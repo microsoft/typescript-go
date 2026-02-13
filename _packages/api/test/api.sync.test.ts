@@ -207,6 +207,125 @@ test("Server-side release", () => {
     });
 });
 
+describe("Multiple snapshots", () => {
+    test("two snapshots work independently", () => {
+        const api = spawnAPI();
+        const snap1 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const snap2 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+
+        // Both can fetch source files
+        const sf1 = snap1.projects[0].program.getSourceFile("/src/index.ts");
+        const sf2 = snap2.projects[0].program.getSourceFile("/src/index.ts");
+        assert.ok(sf1);
+        assert.ok(sf2);
+
+        // Disposing one doesn't break the other
+        snap1.dispose();
+        assert.ok(snap1.isDisposed());
+        assert.ok(!snap2.isDisposed());
+
+        // snap2 still works after snap1 is disposed
+        const symbol = snap2.projects[0].checker.getSymbolAtPosition("/src/index.ts", 9);
+        assert.ok(symbol);
+        assert.equal(symbol.name, "foo");
+
+        snap2.dispose();
+        api.close();
+    });
+
+    test("each snapshot has its own server-side lifecycle", () => {
+        const api = spawnAPI();
+        const snap1 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const snap2 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+
+        snap1.dispose();
+
+        // snap2 still works independently
+        const symbol = snap2.projects[0].checker.getSymbolAtPosition("/src/index.ts", 9);
+        assert.ok(symbol);
+
+        snap2.dispose();
+
+        // Both are disposed, new snapshot works fine
+        const snap3 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const sf = snap3.projects[0].program.getSourceFile("/src/index.ts");
+        assert.ok(sf);
+
+        api.close();
+    });
+});
+
+describe("Source file caching", () => {
+    test("same file from same snapshot returns cached object", () => {
+        const api = spawnAPI();
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.projects[0];
+        const sf1 = project.program.getSourceFile("/src/index.ts");
+        const sf2 = project.program.getSourceFile("/src/index.ts");
+        assert.ok(sf1);
+        assert.strictEqual(sf1, sf2, "Same source file should be returned from cache");
+        api.close();
+    });
+
+    test("same file from two snapshots (same content) returns cached object", () => {
+        const api = spawnAPI();
+        const snap1 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const snap2 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        // Fetch from snap1 first (populates cache), then snap2 (cache hit via hash)
+        const sf1 = snap1.projects[0].program.getSourceFile("/src/index.ts");
+        const sf2 = snap2.projects[0].program.getSourceFile("/src/index.ts");
+        assert.ok(sf1);
+        assert.ok(sf2);
+        // Same content hash → cache hit → same object
+        assert.strictEqual(sf1, sf2, "Same file with same content should share cached object");
+        api.close();
+    });
+
+    test("cache entries survive when one of two snapshots is disposed", () => {
+        const api = spawnAPI();
+        const snap1 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        // Fetch from snap1 to populate cache
+        const sf1 = snap1.projects[0].program.getSourceFile("/src/index.ts");
+        assert.ok(sf1);
+
+        // snap2 retains snap1's cache refs for unchanged files via snapshot changes
+        const snap2 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+
+        // Dispose snap1 — snap2 still holds a ref, so the entry survives
+        snap1.dispose();
+
+        // Fetching from snap2 should still return the cached object
+        const sf2 = snap2.projects[0].program.getSourceFile("/src/index.ts");
+        assert.ok(sf2);
+        assert.strictEqual(sf1, sf2, "Cache entry should survive when retained by the next snapshot");
+        api.close();
+    });
+});
+
+describe("Snapshot disposal", () => {
+    test("dispose is idempotent", () => {
+        const api = spawnAPI();
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        snapshot.dispose();
+        assert.ok(snapshot.isDisposed());
+        // Second dispose should not throw
+        snapshot.dispose();
+        assert.ok(snapshot.isDisposed());
+        api.close();
+    });
+
+    test("api.close disposes all active snapshots", () => {
+        const api = spawnAPI();
+        const snap1 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const snap2 = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        assert.ok(!snap1.isDisposed());
+        assert.ok(!snap2.isDisposed());
+        api.close();
+        assert.ok(snap1.isDisposed());
+        assert.ok(snap2.isDisposed());
+    });
+});
+
 test("Benchmarks", async () => {
     await runBenchmarks(/*singleIteration*/ true);
 });

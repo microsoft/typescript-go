@@ -133,6 +133,9 @@ type Session struct {
 	// Each snapshot has its own symbol/type registries.
 	snapshots   map[Handle[project.Snapshot]]*snapshotData
 	snapshotsMu sync.RWMutex
+
+	// latestSnapshot tracks the most recently created snapshot for computing diffs.
+	latestSnapshot Handle[project.Snapshot]
 }
 
 // Ensure Session implements Handler
@@ -296,88 +299,25 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		projectResponses[i] = NewProjectResponse(proj)
 	}
 
-	// Compute changes if previous snapshot was provided
+	// Compute changes from the previous latest snapshot
 	var changes *SnapshotChanges
-	if params.PreviousSnapshot != "" {
-		s.snapshotsMu.RLock()
-		oldSD, ok := s.snapshots[params.PreviousSnapshot]
-		s.snapshotsMu.RUnlock()
-		if ok {
-			changes = computeSnapshotChanges(oldSD.snapshot, snapshot)
-		}
+	s.snapshotsMu.RLock()
+	prevSD := s.snapshots[s.latestSnapshot]
+	s.snapshotsMu.RUnlock()
+	if prevSD != nil {
+		changes = computeSnapshotChanges(prevSD.snapshot, snapshot)
 	}
+
+	// Update the latest snapshot
+	s.snapshotsMu.Lock()
+	s.latestSnapshot = handle
+	s.snapshotsMu.Unlock()
 
 	return &UpdateSnapshotResponse{
 		Snapshot: handle,
 		Projects: projectResponses,
 		Changes:  changes,
 	}, nil
-}
-
-// computeSnapshotChanges computes the difference between two snapshots for client cache invalidation.
-func computeSnapshotChanges(oldSnapshot, newSnapshot *project.Snapshot) *SnapshotChanges {
-	if oldSnapshot == nil {
-		return nil
-	}
-
-	response := &SnapshotChanges{
-		RemovedProjects: []Handle[project.Project]{},
-		ProjectChanges:  make(map[Handle[project.Project]]*ProjectChanges),
-	}
-
-	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
-	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
-
-	collections.DiffOrderedMaps(
-		oldProjects,
-		newProjects,
-		func(key tspath.Path, newProj *project.Project) {
-			// Project was added
-		},
-		func(key tspath.Path, oldProj *project.Project) {
-			// Project was removed
-			response.RemovedProjects = append(response.RemovedProjects, ProjectHandle(oldProj))
-		},
-		func(key tspath.Path, oldProj, newProj *project.Project) {
-			// Project was changed
-			changes := computeProjectChanges(oldProj, newProj)
-			if changes != nil {
-				response.ProjectChanges[ProjectHandle(newProj)] = changes
-			}
-		},
-	)
-
-	return response
-}
-
-// computeProjectChanges computes file changes between two versions of a project.
-// Returns nil if there are no changes.
-func computeProjectChanges(oldProject, newProject *project.Project) *ProjectChanges {
-	oldFiles := oldProject.Program.FilesByPath()
-	newFiles := newProject.Program.FilesByPath()
-
-	changes := &ProjectChanges{}
-
-	core.DiffMaps(
-		oldFiles,
-		newFiles,
-		func(path tspath.Path, _ *ast.SourceFile) {
-			// File was added - no cache invalidation needed
-		},
-		func(path tspath.Path, _ *ast.SourceFile) {
-			// File was removed
-			changes.RemovedFiles = append(changes.RemovedFiles, path)
-		},
-		func(path tspath.Path, _, _ *ast.SourceFile) {
-			// File was modified
-			changes.ChangedFiles = append(changes.ChangedFiles, path)
-		},
-	)
-
-	if len(changes.ChangedFiles) == 0 && len(changes.RemovedFiles) == 0 {
-		return nil
-	}
-	return changes
 }
 
 // handleRelease decrements the ref count for a snapshot.
@@ -480,7 +420,7 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, params.FileName)
 	}
 
-	// Encode the source file to binary format
+	// Encode the full source file
 	data, err := encoder.EncodeSourceFile(sourceFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
@@ -770,6 +710,56 @@ func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast
 	}
 
 	return node, nil
+}
+
+// computeSnapshotChanges computes the per-project source file differences between
+// two snapshots. It uses DiffOrderedMaps on projects to find changed/removed projects,
+// then DiffMaps on FilesByPath for each changed project to collect file-level changes.
+func computeSnapshotChanges(prev *project.Snapshot, next *project.Snapshot) *SnapshotChanges {
+	prevProjects := prev.ProjectCollection.ProjectsByPath()
+	nextProjects := next.ProjectCollection.ProjectsByPath()
+
+	var changes SnapshotChanges
+
+	collections.DiffOrderedMaps(prevProjects, nextProjects,
+		// onAdded: new project — nothing to retain from previous snapshot.
+		func(_ tspath.Path, _ *project.Project) {},
+		// onRemoved: project removed entirely.
+		func(_ tspath.Path, oldProj *project.Project) {
+			changes.RemovedProjects = append(changes.RemovedProjects, ProjectHandle(oldProj))
+		},
+		// onModified: project changed, diff its files.
+		func(_ tspath.Path, oldProj *project.Project, newProj *project.Project) {
+			if oldProj.GetProgram() == newProj.GetProgram() {
+				return
+			}
+			var oldFiles, newFiles map[tspath.Path]*ast.SourceFile
+			if p := oldProj.GetProgram(); p != nil {
+				oldFiles = p.FilesByPath()
+			}
+			if p := newProj.GetProgram(); p != nil {
+				newFiles = p.FilesByPath()
+			}
+			var projectChanges ProjectFileChanges
+			core.DiffMaps(oldFiles, newFiles,
+				nil, // onAdded: new file in project, not a change.
+				func(path tspath.Path, _ *ast.SourceFile) {
+					projectChanges.DeletedFiles = append(projectChanges.DeletedFiles, path)
+				},
+				func(path tspath.Path, _ *ast.SourceFile, _ *ast.SourceFile) {
+					projectChanges.ChangedFiles = append(projectChanges.ChangedFiles, path)
+				},
+			)
+			if len(projectChanges.ChangedFiles) > 0 || len(projectChanges.DeletedFiles) > 0 {
+				if changes.ChangedProjects == nil {
+					changes.ChangedProjects = make(map[Handle[project.Project]]*ProjectFileChanges)
+				}
+				changes.ChangedProjects[ProjectHandle(newProj)] = &projectChanges
+			}
+		},
+	)
+
+	return &changes
 }
 
 // Close closes the session and releases all active snapshots,

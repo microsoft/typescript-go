@@ -21,9 +21,7 @@ import {
 } from "../path.ts";
 import type {
     ConfigResponse,
-    ProjectChanges,
     ProjectResponse,
-    SnapshotChanges,
     UpdateSnapshotParams,
 } from "../proto.ts";
 import type { MaybeAsync } from "./types.ts";
@@ -129,9 +127,6 @@ export interface Snapshot<Async extends boolean> {
     readonly id: string;
     /** Projects in this snapshot */
     readonly projects: readonly Project<Async>[];
-    /** Changes relative to a previous snapshot, if available */
-    readonly changes: SnapshotChanges | undefined;
-
     /**
      * Get a project by its handle ID.
      */

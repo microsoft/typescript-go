@@ -132,12 +132,31 @@ const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> 
     [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],
 };
 
-const HEADER_OFFSET_RESERVED = 0;
-const HEADER_OFFSET_STRING_TABLE_OFFSETS = 4;
-const HEADER_OFFSET_STRING_TABLE = 8;
-const HEADER_OFFSET_EXTENDED_DATA = 12;
-const HEADER_OFFSET_NODES = 16;
-const HEADER_SIZE = 20;
+const HEADER_OFFSET_METADATA = 0;
+const HEADER_OFFSET_HASH_LO0 = 4;
+const HEADER_OFFSET_HASH_LO1 = 8;
+const HEADER_OFFSET_HASH_HI0 = 12;
+const HEADER_OFFSET_HASH_HI1 = 16;
+const HEADER_OFFSET_STRING_TABLE_OFFSETS = 20;
+const HEADER_OFFSET_STRING_TABLE = 24;
+const HEADER_OFFSET_EXTENDED_DATA = 28;
+const HEADER_OFFSET_NODES = 32;
+const HEADER_SIZE = 36;
+
+/**
+ * Read the 128-bit content hash from a source file binary response as a hex string.
+ */
+export function readSourceFileHash(data: DataView): string {
+    const lo0 = data.getUint32(HEADER_OFFSET_HASH_LO0, true);
+    const lo1 = data.getUint32(HEADER_OFFSET_HASH_LO1, true);
+    const hi0 = data.getUint32(HEADER_OFFSET_HASH_HI0, true);
+    const hi1 = data.getUint32(HEADER_OFFSET_HASH_HI1, true);
+    return hex8(hi1) + hex8(hi0) + hex8(lo1) + hex8(lo0);
+}
+
+function hex8(n: number): string {
+    return (n >>> 0).toString(16).padStart(8, "0");
+}
 
 type NodeDataType = typeof NODE_DATA_TYPE_CHILDREN | typeof NODE_DATA_TYPE_STRING | typeof NODE_DATA_TYPE_EXTENDED;
 const NODE_DATA_TYPE_CHILDREN = 0x00000000;

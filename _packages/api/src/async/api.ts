@@ -25,6 +25,7 @@ import { SourceFileCache } from "../base/sourceFileCache.ts";
 import {
     findDescendant,
     parseNodeHandle,
+    readSourceFileHash,
     RemoteSourceFile,
 } from "../node.ts";
 import {
@@ -35,7 +36,6 @@ import type {
     ConfigResponse,
     InitializeResponse,
     ProjectResponse,
-    SnapshotChanges,
     SourceFileResponse,
     SymbolResponse,
     TypeResponse,
@@ -67,6 +67,7 @@ export class API implements BaseAPI<true> {
     private toPath: ((fileName: string) => Path) | undefined;
     private initialized: boolean = false;
     private activeSnapshots: Set<Snapshot> = new Set();
+    private latestSnapshot: Snapshot | undefined;
 
     constructor(options: APIOptions | LSPConnectionOptions) {
         this.client = new Client(options);
@@ -107,48 +108,42 @@ export class API implements BaseAPI<true> {
         }
 
         const data = await this.client.apiRequest<UpdateSnapshotResponse>("updateSnapshot", requestParams);
+
+        // Retain cached source files from previous snapshot for unchanged files
+        if (this.latestSnapshot) {
+            this.sourceFileCache.retainForSnapshot(data.snapshot, this.latestSnapshot.id, data.changes);
+            if (this.latestSnapshot.isDisposed()) {
+                this.sourceFileCache.releaseSnapshot(this.latestSnapshot.id);
+            }
+        }
+
         const snapshot = new Snapshot(
             data,
             this.client,
             this.sourceFileCache,
             this.toPath!,
-            () => this.activeSnapshots.delete(snapshot),
+            () => {
+                this.activeSnapshots.delete(snapshot);
+                if (snapshot !== this.latestSnapshot) {
+                    this.sourceFileCache.releaseSnapshot(snapshot.id);
+                }
+            },
         );
+        this.latestSnapshot = snapshot;
         this.activeSnapshots.add(snapshot);
 
-        // Apply cache invalidation if changes are available
-        if (data.changes) {
-            this.applySnapshotChanges(data.changes);
-        }
-
         return snapshot;
-    }
-
-    private applySnapshotChanges(changes: SnapshotChanges): void {
-        // Handle removed projects - release their cached files
-        if (changes.removedProjects) {
-            for (const projectId of changes.removedProjects) {
-                this.sourceFileCache.releaseProject(projectId);
-            }
-        }
-
-        // Handle file changes within projects
-        if (changes.projectChanges) {
-            for (const [_projectId, projectChanges] of Object.entries(changes.projectChanges)) {
-                if (projectChanges.changedFiles) {
-                    this.sourceFileCache.remove(projectChanges.changedFiles as Path[]);
-                }
-                if (projectChanges.removedFiles) {
-                    this.sourceFileCache.remove(projectChanges.removedFiles as Path[]);
-                }
-            }
-        }
     }
 
     async close(): Promise<void> {
         // Dispose all active snapshots
         for (const snapshot of [...this.activeSnapshots]) {
             await snapshot.dispose();
+        }
+        // Release the latest snapshot's cache refs if still held
+        if (this.latestSnapshot) {
+            this.sourceFileCache.releaseSnapshot(this.latestSnapshot.id);
+            this.latestSnapshot = undefined;
         }
         await this.client.close();
         this.sourceFileCache.clear();
@@ -158,7 +153,6 @@ export class API implements BaseAPI<true> {
 export class Snapshot implements BaseSnapshot<true> {
     readonly id: string;
     readonly projects: readonly Project[];
-    readonly changes: SnapshotChanges | undefined;
     private projectMap: Map<string, Project>;
     private client: Client;
     private objectRegistry: SnapshotObjectRegistry;
@@ -173,7 +167,6 @@ export class Snapshot implements BaseSnapshot<true> {
         onDispose: () => void,
     ) {
         this.id = data.snapshot;
-        this.changes = data.changes;
         this.client = client;
         this.onDispose = onDispose;
 
@@ -298,11 +291,10 @@ export class Program implements BaseProgram<true> {
         const fileName = resolveFileName(file);
         const path = this.toPath(fileName);
 
-        // Check cache first
-        const cached = this.sourceFileCache.get(path, this.parseOptionsKey);
-        if (cached) {
-            this.sourceFileCache.retain(path, this.projectId);
-            return cached;
+        // Check if we already have a retained cache entry for this (snapshot, project) pair
+        const retained = this.sourceFileCache.getRetained(path, this.parseOptionsKey, this.snapshotId, this.projectId);
+        if (retained) {
+            return retained;
         }
 
         // Fetch from server
@@ -315,12 +307,14 @@ export class Program implements BaseProgram<true> {
             return undefined;
         }
 
-        // Decode base64 to Uint8Array and create RemoteSourceFile
+        // Decode base64 to Uint8Array
         const binaryData = Uint8Array.from(atob(response.data), c => c.charCodeAt(0));
-        const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
-        this.sourceFileCache.set(path, sourceFile, this.parseOptionsKey, this.projectId);
+        const view = new DataView(binaryData.buffer, binaryData.byteOffset, binaryData.byteLength);
+        const contentHash = readSourceFileHash(view);
 
-        return sourceFile;
+        // Create a new RemoteSourceFile and cache it (set returns existing if hash matches)
+        const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
+        return this.sourceFileCache.set(path, sourceFile, this.parseOptionsKey, contentHash, this.snapshotId, this.projectId);
     }
 }
 

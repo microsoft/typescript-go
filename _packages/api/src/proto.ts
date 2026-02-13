@@ -19,8 +19,26 @@ export interface ConfigResponse {
 export interface UpdateSnapshotParams {
     /** Path to a tsconfig.json file to open in the new snapshot */
     openProject?: string;
-    /** Handle of a previous snapshot for computing changes */
-    previousSnapshot?: string;
+}
+
+/**
+ * Changes to source files within a single project.
+ */
+export interface ProjectFileChanges {
+    /** Source file paths whose content changed */
+    changedFiles?: string[];
+    /** Source file paths removed from the project's program */
+    deletedFiles?: string[];
+}
+
+/**
+ * Changes between two consecutive snapshots, reported per-project.
+ */
+export interface SnapshotChanges {
+    /** Project handles mapped to their file changes. Projects not listed are unchanged. */
+    changedProjects?: Record<string, ProjectFileChanges>;
+    /** Project handles that were removed from the snapshot */
+    removedProjects?: string[];
 }
 
 /**
@@ -31,18 +49,8 @@ export interface UpdateSnapshotResponse {
     snapshot: string;
     /** List of projects in the snapshot */
     projects: ProjectResponse[];
-    /** Changes relative to previousSnapshot, if provided */
+    /** Changes from the previous snapshot (absent for the first snapshot) */
     changes?: SnapshotChanges;
-}
-
-/**
- * Changes between two snapshots for cache invalidation.
- */
-export interface SnapshotChanges {
-    /** List of project handles that no longer exist */
-    removedProjects?: string[];
-    /** Map of project handles to their file changes */
-    projectChanges?: Record<string, ProjectChanges>;
 }
 
 export interface ProjectResponse {
@@ -71,14 +79,4 @@ export interface SymbolResponse {
 export interface TypeResponse {
     id: string;
     flags: number;
-}
-
-/**
- * Describes file changes within a project.
- */
-export interface ProjectChanges {
-    /** List of file paths whose content has changed */
-    changedFiles?: string[];
-    /** List of file paths that no longer exist in the project */
-    removedFiles?: string[];
 }

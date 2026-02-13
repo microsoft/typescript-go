@@ -2,132 +2,168 @@ import type {
     Path,
     SourceFile,
 } from "@typescript/ast";
+import type { SnapshotChanges } from "../proto.ts";
 
 /**
- * A cached source file entry.
+ * Builds a composite ref key from a snapshot ID and project ID.
+ */
+function refKey(snapshotId: string, projectId: string): string {
+    return `${snapshotId}:${projectId}`;
+}
+
+/**
+ * A cached source file entry, identified by content hash.
  */
 export interface CachedSourceFile {
     /** The cached source file object */
     file: SourceFile;
-    /** The parse cache key that was used to create this file */
-    parseCacheKey: string;
-    /** Set of project IDs that are retaining this cache entry */
-    retainingProjects: Set<string>;
+    /** The content hash from the server */
+    contentHash: string;
+    /** The parse options key that was used to create this file */
+    parseOptionsKey: string;
+    /** Set of (snapshot, project) ref keys that reference this entry */
+    refs: Set<string>;
 }
 
 /**
- * Client-side cache for source files.
+ * Client-side cache for source files keyed by (path, parseOptionsKey, contentHash).
  *
- * This cache stores source files by their path and allows multiple projects
- * to share cached entries when their parse options are compatible (same parseCacheKey).
+ * Supports multiple versions of the same file at the same path (e.g., from
+ * different snapshots with different file contents). Each version is identified
+ * by its content hash and parse options key.
  *
- * Lifecycle:
- * - Files are added when fetched from the server
- * - Projects retain cache entries to keep them alive
- * - Files are removed when the server reports changes (e.g., via updateSnapshot)
- * - Files are removed when no projects retain them
+ * Entries are ref-counted by (snapshot, project) pairs. When a snapshot is
+ * disposed, all refs for that snapshot across all projects are released,
+ * and entries with no remaining references are evicted.
+ *
+ * When a new snapshot is created, unchanged cache entries from the previous
+ * snapshot are retained per-project. Only files within changed or removed
+ * projects are invalidated.
  */
 export class SourceFileCache {
-    private cache: Map<Path, CachedSourceFile> = new Map();
+    /** Map from path to all cached versions of that file */
+    private cache: Map<Path, CachedSourceFile[]> = new Map();
+    /** Map from snapshotId to (projectId → Set of paths fetched through that project) */
+    private snapshotProjectPaths: Map<string, Map<string, Set<Path>>> = new Map();
 
     /**
-     * Get a cached source file if it exists, is not dirty, and has a compatible parse key.
-     * @param path The file path to look up
-     * @param parseCacheKey The expected parse cache key for compatibility check
-     * @returns The cached source file if found and compatible, undefined otherwise
+     * Get a cached source file already retained for the given (snapshot, project) pair.
+     * This does not require a content hash — it returns the entry if one exists
+     * with a matching ref. Used to skip the server request entirely when
+     * retainForSnapshot has already carried over the ref.
      */
-    get(path: Path, parseCacheKey: string): SourceFile | undefined {
-        const entry = this.cache.get(path);
-        if (!entry) {
-            return undefined;
-        }
-        if (entry.parseCacheKey !== parseCacheKey) {
-            return undefined;
-        }
-        return entry.file;
+    getRetained(path: Path, parseOptionsKey: string, snapshotId: string, projectId: string): SourceFile | undefined {
+        const entries = this.cache.get(path);
+        if (!entries) return undefined;
+        const key = refKey(snapshotId, projectId);
+        const entry = entries.find(e => e.parseOptionsKey === parseOptionsKey && e.refs.has(key));
+        return entry?.file;
     }
 
     /**
-     * Get the raw cache entry for a path (for inspection/debugging).
+     * Store a source file in the cache and retain it for the given (snapshot, project) pair.
+     * Returns the cached file — which may be an existing entry if the hash matches.
      */
-    getEntry(path: Path): CachedSourceFile | undefined {
-        return this.cache.get(path);
-    }
-
-    /**
-     * Store a source file in the cache.
-     * @param path The file path
-     * @param file The source file to cache
-     * @param parseCacheKey The parse cache key used to create this file
-     * @param projectId The ID of the project that fetched this file (will retain it)
-     */
-    set(path: Path, file: SourceFile, parseCacheKey: string, projectId: string): void {
-        const existing = this.cache.get(path);
+    set(path: Path, file: SourceFile, parseOptionsKey: string, contentHash: string, snapshotId: string, projectId: string): SourceFile {
+        let entries = this.cache.get(path);
+        if (!entries) {
+            entries = [];
+            this.cache.set(path, entries);
+        }
+        const ref = refKey(snapshotId, projectId);
+        // Check if we already have this exact version
+        const existing = entries.find(e => e.parseOptionsKey === parseOptionsKey && e.contentHash === contentHash);
         if (existing) {
-            // Update existing entry
-            existing.file = file;
-            existing.parseCacheKey = parseCacheKey;
-            existing.retainingProjects.add(projectId);
+            existing.refs.add(ref);
+            this.trackPath(snapshotId, projectId, path);
+            return existing.file;
         }
-        else {
-            // Create new entry
-            this.cache.set(path, {
-                file,
-                parseCacheKey,
-                retainingProjects: new Set([projectId]),
-            });
-        }
+        entries.push({ file, contentHash, parseOptionsKey, refs: new Set([ref]) });
+        this.trackPath(snapshotId, projectId, path);
+        return file;
     }
 
     /**
-     * Add a project as a retainer of a cache entry.
-     * @param path The file path
-     * @param projectId The project ID to add as a retainer
+     * Retain cache entries from a previous snapshot for a new snapshot.
+     * For each project in the previous snapshot:
+     *   - Removed projects: skip (don't retain any refs).
+     *   - Changed projects: retain refs for files not listed in changedFiles/deletedFiles.
+     *   - Unchanged projects: retain all refs.
      */
-    retain(path: Path, projectId: string): void {
-        const entry = this.cache.get(path);
-        if (entry) {
-            entry.retainingProjects.add(projectId);
-        }
-    }
+    retainForSnapshot(newSnapshotId: string, previousSnapshotId: string, changes: SnapshotChanges | undefined): void {
+        const prevProjectMap = this.snapshotProjectPaths.get(previousSnapshotId);
+        if (!prevProjectMap) return;
 
-    /**
-     * Remove a project as a retainer of a cache entry.
-     * If no projects remain, the entry is removed from the cache.
-     * @param path The file path
-     * @param projectId The project ID to remove
-     */
-    release(path: Path, projectId: string): void {
-        const entry = this.cache.get(path);
-        if (entry) {
-            entry.retainingProjects.delete(projectId);
-            if (entry.retainingProjects.size === 0) {
-                this.cache.delete(path);
+        const removedProjects = new Set(changes?.removedProjects ?? []);
+        const changedProjects = changes?.changedProjects ?? {};
+
+        for (const [projectId, paths] of prevProjectMap) {
+            if (removedProjects.has(projectId)) continue;
+
+            const projectChanges = changedProjects[projectId];
+            let invalidPaths: Set<string> | undefined;
+            if (projectChanges) {
+                invalidPaths = new Set<string>();
+                for (const p of projectChanges.changedFiles ?? []) invalidPaths.add(p);
+                for (const p of projectChanges.deletedFiles ?? []) invalidPaths.add(p);
+            }
+
+            const prevRef = refKey(previousSnapshotId, projectId);
+            const newRef = refKey(newSnapshotId, projectId);
+
+            for (const path of paths) {
+                if (invalidPaths?.has(path)) continue;
+                const entries = this.cache.get(path);
+                if (!entries) continue;
+                for (const entry of entries) {
+                    if (entry.refs.has(prevRef)) {
+                        entry.refs.add(newRef);
+                        this.trackPath(newSnapshotId, projectId, path);
+                    }
+                }
             }
         }
     }
 
     /**
-     * Release all cache entries retained by a project.
-     * @param projectId The project ID whose entries should be released
+     * Release all entries retained by the given snapshot across all projects.
+     * Only visits paths that the snapshot actually referenced.
+     * Entries with no remaining refs are evicted.
      */
-    releaseProject(projectId: string): void {
-        for (const [path, entry] of this.cache) {
-            entry.retainingProjects.delete(projectId);
-            if (entry.retainingProjects.size === 0) {
-                this.cache.delete(path);
+    releaseSnapshot(snapshotId: string): void {
+        const projectMap = this.snapshotProjectPaths.get(snapshotId);
+        if (!projectMap) return;
+        for (const [projectId, paths] of projectMap) {
+            const key = refKey(snapshotId, projectId);
+            for (const path of paths) {
+                const entries = this.cache.get(path);
+                if (!entries) continue;
+                for (let i = entries.length - 1; i >= 0; i--) {
+                    entries[i].refs.delete(key);
+                    if (entries[i].refs.size === 0) {
+                        entries.splice(i, 1);
+                    }
+                }
+                if (entries.length === 0) {
+                    this.cache.delete(path);
+                }
             }
         }
+        this.snapshotProjectPaths.delete(snapshotId);
     }
 
-    /**
-     * Remove specific paths from the cache.
-     * @param paths The paths to remove
-     */
-    remove(paths: Iterable<Path>): void {
-        for (const path of paths) {
-            this.cache.delete(path);
+    private trackPath(snapshotId: string, projectId: string, path: Path): void {
+        let projectMap = this.snapshotProjectPaths.get(snapshotId);
+        if (!projectMap) {
+            projectMap = new Map();
+            this.snapshotProjectPaths.set(snapshotId, projectMap);
         }
+        let paths = projectMap.get(projectId);
+        if (!paths) {
+            paths = new Set();
+            projectMap.set(projectId, paths);
+        }
+        paths.add(path);
     }
 
     /**
@@ -135,17 +171,18 @@ export class SourceFileCache {
      */
     clear(): void {
         this.cache.clear();
+        this.snapshotProjectPaths.clear();
     }
 
     /**
-     * Get the number of entries in the cache.
+     * Get the number of unique paths in the cache.
      */
     get size(): number {
         return this.cache.size;
     }
 
     /**
-     * Check if a path is in the cache (regardless of dirty state).
+     * Check if a path is in the cache.
      */
     has(path: Path): boolean {
         return this.cache.has(path);

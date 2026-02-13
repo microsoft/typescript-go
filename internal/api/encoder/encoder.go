@@ -38,6 +38,10 @@ const (
 
 const (
 	HeaderOffsetMetadata = iota * 4
+	HeaderOffsetHashLo0
+	HeaderOffsetHashLo1
+	HeaderOffsetHashHi0
+	HeaderOffsetHashHi1
 	HeaderOffsetStringOffsets
 	HeaderOffsetStringData
 	HeaderOffsetExtendedData
@@ -46,7 +50,7 @@ const (
 )
 
 const (
-	ProtocolVersion uint8 = 1
+	ProtocolVersion uint8 = 2
 )
 
 // Source File Binary Format
@@ -62,25 +66,31 @@ const (
 //
 // | Section            | Length             | Description                                                                              |
 // | ------------------ | ------------------ | ---------------------------------------------------------------------------------------- |
-// | Header             | 20 bytes           | Contains byte offsets to the start of each section.                                      |
+// | Header             | 36 bytes           | Contains the content hash, flags, and byte offsets to the start of each section.         |
 // | String offsets     | 8 bytes per string | Pairs of starting byte offsets and ending byte offsets into the **string data** section. |
 // | String data        | variable           | UTF-8 encoded string data.                                                               |
 // | Extended node data | variable           | Extra data for some kinds of nodes.                                                      |
 // | Nodes              | 24 bytes per node  | Defines the AST structure of the file, with references to strings and extended data.     |
 //
-// Header (20 bytes)
+// Header (36 bytes)
 // -----------------
 //
 // The header contains the following fields:
 //
-// | Byte offset | Type   | Field                                     |
-// | ----------- | ------ | ----------------------------------------- |
-// | 0           | uint8  | Protocol version                          |
-// | 1-4         |        | Reserved                                  |
-// | 4-8         | uint32 | Byte offset to string offsets section     |
-// | 8-12        | uint32 | Byte offset to string data section        |
-// | 12-16       | uint32 | Byte offset to extended node data section |
-// | 16-20       | uint32 | Byte offset to nodes section              |
+// | Byte offset | Type      | Field                                     |
+// | ----------- | --------- | ----------------------------------------- |
+// | 0           | uint8     | Protocol version                          |
+// | 1           | uint8     | Flags (bit 0: header-only)                |
+// | 2-3         |           | Reserved                                  |
+// | 4-19        | uint128   | Source file content hash (xxh3, LE)       |
+// | 20-23       | uint32    | Byte offset to string offsets section     |
+// | 24-27       | uint32    | Byte offset to string data section        |
+// | 28-31       | uint32    | Byte offset to extended node data section |
+// | 32-35       | uint32    | Byte offset to nodes section              |
+//
+// When the header-only flag (bit 0 of byte 1) is set, the response contains only the 36-byte header
+// with the hash. The section offset fields and all subsequent sections are absent. This is used when the
+// client already has a cached AST with the same content hash.
 //
 // String offsets (8 bytes per string)
 // -----------------------------------
@@ -221,7 +231,14 @@ const (
 // meaning of the data at that offset is defined by the node type. See the **Extended node data** section for details on
 // the format of the extended data for specific node types.
 
+// SourceFileHash returns the 128-bit content hash for a source file as a hex string.
+func SourceFileHash(sourceFile *ast.SourceFile) string {
+	h := sourceFile.Hash
+	return fmt.Sprintf("%016x%016x", h.Hi, h.Lo)
+}
+
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
+	hash := sourceFile.Hash
 	var parentIndex, nodeCount, prevIndex uint32
 	var extendedData []byte
 	strs := newStringTable(sourceFile.Text(), sourceFile.TextCount)
@@ -305,6 +322,8 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 
 	header := []uint32{
 		metadata,
+		uint32(hash.Lo), uint32(hash.Lo >> 32),
+		uint32(hash.Hi), uint32(hash.Hi >> 32),
 		uint32(offsetStringTableOffsets),
 		uint32(offsetStringTableData),
 		uint32(offsetExtendedData),

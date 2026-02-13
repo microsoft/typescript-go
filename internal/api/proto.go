@@ -110,9 +110,26 @@ type InitializeResponse struct {
 type UpdateSnapshotParams struct {
 	// OpenProject is the path to a tsconfig.json file to open/load in the new snapshot.
 	OpenProject string `json:"openProject,omitempty"`
-	// PreviousSnapshot is a handle to a previous snapshot for computing changes.
-	// If provided, the response will include a diff of project/file changes.
-	PreviousSnapshot Handle[project.Snapshot] `json:"previousSnapshot,omitempty"`
+}
+
+// ProjectFileChanges describes what source files changed within a single project.
+type ProjectFileChanges struct {
+	// ChangedFiles lists source file paths whose content differs.
+	ChangedFiles []tspath.Path `json:"changedFiles,omitempty"`
+	// DeletedFiles lists source file paths removed from the project's program.
+	DeletedFiles []tspath.Path `json:"deletedFiles,omitempty"`
+}
+
+// SnapshotChanges describes what changed between the previous latest snapshot
+// and the newly created snapshot. Changes are reported per-project so clients
+// can track cache refs at the (snapshot, project) level.
+type SnapshotChanges struct {
+	// ChangedProjects maps project handles to the file changes within that project.
+	// Projects not listed here (and not in RemovedProjects) are unchanged.
+	ChangedProjects map[Handle[project.Project]]*ProjectFileChanges `json:"changedProjects,omitempty"`
+	// RemovedProjects lists project handles that were present in the previous
+	// snapshot but absent from the new one.
+	RemovedProjects []Handle[project.Project] `json:"removedProjects,omitempty"`
 }
 
 // UpdateSnapshotResponse is returned by updateSnapshot.
@@ -121,25 +138,9 @@ type UpdateSnapshotResponse struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	// Projects is the list of projects in the snapshot.
 	Projects []*ProjectResponse `json:"projects"`
-	// Changes contains project/file changes relative to PreviousSnapshot.
-	// Only present if PreviousSnapshot was provided in the request.
+	// Changes describes source file differences from the previous snapshot.
+	// Nil for the first snapshot in a session.
 	Changes *SnapshotChanges `json:"changes,omitempty"`
-}
-
-// SnapshotChanges contains information about changes between two snapshots.
-type SnapshotChanges struct {
-	// RemovedProjects is a list of project handles that no longer exist.
-	RemovedProjects []Handle[project.Project] `json:"removedProjects,omitempty"`
-	// ProjectChanges maps project handles to their file changes.
-	ProjectChanges map[Handle[project.Project]]*ProjectChanges `json:"projectChanges,omitempty"`
-}
-
-// ProjectChanges describes file changes within a project.
-type ProjectChanges struct {
-	// ChangedFiles is a list of file paths whose content has changed.
-	ChangedFiles []tspath.Path `json:"changedFiles,omitempty"`
-	// RemovedFiles is a list of file paths that no longer exist in the project.
-	RemovedFiles []tspath.Path `json:"removedFiles,omitempty"`
 }
 
 var unmarshalers = map[Method]func([]byte) (any, error){
