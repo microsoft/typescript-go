@@ -310,7 +310,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 				Section: new("javascript"),
 			},
 			{
-				Section: ptrTo("editor"),
+				Section: new("editor"),
 			},
 		},
 	})
@@ -1115,17 +1115,8 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 }
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
-	// !!! only implemented because needed for fourslash
 	if params.Settings == nil {
 		return nil
-	} else if settings, ok := params.Settings.([]any); ok {
-		settingsMap := map[string]any{}
-		for i, item := range []string{"js/ts", "typescript", "javascript", "editor"} {
-			if i < len(settings) {
-				settingsMap[item] = settings[i]
-			}
-		}
-		s.session.Configure(lsutil.ParseNewUserConfig(settingsMap))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
 		for key := range settings {
 			switch key {
