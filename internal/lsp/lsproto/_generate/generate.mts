@@ -49,7 +49,7 @@ const customStructures: Structure[] = [
                 documentation: "The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.",
             },
             {
-                name: "typescript",
+                name: "userPreferences",
                 type: { kind: "reference", name: "any" },
                 optional: true,
                 documentation: "userPreferences and/or formatting options or provided at initialization.",

@@ -21627,7 +21627,7 @@ type InitializationOptions struct {
 	CodeLensShowLocationsCommandName *string `json:"codeLensShowLocationsCommandName,omitzero"`
 
 	// userPreferences and/or formatting options or provided at initialization.
-	Typescript *any `json:"typescript,omitzero"`
+	UserPreferences *any `json:"userPreferences,omitzero"`
 }
 
 // AutoImportFix contains information about an auto-import suggestion.

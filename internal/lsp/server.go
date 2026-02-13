@@ -284,14 +284,14 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.Typescript != nil {
+		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.UserPreferences != nil {
 			s.logger.Logf(
 				"received formatting options from initialization: %T\n%+v",
-				*s.initializeParams.InitializationOptions.Typescript,
-				*s.initializeParams.InitializationOptions.Typescript,
+				*s.initializeParams.InitializationOptions.UserPreferences,
+				*s.initializeParams.InitializationOptions.UserPreferences,
 			)
-			// Any options received via initializationOptions will be used for both `js` and `ts`options
-			if config, ok := (*s.initializeParams.InitializationOptions.Typescript).(map[string]any); ok {
+			// Any options received via initializationOptions will be used for both `js` and `ts` options
+			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
 				return lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences().ParseWorker(config)), nil
 			}
 		}
@@ -1118,14 +1118,6 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	if params.Settings == nil {
 		return nil
 	} else if settings, ok := params.Settings.(map[string]any); ok {
-		for key := range settings {
-			switch key {
-			case "js/ts", "typescript", "javascript", "editor":
-				continue
-			default:
-				delete(settings, key)
-			}
-		}
 		s.session.Configure(lsutil.ParseNewUserConfig(settings))
 	}
 	return nil
