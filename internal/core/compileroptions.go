@@ -218,19 +218,25 @@ func (options *CompilerOptions) GetEmitModuleKind() ModuleKind {
 }
 
 func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
-	switch options.ModuleResolution {
-	case ModuleResolutionKindUnknown, ModuleResolutionKindClassic, ModuleResolutionKindNode10:
-		switch options.GetEmitModuleKind() {
-		case ModuleKindNode16, ModuleKindNode18, ModuleKindNode20:
-			return ModuleResolutionKindNode16
-		case ModuleKindNodeNext:
-			return ModuleResolutionKindNodeNext
-		default:
+	if options.ModuleResolution != ModuleResolutionKindUnknown {
+		switch options.ModuleResolution {
+		case ModuleResolutionKindClassic, ModuleResolutionKindNode10:
 			return ModuleResolutionKindBundler
 		}
-	default:
 		return options.ModuleResolution
 	}
+
+	moduleKind := options.GetEmitModuleKind()
+
+	if moduleKind == ModuleKindNodeNext {
+		return ModuleResolutionKindNodeNext
+	}
+
+	if ModuleKindNode16 <= moduleKind && moduleKind < ModuleKindNodeNext {
+		return ModuleResolutionKindNode16
+	}
+
+	return ModuleResolutionKindBundler
 }
 
 func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind {

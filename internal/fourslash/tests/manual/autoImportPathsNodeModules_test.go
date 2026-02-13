@@ -8,14 +8,13 @@ import (
 )
 
 func TestAutoImportPathsNodeModules(t *testing.T) {
-	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: tsconfig.json
 {
     "compilerOptions": {
         "module": "amd",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "rootDir": "ts",
         "baseUrl": ".",
         "paths": {
@@ -33,5 +32,5 @@ export class Dialog {}
 Dialog/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"WoltLabSuite/Core/Component/Dialog"}, nil /*preferences*/)
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"@woltlab/wcf/ts/WoltLabSuite/Core/Component/Dialog"}, nil /*preferences*/)
 }

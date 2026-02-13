@@ -192,8 +192,6 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
-	harnessutil.SkipUnsupportedCompilerOptions(t, compilerTest.options)
-
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapOutput(t, r.testSuitName, r.isSubmodule)

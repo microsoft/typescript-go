@@ -8,8 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestAutoImportCrossProject_baseUrl_toDist(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+func TestAutoImportCrossProject_paths_toDist2(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/common/tsconfig.json
@@ -31,15 +30,17 @@ export function square(n: number) {
   "compilerOptions": {
     "lib": ["es5"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmit": true,
-    "baseUrl": "."
+    "paths": {
+      "@common/*": ["../common/dist/src/*"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "../common" }]
 }
 // @Filename: /home/src/workspaces/project/web/src/MyApp.ts
-import { square } from "../../common/dist/src/MyModule";
+import { square } from "@common/MyModule";
 // @Filename: /home/src/workspaces/project/web/src/Helper.ts
 export function saveMe() {
   square/**/(2);
@@ -48,5 +49,5 @@ export function saveMe() {
 	defer done()
 	f.MarkTestAsStradaServer()
 	f.GoToFile(t, "/home/src/workspaces/project/web/src/Helper.ts")
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"../../common/src/MyModule"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"@common/MyModule"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
 }

@@ -8,7 +8,6 @@ import (
 )
 
 func TestJsxFindAllReferencesOnRuntimeImportWithPaths1(t *testing.T) {
-	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: project/src/foo.ts
@@ -28,7 +27,7 @@ export {}
 // @Filename: project/tsconfig.json
 {
     "compilerOptions": {
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "module": "es2020",
         "jsx": "react-jsx",
         "jsxImportSource": "@foo/dir",

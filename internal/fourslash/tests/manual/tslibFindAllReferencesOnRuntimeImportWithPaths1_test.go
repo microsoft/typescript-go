@@ -8,7 +8,7 @@ import (
 )
 
 func TestTslibFindAllReferencesOnRuntimeImportWithPaths1(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: project/src/foo.ts
@@ -23,7 +23,7 @@ export function __importStar(...args: any): any;
 // @Filename: project/tsconfig.json
 {
     "compilerOptions": {
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "module": "es2020",
         "importHelpers": true,
         "moduleDetection": "force",

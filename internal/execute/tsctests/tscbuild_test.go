@@ -2632,7 +2632,7 @@ func TestBuildResolveJsonModule(t *testing.T) {
 			{
 				"compilerOptions": {
 					"composite": %t,
-					"moduleResolution": "node",
+					"moduleResolution": "bundler",
 					"module": "commonjs",
 					"resolveJsonModule": true,
 					"esModuleInterop": true,

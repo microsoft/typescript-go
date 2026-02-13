@@ -12,7 +12,7 @@ export default hello.hello
 {
     "compilerOptions": {
         "composite": true,
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "module": "commonjs",
         "resolveJsonModule": true,
         "esModuleInterop": true,

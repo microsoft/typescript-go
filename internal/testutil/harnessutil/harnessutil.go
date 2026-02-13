@@ -183,6 +183,8 @@ func CompileFilesEx(
 		compilerOptions.TypeRoots[i] = tspath.GetNormalizedAbsolutePath(typeRoot, currentDirectory)
 	}
 
+	SkipUnsupportedCompilerOptions(t, compilerOptions)
+
 	// Create fake FS for testing
 	testfs := map[string]any{}
 	for _, file := range inputFiles {
