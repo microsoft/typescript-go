@@ -21,7 +21,6 @@ type SourceFileParseOptions struct {
 	JSDocParsingMode               JSDocParsingMode
 }
 
-
 type ExternalModuleIndicatorOptions struct {
 	JSX   bool
 	Force bool
