@@ -2905,6 +2905,16 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 	return node.ForEachChild(v)
 }
 
+func HasTypeArguments(node *Node) bool {
+	switch node.Kind {
+	case KindCallExpression, KindNewExpression, KindTaggedTemplateExpression,
+		KindTypeReference, KindExpressionWithTypeArguments, KindImportType,
+		KindTypeQuery, KindJsxOpeningElement, KindJsxSelfClosingElement:
+		return true
+	}
+	return false
+}
+
 func IsTypeReferenceType(node *Node) bool {
 	return node.Kind == KindTypeReference || node.Kind == KindExpressionWithTypeArguments
 }
@@ -3969,7 +3979,7 @@ func HasContextSensitiveParameters(node *Node) bool {
 			// an implicit 'this' parameter which is subject to contextual typing.
 			parameter := core.FirstOrNil(node.Parameters())
 			if parameter == nil || !IsThisParameter(parameter) {
-				return true
+				return node.Flags&NodeFlagsContainsThis != 0
 			}
 		}
 	}

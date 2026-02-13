@@ -531,8 +531,8 @@ func (l *LanguageService) getCompletionData(
 				return &completionDataKeyword{
 					keywordCompletions: []*lsproto.CompletionItem{{
 						Label:    scanner.TokenToString(importStatementCompletionInfo.keywordCompletion),
-						Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-						SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
+						Kind:     new(lsproto.CompletionItemKindKeyword),
+						SortText: new(string(SortTextGlobalsOrKeywords)),
 					}},
 					isNewIdentifierLocation: importStatementCompletionInfo.isNewIdentifierLocation,
 				}, nil
@@ -972,7 +972,7 @@ func (l *LanguageService) getCompletionData(
 				}
 				return globalsSearchContinue, nil
 			}
-			completionsType := typeChecker.GetContextualType(objectLikeContainer, checker.ContextFlagsCompletions)
+			completionsType := typeChecker.GetContextualType(objectLikeContainer, checker.ContextFlagsIgnoreNodeInferences)
 			t := core.IfElse(completionsType != nil, completionsType, instantiatedType)
 			stringIndexType := typeChecker.GetStringIndexType(t)
 			numberIndexType := typeChecker.GetNumberIndexType(t)
@@ -1389,7 +1389,7 @@ func (l *LanguageService) getCompletionData(
 		if attrsType == nil {
 			return globalsSearchContinue, nil
 		}
-		completionsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsCompletions)
+		completionsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsIgnoreNodeInferences)
 		filteredSymbols, spreadMemberNames := filterJsxAttributes(
 			getPropertiesForObjectExpression(attrsType, completionsType, jsxContainer.Attributes(), typeChecker),
 			jsxContainer.Attributes().Properties(),
@@ -1588,9 +1588,12 @@ func (l *LanguageService) getCompletionData(
 		}
 	}
 
-	var contextualType *checker.Type
+	var contextualTypeOrConstraint *checker.Type
 	if previousToken != nil {
-		contextualType = getContextualType(previousToken, position, file, typeChecker)
+		contextualTypeOrConstraint = getContextualType(previousToken, position, file, typeChecker)
+		if contextualTypeOrConstraint == nil {
+			contextualTypeOrConstraint = getConstraintOfTypeArgumentProperty(previousToken, typeChecker)
+		}
 	}
 
 	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
@@ -1599,10 +1602,10 @@ func (l *LanguageService) getCompletionData(
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
-		if contextualType != nil && contextualType.IsUnion() {
-			types = contextualType.Types()
-		} else if contextualType != nil {
-			types = []*checker.Type{contextualType}
+		if contextualTypeOrConstraint != nil && contextualTypeOrConstraint.IsUnion() {
+			types = contextualTypeOrConstraint.Types()
+		} else if contextualTypeOrConstraint != nil {
+			types = []*checker.Type{contextualTypeOrConstraint}
 		}
 		literals = core.MapNonNil(types, func(t *checker.Type) literalValue {
 			if isLiteral(t) && !t.IsEnumLiteral() {
@@ -1613,8 +1616,8 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	var recommendedCompletion *ast.Symbol
-	if previousToken != nil && contextualType != nil {
-		recommendedCompletion = getRecommendedCompletion(previousToken, contextualType, typeChecker)
+	if previousToken != nil && contextualTypeOrConstraint != nil {
+		recommendedCompletion = getRecommendedCompletion(previousToken, contextualTypeOrConstraint, typeChecker)
 	}
 
 	if defaultCommitCharacters == nil {
@@ -1903,7 +1906,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			nil,
 			nil,
 			&lsproto.CompletionItemLabelDetails{
-				Description: ptrTo(autoImport.Fix.ModuleSpecifier),
+				Description: new(autoImport.Fix.ModuleSpecifier),
 			},
 			file,
 			position,
@@ -1953,9 +1956,9 @@ func createCompletionItemForLiteral(
 ) *lsproto.CompletionItem {
 	return &lsproto.CompletionItem{
 		Label:            completionNameForLiteral(file, preferences, literal),
-		Kind:             ptrTo(lsproto.CompletionItemKindConstant),
-		SortText:         ptrTo(string(SortTextLocationPriority)),
-		CommitCharacters: ptrTo([]string{}),
+		Kind:             new(lsproto.CompletionItemKindConstant),
+		SortText:         new(string(SortTextLocationPriority)),
+		CommitCharacters: new([]string{}),
 	}
 }
 
@@ -2187,7 +2190,7 @@ func (l *LanguageService) createCompletionItem(
 		if elementKind == lsutil.ScriptElementKindWarning || elementKind == lsutil.ScriptElementKindString {
 			commitCharacters = &[]string{}
 		} else if !clientSupportsDefaultCommitCharacters(ctx) {
-			commitCharacters = ptrTo(data.defaultCommitCharacters)
+			commitCharacters = new(data.defaultCommitCharacters)
 		}
 		// Otherwise use the completion list default.
 	}
@@ -2371,7 +2374,7 @@ func strPtrTo(v string) *string {
 
 func boolToPtr(v bool) *bool {
 	if v {
-		return ptrTo(true)
+		return new(true)
 	}
 	return nil
 }
@@ -2794,7 +2797,7 @@ func getContextualTypeForConditionalExpression(conditionalExpr *ast.Node, positi
 		return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
 	}
 	// Fall through to regular contextual type logic if not in an argument
-	contextualType := typeChecker.GetContextualType(conditionalExpr, checker.ContextFlagsCompletions)
+	contextualType := typeChecker.GetContextualType(conditionalExpr, checker.ContextFlagsIgnoreNodeInferences)
 	if contextualType != nil {
 		return contextualType
 	}
@@ -2882,7 +2885,7 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		// completion at `x ===/**/`
 		return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
 	} else {
-		contextualType := typeChecker.GetContextualType(previousToken, checker.ContextFlagsCompletions)
+		contextualType := typeChecker.GetContextualType(previousToken, checker.ContextFlagsIgnoreNodeInferences)
 		if contextualType != nil {
 			return contextualType
 		}
@@ -3196,8 +3199,8 @@ var (
 		for i := ast.KindFirstKeyword; i <= ast.KindLastKeyword; i++ {
 			result = append(result, &lsproto.CompletionItem{
 				Label:    scanner.TokenToString(i),
-				Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-				SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
+				Kind:     new(lsproto.CompletionItemKindKeyword),
+				SortText: new(string(SortTextGlobalsOrKeywords)),
 			})
 		}
 		return result
@@ -3360,8 +3363,8 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 			tokenLine == currentLine {
 			entries = append(entries, &lsproto.CompletionItem{
 				Label:    scanner.TokenToString(ast.KindAssertKeyword),
-				Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-				SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
+				Kind:     new(lsproto.CompletionItemKindKeyword),
+				SortText: new(string(SortTextGlobalsOrKeywords)),
 			})
 		}
 	}
@@ -3385,9 +3388,9 @@ func (l *LanguageService) getJSCompletionEntries(
 			uniqueNames.Add(name)
 			sortedEntries = append(sortedEntries, &lsproto.CompletionItem{
 				Label:            name,
-				Kind:             ptrTo(lsproto.CompletionItemKindText),
-				SortText:         ptrTo(string(SortTextJavascriptIdentifiers)),
-				CommitCharacters: ptrTo([]string{}),
+				Kind:             new(lsproto.CompletionItemKindText),
+				SortText:         new(string(SortTextJavascriptIdentifiers)),
+				CommitCharacters: new([]string{}),
 			})
 		}
 	}
@@ -3629,8 +3632,11 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 		return nil
 	}
 
-	if ast.IsTypeNode(node) && ast.IsTypeReferenceType(node.Parent) {
-		return typeChecker.GetTypeArgumentConstraint(node)
+	if ast.IsTypeNode(node) {
+		constraint := typeChecker.GetTypeArgumentConstraint(node)
+		if constraint != nil {
+			return constraint
+		}
 	}
 
 	t := getConstraintOfTypeArgumentProperty(node.Parent, typeChecker)
@@ -3641,8 +3647,16 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 	switch node.Kind {
 	case ast.KindPropertySignature:
 		return typeChecker.GetTypeOfPropertyOfContextualType(t, node.Symbol().Name)
+	case ast.KindColonToken:
+		if node.Parent.Kind == ast.KindPropertySignature {
+			// The cursor is at a property value location like `Foo<{ x: | }`.
+			// `t` already refers to the appropriate property type.
+			return t
+		}
 	case ast.KindIntersectionType, ast.KindTypeLiteral, ast.KindUnionType:
 		return t
+	case ast.KindOpenBracketToken:
+		return typeChecker.GetElementTypeOfArrayType(t)
 	}
 
 	return nil
@@ -4392,7 +4406,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Client assumes plain text by default.
 	var insertTextFormat *lsproto.InsertTextFormat
 	if isSnippet {
-		insertTextFormat = ptrTo(lsproto.InsertTextFormatSnippet)
+		insertTextFormat = new(lsproto.InsertTextFormatSnippet)
 	}
 
 	return &lsproto.CompletionItem{
@@ -4402,7 +4416,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		Tags:             tags,
 		Detail:           detail,
 		Preselect:        boolToPtr(preselect),
-		SortText:         ptrTo(string(sortText)),
+		SortText:         new(string(sortText)),
 		FilterText:       strPtrTo(filterText),
 		InsertText:       strPtrTo(insertText),
 		InsertTextFormat: insertTextFormat,
@@ -5377,8 +5391,8 @@ var jsDocTagNameCompletionItems = sync.OnceValue(func() []*lsproto.CompletionIte
 	for _, tagName := range jsDocTagNames {
 		item := &lsproto.CompletionItem{
 			Label:    tagName,
-			Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-			SortText: ptrTo(string(SortTextLocationPriority)),
+			Kind:     new(lsproto.CompletionItemKindKeyword),
+			SortText: new(string(SortTextLocationPriority)),
 		}
 		items = append(items, item)
 	}
@@ -5390,8 +5404,8 @@ var jsDocTagCompletionItems = sync.OnceValue(func() []*lsproto.CompletionItem {
 	for _, tagName := range jsDocTagNames {
 		item := &lsproto.CompletionItem{
 			Label:    "@" + tagName,
-			Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-			SortText: ptrTo(string(SortTextLocationPriority)),
+			Kind:     new(lsproto.CompletionItemKindKeyword),
+			SortText: new(string(SortTextLocationPriority)),
 		}
 		items = append(items, item)
 	}
@@ -5494,10 +5508,10 @@ func getJSDocParameterCompletions(
 
 			return &lsproto.CompletionItem{
 				Label:            displayText,
-				Kind:             ptrTo(lsproto.CompletionItemKindVariable),
-				SortText:         ptrTo(string(SortTextLocationPriority)),
+				Kind:             new(lsproto.CompletionItemKindVariable),
+				SortText:         new(string(SortTextLocationPriority)),
 				InsertText:       strPtrTo(snippetText),
-				InsertTextFormat: core.IfElse(isSnippet, ptrTo(lsproto.InsertTextFormatSnippet), nil),
+				InsertTextFormat: core.IfElse(isSnippet, new(lsproto.InsertTextFormatSnippet), nil),
 			}
 		} else if paramIndex == paramTagCount {
 			// Destructuring parameter; do it positionally
@@ -5535,10 +5549,10 @@ func getJSDocParameterCompletions(
 			}
 			return &lsproto.CompletionItem{
 				Label:            displayText,
-				Kind:             ptrTo(lsproto.CompletionItemKindVariable),
-				SortText:         ptrTo(string(SortTextLocationPriority)),
+				Kind:             new(lsproto.CompletionItemKindVariable),
+				SortText:         new(string(SortTextLocationPriority)),
 				InsertText:       strPtrTo(snippetText),
-				InsertTextFormat: core.IfElse(isSnippet, ptrTo(lsproto.InsertTextFormatSnippet), nil),
+				InsertTextFormat: core.IfElse(isSnippet, new(lsproto.InsertTextFormatSnippet), nil),
 			}
 		}
 		return nil
@@ -5836,8 +5850,8 @@ func getJSDocParameterNameCompletions(tag *ast.JSDocParameterTag) []*lsproto.Com
 
 		return &lsproto.CompletionItem{
 			Label:    name,
-			Kind:     ptrTo(lsproto.CompletionItemKindVariable),
-			SortText: ptrTo(string(SortTextLocationPriority)),
+			Kind:     new(lsproto.CompletionItemKindVariable),
+			SortText: new(string(SortTextLocationPriority)),
 		}
 	})
 }
@@ -5954,16 +5968,16 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 
 		var additionalTextEdits *[]*lsproto.TextEdit
 		if importAdder != nil {
-			additionalTextEdits = ptrTo(importAdder.Edits())
+			additionalTextEdits = new(importAdder.Edits())
 		}
 
 		return &lsproto.CompletionItem{
 			Label:               name,
-			Kind:                ptrTo(lsproto.CompletionItemKindSnippet),
-			SortText:            ptrTo(string(SortTextGlobalsOrKeywords)),
+			Kind:                new(lsproto.CompletionItemKindSnippet),
+			SortText:            new(string(SortTextGlobalsOrKeywords)),
 			InsertText:          strPtrTo(insertText),
 			AdditionalTextEdits: additionalTextEdits,
-			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), ptrTo(lsproto.InsertTextFormatSnippet), nil),
+			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), new(lsproto.InsertTextFormatSnippet), nil),
 			Data: &lsproto.CompletionItemData{
 				FileName: file.FileName(),
 				Position: int32(position),
