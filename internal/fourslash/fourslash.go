@@ -206,32 +206,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		}
 	}
 
-	// Skip tests with deprecated/removed compiler options
-	if compilerOptions.BaseUrl != "" {
-		t.Skipf("Test uses deprecated 'baseUrl' option")
-	}
-	if compilerOptions.OutFile != "" {
-		t.Skipf("Test uses deprecated 'outFile' option")
-	}
-	if compilerOptions.Module == core.ModuleKindAMD {
-		t.Skipf("Test uses deprecated 'module: AMD' option")
-	}
-	if compilerOptions.Module == core.ModuleKindSystem {
-		t.Skipf("Test uses deprecated 'module: System' option")
-	}
-	if compilerOptions.Module == core.ModuleKindUMD {
-		t.Skipf("Test uses deprecated 'module: UMD' option")
-	}
-	if compilerOptions.ModuleResolution == core.ModuleResolutionKindClassic {
-		t.Skipf("Test uses deprecated 'moduleResolution: Classic' option")
-	}
-	if compilerOptions.AllowSyntheticDefaultImports == core.TSFalse {
-		t.Skipf("Test uses unsupported 'allowSyntheticDefaultImports: false' option")
-	}
-	switch compilerOptions.Target {
-	case core.ScriptTargetES3, core.ScriptTargetES5:
-		t.Skipf("Test uses unsupported target: %s", compilerOptions.Target.String())
-	}
+	harnessutil.SkipUnsupportedCompilerOptions(t, compilerOptions)
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
@@ -2165,6 +2140,39 @@ func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...l
 				i+1,
 				actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter,
 				expectedRange.LSRange.Start.Line, expectedRange.LSRange.Start.Character, expectedRange.LSRange.End.Line, expectedRange.LSRange.End.Character)
+		}
+	}
+}
+
+// FoldingRangeLineExpected represents expected start and end lines for a folding range.
+type FoldingRangeLineExpected struct {
+	StartLine uint32
+	EndLine   uint32
+}
+
+// VerifyFoldingRangeLines verifies folding ranges by comparing only start and end lines.
+// This is useful for testing with lineFoldingOnly where character positions are ignored.
+func (f *FourslashTest) VerifyFoldingRangeLines(t *testing.T, expected []FoldingRangeLineExpected) {
+	params := &lsproto.FoldingRangeParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentFoldingRangeInfo, params)
+	if result.FoldingRanges == nil {
+		t.Fatalf("Nil response received for folding range request")
+	}
+
+	actualRanges := *result.FoldingRanges
+	if len(actualRanges) != len(expected) {
+		t.Fatalf("verifyFoldingRangeLines failed - expected %d ranges, got %d", len(expected), len(actualRanges))
+	}
+
+	for i, exp := range expected {
+		got := actualRanges[i]
+		if got.StartLine != exp.StartLine || got.EndLine != exp.EndLine {
+			t.Errorf("verifyFoldingRangeLines failed - range %d: expected (startLine=%d, endLine=%d), got (startLine=%d, endLine=%d)",
+				i, exp.StartLine, exp.EndLine, got.StartLine, got.EndLine)
 		}
 	}
 }
