@@ -43,6 +43,7 @@ type ServerOptions struct {
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
+	SetParentProcessId func(parentPID int)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -64,6 +65,7 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
+		startWatchdog:         opts.SetParentProcessId,
 		initComplete:          make(chan struct{}),
 	}
 	s.logger = newLogger(s)
@@ -186,7 +188,8 @@ type Server struct {
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
 
-	cpuProfiler pprof.CPUProfiler
+	cpuProfiler   pprof.CPUProfiler
+	startWatchdog func(parentPID int)
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -889,6 +892,10 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
 		s.logger.SetVerbose(true)
+	}
+
+	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
+		s.startWatchdog(int(*params.ProcessId.Integer))
 	}
 
 	response := &lsproto.InitializeResult{
