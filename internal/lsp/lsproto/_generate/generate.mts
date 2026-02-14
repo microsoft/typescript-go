@@ -48,6 +48,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.",
             },
+            {
+                name: "userPreferences",
+                type: { kind: "reference", name: "any" },
+                optional: true,
+                documentation: "userPreferences and/or formatting options provided at initialization.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -780,7 +786,7 @@ function handleOrType(orType: OrType): GoType {
 
     let memberNames = nonNullTypes.map(type => {
         if (type.kind === "reference") {
-            return type.name;
+            return type.name
         }
         else if (type.kind === "base") {
             return titleCase(type.name);
