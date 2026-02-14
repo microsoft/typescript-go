@@ -1103,7 +1103,12 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 
 	// remove all excluded entries
 	for _, exclude := range excludes {
-		value := getValueOfOptionString(t, option, exclude)
+		value, ok := tryGetValueOfOptionString(option, exclude)
+		if !ok {
+			// The excluded value is not recognized (e.g., a removed option like "es3").
+			// Just skip it since there's nothing to remove.
+			continue
+		}
 		delete(variations, value)
 	}
 
@@ -1123,6 +1128,33 @@ func getValueOfOptionString(t *testing.T, option string, value string) tsoptions
 		return value
 	}
 	return getOptionValue(t, optionDecl, value, "/")
+}
+
+func tryGetValueOfOptionString(option string, value string) (tsoptions.CompilerOptionsValue, bool) {
+	optionDecl := getCommandLineOption(option)
+	if optionDecl == nil {
+		return nil, false
+	}
+	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
+		return value, true
+	}
+	switch optionDecl.Kind {
+	case tsoptions.CommandLineOptionTypeEnum:
+		enumVal, ok := optionDecl.EnumMap().Get(strings.ToLower(value))
+		if !ok {
+			return nil, false
+		}
+		return enumVal, true
+	case tsoptions.CommandLineOptionTypeBoolean:
+		switch strings.ToLower(value) {
+		case "true":
+			return true, true
+		case "false":
+			return false, true
+		}
+		return nil, false
+	}
+	return value, true
 }
 
 func getCommandLineOption(option string) *tsoptions.CommandLineOption {
@@ -1202,7 +1234,7 @@ func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions)
 		t.Skipf("unsupported outFile %s", options.OutFile)
 	}
 	switch options.Target {
-	case core.ScriptTargetES3, core.ScriptTargetES5:
+	case core.ScriptTargetES5:
 		t.Skipf("unsupported target %s", options.Target)
 	}
 }
