@@ -1119,15 +1119,11 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 }
 
 func getValueOfOptionString(t *testing.T, option string, value string) tsoptions.CompilerOptionsValue {
-	optionDecl := getCommandLineOption(option)
-	if optionDecl == nil {
-		t.Fatalf("Unknown option '%s'", option)
+	result, ok := tryGetValueOfOptionString(option, value)
+	if !ok {
+		t.Fatalf("Unknown value '%s' for option '%s'", value, option)
 	}
-	// TODO(gabritto): remove this when we deprecate the tests containing those option values
-	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
-		return value
-	}
-	return getOptionValue(t, optionDecl, value, "/")
+	return result
 }
 
 func tryGetValueOfOptionString(option string, value string) (tsoptions.CompilerOptionsValue, bool) {
@@ -1135,6 +1131,7 @@ func tryGetValueOfOptionString(option string, value string) (tsoptions.CompilerO
 	if optionDecl == nil {
 		return nil, false
 	}
+	// TODO(gabritto): remove this when we deprecate the tests containing those option values
 	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
 		return value, true
 	}
