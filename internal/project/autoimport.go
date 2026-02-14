@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -154,7 +153,6 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 	opts := ast.SourceFileParseOptions{
 		FileName:         fileName,
 		Path:             path,
-		CompilerOptions:  core.EmptyCompilerOptions.SourceFileAffecting(),
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
