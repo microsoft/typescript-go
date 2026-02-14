@@ -114,6 +114,7 @@ const (
 	KindForKeyword
 	KindFunctionKeyword
 	KindIfKeyword
+	KindDistributeKeyword
 	KindImportKeyword
 	KindInKeyword
 	KindInstanceOfKeyword
@@ -271,6 +272,7 @@ const (
 	KindVariableStatement
 	KindExpressionStatement
 	KindIfStatement
+	KindDistributeStatement
 	KindDoStatement
 	KindWhileStatement
 	KindForStatement

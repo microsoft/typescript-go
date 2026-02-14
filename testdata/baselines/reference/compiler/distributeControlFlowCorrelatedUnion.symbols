@@ -1,0 +1,76 @@
+//// [tests/cases/compiler/distributeControlFlowCorrelatedUnion.ts] ////
+
+=== distributeControlFlowCorrelatedUnion.ts ===
+type A = { type: "a", value: boolean }
+>A : Symbol(A, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 0))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10))
+>value : Symbol(value, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 21))
+
+type B = { type: "b", value: string }
+>B : Symbol(B, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 38))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>value : Symbol(value, Decl(distributeControlFlowCorrelatedUnion.ts, 1, 21))
+
+const handlers = {
+>handlers : Symbol(handlers, Decl(distributeControlFlowCorrelatedUnion.ts, 3, 5))
+
+  a: (action: A) => {},
+>a : Symbol(a, Decl(distributeControlFlowCorrelatedUnion.ts, 3, 18))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 4, 6))
+>A : Symbol(A, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 0))
+
+  b: (action: B) => {},
+>b : Symbol(b, Decl(distributeControlFlowCorrelatedUnion.ts, 4, 23))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 5, 6))
+>B : Symbol(B, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 38))
+}
+
+const handle = (action: A | B) => {
+>handle : Symbol(handle, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 5))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+>A : Symbol(A, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 0))
+>B : Symbol(B, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 38))
+
+  handlers[action.type](action)
+>handlers : Symbol(handlers, Decl(distributeControlFlowCorrelatedUnion.ts, 3, 5))
+>action.type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+
+  distribute (action) {
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+
+    handlers[action.type](action)
+>handlers : Symbol(handlers, Decl(distributeControlFlowCorrelatedUnion.ts, 3, 5))
+>action.type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+  }
+
+  handlers[action.type]({ type: "a", value: true })
+>handlers : Symbol(handlers, Decl(distributeControlFlowCorrelatedUnion.ts, 3, 5))
+>action.type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 15, 25))
+>value : Symbol(value, Decl(distributeControlFlowCorrelatedUnion.ts, 15, 36))
+
+  distribute (action) {
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+
+    handlers[action.type]({ type: "a", value: true })
+>handlers : Symbol(handlers, Decl(distributeControlFlowCorrelatedUnion.ts, 3, 5))
+>action.type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>action : Symbol(action, Decl(distributeControlFlowCorrelatedUnion.ts, 8, 16))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 0, 10), Decl(distributeControlFlowCorrelatedUnion.ts, 1, 10))
+>type : Symbol(type, Decl(distributeControlFlowCorrelatedUnion.ts, 18, 27))
+>value : Symbol(value, Decl(distributeControlFlowCorrelatedUnion.ts, 18, 38))
+  }
+}
+
+
+
+
+
