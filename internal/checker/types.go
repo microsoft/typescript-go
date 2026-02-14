@@ -196,6 +196,7 @@ type DeclaredTypeLinks struct {
 	interfaceChecked       bool
 	indexSignaturesChecked bool
 	typeParametersChecked  bool
+	enumChecked            bool
 }
 
 // Links for switch clauses
