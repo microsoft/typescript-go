@@ -52,7 +52,7 @@ const customStructures: Structure[] = [
                 name: "userPreferences",
                 type: { kind: "reference", name: "any" },
                 optional: true,
-                documentation: "userPreferences and/or formatting options or provided at initialization.",
+                documentation: "userPreferences and/or formatting options provided at initialization.",
             },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
@@ -786,7 +786,7 @@ function handleOrType(orType: OrType): GoType {
 
     let memberNames = nonNullTypes.map(type => {
         if (type.kind === "reference") {
-            return type.name.slice(type.name.lastIndexOf(".") + 1);
+            return type.name
         }
         else if (type.kind === "base") {
             return titleCase(type.name);
