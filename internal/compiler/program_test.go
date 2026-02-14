@@ -1,6 +1,7 @@
 package compiler_test
 
 import (
+	"context"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -318,4 +319,39 @@ func BenchmarkNewProgram(b *testing.B) {
 			compiler.NewProgram(opts)
 		}
 	})
+}
+
+func BenchmarkEmit(b *testing.B) {
+	if !bundled.Embedded {
+		b.Skip("bundled files are not embedded")
+	}
+	repo.SkipIfNoTypeScriptSubmodule(b)
+
+	rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
+
+	fs := osvfs.FS()
+	fs = bundled.WrapFS(fs)
+
+	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
+
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, nil, host, nil)
+	assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
+
+	parsed.CompilerOptions().SourceMap = core.TSTrue
+
+	program := compiler.NewProgram(compiler.ProgramOptions{
+		Config: parsed,
+		Host:   host,
+	})
+
+	// Discard emitted output.
+	nopWriteFile := func(fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
+		return nil
+	}
+
+	for b.Loop() {
+		program.Emit(context.Background(), compiler.EmitOptions{
+			WriteFile: nopWriteFile,
+		})
+	}
 }
