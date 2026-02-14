@@ -3141,7 +3141,18 @@ func (b *NodeBuilderImpl) newStringLiteralEx(text string, isSingleQuote bool) *a
 // Direct serialization core functions for types, type aliases, and symbols
 
 func (t *TypeAlias) ToTypeReferenceNode(b *NodeBuilderImpl) *ast.Node {
-	return b.f.NewTypeReferenceNode(b.symbolToEntityNameNode(t.Symbol()), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
+	sym := t.Symbol()
+	// For unresolved symbols (e.g., from unresolved imports with --noResolve), try to find and track
+	// the local import binding by resolving the name without following the alias.
+	// This ensures the import is retained in declaration emit.
+	if sym.CheckFlags&ast.CheckFlagsUnresolved != 0 && b.ctx.enclosingDeclaration != nil {
+		localSym := b.ch.resolveName(b.ctx.enclosingDeclaration, sym.Name, ast.SymbolFlagsType|ast.SymbolFlagsAlias, nil, false, false)
+		if localSym != nil && localSym.Flags&ast.SymbolFlagsAlias != 0 {
+			// Track the local alias symbol (the import specifier) to mark it visible
+			b.ctx.tracker.TrackSymbol(localSym, b.ctx.enclosingDeclaration, ast.SymbolFlagsType)
+		}
+	}
+	return b.f.NewTypeReferenceNode(b.symbolToEntityNameNode(sym), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
 }
 
 func (b *NodeBuilderImpl) newIdentifier(text string, symbol *ast.Symbol) *ast.Node {
