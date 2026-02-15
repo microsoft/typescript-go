@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func completionJSDocNoCrash(t *testing.T) {
+func TestCompletionJSDocNoCrash(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
@@ -25,5 +25,7 @@ class ErrorMap {
 	// The assertion here is simply "does not crash/panic".
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{CommitCharacters: &[]string{".", ",", ";"}},
+		Items:        &fourslash.CompletionsExpectedItems{},
 	})
 }
