@@ -11,7 +11,8 @@ func TestCompletionJSDocNoCrash(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-// @filename: file.ts
+// @allowJs: true
+// @filename: file.js
 class ErrorMap {
   /**
    * @type {string}
