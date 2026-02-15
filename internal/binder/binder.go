@@ -39,7 +39,14 @@ const (
 	ContainerFlagsIsInterface                                      ContainerFlags = 1 << 6
 	ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor ContainerFlags = 1 << 7
 	ContainerFlagsIsThisContainer                                  ContainerFlags = 1 << 8
+	ContainerFlagsPropagatesThisKeyword                            ContainerFlags = 1 << 9
 )
+
+type ExpandoAssignmentInfo struct {
+	node                *ast.Node
+	container           *ast.Node
+	blockScopeContainer *ast.Node
+}
 
 type Binder struct {
 	file            *ast.SourceFile
@@ -73,6 +80,7 @@ type Binder struct {
 	flowNodePool            core.Pool[ast.FlowNode]
 	flowListPool            core.Pool[ast.FlowList]
 	singleDeclarationsPool  core.Pool[*ast.Node]
+	expandoAssignments      []ExpandoAssignmentInfo
 }
 
 func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
@@ -123,6 +131,7 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.inStrictMode = b.options().BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
+		b.bindDeferredExpandoAssignments()
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
 	})
@@ -607,6 +616,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsIdentifier().FlowNode = b.currentFlow
 		b.checkContextualIdentifier(node)
 	case ast.KindThisKeyword, ast.KindSuperKeyword:
+		if node.Kind == ast.KindThisKeyword {
+			b.seenThisKeyword = true
+		}
 		node.AsKeywordExpression().FlowNode = b.currentFlow
 	case ast.KindQualifiedName:
 		if b.currentFlow != nil && ast.IsPartOfTypeQuery(node) {
@@ -1011,6 +1023,22 @@ func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbo
 }
 
 func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
+	b.expandoAssignments = append(b.expandoAssignments, ExpandoAssignmentInfo{
+		node:                node,
+		container:           b.container,
+		blockScopeContainer: b.blockScopeContainer,
+	})
+}
+
+func (b *Binder) bindDeferredExpandoAssignments() {
+	for _, info := range b.expandoAssignments {
+		b.container = info.container
+		b.blockScopeContainer = info.blockScopeContainer
+		b.bindDeferredExpandoAssignment(info.node)
+	}
+}
+
+func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {
 	parent := getParentOfPropertyAssignment(node)
 	symbol := b.lookupEntity(parent, b.blockScopeContainer)
 	if symbol == nil {
@@ -1021,7 +1049,11 @@ func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
 			b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
 			addLateBoundAssignmentDeclarationToSymbol(node, symbol)
 		} else {
-			b.declareSymbol(ast.GetExports(symbol), symbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
+			// We declare expandos only when there are no non-expando declarations for that name.
+			exports := ast.GetExports(symbol)
+			if existing := exports[b.getDeclarationName(node)]; existing == nil || existing.Flags&ast.SymbolFlagsAssignment != 0 {
+				b.declareSymbol(exports, symbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
+			}
 		}
 	}
 }
@@ -1492,6 +1524,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveExceptionTarget := b.currentExceptionTarget
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
+		saveSeenThisKeyword := b.seenThisKeyword
 		isImmediatelyInvoked := (containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
 			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
 			!isGeneratorFunctionExpression(node) &&
@@ -1517,9 +1550,10 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentContinueTarget = nil
 		b.activeLabelList = nil
 		b.hasExplicitReturn = false
+		b.seenThisKeyword = false
 		b.bindChildren(node)
-		// Reset all reachability check related flags on node (for incremental scenarios)
-		node.Flags &= ^ast.NodeFlagsReachabilityCheckFlags
+		// Reset flags (for incremental scenarios)
+		node.Flags &= ^(ast.NodeFlagsReachabilityCheckFlags | ast.NodeFlagsContainsThis)
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && containerFlags&ContainerFlagsIsFunctionLike != 0 {
 			bodyData := node.BodyData()
 			if bodyData != nil && ast.NodeIsPresent(bodyData.Body) {
@@ -1530,11 +1564,13 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 				bodyData.EndFlowNode = b.currentFlow
 			}
 		}
+		if b.seenThisKeyword {
+			node.Flags |= ast.NodeFlagsContainsThis
+		}
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
 			node.AsSourceFile().EndFlowNode = b.currentFlow
 		}
-
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
 			b.currentFlow = b.finishFlowLabel(b.currentReturnTarget)
@@ -1551,7 +1587,13 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentExceptionTarget = saveExceptionTarget
 		b.activeLabelList = saveActiveLabelList
 		b.hasExplicitReturn = saveHasExplicitReturn
+		if containerFlags&ContainerFlagsPropagatesThisKeyword != 0 {
+			b.seenThisKeyword = saveSeenThisKeyword || b.seenThisKeyword
+		} else {
+			b.seenThisKeyword = saveSeenThisKeyword
+		}
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
+		saveSeenThisKeyword := b.seenThisKeyword
 		b.seenThisKeyword = false
 		b.bindChildren(node)
 		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on Identifier
@@ -1560,6 +1602,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		} else {
 			node.Flags &= ^ast.NodeFlagsContainsThis
 		}
+		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
 	}
@@ -2497,16 +2540,14 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 			return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor | ContainerFlagsIsThisContainer
 		}
 		fallthrough
-	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
+	case ast.KindConstructor, ast.KindFunctionDeclaration, ast.KindClassStaticBlockDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike
-	case ast.KindFunctionDeclaration:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesThisKeyword
 	case ast.KindFunctionExpression:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
 	case ast.KindArrowFunction:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesThisKeyword
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
 	case ast.KindPropertyDeclaration:

@@ -6,7 +6,7 @@
  const {myTypes} = require('./file.js');
 ->myTypes : { [x: string]: any; }
 +>myTypes : any
- >require('./file.js') : typeof import("file")
+ >require('./file.js') : typeof import("./file.js")
  >require : any
  >'./file.js' : "./file.js"
 @@= skipped -11, +11 lines =@@
@@ -77,7 +77,7 @@
 ->exports.myTypes : { [x: string]: any; }
 +>exports.myTypes = myTypes : any
 +>exports.myTypes : any
- >exports : typeof import("file")
+ >exports : typeof import("./file")
 ->myTypes : { [x: string]: any; }
 ->myTypes : { [x: string]: any; }
 +>myTypes : any

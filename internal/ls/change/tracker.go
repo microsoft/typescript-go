@@ -132,6 +132,16 @@ func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, new
 	t.ReplaceRange(sourceFile, t.getAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNode, *options)
 }
 
+func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.Node, newNodes []*ast.Node, options *NodeOptions) {
+	if options == nil {
+		options = &NodeOptions{
+			LeadingTriviaOption:  LeadingTriviaOptionExclude,
+			TrailingTriviaOption: TrailingTriviaOptionExclude,
+		}
+	}
+	t.ReplaceRangeWithNodes(sourceFile, t.getAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNodes, *options)
+}
+
 func (t *Tracker) ReplaceRange(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, newNode *ast.Node, options NodeOptions) {
 	t.changes.Add(sourceFile, &trackerEdit{kind: trackerEditKindReplaceWithSingleNode, Range: lsprotoRange, options: options, Node: newNode})
 }
@@ -371,7 +381,7 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 		lsproto.Range{Start: insertLSPos, End: insertLSPos},
 		newNode,
 		NodeOptions{
-			indentation: ptrTo(indentation),
+			indentation: new(indentation),
 			Prefix:      t.newLine,
 		},
 	)
@@ -480,10 +490,6 @@ func (t *Tracker) getOptionsForInsertNodeBefore(before *ast.Node, inserted *ast.
 	}
 	// We haven't handled this kind of node yet -- add it
 	panic("unimplemented node type " + before.Kind.String() + " in changeTracker.getOptionsForInsertNodeBefore")
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
 
 func rangeContainsRangeExclusive(outer *ast.Node, inner *ast.Node) bool {

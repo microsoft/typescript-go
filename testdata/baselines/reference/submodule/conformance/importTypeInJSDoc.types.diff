@@ -11,26 +11,26 @@
 
      constructor(x: MyClass.Bar);
 ->x : MyClass.Bar
-+>x : import("externs").Bar
++>x : import("./externs").Bar
  >MyClass : any
  }
  declare global {
 @@= skipped -34, +34 lines =@@
- >a : import("externs")
- >new Foo({doer: Foo.Bar}) : import("externs")
- >Foo : typeof import("externs")
+ >a : import("./externs")
+ >new Foo({doer: Foo.Bar}) : import("./externs")
+ >Foo : typeof import("./externs")
 ->{doer: Foo.Bar} : { doer: (x: string, y?: number) => void; }
 ->doer : (x: string, y?: number) => void
 ->Foo.Bar : (x: string, y?: number) => void
 +>{doer: Foo.Bar} : { doer: (x: string, y?: number | undefined) => void; }
 +>doer : (x: string, y?: number | undefined) => void
 +>Foo.Bar : (x: string, y?: number | undefined) => void
- >Foo : typeof import("externs")
+ >Foo : typeof import("./externs")
 ->Bar : (x: string, y?: number) => void
 +>Bar : (x: string, y?: number | undefined) => void
 
  const q = /** @type {import("./externs").Bar} */({ doer: q => q });
- >q : import("externs").Bar
+ >q : import("./externs").Bar
 @@= skipped -16, +16 lines =@@
  >q : string
 
