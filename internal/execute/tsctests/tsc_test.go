@@ -1938,6 +1938,95 @@ func TestTscIncremental(t *testing.T) {
 				},
 			},
 		},
+		{
+			subScenario: "internal symbolname in tsbuildInfo",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es2017",
+						"strict": true,
+						"esModuleInterop": true
+					}
+				}`),
+				"/home/src/workspaces/project/a.ts": stringtestutil.Dedent(`
+					const createFileListFromFiles = (files: File[]): FileList => {
+					const fileList: FileList = {
+						length: files.length,
+						item: (index: number): File | null => files[index] || null,
+						[Symbol.iterator]: function* (): IterableIterator<File> {
+						for (const file of files) yield file;
+						},
+						...files,
+					} as unknown as FileList;
+
+					return fileList;
+					};
+				`),
+				getTestLibPathFor("es2015.iterable"): stringtestutil.Dedent(`
+					interface SymbolConstructor {
+						readonly iterator: unique symbol;
+					}
+					interface IteratorYieldResult<TYield> {
+						done?: false;
+						value: TYield;
+					}
+					interface IteratorReturnResult<TReturn> {
+						done: true;
+						value: TReturn;
+					}
+					type IteratorResult<T, TReturn = any> = IteratorYieldResult<T> | IteratorReturnResult<TReturn>;
+					interface Iterator<T, TReturn = any, TNext = any> {
+						// NOTE: 'next' is defined using a tuple to ensure we report the correct assignability errors in all places.
+						next(...[value]: [] | [TNext]): IteratorResult<T, TReturn>;
+						return?(value?: TReturn): IteratorResult<T, TReturn>;
+						throw?(e?: any): IteratorResult<T, TReturn>;
+					}
+					interface Iterable<T, TReturn = any, TNext = any> {
+						[Symbol.iterator](): Iterator<T, TReturn, TNext>;
+					}
+					interface IterableIterator<T, TReturn = any, TNext = any> extends Iterator<T, TReturn, TNext> {
+						[Symbol.iterator](): IterableIterator<T, TReturn, TNext>;
+					}
+					interface IteratorObject<T, TReturn = unknown, TNext = unknown> extends Iterator<T, TReturn, TNext> {
+						[Symbol.iterator](): IteratorObject<T, TReturn, TNext>;
+					}
+					type BuiltinIteratorReturn = intrinsic;
+					interface ArrayIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknown> {
+						[Symbol.iterator](): ArrayIterator<T>;
+					}
+					interface Array<T> {
+						[Symbol.iterator](): ArrayIterator<T>;
+						entries(): ArrayIterator<[number, T]>;
+						keys(): ArrayIterator<number>;
+						values(): ArrayIterator<T>;
+					}
+				`),
+				getTestLibPathFor("es2017.full"): stringtestutil.Dedent(`
+					/// <reference lib="es2015.iterable"/>
+					interface File {
+					}
+					interface FileList {
+						readonly length: number;
+						item(index: number): File | null;
+						[index: number]: File;
+						[Symbol.iterator](): ArrayIterator<File>;
+					}
+				`) + tscDefaultLibContent,
+			},
+			commandLineArgs: []string{""},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption:         "no change with incremental",
+					commandLineArgs: []string{"--incremental"},
+				},
+				{
+					caption:         "no change with incremental that reads buildInfo",
+					commandLineArgs: []string{"--incremental"},
+				},
+			},
+		},
 	}
 
 	for _, test := range testCases {
@@ -3847,6 +3936,41 @@ func TestTscProjectReferences(t *testing.T) {
 					import referencedSource from "../../lib/src/a"; // Error
 					import referencedDeclaration from "../../lib/dist/a"; // Error
 					import ambiguous from "ambiguous-package"; // Ok`),
+			},
+			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
+		},
+		{
+			subScenario: "referenced project with esnext module disallows synthetic default imports",
+			files: FileMap{
+				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"module": "esnext",
+						"moduleResolution": "bundler",
+						"rootDir": "src",
+						"outDir": "dist"
+					},
+					"include": ["src"]
+				}`),
+				"/home/src/workspaces/project/lib/src/utils.ts":    "export const test = () => 'test';",
+				"/home/src/workspaces/project/lib/dist/utils.d.ts": "export declare const test: () => string;",
+				"/home/src/workspaces/project/app/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"module": "esnext",
+						"moduleResolution": "bundler"
+					},
+					"references": [
+						{ "path": "../lib" }
+					]
+				}`),
+				"/home/src/workspaces/project/app/index.ts": stringtestutil.Dedent(`
+					import TestSrc from '../lib/src/utils'; // Error
+					import TestDecl from '../lib/dist/utils'; // Error
+					console.log(TestSrc.test());
+					console.log(TestDecl.test());`),
 			},
 			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
 		},
