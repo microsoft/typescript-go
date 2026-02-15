@@ -686,7 +686,7 @@ func (p *Program) verifyCompilerOptions() {
 	}
 
 	if options.AlwaysStrict.IsFalse() {
-		createRemovedOptionDiagnostic("alwaysStrict", "false", "strict")
+		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
 
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
