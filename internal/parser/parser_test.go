@@ -215,20 +215,16 @@ test("", async function () {
 
 	file := parser.ParseSourceFile(opts, sourceText, core.ScriptKindJS)
 
-	t.Log("ReparsedClones:")
-	for i, clone := range file.ReparsedClones {
-		t.Logf("  [%d] %s pos=%d end=%d", i, clone.Kind.String(), clone.Pos(), clone.End())
-	}
 	for i := 1; i < len(file.ReparsedClones); i++ {
 		a, b := file.ReparsedClones[i-1], file.ReparsedClones[i]
 		if a.Pos() == b.Pos() && a.End() == b.End() && a.Kind == b.Kind {
-			t.Errorf("DUPLICATE ReparsedClones at [%d] and [%d]: %s pos=%d end=%d", i-1, i, a.Kind.String(), a.Pos(), a.End())
+			t.Errorf("duplicate ReparsedClones at [%d] and [%d]: %s pos=%d end=%d", i-1, i, a.Kind.String(), a.Pos(), a.End())
 		}
 	}
-	t.Log("\nImports:")
-	for i, imp := range file.Imports() {
+	for _, imp := range file.Imports() {
 		reparsed := ast.GetReparsedNodeForNode(imp)
-		sf := ast.GetSourceFileOfNode(reparsed)
-		t.Logf("  [%d] pos=%d end=%d reparsed=%v sfOK=%v", i, imp.Pos(), imp.End(), reparsed != imp, sf != nil)
+		if ast.GetSourceFileOfNode(reparsed) == nil {
+			t.Errorf("reparsed import at pos=%d has broken parent chain", imp.Pos())
+		}
 	}
 }
