@@ -786,7 +786,7 @@ function handleOrType(orType: OrType): GoType {
 
     let memberNames = nonNullTypes.map(type => {
         if (type.kind === "reference") {
-            return type.name
+            return type.name;
         }
         else if (type.kind === "base") {
             return titleCase(type.name);
