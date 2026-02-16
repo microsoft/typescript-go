@@ -1059,9 +1059,11 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 		indentNextTokenOrTrivia := true
 		if len(currentTokenInfo.leadingTrivia) > 0 {
 			commentIndentation := dynamicIndenation.getIndentationForComment(currentTokenInfo.token.Kind, tokenIndentation, container)
-			indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
-				w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
-			})
+			if commentIndentation != -1 {
+				indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
+					w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
+				})
+			}
 		}
 
 		// indent token only if is it is in target range and does not overlap with any error ranges
