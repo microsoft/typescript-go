@@ -182,3 +182,53 @@ func FuzzParser(f *testing.F) {
 		parser.ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
 	})
 }
+
+func TestJSDocImportTypeParentChain(t *testing.T) {
+	sourceText := `test("", async function () {
+  ;(/** @type {typeof import("a")} */ ({}))
+})
+
+test("", async function () {
+  ;(/** @type {typeof import("a")} */ a)
+})
+
+test("", async function () {
+  (/** @type {typeof import("a")} */ ({}))
+  ;(/** @type {typeof import("a")} */ ({}))
+})
+
+test("", async function () {
+  (/** @type {typeof import("a")} */ a)
+  ;(/** @type {typeof import("a")} */ a)
+})
+
+test("", async function () {
+  (/** @type {typeof import("a")} */ ({}))
+  ;(/** @type {typeof import("a")} */ ({}))
+})
+`
+	opts := ast.SourceFileParseOptions{
+		FileName:         "/index.js",
+		Path:             "/index.js",
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+	}
+
+	file := parser.ParseSourceFile(opts, sourceText, core.ScriptKindJS)
+
+	t.Log("ReparsedClones:")
+	for i, clone := range file.ReparsedClones {
+		t.Logf("  [%d] %s pos=%d end=%d", i, clone.Kind.String(), clone.Pos(), clone.End())
+	}
+	for i := 1; i < len(file.ReparsedClones); i++ {
+		a, b := file.ReparsedClones[i-1], file.ReparsedClones[i]
+		if a.Pos() == b.Pos() && a.End() == b.End() && a.Kind == b.Kind {
+			t.Errorf("DUPLICATE ReparsedClones at [%d] and [%d]: %s pos=%d end=%d", i-1, i, a.Kind.String(), a.Pos(), a.End())
+		}
+	}
+	t.Log("\nImports:")
+	for i, imp := range file.Imports() {
+		reparsed := ast.GetReparsedNodeForNode(imp)
+		sf := ast.GetSourceFileOfNode(reparsed)
+		t.Logf("  [%d] pos=%d end=%d reparsed=%v sfOK=%v", i, imp.Pos(), imp.End(), reparsed != imp, sf != nil)
+	}
+}
