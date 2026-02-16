@@ -184,6 +184,7 @@ func FuzzParser(f *testing.F) {
 }
 
 func TestJSDocImportTypeParentChain(t *testing.T) {
+	t.Parallel()
 	sourceText := `test("", async function () {
   ;(/** @type {typeof import("a")} */ ({}))
 })
