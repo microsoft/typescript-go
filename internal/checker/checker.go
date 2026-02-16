@@ -13630,7 +13630,10 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic)
 }
 
 func (c *Checker) IsDeprecatedDeclaration(declaration *ast.Node) bool {
-	return c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsDeprecated != 0
+	if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsDeprecated != 0 {
+		return true
+	}
+	return getJSDocDeprecatedTag(declaration) != nil
 }
 
 func (c *Checker) addDeprecatedSuggestion(location *ast.Node, declarations []*ast.Node, deprecatedEntity string) *ast.Diagnostic {
@@ -26405,11 +26408,17 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 		}
 		prop := c.getPropertyOfType(objectType, propName)
 		if prop != nil {
-			// !!!
-			// if accessFlags&AccessFlagsReportDeprecated != 0 && accessNode != nil && len(prop.declarations) != 0 && c.isDeprecatedSymbol(prop) && c.isUncalledFunctionReference(accessNode, prop) {
-			// 	deprecatedNode := /* TODO(TS-TO-GO) QuestionQuestionToken BinaryExpression: accessExpression?.argumentExpression ?? (isIndexedAccessTypeNode(accessNode) ? accessNode.indexType : accessNode) */ TODO
-			// 	c.addDeprecatedSuggestion(deprecatedNode, prop.declarations, propName /* as string */)
-			// }
+			if accessFlags&AccessFlagsReportDeprecated != 0 && accessNode != nil && len(prop.Declarations) != 0 && c.isDeprecatedSymbol(prop) && c.isUncalledFunctionReference(accessNode, prop) {
+				var deprecatedNode *ast.Node
+				if accessExpression != nil {
+					deprecatedNode = accessExpression.AsElementAccessExpression().ArgumentExpression.AsNode()
+				} else if ast.IsIndexedAccessTypeNode(accessNode) {
+					deprecatedNode = accessNode.AsIndexedAccessTypeNode().IndexType.AsNode()
+				} else {
+					deprecatedNode = accessNode
+				}
+				c.addDeprecatedSuggestion(deprecatedNode, prop.Declarations, propName /* as string */)
+			}
 			if accessExpression != nil {
 				c.markPropertyAsReferenced(prop, accessExpression, c.isSelfTypeAccess(accessExpression.Expression(), objectType.symbol))
 				if c.isAssignmentToReadonlyEntity(accessExpression, prop, getAssignmentTargetKind(accessExpression)) {
