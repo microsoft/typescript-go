@@ -60,11 +60,11 @@ func (ch *PseudoChecker) GetTypeOfDeclaration(node *ast.Node) *PseudoType {
 		// TODO: How much of the checker's getTypeFromPropertyDescriptor is worth trying to emulate over ASTs?
 		case ast.JSDeclarationKindObjectDefinePropertyValue:
 			{
-
+				// !!!
 			}
 		case ast.JSDeclarationKindObjectDefinePropertyExports:
 			{
-
+				// !!!
 			}
 		}
 		return NewPseudoTypeNoResult(node)
