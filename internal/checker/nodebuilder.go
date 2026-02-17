@@ -81,7 +81,7 @@ func (b *NodeBuilder) IndexInfoToIndexSignatureDeclaration(info *IndexInfo, encl
 func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	signature := b.impl.ch.getSignatureFromDeclaration(signatureDeclaration)
-	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature))
+	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature, true))
 }
 
 func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {

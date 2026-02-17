@@ -1754,7 +1754,7 @@ func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	}
 	restoreFlags()
 
-	returnTypeNode := b.serializeReturnTypeForSignature(signature)
+	returnTypeNode := b.serializeReturnTypeForSignature(signature, true)
 
 	var modifiers []*ast.Node
 	if options != nil {
@@ -1949,7 +1949,7 @@ func (b *NodeBuilderImpl) tryGetThisParameterDeclaration(signature *Signature) *
 /**
 * Serializes the return type of the signature by first trying to use the syntactic printer if possible and falling back to the checker type if not.
  */
-func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature) *ast.Node {
+func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, tryReuse bool) *ast.Node {
 	suppressAny := b.ctx.flags&nodebuilder.FlagsSuppressAnyReturnType != 0
 	restoreFlags := b.saveRestoreFlags()
 	if suppressAny {
@@ -1970,12 +1970,11 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature) 
 	}
 	if !(suppressAny && IsTypeAny(returnType)) {
 		typePredicate := b.ch.getTypePredicateOfSignature(signature)
-		if typePredicate == nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
+		if tryReuse && typePredicate == nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
 			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
 			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
 			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
-			annotated := b.pseudoTypeToType(pt)
-			if annotated == returnType || annotated != nil && b.ch.isErrorType(annotated) {
+			if b.pseudoTypeEquivalentToType(pt, returnType) {
 				// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 				// see: canReuseTypeNodeAnnotation in strada for context
 				returnTypeNode = b.pseudoTypeToNode(pt)
@@ -2078,8 +2077,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		} else {
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
-		annotated := b.pseudoTypeToType(pt)
-		if annotated == t || annotated != nil && b.ch.isErrorType(annotated) {
+		if b.pseudoTypeEquivalentToType(pt, t) {
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 			// see: canReuseTypeNodeAnnotation in strada for context
 			result = b.pseudoTypeToNode(pt)

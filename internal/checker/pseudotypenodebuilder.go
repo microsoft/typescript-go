@@ -22,6 +22,9 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindNoResult:
 		node := t.AsPseudoTypeNoResult().Declaration
 		b.ctx.tracker.ReportInferenceFallback(node)
+		if ast.IsFunctionLike(node) && !ast.IsAccessor(node) {
+			return b.serializeReturnTypeForSignature(b.ch.getSignatureFromDeclaration(node), false)
+		}
 		return b.serializeTypeForDeclaration(node, nil, nil, false)
 	case pseudochecker.PseudoTypeKindMaybeConstLocation:
 		d := t.AsPseudoTypeMaybeConstLocation()
@@ -168,7 +171,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				)
 			case pseudochecker.PseudoObjectElementKindGetAccessor:
 				d := e.AsPseudoGetAccessor()
-				newProp = b.f.NewSetAccessorDeclaration(
+				newProp = b.f.NewGetAccessorDeclaration(
 					nil,
 					b.reuseNode(e.Name),
 					nil,
@@ -222,6 +225,20 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
+}
+
+func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType, type_ *Type) bool {
+	if type_ != nil && b.ch.isErrorType(type_) {
+		return true
+	}
+	typeFromPseudo := b.pseudoTypeToType(t) // note: cannot convert complex types like objects, which must be validated seperately
+	if typeFromPseudo == type_ {
+		return true
+	}
+	if t.Kind == pseudochecker.PseudoTypeKindObjectLiteral || t.Kind == pseudochecker.PseudoTypeKindTuple {
+		return true // !!! TODO: validate. This relies on the psuedochecker tossing out all complex literals with insufficient/incorrect annotations/assertions
+	}
+	return false
 }
 
 func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
