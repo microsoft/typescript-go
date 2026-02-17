@@ -419,6 +419,9 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 }
 
 func (p *Parser) createJSDocCache() map[*ast.Node][]*ast.Node {
+	if len(p.jsdocInfos) == 0 {
+		return nil
+	}
 	result := make(map[*ast.Node][]*ast.Node, len(p.jsdocInfos))
 	for _, info := range p.jsdocInfos {
 		result[info.parent] = info.jsDocs
