@@ -52,7 +52,7 @@ const customStructures: Structure[] = [
                 name: "userPreferences",
                 type: { kind: "reference", name: "any" },
                 optional: true,
-                documentation: "userPreferences and/or formatting options provided at initialization.",
+                documentation: "userPreferences and/or formatting options if provided at initialization.",
             },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
