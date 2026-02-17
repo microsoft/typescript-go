@@ -227,6 +227,35 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 	// TODO: wrap all these closures into methods on an object so we can guarantee we reuse the same memory on each invocation by reusing/resetting the object
 	// instead of re-closing-over all of these each time we need a visitor. In theory the compiler could handle this, but in practice closure inlining hasn't been reliable
 	var visitor *ast.NodeVisitor
+	// note: also handles renaming type parameters renamed within the current context
+	attachSymbolToLeftmostIdentifier := func(leftmost *ast.Node, node *ast.Node, sym *ast.Symbol) *ast.Node {
+		var visitor func(node *ast.Node) *ast.Node
+		visitor = func(node *ast.Node) *ast.Node {
+			if node == leftmost {
+				var type_ *Type
+				var name *ast.Node
+				if sym != nil {
+					type_ = b.ch.getDeclaredTypeOfSymbol(sym)
+					if sym.Flags&ast.SymbolFlagsTypeParameter != 0 {
+						name = b.typeParameterToName(type_).AsNode()
+					}
+				}
+				if name == nil {
+					name = node.Clone(b.f)
+				}
+				if name.DeclarationData() != nil {
+					name.DeclarationData().Symbol = sym // TODO: does this work? does quickinfo need this anymore?
+				}
+				name.Loc = node.Loc
+				b.e.AddEmitFlags(name, printer.EFNoAsciiEscaping)
+				return name
+			}
+			res := node.VisitEachChild(ast.NewNodeVisitor(visitor, b.f, ast.NodeVisitorHooks{}))
+			res.Loc = node.Loc
+			return res
+		}
+		return visitor(node)
+	}
 	trackExistingEntityName := func(node *ast.Node, overrideEnclosing *ast.Node) (bool, *ast.Node, *ast.Symbol) {
 		enclosingDeclaration := b.ctx.enclosingDeclaration
 		if overrideEnclosing != nil {
@@ -247,7 +276,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				introducesError = true
 				b.ctx.tracker.ReportInaccessibleThisError()
 			}
-			return introducesError, node, nil // TODO: attachSymbolToLeftmostIdentifier on `node` to smuggle symbols for quick info?
+			return introducesError, attachSymbolToLeftmostIdentifier(leftmost, node, sym), nil
 		}
 		sym = b.ch.resolveEntityName(leftmost, meaning, true, true, nil)
 		if b.ctx.enclosingDeclaration != nil && !(sym != nil && sym.Flags&ast.SymbolFlagsTypeParameter != 0) {
@@ -280,7 +309,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			// If a parameter is resolvable in the current context it is also visible, so no need to go to symbol accesibility
 			if sym.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && sym.ValueDeclaration != nil {
 				if ast.IsPartOfParameterDeclaration(sym.ValueDeclaration) || ast.IsJSDocParameterTag(sym.ValueDeclaration) {
-					return introducesError, node, nil // TODO: attachSymbolToLeftmostIdentifier on `node` to smuggle symbols for quick info?
+					return introducesError, attachSymbolToLeftmostIdentifier(leftmost, node, sym), nil
 				}
 			}
 			if sym.Flags&ast.SymbolFlagsTypeParameter == 0 /* Type parameters are visible in the current context if they are are resolvable */ && !ast.IsDeclarationName(node) &&
@@ -290,7 +319,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			} else {
 				b.ctx.tracker.TrackSymbol(sym, enclosingDeclaration, meaning)
 			}
-			return introducesError, node, nil // TODO: attachSymbolToLeftmostIdentifier on `node` to smuggle symbols for quick info?
+			return introducesError, attachSymbolToLeftmostIdentifier(leftmost, node, sym), nil
 		}
 		return introducesError, node, nil
 	}
