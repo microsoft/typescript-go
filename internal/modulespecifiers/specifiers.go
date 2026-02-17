@@ -752,48 +752,38 @@ func tryGetModuleNameAsPnpPackage(
 	pnpPackageName := ""
 	fromLocator, _ := pnpApi.FindLocator(importingSourceFile.FileName())
 	toLocator, _ := pnpApi.FindLocator(pathObj.FileName)
-
-	// Don't use the package name when the imported file is inside
-	// the source directory (prefer a relative path instead)
-	if fromLocator == toLocator {
-		return ""
-	}
+	parts := GetNodeModulePathParts(pathObj.FileName)
 
 	if fromLocator != nil && toLocator != nil {
-		fromInfo := pnpApi.GetPackage(fromLocator)
+		// Don't use the package name when the imported file is inside
+		// the source directory (prefer a relative path instead)
+		if *fromLocator == *toLocator {
+			return ""
+		}
 
-		useToLocator := false
+		fromInfo := pnpApi.GetPackage(fromLocator)
 
 		for i := range fromInfo.PackageDependencies {
 			isAlias := fromInfo.PackageDependencies[i].IsAlias()
 			if isAlias && fromInfo.PackageDependencies[i].AliasName == toLocator.Name && fromInfo.PackageDependencies[i].Reference == toLocator.Reference {
-				useToLocator = true
+				pnpPackageName = toLocator.Name
 				break
 			} else if fromInfo.PackageDependencies[i].Ident == toLocator.Name && fromInfo.PackageDependencies[i].Reference == toLocator.Reference {
-				useToLocator = true
+				pnpPackageName = toLocator.Name
 				break
 			}
 		}
 
-		if useToLocator {
-			pnpPackageName = toLocator.Name
+		if parts == nil {
+			toInfo := pnpApi.GetPackage(toLocator)
+			packageRootAbsolutePath := pnpApi.GetPackageLocationAbsolutePath(toInfo)
+			parts = &NodeModulePathParts{
+				TopLevelNodeModulesIndex: -1,
+				TopLevelPackageNameIndex: -1,
+				PackageRootIndex:         len(packageRootAbsolutePath),
+				FileNameIndex:            strings.LastIndex(pathObj.FileName, "/"),
+			}
 		}
-	}
-
-	var parts *NodeModulePathParts
-	if toLocator != nil {
-		toInfo := pnpApi.GetPackage(toLocator)
-		packageRootAbsolutePath := pnpApi.GetPackageLocationAbsolutePath(toInfo)
-		parts = &NodeModulePathParts{
-			TopLevelNodeModulesIndex: -1,
-			TopLevelPackageNameIndex: -1,
-			PackageRootIndex:         len(packageRootAbsolutePath),
-			FileNameIndex:            strings.LastIndex(pathObj.FileName, "/"),
-		}
-	}
-
-	if parts == nil {
-		return ""
 	}
 
 	// Simplify the full file path to something that can be resolved by Node.
