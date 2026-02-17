@@ -10,8 +10,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type Snapshot struct {
@@ -37,8 +38,10 @@ type Snapshot struct {
 	fs                                 *SnapshotFS
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
+	AutoImports                        *autoimport.Registry
+	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	config                             Config
+	allUserPreferences                 *lsutil.UserConfig
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -49,13 +52,16 @@ func NewSnapshot(
 	id uint64,
 	fs *SnapshotFS,
 	sessionOptions *SessionOptions,
-	parseCache *ParseCache,
-	extendedConfigCache *ExtendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	config Config,
+	allUserPreferences *lsutil.UserConfig,
+	autoImports *autoimport.Registry,
+	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
+	if allUserPreferences == nil {
+		allUserPreferences = lsutil.NewUserConfig(nil) // disallow nil config
+	}
 	s := &Snapshot{
 		id: id,
 
@@ -66,7 +72,9 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		config:                             config,
+		allUserPreferences:                 allUserPreferences,
+		AutoImports:                        autoImports,
+		autoImportsWatch:                   autoImportsWatch,
 	}
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
@@ -74,9 +82,7 @@ func NewSnapshot(
 }
 
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
-	fileName := uri.FileName()
-	path := s.toPath(fileName)
-	return s.ProjectCollection.GetDefaultProject(fileName, path)
+	return s.ProjectCollection.GetDefaultProject(uri.Path(s.UseCaseSensitiveFileNames()))
 }
 
 func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []ls.Project {
@@ -104,19 +110,24 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
+func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
+	return s.allUserPreferences.GetPreferences(activeFile)
+}
+
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	if s.config.tsUserPreferences != nil {
-		return s.config.tsUserPreferences
+	// returns `ts`
+	if s.allUserPreferences.TS() != nil {
+		return s.allUserPreferences.TS()
 	}
 	return lsutil.NewDefaultUserPreferences()
 }
 
-func (s *Snapshot) FormatOptions() *format.FormatCodeSettings {
-	return s.config.formatOptions
-}
-
 func (s *Snapshot) Converters() *lsconv.Converters {
 	return s.converters
+}
+
+func (s *Snapshot) AutoImportRegistry() *autoimport.Registry {
+	return s.AutoImports
 }
 
 func (s *Snapshot) ID() uint64 {
@@ -133,6 +144,18 @@ func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 		return "", false
 	}
 	return handle.Content(), true
+}
+
+func (s *Snapshot) DirectoryExists(path string) bool {
+	return s.fs.fs.DirectoryExists(path)
+}
+
+func (s *Snapshot) GetDirectories(path string) []string {
+	return s.fs.fs.GetAccessibleEntries(path).Directories
+}
+
+func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	return vfs.ReadDirectory(s.fs.fs, currentDir, path, extensions, excludes, includes, depth)
 }
 
 type APISnapshotRequest struct {
@@ -173,6 +196,8 @@ type ResourceRequest struct {
 	// This is used to compute the solution and project tree so that
 	// we can find references across all the projects in the solution irrespective of which project is open
 	ProjectTree *ProjectTreeRequest
+	// AutoImports is the document URI for which auto imports should be prepared.
+	AutoImports lsproto.DocumentUri
 }
 
 type SnapshotChange struct {
@@ -184,17 +209,10 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	newConfig                          *Config
+	newConfig                          *lsutil.UserConfig
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
-}
-
-type Config struct {
-	tsUserPreferences *lsutil.UserPreferences
-	// jsUserPreferences *lsutil.UserPreferences
-	formatOptions *format.FormatCodeSettings
-	// tsserverOptions
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -256,7 +274,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if !fs.watchChangesOverlapCache(change.fileChanges) {
@@ -271,6 +289,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	} else {
 		fs.markDirtyFiles(change.fileChanges)
+		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
@@ -320,23 +339,23 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
 
+	projectsWithNewProgramStructure := make(map[tspath.Path]bool)
+	for _, project := range projectCollection.Projects() {
+		if project.ProgramLastUpdate == newSnapshotID && project.ProgramUpdateKind != ProgramUpdateKindCloned {
+			projectsWithNewProgramStructure[project.configFilePath] = project.ProgramUpdateKind == ProgramUpdateKindNewFiles
+		}
+	}
+
 	// Clean cached disk files not touched by any open project. It's not important that we do this on
 	// file open specifically, but we don't need to do it on every snapshot clone.
-	if len(change.fileChanges.Opened) != 0 {
-		var changedFiles bool
-		for _, project := range projectCollection.Projects() {
-			if project.ProgramLastUpdate == newSnapshotID && project.ProgramUpdateKind != ProgramUpdateKindCloned {
-				changedFiles = true
-				break
-			}
-		}
+	if change.fileChanges.Opened != "" || change.fileChanges.Reopened != "" {
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
-		if changedFiles {
+		if len(projectsWithNewProgramStructure) > 0 {
 			cleanFilesStart := time.Now()
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
 				for _, project := range projectCollection.Projects() {
-					if project.host != nil && project.host.seenFiles.Has(entry.Key()) {
+					if project.host != nil && project.host.sourceFS.Seen(entry.Key()) {
 						return true
 					}
 				}
@@ -350,14 +369,42 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	config := s.config
+	config := s.allUserPreferences
 	if change.newConfig != nil {
-		if change.newConfig.tsUserPreferences != nil {
-			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
-		}
-		if change.newConfig.formatOptions != nil {
-			config.formatOptions = change.newConfig.formatOptions
-		}
+		config = config.Merge(change.newConfig)
+	}
+
+	autoImportHost := newAutoImportRegistryCloneHost(
+		projectCollection,
+		session.parseCache,
+		fs,
+		s.sessionOptions.CurrentDirectory,
+		s.toPath,
+	)
+	openFiles := make(map[tspath.Path]string, len(overlays))
+	for path, overlay := range overlays {
+		openFiles[path] = overlay.FileName()
+	}
+	prepareAutoImports := tspath.Path("")
+	if change.ResourceRequest.AutoImports != "" {
+		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
+	}
+	oldAutoImports := s.AutoImports
+	if oldAutoImports == nil {
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences.GetPreferences(string(prepareAutoImports)))
+	}
+	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]
+	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
+		RequestedFile:   prepareAutoImports,
+		OpenFiles:       openFiles,
+		Changed:         change.fileChanges.Changed,
+		Created:         change.fileChanges.Created,
+		Deleted:         change.fileChanges.Deleted,
+		RebuiltPrograms: projectsWithNewProgramStructure,
+		UserPreferences: config.GetPreferences(string(prepareAutoImports)),
+	}, autoImportHost, logger.Fork("UpdateAutoImports"))
+	if err == nil {
+		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())
 	}
 
 	snapshotFS, _ := fs.Finalize()
@@ -365,11 +412,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		newSnapshotID,
 		snapshotFS,
 		s.sessionOptions,
-		session.parseCache,
-		session.extendedConfigCache,
 		nil,
 		compilerOptionsForInferredProjects,
 		config,
+		autoImports,
+		autoImportsWatch,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id
@@ -381,6 +428,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)
 		if project.ProgramLastUpdate == newSnapshotID {
+			// Only ref source files when the program was created/updated in this snapshot.
+			// This matches dispose, which only derefs when programCounter reaches zero.
+			if project.Program != nil {
+				for _, file := range project.Program.SourceFiles() {
+					session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
 			// so it's GC'd and to ensure the project can't access any data not already in the
@@ -396,16 +450,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
 		}
 	}
-	for path, config := range newSnapshot.ConfigFileRegistry.configs {
+	for _, config := range newSnapshot.ConfigFileRegistry.configs {
 		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
-			if prevConfig, ok := s.ConfigFileRegistry.configs[path]; ok {
-				if prevConfig.commandLine != nil && config.commandLine.ConfigFile == prevConfig.commandLine.ConfigFile {
-					for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
-						// Ref count extended configs that were already loaded in the previous snapshot.
-						// New/changed ones were handled during config file registry building.
-						session.extendedConfigCache.Ref(s.toPath(file))
-					}
-				}
+			for _, file := range config.commandLine.ConfigFile.ExtendedSourceFiles {
+				session.extendedConfigCache.Ref(newSnapshot.toPath(file))
 			}
 		}
 	}

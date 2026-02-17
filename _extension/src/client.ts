@@ -1,15 +1,27 @@
 import * as vscode from "vscode";
+
 import {
-    DocumentUri,
+    CloseAction,
+    CloseHandlerResult,
+    ErrorAction,
+    ErrorHandler,
+    ErrorHandlerResult,
     LanguageClient,
     LanguageClientOptions,
-    Location,
+    Message,
     NotebookDocumentFilter,
-    Position,
     ServerOptions,
     TextDocumentFilter,
     TransportKind,
 } from "vscode-languageclient/node";
+
+import { codeLensShowLocationsCommandName } from "./commands";
+import {
+    configurationMiddleware,
+    sendNotificationMiddleware,
+} from "./configurationMiddleware";
+import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
+import * as tr from "./telemetryReporting";
 import {
     ExeInfo,
     getExe,
@@ -17,28 +29,49 @@ import {
 } from "./util";
 import { getLanguageForUri } from "./util";
 
-const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
-
-export class Client {
+export class Client implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
+    private initializedEventEmitter: vscode.EventEmitter<void>;
+    private telemetryReporter: tr.TelemetryReporter;
+
+    private documentSelector: Array<{ scheme: string; language: string; }>;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
-    private exe: ExeInfo | undefined;
-    private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
+    private isDisposed = false;
+    private disposables: vscode.Disposable[] = [];
+    isInitialized = false;
+
+    private exe: ExeInfo | undefined;
+
+    constructor(
+        outputChannel: vscode.LogOutputChannel,
+        traceOutputChannel: vscode.LogOutputChannel,
+        initializedEventEmitter: vscode.EventEmitter<void>,
+        telemetryReporter: tr.TelemetryReporter,
+    ) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
+        this.initializedEventEmitter = initializedEventEmitter;
+        this.telemetryReporter = telemetryReporter;
+        this.documentSelector = [
+            ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
+            ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
+        ];
         this.clientOptions = {
-            documentSelector: [
-                ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
-                ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
-            ],
+            documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
             traceOutputChannel: this.traceOutputChannel,
             initializationOptions: {
                 codeLensShowLocationsCommandName,
+            },
+            errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5),
+            middleware: {
+                workspace: {
+                    ...configurationMiddleware,
+                },
+                sendNotification: sendNotificationMiddleware,
             },
             diagnosticPullOptions: {
                 onChange: true,
@@ -89,14 +122,12 @@ export class Client {
         };
     }
 
-    async initialize(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
-        const exe = await getExe(context);
-        return this.start(context, exe);
-    }
-
-    async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
+    async start(exe: { path: string; version: string; }): Promise<void> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
+        this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
+            version: this.exe.version,
+        });
 
         // Get pprofDir
         const config = vscode.workspace.getConfiguration("typescript.native-preview");
@@ -137,76 +168,207 @@ export class Client {
             serverOptions,
             this.clientOptions,
         );
+        this.disposables.push(this.client);
 
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();
-        vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
-        this.onStartedCallbacks.forEach(callback => callback());
+        this.isInitialized = true;
+        this.initializedEventEmitter.fire();
 
         if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
             this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
         }
 
-        const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
-            if (args.length !== 3) {
-                throw new Error("Unexpected number of arguments.");
+        type TelemetryData = {
+            eventName: string;
+            telemetryPurpose: "usage" | "error";
+            properties?: Record<string, string>;
+            measurements?: Record<string, number>;
+        };
+
+        const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
+            switch (d.telemetryPurpose) {
+                case "usage":
+                    this.telemetryReporter.sendTelemetryEventUntyped(d.eventName, d.properties, d.measurements);
+                    break;
+                case "error":
+                    this.telemetryReporter.sendTelemetryErrorEventUntyped(d.eventName, d.properties, d.measurements);
+                    break;
+                default:
+                    const _: never = d.telemetryPurpose;
+                    this.telemetryReporter.sendTelemetryErrorEvent("languageServer.unexpectedTelemetryPurpose", {
+                        telemetryPurpose: String(d.telemetryPurpose),
+                    });
+                    break;
             }
-
-            const lspUri = args[0] as DocumentUri;
-            const lspPosition = args[1] as Position;
-            const lspLocations = args[2] as Location[];
-
-            const editorUri = vscode.Uri.parse(lspUri);
-            const editorPosition = new vscode.Position(lspPosition.line, lspPosition.character);
-            const editorLocations = lspLocations.map(loc =>
-                new vscode.Location(
-                    vscode.Uri.parse(loc.uri),
-                    new vscode.Range(
-                        new vscode.Position(loc.range.start.line, loc.range.start.character),
-                        new vscode.Position(loc.range.end.line, loc.range.end.character),
-                    ),
-                )
-            );
-
-            vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
         });
 
-        return new vscode.Disposable(() => {
-            this.client?.stop();
-            codeLensLocationsCommand.dispose();
-            vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-        });
+        this.disposables.push(
+            serverTelemetryListener,
+            registerTagClosingFeature("typescript", this.documentSelector, this.client),
+            registerTagClosingFeature("javascript", this.documentSelector, this.client),
+        );
+    }
+
+    async dispose(): Promise<void> {
+        if (this.isDisposed) {
+            return;
+        }
+        this.isDisposed = true;
+        await Promise.all(this.disposables.map(d => d.dispose()));
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {
         return this.exe;
     }
 
-    onStarted(callback: () => void): vscode.Disposable {
-        if (this.exe) {
-            callback();
-            return new vscode.Disposable(() => {});
+    /**
+     * Initialize an API session and return the socket path for connecting.
+     * This allows other extensions to get a direct connection to the API server.
+     */
+    async initializeAPISession(pipe?: string): Promise<{ sessionId: string; pipe: string; }> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
         }
-
-        this.onStartedCallbacks.add(callback);
-        return new vscode.Disposable(() => {
-            this.onStartedCallbacks.delete(callback);
-        });
+        return this.client.sendRequest<{ sessionId: string; pipe: string; }>("custom/initializeAPISession", { pipe });
     }
 
-    async restart(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
+    /**
+     * Restart the language server if the executable path has not changed.
+     * Returns true if a restart was performed.
+     */
+    async tryRestart(context: vscode.ExtensionContext): Promise<boolean> {
         if (!this.client) {
             return Promise.reject(new Error("Language client is not initialized"));
         }
         const exe = await getExe(context);
         if (exe.path !== this.exe?.path) {
-            this.outputChannel.appendLine(`Executable path changed from ${this.exe?.path} to ${exe.path}`);
-            this.outputChannel.appendLine(`Restarting language server with new executable...`);
-            return this.start(context, exe);
+            return false;
         }
 
+        this.isInitialized = false;
         this.outputChannel.appendLine(`Restarting language server...`);
-        this.client.restart();
-        return new vscode.Disposable(() => {});
+        await this.client.restart();
+        return true;
+    }
+
+    // Developer/debugging methods
+
+    async runGC(): Promise<void> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        await this.client.sendRequest("custom/runGC");
+    }
+
+    async saveHeapProfile(dir: string): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/saveHeapProfile", { dir });
+        return result.file;
+    }
+
+    async saveAllocProfile(dir: string): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/saveAllocProfile", { dir });
+        return result.file;
+    }
+
+    async startCPUProfile(dir: string): Promise<void> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        await this.client.sendRequest("custom/startCPUProfile", { dir });
+    }
+
+    async stopCPUProfile(): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
+        return result.file;
+    }
+}
+
+// Adapted from the default error handler in vscode-languageclient.
+class ReportingErrorHandler implements ErrorHandler {
+    telemetryReporter: tr.TelemetryReporter;
+    maxRestartCount: number;
+    restarts: number[];
+
+    constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number) {
+        this.telemetryReporter = telemetryReporter;
+        this.maxRestartCount = maxRestartCount;
+        this.restarts = [];
+    }
+
+    error(_error: Error, _message: Message | undefined, count: number | undefined): ErrorHandlerResult | Promise<ErrorHandlerResult> {
+        let errorAction = ErrorAction.Shutdown;
+        if (count && count <= 3) {
+            errorAction = ErrorAction.Continue;
+        }
+
+        let actionString = "";
+        switch (errorAction) {
+            case ErrorAction.Continue:
+                actionString = "continue";
+                break;
+            case ErrorAction.Shutdown:
+                actionString = "shutdown";
+                break;
+            default:
+                const _: never = errorAction;
+        }
+        this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionError", {
+            resultingAction: actionString,
+        });
+
+        return { action: errorAction };
+    }
+
+    closed(): CloseHandlerResult | Promise<CloseHandlerResult> {
+        let resultingAction: CloseAction;
+
+        this.restarts.push(Date.now());
+        if (this.restarts.length <= this.maxRestartCount) {
+            resultingAction = CloseAction.Restart;
+        }
+        else {
+            const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
+            if (diff <= 3 * 60 * 1000) {
+                resultingAction = CloseAction.DoNotRestart;
+            }
+            else {
+                this.restarts.shift();
+                resultingAction = CloseAction.Restart;
+            }
+        }
+
+        let actionString = "";
+        switch (resultingAction) {
+            case CloseAction.DoNotRestart:
+                actionString = "doNotRestart";
+                break;
+            case CloseAction.Restart:
+                actionString = "restart";
+                break;
+            default:
+                const _: never = resultingAction;
+        }
+        this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionClosed", {
+            resultingAction: actionString,
+        });
+
+        if (resultingAction === CloseAction.DoNotRestart) {
+            return {
+                action: resultingAction,
+                message: `The typescript.native-preview-lsp server crashed ${this.maxRestartCount + 1} times in the last 3 minutes. The server will not be restarted. See the output for more information.`,
+            };
+        }
+
+        return { action: resultingAction };
     }
 }

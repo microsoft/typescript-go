@@ -1,8 +1,12 @@
 # Contributing
 
+## Scope of Acceptable Changes
+
+TypeScript 7.0 will be a key bridge release between TypeScript 6.0 (the [last JavaScript release](https://devblogs.microsoft.com/typescript/progress-on-typescript-7-december-2025/#typescript-6.0-is-the-last-javascript-based-release)) and the new Go codebase going forward. To minimize differences and reduce churn during this period, **only PRs addressing 6.0/7.0 differences, or crashes** will be considered. Please hold off on feature PRs or behavioral tweaks until 7.0 is released. Thanks!
+
 ## How to Build and Run
 
-This repo uses [Go 1.25 or higher](https://go.dev/dl/), [Rust 1.85 or higher](https://www.rust-lang.org/tools/install), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
+This repo uses [Go 1.26 or higher](https://go.dev/dl/), [Rust 1.88 or higher](https://www.rust-lang.org/tools/install), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
 
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:

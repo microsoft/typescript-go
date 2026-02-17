@@ -55,6 +55,19 @@ func (ch *PseudoChecker) GetTypeOfDeclaration(node *ast.Node) *PseudoType {
 			return NewPseudoTypeDirect(t)
 		}
 		return ch.typeFromExpression(node.AsCommonJSExport().Initializer)
+	case ast.KindCallExpression:
+		switch ast.GetAssignmentDeclarationKind(node) {
+		// TODO: How much of the checker's getTypeFromPropertyDescriptor is worth trying to emulate over ASTs?
+		case ast.JSDeclarationKindObjectDefinePropertyValue:
+			{
+
+			}
+		case ast.JSDeclarationKindObjectDefinePropertyExports:
+			{
+
+			}
+		}
+		return NewPseudoTypeNoResult(node)
 	default:
 		debug.FailBadSyntaxKind(node, "node needs to be an inferrable node")
 		return nil

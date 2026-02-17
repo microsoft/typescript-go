@@ -55,6 +55,7 @@ type NodeBuilderSymbolLinks struct {
 	specifierCache module.ModeAwareCache[string]
 }
 type NodeBuilderContext struct {
+	host                            Host
 	tracker                         nodebuilder.SymbolTracker
 	approximateLength               int
 	encounteredError                bool
@@ -1176,7 +1177,7 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 			return stringutil.StripQuotes(symbol.Name)
 		}
 	}
-	if b.ctx.enclosingFile == nil || b.ctx.tracker.GetModuleSpecifierGenerationHost() == nil {
+	if b.ctx.enclosingFile == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
 			return stringutil.StripQuotes(symbol.Name)
 		}
@@ -1208,7 +1209,7 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	// just like how the declaration emitter does for the ambient module declarations - we can easily accomplish this
 	// using the `baseUrl` compiler option (which we would otherwise never use in declaration emit) and a non-relative
 	// specifier preference
-	host := b.ctx.tracker.GetModuleSpecifierGenerationHost()
+	host := b.ctx.host
 	specifierCompilerOptions := b.ch.compilerOptions
 	specifierPref := modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative
 	endingPref := modulespecifiers.ImportModuleSpecifierEndingPreferenceNone
@@ -2164,9 +2165,15 @@ func (b *NodeBuilderImpl) shouldUsePlaceholderForProperty(propertySymbol *ast.Sy
 func (b *NodeBuilderImpl) trackComputedName(accessExpression *ast.Node, enclosingDeclaration *ast.Node) {
 	// get symbol of the first identifier of the entityName
 	firstIdentifier := ast.GetFirstIdentifier(accessExpression)
-	name := b.ch.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+	name := b.ch.resolveName(enclosingDeclaration, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
 	if name != nil {
 		b.ctx.tracker.TrackSymbol(name, enclosingDeclaration, ast.SymbolFlagsValue)
+	} else {
+		// Name does not resolve at target location, track symbol at dest location (should be inaccessible)
+		fallback := b.ch.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+		if fallback != nil {
+			b.ctx.tracker.TrackSymbol(fallback, enclosingDeclaration, ast.SymbolFlagsValue)
+		}
 	}
 }
 
@@ -2426,6 +2433,9 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 			}
 			if getDeclarationModifierFlagsFromSymbol(propertySymbol)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(propertySymbol.Name)
+			}
+			if IsPrivateIdentifierSymbol(propertySymbol) {
+				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(ast.SymbolName(propertySymbol))
 			}
 		}
 		if b.checkTruncationLength() && (i+2 < len(properties)-1) {

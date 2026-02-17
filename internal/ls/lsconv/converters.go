@@ -111,7 +111,7 @@ func FileNameToDocumentURI(fileName string) lsproto.DocumentUri {
 	if bundled.IsBundled(fileName) {
 		return lsproto.DocumentUri(fileName)
 	}
-	if strings.HasPrefix(fileName, "^/") {
+	if tspath.IsDynamicFileName(fileName) {
 		scheme, rest, ok := strings.Cut(fileName[2:], "/")
 		if !ok {
 			panic("invalid file name: " + fileName)
@@ -206,10 +206,6 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	}
 }
 
-func ptrTo[T any](v T) *T {
-	return &v
-}
-
 type diagnosticOptions struct {
 	reportStyleChecksAsWarnings bool
 	relatedInformation          bool
@@ -299,11 +295,11 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	return &lsproto.Diagnostic{
 		Range: lspRange,
 		Code: &lsproto.IntegerOrString{
-			Integer: ptrTo(diagnostic.Code()),
+			Integer: new(diagnostic.Code()),
 		},
 		Severity:           &severity,
 		Message:            messageChainToString(diagnostic, locale),
-		Source:             ptrTo("ts"),
+		Source:             new("ts"),
 		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
 		Tags:               ptrToSliceIfNonEmpty(tags),
 	}

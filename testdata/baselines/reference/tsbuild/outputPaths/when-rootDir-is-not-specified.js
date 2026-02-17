@@ -20,7 +20,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
-//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+//// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -43,11 +43,8 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/project/dist/index.js] *new* 
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 10;
+//// [/home/src/workspaces/project/dist/src/index.js] *new* 
+export const x = 10;
 
 //// [/home/src/workspaces/project/dist/tsconfig.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","root":["../src/index.ts"]}
@@ -67,7 +64,7 @@ exports.x = 10;
 
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/src/index.ts
 Signatures::
 
@@ -80,7 +77,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is up to date because newest input 'src/index.ts' is older than output 'dist/index.js'
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is up to date because newest input 'src/index.ts' is older than output 'dist/src/index.js'
 
 
 
@@ -90,5 +87,5 @@ Edit [1]:: Normal build without change, that does not block emit on error to sho
 tsgo -p /home/src/workspaces/project/tsconfig.json
 ExitStatus:: Success
 Output::
-//// [/home/src/workspaces/project/dist/index.js] *rewrite with same content*
+//// [/home/src/workspaces/project/dist/src/index.js] *rewrite with same content*
 

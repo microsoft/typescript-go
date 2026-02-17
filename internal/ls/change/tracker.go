@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -75,7 +76,7 @@ type trackerEdit struct {
 
 type Tracker struct {
 	// initialized with
-	formatSettings *format.FormatCodeSettings
+	formatSettings *lsutil.FormatCodeSettings
 	newLine        string
 	converters     *lsconv.Converters
 	ctx            context.Context
@@ -95,7 +96,7 @@ type deletedNode struct {
 	node       *ast.Node
 }
 
-func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions *format.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
+func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions *lsutil.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
 	emitContext := printer.NewEmitContext()
 	newLine := compilerOptions.NewLine.GetNewLineCharacter()
 	ctx = format.WithFormatCodeSettings(ctx, formatOptions, newLine) // !!! formatSettings in context?
@@ -129,6 +130,16 @@ func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, new
 		}
 	}
 	t.ReplaceRange(sourceFile, t.getAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNode, *options)
+}
+
+func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.Node, newNodes []*ast.Node, options *NodeOptions) {
+	if options == nil {
+		options = &NodeOptions{
+			LeadingTriviaOption:  LeadingTriviaOptionExclude,
+			TrailingTriviaOption: TrailingTriviaOptionExclude,
+		}
+	}
+	t.ReplaceRangeWithNodes(sourceFile, t.getAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNodes, *options)
 }
 
 func (t *Tracker) ReplaceRange(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, newNode *ast.Node, options NodeOptions) {
@@ -370,7 +381,7 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 		lsproto.Range{Start: insertLSPos, End: insertLSPos},
 		newNode,
 		NodeOptions{
-			indentation: ptrTo(indentation),
+			indentation: new(indentation),
 			Prefix:      t.newLine,
 		},
 	)
@@ -479,10 +490,6 @@ func (t *Tracker) getOptionsForInsertNodeBefore(before *ast.Node, inserted *ast.
 	}
 	// We haven't handled this kind of node yet -- add it
 	panic("unimplemented node type " + before.Kind.String() + " in changeTracker.getOptionsForInsertNodeBefore")
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
 
 func rangeContainsRangeExclusive(outer *ast.Node, inner *ast.Node) bool {

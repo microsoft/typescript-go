@@ -5,6 +5,7 @@ type ExtractReturn<T> = T extends { new(): infer R } ? R : never;
 
 
 //// [constructSignatureWithInferReturnType.js]
+"use strict";
 
 
 //// [constructSignatureWithInferReturnType.d.ts]

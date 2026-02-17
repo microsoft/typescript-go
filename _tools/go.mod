@@ -1,11 +1,11 @@
 module github.com/microsoft/typescript-go/_tools
 
-go 1.25
+go 1.26
 
 require (
 	github.com/golangci/plugin-module-register v0.1.2
-	golang.org/x/mod v0.31.0
-	golang.org/x/tools v0.40.0
+	golang.org/x/mod v0.32.0
+	golang.org/x/tools v0.41.0
 	gotest.tools/v3 v3.5.2
 )
 

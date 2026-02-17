@@ -225,7 +225,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 }
 
 func (c *Checker) getContextualJsxElementAttributesType(node *ast.Node, contextFlags ContextFlags) *Type {
-	if ast.IsJsxOpeningElement(node) && contextFlags != ContextFlagsCompletions {
+	if ast.IsJsxOpeningElement(node) && contextFlags != ContextFlagsIgnoreNodeInferences {
 		index := c.findContextualNode(node.Parent, contextFlags == ContextFlagsNone)
 		if index >= 0 {
 			// Contextually applied type is moved from attributes up to the outer jsx attributes so when walking up from the children they get hit
@@ -276,7 +276,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 		return (initializer == nil || c.isPossiblyDiscriminantValue(initializer)) && c.isDiscriminantProperty(contextualType, symbol.Name)
 	})
 	discriminantMembers := core.Filter(c.getPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
-		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil || len(node.Symbol().Members) == 0 {
+		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil {
 			return false
 		}
 		element := node.Parent.Parent
@@ -888,7 +888,8 @@ func (c *Checker) checkJsxChildren(node *ast.Node, checkMode CheckMode) []*Type 
 			// empty jsx expressions don't *really* count as present children
 			continue
 		} else {
-			childTypes = append(childTypes, c.checkExpressionForMutableLocation(child, checkMode))
+			t := c.checkExpressionForMutableLocation(child, checkMode)
+			childTypes = append(childTypes, core.IfElse(t != c.anyFunctionType, t, c.emptyJsxObjectType))
 		}
 	}
 	return childTypes

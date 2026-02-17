@@ -8,7 +8,7 @@
 ->exports.Cls : typeof Cls
 +>exports.Cls = function() {        this.x = 0;    } : () => void
 +>exports.Cls : () => void
- >exports : typeof import("/a")
+ >exports : typeof import("./a")
 ->Cls : typeof Cls
 ->function() {        this.x = 0;    } : typeof Cls
 +>Cls : () => void
@@ -16,10 +16,12 @@
 
          this.x = 0;
  >this.x = 0 : 0
- >this.x : any
+->this.x : any
 ->this : this
-+>this : any
- >x : any
+->x : any
++>this.x : 0
++>this : typeof import("./a")
++>x : 0
  >0 : 0
      }
  }
@@ -31,6 +33,6 @@
 +>instance : any
 +>new exports.Cls() : any
 +>exports.Cls : () => void
- >exports : typeof import("/a")
+ >exports : typeof import("./a")
 ->Cls : typeof Cls
 +>Cls : () => void

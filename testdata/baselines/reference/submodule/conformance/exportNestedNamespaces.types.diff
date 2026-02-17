@@ -8,7 +8,7 @@
 ->exports.n : typeof n
 +>exports.n = {} : {}
 +>exports.n : {}
- >exports : typeof import("mod")
+ >exports : typeof import("./mod")
 ->n : typeof n
 +>n : {}
  >{} : {}
@@ -20,7 +20,7 @@
 +>exports.n.K = function () {    this.x = 10;} : () => void
 +>exports.n.K : any
 +>exports.n : {}
- >exports : typeof import("mod")
+ >exports : typeof import("./mod")
 ->n : typeof n
 ->K : typeof K
 ->function () {    this.x = 10;} : typeof K
@@ -32,7 +32,7 @@
  >this.x = 10 : 10
  >this.x : any
 ->this : this
-+>this : any
++>this : {}
  >x : any
  >10 : 10
  }

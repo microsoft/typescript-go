@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -29,7 +30,7 @@ a[|./**/|]`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "#",
-					InsertText: PtrTo("['#']"),
+					InsertText: new("['#']"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "#",
@@ -39,5 +40,6 @@ a[|./**/|]`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{QuotePreference: lsutil.QuotePreference("single")},
 	})
 }

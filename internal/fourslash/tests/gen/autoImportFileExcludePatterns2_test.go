@@ -15,7 +15,8 @@ func TestAutoImportFileExcludePatterns2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /lib/components/button/Button.ts
+	const content = `// @lib: es5
+// @Filename: /lib/components/button/Button.ts
 export function Button() {}
 // @Filename: /lib/components/button/index.ts
 export * from "./Button";
@@ -41,15 +42,16 @@ Button/**/`
 					&lsproto.CompletionItem{
 						Label: "Button",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./lib/main",
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, false),
 		},
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/index.*"}},
 	})
 	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./lib/main", "./lib/components/button/Button"}, &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/index.*"}})
 }

@@ -196,22 +196,7 @@ func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 }
 
 func entityNameToString(name *ast.Node) string {
-	switch name.Kind {
-	case ast.KindThisKeyword:
-		return "this"
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		if ast.NodeIsSynthesized(name) {
-			return name.Text()
-		}
-		return scanner.GetTextOfNode(name)
-	case ast.KindQualifiedName:
-		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
-	case ast.KindPropertyAccessExpression:
-		return entityNameToString(name.Expression()) + "." + entityNameToString(name.AsPropertyAccessExpression().Name())
-	case ast.KindJsxNamespacedName:
-		return entityNameToString(name.AsJsxNamespacedName().Namespace) + ":" + entityNameToString(name.AsJsxNamespacedName().Name())
-	}
-	panic("Unhandled case in entityNameToString")
+	return ast.EntityNameToString(name, scanner.GetTextOfNode)
 }
 
 func getContainingQualifiedNameNode(node *ast.Node) *ast.Node {
@@ -506,7 +491,7 @@ func CompareTypes(t1, t2 *Type) int {
 		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
-		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
+		if c := int(t1.AsIndexType().indexFlags) - int(t2.AsIndexType().indexFlags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
@@ -1174,16 +1159,19 @@ func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
 	}
 }
 
-func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
+func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node) bool) bool {
 	var traverse func(*ast.Node) bool
 	traverse = func(node *ast.Node) bool {
 		switch node.Kind {
 		case ast.KindYieldExpression:
-			visitor(node)
-			operand := node.Expression()
-			if operand != nil {
-				traverse(operand)
+			if visitor(node) {
+				return true
 			}
+			operand := node.Expression()
+			if operand == nil {
+				return false
+			}
+			return traverse(operand)
 		case ast.KindEnumDeclaration, ast.KindInterfaceDeclaration, ast.KindModuleDeclaration, ast.KindTypeAliasDeclaration:
 			// These are not allowed inside a generator now, but eventually they may be allowed
 			// as local types. Regardless, skip them to avoid the work.
@@ -1192,17 +1180,17 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 				if node.Name() != nil && ast.IsComputedPropertyName(node.Name()) {
 					// Note that we will not include methods/accessors of a class because they would require
 					// first descending into the class. This is by design.
-					traverse(node.Name().Expression())
+					return traverse(node.Name().Expression())
 				}
 			} else if !ast.IsPartOfTypeNode(node) {
 				// This is the general case, which should include mostly expressions and statements.
 				// Also includes NodeArrays.
-				node.ForEachChild(traverse)
+				return node.ForEachChild(traverse)
 			}
 		}
 		return false
 	}
-	traverse(body)
+	return traverse(body)
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
@@ -1584,14 +1572,6 @@ func symbolsToArray(symbols ast.SymbolTable) []*ast.Symbol {
 		}
 	}
 	return result
-}
-
-// See comment on `declareModuleMember` in `binder.go`.
-func GetCombinedLocalAndExportSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
-	if symbol.ExportSymbol != nil {
-		return symbol.Flags | symbol.ExportSymbol.Flags
-	}
-	return symbol.Flags
 }
 
 func SkipAlias(symbol *ast.Symbol, checker *Checker) *ast.Symbol {

@@ -51,14 +51,14 @@ fo/*dts*/`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "a",
 						},
 					},
-					Detail:              PtrTo("const foo: 0"),
-					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
+					Detail:              new("const foo: 0"),
+					Kind:                new(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

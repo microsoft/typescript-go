@@ -34,9 +34,9 @@ export = Foo;
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "Foo",
-					InsertText: PtrTo("import Foo from \"./foo\";"),
+					InsertText: new("import Foo from \"./foo\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./foo",
 						},
 					},
@@ -49,7 +49,7 @@ export = Foo;
 				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

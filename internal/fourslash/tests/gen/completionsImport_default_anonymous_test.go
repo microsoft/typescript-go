@@ -46,23 +46,23 @@ fooB/*1*/`
 				&lsproto.CompletionItem{
 					Label: "fooBar",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./foo-bar",
 						},
 					},
-					Detail:              PtrTo("(property) default: 0"),
-					Kind:                PtrTo(lsproto.CompletionItemKindField),
+					Detail:              new("(property) default: 0"),
+					Kind:                new(lsproto.CompletionItemKindField),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "fooBar",
 		Source:      "./foo-bar",
 		Description: "Add import from \"./foo-bar\"",
-		NewFileContent: PtrTo(`import fooBar from "./foo-bar"
+		NewFileContent: new(`import fooBar from "./foo-bar"
 
 def
 fooB`),

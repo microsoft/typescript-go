@@ -9,10 +9,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/json"
+
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -56,7 +56,7 @@ func (f *FourslashTest) baselineRequestOrNotification(t *testing.T, method lspro
 		return
 	}
 
-	res, _ := json.Marshal(requestOrMessage{method, params}, jsontext.WithIndent("  "))
+	res, _ := json.Marshal(requestOrMessage{method, params}, json.WithIndent("  "))
 	f.stateBaseline.baseline.WriteString("\n" + string(res) + "\n")
 	f.stateBaseline.isInitialized = true
 }
@@ -339,7 +339,7 @@ func (f *FourslashTest) printOpenFilesDiff(t *testing.T, snapshot *project.Snaps
 	options := diffTableOptions{indent: "  ", sortKeys: true}
 	for fileName := range f.openFiles {
 		path := tspath.ToPath(fileName, "/", f.vfs.UseCaseSensitiveFileNames())
-		defaultProject := snapshot.ProjectCollection.GetDefaultProject(fileName, path)
+		defaultProject := snapshot.ProjectCollection.GetDefaultProject(path)
 		newFileInfo := &openFileInfo{}
 		if defaultProject != nil {
 			newFileInfo.defaultProjectName = defaultProject.Name()

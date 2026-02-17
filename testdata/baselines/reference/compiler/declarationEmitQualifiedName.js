@@ -20,30 +20,22 @@ export const B = { ...A } as const
 
 
 //// [e.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.E = void 0;
+export { E };
 var E;
 (function (E) {
     E["A"] = "a";
     E["B"] = "b";
-})(E || (exports.E = E = {}));
+})(E || (E = {}));
 //// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-const e_js_1 = require("./e.js");
-exports.A = {
+import { E } from './e.js';
+export const A = {
     item: {
-        a: e_js_1.E.A,
+        a: E.A,
     },
 };
 //// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = void 0;
-const a_js_1 = require("./a.js");
-exports.B = Object.assign({}, a_js_1.A);
+import { A } from './a.js';
+export const B = Object.assign({}, A);
 
 
 //// [e.d.ts]

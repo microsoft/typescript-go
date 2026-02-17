@@ -37,7 +37,8 @@ export function test(): void;
 // @Filename: /home/src/workspaces/project/tsconfig.json
 {
     "compilerOptions": {
-        "module": "nodenext"
+        "module": "nodenext",
+        "lib": ["es5"]
     }
 }
 // @Filename: /home/src/workspaces/project/main.ts
@@ -56,12 +57,12 @@ export function test(): void;
 				&lsproto.CompletionItem{
 					Label: "test",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "pkg/core/test",
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

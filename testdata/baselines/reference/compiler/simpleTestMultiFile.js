@@ -7,6 +7,8 @@ const x: number = "";
 const y: string = 1;
 
 //// [foo.js]
+"use strict";
 const x = "";
 //// [bar.js]
+"use strict";
 const y = 1;

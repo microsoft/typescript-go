@@ -15,7 +15,7 @@ func TestImportSuggestionsCache_exportUndefined(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
-{ "compilerOptions": { "module": "esnext" } }
+{ "compilerOptions": { "module": "esnext", "lib": ["es5"] } }
 // @Filename: /home/src/workspaces/project/undefined.ts
 export = undefined;
 // @Filename: /home/src/workspaces/project/undefinedAlias.ts
@@ -38,9 +38,9 @@ export = x;
 				&lsproto.CompletionItem{
 					Label:               "x",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./undefinedAlias",
 						},
 					},
@@ -59,9 +59,9 @@ export = x;
 				&lsproto.CompletionItem{
 					Label:               "x",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./undefinedAlias",
 						},
 					},

@@ -5,7 +5,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
@@ -71,10 +70,6 @@ type wrappingTracker struct {
 	bound   *recoveryBoundary
 }
 
-func (w *wrappingTracker) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
-	return w.wrapped.GetModuleSpecifierGenerationHost()
-}
-
 func (w *wrappingTracker) PopErrorFallbackNode() {
 	w.wrapped.PopErrorFallbackNode()
 }
@@ -134,7 +129,7 @@ func newWrappingTracker(inner nodebuilder.SymbolTracker, bound *recoveryBoundary
 func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	b.ch.checkNotCanceled()
 	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError}
-	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound), b.ctx.tracker.GetModuleSpecifierGenerationHost())
+	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound))
 	b.ctx.tracker = newTracker
 	b.ctx.trackedSymbols = nil
 	return bound

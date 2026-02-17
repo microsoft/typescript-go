@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"slices"
 	"strings"
 	"sync"
 
@@ -47,6 +48,11 @@ const (
 
 type ParsingContexts int
 
+type JSDocInfo struct {
+	parent *ast.Node
+	jsDocs []*ast.Node
+}
+
 type Parser struct {
 	scanner *scanner.Scanner
 	factory ast.NodeFactory
@@ -73,7 +79,7 @@ type Parser struct {
 	notParenthesizedArrow      collections.Set[int]
 	nodeSlicePool              core.Pool[*ast.Node]
 	stringSlicePool            core.Pool[string]
-	jsdocCache                 map[*ast.Node][]*ast.Node
+	jsdocInfos                 []JSDocInfo
 	possibleAwaitSpans         []int
 	jsdocCommentsSpace         []string
 	jsdocCommentRangesSpace    []ast.CommentRange
@@ -84,6 +90,7 @@ type Parser struct {
 
 	currentParent        *ast.Node
 	setParentFromContext ast.Visitor
+	reparsedClones       []*ast.Node
 }
 
 func newParser() *Parser {
@@ -262,6 +269,8 @@ type ParserState struct {
 	contextFlags                ast.NodeFlags
 	diagnosticsLen              int
 	jsDiagnosticsLen            int
+	jsdocInfosLen               int
+	reparsedClonesLen           int
 	statementHasAwaitIdentifier bool
 	hasParseError               bool
 }
@@ -272,6 +281,8 @@ func (p *Parser) mark() ParserState {
 		contextFlags:                p.contextFlags,
 		diagnosticsLen:              len(p.diagnostics),
 		jsDiagnosticsLen:            len(p.jsDiagnostics),
+		jsdocInfosLen:               len(p.jsdocInfos),
+		reparsedClonesLen:           len(p.reparsedClones),
 		statementHasAwaitIdentifier: p.statementHasAwaitIdentifier,
 		hasParseError:               p.hasParseError,
 	}
@@ -283,6 +294,8 @@ func (p *Parser) rewind(state ParserState) {
 	p.contextFlags = state.contextFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
 	p.jsDiagnostics = p.jsDiagnostics[0:state.jsDiagnosticsLen]
+	p.jsdocInfos = p.jsdocInfos[0:state.jsdocInfosLen]
+	p.reparsedClones = p.reparsedClones[0:state.reparsedClonesLen]
 	p.statementHasAwaitIdentifier = state.statementHasAwaitIdentifier
 	p.hasParseError = state.hasParseError
 }
@@ -381,9 +394,18 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.NodeCount = p.factory.NodeCount()
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
-	result.SetJSDocCache(p.jsdocCache)
-
+	result.SetJSDocCache(p.createJSDocCache())
+	slices.SortFunc(p.reparsedClones, ast.CompareNodePositions)
+	result.ReparsedClones = slices.Clone(p.reparsedClones)
 	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
+}
+
+func (p *Parser) createJSDocCache() map[*ast.Node][]*ast.Node {
+	result := make(map[*ast.Node][]*ast.Node, len(p.jsdocInfos))
+	for _, info := range p.jsdocInfos {
+		result[info.parent] = info.jsDocs
+	}
+	return result
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
@@ -860,7 +882,7 @@ func (p *Parser) parseExpectedMatchingBrackets(openKind ast.Kind, closeKind ast.
 		return
 	}
 	if lastError != nil {
-		related := ast.NewDiagnostic(nil, core.NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, scanner.TokenToString(openKind), scanner.TokenToString(closeKind))
+		related := ast.NewDiagnostic(nil, core.NewTextRange(openPosition, openPosition), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, scanner.TokenToString(openKind), scanner.TokenToString(closeKind))
 		lastError.AddRelatedInfo(related)
 	}
 }
@@ -1441,7 +1463,9 @@ func (p *Parser) parseVariableDeclarationList(inForStatementInitializer bool) *a
 	case ast.KindUsingKeyword:
 		flags = ast.NodeFlagsUsing
 	case ast.KindAwaitKeyword:
-		debug.Assert(p.isAwaitUsingDeclaration())
+		if !p.isAwaitUsingDeclaration() {
+			break
+		}
 		flags = ast.NodeFlagsAwaitUsing
 		p.nextToken()
 	default:
@@ -2373,7 +2397,7 @@ func (p *Parser) parseModuleExportName(disallowKeywords bool) (node *ast.Node, n
 }
 
 func (p *Parser) tryParseImportAttributes() *ast.Node {
-	if (p.token == ast.KindWithKeyword || p.token == ast.KindAssertKeyword) && !p.hasPrecedingLineBreak() {
+	if p.token == ast.KindWithKeyword || (p.token == ast.KindAssertKeyword && !p.hasPrecedingLineBreak()) {
 		return p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	return nil
@@ -2920,7 +2944,7 @@ func (p *Parser) parseImportType() *ast.Node {
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
+					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
 					lastDiagnostic.AddRelatedInfo(related)
 				}
 			}
@@ -2967,7 +2991,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.No
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
+					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
 					lastDiagnostic.AddRelatedInfo(related)
 				}
 			}
@@ -4598,8 +4622,8 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		var closingElement *ast.Node
 		lastChild := core.LastOrNil(children.Nodes)
 		if lastChild != nil && lastChild.Kind == ast.KindJsxElement &&
-			!tagNamesAreEquivalent(lastChild.AsJsxElement().OpeningElement.TagName(), lastChild.AsJsxElement().ClosingElement.TagName()) &&
-			tagNamesAreEquivalent(opening.TagName(), lastChild.AsJsxElement().ClosingElement.TagName()) {
+			!ast.TagNamesAreEquivalent(lastChild.AsJsxElement().OpeningElement.TagName(), lastChild.AsJsxElement().ClosingElement.TagName()) &&
+			ast.TagNamesAreEquivalent(opening.TagName(), lastChild.AsJsxElement().ClosingElement.TagName()) {
 			// when an unclosed JsxOpeningElement incorrectly parses its parent's JsxClosingElement,
 			// restructure (<div>(...<span>...</div>)) --> (<div>(...<span>...</>)</div>)
 			// (no need to error; the parent will error)
@@ -4625,8 +4649,8 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 			closingElement = lastChild.AsJsxElement().ClosingElement
 		} else {
 			closingElement = p.parseJsxClosingElement(opening, inExpressionContext)
-			if !tagNamesAreEquivalent(opening.TagName(), closingElement.TagName()) {
-				if openingTag != nil && ast.IsJsxOpeningElement(openingTag) && tagNamesAreEquivalent(closingElement.TagName(), openingTag.TagName()) {
+			if !ast.TagNamesAreEquivalent(opening.TagName(), closingElement.TagName()) {
+				if openingTag != nil && ast.IsJsxOpeningElement(openingTag) && ast.TagNamesAreEquivalent(closingElement.TagName(), openingTag.TagName()) {
 					// opening incorrectly matched with its parent's closing -- put error on opening
 					p.parseErrorAtRange(opening.TagName().Loc, diagnostics.JSX_element_0_has_no_corresponding_closing_tag, scanner.GetTextOfNodeFromSourceText(p.sourceText, opening.TagName(), false /*includeTrivia*/))
 				} else {
@@ -4681,8 +4705,8 @@ func (p *Parser) parseJsxChildren(openingTag *ast.Expression) *ast.NodeList {
 		}
 		list = append(list, child)
 		if ast.IsJsxOpeningElement(openingTag) && child.Kind == ast.KindJsxElement &&
-			!tagNamesAreEquivalent(child.AsJsxElement().OpeningElement.TagName(), child.AsJsxElement().ClosingElement.TagName()) &&
-			tagNamesAreEquivalent(openingTag.TagName(), child.AsJsxElement().ClosingElement.TagName()) {
+			!ast.TagNamesAreEquivalent(child.AsJsxElement().OpeningElement.TagName(), child.AsJsxElement().ClosingElement.TagName()) &&
+			ast.TagNamesAreEquivalent(openingTag.TagName(), child.AsJsxElement().ClosingElement.TagName()) {
 			// stop after parsing a mismatched child like <div>...(<span></div>) in order to reattach the </div> higher
 			break
 		}
@@ -4771,7 +4795,7 @@ func (p *Parser) parseJsxClosingElement(open *ast.Node, inExpressionContext bool
 	tagName := p.parseJsxElementName()
 	if p.parseExpectedWithDiagnostic(ast.KindGreaterThanToken, nil /*diagnosticMessage*/, false /*shouldAdvance*/) {
 		// manually advance the scanner in order to look for jsx text inside jsx
-		if inExpressionContext || !tagNamesAreEquivalent(open.TagName(), tagName) {
+		if inExpressionContext || !ast.TagNamesAreEquivalent(open.TagName(), tagName) {
 			p.nextToken()
 		} else {
 			p.scanJsxText()
@@ -6244,25 +6268,6 @@ func (p *Parser) skipRangeTrivia(textRange core.TextRange) core.TextRange {
 
 func isReservedWord(token ast.Kind) bool {
 	return ast.KindFirstReservedWord <= token && token <= ast.KindLastReservedWord
-}
-
-func tagNamesAreEquivalent(lhs *ast.Expression, rhs *ast.Expression) bool {
-	if lhs.Kind != rhs.Kind {
-		return false
-	}
-	switch lhs.Kind {
-	case ast.KindIdentifier:
-		return lhs.Text() == rhs.Text()
-	case ast.KindThisKeyword:
-		return true
-	case ast.KindJsxNamespacedName:
-		return lhs.AsJsxNamespacedName().Namespace.Text() == rhs.AsJsxNamespacedName().Namespace.Text() &&
-			lhs.AsJsxNamespacedName().Name().Text() == rhs.AsJsxNamespacedName().Name().Text()
-	case ast.KindPropertyAccessExpression:
-		return lhs.AsPropertyAccessExpression().Name().Text() == rhs.AsPropertyAccessExpression().Name().Text() &&
-			tagNamesAreEquivalent(lhs.Expression(), rhs.Expression())
-	}
-	panic("Unhandled case in tagNamesAreEquivalent")
 }
 
 func attachFileToDiagnostics(diagnostics []*ast.Diagnostic, file *ast.SourceFile) []*ast.Diagnostic {
