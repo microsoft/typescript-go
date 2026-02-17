@@ -294,7 +294,9 @@ func (tx *JSXTransformer) visitJsxElement(element *ast.JsxElement) *ast.Node {
 	if tx.shouldUseCreateElement(element.AsNode()) {
 		tagTransform = (*JSXTransformer).visitJsxOpeningLikeElementCreateElement
 	}
-	return tagTransform(tx, element.OpeningElement, element.Children, element.AsNode())
+	location := element.AsNode()
+	location.Loc = core.NewTextRange(scanner.SkipTrivia(tx.currentSourceFile.Text(), element.Pos()), element.End())
+	return tagTransform(tx, element.OpeningElement, element.Children, location)
 }
 
 func (tx *JSXTransformer) visitJsxSelfClosingElement(element *ast.JsxSelfClosingElement) *ast.Node {
@@ -302,7 +304,9 @@ func (tx *JSXTransformer) visitJsxSelfClosingElement(element *ast.JsxSelfClosing
 	if tx.shouldUseCreateElement(element.AsNode()) {
 		tagTransform = (*JSXTransformer).visitJsxOpeningLikeElementCreateElement
 	}
-	return tagTransform(tx, element.AsNode(), nil, element.AsNode())
+	location := element.AsNode()
+	location.Loc = core.NewTextRange(scanner.SkipTrivia(tx.currentSourceFile.Text(), element.Pos()), element.End())
+	return tagTransform(tx, location, nil, location)
 }
 
 func (tx *JSXTransformer) visitJsxFragment(fragment *ast.JsxFragment) *ast.Node {
@@ -310,7 +314,9 @@ func (tx *JSXTransformer) visitJsxFragment(fragment *ast.JsxFragment) *ast.Node 
 	if len(tx.importSpecifier) == 0 {
 		tagTransform = (*JSXTransformer).visitJsxOpeningFragmentCreateElement
 	}
-	return tagTransform(tx, fragment.OpeningFragment.AsJsxOpeningFragment(), fragment.Children, fragment.AsNode())
+	location := fragment.AsNode()
+	location.Loc = core.NewTextRange(scanner.SkipTrivia(tx.currentSourceFile.Text(), fragment.Pos()), fragment.End())
+	return tagTransform(tx, fragment.OpeningFragment.AsJsxOpeningFragment(), fragment.Children, location)
 }
 
 func (tx *JSXTransformer) convertJsxChildrenToChildrenPropObject(children []*ast.JsxChild) *ast.Node {
