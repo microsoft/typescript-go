@@ -231,7 +231,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	if type_ != nil && b.ch.isErrorType(type_) {
 		return true
 	}
-	typeFromPseudo := b.pseudoTypeToType(t) // note: cannot convert complex types like objects, which must be validated seperately
+	typeFromPseudo := b.pseudoTypeToType(t) // note: cannot convert complex types like objects, which must be validated separately
 	if typeFromPseudo == type_ {
 		return true
 	}
