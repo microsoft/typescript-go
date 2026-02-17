@@ -1,0 +1,51 @@
+contextuallyTypedJsxChildren2.tsx(22,8): error TS2786: 'TestComponentWithChildren' cannot be used as a JSX component.
+  Its return type 'ReactNode' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+contextuallyTypedJsxChildren2.tsx(26,8): error TS2786: 'TestComponentWithoutChildren' cannot be used as a JSX component.
+  Its return type 'ReactNode' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+
+
+==== contextuallyTypedJsxChildren2.tsx (2 errors) ====
+    /// <reference path="/.lib/react16.d.ts" />
+    
+    // https://github.com/microsoft/typescript-go/issues/2802
+    
+    import * as React from 'react';
+    
+    declare const TestComponentWithChildren: <T, TParam>(props: {
+      state: T;
+      selector?: (state: NoInfer<T>) => TParam;
+      children?: (state: NoInfer<TParam>) => React.ReactNode | undefined;
+    }) => React.ReactNode;
+    
+    declare const TestComponentWithoutChildren: <T, TParam>(props: {
+      state: T;
+      selector?: (state: NoInfer<T>) => TParam;
+      notChildren?: (state: NoInfer<TParam>) => React.ReactNode | undefined;
+    }) => React.ReactNode;
+    
+    const App = () => {
+      return (
+        <>
+          <TestComponentWithChildren state={{ foo: 123 }} selector={(state) => state.foo}>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2786: 'TestComponentWithChildren' cannot be used as a JSX component.
+!!! error TS2786:   Its return type 'ReactNode' is not a valid JSX element.
+!!! error TS2786:     Type 'undefined' is not assignable to type 'Element | null'.
+            {(selected) => <div>{Math.max(selected, 0)}</div>}
+          </TestComponentWithChildren>
+    
+          <TestComponentWithoutChildren
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2786: 'TestComponentWithoutChildren' cannot be used as a JSX component.
+!!! error TS2786:   Its return type 'ReactNode' is not a valid JSX element.
+!!! error TS2786:     Type 'undefined' is not assignable to type 'Element | null'.
+            state={{ foo: 123 }}
+            selector={(state) => state.foo}
+            notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}
+          />
+        </>
+      );
+    };
+    

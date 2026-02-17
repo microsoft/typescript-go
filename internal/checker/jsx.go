@@ -889,7 +889,7 @@ func (c *Checker) checkJsxChildren(node *ast.Node, checkMode CheckMode) []*Type 
 			continue
 		} else {
 			t := c.checkExpressionForMutableLocation(child, checkMode)
-			childTypes = append(childTypes, core.IfElse(t != c.anyFunctionType, t, c.emptyJsxObjectType))
+			childTypes = append(childTypes, core.IfElse(t != c.anyFunctionType || checkMode&CheckModeSkipContextSensitive != 0, t, c.emptyJsxObjectType))
 		}
 	}
 	return childTypes

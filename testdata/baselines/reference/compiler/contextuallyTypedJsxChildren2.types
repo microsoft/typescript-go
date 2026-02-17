@@ -1,0 +1,125 @@
+//// [tests/cases/compiler/contextuallyTypedJsxChildren2.tsx] ////
+
+=== contextuallyTypedJsxChildren2.tsx ===
+/// <reference path="react16.d.ts" />
+
+// https://github.com/microsoft/typescript-go/issues/2802
+
+import * as React from 'react';
+>React : typeof React
+
+declare const TestComponentWithChildren: <T, TParam>(props: {
+>TestComponentWithChildren : <T, TParam>(props: { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; children?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }) => React.ReactNode
+>props : { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; children?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }
+
+  state: T;
+>state : T
+
+  selector?: (state: NoInfer<T>) => TParam;
+>selector : ((state: NoInfer<T>) => TParam) | undefined
+>state : NoInfer<T>
+
+  children?: (state: NoInfer<TParam>) => React.ReactNode | undefined;
+>children : ((state: NoInfer<TParam>) => React.ReactNode) | undefined
+>state : NoInfer<TParam>
+>React : any
+
+}) => React.ReactNode;
+>React : any
+
+declare const TestComponentWithoutChildren: <T, TParam>(props: {
+>TestComponentWithoutChildren : <T, TParam>(props: { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; notChildren?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }) => React.ReactNode
+>props : { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; notChildren?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }
+
+  state: T;
+>state : T
+
+  selector?: (state: NoInfer<T>) => TParam;
+>selector : ((state: NoInfer<T>) => TParam) | undefined
+>state : NoInfer<T>
+
+  notChildren?: (state: NoInfer<TParam>) => React.ReactNode | undefined;
+>notChildren : ((state: NoInfer<TParam>) => React.ReactNode) | undefined
+>state : NoInfer<TParam>
+>React : any
+
+}) => React.ReactNode;
+>React : any
+
+const App = () => {
+>App : () => JSX.Element
+>() => {  return (    <>      <TestComponentWithChildren state={{ foo: 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo: 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      />    </>  );} : () => JSX.Element
+
+  return (
+>(    <>      <TestComponentWithChildren state={{ foo: 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo: 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      />    </>  ) : JSX.Element
+
+    <>
+><>      <TestComponentWithChildren state={{ foo: 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo: 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      />    </> : JSX.Element
+
+      <TestComponentWithChildren state={{ foo: 123 }} selector={(state) => state.foo}>
+><TestComponentWithChildren state={{ foo: 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren> : JSX.Element
+>TestComponentWithChildren : <T, TParam>(props: { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; children?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }) => React.ReactNode
+>state : { foo: number; }
+>{ foo: 123 } : { foo: number; }
+>foo : number
+>123 : 123
+>selector : (state: NoInfer<{ foo: number; }>) => number
+>(state) => state.foo : (state: NoInfer<{ foo: number; }>) => number
+>state : NoInfer<{ foo: number; }>
+>state.foo : number
+>state : { foo: number; }
+>foo : number
+
+        {(selected) => <div>{Math.max(selected, 0)}</div>}
+>(selected) => <div>{Math.max(selected, 0)}</div> : (selected: number) => JSX.Element
+>selected : number
+><div>{Math.max(selected, 0)}</div> : JSX.Element
+>div : any
+>Math.max(selected, 0) : number
+>Math.max : (...values: number[]) => number
+>Math : Math
+>max : (...values: number[]) => number
+>selected : number
+>0 : 0
+>div : any
+
+      </TestComponentWithChildren>
+>TestComponentWithChildren : <T, TParam>(props: { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; children?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }) => React.ReactNode
+
+      <TestComponentWithoutChildren
+><TestComponentWithoutChildren        state={{ foo: 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      /> : JSX.Element
+>TestComponentWithoutChildren : <T, TParam>(props: { state: T; selector?: ((state: NoInfer<T>) => TParam) | undefined; notChildren?: ((state: NoInfer<TParam>) => React.ReactNode) | undefined; }) => React.ReactNode
+
+        state={{ foo: 123 }}
+>state : { foo: number; }
+>{ foo: 123 } : { foo: number; }
+>foo : number
+>123 : 123
+
+        selector={(state) => state.foo}
+>selector : (state: NoInfer<{ foo: number; }>) => number
+>(state) => state.foo : (state: NoInfer<{ foo: number; }>) => number
+>state : NoInfer<{ foo: number; }>
+>state.foo : number
+>state : { foo: number; }
+>foo : number
+
+        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}
+>notChildren : (selected: number) => JSX.Element
+>(selected) => <div>{Math.max(selected, 0)}</div> : (selected: number) => JSX.Element
+>selected : number
+><div>{Math.max(selected, 0)}</div> : JSX.Element
+>div : any
+>Math.max(selected, 0) : number
+>Math.max : (...values: number[]) => number
+>Math : Math
+>max : (...values: number[]) => number
+>selected : number
+>0 : 0
+>div : any
+
+      />
+    </>
+  );
+};
+
