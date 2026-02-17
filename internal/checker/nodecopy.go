@@ -251,7 +251,9 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return name
 			}
 			res := node.VisitEachChild(ast.NewNodeVisitor(visitor, b.f, ast.NodeVisitorHooks{}))
-			res.Loc = node.Loc
+			if res != node {
+				res.Loc = node.Loc
+			}
 			return res
 		}
 		return visitor(node)
