@@ -256,7 +256,10 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return nil // TODO: extract type selection logic from `serializeTypeForDeclaration`, not needed for current usecases but needed if completeness becomes required
 	case pseudochecker.PseudoTypeKindMaybeConstLocation:
 		d := t.AsPseudoTypeMaybeConstLocation()
-		return b.pseudoTypeToType(d.ConstType) // !!! TODO: not needed for const-checking usecases, but proper context switching behavior required if completeness is required
+		if b.ch.isConstContext(d.Node) {
+			return b.pseudoTypeToType(d.ConstType)
+		}
+		return b.pseudoTypeToType(d.RegularType)
 	case pseudochecker.PseudoTypeKindUnion:
 		var res []*Type
 		var hasElidedType bool

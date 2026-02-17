@@ -518,7 +518,7 @@ func (ch *PseudoChecker) typeFromParameter(node *ast.ParameterDeclaration) *Pseu
 	if declaredType != nil {
 		return NewPseudoTypeDirect(declaredType)
 	}
-	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.AsNode()) {
+	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.Parent.AsNode()) {
 		return ch.typeFromExpression(node.Initializer)
 	}
 	// TODO: In strada, the ID checker doesn't infer a parameter type from binding pattern names, but the real checker _does_!
