@@ -2094,7 +2094,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	} else {
 		name = p.parseIdentifier()
 	}
-	if isIllegalModuleKeyword {
+	if isIllegalModuleKeyword && !nested {
 		errorStart := scanner.SkipTrivia(p.sourceText, name.Pos())
 		p.parseErrorAt(errorStart, name.End(), diagnostics.A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead)
 	}
