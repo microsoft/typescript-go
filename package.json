@@ -42,6 +42,6 @@
     "packageManager": "npm@11.10.0+sha512.8bc844e37892200305b98562f13c6c10849d10b3387c8cdaeb4d1a2e32746a79063cba9dd284cf28c26a01c3bf4169b7d3b31b4a5586cc970d6749463108073c",
     "volta": {
         "node": "22.22.0",
-        "npm": "11.9.0"
+        "npm": "11.10.0"
     }
 }
