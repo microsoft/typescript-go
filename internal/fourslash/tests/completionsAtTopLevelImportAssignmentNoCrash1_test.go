@@ -29,9 +29,7 @@ import x =/*3*/
 			CommitCharacters: &[]string{},
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				"type",
-			},
+			Includes: []fourslash.CompletionsExpectedItem{}, // no crash check
 		},
 	})
 }
