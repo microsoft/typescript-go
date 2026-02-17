@@ -2571,10 +2571,28 @@ func (node *Node) JSDoc(file *SourceFile) []*Node {
 	if file.hasLazyJSDoc {
 		return file.resolveJSDoc(node)
 	}
-	if jsdocs, ok := file.jsdocCache[node]; ok {
+	return file.jsdocCache[node]
+}
+
+// EagerJSDoc returns JSDoc nodes that have already been parsed and cached,
+// without triggering lazy JSDoc parsing.
+func (node *Node) EagerJSDoc(file *SourceFile) []*Node {
+	if node.Flags&NodeFlagsHasJSDoc == 0 {
+		return nil
+	}
+	if file == nil {
+		file = GetSourceFileOfNode(node)
+		if file == nil {
+			return nil
+		}
+	}
+	if file.hasLazyJSDoc {
+		file.jsdocMu.RLock()
+		jsdocs := file.jsdocCache[node]
+		file.jsdocMu.RUnlock()
 		return jsdocs
 	}
-	return nil
+	return file.jsdocCache[node]
 }
 
 // compositeNodeBase

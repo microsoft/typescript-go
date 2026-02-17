@@ -2174,7 +2174,7 @@ func (c *Checker) checkSourceElement(node *ast.Node) bool {
 
 func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
-		for _, jsdoc := range node.JSDoc(nil) {
+		for _, jsdoc := range node.EagerJSDoc(nil) {
 			c.checkJSDocComments(jsdoc)
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 				for _, tag := range tags.Nodes {
