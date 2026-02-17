@@ -13630,17 +13630,7 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic)
 }
 
 func (c *Checker) IsDeprecatedDeclaration(declaration *ast.Node) bool {
-	if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsPossiblyContainsDeprecatedTag == 0 {
-		return false
-	}
-	// Walk up to find the node that directly has the flag, since JSDoc is
-	// attached to that node (e.g. VariableStatement, not VariableDeclaration).
-	for n := declaration; n != nil; n = n.Parent {
-		if n.Flags&ast.NodeFlagsPossiblyContainsDeprecatedTag != 0 {
-			return getJSDocDeprecatedTag(n) != nil
-		}
-	}
-	return false
+	return ast.IsDeprecatedDeclarationWithCachedFlags(declaration, c.getCombinedNodeFlagsCached(declaration))
 }
 
 func (c *Checker) addDeprecatedSuggestion(location *ast.Node, declarations []*ast.Node, deprecatedEntity string) *ast.Diagnostic {
