@@ -53,11 +53,13 @@ type JSDocInfo struct {
 	jsDocs []*ast.Node
 }
 
-type jsdocScannerInfo struct {
-	hasJSDoc      bool
-	hasDeprecated bool
-	hasSeeOrLink  bool
-}
+type jsdocScannerInfo uint8
+
+const (
+	jsdocScannerInfoHasJSDoc jsdocScannerInfo = 1 << iota
+	jsdocScannerInfoHasDeprecated
+	jsdocScannerInfoHasSeeOrLink
+)
 
 type Parser struct {
 	scanner *scanner.Scanner
@@ -349,13 +351,16 @@ func (p *Parser) hasPrecedingLineBreak() bool {
 
 func (p *Parser) jsdocScannerInfo() jsdocScannerInfo {
 	if !p.scanner.HasPrecedingJSDocComment() {
-		return jsdocScannerInfo{}
+		return 0
 	}
-	return jsdocScannerInfo{
-		hasJSDoc:      true,
-		hasDeprecated: p.scanner.HasPrecedingJSDocWithDeprecatedTag(),
-		hasSeeOrLink:  p.scanner.HasPrecedingJSDocWithSeeOrLink(),
+	info := jsdocScannerInfoHasJSDoc
+	if p.scanner.HasPrecedingJSDocWithDeprecatedTag() {
+		info |= jsdocScannerInfoHasDeprecated
 	}
+	if p.scanner.HasPrecedingJSDocWithSeeOrLink() {
+		info |= jsdocScannerInfoHasSeeOrLink
+	}
+	return info
 }
 
 func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
@@ -1458,7 +1463,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	}
 	result := p.finishNode(p.factory.NewExpressionStatement(expression), pos)
 	if hasParen {
-		jsdoc.hasJSDoc = false
+		jsdoc &^= jsdocScannerInfoHasJSDoc
 	}
 	jsdocs := p.withJSDoc(result, jsdoc)
 	p.reparseCommonJS(result, jsdocs)
@@ -2142,7 +2147,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, jsdoc jsdocScannerIn
 		implicitExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 		implicitExport.Flags = ast.NodeFlagsReparsed
 		implicitModifiers := p.newModifierList(implicitExport.Loc, p.nodeSlicePool.NewSlice1(implicitExport))
-		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), jsdocScannerInfo{} /*jsdoc*/, implicitModifiers, true /*nested*/, keyword)
+		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), 0 /*jsdoc*/, implicitModifiers, true /*nested*/, keyword)
 	} else {
 		body = p.parseModuleBlock()
 	}

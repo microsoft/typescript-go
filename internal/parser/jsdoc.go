@@ -54,7 +54,7 @@ const (
 )
 
 func (p *Parser) withJSDoc(node *ast.Node, info jsdocScannerInfo) []*ast.Node {
-	if !info.hasJSDoc {
+	if info&jsdocScannerInfoHasJSDoc == 0 {
 		return nil
 	}
 
@@ -64,10 +64,10 @@ func (p *Parser) withJSDoc(node *ast.Node, info jsdocScannerInfo) []*ast.Node {
 	// callers must confirm via JSDoc lookup.
 	if !p.isJavaScript() {
 		node.Flags |= ast.NodeFlagsHasJSDoc
-		if info.hasDeprecated {
+		if info&jsdocScannerInfoHasDeprecated != 0 {
 			node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
 		}
-		if !info.hasSeeOrLink {
+		if info&jsdocScannerInfoHasSeeOrLink == 0 {
 			return nil
 		}
 		// Fall through to eager parse for @see/@link
