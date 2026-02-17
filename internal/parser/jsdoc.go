@@ -53,13 +53,10 @@ const (
 	propertyLikeParseCallbackParameter
 )
 
-func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
-	if !hasJSDoc {
+func (p *Parser) withJSDoc(node *ast.Node, info jsdocScannerInfo) []*ast.Node {
+	if !info.hasJSDoc {
 		return nil
 	}
-
-	ranges := GetJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
-	p.jsdocCommentRangesSpace = ranges[:0]
 
 	// For TS/TSX files, defer JSDoc parsing to first access, unless the comment
 	// contains @see/@link (needed for unused-identifier checks).
@@ -67,22 +64,17 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 	// callers must confirm via JSDoc lookup.
 	if !p.isJavaScript() {
 		node.Flags |= ast.NodeFlagsHasJSDoc
-		needsEagerParse := false
-		for _, comment := range ranges {
-			commentText := p.sourceText[comment.Pos():comment.End()]
-			hasDeprecated, hasSeeOrLink := scanJSDocCommentTags(commentText)
-			if hasDeprecated {
-				node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
-			}
-			if hasSeeOrLink {
-				needsEagerParse = true
-			}
+		if info.hasDeprecated {
+			node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
 		}
-		if !needsEagerParse {
+		if !info.hasSeeOrLink {
 			return nil
 		}
 		// Fall through to eager parse for @see/@link
 	}
+
+	ranges := GetJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
+	p.jsdocCommentRangesSpace = ranges[:0]
 
 	// Should only be called once per node
 	p.hasDeprecatedTag = false
@@ -110,42 +102,6 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 		return jsdoc
 	}
 	return nil
-}
-
-// scanJSDocCommentTags scans a JSDoc comment for tags relevant to TS files in a
-// single pass. Returns whether @deprecated was found (to set
-// NodeFlagsPossiblyContainsDeprecatedTag) and whether @see/@link was found
-// (requiring eager parse).
-func scanJSDocCommentTags(commentText string) (hasDeprecated, hasSeeOrLink bool) {
-	for {
-		i := strings.IndexByte(commentText, '@')
-		if i < 0 {
-			return
-		}
-		commentText = commentText[i+1:]
-		if !hasDeprecated && hasTag(commentText, "deprecated") {
-			hasDeprecated = true
-		} else if !hasSeeOrLink && (hasTag(commentText, "see") || hasTag(commentText, "link")) {
-			hasSeeOrLink = true
-		}
-		if hasDeprecated && hasSeeOrLink {
-			return
-		}
-	}
-}
-
-// hasTag reports whether commentText starts with the given tag name followed
-// by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string),
-// preventing prefix false positives like @deprecatedStyle or @linkedin.
-func hasTag(commentText string, tag string) bool {
-	if !strings.HasPrefix(commentText, tag) {
-		return false
-	}
-	if len(commentText) == len(tag) {
-		return true
-	}
-	ch := commentText[len(tag)]
-	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*'
 }
 
 func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {

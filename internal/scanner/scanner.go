@@ -344,6 +344,49 @@ func (s *Scanner) HasPrecedingJSDocLeadingAsterisks() bool {
 	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocLeadingAsterisks != 0
 }
 
+func (s *Scanner) HasPrecedingJSDocWithDeprecatedTag() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated != 0
+}
+
+func (s *Scanner) HasPrecedingJSDocWithSeeOrLink() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink != 0
+}
+
+// scanJSDocCommentForTags scans a JSDoc comment for @deprecated, @see, and @link tags,
+// setting the appropriate token flags. Called during scanning when a JSDoc comment is detected.
+func (s *Scanner) scanJSDocCommentForTags(commentText string) {
+	for {
+		i := strings.IndexByte(commentText, '@')
+		if i < 0 {
+			return
+		}
+		commentText = commentText[i+1:]
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated == 0 && hasJSDocTag(commentText, "deprecated") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithDeprecated
+		}
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink == 0 && (hasJSDocTag(commentText, "see") || hasJSDocTag(commentText, "link")) {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithSeeOrLink
+		}
+		if s.tokenFlags&(ast.TokenFlagsPrecedingJSDocWithDeprecated|ast.TokenFlagsPrecedingJSDocWithSeeOrLink) ==
+			(ast.TokenFlagsPrecedingJSDocWithDeprecated | ast.TokenFlagsPrecedingJSDocWithSeeOrLink) {
+			return
+		}
+	}
+}
+
+// hasJSDocTag reports whether text starts with the given tag name followed
+// by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string).
+func hasJSDocTag(text string, tag string) bool {
+	if !strings.HasPrefix(text, tag) {
+		return false
+	}
+	if len(text) == len(tag) {
+		return true
+	}
+	ch := text[len(tag)]
+	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*'
+}
+
 func (s *Scanner) SetText(text string) {
 	s.text = text
 	s.ScannerState = ScannerState{}
@@ -581,6 +624,7 @@ func (s *Scanner) Scan() ast.Kind {
 
 				if isJSDoc {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
+					s.scanJSDocCommentForTags(s.text[s.tokenStart:s.pos])
 				}
 
 				s.processCommentDirective(lastLineStart, s.pos, true)
