@@ -1498,6 +1498,9 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"Error": {
 			{lib: "es2022", props: []string{"cause"}},
 		},
+		"Date": {
+			{lib: "esnext", props: []string{"toTemporalInstant"}},
+		},
 	}
 })
 
