@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCompletionNoCrashImportStatementLocationParentNil(t *testing.T) {
+func TestCompletionsAtTopLevelImportAssignmentNoCrash1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
@@ -23,7 +23,7 @@ import x =/*3*/
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1", "2", "3"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
