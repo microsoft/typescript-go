@@ -10,6 +10,32 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
+func init() {
+	ast.SetParseJSDocForNode(parseJSDocForNode)
+}
+
+// parseJSDocForNode lazily parses JSDoc for a node in a TS file.
+// Called on first access to Node.JSDoc() for non-JS source files.
+func parseJSDocForNode(sourceFile *ast.SourceFile, node *ast.Node) []*ast.Node {
+	p := getParser()
+	defer putParser(p)
+	p.initializeState(sourceFile.ParseOptions(), sourceFile.Text(), sourceFile.ScriptKind)
+	ranges := GetJSDocCommentRanges(&p.factory, nil, node, sourceFile.Text())
+	if len(ranges) == 0 {
+		return nil
+	}
+	jsdoc := make([]*ast.Node, 0, len(ranges))
+	pos := node.Pos()
+	for _, comment := range ranges {
+		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End(), pos); parsed != nil {
+			parsed.Parent = node
+			jsdoc = append(jsdoc, parsed)
+			pos = parsed.End()
+		}
+	}
+	return jsdoc
+}
+
 type jsdocState int32
 
 const (
@@ -31,10 +57,35 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 	if !hasJSDoc {
 		return nil
 	}
-	// Should only be called once per node
-	p.hasDeprecatedTag = false
+
 	ranges := GetJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
 	p.jsdocCommentRangesSpace = ranges[:0]
+
+	// For TS/TSX files, defer JSDoc parsing to first access, unless the comment
+	// contains @see/@link (needed for unused-identifier checks).
+	// @deprecated is detected via cheap text scan to set PossiblyContainsDeprecatedTag;
+	// callers must confirm via JSDoc lookup.
+	if !p.isJavaScript() {
+		node.Flags |= ast.NodeFlagsHasJSDoc
+		needsEagerParse := false
+		for _, comment := range ranges {
+			commentText := p.sourceText[comment.Pos():comment.End()]
+			hasDeprecated, hasSeeOrLink := scanJSDocCommentTags(commentText)
+			if hasDeprecated {
+				node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
+			}
+			if hasSeeOrLink {
+				needsEagerParse = true
+			}
+		}
+		if !needsEagerParse {
+			return nil
+		}
+		// Fall through to eager parse for @see/@link
+	}
+
+	// Should only be called once per node
+	p.hasDeprecatedTag = false
 	jsdoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
 	pos := node.Pos()
 	for _, comment := range ranges {
@@ -50,15 +101,51 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 		}
 		if p.hasDeprecatedTag {
 			p.hasDeprecatedTag = false
-			node.Flags |= ast.NodeFlagsDeprecated
+			node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
 		}
-		if p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX {
+		if p.isJavaScript() {
 			p.reparseTags(node, jsdoc)
 		}
 		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: node, jsDocs: jsdoc})
 		return jsdoc
 	}
 	return nil
+}
+
+// scanJSDocCommentTags scans a JSDoc comment for tags relevant to TS files in a
+// single pass. Returns whether @deprecated was found (to set
+// NodeFlagsPossiblyContainsDeprecatedTag) and whether @see/@link was found
+// (requiring eager parse).
+func scanJSDocCommentTags(commentText string) (hasDeprecated, hasSeeOrLink bool) {
+	for {
+		i := strings.IndexByte(commentText, '@')
+		if i < 0 {
+			return
+		}
+		commentText = commentText[i+1:]
+		if !hasDeprecated && hasTag(commentText, "deprecated") {
+			hasDeprecated = true
+		} else if !hasSeeOrLink && (hasTag(commentText, "see") || hasTag(commentText, "link")) {
+			hasSeeOrLink = true
+		}
+		if hasDeprecated && hasSeeOrLink {
+			return
+		}
+	}
+}
+
+// hasTag reports whether commentText starts with the given tag name followed
+// by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string),
+// preventing prefix false positives like @deprecatedStyle or @linkedin.
+func hasTag(commentText string, tag string) bool {
+	if !strings.HasPrefix(commentText, tag) {
+		return false
+	}
+	if len(commentText) == len(tag) {
+		return true
+	}
+	ch := commentText[len(tag)]
+	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*'
 }
 
 func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {

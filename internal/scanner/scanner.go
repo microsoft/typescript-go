@@ -209,12 +209,11 @@ type ScannerState struct {
 }
 
 type Scanner struct {
-	text             string
-	languageVariant  core.LanguageVariant
-	onError          ErrorCallback
-	skipTrivia       bool
-	JSDocParsingMode ast.JSDocParsingMode
-	scriptKind       core.ScriptKind
+	text            string
+	languageVariant core.LanguageVariant
+	onError         ErrorCallback
+	skipTrivia      bool
+	scriptKind      core.ScriptKind
 	ScannerState
 
 	numberCache    map[string]string
@@ -358,10 +357,6 @@ func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
 	s.scriptKind = scriptKind
 }
 
-func (s *Scanner) SetJSDocParsingMode(kind ast.JSDocParsingMode) {
-	s.JSDocParsingMode = kind
-}
-
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
 	s.languageVariant = languageVariant
 }
@@ -396,36 +391,6 @@ func (s *Scanner) charAt(offset int) rune {
 
 func (s *Scanner) charAndSize() (rune, int) {
 	return utf8.DecodeRuneInString(s.text[s.pos:])
-}
-
-func (s *Scanner) shouldParseJSDoc() bool {
-	switch s.JSDocParsingMode {
-	case ast.JSDocParsingModeParseAll:
-		return true
-	case ast.JSDocParsingModeParseNone:
-		return false
-	}
-	if s.scriptKind != core.ScriptKindTS && s.scriptKind != core.ScriptKindTSX {
-		// If outside of TS, we need JSDoc to get any type info.
-		return true
-	}
-	if s.JSDocParsingMode == ast.JSDocParsingModeParseForTypeInfo {
-		// If we're in TS, but we don't need to produce reliable errors,
-		// we don't need to parse to find @see or @link.
-		return false
-	}
-	text := s.text[s.fullStartPos:s.pos]
-	for {
-		i := strings.IndexByte(text, '@')
-		if i < 0 {
-			break
-		}
-		text = text[i+1:]
-		if strings.HasPrefix(text, "see") || strings.HasPrefix(text, "link") {
-			return true
-		}
-	}
-	return false
 }
 
 func (s *Scanner) Scan() ast.Kind {
@@ -614,7 +579,7 @@ func (s *Scanner) Scan() ast.Kind {
 					}
 				}
 
-				if isJSDoc && s.shouldParseJSDoc() {
+				if isJSDoc {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
 				}
 

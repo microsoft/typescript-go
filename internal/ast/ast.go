@@ -13,6 +13,15 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
+// parseJSDocForNode is the package-level function for lazily parsing JSDoc.
+// It is set by the parser package via init().
+var parseJSDocForNode func(*SourceFile, *Node) []*Node
+
+// SetParseJSDocForNode registers the lazy JSDoc parse function. Called from parser's init().
+func SetParseJSDocForNode(fn func(*SourceFile, *Node) []*Node) {
+	parseJSDocForNode = fn
+}
+
 // Visitor
 
 type Visitor func(*Node) bool
@@ -2558,6 +2567,9 @@ func (node *Node) JSDoc(file *SourceFile) []*Node {
 		if file == nil {
 			return nil
 		}
+	}
+	if file.hasLazyJSDoc {
+		return file.resolveJSDoc(node)
 	}
 	if jsdocs, ok := file.jsdocCache[node]; ok {
 		return jsdocs
@@ -10945,6 +10957,8 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	jsdocMu                     sync.RWMutex
+	hasLazyJSDoc                bool
 	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
@@ -11043,12 +11057,39 @@ func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
 }
 
-func (node *SourceFile) JSDocCache() map[*Node][]*Node {
-	return node.jsdocCache
-}
-
 func (node *SourceFile) SetJSDocCache(cache map[*Node][]*Node) {
 	node.jsdocCache = cache
+}
+
+func (node *SourceFile) SetHasLazyJSDoc(lazy bool) {
+	node.hasLazyJSDoc = lazy
+}
+
+func (node *SourceFile) resolveJSDoc(n *Node) []*Node {
+	if parseJSDocForNode == nil {
+		panic("resolveJSDoc called but parseJSDocForNode is not registered; ensure the parser package is imported")
+	}
+	// Fast path: check cache under read lock
+	node.jsdocMu.RLock()
+	if jsdocs, ok := node.jsdocCache[n]; ok {
+		node.jsdocMu.RUnlock()
+		return jsdocs
+	}
+	node.jsdocMu.RUnlock()
+
+	// Slow path: parse and cache under write lock
+	node.jsdocMu.Lock()
+	defer node.jsdocMu.Unlock()
+	// Double-check after acquiring write lock
+	if jsdocs, ok := node.jsdocCache[n]; ok {
+		return jsdocs
+	}
+	jsdocs := parseJSDocForNode(node, n)
+	if node.jsdocCache == nil {
+		node.jsdocCache = make(map[*Node][]*Node)
+	}
+	node.jsdocCache[n] = jsdocs
+	return jsdocs
 }
 
 func (node *SourceFile) BindDiagnostics() []*Diagnostic {

@@ -134,6 +134,10 @@ func (p *Parser) initializeClosures() {
 	}
 }
 
+func (p *Parser) isJavaScript() bool {
+	return p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX
+}
+
 func (p *Parser) parseJSONText() *ast.SourceFile {
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -204,9 +208,7 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 func ParseIsolatedEntityName(text string) *ast.EntityName {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(ast.SourceFileParseOptions{
-		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-	}, text, core.ScriptKindJS)
+	p.initializeState(ast.SourceFileParseOptions{}, text, core.ScriptKindJS)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
@@ -238,7 +240,6 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetLanguageVariant(p.languageVariant)
 	p.scanner.SetScriptKind(p.scriptKind)
-	p.scanner.SetJSDocParsingMode(p.opts.JSDocParsingMode)
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
@@ -395,6 +396,10 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.createJSDocCache())
+	// For non-JS files, enable lazy JSDoc parsing on demand
+	if !p.isJavaScript() {
+		result.SetHasLazyJSDoc(true)
+	}
 	slices.SortFunc(p.reparsedClones, ast.CompareNodePositions)
 	result.ReparsedClones = slices.Clone(p.reparsedClones)
 	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
