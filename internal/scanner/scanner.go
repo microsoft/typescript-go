@@ -364,7 +364,7 @@ func (s *Scanner) scanJSDocCommentForTags(commentText string) {
 		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated == 0 && hasJSDocTag(commentText, "deprecated") {
 			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithDeprecated
 		}
-		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink == 0 && (hasJSDocTag(commentText, "see") || hasJSDocTag(commentText, "link")) {
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink == 0 && hasJSDocTag(commentText, "see", "link", "linkcode", "linkplain") {
 			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithSeeOrLink
 		}
 		if s.tokenFlags&(ast.TokenFlagsPrecedingJSDocWithDeprecated|ast.TokenFlagsPrecedingJSDocWithSeeOrLink) ==
@@ -374,17 +374,22 @@ func (s *Scanner) scanJSDocCommentForTags(commentText string) {
 	}
 }
 
-// hasJSDocTag reports whether text starts with the given tag name followed
+// hasJSDocTag reports whether text starts with one of the given tag names followed
 // by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string).
-func hasJSDocTag(text string, tag string) bool {
-	if !strings.HasPrefix(text, tag) {
-		return false
+func hasJSDocTag(text string, tags ...string) bool {
+	for _, tag := range tags {
+		if !strings.HasPrefix(text, tag) {
+			continue
+		}
+		if len(text) == len(tag) {
+			return true
+		}
+		ch := text[len(tag)]
+		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*' {
+			return true
+		}
 	}
-	if len(text) == len(tag) {
-		return true
-	}
-	ch := text[len(tag)]
-	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*'
+	return false
 }
 
 func (s *Scanner) SetText(text string) {
