@@ -13,6 +13,15 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
+// parseJSDocForNode is the package-level function for lazily parsing JSDoc.
+// It is set by the parser package via init().
+var parseJSDocForNode func(*SourceFile, *Node) []*Node
+
+// SetParseJSDocForNode registers the lazy JSDoc parse function. Called from parser's init().
+func SetParseJSDocForNode(fn func(*SourceFile, *Node) []*Node) {
+	parseJSDocForNode = fn
+}
+
 // Visitor
 
 type Visitor func(*Node) bool
@@ -2559,10 +2568,31 @@ func (node *Node) JSDoc(file *SourceFile) []*Node {
 			return nil
 		}
 	}
-	if jsdocs, ok := file.jsdocCache[node]; ok {
+	if file.hasLazyJSDoc {
+		return file.resolveJSDoc(node)
+	}
+	return file.jsdocCache[node]
+}
+
+// EagerJSDoc returns JSDoc nodes that have already been parsed and cached,
+// without triggering lazy JSDoc parsing.
+func (node *Node) EagerJSDoc(file *SourceFile) []*Node {
+	if node.Flags&NodeFlagsHasJSDoc == 0 {
+		return nil
+	}
+	if file == nil {
+		file = GetSourceFileOfNode(node)
+		if file == nil {
+			return nil
+		}
+	}
+	if file.hasLazyJSDoc {
+		file.jsdocMu.RLock()
+		jsdocs := file.jsdocCache[node]
+		file.jsdocMu.RUnlock()
 		return jsdocs
 	}
-	return nil
+	return file.jsdocCache[node]
 }
 
 // compositeNodeBase
@@ -10912,6 +10942,11 @@ type HasFileName interface {
 	Path() tspath.Path
 }
 
+type TokenCacheKey struct {
+	parent *Node
+	loc    core.TextRange
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -10940,6 +10975,8 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	jsdocMu                     sync.RWMutex
+	hasLazyJSDoc                bool
 	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
@@ -10973,7 +11010,7 @@ type SourceFile struct {
 
 	Hash             xxh3.Uint128
 	tokenCacheMu     sync.Mutex
-	tokenCache       map[core.TextRange]*Node
+	tokenCache       map[TokenCacheKey]*Node
 	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
@@ -11038,12 +11075,39 @@ func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
 }
 
-func (node *SourceFile) JSDocCache() map[*Node][]*Node {
-	return node.jsdocCache
-}
-
 func (node *SourceFile) SetJSDocCache(cache map[*Node][]*Node) {
 	node.jsdocCache = cache
+}
+
+func (node *SourceFile) SetHasLazyJSDoc(lazy bool) {
+	node.hasLazyJSDoc = lazy
+}
+
+func (node *SourceFile) resolveJSDoc(n *Node) []*Node {
+	if parseJSDocForNode == nil {
+		panic("resolveJSDoc called but parseJSDocForNode is not registered; ensure the parser package is imported")
+	}
+	// Fast path: check cache under read lock
+	node.jsdocMu.RLock()
+	if jsdocs, ok := node.jsdocCache[n]; ok {
+		node.jsdocMu.RUnlock()
+		return jsdocs
+	}
+	node.jsdocMu.RUnlock()
+
+	// Slow path: parse and cache under write lock
+	node.jsdocMu.Lock()
+	defer node.jsdocMu.Unlock()
+	// Double-check after acquiring write lock
+	if jsdocs, ok := node.jsdocCache[n]; ok {
+		return jsdocs
+	}
+	jsdocs := parseJSDocForNode(node, n)
+	if node.jsdocCache == nil {
+		node.jsdocCache = make(map[*Node][]*Node)
+	}
+	node.jsdocCache[n] = jsdocs
+	return jsdocs
 }
 
 func (node *SourceFile) BindDiagnostics() []*Diagnostic {
@@ -11178,12 +11242,10 @@ func (node *SourceFile) GetOrCreateToken(
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
 	loc := core.NewTextRange(pos, end)
-	if token, ok := node.tokenCache[loc]; ok {
+	key := TokenCacheKey{parent, loc}
+	if token, ok := node.tokenCache[key]; ok {
 		if token.Kind != kind {
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
-		}
-		if token.Parent != parent {
-			panic(fmt.Sprintf("Token cache mismatch: parent. Expected parent of kind %v, got %v", token.Parent.Kind, parent.Kind))
 		}
 		return token
 	}
@@ -11191,12 +11253,12 @@ func (node *SourceFile) GetOrCreateToken(
 		panic(fmt.Sprintf("Cannot create token from reparsed node of kind %v", parent.Kind))
 	}
 	if node.tokenCache == nil {
-		node.tokenCache = make(map[core.TextRange]*Node)
+		node.tokenCache = make(map[TokenCacheKey]*Node)
 	}
 	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
 	token.Parent = parent
-	node.tokenCache[loc] = token
+	node.tokenCache[key] = token
 	return token
 }
 

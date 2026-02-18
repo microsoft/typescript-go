@@ -5,20 +5,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type JSDocParsingMode uint8
-
-const (
-	JSDocParsingModeParseAll JSDocParsingMode = iota
-	JSDocParsingModeParseNone
-	JSDocParsingModeParseForTypeErrors
-	JSDocParsingModeParseForTypeInfo
-)
-
 type SourceFileParseOptions struct {
 	FileName                       string
 	Path                           tspath.Path
 	ExternalModuleIndicatorOptions ExternalModuleIndicatorOptions
-	JSDocParsingMode               JSDocParsingMode
 }
 
 type ExternalModuleIndicatorOptions struct {

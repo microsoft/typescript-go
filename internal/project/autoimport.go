@@ -151,9 +151,8 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		return nil
 	}
 	opts := ast.SourceFileParseOptions{
-		FileName:         fileName,
-		Path:             path,
-		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+		FileName: fileName,
+		Path:     path,
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
 	result := a.parseCache.Load(key, fh)

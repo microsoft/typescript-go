@@ -295,7 +295,6 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 		FileName:                       t.normalizedFilePath,
 		Path:                           path,
 		ExternalModuleIndicatorOptions: ast.GetExternalModuleIndicatorOptions(t.normalizedFilePath, options, t.metadata),
-		JSDocParsingMode:               p.opts.JSDocParsingMode,
 	})
 	return sourceFile
 }
