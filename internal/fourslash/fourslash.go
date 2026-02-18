@@ -983,14 +983,113 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		}
 	}
 	f.activeFilename = filename
-	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-		TextDocument: &lsproto.TextDocumentItem{
+	if f.testData.isStateBaseliningEnabled() {
+		sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{
+				Uri:        lsconv.FileNameToDocumentURI(filename),
+				LanguageId: getLanguageKind(filename),
+				Text:       script.content,
+			},
+		})
+	} else {
+		f.emulateTyping(t, script, &lsproto.TextDocumentItem{
 			Uri:        lsconv.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
 			Text:       script.content,
+		})
+	}
+	f.baselineProjectsAfterNotification(t, filename)
+}
+
+func (f *FourslashTest) emulateTyping(t *testing.T, script *scriptInfo, origTextDoc *lsproto.TextDocumentItem) {
+	textDocCopy := *origTextDoc
+	fullText := textDocCopy.Text
+	textDocCopy.Text = ""
+	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &textDocCopy,
+	})
+
+	i := 0
+	for {
+		curr, runeLength := utf8.DecodeRuneInString(fullText[i:])
+		if runeLength == 0 {
+			break
+		} else if curr == utf8.RuneError {
+			t.Fatalf("Invalid UTF-8 encoding at position %d in file %s", i, textDocCopy.Uri.FileName())
+		}
+
+		currentText := fullText[:i+runeLength]
+		sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+			TextDocument: lsproto.VersionedTextDocumentIdentifier{
+				Uri:     textDocCopy.Uri,
+				Version: int32(i + runeLength),
+			},
+			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+						Text: currentText,
+					},
+				},
+			},
+		})
+
+		sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, &lsproto.DocumentDiagnosticParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: textDocCopy.Uri,
+			},
+		})
+
+		switch fullText[i] {
+		case '.':
+			lineChar := f.converters.PositionToLineAndCharacter(script, core.TextPos(i))
+			line := int(lineChar.Line)
+			character := int(lineChar.Character)
+			sendRequest(t, f, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: textDocCopy.Uri,
+				},
+				Position: lsproto.Position{
+					Line:      uint32(line),
+					Character: uint32(character),
+				},
+			})
+		case '(', ',', '<':
+			lineChar := f.converters.PositionToLineAndCharacter(script, core.TextPos(i))
+			line := int(lineChar.Line)
+			character := int(lineChar.Character)
+			sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, &lsproto.SignatureHelpParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: textDocCopy.Uri,
+				},
+				Position: lsproto.Position{
+					Line:      uint32(line),
+					Character: uint32(character),
+				},
+				Context: &lsproto.SignatureHelpContext{
+					TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
+					TriggerCharacter: ptrTo(fullText[i : i+runeLength]),
+				},
+			})
+		}
+
+		i += runeLength
+	}
+
+	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+		TextDocument: lsproto.VersionedTextDocumentIdentifier{
+			Uri:     textDocCopy.Uri,
+			Version: int32(1 + 1),
+		},
+		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{
+				WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+					Text: fullText,
+				},
+			},
 		},
 	})
-	f.baselineProjectsAfterNotification(t, filename)
+
+	assert.Equal(t, fullText, fullText[:i])
 }
 
 func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
