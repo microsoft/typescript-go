@@ -25,7 +25,7 @@ export default hello.hello
 }
 
 tsgo --b project --v --explainFiles --listEmittedFiles
-ExitStatus:: Success
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project/tsconfig.json
@@ -33,6 +33,11 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project/tsconfig.json' is out of date because output file 'project/dist/tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'project/tsconfig.json'...
+
+[96mproject/tsconfig.json[0m:[93m4[0m:[93m29[0m - [91merror[0m[90m TS5108: [0mOption 'moduleResolution=node10' has been removed. Please remove it from your configuration.
+
+[7m4[0m         "moduleResolution": "node",
+[7m [0m [91m                            ~~~~~~[0m
 
 TSFILE:  /home/src/workspaces/solution/project/dist/src/hello.json
 TSFILE:  /home/src/workspaces/solution/project/dist/src/index.js
@@ -45,6 +50,9 @@ project/src/hello.json
    Imported via "./hello.json" from file 'project/src/index.ts'
 project/src/index.ts
    Matched by include pattern 'src/**/*' in 'project/tsconfig.json'
+
+Found 1 error in project/tsconfig.json[90m:4[0m
+
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -87,10 +95,11 @@ const hello_json_1 = __importDefault(require("./hello.json"));
 exports.default = hello_json_1.default.hello;
 
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../src/hello.json","../src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"18e7247c85a6a2e7a4ec2e284716edd8-{\n    \"hello\": \"world\"\n}"},{"version":"c15eb6733af1bd811cd113368bb377e5-import hello from \"./hello.json\"\nexport default hello.hello","signature":"a44184f4ac1ed50126ac624c885b51a8-declare const _default: string;\nexport default _default;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"allowSyntheticDefaultImports":true,"composite":true,"esModuleInterop":true,"module":1,"outDir":"./","skipDefaultLibCheck":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/index.d.ts"}
+{"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../src/hello.json","../src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"18e7247c85a6a2e7a4ec2e284716edd8-{\n    \"hello\": \"world\"\n}"},{"version":"c15eb6733af1bd811cd113368bb377e5-import hello from \"./hello.json\"\nexport default hello.hello","signature":"a44184f4ac1ed50126ac624c885b51a8-declare const _default: string;\nexport default _default;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"allowSyntheticDefaultImports":true,"composite":true,"esModuleInterop":true,"module":1,"outDir":"./","skipDefaultLibCheck":true},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[1,2,3],"latestChangedDtsFile":"./src/index.d.ts"}
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
+  "errors": true,
   "root": [
     {
       "files": [
@@ -160,14 +169,19 @@ exports.default = hello_json_1.default.hello;
       "../src/hello.json"
     ]
   },
+  "semanticDiagnosticsPerFile": [
+    "lib.es2025.full.d.ts",
+    "../src/hello.json",
+    "../src/index.ts"
+  ],
   "latestChangedDtsFile": "./src/index.d.ts",
-  "size": 1444
+  "size": 1495
 }
 
 project/tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*refresh*    /home/src/workspaces/solution/project/src/hello.json
-*refresh*    /home/src/workspaces/solution/project/src/index.ts
+*not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
+*not cached* /home/src/workspaces/solution/project/src/hello.json
+*not cached* /home/src/workspaces/solution/project/src/index.ts
 Signatures::
 (stored at emit) /home/src/workspaces/solution/project/src/index.ts

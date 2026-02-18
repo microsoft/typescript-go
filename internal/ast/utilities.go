@@ -2803,6 +2803,41 @@ func IsVariableDeclarationInitializedToRequire(node *Node) bool {
 		IsRequireCall(node.Initializer(), true /*requireStringLiteralLikeArgument*/)
 }
 
+// IsVariableDeclarationInitializedToBareOrAccessedRequire is like IsVariableDeclarationInitializedToRequire
+// but also allows things like `require("...").foo.bar` or `require("...")["baz"]`.
+func IsVariableDeclarationInitializedToBareOrAccessedRequire(node *Node) bool {
+	return isVariableDeclarationInitializedWithRequireHelper(node, true /*allowAccessedRequire*/)
+}
+
+// GetModuleSpecifierOfBareOrAccessedRequire extracts the module specifier string literal
+// from a variable declaration initialized to a require call or an accessed require call.
+func GetModuleSpecifierOfBareOrAccessedRequire(node *Node) *Node {
+	if isVariableDeclarationInitializedWithRequireHelper(node, false /*allowAccessedRequire*/) {
+		return node.Initializer().Arguments()[0]
+	}
+	if isVariableDeclarationInitializedWithRequireHelper(node, true /*allowAccessedRequire*/) {
+		leftmost := GetLeftmostAccessExpression(node.Initializer())
+		if IsRequireCall(leftmost, true /*requireStringLiteralLikeArgument*/) {
+			return leftmost.Arguments()[0]
+		}
+	}
+	return nil
+}
+
+func isVariableDeclarationInitializedWithRequireHelper(node *Node, allowAccessedRequire bool) bool {
+	if !IsVariableDeclaration(node) {
+		return false
+	}
+	init := node.Initializer()
+	if init == nil {
+		return false
+	}
+	if allowAccessedRequire {
+		return IsRequireCall(GetLeftmostAccessExpression(init), true /*requireStringLiteralLikeArgument*/)
+	}
+	return IsRequireCall(init, true /*requireStringLiteralLikeArgument*/)
+}
+
 func IsModuleExportsAccessExpression(node *Node) bool {
 	if IsAccessExpression(node) && IsModuleIdentifier(node.Expression()) {
 		if name := GetElementOrPropertyAccessName(node); name != nil {
