@@ -72,8 +72,6 @@ export interface ProjectResponse {
     configFileName: string;
     compilerOptions: Record<string, unknown>;
     rootFiles: string[];
-    /** Encodes the source-file-independent parse options for this project (for cache keying) */
-    parseOptionsKey: string;
 }
 
 export interface SourceFileResponse {

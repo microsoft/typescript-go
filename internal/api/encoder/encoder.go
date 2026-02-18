@@ -42,6 +42,7 @@ const (
 	HeaderOffsetHashLo1
 	HeaderOffsetHashHi0
 	HeaderOffsetHashHi1
+	HeaderOffsetParseOptions
 	HeaderOffsetStringOffsets
 	HeaderOffsetStringData
 	HeaderOffsetExtendedData
@@ -50,7 +51,7 @@ const (
 )
 
 const (
-	ProtocolVersion uint8 = 2
+	ProtocolVersion uint8 = 3
 )
 
 // Source File Binary Format
@@ -64,33 +65,29 @@ const (
 //
 // The format comprises six sections:
 //
-// | Section            | Length             | Description                                                                              |
-// | ------------------ | ------------------ | ---------------------------------------------------------------------------------------- |
-// | Header             | 36 bytes           | Contains the content hash, flags, and byte offsets to the start of each section.         |
-// | String offsets     | 8 bytes per string | Pairs of starting byte offsets and ending byte offsets into the **string data** section. |
-// | String data        | variable           | UTF-8 encoded string data.                                                               |
-// | Extended node data | variable           | Extra data for some kinds of nodes.                                                      |
-// | Nodes              | 24 bytes per node  | Defines the AST structure of the file, with references to strings and extended data.     |
+// | Section            | Length             | Description                                                                                     |
+// | ------------------ | ------------------ | ----------------------------------------------------------------------------------------------- |
+// | Header             | 40 bytes           | Contains the content hash, parse options, flags, and byte offsets to the start of each section. |
+// | String offsets     | 8 bytes per string | Pairs of starting byte offsets and ending byte offsets into the **string data** section.        |
+// | String data        | variable           | UTF-8 encoded string data.                                                                      |
+// | Extended node data | variable           | Extra data for some kinds of nodes.                                                             |
+// | Nodes              | 24 bytes per node  | Defines the AST structure of the file, with references to strings and extended data.            |
 //
-// Header (36 bytes)
+// Header (40 bytes)
 // -----------------
 //
 // The header contains the following fields:
 //
-// | Byte offset | Type      | Field                                     |
-// | ----------- | --------- | ----------------------------------------- |
-// | 0           | uint8     | Protocol version                          |
-// | 1           | uint8     | Flags (bit 0: header-only)                |
-// | 2-3         |           | Reserved                                  |
-// | 4-19        | uint128   | Source file content hash (xxh3, LE)       |
-// | 20-23       | uint32    | Byte offset to string offsets section     |
-// | 24-27       | uint32    | Byte offset to string data section        |
-// | 28-31       | uint32    | Byte offset to extended node data section |
-// | 32-35       | uint32    | Byte offset to nodes section              |
-//
-// When the header-only flag (bit 0 of byte 1) is set, the response contains only the 36-byte header
-// with the hash. The section offset fields and all subsequent sections are absent. This is used when the
-// client already has a cached AST with the same content hash.
+// | Byte offset | Type      | Field                                             |
+// | ----------- | --------- | ------------------------------------------------- |
+// | 0           | uint8     | Protocol version                                  |
+// | 1-3         |           | Reserved                                          |
+// | 4-19        | uint128   | Source file content hash (xxh3, LE)               |
+// | 20-23       | uint32    | Parse options (bitmask; bit 0: JSX, bit 1: Force) |
+// | 24-27       | uint32    | Byte offset to string offsets section             |
+// | 28-31       | uint32    | Byte offset to string data section                |
+// | 32-35       | uint32    | Byte offset to extended node data section         |
+// | 36-39       | uint32    | Byte offset to nodes section                      |
 //
 // String offsets (8 bytes per string)
 // -----------------------------------
@@ -237,6 +234,18 @@ func SourceFileHash(sourceFile *ast.SourceFile) string {
 	return fmt.Sprintf("%016x%016x", h.Hi, h.Lo)
 }
 
+// encodeParseOptions encodes the per-file ExternalModuleIndicatorOptions as a uint32 bitmask.
+func encodeParseOptions(opts ast.ExternalModuleIndicatorOptions) uint32 {
+	var bits uint32
+	if opts.JSX {
+		bits |= 1
+	}
+	if opts.Force {
+		bits |= 2
+	}
+	return bits
+}
+
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	hash := sourceFile.Hash
 	var parentIndex, nodeCount, prevIndex uint32
@@ -315,6 +324,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	visitor.VisitEachChild(sourceFile.AsNode())
 
 	metadata := uint32(ProtocolVersion) << 24
+	parseOpts := encodeParseOptions(sourceFile.ParseOptions().ExternalModuleIndicatorOptions)
 	offsetStringTableOffsets := HeaderSize
 	offsetStringTableData := HeaderSize + len(strs.offsets)*4
 	offsetExtendedData := offsetStringTableData + strs.stringLength()
@@ -324,6 +334,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		metadata,
 		uint32(hash.Lo), uint32(hash.Lo >> 32),
 		uint32(hash.Hi), uint32(hash.Hi >> 32),
+		parseOpts,
 		uint32(offsetStringTableOffsets),
 		uint32(offsetStringTableData),
 		uint32(offsetExtendedData),

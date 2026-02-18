@@ -25,6 +25,7 @@ import { SourceFileCache } from "../base/sourceFileCache.ts";
 import {
     findDescendant,
     parseNodeHandle,
+    readParseOptionsKey,
     readSourceFileHash,
     RemoteSourceFile,
 } from "../node.ts";
@@ -257,7 +258,6 @@ export class Project implements BaseProject<true> {
             client,
             sourceFileCache,
             toPath,
-            data.parseOptionsKey,
         );
         this.checker = new Checker(
             snapshotId,
@@ -274,7 +274,6 @@ export class Program implements BaseProgram<true> {
     private client: Client;
     private sourceFileCache: SourceFileCache;
     private toPath: (fileName: string) => Path;
-    private parseOptionsKey: string;
     private decoder = new TextDecoder();
 
     constructor(
@@ -283,14 +282,12 @@ export class Program implements BaseProgram<true> {
         client: Client,
         sourceFileCache: SourceFileCache,
         toPath: (fileName: string) => Path,
-        parseOptionsKey: string,
     ) {
         this.snapshotId = snapshotId;
         this.projectId = projectId;
         this.client = client;
         this.sourceFileCache = sourceFileCache;
         this.toPath = toPath;
-        this.parseOptionsKey = parseOptionsKey;
     }
 
     async getSourceFile(file: DocumentIdentifier): Promise<SourceFile | undefined> {
@@ -298,7 +295,7 @@ export class Program implements BaseProgram<true> {
         const path = this.toPath(fileName);
 
         // Check if we already have a retained cache entry for this (snapshot, project) pair
-        const retained = this.sourceFileCache.getRetained(path, this.parseOptionsKey, this.snapshotId, this.projectId);
+        const retained = this.sourceFileCache.getRetained(path, this.snapshotId, this.projectId);
         if (retained) {
             return retained;
         }
@@ -317,10 +314,11 @@ export class Program implements BaseProgram<true> {
         const binaryData = Uint8Array.from(atob(response.data), c => c.charCodeAt(0));
         const view = new DataView(binaryData.buffer, binaryData.byteOffset, binaryData.byteLength);
         const contentHash = readSourceFileHash(view);
+        const parseOptionsKey = readParseOptionsKey(view);
 
         // Create a new RemoteSourceFile and cache it (set returns existing if hash matches)
         const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
-        return this.sourceFileCache.set(path, sourceFile, this.parseOptionsKey, contentHash, this.snapshotId, this.projectId);
+        return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.projectId);
     }
 }
 

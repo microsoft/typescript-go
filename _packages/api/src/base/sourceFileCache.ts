@@ -48,15 +48,18 @@ export class SourceFileCache {
 
     /**
      * Get a cached source file already retained for the given (snapshot, project) pair.
-     * This does not require a content hash — it returns the entry if one exists
-     * with a matching ref. Used to skip the server request entirely when
+     * This does not require a content hash or parse options key — it returns the entry
+     * if one exists with a matching ref. Used to skip the server request entirely when
      * retainForSnapshot has already carried over the ref.
+     *
+     * A given (snapshot, project) pair always parses a file the same way, so there is
+     * at most one matching entry per ref.
      */
-    getRetained(path: Path, parseOptionsKey: string, snapshotId: string, projectId: string): SourceFile | undefined {
+    getRetained(path: Path, snapshotId: string, projectId: string): SourceFile | undefined {
         const entries = this.cache.get(path);
         if (!entries) return undefined;
         const key = refKey(snapshotId, projectId);
-        const entry = entries.find(e => e.parseOptionsKey === parseOptionsKey && e.refs.has(key));
+        const entry = entries.find(e => e.refs.has(key));
         return entry?.file;
     }
 

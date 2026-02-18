@@ -269,8 +269,6 @@ type ProjectResponse struct {
 	ConfigFileName  string                  `json:"configFileName"`
 	RootFiles       []string                `json:"rootFiles"`
 	CompilerOptions *core.CompilerOptions   `json:"compilerOptions"`
-	// ParseOptionsKey encodes the source-file-independent parse options for this project.
-	ParseOptionsKey string `json:"parseOptionsKey"`
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
@@ -279,24 +277,7 @@ func NewProjectResponse(p *project.Project) *ProjectResponse {
 		ConfigFileName:  p.Name(),
 		RootFiles:       p.CommandLine.FileNames(),
 		CompilerOptions: p.CommandLine.CompilerOptions(),
-		ParseOptionsKey: computeProjectParseOptionsKey(p),
 	}
-}
-
-// computeProjectParseOptionsKey computes the source-file-independent part of the parse cache key.
-// Clients combine this with file-specific information (like the normalized path) for cache lookups.
-func computeProjectParseOptionsKey(p *project.Project) string {
-	opts := p.CommandLine.CompilerOptions()
-	sourceFileAffecting := opts.SourceFileAffecting()
-	// JSX indicator depends on Jsx option and ModuleDetection
-	jsxIndicator := opts.Jsx == core.JsxEmitReactJSX || opts.Jsx == core.JsxEmitReactJSXDev
-	// JSDocParsingMode is always ParseAll for in the API/LSP
-	jsdocMode := ast.JSDocParsingModeParseAll
-	return fmt.Sprintf("%d-%d-%d",
-		core.IfElse(sourceFileAffecting.BindInStrictMode, 1, 0),
-		core.IfElse(jsxIndicator, 1, 0),
-		jsdocMode,
-	)
 }
 
 type GetSymbolAtPositionParams struct {

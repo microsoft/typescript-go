@@ -501,6 +501,90 @@ describe("async Snapshot disposal", () => {
     });
 });
 
+describe("async Source file cache keying across projects", () => {
+    // Three projects share the same file (/src/shared.ts).
+    // The file sits inside a package.json scope with "type": "module".
+    //
+    // Project A: moduleResolution: bundler  (auto detection, bundler doesn't
+    //   trigger isFileForcedToBeModuleByFormat → file parsed as script)
+    // Project B: moduleResolution: bundler, moduleDetection: force
+    //   (force → file parsed as module)
+    // Project C: moduleResolution: nodenext
+    //   (nodenext + type:module → impliedNodeFormat ESNext →
+    //    isFileForcedToBeModuleByFormat → file parsed as module)
+    //
+    // Expected: exactly two distinct source file objects are stored:
+    //   - A gets one (script parse)
+    //   - B and C share another (module parse)
+    const multiProjectFiles: Record<string, string> = {
+        "/package.json": JSON.stringify({ type: "module" }),
+        "/src/shared.ts": `export const x = 1;`,
+        // Project A – bundler, auto detection (default)
+        "/projectA/tsconfig.json": JSON.stringify({
+            compilerOptions: {
+                moduleResolution: "bundler",
+                module: "esnext",
+                strict: true,
+            },
+            files: ["../src/shared.ts"],
+        }),
+        // Project B – bundler, force module detection
+        "/projectB/tsconfig.json": JSON.stringify({
+            compilerOptions: {
+                moduleResolution: "bundler",
+                module: "esnext",
+                moduleDetection: "force",
+                strict: true,
+            },
+            files: ["../src/shared.ts"],
+        }),
+        // Project C – nodenext (type:module → module)
+        "/projectC/tsconfig.json": JSON.stringify({
+            compilerOptions: {
+                moduleResolution: "nodenext",
+                module: "nodenext",
+                strict: true,
+            },
+            files: ["../src/shared.ts"],
+        }),
+    };
+
+    test("different parse modes produce separate cached objects; same parse modes share", async () => {
+        const api = spawnAPI(multiProjectFiles);
+        try {
+            // Open all three projects
+            await api.updateSnapshot({ openProject: "/projectA/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/projectB/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/projectC/tsconfig.json" });
+
+            const projectA = snapshot.getProject("/projectA/tsconfig.json")!;
+            const projectB = snapshot.getProject("/projectB/tsconfig.json")!;
+            const projectC = snapshot.getProject("/projectC/tsconfig.json")!;
+            assert.ok(projectA, "projectA should exist");
+            assert.ok(projectB, "projectB should exist");
+            assert.ok(projectC, "projectC should exist");
+
+            // Fetch the shared file from each project
+            const sfA = await projectA.program.getSourceFile("/src/shared.ts");
+            const sfB = await projectB.program.getSourceFile("/src/shared.ts");
+            const sfC = await projectC.program.getSourceFile("/src/shared.ts");
+            assert.ok(sfA, "sfA should exist");
+            assert.ok(sfB, "sfB should exist");
+            assert.ok(sfC, "sfC should exist");
+
+            // A should differ from B and C (script vs module parse)
+            assert.notStrictEqual(sfA, sfB, "projectA (script) and projectB (module) should have different cached source files");
+            assert.notStrictEqual(sfA, sfC, "projectA (script) and projectC (module) should have different cached source files");
+
+            // B and C should share the same cached object (both module parse, same content hash)
+            assert.strictEqual(sfB, sfC, "projectB and projectC (both module parse) should share the same cached source file");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 test("async Benchmarks", async () => {
     await runBenchmarks(/*singleIteration*/ true);
 });
