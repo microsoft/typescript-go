@@ -141,6 +141,12 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
 				modifiers = b.f.NewModifierList([]*ast.Node{b.f.NewModifier(ast.KindReadonlyKeyword)})
 			}
+			if e.Kind != pseudochecker.PseudoObjectElementKindPropertyAssignment {
+				signature := b.ch.getSignatureFromDeclaration(e.Signature())
+				expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
+				cleanup := b.enterNewScope(e.Signature(), expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
+				defer cleanup()
+			}
 			var newProp *ast.Node
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindMethod:

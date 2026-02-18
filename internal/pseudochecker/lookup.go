@@ -328,6 +328,7 @@ func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 				))
 			} else {
 				results = append(results, NewPseudoObjectMethod(
+					e,
 					e.Name(),
 					optional,
 					ch.cloneParameters(e.ParameterList()),
@@ -362,12 +363,14 @@ func (ch *PseudoChecker) getAccessorMember(accessor *ast.Node, name *ast.Node) *
 
 		if ast.IsGetAccessorDeclaration(accessor) {
 			return NewPseudoGetAccessor(
+				accessor,
 				name,
 				false,
 				ch.typeFromAccessor(accessor),
 			)
 		} else {
 			return NewPseudoSetAccessor(
+				accessor,
 				name,
 				false,
 				ch.cloneParameters(accessor.AsSetAccessorDeclaration().Parameters)[0],

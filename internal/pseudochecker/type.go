@@ -216,6 +216,19 @@ type PseudoObjectElement struct {
 
 func (e *PseudoObjectElement) AsPseudoObjectElement() *PseudoObjectElement { return e }
 
+func (e *PseudoObjectElement) Signature() *ast.Node {
+	switch e.Kind {
+	case PseudoObjectElementKindMethod:
+		return e.AsPseudoObjectMethod().Signature
+	case PseudoObjectElementKindSetAccessor:
+		return e.AsPseudoSetAccessor().Signature
+	case PseudoObjectElementKindGetAccessor:
+		return e.AsPseudoGetAccessor().Signature
+	default:
+		return nil
+	}
+}
+
 type PseudoObjectElementKind int8
 
 const (
@@ -240,12 +253,14 @@ func newPseudoObjectElement(kind PseudoObjectElementKind, name *ast.Node, option
 
 type PseudoObjectMethod struct {
 	PseudoObjectElement
+	Signature  *ast.Node
 	Parameters []*PseudoParameter
 	ReturnType *PseudoType
 }
 
-func NewPseudoObjectMethod(name *ast.Node, optional bool, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
+func NewPseudoObjectMethod(signature *ast.Node, name *ast.Node, optional bool, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
 	return newPseudoObjectElement(PseudoObjectElementKindMethod, name, optional, &PseudoObjectMethod{
+		Signature:  signature,
 		Parameters: parameters,
 		ReturnType: returnType,
 	})
@@ -274,11 +289,13 @@ func (e *PseudoObjectElement) AsPseudoPropertyAssignment() *PseudoPropertyAssign
 
 type PseudoSetAccessor struct {
 	PseudoObjectElement
+	Signature *ast.Node
 	Parameter *PseudoParameter
 }
 
-func NewPseudoSetAccessor(name *ast.Node, optional bool, p *PseudoParameter) *PseudoObjectElement {
+func NewPseudoSetAccessor(signature *ast.Node, name *ast.Node, optional bool, p *PseudoParameter) *PseudoObjectElement {
 	return newPseudoObjectElement(PseudoObjectElementKindSetAccessor, name, optional, &PseudoSetAccessor{
+		Signature: signature,
 		Parameter: p,
 	})
 }
@@ -289,12 +306,14 @@ func (e *PseudoObjectElement) AsPseudoSetAccessor() *PseudoSetAccessor {
 
 type PseudoGetAccessor struct {
 	PseudoObjectElement
-	Type *PseudoType
+	Signature *ast.Node
+	Type      *PseudoType
 }
 
-func NewPseudoGetAccessor(name *ast.Node, optional bool, t *PseudoType) *PseudoObjectElement {
+func NewPseudoGetAccessor(signature *ast.Node, name *ast.Node, optional bool, t *PseudoType) *PseudoObjectElement {
 	return newPseudoObjectElement(PseudoObjectElementKindGetAccessor, name, optional, &PseudoGetAccessor{
-		Type: t,
+		Signature: signature,
+		Type:      t,
 	})
 }
 
