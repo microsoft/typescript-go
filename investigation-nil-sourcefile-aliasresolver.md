@@ -6,9 +6,7 @@ A nil pointer dereference (SIGSEGV) occurs in `aliasResolver.GetSourceFile` when
 `binder.BindSourceFile` is called on a nil `*ast.SourceFile`. This crashes the
 language server entirely, requiring a manual restart.
 
-## Root Cause
-
-### Immediate Cause
+## Immediate Cause
 
 In `internal/ls/autoimport/aliasresolver.go:80-84`:
 
@@ -24,29 +22,12 @@ func (r *aliasResolver) GetSourceFile(fileName string) *ast.SourceFile {
 this before passing it to `binder.BindSourceFile()`, which immediately calls
 `file.IsBound()` — a nil pointer dereference.
 
-### Why `host.GetSourceFile()` Returns nil
+The checker at `checker.go:14809` already handles nil returns from
+`GetSourceFileForResolvedModule`, so returning nil is correct behavior. The bug
+is that `aliasResolver.GetSourceFile` crashes *internally* before it gets a
+chance to return nil.
 
-The host implementation is `autoImportRegistryCloneHost.GetSourceFile` in
-`internal/project/autoimport.go:148-167`:
-
-```go
-func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile {
-    fh := a.fs.GetFile(fileName)
-    if fh == nil {
-        return nil  // <-- returns nil when file doesn't exist
-    }
-    // ... parse and return
-}
-```
-
-The underlying `SnapshotFS.GetFileByPath` can return nil when:
-1. The file doesn't exist on disk
-2. The file was deleted between snapshots
-3. A module resolves to a path that doesn't exist in the current snapshot
-
-### The Trigger Scenario
-
-The crash happens during auto-import alias resolution. The call chain is:
+## Call Chain
 
 ```
 checker.resolveAlias
@@ -60,72 +41,144 @@ checker.resolveAlias
                 → binder.BindSourceFile(nil) → CRASH
 ```
 
-The `aliasResolver` is a lightweight implementation of `checker.Program` used
-specifically for auto-import. Unlike the real `compiler.Program`:
+## Root Cause Analysis: Why Module Resolution Succeeds but GetSourceFile Returns nil
 
-1. **`compiler.Program.GetSourceFile`** looks up files from `filesByPath` map — 
-   it only contains files that were successfully loaded during program construction,
-   so it never returns a file that needs binding but doesn't exist.
+### Background
 
-2. **`aliasResolver.GetSourceFile`** resolves files on-demand via the host's 
-   `SnapshotFS`. Module resolution can resolve to a file path, but the file may
-   not actually exist in the current snapshot (e.g., the file was just deleted,
-   or module resolution points to a file that hasn't been loaded yet).
+The `aliasResolver` acts as a lightweight `checker.Program` for auto-import. Unlike
+`compiler.Program` (which pre-loads all files), the alias resolver loads files
+on-demand. The key question is: how can module resolution succeed (finding a file
+via `FileExists`) but `GetSourceFile` subsequently fail for the same file?
 
-### Why This Doesn't Happen with `compiler.Program`
+### VFS Architecture
 
-In `compiler.Program.GetSourceFileForResolvedModule` (`program.go:1564-1578`):
+The auto-import host wraps `autoImportBuilderFS` with `sourceFS`:
+
+```
+autoImportRegistryCloneHost
+  └── sourceFS (implements vfs.FS)
+        └── autoImportBuilderFS (implements FileSource)
+              └── snapshotFSBuilder
+                    ├── overlays (open files)
+                    ├── diskFiles (dirty.SyncMap, from previous snapshots)
+                    └── fs (cachedvfs.FS → OS filesystem)
+```
+
+The module resolver uses `host.FS()` = `sourceFS` for file existence checks.
+`host.GetSourceFile()` also goes through `sourceFS.GetFile()` → `autoImportBuilderFS`.
+
+### The `sourceFS.FileExists` Two-Stage Check
+
+`sourceFS.FileExists` has a critical fallback path:
 
 ```go
-func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
-    file := p.GetSourceFile(fileName)     // map lookup, may return nil
-    if file == nil {
-        filename := p.GetParseFileRedirect(fileName)
-        if filename != "" {
-            return p.GetSourceFile(filename)
-        }
+func (fs *sourceFS) FileExists(path string) bool {
+    if fh := fs.GetFile(path); fh != nil {
+        return true
     }
-    return file  // may return nil, but caller (checker) handles nil
+    return fs.source.FS().FileExists(path)  // fallback to raw VFS
 }
 ```
 
-The checker at line 14806-14809 already handles a nil return:
+The fallback `fs.source.FS().FileExists(path)` goes to `snapshotFSBuilder.fs`,
+which is a `cachedvfs.FS`. Its `FileExists` is **cached** but its `ReadFile` is
+**NOT cached** (always passes through to OS).
+
+### Leading Theory: Stale `cachedvfs.FileExists` Cache
+
+The most plausible scenario involves the `cachedvfs` having a stale `FileExists`
+cache entry:
+
+1. A file (e.g., `@types/node/fs.d.ts`) exists in `diskFiles` from a previous 
+   snapshot and is also cached as `true` in `cachedvfs.fileExistsCache`.
+2. The file gets deleted from disk (e.g., `npm install` running).
+3. `invalidateNodeModulesCache()` marks the `diskFiles` entry as `needsReload=true`.
+4. During auto-import registry building, the checker calls module resolution via
+   `aliasResolver.GetResolvedModule`.
+5. Module resolution calls `sourceFS.FileExists(path)`:
+   - `GetFile` → `autoImportBuilderFS` → `diskFiles.Load` finds the dirty entry → 
+     `reloadEntryIfNeeded` tries to re-read from disk → fails → deletes entry → 
+     returns nil → `GetFile` returns nil.
+   - **Fallback**: `snapshotFSBuilder.fs.FileExists(path)` → `cachedvfs` returns 
+     stale `true` from its cache.
+   - `FileExists` returns `true` → module resolution succeeds.
+6. The checker calls `GetSourceFileForResolvedModule(resolvedFileName)` → 
+   `GetSourceFile(resolvedFileName)`.
+7. `sourceFS.GetFile` → `autoImportBuilderFS.GetFile`:
+   - `diskFiles.Load` now finds the base map entry (dirty entry was deleted, base 
+     entry from previous snapshot still exists with `needsReload=false`) → returns 
+     stale file handle → `GetSourceFile` succeeds with stale data.
+
+This scenario actually results in stale data being served rather than nil. But
+there are edge cases within the `dirty.SyncMap` that might not fall back to the
+base map cleanly, especially under concurrent access patterns.
+
+### Alternative Theory: Path Mismatch from Symlink Resolution
+
+Module resolution resolves symlinks via `createResolvedModuleHandlingSymlink`:
 
 ```go
-sourceFile = c.program.GetSourceFileForResolvedModule(resolvedModule.ResolvedFileName)
-if sourceFile != nil {  // properly guards against nil
-    // ...
+func (r *resolutionState) getOriginalAndResolvedFileName(fileName string) (string, string) {
+    resolvedFileName := r.realPath(fileName)
+    ...
+    return fileName, resolvedFileName  // originalPath=symlink, resolvedFileName=realpath
 }
 ```
 
-So the checker is fine with `GetSourceFileForResolvedModule` returning nil.
-The problem is that `aliasResolver.GetSourceFile` crashes *internally* before
-it even gets a chance to return nil.
+The `ResolvedFileName` stored in the resolved module is the **realpath**, but
+`FileExists` during resolution was called on the **original (symlink) path**.
 
-### Why Module Resolution Succeeds But File Doesn't Exist
+If the file handle was stored in `autoImportBuilderFS.untrackedFiles` under the
+symlink path's key, then `GetSourceFile` called with the realpath would miss the
+cache. It would then attempt to read from disk at the realpath. If the realpath
+is valid, this should succeed. But if there's any path normalization difference
+between what `ReadFile` receives and the actual filesystem path, this could fail.
 
-Module resolution (`aliasResolver.GetResolvedModule`) uses a `module.Resolver`
-which resolves based on filesystem state (checking `FileExists`, reading 
-`package.json`, etc.). However, the `aliasResolver` is used during snapshot 
-transitions — when the user is actively editing code (e.g., pasting into a git
-diff viewer). Between:
+### Incomplete Understanding
 
-1. Module resolution checking `FileExists` (which reads from the VFS)
-2. `GetSourceFile` trying to read/parse the file
+The exact triggering condition remains uncertain. The scenarios investigated 
+don't perfectly explain a nil return from `GetSourceFile` when module resolution
+succeeded via the same VFS. Possible remaining gaps:
 
-...the snapshot state may have changed, or the file may exist at the VFS layer
-but not be loadable via the `SnapshotFS` file handle mechanism (e.g., the file
-exists on disk but the overlay/cache hasn't populated it).
+1. **Concurrent access to `dirty.SyncMap`**: During the second pass in
+   `updateIndexes`, `diskFiles` entries might be mutated by concurrent operations
+   from other snapshot building phases.
+2. **`wrapvfs` Realpath transformation**: When the module resolver uses a custom
+   `Realpath` (via `getModuleResolver`), the resolved path might not correspond
+   to a path that `autoImportBuilderFS.GetFile` can read.
+3. **Edge case in `dirty.SyncMap` after deletion + base map interaction**: After
+   an entry is deleted in the dirty map, the next `Load` might create a new
+   entry from the base map. The exact behavior under rapid concurrent access
+   needs further investigation.
 
-There's also a second possible scenario: module resolution resolved to a `.d.ts`
-or other file that exists on disk but whose path normalization differs from what
-`SnapshotFS.GetFile` expects.
+## Additional Bug Found
+
+In `registry.go:createAliasResolver` (line ~1072-1076), there's another nil-unsafe
+call to `binder.BindSourceFile`:
+
+```go
+wg.Go(func() {
+    file := b.host.GetSourceFile(realpathFileName, realpathPath)
+    binder.BindSourceFile(file)  // <-- also crashes if file is nil
+    rootFiles[i] = file
+})
+```
+
+However, this is partly mitigated by the nil filter at lines 1080-1082:
+```go
+rootFiles = slices.DeleteFunc(rootFiles, func(f *ast.SourceFile) bool {
+    return f == nil
+})
+```
+
+This filter handles the case where `GetSourceFile` returns nil, but only
+*after* the crash in `binder.BindSourceFile`. This is a separate bug that
+should also be fixed.
 
 ## Fix
 
-Add nil guards in both `GetSourceFile` and the `updateIndexes` call site:
+Add nil guards in `GetSourceFile` (the immediate crash site):
 
-### `aliasresolver.go:GetSourceFile`
 ```go
 func (r *aliasResolver) GetSourceFile(fileName string) *ast.SourceFile {
     file := r.host.GetSourceFile(fileName, r.toPath(fileName))
@@ -137,18 +190,12 @@ func (r *aliasResolver) GetSourceFile(fileName string) *ast.SourceFile {
 }
 ```
 
-### `registry.go:updateIndexes` (line ~783)
+And in `registry.go:updateIndexes` (line ~783) where `GetSourceFile` result 
+is used without nil check:
+
 ```go
 sourceFile := aliasResolver.GetSourceFile(source.fileName)
 if sourceFile == nil {
     return true
 }
 ```
-
-## Impact
-
-- The fix is minimal and defensive
-- The checker already handles nil returns from `GetSourceFileForResolvedModule`
-  (see checker.go:14809), so returning nil is the correct behavior
-- The `extractFromFile` function also doesn't handle nil (would crash on 
-  `file.Symbol` access), so the guard in `updateIndexes` is also needed

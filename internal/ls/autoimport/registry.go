@@ -1071,7 +1071,9 @@ func (b *registryBuilder) extractPackages(
 			}
 			wg.Go(func() {
 				file := b.host.GetSourceFile(realpathFileName, realpathPath)
-				binder.BindSourceFile(file)
+				if file != nil {
+					binder.BindSourceFile(file)
+				}
 				rootFiles[i] = file
 			})
 		}
