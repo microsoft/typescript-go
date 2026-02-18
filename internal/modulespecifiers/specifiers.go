@@ -287,7 +287,7 @@ func GetEachFileNameOfModule(
 			if !(shouldFilterIgnoredPaths && containsIgnoredPath(p)) {
 				IsInNodeModules := ContainsNodeModules(p)
 				if pnpApi := host.PnpApi(); pnpApi != nil {
-					IsInNodeModules = IsInNodeModules || pnpApi.IsInPnpModule(importingFileName, p)
+					IsInNodeModules = IsInNodeModules || pnpApi.IsInPnpModule(p, importingFileName)
 				}
 
 				results = append(results, ModulePath{
@@ -350,7 +350,7 @@ func GetEachFileNameOfModule(
 			if !(shouldFilterIgnoredPaths && containsIgnoredPath(p)) {
 				IsInNodeModules := ContainsNodeModules(p)
 				if pnpApi := host.PnpApi(); pnpApi != nil {
-					IsInNodeModules = IsInNodeModules || pnpApi.IsInPnpModule(importingFileName, p)
+					IsInNodeModules = IsInNodeModules || pnpApi.IsInPnpModule(p, importingFileName)
 				}
 
 				results = append(results, ModulePath{
@@ -764,11 +764,12 @@ func tryGetModuleNameAsPnpPackage(
 		fromInfo := pnpApi.GetPackage(fromLocator)
 
 		for i := range fromInfo.PackageDependencies {
-			isAlias := fromInfo.PackageDependencies[i].IsAlias()
-			if isAlias && fromInfo.PackageDependencies[i].AliasName == toLocator.Name && fromInfo.PackageDependencies[i].Reference == toLocator.Reference {
+			dep := fromInfo.PackageDependencies[i]
+			isAlias := dep.IsAlias()
+			if isAlias && dep.AliasName == toLocator.Name && dep.Reference == toLocator.Reference {
 				pnpPackageName = toLocator.Name
 				break
-			} else if fromInfo.PackageDependencies[i].Ident == toLocator.Name && fromInfo.PackageDependencies[i].Reference == toLocator.Reference {
+			} else if dep.Ident == toLocator.Name && dep.Reference == toLocator.Reference {
 				pnpPackageName = toLocator.Name
 				break
 			}

@@ -352,11 +352,24 @@ func (p *PnpApi) GetPackageLocationAbsolutePath(packageInfo *PackageInfo) string
 	return tspath.RemoveTrailingDirectorySeparators(tspath.ResolvePath(p.manifest.dirPath, packageLocation))
 }
 
-// Checks if fromFileName and toFileName are in different pnp modules
-func (p *PnpApi) IsInPnpModule(fromFileName string, toFileName string) bool {
+// Checks if toFileName is in a module defined in the dependencies of fromFileName
+func (p *PnpApi) IsInPnpModule(toFileName string, fromFileName string) bool {
 	fromLocator, _ := p.FindLocator(fromFileName)
 	toLocator, _ := p.FindLocator(toFileName)
-	return fromLocator != nil && toLocator != nil && fromLocator.Name != toLocator.Name
+
+	if fromLocator != nil && toLocator != nil && fromLocator.Name != toLocator.Name {
+		fromInfo := p.GetPackage(fromLocator)
+		for _, dep := range fromInfo.PackageDependencies {
+			if dep.Ident == toLocator.Name {
+				return true
+			}
+
+			if dep.IsAlias() && dep.AliasName == toLocator.Name {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (p *PnpApi) AppendPnpTypeRoots(nmTypes []string, currentDirectory string, compilerOptions *core.CompilerOptions, nmFromConfig bool) ([]string, bool) {
