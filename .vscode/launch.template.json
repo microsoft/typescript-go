@@ -52,10 +52,10 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
-            "program": "${workspaceFolder}/cmd/tsgo",
+            "program": "${workspaceFolder}/internal/lsp",
             "args": [
                 "-test.run",
-                "TestReplay",
+                "TestReplay/$",
                 "-replay",
                 "path_to_replay_log.txt",
                 "-testDir",

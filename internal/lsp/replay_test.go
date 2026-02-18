@@ -1,4 +1,4 @@
-package main
+package lsp_test
 
 import (
 	"bufio"
@@ -38,7 +38,9 @@ type rawMessage struct {
 }
 
 func TestReplay(t *testing.T) {
+	t.Parallel()
 	if replay == nil || *replay == "" {
+		panic(":aaaa")
 		t.Skip("no replay file specified")
 	}
 	if testDir == nil || *testDir == "" {
@@ -48,7 +50,8 @@ func TestReplay(t *testing.T) {
 
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
-	typingsLocation := getGlobalTypingsCacheLocation()
+	// typingsLocation := getGlobalTypingsCacheLocation()
+	typingsLocation := "" // !!!
 	serverOpts := lsp.ServerOptions{
 		Err:                os.Stderr,
 		Cwd:                core.Must(os.Getwd()),
@@ -63,7 +66,12 @@ func TestReplay(t *testing.T) {
 	}
 
 	client, closeClient := lsptestutil.NewLSPClient(t, serverOpts, nil)
-	defer closeClient()
+	defer func() {
+		err := closeClient()
+		if err != nil {
+			t.Errorf("goroutine error: %v", err)
+		}
+	}()
 
 	f, err := os.Open(*replay)
 	if err != nil {
@@ -108,6 +116,9 @@ func TestReplay(t *testing.T) {
 			t.Fatalf("failed to parse message: %v", err)
 		}
 		messages = append(messages, &rawMsg)
+	}
+	if err := scanner.Err(); err != nil {
+		t.Fatalf("error scanning replay file: %v", err)
 	}
 
 	if simple != nil && *simple {
