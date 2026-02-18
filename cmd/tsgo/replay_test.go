@@ -21,10 +21,18 @@ import (
 
 var replay = flag.String("replay", "", "Path to replay file")
 var testDir = flag.String("testDir", "", "Path to project directory")
+var simple = flag.Bool("simple", false, "Replay only file opening and closing, plus the final request")
+var superSimple = flag.Bool("superSimple", false, "Replay only the final file opening and the final request")
 
 type initialArguments struct {
 	RootDirUriPlaceholder string `json:"rootDirUriPlaceholder"`
 	RootDirPlaceholder    string `json:"rootDirPlaceholder"`
+}
+
+type rawMessage struct {
+	Kind   string     `json:"kind"`
+	Method string     `json:"method"`
+	Params json.Value `json:"params"`
 }
 
 func TestReplay(t *testing.T) {
@@ -88,20 +96,66 @@ func TestReplay(t *testing.T) {
 		rootDirUriPlaceholder, string(testDirUri),
 	)
 
+	var messages []*rawMessage
 	var id int32 = 1
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = rootDirReplacer.Replace(line)
-		var rawMsg struct {
-			Kind   string     `json:"kind"`
-			Method string     `json:"method"`
-			Params json.Value `json:"params"`
-		}
+		var rawMsg rawMessage
 		err := json.Unmarshal([]byte(line), &rawMsg)
 		if err != nil {
 			t.Fatalf("failed to parse message: %v", err)
 		}
+		messages = append(messages, &rawMsg)
+	}
 
+	if simple != nil && *simple {
+		// Include only initialization, file opening/changing/closing, and shutdown messages, plus the final request.
+		var newMessages []*rawMessage
+		var i int
+		for i = 0; i < len(messages) && isInitializationMessage(messages[i]); i++ {
+			newMessages = append(newMessages, messages[i])
+		}
+		var j int
+		for j = len(messages) - 1; j >= 0 && isExitMessage(messages[j]); j-- {
+		}
+		for k := i; k <= j; k++ {
+			msg := messages[k]
+			if msg.Method == "textDocument/didOpen" || msg.Method == "textDocument/didChange" || msg.Method == "textDocument/didClose" {
+				newMessages = append(newMessages, msg)
+			}
+		}
+		for k := max(i, j); k < len(messages); k++ {
+			newMessages = append(newMessages, messages[k])
+		}
+		messages = newMessages
+	} else if superSimple != nil && *superSimple {
+		// Include only initialization, shutdown, the last file open and the final request.
+		// We assume here the final request will be for the file that was opened last.
+		var newMessages []*rawMessage
+		var i int
+		for i = 0; i < len(messages) && isInitializationMessage(messages[i]); i++ {
+			newMessages = append(newMessages, messages[i])
+		}
+
+		var j int
+		for j = len(messages) - 1; j >= 0 && isExitMessage(messages[j]); j-- {
+		}
+		var openIdx int
+		for openIdx = j; openIdx >= i; openIdx-- {
+			msg := messages[openIdx]
+			if msg.Method == "textDocument/didOpen" {
+				newMessages = append(newMessages, msg)
+				break
+			}
+		}
+		for k := max(openIdx+1, j); k < len(messages); k++ {
+			newMessages = append(newMessages, messages[k])
+		}
+		messages = newMessages
+	}
+
+	for _, rawMsg := range messages {
 		var kind jsonrpc.MessageKind
 		var reqID *jsonrpc.ID
 		switch rawMsg.Kind {
@@ -142,7 +196,7 @@ func TestReplay(t *testing.T) {
 				t.Fatalf("failed to send request for method %s", rawMsg.Method)
 			}
 			if response.Error != nil {
-				t.Fatalf("server returned error for method %s: %v", rawMsg.Method, response.Error)
+				t.Fatalf("server returned error for method %s params %s:\n%v", rawMsg.Method, rawMsg.Params, response.Error)
 			}
 		case jsonrpc.MessageKindNotification:
 			client.WriteMsg(t, &msg)
@@ -150,4 +204,12 @@ func TestReplay(t *testing.T) {
 			t.Fatalf("unknown message kind: %s", rawMsg.Kind)
 		}
 	}
+}
+
+func isInitializationMessage(msg *rawMessage) bool {
+	return msg.Method == "initialize" || msg.Method == "initialized"
+}
+
+func isExitMessage(msg *rawMessage) bool {
+	return msg.Method == "exit" || msg.Method == "shutdown"
 }
