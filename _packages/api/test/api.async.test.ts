@@ -4,6 +4,7 @@ import {
     TypeFlags,
 } from "@typescript/api/async";
 import { createVirtualFileSystem } from "@typescript/api/fs";
+import type { FileSystem } from "@typescript/api/fs";
 import {
     cast,
     isImportDeclaration,
@@ -45,8 +46,8 @@ describe("Snapshot", () => {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             assert.ok(snapshot);
             assert.ok(snapshot.id);
-            assert.ok(snapshot.projects.length > 0);
-            assert.ok(snapshot.projects[0].configFileName);
+            assert.ok(snapshot.getProjects().length > 0);
+            assert.ok(snapshot.getProject("/tsconfig.json"));
         }
         finally {
             await api.close();
@@ -57,7 +58,7 @@ describe("Snapshot", () => {
         const api = spawnAPI();
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.projects[0];
+            const project = snapshot.getProject("/tsconfig.json")!;
             const symbol = await project.checker.getSymbolAtPosition("/src/index.ts", 9);
             assert.ok(symbol);
             assert.equal(symbol.name, "foo");
@@ -72,7 +73,7 @@ describe("Snapshot", () => {
         const api = spawnAPI();
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.projects[0];
+            const project = snapshot.getProject("/tsconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
             const node = cast(
@@ -94,7 +95,7 @@ describe("Snapshot", () => {
         const api = spawnAPI();
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.projects[0];
+            const project = snapshot.getProject("/tsconfig.json")!;
             const symbol = await project.checker.getSymbolAtPosition("/src/index.ts", 9);
             assert.ok(symbol);
             const type = await project.checker.getTypeOfSymbol(symbol);
@@ -112,7 +113,7 @@ describe("SourceFile", () => {
         const api = spawnAPI();
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.projects[0];
+            const project = snapshot.getProject("/tsconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.ts");
 
             assert.ok(sourceFile);
@@ -128,7 +129,7 @@ describe("SourceFile", () => {
         const api = spawnAPI();
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.projects[0];
+            const project = snapshot.getProject("/tsconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.ts");
 
             assert.ok(sourceFile);
@@ -153,7 +154,7 @@ test("async unicode escapes", async () => {
     });
     try {
         const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.projects[0];
+        const project = snapshot.getProject("/tsconfig.json")!;
 
         for (const file of ["/src/1.ts", "/src/2.ts"]) {
             const sourceFile = await project.program.getSourceFile(file);
@@ -176,7 +177,7 @@ test("async Object equality", async () => {
     const api = spawnAPI();
     try {
         const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.projects[0];
+        const project = snapshot.getProject("/tsconfig.json")!;
         // Same symbol returned from same snapshot's checker
         assert.strictEqual(
             await project.checker.getSymbolAtPosition("/src/index.ts", 9),
@@ -192,7 +193,7 @@ test("async Snapshot dispose", async () => {
     const api = spawnAPI();
     try {
         const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.projects[0];
+        const project = snapshot.getProject("/tsconfig.json")!;
         const symbol = await project.checker.getSymbolAtPosition("/src/index.ts", 9);
         assert.ok(symbol);
 
@@ -203,7 +204,7 @@ test("async Snapshot dispose", async () => {
 
         // After dispose, snapshot methods should throw
         assert.throws(() => {
-            snapshot.getProject(project.id);
+            snapshot.getProject("/tsconfig.json");
         }, {
             name: "Error",
             message: "Snapshot is disposed",
@@ -222,8 +223,8 @@ describe("async Multiple snapshots", () => {
             const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
 
             // Both can fetch source files
-            const sf1 = await snap1.projects[0].program.getSourceFile("/src/index.ts");
-            const sf2 = await snap2.projects[0].program.getSourceFile("/src/index.ts");
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
             assert.ok(sf1);
             assert.ok(sf2);
 
@@ -233,7 +234,7 @@ describe("async Multiple snapshots", () => {
             assert.ok(!snap2.isDisposed());
 
             // snap2 still works after snap1 is disposed
-            const symbol = await snap2.projects[0].checker.getSymbolAtPosition("/src/index.ts", 9);
+            const symbol = await snap2.getProject("/tsconfig.json")!.checker.getSymbolAtPosition("/src/index.ts", 9);
             assert.ok(symbol);
             assert.equal(symbol.name, "foo");
         }
@@ -243,23 +244,92 @@ describe("async Multiple snapshots", () => {
     });
 
     test("each snapshot has its own server-side lifecycle", async () => {
-        const api = spawnAPI();
+        const { api, fs } = spawnAPIWithFS();
         try {
             const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+
+            // Verify initial state
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf1);
+            assert.equal(sf1.text, `export const foo = 42;`);
+
+            // Mutate the file and create a new snapshot with the change
+            fs.writeFile!("/src/foo.ts", `export const foo = "changed";`);
+            const snap2 = await api.updateSnapshot({
+                fileChanges: { changed: ["/src/foo.ts"] },
+            });
+
+            // snap2 should reflect the updated content
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf2);
+            assert.equal(sf2.text, `export const foo = "changed";`);
+
+            // snap1's source file should still have the original content
+            assert.equal(sf1.text, `export const foo = 42;`);
 
             await snap1.dispose();
 
-            // snap2 still works independently
-            const symbol = await snap2.projects[0].checker.getSymbolAtPosition("/src/index.ts", 9);
+            // snap2 still works independently after snap1 is disposed
+            const symbol = await snap2.getProject("/tsconfig.json")!.checker.getSymbolAtPosition("/src/index.ts", 9);
             assert.ok(symbol);
 
             await snap2.dispose();
 
-            // Both are disposed, new snapshot works fine
-            const snap3 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const sf = await snap3.projects[0].program.getSourceFile("/src/index.ts");
+            // Both are disposed, new snapshot works fine with latest content
+            const snap3 = await api.updateSnapshot();
+            const sf3 = await snap3.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf3);
+            assert.equal(sf3.text, `export const foo = "changed";`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("adding a new file is reflected in the next snapshot", async () => {
+        const { api, fs } = spawnAPIWithFS();
+        try {
+            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+
+            // Add a brand new file
+            fs.writeFile!("/src/bar.ts", `export const bar = true;`);
+            const snap2 = await api.updateSnapshot({
+                fileChanges: { created: ["/src/bar.ts"] },
+            });
+
+            const sf = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/bar.ts");
             assert.ok(sf);
+            assert.equal(sf.text, `export const bar = true;`);
+
+            // Original snapshot shouldn't have the new file
+            const sfOld = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/bar.ts");
+            assert.equal(sfOld, undefined);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("multiple sequential edits produce correct snapshots", async () => {
+        const { api, fs } = spawnAPIWithFS();
+        try {
+            await api.updateSnapshot({ openProject: "/tsconfig.json" });
+
+            const versions = [
+                `export const foo = 1;`,
+                `export const foo = 2;`,
+                `export const foo = 3;`,
+            ];
+
+            for (const version of versions) {
+                fs.writeFile!("/src/foo.ts", version);
+                const snap = await api.updateSnapshot({
+                    fileChanges: { changed: ["/src/foo.ts"] },
+                });
+                const sf = await snap.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+                assert.ok(sf);
+                assert.equal(sf.text, version);
+            }
         }
         finally {
             await api.close();
@@ -272,7 +342,7 @@ describe("async Source file caching", () => {
         const api = spawnAPI();
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.projects[0];
+            const project = snapshot.getProject("/tsconfig.json")!;
             const sf1 = await project.program.getSourceFile("/src/index.ts");
             const sf2 = await project.program.getSourceFile("/src/index.ts");
             assert.ok(sf1);
@@ -289,12 +359,64 @@ describe("async Source file caching", () => {
             const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             // Fetch from snap1 first (populates cache), then snap2 (cache hit via hash)
-            const sf1 = await snap1.projects[0].program.getSourceFile("/src/index.ts");
-            const sf2 = await snap2.projects[0].program.getSourceFile("/src/index.ts");
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
             assert.ok(sf1);
             assert.ok(sf2);
             // Same content hash → cache hit → same object
             assert.strictEqual(sf1, sf2, "Same file with same content should share cached object");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("modified file returns a different source file object", async () => {
+        const { api, fs } = spawnAPIWithFS();
+        try {
+            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf1);
+            assert.equal(sf1.text, `export const foo = 42;`);
+
+            // Mutate the file in the VFS
+            fs.writeFile!("/src/foo.ts", `export const foo = 100;`);
+
+            // Notify the server about the change
+            const snap2 = await api.updateSnapshot({
+                fileChanges: { changed: ["/src/foo.ts"] },
+            });
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf2);
+            assert.equal(sf2.text, `export const foo = 100;`);
+
+            // Different content → different object
+            assert.notStrictEqual(sf1, sf2, "Modified file should return a new source file object");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("unmodified file retains cached object across file change notification", async () => {
+        const { api, fs } = spawnAPIWithFS();
+        try {
+            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
+            assert.ok(sf1);
+
+            // Mutate a different file
+            fs.writeFile!("/src/foo.ts", `export const foo = 999;`);
+
+            // Notify the server about the change to foo.ts only
+            const snap2 = await api.updateSnapshot({
+                fileChanges: { changed: ["/src/foo.ts"] },
+            });
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
+            assert.ok(sf2);
+
+            // index.ts wasn't changed — should still get cached object
+            assert.strictEqual(sf1, sf2, "Unchanged file should return cached object across snapshots");
         }
         finally {
             await api.close();
@@ -306,7 +428,7 @@ describe("async Source file caching", () => {
         try {
             const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             // Fetch from snap1 to populate cache
-            const sf1 = await snap1.projects[0].program.getSourceFile("/src/index.ts");
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
             assert.ok(sf1);
 
             // snap2 retains snap1's cache refs for unchanged files via snapshot changes
@@ -316,9 +438,34 @@ describe("async Source file caching", () => {
             await snap1.dispose();
 
             // Fetching from snap2 should still return the cached object
-            const sf2 = await snap2.projects[0].program.getSourceFile("/src/index.ts");
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.ts");
             assert.ok(sf2);
             assert.strictEqual(sf1, sf2, "Cache entry should survive when retained by the next snapshot");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("invalidateAll causes all files to be re-fetched", async () => {
+        const { api, fs } = spawnAPIWithFS();
+        try {
+            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf1);
+            assert.equal(sf1.text, `export const foo = 42;`);
+
+            // Mutate the file
+            fs.writeFile!("/src/foo.ts", `export const foo = "hello";`);
+
+            // Use invalidateAll to force re-fetch
+            const snap2 = await api.updateSnapshot({
+                fileChanges: { invalidateAll: true },
+            });
+            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.ts");
+            assert.ok(sf2);
+            assert.equal(sf2.text, `export const foo = "hello";`);
+            assert.notStrictEqual(sf1, sf2, "invalidateAll should produce new source file objects");
         }
         finally {
             await api.close();
@@ -358,10 +505,20 @@ test("async Benchmarks", async () => {
     await runBenchmarks(/*singleIteration*/ true);
 });
 
-function spawnAPI(files: Record<string, string> = defaultFiles) {
+function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
     return new API({
         cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
         tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         fs: createVirtualFileSystem(files),
     });
+}
+
+function spawnAPIWithFS(files: Record<string, string> = { ...defaultFiles }): { api: API; fs: FileSystem; } {
+    const fs = createVirtualFileSystem(files);
+    const api = new API({
+        cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
+        tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+        fs,
+    });
+    return { api, fs };
 }

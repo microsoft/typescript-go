@@ -10,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -105,11 +107,95 @@ type InitializeResponse struct {
 	CurrentDirectory string `json:"currentDirectory"`
 }
 
+// DocumentIdentifier identifies a document by either a file name (plain string) or a URI object.
+// On the wire it is string | { uri: string }.
+type DocumentIdentifier struct {
+	FileName string              `json:"fileName,omitempty"`
+	URI      lsproto.DocumentUri `json:"uri,omitempty"`
+}
+
+var _ json.UnmarshalerFrom = (*DocumentIdentifier)(nil)
+
+func (d *DocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) error {
+	// Try reading as a plain string first
+	tok, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	switch tok.Kind() {
+	case '"':
+		d.FileName = tok.String()
+		return nil
+	case '{':
+		// Read the object fields
+		for dec.PeekKind() != '}' {
+			key, err := dec.ReadToken()
+			if err != nil {
+				return err
+			}
+			val, err := dec.ReadToken()
+			if err != nil {
+				return err
+			}
+			if key.String() == "uri" {
+				d.URI = lsproto.DocumentUri(val.String())
+			}
+		}
+		// Consume the closing brace
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
+		return nil
+	default:
+		return fmt.Errorf("DocumentIdentifier: expected string or object, got %v", tok.Kind())
+	}
+}
+
+func (d DocumentIdentifier) ToFileName() string {
+	if d.URI != "" {
+		return d.URI.FileName()
+	}
+	return d.FileName
+}
+
+func (d DocumentIdentifier) ToURI() lsproto.DocumentUri {
+	if d.URI != "" {
+		return d.URI
+	}
+	return lsconv.FileNameToDocumentURI(d.FileName)
+}
+
+func (d DocumentIdentifier) ToAbsoluteFileName(cwd string) string {
+	if d.URI != "" {
+		return d.URI.FileName()
+	}
+	return tspath.GetNormalizedAbsolutePath(d.FileName, cwd)
+}
+
+// APIFileChangeSummary lists documents that have been changed, created, or deleted.
+type APIFileChangeSummary struct {
+	Changed []DocumentIdentifier `json:"changed,omitempty"`
+	Created []DocumentIdentifier `json:"created,omitempty"`
+	Deleted []DocumentIdentifier `json:"deleted,omitempty"`
+}
+
+// APIFileChanges describes file changes to apply when updating a snapshot.
+// Either InvalidateAll is true (discard all caches) or Changed/Created/Deleted
+// list individual documents.
+type APIFileChanges struct {
+	InvalidateAll bool                 `json:"invalidateAll,omitempty"`
+	Changed       []DocumentIdentifier `json:"changed,omitempty"`
+	Created       []DocumentIdentifier `json:"created,omitempty"`
+	Deleted       []DocumentIdentifier `json:"deleted,omitempty"`
+}
+
 // UpdateSnapshotParams are the parameters for creating a new snapshot.
 // All fields are optional. With no fields set, the server adopts the latest LSP state.
 type UpdateSnapshotParams struct {
 	// OpenProject is the path to a tsconfig.json file to open/load in the new snapshot.
 	OpenProject string `json:"openProject,omitempty"`
+	// FileChanges describes file system changes since the last snapshot.
+	FileChanges *APIFileChanges `json:"fileChanges,omitempty"`
 }
 
 // ProjectFileChanges describes what source files changed within a single project.
@@ -160,7 +246,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 }
 
 type ParseConfigFileParams struct {
-	FileName string `json:"fileName"`
+	File DocumentIdentifier `json:"file"`
 }
 
 // ReleaseParams are the parameters for the release method.
@@ -175,7 +261,7 @@ type ConfigFileResponse struct {
 
 type GetDefaultProjectForFileParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	FileName string                   `json:"fileName"`
+	File     DocumentIdentifier       `json:"file"`
 }
 
 type ProjectResponse struct {
@@ -216,14 +302,14 @@ func computeProjectParseOptionsKey(p *project.Project) string {
 type GetSymbolAtPositionParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
-	FileName string                   `json:"fileName"`
+	File     DocumentIdentifier       `json:"file"`
 	Position uint32                   `json:"position"`
 }
 
 type GetSymbolsAtPositionsParams struct {
 	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
 	Project   Handle[project.Project]  `json:"project"`
-	FileName  string                   `json:"fileName"`
+	File      DocumentIdentifier       `json:"file"`
 	Positions []uint32                 `json:"positions"`
 }
 
@@ -299,7 +385,7 @@ func NewTypeData(t *checker.Type) *TypeResponse {
 type GetSourceFileParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
-	FileName string                   `json:"fileName"`
+	File     DocumentIdentifier       `json:"file"`
 }
 
 type ResolveNameParams struct {
@@ -307,8 +393,8 @@ type ResolveNameParams struct {
 	Project        Handle[project.Project]  `json:"project"`
 	Name           string                   `json:"name"`
 	Location       Handle[ast.Node]         `json:"location,omitempty"`       // Optional: node handle for location context
-	FileName       string                   `json:"fileName,omitempty"`       // Optional: file for location context (alternative to Location)
-	Position       *uint32                  `json:"position,omitempty"`       // Optional: position in file for location context (with FileName)
+	File           *DocumentIdentifier      `json:"file,omitempty"`           // Optional: file for location context (alternative to Location)
+	Position       *uint32                  `json:"position,omitempty"`       // Optional: position in file for location context (with File)
 	Meaning        uint32                   `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
 	ExcludeGlobals bool                     `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
 }

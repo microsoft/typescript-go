@@ -186,7 +186,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
 
     function loadSnapshot() {
         snapshot = api.updateSnapshot({ openProject: "_submodules/TypeScript/src/compiler/tsconfig.json" });
-        project = snapshot.projects[0];
+        project = snapshot.getProjects()[0];
     }
 
     function tsCreateProgram() {

@@ -21,6 +21,7 @@ import {
 } from "../path.ts";
 import type {
     ConfigResponse,
+    LSPUpdateSnapshotParams,
     ProjectResponse,
     UpdateSnapshotParams,
 } from "../proto.ts";
@@ -29,16 +30,16 @@ import type { MaybeAsync } from "./types.ts";
 export { SymbolFlags, TypeFlags };
 
 /**
- * A document identifier that can be either a file name (path) or a document URI.
+ * A document identifier that can be either a file name (path string) or a document URI object.
  *
  * @example
  * // Using a file name
- * project.program.getSourceFile({ fileName: "/path/to/file.ts" });
+ * project.program.getSourceFile("/path/to/file.ts");
  *
  * // Using a URI
  * project.program.getSourceFile({ uri: "file:///path/to/file.ts" });
  */
-export type DocumentIdentifier = { fileName: string; } | { uri: string; };
+export type DocumentIdentifier = string | { uri: string; };
 
 /**
  * A position within a document, combining a document identifier with an offset.
@@ -54,12 +55,9 @@ export interface DocumentPosition {
  * Resolves a DocumentIdentifier to a file name.
  * If the identifier contains a URI, it is converted to a file name.
  */
-export function resolveFileName(identifier: DocumentIdentifier | string): string {
+export function resolveFileName(identifier: DocumentIdentifier): string {
     if (typeof identifier === "string") {
         return identifier;
-    }
-    if ("fileName" in identifier) {
-        return identifier.fileName;
     }
     return documentURIToFileName(identifier.uri);
 }
@@ -68,14 +66,11 @@ export function resolveFileName(identifier: DocumentIdentifier | string): string
  * Resolves a DocumentIdentifier to a document URI.
  * If the identifier contains a file name, it is converted to a URI.
  */
-export function resolveDocumentURI(identifier: DocumentIdentifier | string): string {
+export function resolveDocumentURI(identifier: DocumentIdentifier): string {
     if (typeof identifier === "string") {
         return fileNameToDocumentURI(identifier);
     }
-    if ("uri" in identifier) {
-        return identifier.uri;
-    }
-    return fileNameToDocumentURI(identifier.fileName);
+    return identifier.uri;
 }
 
 /**
@@ -94,11 +89,11 @@ export interface APIOptions {
  * Base interface for the TypeScript API.
  * The API's primary purpose is to create and manage Snapshots.
  */
-export interface API<Async extends boolean> {
+export interface API<Async extends boolean, FromLSP extends boolean = false> {
     /**
      * Parse a tsconfig.json file.
      */
-    parseConfigFile(file: DocumentIdentifier | string): MaybeAsync<Async, ConfigResponse>;
+    parseConfigFile(file: DocumentIdentifier): MaybeAsync<Async, ConfigResponse>;
 
     /**
      * Create a new snapshot, optionally opening a project.
@@ -108,7 +103,7 @@ export interface API<Async extends boolean> {
      * @param params - Optional: specify openProject and/or previousSnapshot for diffing
      * @returns A new Snapshot representing the immutable state
      */
-    updateSnapshot(params?: UpdateSnapshotParams): MaybeAsync<Async, Snapshot<Async>>;
+    updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): MaybeAsync<Async, Snapshot<Async>>;
 
     /**
      * Close the API connection and release all resources.
@@ -125,17 +120,19 @@ export interface API<Async extends boolean> {
 export interface Snapshot<Async extends boolean> {
     /** Unique handle for this snapshot */
     readonly id: string;
-    /** Projects in this snapshot */
-    readonly projects: readonly Project<Async>[];
     /**
-     * Get a project by its handle ID.
+     * Get all projects in this snapshot.
      */
-    getProject(id: string): Project<Async> | undefined;
+    getProjects(): readonly Project<Async>[];
+    /**
+     * Get a project by its config file name (e.g. "/path/to/tsconfig.json").
+     */
+    getProject(configFileName: string): Project<Async> | undefined;
 
     /**
      * Get the default project for a file.
      */
-    getDefaultProjectForFile(file: DocumentIdentifier | string): MaybeAsync<Async, Project<Async> | undefined>;
+    getDefaultProjectForFile(file: DocumentIdentifier): MaybeAsync<Async, Project<Async> | undefined>;
 
     /**
      * Dispose this snapshot, releasing server-side resources.
@@ -180,7 +177,7 @@ export interface Program<Async extends boolean> {
     /**
      * Get a source file from the project by file name or URI.
      */
-    getSourceFile(file: DocumentIdentifier | string): MaybeAsync<Async, SourceFile | undefined>;
+    getSourceFile(file: DocumentIdentifier): MaybeAsync<Async, SourceFile | undefined>;
 }
 
 /**
@@ -196,8 +193,8 @@ export interface Checker<Async extends boolean> {
     /**
      * Get the symbol at a specific position in a file.
      */
-    getSymbolAtPosition(file: DocumentIdentifier | string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
-    getSymbolAtPosition(file: DocumentIdentifier | string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
+    getSymbolAtPosition(file: DocumentIdentifier, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
+    getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
 
     /**
      * Get the type of a symbol.

@@ -9,7 +9,10 @@ import {
     StreamMessageReader,
     StreamMessageWriter,
 } from "vscode-jsonrpc/node";
-import type { FileSystem } from "../fs.ts";
+import {
+    type FileSystem,
+    fsCallbackNames,
+} from "../fs.ts";
 
 export interface ClientSocketOptions {
     /** Path to the Unix domain socket or Windows named pipe for API communication */
@@ -69,8 +72,16 @@ export class Client {
             ];
 
             // Enable virtual FS callbacks for each provided FS function
-            if (options.fs && Object.keys(options.fs).length > 0) {
-                args.push(`--callbacks=${Object.keys(options.fs).join(",")}`);
+            const enabledCallbacks: string[] = [];
+            if (options.fs) {
+                for (const name of fsCallbackNames) {
+                    if (options.fs[name]) {
+                        enabledCallbacks.push(name);
+                    }
+                }
+            }
+            if (enabledCallbacks.length > 0) {
+                args.push(`--callbacks=${enabledCallbacks.join(",")}`);
             }
 
             this.process = spawn(options.tsserverPath, args, {
@@ -115,11 +126,14 @@ export class Client {
 
     private registerFSCallbacks(connection: MessageConnection, fs: FileSystem | undefined): void {
         if (!fs) return;
-        for (const [key, callback] of Object.entries(fs)) {
-            const requestType = new RequestType<unknown, unknown, void>(key);
-            connection.onRequest(requestType, (arg: unknown) => {
-                return callback(arg) ?? null;
-            });
+        for (const name of fsCallbackNames) {
+            const callback = fs[name];
+            if (callback) {
+                const requestType = new RequestType<unknown, unknown, void>(name);
+                connection.onRequest(requestType, (arg: unknown) => {
+                    return callback(arg as any) ?? null;
+                });
+            }
         }
     }
 

@@ -79,8 +79,8 @@ export class API implements BaseAPI<false> {
         this.toPath = (fileName: string) => toPath(fileName, currentDirectory, getCanonicalFileName) as Path;
     }
 
-    parseConfigFile(file: DocumentIdentifier | string): ConfigResponse {
-        return this.client.request("parseConfigFile", { fileName: resolveFileName(file) });
+    parseConfigFile(file: DocumentIdentifier): ConfigResponse {
+        return this.client.request("parseConfigFile", { file });
     }
 
     updateSnapshot(params?: UpdateSnapshotParams): Snapshot {
@@ -142,8 +142,8 @@ export class API implements BaseAPI<false> {
 
 export class Snapshot implements BaseSnapshot<false> {
     readonly id: string;
-    readonly projects: readonly Project[];
-    private projectMap: Map<string, Project>;
+    private projectMap: Map<Path, Project>;
+    private toPath: (fileName: string) => Path;
     private client: Client;
     private objectRegistry: SnapshotObjectRegistry;
     private disposed: boolean = false;
@@ -158,6 +158,7 @@ export class Snapshot implements BaseSnapshot<false> {
     ) {
         this.id = data.snapshot;
         this.client = client;
+        this.toPath = toPath;
         this.onDispose = onDispose;
 
         this.objectRegistry = new ObjectRegistry<Symbol, Type>({
@@ -167,28 +168,30 @@ export class Snapshot implements BaseSnapshot<false> {
 
         // Create projects
         this.projectMap = new Map();
-        const projects: Project[] = [];
         for (const projData of data.projects) {
             const project = new Project(projData, this.id, client, this.objectRegistry, sourceFileCache, toPath);
-            this.projectMap.set(projData.id, project);
-            projects.push(project);
+            this.projectMap.set(toPath(projData.configFileName), project);
         }
-        this.projects = projects;
     }
 
-    getProject(id: string): Project | undefined {
+    getProjects(): readonly Project[] {
         this.ensureNotDisposed();
-        return this.projectMap.get(id);
+        return [...this.projectMap.values()];
     }
 
-    getDefaultProjectForFile(file: DocumentIdentifier | string): Project | undefined {
+    getProject(configFileName: string): Project | undefined {
+        this.ensureNotDisposed();
+        return this.projectMap.get(this.toPath(configFileName));
+    }
+
+    getDefaultProjectForFile(file: DocumentIdentifier): Project | undefined {
         this.ensureNotDisposed();
         const data: ProjectResponse | null = this.client.request("getDefaultProjectForFile", {
             snapshot: this.id,
-            fileName: resolveFileName(file),
+            file,
         });
         if (!data) return undefined;
-        return this.projectMap.get(data.id);
+        return this.projectMap.get(this.toPath(data.configFileName));
     }
 
     [globalThis.Symbol.dispose](): void {
@@ -277,7 +280,7 @@ export class Program implements BaseProgram<false> {
         this.parseOptionsKey = parseOptionsKey;
     }
 
-    getSourceFile(file: DocumentIdentifier | string): SourceFile | undefined {
+    getSourceFile(file: DocumentIdentifier): SourceFile | undefined {
         const fileName = resolveFileName(file);
         const path = this.toPath(fileName);
 
@@ -291,9 +294,9 @@ export class Program implements BaseProgram<false> {
         const response: Uint8Array | undefined = this.client.requestBinary("getSourceFile", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            fileName,
+            file,
         });
-        if (!response) {
+        if (!response || response.length === 0) {
             return undefined;
         }
 
@@ -335,15 +338,14 @@ export class Checker implements BaseChecker<false> {
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolAtPosition(file: DocumentIdentifier | string, position: number): Symbol | undefined;
-    getSymbolAtPosition(file: DocumentIdentifier | string, positions: readonly number[]): (Symbol | undefined)[];
-    getSymbolAtPosition(file: DocumentIdentifier | string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
-        const fileName = resolveFileName(file);
+    getSymbolAtPosition(file: DocumentIdentifier, position: number): Symbol | undefined;
+    getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): (Symbol | undefined)[];
+    getSymbolAtPosition(file: DocumentIdentifier, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
         if (typeof positionOrPositions === "number") {
-            const data = this.client.request("getSymbolAtPosition", { snapshot: this.snapshotId, project: this.projectId, fileName, position: positionOrPositions });
+            const data = this.client.request("getSymbolAtPosition", { snapshot: this.snapshotId, project: this.projectId, file, position: positionOrPositions });
             return data ? this.objectRegistry.getSymbol(data) : undefined;
         }
-        const data = this.client.request("getSymbolsAtPositions", { snapshot: this.snapshotId, project: this.projectId, fileName, positions: positionOrPositions });
+        const data = this.client.request("getSymbolsAtPositions", { snapshot: this.snapshotId, project: this.projectId, file, positions: positionOrPositions });
         return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
@@ -372,7 +374,7 @@ export class Checker implements BaseChecker<false> {
             name,
             meaning,
             location: isNode ? (location as Node).id : undefined,
-            fileName: !isNode && location ? resolveFileName((location as DocumentPosition).document) : undefined,
+            file: !isNode && location ? (location as DocumentPosition).document : undefined,
             position: !isNode && location ? (location as DocumentPosition).position : undefined,
             excludeGlobals,
         });

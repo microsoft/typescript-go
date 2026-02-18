@@ -41,7 +41,10 @@ import type {
     TypeResponse,
     UpdateSnapshotResponse,
 } from "../proto.ts";
-import type { UpdateSnapshotParams } from "../proto.ts";
+import type {
+    LSPUpdateSnapshotParams,
+    UpdateSnapshotParams,
+} from "../proto.ts";
 import {
     Client,
     type ClientSocketOptions,
@@ -61,7 +64,7 @@ export interface APIOptions extends ClientSpawnOptions {
 /** Type alias for the snapshot-scoped object registry */
 type SnapshotObjectRegistry = ObjectRegistry<Symbol, Type>;
 
-export class API implements BaseAPI<true> {
+export class API<FromLSP extends boolean = false> implements BaseAPI<true, FromLSP> {
     private client: Client;
     private sourceFileCache: SourceFileCache;
     private toPath: ((fileName: string) => Path) | undefined;
@@ -78,7 +81,7 @@ export class API implements BaseAPI<true> {
      * Create an API instance from an existing LSP connection's API session.
      * Use this when connecting to an API pipe provided by an LSP server via custom/initializeAPISession.
      */
-    static async fromLSPConnection(options: LSPConnectionOptions): Promise<API> {
+    static async fromLSPConnection(options: LSPConnectionOptions): Promise<API<true>> {
         const api = new API(options);
         await api.ensureInitialized();
         return api;
@@ -94,12 +97,12 @@ export class API implements BaseAPI<true> {
         }
     }
 
-    async parseConfigFile(file: DocumentIdentifier | string): Promise<ConfigResponse> {
+    async parseConfigFile(file: DocumentIdentifier): Promise<ConfigResponse> {
         await this.ensureInitialized();
-        return this.client.apiRequest<ConfigResponse>("parseConfigFile", { fileName: resolveFileName(file) });
+        return this.client.apiRequest<ConfigResponse>("parseConfigFile", { file });
     }
 
-    async updateSnapshot(params?: UpdateSnapshotParams): Promise<Snapshot> {
+    async updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Promise<Snapshot> {
         await this.ensureInitialized();
 
         const requestParams: UpdateSnapshotParams = params ?? {};
@@ -152,8 +155,8 @@ export class API implements BaseAPI<true> {
 
 export class Snapshot implements BaseSnapshot<true> {
     readonly id: string;
-    readonly projects: readonly Project[];
-    private projectMap: Map<string, Project>;
+    private projectMap: Map<Path, Project>;
+    private toPath: (fileName: string) => Path;
     private client: Client;
     private objectRegistry: SnapshotObjectRegistry;
     private disposed: boolean = false;
@@ -168,6 +171,7 @@ export class Snapshot implements BaseSnapshot<true> {
     ) {
         this.id = data.snapshot;
         this.client = client;
+        this.toPath = toPath;
         this.onDispose = onDispose;
 
         this.objectRegistry = new ObjectRegistry<Symbol, Type>({
@@ -177,28 +181,30 @@ export class Snapshot implements BaseSnapshot<true> {
 
         // Create projects
         this.projectMap = new Map();
-        const projects: Project[] = [];
         for (const projData of data.projects) {
             const project = new Project(projData, this.id, client, this.objectRegistry, sourceFileCache, toPath);
-            this.projectMap.set(projData.id, project);
-            projects.push(project);
+            this.projectMap.set(toPath(projData.configFileName), project);
         }
-        this.projects = projects;
     }
 
-    getProject(id: string): Project | undefined {
+    getProjects(): readonly Project[] {
         this.ensureNotDisposed();
-        return this.projectMap.get(id);
+        return [...this.projectMap.values()];
     }
 
-    async getDefaultProjectForFile(file: DocumentIdentifier | string): Promise<Project | undefined> {
+    getProject(configFileName: string): Project | undefined {
+        this.ensureNotDisposed();
+        return this.projectMap.get(this.toPath(configFileName));
+    }
+
+    async getDefaultProjectForFile(file: DocumentIdentifier): Promise<Project | undefined> {
         this.ensureNotDisposed();
         const data = await this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", {
             snapshot: this.id,
-            fileName: resolveFileName(file),
+            file,
         });
         if (!data) return undefined;
-        return this.projectMap.get(data.id);
+        return this.projectMap.get(this.toPath(data.configFileName));
     }
 
     [globalThis.Symbol.dispose](): void {
@@ -287,7 +293,7 @@ export class Program implements BaseProgram<true> {
         this.parseOptionsKey = parseOptionsKey;
     }
 
-    async getSourceFile(file: DocumentIdentifier | string): Promise<SourceFile | undefined> {
+    async getSourceFile(file: DocumentIdentifier): Promise<SourceFile | undefined> {
         const fileName = resolveFileName(file);
         const path = this.toPath(fileName);
 
@@ -301,7 +307,7 @@ export class Program implements BaseProgram<true> {
         const response = await this.client.apiRequest<SourceFileResponse | undefined>("getSourceFile", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            fileName,
+            file,
         });
         if (!response?.data) {
             return undefined;
@@ -355,15 +361,14 @@ export class Checker implements BaseChecker<true> {
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolAtPosition(file: DocumentIdentifier | string, position: number): Promise<Symbol | undefined>;
-    getSymbolAtPosition(file: DocumentIdentifier | string, positions: readonly number[]): Promise<(Symbol | undefined)[]>;
-    async getSymbolAtPosition(file: DocumentIdentifier | string, positionOrPositions: number | readonly number[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
-        const fileName = resolveFileName(file);
+    getSymbolAtPosition(file: DocumentIdentifier, position: number): Promise<Symbol | undefined>;
+    getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): Promise<(Symbol | undefined)[]>;
+    async getSymbolAtPosition(file: DocumentIdentifier, positionOrPositions: number | readonly number[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
         if (typeof positionOrPositions === "number") {
             const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtPosition", {
                 snapshot: this.snapshotId,
                 project: this.projectId,
-                fileName,
+                file,
                 position: positionOrPositions,
             });
             return data ? this.objectRegistry.getSymbol(data) : undefined;
@@ -371,7 +376,7 @@ export class Checker implements BaseChecker<true> {
         const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsAtPositions", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            fileName,
+            file,
             positions: positionOrPositions,
         });
         return data.map(d => d ? this.objectRegistry.getSymbol(d) : undefined);
@@ -410,7 +415,7 @@ export class Checker implements BaseChecker<true> {
             name,
             meaning,
             location: isNode ? (location as Node).id : undefined,
-            fileName: !isNode && location ? resolveFileName((location as DocumentPosition).document) : undefined,
+            file: !isNode && location ? (location as DocumentPosition).document : undefined,
             position: !isNode && location ? (location as DocumentPosition).position : undefined,
             excludeGlobals,
         });

@@ -15,7 +15,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
-	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -258,15 +257,21 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	var snapshot *project.Snapshot
 	var release func()
 
+	fileChanges := s.toFileChangeSummary(params.FileChanges)
+
 	if params.OpenProject != "" {
 		configFileName := s.toAbsoluteFileName(params.OpenProject)
-		_, newSnapshot, newRelease, err := s.projectSession.OpenProject(ctx, configFileName)
+		_, newSnapshot, newRelease, err := s.projectSession.APIOpenProject(ctx, configFileName, fileChanges)
 		if err != nil {
 			return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
 		}
 		snapshot, release = newSnapshot, newRelease
 	} else {
-		snapshot, release = s.projectSession.Snapshot()
+		// Even when fileChanges is empty, APIUpdateWithFileChanges ensures all projects
+		// opened by the API are up to date. For an API connected to an LSP server, this
+		// brings the API state up to date with the LSP state and ensures projects the
+		// API cares about are ready to be queried.
+		snapshot, release = s.projectSession.APIUpdateWithFileChanges(ctx, fileChanges)
 	}
 
 	// Create or ref-count snapshot data.
@@ -362,10 +367,10 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 		return nil, err
 	}
 
-	uri := lsconv.FileNameToDocumentURI(params.FileName)
+	uri := params.File.ToURI()
 	proj := sd.snapshot.GetDefaultProject(uri)
 	if proj == nil {
-		return nil, fmt.Errorf("%w: no project found for file %s", ErrClientError, params.FileName)
+		return nil, fmt.Errorf("%w: no project found for file %v", ErrClientError, params.File)
 	}
 
 	return NewProjectResponse(proj), nil
@@ -373,7 +378,7 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 
 // handleParseConfigFile parses a tsconfig.json file and returns its contents.
 func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfigFileParams) (*ConfigFileResponse, error) {
-	configFileName := s.toAbsoluteFileName(params.FileName)
+	configFileName := params.File.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
 	configFileContent, ok := s.projectSession.FS().ReadFile(configFileName)
 	if !ok {
 		return nil, fmt.Errorf("%w: could not read file %q", ErrClientError, configFileName)
@@ -415,9 +420,12 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.FileName)
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, params.FileName)
+		if s.useBinaryResponses {
+			return RawBinary(nil), nil
+		}
+		return nil, nil
 	}
 
 	// Encode the full source file
@@ -447,9 +455,9 @@ func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymb
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.FileName)
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, params.FileName)
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}
 
 	node := astnav.GetTouchingPropertyName(sourceFile, int(params.Position))
@@ -480,9 +488,9 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.FileName)
+	sourceFile := program.GetSourceFile(params.File.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory()))
 	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, params.FileName)
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}
 
 	checker, done := program.GetTypeChecker(ctx)
@@ -650,10 +658,10 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 		if err != nil {
 			return nil, err
 		}
-	} else if params.FileName != "" && params.Position != nil {
-		sourceFile := program.GetSourceFile(params.FileName)
+	} else if params.File != nil && params.Position != nil {
+		sourceFile := program.GetSourceFile(params.File.ToFileName())
 		if sourceFile == nil {
-			return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, params.FileName)
+			return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, *params.File)
 		}
 		location = astnav.GetTouchingPropertyName(sourceFile, int(*params.Position))
 	}
@@ -785,4 +793,33 @@ func (s *Session) toAbsoluteFileName(fileName string) string {
 // toPath converts a file name to a normalized path.
 func (s *Session) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, s.projectSession.GetCurrentDirectory(), s.projectSession.FS().UseCaseSensitiveFileNames())
+}
+
+// toFileChangeSummary converts API file changes to a project.FileChangeSummary.
+func (s *Session) toFileChangeSummary(changes *APIFileChanges) project.FileChangeSummary {
+	if changes == nil {
+		return project.FileChangeSummary{}
+	}
+	var summary project.FileChangeSummary
+	if changes.InvalidateAll {
+		summary.InvalidateAll = true
+		summary.IncludesWatchChangeOutsideNodeModules = true
+		return summary
+	}
+	for _, doc := range changes.Changed {
+		uri := doc.ToURI()
+		summary.Changed.Add(uri)
+	}
+	for _, doc := range changes.Created {
+		uri := doc.ToURI()
+		summary.Created.Add(uri)
+	}
+	for _, doc := range changes.Deleted {
+		uri := doc.ToURI()
+		summary.Deleted.Add(uri)
+	}
+	if summary.Changed.Len()+summary.Created.Len()+summary.Deleted.Len() > 0 {
+		summary.IncludesWatchChangeOutsideNodeModules = true
+	}
+	return summary
 }

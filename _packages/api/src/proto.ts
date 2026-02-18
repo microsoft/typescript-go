@@ -1,3 +1,5 @@
+import type { DocumentIdentifier } from "./base/api.ts";
+
 /**
  * Response from the initialize method.
  */
@@ -13,12 +15,24 @@ export interface ConfigResponse {
     fileNames: string[];
 }
 
+export interface LSPUpdateSnapshotParams {
+    /** Path to a tsconfig.json file to open in the new snapshot */
+    openProject?: string;
+}
+
+export interface FileChangeSummary {
+    changed?: DocumentIdentifier[];
+    created?: DocumentIdentifier[];
+    deleted?: DocumentIdentifier[];
+}
+
+export type FileChanges = FileChangeSummary | { invalidateAll: true; };
+
 /**
  * Parameters for updateSnapshot.
  */
-export interface UpdateSnapshotParams {
-    /** Path to a tsconfig.json file to open in the new snapshot */
-    openProject?: string;
+export interface UpdateSnapshotParams extends LSPUpdateSnapshotParams {
+    fileChanges?: FileChanges;
 }
 
 /**
