@@ -22,7 +22,6 @@ import {
 import type {
     ConfigResponse,
     LSPUpdateSnapshotParams,
-    ProjectResponse,
     UpdateSnapshotParams,
 } from "../proto.ts";
 import type { MaybeAsync } from "./types.ts";
@@ -46,7 +45,7 @@ export type DocumentIdentifier = string | { uri: string; };
  */
 export interface DocumentPosition {
     /** The document containing the position */
-    document: DocumentIdentifier | string;
+    document: DocumentIdentifier;
     /** The character offset within the document */
     position: number;
 }
