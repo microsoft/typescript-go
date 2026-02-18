@@ -97,7 +97,6 @@ func TestReplay(t *testing.T) {
 	)
 
 	var messages []*rawMessage
-	var id int32 = 1
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = rootDirReplacer.Replace(line)
@@ -161,7 +160,7 @@ func TestReplay(t *testing.T) {
 		switch rawMsg.Kind {
 		case "request":
 			kind = jsonrpc.MessageKindRequest
-			reqID = lsproto.NewID(lsproto.IntegerOrString{Integer: &id})
+			reqID = lsproto.NewID(lsproto.IntegerOrString{Integer: new(client.NextID())})
 		case "notification":
 			kind = jsonrpc.MessageKindNotification
 		default:
