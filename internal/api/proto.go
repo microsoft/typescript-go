@@ -52,8 +52,8 @@ func NodeHandleFrom(node *ast.Node) Handle[ast.Node] {
 }
 
 // parseNodeHandle parses a node handle into its components.
-// Format: pos.end.kind.fileName
-func parseNodeHandle(handle Handle[ast.Node]) (pos int, end int, kind ast.Kind, fileName string, err error) {
+// Format: pos.end.kind.path
+func parseNodeHandle(handle Handle[ast.Node]) (pos int, end int, kind ast.Kind, path tspath.Path, err error) {
 	parts := strings.SplitN(string(handle), ".", 4)
 	if len(parts) != 4 {
 		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q", handle)
@@ -71,7 +71,7 @@ func parseNodeHandle(handle Handle[ast.Node]) (pos int, end int, kind ast.Kind, 
 	if err != nil {
 		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
 	}
-	return int(posInt), int(endInt), ast.Kind(kindInt), parts[3], nil
+	return int(posInt), int(endInt), ast.Kind(kindInt), tspath.Path(parts[3]), nil
 }
 
 func parseProjectHandle(handle Handle[project.Project]) tspath.Path {

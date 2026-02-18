@@ -678,20 +678,17 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 }
 
 // resolveNodeHandle resolves a node handle to an AST node.
-// Node handles encode: pos.end.kind.fileName
+// Node handles encode: pos.end.kind.path
 func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast.Node]) (*ast.Node, error) {
-	pos, end, kind, fileName, err := parseNodeHandle(handle)
+	pos, end, kind, path, err := parseNodeHandle(handle)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 	}
 
-	// Resolve relative path to absolute
-	absFileName := s.toAbsoluteFileName(fileName)
-
-	// Find the source file by name
-	sourceFile := program.GetSourceFile(absFileName)
+	// Find the source file by path
+	sourceFile := program.GetSourceFileByPath(path)
 	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, fileName)
+		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, path)
 	}
 
 	// Find the node at the position with the expected kind and end
