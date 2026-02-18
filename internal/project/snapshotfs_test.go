@@ -835,8 +835,8 @@ func TestAutoImportBuilderFS(t *testing.T) {
 		// /real/pkg/index.d.ts is the real file.
 		// /project/node_modules/pkg is a symlink to /real/pkg.
 		testFS := vfstest.FromMap(map[string]any{
-			"/real/pkg/index.d.ts":        "export declare const x: number;",
-			"/project/node_modules/pkg":   vfstest.Symlink("/real/pkg"),
+			"/real/pkg/index.d.ts":      "export declare const x: number;",
+			"/project/node_modules/pkg": vfstest.Symlink("/real/pkg"),
 		}, true /* useCaseSensitiveFileNames */)
 
 		// Verify symlink works as expected
