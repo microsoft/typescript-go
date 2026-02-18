@@ -3,7 +3,6 @@ package core
 import (
 	"reflect"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -25,7 +24,6 @@ type CompilerOptions struct {
 	AllowUnreachableCode                      Tristate                                  `json:"allowUnreachableCode,omitzero"`
 	AllowUnusedLabels                         Tristate                                  `json:"allowUnusedLabels,omitzero"`
 	AssumeChangesOnlyAffectDirectDependencies Tristate                                  `json:"assumeChangesOnlyAffectDirectDependencies,omitzero"`
-	AlwaysStrict                              Tristate                                  `json:"alwaysStrict,omitzero"`
 	CheckJs                                   Tristate                                  `json:"checkJs,omitzero"`
 	CustomConditions                          []string                                  `json:"customConditions,omitzero"`
 	Composite                                 Tristate                                  `json:"composite,omitzero"`
@@ -122,6 +120,8 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
 	// Deprecated: Do not use outside of options parsing and validation.
+	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	OutFile string `json:"outFile,omitzero"`
@@ -152,9 +152,6 @@ type CompilerOptions struct {
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
 	Checkers       *int     `json:"checkers,omitzero"`
-
-	sourceFileAffectingCompilerOptionsOnce sync.Once
-	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
 }
 
 // noCopy may be embedded into structs which must not be copied
@@ -367,21 +364,6 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 	return currentDirectory
 }
 
-// SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
-// affect the parse and bind of a source file.
-type SourceFileAffectingCompilerOptions struct {
-	BindInStrictMode bool
-}
-
-func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
-	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
-		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
-			BindInStrictMode: options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-		}
-	})
-	return options.sourceFileAffectingCompilerOptions
-}
-
 type ModuleDetectionKind int32
 
 const (
@@ -513,9 +495,9 @@ func (newLine NewLineKind) GetNewLineCharacter() string {
 type ScriptTarget int32
 
 const (
-	ScriptTargetNone           ScriptTarget = 0
-	ScriptTargetES3            ScriptTarget = 0 // Deprecated
-	ScriptTargetES5            ScriptTarget = 1 // Deprecated
+	ScriptTargetNone ScriptTarget = 0
+	// Deprecated: Do not use outside of options parsing and validation.
+	ScriptTargetES5            ScriptTarget = 1
 	ScriptTargetES2015         ScriptTarget = 2
 	ScriptTargetES2016         ScriptTarget = 3
 	ScriptTargetES2017         ScriptTarget = 4
