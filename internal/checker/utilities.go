@@ -985,7 +985,7 @@ func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 
 func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool {
 	// Return true if symbol is a non-exported and non-global `let` variable
-	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && ast.IsGlobalSourceFile(declaration.Parent.Parent.Parent))
+	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && c.isGlobalSourceFile(declaration.Parent.Parent.Parent))
 }
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
@@ -1721,7 +1721,7 @@ func (c *Checker) isUncheckedJSSuggestion(node *ast.Node, suggestion *ast.Symbol
 				!ast.IsClassLike(suggestion.ValueDeclaration) ||
 				len(ast.GetExtendsHeritageClauseElements(suggestion.ValueDeclaration)) != 0 ||
 				ast.ClassOrConstructorParameterIsDecorated(false, suggestion.ValueDeclaration)
-			return !(file != declarationFile && declarationFile != nil && ast.IsGlobalSourceFile(declarationFile.AsNode())) &&
+			return !(file != declarationFile && declarationFile != nil && c.isGlobalSourceFile(declarationFile.AsNode())) &&
 				!(excludeClasses && suggestion != nil && suggestion.Flags&ast.SymbolFlagsClass != 0 && suggestionHasNoExtendsOrDecorators) &&
 				!(node != nil && excludeClasses && ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword && suggestionHasNoExtendsOrDecorators)
 		}

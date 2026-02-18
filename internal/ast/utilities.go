@@ -1627,11 +1627,11 @@ func IsAmbientModule(node *Node) bool {
 }
 
 func IsExternalModule(file *SourceFile) bool {
-	return file.ExternalModuleIndicator != nil
+	return file.SyntacticExternalModuleIndicator != nil
 }
 
 func IsExternalOrCommonJSModule(file *SourceFile) bool {
-	return file.ExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil
+	return file.SyntacticExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil
 }
 
 // TODO: Should we deprecate `IsExternalOrCommonJSModule` in favor of this function?

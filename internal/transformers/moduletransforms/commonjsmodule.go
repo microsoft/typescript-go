@@ -14,19 +14,20 @@ import (
 
 type CommonJSModuleTransformer struct {
 	transformers.Transformer
-	topLevelVisitor           *ast.NodeVisitor // visits statements at top level of a module
-	topLevelNestedVisitor     *ast.NodeVisitor // visits nested statements at top level of a module
-	discardedValueVisitor     *ast.NodeVisitor // visits expressions whose values would be discarded at runtime
-	assignmentPatternVisitor  *ast.NodeVisitor // visits assignment patterns in a destructuring assignment
-	compilerOptions           *core.CompilerOptions
-	resolver                  binder.ReferenceResolver
-	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
-	moduleKind                core.ModuleKind
-	languageVersion           core.ScriptTarget
-	currentSourceFile         *ast.SourceFile
-	currentModuleInfo         *externalModuleInfo
-	parentNode                *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
-	currentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
+	topLevelVisitor            *ast.NodeVisitor // visits statements at top level of a module
+	topLevelNestedVisitor      *ast.NodeVisitor // visits nested statements at top level of a module
+	discardedValueVisitor      *ast.NodeVisitor // visits expressions whose values would be discarded at runtime
+	assignmentPatternVisitor   *ast.NodeVisitor // visits assignment patterns in a destructuring assignment
+	compilerOptions            *core.CompilerOptions
+	resolver                   binder.ReferenceResolver
+	getEmitModuleFormatOfFile  func(file ast.HasFileName) core.ModuleKind
+	getExternalModuleIndicator func(*ast.SourceFile) *ast.Node
+	moduleKind                 core.ModuleKind
+	languageVersion            core.ScriptTarget
+	currentSourceFile          *ast.SourceFile
+	currentModuleInfo          *externalModuleInfo
+	parentNode                 *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
+	currentNode                *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
 func NewCommonJSModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -36,7 +37,7 @@ func NewCommonJSModuleTransformer(opts *transformers.TransformOptions) *transfor
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile, getExternalModuleIndicator: opts.GetExternalModuleIndicator}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
@@ -231,7 +232,7 @@ func (tx *CommonJSModuleTransformer) visitAssignmentPatternNoStack(node *ast.Nod
 
 func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	if node.IsDeclarationFile ||
-		!(ast.IsEffectiveExternalModule(node, tx.compilerOptions) ||
+		!(tx.isExternalOrCommonJSModule(node) ||
 			node.SubtreeFacts()&ast.SubtreeContainsDynamicImport != 0) {
 		return node.AsNode()
 	}
@@ -244,13 +245,32 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 	return updated
 }
 
+func (tx *CommonJSModuleTransformer) isExternalModule(file *ast.SourceFile) bool {
+	if tx.getExternalModuleIndicator != nil {
+		return tx.getExternalModuleIndicator(file) != nil
+	}
+	return ast.IsExternalModule(file)
+}
+
+func (tx *CommonJSModuleTransformer) isExternalOrCommonJSModule(file *ast.SourceFile) bool {
+	return tx.isExternalModule(file) || file.CommonJSModuleIndicator != nil
+}
+
+func (tx *CommonJSModuleTransformer) getExternalModuleIndicatorNode(file *ast.SourceFile) *ast.Node {
+	if tx.getExternalModuleIndicator != nil {
+		return tx.getExternalModuleIndicator(file)
+	}
+	return ast.IsFileProbablyExternalModule(file)
+}
+
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
+	indicator := tx.getExternalModuleIndicatorNode(tx.currentSourceFile)
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
 		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
-		(tx.currentSourceFile.ExternalModuleIndicator == nil || tx.currentSourceFile.ExternalModuleIndicator.Kind == ast.KindSourceFile) {
+		(indicator == nil || indicator.Kind == ast.KindSourceFile) {
 		return false
 	}
-	if tx.currentModuleInfo.exportEquals == nil && ast.IsExternalModule(tx.currentSourceFile) {
+	if tx.currentModuleInfo.exportEquals == nil && tx.isExternalModule(tx.currentSourceFile) {
 		return true
 	}
 	return false
@@ -362,7 +382,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	result := tx.Factory().UpdateSourceFile(node, statementList, node.EndOfFileToken).AsSourceFile()
 	tx.EmitContext().AddEmitHelper(result.AsNode(), tx.EmitContext().ReadEmitHelpers()...)
 
-	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
+	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/, tx.isExternalOrCommonJSModule(result))
 	if externalHelpersImportDeclaration != nil {
 		prologue, rest := tx.Factory().SplitStandardPrologue(result.Statements.Nodes)
 		custom, rest := tx.Factory().SplitCustomPrologue(rest)

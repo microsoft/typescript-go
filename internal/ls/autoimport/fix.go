@@ -795,7 +795,7 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 		//     a require or an es6 import. The latter, compiled to CJS, has interop built in that will
 		//     avoid accessing .default, but if we write a require directly and call it a default import,
 		//     we emit an unconditional .default access.
-		if importingFile.ExternalModuleIndicator != nil || !ast.IsSourceFileJS(importingFile) {
+		if ast.IsExternalModule(importingFile) || !ast.IsSourceFileJS(importingFile) {
 			return lsproto.ImportKindDefault
 		}
 		return lsproto.ImportKindCommonJS
@@ -854,9 +854,9 @@ func (v *View) computeShouldUseRequire() bool {
 
 	// 2. If the current source file is unambiguously CJS or ESM, go with that
 	switch {
-	case v.importingFile.CommonJSModuleIndicator != nil && v.importingFile.ExternalModuleIndicator == nil:
+	case v.importingFile.CommonJSModuleIndicator != nil && !ast.IsExternalModule(v.importingFile):
 		return true
-	case v.importingFile.ExternalModuleIndicator != nil && v.importingFile.CommonJSModuleIndicator == nil:
+	case ast.IsExternalModule(v.importingFile) && v.importingFile.CommonJSModuleIndicator == nil:
 		return false
 	}
 
@@ -880,9 +880,9 @@ func (v *View) computeShouldUseRequire() bool {
 		switch {
 		case otherFile == v.importingFile, !ast.IsSourceFileJS(otherFile), v.program.IsSourceFileFromExternalLibrary(otherFile):
 			continue
-		case otherFile.CommonJSModuleIndicator != nil && otherFile.ExternalModuleIndicator == nil:
+		case otherFile.CommonJSModuleIndicator != nil && !ast.IsExternalModule(otherFile):
 			return true
-		case otherFile.ExternalModuleIndicator != nil && otherFile.CommonJSModuleIndicator == nil:
+		case ast.IsExternalModule(otherFile) && otherFile.CommonJSModuleIndicator == nil:
 			return false
 		}
 	}

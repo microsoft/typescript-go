@@ -9,9 +9,10 @@ import (
 
 type ImportElisionTransformer struct {
 	transformers.Transformer
-	compilerOptions   *core.CompilerOptions
-	currentSourceFile *ast.SourceFile
-	emitResolver      printer.EmitResolver
+	compilerOptions            *core.CompilerOptions
+	currentSourceFile          *ast.SourceFile
+	emitResolver               printer.EmitResolver
+	getExternalModuleIndicator func(*ast.SourceFile) *ast.Node
 }
 
 func NewImportElisionTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
@@ -20,7 +21,7 @@ func NewImportElisionTransformer(opt *transformers.TransformOptions) *transforme
 	if compilerOptions.VerbatimModuleSyntax.IsTrue() {
 		panic("ImportElisionTransformer should not be used with VerbatimModuleSyntax")
 	}
-	tx := &ImportElisionTransformer{compilerOptions: compilerOptions, emitResolver: opt.EmitResolver}
+	tx := &ImportElisionTransformer{compilerOptions: compilerOptions, emitResolver: opt.EmitResolver, getExternalModuleIndicator: opt.GetExternalModuleIndicator}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 
@@ -127,6 +128,13 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
+func (tx *ImportElisionTransformer) isExternalModule(file *ast.SourceFile) bool {
+	if tx.getExternalModuleIndicator != nil {
+		return tx.getExternalModuleIndicator(file) != nil
+	}
+	return ast.IsExternalModule(file)
+}
+
 func (tx *ImportElisionTransformer) shouldEmitAliasDeclaration(node *ast.Node) bool {
 	return ast.IsInJSFile(node) || tx.isReferencedAliasDeclaration(node)
 }
@@ -135,7 +143,7 @@ func (tx *ImportElisionTransformer) shouldEmitImportEqualsDeclaration(node *ast.
 	// preserve old compiler's behavior: emit import declaration (even if we do not consider them referenced) when
 	// - current file is not external module
 	// - import declaration is top level and target is value imported by entity name
-	return tx.shouldEmitAliasDeclaration(node.AsNode()) || (!ast.IsExternalModule(tx.currentSourceFile) && tx.isTopLevelValueImportEqualsWithEntityName(node.AsNode()))
+	return tx.shouldEmitAliasDeclaration(node.AsNode()) || (!tx.isExternalModule(tx.currentSourceFile) && tx.isTopLevelValueImportEqualsWithEntityName(node.AsNode()))
 }
 
 func (tx *ImportElisionTransformer) isReferencedAliasDeclaration(node *ast.Node) bool {

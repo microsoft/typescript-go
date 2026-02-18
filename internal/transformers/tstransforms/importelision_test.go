@@ -40,6 +40,11 @@ func (p *fakeProgram) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDt
 	panic("unimplemented")
 }
 
+// GetExternalModuleIndicator implements checker.Program.
+func (p *fakeProgram) GetExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
+	return ast.IsFileProbablyExternalModule(file)
+}
+
 // GetEmitSyntaxForUsageLocation implements checker.Program.
 func (p *fakeProgram) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode {
 	panic("unimplemented")

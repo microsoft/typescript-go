@@ -17,6 +17,7 @@ type EmitHost interface {
 	IsEmitBlocked(file string) bool
 	WriteFile(fileName string, text string, writeByteOrderMark bool) error
 	GetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind
+	GetExternalModuleIndicator(file *ast.SourceFile) *ast.Node
 	GetEmitResolver() EmitResolver
 	GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool

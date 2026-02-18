@@ -8,16 +8,25 @@ import (
 
 func NewUseStrictTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &useStrictTransformer{
-		compilerOptions:           opts.CompilerOptions,
-		getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile,
+		compilerOptions:            opts.CompilerOptions,
+		getEmitModuleFormatOfFile:  opts.GetEmitModuleFormatOfFile,
+		getExternalModuleIndicator: opts.GetExternalModuleIndicator,
 	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 type useStrictTransformer struct {
 	transformers.Transformer
-	compilerOptions           *core.CompilerOptions
-	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
+	compilerOptions            *core.CompilerOptions
+	getEmitModuleFormatOfFile  func(file ast.HasFileName) core.ModuleKind
+	getExternalModuleIndicator func(*ast.SourceFile) *ast.Node
+}
+
+func (tx *useStrictTransformer) isExternalModule(file *ast.SourceFile) bool {
+	if tx.getExternalModuleIndicator != nil {
+		return tx.getExternalModuleIndicator(file) != nil
+	}
+	return ast.IsExternalModule(file)
 }
 
 func (tx *useStrictTransformer) visit(node *ast.Node) *ast.Node {
@@ -36,7 +45,7 @@ func (tx *useStrictTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node 
 		return node.AsNode()
 	}
 
-	isExternalModule := ast.IsExternalModule(node)
+	isExternalModule := tx.isExternalModule(node)
 	format := tx.getEmitModuleFormatOfFile(node)
 
 	if isExternalModule && format >= core.ModuleKindES2015 {

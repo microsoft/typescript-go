@@ -12,12 +12,13 @@ import (
 
 type ESModuleTransformer struct {
 	transformers.Transformer
-	compilerOptions           *core.CompilerOptions
-	resolver                  binder.ReferenceResolver
-	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
-	currentSourceFile         *ast.SourceFile
-	importRequireStatements   *importRequireStatements
-	helperNameSubstitutions   map[string]*ast.IdentifierNode
+	compilerOptions            *core.CompilerOptions
+	resolver                   binder.ReferenceResolver
+	getEmitModuleFormatOfFile  func(file ast.HasFileName) core.ModuleKind
+	getExternalModuleIndicator func(*ast.SourceFile) *ast.Node
+	currentSourceFile          *ast.SourceFile
+	importRequireStatements    *importRequireStatements
+	helperNameSubstitutions    map[string]*ast.IdentifierNode
 }
 
 type importRequireStatements struct {
@@ -31,8 +32,15 @@ func NewESModuleTransformer(opts *transformers.TransformOptions) *transformers.T
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile, getExternalModuleIndicator: opts.GetExternalModuleIndicator}
 	return tx.NewTransformer(tx.visit, opts.Context)
+}
+
+func (tx *ESModuleTransformer) isExternalModule(file *ast.SourceFile) bool {
+	if tx.getExternalModuleIndicator != nil {
+		return tx.getExternalModuleIndicator(file) != nil
+	}
+	return ast.IsExternalModule(file)
 }
 
 // Visits source elements that are not top-level or top-level nested statements.
@@ -58,7 +66,7 @@ func (tx *ESModuleTransformer) visit(node *ast.Node) *ast.Node {
 
 func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	if node.IsDeclarationFile ||
-		!(ast.IsExternalModule(node) || tx.compilerOptions.GetIsolatedModules()) {
+		!(tx.isExternalModule(node) || tx.compilerOptions.GetIsolatedModules()) {
 		return node.AsNode()
 	}
 
@@ -68,7 +76,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	result := tx.Visitor().VisitEachChild(node.AsNode()).AsSourceFile()
 	tx.EmitContext().AddEmitHelper(result.AsNode(), tx.EmitContext().ReadEmitHelpers()...)
 
-	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
+	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/, tx.isExternalModule(result) || result.CommonJSModuleIndicator != nil)
 	if externalHelpersImportDeclaration != nil || tx.importRequireStatements != nil {
 		prologue, rest := tx.Factory().SplitStandardPrologue(result.Statements.Nodes)
 		statements := slices.Clone(prologue)
@@ -84,7 +92,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		result = tx.Factory().UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
-	if ast.IsExternalModule(result) &&
+	if tx.isExternalModule(result) &&
 		tx.compilerOptions.GetEmitModuleKind() != core.ModuleKindPreserve &&
 		!core.Some(result.Statements.Nodes, ast.IsExternalModuleIndicator) {
 		statements := slices.Clone(result.Statements.Nodes)

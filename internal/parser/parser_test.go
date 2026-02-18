@@ -97,7 +97,7 @@ func FuzzParser(f *testing.F) {
 			sourceText, err := os.ReadFile(file.path)
 			assert.NilError(f, err)
 			extension := tspath.TryGetExtensionFromPath(file.path)
-			f.Add(extension, string(sourceText), false, false)
+			f.Add(extension, string(sourceText))
 		}
 	}
 
@@ -135,12 +135,12 @@ func FuzzParser(f *testing.F) {
 				if extension == "" {
 					continue
 				}
-				f.Add(extension, unit.content, false, false)
+				f.Add(extension, unit.content)
 			}
 		}
 	}
 
-	f.Fuzz(func(t *testing.T, extension string, sourceText string, externalModuleIndicatorOptionsJSX bool, externalModuleIndicatorOptionsForce bool) {
+	f.Fuzz(func(t *testing.T, extension string, sourceText string) {
 		if !extensions.Has(extension) {
 			t.Skip()
 		}
@@ -151,10 +151,6 @@ func FuzzParser(f *testing.F) {
 		opts := ast.SourceFileParseOptions{
 			FileName: fileName,
 			Path:     path,
-			ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{
-				JSX:   externalModuleIndicatorOptionsJSX,
-				Force: externalModuleIndicatorOptionsForce,
-			},
 		}
 
 		parser.ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))

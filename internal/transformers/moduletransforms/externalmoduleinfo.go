@@ -247,8 +247,8 @@ func (c *externalModuleInfoCollector) collectExportedVariableInfo(decl *ast.Node
 
 const externalHelpersModuleNameText = "tslib"
 
-func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions, fileModuleKind core.ModuleKind, hasExportStarsToExportValues bool, hasImportStar bool, hasImportDefault bool) *ast.Node /*ImportDeclaration | ImportEqualsDeclaration*/ {
-	if compilerOptions.ImportHelpers.IsTrue() && ast.IsEffectiveExternalModule(sourceFile, compilerOptions) {
+func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions, fileModuleKind core.ModuleKind, hasExportStarsToExportValues bool, hasImportStar bool, hasImportDefault bool, isExternalOrCommonJSModule bool) *ast.Node /*ImportDeclaration | ImportEqualsDeclaration*/ {
+	if compilerOptions.ImportHelpers.IsTrue() && isExternalOrCommonJSModule {
 		moduleKind := compilerOptions.GetEmitModuleKind()
 		helpers := getImportedHelpers(emitContext, sourceFile)
 		if fileModuleKind == core.ModuleKindCommonJS || fileModuleKind == core.ModuleKindNone && moduleKind == core.ModuleKindCommonJS {

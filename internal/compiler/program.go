@@ -297,6 +297,11 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
+	// Recompute external module indicator for the changed file
+	result.externalModuleIndicators = maps.Clone(result.externalModuleIndicators)
+	options := result.projectReferenceFileMapper.getCompilerOptionsForFile(newFile)
+	metadata := result.sourceFileMetaDatas[changedFilePath]
+	result.externalModuleIndicators[newFile.Path()] = ast.GetExternalModuleIndicator(newFile, options, metadata)
 	updateFileIncludeProcessor(result)
 	return result, true
 }
@@ -1318,6 +1323,26 @@ func (p *Program) Program() *Program {
 
 func (p *Program) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
 	return p.sourceFileMetaDatas[path]
+}
+
+// GetExternalModuleIndicator returns the full external module indicator for a file,
+// combining syntax-based detection (from the parser) with compiler-options-dependent
+// checks (JSX, forced module format). This is the options-aware version that should be
+// used by the checker and transformers.
+func (p *Program) GetExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
+	return p.externalModuleIndicators[file.Path()]
+}
+
+// IsExternalModule returns true if the file is an external module considering
+// both syntax and compiler options.
+func (p *Program) IsExternalModule(file *ast.SourceFile) bool {
+	return p.GetExternalModuleIndicator(file) != nil
+}
+
+// IsExternalOrCommonJSModule returns true if the file is an external module or CJS module
+// considering both syntax and compiler options.
+func (p *Program) IsExternalOrCommonJSModule(file *ast.SourceFile) bool {
+	return p.IsExternalModule(file) || file.CommonJSModuleIndicator != nil
 }
 
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {

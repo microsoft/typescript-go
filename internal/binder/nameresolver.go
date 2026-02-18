@@ -18,9 +18,21 @@ type NameResolver struct {
 	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
 	GetRequiresScopeChangeCache      func(node *ast.Node) core.Tristate
+	IsExternalOrCommonJSModule       func(file *ast.SourceFile) bool
 	OnPropertyWithInvalidInitializer func(location *ast.Node, name string, declaration *ast.Node, result *ast.Symbol) bool
 	OnFailedToResolveSymbol          func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message)
 	OnSuccessfullyResolvedSymbol     func(location *ast.Node, result *ast.Symbol, meaning ast.SymbolFlags, lastLocation *ast.Node, associatedDeclarationForContainingInitializerOrBindingName *ast.Node, withinDeferredContext bool)
+}
+
+func (r *NameResolver) isExternalOrCommonJSModule(file *ast.SourceFile) bool {
+	if r.IsExternalOrCommonJSModule != nil {
+		return r.IsExternalOrCommonJSModule(file)
+	}
+	return ast.IsExternalOrCommonJSModule(file)
+}
+
+func (r *NameResolver) isGlobalSourceFile(node *ast.Node) bool {
+	return node.Kind == ast.KindSourceFile && !r.isExternalOrCommonJSModule(node.AsSourceFile())
 }
 
 func (r *NameResolver) Resolve(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
@@ -48,7 +60,7 @@ loop:
 		}
 		locals := location.Locals()
 		// Locals of a source file are not in scope (because they get merged into the global symbol table)
-		if locals != nil && !ast.IsGlobalSourceFile(location) {
+		if locals != nil && !r.isGlobalSourceFile(location) {
 			result = r.lookup(locals, name, meaning)
 			if result != nil {
 				useResult := true
@@ -88,7 +100,7 @@ loop:
 		withinDeferredContext = withinDeferredContext || getIsDeferredContext(location, lastLocation)
 		switch location.Kind {
 		case ast.KindSourceFile:
-			if !ast.IsExternalOrCommonJSModule(location.AsSourceFile()) {
+			if !r.isExternalOrCommonJSModule(location.AsSourceFile()) {
 				break
 			}
 			fallthrough

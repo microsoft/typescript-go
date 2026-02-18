@@ -433,7 +433,7 @@ func (b *Binder) declareSourceFileMember(node *ast.Node, symbolFlags ast.SymbolF
 	if ast.IsExternalOrCommonJSModule(b.file) {
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	}
-	return b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, symbolFlags, symbolExcludes)
+	return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 }
 
 func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
@@ -757,10 +757,8 @@ func (b *Binder) bindPropertyWorker(node *ast.Node) {
 
 func (b *Binder) bindSourceFileIfExternalModule() {
 	b.setExportContextFlag(b.file.AsNode())
-	if ast.IsExternalOrCommonJSModule(b.file) {
-		b.bindSourceFileAsExternalModule()
-	} else if ast.IsJsonSourceFile(b.file) {
-		b.bindSourceFileAsExternalModule()
+	b.bindSourceFileAsExternalModule()
+	if ast.IsJsonSourceFile(b.file) {
 		// Create symbol equivalent for the module.exports = {}
 		originalSymbol := b.file.Symbol
 		b.declareSymbol(ast.GetSymbolTable(&b.file.Symbol.Exports), b.file.Symbol, b.file.AsNode(), ast.SymbolFlagsProperty, ast.SymbolFlagsAll)
@@ -932,14 +930,11 @@ func (b *Binder) bindCallExpression(node *ast.Node) {
 }
 
 func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
-	if b.file.ExternalModuleIndicator != nil && b.file.ExternalModuleIndicator != b.file.AsNode() {
+	if ast.IsExternalModule(b.file) {
 		return false
 	}
 	if b.file.CommonJSModuleIndicator == nil {
 		b.file.CommonJSModuleIndicator = node
-		if b.file.ExternalModuleIndicator == nil {
-			b.bindSourceFileAsExternalModule()
-		}
 	}
 	return true
 }
@@ -1210,11 +1205,11 @@ func (b *Binder) bindBlockScopedDeclaration(node *ast.Node, symbolFlags ast.Symb
 	case ast.KindModuleDeclaration:
 		b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	case ast.KindSourceFile:
-		if ast.IsExternalOrCommonJSModule(b.container.AsSourceFile()) {
+		if ast.IsExternalOrCommonJSModule(b.blockScopeContainer.AsSourceFile()) {
 			b.declareModuleMember(node, symbolFlags, symbolExcludes)
-			break
+		} else {
+			b.declareSymbol(ast.GetLocals(b.blockScopeContainer), nil /*parent*/, node, symbolFlags, symbolExcludes)
 		}
-		fallthrough
 	default:
 		b.declareSymbol(ast.GetLocals(b.blockScopeContainer), nil /*parent*/, node, symbolFlags, symbolExcludes)
 	}
@@ -1305,7 +1300,7 @@ func (b *Binder) getStrictModeIdentifierMessage(node *ast.Node) *diagnostics.Mes
 	if ast.GetContainingClass(node) != nil {
 		return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode_Class_definitions_are_automatically_in_strict_mode
 	}
-	if b.file.ExternalModuleIndicator != nil {
+	if ast.IsExternalModule(b.file) {
 		return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode_Modules_are_automatically_in_strict_mode
 	}
 	return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode
@@ -1345,7 +1340,7 @@ func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Nod
 	if ast.GetContainingClass(node) != nil {
 		return diagnostics.Function_declarations_are_not_allowed_inside_blocks_in_strict_mode_when_targeting_ES5_Class_definitions_are_automatically_in_strict_mode
 	}
-	if b.file.ExternalModuleIndicator != nil {
+	if ast.IsExternalModule(b.file) {
 		return diagnostics.Function_declarations_are_not_allowed_inside_blocks_in_strict_mode_when_targeting_ES5_Modules_are_automatically_in_strict_mode
 	}
 	return diagnostics.Function_declarations_are_not_allowed_inside_blocks_in_strict_mode_when_targeting_ES5
@@ -1429,7 +1424,7 @@ func (b *Binder) getStrictModeEvalOrArgumentsMessage(node *ast.Node) *diagnostic
 	if ast.GetContainingClass(node) != nil {
 		return diagnostics.Code_contained_in_a_class_is_evaluated_in_JavaScript_s_strict_mode_which_does_not_allow_this_use_of_0_For_more_information_see_https_Colon_Slash_Slashdeveloper_mozilla_org_Slashen_US_Slashdocs_SlashWeb_SlashJavaScript_SlashReference_SlashStrict_mode
 	}
-	if b.file.ExternalModuleIndicator != nil {
+	if ast.IsExternalModule(b.file) {
 		return diagnostics.Invalid_use_of_0_Modules_are_automatically_in_strict_mode
 	}
 	return diagnostics.Invalid_use_of_0_in_strict_mode

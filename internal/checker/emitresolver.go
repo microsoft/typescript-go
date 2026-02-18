@@ -165,7 +165,7 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		// If the node is not exported or it is not ambient module element (except import declaration)
 		if r.checker.getCombinedModifierFlagsCached(node)&ast.ModifierFlagsExport == 0 &&
 			!(node.Kind != ast.KindImportEqualsDeclaration && parent.Kind != ast.KindSourceFile && parent.Flags&ast.NodeFlagsAmbient != 0) {
-			return ast.IsGlobalSourceFile(parent)
+			return r.checker.isGlobalSourceFile(parent)
 		}
 		// Exported members/ambient module elements (exception import declaration) are visible if parent is visible
 		return r.isDeclarationVisible(parent)
@@ -484,7 +484,7 @@ func (r *EmitResolver) IsImportRequiredByAugmentation(decl *ast.ImportDeclaratio
 		return false
 	}
 	file := ast.GetSourceFileOfNode(decl.AsNode())
-	if file.Symbol == nil {
+	if !r.checker.isExternalOrCommonJSModule(file) {
 		// script file
 		return false
 	}

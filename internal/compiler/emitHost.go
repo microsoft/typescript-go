@@ -59,6 +59,10 @@ func (host *emitHost) GetEmitModuleFormatOfFile(file ast.HasFileName) core.Modul
 	return host.program.GetEmitModuleFormatOfFile(file)
 }
 
+func (host *emitHost) GetExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
+	return host.program.GetExternalModuleIndicator(file)
+}
+
 func (host *emitHost) FileExists(path string) bool {
 	return host.program.FileExists(path)
 }

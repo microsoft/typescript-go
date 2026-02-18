@@ -505,7 +505,10 @@ func TestSession(t *testing.T) {
 			x1 := program1.GetSourceFile("/home/projects/TS/p1/src/x.ts")
 			x2 := program2.GetSourceFile("/home/projects/TS/p1/src/x.ts")
 			assert.Assert(t, x1 != nil && x2 != nil)
-			assert.Assert(t, x1 != x2)
+			// Source files are now shared across projects since parse options no longer
+			// include module detection options. The options-dependent module indicator
+			// is computed at the Program level instead.
+			assert.Assert(t, x1 == x2)
 		})
 	})
 

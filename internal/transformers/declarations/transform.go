@@ -41,6 +41,7 @@ type DeclarationEmitHost interface {
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
 	GetEmitResolver() printer.EmitResolver
+	GetExternalModuleIndicator(file *ast.SourceFile) *ast.Node
 }
 
 type DeclarationTransformer struct {
@@ -91,6 +92,10 @@ func (tx *DeclarationTransformer) GetDiagnostics() []*ast.Diagnostic {
 
 func (tx *DeclarationTransformer) shouldStripInternal(node *ast.Node) bool {
 	return tx.state.stripInternal && node != nil && tx.isInternalDeclaration(node, tx.state.currentSourceFile)
+}
+
+func (tx *DeclarationTransformer) isExternalOrCommonJSModule(file *ast.SourceFile) bool {
+	return tx.host.GetExternalModuleIndicator(file) != nil || file.CommonJSModuleIndicator != nil
 }
 
 func (tx *DeclarationTransformer) isInternalDeclaration(node *ast.Node, sourceFile *ast.SourceFile) bool {
@@ -263,7 +268,7 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements.Loc = statements.Loc // setTextRange
-	if ast.IsExternalOrCommonJSModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
+	if tx.isExternalOrCommonJSModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
 		marker := createEmptyExports(tx.Factory().AsNodeFactory())
 		newList := append(combinedStatements.Nodes, marker)
 		withMarker := tx.Factory().NewNodeList(newList)

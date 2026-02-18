@@ -556,6 +556,7 @@ type Program interface {
 	GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData
+	GetExternalModuleIndicator(file *ast.SourceFile) *ast.Node
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
@@ -912,7 +913,7 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == core.TSTrue
 	c.canCollectSymbolAliasAccessibilityData = c.compilerOptions.VerbatimModuleSyntax.IsFalseOrUnknown()
 	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
-	c.globals = make(ast.SymbolTable, countGlobalSymbols(c.files))
+	c.globals = make(ast.SymbolTable, countGlobalSymbols(c.files, c.program))
 	c.evaluate = evaluator.NewEvaluator(c.evaluateEntity, ast.OEKParentheses)
 	c.stringLiteralTypes = make(map[string]*Type)
 	c.numberLiteralTypes = make(map[jsnum.Number]*Type)
@@ -1107,10 +1108,34 @@ func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
 	return result
 }
 
-func countGlobalSymbols(files []*ast.SourceFile) int {
+// getExternalModuleIndicator returns the full external module indicator for a file,
+// considering both syntax and compiler options.
+func (c *Checker) getExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
+	return c.program.GetExternalModuleIndicator(file)
+}
+
+// isExternalModule returns true if the file is an external module,
+// considering both syntax and compiler options.
+func (c *Checker) isExternalModule(file *ast.SourceFile) bool {
+	return c.getExternalModuleIndicator(file) != nil
+}
+
+// isExternalOrCommonJSModule returns true if the file is an external module or CJS module,
+// considering both syntax and compiler options.
+func (c *Checker) isExternalOrCommonJSModule(file *ast.SourceFile) bool {
+	return c.isExternalModule(file) || file.CommonJSModuleIndicator != nil
+}
+
+// isGlobalSourceFile returns true if the source file is a global (non-module) file,
+// considering both syntax and compiler options.
+func (c *Checker) isGlobalSourceFile(node *ast.Node) bool {
+	return node.Kind == ast.KindSourceFile && !c.isExternalOrCommonJSModule(node.AsSourceFile())
+}
+
+func countGlobalSymbols(files []*ast.SourceFile, program Program) int {
 	count := 0
 	for _, file := range files {
-		if !ast.IsExternalOrCommonJSModule(file) {
+		if program.GetExternalModuleIndicator(file) == nil && file.CommonJSModuleIndicator == nil {
 			count += len(file.Locals)
 		}
 	}
@@ -1280,7 +1305,7 @@ func (c *Checker) initializeChecker() {
 	// Initialize global symbol table
 	augmentations := make([][]*ast.Node, 0, len(c.files))
 	for _, file := range c.files {
-		if !ast.IsExternalOrCommonJSModule(file) {
+		if !c.isExternalOrCommonJSModule(file) {
 			c.mergeSymbolTable(c.globals, file.Locals, false, nil)
 		}
 		c.patternAmbientModules = append(c.patternAmbientModules, file.PatternAmbientModules...)
@@ -1429,6 +1454,7 @@ func (c *Checker) createNameResolver() *binder.NameResolver {
 		SymbolReferenced:                 c.symbolReferenced,
 		SetRequiresScopeChangeCache:      c.setRequiresScopeChangeCache,
 		GetRequiresScopeChangeCache:      c.getRequiresScopeChangeCache,
+		IsExternalOrCommonJSModule:       c.isExternalOrCommonJSModule,
 		OnPropertyWithInvalidInitializer: c.checkAndReportErrorForInvalidInitializer,
 		OnFailedToResolveSymbol:          c.onFailedToResolveSymbol,
 		OnSuccessfullyResolvedSymbol:     c.onSuccessfullyResolvedSymbol,
@@ -1448,6 +1474,7 @@ func (c *Checker) createNameResolverForSuggestion() *binder.NameResolver {
 		SymbolReferenced:            c.symbolReferenced,
 		SetRequiresScopeChangeCache: c.setRequiresScopeChangeCache,
 		GetRequiresScopeChangeCache: c.getRequiresScopeChangeCache,
+		IsExternalOrCommonJSModule:  c.isExternalOrCommonJSModule,
 	}
 }
 
@@ -1745,7 +1772,7 @@ func (c *Checker) getSpellingSuggestionForName(name string, symbols []*ast.Symbo
 
 func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *ast.Symbol, meaning ast.SymbolFlags, lastLocation *ast.Node, associatedDeclarationForContainingInitializerOrBindingName *ast.Node, withinDeferredContext bool) {
 	name := result.Name
-	isInExternalModule := lastLocation != nil && ast.IsSourceFile(lastLocation) && ast.IsExternalOrCommonJSModule(lastLocation.AsSourceFile())
+	isInExternalModule := lastLocation != nil && ast.IsSourceFile(lastLocation) && c.isExternalOrCommonJSModule(lastLocation.AsSourceFile())
 	// Only check for block-scoped variable if we have an error location and are looking for the
 	// name with variable meaning
 	//      For example,
@@ -2129,7 +2156,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		c.renamedBindingElementsInTypes = nil
 		c.checkSourceElements(sourceFile.Statements.Nodes)
 		c.checkDeferredNodes(sourceFile)
-		if ast.IsExternalOrCommonJSModule(sourceFile) {
+		if c.isExternalOrCommonJSModule(sourceFile) {
 			c.checkExternalModuleExports(sourceFile.AsNode())
 			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
 		}
@@ -5025,7 +5052,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 		if c.shouldCheckErasableSyntax(node) {
 			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 		}
-		if c.compilerOptions.GetIsolatedModules() && ast.GetSourceFileOfNode(node).ExternalModuleIndicator == nil {
+		if c.compilerOptions.GetIsolatedModules() && c.getExternalModuleIndicator(ast.GetSourceFileOfNode(node)) == nil {
 			// This could be loosened a little if needed. The only problem we are trying to avoid is unqualified
 			// references to namespace members declared in other files. But use of namespaces is discouraged anyway,
 			// so for now we will just not allow them in scripts, which is the only place they can merge cross-file.
@@ -5059,7 +5086,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 					c.checkModuleAugmentationElement(statement)
 				}
 			}
-		} else if ast.IsGlobalSourceFile(node.Parent) {
+		} else if c.isGlobalSourceFile(node.Parent) {
 			if isGlobalAugmentation {
 				c.error(node.Name(), diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations)
 			} else if tspath.IsExternalModuleNameRelative(node.Name().Text()) {
@@ -5407,7 +5434,7 @@ func (c *Checker) checkExportSpecifier(node *ast.Node) {
 		}
 		// find immediate value referenced by exported name (SymbolFlags.Alias is set so we don't chase down aliases)
 		symbol := c.resolveName(exportedName, exportedName.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
-		if symbol != nil && (symbol == c.undefinedSymbol || symbol == c.globalThisSymbol || symbol.Declarations != nil && ast.IsGlobalSourceFile(ast.GetDeclarationContainer(symbol.Declarations[0]))) {
+		if symbol != nil && (symbol == c.undefinedSymbol || symbol == c.globalThisSymbol || symbol.Declarations != nil && c.isGlobalSourceFile(ast.GetDeclarationContainer(symbol.Declarations[0]))) {
 			c.error(exportedName, diagnostics.Cannot_export_0_Only_local_declarations_can_be_exported_from_a_module, exportedName.Text())
 		} else {
 			c.markLinkedReferences(node, ReferenceHintExportSpecifier, nil /*propSymbol*/, nil /*parentType*/)
@@ -5531,6 +5558,9 @@ func getVerbatimModuleSyntaxErrorMessage(node *ast.Node) *diagnostics.Message {
 
 func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	moduleSymbol := c.getSymbolOfDeclaration(node)
+	if moduleSymbol == nil {
+		return
+	}
 	links := c.moduleSymbolLinks.Get(moduleSymbol)
 	if !links.exportsChecked {
 		exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
@@ -10272,7 +10302,7 @@ func (c *Checker) checkCollisionWithRequireExportsInGeneratedCode(node *ast.Node
 	}
 	// In case of variable declaration, node.parent is variable statement so look at the variable statement's parent
 	parent := ast.GetDeclarationContainer(node)
-	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
+	if ast.IsSourceFile(parent) && c.isExternalOrCommonJSModule(parent.AsSourceFile()) {
 		// If the declaration happens to be in external module, report error that require and exports are reserved keywords
 		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
 	}
@@ -11826,7 +11856,7 @@ func (c *Checker) tryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, con
 	}
 	if ast.IsSourceFile(container) {
 		// look up in the source file's locals or exports
-		if container.AsSourceFile().ExternalModuleIndicator != nil {
+		if c.getExternalModuleIndicator(container.AsSourceFile()) != nil {
 			// TODO: Maybe issue a better error than 'object is possibly undefined'
 			return c.undefinedType
 		}
@@ -14500,7 +14530,8 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 	}
 
 	// JS files have a synthetic default if they do not contain ES2015+ module syntax (export = is not valid in js) _and_ do not have an __esModule marker
-	return (file.AsSourceFile().ExternalModuleIndicator == nil || file.AsSourceFile().ExternalModuleIndicator == file) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
+	indicator := c.getExternalModuleIndicator(file.AsSourceFile())
+	return (indicator == nil || indicator == file) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {
@@ -14908,7 +14939,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 			}
 		}
 
-		if sourceFile.Symbol != nil {
+		if c.isExternalOrCommonJSModule(sourceFile) || ast.IsJsonSourceFile(sourceFile) {
 			if errorNode != nil {
 				if resolvedModule.IsExternalLibraryImport && !resolutionExtensionIsTSOrJson(resolvedModule.Extension) {
 					c.errorOnImplicitAnyModule(false /*isError*/, errorNode, mode, resolvedModule, moduleReference)
@@ -27787,7 +27818,7 @@ func (c *Checker) markExportSpecifierAliasReferenced(location *ast.ExportSpecifi
 			return // Skip for invalid syntax like this: export { "x" }
 		}
 		symbol := c.resolveName(exportedName, exportedName.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
-		if symbol != nil && (symbol == c.undefinedSymbol || symbol == c.globalThisSymbol || symbol.Declarations != nil && ast.IsGlobalSourceFile(ast.GetDeclarationContainer(symbol.Declarations[0]))) {
+		if symbol != nil && (symbol == c.undefinedSymbol || symbol == c.globalThisSymbol || symbol.Declarations != nil && c.isGlobalSourceFile(ast.GetDeclarationContainer(symbol.Declarations[0]))) {
 			// Do nothing, non-local symbol
 		} else {
 			target := symbol
@@ -30704,7 +30735,7 @@ func (c *Checker) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
 // `getSymbolOfDeclaration` for a declaration, etc.
 func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Symbol {
 	if ast.IsSourceFile(node) {
-		if ast.IsExternalOrCommonJSModule(node.AsSourceFile()) {
+		if c.isExternalOrCommonJSModule(node.AsSourceFile()) {
 			return c.getMergedSymbol(node.Symbol())
 		}
 		return nil
@@ -31035,7 +31066,7 @@ func (c *Checker) isThisPropertyAndThisTyped(node *ast.Node) bool {
 }
 
 func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
-	if ast.IsSourceFile(node) && !ast.IsExternalOrCommonJSModule(node.AsSourceFile()) {
+	if ast.IsSourceFile(node) && !c.isExternalOrCommonJSModule(node.AsSourceFile()) {
 		return c.errorType
 	}
 

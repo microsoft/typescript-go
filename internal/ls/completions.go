@@ -1828,7 +1828,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		if name == "" ||
 			uniques[name] && (origin == nil || !originIsObjectLiteralMethod(origin)) ||
 			data.completionKind == CompletionKindGlobal &&
-				!shouldIncludeSymbol(symbol, data, closestSymbolDeclaration, file, typeChecker, compilerOptions) {
+				!shouldIncludeSymbol(symbol, data, closestSymbolDeclaration, file, typeChecker, compilerOptions, l.GetProgram()) {
 			continue
 		}
 
@@ -2418,6 +2418,7 @@ func shouldIncludeSymbol(
 	file *ast.SourceFile,
 	typeChecker *checker.Checker,
 	compilerOptions *core.CompilerOptions,
+	program *compiler.Program,
 ) bool {
 	allFlags := symbol.Flags
 	location := data.location
@@ -2476,7 +2477,7 @@ func shouldIncludeSymbol(
 	symbolOrigin := checker.SkipAlias(symbol, typeChecker)
 	// We only want to filter out the global keywords.
 	// Auto Imports are not available for scripts so this conditional is always false.
-	if file.AsSourceFile().ExternalModuleIndicator != nil &&
+	if program.GetExternalModuleIndicator(file.AsSourceFile()) != nil &&
 		compilerOptions.AllowUmdGlobalAccess != core.TSTrue &&
 		symbol != symbolOrigin &&
 		data.symbolToSortTextMap[ast.GetSymbolId(symbol)] == SortTextGlobalsOrKeywords &&

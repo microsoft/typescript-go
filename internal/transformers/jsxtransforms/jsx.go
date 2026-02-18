@@ -17,8 +17,9 @@ import (
 
 type JSXTransformer struct {
 	transformers.Transformer
-	compilerOptions *core.CompilerOptions
-	emitResolver    printer.EmitResolver
+	compilerOptions            *core.CompilerOptions
+	emitResolver               printer.EmitResolver
+	getExternalModuleIndicator func(*ast.SourceFile) *ast.Node
 
 	importSpecifier                string
 	filenameDeclaration            *ast.Node
@@ -32,8 +33,9 @@ func NewJSXTransformer(opts *transformers.TransformOptions) *transformers.Transf
 	compilerOptions := opts.CompilerOptions
 	emitContext := opts.Context
 	tx := &JSXTransformer{
-		compilerOptions: compilerOptions,
-		emitResolver:    opts.EmitResolver,
+		compilerOptions:            compilerOptions,
+		emitResolver:               opts.EmitResolver,
+		getExternalModuleIndicator: opts.GetExternalModuleIndicator,
 	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
@@ -52,6 +54,17 @@ func (tx *JSXTransformer) getCurrentFileNameExpression() *ast.Node {
 	)
 	tx.filenameDeclaration = d
 	return d.AsVariableDeclaration().Name()
+}
+
+func (tx *JSXTransformer) isExternalModule(file *ast.SourceFile) bool {
+	if tx.getExternalModuleIndicator != nil {
+		return tx.getExternalModuleIndicator(file) != nil
+	}
+	return ast.IsExternalModule(file)
+}
+
+func (tx *JSXTransformer) isExternalOrCommonJSModule(file *ast.SourceFile) bool {
+	return tx.isExternalModule(file) || file.CommonJSModuleIndicator != nil
 }
 
 func (tx *JSXTransformer) getJsxFactoryCalleePrimitive(isStaticChildren bool) string {
@@ -228,7 +241,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 
 	if len(tx.utilizedImplicitRuntimeImports) > 0 {
 		// A key difference from strada is that these imports are sorted in corsa, rather than appearing in a use-defined order
-		if ast.IsExternalModule(file) {
+		if tx.isExternalModule(file) {
 			statementsUpdated = true
 			newStatements := make([]*ast.Node, 0, len(tx.utilizedImplicitRuntimeImports))
 			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports {
@@ -246,7 +259,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 			for _, e := range newStatements {
 				statements = tx.insertStatementAfterCustomPrologue(statements, e)
 			}
-		} else if ast.IsExternalOrCommonJSModule(file) {
+		} else if tx.isExternalOrCommonJSModule(file) {
 			statementsUpdated = true
 			newStatements := make([]*ast.Node, 0, len(tx.utilizedImplicitRuntimeImports))
 			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports {
