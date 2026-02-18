@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/lsptestutil"
@@ -19,27 +20,28 @@ import (
 )
 
 var replay = flag.String("replay", "", "Path to replay file")
-
-// !!! move & reuse from fourslash; refactor into some general "test server"
-// that is like a harness for running the server and sending it messages and receiving responses etc
+var testDir = flag.String("testDir", "", "Path to project directory")
 
 type initialArguments struct {
-	RootDirPlaceholder string `json:"rootDirPlaceholder"`
+	RootDirUriPlaceholder string `json:"rootDirUriPlaceholder"`
+	RootDirPlaceholder    string `json:"rootDirPlaceholder"`
 }
 
 func TestReplay(t *testing.T) {
 	if replay == nil || *replay == "" {
 		t.Skip("no replay file specified")
 	}
-
-	var testDir string // !!!
+	if testDir == nil || *testDir == "" {
+		t.Fatal("testDir must be specified")
+	}
+	testDirUri := lsconv.FileNameToDocumentURI(*testDir)
 
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
 	typingsLocation := getGlobalTypingsCacheLocation()
 	serverOpts := lsp.ServerOptions{
 		Err:                os.Stderr,
-		Cwd:                core.Must(os.Getwd()), // !!!
+		Cwd:                core.Must(os.Getwd()),
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
 		TypingsLocation:    typingsLocation,
@@ -66,9 +68,10 @@ func TestReplay(t *testing.T) {
 	}
 
 	rootDirPlaceholder := "@PROJECT_ROOT@"
+	rootDirUriPlaceholder := "@PROJECT_ROOT_URI@"
 	firstLine := scanner.Bytes()
 	var initObj initialArguments
-	err = json.Unmarshal(firstLine, initObj)
+	err = json.Unmarshal(firstLine, &initObj)
 	if err != nil {
 		t.Fatalf("failed to parse initial arguments: %v", err)
 	}
@@ -76,11 +79,19 @@ func TestReplay(t *testing.T) {
 	if initObj.RootDirPlaceholder != "" {
 		rootDirPlaceholder = initObj.RootDirPlaceholder
 	}
+	if initObj.RootDirUriPlaceholder != "" {
+		rootDirUriPlaceholder = initObj.RootDirUriPlaceholder
+	}
+
+	rootDirReplacer := strings.NewReplacer(
+		rootDirPlaceholder, *testDir,
+		rootDirUriPlaceholder, string(testDirUri),
+	)
 
 	var id int32 = 1
 	for scanner.Scan() {
 		line := scanner.Text()
-		line = strings.ReplaceAll(line, rootDirPlaceholder, core.Must(os.Getwd()))
+		line = rootDirReplacer.Replace(line)
 		var rawMsg struct {
 			Kind   string     `json:"kind"`
 			Method string     `json:"method"`
@@ -118,18 +129,25 @@ func TestReplay(t *testing.T) {
 			t.Fatalf("failed to marshal rpc message: %v", err)
 		}
 
-		// !!! this seems redundant, maybe use byte stream for input.
 		var msg lsproto.Message
 		err = json.Unmarshal(rpcData, &msg)
 		if err != nil {
 			t.Fatalf("failed to unmarshal rpc message into lsproto.Message: %v", err)
 		}
 
-		if kind == jsonrpc.MessageKindRequest {
-			response, ok := client.SendRequestWorker()
+		switch kind {
+		case jsonrpc.MessageKindRequest:
+			response, ok := client.SendRequestWorker(t, msg.AsRequest(), reqID)
+			if !ok {
+				t.Fatalf("failed to send request for method %s", rawMsg.Method)
+			}
+			if response.Error != nil {
+				t.Fatalf("server returned error for method %s: %v", rawMsg.Method, response.Error)
+			}
+		case jsonrpc.MessageKindNotification:
+			client.WriteMsg(t, &msg)
+		default:
+			t.Fatalf("unknown message kind: %s", rawMsg.Kind)
 		}
-
 	}
-
-	// !!! how to wait for everything to finish running on the server?? wait for response??
 }

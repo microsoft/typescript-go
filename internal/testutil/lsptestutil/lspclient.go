@@ -219,6 +219,7 @@ func (c *LSPClient) handleServerRequest(ctx context.Context, req *lsproto.Reques
 }
 
 // WriteMsg validates and sends a message to the server.
+// This is an untyped low-level method; prefer SendRequest and SendNotification for typed interactions.
 func (c *LSPClient) WriteMsg(t *testing.T, msg *lsproto.Message) {
 	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	if err := c.inputWriter.Write(msg); err != nil {
@@ -240,6 +241,7 @@ func SendRequest[Params, Resp any](t *testing.T, c *LSPClient, info lsproto.Requ
 	return resp.Message(), result, ok
 }
 
+// This is an untyped version of SendRequest. Prefer to use SendRequest when possible.
 func (c *LSPClient) SendRequestWorker(t *testing.T, req *lsproto.RequestMessage, reqID *jsonrpc.ID) (*lsproto.ResponseMessage, bool) {
 	// Create response channel and register it
 	responseChan := make(chan *lsproto.ResponseMessage, 1)
