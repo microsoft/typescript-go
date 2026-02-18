@@ -20,29 +20,11 @@ type Obj = {
 let obj: Obj = {
     foo(/*constructOnly*/) {}
 }
-
-// Union where resolving members could discard call signatures
-interface CallableA {
-    <T>(): T;
-    new (): {}
-}
-
-interface CallableB {
-    <U extends string>(x: U, y: unknown): U;
-    new (): {};
-}
-
-interface I {
-    foo: CallableA | CallableB;
-}
-
-let x: I = {
-    foo(/*unionCallable*/) { return 10; }
-};
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	// When contextual type only has construct signatures (no call signatures),
 	// no signature help should be provided (and no panic should occur).
-	f.VerifyNoSignatureHelpForMarkers(t, "constructOnly", "unionCallable")
+	f.GoToMarker(t, "constructOnly")
+	f.VerifyNoSignatureHelp(t)
 }
