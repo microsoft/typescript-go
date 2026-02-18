@@ -39,7 +39,6 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
-	JSDocParsingMode            ast.JSDocParsingMode
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -683,6 +682,10 @@ func (p *Program) verifyCompilerOptions() {
 	}
 	if options.Module == core.ModuleKindUMD {
 		createRemovedOptionDiagnostic("module", "UMD", "")
+	}
+
+	if options.AlwaysStrict.IsFalse() {
+		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
 
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
@@ -1577,6 +1580,10 @@ func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFil
 		}
 	}
 	return file
+}
+
+func (p *Program) FilesByPath() map[tspath.Path]*ast.SourceFile {
+	return p.filesByPath
 }
 
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {

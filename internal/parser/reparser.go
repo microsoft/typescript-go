@@ -27,7 +27,7 @@ func (p *Parser) addDeepCloneReparse(node *ast.Node) *ast.Node {
 }
 
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
-	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX || node.Kind != ast.KindExpressionStatement {
+	if !p.isJavaScript() || node.Kind != ast.KindExpressionStatement {
 		return
 	}
 	// Loop here to support chained assignments, e.g. exports.a = exports.b = exports.c = 42
@@ -239,6 +239,7 @@ func (p *Parser) reparseJSDocComment(node *ast.Node, tag *ast.Node) {
 	if comment := tag.CommentList(); comment != nil {
 		propJSDoc := p.factory.NewJSDoc(comment, nil)
 		p.finishReparsedNode(propJSDoc, tag)
+		propJSDoc.Parent = node
 		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: node, jsDocs: []*ast.Node{propJSDoc}})
 		node.Flags |= ast.NodeFlagsHasJSDoc
 	}
