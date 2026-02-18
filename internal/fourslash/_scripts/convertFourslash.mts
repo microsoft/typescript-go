@@ -96,13 +96,16 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
     };
     for (const statement of statements) {
         const result = parseFourslashStatement(statement);
+        if (result === SKIP_STATEMENT) {
+            // Skip this statement but continue parsing
+            continue;
+        }
         if (!result) {
+            // Could not parse this statement - mark file as unparsed
             unparsedFiles.push(filename);
             return undefined;
         }
-        else {
-            goTest.commands.push(...result);
-        }
+        goTest.commands.push(...result);
     }
     if (goTest.commands.length === 0) {
         console.error(`No commands parsed in file: ${filename}`);
@@ -150,11 +153,22 @@ function getTestInput(content: string): string {
     return `\`${testInput.join("\n")}\``;
 }
 
+// Sentinel value to indicate a statement should be skipped but parsing should continue
+const SKIP_STATEMENT: unique symbol = Symbol("SKIP_STATEMENT");
+type SkipStatement = typeof SKIP_STATEMENT;
+
 /**
  * Parses a Strada fourslash statement and returns the corresponding Corsa commands.
- * @returns an array of commands if the statement is a valid fourslash command, or `undefined` if the statement could not be parsed.
+ * @returns an array of commands if the statement is a valid fourslash command,
+ *          SKIP_STATEMENT if the statement should be skipped but parsing should continue,
+ *          or `undefined` if the statement could not be parsed and the file should be marked as unparsed.
  */
-function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
+function parseFourslashStatement(statement: ts.Statement): Cmd[] | SkipStatement | undefined {
+    // Skip empty statements (bare semicolons)
+    if (ts.isEmptyStatement(statement)) {
+        return SKIP_STATEMENT;
+    }
+
     if (ts.isVariableStatement(statement)) {
         // variable declarations (for ranges and markers), e.g. `const range = test.ranges()[0];`
         return [];
@@ -284,6 +298,10 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return parseErrorExistsAfterMarker(callExpression.arguments);
                 case "errorExistsBeforeMarker":
                     return parseErrorExistsBeforeMarker(callExpression.arguments);
+                case "semanticClassificationsAre":
+                    return parseSemanticClassificationsAre(callExpression.arguments);
+                case "syntacticClassificationsAre":
+                    return SKIP_STATEMENT;
             }
         }
         // `goTo....`
@@ -2666,6 +2684,71 @@ function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutlini
     }];
 }
 
+function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [VerifySemanticClassificationsCmd] | SkipStatement | undefined {
+    if (args.length < 1) {
+        console.error("semanticClassificationsAre requires at least a format argument");
+        return undefined;
+    }
+
+    const formatArg = args[0];
+    if (!ts.isStringLiteralLike(formatArg)) {
+        console.error("semanticClassificationsAre first argument must be a string literal");
+        return undefined;
+    }
+
+    const format = formatArg.text;
+
+    // Only handle "2020" format for semantic tokens
+    if (format !== "2020") {
+        // Skip other formats like "original" - return sentinel to continue parsing
+        return SKIP_STATEMENT;
+    }
+
+    const tokens: Array<{ type: string; text: string; }> = [];
+
+    // Parse the classification tokens (c2.semanticToken("type", "text"))
+    for (let i = 1; i < args.length; i++) {
+        const arg = args[i];
+        if (!ts.isCallExpression(arg)) {
+            console.error(`Expected call expression for token at index ${i}`);
+            return undefined;
+        }
+
+        if (!ts.isPropertyAccessExpression(arg.expression) || arg.expression.name.text !== "semanticToken") {
+            console.error(`Expected semanticToken call at index ${i}`);
+            return undefined;
+        }
+
+        if (arg.arguments.length < 2) {
+            console.error(`semanticToken requires 2 arguments at index ${i}`);
+            return undefined;
+        }
+
+        const typeArg = arg.arguments[0];
+        const textArg = arg.arguments[1];
+
+        if (!ts.isStringLiteralLike(typeArg) || !ts.isStringLiteralLike(textArg)) {
+            console.error(`semanticToken arguments must be string literals at index ${i}`);
+            return undefined;
+        }
+
+        // Map TypeScript's internal "member" type to LSP's "method" type
+        let tokenType = typeArg.text;
+        tokenType = tokenType.replace(/\bmember\b/g, "method");
+
+        tokens.push({
+            type: tokenType,
+            text: textArg.text,
+        });
+    }
+
+    return [{
+        kind: "verifySemanticClassifications",
+        format,
+        tokens,
+    }];
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -3233,6 +3316,12 @@ interface VerifyErrorExistsBeforeMarkerCmd {
     markerName: string;
 }
 
+interface VerifySemanticClassificationsCmd {
+    kind: "verifySemanticClassifications";
+    format: string;
+    tokens: Array<{ type: string; text: string; }>;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -3262,6 +3351,7 @@ type Cmd =
     | VerifyImportFixModuleSpecifiersCmd
     | VerifyDiagnosticsCmd
     | VerifyBaselineDiagnosticsCmd
+    | VerifySemanticClassificationsCmd
     | VerifyOutliningSpansCmd
     | VerifyNumberOfErrorsInCurrentFileCmd
     | VerifyNoErrorsCmd
@@ -3529,6 +3619,14 @@ function generateNavigateTo({ args }: VerifyNavToCmd): string {
     return `f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{\n${args.join(", ")}})`;
 }
 
+function generateSemanticClassifications({ format, tokens }: VerifySemanticClassificationsCmd): string {
+    const tokensStr = tokens.map(t => `{Type: ${getGoStringLiteral(t.type)}, Text: ${getGoStringLiteral(t.text)}}`).join(",\n\t\t");
+    const maybeComma = tokens.length > 0 ? "," : "";
+    return `f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		${tokensStr}${maybeComma}
+	})`;
+}
+
 function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
         case "verifyCompletions":
@@ -3613,6 +3711,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyErrorExistsAfterMarker(t, ${getGoStringLiteral(cmd.markerName)})`;
         case "verifyErrorExistsBeforeMarker":
             return `f.VerifyErrorExistsBeforeMarker(t, ${getGoStringLiteral(cmd.markerName)})`;
+        case "verifySemanticClassifications":
+            return generateSemanticClassifications(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
