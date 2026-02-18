@@ -781,9 +781,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			ch, _ := checker.NewChecker(aliasResolver)
 			t.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
-				if sourceFile == nil {
-					return true
-				}
 				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, ch, moduleResolver, b.host.FS().Realpath)
 				fileExports := extractor.extractFromFile(sourceFile)
 				for _, exp := range fileExports {
@@ -1071,6 +1068,7 @@ func (b *registryBuilder) extractPackages(
 			}
 			wg.Go(func() {
 				file := b.host.GetSourceFile(realpathFileName, realpathPath)
+				// file may be nil due to symlink/realpath mismatch; see TestAutoImportBuilderFS
 				if file != nil {
 					binder.BindSourceFile(file)
 				}
