@@ -12,7 +12,6 @@ export default hello.hello
 {
     "compilerOptions": {
         "composite": false,
-        "moduleResolution": "node",
         "module": "commonjs",
         "resolveJsonModule": true,
         "esModuleInterop": true,
@@ -25,7 +24,7 @@ export default hello.hello
 }
 
 tsgo --b project --v --explainFiles --listEmittedFiles
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project/tsconfig.json
@@ -33,11 +32,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project/tsconfig.json' is out of date because output file 'project/dist/tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'project/tsconfig.json'...
-
-[96mproject/tsconfig.json[0m:[93m4[0m:[93m29[0m - [91merror[0m[90m TS5108: [0mOption 'moduleResolution=node10' has been removed. Please remove it from your configuration.
-
-[7m4[0m         "moduleResolution": "node",
-[7m [0m [91m                            ~~~~~~[0m
 
 TSFILE:  /home/src/workspaces/solution/project/dist/src/index.js
 TSFILE:  /home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo
@@ -47,9 +41,6 @@ hello.json
    Imported via "../../hello.json" from file 'project/src/index.ts'
 project/src/index.ts
    Matched by include pattern 'src/**/*' in 'project/tsconfig.json'
-
-Found 1 error in project/tsconfig.json[90m:4[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -83,11 +74,10 @@ const hello_json_1 = __importDefault(require("../../hello.json"));
 exports.default = hello_json_1.default.hello;
 
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":["../src/index.ts"]}
+{"version":"FakeTSVersion","root":["../src/index.ts"]}
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -96,12 +86,12 @@ exports.default = hello_json_1.default.hello;
       "original": "../src/index.ts"
     }
   ],
-  "size": 68
+  "size": 54
 }
 
 project/tsconfig.json::
 SemanticDiagnostics::
-*not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*not cached* /home/src/workspaces/solution/hello.json
-*not cached* /home/src/workspaces/solution/project/src/index.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
+*refresh*    /home/src/workspaces/solution/hello.json
+*refresh*    /home/src/workspaces/solution/project/src/index.ts
 Signatures::
