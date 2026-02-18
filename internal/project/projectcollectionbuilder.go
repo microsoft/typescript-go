@@ -556,9 +556,9 @@ func (b *ProjectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 	}
 }
 
+// if customConfigFileName changes, invalidate default projects.
 func (b *ProjectCollectionBuilder) DidChangeCustomConfigFileName(logger *logging.LogTree) {
-	configChangeResult := b.configFileRegistryBuilder.DidChangeCustomConfigFileName(logger)
-	if configChangeResult.IsEmpty() {
+	if !b.configFileRegistryBuilder.DidChangeCustomConfigFileName(logger) {
 		return
 	}
 
@@ -616,7 +616,11 @@ func (b *ProjectCollectionBuilder) findDefaultProject(fileName string, path tspa
 }
 
 func (b *ProjectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *dirty.SyncMapEntry[tspath.Path, *Project] {
-	// !!! look in fileDefaultProjects first?
+	if key, ok := b.fileDefaultProjects[path]; ok && key != inferredProjectName {
+		if entry, ok := b.configuredProjects.Load(key); ok {
+			return entry
+		}
+	}
 	// Sort configured projects so we can use a deterministic "first" as a last resort.
 	var configuredProjectPaths []tspath.Path
 	configuredProjects := make(map[tspath.Path]*dirty.SyncMapEntry[tspath.Path, *Project])

@@ -24,10 +24,10 @@ var (
 // configFileRegistry, producing a new clone with `finalize()` after
 // all changes have been made.
 type configFileRegistryBuilder struct {
-	fs                  *sourceFS
-	isOpenFile          func(tspath.Path) bool
-	extendedConfigCache *ExtendedConfigCache
-	sessionOptions      *SessionOptions
+	fs                   *sourceFS
+	isOpenFile           func(tspath.Path) bool
+	extendedConfigCache  *ExtendedConfigCache
+	sessionOptions       *SessionOptions
 	customConfigFileName string
 
 	base                        *ConfigFileRegistry
@@ -45,11 +45,11 @@ func newConfigFileRegistryBuilder(
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
-		fs:                  newSourceFS(false, fs, fs.toPath),
-		isOpenFile:          fs.isOpenFile,
-		base:                oldConfigFileRegistry,
-		sessionOptions:      sessionOptions,
-		extendedConfigCache: extendedConfigCache,
+		fs:                          newSourceFS(false, fs, fs.toPath),
+		isOpenFile:                  fs.isOpenFile,
+		base:                        oldConfigFileRegistry,
+		sessionOptions:              sessionOptions,
+		extendedConfigCache:         extendedConfigCache,
 		customConfigFileName:        customConfigFileName,
 		customConfigFileNameChanged: customConfigFileName != oldConfigFileRegistry.customConfigFileName,
 
@@ -335,30 +335,13 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
-// DidChangeCustomConfigFileName invalidates cached file->config mappings when the
-// customConfigFileName preference changes. Open files recompute lazily on access.
-// Returns true if the preference actually changed.
-func (c *configFileRegistryBuilder) DidChangeCustomConfigFileName(logger *logging.LogTree) changeFileResult {
+func (c *configFileRegistryBuilder) DidChangeCustomConfigFileName(logger *logging.LogTree) bool {
 	if !c.customConfigFileNameChanged {
-		return changeFileResult{}
+		return false
 	}
 
-	logger.Logf("Custom config file name changed from %q to %q; invalidating cache",
-		c.base.customConfigFileName, c.customConfigFileName)
-
-	var affectedFiles map[tspath.Path]struct{}
-	c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
-		if affectedFiles == nil {
-			affectedFiles = make(map[tspath.Path]struct{})
-		}
-		affectedFiles[entry.Key()] = struct{}{}
-		return true
-	})
 	c.configFileNames.Clear()
-
-	return changeFileResult{
-		affectedFiles: affectedFiles,
-	}
+	return true
 }
 
 func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) changeFileResult {
@@ -583,13 +566,18 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 	searchPath := tspath.GetDirectoryPath(fileName)
 	// Prefer custom config file if provided; search ancestors with correct skip behavior.
 	if c.customConfigFileName != "" {
-		skipCustom := skipSearchInDirectoryOfFile
+		skip := skipSearchInDirectoryOfFile
 		if result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
-			customConfigFilePath := tspath.CombinePaths(directory, c.customConfigFileName)
-			if !skipCustom && c.FS().FileExists(customConfigFilePath) {
-				return customConfigFilePath, true
+			if !skip {
+				customPath := tspath.CombinePaths(directory, c.customConfigFileName)
+				if c.FS().FileExists(customPath) {
+					return customPath, true
+				}
 			}
-			skipCustom = false
+			if strings.HasSuffix(directory, "/node_modules") {
+				return "", true
+			}
+			skip = false
 			return "", false
 		}); result != "" {
 			logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
@@ -597,16 +585,17 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 		}
 	}
 
-	// Fallback to tsconfig.json/jsconfig.json
 	skip := skipSearchInDirectoryOfFile
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
-		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if !skip && c.FS().FileExists(tsconfigPath) {
-			return tsconfigPath, true
-		}
-		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if !skip && c.FS().FileExists(jsconfigPath) {
-			return jsconfigPath, true
+		if !skip {
+			tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
+			if c.FS().FileExists(tsconfigPath) {
+				return tsconfigPath, true
+			}
+			jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
+			if c.FS().FileExists(jsconfigPath) {
+				return jsconfigPath, true
+			}
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
