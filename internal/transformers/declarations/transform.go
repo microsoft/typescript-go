@@ -1550,6 +1550,7 @@ func (tx *DeclarationTransformer) walkBindingPattern(pattern *ast.BindingPattern
 		}
 		if ast.IsBindingPattern(elem.Name()) {
 			elems = append(elems, tx.walkBindingPattern(elem.Name().AsBindingPattern(), param)...)
+			continue
 		}
 		elems = append(elems, tx.Factory().NewPropertyDeclaration(
 			tx.ensureModifiers(param),
