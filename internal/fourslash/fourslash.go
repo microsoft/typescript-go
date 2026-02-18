@@ -14,7 +14,6 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -22,6 +21,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
+	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -69,7 +70,7 @@ type FourslashTest struct {
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
 
 	// Async message handling
-	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
+	pendingRequests   map[jsonrpc.ID]chan *lsproto.ResponseMessage
 	pendingRequestsMu sync.Mutex
 }
 
@@ -195,6 +196,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	// !!! use default compiler options for inferred project as base
 	compilerOptions := &core.CompilerOptions{
 		SkipDefaultLibCheck: core.TSTrue,
+		Target:              core.ScriptTargetLatestStandard,
+		Jsx:                 core.JsxEmitPreserve,
 	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
 	if commandLines := testData.GlobalOptions["tsc"]; commandLines != "" {
@@ -203,28 +206,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		}
 	}
 
-	// Skip tests with deprecated/removed compiler options
-	if compilerOptions.BaseUrl != "" {
-		t.Skipf("Test uses deprecated 'baseUrl' option")
-	}
-	if compilerOptions.OutFile != "" {
-		t.Skipf("Test uses deprecated 'outFile' option")
-	}
-	if compilerOptions.Module == core.ModuleKindAMD {
-		t.Skipf("Test uses deprecated 'module: AMD' option")
-	}
-	if compilerOptions.Module == core.ModuleKindSystem {
-		t.Skipf("Test uses deprecated 'module: System' option")
-	}
-	if compilerOptions.Module == core.ModuleKindUMD {
-		t.Skipf("Test uses deprecated 'module: UMD' option")
-	}
-	if compilerOptions.ModuleResolution == core.ModuleResolutionKindClassic {
-		t.Skipf("Test uses deprecated 'moduleResolution: Classic' option")
-	}
-	if compilerOptions.AllowSyntheticDefaultImports == core.TSFalse {
-		t.Skipf("Test uses unsupported 'allowSyntheticDefaultImports: false' option")
-	}
+	harnessutil.SkipUnsupportedCompilerOptions(t, compilerOptions)
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
@@ -265,7 +247,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:              converters,
 		baselines:               make(map[baselineCommand]*strings.Builder),
 		openFiles:               make(map[string]struct{}),
-		pendingRequests:         make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		pendingRequests:         make(map[jsonrpc.ID]chan *lsproto.ResponseMessage),
 	}
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -335,13 +317,13 @@ func (f *FourslashTest) messageRouter(ctx context.Context) error {
 		}
 
 		switch msg.Kind {
-		case lsproto.MessageKindResponse:
+		case jsonrpc.MessageKindResponse:
 			f.handleResponse(ctx, msg.AsResponse())
-		case lsproto.MessageKindRequest:
+		case jsonrpc.MessageKindRequest:
 			if err := f.handleServerRequest(ctx, msg.AsRequest()); err != nil {
 				return err
 			}
-		case lsproto.MessageKindNotification:
+		case jsonrpc.MessageKindNotification:
 			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
 			// in fourslash tests
 		}
@@ -405,7 +387,7 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 		response = &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
-			Error: &lsproto.ResponseError{
+			Error: &jsonrpc.ResponseError{
 				Code:    int32(lsproto.ErrorCodeMethodNotFound),
 				Message: fmt.Sprintf("Unknown method: %s", req.Method),
 			},
@@ -459,9 +441,9 @@ const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
 	params := &lsproto.InitializeParams{
-		Locale: ptrTo("en-US"),
+		Locale: new("en-US"),
 		InitializationOptions: &lsproto.InitializationOptions{
-			CodeLensShowLocationsCommandName: ptrTo(showCodeLensLocationsCommandName),
+			CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
@@ -481,7 +463,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 
 // If modifying the defaults, update GetDefaultCapabilities too.
 var (
-	ptrTrue                       = ptrTo(true)
+	ptrTrue                       = new(true)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
 			SnippetSupport:          ptrTrue,
@@ -521,7 +503,7 @@ var (
 		HierarchicalDocumentSymbolSupport: ptrTrue,
 	}
 	defaultFoldingRangeCapabilities = &lsproto.FoldingRangeClientCapabilities{
-		RangeLimit: ptrTo[uint32](5000),
+		RangeLimit: new(uint32(5000)),
 		// LineFoldingOnly: ptrTrue,
 		FoldingRangeKind: &lsproto.ClientFoldingRangeKindOptions{
 			ValueSet: &[]lsproto.FoldingRangeKind{
@@ -617,7 +599,7 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 				HierarchicalDocumentSymbolSupport: ptrTrue,
 			},
 			FoldingRange: &lsproto.FoldingRangeClientCapabilities{
-				RangeLimit: ptrTo[uint32](5000),
+				RangeLimit: new(uint32(5000)),
 				FoldingRangeKind: &lsproto.ClientFoldingRangeKindOptions{
 					ValueSet: &[]lsproto.FoldingRangeKind{
 						lsproto.FoldingRangeKindComment,
@@ -736,11 +718,20 @@ func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
 	t.Helper()
+	return sendRequestAndBaselineWorker(t, f, info, params, true)
+}
+
+func sendRequestAndBaselineWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params, baselineProjects bool) Resp {
+	t.Helper()
 	prefix := f.getCurrentPositionPrefix()
-	f.baselineState(t)
+	if baselineProjects {
+		f.baselineState(t)
+	}
 	f.baselineRequestOrNotification(t, info.Method, params)
 	resMsg, result, resultOk := sendRequestWorker(t, f, info, params)
-	f.baselineState(t)
+	if baselineProjects {
+		f.baselineState(t)
+	}
 	switch info.Method {
 	case lsproto.MethodTextDocumentOnTypeFormatting:
 		if !f.reportFormatOnTypeCrash {
@@ -764,8 +755,14 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
 	t.Helper()
-	f.baselineState(t)
-	f.updateState(info.Method, params)
+	if info.Method != lsproto.MethodTextDocumentDidChange {
+		// This is called eg when doing typeText = which is series of edits and formatting - which becomes non deterministic "after state"
+		// The notification can only guarantee before state and thats what it baselines, but in case of type it creates
+		// multiple edits which results in getting different state -based on if the snapshot was updated or not at the time of formatting requests
+		// So this is used for all the incremental edits - to baseline only request data but not project state between those edits
+		f.baselineState(t)
+		f.updateState(info.Method, params)
+	}
 	f.baselineRequestOrNotification(t, info.Method, params)
 	sendNotificationWorker(t, f, info, params)
 }
@@ -1480,7 +1477,7 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 			return fmt.Sprintf("%s:\n%s", "Kind mismatch", err)
 		}
 	}
-	if err := cmp.Diff(actual.SortText, core.OrElse(expected.SortText, ptrTo(string(ls.SortTextLocationPriority)))); err != "" {
+	if err := cmp.Diff(actual.SortText, core.OrElse(expected.SortText, new(string(ls.SortTextLocationPriority)))); err != "" {
 		return fmt.Sprintf("%s:\n%s", "SortText mismatch", err)
 	}
 
@@ -1510,6 +1507,61 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
+	}
+}
+
+func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences) {
+	t.Helper()
+
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: lsproto.Position{Line: 0, Character: 0},
+			End:   f.converters.PositionToLineAndCharacter(f.getScriptInfo(f.activeFilename), core.TextPos(len(f.getScriptInfo(f.activeFilename).content))),
+		},
+		Context: &lsproto.CodeActionContext{
+			Only: &[]lsproto.CodeActionKind{codeActionKind},
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	if result.CommandOrCodeActionArray == nil || len(*result.CommandOrCodeActionArray) == 0 {
+		t.Fatalf("No organize imports code action found")
+	}
+
+	var organizeAction *lsproto.CodeAction
+	for _, item := range *result.CommandOrCodeActionArray {
+		if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == codeActionKind {
+			organizeAction = item.CodeAction
+			break
+		}
+	}
+
+	if organizeAction == nil {
+		t.Fatalf("No organize imports code action found")
+	}
+
+	expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+	if organizeAction.Edit != nil && organizeAction.Edit.Changes != nil {
+		for uri, edits := range *organizeAction.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("Organize imports changed unexpected file: %s (expected %s)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actualContent := f.getScriptInfo(f.activeFilename).content
+	if actualContent != expectedContent {
+		t.Fatalf("Organize imports result doesn't match.\nExpected:\n%s\n\nActual:\n%s", expectedContent, actualContent)
 	}
 }
 
@@ -1665,7 +1717,6 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	// Save the original content before any edits
 	script := f.getScriptInfo(f.activeFilename)
 	originalContent := script.content
-
 	// For each import action, apply it and check the result
 	actualTextArray := make([]string, 0, len(importActions))
 	for _, action := range importActions {
@@ -2089,6 +2140,39 @@ func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...l
 				i+1,
 				actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter,
 				expectedRange.LSRange.Start.Line, expectedRange.LSRange.Start.Character, expectedRange.LSRange.End.Line, expectedRange.LSRange.End.Character)
+		}
+	}
+}
+
+// FoldingRangeLineExpected represents expected start and end lines for a folding range.
+type FoldingRangeLineExpected struct {
+	StartLine uint32
+	EndLine   uint32
+}
+
+// VerifyFoldingRangeLines verifies folding ranges by comparing only start and end lines.
+// This is useful for testing with lineFoldingOnly where character positions are ignored.
+func (f *FourslashTest) VerifyFoldingRangeLines(t *testing.T, expected []FoldingRangeLineExpected) {
+	params := &lsproto.FoldingRangeParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentFoldingRangeInfo, params)
+	if result.FoldingRanges == nil {
+		t.Fatalf("Nil response received for folding range request")
+	}
+
+	actualRanges := *result.FoldingRanges
+	if len(actualRanges) != len(expected) {
+		t.Fatalf("verifyFoldingRangeLines failed - expected %d ranges, got %d", len(expected), len(actualRanges))
+	}
+
+	for i, exp := range expected {
+		got := actualRanges[i]
+		if got.StartLine != exp.StartLine || got.EndLine != exp.EndLine {
+			t.Errorf("verifyFoldingRangeLines failed - range %d: expected (startLine=%d, endLine=%d), got (startLine=%d, endLine=%d)",
+				i, exp.StartLine, exp.EndLine, got.StartLine, got.EndLine)
 		}
 	}
 }
@@ -2783,10 +2867,6 @@ func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string)
 	return referenceLocations
 }
 
-func ptrTo[T any](v T) *T {
-	return &v
-}
-
 // This function is intended for spots where a complex
 // value needs to be reinterpreted following some prior JSON deserialization.
 // The default deserializer for `any` properties will give us a map at runtime,
@@ -2809,12 +2889,14 @@ func roundtripThroughJson[T any](value any) (T, error) {
 // Insert text at the current caret position.
 func (f *FourslashTest) Insert(t *testing.T, text string) {
 	t.Helper()
+	f.baselineState(t)
 	f.typeText(t, text)
 }
 
 // Insert text and a new line at the current caret position.
 func (f *FourslashTest) InsertLine(t *testing.T, text string) {
 	t.Helper()
+	f.baselineState(t)
 	f.typeText(t, text+"\n")
 }
 
@@ -2822,6 +2904,7 @@ func (f *FourslashTest) InsertLine(t *testing.T, text string) {
 func (f *FourslashTest) Backspace(t *testing.T, count int) {
 	script := f.getScriptInfo(f.activeFilename)
 	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.baselineState(t)
 
 	for range count {
 		offset--
@@ -2837,6 +2920,7 @@ func (f *FourslashTest) Backspace(t *testing.T, count int) {
 func (f *FourslashTest) DeleteAtCaret(t *testing.T, count int) {
 	script := f.getScriptInfo(f.activeFilename)
 	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.baselineState(t)
 
 	for range count {
 		f.editScriptAndUpdateMarkers(t, f.activeFilename, offset, offset+1, "")
@@ -2848,11 +2932,12 @@ func (f *FourslashTest) DeleteAtCaret(t *testing.T, count int) {
 func (f *FourslashTest) Paste(t *testing.T, text string) {
 	script := f.getScriptInfo(f.activeFilename)
 	start := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.baselineState(t)
 	f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start, text)
 
 	// post-paste fomatting
 	if f.stateEnableFormatting {
-		result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
+		result := sendRequestAndBaselineWorker(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
@@ -2861,7 +2946,7 @@ func (f *FourslashTest) Paste(t *testing.T, text string) {
 				End:   f.converters.PositionToLineAndCharacter(script, core.TextPos(start+len(text))),
 			},
 			Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
-		})
+		}, false)
 		if result.TextEdits != nil {
 			f.applyTextEdits(t, *result.TextEdits)
 		}
@@ -2871,6 +2956,7 @@ func (f *FourslashTest) Paste(t *testing.T, text string) {
 
 // Selects a line and replaces it with a new text.
 func (f *FourslashTest) ReplaceLine(t *testing.T, lineIndex int, text string) {
+	f.baselineState(t)
 	f.selectLine(t, lineIndex)
 	f.typeText(t, text)
 }
@@ -2944,6 +3030,12 @@ func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) 
 }
 
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
+	f.baselineState(t)
+	f.replaceWorker(t, start, length, text)
+}
+
+func (f *FourslashTest) replaceWorker(t *testing.T, start int, length int, text string) {
+	t.Helper()
 	f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+length, text)
 	// f.checkPostEditInvariants() // !!! do we need this?
 }
@@ -2958,7 +3050,7 @@ func (f *FourslashTest) typeText(t *testing.T, text string) {
 
 	script := f.getScriptInfo(f.activeFilename)
 	selection := f.getSelection()
-	f.Replace(t, selection.Pos(), selection.End()-selection.Pos(), "")
+	f.replaceWorker(t, selection.Pos(), selection.End()-selection.Pos(), "")
 
 	totalSize := 0
 
@@ -2973,14 +3065,14 @@ func (f *FourslashTest) typeText(t *testing.T, text string) {
 
 		// Handle post-keystroke formatting
 		if f.stateEnableFormatting {
-			result := sendRequest(t, f, lsproto.TextDocumentOnTypeFormattingInfo, &lsproto.DocumentOnTypeFormattingParams{
+			result := sendRequestAndBaselineWorker(t, f, lsproto.TextDocumentOnTypeFormattingInfo, &lsproto.DocumentOnTypeFormattingParams{
 				TextDocument: lsproto.TextDocumentIdentifier{
 					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 				},
 				Position: f.currentCaretPosition,
 				Ch:       string(r),
 				Options:  f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
-			})
+			}, false)
 			if result.TextEdits != nil {
 				offset += f.applyTextEdits(t, *result.TextEdits)
 			}
@@ -3684,7 +3776,7 @@ func (f *FourslashTest) verifyBaselineRename(
 					text := spanToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[0] != "" {
-						return ptrTo("/*START PREFIX*/" + prefixAndSuffix[0])
+						return new("/*START PREFIX*/" + prefixAndSuffix[0])
 					}
 					return nil
 				},
@@ -3692,7 +3784,7 @@ func (f *FourslashTest) verifyBaselineRename(
 					text := spanToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[1] != "" {
-						return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")
+						return new(prefixAndSuffix[1] + "/*END SUFFIX*/")
 					}
 					return nil
 				},

@@ -8,6 +8,7 @@ function t(x: number) {
 
 
 //// [constEnumInEmbeddedStatements.js]
+"use strict";
 function t(x) {
     if (x)
         /* before E */ ; /* after E */

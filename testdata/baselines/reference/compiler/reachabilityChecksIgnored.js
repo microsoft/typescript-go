@@ -17,6 +17,7 @@ function b() {
 
 
 //// [reachabilityChecksIgnored.js]
+"use strict";
 function a() {
     throw new Error("");
     // @ts-ignore

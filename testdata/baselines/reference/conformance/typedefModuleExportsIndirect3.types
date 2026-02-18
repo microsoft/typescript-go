@@ -17,5 +17,5 @@ module.exports = o;
 /** @typedef {import('./typedefModuleExportsIndirect3').C} C */
 /** @type {C} */
 var c
->c : import("typedefModuleExportsIndirect3").C
+>c : import("./typedefModuleExportsIndirect3").C
 

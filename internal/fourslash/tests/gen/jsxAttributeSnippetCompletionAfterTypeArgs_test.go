@@ -14,7 +14,8 @@ func TestJsxAttributeSnippetCompletionAfterTypeArgs(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `//@Filename: file.tsx
+	const content = `// @strict: false
+//@Filename: file.tsx
 declare const React: any;
 
 namespace JSX {
@@ -61,11 +62,11 @@ function fn4() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "xyz?",
-					InsertText:       PtrTo("xyz={$1}"),
-					FilterText:       PtrTo("xyz"),
-					Detail:           PtrTo("(property) xyz?: number"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("xyz={$1}"),
+					FilterText:       new("xyz"),
+					Detail:           new("(property) xyz?: number"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},

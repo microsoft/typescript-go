@@ -16,7 +16,7 @@ function assertCondition(
 >_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.ts, 4, 25))
 
     throw new Error('Condition failed');
->Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
   }
 }
 

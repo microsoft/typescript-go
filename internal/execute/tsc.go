@@ -14,7 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/format"
-	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -48,9 +48,8 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 	text := fileContent
 	pathified := tspath.ToPath(input, sys.GetCurrentDirectory(), true)
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName:         string(pathified),
-		Path:             pathified,
-		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+		FileName: string(pathified),
+		Path:     pathified,
 	}, text, core.GetScriptKindFromFileName(string(pathified)))
 	edits := format.FormatDocument(ctx, sourceFile)
 	newText := core.ApplyBulkEdits(text, edits)
@@ -271,9 +270,8 @@ func performIncrementalCompilation(
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config:           config,
-		Host:             host,
-		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+		Config: config,
+		Host:   host,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
@@ -311,9 +309,8 @@ func performCompilation(
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config:           config,
-		Host:             host,
-		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+		Config: config,
+		Host:   host,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
@@ -334,5 +331,5 @@ func performCompilation(
 
 func showConfig(sys tsc.System, config *core.CompilerOptions) {
 	// !!!
-	_ = jsonutil.MarshalIndentWrite(sys.Writer(), config, "", "    ")
+	_ = json.MarshalIndentWrite(sys.Writer(), config, "", "    ")
 }

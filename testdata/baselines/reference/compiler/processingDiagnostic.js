@@ -16,7 +16,5 @@ const y = foo;
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo_1 = require("foo");
-const y = foo_1.foo;
+import { foo } from 'foo';
+const y = foo;

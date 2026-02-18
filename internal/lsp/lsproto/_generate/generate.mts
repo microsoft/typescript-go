@@ -206,6 +206,56 @@ const customStructures: Structure[] = [
         ],
         documentation: "RequestFailureTelemetryProperties contains failure information when an LSP request manages to recover.",
     },
+    {
+        name: "ProfileParams",
+        properties: [
+            {
+                name: "dir",
+                type: { kind: "base", name: "string" },
+                documentation: "The directory path where the profile should be saved.",
+            },
+        ],
+        documentation: "Parameters for profiling requests.",
+    },
+    {
+        name: "ProfileResult",
+        properties: [
+            {
+                name: "file",
+                type: { kind: "base", name: "string" },
+                documentation: "The file path where the profile was saved.",
+            },
+        ],
+        documentation: "Result of a profiling request.",
+    },
+    {
+        name: "InitializeAPISessionParams",
+        properties: [
+            {
+                name: "pipe",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "Optional path to use for the named pipe or Unix domain socket. If not provided, a unique path will be generated.",
+            },
+        ],
+        documentation: "Parameters for the initializeAPISession request.",
+    },
+    {
+        name: "InitializeAPISessionResult",
+        properties: [
+            {
+                name: "sessionId",
+                type: { kind: "base", name: "string" },
+                documentation: "The unique identifier for this API session.",
+            },
+            {
+                name: "pipe",
+                type: { kind: "base", name: "string" },
+                documentation: "The path to the named pipe or Unix domain socket for API communication.",
+            },
+        ],
+        documentation: "Result for the initializeAPISession request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -312,6 +362,14 @@ const customRequests: Request[] = [
         result: { kind: "reference", name: "ProfileResult" },
         documentation: "Stops CPU profiling and saves the profile.",
     },
+    {
+        method: "custom/initializeAPISession",
+        typeName: "CustomInitializeAPISessionRequest",
+        params: { kind: "reference", name: "InitializeAPISessionParams" },
+        result: { kind: "reference", name: "InitializeAPISessionResult" },
+        messageDirection: "clientToServer",
+        documentation: "Custom request to initialize an API session.",
+    },
 ];
 
 const customTypeAliases: TypeAlias[] = [
@@ -326,32 +384,6 @@ const customTypeAliases: TypeAlias[] = [
         },
     },
 ];
-
-// Custom structures for profiling requests/responses
-customStructures.push(
-    {
-        name: "ProfileParams",
-        properties: [
-            {
-                name: "dir",
-                type: { kind: "base", name: "string" },
-                documentation: "The directory path where the profile should be saved.",
-            },
-        ],
-        documentation: "Parameters for profiling requests.",
-    },
-    {
-        name: "ProfileResult",
-        properties: [
-            {
-                name: "file",
-                type: { kind: "base", name: "string" },
-                documentation: "The file path where the profile was saved.",
-            },
-        ],
-        documentation: "Result of a profiling request.",
-    },
-);
 
 // Track which custom Data structures were declared explicitly
 const explicitDataStructures = new Set(customStructures.map(s => s.name));
@@ -1122,8 +1154,7 @@ function generateCode() {
     writeLine(`\t"fmt"`);
     writeLine(`\t"strings"`);
     writeLine("");
-    writeLine(`\t"github.com/go-json-experiment/json"`);
-    writeLine(`\t"github.com/go-json-experiment/json/jsontext"`);
+    writeLine(`\t"github.com/microsoft/typescript-go/internal/json"`);
     writeLine(`)`);
     writeLine("");
     writeLine("// Meta model version " + model.metaData.version);
@@ -1205,7 +1236,7 @@ function generateCode() {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
 
-            writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+            writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
             writeLine(`\tconst (`);
             for (let i = 0; i < requiredProps.length; i++) {
                 const prop = requiredProps[i];
@@ -1700,7 +1731,7 @@ function generateCode() {
         writeLine(`var _ json.MarshalerTo = (*${name})(nil)`);
         writeLine("");
 
-        writeLine(`func (o *${name}) MarshalJSONTo(enc *jsontext.Encoder) error {`);
+        writeLine(`func (o *${name}) MarshalJSONTo(enc *json.Encoder) error {`);
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
@@ -1729,7 +1760,7 @@ function generateCode() {
 
         // If all fields are nil, marshal as null (only for unions that can contain null)
         if (unionContainedNull) {
-            writeLine(`\treturn enc.WriteToken(jsontext.Null)`);
+            writeLine(`\treturn enc.WriteToken(json.Null)`);
         }
         else {
             writeLine(`\tpanic("unreachable")`);
@@ -1741,7 +1772,7 @@ function generateCode() {
         writeLine(`var _ json.UnmarshalerFrom = (*${name})(nil)`);
         writeLine("");
 
-        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
         writeLine(`\t*o = ${name}{}`);
         writeLine("");
 
@@ -1792,15 +1823,15 @@ function generateCode() {
         writeLine(`var _ json.MarshalerTo = ${name}{}`);
         writeLine("");
 
-        writeLine(`func (o ${name}) MarshalJSONTo(enc *jsontext.Encoder) error {`);
-        writeLine(`\treturn enc.WriteValue(jsontext.Value(\`${jsonValue}\`))`);
+        writeLine(`func (o ${name}) MarshalJSONTo(enc *json.Encoder) error {`);
+        writeLine(`\treturn enc.WriteValue(json.Value(\`${jsonValue}\`))`);
         writeLine(`}`);
         writeLine("");
 
         writeLine(`var _ json.UnmarshalerFrom = &${name}{}`);
         writeLine("");
 
-        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
         writeLine(`\tv, err := dec.ReadValue();`);
         writeLine(`\tif err != nil {`);
         writeLine(`\t\treturn err`);
@@ -1905,7 +1936,7 @@ function main() {
 
         // Format with gofmt
         const gofmt = which.sync("go");
-        cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.25", "-w", out]);
+        cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.26", "-w", out]);
 
         console.log(`Successfully generated ${out}`);
     }

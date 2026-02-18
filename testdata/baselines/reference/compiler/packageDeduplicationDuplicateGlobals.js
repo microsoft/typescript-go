@@ -54,10 +54,8 @@ const x: string = myGlobal;
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const bar_1 = require("bar");
-const baz_1 = require("baz");
-const barResult = (0, bar_1.useBar)();
-const bazResult = (0, baz_1.useBaz)();
+import { useBar } from "bar";
+import { useBaz } from "baz";
+const barResult = useBar();
+const bazResult = useBaz();
 const x = myGlobal;

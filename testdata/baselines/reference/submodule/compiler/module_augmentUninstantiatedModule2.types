@@ -28,10 +28,10 @@ declare module "angular" {
 
 === node_modules/angular/index.d.ts ===
 declare var ng: ng.IAngularStatic;
->ng : import("node_modules/angular/index.d.ts").IAngularStatic
+>ng : import("angular").IAngularStatic
 >ng : any
 
-declare module ng {
+declare namespace ng {
    export interface IModule {
       name: string;
 >name : string
@@ -45,6 +45,6 @@ declare module ng {
 }
 
 export = ng;
->ng : import("node_modules/angular/index.d.ts").IAngularStatic
+>ng : import("angular").IAngularStatic
 
 

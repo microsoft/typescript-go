@@ -14,7 +14,8 @@ import (
 func TestExhaustiveCaseCompletions4(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @newline: LF
+	const content = `// @lib: es5
+// @newline: LF
 enum E {
     A = 0,
     B = "B",
@@ -93,9 +94,9 @@ switch (z) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "case E.B: ...",
-					InsertText:       PtrTo("case E.B:$1"),
-					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
+					InsertText:       new("case E.B:$1"),
+					SortText:         new(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},
@@ -111,9 +112,9 @@ switch (z) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            `case "2": ...`,
-					InsertText:       PtrTo(`case "2":$1`),
-					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
+					InsertText:       new(`case "2":$1`),
+					SortText:         new(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},
@@ -130,9 +131,9 @@ switch (z) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "case F.A: ...",
-					InsertText:       PtrTo("case F.A:$1\ncase F.B:$2"),
-					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
+					InsertText:       new("case F.A:$1\ncase F.B:$2"),
+					SortText:         new(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},
@@ -148,9 +149,9 @@ switch (z) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "case G.C: ...",
-					InsertText:       PtrTo("case G.C:$1\ncase G.D:$2\ncase G.E:$3\ncase G.DorE:$4"),
-					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
+					InsertText:       new("case G.C:$1\ncase G.D:$2\ncase G.E:$3\ncase G.DorE:$4"),
+					SortText:         new(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},
@@ -166,9 +167,9 @@ switch (z) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "case G.D: ...",
-					InsertText:       PtrTo("case G.D:$1\ncase G.E:$2\ncase G.DorE:$3"),
-					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
+					InsertText:       new("case G.D:$1\ncase G.E:$2\ncase G.DorE:$3"),
+					SortText:         new(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},

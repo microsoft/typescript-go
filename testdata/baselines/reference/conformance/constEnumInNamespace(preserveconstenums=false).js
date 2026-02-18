@@ -7,3 +7,4 @@ namespace N {
 
 
 //// [constEnumInNamespace.js]
+"use strict";

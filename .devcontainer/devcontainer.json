@@ -13,8 +13,7 @@
         },
         "ghcr.io/devcontainers-extra/features/dprint-asdf:2": {
             "version": "latest"
-        },
-        "ghcr.io/devcontainers/features/rust:1": {}
+        }
     },
 
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -26,6 +25,10 @@
         "Initialize Submodules": "git submodule update --init --recursive; cd _submodules/TypeScript; npm ci",
         "Install pprof": "go install github.com/google/pprof@latest",
         "Install Graphviz": "sudo apt update -y; sudo apt install -y graphviz"
+    },
+
+    "containerEnv": {
+        "GOTOOLCHAIN": "auto"
     },
 
     // Configure tool-specific properties.

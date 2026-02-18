@@ -8,7 +8,7 @@
 ->exports.A : typeof A
 +>exports.A = function () {    this.x = 1;} : () => void
 +>exports.A : () => void
- >exports : typeof import("a-ext")
+ >exports : typeof import("./a-ext")
 ->A : typeof A
 ->function () {    this.x = 1;} : typeof A
 +>A : () => void
@@ -18,7 +18,7 @@
  >this.x = 1 : 1
  >this.x : any
 ->this : this
-+>this : any
++>this : typeof import("./a-ext")
  >x : any
  >1 : 1
 
@@ -28,7 +28,7 @@
  const { A } = require("./a-ext");
 ->A : typeof A
 +>A : () => void
- >require("./a-ext") : typeof import("a-ext")
+ >require("./a-ext") : typeof import("./a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"
 @@= skipped -9, +9 lines =@@
@@ -71,7 +71,7 @@
  const { C } = require("./c-ext");
 ->C : typeof C
 +>C : () => void
- >require("./c-ext") : typeof import("c-ext")
+ >require("./c-ext") : typeof import("./c-ext")
  >require : (id: string) => any
  >"./c-ext" : "./c-ext"
 @@= skipped -27, +27 lines =@@
@@ -105,7 +105,7 @@
  const { D } = require("./d-ext");
 ->D : typeof D
 +>D : () => void
- >require("./d-ext") : typeof import("d-ext")
+ >require("./d-ext") : typeof import("./d-ext")
  >require : (id: string) => any
  >"./d-ext" : "./d-ext"
 @@= skipped -9, +9 lines =@@

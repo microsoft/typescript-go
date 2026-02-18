@@ -16,18 +16,13 @@ export const wwmfMap: WWMFMap = {};
 
 
 //// [enum.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WWMF = void 0;
+export { WWMF };
 var WWMF;
 (function (WWMF) {
     WWMF["AAR"] = "AAR";
-})(WWMF || (exports.WWMF = WWMF = {}));
+})(WWMF || (WWMF = {}));
 //// [base.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.wwmfMap = void 0;
-exports.wwmfMap = {};
+export const wwmfMap = {};
 
 
 //// [enum.d.ts]

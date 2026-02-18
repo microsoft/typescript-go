@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -111,7 +110,7 @@ func NewInferredProject(
 			AllowJs:                    core.TSTrue,
 			Module:                     core.ModuleKindESNext,
 			ModuleResolution:           core.ModuleResolutionKindBundler,
-			Target:                     core.ScriptTargetES2022,
+			Target:                     core.ScriptTargetLatestStandard,
 			Jsx:                        core.JsxEmitReactJSX,
 			AllowImportingTsExtensions: core.TSTrue,
 			StrictNullChecks:           core.TSTrue,
@@ -178,6 +177,10 @@ func NewProject(
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+func (p *Project) ID() tspath.Path {
+	return p.configFilePath
 }
 
 // ConfigFileName panics if Kind() is not KindConfigured.
@@ -337,7 +340,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 					checkerPool = newCheckerPool(4, program, p.log)
 					return checkerPool
