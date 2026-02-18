@@ -300,8 +300,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	// Compute effective customConfigFileName from user preferences
 	customConfigFileName := s.ConfigFileRegistry.customConfigFileName
-	if change.newConfig != nil && change.newConfig.tsUserPreferences != nil {
-		customConfigFileName = change.newConfig.tsUserPreferences.CustomConfigFileName
+	if change.newConfig != nil && change.newConfig.TS() != nil {
+		customConfigFileName = change.newConfig.TS().CustomConfigFileName
 	}
 
 	newSnapshotID := session.snapshotID.Add(1)

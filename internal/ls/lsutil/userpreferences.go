@@ -603,7 +603,7 @@ func (p *UserPreferences) parseNativePreview(prefs any) {
 		return
 	}
 	for name, value := range nativePreviewPrefs {
-		p.set(name, value)
+		p.Set(name, value)
 	}
 }
 
@@ -732,7 +732,7 @@ func (p *UserPreferences) Set(name string, value any) bool {
 	case "implementationscodelensshowonallclassmethods":
 		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	case "customconfigfilename":
-		p.CustomConfigFileName = tsoptions.ParseString(value)
+		p.CustomConfigFileName = strings.TrimSpace(tsoptions.ParseString(value))
 	default:
 		if p.FormatCodeSettings == nil {
 			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
