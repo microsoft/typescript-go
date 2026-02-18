@@ -1,6 +1,8 @@
 package pseudochecker
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
@@ -489,6 +491,7 @@ func (ch *PseudoChecker) typeFromFunctionLikeExpression(node *ast.Node) *PseudoT
 	typeParameters := ch.cloneTypeParameters(node.FunctionLikeData().TypeParameters)
 	parameters := ch.cloneParameters(node.FunctionLikeData().Parameters)
 	return NewPseudoTypeSingleCallSignature(
+		node,
 		parameters,
 		typeParameters,
 		returnType,
@@ -509,6 +512,75 @@ func (ch *PseudoChecker) cloneTypeParameters(nodes *ast.NodeList) []*ast.TypePar
 	return result
 }
 
+func isUndefinedPseudoType(t *PseudoType) bool {
+	return t.Kind == PseudoTypeKindUndefined || (t.Kind == PseudoTypeKindMaybeConstLocation && isUndefinedPseudoType(t.AsPseudoTypeMaybeConstLocation().ConstType))
+}
+
+func typeNodeCouldReferToUndefined(node *ast.Node) bool {
+	for node.Kind == ast.KindParenthesizedType {
+		node = node.AsParenthesizedTypeNode().Type
+	}
+	switch node.Kind {
+	// these types require symbolic/type resolution to know if they definitely do or do not refer to `undefined`, so might (or definitely do)
+	case ast.KindTypeReference, ast.KindIndexedAccessType, ast.KindTypeQuery, ast.KindOptionalType, ast.KindRestType, ast.KindImportType:
+		return true
+	case ast.KindIntersectionType:
+		// TODO: why is this not `core.Every`? strada treated unions and intersections the same, but logically every intersection member needs to contain a possible `undefined`
+		// for the result type to contain `undefined`. Likely a bug persisting from strada.
+		return core.Some(node.AsIntersectionTypeNode().Types.Nodes, typeNodeCouldReferToUndefined)
+	case ast.KindUnionType:
+		return core.Some(node.AsUnionTypeNode().Types.Nodes, typeNodeCouldReferToUndefined)
+	case ast.KindConditionalType: // suspect - should be treated as a union of both branches instead, likely a bug persisted from strada
+		return true
+	case ast.KindTypeOperator: // suspect - always refers to a subset of `string | number | symbol` for `keyof` or `symbol` for `unique`
+		return true
+	case ast.KindTypePredicate: // suspect - always refers to `never` or `boolean`, depending on kind - considered possibly-`undefined` referencing for strada compat
+		return true
+	default: // all keywords (why is `undefined` not excluded???), literal types, function-y types, array/tuple types, type literals, template types, this types
+		return false
+	}
+}
+
+// see this as the inverse of `canAddUndefined` in `expressionToTypeNode` in strada
+func couldAlreadyReferToUndefinedType(t *PseudoType) bool {
+	if t.Kind == PseudoTypeKindNoResult || t.Kind == PseudoTypeKindInferred || isUndefinedPseudoType(t) {
+		return true
+	}
+	if t.Kind == PseudoTypeKindMaybeConstLocation {
+		mc := t.AsPseudoTypeMaybeConstLocation()
+		return couldAlreadyReferToUndefinedType(mc.RegularType) // if we're even asking this question, it's not a `const` location
+	}
+	if t.Kind == PseudoTypeKindDirect {
+		// inspect the direct type node
+		node := t.AsPseudoTypeDirect().TypeNode
+		return typeNodeCouldReferToUndefined(node)
+	}
+	if t.Kind == PseudoTypeKindUnion {
+		return core.Some(t.AsPseudoTypeUnion().Types, couldAlreadyReferToUndefinedType)
+	}
+	return false
+}
+
+func isOptionalInitializedOrRestParameter(node *ast.ParameterDeclarationNode) bool {
+	p := node.AsParameterDeclaration()
+	if p.DotDotDotToken != nil || p.Initializer != nil || p.QuestionToken != nil {
+		return true
+	}
+	return false
+}
+
+func addUndefinedIfDefinitelyRequired(expr *PseudoType) *PseudoType {
+	// If `expr` doesn't already contain `| undefined` or a direct/inferred type that may contain `undefined`, add `| undefined`
+	// in Strada, this reached into the checker to see if `undefined` was necessary, using `isRequiredOptionalParameter` from the emit resolver,
+	// but that's not required on top of the syntactic checks to get the same behavior. (If we get the type wrong, it'll mismatch later and be discarded
+	// for an inference error since corsa actually validates that pseudotypes semantically match the inferred type the checker produces)
+	if couldAlreadyReferToUndefinedType(expr) {
+		return expr // will just error later, more like than not, unless the `undefined` is explicit in the pseudo
+	}
+	// Explicitly add an `| undefined`
+	return NewPseudoTypeUnion([]*PseudoType{expr, PseudoTypeUndefined})
+}
+
 func (ch *PseudoChecker) typeFromParameter(node *ast.ParameterDeclaration) *PseudoType {
 	parent := node.Parent
 	if parent.Kind == ast.KindSetAccessor {
@@ -518,8 +590,22 @@ func (ch *PseudoChecker) typeFromParameter(node *ast.ParameterDeclaration) *Pseu
 	if declaredType != nil {
 		return NewPseudoTypeDirect(declaredType)
 	}
-	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.Parent.AsNode()) {
-		return ch.typeFromExpression(node.Initializer)
+	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.AsNode()) {
+		expr := ch.typeFromExpression(node.Initializer)
+		if !ch.strictNullChecks {
+			return expr
+		}
+		p := node.Parent.Parameters()
+		selfIdx := slices.Index(p, node.AsNode())
+		if selfIdx == len(p)-1 {
+			return expr
+		}
+		// if there is a non-optional parameter after this one, a `| undefined` will need to explicitly be emitted on this parameter, if it's not already there
+		remainingParams := node.Parent.Parameters()[selfIdx+1:]
+		if core.Every(remainingParams, isOptionalInitializedOrRestParameter) {
+			return expr
+		}
+		return addUndefinedIfDefinitelyRequired(expr)
 	}
 	// TODO: In strada, the ID checker doesn't infer a parameter type from binding pattern names, but the real checker _does_!
 	// This means ID won't let you write, say, `({elem}) => false` without an annotation, even though it's trivially of type
@@ -553,8 +639,8 @@ func isContextuallyTyped(node *ast.Node) bool {
 		if ast.IsCallExpression(n) {
 			return true
 		}
-		if ast.IsFunctionLikeDeclaration(n) {
-			return n.FunctionLikeData().Type != nil || n.FunctionLikeData().FullSignature != nil
+		if (ast.IsVariableParameterOrProperty(n) || ast.IsAssertionExpression(n)) && n.Type() != nil {
+			return true
 		}
 		return ast.IsJsxElement(n) || ast.IsJsxExpression(n)
 	}) != nil

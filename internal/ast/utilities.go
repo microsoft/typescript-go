@@ -2946,6 +2946,15 @@ func HasInitializer(node *Node) bool {
 	}
 }
 
+func IsVariableParameterOrProperty(node *Node) bool {
+	switch node.Kind {
+	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindPropertyDeclaration:
+		return true
+	default:
+		return false
+	}
+}
+
 func GetTypeAnnotationNode(node *Node) *TypeNode {
 	switch node.Kind {
 	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindPropertyDeclaration,

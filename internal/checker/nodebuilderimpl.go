@@ -117,7 +117,7 @@ func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast
 	if idToSymbol == nil {
 		idToSymbol = make(map[*ast.IdentifierNode]*ast.Symbol)
 	}
-	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol, pc: pseudochecker.NewPseudoChecker()}
+	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol, pc: pseudochecker.NewPseudoChecker(ch.strictNullChecks, ch.exactOptionalPropertyTypes)}
 	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
 	return b
 }
@@ -1974,15 +1974,10 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
 			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
 			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
-			if b.pseudoTypeEquivalentToType(pt, returnType) {
+			if b.pseudoTypeEquivalentToType(pt, returnType, false, !b.ctx.suppressReportInferenceFallback) {
 				// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 				// see: canReuseTypeNodeAnnotation in strada for context
 				returnTypeNode = b.pseudoTypeToNode(pt)
-			}
-			if returnTypeNode == nil && !b.ctx.suppressReportInferenceFallback {
-				// !!! TODO: see psuedochecker.canGetTypeFromObjectLiteral - this isn't quite the same as strada, which reports errors within
-				// object types with more specific inference failures rather than at the top level
-				b.ctx.tracker.ReportInferenceFallback(signature.declaration)
 			}
 			restore()
 		}
@@ -2077,15 +2072,10 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		} else {
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
-		if b.pseudoTypeEquivalentToType(pt, t) {
+		if b.pseudoTypeEquivalentToType(pt, t, (ast.IsParameter(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), !b.ctx.suppressReportInferenceFallback) {
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 			// see: canReuseTypeNodeAnnotation in strada for context
 			result = b.pseudoTypeToNode(pt)
-		}
-		if result == nil && !b.ctx.suppressReportInferenceFallback {
-			// !!! TODO: see psuedochecker.canGetTypeFromObjectLiteral - this isn't quite the same as strada, which reports errors within
-			// object types with more specific inference failures rather than at the top level
-			b.ctx.tracker.ReportInferenceFallback(declaration)
 		}
 		remove()
 	}

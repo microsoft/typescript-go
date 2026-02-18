@@ -92,6 +92,10 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
 	case pseudochecker.PseudoTypeKindSingleCallSignature:
 		d := t.AsPseudoTypeSingleCallSignature()
+		signature := b.ch.getSignatureFromDeclaration(d.Signature)
+		expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
+		cleanup := b.enterNewScope(d.Signature, expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
+		defer cleanup()
 		var typeParams *ast.NodeList
 		if len(d.TypeParameters) > 0 {
 			res := make([]*ast.Node, 0, len(d.TypeParameters))
@@ -227,18 +231,105 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 	)
 }
 
-func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType, type_ *Type) bool {
+// see `typeNodeIsEquivalentToType` in strada, but applied more broadly here, so is setup to handle more equivalences - strada only used it via
+// the `canReuseTypeNodeAnnotation` host hook and not the `canReuseTypeNode` hook, which meant locations using the later were reliant on
+// over-invalidation by the ID inference engine to not emit incorrect types.
+func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType, type_ *Type, isOptionalAnnotated bool, reportErrors bool) bool {
+	// if type_ resolves to an error, we charitably assume equality, since we might be in a single-file checking mode
 	if type_ != nil && b.ch.isErrorType(type_) {
 		return true
 	}
+	// If we can easily operate on just types, we should
 	typeFromPseudo := b.pseudoTypeToType(t) // note: cannot convert complex types like objects, which must be validated separately
 	if typeFromPseudo == type_ {
 		return true
 	}
-	if t.Kind == pseudochecker.PseudoTypeKindObjectLiteral || t.Kind == pseudochecker.PseudoTypeKindTuple {
-		return true // !!! TODO: validate. This relies on the psuedochecker tossing out all complex literals with insufficient/incorrect annotations/assertions
+	if typeFromPseudo != nil && type_ != nil {
+		if isOptionalAnnotated {
+			undefinedStripped := b.ch.getTypeWithFacts(type_, TypeFactsNEUndefined)
+			if undefinedStripped == typeFromPseudo {
+				return true
+			}
+			if typeFromPseudo.flags&TypeFlagsUnion != 0 && undefinedStripped.flags&TypeFlagsUnion != 0 {
+				// does union comparison in general, since the unions may not be `==` identical due to aliasing and the like
+				if b.ch.compareTypesIdentical(typeFromPseudo, undefinedStripped) == TernaryTrue {
+					return true
+				}
+			}
+		}
+		if typeFromPseudo.flags&TypeFlagsUnion != 0 && type_.flags&TypeFlagsUnion != 0 {
+			// handles freshness and `undefined` variant mismatches among union members, plus union comparison in general, since the unions may not be `==`
+			// identical due to aliasing and the like
+			if b.ch.compareTypesIdentical(typeFromPseudo, type_) == TernaryTrue {
+				return true
+			}
+		}
 	}
-	return false
+	// otherwise, fallback to actual pseudo/type cross-comparisons
+	switch t.Kind {
+	case pseudochecker.PseudoTypeKindObjectLiteral:
+		// !!! TODO: validate, don't assume the pseudochecker is being conservative
+		// pt := t.AsPseudoTypeObjectLiteral()
+		return true
+	case pseudochecker.PseudoTypeKindTuple:
+		// !!! TODO: validate, don't assume the pseudochecker is being conservative
+		// pt := t.AsPseudoTypeTuple()
+		return true
+	case pseudochecker.PseudoTypeKindSingleCallSignature:
+		targetSig := b.ch.getSingleCallSignature(type_)
+		if targetSig == nil {
+			return false
+		}
+		pt := t.AsPseudoTypeSingleCallSignature()
+		if len(targetSig.typeParameters) != len(pt.TypeParameters) {
+			if reportErrors {
+				b.ctx.tracker.ReportInferenceFallback(pt.Signature)
+			}
+			return false
+		}
+		if len(targetSig.parameters) != len(pt.Parameters) {
+			if reportErrors {
+				b.ctx.tracker.ReportInferenceFallback(pt.Signature)
+			}
+			return false // TODO: spread tuple params may mess with this check
+		}
+		for i, p := range pt.Parameters {
+			targetParam := targetSig.parameters[i]
+			if p.Optional != isOptionalDeclaration(targetParam.ValueDeclaration) {
+				if reportErrors {
+					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
+				}
+				return false
+			}
+			paramType := b.ch.getTypeOfParameter(targetParam)
+			if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
+				if reportErrors {
+					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
+				}
+				return false
+			}
+		}
+		if b.ch.getTypePredicateOfSignature(targetSig) != nil {
+			return true
+		}
+		if !b.pseudoTypeEquivalentToType(pt.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, reportErrors) {
+			// error reported within the return type
+			return false
+		}
+		return true
+	case pseudochecker.PseudoTypeKindNoResult:
+		if reportErrors {
+			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeNoResult().Declaration)
+		}
+		return false
+	case pseudochecker.PseudoTypeKindInferred:
+		if reportErrors {
+			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
+		}
+		return false
+	default:
+		return false
+	}
 }
 
 func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {

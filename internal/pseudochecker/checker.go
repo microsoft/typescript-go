@@ -11,8 +11,11 @@ package pseudochecker
 // This is an area of active ~~feature-creep~~ development in ID output, prerequisite refactoring would include
 // extracting the `mergeSymbol` core checker logic into a reusable component.
 
-type PseudoChecker struct{}
+type PseudoChecker struct {
+	strictNullChecks           bool
+	exactOptionalPropertyTypes bool
+}
 
-func NewPseudoChecker() *PseudoChecker {
-	return &PseudoChecker{}
+func NewPseudoChecker(strictNullChecks bool, exactOptionalPropertyTypes bool) *PseudoChecker {
+	return &PseudoChecker{strictNullChecks: strictNullChecks, exactOptionalPropertyTypes: exactOptionalPropertyTypes}
 }

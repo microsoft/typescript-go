@@ -172,13 +172,15 @@ func NewPseudoParameter(isRest bool, name *ast.Node, isOptional bool, t *PseudoT
 // PseudoTypeSingleCallSignature represents an object type with a single call signature, like an arrow or function expression
 type PseudoTypeSingleCallSignature struct {
 	PseudoTypeBase
+	Signature      *ast.Node
 	Parameters     []*PseudoParameter
 	TypeParameters []*ast.TypeParameterDeclaration
 	ReturnType     *PseudoType
 }
 
-func NewPseudoTypeSingleCallSignature(parameters []*PseudoParameter, typeParameters []*ast.TypeParameterDeclaration, returnType *PseudoType) *PseudoType {
+func NewPseudoTypeSingleCallSignature(signature *ast.Node, parameters []*PseudoParameter, typeParameters []*ast.TypeParameterDeclaration, returnType *PseudoType) *PseudoType {
 	return newPseudoType(PseudoTypeKindSingleCallSignature, &PseudoTypeSingleCallSignature{
+		Signature:      signature,
 		Parameters:     parameters,
 		TypeParameters: typeParameters,
 		ReturnType:     returnType,
