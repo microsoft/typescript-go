@@ -488,7 +488,7 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.File.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory()))
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}

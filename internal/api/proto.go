@@ -172,6 +172,13 @@ func (d DocumentIdentifier) ToAbsoluteFileName(cwd string) string {
 	return tspath.GetNormalizedAbsolutePath(d.FileName, cwd)
 }
 
+func (d DocumentIdentifier) String() string {
+	if d.URI != "" {
+		return string(d.URI)
+	}
+	return d.FileName
+}
+
 // APIFileChangeSummary lists documents that have been changed, created, or deleted.
 type APIFileChangeSummary struct {
 	Changed []DocumentIdentifier `json:"changed,omitempty"`
