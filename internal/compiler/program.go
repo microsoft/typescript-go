@@ -39,7 +39,6 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
-	JSDocParsingMode            ast.JSDocParsingMode
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -671,12 +670,9 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("outFile", "", "")
 	}
 
-	// if options.Target == core.ScriptTargetES3 {
-	// 	createRemovedOptionDiagnostic("target", "ES3", "")
-	// }
-	// if options.Target == core.ScriptTargetES5 {
-	// 	createRemovedOptionDiagnostic("target", "ES5", "")
-	// }
+	if options.Target == core.ScriptTargetES5 {
+		createRemovedOptionDiagnostic("target", "ES5", "")
+	}
 
 	if options.Module == core.ModuleKindAMD {
 		createRemovedOptionDiagnostic("module", "AMD", "")
