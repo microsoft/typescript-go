@@ -1,0 +1,14 @@
+--- old.genericObjectLitReturnType.types
++++ new.genericObjectLitReturnType.types
+@@= skipped -18, +18 lines =@@
+ var t1 = x.f(5);
+ >t1 : { a: number; }
+ >x.f(5) : { a: number; }
+->x.f : (t: number) => { a: number; }
++>x.f : (t: number) => { a: T; }
+ >x : X<number>
+->f : (t: number) => { a: number; }
++>f : (t: number) => { a: T; }
+ >5 : 5
+
+ t1.a = 5; // Should not error: t1 should have type {a: number}, instead has type {a: T}

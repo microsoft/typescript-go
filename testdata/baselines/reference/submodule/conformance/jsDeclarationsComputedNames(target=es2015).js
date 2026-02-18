@@ -65,7 +65,7 @@ declare const InnerSym: unique symbol;
 declare const _default: {
     [TopLevelSym](x?: number): number;
     items: {
-        [InnerSym]: (arg?: {
+        [InnerSym]: (arg: {
             x: number;
         }) => number;
     };

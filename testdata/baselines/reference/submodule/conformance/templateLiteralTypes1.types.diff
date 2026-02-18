@@ -5,7 +5,7 @@
 
  function test<T extends 'foo' | 'bar'>(name: `get${Capitalize<T>}`) {
 ->test : <T extends "foo" | "bar">(name: `get${Capitalize<T>}`) => void
-+>test : <T extends "bar" | "foo">(name: `get${Capitalize<T>}`) => void
++>test : <T extends 'foo' | 'bar'>(name: `get${Capitalize<T>}`) => void
  >name : `get${Capitalize<T>}`
 
      let s1: string = name;
@@ -30,7 +30,18 @@
  >obj : T
  >path : P0
 
-@@= skipped -252, +252 lines =@@
+@@= skipped -20, +20 lines =@@
+ >path : string
+
+ let p1 = getProp({ a: { b: {c: 42, d: 'hello' }}} as const, 'a');
+->p1 : { readonly b: { readonly c: 42; readonly d: "hello"; }; }
+->getProp({ a: { b: {c: 42, d: 'hello' }}} as const, 'a') : { readonly b: { readonly c: 42; readonly d: "hello"; }; }
++>p1 : { readonly b: { readonly c: 42; readonly d: 'hello'; }; }
++>getProp({ a: { b: {c: 42, d: 'hello' }}} as const, 'a') : { readonly b: { readonly c: 42; readonly d: 'hello'; }; }
+ >getProp : { <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string, P2 extends keyof T[P0][P1] & string>(obj: T, path: `${P0}.${P1}.${P2}`): T[P0][P1][P2]; <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string>(obj: T, path: `${P0}.${P1}`): T[P0][P1]; <T, P0 extends keyof T & string>(obj: T, path: P0): T[P0]; (obj: object, path: string): unknown; }
+ >{ a: { b: {c: 42, d: 'hello' }}} as const : { readonly a: { readonly b: { readonly c: 42; readonly d: "hello"; }; }; }
+ >{ a: { b: {c: 42, d: 'hello' }}} : { readonly a: { readonly b: { readonly c: 42; readonly d: "hello"; }; }; }
+@@= skipped -232, +232 lines =@@
  >TDigits : TDigits
 
  type T100000 = [...TDigits, ...TDigits, ...TDigits, ...TDigits, ...TDigits];  // Error

@@ -1,0 +1,11 @@
+--- old.parameterInitializersForwardReferencing1(target=es2015).types
++++ new.parameterInitializersForwardReferencing1(target=es2015).types
+@@= skipped -18, +18 lines =@@
+ }
+
+ function f2 (bar = (baz = foo) => baz) { // unexpected compiler error; works at runtime
+->f2 : (bar?: (baz?: string) => string) => string
++>f2 : (bar?: (baz: string) => string) => string
+ >bar : (baz?: string) => string
+ >(baz = foo) => baz : (baz?: string) => string
+ >baz : string

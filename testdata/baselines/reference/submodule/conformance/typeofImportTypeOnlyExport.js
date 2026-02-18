@@ -45,9 +45,35 @@ export declare const directive: <C>(class_: C) => () => {
     directive: C;
 };
 export declare const classMap: () => {
-    directive: typeof ClassMapDirective;
+    directive: C;
 };
 //// [button.d.ts]
 export declare const c: {
     directive: typeof import("./lit.js").ClassMapDirective;
 };
+
+
+//// [DtsFileErrors]
+
+
+lit.d.ts(8,16): error TS2304: Cannot find name 'C'.
+
+
+==== button.d.ts (0 errors) ====
+    export declare const c: {
+        directive: typeof import("./lit.js").ClassMapDirective;
+    };
+    
+==== lit.d.ts (1 errors) ====
+    declare class ClassMapDirective {
+    }
+    export type { ClassMapDirective };
+    export declare const directive: <C>(class_: C) => () => {
+        directive: C;
+    };
+    export declare const classMap: () => {
+        directive: C;
+                   ~
+!!! error TS2304: Cannot find name 'C'.
+    };
+    

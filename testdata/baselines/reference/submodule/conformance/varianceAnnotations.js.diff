@@ -13,12 +13,3 @@
  }
  baz1 = baz2; // Error
  baz2 = baz1; // Error
-@@= skipped -135, +133 lines =@@
- }>;
- declare let Anon: {
-     new <out T>(): {
--        foo(): InstanceType<(typeof Anon<T>)>;
-+        foo(): /*elided*/ any;
-     };
- };
- declare let OuterC: {

@@ -1,0 +1,11 @@
+--- old.for-of35.types
++++ new.for-of35.types
+@@= skipped -4, +4 lines =@@
+ >MyStringIterator : MyStringIterator
+
+     next() {
+->next : () => any
++>next : () => { done: boolean; value: any; }
+
+         return {
+ >{            done: true,            value: v        } : { done: boolean; value: any; }

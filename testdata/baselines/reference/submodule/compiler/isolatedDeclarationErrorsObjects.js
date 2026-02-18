@@ -181,7 +181,7 @@ export declare let oBad2: {
     };
     c: {
         d: number;
-        e: number;
+        e: 1;
     };
 };
 export declare let oWithMethods: {
@@ -189,7 +189,7 @@ export declare let oWithMethods: {
     okMethod(): void;
     a: number;
     bad(): void;
-    e: number;
+    e: 1;
 };
 export declare let oWithMethodsNested: {
     foo: {
@@ -205,7 +205,8 @@ export declare let oWithAccessor: {
     getSetBad: number;
     getSetOk: number;
     getSetOk2: number;
-    getSetOk3: number;
+    get getSetOk3(): number;
+    set getSetOk3(value: number);
 };
 declare const s: unique symbol;
 export declare const oWithComputedProperties: {

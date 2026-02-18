@@ -30,20 +30,17 @@
  }
  exports.Bar2 = Bar2;
 
-
+@@= skipped -11, +9 lines =@@
  //// [file1.d.ts]
--type N = 1;
+ type N = 1;
  export declare class Bar {
-     c?: readonly [1] | undefined;
--    c3?: N;
--    readonly r = 1;
--    f: number;
--}
--export {};
-+    c3?: 1 | undefined;
-+    readonly r = 1;
-+    f: number;
-+}
+-    c?: readonly [1] | undefined;
++    c?: [N];
+     c3?: N;
+     readonly r = 1;
+     f: number;
+ }
+ export {};
 +//// [file2.d.ts]
 +export declare function foo(p?: (ip: number | undefined, v: number) => void): void;
 +export declare function foo2(p?: (ip: number | undefined, v: number) => void): void;

@@ -8,7 +8,8 @@
 +>myFunction : any
 
  type T2 = typeof import('./input.js').myFunction<any, { slug: 'hello' }>;
- >T2 : (arg: Arg<any, { slug: "hello"; }>) => { slug: "hello"; }
+->T2 : (arg: Arg<any, { slug: "hello"; }>) => { slug: "hello"; }
 ->myFunction : error
++>T2 : (arg: Arg<any, { slug: 'hello'; }>) => { slug: 'hello'; }
 +>myFunction : any
  >slug : "hello"

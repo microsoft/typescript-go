@@ -1,37 +1,46 @@
 --- old.isomorphicMappedTypeInference.types
 +++ new.isomorphicMappedTypeInference.types
-@@= skipped -367, +367 lines =@@
- }
-
- declare function validate<T>(obj: { [P in keyof T]?: T[P] }): T;
-->validate : <T>(obj: { [P in keyof T]?: T[P]; }) => T
-+>validate : <T>(obj: { [P in keyof T]?: T[P] | undefined; }) => T
- >obj : { [P in keyof T]?: T[P] | undefined; }
-
- declare function clone<T>(obj: { readonly [P in keyof T]: T[P] }): T;
-@@= skipped -8, +8 lines =@@
- >obj : { readonly [P in keyof T]: T[P]; }
-
- declare function validateAndClone<T>(obj: { readonly [P in keyof T]?: T[P] }): T;
-->validateAndClone : <T>(obj: { readonly [P in keyof T]?: T[P]; }) => T
-+>validateAndClone : <T>(obj: { readonly [P in keyof T]?: T[P] | undefined; }) => T
- >obj : { readonly [P in keyof T]?: T[P] | undefined; }
-
- type Foo = {
-@@= skipped -20, +20 lines =@@
-     let x = validate(foo);  // { a: number, readonly b: string }
- >x : { a: number; readonly b: string; }
- >validate(foo) : { a: number; readonly b: string; }
-->validate : <T>(obj: { [P in keyof T]?: T[P]; }) => T
-+>validate : <T>(obj: { [P in keyof T]?: T[P] | undefined; }) => T
+@@= skipped -399, +399 lines =@@
  >foo : Foo
 
      let y = clone(foo);  // { a?: number, b: string }
-@@= skipped -12, +12 lines =@@
-     let z = validateAndClone(foo);  // { a: number, b: string }
- >z : { a: number; b: string; }
- >validateAndClone(foo) : { a: number; b: string; }
-->validateAndClone : <T>(obj: { readonly [P in keyof T]?: T[P]; }) => T
-+>validateAndClone : <T>(obj: { readonly [P in keyof T]?: T[P] | undefined; }) => T
+->y : { a?: number | undefined; b: string; }
+->clone(foo) : { a?: number | undefined; b: string; }
++>y : { a?: number; b: string; }
++>clone(foo) : { a?: number; b: string; }
+ >clone : <T>(obj: { readonly [P in keyof T]: T[P]; }) => T
  >foo : Foo
- }
+
+@@= skipped -36, +36 lines =@@
+
+ // Infers g1: (...args: any[]) => { sum: number, nested: { mul: string } }
+ var g1 = applySpec({
+->g1 : (...args: any[]) => { sum: number; nested: { mul: string; }; }
+->applySpec({    sum: (a: any) => 3,    nested: {        mul: (b: any) => "n"    }}) : (...args: any[]) => { sum: number; nested: { mul: string; }; }
++>g1 : (...args: any[]) => { sum: number; nested: { mul: (b: any) => string; }; }
++>applySpec({    sum: (a: any) => 3,    nested: {        mul: (b: any) => "n"    }}) : (...args: any[]) => { sum: number; nested: { mul: (b: any) => string; }; }
+ >applySpec : <T>(obj: Spec<T>) => (...args: any[]) => T
+ >{    sum: (a: any) => 3,    nested: {        mul: (b: any) => "n"    }} : { sum: (a: any) => number; nested: { mul: (b: any) => string; }; }
+
+@@= skipped -25, +25 lines =@@
+
+ // Infers g2: (...args: any[]) => { foo: { bar: { baz: boolean } } }
+ var g2 = applySpec({ foo: { bar: { baz: (x: any) => true } } });
+->g2 : (...args: any[]) => { foo: { bar: { baz: boolean; }; }; }
+->applySpec({ foo: { bar: { baz: (x: any) => true } } }) : (...args: any[]) => { foo: { bar: { baz: boolean; }; }; }
++>g2 : (...args: any[]) => { foo: { bar: { baz: (x: any) => boolean; }; }; }
++>applySpec({ foo: { bar: { baz: (x: any) => true } } }) : (...args: any[]) => { foo: { bar: { baz: (x: any) => boolean; }; }; }
+ >applySpec : <T>(obj: Spec<T>) => (...args: any[]) => T
+ >{ foo: { bar: { baz: (x: any) => true } } } : { foo: { bar: { baz: (x: any) => boolean; }; }; }
+ >foo : { bar: { baz: (x: any) => boolean; }; }
+@@= skipped -92, +92 lines =@@
+ >"hello" : "hello"
+
+ let x2 = f22({ foo: { value: 42} , bar: { value: "hello" } });
+->x2 : { foo: number; bar: string; }
+->f22({ foo: { value: 42} , bar: { value: "hello" } }) : { foo: number; bar: string; }
++>x2 : { foo: { value: number; }; bar: { value: string; }; }
++>f22({ foo: { value: 42} , bar: { value: "hello" } }) : { foo: { value: number; }; bar: { value: string; }; }
+ >f22 : <T, K extends keyof T>(obj: Boxified<Pick<T, K>>) => T
+ >{ foo: { value: 42} , bar: { value: "hello" } } : { foo: { value: number; }; bar: { value: string; }; }
+ >foo : { value: number; }

@@ -48,7 +48,7 @@ export declare class Base {
 declare const Mix_base: typeof Base;
 export declare class Mix extends Mix_base {
 }
-export declare const classes: readonly [{
+export declare const classes: [{
     new (): {};
 }, {
     new (): {};

@@ -1,0 +1,12 @@
+--- old.contravariantOnlyInferenceFromAnnotatedFunction.types
++++ new.contravariantOnlyInferenceFromAnnotatedFunction.types
+@@= skipped -22, +22 lines =@@
+ >fns : Funcs<A, B>
+
+ const result = foo({
+->result : [string, { bar: string; }]
+->foo({  bar: {    fn: (a: string) => {},    thing: 'asd',  },}) : [string, { bar: string; }]
++>result : [string, { bar: { fn: (a: string) => void; thing: string; }; }]
++>foo({  bar: {    fn: (a: string) => {},    thing: 'asd',  },}) : [string, { bar: { fn: (a: string) => void; thing: string; }; }]
+ >foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
+ >{  bar: {    fn: (a: string) => {},    thing: 'asd',  },} : { bar: { fn: (a: string) => void; thing: string; }; }

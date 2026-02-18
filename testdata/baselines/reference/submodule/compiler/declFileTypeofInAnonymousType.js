@@ -81,5 +81,5 @@ declare var d: {
     me: {
         en: typeof m1.e;
     };
-    mh: m1.e;
+    mh: m1.e.holiday;
 };

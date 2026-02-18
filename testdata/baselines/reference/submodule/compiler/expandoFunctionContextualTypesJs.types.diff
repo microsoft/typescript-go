@@ -46,7 +46,7 @@
 +>module.exports = {    color: "red"} : { color: "red"; }
  >module.exports : MyComponentProps
 ->module : { exports: MyComponentProps; }
-+>module : { "export=": MyComponentProps; }
++>module : { "export=": { color: "red"; }; }
  >exports : MyComponentProps
  >{    color: "red"} : { color: "red"; }
 
@@ -55,5 +55,5 @@
  >props : MyComponentProps
  >module.exports : MyComponentProps
 ->module : { exports: MyComponentProps; }
-+>module : { "export=": MyComponentProps; }
++>module : { "export=": { color: "red"; }; }
  >exports : MyComponentProps

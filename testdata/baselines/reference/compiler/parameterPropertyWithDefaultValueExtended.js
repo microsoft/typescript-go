@@ -70,8 +70,8 @@ export declare class WithDefault {
     constructor(timestamp?: Date);
 }
 export declare class WithoutDefault {
-    readonly timestamp?: Date | undefined;
-    constructor(timestamp?: Date | undefined);
+    readonly timestamp?: Date;
+    constructor(timestamp?: Date);
 }
 export declare class ExplicitUndefined {
     readonly timestamp: Date | undefined;

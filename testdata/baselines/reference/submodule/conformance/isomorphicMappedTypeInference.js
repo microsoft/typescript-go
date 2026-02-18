@@ -353,13 +353,13 @@ declare function applySpec<T>(obj: Spec<T>): (...args: any[]) => T;
 declare var g1: (...args: any[]) => {
     sum: number;
     nested: {
-        mul: string;
+        mul: (b: any) => string;
     };
 };
 declare var g2: (...args: any[]) => {
     foo: {
         bar: {
-            baz: boolean;
+            baz: (x: any) => boolean;
         };
     };
 };
@@ -379,8 +379,12 @@ declare let x0: {
 };
 declare let x1: "bar" | "foo";
 declare let x2: {
-    foo: number;
-    bar: string;
+    foo: {
+        value: number;
+    };
+    bar: {
+        value: string;
+    };
 };
 declare let x3: {
     foo: number;

@@ -1,6 +1,12 @@
 --- old.classAbstractFactoryFunction.types
 +++ new.classAbstractFactoryFunction.types
-@@= skipped -23, +23 lines =@@
+@@= skipped -18, +18 lines =@@
+ }
+
+ function NewB(Factory: typeof B) {
+->NewB : (Factory: typeof B) => any
++>NewB : (Factory: typeof B) => B
+ >Factory : typeof B
  >B : typeof B
 
      return new B;
@@ -8,3 +14,17 @@
 +>new B : B
  >B : typeof B
  }
+
+@@= skipped -21, +21 lines =@@
+
+ NewB(A);
+ >NewB(A) : any
+->NewB : (Factory: typeof B) => any
++>NewB : (Factory: typeof B) => B
+ >A : typeof A
+
+ NewB(B);
+ >NewB(B) : any
+->NewB : (Factory: typeof B) => any
++>NewB : (Factory: typeof B) => B
+ >B : typeof B

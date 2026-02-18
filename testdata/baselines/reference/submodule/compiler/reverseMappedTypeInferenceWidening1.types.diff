@@ -1,0 +1,75 @@
+--- old.reverseMappedTypeInferenceWidening1.types
++++ new.reverseMappedTypeInferenceWidening1.types
+@@= skipped -39, +39 lines =@@
+ ): TypeFlag<Options>;
+
+ const result1 = fn1({
+->result1 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
+->fn1({  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false,  },}) : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
++>result1 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
++>fn1({  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false,  },}) : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
+ >fn1 : <Options extends Flags>(options: Options) => TypeFlag<Options>
+ >{  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false,  },} : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }
+
+@@= skipped -27, +27 lines =@@
+ });
+ result1.booleanFlag; // boolean
+ >result1.booleanFlag : boolean
+->result1 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
++>result1 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
+ >booleanFlag : boolean
+
+ result1.booleanFlagDefault; // boolean
+ >result1.booleanFlagDefault : boolean
+->result1 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
++>result1 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
+ >booleanFlagDefault : boolean
+
+ declare function fn2<Options extends Flags>(
+@@= skipped -17, +17 lines =@@
+ ): TypeFlag<Options>;
+
+ const result2 = fn2({
+->result2 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
+->fn2({  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false,  },}) : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
++>result2 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
++>fn2({  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false,  },}) : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
+ >fn2 : <Options extends Flags>(options: Readonly<Options>) => TypeFlag<Options>
+ >{  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false,  },} : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }
+
+@@= skipped -27, +27 lines =@@
+ });
+ result2.booleanFlag; // boolean
+ >result2.booleanFlag : boolean
+->result2 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
++>result2 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
+ >booleanFlag : boolean
+
+ result2.booleanFlagDefault; // boolean
+ >result2.booleanFlagDefault : boolean
+->result2 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }>
++>result2 : TypeFlag<{ booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }>
+ >booleanFlagDefault : boolean
+
+ declare function fn3<Options extends Flags>(
+@@= skipped -17, +17 lines =@@
+ ): Options;
+
+ const result3 = fn3({
+->result3 : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }
+->fn3({  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false, // no cursed EPC failure here  },}) : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }
++>result3 : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }
++>fn3({  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false, // no cursed EPC failure here  },}) : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }
+ >fn3 : <Options extends Flags>(options: Readonly<Options>) => Options
+ >{  booleanFlag: { type: Boolean },  booleanFlagDefault: {    type: Boolean,    default: false, // no cursed EPC failure here  },} : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }
+
+@@= skipped -34, +34 lines =@@
+ takeType(result3.booleanFlagDefault);
+ >takeType(result3.booleanFlagDefault) : void
+ >takeType : (arg: { type: unknown; }) => void
+->result3.booleanFlagDefault : { type: BooleanConstructor; default: boolean; }
+->result3 : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: boolean; }; }
+->booleanFlagDefault : { type: BooleanConstructor; default: boolean; }
++>result3.booleanFlagDefault : { type: BooleanConstructor; default: false; }
++>result3 : { booleanFlag: { type: BooleanConstructor; }; booleanFlagDefault: { type: BooleanConstructor; default: false; }; }
++>booleanFlagDefault : { type: BooleanConstructor; default: false; }

@@ -2,11 +2,11 @@
 
 === foo.js ===
 module.exports = function () {
->module.exports = function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
->module.exports : () => { c: number; }
->module : { "export=": () => { c: number; }; }
->exports : () => { c: number; }
->function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
+>module.exports = function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: 1; }
+>module.exports : () => { c: 1; }
+>module : { "export=": () => { c: 1; }; }
+>exports : () => { c: 1; }
+>function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: 1; }
 
   class A { }
 >A : A

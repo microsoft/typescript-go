@@ -1,70 +1,67 @@
 --- old.callWithMissingVoid.types
 +++ new.callWithMissingVoid.types
-@@= skipped -189, +189 lines =@@
- >4 : 4
+@@= skipped -20, +20 lines =@@
 
- function c(x: number | void, y: void, z: void | string | number): void  {
-->c : (x: number | void, y: void, z: void | string | number) => void
-+>c : (x: void | number, y: void, z: void | string | number) => void
- >x : void | number
- >y : void
- >z : void | string | number
-@@= skipped -9, +9 lines =@@
+ x.f() // no error because f expects void
+ >x.f() : { a: void; }
+->x.f : (t: void) => { a: void; }
++>x.f : (t: void) => { a: T; }
+ >x : X<void>
+->f : (t: void) => { a: void; }
++>f : (t: void) => { a: T; }
 
- c(3, void 0, void 0); // ok
- >c(3, void 0, void 0) : void
-->c : (x: number | void, y: void, z: void | string | number) => void
-+>c : (x: void | number, y: void, z: void | string | number) => void
- >3 : 3
- >void 0 : undefined
- >0 : 0
-@@= skipped -9, +9 lines =@@
+ declare const xUnion: X<void | number>;
+ >xUnion : X<void | number>
 
- c(3, void 0); // ok
- >c(3, void 0) : void
-->c : (x: number | void, y: void, z: void | string | number) => void
-+>c : (x: void | number, y: void, z: void | string | number) => void
- >3 : 3
- >void 0 : undefined
- >0 : 0
-
- c(3); // ok
- >c(3) : void
-->c : (x: number | void, y: void, z: void | string | number) => void
-+>c : (x: void | number, y: void, z: void | string | number) => void
- >3 : 3
-
- c(); // ok
- >c() : void
-->c : (x: number | void, y: void, z: void | string | number) => void
-+>c : (x: void | number, y: void, z: void | string | number) => void
-
-
- // Spread Parameters
-@@= skipped -80, +80 lines =@@
- call((x: number | void, y: number | void) => 42) // ok
- >call((x: number | void, y: number | void) => 42) : void
- >call : <TS extends unknown[]>(handler: (...args: TS) => unknown, ...args: TS) => void
-->(x: number | void, y: number | void) => 42 : (x: number | void, y: number | void) => number
-+>(x: number | void, y: number | void) => 42 : (x: void | number, y: void | number) => number
- >x : void | number
- >y : void | number
+ xUnion.f(42) // no error because f accepts number
+ >xUnion.f(42) : { a: void | number; }
+->xUnion.f : (t: void | number) => { a: void | number; }
++>xUnion.f : (t: void | number) => { a: T; }
+ >xUnion : X<void | number>
+->f : (t: void | number) => { a: void | number; }
++>f : (t: void | number) => { a: T; }
  >42 : 42
-@@= skipped -8, +8 lines =@@
- call((x: number | void, y: number | void) => 42, 4) // ok
- >call((x: number | void, y: number | void) => 42, 4) : void
- >call : <TS extends unknown[]>(handler: (...args: TS) => unknown, ...args: TS) => void
-->(x: number | void, y: number | void) => 42 : (x: number | void, y: number | void) => number
-+>(x: number | void, y: number | void) => 42 : (x: void | number, y: void | number) => number
- >x : void | number
- >y : void | number
- >42 : 42
-@@= skipped -9, +9 lines =@@
- call((x: number | void, y: number | void) => 42, 4, 2) // ok
- >call((x: number | void, y: number | void) => 42, 4, 2) : void
- >call : <TS extends unknown[]>(handler: (...args: TS) => unknown, ...args: TS) => void
-->(x: number | void, y: number | void) => 42 : (x: number | void, y: number | void) => number
-+>(x: number | void, y: number | void) => 42 : (x: void | number, y: void | number) => number
- >x : void | number
- >y : void | number
- >42 : 42
+
+ xUnion.f() // no error because f accepts void
+ >xUnion.f() : { a: void | number; }
+->xUnion.f : (t: void | number) => { a: void | number; }
++>xUnion.f : (t: void | number) => { a: T; }
+ >xUnion : X<void | number>
+->f : (t: void | number) => { a: void | number; }
++>f : (t: void | number) => { a: T; }
+
+ declare const xAny: X<any>;
+ >xAny : X<any>
+
+ xAny.f() // error, any still expects an argument
+ >xAny.f() : { a: any; }
+->xAny.f : (t: any) => { a: any; }
++>xAny.f : (t: any) => { a: T; }
+ >xAny : X<any>
+->f : (t: any) => { a: any; }
++>f : (t: any) => { a: T; }
+
+ declare const xUnknown: X<unknown>;
+ >xUnknown : X<unknown>
+
+ xUnknown.f() // error, unknown still expects an argument
+ >xUnknown.f() : { a: unknown; }
+->xUnknown.f : (t: unknown) => { a: unknown; }
++>xUnknown.f : (t: unknown) => { a: T; }
+ >xUnknown : X<unknown>
+->f : (t: unknown) => { a: unknown; }
++>f : (t: unknown) => { a: T; }
+
+ declare const xNever: X<never>;
+ >xNever : X<never>
+
+ xNever.f() // error, never still expects an argument
+ >xNever.f() : { a: never; }
+->xNever.f : (t: never) => { a: never; }
++>xNever.f : (t: never) => { a: T; }
+ >xNever : X<never>
+->f : (t: never) => { a: never; }
++>f : (t: never) => { a: T; }
+
+
+ // Promise has previously been updated to work without arguments, but to show this fixes the issue too.

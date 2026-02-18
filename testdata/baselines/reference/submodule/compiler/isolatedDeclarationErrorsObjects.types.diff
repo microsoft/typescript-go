@@ -1,0 +1,11 @@
+--- old.isolatedDeclarationErrorsObjects.types
++++ new.isolatedDeclarationErrorsObjects.types
+@@= skipped -29, +29 lines =@@
+ >1 : 1
+
+ export let oBad2 = {
+->oBad2 : { a: { b: number; }; c: { d: number; e: number; }; }
++>oBad2 : { a: { b: number; }; c: { d: number; e: 1; }; }
+ >{    a: {        b: Math.random(),    },    c: {        d: 1,        e: V,    }} : { a: { b: number; }; c: { d: number; e: number; }; }
+
+     a: {

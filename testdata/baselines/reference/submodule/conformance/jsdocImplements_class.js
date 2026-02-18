@@ -73,20 +73,7 @@ declare class B2 implements A {
 /** @implements {A} */
 declare class B3 implements A {
 }
-declare var Ns: {
-    /** @implements {A} */
-    C1: {
-        new (): {
-            method(): number;
-        };
-    };
-    /** @implements {A} */
-    C5: {
-        new (): {
-            method(): number;
-        };
-    };
-};
+declare var Ns: {};
 declare namespace Ns {
     var C1: {
         new (): {

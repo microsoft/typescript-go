@@ -26,7 +26,7 @@ export declare function noParamAnnotation(p: any): void;
 export declare function noParamAnnotationDefault(p?: number): void;
 export declare function noParamAnnotationBadDefault(p?: number, p2?: {
     a: number;
-}, p3?: readonly [number]): void;
+}, p3?: [number]): void;
 export declare function noParamAnnotationBadDefault2(p?: {
     a: number;
 }): void;

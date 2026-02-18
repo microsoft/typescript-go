@@ -1,0 +1,20 @@
+--- old.typeParameterAsTypeParameterConstraintTransitively.types
++++ new.typeParameterAsTypeParameterConstraintTransitively.types
+@@= skipped -38, +38 lines =@@
+ >3 : 3
+
+ foo({ x: 1 }, { x: 1, y: '' }, { x: 2, y: '', z: true });
+->foo({ x: 1 }, { x: 1, y: '' }, { x: 2, y: '', z: true }) : { x: number; y: string; z: boolean; }
++>foo({ x: 1 }, { x: 1, y: '' }, { x: 2, y: '', z: true }) : { x: number; y: string; z: true; }
+ >foo : <T, U, V>(x: T, y: U, z: V) => V
+ >{ x: 1 } : { x: number; }
+ >x : number
+@@= skipped -26, +26 lines =@@
+ >c : C
+
+ foo(a, b, { foo: 1, bar: '', hm: true });
+->foo(a, b, { foo: 1, bar: '', hm: true }) : { foo: number; bar: string; hm: boolean; }
++>foo(a, b, { foo: 1, bar: '', hm: true }) : { foo: number; bar: string; hm: true; }
+ >foo : <T, U, V>(x: T, y: U, z: V) => V
+ >a : A
+ >b : B

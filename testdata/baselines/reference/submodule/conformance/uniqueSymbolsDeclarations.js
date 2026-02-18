@@ -500,14 +500,14 @@ declare function f<T>(x: T): T;
 declare function g(x: typeof s): void;
 declare function g(x: typeof N.s): void;
 declare const o2: {
-    a: symbol;
-    b: symbol;
-    c: symbol;
-    method1(): symbol;
+    a: typeof s;
+    b: typeof N.s;
+    c: typeof N.s;
+    method1(): typeof s;
     method2(): Promise<symbol>;
     method3(): AsyncGenerator<symbol, void, unknown>;
     method4(): Generator<symbol, void, unknown>;
-    method5(p?: symbol): symbol;
+    method5(p: typeof s): symbol;
 };
 declare class C0 {
     static readonly a: symbol;

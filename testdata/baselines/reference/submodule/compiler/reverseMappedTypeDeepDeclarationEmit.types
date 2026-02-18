@@ -45,15 +45,15 @@ export const test  = {
 }
 
 export const validatorFunc = ObjValidator(test);
->validatorFunc : (o: any) => { Test: { Test1: { Test2: string; }; }; }
->ObjValidator(test) : (o: any) => { Test: { Test1: { Test2: string; }; }; }
+>validatorFunc : (o: any) => { Test: { Test1: { Test2: NativeTypeValidator<string>; }; }; }
+>ObjValidator(test) : (o: any) => { Test: { Test1: { Test2: NativeTypeValidator<string>; }; }; }
 >ObjValidator : <V>(validatorObj: ObjectValidator<V>) => (o: any) => V
 >test : { Test: { Test1: { Test2: NativeTypeValidator<string>; }; }; }
 
 export const outputExample = validatorFunc({
->outputExample : { Test: { Test1: { Test2: string; }; }; }
->validatorFunc({  Test: {    Test1: {      Test2: "hi"    },  }}) : { Test: { Test1: { Test2: string; }; }; }
->validatorFunc : (o: any) => { Test: { Test1: { Test2: string; }; }; }
+>outputExample : { Test: { Test1: { Test2: NativeTypeValidator<string>; }; }; }
+>validatorFunc({  Test: {    Test1: {      Test2: "hi"    },  }}) : { Test: { Test1: { Test2: NativeTypeValidator<string>; }; }; }
+>validatorFunc : (o: any) => { Test: { Test1: { Test2: NativeTypeValidator<string>; }; }; }
 >{  Test: {    Test1: {      Test2: "hi"    },  }} : { Test: { Test1: { Test2: string; }; }; }
 
   Test: {
