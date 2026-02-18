@@ -19,10 +19,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
-var replay = flag.String("replay", "", "Path to replay file")
-var testDir = flag.String("testDir", "", "Path to project directory")
-var simple = flag.Bool("simple", false, "Replay only file opening and closing, plus the final request")
-var superSimple = flag.Bool("superSimple", false, "Replay only the final file opening and the final request")
+var (
+	replay      = flag.String("replay", "", "Path to replay file")
+	testDir     = flag.String("testDir", "", "Path to project directory")
+	simple      = flag.Bool("simple", false, "Replay only file opening and closing, plus the final request")
+	superSimple = flag.Bool("superSimple", false, "Replay only the final file opening and the final request")
+)
 
 type initialArguments struct {
 	RootDirUriPlaceholder string `json:"rootDirUriPlaceholder"`
