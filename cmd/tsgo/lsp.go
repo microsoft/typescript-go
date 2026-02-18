@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -45,6 +46,9 @@ func runLSP(args []string) int {
 	defaultLibraryPath := bundled.LibPath()
 	typingsLocation := getGlobalTypingsCacheLocation()
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	s := lsp.NewServer(&lsp.ServerOptions{
 		In:                 lsp.ToReader(os.Stdin),
 		Out:                lsp.ToWriter(os.Stdout),
@@ -58,10 +62,10 @@ func runLSP(args []string) int {
 			cmd.Dir = cwd
 			return cmd.Output()
 		},
+		SetParentProcessId: func(parentPID int) {
+			startParentProcessWatchdog(ctx, parentPID)
+		},
 	})
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
 
 	if err := s.Run(ctx); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -83,4 +87,42 @@ func getGlobalTypingsCacheLocation() string {
 		subdir = "typescript"
 	}
 	return tspath.CombinePaths(cacheDir, subdir, core.VersionMajorMinor())
+}
+
+// startParentProcessWatchdog starts a goroutine that monitors the parent process
+// and exits the current process if the parent dies. This prevents orphaned language
+// server processes when the editor crashes or is killed.
+func startParentProcessWatchdog(ctx context.Context, parentPID int) {
+	if parentPID <= 0 {
+		return
+	}
+	go func() {
+		tick := time.Tick(5 * time.Second)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-tick:
+				if !isProcessAlive(parentPID) {
+					fmt.Fprintf(os.Stderr, "Parent process %d has exited, shutting down.\n", parentPID)
+					os.Exit(1)
+				}
+			}
+		}
+	}()
+}
+
+// isProcessAlive checks if a process with the given PID is still running.
+func isProcessAlive(pid int) bool {
+	proc, err := os.FindProcess(pid)
+	if err != nil {
+		return false
+	}
+	// On Unix, FindProcess always succeeds. We need to send signal 0 to check if
+	// the process exists. On Windows, FindProcess already validates the process exists.
+	if runtime.GOOS == "windows" {
+		return true
+	}
+	err = proc.Signal(syscall.Signal(0))
+	return err == nil
 }
