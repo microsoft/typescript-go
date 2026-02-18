@@ -245,6 +245,8 @@ func (s *Session) InitializeWithUserConfig(config *lsutil.UserConfig) {
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
 	s.cancelDiagnosticsRefresh()
+	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
 	s.pendingFileChangesMu.Lock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind:         FileChangeKindOpen,
@@ -388,7 +390,11 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 	defer s.snapshotMu.RUnlock()
 	snapshot := s.snapshot
 	snapshot.Ref()
-	return snapshot, func() {
+	return snapshot, s.createSnapshotRelease(snapshot)
+}
+
+func (s *Session) createSnapshotRelease(snapshot *Snapshot) func() {
+	return func() {
 		if snapshot.Deref() {
 			// The session itself accounts for one reference to the snapshot, and it derefs
 			// in UpdateSnapshot while holding the snapshotMu lock, so the only way to end

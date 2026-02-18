@@ -23,18 +23,14 @@ export class Client extends createService<string>() {
 
 
 //// [client.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Client = void 0;
-const lib_1 = require("lib");
+import { createService } from "lib";
 // The extends clause references the factory result which uses MySymbol
 // This should trigger symbol accessibility check for MySymbol
-class Client extends (0, lib_1.createService)() {
+export class Client extends createService() {
     doSomething() {
         return "hello";
     }
 }
-exports.Client = Client;
 
 
 //// [client.d.ts]

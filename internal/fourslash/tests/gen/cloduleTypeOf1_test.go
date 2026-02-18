@@ -14,12 +14,13 @@ func TestCloduleTypeOf1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `class C<T> {
+	const content = `// @strict: false
+class C<T> {
     static foo(x: number) { }
     x: T;
 }
 
-module C {
+namespace C {
     export function f(x: typeof C) {
         x./*1*/
         var /*3*/r = new /*2*/x<number>();
@@ -39,11 +40,11 @@ module C {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "f",
-					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+					SortText: new(string(ls.SortTextLocationPriority)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "foo",
-					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
 				},
 			},
 		},

@@ -14,7 +14,8 @@ func TestCompletionsImport_reExportDefault2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: preserve
+	const content = `// @lib: es5
+// @module: preserve
 // @checkJs: true
 // @Filename: /node_modules/example/package.json
 { "name": "example", "version": "1.0.0", "main": "dist/index.js" }
@@ -49,7 +50,7 @@ defaultExp/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, false),
 		},

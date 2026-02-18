@@ -1,12 +1,13 @@
 reachabilityChecks11.ts(6,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(18,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(30,5): error TS7027: Unreachable code detected.
+reachabilityChecks11.ts(35,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
 reachabilityChecks11.ts(47,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(60,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(69,5): error TS7027: Unreachable code detected.
 
 
-==== reachabilityChecks11.ts (6 errors) ====
+==== reachabilityChecks11.ts (7 errors) ====
     // while (true);
     var x = 1;
     
@@ -52,6 +53,8 @@ reachabilityChecks11.ts(69,5): error TS7027: Unreachable code detected.
     }
     
     function f1(x) {
+                ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         if (x) {
             return;
         }

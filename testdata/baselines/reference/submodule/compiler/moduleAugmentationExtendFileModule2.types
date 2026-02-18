@@ -16,7 +16,7 @@ import { Observable } from "./observable"
 >function() { } : () => void
 
 declare module "./observable" {
->"./observable" : typeof import("observable")
+>"./observable" : typeof import("./observable")
 
     interface Observable<T> {
         map<U>(proj: (e:T) => U): Observable<U>
@@ -74,11 +74,11 @@ let y = x.map(x => x + 1);
 let z1 = Observable.someValue.toFixed();
 >z1 : string
 >Observable.someValue.toFixed() : string
->Observable.someValue.toFixed : (fractionDigits?: number) => string
+>Observable.someValue.toFixed : (fractionDigits?: number | undefined) => string
 >Observable.someValue : number
 >Observable : typeof Observable
 >someValue : number
->toFixed : (fractionDigits?: number) => string
+>toFixed : (fractionDigits?: number | undefined) => string
 
 let z2 = Observable.someAnotherValue.toLowerCase();
 >z2 : string

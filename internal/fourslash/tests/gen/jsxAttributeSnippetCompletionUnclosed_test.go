@@ -14,7 +14,8 @@ func TestJsxAttributeSnippetCompletionUnclosed(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `//@Filename: file.tsx
+	const content = `// @strict: false
+//@Filename: file.tsx
 interface NestedInterface {
     Foo: NestedInterface;
     (props: {className?: string}): any;
@@ -79,11 +80,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -98,11 +99,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -117,11 +118,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -136,11 +137,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -155,11 +156,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -174,11 +175,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -193,11 +194,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -212,11 +213,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -231,11 +232,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -250,11 +251,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -269,11 +270,11 @@ function fn11() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:            "className?",
-					InsertText:       PtrTo("className={$1}"),
-					FilterText:       PtrTo("className"),
-					Detail:           PtrTo("(property) className?: string"),
-					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
-					SortText:         PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText:       new("className={$1}"),
+					FilterText:       new("className"),
+					Detail:           new("(property) className?: string"),
+					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
+					SortText:         new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},

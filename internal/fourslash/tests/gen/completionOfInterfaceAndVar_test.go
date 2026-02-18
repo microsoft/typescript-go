@@ -13,7 +13,8 @@ func TestCompletionOfInterfaceAndVar(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface AnalyserNode {
+	const content = `// @lib: es5
+interface AnalyserNode {
 }
 declare var AnalyserNode: {
     prototype: AnalyserNode;
@@ -32,8 +33,8 @@ declare var AnalyserNode: {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "AnalyserNode",
-					Detail: PtrTo("interface AnalyserNode\nvar AnalyserNode: {\n    new (): AnalyserNode;\n    prototype: AnalyserNode;\n}"),
-					Kind:   PtrTo(lsproto.CompletionItemKindVariable),
+					Detail: new("interface AnalyserNode\nvar AnalyserNode: {\n    new (): AnalyserNode;\n    prototype: AnalyserNode;\n}"),
+					Kind:   new(lsproto.CompletionItemKindVariable),
 				},
 			},
 		},

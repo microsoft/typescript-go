@@ -50,7 +50,7 @@
 ->exports.C : typeof C
 +>exports.C = function() {    this.p = 1} : () => void
 +>exports.C : () => void
- >exports : typeof import("mod3")
+ >exports : typeof import("./mod3")
 ->C : typeof C
 ->function() {    this.p = 1} : typeof C
 +>C : () => void
@@ -60,7 +60,7 @@
  >this.p = 1 : 1
  >this.p : any
 ->this : this
-+>this : any
++>this : typeof import("./mod3")
  >p : any
  >1 : 1
  }

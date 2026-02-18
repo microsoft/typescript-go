@@ -37,7 +37,7 @@ function inject<T>(token: ProviderToken<T>): T {
 interface Type<T> extends Function {
 >Type : Symbol(Type, Decl(strictBestCommonSupertype.ts, 10, 1))
 >T : Symbol(T, Decl(strictBestCommonSupertype.ts, 12, 15))
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
     new (...args: any[]): T;
 >args : Symbol(args, Decl(strictBestCommonSupertype.ts, 13, 9))
@@ -55,7 +55,7 @@ type ProviderToken<T> = Type<T> | AbstractType<T>;
 interface AbstractType<T> extends Function {
 >AbstractType : Symbol(AbstractType, Decl(strictBestCommonSupertype.ts, 16, 50))
 >T : Symbol(T, Decl(strictBestCommonSupertype.ts, 18, 23))
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
     prototype: T;
 >prototype : Symbol(AbstractType.prototype, Decl(strictBestCommonSupertype.ts, 18, 44))

@@ -46,25 +46,18 @@ Default.args = {
 
 
 //// [component.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ColorPicker = void 0;
 const GenericForwardRef = forwardRef;
 function Inner({ disabled, value, onValueChange, colors }, ref) {
     return "rendered";
 }
-exports.ColorPicker = GenericForwardRef(Inner);
+export const ColorPicker = GenericForwardRef(Inner);
 //// [story.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Default = void 0;
 // Story with StoryFn<typeof ImportedGenericComponent>
-const Default = (args) => {
+export const Default = (args) => {
     return "story";
 };
-exports.Default = Default;
 // Property assignment on arrow function - TRIGGERS PANIC
-exports.Default.args = {
+Default.args = {
     disabled: false,
 };
 

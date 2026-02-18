@@ -13,7 +13,7 @@ func TestArgumentsAreAvailableAfterEditsAtEndOfFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module Test1 {
+	const content = `namespace Test1 {
 	class Person {
 		children: string[];
 		constructor(public name: string, children: string[]) {
@@ -35,7 +35,7 @@ func TestArgumentsAreAvailableAfterEditsAtEndOfFunction(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "children",
-					Detail: PtrTo("(parameter) children: string[]"),
+					Detail: new("(parameter) children: string[]"),
 				},
 			},
 		},

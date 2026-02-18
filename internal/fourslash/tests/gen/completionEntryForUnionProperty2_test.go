@@ -13,7 +13,8 @@ func TestCompletionEntryForUnionProperty2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface One {
+	const content = `// @lib: es5
+interface One {
     commonProperty: string;
     commonFunction(): number;
     anotherProperty: Record<string, number>;
@@ -41,7 +42,7 @@ x.anotherProperty./*2*/;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "toLocaleString",
-					Detail: PtrTo("(method) toLocaleString(): string (+1 overload)"),
+					Detail: new("(method) toLocaleString(): string (+1 overload)"),
 					Documentation: &lsproto.StringOrMarkupContent{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
@@ -51,7 +52,7 @@ x.anotherProperty./*2*/;`
 				},
 				&lsproto.CompletionItem{
 					Label:  "toString",
-					Detail: PtrTo("(method) toString(): string (+1 overload)"),
+					Detail: new("(method) toString(): string (+1 overload)"),
 					Documentation: &lsproto.StringOrMarkupContent{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
@@ -61,7 +62,7 @@ x.anotherProperty./*2*/;`
 				},
 				&lsproto.CompletionItem{
 					Label:  "valueOf",
-					Detail: PtrTo("(method) valueOf(): string | number"),
+					Detail: new("(method) valueOf(): string | number"),
 					Documentation: &lsproto.StringOrMarkupContent{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
