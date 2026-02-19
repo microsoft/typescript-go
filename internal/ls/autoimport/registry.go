@@ -10,7 +10,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -27,6 +26,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type newProgramStructure int
@@ -908,16 +908,13 @@ func (b *registryBuilder) buildProjectBucket(
 	var skippedFileCount int
 	var combinedStats extractorStats
 
-outer:
 	for _, file := range program.GetSourceFiles() {
 		if isIgnoredFile(program, file) {
 			continue
 		}
-		for _, excludePattern := range fileExcludePatterns {
-			if matched, _ := excludePattern.MatchString(file.FileName()); matched {
-				skippedFileCount++
-				continue outer
-			}
+		if fileExcludePatterns != nil && fileExcludePatterns.MatchString(file.FileName()) {
+			skippedFileCount++
+			continue
 		}
 		// Skip all node_modules files - they are always handled by node_modules buckets.
 		// This simplifies the logic and ensures exports are indexed consistently.
@@ -1024,7 +1021,7 @@ func (b *registryBuilder) extractPackages(
 	dirName string,
 	dirPath tspath.Path,
 	projectReferenceOutputs map[tspath.Path]string,
-	fileExcludePatterns []*regexp2.Regexp,
+	fileExcludePatterns vfsmatch.SpecMatcher,
 ) *packageExtractionResult {
 	result := &packageExtractionResult{
 		exports:                                  make(map[tspath.Path][]*Export),
@@ -1112,15 +1109,10 @@ func (b *registryBuilder) extractPackages(
 			if packageEntrypoints == nil {
 				return
 			}
-			if len(fileExcludePatterns) > 0 {
+			if fileExcludePatterns != nil {
 				count := int32(len(packageEntrypoints.Entrypoints))
 				packageEntrypoints.Entrypoints = slices.DeleteFunc(packageEntrypoints.Entrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
-					for _, excludePattern := range fileExcludePatterns {
-						if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
-							return true
-						}
-					}
-					return false
+					return fileExcludePatterns.MatchString(entrypoint.ResolvedFileName)
 				})
 				atomic.AddInt32(&result.skippedEntrypointsCount, count-int32(len(packageEntrypoints.Entrypoints)))
 			}
