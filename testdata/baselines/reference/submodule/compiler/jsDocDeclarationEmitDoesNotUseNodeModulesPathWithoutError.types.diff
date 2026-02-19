@@ -5,8 +5,8 @@
       */
      case5_unexpectedlyResolvesPathToNodeModules(init) {}
 ->case5_unexpectedlyResolvesPathToNodeModules : (init?: LionRequestInit) => void
-+>case5_unexpectedlyResolvesPathToNodeModules : (init?: import("node_modules/@lion/ajax/dist-types/types/types").LionRequestInit | undefined) => void
- >init : import("node_modules/@lion/ajax/dist-types/types/types").LionRequestInit | undefined
++>case5_unexpectedlyResolvesPathToNodeModules : (init?: import("./node_modules/@lion/ajax/dist-types/types/types.js").LionRequestInit | undefined) => void
+ >init : import("./node_modules/@lion/ajax/dist-types/types/types.js").LionRequestInit | undefined
  }
 
 @@= skipped -9, +9 lines =@@
