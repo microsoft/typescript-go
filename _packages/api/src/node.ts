@@ -189,8 +189,8 @@ const KIND_NODE_LIST = 2 ** 32 - 1;
 
 export class RemoteNodeBase {
     parent: RemoteNode;
-    protected view: DataView;
-    protected decoder: TextDecoder;
+    view: DataView;
+    decoder: TextDecoder;
     protected index: number;
 
     constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {

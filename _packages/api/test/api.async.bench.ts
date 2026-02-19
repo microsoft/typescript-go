@@ -87,13 +87,11 @@ export async function runBenchmarks(singleIteration?: boolean) {
             await getCheckerTS();
         }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("materialize program.ts", async () => {
-            const view = (file as unknown as RemoteSourceFile)["view"];
-            const decoder = (file as unknown as RemoteSourceFile)["decoder"];
+            const { view, decoder } = file as unknown as RemoteSourceFile;
             new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder);
         }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", async () => {
-            const view = (file as unknown as RemoteSourceFile)["view"];
-            const decoder = (file as unknown as RemoteSourceFile)["decoder"];
+            const { view, decoder } = file as unknown as RemoteSourceFile;
             new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder);
         }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", async () => {
