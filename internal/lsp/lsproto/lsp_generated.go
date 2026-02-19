@@ -21626,7 +21626,7 @@ type InitializationOptions struct {
 	// The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.
 	CodeLensShowLocationsCommandName *string `json:"codeLensShowLocationsCommandName,omitzero"`
 
-	// userPreferences and/or formatting options provided at initialization.
+	// userPreferences and/or formatting options if provided at initialization.
 	UserPreferences *any `json:"userPreferences,omitzero"`
 }
 
