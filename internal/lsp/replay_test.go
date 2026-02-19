@@ -40,7 +40,6 @@ type rawMessage struct {
 func TestReplay(t *testing.T) {
 	t.Parallel()
 	if replay == nil || *replay == "" {
-		panic(":aaaa")
 		t.Skip("no replay file specified")
 	}
 	if testDir == nil || *testDir == "" {
@@ -50,8 +49,7 @@ func TestReplay(t *testing.T) {
 
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
-	// typingsLocation := getGlobalTypingsCacheLocation()
-	typingsLocation := "" // !!!
+	typingsLocation := osvfs.GetGlobalTypingsCacheLocation()
 	serverOpts := lsp.ServerOptions{
 		Err:                os.Stderr,
 		Cwd:                core.Must(os.Getwd()),
