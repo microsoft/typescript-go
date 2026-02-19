@@ -137,9 +137,9 @@ describe("SourceFile", () => {
         const sourceFile = project.program.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
-        assert.equal(sourceFile.statements[0].parent, sourceFile)
-        assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.parent, sourceFile.statements[0])
-        assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings?.parent, cast(sourceFile.statements[0], isImportDeclaration).importClause)
+        assert.equal(sourceFile.statements[0].parent, sourceFile);
+        assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.parent, sourceFile.statements[0]);
+        assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings?.parent, cast(sourceFile.statements[0], isImportDeclaration).importClause);
     });
 });
 
