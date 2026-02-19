@@ -128,6 +128,25 @@ describe("SourceFile", () => {
         });
         assert.equal(nodeCount, 8);
     });
+
+    test("child cache by index", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": "namespace foo.bar {}",
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
+
+        assert.ok(sourceFile);
+        let nodeCount = 1;
+        sourceFile.forEachChild(function visit(node) {
+            nodeCount++;
+            assert.ok(nodeCount < 1000);
+            node.forEachChild(visit);
+        });
+        assert.equal(nodeCount, 8);
+    });
 });
 
 test("unicode escapes", () => {

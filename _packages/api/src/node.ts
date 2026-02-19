@@ -337,15 +337,14 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
-        let child = (this._children ??= new Map()).get(pos);
+        let child = (this._children ??= new Map()).get(index);
         if (!child) {
             const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             if (kind === KIND_NODE_LIST) {
                 throw new Error("NodeList cannot directly contain another NodeList");
             }
             child = new RemoteNode(this.view, this.decoder, index, this.parent);
-            this._children.set(pos, child);
+            this._children.set(index, child);
         }
         return child;
     }
@@ -422,14 +421,13 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
-        let child = (this._children ??= new Map()).get(pos);
+        let child = (this._children ??= new Map()).get(index);
         if (!child) {
             const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             child = kind === KIND_NODE_LIST
                 ? new RemoteNodeList(this.view, this.decoder, index, this)
                 : new RemoteNode(this.view, this.decoder, index, this);
-            this._children.set(pos, child);
+            this._children.set(index, child);
         }
         return child;
     }
