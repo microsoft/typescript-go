@@ -59,3 +59,32 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 		})
 	}
 }
+
+func TestTernaryWithTabs(t *testing.T) {
+	t.Parallel()
+
+	text := "const test = (a: string) => (\n\ta === '1' ? (\n\t\t10\n\t) : (\n\t\t12\n\t)\n)"
+	expected := "const test=(a: string) => (\n\ta==='1'? (\n\t\t10\n\t):(\n\t\t12\n\t)\n)"
+
+	ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
+		EditorSettings: format.EditorSettings{
+			TabSize:                4,
+			IndentSize:             4,
+			BaseIndentSize:         0,
+			NewLineCharacter:       "\n",
+			ConvertTabsToSpaces:    false,
+			IndentStyle:            format.IndentStyleSmart,
+			TrimTrailingWhitespace: true,
+		},
+	}, "\n")
+
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.ts",
+		Path:     "/test.ts",
+	}, text, core.ScriptKindTS)
+
+	edits := format.FormatDocument(ctx, sourceFile)
+	newText := applyBulkEdits(text, edits)
+
+	assert.Equal(t, expected, newText)
+}
