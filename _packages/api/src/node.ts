@@ -192,8 +192,6 @@ export class RemoteNodeBase {
     protected view: DataView;
     protected decoder: TextDecoder;
     protected index: number;
-    /** Keys are positions */
-    protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
         this.view = view;
@@ -267,8 +265,6 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     protected view: DataView;
     protected decoder: TextDecoder;
     protected index: number;
-    /** Keys are positions */
-    protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     get pos(): number {
         return this.view.getUint32(this.byteIndex + NODE_OFFSET_POS, true);
@@ -387,7 +383,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        return this.sourceFile.nodes.at(index)!;
+        return this.sourceFile.nodes[index]!;
     }
 
     __print(): string {
@@ -456,13 +452,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        return this.sourceFile.nodes.at(index)!;
+        return this.sourceFile.nodes[index]!;
     }
 
     private hasChildren(): boolean {
-        if (this._children) {
-            return true;
-        }
         if (this.byteIndex >= this.view.byteLength - NODE_LEN) {
             return false;
         }
