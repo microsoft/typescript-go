@@ -38,6 +38,22 @@
             },
             "types": "./dist/signatureFlags.enum.d.ts",
             "default": "./dist/signatureFlags.js"
+        },
+        "#objectFlags": {
+            "@typescript/source": {
+                "types": "./src/objectFlags.enum.ts",
+                "default": "./src/objectFlags.ts"
+            },
+            "types": "./dist/objectFlags.enum.d.ts",
+            "default": "./dist/objectFlags.js"
+        },
+        "#elementFlags": {
+            "@typescript/source": {
+                "types": "./src/elementFlags.enum.ts",
+                "default": "./src/elementFlags.ts"
+            },
+            "types": "./dist/elementFlags.enum.d.ts",
+            "default": "./dist/elementFlags.js"
         }
     },
     "exports": {

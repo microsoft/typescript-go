@@ -44,7 +44,7 @@ export class ObjectRegistry<
         this.factories = factories;
     }
 
-    getSymbol(data: SymbolResponse): TSymbol {
+    getOrCreateSymbol(data: SymbolResponse): TSymbol {
         let symbol = this.symbols.get(data.id);
         if (symbol) {
             return symbol;
@@ -55,7 +55,7 @@ export class ObjectRegistry<
         return symbol;
     }
 
-    getType(data: TypeResponse): TType {
+    getOrCreateType(data: TypeResponse): TType {
         let type = this.types.get(data.id);
         if (type) {
             return type;
@@ -66,7 +66,11 @@ export class ObjectRegistry<
         return type;
     }
 
-    getSignature(data: SignatureResponse): TSignature {
+    getType(id: string): TType | undefined {
+        return this.types.get(id);
+    }
+
+    getOrCreateSignature(data: SignatureResponse): TSignature {
         let signature = this.signatures.get(data.id);
         if (signature) {
             return signature;

@@ -77,7 +77,7 @@ func (sd *snapshotData) registerType(t *checker.Type) *TypeResponse {
 	if t == nil {
 		return nil
 	}
-	resp := NewTypeData(t)
+	resp := newTypeData(t)
 
 	sd.typeRegistryMu.Lock()
 	sd.typeRegistry[resp.Id] = t
@@ -293,6 +293,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodGetTypesOfSymbols):
 		return s.handleGetTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
+	case string(MethodGetDeclaredTypeOfSymbol):
+		return s.handleGetDeclaredTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodResolveName):
 		return s.handleResolveName(ctx, parsed.(*ResolveNameParams))
 	case string(MethodGetParentOfSymbol):
@@ -313,6 +315,28 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypeAtPosition(ctx, parsed.(*GetTypeAtPositionParams))
 	case string(MethodGetTypesAtPositions):
 		return s.handleGetTypesAtPositions(ctx, parsed.(*GetTypesAtPositionsParams))
+	case string(MethodGetTargetOfType):
+		return s.handleGetTargetOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetTypesOfType):
+		return s.handleGetTypesOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetTypeParametersOfType):
+		return s.handleGetTypeParametersOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetOuterTypeParametersOfType):
+		return s.handleGetOuterTypeParametersOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetLocalTypeParametersOfType):
+		return s.handleGetLocalTypeParametersOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetObjectTypeOfType):
+		return s.handleGetObjectTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetIndexTypeOfType):
+		return s.handleGetIndexTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetCheckTypeOfType):
+		return s.handleGetCheckTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetExtendsTypeOfType):
+		return s.handleGetExtendsTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetBaseTypeOfType):
+		return s.handleGetBaseTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetConstraintOfType):
+		return s.handleGetConstraintOfType(ctx, parsed.(*GetTypePropertyParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -721,6 +745,37 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 	return results, nil
 }
 
+// handleGetDeclaredTypeOfSymbol returns the declared type of a symbol (e.g. the type alias body for type alias symbols).
+func (s *Session) handleGetDeclaredTypeOfSymbol(ctx context.Context, params *GetTypeOfSymbolParams) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+	if symbol == nil {
+		return nil, nil
+	}
+
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	t := checker.GetDeclaredTypeOfSymbol(symbol)
+	if t == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(t), nil
+}
+
 // handleResolveName resolves a name to a symbol at a given location.
 func (s *Session) handleResolveName(ctx context.Context, params *ResolveNameParams) (*SymbolResponse, error) {
 	sd, err := s.getSnapshotData(params.Snapshot)
@@ -1006,6 +1061,112 @@ func (s *Session) handleGetTypesAtPositions(ctx context.Context, params *GetType
 	}
 
 	return results, nil
+}
+
+// resolveTypeProperty resolves a type handle and returns a single sub-type.
+func (s *Session) resolveTypeProperty(params *GetTypePropertyParams, getter func(*checker.Type) *checker.Type) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	result := getter(t)
+	if result == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(result), nil
+}
+
+// resolveTypeArrayProperty resolves a type handle and returns an array of sub-types.
+func (s *Session) resolveTypeArrayProperty(params *GetTypePropertyParams, getter func(*checker.Type) []*checker.Type) ([]*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	types := getter(t)
+	if len(types) == 0 {
+		return nil, nil
+	}
+
+	results := make([]*TypeResponse, len(types))
+	for i, sub := range types {
+		results[i] = sd.registerType(sub)
+	}
+	return results, nil
+}
+
+func (s *Session) handleGetTargetOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, (*checker.Type).Target)
+}
+
+func (s *Session) handleGetTypesOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
+	return s.resolveTypeArrayProperty(params, (*checker.Type).Types)
+}
+
+func (s *Session) handleGetTypeParametersOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
+	return s.resolveTypeArrayProperty(params, func(t *checker.Type) []*checker.Type {
+		return t.AsInterfaceType().TypeParameters()
+	})
+}
+
+func (s *Session) handleGetOuterTypeParametersOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
+	return s.resolveTypeArrayProperty(params, func(t *checker.Type) []*checker.Type {
+		return t.AsInterfaceType().OuterTypeParameters()
+	})
+}
+
+func (s *Session) handleGetLocalTypeParametersOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
+	return s.resolveTypeArrayProperty(params, func(t *checker.Type) []*checker.Type {
+		return t.AsInterfaceType().LocalTypeParameters()
+	})
+}
+
+func (s *Session) handleGetObjectTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		return t.AsIndexedAccessType().ObjectType()
+	})
+}
+
+func (s *Session) handleGetIndexTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		return t.AsIndexedAccessType().IndexType()
+	})
+}
+
+func (s *Session) handleGetCheckTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		return t.AsConditionalType().CheckType()
+	})
+}
+
+func (s *Session) handleGetExtendsTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		return t.AsConditionalType().ExtendsType()
+	})
+}
+
+func (s *Session) handleGetBaseTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		return t.AsSubstitutionType().BaseType()
+	})
+}
+
+func (s *Session) handleGetConstraintOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		return t.AsSubstitutionType().SubstConstraint()
+	})
 }
 
 // resolveNodeHandle resolves a node handle to an AST node.

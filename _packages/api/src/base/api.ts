@@ -7,6 +7,8 @@
  * - `Async = true`: Methods return Promise<T> (async)
  */
 
+import { ElementFlags } from "#elementFlags";
+import { ObjectFlags } from "#objectFlags";
 import { SignatureFlags } from "#signatureFlags";
 import { SignatureKind } from "#signatureKind";
 import { SymbolFlags } from "#symbolFlags";
@@ -28,7 +30,7 @@ import type {
 } from "../proto.ts";
 import type { MaybeAsync } from "./types.ts";
 
-export { SignatureFlags, SignatureKind, SymbolFlags, TypeFlags };
+export { ElementFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags };
 
 /**
  * A document identifier that can be either a file name (path string) or a document URI object.
@@ -204,6 +206,11 @@ export interface Checker<Async extends boolean> {
     getTypeOfSymbol(symbols: readonly Symbol<Async>[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
 
     /**
+     * Get the declared type of a symbol (e.g. the aliased type for type alias symbols).
+     */
+    getDeclaredTypeOfSymbol(symbol: Symbol<Async>): MaybeAsync<Async, Type<Async> | undefined>;
+
+    /**
      * Get the type at a specific node location.
      */
     getTypeAtLocation(node: Node): MaybeAsync<Async, Type<Async> | undefined>;
@@ -278,15 +285,124 @@ export interface Symbol<Async extends boolean> {
 
 /**
  * Base interface for a TypeScript type.
+ *
+ * Use TypeFlags to determine the specific kind of type and access
+ * kind-specific properties. For example:
+ *
+ * ```ts
+ * if (type.flags & TypeFlags.StringLiteral) {
+ *     console.log((type as LiteralType).value); // string
+ * }
+ * ```
  */
 export interface Type<Async extends boolean> {
     /** Unique identifier for this type */
     readonly id: string;
-    /** Type flags */
+    /** Type flags — use to determine the specific kind of type */
     readonly flags: TypeFlags;
 
     /** Get the symbol associated with this type, if any */
     getSymbol(): MaybeAsync<Async, Symbol<Async> | undefined>;
+}
+
+/** Literal types: StringLiteral, NumberLiteral, BigIntLiteral, BooleanLiteral */
+export interface LiteralType<Async extends boolean> extends Type<Async> {
+    /** The literal value */
+    readonly value: string | number | boolean;
+}
+
+/** Object types (TypeFlags.Object) */
+export interface ObjectType<Async extends boolean> extends Type<Async> {
+    /** Object flags — use to determine the specific kind of object type */
+    readonly objectFlags: ObjectFlags;
+}
+
+/** Type references (ObjectFlags.Reference) — e.g. Array<string>, Map<K, V> */
+export interface TypeReference<Async extends boolean> extends ObjectType<Async> {
+    /** Get the generic target type (e.g. Array for Array<string>) */
+    getTarget(): MaybeAsync<Async, Type<Async>>;
+}
+
+/** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
+export interface InterfaceType<Async extends boolean> extends TypeReference<Async> {
+    /** Get all type parameters (outer + local, excluding thisType) */
+    getTypeParameters(): MaybeAsync<Async, readonly Type<Async>[]>;
+    /** Get outer type parameters from enclosing declarations */
+    getOuterTypeParameters(): MaybeAsync<Async, readonly Type<Async>[]>;
+    /** Get local type parameters declared on this interface/class */
+    getLocalTypeParameters(): MaybeAsync<Async, readonly Type<Async>[]>;
+}
+
+/** Tuple types (ObjectFlags.Tuple) */
+export interface TupleType<Async extends boolean> extends InterfaceType<Async> {
+    /** Per-element flags (Required, Optional, Rest, Variadic) */
+    readonly elementFlags: readonly ElementFlags[];
+    /** Number of initial required or optional elements */
+    readonly fixedLength: number;
+    /** Whether the tuple is readonly */
+    readonly readonly: boolean;
+}
+
+/** Union or intersection types (TypeFlags.Union | TypeFlags.Intersection) */
+export interface UnionOrIntersectionType<Async extends boolean> extends Type<Async> {
+    /** Get the constituent types */
+    getTypes(): MaybeAsync<Async, readonly Type<Async>[]>;
+}
+
+/** Union types (TypeFlags.Union) */
+export interface UnionType<Async extends boolean> extends UnionOrIntersectionType<Async> {
+}
+
+/** Intersection types (TypeFlags.Intersection) */
+export interface IntersectionType<Async extends boolean> extends UnionOrIntersectionType<Async> {
+}
+
+/** Type parameters (TypeFlags.TypeParameter) */
+export interface TypeParameter<Async extends boolean> extends Type<Async> {
+}
+
+/** Index types — keyof T (TypeFlags.Index) */
+export interface IndexType<Async extends boolean> extends Type<Async> {
+    /** Get the target type T in `keyof T` */
+    getTarget(): MaybeAsync<Async, Type<Async>>;
+}
+
+/** Indexed access types — T[K] (TypeFlags.IndexedAccess) */
+export interface IndexedAccessType<Async extends boolean> extends Type<Async> {
+    /** Get the object type T in `T[K]` */
+    getObjectType(): MaybeAsync<Async, Type<Async>>;
+    /** Get the index type K in `T[K]` */
+    getIndexType(): MaybeAsync<Async, Type<Async>>;
+}
+
+/** Conditional types — T extends U ? X : Y (TypeFlags.Conditional) */
+export interface ConditionalType<Async extends boolean> extends Type<Async> {
+    /** Get the check type T in `T extends U ? X : Y` */
+    getCheckType(): MaybeAsync<Async, Type<Async>>;
+    /** Get the extends type U in `T extends U ? X : Y` */
+    getExtendsType(): MaybeAsync<Async, Type<Async>>;
+}
+
+/** Substitution types (TypeFlags.Substitution) */
+export interface SubstitutionType<Async extends boolean> extends Type<Async> {
+    /** Get the base/target type */
+    getBaseType(): MaybeAsync<Async, Type<Async>>;
+    /** Get the constraint */
+    getConstraint(): MaybeAsync<Async, Type<Async>>;
+}
+
+/** Template literal types (TypeFlags.TemplateLiteral) */
+export interface TemplateLiteralType<Async extends boolean> extends Type<Async> {
+    /** Text segments (always one more than the number of type spans) */
+    readonly texts: readonly string[];
+    /** Get the types interspersed between text segments */
+    getTypes(): MaybeAsync<Async, readonly Type<Async>[]>;
+}
+
+/** String mapping types — Uppercase<T>, Lowercase<T>, etc. (TypeFlags.StringMapping) */
+export interface StringMappingType<Async extends boolean> extends Type<Async> {
+    /** Get the mapped type */
+    getTarget(): MaybeAsync<Async, Type<Async>>;
 }
 
 /**

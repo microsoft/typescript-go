@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -100,6 +101,7 @@ const (
 	MethodGetSymbolsAtLocations    Method = "getSymbolsAtLocations"
 	MethodGetTypeOfSymbol          Method = "getTypeOfSymbol"
 	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
+	MethodGetDeclaredTypeOfSymbol  Method = "getDeclaredTypeOfSymbol"
 	MethodGetSourceFile            Method = "getSourceFile"
 	MethodResolveName              Method = "resolveName"
 	MethodGetParentOfSymbol        Method = "getParentOfSymbol"
@@ -111,6 +113,19 @@ const (
 	MethodGetTypeAtLocations       Method = "getTypeAtLocations"
 	MethodGetTypeAtPosition        Method = "getTypeAtPosition"
 	MethodGetTypesAtPositions      Method = "getTypesAtPositions"
+
+	// Type sub-property methods
+	MethodGetTargetOfType              Method = "getTargetOfType"
+	MethodGetTypesOfType               Method = "getTypesOfType"
+	MethodGetTypeParametersOfType      Method = "getTypeParametersOfType"
+	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
+	MethodGetLocalTypeParametersOfType Method = "getLocalTypeParametersOfType"
+	MethodGetObjectTypeOfType          Method = "getObjectTypeOfType"
+	MethodGetIndexTypeOfType           Method = "getIndexTypeOfType"
+	MethodGetCheckTypeOfType           Method = "getCheckTypeOfType"
+	MethodGetExtendsTypeOfType         Method = "getExtendsTypeOfType"
+	MethodGetBaseTypeOfType            Method = "getBaseTypeOfType"
+	MethodGetConstraintOfType          Method = "getConstraintOfType"
 )
 
 // InitializeResponse is returned by the initialize method.
@@ -263,6 +278,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSymbolsAtLocations:    unmarshallerFor[GetSymbolsAtLocationsParams],
 	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
+	MethodGetDeclaredTypeOfSymbol:  unmarshallerFor[GetTypeOfSymbolParams],
 	MethodResolveName:              unmarshallerFor[ResolveNameParams],
 	MethodGetParentOfSymbol:        unmarshallerFor[GetParentOfSymbolParams],
 	MethodGetMembersOfSymbol:       unmarshallerFor[GetMembersOfSymbolParams],
@@ -273,6 +289,18 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypeAtLocations:       unmarshallerFor[GetTypeAtLocationsParams],
 	MethodGetTypeAtPosition:        unmarshallerFor[GetTypeAtPositionParams],
 	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
+
+	MethodGetTargetOfType:              unmarshallerFor[GetTypePropertyParams],
+	MethodGetTypesOfType:               unmarshallerFor[GetTypePropertyParams],
+	MethodGetTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
+	MethodGetOuterTypeParametersOfType: unmarshallerFor[GetTypePropertyParams],
+	MethodGetLocalTypeParametersOfType: unmarshallerFor[GetTypePropertyParams],
+	MethodGetObjectTypeOfType:          unmarshallerFor[GetTypePropertyParams],
+	MethodGetIndexTypeOfType:           unmarshallerFor[GetTypePropertyParams],
+	MethodGetCheckTypeOfType:           unmarshallerFor[GetTypePropertyParams],
+	MethodGetExtendsTypeOfType:         unmarshallerFor[GetTypePropertyParams],
+	MethodGetBaseTypeOfType:            unmarshallerFor[GetTypePropertyParams],
+	MethodGetConstraintOfType:          unmarshallerFor[GetTypePropertyParams],
 }
 
 type ParseConfigFileParams struct {
@@ -382,14 +410,134 @@ type GetTypesOfSymbolsParams struct {
 }
 
 type TypeResponse struct {
-	Id    Handle[checker.Type] `json:"id"`
-	Flags uint32               `json:"flags"`
+	Id          Handle[checker.Type] `json:"id"`
+	Flags       uint32               `json:"flags"`
+	ObjectFlags uint32               `json:"objectFlags,omitempty"`
+
+	// LiteralType data
+	Value any `json:"value,omitempty"`
+
+	// ObjectType / TypeReference / StringMappingType / IndexType target
+	Target Handle[checker.Type] `json:"target,omitempty"`
+
+	// InterfaceType type parameters
+	TypeParameters      []Handle[checker.Type] `json:"typeParameters,omitempty"`
+	OuterTypeParameters []Handle[checker.Type] `json:"outerTypeParameters,omitempty"`
+	LocalTypeParameters []Handle[checker.Type] `json:"localTypeParameters,omitempty"`
+
+	// TupleType data
+	ElementFlags  []checker.ElementFlags `json:"elementFlags,omitempty"`
+	FixedLength   *int                   `json:"fixedLength,omitempty"`
+	TupleReadonly *bool                  `json:"readonly,omitempty"`
+
+	// IndexedAccessType data
+	ObjectType Handle[checker.Type] `json:"objectType,omitempty"`
+	IndexType  Handle[checker.Type] `json:"indexType,omitempty"`
+
+	// ConditionalType data
+	CheckType   Handle[checker.Type] `json:"checkType,omitempty"`
+	ExtendsType Handle[checker.Type] `json:"extendsType,omitempty"`
+
+	// SubstitutionType data
+	BaseType        Handle[checker.Type] `json:"baseType,omitempty"`
+	SubstConstraint Handle[checker.Type] `json:"substConstraint,omitempty"`
+
+	// TemplateLiteralType text segments
+	Texts []string `json:"texts,omitempty"`
+
+	// Symbol associated with structured types
+	Symbol Handle[ast.Symbol] `json:"symbol,omitempty"`
 }
 
-func NewTypeData(t *checker.Type) *TypeResponse {
-	return &TypeResponse{
+func newTypeData(t *checker.Type) *TypeResponse {
+	resp := &TypeResponse{
 		Id:    TypeHandle(t),
 		Flags: uint32(t.Flags()),
+	}
+
+	if t.Symbol() != nil {
+		resp.Symbol = SymbolHandle(t.Symbol())
+	}
+
+	switch flags := t.Flags(); {
+	case flags&checker.TypeFlagsLiteral != 0:
+		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
+	case flags&checker.TypeFlagsObject != 0:
+		resp.ObjectFlags = uint32(t.ObjectFlags())
+		objectFlags := t.ObjectFlags()
+		if objectFlags&checker.ObjectFlagsReference != 0 {
+			var ref *checker.TypeReference
+			if objectFlags&checker.ObjectFlagsTuple != 0 {
+				tuple := t.AsTupleType()
+				ref = tuple.AsTypeReference()
+				resp.ElementFlags = tuple.ElementFlags()
+				fixedLen := tuple.FixedLength()
+				resp.FixedLength = &fixedLen
+				isReadonly := tuple.IsReadonly()
+				resp.TupleReadonly = &isReadonly
+			} else {
+				ref = t.AsTypeReference()
+			}
+			if ref.Target() != nil {
+				resp.Target = TypeHandle(ref.Target())
+			}
+		}
+		if objectFlags&checker.ObjectFlagsClassOrInterface != 0 {
+			iface := t.AsInterfaceType()
+			resp.TypeParameters = typeHandles(iface.TypeParameters())
+			resp.OuterTypeParameters = typeHandles(iface.OuterTypeParameters())
+			resp.LocalTypeParameters = typeHandles(iface.LocalTypeParameters())
+		}
+	case flags&checker.TypeFlagsUnionOrIntersection != 0:
+		// types omitted; fetched via separate request
+	case flags&checker.TypeFlagsIndex != 0:
+		resp.Target = TypeHandle(t.AsIndexType().Target())
+	case flags&checker.TypeFlagsIndexedAccess != 0:
+		data := t.AsIndexedAccessType()
+		resp.ObjectType = TypeHandle(data.ObjectType())
+		resp.IndexType = TypeHandle(data.IndexType())
+	case flags&checker.TypeFlagsConditional != 0:
+		data := t.AsConditionalType()
+		resp.CheckType = TypeHandle(data.CheckType())
+		resp.ExtendsType = TypeHandle(data.ExtendsType())
+	case flags&checker.TypeFlagsSubstitution != 0:
+		data := t.AsSubstitutionType()
+		resp.BaseType = TypeHandle(data.BaseType())
+		resp.SubstConstraint = TypeHandle(data.SubstConstraint())
+	case flags&checker.TypeFlagsTemplateLiteral != 0:
+		tl := t.AsTemplateLiteralType()
+		resp.Texts = tl.Texts()
+		// types omitted; fetched via separate request
+	case flags&checker.TypeFlagsStringMapping != 0:
+		resp.Target = TypeHandle(t.AsStringMappingType().Target())
+	}
+
+	return resp
+}
+
+func typeHandles(types []*checker.Type) []Handle[checker.Type] {
+	if len(types) == 0 {
+		return nil
+	}
+	handles := make([]Handle[checker.Type], len(types))
+	for i, t := range types {
+		handles[i] = TypeHandle(t)
+	}
+	return handles
+}
+
+func literalValueToJSON(value any) any {
+	switch v := value.(type) {
+	case string:
+		return v
+	case jsnum.Number:
+		return float64(v)
+	case bool:
+		return v
+	case jsnum.PseudoBigInt:
+		return v.String()
+	default:
+		return nil
 	}
 }
 
@@ -436,6 +584,12 @@ type GetExportsOfSymbolParams struct {
 }
 
 type GetSymbolOfTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
+// GetTypePropertyParams is used for all type sub-property endpoints.
+type GetTypePropertyParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Type     Handle[checker.Type]     `json:"type"`
 }

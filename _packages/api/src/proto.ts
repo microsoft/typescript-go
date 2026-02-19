@@ -91,6 +91,23 @@ export interface SymbolResponse {
 export interface TypeResponse {
     id: string;
     flags: number;
+    objectFlags?: number;
+    value?: string | number | boolean;
+    target?: string;
+    typeParameters?: string[];
+    outerTypeParameters?: string[];
+    localTypeParameters?: string[];
+    elementFlags?: number[];
+    fixedLength?: number;
+    readonly?: boolean;
+    objectType?: string;
+    indexType?: string;
+    checkType?: string;
+    extendsType?: string;
+    baseType?: string;
+    substConstraint?: string;
+    texts?: string[];
+    symbol?: string;
 }
 
 export interface SignatureResponse {

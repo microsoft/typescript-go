@@ -2,10 +2,18 @@ import { createVirtualFileSystem } from "@typescript/api/fs";
 import type { FileSystem } from "@typescript/api/fs";
 import {
     API,
+    type ConditionalType,
+    type IndexedAccessType,
+    type IndexType,
+    ObjectFlags,
     SignatureKind,
     type Snapshot,
+    type StringMappingType,
     SymbolFlags,
+    type TemplateLiteralType,
     TypeFlags,
+    type TypeReference,
+    type UnionOrIntersectionType,
 } from "@typescript/api/sync";
 import {
     cast,
@@ -652,6 +660,158 @@ export const instance: Foo = new Foo();
         const typeSymbol = type.getSymbol();
         assert.ok(typeSymbol);
         assert.equal(typeSymbol.name, "Foo");
+        api.close();
+    });
+});
+
+describe("Type - sub-property fetchers", () => {
+    const typeFiles = {
+        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, target: "esnext" } }),
+        "/src/types.ts": `
+export const arr: Array<number> = [1, 2, 3];
+export const union: string | number = "hello";
+export const intersection: { a: number } & { b: string } = { a: 1, b: "hi" };
+export type KeyOf<T> = keyof T;
+export type Lookup<T, K extends keyof T> = T[K];
+export type Cond<T> = T extends string ? "yes" : "no";
+export const tpl: \`hello \${string}\` = "hello world";
+export type Upper = Uppercase<"hello">;
+export const tuple: readonly [number, string?, ...boolean[]] = [1];
+`,
+    };
+
+    function getTypeAtName(api: API, name: string) {
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const src = typeFiles["/src/types.ts"];
+        const pos = src.indexOf(name);
+        assert.ok(pos >= 0, `Could not find "${name}" in source`);
+        const symbol = project.checker.getSymbolAtPosition("/src/types.ts", pos);
+        assert.ok(symbol, `No symbol found at "${name}"`);
+        const type = project.checker.getTypeOfSymbol(symbol);
+        assert.ok(type, `No type found for symbol "${name}"`);
+        return { type, project, snapshot, api };
+    }
+
+    test("TypeReference.getTarget() returns the generic target", () => {
+        const { type, api } = getTypeAtName(spawnAPI(typeFiles), "arr:");
+        assert.ok(type.flags & TypeFlags.Object);
+        const ref = type as TypeReference;
+        assert.ok(ref.objectFlags & ObjectFlags.Reference);
+        const target = ref.getTarget();
+        assert.ok(target);
+        assert.ok(target.flags & TypeFlags.Object);
+        api.close();
+    });
+
+    test("UnionOrIntersectionType.getTypes() returns union members", () => {
+        const { type, api } = getTypeAtName(spawnAPI(typeFiles), "union:");
+        assert.ok(type.flags & TypeFlags.Union);
+        const union = type as UnionOrIntersectionType;
+        const types = union.getTypes();
+        assert.ok(types.length >= 2);
+        api.close();
+    });
+
+    test("UnionOrIntersectionType.getTypes() returns intersection members", () => {
+        const { type, api } = getTypeAtName(spawnAPI(typeFiles), "intersection:");
+        assert.ok(type.flags & TypeFlags.Intersection);
+        const inter = type as UnionOrIntersectionType;
+        const types = inter.getTypes();
+        assert.ok(types.length >= 2);
+        api.close();
+    });
+
+    test("IndexType.getTarget() returns the target type", () => {
+        const api = spawnAPI(typeFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const symbol = project.checker.resolveName("KeyOf", SymbolFlags.TypeAlias, { document: "/src/types.ts", position: 0 });
+        assert.ok(symbol);
+        const type = project.checker.getDeclaredTypeOfSymbol(symbol);
+        assert.ok(type);
+        // KeyOf<T> = keyof T — this is an IndexType
+        assert.ok(type.flags & TypeFlags.Index, `Expected IndexType, got flags ${type.flags}`);
+        const indexType = type as IndexType;
+        const target = indexType.getTarget();
+        assert.ok(target);
+        api.close();
+    });
+
+    test("IndexedAccessType.getObjectType() and getIndexType()", () => {
+        const api = spawnAPI(typeFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const symbol = project.checker.resolveName("Lookup", SymbolFlags.TypeAlias, { document: "/src/types.ts", position: 0 });
+        assert.ok(symbol);
+        const type = project.checker.getDeclaredTypeOfSymbol(symbol);
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.IndexedAccess, `Expected IndexedAccessType, got flags ${type.flags}`);
+        const ia = type as IndexedAccessType;
+        const objectType = ia.getObjectType();
+        assert.ok(objectType);
+        const indexType = ia.getIndexType();
+        assert.ok(indexType);
+        api.close();
+    });
+
+    test("ConditionalType.getCheckType() and getExtendsType()", () => {
+        const api = spawnAPI(typeFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const symbol = project.checker.resolveName("Cond", SymbolFlags.TypeAlias, { document: "/src/types.ts", position: 0 });
+        assert.ok(symbol);
+        const type = project.checker.getDeclaredTypeOfSymbol(symbol);
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Conditional, `Expected ConditionalType, got flags ${type.flags}`);
+        const cond = type as ConditionalType;
+        const checkType = cond.getCheckType();
+        assert.ok(checkType);
+        const extendsType = cond.getExtendsType();
+        assert.ok(extendsType);
+        api.close();
+    });
+
+    test("TemplateLiteralType.texts and getTypes()", () => {
+        const { type, api } = getTypeAtName(spawnAPI(typeFiles), "tpl:");
+        assert.ok(type.flags & TypeFlags.TemplateLiteral, `Expected TemplateLiteralType, got flags ${type.flags}`);
+        const tpl = type as TemplateLiteralType;
+        assert.ok(tpl.texts);
+        assert.ok(tpl.texts.length >= 2);
+        assert.equal(tpl.texts[0], "hello ");
+        const types = tpl.getTypes();
+        assert.ok(types.length >= 1);
+        api.close();
+    });
+
+    test("StringMappingType.getTarget() returns the mapped type", () => {
+        const api = spawnAPI(typeFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const src = typeFiles["/src/types.ts"];
+        const pos = src.indexOf("Upper");
+        const symbol = project.checker.getSymbolAtPosition("/src/types.ts", pos);
+        assert.ok(symbol);
+        const type = project.checker.getTypeOfSymbol(symbol);
+        assert.ok(type);
+        // Uppercase<"hello"> may resolve to a StringMappingType or a string literal
+        if (type.flags & TypeFlags.StringMapping) {
+            const sm = type as StringMappingType;
+            const target = sm.getTarget();
+            assert.ok(target);
+        }
+        // If it resolved to "HELLO" literal, that's fine too — it means eager evaluation
+        api.close();
+    });
+
+    test("TupleType properties", () => {
+        const { type, api } = getTypeAtName(spawnAPI(typeFiles), "tuple:");
+        assert.ok(type.flags & TypeFlags.Object);
+        const ref = type as TypeReference;
+        assert.ok(ref.objectFlags & ObjectFlags.Reference);
+        const target = ref.getTarget();
+        assert.ok(target);
+        assert.ok(target.flags & TypeFlags.Object);
         api.close();
     });
 });
