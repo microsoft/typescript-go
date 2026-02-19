@@ -1144,6 +1144,10 @@ type Signature struct {
 	composite                *CompositeSignature
 }
 
+func (s *Signature) Flags() SignatureFlags {
+	return s.flags
+}
+
 func (s *Signature) TypeParameters() []*Type {
 	return s.typeParameters
 }

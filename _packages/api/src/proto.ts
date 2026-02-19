@@ -92,3 +92,13 @@ export interface TypeResponse {
     id: string;
     flags: number;
 }
+
+export interface SignatureResponse {
+    id: string;
+    flags: number;
+    declaration?: string;
+    typeParameters?: string[];
+    parameters?: string[];
+    thisParameter?: string;
+    target?: string;
+}

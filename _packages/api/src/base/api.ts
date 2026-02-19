@@ -7,6 +7,8 @@
  * - `Async = true`: Methods return Promise<T> (async)
  */
 
+import { SignatureFlags } from "#signatureFlags";
+import { SignatureKind } from "#signatureKind";
 import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
 import type {
@@ -26,7 +28,7 @@ import type {
 } from "../proto.ts";
 import type { MaybeAsync } from "./types.ts";
 
-export { SymbolFlags, TypeFlags };
+export { SignatureFlags, SignatureKind, SymbolFlags, TypeFlags };
 
 /**
  * A document identifier that can be either a file name (path string) or a document URI object.
@@ -202,6 +204,25 @@ export interface Checker<Async extends boolean> {
     getTypeOfSymbol(symbols: readonly Symbol<Async>[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
 
     /**
+     * Get the type at a specific node location.
+     */
+    getTypeAtLocation(node: Node): MaybeAsync<Async, Type<Async> | undefined>;
+    getTypeAtLocation(nodes: readonly Node[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
+
+    /**
+     * Get the call or construct signatures of a type.
+     * @param type The type to get signatures from
+     * @param kind 0 for call signatures, 1 for construct signatures
+     */
+    getSignaturesOfType(type: Type<Async>, kind: SignatureKind): MaybeAsync<Async, readonly Signature<Async>[]>;
+
+    /**
+     * Get the type at a specific position in a file.
+     */
+    getTypeAtPosition(file: DocumentIdentifier, position: number): MaybeAsync<Async, Type<Async> | undefined>;
+    getTypeAtPosition(file: DocumentIdentifier, positions: readonly number[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
+
+    /**
      * Resolve a name to a symbol at a given location.
      * @param name The name to resolve
      * @param meaning Symbol flags indicating what kind of symbol to look for
@@ -246,6 +267,13 @@ export interface Symbol<Async extends boolean> {
     readonly declarations: readonly NodeHandle<Async>[];
     /** Node handle for the value declaration of this symbol */
     readonly valueDeclaration: NodeHandle<Async> | undefined;
+
+    /** Get the parent symbol, if any */
+    getParent(): MaybeAsync<Async, Symbol<Async> | undefined>;
+    /** Get the members of this symbol */
+    getMembers(): MaybeAsync<Async, readonly Symbol<Async>[]>;
+    /** Get the exports of this symbol */
+    getExports(): MaybeAsync<Async, readonly Symbol<Async>[]>;
 }
 
 /**
@@ -256,4 +284,32 @@ export interface Type<Async extends boolean> {
     readonly id: string;
     /** Type flags */
     readonly flags: TypeFlags;
+
+    /** Get the symbol associated with this type, if any */
+    getSymbol(): MaybeAsync<Async, Symbol<Async> | undefined>;
+}
+
+/**
+ * Base interface for a TypeScript signature.
+ */
+export interface Signature<Async extends boolean> {
+    /** Unique identifier for this signature */
+    readonly id: string;
+    /** Node handle for the declaration of this signature */
+    readonly declaration?: NodeHandle<Async> | undefined;
+    /** Type parameter types */
+    readonly typeParameters?: readonly Type<Async>[] | undefined;
+    /** Parameter symbols */
+    readonly parameters: readonly Symbol<Async>[];
+    /** This parameter symbol, if any */
+    readonly thisParameter?: Symbol<Async> | undefined;
+
+    /** Get the target signature (for instantiated signatures) */
+    readonly target?: Signature<Async> | undefined;
+    /** Whether the last parameter is a rest parameter */
+    readonly hasRestParameter: boolean;
+    /** Whether this is a construct signature */
+    readonly isConstruct: boolean;
+    /** Whether this is an abstract signature */
+    readonly isAbstract: boolean;
 }

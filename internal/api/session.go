@@ -36,6 +36,10 @@ type snapshotData struct {
 
 	typeRegistry   map[Handle[checker.Type]]*checker.Type
 	typeRegistryMu sync.RWMutex
+
+	signatureRegistry   map[Handle[checker.Signature]]*checker.Signature
+	signatureNextID     uint64
+	signatureRegistryMu sync.RWMutex
 }
 
 // getProgram looks up a program from a project handle within this snapshot.
@@ -114,6 +118,65 @@ func (sd *snapshotData) resolveTypeHandle(handle Handle[checker.Type]) (*checker
 	}
 
 	return t, nil
+}
+
+// registerSignature registers a signature in this snapshot's registry and returns the response.
+func (sd *snapshotData) registerSignature(sig *checker.Signature) *SignatureResponse {
+	if sig == nil {
+		return nil
+	}
+
+	sd.signatureRegistryMu.Lock()
+	sd.signatureNextID++
+	id := sd.signatureNextID
+	handle := SignatureHandle(id)
+	sd.signatureRegistry[handle] = sig
+	sd.signatureRegistryMu.Unlock()
+
+	resp := &SignatureResponse{
+		Id:    handle,
+		Flags: uint32(sig.Flags()),
+	}
+
+	if sig.Declaration() != nil {
+		resp.Declaration = NodeHandleFrom(sig.Declaration())
+	}
+
+	if len(sig.TypeParameters()) > 0 {
+		resp.TypeParameters = make([]Handle[checker.Type], len(sig.TypeParameters()))
+		for i, tp := range sig.TypeParameters() {
+			resp.TypeParameters[i] = TypeHandle(tp)
+			sd.typeRegistryMu.Lock()
+			sd.typeRegistry[resp.TypeParameters[i]] = tp
+			sd.typeRegistryMu.Unlock()
+		}
+	}
+
+	if len(sig.Parameters()) > 0 {
+		resp.Parameters = make([]Handle[ast.Symbol], len(sig.Parameters()))
+		for i, param := range sig.Parameters() {
+			resp.Parameters[i] = SymbolHandle(param)
+			sd.symbolRegistryMu.Lock()
+			sd.symbolRegistry[resp.Parameters[i]] = param
+			sd.symbolRegistryMu.Unlock()
+		}
+	}
+
+	if sig.ThisParameter() != nil {
+		resp.ThisParameter = SymbolHandle(sig.ThisParameter())
+		sd.symbolRegistryMu.Lock()
+		sd.symbolRegistry[resp.ThisParameter] = sig.ThisParameter()
+		sd.symbolRegistryMu.Unlock()
+	}
+
+	if sig.Target() != nil {
+		targetResp := sd.registerSignature(sig.Target())
+		if targetResp != nil {
+			resp.Target = targetResp.Id
+		}
+	}
+
+	return resp
 }
 
 // Session represents an API session that provides programmatic access
@@ -232,6 +295,24 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
 	case string(MethodResolveName):
 		return s.handleResolveName(ctx, parsed.(*ResolveNameParams))
+	case string(MethodGetParentOfSymbol):
+		return s.handleGetParentOfSymbol(ctx, parsed.(*GetParentOfSymbolParams))
+	case string(MethodGetMembersOfSymbol):
+		return s.handleGetMembersOfSymbol(ctx, parsed.(*GetMembersOfSymbolParams))
+	case string(MethodGetExportsOfSymbol):
+		return s.handleGetExportsOfSymbol(ctx, parsed.(*GetExportsOfSymbolParams))
+	case string(MethodGetSymbolOfType):
+		return s.handleGetSymbolOfType(ctx, parsed.(*GetSymbolOfTypeParams))
+	case string(MethodGetSignaturesOfType):
+		return s.handleGetSignaturesOfType(ctx, parsed.(*GetSignaturesOfTypeParams))
+	case string(MethodGetTypeAtLocation):
+		return s.handleGetTypeAtLocation(ctx, parsed.(*GetTypeAtLocationParams))
+	case string(MethodGetTypeAtLocations):
+		return s.handleGetTypeAtLocations(ctx, parsed.(*GetTypeAtLocationsParams))
+	case string(MethodGetTypeAtPosition):
+		return s.handleGetTypeAtPosition(ctx, parsed.(*GetTypeAtPositionParams))
+	case string(MethodGetTypesAtPositions):
+		return s.handleGetTypesAtPositions(ctx, parsed.(*GetTypesAtPositionsParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -287,11 +368,12 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		release()
 	} else {
 		sd = &snapshotData{
-			snapshot:       snapshot,
-			release:        release,
-			refCount:       1,
-			symbolRegistry: make(map[Handle[ast.Symbol]]*ast.Symbol),
-			typeRegistry:   make(map[Handle[checker.Type]]*checker.Type),
+			snapshot:          snapshot,
+			release:           release,
+			refCount:          1,
+			symbolRegistry:    make(map[Handle[ast.Symbol]]*ast.Symbol),
+			typeRegistry:      make(map[Handle[checker.Type]]*checker.Type),
+			signatureRegistry: make(map[Handle[checker.Signature]]*checker.Signature),
 		}
 		s.snapshots[handle] = sd
 	}
@@ -677,6 +759,255 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 	return sd.registerSymbol(symbol), nil
 }
 
+// handleGetParentOfSymbol returns the parent of a symbol.
+func (s *Session) handleGetParentOfSymbol(ctx context.Context, params *GetParentOfSymbolParams) (*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	parent := symbol.Parent
+	if parent == nil {
+		return nil, nil
+	}
+
+	return sd.registerSymbol(parent), nil
+}
+
+// handleGetMembersOfSymbol returns the members of a symbol.
+func (s *Session) handleGetMembersOfSymbol(ctx context.Context, params *GetMembersOfSymbolParams) ([]*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	if symbol.Members == nil {
+		return nil, nil
+	}
+
+	results := make([]*SymbolResponse, 0, len(symbol.Members))
+	for _, member := range symbol.Members {
+		results = append(results, sd.registerSymbol(member))
+	}
+
+	return results, nil
+}
+
+// handleGetExportsOfSymbol returns the exports of a symbol.
+func (s *Session) handleGetExportsOfSymbol(ctx context.Context, params *GetExportsOfSymbolParams) ([]*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	if symbol.Exports == nil {
+		return nil, nil
+	}
+
+	results := make([]*SymbolResponse, 0, len(symbol.Exports))
+	for _, exp := range symbol.Exports {
+		results = append(results, sd.registerSymbol(exp))
+	}
+
+	return results, nil
+}
+
+// handleGetSymbolOfType returns the symbol associated with a type.
+func (s *Session) handleGetSymbolOfType(ctx context.Context, params *GetSymbolOfTypeParams) (*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol := t.Symbol()
+	if symbol == nil {
+		return nil, nil
+	}
+
+	return sd.registerSymbol(symbol), nil
+}
+
+// handleGetSignaturesOfType returns the call or construct signatures of a type.
+func (s *Session) handleGetSignaturesOfType(ctx context.Context, params *GetSignaturesOfTypeParams) ([]*SignatureResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	sigs := c.GetSignaturesOfType(t, checker.SignatureKind(params.Kind))
+	results := make([]*SignatureResponse, len(sigs))
+	for i, sig := range sigs {
+		results[i] = sd.registerSignature(sig)
+	}
+
+	return results, nil
+}
+
+// handleGetTypeAtLocation returns the type at a node location.
+func (s *Session) handleGetTypeAtLocation(ctx context.Context, params *GetTypeAtLocationParams) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := s.resolveNodeHandle(program, params.Location)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	t := c.GetTypeAtLocation(node)
+	if t == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(t), nil
+}
+
+// handleGetTypeAtLocations returns types at multiple node locations.
+func (s *Session) handleGetTypeAtLocations(ctx context.Context, params *GetTypeAtLocationsParams) ([]*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	results := make([]*TypeResponse, len(params.Locations))
+	for i, loc := range params.Locations {
+		node, err := s.resolveNodeHandle(program, loc)
+		if err != nil {
+			return nil, err
+		}
+		if node == nil {
+			continue
+		}
+		t := c.GetTypeAtLocation(node)
+		if t != nil {
+			results[i] = sd.registerType(t)
+		}
+	}
+
+	return results, nil
+}
+
+// handleGetTypeAtPosition returns the type at a position in a file.
+func (s *Session) handleGetTypeAtPosition(ctx context.Context, params *GetTypeAtPositionParams) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+	}
+
+	node := astnav.GetTouchingPropertyName(sourceFile, int(params.Position))
+	if node == nil {
+		return nil, nil
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	t := c.GetTypeAtLocation(node)
+	if t == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(t), nil
+}
+
+// handleGetTypesAtPositions returns types at multiple positions in a file.
+func (s *Session) handleGetTypesAtPositions(ctx context.Context, params *GetTypesAtPositionsParams) ([]*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	results := make([]*TypeResponse, len(params.Positions))
+	for i, pos := range params.Positions {
+		node := astnav.GetTouchingPropertyName(sourceFile, int(pos))
+		if node == nil {
+			continue
+		}
+		t := c.GetTypeAtLocation(node)
+		if t != nil {
+			results[i] = sd.registerType(t)
+		}
+	}
+
+	return results, nil
+}
+
 // resolveNodeHandle resolves a node handle to an AST node.
 // Node handles encode: pos.end.kind.path
 func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast.Node]) (*ast.Node, error) {
@@ -689,6 +1020,11 @@ func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast
 	sourceFile := program.GetSourceFileByPath(path)
 	if sourceFile == nil {
 		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, path)
+	}
+
+	// If the handle refers to the source file itself, return it directly
+	if kind == ast.KindSourceFile {
+		return sourceFile.AsNode(), nil
 	}
 
 	// Find the node at the position with the expected kind and end

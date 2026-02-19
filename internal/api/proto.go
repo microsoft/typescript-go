@@ -26,10 +26,11 @@ type Method string
 type Handle[T any] string
 
 const (
-	handlePrefixProject  = 'p'
-	handlePrefixSymbol   = 's'
-	handlePrefixType     = 't'
-	handlePrefixSnapshot = 'n'
+	handlePrefixProject   = 'p'
+	handlePrefixSymbol    = 's'
+	handlePrefixType      = 't'
+	handlePrefixSnapshot  = 'n'
+	handlePrefixSignature = 'g'
 )
 
 func ProjectHandle(p *project.Project) Handle[project.Project] {
@@ -42,6 +43,10 @@ func SymbolHandle(symbol *ast.Symbol) Handle[ast.Symbol] {
 
 func TypeHandle(t *checker.Type) Handle[checker.Type] {
 	return createHandle[checker.Type](handlePrefixType, t.Id())
+}
+
+func SignatureHandle(id uint64) Handle[checker.Signature] {
+	return createHandle[checker.Signature](handlePrefixSignature, id)
 }
 
 // NodeHandleFrom creates a node handle from a node.
@@ -97,6 +102,15 @@ const (
 	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
 	MethodGetSourceFile            Method = "getSourceFile"
 	MethodResolveName              Method = "resolveName"
+	MethodGetParentOfSymbol        Method = "getParentOfSymbol"
+	MethodGetMembersOfSymbol       Method = "getMembersOfSymbol"
+	MethodGetExportsOfSymbol       Method = "getExportsOfSymbol"
+	MethodGetSymbolOfType          Method = "getSymbolOfType"
+	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
+	MethodGetTypeAtLocation        Method = "getTypeAtLocation"
+	MethodGetTypeAtLocations       Method = "getTypeAtLocations"
+	MethodGetTypeAtPosition        Method = "getTypeAtPosition"
+	MethodGetTypesAtPositions      Method = "getTypesAtPositions"
 )
 
 // InitializeResponse is returned by the initialize method.
@@ -250,6 +264,15 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
 	MethodResolveName:              unmarshallerFor[ResolveNameParams],
+	MethodGetParentOfSymbol:        unmarshallerFor[GetParentOfSymbolParams],
+	MethodGetMembersOfSymbol:       unmarshallerFor[GetMembersOfSymbolParams],
+	MethodGetExportsOfSymbol:       unmarshallerFor[GetExportsOfSymbolParams],
+	MethodGetSymbolOfType:          unmarshallerFor[GetSymbolOfTypeParams],
+	MethodGetSignaturesOfType:      unmarshallerFor[GetSignaturesOfTypeParams],
+	MethodGetTypeAtLocation:        unmarshallerFor[GetTypeAtLocationParams],
+	MethodGetTypeAtLocations:       unmarshallerFor[GetTypeAtLocationsParams],
+	MethodGetTypeAtPosition:        unmarshallerFor[GetTypeAtPositionParams],
+	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
 }
 
 type ParseConfigFileParams struct {
@@ -370,6 +393,16 @@ func NewTypeData(t *checker.Type) *TypeResponse {
 	}
 }
 
+type SignatureResponse struct {
+	Id             Handle[checker.Signature] `json:"id"`
+	Flags          uint32                    `json:"flags"`
+	Declaration    Handle[ast.Node]          `json:"declaration,omitempty"`
+	TypeParameters []Handle[checker.Type]    `json:"typeParameters,omitempty"`
+	Parameters     []Handle[ast.Symbol]      `json:"parameters,omitempty"`
+	ThisParameter  Handle[ast.Symbol]        `json:"thisParameter,omitempty"`
+	Target         Handle[checker.Signature] `json:"target,omitempty"`
+}
+
 type GetSourceFileParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
@@ -385,6 +418,59 @@ type ResolveNameParams struct {
 	Position       *uint32                  `json:"position,omitempty"`       // Optional: position in file for location context (with File)
 	Meaning        uint32                   `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
 	ExcludeGlobals bool                     `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
+}
+
+type GetParentOfSymbolParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+}
+
+type GetMembersOfSymbolParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+}
+
+type GetExportsOfSymbolParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+}
+
+type GetSymbolOfTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
+type GetSignaturesOfTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Type     Handle[checker.Type]     `json:"type"`
+	Kind     int32                    `json:"kind"`
+}
+
+type GetTypeAtLocationParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Location Handle[ast.Node]         `json:"location"`
+}
+
+type GetTypeAtLocationsParams struct {
+	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
+	Project   Handle[project.Project]  `json:"project"`
+	Locations []Handle[ast.Node]       `json:"locations"`
+}
+
+type GetTypeAtPositionParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     DocumentIdentifier       `json:"file"`
+	Position uint32                   `json:"position"`
+}
+
+type GetTypesAtPositionsParams struct {
+	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
+	Project   Handle[project.Project]  `json:"project"`
+	File      DocumentIdentifier       `json:"file"`
+	Positions []uint32                 `json:"positions"`
 }
 
 // SourceFileResponse contains the binary-encoded AST data for a source file.

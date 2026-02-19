@@ -22,6 +22,22 @@
             },
             "types": "./dist/typeFlags.enum.d.ts",
             "default": "./dist/typeFlags.js"
+        },
+        "#signatureKind": {
+            "@typescript/source": {
+                "types": "./src/signatureKind.enum.ts",
+                "default": "./src/signatureKind.ts"
+            },
+            "types": "./dist/signatureKind.enum.d.ts",
+            "default": "./dist/signatureKind.js"
+        },
+        "#signatureFlags": {
+            "@typescript/source": {
+                "types": "./src/signatureFlags.enum.ts",
+                "default": "./src/signatureFlags.ts"
+            },
+            "types": "./dist/signatureFlags.enum.d.ts",
+            "default": "./dist/signatureFlags.js"
         }
     },
     "exports": {
