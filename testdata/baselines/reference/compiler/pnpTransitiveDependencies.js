@@ -118,37 +118,27 @@ export function attemptDirectImport(): ConfigOptions {
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.helperB = helperB;
-function helperB(value) {
+export function helperB(value) {
     return "Helper B: " + value;
 }
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.helperA = helperA;
-function helperA(value, config) {
+export function helperA(value, config) {
     return {
         message: "Helper A: " + value,
         config: config
     };
 }
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useDirectDependency = useDirectDependency;
-exports.attemptDirectImport = attemptDirectImport;
 // Test that the project can import package-a directly
 // package-a's types depend on package-b's types (ConfigOptions)
-const package_a_1 = require("package-a");
-function useDirectDependency(text) {
+import { helperA } from 'package-a';
+export function useDirectDependency(text) {
     const config = { enabled: true, timeout: 5000 };
-    return (0, package_a_1.helperA)(text, config);
+    return helperA(text, config);
 }
 // Test that the project CANNOT import package-b directly even though package-a uses it
 // This should cause an error since package-b is not in project's dependencies
-function attemptDirectImport() {
+export function attemptDirectImport() {
     return { enabled: false, timeout: 1000 };
 }
 

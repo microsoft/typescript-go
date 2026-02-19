@@ -168,9 +168,9 @@ aValue;
 							ModuleSpecifier: "package-a/subpath",
 						},
 					},
-					Kind:                PtrTo(lsproto.CompletionItemKindFunction),
+					Kind:                new(lsproto.CompletionItemKindFunction),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 				// Verify that workspaceHelper completion creates an import from 'workspace-lib'
 				&lsproto.CompletionItem{
@@ -180,9 +180,9 @@ aValue;
 							ModuleSpecifier: "workspace-lib",
 						},
 					},
-					Kind:                PtrTo(lsproto.CompletionItemKindFunction),
+					Kind:                new(lsproto.CompletionItemKindFunction),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 			// `bValue` can appear in the completion list since it's mentioned in a unresolved import, but `helperB` should not

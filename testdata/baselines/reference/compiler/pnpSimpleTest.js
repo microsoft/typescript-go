@@ -87,15 +87,12 @@ export function processData(text: string, num: number): string {
 }
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.processData = processData;
 // Workspace package that imports both third-party dependencies
-const package_a_1 = require("package-a");
-const package_b_1 = require("package-b");
-function processData(text, num) {
-    const resultA = (0, package_a_1.helperA)(text);
-    const resultB = (0, package_b_1.helperB)(num);
+import { helperA } from 'package-a';
+import { helperB } from 'package-b';
+export function processData(text, num) {
+    const resultA = helperA(text);
+    const resultB = helperB(num);
     return `${resultA} | ${resultB}`;
 }
 

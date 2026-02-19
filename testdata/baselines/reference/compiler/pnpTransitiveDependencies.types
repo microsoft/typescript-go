@@ -56,7 +56,7 @@ export function helperB(value: number): string {
 // Test that the project can import package-a directly
 // package-a's types depend on package-b's types (ConfigOptions)
 import { helperA } from 'package-a';
->helperA : (value: string, config: import("/packages/package-b/index").ConfigOptions) => HelperResult
+>helperA : (value: string, config: import("../packages/package-b").ConfigOptions) => HelperResult
 
 import type { HelperResult } from 'package-a';
 >HelperResult : HelperResult
@@ -78,7 +78,7 @@ export function useDirectDependency(text: string): HelperResult {
 
   return helperA(text, config);
 >helperA(text, config) : HelperResult
->helperA : (value: string, config: import("/packages/package-b/index").ConfigOptions) => HelperResult
+>helperA : (value: string, config: import("../packages/package-b").ConfigOptions) => HelperResult
 >text : string
 >config : ConfigOptions
 }

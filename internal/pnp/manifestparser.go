@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/json"
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/tspath"

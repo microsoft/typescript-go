@@ -99,15 +99,11 @@ export interface AppConfig {
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.factory = void 0;
-exports.initializeService = initializeService;
-const other_subpath_1 = require("package-a/other-subpath");
-function initializeService(url) {
-    return (0, other_subpath_1.createServiceConfig)(url);
+import { createServiceConfig } from 'package-a/other-subpath';
+export function initializeService(url) {
+    return createServiceConfig(url);
 }
-exports.factory = other_subpath_1.createServiceConfig;
+export const factory = createServiceConfig;
 
 
 //// [index.d.ts]

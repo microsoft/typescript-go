@@ -92,15 +92,11 @@ export const server = createServer();
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.server = void 0;
-exports.handleRequest = handleRequest;
-const server_lib_1 = require("server-lib");
-function handleRequest(req, res) {
+import { createServer } from 'server-lib';
+export function handleRequest(req, res) {
     res.json({ data: 'Hello, world!' });
 }
-exports.server = (0, server_lib_1.createServer)();
+export const server = createServer();
 
 
 //// [index.d.ts]

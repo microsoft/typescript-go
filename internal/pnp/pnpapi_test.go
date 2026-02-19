@@ -5,16 +5,15 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 type TestSuite struct {
-	Manifest jsontext.Value `json:"manifest"`
-	Tests    []TestCase     `json:"tests"`
+	Manifest json.Value `json:"manifest"`
+	Tests    []TestCase `json:"tests"`
 }
 
 type TestCase struct {
