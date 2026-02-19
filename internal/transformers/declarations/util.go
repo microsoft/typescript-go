@@ -191,12 +191,13 @@ func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParame
 	return node.AsNode().Parent.Kind == ast.KindMethodDeclaration && host.GetEffectiveDeclarationFlags(node.AsNode().Parent, ast.ModifierFlagsPrivate) != 0
 }
 
-// We only emit it while the function body exists.
+// Returns true if expando properties should be emitted for this function.
+// Properties are emitted if any overload in the symbol has a body (implementation).
 func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
 	if input.Body != nil {
 		return true
 	}
-	return !core.Every(input.Symbol.Declarations, func(decl *ast.Declaration) bool {
+	return !core.Every(input.Symbol.Declarations, func(decl *ast.Node) bool {
 		return !ast.IsFunctionDeclaration(decl) || decl.AsFunctionDeclaration().Body == nil
 	})
 }
