@@ -1,3 +1,4 @@
+// @strict: true
 // @declaration: true
 
 export function A(a: number): void;
