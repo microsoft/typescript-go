@@ -2174,7 +2174,7 @@ func (c *Checker) checkSourceElement(node *ast.Node) bool {
 
 func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
-		for _, jsdoc := range node.JSDoc(nil) {
+		for _, jsdoc := range node.EagerJSDoc(nil) {
 			c.checkJSDocComments(jsdoc)
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 				for _, tag := range tags.Nodes {
@@ -2736,11 +2736,7 @@ func (c *Checker) checkConstructorDeclaration(node *ast.Node) {
 	}
 	c.checkSourceElement(node.Body())
 	symbol := c.getSymbolOfDeclaration(node)
-	firstDeclaration := ast.GetDeclarationOfKind(symbol, node.Kind)
-	// Only type check the symbol once
-	if node == firstDeclaration {
-		c.checkFunctionOrConstructorSymbol(symbol)
-	}
+	c.checkFunctionOrConstructorSymbol(symbol)
 	// exit early in the case of signature - super checks are not relevant to them
 	if ast.NodeIsMissing(node.Body()) {
 		return
@@ -2914,7 +2910,7 @@ func (c *Checker) checkTypeReferenceOrImport(node *ast.Node) {
 		}
 		symbol := c.getResolvedSymbolOrNil(node)
 		if symbol != nil {
-			if core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.IsTypeDeclaration(d) && d.Flags&ast.NodeFlagsDeprecated != 0 }) {
+			if core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.IsTypeDeclaration(d) && c.IsDeprecatedDeclaration(d) }) {
 				c.addDeprecatedSuggestion(c.getDeprecatedSuggestionNode(node), symbol.Declarations, symbol.Name)
 			}
 		}
@@ -3328,16 +3324,7 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 		// - if node.localSymbol === undefined - this node is non-exported so we can just pick the result of getSymbolOfNode
 		symbol := c.getSymbolOfDeclaration(node)
 		localSymbol := core.OrElse(node.LocalSymbol(), symbol)
-		// Since the javascript won't do semantic analysis like typescript,
-		// if the javascript file comes before the typescript file and both contain same name functions,
-		// checkFunctionOrConstructorSymbol wouldn't be called if we didnt ignore javascript function.
-		firstDeclaration := core.Find(localSymbol.Declarations, func(declaration *ast.Node) bool {
-			return declaration.Kind == node.Kind && declaration.Flags&ast.NodeFlagsJavaScriptFile == 0
-		})
-		// Only type check the symbol once
-		if node == firstDeclaration {
-			c.checkFunctionOrConstructorSymbol(localSymbol)
-		}
+		c.checkFunctionOrConstructorSymbol(localSymbol)
 		if symbol.Parent != nil {
 			// run check on export symbol to check that modifiers agree across all exported declarations
 			c.checkFunctionOrConstructorSymbol(symbol)
@@ -3367,6 +3354,14 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 }
 
 func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
+	// Only check the symbol once
+	if links := c.valueSymbolLinks.Get(symbol); !links.functionOrConstructorChecked {
+		links.functionOrConstructorChecked = true
+		c.checkFunctionOrConstructorSymbolWorker(symbol)
+	}
+}
+
+func (c *Checker) checkFunctionOrConstructorSymbolWorker(symbol *ast.Symbol) {
 	flagsToCheck := ast.ModifierFlagsExport | ast.ModifierFlagsAmbient | ast.ModifierFlagsPrivate | ast.ModifierFlagsProtected | ast.ModifierFlagsAbstract
 	someNodeFlags := ast.ModifierFlagsNone
 	allNodeFlags := flagsToCheck
@@ -4949,8 +4944,8 @@ func (c *Checker) checkEnumDeclaration(node *ast.Node) {
 	//
 	// Only perform this check once per symbol
 	enumSymbol := c.getSymbolOfDeclaration(node)
-	firstDeclaration := ast.GetDeclarationOfKind(enumSymbol, node.Kind)
-	if node == firstDeclaration {
+	if links := c.declaredTypeLinks.Get(enumSymbol); !links.enumChecked {
+		links.enumChecked = true
 		if len(enumSymbol.Declarations) > 1 {
 			enumIsConst := ast.IsEnumConst(node)
 			// check that const is placed\omitted on all enum declarations
@@ -6102,12 +6097,17 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 	if t.flags&TypeFlagsUnion != 0 {
 		return c.combineIterationTypes(core.Map(t.Types(), func(t *Type) IterationTypes { return c.getIterationTypesOfIterableWorker(t, use, errorNode, noCache) }))
 	}
+	var diags []*ast.Diagnostic
 	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
 		iterationTypes := c.getIterationTypesOfIterableFast(t, c.asyncIterationTypesResolver)
 		if iterationTypes.hasTypes() {
 			if use&IterationUseForOfFlag != 0 {
 				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
 			}
+			return iterationTypes
+		}
+		iterationTypes = c.getIterationTypesOfIterableSlow(t, c.asyncIterationTypesResolver, errorNode, &diags)
+		if iterationTypes.hasTypes() {
 			return iterationTypes
 		}
 	}
@@ -6119,16 +6119,7 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 			}
 			return iterationTypes
 		}
-	}
-	var diags []*ast.Diagnostic
-	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
-		iterationTypes := c.getIterationTypesOfIterableSlow(t, c.asyncIterationTypesResolver, errorNode, &diags)
-		if iterationTypes.hasTypes() {
-			return iterationTypes
-		}
-	}
-	if use&IterationUseAllowsSyncIterablesFlag != 0 {
-		iterationTypes := c.getIterationTypesOfIterableSlow(t, c.syncIterationTypesResolver, errorNode, &diags)
+		iterationTypes = c.getIterationTypesOfIterableSlow(t, c.syncIterationTypesResolver, errorNode, &diags)
 		if iterationTypes.hasTypes() {
 			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
 				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
@@ -8221,7 +8212,7 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 	if sig.flags&SignatureFlagsIsSignatureCandidateForOverloadFailure != 0 {
 		return
 	}
-	if sig.declaration != nil && sig.declaration.Flags&ast.NodeFlagsDeprecated != 0 {
+	if sig.declaration != nil && c.IsDeprecatedDeclaration(sig.declaration) {
 		suggestionNode := c.getDeprecatedSuggestionNode(node)
 		name := tryGetPropertyAccessOrIdentifierToString(ast.GetInvokedExpression(node))
 		c.addDeprecatedSuggestionWithSignature(suggestionNode, sig.declaration, name, c.signatureToString(sig))
@@ -13630,7 +13621,7 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic)
 }
 
 func (c *Checker) IsDeprecatedDeclaration(declaration *ast.Node) bool {
-	return c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsDeprecated != 0
+	return ast.IsDeprecatedDeclarationWithCachedFlags(declaration, c.getCombinedNodeFlagsCached(declaration))
 }
 
 func (c *Checker) addDeprecatedSuggestion(location *ast.Node, declarations []*ast.Node, deprecatedEntity string) *ast.Diagnostic {
@@ -13640,7 +13631,7 @@ func (c *Checker) addDeprecatedSuggestion(location *ast.Node, declarations []*as
 
 func (c *Checker) addDeprecatedSuggestionWorker(declarations []*ast.Node, diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	for _, declaration := range declarations {
-		deprecatedTag := getJSDocDeprecatedTag(declaration)
+		deprecatedTag := ast.GetJSDocDeprecatedTag(declaration)
 		if deprecatedTag != nil {
 			diagnostic.AddRelatedInfo(NewDiagnosticForNode(deprecatedTag, diagnostics.The_declaration_was_marked_as_deprecated_here))
 			break

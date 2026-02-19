@@ -35,11 +35,11 @@ const (
 type ContextFlags uint32
 
 const (
-	ContextFlagsNone                ContextFlags = 0
-	ContextFlagsSignature           ContextFlags = 1 << 0 // Obtaining contextual signature
-	ContextFlagsNoConstraints       ContextFlags = 1 << 1 // Don't obtain type variable constraints
-	ContextFlagsCompletions         ContextFlags = 1 << 2 // Ignore inference to current node and parent nodes out to the containing call for completions
-	ContextFlagsSkipBindingPatterns ContextFlags = 1 << 3 // Ignore contextual types applied by binding patterns
+	ContextFlagsNone                 ContextFlags = 0
+	ContextFlagsSignature            ContextFlags = 1 << 0 // Obtaining contextual signature
+	ContextFlagsNoConstraints        ContextFlags = 1 << 1 // Don't obtain type variable constraints
+	ContextFlagsIgnoreNodeInferences ContextFlags = 1 << 2 // Ignore inference to current node and parent nodes out to the containing call for, for example, completions
+	ContextFlagsSkipBindingPatterns  ContextFlags = 1 << 3 // Ignore contextual types applied by binding patterns
 )
 
 type TypeFormatFlags uint32
@@ -120,12 +120,13 @@ type SymbolReferenceLinks struct {
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType   *Type // Type of value symbol
-	writeType      *Type
-	target         *ast.Symbol
-	mapper         *TypeMapper
-	nameType       *Type
-	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	resolvedType                 *Type // Type of value symbol
+	writeType                    *Type
+	target                       *ast.Symbol
+	mapper                       *TypeMapper
+	nameType                     *Type
+	containingType               *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	functionOrConstructorChecked bool
 }
 
 // Additional links for mapped symbols
@@ -195,6 +196,7 @@ type DeclaredTypeLinks struct {
 	interfaceChecked       bool
 	indexSignaturesChecked bool
 	typeParametersChecked  bool
+	enumChecked            bool
 }
 
 // Links for switch clauses
