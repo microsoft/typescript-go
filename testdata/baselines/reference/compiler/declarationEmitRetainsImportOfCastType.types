@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/declarationEmitRetainsImportOfCastType.ts] ////
+
+=== declarationEmitRetainsImportOfCastType.ts ===
+import { WritableAtom } from 'jotai'
+>WritableAtom : any
+
+export function focusAtom() {
+>focusAtom : () => WritableAtom<any, any, any>
+
+  return null as unknown as WritableAtom<any, any, any>
+>null as unknown as WritableAtom<any, any, any> : WritableAtom<any, any, any>
+>null as unknown : unknown
+}
+

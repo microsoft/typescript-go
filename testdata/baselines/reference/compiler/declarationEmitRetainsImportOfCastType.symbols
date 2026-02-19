@@ -1,0 +1,13 @@
+//// [tests/cases/compiler/declarationEmitRetainsImportOfCastType.ts] ////
+
+=== declarationEmitRetainsImportOfCastType.ts ===
+import { WritableAtom } from 'jotai'
+>WritableAtom : Symbol(WritableAtom, Decl(declarationEmitRetainsImportOfCastType.ts, 0, 8))
+
+export function focusAtom() {
+>focusAtom : Symbol(focusAtom, Decl(declarationEmitRetainsImportOfCastType.ts, 0, 36))
+
+  return null as unknown as WritableAtom<any, any, any>
+>WritableAtom : Symbol(WritableAtom, Decl(declarationEmitRetainsImportOfCastType.ts, 0, 8))
+}
+
