@@ -58,6 +58,7 @@ type TracedType interface {
 	EvolvingArrayFinalType() TracedType
 	IsTuple() bool
 	Pattern() *ast.Node
+	RecursionIdentity() any
 
 	// Display is an optional string representation of the type
 	Display() string
@@ -265,6 +266,17 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 	desc := TypeDescriptor{
 		ID:    typ.Id(),
 		Flags: formatTypeFlags(flags),
+	}
+
+	// Assign a unique integer token per recursion identity, matching TypeScript's behavior.
+	// This lets trace analysis tools detect which types share the same recursion identity.
+	if identity := typ.RecursionIdentity(); identity != nil {
+		token, ok := recursionIdentityMap[identity]
+		if !ok {
+			token = len(recursionIdentityMap)
+			recursionIdentityMap[identity] = token
+		}
+		desc.RecursionID = &token
 	}
 
 	// Intrinsic name

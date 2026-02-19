@@ -261,6 +261,10 @@ func (a *tracedTypeAdapter) Pattern() *ast.Node {
 	return a.checker.patternForType[a.t]
 }
 
+func (a *tracedTypeAdapter) RecursionIdentity() any {
+	return getRecursionIdentity(a.t).value
+}
+
 func (a *tracedTypeAdapter) Display() string {
 	// Only compute display for anonymous or literal types, as it can be expensive
 	if a.checker == nil {
