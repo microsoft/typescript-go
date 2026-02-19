@@ -14,6 +14,7 @@ import { SignatureKind } from "#signatureKind";
 import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
 import type {
+    Expression,
     Node,
     Path,
     SourceFile,
@@ -192,22 +193,15 @@ export interface Checker<Async extends boolean> {
      */
     getSymbolAtLocation(node: Node): MaybeAsync<Async, Symbol<Async> | undefined>;
     getSymbolAtLocation(nodes: readonly Node[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
-
     /**
      * Get the symbol at a specific position in a file.
      */
     getSymbolAtPosition(file: DocumentIdentifier, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
     getSymbolAtPosition(file: DocumentIdentifier, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
 
-    /**
-     * Get the type of a symbol.
-     */
     getTypeOfSymbol(symbol: Symbol<Async>): MaybeAsync<Async, Type<Async> | undefined>;
     getTypeOfSymbol(symbols: readonly Symbol<Async>[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
 
-    /**
-     * Get the declared type of a symbol (e.g. the aliased type for type alias symbols).
-     */
     getDeclaredTypeOfSymbol(symbol: Symbol<Async>): MaybeAsync<Async, Type<Async> | undefined>;
 
     /**
@@ -215,22 +209,23 @@ export interface Checker<Async extends boolean> {
      */
     getTypeAtLocation(node: Node): MaybeAsync<Async, Type<Async> | undefined>;
     getTypeAtLocation(nodes: readonly Node[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
-
-    /**
-     * Get the call or construct signatures of a type.
-     * @param type The type to get signatures from
-     * @param kind 0 for call signatures, 1 for construct signatures
-     */
-    getSignaturesOfType(type: Type<Async>, kind: SignatureKind): MaybeAsync<Async, readonly Signature<Async>[]>;
-
     /**
      * Get the type at a specific position in a file.
      */
     getTypeAtPosition(file: DocumentIdentifier, position: number): MaybeAsync<Async, Type<Async> | undefined>;
     getTypeAtPosition(file: DocumentIdentifier, positions: readonly number[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
+    /**
+     * Get the narrowed type of a symbol at a specific location.
+     */
+    getTypeOfSymbolAtLocation(symbol: Symbol<Async>, location: Node): MaybeAsync<Async, Type<Async> | undefined>;
 
     /**
-     * Resolve a name to a symbol at a given location.
+     * Get the call or construct signatures of a type.
+     */
+    getSignaturesOfType(type: Type<Async>, kind: SignatureKind): MaybeAsync<Async, readonly Signature<Async>[]>;
+
+    /**
+     * Resolve a name to a symbol from a given location.
      * @param name The name to resolve
      * @param meaning Symbol flags indicating what kind of symbol to look for
      * @param location Optional node or document position for location context
@@ -246,10 +241,10 @@ export interface Checker<Async extends boolean> {
     /**
      * Get the contextual type for an expression node.
      */
-    getContextualType(node: Node): MaybeAsync<Async, Type<Async> | undefined>;
+    getContextualType(node: Expression): MaybeAsync<Async, Type<Async> | undefined>;
 
     /**
-     * Get the base type of a literal type (e.g. `number` for `42`).
+     * Get the base type of a literal type.
      */
     getBaseTypeOfLiteralType(type: Type<Async>): MaybeAsync<Async, Type<Async> | undefined>;
 
@@ -258,14 +253,6 @@ export interface Checker<Async extends boolean> {
      */
     getShorthandAssignmentValueSymbol(node: Node): MaybeAsync<Async, Symbol<Async> | undefined>;
 
-    /**
-     * Get the narrowed type of a symbol at a specific location.
-     */
-    getTypeOfSymbolAtLocation(symbol: Symbol<Async>, location: Node): MaybeAsync<Async, Type<Async> | undefined>;
-
-    /**
-     * Intrinsic type getters.
-     */
     getAnyType(): MaybeAsync<Async, Type<Async>>;
     getStringType(): MaybeAsync<Async, Type<Async>>;
     getNumberType(): MaybeAsync<Async, Type<Async>>;
@@ -420,9 +407,7 @@ export interface ConditionalType<Async extends boolean> extends Type<Async> {
 
 /** Substitution types (TypeFlags.Substitution) */
 export interface SubstitutionType<Async extends boolean> extends Type<Async> {
-    /** Get the base/target type */
     getBaseType(): MaybeAsync<Async, Type<Async>>;
-    /** Get the constraint */
     getConstraint(): MaybeAsync<Async, Type<Async>>;
 }
 
@@ -444,20 +429,13 @@ export interface StringMappingType<Async extends boolean> extends Type<Async> {
  * Base interface for a TypeScript signature.
  */
 export interface Signature<Async extends boolean> {
-    /** Unique identifier for this signature */
     readonly id: string;
-    /** Node handle for the declaration of this signature */
     readonly declaration?: NodeHandle<Async> | undefined;
-    /** Type parameter types */
     readonly typeParameters?: readonly Type<Async>[] | undefined;
-    /** Parameter symbols */
     readonly parameters: readonly Symbol<Async>[];
-    /** This parameter symbol, if any */
     readonly thisParameter?: Symbol<Async> | undefined;
-
-    /** Get the target signature (for instantiated signatures) */
+    /** The target signature (for instantiated signatures) */
     readonly target?: Signature<Async> | undefined;
-    /** Whether the last parameter is a rest parameter */
     readonly hasRestParameter: boolean;
     /** Whether this is a construct signature */
     readonly isConstruct: boolean;

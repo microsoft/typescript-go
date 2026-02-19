@@ -7,7 +7,6 @@ import {
     type IndexType,
     ObjectFlags,
     SignatureKind,
-    type Snapshot,
     type StringMappingType,
     SymbolFlags,
     type TemplateLiteralType,
@@ -997,7 +996,7 @@ foo(42);
         // statement[1] = foo(42); which is an ExpressionStatement -> CallExpression
         const callStmt = sourceFile.statements[1];
         assert.ok(callStmt);
-        let numLiteral: import("@typescript/ast").Node | undefined;
+        let numLiteral: import("@typescript/ast").Expression | undefined;
         callStmt.forEachChild(function visit(node) {
             if (isCallExpression(node)) {
                 // First argument

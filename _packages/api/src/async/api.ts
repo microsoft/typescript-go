@@ -6,6 +6,7 @@ import { SignatureKind } from "#signatureKind";
 import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
 import type {
+    Expression,
     Node,
     Path,
     SourceFile,
@@ -517,7 +518,7 @@ export class Checker implements BaseChecker<true> {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
-    async getContextualType(node: Node): Promise<Type | undefined> {
+    async getContextualType(node: Expression): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getContextualType", {
             snapshot: this.snapshotId,
             project: this.projectId,

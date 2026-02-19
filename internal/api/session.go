@@ -249,6 +249,36 @@ func (s *Session) getSnapshotData(handle Handle[project.Snapshot]) (*snapshotDat
 	return sd, nil
 }
 
+// checkerSetup holds the common context needed by handlers that require a type checker.
+type checkerSetup struct {
+	sd      *snapshotData
+	program *compiler.Program
+	checker *checker.Checker
+	done    func()
+}
+
+// setupChecker resolves snapshot, program, and type checker for a project.
+// Callers must defer setup.done() to release the checker.
+func (s *Session) setupChecker(ctx context.Context, snapshot Handle[project.Snapshot], projectHandle Handle[project.Project]) (checkerSetup, error) {
+	sd, err := s.getSnapshotData(snapshot)
+	if err != nil {
+		return checkerSetup{}, err
+	}
+
+	program, err := sd.getProgram(projectHandle)
+	if err != nil {
+		return checkerSetup{}, err
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	return checkerSetup{
+		sd:      sd,
+		program: program,
+		checker: c,
+		done:    done,
+	}, nil
+}
+
 // HandleRequest implements Handler.
 func (s *Session) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	// Handle simple methods that don't need param parsing
@@ -581,17 +611,13 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 
 // handleGetSymbolAtPosition returns the symbol at a position in a file.
 func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymbolAtPositionParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}
@@ -601,36 +627,26 @@ func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymb
 		return nil, nil
 	}
 
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	symbol := checker.GetSymbolAtLocation(node)
+	symbol := setup.checker.GetSymbolAtLocation(node)
 	if symbol == nil {
 		return nil, nil
 	}
 
-	return sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol), nil
 }
 
 // handleGetSymbolsAtPositions returns symbols at multiple positions in a file.
 func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSymbolsAtPositionsParams) ([]*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}
-
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
 
 	results := make([]*SymbolResponse, len(params.Positions))
 	for i, pos := range params.Positions {
@@ -638,9 +654,9 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 		if node == nil {
 			continue
 		}
-		symbol := checker.GetSymbolAtLocation(node)
+		symbol := setup.checker.GetSymbolAtLocation(node)
 		if symbol != nil {
-			results[i] = sd.registerSymbol(symbol)
+			results[i] = setup.sd.registerSymbol(symbol)
 		}
 	}
 
@@ -649,17 +665,13 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 
 // handleGetSymbolAtLocation returns the symbol at a node location.
 func (s *Session) handleGetSymbolAtLocation(ctx context.Context, params *GetSymbolAtLocationParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	node, err := s.resolveNodeHandle(program, params.Location)
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -667,44 +679,34 @@ func (s *Session) handleGetSymbolAtLocation(ctx context.Context, params *GetSymb
 		return nil, nil
 	}
 
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	symbol := checker.GetSymbolAtLocation(node)
+	symbol := setup.checker.GetSymbolAtLocation(node)
 	if symbol == nil {
 		return nil, nil
 	}
 
-	return sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol), nil
 }
 
 // handleGetSymbolsAtLocations returns symbols at multiple node locations.
 func (s *Session) handleGetSymbolsAtLocations(ctx context.Context, params *GetSymbolsAtLocationsParams) ([]*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
+	defer setup.done()
 
 	results := make([]*SymbolResponse, len(params.Locations))
 	for i, loc := range params.Locations {
-		node, err := s.resolveNodeHandle(program, loc)
+		node, err := s.resolveNodeHandle(setup.program, loc)
 		if err != nil {
 			return nil, err
 		}
 		if node == nil {
 			continue
 		}
-		symbol := checker.GetSymbolAtLocation(node)
+		symbol := setup.checker.GetSymbolAtLocation(node)
 		if symbol != nil {
-			results[i] = sd.registerSymbol(symbol)
+			results[i] = setup.sd.registerSymbol(symbol)
 		}
 	}
 
@@ -713,17 +715,13 @@ func (s *Session) handleGetSymbolsAtLocations(ctx context.Context, params *GetSy
 
 // handleGetTypeOfSymbol returns the type of a symbol.
 func (s *Session) handleGetTypeOfSymbol(ctx context.Context, params *GetTypeOfSymbolParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -731,44 +729,34 @@ func (s *Session) handleGetTypeOfSymbol(ctx context.Context, params *GetTypeOfSy
 		return nil, nil
 	}
 
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := checker.GetTypeOfSymbol(symbol)
+	t := setup.checker.GetTypeOfSymbol(symbol)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // handleGetTypesOfSymbols returns the types of multiple symbols.
 func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesOfSymbolsParams) ([]*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
+	defer setup.done()
 
 	results := make([]*TypeResponse, len(params.Symbols))
 	for i, symHandle := range params.Symbols {
-		symbol, err := sd.resolveSymbolHandle(symHandle)
+		symbol, err := setup.sd.resolveSymbolHandle(symHandle)
 		if err != nil {
 			return nil, err
 		}
 		if symbol == nil {
 			continue
 		}
-		t := checker.GetTypeOfSymbol(symbol)
+		t := setup.checker.GetTypeOfSymbol(symbol)
 		if t != nil {
-			results[i] = sd.registerType(t)
+			results[i] = setup.sd.registerType(t)
 		}
 	}
 
@@ -777,17 +765,13 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 
 // handleGetDeclaredTypeOfSymbol returns the declared type of a symbol (e.g. the type alias body for type alias symbols).
 func (s *Session) handleGetDeclaredTypeOfSymbol(ctx context.Context, params *GetTypeOfSymbolParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -795,53 +779,43 @@ func (s *Session) handleGetDeclaredTypeOfSymbol(ctx context.Context, params *Get
 		return nil, nil
 	}
 
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := checker.GetDeclaredTypeOfSymbol(symbol)
+	t := setup.checker.GetDeclaredTypeOfSymbol(symbol)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // handleResolveName resolves a name to a symbol at a given location.
 func (s *Session) handleResolveName(ctx context.Context, params *ResolveNameParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
+	defer setup.done()
 
 	// Resolve location node - either from node handle or from fileName+position
 	var location *ast.Node
 	if params.Location != "" {
-		location, err = s.resolveNodeHandle(program, params.Location)
+		location, err = s.resolveNodeHandle(setup.program, params.Location)
 		if err != nil {
 			return nil, err
 		}
 	} else if params.File != nil && params.Position != nil {
-		sourceFile := program.GetSourceFile(params.File.ToFileName())
+		sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
 		if sourceFile == nil {
 			return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, *params.File)
 		}
 		location = astnav.GetTouchingPropertyName(sourceFile, int(*params.Position))
 	}
 
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	symbol := checker.ResolveName(params.Name, location, ast.SymbolFlags(params.Meaning), params.ExcludeGlobals)
+	symbol := setup.checker.ResolveName(params.Name, location, ast.SymbolFlags(params.Meaning), params.ExcludeGlobals)
 	if symbol == nil {
 		return nil, nil
 	}
 
-	return sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol), nil
 }
 
 // handleGetParentOfSymbol returns the parent of a symbol.
@@ -934,28 +908,21 @@ func (s *Session) handleGetSymbolOfType(ctx context.Context, params *GetSymbolOf
 
 // handleGetSignaturesOfType returns the call or construct signatures of a type.
 func (s *Session) handleGetSignaturesOfType(ctx context.Context, params *GetSignaturesOfTypeParams) ([]*SignatureResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Type)
 	if err != nil {
 		return nil, err
 	}
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	t, err := sd.resolveTypeHandle(params.Type)
-	if err != nil {
-		return nil, err
-	}
-
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	sigs := c.GetSignaturesOfType(t, checker.SignatureKind(params.Kind))
+	sigs := setup.checker.GetSignaturesOfType(t, checker.SignatureKind(params.Kind))
 	results := make([]*SignatureResponse, len(sigs))
 	for i, sig := range sigs {
-		results[i] = sd.registerSignature(sig)
+		results[i] = setup.sd.registerSignature(sig)
 	}
 
 	return results, nil
@@ -963,17 +930,13 @@ func (s *Session) handleGetSignaturesOfType(ctx context.Context, params *GetSign
 
 // handleGetTypeAtLocation returns the type at a node location.
 func (s *Session) handleGetTypeAtLocation(ctx context.Context, params *GetTypeAtLocationParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	node, err := s.resolveNodeHandle(program, params.Location)
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -981,44 +944,34 @@ func (s *Session) handleGetTypeAtLocation(ctx context.Context, params *GetTypeAt
 		return nil, nil
 	}
 
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := c.GetTypeAtLocation(node)
+	t := setup.checker.GetTypeAtLocation(node)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // handleGetTypeAtLocations returns types at multiple node locations.
 func (s *Session) handleGetTypeAtLocations(ctx context.Context, params *GetTypeAtLocationsParams) ([]*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
+	defer setup.done()
 
 	results := make([]*TypeResponse, len(params.Locations))
 	for i, loc := range params.Locations {
-		node, err := s.resolveNodeHandle(program, loc)
+		node, err := s.resolveNodeHandle(setup.program, loc)
 		if err != nil {
 			return nil, err
 		}
 		if node == nil {
 			continue
 		}
-		t := c.GetTypeAtLocation(node)
+		t := setup.checker.GetTypeAtLocation(node)
 		if t != nil {
-			results[i] = sd.registerType(t)
+			results[i] = setup.sd.registerType(t)
 		}
 	}
 
@@ -1027,17 +980,13 @@ func (s *Session) handleGetTypeAtLocations(ctx context.Context, params *GetTypeA
 
 // handleGetTypeAtPosition returns the type at a position in a file.
 func (s *Session) handleGetTypeAtPosition(ctx context.Context, params *GetTypeAtPositionParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}
@@ -1047,36 +996,26 @@ func (s *Session) handleGetTypeAtPosition(ctx context.Context, params *GetTypeAt
 		return nil, nil
 	}
 
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := c.GetTypeAtLocation(node)
+	t := setup.checker.GetTypeAtLocation(node)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // handleGetTypesAtPositions returns types at multiple positions in a file.
 func (s *Session) handleGetTypesAtPositions(ctx context.Context, params *GetTypesAtPositionsParams) ([]*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
 	if sourceFile == nil {
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
 	}
-
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
 
 	results := make([]*TypeResponse, len(params.Positions))
 	for i, pos := range params.Positions {
@@ -1084,9 +1023,9 @@ func (s *Session) handleGetTypesAtPositions(ctx context.Context, params *GetType
 		if node == nil {
 			continue
 		}
-		t := c.GetTypeAtLocation(node)
+		t := setup.checker.GetTypeAtLocation(node)
 		if t != nil {
-			results[i] = sd.registerType(t)
+			results[i] = setup.sd.registerType(t)
 		}
 	}
 
@@ -1201,17 +1140,13 @@ func (s *Session) handleGetConstraintOfType(_ context.Context, params *GetTypePr
 
 // handleGetContextualType returns the contextual type for a node.
 func (s *Session) handleGetContextualType(ctx context.Context, params *GetContextualTypeParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	node, err := s.resolveNodeHandle(program, params.Location)
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -1219,58 +1154,44 @@ func (s *Session) handleGetContextualType(ctx context.Context, params *GetContex
 		return nil, nil
 	}
 
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := c.GetContextualType(node, checker.ContextFlagsNone)
+	t := setup.checker.GetContextualType(node, checker.ContextFlagsNone)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // handleGetBaseTypeOfLiteralType returns the base type of a literal type (e.g. number for 42).
 func (s *Session) handleGetBaseTypeOfLiteralType(ctx context.Context, params *GetBaseTypeOfLiteralTypeParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Type)
 	if err != nil {
 		return nil, err
 	}
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	t, err := sd.resolveTypeHandle(params.Type)
-	if err != nil {
-		return nil, err
-	}
-
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	result := c.GetBaseTypeOfLiteralType(t)
+	result := setup.checker.GetBaseTypeOfLiteralType(t)
 	if result == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(result), nil
+	return setup.sd.registerType(result), nil
 }
 
 // handleGetShorthandAssignmentValueSymbol returns the value symbol of a shorthand property assignment.
 func (s *Session) handleGetShorthandAssignmentValueSymbol(ctx context.Context, params *GetTypeAtLocationParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	node, err := s.resolveNodeHandle(program, params.Location)
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -1278,30 +1199,23 @@ func (s *Session) handleGetShorthandAssignmentValueSymbol(ctx context.Context, p
 		return nil, nil
 	}
 
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	symbol := c.GetShorthandAssignmentValueSymbol(node)
+	symbol := setup.checker.GetShorthandAssignmentValueSymbol(node)
 	if symbol == nil {
 		return nil, nil
 	}
 
-	return sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol), nil
 }
 
 // handleGetTypeOfSymbolAtLocation returns the narrowed type of a symbol at a specific location.
 func (s *Session) handleGetTypeOfSymbolAtLocation(ctx context.Context, params *GetTypeOfSymbolAtLocationParams) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -1309,7 +1223,7 @@ func (s *Session) handleGetTypeOfSymbolAtLocation(ctx context.Context, params *G
 		return nil, nil
 	}
 
-	node, err := s.resolveNodeHandle(program, params.Location)
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -1317,38 +1231,28 @@ func (s *Session) handleGetTypeOfSymbolAtLocation(ctx context.Context, params *G
 		return nil, nil
 	}
 
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := c.GetTypeOfSymbolAtLocation(symbol, node)
+	t := setup.checker.GetTypeOfSymbolAtLocation(symbol, node)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // handleGetIntrinsicType returns an intrinsic type (any, string, number, etc.).
 func (s *Session) handleGetIntrinsicType(ctx context.Context, params *GetIntrinsicTypeParams, getter func(*checker.Checker) *checker.Type) (*TypeResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	c, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	t := getter(c)
+	t := getter(setup.checker)
 	if t == nil {
 		return nil, nil
 	}
 
-	return sd.registerType(t), nil
+	return setup.sd.registerType(t), nil
 }
 
 // resolveNodeHandle resolves a node handle to an AST node.

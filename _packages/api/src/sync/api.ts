@@ -6,6 +6,7 @@ import { SignatureKind } from "#signatureKind";
 import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
 import type {
+    Expression,
     Node,
     Path,
     SourceFile,
@@ -449,7 +450,7 @@ export class Checker implements BaseChecker<false> {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
-    getContextualType(node: Node): Type | undefined {
+    getContextualType(node: Expression): Type | undefined {
         const data = this.client.request("getContextualType", { snapshot: this.snapshotId, project: this.projectId, location: node.id });
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
