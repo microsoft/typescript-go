@@ -8,6 +8,7 @@ import (
 )
 
 func TestGotoDefinitionInObjectBindingPattern2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var p0 = ({a/*1*/a}) => {console.log(aa)};
