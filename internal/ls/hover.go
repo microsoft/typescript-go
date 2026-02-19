@@ -200,7 +200,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		for i, sig := range signatures {
 			writeNewLine()
 			if i == 3 && len(signatures) >= 5 {
-				b.WriteString(fmt.Sprintf("// +%v more overloads", len(signatures)-3))
+				fmt.Fprintf(&b, "// +%v more overloads", len(signatures)-3)
 				break
 			}
 			b.WriteString(prefix)

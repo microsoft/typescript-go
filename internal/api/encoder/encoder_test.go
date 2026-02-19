@@ -102,7 +102,7 @@ func formatEncodedSourceFile(encoded []byte) string {
 			strStart := readUint32(encoded, int(offsetStringOffsets+stringIndex*4))
 			strEnd := readUint32(encoded, int(offsetStringOffsets+stringIndex*4)+4)
 			str := string(encoded[offsetStrings+strStart : offsetStrings+strEnd])
-			result.WriteString(fmt.Sprintf(" \"%s\"", str))
+			fmt.Fprintf(&result, " \"%s\"", str)
 		}
 		fmt.Fprintf(&result, " [%d, %d), i=%d, next=%d", pos, end, j, encoded[i+encoder.NodeOffsetNext])
 		result.WriteString("\n")

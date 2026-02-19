@@ -494,7 +494,7 @@ func (b *fileMapBuilder) AddPackageJSONWithDependenciesNamed(projectDir string, 
 		b.nextProjectID++
 		name = fmt.Sprintf("local-project-%d", b.nextProjectID)
 	}
-	builder.WriteString(fmt.Sprintf("{\n  \"name\": \"%s\"", name))
+	fmt.Fprintf(&builder, "{\n  \"name\": \"%s\"", name)
 	if len(dependencyLines) > 0 {
 		builder.WriteString(",\n  \"dependencies\": {\n    ")
 		builder.WriteString(strings.Join(dependencyLines, ",\n    "))
@@ -527,7 +527,7 @@ func (b *fileMapBuilder) addRootPackageJSON(rootDir string, packageName string, 
 	if pkgName == "" {
 		pkgName = "monorepo-root"
 	}
-	builder.WriteString(fmt.Sprintf("{\n  \"name\": \"%s\",\n  \"private\": true", pkgName))
+	fmt.Fprintf(&builder, "{\n  \"name\": \"%s\",\n  \"private\": true", pkgName)
 	if len(dependencyLines) > 0 {
 		builder.WriteString(",\n  \"dependencies\": {\n    ")
 		builder.WriteString(strings.Join(dependencyLines, ",\n    "))

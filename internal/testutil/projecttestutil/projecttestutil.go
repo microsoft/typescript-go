@@ -139,7 +139,7 @@ func TypesRegistryConfigText() string {
 			if result.Len() != 0 {
 				result.WriteString(",")
 			}
-			result.WriteString(fmt.Sprintf("\n      \"%s\": \"%s\"", key, value))
+			fmt.Fprintf(&result, "\n      \"%s\": \"%s\"", key, value)
 
 		}
 		typesRegistryConfigText = result.String()

@@ -1050,7 +1050,7 @@ func annotateContentWithTooltips[T comparable](
 	builder := strings.Builder{}
 	seenFirst := false
 	for fileName, lines := range filesToLines.Entries() {
-		builder.WriteString(fmt.Sprintf("=== %s ===\n", fileName))
+		fmt.Fprintf(&builder, "=== %s ===\n", fileName)
 		for _, line := range lines {
 			builder.WriteString("// ")
 			builder.WriteString(line)

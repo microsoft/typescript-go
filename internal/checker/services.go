@@ -690,7 +690,7 @@ func (c *Checker) getTypeParameterConstraintForPositionAcrossSignatures(signatur
 }
 
 func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
-	var typeArgumentPosition int = -1
+	typeArgumentPosition := -1
 	if ast.HasTypeArguments(node.Parent) {
 		typeArgs := node.Parent.TypeArguments()
 		for i, arg := range typeArgs {
