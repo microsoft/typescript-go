@@ -1,0 +1,4 @@
+// === Code Lenses ===
+// === /abc.ts ===
+// export function /*CODELENS: 0 references*/abc() { }
+// 
