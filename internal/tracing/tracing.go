@@ -29,8 +29,8 @@ type Tracer interface {
 // without creating a circular dependency.
 type TracedType interface {
 	Id() uint32
-	Flags() uint32
-	ObjectFlags() uint32
+	FormatFlags() []string
+	IsConditional() bool
 	Symbol() *ast.Symbol
 	AliasSymbol() *ast.Symbol
 	AliasTypeArguments() []TracedType
@@ -258,14 +258,12 @@ func escapeSymbolName(name string) string {
 }
 
 func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap map[any]int) TypeDescriptor {
-	flags := typ.Flags()
-	objectFlags := typ.ObjectFlags()
 	symbol := typ.Symbol()
 	aliasSymbol := typ.AliasSymbol()
 
 	desc := TypeDescriptor{
 		ID:    typ.Id(),
-		Flags: formatTypeFlags(flags),
+		Flags: typ.FormatFlags(),
 	}
 
 	// Assign a unique integer token per recursion identity, matching TypeScript's behavior.
@@ -297,13 +295,13 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 	}
 
 	// Union types
-	if flags&TypeFlagsUnion != 0 {
-		desc.UnionTypes = mapTypeIds(typ.UnionTypes())
+	if types := typ.UnionTypes(); len(types) > 0 {
+		desc.UnionTypes = mapTypeIds(types)
 	}
 
 	// Intersection types
-	if flags&TypeFlagsIntersection != 0 {
-		desc.IntersectionTypes = mapTypeIds(typ.IntersectionTypes())
+	if types := typ.IntersectionTypes(); len(types) > 0 {
+		desc.IntersectionTypes = mapTypeIds(types)
 	}
 
 	// Alias type arguments
@@ -312,27 +310,23 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 	}
 
 	// Index type (keyof)
-	if flags&TypeFlagsIndex != 0 {
-		if indexType := typ.IndexType(); indexType != nil {
-			id := indexType.Id()
-			desc.KeyofType = &id
-		}
+	if indexType := typ.IndexType(); indexType != nil {
+		id := indexType.Id()
+		desc.KeyofType = &id
 	}
 
 	// Indexed access type
-	if flags&TypeFlagsIndexedAccess != 0 {
-		if objType := typ.IndexedAccessObjectType(); objType != nil {
-			id := objType.Id()
-			desc.IndexedAccessObjectType = &id
-		}
-		if idxType := typ.IndexedAccessIndexType(); idxType != nil {
-			id := idxType.Id()
-			desc.IndexedAccessIndexType = &id
-		}
+	if objType := typ.IndexedAccessObjectType(); objType != nil {
+		id := objType.Id()
+		desc.IndexedAccessObjectType = &id
+	}
+	if idxType := typ.IndexedAccessIndexType(); idxType != nil {
+		id := idxType.Id()
+		desc.IndexedAccessIndexType = &id
 	}
 
 	// Conditional type
-	if flags&TypeFlagsConditional != 0 {
+	if typ.IsConditional() {
 		if checkType := typ.ConditionalCheckType(); checkType != nil {
 			id := checkType.Id()
 			desc.ConditionalCheckType = &id
@@ -358,57 +352,49 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 	}
 
 	// Substitution type
-	if flags&TypeFlagsSubstitution != 0 {
-		if baseType := typ.SubstitutionBaseType(); baseType != nil {
-			id := baseType.Id()
-			desc.SubstitutionBaseType = &id
-		}
-		if constraint := typ.SubstitutionConstraintType(); constraint != nil {
-			id := constraint.Id()
-			desc.ConstraintType = &id
-		}
+	if baseType := typ.SubstitutionBaseType(); baseType != nil {
+		id := baseType.Id()
+		desc.SubstitutionBaseType = &id
+	}
+	if constraint := typ.SubstitutionConstraintType(); constraint != nil {
+		id := constraint.Id()
+		desc.ConstraintType = &id
 	}
 
-	// Reference type (Object with Reference flag)
-	if flags&TypeFlagsObject != 0 && objectFlags&ObjectFlagsReference != 0 {
-		if target := typ.ReferenceTarget(); target != nil {
-			id := target.Id()
-			desc.InstantiatedType = &id
-		}
-		if args := typ.ReferenceTypeArguments(); len(args) > 0 {
-			desc.TypeArguments = mapTypeIds(args)
-		}
-		if node := typ.ReferenceNode(); node != nil {
-			desc.ReferenceLocation = getLocation(node)
-		}
+	// Reference type
+	if target := typ.ReferenceTarget(); target != nil {
+		id := target.Id()
+		desc.InstantiatedType = &id
+	}
+	if args := typ.ReferenceTypeArguments(); len(args) > 0 {
+		desc.TypeArguments = mapTypeIds(args)
+	}
+	if node := typ.ReferenceNode(); node != nil {
+		desc.ReferenceLocation = getLocation(node)
 	}
 
 	// Reverse mapped type
-	if flags&TypeFlagsObject != 0 && objectFlags&ObjectFlagsReverseMapped != 0 {
-		if sourceType := typ.ReverseMappedSourceType(); sourceType != nil {
-			id := sourceType.Id()
-			desc.ReverseMappedSourceType = &id
-		}
-		if mappedType := typ.ReverseMappedMappedType(); mappedType != nil {
-			id := mappedType.Id()
-			desc.ReverseMappedMappedType = &id
-		}
-		if constraintType := typ.ReverseMappedConstraintType(); constraintType != nil {
-			id := constraintType.Id()
-			desc.ReverseMappedConstraintType = &id
-		}
+	if sourceType := typ.ReverseMappedSourceType(); sourceType != nil {
+		id := sourceType.Id()
+		desc.ReverseMappedSourceType = &id
+	}
+	if mappedType := typ.ReverseMappedMappedType(); mappedType != nil {
+		id := mappedType.Id()
+		desc.ReverseMappedMappedType = &id
+	}
+	if constraintType := typ.ReverseMappedConstraintType(); constraintType != nil {
+		id := constraintType.Id()
+		desc.ReverseMappedConstraintType = &id
 	}
 
 	// Evolving array type
-	if flags&TypeFlagsObject != 0 && objectFlags&ObjectFlagsEvolvingArray != 0 {
-		if elemType := typ.EvolvingArrayElementType(); elemType != nil {
-			id := elemType.Id()
-			desc.EvolvingArrayElementType = &id
-		}
-		if finalType := typ.EvolvingArrayFinalType(); finalType != nil {
-			id := finalType.Id()
-			desc.EvolvingArrayFinalType = &id
-		}
+	if elemType := typ.EvolvingArrayElementType(); elemType != nil {
+		id := elemType.Id()
+		desc.EvolvingArrayElementType = &id
+	}
+	if finalType := typ.EvolvingArrayFinalType(); finalType != nil {
+		id := finalType.Id()
+		desc.EvolvingArrayFinalType = &id
 	}
 
 	// Pattern (destructuring)
@@ -465,105 +451,4 @@ func getLocation(node *ast.Node) *Location {
 			Character: endChar + 1,
 		},
 	}
-}
-
-// TypeFlags constants (copied from checker to avoid circular dependency)
-const (
-	TypeFlagsNone            uint32 = 0
-	TypeFlagsAny             uint32 = 1 << 0
-	TypeFlagsUnknown         uint32 = 1 << 1
-	TypeFlagsUndefined       uint32 = 1 << 2
-	TypeFlagsNull            uint32 = 1 << 3
-	TypeFlagsVoid            uint32 = 1 << 4
-	TypeFlagsString          uint32 = 1 << 5
-	TypeFlagsNumber          uint32 = 1 << 6
-	TypeFlagsBigInt          uint32 = 1 << 7
-	TypeFlagsBoolean         uint32 = 1 << 8
-	TypeFlagsESSymbol        uint32 = 1 << 9
-	TypeFlagsStringLiteral   uint32 = 1 << 10
-	TypeFlagsNumberLiteral   uint32 = 1 << 11
-	TypeFlagsBigIntLiteral   uint32 = 1 << 12
-	TypeFlagsBooleanLiteral  uint32 = 1 << 13
-	TypeFlagsUniqueESSymbol  uint32 = 1 << 14
-	TypeFlagsEnumLiteral     uint32 = 1 << 15
-	TypeFlagsEnum            uint32 = 1 << 16
-	TypeFlagsNonPrimitive    uint32 = 1 << 17
-	TypeFlagsNever           uint32 = 1 << 18
-	TypeFlagsTypeParameter   uint32 = 1 << 19
-	TypeFlagsObject          uint32 = 1 << 20
-	TypeFlagsIndex           uint32 = 1 << 21
-	TypeFlagsTemplateLiteral uint32 = 1 << 22
-	TypeFlagsStringMapping   uint32 = 1 << 23
-	TypeFlagsSubstitution    uint32 = 1 << 24
-	TypeFlagsIndexedAccess   uint32 = 1 << 25
-	TypeFlagsConditional     uint32 = 1 << 26
-	TypeFlagsUnion           uint32 = 1 << 27
-	TypeFlagsIntersection    uint32 = 1 << 28
-
-	TypeFlagsLiteral = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral
-)
-
-// ObjectFlags constants
-const (
-	ObjectFlagsNone          uint32 = 0
-	ObjectFlagsClass         uint32 = 1 << 0
-	ObjectFlagsInterface     uint32 = 1 << 1
-	ObjectFlagsReference     uint32 = 1 << 2
-	ObjectFlagsTuple         uint32 = 1 << 3
-	ObjectFlagsAnonymous     uint32 = 1 << 4
-	ObjectFlagsMapped        uint32 = 1 << 5
-	ObjectFlagsInstantiated  uint32 = 1 << 6
-	ObjectFlagsEvolvingArray uint32 = 1 << 8
-	ObjectFlagsReverseMapped uint32 = 1 << 10
-)
-
-func formatTypeFlags(flags uint32) []string {
-	var result []string
-
-	flagNames := []struct {
-		flag uint32
-		name string
-	}{
-		{TypeFlagsAny, "Any"},
-		{TypeFlagsUnknown, "Unknown"},
-		{TypeFlagsUndefined, "Undefined"},
-		{TypeFlagsNull, "Null"},
-		{TypeFlagsVoid, "Void"},
-		{TypeFlagsString, "String"},
-		{TypeFlagsNumber, "Number"},
-		{TypeFlagsBigInt, "BigInt"},
-		{TypeFlagsBoolean, "Boolean"},
-		{TypeFlagsESSymbol, "ESSymbol"},
-		{TypeFlagsStringLiteral, "StringLiteral"},
-		{TypeFlagsNumberLiteral, "NumberLiteral"},
-		{TypeFlagsBigIntLiteral, "BigIntLiteral"},
-		{TypeFlagsBooleanLiteral, "BooleanLiteral"},
-		{TypeFlagsUniqueESSymbol, "UniqueESSymbol"},
-		{TypeFlagsEnumLiteral, "EnumLiteral"},
-		{TypeFlagsEnum, "Enum"},
-		{TypeFlagsNonPrimitive, "NonPrimitive"},
-		{TypeFlagsNever, "Never"},
-		{TypeFlagsTypeParameter, "TypeParameter"},
-		{TypeFlagsObject, "Object"},
-		{TypeFlagsIndex, "Index"},
-		{TypeFlagsTemplateLiteral, "TemplateLiteral"},
-		{TypeFlagsStringMapping, "StringMapping"},
-		{TypeFlagsSubstitution, "Substitution"},
-		{TypeFlagsIndexedAccess, "IndexedAccess"},
-		{TypeFlagsConditional, "Conditional"},
-		{TypeFlagsUnion, "Union"},
-		{TypeFlagsIntersection, "Intersection"},
-	}
-
-	for _, fn := range flagNames {
-		if flags&fn.flag != 0 {
-			result = append(result, fn.name)
-		}
-	}
-
-	if len(result) == 0 {
-		result = append(result, "None")
-	}
-
-	return result
 }

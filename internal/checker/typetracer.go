@@ -23,12 +23,12 @@ func (a *tracedTypeAdapter) Id() uint32 {
 	return uint32(a.t.id)
 }
 
-func (a *tracedTypeAdapter) Flags() uint32 {
-	return uint32(a.t.flags)
+func (a *tracedTypeAdapter) FormatFlags() []string {
+	return FormatTypeFlags(a.t.flags)
 }
 
-func (a *tracedTypeAdapter) ObjectFlags() uint32 {
-	return uint32(a.t.objectFlags)
+func (a *tracedTypeAdapter) IsConditional() bool {
+	return a.t.flags&TypeFlagsConditional != 0
 }
 
 func (a *tracedTypeAdapter) Symbol() *ast.Symbol {

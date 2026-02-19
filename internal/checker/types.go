@@ -1,7 +1,9 @@
 package checker
 
 import (
+	"math/bits"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -469,6 +471,60 @@ const (
 	TypeFlagsIncludesError                   = TypeFlagsReserved2
 	TypeFlagsNotPrimitiveUnion               = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsVoid | TypeFlagsNever | TypeFlagsObject | TypeFlagsIntersection | TypeFlagsIncludesInstantiable
 )
+
+var typeFlagNames = [...]struct {
+	flag TypeFlags
+	name string
+}{
+	{TypeFlagsAny, "Any"},
+	{TypeFlagsUnknown, "Unknown"},
+	{TypeFlagsUndefined, "Undefined"},
+	{TypeFlagsNull, "Null"},
+	{TypeFlagsVoid, "Void"},
+	{TypeFlagsString, "String"},
+	{TypeFlagsNumber, "Number"},
+	{TypeFlagsBigInt, "BigInt"},
+	{TypeFlagsBoolean, "Boolean"},
+	{TypeFlagsESSymbol, "ESSymbol"},
+	{TypeFlagsStringLiteral, "StringLiteral"},
+	{TypeFlagsNumberLiteral, "NumberLiteral"},
+	{TypeFlagsBigIntLiteral, "BigIntLiteral"},
+	{TypeFlagsBooleanLiteral, "BooleanLiteral"},
+	{TypeFlagsUniqueESSymbol, "UniqueESSymbol"},
+	{TypeFlagsEnumLiteral, "EnumLiteral"},
+	{TypeFlagsEnum, "Enum"},
+	{TypeFlagsNonPrimitive, "NonPrimitive"},
+	{TypeFlagsNever, "Never"},
+	{TypeFlagsTypeParameter, "TypeParameter"},
+	{TypeFlagsObject, "Object"},
+	{TypeFlagsIndex, "Index"},
+	{TypeFlagsTemplateLiteral, "TemplateLiteral"},
+	{TypeFlagsStringMapping, "StringMapping"},
+	{TypeFlagsSubstitution, "Substitution"},
+	{TypeFlagsIndexedAccess, "IndexedAccess"},
+	{TypeFlagsConditional, "Conditional"},
+	{TypeFlagsUnion, "Union"},
+	{TypeFlagsIntersection, "Intersection"},
+}
+
+// FormatTypeFlags returns the individual flag names as a slice of strings.
+func FormatTypeFlags(flags TypeFlags) []string {
+	result := make([]string, 0, bits.OnesCount32(uint32(flags)))
+	for _, fn := range typeFlagNames {
+		if flags&fn.flag != 0 {
+			result = append(result, fn.name)
+		}
+	}
+	if len(result) == 0 {
+		result = append(result, "None")
+	}
+	return result
+}
+
+// String returns a pipe-separated string of flag names.
+func (f TypeFlags) String() string {
+	return strings.Join(FormatTypeFlags(f), "|")
+}
 
 type ObjectFlags uint32
 
