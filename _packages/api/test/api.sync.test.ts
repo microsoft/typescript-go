@@ -130,7 +130,7 @@ describe("SourceFile", () => {
         assert.equal(nodeCount, 8);
     });
 
-    test.only("node parents", () => {
+    test("node parents", () => {
         const api = spawnAPI();
         const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
         const project = snapshot.getProject("/tsconfig.json")!;
