@@ -360,7 +360,9 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 	path := b.toPath(fileName)
 	if b.defaultProjectsInvalidated {
 		b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
-		return
+		if !b.fs.isOpenFile(path) {
+			return
+		}
 	}
 	if b.fs.isOpenFile(path) {
 		hasChanges := b.programStructureChanged

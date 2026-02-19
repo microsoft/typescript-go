@@ -379,6 +379,11 @@ func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) cha
 	}
 }
 
+func (c *configFileRegistryBuilder) isConfigBaseName(baseName string) bool {
+	return baseName == "tsconfig.json" || baseName == "jsconfig.json" ||
+		(c.customConfigFileName != "" && baseName == c.customConfigFileName)
+}
+
 func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
@@ -397,7 +402,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
 		baseName := tspath.GetBaseFileName(string(path))
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+		if c.isConfigBaseName(baseName) {
 			createdOrDeletedConfigFiles[path] = struct{}{}
 		}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
@@ -410,7 +415,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		path := c.fs.toPath(fileName)
 		deletedFiles[path] = fileName
 		baseName := tspath.GetBaseFileName(string(path))
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+		if c.isConfigBaseName(baseName) {
 			createdOrDeletedConfigFiles[path] = struct{}{}
 		}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
@@ -423,7 +428,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		path := c.fs.toPath(fileName)
 		createdFiles[path] = fileName
 		baseName := tspath.GetBaseFileName(string(path))
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+		if c.isConfigBaseName(baseName) {
 			createdOrDeletedConfigFiles[path] = struct{}{}
 		}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
