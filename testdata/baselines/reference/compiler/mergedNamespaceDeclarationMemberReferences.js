@@ -44,13 +44,13 @@ var N;
     N.A = A;
 })(N || (N = {}));
 (function (N) {
-    N.y = x;
-    fn();
-    class B extends A {
+    N.y = N.x;
+    N.fn();
+    class B extends N.A {
         method() {
             console.log("B.method");
         }
     }
     N.B = B;
-    const a = new A();
+    const a = new N.A();
 })(N || (N = {}));
