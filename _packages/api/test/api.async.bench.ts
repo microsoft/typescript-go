@@ -13,6 +13,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Bench } from "tinybench";
 import ts from "typescript";
+// @ts-expect-error
+import { RemoteSourceFile } from "../src/node.ts";
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
@@ -86,14 +88,14 @@ export async function runBenchmarks(singleIteration?: boolean) {
             await getCheckerTS();
         }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("materialize program.ts", async () => {
-            file.forEachChild(function visit(node) {
-                node.forEachChild(visit);
-            });
+            const view = (file as unknown as RemoteSourceFile)["view"];
+            const decoder = (file as unknown as RemoteSourceFile)["decoder"];
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder);
         }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", async () => {
-            file.forEachChild(function visit(node) {
-                node.forEachChild(visit);
-            });
+            const view = (file as unknown as RemoteSourceFile)["view"];
+            const decoder = (file as unknown as RemoteSourceFile)["decoder"];
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder);
         }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", async () => {
             await project.checker.getSymbolAtPosition("program.ts", 8895);
