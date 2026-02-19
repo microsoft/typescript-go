@@ -15,31 +15,31 @@ import {
     type API as BaseAPI,
     type APIOptions as BaseAPIOptions,
     type Checker as BaseChecker,
+    type ConditionalType as BaseConditionalType,
     type DocumentIdentifier,
     type DocumentPosition,
+    type IndexedAccessType as BaseIndexedAccessType,
+    type IndexType as BaseIndexType,
+    type InterfaceType as BaseInterfaceType,
+    type IntersectionType as BaseIntersectionType,
+    type LiteralType as BaseLiteralType,
     type NodeHandle as BaseNodeHandle,
+    type ObjectType as BaseObjectType,
     type Program as BaseProgram,
     type Project as BaseProject,
     resolveFileName,
     type Signature as BaseSignature,
     type Snapshot as BaseSnapshot,
+    type StringMappingType as BaseStringMappingType,
+    type SubstitutionType as BaseSubstitutionType,
     type Symbol as BaseSymbol,
-    type Type as BaseType,
-    type LiteralType as BaseLiteralType,
-    type ObjectType as BaseObjectType,
-    type TypeReference as BaseTypeReference,
-    type InterfaceType as BaseInterfaceType,
+    type TemplateLiteralType as BaseTemplateLiteralType,
     type TupleType as BaseTupleType,
+    type Type as BaseType,
+    type TypeParameter as BaseTypeParameter,
+    type TypeReference as BaseTypeReference,
     type UnionOrIntersectionType as BaseUnionOrIntersectionType,
     type UnionType as BaseUnionType,
-    type IntersectionType as BaseIntersectionType,
-    type TypeParameter as BaseTypeParameter,
-    type IndexType as BaseIndexType,
-    type IndexedAccessType as BaseIndexedAccessType,
-    type ConditionalType as BaseConditionalType,
-    type SubstitutionType as BaseSubstitutionType,
-    type TemplateLiteralType as BaseTemplateLiteralType,
-    type StringMappingType as BaseStringMappingType,
 } from "../base/api.ts";
 import { ObjectRegistry } from "../base/objectRegistry.ts";
 import { SourceFileCache } from "../base/sourceFileCache.ts";
@@ -474,17 +474,39 @@ export class Checker implements BaseChecker<false> {
         return this.objectRegistry.getOrCreateType(data);
     }
 
-    getAnyType(): Type { return this.getIntrinsicType("getAnyType"); }
-    getStringType(): Type { return this.getIntrinsicType("getStringType"); }
-    getNumberType(): Type { return this.getIntrinsicType("getNumberType"); }
-    getBooleanType(): Type { return this.getIntrinsicType("getBooleanType"); }
-    getVoidType(): Type { return this.getIntrinsicType("getVoidType"); }
-    getUndefinedType(): Type { return this.getIntrinsicType("getUndefinedType"); }
-    getNullType(): Type { return this.getIntrinsicType("getNullType"); }
-    getNeverType(): Type { return this.getIntrinsicType("getNeverType"); }
-    getUnknownType(): Type { return this.getIntrinsicType("getUnknownType"); }
-    getBigIntType(): Type { return this.getIntrinsicType("getBigIntType"); }
-    getESSymbolType(): Type { return this.getIntrinsicType("getESSymbolType"); }
+    getAnyType(): Type {
+        return this.getIntrinsicType("getAnyType");
+    }
+    getStringType(): Type {
+        return this.getIntrinsicType("getStringType");
+    }
+    getNumberType(): Type {
+        return this.getIntrinsicType("getNumberType");
+    }
+    getBooleanType(): Type {
+        return this.getIntrinsicType("getBooleanType");
+    }
+    getVoidType(): Type {
+        return this.getIntrinsicType("getVoidType");
+    }
+    getUndefinedType(): Type {
+        return this.getIntrinsicType("getUndefinedType");
+    }
+    getNullType(): Type {
+        return this.getIntrinsicType("getNullType");
+    }
+    getNeverType(): Type {
+        return this.getIntrinsicType("getNeverType");
+    }
+    getUnknownType(): Type {
+        return this.getIntrinsicType("getUnknownType");
+    }
+    getBigIntType(): Type {
+        return this.getIntrinsicType("getBigIntType");
+    }
+    getESSymbolType(): Type {
+        return this.getIntrinsicType("getESSymbolType");
+    }
 }
 
 export class NodeHandle implements BaseNodeHandle<false> {
