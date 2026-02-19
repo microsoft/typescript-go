@@ -102,10 +102,7 @@ func (fs *callbackFS) ReadFile(path string) (contents string, ok bool) {
 		if err != nil {
 			panic(err)
 		}
-		if string(result) == "null" {
-			return "", false
-		}
-		if len(result) > 0 {
+		if len(result) > 0 && string(result) != "null" {
 			var content string
 			if err := json.Unmarshal(result, &content); err != nil {
 				panic(err)
@@ -123,7 +120,7 @@ func (fs *callbackFS) FileExists(path string) bool {
 		if err != nil {
 			panic(err)
 		}
-		if len(result) > 0 {
+		if len(result) > 0 && string(result) != "null" {
 			return string(result) == "true"
 		}
 	}
@@ -137,7 +134,7 @@ func (fs *callbackFS) DirectoryExists(path string) bool {
 		if err != nil {
 			panic(err)
 		}
-		if len(result) > 0 {
+		if len(result) > 0 && string(result) != "null" {
 			return string(result) == "true"
 		}
 	}
@@ -177,7 +174,7 @@ func (fs *callbackFS) Realpath(path string) string {
 		if err != nil {
 			panic(err)
 		}
-		if len(result) > 0 {
+		if len(result) > 0 && string(result) != "null" {
 			var realpath string
 			if err := json.Unmarshal(result, &realpath); err != nil {
 				panic(err)

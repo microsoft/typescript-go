@@ -7,10 +7,6 @@
 // Regenerate: npm run generate (from _packages/api)
 //
 import {
-    type FileSystem,
-    type FileSystemEntries,
-} from "@typescript/api/fs";
-import {
     API,
     type Project,
     type Snapshot,
@@ -32,7 +28,7 @@ if (isMain) {
 }
 
 export function runBenchmarks(singleIteration?: boolean) {
-    const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
+    const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
         console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
         return;
@@ -83,9 +79,6 @@ export function runBenchmarks(singleIteration?: boolean) {
         .add("load snapshot", () => {
             loadSnapshot();
         }, { beforeAll: spawnAPI })
-        .add("load snapshot (client FS)", () => {
-            loadSnapshot();
-        }, { beforeAll: spawnAPIHosted })
         .add("TS - load project", () => {
             tsCreateProgram();
         })
@@ -145,7 +138,7 @@ export function runBenchmarks(singleIteration?: boolean) {
             });
         }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) });
 
-    bench.run();
+    bench.runSync();
     console.table(bench.table());
 
     function collectIdentifiers(sourceFile: SourceFile): Node[] {
@@ -162,15 +155,7 @@ export function runBenchmarks(singleIteration?: boolean) {
     function spawnAPI() {
         api = new API({
             cwd: repoRoot,
-            tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
-        });
-    }
-
-    function spawnAPIHosted() {
-        api = new API({
-            cwd: repoRoot,
-            tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
-            fs: createNodeFileSystem(),
+            tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         });
     }
 
@@ -180,7 +165,7 @@ export function runBenchmarks(singleIteration?: boolean) {
     }
 
     function tsCreateProgram() {
-        const configFileName = fileURLToPath(new URL("../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).toString());
+        const configFileName = fileURLToPath(new URL("../../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).toString());
         const configFile = ts.readConfigFile(configFileName, ts.sys.readFile);
         const parsedCommandLine = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(configFileName));
         const host = ts.createCompilerHost(parsedCommandLine.options);
@@ -210,7 +195,7 @@ export function runBenchmarks(singleIteration?: boolean) {
     }
 
     function tsGetProgramTS() {
-        tsFile = tsProgram.getSourceFile(fileURLToPath(new URL("../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).toString()))!;
+        tsFile = tsProgram.getSourceFile(fileURLToPath(new URL("../../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).toString()))!;
     }
 
     function getCheckerTS() {
@@ -232,66 +217,6 @@ export function runBenchmarks(singleIteration?: boolean) {
             for (const fn of fns) {
                 fn();
             }
-        };
-    }
-
-    function createNodeFileSystem(): FileSystem {
-        return {
-            directoryExists: directoryName => {
-                try {
-                    return fs.statSync(directoryName).isDirectory();
-                }
-                catch {
-                    return false;
-                }
-            },
-            fileExists: fileName => {
-                try {
-                    return fs.statSync(fileName).isFile();
-                }
-                catch {
-                    return false;
-                }
-            },
-            readFile: fileName => {
-                try {
-                    return fs.readFileSync(fileName, "utf8");
-                }
-                catch {
-                    return undefined;
-                }
-            },
-            getAccessibleEntries: dirName => {
-                const entries: FileSystemEntries = {
-                    files: [],
-                    directories: [],
-                };
-                for (const entry of fs.readdirSync(dirName, { withFileTypes: true })) {
-                    if (entry.isFile()) {
-                        entries.files.push(entry.name);
-                    }
-                    else if (entry.isDirectory()) {
-                        entries.directories.push(entry.name);
-                    }
-                    else if (entry.isSymbolicLink()) {
-                        const fullName = path.join(dirName, entry.name);
-                        try {
-                            const stat = fs.statSync(fullName);
-                            if (stat.isFile()) {
-                                entries.files.push(entry.name);
-                            }
-                            else if (stat.isDirectory()) {
-                                entries.directories.push(entry.name);
-                            }
-                        }
-                        catch {
-                            // Ignore errors
-                        }
-                    }
-                }
-                return entries;
-            },
-            realpath: fs.realpathSync,
         };
     }
 }

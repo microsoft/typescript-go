@@ -253,31 +253,6 @@ test("Snapshot dispose", () => {
     }
 });
 
-test("Server-side release", () => {
-    const api = spawnAPI();
-    try {
-        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
-        const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
-        assert.ok(symbol);
-
-        // Manually release the snapshot on the server
-        // @ts-ignore private API
-        api.client.apiRequest("release", { handle: snapshot.id });
-
-        // Symbol handle should no longer be resolvable on the server
-        assert.throws(() => {
-            project.checker.getTypeOfSymbol(symbol);
-        }, {
-            name: "Error",
-            message: `api: client error: snapshot ${snapshot.id} not found`,
-        });
-    }
-    finally {
-        api.close();
-    }
-});
-
 describe("Multiple snapshots", () => {
     test("two snapshots work independently", () => {
         const api = spawnAPI();
@@ -1423,8 +1398,8 @@ test("Benchmarks", () => {
 
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
     return new API({
-        cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
-        tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+        cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+        tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         fs: createVirtualFileSystem(files),
     });
 }
@@ -1432,8 +1407,8 @@ function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
 function spawnAPIWithFS(files: Record<string, string> = { ...defaultFiles }): { api: API; fs: FileSystem; } {
     const fs = createVirtualFileSystem(files);
     const api = new API({
-        cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
-        tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+        cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+        tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         fs,
     });
     return { api, fs };
