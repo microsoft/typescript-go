@@ -1023,12 +1023,20 @@ export class RemoteSourceFile extends RemoteNode {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, decoder, 1, undefined!, {} as unknown as RemoteSourceFile);
         this.sourceFile = this;
-        this.nodes = Array((this.view.byteLength - this.offsetNodes) / NODE_LEN).fill(null).map((_, index) => {
-            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
-            return kind === KIND_NODE_LIST
-                ? new RemoteNodeList(this.view, this.decoder, index, this, this.sourceFile)
-                : new RemoteNode(this.view, this.decoder, index, this, this.sourceFile);
-        });
+        this.nodes = Array((this.view.byteLength - this.offsetNodes) / NODE_LEN);
+        this.nodes[0] = new RemoteNode(this.view, this.decoder, 0, this, this);
+        this.nodes[1] = this
+        for (let index = 2; index < this.nodes.length; index++) {
+            const nodeOffset = this.offsetNodes + index * NODE_LEN
+            const kind = this.view.getUint32(nodeOffset + NODE_OFFSET_KIND, true);
+            let parent = this.nodes[this.view.getUint32(nodeOffset + NODE_OFFSET_PARENT, true)]
+            if (parent instanceof RemoteNodeList) {
+              parent = parent.parent
+            }
+            this.nodes[index] = kind === KIND_NODE_LIST
+                ? new RemoteNodeList(this.view, this.decoder, index, parent, this.sourceFile)
+                : new RemoteNode(this.view, this.decoder, index, parent, this.sourceFile);
+        }
     }
 }
 

@@ -14,6 +14,7 @@ import {
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
+    SyntaxKind,
 } from "@typescript/ast";
 import assert from "node:assert";
 import {
@@ -127,6 +128,18 @@ describe("SourceFile", () => {
             node.forEachChild(visit);
         });
         assert.equal(nodeCount, 8);
+    });
+
+    test.only("node parents", () => {
+        const api = spawnAPI();
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
+
+        assert.ok(sourceFile);
+        assert.equal(sourceFile.statements[0].parent, sourceFile)
+        assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.parent, sourceFile.statements[0])
+        assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings?.parent, cast(sourceFile.statements[0], isImportDeclaration).importClause)
     });
 });
 
