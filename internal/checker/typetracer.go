@@ -266,14 +266,15 @@ func (a *tracedTypeAdapter) RecursionIdentity() any {
 }
 
 func (a *tracedTypeAdapter) Display() string {
-	// Only compute display for anonymous or literal types, as it can be expensive
+	// Only compute display for anonymous or literal types, as it can be expensive.
+	// Matches TypeScript's try/catch around typeToString — incomplete types during
+	// tracing can cause panics, which we intentionally suppress (returning "").
 	if a.checker == nil {
 		return ""
 	}
 	if a.t.objectFlags&ObjectFlagsAnonymous != 0 || a.t.flags&TypeFlagsLiteral != 0 {
-		// Use a try/catch equivalent - in Go we just wrap in a recovery
 		defer func() {
-			_ = recover() // Ignore panics from type stringification
+			_ = recover()
 		}()
 		return a.checker.TypeToString(a.t)
 	}
