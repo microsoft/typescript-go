@@ -772,16 +772,38 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 }
 
 func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, checker *checker.Checker, isManuallyInvoked bool, position int) *argumentListInfo {
+	var firstArgumentInfo *argumentListInfo
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
 		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), fmt.Sprintf("Not a subspan. Child: %s, parent: %s", n.KindString(), n.Parent.KindString()))
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
-			return argumentInfo
+			// For contextual invocations (e.g., arrow functions with contextual types),
+			// always return immediately without checking the position.
+			// This ensures that when inside a callback's parameter list, we show the callback's
+			// signature, not the outer call's signature.
+			if argumentInfo.invocation.contextualInvocation != nil {
+				return argumentInfo
+			}
+
+			// Remember the first (innermost) argument info we find
+			if firstArgumentInfo == nil {
+				firstArgumentInfo = argumentInfo
+			}
+
+			// If any call's span contains the position, return it.
+			// We walk from inner to outer, so this naturally prefers the innermost call
+			// when multiple calls contain the position.
+			if argumentInfo.argumentsSpan.Contains(position) {
+				return argumentInfo
+			}
 		}
 	}
-	return nil
+
+	// No call's span contains the position. Return the innermost call as fallback.
+	// This handles cases like foo(bar(|)) where bar's span might be empty.
+	return firstArgumentInfo
 }
 
 func getImmediatelyContainingArgumentOrContextualParameterInfo(node *ast.Node, position int, sourceFile *ast.SourceFile, checker *checker.Checker) *argumentListInfo {
@@ -1053,23 +1075,44 @@ func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, 
 }
 
 func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange {
-	// We use full start and skip trivia on the end because we want to include trivia on
-	// both sides. For example,
+	// The applicable span starts at the beginning of the argument list (including leading trivia)
+	// and extends to the end of the argument list plus any trailing trivia.
+	// For example,
 	//
 	//    foo(   /*comment */     a, b, c      /*comment*/     )
 	//        |                                               |
 	//
 	// The applicable span is from the first bar to the second bar (inclusive,
-	// but not including parentheses)
+	// but not including parentheses).
 	if argumentList == nil && node != nil {
 		// If the user has just opened a list, and there are no arguments.
 		// For example, foo(    )
 		//                  |  |
-		return core.NewTextRange(node.End(), scanner.SkipTrivia(sourceFile.Text(), node.End()))
+		// The span should include positions inside the parentheses.
+		spanStart := node.End()
+		spanEnd := scanner.SkipTrivia(sourceFile.Text(), node.End())
+		// Ensure the span includes at least the position right after the opening paren
+		spanEnd = ensureMinimumSpanSize(spanStart, spanEnd)
+		return core.NewTextRange(spanStart, spanEnd)
 	}
 	applicableSpanStart := argumentList.Pos()
 	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text(), argumentList.End())
+
+	// If the argument list is empty (Pos == End), extend the span to include at least
+	// one position. This handles foo(|) where the cursor is right after the opening paren.
+	applicableSpanEnd = ensureMinimumSpanSize(applicableSpanStart, applicableSpanEnd)
+
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
+}
+
+// ensureMinimumSpanSize ensures that a span includes at least one position.
+// This is necessary for empty argument lists where start == end would create
+// a span that doesn't contain any position.
+func ensureMinimumSpanSize(start, end int) int {
+	if end <= start {
+		return start + 1
+	}
+	return end
 }
 
 type argumentOrParameterListAndIndex struct {
