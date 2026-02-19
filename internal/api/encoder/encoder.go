@@ -843,8 +843,10 @@ func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte)
 }
 
 func boolToByte(b bool) byte {
+	// https://github.com/golang/go/issues/64825
+	var x byte
 	if b {
-		return 1
+		x = 1
 	}
-	return 0
+	return x
 }
