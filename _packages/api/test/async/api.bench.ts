@@ -2,13 +2,19 @@ import {
     API,
     type Project,
     type Snapshot,
-} from "@typescript/api/async";
+} from "@typescript/api/async"; // @sync: } from "@typescript/api/sync";
+// @sync-only-start
+// import {
+//     type FileSystem,
+//     type FileSystemEntries,
+// } from "@typescript/api/fs";
+// @sync-only-end
 import {
     type Node,
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
-import { existsSync } from "node:fs";
+import fs, { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Bench } from "tinybench";
@@ -22,15 +28,15 @@ if (isMain) {
 export async function runBenchmarks(singleIteration?: boolean) {
     const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
-        console.warn("Warning: TypeScript submodule is not cloned; skipping async benchmarks.");
+        console.warn("Warning: TypeScript submodule is not cloned; skipping async benchmarks."); // @sync: console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
         return;
     }
 
     const bench = new Bench({
-        name: "Async API",
-        teardown: async () => {
-            await teardown();
-        },
+        name: "Async API", // @sync: name: "Sync API",
+        teardown: async () => { // @sync: teardown,
+            await teardown(); // @sync-skip
+        }, // @sync-skip
         // Reduce iterations from the default 64 to 10.  Slow tasks
         // are dominated by the iteration minimum, not the time limit.
         // 10 iterations still gives stable medians while cutting total
@@ -67,12 +73,17 @@ export async function runBenchmarks(singleIteration?: boolean) {
     })();
 
     bench
-        .add("spawn Async API", async () => {
-            await spawnAPI();
-        })
+        .add("spawn Async API", async () => { // @sync: .add("spawn API", () => {
+            await spawnAPI(); // @sync: spawnAPI();
+        }) // @sync: })
         .add("load snapshot", async () => {
             await loadSnapshot();
         }, { beforeAll: spawnAPI })
+        // @sync-only-start
+        // .add("load snapshot (client FS)", () => {
+        //     loadSnapshot();
+        // }, { beforeAll: spawnAPIHosted })
+        // @sync-only-end
         .add("TS - load project", () => {
             tsCreateProgram();
         })
@@ -153,6 +164,16 @@ export async function runBenchmarks(singleIteration?: boolean) {
         });
     }
 
+    // @sync-only-start
+    // function spawnAPIHosted() {
+    //     api = new API({
+    //         cwd: repoRoot,
+    //         tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+    //         fs: createNodeFileSystem(),
+    //     });
+    // }
+    // @sync-only-end
+
     async function loadSnapshot() {
         snapshot = await api.updateSnapshot({ openProject: "_submodules/TypeScript/src/compiler/tsconfig.json" });
         project = snapshot.getProjects()[0];
@@ -213,4 +234,66 @@ export async function runBenchmarks(singleIteration?: boolean) {
             }
         };
     }
+
+    // @sync-only-start
+    // function createNodeFileSystem(): FileSystem {
+    //     return {
+    //         directoryExists: directoryName => {
+    //             try {
+    //                 return fs.statSync(directoryName).isDirectory();
+    //             }
+    //             catch {
+    //                 return false;
+    //             }
+    //         },
+    //         fileExists: fileName => {
+    //             try {
+    //                 return fs.statSync(fileName).isFile();
+    //             }
+    //             catch {
+    //                 return false;
+    //             }
+    //         },
+    //         readFile: fileName => {
+    //             try {
+    //                 return fs.readFileSync(fileName, "utf8");
+    //             }
+    //             catch {
+    //                 return undefined;
+    //             }
+    //         },
+    //         getAccessibleEntries: dirName => {
+    //             const entries: FileSystemEntries = {
+    //                 files: [],
+    //                 directories: [],
+    //             };
+    //             for (const entry of fs.readdirSync(dirName, { withFileTypes: true })) {
+    //                 if (entry.isFile()) {
+    //                     entries.files.push(entry.name);
+    //                 }
+    //                 else if (entry.isDirectory()) {
+    //                     entries.directories.push(entry.name);
+    //                 }
+    //                 else if (entry.isSymbolicLink()) {
+    //                     const fullName = path.join(dirName, entry.name);
+    //                     try {
+    //                         const stat = fs.statSync(fullName);
+    //                         if (stat.isFile()) {
+    //                             entries.files.push(entry.name);
+    //                         }
+    //                         else if (stat.isDirectory()) {
+    //                             entries.directories.push(entry.name);
+    //                         }
+    //                     }
+    //                     catch {
+    //                         // Ignore errors
+    //                     }
+    //                 }
+    //             }
+    //             return entries;
+    //         },
+    //         realpath: fs.realpathSync,
+    //     };
+    // }
+    // @sync-only-end
 }

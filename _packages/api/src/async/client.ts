@@ -13,26 +13,14 @@ import {
     type FileSystem,
     fsCallbackNames,
 } from "../fs.ts";
+import {
+    type ClientOptions,
+    type ClientSocketOptions,
+    type ClientSpawnOptions,
+    isSpawnOptions,
+} from "../options.ts";
 
-export interface ClientSocketOptions {
-    /** Path to the Unix domain socket or Windows named pipe for API communication */
-    pipe: string;
-}
-
-export interface ClientSpawnOptions {
-    /** Path to the tsgo executable */
-    tsserverPath: string;
-    /** Current working directory */
-    cwd?: string;
-    /** Virtual filesystem callbacks */
-    fs?: FileSystem;
-}
-
-export type ClientOptions = ClientSocketOptions | ClientSpawnOptions;
-
-function isSpawnOptions(options: ClientOptions): options is ClientSpawnOptions {
-    return "tsserverPath" in options;
-}
+export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions };
 
 /**
  * Client handles communication with the TypeScript API server
@@ -147,6 +135,12 @@ export class Client {
 
         const requestType = new RequestType<unknown, T, void>(method);
         return this.connection.sendRequest(requestType, params);
+    }
+
+    async apiRequestBinary(method: string, params?: unknown): Promise<Uint8Array | undefined> {
+        const response = await this.apiRequest<{ data: string; } | null>(method, params);
+        if (!response) return undefined;
+        return Uint8Array.from(atob(response.data), c => c.charCodeAt(0));
     }
 
     async close(): Promise<void> {
