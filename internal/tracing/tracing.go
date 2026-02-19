@@ -66,9 +66,9 @@ type TracedType interface {
 
 // TraceRecord represents metadata about a single trace file
 type TraceRecord struct {
-	ConfigFilePath string `json:"configFilePath,omitempty"`
-	TracePath      string `json:"tracePath,omitempty"`
-	TypesPath      string `json:"typesPath,omitempty"`
+	ConfigFilePath string `json:"configFilePath,omitzero"`
+	TracePath      string `json:"tracePath,omitzero"`
+	TypesPath      string `json:"typesPath,omitzero"`
 }
 
 // Tracing manages the overall tracing session including all checkers
@@ -203,41 +203,41 @@ func (t *typeTracer) Close() error {
 // TypeDescriptor represents a type in the output JSON
 type TypeDescriptor struct {
 	ID                          uint32    `json:"id"`
-	IntrinsicName               string    `json:"intrinsicName,omitempty"`
-	SymbolName                  string    `json:"symbolName,omitempty"`
-	RecursionID                 *int      `json:"recursionId,omitempty"`
-	IsTuple                     bool      `json:"isTuple,omitempty"`
-	UnionTypes                  []uint32  `json:"unionTypes,omitempty"`
-	IntersectionTypes           []uint32  `json:"intersectionTypes,omitempty"`
-	AliasTypeArguments          []uint32  `json:"aliasTypeArguments,omitempty"`
-	KeyofType                   *uint32   `json:"keyofType,omitempty"`
-	IndexedAccessObjectType     *uint32   `json:"indexedAccessObjectType,omitempty"`
-	IndexedAccessIndexType      *uint32   `json:"indexedAccessIndexType,omitempty"`
-	ConditionalCheckType        *uint32   `json:"conditionalCheckType,omitempty"`
-	ConditionalExtendsType      *uint32   `json:"conditionalExtendsType,omitempty"`
-	ConditionalTrueType         *int32    `json:"conditionalTrueType,omitempty"`
-	ConditionalFalseType        *int32    `json:"conditionalFalseType,omitempty"`
-	SubstitutionBaseType        *uint32   `json:"substitutionBaseType,omitempty"`
-	ConstraintType              *uint32   `json:"constraintType,omitempty"`
-	InstantiatedType            *uint32   `json:"instantiatedType,omitempty"`
-	TypeArguments               []uint32  `json:"typeArguments,omitempty"`
-	ReferenceLocation           *Location `json:"referenceLocation,omitempty"`
-	ReverseMappedSourceType     *uint32   `json:"reverseMappedSourceType,omitempty"`
-	ReverseMappedMappedType     *uint32   `json:"reverseMappedMappedType,omitempty"`
-	ReverseMappedConstraintType *uint32   `json:"reverseMappedConstraintType,omitempty"`
-	EvolvingArrayElementType    *uint32   `json:"evolvingArrayElementType,omitempty"`
-	EvolvingArrayFinalType      *uint32   `json:"evolvingArrayFinalType,omitempty"`
-	DestructuringPattern        *Location `json:"destructuringPattern,omitempty"`
-	FirstDeclaration            *Location `json:"firstDeclaration,omitempty"`
+	IntrinsicName               string    `json:"intrinsicName,omitzero"`
+	SymbolName                  string    `json:"symbolName,omitzero"`
+	RecursionID                 *int      `json:"recursionId,omitzero"`
+	IsTuple                     bool      `json:"isTuple,omitzero"`
+	UnionTypes                  []uint32  `json:"unionTypes,omitzero"`
+	IntersectionTypes           []uint32  `json:"intersectionTypes,omitzero"`
+	AliasTypeArguments          []uint32  `json:"aliasTypeArguments,omitzero"`
+	KeyofType                   *uint32   `json:"keyofType,omitzero"`
+	IndexedAccessObjectType     *uint32   `json:"indexedAccessObjectType,omitzero"`
+	IndexedAccessIndexType      *uint32   `json:"indexedAccessIndexType,omitzero"`
+	ConditionalCheckType        *uint32   `json:"conditionalCheckType,omitzero"`
+	ConditionalExtendsType      *uint32   `json:"conditionalExtendsType,omitzero"`
+	ConditionalTrueType         *int32    `json:"conditionalTrueType,omitzero"`
+	ConditionalFalseType        *int32    `json:"conditionalFalseType,omitzero"`
+	SubstitutionBaseType        *uint32   `json:"substitutionBaseType,omitzero"`
+	ConstraintType              *uint32   `json:"constraintType,omitzero"`
+	InstantiatedType            *uint32   `json:"instantiatedType,omitzero"`
+	TypeArguments               []uint32  `json:"typeArguments,omitzero"`
+	ReferenceLocation           *Location `json:"referenceLocation,omitzero"`
+	ReverseMappedSourceType     *uint32   `json:"reverseMappedSourceType,omitzero"`
+	ReverseMappedMappedType     *uint32   `json:"reverseMappedMappedType,omitzero"`
+	ReverseMappedConstraintType *uint32   `json:"reverseMappedConstraintType,omitzero"`
+	EvolvingArrayElementType    *uint32   `json:"evolvingArrayElementType,omitzero"`
+	EvolvingArrayFinalType      *uint32   `json:"evolvingArrayFinalType,omitzero"`
+	DestructuringPattern        *Location `json:"destructuringPattern,omitzero"`
+	FirstDeclaration            *Location `json:"firstDeclaration,omitzero"`
 	Flags                       []string  `json:"flags"`
-	Display                     string    `json:"display,omitempty"`
+	Display                     string    `json:"display,omitzero"`
 }
 
 // Location represents a source code location
 type Location struct {
 	Path  string       `json:"path"`
-	Start *LineAndChar `json:"start,omitempty"`
-	End   *LineAndChar `json:"end,omitempty"`
+	Start *LineAndChar `json:"start,omitzero"`
+	End   *LineAndChar `json:"end,omitzero"`
 }
 
 // LineAndChar represents a line and character position (1-indexed)
