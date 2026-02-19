@@ -383,7 +383,16 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        return this.sourceFile.nodes[index]!;
+        let child = this.sourceFile.nodes[index]
+        if (!child) {
+            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
+            if (kind === KIND_NODE_LIST) {
+                throw new Error("NodeList cannot directly contain another NodeList");
+            }
+            child = new RemoteNode(this.view, this.decoder, index, this.parent, this.sourceFile);
+            this.sourceFile.nodes[index] = child;
+        }
+        return child;
     }
 
     __print(): string {
@@ -452,7 +461,15 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        return this.sourceFile.nodes[index]!;
+        let child = this.sourceFile.nodes[index]
+        if (!child) {
+            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
+            child = kind === KIND_NODE_LIST
+                ? new RemoteNodeList(this.view, this.decoder, index, this, this.sourceFile)
+                : new RemoteNode(this.view, this.decoder, index, this, this.sourceFile);
+            this.sourceFile.nodes[index] = child
+        }
+        return child;
     }
 
     private hasChildren(): boolean {
@@ -1026,17 +1043,6 @@ export class RemoteSourceFile extends RemoteNode {
         this.nodes = Array((this.view.byteLength - this.offsetNodes) / NODE_LEN);
         this.nodes[0] = new RemoteNode(this.view, this.decoder, 0, this, this);
         this.nodes[1] = this;
-        for (let index = 2; index < this.nodes.length; index++) {
-            const nodeOffset = this.offsetNodes + index * NODE_LEN;
-            const kind = this.view.getUint32(nodeOffset + NODE_OFFSET_KIND, true);
-            let parent = this.nodes[this.view.getUint32(nodeOffset + NODE_OFFSET_PARENT, true)];
-            if (parent instanceof RemoteNodeList) {
-                parent = parent.parent;
-            }
-            this.nodes[index] = kind === KIND_NODE_LIST
-                ? new RemoteNodeList(this.view, this.decoder, index, parent, this.sourceFile)
-                : new RemoteNode(this.view, this.decoder, index, parent, this.sourceFile);
-        }
     }
 }
 

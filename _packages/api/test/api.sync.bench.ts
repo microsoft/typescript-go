@@ -111,14 +111,16 @@ export async function runBenchmarks(singleIteration?: boolean) {
             getCheckerTS();
         }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("materialize program.ts", () => {
-            const view = (file as unknown as RemoteSourceFile)["view"];
-            const decoder = (file as unknown as RemoteSourceFile)["decoder"];
-            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder);
+            const { view, decoder } = file as unknown as RemoteSourceFile;
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
+              node.forEachChild(visit)
+            })
         }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", () => {
-            const view = (file as unknown as RemoteSourceFile)["view"];
-            const decoder = (file as unknown as RemoteSourceFile)["decoder"];
-            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder);
+            const { view, decoder } = file as unknown as RemoteSourceFile;
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
+              node.forEachChild(visit)
+            })
         }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", () => {
             project.checker.getSymbolAtPosition("program.ts", 8895);
