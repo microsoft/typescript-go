@@ -20,8 +20,6 @@ type Tracer interface {
 	RecordType(t TracedType)
 	// DumpTypes writes all recorded types to disk.
 	DumpTypes() error
-	// Close releases any resources held by the tracer.
-	Close() error
 }
 
 // TracedType is an interface that represents a type that can be traced.
@@ -194,10 +192,6 @@ func (t *typeTracer) DumpTypes() error {
 	sb.WriteString("]\n")
 
 	return t.fs.WriteFile(t.typesPath, sb.String(), false)
-}
-
-func (t *typeTracer) Close() error {
-	return nil
 }
 
 // TypeDescriptor represents a type in the output JSON

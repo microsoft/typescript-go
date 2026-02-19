@@ -24,6 +24,31 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine) *tracing.Tracing {
+	traceDir := config.CompilerOptions().GenerateTrace
+	if traceDir == "" {
+		return nil
+	}
+	configFilePath := ""
+	if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
+		configFilePath = config.ConfigFile.SourceFile.FileName()
+	}
+	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath)
+	if err != nil {
+		fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
+	}
+	return tr
+}
+
+func stopTracing(sys tsc.System, tr *tracing.Tracing) {
+	if tr == nil {
+		return
+	}
+	if err := tr.StopTracing(); err != nil {
+		fmt.Fprintf(sys.Writer(), "Warning: Failed to stop tracing: %v\n", err)
+	}
+}
+
 func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
 		switch strings.ToLower(commandLineArgs[0]) {
@@ -269,20 +294,7 @@ func performIncrementalCompilation(
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
 
-	// Initialize tracing if generateTrace is set
-	var tr *tracing.Tracing
-	if traceDir := config.CompilerOptions().GenerateTrace; traceDir != "" {
-		var err error
-		configFilePath := ""
-		if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
-			configFilePath = config.ConfigFile.SourceFile.FileName()
-		}
-		tr, err = tracing.StartTracing(sys.FS(), traceDir, configFilePath)
-		if err != nil {
-			// Report warning but continue compilation
-			fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
-		}
-	}
+	tr := startTracingIfNeeded(sys, config)
 
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
@@ -306,12 +318,7 @@ func performIncrementalCompilation(
 		Testing:            testing,
 	})
 
-	// Stop tracing and write output files
-	if tr != nil {
-		if err := tr.StopTracing(); err != nil {
-			fmt.Fprintf(sys.Writer(), "Warning: Failed to stop tracing: %v\n", err)
-		}
-	}
+	stopTracing(sys, tr)
 
 	if testing != nil {
 		testing.OnProgram(incrementalProgram)
@@ -332,20 +339,7 @@ func performCompilation(
 ) tsc.CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 
-	// Initialize tracing if generateTrace is set
-	var tr *tracing.Tracing
-	if traceDir := config.CompilerOptions().GenerateTrace; traceDir != "" {
-		var err error
-		configFilePath := ""
-		if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
-			configFilePath = config.ConfigFile.SourceFile.FileName()
-		}
-		tr, err = tracing.StartTracing(sys.FS(), traceDir, configFilePath)
-		if err != nil {
-			// Report warning but continue compilation
-			fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
-		}
-	}
+	tr := startTracingIfNeeded(sys, config)
 
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
@@ -366,12 +360,7 @@ func performCompilation(
 		Testing:            testing,
 	})
 
-	// Stop tracing and write output files
-	if tr != nil {
-		if err := tr.StopTracing(); err != nil {
-			fmt.Fprintf(sys.Writer(), "Warning: Failed to stop tracing: %v\n", err)
-		}
-	}
+	stopTracing(sys, tr)
 
 	return tsc.CommandLineResult{
 		Status: result.Status,
