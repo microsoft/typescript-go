@@ -55,7 +55,7 @@
             "program": "${workspaceFolder}/internal/lsp",
             "args": [
                 "-test.run",
-                "TestReplay/$",
+                "TestReplay",
                 "-replay",
                 "path_to_replay_log.txt",
                 "-testDir",
