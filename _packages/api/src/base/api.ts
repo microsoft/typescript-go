@@ -242,6 +242,41 @@ export interface Checker<Async extends boolean> {
         location?: Node | DocumentPosition,
         excludeGlobals?: boolean,
     ): MaybeAsync<Async, Symbol<Async> | undefined>;
+
+    /**
+     * Get the contextual type for an expression node.
+     */
+    getContextualType(node: Node): MaybeAsync<Async, Type<Async> | undefined>;
+
+    /**
+     * Get the base type of a literal type (e.g. `number` for `42`).
+     */
+    getBaseTypeOfLiteralType(type: Type<Async>): MaybeAsync<Async, Type<Async> | undefined>;
+
+    /**
+     * Get the value symbol of a shorthand property assignment.
+     */
+    getShorthandAssignmentValueSymbol(node: Node): MaybeAsync<Async, Symbol<Async> | undefined>;
+
+    /**
+     * Get the narrowed type of a symbol at a specific location.
+     */
+    getTypeOfSymbolAtLocation(symbol: Symbol<Async>, location: Node): MaybeAsync<Async, Type<Async> | undefined>;
+
+    /**
+     * Intrinsic type getters.
+     */
+    getAnyType(): MaybeAsync<Async, Type<Async>>;
+    getStringType(): MaybeAsync<Async, Type<Async>>;
+    getNumberType(): MaybeAsync<Async, Type<Async>>;
+    getBooleanType(): MaybeAsync<Async, Type<Async>>;
+    getVoidType(): MaybeAsync<Async, Type<Async>>;
+    getUndefinedType(): MaybeAsync<Async, Type<Async>>;
+    getNullType(): MaybeAsync<Async, Type<Async>>;
+    getNeverType(): MaybeAsync<Async, Type<Async>>;
+    getUnknownType(): MaybeAsync<Async, Type<Async>>;
+    getBigIntType(): MaybeAsync<Async, Type<Async>>;
+    getESSymbolType(): MaybeAsync<Async, Type<Async>>;
 }
 
 export interface NodeHandle<Async extends boolean> {

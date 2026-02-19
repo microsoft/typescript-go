@@ -448,6 +448,43 @@ export class Checker implements BaseChecker<false> {
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
+
+    getContextualType(node: Node): Type | undefined {
+        const data = this.client.request("getContextualType", { snapshot: this.snapshotId, project: this.projectId, location: node.id });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    getBaseTypeOfLiteralType(type: Type): Type | undefined {
+        const data = this.client.request("getBaseTypeOfLiteralType", { snapshot: this.snapshotId, project: this.projectId, type: type.id });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined {
+        const data = this.client.request("getShorthandAssignmentValueSymbol", { snapshot: this.snapshotId, project: this.projectId, location: node.id });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Type | undefined {
+        const data = this.client.request("getTypeOfSymbolAtLocation", { snapshot: this.snapshotId, project: this.projectId, symbol: symbol.id, location: location.id });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    private getIntrinsicType(method: string): Type {
+        const data = this.client.request(method, { snapshot: this.snapshotId, project: this.projectId });
+        return this.objectRegistry.getOrCreateType(data);
+    }
+
+    getAnyType(): Type { return this.getIntrinsicType("getAnyType"); }
+    getStringType(): Type { return this.getIntrinsicType("getStringType"); }
+    getNumberType(): Type { return this.getIntrinsicType("getNumberType"); }
+    getBooleanType(): Type { return this.getIntrinsicType("getBooleanType"); }
+    getVoidType(): Type { return this.getIntrinsicType("getVoidType"); }
+    getUndefinedType(): Type { return this.getIntrinsicType("getUndefinedType"); }
+    getNullType(): Type { return this.getIntrinsicType("getNullType"); }
+    getNeverType(): Type { return this.getIntrinsicType("getNeverType"); }
+    getUnknownType(): Type { return this.getIntrinsicType("getUnknownType"); }
+    getBigIntType(): Type { return this.getIntrinsicType("getBigIntType"); }
+    getESSymbolType(): Type { return this.getIntrinsicType("getESSymbolType"); }
 }
 
 export class NodeHandle implements BaseNodeHandle<false> {

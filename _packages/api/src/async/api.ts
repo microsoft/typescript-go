@@ -516,6 +516,85 @@ export class Checker implements BaseChecker<true> {
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
+
+    async getContextualType(node: Node): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getContextualType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            location: node.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    async getBaseTypeOfLiteralType(type: Type): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getBaseTypeOfLiteralType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    async getShorthandAssignmentValueSymbol(node: Node): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            location: node.id,
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    async getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getTypeOfSymbolAtLocation", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+            location: location.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    private async getIntrinsicType(method: string): Promise<Type> {
+        const data = await this.client.apiRequest<TypeResponse>(method, {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return this.objectRegistry.getOrCreateType(data);
+    }
+
+    async getAnyType(): Promise<Type> {
+        return this.getIntrinsicType("getAnyType");
+    }
+    async getStringType(): Promise<Type> {
+        return this.getIntrinsicType("getStringType");
+    }
+    async getNumberType(): Promise<Type> {
+        return this.getIntrinsicType("getNumberType");
+    }
+    async getBooleanType(): Promise<Type> {
+        return this.getIntrinsicType("getBooleanType");
+    }
+    async getVoidType(): Promise<Type> {
+        return this.getIntrinsicType("getVoidType");
+    }
+    async getUndefinedType(): Promise<Type> {
+        return this.getIntrinsicType("getUndefinedType");
+    }
+    async getNullType(): Promise<Type> {
+        return this.getIntrinsicType("getNullType");
+    }
+    async getNeverType(): Promise<Type> {
+        return this.getIntrinsicType("getNeverType");
+    }
+    async getUnknownType(): Promise<Type> {
+        return this.getIntrinsicType("getUnknownType");
+    }
+    async getBigIntType(): Promise<Type> {
+        return this.getIntrinsicType("getBigIntType");
+    }
+    async getESSymbolType(): Promise<Type> {
+        return this.getIntrinsicType("getESSymbolType");
+    }
 }
 
 export class NodeHandle implements BaseNodeHandle<true> {

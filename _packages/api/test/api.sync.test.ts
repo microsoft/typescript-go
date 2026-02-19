@@ -17,8 +17,11 @@ import {
 } from "@typescript/api/sync";
 import {
     cast,
+    isCallExpression,
     isImportDeclaration,
     isNamedImports,
+    isReturnStatement,
+    isShorthandPropertyAssignment,
     isStringLiteral,
     isTemplateHead,
     isTemplateMiddle,
@@ -812,6 +815,287 @@ export const tuple: readonly [number, string?, ...boolean[]] = [1];
         const target = ref.getTarget();
         assert.ok(target);
         assert.ok(target.flags & TypeFlags.Object);
+        api.close();
+    });
+});
+
+describe("Checker - intrinsic type getters", () => {
+    const intrinsicFiles = {
+        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/src/main.ts": `export const x = 1;`,
+    };
+
+    test("getAnyType returns a type with Any flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getAnyType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Any);
+        api.close();
+    });
+
+    test("getStringType returns a type with String flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getStringType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.String);
+        api.close();
+    });
+
+    test("getNumberType returns a type with Number flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getNumberType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Number);
+        api.close();
+    });
+
+    test("getBooleanType returns a type with Boolean flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getBooleanType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Boolean);
+        api.close();
+    });
+
+    test("getVoidType returns a type with Void flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getVoidType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Void);
+        api.close();
+    });
+
+    test("getUndefinedType returns a type with Undefined flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getUndefinedType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Undefined);
+        api.close();
+    });
+
+    test("getNullType returns a type with Null flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getNullType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Null);
+        api.close();
+    });
+
+    test("getNeverType returns a type with Never flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getNeverType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Never);
+        api.close();
+    });
+
+    test("getUnknownType returns a type with Unknown flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getUnknownType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.Unknown);
+        api.close();
+    });
+
+    test("getBigIntType returns a type with BigInt flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getBigIntType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.BigInt);
+        api.close();
+    });
+
+    test("getESSymbolType returns a type with ESSymbol flag", () => {
+        const api = spawnAPI(intrinsicFiles);
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const type = project.checker.getESSymbolType();
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.ESSymbol);
+        api.close();
+    });
+});
+
+describe("Checker - getBaseTypeOfLiteralType", () => {
+    test("number literal widens to number", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const x = 42;`,
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const src = `export const x = 42;`;
+        const pos = src.indexOf("x =");
+        const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+        assert.ok(symbol);
+        const literalType = project.checker.getTypeOfSymbol(symbol);
+        assert.ok(literalType);
+        assert.ok(literalType.flags & TypeFlags.NumberLiteral);
+        const baseType = project.checker.getBaseTypeOfLiteralType(literalType);
+        assert.ok(baseType);
+        assert.ok(baseType.flags & TypeFlags.Number);
+        api.close();
+    });
+
+    test("string literal widens to string", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const s = "hello";`,
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const src = `export const s = "hello";`;
+        const pos = src.indexOf("s ");
+        const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+        assert.ok(symbol);
+        const literalType = project.checker.getTypeOfSymbol(symbol);
+        assert.ok(literalType);
+        assert.ok(literalType.flags & TypeFlags.StringLiteral);
+        const baseType = project.checker.getBaseTypeOfLiteralType(literalType);
+        assert.ok(baseType);
+        assert.ok(baseType.flags & TypeFlags.String);
+        api.close();
+    });
+});
+
+describe("Checker - getContextualType", () => {
+    test("contextual type from function parameter", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `
+function foo(x: number) {}
+foo(42);
+`,
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+
+        const sourceFile = project.program.getSourceFile("/src/main.ts");
+        assert.ok(sourceFile);
+
+        // Find the argument "42" in foo(42)
+        // statement[1] = foo(42); which is an ExpressionStatement -> CallExpression
+        const callStmt = sourceFile.statements[1];
+        assert.ok(callStmt);
+        let numLiteral: import("@typescript/ast").Node | undefined;
+        callStmt.forEachChild(function visit(node) {
+            if (isCallExpression(node)) {
+                // First argument
+                numLiteral = node.arguments[0];
+            }
+            node.forEachChild(visit);
+        });
+        assert.ok(numLiteral);
+        const contextualType = project.checker.getContextualType(numLiteral);
+        assert.ok(contextualType);
+        assert.ok(contextualType.flags & TypeFlags.Number);
+        api.close();
+    });
+});
+
+describe("Checker - getTypeOfSymbolAtLocation", () => {
+    test("narrowed type via typeof check", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `
+export function check(x: string | number) {
+    if (typeof x === "string") {
+        return x;
+    }
+    return x;
+}
+`,
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const src = `\nexport function check(x: string | number) {\n    if (typeof x === "string") {\n        return x;\n    }\n    return x;\n}\n`;
+
+        // Get the symbol for parameter "x"
+        const paramPos = src.indexOf("x:");
+        const symbol = project.checker.getSymbolAtPosition("/src/main.ts", paramPos);
+        assert.ok(symbol);
+        assert.equal(symbol.name, "x");
+
+        // Get the type of "x" at the wider function scope — should be string | number
+        const wideType = project.checker.getTypeOfSymbol(symbol);
+        assert.ok(wideType);
+        assert.ok(wideType.flags & TypeFlags.Union, `Expected union type, got flags ${wideType.flags}`);
+
+        // Get the narrowed return x inside the if block
+        const sourceFile = project.program.getSourceFile("/src/main.ts");
+        assert.ok(sourceFile);
+
+        // statement[0] is the function declaration
+        const funcDecl = sourceFile.statements[0];
+        assert.ok(funcDecl);
+        // Walk to find the first "return x" — inside the if, x should be narrowed to string
+        let firstReturnX: import("@typescript/ast").Node | undefined;
+        funcDecl.forEachChild(function visit(node) {
+            if (isReturnStatement(node) && !firstReturnX) {
+                // The expression of the return statement is the identifier "x"
+                if (node.expression) {
+                    firstReturnX = node.expression;
+                }
+            }
+            node.forEachChild(visit);
+        });
+        assert.ok(firstReturnX);
+        const narrowedType = project.checker.getTypeOfSymbolAtLocation(symbol, firstReturnX);
+        assert.ok(narrowedType);
+        // Inside the if (typeof x === "string") branch, x should be narrowed to string
+        assert.ok(narrowedType.flags & TypeFlags.String, `Expected string type, got flags ${narrowedType.flags}`);
+        api.close();
+    });
+});
+
+describe("Checker - getShorthandAssignmentValueSymbol", () => {
+    test("shorthand property symbol resolves to variable", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `
+const name = "Alice";
+export const obj = { name };
+`,
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+
+        const sourceFile = project.program.getSourceFile("/src/main.ts");
+        assert.ok(sourceFile);
+
+        // Find the shorthand property assignment { name }
+        // statement[1] = export const obj = { name };
+        let shorthandNode: import("@typescript/ast").Node | undefined;
+        sourceFile.forEachChild(function visit(node) {
+            if (isShorthandPropertyAssignment(node)) {
+                shorthandNode = node;
+            }
+            node.forEachChild(visit);
+        });
+        assert.ok(shorthandNode, "Should find a shorthand property assignment");
+        const valueSymbol = project.checker.getShorthandAssignmentValueSymbol(shorthandNode);
+        assert.ok(valueSymbol);
+        assert.equal(valueSymbol.name, "name");
         api.close();
     });
 });

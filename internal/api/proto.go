@@ -126,6 +126,25 @@ const (
 	MethodGetExtendsTypeOfType         Method = "getExtendsTypeOfType"
 	MethodGetBaseTypeOfType            Method = "getBaseTypeOfType"
 	MethodGetConstraintOfType          Method = "getConstraintOfType"
+
+	// Checker methods
+	MethodGetContextualType                 Method = "getContextualType"
+	MethodGetBaseTypeOfLiteralType          Method = "getBaseTypeOfLiteralType"
+	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
+	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
+
+	// Intrinsic type getters
+	MethodGetAnyType       Method = "getAnyType"
+	MethodGetStringType    Method = "getStringType"
+	MethodGetNumberType    Method = "getNumberType"
+	MethodGetBooleanType   Method = "getBooleanType"
+	MethodGetVoidType      Method = "getVoidType"
+	MethodGetUndefinedType Method = "getUndefinedType"
+	MethodGetNullType      Method = "getNullType"
+	MethodGetNeverType     Method = "getNeverType"
+	MethodGetUnknownType   Method = "getUnknownType"
+	MethodGetBigIntType    Method = "getBigIntType"
+	MethodGetESSymbolType  Method = "getESSymbolType"
 )
 
 // InitializeResponse is returned by the initialize method.
@@ -290,17 +309,32 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypeAtPosition:        unmarshallerFor[GetTypeAtPositionParams],
 	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
 
-	MethodGetTargetOfType:              unmarshallerFor[GetTypePropertyParams],
-	MethodGetTypesOfType:               unmarshallerFor[GetTypePropertyParams],
-	MethodGetTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
-	MethodGetOuterTypeParametersOfType: unmarshallerFor[GetTypePropertyParams],
-	MethodGetLocalTypeParametersOfType: unmarshallerFor[GetTypePropertyParams],
-	MethodGetObjectTypeOfType:          unmarshallerFor[GetTypePropertyParams],
-	MethodGetIndexTypeOfType:           unmarshallerFor[GetTypePropertyParams],
-	MethodGetCheckTypeOfType:           unmarshallerFor[GetTypePropertyParams],
-	MethodGetExtendsTypeOfType:         unmarshallerFor[GetTypePropertyParams],
-	MethodGetBaseTypeOfType:            unmarshallerFor[GetTypePropertyParams],
-	MethodGetConstraintOfType:          unmarshallerFor[GetTypePropertyParams],
+	MethodGetTargetOfType:                   unmarshallerFor[GetTypePropertyParams],
+	MethodGetTypesOfType:                    unmarshallerFor[GetTypePropertyParams],
+	MethodGetTypeParametersOfType:           unmarshallerFor[GetTypePropertyParams],
+	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
+	MethodGetLocalTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
+	MethodGetObjectTypeOfType:               unmarshallerFor[GetTypePropertyParams],
+	MethodGetIndexTypeOfType:                unmarshallerFor[GetTypePropertyParams],
+	MethodGetCheckTypeOfType:                unmarshallerFor[GetTypePropertyParams],
+	MethodGetExtendsTypeOfType:              unmarshallerFor[GetTypePropertyParams],
+	MethodGetBaseTypeOfType:                 unmarshallerFor[GetTypePropertyParams],
+	MethodGetConstraintOfType:               unmarshallerFor[GetTypePropertyParams],
+	MethodGetContextualType:                 unmarshallerFor[GetContextualTypeParams],
+	MethodGetBaseTypeOfLiteralType:          unmarshallerFor[GetBaseTypeOfLiteralTypeParams],
+	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
+	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
+	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetNumberType:                     unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetBooleanType:                    unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetVoidType:                       unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetUndefinedType:                  unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetNullType:                       unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetNeverType:                      unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetUnknownType:                    unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetBigIntType:                     unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetESSymbolType:                   unmarshallerFor[GetIntrinsicTypeParams],
 }
 
 type ParseConfigFileParams struct {
@@ -591,6 +625,34 @@ type GetSymbolOfTypeParams struct {
 // GetTypePropertyParams is used for all type sub-property endpoints.
 type GetTypePropertyParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
+// GetContextualTypeParams returns the contextual type for a node.
+type GetContextualTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Location Handle[ast.Node]         `json:"location"`
+}
+
+// GetTypeOfSymbolAtLocationParams returns the narrowed type of a symbol at a specific location.
+type GetTypeOfSymbolAtLocationParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Location Handle[ast.Node]         `json:"location"`
+}
+
+// GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).
+type GetIntrinsicTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+}
+
+// GetBaseTypeOfLiteralTypeParams returns the base type of a literal type.
+type GetBaseTypeOfLiteralTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
 	Type     Handle[checker.Type]     `json:"type"`
 }
 

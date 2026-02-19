@@ -337,6 +337,36 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetBaseTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetConstraintOfType):
 		return s.handleGetConstraintOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetContextualType):
+		return s.handleGetContextualType(ctx, parsed.(*GetContextualTypeParams))
+	case string(MethodGetBaseTypeOfLiteralType):
+		return s.handleGetBaseTypeOfLiteralType(ctx, parsed.(*GetBaseTypeOfLiteralTypeParams))
+	case string(MethodGetShorthandAssignmentValueSymbol):
+		return s.handleGetShorthandAssignmentValueSymbol(ctx, parsed.(*GetTypeAtLocationParams))
+	case string(MethodGetTypeOfSymbolAtLocation):
+		return s.handleGetTypeOfSymbolAtLocation(ctx, parsed.(*GetTypeOfSymbolAtLocationParams))
+	case string(MethodGetAnyType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetAnyType)
+	case string(MethodGetStringType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetStringType)
+	case string(MethodGetNumberType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetNumberType)
+	case string(MethodGetBooleanType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetBooleanType)
+	case string(MethodGetVoidType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetVoidType)
+	case string(MethodGetUndefinedType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetUndefinedType)
+	case string(MethodGetNullType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetNullType)
+	case string(MethodGetNeverType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetNeverType)
+	case string(MethodGetUnknownType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetUnknownType)
+	case string(MethodGetBigIntType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetBigIntType)
+	case string(MethodGetESSymbolType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetESSymbolType)
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -1167,6 +1197,158 @@ func (s *Session) handleGetConstraintOfType(_ context.Context, params *GetTypePr
 	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
 		return t.AsSubstitutionType().SubstConstraint()
 	})
+}
+
+// handleGetContextualType returns the contextual type for a node.
+func (s *Session) handleGetContextualType(ctx context.Context, params *GetContextualTypeParams) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := s.resolveNodeHandle(program, params.Location)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	t := c.GetContextualType(node, checker.ContextFlagsNone)
+	if t == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(t), nil
+}
+
+// handleGetBaseTypeOfLiteralType returns the base type of a literal type (e.g. number for 42).
+func (s *Session) handleGetBaseTypeOfLiteralType(ctx context.Context, params *GetBaseTypeOfLiteralTypeParams) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	result := c.GetBaseTypeOfLiteralType(t)
+	if result == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(result), nil
+}
+
+// handleGetShorthandAssignmentValueSymbol returns the value symbol of a shorthand property assignment.
+func (s *Session) handleGetShorthandAssignmentValueSymbol(ctx context.Context, params *GetTypeAtLocationParams) (*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := s.resolveNodeHandle(program, params.Location)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	symbol := c.GetShorthandAssignmentValueSymbol(node)
+	if symbol == nil {
+		return nil, nil
+	}
+
+	return sd.registerSymbol(symbol), nil
+}
+
+// handleGetTypeOfSymbolAtLocation returns the narrowed type of a symbol at a specific location.
+func (s *Session) handleGetTypeOfSymbolAtLocation(ctx context.Context, params *GetTypeOfSymbolAtLocationParams) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+	if symbol == nil {
+		return nil, nil
+	}
+
+	node, err := s.resolveNodeHandle(program, params.Location)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	t := c.GetTypeOfSymbolAtLocation(symbol, node)
+	if t == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(t), nil
+}
+
+// handleGetIntrinsicType returns an intrinsic type (any, string, number, etc.).
+func (s *Session) handleGetIntrinsicType(ctx context.Context, params *GetIntrinsicTypeParams, getter func(*checker.Checker) *checker.Type) (*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	t := getter(c)
+	if t == nil {
+		return nil, nil
+	}
+
+	return sd.registerType(t), nil
 }
 
 // resolveNodeHandle resolves a node handle to an AST node.
