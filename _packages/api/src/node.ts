@@ -192,7 +192,7 @@ export class RemoteNodeBase {
     protected view: DataView;
     protected decoder: TextDecoder;
     protected index: number;
-    /** Keys are positions */
+    /** Keys are indexes */
     protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
@@ -267,7 +267,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     protected view: DataView;
     protected decoder: TextDecoder;
     protected index: number;
-    /** Keys are positions */
+    /** Keys are indexes */
     protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     get pos(): number {
