@@ -383,7 +383,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        let child = this.sourceFile.nodes[index]
+        let child = this.sourceFile.nodes[index];
         if (!child) {
             const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             if (kind === KIND_NODE_LIST) {
@@ -461,13 +461,13 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        let child = this.sourceFile.nodes[index]
+        let child = this.sourceFile.nodes[index];
         if (!child) {
             const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             child = kind === KIND_NODE_LIST
                 ? new RemoteNodeList(this.view, this.decoder, index, this, this.sourceFile)
                 : new RemoteNode(this.view, this.decoder, index, this, this.sourceFile);
-            this.sourceFile.nodes[index] = child
+            this.sourceFile.nodes[index] = child;
         }
         return child;
     }

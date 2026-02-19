@@ -89,14 +89,14 @@ export async function runBenchmarks(singleIteration?: boolean) {
         .add("materialize program.ts", async () => {
             const { view, decoder } = file as unknown as RemoteSourceFile;
             new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
-              node.forEachChild(visit)
-            })
+                node.forEachChild(visit);
+            });
         }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", async () => {
             const { view, decoder } = file as unknown as RemoteSourceFile;
             new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
-              node.forEachChild(visit)
-            })
+                node.forEachChild(visit);
+            });
         }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", async () => {
             await project.checker.getSymbolAtPosition("program.ts", 8895);
