@@ -202,19 +202,21 @@ func (t *typeTracer) Close() error {
 
 // TypeDescriptor represents a type in the output JSON
 type TypeDescriptor struct {
-	ID                          uint32    `json:"id"`
-	IntrinsicName               string    `json:"intrinsicName,omitzero"`
-	SymbolName                  string    `json:"symbolName,omitzero"`
-	RecursionID                 *int      `json:"recursionId,omitzero"`
-	IsTuple                     bool      `json:"isTuple,omitzero"`
-	UnionTypes                  []uint32  `json:"unionTypes,omitzero"`
-	IntersectionTypes           []uint32  `json:"intersectionTypes,omitzero"`
-	AliasTypeArguments          []uint32  `json:"aliasTypeArguments,omitzero"`
-	KeyofType                   *uint32   `json:"keyofType,omitzero"`
-	IndexedAccessObjectType     *uint32   `json:"indexedAccessObjectType,omitzero"`
-	IndexedAccessIndexType      *uint32   `json:"indexedAccessIndexType,omitzero"`
-	ConditionalCheckType        *uint32   `json:"conditionalCheckType,omitzero"`
-	ConditionalExtendsType      *uint32   `json:"conditionalExtendsType,omitzero"`
+	ID                      uint32   `json:"id"`
+	IntrinsicName           string   `json:"intrinsicName,omitzero"`
+	SymbolName              string   `json:"symbolName,omitzero"`
+	RecursionID             *int     `json:"recursionId,omitzero"`
+	IsTuple                 bool     `json:"isTuple,omitzero"`
+	UnionTypes              []uint32 `json:"unionTypes,omitzero"`
+	IntersectionTypes       []uint32 `json:"intersectionTypes,omitzero"`
+	AliasTypeArguments      []uint32 `json:"aliasTypeArguments,omitzero"`
+	KeyofType               *uint32  `json:"keyofType,omitzero"`
+	IndexedAccessObjectType *uint32  `json:"indexedAccessObjectType,omitzero"`
+	IndexedAccessIndexType  *uint32  `json:"indexedAccessIndexType,omitzero"`
+	ConditionalCheckType    *uint32  `json:"conditionalCheckType,omitzero"`
+	ConditionalExtendsType  *uint32  `json:"conditionalExtendsType,omitzero"`
+	// ConditionalTrueType and ConditionalFalseType are *int32 (not *uint32) because
+	// unresolved conditional branches are serialized as -1, matching TypeScript's behavior.
 	ConditionalTrueType         *int32    `json:"conditionalTrueType,omitzero"`
 	ConditionalFalseType        *int32    `json:"conditionalFalseType,omitzero"`
 	SubstitutionBaseType        *uint32   `json:"substitutionBaseType,omitzero"`
