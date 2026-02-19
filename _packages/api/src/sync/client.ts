@@ -46,6 +46,12 @@ export class Client {
                 const callback = options.fs[name]!;
                 channel.registerCallback(name, (_, arg) => {
                     const result = callback(JSON.parse(arg));
+                    if (name === "readFile") {
+                        // readFile has 3 returns: string (content), null (not found), undefined (fall back).
+                        // Wrap in object to preserve null vs undefined distinction.
+                        if (result === undefined) return "";
+                        return JSON.stringify({ content: result });
+                    }
                     return JSON.stringify(result) ?? "";
                 });
             }

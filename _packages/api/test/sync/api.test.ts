@@ -1392,6 +1392,62 @@ export const obj = { name };
     });
 });
 
+describe("readFile callback semantics", () => {
+    test("readFile: string returns content, null blocks fallback, undefined falls through to real FS", () => {
+        const virtualFiles: Record<string, string> = {
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x: number = 1;`,
+        };
+        const vfs = createVirtualFileSystem(virtualFiles);
+        const blockedPath = "/src/blocked.ts";
+
+        const fs: FileSystem = {
+            ...vfs,
+            readFile: (fileName: string) => {
+                if (fileName === blockedPath) {
+                    // null = file not found, don't fall back to real FS
+                    return null;
+                }
+                // Try the VFS first; if it has the file, return its content (string).
+                // Otherwise return undefined to fall through to the real FS.
+                return vfs.readFile!(fileName);
+            },
+        };
+
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+            fs,
+        });
+
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            // 1. String content: virtual file is found
+            const sf = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sf, "Virtual file should be found");
+            assert.equal(sf.text, virtualFiles["/src/index.ts"]);
+
+            // 2. undefined fallback: lib files from the real FS should be present.
+            //    If readFile returned null for unknowns, lib files would be missing
+            //    and `number` would not resolve — this was the original async bug.
+            //    Verify by checking that `number` resolves to a proper type (not error).
+            const pos = virtualFiles["/src/index.ts"].indexOf("x:");
+            const type = project.checker.getTypeAtPosition("/src/index.ts", pos);
+            assert.ok(type, "Type should resolve");
+            assert.ok(type.flags & TypeFlags.Number, `Expected number type, got flags ${type.flags}`);
+
+            // 3. null blocks fallback: blocked file should not be found
+            const blockedSf = project.program.getSourceFile(blockedPath);
+            assert.equal(blockedSf, undefined, "Blocked file should not be found (null prevents fallback)");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 test("Benchmarks", () => {
     runBenchmarks(/*singleIteration*/ true);
 });

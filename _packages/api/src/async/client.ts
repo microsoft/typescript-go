@@ -119,7 +119,14 @@ export class Client {
             if (callback) {
                 const requestType = new RequestType<unknown, unknown, void>(name);
                 connection.onRequest(requestType, (arg: unknown) => {
-                    return callback(arg as any) ?? null;
+                    const result = callback(arg as any);
+                    if (name === "readFile") {
+                        // readFile has 3 returns: string (content), null (not found), undefined (fall back).
+                        // JSON-RPC can't distinguish null from undefined, so wrap in object.
+                        if (result === undefined) return null;
+                        return { content: result };
+                    }
+                    return result ?? null;
                 });
             }
         }

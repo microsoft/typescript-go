@@ -96,6 +96,11 @@ func (fs *callbackFS) UseCaseSensitiveFileNames() bool {
 }
 
 // ReadFile implements vfs.FS.
+//
+// The readFile callback uses a wrapped response format to distinguish three states:
+//   - undefined (fall back to real FS): null or empty on wire
+//   - null (not found, no fallback): {"content": null}
+//   - string content: {"content": "..."}
 func (fs *callbackFS) ReadFile(path string) (contents string, ok bool) {
 	if fs.isEnabled(callbackReadFile) {
 		result, err := fs.call(callbackReadFile, path)
@@ -103,11 +108,16 @@ func (fs *callbackFS) ReadFile(path string) (contents string, ok bool) {
 			panic(err)
 		}
 		if len(result) > 0 && string(result) != "null" {
-			var content string
-			if err := json.Unmarshal(result, &content); err != nil {
+			var wrapper struct {
+				Content *string `json:"content"`
+			}
+			if err := json.Unmarshal(result, &wrapper); err != nil {
 				panic(err)
 			}
-			return content, true
+			if wrapper.Content == nil {
+				return "", false
+			}
+			return *wrapper.Content, true
 		}
 	}
 	return fs.base.ReadFile(path)
