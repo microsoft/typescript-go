@@ -1,7 +1,11 @@
-import {
-    type FileSystem,
-    type FileSystemEntries,
-} from "@typescript/api/fs";
+//
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !!! THIS FILE IS AUTO-GENERATED — DO NOT EDIT !!!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+// Source: test/async/api.bench.ts
+// Regenerate: npm run generate (from _packages/api)
+//
 import {
     API,
     type Project,
@@ -12,20 +16,20 @@ import {
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
-import fs, { existsSync } from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Bench } from "tinybench";
 import ts from "typescript";
-import { RemoteSourceFile } from "../src/node.ts";
+import { RemoteSourceFile } from "../../src/node.ts";
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
-    await runBenchmarks();
+    runBenchmarks();
 }
 
-export async function runBenchmarks(singleIteration?: boolean) {
-    const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
+export function runBenchmarks(singleIteration?: boolean) {
+    const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
         console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
         return;
@@ -35,11 +39,9 @@ export async function runBenchmarks(singleIteration?: boolean) {
         name: "Sync API",
         teardown,
         // Reduce iterations from the default 64 to 10.  Slow tasks
-        // (e.g. getSymbolAtLocation over 10k ids at ~450ms each) are
-        // dominated by the iteration minimum, not the time limit.
+        // are dominated by the iteration minimum, not the time limit.
         // 10 iterations still gives stable medians while cutting total
-        // bench time by ~5x.  Fast tasks are unaffected because the
-        // time-based limit (1000ms) gives them 50k+ samples anyway.
+        // bench time by ~5x.
         iterations: 10,
         warmupIterations: 4,
         ...singleIteration ? {
@@ -71,33 +73,13 @@ export async function runBenchmarks(singleIteration?: boolean) {
         return count;
     })();
 
-    const SMALL_STRING = "ping";
-    const LARGE_STRING = "a".repeat(1_000_000);
-    const SMALL_UINT8_ARRAY = new Uint8Array([1, 2, 3, 4]);
-    const LARGE_UINT8_ARRAY = new Uint8Array(1_000_000);
-
     bench
         .add("spawn API", () => {
             spawnAPI();
         })
-        .add("echo (small string)", () => {
-            api.echo(SMALL_STRING);
-        }, { beforeAll: spawnAPI })
-        .add("echo (large string)", () => {
-            api.echo(LARGE_STRING);
-        }, { beforeAll: spawnAPI })
-        .add("echo (small Uint8Array)", () => {
-            api.echoBinary(SMALL_UINT8_ARRAY);
-        }, { beforeAll: spawnAPI })
-        .add("echo (large Uint8Array)", () => {
-            api.echoBinary(LARGE_UINT8_ARRAY);
-        }, { beforeAll: spawnAPI })
         .add("load snapshot", () => {
             loadSnapshot();
         }, { beforeAll: spawnAPI })
-        .add("load snapshot (client FS)", () => {
-            loadSnapshot();
-        }, { beforeAll: spawnAPIHosted })
         .add("TS - load project", () => {
             tsCreateProgram();
         })
@@ -132,39 +114,21 @@ export async function runBenchmarks(singleIteration?: boolean) {
             );
         }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers`, () => {
-            file.forEachChild(function visit(node) {
-                if (node.kind === SyntaxKind.Identifier) {
-                    project.checker.getSymbolAtPosition("program.ts", node.pos);
-                }
-                node.forEachChild(visit);
-            });
+            for (const node of collectIdentifiers(file)) {
+                project.checker.getSymbolAtPosition("program.ts", node.pos);
+            }
         }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers (batched)`, () => {
-            const positions: number[] = [];
-            file.forEachChild(function visit(node) {
-                if (node.kind === SyntaxKind.Identifier) {
-                    positions.push(node.pos);
-                }
-                node.forEachChild(visit);
-            });
+            const positions = collectIdentifiers(file).map(node => node.pos);
             project.checker.getSymbolAtPosition("program.ts", positions);
         }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
-            file.forEachChild(function visit(node) {
-                if (node.kind === SyntaxKind.Identifier) {
-                    project.checker.getSymbolAtLocation(node);
-                }
-                node.forEachChild(visit);
-            });
+            for (const node of collectIdentifiers(file)) {
+                project.checker.getSymbolAtLocation(node);
+            }
         }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers (batched)`, () => {
-            const nodes: Node[] = [];
-            file.forEachChild(function visit(node) {
-                if (node.kind === SyntaxKind.Identifier) {
-                    nodes.push(node);
-                }
-                node.forEachChild(visit);
-            });
+            const nodes = collectIdentifiers(file);
             project.checker.getSymbolAtLocation(nodes);
         }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
@@ -177,21 +141,24 @@ export async function runBenchmarks(singleIteration?: boolean) {
             });
         }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) });
 
-    await bench.run();
+    bench.runSync();
     console.table(bench.table());
+
+    function collectIdentifiers(sourceFile: SourceFile): Node[] {
+        const nodes: Node[] = [];
+        sourceFile.forEachChild(function visit(node) {
+            if (node.kind === SyntaxKind.Identifier) {
+                nodes.push(node);
+            }
+            node.forEachChild(visit);
+        });
+        return nodes;
+    }
 
     function spawnAPI() {
         api = new API({
             cwd: repoRoot,
-            tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
-        });
-    }
-
-    function spawnAPIHosted() {
-        api = new API({
-            cwd: repoRoot,
-            tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
-            fs: createNodeFileSystem(),
+            tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         });
     }
 
@@ -201,7 +168,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     }
 
     function tsCreateProgram() {
-        const configFileName = fileURLToPath(new URL("../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).toString());
+        const configFileName = fileURLToPath(new URL("../../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).toString());
         const configFile = ts.readConfigFile(configFileName, ts.sys.readFile);
         const parsedCommandLine = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(configFileName));
         const host = ts.createCompilerHost(parsedCommandLine.options);
@@ -223,19 +190,19 @@ export async function runBenchmarks(singleIteration?: boolean) {
     }
 
     function getDebugTS() {
-        file = project.program.getSourceFile("debug.ts")!;
+        file = (project.program.getSourceFile("debug.ts"))!;
     }
 
     function getProgramTS() {
-        file = project.program.getSourceFile("program.ts")!;
+        file = (project.program.getSourceFile("program.ts"))!;
     }
 
     function tsGetProgramTS() {
-        tsFile = tsProgram.getSourceFile(fileURLToPath(new URL("../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).toString()))!;
+        tsFile = tsProgram.getSourceFile(fileURLToPath(new URL("../../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).toString()))!;
     }
 
     function getCheckerTS() {
-        file = project.program.getSourceFile("checker.ts")!;
+        file = (project.program.getSourceFile("checker.ts"))!;
     }
 
     function teardown() {
@@ -248,71 +215,11 @@ export async function runBenchmarks(singleIteration?: boolean) {
         tsFile = undefined!;
     }
 
-    function all(...fns: (() => void)[]) {
+    function all(...fns: (() => void | void)[]) {
         return () => {
             for (const fn of fns) {
                 fn();
             }
-        };
-    }
-
-    function createNodeFileSystem(): FileSystem {
-        return {
-            directoryExists: directoryName => {
-                try {
-                    return fs.statSync(directoryName).isDirectory();
-                }
-                catch {
-                    return false;
-                }
-            },
-            fileExists: fileName => {
-                try {
-                    return fs.statSync(fileName).isFile();
-                }
-                catch {
-                    return false;
-                }
-            },
-            readFile: fileName => {
-                try {
-                    return fs.readFileSync(fileName, "utf8");
-                }
-                catch {
-                    return undefined;
-                }
-            },
-            getAccessibleEntries: dirName => {
-                const entries: FileSystemEntries = {
-                    files: [],
-                    directories: [],
-                };
-                for (const entry of fs.readdirSync(dirName, { withFileTypes: true })) {
-                    if (entry.isFile()) {
-                        entries.files.push(entry.name);
-                    }
-                    else if (entry.isDirectory()) {
-                        entries.directories.push(entry.name);
-                    }
-                    else if (entry.isSymbolicLink()) {
-                        const fullName = path.join(dirName, entry.name);
-                        try {
-                            const stat = fs.statSync(fullName);
-                            if (stat.isFile()) {
-                                entries.files.push(entry.name);
-                            }
-                            else if (stat.isDirectory()) {
-                                entries.directories.push(entry.name);
-                            }
-                        }
-                        catch {
-                            // Ignore errors
-                        }
-                    }
-                }
-                return entries;
-            },
-            realpath: fs.realpathSync,
         };
     }
 }
