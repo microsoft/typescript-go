@@ -668,7 +668,6 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 func (f *NodeFactory) NewAwaiterHelper(
 	hasLexicalThis bool,
 	argumentsExpression *ast.Expression,
-	promiseConstructor *ast.Expression,
 	parameters *ast.NodeList,
 	body *ast.BlockNode,
 ) *ast.Expression {
@@ -709,13 +708,6 @@ func (f *NodeFactory) NewAwaiterHelper(
 		argsArg = f.NewVoidZeroExpression()
 	}
 
-	var promiseArg *ast.Expression
-	if promiseConstructor != nil {
-		promiseArg = f.CreateExpressionFromEntityName(promiseConstructor)
-	} else {
-		promiseArg = f.NewVoidZeroExpression()
-	}
-
 	return f.NewCallExpression(
 		f.NewUnscopedHelperName("__awaiter"),
 		nil, /*questionDotToken*/
@@ -723,7 +715,7 @@ func (f *NodeFactory) NewAwaiterHelper(
 		f.NewNodeList([]*ast.Expression{
 			thisArg,
 			argsArg,
-			promiseArg,
+			f.NewVoidZeroExpression(),
 			generatorFunc,
 		}),
 		ast.NodeFlagsNone,

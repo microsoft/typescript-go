@@ -22,7 +22,6 @@ const (
 type asyncTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
-	languageVersion core.ScriptTarget
 	emitResolver    printer.EmitResolver
 
 	contextFlags contextFlags
@@ -380,7 +379,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
 	// This step isn't needed if we eventually transform this to ES5.
 	// !!! super property access/assignment check flags not yet available on resolver
-	// emitSuperHelpers := tx.languageVersion >= core.ScriptTargetES2015 &&
+	// emitSuperHelpers :=
 	// 	tx.emitResolver != nil &&
 	// 	(resolver.hasNodeCheckFlag(node, NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync) ||
 	// 	 resolver.hasNodeCheckFlag(node, NodeCheckFlagsMethodWithSuperPropertyAccessInAsync)) &&
@@ -438,10 +437,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	}
 	tx.EmitContext().StartVariableEnvironment()
 
-	promiseConstructor := (*ast.Expression)(nil)
-	if tx.languageVersion < core.ScriptTargetES2015 {
-		promiseConstructor = tx.getPromiseConstructor(node)
-	}
 	isArrow := node.Kind == ast.KindArrowFunction
 	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
 	captureLexicalArguments := tx.lexicalArgumentsBinding == nil
@@ -509,7 +504,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 			tx.Factory().NewAwaiterHelper(
 				hasLexicalThis,
 				argumentsExpression,
-				promiseConstructor,
 				innerParameters,
 				asyncBody,
 			),
@@ -534,7 +528,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		result = tx.Factory().NewAwaiterHelper(
 			hasLexicalThis,
 			argumentsExpression,
-			promiseConstructor,
 			innerParameters,
 			asyncBody,
 		)
@@ -573,28 +566,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *as
 	block := tx.Factory().NewBlock(list, false /*multiLine*/)
 	block.Loc = body.Loc
 	return block
-}
-
-func (tx *asyncTransformer) getPromiseConstructor(node *ast.Node) *ast.Expression {
-	original := tx.getOriginalIfFunctionLike(node)
-	if original == nil {
-		return nil
-	}
-	nodeType := original.Type()
-	if nodeType == nil {
-		return nil
-	}
-	typeName := getEntityNameFromTypeNode(nodeType)
-	if typeName != nil && ast.IsEntityName(typeName) {
-		if tx.emitResolver != nil {
-			serializationKind := tx.emitResolver.GetTypeReferenceSerializationKind(typeName, nil)
-			if serializationKind == printer.TypeReferenceSerializationKindTypeWithConstructSignatureAndValue ||
-				serializationKind == printer.TypeReferenceSerializationKindUnknown {
-				return typeName
-			}
-		}
-	}
-	return nil
 }
 
 func (tx *asyncTransformer) createCaptureArgumentsStatement() *ast.Node {
@@ -901,22 +872,9 @@ func isNodeWithPossibleHoistedDeclaration(node *ast.Node) bool {
 	return false
 }
 
-// getEntityNameFromTypeNode extracts the entity name from a type node.
-func getEntityNameFromTypeNode(node *ast.Node) *ast.Node {
-	if node == nil {
-		return nil
-	}
-	switch node.Kind {
-	case ast.KindTypeReference:
-		return node.AsTypeReferenceNode().TypeName
-	}
-	return nil
-}
-
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &asyncTransformer{
 		compilerOptions: opts.CompilerOptions,
-		languageVersion: opts.CompilerOptions.GetEmitScriptTarget(),
 	}
 	if opts.EmitResolver != nil {
 		tx.emitResolver = opts.EmitResolver
