@@ -40,7 +40,7 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 		// ES2017 async modifier should be elided for targets < ES2017
 		return nil
 	}
-	if node.SubtreeFacts()&(ast.SubtreeContainsES2017|ast.SubtreeContainsAwait) == 0 {
+	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
 		if tx.lexicalArgumentsBinding != nil {
 			return tx.argumentsVisitor(node)
 		}
