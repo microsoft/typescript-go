@@ -1,3 +1,4 @@
+/3.cjs(1,8): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 /5.cjs(2,8): error TS1192: Module '"/3"' has no default export.
 
 
@@ -7,8 +8,10 @@
 ==== /2.cjs (0 errors) ====
     exports.foo = 0;
     
-==== /3.cjs (0 errors) ====
+==== /3.cjs (1 errors) ====
     import "foo";
+           ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     exports.foo = {};
     
 ==== /4.cjs (0 errors) ====

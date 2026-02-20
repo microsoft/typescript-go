@@ -3,18 +3,20 @@
 @@= skipped -0, +0 lines =@@
 -/3.cjs(1,8): error TS2882: Cannot find module or type declarations for side-effect import of 'foo'.
 -/3.cjs(2,1): error TS2304: Cannot find name 'exports'.
++/3.cjs(1,8): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
  /5.cjs(2,8): error TS1192: Module '"/3"' has no default export.
 
 
-@@= skipped -8, +6 lines =@@
+@@= skipped -8, +7 lines =@@
  ==== /2.cjs (0 errors) ====
      exports.foo = 0;
      
 -==== /3.cjs (2 errors) ====
-+==== /3.cjs (0 errors) ====
++==== /3.cjs (1 errors) ====
      import "foo";
--           ~~~~~
+            ~~~~~
 -!!! error TS2882: Cannot find module or type declarations for side-effect import of 'foo'.
++!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
      exports.foo = {};
 -    ~~~~~~~
 -!!! error TS2304: Cannot find name 'exports'.

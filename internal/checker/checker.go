@@ -5165,7 +5165,7 @@ func (c *Checker) checkImportDeclaration(node *ast.Node) {
 				!hasTypeJsonImportAttribute(node) {
 				c.error(moduleSpecifier, diagnostics.Importing_a_JSON_file_into_an_ECMAScript_module_requires_a_type_Colon_json_import_attribute_when_module_is_set_to_0, c.moduleKind.String())
 			}
-		} else if c.compilerOptions.NoUncheckedSideEffectImports.IsTrue() && importClause == nil {
+		} else if c.compilerOptions.NoUncheckedSideEffectImports.IsTrueOrUnknown() && importClause == nil {
 			c.resolveExternalModuleName(node, moduleSpecifier, false)
 		}
 	}

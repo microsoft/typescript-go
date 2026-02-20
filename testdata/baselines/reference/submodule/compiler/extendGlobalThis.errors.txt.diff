@@ -2,23 +2,16 @@
 +++ new.extendGlobalThis.errors.txt
 @@= skipped -0, +0 lines =@@
 -index.ts(1,8): error TS2882: Cannot find module or type declarations for side-effect import of './extention'.
--
--
--==== extension.d.ts (0 errors) ====
--    declare global {
--        namespace globalThis  {
--            var test: string;
--        }
--    }
--    
--    export {}
--    
--==== index.ts (1 errors) ====
--    import "./extention";
--           ~~~~~~~~~~~~~
++index.ts(1,8): error TS2307: Cannot find module './extention' or its corresponding type declarations.
+
+
+ ==== extension.d.ts (0 errors) ====
+@@= skipped -12, +12 lines =@@
+ ==== index.ts (1 errors) ====
+     import "./extention";
+            ~~~~~~~~~~~~~
 -!!! error TS2882: Cannot find module or type declarations for side-effect import of './extention'.
--    
--    globalThis.tests = "a-b";
--    console.log(globalThis.test.split("-"));
--    
-+<no content>
++!!! error TS2307: Cannot find module './extention' or its corresponding type declarations.
+     
+     globalThis.tests = "a-b";
+     console.log(globalThis.test.split("-"));

@@ -2,19 +2,14 @@
 +++ new.jsxFactoryQualifiedNameWithEs5(target=es2015).errors.txt
 @@= skipped -0, +0 lines =@@
 -index.tsx(1,8): error TS2882: Cannot find module or type declarations for side-effect import of './jsx'.
--
--
--==== index.tsx (1 errors) ====
--    import "./jsx";
--           ~~~~~~~
++index.tsx(1,8): error TS2307: Cannot find module './jsx' or its corresponding type declarations.
+
+
+ ==== index.tsx (1 errors) ====
+     import "./jsx";
+            ~~~~~~~
 -!!! error TS2882: Cannot find module or type declarations for side-effect import of './jsx'.
--    
--    var skate: any;
--    const React = { createElement: skate.h };
--    
--    class Component {
--        renderCallback() {
--            return <div>test</div>;
--        }
--    };
-+<no content>
++!!! error TS2307: Cannot find module './jsx' or its corresponding type declarations.
+     
+     var skate: any;
+     const React = { createElement: skate.h };
