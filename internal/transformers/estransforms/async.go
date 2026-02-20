@@ -208,6 +208,9 @@ func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
 }
 
+// visitAwaitExpression visits an AwaitExpression node.
+//
+// This function will be called any time a ES2017 await expression is encountered.
 func (tx *asyncTransformer) visitAwaitExpression(node *ast.AwaitExpression) *ast.Node {
 	// do not downlevel a top-level await as it is module syntax...
 	if tx.inTopLevelContext() {
@@ -239,6 +242,10 @@ func (tx *asyncTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Nod
 	return updated
 }
 
+// visitMethodDeclaration visits a MethodDeclaration node.
+//
+// This function will be called when one of the following conditions are met:
+// - The node is marked as async
 func (tx *asyncTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsMethodDeclaration()
 	functionFlags := getFunctionFlags(node)
@@ -307,6 +314,10 @@ func (tx *asyncTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Nod
 	return updated
 }
 
+// visitFunctionDeclaration visits a FunctionDeclaration node.
+//
+// This function will be called when one of the following conditions are met:
+// - The node is marked async
 func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionDeclaration()
 	functionFlags := getFunctionFlags(node)
@@ -338,6 +349,10 @@ func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 	return updated
 }
 
+// visitFunctionExpression visits a FunctionExpression node.
+//
+// This function will be called when one of the following conditions are met:
+// - The node is marked async
 func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionExpression()
 	functionFlags := getFunctionFlags(node)
@@ -369,6 +384,10 @@ func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 	return updated
 }
 
+// visitArrowFunction visits an ArrowFunction.
+//
+// This function will be called when one of the following conditions are met:
+// - The node is marked async
 func (tx *asyncTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 	decl := node.AsArrowFunction()
 	functionFlags := getFunctionFlags(node)
@@ -455,6 +474,7 @@ func (tx *asyncTransformer) transformAsyncFunctionParameterList(node *ast.Node) 
 		param := parameter.AsParameterDeclaration()
 		if param.Initializer != nil || param.DotDotDotToken != nil {
 			// for an arrow function, capture the remaining arguments in a rest parameter.
+			// for any other function/method this isn't necessary as we can just use `arguments`.
 			if node.Kind == ast.KindArrowFunction {
 				restParameter := tx.Factory().NewParameterDeclaration(
 					nil,
@@ -504,8 +524,8 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	var argumentsExpression *ast.Expression
 	if innerParameters != nil {
 		if isArrow {
-			// `node` does not have a simple parameter list, so `outerParameters` refers to placeholders
-			// forwarded to `innerParameters`.
+			// `node` does not have a simple parameter list, so `outerParameters` refers to placeholders that are
+			// forwarded to `innerParameters`, matching how they are introduced in `transformAsyncFunctionParameterList`.
 			var parameterBindings []*ast.Node
 			outerLen := len(outerParameters.Nodes)
 			for i, param := range node.Parameters() {
@@ -578,6 +598,8 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 			),
 		))
 
+		// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
+		// This step isn't needed if we eventually transform this to ES5.
 		if emitSuperHelpers {
 			var superHelpers []*ast.Node
 			if tx.hasSuperElementAccess {
@@ -788,7 +810,10 @@ func (tx *asyncTransformer) createSuperElementAccessInAsyncMethod(argumentExpres
 	return superIndexCall
 }
 
-// createSuperAccessVariableStatement creates:
+// createSuperAccessVariableStatement creates a variable named `_super` with accessor
+// properties for the given property names.
+//
+// Create a variable declaration with a getter/setter (if binding) definition for each name:
 //
 //	const _super = Object.create(null, {
 //	    x: { get: () => super.x },                           // read-only
