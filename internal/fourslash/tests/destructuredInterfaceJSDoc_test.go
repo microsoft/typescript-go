@@ -26,10 +26,7 @@ const {/*1*/foo, /*2*/bar, /*3*/baz: /*4*/biz} = fubar;
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyQuickInfoAt(t, "1", "const foo: number", "foo comment")
-	f.VerifyQuickInfoAt(t, "2", "const bar: string", "bar comment")
-	f.VerifyQuickInfoAt(t, "3", "(property) FooBar.baz: string", "baz comment")
-	f.VerifyQuickInfoAt(t, "4", "const biz: string", "baz comment")
+	f.VerifyBaselineHover(t)
 }
 
 func TestDestructuredInterfaceJSDocWithRename(t *testing.T) {
@@ -49,8 +46,7 @@ const {foo: /*1*/myFoo, bar: /*2*/myBar} = fubar;
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyQuickInfoAt(t, "1", "const myFoo: number", "foo comment")
-	f.VerifyQuickInfoAt(t, "2", "const myBar: string", "bar comment")
+	f.VerifyBaselineHover(t)
 }
 
 func TestDestructuredWithOwnJSDoc(t *testing.T) {
@@ -74,8 +70,5 @@ const {
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	// When binding elements have their own JSDoc, TypeScript doesn't currently show it in hover
-	// Instead, it falls back to the property's JSDoc from the interface
-	f.VerifyQuickInfoAt(t, "1", "const bar: string", "This is bar from the interface")
-	f.VerifyQuickInfoAt(t, "2", "const baz: number", "This is baz from the interface")
+	f.VerifyBaselineHover(t)
 }
