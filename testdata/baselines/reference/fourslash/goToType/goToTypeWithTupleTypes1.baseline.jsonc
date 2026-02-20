@@ -1,6 +1,6 @@
 // === goToType ===
-// === /goToTypeOnTuples1.ts ===
-// // export let x/*GOTO TYPE*/: [number, number] = [1, 2];
+// === /goToTypeWithTupleTypes1.ts ===
+// export let x/*GOTO TYPE*/: [number, number] = [1, 2];
 // 
 // type DoubleTupleTrouble<T> = [T, T];
 // 
@@ -10,8 +10,8 @@
 
 
 // === goToType ===
-// === /goToTypeOnTuples1.ts ===
-// // export let x: [number, number] = [1, 2];
+// === /goToTypeWithTupleTypes1.ts ===
+// export let x: [number, number] = [1, 2];
 // 
 // type DoubleTupleTrouble<T> = [T, T];
 // 
