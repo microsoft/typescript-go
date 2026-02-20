@@ -157,7 +157,7 @@ func TestSnapshot(t *testing.T) {
 		session.DidOpenFile(ctx, otherIndexURI, 1, files["/home/projects/otherproject/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Insert import statement:
-		// This will trigger both a program rebuild wich will include the node_modules files,
+		// This will trigger both a program rebuild which will include the node_modules files,
 		// and an auto-import collection which should find the exports from those files.
 		session.DidChangeFile(ctx, otherIndexURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{
