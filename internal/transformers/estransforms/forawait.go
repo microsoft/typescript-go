@@ -4,7 +4,6 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -48,7 +47,7 @@ type forawaitTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
 
-	enclosingFunctionFlags checker.FunctionFlags
+	enclosingFunctionFlags ast.FunctionFlags
 	forAwaitHierarchyFacts forAwaitHierarchyFacts
 	// Keeps track of property names accessed on super (`super.x`) within async functions.
 	capturedSuperProperties *collections.Set[string]
@@ -173,7 +172,7 @@ func (tx *forawaitTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 }
 
 func (tx *forawaitTransformer) visitAwaitExpression(node *ast.AwaitExpression) *ast.Node {
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		result := tx.Factory().NewYieldExpression(
 			nil, /*asteriskToken*/
 			tx.Factory().NewAwaitHelper(tx.Visitor().VisitNode(node.Expression)),
@@ -186,7 +185,7 @@ func (tx *forawaitTransformer) visitAwaitExpression(node *ast.AwaitExpression) *
 }
 
 func (tx *forawaitTransformer) visitYieldExpression(node *ast.YieldExpression) *ast.Node {
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		if node.AsteriskToken != nil {
 			expression := tx.Visitor().VisitNode(node.Expression)
 
@@ -233,7 +232,7 @@ func (tx *forawaitTransformer) visitYieldExpression(node *ast.YieldExpression) *
 }
 
 func (tx *forawaitTransformer) visitReturnStatement(node *ast.ReturnStatement) *ast.Node {
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		var expression *ast.Node
 		if node.Expression != nil {
 			expression = tx.Visitor().VisitNode(node.Expression)
@@ -250,7 +249,7 @@ func (tx *forawaitTransformer) visitReturnStatement(node *ast.ReturnStatement) *
 }
 
 func (tx *forawaitTransformer) visitLabeledStatement(node *ast.LabeledStatement) *ast.Node {
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 {
 		statement := unwrapInnermostStatementOfLabel(node)
 		if statement.Kind == ast.KindForOfStatement && statement.AsForInOrOfStatement().AwaitModifier != nil {
 			return tx.visitForOfStatement(statement.AsForInOrOfStatement(), node)
@@ -300,7 +299,7 @@ func (tx *forawaitTransformer) visitForOfStatement(node *ast.ForInOrOfStatement,
 }
 
 func (tx *forawaitTransformer) createDownlevelAwait(expression *ast.Node) *ast.Node {
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		return tx.Factory().NewYieldExpression(
 			nil, /*asteriskToken*/
 			tx.Factory().NewAwaitHelper(expression),
@@ -521,7 +520,7 @@ func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfS
 func (tx *forawaitTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsConstructorDeclaration()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 	updated := tx.Factory().UpdateConstructorDeclaration(
 		decl,
 		decl.Modifiers(),
@@ -538,17 +537,17 @@ func (tx *forawaitTransformer) visitConstructorDeclaration(node *ast.Node) *ast.
 func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsMethodDeclaration()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 
 	var modifiers *ast.ModifierList
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		modifiers = tx.visitorNoAsyncModifier().VisitModifiers(decl.Modifiers())
 	} else {
 		modifiers = decl.Modifiers()
 	}
 
 	var asteriskToken *ast.TokenNode
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 {
 		asteriskToken = nil
 	} else {
 		asteriskToken = decl.AsteriskToken
@@ -556,7 +555,7 @@ func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node 
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		parameters = tx.transformAsyncGeneratorFunctionParameterList(node)
 		body = tx.transformAsyncGeneratorFunctionBody(node)
 	} else {
@@ -583,7 +582,7 @@ func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node 
 func (tx *forawaitTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsGetAccessorDeclaration()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 	updated := tx.Factory().UpdateGetAccessorDeclaration(
 		decl,
 		decl.Modifiers(),
@@ -601,7 +600,7 @@ func (tx *forawaitTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.
 func (tx *forawaitTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsSetAccessorDeclaration()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 	updated := tx.Factory().UpdateSetAccessorDeclaration(
 		decl,
 		decl.Modifiers(),
@@ -619,17 +618,17 @@ func (tx *forawaitTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.
 func (tx *forawaitTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionDeclaration()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 
 	var modifiers *ast.ModifierList
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		modifiers = tx.visitorNoAsyncModifier().VisitModifiers(decl.Modifiers())
 	} else {
 		modifiers = decl.Modifiers()
 	}
 
 	var asteriskToken *ast.TokenNode
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 {
 		asteriskToken = nil
 	} else {
 		asteriskToken = decl.AsteriskToken
@@ -637,7 +636,7 @@ func (tx *forawaitTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Nod
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		parameters = tx.transformAsyncGeneratorFunctionParameterList(node)
 		body = tx.transformAsyncGeneratorFunctionBody(node)
 	} else {
@@ -663,7 +662,7 @@ func (tx *forawaitTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Nod
 func (tx *forawaitTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 	decl := node.AsArrowFunction()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 	updated := tx.Factory().UpdateArrowFunction(
 		decl,
 		decl.Modifiers(),
@@ -681,17 +680,17 @@ func (tx *forawaitTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 func (tx *forawaitTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionExpression()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = getFunctionFlags(node)
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
 
 	var modifiers *ast.ModifierList
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		modifiers = tx.visitorNoAsyncModifier().VisitModifiers(decl.Modifiers())
 	} else {
 		modifiers = decl.Modifiers()
 	}
 
 	var asteriskToken *ast.TokenNode
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 {
 		asteriskToken = nil
 	} else {
 		asteriskToken = decl.AsteriskToken
@@ -699,7 +698,7 @@ func (tx *forawaitTransformer) visitFunctionExpression(node *ast.Node) *ast.Node
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if tx.enclosingFunctionFlags&checker.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&checker.FunctionFlagsGenerator != 0 {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsAsync != 0 && tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
 		parameters = tx.transformAsyncGeneratorFunctionParameterList(node)
 		body = tx.transformAsyncGeneratorFunctionBody(node)
 	} else {
