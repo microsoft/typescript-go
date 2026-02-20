@@ -11,37 +11,48 @@ import (
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
-type hierarchyFacts int
+// Facts we track as we traverse the tree
+type forAwaitHierarchyFacts int
 
 const (
-	hierarchyFactsNone hierarchyFacts = 0
+	forAwaitHierarchyFactsNone forAwaitHierarchyFacts = 0
 
+	//
 	// Ancestor facts
-	hierarchyFactsHasLexicalThis     hierarchyFacts = 1 << 0
-	hierarchyFactsIterationContainer hierarchyFacts = 1 << 1
+	//
 
-	hierarchyFactsAncestorFactsMask = (hierarchyFactsIterationContainer << 1) - 1
+	forAwaitHierarchyFactsHasLexicalThis     forAwaitHierarchyFacts = 1 << 0
+	forAwaitHierarchyFactsIterationContainer forAwaitHierarchyFacts = 1 << 1
+	// NOTE: do not add more ancestor flags without also updating AncestorFactsMask below.
 
-	hierarchyFactsSourceFileExcludes           = hierarchyFactsIterationContainer
-	hierarchyFactsStrictModeSourceFileIncludes = hierarchyFactsNone
+	//
+	// Ancestor masks
+	//
 
-	hierarchyFactsClassOrFunctionIncludes = hierarchyFactsHasLexicalThis
-	hierarchyFactsClassOrFunctionExcludes = hierarchyFactsIterationContainer
+	forAwaitHierarchyFactsAncestorFactsMask = (forAwaitHierarchyFactsIterationContainer << 1) - 1
 
-	hierarchyFactsArrowFunctionIncludes = hierarchyFactsNone
-	hierarchyFactsArrowFunctionExcludes = hierarchyFactsClassOrFunctionExcludes
+	forAwaitHierarchyFactsSourceFileExcludes           = forAwaitHierarchyFactsIterationContainer
+	forAwaitHierarchyFactsStrictModeSourceFileIncludes = forAwaitHierarchyFactsNone
 
-	hierarchyFactsIterationStatementIncludes = hierarchyFactsIterationContainer
-	hierarchyFactsIterationStatementExcludes = hierarchyFactsNone
+	forAwaitHierarchyFactsClassOrFunctionIncludes = forAwaitHierarchyFactsHasLexicalThis
+	forAwaitHierarchyFactsClassOrFunctionExcludes = forAwaitHierarchyFactsIterationContainer
+
+	forAwaitHierarchyFactsArrowFunctionIncludes = forAwaitHierarchyFactsNone
+	forAwaitHierarchyFactsArrowFunctionExcludes = forAwaitHierarchyFactsClassOrFunctionExcludes
+
+	forAwaitHierarchyFactsIterationStatementIncludes = forAwaitHierarchyFactsIterationContainer
+	forAwaitHierarchyFactsIterationStatementExcludes = forAwaitHierarchyFactsNone
 )
 
 type forawaitTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
 
-	enclosingFunctionFlags     checker.FunctionFlags
-	hierarchyFacts             hierarchyFacts
-	capturedSuperProperties    *collections.Set[string]
+	enclosingFunctionFlags checker.FunctionFlags
+	forAwaitHierarchyFacts forAwaitHierarchyFacts
+	// Keeps track of property names accessed on super (`super.x`) within async functions.
+	capturedSuperProperties *collections.Set[string]
+	// Whether the async function contains an element access on super (`super[x]`).
 	hasSuperElementAccess      bool
 	hasSuperPropertyAssignment bool
 	superBinding               *ast.IdentifierNode
@@ -57,6 +68,10 @@ func (tx *forawaitTransformer) visitWithUnusedExpressionResult(node *ast.Node) *
 	return tx.visitorWorker(node, true)
 }
 
+// visitorWorker visits a node.
+//
+// expressionResultIsUnused indicates the result of an expression is unused by the parent node
+// (i.e., the left side of a comma or the expression of an ExpressionStatement).
 func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsUnused bool) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
 		if tx.capturedSuperProperties != nil {
@@ -78,25 +93,25 @@ func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsU
 	case ast.KindForOfStatement:
 		return tx.visitForOfStatement(node.AsForInOrOfStatement(), nil)
 	case ast.KindForStatement:
-		return tx.doWithHierarchyFacts(tx.visitForStatement, node, hierarchyFactsIterationStatementExcludes, hierarchyFactsIterationStatementIncludes)
+		return tx.doWithHierarchyFacts(tx.visitForStatement, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
 	case ast.KindDoStatement, ast.KindWhileStatement, ast.KindForInStatement:
-		return tx.doWithHierarchyFacts(tx.visitDefault, node, hierarchyFactsIterationStatementExcludes, hierarchyFactsIterationStatementIncludes)
+		return tx.doWithHierarchyFacts(tx.visitDefault, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
 	case ast.KindVoidExpression:
 		return tx.visitVoidExpression(node)
 	case ast.KindConstructor:
-		return tx.doWithHierarchyFacts(tx.visitConstructorDeclaration, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitConstructorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindMethodDeclaration:
-		return tx.doWithHierarchyFacts(tx.visitMethodDeclaration, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitMethodDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindGetAccessor:
-		return tx.doWithHierarchyFacts(tx.visitGetAccessorDeclaration, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitGetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindSetAccessor:
-		return tx.doWithHierarchyFacts(tx.visitSetAccessorDeclaration, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitSetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindFunctionDeclaration:
-		return tx.doWithHierarchyFacts(tx.visitFunctionDeclaration, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitFunctionDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindFunctionExpression:
-		return tx.doWithHierarchyFacts(tx.visitFunctionExpression, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitFunctionExpression, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindArrowFunction:
-		return tx.doWithHierarchyFacts(tx.visitArrowFunction, node, hierarchyFactsArrowFunctionExcludes, hierarchyFactsArrowFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitArrowFunction, node, forAwaitHierarchyFactsArrowFunctionExcludes, forAwaitHierarchyFactsArrowFunctionIncludes)
 	case ast.KindExpressionStatement:
 		return tx.visitExpressionStatement(node)
 	case ast.KindParenthesizedExpression:
@@ -127,27 +142,31 @@ func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsU
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithHierarchyFacts(tx.visitDefault, node, hierarchyFactsClassOrFunctionExcludes, hierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(tx.visitDefault, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
 }
 
-func (tx *forawaitTransformer) affectsSubtree(excludeFacts hierarchyFacts, includeFacts hierarchyFacts) bool {
-	return tx.hierarchyFacts != (tx.hierarchyFacts&^excludeFacts | includeFacts)
+func (tx *forawaitTransformer) affectsSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) bool {
+	return tx.forAwaitHierarchyFacts != (tx.forAwaitHierarchyFacts&^excludeFacts | includeFacts)
 }
 
-func (tx *forawaitTransformer) enterSubtree(excludeFacts hierarchyFacts, includeFacts hierarchyFacts) hierarchyFacts {
-	ancestorFacts := tx.hierarchyFacts
-	tx.hierarchyFacts = (tx.hierarchyFacts&^excludeFacts | includeFacts) & hierarchyFactsAncestorFactsMask
+// enterSubtree sets the HierarchyFacts for this node prior to visiting this node's subtree,
+// returning the facts set prior to modification.
+func (tx *forawaitTransformer) enterSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) forAwaitHierarchyFacts {
+	ancestorFacts := tx.forAwaitHierarchyFacts
+	tx.forAwaitHierarchyFacts = (tx.forAwaitHierarchyFacts&^excludeFacts | includeFacts) & forAwaitHierarchyFactsAncestorFactsMask
 	return ancestorFacts
 }
 
-func (tx *forawaitTransformer) exitSubtree(ancestorFacts hierarchyFacts) {
-	tx.hierarchyFacts = ancestorFacts
+// exitSubtree restores the HierarchyFacts for this node's ancestor after visiting this node's
+// subtree.
+func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts) {
+	tx.forAwaitHierarchyFacts = ancestorFacts
 }
 
-func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*ast.Node) *ast.Node, node *ast.Node, excludeFacts hierarchyFacts, includeFacts hierarchyFacts) *ast.Node {
+func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
 	if tx.affectsSubtree(excludeFacts, includeFacts) {
 		ancestorFacts := tx.enterSubtree(excludeFacts, includeFacts)
 		result := cb(node)
@@ -163,8 +182,8 @@ func (tx *forawaitTransformer) visitDefault(node *ast.Node) *ast.Node {
 
 func (tx *forawaitTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	ancestorFacts := tx.enterSubtree(
-		hierarchyFactsSourceFileExcludes,
-		hierarchyFactsStrictModeSourceFileIncludes,
+		forAwaitHierarchyFactsSourceFileExcludes,
+		forAwaitHierarchyFactsStrictModeSourceFileIncludes,
 	)
 	tx.exportedVariableStatement = false
 	visited := tx.Visitor().VisitEachChild(node.AsNode())
@@ -192,6 +211,10 @@ func (tx *forawaitTransformer) visitExpressionStatement(node *ast.Node) *ast.Nod
 	return tx.unusedExpressionResultVisitor().VisitEachChild(node)
 }
 
+// visitParenthesizedExpression visits a ParenthesizedExpression.
+//
+// expressionResultIsUnused indicates the result of an expression is unused by the parent node
+// (i.e., the left side of a comma or the expression of an ExpressionStatement).
 func (tx *forawaitTransformer) visitParenthesizedExpression(node *ast.Node, expressionResultIsUnused bool) *ast.Node {
 	if expressionResultIsUnused {
 		return tx.unusedExpressionResultVisitor().VisitEachChild(node)
@@ -317,8 +340,9 @@ func (tx *forawaitTransformer) restoreEnclosingLabel(node *ast.Node, outermostLa
 	)
 }
 
+// visitForOfStatement visits a ForOfStatement and converts it into a ES2015-compatible ForOfStatement.
 func (tx *forawaitTransformer) visitForOfStatement(node *ast.ForInOrOfStatement, outermostLabeledStatement *ast.LabeledStatement) *ast.Node {
-	ancestorFacts := tx.enterSubtree(hierarchyFactsIterationStatementExcludes, hierarchyFactsIterationStatementIncludes)
+	ancestorFacts := tx.enterSubtree(forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
 	var result *ast.Node
 	if node.AwaitModifier != nil {
 		result = tx.transformForAwaitOfStatement(node, outermostLabeledStatement, ancestorFacts)
@@ -402,7 +426,7 @@ func (tx *forawaitTransformer) createForOfBindingStatement(node *ast.Node, bound
 	return statement
 }
 
-func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfStatement, outermostLabeledStatement *ast.LabeledStatement, ancestorFacts hierarchyFacts) *ast.Node {
+func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfStatement, outermostLabeledStatement *ast.LabeledStatement, ancestorFacts forAwaitHierarchyFacts) *ast.Node {
 	f := tx.Factory()
 	expression := tx.Visitor().VisitNode(node.Expression)
 
@@ -443,7 +467,7 @@ func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfS
 
 	// if we are enclosed in an outer loop ensure we reset 'errorRecord' per each iteration
 	var initializer *ast.Node
-	if ancestorFacts&hierarchyFactsIterationContainer != 0 {
+	if ancestorFacts&forAwaitHierarchyFactsIterationContainer != 0 {
 		initializer = f.InlineExpressions([]*ast.Node{
 			f.NewAssignmentExpression(errorRecord, f.NewVoidZeroExpression()),
 			callValues,
@@ -836,7 +860,7 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	returnStatement := f.NewReturnStatement(
 		f.NewAsyncGeneratorHelper(
 			generatorFunc,
-			tx.hierarchyFacts&hierarchyFactsHasLexicalThis != 0,
+			tx.forAwaitHierarchyFacts&forAwaitHierarchyFactsHasLexicalThis != 0,
 		),
 	)
 
