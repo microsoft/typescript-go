@@ -19,6 +19,11 @@ const (
 	contextFlagsHasLexicalThis
 )
 
+type lexicalArgumentsInfo struct {
+	binding *ast.IdentifierNode
+	used    bool
+}
+
 type asyncTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
@@ -29,8 +34,7 @@ type asyncTransformer struct {
 	enclosingFunctionParameterNames *collections.Set[string]
 	capturedSuperProperties         *collections.Set[string]
 	hasSuperElementAccess           bool
-	lexicalArgumentsBinding         *ast.IdentifierNode
-	usedLexicalArguments            bool
+	lexicalArguments                lexicalArgumentsInfo
 
 	asyncBodyVisitor *ast.NodeVisitor
 }
@@ -41,7 +45,7 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 		return nil
 	}
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
-		if tx.lexicalArgumentsBinding != nil {
+		if tx.lexicalArguments.binding != nil {
 			return tx.argumentsVisitor(node)
 		}
 		return node
@@ -108,9 +112,9 @@ func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
 		ast.KindVariableDeclaration:
 		// fall through to visitEachChild
 	case ast.KindIdentifier:
-		if tx.lexicalArgumentsBinding != nil && tx.emitResolver != nil && tx.emitResolver.IsArgumentsLocalBinding(node) {
-			tx.usedLexicalArguments = true
-			return tx.lexicalArgumentsBinding
+		if tx.lexicalArguments.binding != nil && tx.emitResolver != nil && tx.emitResolver.IsArgumentsLocalBinding(node) {
+			tx.lexicalArguments.used = true
+			return tx.lexicalArguments.binding
 		}
 	}
 	return tx.Visitor().VisitEachChild(node)
@@ -197,8 +201,8 @@ func (tx *asyncTransformer) visitAwaitExpression(node *ast.AwaitExpression) *ast
 
 func (tx *asyncTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsConstructorDeclaration()
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	tx.lexicalArgumentsBinding = nil
+	savedLexicalArguments := tx.lexicalArguments
+	tx.lexicalArguments = lexicalArgumentsInfo{}
 	updated := tx.Factory().UpdateConstructorDeclaration(
 		decl,
 		tx.Visitor().VisitModifiers(decl.Modifiers()),
@@ -208,15 +212,15 @@ func (tx *asyncTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Nod
 		nil, /*fullSignature*/
 		tx.transformMethodBody(node),
 	)
-	tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+	tx.lexicalArguments = savedLexicalArguments
 	return updated
 }
 
 func (tx *asyncTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsMethodDeclaration()
 	functionFlags := getFunctionFlags(node)
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	tx.lexicalArgumentsBinding = nil
+	savedLexicalArguments := tx.lexicalArguments
+	tx.lexicalArguments = lexicalArgumentsInfo{}
 
 	var parameters *ast.NodeList
 	var body *ast.Node
@@ -240,14 +244,14 @@ func (tx *asyncTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 		nil, /*fullSignature*/
 		body,
 	)
-	tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+	tx.lexicalArguments = savedLexicalArguments
 	return updated
 }
 
 func (tx *asyncTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsGetAccessorDeclaration()
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	tx.lexicalArgumentsBinding = nil
+	savedLexicalArguments := tx.lexicalArguments
+	tx.lexicalArguments = lexicalArgumentsInfo{}
 	updated := tx.Factory().UpdateGetAccessorDeclaration(
 		decl,
 		tx.Visitor().VisitModifiers(decl.Modifiers()),
@@ -258,14 +262,14 @@ func (tx *asyncTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Nod
 		nil, /*fullSignature*/
 		tx.transformMethodBody(node),
 	)
-	tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+	tx.lexicalArguments = savedLexicalArguments
 	return updated
 }
 
 func (tx *asyncTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsSetAccessorDeclaration()
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	tx.lexicalArgumentsBinding = nil
+	savedLexicalArguments := tx.lexicalArguments
+	tx.lexicalArguments = lexicalArgumentsInfo{}
 	updated := tx.Factory().UpdateSetAccessorDeclaration(
 		decl,
 		tx.Visitor().VisitModifiers(decl.Modifiers()),
@@ -276,15 +280,15 @@ func (tx *asyncTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Nod
 		nil, /*fullSignature*/
 		tx.transformMethodBody(node),
 	)
-	tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+	tx.lexicalArguments = savedLexicalArguments
 	return updated
 }
 
 func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionDeclaration()
 	functionFlags := getFunctionFlags(node)
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	tx.lexicalArgumentsBinding = nil
+	savedLexicalArguments := tx.lexicalArguments
+	tx.lexicalArguments = lexicalArgumentsInfo{}
 
 	var parameters *ast.NodeList
 	var body *ast.Node
@@ -307,15 +311,15 @@ func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 		nil, /*fullSignature*/
 		body,
 	)
-	tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+	tx.lexicalArguments = savedLexicalArguments
 	return updated
 }
 
 func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionExpression()
 	functionFlags := getFunctionFlags(node)
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	tx.lexicalArgumentsBinding = nil
+	savedLexicalArguments := tx.lexicalArguments
+	tx.lexicalArguments = lexicalArgumentsInfo{}
 
 	var parameters *ast.NodeList
 	var body *ast.Node
@@ -338,7 +342,7 @@ func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 		nil, /*fullSignature*/
 		body,
 	)
-	tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+	tx.lexicalArguments = savedLexicalArguments
 	return updated
 }
 
@@ -438,11 +442,12 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	tx.EmitContext().StartVariableEnvironment()
 
 	isArrow := node.Kind == ast.KindArrowFunction
-	savedLexicalArgumentsBinding := tx.lexicalArgumentsBinding
-	captureLexicalArguments := tx.lexicalArgumentsBinding == nil
+	savedLexicalArguments := tx.lexicalArguments
+	captureLexicalArguments := tx.lexicalArguments.binding == nil
 	if captureLexicalArguments {
-		tx.lexicalArgumentsBinding = tx.Factory().NewUniqueName("arguments")
-		tx.usedLexicalArguments = false
+		tx.lexicalArguments = lexicalArgumentsInfo{
+			binding: tx.Factory().NewUniqueName("arguments"),
+		}
 	}
 
 	var argumentsExpression *ast.Expression
@@ -512,7 +517,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		// !!! super property access/assignment helpers
 		// (requires onEmitNode/onSubstituteNode support)
 
-		if captureLexicalArguments && tx.usedLexicalArguments {
+		if captureLexicalArguments && tx.lexicalArguments.used {
 			prologue, rest := tx.Factory().SplitStandardPrologue(statements)
 			statements = append(prologue, append([]*ast.Node{tx.createCaptureArgumentsStatement()}, rest...)...)
 		}
@@ -532,7 +537,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 			asyncBody,
 		)
 
-		if captureLexicalArguments && tx.usedLexicalArguments {
+		if captureLexicalArguments && tx.lexicalArguments.used {
 			block := tx.convertToFunctionBlock(result)
 			result = tx.Factory().UpdateBlock(
 				block.AsBlock(),
@@ -545,7 +550,15 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	if !isArrow {
 		tx.capturedSuperProperties = savedCapturedSuperProperties
 		tx.hasSuperElementAccess = savedHasSuperElementAccess
-		tx.lexicalArgumentsBinding = savedLexicalArgumentsBinding
+		tx.lexicalArguments = savedLexicalArguments
+	} else if captureLexicalArguments && !tx.lexicalArguments.used {
+		// If we created a new binding but it wasn't used, restore the previous state.
+		// If it was used, keep the binding alive so sibling arrows can reuse it
+		// (the `var` declaration hoists to the enclosing function scope).
+		tx.lexicalArguments = savedLexicalArguments
+	} else if captureLexicalArguments {
+		// Keep the binding but clear the used flag so siblings don't re-emit the capture statement.
+		tx.lexicalArguments.used = false
 	}
 	return result
 }
@@ -570,7 +583,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *as
 
 func (tx *asyncTransformer) createCaptureArgumentsStatement() *ast.Node {
 	variable := tx.Factory().NewVariableDeclaration(
-		tx.lexicalArgumentsBinding,
+		tx.lexicalArguments.binding,
 		nil,
 		nil,
 		tx.Factory().NewIdentifier("arguments"),
