@@ -445,7 +445,9 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 			helpers = append(helpers, tx.createSuperAccessVariableStatement())
 		}
 		prologue, rest := tx.Factory().SplitStandardPrologue(statements)
-		statements = append(prologue, append(helpers, rest...)...)
+		statements = slices.Clone(prologue)
+		statements = append(statements, helpers...)
+		statements = append(statements, rest...)
 		if multiLine != block.Multiline {
 			newBlock := tx.Factory().NewBlock(tx.Factory().NewNodeList(statements), multiLine)
 			newBlock.Loc = updated.Loc
@@ -608,12 +610,16 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 				superHelpers = append(superHelpers, tx.createSuperAccessVariableStatement())
 			}
 			prologue, rest := tx.Factory().SplitStandardPrologue(statements)
-			statements = append(prologue, append(superHelpers, rest...)...)
+			statements = slices.Clone(prologue)
+			statements = append(statements, superHelpers...)
+			statements = append(statements, rest...)
 		}
 
 		if captureLexicalArguments && tx.lexicalArguments.used {
 			prologue, rest := tx.Factory().SplitStandardPrologue(statements)
-			statements = append(prologue, append([]*ast.Node{tx.createCaptureArgumentsStatement()}, rest...)...)
+			statements = slices.Clone(prologue)
+			statements = append(statements, tx.createCaptureArgumentsStatement())
+			statements = append(statements, rest...)
 		}
 
 		block := tx.Factory().NewBlock(tx.Factory().NewNodeList(statements), true)
