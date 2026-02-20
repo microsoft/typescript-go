@@ -526,10 +526,10 @@ func (tx *forawaitTransformer) visitConstructorDeclaration(node *ast.Node) *ast.
 		decl,
 		decl.Modifiers(),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
-		tx.transformFunctionBody(node),
+		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
 	)
 	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
 	return updated
@@ -560,8 +560,8 @@ func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node 
 		parameters = tx.transformAsyncGeneratorFunctionParameterList(node)
 		body = tx.transformAsyncGeneratorFunctionBody(node)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
-		body = tx.transformFunctionBody(node)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
+		body = tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor())
 	}
 
 	updated := tx.Factory().UpdateMethodDeclaration(
@@ -589,10 +589,10 @@ func (tx *forawaitTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.
 		decl.Modifiers(),
 		tx.Visitor().VisitNode(decl.Name()),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
-		tx.transformFunctionBody(node),
+		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
 	)
 	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
 	return updated
@@ -607,10 +607,10 @@ func (tx *forawaitTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.
 		decl.Modifiers(),
 		tx.Visitor().VisitNode(decl.Name()),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
-		tx.transformFunctionBody(node),
+		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
 	)
 	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
 	return updated
@@ -641,8 +641,8 @@ func (tx *forawaitTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Nod
 		parameters = tx.transformAsyncGeneratorFunctionParameterList(node)
 		body = tx.transformAsyncGeneratorFunctionBody(node)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
-		body = tx.transformFunctionBody(node)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
+		body = tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor())
 	}
 
 	updated := tx.Factory().UpdateFunctionDeclaration(
@@ -668,11 +668,11 @@ func (tx *forawaitTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 		decl,
 		decl.Modifiers(),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
 		decl.EqualsGreaterThanToken,
-		tx.transformFunctionBody(node),
+		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
 	)
 	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
 	return updated
@@ -703,8 +703,8 @@ func (tx *forawaitTransformer) visitFunctionExpression(node *ast.Node) *ast.Node
 		parameters = tx.transformAsyncGeneratorFunctionParameterList(node)
 		body = tx.transformAsyncGeneratorFunctionBody(node)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
-		body = tx.transformFunctionBody(node)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
+		body = tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor())
 	}
 
 	updated := tx.Factory().UpdateFunctionExpression(
@@ -812,20 +812,22 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 		),
 	)
 
-	outerStatements := []*ast.Node{returnStatement}
-
+	tx.EmitContext().StartVariableEnvironment()
 	if emitSuperHelpers {
-		var superHelpers []*ast.Node
 		if tx.hasSuperElementAccess {
-			superHelpers = append(superHelpers, tx.createSuperIndexVariableStatement())
+			tx.EmitContext().AddInitializationStatement(tx.createSuperIndexVariableStatement())
 		}
 		if tx.capturedSuperProperties.Len() > 0 {
-			superHelpers = append(superHelpers, tx.createSuperAccessVariableStatement())
+			tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 		}
-		outerStatements = append(superHelpers, outerStatements...)
 	}
 
-	block := f.UpdateBlock(node.Body().AsBlock(), f.NewNodeList(outerStatements))
+	outerStatements := []*ast.Node{returnStatement}
+
+	block := f.UpdateBlock(
+		node.Body().AsBlock(),
+		tx.EmitContext().EndAndMergeVariableEnvironmentList(f.NewNodeList(outerStatements)),
+	)
 
 	tx.capturedSuperProperties = savedCapturedSuperProperties
 	tx.hasSuperElementAccess = savedHasSuperElementAccess
@@ -834,28 +836,6 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	tx.superIndexBinding = savedSuperIndexBinding
 
 	return block
-}
-
-func (tx *forawaitTransformer) transformFunctionBody(node *ast.Node) *ast.Node {
-	tx.EmitContext().StartVariableEnvironment()
-	body := tx.Visitor().VisitNode(node.Body())
-	extras := tx.EmitContext().EndVariableEnvironment()
-	if body == nil {
-		body = tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Node{}), true)
-	}
-	if len(extras) == 0 {
-		return body
-	}
-	if !ast.IsBlock(body) {
-		ret := tx.Factory().NewReturnStatement(body)
-		ret.Loc = body.Loc
-		body = tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Node{ret}), true)
-		body.Loc = node.Body().Loc
-	}
-	block := body.AsBlock()
-	prologue, rest := tx.Factory().SplitStandardPrologue(block.Statements.Nodes)
-	newStatements := append(prologue, append(extras, rest...)...)
-	return tx.Factory().UpdateBlock(block, tx.Factory().NewNodeList(newStatements))
 }
 
 func (tx *forawaitTransformer) visitorNoAsyncModifier() *ast.NodeVisitor {
