@@ -55,6 +55,9 @@ func (r *EmitResolver) IsArgumentsLocalBinding(nodeIn *ast.IdentifierNode) bool 
 	if !ast.IsParseTreeNode(nodeIn) {
 		return false
 	}
+	if nodeIn.Text() != "arguments" {
+		return false
+	}
 	parent := nodeIn.Parent
 	if parent == nil {
 		return false
