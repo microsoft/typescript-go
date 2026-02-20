@@ -286,7 +286,9 @@ func (f *NodeFactory) CreateExpressionFromEntityName(node *ast.Node) *ast.Expres
 		right := node.AsQualifiedName().Right.Clone(f.AsNodeFactory())
 		right.Loc = node.AsQualifiedName().Right.Loc
 		right.Parent = node.AsQualifiedName().Right.Parent
-		return f.NewPropertyAccessExpression(left, nil, right, ast.NodeFlagsNone)
+		propAccess := f.NewPropertyAccessExpression(left, nil, right, ast.NodeFlagsNone)
+		propAccess.Loc = node.Loc
+		return propAccess
 	}
 	res := node.Clone(f.AsNodeFactory())
 	res.Loc = node.Loc
