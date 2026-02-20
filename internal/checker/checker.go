@@ -7773,11 +7773,6 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 	// //
 	// // For element access expressions (`super[x]`), we emit a generic helper that forwards the element access in both situations.
 	// if container.Kind == ast.KindMethodDeclaration && inAsyncFunction {
-	// 	if isSuperProperty(node.Parent) && isAssignmentTarget(node.Parent) {
-	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync
-	// 	} else {
-	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAccessInAsync
-	// 	}
 	// }
 	// if needToCaptureLexicalThis {
 	// 	// call expressions are allowed only in constructors so they should always capture correct 'this'
