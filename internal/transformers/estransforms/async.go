@@ -58,13 +58,13 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindAwaitExpression:
 		return tx.visitAwaitExpression(node.AsAwaitExpression())
 	case ast.KindMethodDeclaration:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitMethodDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitMethodDeclaration, node)
 	case ast.KindFunctionDeclaration:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitFunctionDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionDeclaration, node)
 	case ast.KindFunctionExpression:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitFunctionExpression, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
 	case ast.KindArrowFunction:
-		return tx.doWithContext(asyncContextNonTopLevel, tx.visitArrowFunction, node)
+		return tx.doWithContext(asyncContextNonTopLevel, (*asyncTransformer).visitArrowFunction, node)
 	case ast.KindPropertyAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.capturedSuperProperties.Add(node.Name().Text())
@@ -91,13 +91,13 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindGetAccessor:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitGetAccessorDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
 	case ast.KindSetAccessor:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitSetAccessorDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitSetAccessorDeclaration, node)
 	case ast.KindConstructor:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitConstructorDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitConstructorDeclaration, node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitDefault, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitDefault, node)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
@@ -207,15 +207,15 @@ func (tx *asyncTransformer) inHasLexicalThisContext() bool {
 	return tx.inContext(asyncContextHasLexicalThis)
 }
 
-func (tx *asyncTransformer) doWithContext(flags asyncContextFlags, cb func(*ast.Node) *ast.Node, node *ast.Node) *ast.Node {
+func (tx *asyncTransformer) doWithContext(flags asyncContextFlags, cb func(*asyncTransformer, *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
 	flagsToSet := flags & ^tx.contextFlags
 	if flagsToSet != 0 {
 		tx.setContextFlag(flagsToSet, true)
-		result := cb(node)
+		result := cb(tx, node)
 		tx.setContextFlag(flagsToSet, false)
 		return result
 	}
-	return cb(node)
+	return cb(tx, node)
 }
 
 func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
