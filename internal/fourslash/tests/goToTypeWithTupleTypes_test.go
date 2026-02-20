@@ -7,12 +7,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestGoToTypeOnTuples1(t *testing.T) {
+func TestGoToTypeWithTupleTypes1(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-// export let x/*1*/: [number, number] = [1, 2];
+export let x/*1*/: [number, number] = [1, 2];
 
 type DoubleTupleTrouble<T> = [T, T];
 
