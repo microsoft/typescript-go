@@ -1,6 +1,8 @@
 package estransforms
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -37,11 +39,14 @@ type forawaitTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
 
-	enclosingFunctionFlags    checker.FunctionFlags
-	hierarchyFacts            hierarchyFacts
-	capturedSuperProperties   *collections.Set[string]
-	hasSuperElementAccess     bool
-	exportedVariableStatement bool
+	enclosingFunctionFlags     checker.FunctionFlags
+	hierarchyFacts             hierarchyFacts
+	capturedSuperProperties    *collections.Set[string]
+	hasSuperElementAccess      bool
+	hasSuperPropertyAssignment bool
+	superBinding               *ast.IdentifierNode
+	superIndexBinding          *ast.IdentifierNode
+	exportedVariableStatement  bool
 }
 
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
@@ -54,6 +59,9 @@ func (tx *forawaitTransformer) visitWithUnusedExpressionResult(node *ast.Node) *
 
 func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsUnused bool) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
+		if tx.capturedSuperProperties != nil {
+			return tx.superPropertyVisitor(node)
+		}
 		return node
 	}
 	switch node.Kind {
@@ -101,6 +109,21 @@ func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsU
 	case ast.KindElementAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.hasSuperElementAccess = true
+		}
+		return tx.Visitor().VisitEachChild(node)
+	case ast.KindBinaryExpression:
+		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+		return tx.Visitor().VisitEachChild(node)
+	case ast.KindPrefixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+		return tx.Visitor().VisitEachChild(node)
+	case ast.KindPostfixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
@@ -763,8 +786,14 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 
 	savedCapturedSuperProperties := tx.capturedSuperProperties
 	savedHasSuperElementAccess := tx.hasSuperElementAccess
+	savedHasSuperPropertyAssignment := tx.hasSuperPropertyAssignment
+	savedSuperBinding := tx.superBinding
+	savedSuperIndexBinding := tx.superIndexBinding
 	tx.capturedSuperProperties = &collections.Set[string]{}
 	tx.hasSuperElementAccess = false
+	tx.hasSuperPropertyAssignment = false
+	tx.superBinding = f.NewUniqueNameEx("_super", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
+	tx.superIndexBinding = f.NewUniqueNameEx("_superIndex", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 
 	asyncBody := f.UpdateBlock(
 		node.Body().AsBlock(),
@@ -774,6 +803,12 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 		asyncBody.AsBlock(),
 		tx.EmitContext().EndAndMergeVariableEnvironmentList(asyncBody.StatementList()),
 	)
+
+	// Substitute super property accesses with _super/_superIndex helpers
+	emitSuperHelpers := tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess
+	if emitSuperHelpers {
+		asyncBody = tx.substituteSuperAccessesInBody(asyncBody)
+	}
 
 	var innerParams *ast.NodeList
 	if innerParameters != nil {
@@ -807,10 +842,24 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 
 	outerStatements := []*ast.Node{returnStatement}
 
+	if emitSuperHelpers {
+		var superHelpers []*ast.Node
+		if tx.hasSuperElementAccess {
+			superHelpers = append(superHelpers, tx.createSuperIndexVariableStatement())
+		}
+		if tx.capturedSuperProperties.Len() > 0 {
+			superHelpers = append(superHelpers, tx.createSuperAccessVariableStatement())
+		}
+		outerStatements = append(superHelpers, outerStatements...)
+	}
+
 	block := f.UpdateBlock(node.Body().AsBlock(), f.NewNodeList(outerStatements))
 
 	tx.capturedSuperProperties = savedCapturedSuperProperties
 	tx.hasSuperElementAccess = savedHasSuperElementAccess
+	tx.hasSuperPropertyAssignment = savedHasSuperPropertyAssignment
+	tx.superBinding = savedSuperBinding
+	tx.superIndexBinding = savedSuperIndexBinding
 
 	return block
 }
@@ -844,6 +893,286 @@ func (tx *forawaitTransformer) visitorNoAsyncModifier() *ast.NodeVisitor {
 		}
 		return node
 	})
+}
+
+func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
+		ast.KindConstructor:
+		return node
+	case ast.KindPropertyAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			tx.capturedSuperProperties.Add(node.Name().Text())
+		}
+	case ast.KindElementAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			tx.hasSuperElementAccess = true
+		}
+	case ast.KindBinaryExpression:
+		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPrefixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPostfixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+// substituteSuperAccessesInBody walks the async generator body and replaces super property/element
+// accesses with _super/_superIndex references. This is necessary because the async generator body
+// ends up inside a generator function where `super` is not valid.
+func (tx *forawaitTransformer) substituteSuperAccessesInBody(body *ast.Node) *ast.Node {
+	var visitor *ast.NodeVisitor
+	var doVisit func(node *ast.Node) *ast.Node
+	doVisit = func(node *ast.Node) *ast.Node {
+		switch node.Kind {
+		case ast.KindCallExpression:
+			call := node.AsCallExpression()
+			if isSuperProperty(call.Expression) {
+				return tx.substituteCallExpressionWithSuperAccess(call, visitor)
+			}
+			return visitor.VisitEachChild(node)
+		case ast.KindPropertyAccessExpression:
+			if node.Expression().Kind == ast.KindSuperKeyword {
+				return tx.Factory().NewPropertyAccessExpression(
+					tx.superBinding, nil, node.Name(), ast.NodeFlagsNone,
+				)
+			}
+			return visitor.VisitEachChild(node)
+		case ast.KindElementAccessExpression:
+			if node.Expression().Kind == ast.KindSuperKeyword {
+				return tx.createSuperElementAccessInAsyncMethod(
+					node.AsElementAccessExpression().ArgumentExpression,
+				)
+			}
+			return visitor.VisitEachChild(node)
+		case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
+			ast.KindConstructor, ast.KindClassDeclaration, ast.KindClassExpression:
+			return node
+		default:
+			return visitor.VisitEachChild(node)
+		}
+	}
+	visitor = tx.EmitContext().NewNodeVisitor(doVisit)
+	return visitor.VisitNode(body)
+}
+
+func (tx *forawaitTransformer) substituteCallExpressionWithSuperAccess(call *ast.CallExpression, visitor *ast.NodeVisitor) *ast.Node {
+	expression := call.Expression
+	var target *ast.Node
+
+	if ast.IsPropertyAccessExpression(expression) {
+		target = tx.Factory().NewPropertyAccessExpression(
+			tx.superBinding, nil,
+			expression.AsPropertyAccessExpression().Name(), ast.NodeFlagsNone,
+		)
+	} else if ast.IsElementAccessExpression(expression) {
+		target = tx.createSuperElementAccessInAsyncMethod(
+			expression.AsElementAccessExpression().ArgumentExpression,
+		)
+	} else {
+		return visitor.VisitEachChild(call.AsNode())
+	}
+
+	callTarget := tx.Factory().NewPropertyAccessExpression(
+		target, nil,
+		tx.Factory().NewIdentifier("call"), ast.NodeFlagsNone,
+	)
+
+	var allArgs []*ast.Node
+	allArgs = append(allArgs, tx.Factory().NewThisExpression())
+	if call.Arguments != nil {
+		visitedArgs := visitor.VisitNodes(call.Arguments)
+		if visitedArgs != nil {
+			allArgs = append(allArgs, visitedArgs.Nodes...)
+		}
+	}
+
+	result := tx.Factory().NewCallExpression(
+		callTarget, nil, nil,
+		tx.Factory().NewNodeList(allArgs), ast.NodeFlagsNone,
+	)
+	result.Loc = call.Loc
+	return result
+}
+
+func (tx *forawaitTransformer) createSuperElementAccessInAsyncMethod(argumentExpression *ast.Node) *ast.Node {
+	superIndexCall := tx.Factory().NewCallExpression(
+		tx.superIndexBinding, nil, nil,
+		tx.Factory().NewNodeList([]*ast.Node{argumentExpression}),
+		ast.NodeFlagsNone,
+	)
+	if tx.hasSuperPropertyAssignment {
+		return tx.Factory().NewPropertyAccessExpression(
+			superIndexCall, nil,
+			tx.Factory().NewIdentifier("value"), ast.NodeFlagsNone,
+		)
+	}
+	return superIndexCall
+}
+
+func (tx *forawaitTransformer) createSuperAccessVariableStatement() *ast.Node {
+	f := tx.Factory()
+	var accessors []*ast.Node
+
+	var sortedNames []string
+	for name := range tx.capturedSuperProperties.Keys() {
+		sortedNames = append(sortedNames, name)
+	}
+	slices.Sort(sortedNames)
+
+	for _, name := range sortedNames {
+		var descriptorProperties []*ast.Node
+
+		getterBody := f.NewPropertyAccessExpression(
+			f.NewKeywordExpression(ast.KindSuperKeyword), nil,
+			f.NewIdentifier(name), ast.NodeFlagsNone,
+		)
+		getterArrow := f.NewArrowFunction(
+			nil, nil,
+			f.NewNodeList([]*ast.Node{}),
+			nil, nil,
+			f.NewToken(ast.KindEqualsGreaterThanToken),
+			getterBody,
+		)
+		getter := f.NewPropertyAssignment(nil, f.NewIdentifier("get"), nil, nil, getterArrow)
+		descriptorProperties = append(descriptorProperties, getter)
+
+		if tx.hasSuperPropertyAssignment {
+			vParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("v"), nil, nil, nil)
+			superProp := f.NewPropertyAccessExpression(
+				f.NewKeywordExpression(ast.KindSuperKeyword), nil,
+				f.NewIdentifier(name), ast.NodeFlagsNone,
+			)
+			assignExpr := f.NewAssignmentExpression(superProp, f.NewIdentifier("v"))
+			setterArrow := f.NewArrowFunction(
+				nil, nil,
+				f.NewNodeList([]*ast.Node{vParam}),
+				nil, nil,
+				f.NewToken(ast.KindEqualsGreaterThanToken),
+				assignExpr,
+			)
+			setter := f.NewPropertyAssignment(nil, f.NewIdentifier("set"), nil, nil, setterArrow)
+			descriptorProperties = append(descriptorProperties, setter)
+		}
+
+		descriptor := f.NewObjectLiteralExpression(f.NewNodeList(descriptorProperties), false)
+		accessor := f.NewPropertyAssignment(nil, f.NewIdentifier(name), nil, nil, descriptor)
+		accessors = append(accessors, accessor)
+	}
+
+	descriptorsObject := f.NewObjectLiteralExpression(f.NewNodeList(accessors), true)
+
+	objectCreateCall := f.NewCallExpression(
+		f.NewPropertyAccessExpression(
+			f.NewIdentifier("Object"), nil,
+			f.NewIdentifier("create"), ast.NodeFlagsNone,
+		), nil, nil,
+		f.NewNodeList([]*ast.Node{
+			f.NewKeywordExpression(ast.KindNullKeyword),
+			descriptorsObject,
+		}),
+		ast.NodeFlagsNone,
+	)
+
+	decl := f.NewVariableDeclaration(tx.superBinding, nil, nil, objectCreateCall)
+	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
+	return f.NewVariableStatement(nil, declList)
+}
+
+func (tx *forawaitTransformer) createSuperIndexVariableStatement() *ast.Node {
+	if tx.hasSuperPropertyAssignment {
+		return tx.createAdvancedSuperIndexVariableStatement()
+	}
+	return tx.createSimpleSuperIndexVariableStatement()
+}
+
+func (tx *forawaitTransformer) createSimpleSuperIndexVariableStatement() *ast.Node {
+	f := tx.Factory()
+	nameParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
+	superElementAccess := f.NewElementAccessExpression(
+		f.NewKeywordExpression(ast.KindSuperKeyword), nil,
+		f.NewIdentifier("name"), ast.NodeFlagsNone,
+	)
+	arrow := f.NewArrowFunction(
+		nil, nil,
+		f.NewNodeList([]*ast.Node{nameParam}),
+		nil, nil,
+		f.NewToken(ast.KindEqualsGreaterThanToken),
+		superElementAccess,
+	)
+	decl := f.NewVariableDeclaration(tx.superIndexBinding, nil, nil, arrow)
+	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
+	return f.NewVariableStatement(nil, declList)
+}
+
+func (tx *forawaitTransformer) createAdvancedSuperIndexVariableStatement() *ast.Node {
+	f := tx.Factory()
+
+	objectCreateNull := f.NewCallExpression(
+		f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("create"), ast.NodeFlagsNone),
+		nil, nil,
+		f.NewNodeList([]*ast.Node{f.NewKeywordExpression(ast.KindNullKeyword)}),
+		ast.NodeFlagsNone,
+	)
+	cacheDecl := f.NewVariableDeclaration(f.NewIdentifier("cache"), nil, nil, objectCreateNull)
+	cacheDeclList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{cacheDecl}))
+	cacheStmt := f.NewVariableStatement(nil, cacheDeclList)
+
+	getiCall := f.NewCallExpression(f.NewIdentifier("geti"), nil, nil, f.NewNodeList([]*ast.Node{f.NewIdentifier("name")}), ast.NodeFlagsNone)
+	setiCall := f.NewCallExpression(f.NewIdentifier("seti"), nil, nil, f.NewNodeList([]*ast.Node{f.NewIdentifier("name"), f.NewIdentifier("v")}), ast.NodeFlagsNone)
+
+	getterBody := f.NewBlock(f.NewNodeList([]*ast.Node{f.NewReturnStatement(getiCall)}), false)
+	getAccessor := f.NewGetAccessorDeclaration(nil, f.NewIdentifier("value"), nil, f.NewNodeList([]*ast.Node{}), nil, nil, getterBody)
+
+	setterVParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("v"), nil, nil, nil)
+	setterBody := f.NewBlock(f.NewNodeList([]*ast.Node{f.NewExpressionStatement(setiCall)}), false)
+	setAccessor := f.NewSetAccessorDeclaration(nil, f.NewIdentifier("value"), nil, f.NewNodeList([]*ast.Node{setterVParam}), nil, nil, setterBody)
+
+	descriptor := f.NewObjectLiteralExpression(f.NewNodeList([]*ast.Node{getAccessor, setAccessor}), false)
+
+	cacheAccess1 := f.NewElementAccessExpression(f.NewIdentifier("cache"), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
+	cacheAccess2 := f.NewElementAccessExpression(f.NewIdentifier("cache"), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
+	cacheAssign := f.NewParenthesizedExpression(f.NewAssignmentExpression(cacheAccess2, descriptor))
+	orExpr := f.NewBinaryExpression(nil, cacheAccess1, nil, f.NewToken(ast.KindBarBarToken), cacheAssign)
+
+	innerNameParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
+	innerArrow := f.NewArrowFunction(nil, nil, f.NewNodeList([]*ast.Node{innerNameParam}), nil, nil, f.NewToken(ast.KindEqualsGreaterThanToken), orExpr)
+
+	returnStmt := f.NewReturnStatement(innerArrow)
+
+	funcBody := f.NewBlock(f.NewNodeList([]*ast.Node{cacheStmt, returnStmt}), true)
+	getiParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("geti"), nil, nil, nil)
+	setiParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("seti"), nil, nil, nil)
+	outerFunc := f.NewFunctionExpression(nil, nil, nil, nil, f.NewNodeList([]*ast.Node{getiParam, setiParam}), nil, nil, funcBody)
+
+	getterArgParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
+	getterArgBody := f.NewElementAccessExpression(f.NewKeywordExpression(ast.KindSuperKeyword), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
+	getterArg := f.NewArrowFunction(nil, nil, f.NewNodeList([]*ast.Node{getterArgParam}), nil, nil, f.NewToken(ast.KindEqualsGreaterThanToken), getterArgBody)
+
+	setterArgNameParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
+	setterArgValueParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("value"), nil, nil, nil)
+	setterArgSuperAccess := f.NewElementAccessExpression(f.NewKeywordExpression(ast.KindSuperKeyword), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
+	setterArgAssign := f.NewAssignmentExpression(setterArgSuperAccess, f.NewIdentifier("value"))
+	setterArg := f.NewArrowFunction(nil, nil, f.NewNodeList([]*ast.Node{setterArgNameParam, setterArgValueParam}), nil, nil, f.NewToken(ast.KindEqualsGreaterThanToken), setterArgAssign)
+
+	iife := f.NewCallExpression(
+		f.NewParenthesizedExpression(outerFunc), nil, nil,
+		f.NewNodeList([]*ast.Node{getterArg, setterArg}),
+		ast.NodeFlagsNone,
+	)
+
+	decl := f.NewVariableDeclaration(tx.superIndexBinding, nil, nil, iife)
+	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
+	return f.NewVariableStatement(nil, declList)
 }
 
 func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
