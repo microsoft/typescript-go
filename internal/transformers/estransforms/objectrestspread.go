@@ -45,6 +45,7 @@ type objectRestSpreadTransformer struct {
 	compilerOptions *core.CompilerOptions
 
 	inExportedVariableStatement bool
+	expressionResultIsUnused    bool
 
 	ctx                                       flattenContext
 	parametersWithPrecedingObjectRestOrSpread map[*ast.Node]struct{}
@@ -78,13 +79,24 @@ func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsESObjectRestOrSpread == 0 && ch.parametersWithPrecedingObjectRestOrSpread == nil {
 		return node
 	}
+	// Save the expressionResultIsUnused flag set by the parent for this node,
+	// then reset to false for children (the default). Specific cases below override as needed.
+	expressionResultIsUnused := ch.expressionResultIsUnused
+	ch.expressionResultIsUnused = false
+	defer func() { ch.expressionResultIsUnused = expressionResultIsUnused }()
 	switch node.Kind {
 	case ast.KindSourceFile:
 		return ch.visitSourceFile(node.AsSourceFile())
 	case ast.KindObjectLiteralExpression:
 		return ch.visitObjectLiteralExpression(node.AsObjectLiteralExpression())
 	case ast.KindBinaryExpression:
-		return ch.visitBinaryExpression(node.AsBinaryExpression())
+		return ch.visitBinaryExpression(node.AsBinaryExpression(), expressionResultIsUnused)
+	case ast.KindExpressionStatement:
+		ch.expressionResultIsUnused = true
+		return ch.Visitor().VisitEachChild(node)
+	case ast.KindParenthesizedExpression:
+		ch.expressionResultIsUnused = expressionResultIsUnused
+		return ch.Visitor().VisitEachChild(node)
 	case ast.KindForOfStatement:
 		return ch.visitForOftatement(node.AsForInOrOfStatement())
 	case ast.KindVariableStatement:
@@ -608,16 +620,21 @@ func (ch *objectRestSpreadTransformer) createForOfBindingStatement(node *ast.Nod
 	}
 }
 
-func (ch *objectRestSpreadTransformer) visitBinaryExpression(node *ast.BinaryExpression) *ast.Node {
-	if !(ast.IsDestructuringAssignment(node.AsNode()) && ast.ContainsObjectRestOrSpread(node.Left)) {
-		return ch.Visitor().VisitEachChild(node.AsNode())
+func (ch *objectRestSpreadTransformer) visitBinaryExpression(node *ast.BinaryExpression, expressionResultIsUnused bool) *ast.Node {
+	if ast.IsDestructuringAssignment(node.AsNode()) && ast.ContainsObjectRestOrSpread(node.Left) {
+		return ch.flattenDestructuringAssignment(node, !expressionResultIsUnused)
 	}
-	return ch.flattenDestructuringAssignment(
-		node,
-	)
+	if node.OperatorToken.Kind == ast.KindCommaToken {
+		ch.expressionResultIsUnused = true
+		left := ch.Visitor().VisitNode(node.Left)
+		ch.expressionResultIsUnused = expressionResultIsUnused
+		right := ch.Visitor().VisitNode(node.Right)
+		return ch.Factory().UpdateBinaryExpression(node, nil, left, nil, node.OperatorToken, right)
+	}
+	return ch.Visitor().VisitEachChild(node.AsNode())
 }
 
-func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.BinaryExpression) *ast.Node {
+func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.BinaryExpression, needsValue bool) *ast.Node {
 	location := node.Loc
 	var value *ast.Node
 	if ast.IsDestructuringAssignment(node.AsNode()) {
@@ -642,11 +659,12 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 			// If the right-hand value of the assignment is also an assignment target then
 			// we need to cache the right-hand value.
 			value = ch.ensureIdentifier(value, false, location)
-		} else {
+		} else if needsValue {
+			// If the right-hand value of the destructuring assignment needs to be preserved (as
+			// is the case when the destructuring assignment is part of a larger expression),
+			// then we need to cache the right-hand value.
 			value = ch.ensureIdentifier(value, true, location)
-		}
-
-		if ast.NodeIsSynthesized(node.AsNode()) {
+		} else if ast.NodeIsSynthesized(node.AsNode()) {
 			// Generally, the source map location for a destructuring assignment is the root
 			// expression.
 			//
@@ -658,6 +676,13 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 	}
 
 	ch.flattenBindingOrAssignmentElement(node.AsNode(), value, location, ast.IsDestructuringAssignment(node.AsNode()))
+
+	if value != nil && needsValue {
+		if len(ch.ctx.currentExpressions) == 0 {
+			return value
+		}
+		ch.ctx.currentExpressions = append(ch.ctx.currentExpressions, value)
+	}
 
 	res := ch.Factory().InlineExpressions(ch.ctx.currentExpressions)
 	if res != nil {
