@@ -485,7 +485,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 
 func (tx *asyncTransformer) transformAsyncFunctionParameterList(node *ast.Node) *ast.NodeList {
 	if isSimpleParameterList(node.Parameters()) {
-		return tx.Visitor().VisitNodes(node.ParameterList())
+		return tx.EmitContext().VisitParameters(node.ParameterList(), tx.Visitor())
 	}
 
 	var newParameters []*ast.Node
@@ -527,9 +527,8 @@ func (tx *asyncTransformer) transformAsyncFunctionParameterList(node *ast.Node) 
 func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerParameters *ast.NodeList) *ast.Node {
 	innerParameters := (*ast.NodeList)(nil)
 	if !isSimpleParameterList(node.Parameters()) {
-		innerParameters = tx.Visitor().VisitNodes(node.ParameterList())
+		innerParameters = tx.EmitContext().VisitParameters(node.ParameterList(), tx.Visitor())
 	}
-	tx.EmitContext().StartVariableEnvironment()
 
 	isArrow := node.Kind == ast.KindArrowFunction
 	savedLexicalArguments := tx.lexicalArguments
