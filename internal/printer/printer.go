@@ -176,6 +176,9 @@ func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *Emi
 	printer.nameGenerator.Context = printer.emitContext
 	printer.nameGenerator.GetTextOfNode = func(node *ast.Node) string { return printer.getTextOfNode(node, false) }
 	printer.nameGenerator.IsFileLevelUniqueNameInCurrentFile = printer.isFileLevelUniqueNameInCurrentFile
+	printer.makeFileLevelOptimisticUniqueName = func(name string) string {
+		return printer.nameGenerator.MakeFileLevelOptimisticUniqueName(name)
+	}
 	printer.containerPos = -1
 	printer.containerEnd = -1
 	printer.declarationListContainerEnd = -1

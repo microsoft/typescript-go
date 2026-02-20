@@ -448,9 +448,6 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 		(getFunctionFlags(tx.getOriginalIfFunctionLike(node))&checker.FunctionFlagsAsyncGenerator) != checker.FunctionFlagsAsyncGenerator
 
 	if emitSuperHelpers {
-		if tx.hasSuperElementAccess {
-			tx.EmitContext().AddInitializationStatement(tx.createSuperIndexVariableStatement())
-		}
 		if tx.capturedSuperProperties.Len() > 0 {
 			tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 		}
@@ -463,6 +460,14 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 		updated = newBlock
 	} else {
 		updated = tx.Factory().UpdateBlock(updated.AsBlock(), mergedStatements)
+	}
+
+	if emitSuperHelpers && tx.hasSuperElementAccess {
+		if tx.hasSuperPropertyAssignment {
+			tx.EmitContext().AddEmitHelper(updated, printer.AdvancedAsyncSuperHelper)
+		} else {
+			tx.EmitContext().AddEmitHelper(updated, printer.AsyncSuperHelper)
+		}
 	}
 
 	tx.capturedSuperProperties = savedCapturedSuperProperties
@@ -601,9 +606,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
 		if emitSuperHelpers {
-			if tx.hasSuperElementAccess {
-				tx.EmitContext().AddInitializationStatement(tx.createSuperIndexVariableStatement())
-			}
 			if tx.capturedSuperProperties.Len() > 0 {
 				tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 			}
@@ -629,6 +631,14 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 			true,
 		)
 		block.Loc = node.Body().Loc
+
+		if emitSuperHelpers && tx.hasSuperElementAccess {
+			if tx.hasSuperPropertyAssignment {
+				tx.EmitContext().AddEmitHelper(block, printer.AdvancedAsyncSuperHelper)
+			} else {
+				tx.EmitContext().AddEmitHelper(block, printer.AsyncSuperHelper)
+			}
+		}
 
 		result = block
 	} else {
@@ -944,112 +954,6 @@ func (tx *asyncTransformer) createSuperAccessVariableStatement() *ast.Node {
 	)
 
 	decl := f.NewVariableDeclaration(tx.superBinding, nil, nil, objectCreateCall)
-	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
-	return f.NewVariableStatement(nil, declList)
-}
-
-// createSuperIndexVariableStatement creates the _superIndex helper variable.
-func (tx *asyncTransformer) createSuperIndexVariableStatement() *ast.Node {
-	if tx.hasSuperPropertyAssignment {
-		return tx.createAdvancedSuperIndexVariableStatement()
-	}
-	return tx.createSimpleSuperIndexVariableStatement()
-}
-
-// createSimpleSuperIndexVariableStatement creates: const _superIndex = name => super[name];
-func (tx *asyncTransformer) createSimpleSuperIndexVariableStatement() *ast.Node {
-	f := tx.Factory()
-	nameParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
-	superElementAccess := f.NewElementAccessExpression(
-		f.NewKeywordExpression(ast.KindSuperKeyword), nil,
-		f.NewIdentifier("name"), ast.NodeFlagsNone,
-	)
-	arrow := f.NewArrowFunction(
-		nil, nil,
-		f.NewNodeList([]*ast.Node{nameParam}),
-		nil, nil,
-		f.NewToken(ast.KindEqualsGreaterThanToken),
-		superElementAccess,
-	)
-	decl := f.NewVariableDeclaration(tx.superIndexBinding, nil, nil, arrow)
-	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
-	return f.NewVariableStatement(nil, declList)
-}
-
-// createAdvancedSuperIndexVariableStatement creates:
-//
-//	const _superIndex = (function (geti, seti) {
-//	    const cache = Object.create(null);
-//	    return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
-//	})(name => super[name], (name, value) => super[name] = value);
-func (tx *asyncTransformer) createAdvancedSuperIndexVariableStatement() *ast.Node {
-	f := tx.Factory()
-
-	// const cache = Object.create(null)
-	objectCreateNull := f.NewCallExpression(
-		f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("create"), ast.NodeFlagsNone),
-		nil, nil,
-		f.NewNodeList([]*ast.Node{f.NewKeywordExpression(ast.KindNullKeyword)}),
-		ast.NodeFlagsNone,
-	)
-	cacheDecl := f.NewVariableDeclaration(f.NewIdentifier("cache"), nil, nil, objectCreateNull)
-	cacheDeclList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{cacheDecl}))
-	cacheStmt := f.NewVariableStatement(nil, cacheDeclList)
-
-	// geti(name)
-	getiCall := f.NewCallExpression(f.NewIdentifier("geti"), nil, nil, f.NewNodeList([]*ast.Node{f.NewIdentifier("name")}), ast.NodeFlagsNone)
-	// seti(name, v)
-	setiCall := f.NewCallExpression(f.NewIdentifier("seti"), nil, nil, f.NewNodeList([]*ast.Node{f.NewIdentifier("name"), f.NewIdentifier("v")}), ast.NodeFlagsNone)
-
-	// { get value() { return geti(name); }, set value(v) { seti(name, v); } }
-	getterBody := f.NewBlock(f.NewNodeList([]*ast.Node{f.NewReturnStatement(getiCall)}), false)
-	getAccessor := f.NewGetAccessorDeclaration(nil, f.NewIdentifier("value"), nil, f.NewNodeList([]*ast.Node{}), nil, nil, getterBody)
-
-	setterVParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("v"), nil, nil, nil)
-	setterBody := f.NewBlock(f.NewNodeList([]*ast.Node{f.NewExpressionStatement(setiCall)}), false)
-	setAccessor := f.NewSetAccessorDeclaration(nil, f.NewIdentifier("value"), nil, f.NewNodeList([]*ast.Node{setterVParam}), nil, nil, setterBody)
-
-	descriptor := f.NewObjectLiteralExpression(f.NewNodeList([]*ast.Node{getAccessor, setAccessor}), false)
-
-	// cache[name] || (cache[name] = descriptor)
-	cacheAccess1 := f.NewElementAccessExpression(f.NewIdentifier("cache"), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
-	cacheAccess2 := f.NewElementAccessExpression(f.NewIdentifier("cache"), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
-	cacheAssign := f.NewParenthesizedExpression(f.NewAssignmentExpression(cacheAccess2, descriptor))
-	orExpr := f.NewBinaryExpression(nil, cacheAccess1, nil, f.NewToken(ast.KindBarBarToken), cacheAssign)
-
-	// name => cache[name] || (cache[name] = descriptor)
-	innerNameParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
-	innerArrow := f.NewArrowFunction(nil, nil, f.NewNodeList([]*ast.Node{innerNameParam}), nil, nil, f.NewToken(ast.KindEqualsGreaterThanToken), orExpr)
-
-	// return innerArrow
-	returnStmt := f.NewReturnStatement(innerArrow)
-
-	// function(geti, seti) { const cache = ...; return ...; }
-	funcBody := f.NewBlock(f.NewNodeList([]*ast.Node{cacheStmt, returnStmt}), true)
-	getiParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("geti"), nil, nil, nil)
-	setiParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("seti"), nil, nil, nil)
-	outerFunc := f.NewFunctionExpression(nil, nil, nil, nil, f.NewNodeList([]*ast.Node{getiParam, setiParam}), nil, nil, funcBody)
-
-	// Getter arg: name => super[name]
-	getterArgParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
-	getterArgBody := f.NewElementAccessExpression(f.NewKeywordExpression(ast.KindSuperKeyword), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
-	getterArg := f.NewArrowFunction(nil, nil, f.NewNodeList([]*ast.Node{getterArgParam}), nil, nil, f.NewToken(ast.KindEqualsGreaterThanToken), getterArgBody)
-
-	// Setter arg: (name, value) => super[name] = value
-	setterArgNameParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("name"), nil, nil, nil)
-	setterArgValueParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("value"), nil, nil, nil)
-	setterArgSuperAccess := f.NewElementAccessExpression(f.NewKeywordExpression(ast.KindSuperKeyword), nil, f.NewIdentifier("name"), ast.NodeFlagsNone)
-	setterArgAssign := f.NewAssignmentExpression(setterArgSuperAccess, f.NewIdentifier("value"))
-	setterArg := f.NewArrowFunction(nil, nil, f.NewNodeList([]*ast.Node{setterArgNameParam, setterArgValueParam}), nil, nil, f.NewToken(ast.KindEqualsGreaterThanToken), setterArgAssign)
-
-	// IIFE: (function(geti, seti) { ... })(getterArg, setterArg)
-	iife := f.NewCallExpression(
-		f.NewParenthesizedExpression(outerFunc), nil, nil,
-		f.NewNodeList([]*ast.Node{getterArg, setterArg}),
-		ast.NodeFlagsNone,
-	)
-
-	decl := f.NewVariableDeclaration(tx.superIndexBinding, nil, nil, iife)
 	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
 	return f.NewVariableStatement(nil, declList)
 }
