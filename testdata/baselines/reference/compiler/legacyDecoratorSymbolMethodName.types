@@ -1,0 +1,20 @@
+//// [tests/cases/compiler/legacyDecoratorSymbolMethodName.ts] ////
+
+=== legacyDecoratorSymbolMethodName.ts ===
+export class A {
+>A : A
+
+  @(fakeDecorator as any)
+>(fakeDecorator as any) : any
+>fakeDecorator as any : any
+>fakeDecorator : () => void
+
+  [Symbol()]() {}
+>[Symbol()] : () => void
+>Symbol() : symbol
+>Symbol : SymbolConstructor
+}
+
+function fakeDecorator() {}
+>fakeDecorator : () => void
+
