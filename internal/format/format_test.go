@@ -1,6 +1,7 @@
 package format_test
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -56,6 +57,65 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 			if !strings.HasSuffix(tc.text, "\n") {
 				assert.Assert(t, !strings.HasSuffix(newText, " "), "Formatter should not add space before EOF")
 			}
+		})
+	}
+}
+
+// Test for panic handling request textDocument/onTypeFormatting (issue #2042)
+// The panic occurs when nodes in a list can be nil, causing deriveActualIndentationFromList
+// to panic when accessing node properties
+func TestFormatOnEnter_NilNodesInList(t *testing.T) {
+	t.Parallel()
+
+	// Test cases that can produce nil nodes in AST lists
+	testCases := []struct {
+		name     string
+		text     string
+		position int // position where enter is pressed
+	}{
+		{
+			name:     "empty file",
+			text:     "",
+			position: 0,
+		},
+		{
+			name:     "simple statement",
+			text:     "const x = 1;",
+			position: 12,
+		},
+		{
+			name:     "incomplete code",
+			text:     "if (",
+			position: 4,
+		},
+		{
+			name:     "malformed syntax",
+			text:     "function f() { return }",
+			position: 21,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: "/test.ts",
+				Path:     "/test.ts",
+			}, tc.text, core.ScriptKindTS)
+
+			ctx := format.WithFormatCodeSettings(context.Background(), &format.FormatCodeSettings{
+				EditorSettings: format.EditorSettings{
+					TabSize:             4,
+					IndentSize:          4,
+					NewLineCharacter:    "\n",
+					ConvertTabsToSpaces: true,
+					IndentStyle:         format.IndentStyleSmart,
+				},
+			}, "\n")
+
+			// This should not panic even with nil nodes in lists
+			edits := format.FormatOnEnter(ctx, sourceFile, tc.position)
+			_ = edits // Just ensuring no panic
 		})
 	}
 }

@@ -178,6 +178,9 @@ func deriveActualIndentationFromList(list *ast.NodeList, index int, sourceFile *
 	debug.Assert(list != nil && index >= 0 && index < len(list.Nodes))
 
 	node := list.Nodes[index]
+	if node == nil {
+		return -1
+	}
 
 	// walk toward the start of the list starting from current node and check if the line is the same for all items.
 	// if end line for item [i - 1] differs from the start line for item [i] - find column of the first non-whitespace character on the line of item [i]
@@ -185,6 +188,9 @@ func deriveActualIndentationFromList(list *ast.NodeList, index int, sourceFile *
 	line, char := getStartLineAndCharacterForNode(node, sourceFile)
 
 	for i := index; i >= 0; i-- {
+		if list.Nodes[i] == nil {
+			continue
+		}
 		if list.Nodes[i].Kind == ast.KindCommaToken {
 			continue
 		}
