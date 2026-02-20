@@ -664,6 +664,76 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 	)
 }
 
+// ES2018 Helpers
+
+// Allocates a new Call expression to the `__await` helper.
+func (f *NodeFactory) NewAwaitHelper(expression *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(awaitHelper)
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__await"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{expression}),
+		ast.NodeFlagsNone,
+	)
+}
+
+// Allocates a new Call expression to the `__asyncGenerator` helper.
+func (f *NodeFactory) NewAsyncGeneratorHelper(
+	generatorFunc *ast.Expression,
+	hasLexicalThis bool,
+) *ast.Expression {
+	f.emitContext.RequestEmitHelper(awaitHelper)
+	f.emitContext.RequestEmitHelper(asyncGeneratorHelper)
+
+	// Mark this node as originally an async function body
+	f.emitContext.AddEmitFlags(generatorFunc, EFAsyncFunctionBody|EFReuseTempVariableScope)
+
+	var thisArg *ast.Expression
+	if hasLexicalThis {
+		thisArg = f.NewKeywordExpression(ast.KindThisKeyword)
+	} else {
+		thisArg = f.NewVoidZeroExpression()
+	}
+
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__asyncGenerator"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{
+			thisArg,
+			f.NewIdentifier("arguments"),
+			generatorFunc,
+		}),
+		ast.NodeFlagsNone,
+	)
+}
+
+// Allocates a new Call expression to the `__asyncDelegator` helper.
+func (f *NodeFactory) NewAsyncDelegatorHelper(expression *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(awaitHelper)
+	f.emitContext.RequestEmitHelper(asyncDelegatorHelper)
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__asyncDelegator"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{expression}),
+		ast.NodeFlagsNone,
+	)
+}
+
+// Allocates a new Call expression to the `__asyncValues` helper.
+func (f *NodeFactory) NewAsyncValuesHelper(expression *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(asyncValuesHelper)
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__asyncValues"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{expression}),
+		ast.NodeFlagsNone,
+	)
+}
+
 // !!! ES2017 Helpers
 
 // Allocates a new Call expression to the `__awaiter` helper.
