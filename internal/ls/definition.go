@@ -215,18 +215,19 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		contextualDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
 		return core.Concatenate(declarations, contextualDeclarations)
 	}
-	// If the node is the name of a BindingElement within an ObjectBindingPattern instead of just returning the
-	// declaration of the symbol (which is itself), we should try to get to the original type of the
-	// ObjectBindingPattern and return the property declaration for the referenced property.
-	// For example:
-	//      import('./foo').then(({ bar }) => undefined); => should navigate to the declaration in file "./foo"
-	//
-	//      function bar<T>(onfulfilled: (value: T) => void) { }
-	//      interface Test { prop1: number }
-	//      bar<Test>(({ prop1 }) => {});  => should navigate to prop1 in Test
+
 	if ast.IsPropertyName(node) && ast.IsBindingElement(node.Parent) && ast.IsObjectBindingPattern(node.Parent.Parent) {
+		// If the node is the name of a BindingElement within an ObjectBindingPattern instead of just returning the
+		// declaration of the symbol (which is itself), we should try to get to the original type of the
+		// ObjectBindingPattern and return the property declaration for the referenced property.
+		// For example:
+		//      import('./foo').then(({ bar }) => undefined); => should navigate to the declaration in file "./foo"
+		//
+		//      function bar<T>(onfulfilled: (value: T) => void) { }
+		//      interface Test { prop1: number }
+		//      bar<Test>(({ prop1 }) => {});  => should navigate to prop1 in Test
 		bindingEl := node.Parent.AsBindingElement()
-		if node == core.OrElse(bindingEl.PropertyName, node.Parent.Name()) {
+		if bindingEl.DotDotDotToken == nil && node == core.OrElse(bindingEl.PropertyName, node.Parent.Name()) {
 			if name, ok := ast.TryGetTextOfPropertyName(node); ok {
 				t := c.GetTypeAtLocation(node.Parent.Parent)
 				types := []*checker.Type{t}
@@ -243,6 +244,7 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 			}
 		}
 	}
+
 	node = getDeclarationNameForKeyword(node)
 	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
 		if symbol.Flags&ast.SymbolFlagsClass != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable) == 0 && node.Kind == ast.KindConstructorKeyword {
