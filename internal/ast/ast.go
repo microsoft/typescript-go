@@ -6375,12 +6375,18 @@ func (node *BinaryExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
+	facts := propagateModifierListSubtreeFacts(node.modifiers) |
 		propagateSubtreeFacts(node.Left) |
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.OperatorToken) |
 		propagateSubtreeFacts(node.Right) |
 		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields|SubtreeContainsPrivateIdentifierInExpression, SubtreeFactsNone)
+	if node.OperatorToken.Kind == KindEqualsToken {
+		if (IsObjectLiteralExpression(node.Left) || IsArrayLiteralExpression(node.Left)) && ContainsObjectRestOrSpread(node.Left) {
+			facts |= SubtreeContainsObjectRestOrSpread
+		}
+	}
+	return facts
 }
 
 func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
