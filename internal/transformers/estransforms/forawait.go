@@ -723,7 +723,7 @@ func (tx *forawaitTransformer) visitFunctionExpression(node *ast.Node) *ast.Node
 
 func (tx *forawaitTransformer) transformAsyncGeneratorFunctionParameterList(node *ast.Node) *ast.NodeList {
 	if isSimpleParameterList(node.Parameters()) {
-		return tx.Visitor().VisitNodes(node.ParameterList())
+		return tx.EmitContext().VisitParameters(node.ParameterList(), tx.Visitor())
 	}
 	// Add fixed parameters to preserve the function's `length` property.
 	var newParameters []*ast.Node
@@ -751,9 +751,8 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	f := tx.Factory()
 	innerParameters := (*ast.NodeList)(nil)
 	if !isSimpleParameterList(node.Parameters()) {
-		innerParameters = tx.Visitor().VisitNodes(node.ParameterList())
+		innerParameters = tx.EmitContext().VisitParameters(node.ParameterList(), tx.Visitor())
 	}
-	tx.EmitContext().StartVariableEnvironment()
 
 	savedCapturedSuperProperties := tx.capturedSuperProperties
 	savedHasSuperElementAccess := tx.hasSuperElementAccess
