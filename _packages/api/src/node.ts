@@ -371,8 +371,11 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         if (!Number.isInteger(index)) {
             return undefined!;
         }
+        if (index >= this.data || (index < 0 && -index > this.data)) {
+            return undefined!;
+        }
         if (index < 0) {
-            index = this.length - index;
+            index = this.length + index;
         }
         let next = this.index + 1;
         for (let i = 0; i < index; i++) {
@@ -1041,7 +1044,6 @@ export class RemoteSourceFile extends RemoteNode {
         super(view, decoder, 1, undefined!, {} as unknown as RemoteSourceFile);
         this.sourceFile = this;
         this.nodes = Array((this.view.byteLength - this.offsetNodes) / NODE_LEN);
-        this.nodes[0] = new RemoteNode(this.view, this.decoder, 0, this, this);
         this.nodes[1] = this;
     }
 }

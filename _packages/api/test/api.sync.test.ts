@@ -141,6 +141,22 @@ describe("SourceFile", () => {
         assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.parent, sourceFile.statements[0]);
         assert.equal(cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings?.parent, cast(sourceFile.statements[0], isImportDeclaration).importClause);
     });
+
+    test("node list returns undefined for out-of-range indexes", () => {
+        const api = spawnAPI();
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
+
+        assert.ok(sourceFile);
+        assert.equal(sourceFile.statements.length, 1);
+        assert.equal(sourceFile.statements[0].kind, SyntaxKind.ImportDeclaration);
+        assert.equal(sourceFile.statements.at(0).kind, SyntaxKind.ImportDeclaration);
+        assert.equal(sourceFile.statements.at(-1).kind, SyntaxKind.ImportDeclaration);
+        assert.equal(sourceFile.statements[1], undefined);
+        assert.equal(sourceFile.statements.at(1), undefined);
+        assert.equal(sourceFile.statements.at(-2), undefined);
+    });
 });
 
 test("unicode escapes", () => {
