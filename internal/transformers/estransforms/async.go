@@ -68,17 +68,26 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindPropertyAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.capturedSuperProperties.Add(node.Name().Text())
-			if ast.IsAssignmentTarget(node) {
-				tx.hasSuperPropertyAssignment = true
-			}
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindElementAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.hasSuperElementAccess = true
-			if ast.IsAssignmentTarget(node) {
-				tx.hasSuperPropertyAssignment = true
-			}
+		}
+		return tx.Visitor().VisitEachChild(node)
+	case ast.KindBinaryExpression:
+		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+		return tx.Visitor().VisitEachChild(node)
+	case ast.KindPrefixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+		return tx.Visitor().VisitEachChild(node)
+	case ast.KindPostfixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindGetAccessor:
@@ -127,16 +136,22 @@ func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
 	case ast.KindPropertyAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.capturedSuperProperties.Add(node.Name().Text())
-			if ast.IsAssignmentTarget(node) {
-				tx.hasSuperPropertyAssignment = true
-			}
 		}
 	case ast.KindElementAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.hasSuperElementAccess = true
-			if ast.IsAssignmentTarget(node) {
-				tx.hasSuperPropertyAssignment = true
-			}
+		}
+	case ast.KindBinaryExpression:
+		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPrefixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPostfixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
 		}
 	}
 	return tx.Visitor().VisitEachChild(node)
@@ -712,6 +727,54 @@ func (tx *asyncTransformer) convertToFunctionBlock(node *ast.Node) *ast.Node {
 func isSuperProperty(node *ast.Node) bool {
 	return (ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
 		node.Expression().Kind == ast.KindSuperKeyword
+}
+
+// assignmentTargetContainsSuperProperty checks top-down whether an assignment target
+// expression contains a super property or element access (super.x or super[x]).
+// This avoids relying on parent pointers (IsAssignmentTarget) which may not be set
+// on synthesized AST nodes from prior transforms.
+func assignmentTargetContainsSuperProperty(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+		return node.Expression().Kind == ast.KindSuperKeyword
+	case ast.KindParenthesizedExpression:
+		return assignmentTargetContainsSuperProperty(node.AsParenthesizedExpression().Expression)
+	case ast.KindArrayLiteralExpression:
+		return slices.ContainsFunc(node.AsArrayLiteralExpression().Elements.Nodes, assignmentTargetContainsSuperProperty)
+	case ast.KindObjectLiteralExpression:
+		for _, prop := range node.AsObjectLiteralExpression().Properties.Nodes {
+			switch prop.Kind {
+			case ast.KindPropertyAssignment:
+				if assignmentTargetContainsSuperProperty(prop.AsPropertyAssignment().Initializer) {
+					return true
+				}
+			case ast.KindShorthandPropertyAssignment:
+				if assignmentTargetContainsSuperProperty(prop.AsShorthandPropertyAssignment().Name()) {
+					return true
+				}
+			case ast.KindSpreadAssignment:
+				if assignmentTargetContainsSuperProperty(prop.AsSpreadAssignment().Expression) {
+					return true
+				}
+			}
+		}
+	case ast.KindSpreadElement:
+		return assignmentTargetContainsSuperProperty(node.AsSpreadElement().Expression)
+	}
+	return false
+}
+
+// isUpdateExpression checks if a prefix/postfix unary expression is ++ or --.
+func isUpdateExpression(node *ast.Node) bool {
+	if ast.IsPrefixUnaryExpression(node) {
+		op := node.AsPrefixUnaryExpression().Operator
+		return op == ast.KindPlusPlusToken || op == ast.KindMinusMinusToken
+	}
+	if ast.IsPostfixUnaryExpression(node) {
+		op := node.AsPostfixUnaryExpression().Operator
+		return op == ast.KindPlusPlusToken || op == ast.KindMinusMinusToken
+	}
+	return false
 }
 
 // substituteSuperAccessesInBody walks the async body and replaces super property/element
