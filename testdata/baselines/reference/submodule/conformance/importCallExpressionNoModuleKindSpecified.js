@@ -91,7 +91,7 @@ class C {
         const loadAsync = Promise.resolve().then(() => __importStar(require("./0")));
         this.myModule.then(Zero => {
             console.log(Zero.foo());
-        }, err => __awaiter(this, void 0, void 0, function* () {
+        }, (err) => __awaiter(this, void 0, void 0, function* () {
             console.log(err);
             let one = yield Promise.resolve().then(() => __importStar(require("./1")));
             console.log(one.backup());
