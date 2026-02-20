@@ -8,14 +8,7 @@
  main.ts(8,15): error TS2307: Cannot find module './foo.ts' or its corresponding type declarations.
  main.ts(10,8): error TS2307: Cannot find module './foo.ts' or its corresponding type declarations.
  main.ts(11,8): error TS2307: Cannot find module './foo.ts' or its corresponding type declarations.
-@@= skipped -15, +14 lines =@@
- no.ts(7,16): error TS2307: Cannot find module './foo.d.css.ts' or its corresponding type declarations.
- no.ts(8,16): error TS2307: Cannot find module '#internal/foo.ts' or its corresponding type declarations.
- no.ts(9,16): error TS2307: Cannot find module 'node:foo.ts' or its corresponding type declarations.
--no.ts(11,8): error TS2591: Cannot find name 'node:path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
-+no.ts(11,8): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
-
-
+@@= skipped -21, +20 lines =@@
  ==== globals.d.ts (0 errors) ====
      declare function require(module: string): any;
      
@@ -24,7 +17,7 @@
      // Rewrite
      import {} from "./foo.ts";
                     ~~~~~~~~~~
-@@= skipped -24, +24 lines =@@
+@@= skipped -18, +18 lines =@@
                           ~~~~~~~~~~
  !!! error TS2307: Cannot find module './foo.ts' or its corresponding type declarations.
      import "./foo.ts";
@@ -33,12 +26,3 @@
      export * from "./foo.ts";
                    ~~~~~~~~~~
  !!! error TS2307: Cannot find module './foo.ts' or its corresponding type declarations.
-@@= skipped -69, +67 lines =@@
-     (require)("./foo.ts");
-     import("node:path");
-            ~~~~~~~~~~~
--!!! error TS2591: Cannot find name 'node:path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
-+!!! error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
-     require("node:path");
-     
- ==== lol.ts (0 errors) ====
