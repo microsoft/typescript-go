@@ -344,8 +344,8 @@ func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
-		body = tx.Visitor().VisitNode(decl.Body)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
+		body = tx.EmitContext().VisitFunctionBody(decl.Body, tx.Visitor())
 	}
 
 	updated := tx.Factory().UpdateFunctionDeclaration(
@@ -379,8 +379,8 @@ func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
-		body = tx.Visitor().VisitNode(decl.Body)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
+		body = tx.EmitContext().VisitFunctionBody(decl.Body, tx.Visitor())
 	}
 
 	updated := tx.Factory().UpdateFunctionExpression(
@@ -412,8 +412,8 @@ func (tx *asyncTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
-		body = tx.Visitor().VisitNode(decl.Body)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
+		body = tx.EmitContext().VisitFunctionBody(decl.Body, tx.Visitor())
 	}
 
 	return tx.Factory().UpdateArrowFunction(
@@ -440,6 +440,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	tx.superBinding = tx.Factory().NewUniqueNameEx("_super", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 	tx.superIndexBinding = tx.Factory().NewUniqueNameEx("_superIndex", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 
+	tx.EmitContext().StartVariableEnvironment()
 	updated := tx.Visitor().VisitNode(node.Body())
 
 	// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
@@ -448,28 +449,21 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 		(getFunctionFlags(tx.getOriginalIfFunctionLike(node))&checker.FunctionFlagsAsyncGenerator) != checker.FunctionFlagsAsyncGenerator
 
 	if emitSuperHelpers {
-		block := updated.AsBlock()
-		statements := append([]*ast.Node{}, block.Statements.Nodes...)
-		var helpers []*ast.Node
-		multiLine := block.Multiline
 		if tx.hasSuperElementAccess {
-			helpers = append(helpers, tx.createSuperIndexVariableStatement())
-			multiLine = true
+			tx.EmitContext().AddInitializationStatement(tx.createSuperIndexVariableStatement())
 		}
 		if tx.capturedSuperProperties.Len() > 0 {
-			helpers = append(helpers, tx.createSuperAccessVariableStatement())
+			tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 		}
-		prologue, rest := tx.Factory().SplitStandardPrologue(statements)
-		statements = slices.Clone(prologue)
-		statements = append(statements, helpers...)
-		statements = append(statements, rest...)
-		if multiLine != block.Multiline {
-			newBlock := tx.Factory().NewBlock(tx.Factory().NewNodeList(statements), multiLine)
-			newBlock.Loc = updated.Loc
-			updated = newBlock
-		} else {
-			updated = tx.Factory().UpdateBlock(block, tx.Factory().NewNodeList(statements))
-		}
+	}
+
+	mergedStatements := tx.EmitContext().EndAndMergeVariableEnvironmentList(updated.StatementList())
+	if emitSuperHelpers && tx.hasSuperElementAccess && !updated.AsBlock().Multiline {
+		newBlock := tx.Factory().NewBlock(mergedStatements, true)
+		newBlock.Loc = updated.Loc
+		updated = newBlock
+	} else {
+		updated = tx.Factory().UpdateBlock(updated.AsBlock(), mergedStatements)
 	}
 
 	tx.capturedSuperProperties = savedCapturedSuperProperties
@@ -604,40 +598,38 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 	var result *ast.Node
 	if !isArrow {
-		var statements []*ast.Node
-		statements = append(statements, tx.Factory().NewReturnStatement(
-			tx.Factory().NewAwaiterHelper(
-				hasLexicalThis,
-				argumentsExpression,
-				innerParameters,
-				asyncBody,
-			),
-		))
+		tx.EmitContext().StartVariableEnvironment()
 
 		// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
 		// This step isn't needed if we eventually transform this to ES5.
 		if emitSuperHelpers {
-			var superHelpers []*ast.Node
 			if tx.hasSuperElementAccess {
-				superHelpers = append(superHelpers, tx.createSuperIndexVariableStatement())
+				tx.EmitContext().AddInitializationStatement(tx.createSuperIndexVariableStatement())
 			}
 			if tx.capturedSuperProperties.Len() > 0 {
-				superHelpers = append(superHelpers, tx.createSuperAccessVariableStatement())
+				tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 			}
-			prologue, rest := tx.Factory().SplitStandardPrologue(statements)
-			statements = slices.Clone(prologue)
-			statements = append(statements, superHelpers...)
-			statements = append(statements, rest...)
 		}
 
 		if captureLexicalArguments && tx.lexicalArguments.used {
-			prologue, rest := tx.Factory().SplitStandardPrologue(statements)
-			statements = slices.Clone(prologue)
-			statements = append(statements, tx.createCaptureArgumentsStatement())
-			statements = append(statements, rest...)
+			tx.EmitContext().AddInitializationStatement(tx.createCaptureArgumentsStatement())
 		}
 
-		block := tx.Factory().NewBlock(tx.Factory().NewNodeList(statements), true)
+		statements := []*ast.Node{
+			tx.Factory().NewReturnStatement(
+				tx.Factory().NewAwaiterHelper(
+					hasLexicalThis,
+					argumentsExpression,
+					innerParameters,
+					asyncBody,
+				),
+			),
+		}
+
+		block := tx.Factory().NewBlock(
+			tx.EmitContext().EndAndMergeVariableEnvironmentList(tx.Factory().NewNodeList(statements)),
+			true,
+		)
 		block.Loc = node.Body().Loc
 
 		result = block
