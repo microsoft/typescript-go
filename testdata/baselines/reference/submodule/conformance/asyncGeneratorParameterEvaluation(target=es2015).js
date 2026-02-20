@@ -17,5 +17,7 @@ class Sub extends Super {
 function f1(x_1) { return __asyncGenerator(this, arguments, function* f1_1(x, y = z) { }); }
 function f2(_a) { return __asyncGenerator(this, arguments, function* f2_1({ [z]: x }) { }); }
 class Sub extends Super {
-    m(x_1) { return __asyncGenerator(this, arguments, function* m_1(x, y = z, _a) { var w = __rest(_a, []); super.foo(); }); }
+    m(x_1) { const _super = Object.create(null, {
+        foo: { get: () => super.foo }
+    }); return __asyncGenerator(this, arguments, function* m_1(x, y = z, _a) { var w = __rest(_a, []); _super.foo.call(this); }); }
 }

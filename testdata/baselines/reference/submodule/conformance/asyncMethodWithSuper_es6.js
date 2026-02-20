@@ -343,51 +343,62 @@ class B extends A {
         });
     }
     property_access_only_read_only_in_generator() {
+        const _super = Object.create(null, {
+            x: { get: () => super.x }
+        });
         return __asyncGenerator(this, arguments, function* property_access_only_read_only_in_generator_1() {
             // call with property access
-            super.x();
+            _super.x.call(this);
             // property access (read)
-            const a = super.x;
+            const a = _super.x;
             // property access in arrow
-            (() => super.x());
+            (() => _super.x.call(this));
             // property access in async arrow
             (() => __awaiter(this, void 0, void 0, function* () { return _super.x.call(this); }));
         });
     }
     property_access_only_write_only_in_generator() {
+        const _super = Object.create(null, {
+            x: { get: () => super.x, set: v => super.x = v }
+        });
         return __asyncGenerator(this, arguments, function* property_access_only_write_only_in_generator_1() {
             const f = () => { };
             // property access (assign)
-            super.x = f;
+            _super.x = f;
             // destructuring assign with property access
-            ({ f: super.x } = { f });
+            ({ f: _super.x } = { f });
             // property access (assign) in arrow
-            (() => super.x = f);
+            (() => _super.x = f);
             // property access (assign) in async arrow
             (() => __awaiter(this, void 0, void 0, function* () { return _super.x = f; }));
         });
     }
     element_access_only_read_only_in_generator() {
+        const _superIndex = name => super[name];
         return __asyncGenerator(this, arguments, function* element_access_only_read_only_in_generator_1() {
             // call with element access
-            super["x"]();
+            _superIndex("x").call(this);
             // element access (read)
-            const a = super["x"];
+            const a = _superIndex("x");
             // element access in arrow
-            (() => super["x"]());
+            (() => _superIndex("x").call(this));
             // element access in async arrow
             (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").call(this); }));
         });
     }
     element_access_only_write_only_in_generator() {
+        const _superIndex = (function (geti, seti) {
+            const cache = Object.create(null);
+            return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
+        })(name => super[name], (name, value) => super[name] = value);
         return __asyncGenerator(this, arguments, function* element_access_only_write_only_in_generator_1() {
             const f = () => { };
             // element access (assign)
-            super["x"] = f;
+            _superIndex("x").value = f;
             // destructuring assign with element access
-            ({ f: super["x"] } = { f });
+            ({ f: _superIndex("x").value } = { f });
             // element access (assign) in arrow
-            (() => super["x"] = f);
+            (() => _superIndex("x").value = f);
             // element access (assign) in async arrow
             (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").value = f; }));
         });
