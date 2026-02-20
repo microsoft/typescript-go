@@ -38,6 +38,15 @@ abstract class B {
 
 //// [privateNamesIncompatibleModifiers.js]
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 class A {
     #foo = 3; // Error
     #bar = 3; // Error
@@ -47,7 +56,9 @@ class A {
     #barMethod() { return 3; } // Error
     #bazMethod() { return 3; } // Error
     #quxMethod() { return 3; } // Error
-    async #asyncMethod() { return 1; } //OK
+    #asyncMethod() {
+        return __awaiter(this, void 0, void 0, function* () { return 1; });
+    } //OK
     *#genMethod() { return 1; } //OK
     async *#asyncGenMethod() { return 1; } //OK
     get #fooProp() { return 3; } // Error

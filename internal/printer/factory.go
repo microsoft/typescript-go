@@ -664,6 +664,72 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 
 // !!! ES2017 Helpers
 
+// Allocates a new Call expression to the `__awaiter` helper.
+func (f *NodeFactory) NewAwaiterHelper(
+	hasLexicalThis bool,
+	argumentsExpression *ast.Expression,
+	promiseConstructor *ast.Expression,
+	parameters *ast.NodeList,
+	body *ast.BlockNode,
+) *ast.Expression {
+	f.emitContext.RequestEmitHelper(awaiterHelper)
+
+	var params *ast.NodeList
+	if parameters != nil {
+		params = parameters
+	} else {
+		params = f.NewNodeList([]*ast.Node{})
+	}
+
+	generatorFunc := f.NewFunctionExpression(
+		nil, /*modifiers*/
+		f.NewToken(ast.KindAsteriskToken),
+		nil, /*name*/
+		nil, /*typeParameters*/
+		params,
+		nil, /*returnType*/
+		nil, /*fullSignature*/
+		body,
+	)
+
+	// Mark this node as originally an async function body
+	f.emitContext.AddEmitFlags(generatorFunc, EFAsyncFunctionBody|EFReuseTempVariableScope)
+
+	var thisArg *ast.Expression
+	if hasLexicalThis {
+		thisArg = f.NewKeywordExpression(ast.KindThisKeyword)
+	} else {
+		thisArg = f.NewVoidZeroExpression()
+	}
+
+	var argsArg *ast.Expression
+	if argumentsExpression != nil {
+		argsArg = argumentsExpression
+	} else {
+		argsArg = f.NewVoidZeroExpression()
+	}
+
+	var promiseArg *ast.Expression
+	if promiseConstructor != nil {
+		promiseArg = f.CreateExpressionFromEntityName(promiseConstructor)
+	} else {
+		promiseArg = f.NewVoidZeroExpression()
+	}
+
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__awaiter"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{
+			thisArg,
+			argsArg,
+			promiseArg,
+			generatorFunc,
+		}),
+		ast.NodeFlagsNone,
+	)
+}
+
 // ES2015 Helpers
 
 func (f *NodeFactory) NewPropKeyHelper(expr *ast.Expression) *ast.Expression {
