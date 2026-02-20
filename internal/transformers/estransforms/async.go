@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -26,7 +25,6 @@ type lexicalArgumentsInfo struct {
 
 type asyncTransformer struct {
 	transformers.Transformer
-	compilerOptions *core.CompilerOptions
 
 	contextFlags asyncContextFlags
 
@@ -109,7 +107,7 @@ func (tx *asyncTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	}
 
 	tx.setContextFlag(asyncContextNonTopLevel, false)
-	tx.setContextFlag(asyncContextHasLexicalThis, !isEffectiveStrictModeSourceFile(node, tx.compilerOptions))
+	tx.setContextFlag(asyncContextHasLexicalThis, false)
 	visited := tx.Visitor().VisitEachChild(node.AsNode())
 	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
 	return visited
@@ -1167,12 +1165,6 @@ func (tx *asyncTransformer) getOriginalIfFunctionLike(node *ast.Node) *ast.Node 
 	return node
 }
 
-// isEffectiveStrictModeSourceFile checks if the source file is in strict mode.
-// alwaysStrict is always true in the Go port.
-func isEffectiveStrictModeSourceFile(_ *ast.SourceFile, _ *core.CompilerOptions) bool {
-	return true
-}
-
 // isArgumentsIdentifier checks whether an identifier refers to the `arguments` object.
 // Since we always assume strict mode, a simple name check suffices.
 func isArgumentsIdentifier(node *ast.Node) bool {
@@ -1253,9 +1245,7 @@ func isNodeWithPossibleHoistedDeclaration(node *ast.Node) bool {
 }
 
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &asyncTransformer{
-		compilerOptions: opts.CompilerOptions,
-	}
+	tx := &asyncTransformer{}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)
 	return result
