@@ -35,10 +35,18 @@ type asyncTransformer struct {
 	superIndexBinding               *ast.IdentifierNode
 	lexicalArguments                lexicalArgumentsInfo
 
+	parentNode  *ast.Node
+	currentNode *ast.Node
+
 	asyncBodyVisitor *ast.NodeVisitor
 }
 
 func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
+	savedParent := tx.parentNode
+	tx.parentNode = tx.currentNode
+	tx.currentNode = node
+	defer func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }()
+
 	if node.Kind == ast.KindAsyncKeyword {
 		// ES2017 async modifier should be elided for targets < ES2017
 		return nil
@@ -126,7 +134,7 @@ func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
 		ast.KindVariableDeclaration:
 		// fall through to visitEachChild
 	case ast.KindIdentifier:
-		if tx.lexicalArguments.binding != nil && isArgumentsIdentifier(node) {
+		if tx.lexicalArguments.binding != nil && node.Text() == "arguments" && !isNameOfPropertyAccessOrAssignment(tx.parentNode, node) {
 			tx.lexicalArguments.used = true
 			return tx.lexicalArguments.binding
 		}
@@ -1164,21 +1172,10 @@ func (tx *asyncTransformer) getOriginalIfFunctionLike(node *ast.Node) *ast.Node 
 	return node
 }
 
-// isArgumentsIdentifier checks whether an identifier refers to the `arguments` object.
-// Since we always assume strict mode, a simple name check suffices.
-func isArgumentsIdentifier(node *ast.Node) bool {
-	if node.Text() != "arguments" {
-		return false
-	}
-	parent := node.Parent
-	if parent == nil {
-		return false
-	}
-	// Exclude property name positions like obj.arguments or { arguments: ... }
-	if (ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) && parent.Name() == node {
-		return false
-	}
-	return true
+func isNameOfPropertyAccessOrAssignment(parent *ast.Node, node *ast.Node) bool {
+	return parent != nil &&
+		(ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) &&
+		parent.Name() == node
 }
 
 // isSimpleParameterList checks if every parameter has no initializer and an Identifier name.
