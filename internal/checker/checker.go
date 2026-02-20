@@ -5171,7 +5171,7 @@ func (c *Checker) checkImportDeclaration(node *ast.Node) {
 			if !ignoreErrors {
 				errorMessage = diagnostics.Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
 			}
-			c.resolveExternalModuleNameWorker(node, moduleSpecifier, errorMessage,ignoreErrors, false /*isForAugmentation*/)
+			c.resolveExternalModuleNameWorker(node, moduleSpecifier, errorMessage, ignoreErrors, false /*isForAugmentation*/)
 		}
 	}
 	c.checkImportAttributes(node)
