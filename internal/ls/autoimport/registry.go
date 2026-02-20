@@ -1092,6 +1092,11 @@ func (b *registryBuilder) extractPackages(
 		})
 	}
 
+	// Share a packageJsonInfoCache across per-package resolvers so that module resolution
+	// results are amortized across all packages. Each package still gets its own resolver
+	// with a symlink-aware Realpath, but the expensive package.json lookups are shared.
+	sharedPackageJsonCache := packagejson.NewInfoCache(b.host.GetCurrentDirectory(), b.host.FS().UseCaseSensitiveFileNames())
+
 	var wg sync.WaitGroup
 	for packageName := range packageNames.Keys() {
 		wg.Go(func() {
@@ -1107,7 +1112,7 @@ func (b *registryBuilder) extractPackages(
 			}
 
 			toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
-			resolver := getModuleResolver(b.host, toRealpath)
+			resolver := getModuleResolver(b.host, toRealpath, sharedPackageJsonCache)
 			packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 			if packageEntrypoints == nil {
 				return

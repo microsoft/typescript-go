@@ -173,6 +173,24 @@ func NewResolver(
 	}
 }
 
+func NewResolverWithPackageJsonCache(
+	host ResolutionHost,
+	options *core.CompilerOptions,
+	typingsLocation string,
+	projectName string,
+	packageJsonCache *packagejson.InfoCache,
+) *Resolver {
+	return &Resolver{
+		host: host,
+		caches: caches{
+			packageJsonInfoCache: packageJsonCache,
+		},
+		compilerOptions: options,
+		typingsLocation: typingsLocation,
+		projectName:     projectName,
+	}
+}
+
 func (r *Resolver) newTraceBuilder() *tracer {
 	if r.compilerOptions.TraceResolution == core.TSTrue {
 		return &tracer{}
