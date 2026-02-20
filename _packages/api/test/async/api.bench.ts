@@ -13,7 +13,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Bench } from "tinybench";
 import ts from "typescript";
-import { RemoteSourceFile } from "../../src/node.ts";
+import { RemoteSourceFile } from "../../src/node/node.ts";
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {

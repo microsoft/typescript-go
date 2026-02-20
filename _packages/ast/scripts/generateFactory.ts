@@ -38,7 +38,8 @@ function fail(msg: string): never {
 
 interface PropertyInfo {
     name: string;
-    type: string;
+    typeNode: ts.TypeNode;
+    substitutions?: Map<string, string>;
     optional: boolean;
 }
 
@@ -124,14 +125,17 @@ for (const stmt of sourceFile.statements) {
         if (!member.type) {
             fail(`${name}.${propName}: property has no type annotation`);
         }
-        const propType = member.type.getText(sourceFile);
+        const propTypeNode = member.type;
         const isOptional = !!member.questionToken;
 
-        if (propName === "kind" && propType.startsWith("SyntaxKind.")) {
-            syntaxKind = propType;
+        if (propName === "kind") {
+            const kindText = propTypeNode.getText(sourceFile);
+            if (kindText.startsWith("SyntaxKind.")) {
+                syntaxKind = kindText;
+            }
         }
 
-        properties.push({ name: propName, type: propType, optional: isOptional });
+        properties.push({ name: propName, typeNode: propTypeNode, optional: isOptional });
     }
 
     interfaces.set(name, { name, syntaxKind, properties, extends: extendsInfos, typeParameters });
@@ -155,7 +159,7 @@ for (const stmt of sourceFile.statements) {
 // Step 3: Resolve all properties for an interface (including inherited)
 // ---------------------------------------------------------------------------
 
-const EXCLUDED_PROPS = new Set(["kind", "parent", "pos", "end"]);
+const EXCLUDED_PROPS = new Set(["kind", "parent", "pos", "end", "flags"]);
 
 function isBrandField(name: string): boolean {
     return name.startsWith("_") && (name.endsWith("Brand") || name.endsWith("brand"));
@@ -206,7 +210,8 @@ function getAllProperties(name: string, visited = new Set<string>(), substitutio
 
     for (const prop of iface.properties) {
         if (substitutions.size > 0) {
-            result.push({ ...prop, type: substituteTypeParams(prop.type, substitutions) });
+            const merged = prop.substitutions ? new Map([...prop.substitutions, ...substitutions]) : new Map(substitutions);
+            result.push({ ...prop, substitutions: merged });
         }
         else {
             result.push(prop);
@@ -244,21 +249,6 @@ for (const [name, iface] of interfaces) {
     }
 
     const params = [...propMap.values()];
-
-    // Validate no unresolved type parameters leaked through
-    for (const p of params) {
-        // Single uppercase letter like T, K, U indicates an unresolved generic
-        if (/\b[A-Z]\b/.test(p.type)) {
-            // Check it's not just a normal single-letter type used in the codebase
-            const singleLetters = p.type.match(/\b[A-Z]\b/g) ?? [];
-            for (const letter of singleLetters) {
-                if (!exportedTypeNames.has(letter)) {
-                    fail(`${name}.${p.name}: unresolved type parameter "${letter}" in type "${p.type}"`);
-                }
-            }
-        }
-    }
-
     const factoryName = `create${name}`;
 
     for (const prop of params) {
@@ -279,37 +269,31 @@ factoryDefs.sort((a, b) => a.interfaceName.localeCompare(b.interfaceName));
 // Step 5: Collect type references for imports
 // ---------------------------------------------------------------------------
 
-function extractTypeReferences(typeStr: string): string[] {
-    // Remove SyntaxKind.XYZ and TokenFlags.XYZ references before extracting type names
-    const cleaned = typeStr.replace(/\b(?:SyntaxKind|TokenFlags)\.\w+/g, "");
-    const matches = cleaned.match(/\b[A-Z][A-Za-z0-9]*\b/g) ?? [];
-    const builtins = new Set([
-        "Array",
-        "ReadonlyArray",
-        "Record",
-        "Map",
-        "Set",
-        "Promise",
-        "Partial",
-        "Required",
-        "Readonly",
-        "Pick",
-        "Omit",
-        "Exclude",
-        "Extract",
-        "NonNullable",
-        "ReturnType",
-        "InstanceType",
-    ]);
-    return matches.filter(m => !builtins.has(m));
+function walkTypeReferences(node: ts.Node, refs: Set<string>, skipParams?: Set<string>): void {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+        if (!skipParams?.has(node.typeName.text)) {
+            refs.add(node.typeName.text);
+        }
+    }
+    node.forEachChild(child => walkTypeReferences(child, refs, skipParams));
 }
 
-const referencedTypes = new Set<string>(["Node"]);
+// Collect all type parameter names across all interfaces
+const allTypeParams = new Set<string>();
+for (const iface of interfaces.values()) {
+    for (const tp of iface.typeParameters) allTypeParams.add(tp);
+}
+
+const referencedTypes = new Set<string>(["Node", "NodeArray"]);
 for (const def of factoryDefs) {
     referencedTypes.add(def.interfaceName);
     for (const param of def.params) {
-        for (const t of extractTypeReferences(param.type)) {
-            referencedTypes.add(t);
+        walkTypeReferences(param.typeNode, referencedTypes, allTypeParams);
+        if (param.substitutions) {
+            for (const value of param.substitutions.values()) {
+                const matches = value.match(/\b[A-Z][A-Za-z0-9]*\b/g) ?? [];
+                for (const m of matches) referencedTypes.add(m);
+            }
         }
     }
 }
@@ -321,6 +305,7 @@ referencedTypes.delete("TokenFlags");
 const KNOWN_EXTERNAL_TYPES = new Set([
     "SyntaxKind",
     "TokenFlags",
+    "NodeFlags",
 ]);
 for (const t of referencedTypes) {
     if (!exportedTypeNames.has(t) && !KNOWN_EXTERNAL_TYPES.has(t)) {
@@ -349,10 +334,10 @@ emit("// Source: _packages/ast/src/nodes.ts");
 emit("// Generator: _packages/ast/scripts/generateFactory.ts");
 emit("//");
 emit("");
-emit(`import { SyntaxKind } from "#syntaxKind";`);
+emit(`import { SyntaxKind } from "#enums/syntaxKind";`);
 
 if (needsTokenFlags) {
-    emit(`import { TokenFlags } from "#tokenFlags";`);
+    emit(`import { TokenFlags } from "#enums/tokenFlags";`);
 }
 
 emit(`import type {`);
@@ -405,6 +390,57 @@ emit("    return new NodeObject(kind, undefined) as any;");
 emit("}");
 emit("");
 
+// createNodeArray helper
+emit("export function createNodeArray<T extends Node>(elements: readonly T[], pos: number = -1, end: number = -1): NodeArray<T> {");
+emit("    const arr = elements as unknown as NodeArray<T> & { pos: number; end: number };");
+emit("    arr.pos = pos;");
+emit("    arr.end = end;");
+emit("    return arr;");
+emit("}");
+emit("");
+
+// Structural check for NodeArray<X> types — returns the element TypeNode if matched.
+// Also handles `NodeArray<X> | undefined` since the `?` optional marker already covers undefined.
+function getNodeArrayElementType(typeNode: ts.TypeNode): ts.TypeNode | undefined {
+    if (ts.isTypeReferenceNode(typeNode)) {
+        if (
+            ts.isIdentifier(typeNode.typeName) && typeNode.typeName.text === "NodeArray"
+            && typeNode.typeArguments && typeNode.typeArguments.length === 1
+        ) {
+            return typeNode.typeArguments[0];
+        }
+        return undefined;
+    }
+    if (ts.isUnionTypeNode(typeNode)) {
+        // Check for `NodeArray<X> | undefined`
+        const nonUndefined = typeNode.types.filter(t => t.kind !== ts.SyntaxKind.UndefinedKeyword);
+        if (nonUndefined.length === 1) {
+            return getNodeArrayElementType(nonUndefined[0]);
+        }
+    }
+    return undefined;
+}
+
+function printType(prop: PropertyInfo): string {
+    let text = prop.typeNode.getText(sourceFile);
+    if (prop.substitutions) {
+        text = substituteTypeParams(text, prop.substitutions);
+    }
+    return text;
+}
+
+function printElementType(elemTypeNode: ts.TypeNode, substitutions?: Map<string, string>): string {
+    let text = elemTypeNode.getText(sourceFile);
+    if (substitutions) {
+        text = substituteTypeParams(text, substitutions);
+    }
+    // Only parenthesize union/intersection types for valid array syntax
+    if (ts.isUnionTypeNode(elemTypeNode) || ts.isIntersectionTypeNode(elemTypeNode)) {
+        return `(${text})`;
+    }
+    return text;
+}
+
 // Factory functions
 for (const def of factoryDefs) {
     const { interfaceName, syntaxKind, factoryName, params } = def;
@@ -413,9 +449,18 @@ for (const def of factoryDefs) {
     const optionalParams = params.filter(p => p.optional);
     const orderedParams = [...requiredParams, ...optionalParams];
 
+    // Track which params are NodeArray types so we can wrap them
+    const nodeArrayParams = new Set<string>();
     const paramList = orderedParams.map(p => {
         const opt = p.optional ? "?" : "";
-        return `${safeParamName(p.name)}${opt}: ${p.type}`;
+        const safe = safeParamName(p.name);
+        const elemTypeNode = getNodeArrayElementType(p.typeNode);
+        if (elemTypeNode) {
+            nodeArrayParams.add(p.name);
+            const elemText = printElementType(elemTypeNode, p.substitutions);
+            return `${safe}${opt}: readonly ${elemText}[]`;
+        }
+        return `${safe}${opt}: ${printType(p)}`;
     });
 
     emit(`export function ${factoryName}(${paramList.join(", ")}): ${interfaceName} {`);
@@ -427,7 +472,11 @@ for (const def of factoryDefs) {
         emit(`    return new NodeObject(${syntaxKind}, {`);
         for (const p of orderedParams) {
             const safe = safeParamName(p.name);
-            if (safe !== p.name) {
+            if (nodeArrayParams.has(p.name)) {
+                const wrap = p.optional ? `${safe} ? createNodeArray(${safe}) : undefined` : `createNodeArray(${safe})`;
+                emit(`        ${p.name}: ${wrap},`);
+            }
+            else if (safe !== p.name) {
                 emit(`        ${p.name}: ${safe},`);
             }
             else {

@@ -5,6 +5,23 @@ import {
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
+import {
+    childProperties,
+    HEADER_OFFSET_EXTENDED_DATA,
+    HEADER_OFFSET_HASH_HI0,
+    HEADER_OFFSET_HASH_HI1,
+    HEADER_OFFSET_HASH_LO0,
+    HEADER_OFFSET_HASH_LO1,
+    HEADER_OFFSET_NODES,
+    HEADER_OFFSET_PARSE_OPTIONS,
+    HEADER_OFFSET_STRING_TABLE,
+    HEADER_OFFSET_STRING_TABLE_OFFSETS,
+    KIND_NODE_LIST,
+    NODE_DATA_TYPE_CHILDREN,
+    NODE_DATA_TYPE_EXTENDED,
+    NODE_DATA_TYPE_STRING,
+    NODE_LEN,
+} from "./protocol.ts";
 
 declare module "@typescript/ast" {
     export interface Node {
@@ -19,130 +36,6 @@ declare module "@typescript/ast" {
 }
 
 const popcount8 = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8];
-
-const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> = {
-    [SyntaxKind.SourceFile]: ["statements", "endOfFileToken"],
-    [SyntaxKind.QualifiedName]: ["left", "right"],
-    [SyntaxKind.TypeParameter]: ["modifiers", "name", "constraint", "defaultType"],
-    [SyntaxKind.IfStatement]: ["expression", "thenStatement", "elseStatement"],
-    [SyntaxKind.DoStatement]: ["statement", "expression"],
-    [SyntaxKind.WhileStatement]: ["expression", "statement"],
-    [SyntaxKind.ForStatement]: ["initializer", "condition", "incrementor", "statement"],
-    [SyntaxKind.ForInStatement]: ["awaitModifier", "initializer", "expression", "statement"],
-    [SyntaxKind.ForOfStatement]: ["awaitModifier", "initializer", "expression", "statement"],
-    [SyntaxKind.WithStatement]: ["expression", "statement"],
-    [SyntaxKind.SwitchStatement]: ["expression", "caseBlock"],
-    [SyntaxKind.CaseClause]: ["expression", "statements"],
-    [SyntaxKind.DefaultClause]: ["expression", "statements"],
-    [SyntaxKind.TryStatement]: ["tryBlock", "catchClause", "finallyBlock"],
-    [SyntaxKind.CatchClause]: ["variableDeclaration", "block"],
-    [SyntaxKind.LabeledStatement]: ["label", "statement"],
-    [SyntaxKind.VariableStatement]: ["modifiers", "declarationList"],
-    [SyntaxKind.VariableDeclaration]: ["name", "exclamationToken", "type", "initializer"],
-    [SyntaxKind.Parameter]: ["modifiers", "dotDotDotToken", "name", "questionToken", "type", "initializer"],
-    [SyntaxKind.BindingElement]: ["dotDotDotToken", "propertyName", "name", "initializer"],
-    [SyntaxKind.FunctionDeclaration]: ["modifiers", "asteriskToken", "name", "typeParameters", "parameters", "type", "body"],
-    [SyntaxKind.InterfaceDeclaration]: ["modifiers", "name", "typeParameters", "heritageClauses", "members"],
-    [SyntaxKind.TypeAliasDeclaration]: ["modifiers", "name", "typeParameters", "type"],
-    [SyntaxKind.EnumMember]: ["name", "initializer"],
-    [SyntaxKind.EnumDeclaration]: ["modifiers", "name", "members"],
-    [SyntaxKind.ModuleDeclaration]: ["modifiers", "name", "body"],
-    [SyntaxKind.ImportEqualsDeclaration]: ["modifiers", "name", "moduleReference"],
-    [SyntaxKind.ImportDeclaration]: ["modifiers", "importClause", "moduleSpecifier", "attributes"],
-    [SyntaxKind.ImportSpecifier]: ["propertyName", "name"],
-    [SyntaxKind.ImportClause]: ["name", "namedBindings"],
-    [SyntaxKind.ExportAssignment]: ["modifiers", "expression"],
-    [SyntaxKind.NamespaceExportDeclaration]: ["modifiers", "name"],
-    [SyntaxKind.ExportDeclaration]: ["modifiers", "exportClause", "moduleSpecifier", "attributes"],
-    [SyntaxKind.ExportSpecifier]: ["propertyName", "name"],
-    [SyntaxKind.CallSignature]: ["typeParameters", "parameters", "type"],
-    [SyntaxKind.ConstructSignature]: ["typeParameters", "parameters", "type"],
-    [SyntaxKind.Constructor]: ["modifiers", "typeParameters", "parameters", "type", "body"],
-    [SyntaxKind.GetAccessor]: ["modifiers", "name", "typeParameters", "parameters", "type", "body"],
-    [SyntaxKind.SetAccessor]: ["modifiers", "name", "typeParameters", "parameters", "type", "body"],
-    [SyntaxKind.IndexSignature]: ["modifiers", "parameters", "type"],
-    [SyntaxKind.MethodSignature]: ["modifiers", "name", "postfixToken", "typeParameters", "parameters", "type"],
-    [SyntaxKind.MethodDeclaration]: ["modifiers", "asteriskToken", "name", "postfixToken", "typeParameters", "parameters", "type", "body"],
-    [SyntaxKind.PropertySignature]: ["modifiers", "name", "postfixToken", "type", "initializer"],
-    [SyntaxKind.PropertyDeclaration]: ["modifiers", "name", "postfixToken", "type", "initializer"],
-    [SyntaxKind.BinaryExpression]: ["left", "operatorToken", "right"],
-    [SyntaxKind.YieldExpression]: ["asteriskToken", "expression"],
-    [SyntaxKind.ArrowFunction]: ["modifiers", "typeParameters", "parameters", "type", "equalsGreaterThanToken", "body"],
-    [SyntaxKind.FunctionExpression]: ["modifiers", "asteriskToken", "name", "typeParameters", "parameters", "type", "body"],
-    [SyntaxKind.AsExpression]: ["expression", "type"],
-    [SyntaxKind.SatisfiesExpression]: ["expression", "type"],
-    [SyntaxKind.ConditionalExpression]: ["condition", "questionToken", "whenTrue", "colonToken", "whenFalse"],
-    [SyntaxKind.PropertyAccessExpression]: ["expression", "questionDotToken", "name"],
-    [SyntaxKind.ElementAccessExpression]: ["expression", "questionDotToken", "argumentExpression"],
-    [SyntaxKind.CallExpression]: ["expression", "questionDotToken", "typeArguments", "arguments"],
-    [SyntaxKind.NewExpression]: ["expression", "typeArguments", "arguments"],
-    [SyntaxKind.TemplateExpression]: ["head", "templateSpans"],
-    [SyntaxKind.TemplateSpan]: ["expression", "literal"],
-    [SyntaxKind.TaggedTemplateExpression]: ["tag", "questionDotToken", "typeArguments", "template"],
-    [SyntaxKind.PropertyAssignment]: ["modifiers", "name", "postfixToken", "initializer"],
-    [SyntaxKind.ShorthandPropertyAssignment]: ["modifiers", "name", "postfixToken", "equalsToken", "objectAssignmentInitializer"],
-    [SyntaxKind.TypeAssertionExpression]: ["type", "expression"],
-    [SyntaxKind.ConditionalType]: ["checkType", "extendsType", "trueType", "falseType"],
-    [SyntaxKind.IndexedAccessType]: ["objectType", "indexType"],
-    [SyntaxKind.TypeReference]: ["typeName", "typeArguments"],
-    [SyntaxKind.ExpressionWithTypeArguments]: ["expression", "typeArguments"],
-    [SyntaxKind.TypePredicate]: ["assertsModifier", "parameterName", "type"],
-    [SyntaxKind.ImportType]: ["argument", "attributes", "qualifier", "typeArguments"],
-    [SyntaxKind.ImportAttribute]: ["name", "value"],
-    [SyntaxKind.TypeQuery]: ["exprName", "typeArguments"],
-    [SyntaxKind.MappedType]: ["readonlyToken", "typeParameter", "nameType", "questionToken", "type", "members"],
-    [SyntaxKind.NamedTupleMember]: ["dotDotDotToken", "name", "questionToken", "type"],
-    [SyntaxKind.FunctionType]: ["typeParameters", "parameters", "type"],
-    [SyntaxKind.ConstructorType]: ["modifiers", "typeParameters", "parameters", "type"],
-    [SyntaxKind.TemplateLiteralType]: ["head", "templateSpans"],
-    [SyntaxKind.TemplateLiteralTypeSpan]: ["type", "literal"],
-    [SyntaxKind.JsxElement]: ["openingElement", "children", "closingElement"],
-    [SyntaxKind.JsxNamespacedName]: ["name", "namespace"],
-    [SyntaxKind.JsxOpeningElement]: ["tagName", "typeArguments", "attributes"],
-    [SyntaxKind.JsxSelfClosingElement]: ["tagName", "typeArguments", "attributes"],
-    [SyntaxKind.JsxFragment]: ["openingFragment", "children", "closingFragment"],
-    [SyntaxKind.JsxAttribute]: ["name", "initializer"],
-    [SyntaxKind.JsxExpression]: ["dotDotDotToken", "expression"],
-    [SyntaxKind.JSDoc]: ["comment", "tags"],
-    [SyntaxKind.JSDocTypeTag]: ["tagName", "typeExpression", "comment"],
-    [SyntaxKind.JSDocTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocTemplateTag]: ["tagName", "constraint", "typeParameters", "comment"],
-    [SyntaxKind.JSDocReturnTag]: ["tagName", "typeExpression", "comment"],
-    [SyntaxKind.JSDocPublicTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocPrivateTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocProtectedTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocReadonlyTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocOverrideTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocDeprecatedTag]: ["tagName", "comment"],
-    [SyntaxKind.JSDocSeeTag]: ["tagName", "nameExpression", "comment"],
-    [SyntaxKind.JSDocImplementsTag]: ["tagName", "className", "comment"],
-    [SyntaxKind.JSDocAugmentsTag]: ["tagName", "className", "comment"],
-    [SyntaxKind.JSDocSatisfiesTag]: ["tagName", "typeExpression", "comment"],
-    [SyntaxKind.JSDocThisTag]: ["tagName", "typeExpression", "comment"],
-    [SyntaxKind.JSDocImportTag]: ["tagName", "importClause", "moduleSpecifier", "attributes", "comment"],
-    [SyntaxKind.JSDocCallbackTag]: ["tagName", "typeExpression", "fullName", "comment"],
-    [SyntaxKind.JSDocOverloadTag]: ["tagName", "typeExpression", "comment"],
-    [SyntaxKind.JSDocTypedefTag]: ["tagName", "typeExpression", "fullName", "comment"],
-    [SyntaxKind.JSDocSignature]: ["typeParameters", "parameters", "type"],
-    [SyntaxKind.ClassStaticBlockDeclaration]: ["modifiers", "body"],
-    [SyntaxKind.ClassDeclaration]: ["modifiers", "name", "typeParameters", "heritageClauses", "members"],
-
-    // Later properties are in variable order, needs special handling
-    [SyntaxKind.JSDocPropertyTag]: [undefined!, undefined!],
-    [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],
-};
-
-const HEADER_OFFSET_METADATA = 0;
-const HEADER_OFFSET_HASH_LO0 = 4;
-const HEADER_OFFSET_HASH_LO1 = 8;
-const HEADER_OFFSET_HASH_HI0 = 12;
-const HEADER_OFFSET_HASH_HI1 = 16;
-const HEADER_OFFSET_PARSE_OPTIONS = 20;
-const HEADER_OFFSET_STRING_TABLE_OFFSETS = 24;
-const HEADER_OFFSET_STRING_TABLE = 28;
-const HEADER_OFFSET_EXTENDED_DATA = 32;
-const HEADER_OFFSET_NODES = 36;
-const HEADER_SIZE = 40;
 
 /**
  * Read the 128-bit content hash from a source file binary response as a hex string.
@@ -169,9 +62,6 @@ function hex8(n: number): string {
 }
 
 type NodeDataType = typeof NODE_DATA_TYPE_CHILDREN | typeof NODE_DATA_TYPE_STRING | typeof NODE_DATA_TYPE_EXTENDED;
-const NODE_DATA_TYPE_CHILDREN = 0x00000000;
-const NODE_DATA_TYPE_STRING = 0x40000000;
-const NODE_DATA_TYPE_EXTENDED = 0x80000000;
 const NODE_DATA_TYPE_MASK = 0xc0_00_00_00;
 const NODE_CHILD_MASK = 0x00_00_00_ff;
 const NODE_STRING_INDEX_MASK = 0x00_ff_ff_ff;
@@ -183,9 +73,6 @@ const NODE_OFFSET_END = 8;
 const NODE_OFFSET_NEXT = 12;
 const NODE_OFFSET_PARENT = 16;
 const NODE_OFFSET_DATA = 20;
-const NODE_LEN = 24;
-
-const KIND_NODE_LIST = 2 ** 32 - 1;
 
 export class RemoteNodeBase {
     parent: RemoteNode;

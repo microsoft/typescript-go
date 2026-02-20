@@ -18,7 +18,7 @@ import {
     readParseOptionsKey,
     readSourceFileHash,
     RemoteSourceFile,
-} from "../node.ts";
+} from "../node/node.ts";
 import { ObjectRegistry } from "../objectRegistry.ts";
 import type {
     APIOptions,

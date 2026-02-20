@@ -1,5 +1,6 @@
-import { SyntaxKind } from "#syntaxKind";
-import { TokenFlags } from "#tokenFlags";
+import type { NodeFlags } from "#enums/nodeFlags";
+import { SyntaxKind } from "#enums/syntaxKind";
+import { TokenFlags } from "#enums/tokenFlags";
 
 // branded string type used to store absolute, normalized and canonicalized paths
 // arbitrary file name can be converted to Path via toPath function
@@ -12,6 +13,7 @@ export interface TextRange {
 
 export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
+    readonly flags: NodeFlags;
     readonly parent: Node;
 }
 
