@@ -156,6 +156,8 @@ import type {
     JsxSpreadAttribute,
     JsxTagNameExpression,
     JsxText,
+    KeywordTypeNode,
+    KeywordTypeSyntaxKind,
     LabeledStatement,
     LeftHandSideExpression,
     LiteralExpression,
@@ -650,6 +652,13 @@ export function createToken<TKind extends SyntaxKind>(kind: TKind): Node & { rea
     return new NodeObject(kind, undefined) as any;
 }
 
+/**
+ * Create a keyword type node (e.g. `string`, `number`, `boolean`, etc.).
+ */
+export function createKeywordTypeNode<TKind extends KeywordTypeSyntaxKind>(kind: TKind): KeywordTypeNode<TKind> {
+    return new NodeObject(kind, undefined) as any;
+}
+
 export function createNodeArray<T extends Node>(elements: readonly T[], pos: number = -1, end: number = -1): NodeArray<T> {
     const arr = elements as unknown as NodeArray<T> & { pos: number; end: number; };
     arr.pos = pos;
@@ -682,12 +691,12 @@ export function createArrowFunction(name: never, parameters: readonly ParameterD
         parameters: createNodeArray(parameters),
         body,
         equalsGreaterThanToken,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ArrowFunction;
 }
 
@@ -747,7 +756,7 @@ export function createCallExpression(expression: LeftHandSideExpression, argumen
         expression,
         arguments: createNodeArray(arguments_),
         questionDotToken,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as CallExpression;
 }
 
@@ -755,7 +764,7 @@ export function createCallSignatureDeclaration(parameters: readonly ParameterDec
     return new NodeObject(SyntaxKind.CallSignature, {
         parameters: createNodeArray(parameters),
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         questionToken,
     }) as unknown as CallSignatureDeclaration;
@@ -785,9 +794,9 @@ export function createClassDeclaration(members: readonly ClassElement[], name?: 
     return new NodeObject(SyntaxKind.ClassDeclaration, {
         members: createNodeArray(members),
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
-        heritageClauses: heritageClauses != null ? createNodeArray(heritageClauses) : undefined,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ClassDeclaration;
 }
 
@@ -795,9 +804,9 @@ export function createClassExpression(members: readonly ClassElement[], name?: I
     return new NodeObject(SyntaxKind.ClassExpression, {
         members: createNodeArray(members),
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
-        heritageClauses: heritageClauses != null ? createNodeArray(heritageClauses) : undefined,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ClassExpression;
 }
 
@@ -843,13 +852,13 @@ export function createConstructorDeclaration(parameters: readonly ParameterDecla
     return new NodeObject(SyntaxKind.Constructor, {
         parameters: createNodeArray(parameters),
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
         body,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ConstructorDeclaration;
 }
 
@@ -858,8 +867,8 @@ export function createConstructorTypeNode(parameters: readonly ParameterDeclarat
         parameters: createNodeArray(parameters),
         type,
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ConstructorTypeNode;
 }
 
@@ -867,7 +876,7 @@ export function createConstructSignatureDeclaration(parameters: readonly Paramet
     return new NodeObject(SyntaxKind.ConstructSignature, {
         parameters: createNodeArray(parameters),
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         questionToken,
     }) as unknown as ConstructSignatureDeclaration;
@@ -924,7 +933,7 @@ export function createEnumDeclaration(name: Identifier, members: readonly EnumMe
     return new NodeObject(SyntaxKind.EnumDeclaration, {
         name,
         members: createNodeArray(members),
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as EnumDeclaration;
 }
 
@@ -939,7 +948,7 @@ export function createExportAssignment(expression: Expression, name?: Identifier
     return new NodeObject(SyntaxKind.ExportAssignment, {
         expression,
         name,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         isExportEquals,
     }) as unknown as ExportAssignment;
 }
@@ -948,7 +957,7 @@ export function createExportDeclaration(isTypeOnly: boolean, name?: Identifier |
     return new NodeObject(SyntaxKind.ExportDeclaration, {
         isTypeOnly,
         name,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         exportClause,
         moduleSpecifier,
         assertClause,
@@ -973,7 +982,7 @@ export function createExpressionStatement(expression: Expression): ExpressionSta
 export function createExpressionWithTypeArguments(expression: LeftHandSideExpression, typeArguments?: readonly TypeNode[]): ExpressionWithTypeArguments {
     return new NodeObject(SyntaxKind.ExpressionWithTypeArguments, {
         expression,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as ExpressionWithTypeArguments;
 }
 
@@ -1017,13 +1026,13 @@ export function createFunctionDeclaration(parameters: readonly ParameterDeclarat
     return new NodeObject(SyntaxKind.FunctionDeclaration, {
         parameters: createNodeArray(parameters),
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
         body,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as FunctionDeclaration;
 }
 
@@ -1032,12 +1041,12 @@ export function createFunctionExpression(parameters: readonly ParameterDeclarati
         parameters: createNodeArray(parameters),
         body,
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as FunctionExpression;
 }
 
@@ -1046,7 +1055,7 @@ export function createFunctionTypeNode(parameters: readonly ParameterDeclaration
         parameters: createNodeArray(parameters),
         type,
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
     }) as unknown as FunctionTypeNode;
 }
 
@@ -1054,13 +1063,13 @@ export function createGetAccessorDeclaration(name: PropertyName, parameters: rea
     return new NodeObject(SyntaxKind.GetAccessor, {
         name,
         parameters: createNodeArray(parameters),
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
         body,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as GetAccessorDeclaration;
 }
 
@@ -1111,7 +1120,7 @@ export function createImportClause(phaseModifier: ImportPhaseModifierSyntaxKind,
 export function createImportDeclaration(moduleSpecifier: Expression, modifiers?: readonly ModifierLike[], importClause?: ImportClause, assertClause?: AssertClause, attributes?: ImportAttributes): ImportDeclaration {
     return new NodeObject(SyntaxKind.ImportDeclaration, {
         moduleSpecifier,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         importClause,
         assertClause,
         attributes,
@@ -1123,7 +1132,7 @@ export function createImportEqualsDeclaration(name: Identifier, isTypeOnly: bool
         name,
         isTypeOnly,
         moduleReference,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ImportEqualsDeclaration;
 }
 
@@ -1143,7 +1152,7 @@ export function createImportTypeNode(isTypeOf: boolean, argument: TypeNode, type
     return new NodeObject(SyntaxKind.ImportType, {
         isTypeOf,
         argument,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
         attributes,
         qualifier,
     }) as unknown as ImportTypeNode;
@@ -1161,9 +1170,9 @@ export function createIndexSignatureDeclaration(parameters: readonly ParameterDe
         parameters: createNodeArray(parameters),
         type,
         name,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         questionToken,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as IndexSignatureDeclaration;
 }
 
@@ -1177,9 +1186,9 @@ export function createInterfaceDeclaration(name: Identifier, members: readonly T
     return new NodeObject(SyntaxKind.InterfaceDeclaration, {
         name,
         members: createNodeArray(members),
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
-        heritageClauses: heritageClauses != null ? createNodeArray(heritageClauses) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
     }) as unknown as InterfaceDeclaration;
 }
 
@@ -1191,7 +1200,7 @@ export function createIntersectionTypeNode(types: readonly TypeNode[]): Intersec
 
 export function createJSDoc(tags?: readonly JSDocTag[], comment?: string | NodeArray<JSDocComment>): JSDoc {
     return new NodeObject(SyntaxKind.JSDoc, {
-        tags: tags != null ? createNodeArray(tags) : undefined,
+        tags: tags ? createNodeArray(tags) : undefined,
         comment,
     }) as unknown as JSDoc;
 }
@@ -1518,7 +1527,7 @@ export function createJsxOpeningElement(tagName: JsxTagNameExpression, attribute
     return new NodeObject(SyntaxKind.JsxOpeningElement, {
         tagName,
         attributes,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as JsxOpeningElement;
 }
 
@@ -1530,7 +1539,7 @@ export function createJsxSelfClosingElement(tagName: JsxTagNameExpression, attri
     return new NodeObject(SyntaxKind.JsxSelfClosingElement, {
         tagName,
         attributes,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as JsxSelfClosingElement;
 }
 
@@ -1570,7 +1579,7 @@ export function createMappedTypeNode(typeParameter: TypeParameterDeclaration, re
         nameType,
         questionToken,
         type,
-        members: members != null ? createNodeArray(members) : undefined,
+        members: members ? createNodeArray(members) : undefined,
     }) as unknown as MappedTypeNode;
 }
 
@@ -1585,13 +1594,13 @@ export function createMethodDeclaration(name: PropertyName, parameters: readonly
     return new NodeObject(SyntaxKind.MethodDeclaration, {
         name,
         parameters: createNodeArray(parameters),
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
         body,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as MethodDeclaration;
 }
 
@@ -1599,10 +1608,10 @@ export function createMethodSignature(name: PropertyName, parameters: readonly P
     return new NodeObject(SyntaxKind.MethodSignature, {
         name,
         parameters: createNodeArray(parameters),
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         questionToken,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as MethodSignature;
 }
 
@@ -1615,7 +1624,7 @@ export function createModuleBlock(statements: readonly Statement[]): ModuleBlock
 export function createModuleDeclaration(name: ModuleName, modifiers?: readonly ModifierLike[], body?: ModuleBody | JSDocNamespaceDeclaration): ModuleDeclaration {
     return new NodeObject(SyntaxKind.ModuleDeclaration, {
         name,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         body,
     }) as unknown as ModuleDeclaration;
 }
@@ -1662,8 +1671,8 @@ export function createNamespaceImport(name: Identifier): NamespaceImport {
 export function createNewExpression(expression: LeftHandSideExpression, typeArguments?: readonly TypeNode[], arguments_?: readonly Expression[]): NewExpression {
     return new NodeObject(SyntaxKind.NewExpression, {
         expression,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
-        arguments: arguments_ != null ? createNodeArray(arguments_) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
+        arguments: arguments_ ? createNodeArray(arguments_) : undefined,
     }) as unknown as NewExpression;
 }
 
@@ -1722,7 +1731,7 @@ export function createOptionalTypeNode(type: TypeNode): OptionalTypeNode {
 export function createParameterDeclaration(name: BindingName, modifiers?: readonly ModifierLike[], dotDotDotToken?: DotDotDotToken, questionToken?: QuestionToken, type?: TypeNode, initializer?: Expression): ParameterDeclaration {
     return new NodeObject(SyntaxKind.Parameter, {
         name,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         dotDotDotToken,
         questionToken,
         type,
@@ -1786,7 +1795,7 @@ export function createPropertyAssignment(name: PropertyName, initializer: Expres
 export function createPropertyDeclaration(name: PropertyName, modifiers?: readonly ModifierLike[], questionToken?: QuestionToken, exclamationToken?: ExclamationToken, type?: TypeNode, initializer?: Expression): PropertyDeclaration {
     return new NodeObject(SyntaxKind.PropertyDeclaration, {
         name,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         questionToken,
         exclamationToken,
         type,
@@ -1798,7 +1807,7 @@ export function createPropertySignature(name: PropertyName, questionToken?: Ques
     return new NodeObject(SyntaxKind.PropertySignature, {
         name,
         questionToken,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         type,
     }) as unknown as PropertySignature;
 }
@@ -1847,13 +1856,13 @@ export function createSetAccessorDeclaration(name: PropertyName, parameters: rea
     return new NodeObject(SyntaxKind.SetAccessor, {
         name,
         parameters: createNodeArray(parameters),
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         type,
         asteriskToken,
         questionToken,
         exclamationToken,
         body,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as SetAccessorDeclaration;
 }
 
@@ -1912,7 +1921,7 @@ export function createTaggedTemplateExpression(tag: LeftHandSideExpression, temp
     return new NodeObject(SyntaxKind.TaggedTemplateExpression, {
         tag,
         template,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as TaggedTemplateExpression;
 }
 
@@ -2010,8 +2019,8 @@ export function createTypeAliasDeclaration(name: Identifier, type: TypeNode, mod
     return new NodeObject(SyntaxKind.TypeAliasDeclaration, {
         name,
         type,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
-        typeParameters: typeParameters != null ? createNodeArray(typeParameters) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
     }) as unknown as TypeAliasDeclaration;
 }
 
@@ -2044,7 +2053,7 @@ export function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | Synta
 export function createTypeParameterDeclaration(name: Identifier, modifiers?: readonly Modifier[], constraint?: TypeNode, default_?: TypeNode, expression?: Expression): TypeParameterDeclaration {
     return new NodeObject(SyntaxKind.TypeParameter, {
         name,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         constraint,
         default: default_,
         expression,
@@ -2062,14 +2071,14 @@ export function createTypePredicateNode(parameterName: Identifier | ThisTypeNode
 export function createTypeQueryNode(exprName: EntityName, typeArguments?: readonly TypeNode[]): TypeQueryNode {
     return new NodeObject(SyntaxKind.TypeQuery, {
         exprName,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as TypeQueryNode;
 }
 
 export function createTypeReferenceNode(typeName: EntityName, typeArguments?: readonly TypeNode[]): TypeReferenceNode {
     return new NodeObject(SyntaxKind.TypeReference, {
         typeName,
-        typeArguments: typeArguments != null ? createNodeArray(typeArguments) : undefined,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as TypeReferenceNode;
 }
 
@@ -2097,7 +2106,7 @@ export function createVariableDeclarationList(declarations: readonly VariableDec
 export function createVariableStatement(declarationList: VariableDeclarationList, modifiers?: readonly ModifierLike[]): VariableStatement {
     return new NodeObject(SyntaxKind.VariableStatement, {
         declarationList,
-        modifiers: modifiers != null ? createNodeArray(modifiers) : undefined,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as VariableStatement;
 }
 

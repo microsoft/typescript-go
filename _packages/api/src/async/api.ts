@@ -1,4 +1,4 @@
-/// <reference path="../node.ts" preserve="true" />
+/// <reference path="../node/node.ts" preserve="true" />
 import { ElementFlags } from "#enums/elementFlags";
 import { ObjectFlags } from "#enums/objectFlags";
 import { SignatureFlags } from "#enums/signatureFlags";
@@ -11,8 +11,11 @@ import type {
     Path,
     SourceFile,
     SyntaxKind,
+    TypeNode,
 } from "@typescript/ast";
+import { encodeNode } from "../node/encoder.ts";
 import {
+    decodeNode,
     findDescendant,
     parseNodeHandle,
     readParseOptionsKey,
@@ -250,6 +253,7 @@ export class Project {
 
     readonly program: Program;
     readonly checker: Checker;
+    readonly emitter: Emitter;
 
     constructor(
         data: ProjectResponse,
@@ -276,6 +280,7 @@ export class Project {
             client,
             objectRegistry,
         );
+        this.emitter = new Emitter(client);
     }
 }
 
@@ -565,6 +570,32 @@ export class Checker {
     }
     async getESSymbolType(): Promise<Type> {
         return this.getIntrinsicType("getESSymbolType");
+    }
+
+    async typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: number): Promise<TypeNode | undefined> {
+        const binaryData = await this.client.apiRequestBinary("typeToTypeNode", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+            location: enclosingDeclaration ? (enclosingDeclaration as Node).id : undefined,
+            flags,
+        });
+        if (!binaryData) return undefined;
+        return decodeNode(binaryData) as unknown as TypeNode;
+    }
+}
+
+export class Emitter {
+    private client: Client;
+
+    constructor(client: Client) {
+        this.client = client;
+    }
+
+    async printNode(node: Node): Promise<string> {
+        const encoded = encodeNode(node);
+        const base64 = btoa(String.fromCharCode(...encoded));
+        return this.client.apiRequest<string>("printNode", { data: base64 });
     }
 }
 

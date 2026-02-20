@@ -1267,6 +1267,21 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		}
 		return d.factory.NewMissingDeclaration(mods), nil
 
+	// Keyword type nodes (must be KeywordTypeNode, not Token, for the printer)
+	case ast.KindAnyKeyword,
+		ast.KindUnknownKeyword,
+		ast.KindNumberKeyword,
+		ast.KindBigIntKeyword,
+		ast.KindObjectKeyword,
+		ast.KindBooleanKeyword,
+		ast.KindStringKeyword,
+		ast.KindSymbolKeyword,
+		ast.KindVoidKeyword,
+		ast.KindUndefinedKeyword,
+		ast.KindNeverKeyword,
+		ast.KindIntrinsicKeyword:
+		return d.factory.NewKeywordTypeNode(kind), nil
+
 	// Token/keyword nodes with no children
 	default:
 		if len(childIndices) == 0 {

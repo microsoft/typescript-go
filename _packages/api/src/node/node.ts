@@ -92,11 +92,11 @@ export class RemoteNodeBase {
     }
 
     get pos(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_POS, true);
+        return this.view.getInt32(this.byteIndex + NODE_OFFSET_POS, true);
     }
 
     get end(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_END, true);
+        return this.view.getInt32(this.byteIndex + NODE_OFFSET_END, true);
     }
 
     get next(): number {
@@ -443,7 +443,12 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         // were present, we would have `parameters = children[5]`, but since `postfixToken` and `astersiskToken` are
         // missing, we have `parameters = children[5 - 2]`.
         const propertyIndex = order - popcount8[~(mask | ((0xff << order) & 0xff)) & 0xff];
-        return this.getOrCreateChildAtNodeIndex(this.index + 1 + propertyIndex);
+        let childIndex = this.index + 1;
+        for (let i = 0; i < propertyIndex; i++) {
+            // Walk through children via their `next` pointer until we get to the right property index
+            childIndex = this.view.getUint32(this.offsetNodes + childIndex * NODE_LEN + NODE_OFFSET_NEXT, true);
+        }
+        return this.getOrCreateChildAtNodeIndex(childIndex);
     }
 
     __print(): string {
@@ -982,4 +987,14 @@ export function parseNodeHandle(handle: string): ParsedNodeHandle {
         kind: parseInt(handle.slice(dot2 + 1, dot3), 10) as SyntaxKind,
         path: handle.slice(dot3 + 1) as Path,
     };
+}
+
+/**
+ * Decode binary-encoded AST data into a Node.
+ * Works for any binary-encoded node, including synthetic nodes
+ * (e.g. from typeToTypeNode) that don't have a source file.
+ */
+export function decodeNode(data: Uint8Array): Node {
+    const sf = new RemoteSourceFile(data, new TextDecoder());
+    return sf as unknown as Node;
 }

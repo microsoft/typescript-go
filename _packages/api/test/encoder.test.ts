@@ -147,7 +147,7 @@ describe("Encoder", () => {
         const ifStmt = createIfStatement(condition, thenBlock);
         const sf = makeSF("if (x) {}", "/test.ts", []);
 
-        const encoded = encodeNode(ifStmt, sf);
+        const encoded = encodeNode(ifStmt);
         assert.ok(encoded instanceof Uint8Array);
 
         // Root node at index 1 should be IfStatement
@@ -161,7 +161,7 @@ describe("Encoder", () => {
         const id = createIdentifier("hello");
         const sf = makeSF("var hello = 42;", "/test.ts", []);
 
-        const encoded = encodeNode(id, sf);
+        const encoded = encodeNode(id);
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
         const offsetNodes = view.getUint32(36, true);
         // Index 1 is the encoded identifier
@@ -182,7 +182,7 @@ describe("Encoder", () => {
 
         // Block with multiLine=true
         const block = createBlock([], true);
-        const encoded = encodeNode(block, sf);
+        const encoded = encodeNode(block);
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
         const offsetNodes = view.getUint32(36, true);
         const data = view.getUint32(offsetNodes + NODE_LEN + 20, true);

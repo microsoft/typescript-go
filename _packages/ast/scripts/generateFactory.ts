@@ -284,7 +284,7 @@ for (const iface of interfaces.values()) {
     for (const tp of iface.typeParameters) allTypeParams.add(tp);
 }
 
-const referencedTypes = new Set<string>(["Node", "NodeArray"]);
+const referencedTypes = new Set<string>(["Node", "NodeArray", "KeywordTypeNode", "KeywordTypeSyntaxKind"]);
 for (const def of factoryDefs) {
     referencedTypes.add(def.interfaceName);
     for (const param of def.params) {
@@ -386,6 +386,15 @@ emit("/**");
 emit(" * Create a simple token node with only a `kind`.");
 emit(" */");
 emit("export function createToken<TKind extends SyntaxKind>(kind: TKind): Node & { readonly kind: TKind } {");
+emit("    return new NodeObject(kind, undefined) as any;");
+emit("}");
+emit("");
+
+// createKeywordTypeNode helper
+emit("/**");
+emit(" * Create a keyword type node (e.g. `string`, `number`, `boolean`, etc.).");
+emit(" */");
+emit("export function createKeywordTypeNode<TKind extends KeywordTypeSyntaxKind>(kind: TKind): KeywordTypeNode<TKind> {");
 emit("    return new NodeObject(kind, undefined) as any;");
 emit("}");
 emit("");

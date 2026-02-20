@@ -234,6 +234,69 @@ function getNodeData(node: Node, strs: StringTable, extendedData: number[]): num
 
 // Returns the child properties for a node, in visitor order.
 // For JSDocParameterTag and JSDocPropertyTag, the order depends on isNameFirst.
+// Additional child properties for node kinds not in the shared childProperties map.
+// These are used only by the encoder; the decoder (RemoteNode) handles them via forEachChild.
+const encoderChildProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> = {
+    [SyntaxKind.ClassExpression]: ["modifiers", "name", "typeParameters", "heritageClauses", "members"],
+    [SyntaxKind.JSImportDeclaration]: ["modifiers", "importClause", "moduleSpecifier", "attributes"],
+    [SyntaxKind.JSExportAssignment]: ["modifiers", "expression"],
+    // Single-child nodes
+    [SyntaxKind.ReturnStatement]: ["expression"],
+    [SyntaxKind.ThrowStatement]: ["expression"],
+    [SyntaxKind.ExpressionStatement]: ["expression"],
+    [SyntaxKind.BreakStatement]: ["label"],
+    [SyntaxKind.ContinueStatement]: ["label"],
+    [SyntaxKind.ParenthesizedExpression]: ["expression"],
+    [SyntaxKind.ComputedPropertyName]: ["expression"],
+    [SyntaxKind.Decorator]: ["expression"],
+    [SyntaxKind.SpreadElement]: ["expression"],
+    [SyntaxKind.SpreadAssignment]: ["expression"],
+    [SyntaxKind.DeleteExpression]: ["expression"],
+    [SyntaxKind.TypeOfExpression]: ["expression"],
+    [SyntaxKind.VoidExpression]: ["expression"],
+    [SyntaxKind.AwaitExpression]: ["expression"],
+    [SyntaxKind.NonNullExpression]: ["expression"],
+    [SyntaxKind.ExternalModuleReference]: ["expression"],
+    [SyntaxKind.NamespaceImport]: ["name"],
+    [SyntaxKind.NamespaceExport]: ["name"],
+    [SyntaxKind.JsxClosingElement]: ["tagName"],
+    [SyntaxKind.ArrayType]: ["elementType"],
+    [SyntaxKind.LiteralType]: ["literal"],
+    [SyntaxKind.InferType]: ["typeParameter"],
+    [SyntaxKind.OptionalType]: ["type"],
+    [SyntaxKind.RestType]: ["type"],
+    [SyntaxKind.ParenthesizedType]: ["type"],
+    [SyntaxKind.JSDocTypeExpression]: ["type"],
+    [SyntaxKind.JSDocNonNullableType]: ["type"],
+    [SyntaxKind.JSDocNullableType]: ["type"],
+    [SyntaxKind.JSDocVariadicType]: ["type"],
+    [SyntaxKind.JSDocOptionalType]: ["type"],
+    [SyntaxKind.PrefixUnaryExpression]: ["operand"],
+    [SyntaxKind.PostfixUnaryExpression]: ["operand"],
+    [SyntaxKind.MetaProperty]: ["name"],
+    [SyntaxKind.TypeOperator]: ["type"],
+    [SyntaxKind.MissingDeclaration]: ["modifiers"],
+    // Single NodeList child nodes
+    [SyntaxKind.Block]: ["statements"],
+    [SyntaxKind.VariableDeclarationList]: ["declarations"],
+    [SyntaxKind.ImportAttributes]: ["elements"],
+    [SyntaxKind.ArrayLiteralExpression]: ["elements"],
+    [SyntaxKind.ObjectLiteralExpression]: ["properties"],
+    [SyntaxKind.UnionType]: ["types"],
+    [SyntaxKind.IntersectionType]: ["types"],
+    [SyntaxKind.TupleType]: ["elements"],
+    [SyntaxKind.NamedImports]: ["elements"],
+    [SyntaxKind.NamedExports]: ["elements"],
+    [SyntaxKind.ModuleBlock]: ["statements"],
+    [SyntaxKind.CaseBlock]: ["clauses"],
+    [SyntaxKind.TypeLiteral]: ["members"],
+    [SyntaxKind.JsxAttributes]: ["properties"],
+    [SyntaxKind.ArrayBindingPattern]: ["elements"],
+    [SyntaxKind.ObjectBindingPattern]: ["elements"],
+    [SyntaxKind.HeritageClause]: ["types"],
+    [SyntaxKind.JSDocTypeLiteral]: ["jsDocPropertyTags"],
+};
+
 function getChildPropertiesForNode(node: Node): readonly string[] | undefined {
     const kind = node.kind;
     if (kind === SyntaxKind.JSDocParameterTag || kind === SyntaxKind.JSDocPropertyTag) {
@@ -246,7 +309,7 @@ function getChildPropertiesForNode(node: Node): readonly string[] | undefined {
             ? ["tagName", "typeExpression", "name", "comment"]
             : ["typeExpression", "name"];
     }
-    return childProperties[kind] as readonly string[] | undefined;
+    return (childProperties[kind] ?? encoderChildProperties[kind]) as readonly string[] | undefined;
 }
 
 // Returns whether a value is a NodeArray (array-like with pos and end).
@@ -258,20 +321,14 @@ function isNodeArray(value: any): value is NodeArray<Node> {
  * Encode a SourceFile AST node into the binary format.
  */
 export function encodeSourceFile(sourceFile: SourceFile): Uint8Array {
-    return encodeTree(sourceFile as unknown as Node, sourceFile);
+    return encodeNode(sourceFile);
 }
 
 /**
  * Encode an arbitrary AST node into the binary format.
- * The sourceFile is needed to provide the source text for efficient string encoding.
  * When encoding a non-SourceFile node, the header hash and parse options fields will be zero.
  */
-export function encodeNode(node: Node, sourceFile: SourceFile): Uint8Array {
-    return encodeTree(node, sourceFile);
-}
-
-function encodeTree(rootNode: Node, sourceFile: SourceFile): Uint8Array {
-    const isRoot = rootNode.kind === SyntaxKind.SourceFile;
+export function encodeNode(node: Node): Uint8Array {
     const strs = new StringTable();
     const extendedDataValues: number[] = [];
 
@@ -337,7 +394,6 @@ function encodeTree(rootNode: Node, sourceFile: SourceFile): Uint8Array {
         );
 
         const saveParentIndex = parentIndex;
-        const savePrevIndex = prevIndex;
         parentIndex = currentIndex;
         prevIndex = 0;
 
@@ -366,18 +422,16 @@ function encodeTree(rootNode: Node, sourceFile: SourceFile): Uint8Array {
                 }
             }
         }
-        // For nodes not in childProperties, they have at most one child
-        // and the mask is 0, which works correctly.
     }
 
     // Encode root node
     nodeCount++;
     parentIndex++;
-    const rootData = getNodeData(rootNode, strs, extendedDataValues);
+    const rootData = getNodeData(node, strs, extendedDataValues);
     nodeValues.push(
-        rootNode.kind,
-        rootNode.pos >= 0 ? rootNode.pos : 0,
-        rootNode.end >= 0 ? rootNode.end : 0,
+        node.kind,
+        node.pos >= 0 ? node.pos : 0,
+        node.end >= 0 ? node.end : 0,
         0,
         0,
         rootData,
@@ -386,7 +440,7 @@ function encodeTree(rootNode: Node, sourceFile: SourceFile): Uint8Array {
     const saveParent = parentIndex;
     prevIndex = 0;
     parentIndex = 1; // root is at index 1
-    visitChildren(rootNode);
+    visitChildren(node);
     parentIndex = saveParent;
 
     // Encode extended data section

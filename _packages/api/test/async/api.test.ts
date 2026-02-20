@@ -26,6 +26,16 @@ import {
     isTemplateMiddle,
     isTemplateTail,
 } from "@typescript/ast";
+import { SyntaxKind } from "@typescript/ast";
+import {
+    createArrayTypeNode,
+    createFunctionTypeNode,
+    createIdentifier,
+    createKeywordTypeNode,
+    createParameterDeclaration,
+    createTypeReferenceNode,
+    createUnionTypeNode,
+} from "@typescript/ast/factory";
 import assert from "node:assert";
 import {
     describe,
@@ -1433,6 +1443,125 @@ describe("readFile callback semantics", () => {
             // 3. null blocks fallback: blocked file should not be found
             const blockedSf = await project.program.getSourceFile(blockedPath);
             assert.equal(blockedSf, undefined, "Blocked file should not be found (null prevents fallback)");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("Emitter - printNode", () => {
+    const emitterFiles = {
+        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/src/main.ts": `
+export const x = 42;
+export function greet(name: string): string { return name; }
+export type Pair = [string, number];
+`,
+    };
+
+    test("printNode with factory-created keyword type", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createKeywordTypeNode(SyntaxKind.StringKeyword);
+            const text = await project.emitter.printNode(node);
+            assert.strictEqual(text, "string");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("printNode with factory-created union type", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createUnionTypeNode([
+                createKeywordTypeNode(SyntaxKind.StringKeyword),
+                createKeywordTypeNode(SyntaxKind.NumberKeyword),
+            ]);
+            const text = await project.emitter.printNode(node);
+            assert.strictEqual(text, "string | number");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("printNode with factory-created function type", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const param = createParameterDeclaration(
+                createIdentifier("x"),
+                undefined,
+                undefined,
+                undefined,
+                createKeywordTypeNode(SyntaxKind.StringKeyword),
+            );
+            const node = createFunctionTypeNode(
+                [param],
+                createKeywordTypeNode(SyntaxKind.NumberKeyword),
+            );
+            const text = await project.emitter.printNode(node);
+            assert.strictEqual(text, "(x: string) => number");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("printNode with factory-created type reference", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createTypeReferenceNode(createIdentifier("Array"), [
+                createKeywordTypeNode(SyntaxKind.StringKeyword),
+            ]);
+            const text = await project.emitter.printNode(node);
+            assert.strictEqual(text, "Array<string>");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("printNode with factory-created array type", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createArrayTypeNode(createKeywordTypeNode(SyntaxKind.NumberKeyword));
+            const text = await project.emitter.printNode(node);
+            assert.strictEqual(text, "number[]");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("typeToTypeNode + printNode round-trip", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const { checker, emitter } = snapshot.getProject("/tsconfig.json")!;
+            const src = emitterFiles["/src/main.ts"];
+
+            const greetPos = src.indexOf("greet(");
+            const symbol = await checker.getSymbolAtPosition("/src/main.ts", greetPos);
+            assert.ok(symbol);
+            const type = await checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const typeNode = await checker.typeToTypeNode(type);
+            assert.ok(typeNode);
+            const text = await emitter.printNode(typeNode);
+            assert.ok(text);
+            assert.strictEqual(text, "(name: string) => string");
         }
         finally {
             await api.close();

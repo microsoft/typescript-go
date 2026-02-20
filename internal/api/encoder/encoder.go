@@ -281,7 +281,11 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 	} else {
 		strs = newStringTable("", 0)
 	}
-	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*NodeSize)
+	var initialNodeCount int
+	if sourceFile != nil {
+		initialNodeCount = sourceFile.NodeCount
+	}
+	nodes := make([]byte, 0, (initialNodeCount+1)*NodeSize)
 
 	visitor := &ast.NodeVisitor{
 		Hooks: ast.NodeVisitorHooks{

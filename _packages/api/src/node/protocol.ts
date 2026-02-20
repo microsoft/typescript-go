@@ -127,6 +127,10 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
     [SyntaxKind.JSDocSignature]: ["typeParameters", "parameters", "type"],
     [SyntaxKind.ClassStaticBlockDeclaration]: ["modifiers", "body"],
     [SyntaxKind.ClassDeclaration]: ["modifiers", "name", "typeParameters", "heritageClauses", "members"],
+    [SyntaxKind.ClassExpression]: ["modifiers", "name", "typeParameters", "heritageClauses", "members"],
+    [SyntaxKind.JSImportDeclaration]: ["modifiers", "importClause", "moduleSpecifier", "attributes"],
+    [SyntaxKind.JSExportAssignment]: ["modifiers", "expression"],
+
     // JSDocPropertyTag and JSDocParameterTag have variable child order based on isNameFirst
     [SyntaxKind.JSDocPropertyTag]: [undefined!, undefined!],
     [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],

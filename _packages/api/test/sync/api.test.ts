@@ -1,6 +1,6 @@
 //
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! THIS FILE IS AUTO-GENERATED — DO NOT EDIT !!!
+// !!! THIS FILE IS AUTO-GENERATED - DO NOT EDIT !!!
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
 // Source: test/async/api.test.ts
@@ -34,6 +34,16 @@ import {
     isTemplateMiddle,
     isTemplateTail,
 } from "@typescript/ast";
+import { SyntaxKind } from "@typescript/ast";
+import {
+    createArrayTypeNode,
+    createFunctionTypeNode,
+    createIdentifier,
+    createKeywordTypeNode,
+    createParameterDeclaration,
+    createTypeReferenceNode,
+    createUnionTypeNode,
+} from "@typescript/ast/factory";
 import assert from "node:assert";
 import {
     describe,
@@ -1441,6 +1451,125 @@ describe("readFile callback semantics", () => {
             // 3. null blocks fallback: blocked file should not be found
             const blockedSf = project.program.getSourceFile(blockedPath);
             assert.equal(blockedSf, undefined, "Blocked file should not be found (null prevents fallback)");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Emitter - printNode", () => {
+    const emitterFiles = {
+        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/src/main.ts": `
+export const x = 42;
+export function greet(name: string): string { return name; }
+export type Pair = [string, number];
+`,
+    };
+
+    test("printNode with factory-created keyword type", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createKeywordTypeNode(SyntaxKind.StringKeyword);
+            const text = project.emitter.printNode(node);
+            assert.strictEqual(text, "string");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("printNode with factory-created union type", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createUnionTypeNode([
+                createKeywordTypeNode(SyntaxKind.StringKeyword),
+                createKeywordTypeNode(SyntaxKind.NumberKeyword),
+            ]);
+            const text = project.emitter.printNode(node);
+            assert.strictEqual(text, "string | number");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("printNode with factory-created function type", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const param = createParameterDeclaration(
+                createIdentifier("x"),
+                undefined,
+                undefined,
+                undefined,
+                createKeywordTypeNode(SyntaxKind.StringKeyword),
+            );
+            const node = createFunctionTypeNode(
+                [param],
+                createKeywordTypeNode(SyntaxKind.NumberKeyword),
+            );
+            const text = project.emitter.printNode(node);
+            assert.strictEqual(text, "(x: string) => number");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("printNode with factory-created type reference", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createTypeReferenceNode(createIdentifier("Array"), [
+                createKeywordTypeNode(SyntaxKind.StringKeyword),
+            ]);
+            const text = project.emitter.printNode(node);
+            assert.strictEqual(text, "Array<string>");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("printNode with factory-created array type", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createArrayTypeNode(createKeywordTypeNode(SyntaxKind.NumberKeyword));
+            const text = project.emitter.printNode(node);
+            assert.strictEqual(text, "number[]");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("typeToTypeNode + printNode round-trip", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = emitterFiles["/src/main.ts"];
+            const greetPos = src.indexOf("greet(");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", greetPos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const typeNode = project.checker.typeToTypeNode(type);
+            assert.ok(typeNode);
+            const text = project.emitter.printNode(typeNode);
+            assert.ok(text);
+            // The function type should print as "(name: string) => string"
+            assert.strictEqual(text, "(name: string) => string");
         }
         finally {
             api.close();
