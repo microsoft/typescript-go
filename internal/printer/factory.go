@@ -280,6 +280,20 @@ func (f *NodeFactory) InlineExpressions(expressions []*ast.Expression) *ast.Expr
 // Utilities
 //
 
+func (f *NodeFactory) CreateExpressionFromEntityName(node *ast.Node) *ast.Expression {
+	if ast.IsQualifiedName(node) {
+		left := f.CreateExpressionFromEntityName(node.AsQualifiedName().Left)
+		right := node.AsQualifiedName().Right.Clone(f.AsNodeFactory())
+		right.Loc = node.AsQualifiedName().Right.Loc
+		right.Parent = node.AsQualifiedName().Right.Parent
+		return f.NewPropertyAccessExpression(left, nil, right, ast.NodeFlagsNone)
+	}
+	res := node.Clone(f.AsNodeFactory())
+	res.Loc = node.Loc
+	res.Parent = node.Parent
+	return res
+}
+
 func (f *NodeFactory) NewTypeCheck(value *ast.Node, tag string) *ast.Node {
 	if tag == "null" {
 		return f.NewStrictEqualityExpression(value, f.NewKeywordExpression(ast.KindNullKeyword))
