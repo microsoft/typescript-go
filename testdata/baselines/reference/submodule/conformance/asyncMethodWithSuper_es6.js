@@ -226,147 +226,181 @@ class A {
 class B extends A {
     // async method with only call/get on 'super' does not require a binding
     simple() {
+        const _superIndex = name => super[name];
+        const _super = Object.create(null, {
+            x: { get: () => super.x },
+            y: { get: () => super.y }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             // call with property access
-            super.x();
+            _super.x.call(this);
             // call additional property.
-            super.y();
+            _super.y.call(this);
             // call with element access
-            super["x"]();
+            _superIndex("x").call(this);
             // property access (read)
-            const a = super.x;
+            const a = _super.x;
             // element access (read)
-            const b = super["x"];
+            const b = _superIndex("x");
         });
     }
     // async method with assignment/destructuring on 'super' requires a binding
     advanced() {
+        const _superIndex = (function (geti, seti) {
+            const cache = Object.create(null);
+            return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
+        })(name => super[name], (name, value) => super[name] = value);
+        const _super = Object.create(null, {
+            x: { get: () => super.x, set: v => super.x = v }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             const f = () => { };
             // call with property access
-            super.x();
+            _super.x.call(this);
             // call with element access
-            super["x"]();
+            _superIndex("x").value.call(this);
             // property access (read)
-            const a = super.x;
+            const a = _super.x;
             // element access (read)
-            const b = super["x"];
+            const b = _superIndex("x").value;
             // property access (assign)
-            super.x = f;
+            _super.x = f;
             // element access (assign)
-            super["x"] = f;
+            _superIndex("x").value = f;
             // destructuring assign with property access
-            ({ f: super.x } = { f });
+            ({ f: _super.x } = { f });
             // destructuring assign with element access
-            ({ f: super["x"] } = { f });
+            ({ f: _superIndex("x").value } = { f });
             // property access in arrow
-            (() => super.x());
+            (() => _super.x.call(this));
             // element access in arrow
-            (() => super["x"]());
+            (() => _superIndex("x").value.call(this));
             // property access in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super.x(); }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _super.x.call(this); }));
             // element access in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super["x"](); }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").value.call(this); }));
         });
     }
     property_access_only_read_only() {
+        const _super = Object.create(null, {
+            x: { get: () => super.x }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             // call with property access
-            super.x();
+            _super.x.call(this);
             // property access (read)
-            const a = super.x;
+            const a = _super.x;
             // property access in arrow
-            (() => super.x());
+            (() => _super.x.call(this));
             // property access in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super.x(); }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _super.x.call(this); }));
         });
     }
     property_access_only_write_only() {
+        const _super = Object.create(null, {
+            x: { get: () => super.x, set: v => super.x = v }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             const f = () => { };
             // property access (assign)
-            super.x = f;
+            _super.x = f;
             // destructuring assign with property access
-            ({ f: super.x } = { f });
+            ({ f: _super.x } = { f });
             // property access (assign) in arrow
-            (() => super.x = f);
+            (() => _super.x = f);
             // property access (assign) in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super.x = f; }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _super.x = f; }));
         });
     }
     element_access_only_read_only() {
+        const _superIndex = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
             // call with element access
-            super["x"]();
+            _superIndex("x").call(this);
             // element access (read)
-            const a = super["x"];
+            const a = _superIndex("x");
             // element access in arrow
-            (() => super["x"]());
+            (() => _superIndex("x").call(this));
             // element access in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super["x"](); }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").call(this); }));
         });
     }
     element_access_only_write_only() {
+        const _superIndex = (function (geti, seti) {
+            const cache = Object.create(null);
+            return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
+        })(name => super[name], (name, value) => super[name] = value);
         return __awaiter(this, void 0, void 0, function* () {
             const f = () => { };
             // element access (assign)
-            super["x"] = f;
+            _superIndex("x").value = f;
             // destructuring assign with element access
-            ({ f: super["x"] } = { f });
+            ({ f: _superIndex("x").value } = { f });
             // element access (assign) in arrow
-            (() => super["x"] = f);
+            (() => _superIndex("x").value = f);
             // element access (assign) in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super["x"] = f; }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").value = f; }));
         });
     }
     *property_access_only_read_only_in_generator() {
+        const _super = Object.create(null, {
+            x: { get: () => super.x }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             // call with property access
-            super.x();
+            _super.x.call(this);
             // property access (read)
-            const a = super.x;
+            const a = _super.x;
             // property access in arrow
-            (() => super.x());
+            (() => _super.x.call(this));
             // property access in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super.x(); }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _super.x.call(this); }));
         });
     }
     *property_access_only_write_only_in_generator() {
+        const _super = Object.create(null, {
+            x: { get: () => super.x, set: v => super.x = v }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             const f = () => { };
             // property access (assign)
-            super.x = f;
+            _super.x = f;
             // destructuring assign with property access
-            ({ f: super.x } = { f });
+            ({ f: _super.x } = { f });
             // property access (assign) in arrow
-            (() => super.x = f);
+            (() => _super.x = f);
             // property access (assign) in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super.x = f; }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _super.x = f; }));
         });
     }
     *element_access_only_read_only_in_generator() {
+        const _superIndex = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
             // call with element access
-            super["x"]();
+            _superIndex("x").call(this);
             // element access (read)
-            const a = super["x"];
+            const a = _superIndex("x");
             // element access in arrow
-            (() => super["x"]());
+            (() => _superIndex("x").call(this));
             // element access in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super["x"](); }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").call(this); }));
         });
     }
     *element_access_only_write_only_in_generator() {
+        const _superIndex = (function (geti, seti) {
+            const cache = Object.create(null);
+            return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
+        })(name => super[name], (name, value) => super[name] = value);
         return __awaiter(this, void 0, void 0, function* () {
             const f = () => { };
             // element access (assign)
-            super["x"] = f;
+            _superIndex("x").value = f;
             // destructuring assign with element access
-            ({ f: super["x"] } = { f });
+            ({ f: _superIndex("x").value } = { f });
             // element access (assign) in arrow
-            (() => super["x"] = f);
+            (() => _superIndex("x").value = f);
             // element access (assign) in async arrow
-            (() => __awaiter(this, void 0, void 0, function* () { return super["x"] = f; }));
+            (() => __awaiter(this, void 0, void 0, function* () { return _superIndex("x").value = f; }));
         });
     }
 }
@@ -380,16 +414,52 @@ class Base {
     static method(x) { }
 }
 class Derived extends Base {
-    a() { return () => __awaiter(this, void 0, void 0, function* () { return super.method(''); }); }
-    b() { return () => __awaiter(this, void 0, void 0, function* () { return super.getter; }); }
-    c() { return () => __awaiter(this, void 0, void 0, function* () { return super.setter = ''; }); }
-    d() { return () => __awaiter(this, void 0, void 0, function* () { return super["method"](''); }); }
-    e() { return () => __awaiter(this, void 0, void 0, function* () { return super["getter"]; }); }
-    f() { return () => __awaiter(this, void 0, void 0, function* () { return super["setter"] = ''; }); }
-    static a() { return () => __awaiter(this, void 0, void 0, function* () { return super.method(''); }); }
-    static b() { return () => __awaiter(this, void 0, void 0, function* () { return super.getter; }); }
-    static c() { return () => __awaiter(this, void 0, void 0, function* () { return super.setter = ''; }); }
-    static d() { return () => __awaiter(this, void 0, void 0, function* () { return super["method"](''); }); }
-    static e() { return () => __awaiter(this, void 0, void 0, function* () { return super["getter"]; }); }
-    static f() { return () => __awaiter(this, void 0, void 0, function* () { return super["setter"] = ''; }); }
+    a() { const _super = Object.create(null, {
+        method: { get: () => super.method }
+    }); return () => __awaiter(this, void 0, void 0, function* () { return _super.method.call(this, ''); }); }
+    b() { const _super = Object.create(null, {
+        getter: { get: () => super.getter }
+    }); return () => __awaiter(this, void 0, void 0, function* () { return _super.getter; }); }
+    c() { const _super = Object.create(null, {
+        setter: { get: () => super.setter, set: v => super.setter = v }
+    }); return () => __awaiter(this, void 0, void 0, function* () { return _super.setter = ''; }); }
+    d() {
+        const _superIndex = name => super[name];
+        return () => __awaiter(this, void 0, void 0, function* () { return _superIndex("method").call(this, ''); });
+    }
+    e() {
+        const _superIndex = name => super[name];
+        return () => __awaiter(this, void 0, void 0, function* () { return _superIndex("getter"); });
+    }
+    f() {
+        const _superIndex = (function (geti, seti) {
+            const cache = Object.create(null);
+            return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
+        })(name => super[name], (name, value) => super[name] = value);
+        return () => __awaiter(this, void 0, void 0, function* () { return _superIndex("setter").value = ''; });
+    }
+    static a() { const _super = Object.create(null, {
+        method: { get: () => super.method }
+    }); return () => __awaiter(this, void 0, void 0, function* () { return _super.method.call(this, ''); }); }
+    static b() { const _super = Object.create(null, {
+        getter: { get: () => super.getter }
+    }); return () => __awaiter(this, void 0, void 0, function* () { return _super.getter; }); }
+    static c() { const _super = Object.create(null, {
+        setter: { get: () => super.setter, set: v => super.setter = v }
+    }); return () => __awaiter(this, void 0, void 0, function* () { return _super.setter = ''; }); }
+    static d() {
+        const _superIndex = name => super[name];
+        return () => __awaiter(this, void 0, void 0, function* () { return _superIndex("method").call(this, ''); });
+    }
+    static e() {
+        const _superIndex = name => super[name];
+        return () => __awaiter(this, void 0, void 0, function* () { return _superIndex("getter"); });
+    }
+    static f() {
+        const _superIndex = (function (geti, seti) {
+            const cache = Object.create(null);
+            return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
+        })(name => super[name], (name, value) => super[name] = value);
+        return () => __awaiter(this, void 0, void 0, function* () { return _superIndex("setter").value = ''; });
+    }
 }

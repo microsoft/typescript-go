@@ -35,9 +35,12 @@ class Derived extends Base {
         return (_a = super.method) === null || _a === void 0 ? void 0 : _a.call(this);
     }
     asyncMethod() {
+        const _super = Object.create(null, {
+            method: { get: () => super.method }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            return (_a = super.method) === null || _a === void 0 ? void 0 : _a.call(this);
+            return (_a = _super.method) === null || _a === void 0 ? void 0 : _a.call(this);
         });
     }
 }
