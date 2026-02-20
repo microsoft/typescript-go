@@ -444,7 +444,6 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	updated := tx.Visitor().VisitNode(node.Body())
 
 	// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
-	// This step isn't needed if we eventually transform this to ES5.
 	emitSuperHelpers := (tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess) &&
 		(getFunctionFlags(tx.getOriginalIfFunctionLike(node))&checker.FunctionFlagsAsyncGenerator) != checker.FunctionFlagsAsyncGenerator
 
@@ -601,7 +600,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		tx.EmitContext().StartVariableEnvironment()
 
 		// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
-		// This step isn't needed if we eventually transform this to ES5.
 		if emitSuperHelpers {
 			if tx.hasSuperElementAccess {
 				tx.EmitContext().AddInitializationStatement(tx.createSuperIndexVariableStatement())
