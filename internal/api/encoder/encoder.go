@@ -427,6 +427,9 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindIfStatement:
 		n := node.AsIfStatement()
 		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.ThenStatement != nil) << 1) | (boolToByte(n.ElseStatement != nil) << 2)
+	case ast.KindDistributeStatement:
+		n := node.AsDistributeStatement()
+		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.Statement != nil) << 1)
 	case ast.KindDoStatement:
 		n := node.AsDoStatement()
 		return (boolToByte(n.Statement != nil) << 0) | (boolToByte(n.Expression != nil) << 1)

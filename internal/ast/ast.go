@@ -74,6 +74,7 @@ type NodeFactory struct {
 	heritageClausePool                core.Pool[HeritageClause]
 	identifierPool                    core.Pool[Identifier]
 	ifStatementPool                   core.Pool[IfStatement]
+	distributeStatementPool           core.Pool[DistributeStatement]
 	importSpecifierPool               core.Pool[ImportSpecifier]
 	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
 	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
@@ -398,6 +399,8 @@ func (n *Node) Expression() *Node {
 		return n.AsPartiallyEmittedExpression().Expression
 	case KindIfStatement:
 		return n.AsIfStatement().Expression
+	case KindDistributeStatement:
+		return n.AsDistributeStatement().Expression
 	case KindDoStatement:
 		return n.AsDoStatement().Expression
 	case KindWhileStatement:
@@ -1069,6 +1072,8 @@ func (n *Node) Statement() *Statement {
 		return n.AsWithStatement().Statement
 	case KindLabeledStatement:
 		return n.AsLabeledStatement().Statement
+	case KindDistributeStatement:
+		return n.AsDistributeStatement().Statement
 	}
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
@@ -1353,6 +1358,10 @@ func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
 
 func (n *Node) AsIfStatement() *IfStatement {
 	return n.data.(*IfStatement)
+}
+
+func (n *Node) AsDistributeStatement() *DistributeStatement {
+	return n.data.(*DistributeStatement)
 }
 
 func (n *Node) AsWhileStatement() *WhileStatement {
@@ -2989,6 +2998,50 @@ func (node *IfStatement) computeSubtreeFacts() SubtreeFacts {
 
 func IsIfStatement(node *Node) bool {
 	return node.Kind == KindIfStatement
+}
+
+// DistributeStatement
+
+type DistributeStatement struct {
+	StatementBase
+	compositeNodeBase
+	Expression *Expression // Expression
+	Statement  *Statement  // Statement
+}
+
+func (f *NodeFactory) NewDistributeStatement(expression *Expression, statement *Statement) *Node {
+	data := f.distributeStatementPool.New()
+	data.Expression = expression
+	data.Statement = statement
+	return f.newNode(KindDistributeStatement, data)
+}
+
+func (f *NodeFactory) UpdateDistributeStatement(node *DistributeStatement, expression *Expression, statement *Statement) *Node {
+	if expression != node.Expression || statement != node.Statement {
+		return updateNode(f.NewDistributeStatement(expression, statement), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *DistributeStatement) ForEachChild(v Visitor) bool {
+	return visit(v, node.Expression) || visit(v, node.Statement)
+}
+
+func (node *DistributeStatement) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateDistributeStatement(node, v.visitNode(node.Expression), v.visitEmbeddedStatement(node.Statement))
+}
+
+func (node *DistributeStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewDistributeStatement(node.Expression, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func (node *DistributeStatement) computeSubtreeFacts() SubtreeFacts {
+	return propagateSubtreeFacts(node.Expression) |
+		propagateSubtreeFacts(node.Statement) | SubtreeContainsTypeScript | SubtreeContainsDistributeStatement
+}
+
+func IsDistributeStatement(node *Node) bool {
+	return node.Kind == KindDistributeStatement
 }
 
 // DoStatement

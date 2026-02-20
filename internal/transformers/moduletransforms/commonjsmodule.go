@@ -113,6 +113,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedNoStack(node *ast.Node) 
 		node = tx.visitTopLevelNestedWithStatement(node.AsWithStatement())
 	case ast.KindIfStatement:
 		node = tx.visitTopLevelNestedIfStatement(node.AsIfStatement())
+	case ast.KindDistributeStatement:
+		node = tx.visitTopLevelNestedDistributeStatement(node.AsDistributeStatement())
 	case ast.KindSwitchStatement:
 		node = tx.visitTopLevelNestedSwitchStatement(node.AsSwitchStatement())
 	case ast.KindCaseBlock:
@@ -1259,6 +1261,16 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedIfStatement(node *ast.If
 		tx.Visitor().VisitNode(node.Expression),
 		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement),
 		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement),
+	)
+}
+
+// Visits a top-level nested `distribute` statement as it may contain `var` declarations that are hoisted and may still be
+// exported with `export {}`.
+func (tx *CommonJSModuleTransformer) visitTopLevelNestedDistributeStatement(node *ast.DistributeStatement) *ast.Node {
+	return tx.Factory().UpdateDistributeStatement(
+		node,
+		tx.Visitor().VisitNode(node.Expression),
+		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement),
 	)
 }
 

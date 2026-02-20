@@ -3354,6 +3354,17 @@ func (p *Printer) emitIfStatement(node *ast.IfStatement) {
 	p.exitNode(node.AsNode(), state)
 }
 
+func (p *Printer) emitDistributeStatement(node *ast.DistributeStatement) {
+	state := p.enterNode(node.AsNode())
+	pos := p.emitToken(ast.KindDistributeKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	p.writeSpace()
+	p.emitToken(ast.KindOpenParenToken, pos, WriteKindPunctuation, node.AsNode())
+	p.emitExpression(node.Expression, ast.OperatorPrecedenceLowest)
+	p.emitToken(ast.KindCloseParenToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
+	p.emitEmbeddedStatement(node.AsNode(), node.Statement)
+	p.exitNode(node.AsNode(), state)
+}
+
 func (p *Printer) emitWhileClause(node *ast.Node, expression *ast.Expression, startPos int) {
 	pos := p.emitToken(ast.KindWhileKeyword, startPos, WriteKindKeyword, node)
 	p.writeSpace()
@@ -4031,6 +4042,8 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitExpressionStatement(node.AsExpressionStatement())
 	case ast.KindIfStatement:
 		p.emitIfStatement(node.AsIfStatement())
+	case ast.KindDistributeStatement:
+		p.emitDistributeStatement(node.AsDistributeStatement())
 	case ast.KindDoStatement:
 		p.emitDoStatement(node.AsDoStatement())
 	case ast.KindWhileStatement:
@@ -5782,6 +5795,8 @@ func (p *Printer) generateNames(node *ast.Node) {
 	case ast.KindIfStatement:
 		p.generateNames(node.AsIfStatement().ThenStatement)
 		p.generateNames(node.AsIfStatement().ElseStatement)
+	case ast.KindDistributeStatement:
+		p.generateNames(node.AsDistributeStatement().Statement)
 	case ast.KindForStatement, ast.KindForOfStatement, ast.KindForInStatement:
 		p.generateNames(node.Initializer())
 		p.generateNames(node.Statement())

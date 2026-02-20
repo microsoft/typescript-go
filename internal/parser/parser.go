@@ -1013,6 +1013,8 @@ func (p *Parser) parseStatement() *ast.Statement {
 		return p.parseClassDeclaration(p.nodePos(), p.jsdocScannerInfo(), nil /*modifiers*/)
 	case ast.KindIfKeyword:
 		return p.parseIfStatement()
+	case ast.KindDistributeKeyword:
+		return p.parseDistributeStatement()
 	case ast.KindDoKeyword:
 		return p.parseDoStatement()
 	case ast.KindWhileKeyword:
@@ -1179,6 +1181,20 @@ func (p *Parser) parseIfStatement() *ast.Node {
 	}
 	result := p.finishNode(p.factory.NewIfStatement(expression, thenStatement, elseStatement), pos)
 	p.withJSDoc(result, jsdoc)
+	return result
+}
+
+func (p *Parser) parseDistributeStatement() *ast.Node {
+	pos := p.nodePos()
+	hasJSDoc := p.hasPrecedingJSDocComment()
+	p.parseExpected(ast.KindDistributeKeyword)
+	openParenPosition := p.scanner.TokenStart()
+	openParenParsed := p.parseExpected(ast.KindOpenParenToken)
+	expression := p.parseExpressionAllowIn()
+	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
+	statement := p.parseStatement()
+	result := p.finishNode(p.factory.NewDistributeStatement(expression, statement), pos)
+	p.withJSDoc(result, hasJSDoc)
 	return result
 }
 
@@ -5952,7 +5968,7 @@ func (p *Parser) isStartOfStatement() bool {
 		ast.KindUsingKeyword, ast.KindFunctionKeyword, ast.KindClassKeyword, ast.KindEnumKeyword, ast.KindIfKeyword,
 		ast.KindDoKeyword, ast.KindWhileKeyword, ast.KindForKeyword, ast.KindContinueKeyword, ast.KindBreakKeyword,
 		ast.KindReturnKeyword, ast.KindWithKeyword, ast.KindSwitchKeyword, ast.KindThrowKeyword, ast.KindTryKeyword,
-		ast.KindDebuggerKeyword, ast.KindCatchKeyword, ast.KindFinallyKeyword:
+		ast.KindDebuggerKeyword, ast.KindCatchKeyword, ast.KindFinallyKeyword, ast.KindDistributeKeyword:
 		return true
 	case ast.KindImportKeyword:
 		return p.isStartOfDeclaration() || p.isNextTokenOpenParenOrLessThanOrDot()
