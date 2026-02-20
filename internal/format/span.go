@@ -221,6 +221,7 @@ func getNonDecoratorTokenPosOfNode(node *ast.Node, file *ast.SourceFile) int {
 func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	w.formattingScanner = s
 	w.indentationOnLastIndentedLine = -1
+	w.lastIndentedLine = -1
 	opt := GetFormatCodeSettingsFromContext(w.ctx)
 	w.formattingContext = NewFormattingContext(w.sourceFile, w.requestKind, opt)
 	// formatting context is used by rules provider
@@ -1059,11 +1060,9 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 		indentNextTokenOrTrivia := true
 		if len(currentTokenInfo.leadingTrivia) > 0 {
 			commentIndentation := dynamicIndenation.getIndentationForComment(currentTokenInfo.token.Kind, tokenIndentation, container)
-			if commentIndentation != -1 {
-				indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
-					w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
-				})
-			}
+			indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
+				w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
+			})
 		}
 
 		// indent token only if is it is in target range and does not overlap with any error ranges
