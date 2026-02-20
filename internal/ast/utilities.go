@@ -3974,7 +3974,21 @@ func IsExpandoInitializer(initializer *Node) bool {
 }
 
 func GetContainingFunction(node *Node) *Node {
-	return FindAncestor(node.Parent, IsFunctionLike)
+	node = node.Parent
+	for node != nil {
+		if node.Kind == KindComputedPropertyName {
+			if node.Parent != nil && node.Parent.Parent != nil {
+				node = node.Parent.Parent
+				continue
+			}
+			return nil
+		}
+		if IsFunctionLike(node) {
+			return node
+		}
+		node = node.Parent
+	}
+	return nil
 }
 
 func ImportFromModuleSpecifier(node *Node) *Node {
