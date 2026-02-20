@@ -61,18 +61,6 @@ type forawaitTransformer struct {
 }
 
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
-	return tx.visitorWorker(node, false)
-}
-
-func (tx *forawaitTransformer) visitWithUnusedExpressionResult(node *ast.Node) *ast.Node {
-	return tx.visitorWorker(node, true)
-}
-
-// visitorWorker visits a node.
-//
-// expressionResultIsUnused indicates the result of an expression is unused by the parent node
-// (i.e., the left side of a comma or the expression of an ExpressionStatement).
-func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsUnused bool) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
 		if tx.capturedSuperProperties != nil {
 			return tx.superPropertyVisitor(node)
@@ -92,12 +80,8 @@ func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsU
 		return tx.visitLabeledStatement(node.AsLabeledStatement())
 	case ast.KindForOfStatement:
 		return tx.visitForOfStatement(node.AsForInOrOfStatement(), nil)
-	case ast.KindForStatement:
-		return tx.doWithHierarchyFacts(tx.visitForStatement, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
-	case ast.KindDoStatement, ast.KindWhileStatement, ast.KindForInStatement:
+	case ast.KindForStatement, ast.KindDoStatement, ast.KindWhileStatement, ast.KindForInStatement:
 		return tx.doWithHierarchyFacts(tx.visitDefault, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
-	case ast.KindVoidExpression:
-		return tx.visitVoidExpression(node)
 	case ast.KindConstructor:
 		return tx.doWithHierarchyFacts(tx.visitConstructorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindMethodDeclaration:
@@ -112,10 +96,6 @@ func (tx *forawaitTransformer) visitorWorker(node *ast.Node, expressionResultIsU
 		return tx.doWithHierarchyFacts(tx.visitFunctionExpression, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindArrowFunction:
 		return tx.doWithHierarchyFacts(tx.visitArrowFunction, node, forAwaitHierarchyFactsArrowFunctionExcludes, forAwaitHierarchyFactsArrowFunctionIncludes)
-	case ast.KindExpressionStatement:
-		return tx.visitExpressionStatement(node)
-	case ast.KindParenthesizedExpression:
-		return tx.visitParenthesizedExpression(node, expressionResultIsUnused)
 	case ast.KindPropertyAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.capturedSuperProperties.Add(node.Name().Text())
@@ -190,40 +170,6 @@ func (tx *forawaitTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
 	tx.exitSubtree(ancestorFacts)
 	return visited
-}
-
-func (tx *forawaitTransformer) visitForStatement(node *ast.Node) *ast.Node {
-	n := node.AsForStatement()
-	return tx.Factory().UpdateForStatement(
-		n,
-		tx.unusedExpressionResultVisitor().VisitNode(n.Initializer),
-		tx.Visitor().VisitNode(n.Condition),
-		tx.unusedExpressionResultVisitor().VisitNode(n.Incrementor),
-		tx.Visitor().VisitEmbeddedStatement(n.Statement),
-	)
-}
-
-func (tx *forawaitTransformer) visitVoidExpression(node *ast.Node) *ast.Node {
-	return tx.unusedExpressionResultVisitor().VisitEachChild(node)
-}
-
-func (tx *forawaitTransformer) visitExpressionStatement(node *ast.Node) *ast.Node {
-	return tx.unusedExpressionResultVisitor().VisitEachChild(node)
-}
-
-// visitParenthesizedExpression visits a ParenthesizedExpression.
-//
-// expressionResultIsUnused indicates the result of an expression is unused by the parent node
-// (i.e., the left side of a comma or the expression of an ExpressionStatement).
-func (tx *forawaitTransformer) visitParenthesizedExpression(node *ast.Node, expressionResultIsUnused bool) *ast.Node {
-	if expressionResultIsUnused {
-		return tx.unusedExpressionResultVisitor().VisitEachChild(node)
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *forawaitTransformer) unusedExpressionResultVisitor() *ast.NodeVisitor {
-	return tx.EmitContext().NewNodeVisitor(tx.visitWithUnusedExpressionResult)
 }
 
 func (tx *forawaitTransformer) visitAwaitExpression(node *ast.AwaitExpression) *ast.Node {
@@ -477,9 +423,11 @@ func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfS
 	}
 
 	// Build the for statement
+	iteratorDecl := f.NewVariableDeclaration(iterator, nil, nil, initializer)
+	iteratorDecl.Loc = node.Expression.Loc
 	varDeclList := f.NewVariableDeclarationList(ast.NodeFlagsNone, f.NewNodeList([]*ast.Node{
 		f.NewVariableDeclaration(nonUserCode, nil, nil, f.NewKeywordExpression(ast.KindTrueKeyword)),
-		f.NewVariableDeclaration(iterator, nil, nil, initializer),
+		iteratorDecl,
 		f.NewVariableDeclaration(result, nil, nil, nil),
 	}))
 	varDeclList.Loc = node.Expression.Loc
