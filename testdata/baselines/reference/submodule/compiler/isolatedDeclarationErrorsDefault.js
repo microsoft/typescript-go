@@ -49,12 +49,12 @@ declare const _default: {
 }[];
 export default _default;
 //// [d.d.ts]
-declare const _default: readonly [{
+declare const _default: [{
     readonly foo: number;
 }];
 export default _default;
 //// [e.d.ts]
-declare const _default: readonly [{
+declare const _default: [{
     readonly foo: number;
 }];
 export default _default;

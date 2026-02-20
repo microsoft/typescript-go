@@ -72,22 +72,22 @@ export default _default;
 declare const _default: RequireInterface;
 export default _default;
 //// [index.d.ts]
-declare const _default: readonly [ImportInterface, RequireInterface];
+declare const _default: [ImportInterface, RequireInterface];
 export default _default;
 
 
 //// [DtsFileErrors]
 
 
-out/index.d.ts(1,35): error TS2304: Cannot find name 'ImportInterface'.
-out/index.d.ts(1,52): error TS2304: Cannot find name 'RequireInterface'.
+out/index.d.ts(1,26): error TS2304: Cannot find name 'ImportInterface'.
+out/index.d.ts(1,43): error TS2304: Cannot find name 'RequireInterface'.
 
 
 ==== out/index.d.ts (2 errors) ====
-    declare const _default: readonly [ImportInterface, RequireInterface];
-                                      ~~~~~~~~~~~~~~~
+    declare const _default: [ImportInterface, RequireInterface];
+                             ~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'ImportInterface'.
-                                                       ~~~~~~~~~~~~~~~~
+                                              ~~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'RequireInterface'.
     export default _default;
     

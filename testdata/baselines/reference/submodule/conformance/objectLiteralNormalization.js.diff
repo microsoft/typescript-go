@@ -1,23 +1,11 @@
 --- old.objectLiteralNormalization.js
 +++ new.objectLiteralNormalization.js
-@@= skipped -146, +146 lines =@@
-     baz?: boolean;
- };
- declare let c1: {
--    foo?: string;
--    bar?: string;
--    baz?: boolean;
-+    foo?: string | undefined;
-+    bar?: string | undefined;
-+    baz?: boolean | undefined;
- };
- declare let c2: {
--    foo?: string;
--    bar?: string;
--    baz?: boolean;
-+    foo?: string | undefined;
-+    bar?: string | undefined;
-+    baz?: boolean | undefined;
- };
- declare let c3: {
-     a: number;
+@@= skipped -172, +172 lines =@@
+ declare let d1: {
+     kind: string;
+     pos: {
+-        b?: undefined;
+-        a?: undefined;
+         x: number;
+         y: number;
+     };

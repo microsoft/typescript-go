@@ -43,8 +43,8 @@ declare function create<T extends { [s: string]: ViewStyle }>(styles: T): { [P i
 >styles : T
 
 const wrapped = create({ first: { view: 0, styleMedia: "???" } });
->wrapped : { first: Brand<{ view: number; styleMedia: string; }>; }
->create({ first: { view: 0, styleMedia: "???" } }) : { first: Brand<{ view: number; styleMedia: string; }>; }
+>wrapped : { first: { view: number; styleMedia: string; }; }
+>create({ first: { view: 0, styleMedia: "???" } }) : { first: { view: number; styleMedia: string; }; }
 >create : <T extends { [s: string]: ViewStyle; }>(styles: T) => { [P in keyof T]: Brand<T[P]>; }
 >{ first: { view: 0, styleMedia: "???" } } : { first: { view: number; styleMedia: string; }; }
 >first : { view: number; styleMedia: string; }
@@ -57,6 +57,6 @@ const wrapped = create({ first: { view: 0, styleMedia: "???" } });
 const vs: ViewStyle = wrapped.first // error, first is a branded number
 >vs : ViewStyle
 >wrapped.first : Brand<{ view: number; styleMedia: string; }>
->wrapped : { first: Brand<{ view: number; styleMedia: string; }>; }
+>wrapped : { first: { view: number; styleMedia: string; }; }
 >first : Brand<{ view: number; styleMedia: string; }>
 

@@ -554,7 +554,7 @@ declare function isNonNull(x: number | null): x is number;
 declare function isNonNullVar(x: number | null): x is number;
 declare function isNonNullGeneric<T>(x: T): x is T & ({} | undefined);
 declare const myGuard: (o: string | undefined) => o is string;
-declare const mySecondGuard: (o: string | undefined) => o is string;
+declare const mySecondGuard: (o: string | undefined) => boolean;
 type MyObj = {
     data?: string;
 };
@@ -589,7 +589,7 @@ declare function doubleReturn(x: string | number): boolean;
 declare function guardsOneButNotOthers(a: string | number, b: string | number, c: string | number): b is string;
 declare function dunderguard(__x: number | string): __x is string;
 declare const booleanIdentity: (x: boolean) => boolean;
-declare const numOrBoolean: (x: number | boolean) => x is number | true;
+declare const numOrBoolean: (x: number | boolean) => boolean;
 interface NumberInferrer {
     isNumber(x: number | string): x is number;
 }
@@ -618,8 +618,8 @@ declare function assertAndPredicate(x: string | number | Date): x is string;
 declare let snd: string | number | Date;
 declare function isNumberWithThis(this: Date, x: number | string): x is number;
 declare function narrowFromAny(x: any): x is number;
-declare const noInferenceFromRest: (f_0: "a" | "b") => boolean;
-declare const noInferenceFromImpossibleRest: () => boolean;
+declare const noInferenceFromRest: (...f: ["a" | "b"]) => boolean;
+declare const noInferenceFromImpossibleRest: (...f: []) => boolean;
 declare function inferWithRest(x: string | null, ...f: ["a", "b"]): x is string;
 declare const foobar: {
     type: "foo";
@@ -628,16 +628,7 @@ declare const foobar: {
     type: "bar";
     bar: string;
 };
-declare const foobarPred: (fb: {
-    type: "foo";
-    foo: number;
-} | {
-    type: "bar";
-    bar: string;
-}) => fb is {
-    type: "foo";
-    foo: number;
-};
+declare const foobarPred: (fb: typeof foobar) => boolean;
 declare const arrTest: Array<number>;
 declare function isEmptyString(x: unknown): x is "";
 type Animal = {

@@ -19,7 +19,7 @@ function NewA(Factory: typeof A) {
 }
 
 function NewB(Factory: typeof B) {
->NewB : (Factory: typeof B) => any
+>NewB : (Factory: typeof B) => B
 >Factory : typeof B
 >B : typeof B
 
@@ -40,11 +40,11 @@ NewA(B);
 
 NewB(A);
 >NewB(A) : any
->NewB : (Factory: typeof B) => any
+>NewB : (Factory: typeof B) => B
 >A : typeof A
 
 NewB(B);
 >NewB(B) : any
->NewB : (Factory: typeof B) => any
+>NewB : (Factory: typeof B) => B
 >B : typeof B
 

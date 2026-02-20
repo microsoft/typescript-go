@@ -33,16 +33,7 @@
  }
 
  namespace A {
-@@= skipped -385, +385 lines =@@
- }
-
- function bar(e: A.B.C.E): number {
-->bar : (e: A.B.C.E) => number
-+>bar : (e: I) => number
- >e : I
- >A : any
- >B : any
-@@= skipped -55, +55 lines =@@
+@@= skipped -440, +440 lines =@@
  >c : Comments
 
          case Comments["//"]:

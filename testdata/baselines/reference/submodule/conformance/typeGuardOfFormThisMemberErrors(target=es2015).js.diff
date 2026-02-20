@@ -32,12 +32,3 @@
      }
      Test.Directory = Directory;
      let file = new File("foo/bar.txt", "foo");
-@@= skipped -15, +16 lines =@@
-         path: string;
-         isFSO: this is FileSystemObject;
-         get isFile(): this is File;
--        set isFile(param: this is File);
-+        set isFile(param: boolean);
-         get isDirectory(): this is Directory;
-         isNetworked: this is (Networked & this);
-         constructor(path: string);

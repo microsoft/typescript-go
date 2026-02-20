@@ -1,0 +1,11 @@
+--- old.declInput3.js
++++ new.declInput3.js
+@@= skipped -28, +28 lines =@@
+     g(): {
+         a: bar;
+         b: any;
+-        c: any;
++        c: undefined;
+     };
+     h(x?: number, y?: any, z?: string): void;
+ }

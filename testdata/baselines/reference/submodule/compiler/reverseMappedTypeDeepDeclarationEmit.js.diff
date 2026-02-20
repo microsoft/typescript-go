@@ -1,0 +1,19 @@
+--- old.reverseMappedTypeDeepDeclarationEmit.js
++++ new.reverseMappedTypeDeepDeclarationEmit.js
+@@= skipped -70, +70 lines =@@
+ export declare const validatorFunc: (o: any) => {
+     Test: {
+         Test1: {
+-            Test2: string;
++            Test2: NativeTypeValidator<string>;
+         };
+     };
+ };
+ export declare const outputExample: {
+     Test: {
+         Test1: {
+-            Test2: string;
++            Test2: NativeTypeValidator<string>;
+         };
+     };
+ };

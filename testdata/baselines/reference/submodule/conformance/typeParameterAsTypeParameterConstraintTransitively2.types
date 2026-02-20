@@ -39,7 +39,7 @@ foo(1, 2, '');
 >'' : ""
 
 foo({ x: 1 }, { x: 1, y: '' }, { x: 2, y: 2, z: true });
->foo({ x: 1 }, { x: 1, y: '' }, { x: 2, y: 2, z: true }) : { x: number; y: number; z: boolean; }
+>foo({ x: 1 }, { x: 1, y: '' }, { x: 2, y: 2, z: true }) : { x: number; y: number; z: true; }
 >foo : <T, U, V>(x: T, y: U, z: V) => V
 >{ x: 1 } : { x: number; }
 >x : number

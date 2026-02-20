@@ -275,7 +275,7 @@ export declare let templateLetOk2AsConst: "s1 - S";
 export declare let templateLetOk3AsConst: "s1 - S - false";
 export declare let templateLetOk4AsConst: `s${number} - S - true`;
 export declare let arr: number[];
-export declare let arrConst: readonly [1, 2, 3];
+export declare let arrConst: [1, 2, 3];
 export declare let arrWithSpread: readonly [1, 2, 3, ...number[]];
 export declare class Exported {
     numberLet: number;

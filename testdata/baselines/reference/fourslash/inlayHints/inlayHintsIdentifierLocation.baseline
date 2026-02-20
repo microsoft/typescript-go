@@ -33,20 +33,7 @@ const p = (a: Foo[]) => a;
       "value": ": "
     },
     {
-      "value": "Foo",
-      "location": {
-        "uri": "file:///inlayHintsIdentifierLocation.ts",
-        "range": {
-          "start": {
-            "line": 0,
-            "character": 10
-          },
-          "end": {
-            "line": 0,
-            "character": 13
-          }
-        }
-      }
+      "value": "Foo"
     },
     {
       "value": "[]"

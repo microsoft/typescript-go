@@ -10,27 +10,39 @@
      },
      {
        "value": ": "
-@@= skipped -9, +10 lines =@@
-       "value": "("
-     },
-     {
--      "value": "d"
-+      "value": "d",
-+      "location": {},
-     },
-     {
-       "value": ": "
-@@= skipped -107, +108 lines =@@
+@@= skipped -116, +117 lines =@@
        "value": "("
      },
      {
 -      "value": "x"
+-    },
+-    {
+-      "value": ": "
+-    },
+-    {
+-      "value": "X",
 +      "value": "x",
-+      "location": {},
+       "location": {},
++    },
++    {
++      "value": ": "
++    },
++    {
++      "value": "X"
      },
      {
+       "value": ")"
+@@= skipped -16, +16 lines =@@
        "value": ": "
-@@= skipped -47, +48 lines =@@
+     },
+     {
+-      "value": "Y",
+-      "location": {},
++      "value": "Y"
+     },
+     {
+       "value": "; "
+@@= skipped -31, +30 lines =@@
        "value": "; "
      },
      {
@@ -70,7 +82,16 @@
      },
      {
        "value": "?"
-@@= skipped -21, +22 lines =@@
+@@= skipped -12, +13 lines =@@
+       "value": "number"
+     },
+     {
+-      "value": " | "
+-    },
+-    {
+-      "value": "undefined"
+-    },
+-    {
        "value": "; "
      },
      {
@@ -80,7 +101,7 @@
      },
      {
        "value": "("
-@@= skipped -18, +19 lines =@@
+@@= skipped -27, +22 lines =@@
        "value": "; "
      },
      {
@@ -100,7 +121,15 @@
      },
      {
        "value": "<"
-@@= skipped -29, +30 lines =@@
+@@= skipped -22, +23 lines =@@
+       "value": ": "
+     },
+     {
+-      "value": "T",
+-      "location": {},
++      "value": "T"
+     },
+     {
        "value": "; "
      },
      {
@@ -110,13 +139,35 @@
      },
      {
        "value": "?"
-@@= skipped -26, +27 lines =@@
+@@= skipped -33, +33 lines =@@
        "value": "("
      },
      {
 -      "value": "x"
+-    },
+-    {
+-      "value": ": "
+-    },
+-    {
+-      "value": "X",
 +      "value": "x",
-+      "location": {},
+       "location": {},
++    },
++    {
++      "value": ": "
++    },
++    {
++      "value": "X"
      },
      {
+       "value": ")"
+@@= skipped -16, +16 lines =@@
        "value": ": "
+     },
+     {
+-      "value": "Y",
+-      "location": {},
++      "value": "Y"
+     },
+     {
+       "value": " "

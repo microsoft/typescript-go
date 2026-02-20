@@ -1,0 +1,12 @@
+--- old.reverseMappedIntersectionInference1.types
++++ new.reverseMappedIntersectionInference1.types
+@@= skipped -37, +37 lines =@@
+ ): [T, E];
+
+ const res = withKeyedObj({
+->res : [{ a: string; b: boolean; }, { a: number; b: number; }]
+->withKeyedObj({  a: {    data: "foo",    onSuccess: (dataArg) => {      dataArg;    },    error: 404,    onError: (errorArg) => {      errorArg;    },  },  b: {    data: true,    onSuccess: (dataArg) => {      dataArg;    },    error: 500,    onError: (errorArg) => {      errorArg;    },  },}) : [{ a: string; b: boolean; }, { a: number; b: number; }]
++>res : [{ a: { data: string; onSuccess: (dataArg: string) => void; error: number; onError: (errorArg: number) => void; }; b: { data: true; onSuccess: (dataArg: boolean) => void; error: number; onError: (errorArg: number) => void; }; }, { a: { data: string; onSuccess: (dataArg: string) => void; error: number; onError: (errorArg: number) => void; }; b: { data: true; onSuccess: (dataArg: boolean) => void; error: number; onError: (errorArg: number) => void; }; }]
++>withKeyedObj({  a: {    data: "foo",    onSuccess: (dataArg) => {      dataArg;    },    error: 404,    onError: (errorArg) => {      errorArg;    },  },  b: {    data: true,    onSuccess: (dataArg) => {      dataArg;    },    error: 500,    onError: (errorArg) => {      errorArg;    },  },}) : [{ a: { data: string; onSuccess: (dataArg: string) => void; error: number; onError: (errorArg: number) => void; }; b: { data: true; onSuccess: (dataArg: boolean) => void; error: number; onError: (errorArg: number) => void; }; }, { a: { data: string; onSuccess: (dataArg: string) => void; error: number; onError: (errorArg: number) => void; }; b: { data: true; onSuccess: (dataArg: boolean) => void; error: number; onError: (errorArg: number) => void; }; }]
+ >withKeyedObj : <T, E>(arg: Results<T> & Errors<E>) => [T, E]
+ >{  a: {    data: "foo",    onSuccess: (dataArg) => {      dataArg;    },    error: 404,    onError: (errorArg) => {      errorArg;    },  },  b: {    data: true,    onSuccess: (dataArg) => {      dataArg;    },    error: 500,    onError: (errorArg) => {      errorArg;    },  },} : { a: { data: string; onSuccess: (dataArg: string) => void; error: number; onError: (errorArg: number) => void; }; b: { data: true; onSuccess: (dataArg: boolean) => void; error: number; onError: (errorArg: number) => void; }; }

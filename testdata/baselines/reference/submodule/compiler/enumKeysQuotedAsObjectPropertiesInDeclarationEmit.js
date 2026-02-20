@@ -52,10 +52,10 @@ export declare enum MouseButton {
     NO_BUTTON = 0
 }
 export declare const DOMMouseButton: {
-    '-1': MouseButton;
-    "0": MouseButton;
-    "1": MouseButton;
-    "2": MouseButton;
-    "3": MouseButton;
-    "4": MouseButton;
+    '-1': MouseButton.NO_BUTTON;
+    "0": MouseButton.LEFT_BUTTON;
+    "1": MouseButton.MIDDLE_BUTTON;
+    "2": MouseButton.RIGHT_BUTTON;
+    "3": MouseButton.XBUTTON1_BUTTON;
+    "4": MouseButton.XBUTTON2_BUTTON;
 };

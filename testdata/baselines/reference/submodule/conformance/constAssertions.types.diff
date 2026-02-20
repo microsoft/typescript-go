@@ -5,7 +5,7 @@
 
  function ff1(x: 'foo' | 'bar', y: 1 | 2) {
 ->ff1 : (x: "foo" | "bar", y: 1 | 2) => "bar-1" | "bar-2" | "foo-1" | "foo-2"
-+>ff1 : (x: "bar" | "foo", y: 1 | 2) => "bar-1" | "bar-2" | "foo-1" | "foo-2"
++>ff1 : (x: 'foo' | 'bar', y: 1 | 2) => "bar-1" | "bar-2" | "foo-1" | "foo-2"
  >x : "bar" | "foo"
  >y : 1 | 2
 
@@ -14,6 +14,25 @@
 
  function ff3(x: 'foo' | 'bar', y: object) {
 ->ff3 : (x: "foo" | "bar", y: object) => `bar${string}` | `foo${string}`
-+>ff3 : (x: "bar" | "foo", y: object) => `bar${string}` | `foo${string}`
++>ff3 : (x: 'foo' | 'bar', y: object) => `bar${string}` | `foo${string}`
  >x : "bar" | "foo"
  >y : object
+
+@@= skipped -81, +81 lines =@@
+ }
+
+ function accessorNames<S extends string>(propName: S) {
+->accessorNames : <S extends string>(propName: S) => readonly [`get-${S}`, `set-${S}`]
++>accessorNames : <S extends string>(propName: S) => [`get-${S}`, `set-${S}`]
+ >propName : S
+
+     return [`get-${propName}`, `set-${propName}`] as const;
+@@= skipped -15, +15 lines =@@
+ const ns1 = accessorNames('foo');
+ >ns1 : readonly ["get-foo", "set-foo"]
+ >accessorNames('foo') : readonly ["get-foo", "set-foo"]
+->accessorNames : <S extends string>(propName: S) => readonly [`get-${S}`, `set-${S}`]
++>accessorNames : <S extends string>(propName: S) => [`get-${S}`, `set-${S}`]
+ >'foo' : "foo"
+
+ // repro from https://github.com/microsoft/TypeScript/issues/54374

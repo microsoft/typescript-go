@@ -234,9 +234,9 @@ declare let c8: true;
 declare let c9: false;
 declare let vv1: "abc";
 declare let vc1: "abc";
-declare let a1: readonly [];
-declare let a2: readonly [1, 2, 3];
-declare let a3: readonly [10, "hello", true];
+declare let a1: [];
+declare let a2: [1, 2, 3];
+declare let a3: [10, 'hello', true];
 declare let a4: readonly [1, 2, 3];
 declare let a5: number[];
 declare let a6: readonly number[];
@@ -285,12 +285,12 @@ declare let o8: {
 };
 declare let o9: {
     readonly x: 10;
-    readonly foo: () => void;
+    readonly foo(): void;
 };
 declare let p1: 10;
 declare let p2: -10;
-declare let p3: readonly [10];
-declare let p4: readonly [readonly [readonly [readonly [10]]]];
+declare let p3: [10];
+declare let p4: [[[[10]]]];
 declare let x1: {
     readonly x: 10;
     readonly y: readonly [20, 30];
@@ -303,7 +303,7 @@ declare let x1: {
 declare let q1: 10;
 declare let q2: "abc";
 declare let q3: true;
-declare let q4: readonly [1, 2, 3];
+declare let q4: [1, 2, 3];
 declare let q5: {
     readonly x: 10;
     readonly y: 20;
@@ -327,7 +327,7 @@ type ContentMatch = "match" | "nonMatch";
 type Outcome = `${Action}_${ContentMatch}`;
 declare function ff4(verify: boolean, contentMatches: boolean): "verify_match" | "verify_nonMatch" | "write_match" | "write_nonMatch";
 declare function ff5(verify: boolean, contentMatches: boolean): "verify_match" | "verify_nonMatch" | "write_match" | "write_nonMatch";
-declare function accessorNames<S extends string>(propName: S): readonly [`get-${S}`, `set-${S}`];
+declare function accessorNames<S extends string>(propName: S): [`get-${S}`, `set-${S}`];
 declare const ns1: readonly ["get-foo", "set-foo"];
 interface Foo54374 {
     a: 1;

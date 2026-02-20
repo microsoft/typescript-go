@@ -1,0 +1,20 @@
+--- old.intersectionAsWeakTypeSource.types
++++ new.intersectionAsWeakTypeSource.types
+@@= skipped -42, +42 lines =@@
+ >styles : T
+
+ const wrapped = create({ first: { view: 0, styleMedia: "???" } });
+->wrapped : { first: Brand<{ view: number; styleMedia: string; }>; }
+->create({ first: { view: 0, styleMedia: "???" } }) : { first: Brand<{ view: number; styleMedia: string; }>; }
++>wrapped : { first: { view: number; styleMedia: string; }; }
++>create({ first: { view: 0, styleMedia: "???" } }) : { first: { view: number; styleMedia: string; }; }
+ >create : <T extends { [s: string]: ViewStyle; }>(styles: T) => { [P in keyof T]: Brand<T[P]>; }
+ >{ first: { view: 0, styleMedia: "???" } } : { first: { view: number; styleMedia: string; }; }
+ >first : { view: number; styleMedia: string; }
+@@= skipped -14, +14 lines =@@
+ const vs: ViewStyle = wrapped.first // error, first is a branded number
+ >vs : ViewStyle
+ >wrapped.first : Brand<{ view: number; styleMedia: string; }>
+->wrapped : { first: Brand<{ view: number; styleMedia: string; }>; }
++>wrapped : { first: { view: number; styleMedia: string; }; }
+ >first : Brand<{ view: number; styleMedia: string; }>

@@ -29,7 +29,7 @@ declare class bar {
     g(): {
         a: bar;
         b: any;
-        c: any;
+        c: undefined;
     };
     h(x?: number, y?: any, z?: string): void;
 }

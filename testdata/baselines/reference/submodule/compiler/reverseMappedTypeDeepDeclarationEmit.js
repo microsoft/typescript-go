@@ -71,14 +71,14 @@ export declare const test: {
 export declare const validatorFunc: (o: any) => {
     Test: {
         Test1: {
-            Test2: string;
+            Test2: NativeTypeValidator<string>;
         };
     };
 };
 export declare const outputExample: {
     Test: {
         Test1: {
-            Test2: string;
+            Test2: NativeTypeValidator<string>;
         };
     };
 };

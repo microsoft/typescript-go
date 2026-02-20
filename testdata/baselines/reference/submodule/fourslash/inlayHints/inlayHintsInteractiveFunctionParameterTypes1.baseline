@@ -137,20 +137,7 @@
       "value": "("
     },
     {
-      "value": "d",
-      "location": {
-        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
-        "range": {
-          "start": {
-            "line": 7,
-            "character": 28
-          },
-          "end": {
-            "line": 7,
-            "character": 29
-          }
-        }
-      }
+      "value": "d"
     },
     {
       "value": ": "
@@ -312,20 +299,7 @@
       "value": ": "
     },
     {
-      "value": "X",
-      "location": {
-        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
-        "range": {
-          "start": {
-            "line": 22,
-            "character": 6
-          },
-          "end": {
-            "line": 22,
-            "character": 7
-          }
-        }
-      }
+      "value": "X"
     },
     {
       "value": ")"
@@ -334,20 +308,7 @@
       "value": ": "
     },
     {
-      "value": "Y",
-      "location": {
-        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
-        "range": {
-          "start": {
-            "line": 22,
-            "character": 9
-          },
-          "end": {
-            "line": 22,
-            "character": 10
-          }
-        }
-      }
+      "value": "Y"
     },
     {
       "value": "; "
@@ -483,12 +444,6 @@
       "value": "number"
     },
     {
-      "value": " | "
-    },
-    {
-      "value": "undefined"
-    },
-    {
       "value": "; "
     },
     {
@@ -604,20 +559,7 @@
       "value": ": "
     },
     {
-      "value": "T",
-      "location": {
-        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
-        "range": {
-          "start": {
-            "line": 20,
-            "character": 7
-          },
-          "end": {
-            "line": 20,
-            "character": 8
-          }
-        }
-      }
+      "value": "T"
     },
     {
       "value": "; "
@@ -705,20 +647,7 @@
       "value": ": "
     },
     {
-      "value": "X",
-      "location": {
-        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
-        "range": {
-          "start": {
-            "line": 21,
-            "character": 8
-          },
-          "end": {
-            "line": 21,
-            "character": 9
-          }
-        }
-      }
+      "value": "X"
     },
     {
       "value": ")"
@@ -727,20 +656,7 @@
       "value": ": "
     },
     {
-      "value": "Y",
-      "location": {
-        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
-        "range": {
-          "start": {
-            "line": 21,
-            "character": 11
-          },
-          "end": {
-            "line": 21,
-            "character": 12
-          }
-        }
-      }
+      "value": "Y"
     },
     {
       "value": " "

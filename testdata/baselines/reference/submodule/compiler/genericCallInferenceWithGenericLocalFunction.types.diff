@@ -1,0 +1,24 @@
+--- old.genericCallInferenceWithGenericLocalFunction.types
++++ new.genericCallInferenceWithGenericLocalFunction.types
+@@= skipped -87, +87 lines =@@
+ >'' : ""
+
+ const added3 = addedSome3({ c: true });
+->added3 : { b: string; } & { c: boolean; } & { a: number; }
+->addedSome3({ c: true }) : { b: string; } & { c: boolean; } & { a: number; }
++>added3 : { b: string; } & { c: true; } & { a: number; }
++>addedSome3({ c: true }) : { b: string; } & { c: true; } & { a: number; }
+ >addedSome3 : <I2>(from2: I2) => { b: string; } & I2 & { a: number; }
+ >{ c: true } : { c: true; }
+ >c : true
+@@= skipped -24, +24 lines =@@
+ >123 : 123
+
+ const added3_other = addedSome3_other({ bazinga: true });
+->added3_other : { qwerty: number; } & { bazinga: boolean; } & { foo: string; }
+->addedSome3_other({ bazinga: true }) : { qwerty: number; } & { bazinga: boolean; } & { foo: string; }
++>added3_other : { qwerty: number; } & { bazinga: true; } & { foo: string; }
++>addedSome3_other({ bazinga: true }) : { qwerty: number; } & { bazinga: true; } & { foo: string; }
+ >addedSome3_other : <I2>(from2: I2) => { qwerty: number; } & I2 & { foo: string; }
+ >{ bazinga: true } : { bazinga: true; }
+ >bazinga : true

@@ -1,0 +1,9 @@
+--- old.declFileTypeofInAnonymousType.js
++++ new.declFileTypeofInAnonymousType.js
+@@= skipped -80, +80 lines =@@
+     me: {
+         en: typeof m1.e;
+     };
+-    mh: m1.e;
++    mh: m1.e.holiday;
+ };
