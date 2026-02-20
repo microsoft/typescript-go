@@ -10,6 +10,50 @@ func (c *Checker) GetStringType() *Type {
 	return c.stringType
 }
 
+func (c *Checker) GetNumberType() *Type {
+	return c.numberType
+}
+
+func (c *Checker) GetBooleanType() *Type {
+	return c.booleanType
+}
+
+func (c *Checker) GetVoidType() *Type {
+	return c.voidType
+}
+
+func (c *Checker) GetUndefinedType() *Type {
+	return c.undefinedType
+}
+
+func (c *Checker) GetNullType() *Type {
+	return c.nullType
+}
+
+func (c *Checker) GetAnyType() *Type {
+	return c.anyType
+}
+
+func (c *Checker) GetNeverType() *Type {
+	return c.neverType
+}
+
+func (c *Checker) GetUnknownType() *Type {
+	return c.unknownType
+}
+
+func (c *Checker) GetBigIntType() *Type {
+	return c.bigintType
+}
+
+func (c *Checker) GetESSymbolType() *Type {
+	return c.esSymbolType
+}
+
+func (c *Checker) GetBaseTypeOfLiteralType(t *Type) *Type {
+	return c.getBaseTypeOfLiteralType(t)
+}
+
 func (c *Checker) GetUnknownSymbol() *ast.Symbol {
 	return c.unknownSymbol
 }
@@ -173,6 +217,14 @@ func (c *Checker) GetResolvedSymbol(node *ast.Node) *ast.Symbol {
 
 func (c *Checker) GetJsxNamespace(location *ast.Node) string {
 	return c.getJsxNamespace(location)
+}
+
+func (c *Checker) GetJsxFragmentFactory(location *ast.Node) string {
+	entity := c.getJsxFragmentFactoryEntity(location)
+	if entity != nil {
+		return ast.GetFirstIdentifier(entity).Text()
+	}
+	return ""
 }
 
 func (c *Checker) ResolveName(name string, location *ast.Node, meaning ast.SymbolFlags, excludeGlobals bool) *ast.Symbol {

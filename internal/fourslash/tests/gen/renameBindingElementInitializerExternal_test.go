@@ -8,10 +8,11 @@ import (
 )
 
 func TestRenameBindingElementInitializerExternal(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `[|const [|{| "contextRangeIndex": 0 |}external|] = true;|]
+	const content = `// @lib: es5
+[|const [|{| "contextRangeIndex": 0 |}external|] = true;|]
 
 function f({
     lvl1 = [|external|],

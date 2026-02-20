@@ -9,13 +9,13 @@ import (
 )
 
 func TestTsxCompletionsGenericComponent(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @skipLibCheck: true
 // @Filename: file.tsx
- declare module JSX {
+ declare namespace JSX {
      interface Element { }
      interface IntrinsicElements {
      }

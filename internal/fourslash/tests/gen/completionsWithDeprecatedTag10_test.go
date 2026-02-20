@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsWithDeprecatedTag10(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /foo.ts
 /** @deprecated foo */
@@ -32,13 +32,13 @@ export const foo = 0;
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./foo",
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
-					SortText:            PtrTo(string(ls.DeprecateSortText(ls.SortTextAutoImportSuggestions))),
+					Kind:                new(lsproto.CompletionItemKindVariable),
+					SortText:            new(string(ls.DeprecateSortText(ls.SortTextAutoImportSuggestions))),
 				},
 			},
 		},

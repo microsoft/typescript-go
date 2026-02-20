@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListOnContextualThis(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A {
     a: string;
@@ -31,7 +31,7 @@ ctx(function () { return th/*1*/is./*2*/a });`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("(property) A.a: string"),
+					Detail: new("(property) A.a: string"),
 				},
 			},
 		},

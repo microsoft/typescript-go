@@ -580,7 +580,7 @@ var A_bigint_literal_must_be_an_integer = &Message{code: 1353, category: Categor
 
 var X_readonly_type_modifier_is_only_permitted_on_array_and_tuple_literal_types = &Message{code: 1354, category: CategoryError, key: "readonly_type_modifier_is_only_permitted_on_array_and_tuple_literal_types_1354", text: "'readonly' type modifier is only permitted on array and tuple literal types."}
 
-var A_const_assertions_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_or_object_literals = &Message{code: 1355, category: CategoryError, key: "A_const_assertions_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array__1355", text: "A 'const' assertions can only be applied to references to enum members, or string, number, boolean, array, or object literals."}
+var A_const_assertion_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_or_object_literals = &Message{code: 1355, category: CategoryError, key: "A_const_assertion_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_o_1355", text: "A 'const' assertion can only be applied to references to enum members, or string, number, boolean, array, or object literals."}
 
 var Did_you_mean_to_mark_this_function_as_async = &Message{code: 1356, category: CategoryError, key: "Did_you_mean_to_mark_this_function_as_async_1356", text: "Did you mean to mark this function as 'async'?"}
 
@@ -912,7 +912,7 @@ var Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_U
 
 var A_bigint_literal_cannot_be_used_as_a_property_name = &Message{code: 1539, category: CategoryError, key: "A_bigint_literal_cannot_be_used_as_a_property_name_1539", text: "A 'bigint' literal cannot be used as a property name."}
 
-var A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead = &Message{code: 1540, category: CategorySuggestion, key: "A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_key_1540", text: "A 'namespace' declaration should not be declared using the 'module' keyword. Please use the 'namespace' keyword instead.", reportsDeprecated: true}
+var A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead = &Message{code: 1540, category: CategoryError, key: "A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_key_1540", text: "A 'namespace' declaration should not be declared using the 'module' keyword. Please use the 'namespace' keyword instead."}
 
 var Type_only_import_of_an_ECMAScript_module_from_a_CommonJS_module_must_have_a_resolution_mode_attribute = &Message{code: 1541, category: CategoryError, key: "Type_only_import_of_an_ECMAScript_module_from_a_CommonJS_module_must_have_a_resolution_mode_attribut_1541", text: "Type-only import of an ECMAScript module from a CommonJS module must have a 'resolution-mode' attribute."}
 
@@ -925,6 +925,10 @@ var Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_whe
 var X_using_declarations_are_not_allowed_in_ambient_contexts = &Message{code: 1545, category: CategoryError, key: "using_declarations_are_not_allowed_in_ambient_contexts_1545", text: "'using' declarations are not allowed in ambient contexts."}
 
 var X_await_using_declarations_are_not_allowed_in_ambient_contexts = &Message{code: 1546, category: CategoryError, key: "await_using_declarations_are_not_allowed_in_ambient_contexts_1546", text: "'await using' declarations are not allowed in ambient contexts."}
+
+var X_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block = &Message{code: 1547, category: CategoryError, key: "using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block_1547", text: "'using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block."}
+
+var X_await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block = &Message{code: 1548, category: CategoryError, key: "await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block_1548", text: "'await using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block."}
 
 var Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files = &Message{code: 1549, category: CategoryMessage, key: "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549", text: "Ignore the tsconfig found and build with commandline options and files."}
 
@@ -2002,6 +2006,8 @@ var Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_o
 
 var This_expression_is_never_nullish = &Message{code: 2881, category: CategoryError, key: "This_expression_is_never_nullish_2881", text: "This expression is never nullish."}
 
+var Cannot_find_module_or_type_declarations_for_side_effect_import_of_0 = &Message{code: 2882, category: CategoryError, key: "Cannot_find_module_or_type_declarations_for_side_effect_import_of_0_2882", text: "Cannot find module or type declarations for side-effect import of '{0}'."}
+
 var Import_declaration_0_is_using_private_name_1 = &Message{code: 4000, category: CategoryError, key: "Import_declaration_0_is_using_private_name_1_4000", text: "Import declaration '{0}' is using private name '{1}'."}
 
 var Type_parameter_0_of_exported_class_has_or_is_using_private_name_1 = &Message{code: 4002, category: CategoryError, key: "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002", text: "Type parameter '{0}' of exported class has or is using private name '{1}'."}
@@ -2226,9 +2232,13 @@ var This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_nam
 
 var The_current_host_does_not_support_the_0_option = &Message{code: 5001, category: CategoryError, key: "The_current_host_does_not_support_the_0_option_5001", text: "The current host does not support the '{0}' option."}
 
+var Option_0_requires_value_to_be_greater_than_1 = &Message{code: 5002, category: CategoryError, key: "Option_0_requires_value_to_be_greater_than_1_5002", text: "Option '{0}' requires value to be greater than '{1}'."}
+
 var Cannot_find_the_common_subdirectory_path_for_the_input_files = &Message{code: 5009, category: CategoryError, key: "Cannot_find_the_common_subdirectory_path_for_the_input_files_5009", text: "Cannot find the common subdirectory path for the input files."}
 
 var File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0 = &Message{code: 5010, category: CategoryError, key: "File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0_5010", text: "File specification cannot end in a recursive directory wildcard ('**'): '{0}'."}
+
+var The_common_source_directory_of_0_is_1_The_rootDir_setting_must_be_explicitly_set_to_this_or_another_path_to_adjust_your_output_s_file_layout = &Message{code: 5011, category: CategoryError, key: "The_common_source_directory_of_0_is_1_The_rootDir_setting_must_be_explicitly_set_to_this_or_another__5011", text: "The common source directory of '{0}' is '{1}'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout."}
 
 var Cannot_read_file_0_Colon_1 = &Message{code: 5012, category: CategoryError, key: "Cannot_read_file_0_Colon_1_5012", text: "Cannot read file '{0}': {1}."}
 
@@ -2330,7 +2340,7 @@ var Compiler_option_0_may_not_be_used_with_build = &Message{code: 5094, category
 
 var Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later = &Message{code: 5095, category: CategoryError, key: "Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later_5095", text: "Option '{0}' can only be used when 'module' is set to 'preserve', 'commonjs', or 'es2015' or later."}
 
-var Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set = &Message{code: 5096, category: CategoryError, key: "Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set_5096", text: "Option 'allowImportingTsExtensions' can only be used when either 'noEmit' or 'emitDeclarationOnly' is set."}
+var Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewriteRelativeImportExtensions_is_set = &Message{code: 5096, category: CategoryError, key: "Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewrite_5096", text: "Option 'allowImportingTsExtensions' can only be used when one of 'noEmit', 'emitDeclarationOnly', or 'rewriteRelativeImportExtensions' is set."}
 
 var An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled = &Message{code: 5097, category: CategoryError, key: "An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled_5097", text: "An import path can only end with a '{0}' extension when 'allowImportingTsExtensions' is enabled."}
 
@@ -3278,6 +3288,8 @@ var This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2 = &Message
 
 var Enable_lib_replacement = &Message{code: 6808, category: CategoryMessage, key: "Enable_lib_replacement_6808", text: "Enable lib replacement."}
 
+var Ensure_types_are_ordered_stably_and_deterministically_across_compilations = &Message{code: 6809, category: CategoryMessage, key: "Ensure_types_are_ordered_stably_and_deterministically_across_compilations_6809", text: "Ensure types are ordered stably and deterministically across compilations."}
+
 var X_one_of_Colon = &Message{code: 6900, category: CategoryMessage, key: "one_of_Colon_6900", text: "one of:"}
 
 var X_one_or_more_Colon = &Message{code: 6901, category: CategoryMessage, key: "one_or_more_Colon_6901", text: "one or more:"}
@@ -3286,9 +3298,7 @@ var X_type_Colon = &Message{code: 6902, category: CategoryMessage, key: "type_Co
 
 var X_default_Colon = &Message{code: 6903, category: CategoryMessage, key: "default_Colon_6903", text: "default:"}
 
-var X_module_system_or_esModuleInterop = &Message{code: 6904, category: CategoryMessage, key: "module_system_or_esModuleInterop_6904", text: "module === \"system\" or esModuleInterop"}
-
-var X_false_unless_strict_is_set = &Message{code: 6905, category: CategoryMessage, key: "false_unless_strict_is_set_6905", text: "`false`, unless `strict` is set"}
+var X_true_unless_strict_is_false = &Message{code: 6905, category: CategoryMessage, key: "true_unless_strict_is_false_6905", text: "`true`, unless `strict` is `false`"}
 
 var X_false_unless_composite_is_set = &Message{code: 6906, category: CategoryMessage, key: "false_unless_composite_is_set_6906", text: "`false`, unless `composite` is set"}
 
@@ -3339,6 +3349,8 @@ var Compiles_the_current_project_with_additional_settings = &Message{code: 6929,
 var X_true_for_ES2022_and_above_including_ESNext = &Message{code: 6930, category: CategoryMessage, key: "true_for_ES2022_and_above_including_ESNext_6930", text: "`true` for ES2022 and above, including ESNext."}
 
 var List_of_file_name_suffixes_to_search_when_resolving_a_module = &Message{code: 6931, category: CategoryError, key: "List_of_file_name_suffixes_to_search_when_resolving_a_module_6931", text: "List of file name suffixes to search when resolving a module."}
+
+var X_false_unless_checkJs_is_set = &Message{code: 6932, category: CategoryMessage, key: "false_unless_checkJs_is_set_6932", text: "`false`, unless `checkJs` is set"}
 
 var Variable_0_implicitly_has_an_1_type = &Message{code: 7005, category: CategoryError, key: "Variable_0_implicitly_has_an_1_type_7005", text: "Variable '{0}' implicitly has an '{1}' type."}
 
@@ -4270,6 +4282,10 @@ var X_0_implementations = &Message{code: 100007, category: CategoryMessage, key:
 
 var X_1_implementation = &Message{code: 100008, category: CategoryMessage, key: "1_implementation_100008", text: "1 implementation"}
 
+var Set_the_number_of_projects_to_build_concurrently = &Message{code: 100009, category: CategoryMessage, key: "Set_the_number_of_projects_to_build_concurrently_100009", text: "Set the number of projects to build concurrently."}
+
+var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Deduplicate_packages_with_the_same_name_and_version_100011", text: "Deduplicate packages with the same name and version."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -4850,8 +4866,8 @@ func keyToMessage(key Key) *Message {
 		return A_bigint_literal_must_be_an_integer
 	case "readonly_type_modifier_is_only_permitted_on_array_and_tuple_literal_types_1354":
 		return X_readonly_type_modifier_is_only_permitted_on_array_and_tuple_literal_types
-	case "A_const_assertions_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array__1355":
-		return A_const_assertions_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_or_object_literals
+	case "A_const_assertion_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_o_1355":
+		return A_const_assertion_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_or_object_literals
 	case "Did_you_mean_to_mark_this_function_as_async_1356":
 		return Did_you_mean_to_mark_this_function_as_async
 	case "An_enum_member_name_must_be_followed_by_a_or_1357":
@@ -5196,6 +5212,10 @@ func keyToMessage(key Key) *Message {
 		return X_using_declarations_are_not_allowed_in_ambient_contexts
 	case "await_using_declarations_are_not_allowed_in_ambient_contexts_1546":
 		return X_await_using_declarations_are_not_allowed_in_ambient_contexts
+	case "using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block_1547":
+		return X_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block
+	case "await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block_1548":
+		return X_await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block
 	case "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549":
 		return Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files
 	case "The_types_of_0_are_incompatible_between_these_types_2200":
@@ -6272,6 +6292,8 @@ func keyToMessage(key Key) *Message {
 		return Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert
 	case "This_expression_is_never_nullish_2881":
 		return This_expression_is_never_nullish
+	case "Cannot_find_module_or_type_declarations_for_side_effect_import_of_0_2882":
+		return Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
 	case "Import_declaration_0_is_using_private_name_1_4000":
 		return Import_declaration_0_is_using_private_name_1
 	case "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002":
@@ -6496,10 +6518,14 @@ func keyToMessage(key Key) *Message {
 		return This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_name_is_dynamic
 	case "The_current_host_does_not_support_the_0_option_5001":
 		return The_current_host_does_not_support_the_0_option
+	case "Option_0_requires_value_to_be_greater_than_1_5002":
+		return Option_0_requires_value_to_be_greater_than_1
 	case "Cannot_find_the_common_subdirectory_path_for_the_input_files_5009":
 		return Cannot_find_the_common_subdirectory_path_for_the_input_files
 	case "File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0_5010":
 		return File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
+	case "The_common_source_directory_of_0_is_1_The_rootDir_setting_must_be_explicitly_set_to_this_or_another__5011":
+		return The_common_source_directory_of_0_is_1_The_rootDir_setting_must_be_explicitly_set_to_this_or_another_path_to_adjust_your_output_s_file_layout
 	case "Cannot_read_file_0_Colon_1_5012":
 		return Cannot_read_file_0_Colon_1
 	case "Unknown_compiler_option_0_5023":
@@ -6600,8 +6626,8 @@ func keyToMessage(key Key) *Message {
 		return Compiler_option_0_may_not_be_used_with_build
 	case "Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later_5095":
 		return Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later
-	case "Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set_5096":
-		return Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set
+	case "Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewrite_5096":
+		return Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewriteRelativeImportExtensions_is_set
 	case "An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled_5097":
 		return An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled
 	case "Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler_5098":
@@ -7548,6 +7574,8 @@ func keyToMessage(key Key) *Message {
 		return This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2
 	case "Enable_lib_replacement_6808":
 		return Enable_lib_replacement
+	case "Ensure_types_are_ordered_stably_and_deterministically_across_compilations_6809":
+		return Ensure_types_are_ordered_stably_and_deterministically_across_compilations
 	case "one_of_Colon_6900":
 		return X_one_of_Colon
 	case "one_or_more_Colon_6901":
@@ -7556,10 +7584,8 @@ func keyToMessage(key Key) *Message {
 		return X_type_Colon
 	case "default_Colon_6903":
 		return X_default_Colon
-	case "module_system_or_esModuleInterop_6904":
-		return X_module_system_or_esModuleInterop
-	case "false_unless_strict_is_set_6905":
-		return X_false_unless_strict_is_set
+	case "true_unless_strict_is_false_6905":
+		return X_true_unless_strict_is_false
 	case "false_unless_composite_is_set_6906":
 		return X_false_unless_composite_is_set
 	case "node_modules_bower_components_jspm_packages_plus_the_value_of_outDir_if_one_is_specified_6907":
@@ -7610,6 +7636,8 @@ func keyToMessage(key Key) *Message {
 		return X_true_for_ES2022_and_above_including_ESNext
 	case "List_of_file_name_suffixes_to_search_when_resolving_a_module_6931":
 		return List_of_file_name_suffixes_to_search_when_resolving_a_module
+	case "false_unless_checkJs_is_set_6932":
+		return X_false_unless_checkJs_is_set
 	case "Variable_0_implicitly_has_an_1_type_7005":
 		return Variable_0_implicitly_has_an_1_type
 	case "Parameter_0_implicitly_has_an_1_type_7006":
@@ -8540,6 +8568,10 @@ func keyToMessage(key Key) *Message {
 		return X_0_implementations
 	case "1_implementation_100008":
 		return X_1_implementation
+	case "Set_the_number_of_projects_to_build_concurrently_100009":
+		return Set_the_number_of_projects_to_build_concurrently
+	case "Deduplicate_packages_with_the_same_name_and_version_100011":
+		return Deduplicate_packages_with_the_same_name_and_version
 	default:
 		return nil
 	}

@@ -8,8 +8,8 @@ import (
 )
 
 func TestOutliningSpansForImportsAndExports(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import { a1, a2 } from "a";
 ;
@@ -21,12 +21,12 @@ import [|{
   b2,
 }|] from "b";
 ;
-import j1 from "./j" assert { type: "json" };
+import j1 from "./j" with { type: "json" };
 ;
-import j2 from "./j" assert {
+import j2 from "./j" with {
 };
 ;
-import j3 from "./j" assert [|{
+import j3 from "./j" with [|{
   type: "json"
 }|];
 ;

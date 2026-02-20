@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsUniqueSymbol1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const Symbol: () => symbol;
 namespace M {
@@ -40,8 +40,8 @@ i[|./**/|];`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "M",
-					InsertText: PtrTo("[M]"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					InsertText: new("[M]"),
+					SortText:   new(string(ls.SortTextGlobalsOrKeywords)),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "M",

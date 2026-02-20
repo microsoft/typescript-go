@@ -9,11 +9,11 @@ import (
 )
 
 func TestCompletionListAfterInvalidCharacter(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// Completion after invalid character
-module testModule {
+namespace testModule {
     export var foo = 1;
 }
 @

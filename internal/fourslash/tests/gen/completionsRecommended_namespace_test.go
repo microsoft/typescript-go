@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsRecommended_namespace(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /a.ts
@@ -42,9 +42,9 @@ alpha.f(new /*c1*/);`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:     "Name",
-					Detail:    PtrTo("namespace Name"),
-					Kind:      PtrTo(lsproto.CompletionItemKindModule),
-					Preselect: PtrTo(true),
+					Detail:    new("namespace Name"),
+					Kind:      new(lsproto.CompletionItemKindModule),
+					Preselect: new(true),
 				},
 			},
 		},
@@ -60,15 +60,15 @@ alpha.f(new /*c1*/);`
 				&lsproto.CompletionItem{
 					Label: "Name",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},
-					Detail:              PtrTo("namespace Name"),
-					Kind:                PtrTo(lsproto.CompletionItemKindModule),
+					Detail:              new("namespace Name"),
+					Kind:                new(lsproto.CompletionItemKindModule),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Preselect:           PtrTo(true),
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					Preselect:           new(true),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},
@@ -83,9 +83,9 @@ alpha.f(new /*c1*/);`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:     "alpha",
-					Detail:    PtrTo("import alpha"),
-					Kind:      PtrTo(lsproto.CompletionItemKindVariable),
-					Preselect: PtrTo(true),
+					Detail:    new("import alpha"),
+					Kind:      new(lsproto.CompletionItemKindVariable),
+					Preselect: new(true),
 				},
 			},
 		},

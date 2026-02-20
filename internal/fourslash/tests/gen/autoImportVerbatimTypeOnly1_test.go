@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestAutoImportVerbatimTypeOnly1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @verbatimModuleSyntax: true
@@ -23,16 +22,14 @@ export interface I {}
 const x: /**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "I",
 		Source:      "./mod",
 		Description: "Add import from \"./mod.js\"",
-		AutoImportData: &lsproto.AutoImportData{
-			ExportName:      "I",
-			FileName:        "/mod.ts",
+		AutoImportFix: &lsproto.AutoImportFix{
 			ModuleSpecifier: "./mod.js",
 		},
-		NewFileContent: PtrTo(`import type { I } from "./mod.js";
+		NewFileContent: new(`import type { I } from "./mod.js";
 
 const x: `),
 	})
@@ -41,12 +38,10 @@ const x: `),
 		Name:        "C",
 		Source:      "./mod",
 		Description: "Update import from \"./mod.js\"",
-		AutoImportData: &lsproto.AutoImportData{
-			ExportName:      "C",
-			FileName:        "/mod.ts",
+		AutoImportFix: &lsproto.AutoImportFix{
 			ModuleSpecifier: "./mod.js",
 		},
-		NewFileContent: PtrTo(`import { C, type I } from "./mod.js";
+		NewFileContent: new(`import { C, type I } from "./mod.js";
 
 const x: I = new C`),
 	})

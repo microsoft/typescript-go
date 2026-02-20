@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionAfterQuestionDot(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 class User {
@@ -39,12 +39,12 @@ class User {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "city",
-					Detail: PtrTo("(property) city: string"),
+					Detail: new("(property) city: string"),
 				},
 				&lsproto.CompletionItem{
 					Label:      "postal code",
-					InsertText: PtrTo("?.[\"postal code\"]"),
-					Detail:     PtrTo("(property) \"postal code\": string"),
+					InsertText: new("?.[\"postal code\"]"),
+					Detail:     new("(property) \"postal code\": string"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "postal code",

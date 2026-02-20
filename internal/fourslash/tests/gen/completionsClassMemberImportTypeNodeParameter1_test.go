@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsClassMemberImportTypeNodeParameter1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /generation.d.ts
@@ -38,8 +38,8 @@ export declare class BlenderbotSmallPreTrainedModel extends PreTrainedModel {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:               "_get_generation_config",
-					InsertText:          PtrTo("_get_generation_config(param: import(\"./generation.js\").GenerationConfigType): import(\"./generation.js\").GenerationConfigType;"),
-					FilterText:          PtrTo("_get_generation_config"),
+					InsertText:          new("_get_generation_config(param: import(\"./generation.js\").GenerationConfigType): import(\"./generation.js\").GenerationConfigType;"),
+					FilterText:          new("_get_generation_config"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 			},

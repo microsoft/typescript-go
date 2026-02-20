@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInNamedFunctionExpression1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = function foo() {
    /*1*/
@@ -28,8 +28,8 @@ func TestCompletionListInNamedFunctionExpression1(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "foo",
-					Detail: PtrTo("(local function) foo(): void"),
-					Kind:   PtrTo(lsproto.CompletionItemKindFunction),
+					Detail: new("(local function) foo(): void"),
+					Kind:   new(lsproto.CompletionItemKindFunction),
 				},
 			},
 		},

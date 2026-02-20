@@ -12,10 +12,10 @@ declare namespace JSX {
 >x : Symbol(x, Decl(tsxElementResolution.tsx, 2, 15))
 
 		'string_named';
->'string_named' : Symbol(IntrinsicElements["string_named"], Decl(tsxElementResolution.tsx, 2, 28))
+>'string_named' : Symbol(IntrinsicElements['string_named'], Decl(tsxElementResolution.tsx, 2, 28))
 
 		'var';
->'var' : Symbol(IntrinsicElements["var"], Decl(tsxElementResolution.tsx, 3, 17))
+>'var' : Symbol(IntrinsicElements['var'], Decl(tsxElementResolution.tsx, 3, 17))
 	}
 }
 
@@ -25,11 +25,11 @@ class foundFirst { }
 class Other {}
 >Other : Symbol(Other, Decl(tsxElementResolution.tsx, 8, 20))
 
-module Dotted {
+namespace Dotted {
 >Dotted : Symbol(Dotted, Decl(tsxElementResolution.tsx, 9, 14))
 
 	export class Name { }
->Name : Symbol(Name, Decl(tsxElementResolution.tsx, 11, 15))
+>Name : Symbol(Name, Decl(tsxElementResolution.tsx, 11, 18))
 }
 
 // Should find the intrinsic element, not the class element
@@ -40,7 +40,7 @@ var a = <foundFirst  x="hello" />;
 
 var b = <string_named />;
 >b : Symbol(b, Decl(tsxElementResolution.tsx, 17, 3))
->string_named : Symbol(JSX.IntrinsicElements["string_named"], Decl(tsxElementResolution.tsx, 2, 28))
+>string_named : Symbol(JSX.IntrinsicElements['string_named'], Decl(tsxElementResolution.tsx, 2, 28))
 
 // TODO: This should not be a parse error (should
 //        parse a property name here, not identifier)
@@ -51,7 +51,7 @@ var d = <Other />;
 
 var e = <Dotted.Name />;
 >e : Symbol(e, Decl(tsxElementResolution.tsx, 22, 3))
->Dotted.Name : Symbol(Dotted.Name, Decl(tsxElementResolution.tsx, 11, 15))
+>Dotted.Name : Symbol(Dotted.Name, Decl(tsxElementResolution.tsx, 11, 18))
 >Dotted : Symbol(Dotted, Decl(tsxElementResolution.tsx, 9, 14))
->Name : Symbol(Dotted.Name, Decl(tsxElementResolution.tsx, 11, 15))
+>Name : Symbol(Dotted.Name, Decl(tsxElementResolution.tsx, 11, 18))
 

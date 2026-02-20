@@ -44,6 +44,12 @@ func IsDiskPathRoot(path string) bool {
 	return rootLength > 0 && rootLength == len(path)
 }
 
+// IsDynamicFileName returns true if the file name represents a dynamic/virtual file
+// that doesn't exist on disk (e.g., untitled files with paths like "^/untitled/...").
+func IsDynamicFileName(fileName string) bool {
+	return strings.HasPrefix(fileName, "^/")
+}
+
 // Determines whether a path starts with an absolute path component (i.e. `/`, `c:/`, `file://`, etc.).
 //
 //	```
@@ -1143,6 +1149,20 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 	}
 
 	return [][]string{componentGroups[0][:maxDepth]}
+}
+
+func StartsWithDirectory(fileName string, directoryName string, useCaseSensitiveFileNames bool) bool {
+	if directoryName == "" {
+		return false
+	}
+
+	canonicalFileName := GetCanonicalFileName(fileName, useCaseSensitiveFileNames)
+	canonicalDirectoryName := GetCanonicalFileName(directoryName, useCaseSensitiveFileNames)
+	canonicalDirectoryName = strings.TrimSuffix(canonicalDirectoryName, "/")
+	canonicalDirectoryName = strings.TrimSuffix(canonicalDirectoryName, "\\")
+
+	return strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"/") ||
+		strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"\\")
 }
 
 func CompareNumberOfDirectorySeparators(path1, path2 string) int {

@@ -18,6 +18,7 @@ class A {
 }
 
 //// [decoratorWithUnderscoreMethod.js]
+"use strict";
 function dec() {
     return function (target, propKey, descr) {
         console.log(target[propKey]);
@@ -26,8 +27,10 @@ function dec() {
     };
 }
 class A {
-    @dec()
     __foo(bar) {
         // do something with bar
     }
 }
+__decorate([
+    dec()
+], A.prototype, "__foo", null);

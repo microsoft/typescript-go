@@ -11,10 +11,11 @@ import (
 )
 
 func TestCompletionListOnAliases2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module M {
+	const content = `// @lib: es5
+namespace M {
     export interface I { }
     export class C {
         static property;
@@ -22,7 +23,7 @@ func TestCompletionListOnAliases2(t *testing.T) {
     export enum E {
         value = 0
     }
-    export module N {
+    export namespace N {
         export var v;
     }
     export var V = 0;
@@ -92,11 +93,11 @@ var tmp2: a./*7Type*/;`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "property",
-						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: PtrTo(string(ls.SortTextLocationPriority)),
+						SortText: new(string(ls.SortTextLocationPriority)),
 					},
 				}),
 		},

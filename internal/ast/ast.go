@@ -10,7 +10,17 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
+
+// parseJSDocForNode is the package-level function for lazily parsing JSDoc.
+// It is set by the parser package via init().
+var parseJSDocForNode func(*SourceFile, *Node) []*Node
+
+// SetParseJSDocForNode registers the lazy JSDoc parse function. Called from parser's init().
+func SetParseJSDocForNode(fn func(*SourceFile, *Node) []*Node) {
+	parseJSDocForNode = fn
+}
 
 // Visitor
 
@@ -262,6 +272,12 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
+func (n *Node) Decorators() []*Node {
+	if n.Modifiers() == nil {
+		return nil
+	}
+	return core.Filter(n.Modifiers().Nodes, IsDecorator)
+}
 
 type MutableNode Node
 
@@ -2126,6 +2142,9 @@ type (
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
 	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
 	CallOrNewExpression            = Node // CallExpression | NewExpression
+	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
+	AnyImportSyntax                = Node // ImportDeclaration | ImportEqualsDeclaration
+	AnyImportOrRequireStatement    = Node // AnyImportSyntax | RequireVariableStatement
 )
 
 // Aliases for node singletons
@@ -2244,7 +2263,7 @@ func GetDeclarationFromName(name *Node) *Declaration {
 			return nil
 		}
 		binExp := parent.Parent
-		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp) != JSDeclarationKindNone {
 			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
 			leftHasSymbol := false
 			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
@@ -2549,10 +2568,31 @@ func (node *Node) JSDoc(file *SourceFile) []*Node {
 			return nil
 		}
 	}
-	if jsdocs, ok := file.jsdocCache[node]; ok {
+	if file.hasLazyJSDoc {
+		return file.resolveJSDoc(node)
+	}
+	return file.jsdocCache[node]
+}
+
+// EagerJSDoc returns JSDoc nodes that have already been parsed and cached,
+// without triggering lazy JSDoc parsing.
+func (node *Node) EagerJSDoc(file *SourceFile) []*Node {
+	if node.Flags&NodeFlagsHasJSDoc == 0 {
+		return nil
+	}
+	if file == nil {
+		file = GetSourceFileOfNode(node)
+		if file == nil {
+			return nil
+		}
+	}
+	if file.hasLazyJSDoc {
+		file.jsdocMu.RLock()
+		jsdocs := file.jsdocCache[node]
+		file.jsdocMu.RUnlock()
 		return jsdocs
 	}
-	return nil
+	return file.jsdocCache[node]
 }
 
 // compositeNodeBase
@@ -2991,6 +3031,10 @@ func (node *DoStatement) computeSubtreeFacts() SubtreeFacts {
 		propagateSubtreeFacts(node.Expression)
 }
 
+func IsDoStatement(node *Node) bool {
+	return node.Kind == KindDoStatement
+}
+
 // WhileStatement
 
 type WhileStatement struct {
@@ -3028,6 +3072,10 @@ func (node *WhileStatement) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *WhileStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | propagateSubtreeFacts(node.Statement)
+}
+
+func IsWhileStatement(node *Node) bool {
+	return node.Kind == KindWhileStatement
 }
 
 // ForStatement
@@ -3172,6 +3220,10 @@ func (node *BreakStatement) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewBreakStatement(node.Label), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsBreakStatement(node *Node) bool {
+	return node.Kind == KindBreakStatement
+}
+
 // ContinueStatement
 
 type ContinueStatement struct {
@@ -3202,6 +3254,10 @@ func (node *ContinueStatement) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ContinueStatement) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewContinueStatement(node.Label), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsContinueStatement(node *Node) bool {
+	return node.Kind == KindContinueStatement
 }
 
 // ReturnStatement
@@ -3284,6 +3340,10 @@ func (node *WithStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | propagateSubtreeFacts(node.Statement)
 }
 
+func IsWithStatement(node *Node) bool {
+	return node.Kind == KindWithStatement
+}
+
 // SwitchStatement
 
 type SwitchStatement struct {
@@ -3364,6 +3424,10 @@ func (node *CaseBlock) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *CaseBlock) computeSubtreeFacts() SubtreeFacts {
 	return propagateNodeListSubtreeFacts(node.Clauses, propagateSubtreeFacts)
+}
+
+func IsCaseBlock(node *Node) bool {
+	return node.Kind == KindCaseBlock
 }
 
 // CaseOrDefaultClause
@@ -3567,6 +3631,10 @@ func (f *NodeFactory) NewDebuggerStatement() *Node {
 
 func (node *DebuggerStatement) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewDebuggerStatement(), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsDebuggerStatement(node *Node) bool {
+	return node.Kind == KindDebuggerStatement
 }
 
 // LabeledStatement
@@ -4064,6 +4132,10 @@ func (node *MissingDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *MissingDeclaration) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewMissingDeclaration(node.Modifiers()), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsMissingDeclaration(node *Node) bool {
+	return node.Kind == KindMissingDeclaration
 }
 
 // FunctionDeclaration
@@ -6023,6 +6095,10 @@ func (node *SemicolonClassElement) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewSemicolonClassElement(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsSemicolonClassElement(node *Node) bool {
+	return node.Kind == KindSemicolonClassElement
+}
+
 // ClassStaticBlockDeclaration
 
 type ClassStaticBlockDeclaration struct {
@@ -6140,15 +6216,16 @@ type StringLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewStringLiteral(text string) *Node {
+func (f *NodeFactory) NewStringLiteral(text string, flags TokenFlags) *Node {
 	data := f.stringLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsStringLiteralFlags
 	f.textCount++
 	return f.newNode(KindStringLiteral, data)
 }
 
 func (node *StringLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsStringLiteral(node *Node) bool {
@@ -6162,15 +6239,16 @@ type NumericLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewNumericLiteral(text string) *Node {
+func (f *NodeFactory) NewNumericLiteral(text string, flags TokenFlags) *Node {
 	data := f.numericLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindNumericLiteral, data)
 }
 
 func (node *NumericLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNumericLiteral(node *Node) bool {
@@ -6184,15 +6262,16 @@ type BigIntLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
+func (f *NodeFactory) NewBigIntLiteral(text string, flags TokenFlags) *Node {
 	data := &BigIntLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindBigIntLiteral, data)
 }
 
 func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
@@ -6210,15 +6289,16 @@ type RegularExpressionLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
+func (f *NodeFactory) NewRegularExpressionLiteral(text string, flags TokenFlags) *Node {
 	data := &RegularExpressionLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsRegularExpressionLiteralFlags
 	f.textCount++
 	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
 func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsRegularExpressionLiteral(node *Node) bool {
@@ -6232,15 +6312,20 @@ type NoSubstitutionTemplateLiteral struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
+func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string, templateFlags TokenFlags) *Node {
 	data := &NoSubstitutionTemplateLiteral{}
 	data.Text = text
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
 func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsNoSubstitutionTemplateLiteral(node *Node) bool {
+	return node.Kind == KindNoSubstitutionTemplateLiteral
 }
 
 // BinaryExpression
@@ -6294,7 +6379,7 @@ func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.OperatorToken) |
 		propagateSubtreeFacts(node.Right) |
-		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields, SubtreeFactsNone)
+		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields|SubtreeContainsPrivateIdentifierInExpression, SubtreeFactsNone)
 }
 
 func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
@@ -6381,6 +6466,10 @@ func (node *PostfixUnaryExpression) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *PostfixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Operand)
+}
+
+func IsPostfixUnaryExpression(node *Node) bool {
+	return node.Kind == KindPostfixUnaryExpression
 }
 
 // YieldExpression
@@ -6606,6 +6695,10 @@ func (node *AsExpression) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsOuterExpression
 }
 
+func IsAsExpression(node *Node) bool {
+	return node.Kind == KindAsExpression
+}
+
 // SatisfiesExpression
 
 type SatisfiesExpression struct {
@@ -6747,9 +6840,13 @@ func (node *PropertyAccessExpression) Clone(f NodeFactoryCoercible) *Node {
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
 
 func (node *PropertyAccessExpression) computeSubtreeFacts() SubtreeFacts {
+	privateName := SubtreeFactsNone
+	if !IsIdentifier(node.name) {
+		privateName = SubtreeContainsPrivateIdentifierInExpression
+	}
 	return propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.name)
+		propagateSubtreeFacts(node.name) | privateName
 }
 
 func (node *PropertyAccessExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -6818,6 +6915,7 @@ func IsElementAccessExpression(node *Node) bool {
 
 type CallExpression struct {
 	ExpressionBase
+	DeclarationBase
 	compositeNodeBase
 	Expression       *Expression // Expression
 	QuestionDotToken *TokenNode  // TokenNode
@@ -7513,6 +7611,10 @@ func (node *DeleteExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
+func IsDeleteExpression(node *Node) bool {
+	return node.Kind == KindDeleteExpression
+}
+
 // TypeOfExpression
 
 type TypeOfExpression struct {
@@ -7671,6 +7773,10 @@ func (node *TypeAssertion) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsOuterExpression
 }
 
+func IsTypeAssertionExpression(node *Node) bool {
+	return node.Kind == KindTypeAssertionExpression
+}
+
 // TypeNodeBase
 
 type TypeNodeBase struct {
@@ -7728,6 +7834,10 @@ func (node *UnionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *UnionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewUnionTypeNode(node.Types), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsUnionTypeNode(node *Node) bool {
+	return node.Kind == KindUnionType
 }
 
 // IntersectionTypeNode
@@ -7908,6 +8018,10 @@ func (node *ArrayTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ArrayTypeNode) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewArrayTypeNode(node.ElementType), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsArrayTypeNode(node *Node) bool {
+	return node.Kind == KindArrayType
 }
 
 // IndexedAccessTypeNode
@@ -8210,6 +8324,10 @@ func (node *ImportAttribute) computeSubtreeFacts() SubtreeFacts {
 
 func (node *ImportAttribute) Name() *ImportAttributeName {
 	return node.name
+}
+
+func IsImportAttribute(node *Node) bool {
+	return node.Kind == KindImportAttribute
 }
 
 // ImportAttributes
@@ -8721,7 +8839,7 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	data := &TemplateHead{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateHead, data)
 }
@@ -8745,7 +8863,7 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	data := &TemplateMiddle{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateMiddle, data)
 }
@@ -8769,7 +8887,7 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data := &TemplateTail{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateTail, data)
 }
@@ -8814,6 +8932,10 @@ func (node *TemplateLiteralTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *TemplateLiteralTypeNode) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateLiteralTypeNode(node.Head, node.TemplateSpans), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsTemplateLiteralTypeNode(node *Node) bool {
+	return node.Kind == KindTemplateLiteralType
 }
 
 // TemplateLiteralTypeSpan
@@ -9466,7 +9588,13 @@ func (node *SyntaxList) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewSyntaxList(node.Children), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
-/// JSDoc ///
+func IsSyntaxList(node *Node) bool {
+	return node.Kind == KindSyntaxList
+}
+
+/// JSDoc nodes ///
+
+// JSDoc
 
 type JSDoc struct {
 	NodeBase
@@ -9515,7 +9643,8 @@ type JSDocCommentBase struct {
 	text []string
 }
 
-// JSDoc comments
+// JSDocText
+
 type JSDocText struct {
 	JSDocCommentBase
 }
@@ -9530,6 +9659,12 @@ func (f *NodeFactory) NewJSDocText(text []string) *Node {
 func (node *JSDocText) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocText(node.text), node.AsNode(), f.AsNodeFactory().hooks)
 }
+
+func IsJSDocText(node *Node) bool {
+	return node.Kind == KindJSDocText
+}
+
+// JSDocLink
 
 type JSDocLink struct {
 	JSDocCommentBase
@@ -9567,6 +9702,12 @@ func (node *JSDocLink) Name() *DeclarationName {
 	return node.name
 }
 
+func IsJSDocLink(node *Node) bool {
+	return node.Kind == KindJSDocLink
+}
+
+// JSDocLinkPlain
+
 type JSDocLinkPlain struct {
 	JSDocCommentBase
 	name *Node // optional (should only be EntityName)
@@ -9603,6 +9744,12 @@ func (node *JSDocLinkPlain) Name() *DeclarationName {
 	return node.name
 }
 
+func IsJSDocLinkPlain(node *Node) bool {
+	return node.Kind == KindJSDocLinkPlain
+}
+
+// JSDocLinkCode
+
 type JSDocLinkCode struct {
 	JSDocCommentBase
 	name *Node // optional (should only be EntityName)
@@ -9637,6 +9784,10 @@ func (node *JSDocLinkCode) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *JSDocLinkCode) Name() *DeclarationName {
 	return node.name
+}
+
+func IsJSDocLinkCode(node *Node) bool {
+	return node.Kind == KindJSDocLinkCode
 }
 
 // JSDocTypeExpression
@@ -9762,6 +9913,10 @@ func (node *JSDocAllType) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocAllType(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocAllType(node *Node) bool {
+	return node.Kind == KindJSDocAllType
+}
+
 // JSDocVariadicType
 
 type JSDocVariadicType struct {
@@ -9794,6 +9949,10 @@ func (node *JSDocVariadicType) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocVariadicType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocVariadicType(node *Node) bool {
+	return node.Kind == KindJSDocVariadicType
+}
+
 // JSDocOptionalType
 
 type JSDocOptionalType struct {
@@ -9824,6 +9983,10 @@ func (node *JSDocOptionalType) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocOptionalType) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocOptionalType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocOptionalType(node *Node) bool {
+	return node.Kind == KindJSDocOptionalType
 }
 
 // JSDocTypeTag
@@ -9865,6 +10028,7 @@ func IsJSDocTypeTag(node *Node) bool {
 }
 
 // JSDocUnknownTag
+
 type JSDocUnknownTag struct {
 	JSDocTagBase
 }
@@ -9900,6 +10064,7 @@ func IsJSDocUnknownTag(node *Node) bool {
 }
 
 // JSDocTemplateTag
+
 type JSDocTemplateTag struct {
 	JSDocTagBase
 	Constraint     *Node
@@ -9939,6 +10104,7 @@ func IsJSDocTemplateTag(n *Node) bool {
 }
 
 // JSDocParameterOrPropertyTag
+
 type JSDocParameterOrPropertyTag struct {
 	JSDocTagBase
 	name           *EntityName
@@ -10012,6 +10178,7 @@ func IsJSDocPropertyTag(node *Node) bool {
 }
 
 // JSDocReturnTag
+
 type JSDocReturnTag struct {
 	JSDocTagBase
 	TypeExpression *TypeNode
@@ -10049,6 +10216,7 @@ func IsJSDocReturnTag(node *Node) bool {
 }
 
 // JSDocPublicTag
+
 type JSDocPublicTag struct {
 	JSDocTagBase
 }
@@ -10079,7 +10247,12 @@ func (node *JSDocPublicTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocPublicTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocPublicTag(node *Node) bool {
+	return node.Kind == KindJSDocPublicTag
+}
+
 // JSDocPrivateTag
+
 type JSDocPrivateTag struct {
 	JSDocTagBase
 }
@@ -10110,7 +10283,12 @@ func (node *JSDocPrivateTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocPrivateTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocPrivateTag(node *Node) bool {
+	return node.Kind == KindJSDocPrivateTag
+}
+
 // JSDocProtectedTag
+
 type JSDocProtectedTag struct {
 	JSDocTagBase
 }
@@ -10141,7 +10319,12 @@ func (node *JSDocProtectedTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocProtectedTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocProtectedTag(node *Node) bool {
+	return node.Kind == KindJSDocProtectedTag
+}
+
 // JSDocReadonlyTag
+
 type JSDocReadonlyTag struct {
 	JSDocTagBase
 }
@@ -10172,7 +10355,12 @@ func (node *JSDocReadonlyTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocReadonlyTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocReadonlyTag(node *Node) bool {
+	return node.Kind == KindJSDocReadonlyTag
+}
+
 // JSDocOverrideTag
+
 type JSDocOverrideTag struct {
 	JSDocTagBase
 }
@@ -10203,7 +10391,12 @@ func (node *JSDocOverrideTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocOverrideTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocOverrideTag(node *Node) bool {
+	return node.Kind == KindJSDocOverrideTag
+}
+
 // JSDocDeprecatedTag
+
 type JSDocDeprecatedTag struct {
 	JSDocTagBase
 }
@@ -10239,6 +10432,7 @@ func IsJSDocDeprecatedTag(node *Node) bool {
 }
 
 // JSDocSeeTag
+
 type JSDocSeeTag struct {
 	JSDocTagBase
 	NameExpression *TypeNode
@@ -10271,7 +10465,12 @@ func (node *JSDocSeeTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocSeeTag(node.TagName, node.NameExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocSeeTag(node *Node) bool {
+	return node.Kind == KindJSDocSeeTag
+}
+
 // JSDocImplementsTag
+
 type JSDocImplementsTag struct {
 	JSDocTagBase
 	ClassName *Expression
@@ -10309,6 +10508,7 @@ func IsJSDocImplementsTag(node *Node) bool {
 }
 
 // JSDocAugmentsTag
+
 type JSDocAugmentsTag struct {
 	JSDocTagBase
 	ClassName *Expression
@@ -10346,6 +10546,7 @@ func IsJSDocAugmentsTag(node *Node) bool {
 }
 
 // JSDocSatisfiesTag
+
 type JSDocSatisfiesTag struct {
 	JSDocTagBase
 	TypeExpression *TypeNode
@@ -10378,7 +10579,12 @@ func (node *JSDocSatisfiesTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocSatisfiesTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocSatisfiesTag(node *Node) bool {
+	return node.Kind == KindJSDocSatisfiesTag
+}
+
 // JSDocThisTag
+
 type JSDocThisTag struct {
 	JSDocTagBase
 	TypeExpression *TypeNode
@@ -10411,7 +10617,12 @@ func (node *JSDocThisTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocThisTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocThisTag(node *Node) bool {
+	return node.Kind == KindJSDocThisTag
+}
+
 // JSDocImportTag
+
 type JSDocImportTag struct {
 	JSDocTagBase
 	ImportClause    *Declaration
@@ -10453,6 +10664,7 @@ func IsJSDocImportTag(node *Node) bool {
 }
 
 // JSDocCallbackTag
+
 type JSDocCallbackTag struct {
 	JSDocTagBase
 	FullName       *Node
@@ -10494,6 +10706,7 @@ func IsJSDocCallbackTag(node *Node) bool {
 }
 
 // JSDocOverloadTag
+
 type JSDocOverloadTag struct {
 	JSDocTagBase
 	TypeExpression *TypeNode
@@ -10526,7 +10739,12 @@ func (node *JSDocOverloadTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocOverloadTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocOverloadTag(node *Node) bool {
+	return node.Kind == KindJSDocOverloadTag
+}
+
 // JSDocTypedefTag
+
 type JSDocTypedefTag struct {
 	JSDocTagBase
 	TypeExpression *Node
@@ -10571,6 +10789,7 @@ func IsJSDocTypedefTag(node *Node) bool {
 }
 
 // JSDocTypeLiteral
+
 type JSDocTypeLiteral struct {
 	TypeNodeBase
 	DeclarationBase
@@ -10610,6 +10829,7 @@ func IsJSDocTypeLiteral(node *Node) bool {
 }
 
 // JSDocSignature
+
 type JSDocSignature struct {
 	TypeNodeBase
 	FunctionLikeBase
@@ -10647,6 +10867,7 @@ func IsJSDocSignature(node *Node) bool {
 }
 
 // JSDocNameReference
+
 type JSDocNameReference struct {
 	TypeNodeBase
 	name *EntityName
@@ -10721,6 +10942,11 @@ type HasFileName interface {
 	Path() tspath.Path
 }
 
+type TokenCacheKey struct {
+	parent *Node
+	loc    core.TextRange
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -10749,6 +10975,9 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	jsdocMu                     sync.RWMutex
+	hasLazyJSDoc                bool
+	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
@@ -10779,10 +11008,14 @@ type SourceFile struct {
 
 	// Fields set by language service
 
+	Hash             xxh3.Uint128
 	tokenCacheMu     sync.Mutex
-	tokenCache       map[core.TextRange]*Node
+	tokenCache       map[TokenCacheKey]*Node
+	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
+	nameTableOnce    sync.Once
+	nameTable        map[string]int
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -10842,12 +11075,39 @@ func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
 }
 
-func (node *SourceFile) JSDocCache() map[*Node][]*Node {
-	return node.jsdocCache
-}
-
 func (node *SourceFile) SetJSDocCache(cache map[*Node][]*Node) {
 	node.jsdocCache = cache
+}
+
+func (node *SourceFile) SetHasLazyJSDoc(lazy bool) {
+	node.hasLazyJSDoc = lazy
+}
+
+func (node *SourceFile) resolveJSDoc(n *Node) []*Node {
+	if parseJSDocForNode == nil {
+		panic("resolveJSDoc called but parseJSDocForNode is not registered; ensure the parser package is imported")
+	}
+	// Fast path: check cache under read lock
+	node.jsdocMu.RLock()
+	if jsdocs, ok := node.jsdocCache[n]; ok {
+		node.jsdocMu.RUnlock()
+		return jsdocs
+	}
+	node.jsdocMu.RUnlock()
+
+	// Slow path: parse and cache under write lock
+	node.jsdocMu.Lock()
+	defer node.jsdocMu.Unlock()
+	// Double-check after acquiring write lock
+	if jsdocs, ok := node.jsdocCache[n]; ok {
+		return jsdocs
+	}
+	jsdocs := parseJSDocForNode(node, n)
+	if node.jsdocCache == nil {
+		node.jsdocCache = make(map[*Node][]*Node)
+	}
+	node.jsdocCache[n] = jsdocs
+	return jsdocs
 }
 
 func (node *SourceFile) BindDiagnostics() []*Diagnostic {
@@ -10926,6 +11186,39 @@ func (node *SourceFile) ECMALineMap() []core.TextPos {
 	return lineMap
 }
 
+// GetNameTable returns a map of all names in the file to their positions.
+// If the name appears more than once, the value is -1.
+func (file *SourceFile) GetNameTable() map[string]int {
+	file.nameTableOnce.Do(func() {
+		nameTable := make(map[string]int, file.IdentifierCount)
+
+		var walk func(node *Node) bool
+		walk = func(node *Node) bool {
+			if IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
+				IsStringOrNumericLiteralLike(node) && literalIsName(node) ||
+				IsPrivateIdentifier(node) {
+				text := node.Text()
+				if _, ok := nameTable[text]; ok {
+					nameTable[text] = -1
+				} else {
+					nameTable[text] = node.Pos()
+				}
+			}
+
+			node.ForEachChild(walk)
+			jsdocNodes := node.JSDoc(file)
+			for _, jsdoc := range jsdocNodes {
+				jsdoc.ForEachChild(walk)
+			}
+			return false
+		}
+		file.ForEachChild(walk)
+
+		file.nameTable = nameTable
+	})
+	return file.nameTable
+}
+
 func (node *SourceFile) IsBound() bool {
 	return node.isBound.Load()
 }
@@ -10937,33 +11230,70 @@ func (node *SourceFile) BindOnce(bind func()) {
 	})
 }
 
+// Gets a token from the file's token cache, or creates it if it does not already exist.
+// This function should NOT be used for creating synthetic tokens that are not in the file in the first place.
 func (node *SourceFile) GetOrCreateToken(
 	kind Kind,
 	pos int,
 	end int,
 	parent *Node,
+	flags TokenFlags,
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
-
 	loc := core.NewTextRange(pos, end)
-	if node.tokenCache == nil {
-		node.tokenCache = make(map[core.TextRange]*Node)
-	} else if token, ok := node.tokenCache[loc]; ok {
+	key := TokenCacheKey{parent, loc}
+	if token, ok := node.tokenCache[key]; ok {
 		if token.Kind != kind {
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
-		if token.Parent != parent {
-			panic(fmt.Sprintf("Token cache mismatch: parent. Expected parent of kind %v, got %v", token.Parent.Kind, parent.Kind))
-		}
 		return token
 	}
-
-	token := newNode(kind, &Token{}, NodeFactoryHooks{})
+	if parent.Flags&NodeFlagsReparsed != 0 {
+		panic(fmt.Sprintf("Cannot create token from reparsed node of kind %v", parent.Kind))
+	}
+	if node.tokenCache == nil {
+		node.tokenCache = make(map[TokenCacheKey]*Node)
+	}
+	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
 	token.Parent = parent
-	node.tokenCache[loc] = token
+	node.tokenCache[key] = token
 	return token
+}
+
+// `kind` should be a token kind.
+func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *Node {
+	if file.tokenFactory == nil {
+		file.tokenFactory = NewNodeFactory(NodeFactoryHooks{})
+	}
+	text := file.text[pos:end]
+	switch kind {
+	case KindNumericLiteral:
+		return file.tokenFactory.NewNumericLiteral(text, flags)
+	case KindBigIntLiteral:
+		return file.tokenFactory.NewBigIntLiteral(text, flags)
+	case KindStringLiteral:
+		return file.tokenFactory.NewStringLiteral(text, flags)
+	case KindJsxText, KindJsxTextAllWhiteSpaces:
+		return file.tokenFactory.NewJsxText(text, kind == KindJsxTextAllWhiteSpaces)
+	case KindRegularExpressionLiteral:
+		return file.tokenFactory.NewRegularExpressionLiteral(text, flags)
+	case KindNoSubstitutionTemplateLiteral:
+		return file.tokenFactory.NewNoSubstitutionTemplateLiteral(text, flags)
+	case KindTemplateHead:
+		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags)
+	case KindTemplateMiddle:
+		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags)
+	case KindTemplateTail:
+		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags)
+	case KindIdentifier:
+		return file.tokenFactory.NewIdentifier(text)
+	case KindPrivateIdentifier:
+		return file.tokenFactory.NewPrivateIdentifier(text)
+	default: // Punctuation and keywords
+		return file.tokenFactory.NewToken(kind)
+	}
 }
 
 func IsSourceFile(node *Node) bool {
@@ -11075,7 +11405,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				}
 			}
 		case KindBinaryExpression:
-			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			switch GetAssignmentDeclarationKind(node) {
 			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
 				addDeclaration(node)
 			}

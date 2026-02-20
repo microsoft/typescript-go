@@ -11,12 +11,13 @@ declare let g: <T>(...args: any) => any;
 
 
 //// [esDecorators-decoratorExpression.3.js]
+"use strict";
 // existing errors
 {
-    ((class C {
-    }));
+    (class C {
+    });
 }
 {
-    ((class C {
-    }));
+    (class C {
+    });
 }

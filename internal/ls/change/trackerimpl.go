@@ -23,7 +23,7 @@ func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 	for sourceFile, changesInFile := range t.changes.M {
 		// order changes by start position
 		// If the start position is the same, put the shorter range first, since an empty range (x, x) may precede (x, y) but not vice-versa.
-		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(ptrTo(a.Range), ptrTo(b.Range)) })
+		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(new(a.Range), new(b.Range)) })
 		// verify that change intervals do not overlap, except possibly at end points.
 		for i := range len(changesInFile) - 1 {
 			if lsproto.ComparePositions(changesInFile[i].Range.End, changesInFile[i+1].Range.Start) > 0 {
@@ -112,11 +112,11 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 	return core.ApplyBulkEdits(text, changes)
 }
 
-func getFormatCodeSettingsForWriting(options *format.FormatCodeSettings, sourceFile *ast.SourceFile) *format.FormatCodeSettings {
-	shouldAutoDetectSemicolonPreference := options.Semicolons == format.SemicolonPreferenceIgnore
-	shouldRemoveSemicolons := options.Semicolons == format.SemicolonPreferenceRemove || shouldAutoDetectSemicolonPreference && !lsutil.ProbablyUsesSemicolons(sourceFile)
+func getFormatCodeSettingsForWriting(options *lsutil.FormatCodeSettings, sourceFile *ast.SourceFile) *lsutil.FormatCodeSettings {
+	shouldAutoDetectSemicolonPreference := options.Semicolons == lsutil.SemicolonPreferenceIgnore
+	shouldRemoveSemicolons := options.Semicolons == lsutil.SemicolonPreferenceRemove || shouldAutoDetectSemicolonPreference && !lsutil.ProbablyUsesSemicolons(sourceFile)
 	if shouldRemoveSemicolons {
-		options.Semicolons = format.SemicolonPreferenceRemove
+		options.Semicolons = lsutil.SemicolonPreferenceRemove
 	}
 
 	return options
@@ -126,14 +126,21 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 	nodeIn := node
 	eofToken := t.Factory.NewToken(ast.KindEndOfFile)
 	if ast.IsStatement(node) {
+		text := ""
+		// OrganizeImports uses nodes from the old tree for preserving comments when emitting,
+		// which causes text to be indexed with the positions of the old nodes.
+		// For more details, check PR #2331
+		if !ast.NodeIsSynthesized(node) {
+			text = sourceFile.Text()
+		}
 		nodeIn = t.Factory.NewSourceFile(
 			ast.SourceFileParseOptions{FileName: sourceFile.FileName(), Path: sourceFile.Path()},
-			"",
+			text,
 			t.Factory.NewNodeList([]*ast.Node{node}),
 			t.Factory.NewToken(ast.KindEndOfFile),
 		)
 	}
-	writer := printer.NewChangeTrackerWriter(t.newLine)
+	writer := printer.NewChangeTrackerWriter(t.newLine, t.formatSettings.IndentSize)
 	printer.NewPrinter(
 		printer.PrinterOptions{
 			NewLine:                       core.GetNewLineKind(t.newLine),
@@ -256,7 +263,7 @@ func (t *Tracker) getEndPositionOfMultilineTrailingComment(sourceFile *ast.Sourc
 		nodeEndLine := scanner.ComputeLineOfPosition(lineStarts, node.End())
 		for comment := range scanner.GetTrailingCommentRanges(t.NodeFactory, sourceFile.Text(), node.End()) {
 			// Single line can break the loop as trivia will only be this line.
-			// Comments on subsequest lines are also ignored.
+			// Comments on subsequent lines are also ignored.
 			if comment.Kind == ast.KindSingleLineCommentTrivia || scanner.ComputeLineOfPosition(lineStarts, comment.Pos()) > nodeEndLine {
 				break
 			}

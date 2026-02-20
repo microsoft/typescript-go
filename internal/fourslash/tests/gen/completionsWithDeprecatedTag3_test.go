@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsWithDeprecatedTag3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @deprecated foo */
 declare function foo<T>();
@@ -32,8 +32,8 @@ foo/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "foo",
-					Kind:     PtrTo(lsproto.CompletionItemKindFunction),
-					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+					Kind:     new(lsproto.CompletionItemKindFunction),
+					SortText: new(string(ls.SortTextLocationPriority)),
 				},
 			},
 		},

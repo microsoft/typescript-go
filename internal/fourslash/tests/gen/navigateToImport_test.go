@@ -4,16 +4,16 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestNavigateToImport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: library.ts
+	const content = `// @lib: es5
+// @Filename: library.ts
 [|export function foo() {}|]
 [|export function bar() {}|]
 // @Filename: user.ts
@@ -24,7 +24,7 @@ import {foo, [|bar as baz|]} from './library';`
 		{
 			Pattern:     "foo",
 			Preferences: nil,
-			Exact: PtrTo([]*lsproto.SymbolInformation{
+			Exact: new([]*lsproto.SymbolInformation{
 				{
 					Name:     "foo",
 					Kind:     lsproto.SymbolKindFunction,
@@ -34,7 +34,7 @@ import {foo, [|bar as baz|]} from './library';`
 		}, {
 			Pattern:     "bar",
 			Preferences: nil,
-			Exact: PtrTo([]*lsproto.SymbolInformation{
+			Exact: new([]*lsproto.SymbolInformation{
 				{
 					Name:     "bar",
 					Kind:     lsproto.SymbolKindFunction,
@@ -44,7 +44,7 @@ import {foo, [|bar as baz|]} from './library';`
 		}, {
 			Pattern:     "baz",
 			Preferences: nil,
-			Exact: PtrTo([]*lsproto.SymbolInformation{
+			Exact: new([]*lsproto.SymbolInformation{
 				{
 					Name:     "baz",
 					Kind:     lsproto.SymbolKindVariable,

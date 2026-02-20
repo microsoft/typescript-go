@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsRecommended_equals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum Enu {}
 declare const e: Enu;
@@ -29,9 +29,9 @@ e === E/*b*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:     "Enu",
-					Detail:    PtrTo("enum Enu"),
-					Kind:      PtrTo(lsproto.CompletionItemKindEnum),
-					Preselect: PtrTo(true),
+					Detail:    new("enum Enu"),
+					Kind:      new(lsproto.CompletionItemKindEnum),
+					Preselect: new(true),
 				},
 			},
 		},

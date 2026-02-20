@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_wildcardExports3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/packages/ui/package.json
 {
@@ -38,7 +38,8 @@ export const Card = () => null;
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "lib": ["es5"]
   },
  "include": ["app"]
 }
@@ -60,12 +61,12 @@ export const Card = () => null;
 				&lsproto.CompletionItem{
 					Label: "Card",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "@repo/ui/Card",
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

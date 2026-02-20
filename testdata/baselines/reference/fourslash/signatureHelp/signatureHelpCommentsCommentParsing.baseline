@@ -169,24 +169,16 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | sum(**a: number**, b: number): number
+// | - `a: number`: first number
+
 // | Adds two integers and returns the result
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b` — second number
-// | 
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
 // | sum(a: number, **b: number**): number
+// | - `b: number`: second number
+
 // | Adds two integers and returns the result
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b` — second number
-// | 
 // | ----------------------------------------------------------------------
 // /** This is multiplication function
 //  * @param 
@@ -200,113 +192,31 @@
 // multiply(10, 20, 30, 40, 50);
 //          ^
 // | ----------------------------------------------------------------------
-// | multiply(**a: number**, b: number, c?: number, d?: any, e?: any): void
+// | multiply(**a: number**, b: number, c?: number | undefined, d?: any, e?: any): void
+// | - `a: number`: first number
+
 // | This is multiplication function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b`
-// | 
-// | *@param* `c`
-// | 
-// | *@param* `d`
-// | 
-// | *@anotherTag*
-// | 
-// | *@param* `e` — LastParam 
-// | 
-// | *@anotherTag*
 // | ----------------------------------------------------------------------
 //             ^
 // | ----------------------------------------------------------------------
-// | multiply(a: number, **b: number**, c?: number, d?: any, e?: any): void
+// | multiply(a: number, **b: number**, c?: number | undefined, d?: any, e?: any): void
 // | This is multiplication function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b`
-// | 
-// | *@param* `c`
-// | 
-// | *@param* `d`
-// | 
-// | *@anotherTag*
-// | 
-// | *@param* `e` — LastParam 
-// | 
-// | *@anotherTag*
 // | ----------------------------------------------------------------------
 //                 ^
 // | ----------------------------------------------------------------------
-// | multiply(a: number, b: number, **c?: number**, d?: any, e?: any): void
+// | multiply(a: number, b: number, **c?: number | undefined**, d?: any, e?: any): void
 // | This is multiplication function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b`
-// | 
-// | *@param* `c`
-// | 
-// | *@param* `d`
-// | 
-// | *@anotherTag*
-// | 
-// | *@param* `e` — LastParam 
-// | 
-// | *@anotherTag*
 // | ----------------------------------------------------------------------
 //                      ^
 // | ----------------------------------------------------------------------
-// | multiply(a: number, b: number, c?: number, **d?: any**, e?: any): void
+// | multiply(a: number, b: number, c?: number | undefined, **d?: any**, e?: any): void
 // | This is multiplication function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b`
-// | 
-// | *@param* `c`
-// | 
-// | *@param* `d`
-// | 
-// | *@anotherTag*
-// | 
-// | *@param* `e` — LastParam 
-// | 
-// | *@anotherTag*
 // | ----------------------------------------------------------------------
 //                          ^
 // | ----------------------------------------------------------------------
-// | multiply(a: number, b: number, c?: number, d?: any, **e?: any**): void
+// | multiply(a: number, b: number, c?: number | undefined, d?: any, **e?: any**): void
+// | - `e?: any`: LastParam 
 // | This is multiplication function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `a` — first number
-// | 
-// | 
-// | *@param* `b`
-// | 
-// | *@param* `c`
-// | 
-// | *@param* `d`
-// | 
-// | *@anotherTag*
-// | 
-// | *@param* `e` — LastParam 
-// | 
-// | *@anotherTag*
 // | ----------------------------------------------------------------------
 // /** fn f1 with number
 // * @param { string} b about b
@@ -322,14 +232,14 @@
 // | ----------------------------------------------------------------------
 // | f1(**a: number**): any
 // | fn f1 with number
-// | 
-// | *@param* `b` — about b
-// | 
 // | ----------------------------------------------------------------------
 // f1("hello");
 //    ^
 // | ----------------------------------------------------------------------
 // | f1(**b: string**): any
+// | - `b: string`: about b
+
+// | fn f1 with number
 // | ----------------------------------------------------------------------
 // 
 // /** This is subtract function
@@ -345,135 +255,41 @@
 // subtract(10,  20,  null,  null,  null, null);
 //          ^
 // | ----------------------------------------------------------------------
-// | subtract(**a: number**, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
+// | subtract(**a: number**, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void
 // | This is subtract function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `b` — this is about b
-// | 
-// | 
-// | *@param* `c` — this is optional param c
-// | 
-// | 
-// | *@param* `d` — this is optional param d
-// | 
-// | 
-// | *@param* `e` — this is optional param e
-// | 
-// | 
-// | *@param* `` — { () => string; } } f this is optional param f
-// | 
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
-// | subtract(a: number, **b: number**, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
+// | subtract(a: number, **b: number**, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void
+// | - `b: number`: this is about b
+
 // | This is subtract function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `b` — this is about b
-// | 
-// | 
-// | *@param* `c` — this is optional param c
-// | 
-// | 
-// | *@param* `d` — this is optional param d
-// | 
-// | 
-// | *@param* `e` — this is optional param e
-// | 
-// | 
-// | *@param* `` — { () => string; } } f this is optional param f
-// | 
 // | ----------------------------------------------------------------------
 //                   ^
 // | ----------------------------------------------------------------------
-// | subtract(a: number, b: number, **c?: () => string**, d?: () => string, e?: () => string, f?: () => string): void
+// | subtract(a: number, b: number, **c?: (() => string) | undefined**, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void
+// | - `c?: (() => string) | undefined`: this is optional param c
+
 // | This is subtract function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `b` — this is about b
-// | 
-// | 
-// | *@param* `c` — this is optional param c
-// | 
-// | 
-// | *@param* `d` — this is optional param d
-// | 
-// | 
-// | *@param* `e` — this is optional param e
-// | 
-// | 
-// | *@param* `` — { () => string; } } f this is optional param f
-// | 
 // | ----------------------------------------------------------------------
 //                          ^
 // | ----------------------------------------------------------------------
-// | subtract(a: number, b: number, c?: () => string, **d?: () => string**, e?: () => string, f?: () => string): void
+// | subtract(a: number, b: number, c?: (() => string) | undefined, **d?: (() => string) | undefined**, e?: (() => string) | undefined, f?: (() => string) | undefined): void
+// | - `d?: (() => string) | undefined`: this is optional param d
+
 // | This is subtract function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `b` — this is about b
-// | 
-// | 
-// | *@param* `c` — this is optional param c
-// | 
-// | 
-// | *@param* `d` — this is optional param d
-// | 
-// | 
-// | *@param* `e` — this is optional param e
-// | 
-// | 
-// | *@param* `` — { () => string; } } f this is optional param f
-// | 
 // | ----------------------------------------------------------------------
 //                                 ^
 // | ----------------------------------------------------------------------
-// | subtract(a: number, b: number, c?: () => string, d?: () => string, **e?: () => string**, f?: () => string): void
+// | subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, **e?: (() => string) | undefined**, f?: (() => string) | undefined): void
+// | - `e?: (() => string) | undefined`: this is optional param e
+
 // | This is subtract function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `b` — this is about b
-// | 
-// | 
-// | *@param* `c` — this is optional param c
-// | 
-// | 
-// | *@param* `d` — this is optional param d
-// | 
-// | 
-// | *@param* `e` — this is optional param e
-// | 
-// | 
-// | *@param* `` — { () => string; } } f this is optional param f
-// | 
 // | ----------------------------------------------------------------------
 //                                        ^
 // | ----------------------------------------------------------------------
-// | subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, **f?: () => string**): void
+// | subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, **f?: (() => string) | undefined**): void
 // | This is subtract function
-// | 
-// | *@param* ``
-// | 
-// | *@param* `b` — this is about b
-// | 
-// | 
-// | *@param* `c` — this is optional param c
-// | 
-// | 
-// | *@param* `d` — this is optional param d
-// | 
-// | 
-// | *@param* `e` — this is optional param e
-// | 
-// | 
-// | *@param* `` — { () => string; } } f this is optional param f
-// | 
 // | ----------------------------------------------------------------------
 // /** this is square function
 // @paramTag { number } a this is input number of paramTag
@@ -487,16 +303,9 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | square(**a: number**): number
+// | - `a: number`: this is input number
+
 // | this is square function
-// | 
-// | *@paramTag* — { number } a this is input number of paramTag
-// | 
-// | 
-// | *@param* `a` — this is input number
-// | 
-// | 
-// | *@returnType* — { number } it is return type
-// | 
 // | ----------------------------------------------------------------------
 // /** this is divide function
 // @param { number} a this is a
@@ -509,30 +318,16 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | divide(**a: number**, b: number): void
+// | - `a: number`: this is a
+
 // | this is divide function
-// | 
-// | *@param* `a` — this is a
-// | 
-// | 
-// | *@paramTag* — { number } g this is optional param g
-// | 
-// | 
-// | *@param* `b` — this is b
-// | 
 // | ----------------------------------------------------------------------
 //            ^
 // | ----------------------------------------------------------------------
 // | divide(a: number, **b: number**): void
+// | - `b: number`: this is b
+
 // | this is divide function
-// | 
-// | *@param* `a` — this is a
-// | 
-// | 
-// | *@paramTag* — { number } g this is optional param g
-// | 
-// | 
-// | *@param* `b` — this is b
-// | 
 // | ----------------------------------------------------------------------
 // /**
 // Function returns string concat of foo and bar
@@ -546,24 +341,16 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | fooBar(**foo: string**, bar: string): string
+// | - `foo: string`: is string
+
 // | Function returns string concat of foo and bar
-// | 
-// | *@param* `foo` — is string
-// | 
-// | 
-// | *@param* `bar` — is second string
-// | 
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
 // | fooBar(foo: string, **bar: string**): string
+// | - `bar: string`: is second string
+
 // | Function returns string concat of foo and bar
-// | 
-// | *@param* `foo` — is string
-// | 
-// | 
-// | *@param* `bar` — is second string
-// | 
 // | ----------------------------------------------------------------------
 // /** This is a comment */
 // var x;
@@ -586,46 +373,26 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(**a: number**, b: number, c: number, d: number): number
+// | - `a: number`: this is inline comment for a
 // | this is jsdoc style function with param tag as well as inline parameter help
-// | 
-// | *@param* `a` — it is first parameter
-// | 
-// | 
-// | *@param* `c` — it is third parameter
-// | 
 // | ----------------------------------------------------------------------
 //                    ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, **b: number**, c: number, d: number): number
+// | - `b: number`: this is inline comment for b
 // | this is jsdoc style function with param tag as well as inline parameter help
-// | 
-// | *@param* `a` — it is first parameter
-// | 
-// | 
-// | *@param* `c` — it is third parameter
-// | 
 // | ----------------------------------------------------------------------
 //                        ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, b: number, **c: number**, d: number): number
+// | - `c: number`: it is third parameter
+
 // | this is jsdoc style function with param tag as well as inline parameter help
-// | 
-// | *@param* `a` — it is first parameter
-// | 
-// | 
-// | *@param* `c` — it is third parameter
-// | 
 // | ----------------------------------------------------------------------
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, b: number, c: number, **d: number**): number
 // | this is jsdoc style function with param tag as well as inline parameter help
-// | 
-// | *@param* `a` — it is first parameter
-// | 
-// | 
-// | *@param* `c` — it is third parameter
-// | 
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   * And properly aligned comment
@@ -668,62 +435,31 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(**a: string**, b: any, c: any): void
+// | - `a: string`: this is info about a
+spanning on two lines and aligned perfectly
+
 // | This is function comment
 // |     And aligned with 4 space char margin
-// | 
-// | *@param* `a` — this is info about a
-// | spanning on two lines and aligned perfectly
-// | 
-// | 
-// | *@param* `b` — this is info about b
-// | spanning on two lines and aligned perfectly
-// | spanning one more line alined perfectly
-// |     spanning another line with more margin
-// | 
-// | 
-// | *@param* `c` — this is info about b
-// | not aligned text about parameter will eat only one space
-// | 
 // | ----------------------------------------------------------------------
 //                                    ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(a: string, **b: any**, c: any): void
+// | - `b: any`: this is info about b
+spanning on two lines and aligned perfectly
+spanning one more line alined perfectly
+    spanning another line with more margin
+
 // | This is function comment
 // |     And aligned with 4 space char margin
-// | 
-// | *@param* `a` — this is info about a
-// | spanning on two lines and aligned perfectly
-// | 
-// | 
-// | *@param* `b` — this is info about b
-// | spanning on two lines and aligned perfectly
-// | spanning one more line alined perfectly
-// |     spanning another line with more margin
-// | 
-// | 
-// | *@param* `c` — this is info about b
-// | not aligned text about parameter will eat only one space
-// | 
 // | ----------------------------------------------------------------------
 //                                       ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(a: string, b: any, **c: any**): void
+// | - `c: any`: this is info about b
+not aligned text about parameter will eat only one space
+
 // | This is function comment
 // |     And aligned with 4 space char margin
-// | 
-// | *@param* `a` — this is info about a
-// | spanning on two lines and aligned perfectly
-// | 
-// | 
-// | *@param* `b` — this is info about b
-// | spanning on two lines and aligned perfectly
-// | spanning one more line alined perfectly
-// |     spanning another line with more margin
-// | 
-// | 
-// | *@param* `c` — this is info about b
-// | not aligned text about parameter will eat only one space
-// | 
 // | ----------------------------------------------------------------------
 // 
 // ^
@@ -1065,14 +801,22 @@
           "label": "sum(a: number, b: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "Adds two integers and returns the result\n\n*@param* `a` — first number\n\n\n*@param* `b` — second number\n"
+            "value": "Adds two integers and returns the result"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "second number\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -1097,14 +841,22 @@
           "label": "sum(a: number, b: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "Adds two integers and returns the result\n\n*@param* `a` — first number\n\n\n*@param* `b` — second number\n"
+            "value": "Adds two integers and returns the result"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "second number\n"
+              }
             }
           ],
           "activeParameter": 1
@@ -1126,26 +878,34 @@
     "item": {
       "signatures": [
         {
-          "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "label": "multiply(a: number, b: number, c?: number | undefined, d?: any, e?: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam \n\n*@anotherTag*"
+            "value": "This is multiplication function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
             },
             {
-              "label": "c?: number"
+              "label": "c?: number | undefined"
             },
             {
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
           ],
           "activeParameter": 0
@@ -1167,26 +927,34 @@
     "item": {
       "signatures": [
         {
-          "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "label": "multiply(a: number, b: number, c?: number | undefined, d?: any, e?: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam \n\n*@anotherTag*"
+            "value": "This is multiplication function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
             },
             {
-              "label": "c?: number"
+              "label": "c?: number | undefined"
             },
             {
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
           ],
           "activeParameter": 1
@@ -1208,26 +976,34 @@
     "item": {
       "signatures": [
         {
-          "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "label": "multiply(a: number, b: number, c?: number | undefined, d?: any, e?: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam \n\n*@anotherTag*"
+            "value": "This is multiplication function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
             },
             {
-              "label": "c?: number"
+              "label": "c?: number | undefined"
             },
             {
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
           ],
           "activeParameter": 2
@@ -1249,26 +1025,34 @@
     "item": {
       "signatures": [
         {
-          "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "label": "multiply(a: number, b: number, c?: number | undefined, d?: any, e?: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam \n\n*@anotherTag*"
+            "value": "This is multiplication function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
             },
             {
-              "label": "c?: number"
+              "label": "c?: number | undefined"
             },
             {
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
           ],
           "activeParameter": 3
@@ -1290,26 +1074,34 @@
     "item": {
       "signatures": [
         {
-          "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "label": "multiply(a: number, b: number, c?: number | undefined, d?: any, e?: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam \n\n*@anotherTag*"
+            "value": "This is multiplication function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
             },
             {
-              "label": "c?: number"
+              "label": "c?: number | undefined"
             },
             {
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
           ],
           "activeParameter": 4
@@ -1334,7 +1126,7 @@
           "label": "f1(a: number): any",
           "documentation": {
             "kind": "markdown",
-            "value": "fn f1 with number\n\n*@param* `b` — about b\n"
+            "value": "fn f1 with number"
           },
           "parameters": [
             {
@@ -1345,9 +1137,17 @@
         },
         {
           "label": "f1(b: string): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "fn f1 with number"
+          },
           "parameters": [
             {
-              "label": "b: string"
+              "label": "b: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "about b\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -1372,7 +1172,7 @@
           "label": "f1(a: number): any",
           "documentation": {
             "kind": "markdown",
-            "value": "fn f1 with number\n\n*@param* `b` — about b\n"
+            "value": "fn f1 with number"
           },
           "parameters": [
             {
@@ -1383,9 +1183,17 @@
         },
         {
           "label": "f1(b: string): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "fn f1 with number"
+          },
           "parameters": [
             {
-              "label": "b: string"
+              "label": "b: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "about b\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -1407,29 +1215,45 @@
     "item": {
       "signatures": [
         {
-          "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "label": "subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
+            "value": "This is subtract function"
           },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
-              "label": "f?: () => string"
+              "label": "f?: (() => string) | undefined"
             }
           ],
           "activeParameter": 0
@@ -1451,29 +1275,45 @@
     "item": {
       "signatures": [
         {
-          "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "label": "subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
+            "value": "This is subtract function"
           },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
-              "label": "f?: () => string"
+              "label": "f?: (() => string) | undefined"
             }
           ],
           "activeParameter": 1
@@ -1495,29 +1335,45 @@
     "item": {
       "signatures": [
         {
-          "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "label": "subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
+            "value": "This is subtract function"
           },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
-              "label": "f?: () => string"
+              "label": "f?: (() => string) | undefined"
             }
           ],
           "activeParameter": 2
@@ -1539,29 +1395,45 @@
     "item": {
       "signatures": [
         {
-          "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "label": "subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
+            "value": "This is subtract function"
           },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
-              "label": "f?: () => string"
+              "label": "f?: (() => string) | undefined"
             }
           ],
           "activeParameter": 3
@@ -1583,29 +1455,45 @@
     "item": {
       "signatures": [
         {
-          "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "label": "subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
+            "value": "This is subtract function"
           },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
-              "label": "f?: () => string"
+              "label": "f?: (() => string) | undefined"
             }
           ],
           "activeParameter": 4
@@ -1627,29 +1515,45 @@
     "item": {
       "signatures": [
         {
-          "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "label": "subtract(a: number, b: number, c?: (() => string) | undefined, d?: (() => string) | undefined, e?: (() => string) | undefined, f?: (() => string) | undefined): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
+            "value": "This is subtract function"
           },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: (() => string) | undefined",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
-              "label": "f?: () => string"
+              "label": "f?: (() => string) | undefined"
             }
           ],
           "activeParameter": 5
@@ -1674,11 +1578,15 @@
           "label": "square(a: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "this is square function\n\n*@paramTag* — { number } a this is input number of paramTag\n\n\n*@param* `a` — this is input number\n\n\n*@returnType* — { number } it is return type\n"
+            "value": "this is square function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is input number\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -1703,14 +1611,22 @@
           "label": "divide(a: number, b: number): void",
           "documentation": {
             "kind": "markdown",
-            "value": "this is divide function\n\n*@param* `a` — this is a\n\n\n*@paramTag* — { number } g this is optional param g\n\n\n*@param* `b` — this is b\n"
+            "value": "this is divide function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is a\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is b\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -1735,14 +1651,22 @@
           "label": "divide(a: number, b: number): void",
           "documentation": {
             "kind": "markdown",
-            "value": "this is divide function\n\n*@param* `a` — this is a\n\n\n*@paramTag* — { number } g this is optional param g\n\n\n*@param* `b` — this is b\n"
+            "value": "this is divide function"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is a\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is b\n"
+              }
             }
           ],
           "activeParameter": 1
@@ -1767,14 +1691,22 @@
           "label": "fooBar(foo: string, bar: string): string",
           "documentation": {
             "kind": "markdown",
-            "value": "Function returns string concat of foo and bar\n\n*@param* `foo` — is string\n\n\n*@param* `bar` — is second string\n"
+            "value": "Function returns string concat of foo and bar"
           },
           "parameters": [
             {
-              "label": "foo: string"
+              "label": "foo: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is string\n"
+              }
             },
             {
-              "label": "bar: string"
+              "label": "bar: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is second string\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -1799,14 +1731,22 @@
           "label": "fooBar(foo: string, bar: string): string",
           "documentation": {
             "kind": "markdown",
-            "value": "Function returns string concat of foo and bar\n\n*@param* `foo` — is string\n\n\n*@param* `bar` — is second string\n"
+            "value": "Function returns string concat of foo and bar"
           },
           "parameters": [
             {
-              "label": "foo: string"
+              "label": "foo: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is string\n"
+              }
             },
             {
-              "label": "bar: string"
+              "label": "bar: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is second string\n"
+              }
             }
           ],
           "activeParameter": 1
@@ -1843,17 +1783,29 @@
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "this is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n\n*@param* `c` — it is third parameter\n"
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
@@ -1881,17 +1833,29 @@
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "this is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n\n*@param* `c` — it is third parameter\n"
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
@@ -1919,17 +1883,29 @@
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "this is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n\n*@param* `c` — it is third parameter\n"
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
@@ -1957,17 +1933,29 @@
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
           "documentation": {
             "kind": "markdown",
-            "value": "this is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n\n*@param* `c` — it is third parameter\n"
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
           },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
@@ -2043,17 +2031,29 @@
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is function comment\n    And aligned with 4 space char margin\n\n*@param* `a` — this is info about a\nspanning on two lines and aligned perfectly\n\n\n*@param* `b` — this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n\n\n*@param* `c` — this is info about b\nnot aligned text about parameter will eat only one space\n"
+            "value": "This is function comment\n    And aligned with 4 space char margin"
           },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about a\nspanning on two lines and aligned perfectly\n"
+              }
             },
             {
-              "label": "b: any"
+              "label": "b: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+              }
             },
             {
-              "label": "c: any"
+              "label": "c: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nnot aligned text about parameter will eat only one space\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -2078,17 +2078,29 @@
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is function comment\n    And aligned with 4 space char margin\n\n*@param* `a` — this is info about a\nspanning on two lines and aligned perfectly\n\n\n*@param* `b` — this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n\n\n*@param* `c` — this is info about b\nnot aligned text about parameter will eat only one space\n"
+            "value": "This is function comment\n    And aligned with 4 space char margin"
           },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about a\nspanning on two lines and aligned perfectly\n"
+              }
             },
             {
-              "label": "b: any"
+              "label": "b: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+              }
             },
             {
-              "label": "c: any"
+              "label": "c: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nnot aligned text about parameter will eat only one space\n"
+              }
             }
           ],
           "activeParameter": 1
@@ -2113,17 +2125,29 @@
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
           "documentation": {
             "kind": "markdown",
-            "value": "This is function comment\n    And aligned with 4 space char margin\n\n*@param* `a` — this is info about a\nspanning on two lines and aligned perfectly\n\n\n*@param* `b` — this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n\n\n*@param* `c` — this is info about b\nnot aligned text about parameter will eat only one space\n"
+            "value": "This is function comment\n    And aligned with 4 space char margin"
           },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about a\nspanning on two lines and aligned perfectly\n"
+              }
             },
             {
-              "label": "b: any"
+              "label": "b: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+              }
             },
             {
-              "label": "c: any"
+              "label": "c: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nnot aligned text about parameter will eat only one space\n"
+              }
             }
           ],
           "activeParameter": 2

@@ -8,11 +8,11 @@ import (
 )
 
 func TestPackageJsonImportsFailedLookups(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a/b/c/d/e/tsconfig.json
-{ "compilerOptions": { "module": "nodenext" } }
+{ "compilerOptions": { "lib": ["es5"], "module": "nodenext" } }
 // @Filename: /a/b/c/d/e/package.json
 {
   "name": "app",

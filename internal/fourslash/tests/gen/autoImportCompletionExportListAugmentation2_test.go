@@ -10,8 +10,8 @@ import (
 )
 
 func TestAutoImportCompletionExportListAugmentation2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /node_modules/@sapphire/pieces/index.d.ts
@@ -56,8 +56,8 @@ class PingCommand extends Command {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:               "container",
-					InsertText:          PtrTo("get container(): Container {\n}"),
-					FilterText:          PtrTo("container"),
+					InsertText:          new("get container(): Container {\n}"),
+					FilterText:          new("container"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
@@ -66,11 +66,11 @@ class PingCommand extends Command {
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "container",
 		Source:      "ClassMemberSnippet/",
 		Description: "Includes imports of types referenced by 'container'",
-		NewFileContent: PtrTo(`import "@sapphire/pieces";
+		NewFileContent: new(`import "@sapphire/pieces";
 import { Command } from "@sapphire/framework";
 import { Container } from "@sapphire/pieces";
 class PingCommand extends Command {

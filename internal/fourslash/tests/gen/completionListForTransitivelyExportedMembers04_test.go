@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListForTransitivelyExportedMembers04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: A.ts
 export interface I1 { one: number }
@@ -21,7 +21,7 @@ export class C1 {
     one: string;
 }
 
-export module Inner {
+export namespace Inner {
     export interface I3 {
         three: boolean
     }

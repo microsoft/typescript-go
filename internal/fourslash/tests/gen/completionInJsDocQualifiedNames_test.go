@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionInJsDocQualifiedNames(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /node_modules/foo/index.d.ts
@@ -33,14 +33,14 @@ const x = 0;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "T",
-					Detail: PtrTo("type T = number"),
+					Detail: new("type T = number"),
 					Documentation: &lsproto.StringOrMarkupContent{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "tee",
 						},
 					},
-					Kind: PtrTo(lsproto.CompletionItemKindClass),
+					Kind: new(lsproto.CompletionItemKindClass),
 				},
 			},
 		},

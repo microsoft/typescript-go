@@ -5,10 +5,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -86,6 +86,8 @@ type Project struct {
 	typingsFiles []string
 }
 
+var _ ls.Project = (*Project)(nil)
+
 func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
@@ -108,7 +110,7 @@ func NewInferredProject(
 			AllowJs:                    core.TSTrue,
 			Module:                     core.ModuleKindESNext,
 			ModuleResolution:           core.ModuleResolutionKindBundler,
-			Target:                     core.ScriptTargetES2022,
+			Target:                     core.ScriptTargetLatestStandard,
 			Jsx:                        core.JsxEmitReactJSX,
 			AllowImportingTsExtensions: core.TSTrue,
 			StrictNullChecks:           core.TSTrue,
@@ -148,35 +150,37 @@ func NewProject(
 	}
 
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
-	if builder.sessionOptions.WatchEnabled {
-		project.programFilesWatch = NewWatchedFiles(
-			"non-root program files for "+configFileName,
+	project.programFilesWatch = NewWatchedFiles(
+		"non-root program files for "+configFileName,
+		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		core.Identity,
+	)
+	project.failedLookupsWatch = NewWatchedFiles(
+		"failed lookups for "+configFileName,
+		lsproto.WatchKindCreate,
+		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+	)
+	project.affectingLocationsWatch = NewWatchedFiles(
+		"affecting locations for "+configFileName,
+		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+	)
+	if builder.sessionOptions.TypingsLocation != "" {
+		project.typingsWatch = NewWatchedFiles(
+			"typings installer files",
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 			core.Identity,
 		)
-		project.failedLookupsWatch = NewWatchedFiles(
-			"failed lookups for "+configFileName,
-			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-		)
-		project.affectingLocationsWatch = NewWatchedFiles(
-			"affecting locations for "+configFileName,
-			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-		)
-		if builder.sessionOptions.TypingsLocation != "" {
-			project.typingsWatch = NewWatchedFiles(
-				"typings installer files",
-				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-				core.Identity,
-			)
-		}
 	}
 	return project
 }
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+func (p *Project) ID() tspath.Path {
+	return p.configFilePath
 }
 
 // ConfigFileName panics if Kind() is not KindConfigured.
@@ -288,16 +292,16 @@ func (p *Project) setPotentialProjectReference(configFilePath tspath.Path) {
 	p.potentialProjectReferences.Add(configFilePath)
 }
 
-func (p *Project) hasPotentialProjectReference(references map[tspath.Path]struct{}) bool {
+func (p *Project) hasPotentialProjectReference(projectTreeRequest *ProjectTreeRequest) bool {
 	if p.CommandLine != nil {
 		for _, path := range p.CommandLine.ResolvedProjectReferencePaths() {
-			if _, has := references[p.toPath(path)]; has {
+			if projectTreeRequest.IsProjectReferenced(p.toPath(path)) {
 				return true
 			}
 		}
 	} else if p.potentialProjectReferences != nil {
 		for path := range p.potentialProjectReferences.Keys() {
-			if _, has := references[path]; has {
+			if projectTreeRequest.IsProjectReferenced(path) {
 				return true
 			}
 		}
@@ -324,13 +328,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
-			for _, file := range newProgram.GetSourceFiles() {
-				if file.Path() != p.dirtyFilePath {
-					// UpdateProgram only called host.GetSourceFile for the dirty file.
-					// Increment ref count for all other files.
-					p.host.builder.parseCache.Ref(file)
-				}
-			}
 		}
 	} else {
 		var typingsLocation string
@@ -343,7 +340,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 					checkerPool = newCheckerPool(4, program, p.log)
 					return checkerPool

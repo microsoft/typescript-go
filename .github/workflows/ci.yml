@@ -24,9 +24,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          dotnet: false
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
       - uses: ./.github/actions/setup-go
 
       # Avoid duplicate PR annotations.
@@ -41,12 +46,34 @@ jobs:
 
       - run: npx hereby build
 
+  release-build:
+    if: ${{ github.repository == 'microsoft/typescript-go' }}
+    runs-on: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: 'lts/*'
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: ./.github/actions/setup-go
+
+      # Avoid duplicate PR annotations.
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
+      - run: npm ci
+
+      - run: npx hereby native-preview:release --forRelease --setPrerelease dev.0.0
+
   extension:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
 
       - run: npm ci
 
@@ -54,7 +81,7 @@ jobs:
 
   test:
     strategy:
-      fail-fast: false
+      fail-fast: ${{ github.event_name == 'merge_group' }}
       matrix:
         config:
           - os: ubuntu-latest
@@ -65,14 +92,15 @@ jobs:
             skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
             coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
+            # There aren't enough macOS runners; skip in PRs and rely on main branch runs.
+            skip: ${{ github.event_name == 'merge_group' || github.event_name == 'pull_request' }}
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
           - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
             name: 'race mode'
             race: true
-            skip: ${{ github.event_name == 'merge_group' }}
+            skip: ${{ github.event_name == 'merge_group' || github.repository != 'microsoft/typescript-go' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
@@ -109,13 +137,12 @@ jobs:
       - run: git config --system core.longpaths true
         if: ${{ matrix.config.os == 'windows-latest' }}
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: ${{ !matrix.config.no-submodules }}
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: 'lts/*'
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
 
       # Avoid duplicate PR annotations.
@@ -149,7 +176,7 @@ jobs:
 
       - run: git add .
 
-      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         if: ${{ always() && matrix.config.coverage && github.event_name != 'merge_group' }}
         with:
           use_oidc: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
@@ -164,7 +191,7 @@ jobs:
           npx hereby baseline-accept
           git add testdata/baselines/reference
           git diff --staged --exit-code
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         with:
           name: ${{ matrix.config.os }}-${{ (matrix.config.race && 'race') || 'norace' }}-new-baselines-artifact
@@ -172,7 +199,7 @@ jobs:
 
   lint:
     strategy:
-      fail-fast: false
+      fail-fast: ${{ github.event_name == 'merge_group' }}
       matrix:
         config:
           - os: ubuntu-latest
@@ -204,9 +231,8 @@ jobs:
           docker-images: false
           swap-storage: false
           dotnet: false
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
       - uses: ./.github/actions/setup-go
         with:
           lint-cache: 'true'
@@ -227,9 +253,8 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
       - uses: ./.github/actions/setup-go
 
       - run: npm ci
@@ -245,18 +270,19 @@ jobs:
           docker-images: false
           swap-storage: false
           dotnet: false
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: true
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: '>=22.16.0'
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
 
       - run: npm ci
 
       - run: npx hereby generate
+      - run: npx hereby generate:enums
+      - run: npm run -w @typescript/api generate:sync
 
       - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/fetchModel.mts
       - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/generate.mts
@@ -264,16 +290,14 @@ jobs:
       - name: Regenerate fourslash tests and update failing test list
         run: |
           set -x
-          echo "" > ./internal/fourslash/_scripts/failingTests.txt
           npm run convertfourslash >/dev/null 2>&1 || true
-          npx hereby test >/dev/null || true
-          npx hereby baseline-accept || true
           npm run updatefailing >/dev/null 2>&1 || true
-          npx hereby baseline-accept || true
           rm -rf testdata/baselines/reference/fourslash || true
           npx hereby test >/dev/null || true
           npx hereby baseline-accept || true
           npx hereby test || true
+          npx hereby baseline-accept || true
+          npx hereby test
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
@@ -281,7 +305,7 @@ jobs:
   tidy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup-go
 
       - run: go mod tidy -diff
@@ -290,11 +314,16 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          dotnet: false
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: true
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
       - uses: ./.github/actions/setup-go
 
       # Avoid duplicate PR annotations.
@@ -318,74 +347,17 @@ jobs:
   misc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup-go
 
       - run: go -C ./_tools run ./cmd/checkmodpaths $PWD
-
-  baselines:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
-        with:
-          large-packages: false
-          docker-images: false
-          swap-storage: false
-          dotnet: false
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-        with:
-          submodules: true
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
-      - uses: ./.github/actions/setup-go
-
-      - run: npm ci
-
-      - name: Remove all baselines
-        run: rm -rf testdata/baselines/reference
-
-      - name: Run tests
-        run: npx hereby test &> /dev/null || exit 0
-
-      - name: Accept baselines
-        run: |
-          npx hereby baseline-accept
-          git add testdata/baselines/reference
-
-      - name: Run tests
-        run: npx hereby test
-
-      - name: Check baselines
-        id: check-baselines
-        run: |
-          function print_diff() {
-            if ! git diff --staged --exit-code --quiet --diff-filter=$1; then
-              echo "$2:"
-              git diff --staged --name-only --diff-filter=$1
-            fi
-          }
-
-          if ! git diff --staged --exit-code --quiet; then
-            print_diff ACR "Missing baselines"
-            print_diff MTUXB "Modified baselines"
-            print_diff D "Unused baselines"
-            git diff --staged > fix_baselines.patch
-            exit 1
-          fi
-
-      - name: Upload baseline diff artifact
-        if: ${{ failure() && steps.check-baselines.conclusion == 'failure' }}
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
-        with:
-          name: fix_baselines.patch
-          path: fix_baselines.patch
 
   required:
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:
-      - baselines
       - build
+      - release-build
       - extension
       - format
       - generate

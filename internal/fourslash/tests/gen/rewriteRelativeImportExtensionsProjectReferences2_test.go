@@ -8,12 +8,13 @@ import (
 )
 
 func TestRewriteRelativeImportExtensionsProjectReferences2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: src/tsconfig-base.json
 {
     "compilerOptions": {
+        "lib": ["es5"],
         "module": "nodenext",
         "composite": true,
         "rootDir": ".",
@@ -24,14 +25,14 @@ func TestRewriteRelativeImportExtensionsProjectReferences2(t *testing.T) {
 // @Filename: src/compiler/tsconfig.json
 {
     "extends": "../tsconfig-base.json",
-    "compilerOptions": {}
+    "compilerOptions": { "lib": ["es5"] }
 }
 // @Filename: src/compiler/parser.ts
 export {};
 // @Filename: src/services/tsconfig.json
 {
     "extends": "../tsconfig-base.json",
-    "compilerOptions": {},
+    "compilerOptions": { "lib": ["es5"] },
     "references": [
         { "path": "../compiler" }
     ]

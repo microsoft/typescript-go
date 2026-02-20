@@ -10,8 +10,8 @@ import (
 )
 
 func TestJsFileImportNoTypes2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /default.ts
@@ -44,36 +44,36 @@ import /**/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "TestClassBaseline",
-					InsertText: PtrTo("import { TestClassBaseline } from \"./baseline\";"),
+					InsertText: new("import { TestClassBaseline } from \"./baseline\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./baseline",
 						},
 					},
 				},
 				&lsproto.CompletionItem{
 					Label:      "TestClassExportList",
-					InsertText: PtrTo("import { TestClassExportList } from \"./exportList\";"),
+					InsertText: new("import { TestClassExportList } from \"./exportList\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./exportList",
 						},
 					},
 				},
 				&lsproto.CompletionItem{
 					Label:      "TestClassReExport",
-					InsertText: PtrTo("import { TestClassReExport } from \"./reExport\";"),
+					InsertText: new("import { TestClassReExport } from \"./reExport\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./reExport",
 						},
 					},
 				},
 				&lsproto.CompletionItem{
 					Label:      "TestDefaultClass",
-					InsertText: PtrTo("import TestDefaultClass from \"./default\";"),
+					InsertText: new("import TestDefaultClass from \"./default\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./default",
 						},
 					},

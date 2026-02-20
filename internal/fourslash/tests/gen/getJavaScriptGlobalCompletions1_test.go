@@ -11,8 +11,8 @@ import (
 )
 
 func TestGetJavaScriptGlobalCompletions1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.js
@@ -37,7 +37,7 @@ hello/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "helloWorld",
-					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
 				},
 			},
 		},

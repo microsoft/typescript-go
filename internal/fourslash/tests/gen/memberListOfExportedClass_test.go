@@ -10,10 +10,10 @@ import (
 )
 
 func TestMemberListOfExportedClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module M {
+	const content = `namespace M {
   export class C { public pub = 0; private priv = 1; }
   export var V = 0;
 }
@@ -34,7 +34,7 @@ c./**/ // test on c.`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "pub",
-					Detail: PtrTo("(property) M.C.pub: number"),
+					Detail: new("(property) M.C.pub: number"),
 				},
 			},
 		},

@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsDefaultExport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export default function f() {}
@@ -30,7 +30,7 @@ a./**/;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "default",
-					Detail: PtrTo("function f(): void"),
+					Detail: new("function f(): void"),
 				},
 			},
 		},

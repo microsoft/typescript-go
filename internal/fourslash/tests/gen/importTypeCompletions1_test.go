@@ -10,8 +10,8 @@ import (
 )
 
 func TestImportTypeCompletions1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @target: esnext
 // @filename: /foo.ts
@@ -31,9 +31,9 @@ export interface Foo {}
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "Foo",
-					InsertText: PtrTo("import type { Foo } from \"./foo\";"),
+					InsertText: new("import type { Foo } from \"./foo\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./foo",
 						},
 					},

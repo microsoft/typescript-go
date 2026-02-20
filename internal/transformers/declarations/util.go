@@ -14,7 +14,7 @@ func canHaveLiteralInitializer(host DeclarationEmitHost, node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindPropertyDeclaration,
 		ast.KindPropertySignature:
-		return host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) != 0
+		return host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) == 0
 	case ast.KindParameter,
 		ast.KindVariableDeclaration:
 		return true
@@ -58,6 +58,7 @@ func hasInferredType(node *ast.Node) bool {
 		ast.KindPropertyAccessExpression,
 		ast.KindElementAccessExpression,
 		ast.KindBinaryExpression,
+		ast.KindCallExpression,
 		ast.KindVariableDeclaration,
 		ast.KindExportAssignment,
 		ast.KindJSExportAssignment,
@@ -190,17 +191,15 @@ func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParame
 	return node.AsNode().Parent.Kind == ast.KindMethodDeclaration && host.GetEffectiveDeclarationFlags(node.AsNode().Parent, ast.ModifierFlagsPrivate) != 0
 }
 
-// If the ExpandoFunctionDeclaration have multiple overloads, then we only need to emit properties for the last one.
+// Returns true if expando properties should be emitted for this function.
+// Properties are emitted if any overload in the symbol has a body (implementation).
 func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
-	if input.Body != nil { // if it has an implementation, it must be the last one
+	if input.Body != nil {
 		return true
 	}
-
-	overloadSignatures := core.Filter(input.Symbol.Declarations, func(decl *ast.Node) bool {
-		return ast.IsFunctionDeclaration(decl)
+	return !core.Every(input.Symbol.Declarations, func(decl *ast.Node) bool {
+		return !ast.IsFunctionDeclaration(decl) || decl.AsFunctionDeclaration().Body == nil
 	})
-
-	return len(overloadSignatures) == 0 || overloadSignatures[len(overloadSignatures)-1] == input.AsNode()
 }
 
 func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {

@@ -10,8 +10,8 @@ import (
 )
 
 func TestExportDefaultClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export default class C {
     method() { /*1*/ }
@@ -29,8 +29,8 @@ func TestExportDefaultClass(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "C",
-					Detail: PtrTo("class C"),
-					Kind:   PtrTo(lsproto.CompletionItemKindClass),
+					Detail: new("class C"),
+					Kind:   new(lsproto.CompletionItemKindClass),
 				},
 			},
 		},

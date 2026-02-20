@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionEntryForUnionProperty(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface One {
     commonProperty: number;
@@ -38,11 +38,11 @@ x./**/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "commonFunction",
-					Detail: PtrTo("(method) commonFunction(): number"),
+					Detail: new("(method) commonFunction(): number"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "commonProperty",
-					Detail: PtrTo("(property) commonProperty: string | number"),
+					Detail: new("(property) commonProperty: string | number"),
 				},
 			},
 		},

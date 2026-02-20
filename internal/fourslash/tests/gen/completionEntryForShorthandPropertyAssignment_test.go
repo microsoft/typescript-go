@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionEntryForShorthandPropertyAssignment(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var person: {name:string; id:number} = {n/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
@@ -26,7 +26,7 @@ func TestCompletionEntryForShorthandPropertyAssignment(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "name",
-					Kind:  PtrTo(lsproto.CompletionItemKindField),
+					Kind:  new(lsproto.CompletionItemKindField),
 				},
 			},
 		},

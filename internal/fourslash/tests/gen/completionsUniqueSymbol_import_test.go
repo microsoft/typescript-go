@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsUniqueSymbol_import(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /globals.d.ts
@@ -43,13 +43,13 @@ i[|./**/|];`
 				"n",
 				&lsproto.CompletionItem{
 					Label:      "publicSym",
-					InsertText: PtrTo("[publicSym]"),
+					InsertText: new("[publicSym]"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},
-					SortText:            PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText:            new(string(ls.SortTextGlobalsOrKeywords)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
@@ -61,11 +61,11 @@ i[|./**/|];`
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "publicSym",
 		Source:      "./a",
 		Description: "Update import from \"./a\"",
-		NewFileContent: PtrTo(`import { i, publicSym } from "./a";
+		NewFileContent: new(`import { i, publicSym } from "./a";
 i.;`),
 	})
 }

@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionOfAwaitPromise2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo { foo: string }
 async function foo(x: Promise<Foo>) {
@@ -30,7 +30,7 @@ async function foo(x: Promise<Foo>) {
 				"then",
 				&lsproto.CompletionItem{
 					Label:      "foo",
-					InsertText: PtrTo("(await x).foo"),
+					InsertText: new("(await x).foo"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "foo",

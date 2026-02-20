@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_named_exportEqualsNamespace_merged(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /b.d.ts
@@ -39,14 +39,14 @@ fo/**/`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "n",
 						},
 					},
-					Detail:              PtrTo("const N.foo: number"),
-					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
+					Detail:              new("const N.foo: number"),
+					Kind:                new(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

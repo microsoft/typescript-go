@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListForExportEquals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/foo/index.d.ts
 export = Foo;
@@ -38,7 +38,7 @@ import { /**/ } from "foo";`
 				"Static",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

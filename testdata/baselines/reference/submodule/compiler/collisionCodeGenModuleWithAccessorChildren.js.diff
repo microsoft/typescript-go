@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithAccessorChildren.js
 +++ new.collisionCodeGenModuleWithAccessorChildren.js
-@@= skipped -51, +51 lines =@@
+@@= skipped -52, +52 lines =@@
  (function (M_1) {
      M_1.x = 3;
      class c {
@@ -15,34 +15,12 @@
 +        y;
          set Z(p) {
              var M = 10;
--            this.y = M_2.x;
-+            this.y = x;
-         }
-     }
+             this.y = M_2.x;
+@@= skipped -8, +9 lines =@@
  })(M || (M = {}));
  (function (M) {
      class e {
 +        y;
          set M(p) {
--            this.y = M.x;
-+            this.y = x;
+             this.y = M.x;
          }
-     }
- })(M || (M = {}));
-@@= skipped -17, +19 lines =@@
-     class f {
-         get Z() {
-             var M = 10;
--            return M_3.x;
-+            return x;
-         }
-     }
- })(M || (M = {}));
- (function (M) {
-     class e {
-         get M() {
--            return M.x;
-+            return x;
-         }
-     }
- })(M || (M = {}));

@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInvalidMemberNames(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = {
     "foo ": "space in the name",
@@ -121,7 +121,7 @@ x["[|/*b*/|]"];`
 			Unsorted: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "foo ",
-					InsertText: PtrTo("[\"foo \"]"),
+					InsertText: new("[\"foo \"]"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "foo ",
@@ -134,7 +134,7 @@ x["[|/*b*/|]"];`
 				"any",
 				&lsproto.CompletionItem{
 					Label:      "#",
-					InsertText: PtrTo("[\"#\"]"),
+					InsertText: new("[\"#\"]"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "#",
@@ -146,7 +146,7 @@ x["[|/*b*/|]"];`
 				"b",
 				&lsproto.CompletionItem{
 					Label:      "1b",
-					InsertText: PtrTo("[\"1b\"]"),
+					InsertText: new("[\"1b\"]"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "1b",

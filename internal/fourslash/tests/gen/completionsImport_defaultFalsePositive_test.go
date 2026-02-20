@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_defaultFalsePositive(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/foo/index.ts
 export default function f(): void;
@@ -35,23 +35,23 @@ conca/**/`
 				&lsproto.CompletionItem{
 					Label: "concat",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "bar/concat",
 						},
 					},
-					Detail:              PtrTo("const concat: 0"),
-					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
+					Detail:              new("const concat: 0"),
+					Kind:                new(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "concat",
 		Source:      "bar/concat",
 		Description: "Add import from \"bar/concat\"",
-		NewFileContent: PtrTo(`import { concat } from "bar/concat";
+		NewFileContent: new(`import { concat } from "bar/concat";
 
 export {};
 conca`),

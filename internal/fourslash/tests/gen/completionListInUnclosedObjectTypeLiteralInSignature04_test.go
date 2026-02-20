@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListInUnclosedObjectTypeLiteralInSignature04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I<TString, TNumber> {
     [s: string]: TString;
@@ -32,7 +32,7 @@ declare function foo<TString, TNumber>(obj: I<TString, TNumber>): { /*1*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "readonly",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

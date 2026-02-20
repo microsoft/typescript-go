@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsClassMemberImportTypeNodeParameter4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @FileName: /other/cls.d.ts
@@ -38,8 +38,8 @@ export declare class Derived extends Cls {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:               "method",
-					InsertText:          PtrTo("method(param: import(\"./doesntexist.js\").Foo);"),
-					FilterText:          PtrTo("method"),
+					InsertText:          new("method(param: import(\"./doesntexist.js\").Foo);"),
+					FilterText:          new("method"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 			},

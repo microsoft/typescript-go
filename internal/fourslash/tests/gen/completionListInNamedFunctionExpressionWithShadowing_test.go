@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInNamedFunctionExpressionWithShadowing(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo() {}
 /*0*/
@@ -33,8 +33,8 @@ var y = function () {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "foo",
-					Detail: PtrTo("function foo(): void"),
-					Kind:   PtrTo(lsproto.CompletionItemKindFunction),
+					Detail: new("function foo(): void"),
+					Kind:   new(lsproto.CompletionItemKindFunction),
 				},
 			},
 		},
@@ -49,8 +49,8 @@ var y = function () {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "foo",
-					Detail: PtrTo("(local function) foo(): void"),
-					Kind:   PtrTo(lsproto.CompletionItemKindFunction),
+					Detail: new("(local function) foo(): void"),
+					Kind:   new(lsproto.CompletionItemKindFunction),
 				},
 			},
 		},

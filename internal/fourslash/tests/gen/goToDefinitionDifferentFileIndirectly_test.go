@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionDifferentFileIndirectly(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: Remote2.ts
 var /*remoteVariableDefinition*/rem2Var;
@@ -22,7 +22,7 @@ var remVar;
 function remFn() { }
 class remCls { }
 interface remInt{}
-module remMod { export var foo; }
+namespace remMod { export var foo; }
 // @Filename: Definition.ts
 /*remoteVariableReference*/rem2Var = 1;
 /*remoteFunctionReference*/rem2Fn();

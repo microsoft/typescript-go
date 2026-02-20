@@ -10,8 +10,8 @@ import (
 )
 
 func TestAugmentedTypesClass3Fourslash(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class c/*1*/5b { public foo() { } }
 namespace c/*2*/5b { export var y = 2; } // should be ok
@@ -30,7 +30,7 @@ namespace c/*2*/5b { export var y = 2; } // should be ok
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "c5b",
-					Detail: PtrTo("class c5b\nnamespace c5b"),
+					Detail: new("class c5b\nnamespace c5b"),
 				},
 			},
 		},

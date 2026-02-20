@@ -8,10 +8,11 @@ import (
 )
 
 func TestFindAllReferencesDynamicImport1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: foo.ts
+	const content = `// @lib: es5
+// @Filename: foo.ts
 export function foo() { return "foo"; }
 /*1*/import("/*2*/./foo")
 /*3*/var x = import("/*4*/./foo")`

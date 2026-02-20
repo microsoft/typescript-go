@@ -11,8 +11,8 @@ import (
 )
 
 func TestCodeCompletionEscaping(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.js
 // @allowJs: true
@@ -29,13 +29,13 @@ ___foo; __foo;/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "__foo",
-					Kind:     PtrTo(lsproto.CompletionItemKindText),
-					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
+					Kind:     new(lsproto.CompletionItemKindText),
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "___foo",
-					Kind:     PtrTo(lsproto.CompletionItemKindText),
-					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
+					Kind:     new(lsproto.CompletionItemKindText),
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
 				},
 			},
 		},

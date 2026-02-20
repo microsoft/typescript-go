@@ -1,11 +1,11 @@
 //// [tests/cases/conformance/es6/shorthandPropertyAssignment/objectLiteralShorthandPropertiesWithModuleES6.ts] ////
 
 //// [objectLiteralShorthandPropertiesWithModuleES6.ts]
-module m {
+namespace m {
     export var x;
 }
 
-module m {
+namespace m {
     var z = x;
     var y = {
         a: x,
@@ -15,13 +15,14 @@ module m {
 
 
 //// [objectLiteralShorthandPropertiesWithModuleES6.js]
+"use strict";
 var m;
 (function (m) {
 })(m || (m = {}));
 (function (m) {
-    var z = x;
+    var z = m.x;
     var y = {
-        a: x,
-        x
+        a: m.x,
+        x: m.x
     };
 })(m || (m = {}));

@@ -11,12 +11,12 @@ import (
 )
 
 func TestJsxAriaLikeCompletions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 declare var React: any;
-declare module JSX {
+declare namespace JSX {
     interface Element { }
     interface IntrinsicElements {
         div: { "aria-whatever"?: string  }
@@ -36,9 +36,9 @@ const a = <div {...{}} /*1*/></div>;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "aria-whatever?",
-					InsertText: PtrTo("aria-whatever"),
-					FilterText: PtrTo("aria-whatever"),
-					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText: new("aria-whatever"),
+					FilterText: new("aria-whatever"),
+					SortText:   new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},

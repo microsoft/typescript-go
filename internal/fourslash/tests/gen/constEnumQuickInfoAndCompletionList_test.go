@@ -10,8 +10,8 @@ import (
 )
 
 func TestConstEnumQuickInfoAndCompletionList(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const enum /*1*/e {
     a,
@@ -31,7 +31,7 @@ func TestConstEnumQuickInfoAndCompletionList(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "e",
-					Detail: PtrTo("const enum e"),
+					Detail: new("const enum e"),
 				},
 			},
 		},

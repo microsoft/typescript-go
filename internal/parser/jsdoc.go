@@ -10,6 +10,32 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
+func init() {
+	ast.SetParseJSDocForNode(parseJSDocForNode)
+}
+
+// parseJSDocForNode lazily parses JSDoc for a node in a TS file.
+// Called on first access to Node.JSDoc() for non-JS source files.
+func parseJSDocForNode(sourceFile *ast.SourceFile, node *ast.Node) []*ast.Node {
+	p := getParser()
+	defer putParser(p)
+	p.initializeState(sourceFile.ParseOptions(), sourceFile.Text(), sourceFile.ScriptKind)
+	ranges := GetJSDocCommentRanges(&p.factory, nil, node, sourceFile.Text())
+	if len(ranges) == 0 {
+		return nil
+	}
+	jsdoc := make([]*ast.Node, 0, len(ranges))
+	pos := node.Pos()
+	for _, comment := range ranges {
+		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End(), pos); parsed != nil {
+			parsed.Parent = node
+			jsdoc = append(jsdoc, parsed)
+			pos = parsed.End()
+		}
+	}
+	return jsdoc
+}
+
 type jsdocState int32
 
 const (
@@ -27,20 +53,31 @@ const (
 	propertyLikeParseCallbackParameter
 )
 
-func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
-	if !hasJSDoc {
+func (p *Parser) withJSDoc(node *ast.Node, info jsdocScannerInfo) []*ast.Node {
+	if info&jsdocScannerInfoHasJSDoc == 0 {
 		return nil
 	}
 
-	if p.jsdocCache == nil {
-		p.jsdocCache = make(map[*ast.Node][]*ast.Node, strings.Count(p.sourceText, "/**"))
-	} else if _, ok := p.jsdocCache[node]; ok {
-		panic("tried to set JSDoc on a node with existing JSDoc")
+	// For TS/TSX files, defer JSDoc parsing to first access, unless the comment
+	// contains @see/@link (needed for unused-identifier checks).
+	// @deprecated is detected via cheap text scan to set PossiblyContainsDeprecatedTag;
+	// callers must confirm via JSDoc lookup.
+	if !p.isJavaScript() {
+		node.Flags |= ast.NodeFlagsHasJSDoc
+		if info&jsdocScannerInfoHasDeprecated != 0 {
+			node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
+		}
+		if info&jsdocScannerInfoHasSeeOrLink == 0 {
+			return nil
+		}
+		// Fall through to eager parse for @see/@link
 	}
-	// Should only be called once per node
-	p.hasDeprecatedTag = false
+
 	ranges := GetJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
 	p.jsdocCommentRangesSpace = ranges[:0]
+
+	// Should only be called once per node
+	p.hasDeprecatedTag = false
 	jsdoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
 	pos := node.Pos()
 	for _, comment := range ranges {
@@ -56,12 +93,12 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 		}
 		if p.hasDeprecatedTag {
 			p.hasDeprecatedTag = false
-			node.Flags |= ast.NodeFlagsDeprecated
+			node.Flags |= ast.NodeFlagsPossiblyContainsDeprecatedTag
 		}
-		if p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX {
+		if p.isJavaScript() {
 			p.reparseTags(node, jsdoc)
 		}
-		p.jsdocCache[node] = jsdoc
+		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: node, jsDocs: jsdoc})
 		return jsdoc
 	}
 	return nil
@@ -89,17 +126,12 @@ func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 func (p *Parser) parseJSDocNameReference() *ast.Node {
 	pos := p.nodePos()
 	hasBrace := p.parseOptional(ast.KindOpenBraceToken)
-	p2 := p.nodePos()
-	entityName := p.parseEntityName(false, nil)
-	for p.token == ast.KindPrivateIdentifier {
-		p.scanner.ReScanHashToken() // rescan #id as # id
-		p.nextTokenJSDoc()          // then skip the #
-		entityName = p.finishNode(p.factory.NewQualifiedName(entityName, p.parseIdentifier()), p2)
-	}
+	entityName := p.parseJSDocLinkName()
 	if hasBrace {
 		p.parseExpectedJSDoc(ast.KindCloseBraceToken)
 	}
-
+	p.scanner.ResetPos(p.scanner.TokenFullStart())
+	p.nextTokenJSDoc()
 	return p.finishNode(p.factory.NewJSDocNameReference(entityName), pos)
 }
 
@@ -133,7 +165,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	// +3 for leading `/**`
 	p.scanner.ResetPos(start + 3)
 	p.setContextFlags(ast.NodeFlagsJSDoc, true)
-	p.parsingContexts = p.parsingContexts | ParsingContexts(PCJSDocComment)
+	p.parsingContexts |= 1 << PCJSDocComment
 
 	comment := p.parseJSDocCommentWorker(start, end, fullStart, initialIndent)
 	// move jsdoc diagnostics to jsdocDiagnostics -- for JS files only
@@ -303,7 +335,7 @@ loop:
 
 func removeLeadingNewlines(comments []string) []string {
 	i := 0
-	for i < len(comments) && (comments[i] == "\n" || comments[i] == "\r") {
+	for i < len(comments) && strings.TrimLeft(comments[i], "\r\n") == "" {
 		i++
 	}
 	return comments[i:]
@@ -627,7 +659,6 @@ func (p *Parser) parseJSDocLink(start int) *ast.Node {
 func (p *Parser) parseJSDocLinkName() *ast.Node {
 	if tokenIsIdentifierOrKeyword(p.token) {
 		pos := p.nodePos()
-
 		name := p.parseIdentifierName()
 		for p.parseOptional(ast.KindDotToken) {
 			var right *ast.IdentifierNode
@@ -638,7 +669,6 @@ func (p *Parser) parseJSDocLinkName() *ast.Node {
 			}
 			name = p.finishNode(p.factory.NewQualifiedName(name, right), pos)
 		}
-
 		for p.token == ast.KindPrivateIdentifier {
 			p.scanner.ReScanHashToken()
 			p.nextTokenJSDoc()
@@ -794,11 +824,10 @@ func (p *Parser) parseTypeTag(previousTags []*ast.Node, start int, tagName *ast.
 }
 
 func (p *Parser) parseSeeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	isMarkdownOrJSDocLink := p.token == ast.KindOpenBracketToken || p.lookAhead(func(p *Parser) bool {
-		return p.nextTokenJSDoc() == ast.KindAtToken && tokenIsIdentifierOrKeyword(p.nextTokenJSDoc()) && isJSDocLinkTag(p.scanner.TokenValue())
-	})
+	hasNameReference := p.isIdentifier() && !strings.HasPrefix(p.sourceText[p.scanner.TokenEnd():], "://") ||
+		p.token == ast.KindOpenBraceToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
 	var nameExpression *ast.Node
-	if !isMarkdownOrJSDocLink {
+	if hasNameReference {
 		nameExpression = p.parseJSDocNameReference()
 	}
 	comments := p.parseTrailingTagComments(start, p.nodePos(), indent, indentText)

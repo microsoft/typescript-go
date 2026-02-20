@@ -12,9 +12,8 @@ class A {
 
 
 //// [privateNamesAndDecorators.js]
+"use strict";
 class A {
-    @dec // Error
     #foo = 1;
-    @dec // Error
     #bar() { }
 }

@@ -11,10 +11,11 @@ import (
 )
 
 func TestJsdocTypedefTagNamespace(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @allowNonTsExtensions: true
+	const content = `// @lib: es5
+// @allowNonTsExtensions: true
 // @Filename: jsdocCompletion_typedef.js
 /**
  * @typedef {string | number} T.NumberLike
@@ -53,7 +54,7 @@ var x1; x1./*3*/;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "age",
-					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
 				},
 			},
 		},

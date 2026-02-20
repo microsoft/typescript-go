@@ -5,7 +5,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -46,13 +45,13 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	if len(documentHighlights) == 0 {
 		documentHighlights = l.getSyntacticDocumentHighlights(node, sourceFile)
 	}
-	// if nil is passed here we never generate an error, just pass an empty higlight
+	// if nil is passed here we never generate an error, just pass an empty highlight
 	return lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}, nil
 }
 
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
 	options := refOptions{use: referenceUseNone}
-	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options, &collections.Set[string]{})
+	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options)
 	if referenceEntries == nil {
 		return nil
 	}
@@ -236,10 +235,22 @@ func (l *LanguageService) getIfElseOccurrences(ifStatement *ast.IfStatement, sou
 }
 
 func getIfElseKeywords(ifStatement *ast.IfStatement, sourceFile *ast.SourceFile) []*ast.Node {
+	// We may be at an if statement like those in the range below:
+	//
+	//   ```
+	//   if (...) {
+	//   } else [|if (...) {}|]
+	//   ````
+	//
 	// Traverse upwards through all parent if-statements linked by their else-branches.
-	// Is this cast error safe or should i be checking if elseStatement exists first?
-	for ast.IsIfStatement(ifStatement.Parent) && ifStatement.Parent.AsIfStatement().ElseStatement.AsIfStatement() == ifStatement {
-		ifStatement = ifStatement.Parent.AsIfStatement()
+	for ast.IsIfStatement(ifStatement.Parent) {
+		// See if the parent's `else` is actually the current `if` statement.
+		parentingIf := ifStatement.Parent.AsIfStatement()
+		elseStatement := parentingIf.ElseStatement
+		if elseStatement != ifStatement.AsNode() {
+			break
+		}
+		ifStatement = parentingIf
 	}
 
 	var keywords []*ast.Node
@@ -400,20 +411,18 @@ func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) [
 
 	var keywords []*ast.Node
 	token := lsutil.GetFirstToken(node, sourceFile)
-	if token.Kind == ast.KindTryKeyword {
+	if token != nil && token.Kind == ast.KindTryKeyword {
 		keywords = append(keywords, token)
 	}
 
 	if tryStatement.CatchClause != nil {
-		catchToken := lsutil.GetFirstToken(tryStatement.CatchClause.AsNode(), sourceFile)
-		if catchToken.Kind == ast.KindCatchKeyword {
+		if catchToken := astnav.FindChildOfKind(node, ast.KindCatchKeyword, sourceFile); catchToken != nil {
 			keywords = append(keywords, catchToken)
 		}
 	}
 
 	if tryStatement.FinallyBlock != nil {
-		finallyKeyword := astnav.FindChildOfKind(node, ast.KindFinallyKeyword, sourceFile)
-		if finallyKeyword.Kind == ast.KindFinallyKeyword {
+		if finallyKeyword := astnav.FindChildOfKind(node, ast.KindFinallyKeyword, sourceFile); finallyKeyword != nil {
 			keywords = append(keywords, finallyKeyword)
 		}
 	}
@@ -578,7 +587,7 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 }
 
 func getYieldOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	parentFunc := ast.FindAncestor(node.Parent, ast.IsFunctionLike).AsFunctionDeclaration()
+	parentFunc := ast.FindAncestor(node.Parent, ast.IsFunctionLike)
 	if parentFunc == nil {
 		return nil
 	}

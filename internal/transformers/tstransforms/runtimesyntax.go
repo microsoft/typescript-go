@@ -1,7 +1,5 @@
 package tstransforms
 
-// !!! Unqualified enum member references across merged enum declarations are not currently supported (e.g `enum E {A}; enum E {B=A}`)
-// !!! Unqualified namespace member references across merged namespace declarations are not currently supported (e.g `namespace N { export var x = 1; }; namespace N { x; }`).
 // !!! SourceMaps and Comments need to be validated
 
 import (
@@ -190,10 +188,10 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 		return tx.Visitor().VisitNode(n.Expression)
 	case ast.KindIdentifier:
 		return tx.Factory().NewStringLiteralFromNode(name)
-	case ast.KindStringLiteral:
-		return tx.Factory().NewStringLiteral(name.Text())
+	case ast.KindStringLiteral: // !!! propagate token flags (will produce new diffs)
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	case ast.KindNumericLiteral:
-		return tx.Factory().NewNumericLiteral(name.Text())
+		return tx.Factory().NewNumericLiteral(name.Text(), ast.TokenFlagsNone)
 	default:
 		return name
 	}
@@ -530,7 +528,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		ifStatement := tx.Factory().NewIfStatement(
 			tx.Factory().NewStrictInequalityExpression(
 				tx.Factory().NewTypeOfExpression(tx.getEnumQualifiedReference(enum, member)),
-				tx.Factory().NewStringLiteral("string"),
+				tx.Factory().NewStringLiteral("string", ast.TokenFlagsNone),
 			),
 			tx.Factory().NewExpressionStatement(
 				tx.Factory().NewAssignmentExpression(
@@ -1048,7 +1046,7 @@ func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.Identifi
 			tx.resolver = binder.NewReferenceResolver(tx.compilerOptions, binder.ReferenceResolverHooks{})
 		}
 		container := tx.resolver.GetReferencedExportContainer(location, false /*prefixLocals*/)
-		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) && container.Contains(location) {
+		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) {
 			containerName := tx.getNamespaceContainerName(container)
 
 			memberName := node.Clone(tx.Factory())

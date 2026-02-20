@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsInJsxTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @Filename: /a.tsx
@@ -44,25 +44,25 @@ class Foo {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "aria-label",
-					Detail: PtrTo("(property) \"aria-label\": string"),
+					Detail: new("(property) \"aria-label\": string"),
 					Documentation: &lsproto.StringOrMarkupContent{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Label docs",
 						},
 					},
-					Kind: PtrTo(lsproto.CompletionItemKindField),
+					Kind: new(lsproto.CompletionItemKindField),
 				},
 				&lsproto.CompletionItem{
 					Label:  "foo",
-					Detail: PtrTo("(property) foo: string"),
+					Detail: new("(property) foo: string"),
 					Documentation: &lsproto.StringOrMarkupContent{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Doc",
 						},
 					},
-					Kind: PtrTo(lsproto.CompletionItemKindField),
+					Kind: new(lsproto.CompletionItemKindField),
 				},
 			},
 		},

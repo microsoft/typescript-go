@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_default_fromMergedDeclarations(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a.ts
@@ -38,23 +38,23 @@ declare module "m" {
 				&lsproto.CompletionItem{
 					Label: "M",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "m",
 						},
 					},
-					Detail:              PtrTo("class M"),
-					Kind:                PtrTo(lsproto.CompletionItemKindClass),
+					Detail:              new("class M"),
+					Kind:                new(lsproto.CompletionItemKindClass),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "M",
 		Source:      "m",
 		Description: "Add import from \"m\"",
-		NewFileContent: PtrTo(`import M from "m";
+		NewFileContent: new(`import M from "m";
 
 `),
 	})

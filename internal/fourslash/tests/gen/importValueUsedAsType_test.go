@@ -8,11 +8,11 @@ import (
 )
 
 func TestImportValueUsedAsType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**/
-module A {
+namespace A {
     export var X;
     import Z = A.X;
     var v: Z;

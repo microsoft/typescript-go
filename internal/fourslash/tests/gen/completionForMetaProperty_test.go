@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionForMetaProperty(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import./*1*/;
 new./*2*/;
@@ -28,7 +28,7 @@ function test() { new./*3*/ }`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "meta",
-					Detail: PtrTo("(property) ImportMetaExpression.meta: ImportMeta"),
+					Detail: new("(property) ImportMetaExpression.meta: ImportMeta"),
 				},
 			},
 		},
@@ -53,7 +53,7 @@ function test() { new./*3*/ }`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "target",
-					Detail: PtrTo("(property) NewTargetExpression.target: () => void"),
+					Detail: new("(property) NewTargetExpression.target: () => void"),
 				},
 			},
 		},

@@ -11,11 +11,11 @@ import (
 )
 
 func TestAutoImportProvider6(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
-{ "compilerOptions": { "module": "commonjs", "lib": ["es2019"] } }
+{ "compilerOptions": { "module": "commonjs", "lib": ["es2019"], "types": ["*"] } }
 // @Filename: /home/src/workspaces/project/package.json
 { "dependencies": { "antd": "*", "react": "*" } }
 // @Filename: /home/src/workspaces/project/node_modules/@types/react/index.d.ts
@@ -40,11 +40,11 @@ Component/**/`
 					Label:               "Component",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "react",
 						},
 					},
-					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

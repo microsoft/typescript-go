@@ -3,7 +3,6 @@ package core
 import (
 	"reflect"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -25,7 +24,6 @@ type CompilerOptions struct {
 	AllowUnreachableCode                      Tristate                                  `json:"allowUnreachableCode,omitzero"`
 	AllowUnusedLabels                         Tristate                                  `json:"allowUnusedLabels,omitzero"`
 	AssumeChangesOnlyAffectDirectDependencies Tristate                                  `json:"assumeChangesOnlyAffectDirectDependencies,omitzero"`
-	AlwaysStrict                              Tristate                                  `json:"alwaysStrict,omitzero"`
 	CheckJs                                   Tristate                                  `json:"checkJs,omitzero"`
 	CustomConditions                          []string                                  `json:"customConditions,omitzero"`
 	Composite                                 Tristate                                  `json:"composite,omitzero"`
@@ -36,6 +34,7 @@ type CompilerOptions struct {
 	Declaration                               Tristate                                  `json:"declaration,omitzero"`
 	DeclarationDir                            string                                    `json:"declarationDir,omitzero"`
 	DeclarationMap                            Tristate                                  `json:"declarationMap,omitzero"`
+	DeduplicatePackages                       Tristate                                  `json:"deduplicatePackages,omitzero"`
 	DisableSizeLimit                          Tristate                                  `json:"disableSizeLimit,omitzero"`
 	DisableSourceOfProjectReferenceRedirect   Tristate                                  `json:"disableSourceOfProjectReferenceRedirect,omitzero"`
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
@@ -98,6 +97,7 @@ type CompilerOptions struct {
 	RootDir                                   string                                    `json:"rootDir,omitzero"`
 	RootDirs                                  []string                                  `json:"rootDirs,omitzero"`
 	SkipLibCheck                              Tristate                                  `json:"skipLibCheck,omitzero"`
+	StableTypeOrdering                        Tristate                                  `json:"stableTypeOrdering,omitzero"`
 	Strict                                    Tristate                                  `json:"strict,omitzero"`
 	StrictBindCallApply                       Tristate                                  `json:"strictBindCallApply,omitzero"`
 	StrictBuiltinIteratorReturn               Tristate                                  `json:"strictBuiltinIteratorReturn,omitzero"`
@@ -119,6 +119,8 @@ type CompilerOptions struct {
 	VerbatimModuleSyntax                      Tristate                                  `json:"verbatimModuleSyntax,omitzero"`
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
+	// Deprecated: Do not use outside of options parsing and validation.
+	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
@@ -150,9 +152,6 @@ type CompilerOptions struct {
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
 	Checkers       *int     `json:"checkers,omitzero"`
-
-	sourceFileAffectingCompilerOptionsOnce sync.Once
-	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
 }
 
 // noCopy may be embedded into structs which must not be copied
@@ -165,6 +164,8 @@ type noCopy struct{}
 // Lock is a no-op used by -copylocks checker from `go vet`.
 func (*noCopy) Lock()   {}
 func (*noCopy) Unlock() {}
+
+var EmptyCompilerOptions = &CompilerOptions{}
 
 var optionsType = reflect.TypeFor[CompilerOptions]()
 
@@ -189,28 +190,28 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
 		return options.Target
 	}
-	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNode18:
-		return ScriptTargetES2022
-	case ModuleKindNode20:
-		return ScriptTargetES2023
-	case ModuleKindNodeNext:
-		return ScriptTargetESNext
-	default:
-		return ScriptTargetES5
-	}
+	return ScriptTargetLatestStandard
 }
 
 func (options *CompilerOptions) GetEmitModuleKind() ModuleKind {
-	switch options.Module {
-	case ModuleKindNone, ModuleKindAMD, ModuleKindUMD, ModuleKindSystem:
-		if options.Target >= ScriptTargetES2015 {
-			return ModuleKindES2015
-		}
-		return ModuleKindCommonJS
-	default:
+	if options.Module != ModuleKindNone {
 		return options.Module
 	}
+
+	target := options.GetEmitScriptTarget()
+	if target == ScriptTargetESNext {
+		return ModuleKindESNext
+	}
+	if target >= ScriptTargetES2022 {
+		return ModuleKindES2022
+	}
+	if target >= ScriptTargetES2020 {
+		return ModuleKindES2020
+	}
+	if target >= ScriptTargetES2015 {
+		return ModuleKindES2015
+	}
+	return ModuleKindCommonJS
 }
 
 func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
@@ -272,7 +273,7 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 	}
 	switch options.GetEmitModuleKind() {
 	// TODO in 6.0: add Node16/Node18
-	case ModuleKindNode20, ModuleKindESNext:
+	case ModuleKindNode20, ModuleKindNodeNext:
 		return true
 	}
 	return options.GetModuleResolutionKind() == ModuleResolutionKindBundler
@@ -298,7 +299,7 @@ func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
 	if value != TSUnknown {
 		return value == TSTrue
 	}
-	return options.Strict == TSTrue
+	return options.Strict != TSFalse
 }
 
 func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
@@ -361,21 +362,6 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 		return options.PathsBasePath
 	}
 	return currentDirectory
-}
-
-// SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
-// affect the parse and bind of a source file.
-type SourceFileAffectingCompilerOptions struct {
-	BindInStrictMode bool
-}
-
-func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
-	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
-		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
-			BindInStrictMode: options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-		}
-	})
-	return options.sourceFileAffectingCompilerOptions
 }
 
 type ModuleDetectionKind int32
@@ -509,22 +495,24 @@ func (newLine NewLineKind) GetNewLineCharacter() string {
 type ScriptTarget int32
 
 const (
-	ScriptTargetNone   ScriptTarget = 0
-	ScriptTargetES3    ScriptTarget = 0 // Deprecated
-	ScriptTargetES5    ScriptTarget = 1
-	ScriptTargetES2015 ScriptTarget = 2
-	ScriptTargetES2016 ScriptTarget = 3
-	ScriptTargetES2017 ScriptTarget = 4
-	ScriptTargetES2018 ScriptTarget = 5
-	ScriptTargetES2019 ScriptTarget = 6
-	ScriptTargetES2020 ScriptTarget = 7
-	ScriptTargetES2021 ScriptTarget = 8
-	ScriptTargetES2022 ScriptTarget = 9
-	ScriptTargetES2023 ScriptTarget = 10
-	ScriptTargetES2024 ScriptTarget = 11
-	ScriptTargetESNext ScriptTarget = 99
-	ScriptTargetJSON   ScriptTarget = 100
-	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
+	ScriptTargetNone ScriptTarget = 0
+	// Deprecated: Do not use outside of options parsing and validation.
+	ScriptTargetES5            ScriptTarget = 1
+	ScriptTargetES2015         ScriptTarget = 2
+	ScriptTargetES2016         ScriptTarget = 3
+	ScriptTargetES2017         ScriptTarget = 4
+	ScriptTargetES2018         ScriptTarget = 5
+	ScriptTargetES2019         ScriptTarget = 6
+	ScriptTargetES2020         ScriptTarget = 7
+	ScriptTargetES2021         ScriptTarget = 8
+	ScriptTargetES2022         ScriptTarget = 9
+	ScriptTargetES2023         ScriptTarget = 10
+	ScriptTargetES2024         ScriptTarget = 11
+	ScriptTargetES2025         ScriptTarget = 12
+	ScriptTargetESNext         ScriptTarget = 99
+	ScriptTargetJSON           ScriptTarget = 100
+	ScriptTargetLatest         ScriptTarget = ScriptTargetESNext
+	ScriptTargetLatestStandard ScriptTarget = ScriptTargetES2025
 )
 
 type JsxEmit int32

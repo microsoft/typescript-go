@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsClassMemberImportTypeNodeParameter3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @FileName: /other/foo.d.ts
@@ -40,8 +40,8 @@ export declare class Derived extends Cls {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:               "method",
-					InsertText:          PtrTo("method(param: import(\"./other/foo.js\").Bar): import(\"./other/foo.js\").Bar;"),
-					FilterText:          PtrTo("method"),
+					InsertText:          new("method(param: import(\"./other/foo.js\").Bar): import(\"./other/foo.js\").Bar;"),
+					FilterText:          new("method"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 			},

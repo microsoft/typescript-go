@@ -88,7 +88,7 @@
 ->exports.A : typeof A
 +>exports.A = A : { (): void; prototype: { m(n: number): number; }; }
 +>exports.A : { (): void; prototype: { m(n: number): number; }; }
- >exports : typeof import("mod")
+ >exports : typeof import("./mod")
 ->A : typeof A
 ->A : typeof A
 +>A : { (): void; prototype: { m(n: number): number; }; }
@@ -99,7 +99,7 @@
 ->exports.B : typeof B
 +>exports.B = B : { (): void; prototype: { m(n: number): number; }; }
 +>exports.B : { (): void; prototype: { m(n: number): number; }; }
- >exports : typeof import("mod")
+ >exports : typeof import("./mod")
 ->B : typeof B
 ->B : typeof B
 +>B : { (): void; prototype: { m(n: number): number; }; }

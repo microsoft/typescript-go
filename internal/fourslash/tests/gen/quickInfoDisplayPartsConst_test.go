@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsConst(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const /*1*/a = 10;
 function foo() {
@@ -18,7 +18,7 @@ function foo() {
         const /*4*/b1 = 10;
     }
 }
-module m {
+namespace m {
     const /*5*/c = 10;
     export const /*6*/d = 10;
     if (c) {

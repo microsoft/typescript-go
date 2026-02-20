@@ -10,8 +10,8 @@ import (
 )
 
 func TestLetQuickInfoAndCompletionList(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let /*1*/a = 10;
 /*2*/a = 30;
@@ -31,7 +31,7 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("let a: number"),
+					Detail: new("let a: number"),
 				},
 			},
 		},
@@ -46,11 +46,11 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("let a: number"),
+					Detail: new("let a: number"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: PtrTo("let b: number"),
+					Detail: new("let b: number"),
 				},
 			},
 		},
@@ -65,11 +65,11 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("let a: number"),
+					Detail: new("let a: number"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: PtrTo("let b: number"),
+					Detail: new("let b: number"),
 				},
 			},
 		},

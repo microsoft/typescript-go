@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListObjectMembersInTypeLocationWithTypeof(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 const languageService = { getCompletions() {} }
@@ -31,7 +31,7 @@ type B = Parameters<typeof obj./*2*/>`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "getCompletions",
-					Detail: PtrTo("(method) getCompletions(): void"),
+					Detail: new("(method) getCompletions(): void"),
 				},
 			},
 		},
@@ -46,7 +46,7 @@ type B = Parameters<typeof obj./*2*/>`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "dance",
-					Detail: PtrTo("(property) dance: () => {}"),
+					Detail: new("(property) dance: () => {}"),
 				},
 			},
 		},

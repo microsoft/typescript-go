@@ -5,13 +5,14 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionForStringLiteral_quotePreference8(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /a.ts
 export const a = null;
@@ -33,7 +34,7 @@ foo[|./**/|]`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "\"a name's all good but it's better with more\"",
-					InsertText: PtrTo("['\"a name\\'s all good but it\\'s better with more\"']"),
+					InsertText: new("['\"a name\\'s all good but it\\'s better with more\"']"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "\"a name's all good but it's better with more\"",
@@ -43,5 +44,6 @@ foo[|./**/|]`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{QuotePreference: lsutil.QuotePreference("auto")},
 	})
 }

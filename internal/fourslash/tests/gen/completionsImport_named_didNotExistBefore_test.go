@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_named_didNotExistBefore(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /a.ts
@@ -34,22 +34,22 @@ t/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:  "Test2",
-						Detail: PtrTo("(alias) function Test2(): void\nimport Test2"),
-						Kind:   PtrTo(lsproto.CompletionItemKindVariable),
+						Detail: new("(alias) function Test2(): void\nimport Test2"),
+						Kind:   new(lsproto.CompletionItemKindVariable),
 					},
 					&lsproto.CompletionItem{
 						Label: "Test1",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./a",
 							},
 						},
-						Detail:              PtrTo("function Test1(): void"),
-						Kind:                PtrTo(lsproto.CompletionItemKindFunction),
+						Detail:              new("function Test1(): void"),
+						Kind:                new(lsproto.CompletionItemKindFunction),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 						LabelDetails: &lsproto.CompletionItemLabelDetails{
-							Description: PtrTo("./a"),
+							Description: new("./a"),
 						},
 					},
 				}, true),

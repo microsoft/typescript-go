@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsPropertiesWithPromiseUnionType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 type MyType = {
@@ -35,7 +35,7 @@ fakeTest(() => {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo",
-					Kind:  PtrTo(lsproto.CompletionItemKindField),
+					Kind:  new(lsproto.CompletionItemKindField),
 				},
 			},
 		},

@@ -8,12 +8,12 @@ import (
 )
 
 func TestGoToTypeDefinitionImportMeta(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: esnext
+	const content = `// @lib: es5
+// @module: esnext
 // @Filename: foo.ts
-/// <reference no-default-lib="true"/>
 /// <reference path='./bar.d.ts' />
 import.me/*reference*/ta;
 //@Filename: bar.d.ts

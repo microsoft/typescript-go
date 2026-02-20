@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelpCommentsClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This is class c2 without constructor*/
 class c2 {
@@ -57,8 +57,8 @@ class a {
     }
 }
 new a(/*27*/"Hello");
-module m {
-    export module m2 {
+namespace m {
+    export namespace m2 {
         /** class comment */
         export class c1 {
             /** constructor comment*/

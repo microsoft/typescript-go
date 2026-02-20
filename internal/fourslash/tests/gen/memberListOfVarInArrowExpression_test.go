@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListOfVarInArrowExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IMap<T> {
     [key: string]: T;
@@ -38,7 +38,7 @@ function each<T>(items: T[], handler: (item: T) => void) { }`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a1",
-					Detail: PtrTo("(property) a1: string"),
+					Detail: new("(property) a1: string"),
 				},
 			},
 		},

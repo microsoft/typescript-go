@@ -9,10 +9,11 @@ import (
 )
 
 func TestCompletionsLiteralFromInferenceWithinInferredType1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /a.tsx
+	const content = `// @stableTypeOrdering: true
+// @Filename: /a.tsx
 declare function test<T>(a: {
   [K in keyof T]: {
     b?: keyof T;
@@ -55,8 +56,8 @@ test({
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
-				"\"foo\"",
 				"\"bar\"",
+				"\"foo\"",
 			},
 		},
 	})

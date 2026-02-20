@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestDeclareFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: index.ts
 declare function`
@@ -21,7 +20,7 @@ declare function`
 		{
 			Pattern:     "",
 			Preferences: nil,
-			Exact:       PtrTo([]*lsproto.SymbolInformation{}),
+			Exact:       new([]*lsproto.SymbolInformation{}),
 		},
 	})
 }

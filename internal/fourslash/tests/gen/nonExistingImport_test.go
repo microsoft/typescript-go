@@ -9,10 +9,11 @@ import (
 )
 
 func TestNonExistingImport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module m {
+	const content = `// @lib: es5
+namespace m {
     import foo = module(_foo);
     var n: num/*1*/
 }`

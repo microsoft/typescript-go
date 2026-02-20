@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"gotest.tools/v3/assert"
 )
@@ -16,14 +17,14 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format comment issue reproduction", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
 				ConvertTabsToSpaces:    true,
-				IndentStyle:            format.IndentStyleSmart,
+				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
@@ -67,14 +68,14 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format JSDoc with tab indentation", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
 				ConvertTabsToSpaces:    false, // Use tabs
-				IndentStyle:            format.IndentStyleSmart,
+				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
@@ -104,14 +105,14 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format comment inside multi-line argument list", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
 				ConvertTabsToSpaces:    false, // Use tabs
-				IndentStyle:            format.IndentStyleSmart,
+				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
@@ -137,14 +138,14 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format comment in chained method calls", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
 				ConvertTabsToSpaces:    false, // Use tabs
-				IndentStyle:            format.IndentStyleSmart,
+				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
@@ -171,14 +172,14 @@ func TestCommentFormatting(t *testing.T) {
 	// Regression test for issue #1928 - panic when formatting chained method call with comment
 	t.Run("format chained method call with comment (issue #1928)", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
 				ConvertTabsToSpaces:    false, // Use tabs
-				IndentStyle:            format.IndentStyleSmart,
+				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
@@ -201,6 +202,64 @@ func TestCommentFormatting(t *testing.T) {
 		assert.Check(t, strings.Contains(formatted, "\t// A second call") || strings.Contains(formatted, "   // A second call"), "comment should be indented")
 		assert.Check(t, !strings.Contains(formatted, "\n// A second call"), "comment should not be at column 0")
 	})
+
+	t.Run("multiline comment inside block that opens on first line (issue #2649)", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    false,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+		}, "\n")
+
+		originalText := `document.addEventListener('DOMContentLoaded', () => {
+    /** @type {NodeListOf<HTMLSpanElement>} */
+    const elements = document.querySelectorAll('.test')
+});`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.js",
+			Path:     "/test.js",
+		}, originalText, core.ScriptKindJS)
+
+		edits := format.FormatDocument(ctx, sourceFile)
+		formatted := applyBulkEdits(originalText, edits)
+		assert.Check(t, len(formatted) > 0, "formatted text should not be empty")
+	})
+
+	t.Run("single-line comment inside block that opens on first line (issue #2649)", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    false,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+		}, "\n")
+
+		originalText := `document.addEventListener('DOMContentLoaded', () => {
+    // a comment
+    const x = 1
+});`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		edits := format.FormatDocument(ctx, sourceFile)
+		formatted := applyBulkEdits(originalText, edits)
+		assert.Check(t, len(formatted) > 0, "formatted text should not be empty")
+	})
 }
 
 func TestSliceBoundsPanic(t *testing.T) {
@@ -208,14 +267,14 @@ func TestSliceBoundsPanic(t *testing.T) {
 
 	t.Run("format code with trailing semicolon should not panic", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
 				ConvertTabsToSpaces:    true,
-				IndentStyle:            format.IndentStyleSmart,
+				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,

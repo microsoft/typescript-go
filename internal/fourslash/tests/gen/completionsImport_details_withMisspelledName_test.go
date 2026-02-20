@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionsImport_details_withMisspelledName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export const abc = 0;
@@ -22,25 +21,23 @@ acb/*2*/;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "1")
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "abc",
 		Source:      "./a",
 		Description: "Add import from \"./a\"",
-		NewFileContent: PtrTo(`import { abc } from "./a";
+		NewFileContent: new(`import { abc } from "./a";
 
 acb;`),
 	})
 	f.GoToMarker(t, "2")
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("2"), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new("2"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:   "abc",
 		Source: "./a",
-		AutoImportData: &lsproto.AutoImportData{
-			ExportName:      "abc",
-			FileName:        "/a.ts",
+		AutoImportFix: &lsproto.AutoImportFix{
 			ModuleSpecifier: "./a",
 		},
 		Description: "Add import from \"./a\"",
-		NewFileContent: PtrTo(`import { abc } from "./a";
+		NewFileContent: new(`import { abc } from "./a";
 
 acb;`),
 	})

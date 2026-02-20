@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionReturnConstAssertion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type T = {
     foo1: 1;
@@ -31,11 +31,11 @@ F(()=>({/*1*/} as const))`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "foo1",
-					Detail: PtrTo("(property) foo1: 1"),
+					Detail: new("(property) foo1: 1"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "foo2",
-					Detail: PtrTo("(property) foo2: 2"),
+					Detail: new("(property) foo2: 2"),
 				},
 			},
 		},

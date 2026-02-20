@@ -32,7 +32,7 @@ func (l *LanguageService) ProvideInlayHint(
 	}
 
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	quotePreference := getQuotePreference(file, userPreferences)
+	quotePreference := lsutil.GetQuotePreference(file, userPreferences)
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
@@ -53,7 +53,7 @@ type inlayHintState struct {
 	ctx             context.Context
 	span            core.TextRange
 	preferences     *lsutil.InlayHintsPreferences
-	quotePreference quotePreference
+	quotePreference lsutil.QuotePreference
 	file            *ast.SourceFile
 	checker         *checker.Checker
 	converters      *lsconv.Converters
@@ -61,7 +61,7 @@ type inlayHintState struct {
 }
 
 func (s *inlayHintState) visit(node *ast.Node) bool {
-	if node == nil || node.End()-node.Pos() == 0 {
+	if node == nil || node.End()-node.Pos() == 0 || node.Flags&ast.NodeFlagsReparsed != 0 {
 		return false
 	}
 
@@ -304,50 +304,54 @@ func (s *inlayHintState) getParameterDeclarationTypeHints(symbol *ast.Symbol) *l
 		return nil
 	}
 
-	return ptrTo(s.typeToInlayHintParts(signatureParamType))
+	return new(s.typeToInlayHintParts(signatureParamType))
 }
 
 func (s *inlayHintState) typeToInlayHintParts(t *checker.Type) lsproto.StringOrInlayHintLabelParts {
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
-	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
+	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+	// !!! Avoid type node reuse so we collect identifier symbols.
+	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags, idToSymbol)
 	debug.AssertIsDefined(typeNode, "should always get typenode")
 	return lsproto.StringOrInlayHintLabelParts{
-		InlayHintLabelParts: ptrTo(s.getInlayHintLabelParts(typeNode)),
+		InlayHintLabelParts: new(s.getInlayHintLabelParts(typeNode, idToSymbol)),
 	}
 }
 
 func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.TypePredicate) lsproto.StringOrInlayHintLabelParts {
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
-	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags)
+	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+	// !!! Avoid type node reuse so we collect identifier symbols.
+	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags, idToSymbol)
 	debug.AssertIsDefined(typeNode, "should always get typePredicateNode")
 	return lsproto.StringOrInlayHintLabelParts{
-		InlayHintLabelParts: ptrTo(s.getInlayHintLabelParts(typeNode)),
+		InlayHintLabelParts: new(s.getInlayHintLabelParts(typeNode, idToSymbol)),
 	}
 }
 
 func (s *inlayHintState) addTypeHints(hint lsproto.StringOrInlayHintLabelParts, position int) {
 	if hint.String != nil {
-		hint.String = ptrTo(": " + *hint.String)
+		hint.String = new(": " + *hint.String)
 	} else {
-		hint.InlayHintLabelParts = ptrTo(append([]*lsproto.InlayHintLabelPart{{Value: ": "}}, *hint.InlayHintLabelParts...))
+		hint.InlayHintLabelParts = new(append([]*lsproto.InlayHintLabelPart{{Value: ": "}}, *hint.InlayHintLabelParts...))
 	}
 	s.result = append(s.result, &lsproto.InlayHint{
 		Label:       hint,
 		Position:    s.converters.PositionToLineAndCharacter(s.file, core.TextPos(position)),
-		Kind:        ptrTo(lsproto.InlayHintKindType),
-		PaddingLeft: ptrTo(true),
+		Kind:        new(lsproto.InlayHintKindType),
+		PaddingLeft: new(true),
 	})
 }
 
 func (s *inlayHintState) addEnumMemberValueHints(text string, position int) {
 	s.result = append(s.result, &lsproto.InlayHint{
 		Label: lsproto.StringOrInlayHintLabelParts{
-			String: ptrTo("= " + text),
+			String: new("= " + text),
 		},
 		Position:    s.converters.PositionToLineAndCharacter(s.file, core.TextPos(position)),
-		PaddingLeft: ptrTo(true),
+		PaddingLeft: new(true),
 	})
 }
 
@@ -364,8 +368,8 @@ func (s *inlayHintState) addParameterHints(text string, parameter *ast.Identifie
 	s.result = append(s.result, &lsproto.InlayHint{
 		Label:        labelParts,
 		Position:     s.converters.PositionToLineAndCharacter(s.file, core.TextPos(position)),
-		Kind:         ptrTo(lsproto.InlayHintKindParameter),
-		PaddingRight: ptrTo(true),
+		Kind:         new(lsproto.InlayHintKindParameter),
+		PaddingRight: new(true),
 	})
 }
 
@@ -414,7 +418,7 @@ func isModuleReferenceType(t *checker.Type) bool {
 	return symbol != nil && symbol.Flags&ast.SymbolFlagsModule != 0
 }
 
-func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.InlayHintLabelPart {
+func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) []*lsproto.InlayHintLabelPart {
 	var parts []*lsproto.InlayHintLabelPart
 
 	var visitForDisplayParts func(node *ast.Node)
@@ -441,9 +445,8 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 		case ast.KindIdentifier:
 			identifierText := node.Text()
 			var name *ast.Node
-			// !!! This won't work in Corsa since we don't store symbols on identifiers. We need another strategy for it.
-			if node.Symbol() != nil && len(node.Symbol().Declarations) != 0 {
-				name = ast.GetNameOfDeclaration(node.Symbol().Declarations[0])
+			if symbol := idToSymbol[node]; symbol != nil && len(symbol.Declarations) != 0 {
+				name = ast.GetNameOfDeclaration(symbol.Declarations[0])
 			}
 			if name != nil {
 				parts = append(parts, s.getNodeDisplayPart(identifierText, name))
@@ -720,6 +723,15 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
 			visitForDisplayParts(node.Expression())
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
+		case ast.KindPropertyAccessExpression:
+			visitForDisplayParts(node.Expression())
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "."})
+			visitForDisplayParts(node.Name())
+		case ast.KindElementAccessExpression:
+			visitForDisplayParts(node.Expression())
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
+			visitForDisplayParts(node.AsElementAccessExpression().ArgumentExpression)
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
 		default:
 			debug.FailBadSyntaxKind(node)
 		}
@@ -751,11 +763,13 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 
 func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsproto.InlayHintLabelPart {
 	file := ast.GetSourceFileOfNode(node)
+	pos := astnav.GetStartOfNode(node, file, false /*includeJSDoc*/)
+	end := node.End()
 	return &lsproto.InlayHintLabelPart{
 		Value: text,
 		Location: &lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(file.FileName()),
-			Range: s.converters.ToLSPRange(file, node.Loc),
+			Range: s.converters.ToLSPRange(file, core.NewTextRange(pos, end)),
 		},
 	}
 }
@@ -763,7 +777,7 @@ func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsprot
 func (s *inlayHintState) getLiteralText(node *ast.LiteralLikeNode) string {
 	switch node.Kind {
 	case ast.KindStringLiteral:
-		if s.quotePreference == quotePreferenceSingle {
+		if s.quotePreference == lsutil.QuotePreferenceSingle {
 			return `'` + printer.EscapeString(node.Text(), printer.QuoteCharSingleQuote) + `'`
 		}
 		return `"` + printer.EscapeString(node.Text(), printer.QuoteCharDoubleQuote) + `"`

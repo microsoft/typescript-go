@@ -13,7 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
-	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -851,13 +851,13 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		if noSubmoduleBaseline {
 			baselineContent.WriteString("CompilerOptions::\n")
-			assert.NilError(t, jsonutil.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.CompilerOptions, "", "  "))
+			assert.NilError(t, json.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.CompilerOptions, "", "  "))
 			baselineContent.WriteString("\n")
 			baselineContent.WriteString("\n")
 
 			if parsedConfigFileContent.ParsedConfig.TypeAcquisition != nil {
 				baselineContent.WriteString("TypeAcquisition::\n")
-				assert.NilError(t, jsonutil.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.TypeAcquisition, "", "  "))
+				assert.NilError(t, json.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.TypeAcquisition, "", "  "))
 				baselineContent.WriteString("\n")
 				baselineContent.WriteString("\n")
 			}
@@ -885,7 +885,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 }
 
 func writeJsonReadableText(output io.Writer, input any) error {
-	return jsonutil.MarshalIndentWrite(output, input, "", "  ")
+	return json.MarshalIndentWrite(output, input, "", "  ")
 }
 
 func TestParseTypeAcquisition(t *testing.T) {
@@ -1008,7 +1008,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
-	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
 
 	fs := osvfs.FS()
@@ -1061,7 +1061,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		Module:                     core.ModuleKindNodeNext,
 		ModuleResolution:           core.ModuleResolutionKindNodeNext,
 		NewLine:                    core.NewLineKindLF,
-		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
+		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "built", "local")),
 		Target:                     core.ScriptTargetES2020,
 		Types:                      []string{"node"},
 		ConfigFilePath:             tsconfigFileName,
@@ -1073,7 +1073,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		IsolatedDeclarations:       core.TSTrue,
 		NoImplicitOverride:         core.TSTrue,
 		PreserveConstEnums:         core.TSTrue,
-		RootDir:                    tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src")),
+		RootDir:                    tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src")),
 		SkipLibCheck:               core.TSTrue,
 		Strict:                     core.TSTrue,
 		StrictBindCallApply:        core.TSFalse,
@@ -1151,6 +1151,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		"transformers/classThis.ts",
 		"transformers/declarations.ts",
 		"transformers/destructuring.ts",
+		"transformers/es2015.ts",
 		"transformers/es2016.ts",
 		"transformers/es2017.ts",
 		"transformers/es2018.ts",
@@ -1159,6 +1160,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		"transformers/es2021.ts",
 		"transformers/esDecorators.ts",
 		"transformers/esnext.ts",
+		"transformers/generators.ts",
 		"transformers/jsx.ts",
 		"transformers/legacyDecorators.ts",
 		"transformers/namedEvaluation.ts",
@@ -1177,7 +1179,7 @@ func TestParseSrcCompiler(t *testing.T) {
 func BenchmarkParseSrcCompiler(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 
-	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
 
 	fs := osvfs.FS()
@@ -1219,14 +1221,14 @@ type memoCache struct {
 	m map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry
 }
 
-func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
 	if mc.m == nil {
 		mc.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
 	}
 	if e, ok := mc.m[path]; ok {
 		return e
 	}
-	e := parse()
+	e := tsoptions.ParseExtendedConfig(fileName, path, resolutionStack, host, mc)
 	mc.m[path] = e
 	return e
 }

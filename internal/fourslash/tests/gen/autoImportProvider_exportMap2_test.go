@@ -11,14 +11,15 @@ import (
 )
 
 func TestAutoImportProvider_exportMap2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
   "compilerOptions": {
-    "module": "commonjs"
-    "moduleResolution": "node10",
+    "lib": ["es5"],
+    "module": "commonjs",
+    "moduleResolution": "node10"
   }
 }
 // @Filename: /home/src/workspaces/project/package.json
@@ -65,11 +66,11 @@ fooFrom/**/`
 					&lsproto.CompletionItem{
 						Label: "fooFromIndex",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "dependency",
 							},
 						},
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 					},
 				}, false),

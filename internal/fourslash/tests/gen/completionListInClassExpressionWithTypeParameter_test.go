@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInClassExpressionWithTypeParameter(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = class myClass <TypeParam> {
    getClassName (){
@@ -44,8 +44,8 @@ func TestCompletionListInClassExpressionWithTypeParameter(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "TypeParam",
-					Detail: PtrTo("(type parameter) TypeParam in myClass<TypeParam>"),
-					Kind:   PtrTo(lsproto.CompletionItemKindProperty),
+					Detail: new("(type parameter) TypeParam in myClass<TypeParam>"),
+					Kind:   new(lsproto.CompletionItemKindProperty),
 				},
 			},
 		},

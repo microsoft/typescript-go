@@ -209,12 +209,11 @@ type ScannerState struct {
 }
 
 type Scanner struct {
-	text             string
-	languageVariant  core.LanguageVariant
-	onError          ErrorCallback
-	skipTrivia       bool
-	JSDocParsingMode ast.JSDocParsingMode
-	scriptKind       core.ScriptKind
+	text            string
+	languageVariant core.LanguageVariant
+	onError         ErrorCallback
+	skipTrivia      bool
+	scriptKind      core.ScriptKind
 	ScannerState
 
 	numberCache    map[string]string
@@ -345,6 +344,54 @@ func (s *Scanner) HasPrecedingJSDocLeadingAsterisks() bool {
 	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocLeadingAsterisks != 0
 }
 
+func (s *Scanner) HasPrecedingJSDocWithDeprecatedTag() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated != 0
+}
+
+func (s *Scanner) HasPrecedingJSDocWithSeeOrLink() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink != 0
+}
+
+// scanJSDocCommentForTags scans a JSDoc comment for @deprecated, @see, and @link tags,
+// setting the appropriate token flags. Called during scanning when a JSDoc comment is detected.
+func (s *Scanner) scanJSDocCommentForTags(commentText string) {
+	for {
+		i := strings.IndexByte(commentText, '@')
+		if i < 0 {
+			return
+		}
+		commentText = commentText[i+1:]
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated == 0 && hasJSDocTag(commentText, "deprecated") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithDeprecated
+		}
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink == 0 && hasJSDocTag(commentText, "see", "link", "linkcode", "linkplain") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithSeeOrLink
+		}
+		if s.tokenFlags&(ast.TokenFlagsPrecedingJSDocWithDeprecated|ast.TokenFlagsPrecedingJSDocWithSeeOrLink) ==
+			(ast.TokenFlagsPrecedingJSDocWithDeprecated | ast.TokenFlagsPrecedingJSDocWithSeeOrLink) {
+			return
+		}
+	}
+}
+
+// hasJSDocTag reports whether text starts with one of the given tag names followed
+// by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string).
+func hasJSDocTag(text string, tags ...string) bool {
+	for _, tag := range tags {
+		if !strings.HasPrefix(text, tag) {
+			continue
+		}
+		if len(text) == len(tag) {
+			return true
+		}
+		ch := text[len(tag)]
+		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*' {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Scanner) SetText(text string) {
 	s.text = text
 	s.ScannerState = ScannerState{}
@@ -356,10 +403,6 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 
 func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
 	s.scriptKind = scriptKind
-}
-
-func (s *Scanner) SetJSDocParsingMode(kind ast.JSDocParsingMode) {
-	s.JSDocParsingMode = kind
 }
 
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
@@ -396,36 +439,6 @@ func (s *Scanner) charAt(offset int) rune {
 
 func (s *Scanner) charAndSize() (rune, int) {
 	return utf8.DecodeRuneInString(s.text[s.pos:])
-}
-
-func (s *Scanner) shouldParseJSDoc() bool {
-	switch s.JSDocParsingMode {
-	case ast.JSDocParsingModeParseAll:
-		return true
-	case ast.JSDocParsingModeParseNone:
-		return false
-	}
-	if s.scriptKind != core.ScriptKindTS && s.scriptKind != core.ScriptKindTSX {
-		// If outside of TS, we need JSDoc to get any type info.
-		return true
-	}
-	if s.JSDocParsingMode == ast.JSDocParsingModeParseForTypeInfo {
-		// If we're in TS, but we don't need to produce reliable errors,
-		// we don't need to parse to find @see or @link.
-		return false
-	}
-	text := s.text[s.fullStartPos:s.pos]
-	for {
-		i := strings.IndexByte(text, '@')
-		if i < 0 {
-			break
-		}
-		text = text[i+1:]
-		if strings.HasPrefix(text, "see") || strings.HasPrefix(text, "link") {
-			return true
-		}
-	}
-	return false
 }
 
 func (s *Scanner) Scan() ast.Kind {
@@ -614,8 +627,9 @@ func (s *Scanner) Scan() ast.Kind {
 					}
 				}
 
-				if isJSDoc && s.shouldParseJSDoc() {
+				if isJSDoc {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
+					s.scanJSDocCommentForTags(s.text[s.tokenStart:s.pos])
 				}
 
 				s.processCommentDirective(lastLineStart, s.pos, true)
@@ -1363,7 +1377,8 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 			s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 			s.token = GetIdentifierToken(s.tokenValue)
 		} else {
-			s.scanInvalidCharacter()
+			s.pos++
+			s.token = ast.KindUnknown
 		}
 		return s.token
 	}
@@ -2064,14 +2079,13 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[ast.Kind]string
-
-func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToToken))
-	for text, key := range textToToken {
-		tokenToText[key] = text
+var tokenToText = func() [ast.KindCount]string {
+	var result [ast.KindCount]string
+	for text, kind := range textToToken {
+		result[kind] = text
 	}
-}
+	return result
+}()
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
@@ -2347,9 +2361,8 @@ func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) c
 		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
 		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
-			// The arrow function spans multiple lines,
-			// make the error span be the first line, inclusive.
-			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine))
+			// The arrow function spans multiple lines, make the error span be the first line, inclusive.
+			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine)+1)
 		}
 	}
 	return core.NewTextRange(pos, node.End())
@@ -2459,7 +2472,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
-			return pos
+			return pos - 1
 		}
 		pos += size
 	}

@@ -1,6 +1,6 @@
 --- old.optionalChainingInTypeAssertions(target=esnext).js
 +++ new.optionalChainingInTypeAssertions(target=esnext).js
-@@= skipped -25, +25 lines =@@
+@@= skipped -26, +26 lines =@@
  const foo = new Foo();
  foo.m?.();
  foo.m?.();
@@ -9,11 +9,5 @@
 +/*a1*/ foo.m /*a3*/ /*a4*/?.();
 +/*b1*/ foo.m /*b3*/ /*b4*/?.();
  // https://github.com/microsoft/TypeScript/issues/50148
--(foo?.m).length;
--(foo?.m).length;
--(foo?.["m"]).length;
--(foo?.["m"]).length;
-+((foo?.m)).length;
-+((foo?.m)).length;
-+((foo?.["m"])).length;
-+((foo?.["m"])).length;
+ (foo?.m).length;
+ (foo?.m).length;

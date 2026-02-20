@@ -4,7 +4,7 @@
 exports.n = {};
 >exports.n = {} : {}
 >exports.n : {}
->exports : typeof import("mod")
+>exports : typeof import("./mod")
 >n : {}
 >{} : {}
 
@@ -12,7 +12,7 @@ exports.n.K = function () {
 >exports.n.K = function () {    this.x = 10;} : () => void
 >exports.n.K : any
 >exports.n : {}
->exports : typeof import("mod")
+>exports : typeof import("./mod")
 >n : {}
 >K : any
 >function () {    this.x = 10;} : () => void
@@ -20,14 +20,14 @@ exports.n.K = function () {
     this.x = 10;
 >this.x = 10 : 10
 >this.x : any
->this : any
+>this : {}
 >x : any
 >10 : 10
 }
 exports.Classic = class {
 >exports.Classic = class {    constructor() {        this.p = 1    }} : typeof Classic
 >exports.Classic : typeof Classic
->exports : typeof import("mod")
+>exports : typeof import("./mod")
 >Classic : typeof Classic
 >class {    constructor() {        this.p = 1    }} : typeof Classic
 

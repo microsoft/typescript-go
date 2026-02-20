@@ -67,21 +67,17 @@ Found 'package.json' at '/home/src/workspaces/project/packages/a/package.json'.
 Entering conditional exports.
 Matched 'exports' condition 'types'.
 Using 'exports' subpath '.' with target './types/index.d.ts'.
-File '/home/src/workspaces/project/packages/a/types/index.d.ts' does not exist.
-Failed to resolve under condition 'types'.
-Matched 'exports' condition 'default'.
-Using 'exports' subpath '.' with target './index.js'.
 File name '/home/src/workspaces/project/packages/a/index.js' has a '.js' extension - stripping it.
 File '/home/src/workspaces/project/packages/a/index.ts' does not exist.
 File '/home/src/workspaces/project/packages/a/index.tsx' does not exist.
 File '/home/src/workspaces/project/packages/a/index.d.ts' does not exist.
 File '/home/src/workspaces/project/packages/a/index.js' exists - use it as a name resolution result.
 'package.json' does not have a 'peerDependencies' field.
-Resolved under condition 'default'.
+Resolved under condition 'types'.
 Exiting conditional exports.
 ======== Module name 'a' was successfully resolved to '/home/src/workspaces/project/packages/a/index.js' with Package ID 'a/index.js@0.0.0'. ========
-../../tslibs/TS/Lib/lib.esnext.full.d.ts
-   Default library for target 'ESNext'
+../../tslibs/TS/Lib/lib.es2025.full.d.ts
+   Default library for target 'ES2025'
 packages/a/index.js
    Matched by default include pattern '**/*'
    Imported via 'a' from file 'packages/a/test/index.js' with packageId 'a/index.js@0.0.0'
@@ -97,7 +93,7 @@ packages/a/test/index.js
 Module resolution kind is not specified, using 'NodeNext'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
 Found 'package.json' at '/home/src/workspaces/project/packages/b/package.json'.
-Loading module 'a' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
+Loading module 'a' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/workspaces/project/packages/b/node_modules' does not exist, skipping all lookups in it.
 Directory '/home/src/workspaces/project/packages/b/node_modules/@types' does not exist, skipping all lookups in it.
@@ -113,15 +109,15 @@ Resolved under condition 'types'.
 Exiting conditional exports.
 Resolving real path for '/home/src/workspaces/project/node_modules/a/types/index.d.ts', result '/home/src/workspaces/project/packages/a/types/index.d.ts'.
 ======== Module name 'a' was successfully resolved to '/home/src/workspaces/project/packages/a/types/index.d.ts' with Package ID 'a/types/index.d.ts@0.0.0'. ========
-../../tslibs/TS/Lib/lib.esnext.full.d.ts
-   Default library for target 'ESNext'
+../../tslibs/TS/Lib/lib.es2025.full.d.ts
+   Default library for target 'ES2025'
 packages/a/types/index.d.ts
    Imported via 'a' from file 'packages/b/index.js' with packageId 'a/types/index.d.ts@0.0.0'
    File is ECMAScript module because 'packages/a/package.json' has field "type" with value "module"
 packages/b/index.js
    Matched by default include pattern '**/*'
    File is ECMAScript module because 'packages/b/package.json' has field "type" with value "module"
-//// [/home/src/tslibs/TS/Lib/lib.esnext.full.d.ts] *Lib*
+//// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -151,7 +147,7 @@ export declare const a = "a";
 import 'a';
 
 //// [/home/src/workspaces/project/packages/a/types/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.esnext.full.d.ts","../index.js","../test/index.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"fb6f7bce1e97f6455fc2f6a3fc00ca67-export const a = 'a';","signature":"410f445844ca5e1f83239796f66520a1-export declare const a = \"a\";\n","impliedNodeFormat":99},{"version":"25c2781885c8232d7ba0f67afa33aa44-import 'a';","signature":"518d564eba22abfaf340ce3ae18a4763-import 'a';\n","impliedNodeFormat":99}],"fileIdsList":[[2]],"options":{"checkJs":true,"composite":true,"emitDeclarationOnly":true,"declaration":true,"module":199,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./test/index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../index.js","../test/index.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"fb6f7bce1e97f6455fc2f6a3fc00ca67-export const a = 'a';","signature":"410f445844ca5e1f83239796f66520a1-export declare const a = \"a\";\n","impliedNodeFormat":99},{"version":"25c2781885c8232d7ba0f67afa33aa44-import 'a';","signature":"518d564eba22abfaf340ce3ae18a4763-import 'a';\n","impliedNodeFormat":99}],"fileIdsList":[[2]],"options":{"checkJs":true,"composite":true,"emitDeclarationOnly":true,"declaration":true,"module":199,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./test/index.d.ts"}
 //// [/home/src/workspaces/project/packages/a/types/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -168,13 +164,13 @@ import 'a';
     }
   ],
   "fileNames": [
-    "lib.esnext.full.d.ts",
+    "lib.es2025.full.d.ts",
     "../index.js",
     "../test/index.js"
   ],
   "fileInfos": [
     {
-      "fileName": "lib.esnext.full.d.ts",
+      "fileName": "lib.es2025.full.d.ts",
       "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "signature": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
@@ -247,7 +243,7 @@ import 'a';
 
 packages/a/tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/packages/a/index.js
 *refresh*    /home/src/workspaces/project/packages/a/test/index.js
 Signatures::
@@ -256,7 +252,7 @@ Signatures::
 
 packages/b/tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/packages/a/types/index.d.ts
 *refresh*    /home/src/workspaces/project/packages/b/index.js
 Signatures::

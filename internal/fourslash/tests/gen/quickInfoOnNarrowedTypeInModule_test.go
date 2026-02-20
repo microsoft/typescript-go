@@ -10,11 +10,12 @@ import (
 )
 
 func TestQuickInfoOnNarrowedTypeInModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `var strOrNum: string | number;
-module m {
+	const content = `// @strict: false
+var strOrNum: string | number;
+namespace m {
     var nonExportedStrOrNum: string | number;
     export var exportedStrOrNum: string | number;
     var num: number;
@@ -59,7 +60,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: PtrTo("var nonExportedStrOrNum: string | number"),
+					Detail: new("var nonExportedStrOrNum: string | number"),
 				},
 			},
 		},
@@ -74,7 +75,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: PtrTo("var nonExportedStrOrNum: number"),
+					Detail: new("var nonExportedStrOrNum: number"),
 				},
 			},
 		},
@@ -89,7 +90,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: PtrTo("var nonExportedStrOrNum: string"),
+					Detail: new("var nonExportedStrOrNum: string"),
 				},
 			},
 		},
@@ -104,7 +105,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: PtrTo("var exportedStrOrNum: string | number"),
+					Detail: new("var exportedStrOrNum: string | number"),
 				},
 			},
 		},
@@ -119,7 +120,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: PtrTo("var exportedStrOrNum: number"),
+					Detail: new("var exportedStrOrNum: number"),
 				},
 			},
 		},
@@ -134,7 +135,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: PtrTo("var exportedStrOrNum: string"),
+					Detail: new("var exportedStrOrNum: string"),
 				},
 			},
 		},
@@ -149,7 +150,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: PtrTo("var m.exportedStrOrNum: string | number"),
+					Detail: new("var m.exportedStrOrNum: string | number"),
 				},
 			},
 		},
@@ -164,7 +165,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: PtrTo("var m.exportedStrOrNum: number"),
+					Detail: new("var m.exportedStrOrNum: number"),
 				},
 			},
 		},
@@ -179,7 +180,7 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: PtrTo("var m.exportedStrOrNum: string"),
+					Detail: new("var m.exportedStrOrNum: string"),
 				},
 			},
 		},

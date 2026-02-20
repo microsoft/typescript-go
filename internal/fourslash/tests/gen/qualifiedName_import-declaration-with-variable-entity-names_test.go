@@ -10,14 +10,14 @@ import (
 )
 
 func TestQualifiedName_import_declaration_with_variable_entity_names(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module Alpha {
+	const content = `namespace Alpha {
     export var [|{| "name" : "def" |}x|] = 100;
 }
 
-module Beta {
+namespace Beta {
     import p = Alpha.[|{| "name" : "import" |}x|];
 }
 
@@ -35,7 +35,7 @@ var x = Alpha.[|{| "name" : "mem" |}x|]`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: PtrTo("var Alpha.x: number"),
+					Detail: new("var Alpha.x: number"),
 				},
 			},
 		},

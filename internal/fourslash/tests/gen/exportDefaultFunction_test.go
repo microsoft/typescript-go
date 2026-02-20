@@ -10,8 +10,8 @@ import (
 )
 
 func TestExportDefaultFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export default function func() {
     /*1*/
@@ -29,8 +29,8 @@ func TestExportDefaultFunction(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "func",
-					Detail: PtrTo("function func(): void"),
-					Kind:   PtrTo(lsproto.CompletionItemKindFunction),
+					Detail: new("function func(): void"),
+					Kind:   new(lsproto.CompletionItemKindFunction),
 				},
 			},
 		},

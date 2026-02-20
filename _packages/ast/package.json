@@ -4,6 +4,9 @@
     "version": "1.0.0",
     "description": "TypeScript AST definitions",
     "type": "module",
+    "engines": {
+        "node": ">=20.19"
+    },
     "imports": {
         "#syntaxKind": {
             "@typescript/source": {
@@ -35,5 +38,10 @@
             "@typescript/source": "./src/utils.ts",
             "default": "./dist/utils.js"
         }
+    },
+    "scripts": {
+        "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
+        "prebuild": "npm run generate:enums",
+        "build": "tsc -b"
     }
 }

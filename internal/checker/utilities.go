@@ -60,14 +60,6 @@ func hasOverrideModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsOverride)
 }
 
-func hasAbstractModifier(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract)
-}
-
-func hasAmbientModifier(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient)
-}
-
 func hasAsyncModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 }
@@ -169,40 +161,6 @@ func IsInTypeQuery(node *ast.Node) bool {
 	}) != nil
 }
 
-func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
-	// private names cannot be used with decorators yet
-	if useLegacyDecorators && node.Name() != nil && ast.IsPrivateIdentifier(node.Name()) {
-		return false
-	}
-	switch node.Kind {
-	case ast.KindClassDeclaration:
-		// class declarations are valid targets
-		return true
-	case ast.KindClassExpression:
-		// class expressions are valid targets for native decorators
-		return !useLegacyDecorators
-	case ast.KindPropertyDeclaration:
-		// property declarations are valid if their parent is a class declaration.
-		return parent != nil && (useLegacyDecorators && ast.IsClassDeclaration(parent) ||
-			!useLegacyDecorators && ast.IsClassLike(parent) && !hasAbstractModifier(node) && !hasAmbientModifier(node))
-	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
-		// if this method has a body and its parent is a class declaration, this is a valid target.
-		return parent != nil && node.Body() != nil && (useLegacyDecorators && ast.IsClassDeclaration(parent) ||
-			!useLegacyDecorators && ast.IsClassLike(parent))
-	case ast.KindParameter:
-		// TODO(rbuckton): Parameter decorator support for ES decorators must wait until it is standardized
-		if !useLegacyDecorators {
-			return false
-		}
-		// if the parameter's parent has a body and its grandparent is a class declaration, this is a valid target.
-		return parent != nil && parent.Body() != nil &&
-			(parent.Kind == ast.KindConstructor || parent.Kind == ast.KindMethodDeclaration || parent.Kind == ast.KindSetAccessor) &&
-			ast.GetThisParameter(parent) != node && grandparent != nil && grandparent.Kind == ast.KindClassDeclaration
-	}
-
-	return false
-}
-
 func canHaveLocals(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature, ast.KindCaseBlock, ast.KindCatchClause,
@@ -238,22 +196,7 @@ func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 }
 
 func entityNameToString(name *ast.Node) string {
-	switch name.Kind {
-	case ast.KindThisKeyword:
-		return "this"
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		if ast.NodeIsSynthesized(name) {
-			return name.Text()
-		}
-		return scanner.GetTextOfNode(name)
-	case ast.KindQualifiedName:
-		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
-	case ast.KindPropertyAccessExpression:
-		return entityNameToString(name.Expression()) + "." + entityNameToString(name.AsPropertyAccessExpression().Name())
-	case ast.KindJsxNamespacedName:
-		return entityNameToString(name.AsJsxNamespacedName().Namespace) + ":" + entityNameToString(name.AsJsxNamespacedName().Name())
-	}
-	panic("Unhandled case in entityNameToString")
+	return ast.EntityNameToString(name, scanner.GetTextOfNode)
 }
 
 func getContainingQualifiedNameNode(node *ast.Node) *ast.Node {
@@ -548,7 +491,7 @@ func CompareTypes(t1, t2 *Type) int {
 		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
-		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
+		if c := int(t1.AsIndexType().indexFlags) - int(t2.AsIndexType().indexFlags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
@@ -1252,16 +1195,19 @@ func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
 	}
 }
 
-func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
+func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node) bool) bool {
 	var traverse func(*ast.Node) bool
 	traverse = func(node *ast.Node) bool {
 		switch node.Kind {
 		case ast.KindYieldExpression:
-			visitor(node)
-			operand := node.Expression()
-			if operand != nil {
-				traverse(operand)
+			if visitor(node) {
+				return true
 			}
+			operand := node.Expression()
+			if operand == nil {
+				return false
+			}
+			return traverse(operand)
 		case ast.KindEnumDeclaration, ast.KindInterfaceDeclaration, ast.KindModuleDeclaration, ast.KindTypeAliasDeclaration:
 			// These are not allowed inside a generator now, but eventually they may be allowed
 			// as local types. Regardless, skip them to avoid the work.
@@ -1270,45 +1216,17 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 				if node.Name() != nil && ast.IsComputedPropertyName(node.Name()) {
 					// Note that we will not include methods/accessors of a class because they would require
 					// first descending into the class. This is by design.
-					traverse(node.Name().Expression())
+					return traverse(node.Name().Expression())
 				}
 			} else if !ast.IsPartOfTypeNode(node) {
 				// This is the general case, which should include mostly expressions and statements.
 				// Also includes NodeArrays.
-				node.ForEachChild(traverse)
+				return node.ForEachChild(traverse)
 			}
 		}
 		return false
 	}
-	traverse(body)
-}
-
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program, ignoreNoCheck bool) bool {
-	return (!ignoreNoCheck && options.NoCheck.IsTrue()) ||
-		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
-		options.SkipDefaultLibCheck.IsTrue() && host.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
-		host.IsSourceFromProjectReference(sourceFile.Path()) ||
-		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
-}
-
-func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
-		return false
-	}
-
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
-		return true
-	}
-
-	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
-	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, options)
-	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
-
-	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
-	// - plain JS: .js files with no // ts-check and checkJs: undefined
-	// - check JS: .js files with either // ts-check or checkJs: true
-	// - external: files that are added by plugins
-	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return traverse(body)
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
@@ -1429,6 +1347,9 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2018", props: []string{"dotAll"}},
 			{lib: "es2024", props: []string{"unicodeSets"}},
 		},
+		"RegExpConstructor": {
+			{lib: "es2025", props: []string{"escape"}},
+		},
 		"Reflect": {
 			{lib: "es2015", props: []string{"apply", "construct", "defineProperty", "deleteProperty", "get", "getOwnPropertyDescriptor", "getPrototypeOf", "has", "isExtensible", "ownKeys", "preventExtensions", "set", "setPrototypeOf"}},
 		},
@@ -1448,16 +1369,21 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"Math": {
 			{lib: "es2015", props: []string{"clz32", "imul", "sign", "log10", "log2", "log1p", "expm1", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh", "hypot", "trunc", "fround", "cbrt"}},
+			{lib: "es2025", props: []string{"f16round"}},
 		},
 		"Map": {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+			{lib: "esnext", props: []string{
+				"getOrInsert",
+				"getOrInsertComputed",
+			}},
 		},
 		"MapConstructor": {
 			{lib: "es2024", props: []string{"groupBy"}},
 		},
 		"Set": {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
-			{lib: "esnext", props: []string{
+			{lib: "es2025", props: []string{
 				"union",
 				"intersection",
 				"difference",
@@ -1472,16 +1398,21 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2020", props: []string{"allSettled"}},
 			{lib: "es2021", props: []string{"any"}},
 			{lib: "es2024", props: []string{"withResolvers"}},
+			{lib: "es2025", props: []string{"try"}},
 		},
 		"Symbol": {
 			{lib: "es2015", props: []string{"for", "keyFor"}},
 			{lib: "es2019", props: []string{"description"}},
 		},
 		"WeakMap": {
-			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+			{lib: "es2015", props: []string{}},
+			{lib: "esnext", props: []string{
+				"getOrInsert",
+				"getOrInsertComputed",
+			}},
 		},
 		"WeakSet": {
-			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+			{lib: "es2015", props: []string{}},
 		},
 		"String": {
 			{lib: "es2015", props: []string{"codePointAt", "includes", "endsWith", "normalize", "repeat", "startsWith", "anchor", "big", "blink", "bold", "fixed", "fontcolor", "fontsize", "italics", "link", "small", "strike", "sub", "sup"}},
@@ -1510,6 +1441,10 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"Intl": {
 			{lib: "es2018", props: []string{"PluralRules"}},
+			{lib: "es2020", props: []string{"RelativeTimeFormat", "Locale", "DisplayNames"}},
+			{lib: "es2021", props: []string{"ListFormat", "DateTimeFormat"}},
+			{lib: "es2022", props: []string{"Segmenter"}},
+			{lib: "es2025", props: []string{"DurationFormat"}},
 		},
 		"NumberFormat": {
 			{lib: "es2018", props: []string{"formatToParts"}},
@@ -1524,6 +1459,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"DataView": {
 			{lib: "es2020", props: []string{"setBigInt64", "setBigUint64", "getBigInt64", "getBigUint64"}},
+			{lib: "es2025", props: []string{"setFloat16", "getFloat16"}},
 		},
 		"BigInt": {
 			{lib: "es2020", props: []string{}},
@@ -1559,6 +1495,9 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2022", props: []string{"at"}},
 			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
 		},
+		"Float16Array": {
+			{lib: "es2025", props: []string{}},
+		},
 		"Float32Array": {
 			{lib: "es2022", props: []string{"at"}},
 			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
@@ -1579,6 +1518,21 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"Error": {
 			{lib: "es2022", props: []string{"cause"}},
+		},
+		"ErrorConstructor": {
+			{lib: "esnext", props: []string{"isError"}},
+		},
+		"Uint8ArrayConstructor": {
+			{lib: "esnext", props: []string{"fromBase64", "fromHex"}},
+		},
+		"DisposableStack": {
+			{lib: "esnext", props: []string{}},
+		},
+		"AsyncDisposableStack": {
+			{lib: "esnext", props: []string{}},
+		},
+		"Date": {
+			{lib: "esnext", props: []string{"toTemporalInstant"}},
 		},
 	}
 })
@@ -1605,24 +1559,6 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 		return entityNameToString(expr)
 	}
 	return ""
-}
-
-func getFirstJSDocTag(node *ast.Node, f func(*ast.Node) bool) *ast.Node {
-	for _, jsdoc := range node.JSDoc(nil) {
-		tags := jsdoc.AsJSDoc().Tags
-		if tags != nil {
-			for _, tag := range tags.Nodes {
-				if f(tag) {
-					return tag
-				}
-			}
-		}
-	}
-	return nil
-}
-
-func getJSDocDeprecatedTag(node *ast.Node) *ast.Node {
-	return getFirstJSDocTag(node, ast.IsJSDocDeprecatedTag)
 }
 
 func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
@@ -1690,14 +1626,6 @@ func symbolsToArray(symbols ast.SymbolTable) []*ast.Symbol {
 		}
 	}
 	return result
-}
-
-// See comment on `declareModuleMember` in `binder.go`.
-func GetCombinedLocalAndExportSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
-	if symbol.ExportSymbol != nil {
-		return symbol.Flags | symbol.ExportSymbol.Flags
-	}
-	return symbol.Flags
 }
 
 func SkipAlias(symbol *ast.Symbol, checker *Checker) *ast.Symbol {
@@ -1792,46 +1720,13 @@ func (c *Checker) isUncheckedJSSuggestion(node *ast.Node, suggestion *ast.Symbol
 				suggestion.ValueDeclaration == nil ||
 				!ast.IsClassLike(suggestion.ValueDeclaration) ||
 				len(ast.GetExtendsHeritageClauseElements(suggestion.ValueDeclaration)) != 0 ||
-				classOrConstructorParameterIsDecorated(suggestion.ValueDeclaration)
+				ast.ClassOrConstructorParameterIsDecorated(false, suggestion.ValueDeclaration)
 			return !(file != declarationFile && declarationFile != nil && ast.IsGlobalSourceFile(declarationFile.AsNode())) &&
 				!(excludeClasses && suggestion != nil && suggestion.Flags&ast.SymbolFlagsClass != 0 && suggestionHasNoExtendsOrDecorators) &&
 				!(node != nil && excludeClasses && ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword && suggestionHasNoExtendsOrDecorators)
 		}
 	}
 	return false
-}
-
-func classOrConstructorParameterIsDecorated(node *ast.Node) bool {
-	if nodeIsDecorated(node, nil, nil) {
-		return true
-	}
-	constructor := ast.GetFirstConstructorWithBody(node)
-	return constructor != nil && childIsDecorated(constructor, node)
-}
-
-func nodeIsDecorated(node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
-	return ast.HasDecorators(node) && nodeCanBeDecorated(false, node, parent, grandparent)
-}
-
-func nodeOrChildIsDecorated(node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
-	return nodeIsDecorated(node, parent, grandparent) || childIsDecorated(node, parent)
-}
-
-func childIsDecorated(node *ast.Node, parent *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return core.Some(node.Members(), func(m *ast.Node) bool {
-			return nodeOrChildIsDecorated(m, node, parent)
-		})
-	case ast.KindMethodDeclaration,
-		ast.KindSetAccessor,
-		ast.KindConstructor:
-		return core.Some(node.Parameters(), func(p *ast.Node) bool {
-			return nodeIsDecorated(p, node, parent)
-		})
-	default:
-		return false
-	}
 }
 
 // Returns if a type is or consists of a JSLiteral object type

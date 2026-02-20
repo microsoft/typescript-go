@@ -10,8 +10,8 @@ import (
 )
 
 func TestPrototypeProperty(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class A {}
 A./*1*/prototype;
@@ -29,7 +29,7 @@ A./*2*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "prototype",
-					Detail: PtrTo("(property) A.prototype: A"),
+					Detail: new("(property) A.prototype: A"),
 				},
 			},
 		},

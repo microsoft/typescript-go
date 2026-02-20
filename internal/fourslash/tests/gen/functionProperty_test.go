@@ -10,8 +10,8 @@ import (
 )
 
 func TestFunctionProperty(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var a = {
     x(a: number) { }
@@ -51,7 +51,7 @@ c./*quickInfoC*/x;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: PtrTo("(method) x(a: number): void"),
+					Detail: new("(method) x(a: number): void"),
 				},
 			},
 		},
@@ -66,7 +66,7 @@ c./*quickInfoC*/x;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: PtrTo("(property) x: (a: number) => void"),
+					Detail: new("(property) x: (a: number) => void"),
 				},
 			},
 		},

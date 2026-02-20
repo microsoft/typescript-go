@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_jsxOpeningTagImportDefault(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @jsx: react
@@ -36,12 +36,12 @@ export function Index() {
 				&lsproto.CompletionItem{
 					Label: "Component",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./component",
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 			Excludes: []string{
@@ -49,11 +49,11 @@ export function Index() {
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "Component",
 		Source:      "./component",
 		Description: "Add import from \"./component\"",
-		NewFileContent: PtrTo(`import Component from "./component";
+		NewFileContent: new(`import Component from "./component";
 
 export function Index() {
     return <Component

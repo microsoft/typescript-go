@@ -225,7 +225,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 }
 
 func (c *Checker) getContextualJsxElementAttributesType(node *ast.Node, contextFlags ContextFlags) *Type {
-	if ast.IsJsxOpeningElement(node) && contextFlags != ContextFlagsCompletions {
+	if ast.IsJsxOpeningElement(node) && contextFlags != ContextFlagsIgnoreNodeInferences {
 		index := c.findContextualNode(node.Parent, contextFlags == ContextFlagsNone)
 		if index >= 0 {
 			// Contextually applied type is moved from attributes up to the outer jsx attributes so when walking up from the children they get hit
@@ -276,7 +276,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 		return (initializer == nil || c.isPossiblyDiscriminantValue(initializer)) && c.isDiscriminantProperty(contextualType, symbol.Name)
 	})
 	discriminantMembers := core.Filter(c.getPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
-		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil || len(node.Symbol().Members) == 0 {
+		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil {
 			return false
 		}
 		element := node.Parent.Parent
@@ -849,7 +849,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			childrenPropSymbol.ValueDeclaration.AsPropertySignatureDeclaration().Symbol = childrenPropSymbol
 			childPropMap := make(ast.SymbolTable)
 			childPropMap[jsxChildrenPropertyName] = childrenPropSymbol
-			spread = c.getSpreadType(spread, c.newAnonymousType(attributesSymbol, childPropMap, nil, nil, nil), attributesSymbol, objectFlags, false /*readonly*/)
+			spread = c.getSpreadType(spread, c.newAnonymousType(attributesSymbol, childPropMap, nil, nil, nil), attributesSymbol, objectFlags|c.getPropagatingFlagsOfTypes(childTypes, TypeFlagsNone), false /*readonly*/)
 		}
 	}
 	if hasSpreadAnyType {
@@ -1030,7 +1030,7 @@ func (c *Checker) getJsxManagedAttributesFromLocatedAttributes(context *ast.Node
 
 func (c *Checker) instantiateAliasOrInterfaceWithDefaults(managedSym *ast.Symbol, typeArguments []*Type, inJavaScript bool) *Type {
 	declaredManagedType := c.getDeclaredTypeOfSymbol(managedSym)
-	// fetches interface type, or initializes symbol links type parmaeters
+	// fetches interface type, or initializes symbol links type parameters
 	if managedSym.Flags&ast.SymbolFlagsTypeAlias != 0 {
 		params := c.typeAliasLinks.Get(managedSym).typeParameters
 		if len(params) >= len(typeArguments) {

@@ -11,13 +11,13 @@ import (
 )
 
 func TestCompletionsImport_umdModules2_moduleExports(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /package.json
 { "dependencies": { "@types/classnames": "*" } }
 // @filename: /tsconfig.json
-{}
+{ "compilerOptions": { "types": ["*"] } }
 // @filename: /node_modules/@types/classnames/package.json
 { "name": "@types/classnames", "types": "index.d.ts" }
 // @filename: /node_modules/@types/classnames/index.d.ts
@@ -43,11 +43,11 @@ const el1 = <div className={class/*1*/}>foo</div>;`
 					Label:               "classNames",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "classnames",
 						},
 					},
-					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

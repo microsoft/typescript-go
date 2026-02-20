@@ -8,8 +8,8 @@ import (
 )
 
 func TestDeclarationMapsGoToDefinitionSameNameDifferentDirectory(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: BaseClass/Source.d.ts
 declare class Control {
@@ -33,6 +33,8 @@ class /*2*/Control{
     "$schema": "http://json.schemastore.org/tsconfig",
     "compileOnSave": true,
     "compilerOptions": {
+      "lib": ["es5"],
+      "strict": false,
       "sourceMap": true,
       "declaration": true,
       "declarationMap": true

@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListInExportClause01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: m1.ts
 export var foo: number = 1;
@@ -39,7 +39,7 @@ export {foo, bar, baz as b,/*7*/} from "./m1"`
 				"foo",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},
@@ -56,7 +56,7 @@ export {foo, bar, baz as b,/*7*/} from "./m1"`
 				"baz",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},
@@ -74,7 +74,7 @@ export {foo, bar, baz as b,/*7*/} from "./m1"`
 				"foo",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

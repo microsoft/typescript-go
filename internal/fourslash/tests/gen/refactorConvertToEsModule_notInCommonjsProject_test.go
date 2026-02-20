@@ -8,10 +8,11 @@ import (
 )
 
 func TestRefactorConvertToEsModule_notInCommonjsProject(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
+// @target: es5
 // @Filename: /a.js
 exports.x = 0;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

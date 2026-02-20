@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInNamedClassExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = class myClass {
    getClassName (){
@@ -31,8 +31,8 @@ func TestCompletionListInNamedClassExpression(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "myClass",
-					Detail: PtrTo("(local class) myClass"),
-					Kind:   PtrTo(lsproto.CompletionItemKindProperty),
+					Detail: new("(local class) myClass"),
+					Kind:   new(lsproto.CompletionItemKindProperty),
 				},
 			},
 		},

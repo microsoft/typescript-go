@@ -10,8 +10,8 @@ import (
 )
 
 func TestProtoVarVisibleWithOuterScopeUnderscoreProto(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// outer
 var ___proto__ = 10;
@@ -31,11 +31,11 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__proto__",
-					Detail: PtrTo("(local var) __proto__: string"),
+					Detail: new("(local var) __proto__: string"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "___proto__",
-					Detail: PtrTo("var ___proto__: number"),
+					Detail: new("var ___proto__: number"),
 				},
 			},
 		},

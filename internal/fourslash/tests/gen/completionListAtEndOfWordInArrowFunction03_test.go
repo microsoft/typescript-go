@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListAtEndOfWordInArrowFunction03(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `(d, defaultIsAnInvalidParameterName) => default/*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
@@ -28,9 +28,9 @@ func TestCompletionListAtEndOfWordInArrowFunction03(t *testing.T) {
 				"defaultIsAnInvalidParameterName",
 				&lsproto.CompletionItem{
 					Label:    "default",
-					Detail:   PtrTo("default"),
-					Kind:     PtrTo(lsproto.CompletionItemKindKeyword),
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					Detail:   new("default"),
+					Kind:     new(lsproto.CompletionItemKindKeyword),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

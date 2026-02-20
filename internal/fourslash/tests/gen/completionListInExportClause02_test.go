@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListInExportClause02(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module "M1" {
     export var V;
@@ -34,7 +34,7 @@ declare module "M2" {
 				"V",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

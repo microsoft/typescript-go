@@ -11,8 +11,8 @@ import (
 )
 
 func TestTypeOfKeywordCompletion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export type A = typ/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
@@ -27,7 +27,7 @@ func TestTypeOfKeywordCompletion(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "typeof",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

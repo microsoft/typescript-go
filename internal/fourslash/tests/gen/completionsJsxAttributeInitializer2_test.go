@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsJsxAttributeInitializer2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.tsx
 declare namespace JSX {
@@ -36,9 +36,9 @@ const foo = 0;
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "foo",
-					InsertText: PtrTo("{foo}"),
-					Detail:     PtrTo("const foo: 0"),
-					Kind:       PtrTo(lsproto.CompletionItemKindVariable),
+					InsertText: new("{foo}"),
+					Detail:     new("const foo: 0"),
+					Kind:       new(lsproto.CompletionItemKindVariable),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "foo",

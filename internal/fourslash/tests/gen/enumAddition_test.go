@@ -8,10 +8,10 @@ import (
 )
 
 func TestEnumAddition(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module m { export enum Color { Red } }
+	const content = `namespace m { export enum Color { Red } }
 var /**/t = m.Color.Red + 1;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

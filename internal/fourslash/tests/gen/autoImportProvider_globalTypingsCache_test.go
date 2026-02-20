@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_globalTypingsCache(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/Library/Caches/typescript/node_modules/@types/react-router-dom/package.json
  { "name": "@types/react-router-dom", "version": "16.8.4", "types": "index.d.ts" }
@@ -21,7 +21,7 @@ func TestAutoImportProvider_globalTypingsCache(t *testing.T) {
 // @Filename: /home/src/workspaces/project/package.json
  { "dependencies": { "react-router-dom": "*" } }
 // @Filename: /home/src/workspaces/project/tsconfig.json
- { "compilerOptions": { "module": "commonjs", "allowJs": true, "checkJs": true, "maxNodeModuleJsDepth": 2 }, "typeAcquisition": { "enable": true } }
+ { "compilerOptions": { "module": "commonjs", "lib": ["es5"], "allowJs": true, "checkJs": true, "maxNodeModuleJsDepth": 2 }, "typeAcquisition": { "enable": true } }
 // @Filename: /home/src/workspaces/project/node_modules/react-router-dom/package.json
  { "name": "react-router-dom", "version": "16.8.4", "main": "index.js" }
 // @Filename: /home/src/workspaces/project/node_modules/react-router-dom/index.js
@@ -46,12 +46,12 @@ BrowserRouter/**/`
 					&lsproto.CompletionItem{
 						Label: "BrowserRouterFromDts",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "react-router-dom",
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, false),
 		},

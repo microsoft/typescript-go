@@ -1,16 +1,14 @@
 --- old.classExpressionWithDecorator1.js
 +++ new.classExpressionWithDecorator1.js
-@@= skipped -3, +3 lines =@@
- var v = @decorate class C { static p = 1 };
+@@= skipped -4, +4 lines =@@
 
  //// [classExpressionWithDecorator1.js]
+ "use strict";
 -var _a;
 -var v = (_a = class C {
 -    },
 -    _a.p = 1,
 -    _a);
-+var v = 
-+@decorate
-+class C {
++var v = class C {
 +    static p = 1;
 +};

@@ -11,8 +11,8 @@ import (
 )
 
 func TestExtendsKeywordCompletion1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export interface B ex/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
@@ -27,7 +27,7 @@ func TestExtendsKeywordCompletion1(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "extends",
-					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},

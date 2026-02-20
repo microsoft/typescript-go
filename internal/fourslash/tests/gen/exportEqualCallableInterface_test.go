@@ -9,10 +9,11 @@ import (
 )
 
 func TestExportEqualCallableInterface(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: exportEqualCallableInterface_file0.ts
+	const content = `// @lib: es5
+// @Filename: exportEqualCallableInterface_file0.ts
 interface x {
     (): Date;
     foo: string;

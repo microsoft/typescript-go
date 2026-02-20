@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsJsdocTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @typedef {object} T
@@ -29,8 +29,8 @@ func TestCompletionsJsdocTag(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "@property",
-					Detail: PtrTo("@property"),
-					Kind:   PtrTo(lsproto.CompletionItemKindKeyword),
+					Detail: new("@property"),
+					Kind:   new(lsproto.CompletionItemKindKeyword),
 				},
 			},
 		},

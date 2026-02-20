@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_multipleWithSameName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @noLib: true
@@ -38,42 +38,42 @@ fo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "foo",
-						Detail:   PtrTo("var foo: number"),
-						Kind:     PtrTo(lsproto.CompletionItemKindVariable),
-						SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+						Detail:   new("var foo: number"),
+						Kind:     new(lsproto.CompletionItemKindVariable),
+						SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 					},
 					&lsproto.CompletionItem{
 						Label: "foo",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./a",
 							},
 						},
-						Detail:              PtrTo("const foo: 0"),
-						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
+						Detail:              new("const foo: 0"),
+						Kind:                new(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "foo",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./b",
 							},
 						},
-						Detail:              PtrTo("const foo: 1"),
-						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
+						Detail:              new("const foo: 1"),
+						Kind:                new(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, true),
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
 		Source:      "./b",
 		Description: "Add import from \"./b\"",
-		NewFileContent: PtrTo(`import { foo } from "./b";
+		NewFileContent: new(`import { foo } from "./b";
 
 fo`),
 	})

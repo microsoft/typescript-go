@@ -10,8 +10,8 @@ import (
 )
 
 func TestSelfReferencedExternalModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: app.ts
 export import A = require('./app');
@@ -29,11 +29,11 @@ A./**/I`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "A",
-					Detail: PtrTo("import A = require('./app')"),
+					Detail: new("import A = require('./app')"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "I",
-					Detail: PtrTo("var I: number"),
+					Detail: new("var I: number"),
 				},
 			},
 		},

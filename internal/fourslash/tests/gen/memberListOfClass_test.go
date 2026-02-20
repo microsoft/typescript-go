@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListOfClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C1 {
    public pubMeth() { }
@@ -33,11 +33,11 @@ f./**/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "pubMeth",
-					Detail: PtrTo("(method) C1.pubMeth(): void"),
+					Detail: new("(method) C1.pubMeth(): void"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "pubProp",
-					Detail: PtrTo("(property) C1.pubProp: number"),
+					Detail: new("(property) C1.pubProp: number"),
 				},
 			},
 		},

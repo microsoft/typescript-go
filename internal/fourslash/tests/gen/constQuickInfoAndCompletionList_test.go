@@ -10,8 +10,8 @@ import (
 )
 
 func TestConstQuickInfoAndCompletionList(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const /*1*/a = 10;
 var x = /*2*/a;
@@ -34,7 +34,7 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("const a: 10"),
+					Detail: new("const a: 10"),
 				},
 			},
 			Excludes: []string{
@@ -52,7 +52,7 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("const a: 10"),
+					Detail: new("const a: 10"),
 				},
 			},
 			Excludes: []string{
@@ -70,11 +70,11 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("const a: 10"),
+					Detail: new("const a: 10"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: PtrTo("const b: 20"),
+					Detail: new("const b: 20"),
 				},
 			},
 		},
@@ -89,11 +89,11 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("const a: 10"),
+					Detail: new("const a: 10"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: PtrTo("const b: 20"),
+					Detail: new("const b: 20"),
 				},
 			},
 		},

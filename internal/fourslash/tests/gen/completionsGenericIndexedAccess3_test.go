@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsGenericIndexedAccess3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface CustomElements {
   'component-one': {
@@ -43,9 +43,9 @@ create('component-two', { props: { /*2*/ } });`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "foo?",
-					InsertText: PtrTo("foo"),
-					FilterText: PtrTo("foo"),
-					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText: new("foo"),
+					FilterText: new("foo"),
+					SortText:   new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},
@@ -60,9 +60,9 @@ create('component-two', { props: { /*2*/ } });`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "bar?",
-					InsertText: PtrTo("bar"),
-					FilterText: PtrTo("bar"),
-					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+					InsertText: new("bar"),
+					FilterText: new("bar"),
+					SortText:   new(string(ls.SortTextOptionalMember)),
 				},
 			},
 		},

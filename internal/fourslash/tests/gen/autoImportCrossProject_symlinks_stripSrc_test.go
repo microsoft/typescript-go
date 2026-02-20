@@ -8,14 +8,15 @@ import (
 )
 
 func TestAutoImportCrossProject_symlinks_stripSrc(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/packages/app/package.json
 { "name": "app", "dependencies": { "dep": "*" } }
 // @Filename: /home/src/workspaces/project/packages/app/tsconfig.json
 {
   "compilerOptions": {
+    "lib": ["es5"],
     "module": "commonjs",
     "outDir": "dist",
     "rootDir": "src",
@@ -32,7 +33,7 @@ dep/**/
 { "name": "dep", "main": "dist/index.js", "types": "dist/index.d.ts" }
 // @Filename: /home/src/workspaces/project/packages/dep/tsconfig.json
 {
-  "compilerOptions": { "outDir": "dist", "rootDir": "src", "module": "commonjs" }
+  "compilerOptions": { "lib": ["es5"], "outDir": "dist", "rootDir": "src", "module": "commonjs" }
 }
 // @Filename: /home/src/workspaces/project/packages/dep/src/index.ts
 import "./sub/folder";

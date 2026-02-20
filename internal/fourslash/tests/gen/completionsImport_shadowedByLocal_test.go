@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsImport_shadowedByLocal(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /a.ts
@@ -32,7 +32,7 @@ fo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:  "foo",
-						Detail: PtrTo("const foo: 1"),
+						Detail: new("const foo: 1"),
 					},
 				}, true),
 		},

@@ -32,26 +32,8 @@ module.exports = function loader(options) { };
 export type Options = {
     opt: string;
 };
+/**
+ * @param {Options} options
+ */
 declare const _default: (options: Options) => void;
 export = _default;
-
-
-//// [DtsFileErrors]
-
-
-out/index.d.ts(9,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-
-
-==== out/index.d.ts (1 errors) ====
-    /**
-     * @typedef Options
-     * @property {string} opt
-     */
-    export type Options = {
-        opt: string;
-    };
-    declare const _default: (options: Options) => void;
-    export = _default;
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
-    

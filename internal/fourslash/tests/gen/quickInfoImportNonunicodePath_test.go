@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoImportNonunicodePath(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /江南今何在/tmp.ts
 export const foo = 1;
@@ -17,5 +17,5 @@ export const foo = 1;
 import { foo } from "./江南/*1*/今何在/tmp";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyQuickInfoAt(t, "1", "module \"/江南今何在/tmp\"", "")
+	f.VerifyQuickInfoAt(t, "1", "module \"./江南今何在/tmp\"", "")
 }

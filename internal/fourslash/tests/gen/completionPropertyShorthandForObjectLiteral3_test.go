@@ -9,10 +9,11 @@ import (
 )
 
 func TestCompletionPropertyShorthandForObjectLiteral3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `const foo = 1;
+	const content = `// @lib: es5
+const foo = 1;
 const bar = 2;
 const obj = {
   foo b/*1*/`

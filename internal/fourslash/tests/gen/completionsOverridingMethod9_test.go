@@ -11,10 +11,11 @@ import (
 )
 
 func TestCompletionsOverridingMethod9(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: a.ts
+	const content = `// @strict: false
+// @Filename: a.ts
 // @newline: LF
 interface IFoo {
     a?: number;
@@ -35,15 +36,15 @@ class Foo implements IFoo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "a",
-					InsertText: PtrTo("a?: number;"),
-					FilterText: PtrTo("a"),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
+					InsertText: new("a?: number;"),
+					FilterText: new("a"),
+					SortText:   new(string(ls.SortTextLocationPriority)),
 				},
 				&lsproto.CompletionItem{
 					Label:      "b",
-					InsertText: PtrTo("b(x: number): void {\n}"),
-					FilterText: PtrTo("b"),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
+					InsertText: new("b(x: number): void {\n}"),
+					FilterText: new("b"),
+					SortText:   new(string(ls.SortTextLocationPriority)),
 				},
 			},
 		},

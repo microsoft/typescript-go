@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionEntryClassMembersWithInferredFunctionReturnType1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /tokenizer.ts
 export default abstract class Tokenizer {
@@ -37,8 +37,8 @@ export default abstract class ExpressionParser extends Tokenizer {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "errorBuilder",
-					InsertText: PtrTo("errorBuilder(): (pos: number, lineStart: number, curLine: number) => void {\n}"),
-					FilterText: PtrTo("errorBuilder"),
+					InsertText: new("errorBuilder(): (pos: number, lineStart: number, curLine: number) => void {\n}"),
+					FilterText: new("errorBuilder"),
 				},
 			},
 		},

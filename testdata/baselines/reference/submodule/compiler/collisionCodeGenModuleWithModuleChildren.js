@@ -1,16 +1,16 @@
 //// [tests/cases/compiler/collisionCodeGenModuleWithModuleChildren.ts] ////
 
 //// [collisionCodeGenModuleWithModuleChildren.ts]
-module M {
+namespace M {
     export var x = 3;
-    module m1 {
+    namespace m1 {
         var M = 10;
         var p = x;
     }
 }
 
-module M {
-    module m2 {
+namespace M {
+    namespace m2 {
         class M {
         }
         var p = x;
@@ -18,8 +18,8 @@ module M {
     }
 }
 
-module M {
-    module m3 {
+namespace M {
+    namespace m3 {
         function M() {
         }
         var p = x;
@@ -27,8 +27,8 @@ module M {
     }
 }
 
-module M { // shouldnt be _M
-    module m3 {
+namespace M { // shouldnt be _M
+    namespace m3 {
         interface M {
         }
         var p = x;
@@ -36,15 +36,16 @@ module M { // shouldnt be _M
     }
 }
 
-module M {
-    module m4 {
-        module M {
+namespace M {
+    namespace m4 {
+        namespace M {
             var p = x;
         }
     }
 }
 
 //// [collisionCodeGenModuleWithModuleChildren.js]
+"use strict";
 var M;
 (function (M_1) {
     M_1.x = 3;
@@ -59,7 +60,7 @@ var M;
     (function (m2) {
         class M {
         }
-        var p = x;
+        var p = M_2.x;
         var p2 = new M();
     })(m2 || (m2 = {}));
 })(M || (M = {}));
@@ -68,14 +69,14 @@ var M;
     (function (m3) {
         function M() {
         }
-        var p = x;
+        var p = M_3.x;
         var p2 = M();
     })(m3 || (m3 = {}));
 })(M || (M = {}));
 (function (M) {
     let m3;
     (function (m3) {
-        var p = x;
+        var p = M.x;
         var p2;
     })(m3 || (m3 = {}));
 })(M || (M = {}));
@@ -84,7 +85,7 @@ var M;
     (function (m4) {
         let M;
         (function (M) {
-            var p = x;
+            var p = M_4.x;
         })(M || (M = {}));
     })(m4 || (m4 = {}));
 })(M || (M = {}));

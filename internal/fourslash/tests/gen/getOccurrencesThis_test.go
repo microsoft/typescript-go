@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesThis(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|this|];
 [|th/**/is|];
@@ -35,7 +35,7 @@ function f() {
     }
 }
 
-module m {
+namespace m {
     function f() {
         this;
         this;

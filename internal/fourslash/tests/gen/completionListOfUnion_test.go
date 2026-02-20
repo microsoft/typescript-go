@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListOfUnion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strictNullChecks: true
 const x: { a: number, b: number } | { a: string, c: string } | { b: boolean } | number | null | undefined = { /*x*/ };
@@ -30,15 +30,15 @@ f({ /*f*/ });`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("(property) a: string | number"),
+					Detail: new("(property) a: string | number"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: PtrTo("(property) b: number | boolean"),
+					Detail: new("(property) b: number | boolean"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "c",
-					Detail: PtrTo("(property) c: string"),
+					Detail: new("(property) c: string"),
 				},
 			},
 		},
@@ -53,7 +53,7 @@ f({ /*f*/ });`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: PtrTo("(property) I.a: number"),
+					Detail: new("(property) I.a: number"),
 				},
 			},
 		},

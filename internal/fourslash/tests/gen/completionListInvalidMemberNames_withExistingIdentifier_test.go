@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInvalidMemberNames_withExistingIdentifier(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const x: { "foo ": "space in the name", };
 x[|.fo/*0*/|];
@@ -29,7 +29,7 @@ unrelatedIdentifier;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "foo ",
-					InsertText: PtrTo("[\"foo \"]"),
+					InsertText: new("[\"foo \"]"),
 				},
 			},
 		},
@@ -44,7 +44,7 @@ unrelatedIdentifier;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "foo ",
-					InsertText: PtrTo("[\"foo \"]"),
+					InsertText: new("[\"foo \"]"),
 				},
 			},
 		},

@@ -10,10 +10,10 @@ import (
 )
 
 func TestMemberListOfModuleAfterInvalidCharater(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module testModule {
+	const content = `namespace testModule {
     export var foo = 1;
 }
 @
@@ -30,7 +30,7 @@ testModule./**/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "foo",
-					Detail: PtrTo("var testModule.foo: number"),
+					Detail: new("var testModule.foo: number"),
 				},
 			},
 		},

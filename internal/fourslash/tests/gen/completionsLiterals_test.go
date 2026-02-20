@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsLiterals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const x: 0 | "one" = /**/;
 const y: 0 | "one" | 1n = /*1*/;
@@ -28,13 +28,13 @@ const y2: 0 | "one" | 1n = 'one'/*2*/;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "0",
-					Kind:   PtrTo(lsproto.CompletionItemKindConstant),
-					Detail: PtrTo("0"),
+					Kind:   new(lsproto.CompletionItemKindConstant),
+					Detail: new("0"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "\"one\"",
-					Kind:   PtrTo(lsproto.CompletionItemKindConstant),
-					Detail: PtrTo("\"one\""),
+					Kind:   new(lsproto.CompletionItemKindConstant),
+					Detail: new("\"one\""),
 				},
 			},
 		},
@@ -49,18 +49,18 @@ const y2: 0 | "one" | 1n = 'one'/*2*/;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "0",
-					Kind:   PtrTo(lsproto.CompletionItemKindConstant),
-					Detail: PtrTo("0"),
+					Kind:   new(lsproto.CompletionItemKindConstant),
+					Detail: new("0"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "\"one\"",
-					Kind:   PtrTo(lsproto.CompletionItemKindConstant),
-					Detail: PtrTo("\"one\""),
+					Kind:   new(lsproto.CompletionItemKindConstant),
+					Detail: new("\"one\""),
 				},
 				&lsproto.CompletionItem{
 					Label:  "1n",
-					Kind:   PtrTo(lsproto.CompletionItemKindConstant),
-					Detail: PtrTo("1n"),
+					Kind:   new(lsproto.CompletionItemKindConstant),
+					Detail: new("1n"),
 				},
 			},
 		},

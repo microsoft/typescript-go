@@ -10,8 +10,8 @@ import (
 )
 
 func TestProtoPropertyInObjectLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var o1 = {
     "__proto__": 10
@@ -33,7 +33,7 @@ o2./*2*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__proto__",
-					Detail: PtrTo("(property) \"__proto__\": number"),
+					Detail: new("(property) \"__proto__\": number"),
 				},
 			},
 		},
@@ -50,7 +50,7 @@ o2./*2*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__proto__",
-					Detail: PtrTo("(property) __proto__: number"),
+					Detail: new("(property) __proto__: number"),
 				},
 			},
 		},

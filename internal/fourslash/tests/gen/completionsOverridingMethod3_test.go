@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsOverridingMethod3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
 // @Filename: boo.d.ts
@@ -35,9 +35,9 @@ declare class Poltergeist implements Ghost {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "boo",
-					InsertText: PtrTo("boo(): string;"),
-					FilterText: PtrTo("boo"),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
+					InsertText: new("boo(): string;"),
+					FilterText: new("boo"),
+					SortText:   new(string(ls.SortTextLocationPriority)),
 				},
 			},
 		},
