@@ -1,4 +1,4 @@
-es6ImportWithoutFromClause_1.ts(1,8): error TS2307: Cannot find module 'es6ImportWithoutFromClause_0' or its corresponding type declarations.
+es6ImportWithoutFromClause_1.ts(1,8): error TS2882: Cannot find module or type declarations for side-effect import of 'es6ImportWithoutFromClause_0'.
 
 
 ==== es6ImportWithoutFromClause_0.ts (0 errors) ====
@@ -7,5 +7,5 @@ es6ImportWithoutFromClause_1.ts(1,8): error TS2307: Cannot find module 'es6Impor
 ==== es6ImportWithoutFromClause_1.ts (1 errors) ====
     import "es6ImportWithoutFromClause_0";
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'es6ImportWithoutFromClause_0' or its corresponding type declarations.
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'es6ImportWithoutFromClause_0'.
     
