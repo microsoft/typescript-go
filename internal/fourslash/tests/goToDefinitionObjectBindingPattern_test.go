@@ -30,3 +30,17 @@ let { x: { /*7*/targetProperty: /*8*/{} } }: { x: SomeType } = { x: { targetProp
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, f.MarkerNames()...)
 }
+
+func TestGoToDefinitionObjectBindingPatternRest(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `
+interface SomeType {
+    targetProperty: number;
+}
+
+let { .../*1*/rest }: SomeType = { targetProperty: 42 };`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, f.MarkerNames()...)
+}
