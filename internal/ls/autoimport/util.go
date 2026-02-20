@@ -264,10 +264,10 @@ func (rh *resolutionHost) FS() vfs.FS {
 	return rh.fs
 }
 
-func getModuleResolver(host RegistryCloneHost, realpath func(string) string, packageJsonCache *packagejson.InfoCache) *module.Resolver {
+func getModuleResolver(host RegistryCloneHost, realpath func(string) string, opts module.ResolverOptions) *module.Resolver {
 	rh := &resolutionHost{
 		fs:               wrapvfs.Wrap(host.FS(), wrapvfs.Replacements{Realpath: realpath}),
 		currentDirectory: host.GetCurrentDirectory(),
 	}
-	return module.NewResolverWithPackageJsonCache(rh, core.EmptyCompilerOptions, "", "", packageJsonCache)
+	return module.NewResolverWithOptions(rh, core.EmptyCompilerOptions, "", "", opts)
 }
