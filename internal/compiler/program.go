@@ -688,6 +688,10 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
 
+	if !options.DownlevelIteration.IsUnknown() {
+		createRemovedOptionDiagnostic("downlevelIteration", "", "")
+	}
+
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "strictPropertyInitialization", "strictNullChecks")
 	}
