@@ -86,8 +86,7 @@ func (p *projectReferenceParser) initMapperWorker(tasks []*projectReferenceParse
 		if !seen.AddIfAbsent(task) {
 			continue
 		}
-		var referencesInConfig []tspath.Path
-		referencesInConfig = p.initMapperWorker(task.subTasks, seen)
+		referencesInConfig := p.initMapperWorker(task.subTasks, seen)
 		p.loader.projectReferenceFileMapper.configToProjectReference[path] = task.resolved
 		p.loader.projectReferenceFileMapper.referencesInConfigFile[path] = referencesInConfig
 		if task.resolved == nil || p.loader.projectReferenceFileMapper.opts.Config.ConfigFile == task.resolved.ConfigFile {

@@ -126,7 +126,7 @@ func (s *formattingScanner) shouldRescanJsxText(node *ast.Node) bool {
 	if ast.IsJsxText(node) {
 		return true
 	}
-	if !ast.IsJsxElement(node) || s.hasLastTokenInfo == false {
+	if !ast.IsJsxElement(node) || !s.hasLastTokenInfo {
 		return false
 	}
 

@@ -331,23 +331,23 @@ func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDif
 		output.WriteString("\n\n")
 	}
 
-	output.WriteString(fmt.Sprintf("〚Positions: [%d, %d]〛\n", rng.Pos(), rng.End()))
+	fmt.Fprintf(output, "〚Positions: [%d, %d]〛\n", rng.Pos(), rng.End())
 	if diff.tsToken != nil {
-		output.WriteString(fmt.Sprintf("【TS: %s [%d, %d)】\n", diff.tsToken.Kind, tsTokenPos, tsTokenEnd))
+		fmt.Fprintf(output, "【TS: %s [%d, %d)】\n", diff.tsToken.Kind, tsTokenPos, tsTokenEnd)
 	} else {
 		output.WriteString("【TS: nil】\n")
 	}
 	if diff.goToken != nil {
-		output.WriteString(fmt.Sprintf("《Go: %s [%d, %d)》\n", diff.goToken.Kind, goTokenPos, goTokenEnd))
+		fmt.Fprintf(output, "《Go: %s [%d, %d)》\n", diff.goToken.Kind, goTokenPos, goTokenEnd)
 	} else {
 		output.WriteString("《Go: nil》\n")
 	}
 	for line := contextStart; line <= contextEnd; line++ {
 		if truncate, skipTo := shouldTruncate(line); truncate {
-			output.WriteString(fmt.Sprintf("%s │........ %d lines omitted ........\n", strings.Repeat(" ", digits), skipTo-line+1))
+			fmt.Fprintf(output, "%s │........ %d lines omitted ........\n", strings.Repeat(" ", digits), skipTo-line+1)
 			line = skipTo
 		}
-		output.WriteString(fmt.Sprintf("%*d │", digits, line+1))
+		fmt.Fprintf(output, "%*d │", digits, line+1)
 		end := len(file.Text()) + 1
 		if line < len(lines)-1 {
 			end = int(lines[line+1])

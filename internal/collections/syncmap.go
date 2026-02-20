@@ -80,10 +80,7 @@ func (s *SyncMap[K, V]) ToMap() map[K]V {
 func (s *SyncMap[K, V]) Keys() iter.Seq[K] {
 	return func(yield func(K) bool) {
 		s.m.Range(func(key, value any) bool {
-			if !yield(key.(K)) {
-				return false
-			}
-			return true
+			return yield(key.(K))
 		})
 	}
 }

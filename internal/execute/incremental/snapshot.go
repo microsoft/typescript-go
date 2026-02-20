@@ -299,10 +299,10 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 		)))
 	}
 	if diagnostic.File() != nil {
-		builder.WriteString(fmt.Sprintf("(%d,%d): ", diagnostic.Pos(), diagnostic.Len()))
+		fmt.Fprintf(builder, "(%d,%d): ", diagnostic.Pos(), diagnostic.Len())
 	}
 	builder.WriteString(diagnostic.Category().Name())
-	builder.WriteString(fmt.Sprintf("%d: ", diagnostic.Code()))
+	fmt.Fprintf(builder, "%d: ", diagnostic.Code())
 	builder.WriteString(string(diagnostic.MessageKey()))
 	builder.WriteString("\n")
 	for _, arg := range diagnostic.MessageArgs() {

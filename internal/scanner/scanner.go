@@ -1385,10 +1385,8 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 
 	if IsIdentifierStart(ch) {
 		char := ch
-		for {
-			if s.pos >= len(s.text) {
-				break
-			}
+		for s.pos < len(s.text) {
+
 			char, size = s.charAndSize()
 			if !IsIdentifierPart(char) && char != '-' {
 				break

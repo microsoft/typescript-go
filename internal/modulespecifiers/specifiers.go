@@ -748,7 +748,7 @@ func tryGetModuleNameAsNodeModule(
 	if !packageNameOnly {
 		packageRootIndex := parts.PackageRootIndex
 		var moduleFileName string
-		for true {
+		for {
 			// If the module could be imported by a directory name, use that directory's name
 			pkgJsonResults := tryDirectoryWithPackageJson(
 				*parts,
@@ -868,14 +868,14 @@ func tryDirectoryWithPackageJson(
 		conditions := module.GetConditions(options, importMode)
 
 		var fromExports string
-		if packageJsonContent != nil && packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
+		if packageJsonContent != nil && packageJsonContent.Exports.Type != packagejson.JSONValueTypeNotPresent {
 			fromExports = tryGetModuleNameFromExports(
 				options,
 				host,
 				pathObj.FileName,
 				packageRootPath,
 				packageName,
-				packageJsonContent.Fields.Exports,
+				packageJsonContent.Exports,
 				conditions,
 			)
 		}
@@ -885,7 +885,7 @@ func tryDirectoryWithPackageJson(
 				verbatimFromExports: true,
 			}
 		}
-		if packageJsonContent != nil && packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
+		if packageJsonContent != nil && packageJsonContent.Exports.Type != packagejson.JSONValueTypeNotPresent {
 			return pkgJsonDirAttemptResult{
 				moduleFileToTry:  pathObj.FileName,
 				blockedByExports: true,
@@ -1022,7 +1022,7 @@ func tryGetModuleNameFromPackageJsonImports(
 		return ""
 	}
 
-	imports := info.GetContents().Fields.Imports
+	imports := info.GetContents().Imports
 	switch imports.Type {
 	case packagejson.JSONValueTypeNotPresent, packagejson.JSONValueTypeArray, packagejson.JSONValueTypeString:
 		return "" // not present or invalid for imports

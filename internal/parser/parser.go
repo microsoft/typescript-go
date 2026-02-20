@@ -6512,7 +6512,7 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 		case "ts-check", "ts-nocheck":
 			// _last_ of either nocheck or check in a file is the "winner"
 			for _, directive := range context.Pragmas {
-				if context.CheckJsDirective == nil || directive.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
+				if context.CheckJsDirective == nil || directive.Pos() > context.CheckJsDirective.Range.Pos() {
 					context.CheckJsDirective = &ast.CheckJsDirective{
 						Enabled: directive.Name == "ts-check",
 						Range:   directive.CommentRange,

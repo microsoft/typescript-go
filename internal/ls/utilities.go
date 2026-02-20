@@ -427,7 +427,7 @@ func isLabelOfLabeledStatement(node *ast.Node) bool {
 }
 
 func findReferenceInPosition(refs []*ast.FileReference, pos int) *ast.FileReference {
-	return core.Find(refs, func(ref *ast.FileReference) bool { return ref.TextRange.ContainsInclusive(pos) })
+	return core.Find(refs, func(ref *ast.FileReference) bool { return ref.ContainsInclusive(pos) })
 }
 
 // Assumes `candidate.pos <= position` holds.

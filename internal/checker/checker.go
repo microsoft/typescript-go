@@ -1682,13 +1682,6 @@ func (c *Checker) getSuggestedLibForNonExistentName(name string) string {
 	return ""
 }
 
-func (c *Checker) getPrimitiveAliasSymbols() {
-	var symbols []*ast.Symbol
-	for _, name := range []string{"string", "number", "boolean", "object", "bigint", "symbol"} {
-		symbols = append(symbols, c.newSymbol(ast.SymbolFlagsTypeAlias, name))
-	}
-}
-
 func (c *Checker) getSuggestedSymbolForNonexistentSymbol(location *ast.Node, outerName string, meaning ast.SymbolFlags) *ast.Symbol {
 	return c.resolveNameForSymbolSuggestion(location, outerName, meaning, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 }
@@ -10578,10 +10571,10 @@ func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
 	case ast.KindExclamationToken:
 		c.checkTruthinessOfType(operandType, expr.Operand)
 		facts := c.getTypeFacts(operandType, TypeFactsTruthy|TypeFactsFalsy)
-		switch {
-		case facts == TypeFactsTruthy:
+		switch facts {
+		case TypeFactsTruthy:
 			return c.falseType
-		case facts == TypeFactsFalsy:
+		case TypeFactsFalsy:
 			return c.trueType
 		default:
 			return c.booleanType
@@ -13436,7 +13429,7 @@ func (c *Checker) isReadonlyAssignmentDeclaration(node *ast.Node) bool {
 			} else {
 				writableType = c.getTypeOfSymbol(writableProp)
 			}
-			return writableType.flags&TypeFlagsBooleanLiteral != 0 && getBooleanLiteralValue(writableType) == false
+			return writableType.flags&TypeFlagsBooleanLiteral != 0 && !getBooleanLiteralValue(writableType)
 		}
 		return true
 	}
@@ -15033,10 +15026,10 @@ func (c *Checker) getSuggestedImportSource(moduleReference string, tsExtension s
 	if c.moduleKind.IsNonNodeESM() || mode == core.ModuleKindESNext {
 		preferTs := tspath.IsDeclarationFileName(moduleReference) && c.compilerOptions.GetAllowImportingTsExtensions()
 		var ext string
-		switch {
-		case tsExtension == tspath.ExtensionMts || tsExtension == tspath.ExtensionDmts:
+		switch tsExtension {
+		case tspath.ExtensionMts, tspath.ExtensionDmts:
 			ext = core.IfElse(preferTs, ".mts", ".mjs")
-		case tsExtension == tspath.ExtensionCts || tsExtension == tspath.ExtensionDcts:
+		case tspath.ExtensionCts, tspath.ExtensionDcts:
 			ext = core.IfElse(preferTs, ".cts", ".cjs")
 		default:
 			ext = core.IfElse(preferTs, ".ts", ".js")
@@ -15789,10 +15782,8 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 		return symbols
 	}
 	var originalModule *ast.Symbol
-	if moduleSymbol != nil {
-		if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
-			originalModule = moduleSymbol
-		}
+	if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
+		originalModule = moduleSymbol
 	}
 	// A module defined by an 'export=' consists of one export that needs to be resolved
 	moduleSymbol = c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
@@ -16559,7 +16550,7 @@ func (c *Checker) getBaseConstructorTypeOfClass(t *Type) *Type {
 		err := c.error(baseTypeNode.Expression(), diagnostics.Type_0_is_not_a_constructor_function_type, c.TypeToString(baseConstructorType))
 		if baseConstructorType.flags&TypeFlagsTypeParameter != 0 {
 			constraint := c.getConstraintFromTypeParameter(baseConstructorType)
-			var ctorReturn *Type = c.unknownType
+			ctorReturn := c.unknownType
 			if constraint != nil {
 				ctorSigs := c.getSignaturesOfType(constraint, SignatureKindConstruct)
 				if len(ctorSigs) != 0 {
@@ -18184,12 +18175,12 @@ func (c *Checker) getOptionalType(t *Type, isProperty bool) *Type {
 // Add undefined or null or both to a type if they are missing.
 func (c *Checker) getNullableType(t *Type, flags TypeFlags) *Type {
 	missing := (flags & ^t.flags) & (TypeFlagsUndefined | TypeFlagsNull)
-	switch {
-	case missing == 0:
+	switch missing {
+	case 0:
 		return t
-	case missing == TypeFlagsUndefined:
+	case TypeFlagsUndefined:
 		return c.getUnionType([]*Type{t, c.undefinedType})
-	case missing == TypeFlagsNull:
+	case TypeFlagsNull:
 		return c.getUnionType([]*Type{t, c.nullType})
 	}
 	return c.getUnionType([]*Type{t, c.undefinedType, c.nullType})
@@ -19668,7 +19659,7 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 	var returnType *Type
 	var yieldType *Type
 	var nextType *Type
-	var fallbackReturnType *Type = c.voidType
+	fallbackReturnType := c.voidType
 	switch {
 	case !ast.IsBlock(body):
 		returnType = c.checkExpressionCachedEx(body, checkMode & ^CheckModeSkipGenericFunctions)
@@ -20690,7 +20681,7 @@ func (c *Checker) getUnionSignatures(signatureLists [][]*Signature) []*Signature
 		// nature and having overloads in multiple constituents would necessitate making a power set of signatures from the type, whose
 		// ordering would be non-obvious)
 		masterList := signatureLists[indexWithLengthOverOne]
-		var results []*Signature = slices.Clone(masterList)
+		results := slices.Clone(masterList)
 		for _, signatures := range signatureLists {
 			if !core.Same(signatures, masterList) {
 				signature := signatures[0]
@@ -28884,10 +28875,10 @@ func (c *Checker) getContextualTypeForArgument(callTarget *ast.Node, arg *ast.No
 
 func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argIndex int) *Type {
 	if ast.IsImportCall(callTarget) {
-		switch {
-		case argIndex == 0:
+		switch argIndex {
+		case 0:
 			return c.stringType
-		case argIndex == 1:
+		case 1:
 			return c.getGlobalImportCallOptionsType()
 		default:
 			return c.anyType
@@ -30324,10 +30315,10 @@ func (c *Checker) getGlobalNonNullableTypeInstantiation(t *Type) *Type {
 }
 
 func (c *Checker) convertAutoToAny(t *Type) *Type {
-	switch {
-	case t == c.autoType:
+	switch t {
+	case c.autoType:
 		return c.anyType
-	case t == c.autoArrayType:
+	case c.autoArrayType:
 		return c.anyArrayType
 	}
 	return t

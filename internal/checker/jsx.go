@@ -818,7 +818,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		return len(ast.GetSemanticJsxChildren(children)) != 0
 	}
 	if parentHasSemanticJsxChildren(openingLikeElement) {
-		var childTypes []*Type = c.checkJsxChildren(openingLikeElement.Parent, checkMode)
+		childTypes := c.checkJsxChildren(openingLikeElement.Parent, checkMode)
 		if !hasSpreadAnyType && jsxChildrenPropertyName != ast.InternalSymbolNameMissing && jsxChildrenPropertyName != "" {
 			// Error if there is a attribute named "children" explicitly specified and children element.
 			// This is because children element will overwrite the value from attributes.

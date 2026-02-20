@@ -385,12 +385,12 @@ func (p *Project) toPath(fileName string) tspath.Path {
 }
 
 func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder *strings.Builder) string {
-	builder.WriteString(fmt.Sprintf("\nProject '%s'\n", p.Name()))
+	fmt.Fprintf(builder, "\nProject '%s'\n", p.Name())
 	if p.Program == nil {
 		builder.WriteString("\tFiles (0) NoProgram\n")
 	} else {
 		sourceFiles := p.Program.GetSourceFiles()
-		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
+		fmt.Fprintf(builder, "\tFiles (%d)\n", len(sourceFiles))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
 				builder.WriteString("\t\t" + sourceFile.FileName() + "\n")

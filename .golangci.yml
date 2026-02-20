@@ -41,6 +41,7 @@ linters:
     - perfsprint
     - predeclared
     - reassign
+    - staticcheck
     - testableexamples
     - tparallel
     - unconvert
@@ -55,7 +56,6 @@ linters:
     # - gocritic
     # - gosec
     # - revive
-    # - staticcheck
     # - testifylint
     # - unparam
     # - unused
@@ -86,6 +86,21 @@ linters:
         - pattern: 'GOOS'
           msg: a host implementation should likely be used instead
           pkg: ^runtime$
+
+    staticcheck:
+      checks:
+        - all
+        - -QF1001 # Apply De Morgan’s law
+        - -QF1003 # Convert if/else-if chain to tagged switch
+        - -SA1019 # Using a deprecated function, variable, constant or field
+        - -SA9003 # Empty body in an if or else branch
+        - -ST1000 # Incorrect or missing package comment
+        - -ST1003 # Poorly chosen identifier
+        - -ST1006 # Poorly chosen receiver name
+        - -ST1016 # Use consistent method receiver names
+        - -ST1020 # The documentation of an exported function should start with the function’s name
+        - -ST1021 # The documentation of an exported type should start with type’s name
+        - -ST1022 # The documentation of an exported variable or constant should start with variable’s name
 
   exclusions:
     rules:

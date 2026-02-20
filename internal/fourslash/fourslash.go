@@ -2405,12 +2405,12 @@ func formatCallHierarchyItem(
 	}
 
 	trailingPrefix := prefix
-	result.WriteString(fmt.Sprintf("%s╭ name: %s\n", prefix, callHierarchyItem.Name))
-	result.WriteString(fmt.Sprintf("%s├ kind: %s\n", prefix, symbolKindToLowercase(callHierarchyItem.Kind)))
+	fmt.Fprintf(result, "%s╭ name: %s\n", prefix, callHierarchyItem.Name)
+	fmt.Fprintf(result, "%s├ kind: %s\n", prefix, symbolKindToLowercase(callHierarchyItem.Kind))
 	if callHierarchyItem.Detail != nil && *callHierarchyItem.Detail != "" {
-		result.WriteString(fmt.Sprintf("%s├ containerName: %s\n", prefix, *callHierarchyItem.Detail))
+		fmt.Fprintf(result, "%s├ containerName: %s\n", prefix, *callHierarchyItem.Detail)
 	}
-	result.WriteString(fmt.Sprintf("%s├ file: %s\n", prefix, callHierarchyItem.Uri.FileName()))
+	fmt.Fprintf(result, "%s├ file: %s\n", prefix, callHierarchyItem.Uri.FileName())
 	result.WriteString(prefix + "├ span:\n")
 	formatCallHierarchyItemSpan(f, file, result, callHierarchyItem.Range, prefix+"│ ", prefix+"│ ")
 	result.WriteString(prefix + "├ selectionSpan:\n")
@@ -2512,7 +2512,7 @@ func formatCallHierarchyItemSpan(
 	// Calculate line number padding
 	lineNumWidth := len(strconv.Itoa(contextEndLine+1)) + 2
 
-	result.WriteString(fmt.Sprintf("%s╭ %s:%d:%d-%d:%d\n", prefix, file.fileName, startLc.Line+1, startLc.Character+1, endLc.Line+1, endLc.Character+1))
+	fmt.Fprintf(result, "%s╭ %s:%d:%d-%d:%d\n", prefix, file.fileName, startLc.Line+1, startLc.Character+1, endLc.Line+1, endLc.Character+1)
 
 	for lineNum := contextStartLine; lineNum <= contextEndLine; lineNum++ {
 		lineStart := lineStarts[lineNum]
@@ -2529,9 +2529,9 @@ func formatCallHierarchyItemSpan(
 		lineNumStr := fmt.Sprintf("%d:", lineNum+1)
 		paddedLineNum := strings.Repeat(" ", lineNumWidth-len(lineNumStr)-1) + lineNumStr
 		if lineContent == "" {
-			result.WriteString(fmt.Sprintf("%s│ %s\n", prefix, paddedLineNum))
+			fmt.Fprintf(result, "%s│ %s\n", prefix, paddedLineNum)
 		} else {
-			result.WriteString(fmt.Sprintf("%s│ %s %s\n", prefix, paddedLineNum, lineContent))
+			fmt.Fprintf(result, "%s│ %s %s\n", prefix, paddedLineNum, lineContent)
 		}
 
 		// Add selection carets if this line contains part of the span
@@ -2551,7 +2551,7 @@ func formatCallHierarchyItemSpan(
 			if isEmpty {
 				// For empty selections, show a single "<" character
 				padding := strings.Repeat(" ", lineNumWidth+selStart)
-				result.WriteString(fmt.Sprintf("%s│ %s<\n", prefix, padding))
+				fmt.Fprintf(result, "%s│ %s<\n", prefix, padding)
 			} else {
 				// Calculate selection length (at least 1)
 				selLength := selEnd - selStart
@@ -2566,7 +2566,7 @@ func formatCallHierarchyItemSpan(
 
 				padding := strings.Repeat(" ", lineNumWidth+selStart)
 				carets := strings.Repeat("^", selLength)
-				result.WriteString(fmt.Sprintf("%s│ %s%s\n", prefix, padding, carets))
+				fmt.Fprintf(result, "%s│ %s%s\n", prefix, padding, carets)
 			}
 		}
 	}

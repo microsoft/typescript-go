@@ -58,10 +58,7 @@ func (s *SyncSet[T]) ToSlice() []T {
 func (s *SyncSet[T]) Keys() iter.Seq[T] {
 	return func(yield func(T) bool) {
 		s.m.Range(func(key T, value struct{}) bool {
-			if !yield(key) {
-				return false
-			}
-			return true
+			return yield(key)
 		})
 	}
 }

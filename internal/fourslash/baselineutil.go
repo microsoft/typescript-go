@@ -943,7 +943,7 @@ func (t *textWithContext) add(detail *baselineDetail) {
 				if t.isLibFile {
 					t.newContent.WriteString("--- (line: --) skipped ---\n")
 				} else {
-					t.newContent.WriteString(fmt.Sprintf("--- (line: %v) skipped ---\n", locationLineIndex-t.nLinesContext+1))
+					fmt.Fprintf(t.newContent, "--- (line: %v) skipped ---\n", locationLineIndex-t.nLinesContext+1)
 				}
 				t.newContent.WriteString(t.sliceOfContent(
 					t.getIndex(t.lineStarts.LineStarts[locationLineIndex-t.nLinesContext+1]),
@@ -1050,7 +1050,7 @@ func annotateContentWithTooltips[T comparable](
 	builder := strings.Builder{}
 	seenFirst := false
 	for fileName, lines := range filesToLines.Entries() {
-		builder.WriteString(fmt.Sprintf("=== %s ===\n", fileName))
+		fmt.Fprintf(&builder, "=== %s ===\n", fileName)
 		for _, line := range lines {
 			builder.WriteString("// ")
 			builder.WriteString(line)

@@ -1204,9 +1204,8 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 	case ast.KindBinaryExpression:
 		highestBinary := getHighestBinary(parent.AsBinaryExpression())
 		contextualType := c.GetContextualType(highestBinary.AsNode(), checker.ContextFlagsNone)
-		argumentIndex := 0
 		if node.Kind != ast.KindOpenParenToken {
-			argumentIndex = countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1
+			argumentIndex := countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1
 			argumentCount := countBinaryExpressionParameters(highestBinary)
 			if contextualType != nil {
 				return &contextualSignatureLocationInfo{

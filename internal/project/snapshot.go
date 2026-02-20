@@ -389,8 +389,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		openFiles[path] = overlay.FileName()
 	}
 	prepareAutoImports := tspath.Path("")
-	if change.ResourceRequest.AutoImports != "" {
-		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
+	if change.AutoImports != "" {
+		prepareAutoImports = change.AutoImports.Path(s.UseCaseSensitiveFileNames())
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
