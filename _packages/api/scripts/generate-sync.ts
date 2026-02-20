@@ -28,6 +28,7 @@ import {
 import {
     dirname,
     join,
+    relative,
 } from "node:path";
 import ts from "typescript";
 
@@ -63,13 +64,13 @@ function generateSyncFile(srcPath: string, destPath: string): string {
     let result = removeAsyncAwaitAndPromise(afterDirectives, fileName);
 
     // Prepend generated header pointing to async source
-    const srcRelPath = srcPath.replace(ROOT + "/", "");
+    const srcRelPath = relative(ROOT, srcPath).replaceAll("\\", "/");
     result = generatedHeader(srcRelPath) + result;
 
     mkdirSync(dirname(destPath), { recursive: true });
     writeFileSync(destPath, result);
-    const label = srcPath.replace(ROOT + "/", "");
-    const destLabel = destPath.replace(ROOT + "/", "");
+    const label = relative(ROOT, srcPath).replaceAll("\\", "/");
+    const destLabel = relative(ROOT, destPath).replaceAll("\\", "/");
     console.log(`  ${label} → ${destLabel}`);
     return destPath;
 }
