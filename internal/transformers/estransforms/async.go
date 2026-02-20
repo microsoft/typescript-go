@@ -4,7 +4,6 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -260,13 +259,13 @@ func (tx *asyncTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Nod
 // - The node is marked as async
 func (tx *asyncTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsMethodDeclaration()
-	functionFlags := getFunctionFlags(node)
+	functionFlags := ast.GetFunctionFlags(node)
 	savedLexicalArguments := tx.lexicalArguments
 	tx.lexicalArguments = lexicalArgumentsInfo{}
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if functionFlags&checker.FunctionFlagsAsync != 0 {
+	if functionFlags&ast.FunctionFlagsAsync != 0 {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
@@ -332,13 +331,13 @@ func (tx *asyncTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Nod
 // - The node is marked async
 func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionDeclaration()
-	functionFlags := getFunctionFlags(node)
+	functionFlags := ast.GetFunctionFlags(node)
 	savedLexicalArguments := tx.lexicalArguments
 	tx.lexicalArguments = lexicalArgumentsInfo{}
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if functionFlags&checker.FunctionFlagsAsync != 0 {
+	if functionFlags&ast.FunctionFlagsAsync != 0 {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
@@ -367,13 +366,13 @@ func (tx *asyncTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Node {
 // - The node is marked async
 func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 	decl := node.AsFunctionExpression()
-	functionFlags := getFunctionFlags(node)
+	functionFlags := ast.GetFunctionFlags(node)
 	savedLexicalArguments := tx.lexicalArguments
 	tx.lexicalArguments = lexicalArgumentsInfo{}
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if functionFlags&checker.FunctionFlagsAsync != 0 {
+	if functionFlags&ast.FunctionFlagsAsync != 0 {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
@@ -402,11 +401,11 @@ func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 // - The node is marked async
 func (tx *asyncTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 	decl := node.AsArrowFunction()
-	functionFlags := getFunctionFlags(node)
+	functionFlags := ast.GetFunctionFlags(node)
 
 	var parameters *ast.NodeList
 	var body *ast.Node
-	if functionFlags&checker.FunctionFlagsAsync != 0 {
+	if functionFlags&ast.FunctionFlagsAsync != 0 {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
@@ -443,7 +442,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 
 	// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
 	emitSuperHelpers := (tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess) &&
-		(getFunctionFlags(tx.getOriginalIfFunctionLike(node))&checker.FunctionFlagsAsyncGenerator) != checker.FunctionFlagsAsyncGenerator
+		(ast.GetFunctionFlags(tx.getOriginalIfFunctionLike(node))&ast.FunctionFlagsAsyncGenerator) != ast.FunctionFlagsAsyncGenerator
 
 	if emitSuperHelpers {
 		if tx.capturedSuperProperties.Len() > 0 {
@@ -1191,33 +1190,6 @@ func isSimpleParameterList(params []*ast.Node) bool {
 		}
 	}
 	return true
-}
-
-// getFunctionFlags returns the function flags for a node.
-func getFunctionFlags(node *ast.Node) checker.FunctionFlags {
-	if node == nil {
-		return checker.FunctionFlagsInvalid
-	}
-	data := node.BodyData()
-	if data == nil {
-		return checker.FunctionFlagsInvalid
-	}
-	flags := checker.FunctionFlagsNormal
-	switch node.Kind {
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindMethodDeclaration:
-		if data.AsteriskToken != nil {
-			flags |= checker.FunctionFlagsGenerator
-		}
-		fallthrough
-	case ast.KindArrowFunction:
-		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) {
-			flags |= checker.FunctionFlagsAsync
-		}
-	}
-	if data.Body == nil {
-		flags |= checker.FunctionFlagsInvalid
-	}
-	return flags
 }
 
 // isNodeWithPossibleHoistedDeclaration checks if a node could contain hoisted declarations.
