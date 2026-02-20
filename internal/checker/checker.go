@@ -28991,7 +28991,9 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 			if ast.IsPropertyAccessExpression(left) {
 				name := left.Name()
 				if ast.IsPrivateIdentifier(name) {
-					symbol = c.getPropertyOfType(thisType, binder.GetSymbolNameForPrivateIdentifier(thisType.symbol, name.Text()))
+					if thisType.symbol != nil {
+						symbol = c.getPropertyOfType(thisType, binder.GetSymbolNameForPrivateIdentifier(thisType.symbol, name.Text()))
+					}
 				} else {
 					symbol = c.getPropertyOfType(thisType, name.Text())
 				}
@@ -30691,9 +30693,6 @@ func (c *Checker) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
 	// const node = getParseTreeNode(nodeIn);
 
 	// set ignoreErrors: true because any lookups invoked by the API shouldn't cause any new errors
-	if node.Parent == nil || node.Parent.Parent == nil {
-		return nil
-	}
 	return c.getSymbolAtLocation(ast.GetReparsedNodeForNode(node), true /*ignoreErrors*/)
 }
 

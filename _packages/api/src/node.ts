@@ -1034,11 +1034,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
 export class RemoteSourceFile extends RemoteNode {
     readonly nodes: (RemoteNode | RemoteNodeList)[];
 
-    get id(): string {
-        const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
-        return this.getString(this.view.getUint32(extendedDataOffset + 12, true));
-    }
-
     constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, decoder, 1, undefined!, {} as unknown as RemoteSourceFile);
