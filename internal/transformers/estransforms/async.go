@@ -11,12 +11,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
-type contextFlags int
+type asyncContextFlags int
 
 const (
-	contextFlagsNone        contextFlags = 0
-	contextFlagsNonTopLevel contextFlags = 1 << iota
-	contextFlagsHasLexicalThis
+	asyncContextNone        asyncContextFlags = 0
+	asyncContextNonTopLevel asyncContextFlags = 1 << iota
+	asyncContextHasLexicalThis
 )
 
 type lexicalArgumentsInfo struct {
@@ -29,7 +29,7 @@ type asyncTransformer struct {
 	compilerOptions *core.CompilerOptions
 	emitResolver    printer.EmitResolver
 
-	contextFlags contextFlags
+	contextFlags asyncContextFlags
 
 	enclosingFunctionParameterNames *collections.Set[string]
 	capturedSuperProperties         *collections.Set[string]
@@ -59,13 +59,13 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindAwaitExpression:
 		return tx.visitAwaitExpression(node.AsAwaitExpression())
 	case ast.KindMethodDeclaration:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitMethodDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitMethodDeclaration, node)
 	case ast.KindFunctionDeclaration:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitFunctionDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitFunctionDeclaration, node)
 	case ast.KindFunctionExpression:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitFunctionExpression, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitFunctionExpression, node)
 	case ast.KindArrowFunction:
-		return tx.doWithContext(contextFlagsNonTopLevel, tx.visitArrowFunction, node)
+		return tx.doWithContext(asyncContextNonTopLevel, tx.visitArrowFunction, node)
 	case ast.KindPropertyAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.capturedSuperProperties.Add(node.Name().Text())
@@ -83,13 +83,13 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindGetAccessor:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitGetAccessorDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitGetAccessorDeclaration, node)
 	case ast.KindSetAccessor:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitSetAccessorDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitSetAccessorDeclaration, node)
 	case ast.KindConstructor:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitConstructorDeclaration, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitConstructorDeclaration, node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithContext(contextFlagsNonTopLevel|contextFlagsHasLexicalThis, tx.visitDefault, node)
+		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, tx.visitDefault, node)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
@@ -100,8 +100,8 @@ func (tx *asyncTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		return node.AsNode()
 	}
 
-	tx.setContextFlag(contextFlagsNonTopLevel, false)
-	tx.setContextFlag(contextFlagsHasLexicalThis, !isEffectiveStrictModeSourceFile(node, tx.compilerOptions))
+	tx.setContextFlag(asyncContextNonTopLevel, false)
+	tx.setContextFlag(asyncContextHasLexicalThis, !isEffectiveStrictModeSourceFile(node, tx.compilerOptions))
 	visited := tx.Visitor().VisitEachChild(node.AsNode())
 	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
 	return visited
@@ -173,7 +173,7 @@ func (tx *asyncTransformer) visitAsyncBodyNode(node *ast.Node) *ast.Node {
 	return tx.visit(node)
 }
 
-func (tx *asyncTransformer) setContextFlag(flag contextFlags, val bool) {
+func (tx *asyncTransformer) setContextFlag(flag asyncContextFlags, val bool) {
 	if val {
 		tx.contextFlags |= flag
 	} else {
@@ -181,24 +181,24 @@ func (tx *asyncTransformer) setContextFlag(flag contextFlags, val bool) {
 	}
 }
 
-func (tx *asyncTransformer) inContext(flags contextFlags) bool {
+func (tx *asyncTransformer) inContext(flags asyncContextFlags) bool {
 	return tx.contextFlags&flags != 0
 }
 
 func (tx *asyncTransformer) inTopLevelContext() bool {
-	return !tx.inContext(contextFlagsNonTopLevel)
+	return !tx.inContext(asyncContextNonTopLevel)
 }
 
 func (tx *asyncTransformer) inHasLexicalThisContext() bool {
-	return tx.inContext(contextFlagsHasLexicalThis)
+	return tx.inContext(asyncContextHasLexicalThis)
 }
 
-func (tx *asyncTransformer) doWithContext(flags contextFlags, cb func(*ast.Node) *ast.Node, node *ast.Node) *ast.Node {
-	contextFlagsToSet := flags & ^tx.contextFlags
-	if contextFlagsToSet != 0 {
-		tx.setContextFlag(contextFlagsToSet, true)
+func (tx *asyncTransformer) doWithContext(flags asyncContextFlags, cb func(*ast.Node) *ast.Node, node *ast.Node) *ast.Node {
+	flagsToSet := flags & ^tx.contextFlags
+	if flagsToSet != 0 {
+		tx.setContextFlag(flagsToSet, true)
 		result := cb(node)
-		tx.setContextFlag(contextFlagsToSet, false)
+		tx.setContextFlag(flagsToSet, false)
 		return result
 	}
 	return cb(node)
