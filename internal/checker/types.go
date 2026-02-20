@@ -120,12 +120,13 @@ type SymbolReferenceLinks struct {
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType   *Type // Type of value symbol
-	writeType      *Type
-	target         *ast.Symbol
-	mapper         *TypeMapper
-	nameType       *Type
-	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	resolvedType                 *Type // Type of value symbol
+	writeType                    *Type
+	target                       *ast.Symbol
+	mapper                       *TypeMapper
+	nameType                     *Type
+	containingType               *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	functionOrConstructorChecked bool
 }
 
 // Additional links for mapped symbols
@@ -195,6 +196,7 @@ type DeclaredTypeLinks struct {
 	interfaceChecked       bool
 	indexSignaturesChecked bool
 	typeParametersChecked  bool
+	enumChecked            bool
 }
 
 // Links for switch clauses
@@ -941,6 +943,7 @@ type TupleType struct {
 }
 
 func (t *TupleType) FixedLength() int { return t.fixedLength }
+func (t *TupleType) IsReadonly() bool { return t.readonly }
 func (t *TupleType) ElementFlags() []ElementFlags {
 	elementFlags := make([]ElementFlags, len(t.elementInfos))
 	for i, info := range t.elementInfos {
@@ -1000,6 +1003,10 @@ type UnionOrIntersectionType struct {
 
 func (t *UnionOrIntersectionType) AsUnionOrIntersectionType() *UnionOrIntersectionType { return t }
 
+func (t *UnionOrIntersectionType) Types() []*Type {
+	return t.types
+}
+
 // UnionType
 
 type UnionType struct {
@@ -1030,6 +1037,8 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
+func (t *TypeParameter) IsThisType() bool { return t.isThisType }
+
 // IndexFlags
 
 type IndexFlags uint32
@@ -1049,6 +1058,8 @@ type IndexType struct {
 	indexFlags IndexFlags
 }
 
+func (t *IndexType) Target() *Type { return t.target }
+
 // IndexedAccessType
 
 type IndexedAccessType struct {
@@ -1058,22 +1069,33 @@ type IndexedAccessType struct {
 	accessFlags AccessFlags // Only includes AccessFlags.Persistent
 }
 
+func (t *IndexedAccessType) ObjectType() *Type { return t.objectType }
+func (t *IndexedAccessType) IndexType() *Type  { return t.indexType }
+
 type TemplateLiteralType struct {
 	ConstrainedType
 	texts []string // Always one element longer than types
 	types []*Type  // Always at least one element
 }
 
+func (t *TemplateLiteralType) Texts() []string { return t.texts }
+func (t *TemplateLiteralType) Types() []*Type  { return t.types }
+
 type StringMappingType struct {
 	ConstrainedType
 	target *Type
 }
+
+func (t *StringMappingType) Target() *Type { return t.target }
 
 type SubstitutionType struct {
 	ConstrainedType
 	baseType   *Type // Target type
 	constraint *Type // Constraint that target type is known to satisfy
 }
+
+func (t *SubstitutionType) BaseType() *Type        { return t.baseType }
+func (t *SubstitutionType) SubstConstraint() *Type { return t.constraint }
 
 type ConditionalRoot struct {
 	node                *ast.ConditionalTypeNode
@@ -1099,6 +1121,9 @@ type ConditionalType struct {
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
 }
+
+func (t *ConditionalType) CheckType() *Type   { return t.checkType }
+func (t *ConditionalType) ExtendsType() *Type { return t.extendsType }
 
 // SignatureFlags
 
@@ -1140,6 +1165,10 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) Flags() SignatureFlags {
+	return s.flags
 }
 
 func (s *Signature) TypeParameters() []*Type {
