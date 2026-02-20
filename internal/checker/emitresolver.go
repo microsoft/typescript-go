@@ -51,26 +51,6 @@ func newEmitResolver(checker *Checker) *EmitResolver {
 	return e
 }
 
-func (r *EmitResolver) IsArgumentsLocalBinding(nodeIn *ast.IdentifierNode) bool {
-	if !ast.IsParseTreeNode(nodeIn) {
-		return false
-	}
-	if nodeIn.Text() != "arguments" {
-		return false
-	}
-	parent := nodeIn.Parent
-	if parent == nil {
-		return false
-	}
-	isPropertyName := (ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) && parent.Name() == nodeIn
-	if isPropertyName {
-		return false
-	}
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
-	return r.checker.getResolvedSymbol(nodeIn) == r.checker.argumentsSymbol
-}
-
 func (r *EmitResolver) GetJsxFactoryEntity(location *ast.Node) *ast.Node {
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()

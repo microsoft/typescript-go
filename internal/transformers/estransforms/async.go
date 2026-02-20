@@ -27,7 +27,6 @@ type lexicalArgumentsInfo struct {
 type asyncTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
-	emitResolver    printer.EmitResolver
 
 	contextFlags asyncContextFlags
 
@@ -121,7 +120,7 @@ func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
 		ast.KindVariableDeclaration:
 		// fall through to visitEachChild
 	case ast.KindIdentifier:
-		if tx.lexicalArguments.binding != nil && tx.emitResolver != nil && tx.emitResolver.IsArgumentsLocalBinding(node) {
+		if tx.lexicalArguments.binding != nil && isArgumentsIdentifier(node) {
 			tx.lexicalArguments.used = true
 			return tx.lexicalArguments.binding
 		}
@@ -1211,6 +1210,23 @@ func isEffectiveStrictModeSourceFile(_ *ast.SourceFile, _ *core.CompilerOptions)
 	return true
 }
 
+// isArgumentsIdentifier checks whether an identifier refers to the `arguments` object.
+// Since we always assume strict mode, a simple name check suffices.
+func isArgumentsIdentifier(node *ast.Node) bool {
+	if node.Text() != "arguments" {
+		return false
+	}
+	parent := node.Parent
+	if parent == nil {
+		return false
+	}
+	// Exclude property name positions like obj.arguments or { arguments: ... }
+	if (ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) && parent.Name() == node {
+		return false
+	}
+	return true
+}
+
 // isSimpleParameterList checks if every parameter has no initializer and an Identifier name.
 func isSimpleParameterList(params []*ast.Node) bool {
 	for _, param := range params {
@@ -1276,9 +1292,6 @@ func isNodeWithPossibleHoistedDeclaration(node *ast.Node) bool {
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &asyncTransformer{
 		compilerOptions: opts.CompilerOptions,
-	}
-	if opts.EmitResolver != nil {
-		tx.emitResolver = opts.EmitResolver
 	}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)

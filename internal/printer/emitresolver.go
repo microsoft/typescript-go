@@ -84,9 +84,6 @@ type EmitResolver interface {
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 
-	// arguments support
-	IsArgumentsLocalBinding(node *ast.IdentifierNode) bool
-
 	// decorator metadata
 	GetTypeReferenceSerializationKind(name *ast.EntityName, serialScope *ast.Node) TypeReferenceSerializationKind
 
