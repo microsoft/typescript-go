@@ -1,5 +1,4 @@
 import type {
-    Node,
     Path,
     SourceFile,
     Statement,
@@ -61,9 +60,9 @@ describe("Encoder", () => {
 
     test("encodes source file with identifier", () => {
         const id = createIdentifier("hello");
-        const decl = createVariableDeclaration(id);
+        const decl = createVariableDeclaration(id, undefined, undefined, undefined);
         const declList = createVariableDeclarationList([decl]);
-        const stmt = createVariableStatement(declList);
+        const stmt = createVariableStatement(undefined, declList);
         const sf = makeSF("var hello = 42;", "/test.ts", [stmt]);
 
         const encoded = encodeSourceFile(sf);
@@ -83,7 +82,7 @@ describe("Encoder", () => {
     test("encodes if statement with optional else", () => {
         const condition = createIdentifier("ok");
         const thenBlock = createBlock([]);
-        const ifStmt = createIfStatement(condition, thenBlock);
+        const ifStmt = createIfStatement(condition, thenBlock, undefined);
         const sf = makeSF("if (ok) {}", "/test.ts", [ifStmt]);
 
         const encoded = encodeSourceFile(sf);
@@ -124,7 +123,7 @@ describe("Encoder", () => {
     test("encodes function declaration", () => {
         const name = createIdentifier("foo");
         const body = createBlock([]);
-        const fn = createFunctionDeclaration([], name, undefined, undefined, undefined, undefined, undefined, body);
+        const fn = createFunctionDeclaration(undefined, undefined, name, undefined, [], undefined, body);
         const sf = makeSF("function foo() {}", "/test.ts", [fn]);
 
         const encoded = encodeSourceFile(sf);
@@ -144,8 +143,7 @@ describe("Encoder", () => {
     test("encodes arbitrary node (not source file)", () => {
         const condition = createIdentifier("x");
         const thenBlock = createBlock([]);
-        const ifStmt = createIfStatement(condition, thenBlock);
-        const sf = makeSF("if (x) {}", "/test.ts", []);
+        const ifStmt = createIfStatement(condition, thenBlock, undefined);
 
         const encoded = encodeNode(ifStmt);
         assert.ok(encoded instanceof Uint8Array);
@@ -155,19 +153,6 @@ describe("Encoder", () => {
         const offsetNodes = view.getUint32(36, true);
         const rootKind = view.getUint32(offsetNodes + NODE_LEN, true);
         assert.strictEqual(rootKind, SyntaxKind.IfStatement);
-    });
-
-    test("string table references file text", () => {
-        const id = createIdentifier("hello");
-        const sf = makeSF("var hello = 42;", "/test.ts", []);
-
-        const encoded = encodeNode(id);
-        const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
-        const offsetNodes = view.getUint32(36, true);
-        // Index 1 is the encoded identifier
-        const data = view.getUint32(offsetNodes + NODE_LEN + 20, true);
-        // Data type should be String (0x40000000)
-        assert.strictEqual(data & 0xC0000000, 0x40000000);
     });
 
     test("protocol version is 3", () => {

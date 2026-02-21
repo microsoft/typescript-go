@@ -23,18 +23,6 @@ import {
     NODE_LEN,
 } from "./protocol.ts";
 
-declare module "@typescript/ast" {
-    export interface Node {
-        readonly id: string;
-        forEachChild<T>(visitor: (node: Node) => T): T | undefined;
-        getSourceFile(): SourceFile;
-    }
-
-    export interface NodeArray<T> {
-        at(index: number): T;
-    }
-}
-
 const popcount8 = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8];
 
 /**
@@ -997,4 +985,15 @@ export function parseNodeHandle(handle: string): ParsedNodeHandle {
 export function decodeNode(data: Uint8Array): Node {
     const sf = new RemoteSourceFile(data, new TextDecoder());
     return sf as unknown as Node;
+}
+
+/**
+ * Get the unique ID string for a remote node.
+ * Throws if the node is not a RemoteNode (i.e. not decoded from binary data).
+ */
+export function getNodeId(node: Node): string {
+    if (!(node instanceof RemoteNode)) {
+        throw new Error("getNodeId requires a RemoteNode");
+    }
+    return node.id;
 }

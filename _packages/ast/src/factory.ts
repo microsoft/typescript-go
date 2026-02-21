@@ -15,7 +15,6 @@ import type {
     ArrayTypeNode,
     ArrowFunction,
     AsExpression,
-    AssertClause,
     AssertsKeyword,
     AsteriskToken,
     AwaitExpression,
@@ -207,7 +206,6 @@ import type {
     PrefixUnaryExpression,
     PrefixUnaryOperator,
     PrivateIdentifier,
-    PropertyAccessEntityNameExpression,
     PropertyAccessExpression,
     PropertyAssignment,
     PropertyDeclaration,
@@ -301,9 +299,6 @@ export class NodeObject {
     get arguments(): any {
         return this._data?.arguments;
     }
-    get assertClause(): any {
-        return this._data?.assertClause;
-    }
     get assertsModifier(): any {
         return this._data?.assertsModifier;
     }
@@ -334,9 +329,6 @@ export class NodeObject {
     get children(): any {
         return this._data?.children;
     }
-    get class(): any {
-        return this._data?.class;
-    }
     get clauses(): any {
         return this._data?.clauses;
     }
@@ -366,9 +358,6 @@ export class NodeObject {
     }
     get declarations(): any {
         return this._data?.declarations;
-    }
-    get default(): any {
-        return this._data?.default;
     }
     get dotDotDotToken(): any {
         return this._data?.dotDotDotToken;
@@ -643,6 +632,17 @@ export class NodeObject {
     get whenTrue(): any {
         return this._data?.whenTrue;
     }
+
+    forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined {
+        const fn = forEachChildTable[this.kind];
+        return fn ? fn(this._data, visitor, visitArray) : undefined;
+    }
+
+    getSourceFile(): SourceFile {
+        let node: Node = this as unknown as Node;
+        while (node.parent) node = node.parent;
+        return node as unknown as SourceFile;
+    }
 }
 
 /**
@@ -666,6 +666,479 @@ export function createNodeArray<T extends Node>(elements: readonly T[], pos: num
     return arr;
 }
 
+type ForEachChildFunction = (data: any, cbNode: (node: Node) => any, cbNodes?: (nodes: NodeArray<Node>) => any) => any;
+
+const forEachChildTable: Record<number, ForEachChildFunction> = {
+    [SyntaxKind.ArrayBindingPattern]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.ArrayLiteralExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.ArrayType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.elementType),
+    [SyntaxKind.ArrowFunction]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.equalsGreaterThanToken) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.AsExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.AwaitExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.BinaryExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.left) ||
+        visitNode(cbNode, data.operatorToken) ||
+        visitNode(cbNode, data.right),
+    [SyntaxKind.BindingElement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.dotDotDotToken) ||
+        visitNode(cbNode, data.propertyName) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.Block]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.statements),
+    [SyntaxKind.BreakStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
+    [SyntaxKind.CallExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.questionDotToken) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments) ||
+        visitNodes(cbNode, cbNodes, data.arguments),
+    [SyntaxKind.CallSignature]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.CaseBlock]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.clauses),
+    [SyntaxKind.CaseClause]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNodes(cbNode, cbNodes, data.statements),
+    [SyntaxKind.CatchClause]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.variableDeclaration) ||
+        visitNode(cbNode, data.block),
+    [SyntaxKind.ClassDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.heritageClauses) ||
+        visitNodes(cbNode, cbNodes, data.members),
+    [SyntaxKind.ClassExpression]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.heritageClauses) ||
+        visitNodes(cbNode, cbNodes, data.members),
+    [SyntaxKind.ClassStaticBlockDeclaration]: (data, cbNode, cbNodes) => visitNode(cbNode, data.body),
+    [SyntaxKind.CommaListExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.ComputedPropertyName]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.ConditionalExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.condition) ||
+        visitNode(cbNode, data.questionToken) ||
+        visitNode(cbNode, data.whenTrue) ||
+        visitNode(cbNode, data.colonToken) ||
+        visitNode(cbNode, data.whenFalse),
+    [SyntaxKind.ConditionalType]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.checkType) ||
+        visitNode(cbNode, data.extendsType) ||
+        visitNode(cbNode, data.trueType) ||
+        visitNode(cbNode, data.falseType),
+    [SyntaxKind.Constructor]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.ConstructorType]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.ConstructSignature]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.ContinueStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
+    [SyntaxKind.Decorator]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.DefaultClause]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.statements),
+    [SyntaxKind.DeleteExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.DoStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.statement) ||
+        visitNode(cbNode, data.expression),
+    [SyntaxKind.ElementAccessExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.questionDotToken) ||
+        visitNode(cbNode, data.argumentExpression),
+    [SyntaxKind.EnumDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.members),
+    [SyntaxKind.EnumMember]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.ExportAssignment]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.expression),
+    [SyntaxKind.ExportDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.exportClause) ||
+        visitNode(cbNode, data.moduleSpecifier) ||
+        visitNode(cbNode, data.attributes),
+    [SyntaxKind.ExportSpecifier]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.propertyName) ||
+        visitNode(cbNode, data.name),
+    [SyntaxKind.ExpressionStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.ExpressionWithTypeArguments]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments),
+    [SyntaxKind.ExternalModuleReference]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.ForInStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.initializer) ||
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.statement),
+    [SyntaxKind.ForOfStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.awaitModifier) ||
+        visitNode(cbNode, data.initializer) ||
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.statement),
+    [SyntaxKind.ForStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.initializer) ||
+        visitNode(cbNode, data.condition) ||
+        visitNode(cbNode, data.incrementor) ||
+        visitNode(cbNode, data.statement),
+    [SyntaxKind.FunctionDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.asteriskToken) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.FunctionExpression]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.asteriskToken) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.FunctionType]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.GetAccessor]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.HeritageClause]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.types),
+    [SyntaxKind.IfStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.thenStatement) ||
+        visitNode(cbNode, data.elseStatement),
+    [SyntaxKind.ImportAttribute]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.value),
+    [SyntaxKind.ImportAttributes]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.ImportClause]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.namedBindings),
+    [SyntaxKind.ImportDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.importClause) ||
+        visitNode(cbNode, data.moduleSpecifier) ||
+        visitNode(cbNode, data.attributes),
+    [SyntaxKind.ImportEqualsDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.moduleReference),
+    [SyntaxKind.ImportSpecifier]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.propertyName) ||
+        visitNode(cbNode, data.name),
+    [SyntaxKind.ImportType]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.argument) ||
+        visitNode(cbNode, data.attributes) ||
+        visitNode(cbNode, data.qualifier) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments),
+    [SyntaxKind.IndexedAccessType]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.objectType) ||
+        visitNode(cbNode, data.indexType),
+    [SyntaxKind.IndexSignature]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.InferType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.typeParameter),
+    [SyntaxKind.InterfaceDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.heritageClauses) ||
+        visitNodes(cbNode, cbNodes, data.members),
+    [SyntaxKind.IntersectionType]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.types),
+    [SyntaxKind.JSDoc]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.tags),
+    [SyntaxKind.JSDocAugmentsTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocCallbackTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression) ||
+        visitNode(cbNode, data.fullName),
+    [SyntaxKind.JSDocDeprecatedTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocImplementsTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocImportTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.importClause) ||
+        visitNode(cbNode, data.moduleSpecifier) ||
+        visitNode(cbNode, data.attributes),
+    [SyntaxKind.JSDocLink]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.JSDocLinkCode]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.JSDocLinkPlain]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.JSDocMemberName]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.left) ||
+        visitNode(cbNode, data.right),
+    [SyntaxKind.JSDocNameReference]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.JSDocNonNullableType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.JSDocNullableType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.JSDocOptionalType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.JSDocOverloadTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression),
+    [SyntaxKind.JSDocOverrideTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocParameterTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocPrivateTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocProtectedTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocPublicTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocReadonlyTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocReturnTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression),
+    [SyntaxKind.JSDocSatisfiesTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression),
+    [SyntaxKind.JSDocSeeTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocSignature]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.JSDocTemplateTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.constraint) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters),
+    [SyntaxKind.JSDocThisTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression),
+    [SyntaxKind.JSDocTypedefTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression) ||
+        visitNode(cbNode, data.fullName),
+    [SyntaxKind.JSDocTypeExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.JSDocTypeTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.typeExpression),
+    [SyntaxKind.JSDocTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocVariadicType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.JsxAttribute]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.JsxAttributes]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.properties),
+    [SyntaxKind.JsxClosingElement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JsxElement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.openingElement) ||
+        visitNodes(cbNode, cbNodes, data.children) ||
+        visitNode(cbNode, data.closingElement),
+    [SyntaxKind.JsxExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.dotDotDotToken) ||
+        visitNode(cbNode, data.expression),
+    [SyntaxKind.JsxFragment]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.openingFragment) ||
+        visitNodes(cbNode, cbNodes, data.children) ||
+        visitNode(cbNode, data.closingFragment),
+    [SyntaxKind.JsxNamespacedName]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.namespace),
+    [SyntaxKind.JsxOpeningElement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments) ||
+        visitNode(cbNode, data.attributes),
+    [SyntaxKind.JsxSelfClosingElement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments) ||
+        visitNode(cbNode, data.attributes),
+    [SyntaxKind.JsxSpreadAttribute]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.LabeledStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.label) ||
+        visitNode(cbNode, data.statement),
+    [SyntaxKind.LiteralType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.literal),
+    [SyntaxKind.MappedType]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.readonlyToken) ||
+        visitNode(cbNode, data.typeParameter) ||
+        visitNode(cbNode, data.nameType) ||
+        visitNode(cbNode, data.questionToken) ||
+        visitNode(cbNode, data.type) ||
+        visitNodes(cbNode, cbNodes, data.members),
+    [SyntaxKind.MetaProperty]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.MethodDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.asteriskToken) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.MethodSignature]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.ModuleBlock]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.statements),
+    [SyntaxKind.ModuleDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name),
+    [SyntaxKind.NamedExports]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.NamedImports]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.NamedTupleMember]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.dotDotDotToken) ||
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.questionToken) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.NamespaceExport]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.NamespaceExportDeclaration]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.NamespaceImport]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.NewExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments) ||
+        visitNodes(cbNode, cbNodes, data.arguments),
+    [SyntaxKind.NonNullExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.ObjectBindingPattern]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.ObjectLiteralExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.properties),
+    [SyntaxKind.OptionalType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.Parameter]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.dotDotDotToken) ||
+        visitNode(cbNode, data.questionToken) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.ParenthesizedExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.ParenthesizedType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.PartiallyEmittedExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.PostfixUnaryExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.operand),
+    [SyntaxKind.PrefixUnaryExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.operand),
+    [SyntaxKind.PropertyAccessExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.questionDotToken) ||
+        visitNode(cbNode, data.name),
+    [SyntaxKind.PropertyAssignment]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.PropertyDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.PropertySignature]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.QualifiedName]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.left) ||
+        visitNode(cbNode, data.right),
+    [SyntaxKind.RestType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.ReturnStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.SatisfiesExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.SemicolonClassElement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
+    [SyntaxKind.SetAccessor]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNodes(cbNode, cbNodes, data.parameters) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.body),
+    [SyntaxKind.ShorthandPropertyAssignment]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.equalsToken) ||
+        visitNode(cbNode, data.objectAssignmentInitializer),
+    [SyntaxKind.SourceFile]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.statements) ||
+        visitNode(cbNode, data.endOfFileToken),
+    [SyntaxKind.SpreadAssignment]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.SpreadElement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.SwitchStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.caseBlock),
+    [SyntaxKind.TaggedTemplateExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tag) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments) ||
+        visitNode(cbNode, data.template),
+    [SyntaxKind.TemplateExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.head) ||
+        visitNodes(cbNode, cbNodes, data.templateSpans),
+    [SyntaxKind.TemplateLiteralType]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.head) ||
+        visitNodes(cbNode, cbNodes, data.templateSpans),
+    [SyntaxKind.TemplateLiteralTypeSpan]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.literal),
+    [SyntaxKind.TemplateSpan]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.literal),
+    [SyntaxKind.ThrowStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.TryStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tryBlock) ||
+        visitNode(cbNode, data.catchClause) ||
+        visitNode(cbNode, data.finallyBlock),
+    [SyntaxKind.TupleType]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.TypeAliasDeclaration]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNodes(cbNode, cbNodes, data.typeParameters) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.TypeAssertionExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.expression),
+    [SyntaxKind.TypeLiteral]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.members),
+    [SyntaxKind.TypeOfExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.TypeOperator]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
+    [SyntaxKind.TypeParameter]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.constraint),
+    [SyntaxKind.TypePredicate]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.assertsModifier) ||
+        visitNode(cbNode, data.parameterName) ||
+        visitNode(cbNode, data.type),
+    [SyntaxKind.TypeQuery]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.exprName) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments),
+    [SyntaxKind.TypeReference]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.typeName) ||
+        visitNodes(cbNode, cbNodes, data.typeArguments),
+    [SyntaxKind.UnionType]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.types),
+    [SyntaxKind.VariableDeclaration]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.exclamationToken) ||
+        visitNode(cbNode, data.type) ||
+        visitNode(cbNode, data.initializer),
+    [SyntaxKind.VariableDeclarationList]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.declarations),
+    [SyntaxKind.VariableStatement]: (data, cbNode, cbNodes) =>
+        visitNodes(cbNode, cbNodes, data.modifiers) ||
+        visitNode(cbNode, data.declarationList),
+    [SyntaxKind.VoidExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
+    [SyntaxKind.WhileStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.statement),
+    [SyntaxKind.WithStatement]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.expression) ||
+        visitNode(cbNode, data.statement),
+    [SyntaxKind.YieldExpression]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.asteriskToken) ||
+        visitNode(cbNode, data.expression),
+};
+
+function visitNode<T>(cbNode: (node: Node) => T, node: Node | undefined): T | undefined {
+    return node ? cbNode(node) : undefined;
+}
+
+function visitNodes<T>(cbNode: (node: Node) => T, cbNodes: ((nodes: NodeArray<Node>) => T) | undefined, nodes: NodeArray<Node> | undefined): T | undefined {
+    if (!nodes) return undefined;
+    if (cbNodes) return cbNodes(nodes);
+    for (const node of nodes) {
+        const result = cbNode(node);
+        if (result) return result;
+    }
+    return undefined;
+}
+
 export function createArrayBindingPattern(elements: readonly ArrayBindingElement[]): ArrayBindingPattern {
     return new NodeObject(SyntaxKind.ArrayBindingPattern, {
         elements: createNodeArray(elements),
@@ -685,18 +1158,15 @@ export function createArrayTypeNode(elementType: TypeNode): ArrayTypeNode {
     }) as unknown as ArrayTypeNode;
 }
 
-export function createArrowFunction(name: never, parameters: readonly ParameterDeclaration[], body: ConciseBody, equalsGreaterThanToken: EqualsGreaterThanToken, typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, modifiers?: readonly Modifier[]): ArrowFunction {
+export function createArrowFunction(modifiers: readonly Modifier[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, equalsGreaterThanToken: EqualsGreaterThanToken, body: ConciseBody, name: never): ArrowFunction {
     return new NodeObject(SyntaxKind.ArrowFunction, {
-        name,
-        parameters: createNodeArray(parameters),
-        body,
-        equalsGreaterThanToken,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
+        type,
+        equalsGreaterThanToken,
+        body,
+        name,
     }) as unknown as ArrowFunction;
 }
 
@@ -729,11 +1199,11 @@ export function createBinaryExpression(left: Expression, operatorToken: BinaryOp
     }) as unknown as BinaryExpression;
 }
 
-export function createBindingElement(name: BindingName, propertyName?: PropertyName, dotDotDotToken?: DotDotDotToken, initializer?: Expression): BindingElement {
+export function createBindingElement(dotDotDotToken: DotDotDotToken | undefined, propertyName: PropertyName | undefined, name: BindingName, initializer: Expression | undefined): BindingElement {
     return new NodeObject(SyntaxKind.BindingElement, {
-        name,
-        propertyName,
         dotDotDotToken,
+        propertyName,
+        name,
         initializer,
     }) as unknown as BindingElement;
 }
@@ -745,28 +1215,26 @@ export function createBlock(statements: readonly Statement[], multiLine?: boolea
     }) as unknown as Block;
 }
 
-export function createBreakStatement(label?: Identifier): BreakStatement {
+export function createBreakStatement(label: Identifier | undefined): BreakStatement {
     return new NodeObject(SyntaxKind.BreakStatement, {
         label,
     }) as unknown as BreakStatement;
 }
 
-export function createCallExpression(expression: LeftHandSideExpression, arguments_: readonly Expression[], questionDotToken?: QuestionDotToken, typeArguments?: readonly TypeNode[]): CallExpression {
+export function createCallExpression(expression: LeftHandSideExpression, questionDotToken: QuestionDotToken | undefined, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[]): CallExpression {
     return new NodeObject(SyntaxKind.CallExpression, {
         expression,
-        arguments: createNodeArray(arguments_),
         questionDotToken,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
+        arguments: createNodeArray(arguments_),
     }) as unknown as CallExpression;
 }
 
-export function createCallSignatureDeclaration(parameters: readonly ParameterDeclaration[], name?: PropertyName, typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, questionToken?: QuestionToken | undefined): CallSignatureDeclaration {
+export function createCallSignatureDeclaration(typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined): CallSignatureDeclaration {
     return new NodeObject(SyntaxKind.CallSignature, {
-        parameters: createNodeArray(parameters),
-        name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
         type,
-        questionToken,
     }) as unknown as CallSignatureDeclaration;
 }
 
@@ -783,37 +1251,36 @@ export function createCaseClause(expression: Expression, statements: readonly St
     }) as unknown as CaseClause;
 }
 
-export function createCatchClause(block: Block, variableDeclaration?: VariableDeclaration): CatchClause {
+export function createCatchClause(variableDeclaration: VariableDeclaration | undefined, block: Block): CatchClause {
     return new NodeObject(SyntaxKind.CatchClause, {
-        block,
         variableDeclaration,
+        block,
     }) as unknown as CatchClause;
 }
 
-export function createClassDeclaration(members: readonly ClassElement[], name?: Identifier, typeParameters?: readonly TypeParameterDeclaration[], heritageClauses?: readonly HeritageClause[], modifiers?: readonly ModifierLike[]): ClassDeclaration {
+export function createClassDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassDeclaration {
     return new NodeObject(SyntaxKind.ClassDeclaration, {
-        members: createNodeArray(members),
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        members: createNodeArray(members),
     }) as unknown as ClassDeclaration;
 }
 
-export function createClassExpression(members: readonly ClassElement[], name?: Identifier, typeParameters?: readonly TypeParameterDeclaration[], heritageClauses?: readonly HeritageClause[], modifiers?: readonly ModifierLike[]): ClassExpression {
+export function createClassExpression(modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassExpression {
     return new NodeObject(SyntaxKind.ClassExpression, {
-        members: createNodeArray(members),
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        members: createNodeArray(members),
     }) as unknown as ClassExpression;
 }
 
-export function createClassStaticBlockDeclaration(body: Block, name?: PropertyName): ClassStaticBlockDeclaration {
+export function createClassStaticBlockDeclaration(body: Block): ClassStaticBlockDeclaration {
     return new NodeObject(SyntaxKind.ClassStaticBlockDeclaration, {
         body,
-        name,
     }) as unknown as ClassStaticBlockDeclaration;
 }
 
@@ -848,41 +1315,34 @@ export function createConditionalTypeNode(checkType: TypeNode, extendsType: Type
     }) as unknown as ConditionalTypeNode;
 }
 
-export function createConstructorDeclaration(parameters: readonly ParameterDeclaration[], name?: PropertyName, typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, body?: FunctionBody | undefined, modifiers?: readonly ModifierLike[]): ConstructorDeclaration {
+export function createConstructorDeclaration(modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): ConstructorDeclaration {
     return new NodeObject(SyntaxKind.Constructor, {
-        parameters: createNodeArray(parameters),
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
-        body,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
+        type,
+        body,
     }) as unknown as ConstructorDeclaration;
 }
 
-export function createConstructorTypeNode(parameters: readonly ParameterDeclaration[], type: TypeNode, name?: PropertyName, typeParameters?: readonly TypeParameterDeclaration[], modifiers?: readonly Modifier[]): ConstructorTypeNode {
+export function createConstructorTypeNode(modifiers: readonly Modifier[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): ConstructorTypeNode {
     return new NodeObject(SyntaxKind.ConstructorType, {
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
         type,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as ConstructorTypeNode;
 }
 
-export function createConstructSignatureDeclaration(parameters: readonly ParameterDeclaration[], name?: PropertyName, typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, questionToken?: QuestionToken | undefined): ConstructSignatureDeclaration {
+export function createConstructSignatureDeclaration(typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined): ConstructSignatureDeclaration {
     return new NodeObject(SyntaxKind.ConstructSignature, {
-        parameters: createNodeArray(parameters),
-        name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
         type,
-        questionToken,
     }) as unknown as ConstructSignatureDeclaration;
 }
 
-export function createContinueStatement(label?: Identifier): ContinueStatement {
+export function createContinueStatement(label: Identifier | undefined): ContinueStatement {
     return new NodeObject(SyntaxKind.ContinueStatement, {
         label,
     }) as unknown as ContinueStatement;
@@ -917,11 +1377,11 @@ export function createDoStatement(statement: Statement, expression: Expression):
     }) as unknown as DoStatement;
 }
 
-export function createElementAccessExpression(expression: LeftHandSideExpression, argumentExpression: Expression, questionDotToken?: QuestionDotToken): ElementAccessExpression {
+export function createElementAccessExpression(expression: LeftHandSideExpression, questionDotToken: QuestionDotToken | undefined, argumentExpression: Expression): ElementAccessExpression {
     return new NodeObject(SyntaxKind.ElementAccessExpression, {
         expression,
-        argumentExpression,
         questionDotToken,
+        argumentExpression,
     }) as unknown as ElementAccessExpression;
 }
 
@@ -929,47 +1389,44 @@ export function createEmptyStatement(): EmptyStatement {
     return new NodeObject(SyntaxKind.EmptyStatement, undefined) as unknown as EmptyStatement;
 }
 
-export function createEnumDeclaration(name: Identifier, members: readonly EnumMember[], modifiers?: readonly ModifierLike[]): EnumDeclaration {
+export function createEnumDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier, members: readonly EnumMember[]): EnumDeclaration {
     return new NodeObject(SyntaxKind.EnumDeclaration, {
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
         members: createNodeArray(members),
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as EnumDeclaration;
 }
 
-export function createEnumMember(name: PropertyName, initializer?: Expression): EnumMember {
+export function createEnumMember(name: PropertyName, initializer: Expression | undefined): EnumMember {
     return new NodeObject(SyntaxKind.EnumMember, {
         name,
         initializer,
     }) as unknown as EnumMember;
 }
 
-export function createExportAssignment(expression: Expression, name?: Identifier | StringLiteral | NumericLiteral, modifiers?: readonly ModifierLike[], isExportEquals?: boolean): ExportAssignment {
+export function createExportAssignment(modifiers: readonly ModifierLike[] | undefined, expression: Expression, isExportEquals?: boolean): ExportAssignment {
     return new NodeObject(SyntaxKind.ExportAssignment, {
-        expression,
-        name,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        expression,
         isExportEquals,
     }) as unknown as ExportAssignment;
 }
 
-export function createExportDeclaration(isTypeOnly: boolean, name?: Identifier | StringLiteral | NumericLiteral, modifiers?: readonly ModifierLike[], exportClause?: NamedExportBindings, moduleSpecifier?: Expression, assertClause?: AssertClause, attributes?: ImportAttributes): ExportDeclaration {
+export function createExportDeclaration(modifiers: readonly ModifierLike[] | undefined, exportClause: NamedExportBindings | undefined, moduleSpecifier: Expression | undefined, attributes: ImportAttributes | undefined, isTypeOnly: boolean): ExportDeclaration {
     return new NodeObject(SyntaxKind.ExportDeclaration, {
-        isTypeOnly,
-        name,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         exportClause,
         moduleSpecifier,
-        assertClause,
         attributes,
+        isTypeOnly,
     }) as unknown as ExportDeclaration;
 }
 
-export function createExportSpecifier(name: ModuleExportName, isTypeOnly: boolean, propertyName?: ModuleExportName): ExportSpecifier {
+export function createExportSpecifier(propertyName: ModuleExportName | undefined, name: ModuleExportName, isTypeOnly: boolean): ExportSpecifier {
     return new NodeObject(SyntaxKind.ExportSpecifier, {
+        propertyName,
         name,
         isTypeOnly,
-        propertyName,
     }) as unknown as ExportSpecifier;
 }
 
@@ -979,7 +1436,7 @@ export function createExpressionStatement(expression: Expression): ExpressionSta
     }) as unknown as ExpressionStatement;
 }
 
-export function createExpressionWithTypeArguments(expression: LeftHandSideExpression, typeArguments?: readonly TypeNode[]): ExpressionWithTypeArguments {
+export function createExpressionWithTypeArguments(expression: LeftHandSideExpression, typeArguments: readonly TypeNode[] | undefined): ExpressionWithTypeArguments {
     return new NodeObject(SyntaxKind.ExpressionWithTypeArguments, {
         expression,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
@@ -996,80 +1453,72 @@ export function createFalseLiteral(): FalseLiteral {
     return new NodeObject(SyntaxKind.FalseKeyword, undefined) as unknown as FalseLiteral;
 }
 
-export function createForInStatement(statement: Statement, initializer: ForInitializer, expression: Expression): ForInStatement {
+export function createForInStatement(initializer: ForInitializer, expression: Expression, statement: Statement): ForInStatement {
     return new NodeObject(SyntaxKind.ForInStatement, {
-        statement,
         initializer,
         expression,
+        statement,
     }) as unknown as ForInStatement;
 }
 
-export function createForOfStatement(statement: Statement, initializer: ForInitializer, expression: Expression, awaitModifier?: AwaitKeyword): ForOfStatement {
+export function createForOfStatement(awaitModifier: AwaitKeyword | undefined, initializer: ForInitializer, expression: Expression, statement: Statement): ForOfStatement {
     return new NodeObject(SyntaxKind.ForOfStatement, {
-        statement,
+        awaitModifier,
         initializer,
         expression,
-        awaitModifier,
+        statement,
     }) as unknown as ForOfStatement;
 }
 
-export function createForStatement(statement: Statement, initializer?: ForInitializer, condition?: Expression, incrementor?: Expression): ForStatement {
+export function createForStatement(initializer: ForInitializer | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Statement): ForStatement {
     return new NodeObject(SyntaxKind.ForStatement, {
-        statement,
         initializer,
         condition,
         incrementor,
+        statement,
     }) as unknown as ForStatement;
 }
 
-export function createFunctionDeclaration(parameters: readonly ParameterDeclaration[], name?: Identifier, typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, body?: FunctionBody, modifiers?: readonly ModifierLike[]): FunctionDeclaration {
+export function createFunctionDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): FunctionDeclaration {
     return new NodeObject(SyntaxKind.FunctionDeclaration, {
-        parameters: createNodeArray(parameters),
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        asteriskToken,
         name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
         type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
         body,
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as FunctionDeclaration;
 }
 
-export function createFunctionExpression(parameters: readonly ParameterDeclaration[], body: FunctionBody, name?: Identifier, typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, modifiers?: readonly Modifier[]): FunctionExpression {
+export function createFunctionExpression(modifiers: readonly Modifier[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody): FunctionExpression {
     return new NodeObject(SyntaxKind.FunctionExpression, {
-        parameters: createNodeArray(parameters),
-        body,
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        asteriskToken,
         name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
         type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        body,
     }) as unknown as FunctionExpression;
 }
 
-export function createFunctionTypeNode(parameters: readonly ParameterDeclaration[], type: TypeNode, name?: PropertyName, typeParameters?: readonly TypeParameterDeclaration[]): FunctionTypeNode {
+export function createFunctionTypeNode(typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): FunctionTypeNode {
     return new NodeObject(SyntaxKind.FunctionType, {
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
         type,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
     }) as unknown as FunctionTypeNode;
 }
 
-export function createGetAccessorDeclaration(name: PropertyName, parameters: readonly ParameterDeclaration[], typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, body?: FunctionBody, modifiers?: readonly ModifierLike[]): GetAccessorDeclaration {
+export function createGetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): GetAccessorDeclaration {
     return new NodeObject(SyntaxKind.GetAccessor, {
-        name,
-        parameters: createNodeArray(parameters),
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
-        body,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
+        type,
+        body,
     }) as unknown as GetAccessorDeclaration;
 }
 
@@ -1086,7 +1535,7 @@ export function createIdentifier(text: string): Identifier {
     }) as unknown as Identifier;
 }
 
-export function createIfStatement(expression: Expression, thenStatement: Statement, elseStatement?: Statement): IfStatement {
+export function createIfStatement(expression: Expression, thenStatement: Statement, elseStatement: Statement | undefined): IfStatement {
     return new NodeObject(SyntaxKind.IfStatement, {
         expression,
         thenStatement,
@@ -1109,30 +1558,29 @@ export function createImportAttributes(token: SyntaxKind.WithKeyword | SyntaxKin
     }) as unknown as ImportAttributes;
 }
 
-export function createImportClause(phaseModifier: ImportPhaseModifierSyntaxKind, name?: Identifier, namedBindings?: NamedImportBindings): ImportClause {
+export function createImportClause(name: Identifier | undefined, namedBindings: NamedImportBindings | undefined, phaseModifier: ImportPhaseModifierSyntaxKind): ImportClause {
     return new NodeObject(SyntaxKind.ImportClause, {
-        phaseModifier,
         name,
         namedBindings,
+        phaseModifier,
     }) as unknown as ImportClause;
 }
 
-export function createImportDeclaration(moduleSpecifier: Expression, modifiers?: readonly ModifierLike[], importClause?: ImportClause, assertClause?: AssertClause, attributes?: ImportAttributes): ImportDeclaration {
+export function createImportDeclaration(modifiers: readonly ModifierLike[] | undefined, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes: ImportAttributes | undefined): ImportDeclaration {
     return new NodeObject(SyntaxKind.ImportDeclaration, {
-        moduleSpecifier,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         importClause,
-        assertClause,
+        moduleSpecifier,
         attributes,
     }) as unknown as ImportDeclaration;
 }
 
-export function createImportEqualsDeclaration(name: Identifier, isTypeOnly: boolean, moduleReference: ModuleReference, modifiers?: readonly ModifierLike[]): ImportEqualsDeclaration {
+export function createImportEqualsDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier, moduleReference: ModuleReference, isTypeOnly: boolean): ImportEqualsDeclaration {
     return new NodeObject(SyntaxKind.ImportEqualsDeclaration, {
-        name,
-        isTypeOnly,
-        moduleReference,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
+        moduleReference,
+        isTypeOnly,
     }) as unknown as ImportEqualsDeclaration;
 }
 
@@ -1140,21 +1588,21 @@ export function createImportExpression(): ImportExpression {
     return new NodeObject(SyntaxKind.ImportKeyword, undefined) as unknown as ImportExpression;
 }
 
-export function createImportSpecifier(name: Identifier, isTypeOnly: boolean, propertyName?: ModuleExportName): ImportSpecifier {
+export function createImportSpecifier(propertyName: ModuleExportName | undefined, name: Identifier, isTypeOnly: boolean): ImportSpecifier {
     return new NodeObject(SyntaxKind.ImportSpecifier, {
+        propertyName,
         name,
         isTypeOnly,
-        propertyName,
     }) as unknown as ImportSpecifier;
 }
 
-export function createImportTypeNode(isTypeOf: boolean, argument: TypeNode, typeArguments?: readonly TypeNode[], attributes?: ImportAttributes, qualifier?: EntityName): ImportTypeNode {
+export function createImportTypeNode(argument: TypeNode, attributes: ImportAttributes | undefined, qualifier: EntityName | undefined, typeArguments: readonly TypeNode[] | undefined, isTypeOf: boolean): ImportTypeNode {
     return new NodeObject(SyntaxKind.ImportType, {
-        isTypeOf,
         argument,
-        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
         attributes,
         qualifier,
+        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
+        isTypeOf,
     }) as unknown as ImportTypeNode;
 }
 
@@ -1165,14 +1613,11 @@ export function createIndexedAccessTypeNode(objectType: TypeNode, indexType: Typ
     }) as unknown as IndexedAccessTypeNode;
 }
 
-export function createIndexSignatureDeclaration(parameters: readonly ParameterDeclaration[], type: TypeNode, name?: PropertyName, typeParameters?: readonly TypeParameterDeclaration[], questionToken?: QuestionToken | undefined, modifiers?: readonly ModifierLike[]): IndexSignatureDeclaration {
+export function createIndexSignatureDeclaration(modifiers: readonly ModifierLike[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): IndexSignatureDeclaration {
     return new NodeObject(SyntaxKind.IndexSignature, {
+        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         parameters: createNodeArray(parameters),
         type,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        questionToken,
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
     }) as unknown as IndexSignatureDeclaration;
 }
 
@@ -1182,13 +1627,13 @@ export function createInferTypeNode(typeParameter: TypeParameterDeclaration): In
     }) as unknown as InferTypeNode;
 }
 
-export function createInterfaceDeclaration(name: Identifier, members: readonly TypeElement[], modifiers?: readonly ModifierLike[], typeParameters?: readonly TypeParameterDeclaration[], heritageClauses?: readonly HeritageClause[]): InterfaceDeclaration {
+export function createInterfaceDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly TypeElement[]): InterfaceDeclaration {
     return new NodeObject(SyntaxKind.InterfaceDeclaration, {
-        name,
-        members: createNodeArray(members),
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
+        members: createNodeArray(members),
     }) as unknown as InterfaceDeclaration;
 }
 
@@ -1198,10 +1643,10 @@ export function createIntersectionTypeNode(types: readonly TypeNode[]): Intersec
     }) as unknown as IntersectionTypeNode;
 }
 
-export function createJSDoc(tags?: readonly JSDocTag[], comment?: string | NodeArray<JSDocComment>): JSDoc {
+export function createJSDoc(comment: string | NodeArray<JSDocComment> | undefined, tags: readonly JSDocTag[] | undefined): JSDoc {
     return new NodeObject(SyntaxKind.JSDoc, {
-        tags: tags ? createNodeArray(tags) : undefined,
         comment,
+        tags: tags ? createNodeArray(tags) : undefined,
     }) as unknown as JSDoc;
 }
 
@@ -1209,21 +1654,19 @@ export function createJSDocAllType(): JSDocAllType {
     return new NodeObject(SyntaxKind.JSDocAllType, undefined) as unknown as JSDocAllType;
 }
 
-export function createJSDocAugmentsTag(tagName: Identifier, class_: ExpressionWithTypeArguments & { readonly expression: Identifier | PropertyAccessEntityNameExpression; }, comment?: string | NodeArray<JSDocComment>): JSDocAugmentsTag {
+export function createJSDocAugmentsTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>): JSDocAugmentsTag {
     return new NodeObject(SyntaxKind.JSDocAugmentsTag, {
         tagName,
-        class: class_,
         comment,
     }) as unknown as JSDocAugmentsTag;
 }
 
-export function createJSDocCallbackTag(tagName: Identifier, typeExpression: JSDocSignature, comment?: string | NodeArray<JSDocComment>, name?: Identifier, fullName?: JSDocNamespaceDeclaration | Identifier): JSDocCallbackTag {
+export function createJSDocCallbackTag(tagName: Identifier, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration | Identifier | undefined, comment?: string | NodeArray<JSDocComment>): JSDocCallbackTag {
     return new NodeObject(SyntaxKind.JSDocCallbackTag, {
         tagName,
         typeExpression,
-        comment,
-        name,
         fullName,
+        comment,
     }) as unknown as JSDocCallbackTag;
 }
 
@@ -1234,42 +1677,41 @@ export function createJSDocDeprecatedTag(tagName: Identifier, comment?: string |
     }) as unknown as JSDocDeprecatedTag;
 }
 
-export function createJSDocImplementsTag(tagName: Identifier, class_: ExpressionWithTypeArguments & { readonly expression: Identifier | PropertyAccessEntityNameExpression; }, comment?: string | NodeArray<JSDocComment>): JSDocImplementsTag {
+export function createJSDocImplementsTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>): JSDocImplementsTag {
     return new NodeObject(SyntaxKind.JSDocImplementsTag, {
         tagName,
-        class: class_,
         comment,
     }) as unknown as JSDocImplementsTag;
 }
 
-export function createJSDocImportTag(tagName: Identifier, moduleSpecifier: Expression, comment?: string | NodeArray<JSDocComment>, importClause?: ImportClause, attributes?: ImportAttributes): JSDocImportTag {
+export function createJSDocImportTag(tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes: ImportAttributes | undefined, comment?: string | NodeArray<JSDocComment>): JSDocImportTag {
     return new NodeObject(SyntaxKind.JSDocImportTag, {
         tagName,
-        moduleSpecifier,
-        comment,
         importClause,
+        moduleSpecifier,
         attributes,
+        comment,
     }) as unknown as JSDocImportTag;
 }
 
-export function createJSDocLink(text: string, name?: EntityName | JSDocMemberName): JSDocLink {
+export function createJSDocLink(name: EntityName | JSDocMemberName | undefined, text: string): JSDocLink {
     return new NodeObject(SyntaxKind.JSDocLink, {
-        text,
         name,
+        text,
     }) as unknown as JSDocLink;
 }
 
-export function createJSDocLinkCode(text: string, name?: EntityName | JSDocMemberName): JSDocLinkCode {
+export function createJSDocLinkCode(name: EntityName | JSDocMemberName | undefined, text: string): JSDocLinkCode {
     return new NodeObject(SyntaxKind.JSDocLinkCode, {
-        text,
         name,
+        text,
     }) as unknown as JSDocLinkCode;
 }
 
-export function createJSDocLinkPlain(text: string, name?: EntityName | JSDocMemberName): JSDocLinkPlain {
+export function createJSDocLinkPlain(name: EntityName | JSDocMemberName | undefined, text: string): JSDocLinkPlain {
     return new NodeObject(SyntaxKind.JSDocLinkPlain, {
-        text,
         name,
+        text,
     }) as unknown as JSDocLinkPlain;
 }
 
@@ -1321,14 +1763,12 @@ export function createJSDocOverrideTag(tagName: Identifier, comment?: string | N
     }) as unknown as JSDocOverrideTag;
 }
 
-export function createJSDocParameterTag(tagName: Identifier, name: EntityName, isNameFirst: boolean, isBracketed: boolean, comment?: string | NodeArray<JSDocComment>, typeExpression?: JSDocTypeExpression): JSDocParameterTag {
+export function createJSDocParameterTag(tagName: Identifier, comment: string | NodeArray<JSDocComment> | undefined, isNameFirst: boolean, isBracketed: boolean): JSDocParameterTag {
     return new NodeObject(SyntaxKind.JSDocParameterTag, {
         tagName,
-        name,
+        comment,
         isNameFirst,
         isBracketed,
-        comment,
-        typeExpression,
     }) as unknown as JSDocParameterTag;
 }
 
@@ -1339,14 +1779,11 @@ export function createJSDocPrivateTag(tagName: Identifier, comment?: string | No
     }) as unknown as JSDocPrivateTag;
 }
 
-export function createJSDocPropertyTag(tagName: Identifier, name: EntityName, isNameFirst: boolean, isBracketed: boolean, comment?: string | NodeArray<JSDocComment>, typeExpression?: JSDocTypeExpression): JSDocPropertyTag {
+export function createJSDocPropertyTag(comment: string | NodeArray<JSDocComment> | undefined, isNameFirst: boolean, isBracketed: boolean): JSDocPropertyTag {
     return new NodeObject(SyntaxKind.JSDocPropertyTag, {
-        tagName,
-        name,
+        comment,
         isNameFirst,
         isBracketed,
-        comment,
-        typeExpression,
     }) as unknown as JSDocPropertyTag;
 }
 
@@ -1371,11 +1808,11 @@ export function createJSDocReadonlyTag(tagName: Identifier, comment?: string | N
     }) as unknown as JSDocReadonlyTag;
 }
 
-export function createJSDocReturnTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>, typeExpression?: JSDocTypeExpression): JSDocReturnTag {
+export function createJSDocReturnTag(tagName: Identifier, typeExpression: JSDocTypeExpression | undefined, comment?: string | NodeArray<JSDocComment>): JSDocReturnTag {
     return new NodeObject(SyntaxKind.JSDocReturnTag, {
         tagName,
-        comment,
         typeExpression,
+        comment,
     }) as unknown as JSDocReturnTag;
 }
 
@@ -1387,19 +1824,18 @@ export function createJSDocSatisfiesTag(tagName: Identifier, typeExpression: JSD
     }) as unknown as JSDocSatisfiesTag;
 }
 
-export function createJSDocSeeTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>, name?: JSDocNameReference): JSDocSeeTag {
+export function createJSDocSeeTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>): JSDocSeeTag {
     return new NodeObject(SyntaxKind.JSDocSeeTag, {
         tagName,
         comment,
-        name,
     }) as unknown as JSDocSeeTag;
 }
 
-export function createJSDocSignature(parameters: readonly JSDocParameterTag[], type: JSDocReturnTag | undefined, typeParameters?: readonly JSDocTemplateTag[]): JSDocSignature {
+export function createJSDocSignature(typeParameters: readonly JSDocTemplateTag[] | undefined, parameters: readonly JSDocParameterTag[], type: JSDocReturnTag | undefined): JSDocSignature {
     return new NodeObject(SyntaxKind.JSDocSignature, {
+        typeParameters,
         parameters,
         type,
-        typeParameters,
     }) as unknown as JSDocSignature;
 }
 
@@ -1426,13 +1862,12 @@ export function createJSDocThisTag(tagName: Identifier, typeExpression: JSDocTyp
     }) as unknown as JSDocThisTag;
 }
 
-export function createJSDocTypedefTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>, name?: Identifier, fullName?: JSDocNamespaceDeclaration | Identifier, typeExpression?: JSDocTypeExpression | JSDocTypeLiteral): JSDocTypedefTag {
+export function createJSDocTypedefTag(tagName: Identifier, typeExpression: JSDocTypeExpression | JSDocTypeLiteral | undefined, fullName: JSDocNamespaceDeclaration | Identifier | undefined, comment?: string | NodeArray<JSDocComment>): JSDocTypedefTag {
     return new NodeObject(SyntaxKind.JSDocTypedefTag, {
         tagName,
-        comment,
-        name,
-        fullName,
         typeExpression,
+        fullName,
+        comment,
     }) as unknown as JSDocTypedefTag;
 }
 
@@ -1442,10 +1877,10 @@ export function createJSDocTypeExpression(type: TypeNode): JSDocTypeExpression {
     }) as unknown as JSDocTypeExpression;
 }
 
-export function createJSDocTypeLiteral(isArrayType: boolean, jsDocPropertyTags?: readonly JSDocPropertyLikeTag[]): JSDocTypeLiteral {
+export function createJSDocTypeLiteral(jsDocPropertyTags: readonly JSDocPropertyLikeTag[] | undefined, isArrayType: boolean): JSDocTypeLiteral {
     return new NodeObject(SyntaxKind.JSDocTypeLiteral, {
-        isArrayType,
         jsDocPropertyTags,
+        isArrayType,
     }) as unknown as JSDocTypeLiteral;
 }
 
@@ -1470,7 +1905,7 @@ export function createJSDocVariadicType(type: TypeNode): JSDocVariadicType {
     }) as unknown as JSDocVariadicType;
 }
 
-export function createJsxAttribute(name: JsxAttributeName, initializer?: JsxAttributeValue): JsxAttribute {
+export function createJsxAttribute(name: JsxAttributeName, initializer: JsxAttributeValue | undefined): JsxAttribute {
     return new NodeObject(SyntaxKind.JsxAttribute, {
         name,
         initializer,
@@ -1501,7 +1936,7 @@ export function createJsxElement(openingElement: JsxOpeningElement, children: re
     }) as unknown as JsxElement;
 }
 
-export function createJsxExpression(dotDotDotToken?: Token<SyntaxKind.DotDotDotToken>, expression?: Expression): JsxExpression {
+export function createJsxExpression(dotDotDotToken: Token<SyntaxKind.DotDotDotToken> | undefined, expression: Expression | undefined): JsxExpression {
     return new NodeObject(SyntaxKind.JsxExpression, {
         dotDotDotToken,
         expression,
@@ -1523,11 +1958,11 @@ export function createJsxNamespacedName(name: Identifier, namespace: Identifier)
     }) as unknown as JsxNamespacedName;
 }
 
-export function createJsxOpeningElement(tagName: JsxTagNameExpression, attributes: JsxAttributes, typeArguments?: readonly TypeNode[]): JsxOpeningElement {
+export function createJsxOpeningElement(tagName: JsxTagNameExpression, typeArguments: readonly TypeNode[] | undefined, attributes: JsxAttributes): JsxOpeningElement {
     return new NodeObject(SyntaxKind.JsxOpeningElement, {
         tagName,
-        attributes,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
+        attributes,
     }) as unknown as JsxOpeningElement;
 }
 
@@ -1535,27 +1970,26 @@ export function createJsxOpeningFragment(): JsxOpeningFragment {
     return new NodeObject(SyntaxKind.JsxOpeningFragment, undefined) as unknown as JsxOpeningFragment;
 }
 
-export function createJsxSelfClosingElement(tagName: JsxTagNameExpression, attributes: JsxAttributes, typeArguments?: readonly TypeNode[]): JsxSelfClosingElement {
+export function createJsxSelfClosingElement(tagName: JsxTagNameExpression, typeArguments: readonly TypeNode[] | undefined, attributes: JsxAttributes): JsxSelfClosingElement {
     return new NodeObject(SyntaxKind.JsxSelfClosingElement, {
         tagName,
-        attributes,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
+        attributes,
     }) as unknown as JsxSelfClosingElement;
 }
 
-export function createJsxSpreadAttribute(expression: Expression, name?: PropertyName): JsxSpreadAttribute {
+export function createJsxSpreadAttribute(expression: Expression): JsxSpreadAttribute {
     return new NodeObject(SyntaxKind.JsxSpreadAttribute, {
         expression,
-        name,
     }) as unknown as JsxSpreadAttribute;
 }
 
-export function createJsxText(text: string, containsOnlyTriviaWhiteSpaces: boolean, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean): JsxText {
+export function createJsxText(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, containsOnlyTriviaWhiteSpaces: boolean): JsxText {
     return new NodeObject(SyntaxKind.JsxText, {
         text,
-        containsOnlyTriviaWhiteSpaces,
         isUnterminated,
         hasExtendedUnicodeEscape,
+        containsOnlyTriviaWhiteSpaces,
     }) as unknown as JsxText;
 }
 
@@ -1572,10 +2006,10 @@ export function createLiteralTypeNode(literal: NullLiteral | BooleanLiteral | Li
     }) as unknown as LiteralTypeNode;
 }
 
-export function createMappedTypeNode(typeParameter: TypeParameterDeclaration, readonlyToken?: ReadonlyKeyword | PlusToken | MinusToken, nameType?: TypeNode, questionToken?: QuestionToken | PlusToken | MinusToken, type?: TypeNode, members?: readonly TypeElement[]): MappedTypeNode {
+export function createMappedTypeNode(readonlyToken: ReadonlyKeyword | PlusToken | MinusToken | undefined, typeParameter: TypeParameterDeclaration, nameType: TypeNode | undefined, questionToken: QuestionToken | PlusToken | MinusToken | undefined, type: TypeNode | undefined, members: readonly TypeElement[] | undefined): MappedTypeNode {
     return new NodeObject(SyntaxKind.MappedType, {
-        typeParameter,
         readonlyToken,
+        typeParameter,
         nameType,
         questionToken,
         type,
@@ -1590,28 +2024,25 @@ export function createMetaProperty(keywordToken: SyntaxKind.NewKeyword | SyntaxK
     }) as unknown as MetaProperty;
 }
 
-export function createMethodDeclaration(name: PropertyName, parameters: readonly ParameterDeclaration[], typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, body?: FunctionBody | undefined, modifiers?: readonly ModifierLike[]): MethodDeclaration {
+export function createMethodDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): MethodDeclaration {
     return new NodeObject(SyntaxKind.MethodDeclaration, {
-        name,
-        parameters: createNodeArray(parameters),
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
-        body,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        asteriskToken,
+        name,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
+        type,
+        body,
     }) as unknown as MethodDeclaration;
 }
 
-export function createMethodSignature(name: PropertyName, parameters: readonly ParameterDeclaration[], typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, questionToken?: QuestionToken | undefined, modifiers?: readonly Modifier[]): MethodSignature {
+export function createMethodSignature(modifiers: readonly Modifier[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined): MethodSignature {
     return new NodeObject(SyntaxKind.MethodSignature, {
-        name,
-        parameters: createNodeArray(parameters),
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        type,
-        questionToken,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
+        type,
     }) as unknown as MethodSignature;
 }
 
@@ -1621,10 +2052,10 @@ export function createModuleBlock(statements: readonly Statement[]): ModuleBlock
     }) as unknown as ModuleBlock;
 }
 
-export function createModuleDeclaration(name: ModuleName, modifiers?: readonly ModifierLike[], body?: ModuleBody | JSDocNamespaceDeclaration): ModuleDeclaration {
+export function createModuleDeclaration(modifiers: readonly ModifierLike[] | undefined, name: ModuleName, body?: ModuleBody | JSDocNamespaceDeclaration): ModuleDeclaration {
     return new NodeObject(SyntaxKind.ModuleDeclaration, {
-        name,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
         body,
     }) as unknown as ModuleDeclaration;
 }
@@ -1641,12 +2072,12 @@ export function createNamedImports(elements: readonly ImportSpecifier[]): NamedI
     }) as unknown as NamedImports;
 }
 
-export function createNamedTupleMember(name: Identifier, type: TypeNode, dotDotDotToken?: Token<SyntaxKind.DotDotDotToken>, questionToken?: Token<SyntaxKind.QuestionToken>): NamedTupleMember {
+export function createNamedTupleMember(dotDotDotToken: Token<SyntaxKind.DotDotDotToken> | undefined, name: Identifier, questionToken: Token<SyntaxKind.QuestionToken> | undefined, type: TypeNode): NamedTupleMember {
     return new NodeObject(SyntaxKind.NamedTupleMember, {
-        name,
-        type,
         dotDotDotToken,
+        name,
         questionToken,
+        type,
     }) as unknown as NamedTupleMember;
 }
 
@@ -1668,7 +2099,7 @@ export function createNamespaceImport(name: Identifier): NamespaceImport {
     }) as unknown as NamespaceImport;
 }
 
-export function createNewExpression(expression: LeftHandSideExpression, typeArguments?: readonly TypeNode[], arguments_?: readonly Expression[]): NewExpression {
+export function createNewExpression(expression: LeftHandSideExpression, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[] | undefined): NewExpression {
     return new NodeObject(SyntaxKind.NewExpression, {
         expression,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
@@ -1696,12 +2127,12 @@ export function createNullLiteral(): NullLiteral {
     return new NodeObject(SyntaxKind.NullKeyword, undefined) as unknown as NullLiteral;
 }
 
-export function createNumericLiteral(text: string, numericLiteralFlags: TokenFlags, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean): NumericLiteral {
+export function createNumericLiteral(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, numericLiteralFlags: TokenFlags): NumericLiteral {
     return new NodeObject(SyntaxKind.NumericLiteral, {
         text,
-        numericLiteralFlags,
         isUnterminated,
         hasExtendedUnicodeEscape,
+        numericLiteralFlags,
     }) as unknown as NumericLiteral;
 }
 
@@ -1728,11 +2159,11 @@ export function createOptionalTypeNode(type: TypeNode): OptionalTypeNode {
     }) as unknown as OptionalTypeNode;
 }
 
-export function createParameterDeclaration(name: BindingName, modifiers?: readonly ModifierLike[], dotDotDotToken?: DotDotDotToken, questionToken?: QuestionToken, type?: TypeNode, initializer?: Expression): ParameterDeclaration {
+export function createParameterDeclaration(modifiers: readonly ModifierLike[] | undefined, dotDotDotToken: DotDotDotToken | undefined, name: BindingName, questionToken: QuestionToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): ParameterDeclaration {
     return new NodeObject(SyntaxKind.Parameter, {
-        name,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         dotDotDotToken,
+        name,
         questionToken,
         type,
         initializer,
@@ -1777,11 +2208,11 @@ export function createPrivateIdentifier(escapedText: string): PrivateIdentifier 
     }) as unknown as PrivateIdentifier;
 }
 
-export function createPropertyAccessExpression(name: MemberName, expression: LeftHandSideExpression, questionDotToken?: QuestionDotToken): PropertyAccessExpression {
+export function createPropertyAccessExpression(expression: LeftHandSideExpression, questionDotToken: QuestionDotToken | undefined, name: MemberName): PropertyAccessExpression {
     return new NodeObject(SyntaxKind.PropertyAccessExpression, {
-        name,
         expression,
         questionDotToken,
+        name,
     }) as unknown as PropertyAccessExpression;
 }
 
@@ -1792,22 +2223,19 @@ export function createPropertyAssignment(name: PropertyName, initializer: Expres
     }) as unknown as PropertyAssignment;
 }
 
-export function createPropertyDeclaration(name: PropertyName, modifiers?: readonly ModifierLike[], questionToken?: QuestionToken, exclamationToken?: ExclamationToken, type?: TypeNode, initializer?: Expression): PropertyDeclaration {
+export function createPropertyDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, type: TypeNode | undefined, initializer: Expression | undefined): PropertyDeclaration {
     return new NodeObject(SyntaxKind.PropertyDeclaration, {
-        name,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        questionToken,
-        exclamationToken,
+        name,
         type,
         initializer,
     }) as unknown as PropertyDeclaration;
 }
 
-export function createPropertySignature(name: PropertyName, questionToken?: QuestionToken, modifiers?: readonly Modifier[], type?: TypeNode): PropertySignature {
+export function createPropertySignature(modifiers: readonly Modifier[] | undefined, name: PropertyName, type: TypeNode | undefined): PropertySignature {
     return new NodeObject(SyntaxKind.PropertySignature, {
-        name,
-        questionToken,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
         type,
     }) as unknown as PropertySignature;
 }
@@ -1833,7 +2261,7 @@ export function createRestTypeNode(type: TypeNode): RestTypeNode {
     }) as unknown as RestTypeNode;
 }
 
-export function createReturnStatement(expression?: Expression): ReturnStatement {
+export function createReturnStatement(expression: Expression | undefined): ReturnStatement {
     return new NodeObject(SyntaxKind.ReturnStatement, {
         expression,
     }) as unknown as ReturnStatement;
@@ -1846,27 +2274,24 @@ export function createSatisfiesExpression(expression: Expression, type: TypeNode
     }) as unknown as SatisfiesExpression;
 }
 
-export function createSemicolonClassElement(name?: PropertyName): SemicolonClassElement {
+export function createSemicolonClassElement(name: PropertyName | undefined): SemicolonClassElement {
     return new NodeObject(SyntaxKind.SemicolonClassElement, {
         name,
     }) as unknown as SemicolonClassElement;
 }
 
-export function createSetAccessorDeclaration(name: PropertyName, parameters: readonly ParameterDeclaration[], typeParameters?: readonly TypeParameterDeclaration[], type?: TypeNode | undefined, asteriskToken?: AsteriskToken | undefined, questionToken?: QuestionToken | undefined, exclamationToken?: ExclamationToken | undefined, body?: FunctionBody, modifiers?: readonly ModifierLike[]): SetAccessorDeclaration {
+export function createSetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): SetAccessorDeclaration {
     return new NodeObject(SyntaxKind.SetAccessor, {
-        name,
-        parameters: createNodeArray(parameters),
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        type,
-        asteriskToken,
-        questionToken,
-        exclamationToken,
-        body,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
+        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        parameters: createNodeArray(parameters),
+        type,
+        body,
     }) as unknown as SetAccessorDeclaration;
 }
 
-export function createShorthandPropertyAssignment(name: Identifier, equalsToken?: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
+export function createShorthandPropertyAssignment(name: Identifier, equalsToken: EqualsToken | undefined, objectAssignmentInitializer: Expression | undefined): ShorthandPropertyAssignment {
     return new NodeObject(SyntaxKind.ShorthandPropertyAssignment, {
         name,
         equalsToken,
@@ -1884,10 +2309,9 @@ export function createSourceFile(statements: readonly Statement[], endOfFileToke
     }) as unknown as SourceFile;
 }
 
-export function createSpreadAssignment(expression: Expression, name?: PropertyName): SpreadAssignment {
+export function createSpreadAssignment(expression: Expression): SpreadAssignment {
     return new NodeObject(SyntaxKind.SpreadAssignment, {
         expression,
-        name,
     }) as unknown as SpreadAssignment;
 }
 
@@ -1917,11 +2341,11 @@ export function createSwitchStatement(expression: Expression, caseBlock: CaseBlo
     }) as unknown as SwitchStatement;
 }
 
-export function createTaggedTemplateExpression(tag: LeftHandSideExpression, template: TemplateLiteral, typeArguments?: readonly TypeNode[]): TaggedTemplateExpression {
+export function createTaggedTemplateExpression(tag: LeftHandSideExpression, typeArguments: readonly TypeNode[] | undefined, template: TemplateLiteral): TaggedTemplateExpression {
     return new NodeObject(SyntaxKind.TaggedTemplateExpression, {
         tag,
-        template,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
+        template,
     }) as unknown as TaggedTemplateExpression;
 }
 
@@ -1932,13 +2356,13 @@ export function createTemplateExpression(head: TemplateHead, templateSpans: read
     }) as unknown as TemplateExpression;
 }
 
-export function createTemplateHead(text: string, templateFlags: TokenFlags, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean, rawText?: string): TemplateHead {
+export function createTemplateHead(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, rawText: string | undefined, templateFlags: TokenFlags): TemplateHead {
     return new NodeObject(SyntaxKind.TemplateHead, {
         text,
-        templateFlags,
         isUnterminated,
         hasExtendedUnicodeEscape,
         rawText,
+        templateFlags,
     }) as unknown as TemplateHead;
 }
 
@@ -1956,13 +2380,13 @@ export function createTemplateLiteralTypeSpan(type: TypeNode, literal: TemplateM
     }) as unknown as TemplateLiteralTypeSpan;
 }
 
-export function createTemplateMiddle(text: string, templateFlags: TokenFlags, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean, rawText?: string): TemplateMiddle {
+export function createTemplateMiddle(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, rawText: string | undefined, templateFlags: TokenFlags): TemplateMiddle {
     return new NodeObject(SyntaxKind.TemplateMiddle, {
         text,
-        templateFlags,
         isUnterminated,
         hasExtendedUnicodeEscape,
         rawText,
+        templateFlags,
     }) as unknown as TemplateMiddle;
 }
 
@@ -1973,13 +2397,13 @@ export function createTemplateSpan(expression: Expression, literal: TemplateMidd
     }) as unknown as TemplateSpan;
 }
 
-export function createTemplateTail(text: string, templateFlags: TokenFlags, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean, rawText?: string): TemplateTail {
+export function createTemplateTail(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, rawText: string | undefined, templateFlags: TokenFlags): TemplateTail {
     return new NodeObject(SyntaxKind.TemplateTail, {
         text,
-        templateFlags,
         isUnterminated,
         hasExtendedUnicodeEscape,
         rawText,
+        templateFlags,
     }) as unknown as TemplateTail;
 }
 
@@ -2001,7 +2425,7 @@ export function createTrueLiteral(): TrueLiteral {
     return new NodeObject(SyntaxKind.TrueKeyword, undefined) as unknown as TrueLiteral;
 }
 
-export function createTryStatement(tryBlock: Block, catchClause?: CatchClause, finallyBlock?: Block): TryStatement {
+export function createTryStatement(tryBlock: Block, catchClause: CatchClause | undefined, finallyBlock: Block | undefined): TryStatement {
     return new NodeObject(SyntaxKind.TryStatement, {
         tryBlock,
         catchClause,
@@ -2015,12 +2439,12 @@ export function createTupleTypeNode(elements: readonly (TypeNode | NamedTupleMem
     }) as unknown as TupleTypeNode;
 }
 
-export function createTypeAliasDeclaration(name: Identifier, type: TypeNode, modifiers?: readonly ModifierLike[], typeParameters?: readonly TypeParameterDeclaration[]): TypeAliasDeclaration {
+export function createTypeAliasDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, type: TypeNode): TypeAliasDeclaration {
     return new NodeObject(SyntaxKind.TypeAliasDeclaration, {
-        name,
-        type,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
+        type,
     }) as unknown as TypeAliasDeclaration;
 }
 
@@ -2050,32 +2474,30 @@ export function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | Synta
     }) as unknown as TypeOperatorNode;
 }
 
-export function createTypeParameterDeclaration(name: Identifier, modifiers?: readonly Modifier[], constraint?: TypeNode, default_?: TypeNode, expression?: Expression): TypeParameterDeclaration {
+export function createTypeParameterDeclaration(modifiers: readonly Modifier[] | undefined, name: Identifier, constraint: TypeNode | undefined): TypeParameterDeclaration {
     return new NodeObject(SyntaxKind.TypeParameter, {
-        name,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        name,
         constraint,
-        default: default_,
-        expression,
     }) as unknown as TypeParameterDeclaration;
 }
 
-export function createTypePredicateNode(parameterName: Identifier | ThisTypeNode, assertsModifier?: AssertsKeyword, type?: TypeNode): TypePredicateNode {
+export function createTypePredicateNode(assertsModifier: AssertsKeyword | undefined, parameterName: Identifier | ThisTypeNode, type: TypeNode | undefined): TypePredicateNode {
     return new NodeObject(SyntaxKind.TypePredicate, {
-        parameterName,
         assertsModifier,
+        parameterName,
         type,
     }) as unknown as TypePredicateNode;
 }
 
-export function createTypeQueryNode(exprName: EntityName, typeArguments?: readonly TypeNode[]): TypeQueryNode {
+export function createTypeQueryNode(exprName: EntityName, typeArguments: readonly TypeNode[] | undefined): TypeQueryNode {
     return new NodeObject(SyntaxKind.TypeQuery, {
         exprName,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as TypeQueryNode;
 }
 
-export function createTypeReferenceNode(typeName: EntityName, typeArguments?: readonly TypeNode[]): TypeReferenceNode {
+export function createTypeReferenceNode(typeName: EntityName, typeArguments: readonly TypeNode[] | undefined): TypeReferenceNode {
     return new NodeObject(SyntaxKind.TypeReference, {
         typeName,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
@@ -2088,7 +2510,7 @@ export function createUnionTypeNode(types: readonly TypeNode[]): UnionTypeNode {
     }) as unknown as UnionTypeNode;
 }
 
-export function createVariableDeclaration(name: BindingName, exclamationToken?: ExclamationToken, type?: TypeNode, initializer?: Expression): VariableDeclaration {
+export function createVariableDeclaration(name: BindingName, exclamationToken: ExclamationToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): VariableDeclaration {
     return new NodeObject(SyntaxKind.VariableDeclaration, {
         name,
         exclamationToken,
@@ -2103,10 +2525,10 @@ export function createVariableDeclarationList(declarations: readonly VariableDec
     }) as unknown as VariableDeclarationList;
 }
 
-export function createVariableStatement(declarationList: VariableDeclarationList, modifiers?: readonly ModifierLike[]): VariableStatement {
+export function createVariableStatement(modifiers: readonly ModifierLike[] | undefined, declarationList: VariableDeclarationList): VariableStatement {
     return new NodeObject(SyntaxKind.VariableStatement, {
-        declarationList,
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
+        declarationList,
     }) as unknown as VariableStatement;
 }
 
@@ -2116,10 +2538,10 @@ export function createVoidExpression(expression: UnaryExpression): VoidExpressio
     }) as unknown as VoidExpression;
 }
 
-export function createWhileStatement(statement: Statement, expression: Expression): WhileStatement {
+export function createWhileStatement(expression: Expression, statement: Statement): WhileStatement {
     return new NodeObject(SyntaxKind.WhileStatement, {
-        statement,
         expression,
+        statement,
     }) as unknown as WhileStatement;
 }
 
@@ -2130,7 +2552,7 @@ export function createWithStatement(expression: Expression, statement: Statement
     }) as unknown as WithStatement;
 }
 
-export function createYieldExpression(asteriskToken?: AsteriskToken, expression?: Expression): YieldExpression {
+export function createYieldExpression(asteriskToken: AsteriskToken | undefined, expression: Expression | undefined): YieldExpression {
     return new NodeObject(SyntaxKind.YieldExpression, {
         asteriskToken,
         expression,

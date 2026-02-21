@@ -15,6 +15,8 @@ export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
     readonly flags: NodeFlags;
     readonly parent: Node;
+    forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
+    getSourceFile(): SourceFile;
 }
 
 export interface SourceFile extends Node {
@@ -277,6 +279,7 @@ export interface NodeArray<T> extends ReadonlyTextRange, ReadonlyArray<T> {
     readonly length: number;
     readonly pos: number;
     readonly end: number;
+    at(index: number): T;
 }
 
 // TODO(rbuckton): Constraint 'TKind' to 'TokenSyntaxKind'

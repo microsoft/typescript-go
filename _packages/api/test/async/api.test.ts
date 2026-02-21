@@ -1497,13 +1497,15 @@ export type Pair = [string, number];
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             const param = createParameterDeclaration(
+                undefined,
+                undefined,
                 createIdentifier("x"),
                 undefined,
-                undefined,
-                undefined,
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
+                undefined,
             );
             const node = createFunctionTypeNode(
+                undefined,
                 [param],
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
             );

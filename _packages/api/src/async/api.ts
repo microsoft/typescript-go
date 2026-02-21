@@ -17,6 +17,7 @@ import { encodeNode } from "../node/encoder.ts";
 import {
     decodeNode,
     findDescendant,
+    getNodeId,
     parseNodeHandle,
     readParseOptionsKey,
     readSourceFileHash,
@@ -361,14 +362,14 @@ export class Checker {
             const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsAtLocations", {
                 snapshot: this.snapshotId,
                 project: this.projectId,
-                locations: nodeOrNodes.map(node => node.id),
+                locations: nodeOrNodes.map(node => getNodeId(node)),
             });
             return data.map(d => d ? this.objectRegistry.getOrCreateSymbol(d) : undefined);
         }
         const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtLocation", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            location: (nodeOrNodes as Node).id,
+            location: getNodeId(nodeOrNodes as Node),
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
@@ -429,14 +430,14 @@ export class Checker {
             const data = await this.client.apiRequest<(TypeResponse | null)[]>("getTypeAtLocations", {
                 snapshot: this.snapshotId,
                 project: this.projectId,
-                locations: nodeOrNodes.map(node => node.id),
+                locations: nodeOrNodes.map(node => getNodeId(node)),
             });
             return data.map(d => d ? this.objectRegistry.getOrCreateType(d) : undefined);
         }
         const data = await this.client.apiRequest<TypeResponse | null>("getTypeAtLocation", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            location: (nodeOrNodes as Node).id,
+            location: getNodeId(nodeOrNodes as Node),
         });
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
@@ -478,14 +479,14 @@ export class Checker {
         location?: Node | DocumentPosition,
         excludeGlobals?: boolean,
     ): Promise<Symbol | undefined> {
-        // Distinguish Node (has `id`) from DocumentPosition (has `document` and `position`)
-        const isNode = location && "id" in location;
+        // Distinguish Node (has `kind`) from DocumentPosition (has `document` and `position`)
+        const isNode = location && "kind" in location;
         const data = await this.client.apiRequest<SymbolResponse | null>("resolveName", {
             snapshot: this.snapshotId,
             project: this.projectId,
             name,
             meaning,
-            location: isNode ? (location as Node).id : undefined,
+            location: isNode ? getNodeId(location as Node) : undefined,
             file: !isNode && location ? (location as DocumentPosition).document : undefined,
             position: !isNode && location ? (location as DocumentPosition).position : undefined,
             excludeGlobals,
@@ -497,7 +498,7 @@ export class Checker {
         const data = await this.client.apiRequest<TypeResponse | null>("getContextualType", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            location: node.id,
+            location: getNodeId(node),
         });
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
@@ -515,7 +516,7 @@ export class Checker {
         const data = await this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            location: node.id,
+            location: getNodeId(node),
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
@@ -525,7 +526,7 @@ export class Checker {
             snapshot: this.snapshotId,
             project: this.projectId,
             symbol: symbol.id,
-            location: location.id,
+            location: getNodeId(location),
         });
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
@@ -577,7 +578,7 @@ export class Checker {
             snapshot: this.snapshotId,
             project: this.projectId,
             type: type.id,
-            location: enclosingDeclaration ? (enclosingDeclaration as Node).id : undefined,
+            location: enclosingDeclaration ? getNodeId(enclosingDeclaration as Node) : undefined,
             flags,
         });
         if (!binaryData) return undefined;

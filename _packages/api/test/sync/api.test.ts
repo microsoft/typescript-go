@@ -1505,13 +1505,15 @@ export type Pair = [string, number];
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             const param = createParameterDeclaration(
+                undefined,
+                undefined,
                 createIdentifier("x"),
                 undefined,
-                undefined,
-                undefined,
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
+                undefined,
             );
             const node = createFunctionTypeNode(
+                undefined,
                 [param],
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
             );
@@ -1557,18 +1559,18 @@ export type Pair = [string, number];
         const api = spawnAPI(emitterFiles);
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const { checker, emitter } = snapshot.getProject("/tsconfig.json")!;
             const src = emitterFiles["/src/main.ts"];
+
             const greetPos = src.indexOf("greet(");
-            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", greetPos);
+            const symbol = checker.getSymbolAtPosition("/src/main.ts", greetPos);
             assert.ok(symbol);
-            const type = project.checker.getTypeOfSymbol(symbol);
+            const type = checker.getTypeOfSymbol(symbol);
             assert.ok(type);
-            const typeNode = project.checker.typeToTypeNode(type);
+            const typeNode = checker.typeToTypeNode(type);
             assert.ok(typeNode);
-            const text = project.emitter.printNode(typeNode);
+            const text = emitter.printNode(typeNode);
             assert.ok(text);
-            // The function type should print as "(name: string) => string"
             assert.strictEqual(text, "(name: string) => string");
         }
         finally {

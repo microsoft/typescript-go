@@ -10,11 +10,13 @@
  * Writes: _packages/ast/src/factory.ts
  */
 
+import { SyntaxKind } from "#enums/syntaxKind";
 import { execaSync } from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+import { childProperties } from "../../api/src/node/protocol.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,6 +63,11 @@ interface FactoryDef {
     syntaxKind: string;
     factoryName: string;
     params: PropertyInfo[];
+    hasProtocolOrder: boolean;
+}
+
+function countChildParams(params: PropertyInfo[]): number {
+    return params.filter(p => classifyProperty(p) !== "data").length;
 }
 
 // ---------------------------------------------------------------------------
@@ -156,6 +163,54 @@ for (const stmt of sourceFile.statements) {
 }
 
 // ---------------------------------------------------------------------------
+// Step 2b: Build the set of all types that are Node subtypes
+// ---------------------------------------------------------------------------
+
+function extendsNode(name: string, visited = new Set<string>()): boolean {
+    if (visited.has(name)) return false;
+    visited.add(name);
+    if (name === "Node") return true;
+    const iface = interfaces.get(name);
+    if (!iface) return false;
+    return iface.extends.some(ext => extendsNode(ext.name, visited));
+}
+
+const nodeTypeInterfaces = new Set<string>();
+for (const [name] of interfaces) {
+    if (extendsNode(name)) nodeTypeInterfaces.add(name);
+}
+
+// Also collect type aliases that resolve to node types (unions of node types, Token<X>, etc.)
+const nodeTypeAliases = new Set<string>();
+for (const stmt of sourceFile.statements) {
+    if (!ts.isTypeAliasDeclaration(stmt)) continue;
+    const aliasName = stmt.name.text;
+    if (nodeTypeInterfaces.has(aliasName)) continue;
+    // Check if it resolves to a node type
+    if (isNodeType(stmt.type)) {
+        nodeTypeAliases.add(aliasName);
+    }
+}
+
+function isNodeType(typeNode: ts.TypeNode): boolean {
+    if (ts.isTypeReferenceNode(typeNode)) {
+        if (ts.isIdentifier(typeNode.typeName)) {
+            const name = typeNode.typeName.text;
+            return nodeTypeInterfaces.has(name) || nodeTypeAliases.has(name);
+        }
+        return false;
+    }
+    if (ts.isUnionTypeNode(typeNode)) {
+        const nonUndefined = typeNode.types.filter(t => t.kind !== ts.SyntaxKind.UndefinedKeyword);
+        return nonUndefined.length > 0 && nonUndefined.every(t => isNodeType(t));
+    }
+    if (ts.isIntersectionTypeNode(typeNode)) {
+        return typeNode.types.some(t => isNodeType(t));
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
 // Step 3: Resolve all properties for an interface (including inherited)
 // ---------------------------------------------------------------------------
 
@@ -248,7 +303,36 @@ for (const [name, iface] of interfaces) {
         propMap.set(prop.name, prop);
     }
 
-    const params = [...propMap.values()];
+    // Order params using childProperties from protocol.ts when available.
+    // childProperties is also used as a filter: only child properties listed
+    // there are included. Inherited child properties not in the list are dropped.
+    // Data properties (non-node) are always included from the type hierarchy.
+    const kindName = iface.syntaxKind.replace("SyntaxKind.", "");
+    const kindValue = SyntaxKind[kindName as keyof typeof SyntaxKind] as SyntaxKind;
+    const order = kindValue !== undefined ? childProperties[kindValue]?.filter((s): s is string => s !== undefined) : undefined;
+    let params: PropertyInfo[];
+    if (order) {
+        const ordered: PropertyInfo[] = [];
+        const childPropSet = new Set(order);
+        const remaining = new Map(propMap);
+        for (const propName of order) {
+            const prop = remaining.get(propName);
+            if (prop) {
+                ordered.push(prop);
+                remaining.delete(propName);
+            }
+        }
+        // Append remaining data properties only; drop unlisted child properties
+        for (const prop of remaining.values()) {
+            if (classifyProperty(prop) === "data") {
+                ordered.push(prop);
+            }
+        }
+        params = ordered;
+    }
+    else {
+        params = [...propMap.values()];
+    }
     const factoryName = `create${name}`;
 
     for (const prop of params) {
@@ -260,7 +344,15 @@ for (const [name, iface] of interfaces) {
         syntaxKind: iface.syntaxKind,
         factoryName,
         params,
+        hasProtocolOrder: !!order,
     });
+}
+
+// Diagnostic: error if any node without protocol order has more than 1 child param
+for (const def of factoryDefs) {
+    if (!def.hasProtocolOrder && countChildParams(def.params) > 1) {
+        reportError(`${def.interfaceName} has ${countChildParams(def.params)} child params but no childProperties order`);
+    }
 }
 
 factoryDefs.sort((a, b) => a.interfaceName.localeCompare(b.interfaceName));
@@ -284,7 +376,7 @@ for (const iface of interfaces.values()) {
     for (const tp of iface.typeParameters) allTypeParams.add(tp);
 }
 
-const referencedTypes = new Set<string>(["Node", "NodeArray", "KeywordTypeNode", "KeywordTypeSyntaxKind"]);
+const referencedTypes = new Set<string>(["Node", "NodeArray", "SourceFile", "KeywordTypeNode", "KeywordTypeSyntaxKind"]);
 for (const def of factoryDefs) {
     referencedTypes.add(def.interfaceName);
     for (const param of def.params) {
@@ -378,6 +470,18 @@ for (const propName of sortedPropertyNames) {
     emit(`    get ${propName}(): any { return this._data?.${propName}; }`);
 }
 
+emit("");
+emit("    forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined {");
+emit("        const fn = forEachChildTable[this.kind];");
+emit("        return fn ? fn(this._data, visitor, visitArray) : undefined;");
+emit("    }");
+emit("");
+emit("    getSourceFile(): SourceFile {");
+emit("        let node: Node = this as unknown as Node;");
+emit("        while (node.parent) node = node.parent;");
+emit("        return node as unknown as SourceFile;");
+emit("    }");
+
 emit("}");
 emit("");
 
@@ -430,6 +534,34 @@ function getNodeArrayElementType(typeNode: ts.TypeNode): ts.TypeNode | undefined
     return undefined;
 }
 
+/**
+ * Classify a property as "node" (single child node), "nodeArray" (NodeArray child),
+ * or "data" (non-node value like string, number, boolean, SyntaxKind, etc.).
+ */
+function classifyProperty(prop: PropertyInfo): "node" | "nodeArray" | "data" {
+    if (getNodeArrayElementType(prop.typeNode)) return "nodeArray";
+    if (isPropertyNodeType(prop.typeNode)) return "node";
+    return "data";
+}
+
+function isPropertyNodeType(typeNode: ts.TypeNode): boolean {
+    if (ts.isTypeReferenceNode(typeNode)) {
+        if (ts.isIdentifier(typeNode.typeName)) {
+            const name = typeNode.typeName.text;
+            return nodeTypeInterfaces.has(name) || nodeTypeAliases.has(name);
+        }
+        return false;
+    }
+    if (ts.isUnionTypeNode(typeNode)) {
+        const nonUndefined = typeNode.types.filter(t => t.kind !== ts.SyntaxKind.UndefinedKeyword);
+        return nonUndefined.length > 0 && nonUndefined.every(t => isPropertyNodeType(t));
+    }
+    if (ts.isIntersectionTypeNode(typeNode)) {
+        return typeNode.types.some(t => isPropertyNodeType(t));
+    }
+    return false;
+}
+
 function printType(prop: PropertyInfo): string {
     let text = prop.typeNode.getText(sourceFile);
     if (prop.substitutions) {
@@ -450,26 +582,121 @@ function printElementType(elemTypeNode: ts.TypeNode, substitutions?: Map<string,
     return text;
 }
 
+// ---------------------------------------------------------------------------
+// forEachChildTable: generated dispatch table for forEachChild
+// ---------------------------------------------------------------------------
+
+type ChildProp = { name: string; kind: "node" | "nodeArray"; };
+
+emit("type ForEachChildFunction = (data: any, cbNode: (node: Node) => any, cbNodes?: (nodes: NodeArray<Node>) => any) => any;");
+emit("");
+emit("const forEachChildTable: Record<number, ForEachChildFunction> = {");
+
+let forEachChildCount = 0;
+for (const def of factoryDefs) {
+    const childProps: ChildProp[] = [];
+    for (const prop of def.params) {
+        const classification = classifyProperty(prop);
+        if (classification !== "data") {
+            childProps.push({ name: prop.name, kind: classification });
+        }
+    }
+
+    if (childProps.length === 0) continue;
+    forEachChildCount++;
+
+    const propAccesses = childProps.map(cp => {
+        if (cp.kind === "nodeArray") {
+            return `visitNodes(cbNode, cbNodes, data.${cp.name})`;
+        }
+        else {
+            return `visitNode(cbNode, data.${cp.name})`;
+        }
+    });
+
+    if (propAccesses.length === 1) {
+        emit(`    [${def.syntaxKind}]: (data, cbNode, cbNodes) => ${propAccesses[0]},`);
+    }
+    else {
+        emit(`    [${def.syntaxKind}]: (data, cbNode, cbNodes) =>`);
+        for (let i = 0; i < propAccesses.length; i++) {
+            const sep = i < propAccesses.length - 1 ? " ||" : ",";
+            const indent = "        ";
+            emit(`${indent}${propAccesses[i]}${sep}`);
+        }
+    }
+}
+
+emit("};");
+emit("");
+
+// visitNode / visitNodes helpers
+emit("function visitNode<T>(cbNode: (node: Node) => T, node: Node | undefined): T | undefined {");
+emit("    return node ? cbNode(node) : undefined;");
+emit("}");
+emit("");
+emit("function visitNodes<T>(cbNode: (node: Node) => T, cbNodes: ((nodes: NodeArray<Node>) => T) | undefined, nodes: NodeArray<Node> | undefined): T | undefined {");
+emit("    if (!nodes) return undefined;");
+emit("    if (cbNodes) return cbNodes(nodes);");
+emit("    for (const node of nodes) {");
+emit("        const result = cbNode(node);");
+emit("        if (result) return result;");
+emit("    }");
+emit("    return undefined;");
+emit("}");
+emit("");
+
 // Factory functions
 for (const def of factoryDefs) {
     const { interfaceName, syntaxKind, factoryName, params } = def;
 
-    const requiredParams = params.filter(p => !p.optional);
-    const optionalParams = params.filter(p => p.optional);
-    const orderedParams = [...requiredParams, ...optionalParams];
+    // Params are already in protocol order (from childProperties) when available.
+    // Child params (node/nodeArray) are never optional (?) — they use | undefined.
+    // Only trailing data params may use ?.
+    const orderedParams = params;
+
+    // Find the index after which all remaining params are optional data params
+    let lastNonTrailingIndex = -1;
+    for (let i = orderedParams.length - 1; i >= 0; i--) {
+        const p = orderedParams[i];
+        if (!p.optional || classifyProperty(p) !== "data") {
+            lastNonTrailingIndex = i;
+            break;
+        }
+    }
 
     // Track which params are NodeArray types so we can wrap them
     const nodeArrayParams = new Set<string>();
-    const paramList = orderedParams.map(p => {
-        const opt = p.optional ? "?" : "";
+    const paramList = orderedParams.map((p, i) => {
+        const isChild = classifyProperty(p) !== "data";
         const safe = safeParamName(p.name);
         const elemTypeNode = getNodeArrayElementType(p.typeNode);
         if (elemTypeNode) {
             nodeArrayParams.add(p.name);
             const elemText = printElementType(elemTypeNode, p.substitutions);
-            return `${safe}${opt}: readonly ${elemText}[]`;
+            if (p.optional) {
+                return `${safe}: readonly ${elemText}[] | undefined`;
+            }
+            return `${safe}: readonly ${elemText}[]`;
         }
-        return `${safe}${opt}: ${printType(p)}`;
+        if (isChild) {
+            // Child params are never ?, use | undefined in the type
+            let typeText = printType(p);
+            if (p.optional && !typeText.includes("undefined")) {
+                typeText += " | undefined";
+            }
+            return `${safe}: ${typeText}`;
+        }
+        // Data params: only trailing optional ones use ?
+        const isTrailing = i > lastNonTrailingIndex;
+        if (p.optional && isTrailing) {
+            return `${safe}?: ${printType(p)}`;
+        }
+        let typeText = printType(p);
+        if (p.optional && !typeText.includes("undefined")) {
+            typeText += " | undefined";
+        }
+        return `${safe}: ${typeText}`;
     });
 
     emit(`export function ${factoryName}(${paramList.join(", ")}): ${interfaceName} {`);
