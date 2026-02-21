@@ -120,6 +120,11 @@ func NewInferredProject(
 			AllowNonTsExtensions:       core.TSTrue,
 			ResolveJsonModule:          core.TSTrue,
 		}
+	} else {
+		// Apply inferred project defaults for options that are not explicitly set
+		if compilerOptions.AllowJs == core.TSUnknown {
+			compilerOptions.AllowJs = core.TSTrue
+		}
 	}
 	p.CommandLine = tsoptions.NewParsedCommandLine(
 		compilerOptions,
