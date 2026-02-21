@@ -202,6 +202,7 @@ func (p *Parser) parseJSDocCommentWorker(start int, end int, fullStart int, inde
 	commentsPos := -1
 	linkEnd := start
 	margin := -1
+	inBackticks := false
 	pushComment := func(text string) {
 		if margin == -1 {
 			margin = indent
@@ -276,6 +277,10 @@ loop:
 		case ast.KindJSDocCommentTextToken:
 			state = jsdocStateSavingComments
 			pushComment(p.scanner.TokenValue())
+		case ast.KindBacktickToken:
+			state = jsdocStateSavingComments
+			inBackticks = !inBackticks
+			pushComment(p.scanner.TokenText())
 		case ast.KindOpenBraceToken:
 			state = jsdocStateSavingComments
 			commentEnd := p.scanner.TokenFullStart()
@@ -300,7 +305,7 @@ loop:
 			pushComment(p.scanner.TokenText())
 		}
 		if state == jsdocStateSavingComments {
-			p.nextJSDocCommentTextToken(false)
+			p.nextJSDocCommentTextToken(inBackticks)
 		} else {
 			p.nextTokenJSDoc()
 		}
