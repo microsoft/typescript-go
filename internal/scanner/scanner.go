@@ -212,6 +212,7 @@ type ScannerState struct {
 type Scanner struct {
 	text            string
 	languageVariant core.LanguageVariant
+	scriptTarget    core.ScriptTarget
 	onError         ErrorCallback
 	skipTrivia      bool
 	scriptKind      core.ScriptKind
@@ -416,6 +417,17 @@ func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
 
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
 	s.languageVariant = languageVariant
+}
+
+func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
+	s.scriptTarget = scriptTarget
+}
+
+func (s *Scanner) languageVersion() core.ScriptTarget {
+	if s.scriptTarget == core.ScriptTargetNone {
+		return core.ScriptTargetLatest
+	}
+	return s.scriptTarget
 }
 
 func (s *Scanner) error(diagnostic *diagnostics.Message) {
@@ -1034,50 +1046,58 @@ func (s *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
 	return s.token
 }
 
-// !!! https://github.com/microsoft/TypeScript/pull/55600
 func (s *Scanner) ReScanSlashToken() ast.Kind {
 	if s.token == ast.KindSlashToken || s.token == ast.KindSlashEqualsToken {
-		s.pos = s.tokenStart + 1
-		startOfRegExpBody := s.pos
+		// Quickly get to the end of regex such that we know the flags
+		startOfRegExpBody := s.tokenStart + 1
+		p := startOfRegExpBody
 		inEscape := false
+		// Although nested character classes are allowed in Unicode Sets mode,
+		// an unescaped slash is nevertheless invalid even in a character class in Unicode mode.
+		// Additionally, parsing nested character classes will misinterpret regexes like `/[[]/`
+		// as unterminated, consuming characters beyond the slash. (This even applies to `/[[]/v`,
+		// which should be parsed as a well-terminated regex with an incomplete character class.)
+		// Thus we must not handle nested character classes in the first pass.
 		inCharacterClass := false
 	loop:
 		for {
-			ch, size := s.charAndSize()
-			// If we reach the end of a file, or hit a newline, then this is an unterminated
-			// regex.  Report error and return what we have so far.
-			switch {
-			case size == 0 || stringutil.IsLineBreak(ch):
+			if p >= len(s.text) {
 				s.tokenFlags |= ast.TokenFlagsUnterminated
 				break loop
-			case inEscape:
-				// Parsing an escape character;
-				// reset the flag and just advance to the next char.
-				inEscape = false
-			case ch == '/' && !inCharacterClass:
-				// A slash within a character class is permissible,
-				// but in general it signals the end of the regexp literal.
+			}
+			ch := rune(s.text[p])
+			if stringutil.IsLineBreak(ch) {
+				s.tokenFlags |= ast.TokenFlagsUnterminated
 				break loop
-			case ch == '[':
+			}
+			if inEscape {
+				inEscape = false
+			} else if ch == '/' && !inCharacterClass {
+				break loop
+			} else if ch == '[' {
 				inCharacterClass = true
-			case ch == '\\':
+			} else if ch == '\\' {
 				inEscape = true
-			case ch == ']':
+			} else if ch == ']' {
 				inCharacterClass = false
 			}
-			s.pos += size
+			p++
 		}
-		if s.tokenFlags&ast.TokenFlagsUnterminated != 0 {
-			// Search for the nearest unbalanced bracket for better recovery. Since the expression is
-			// invalid anyways, we take nested square brackets into consideration for the best guess.
-			endOfRegExpBody := s.pos
-			s.pos = startOfRegExpBody
+
+		isUnterminated := s.tokenFlags&ast.TokenFlagsUnterminated != 0
+		endOfBody := p
+		var regExpFlags RegularExpressionFlags
+
+		if isUnterminated {
+			// Search for the nearest unbalanced bracket for better recovery
+			endOfScan := p
+			p = startOfRegExpBody
 			inEscape = false
 			characterClassDepth := 0
 			inDecimalQuantifier := false
 			groupDepth := 0
-			for s.pos < endOfRegExpBody {
-				ch, size := s.charAndSize()
+			for p < endOfScan {
+				ch := rune(s.text[p])
 				if inEscape {
 					inEscape = false
 				} else if ch == '\\' {
@@ -1097,34 +1117,66 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 						} else if ch == ')' && groupDepth != 0 {
 							groupDepth--
 						} else if ch == ')' || ch == ']' || ch == '}' {
-							// We encountered an unbalanced bracket outside a character class. Treat this position as the end of regex.
 							break
 						}
 					}
 				}
-				s.pos += size
+				p++
 			}
-			// Whitespaces and semicolons at the end are not likely to be part of the regex
-			for {
-				ch, size := utf8.DecodeLastRuneInString(s.text[:s.pos])
+			for p > startOfRegExpBody {
+				ch, size := utf8.DecodeLastRuneInString(s.text[:p])
 				if stringutil.IsWhiteSpaceLike(ch) || ch == ';' {
-					s.pos -= size
+					p -= size
 				} else {
 					break
 				}
 			}
-			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, s.pos-s.tokenStart)
+			endOfBody = p
+			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, p-s.tokenStart)
 		} else {
-			// Consume the slash character
-			s.pos++
-			for {
-				ch, size := s.charAndSize()
-				if size == 0 || !IsIdentifierPart(ch) {
+			// Skip past the closing '/'
+			p++
+			// Scan and validate flags
+			for p < len(s.text) {
+				ch, size := utf8.DecodeRuneInString(s.text[p:])
+				if !IsIdentifierPart(ch) {
 					break
 				}
-				s.pos += size
+				flag, ok := CharacterToRegularExpressionFlag(ch)
+				if !ok {
+					s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
+				} else if regExpFlags&flag != 0 {
+					s.errorAt(diagnostics.Duplicate_regular_expression_flag, p, size)
+				} else if (regExpFlags|flag)&RegularExpressionFlagsUnicodeMode == RegularExpressionFlagsUnicodeMode {
+					s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
+				} else {
+					regExpFlags |= flag
+					availableFrom := regExpFlagToFirstAvailableLanguageVersion[flag]
+					if s.languageVersion() < availableFrom {
+						s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, p, size, GetNameOfScriptTarget(availableFrom))
+					}
+				}
+				p += size
 			}
 		}
+
+		s.pos = startOfRegExpBody
+		saveTokenPos := s.tokenStart
+		saveTokenFlags := s.tokenFlags
+		parser := &regExpParser{
+			scanner:         s,
+			end:             endOfBody,
+			regExpFlags:     regExpFlags,
+			isUnterminated:  isUnterminated,
+			unicodeMode:     regExpFlags&RegularExpressionFlagsUnicodeMode != 0,
+			unicodeSetsMode: regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+			groupSpecifiers: make(map[string]bool),
+		}
+		parser.run()
+		s.tokenStart = saveTokenPos
+		s.tokenFlags = saveTokenFlags
+
+		s.pos = p
 		s.tokenValue = s.text[s.tokenStart:s.pos]
 		s.token = ast.KindRegularExpressionLiteral
 	}
@@ -1629,7 +1681,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			code, _ := strconv.ParseInt(s.text[start+1:s.pos], 8, 32)
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
-				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, fmt.Sprintf("%02x", code))
+				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
 			} else {
 				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
 			}
@@ -1735,21 +1787,26 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	}
 	hexValue, _ := strconv.ParseInt(hexDigits, 16, 32)
 	if extended {
+		isInvalidExtendedEscape := false
 		if hexValue > 0x10FFFF {
 			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.errorAt(diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive, start+1, s.pos-start-1)
 			}
-			return -1
+			isInvalidExtendedEscape = true
 		}
-		if s.char() != '}' {
+		if s.char() == '}' {
+			s.pos++
+		} else {
 			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.error(diagnostics.Unterminated_Unicode_escape_sequence)
 			}
+			isInvalidExtendedEscape = true
+		}
+		if isInvalidExtendedEscape {
 			return -1
 		}
-		s.pos++
 	}
 	return rune(hexValue)
 }

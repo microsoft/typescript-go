@@ -1,0 +1,46 @@
+regularExpressionCharacterClassRangeOrder.ts(8,9): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(9,9): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(11,25): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(12,25): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(13,25): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(15,31): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(16,31): error TS1517: Range out of order in character class.
+regularExpressionCharacterClassRangeOrder.ts(17,31): error TS1517: Range out of order in character class.
+
+
+==== regularExpressionCharacterClassRangeOrder.ts (8 errors) ====
+    // The characters in the following regular expressions are ASCII-lookalike characters found in Unicode, including:
+    // - 𝘈 (U+1D608 Mathematical Sans-Serif Italic Capital A)
+    // - 𝘡 (U+1D621 Mathematical Sans-Serif Italic Capital Z)
+    //
+    // See https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
+    const regexes: RegExp[] = [
+    	/[𝘈-𝘡][𝘡-𝘈]/,
+    	/[𝘈-𝘡][𝘡-𝘈]/u,
+    	       ~~~
+!!! error TS1517: Range out of order in character class.
+    	/[𝘈-𝘡][𝘡-𝘈]/v,
+    	       ~~~
+!!! error TS1517: Range out of order in character class.
+    
+    	/[\u{1D608}-\u{1D621}][\u{1D621}-\u{1D608}]/,
+    	                       ~~~~~~~~~~~~~~~~~~~
+!!! error TS1517: Range out of order in character class.
+    	/[\u{1D608}-\u{1D621}][\u{1D621}-\u{1D608}]/u,
+    	                       ~~~~~~~~~~~~~~~~~~~
+!!! error TS1517: Range out of order in character class.
+    	/[\u{1D608}-\u{1D621}][\u{1D621}-\u{1D608}]/v,
+    	                       ~~~~~~~~~~~~~~~~~~~
+!!! error TS1517: Range out of order in character class.
+    
+    	/[\uD835\uDE08-\uD835\uDE21][\uD835\uDE21-\uD835\uDE08]/,
+    	                             ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1517: Range out of order in character class.
+    	/[\uD835\uDE08-\uD835\uDE21][\uD835\uDE21-\uD835\uDE08]/u,
+    	                             ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1517: Range out of order in character class.
+    	/[\uD835\uDE08-\uD835\uDE21][\uD835\uDE21-\uD835\uDE08]/v,
+    	                             ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1517: Range out of order in character class.
+    ];
+    

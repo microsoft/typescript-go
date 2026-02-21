@@ -1,0 +1,11 @@
+--- old.parserRegularExpression1.errors.txt
++++ new.parserRegularExpression1.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++parserRegularExpression1.ts(1,27): error TS1516: A character class range must not be bounded by another character class.
++
++
++==== parserRegularExpression1.ts (1 errors) ====
++    /(#?-?\d*\.\d\w*%?)|(@?#?[\w-?]+%?)/g;
++                              ~~
++!!! error TS1516: A character class range must not be bounded by another character class.
