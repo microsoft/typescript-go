@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -21,6 +22,10 @@ type mockModuleSpecifierGenerationHost struct {
 
 func (h *mockModuleSpecifierGenerationHost) GetCurrentDirectory() string {
 	return h.currentDir
+}
+
+func (h *mockModuleSpecifierGenerationHost) PnpApi() *pnp.PnpApi {
+	return nil
 }
 
 func (h *mockModuleSpecifierGenerationHost) UseCaseSensitiveFileNames() bool {

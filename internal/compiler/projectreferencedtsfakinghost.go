@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -41,6 +42,11 @@ func (h *projectReferenceDtsFakingHost) FS() vfs.FS {
 // GetCurrentDirectory implements module.ResolutionHost.
 func (h *projectReferenceDtsFakingHost) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
+}
+
+// PnpApi implements module.ResolutionHost.
+func (h *projectReferenceDtsFakingHost) PnpApi() *pnp.PnpApi {
+	return h.host.PnpApi()
 }
 
 type projectReferenceDtsFakingVfs struct {

@@ -4,10 +4,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 var _ compiler.CompilerHost = (*compilerHost)(nil)
@@ -17,6 +19,7 @@ type compilerHost struct {
 	currentDirectory string
 	sessionOptions   *SessionOptions
 
+	pnpApi             *pnp.PnpApi
 	sourceFS           *sourceFS
 	configFileRegistry *ConfigFileRegistry
 
@@ -31,11 +34,17 @@ func newCompilerHost(
 	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *compilerHost {
+	pnpApi := pnp.InitPnpApi(builder.fs.fs, currentDirectory)
+	if pnpApi != nil {
+		builder.fs.fs = pnpvfs.From(builder.fs.fs)
+	}
+
 	return &compilerHost{
 		configFilePath:   project.configFilePath,
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
+		pnpApi:   pnpApi,
 		sourceFS: newSourceFS(true, builder.fs, builder.toPath),
 
 		project: project,
@@ -77,6 +86,11 @@ func (c *compilerHost) FS() vfs.FS {
 // GetCurrentDirectory implements compiler.CompilerHost.
 func (c *compilerHost) GetCurrentDirectory() string {
 	return c.currentDirectory
+}
+
+// PnpApi implements compiler.CompilerHost.
+func (c *compilerHost) PnpApi() *pnp.PnpApi {
+	return c.pnpApi
 }
 
 // GetResolvedProjectReference implements compiler.CompilerHost.
