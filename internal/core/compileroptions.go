@@ -2,6 +2,7 @@ package core
 
 import (
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -324,6 +325,11 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 		return nil, false
 	})
 	return typeRoots, false
+}
+
+// UsesWildcardTypes returns true if this option's types array includes "*"
+func (options *CompilerOptions) UsesWildcardTypes() bool {
+	return slices.Contains(options.Types, "*")
 }
 
 func (options *CompilerOptions) GetIsolatedModules() bool {
