@@ -2021,7 +2021,7 @@ func isSameScopeDescendentOf(initial *ast.Node, parent *ast.Node, stopAt *ast.No
 		if n == parent {
 			return true
 		}
-		if n == stopAt || ast.IsFunctionLike(n) && (ast.GetImmediatelyInvokedFunctionExpression(n) == nil || (getFunctionFlags(n)&FunctionFlagsAsyncGenerator != 0)) {
+		if n == stopAt || ast.IsFunctionLike(n) && (ast.GetImmediatelyInvokedFunctionExpression(n) == nil || (ast.GetFunctionFlags(n)&ast.FunctionFlagsAsyncGenerator != 0)) {
 			return false
 		}
 	}
@@ -2660,15 +2660,15 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 		}
 	}
 	if returnTypeNode != nil {
-		functionFlags := getFunctionFlags(node)
-		if (functionFlags & (FunctionFlagsInvalid | FunctionFlagsGenerator)) == FunctionFlagsGenerator {
+		functionFlags := ast.GetFunctionFlags(node)
+		if (functionFlags & (ast.FunctionFlagsInvalid | ast.FunctionFlagsGenerator)) == ast.FunctionFlagsGenerator {
 			returnType := c.getTypeFromTypeNode(returnTypeNode)
 			if returnType == c.voidType {
 				c.error(returnTypeNode, diagnostics.A_generator_cannot_have_a_void_type_annotation)
 			} else {
 				c.checkGeneratorInstantiationAssignabilityToReturnType(returnType, functionFlags, returnTypeNode)
 			}
-		} else if (functionFlags & FunctionFlagsAsyncGenerator) == FunctionFlagsAsync {
+		} else if (functionFlags & ast.FunctionFlagsAsyncGenerator) == ast.FunctionFlagsAsync {
 			c.checkAsyncFunctionReturnType(node, returnTypeNode)
 		}
 	}
@@ -3309,7 +3309,7 @@ func (c *Checker) checkFunctionDeclaration(node *ast.Node) {
 func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 	c.checkDecorators(node)
 	c.checkSignatureDeclaration(node)
-	functionFlags := getFunctionFlags(node)
+	functionFlags := ast.GetFunctionFlags(node)
 	// Do not use hasDynamicName here, because that returns false for well known symbols.
 	// We want to perform checkComputedPropertyName for all computed properties, including
 	// well known symbols.
@@ -3344,7 +3344,7 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 		if ast.NodeIsMissing(body) && !isPrivateWithinAmbient(node) {
 			c.reportImplicitAny(node, c.anyType, WideningKindNormal)
 		}
-		if functionFlags&FunctionFlagsGenerator != 0 && ast.NodeIsPresent(body) {
+		if functionFlags&ast.FunctionFlagsGenerator != 0 && ast.NodeIsPresent(body) {
 			// A generator with a body and no type annotation can still cause errors. It can error if the
 			// yielded values have no common supertype, or it can give an implicit any error if it has no
 			// yielded values. The only way to trigger these errors is to try checking its return type.
@@ -3621,7 +3621,7 @@ func (c *Checker) isImplementationCompatibleWithOverload(implementation *Signatu
 }
 
 func (c *Checker) checkAllCodePathsInNonVoidFunctionReturnOrThrow(fn *ast.Node, returnType *Type) {
-	functionFlags := getFunctionFlags(fn)
+	functionFlags := ast.GetFunctionFlags(fn)
 	var t *Type
 	if returnType != nil {
 		t = c.unwrapReturnType(returnType, functionFlags)
@@ -3673,7 +3673,7 @@ func (c *Checker) checkAllCodePathsInNonVoidFunctionReturnOrThrow(fn *ast.Node, 
 }
 
 func (c *Checker) isUnwrappedReturnTypeUndefinedVoidOrAny(fn *ast.Node, returnType *Type) bool {
-	t := c.unwrapReturnType(returnType, getFunctionFlags(fn))
+	t := c.unwrapReturnType(returnType, ast.GetFunctionFlags(fn))
 	return t != nil && (c.maybeTypeOfKind(t, TypeFlagsVoid) || t.flags&(TypeFlagsAny|TypeFlagsUndefined) != 0)
 }
 
@@ -3987,7 +3987,7 @@ func (c *Checker) checkReturnStatement(node *ast.Node) {
 	}
 	signature := c.getSignatureFromDeclaration(container)
 	returnType := c.getReturnTypeOfSignature(signature)
-	functionFlags := getFunctionFlags(container)
+	functionFlags := ast.GetFunctionFlags(container)
 	exprNode := node.Expression()
 	if c.strictNullChecks || exprNode != nil || returnType.flags&TypeFlagsNever != 0 {
 		exprType := c.undefinedType
@@ -4016,7 +4016,7 @@ func (c *Checker) checkReturnStatement(node *ast.Node) {
 // Otherwise, `node` is a return statement.
 func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType *Type, node *ast.Node, expr *ast.Node, exprType *Type, inConditionalExpression bool) {
 	unwrappedExprType := exprType
-	functionFlags := getFunctionFlags(container)
+	functionFlags := ast.GetFunctionFlags(container)
 	if expr != nil {
 		unwrappedExpr := ast.SkipParentheses(expr)
 		if ast.IsConditionalExpression(unwrappedExpr) {
@@ -4028,7 +4028,7 @@ func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType
 		}
 	}
 	inReturnStatement := node.Kind == ast.KindReturnStatement
-	if functionFlags&FunctionFlagsAsync != 0 {
+	if functionFlags&ast.FunctionFlagsAsync != 0 {
 		unwrappedExprType = c.checkAwaitedType(exprType, false /*withAlias*/, node, diagnostics.The_return_type_of_an_async_function_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
 	}
 	effectiveExpr := expr // The effective expression for diagnostics purposes.
@@ -7774,11 +7774,6 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 	// //
 	// // For element access expressions (`super[x]`), we emit a generic helper that forwards the element access in both situations.
 	// if container.Kind == ast.KindMethodDeclaration && inAsyncFunction {
-	// 	if isSuperProperty(node.Parent) && isAssignmentTarget(node.Parent) {
-	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync
-	// 	} else {
-	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAccessInAsync
-	// 	}
 	// }
 	// if needToCaptureLexicalThis {
 	// 	// call expressions are allowed only in constructors so they should always capture correct 'this'
@@ -10013,7 +10008,7 @@ func (c *Checker) contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node 
 }
 
 func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast.Node) {
-	functionFlags := getFunctionFlags(node)
+	functionFlags := ast.GetFunctionFlags(node)
 	returnType := c.getReturnTypeFromAnnotation(node)
 	c.checkAllCodePathsInNonVoidFunctionReturnOrThrow(node, returnType)
 	body := node.Body()
@@ -10650,12 +10645,12 @@ func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
 	if fn == nil {
 		return c.anyType
 	}
-	functionFlags := getFunctionFlags(fn)
-	if functionFlags&FunctionFlagsGenerator == 0 {
+	functionFlags := ast.GetFunctionFlags(fn)
+	if functionFlags&ast.FunctionFlagsGenerator == 0 {
 		// If the user's code is syntactically correct, the func should always have a star. After all, we are in a yield context.
 		return c.anyType
 	}
-	isAsync := (functionFlags & FunctionFlagsAsync) != 0
+	isAsync := (functionFlags & ast.FunctionFlagsAsync) != 0
 	// There is no point in doing an assignability check if the function
 	// has no explicit return type because the return type is directly computed
 	// from the yield expressions.
@@ -19666,9 +19661,9 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 	if body == nil {
 		return c.errorType
 	}
-	functionFlags := getFunctionFlags(fn)
-	isAsync := (functionFlags & FunctionFlagsAsync) != 0
-	isGenerator := (functionFlags & FunctionFlagsGenerator) != 0
+	functionFlags := ast.GetFunctionFlags(fn)
+	isAsync := (functionFlags & ast.FunctionFlagsAsync) != 0
+	isGenerator := (functionFlags & ast.FunctionFlagsGenerator) != 0
 	var returnType *Type
 	var yieldType *Type
 	var nextType *Type
@@ -19704,7 +19699,7 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 		types, isNeverReturning := c.checkAndAggregateReturnExpressionTypes(fn, checkMode)
 		if isNeverReturning {
 			// For an async function, the return type will not be never, but rather a Promise for never.
-			if functionFlags&FunctionFlagsAsync != 0 {
+			if functionFlags&ast.FunctionFlagsAsync != 0 {
 				return c.createPromiseReturnType(fn, c.neverType)
 			}
 			// Normal function
@@ -19719,7 +19714,7 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 			} else {
 				returnType = c.voidType
 			}
-			if functionFlags&FunctionFlagsAsync != 0 {
+			if functionFlags&ast.FunctionFlagsAsync != 0 {
 				return c.createPromiseReturnType(fn, returnType)
 			}
 			// Normal function
@@ -19795,7 +19790,7 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 
 // Returns the aggregated list of return types, plus a bool indicating a never-returning function.
 func (c *Checker) checkAndAggregateReturnExpressionTypes(fn *ast.Node, checkMode CheckMode) ([]*Type, bool) {
-	functionFlags := getFunctionFlags(fn)
+	functionFlags := ast.GetFunctionFlags(fn)
 	var aggregatedTypes []*Type
 	hasReturnWithNoExpression := c.functionHasImplicitReturn(fn)
 	hasReturnOfTypeNever := false
@@ -19808,7 +19803,7 @@ func (c *Checker) checkAndAggregateReturnExpressionTypes(fn *ast.Node, checkMode
 		expr = ast.SkipParentheses(expr)
 		// Bare calls to this same function don't contribute to inference
 		// and `return await` is also safe to unwrap here
-		if functionFlags&FunctionFlagsAsync != 0 && ast.IsAwaitExpression(expr) {
+		if functionFlags&ast.FunctionFlagsAsync != 0 && ast.IsAwaitExpression(expr) {
 			expr = ast.SkipParentheses(expr.Expression())
 		}
 		if ast.IsCallExpression(expr) && ast.IsIdentifier(expr.Expression()) && c.checkExpressionCached(expr.Expression()).symbol == c.getMergedSymbol(fn.Symbol()) &&
@@ -19817,7 +19812,7 @@ func (c *Checker) checkAndAggregateReturnExpressionTypes(fn *ast.Node, checkMode
 			return false
 		}
 		t := c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
-		if functionFlags&FunctionFlagsAsync != 0 {
+		if functionFlags&ast.FunctionFlagsAsync != 0 {
 			// From within an async function you can return either a non-promise value or a promise. Any
 			// Promise/A+ compatible implementation will always assimilate any foreign promise, so the
 			// return type of the body should be unwrapped to its awaited type, which should be wrapped in
@@ -19858,7 +19853,7 @@ func mayReturnNever(fn *ast.Node) bool {
 }
 
 func (c *Checker) checkAndAggregateYieldOperandTypes(fn *ast.Node, checkMode CheckMode) (yieldTypes []*Type, nextTypes []*Type) {
-	isAsync := (getFunctionFlags(fn) & FunctionFlagsAsync) != 0
+	isAsync := (ast.GetFunctionFlags(fn) & ast.FunctionFlagsAsync) != 0
 	forEachYieldExpression(fn.Body(), func(yieldExpr *ast.Node) bool {
 		yieldExprType := c.undefinedWideningType
 		if yieldExpr.Expression() != nil {
@@ -19923,9 +19918,9 @@ func (c *Checker) createPromiseReturnType(fn *ast.Node, promisedType *Type) *Typ
 	return promiseType
 }
 
-func (c *Checker) unwrapReturnType(returnType *Type, functionFlags FunctionFlags) *Type {
-	isGenerator := functionFlags&FunctionFlagsGenerator != 0
-	isAsync := functionFlags&FunctionFlagsAsync != 0
+func (c *Checker) unwrapReturnType(returnType *Type, functionFlags ast.FunctionFlags) *Type {
+	isGenerator := functionFlags&ast.FunctionFlagsGenerator != 0
+	isAsync := functionFlags&ast.FunctionFlagsAsync != 0
 	if isGenerator {
 		returnIterationType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, isAsync)
 		if returnIterationType == nil {
@@ -20004,20 +19999,20 @@ func (c *Checker) shouldReportErrorsFromWideningWithContextualSignature(declarat
 		return true
 	}
 	returnType := c.getReturnTypeOfSignature(signature)
-	flags := getFunctionFlags(declaration)
+	flags := ast.GetFunctionFlags(declaration)
 	switch wideningKind {
 	case WideningKindFunctionReturn:
-		if flags&FunctionFlagsGenerator != 0 {
-			returnType = core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, flags&FunctionFlagsAsync != 0), returnType)
-		} else if flags&FunctionFlagsAsync != 0 {
+		if flags&ast.FunctionFlagsGenerator != 0 {
+			returnType = core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, flags&ast.FunctionFlagsAsync != 0), returnType)
+		} else if flags&ast.FunctionFlagsAsync != 0 {
 			returnType = core.OrElse(c.getAwaitedTypeNoAlias(returnType), returnType)
 		}
 		return c.isGenericType(returnType)
 	case WideningKindGeneratorYield:
-		yieldType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, returnType, flags&FunctionFlagsAsync != 0)
+		yieldType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, returnType, flags&ast.FunctionFlagsAsync != 0)
 		return yieldType != nil && c.isGenericType(yieldType)
 	case WideningKindGeneratorNext:
-		nextType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, flags&FunctionFlagsAsync != 0)
+		nextType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, flags&ast.FunctionFlagsAsync != 0)
 		return nextType != nil && c.isGenericType(nextType)
 	}
 	return false
@@ -20075,8 +20070,8 @@ func (c *Checker) getTypePredicateFromBody(fn *ast.Node) *TypePredicate {
 	case ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
 		return nil
 	}
-	functionFlags := getFunctionFlags(fn)
-	if functionFlags != FunctionFlagsNormal {
+	functionFlags := ast.GetFunctionFlags(fn)
+	if functionFlags != ast.FunctionFlagsNormal {
 		return nil
 	}
 	// Only attempt to infer a type predicate if there's exactly one return.
@@ -28743,22 +28738,22 @@ func (c *Checker) getContextualTypeForReturnExpression(node *ast.Node, contextFl
 	if fn != nil {
 		contextualReturnType := c.getContextualReturnType(fn, contextFlags)
 		if contextualReturnType != nil {
-			functionFlags := getFunctionFlags(fn)
-			if functionFlags&FunctionFlagsGenerator != 0 {
-				isAsyncGenerator := (functionFlags & FunctionFlagsAsync) != 0
+			functionFlags := ast.GetFunctionFlags(fn)
+			if functionFlags&ast.FunctionFlagsGenerator != 0 {
+				isAsyncGenerator := (functionFlags & ast.FunctionFlagsAsync) != 0
 				if contextualReturnType.flags&TypeFlagsUnion != 0 {
 					contextualReturnType = c.filterType(contextualReturnType, func(t *Type) bool {
 						return c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, t, isAsyncGenerator) != nil
 					})
 				}
-				iterationReturnType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, contextualReturnType, (functionFlags&FunctionFlagsAsync) != 0)
+				iterationReturnType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, contextualReturnType, (functionFlags&ast.FunctionFlagsAsync) != 0)
 				if iterationReturnType == nil {
 					return nil
 				}
 				contextualReturnType = iterationReturnType
 				// falls through to unwrap Promise for AsyncGenerators
 			}
-			if functionFlags&FunctionFlagsAsync != 0 {
+			if functionFlags&ast.FunctionFlagsAsync != 0 {
 				// Get the awaited type without the `Awaited<T>` alias
 				contextualAwaitedType := c.mapType(contextualReturnType, c.getAwaitedTypeNoAlias)
 				return c.getUnionType([]*Type{contextualAwaitedType, c.createPromiseLikeType(contextualAwaitedType)})
@@ -28771,7 +28766,7 @@ func (c *Checker) getContextualTypeForReturnExpression(node *ast.Node, contextFl
 }
 
 func (c *Checker) getContextualIterationType(kind IterationTypeKind, functionDecl *ast.Node) *Type {
-	isAsync := getFunctionFlags(functionDecl)&FunctionFlagsAsync != 0
+	isAsync := ast.GetFunctionFlags(functionDecl)&ast.FunctionFlagsAsync != 0
 	contextualReturnType := c.getContextualReturnType(functionDecl, ContextFlagsNone)
 	if contextualReturnType != nil {
 		return c.getIterationTypeOfGeneratorFunctionReturnType(kind, contextualReturnType, isAsync)
@@ -28791,13 +28786,13 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 	signature := c.getContextualSignatureForFunctionLikeDeclaration(functionDecl)
 	if signature != nil && !c.isResolvingReturnTypeOfSignature(signature) {
 		returnType := c.getReturnTypeOfSignature(signature)
-		functionFlags := getFunctionFlags(functionDecl)
-		if functionFlags&FunctionFlagsGenerator != 0 {
+		functionFlags := ast.GetFunctionFlags(functionDecl)
+		if functionFlags&ast.FunctionFlagsGenerator != 0 {
 			return c.filterType(returnType, func(t *Type) bool {
 				return t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid|TypeFlagsInstantiableNonPrimitive) != 0 || c.checkGeneratorInstantiationAssignabilityToReturnType(t, functionFlags, nil /*errorNode*/)
 			})
 		}
-		if functionFlags&FunctionFlagsAsync != 0 {
+		if functionFlags&ast.FunctionFlagsAsync != 0 {
 			return c.filterType(returnType, func(t *Type) bool {
 				return t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid|TypeFlagsInstantiableNonPrimitive) != 0 || c.getAwaitedTypeOfPromise(t) != nil
 			})
@@ -28811,17 +28806,17 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 	return nil
 }
 
-func (c *Checker) checkGeneratorInstantiationAssignabilityToReturnType(returnType *Type, functionFlags FunctionFlags, errorNode *ast.Node) bool {
+func (c *Checker) checkGeneratorInstantiationAssignabilityToReturnType(returnType *Type, functionFlags ast.FunctionFlags, errorNode *ast.Node) bool {
 	// Naively, one could check that Generator<any, any, any> is assignable to the return type annotation.
 	// However, that would not catch the error in the following case.
 	//
 	//    interface BadGenerator extends Iterable<number>, Iterator<string> { }
 	//    function* g(): BadGenerator { } // Iterable and Iterator have different types!
 	//
-	generatorYieldType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, returnType, (functionFlags&FunctionFlagsAsync) != 0), c.anyType)
-	generatorReturnType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, (functionFlags&FunctionFlagsAsync) != 0), generatorYieldType)
-	generatorNextType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, (functionFlags&FunctionFlagsAsync) != 0), c.unknownType)
-	generatorInstantiation := c.createGeneratorType(generatorYieldType, generatorReturnType, generatorNextType, functionFlags&FunctionFlagsAsync != 0)
+	generatorYieldType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, returnType, (functionFlags&ast.FunctionFlagsAsync) != 0), c.anyType)
+	generatorReturnType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, (functionFlags&ast.FunctionFlagsAsync) != 0), generatorYieldType)
+	generatorNextType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, (functionFlags&ast.FunctionFlagsAsync) != 0), c.unknownType)
+	generatorInstantiation := c.createGeneratorType(generatorYieldType, generatorReturnType, generatorNextType, functionFlags&ast.FunctionFlagsAsync != 0)
 	return c.checkTypeAssignableTo(generatorInstantiation, returnType, errorNode, nil)
 }
 
@@ -28836,10 +28831,10 @@ func (c *Checker) getContextualSignatureForFunctionLikeDeclaration(node *ast.Nod
 func (c *Checker) getContextualTypeForYieldOperand(node *ast.Node, contextFlags ContextFlags) *Type {
 	fn := ast.GetContainingFunction(node)
 	if fn != nil {
-		functionFlags := getFunctionFlags(fn)
+		functionFlags := ast.GetFunctionFlags(fn)
 		contextualReturnType := c.getContextualReturnType(fn, contextFlags)
 		if contextualReturnType != nil {
-			isAsyncGenerator := functionFlags&FunctionFlagsAsync != 0
+			isAsyncGenerator := functionFlags&ast.FunctionFlagsAsync != 0
 			isYieldStar := node.AsYieldExpression().AsteriskToken != nil
 			if !isYieldStar && contextualReturnType.flags&TypeFlagsUnion != 0 {
 				contextualReturnType = c.filterType(contextualReturnType, func(t *Type) bool {
@@ -30063,7 +30058,7 @@ func (c *Checker) hasContextSensitiveReturnExpression(node *ast.Node) bool {
 }
 
 func (c *Checker) hasContextSensitiveYieldExpression(node *ast.Node) bool {
-	return getFunctionFlags(node)&FunctionFlagsGenerator != 0 && node.Body() != nil && forEachYieldExpression(node.Body(), c.isContextSensitive)
+	return ast.GetFunctionFlags(node)&ast.FunctionFlagsGenerator != 0 && node.Body() != nil && forEachYieldExpression(node.Body(), c.isContextSensitive)
 }
 
 func (c *Checker) pushInferenceContext(node *ast.Node, context *InferenceContext) {
