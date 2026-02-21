@@ -82,18 +82,17 @@ func withTokenStart(loc *ast.Node, file *ast.SourceFile) core.TextRange {
 func (this *FormattingContext) blockIsOnOneLine(node *ast.Node) core.Tristate {
 	// In strada, this relies on token child manifesting - we just use the scanner here,
 	// so this will have a differing performance profile. Is this OK? Needs profiling to know.
-	this.scanner.ResetPos(node.Pos())
+	this.scanner.ResetTokenState(node.Pos())
 	end := node.End()
 	firstOpenBrace := -1
 	lastCloseBrace := -1
-	for this.scanner.TokenEnd() < end {
+	for this.scanner.Scan(); this.scanner.TokenStart() < end; this.scanner.Scan() {
 		// tokenStart instead of tokenfullstart to skip trivia
 		if firstOpenBrace == -1 && this.scanner.Token() == ast.KindOpenBraceToken {
 			firstOpenBrace = this.scanner.TokenStart()
 		} else if this.scanner.Token() == ast.KindCloseBraceToken {
 			lastCloseBrace = this.scanner.TokenStart()
 		}
-		this.scanner.Scan()
 	}
 	if firstOpenBrace != -1 && lastCloseBrace != -1 {
 		return this.rangeIsOnOneLine(core.NewTextRange(firstOpenBrace, lastCloseBrace))
