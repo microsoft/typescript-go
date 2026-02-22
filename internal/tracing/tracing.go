@@ -26,6 +26,9 @@ func WithTracing(ctx context.Context, tr *Tracing) context.Context {
 
 // FromContext returns the Tracing instance from the context, or nil if none.
 func FromContext(ctx context.Context) *Tracing {
+	if ctx == nil {
+		return nil
+	}
 	tr, _ := ctx.Value(tracingContextKey).(*Tracing)
 	return tr
 }

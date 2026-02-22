@@ -49,11 +49,11 @@ declare const console: { log(msg: any): void; };
 {"cat":"__metadata","ph":"M","ts":1,"pid":1,"tid":1,"name":"thread_name","args":{"name":"Main"}},
 {"cat":"__metadata","ph":"M","ts":1,"pid":1,"tid":1,"name":"TracingStartedInBrowser","cat":"disabled-by-default-devtools.timeline"},
 {"pid":1,"tid":1,"ph":"B","cat":"check","ts":2,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":3,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":4,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":5,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":6,"name":"emit"},
-{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":7,"name":"emit"}
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":13,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":14,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":27,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":28,"name":"emit"},
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":29,"name":"emit"}
 ]
 
 //// [/home/src/workspaces/project/trace/types_0.json] *new* 

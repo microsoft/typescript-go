@@ -69,13 +69,13 @@ declare const console: { log(msg: any): void; };
 {"cat":"__metadata","ph":"M","ts":1,"pid":1,"tid":1,"name":"thread_name","args":{"name":"Main"}},
 {"cat":"__metadata","ph":"M","ts":1,"pid":1,"tid":1,"name":"TracingStartedInBrowser","cat":"disabled-by-default-devtools.timeline"},
 {"pid":1,"tid":1,"ph":"B","cat":"check","ts":2,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/main.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":3,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/main.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":4,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/types.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":5,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/types.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":6,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":7,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":8,"name":"emit"},
-{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":9,"name":"emit"}
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":63,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/main.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":64,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/types.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":71,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/types.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":72,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":85,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":86,"name":"emit"},
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":87,"name":"emit"}
 ]
 
 //// [/home/src/workspaces/project/trace/types_0.json] *new* 

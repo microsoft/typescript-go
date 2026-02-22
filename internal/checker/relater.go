@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tracing"
 )
 
 type SignatureCheckMode uint32
@@ -373,6 +374,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
 		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
 		relation.set(id, RelationComparisonResultFailed|core.IfElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
+		tracing.Instant(c.ctx, tracing.PhaseCheckTypes, "checkTypeRelatedTo_DepthLimit", map[string]any{"sourceId": source.id, "targetId": target.id, "depth": r.sourceDepth, "targetDepth": r.targetDepth})
 		message := core.IfElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 		if errorNode == nil {
 			errorNode = c.currentNode
@@ -1333,6 +1335,7 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
 	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
+		defer tracing.Push(c.ctx, tracing.PhaseCheckTypes, "getVariancesWorker", map[string]any{"arity": len(typeParameters), "id": c.getDeclaredTypeOfSymbol(symbol).id}, false)()
 		oldVarianceComputation := c.inVarianceComputation
 		saveResolutionStart := c.resolutionStart
 		if !c.inVarianceComputation {
@@ -3075,8 +3078,10 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	r.c.reliabilityFlags = 0
 	var result Ternary
 	if r.expandingFlags == ExpandingFlagsBoth {
+		tracing.Instant(r.c.ctx, tracing.PhaseCheckTypes, "recursiveTypeRelatedTo_DepthLimit", map[string]any{"sourceId": source.id, "targetId": target.id, "depth": r.sourceDepth, "targetDepth": r.targetDepth})
 		result = TernaryMaybe
 	} else {
+		defer tracing.Push(r.c.ctx, tracing.PhaseCheckTypes, "structuredTypeRelatedTo", map[string]any{"sourceId": source.id, "targetId": target.id}, false)()
 		result = r.structuredTypeRelatedTo(source, target, reportErrors, intersectionState)
 	}
 	propagatingVarianceFlags := r.c.reliabilityFlags
@@ -3955,6 +3960,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	for _, sourceProperty := range sourcePropertiesFiltered {
 		numCombinations *= countTypes(r.c.getNonMissingTypeOfSymbol(sourceProperty))
 		if numCombinations == 0 || numCombinations > 25 {
+			tracing.Instant(r.c.ctx, tracing.PhaseCheckTypes, "typeRelatedToDiscriminatedType_DepthLimit", map[string]any{"sourceId": source.id, "targetId": target.id, "numCombinations": numCombinations})
 			return TernaryFalse
 		}
 	}
