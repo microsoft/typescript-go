@@ -1,6 +1,7 @@
 package tracing
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strings"
@@ -12,6 +13,39 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+// Context key for tracing
+type contextKey int
+
+const tracingContextKey contextKey = 0
+
+// WithTracing returns a new context with the given Tracing instance.
+func WithTracing(ctx context.Context, tr *Tracing) context.Context {
+	return context.WithValue(ctx, tracingContextKey, tr)
+}
+
+// FromContext returns the Tracing instance from the context, or nil if none.
+func FromContext(ctx context.Context) *Tracing {
+	tr, _ := ctx.Value(tracingContextKey).(*Tracing)
+	return tr
+}
+
+// Push starts a new trace event if tracing is enabled in the context.
+// Returns a function that should be called (typically deferred) to end the event.
+func Push(ctx context.Context, phase Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
+	if tr := FromContext(ctx); tr != nil {
+		tr.Push(phase, name, args, separateBeginAndEnd)
+		return func() { tr.Pop(nil) }
+	}
+	return func() {}
+}
+
+// Instant records an instantaneous trace event if tracing is enabled in the context.
+func Instant(ctx context.Context, phase Phase, name string, args map[string]any) {
+	if tr := FromContext(ctx); tr != nil {
+		tr.Instant(phase, name, args)
+	}
+}
 
 // Tracer is an interface for recording types during type checking.
 // Each checker should have its own Tracer instance to avoid sharing types between checkers.
@@ -76,17 +110,37 @@ type Tracing struct {
 	configFilePath string
 	legend         []TraceRecord
 	tracers        []*typeTracer
+	eventTracer    *EventTracer
 	mu             sync.Mutex
 }
 
 // StartTracing creates a new tracing session
 func StartTracing(fs vfs.FS, traceDir string, configFilePath string) (*Tracing, error) {
+	return StartTracingWithClock(fs, traceDir, configFilePath, nil)
+}
+
+// StartTracingWithClock creates a new tracing session with an optional custom clock.
+// If clock is nil, the system clock is used.
+// Use NewMonotonicClock for deterministic timestamps in tests.
+func StartTracingWithClock(fs vfs.FS, traceDir string, configFilePath string, clock Clock) (*Tracing, error) {
+	var eventTracer *EventTracer
+	var err error
+	if clock != nil {
+		eventTracer, err = NewEventTracerWithClock(fs, traceDir, "", clock)
+	} else {
+		eventTracer, err = NewEventTracer(fs, traceDir, "")
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to create event tracer: %w", err)
+	}
+
 	return &Tracing{
 		fs:             fs,
 		traceDir:       traceDir,
 		configFilePath: configFilePath,
 		legend:         []TraceRecord{},
 		tracers:        []*typeTracer{},
+		eventTracer:    eventTracer,
 	}, nil
 }
 
@@ -111,16 +165,65 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	return tracer
 }
 
+// Instant writes an instant trace event (single point in time)
+func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
+	if tr.eventTracer != nil {
+		tr.eventTracer.Instant(phase, name, args)
+	}
+}
+
+// Push starts a new trace event that will be closed by the returned function or Pop.
+// separateBeginAndEnd is used for special cases where we need the trace point even if the event
+// never terminates (typically for reducing a scenario too big to trace to one that can be completed).
+// Returns a function that can be deferred to close the event.
+func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
+	if tr.eventTracer != nil {
+		tr.eventTracer.Push(phase, name, args, separateBeginAndEnd)
+		return func() { tr.Pop(nil) }
+	}
+	return func() {}
+}
+
+// Pop closes the most recent Push event
+func (tr *Tracing) Pop(results map[string]any) {
+	if tr.eventTracer != nil {
+		tr.eventTracer.Pop(results)
+	}
+}
+
+// PopAll closes all open Push events
+func (tr *Tracing) PopAll() {
+	if tr.eventTracer != nil {
+		tr.eventTracer.PopAll()
+	}
+}
+
 // StopTracing finalizes the tracing session and writes all output files
 func (tr *Tracing) StopTracing() error {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
+
+	// Finish event tracer first
+	if tr.eventTracer != nil {
+		if err := tr.eventTracer.Finish(); err != nil {
+			return fmt.Errorf("failed to finish event tracer: %w", err)
+		}
+	}
 
 	// Dump types from all tracers
 	for _, tracer := range tr.tracers {
 		if err := tracer.DumpTypes(); err != nil {
 			return fmt.Errorf("failed to dump types for checker %d: %w", tracer.checkerIndex, err)
 		}
+	}
+
+	// Add event trace path to legend entries
+	tracePath := ""
+	if tr.eventTracer != nil {
+		tracePath = tr.eventTracer.TracePath()
+	}
+	for i := range tr.legend {
+		tr.legend[i].TracePath = tracePath
 	}
 
 	// Sort legend entries by typesPath for deterministic output

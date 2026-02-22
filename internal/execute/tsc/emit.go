@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -38,6 +39,7 @@ type EmitInput struct {
 	CompileTimes       *CompileTimes
 	Testing            CommandLineTesting
 	TestingMTimesCache *collections.SyncMap[tspath.Path, time.Time]
+	Tracing            *tracing.Tracing
 }
 
 func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
@@ -71,6 +73,9 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
 	ctx := context.Background()
+	if input.Tracing != nil {
+		ctx = tracing.WithTracing(ctx, input.Tracing)
+	}
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
 		ctx,

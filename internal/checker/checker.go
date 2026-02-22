@@ -25,6 +25,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
@@ -2126,6 +2127,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 }
 
 func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
+	defer tracing.Push(ctx, tracing.PhaseCheck, "checkSourceFile", map[string]any{"path": sourceFile.FileName()}, true)()
 	c.checkNotCanceled()
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {

@@ -4472,7 +4472,7 @@ func TestGenerateTrace(t *testing.T) {
 				const p: Person = { name: "Alice", age: 30 };
 				`),
 			},
-			commandLineArgs: []string{"--generateTrace", "/home/src/workspaces/project/trace"},
+			commandLineArgs: []string{"--generateTrace", "/home/src/workspaces/project/trace", "--singleThreaded"},
 		},
 		{
 			subScenario: "generateTrace with multiple files and complex types",
@@ -4497,7 +4497,7 @@ func TestGenerateTrace(t *testing.T) {
 				const n: Nullable<string> = "hello";
 				`),
 			},
-			commandLineArgs: []string{"--generateTrace", "/home/src/workspaces/project/trace"},
+			commandLineArgs: []string{"--generateTrace", "/home/src/workspaces/project/trace", "--singleThreaded"},
 		},
 	}
 
