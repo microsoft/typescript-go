@@ -1148,10 +1148,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 					s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
 				} else {
 					regExpFlags |= flag
-					availableFrom := regExpFlagToFirstAvailableLanguageVersion[flag]
-					if s.languageVersion() < availableFrom {
-						s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, p, size, GetNameOfScriptTarget(availableFrom))
-					}
+					s.checkRegularExpressionFlagAvailable(flag, p)
 				}
 				p += size
 			}

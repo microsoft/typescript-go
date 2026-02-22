@@ -1256,6 +1256,8 @@ const (
 type TypeComparer func(s *Type, t *Type, reportErrors bool) Ternary
 
 type LanguageFeatureMinimumTargetMap struct {
+	RegularExpressionFlagsUnicode     core.ScriptTarget
+	RegularExpressionFlagsSticky      core.ScriptTarget
 	Exponentiation                    core.ScriptTarget
 	AsyncFunctions                    core.ScriptTarget
 	ForAwaitOf                        core.ScriptTarget
@@ -1279,6 +1281,8 @@ type LanguageFeatureMinimumTargetMap struct {
 }
 
 var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
+	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
+	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
 	Exponentiation:                    core.ScriptTargetES2016,
 	AsyncFunctions:                    core.ScriptTargetES2017,
 	ForAwaitOf:                        core.ScriptTargetES2018,

@@ -12,17 +12,17 @@ import (
 type RegularExpressionFlags int32
 
 const (
-	RegularExpressionFlagsNone       RegularExpressionFlags = 0
-	RegularExpressionFlagsHasIndices RegularExpressionFlags = 1 << 0 // d
-	RegularExpressionFlagsGlobal     RegularExpressionFlags = 1 << 1 // g
-	RegularExpressionFlagsIgnoreCase RegularExpressionFlags = 1 << 2 // i
-	RegularExpressionFlagsMultiline  RegularExpressionFlags = 1 << 3 // m
-	RegularExpressionFlagsDotAll     RegularExpressionFlags = 1 << 4 // s
-	RegularExpressionFlagsUnicode    RegularExpressionFlags = 1 << 5 // u
-	RegularExpressionFlagsUnicodeSets RegularExpressionFlags = 1 << 6 // v
-	RegularExpressionFlagsSticky     RegularExpressionFlags = 1 << 7 // y
+	RegularExpressionFlagsNone           RegularExpressionFlags = 0
+	RegularExpressionFlagsHasIndices     RegularExpressionFlags = 1 << 0 // d
+	RegularExpressionFlagsGlobal         RegularExpressionFlags = 1 << 1 // g
+	RegularExpressionFlagsIgnoreCase     RegularExpressionFlags = 1 << 2 // i
+	RegularExpressionFlagsMultiline      RegularExpressionFlags = 1 << 3 // m
+	RegularExpressionFlagsDotAll         RegularExpressionFlags = 1 << 4 // s
+	RegularExpressionFlagsUnicode        RegularExpressionFlags = 1 << 5 // u
+	RegularExpressionFlagsUnicodeSets    RegularExpressionFlags = 1 << 6 // v
+	RegularExpressionFlagsSticky         RegularExpressionFlags = 1 << 7 // y
 	RegularExpressionFlagsAnyUnicodeMode RegularExpressionFlags = RegularExpressionFlagsUnicode | RegularExpressionFlagsUnicodeSets
-	RegularExpressionFlagsModifiers  RegularExpressionFlags = RegularExpressionFlagsIgnoreCase | RegularExpressionFlagsMultiline | RegularExpressionFlagsDotAll
+	RegularExpressionFlagsModifiers      RegularExpressionFlags = RegularExpressionFlagsIgnoreCase | RegularExpressionFlagsMultiline | RegularExpressionFlagsDotAll
 )
 
 var charToRegExpFlag = map[rune]RegularExpressionFlags{
@@ -38,9 +38,6 @@ var charToRegExpFlag = map[rune]RegularExpressionFlags{
 
 var regExpFlagToFirstAvailableLanguageVersion = map[RegularExpressionFlags]core.ScriptTarget{
 	RegularExpressionFlagsHasIndices:  core.ScriptTargetES2022,
-	RegularExpressionFlagsGlobal:      core.ScriptTargetES5, // ES3 doesn't exist in Go; ES5 is the lowest
-	RegularExpressionFlagsIgnoreCase:  core.ScriptTargetES5,
-	RegularExpressionFlagsMultiline:   core.ScriptTargetES5,
 	RegularExpressionFlagsDotAll:      core.ScriptTargetES2018,
 	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
@@ -50,6 +47,12 @@ var regExpFlagToFirstAvailableLanguageVersion = map[RegularExpressionFlags]core.
 func CharacterToRegularExpressionFlag(ch rune) (RegularExpressionFlags, bool) {
 	flag, ok := charToRegExpFlag[ch]
 	return flag, ok
+}
+
+func (s *Scanner) checkRegularExpressionFlagAvailable(flag RegularExpressionFlags, pos int) {
+	if availableFrom, ok := regExpFlagToFirstAvailableLanguageVersion[flag]; ok && s.languageVersion() < availableFrom {
+		s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, pos, 1, GetNameOfScriptTarget(availableFrom))
+	}
 }
 
 type classSetExpressionType int
@@ -74,10 +77,10 @@ type decimalEscapeValue struct {
 }
 
 type regExpParser struct {
-	scanner        *Scanner
-	end            int
-	regExpFlags    RegularExpressionFlags
-	anyUnicodeMode bool
+	scanner         *Scanner
+	end             int
+	regExpFlags     RegularExpressionFlags
+	anyUnicodeMode  bool
 	unicodeSetsMode bool
 
 	mayContainStrings       bool
@@ -130,33 +133,42 @@ func (p *regExpParser) scanDisjunction(isInGroup bool) {
 
 // Alternative ::= Term*
 // Term ::=
-//     | Assertion
-//     | Atom Quantifier?
+//
+//	| Assertion
+//	| Atom Quantifier?
+//
 // Assertion ::=
-//     | '^'
-//     | '$'
-//     | '\b'
-//     | '\B'
-//     | '(?=' Disjunction ')'
-//     | '(?!' Disjunction ')'
-//     | '(?<=' Disjunction ')'
-//     | '(?<!' Disjunction ')'
+//
+//	| '^'
+//	| '$'
+//	| '\b'
+//	| '\B'
+//	| '(?=' Disjunction ')'
+//	| '(?!' Disjunction ')'
+//	| '(?<=' Disjunction ')'
+//	| '(?<!' Disjunction ')'
+//
 // Quantifier ::= QuantifierPrefix '?'?
 // QuantifierPrefix ::=
-//     | '*'
-//     | '+'
-//     | '?'
-//     | '{' DecimalDigits (',' DecimalDigits?)? '}'
+//
+//	| '*'
+//	| '+'
+//	| '?'
+//	| '{' DecimalDigits (',' DecimalDigits?)? '}'
+//
 // Atom ::=
-//     | PatternCharacter
-//     | '.'
-//     | '\' AtomEscape
-//     | CharacterClass
-//     | '(?<' RegExpIdentifierName '>' Disjunction ')'
-//     | '(?' RegularExpressionFlags ('-' RegularExpressionFlags)? ':' Disjunction ')'
+//
+//	| PatternCharacter
+//	| '.'
+//	| '\' AtomEscape
+//	| CharacterClass
+//	| '(?<' RegExpIdentifierName '>' Disjunction ')'
+//	| '(?' RegularExpressionFlags ('-' RegularExpressionFlags)? ':' Disjunction ')'
+//
 // CharacterClass ::= unicodeMode
-//     ? '[' ClassRanges ']'
-//     : '[' ClassSetExpression ']'
+//
+//	? '[' ClassRanges ']'
+//	: '[' ClassSetExpression ']'
 func (p *regExpParser) scanAlternative(isInGroup bool) {
 	isPreviousTermQuantifiable := false
 	for p.pos() < p.end {
@@ -313,10 +325,7 @@ func (p *regExpParser) scanPatternModifiers(currFlags RegularExpressionFlags) Re
 			p.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, p.pos(), 1)
 		} else {
 			currFlags |= flag
-			availableFrom := regExpFlagToFirstAvailableLanguageVersion[flag]
-			if p.scanner.languageVersion() < availableFrom {
-				p.error(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, p.pos(), 1, GetNameOfScriptTarget(availableFrom))
-			}
+			p.scanner.checkRegularExpressionFlagAvailable(flag, p.pos())
 		}
 		p.incPos(1)
 	}
@@ -324,10 +333,11 @@ func (p *regExpParser) scanPatternModifiers(currFlags RegularExpressionFlags) Re
 }
 
 // AtomEscape ::=
-//     | DecimalEscape
-//     | CharacterClassEscape
-//     | CharacterEscape
-//     | 'k<' RegExpIdentifierName '>'
+//
+//	| DecimalEscape
+//	| CharacterClassEscape
+//	| CharacterEscape
+//	| 'k<' RegExpIdentifierName '>'
 func (p *regExpParser) scanAtomEscape() {
 	switch p.charAt(p.pos()) {
 	case 'k':
@@ -367,12 +377,15 @@ func (p *regExpParser) scanDecimalEscape() bool {
 }
 
 // CharacterEscape ::=
-//     | `c` ControlLetter
-//     | IdentityEscape
-//     | (Other sequences handled by `scanEscapeSequence`)
+//
+//	| `c` ControlLetter
+//	| IdentityEscape
+//	| (Other sequences handled by `scanEscapeSequence`)
+//
 // IdentityEscape ::=
-//     | '^' | '$' | '/' | '\' | '.' | '*' | '+' | '?' | '(' | ')' | '[' | ']' | '{' | '}' | '|'
-//     | [~AnyUnicodeMode] (any other non-identifier characters)
+//
+//	| '^' | '$' | '/' | '\' | '.' | '*' | '+' | '?' | '(' | ')' | '[' | ']' | '{' | '}' | '|'
+//	| [~AnyUnicodeMode] (any other non-identifier characters)
 func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 	ch := p.charAt(p.pos())
 	switch ch {
@@ -659,10 +672,11 @@ func (p *regExpParser) scanClassSetSubExpression(expressionType classSetExpressi
 }
 
 // ClassSetOperand ::=
-//     | '[' ClassSetExpression ']'
-//     | '\' CharacterClassEscape
-//     | '\q{' ClassStringDisjunctionContents '}'
-//     | ClassSetCharacter
+//
+//	| '[' ClassSetExpression ']'
+//	| '\' CharacterClassEscape
+//	| '\q{' ClassStringDisjunctionContents '}'
+//	| ClassSetCharacter
 func (p *regExpParser) scanClassSetOperand() string {
 	p.mayContainStrings = false
 	switch p.charAt(p.pos()) {
@@ -719,8 +733,9 @@ func (p *regExpParser) scanClassStringDisjunctionContents() {
 }
 
 // ClassSetCharacter ::=
-//     | SourceCharacter -- ClassSetSyntaxCharacter -- ClassSetReservedDoublePunctuator
-//     | '\' (CharacterEscape | ClassSetReservedPunctuator | 'b')
+//
+//	| SourceCharacter -- ClassSetSyntaxCharacter -- ClassSetReservedDoublePunctuator
+//	| '\' (CharacterEscape | ClassSetReservedPunctuator | 'b')
 func (p *regExpParser) scanClassSetCharacter() string {
 	ch := p.charAt(p.pos())
 	if ch == '\\' {
@@ -754,13 +769,16 @@ func (p *regExpParser) scanClassSetCharacter() string {
 }
 
 // ClassAtom ::=
-//     | SourceCharacter but not one of '\' or ']'
-//     | '\' ClassEscape
+//
+//	| SourceCharacter but not one of '\' or ']'
+//	| '\' ClassEscape
+//
 // ClassEscape ::=
-//     | 'b'
-//     | '-'
-//     | CharacterClassEscape
-//     | CharacterEscape
+//
+//	| 'b'
+//	| '-'
+//	| CharacterClassEscape
+//	| CharacterEscape
 func (p *regExpParser) scanClassAtom() string {
 	if p.charAt(p.pos()) == '\\' {
 		p.incPos(1)
@@ -784,8 +802,9 @@ func (p *regExpParser) scanClassAtom() string {
 }
 
 // CharacterClassEscape ::=
-//     | 'd' | 'D' | 's' | 'S' | 'w' | 'W'
-//     | [+AnyUnicodeMode] ('P' | 'p') '{' UnicodePropertyValueExpression '}'
+//
+//	| 'd' | 'D' | 's' | 'S' | 'w' | 'W'
+//	| [+AnyUnicodeMode] ('P' | 'p') '{' UnicodePropertyValueExpression '}'
 func (p *regExpParser) scanCharacterClassEscape() bool {
 	isCharacterComplement := false
 	start := p.pos() - 1
