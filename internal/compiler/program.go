@@ -257,9 +257,11 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
+	p.opts.Tracing.Push(tracing.PhaseProgram, "createProgram", "configFilePath", opts.Config.CompilerOptions().ConfigFilePath)
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.initCheckerPool()
 	p.verifyCompilerOptions()
+	p.opts.Tracing.Pop()
 	return p
 }
 
@@ -388,6 +390,11 @@ func (p *Program) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile) [
 
 func (p *Program) SingleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
+}
+
+// Tracing returns the tracing session associated with this program, or nil if tracing is not enabled.
+func (p *Program) Tracing() *tracing.Tracing {
+	return p.opts.Tracing
 }
 
 func (p *Program) BindSourceFiles() {
@@ -1410,6 +1417,9 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
+	p.opts.Tracing.Push(tracing.PhaseEmit, "emit")
+	defer p.opts.Tracing.Pop()
+
 	if options.EmitOnly != EmitOnlyForcedDts {
 		result := HandleNoEmitOnError(
 			ctx,
@@ -1437,6 +1447,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			sourceFile: sourceFile,
 			emitOnly:   options.EmitOnly,
 			writeFile:  options.WriteFile,
+			tr:         p.opts.Tracing,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {

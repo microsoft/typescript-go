@@ -71,23 +71,157 @@ type TraceRecord struct {
 
 // Tracing manages the overall tracing session including all checkers
 type Tracing struct {
-	fs             vfs.FS
-	traceDir       string
-	configFilePath string
-	legend         []TraceRecord
-	tracers        []*typeTracer
-	mu             sync.Mutex
+	fs               vfs.FS
+	traceDir         string
+	configFilePath   string
+	legend           []TraceRecord
+	tracers          []*typeTracer
+	tracePath        string
+	traceContent     strings.Builder
+	traceStarted     bool
+	timestampCounter uint64
+	mu               sync.Mutex
 }
+
+// Phase represents a tracing phase
+type Phase string
+
+const (
+	PhaseParse      Phase = "parse"
+	PhaseProgram    Phase = "program"
+	PhaseBind       Phase = "bind"
+	PhaseCheck      Phase = "check"
+	PhaseCheckTypes Phase = "checkTypes"
+	PhaseEmit       Phase = "emit"
+	PhaseSession    Phase = "session"
+)
 
 // StartTracing creates a new tracing session
 func StartTracing(fs vfs.FS, traceDir string, configFilePath string) (*Tracing, error) {
-	return &Tracing{
-		fs:             fs,
-		traceDir:       traceDir,
-		configFilePath: configFilePath,
-		legend:         []TraceRecord{},
-		tracers:        []*typeTracer{},
-	}, nil
+	tracePath := tspath.CombinePaths(traceDir, "trace.json")
+	tr := &Tracing{
+		fs:               fs,
+		traceDir:         traceDir,
+		configFilePath:   configFilePath,
+		legend:           []TraceRecord{},
+		tracers:          []*typeTracer{},
+		tracePath:        tracePath,
+		traceStarted:     true,
+		timestampCounter: 1000000000,
+	}
+
+	// Write the trace file header with metadata events
+	tr.traceContent.WriteString("[\n")
+
+	// Write metadata events (matching TypeScript's format)
+	// Metadata events all use the same base timestamp
+	baseTs := uint64(1000000000)
+	tr.writeEventRaw("M", "__metadata", baseTs, "process_name", "{\"name\":\"tsc\"}")
+	tr.traceContent.WriteString(",\n")
+	tr.writeEventRaw("M", "__metadata", baseTs, "thread_name", "{\"name\":\"Main\"}")
+	tr.traceContent.WriteString(",\n")
+	tr.writeEventRaw("M", "disabled-by-default-devtools.timeline", baseTs, "TracingStartedInBrowser", "")
+
+	return tr, nil
+}
+
+// nextTimestamp returns the next deterministic timestamp value
+func (tr *Tracing) nextTimestamp() uint64 {
+	tr.timestampCounter++
+	return tr.timestampCounter
+}
+
+// writeEventRaw writes a trace event with deterministic field ordering.
+// argsJSON should be pre-formatted JSON for the args object contents, or empty string for no args.
+func (tr *Tracing) writeEventRaw(ph string, cat string, ts uint64, name string, argsJSON string) {
+	tr.traceContent.WriteString("{\"pid\":1,\"tid\":1,\"ph\":\"")
+	tr.traceContent.WriteString(ph)
+	tr.traceContent.WriteString("\"")
+	if cat != "" {
+		tr.traceContent.WriteString(",\"cat\":\"")
+		tr.traceContent.WriteString(cat)
+		tr.traceContent.WriteString("\"")
+	}
+	tr.traceContent.WriteString(",\"ts\":")
+	fmt.Fprintf(&tr.traceContent, "%d", ts)
+	if name != "" {
+		tr.traceContent.WriteString(",\"name\":\"")
+		tr.traceContent.WriteString(name)
+		tr.traceContent.WriteString("\"")
+	}
+	if argsJSON != "" {
+		tr.traceContent.WriteString(",\"args\":")
+		tr.traceContent.WriteString(argsJSON)
+	}
+	tr.traceContent.WriteString("}")
+}
+
+// writeArgsJSON constructs a deterministic JSON object from key-value pairs.
+// Keys and values are written in the order provided. Values are JSON-escaped strings.
+func writeArgsJSON(pairs ...string) string {
+	if len(pairs) == 0 || len(pairs)%2 != 0 {
+		return ""
+	}
+	var b strings.Builder
+	b.WriteString("{")
+	for i := 0; i < len(pairs); i += 2 {
+		if i > 0 {
+			b.WriteString(",")
+		}
+		b.WriteString("\"")
+		b.WriteString(pairs[i])
+		b.WriteString("\":\"")
+		b.WriteString(pairs[i+1])
+		b.WriteString("\"")
+	}
+	b.WriteString("}")
+	return b.String()
+}
+
+// Instant records an instant event in the trace.
+// Safe to call on nil receiver.
+func (tr *Tracing) Instant(phase Phase, name string, args ...string) {
+	if tr == nil || !tr.traceStarted {
+		return
+	}
+
+	tr.mu.Lock()
+	defer tr.mu.Unlock()
+
+	ts := tr.nextTimestamp()
+	tr.traceContent.WriteString(",\n")
+	tr.writeEventRaw("I", string(phase), ts, name, writeArgsJSON(args...))
+}
+
+// Push starts a trace event block.
+// Safe to call on nil receiver.
+// args are key-value pairs: "key1", "value1", "key2", "value2", ...
+func (tr *Tracing) Push(phase Phase, name string, args ...string) {
+	if tr == nil || !tr.traceStarted {
+		return
+	}
+
+	tr.mu.Lock()
+	defer tr.mu.Unlock()
+
+	ts := tr.nextTimestamp()
+	tr.traceContent.WriteString(",\n")
+	tr.writeEventRaw("B", string(phase), ts, name, writeArgsJSON(args...))
+}
+
+// Pop ends the most recent trace event block.
+// Safe to call on nil receiver.
+func (tr *Tracing) Pop() {
+	if tr == nil || !tr.traceStarted {
+		return
+	}
+
+	tr.mu.Lock()
+	defer tr.mu.Unlock()
+
+	ts := tr.nextTimestamp()
+	tr.traceContent.WriteString(",\n")
+	tr.writeEventRaw("E", "", ts, "", "")
 }
 
 // NewTypeTracer creates a new tracer for a specific checker.
@@ -106,6 +240,7 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.tracers = append(tr.tracers, tracer)
 	tr.legend = append(tr.legend, TraceRecord{
 		ConfigFilePath: tr.configFilePath,
+		TracePath:      tr.tracePath,
 		TypesPath:      typesPath,
 	})
 	return tracer
@@ -121,6 +256,15 @@ func (tr *Tracing) StopTracing() error {
 		if err := tracer.DumpTypes(); err != nil {
 			return fmt.Errorf("failed to dump types for checker %d: %w", tracer.checkerIndex, err)
 		}
+	}
+
+	// Close the trace file
+	if tr.traceStarted {
+		tr.traceContent.WriteString("\n]\n")
+		if err := tr.fs.WriteFile(tr.tracePath, tr.traceContent.String(), false); err != nil {
+			return fmt.Errorf("failed to write trace file: %w", err)
+		}
+		tr.traceStarted = false
 	}
 
 	// Sort legend entries by typesPath for deterministic output

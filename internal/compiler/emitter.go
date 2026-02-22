@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
 	"github.com/microsoft/typescript-go/internal/transformers/estransforms"
@@ -40,13 +41,15 @@ type emitter struct {
 	sourceFile         *ast.SourceFile
 	emitResult         EmitResult
 	writeFile          func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+	tr                 *tracing.Tracing
 }
 
 func (e *emitter) emit() {
-	// !!! tracing
+	e.tr.Push(tracing.PhaseEmit, "emit", "path", string(e.sourceFile.Path()))
 	e.emitJSFile(e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
 	e.emitDeclarationFile(e.sourceFile, e.paths.DeclarationFilePath(), e.paths.DeclarationMapPath())
 	e.emitResult.Diagnostics = e.emitterDiagnostics.GetDiagnostics()
+	e.tr.Pop()
 }
 
 func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, declarationFilePath string, declarationMapPath string) []*declarations.DeclarationTransformer {
@@ -158,6 +161,9 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
+	e.tr.Push(tracing.PhaseEmit, "emitJsFileOrBundle", "jsFilePath", jsFilePath)
+	defer e.tr.Pop()
+
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
 
@@ -195,6 +201,9 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		e.emitResult.EmitSkipped = true
 		return
 	}
+
+	e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", "declarationFilePath", declarationFilePath)
+	defer e.tr.Pop()
 
 	var diags []*ast.Diagnostic
 	emitContext, putEmitContext := printer.GetEmitContext()
