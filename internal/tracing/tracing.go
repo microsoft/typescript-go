@@ -33,23 +33,6 @@ func FromContext(ctx context.Context) *Tracing {
 	return tr
 }
 
-// Push starts a new trace event if tracing is enabled in the context.
-// Returns a function that should be called (typically deferred) to end the event.
-func Push(ctx context.Context, phase Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
-	if tr := FromContext(ctx); tr != nil {
-		tr.Push(phase, name, args, separateBeginAndEnd)
-		return func() { tr.Pop(nil) }
-	}
-	return func() {}
-}
-
-// Instant records an instantaneous trace event if tracing is enabled in the context.
-func Instant(ctx context.Context, phase Phase, name string, args map[string]any) {
-	if tr := FromContext(ctx); tr != nil {
-		tr.Instant(phase, name, args)
-	}
-}
-
 // Tracer is an interface for recording types during type checking.
 // Each checker should have its own Tracer instance to avoid sharing types between checkers.
 type Tracer interface {

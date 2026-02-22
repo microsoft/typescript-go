@@ -1410,7 +1410,9 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
-	defer tracing.Push(ctx, tracing.PhaseEmit, "emit", nil, true)()
+	if tr := tracing.FromContext(ctx); tr != nil {
+		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
+	}
 	if options.EmitOnly != EmitOnlyForcedDts {
 		result := HandleNoEmitOnError(
 			ctx,
