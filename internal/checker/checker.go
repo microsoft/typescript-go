@@ -883,15 +883,15 @@ type Checker struct {
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 
 	mu      sync.Mutex
-	tracer  TypeTracer       // Optional tracer for recording types (for --generateTrace)
-	tracing *tracing.Tracing // Optional tracing session for trace events (for --generateTrace)
+	tracer  TypeTracer              // Optional tracer for recording types (for --generateTrace)
+	tracing *tracing.CheckerTracing // Optional per-checker tracing for trace events (for --generateTrace)
 }
 
 func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	return NewCheckerWithTracer(program, nil, nil)
 }
 
-func NewCheckerWithTracer(program Program, tracer TypeTracer, tr *tracing.Tracing) (*Checker, *sync.Mutex) {
+func NewCheckerWithTracer(program Program, tracer TypeTracer, tr *tracing.CheckerTracing) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}

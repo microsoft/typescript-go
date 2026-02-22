@@ -67,15 +67,15 @@ declare const console: { log(msg: any): void; };
 {"pid":1,"tid":1,"ph":"E","cat":"bind","ts":12,"name":"bindSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
 {"pid":1,"tid":1,"ph":"E","cat":"bind","ts":13,"name":"bindSourceFiles"},
 {"pid":1,"tid":1,"ph":"B","cat":"check","ts":14,"name":"checkSourceFiles"},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":15,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":16,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":17,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"check","ts":18,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
 {"pid":1,"tid":1,"ph":"E","cat":"check","ts":19,"name":"checkSourceFiles"},
 {"pid":1,"tid":1,"ph":"B","cat":"emit","ts":20,"name":"emit"},
 {"pid":1,"tid":1,"ph":"B","cat":"emit","ts":21,"name":"emit","args":{"path":"/home/src/workspaces/project/a.ts"}},
 {"pid":1,"tid":1,"ph":"E","cat":"emit","ts":22,"name":"emit","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":23,"name":"emit"}
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":23,"name":"emit"},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":15,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":16,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":17,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":18,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}}
 ]
 
 //// [/home/src/workspaces/project/trace/types_0.json] *new* 
