@@ -1053,7 +1053,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 		p := startOfRegExpBody
 		inEscape := false
 		// Although nested character classes are allowed in Unicode Sets mode,
-		// an unescaped slash is nevertheless invalid even in a character class in Unicode mode.
+		// an unescaped slash is nevertheless invalid even in a character class in any Unicode mode.
 		// Additionally, parsing nested character classes will misinterpret regexes like `/[[]/`
 		// as unterminated, consuming characters beyond the slash. (This even applies to `/[[]/v`,
 		// which should be parsed as a well-terminated regex with an incomplete character class.)
@@ -1084,19 +1084,16 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 			p++
 		}
 
-		isUnterminated := s.tokenFlags&ast.TokenFlagsUnterminated != 0
-		endOfBody := p
-		var regExpFlags RegularExpressionFlags
-
-		if isUnterminated {
-			// Search for the nearest unbalanced bracket for better recovery
-			endOfScan := p
+		endOfRegExpBody := p
+		if s.tokenFlags&ast.TokenFlagsUnterminated != 0 {
+			// Search for the nearest unbalanced bracket for better recovery. Since the expression is
+			// invalid anyways, we take nested square brackets into consideration for the best guess.
 			p = startOfRegExpBody
 			inEscape = false
 			characterClassDepth := 0
 			inDecimalQuantifier := false
 			groupDepth := 0
-			for p < endOfScan {
+			for p < endOfRegExpBody {
 				ch := rune(s.text[p])
 				if inEscape {
 					inEscape = false
@@ -1123,6 +1120,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 				}
 				p++
 			}
+			// Whitespaces and semicolons at the end are not likely to be part of the regex
 			for p > startOfRegExpBody {
 				ch, size := utf8.DecodeLastRuneInString(s.text[:p])
 				if stringutil.IsWhiteSpaceLike(ch) || ch == ';' {
@@ -1131,12 +1129,11 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 					break
 				}
 			}
-			endOfBody = p
 			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, p-s.tokenStart)
 		} else {
-			// Skip past the closing '/'
+			// Consume the slash character
 			p++
-			// Scan and validate flags
+			var regExpFlags RegularExpressionFlags
 			for p < len(s.text) {
 				ch, size := utf8.DecodeRuneInString(s.text[p:])
 				if !IsIdentifierPart(ch) {
@@ -1147,7 +1144,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 					s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
 				} else if regExpFlags&flag != 0 {
 					s.errorAt(diagnostics.Duplicate_regular_expression_flag, p, size)
-				} else if (regExpFlags|flag)&RegularExpressionFlagsUnicodeMode == RegularExpressionFlagsUnicodeMode {
+				} else if (regExpFlags|flag)&RegularExpressionFlagsAnyUnicodeMode == RegularExpressionFlagsAnyUnicodeMode {
 					s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
 				} else {
 					regExpFlags |= flag
@@ -1158,23 +1155,21 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 				}
 				p += size
 			}
+			s.pos = startOfRegExpBody
+			saveTokenPos := s.tokenStart
+			saveTokenFlags := s.tokenFlags
+			parser := &regExpParser{
+				scanner:         s,
+				end:             endOfRegExpBody,
+				regExpFlags:     regExpFlags,
+				anyUnicodeMode:  regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
+				unicodeSetsMode: regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+				groupSpecifiers: make(map[string]bool),
+			}
+			parser.run()
+			s.tokenStart = saveTokenPos
+			s.tokenFlags = saveTokenFlags
 		}
-
-		s.pos = startOfRegExpBody
-		saveTokenPos := s.tokenStart
-		saveTokenFlags := s.tokenFlags
-		parser := &regExpParser{
-			scanner:         s,
-			end:             endOfBody,
-			regExpFlags:     regExpFlags,
-			isUnterminated:  isUnterminated,
-			unicodeMode:     regExpFlags&RegularExpressionFlagsUnicodeMode != 0,
-			unicodeSetsMode: regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
-			groupSpecifiers: make(map[string]bool),
-		}
-		parser.run()
-		s.tokenStart = saveTokenPos
-		s.tokenFlags = saveTokenFlags
 
 		s.pos = p
 		s.tokenValue = s.text[s.tokenStart:s.pos]

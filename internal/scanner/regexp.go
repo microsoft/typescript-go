@@ -21,7 +21,7 @@ const (
 	RegularExpressionFlagsUnicode    RegularExpressionFlags = 1 << 5 // u
 	RegularExpressionFlagsUnicodeSets RegularExpressionFlags = 1 << 6 // v
 	RegularExpressionFlagsSticky     RegularExpressionFlags = 1 << 7 // y
-	RegularExpressionFlagsUnicodeMode RegularExpressionFlags = RegularExpressionFlagsUnicode | RegularExpressionFlagsUnicodeSets
+	RegularExpressionFlagsAnyUnicodeMode RegularExpressionFlags = RegularExpressionFlagsUnicode | RegularExpressionFlagsUnicodeSets
 	RegularExpressionFlagsModifiers  RegularExpressionFlags = RegularExpressionFlagsIgnoreCase | RegularExpressionFlagsMultiline | RegularExpressionFlagsDotAll
 )
 
@@ -77,8 +77,7 @@ type regExpParser struct {
 	scanner        *Scanner
 	end            int
 	regExpFlags    RegularExpressionFlags
-	isUnterminated bool
-	unicodeMode    bool
+	anyUnicodeMode bool
 	unicodeSetsMode bool
 
 	mayContainStrings       bool
@@ -233,7 +232,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 					if max != "" || p.charAt(p.pos()) == '}' {
 						p.error(diagnostics.Incomplete_quantifier_Digit_expected, digitsStart, 0)
 					} else {
-						if p.unicodeMode {
+						if p.anyUnicodeMode {
 							p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
 						}
 						isPreviousTermQuantifiable = true
@@ -248,7 +247,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 					}
 				}
 			} else if min == "" {
-				if p.unicodeMode {
+				if p.anyUnicodeMode {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
 				}
 				isPreviousTermQuantifiable = true
@@ -285,10 +284,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 			}
 			fallthrough
 		case ']', '}':
-			if p.isUnterminated && !isInGroup {
-				return
-			}
-			if p.unicodeMode || ch == ')' {
+			if p.anyUnicodeMode || ch == ')' {
 				p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 			}
 			p.incPos(1)
@@ -340,7 +336,7 @@ func (p *regExpParser) scanAtomEscape() {
 			p.incPos(1)
 			p.scanGroupName(true /*isReference*/)
 			p.scanExpectedChar('>')
-		} else if p.unicodeMode {
+		} else if p.anyUnicodeMode {
 			p.error(diagnostics.X_k_must_be_followed_by_a_capturing_group_name_enclosed_in_angle_brackets, p.pos()-2, 2)
 		}
 	case 'q':
@@ -376,10 +372,13 @@ func (p *regExpParser) scanDecimalEscape() bool {
 //     | (Other sequences handled by `scanEscapeSequence`)
 // IdentityEscape ::=
 //     | '^' | '$' | '/' | '\' | '.' | '*' | '+' | '?' | '(' | ')' | '[' | ']' | '{' | '}' | '|'
-//     | [~UnicodeMode] (any other non-identifier characters)
+//     | [~AnyUnicodeMode] (any other non-identifier characters)
 func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 	ch := p.charAt(p.pos())
 	switch ch {
+	case -1:
+		p.error(diagnostics.Undetermined_character_escape, p.pos()-1, 1)
+		return "\\"
 	case 'c':
 		p.incPos(1)
 		ch = p.charAt(p.pos())
@@ -387,7 +386,7 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 			p.incPos(1)
 			return string(rune(ch & 0x1f))
 		}
-		if p.unicodeMode {
+		if p.anyUnicodeMode {
 			p.error(diagnostics.X_c_must_be_followed_by_an_ASCII_letter, p.pos()-2, 2)
 		}
 		return string(ch)
@@ -395,13 +394,9 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 		p.incPos(1)
 		return string(ch)
 	default:
-		if p.pos() >= p.end {
-			p.error(diagnostics.Undetermined_character_escape, p.pos()-1, 1)
-			return "\\"
-		}
 		p.incPos(-1) // back up to include the backslash for scanEscapeSequence
 		flags := EscapeSequenceScanningFlagsRegularExpression | EscapeSequenceScanningFlagsAnnexB
-		if p.unicodeMode {
+		if p.anyUnicodeMode {
 			flags |= EscapeSequenceScanningFlagsReportErrors | EscapeSequenceScanningFlagsAnyUnicodeMode
 		}
 		if atomEscape {
@@ -790,7 +785,7 @@ func (p *regExpParser) scanClassAtom() string {
 
 // CharacterClassEscape ::=
 //     | 'd' | 'D' | 's' | 'S' | 'w' | 'W'
-//     | [+UnicodeMode] ('P' | 'p') '{' UnicodePropertyValueExpression '}'
+//     | [+AnyUnicodeMode] ('P' | 'p') '{' UnicodePropertyValueExpression '}'
 func (p *regExpParser) scanCharacterClassEscape() bool {
 	isCharacterComplement := false
 	start := p.pos() - 1
@@ -854,10 +849,10 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 				}
 			}
 			p.scanExpectedChar('}')
-			if !p.unicodeMode {
+			if !p.anyUnicodeMode {
 				p.error(diagnostics.Unicode_property_value_expressions_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, p.pos()-start)
 			}
-		} else if p.unicodeMode {
+		} else if p.anyUnicodeMode {
 			p.error(diagnostics.X_0_must_be_followed_by_a_Unicode_property_value_expression_enclosed_in_braces, p.pos()-2, 2, string(ch))
 		}
 		return true
@@ -912,7 +907,7 @@ func (p *regExpParser) scanWordCharacters() string {
 }
 
 func (p *regExpParser) scanSourceCharacter() string {
-	if p.unicodeMode {
+	if p.anyUnicodeMode {
 		ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
 		if size == 0 || ch == utf8.RuneError {
 			return ""

@@ -5,5 +5,4 @@ regularExpressionGroupNameSuggestions.ts(1,27): error TS1532: There is no captur
     const regex = /(?<foo>)\k<Foo>/;
                               ~~~
 !!! error TS1532: There is no capturing group named 'Foo' in this regular expression.
-!!! related TS1369 regularExpressionGroupNameSuggestions.ts:1:27: Did you mean 'foo'?
     

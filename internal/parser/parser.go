@@ -251,13 +251,7 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
-	lastError := p.lastDiagnostic()
-	if message.Category() == diagnostics.CategoryMessage && lastError != nil && pos == lastError.Pos() && length == lastError.Len() {
-		related := ast.NewDiagnostic(nil, core.NewTextRange(pos, pos+length), message, args...)
-		lastError.AddRelatedInfo(related)
-	} else {
-		p.parseErrorAtRange(core.NewTextRange(pos, pos+length), message, args...)
-	}
+	p.parseErrorAtRange(core.NewTextRange(pos, pos+length), message, args...)
 }
 
 func (p *Parser) lastDiagnostic() *ast.Diagnostic {
