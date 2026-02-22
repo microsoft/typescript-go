@@ -125,6 +125,7 @@ type Printer struct {
 	sourceMapSource                   sourcemap.Source
 	sourceMapSourceIndex              sourcemap.SourceIndex
 	sourceMapSourceIsJson             bool
+	sourceMapLineCharCache            *lineCharacterCache
 	mostRecentSourceMapSource         sourcemap.Source
 	mostRecentSourceMapSourceIndex    sourcemap.SourceIndex
 	containerPos                      int
@@ -5578,6 +5579,7 @@ func (p *Printer) setSourceMapSource(source sourcemap.Source) {
 	}
 
 	p.sourceMapSource = source
+	p.sourceMapLineCharCache = newLineCharacterCache(source)
 	if p.mostRecentSourceMapSource == source {
 		p.sourceMapSourceIndex = p.mostRecentSourceMapSourceIndex
 		return
@@ -5604,7 +5606,7 @@ func (p *Printer) emitPos(pos int) {
 		return
 	}
 
-	sourceLine, sourceCharacter := scanner.GetECMALineAndCharacterOfPosition(p.sourceMapSource, pos)
+	sourceLine, sourceCharacter := p.sourceMapLineCharCache.getLineAndCharacter(pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),
 		p.writer.GetColumn(),
