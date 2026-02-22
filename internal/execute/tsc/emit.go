@@ -88,7 +88,7 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			// Options diagnostics include global diagnostics (even though we collect them separately),
 			// and global diagnostics create checkers, which then bind all of the files. Do this binding
 			// early so we can track the time.
-			tr.Push(tracing.PhaseBind, "bindSourceFiles")
+			tr.Push(tracing.PhaseBind, "bindSourceFiles", true)
 			bindStart := input.Sys.Now()
 			diags := input.ProgramLike.GetBindDiagnostics(ctx, file)
 			result.times.bindTime = input.Sys.Now().Sub(bindStart)
@@ -96,7 +96,7 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			return diags
 		},
 		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-			tr.Push(tracing.PhaseCheck, "checkSourceFiles")
+			tr.Push(tracing.PhaseCheck, "checkSourceFiles", true)
 			checkStart := input.Sys.Now()
 			diags := input.ProgramLike.GetSemanticDiagnostics(ctx, file)
 			result.times.checkTime = input.Sys.Now().Sub(checkStart)

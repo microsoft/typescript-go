@@ -45,7 +45,7 @@ type emitter struct {
 }
 
 func (e *emitter) emit() {
-	e.tr.Push(tracing.PhaseEmit, "emit", "path", string(e.sourceFile.Path()))
+	e.tr.Push(tracing.PhaseEmit, "emit", true, "path", string(e.sourceFile.Path()))
 	e.emitJSFile(e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
 	e.emitDeclarationFile(e.sourceFile, e.paths.DeclarationFilePath(), e.paths.DeclarationMapPath())
 	e.emitResult.Diagnostics = e.emitterDiagnostics.GetDiagnostics()
@@ -161,7 +161,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
-	e.tr.Push(tracing.PhaseEmit, "emitJsFileOrBundle", "jsFilePath", jsFilePath)
+	e.tr.Push(tracing.PhaseEmit, "emitJsFileOrBundle", true, "jsFilePath", jsFilePath)
 	defer e.tr.Pop()
 
 	emitContext, putEmitContext := printer.GetEmitContext()
@@ -202,7 +202,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		return
 	}
 
-	e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", "declarationFilePath", declarationFilePath)
+	e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", true, "declarationFilePath", declarationFilePath)
 	defer e.tr.Pop()
 
 	var diags []*ast.Diagnostic

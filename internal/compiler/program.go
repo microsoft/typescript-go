@@ -257,7 +257,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
-	p.opts.Tracing.Push(tracing.PhaseProgram, "createProgram", "configFilePath", opts.Config.CompilerOptions().ConfigFilePath)
+	p.opts.Tracing.Push(tracing.PhaseProgram, "createProgram", true, "configFilePath", opts.Config.CompilerOptions().ConfigFilePath)
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.initCheckerPool()
 	p.verifyCompilerOptions()
@@ -402,7 +402,9 @@ func (p *Program) BindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
+				p.opts.Tracing.Push(tracing.PhaseBind, "bindSourceFile", true, "path", string(file.Path()))
 				binder.BindSourceFile(file)
+				p.opts.Tracing.Pop()
 			})
 		}
 	}
@@ -1417,7 +1419,7 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
-	p.opts.Tracing.Push(tracing.PhaseEmit, "emit")
+	p.opts.Tracing.Push(tracing.PhaseEmit, "emit", true)
 	defer p.opts.Tracing.Pop()
 
 	if options.EmitOnly != EmitOnlyForcedDts {

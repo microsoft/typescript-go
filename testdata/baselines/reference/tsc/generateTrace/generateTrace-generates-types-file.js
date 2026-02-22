@@ -42,48 +42,40 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/trace/legend.json] *new* 
-[{"configFilePath":"/home/src/workspaces/project/tsconfig.json","tracePath":"/home/src/workspaces/project/trace/trace.json","typesPath":"/home/src/workspaces/project/trace/types_0.json"}]
-//// [/home/src/workspaces/project/trace/trace.json] *new* 
 [
-{"pid":1,"tid":1,"ph":"M","cat":"__metadata","ts":1000000000,"name":"process_name","args":{"name":"tsc"}},
-{"pid":1,"tid":1,"ph":"M","cat":"__metadata","ts":1000000000,"name":"thread_name","args":{"name":"Main"}},
-{"pid":1,"tid":1,"ph":"M","cat":"disabled-by-default-devtools.timeline","ts":1000000000,"name":"TracingStartedInBrowser"},
-{"pid":1,"tid":1,"ph":"B","cat":"program","ts":1000000001,"name":"createProgram","args":{"configFilePath":"/home/src/workspaces/project/tsconfig.json"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000002},
-{"pid":1,"tid":1,"ph":"B","cat":"bind","ts":1000000003,"name":"bindSourceFiles"},
-{"pid":1,"tid":1,"ph":"E","ts":1000000004},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000005,"name":"checkSourceFiles"},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000006,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000007,"name":"checkVariableDeclaration","args":{"kind":"261","pos":"61","end":"100"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000008,"name":"checkExpression","args":{"kind":"211","pos":"73","end":"100"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000009,"name":"checkExpression","args":{"kind":"10","pos":"81","end":"89"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000010},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000011,"name":"checkExpression","args":{"kind":"8","pos":"95","end":"98"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000012},
-{"pid":1,"tid":1,"ph":"E","ts":1000000013},
-{"pid":1,"tid":1,"ph":"B","cat":"checkTypes","ts":1000000014,"name":"structuredTypeRelatedTo","args":{"sourceId":"87","targetId":"82"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000015},
-{"pid":1,"tid":1,"ph":"E","ts":1000000016},
-{"pid":1,"tid":1,"ph":"E","ts":1000000017},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000018,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000019,"name":"checkVariableDeclaration","args":{"kind":"261","pos":"511","end":"537"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000020},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000021,"name":"checkExpression","args":{"kind":"212","pos":"572","end":"590"}},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000022,"name":"checkExpression","args":{"kind":"79","pos":"572","end":"578"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000023},
-{"pid":1,"tid":1,"ph":"E","ts":1000000024},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000025,"name":"checkVariableDeclaration","args":{"kind":"261","pos":"616","end":"650"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000026},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000027,"name":"checkDeferredNode","args":{"kind":"169","pos":"296","end":"297"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000028},
-{"pid":1,"tid":1,"ph":"B","cat":"check","ts":1000000029,"name":"checkDeferredNode","args":{"kind":"169","pos":"359","end":"360"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000030},
-{"pid":1,"tid":1,"ph":"E","ts":1000000031},
-{"pid":1,"tid":1,"ph":"E","ts":1000000032},
-{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":1000000033,"name":"emit"},
-{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":1000000034,"name":"emit","args":{"path":"/home/src/workspaces/project/a.ts"}},
-{"pid":1,"tid":1,"ph":"E","ts":1000000035},
-{"pid":1,"tid":1,"ph":"E","ts":1000000036}
+  {
+    "configFilePath": "/home/src/workspaces/project/tsconfig.json",
+    "tracePath": "/home/src/workspaces/project/trace/trace_0.json",
+    "typesPath": "/home/src/workspaces/project/trace/types_0.json"
+  }
+]
+//// [/home/src/workspaces/project/trace/trace_0.json] *new* 
+[
+{"pid":1,"tid":1,"ph":"M","cat":"__metadata","ts":1,"name":"process_name","args":{"name":"tsgo"}},
+{"pid":1,"tid":1,"ph":"M","cat":"__metadata","ts":1,"name":"thread_name","args":{"name":"Main"}},
+{"pid":1,"tid":1,"ph":"M","cat":"disabled-by-default-devtools.timeline","ts":1,"name":"TracingStartedInBrowser"},
+{"pid":1,"tid":1,"ph":"B","cat":"program","ts":2,"name":"createProgram","args":{"configFilePath":"/home/src/workspaces/project/tsconfig.json"}},
+{"pid":1,"tid":1,"ph":"B","cat":"parse","ts":3,"name":"createSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"parse","ts":4,"name":"createSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"parse","ts":5,"name":"createSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"parse","ts":6,"name":"createSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"program","ts":7,"name":"createProgram","args":{"configFilePath":"/home/src/workspaces/project/tsconfig.json"}},
+{"pid":1,"tid":1,"ph":"B","cat":"bind","ts":8,"name":"bindSourceFiles"},
+{"pid":1,"tid":1,"ph":"B","cat":"bind","ts":9,"name":"bindSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"bind","ts":10,"name":"bindSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"bind","ts":11,"name":"bindSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"bind","ts":12,"name":"bindSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"bind","ts":13,"name":"bindSourceFiles"},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":14,"name":"checkSourceFiles"},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":15,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":16,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"check","ts":17,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":18,"name":"checkSourceFile","args":{"path":"/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"check","ts":19,"name":"checkSourceFiles"},
+{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":20,"name":"emit"},
+{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":21,"name":"emit","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":22,"name":"emit","args":{"path":"/home/src/workspaces/project/a.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":23,"name":"emit"}
 ]
 
 //// [/home/src/workspaces/project/trace/types_0.json] *new* 

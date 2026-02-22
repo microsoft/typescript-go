@@ -2,9 +2,11 @@ package tracing
 
 import (
 	"fmt"
+	"math"
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -69,6 +71,21 @@ type TraceRecord struct {
 	TypesPath      string `json:"typesPath,omitzero"`
 }
 
+// traceStackEntry records the state of a Push call so Pop can
+// either emit a matching "E" event (separateBeginAndEnd) or a sampled "X" event.
+type traceStackEntry struct {
+	phase               Phase
+	name                string
+	argsJSON            string
+	startTime           time.Time // wall-clock time for sampling decisions
+	separateBeginAndEnd bool
+}
+
+// sampleInterval matches TypeScript's 10ms sampling interval.
+// Events with separateBeginAndEnd=false are only recorded if their
+// duration crosses a 10ms sampling boundary.
+const sampleInterval = 10 * time.Millisecond
+
 // Tracing manages the overall tracing session including all checkers
 type Tracing struct {
 	fs               vfs.FS
@@ -76,10 +93,12 @@ type Tracing struct {
 	configFilePath   string
 	legend           []TraceRecord
 	tracers          []*typeTracer
-	tracePath        string
 	traceContent     strings.Builder
 	traceStarted     bool
-	timestampCounter uint64
+	deterministic    bool   // when true, use monotonic counter instead of real time
+	timestampCounter uint64 // only used in deterministic mode
+	startTime        time.Time
+	eventStack       []traceStackEntry
 	mu               sync.Mutex
 }
 
@@ -96,44 +115,51 @@ const (
 	PhaseSession    Phase = "session"
 )
 
-// StartTracing creates a new tracing session
-func StartTracing(fs vfs.FS, traceDir string, configFilePath string) (*Tracing, error) {
-	tracePath := tspath.CombinePaths(traceDir, "trace.json")
+// StartTracing creates a new tracing session.
+// When deterministic is true, timestamps use a monotonic counter instead of
+// real wall-clock time, producing stable output for test baselines.
+func StartTracing(fs vfs.FS, traceDir string, configFilePath string, deterministic bool) (*Tracing, error) {
 	tr := &Tracing{
-		fs:               fs,
-		traceDir:         traceDir,
-		configFilePath:   configFilePath,
-		legend:           []TraceRecord{},
-		tracers:          []*typeTracer{},
-		tracePath:        tracePath,
-		traceStarted:     true,
-		timestampCounter: 1000000000,
+		fs:             fs,
+		traceDir:       traceDir,
+		configFilePath: configFilePath,
+		legend:         []TraceRecord{},
+		tracers:        []*typeTracer{},
+		traceStarted:   true,
+		deterministic:  deterministic,
+		startTime:      time.Now(),
 	}
 
 	// Write the trace file header with metadata events
 	tr.traceContent.WriteString("[\n")
 
 	// Write metadata events (matching TypeScript's format)
-	// Metadata events all use the same base timestamp
-	baseTs := uint64(1000000000)
-	tr.writeEventRaw("M", "__metadata", baseTs, "process_name", "{\"name\":\"tsc\"}")
+	metaTs := tr.timestamp()
+	tr.writeEventRaw("M", "__metadata", metaTs, "process_name", "{\"name\":\"tsgo\"}")
 	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("M", "__metadata", baseTs, "thread_name", "{\"name\":\"Main\"}")
+	tr.writeEventRaw("M", "__metadata", metaTs, "thread_name", "{\"name\":\"Main\"}")
 	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("M", "disabled-by-default-devtools.timeline", baseTs, "TracingStartedInBrowser", "")
+	tr.writeEventRaw("M", "disabled-by-default-devtools.timeline", metaTs, "TracingStartedInBrowser", "")
 
 	return tr, nil
 }
 
-// nextTimestamp returns the next deterministic timestamp value
-func (tr *Tracing) nextTimestamp() uint64 {
-	tr.timestampCounter++
-	return tr.timestampCounter
+// timestamp returns the current timestamp in microseconds.
+// In deterministic mode it returns a monotonically increasing counter;
+// otherwise it returns the real elapsed wall-clock time since tracing started,
+// matching TypeScript's 1000 * timestamp() (microseconds).
+func (tr *Tracing) timestamp() float64 {
+	if tr.deterministic {
+		tr.timestampCounter++
+		return float64(tr.timestampCounter)
+	}
+	return float64(time.Since(tr.startTime).Nanoseconds()) / 1000.0
 }
 
 // writeEventRaw writes a trace event with deterministic field ordering.
 // argsJSON should be pre-formatted JSON for the args object contents, or empty string for no args.
-func (tr *Tracing) writeEventRaw(ph string, cat string, ts uint64, name string, argsJSON string) {
+// extras should be pre-formatted JSON key-value pair(s) like `"dur":123`, or empty string.
+func (tr *Tracing) writeEventRaw(ph string, cat string, ts float64, name string, argsJSON string, extras ...string) {
 	tr.traceContent.WriteString("{\"pid\":1,\"tid\":1,\"ph\":\"")
 	tr.traceContent.WriteString(ph)
 	tr.traceContent.WriteString("\"")
@@ -143,17 +169,33 @@ func (tr *Tracing) writeEventRaw(ph string, cat string, ts uint64, name string, 
 		tr.traceContent.WriteString("\"")
 	}
 	tr.traceContent.WriteString(",\"ts\":")
-	fmt.Fprintf(&tr.traceContent, "%d", ts)
+	tr.writeNumber(ts)
 	if name != "" {
 		tr.traceContent.WriteString(",\"name\":\"")
 		tr.traceContent.WriteString(name)
 		tr.traceContent.WriteString("\"")
+	}
+	for _, extra := range extras {
+		if extra != "" {
+			tr.traceContent.WriteString(",")
+			tr.traceContent.WriteString(extra)
+		}
 	}
 	if argsJSON != "" {
 		tr.traceContent.WriteString(",\"args\":")
 		tr.traceContent.WriteString(argsJSON)
 	}
 	tr.traceContent.WriteString("}")
+}
+
+// writeNumber writes a number to the trace content, using integer format when
+// the value has no fractional part to produce cleaner output.
+func (tr *Tracing) writeNumber(v float64) {
+	if v == float64(int64(v)) {
+		fmt.Fprintf(&tr.traceContent, "%d", int64(v))
+	} else {
+		fmt.Fprintf(&tr.traceContent, "%.4f", v)
+	}
 }
 
 // writeArgsJSON constructs a deterministic JSON object from key-value pairs.
@@ -188,15 +230,24 @@ func (tr *Tracing) Instant(phase Phase, name string, args ...string) {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	ts := tr.nextTimestamp()
+	ts := tr.timestamp()
 	tr.traceContent.WriteString(",\n")
 	tr.writeEventRaw("I", string(phase), ts, name, writeArgsJSON(args...))
 }
 
 // Push starts a trace event block.
 // Safe to call on nil receiver.
+//
+// When separateBeginAndEnd is true, a "B" (begin) event is written immediately and
+// Pop will write a matching "E" (end) event. This is used for events that must always
+// appear in the trace (e.g. checkSourceFile, createProgram, emit).
+//
+// When separateBeginAndEnd is false (the default in TypeScript), the event is only
+// recorded if its duration crosses a 10ms sampling boundary, matching TypeScript's
+// behavior of sampling short-lived events to avoid trace bloat.
+//
 // args are key-value pairs: "key1", "value1", "key2", "value2", ...
-func (tr *Tracing) Push(phase Phase, name string, args ...string) {
+func (tr *Tracing) Push(phase Phase, name string, separateBeginAndEnd bool, args ...string) {
 	if tr == nil || !tr.traceStarted {
 		return
 	}
@@ -204,9 +255,20 @@ func (tr *Tracing) Push(phase Phase, name string, args ...string) {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	ts := tr.nextTimestamp()
-	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("B", string(phase), ts, name, writeArgsJSON(args...))
+	argsJSON := writeArgsJSON(args...)
+	tr.eventStack = append(tr.eventStack, traceStackEntry{
+		phase:               phase,
+		name:                name,
+		argsJSON:            argsJSON,
+		startTime:           time.Now(),
+		separateBeginAndEnd: separateBeginAndEnd,
+	})
+
+	if separateBeginAndEnd {
+		ts := tr.timestamp()
+		tr.traceContent.WriteString(",\n")
+		tr.writeEventRaw("B", string(phase), ts, name, argsJSON)
+	}
 }
 
 // Pop ends the most recent trace event block.
@@ -219,9 +281,33 @@ func (tr *Tracing) Pop() {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	ts := tr.nextTimestamp()
-	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("E", "", ts, "", "")
+	// Pop the matching entry
+	if len(tr.eventStack) == 0 {
+		return
+	}
+	n := len(tr.eventStack)
+	entry := tr.eventStack[n-1]
+	tr.eventStack = tr.eventStack[:n-1]
+
+	if entry.separateBeginAndEnd {
+		// Always write the matching "E" event
+		ts := tr.timestamp()
+		tr.traceContent.WriteString(",\n")
+		tr.writeEventRaw("E", string(entry.phase), ts, entry.name, entry.argsJSON)
+	} else {
+		// Sampled: only record if the duration crosses a 10ms sampling boundary.
+		// This matches TypeScript's behavior: sampleInterval - (time % sampleInterval) <= endTime - time
+		now := time.Now()
+		startMicros := float64(entry.startTime.Sub(tr.startTime).Nanoseconds()) / 1000.0
+		endMicros := float64(now.Sub(tr.startTime).Nanoseconds()) / 1000.0
+		intervalMicros := float64(sampleInterval.Nanoseconds()) / 1000.0
+		dur := endMicros - startMicros
+
+		if intervalMicros-math.Mod(startMicros, intervalMicros) <= dur {
+			tr.traceContent.WriteString(",\n")
+			tr.writeEventRaw("X", string(entry.phase), startMicros, entry.name, entry.argsJSON, fmt.Sprintf("\"dur\":%.4f", dur))
+		}
+	}
 }
 
 // NewTypeTracer creates a new tracer for a specific checker.
@@ -230,6 +316,7 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
+	tracePath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("trace_%d.json", checkerIndex))
 	typesPath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("types_%d.json", checkerIndex))
 	tracer := &typeTracer{
 		fs:           tr.fs,
@@ -240,7 +327,7 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.tracers = append(tr.tracers, tracer)
 	tr.legend = append(tr.legend, TraceRecord{
 		ConfigFilePath: tr.configFilePath,
-		TracePath:      tr.tracePath,
+		TracePath:      tracePath,
 		TypesPath:      typesPath,
 	})
 	return tracer
@@ -260,11 +347,27 @@ func (tr *Tracing) StopTracing() error {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	// Close the trace file
+	// Close the trace file(s)
 	if tr.traceStarted {
 		tr.traceContent.WriteString("\n]\n")
-		if err := tr.fs.WriteFile(tr.tracePath, tr.traceContent.String(), false); err != nil {
-			return fmt.Errorf("failed to write trace file: %w", err)
+		content := tr.traceContent.String()
+
+		// Collect unique trace paths from legend entries
+		tracePaths := make(map[string]struct{})
+		for _, entry := range tr.legend {
+			if entry.TracePath != "" {
+				tracePaths[entry.TracePath] = struct{}{}
+			}
+		}
+		// Fallback: if no legend entries, write to trace.json
+		if len(tracePaths) == 0 {
+			tracePaths[tspath.CombinePaths(tr.traceDir, "trace.json")] = struct{}{}
+		}
+
+		for path := range tracePaths {
+			if err := tr.fs.WriteFile(path, content, false); err != nil {
+				return fmt.Errorf("failed to write trace file: %w", err)
+			}
 		}
 		tr.traceStarted = false
 	}
@@ -276,7 +379,7 @@ func (tr *Tracing) StopTracing() error {
 
 	// Write the legend file
 	legendPath := tspath.CombinePaths(tr.traceDir, "legend.json")
-	legendData, err := json.Marshal(tr.legend)
+	legendData, err := json.MarshalIndent(tr.legend, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal legend file: %w", err)
 	}

@@ -2132,7 +2132,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 	c.checkNotCanceled()
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
-		c.tracing.Push(tracing.PhaseCheck, "checkSourceFile", "path", string(sourceFile.Path()))
+		c.tracing.Push(tracing.PhaseCheck, "checkSourceFile", true, "path", string(sourceFile.Path()))
 		c.ctx = ctx
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
@@ -2435,7 +2435,7 @@ func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
 }
 
 func (c *Checker) checkDeferredNode(node *ast.Node) {
-	c.tracing.Push(tracing.PhaseCheck, "checkDeferredNode", "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
+	c.tracing.Push(tracing.PhaseCheck, "checkDeferredNode", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
@@ -2566,7 +2566,7 @@ func (c *Checker) checkTypeParameterDeferred(node *ast.Node) {
 			if ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && c.getDeclaredTypeOfSymbol(symbol).objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) == 0 {
 				c.error(node, diagnostics.Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_types)
 			} else if modifiers == ast.ModifierFlagsIn || modifiers == ast.ModifierFlagsOut {
-				c.tracing.Push(tracing.PhaseCheckTypes, "checkTypeParameterDeferred", "parent", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10), "id", strconv.FormatUint(uint64(typeParameter.id), 10))
+				c.tracing.Push(tracing.PhaseCheckTypes, "checkTypeParameterDeferred", false, "parent", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10), "id", strconv.FormatUint(uint64(typeParameter.id), 10))
 				source := c.createMarkerType(symbol, typeParameter, core.IfElse(modifiers == ast.ModifierFlagsOut, c.markerSubTypeForCheck, c.markerSuperTypeForCheck))
 				target := c.createMarkerType(symbol, typeParameter, core.IfElse(modifiers == ast.ModifierFlagsOut, c.markerSuperTypeForCheck, c.markerSubTypeForCheck))
 				saveVarianceTypeParameter := typeParameter
@@ -5623,7 +5623,7 @@ func (c *Checker) checkVariableDeclarationList(node *ast.Node) {
 }
 
 func (c *Checker) checkVariableDeclaration(node *ast.Node) {
-	c.tracing.Push(tracing.PhaseCheck, "checkVariableDeclaration", "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
+	c.tracing.Push(tracing.PhaseCheck, "checkVariableDeclaration", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
 	c.checkGrammarVariableDeclaration(node.AsVariableDeclaration())
 	c.checkVariableLikeDeclaration(node)
 	c.tracing.Pop()
@@ -7356,7 +7356,7 @@ func (c *Checker) checkExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
-	c.tracing.Push(tracing.PhaseCheck, "checkExpression", "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
+	c.tracing.Push(tracing.PhaseCheck, "checkExpression", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0

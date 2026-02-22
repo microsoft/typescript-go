@@ -1335,7 +1335,7 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
 	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
-		c.tracing.Push(tracing.PhaseCheckTypes, "getVariancesWorker", "arity", strconv.Itoa(len(typeParameters)), "id", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10))
+		c.tracing.Push(tracing.PhaseCheckTypes, "getVariancesWorker", false, "arity", strconv.Itoa(len(typeParameters)), "id", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10))
 		oldVarianceComputation := c.inVarianceComputation
 		saveResolutionStart := c.resolutionStart
 		if !c.inVarianceComputation {
@@ -3084,7 +3084,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 		r.c.tracing.Instant(tracing.PhaseCheckTypes, "recursiveTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
 		result = TernaryMaybe
 	} else {
-		r.c.tracing.Push(tracing.PhaseCheckTypes, "structuredTypeRelatedTo", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10))
+		r.c.tracing.Push(tracing.PhaseCheckTypes, "structuredTypeRelatedTo", false, "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10))
 		result = r.structuredTypeRelatedTo(source, target, reportErrors, intersectionState)
 		r.c.tracing.Pop()
 	}

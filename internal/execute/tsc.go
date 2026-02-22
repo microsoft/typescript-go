@@ -33,7 +33,7 @@ func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine) *
 	if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
 		configFilePath = config.ConfigFile.SourceFile.FileName()
 	}
-	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath)
+	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath, config.CompilerOptions().SingleThreaded.IsTrue())
 	if err != nil {
 		fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
 	}
