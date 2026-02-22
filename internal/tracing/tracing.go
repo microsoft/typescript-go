@@ -248,15 +248,17 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 
 // StopTracing finalizes the tracing session and writes all output files
 func (tr *Tracing) StopTracing() error {
-	tr.mu.Lock()
-	defer tr.mu.Unlock()
-
-	// Dump types from all tracers
+	// Dump types from all tracers BEFORE acquiring the lock, because
+	// DumpTypes → buildTypeDescriptor → Display() → TypeToString can
+	// re-enter the checker which calls Push/Pop (which need tr.mu).
 	for _, tracer := range tr.tracers {
 		if err := tracer.DumpTypes(); err != nil {
 			return fmt.Errorf("failed to dump types for checker %d: %w", tracer.checkerIndex, err)
 		}
 	}
+
+	tr.mu.Lock()
+	defer tr.mu.Unlock()
 
 	// Close the trace file
 	if tr.traceStarted {
