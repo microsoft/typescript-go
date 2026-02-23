@@ -16,19 +16,32 @@ import {
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
-import { existsSync } from "node:fs";
+import {
+    existsSync,
+    writeFileSync,
+} from "node:fs";
+import inspector from "node:inspector";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 import { Bench } from "tinybench";
 import ts from "typescript";
 import { RemoteSourceFile } from "../../src/node/node.ts";
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
-    runBenchmarks();
+    const { values } = parseArgs({
+        options: {
+            filter: { type: "string" },
+            singleIteration: { type: "boolean", default: false },
+            cpuprofile: { type: "boolean", default: false },
+        },
+    });
+    runBenchmarks(values);
 }
 
-export function runBenchmarks(singleIteration?: boolean) {
+export function runBenchmarks(options?: { filter?: string; singleIteration?: boolean; cpuprofile?: boolean; }) {
+    const { filter, singleIteration, cpuprofile } = options ?? {};
     const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
         console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
@@ -141,7 +154,34 @@ export function runBenchmarks(singleIteration?: boolean) {
             });
         }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) });
 
+    if (filter) {
+        const pattern = filter.toLowerCase();
+        for (const task of [...bench.tasks]) {
+            if (!task.name.toLowerCase().includes(pattern)) {
+                bench.remove(task.name);
+            }
+        }
+    }
+
+    let session: inspector.Session | undefined;
+    if (cpuprofile) {
+        session = new inspector.Session();
+        session.connect();
+        session.post("Profiler.enable");
+        session.post("Profiler.start");
+    }
+
     bench.runSync();
+
+    if (session) {
+        session.post("Profiler.stop", (err, { profile }) => {
+            if (err) throw err;
+            const outPath = `bench-${Date.now()}.cpuprofile`;
+            writeFileSync(outPath, JSON.stringify(profile));
+            console.log(`CPU profile written to ${outPath}`);
+        });
+        session.disconnect();
+    }
     console.table(bench.table());
 
     function collectIdentifiers(sourceFile: SourceFile): Node[] {
