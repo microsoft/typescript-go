@@ -32,10 +32,6 @@
         "./proto": {
             "@typescript/source": "./src/proto.ts",
             "default": "./dist/proto.js"
-        },
-        "./emitter": {
-            "@typescript/source": "./src/emitter.ts",
-            "default": "./dist/emitter.js"
         }
     },
     "scripts": {
