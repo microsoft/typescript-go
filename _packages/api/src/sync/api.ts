@@ -21,7 +21,10 @@ import type {
     SyntaxKind,
     TypeNode,
 } from "@typescript/ast";
-import { encodeNode, uint8ArrayToBase64 } from "../node/encoder.ts";
+import {
+    encodeNode,
+    uint8ArrayToBase64,
+} from "../node/encoder.ts";
 import {
     decodeNode,
     findDescendant,
