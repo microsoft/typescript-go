@@ -1746,7 +1746,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		}
 		if codePoint < 0 {
 			return s.text[start:s.pos]
-		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+		} else if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 && codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' && s.charAt(2) != '{' {
 			savedPos := s.pos
 			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 			if codePointIsLowSurrogate(nextCodePoint) {
