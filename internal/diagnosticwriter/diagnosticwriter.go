@@ -196,10 +196,10 @@ func writeCodeSnippet(writer io.Writer, sourceFile FileLike, start int, length i
 			i = lastLine - 1
 		}
 
-		lineStart := scanner.GetECMAPositionOfLineAndCharacter(sourceFile, i, 0)
+		lineStart := scanner.GetECMAPositionOfLineAndByteOffset(sourceFile, i, 0)
 		var lineEnd int
 		if i < lastLineOfFile {
-			lineEnd = scanner.GetECMAPositionOfLineAndCharacter(sourceFile, i+1, 0)
+			lineEnd = scanner.GetECMAPositionOfLineAndByteOffset(sourceFile, i+1, 0)
 		} else {
 			lineEnd = len(sourceFile.Text())
 		}

@@ -8,6 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -289,7 +290,14 @@ func (sw *recordedSpanWriter) writeSourceMapMarkerEx(currentSpan *sourceMapSpanW
 }
 
 func (sw *recordedSpanWriter) writeSourceMapSourceText(currentSpan *sourceMapSpanWithDecodeErrors, index int) {
-	sourcePos := int(sw.w.tsLineMap[currentSpan.sourceMapSpan.SourceLine]) + currentSpan.sourceMapSpan.SourceCharacter
+	// Convert UTF-16 character offset from the source map to a byte position.
+	sourcePos := scanner.ComputePositionOfLineAndCharacterEx(
+		sw.w.tsLineMap,
+		currentSpan.sourceMapSpan.SourceLine,
+		currentSpan.sourceMapSpan.SourceCharacter,
+		&sw.w.tsCode,
+		true, /*allowEdits*/
+	)
 	var sourceText string
 	if sw.w.prevWrittenSourcePos < sourcePos {
 		// Position that goes forward, get text

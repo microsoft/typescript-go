@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/debug"
@@ -440,11 +441,24 @@ func ComputeECMALineStartsSeq(text string) iter.Seq[TextPos] {
 	}
 }
 
+// PositionToLineAndCharacter returns the 0-based line and byte offset from the
+// start of that line for the given byte position, using the provided line starts.
+// The character is a raw UTF-8 byte offset from the line start, not a UTF-16 code unit count.
 func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
 	line = max(sort.Search(len(lineStarts), func(i int) bool {
 		return int(lineStarts[i]) > position
 	})-1, 0)
 	return line, position - int(lineStarts[line])
+}
+
+// UTF16Len returns the number of UTF-16 code units needed to
+// represent the given UTF-8 encoded string.
+func UTF16Len(s string) int {
+	n := 0
+	for _, r := range s {
+		n += utf16.RuneLen(r)
+	}
+	return n
 }
 
 func Flatten[T any](array [][]T) []T {

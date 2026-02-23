@@ -31,11 +31,15 @@ func (w *textWriter) DecreaseIndent() {
 	w.indent--
 }
 
+// GetColumn returns the column position measured in UTF-16 code units,
+// matching TypeScript's native encoding for source map compatibility.
 func (w *textWriter) GetColumn() int {
 	if w.lineStart {
 		return w.indent * w.indentSize
 	}
-	return w.builder.Len() - w.linePos
+	// Count UTF-16 code units from the last line start.
+	// For ASCII-only output (the common case), this equals the byte count.
+	return core.UTF16Len(w.builder.String()[w.linePos:])
 }
 
 func (w *textWriter) GetIndent() int {

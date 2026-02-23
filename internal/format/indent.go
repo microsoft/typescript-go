@@ -14,7 +14,7 @@ import (
 )
 
 func GetIndentationForNode(n *ast.Node, ignoreActualIndentationRange *core.TextRange, sourceFile *ast.SourceFile, options *lsutil.FormatCodeSettings) int {
-	startline, startpos := scanner.GetECMALineAndCharacterOfPosition(sourceFile, scanner.GetTokenPosOfNode(n, sourceFile, false))
+	startline, startpos := scanner.GetECMALineAndByteOffsetOfPosition(sourceFile, scanner.GetTokenPosOfNode(n, sourceFile, false))
 	return getIndentationForNodeWorker(n, startline, startpos, ignoreActualIndentationRange /*indentationDelta*/, 0, sourceFile /*isNextChild*/, false, options)
 }
 
@@ -104,7 +104,7 @@ func getIndentationForNodeWorker(
 		parent = current.Parent
 
 		if useTrueStart {
-			currentStartLine, currentStartCharacter = scanner.GetECMALineAndCharacterOfPosition(sourceFile, scanner.GetTokenPosOfNode(current, sourceFile, false))
+			currentStartLine, currentStartCharacter = scanner.GetECMALineAndByteOffsetOfPosition(sourceFile, scanner.GetTokenPosOfNode(current, sourceFile, false))
 		} else {
 			currentStartLine = containingListOrParentStartLine
 			currentStartCharacter = containingListOrParentStartCharacter
@@ -170,7 +170,7 @@ func getActualIndentationForListStartLine(list *ast.NodeList, sourceFile *ast.So
 	if list == nil {
 		return -1
 	}
-	line, char := scanner.GetECMALineAndCharacterOfPosition(sourceFile, list.Loc.Pos())
+	line, char := scanner.GetECMALineAndByteOffsetOfPosition(sourceFile, list.Loc.Pos())
 	return findColumnForFirstNonWhitespaceCharacterInLine(line, char, sourceFile, options)
 }
 
@@ -200,7 +200,7 @@ func deriveActualIndentationFromList(list *ast.NodeList, index int, sourceFile *
 }
 
 func findColumnForFirstNonWhitespaceCharacterInLine(line int, char int, sourceFile *ast.SourceFile, options *lsutil.FormatCodeSettings) int {
-	lineStart := scanner.GetECMAPositionOfLineAndCharacter(sourceFile, line, 0)
+	lineStart := scanner.GetECMAPositionOfLineAndByteOffset(sourceFile, line, 0)
 	return FindFirstNonWhitespaceColumn(lineStart, lineStart+char, sourceFile, options)
 }
 
@@ -251,7 +251,7 @@ func childStartsOnTheSameLineWithElseInIfStatement(parent *ast.Node, child *ast.
 }
 
 func getStartLineAndCharacterForNode(n *ast.Node, sourceFile *ast.SourceFile) (line int, character int) {
-	return scanner.GetECMALineAndCharacterOfPosition(sourceFile, scanner.GetTokenPosOfNode(n, sourceFile, false))
+	return scanner.GetECMALineAndByteOffsetOfPosition(sourceFile, scanner.GetTokenPosOfNode(n, sourceFile, false))
 }
 
 func getStartLineForNode(n *ast.Node, sourceFile *ast.SourceFile) int {
@@ -361,7 +361,7 @@ func getContainingListOrParentStart(parent *ast.Node, child *ast.Node, sourceFil
 	} else {
 		startPos = scanner.GetTokenPosOfNode(parent, sourceFile, false)
 	}
-	return scanner.GetECMALineAndCharacterOfPosition(sourceFile, startPos)
+	return scanner.GetECMALineAndByteOffsetOfPosition(sourceFile, startPos)
 }
 
 func isControlFlowEndingStatement(kind ast.Kind, parentKind ast.Kind) bool {

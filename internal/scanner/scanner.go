@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -2459,12 +2460,26 @@ func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
 	return ComputeLineOfPosition(lineMap, pos)
 }
 
+// GetECMALineAndCharacterOfPosition returns the 0-based line number and the
+// UTF-16 code unit offset from the start of that line for the given byte position.
+// Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
+// This matches TypeScript's native getLineAndCharacterOfPosition.
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	// !!! TODO: this is suspect; these are rune counts, not UTF-8 _or_ UTF-16 offsets.
-	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
+	character = core.UTF16Len(sourceFile.Text()[lineMap[line]:pos])
 	return line, character
+}
+
+// GetECMALineAndByteOffsetOfPosition returns the 0-based line number and the
+// raw UTF-8 byte offset from the start of that line for the given byte position.
+// Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
+// Unlike GetECMALineAndCharacterOfPosition, the offset is in bytes, not UTF-16 code units.
+func GetECMALineAndByteOffsetOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, byteOffset int) {
+	lineMap := GetECMALineStarts(sourceFile)
+	line = ComputeLineOfPosition(lineMap, pos)
+	byteOffset = pos - int(lineMap[line])
+	return line, byteOffset
 }
 
 func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
@@ -2478,14 +2493,49 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
+// GetECMAPositionOfLineAndCharacter converts a 0-based line number and UTF-16
+// code unit character offset back to an absolute byte position in the source text.
+// Uses ECMAScript line separators.
 func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
-	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
+	lineStarts := GetECMALineStarts(sourceFile)
+	lineStart := int(lineStarts[line])
+	if character == 0 {
+		return lineStart
+	}
+	// Scan from line start counting UTF-16 code units to find the byte position.
+	text := sourceFile.Text()
+	utf16Count := 0
+	for i, r := range text[lineStart:] {
+		if utf16Count >= character {
+			return lineStart + i
+		}
+		utf16Count += utf16.RuneLen(r)
+	}
+	return len(text)
 }
 
-func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, character int) int {
-	return ComputePositionOfLineAndCharacterEx(lineStarts, line, character, nil, false)
+// GetECMAPositionOfLineAndByteOffset converts a 0-based line number and byte offset
+// from line start back to an absolute byte position in the source text.
+// Uses ECMAScript line separators.
+func GetECMAPositionOfLineAndByteOffset(sourceFile ast.SourceFileLike, line int, byteOffset int) int {
+	return ComputePositionOfLineAndByteOffset(GetECMALineStarts(sourceFile), line, byteOffset)
 }
 
+// ComputePositionOfLineAndByteOffset computes a byte position from a line and
+// raw byte offset from the line start. This is a simple addition with validation.
+func ComputePositionOfLineAndByteOffset(lineStarts []core.TextPos, line int, byteOffset int) int {
+	if line < 0 || line >= len(lineStarts) {
+		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+	}
+	return int(lineStarts[line]) + byteOffset
+}
+
+// ComputePositionOfLineAndCharacterEx converts a line and UTF-16 character offset
+// back to a byte position. The character parameter is measured in UTF-16 code units,
+// matching the encoding used by TypeScript and source maps.
+// When text is provided, it scans from the line start to correctly handle multi-byte characters.
+// When text is nil, character is treated as a byte offset (legacy behavior).
+// When allowEdits is true, out-of-range values are clamped instead of panicking.
 func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, character int, text *string, allowEdits bool) int {
 	if line < 0 || line >= len(lineStarts) {
 		if allowEdits {
@@ -2500,7 +2550,34 @@ func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, ch
 		}
 	}
 
-	res := int(lineStarts[line]) + character
+	lineStart := int(lineStarts[line])
+
+	if text != nil && character > 0 {
+		// UTF-16 character offset: scan from line start counting UTF-16 code units.
+		lineEnd := len(*text)
+		if line+1 < len(lineStarts) {
+			lineEnd = int(lineStarts[line+1])
+		}
+		utf16Count := 0
+		pos := lineStart
+		for pos < lineEnd {
+			if utf16Count >= character {
+				break
+			}
+			r, size := utf8.DecodeRuneInString((*text)[pos:])
+			utf16Count += utf16.RuneLen(r)
+			pos += size
+		}
+		if allowEdits {
+			if pos > len(*text) {
+				return len(*text)
+			}
+		}
+		return pos
+	}
+
+	// No text or character is 0: treat character as byte offset (simple addition).
+	res := lineStart + character
 
 	if allowEdits {
 		// Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
