@@ -13,22 +13,21 @@ import (
 // Facts we track as we traverse the tree
 type forAwaitHierarchyFacts int
 
-const (
-	forAwaitHierarchyFactsNone forAwaitHierarchyFacts = 0
+const forAwaitHierarchyFactsNone forAwaitHierarchyFacts = 0
 
+const (
 	//
 	// Ancestor facts
 	//
 
-	forAwaitHierarchyFactsHasLexicalThis     forAwaitHierarchyFacts = 1 << 0
-	forAwaitHierarchyFactsIterationContainer forAwaitHierarchyFacts = 1 << 1
-	// NOTE: do not add more ancestor flags without also updating AncestorFactsMask below.
+	forAwaitHierarchyFactsHasLexicalThis forAwaitHierarchyFacts = 1 << iota
+	forAwaitHierarchyFactsIterationContainer
 
 	//
 	// Ancestor masks
 	//
 
-	forAwaitHierarchyFactsAncestorFactsMask = (forAwaitHierarchyFactsIterationContainer << 1) - 1
+	forAwaitHierarchyFactsAncestorFactsMask = 1<<iota - 1
 
 	forAwaitHierarchyFactsSourceFileExcludes           = forAwaitHierarchyFactsIterationContainer
 	forAwaitHierarchyFactsStrictModeSourceFileIncludes = forAwaitHierarchyFactsNone
