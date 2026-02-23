@@ -12,7 +12,6 @@ import (
 type asyncContextFlags int
 
 const (
-	asyncContextNone        asyncContextFlags = 0
 	asyncContextNonTopLevel asyncContextFlags = 1 << iota
 	asyncContextHasLexicalThis
 )
