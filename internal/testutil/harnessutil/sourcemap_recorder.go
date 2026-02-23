@@ -291,7 +291,7 @@ func (sw *recordedSpanWriter) writeSourceMapMarkerEx(currentSpan *sourceMapSpanW
 
 func (sw *recordedSpanWriter) writeSourceMapSourceText(currentSpan *sourceMapSpanWithDecodeErrors, index int) {
 	// Convert UTF-16 character offset from the source map to a byte position.
-	sourcePos := scanner.ComputePositionOfLineAndCharacterEx(
+	sourcePos := scanner.ComputePositionOfLineAndUTF16Character(
 		sw.w.tsLineMap,
 		currentSpan.sourceMapSpan.SourceLine,
 		currentSpan.sourceMapSpan.SourceCharacter,

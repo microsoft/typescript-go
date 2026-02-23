@@ -434,7 +434,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		}
 
 		declSourceFile := ast.GetSourceFileOfNode(declaration)
-		declLine, declChar := scanner.GetECMALineAndCharacterOfPosition(declSourceFile, declaration.Pos())
+		declLine, declChar := scanner.GetECMALineAndUTF16CharacterOfPosition(declSourceFile, declaration.Pos())
 		fileName := tspath.GetBaseFileName(declSourceFile.FileName())
 		symbolString.WriteString("Decl(")
 		symbolString.WriteString(fileName)

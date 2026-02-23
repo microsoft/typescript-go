@@ -78,7 +78,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 		generatedPosition := -1
 		lineInfo := host.GetECMALineInfo(generatedAbsoluteFilePath)
 		if lineInfo != nil {
-			generatedPosition = scanner.ComputePositionOfLineAndCharacterEx(
+			generatedPosition = scanner.ComputePositionOfLineAndUTF16Character(
 				lineInfo.lineStarts,
 				mapping.GeneratedLine,
 				mapping.GeneratedCharacter,
@@ -91,7 +91,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 		if mapping.IsSourceMapping() {
 			lineInfo := host.GetECMALineInfo(sourceFileAbsolutePaths[mapping.SourceIndex])
 			if lineInfo != nil {
-				pos := scanner.ComputePositionOfLineAndCharacterEx(
+				pos := scanner.ComputePositionOfLineAndUTF16Character(
 					lineInfo.lineStarts,
 					mapping.SourceLine,
 					mapping.SourceCharacter,

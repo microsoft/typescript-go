@@ -441,10 +441,10 @@ func ComputeECMALineStartsSeq(text string) iter.Seq[TextPos] {
 	}
 }
 
-// PositionToLineAndCharacter returns the 0-based line and byte offset from the
+// PositionToLineAndByteOffset returns the 0-based line and byte offset from the
 // start of that line for the given byte position, using the provided line starts.
-// The character is a raw UTF-8 byte offset from the line start, not a UTF-16 code unit count.
-func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
+// The byte offset is a raw UTF-8 byte offset from the line start, not a UTF-16 code unit count.
+func PositionToLineAndByteOffset(position int, lineStarts []TextPos) (line int, byteOffset int) {
 	line = max(sort.Search(len(lineStarts), func(i int) bool {
 		return int(lineStarts[i]) > position
 	})-1, 0)

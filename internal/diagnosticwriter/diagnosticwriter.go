@@ -167,8 +167,8 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic Diagnostic
 }
 
 func writeCodeSnippet(writer io.Writer, sourceFile FileLike, start int, length int, squiggleColor string, indent string, formatOpts *FormattingOptions) {
-	firstLine, firstLineChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, start)
-	lastLine, lastLineChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, start+length)
+	firstLine, firstLineChar := scanner.GetECMALineAndUTF16CharacterOfPosition(sourceFile, start)
+	lastLine, lastLineChar := scanner.GetECMALineAndUTF16CharacterOfPosition(sourceFile, start+length)
 	if length == 0 {
 		lastLineChar++ // When length is zero, squiggle the character right after the start position.
 	}
@@ -303,7 +303,7 @@ func writeWithStyleAndReset(output io.Writer, text string, formatStyle string) {
 }
 
 func WriteLocation(output io.Writer, file FileLike, pos int, formatOpts *FormattingOptions, writeWithStyleAndReset FormattedWriter) {
-	firstLine, firstChar := scanner.GetECMALineAndCharacterOfPosition(file, pos)
+	firstLine, firstChar := scanner.GetECMALineAndUTF16CharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
 		relativeFileName = tspath.ConvertToRelativePath(file.FileName(), formatOpts.ComparePathsOptions)
@@ -465,7 +465,7 @@ func WriteFormatDiagnostics(output io.Writer, diagnostics []Diagnostic, formatOp
 
 func WriteFormatDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *FormattingOptions) {
 	if diagnostic.File() != nil {
-		line, character := scanner.GetECMALineAndCharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
 		fileName := diagnostic.File().FileName()
 		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
