@@ -578,11 +578,21 @@ export class Checker {
             snapshot: this.snapshotId,
             project: this.projectId,
             type: type.id,
-            location: enclosingDeclaration ? getNodeId(enclosingDeclaration as Node) : undefined,
+            location: enclosingDeclaration ? getNodeId(enclosingDeclaration) : undefined,
             flags,
         });
         if (!binaryData) return undefined;
-        return decodeNode(binaryData) as unknown as TypeNode;
+        return decodeNode(binaryData) as TypeNode;
+    }
+
+    async typeToString(type: Type, enclosingDeclaration?: Node, flags?: number): Promise<string> {
+        return this.client.apiRequest<string>("typeToString", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+            location: enclosingDeclaration ? getNodeId(enclosingDeclaration) : undefined,
+            flags,
+        });
     }
 }
 

@@ -1577,6 +1577,26 @@ export type Pair = [string, number];
             api.close();
         }
     });
+
+    test("typeToString", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const { checker } = snapshot.getProject("/tsconfig.json")!;
+            const src = emitterFiles["/src/main.ts"];
+
+            const greetPos = src.indexOf("greet(");
+            const symbol = checker.getSymbolAtPosition("/src/main.ts", greetPos);
+            assert.ok(symbol);
+            const type = checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const text = checker.typeToString(type);
+            assert.strictEqual(text, "(name: string) => string");
+        }
+        finally {
+            api.close();
+        }
+    });
 });
 
 test("Benchmarks", () => {

@@ -379,6 +379,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypeOfSymbolAtLocation(ctx, parsed.(*GetTypeOfSymbolAtLocationParams))
 	case string(MethodTypeToTypeNode):
 		return s.handleTypeToTypeNode(ctx, parsed.(*TypeToTypeNodeParams))
+	case string(MethodTypeToString):
+		return s.handleTypeToString(ctx, parsed.(*TypeToTypeNodeParams))
 	case string(MethodPrintNode):
 		return s.handlePrintNode(ctx, parsed.(*PrintNodeParams))
 	case string(MethodGetAnyType):
@@ -1282,6 +1284,33 @@ func (s *Session) handleTypeToTypeNode(ctx context.Context, params *TypeToTypeNo
 	return &SourceFileResponse{
 		Data: base64.StdEncoding.EncodeToString(data),
 	}, nil
+}
+
+// handleTypeToString converts a Type to its string representation.
+func (s *Session) handleTypeToString(ctx context.Context, params *TypeToTypeNodeParams) (any, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	var enclosingDeclaration *ast.Node
+	if params.Location != "" {
+		enclosingDeclaration, err = s.resolveNodeHandle(setup.program, params.Location)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if params.Flags != 0 {
+		return setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlags(params.Flags)), nil
+	}
+	return setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlagsAllowUniqueESSymbolType|checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope), nil
 }
 
 // handlePrintNode decodes a binary-encoded AST node and prints it to text.

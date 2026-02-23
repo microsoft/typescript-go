@@ -133,6 +133,7 @@ const (
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
+	MethodTypeToString                      Method = "typeToString"
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
@@ -329,6 +330,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
+	MethodTypeToString:                      unmarshallerFor[TypeToTypeNodeParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
