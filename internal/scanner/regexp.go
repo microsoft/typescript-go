@@ -25,7 +25,7 @@ const (
 	RegularExpressionFlagsModifiers      RegularExpressionFlags = RegularExpressionFlagsIgnoreCase | RegularExpressionFlagsMultiline | RegularExpressionFlagsDotAll
 )
 
-var charToRegExpFlag = map[rune]RegularExpressionFlags{
+var charCodeToRegExpFlag = map[rune]RegularExpressionFlags{
 	'd': RegularExpressionFlagsHasIndices,
 	'g': RegularExpressionFlagsGlobal,
 	'i': RegularExpressionFlagsIgnoreCase,
@@ -44,14 +44,14 @@ var regExpFlagToFirstAvailableLanguageVersion = map[RegularExpressionFlags]core.
 	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
 }
 
-func CharacterToRegularExpressionFlag(ch rune) (RegularExpressionFlags, bool) {
-	flag, ok := charToRegExpFlag[ch]
+func CharacterCodeToRegularExpressionFlag(ch rune) (RegularExpressionFlags, bool) {
+	flag, ok := charCodeToRegExpFlag[ch]
 	return flag, ok
 }
 
-func (s *Scanner) checkRegularExpressionFlagAvailable(flag RegularExpressionFlags, pos int) {
+func (s *Scanner) checkRegularExpressionFlagAvailability(flag RegularExpressionFlags, pos int, size int) {
 	if availableFrom, ok := regExpFlagToFirstAvailableLanguageVersion[flag]; ok && s.languageVersion() < availableFrom {
-		s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, pos, 1, GetNameOfScriptTarget(availableFrom))
+		s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, pos, size, GetNameOfScriptTarget(availableFrom))
 	}
 }
 
@@ -325,22 +325,22 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 
 func (p *regExpParser) scanPatternModifiers(currFlags RegularExpressionFlags) RegularExpressionFlags {
 	for p.pos() < p.end {
-		ch := p.charAt(p.pos())
-		if !IsIdentifierPart(ch) {
+		ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
+		if ch == utf8.RuneError || !IsIdentifierPart(ch) {
 			break
 		}
-		flag, ok := CharacterToRegularExpressionFlag(ch)
+		flag, ok := CharacterCodeToRegularExpressionFlag(ch)
 		if !ok {
-			p.error(diagnostics.Unknown_regular_expression_flag, p.pos(), 1)
+			p.error(diagnostics.Unknown_regular_expression_flag, p.pos(), size)
 		} else if currFlags&flag != 0 {
-			p.error(diagnostics.Duplicate_regular_expression_flag, p.pos(), 1)
+			p.error(diagnostics.Duplicate_regular_expression_flag, p.pos(), size)
 		} else if flag&RegularExpressionFlagsModifiers == 0 {
-			p.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, p.pos(), 1)
+			p.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, p.pos(), size)
 		} else {
 			currFlags |= flag
-			p.scanner.checkRegularExpressionFlagAvailable(flag, p.pos())
+			p.scanner.checkRegularExpressionFlagAvailability(flag, p.pos(), size)
 		}
-		p.incPos(1)
+		p.incPos(size)
 	}
 	return currFlags
 }

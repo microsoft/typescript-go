@@ -1146,11 +1146,11 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 			var regExpFlags RegularExpressionFlags
 			for p < len(s.text) {
 				ch, size := utf8.DecodeRuneInString(s.text[p:])
-				if !IsIdentifierPart(ch) {
+				if ch == utf8.RuneError || !IsIdentifierPart(ch) {
 					break
 				}
 				if shouldReportErrors {
-					flag, ok := CharacterToRegularExpressionFlag(ch)
+					flag, ok := CharacterCodeToRegularExpressionFlag(ch)
 					if !ok {
 						s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
 					} else if regExpFlags&flag != 0 {
@@ -1159,7 +1159,7 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 						s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
 					} else {
 						regExpFlags |= flag
-						s.checkRegularExpressionFlagAvailable(flag, p)
+						s.checkRegularExpressionFlagAvailability(flag, p, size)
 					}
 				}
 				p += size

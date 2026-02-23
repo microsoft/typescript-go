@@ -7,21 +7,16 @@
 -regularExpressionWithNonBMPFlags.ts(7,41): error TS1499: Unknown regular expression flag.
 -regularExpressionWithNonBMPFlags.ts(7,43): error TS1499: Unknown regular expression flag.
 -regularExpressionWithNonBMPFlags.ts(7,45): error TS1499: Unknown regular expression flag.
--
--
--==== regularExpressionWithNonBMPFlags.ts (6 errors) ====
 +regularExpressionWithNonBMPFlags.ts(7,18): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,19): error TS1005: ':' expected.
++regularExpressionWithNonBMPFlags.ts(7,19): error TS1499: Unknown regular expression flag.
++regularExpressionWithNonBMPFlags.ts(7,21): error TS1499: Unknown regular expression flag.
 +regularExpressionWithNonBMPFlags.ts(7,30): error TS1499: Unknown regular expression flag.
 +regularExpressionWithNonBMPFlags.ts(7,31): error TS1499: Unknown regular expression flag.
 +regularExpressionWithNonBMPFlags.ts(7,32): error TS1499: Unknown regular expression flag.
-+
-+
-+==== regularExpressionWithNonBMPFlags.ts (5 errors) ====
-     // The characters in the following regular expression are ASCII-lookalike characters found in Unicode, including:
-     // - 𝘴 (U+1D634 Mathematical Sans-Serif Italic Small S)
-     // - 𝘪 (U+1D62A Mathematical Sans-Serif Italic Small I)
-@@= skipped -13, +12 lines =@@
+
+
+ ==== regularExpressionWithNonBMPFlags.ts (6 errors) ====
+@@= skipped -13, +13 lines =@@
      //
      // See https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
      const 𝘳𝘦𝘨𝘦𝘹 = /(?𝘴𝘪-𝘮:^𝘧𝘰𝘰.)/𝘨𝘮𝘶;
@@ -38,8 +33,10 @@
 -                                                ~~
 +                     ~
 +!!! error TS1499: Unknown regular expression flag.
-+                      
-+!!! error TS1005: ':' expected.
++                      ~
++!!! error TS1499: Unknown regular expression flag.
++                        ~
++!!! error TS1499: Unknown regular expression flag.
 +                                 ~
 +!!! error TS1499: Unknown regular expression flag.
 +                                  ~
