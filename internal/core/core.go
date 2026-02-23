@@ -457,11 +457,19 @@ type UTF16Offset int
 // UTF16Len returns the number of UTF-16 code units needed to
 // represent the given UTF-8 encoded string.
 func UTF16Len(s string) UTF16Offset {
-	n := UTF16Offset(0)
-	for _, r := range s {
-		n += UTF16Offset(utf16.RuneLen(r))
+	// Fast path: scan for non-ASCII bytes. For ASCII-only strings,
+	// each byte is one UTF-16 code unit, so we can return len(s) directly.
+	for i := 0; i < len(s); i++ {
+		if s[i] >= utf8.RuneSelf {
+			// Found non-ASCII; count the ASCII prefix, then decode the rest.
+			n := UTF16Offset(i)
+			for _, r := range s[i:] {
+				n += UTF16Offset(utf16.RuneLen(r))
+			}
+			return n
+		}
 	}
-	return n
+	return UTF16Offset(len(s))
 }
 
 func Flatten[T any](array [][]T) []T {
