@@ -256,16 +256,28 @@ func BenchmarkDecodeSourceFile(b *testing.B) {
 	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
 	fileContent, err := os.ReadFile(filePath)
 	assert.NilError(b, err)
+	code := string(fileContent)
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: "/checker.ts",
 		Path:     "/checker.ts",
-	}, string(fileContent), core.ScriptKindTS)
+	}, code, core.ScriptKindTS)
 
 	buf, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(b, err)
 
-	for b.Loop() {
-		_, err := encoder.DecodeSourceFile(buf)
-		assert.NilError(b, err)
-	}
+	b.Run("parse", func(b *testing.B) {
+		for b.Loop() {
+			parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: "/checker.ts",
+				Path:     "/checker.ts",
+			}, code, core.ScriptKindTS)
+		}
+	})
+
+	b.Run("decode", func(b *testing.B) {
+		for b.Loop() {
+			_, decodeErr := encoder.DecodeSourceFile(buf)
+			assert.NilError(b, decodeErr)
+		}
+	})
 }

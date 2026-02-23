@@ -20,6 +20,10 @@ type astDecoder struct {
 	nodeCount int
 	factory   *ast.NodeFactory
 	childBuf  []int
+	// Single Go string covering all string data; substrings are zero-alloc slices.
+	allStringData string
+	// Arena for batch-allocating []*ast.Node slices used by NodeLists.
+	nodeArena []*ast.Node
 	// Results
 	nodes     []*ast.Node
 	nodeLists []*ast.NodeList
@@ -66,7 +70,20 @@ func newASTDecoder(data []byte) (*astDecoder, error) {
 
 	d.nodeCount = (len(data) - int(d.nodeOff)) / NodeSize
 
+	// Convert entire string data region to a single Go string upfront.
+	// Substringing a Go string shares the backing array, so subsequent
+	// getString calls produce substrings with zero allocations.
+	d.allStringData = string(data[d.strData:])
+
 	return d, nil
+}
+
+// allocNodeSlice returns a zero-length slice with the given capacity, backed by
+// the pre-allocated nodeArena. This avoids a heap allocation per NodeList.
+func (d *astDecoder) allocNodeSlice(capacity int) []*ast.Node {
+	start := len(d.nodeArena)
+	d.nodeArena = d.nodeArena[:start+capacity]
+	return d.nodeArena[start : start : start+capacity]
 }
 
 // nodeField reads a uint32 field from node i at the given field offset.
@@ -78,7 +95,7 @@ func (d *astDecoder) getString(idx uint32) string {
 	offBase := int(d.strTable) + int(idx)*4
 	start := readLE32(d.raw, offBase)
 	end := readLE32(d.raw, offBase+4)
-	return string(d.raw[d.strData+start : d.strData+end])
+	return d.allStringData[start:end]
 }
 
 // collectChildren returns indices of direct children of node i.
@@ -108,6 +125,9 @@ func (d *astDecoder) decode() (*ast.Node, error) {
 
 	d.nodes = make([]*ast.Node, d.nodeCount)
 	d.nodeLists = make([]*ast.NodeList, d.nodeCount)
+	// Pre-allocate arena for NodeList child slices. Each node can appear as a
+	// child at most once, so nodeCount is an upper bound on total child pointers.
+	d.nodeArena = make([]*ast.Node, 0, d.nodeCount)
 
 	// Process bottom-up so children exist before parents.
 	for i := d.nodeCount - 1; i >= 1; i-- {
@@ -118,7 +138,7 @@ func (d *astDecoder) decode() (*ast.Node, error) {
 		childIndices := d.collectChildren(i)
 
 		if kind == SyntaxKindNodeList {
-			childNodes := make([]*ast.Node, 0, len(childIndices))
+			childNodes := d.allocNodeSlice(len(childIndices))
 			for _, ci := range childIndices {
 				if d.nodes[ci] != nil {
 					childNodes = append(childNodes, d.nodes[ci])
