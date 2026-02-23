@@ -59,12 +59,29 @@ func newASTDecoder(data []byte) (*astDecoder, error) {
 		return nil, fmt.Errorf("unsupported protocol version %d (expected %d)", version, ProtocolVersion)
 	}
 
+	strTable := readLE32(data, HeaderOffsetStringOffsets)
+	strData := readLE32(data, HeaderOffsetStringData)
+	extData := readLE32(data, HeaderOffsetExtendedData)
+	nodeOff := readLE32(data, HeaderOffsetNodes)
+
+	dataLen := uint32(len(data))
+
+	// Validate that all offsets are within the buffer.
+	if strTable > dataLen || strData > dataLen || extData > dataLen || nodeOff > dataLen {
+		return nil, fmt.Errorf("invalid AST header offsets: offsets exceed data length (%d)", dataLen)
+	}
+
+	// Validate monotonic non-decreasing order of regions.
+	if !(strTable <= strData && strData <= extData && extData <= nodeOff) {
+		return nil, fmt.Errorf("invalid AST header offsets: expected strTable <= strData <= extData <= nodeOff (got %d, %d, %d, %d)", strTable, strData, extData, nodeOff)
+	}
+
 	d := &astDecoder{
 		raw:      data,
-		strTable: readLE32(data, HeaderOffsetStringOffsets),
-		strData:  readLE32(data, HeaderOffsetStringData),
-		extData:  readLE32(data, HeaderOffsetExtendedData),
-		nodeOff:  readLE32(data, HeaderOffsetNodes),
+		strTable: strTable,
+		strData:  strData,
+		extData:  extData,
+		nodeOff:  nodeOff,
 		factory:  ast.NewNodeFactory(ast.NodeFactoryHooks{}),
 	}
 
@@ -1326,5 +1343,8 @@ func (d *astDecoder) singleNodeListChild(childIndices []int) *ast.NodeList {
 }
 
 func readLE32(data []byte, offset int) uint32 {
+	if offset < 0 || offset+4 > len(data) {
+		return 0
+	}
 	return binary.LittleEndian.Uint32(data[offset : offset+4])
 }

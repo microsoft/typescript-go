@@ -13,7 +13,7 @@ import type {
     SyntaxKind,
     TypeNode,
 } from "@typescript/ast";
-import { encodeNode } from "../node/encoder.ts";
+import { encodeNode, uint8ArrayToBase64 } from "../node/encoder.ts";
 import {
     decodeNode,
     findDescendant,
@@ -605,7 +605,7 @@ export class Emitter {
 
     async printNode(node: Node): Promise<string> {
         const encoded = encodeNode(node);
-        const base64 = btoa(String.fromCharCode(...encoded));
+        const base64 = uint8ArrayToBase64(encoded);
         return this.client.apiRequest<string>("printNode", { data: base64 });
     }
 }

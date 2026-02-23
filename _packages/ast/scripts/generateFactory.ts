@@ -455,6 +455,7 @@ emit("// Source: _packages/ast/src/nodes.ts");
 emit("// Generator: _packages/ast/scripts/generateFactory.ts");
 emit("//");
 emit("");
+emit(`import { NodeFlags } from "#enums/nodeFlags";`);
 emit(`import { SyntaxKind } from "#enums/syntaxKind";`);
 
 if (needsTokenFlags) {
@@ -480,6 +481,7 @@ emit(" * in the `_data` bag and accessed via generated property accessors.");
 emit(" */");
 emit("export class NodeObject {");
 emit("    readonly kind!: SyntaxKind;");
+emit("    readonly flags!: NodeFlags;");
 emit("    readonly pos!: number;");
 emit("    readonly end!: number;");
 emit("    readonly parent!: Node;");
@@ -488,6 +490,7 @@ emit("    _data: any;");
 emit("");
 emit("    constructor(kind: SyntaxKind, data: any) {");
 emit("        this.kind = kind;");
+emit("        this.flags = 0 as NodeFlags;");
 emit("        this.pos = -1;");
 emit("        this.end = -1;");
 emit("        this.parent = undefined!;");

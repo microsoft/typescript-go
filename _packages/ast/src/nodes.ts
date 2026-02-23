@@ -279,7 +279,7 @@ export interface NodeArray<T> extends ReadonlyTextRange, ReadonlyArray<T> {
     readonly length: number;
     readonly pos: number;
     readonly end: number;
-    at(index: number): T;
+    at(index: number): T | undefined;
 }
 
 // TODO(rbuckton): Constraint 'TKind' to 'TokenSyntaxKind'

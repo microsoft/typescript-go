@@ -74,6 +74,10 @@ class StringTable {
     stringByteLength(): number {
         return this.byteLen;
     }
+
+    offsetsCount(): number {
+        return this.offsets.length;
+    }
 }
 
 let _encoder: TextEncoder | undefined;
@@ -455,7 +459,7 @@ export function encodeNode(node: Node): Uint8Array {
 
     // Calculate section offsets
     const offsetStringTableOffsets = HEADER_SIZE;
-    const offsetStringTableData = HEADER_SIZE + strs["offsets"].length * 4;
+    const offsetStringTableData = HEADER_SIZE + strs.offsetsCount() * 4;
     const offsetExtendedData = offsetStringTableData + strs.stringByteLength();
     const offsetNodes = offsetExtendedData + extendedDataBytes.length;
 
@@ -478,4 +482,11 @@ export function encodeNode(node: Node): Uint8Array {
     result.set(extendedDataBytes, offsetExtendedData);
     result.set(nodesBytes, offsetNodes);
     return result;
+}
+
+/**
+ * Encode a Uint8Array to a base64 string.
+ */
+export function uint8ArrayToBase64(data: Uint8Array): string {
+    return Buffer.from(data).toString("base64");
 }

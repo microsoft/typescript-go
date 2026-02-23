@@ -6,6 +6,7 @@
 // Generator: _packages/ast/scripts/generateFactory.ts
 //
 
+import { NodeFlags } from "#enums/nodeFlags";
 import { SyntaxKind } from "#enums/syntaxKind";
 import { TokenFlags } from "#enums/tokenFlags";
 import type {
@@ -277,6 +278,7 @@ import type {
  */
 export class NodeObject {
     readonly kind!: SyntaxKind;
+    readonly flags!: NodeFlags;
     readonly pos!: number;
     readonly end!: number;
     readonly parent!: Node;
@@ -285,6 +287,7 @@ export class NodeObject {
 
     constructor(kind: SyntaxKind, data: any) {
         this.kind = kind;
+        this.flags = 0 as NodeFlags;
         this.pos = -1;
         this.end = -1;
         this.parent = undefined!;
