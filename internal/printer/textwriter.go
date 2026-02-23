@@ -33,9 +33,9 @@ func (w *textWriter) DecreaseIndent() {
 
 // GetColumn returns the column position measured in UTF-16 code units
 // for source map compatibility.
-func (w *textWriter) GetColumn() int {
+func (w *textWriter) GetColumn() core.UTF16Offset {
 	if w.lineStart {
-		return w.indent * w.indentSize
+		return core.UTF16Offset(w.indent * w.indentSize)
 	}
 	// Count UTF-16 code units from the last line start.
 	// For ASCII-only output (the common case), this equals the byte count.

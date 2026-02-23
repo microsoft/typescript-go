@@ -2463,7 +2463,7 @@ func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
 // GetECMALineAndUTF16CharacterOfPosition returns the 0-based line number and the
 // UTF-16 code unit offset from the start of that line for the given byte position.
 // Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
-func GetECMALineAndUTF16CharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
+func GetECMALineAndUTF16CharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character core.UTF16Offset) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
 	character = core.UTF16Len(sourceFile.Text()[lineMap[line]:pos])
@@ -2495,7 +2495,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 // GetECMAPositionOfLineAndUTF16Character converts a 0-based line number and UTF-16
 // code unit character offset back to an absolute byte position in the source text.
 // Uses ECMAScript line separators.
-func GetECMAPositionOfLineAndUTF16Character(sourceFile ast.SourceFileLike, line int, character int) int {
+func GetECMAPositionOfLineAndUTF16Character(sourceFile ast.SourceFileLike, line int, character core.UTF16Offset) int {
 	lineStarts := GetECMALineStarts(sourceFile)
 	return ComputePositionOfLineAndUTF16Character(lineStarts, line, character, sourceFile.Text(), false)
 }
@@ -2520,7 +2520,7 @@ func ComputePositionOfLineAndByteOffset(lineStarts []core.TextPos, line int, byt
 // back to a byte position. The character parameter is measured in UTF-16 code units.
 // It scans from the line start to correctly handle multi-byte characters.
 // When allowEdits is true, out-of-range values are clamped instead of panicking.
-func ComputePositionOfLineAndUTF16Character(lineStarts []core.TextPos, line int, character int, text string, allowEdits bool) int {
+func ComputePositionOfLineAndUTF16Character(lineStarts []core.TextPos, line int, character core.UTF16Offset, text string, allowEdits bool) int {
 	if line < 0 || line >= len(lineStarts) {
 		if allowEdits {
 			// Clamp line to nearest allowable value
@@ -2542,14 +2542,14 @@ func ComputePositionOfLineAndUTF16Character(lineStarts []core.TextPos, line int,
 		if line+1 < len(lineStarts) {
 			lineEnd = int(lineStarts[line+1])
 		}
-		utf16Count := 0
+		utf16Count := core.UTF16Offset(0)
 		pos := lineStart
 		for pos < lineEnd {
 			if utf16Count >= character {
 				break
 			}
 			r, size := utf8.DecodeRuneInString(text[pos:])
-			utf16Count += utf16.RuneLen(r)
+			utf16Count += core.UTF16Offset(utf16.RuneLen(r))
 			pos += size
 		}
 		if allowEdits {

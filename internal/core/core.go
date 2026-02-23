@@ -451,12 +451,15 @@ func PositionToLineAndByteOffset(position int, lineStarts []TextPos) (line int, 
 	return line, position - int(lineStarts[line])
 }
 
+// UTF16Offset represents a character offset measured in UTF-16 code units.
+type UTF16Offset int
+
 // UTF16Len returns the number of UTF-16 code units needed to
 // represent the given UTF-8 encoded string.
-func UTF16Len(s string) int {
-	n := 0
+func UTF16Len(s string) UTF16Offset {
+	n := UTF16Offset(0)
 	for _, r := range s {
-		n += utf16.RuneLen(r)
+		n += UTF16Offset(utf16.RuneLen(r))
 	}
 	return n
 }

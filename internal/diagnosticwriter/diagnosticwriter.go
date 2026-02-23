@@ -229,18 +229,18 @@ func writeCodeSnippet(writer io.Writer, sourceFile FileLike, start int, length i
 			// Otherwise, we'll just squiggle the rest of the line, giving 'slice' no end position.
 			var lastCharForLine int
 			if i == lastLine {
-				lastCharForLine = lastLineChar
+				lastCharForLine = int(lastLineChar)
 			} else {
 				lastCharForLine = len(lineContent)
 			}
 
 			// Fill with spaces until the first character,
 			// then squiggle the remainder of the line.
-			fmt.Fprint(writer, strings.Repeat(" ", firstLineChar))
-			fmt.Fprint(writer, strings.Repeat("~", lastCharForLine-firstLineChar))
+			fmt.Fprint(writer, strings.Repeat(" ", int(firstLineChar)))
+			fmt.Fprint(writer, strings.Repeat("~", lastCharForLine-int(firstLineChar)))
 		case lastLine:
 			// Squiggle until the final character.
-			fmt.Fprint(writer, strings.Repeat("~", lastLineChar))
+			fmt.Fprint(writer, strings.Repeat("~", int(lastLineChar)))
 		default:
 			// Squiggle the entire line.
 			fmt.Fprint(writer, strings.Repeat("~", len(lineContent)))
@@ -315,7 +315,7 @@ func WriteLocation(output io.Writer, file FileLike, pos int, formatOpts *Formatt
 	fmt.Fprint(output, ":")
 	writeWithStyleAndReset(output, strconv.Itoa(firstLine+1), foregroundColorEscapeYellow)
 	fmt.Fprint(output, ":")
-	writeWithStyleAndReset(output, strconv.Itoa(firstChar+1), foregroundColorEscapeYellow)
+	writeWithStyleAndReset(output, strconv.Itoa(int(firstChar)+1), foregroundColorEscapeYellow)
 }
 
 // Some of these lived in watch.ts, but they're not specific to the watch API.
@@ -468,7 +468,7 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *
 		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
 		fileName := diagnostic.File().FileName()
 		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
-		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
+		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, int(character)+1)
 	}
 
 	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().Name(), diagnostic.Code())

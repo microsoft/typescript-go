@@ -166,7 +166,7 @@ func (w *sourceMapSpanWriter) recordSourceMapSpan(sourceMapSpan *sourcemap.Mappi
 
 func (w *sourceMapSpanWriter) recordNewSourceFileSpan(sourceMapSpan *sourcemap.Mapping, newSourceFileCode string) {
 	continuesLine := false
-	if len(w.spansOnSingleLine) > 0 && w.spansOnSingleLine[0].sourceMapSpan.GeneratedCharacter == sourceMapSpan.GeneratedLine { // !!! char == line seems like a bug in Strada?
+	if len(w.spansOnSingleLine) > 0 && int(w.spansOnSingleLine[0].sourceMapSpan.GeneratedCharacter) == sourceMapSpan.GeneratedLine { // !!! char == line seems like a bug in Strada?
 		w.writeRecordedSpans()
 		w.spansOnSingleLine = nil
 		w.nextJsLineToWrite-- // walk back one line to reprint the line
@@ -260,7 +260,7 @@ func (sw *recordedSpanWriter) iterateSpans(fn func(currentSpan *sourceMapSpanWit
 	sw.prevEmittedCol = 0
 	for i := range len(sw.w.spansOnSingleLine) {
 		fn(&sw.w.spansOnSingleLine[i], i)
-		sw.prevEmittedCol = sw.w.spansOnSingleLine[i].sourceMapSpan.GeneratedCharacter
+		sw.prevEmittedCol = int(sw.w.spansOnSingleLine[i].sourceMapSpan.GeneratedCharacter)
 	}
 }
 
@@ -272,7 +272,7 @@ func (sw *recordedSpanWriter) writeSourceMapIndent(indentLength int, indentPrefi
 }
 
 func (sw *recordedSpanWriter) writeSourceMapMarker(currentSpan *sourceMapSpanWithDecodeErrors, index int) {
-	sw.writeSourceMapMarkerEx(currentSpan, index, currentSpan.sourceMapSpan.GeneratedCharacter, false /*endContinues*/)
+	sw.writeSourceMapMarkerEx(currentSpan, index, int(currentSpan.sourceMapSpan.GeneratedCharacter), false /*endContinues*/)
 }
 
 func (sw *recordedSpanWriter) writeSourceMapMarkerEx(currentSpan *sourceMapSpanWithDecodeErrors, index int, endColumn int, endContinues bool) {
