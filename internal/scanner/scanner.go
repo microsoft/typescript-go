@@ -2497,20 +2497,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 // Uses ECMAScript line separators.
 func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
 	lineStarts := GetECMALineStarts(sourceFile)
-	lineStart := int(lineStarts[line])
-	if character == 0 {
-		return lineStart
-	}
-	// Scan from line start counting UTF-16 code units to find the byte position.
-	text := sourceFile.Text()
-	utf16Count := 0
-	for i, r := range text[lineStart:] {
-		if utf16Count >= character {
-			return lineStart + i
-		}
-		utf16Count += utf16.RuneLen(r)
-	}
-	return len(text)
+	return ComputePositionOfLineAndCharacterEx(lineStarts, line, character, sourceFile.Text(), false)
 }
 
 // GetECMAPositionOfLineAndByteOffset converts a 0-based line number and byte offset
@@ -2531,10 +2518,9 @@ func ComputePositionOfLineAndByteOffset(lineStarts []core.TextPos, line int, byt
 
 // ComputePositionOfLineAndCharacterEx converts a line and UTF-16 character offset
 // back to a byte position. The character parameter is measured in UTF-16 code units.
-// When text is provided, it scans from the line start to correctly handle multi-byte characters.
-// When text is nil, character is treated as a byte offset (legacy behavior).
+// It scans from the line start to correctly handle multi-byte characters.
 // When allowEdits is true, out-of-range values are clamped instead of panicking.
-func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, character int, text *string, allowEdits bool) int {
+func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, character int, text string, allowEdits bool) int {
 	if line < 0 || line >= len(lineStarts) {
 		if allowEdits {
 			// Clamp line to nearest allowable value
@@ -2550,9 +2536,9 @@ func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, ch
 
 	lineStart := int(lineStarts[line])
 
-	if text != nil && character > 0 {
+	if character > 0 {
 		// UTF-16 character offset: scan from line start counting UTF-16 code units.
-		lineEnd := len(*text)
+		lineEnd := len(text)
 		if line+1 < len(lineStarts) {
 			lineEnd = int(lineStarts[line+1])
 		}
@@ -2562,38 +2548,28 @@ func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, ch
 			if utf16Count >= character {
 				break
 			}
-			r, size := utf8.DecodeRuneInString((*text)[pos:])
+			r, size := utf8.DecodeRuneInString(text[pos:])
 			utf16Count += utf16.RuneLen(r)
 			pos += size
 		}
 		if allowEdits {
-			if pos > len(*text) {
-				return len(*text)
+			if pos > len(text) {
+				return len(text)
 			}
 		}
 		return pos
 	}
 
-	// No text or character is 0: treat character as byte offset (simple addition).
-	res := lineStart + character
+	// Character is 0: line start position.
+	res := lineStart
 
 	if allowEdits {
-		// Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
-		// TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
-		// apply them to the computed position to improve accuracy
-		if line+1 < len(lineStarts) && res > int(lineStarts[line+1]) {
-			return int(lineStarts[line+1])
-		}
-		if text != nil && res > len(*text) {
-			return len(*text)
+		if res > len(text) {
+			return len(text)
 		}
 		return res
 	}
-	if line < len(lineStarts)-1 && res >= int(lineStarts[line+1]) {
-		panic("Computed position is beyond that of the following line.")
-	} else if text != nil {
-		debug.Assert(res <= len(*text)) // Allow single character overflow for trailing newline
-	}
+	debug.Assert(res <= len(text)) // Allow single character overflow for trailing newline
 	return res
 }
 

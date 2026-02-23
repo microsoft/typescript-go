@@ -82,7 +82,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 				lineInfo.lineStarts,
 				mapping.GeneratedLine,
 				mapping.GeneratedCharacter,
-				&lineInfo.text,
+				lineInfo.text,
 				true, /*allowEdits*/
 			)
 		}
@@ -95,7 +95,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 					lineInfo.lineStarts,
 					mapping.SourceLine,
 					mapping.SourceCharacter,
-					&lineInfo.text,
+					lineInfo.text,
 					true, /*allowEdits*/
 				)
 				sourcePosition = pos

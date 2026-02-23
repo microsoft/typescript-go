@@ -295,7 +295,7 @@ func (sw *recordedSpanWriter) writeSourceMapSourceText(currentSpan *sourceMapSpa
 		sw.w.tsLineMap,
 		currentSpan.sourceMapSpan.SourceLine,
 		currentSpan.sourceMapSpan.SourceCharacter,
-		&sw.w.tsCode,
+		sw.w.tsCode,
 		true, /*allowEdits*/
 	)
 	var sourceText string
