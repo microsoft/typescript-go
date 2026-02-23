@@ -653,7 +653,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	tx.superIndexBinding = tx.Factory().NewUniqueNameEx("_superIndex", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 
 	tx.EmitContext().StartVariableEnvironment()
-	updated := tx.Visitor().VisitNode(node.Body())
+	updated := tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor())
 
 	// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
 	emitSuperHelpers := (tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess) &&
