@@ -896,8 +896,7 @@ func calculateIndent(text string, pos int, end int) int {
 // position and the new position needs to be scanned for UTF-16 code unit counts,
 // turning what would be O(n²) into O(n) for long lines.
 //
-// Character offsets are measured in UTF-16 code units, matching TypeScript's
-// native encoding and the source map specification.
+// Character offsets are measured in UTF-16 code units per the source map specification.
 type lineCharacterCache struct {
 	lineMap    []core.TextPos
 	text       string

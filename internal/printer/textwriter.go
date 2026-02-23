@@ -31,8 +31,8 @@ func (w *textWriter) DecreaseIndent() {
 	w.indent--
 }
 
-// GetColumn returns the column position measured in UTF-16 code units,
-// matching TypeScript's native encoding for source map compatibility.
+// GetColumn returns the column position measured in UTF-16 code units
+// for source map compatibility.
 func (w *textWriter) GetColumn() int {
 	if w.lineStart {
 		return w.indent * w.indentSize

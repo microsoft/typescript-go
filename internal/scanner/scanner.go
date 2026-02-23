@@ -2463,7 +2463,6 @@ func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
 // GetECMALineAndCharacterOfPosition returns the 0-based line number and the
 // UTF-16 code unit offset from the start of that line for the given byte position.
 // Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
-// This matches TypeScript's native getLineAndCharacterOfPosition.
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
@@ -2531,8 +2530,7 @@ func ComputePositionOfLineAndByteOffset(lineStarts []core.TextPos, line int, byt
 }
 
 // ComputePositionOfLineAndCharacterEx converts a line and UTF-16 character offset
-// back to a byte position. The character parameter is measured in UTF-16 code units,
-// matching the encoding used by TypeScript and source maps.
+// back to a byte position. The character parameter is measured in UTF-16 code units.
 // When text is provided, it scans from the line start to correctly handle multi-byte characters.
 // When text is nil, character is treated as a byte offset (legacy behavior).
 // When allowEdits is true, out-of-range values are clamped instead of panicking.
