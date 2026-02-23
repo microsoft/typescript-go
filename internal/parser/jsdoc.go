@@ -431,7 +431,7 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 	start := p.scanner.TokenStart()
 	p.nextTokenJSDoc()
 
-	tagName := p.parseJSDocIdentifierName(nil)
+	tagName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 	indentText := p.skipWhitespaceOrAsterisk()
 
 	var tag *ast.Node
@@ -718,7 +718,7 @@ func (p *Parser) tryParseTypeExpression() *ast.Node {
 	}
 }
 
-func (p *Parser) parseBracketNameInPropertyAndParamTag() (name *ast.EntityName, isBracketed bool) {
+func (p *Parser) parseBracketNameInPropertyAndParamTag(target propertyLikeParse) (name *ast.EntityName, isBracketed bool) {
 	// Looking for something like '[foo]', 'foo', '[foo.bar]' or 'foo.bar'
 	isBracketed = p.parseOptionalJsdoc(ast.KindOpenBracketToken)
 	if isBracketed {
@@ -726,7 +726,7 @@ func (p *Parser) parseBracketNameInPropertyAndParamTag() (name *ast.EntityName, 
 	}
 	// a markdown-quoted name: `arg` is not legal jsdoc, but occurs in the wild
 	isBackquoted := p.parseOptionalJsdoc(ast.KindBacktickToken)
-	name = p.parseJSDocEntityName()
+	name = p.parseJSDocEntityName(core.IfElse(target == propertyLikeParseParameter, nil, diagnostics.Identifier_expected))
 	if isBackquoted {
 		p.parseExpectedTokenJSDoc(ast.KindBacktickToken)
 	}
@@ -763,7 +763,7 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 	isNameFirst := typeExpression == nil
 	p.skipWhitespaceOrAsterisk()
 
-	name, isBracketed := p.parseBracketNameInPropertyAndParamTag()
+	name, isBracketed := p.parseBracketNameInPropertyAndParamTag(target)
 	indentText := p.skipWhitespaceOrAsterisk()
 
 	if isNameFirst && p.lookAhead(func(p *Parser) bool { _, ok := p.parseJSDocLinkPrefix(); return !ok }) {
@@ -894,9 +894,9 @@ func (p *Parser) parseExpressionWithTypeArgumentsForAugments() *ast.Node {
 
 func (p *Parser) parsePropertyAccessEntityNameExpression() *ast.Node {
 	pos := p.nodePos()
-	node := p.parseJSDocIdentifierName(nil)
+	node := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 	for p.parseOptional(ast.KindDotToken) {
-		name := p.parseJSDocIdentifierName(nil)
+		name := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 		node = p.finishNode(p.factory.NewPropertyAccessExpression(node, nil, name, ast.NodeFlagsNone), pos)
 	}
 	return node
@@ -916,7 +916,7 @@ func (p *Parser) parseThisTag(start int, tagName *ast.IdentifierNode, margin int
 func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	typeExpression := p.tryParseTypeExpression()
 	p.skipWhitespaceOrAsterisk()
-	fullName := p.parseJSDocIdentifierName(nil)
+	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 
@@ -1032,7 +1032,7 @@ func (p *Parser) parseJSDocSignature(start int, indent int) *ast.Node {
 }
 
 func (p *Parser) parseCallbackTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	fullName := p.parseJSDocIdentifierName(nil)
+	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 	typeExpression := p.parseJSDocSignature(p.nodePos(), indent)
@@ -1119,7 +1119,7 @@ func (p *Parser) tryParseChildTag(target propertyLikeParse, indent int) *ast.Nod
 	start := p.scanner.TokenFullStart()
 	p.nextTokenJSDoc()
 
-	tagName := p.parseJSDocIdentifierName(nil)
+	tagName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 	indentText := p.skipWhitespaceOrAsterisk()
 	var t propertyLikeParse
 	switch tagName.Text() {
@@ -1212,8 +1212,8 @@ func (p *Parser) parseOptionalJsdoc(t ast.Kind) bool {
 	return false
 }
 
-func (p *Parser) parseJSDocEntityName() *ast.EntityName {
-	var entity *ast.EntityName = p.parseJSDocIdentifierName(nil)
+func (p *Parser) parseJSDocEntityName(diagnosticMessage *diagnostics.Message) *ast.EntityName {
+	var entity *ast.EntityName = p.parseJSDocIdentifierName(diagnosticMessage)
 	if p.parseOptional(ast.KindOpenBracketToken) {
 		p.parseExpected(ast.KindCloseBracketToken)
 		// Note that y[] is accepted as an entity name, but the postfix brackets are not saved for checking.
@@ -1221,7 +1221,7 @@ func (p *Parser) parseJSDocEntityName() *ast.EntityName {
 		// but it's not worth it to enforce that restriction.
 	}
 	for p.parseOptional(ast.KindDotToken) {
-		name := p.parseJSDocIdentifierName(nil)
+		name := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 		if p.parseOptional(ast.KindOpenBracketToken) {
 			p.parseExpected(ast.KindCloseBracketToken)
 		}
@@ -1237,8 +1237,6 @@ func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message
 			p.parseErrorAtCurrentToken(diagnosticMessage)
 		} else if isReservedWord(p.token) {
 			p.parseErrorAtCurrentToken(diagnostics.Identifier_expected_0_is_a_reserved_word_that_cannot_be_used_here, p.scanner.TokenText())
-		} else {
-			p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
 		}
 		return p.finishNode(p.newIdentifier(""), p.nodePos())
 	}
