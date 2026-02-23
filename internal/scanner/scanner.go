@@ -1728,9 +1728,22 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 	case '"':
 		return "\""
 	case 'u':
-		// '\uDDDD' and '\U{DDDDDD}'
+		// '\uDDDD' and '\u{DDDDDD}'
+		extended := s.char() == '{'
 		s.pos -= 2
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+		if extended {
+			if flags&EscapeSequenceScanningFlagsAllowExtendedUnicodeEscape == 0 {
+				s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
+				if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
+					s.errorAt(diagnostics.Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, s.pos-start)
+				}
+			}
+			if codePoint < 0 {
+				return s.text[start:s.pos]
+			}
+			return string(codePoint)
+		}
 		if codePoint < 0 {
 			return s.text[start:s.pos]
 		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
@@ -1739,7 +1752,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			if codePointIsLowSurrogate(nextCodePoint) {
 				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
 			}
-			s.pos = savedPos // restore position because we do not consume nextCodePoint
+			s.pos = savedPos
 		}
 		return string(codePoint)
 	case 'x':
