@@ -58,6 +58,13 @@ type forawaitTransformer struct {
 	exportedVariableStatement  bool
 }
 
+func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	tx := &forawaitTransformer{
+		compilerOptions: opts.CompilerOptions,
+	}
+	return tx.NewTransformer(tx.visit, opts.Context)
+}
+
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
 		if tx.capturedSuperProperties != nil {
@@ -79,21 +86,21 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindForOfStatement:
 		return tx.visitForOfStatement(node.AsForInOrOfStatement(), nil)
 	case ast.KindForStatement, ast.KindDoStatement, ast.KindWhileStatement, ast.KindForInStatement:
-		return tx.doWithHierarchyFacts(tx.visitDefault, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitDefault, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
 	case ast.KindConstructor:
-		return tx.doWithHierarchyFacts(tx.visitConstructorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitConstructorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindMethodDeclaration:
-		return tx.doWithHierarchyFacts(tx.visitMethodDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitMethodDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindGetAccessor:
-		return tx.doWithHierarchyFacts(tx.visitGetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitGetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindSetAccessor:
-		return tx.doWithHierarchyFacts(tx.visitSetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitSetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindFunctionDeclaration:
-		return tx.doWithHierarchyFacts(tx.visitFunctionDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitFunctionDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindFunctionExpression:
-		return tx.doWithHierarchyFacts(tx.visitFunctionExpression, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitFunctionExpression, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindArrowFunction:
-		return tx.doWithHierarchyFacts(tx.visitArrowFunction, node, forAwaitHierarchyFactsArrowFunctionExcludes, forAwaitHierarchyFactsArrowFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitArrowFunction, node, forAwaitHierarchyFactsArrowFunctionExcludes, forAwaitHierarchyFactsArrowFunctionIncludes)
 	case ast.KindPropertyAccessExpression:
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.capturedSuperProperties.Add(node.Name().Text())
@@ -120,7 +127,7 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithHierarchyFacts(tx.visitDefault, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts((*forawaitTransformer).visitDefault, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
@@ -144,14 +151,14 @@ func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts)
 	tx.forAwaitHierarchyFacts = ancestorFacts
 }
 
-func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
+func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*forawaitTransformer, *ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
 	if tx.affectsSubtree(excludeFacts, includeFacts) {
 		ancestorFacts := tx.enterSubtree(excludeFacts, includeFacts)
-		result := cb(node)
+		result := cb(tx, node)
 		tx.exitSubtree(ancestorFacts)
 		return result
 	}
-	return cb(node)
+	return cb(tx, node)
 }
 
 func (tx *forawaitTransformer) visitDefault(node *ast.Node) *ast.Node {
@@ -1040,11 +1047,4 @@ func (tx *forawaitTransformer) createSuperAccessVariableStatement() *ast.Node {
 	decl := f.NewVariableDeclaration(tx.superBinding, nil, nil, objectCreateCall)
 	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
 	return f.NewVariableStatement(nil, declList)
-}
-
-func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &forawaitTransformer{
-		compilerOptions: opts.CompilerOptions,
-	}
-	return tx.NewTransformer(tx.visit, opts.Context)
 }
