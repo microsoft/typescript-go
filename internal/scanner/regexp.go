@@ -948,20 +948,15 @@ func (p *regExpParser) scanWordCharacters() string {
 }
 
 func (p *regExpParser) scanSourceCharacter() string {
-	if p.anyUnicodeMode {
-		ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
-		if size == 0 || ch == utf8.RuneError {
-			return ""
-		}
-		p.incPos(size)
-		return string(ch)
+	if p.pos() >= p.end {
+		return ""
 	}
-	if p.pos() < p.end {
-		ch := p.text()[p.pos()]
-		p.incPos(1)
-		return string(ch)
+	ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
+	if size == 0 || ch == utf8.RuneError {
+		return ""
 	}
-	return ""
+	p.incPos(size)
+	return string(ch)
 }
 
 func (p *regExpParser) scanExpectedChar(ch rune) {
