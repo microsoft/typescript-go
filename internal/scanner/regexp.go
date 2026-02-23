@@ -82,6 +82,7 @@ type regExpParser struct {
 	regExpFlags     RegularExpressionFlags
 	anyUnicodeMode  bool
 	unicodeSetsMode bool
+	annexB          bool
 
 	mayContainStrings       bool
 	numberOfCapturingGroups int
@@ -195,7 +196,8 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				switch p.charAt(p.pos()) {
 				case '=', '!':
 					p.incPos(1)
-					isPreviousTermQuantifiable = false
+					// In Annex B, `(?=Disjunction)` and `(?!Disjunction)` are quantifiable
+					isPreviousTermQuantifiable = p.annexB
 				case '<':
 					groupNameStart := p.pos()
 					p.incPos(1)
@@ -401,6 +403,9 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 		}
 		if p.anyUnicodeMode {
 			p.error(diagnostics.X_c_must_be_followed_by_an_ASCII_letter, p.pos()-2, 2)
+		} else if atomEscape && p.annexB {
+			p.incPos(-1)
+			return "\\"
 		}
 		return string(ch)
 	case '^', '$', '/', '\\', '.', '*', '+', '?', '(', ')', '[', ']', '{', '}', '|':
@@ -408,7 +413,10 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 		return string(ch)
 	default:
 		p.incPos(-1) // back up to include the backslash for scanEscapeSequence
-		flags := EscapeSequenceScanningFlagsRegularExpression | EscapeSequenceScanningFlagsAnnexB
+		flags := EscapeSequenceScanningFlagsRegularExpression
+		if p.annexB {
+			flags |= EscapeSequenceScanningFlagsAnnexB
+		}
 		if p.anyUnicodeMode {
 			flags |= EscapeSequenceScanningFlagsReportErrors | EscapeSequenceScanningFlagsAnyUnicodeMode
 		}
@@ -467,12 +475,12 @@ func (p *regExpParser) scanClassRanges() {
 			if p.isClassContentExit(ch) {
 				return
 			}
-			if minCharacter == "" {
+			if minCharacter == "" && !p.annexB {
 				p.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, minStart, p.pos()-1-minStart)
 			}
 			maxStart := p.pos()
 			maxCharacter := p.scanClassAtom()
-			if maxCharacter == "" {
+			if maxCharacter == "" && !p.annexB {
 				p.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, maxStart, p.pos()-maxStart)
 				continue
 			}
@@ -959,6 +967,10 @@ func (p *regExpParser) scanDigits() {
 }
 
 func (p *regExpParser) run() {
+	if p.anyUnicodeMode {
+		p.annexB = false
+	}
+
 	p.scanDisjunction(false /*isInGroup*/)
 
 	for _, reference := range p.groupNameReferences {
@@ -977,7 +989,9 @@ func (p *regExpParser) run() {
 		}
 	}
 	for _, escape := range p.decimalEscapes {
-		if escape.value > p.numberOfCapturingGroups {
+		// in AnnexB, if a DecimalEscape is greater than the number of capturing groups then it is treated as
+		// either a LegacyOctalEscapeSequence or IdentityEscape
+		if !p.annexB && escape.value > p.numberOfCapturingGroups {
 			if p.numberOfCapturingGroups > 0 {
 				p.error(diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_only_0_capturing_groups_in_this_regular_expression, escape.pos, escape.end-escape.pos, p.numberOfCapturingGroups)
 			} else {

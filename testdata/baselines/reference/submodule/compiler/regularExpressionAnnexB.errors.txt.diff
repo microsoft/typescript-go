@@ -1,14 +1,6 @@
 --- old.regularExpressionAnnexB.errors.txt
 +++ new.regularExpressionAnnexB.errors.txt
-@@= skipped -3, +3 lines =@@
- regularExpressionAnnexB.ts(3,9): error TS1125: Hexadecimal digit expected.
- regularExpressionAnnexB.ts(3,23): error TS1125: Hexadecimal digit expected.
- regularExpressionAnnexB.ts(3,29): error TS1125: Hexadecimal digit expected.
-+regularExpressionAnnexB.ts(4,9): error TS1516: A character class range must not be bounded by another character class.
- regularExpressionAnnexB.ts(7,4): error TS1535: This character cannot be escaped in a regular expression.
- regularExpressionAnnexB.ts(7,8): error TS1125: Hexadecimal digit expected.
- regularExpressionAnnexB.ts(7,10): error TS1512: '\c' must be followed by an ASCII letter.
-@@= skipped -23, +24 lines =@@
+@@= skipped -26, +26 lines =@@
  regularExpressionAnnexB.ts(9,4): error TS1531: '\P' must be followed by a Unicode property value expression enclosed in braces.
  regularExpressionAnnexB.ts(9,7): error TS1531: '\P' must be followed by a Unicode property value expression enclosed in braces.
  regularExpressionAnnexB.ts(9,9): error TS1516: A character class range must not be bounded by another character class.
@@ -43,20 +35,11 @@
 
 
 -==== regularExpressionAnnexB.ts (74 errors) ====
-+==== regularExpressionAnnexB.ts (98 errors) ====
++==== regularExpressionAnnexB.ts (97 errors) ====
      const regexes: RegExp[] = [
        /\q\u\i\c\k\_\f\o\x\-\j\u\m\p\s/,
             
-@@= skipped -17, +17 lines =@@
-                                 
- !!! error TS1125: Hexadecimal digit expected.
-       /\P[\P\w-_]/,
-+            ~~
-+!!! error TS1516: A character class range must not be bounded by another character class.
-     
-       // Compare to
-       /\q\u\i\c\k\_\f\o\x\-\j\u\m\p\s/u,
-@@= skipped -57, +59 lines =@@
+@@= skipped -74, +74 lines =@@
        /{??/,
        /{,??/,
        /{,1??/,

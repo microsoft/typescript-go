@@ -1046,7 +1046,8 @@ func (s *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
 	return s.token
 }
 
-func (s *Scanner) ReScanSlashToken() ast.Kind {
+func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
+	shouldReportErrors := len(reportErrors) > 0 && reportErrors[0]
 	if s.token == ast.KindSlashToken || s.token == ast.KindSlashEqualsToken {
 		// Quickly get to the end of regex such that we know the flags
 		startOfRegExpBody := s.tokenStart + 1
@@ -1139,33 +1140,41 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 				if !IsIdentifierPart(ch) {
 					break
 				}
-				flag, ok := CharacterToRegularExpressionFlag(ch)
-				if !ok {
-					s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
-				} else if regExpFlags&flag != 0 {
-					s.errorAt(diagnostics.Duplicate_regular_expression_flag, p, size)
-				} else if (regExpFlags|flag)&RegularExpressionFlagsAnyUnicodeMode == RegularExpressionFlagsAnyUnicodeMode {
-					s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
-				} else {
-					regExpFlags |= flag
-					s.checkRegularExpressionFlagAvailable(flag, p)
+				if shouldReportErrors {
+					flag, ok := CharacterToRegularExpressionFlag(ch)
+					if !ok {
+						s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
+					} else if regExpFlags&flag != 0 {
+						s.errorAt(diagnostics.Duplicate_regular_expression_flag, p, size)
+					} else if (regExpFlags|flag)&RegularExpressionFlagsAnyUnicodeMode == RegularExpressionFlagsAnyUnicodeMode {
+						s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
+					} else {
+						regExpFlags |= flag
+						s.checkRegularExpressionFlagAvailable(flag, p)
+					}
 				}
 				p += size
 			}
-			s.pos = startOfRegExpBody
-			saveTokenPos := s.tokenStart
-			saveTokenFlags := s.tokenFlags
-			parser := &regExpParser{
-				scanner:         s,
-				end:             endOfRegExpBody,
-				regExpFlags:     regExpFlags,
-				anyUnicodeMode:  regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
-				unicodeSetsMode: regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
-				groupSpecifiers: make(map[string]bool),
+			if shouldReportErrors {
+				s.pos = startOfRegExpBody
+				saveTokenPos := s.tokenStart
+				saveTokenFlags := s.tokenFlags
+				parser := &regExpParser{
+					scanner:         s,
+					end:             endOfRegExpBody,
+					regExpFlags:     regExpFlags,
+					anyUnicodeMode:  regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
+					unicodeSetsMode: regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+					annexB:          true,
+					groupSpecifiers: make(map[string]bool),
+				}
+				parser.run()
+				s.pos = p
+				s.tokenStart = saveTokenPos
+				s.tokenFlags = saveTokenFlags
+			} else {
+				s.pos = p
 			}
-			parser.run()
-			s.tokenStart = saveTokenPos
-			s.tokenFlags = saveTokenFlags
 		}
 
 		s.pos = p
@@ -1672,10 +1681,12 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			code, _ := strconv.ParseInt(s.text[start+1:s.pos], 8, 32)
-			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
-				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
-			} else {
-				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
+			if flags&EscapeSequenceScanningFlagsAnnexB == 0 {
+				if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
+					s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
+				} else {
+					s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
+				}
 			}
 			return string(rune(code))
 		}
