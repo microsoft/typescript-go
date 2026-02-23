@@ -294,9 +294,11 @@ function wrapI1() {
     })();
 }
 function wrapI2() {
-    const iter = (async function* foo() {
-        iter;
-        yield 1;
+    const iter = (function* foo() {
+        return __awaiter(this, void 0, void 0, function* () {
+            iter;
+            yield 1;
+        });
     })();
 }
 function foo18() {

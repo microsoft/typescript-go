@@ -694,13 +694,15 @@ let fooGenM = {
     }
 };
 let fooAsyncGenM = {
-    async *method(type, cb) {
-        if (type == 'num') {
-            cb(123);
-        }
-        else {
-            cb("abc");
-        }
+    *method(type, cb) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (type == 'num') {
+                cb(123);
+            }
+            else {
+                cb("abc");
+            }
+        });
     }
 };
 const f60 = (kind, payload) => {

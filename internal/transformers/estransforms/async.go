@@ -174,15 +174,14 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	tx.currentNode = node
 	defer func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }()
 
-	if node.Kind == ast.KindAsyncKeyword {
-		// ES2017 async modifier should be elided for targets < ES2017
-		return nil
-	}
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
 		return tx.argumentsAndSuperVisitor(node)
 	}
 	tx.trackSuperAccess(node)
 	switch node.Kind {
+	case ast.KindAsyncKeyword:
+		// ES2017 async modifier should be elided for targets < ES2017
+		return nil
 	case ast.KindSourceFile:
 		return tx.visitSourceFile(node.AsSourceFile())
 	case ast.KindAwaitExpression:

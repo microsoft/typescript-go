@@ -26,20 +26,8 @@
  let fooAsyncGenM = {
 -    method(type, cb) {
 -        return __asyncGenerator(this, arguments, function* method_1() {
--            if (type == 'num') {
--                cb(123);
--            }
--            else {
--                cb("abc");
--            }
--        });
-+    async *method(type, cb) {
-+        if (type == 'num') {
-+            cb(123);
-+        }
-+        else {
-+            cb("abc");
-+        }
-     }
- };
- const f60 = (kind, payload) => {
++    *method(type, cb) {
++        return __awaiter(this, void 0, void 0, function* () {
+             if (type == 'num') {
+                 cb(123);
+             }

@@ -60,7 +60,9 @@ class A {
         return __awaiter(this, void 0, void 0, function* () { return 1; });
     } //OK
     *#genMethod() { return 1; } //OK
-    async *#asyncGenMethod() { return 1; } //OK
+    *#asyncGenMethod() {
+        return __awaiter(this, void 0, void 0, function* () { return 1; });
+    } //OK
     get #fooProp() { return 3; } // Error
     set #fooProp(value) { } // Error
     get #barProp() { return 3; } // Error
@@ -69,8 +71,8 @@ class A {
     set #bazProp(value) { } // Error
     get #quxProp() { return 3; } // Error
     set #quxProp(value) { } // Error
-    async get #asyncProp() { return 1; } // Error
-    async set #asyncProp(value) { } // Error
+    get #asyncProp() { return 1; } // Error
+    set #asyncProp(value) { } // Error
 }
 class B {
 }

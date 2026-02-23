@@ -2670,6 +2670,13 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsTypeScript
 	case KindAccessorKeyword:
 		return SubtreeContainsClassFields
+	case KindAsyncKeyword:
+		// 'async' modifier is ES2017 (async functions) or ES2018 (async generators)
+		return SubtreeContainsAnyAwait
+	case KindSuperKeyword:
+		return SubtreeContainsLexicalSuper
+	case KindThisKeyword:
+		return SubtreeContainsLexicalThis
 	case KindAsteriskAsteriskToken, KindAsteriskAsteriskEqualsToken:
 		return SubtreeContainsExponentiationOperator
 	case KindQuestionQuestionToken:
