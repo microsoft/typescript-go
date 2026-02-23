@@ -1801,7 +1801,6 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	var hexDigits string
 	if extended {
 		s.pos++
-		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 		hexDigits = s.scanHexDigits(1, true, false)
 	} else {
 		s.tokenFlags |= ast.TokenFlagsUnicodeEscape
@@ -1836,6 +1835,7 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 		if isInvalidExtendedEscape {
 			return -1
 		}
+		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 	}
 	return rune(hexValue)
 }
