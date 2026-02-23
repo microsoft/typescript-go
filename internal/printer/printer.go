@@ -4923,11 +4923,13 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	savedSourceMapGenerator := p.sourceMapGenerator
 	savedSourceMapSource := p.sourceMapSource
 	savedSourceMapSourceIndex := p.sourceMapSourceIndex
+	savedSourceMapLineCharCache := p.sourceMapLineCharCache
 
 	p.sourceMapsDisabled = sourceMapGenerator == nil
 	p.sourceMapGenerator = sourceMapGenerator
 	p.sourceMapSource = nil
 	p.sourceMapSourceIndex = -1
+	p.sourceMapLineCharCache = nil
 
 	p.setSourceFile(sourceFile)
 	p.writer = writer
@@ -5113,6 +5115,7 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	p.sourceMapGenerator = savedSourceMapGenerator
 	p.sourceMapSource = savedSourceMapSource
 	p.sourceMapSourceIndex = savedSourceMapSourceIndex
+	p.sourceMapLineCharCache = savedSourceMapLineCharCache
 }
 
 //
@@ -5642,10 +5645,12 @@ func (p *Printer) emitSourcePos(source sourcemap.Source, pos int) {
 	if source != p.sourceMapSource {
 		savedSourceMapSource := p.sourceMapSource
 		savedSourceMapSourceIndex := p.sourceMapSourceIndex
+		savedSourceMapLineCharCache := p.sourceMapLineCharCache
 		p.setSourceMapSource(source)
 		p.emitPos(pos)
 		p.sourceMapSource = savedSourceMapSource
 		p.sourceMapSourceIndex = savedSourceMapSourceIndex
+		p.sourceMapLineCharCache = savedSourceMapLineCharCache
 	} else {
 		p.emitPos(pos)
 	}
