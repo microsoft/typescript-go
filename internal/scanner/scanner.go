@@ -1817,22 +1817,26 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	if extended {
 		isInvalidExtendedEscape := false
 		if hexValue > 0x10FFFF {
-			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.errorAt(diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive, start+1, s.pos-start-1)
 			}
 			isInvalidExtendedEscape = true
 		}
-		if s.char() == '}' {
+		if s.pos >= s.end {
+			if shouldEmitInvalidEscapeError {
+				s.error(diagnostics.Unexpected_end_of_text)
+			}
+			isInvalidExtendedEscape = true
+		} else if s.char() == '}' {
 			s.pos++
 		} else {
-			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.error(diagnostics.Unterminated_Unicode_escape_sequence)
 			}
 			isInvalidExtendedEscape = true
 		}
 		if isInvalidExtendedEscape {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			return -1
 		}
 		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
