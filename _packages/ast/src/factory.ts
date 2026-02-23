@@ -206,6 +206,7 @@ import type {
     PrefixUnaryExpression,
     PrefixUnaryOperator,
     PrivateIdentifier,
+    PropertyAccessEntityNameExpression,
     PropertyAccessExpression,
     PropertyAssignment,
     PropertyDeclaration,
@@ -329,6 +330,9 @@ export class NodeObject {
     get children(): any {
         return this._data?.children;
     }
+    get class(): any {
+        return this._data?.class;
+    }
     get clauses(): any {
         return this._data?.clauses;
     }
@@ -358,6 +362,9 @@ export class NodeObject {
     }
     get declarations(): any {
         return this._data?.declarations;
+    }
+    get default(): any {
+        return this._data?.default;
     }
     get dotDotDotToken(): any {
         return this._data?.dotDotDotToken;
@@ -410,9 +417,6 @@ export class NodeObject {
     get fullName(): any {
         return this._data?.fullName;
     }
-    get hasExtendedUnicodeEscape(): any {
-        return this._data?.hasExtendedUnicodeEscape;
-    }
     get head(): any {
         return this._data?.head;
     }
@@ -448,9 +452,6 @@ export class NodeObject {
     }
     get isTypeOnly(): any {
         return this._data?.isTypeOnly;
-    }
-    get isUnterminated(): any {
-        return this._data?.isUnterminated;
     }
     get jsDocPropertyTags(): any {
         return this._data?.jsDocPropertyTags;
@@ -535,6 +536,9 @@ export class NodeObject {
     }
     get postfix(): any {
         return this._data?.postfix;
+    }
+    get postfixToken(): any {
+        return this._data?.postfixToken;
     }
     get properties(): any {
         return this._data?.properties;
@@ -737,9 +741,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.falseType),
     [SyntaxKind.Constructor]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.body),
     [SyntaxKind.ConstructorType]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
@@ -821,7 +823,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.GetAccessor]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.body),
@@ -870,13 +871,17 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.members),
     [SyntaxKind.IntersectionType]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.types),
     [SyntaxKind.JSDoc]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.tags),
-    [SyntaxKind.JSDocAugmentsTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocAugmentsTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.class),
     [SyntaxKind.JSDocCallbackTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
         visitNode(cbNode, data.typeExpression) ||
         visitNode(cbNode, data.fullName),
     [SyntaxKind.JSDocDeprecatedTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
-    [SyntaxKind.JSDocImplementsTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocImplementsTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.class),
     [SyntaxKind.JSDocImportTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
         visitNode(cbNode, data.importClause) ||
@@ -907,7 +912,9 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.JSDocSatisfiesTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
         visitNode(cbNode, data.typeExpression),
-    [SyntaxKind.JSDocSeeTag]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
+    [SyntaxKind.JSDocSeeTag]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.tagName) ||
+        visitNode(cbNode, data.name),
     [SyntaxKind.JSDocSignature]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
     [SyntaxKind.JSDocTemplateTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
@@ -970,6 +977,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.asteriskToken) ||
         visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.postfixToken) ||
         visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type) ||
@@ -977,6 +985,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.MethodSignature]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.postfixToken) ||
         visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type),
@@ -1019,15 +1028,18 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.name),
     [SyntaxKind.PropertyAssignment]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.initializer),
     [SyntaxKind.PropertyDeclaration]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
     [SyntaxKind.PropertySignature]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type),
     [SyntaxKind.QualifiedName]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.left) ||
@@ -1037,16 +1049,14 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.SatisfiesExpression]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.type),
-    [SyntaxKind.SemicolonClassElement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
     [SyntaxKind.SetAccessor]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.body),
     [SyntaxKind.ShorthandPropertyAssignment]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.equalsToken) ||
         visitNode(cbNode, data.objectAssignmentInitializer),
     [SyntaxKind.SourceFile]: (data, cbNode, cbNodes) =>
@@ -1093,7 +1103,8 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.TypeParameter]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
-        visitNode(cbNode, data.constraint),
+        visitNode(cbNode, data.constraint) ||
+        visitNode(cbNode, data.default),
     [SyntaxKind.TypePredicate]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.assertsModifier) ||
         visitNode(cbNode, data.parameterName) ||
@@ -1158,7 +1169,7 @@ export function createArrayTypeNode(elementType: TypeNode): ArrayTypeNode {
     }) as unknown as ArrayTypeNode;
 }
 
-export function createArrowFunction(modifiers: readonly Modifier[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, equalsGreaterThanToken: EqualsGreaterThanToken, body: ConciseBody, name: never): ArrowFunction {
+export function createArrowFunction(modifiers: readonly Modifier[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, equalsGreaterThanToken: EqualsGreaterThanToken, body: ConciseBody): ArrowFunction {
     return new NodeObject(SyntaxKind.ArrowFunction, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
@@ -1166,7 +1177,6 @@ export function createArrowFunction(modifiers: readonly Modifier[] | undefined, 
         type,
         equalsGreaterThanToken,
         body,
-        name,
     }) as unknown as ArrowFunction;
 }
 
@@ -1183,11 +1193,9 @@ export function createAwaitExpression(expression: UnaryExpression): AwaitExpress
     }) as unknown as AwaitExpression;
 }
 
-export function createBigIntLiteral(text: string, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean): BigIntLiteral {
+export function createBigIntLiteral(text: string): BigIntLiteral {
     return new NodeObject(SyntaxKind.BigIntLiteral, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
     }) as unknown as BigIntLiteral;
 }
 
@@ -1315,12 +1323,10 @@ export function createConditionalTypeNode(checkType: TypeNode, extendsType: Type
     }) as unknown as ConditionalTypeNode;
 }
 
-export function createConstructorDeclaration(modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): ConstructorDeclaration {
+export function createConstructorDeclaration(modifiers: readonly ModifierLike[] | undefined, parameters: readonly ParameterDeclaration[], body: FunctionBody | undefined): ConstructorDeclaration {
     return new NodeObject(SyntaxKind.Constructor, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
-        type,
         body,
     }) as unknown as ConstructorDeclaration;
 }
@@ -1511,11 +1517,10 @@ export function createFunctionTypeNode(typeParameters: readonly TypeParameterDec
     }) as unknown as FunctionTypeNode;
 }
 
-export function createGetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): GetAccessorDeclaration {
+export function createGetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): GetAccessorDeclaration {
     return new NodeObject(SyntaxKind.GetAccessor, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
         type,
         body,
@@ -1654,9 +1659,10 @@ export function createJSDocAllType(): JSDocAllType {
     return new NodeObject(SyntaxKind.JSDocAllType, undefined) as unknown as JSDocAllType;
 }
 
-export function createJSDocAugmentsTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>): JSDocAugmentsTag {
+export function createJSDocAugmentsTag(tagName: Identifier, class_: ExpressionWithTypeArguments & { readonly expression: Identifier | PropertyAccessEntityNameExpression; }, comment?: string | NodeArray<JSDocComment>): JSDocAugmentsTag {
     return new NodeObject(SyntaxKind.JSDocAugmentsTag, {
         tagName,
+        class: class_,
         comment,
     }) as unknown as JSDocAugmentsTag;
 }
@@ -1677,9 +1683,10 @@ export function createJSDocDeprecatedTag(tagName: Identifier, comment?: string |
     }) as unknown as JSDocDeprecatedTag;
 }
 
-export function createJSDocImplementsTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>): JSDocImplementsTag {
+export function createJSDocImplementsTag(tagName: Identifier, class_: ExpressionWithTypeArguments & { readonly expression: Identifier | PropertyAccessEntityNameExpression; }, comment?: string | NodeArray<JSDocComment>): JSDocImplementsTag {
     return new NodeObject(SyntaxKind.JSDocImplementsTag, {
         tagName,
+        class: class_,
         comment,
     }) as unknown as JSDocImplementsTag;
 }
@@ -1824,9 +1831,10 @@ export function createJSDocSatisfiesTag(tagName: Identifier, typeExpression: JSD
     }) as unknown as JSDocSatisfiesTag;
 }
 
-export function createJSDocSeeTag(tagName: Identifier, comment?: string | NodeArray<JSDocComment>): JSDocSeeTag {
+export function createJSDocSeeTag(tagName: Identifier, name: JSDocNameReference | undefined, comment?: string | NodeArray<JSDocComment>): JSDocSeeTag {
     return new NodeObject(SyntaxKind.JSDocSeeTag, {
         tagName,
+        name,
         comment,
     }) as unknown as JSDocSeeTag;
 }
@@ -1984,11 +1992,9 @@ export function createJsxSpreadAttribute(expression: Expression): JsxSpreadAttri
     }) as unknown as JsxSpreadAttribute;
 }
 
-export function createJsxText(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, containsOnlyTriviaWhiteSpaces: boolean): JsxText {
+export function createJsxText(text: string, containsOnlyTriviaWhiteSpaces: boolean): JsxText {
     return new NodeObject(SyntaxKind.JsxText, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
         containsOnlyTriviaWhiteSpaces,
     }) as unknown as JsxText;
 }
@@ -2024,11 +2030,12 @@ export function createMetaProperty(keywordToken: SyntaxKind.NewKeyword | SyntaxK
     }) as unknown as MetaProperty;
 }
 
-export function createMethodDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): MethodDeclaration {
+export function createMethodDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: PropertyName, postfixToken: QuestionToken | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): MethodDeclaration {
     return new NodeObject(SyntaxKind.MethodDeclaration, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         asteriskToken,
         name,
+        postfixToken,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
         type,
@@ -2036,10 +2043,11 @@ export function createMethodDeclaration(modifiers: readonly ModifierLike[] | und
     }) as unknown as MethodDeclaration;
 }
 
-export function createMethodSignature(modifiers: readonly Modifier[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined): MethodSignature {
+export function createMethodSignature(modifiers: readonly Modifier[] | undefined, name: PropertyName, postfixToken: QuestionToken | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined): MethodSignature {
     return new NodeObject(SyntaxKind.MethodSignature, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
+        postfixToken,
         typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
         type,
@@ -2113,11 +2121,9 @@ export function createNonNullExpression(expression: Expression): NonNullExpressi
     }) as unknown as NonNullExpression;
 }
 
-export function createNoSubstitutionTemplateLiteral(text: string, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean, rawText?: string, templateFlags?: TokenFlags): NoSubstitutionTemplateLiteral {
+export function createNoSubstitutionTemplateLiteral(text: string, rawText?: string, templateFlags?: TokenFlags): NoSubstitutionTemplateLiteral {
     return new NodeObject(SyntaxKind.NoSubstitutionTemplateLiteral, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
         rawText,
         templateFlags,
     }) as unknown as NoSubstitutionTemplateLiteral;
@@ -2127,11 +2133,9 @@ export function createNullLiteral(): NullLiteral {
     return new NodeObject(SyntaxKind.NullKeyword, undefined) as unknown as NullLiteral;
 }
 
-export function createNumericLiteral(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, numericLiteralFlags: TokenFlags): NumericLiteral {
+export function createNumericLiteral(text: string, numericLiteralFlags: TokenFlags): NumericLiteral {
     return new NodeObject(SyntaxKind.NumericLiteral, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
         numericLiteralFlags,
     }) as unknown as NumericLiteral;
 }
@@ -2216,26 +2220,29 @@ export function createPropertyAccessExpression(expression: LeftHandSideExpressio
     }) as unknown as PropertyAccessExpression;
 }
 
-export function createPropertyAssignment(name: PropertyName, initializer: Expression): PropertyAssignment {
+export function createPropertyAssignment(name: PropertyName, postfixToken: QuestionToken | undefined, initializer: Expression): PropertyAssignment {
     return new NodeObject(SyntaxKind.PropertyAssignment, {
         name,
+        postfixToken,
         initializer,
     }) as unknown as PropertyAssignment;
 }
 
-export function createPropertyDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, type: TypeNode | undefined, initializer: Expression | undefined): PropertyDeclaration {
+export function createPropertyDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): PropertyDeclaration {
     return new NodeObject(SyntaxKind.PropertyDeclaration, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
+        postfixToken,
         type,
         initializer,
     }) as unknown as PropertyDeclaration;
 }
 
-export function createPropertySignature(modifiers: readonly Modifier[] | undefined, name: PropertyName, type: TypeNode | undefined): PropertySignature {
+export function createPropertySignature(modifiers: readonly Modifier[] | undefined, name: PropertyName, postfixToken: QuestionToken | undefined, type: TypeNode | undefined): PropertySignature {
     return new NodeObject(SyntaxKind.PropertySignature, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
+        postfixToken,
         type,
     }) as unknown as PropertySignature;
 }
@@ -2247,11 +2254,9 @@ export function createQualifiedName(left: EntityName, right: Identifier): Qualif
     }) as unknown as QualifiedName;
 }
 
-export function createRegularExpressionLiteral(text: string, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean): RegularExpressionLiteral {
+export function createRegularExpressionLiteral(text: string): RegularExpressionLiteral {
     return new NodeObject(SyntaxKind.RegularExpressionLiteral, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
     }) as unknown as RegularExpressionLiteral;
 }
 
@@ -2274,26 +2279,23 @@ export function createSatisfiesExpression(expression: Expression, type: TypeNode
     }) as unknown as SatisfiesExpression;
 }
 
-export function createSemicolonClassElement(name: PropertyName | undefined): SemicolonClassElement {
-    return new NodeObject(SyntaxKind.SemicolonClassElement, {
-        name,
-    }) as unknown as SemicolonClassElement;
+export function createSemicolonClassElement(): SemicolonClassElement {
+    return new NodeObject(SyntaxKind.SemicolonClassElement, undefined) as unknown as SemicolonClassElement;
 }
 
-export function createSetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode | undefined, body: FunctionBody | undefined): SetAccessorDeclaration {
+export function createSetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, parameters: readonly ParameterDeclaration[], body: FunctionBody | undefined): SetAccessorDeclaration {
     return new NodeObject(SyntaxKind.SetAccessor, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
         parameters: createNodeArray(parameters),
-        type,
         body,
     }) as unknown as SetAccessorDeclaration;
 }
 
-export function createShorthandPropertyAssignment(name: Identifier, equalsToken: EqualsToken | undefined, objectAssignmentInitializer: Expression | undefined): ShorthandPropertyAssignment {
+export function createShorthandPropertyAssignment(name: Identifier, postfixToken: QuestionToken | undefined, equalsToken: EqualsToken | undefined, objectAssignmentInitializer: Expression | undefined): ShorthandPropertyAssignment {
     return new NodeObject(SyntaxKind.ShorthandPropertyAssignment, {
         name,
+        postfixToken,
         equalsToken,
         objectAssignmentInitializer,
     }) as unknown as ShorthandPropertyAssignment;
@@ -2321,11 +2323,9 @@ export function createSpreadElement(expression: Expression): SpreadElement {
     }) as unknown as SpreadElement;
 }
 
-export function createStringLiteral(text: string, isUnterminated?: boolean, hasExtendedUnicodeEscape?: boolean): StringLiteral {
+export function createStringLiteral(text: string): StringLiteral {
     return new NodeObject(SyntaxKind.StringLiteral, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
     }) as unknown as StringLiteral;
 }
 
@@ -2356,11 +2356,9 @@ export function createTemplateExpression(head: TemplateHead, templateSpans: read
     }) as unknown as TemplateExpression;
 }
 
-export function createTemplateHead(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, rawText: string | undefined, templateFlags: TokenFlags): TemplateHead {
+export function createTemplateHead(text: string, rawText: string | undefined, templateFlags: TokenFlags): TemplateHead {
     return new NodeObject(SyntaxKind.TemplateHead, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
         rawText,
         templateFlags,
     }) as unknown as TemplateHead;
@@ -2380,11 +2378,9 @@ export function createTemplateLiteralTypeSpan(type: TypeNode, literal: TemplateM
     }) as unknown as TemplateLiteralTypeSpan;
 }
 
-export function createTemplateMiddle(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, rawText: string | undefined, templateFlags: TokenFlags): TemplateMiddle {
+export function createTemplateMiddle(text: string, rawText: string | undefined, templateFlags: TokenFlags): TemplateMiddle {
     return new NodeObject(SyntaxKind.TemplateMiddle, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
         rawText,
         templateFlags,
     }) as unknown as TemplateMiddle;
@@ -2397,11 +2393,9 @@ export function createTemplateSpan(expression: Expression, literal: TemplateMidd
     }) as unknown as TemplateSpan;
 }
 
-export function createTemplateTail(text: string, isUnterminated: boolean | undefined, hasExtendedUnicodeEscape: boolean | undefined, rawText: string | undefined, templateFlags: TokenFlags): TemplateTail {
+export function createTemplateTail(text: string, rawText: string | undefined, templateFlags: TokenFlags): TemplateTail {
     return new NodeObject(SyntaxKind.TemplateTail, {
         text,
-        isUnterminated,
-        hasExtendedUnicodeEscape,
         rawText,
         templateFlags,
     }) as unknown as TemplateTail;
@@ -2474,11 +2468,12 @@ export function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | Synta
     }) as unknown as TypeOperatorNode;
 }
 
-export function createTypeParameterDeclaration(modifiers: readonly Modifier[] | undefined, name: Identifier, constraint: TypeNode | undefined): TypeParameterDeclaration {
+export function createTypeParameterDeclaration(modifiers: readonly Modifier[] | undefined, name: Identifier, constraint: TypeNode | undefined, default_: TypeNode | undefined): TypeParameterDeclaration {
     return new NodeObject(SyntaxKind.TypeParameter, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
         constraint,
+        default: default_,
     }) as unknown as TypeParameterDeclaration;
 }
 

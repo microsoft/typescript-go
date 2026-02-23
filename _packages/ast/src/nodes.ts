@@ -528,7 +528,7 @@ export interface PropertySignature extends TypeElement {
     readonly parent: TypeLiteralNode | InterfaceDeclaration;
     readonly modifiers?: NodeArray<Modifier>;
     readonly name: PropertyName;                 // Declared property name
-    readonly questionToken?: QuestionToken;      // Present on optional property
+    readonly postfixToken?: QuestionToken;       // Present on optional property
     readonly type?: TypeNode;                    // Optional type annotation
 }
 
@@ -538,8 +538,7 @@ export interface PropertyDeclaration extends ClassElement {
     readonly parent: ClassLikeDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
     readonly name: PropertyName;
-    readonly questionToken?: QuestionToken;      // Present for use with reporting a grammar error for auto-accessors (see `isGrammarError` in utilities.ts)
-    readonly exclamationToken?: ExclamationToken;
+    readonly postfixToken?: QuestionToken | ExclamationToken;
     readonly type?: TypeNode;
     readonly initializer?: Expression;           // Optional initializer
 }
@@ -565,6 +564,7 @@ export interface PropertyAssignment extends ObjectLiteralElement {
     readonly kind: SyntaxKind.PropertyAssignment;
     readonly parent: ObjectLiteralExpression;
     readonly name: PropertyName;
+    readonly postfixToken?: QuestionToken;
     readonly initializer: Expression;
 }
 
@@ -572,6 +572,7 @@ export interface ShorthandPropertyAssignment extends ObjectLiteralElement {
     readonly kind: SyntaxKind.ShorthandPropertyAssignment;
     readonly parent: ObjectLiteralExpression;
     readonly name: Identifier;
+    readonly postfixToken?: QuestionToken;
     // used when ObjectLiteralExpression is used in ObjectAssignmentPattern
     // it is a grammar error to appear in actual object initializer (see `isGrammarError` in utilities.ts):
     readonly equalsToken?: EqualsToken;
@@ -653,6 +654,7 @@ export interface MethodSignature extends SignatureDeclarationBase, TypeElement {
     readonly parent: TypeLiteralNode | InterfaceDeclaration;
     readonly modifiers?: NodeArray<Modifier>;
     readonly name: PropertyName;
+    readonly postfixToken?: QuestionToken;
 }
 
 // Note that a MethodDeclaration is considered both a ClassElement and an ObjectLiteralElement.
@@ -669,6 +671,7 @@ export interface MethodDeclaration extends FunctionLikeDeclarationBase, ClassEle
     readonly parent: ClassLikeDeclaration | ObjectLiteralExpression;
     readonly modifiers?: NodeArray<ModifierLike> | undefined;
     readonly name: PropertyName;
+    readonly postfixToken?: QuestionToken;
     readonly body?: FunctionBody | undefined;
 }
 
@@ -1254,8 +1257,6 @@ export interface ArrowFunction extends Expression, FunctionLikeDeclarationBase {
 // For a NumericLiteral, the stored value is the toString() representation of the number. For example 1, 1.00, and 1e0 are all stored as just "1".
 export interface LiteralLikeNode extends Node {
     text: string;
-    isUnterminated?: boolean;
-    hasExtendedUnicodeEscape?: boolean;
 }
 
 export interface TemplateLiteralLikeNode extends LiteralLikeNode {

@@ -216,8 +216,21 @@ function isNodeType(typeNode: ts.TypeNode): boolean {
 
 const EXCLUDED_PROPS = new Set(["kind", "parent", "pos", "end", "flags"]);
 
+// Per-interface property exclusions for inherited properties that are semantically
+// meaningless on certain node types (e.g. constructors don't have type parameters).
+const INTERFACE_EXCLUDED_PROPS: Record<string, Set<string>> = {
+    ConstructorDeclaration: new Set(["typeParameters", "type", "name"]),
+    GetAccessorDeclaration: new Set(["typeParameters"]),
+    SetAccessorDeclaration: new Set(["typeParameters", "type"]),
+    SemicolonClassElement: new Set(["name"]),
+};
+
 function isBrandField(name: string): boolean {
     return name.startsWith("_") && (name.endsWith("Brand") || name.endsWith("brand"));
+}
+
+function isNeverType(typeNode: ts.TypeNode): boolean {
+    return typeNode.kind === ts.SyntaxKind.NeverKeyword;
 }
 
 function substituteTypeParams(type: string, substitutions: Map<string, string>): string {
@@ -286,6 +299,19 @@ function safeParamName(name: string): string {
     return RESERVED_WORDS.has(name) ? `${name}_` : name;
 }
 
+// Map protocol child property names that differ from TS interface property names.
+// The Go AST unifies questionToken/exclamationToken into a single PostfixToken field.
+const PROTOCOL_NAME_MAP: Record<string, string> = {
+};
+
+function protocolToInterfaceName(protocolName: string, propMap: Map<string, PropertyInfo>): string {
+    // If the protocol name directly exists in the interface, use it
+    if (propMap.has(protocolName)) return protocolName;
+    // Otherwise, try the mapping
+    const mapped = PROTOCOL_NAME_MAP[protocolName];
+    return mapped ?? protocolName;
+}
+
 const factoryDefs: FactoryDef[] = [];
 const allPropertyNames = new Set<string>();
 
@@ -300,6 +326,8 @@ for (const [name, iface] of interfaces) {
     const propMap = new Map<string, PropertyInfo>();
     for (const prop of allProps) {
         if (EXCLUDED_PROPS.has(prop.name) || isBrandField(prop.name)) continue;
+        if (isNeverType(prop.typeNode)) continue;
+        if (INTERFACE_EXCLUDED_PROPS[name]?.has(prop.name)) continue;
         propMap.set(prop.name, prop);
     }
 
@@ -315,7 +343,9 @@ for (const [name, iface] of interfaces) {
         const ordered: PropertyInfo[] = [];
         const childPropSet = new Set(order);
         const remaining = new Map(propMap);
-        for (const propName of order) {
+        for (const protocolName of order) {
+            // Map Go-side protocol names to TS interface property names
+            const propName = protocolToInterfaceName(protocolName, remaining);
             const prop = remaining.get(propName);
             if (prop) {
                 ordered.push(prop);
