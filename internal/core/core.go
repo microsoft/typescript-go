@@ -459,7 +459,7 @@ type UTF16Offset int
 func UTF16Len(s string) UTF16Offset {
 	// Fast path: scan for non-ASCII bytes. For ASCII-only strings,
 	// each byte is one UTF-16 code unit, so we can return len(s) directly.
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if s[i] >= utf8.RuneSelf {
 			// Found non-ASCII; count the ASCII prefix, then decode the rest.
 			n := UTF16Offset(i)
