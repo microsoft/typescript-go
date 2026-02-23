@@ -17,7 +17,9 @@ func TestAutoImportReExportFromAmbientModule(t *testing.T) {
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
   "compilerOptions": {
-    "module": "commonjs"
+    "module": "commonjs",
+    "types": ["*"],
+    "lib": ["es5"]
   }
 }
 // @Filename: /home/src/workspaces/project/node_modules/@types/node/index.d.ts
@@ -47,7 +49,7 @@ access/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "accessSync",
@@ -57,16 +59,16 @@ access/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "accessSync",
 		Source:      "fs-extra",
 		Description: "Add import from \"fs-extra\"",
-		NewFileContent: PtrTo(`import { accessSync } from "fs-extra";
+		NewFileContent: new(`import { accessSync } from "fs-extra";
 
 access`),
 		AutoImportFix: &lsproto.AutoImportFix{

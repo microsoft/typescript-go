@@ -330,7 +330,7 @@ func isNotPrologueDirective(node *ast.Node) bool {
 	return !ast.IsPrologueDirective(node)
 }
 
-func rangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
+func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
 	return rangeStartIsOnSameLineAsRangeEnd(r, r, sourceFile)
 }
 
@@ -625,6 +625,16 @@ func isBinaryOperation(node *ast.Node, token ast.Kind) bool {
 		node.AsBinaryExpression().OperatorToken.Kind == token
 }
 
+func mixingBinaryOperatorsRequiresParentheses(a ast.Kind, b ast.Kind) bool {
+	if a == ast.KindQuestionQuestionToken {
+		return b == ast.KindAmpersandAmpersandToken || b == ast.KindBarBarToken
+	}
+	if b == ast.KindQuestionQuestionToken {
+		return a == ast.KindAmpersandAmpersandToken || a == ast.KindBarBarToken
+	}
+	return false
+}
+
 func isImmediatelyInvokedFunctionExpressionOrArrowFunction(node *ast.Expression) bool {
 	node = ast.SkipPartiallyEmittedExpressions(node)
 	if !ast.IsCallExpression(node) {
@@ -859,7 +869,7 @@ func IsPinnedComment(text string, comment ast.CommentRange) bool {
 
 func calculateIndent(text string, pos int, end int) int {
 	currentLineIndent := 0
-	indentSize := len(getIndentString(1))
+	indentSize := GetDefaultIndentSize()
 	for pos < end {
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		if !stringutil.IsWhiteSpaceSingleLine(ch) {

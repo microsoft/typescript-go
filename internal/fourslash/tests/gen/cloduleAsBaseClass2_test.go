@@ -14,14 +14,16 @@ func TestCloduleAsBaseClass2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: cloduleAsBaseClass2_0.ts
+	const content = `// @module: commonjs
+// @strict: false
+// @Filename: cloduleAsBaseClass2_0.ts
 class A {
     constructor(x: number) { }
     foo() { }
     static bar() { }
 }
 
-module A {
+namespace A {
     export var x = 1;
     export function baz() { }
 }
@@ -66,19 +68,19 @@ D./*2*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "bar",
-					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "bar2",
-					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "baz",
-					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+					SortText: new(string(ls.SortTextLocationPriority)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "x",
-					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+					SortText: new(string(ls.SortTextLocationPriority)),
 				},
 			},
 			Excludes: []string{

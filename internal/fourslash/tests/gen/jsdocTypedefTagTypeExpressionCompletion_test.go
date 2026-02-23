@@ -14,7 +14,8 @@ func TestJsdocTypedefTagTypeExpressionCompletion(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface I {
+	const content = `// @lib: es5
+interface I {
     age: number;
 }
  class Foo {
@@ -55,11 +56,11 @@ var y;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "Foo",
-					Kind:  PtrTo(lsproto.CompletionItemKindClass),
+					Kind:  new(lsproto.CompletionItemKindClass),
 				},
 				&lsproto.CompletionItem{
 					Label: "I",
-					Kind:  PtrTo(lsproto.CompletionItemKindInterface),
+					Kind:  new(lsproto.CompletionItemKindInterface),
 				},
 			},
 			Excludes: []string{
@@ -86,7 +87,7 @@ var y;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "Namespace",
-					Kind:  PtrTo(lsproto.CompletionItemKindModule),
+					Kind:  new(lsproto.CompletionItemKindModule),
 				},
 			},
 		},
@@ -101,7 +102,7 @@ var y;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "SomeType",
-					Kind:  PtrTo(lsproto.CompletionItemKindInterface),
+					Kind:  new(lsproto.CompletionItemKindInterface),
 				},
 			},
 		},
@@ -116,19 +117,19 @@ var y;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "Foo",
-					Kind:  PtrTo(lsproto.CompletionItemKindClass),
+					Kind:  new(lsproto.CompletionItemKindClass),
 				},
 				&lsproto.CompletionItem{
 					Label: "x",
-					Kind:  PtrTo(lsproto.CompletionItemKindVariable),
+					Kind:  new(lsproto.CompletionItemKindVariable),
 				},
 				&lsproto.CompletionItem{
 					Label: "x1",
-					Kind:  PtrTo(lsproto.CompletionItemKindVariable),
+					Kind:  new(lsproto.CompletionItemKindVariable),
 				},
 				&lsproto.CompletionItem{
 					Label: "y",
-					Kind:  PtrTo(lsproto.CompletionItemKindVariable),
+					Kind:  new(lsproto.CompletionItemKindVariable),
 				},
 			},
 			Excludes: []string{
@@ -154,15 +155,15 @@ var y;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "method3",
-					Kind:  PtrTo(lsproto.CompletionItemKindMethod),
+					Kind:  new(lsproto.CompletionItemKindMethod),
 				},
 				&lsproto.CompletionItem{
 					Label: "method4",
-					Kind:  PtrTo(lsproto.CompletionItemKindMethod),
+					Kind:  new(lsproto.CompletionItemKindMethod),
 				},
 				&lsproto.CompletionItem{
 					Label: "property1",
-					Kind:  PtrTo(lsproto.CompletionItemKindField),
+					Kind:  new(lsproto.CompletionItemKindField),
 				},
 			},
 		},
@@ -178,12 +179,12 @@ var y;`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "method1",
-						Kind:     PtrTo(lsproto.CompletionItemKindMethod),
-						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+						Kind:     new(lsproto.CompletionItemKindMethod),
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: PtrTo(string(ls.SortTextLocationPriority)),
+						SortText: new(string(ls.SortTextLocationPriority)),
 					},
 				}),
 		},

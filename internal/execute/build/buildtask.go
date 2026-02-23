@@ -200,10 +200,6 @@ func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 }
 
 func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path) {
-	if orchestrator.buildSemaphore != nil {
-		orchestrator.buildSemaphore <- struct{}{}        // acquire slot
-		defer func() { <-orchestrator.buildSemaphore }() // release slot
-	}
 	t.errors = nil
 	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
 		t.result.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
@@ -226,7 +222,6 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 			host:  orchestrator.host,
 			trace: tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
 		},
-		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
 	changesComputeStart := orchestrator.opts.Sys.Now()

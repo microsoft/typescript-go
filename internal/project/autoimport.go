@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -54,6 +53,10 @@ func (a *autoImportBuilderFS) GetFileByPath(fileName string, path tspath.Path) F
 	}
 	fh, _ = a.untrackedFiles.LoadOrStore(path, fh)
 	return fh
+}
+
+func (a *autoImportBuilderFS) GetAccessibleEntries(path string) vfs.Entries {
+	return a.snapshotFSBuilder.GetAccessibleEntries(path)
 }
 
 type autoImportRegistryCloneHost struct {
@@ -148,17 +151,18 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		return nil
 	}
 	opts := ast.SourceFileParseOptions{
-		FileName:         fileName,
-		Path:             path,
-		CompilerOptions:  core.EmptyCompilerOptions.SourceFileAffecting(),
-		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+		FileName: fileName,
+		Path:     path,
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
+	result := a.parseCache.Load(key, fh)
 
 	a.filesMu.Lock()
 	a.files = append(a.files, key)
 	a.filesMu.Unlock()
-	return a.parseCache.Acquire(key, fh)
+
+	a.parseCache.Ref(key)
+	return result
 }
 
 // Dispose implements autoimport.RegistryCloneHost.

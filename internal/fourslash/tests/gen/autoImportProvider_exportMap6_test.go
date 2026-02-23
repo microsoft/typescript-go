@@ -18,7 +18,8 @@ func TestAutoImportProvider_exportMap6(t *testing.T) {
 // @Filename: /home/src/workspaces/project/tsconfig.json
 {
   "compilerOptions": {
-    "module": "nodenext"
+    "module": "nodenext",
+    "lib": ["es5"]
   }
 }
 // @Filename: /home/src/workspaces/project/package.json
@@ -84,7 +85,7 @@ fooFrom/**/`
 							ModuleSpecifier: "dependency",
 						},
 					},
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 				&lsproto.CompletionItem{
@@ -94,7 +95,7 @@ fooFrom/**/`
 							ModuleSpecifier: "dependency/lol",
 						},
 					},
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 			},

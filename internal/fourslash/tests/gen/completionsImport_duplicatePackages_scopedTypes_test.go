@@ -14,7 +14,8 @@ func TestCompletionsImport_duplicatePackages_scopedTypes(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: commonjs
+	const content = `// @lib: es5
+// @module: commonjs
 // @esModuleInterop: true
 // @Filename: /node_modules/@types/scope__react-dom/package.json
 { "name": "react-dom", "version": "1.0.0", "types": "./index.d.ts" }
@@ -57,7 +58,7 @@ import "@scope/react";
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "useState",
@@ -67,7 +68,7 @@ import "@scope/react";
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, false),
 		},

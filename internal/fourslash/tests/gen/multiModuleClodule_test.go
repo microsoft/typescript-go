@@ -14,18 +14,19 @@ func TestMultiModuleClodule(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `class C {
+	const content = `// @lib: es5
+class C {
     constructor(x: number) { }
     foo() { }
     bar() { }
     static boo() { }
 }
 
-module C {
+namespace C {
     export var x = 1;
     var y = 2;
 }
-module C {
+namespace C {
     export function foo() { }
     function baz() { return ''; }
 }
@@ -57,19 +58,19 @@ c./*3*/foo = C./*4*/foo;`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "boo",
-						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "foo",
-						SortText: PtrTo(string(ls.SortTextLocationPriority)),
+						SortText: new(string(ls.SortTextLocationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: PtrTo(string(ls.SortTextLocationPriority)),
+						SortText: new(string(ls.SortTextLocationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "x",
-						SortText: PtrTo(string(ls.SortTextLocationPriority)),
+						SortText: new(string(ls.SortTextLocationPriority)),
 					},
 				}),
 		},

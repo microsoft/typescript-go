@@ -11,7 +11,7 @@ func TestFormattingCommentsBeforeErrors(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module A {
+	const content = `namespace A {
     interface B {
         // a
         // b
@@ -29,5 +29,5 @@ func TestFormattingCommentsBeforeErrors(t *testing.T) {
 	f.GoToMarker(t, "1")
 	f.Insert(t, "\n")
 	f.GoToMarker(t, "0")
-	f.VerifyCurrentLineContentIs(t, "        // d ")
+	f.VerifyCurrentLineContent(t, `        // d `)
 }

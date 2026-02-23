@@ -330,7 +330,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Language_and_Environment,
 		Description:              diagnostics.Set_the_JavaScript_language_version_for_emitted_JavaScript_and_include_compatible_library_declarations,
-		DefaultValueDescription:  core.ScriptTargetES5,
+		DefaultValueDescription:  core.ScriptTargetLatestStandard,
 	},
 
 	// moduleOptionDeclaration,
@@ -368,7 +368,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.JavaScript_Support,
 		Description:              diagnostics.Allow_JavaScript_files_to_be_a_part_of_your_program_Use_the_checkJs_option_to_get_errors_from_these_files,
-		DefaultValueDescription:  false,
+		DefaultValueDescription:  diagnostics.X_false_unless_checkJs_is_set,
 	},
 	{
 		Name:                       "checkJs",
@@ -548,7 +548,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Type_Checking,
 		Description:              diagnostics.Enable_all_strict_type_checking_options,
-		DefaultValueDescription:  false,
+		DefaultValueDescription:  true,
 	},
 	{
 		Name:                       "noImplicitAny",
@@ -558,7 +558,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Enable_error_reporting_for_expressions_and_declarations_with_an_implied_any_type,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "strictNullChecks",
@@ -568,7 +568,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.When_type_checking_take_into_account_null_and_undefined,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "strictFunctionTypes",
@@ -578,7 +578,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.When_assigning_functions_check_to_ensure_parameters_and_the_return_values_are_subtype_compatible,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "strictBindCallApply",
@@ -588,7 +588,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Check_that_the_arguments_for_bind_call_and_apply_methods_match_the_original_function,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "strictPropertyInitialization",
@@ -598,7 +598,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Check_for_class_properties_that_are_declared_but_not_set_in_the_constructor,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "strictBuiltinIteratorReturn",
@@ -608,7 +608,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "noImplicitThis",
@@ -618,7 +618,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Enable_error_reporting_when_this_is_given_the_type_any,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                       "useUnknownInCatchVariables",
@@ -628,7 +628,7 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Default_catch_clause_variables_as_unknown_instead_of_any,
-		DefaultValueDescription:    diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
 		Name:                    "alwaysStrict",
@@ -636,10 +636,18 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsSourceFile:       true,
 		AffectsEmit:             true,
 		AffectsBuildInfo:        true,
-		strictFlag:              true,
 		Category:                diagnostics.Type_Checking,
 		Description:             diagnostics.Ensure_use_strict_is_always_emitted,
-		DefaultValueDescription: diagnostics.X_false_unless_strict_is_set,
+		DefaultValueDescription: true,
+	},
+	{
+		Name:                       "stableTypeOrdering",
+		Kind:                       CommandLineOptionTypeBoolean,
+		AffectsSemanticDiagnostics: true,
+		AffectsBuildInfo:           true,
+		Category:                   diagnostics.Type_Checking,
+		Description:                diagnostics.Ensure_types_are_ordered_stably_and_deterministically_across_compilations,
+		DefaultValueDescription:    true,
 	},
 
 	// Additional Checks
@@ -793,7 +801,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsBuildInfo:           true,
 		Category:                   diagnostics.Interop_Constraints,
 		Description:                diagnostics.Allow_import_x_from_y_when_a_module_doesn_t_have_a_default_export,
-		DefaultValueDescription:    diagnostics.X_module_system_or_esModuleInterop,
+		DefaultValueDescription:    true,
 	},
 	{
 		Name:                       "esModuleInterop",
@@ -879,7 +887,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsBuildInfo:           true,
 		Category:                   diagnostics.Modules,
 		Description:                diagnostics.Check_side_effect_imports,
-		DefaultValueDescription:    false,
+		DefaultValueDescription:    true,
 	},
 
 	// Source Maps
@@ -1177,16 +1185,6 @@ var optionsForCompiler = []*CommandLineOption{
 		Description:                diagnostics.Emit_ECMAScript_standard_compliant_class_fields,
 		DefaultValueDescription:    diagnostics.X_true_for_ES2022_and_above_including_ESNext,
 	},
-	{
-		Name:                    "preserveValueImports",
-		Kind:                    CommandLineOptionTypeBoolean,
-		AffectsEmit:             true,
-		AffectsBuildInfo:        true,
-		Category:                diagnostics.Backwards_Compatibility,
-		Description:             diagnostics.Preserve_unused_imported_values_in_the_JavaScript_output_that_would_otherwise_be_removed,
-		DefaultValueDescription: false,
-	},
-
 	{
 		// A list of plugins to load in the language service
 		Name:           "plugins",

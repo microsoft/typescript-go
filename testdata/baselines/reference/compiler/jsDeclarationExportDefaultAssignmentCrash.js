@@ -7,6 +7,7 @@ exports.default = () => {
 
 
 //// [index.js]
+"use strict";
 exports.default = () => {
     return 1234;
 };

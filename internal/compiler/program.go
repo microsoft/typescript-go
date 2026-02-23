@@ -10,13 +10,13 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -39,11 +39,38 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
-	JSDocParsingMode            ast.JSDocParsingMode
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
 	return p.UseSourceOfProjectReference && !p.Config.CompilerOptions().DisableSourceOfProjectReferenceRedirect.IsTrue()
+}
+
+type lazyValue[T any] struct {
+	value       *T
+	once        sync.Once
+	initialized atomic.Bool
+}
+
+func (l *lazyValue[T]) getValue(compute func() *T) *T {
+	l.once.Do(func() {
+		if l.value == nil {
+			l.value = compute()
+		}
+		l.initialized.Store(true)
+	})
+	return l.value
+}
+
+func (l *lazyValue[T]) tryReuse(from *lazyValue[T]) {
+	if from.initialized.Load() {
+		l.value = from.value
+		l.initialized.Store(true)
+	}
+}
+
+type packageNamesInfo struct {
+	resolved   *collections.Set[string]
+	unresolved *collections.Set[string]
 }
 
 type Program struct {
@@ -68,15 +95,11 @@ type Program struct {
 	sourceFilesToEmit     []*ast.SourceFile
 
 	// Cached unresolved imports for ATA
-	unresolvedImportsOnce sync.Once
-	unresolvedImports     *collections.Set[string]
-	knownSymlinks         *symlinks.KnownSymlinks
-	knownSymlinksOnce     sync.Once
+	unresolvedImports lazyValue[collections.Set[string]]
+	knownSymlinks     lazyValue[symlinks.KnownSymlinks]
 
 	// Used by auto-imports
-	packageNamesOnce       sync.Once
-	resolvedPackageNames   *collections.Set[string]
-	unresolvedPackageNames *collections.Set[string]
+	packageNames lazyValue[packageNamesInfo]
 
 	// Used by workspace/symbol
 	hasTSFileOnce sync.Once
@@ -241,18 +264,19 @@ func NewProgram(opts ProgramOptions) *Program {
 // Return an updated program for which it is known that only the file with the given path has changed.
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost) (*Program, bool) {
-	oldFile := p.filesByPath[changedFilePath]
 	newOpts := p.opts
 	newOpts.Host = newHost
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
-	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(newOpts), false
-	}
+
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets
 	// might need recalculation.
-	if p.deduplicatedPaths.Has(changedFilePath) {
-		// File is either a canonical file or a redirect target; either way, need full rebuild
+	if _, exists := p.redirectFilesByPath[changedFilePath]; exists {
+		return NewProgram(newOpts), false
+	}
+
+	oldFile := p.filesByPath[changedFilePath]
+	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
 	}
 	// TODO: reverify compiler options when config has changed?
@@ -263,11 +287,10 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
-		unresolvedImports:           p.unresolvedImports,
-		resolvedPackageNames:        p.resolvedPackageNames,
-		unresolvedPackageNames:      p.unresolvedPackageNames,
-		knownSymlinks:               p.knownSymlinks,
 	}
+	result.unresolvedImports.tryReuse(&p.unresolvedImports)
+	result.knownSymlinks.tryReuse(&p.knownSymlinks)
+	result.packageNames.tryReuse(&p.packageNames)
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
 	result.files = slices.Clone(result.files)
@@ -275,10 +298,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
 	updateFileIncludeProcessor(result)
-	result.knownSymlinks = symlinks.NewKnownSymlink(result.GetCurrentDirectory(), result.UseCaseSensitiveFileNames())
-	if len(result.resolvedModules) > 0 || len(result.typeResolutionsInFile) > 0 {
-		result.knownSymlinks.SetSymlinksFromResolutions(result.ForEachResolvedModule, result.ForEachResolvedTypeReferenceDirective)
-	}
 	return result, true
 }
 
@@ -334,13 +353,7 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 // GetUnresolvedImports returns the unresolved imports for this program.
 // The result is cached and computed only once.
 func (p *Program) GetUnresolvedImports() *collections.Set[string] {
-	p.unresolvedImportsOnce.Do(func() {
-		if p.unresolvedImports == nil {
-			p.unresolvedImports = p.extractUnresolvedImports()
-		}
-	})
-
-	return p.unresolvedImports
+	return p.unresolvedImports.getValue(p.extractUnresolvedImports)
 }
 
 func (p *Program) extractUnresolvedImports() *collections.Set[string] {
@@ -657,12 +670,9 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("outFile", "", "")
 	}
 
-	// if options.Target == core.ScriptTargetES3 {
-	// 	createRemovedOptionDiagnostic("target", "ES3", "")
-	// }
-	// if options.Target == core.ScriptTargetES5 {
-	// 	createRemovedOptionDiagnostic("target", "ES5", "")
-	// }
+	if options.Target == core.ScriptTargetES5 {
+		createRemovedOptionDiagnostic("target", "ES5", "")
+	}
 
 	if options.Module == core.ModuleKindAMD {
 		createRemovedOptionDiagnostic("module", "AMD", "")
@@ -672,6 +682,10 @@ func (p *Program) verifyCompilerOptions() {
 	}
 	if options.Module == core.ModuleKindUMD {
 		createRemovedOptionDiagnostic("module", "UMD", "")
+	}
+
+	if options.AlwaysStrict.IsFalse() {
+		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
 
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
@@ -897,7 +911,7 @@ func (p *Program) verifyCompilerOptions() {
 	moduleKind := options.GetEmitModuleKind()
 
 	if options.AllowImportingTsExtensions.IsTrue() && !(options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()) {
-		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set)
+		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewriteRelativeImportExtensions_is_set)
 	}
 
 	moduleResolution := options.GetModuleResolutionKind()
@@ -1405,9 +1419,10 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 		}
 	}
 
+	newLine := p.Options().NewLine.GetNewLineCharacter()
 	writerPool := &sync.Pool{
 		New: func() any {
-			return printer.NewTextWriter(p.Options().NewLine.GetNewLineCharacter())
+			return printer.NewTextWriter(newLine, 0)
 		},
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
@@ -1567,6 +1582,10 @@ func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFil
 	return file
 }
 
+func (p *Program) FilesByPath() map[tspath.Path]*ast.SourceFile {
+	return p.filesByPath
+}
+
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
 }
@@ -1574,6 +1593,8 @@ func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 func (p *Program) HasSameFileNames(other *Program) bool {
 	return maps.EqualFunc(p.filesByPath, other.filesByPath, func(a, b *ast.SourceFile) bool {
 		// checks for casing differences on case-insensitive file systems
+		return a.FileName() == b.FileName()
+	}) && maps.EqualFunc(p.redirectFilesByPath, other.redirectFilesByPath, func(a, b *redirectsFile) bool {
 		return a.FileName() == b.FileName()
 	})
 }
@@ -1598,15 +1619,40 @@ func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	toRelativeFileName := func(fileName string) string {
 		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
 	}
-	for _, file := range p.GetSourceFiles() {
+	filesExplained := 0
+	explainFile := func(file ast.HasFileName) {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
 			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
-		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
+		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file.Path(), toRelativeFileName) {
 			fmt.Fprintln(w, "  ", diag.Localize(locale))
 		}
+		filesExplained++
 	}
+
+	redirectFiles := slices.Collect(maps.Values(p.redirectFilesByPath))
+	slices.SortFunc(redirectFiles, func(a, b *redirectsFile) int {
+		return a.index - b.index
+	})
+
+	files := p.GetSourceFiles()
+	sourceFileIndex := 0
+	explainSourceFiles := func(endIndex int) {
+		for filesExplained < endIndex {
+			explainFile(files[sourceFileIndex])
+			sourceFileIndex++
+		}
+	}
+
+	for _, redirectFile := range redirectFiles {
+		// Explain all sourceFiles till we reach this redirectFile index
+		explainSourceFiles(redirectFile.index)
+		explainFile(redirectFile)
+	}
+
+	// Explain any remaining sourceFiles
+	explainSourceFiles(len(files) + len(redirectFiles))
 }
 
 func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {
@@ -1660,50 +1706,58 @@ func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmi
 }
 
 func (p *Program) ResolvedPackageNames() *collections.Set[string] {
-	p.collectPackageNames()
-	return p.resolvedPackageNames
+	return p.collectPackageNames().resolved
 }
 
 func (p *Program) UnresolvedPackageNames() *collections.Set[string] {
-	p.collectPackageNames()
-	return p.unresolvedPackageNames
+	return p.collectPackageNames().unresolved
 }
 
-func (p *Program) collectPackageNames() {
-	p.packageNamesOnce.Do(func() {
-		if p.resolvedPackageNames == nil {
-			p.resolvedPackageNames = &collections.Set[string]{}
-			p.unresolvedPackageNames = &collections.Set[string]{}
-			for _, file := range p.files {
-				if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
-					// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
-					// as root files, which would not pass IsSourceFileFromExternalLibrary.
+func (p *Program) collectPackageNames() *packageNamesInfo {
+	return p.packageNames.getValue(func() *packageNamesInfo {
+		packageNames := &packageNamesInfo{&collections.Set[string]{}, &collections.Set[string]{}}
+		for _, file := range p.files {
+			if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
+				// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
+				// as root files, which would not pass IsSourceFileFromExternalLibrary.
+				continue
+			}
+			for _, imp := range file.Imports() {
+				if tspath.IsExternalModuleNameRelative(imp.Text()) {
 					continue
 				}
-				for _, imp := range file.Imports() {
-					if tspath.IsExternalModuleNameRelative(imp.Text()) {
-						continue
-					}
-					if resolvedModules, ok := p.resolvedModules[file.Path()]; ok {
-						key := module.ModeAwareCacheKey{Name: imp.Text(), Mode: p.GetModeForUsageLocation(file, imp)}
-						if resolvedModule, ok := resolvedModules[key]; ok && resolvedModule.IsResolved() {
-							if !resolvedModule.IsExternalLibraryImport {
-								continue
-							}
-							name := resolvedModule.PackageId.Name
-							if name == "" {
-								// node_modules package, but no name in package.json - this can happen in a monorepo package,
-								// and unfortunately in lots of fourslash tests
-								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
-							}
-							p.resolvedPackageNames.Add(name)
+				if resolvedModules, ok := p.resolvedModules[file.Path()]; ok {
+					key := module.ModeAwareCacheKey{Name: imp.Text(), Mode: p.GetModeForUsageLocation(file, imp)}
+					if resolvedModule, ok := resolvedModules[key]; ok && resolvedModule.IsResolved() {
+						if !resolvedModule.IsExternalLibraryImport {
 							continue
 						}
+						// Priority order for getting package name:
+						// 1. PackageId.Name (requires both name and version in package.json)
+						name := resolvedModule.PackageId.Name
+						if name == "" {
+							// 2. GetPackageScopeForPath - get name from package.json in the package directory
+							if packageScope := p.resolver.GetPackageScopeForPath(resolvedModule.ResolvedFileName); packageScope != nil && packageScope.Exists() {
+								if scopeName, ok := packageScope.Contents.Name.GetValue(); ok {
+									name = scopeName
+								}
+							}
+						}
+						if name == "" {
+							// 3. GetPackageNameFromDirectory - extract from node_modules path
+							name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
+						}
+						// 4. If all fail, don't add empty string
+						if name != "" {
+							packageNames.resolved.Add(name)
+						}
+						continue
 					}
-					p.unresolvedPackageNames.Add(imp.Text())
 				}
+				packageNames.unresolved.Add(imp.Text())
 			}
 		}
+		return packageNames
 	})
 }
 
@@ -1725,54 +1779,52 @@ func (p *Program) HasTSFile() bool {
 }
 
 func (p *Program) GetSymlinkCache() *symlinks.KnownSymlinks {
-	p.knownSymlinksOnce.Do(func() {
-		if p.knownSymlinks == nil {
-			p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+	return p.knownSymlinks.getValue(func() *symlinks.KnownSymlinks {
+		knownSymlinks := symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 
-			// Resolved modules store realpath information when they're resolved inside node_modules
-			if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
-				p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+		// Resolved modules store realpath information when they're resolved inside node_modules
+		if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
+			knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+		}
+
+		// Check other dependencies for symlinks
+		var seenPackageJsons collections.Set[tspath.Path]
+		for filePath, meta := range p.sourceFileMetaDatas {
+			if meta.PackageJsonDirectory == "" ||
+				!p.SourceFileMayBeEmitted(p.GetSourceFileByPath(filePath), false) ||
+				!seenPackageJsons.AddIfAbsent(p.toPath(meta.PackageJsonDirectory)) {
+				continue
+			}
+			packageJsonName := tspath.CombinePaths(meta.PackageJsonDirectory, "package.json")
+			info := p.GetPackageJsonInfo(packageJsonName)
+			if info.GetContents() == nil {
+				continue
 			}
 
-			// Check other dependencies for symlinks
-			var seenPackageJsons collections.Set[tspath.Path]
-			for filePath, meta := range p.sourceFileMetaDatas {
-				if meta.PackageJsonDirectory == "" ||
-					!p.SourceFileMayBeEmitted(p.GetSourceFileByPath(filePath), false) ||
-					!seenPackageJsons.AddIfAbsent(p.toPath(meta.PackageJsonDirectory)) {
+			for dep := range info.GetContents().GetRuntimeDependencyNames().Keys() {
+				// Skip work in common case: we already saved a symlink for this package directory
+				// in the node_modules adjacent to this package.json
+				possibleDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", dep))
+				if knownSymlinks.HasDirectory(possibleDirectoryPath) {
 					continue
 				}
-				packageJsonName := tspath.CombinePaths(meta.PackageJsonDirectory, "package.json")
-				info := p.GetPackageJsonInfo(packageJsonName)
-				if info.GetContents() == nil {
-					continue
-				}
-
-				for dep := range info.GetContents().GetRuntimeDependencyNames().Keys() {
-					// Skip work in common case: we already saved a symlink for this package directory
-					// in the node_modules adjacent to this package.json
-					possibleDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", dep))
-					if p.knownSymlinks.HasDirectory(possibleDirectoryPath) {
+				if !strings.HasPrefix(dep, "@types") {
+					possibleTypesDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", module.GetTypesPackageName(dep)))
+					if knownSymlinks.HasDirectory(possibleTypesDirectoryPath) {
 						continue
 					}
-					if !strings.HasPrefix(dep, "@types") {
-						possibleTypesDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", module.GetTypesPackageName(dep)))
-						if p.knownSymlinks.HasDirectory(possibleTypesDirectoryPath) {
-							continue
-						}
-					}
+				}
 
-					if packageResolution := p.resolver.ResolvePackageDirectory(dep, packageJsonName, core.ResolutionModeCommonJS, nil); packageResolution.IsResolved() {
-						p.knownSymlinks.ProcessResolution(
-							tspath.CombinePaths(packageResolution.OriginalPath, "package.json"),
-							tspath.CombinePaths(packageResolution.ResolvedFileName, "package.json"),
-						)
-					}
+				if packageResolution := p.resolver.ResolvePackageDirectory(dep, packageJsonName, core.ResolutionModeCommonJS, nil); packageResolution.IsResolved() {
+					knownSymlinks.ProcessResolution(
+						tspath.CombinePaths(packageResolution.OriginalPath, "package.json"),
+						tspath.CombinePaths(packageResolution.ResolvedFileName, "package.json"),
+					)
 				}
 			}
 		}
+		return knownSymlinks
 	})
-	return p.knownSymlinks
 }
 
 func (p *Program) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {

@@ -1191,6 +1191,44 @@ func IsVarUsing(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsUsing
 }
 
+// GetJSDocDeprecatedTag returns the first @deprecated JSDoc tag for the given node, or nil if none exists.
+func GetJSDocDeprecatedTag(node *Node) *Node {
+	for _, jsdoc := range node.JSDoc(nil) {
+		tags := jsdoc.AsJSDoc().Tags
+		if tags != nil {
+			for _, tag := range tags.Nodes {
+				if IsJSDocDeprecatedTag(tag) {
+					return tag
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// IsDeprecatedDeclaration reports whether the given declaration is marked as @deprecated.
+// It checks NodeFlagsPossiblyContainsDeprecatedTag on combined node flags, then confirms
+// by walking up to find the node with the flag and performing a JSDoc lookup.
+func IsDeprecatedDeclaration(declaration *Node) bool {
+	return IsDeprecatedDeclarationWithCachedFlags(declaration, GetCombinedNodeFlags(declaration))
+}
+
+// IsDeprecatedDeclarationWithCachedFlags is the core logic for IsDeprecatedDeclaration,
+// parameterized on pre-computed combined flags so the checker can supply cached flags.
+func IsDeprecatedDeclarationWithCachedFlags(declaration *Node, combinedFlags NodeFlags) bool {
+	if combinedFlags&NodeFlagsPossiblyContainsDeprecatedTag == 0 {
+		return false
+	}
+	// Walk up to find the node that directly has the flag, since JSDoc is
+	// attached to that node (e.g. VariableStatement, not VariableDeclaration).
+	for n := declaration; n != nil; n = n.Parent {
+		if n.Flags&NodeFlagsPossiblyContainsDeprecatedTag != 0 {
+			return GetJSDocDeprecatedTag(n) != nil
+		}
+	}
+	return false
+}
+
 // Gets whether a bound `VariableDeclaration` or `VariableDeclarationList` is part of a `const` declaration.
 func IsVarConst(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsConst
@@ -1810,11 +1848,18 @@ func IsInstanceOfExpression(node *Node) bool {
 }
 
 func IsAnyImportOrReExport(node *Node) bool {
-	return IsAnyImportSyntax(node) || IsExportDeclaration(node)
+	return IsImportNode(node) || IsExportDeclaration(node)
 }
 
+func IsImportNode(node *Node) bool {
+	return IsAnyImportSyntax(node) || NodeKindIs(node, KindJSImportDeclaration)
+}
+
+// Checks if the node is a genuine import declation. In particular the re-parsed KindJSImportDeclaration
+// is explicitly excluded because the callers of this function are typically not prepared to handle it properly.
+// For more permissive check, use IsImportNode.
 func IsAnyImportSyntax(node *Node) bool {
-	return NodeKindIs(node, KindImportDeclaration, KindJSImportDeclaration, KindImportEqualsDeclaration)
+	return NodeKindIs(node, KindImportDeclaration, KindImportEqualsDeclaration)
 }
 
 func IsJsonSourceFile(file *SourceFile) bool {
@@ -2897,12 +2942,20 @@ func IsParameterPropertyModifier(kind Kind) bool {
 }
 
 func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
-	if node.Flags&NodeFlagsHasJSDoc != 0 {
-		if visitNodes(v, node.JSDoc(sourceFile)) {
-			return true
-		}
+	if visitNodes(v, node.JSDoc(sourceFile)) {
+		return true
 	}
 	return node.ForEachChild(v)
+}
+
+func HasTypeArguments(node *Node) bool {
+	switch node.Kind {
+	case KindCallExpression, KindNewExpression, KindTaggedTemplateExpression,
+		KindTypeReference, KindExpressionWithTypeArguments, KindImportType,
+		KindTypeQuery, KindJsxOpeningElement, KindJsxSelfClosingElement:
+		return true
+	}
+	return false
 }
 
 func IsTypeReferenceType(node *Node) bool {
@@ -3609,14 +3662,14 @@ func IsCallOrNewExpression(node *Node) bool {
 }
 
 func IndexOfNode(nodes []*Node, node *Node) int {
-	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
+	index, ok := slices.BinarySearchFunc(nodes, node, CompareNodePositions)
 	if ok {
 		return index
 	}
 	return -1
 }
 
-func compareNodePositions(n1, n2 *Node) int {
+func CompareNodePositions(n1, n2 *Node) int {
 	return n1.Pos() - n2.Pos()
 }
 
@@ -3969,7 +4022,7 @@ func HasContextSensitiveParameters(node *Node) bool {
 			// an implicit 'this' parameter which is subject to contextual typing.
 			parameter := core.FirstOrNil(node.Parameters())
 			if parameter == nil || !IsThisParameter(parameter) {
-				return true
+				return node.Flags&NodeFlagsContainsThis != 0
 			}
 		}
 	}
@@ -4263,4 +4316,42 @@ func isArgumentOfElementAccessExpression(node *Node) bool {
 	return node != nil && node.Parent != nil &&
 		node.Parent.Kind == KindElementAccessExpression &&
 		node.Parent.AsElementAccessExpression().ArgumentExpression == node
+}
+
+// If the given node is part of a subtree of JSDoc nodes that have been cloned into a reparsed construct,
+// return the corresponding reparsed clone in the subtree. Otherwise, just return the node.
+func GetReparsedNodeForNode(node *Node) *Node {
+	if node != nil && node.Flags&NodeFlagsJSDoc != 0 && node.Flags&NodeFlagsReparsed == 0 {
+		if file := GetSourceFileOfNode(node); file != nil && len(file.ReparsedClones) != 0 {
+			pos, found := slices.BinarySearchFunc(file.ReparsedClones, node, CompareNodePositions)
+			if !found && pos > 0 {
+				pos--
+			}
+			candidate := file.ReparsedClones[pos]
+			if node.Loc.ContainedBy(candidate.Loc) {
+				if reparsed := findCloneInNode(candidate, node); reparsed != nil {
+					return reparsed
+				}
+			}
+		}
+	}
+	return node
+}
+
+func findCloneInNode(node *Node, original *Node) *Node {
+	for {
+		if node.Kind == original.Kind && node.Loc == original.Loc {
+			return node
+		}
+		foundContainingChild := node.ForEachChild(func(n *Node) bool {
+			if original.Loc.ContainedBy(n.Loc) {
+				node = n
+				return true
+			}
+			return false
+		})
+		if !foundContainingChild {
+			return nil
+		}
+	}
 }

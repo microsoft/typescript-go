@@ -39,7 +39,14 @@ const (
 	ContainerFlagsIsInterface                                      ContainerFlags = 1 << 6
 	ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor ContainerFlags = 1 << 7
 	ContainerFlagsIsThisContainer                                  ContainerFlags = 1 << 8
+	ContainerFlagsPropagatesThisKeyword                            ContainerFlags = 1 << 9
 )
+
+type ExpandoAssignmentInfo struct {
+	node                *ast.Node
+	container           *ast.Node
+	blockScopeContainer *ast.Node
+}
 
 type Binder struct {
 	file            *ast.SourceFile
@@ -63,7 +70,6 @@ type Binder struct {
 	seenThisKeyword         bool
 	hasExplicitReturn       bool
 	hasFlowEffects          bool
-	inStrictMode            bool
 	inAssignmentPattern     bool
 	seenParseError          bool
 	symbolCount             int
@@ -73,10 +79,7 @@ type Binder struct {
 	flowNodePool            core.Pool[ast.FlowNode]
 	flowListPool            core.Pool[ast.FlowList]
 	singleDeclarationsPool  core.Pool[*ast.Node]
-}
-
-func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
-	return b.file.ParseOptions().CompilerOptions
+	expandoAssignments      []ExpandoAssignmentInfo
 }
 
 type ActiveLabel struct {
@@ -120,9 +123,9 @@ func bindSourceFile(file *ast.SourceFile) {
 		b := getBinder()
 		defer putBinder(b)
 		b.file = file
-		b.inStrictMode = b.options().BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
+		b.bindDeferredExpandoAssignments()
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
 	})
@@ -581,7 +584,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:
 	//
@@ -607,6 +609,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsIdentifier().FlowNode = b.currentFlow
 		b.checkContextualIdentifier(node)
 	case ast.KindThisKeyword, ast.KindSuperKeyword:
+		if node.Kind == ast.KindThisKeyword {
+			b.seenThisKeyword = true
+		}
 		node.AsKeywordExpression().FlowNode = b.currentFlow
 	case ast.KindQualifiedName:
 		if b.currentFlow != nil && ast.IsPartOfTypeQuery(node) {
@@ -680,7 +685,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindFunctionExpression, ast.KindArrowFunction:
 		b.bindFunctionExpression(node)
 	case ast.KindClassExpression, ast.KindClassDeclaration:
-		b.inStrictMode = true
 		b.bindClassLikeDeclaration(node)
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
@@ -711,14 +715,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		b.bindExportAssignment(node)
 	case ast.KindSourceFile:
-		b.updateStrictModeStatementList(node.StatementList())
 		b.bindSourceFileIfExternalModule()
-	case ast.KindBlock:
-		if ast.IsFunctionLikeOrClassStaticBlockDeclaration(node.Parent) {
-			b.updateStrictModeStatementList(node.StatementList())
-		}
-	case ast.KindModuleBlock:
-		b.updateStrictModeStatementList(node.StatementList())
 	case ast.KindJsxAttributes:
 		b.bindJsxAttributes(node)
 	case ast.KindJsxAttribute:
@@ -748,7 +745,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.Flags |= ast.NodeFlagsThisNodeOrAnySubNodesHasError
 		b.seenParseError = true
 	}
-	b.inStrictMode = saveInStrictMode
 	return false
 }
 
@@ -1011,6 +1007,22 @@ func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbo
 }
 
 func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
+	b.expandoAssignments = append(b.expandoAssignments, ExpandoAssignmentInfo{
+		node:                node,
+		container:           b.container,
+		blockScopeContainer: b.blockScopeContainer,
+	})
+}
+
+func (b *Binder) bindDeferredExpandoAssignments() {
+	for _, info := range b.expandoAssignments {
+		b.container = info.container
+		b.blockScopeContainer = info.blockScopeContainer
+		b.bindDeferredExpandoAssignment(info.node)
+	}
+}
+
+func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {
 	parent := getParentOfPropertyAssignment(node)
 	symbol := b.lookupEntity(parent, b.blockScopeContainer)
 	if symbol == nil {
@@ -1021,7 +1033,11 @@ func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
 			b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
 			addLateBoundAssignmentDeclarationToSymbol(node, symbol)
 		} else {
-			b.declareSymbol(ast.GetExports(symbol), symbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
+			// We declare expandos only when there are no non-expando declarations for that name.
+			exports := ast.GetExports(symbol)
+			if existing := exports[b.getDeclarationName(node)]; existing == nil || existing.Flags&ast.SymbolFlagsAssignment != 0 {
+				b.declareSymbol(exports, symbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
+			}
 		}
 	}
 }
@@ -1119,9 +1135,7 @@ func (b *Binder) bindEnumDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
-	if b.inStrictMode {
-		b.checkStrictModeEvalOrArguments(node, node.Name())
-	}
+	b.checkStrictModeEvalOrArguments(node, node.Name())
 	if name := node.Name(); name != nil && !ast.IsBindingPattern(name) {
 		switch {
 		case ast.IsVariableDeclarationInitializedToRequire(node):
@@ -1147,7 +1161,7 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 
 func (b *Binder) bindParameter(node *ast.Node) {
 	decl := node.AsParameterDeclaration()
-	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
 		// strict mode FunctionLikeDeclaration or FunctionExpression(13.1)
 		b.checkStrictModeEvalOrArguments(node, decl.Name())
@@ -1169,11 +1183,7 @@ func (b *Binder) bindParameter(node *ast.Node) {
 
 func (b *Binder) bindFunctionDeclaration(node *ast.Node) {
 	b.checkStrictModeFunctionName(node)
-	if b.inStrictMode {
-		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
-	} else {
-		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
-	}
+	b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
 }
 
 func (b *Binder) getInferTypeContainer(node *ast.Node) *ast.Node {
@@ -1266,7 +1276,7 @@ func (b *Binder) checkContextualIdentifier(node *ast.Node) {
 		if originalKeywordKind == ast.KindIdentifier {
 			return
 		}
-		if b.inStrictMode && originalKeywordKind >= ast.KindFirstFutureReservedWord && originalKeywordKind <= ast.KindLastFutureReservedWord {
+		if originalKeywordKind >= ast.KindFirstFutureReservedWord && originalKeywordKind <= ast.KindLastFutureReservedWord {
 			b.errorOnNode(node, b.getStrictModeIdentifierMessage(node), scanner.DeclarationNameToString(node))
 		} else if originalKeywordKind == ast.KindAwaitKeyword {
 			if ast.IsExternalModule(b.file) && ast.IsInTopLevelContext(node) {
@@ -1301,15 +1311,6 @@ func (b *Binder) getStrictModeIdentifierMessage(node *ast.Node) *diagnostics.Mes
 	return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode
 }
 
-func (b *Binder) updateStrictModeStatementList(statements *ast.NodeList) {
-	if !b.inStrictMode {
-		useStrictDirective := FindUseStrictPrologue(b.file, statements.Nodes)
-		if useStrictDirective != nil {
-			b.inStrictMode = true
-		}
-	}
-}
-
 // Should be called only on prologue directives (ast.IsPrologueDirective(node) should be true)
 func isUseStrictPrologueDirective(sourceFile *ast.SourceFile, node *ast.Node) bool {
 	nodeText := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, node.Expression(), false /*includeTrivia*/)
@@ -1333,7 +1334,7 @@ func FindUseStrictPrologue(sourceFile *ast.SourceFile, statements []*ast.Node) *
 }
 
 func (b *Binder) checkStrictModeFunctionName(node *ast.Node) {
-	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a strict mode FunctionDeclaration or FunctionExpression (13.1))
 		b.checkStrictModeEvalOrArguments(node, node.Name())
 	}
@@ -1352,7 +1353,7 @@ func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Nod
 
 func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	expr := node.AsBinaryExpression()
-	if b.inStrictMode && ast.IsLeftHandSideExpression(expr.Left) && ast.IsAssignmentOperator(expr.OperatorToken.Kind) {
+	if ast.IsLeftHandSideExpression(expr.Left) && ast.IsAssignmentOperator(expr.OperatorToken.Kind) {
 		// ECMA 262 (Annex C) The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 		// Assignment operator(11.13) or of a PostfixExpression(11.3)
 		b.checkStrictModeEvalOrArguments(node, expr.Left)
@@ -1363,7 +1364,7 @@ func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
 	// It is a SyntaxError if a TryStatement with a Catch occurs within strict code and the Identifier of the
 	// Catch production is eval or arguments
 	clause := node.AsCatchClause()
-	if b.inStrictMode && clause.VariableDeclaration != nil {
+	if clause.VariableDeclaration != nil {
 		b.checkStrictModeEvalOrArguments(node, clause.VariableDeclaration.AsVariableDeclaration().Name())
 	}
 }
@@ -1371,7 +1372,7 @@ func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
 func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
 	// Grammar checking
 	expr := node.AsDeleteExpression()
-	if b.inStrictMode && expr.Expression.Kind == ast.KindIdentifier {
+	if expr.Expression.Kind == ast.KindIdentifier {
 		// When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
 		// UnaryExpression is a direct reference to a variable, function argument, or function name
 		b.errorOnNode(expr.Expression, diagnostics.X_delete_cannot_be_called_on_an_identifier_in_strict_mode)
@@ -1383,35 +1384,27 @@ func (b *Binder) checkStrictModePostfixUnaryExpression(node *ast.Node) {
 	// The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 	// Assignment operator(11.13) or of a PostfixExpression(11.3) or as the UnaryExpression
 	// operated upon by a Prefix Increment(11.4.4) or a Prefix Decrement(11.4.5) operator.
-	if b.inStrictMode {
-		b.checkStrictModeEvalOrArguments(node, node.AsPostfixUnaryExpression().Operand)
-	}
+	b.checkStrictModeEvalOrArguments(node, node.AsPostfixUnaryExpression().Operand)
 }
 
 func (b *Binder) checkStrictModePrefixUnaryExpression(node *ast.Node) {
 	// Grammar checking
-	if b.inStrictMode {
-		expr := node.AsPrefixUnaryExpression()
-		if expr.Operator == ast.KindPlusPlusToken || expr.Operator == ast.KindMinusMinusToken {
-			b.checkStrictModeEvalOrArguments(node, expr.Operand)
-		}
+	expr := node.AsPrefixUnaryExpression()
+	if expr.Operator == ast.KindPlusPlusToken || expr.Operator == ast.KindMinusMinusToken {
+		b.checkStrictModeEvalOrArguments(node, expr.Operand)
 	}
 }
 
 func (b *Binder) checkStrictModeWithStatement(node *ast.Node) {
 	// Grammar checking for withStatement
-	if b.inStrictMode {
-		b.errorOnFirstToken(node, diagnostics.X_with_statements_are_not_allowed_in_strict_mode)
-	}
+	b.errorOnFirstToken(node, diagnostics.X_with_statements_are_not_allowed_in_strict_mode)
 }
 
 func (b *Binder) checkStrictModeLabeledStatement(node *ast.Node) {
 	// Grammar checking for labeledStatement
-	if b.inStrictMode {
-		data := node.AsLabeledStatement()
-		if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
-			b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
-		}
+	data := node.AsLabeledStatement()
+	if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
+		b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
 	}
 }
 
@@ -1492,6 +1485,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveExceptionTarget := b.currentExceptionTarget
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
+		saveSeenThisKeyword := b.seenThisKeyword
 		isImmediatelyInvoked := (containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
 			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
 			!isGeneratorFunctionExpression(node) &&
@@ -1517,9 +1511,10 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentContinueTarget = nil
 		b.activeLabelList = nil
 		b.hasExplicitReturn = false
+		b.seenThisKeyword = false
 		b.bindChildren(node)
-		// Reset all reachability check related flags on node (for incremental scenarios)
-		node.Flags &= ^ast.NodeFlagsReachabilityCheckFlags
+		// Reset flags (for incremental scenarios)
+		node.Flags &= ^(ast.NodeFlagsReachabilityCheckFlags | ast.NodeFlagsContainsThis)
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && containerFlags&ContainerFlagsIsFunctionLike != 0 {
 			bodyData := node.BodyData()
 			if bodyData != nil && ast.NodeIsPresent(bodyData.Body) {
@@ -1530,11 +1525,13 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 				bodyData.EndFlowNode = b.currentFlow
 			}
 		}
+		if b.seenThisKeyword {
+			node.Flags |= ast.NodeFlagsContainsThis
+		}
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
 			node.AsSourceFile().EndFlowNode = b.currentFlow
 		}
-
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
 			b.currentFlow = b.finishFlowLabel(b.currentReturnTarget)
@@ -1551,7 +1548,13 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentExceptionTarget = saveExceptionTarget
 		b.activeLabelList = saveActiveLabelList
 		b.hasExplicitReturn = saveHasExplicitReturn
+		if containerFlags&ContainerFlagsPropagatesThisKeyword != 0 {
+			b.seenThisKeyword = saveSeenThisKeyword || b.seenThisKeyword
+		} else {
+			b.seenThisKeyword = saveSeenThisKeyword
+		}
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
+		saveSeenThisKeyword := b.seenThisKeyword
 		b.seenThisKeyword = false
 		b.bindChildren(node)
 		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on Identifier
@@ -1560,6 +1563,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		} else {
 			node.Flags &= ^ast.NodeFlagsContainsThis
 		}
+		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
 	}
@@ -2497,16 +2501,14 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 			return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor | ContainerFlagsIsThisContainer
 		}
 		fallthrough
-	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
+	case ast.KindConstructor, ast.KindFunctionDeclaration, ast.KindClassStaticBlockDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike
-	case ast.KindFunctionDeclaration:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesThisKeyword
 	case ast.KindFunctionExpression:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
 	case ast.KindArrowFunction:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesThisKeyword
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
 	case ast.KindPropertyDeclaration:

@@ -38,7 +38,8 @@ export const Card = () => null;
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "lib": ["es5"]
   },
  "include": ["app"]
 }
@@ -65,7 +66,7 @@ export const Card = () => null;
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 		},

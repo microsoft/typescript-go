@@ -5,9 +5,9 @@
 
  module.exports.y = 0; // Error
 +>module.exports.y : Symbol(y, Decl(a.js, 0, 19))
-+>module.exports : Symbol("/a", Decl(a.js, 0, 0))
-+>module : Symbol("/a", Decl(a.js, 0, 0))
-+>exports : Symbol("/a", Decl(a.js, 0, 0))
++>module.exports : Symbol("./a", Decl(a.js, 0, 0))
++>module : Symbol("./a", Decl(a.js, 0, 0))
++>exports : Symbol("./a", Decl(a.js, 0, 0))
 +>y : Symbol(y, Decl(a.js, 0, 19))
 
  === /b.ts ===
@@ -17,7 +17,7 @@
  exports.default = 0;
  >exports.default : Symbol(default, Decl(g.js, 0, 0))
 ->exports : Symbol(default, Decl(g.js, 0, 0))
-+>exports : Symbol("/g", Decl(g.js, 0, 0))
++>exports : Symbol("./g", Decl(g.js, 0, 0))
  >default : Symbol(default, Decl(g.js, 0, 0))
 
  === /main1.ts ===
@@ -26,9 +26,9 @@
  exports.x = require("./g");
  >exports.x : Symbol(x, Decl(main4.cjs, 0, 0))
 ->exports : Symbol(x, Decl(main4.cjs, 0, 0))
-+>exports : Symbol("/main4", Decl(main4.cjs, 0, 0))
++>exports : Symbol("./main4.cjs", Decl(main4.cjs, 0, 0))
  >x : Symbol(x, Decl(main4.cjs, 0, 0))
  >require : Symbol(require)
-->"./g" : Symbol("/g", Decl(g.js, 0, 0))
+->"./g" : Symbol("./g", Decl(g.js, 0, 0))
 
  === /dummy.ts ===

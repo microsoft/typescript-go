@@ -1,6 +1,6 @@
 --- old.moduleVisibilityTest1.js
 +++ new.moduleVisibilityTest1.js
-@@= skipped -94, +94 lines =@@
+@@= skipped -95, +95 lines =@@
      M.x = 5;
      var y = M.x + M.x;
      class B {
@@ -20,12 +20,3 @@
              function someInnerFunc() { return 2; }
              var someInnerVar = 3;
          }
-@@= skipped -20, +18 lines =@@
-     function someModuleFunction() { return 5; }
- })(M || (M = {}));
- (function (M) {
--    M.c = M.x;
-+    M.c = x;
-     M.meb = M.E.B;
- })(M || (M = {}));
- var cprime = null;

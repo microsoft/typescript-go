@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -81,7 +82,7 @@ func getScanStartPosition(enclosingNode *ast.Node, originalRange core.TextRange,
  * if parent is on the different line - its delta was already contributed
  * to the initial indentation.
  */
-func getOwnOrInheritedDelta(n *ast.Node, options *FormatCodeSettings, sourceFile *ast.SourceFile) int {
+func getOwnOrInheritedDelta(n *ast.Node, options *lsutil.FormatCodeSettings, sourceFile *ast.SourceFile) int {
 	previousLine := -1
 	var child *ast.Node
 	for n != nil {
@@ -220,6 +221,7 @@ func getNonDecoratorTokenPosOfNode(node *ast.Node, file *ast.SourceFile) int {
 func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	w.formattingScanner = s
 	w.indentationOnLastIndentedLine = -1
+	w.lastIndentedLine = -1
 	opt := GetFormatCodeSettingsFromContext(w.ctx)
 	w.formattingContext = NewFormattingContext(w.sourceFile, w.requestKind, opt)
 	// formatting context is used by rules provider
@@ -267,7 +269,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			w.insertIndentation(item.Loc.Pos(), indentation, false)
 		})
 
-		if opt.TrimTrailingWhitespace != false {
+		if opt.TrimTrailingWhitespace {
 			w.trimTrailingWhitespacesForRemainingRange(remainingTrivia)
 		}
 	}
@@ -302,6 +304,9 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			// edit in the middle of a token where the range ended, so if we have a non-contiguous
 			// pair here, we're already done and we can ignore it.
 			parent := astnav.FindPrecedingToken(w.sourceFile, tokenInfo.Loc.End())
+			if parent != nil {
+				parent = parent.Parent
+			}
 			if parent == nil {
 				parent = w.previousParent
 			}
@@ -338,7 +343,7 @@ func (w *formatSpanWorker) processChildNode(
 ) int {
 	debug.Assert(!ast.NodeIsSynthesized(child))
 
-	if ast.NodeIsMissing(child) || isGrammarError(parent, child) {
+	if ast.NodeIsMissing(child) || isGrammarError(parent, child) || child.Flags&ast.NodeFlagsReparsed != 0 {
 		return inheritedIndentation
 	}
 
@@ -448,7 +453,7 @@ func (w *formatSpanWorker) processChildNodes(
 		return
 	}
 
-	if listStartToken != -1 {
+	if listStartToken != ast.KindUnknown {
 		// introduce a new indentation scope for lists (including list start and end tokens)
 		for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
 			tokenInfo := w.formattingScanner.readTokenInfo(parent)
@@ -968,7 +973,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	}
 }
 
-func getIndentationString(indentation int, options *FormatCodeSettings) string {
+func getIndentationString(indentation int, options *lsutil.FormatCodeSettings) string {
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
 	if !options.ConvertTabsToSpaces {
 		tabs := int(math.Floor(float64(indentation) / float64(options.TabSize)))
@@ -1080,7 +1085,7 @@ type dynamicIndenter struct {
 	indentation   int
 	delta         int
 
-	options    *FormatCodeSettings
+	options    *lsutil.FormatCodeSettings
 	sourceFile *ast.SourceFile
 }
 

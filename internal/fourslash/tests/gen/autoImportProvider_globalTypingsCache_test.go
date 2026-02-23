@@ -21,7 +21,7 @@ func TestAutoImportProvider_globalTypingsCache(t *testing.T) {
 // @Filename: /home/src/workspaces/project/package.json
  { "dependencies": { "react-router-dom": "*" } }
 // @Filename: /home/src/workspaces/project/tsconfig.json
- { "compilerOptions": { "module": "commonjs", "allowJs": true, "checkJs": true, "maxNodeModuleJsDepth": 2 }, "typeAcquisition": { "enable": true } }
+ { "compilerOptions": { "module": "commonjs", "lib": ["es5"], "allowJs": true, "checkJs": true, "maxNodeModuleJsDepth": 2 }, "typeAcquisition": { "enable": true } }
 // @Filename: /home/src/workspaces/project/node_modules/react-router-dom/package.json
  { "name": "react-router-dom", "version": "16.8.4", "main": "index.js" }
 // @Filename: /home/src/workspaces/project/node_modules/react-router-dom/index.js
@@ -51,7 +51,7 @@ BrowserRouter/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, false),
 		},

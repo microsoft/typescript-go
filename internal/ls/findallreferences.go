@@ -342,7 +342,7 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 	}
 	parent := node.Parent
 	if parent.Kind == ast.KindExportSpecifier && useLocalSymbolForExportSpecifier {
-		return getLocalSymbolForExportSpecifier(node.AsIdentifier(), symbol, parent.AsExportSpecifier(), checker)
+		return getLocalSymbolForExportSpecifier(node, symbol, parent.AsExportSpecifier(), checker)
 	}
 	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
 	return core.FirstNonNil(symbol.Declarations, func(decl *ast.Node) *ast.Symbol {
@@ -754,7 +754,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 
 func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, checker *checker.Checker) string {
 	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
-		node := entry.node
+		node := ast.GetReparsedNodeForNode(entry.node)
 		kind := entry.kind
 		parent := node.Parent
 		name := originalNode.Text()
@@ -1135,8 +1135,8 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 	}
 
 	filesToSearch := sourceFiles
-	if searchSpaceNode.Kind == ast.KindSourceFile {
-		filesToSearch = []*ast.SourceFile{searchSpaceNode.AsSourceFile()}
+	if searchSpaceNode.Kind != ast.KindSourceFile {
+		filesToSearch = []*ast.SourceFile{ast.GetSourceFileOfNode(searchSpaceNode)}
 	}
 	references := core.Map(
 		core.FlatMap(filesToSearch, func(sourceFile *ast.SourceFile) []*ast.Node {
@@ -2000,7 +2000,7 @@ func (state *refState) getReferencesAtExportSpecifier(
 	exportDeclaration := exportSpecifier.Parent.Parent.AsExportDeclaration()
 	propertyName := exportSpecifier.PropertyName
 	name := exportSpecifier.Name()
-	localSymbol := getLocalSymbolForExportSpecifier(referenceLocation.AsIdentifier(), referenceSymbol, exportSpecifier, state.checker)
+	localSymbol := getLocalSymbolForExportSpecifier(referenceLocation, referenceSymbol, exportSpecifier, state.checker)
 
 	if !alwaysGetReferences && !search.includes(localSymbol) {
 		return

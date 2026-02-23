@@ -13,7 +13,8 @@ func TestCompletionsExportImport(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `declare global {
+	const content = `// @lib: es5
+declare global {
     namespace N {
         const foo: number;
     }
@@ -33,13 +34,13 @@ export import foo = N.foo;
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:  "foo",
-						Kind:   PtrTo(lsproto.CompletionItemKindVariable),
-						Detail: PtrTo("(alias) const foo: number\nimport foo = N.foo"),
+						Kind:   new(lsproto.CompletionItemKindVariable),
+						Detail: new("(alias) const foo: number\nimport foo = N.foo"),
 					},
 					&lsproto.CompletionItem{
 						Label:  "N",
-						Kind:   PtrTo(lsproto.CompletionItemKindModule),
-						Detail: PtrTo("namespace N"),
+						Kind:   new(lsproto.CompletionItemKindModule),
+						Detail: new("namespace N"),
 					},
 				}, false),
 		},

@@ -49,7 +49,8 @@ export const d1: number;
 // @Filename: /home/src/workspaces/project/tsconfig.json
 {
     "compilerOptions": {
-        "module": "nodenext"
+        "module": "nodenext",
+        "lib": ["es5"]
     }
 }
 // @Filename: /home/src/workspaces/project/main.ts
@@ -73,7 +74,7 @@ export const d1: number;
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "b1",
@@ -83,7 +84,7 @@ export const d1: number;
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "c1",
@@ -93,7 +94,7 @@ export const d1: number;
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "c2",
@@ -103,7 +104,7 @@ export const d1: number;
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "d1",
@@ -113,7 +114,7 @@ export const d1: number;
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},
 			Excludes: []string{

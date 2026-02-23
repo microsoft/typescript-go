@@ -1,6 +1,7 @@
 import {
     type Node,
     type NodeArray,
+    type Path,
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
@@ -131,12 +132,41 @@ const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> 
     [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],
 };
 
-const HEADER_OFFSET_RESERVED = 0;
-const HEADER_OFFSET_STRING_TABLE_OFFSETS = 4;
-const HEADER_OFFSET_STRING_TABLE = 8;
-const HEADER_OFFSET_EXTENDED_DATA = 12;
-const HEADER_OFFSET_NODES = 16;
-const HEADER_SIZE = 20;
+const HEADER_OFFSET_METADATA = 0;
+const HEADER_OFFSET_HASH_LO0 = 4;
+const HEADER_OFFSET_HASH_LO1 = 8;
+const HEADER_OFFSET_HASH_HI0 = 12;
+const HEADER_OFFSET_HASH_HI1 = 16;
+const HEADER_OFFSET_PARSE_OPTIONS = 20;
+const HEADER_OFFSET_STRING_TABLE_OFFSETS = 24;
+const HEADER_OFFSET_STRING_TABLE = 28;
+const HEADER_OFFSET_EXTENDED_DATA = 32;
+const HEADER_OFFSET_NODES = 36;
+const HEADER_SIZE = 40;
+
+/**
+ * Read the 128-bit content hash from a source file binary response as a hex string.
+ */
+export function readSourceFileHash(data: DataView): string {
+    const lo0 = data.getUint32(HEADER_OFFSET_HASH_LO0, true);
+    const lo1 = data.getUint32(HEADER_OFFSET_HASH_LO1, true);
+    const hi0 = data.getUint32(HEADER_OFFSET_HASH_HI0, true);
+    const hi1 = data.getUint32(HEADER_OFFSET_HASH_HI1, true);
+    return hex8(hi1) + hex8(hi0) + hex8(lo1) + hex8(lo0);
+}
+
+/**
+ * Read the per-file parse options key from a source file binary response.
+ * This encodes the ExternalModuleIndicatorOptions bitmask as a string,
+ * allowing the client to distinguish files parsed with different options.
+ */
+export function readParseOptionsKey(data: DataView): string {
+    return data.getUint32(HEADER_OFFSET_PARSE_OPTIONS, true).toString();
+}
+
+function hex8(n: number): string {
+    return (n >>> 0).toString(16).padStart(8, "0");
+}
 
 type NodeDataType = typeof NODE_DATA_TYPE_CHILDREN | typeof NODE_DATA_TYPE_STRING | typeof NODE_DATA_TYPE_EXTENDED;
 const NODE_DATA_TYPE_CHILDREN = 0x00000000;
@@ -159,11 +189,9 @@ const KIND_NODE_LIST = 2 ** 32 - 1;
 
 export class RemoteNodeBase {
     parent: RemoteNode;
-    protected view: DataView;
-    protected decoder: TextDecoder;
+    view: DataView;
+    decoder: TextDecoder;
     protected index: number;
-    /** Keys are positions */
-    protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
         this.view = view;
@@ -237,8 +265,6 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     protected view: DataView;
     protected decoder: TextDecoder;
     protected index: number;
-    /** Keys are positions */
-    protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     get pos(): number {
         return this.view.getUint32(this.byteIndex + NODE_OFFSET_POS, true);
@@ -263,23 +289,73 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     private get byteIndex(): number {
         return this.offsetNodes + this.index * NODE_LEN;
     }
+    private sourceFile: RemoteSourceFile;
 
-    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
+    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode, sourceFile: RemoteSourceFile) {
         super();
         this.view = view;
         this.decoder = decoder;
         this.index = index;
         this.parent = parent;
         this.length = this.data;
+        this.sourceFile = sourceFile;
 
         const length = this.length;
-        for (let i = 0; i < length; i++) {
+        for (let i = 16; i < length; i++) {
             Object.defineProperty(this, i, {
                 get() {
                     return this.at(i);
                 },
             });
         }
+    }
+    get 0(): RemoteNode {
+        return this.at(0);
+    }
+    get 1(): RemoteNode {
+        return this.at(1);
+    }
+    get 2(): RemoteNode {
+        return this.at(2);
+    }
+    get 3(): RemoteNode {
+        return this.at(3);
+    }
+    get 4(): RemoteNode {
+        return this.at(4);
+    }
+    get 5(): RemoteNode {
+        return this.at(5);
+    }
+    get 6(): RemoteNode {
+        return this.at(6);
+    }
+    get 7(): RemoteNode {
+        return this.at(7);
+    }
+    get 8(): RemoteNode {
+        return this.at(8);
+    }
+    get 9(): RemoteNode {
+        return this.at(9);
+    }
+    get 10(): RemoteNode {
+        return this.at(10);
+    }
+    get 11(): RemoteNode {
+        return this.at(11);
+    }
+    get 12(): RemoteNode {
+        return this.at(12);
+    }
+    get 13(): RemoteNode {
+        return this.at(13);
+    }
+    get 14(): RemoteNode {
+        return this.at(14);
+    }
+    get 15(): RemoteNode {
+        return this.at(15);
     }
 
     *[Symbol.iterator](): ArrayIterator<RemoteNode> {
@@ -295,8 +371,11 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         if (!Number.isInteger(index)) {
             return undefined!;
         }
+        if (index >= this.data || (index < 0 && -index > this.data)) {
+            return undefined!;
+        }
         if (index < 0) {
-            index = this.length - index;
+            index = this.length + index;
         }
         let next = this.index + 1;
         for (let i = 0; i < index; i++) {
@@ -307,15 +386,14 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
-        let child = (this._children ??= new Map()).get(pos);
+        let child = this.sourceFile.nodes[index];
         if (!child) {
             const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             if (kind === KIND_NODE_LIST) {
                 throw new Error("NodeList cannot directly contain another NodeList");
             }
-            child = new RemoteNode(this.view, this.decoder, index, this.parent);
-            this._children.set(pos, child);
+            child = new RemoteNode(this.view, this.decoder, index, this.parent, this.sourceFile);
+            this.sourceFile.nodes[index] = child;
         }
         return child;
     }
@@ -332,20 +410,15 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
 
 export class RemoteNode extends RemoteNodeBase implements Node {
     protected static NODE_LEN: number = NODE_LEN;
-    private sourceFile: SourceFile;
-    id: string;
+    protected sourceFile: RemoteSourceFile;
+    get id(): string {
+        return `${this.pos}.${this.end}.${this.kind}.${this.sourceFile.path}`;
+    }
 
-    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
+    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode, sourceFile: RemoteSourceFile) {
         super(view, decoder, index, parent);
-        let sourceFile: RemoteNode = this;
-        while (sourceFile && sourceFile.kind !== SyntaxKind.SourceFile) {
-            sourceFile = sourceFile.parent;
-        }
-        if (!sourceFile) {
-            throw new Error("SourceFile not found");
-        }
-        this.sourceFile = sourceFile as unknown as SourceFile;
-        this.id = `${sourceFile.id}.${this.pos}.${this.kind}`;
+        this.sourceFile = sourceFile;
+        // Node handle format: pos.end.kind.path
     }
 
     forEachChild<T>(visitNode: (node: Node) => T, visitList?: (list: NodeArray<Node>) => T): T | undefined {
@@ -380,7 +453,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     getSourceFile(): SourceFile {
-        return this.sourceFile;
+        return this.sourceFile as unknown as SourceFile;
     }
 
     protected getString(index: number): string {
@@ -391,22 +464,18 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
-        let child = (this._children ??= new Map()).get(pos);
+        let child = this.sourceFile.nodes[index];
         if (!child) {
             const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             child = kind === KIND_NODE_LIST
-                ? new RemoteNodeList(this.view, this.decoder, index, this)
-                : new RemoteNode(this.view, this.decoder, index, this);
-            this._children.set(pos, child);
+                ? new RemoteNodeList(this.view, this.decoder, index, this, this.sourceFile)
+                : new RemoteNode(this.view, this.decoder, index, this, this.sourceFile);
+            this.sourceFile.nodes[index] = child;
         }
         return child;
     }
 
     private hasChildren(): boolean {
-        if (this._children) {
-            return true;
-        }
         if (this.byteIndex >= this.view.byteLength - NODE_LEN) {
             return false;
         }
@@ -910,6 +979,15 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get path(): string | undefined {
+        switch (this.kind) {
+            case SyntaxKind.SourceFile:
+                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const stringIndex = this.view.getUint32(extendedDataOffset + 8, true);
+                return this.getString(stringIndex);
+        }
+    }
+
     // Other properties
     get flags(): number {
         switch (this.kind) {
@@ -954,9 +1032,67 @@ export class RemoteNode extends RemoteNodeBase implements Node {
 }
 
 export class RemoteSourceFile extends RemoteNode {
+    readonly nodes: (RemoteNode | RemoteNodeList)[];
+
     constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-        super(view, decoder, 1, undefined!);
-        this.id = this.getString(this.view.getUint32(this.offsetExtendedData + 8, true));
+        super(view, decoder, 1, undefined!, {} as unknown as RemoteSourceFile);
+        this.sourceFile = this;
+        this.nodes = Array((this.view.byteLength - this.offsetNodes) / NODE_LEN);
+        this.nodes[1] = this;
     }
+}
+
+/**
+ * Find a descendant node at a specific position with matching kind and end position.
+ */
+export function findDescendant(root: Node, pos: number, end: number, kind: SyntaxKind): Node | undefined {
+    if (root.pos === pos && root.end === end && root.kind === kind) {
+        return root;
+    }
+
+    // Search children
+    let result: Node | undefined;
+    root.forEachChild(child => {
+        if (result) return result; // Already found
+        // Only search in children that could contain our target
+        if (child.pos <= pos && child.end >= end) {
+            result = findDescendant(child, pos, end, kind);
+        }
+        return undefined;
+    });
+
+    return result;
+}
+
+/**
+ * Parsed components of a node handle.
+ */
+export interface ParsedNodeHandle {
+    pos: number;
+    end: number;
+    kind: SyntaxKind;
+    path: Path;
+}
+
+/**
+ * Parse a node handle string into its components.
+ * Handle format: "pos.end.kind.path" where path may contain dots.
+ */
+export function parseNodeHandle(handle: string): ParsedNodeHandle {
+    // Find the positions of the first 3 dots
+    const dot1 = handle.indexOf(".");
+    const dot2 = handle.indexOf(".", dot1 + 1);
+    const dot3 = handle.indexOf(".", dot2 + 1);
+
+    if (dot1 === -1 || dot2 === -1 || dot3 === -1) {
+        throw new Error(`Invalid node handle: ${handle}`);
+    }
+
+    return {
+        pos: parseInt(handle.slice(0, dot1), 10),
+        end: parseInt(handle.slice(dot1 + 1, dot2), 10),
+        kind: parseInt(handle.slice(dot2 + 1, dot3), 10) as SyntaxKind,
+        path: handle.slice(dot3 + 1) as Path,
+    };
 }

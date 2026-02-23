@@ -14,7 +14,8 @@ func TestCompletionsImport_reExportDefault(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: esnext
+	const content = `// @lib: es5
+// @module: esnext
 // @Filename: /a/b/impl.ts
 export default function foo() {}
 // @Filename: /a/index.ts
@@ -39,19 +40,19 @@ fo/**/`
 								ModuleSpecifier: "./a",
 							},
 						},
-						Detail:              PtrTo("(alias) function foo(): void\nexport foo"),
-						Kind:                PtrTo(lsproto.CompletionItemKindFunction),
+						Detail:              new("(alias) function foo(): void\nexport foo"),
+						Kind:                new(lsproto.CompletionItemKindFunction),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
 				}, false),
 		},
 	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
 		Source:      "./a",
 		Description: "Add import from \"./a\"",
-		NewFileContent: PtrTo(`import { foo } from "./a";
+		NewFileContent: new(`import { foo } from "./a";
 
 fo`),
 	})

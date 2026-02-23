@@ -16,12 +16,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
-	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -56,7 +54,7 @@ func (f *Fix) Edits(
 	ctx context.Context,
 	file *ast.SourceFile,
 	compilerOptions *core.CompilerOptions,
-	formatOptions *format.FormatCodeSettings,
+	formatOptions *lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
 	preferences *lsutil.UserPreferences,
 ) ([]*lsproto.TextEdit, string) {
@@ -220,7 +218,7 @@ func addToExistingImport(
 		}
 
 		if len(namedImports) > 0 {
-			specifierComparer, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(importClause.Parent, file, preferences)
+			specifierComparer, isSorted := lsutil.GetNamedImportSpecifierComparerWithDetection(importClause.Parent, file, preferences)
 			newSpecifiers := core.Map(namedImports, func(namedImport *newImportBinding) *ast.Node {
 				var identifier *ast.Node
 				if namedImport.propertyName != "" {
@@ -260,13 +258,13 @@ func addToExistingImport(
 				}
 
 				for _, spec := range newSpecifiers {
-					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
+					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
 					ct.InsertImportSpecifierAtIndex(file, spec, importClause.NamedBindings, insertionIndex)
 				}
 			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
 				// Existing specifiers are sorted, so insert each new specifier at the correct position
 				for _, spec := range newSpecifiers {
-					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
+					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
 					if insertionIndex >= len(existingSpecifiers) {
 						// Insert at the end
 						ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
@@ -506,17 +504,17 @@ func insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*as
 	} else {
 		existingImportStatements = core.Filter(sourceFile.Statements.Nodes, ast.IsAnyImportSyntax)
 	}
-	comparer, isSorted := organizeimports.GetOrganizeImportsStringComparerWithDetection(existingImportStatements, preferences)
+	comparer, isSorted := lsutil.GetOrganizeImportsStringComparerWithDetection(existingImportStatements, preferences)
 	sortedNewImports := slices.Clone(imports)
 	slices.SortFunc(sortedNewImports, func(a, b *ast.Statement) int {
-		return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
+		return lsutil.CompareImportsOrRequireStatements(a, b, comparer)
 	})
 
 	if len(existingImportStatements) > 0 && isSorted {
 		// Existing imports are sorted, insert each new import at the correct position
 		for _, newImport := range sortedNewImports {
-			insertionIndex := organizeimports.GetImportDeclarationInsertIndex(existingImportStatements, newImport, func(a, b *ast.Statement) stringutil.Comparison {
-				return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
+			insertionIndex := lsutil.GetImportDeclarationInsertIndex(existingImportStatements, newImport, func(a, b *ast.Statement) stringutil.Comparison {
+				return lsutil.CompareImportsOrRequireStatements(a, b, comparer)
 			})
 			if insertionIndex == 0 {
 				// If the first import is top-of-file, insert after the leading comment which is likely the header
@@ -1116,7 +1114,7 @@ func promoteImportClause(
 			namedImportsData := namedImports.AsNamedImports()
 			if len(namedImportsData.Elements.Nodes) > 1 {
 				// Check if the list is sorted and if we need to reorder
-				_, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(
+				_, isSorted := lsutil.GetNamedImportSpecifierComparerWithDetection(
 					importClause.Parent,
 					sourceFile,
 					preferences,

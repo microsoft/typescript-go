@@ -69,7 +69,7 @@ func getNonModuleSymbolOfMergedModuleSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return nil
 }
 
-func getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier, ch *checker.Checker) *ast.Symbol {
+func getLocalSymbolForExportSpecifier(referenceLocation *ast.Node, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier, ch *checker.Checker) *ast.Symbol {
 	if isExportSpecifierAlias(referenceLocation, exportSpecifier) {
 		if symbol := ch.GetExportSpecifierLocalTargetSymbol(exportSpecifier.AsNode()); symbol != nil {
 			return symbol
@@ -78,12 +78,12 @@ func getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referen
 	return referenceSymbol
 }
 
-func isExportSpecifierAlias(referenceLocation *ast.Identifier, exportSpecifier *ast.ExportSpecifier) bool {
-	debug.Assert(exportSpecifier.PropertyName == referenceLocation.AsNode() || exportSpecifier.Name() == referenceLocation.AsNode(), "referenceLocation is not export specifier name or property name")
+func isExportSpecifierAlias(referenceLocation *ast.Node, exportSpecifier *ast.ExportSpecifier) bool {
+	debug.Assert(exportSpecifier.PropertyName == referenceLocation || exportSpecifier.Name() == referenceLocation, "referenceLocation is not export specifier name or property name")
 	propertyName := exportSpecifier.PropertyName
 	if propertyName != nil {
 		// Given `export { foo as bar } [from "someModule"]`: It's an alias at `foo`, but at `bar` it's a new symbol.
-		return propertyName == referenceLocation.AsNode()
+		return propertyName == referenceLocation
 	} else {
 		// `export { foo } from "foo"` is a re-export.
 		// `export { foo };` is not a re-export, it creates an alias for the local variable `foo`.
@@ -680,11 +680,12 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		}
 	}
 
-	// /**/<var|let| [|n:ame|] ...
-	if node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword &&
+	// /**/<var|let|const> [|name|] ...
+	if (node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword) &&
 		ast.IsVariableDeclarationList(parent) && len(parent.AsVariableDeclarationList().Declarations.Nodes) == 1 {
-		if decl := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration(); ast.IsIdentifier(decl.Name()) {
-			return decl.Name()
+		declaration := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+		if ast.IsIdentifier(declaration.Name()) {
+			return declaration.Name()
 		}
 	}
 
@@ -983,7 +984,7 @@ func symbolFlagsHaveMeaning(flags ast.SymbolFlags, meaning ast.SemanticMeaning) 
 
 func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 	// todo: check if this function needs to be changed for jsdoc updates
-	node = getAdjustedLocation(node, false /*forRename*/, nil)
+	node = getAdjustedLocation(ast.GetReparsedNodeForNode(node), false /*forRename*/, nil)
 	parent := node.Parent
 	switch {
 	case ast.IsSourceFile(node):
@@ -998,10 +999,10 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 		if node.Kind != ast.KindQualifiedName {
 			name = core.IfElse(node.Parent.Kind == ast.KindQualifiedName && node.Parent.AsQualifiedName().Right == node, node.Parent, nil)
 		}
-		if name == nil || name.Parent.Kind == ast.KindImportEqualsDeclaration {
-			return ast.SemanticMeaningNamespace
+		if name != nil && name.Parent.Kind == ast.KindImportEqualsDeclaration {
+			return ast.SemanticMeaningAll
 		}
-		return ast.SemanticMeaningAll
+		return ast.SemanticMeaningNamespace
 	case ast.IsDeclarationName(node):
 		return getMeaningFromDeclaration(parent)
 	case ast.IsEntityName(node) && ast.IsJSDocNameReferenceContext(node):
@@ -1534,8 +1535,4 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 	}
 
 	return nil
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }

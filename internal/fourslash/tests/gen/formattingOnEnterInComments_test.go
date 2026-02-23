@@ -11,7 +11,7 @@ func TestFormattingOnEnterInComments(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module me {
+	const content = `namespace me {
     class A {
         /*
          */*1*/
@@ -22,5 +22,5 @@ func TestFormattingOnEnterInComments(t *testing.T) {
 	f.GoToMarker(t, "1")
 	f.InsertLine(t, "")
 	f.GoToMarker(t, "2")
-	f.VerifyCurrentLineContentIs(t, "    }")
+	f.VerifyCurrentLineContent(t, `    }`)
 }

@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -111,7 +110,7 @@ func NewInferredProject(
 			AllowJs:                    core.TSTrue,
 			Module:                     core.ModuleKindESNext,
 			ModuleResolution:           core.ModuleResolutionKindBundler,
-			Target:                     core.ScriptTargetES2022,
+			Target:                     core.ScriptTargetLatestStandard,
 			Jsx:                        core.JsxEmitReactJSX,
 			AllowImportingTsExtensions: core.TSTrue,
 			StrictNullChecks:           core.TSTrue,
@@ -151,35 +150,37 @@ func NewProject(
 	}
 
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
-	if builder.sessionOptions.WatchEnabled {
-		project.programFilesWatch = NewWatchedFiles(
-			"non-root program files for "+configFileName,
+	project.programFilesWatch = NewWatchedFiles(
+		"non-root program files for "+configFileName,
+		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		core.Identity,
+	)
+	project.failedLookupsWatch = NewWatchedFiles(
+		"failed lookups for "+configFileName,
+		lsproto.WatchKindCreate,
+		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+	)
+	project.affectingLocationsWatch = NewWatchedFiles(
+		"affecting locations for "+configFileName,
+		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+	)
+	if builder.sessionOptions.TypingsLocation != "" {
+		project.typingsWatch = NewWatchedFiles(
+			"typings installer files",
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 			core.Identity,
 		)
-		project.failedLookupsWatch = NewWatchedFiles(
-			"failed lookups for "+configFileName,
-			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-		)
-		project.affectingLocationsWatch = NewWatchedFiles(
-			"affecting locations for "+configFileName,
-			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-		)
-		if builder.sessionOptions.TypingsLocation != "" {
-			project.typingsWatch = NewWatchedFiles(
-				"typings installer files",
-				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-				core.Identity,
-			)
-		}
 	}
 	return project
 }
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+func (p *Project) ID() tspath.Path {
+	return p.configFilePath
 }
 
 // ConfigFileName panics if Kind() is not KindConfigured.
@@ -327,13 +328,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
-			for _, file := range newProgram.GetSourceFiles() {
-				if file.Path() != p.dirtyFilePath {
-					// UpdateProgram only called host.GetSourceFile for the dirty file.
-					// Increment ref count for all other files.
-					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
-				}
-			}
 		}
 	} else {
 		var typingsLocation string
@@ -346,7 +340,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 					checkerPool = newCheckerPool(4, program, p.log)
 					return checkerPool

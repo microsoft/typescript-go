@@ -15,9 +15,9 @@
  const f21: () => undefined | number = () => {
 ->f21 : () => undefined | number
 +>f21 : () => number | undefined
- >() => {    // Error, regular void function because contextual type for implicit return isn't just undefined} : () => void
+ >() => {    // Ok, contextual type for implicit return contains undefined} : () => undefined
 
-     // Error, regular void function because contextual type for implicit return isn't just undefined
+     // Ok, contextual type for implicit return contains undefined
 @@= skipped -20, +20 lines =@@
  }
 

@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
-	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/locale"
 
 	// "github.com/microsoft/typescript-go/internal/ls"
@@ -55,7 +54,7 @@ type importAdder struct {
 	ctx           context.Context
 	checker       *checker.Checker
 	view          *View
-	formatOptions *format.FormatCodeSettings
+	formatOptions *lsutil.FormatCodeSettings
 	converters    *lsconv.Converters
 	preferences   *lsutil.UserPreferences
 
@@ -73,7 +72,7 @@ func NewImportAdder(
 	checker *checker.Checker,
 	file *ast.SourceFile,
 	view *View,
-	formatOptions *format.FormatCodeSettings,
+	formatOptions *lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
 	preferences *lsutil.UserPreferences,
 ) ImportAdder {
@@ -363,8 +362,10 @@ func (adder *importAdder) getNewImportEntry(moduleSpecifier string, importKind l
 func (adder *importAdder) getAllExportsForSymbol(
 	symbol *ast.Symbol,
 ) []*Export {
-	exportId := SymbolToExport(symbol, adder.checker).ExportID
-	return adder.view.SearchByExportID(exportId)
+	if export := SymbolToExport(symbol, adder.checker); export != nil {
+		return adder.view.SearchByExportID(export.ExportID)
+	}
+	return nil
 }
 
 func TypeToAutoImportableTypeNode(
@@ -388,7 +389,9 @@ func typeNodeToAutoImportableTypeNode(
 ) *ast.TypeNode {
 	referenceTypeNode, importableSymbols := tryGetAutoImportableReferenceFromTypeNode(typeNode, idToSymbol)
 	if referenceTypeNode != nil {
-		importSymbols(importAdder, importableSymbols)
+		if importAdder != nil {
+			importSymbols(importAdder, importableSymbols)
+		}
 		typeNode = referenceTypeNode
 	}
 

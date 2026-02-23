@@ -13,7 +13,7 @@ func TestCompletionListOnAliases(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module M {
+	const content = `namespace M {
     export var value;
 
     import x = M;
@@ -32,7 +32,7 @@ func TestCompletionListOnAliases(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: PtrTo("(alias) namespace x\nimport x = M"),
+					Detail: new("(alias) namespace x\nimport x = M"),
 				},
 			},
 		},
