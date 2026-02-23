@@ -41,6 +41,102 @@ type asyncTransformer struct {
 	asyncBodyVisitor *ast.NodeVisitor
 }
 
+func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	tx := &asyncTransformer{}
+	result := tx.NewTransformer(tx.visit, opts.Context)
+	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)
+	return result
+}
+
+func (tx *asyncTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
+	if node.IsDeclarationFile {
+		return node.AsNode()
+	}
+
+	tx.setContextFlag(asyncContextNonTopLevel, false)
+	tx.setContextFlag(asyncContextHasLexicalThis, false)
+	visited := tx.Visitor().VisitEachChild(node.AsNode())
+	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
+	return visited
+}
+
+func (tx *asyncTransformer) setContextFlag(flag asyncContextFlags, val bool) {
+	if val {
+		tx.contextFlags |= flag
+	} else {
+		tx.contextFlags &^= flag
+	}
+}
+
+func (tx *asyncTransformer) inContext(flags asyncContextFlags) bool {
+	return tx.contextFlags&flags != 0
+}
+
+func (tx *asyncTransformer) inTopLevelContext() bool {
+	return !tx.inContext(asyncContextNonTopLevel)
+}
+
+func (tx *asyncTransformer) inHasLexicalThisContext() bool {
+	return tx.inContext(asyncContextHasLexicalThis)
+}
+
+func (tx *asyncTransformer) doWithContext(flags asyncContextFlags, cb func(*asyncTransformer, *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
+	flagsToSet := flags & ^tx.contextFlags
+	if flagsToSet != 0 {
+		tx.setContextFlag(flagsToSet, true)
+		result := cb(tx, node)
+		tx.setContextFlag(flagsToSet, false)
+		return result
+	}
+	return cb(tx, node)
+}
+
+func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindFunctionExpression,
+		ast.KindFunctionDeclaration,
+		ast.KindMethodDeclaration,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor,
+		ast.KindConstructor:
+		return node
+	case ast.KindParameter,
+		ast.KindBindingElement,
+		ast.KindVariableDeclaration:
+		// fall through to visitEachChild
+	case ast.KindIdentifier:
+		if tx.lexicalArguments.binding != nil && node.Text() == "arguments" && !isNameOfPropertyAccessOrAssignment(tx.parentNode, node) {
+			tx.lexicalArguments.used = true
+			return tx.lexicalArguments.binding
+		}
+	case ast.KindPropertyAccessExpression: // TODO: why is this duplicated?
+		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
+			tx.capturedSuperProperties.Add(node.Name().Text())
+		}
+	case ast.KindElementAccessExpression:
+		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
+			tx.hasSuperElementAccess = true
+		}
+	case ast.KindBinaryExpression:
+		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPrefixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPostfixUnaryExpression:
+		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
 func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	savedParent := tx.parentNode
 	tx.parentNode = tx.currentNode
@@ -75,7 +171,7 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 			tx.capturedSuperProperties.Add(node.Name().Text())
 		}
 		return tx.Visitor().VisitEachChild(node)
-	case ast.KindElementAccessExpression:
+	case ast.KindElementAccessExpression: // TODO: why is this duplicated?
 		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
 			tx.hasSuperElementAccess = true
 		}
@@ -108,60 +204,6 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
-func (tx *asyncTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
-	if node.IsDeclarationFile {
-		return node.AsNode()
-	}
-
-	tx.setContextFlag(asyncContextNonTopLevel, false)
-	tx.setContextFlag(asyncContextHasLexicalThis, false)
-	visited := tx.Visitor().VisitEachChild(node.AsNode())
-	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
-	return visited
-}
-
-func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindFunctionExpression,
-		ast.KindFunctionDeclaration,
-		ast.KindMethodDeclaration,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor,
-		ast.KindConstructor:
-		return node
-	case ast.KindParameter,
-		ast.KindBindingElement,
-		ast.KindVariableDeclaration:
-		// fall through to visitEachChild
-	case ast.KindIdentifier:
-		if tx.lexicalArguments.binding != nil && node.Text() == "arguments" && !isNameOfPropertyAccessOrAssignment(tx.parentNode, node) {
-			tx.lexicalArguments.used = true
-			return tx.lexicalArguments.binding
-		}
-	case ast.KindPropertyAccessExpression:
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-	case ast.KindElementAccessExpression:
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-	case ast.KindBinaryExpression:
-		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPrefixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPostfixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
 func (tx *asyncTransformer) visitAsyncBodyNode(node *ast.Node) *ast.Node {
 	if isNodeWithPossibleHoistedDeclaration(node) {
 		switch node.Kind {
@@ -192,39 +234,95 @@ func (tx *asyncTransformer) visitAsyncBodyNode(node *ast.Node) *ast.Node {
 	return tx.visit(node)
 }
 
-func (tx *asyncTransformer) setContextFlag(flag asyncContextFlags, val bool) {
-	if val {
-		tx.contextFlags |= flag
-	} else {
-		tx.contextFlags &= ^flag
+func (tx *asyncTransformer) visitCatchClauseInAsyncBody(node *ast.CatchClause) *ast.Node {
+	catchClauseNames := &collections.Set[string]{}
+	if node.VariableDeclaration != nil {
+		tx.recordDeclarationName(node.VariableDeclaration, catchClauseNames)
 	}
-}
 
-func (tx *asyncTransformer) inContext(flags asyncContextFlags) bool {
-	return tx.contextFlags&flags != 0
-}
+	// names declared in a catch variable are block scoped
+	var catchClauseUnshadowedNames *collections.Set[string]
+	for escapedName := range catchClauseNames.Keys() {
+		if tx.enclosingFunctionParameterNames != nil && tx.enclosingFunctionParameterNames.Has(escapedName) {
+			if catchClauseUnshadowedNames == nil {
+				catchClauseUnshadowedNames = tx.enclosingFunctionParameterNames.Clone()
+			}
+			catchClauseUnshadowedNames.Delete(escapedName)
+		}
+	}
 
-func (tx *asyncTransformer) inTopLevelContext() bool {
-	return !tx.inContext(asyncContextNonTopLevel)
-}
-
-func (tx *asyncTransformer) inHasLexicalThisContext() bool {
-	return tx.inContext(asyncContextHasLexicalThis)
-}
-
-func (tx *asyncTransformer) doWithContext(flags asyncContextFlags, cb func(*asyncTransformer, *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
-	flagsToSet := flags & ^tx.contextFlags
-	if flagsToSet != 0 {
-		tx.setContextFlag(flagsToSet, true)
-		result := cb(tx, node)
-		tx.setContextFlag(flagsToSet, false)
+	if catchClauseUnshadowedNames != nil {
+		savedEnclosingFunctionParameterNames := tx.enclosingFunctionParameterNames
+		tx.enclosingFunctionParameterNames = catchClauseUnshadowedNames
+		result := tx.asyncBodyVisitor.VisitEachChild(node.AsNode())
+		tx.enclosingFunctionParameterNames = savedEnclosingFunctionParameterNames
 		return result
 	}
-	return cb(tx, node)
+	return tx.asyncBodyVisitor.VisitEachChild(node.AsNode())
 }
 
-func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
+func (tx *asyncTransformer) visitVariableStatementInAsyncBody(node *ast.Node) *ast.Node {
+	declList := node.AsVariableStatement().DeclarationList
+	if tx.isVariableDeclarationListWithCollidingName(declList) {
+		expression := tx.visitVariableDeclarationListWithCollidingNames(declList.AsVariableDeclarationList(), false)
+		if expression != nil {
+			return tx.Factory().NewExpressionStatement(expression)
+		}
+		return nil
+	}
 	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *asyncTransformer) visitForInStatementInAsyncBody(node *ast.ForInOrOfStatement) *ast.Node {
+	var visitedInitializer *ast.Node
+	if tx.isVariableDeclarationListWithCollidingName(node.Initializer) {
+		visitedInitializer = tx.visitVariableDeclarationListWithCollidingNames(node.Initializer.AsVariableDeclarationList(), true)
+	} else {
+		visitedInitializer = tx.Visitor().VisitNode(node.Initializer)
+	}
+
+	return tx.Factory().UpdateForInOrOfStatement(
+		node,
+		nil, /*awaitModifier*/
+		visitedInitializer,
+		tx.Visitor().VisitNode(node.Expression),
+		tx.asyncBodyVisitor.VisitEmbeddedStatement(node.Statement),
+	)
+}
+
+func (tx *asyncTransformer) visitForOfStatementInAsyncBody(node *ast.ForInOrOfStatement) *ast.Node {
+	var visitedInitializer *ast.Node
+	if tx.isVariableDeclarationListWithCollidingName(node.Initializer) {
+		visitedInitializer = tx.visitVariableDeclarationListWithCollidingNames(node.Initializer.AsVariableDeclarationList(), true)
+	} else {
+		visitedInitializer = tx.Visitor().VisitNode(node.Initializer)
+	}
+
+	return tx.Factory().UpdateForInOrOfStatement(
+		node,
+		tx.Visitor().VisitNode(node.AwaitModifier),
+		visitedInitializer,
+		tx.Visitor().VisitNode(node.Expression),
+		tx.asyncBodyVisitor.VisitEmbeddedStatement(node.Statement),
+	)
+}
+
+func (tx *asyncTransformer) visitForStatementInAsyncBody(node *ast.ForStatement) *ast.Node {
+	initializer := node.Initializer
+	var visitedInitializer *ast.Node
+	if initializer != nil && tx.isVariableDeclarationListWithCollidingName(initializer) {
+		visitedInitializer = tx.visitVariableDeclarationListWithCollidingNames(initializer.AsVariableDeclarationList(), false)
+	} else {
+		visitedInitializer = tx.Visitor().VisitNode(node.Initializer)
+	}
+
+	return tx.Factory().UpdateForStatement(
+		node,
+		visitedInitializer,
+		tx.Visitor().VisitNode(node.Condition),
+		tx.Visitor().VisitNode(node.Incrementor),
+		tx.asyncBodyVisitor.VisitEmbeddedStatement(node.Statement),
+	)
 }
 
 // visitAwaitExpression visits an AwaitExpression node.
@@ -252,7 +350,7 @@ func (tx *asyncTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Nod
 		decl,
 		tx.Visitor().VisitModifiers(decl.Modifiers()),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
 		tx.transformMethodBody(node),
@@ -277,7 +375,7 @@ func (tx *asyncTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 		parameters = tx.transformAsyncFunctionParameterList(node)
 		body = tx.transformAsyncFunctionBody(node, parameters)
 	} else {
-		parameters = tx.Visitor().VisitNodes(decl.Parameters)
+		parameters = tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor())
 		body = tx.transformMethodBody(node)
 	}
 
@@ -306,7 +404,7 @@ func (tx *asyncTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Nod
 		tx.Visitor().VisitModifiers(decl.Modifiers()),
 		decl.Name(),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
 		tx.transformMethodBody(node),
@@ -324,7 +422,7 @@ func (tx *asyncTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Nod
 		tx.Visitor().VisitModifiers(decl.Modifiers()),
 		decl.Name(),
 		nil, /*typeParameters*/
-		tx.Visitor().VisitNodes(decl.Parameters),
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
 		nil, /*returnType*/
 		nil, /*fullSignature*/
 		tx.transformMethodBody(node),
@@ -433,6 +531,112 @@ func (tx *asyncTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
 	)
 }
 
+func (tx *asyncTransformer) recordDeclarationName(node *ast.Node, names *collections.Set[string]) {
+	name := node.Name()
+	if name == nil {
+		return
+	}
+	if ast.IsIdentifier(name) {
+		names.Add(name.Text())
+	} else if ast.IsBindingPattern(name) {
+		for _, element := range name.AsBindingPattern().Elements.Nodes {
+			if !ast.IsOmittedExpression(element) {
+				tx.recordDeclarationName(element, names)
+			}
+		}
+	}
+}
+
+func (tx *asyncTransformer) isVariableDeclarationListWithCollidingName(node *ast.Node) bool {
+	return node != nil &&
+		ast.IsVariableDeclarationList(node) &&
+		node.Flags&ast.NodeFlagsBlockScoped == 0 &&
+		slices.ContainsFunc(node.AsVariableDeclarationList().Declarations.Nodes, tx.collidesWithParameterName)
+}
+
+func (tx *asyncTransformer) visitVariableDeclarationListWithCollidingNames(node *ast.VariableDeclarationList, hasReceiver bool) *ast.Node {
+	tx.hoistVariableDeclarationList(node)
+
+	var variables []*ast.Node
+	for _, decl := range node.Declarations.Nodes {
+		if decl.AsVariableDeclaration().Initializer != nil {
+			variables = append(variables, decl)
+		}
+	}
+
+	if len(variables) == 0 {
+		if hasReceiver {
+			name := node.Declarations.Nodes[0].Name()
+			var target *ast.Node
+			if ast.IsBindingPattern(name) {
+				target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), name.AsBindingPattern())
+			} else {
+				target = name
+			}
+			return tx.Visitor().VisitNode(target)
+		}
+		return nil
+	}
+
+	var expressions []*ast.Node
+	for _, variable := range variables {
+		expressions = append(expressions, tx.transformInitializedVariable(variable.AsVariableDeclaration()))
+	}
+	return tx.Factory().InlineExpressions(expressions)
+}
+
+func (tx *asyncTransformer) hoistVariableDeclarationList(node *ast.VariableDeclarationList) {
+	for _, decl := range node.Declarations.Nodes {
+		tx.hoistVariable(decl)
+	}
+}
+
+func (tx *asyncTransformer) hoistVariable(node *ast.Node) {
+	name := node.Name()
+	if name == nil {
+		return
+	}
+	if ast.IsIdentifier(name) {
+		tx.EmitContext().AddVariableDeclaration(name)
+	} else if ast.IsBindingPattern(name) {
+		for _, element := range name.AsBindingPattern().Elements.Nodes {
+			if !ast.IsOmittedExpression(element) {
+				tx.hoistVariable(element)
+			}
+		}
+	}
+}
+
+func (tx *asyncTransformer) transformInitializedVariable(node *ast.VariableDeclaration) *ast.Node {
+	var target *ast.Node
+	if ast.IsBindingPattern(node.Name()) {
+		target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), node.Name().AsBindingPattern())
+	} else {
+		target = node.Name()
+	}
+	converted := tx.Factory().NewAssignmentExpression(target, node.Initializer)
+	tx.EmitContext().SetSourceMapRange(converted, node.Loc)
+	return tx.Visitor().VisitNode(converted)
+}
+
+func (tx *asyncTransformer) collidesWithParameterName(node *ast.Node) bool {
+	name := node.Name()
+	if name == nil {
+		return false
+	}
+	if ast.IsIdentifier(name) {
+		return tx.enclosingFunctionParameterNames != nil && tx.enclosingFunctionParameterNames.Has(name.Text())
+	}
+	if ast.IsBindingPattern(name) {
+		for _, element := range name.AsBindingPattern().Elements.Nodes {
+			if !ast.IsOmittedExpression(element) && tx.collidesWithParameterName(element) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	savedCapturedSuperProperties := tx.capturedSuperProperties
 	savedHasSuperElementAccess := tx.hasSuperElementAccess
@@ -481,6 +685,19 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	tx.superBinding = savedSuperBinding
 	tx.superIndexBinding = savedSuperIndexBinding
 	return updated
+}
+
+func (tx *asyncTransformer) createCaptureArgumentsStatement() *ast.Node {
+	variable := tx.Factory().NewVariableDeclaration(
+		tx.lexicalArguments.binding,
+		nil,
+		nil,
+		tx.Factory().NewIdentifier("arguments"),
+	)
+	declList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{variable}))
+	statement := tx.Factory().NewVariableStatement(nil, declList)
+	tx.EmitContext().AddEmitFlags(statement, printer.EFStartOnNewLine|printer.EFCustomPrologue)
+	return statement
 }
 
 func (tx *asyncTransformer) transformAsyncFunctionParameterList(node *ast.Node) *ast.NodeList {
@@ -700,87 +917,6 @@ func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *as
 	return block
 }
 
-func (tx *asyncTransformer) createCaptureArgumentsStatement() *ast.Node {
-	variable := tx.Factory().NewVariableDeclaration(
-		tx.lexicalArguments.binding,
-		nil,
-		nil,
-		tx.Factory().NewIdentifier("arguments"),
-	)
-	declList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{variable}))
-	statement := tx.Factory().NewVariableStatement(nil, declList)
-	tx.EmitContext().AddEmitFlags(statement, printer.EFStartOnNewLine|printer.EFCustomPrologue)
-	return statement
-}
-
-func (tx *asyncTransformer) convertToFunctionBlock(node *ast.Node) *ast.Node {
-	if ast.IsBlock(node) {
-		return node
-	}
-	ret := tx.Factory().NewReturnStatement(node)
-	ret.Loc = node.Loc
-	tx.EmitContext().SetOriginal(ret, node)
-	list := tx.Factory().NewNodeList([]*ast.Node{ret})
-	list.Loc = node.Loc
-	block := tx.Factory().NewBlock(list, true)
-	block.Loc = node.Loc
-	return block
-}
-
-// isSuperProperty checks if a node is super.x or super[x].
-func isSuperProperty(node *ast.Node) bool {
-	return (ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
-		node.Expression().Kind == ast.KindSuperKeyword
-}
-
-// assignmentTargetContainsSuperProperty checks top-down whether an assignment target
-// expression contains a super property or element access (super.x or super[x]).
-// This avoids relying on parent pointers (IsAssignmentTarget) which may not be set
-// on synthesized AST nodes from prior transforms.
-func assignmentTargetContainsSuperProperty(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
-		return node.Expression().Kind == ast.KindSuperKeyword
-	case ast.KindParenthesizedExpression:
-		return assignmentTargetContainsSuperProperty(node.AsParenthesizedExpression().Expression)
-	case ast.KindArrayLiteralExpression:
-		return slices.ContainsFunc(node.AsArrayLiteralExpression().Elements.Nodes, assignmentTargetContainsSuperProperty)
-	case ast.KindObjectLiteralExpression:
-		for _, prop := range node.AsObjectLiteralExpression().Properties.Nodes {
-			switch prop.Kind {
-			case ast.KindPropertyAssignment:
-				if assignmentTargetContainsSuperProperty(prop.AsPropertyAssignment().Initializer) {
-					return true
-				}
-			case ast.KindShorthandPropertyAssignment:
-				if assignmentTargetContainsSuperProperty(prop.AsShorthandPropertyAssignment().Name()) {
-					return true
-				}
-			case ast.KindSpreadAssignment:
-				if assignmentTargetContainsSuperProperty(prop.AsSpreadAssignment().Expression) {
-					return true
-				}
-			}
-		}
-	case ast.KindSpreadElement:
-		return assignmentTargetContainsSuperProperty(node.AsSpreadElement().Expression)
-	}
-	return false
-}
-
-// isUpdateExpression checks if a prefix/postfix unary expression is ++ or --.
-func isUpdateExpression(node *ast.Node) bool {
-	if ast.IsPrefixUnaryExpression(node) {
-		op := node.AsPrefixUnaryExpression().Operator
-		return op == ast.KindPlusPlusToken || op == ast.KindMinusMinusToken
-	}
-	if ast.IsPostfixUnaryExpression(node) {
-		op := node.AsPostfixUnaryExpression().Operator
-		return op == ast.KindPlusPlusToken || op == ast.KindMinusMinusToken
-	}
-	return false
-}
-
 // substituteSuperAccessesInBody walks the async body and replaces super property/element
 // accesses with _super/_superIndex references. This is necessary because the async body
 // ends up inside a generator function where `super` is not valid.
@@ -791,7 +927,7 @@ func (tx *asyncTransformer) substituteSuperAccessesInBody(body *ast.Node) *ast.N
 		switch node.Kind {
 		case ast.KindCallExpression:
 			call := node.AsCallExpression()
-			if isSuperProperty(call.Expression) {
+			if ast.IsSuperProperty(call.Expression) {
 				return tx.substituteCallExpressionWithSuperAccess(call, visitor)
 			}
 			return visitor.VisitEachChild(node)
@@ -962,205 +1098,66 @@ func (tx *asyncTransformer) createSuperAccessVariableStatement() *ast.Node {
 	return f.NewVariableStatement(nil, declList)
 }
 
-func (tx *asyncTransformer) recordDeclarationName(node *ast.Node, names *collections.Set[string]) {
-	name := node.Name()
-	if name == nil {
-		return
+func (tx *asyncTransformer) convertToFunctionBlock(node *ast.Node) *ast.Node {
+	if ast.IsBlock(node) {
+		return node
 	}
-	if ast.IsIdentifier(name) {
-		names.Add(name.Text())
-	} else if ast.IsBindingPattern(name) {
-		for _, element := range name.AsBindingPattern().Elements.Nodes {
-			if !ast.IsOmittedExpression(element) {
-				tx.recordDeclarationName(element, names)
+	ret := tx.Factory().NewReturnStatement(node)
+	ret.Loc = node.Loc
+	tx.EmitContext().SetOriginal(ret, node)
+	list := tx.Factory().NewNodeList([]*ast.Node{ret})
+	list.Loc = node.Loc
+	block := tx.Factory().NewBlock(list, true)
+	block.Loc = node.Loc
+	return block
+}
+
+// assignmentTargetContainsSuperProperty checks top-down whether an assignment target
+// expression contains a super property or element access (super.x or super[x]).
+// This avoids relying on parent pointers (IsAssignmentTarget) which may not be set
+// on synthesized AST nodes from prior transforms.
+func assignmentTargetContainsSuperProperty(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+		return node.Expression().Kind == ast.KindSuperKeyword
+	case ast.KindParenthesizedExpression:
+		return assignmentTargetContainsSuperProperty(node.AsParenthesizedExpression().Expression)
+	case ast.KindArrayLiteralExpression:
+		return slices.ContainsFunc(node.AsArrayLiteralExpression().Elements.Nodes, assignmentTargetContainsSuperProperty)
+	case ast.KindObjectLiteralExpression:
+		for _, prop := range node.AsObjectLiteralExpression().Properties.Nodes {
+			switch prop.Kind {
+			case ast.KindPropertyAssignment:
+				if assignmentTargetContainsSuperProperty(prop.AsPropertyAssignment().Initializer) {
+					return true
+				}
+			case ast.KindShorthandPropertyAssignment:
+				if assignmentTargetContainsSuperProperty(prop.AsShorthandPropertyAssignment().Name()) {
+					return true
+				}
+			case ast.KindSpreadAssignment:
+				if assignmentTargetContainsSuperProperty(prop.AsSpreadAssignment().Expression) {
+					return true
+				}
 			}
 		}
-	}
-}
-
-func (tx *asyncTransformer) visitCatchClauseInAsyncBody(node *ast.CatchClause) *ast.Node {
-	catchClauseNames := &collections.Set[string]{}
-	if node.VariableDeclaration != nil {
-		tx.recordDeclarationName(node.VariableDeclaration, catchClauseNames)
-	}
-
-	// names declared in a catch variable are block scoped
-	var catchClauseUnshadowedNames *collections.Set[string]
-	for escapedName := range catchClauseNames.Keys() {
-		if tx.enclosingFunctionParameterNames != nil && tx.enclosingFunctionParameterNames.Has(escapedName) {
-			if catchClauseUnshadowedNames == nil {
-				catchClauseUnshadowedNames = tx.enclosingFunctionParameterNames.Clone()
-			}
-			catchClauseUnshadowedNames.Delete(escapedName)
-		}
-	}
-
-	if catchClauseUnshadowedNames != nil {
-		savedEnclosingFunctionParameterNames := tx.enclosingFunctionParameterNames
-		tx.enclosingFunctionParameterNames = catchClauseUnshadowedNames
-		result := tx.asyncBodyVisitor.VisitEachChild(node.AsNode())
-		tx.enclosingFunctionParameterNames = savedEnclosingFunctionParameterNames
-		return result
-	}
-	return tx.asyncBodyVisitor.VisitEachChild(node.AsNode())
-}
-
-func (tx *asyncTransformer) visitVariableStatementInAsyncBody(node *ast.Node) *ast.Node {
-	declList := node.AsVariableStatement().DeclarationList
-	if tx.isVariableDeclarationListWithCollidingName(declList) {
-		expression := tx.visitVariableDeclarationListWithCollidingNames(declList.AsVariableDeclarationList(), false)
-		if expression != nil {
-			return tx.Factory().NewExpressionStatement(expression)
-		}
-		return nil
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *asyncTransformer) visitForStatementInAsyncBody(node *ast.ForStatement) *ast.Node {
-	initializer := node.Initializer
-	var visitedInitializer *ast.Node
-	if initializer != nil && tx.isVariableDeclarationListWithCollidingName(initializer) {
-		visitedInitializer = tx.visitVariableDeclarationListWithCollidingNames(initializer.AsVariableDeclarationList(), false)
-	} else {
-		visitedInitializer = tx.Visitor().VisitNode(node.Initializer)
-	}
-
-	return tx.Factory().UpdateForStatement(
-		node,
-		visitedInitializer,
-		tx.Visitor().VisitNode(node.Condition),
-		tx.Visitor().VisitNode(node.Incrementor),
-		tx.asyncBodyVisitor.VisitEmbeddedStatement(node.Statement),
-	)
-}
-
-func (tx *asyncTransformer) visitForInStatementInAsyncBody(node *ast.ForInOrOfStatement) *ast.Node {
-	var visitedInitializer *ast.Node
-	if tx.isVariableDeclarationListWithCollidingName(node.Initializer) {
-		visitedInitializer = tx.visitVariableDeclarationListWithCollidingNames(node.Initializer.AsVariableDeclarationList(), true)
-	} else {
-		visitedInitializer = tx.Visitor().VisitNode(node.Initializer)
-	}
-
-	return tx.Factory().UpdateForInOrOfStatement(
-		node,
-		nil, /*awaitModifier*/
-		visitedInitializer,
-		tx.Visitor().VisitNode(node.Expression),
-		tx.asyncBodyVisitor.VisitEmbeddedStatement(node.Statement),
-	)
-}
-
-func (tx *asyncTransformer) visitForOfStatementInAsyncBody(node *ast.ForInOrOfStatement) *ast.Node {
-	var visitedInitializer *ast.Node
-	if tx.isVariableDeclarationListWithCollidingName(node.Initializer) {
-		visitedInitializer = tx.visitVariableDeclarationListWithCollidingNames(node.Initializer.AsVariableDeclarationList(), true)
-	} else {
-		visitedInitializer = tx.Visitor().VisitNode(node.Initializer)
-	}
-
-	return tx.Factory().UpdateForInOrOfStatement(
-		node,
-		tx.Visitor().VisitNode(node.AwaitModifier),
-		visitedInitializer,
-		tx.Visitor().VisitNode(node.Expression),
-		tx.asyncBodyVisitor.VisitEmbeddedStatement(node.Statement),
-	)
-}
-
-func (tx *asyncTransformer) isVariableDeclarationListWithCollidingName(node *ast.Node) bool {
-	return node != nil &&
-		ast.IsVariableDeclarationList(node) &&
-		node.Flags&ast.NodeFlagsBlockScoped == 0 &&
-		tx.hasCollidingDeclarations(node.AsVariableDeclarationList())
-}
-
-func (tx *asyncTransformer) hasCollidingDeclarations(node *ast.VariableDeclarationList) bool {
-	return slices.ContainsFunc(node.Declarations.Nodes, tx.collidesWithParameterName)
-}
-
-func (tx *asyncTransformer) collidesWithParameterName(node *ast.Node) bool {
-	name := node.Name()
-	if name == nil {
-		return false
-	}
-	if ast.IsIdentifier(name) {
-		return tx.enclosingFunctionParameterNames != nil && tx.enclosingFunctionParameterNames.Has(name.Text())
-	}
-	if ast.IsBindingPattern(name) {
-		for _, element := range name.AsBindingPattern().Elements.Nodes {
-			if !ast.IsOmittedExpression(element) && tx.collidesWithParameterName(element) {
-				return true
-			}
-		}
+	case ast.KindSpreadElement:
+		return assignmentTargetContainsSuperProperty(node.AsSpreadElement().Expression)
 	}
 	return false
 }
 
-func (tx *asyncTransformer) visitVariableDeclarationListWithCollidingNames(node *ast.VariableDeclarationList, hasReceiver bool) *ast.Node {
-	tx.hoistVariableDeclarationList(node)
-
-	var variables []*ast.Node
-	for _, decl := range node.Declarations.Nodes {
-		if decl.AsVariableDeclaration().Initializer != nil {
-			variables = append(variables, decl)
-		}
+// isUpdateExpression checks if a prefix/postfix unary expression is ++ or --.
+func isUpdateExpression(node *ast.Node) bool {
+	if ast.IsPrefixUnaryExpression(node) {
+		op := node.AsPrefixUnaryExpression().Operator
+		return op == ast.KindPlusPlusToken || op == ast.KindMinusMinusToken
 	}
-
-	if len(variables) == 0 {
-		if hasReceiver {
-			name := node.Declarations.Nodes[0].Name()
-			var target *ast.Node
-			if ast.IsBindingPattern(name) {
-				target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), name.AsBindingPattern())
-			} else {
-				target = name
-			}
-			return tx.Visitor().VisitNode(target)
-		}
-		return nil
+	if ast.IsPostfixUnaryExpression(node) {
+		op := node.AsPostfixUnaryExpression().Operator
+		return op == ast.KindPlusPlusToken || op == ast.KindMinusMinusToken
 	}
-
-	var expressions []*ast.Node
-	for _, variable := range variables {
-		expressions = append(expressions, tx.transformInitializedVariable(variable.AsVariableDeclaration()))
-	}
-	return tx.Factory().InlineExpressions(expressions)
-}
-
-func (tx *asyncTransformer) hoistVariableDeclarationList(node *ast.VariableDeclarationList) {
-	for _, decl := range node.Declarations.Nodes {
-		tx.hoistVariable(decl)
-	}
-}
-
-func (tx *asyncTransformer) hoistVariable(node *ast.Node) {
-	name := node.Name()
-	if name == nil {
-		return
-	}
-	if ast.IsIdentifier(name) {
-		tx.EmitContext().AddVariableDeclaration(name)
-	} else if ast.IsBindingPattern(name) {
-		for _, element := range name.AsBindingPattern().Elements.Nodes {
-			if !ast.IsOmittedExpression(element) {
-				tx.hoistVariable(element)
-			}
-		}
-	}
-}
-
-func (tx *asyncTransformer) transformInitializedVariable(node *ast.VariableDeclaration) *ast.Node {
-	var target *ast.Node
-	if ast.IsBindingPattern(node.Name()) {
-		target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), node.Name().AsBindingPattern())
-	} else {
-		target = node.Name()
-	}
-	converted := tx.Factory().NewAssignmentExpression(target, node.Initializer)
-	tx.EmitContext().SetSourceMapRange(converted, node.Loc)
-	return tx.Visitor().VisitNode(converted)
+	return false
 }
 
 func (tx *asyncTransformer) getOriginalIfFunctionLike(node *ast.Node) *ast.Node {
@@ -1210,11 +1207,4 @@ func isNodeWithPossibleHoistedDeclaration(node *ast.Node) bool {
 		return true
 	}
 	return false
-}
-
-func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &asyncTransformer{}
-	result := tx.NewTransformer(tx.visit, opts.Context)
-	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)
-	return result
 }

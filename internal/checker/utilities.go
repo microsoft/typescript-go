@@ -1027,15 +1027,6 @@ func isSuperCall(n *ast.Node) bool {
 	return ast.IsCallExpression(n) && n.Expression().Kind == ast.KindSuperKeyword
 }
 
-/**
- * Determines whether a node is a property or element access expression for `super`.
- *
- * @internal
- */
-func isSuperProperty(node *ast.Node) bool {
-	return ast.IsAccessExpression(node) && node.Expression().Kind == ast.KindSuperKeyword
-}
-
 func getMembersOfDeclaration(node *ast.Node) []*ast.Node {
 	switch node.Kind {
 	case ast.KindInterfaceDeclaration, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindTypeLiteral:
