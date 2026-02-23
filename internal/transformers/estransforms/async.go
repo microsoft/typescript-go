@@ -38,13 +38,15 @@ type asyncTransformer struct {
 	parentNode  *ast.Node
 	currentNode *ast.Node
 
-	asyncBodyVisitor *ast.NodeVisitor
+	asyncBodyVisitor             *ast.NodeVisitor
+	argumentsAndSuperNodeVisitor *ast.NodeVisitor
 }
 
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &asyncTransformer{}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)
+	tx.argumentsAndSuperNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArgumentsAndSuper)
 	return result
 }
 
@@ -95,7 +97,46 @@ func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
 }
 
-func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
+// trackSuperAccess records super property/element accesses and super property assignments
+// for the enclosing async method body. Called from both the main visitor and the arguments
+// visitor to ensure super accesses are tracked regardless of whether the node has transform flags.
+func (tx *asyncTransformer) trackSuperAccess(node *ast.Node) {
+	if tx.capturedSuperProperties == nil {
+		return
+	}
+	switch node.Kind {
+	case ast.KindPropertyAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			tx.capturedSuperProperties.Add(node.Name().Text())
+		}
+	case ast.KindElementAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			tx.hasSuperElementAccess = true
+		}
+	case ast.KindBinaryExpression:
+		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPrefixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPostfixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	}
+}
+
+// argumentsAndSuperVisitor recurses into subtrees that lack await transform flags.
+// It ensures we still (1) substitute `arguments` references with a lexical binding and
+// (2) track super accesses (which don't set await flags). It stops at function boundaries
+// since both `arguments` and `super` rebind in nested functions.
+func (tx *asyncTransformer) argumentsAndSuperVisitor(node *ast.Node) *ast.Node {
+	if tx.capturedSuperProperties == nil && tx.lexicalArguments.binding == nil {
+		return node
+	}
+	tx.trackSuperAccess(node)
 	switch node.Kind {
 	case ast.KindFunctionExpression,
 		ast.KindFunctionDeclaration,
@@ -113,28 +154,18 @@ func (tx *asyncTransformer) argumentsVisitor(node *ast.Node) *ast.Node {
 			tx.lexicalArguments.used = true
 			return tx.lexicalArguments.binding
 		}
-	case ast.KindPropertyAccessExpression: // TODO: why is this duplicated?
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-	case ast.KindElementAccessExpression:
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-	case ast.KindBinaryExpression:
-		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPrefixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPostfixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
 	}
-	return tx.Visitor().VisitEachChild(node)
+	return tx.argumentsAndSuperNodeVisitor.VisitEachChild(node)
+}
+
+// visitArgumentsAndSuper is the NodeVisitor callback for argumentsAndSuperNodeVisitor.
+// It wraps argumentsAndSuperVisitor with parent tracking for recursive calls.
+func (tx *asyncTransformer) visitArgumentsAndSuper(node *ast.Node) *ast.Node {
+	savedParent := tx.parentNode
+	tx.parentNode = tx.currentNode
+	tx.currentNode = node
+	defer func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }()
+	return tx.argumentsAndSuperVisitor(node)
 }
 
 func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
@@ -148,11 +179,9 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 		return nil
 	}
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
-		if tx.capturedSuperProperties != nil || tx.lexicalArguments.binding != nil {
-			return tx.argumentsVisitor(node)
-		}
-		return node
+		return tx.argumentsAndSuperVisitor(node)
 	}
+	tx.trackSuperAccess(node)
 	switch node.Kind {
 	case ast.KindSourceFile:
 		return tx.visitSourceFile(node.AsSourceFile())
@@ -166,31 +195,6 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
 	case ast.KindArrowFunction:
 		return tx.doWithContext(asyncContextNonTopLevel, (*asyncTransformer).visitArrowFunction, node)
-	case ast.KindPropertyAccessExpression:
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindElementAccessExpression: // TODO: why is this duplicated?
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindBinaryExpression:
-		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindPrefixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindPostfixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-		return tx.Visitor().VisitEachChild(node)
 	case ast.KindGetAccessor:
 		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
 	case ast.KindSetAccessor:
