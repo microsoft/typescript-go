@@ -65,58 +65,38 @@ const NODE_OFFSET_DATA = 20;
 export class RemoteNodeBase {
     parent: RemoteNode;
     view: DataView;
-    decoder: TextDecoder;
     protected index: number;
+    protected _byteIndex: number;
 
-    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
+    constructor(view: DataView, index: number, parent: RemoteNode, byteIndex: number) {
         this.view = view;
-        this.decoder = decoder;
         this.index = index;
         this.parent = parent;
+        this._byteIndex = byteIndex;
     }
 
     get kind(): SyntaxKind {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_KIND, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_KIND, true);
     }
 
     get pos(): number {
-        return this.view.getInt32(this.byteIndex + NODE_OFFSET_POS, true);
+        return this.view.getInt32(this._byteIndex + NODE_OFFSET_POS, true);
     }
 
     get end(): number {
-        return this.view.getInt32(this.byteIndex + NODE_OFFSET_END, true);
+        return this.view.getInt32(this._byteIndex + NODE_OFFSET_END, true);
     }
 
     get next(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_NEXT, true);
-    }
-
-    protected get byteIndex(): number {
-        return this.offsetNodes + this.index * NODE_LEN;
-    }
-
-    protected get offsetStringTableOffsets(): number {
-        return this.view.getUint32(HEADER_OFFSET_STRING_TABLE_OFFSETS, true);
-    }
-
-    protected get offsetStringTable(): number {
-        return this.view.getUint32(HEADER_OFFSET_STRING_TABLE, true);
-    }
-
-    protected get offsetExtendedData(): number {
-        return this.view.getUint32(HEADER_OFFSET_EXTENDED_DATA, true);
-    }
-
-    protected get offsetNodes(): number {
-        return this.view.getUint32(HEADER_OFFSET_NODES, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_NEXT, true);
     }
 
     protected get parentIndex(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_PARENT, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_PARENT, true);
     }
 
     protected get data(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_DATA, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_DATA, true);
     }
 
     protected get dataType(): NodeDataType {
@@ -131,49 +111,47 @@ export class RemoteNodeBase {
     }
 
     protected getFileText(start: number, end: number): string {
-        return this.decoder.decode(new Uint8Array(this.view.buffer, this.offsetStringTable + start, end - start));
+        return this.sourceFile._decoder.decode(new Uint8Array(this.view.buffer, this.sourceFile._offsetStringTable + start, end - start));
+    }
+
+    protected get sourceFile(): RemoteSourceFile {
+        // Overridden in RemoteNode; exists here for getFileText access
+        throw new Error("sourceFile not available on base");
     }
 }
 
 export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {
     parent: RemoteNode;
     protected view: DataView;
-    protected decoder: TextDecoder;
     protected index: number;
+    private _byteIndex: number;
 
     get pos(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_POS, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_POS, true);
     }
 
     get end(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_END, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_END, true);
     }
 
     get next(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_NEXT, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_NEXT, true);
     }
 
     private get data(): number {
-        return this.view.getUint32(this.byteIndex + NODE_OFFSET_DATA, true);
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_DATA, true);
     }
 
-    private get offsetNodes(): number {
-        return this.view.getUint32(HEADER_OFFSET_NODES, true);
-    }
-
-    private get byteIndex(): number {
-        return this.offsetNodes + this.index * NODE_LEN;
-    }
     private sourceFile: RemoteSourceFile;
 
-    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode, sourceFile: RemoteSourceFile) {
+    constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: RemoteSourceFile, offsetNodes: number) {
         super();
         this.view = view;
-        this.decoder = decoder;
         this.index = index;
         this.parent = parent;
-        this.length = this.data;
         this.sourceFile = sourceFile;
+        this._byteIndex = offsetNodes + index * NODE_LEN;
+        this.length = this.data;
 
         const length = this.length;
         for (let i = 16; i < length; i++) {
@@ -242,6 +220,16 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         }
     }
 
+    forEachNode<T>(visitNode: (node: RemoteNode) => T | undefined): T | undefined {
+        let next = this.index + 1;
+        while (next) {
+            const child = this.getOrCreateChildAtNodeIndex(next);
+            next = child.next;
+            const result = visitNode(child as RemoteNode);
+            if (result) return result;
+        }
+    }
+
     at(index: number): RemoteNode {
         if (!Number.isInteger(index)) {
             return undefined!;
@@ -263,11 +251,11 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
         let child = this.sourceFile.nodes[index];
         if (!child) {
-            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
+            const kind = this.view.getUint32(this.sourceFile._offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             if (kind === KIND_NODE_LIST) {
                 throw new Error("NodeList cannot directly contain another NodeList");
             }
-            child = new RemoteNode(this.view, this.decoder, index, this.parent, this.sourceFile);
+            child = new RemoteNode(this.view, index, this.parent, this.sourceFile, this.sourceFile._offsetNodes);
             this.sourceFile.nodes[index] = child;
         }
         return child;
@@ -277,7 +265,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         const result = [];
         result.push(`kind: NodeList`);
         result.push(`index: ${this.index}`);
-        result.push(`byteIndex: ${this.byteIndex}`);
+        result.push(`byteIndex: ${this._byteIndex}`);
         result.push(`length: ${this.length}`);
         return result.join("\n");
     }
@@ -285,15 +273,17 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
 
 export class RemoteNode extends RemoteNodeBase implements Node {
     protected static NODE_LEN: number = NODE_LEN;
-    protected sourceFile: RemoteSourceFile;
+    protected override get sourceFile(): RemoteSourceFile {
+        return this._sourceFile;
+    }
+    protected _sourceFile: RemoteSourceFile;
     get id(): string {
         return `${this.pos}.${this.end}.${this.kind}.${this.sourceFile.path}`;
     }
 
-    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode, sourceFile: RemoteSourceFile) {
-        super(view, decoder, index, parent);
-        this.sourceFile = sourceFile;
-        // Node handle format: pos.end.kind.path
+    constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: RemoteSourceFile, offsetNodes: number) {
+        super(view, index, parent, offsetNodes + index * NODE_LEN);
+        this._sourceFile = sourceFile;
     }
 
     forEachChild<T>(visitNode: (node: Node) => T, visitList?: (list: NodeArray<Node>) => T): T | undefined {
@@ -308,11 +298,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                             return result;
                         }
                     }
-                    for (const node of child) {
-                        const result = visitNode(node);
-                        if (result) {
-                            return result;
-                        }
+                    const result = child.forEachNode(visitNode);
+                    if (result) {
+                        return result;
                     }
                 }
                 else {
@@ -332,29 +320,33 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     protected getString(index: number): string {
-        const start = this.view.getUint32(this.offsetStringTableOffsets + index * 4, true);
-        const end = this.view.getUint32(this.offsetStringTableOffsets + (index + 1) * 4, true);
-        const text = new Uint8Array(this.view.buffer, this.offsetStringTable + start, end - start);
-        return this.decoder.decode(text);
+        const offsetStringTableOffsets = this.sourceFile._offsetStringTableOffsets;
+        const start = this.view.getUint32(offsetStringTableOffsets + index * 4, true);
+        const end = this.view.getUint32(offsetStringTableOffsets + (index + 1) * 4, true);
+        const offsetStringTable = this.sourceFile._offsetStringTable;
+        const text = new Uint8Array(this.view.buffer, offsetStringTable + start, end - start);
+        return this.sourceFile._decoder.decode(text);
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
         let child = this.sourceFile.nodes[index];
         if (!child) {
-            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
+            const offsetNodes = this.sourceFile._offsetNodes;
+            const kind = this.view.getUint32(offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
+            const sf = this.sourceFile;
             child = kind === KIND_NODE_LIST
-                ? new RemoteNodeList(this.view, this.decoder, index, this, this.sourceFile)
-                : new RemoteNode(this.view, this.decoder, index, this, this.sourceFile);
-            this.sourceFile.nodes[index] = child;
+                ? new RemoteNodeList(this.view, index, this, sf, offsetNodes)
+                : new RemoteNode(this.view, index, this, sf, offsetNodes);
+            sf.nodes[index] = child;
         }
         return child;
     }
 
     private hasChildren(): boolean {
-        if (this.byteIndex >= this.view.byteLength - NODE_LEN) {
+        if (this._byteIndex >= this.view.byteLength - NODE_LEN) {
             return false;
         }
-        const nextNodeParent = this.view.getUint32(this.offsetNodes + (this.index + 1) * NODE_LEN + NODE_OFFSET_PARENT, true);
+        const nextNodeParent = this.view.getUint32(this.sourceFile._offsetNodes + (this.index + 1) * NODE_LEN + NODE_OFFSET_PARENT, true);
         return nextNodeParent === this.index;
     }
 
@@ -434,7 +426,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         let childIndex = this.index + 1;
         for (let i = 0; i < propertyIndex; i++) {
             // Walk through children via their `next` pointer until we get to the right property index
-            childIndex = this.view.getUint32(this.offsetNodes + childIndex * NODE_LEN + NODE_OFFSET_NEXT, true);
+            childIndex = this.view.getUint32(this.sourceFile._offsetNodes + childIndex * NODE_LEN + NODE_OFFSET_NEXT, true);
         }
         return this.getOrCreateChildAtNodeIndex(childIndex);
     }
@@ -442,7 +434,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     __print(): string {
         const result = [];
         result.push(`index: ${this.index}`);
-        result.push(`byteIndex: ${this.byteIndex}`);
+        result.push(`byteIndex: ${this._byteIndex}`);
         result.push(`kind: ${SyntaxKind[this.kind]}`);
         result.push(`pos: ${this.pos}`);
         result.push(`end: ${this.end}`);
@@ -832,7 +824,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail: {
-                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 const stringIndex = this.view.getUint32(extendedDataOffset, true);
                 return this.getString(stringIndex);
             }
@@ -844,7 +836,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail:
-                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 const stringIndex = this.view.getUint32(extendedDataOffset + 4, true);
                 return this.getString(stringIndex);
         }
@@ -853,7 +845,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get fileName(): string | undefined {
         switch (this.kind) {
             case SyntaxKind.SourceFile:
-                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 const stringIndex = this.view.getUint32(extendedDataOffset + 4, true);
                 return this.getString(stringIndex);
         }
@@ -862,7 +854,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get path(): string | undefined {
         switch (this.kind) {
             case SyntaxKind.SourceFile:
-                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 const stringIndex = this.view.getUint32(extendedDataOffset + 8, true);
                 return this.getString(stringIndex);
         }
@@ -905,7 +897,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail:
-                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 return this.view.getUint32(extendedDataOffset + 8, true);
         }
     }
@@ -913,12 +905,23 @@ export class RemoteNode extends RemoteNodeBase implements Node {
 
 export class RemoteSourceFile extends RemoteNode {
     readonly nodes: (RemoteNode | RemoteNodeList)[];
+    readonly _offsetNodes: number;
+    readonly _offsetStringTableOffsets: number;
+    readonly _offsetStringTable: number;
+    readonly _offsetExtendedData: number;
+    readonly _decoder: TextDecoder;
 
     constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-        super(view, decoder, 1, undefined!, {} as unknown as RemoteSourceFile);
-        this.sourceFile = this;
-        this.nodes = Array((this.view.byteLength - this.offsetNodes) / NODE_LEN);
+        const offsetNodes = view.getUint32(HEADER_OFFSET_NODES, true);
+        super(view, 1, undefined!, undefined!, offsetNodes);
+        this._sourceFile = this;
+        this._offsetNodes = offsetNodes;
+        this._offsetStringTableOffsets = view.getUint32(HEADER_OFFSET_STRING_TABLE_OFFSETS, true);
+        this._offsetStringTable = view.getUint32(HEADER_OFFSET_STRING_TABLE, true);
+        this._offsetExtendedData = view.getUint32(HEADER_OFFSET_EXTENDED_DATA, true);
+        this._decoder = decoder;
+        this.nodes = Array((view.byteLength - offsetNodes) / NODE_LEN);
         this.nodes[1] = this;
     }
 }
