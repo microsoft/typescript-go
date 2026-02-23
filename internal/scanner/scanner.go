@@ -2552,10 +2552,15 @@ func ComputePositionOfLineAndUTF16Character(lineStarts []core.TextPos, line int,
 			utf16Count += core.UTF16Offset(utf16.RuneLen(r))
 			pos += size
 		}
-		if allowEdits {
-			if pos > len(text) {
-				return len(text)
+		if !allowEdits {
+			if pos == lineEnd && utf16Count < character {
+				panic(fmt.Sprintf("Bad UTF-16 character offset. Line: %d, character: %d.", line, character))
 			}
+			debug.Assert(pos <= len(text))
+			return pos
+		}
+		if pos > len(text) {
+			return len(text)
 		}
 		return pos
 	}

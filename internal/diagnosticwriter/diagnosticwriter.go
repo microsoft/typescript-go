@@ -231,7 +231,7 @@ func writeCodeSnippet(writer io.Writer, sourceFile FileLike, start int, length i
 			if i == lastLine {
 				lastCharForLine = int(lastLineChar)
 			} else {
-				lastCharForLine = len(lineContent)
+				lastCharForLine = int(core.UTF16Len(lineContent))
 			}
 
 			// Fill with spaces until the first character,
@@ -243,7 +243,7 @@ func writeCodeSnippet(writer io.Writer, sourceFile FileLike, start int, length i
 			fmt.Fprint(writer, strings.Repeat("~", int(lastLineChar)))
 		default:
 			// Squiggle the entire line.
-			fmt.Fprint(writer, strings.Repeat("~", len(lineContent)))
+			fmt.Fprint(writer, strings.Repeat("~", int(core.UTF16Len(lineContent))))
 		}
 
 		fmt.Fprint(writer, resetEscapeSequence)
