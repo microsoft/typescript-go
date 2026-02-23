@@ -217,14 +217,11 @@ func FindFirstNonWhitespaceColumn(startPos int, endPos int, sourceFile *ast.Sour
 * value of 'column' for '$' is 6 (assuming that tab size is 4)
  */
 func findFirstNonWhitespaceCharacterAndColumn(startPos int, endPos int, sourceFile *ast.SourceFile, options *lsutil.FormatCodeSettings) (character int, column int) {
-	character = 0
 	column = 0
 	text := sourceFile.Text()
-	for pos := startPos; pos < endPos; pos++ {
+	pos := startPos
+	for pos < endPos {
 		ch, size := utf8.DecodeRuneInString(text[pos:])
-		if size == 0 && ch == utf8.RuneError {
-			continue // multibyte character - TODO: recognize non-tab multicolumn characters? ideographic space?
-		}
 		if !stringutil.IsWhiteSpaceSingleLine(ch) {
 			break
 		}
@@ -235,9 +232,9 @@ func findFirstNonWhitespaceCharacterAndColumn(startPos int, endPos int, sourceFi
 			column++
 		}
 
-		character++
+		pos += size
 	}
-	return character, column
+	return pos - startPos, column
 }
 
 func childStartsOnTheSameLineWithElseInIfStatement(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
