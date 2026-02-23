@@ -178,15 +178,15 @@ function getChildrenPropertyMask(node: Node): number {
     return mask;
 }
 
-function boolBit(v: any): number {
+function boolBit(v: unknown): number {
     return isChildPresent(v) ? 1 : 0;
 }
 
 // A child is "present" if it's non-null and, for arrays, non-empty.
 // This matches the Go encoder's behavior where nil and empty NodeLists
 // are both treated as absent.
-function isChildPresent(v: any): boolean {
-    if (v == null) return false;
+function isChildPresent(v: unknown): boolean {
+    if (v === undefined || v === null) return false;
     if (Array.isArray(v)) return v.length > 0;
     return true;
 }
@@ -413,7 +413,7 @@ export function encodeNode(node: Node): Uint8Array {
             for (const propName of props) {
                 if (propName === undefined) continue;
                 const child = n[propName];
-                if (child == null) continue;
+                if (child === undefined || child === null) continue;
                 if (isNodeArray(child)) {
                     visitNodeList(child);
                 }
