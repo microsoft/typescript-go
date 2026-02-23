@@ -37,7 +37,7 @@
     },
     "scripts": {
         "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
-        "generate:factory": "node --experimental-strip-types --no-warnings scripts/generateFactory.ts",
+        "generate:factory": "node --conditions=@typescript/source --experimental-strip-types --no-warnings scripts/generateFactory.ts",
         "prebuild": "npm run generate:enums && npm run generate:factory",
         "build": "tsc -b"
     }
