@@ -1,9 +1,0 @@
---- old.regularExpressionGroupNameSuggestions.errors.txt
-+++ new.regularExpressionGroupNameSuggestions.errors.txt
-@@= skipped -7, +7 lines =@@
- !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
-                               ~~~
- !!! error TS1532: There is no capturing group named 'Foo' in this regular expression.
--!!! related TS1369: Did you mean 'foo'?
-+!!! related TS1369 regularExpressionGroupNameSuggestions.ts:1:27: Did you mean 'foo'?
-     
