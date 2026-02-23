@@ -84,6 +84,9 @@ type regExpParser struct {
 	unicodeSetsMode bool
 	annexB          bool
 
+	anyUnicodeModeOrNonAnnexB bool
+	namedCaptureGroups        bool
+
 	mayContainStrings       bool
 	numberOfCapturingGroups int
 	groupSpecifiers         map[string]bool
@@ -197,7 +200,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				case '=', '!':
 					p.incPos(1)
 					// In Annex B, `(?=Disjunction)` and `(?!Disjunction)` are quantifiable
-					isPreviousTermQuantifiable = p.annexB
+					isPreviousTermQuantifiable = !p.anyUnicodeModeOrNonAnnexB
 				case '<':
 					groupNameStart := p.pos()
 					p.incPos(1)
@@ -238,6 +241,10 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 			digitsStart := p.pos()
 			p.scanDigits()
 			min := p.scanner.tokenValue
+			if !p.anyUnicodeModeOrNonAnnexB && min == "" {
+				isPreviousTermQuantifiable = true
+				continue
+			}
 			if p.charAt(p.pos()) == ',' {
 				p.incPos(1)
 				p.scanDigits()
@@ -246,29 +253,33 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 					if max != "" || p.charAt(p.pos()) == '}' {
 						p.error(diagnostics.Incomplete_quantifier_Digit_expected, digitsStart, 0)
 					} else {
-						if p.anyUnicodeMode {
-							p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
-						}
+						p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
 						isPreviousTermQuantifiable = true
 						continue
 					}
-				}
-				if max != "" {
+				} else if max != "" {
 					minVal, _ := strconv.Atoi(min)
 					maxVal, _ := strconv.Atoi(max)
-					if minVal > maxVal {
+					if minVal > maxVal && (p.anyUnicodeModeOrNonAnnexB || p.charAt(p.pos()) == '}') {
 						p.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, p.pos()-digitsStart)
 					}
 				}
 			} else if min == "" {
-				if p.anyUnicodeMode {
+				if p.anyUnicodeModeOrNonAnnexB {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
 				}
 				isPreviousTermQuantifiable = true
 				continue
 			}
-			p.scanExpectedChar('}')
-			p.incPos(-1)
+			if p.charAt(p.pos()) != '}' {
+				if p.anyUnicodeModeOrNonAnnexB {
+					p.error(diagnostics.X_0_expected, p.pos(), 0, "}")
+					p.incPos(-1)
+				} else {
+					isPreviousTermQuantifiable = true
+					continue
+				}
+			}
 			// falls through to quantifier handling
 			fallthrough
 		case '*', '+', '?':
@@ -298,7 +309,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 			}
 			fallthrough
 		case ']', '}':
-			if p.anyUnicodeMode || ch == ')' {
+			if p.anyUnicodeModeOrNonAnnexB || ch == ')' {
 				p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 			}
 			p.incPos(1)
@@ -348,7 +359,7 @@ func (p *regExpParser) scanAtomEscape() {
 			p.incPos(1)
 			p.scanGroupName(true /*isReference*/)
 			p.scanExpectedChar('>')
-		} else if p.anyUnicodeMode {
+		} else if p.anyUnicodeModeOrNonAnnexB || p.namedCaptureGroups {
 			p.error(diagnostics.X_k_must_be_followed_by_a_capturing_group_name_enclosed_in_angle_brackets, p.pos()-2, 2)
 		}
 	case 'q':
@@ -401,9 +412,9 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 			p.incPos(1)
 			return string(rune(ch & 0x1f))
 		}
-		if p.anyUnicodeMode {
+		if p.anyUnicodeModeOrNonAnnexB {
 			p.error(diagnostics.X_c_must_be_followed_by_an_ASCII_letter, p.pos()-2, 2)
-		} else if atomEscape && p.annexB {
+		} else if atomEscape {
 			p.incPos(-1)
 			return "\\"
 		}
@@ -418,7 +429,7 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 			flags |= EscapeSequenceScanningFlagsAnnexB
 		}
 		if p.anyUnicodeMode {
-			flags |= EscapeSequenceScanningFlagsReportErrors | EscapeSequenceScanningFlagsAnyUnicodeMode
+			flags |= EscapeSequenceScanningFlagsAnyUnicodeMode
 		}
 		if atomEscape {
 			flags |= EscapeSequenceScanningFlagsAtomEscape
@@ -475,12 +486,12 @@ func (p *regExpParser) scanClassRanges() {
 			if p.isClassContentExit(ch) {
 				return
 			}
-			if minCharacter == "" && !p.annexB {
+			if minCharacter == "" && p.anyUnicodeModeOrNonAnnexB {
 				p.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, minStart, p.pos()-1-minStart)
 			}
 			maxStart := p.pos()
 			maxCharacter := p.scanClassAtom()
-			if maxCharacter == "" && !p.annexB {
+			if maxCharacter == "" && p.anyUnicodeModeOrNonAnnexB {
 				p.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, maxStart, p.pos()-maxStart)
 				continue
 			}
@@ -879,8 +890,11 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 			if !p.anyUnicodeMode {
 				p.error(diagnostics.Unicode_property_value_expressions_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, p.pos()-start)
 			}
-		} else if p.anyUnicodeMode {
+		} else if p.anyUnicodeModeOrNonAnnexB {
 			p.error(diagnostics.X_0_must_be_followed_by_a_Unicode_property_value_expression_enclosed_in_braces, p.pos()-2, 2, string(ch))
+		} else {
+			p.incPos(-1)
+			return false
 		}
 		return true
 	}
@@ -967,9 +981,9 @@ func (p *regExpParser) scanDigits() {
 }
 
 func (p *regExpParser) run() {
-	if p.anyUnicodeMode {
-		p.annexB = false
-	}
+	// Regular expressions are checked more strictly when either in 'u' or 'v' mode, or
+	// when not using the looser interpretation of the syntax from ECMA-262 Annex B.
+	p.anyUnicodeModeOrNonAnnexB = p.anyUnicodeMode || !p.annexB
 
 	p.scanDisjunction(false /*isInGroup*/)
 
@@ -989,9 +1003,10 @@ func (p *regExpParser) run() {
 		}
 	}
 	for _, escape := range p.decimalEscapes {
-		// in AnnexB, if a DecimalEscape is greater than the number of capturing groups then it is treated as
-		// either a LegacyOctalEscapeSequence or IdentityEscape
-		if !p.annexB && escape.value > p.numberOfCapturingGroups {
+		// Although a DecimalEscape with a value greater than the number of capturing groups
+		// is treated as either a LegacyOctalEscapeSequence or an IdentityEscape in Annex B,
+		// an error is nevertheless reported since it's most likely a mistake.
+		if escape.value > p.numberOfCapturingGroups {
 			if p.numberOfCapturingGroups > 0 {
 				p.error(diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_only_0_capturing_groups_in_this_regular_expression, escape.pos, escape.end-escape.pos, p.numberOfCapturingGroups)
 			} else {

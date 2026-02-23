@@ -27,29 +27,6 @@ regularExpressionAnnexB.ts(8,31): error TS1531: '\p' must be followed by a Unico
 regularExpressionAnnexB.ts(9,4): error TS1531: '\P' must be followed by a Unicode property value expression enclosed in braces.
 regularExpressionAnnexB.ts(9,7): error TS1531: '\P' must be followed by a Unicode property value expression enclosed in braces.
 regularExpressionAnnexB.ts(9,9): error TS1516: A character class range must not be bounded by another character class.
-regularExpressionAnnexB.ts(15,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(15,5): error TS1505: Incomplete quantifier. Digit expected.
-regularExpressionAnnexB.ts(15,7): error TS1005: '}' expected.
-regularExpressionAnnexB.ts(15,8): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(16,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(16,6): error TS1005: '}' expected.
-regularExpressionAnnexB.ts(16,7): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(17,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(17,7): error TS1005: '}' expected.
-regularExpressionAnnexB.ts(17,8): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(18,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(18,8): error TS1005: '}' expected.
-regularExpressionAnnexB.ts(18,9): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(19,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(19,5): error TS1506: Numbers out of order in quantifier.
-regularExpressionAnnexB.ts(19,8): error TS1005: '}' expected.
-regularExpressionAnnexB.ts(19,9): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(21,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(21,5): error TS1505: Incomplete quantifier. Digit expected.
-regularExpressionAnnexB.ts(21,8): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(22,4): error TS1507: There is nothing available for repetition.
-regularExpressionAnnexB.ts(22,5): error TS1505: Incomplete quantifier. Digit expected.
-regularExpressionAnnexB.ts(22,9): error TS1507: There is nothing available for repetition.
 regularExpressionAnnexB.ts(23,4): error TS1507: There is nothing available for repetition.
 regularExpressionAnnexB.ts(23,8): error TS1507: There is nothing available for repetition.
 regularExpressionAnnexB.ts(24,4): error TS1507: There is nothing available for repetition.
@@ -97,7 +74,7 @@ regularExpressionAnnexB.ts(42,5): error TS1506: Numbers out of order in quantifi
 regularExpressionAnnexB.ts(42,10): error TS1507: There is nothing available for repetition.
 
 
-==== regularExpressionAnnexB.ts (97 errors) ====
+==== regularExpressionAnnexB.ts (74 errors) ====
     const regexes: RegExp[] = [
       /\q\u\i\c\k\_\f\o\x\-\j\u\m\p\s/,
            
@@ -171,59 +148,13 @@ regularExpressionAnnexB.ts(42,10): error TS1507: There is nothing available for 
       /{??/,
       /{,??/,
       /{,1??/,
-       ~~~~
-!!! error TS1507: There is nothing available for repetition.
-        
-!!! error TS1505: Incomplete quantifier. Digit expected.
-          
-!!! error TS1005: '}' expected.
-           ~
-!!! error TS1507: There is nothing available for repetition.
       /{1??/,
-       ~~~
-!!! error TS1507: There is nothing available for repetition.
-         
-!!! error TS1005: '}' expected.
-          ~
-!!! error TS1507: There is nothing available for repetition.
       /{1,??/,
-       ~~~~
-!!! error TS1507: There is nothing available for repetition.
-          
-!!! error TS1005: '}' expected.
-           ~
-!!! error TS1507: There is nothing available for repetition.
       /{1,2??/,
-       ~~~~~
-!!! error TS1507: There is nothing available for repetition.
-           
-!!! error TS1005: '}' expected.
-            ~
-!!! error TS1507: There is nothing available for repetition.
       /{2,1??/,
-       ~~~~~
-!!! error TS1507: There is nothing available for repetition.
-        ~~~
-!!! error TS1506: Numbers out of order in quantifier.
-           
-!!! error TS1005: '}' expected.
-            ~
-!!! error TS1507: There is nothing available for repetition.
       /{}??/,
       /{,}??/,
-       ~~~~
-!!! error TS1507: There is nothing available for repetition.
-        
-!!! error TS1505: Incomplete quantifier. Digit expected.
-           ~
-!!! error TS1507: There is nothing available for repetition.
       /{,1}??/,
-       ~~~~~
-!!! error TS1507: There is nothing available for repetition.
-        
-!!! error TS1505: Incomplete quantifier. Digit expected.
-            ~
-!!! error TS1507: There is nothing available for repetition.
       /{1}??/,
        ~~~~
 !!! error TS1507: There is nothing available for repetition.

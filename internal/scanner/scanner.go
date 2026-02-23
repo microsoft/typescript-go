@@ -1053,8 +1053,12 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 		startOfRegExpBody := s.tokenStart + 1
 		p := startOfRegExpBody
 		inEscape := false
+		namedCaptureGroups := false
 		// Although nested character classes are allowed in Unicode Sets mode,
 		// an unescaped slash is nevertheless invalid even in a character class in any Unicode mode.
+		// This is indicated by Section 12.9.5 Regular Expression Literals of the specification,
+		// where nested character classes are not considered at all. (A `[` RegularExpressionClassChar
+		// does nothing in a RegularExpressionClass, and a `]` always closes the class.)
 		// Additionally, parsing nested character classes will misinterpret regexes like `/[[]/`
 		// as unterminated, consuming characters beyond the slash. (This even applies to `/[[]/v`,
 		// which should be parsed as a well-terminated regex with an incomplete character class.)
@@ -1081,6 +1085,11 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 				inEscape = true
 			} else if ch == ']' {
 				inCharacterClass = false
+			} else if !inCharacterClass && ch == '(' &&
+				p+1 < len(s.text) && s.text[p+1] == '?' &&
+				p+2 < len(s.text) && s.text[p+2] == '<' &&
+				(p+3 >= len(s.text) || (s.text[p+3] != '=' && s.text[p+3] != '!')) {
+				namedCaptureGroups = true
 			}
 			p++
 		}
@@ -1160,13 +1169,14 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 				saveTokenPos := s.tokenStart
 				saveTokenFlags := s.tokenFlags
 				parser := &regExpParser{
-					scanner:         s,
-					end:             endOfRegExpBody,
-					regExpFlags:     regExpFlags,
-					anyUnicodeMode:  regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
-					unicodeSetsMode: regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
-					annexB:          true,
-					groupSpecifiers: make(map[string]bool),
+					scanner:            s,
+					end:                endOfRegExpBody,
+					regExpFlags:        regExpFlags,
+					anyUnicodeMode:     regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
+					unicodeSetsMode:    regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+					annexB:             true,
+					namedCaptureGroups: namedCaptureGroups,
+					groupSpecifiers:    make(map[string]bool),
 				}
 				parser.run()
 				s.pos = p
@@ -1681,12 +1691,10 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			code, _ := strconv.ParseInt(s.text[start+1:s.pos], 8, 32)
-			if flags&EscapeSequenceScanningFlagsAnnexB == 0 {
-				if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
-					s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
-				} else {
-					s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
-				}
+			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
+				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
+			} else {
+				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
 			}
 			return string(rune(code))
 		}
