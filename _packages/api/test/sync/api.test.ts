@@ -1600,7 +1600,7 @@ export type Pair = [string, number];
 });
 
 test("Benchmarks", () => {
-    runBenchmarks(/*singleIteration*/ true);
+    runBenchmarks({ singleIteration: true });
 });
 
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {

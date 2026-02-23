@@ -106,14 +106,14 @@ export function runBenchmarks(options?: { filter?: string; singleIteration?: boo
             getCheckerTS();
         }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("materialize program.ts", () => {
-            const { view, decoder } = file as unknown as RemoteSourceFile;
-            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
+            const { view, _decoder } = file as unknown as RemoteSourceFile;
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), _decoder).forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
         }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", () => {
-            const { view, decoder } = file as unknown as RemoteSourceFile;
-            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
+            const { view, _decoder } = file as unknown as RemoteSourceFile;
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), _decoder).forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
         }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })

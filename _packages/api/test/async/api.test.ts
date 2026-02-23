@@ -1592,7 +1592,7 @@ export type Pair = [string, number];
 });
 
 test("Benchmarks", async () => {
-    await runBenchmarks(/*singleIteration*/ true);
+    await runBenchmarks({ singleIteration: true });
 });
 
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {

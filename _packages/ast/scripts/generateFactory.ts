@@ -301,8 +301,7 @@ function safeParamName(name: string): string {
 
 // Map protocol child property names that differ from TS interface property names.
 // The Go AST unifies questionToken/exclamationToken into a single PostfixToken field.
-const PROTOCOL_NAME_MAP: Record<string, string> = {
-};
+const PROTOCOL_NAME_MAP: Record<string, string> = {};
 
 function protocolToInterfaceName(protocolName: string, propMap: Map<string, PropertyInfo>): string {
     // If the protocol name directly exists in the interface, use it
