@@ -211,6 +211,7 @@ type ScannerState struct {
 
 type Scanner struct {
 	text            string
+	end             int
 	languageVariant core.LanguageVariant
 	scriptTarget    core.ScriptTarget
 	onError         ErrorCallback
@@ -404,6 +405,7 @@ func hasJSDocTag(text string, tags ...string) bool {
 
 func (s *Scanner) SetText(text string) {
 	s.text = text
+	s.end = len(text)
 	s.ScannerState = ScannerState{}
 }
 
@@ -444,7 +446,7 @@ func (s *Scanner) errorAt(diagnostic *diagnostics.Message, pos int, length int, 
 // It must be checked against utf8.RuneSelf to verify that a call to charAndSize
 // is not needed.
 func (s *Scanner) char() rune {
-	if s.pos < len(s.text) {
+	if s.pos < s.end {
 		return rune(s.text[s.pos])
 	}
 	return -1
@@ -452,7 +454,7 @@ func (s *Scanner) char() rune {
 
 // NOTE: this returns a rune, but only decodes the byte at the offset.
 func (s *Scanner) charAt(offset int) rune {
-	if s.pos+offset < len(s.text) {
+	if s.pos+offset < s.end {
 		return rune(s.text[s.pos+offset])
 	}
 	return -1
@@ -1164,24 +1166,27 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 				}
 				p += size
 			}
-			if shouldReportErrors {
-				s.pos = startOfRegExpBody
-				saveTokenPos := s.tokenStart
-				saveTokenFlags := s.tokenFlags
-				parser := &regExpParser{
-					scanner:            s,
-					end:                endOfRegExpBody,
-					regExpFlags:        regExpFlags,
-					anyUnicodeMode:     regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
-					unicodeSetsMode:    regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
-					annexB:             true,
-					namedCaptureGroups: namedCaptureGroups,
-					groupSpecifiers:    make(map[string]bool),
-				}
-				parser.run()
-				s.pos = p
-				s.tokenStart = saveTokenPos
-				s.tokenFlags = saveTokenFlags
+		if shouldReportErrors {
+			s.pos = startOfRegExpBody
+			saveEnd := s.end
+			saveTokenPos := s.tokenStart
+			saveTokenFlags := s.tokenFlags
+			s.end = endOfRegExpBody
+			parser := &regExpParser{
+				scanner:            s,
+				end:                endOfRegExpBody,
+				regExpFlags:        regExpFlags,
+				anyUnicodeMode:     regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
+				unicodeSetsMode:    regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+				annexB:             true,
+				namedCaptureGroups: namedCaptureGroups,
+				groupSpecifiers:    make(map[string]bool),
+			}
+			parser.run()
+			s.end = saveEnd
+			s.pos = p
+			s.tokenStart = saveTokenPos
+			s.tokenFlags = saveTokenFlags
 			} else {
 				s.pos = p
 			}
