@@ -21,7 +21,7 @@ export const NODE_DATA_TYPE_CHILDREN = 0x00000000;
 export const NODE_DATA_TYPE_STRING = 0x40000000;
 export const NODE_DATA_TYPE_EXTENDED = 0x80000000;
 
-export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (string | undefined)[]>>> = {
+export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> = {
     [SyntaxKind.SourceFile]: ["statements", "endOfFileToken"],
     [SyntaxKind.QualifiedName]: ["left", "right"],
     [SyntaxKind.TypeParameter]: ["modifiers", "name", "constraint", "default"],
