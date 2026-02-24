@@ -49,8 +49,8 @@ type forawaitTransformer struct {
 	forAwaitHierarchyFacts    forAwaitHierarchyFacts
 	exportedVariableStatement bool
 
-	superPropertyNodeVisitor *ast.NodeVisitor
-	noAsyncModifierVisitor   *ast.NodeVisitor
+	fallbackNodeVisitor    *ast.NodeVisitor
+	noAsyncModifierVisitor *ast.NodeVisitor
 }
 
 func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -59,7 +59,7 @@ func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.T
 	}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.initSuperAccessVisitor(tx.EmitContext(), tx.Factory())
-	tx.superPropertyNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitSuperProperty)
+	tx.fallbackNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitFallback)
 	tx.noAsyncModifierVisitor = tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
 		if node.Kind == ast.KindAsyncKeyword {
 			return nil
@@ -87,7 +87,10 @@ func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts)
 	tx.forAwaitHierarchyFacts = ancestorFacts
 }
 
-func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
+func (tx *forawaitTransformer) fallbackVisitor(node *ast.Node) *ast.Node {
+	if tx.capturedSuperProperties == nil {
+		return node
+	}
 	switch node.Kind {
 	case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
 		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
@@ -95,20 +98,16 @@ func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
 		return node
 	}
 	tx.trackSuperAccess(node)
-	return tx.superPropertyNodeVisitor.VisitEachChild(node)
+	return tx.fallbackNodeVisitor.VisitEachChild(node)
 }
 
-// visitSuperProperty is the NodeVisitor callback for superPropertyNodeVisitor.
-func (tx *forawaitTransformer) visitSuperProperty(node *ast.Node) *ast.Node {
-	return tx.superPropertyVisitor(node)
+func (tx *forawaitTransformer) visitFallback(node *ast.Node) *ast.Node {
+	return tx.fallbackVisitor(node)
 }
 
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
-		if tx.capturedSuperProperties != nil {
-			return tx.superPropertyVisitor(node)
-		}
-		return node
+		return tx.fallbackVisitor(node)
 	}
 	tx.trackSuperAccess(node)
 	switch node.Kind {

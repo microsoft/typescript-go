@@ -33,8 +33,8 @@ type asyncTransformer struct {
 	parentNode  *ast.Node
 	currentNode *ast.Node
 
-	asyncBodyVisitor             *ast.NodeVisitor
-	argumentsAndSuperNodeVisitor *ast.NodeVisitor
+	asyncBodyVisitor    *ast.NodeVisitor
+	fallbackNodeVisitor *ast.NodeVisitor
 }
 
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -42,7 +42,7 @@ func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Tran
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.initSuperAccessVisitor(tx.EmitContext(), tx.Factory())
 	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)
-	tx.argumentsAndSuperNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArgumentsAndSuper)
+	tx.fallbackNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitFallback)
 	return result
 }
 
@@ -93,11 +93,7 @@ func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
 }
 
-// argumentsAndSuperVisitor recurses into subtrees that lack await transform flags.
-// It ensures we still (1) substitute `arguments` references with a lexical binding and
-// (2) track super accesses (which don't set await flags). It stops at function boundaries
-// since both `arguments` and `super` rebind in nested functions.
-func (tx *asyncTransformer) argumentsAndSuperVisitor(node *ast.Node) *ast.Node {
+func (tx *asyncTransformer) fallbackVisitor(node *ast.Node) *ast.Node {
 	if tx.capturedSuperProperties == nil && tx.lexicalArguments.binding == nil {
 		return node
 	}
@@ -120,7 +116,7 @@ func (tx *asyncTransformer) argumentsAndSuperVisitor(node *ast.Node) *ast.Node {
 			return tx.lexicalArguments.binding
 		}
 	}
-	return tx.argumentsAndSuperNodeVisitor.VisitEachChild(node)
+	return tx.fallbackNodeVisitor.VisitEachChild(node)
 }
 
 func (tx *asyncTransformer) descendInto(node *ast.Node) func() {
@@ -130,12 +126,10 @@ func (tx *asyncTransformer) descendInto(node *ast.Node) func() {
 	return func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }
 }
 
-// visitArgumentsAndSuper is the NodeVisitor callback for argumentsAndSuperNodeVisitor.
-// It wraps argumentsAndSuperVisitor with parent tracking for recursive calls.
-func (tx *asyncTransformer) visitArgumentsAndSuper(node *ast.Node) *ast.Node {
+func (tx *asyncTransformer) visitFallback(node *ast.Node) *ast.Node {
 	cleanup := tx.descendInto(node)
 	defer cleanup()
-	return tx.argumentsAndSuperVisitor(node)
+	return tx.fallbackVisitor(node)
 }
 
 func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
@@ -143,7 +137,7 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	defer cleanup()
 
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
-		return tx.argumentsAndSuperVisitor(node)
+		return tx.fallbackVisitor(node)
 	}
 	tx.trackSuperAccess(node)
 	switch node.Kind {
