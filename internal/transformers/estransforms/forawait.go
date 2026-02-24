@@ -56,13 +56,49 @@ type forawaitTransformer struct {
 	superBinding               *ast.IdentifierNode
 	superIndexBinding          *ast.IdentifierNode
 	exportedVariableStatement  bool
+
+	superPropertyNodeVisitor *ast.NodeVisitor
 }
 
 func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &forawaitTransformer{
 		compilerOptions: opts.CompilerOptions,
 	}
-	return tx.NewTransformer(tx.visit, opts.Context)
+	result := tx.NewTransformer(tx.visit, opts.Context)
+	tx.superPropertyNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitSuperProperty)
+	return result
+}
+
+// trackSuperAccess records super property/element accesses and super property assignments
+// for the enclosing async generator method body. Called from both the main visitor and the
+// super property visitor to ensure super accesses are tracked regardless of whether the node
+// has transform flags.
+func (tx *forawaitTransformer) trackSuperAccess(node *ast.Node) {
+	if tx.capturedSuperProperties == nil {
+		return
+	}
+	switch node.Kind {
+	case ast.KindPropertyAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			tx.capturedSuperProperties.Add(node.Name().Text())
+		}
+	case ast.KindElementAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			tx.hasSuperElementAccess = true
+		}
+	case ast.KindBinaryExpression:
+		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPrefixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPostfixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			tx.hasSuperPropertyAssignment = true
+		}
+	}
 }
 
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
@@ -72,6 +108,7 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return node
 	}
+	tx.trackSuperAccess(node)
 	switch node.Kind {
 	case ast.KindSourceFile:
 		return tx.visitSourceFile(node.AsSourceFile())
@@ -101,31 +138,6 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.doWithHierarchyFacts((*forawaitTransformer).visitFunctionExpression, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	case ast.KindArrowFunction:
 		return tx.doWithHierarchyFacts((*forawaitTransformer).visitArrowFunction, node, forAwaitHierarchyFactsArrowFunctionExcludes, forAwaitHierarchyFactsArrowFunctionIncludes)
-	case ast.KindPropertyAccessExpression:
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindElementAccessExpression:
-		if tx.capturedSuperProperties != nil && node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindBinaryExpression:
-		if tx.capturedSuperProperties != nil && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindPrefixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-		return tx.Visitor().VisitEachChild(node)
-	case ast.KindPostfixUnaryExpression:
-		if tx.capturedSuperProperties != nil && isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-		return tx.Visitor().VisitEachChild(node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
 		return tx.doWithHierarchyFacts((*forawaitTransformer).visitDefault, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
 	default:
@@ -862,28 +874,14 @@ func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
 		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
 		ast.KindConstructor:
 		return node
-	case ast.KindPropertyAccessExpression:
-		if node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-	case ast.KindElementAccessExpression:
-		if node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-	case ast.KindBinaryExpression:
-		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPrefixUnaryExpression:
-		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPostfixUnaryExpression:
-		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
 	}
-	return tx.Visitor().VisitEachChild(node)
+	tx.trackSuperAccess(node)
+	return tx.superPropertyNodeVisitor.VisitEachChild(node)
+}
+
+// visitSuperProperty is the NodeVisitor callback for superPropertyNodeVisitor.
+func (tx *forawaitTransformer) visitSuperProperty(node *ast.Node) *ast.Node {
+	return tx.superPropertyVisitor(node)
 }
 
 // substituteSuperAccessesInBody walks the async generator body and replaces super property/element
