@@ -298,6 +298,34 @@ func (f *NodeFactory) CreateExpressionFromEntityName(node *ast.Node) *ast.Expres
 	return res
 }
 
+// CreateForOfBindingStatement creates a statement to bind the iteration value.
+func (f *NodeFactory) CreateForOfBindingStatement(node *ast.Node, boundValue *ast.Node) *ast.Node {
+	if ast.IsVariableDeclarationList(node) {
+		firstDeclaration := node.AsVariableDeclarationList().Declarations.Nodes[0]
+		updatedDeclaration := f.UpdateVariableDeclaration(
+			firstDeclaration.AsVariableDeclaration(),
+			firstDeclaration.Name(),
+			nil, /*exclamationToken*/
+			nil, /*type*/
+			boundValue,
+		)
+		statement := f.NewVariableStatement(
+			nil,
+			f.UpdateVariableDeclarationList(
+				node.AsVariableDeclarationList(),
+				f.NewNodeList([]*ast.Node{updatedDeclaration}),
+			),
+		)
+		statement.Loc = node.Loc
+		return statement
+	}
+	updatedExpression := f.NewAssignmentExpression(node, boundValue)
+	updatedExpression.Loc = node.Loc
+	statement := f.NewExpressionStatement(updatedExpression)
+	statement.Loc = node.Loc
+	return statement
+}
+
 func (f *NodeFactory) NewTypeCheck(value *ast.Node, tag string) *ast.Node {
 	if tag == "null" {
 		return f.NewStrictEqualityExpression(value, f.NewKeywordExpression(ast.KindNullKeyword))

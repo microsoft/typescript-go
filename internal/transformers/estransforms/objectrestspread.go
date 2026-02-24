@@ -546,7 +546,7 @@ func (ch *objectRestSpreadTransformer) visitForOftatement(node *ast.ForInOrOfSta
 			var bodyLocation core.TextRange
 			var statementsLocation core.TextRange
 			temp := ch.Factory().NewTempVariable()
-			res := ch.Visitor().VisitNode(ch.createForOfBindingStatement(initializerWithoutParens, temp))
+			res := ch.Visitor().VisitNode(ch.Factory().CreateForOfBindingStatement(initializerWithoutParens, temp))
 			statements := make([]*ast.Node, 0, 1)
 			if res != nil {
 				statements = append(statements, res)
@@ -590,34 +590,6 @@ func (ch *objectRestSpreadTransformer) visitForOftatement(node *ast.ForInOrOfSta
 		}
 	}
 	return ch.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (ch *objectRestSpreadTransformer) createForOfBindingStatement(node *ast.Node, boundValue *ast.Node) *ast.Node {
-	if ast.IsVariableDeclarationList(node) {
-		firstDeclaration := node.AsVariableDeclarationList().Declarations.Nodes[0]
-		updatedDeclaration := ch.Factory().UpdateVariableDeclaration(
-			firstDeclaration.AsVariableDeclaration(),
-			firstDeclaration.Name(),
-			nil,
-			nil,
-			boundValue,
-		)
-		statement := ch.Factory().NewVariableStatement(
-			nil,
-			ch.Factory().UpdateVariableDeclarationList(
-				node.AsVariableDeclarationList(),
-				ch.Factory().NewNodeList([]*ast.Node{updatedDeclaration}),
-			),
-		)
-		statement.Loc = node.Loc
-		return statement
-	} else {
-		updatedExpression := ch.Factory().NewAssignmentExpression(node, boundValue)
-		updatedExpression.Loc = node.Loc
-		statement := ch.Factory().NewExpressionStatement(updatedExpression)
-		statement.Loc = node.Loc
-		return statement
-	}
 }
 
 func (ch *objectRestSpreadTransformer) visitBinaryExpression(node *ast.BinaryExpression, expressionResultIsUnused bool) *ast.Node {

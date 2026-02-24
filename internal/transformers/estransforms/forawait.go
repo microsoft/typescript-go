@@ -304,7 +304,7 @@ func (tx *forawaitTransformer) convertForOfStatementHead(node *ast.ForInOrOfStat
 	tx.EmitContext().SetSourceMapRange(exitNonUserCodeStatement, node.Expression.Loc)
 
 	statements := []*ast.Node{iteratorValueStatement, exitNonUserCodeStatement}
-	binding := tx.createForOfBindingStatement(node.Initializer, value)
+	binding := tx.Factory().CreateForOfBindingStatement(node.Initializer, value)
 	statements = append(statements, tx.Visitor().VisitNode(binding))
 
 	var bodyLocation core.TextRange
@@ -323,35 +323,6 @@ func (tx *forawaitTransformer) convertForOfStatementHead(node *ast.ForInOrOfStat
 	block := f.NewBlock(stmtList, true)
 	block.Loc = bodyLocation
 	return block
-}
-
-// createForOfBindingStatement creates a statement to bind the iteration value.
-func (tx *forawaitTransformer) createForOfBindingStatement(node *ast.Node, boundValue *ast.Node) *ast.Node {
-	f := tx.Factory()
-	if ast.IsVariableDeclarationList(node) {
-		firstDeclaration := node.AsVariableDeclarationList().Declarations.Nodes[0]
-		updatedDeclaration := f.UpdateVariableDeclaration(
-			firstDeclaration.AsVariableDeclaration(),
-			firstDeclaration.Name(),
-			nil, /*exclamationToken*/
-			nil, /*type*/
-			boundValue,
-		)
-		statement := f.NewVariableStatement(
-			nil,
-			f.UpdateVariableDeclarationList(
-				node.AsVariableDeclarationList(),
-				f.NewNodeList([]*ast.Node{updatedDeclaration}),
-			),
-		)
-		statement.Loc = node.Loc
-		return statement
-	}
-	updatedExpression := f.NewAssignmentExpression(node, boundValue)
-	updatedExpression.Loc = node.Loc
-	statement := f.NewExpressionStatement(updatedExpression)
-	statement.Loc = node.Loc
-	return statement
 }
 
 func (tx *forawaitTransformer) createDownlevelAwait(expression *ast.Node) *ast.Node {
