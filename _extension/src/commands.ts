@@ -35,12 +35,14 @@ async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     const tsTarget = getExplicitConfigTarget(tsConfig, "experimental.useTsgo");
     const jsTsTarget = getExplicitConfigTarget(jsTsConfig, "experimental.useTsgo");
 
+    const updates: Thenable<void>[] = [];
     if (jsTsTarget !== undefined) {
-        await jsTsConfig.update("experimental.useTsgo", enable, jsTsTarget);
+        updates.push(jsTsConfig.update("experimental.useTsgo", enable, jsTsTarget));
     }
     if (tsTarget !== undefined || jsTsTarget === undefined) {
-        await tsConfig.update("experimental.useTsgo", enable, tsTarget ?? vscode.ConfigurationTarget.Global);
+        updates.push(tsConfig.update("experimental.useTsgo", enable, tsTarget ?? vscode.ConfigurationTarget.Global));
     }
+    await Promise.all(updates);
 
     await restartExtHostOnChangeIfNeeded();
 }
