@@ -216,7 +216,7 @@ func getAllRules() []ruleSpec {
 				ast.KindInterfaceKeyword,
 				ast.KindModuleKeyword,
 				ast.KindNamespaceKeyword,
-				ast.OverrideKeyword,
+				ast.KindOverrideKeyword,
 				ast.KindPrivateKeyword,
 				ast.KindPublicKeyword,
 				ast.KindProtectedKeyword,
