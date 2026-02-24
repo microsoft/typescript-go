@@ -16,7 +16,9 @@ import { createVirtualFileSystem } from "@typescript/api/fs";
 import type { FileSystem } from "@typescript/api/fs";
 import {
     cast,
+    isBinaryExpression,
     isCallExpression,
+    isExpressionStatement,
     isImportDeclaration,
     isNamedImports,
     isReturnStatement,
@@ -25,6 +27,7 @@ import {
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
+    SyntaxKind,
 } from "@typescript/ast";
 import assert from "node:assert";
 import {
@@ -138,6 +141,23 @@ describe("SourceFile", () => {
         finally {
             await api.close();
         }
+    });
+
+    test("node named children", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": "foo.bar === baz",
+        });
+        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = await project.program.getSourceFile("/src/index.ts");
+
+        assert.ok(sourceFile);
+        assert.equal(sourceFile.statements[0].kind, SyntaxKind.ExpressionStatement);
+        const expr = cast(sourceFile.statements[0], isExpressionStatement).expression;
+        assert.equal(expr.kind, SyntaxKind.BinaryExpression);
+        const operator = cast(expr, isBinaryExpression).operatorToken;
+        assert.equal(operator.kind, SyntaxKind.EqualsEqualsEqualsToken);
     });
 
     test("extended data", async () => {

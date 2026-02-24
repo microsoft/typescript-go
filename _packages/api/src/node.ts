@@ -555,8 +555,12 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         // Counting the 1s gives us the number of *missing properties* before the `order`th property. If every property
         // were present, we would have `parameters = children[5]`, but since `postfixToken` and `astersiskToken` are
         // missing, we have `parameters = children[5 - 2]`.
-        const propertyIndex = order - popcount8[~(mask | ((0xff << order) & 0xff)) & 0xff];
-        return this.getOrCreateChildAtNodeIndex(this.index + 1 + propertyIndex);
+        let propertyIndex = order - popcount8[~(mask | ((0xff << order) & 0xff)) & 0xff];
+        let childIndex = this.index + 1;
+        for (let i = 0; i < propertyIndex; i++) {
+            childIndex = this.view.getUint32(this.offsetNodes + childIndex * NODE_LEN + NODE_OFFSET_NEXT, true);
+        }
+        return this.getOrCreateChildAtNodeIndex(childIndex);
     }
 
     __print(): string {

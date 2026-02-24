@@ -24,7 +24,9 @@ import {
 } from "@typescript/api/sync";
 import {
     cast,
+    isBinaryExpression,
     isCallExpression,
+    isExpressionStatement,
     isImportDeclaration,
     isNamedImports,
     isReturnStatement,
@@ -33,6 +35,7 @@ import {
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
+    SyntaxKind,
 } from "@typescript/ast";
 import assert from "node:assert";
 import {
@@ -146,6 +149,23 @@ describe("SourceFile", () => {
         finally {
             api.close();
         }
+    });
+
+    test("node named children", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": "foo.bar === baz",
+        });
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
+
+        assert.ok(sourceFile);
+        assert.equal(sourceFile.statements[0].kind, SyntaxKind.ExpressionStatement);
+        const expr = cast(sourceFile.statements[0], isExpressionStatement).expression;
+        assert.equal(expr.kind, SyntaxKind.BinaryExpression);
+        const operator = cast(expr, isBinaryExpression).operatorToken;
+        assert.equal(operator.kind, SyntaxKind.EqualsEqualsEqualsToken);
     });
 
     test("extended data", () => {
