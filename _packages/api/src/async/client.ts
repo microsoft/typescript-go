@@ -147,7 +147,8 @@ export class Client {
     async apiRequestBinary(method: string, params?: unknown): Promise<Uint8Array | undefined> {
         const response = await this.apiRequest<{ data: string; } | null>(method, params);
         if (!response) return undefined;
-        return new Uint8Array(Buffer.from(response.data, "base64").buffer);
+        const buffer = Buffer.from(response.data, "base64");
+        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
     }
 
     async close(): Promise<void> {
