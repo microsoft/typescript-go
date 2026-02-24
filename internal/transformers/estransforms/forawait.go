@@ -713,7 +713,7 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionParameterList(node
 
 func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Node) *ast.Node {
 	f := tx.Factory()
-	innerParameters := (*ast.NodeList)(nil)
+	var innerParameters *ast.NodeList
 	if !isSimpleParameterList(node.Parameters()) {
 		innerParameters = tx.EmitContext().VisitParameters(node.ParameterList(), tx.Visitor())
 	}
