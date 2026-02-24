@@ -299,6 +299,8 @@ func (ch *objectRestSpreadTransformer) visitFunctionExpression(node *ast.Functio
 }
 
 func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *ast.Node {
+	// EmitContext().VisitFunctionBody is not used here because this transformer needs to inject
+	// object rest assignments between visiting the body and merging the variable environment.
 	ch.EmitContext().StartVariableEnvironment()
 	body := ch.Visitor().VisitNode(node.Body())
 	extras := ch.EmitContext().EndVariableEnvironment()
