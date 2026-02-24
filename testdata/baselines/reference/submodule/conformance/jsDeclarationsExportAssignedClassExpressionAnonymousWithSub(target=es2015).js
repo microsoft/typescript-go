@@ -34,16 +34,28 @@ module.exports.Sub = class {
 
 
 //// [index.d.ts]
-declare const _default: {
-    new (p: number): {
-        t: number;
-    };
-};
+declare const _default: any;
 export = _default;
-export declare var Sub: {
-    new (): {
-        instance: {
-            t: number;
-        };
-    };
-};
+export declare var Sub: any;
+
+
+!!!! File out/index.d.ts differs from original emit in noCheck emit
+//// [index.d.ts]
+--- Expected	The full check baseline
++++ Actual	with noCheck set
+@@ -1,3 +1,13 @@
+-declare const _default: any;
++declare const _default: {
++    new (p: number): {
++        t: number;
++    };
++};
+ export = _default;
+-export declare var Sub: any;
++export declare var Sub: {
++    new (): {
++        instance: {
++            t: number;
++        };
++    };
++};

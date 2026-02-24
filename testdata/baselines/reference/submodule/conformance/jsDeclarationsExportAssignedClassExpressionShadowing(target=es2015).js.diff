@@ -22,23 +22,41 @@
 
  //// [index.d.ts]
 -export = Q;
--declare class Q {
+ declare class Q {
 -    x: A;
 -}
 -declare namespace Q {
 -    export { Q_1 as Another };
 -}
- declare class A {
-     member: Q;
- }
+-declare class A {
+-    member: Q;
+-}
 -declare class Q_1 {
-+declare class Q {
      x: number;
  }
 +declare const _default: {
-+    new (): {
-+        x: A;
-+    };
++    new (): Q;
 +};
 +export = _default;
 +export declare var Another: typeof Q;
++
++
++!!!! File out/index.d.ts differs from original emit in noCheck emit
++//// [index.d.ts]
++--- Expected	The full check baseline
+++++ Actual	with noCheck set
++@@= skipped --35, +-31 lines =@@
+++declare class A {
+++    member: Q;
+++}
++ declare class Q {
++     x: number;
++ }
++ declare const _default: {
++-    new (): Q;
+++    new (): {
+++        x: A;
+++    };
++ };
++ export = _default;
++ export declare var Another: typeof Q;

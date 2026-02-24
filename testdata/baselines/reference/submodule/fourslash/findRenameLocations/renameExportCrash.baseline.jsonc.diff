@@ -1,0 +1,8 @@
+--- old.renameExportCrash.baseline.jsonc
++++ new.renameExportCrash.baseline.jsonc
+@@= skipped -1, +1 lines =@@
+ // === /Foo.js ===
+ // let [|aRENAME|];
+ // module.exports = /*RENAME*/[|aRENAME|];
+-// exports["foo"] = [|aRENAME|];
++// exports["foo"] = a;

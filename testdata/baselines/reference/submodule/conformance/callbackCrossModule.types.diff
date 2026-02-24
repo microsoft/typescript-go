@@ -1,24 +1,15 @@
 --- old.callbackCrossModule.types
 +++ new.callbackCrossModule.types
-@@= skipped -5, +5 lines =@@
-  * @return {any} I don't even know what this should return
-  */
+@@= skipped -7, +7 lines =@@
  module.exports = C
-->module.exports = C : typeof C
-->module.exports : typeof C
+ >module.exports = C : typeof C
+ >module.exports : typeof C
 ->module : { exports: typeof C; }
-->exports : typeof C
-->C : typeof C
-+>module.exports = C : () => void
-+>module.exports : () => void
 +>module : { C(): void; }
-+>exports : () => void
-+>C : () => void
+ >exports : typeof C
+ >C : typeof C
 
- function C() {
-->C : typeof C
-+>C : () => void
-
+@@= skipped -10, +10 lines =@@
      this.p = 1
  >this.p = 1 : 1
  >this.p : any

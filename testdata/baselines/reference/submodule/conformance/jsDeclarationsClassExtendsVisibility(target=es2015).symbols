@@ -27,9 +27,11 @@ module.exports = Foo;
 >Foo : Symbol(Foo, Decl(cls.js, 4, 2))
 
 module.exports.Strings = Strings;
+>module.exports.Strings : Symbol(Strings, Decl(cls.js, 6, 21))
 >module.exports : Symbol(Foo, Decl(cls.js, 4, 2))
 >module : Symbol("./cls", Decl(cls.js, 0, 0))
 >exports : Symbol(Foo, Decl(cls.js, 4, 2))
+>Strings : Symbol(Strings, Decl(cls.js, 6, 21))
 >Strings : Symbol(Strings, Decl(cls.js, 1, 5))
 
 === bar.js ===

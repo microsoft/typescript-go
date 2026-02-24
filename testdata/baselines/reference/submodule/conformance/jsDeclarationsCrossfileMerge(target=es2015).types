@@ -8,27 +8,27 @@ const m = require("./exporter");
 >"./exporter" : "./exporter"
 
 module.exports = m.default;
->module.exports = m.default : () => void
->module.exports : () => void
->module : { validate(): void; }
->exports : () => void
->m.default : () => void
+>module.exports = m.default : { (): void; memberName: "thing"; }
+>module.exports : typeof m.default
+>module : { validate: typeof m.default; }
+>exports : typeof m.default
+>m.default : { (): void; memberName: "thing"; }
 >m : typeof m
->default : () => void
+>default : { (): void; memberName: "thing"; }
 
 module.exports.memberName = "thing";
 >module.exports.memberName = "thing" : "thing"
->module.exports.memberName : any
->module.exports : () => void
->module : { validate(): void; }
->exports : () => void
->memberName : any
+>module.exports.memberName : "thing"
+>module.exports : typeof m.default
+>module : { validate: typeof m.default; }
+>exports : typeof m.default
+>memberName : "thing"
 >"thing" : "thing"
 
 === exporter.js ===
 function validate() {}
->validate : () => void
+>validate : typeof validate
 
 export default validate;
->validate : () => void
+>validate : typeof validate
 

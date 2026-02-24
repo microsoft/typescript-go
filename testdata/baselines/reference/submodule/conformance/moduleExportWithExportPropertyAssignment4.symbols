@@ -43,11 +43,11 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports.bothBefore = 'string'
->module.exports.bothBefore : Symbol(A.bothBefore, Decl(mod1.js, 2, 16))
+>module.exports.bothBefore : Symbol(bothBefore, Decl(mod1.js, 2, 16), Decl(mod1.js, 0, 0))
 >module.exports : Symbol(A, Decl(mod1.js, 5, 18))
 >module : Symbol("./mod1", Decl(mod1.js, 0, 0))
 >exports : Symbol(A, Decl(mod1.js, 5, 18))
->bothBefore : Symbol(A.bothBefore, Decl(mod1.js, 2, 16))
+>bothBefore : Symbol(bothBefore, Decl(mod1.js, 2, 16), Decl(mod1.js, 0, 0))
 
 A.justExport = 4
 >A.justExport : Symbol(A.justExport, Decl(mod1.js, 1, 36))
@@ -55,14 +55,14 @@ A.justExport = 4
 >justExport : Symbol(A.justExport, Decl(mod1.js, 1, 36))
 
 A.bothBefore = 2
->A.bothBefore : Symbol(A.bothBefore, Decl(mod1.js, 2, 16))
+>A.bothBefore : Symbol(bothBefore, Decl(mod1.js, 2, 16), Decl(mod1.js, 0, 0))
 >A : Symbol(A, Decl(mod1.js, 5, 18))
->bothBefore : Symbol(A.bothBefore, Decl(mod1.js, 2, 16))
+>bothBefore : Symbol(bothBefore, Decl(mod1.js, 2, 16), Decl(mod1.js, 0, 0))
 
 A.bothAfter = 3
->A.bothAfter : Symbol(A.bothAfter, Decl(mod1.js, 3, 16))
+>A.bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16), Decl(mod1.js, 8, 1))
 >A : Symbol(A, Decl(mod1.js, 5, 18))
->bothAfter : Symbol(A.bothAfter, Decl(mod1.js, 3, 16))
+>bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16), Decl(mod1.js, 8, 1))
 
 module.exports = A
 >module.exports : Symbol(A, Decl(mod1.js, 5, 18))
@@ -76,14 +76,16 @@ function A() {
     this.p = 1
 }
 module.exports.bothAfter = 'string'
->module.exports.bothAfter : Symbol(A.bothAfter, Decl(mod1.js, 3, 16))
+>module.exports.bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16), Decl(mod1.js, 8, 1))
 >module.exports : Symbol(A, Decl(mod1.js, 5, 18))
 >module : Symbol("./mod1", Decl(mod1.js, 0, 0))
 >exports : Symbol(A, Decl(mod1.js, 5, 18))
->bothAfter : Symbol(A.bothAfter, Decl(mod1.js, 3, 16))
+>bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16), Decl(mod1.js, 8, 1))
 
 module.exports.justProperty = 'string'
+>module.exports.justProperty : Symbol(justProperty, Decl(mod1.js, 9, 35))
 >module.exports : Symbol(A, Decl(mod1.js, 5, 18))
 >module : Symbol("./mod1", Decl(mod1.js, 0, 0))
 >exports : Symbol(A, Decl(mod1.js, 5, 18))
+>justProperty : Symbol(justProperty, Decl(mod1.js, 9, 35))
 

@@ -1,13 +1,12 @@
 --- old.moduleExportAliasImported.symbols
 +++ new.moduleExportAliasImported.symbols
-@@= skipped -1, +1 lines =@@
-
+@@= skipped -2, +2 lines =@@
  === bug28014.js ===
  exports.version = 1
-->exports.version : Symbol(version, Decl(bug28014.js, 0, 0))
+ >exports.version : Symbol(version, Decl(bug28014.js, 0, 0))
 ->exports : Symbol(version, Decl(bug28014.js, 0, 0))
-->version : Symbol(version, Decl(bug28014.js, 0, 0))
 +>exports : Symbol("./bug28014", Decl(bug28014.js, 0, 0))
+ >version : Symbol(version, Decl(bug28014.js, 0, 0))
 
  function alias() { }
  >alias : Symbol(alias, Decl(bug28014.js, 0, 19))

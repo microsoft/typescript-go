@@ -1,26 +1,32 @@
 --- old.moduleExportAssignment4.types
 +++ new.moduleExportAssignment4.types
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
+ === async.js ===
  exports.default = { m: 1, a: 1 }
  >exports.default = { m: 1, a: 1 } : { m: number; a: number; }
- >exports.default : any
+->exports.default : any
 ->exports : any
+->default : any
++>exports.default : { m: number; a: number; }
 +>exports : typeof import("./async")
- >default : any
++>default : { m: number; a: number; }
  >{ m: 1, a: 1 } : { m: number; a: number; }
  >m : number
-@@= skipped -9, +9 lines =@@
+ >1 : 1
+@@= skipped -10, +10 lines =@@
  >1 : 1
 
  module.exports = exports['default'];
 ->module.exports = exports['default'] : error
 ->module.exports : error
 ->module : { exports: any; }
-+>module.exports = exports['default'] : any
-+>module.exports : any
-+>module : { "export=": any; }
- >exports : any
- >exports['default'] : any
 ->exports : any
+->exports['default'] : any
+->exports : any
++>module.exports = exports['default'] : { m: number; a: number; }
++>module.exports : { m: number; a: number; }
++>module : { "export=": { m: number; a: number; }; }
++>exports : { m: number; a: number; }
++>exports['default'] : { m: number; a: number; }
 +>exports : typeof import("./async")
  >'default' : "default"

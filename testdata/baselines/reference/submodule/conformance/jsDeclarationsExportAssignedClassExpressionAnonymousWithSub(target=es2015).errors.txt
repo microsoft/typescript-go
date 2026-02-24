@@ -1,10 +1,13 @@
-index.js(1,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
+index.js(1,1): error TS2741: Property 'Sub' is missing in type 'typeof exports' but required in type 'typeof (Anonymous class)'.
 index.js(1,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-index.js(9,16): error TS2339: Property 'Sub' does not exist on type 'typeof (Anonymous class)'.
+index.js(1,1): error TS4082: Default export of the module has or is using private name '(Anonymous class)'.
 
 
 ==== index.js (3 errors) ====
     module.exports = class {
+    ~~~~~~~~~~~~~~
+!!! error TS2741: Property 'Sub' is missing in type 'typeof exports' but required in type 'typeof (Anonymous class)'.
+!!! related TS2728 index.js:9:1: 'Sub' is declared here.
     ~~~~~~~~~~~~~~~~~~~~~~~~
     ~~~~~~~~~~~~~~~~~~~~~~~~
         /**
@@ -27,12 +30,10 @@ index.js(9,16): error TS2339: Property 'Sub' does not exist on type 'typeof (Ano
     ~~~~~
     }
     ~
-!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-    ~
 !!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+    ~
+!!! error TS4082: Default export of the module has or is using private name '(Anonymous class)'.
     module.exports.Sub = class {
-                   ~~~
-!!! error TS2339: Property 'Sub' does not exist on type 'typeof (Anonymous class)'.
         constructor() {
             this.instance = new module.exports(10);
         }

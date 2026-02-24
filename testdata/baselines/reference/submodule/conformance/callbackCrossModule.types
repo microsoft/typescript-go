@@ -6,14 +6,14 @@
  * @return {any} I don't even know what this should return
  */
 module.exports = C
->module.exports = C : () => void
->module.exports : () => void
+>module.exports = C : typeof C
+>module.exports : typeof C
 >module : { C(): void; }
->exports : () => void
->C : () => void
+>exports : typeof C
+>C : typeof C
 
 function C() {
->C : () => void
+>C : typeof C
 
     this.p = 1
 >this.p = 1 : 1

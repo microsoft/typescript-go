@@ -9,20 +9,16 @@
  >exports : typeof Foo
  >Foo : typeof Foo
 
- module.exports.Strings = Strings;
+@@= skipped -8, +8 lines =@@
  >module.exports.Strings = Strings : { a: string; b: string; }
-->module.exports.Strings : { a: string; b: string; }
-+>module.exports.Strings : any
+ >module.exports.Strings : { a: string; b: string; }
  >module.exports : typeof Foo
 ->module : { exports: typeof Foo; }
 +>module : { Foo: typeof Foo; }
  >exports : typeof Foo
-->Strings : { a: string; b: string; }
-+>Strings : any
  >Strings : { a: string; b: string; }
-
- === bar.js ===
-@@= skipped -20, +20 lines =@@
+ >Strings : { a: string; b: string; }
+@@= skipped -12, +12 lines =@@
  module.exports = Bar;
  >module.exports = Bar : typeof Bar
  >module.exports : typeof Bar

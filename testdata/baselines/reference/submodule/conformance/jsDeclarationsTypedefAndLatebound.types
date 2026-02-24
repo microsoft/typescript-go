@@ -32,8 +32,8 @@ class LazySet {
      * @param {LazySet} iterable
      */
     addAll(iterable) {}
->addAll : (iterable: LazySet) => void
->iterable : LazySet
+>addAll : (iterable: import("./LazySet")) => void
+>iterable : import("./LazySet")
 
     [Symbol.iterator]() {}
 >[Symbol.iterator] : () => void

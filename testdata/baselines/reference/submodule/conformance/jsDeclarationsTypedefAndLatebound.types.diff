@@ -1,15 +1,15 @@
 --- old.jsDeclarationsTypedefAndLatebound.types
 +++ new.jsDeclarationsTypedefAndLatebound.types
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
+      * @param {LazySet} iterable
       */
      addAll(iterable) {}
- >addAll : (iterable: LazySet) => void
-->iterable : import("./LazySet")
-+>iterable : LazySet
+->addAll : (iterable: LazySet) => void
++>addAll : (iterable: import("./LazySet")) => void
+ >iterable : import("./LazySet")
 
      [Symbol.iterator]() {}
- >[Symbol.iterator] : () => void
-@@= skipped -12, +12 lines =@@
+@@= skipped -13, +13 lines =@@
  module.exports = LazySet;
  >module.exports = LazySet : typeof LazySet
  >module.exports : typeof LazySet

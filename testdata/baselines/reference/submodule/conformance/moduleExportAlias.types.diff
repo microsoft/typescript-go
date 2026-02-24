@@ -181,12 +181,7 @@
  >function () { } : () => void
 
  exports.func2 = function () { };
- >exports.func2 = function () { } : () => void
-->exports.func2 : () => void
-+>exports.func2 : any
- >exports : typeof import("./b")
-->func2 : () => void
-+>func2 : any
+@@= skipped -13, +13 lines =@@
  >function () { } : () => void
 
  var moduleExportsAlias = module.exports;
@@ -271,7 +266,7 @@
  >function () { } : () => void
 
  var someOtherVariable;
-@@= skipped -75, +75 lines =@@
+@@= skipped -62, +62 lines =@@
 
  multipleDeclarationAlias3.func7 = function () { };
  >multipleDeclarationAlias3.func7 = function () { } : () => void
@@ -425,9 +420,9 @@
 +
 +exports.func11 = function () { };
 +>exports.func11 = function () { } : () => void
-+>exports.func11 : any
++>exports.func11 : (() => void) | (() => void)
 +>exports : typeof import("./b")
-+>func11 : any
++>func11 : (() => void) | (() => void)
 +>function () { } : () => void
 +
 +module.exports.func12 = function () { };
@@ -452,9 +447,9 @@
 +
 +exports.func11 = function () { };
 +>exports.func11 = function () { } : () => void
-+>exports.func11 : any
++>exports.func11 : (() => void) | (() => void)
 +>exports : typeof import("./b")
-+>func11 : any
++>func11 : (() => void) | (() => void)
 +>function () { } : () => void
 +
 +module.exports.func12 = function () { };
@@ -482,13 +477,7 @@
  >{} : {}
 
  exports.func13 = function () { };
- >exports.func13 = function () { } : () => void
-->exports.func13 : () => void
-+>exports.func13 : any
- >exports : typeof import("./b")
-->func13 : () => void
-+>func13 : any
- >function () { } : () => void
+@@= skipped -126, +126 lines =@@
 
  module.exports.func14 = function () { };
  >module.exports.func14 = function () { } : () => void
@@ -520,13 +509,7 @@
  >{} : {}
 
  exports.func15 = function () { };
- >exports.func15 = function () { } : () => void
-->exports.func15 : () => void
-+>exports.func15 : any
- >exports : typeof import("./b")
-->func15 : () => void
-+>func15 : any
- >function () { } : () => void
+@@= skipped -25, +25 lines =@@
 
  module.exports.func16 = function () { };
  >module.exports.func16 = function () { } : () => void
@@ -557,13 +540,7 @@
  >{} : {}
 
  exports.func17 = function () { };
- >exports.func17 = function () { } : () => void
-->exports.func17 : () => void
-+>exports.func17 : any
- >exports : typeof import("./b")
-->func17 : () => void
-+>func17 : any
- >function () { } : () => void
+@@= skipped -25, +25 lines =@@
 
  module.exports.func18 = function () { };
  >module.exports.func18 = function () { } : () => void
@@ -591,13 +568,7 @@
  >{} : {}
 
  exports.func19 = function () { };
- >exports.func19 = function () { } : () => void
-->exports.func19 : () => void
-+>exports.func19 : any
- >exports : typeof import("./b")
-->func19 : () => void
-+>func19 : any
- >function () { } : () => void
+@@= skipped -23, +23 lines =@@
 
  module.exports.func20 = function () { };
  >module.exports.func20 = function () { } : () => void

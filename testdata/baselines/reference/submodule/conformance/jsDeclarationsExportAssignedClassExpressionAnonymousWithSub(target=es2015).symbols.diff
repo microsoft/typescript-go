@@ -13,21 +13,20 @@
 
      /**
       * @param {number} p
-@@= skipped -18, +18 lines =@@
-     }
+@@= skipped -19, +19 lines =@@
  }
  module.exports.Sub = class {
-->module.exports.Sub : Symbol(Sub, Decl(index.js, 7, 1))
+ >module.exports.Sub : Symbol(Sub, Decl(index.js, 7, 1))
 ->module.exports : Symbol(Sub, Decl(index.js, 7, 1))
 ->module : Symbol(module, Decl(index.js, 0, 0), Decl(index.js, 10, 27))
 ->exports : Symbol(module.exports, Decl(index.js, 0, 0))
-->Sub : Symbol(Sub, Decl(index.js, 7, 1))
 +>module.exports : Symbol((Anonymous class), Decl(index.js, 0, 16))
 +>module : Symbol(".", Decl(index.js, 0, 0))
 +>exports : Symbol((Anonymous class), Decl(index.js, 0, 16))
+ >Sub : Symbol(Sub, Decl(index.js, 7, 1))
 
      constructor() {
-         this.instance = new module.exports(10);
+@@= skipped -10, +10 lines =@@
  >this.instance : Symbol(Sub.instance, Decl(index.js, 9, 19))
  >this : Symbol(Sub, Decl(index.js, 8, 20))
  >instance : Symbol(Sub.instance, Decl(index.js, 9, 19))

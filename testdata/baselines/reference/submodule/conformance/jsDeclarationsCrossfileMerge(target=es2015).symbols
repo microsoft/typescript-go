@@ -15,9 +15,11 @@ module.exports = m.default;
 >default : Symbol(m.default, Decl(exporter.js, 0, 22))
 
 module.exports.memberName = "thing";
+>module.exports.memberName : Symbol(memberName, Decl(index.js, 2, 27))
 >module.exports : Symbol(m.default, Decl(exporter.js, 0, 0))
 >module : Symbol(".", Decl(index.js, 0, 0))
 >exports : Symbol(m.default, Decl(exporter.js, 0, 0))
+>memberName : Symbol(memberName, Decl(index.js, 2, 27))
 
 === exporter.js ===
 function validate() {}

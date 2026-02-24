@@ -36,10 +36,10 @@ module.exports = class Q {
 }
 module.exports.Another = Q;
 >module.exports.Another = Q : typeof Q
->module.exports.Another : any
+>module.exports.Another : typeof Q
 >module.exports : typeof Q
 >module : { Q: typeof Q; }
 >exports : typeof Q
->Another : any
+>Another : typeof Q
 >Q : typeof Q
 

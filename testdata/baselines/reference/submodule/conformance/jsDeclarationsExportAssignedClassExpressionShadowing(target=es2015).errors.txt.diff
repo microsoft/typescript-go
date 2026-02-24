@@ -2,9 +2,9 @@
 +++ new.jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+index.js(7,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
++index.js(7,1): error TS2741: Property 'Another' is missing in type 'typeof Q' but required in type 'typeof Q'.
 +index.js(7,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-+index.js(12,16): error TS2339: Property 'Another' does not exist on type 'typeof Q'.
++index.js(7,1): error TS4082: Default export of the module has or is using private name 'Q'.
 +
 +
 +==== index.js (3 errors) ====
@@ -15,6 +15,9 @@
 +        x = 42;
 +    }
 +    module.exports = class Q {
++    ~~~~~~~~~~~~~~
++!!! error TS2741: Property 'Another' is missing in type 'typeof Q' but required in type 'typeof Q'.
++!!! related TS2728 index.js:12:1: 'Another' is declared here.
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 +        constructor() {
@@ -28,10 +31,8 @@
 +    ~~~~~
 +    }
 +    ~
-+!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-+    ~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
++    ~
++!!! error TS4082: Default export of the module has or is using private name 'Q'.
 +    module.exports.Another = Q;
-+                   ~~~~~~~
-+!!! error TS2339: Property 'Another' does not exist on type 'typeof Q'.
 +    

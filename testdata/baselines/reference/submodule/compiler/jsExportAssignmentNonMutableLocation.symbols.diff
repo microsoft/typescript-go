@@ -13,12 +13,11 @@
 
      customSymbol,
  >customSymbol : Symbol(customSymbol, Decl(file.js, 3, 18))
-@@= skipped -10, +10 lines =@@
- };
+@@= skipped -11, +11 lines =@@
 
  exports.customSymbol2 = Symbol("custom");
-->exports.customSymbol2 : Symbol(customSymbol2, Decl(file.js, 5, 2))
+ >exports.customSymbol2 : Symbol(customSymbol2, Decl(file.js, 5, 2))
 ->exports : Symbol(customSymbol2, Decl(file.js, 5, 2))
-->customSymbol2 : Symbol(customSymbol2, Decl(file.js, 5, 2))
 +>exports : Symbol("./file", Decl(file.js, 0, 0))
+ >customSymbol2 : Symbol(customSymbol2, Decl(file.js, 5, 2))
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))

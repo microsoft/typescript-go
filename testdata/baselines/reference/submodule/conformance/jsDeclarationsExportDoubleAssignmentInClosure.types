@@ -39,9 +39,9 @@ function foo() {
     }
     exports.methods = m;
 >exports.methods = m : () => void
->exports.methods : any
+>exports.methods : () => void
 >exports : typeof import(".")
->methods : any
+>methods : () => void
 >m : () => void
 }
 

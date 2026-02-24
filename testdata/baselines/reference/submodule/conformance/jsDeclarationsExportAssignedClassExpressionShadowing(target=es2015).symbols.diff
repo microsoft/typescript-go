@@ -13,16 +13,15 @@
  >Q : Symbol(Q, Decl(index.js, 6, 16))
 
      constructor() {
-@@= skipped -14, +14 lines =@@
-     }
+@@= skipped -15, +15 lines =@@
  }
  module.exports.Another = Q;
-->module.exports.Another : Symbol(Another, Decl(index.js, 10, 1))
+ >module.exports.Another : Symbol(Another, Decl(index.js, 10, 1))
 ->module.exports : Symbol(Another, Decl(index.js, 10, 1))
 ->module : Symbol(module, Decl(index.js, 5, 1))
 ->exports : Symbol(module.exports, Decl(index.js, 0, 0))
-->Another : Symbol(Another, Decl(index.js, 10, 1))
 +>module.exports : Symbol(Q, Decl(index.js, 6, 16))
 +>module : Symbol(".", Decl(index.js, 0, 0))
 +>exports : Symbol(Q, Decl(index.js, 6, 16))
+ >Another : Symbol(Another, Decl(index.js, 10, 1))
  >Q : Symbol(Q, Decl(index.js, 2, 1))

@@ -26,11 +26,11 @@ module.exports = class {
 }
 module.exports.Sub = class {
 >module.exports.Sub = class {    constructor() {        this.instance = new module.exports(10);    }} : typeof Sub
->module.exports.Sub : any
+>module.exports.Sub : typeof Sub
 >module.exports : typeof (Anonymous class)
 >module : { "\uFFFDclass": typeof (Anonymous class); }
 >exports : typeof (Anonymous class)
->Sub : any
+>Sub : typeof Sub
 >class {    constructor() {        this.instance = new module.exports(10);    }} : typeof Sub
 
     constructor() {

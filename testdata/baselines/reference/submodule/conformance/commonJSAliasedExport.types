@@ -2,7 +2,7 @@
 
 === bug43713.js ===
 const { funky } = require('./commonJSAliasedExport');
->funky : any
+>funky : (declaration: any) => boolean
 >require('./commonJSAliasedExport') : (ast: any) => any
 >require : any
 >'./commonJSAliasedExport' : "./commonJSAliasedExport"
@@ -13,8 +13,8 @@ var diddy
 
 var diddy = funky(1)
 >diddy : boolean
->funky(1) : any
->funky : any
+>funky(1) : boolean
+>funky : (declaration: any) => boolean
 >1 : 1
 
 

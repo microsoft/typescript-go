@@ -41,12 +41,15 @@
 
      };
      const m = function () {
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
+     }
      exports.methods = m;
  >exports.methods = m : () => void
- >exports.methods : any
+->exports.methods : any
 ->exports : any
+->methods : any
++>exports.methods : () => void
 +>exports : typeof import(".")
- >methods : any
++>methods : () => void
  >m : () => void
  }

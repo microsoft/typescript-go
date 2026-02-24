@@ -2,4 +2,4 @@
 // === /Foo.js ===
 // let [|aRENAME|];
 // module.exports = /*RENAME*/[|aRENAME|];
-// exports["foo"] = [|aRENAME|];
+// exports["foo"] = a;

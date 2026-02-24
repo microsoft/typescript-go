@@ -119,9 +119,9 @@ exportsAlias.func1 = function () { };
 
 exports.func2 = function () { };
 >exports.func2 = function () { } : () => void
->exports.func2 : any
+>exports.func2 : () => void
 >exports : typeof import("./b")
->func2 : any
+>func2 : () => void
 >function () { } : () => void
 
 var moduleExportsAlias = module.exports;
@@ -254,9 +254,9 @@ exports = module.exports = someOtherVariable = {};
 
 exports.func11 = function () { };
 >exports.func11 = function () { } : () => void
->exports.func11 : any
+>exports.func11 : (() => void) | (() => void)
 >exports : typeof import("./b")
->func11 : any
+>func11 : (() => void) | (() => void)
 >function () { } : () => void
 
 module.exports.func12 = function () { };
@@ -281,9 +281,9 @@ exports = module.exports = someOtherVariable = {};
 
 exports.func11 = function () { };
 >exports.func11 = function () { } : () => void
->exports.func11 : any
+>exports.func11 : (() => void) | (() => void)
 >exports : typeof import("./b")
->func11 : any
+>func11 : (() => void) | (() => void)
 >function () { } : () => void
 
 module.exports.func12 = function () { };
@@ -306,9 +306,9 @@ exports = module.exports = {};
 
 exports.func13 = function () { };
 >exports.func13 = function () { } : () => void
->exports.func13 : any
+>exports.func13 : () => void
 >exports : typeof import("./b")
->func13 : any
+>func13 : () => void
 >function () { } : () => void
 
 module.exports.func14 = function () { };
@@ -331,9 +331,9 @@ exports = module.exports = {};
 
 exports.func15 = function () { };
 >exports.func15 = function () { } : () => void
->exports.func15 : any
+>exports.func15 : () => void
 >exports : typeof import("./b")
->func15 : any
+>func15 : () => void
 >function () { } : () => void
 
 module.exports.func16 = function () { };
@@ -356,9 +356,9 @@ module.exports = exports = {};
 
 exports.func17 = function () { };
 >exports.func17 = function () { } : () => void
->exports.func17 : any
+>exports.func17 : () => void
 >exports : typeof import("./b")
->func17 : any
+>func17 : () => void
 >function () { } : () => void
 
 module.exports.func18 = function () { };
@@ -379,9 +379,9 @@ module.exports = {};
 
 exports.func19 = function () { };
 >exports.func19 = function () { } : () => void
->exports.func19 : any
+>exports.func19 : () => void
 >exports : typeof import("./b")
->func19 : any
+>func19 : () => void
 >function () { } : () => void
 
 module.exports.func20 = function () { };
