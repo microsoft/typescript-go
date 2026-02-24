@@ -100,3 +100,19 @@ export async function restartExtHostOnChangeIfNeeded(): Promise<void> {
         await vscode.commands.executeCommand("workbench.action.restartExtensionHost");
     }
 }
+
+/**
+ * Read the useTsgo setting from both `js/ts.experimental.useTsgo` and
+ * `typescript.experimental.useTsgo`.
+ *
+ * Returns `true` if either setting is `true`, `false` if either is
+ * explicitly `false` (and neither is `true`), or `undefined` if neither
+ * setting has a value.
+ */
+export function getUseTsgo(): boolean | undefined {
+    const tsValue = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
+    const jsTsValue = vscode.workspace.getConfiguration("js/ts").get<boolean>("experimental.useTsgo");
+    if (tsValue === true || jsTsValue === true) return true;
+    if (tsValue === false || jsTsValue === false) return false;
+    return undefined;
+}

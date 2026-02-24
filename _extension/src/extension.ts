@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { registerEnablementCommands } from "./commands";
 import {
     aiConnectionString,
+    getUseTsgo,
     needsExtHostRestartOnChange,
 } from "./util";
 
@@ -34,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     context.subscriptions.push(sessionManager);
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async event => {
-        if (event.affectsConfiguration("typescript.experimental.useTsgo")) {
+        if (event.affectsConfiguration("typescript.experimental.useTsgo") || event.affectsConfiguration("js/ts.experimental.useTsgo")) {
             if (needsExtHostRestartOnChange()) {
                 // Delay because the command to change the config setting will restart
                 // the extension host, so no need to show a message
@@ -46,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                 }, 100);
             }
             else {
-                const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
+                const useTsgo = getUseTsgo();
                 if (useTsgo) {
                     await sessionManager.restart(context);
                 }
@@ -57,7 +58,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
     }));
 
-    const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
+    const useTsgo = getUseTsgo();
 
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
