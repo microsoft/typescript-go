@@ -975,6 +975,9 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 
 func getIndentationString(indentation int, options *lsutil.FormatCodeSettings) string {
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
+	if options.TabSize < 1 {
+		return ""
+	}
 	if !options.ConvertTabsToSpaces {
 		tabs := int(math.Floor(float64(indentation) / float64(options.TabSize)))
 		spaces := indentation - (tabs * options.TabSize)
