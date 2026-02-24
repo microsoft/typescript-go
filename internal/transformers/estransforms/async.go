@@ -39,6 +39,7 @@ type asyncTransformer struct {
 
 	asyncBodyVisitor             *ast.NodeVisitor
 	argumentsAndSuperNodeVisitor *ast.NodeVisitor
+	superAccessVisitor           *ast.NodeVisitor
 }
 
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -46,6 +47,7 @@ func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Tran
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.asyncBodyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAsyncBodyNode)
 	tx.argumentsAndSuperNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArgumentsAndSuper)
+	tx.superAccessVisitor = tx.EmitContext().NewNodeVisitor(tx.visitSuperAccess)
 	return result
 }
 
@@ -922,44 +924,43 @@ func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *as
 // substituteSuperAccessesInBody walks the async body and replaces super property/element
 // accesses with _super/_superIndex references. This is necessary because the async body
 // ends up inside a generator function where `super` is not valid.
-func (tx *asyncTransformer) substituteSuperAccessesInBody(body *ast.Node) *ast.Node {
-	var visitor *ast.NodeVisitor
-	var doVisit func(node *ast.Node) *ast.Node
-	doVisit = func(node *ast.Node) *ast.Node {
-		switch node.Kind {
-		case ast.KindCallExpression:
-			call := node.AsCallExpression()
-			if ast.IsSuperProperty(call.Expression) {
-				return tx.substituteCallExpressionWithSuperAccess(call, visitor)
-			}
-			return visitor.VisitEachChild(node)
-		case ast.KindPropertyAccessExpression:
-			if node.Expression().Kind == ast.KindSuperKeyword {
-				// super.x → _super.x
-				return tx.Factory().NewPropertyAccessExpression(
-					tx.superBinding, nil, node.Name(), ast.NodeFlagsNone,
-				)
-			}
-			return visitor.VisitEachChild(node)
-		case ast.KindElementAccessExpression:
-			if node.Expression().Kind == ast.KindSuperKeyword {
-				// super[x] → _superIndex(x) or _superIndex(x).value
-				return tx.createSuperElementAccessInAsyncMethod(
-					node.AsElementAccessExpression().ArgumentExpression,
-				)
-			}
-			return visitor.VisitEachChild(node)
-		// Don't recurse into non-arrow function scopes or classes
-		case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
-			ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
-			ast.KindConstructor, ast.KindClassDeclaration, ast.KindClassExpression:
-			return node
-		default:
-			return visitor.VisitEachChild(node)
+// visitSuperAccess is the NodeVisitor callback for superAccessVisitor.
+func (tx *asyncTransformer) visitSuperAccess(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindCallExpression:
+		call := node.AsCallExpression()
+		if ast.IsSuperProperty(call.Expression) {
+			return tx.substituteCallExpressionWithSuperAccess(call, tx.superAccessVisitor)
 		}
+		return tx.superAccessVisitor.VisitEachChild(node)
+	case ast.KindPropertyAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			// super.x → _super.x
+			return tx.Factory().NewPropertyAccessExpression(
+				tx.superBinding, nil, node.Name(), ast.NodeFlagsNone,
+			)
+		}
+		return tx.superAccessVisitor.VisitEachChild(node)
+	case ast.KindElementAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			// super[x] → _superIndex(x) or _superIndex(x).value
+			return tx.createSuperElementAccessInAsyncMethod(
+				node.AsElementAccessExpression().ArgumentExpression,
+			)
+		}
+		return tx.superAccessVisitor.VisitEachChild(node)
+	// Don't recurse into non-arrow function scopes or classes
+	case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
+		ast.KindConstructor, ast.KindClassDeclaration, ast.KindClassExpression:
+		return node
+	default:
+		return tx.superAccessVisitor.VisitEachChild(node)
 	}
-	visitor = tx.EmitContext().NewNodeVisitor(doVisit)
-	return visitor.VisitNode(body)
+}
+
+func (tx *asyncTransformer) substituteSuperAccessesInBody(body *ast.Node) *ast.Node {
+	return tx.superAccessVisitor.VisitNode(body)
 }
 
 // substituteCallExpressionWithSuperAccess handles super.x(args) and super[x](args).
