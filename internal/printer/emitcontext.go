@@ -635,6 +635,10 @@ func (c *EmitContext) AssignedName(node *ast.Node) *ast.Expression {
 	return c.assignedName[node]
 }
 
+func (c *EmitContext) TextSource(node *ast.StringLiteralNode) *ast.Node {
+	return c.textSource[node]
+}
+
 func (c *EmitContext) SetAssignedName(node *ast.Node, name *ast.Expression) {
 	if c.assignedName == nil {
 		c.assignedName = make(map[*ast.Node]*ast.Expression)

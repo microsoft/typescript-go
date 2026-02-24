@@ -40,8 +40,6 @@ var A;
         var C;
         (function (C) {
             class Point {
-                x;
-                y;
             }
             C.Point = Point;
         })(C = B.C || (B.C = {}));
@@ -51,7 +49,6 @@ var A;
     let B;
     (function (B) {
         class C {
-            name;
         }
         B.C = C;
     })(B = A.B || (A.B = {}));
@@ -61,8 +58,6 @@ var M2;
     var X;
     (function (X) {
         class Point {
-            x;
-            y;
         }
         X.Point = Point;
     })(X = M2.X || (M2.X = {}));

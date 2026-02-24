@@ -65,7 +65,6 @@ var B;
     // re-opened module with colliding name
     // this should add an underscore.
     class B {
-        name;
     }
 })(B || (B = {}));
 var X;

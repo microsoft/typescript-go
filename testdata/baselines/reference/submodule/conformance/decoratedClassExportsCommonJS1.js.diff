@@ -5,13 +5,15 @@
      return c > 3 && r && Object.defineProperty(target, key, r), r;
  };
 -var Testing123_1;
++var _a;
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Testing123 = void 0;
 -let Testing123 = Testing123_1 = class Testing123 {
-+let Testing123 = class Testing123 {
-+    static prop0;
-+    static prop1 = Testing123.prop0;
- };
+-};
++let Testing123 = (_a = class Testing123 {
++    },
++    _a.prop1 = _a.prop0,
++    _a);
  exports.Testing123 = Testing123;
 -Testing123.prop1 = Testing123_1.prop0;
 -exports.Testing123 = Testing123 = Testing123_1 = __decorate([

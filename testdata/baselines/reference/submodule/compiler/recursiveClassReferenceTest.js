@@ -133,13 +133,12 @@ var Sample;
         var Widgets;
         (function (Widgets) {
             class FindWidget {
-                codeThing;
                 gar(runner) { if (true) {
                     return runner(this);
                 } }
-                domNode = null;
                 constructor(codeThing) {
                     this.codeThing = codeThing;
+                    this.domNode = null;
                     // scenario 1
                     codeThing.addWidget("addWidget", this);
                 }
@@ -164,7 +163,6 @@ class AbstractMode {
             var PlainText;
             (function (PlainText) {
                 class State {
-                    mode;
                     constructor(mode) {
                         this.mode = mode;
                     }

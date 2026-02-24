@@ -40,7 +40,6 @@ var SomeOther;
     (function (Thing) {
         var Internal = My.Internal;
         class Foo {
-            _which;
             constructor() {
                 Internal.getThing();
                 0 /* Internal.WhichThing.A */ ? "foo" : "bar";

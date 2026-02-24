@@ -50,7 +50,6 @@ const onSomeEvent = <T extends keyof TypesMap>(p: P<T>) =>
 "use strict";
 // Repro from #49242
 class Test {
-    entries;
     constructor() {
         this.entries = {};
     }

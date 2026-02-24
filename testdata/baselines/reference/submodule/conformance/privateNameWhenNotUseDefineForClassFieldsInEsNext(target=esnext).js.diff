@@ -1,80 +1,53 @@
 --- old.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esnext).js
 +++ new.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esnext).js
-@@= skipped -56, +56 lines =@@
+@@= skipped -54, +54 lines =@@
+
+ //// [privateNameWhenNotUseDefineForClassFieldsInEsNext.js]
  "use strict";
++var _a;
  class TestWithStatics {
      #prop = 0;
--    static { this.dd = new TestWithStatics().#prop; } // OK
--    static { this["X_ z_ zz"] = class Inner {
-+    static dd = new TestWithStatics().#prop; // OK
-+    static ["X_ z_ zz"] = class Inner {
-         #foo = 10;
-         m() {
-             new TestWithStatics().#prop; // OK
-         }
--        static { this.C = class InnerInner {
-+        static C = class InnerInner {
+     static { this.dd = new TestWithStatics().#prop; } // OK
+@@= skipped -11, +12 lines =@@
+         static { this.C = class InnerInner {
              m() {
                  new TestWithStatics().#prop; // OK
-                 new Inner().#foo; // OK
+-                new Inner().#foo; // OK
++                new _a().#foo; // OK
              }
--        }; }
-+        };
+         }; }
          static M() {
              return class {
                  m() {
-@@= skipped -20, +20 lines =@@
+                     new TestWithStatics().#prop; // OK
+-                    new Inner().#foo; // OK
++                    new _a().#foo; // OK
                  }
              };
          }
--    }; }
-+    };
+@@= skipped -15, +15 lines =@@
  }
  class TestNonStatics {
--    constructor() {
--        this.#prop = 0;
--        this.dd = new TestNonStatics().#prop; // OK
--        this["X_ z_ zz"] = class Inner {
--            constructor() {
--                this.#foo = 10;
--                this.C = class InnerInner {
--                    m() {
--                        new TestNonStatics().#prop; // Ok
+     constructor() {
++        var _b;
+         this.#prop = 0;
+         this.dd = new TestNonStatics().#prop; // OK
+         this["X_ z_ zz"] = class Inner {
+@@= skipped -8, +9 lines =@@
+                 this.C = class InnerInner {
+                     m() {
+                         new TestNonStatics().#prop; // Ok
 -                        new Inner().#foo; // Ok
--                    }
--                };
--            }
--            #foo;
-+    #prop = 0;
-+    dd = new TestNonStatics().#prop; // OK
-+    ["X_ z_ zz"] = class Inner {
-+        #foo = 10;
-+        m() {
-+            new TestNonStatics().#prop; // Ok
-+        }
-+        C = class InnerInner {
-             m() {
-                 new TestNonStatics().#prop; // Ok
--            }
--            static M() {
--                return class {
--                    m() {
--                        new TestNonStatics().#prop; // OK
--                        new Inner().#foo; // OK
--                    }
--                };
-+                new Inner().#foo; // Ok
++                        new _b().#foo; // Ok
+                     }
+                 };
              }
-         };
--    }
--    #prop;
-+        static M() {
-+            return class {
-+                m() {
-+                    new TestNonStatics().#prop; // OK
-+                    new Inner().#foo; // OK
-+                }
-+            };
-+        }
-+    };
- }
+@@= skipped -12, +12 lines =@@
+                 return class {
+                     m() {
+                         new TestNonStatics().#prop; // OK
+-                        new Inner().#foo; // OK
++                        new _b().#foo; // OK
+                     }
+                 };
+             }

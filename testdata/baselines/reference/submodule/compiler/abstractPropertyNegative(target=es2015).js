@@ -50,7 +50,10 @@ abstract class AbstractAccessorMismatch {
 class B {
 }
 class C extends B {
-    ro = "readonly please";
+    constructor() {
+        super(...arguments);
+        this.ro = "readonly please";
+    }
     get concreteWithNoBody() { }
 }
 let c = new C();
@@ -58,7 +61,10 @@ c.ro = "error: lhs of assignment can't be readonly";
 class WrongTypeProperty {
 }
 class WrongTypePropertyImpl extends WrongTypeProperty {
-    num = "nope, wrong";
+    constructor() {
+        super(...arguments);
+        this.num = "nope, wrong";
+    }
 }
 class WrongTypeAccessor {
 }
@@ -66,7 +72,10 @@ class WrongTypeAccessorImpl extends WrongTypeAccessor {
     get num() { return "nope, wrong"; }
 }
 class WrongTypeAccessorImpl2 extends WrongTypeAccessor {
-    num = "nope, wrong";
+    constructor() {
+        super(...arguments);
+        this.num = "nope, wrong";
+    }
 }
 class AbstractAccessorMismatch {
     set p1(val) { }

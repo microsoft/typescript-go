@@ -6,17 +6,22 @@
  "use strict";
 -var BulkEditPreviewProvider_1;
 -let BulkEditPreviewProvider = BulkEditPreviewProvider_1 = class BulkEditPreviewProvider {
-+let BulkEditPreviewProvider = class BulkEditPreviewProvider {
-+    _modeService;
-+    static Schema = 'vscode-bulkeditpreview';
-+    static emptyPreview = { scheme: BulkEditPreviewProvider.Schema };
-     constructor(_modeService) {
-         this._modeService = _modeService;
-     }
- };
+-    constructor(_modeService) {
+-        this._modeService = _modeService;
+-    }
+-};
 -BulkEditPreviewProvider.Schema = 'vscode-bulkeditpreview';
 -BulkEditPreviewProvider.emptyPreview = { scheme: BulkEditPreviewProvider_1.Schema };
 -BulkEditPreviewProvider = BulkEditPreviewProvider_1 = __decorate([
++var _a;
++let BulkEditPreviewProvider = (_a = class BulkEditPreviewProvider {
++        constructor(_modeService) {
++            this._modeService = _modeService;
++        }
++    },
++    _a.Schema = 'vscode-bulkeditpreview',
++    _a.emptyPreview = { scheme: _a.Schema },
++    _a);
 +BulkEditPreviewProvider = __decorate([
      __param(0, IFoo)
  ], BulkEditPreviewProvider);

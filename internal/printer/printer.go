@@ -2454,7 +2454,11 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 	if shouldEmitDotDot {
 		p.writePunctuation(".")
 	}
-	p.emitTokenNode(token)
+	if node.QuestionDotToken != nil {
+		p.emitTokenNode(token)
+	} else {
+		p.emitToken(ast.KindDotToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
+	}
 	linesAfterDot := p.getLinesBetweenNodes(node.AsNode(), token, node.Name())
 	p.writeLineRepeat(linesAfterDot)
 	p.increaseIndentIf(linesAfterDot > 0)
@@ -3934,7 +3938,7 @@ func (p *Printer) emitImportAttribute(node *ast.ImportAttribute) {
 	p.writeSpace()
 	value := node.Value
 	if p.emitContext.EmitFlags(node.Value)&EFNoLeadingComments == 0 {
-		commentRange := getCommentRange(value)
+		commentRange := p.emitContext.CommentRange(value)
 		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 	}
 	p.emitExpression(value, ast.OperatorPrecedenceDisallowComma)
@@ -4407,7 +4411,7 @@ func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	// but rather a trailing comment on the previous node.
 	initializer := node.Initializer
 	if p.emitContext.EmitFlags(initializer)&EFNoLeadingComments == 0 {
-		commentRange := getCommentRange(initializer)
+		commentRange := p.emitContext.CommentRange(initializer)
 		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 	}
 	p.emitExpression(initializer, ast.OperatorPrecedenceDisallowComma)
@@ -4815,7 +4819,7 @@ func (p *Printer) emitListItems(
 				}
 
 				if shouldEmitInterveningComments && format&LFDelimitersMask != 0 && !ast.PositionIsSynthesized(child.Pos()) {
-					commentRange := getCommentRange(child)
+					commentRange := p.emitContext.CommentRange(child)
 					p.emitTrailingComments(commentRange.Pos(), core.IfElse(format&LFSpaceBetweenSiblings != 0, commentSeparatorBefore, commentSeparatorNone))
 				}
 
@@ -4831,7 +4835,7 @@ func (p *Printer) emitListItems(
 
 		// Emit this child.
 		if shouldEmitInterveningComments {
-			commentRange := getCommentRange(child)
+			commentRange := p.emitContext.CommentRange(child)
 			p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 		} else {
 			shouldEmitInterveningComments = mayEmitInterveningComments
@@ -5440,6 +5444,9 @@ func (p *Printer) shouldEmitNewLineBeforeLeadingCommentOfPosition(pos int, comme
 }
 
 func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparator) {
+	if p.commentsDisabled {
+		return
+	}
 	// Emit the trailing comments only if the container's end doesn't match because the container should take care of emitting these comments
 	if p.commentsDisabled || p.currentSourceFile == nil || p.containerEnd != -1 && (pos == p.containerEnd || pos == p.declarationListContainerEnd) {
 		return

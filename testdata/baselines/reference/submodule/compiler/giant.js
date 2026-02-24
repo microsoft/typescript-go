@@ -707,8 +707,6 @@ function F() { }
 ;
 class C {
     constructor() { }
-    pV;
-    rV;
     pF() { }
     rF() { }
     pgF() { }
@@ -719,7 +717,6 @@ class C {
     get rgF() { }
     rsF(param) { }
     set rsF(param) { }
-    static tV;
     static tF() { }
     static tsF(param) { }
     static set tsF(param) { }
@@ -733,8 +730,6 @@ var M;
     ;
     class C {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
@@ -745,7 +740,6 @@ var M;
         get rgF() { }
         rsF(param) { }
         set rsF(param) { }
-        static tV;
         static tF() { }
         static tsF(param) { }
         static set tsF(param) { }
@@ -780,8 +774,6 @@ var M;
     ;
     class eC {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
@@ -792,7 +784,6 @@ var M;
         get rgF() { }
         rsF(param) { }
         set rsF(param) { }
-        static tV;
         static tF() { }
         static tsF(param) { }
         static set tsF(param) { }
@@ -829,8 +820,6 @@ function eF() { }
 ;
 class eC {
     constructor() { }
-    pV;
-    rV;
     pF() { }
     rF() { }
     pgF() { }
@@ -841,7 +830,6 @@ class eC {
     get rgF() { }
     rsF(param) { }
     set rsF(param) { }
-    static tV;
     static tF() { }
     static tsF(param) { }
     static set tsF(param) { }
@@ -856,8 +844,6 @@ var eM;
     ;
     class C {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
@@ -868,7 +854,6 @@ var eM;
         get rgF() { }
         rsF(param) { }
         set rsF(param) { }
-        static tV;
         static tF() { }
         static tsF(param) { }
         static set tsF(param) { }
@@ -903,8 +888,6 @@ var eM;
     ;
     class eC {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
@@ -915,7 +898,6 @@ var eM;
         get rgF() { }
         rsF(param) { }
         set rsF(param) { }
-        static tV;
         static tF() { }
         static tsF(param) { }
         static set tsF(param) { }

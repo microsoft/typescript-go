@@ -1,27 +1,32 @@
 --- old.es6modulekindWithES5Target(target=es2015).js
 +++ new.es6modulekindWithES5Target(target=es2015).js
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
+     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
      return c > 3 && r && Object.defineProperty(target, key, r), r;
  };
++var _a;
  export class C {
--    constructor() {
--        this.p = 1;
--    }
-+    static s = 0;
-+    p = 1;
-     method() { }
+     constructor() {
+         this.p = 1;
+@@= skipped -8, +9 lines =@@
  }
--C.s = 0;
+ C.s = 0;
  export { C as C2 };
- let D = class D {
+-let D = class D {
 -    constructor() {
 -        this.p = 1;
 -    }
-+    static s = 0;
-+    p = 1;
-     method() { }
- };
+-    method() { }
+-};
 -D.s = 0;
++let D = (_a = class D {
++        constructor() {
++            this.p = 1;
++        }
++        method() { }
++    },
++    _a.s = 0,
++    _a);
  D = __decorate([
      foo
  ], D);

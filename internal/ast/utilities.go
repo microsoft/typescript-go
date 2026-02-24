@@ -143,6 +143,10 @@ func IsAssignmentOperator(token Kind) bool {
 	return token >= KindFirstAssignment && token <= KindLastAssignment
 }
 
+func IsCompoundAssignment(token Kind) bool {
+	return token >= KindFirstCompoundAssignment && token <= KindLastCompoundAssignment
+}
+
 func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 	if node.Kind == KindBinaryExpression {
 		expr := node.AsBinaryExpression()

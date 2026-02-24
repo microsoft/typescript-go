@@ -14,14 +14,15 @@ class BulkEditPreviewProvider {
 
 //// [decoratorOnClassConstructorParameter5.js]
 "use strict";
-let BulkEditPreviewProvider = class BulkEditPreviewProvider {
-    _modeService;
-    static Schema = 'vscode-bulkeditpreview';
-    static emptyPreview = { scheme: BulkEditPreviewProvider.Schema };
-    constructor(_modeService) {
-        this._modeService = _modeService;
-    }
-};
+var _a;
+let BulkEditPreviewProvider = (_a = class BulkEditPreviewProvider {
+        constructor(_modeService) {
+            this._modeService = _modeService;
+        }
+    },
+    _a.Schema = 'vscode-bulkeditpreview',
+    _a.emptyPreview = { scheme: _a.Schema },
+    _a);
 BulkEditPreviewProvider = __decorate([
     __param(0, IFoo)
 ], BulkEditPreviewProvider);

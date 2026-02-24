@@ -26,7 +26,6 @@ var TypeScript;
         var Street;
         (function (Street) {
             class Rue {
-                address;
             }
             Street.Rue = Rue;
         })(Street = Strasse.Street || (Strasse.Street = {}));

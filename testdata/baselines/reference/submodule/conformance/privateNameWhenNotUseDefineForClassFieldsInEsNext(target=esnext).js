@@ -55,51 +55,59 @@ class TestNonStatics {
 
 //// [privateNameWhenNotUseDefineForClassFieldsInEsNext.js]
 "use strict";
+var _a;
 class TestWithStatics {
     #prop = 0;
-    static dd = new TestWithStatics().#prop; // OK
-    static ["X_ z_ zz"] = class Inner {
+    static { this.dd = new TestWithStatics().#prop; } // OK
+    static { this["X_ z_ zz"] = class Inner {
         #foo = 10;
         m() {
             new TestWithStatics().#prop; // OK
         }
-        static C = class InnerInner {
+        static { this.C = class InnerInner {
             m() {
                 new TestWithStatics().#prop; // OK
-                new Inner().#foo; // OK
+                new _a().#foo; // OK
             }
-        };
+        }; }
         static M() {
             return class {
                 m() {
                     new TestWithStatics().#prop; // OK
-                    new Inner().#foo; // OK
+                    new _a().#foo; // OK
                 }
             };
         }
-    };
+    }; }
 }
 class TestNonStatics {
-    #prop = 0;
-    dd = new TestNonStatics().#prop; // OK
-    ["X_ z_ zz"] = class Inner {
-        #foo = 10;
-        m() {
-            new TestNonStatics().#prop; // Ok
-        }
-        C = class InnerInner {
+    constructor() {
+        var _b;
+        this.#prop = 0;
+        this.dd = new TestNonStatics().#prop; // OK
+        this["X_ z_ zz"] = class Inner {
+            constructor() {
+                this.#foo = 10;
+                this.C = class InnerInner {
+                    m() {
+                        new TestNonStatics().#prop; // Ok
+                        new _b().#foo; // Ok
+                    }
+                };
+            }
+            #foo;
             m() {
                 new TestNonStatics().#prop; // Ok
-                new Inner().#foo; // Ok
+            }
+            static M() {
+                return class {
+                    m() {
+                        new TestNonStatics().#prop; // OK
+                        new _b().#foo; // OK
+                    }
+                };
             }
         };
-        static M() {
-            return class {
-                m() {
-                    new TestNonStatics().#prop; // OK
-                    new Inner().#foo; // OK
-                }
-            };
-        }
-    };
+    }
+    #prop;
 }

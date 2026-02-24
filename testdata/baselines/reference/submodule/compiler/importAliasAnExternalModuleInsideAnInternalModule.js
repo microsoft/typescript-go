@@ -30,6 +30,5 @@ const r = require("./importAliasAnExternalModuleInsideAnInternalModule_file0");
 var m_private;
 (function (m_private) {
     m_private.C = r;
-    m_private. // no error
-    C.m.foo();
+    m_private.C.m.foo();
 })(m_private || (m_private = {}));

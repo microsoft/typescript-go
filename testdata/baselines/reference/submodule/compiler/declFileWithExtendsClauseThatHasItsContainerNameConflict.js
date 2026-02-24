@@ -26,7 +26,6 @@ var A;
     var B;
     (function (B) {
         class EventManager {
-            id;
         }
         B.EventManager = EventManager;
     })(B = A.B || (A.B = {}));
@@ -37,7 +36,6 @@ var A;
         var C;
         (function (C) {
             class ContextMenu extends B.EventManager {
-                name;
             }
             C.ContextMenu = ContextMenu;
         })(C = B.C || (B.C = {}));

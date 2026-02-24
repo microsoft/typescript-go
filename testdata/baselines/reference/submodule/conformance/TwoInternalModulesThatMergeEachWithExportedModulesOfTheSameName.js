@@ -59,7 +59,6 @@ var X;
         var Z;
         (function (Z) {
             class Line {
-                length;
             }
             Z.Line = Line;
         })(Z = Y.Z || (Y.Z = {}));
@@ -71,7 +70,6 @@ var X;
         let Z;
         (function (Z) {
             class Line {
-                name;
             }
             Z.Line = Line;
         })(Z || (Z = {}));

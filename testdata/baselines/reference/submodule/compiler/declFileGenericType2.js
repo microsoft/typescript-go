@@ -70,7 +70,6 @@ var templa;
             var composite;
             (function (composite) {
                 class AbstractCompositeElementController extends templa.dom.mvc.AbstractElementController {
-                    _controllers;
                     constructor() {
                         super();
                         this._controllers = [];

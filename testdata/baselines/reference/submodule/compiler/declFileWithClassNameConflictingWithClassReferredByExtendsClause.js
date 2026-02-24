@@ -30,7 +30,6 @@ var X;
         var base;
         (function (base) {
             class W extends A.B.Base.W {
-                name;
             }
             base.W = W;
         })(base = Y.base || (Y.base = {}));
@@ -44,7 +43,6 @@ var X;
             var Z;
             (function (Z) {
                 class W extends X.Y.base.W {
-                    value;
                 }
                 Z.W = W;
             })(Z = base.Z || (base.Z = {}));

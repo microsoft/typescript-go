@@ -51,8 +51,6 @@ var X;
                 this.x = x;
                 this.y = y;
             }
-            x;
-            y;
         }
         Y.Point = Point;
     })(Y = X.Y || (X.Y = {}));
@@ -77,7 +75,6 @@ var cl = X.Y.Point.Origin; // error not expected here same as bug 83996 ?
 //// [simple.js]
 "use strict";
 class A {
-    id;
 }
 (function (A) {
     A.Instance = new A();

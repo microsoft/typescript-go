@@ -35,7 +35,6 @@ var EndGate;
     var Tweening;
     (function (Tweening) {
         class Tween {
-            _from;
             constructor(from) {
                 this._from = from.Clone();
             }

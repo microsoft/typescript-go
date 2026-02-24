@@ -86,10 +86,6 @@ var Portal;
         var Validators;
         (function (Validators) {
             class Validator {
-                _subscription;
-                message;
-                validationState;
-                validate;
                 constructor(message) { }
                 destroy() { }
                 _validate(value) { return 0; }
@@ -117,5 +113,7 @@ var PortalFx;
     })(ViewModels = PortalFx.ViewModels || (PortalFx.ViewModels = {}));
 })(PortalFx || (PortalFx = {}));
 class ViewModel {
-    validators = ko.observableArray();
+    constructor() {
+        this.validators = ko.observableArray();
+    }
 }
