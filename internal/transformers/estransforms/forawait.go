@@ -101,6 +101,24 @@ func (tx *forawaitTransformer) trackSuperAccess(node *ast.Node) {
 	}
 }
 
+func (tx *forawaitTransformer) affectsSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) bool {
+	return tx.forAwaitHierarchyFacts != (tx.forAwaitHierarchyFacts&^excludeFacts | includeFacts)
+}
+
+// enterSubtree sets the HierarchyFacts for this node prior to visiting this node's subtree,
+// returning the facts set prior to modification.
+func (tx *forawaitTransformer) enterSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) forAwaitHierarchyFacts {
+	ancestorFacts := tx.forAwaitHierarchyFacts
+	tx.forAwaitHierarchyFacts = (tx.forAwaitHierarchyFacts&^excludeFacts | includeFacts) & forAwaitHierarchyFactsAncestorFactsMask
+	return ancestorFacts
+}
+
+// exitSubtree restores the HierarchyFacts for this node's ancestor after visiting this node's
+// subtree.
+func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts) {
+	tx.forAwaitHierarchyFacts = ancestorFacts
+}
+
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
 		if tx.capturedSuperProperties != nil {
@@ -145,22 +163,13 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
-func (tx *forawaitTransformer) affectsSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) bool {
-	return tx.forAwaitHierarchyFacts != (tx.forAwaitHierarchyFacts&^excludeFacts | includeFacts)
-}
-
-// enterSubtree sets the HierarchyFacts for this node prior to visiting this node's subtree,
-// returning the facts set prior to modification.
-func (tx *forawaitTransformer) enterSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) forAwaitHierarchyFacts {
-	ancestorFacts := tx.forAwaitHierarchyFacts
-	tx.forAwaitHierarchyFacts = (tx.forAwaitHierarchyFacts&^excludeFacts | includeFacts) & forAwaitHierarchyFactsAncestorFactsMask
-	return ancestorFacts
-}
-
-// exitSubtree restores the HierarchyFacts for this node's ancestor after visiting this node's
-// subtree.
-func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts) {
-	tx.forAwaitHierarchyFacts = ancestorFacts
+func (tx *forawaitTransformer) visitorNoAsyncModifier() *ast.NodeVisitor {
+	return tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
+		if node.Kind == ast.KindAsyncKeyword {
+			return nil
+		}
+		return node
+	})
 }
 
 func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*forawaitTransformer, *ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
@@ -175,18 +184,6 @@ func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*forawaitTransformer
 
 func (tx *forawaitTransformer) visitDefault(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *forawaitTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
-	ancestorFacts := tx.enterSubtree(
-		forAwaitHierarchyFactsSourceFileExcludes,
-		forAwaitHierarchyFactsStrictModeSourceFileIncludes,
-	)
-	tx.exportedVariableStatement = false
-	visited := tx.Visitor().VisitEachChild(node.AsNode())
-	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
-	tx.exitSubtree(ancestorFacts)
-	return visited
 }
 
 func (tx *forawaitTransformer) visitAwaitExpression(node *ast.AwaitExpression) *ast.Node {
@@ -303,6 +300,18 @@ func (tx *forawaitTransformer) restoreEnclosingLabel(node *ast.Node, outermostLa
 	)
 }
 
+func (tx *forawaitTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
+	ancestorFacts := tx.enterSubtree(
+		forAwaitHierarchyFactsSourceFileExcludes,
+		forAwaitHierarchyFactsStrictModeSourceFileIncludes,
+	)
+	tx.exportedVariableStatement = false
+	visited := tx.Visitor().VisitEachChild(node.AsNode())
+	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
+	tx.exitSubtree(ancestorFacts)
+	return visited
+}
+
 // visitForOfStatement visits a ForOfStatement and converts it into a ES2015-compatible ForOfStatement.
 func (tx *forawaitTransformer) visitForOfStatement(node *ast.ForInOrOfStatement, outermostLabeledStatement *ast.LabeledStatement) *ast.Node {
 	ancestorFacts := tx.enterSubtree(forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
@@ -314,16 +323,6 @@ func (tx *forawaitTransformer) visitForOfStatement(node *ast.ForInOrOfStatement,
 	}
 	tx.exitSubtree(ancestorFacts)
 	return result
-}
-
-func (tx *forawaitTransformer) createDownlevelAwait(expression *ast.Node) *ast.Node {
-	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
-		return tx.Factory().NewYieldExpression(
-			nil, /*asteriskToken*/
-			tx.Factory().NewAwaitHelper(expression),
-		)
-	}
-	return tx.Factory().NewAwaitExpression(expression)
 }
 
 func (tx *forawaitTransformer) convertForOfStatementHead(node *ast.ForInOrOfStatement, boundValue *ast.Node, nonUserCode *ast.Node) *ast.Node {
@@ -387,6 +386,16 @@ func (tx *forawaitTransformer) createForOfBindingStatement(node *ast.Node, bound
 	statement := f.NewExpressionStatement(updatedExpression)
 	statement.Loc = node.Loc
 	return statement
+}
+
+func (tx *forawaitTransformer) createDownlevelAwait(expression *ast.Node) *ast.Node {
+	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
+		return tx.Factory().NewYieldExpression(
+			nil, /*asteriskToken*/
+			tx.Factory().NewAwaitHelper(expression),
+		)
+	}
+	return tx.Factory().NewAwaitExpression(expression)
 }
 
 func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfStatement, outermostLabeledStatement *ast.LabeledStatement, ancestorFacts forAwaitHierarchyFacts) *ast.Node {
@@ -552,6 +561,42 @@ func (tx *forawaitTransformer) visitConstructorDeclaration(node *ast.Node) *ast.
 	return updated
 }
 
+func (tx *forawaitTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Node {
+	decl := node.AsGetAccessorDeclaration()
+	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
+	updated := tx.Factory().UpdateGetAccessorDeclaration(
+		decl,
+		decl.Modifiers(),
+		tx.Visitor().VisitNode(decl.Name()),
+		nil, /*typeParameters*/
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
+		nil, /*returnType*/
+		nil, /*fullSignature*/
+		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
+	)
+	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
+	return updated
+}
+
+func (tx *forawaitTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Node {
+	decl := node.AsSetAccessorDeclaration()
+	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
+	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
+	updated := tx.Factory().UpdateSetAccessorDeclaration(
+		decl,
+		decl.Modifiers(),
+		tx.Visitor().VisitNode(decl.Name()),
+		nil, /*typeParameters*/
+		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
+		nil, /*returnType*/
+		nil, /*fullSignature*/
+		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
+	)
+	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
+	return updated
+}
+
 func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
 	decl := node.AsMethodDeclaration()
 	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
@@ -592,42 +637,6 @@ func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node 
 		nil, /*returnType*/
 		nil, /*fullSignature*/
 		body,
-	)
-	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
-	return updated
-}
-
-func (tx *forawaitTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Node {
-	decl := node.AsGetAccessorDeclaration()
-	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
-	updated := tx.Factory().UpdateGetAccessorDeclaration(
-		decl,
-		decl.Modifiers(),
-		tx.Visitor().VisitNode(decl.Name()),
-		nil, /*typeParameters*/
-		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
-		nil, /*returnType*/
-		nil, /*fullSignature*/
-		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
-	)
-	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
-	return updated
-}
-
-func (tx *forawaitTransformer) visitSetAccessorDeclaration(node *ast.Node) *ast.Node {
-	decl := node.AsSetAccessorDeclaration()
-	savedEnclosingFunctionFlags := tx.enclosingFunctionFlags
-	tx.enclosingFunctionFlags = ast.GetFunctionFlags(node)
-	updated := tx.Factory().UpdateSetAccessorDeclaration(
-		decl,
-		decl.Modifiers(),
-		tx.Visitor().VisitNode(decl.Name()),
-		nil, /*typeParameters*/
-		tx.EmitContext().VisitParameters(decl.Parameters, tx.Visitor()),
-		nil, /*returnType*/
-		nil, /*fullSignature*/
-		tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor()),
 	)
 	tx.enclosingFunctionFlags = savedEnclosingFunctionFlags
 	return updated
@@ -857,15 +866,6 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	tx.superIndexBinding = savedSuperIndexBinding
 
 	return block
-}
-
-func (tx *forawaitTransformer) visitorNoAsyncModifier() *ast.NodeVisitor {
-	return tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
-		if node.Kind == ast.KindAsyncKeyword {
-			return nil
-		}
-		return node
-	})
 }
 
 func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
