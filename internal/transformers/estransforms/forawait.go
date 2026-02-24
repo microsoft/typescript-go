@@ -58,6 +58,8 @@ type forawaitTransformer struct {
 	exportedVariableStatement  bool
 
 	superPropertyNodeVisitor *ast.NodeVisitor
+	noAsyncModifierVisitor   *ast.NodeVisitor
+	superAccessVisitor       *ast.NodeVisitor
 }
 
 func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -66,6 +68,13 @@ func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.T
 	}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.superPropertyNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitSuperProperty)
+	tx.noAsyncModifierVisitor = tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
+		if node.Kind == ast.KindAsyncKeyword {
+			return nil
+		}
+		return node
+	})
+	tx.superAccessVisitor = tx.EmitContext().NewNodeVisitor(tx.visitSuperAccessInBody)
 	return result
 }
 
@@ -163,13 +172,8 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
-func (tx *forawaitTransformer) visitorNoAsyncModifier() *ast.NodeVisitor {
-	return tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
-		if node.Kind == ast.KindAsyncKeyword {
-			return nil
-		}
-		return node
-	})
+func (tx *forawaitTransformer) visitModifiersNoAsync(modifiers *ast.ModifierList) *ast.ModifierList {
+	return tx.noAsyncModifierVisitor.VisitModifiers(modifiers)
 }
 
 func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*forawaitTransformer, *ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
@@ -604,7 +608,7 @@ func (tx *forawaitTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node 
 
 	var modifiers *ast.ModifierList
 	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
-		modifiers = tx.visitorNoAsyncModifier().VisitModifiers(decl.Modifiers())
+		modifiers = tx.visitModifiersNoAsync(decl.Modifiers())
 	} else {
 		modifiers = decl.Modifiers()
 	}
@@ -649,7 +653,7 @@ func (tx *forawaitTransformer) visitFunctionDeclaration(node *ast.Node) *ast.Nod
 
 	var modifiers *ast.ModifierList
 	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
-		modifiers = tx.visitorNoAsyncModifier().VisitModifiers(decl.Modifiers())
+		modifiers = tx.visitModifiersNoAsync(decl.Modifiers())
 	} else {
 		modifiers = decl.Modifiers()
 	}
@@ -711,7 +715,7 @@ func (tx *forawaitTransformer) visitFunctionExpression(node *ast.Node) *ast.Node
 
 	var modifiers *ast.ModifierList
 	if tx.enclosingFunctionFlags&ast.FunctionFlagsGenerator != 0 {
-		modifiers = tx.visitorNoAsyncModifier().VisitModifiers(decl.Modifiers())
+		modifiers = tx.visitModifiersNoAsync(decl.Modifiers())
 	} else {
 		modifiers = decl.Modifiers()
 	}
@@ -887,41 +891,40 @@ func (tx *forawaitTransformer) visitSuperProperty(node *ast.Node) *ast.Node {
 // substituteSuperAccessesInBody walks the async generator body and replaces super property/element
 // accesses with _super/_superIndex references. This is necessary because the async generator body
 // ends up inside a generator function where `super` is not valid.
-func (tx *forawaitTransformer) substituteSuperAccessesInBody(body *ast.Node) *ast.Node {
-	var visitor *ast.NodeVisitor
-	var doVisit func(node *ast.Node) *ast.Node
-	doVisit = func(node *ast.Node) *ast.Node {
-		switch node.Kind {
-		case ast.KindCallExpression:
-			call := node.AsCallExpression()
-			if ast.IsSuperProperty(call.Expression) {
-				return tx.substituteCallExpressionWithSuperAccess(call, visitor)
-			}
-			return visitor.VisitEachChild(node)
-		case ast.KindPropertyAccessExpression:
-			if node.Expression().Kind == ast.KindSuperKeyword {
-				return tx.Factory().NewPropertyAccessExpression(
-					tx.superBinding, nil, node.Name(), ast.NodeFlagsNone,
-				)
-			}
-			return visitor.VisitEachChild(node)
-		case ast.KindElementAccessExpression:
-			if node.Expression().Kind == ast.KindSuperKeyword {
-				return tx.createSuperElementAccessInAsyncMethod(
-					node.AsElementAccessExpression().ArgumentExpression,
-				)
-			}
-			return visitor.VisitEachChild(node)
-		case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
-			ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
-			ast.KindConstructor, ast.KindClassDeclaration, ast.KindClassExpression:
-			return node
-		default:
-			return visitor.VisitEachChild(node)
+// visitSuperAccessInBody is the NodeVisitor callback for superAccessVisitor.
+func (tx *forawaitTransformer) visitSuperAccessInBody(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindCallExpression:
+		call := node.AsCallExpression()
+		if ast.IsSuperProperty(call.Expression) {
+			return tx.substituteCallExpressionWithSuperAccess(call, tx.superAccessVisitor)
 		}
+		return tx.superAccessVisitor.VisitEachChild(node)
+	case ast.KindPropertyAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			return tx.Factory().NewPropertyAccessExpression(
+				tx.superBinding, nil, node.Name(), ast.NodeFlagsNone,
+			)
+		}
+		return tx.superAccessVisitor.VisitEachChild(node)
+	case ast.KindElementAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			return tx.createSuperElementAccessInAsyncMethod(
+				node.AsElementAccessExpression().ArgumentExpression,
+			)
+		}
+		return tx.superAccessVisitor.VisitEachChild(node)
+	case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
+		ast.KindConstructor, ast.KindClassDeclaration, ast.KindClassExpression:
+		return node
+	default:
+		return tx.superAccessVisitor.VisitEachChild(node)
 	}
-	visitor = tx.EmitContext().NewNodeVisitor(doVisit)
-	return visitor.VisitNode(body)
+}
+
+func (tx *forawaitTransformer) substituteSuperAccessesInBody(body *ast.Node) *ast.Node {
+	return tx.superAccessVisitor.VisitNode(body)
 }
 
 func (tx *forawaitTransformer) substituteCallExpressionWithSuperAccess(call *ast.CallExpression, visitor *ast.NodeVisitor) *ast.Node {
