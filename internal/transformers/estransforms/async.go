@@ -23,13 +23,11 @@ type lexicalArgumentsInfo struct {
 
 type asyncTransformer struct {
 	transformers.Transformer
+	superAccessState
 
 	contextFlags asyncContextFlags
 
 	enclosingFunctionParameterNames *collections.Set[string]
-	capturedSuperProperties         *collections.OrderedSet[string]
-	hasSuperElementAccess           bool
-	hasSuperPropertyAssignment      bool
 	superBinding                    *ast.IdentifierNode
 	superIndexBinding               *ast.IdentifierNode
 	lexicalArguments                lexicalArgumentsInfo
@@ -96,37 +94,6 @@ func (tx *asyncTransformer) doWithContext(flags asyncContextFlags, cb func(*asyn
 
 func (tx *asyncTransformer) visitDefault(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
-}
-
-// trackSuperAccess records super property/element accesses and super property assignments
-// for the enclosing async method body. Called from both the main visitor and the arguments
-// visitor to ensure super accesses are tracked regardless of whether the node has transform flags.
-func (tx *asyncTransformer) trackSuperAccess(node *ast.Node) {
-	if tx.capturedSuperProperties == nil {
-		return
-	}
-	switch node.Kind {
-	case ast.KindPropertyAccessExpression:
-		if node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-	case ast.KindElementAccessExpression:
-		if node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-	case ast.KindBinaryExpression:
-		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPrefixUnaryExpression:
-		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPostfixUnaryExpression:
-		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	}
 }
 
 // argumentsAndSuperVisitor recurses into subtrees that lack await transform flags.

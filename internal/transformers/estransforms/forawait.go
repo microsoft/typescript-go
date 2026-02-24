@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"slices"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -44,18 +42,14 @@ const (
 
 type forawaitTransformer struct {
 	transformers.Transformer
+	superAccessState
 	compilerOptions *core.CompilerOptions
 
-	enclosingFunctionFlags ast.FunctionFlags
-	forAwaitHierarchyFacts forAwaitHierarchyFacts
-	// Keeps track of property names accessed on super (`super.x`) within async functions.
-	capturedSuperProperties *collections.Set[string]
-	// Whether the async function contains an element access on super (`super[x]`).
-	hasSuperElementAccess      bool
-	hasSuperPropertyAssignment bool
-	superBinding               *ast.IdentifierNode
-	superIndexBinding          *ast.IdentifierNode
-	exportedVariableStatement  bool
+	enclosingFunctionFlags    ast.FunctionFlags
+	forAwaitHierarchyFacts    forAwaitHierarchyFacts
+	superBinding              *ast.IdentifierNode
+	superIndexBinding         *ast.IdentifierNode
+	exportedVariableStatement bool
 
 	superPropertyNodeVisitor *ast.NodeVisitor
 	noAsyncModifierVisitor   *ast.NodeVisitor
@@ -76,38 +70,6 @@ func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.T
 	})
 	tx.superAccessVisitor = tx.EmitContext().NewNodeVisitor(tx.visitSuperAccessInBody)
 	return result
-}
-
-// trackSuperAccess records super property/element accesses and super property assignments
-// for the enclosing async generator method body. Called from both the main visitor and the
-// super property visitor to ensure super accesses are tracked regardless of whether the node
-// has transform flags.
-func (tx *forawaitTransformer) trackSuperAccess(node *ast.Node) {
-	if tx.capturedSuperProperties == nil {
-		return
-	}
-	switch node.Kind {
-	case ast.KindPropertyAccessExpression:
-		if node.Expression().Kind == ast.KindSuperKeyword {
-			tx.capturedSuperProperties.Add(node.Name().Text())
-		}
-	case ast.KindElementAccessExpression:
-		if node.Expression().Kind == ast.KindSuperKeyword {
-			tx.hasSuperElementAccess = true
-		}
-	case ast.KindBinaryExpression:
-		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPrefixUnaryExpression:
-		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	case ast.KindPostfixUnaryExpression:
-		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
-			tx.hasSuperPropertyAssignment = true
-		}
-	}
 }
 
 func (tx *forawaitTransformer) affectsSubtree(excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) bool {
@@ -790,7 +752,7 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	savedHasSuperPropertyAssignment := tx.hasSuperPropertyAssignment
 	savedSuperBinding := tx.superBinding
 	savedSuperIndexBinding := tx.superIndexBinding
-	tx.capturedSuperProperties = &collections.Set[string]{}
+	tx.capturedSuperProperties = &collections.OrderedSet[string]{}
 	tx.hasSuperElementAccess = false
 	tx.hasSuperPropertyAssignment = false
 	tx.superBinding = f.NewUniqueNameEx("_super", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
@@ -806,7 +768,7 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	)
 
 	// Substitute super property accesses with _super/_superIndex helpers
-	emitSuperHelpers := tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess
+	emitSuperHelpers := tx.capturedSuperProperties.Size() > 0 || tx.hasSuperElementAccess
 	if emitSuperHelpers {
 		asyncBody = tx.substituteSuperAccessesInBody(asyncBody)
 	}
@@ -843,7 +805,7 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 
 	tx.EmitContext().StartVariableEnvironment()
 	if emitSuperHelpers {
-		if tx.capturedSuperProperties.Len() > 0 {
+		if tx.capturedSuperProperties.Size() > 0 {
 			tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 		}
 	}
@@ -985,13 +947,7 @@ func (tx *forawaitTransformer) createSuperAccessVariableStatement() *ast.Node {
 	f := tx.Factory()
 	var accessors []*ast.Node
 
-	var sortedNames []string
-	for name := range tx.capturedSuperProperties.Keys() {
-		sortedNames = append(sortedNames, name)
-	}
-	slices.Sort(sortedNames)
-
-	for _, name := range sortedNames {
+	for name := range tx.capturedSuperProperties.Values() {
 		var descriptorProperties []*ast.Node
 
 		getterBody := f.NewPropertyAccessExpression(

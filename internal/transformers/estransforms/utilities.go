@@ -2,6 +2,7 @@ package estransforms
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -46,4 +47,47 @@ func createNotNullCondition(emitContext *printer.EmitContext, left *ast.Node, ri
 			emitContext.Factory.NewVoidZeroExpression(),
 		),
 	)
+}
+
+// superAccessState tracks super property/element accesses and super property assignments
+// within async function or async generator bodies. It is embedded by both asyncTransformer
+// and forawaitTransformer to share the tracking logic.
+type superAccessState struct {
+	// Keeps track of property names accessed on super (`super.x`) within async functions.
+	capturedSuperProperties *collections.OrderedSet[string]
+	// Whether the async function contains an element access on super (`super[x]`).
+	hasSuperElementAccess      bool
+	hasSuperPropertyAssignment bool
+}
+
+// trackSuperAccess records super property/element accesses and super property assignments
+// for the enclosing async method body. Called from both the main visitor and auxiliary
+// visitors to ensure super accesses are tracked regardless of whether the node has
+// transform flags.
+func (s *superAccessState) trackSuperAccess(node *ast.Node) {
+	if s.capturedSuperProperties == nil {
+		return
+	}
+	switch node.Kind {
+	case ast.KindPropertyAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			s.capturedSuperProperties.Add(node.Name().Text())
+		}
+	case ast.KindElementAccessExpression:
+		if node.Expression().Kind == ast.KindSuperKeyword {
+			s.hasSuperElementAccess = true
+		}
+	case ast.KindBinaryExpression:
+		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) && assignmentTargetContainsSuperProperty(node.AsBinaryExpression().Left) {
+			s.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPrefixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPrefixUnaryExpression().Operand) {
+			s.hasSuperPropertyAssignment = true
+		}
+	case ast.KindPostfixUnaryExpression:
+		if isUpdateExpression(node) && assignmentTargetContainsSuperProperty(node.AsPostfixUnaryExpression().Operand) {
+			s.hasSuperPropertyAssignment = true
+		}
+	}
 }
