@@ -87,6 +87,22 @@ func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts)
 	tx.forAwaitHierarchyFacts = ancestorFacts
 }
 
+func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
+		ast.KindConstructor:
+		return node
+	}
+	tx.trackSuperAccess(node)
+	return tx.superPropertyNodeVisitor.VisitEachChild(node)
+}
+
+// visitSuperProperty is the NodeVisitor callback for superPropertyNodeVisitor.
+func (tx *forawaitTransformer) visitSuperProperty(node *ast.Node) *ast.Node {
+	return tx.superPropertyVisitor(node)
+}
+
 func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 	if node.SubtreeFacts()&ast.SubtreeContainsForAwaitOrAsyncGenerator == 0 {
 		if tx.capturedSuperProperties != nil {
@@ -800,20 +816,4 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	tx.superIndexBinding = savedSuperIndexBinding
 
 	return block
-}
-
-func (tx *forawaitTransformer) superPropertyVisitor(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindFunctionExpression, ast.KindFunctionDeclaration,
-		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor,
-		ast.KindConstructor:
-		return node
-	}
-	tx.trackSuperAccess(node)
-	return tx.superPropertyNodeVisitor.VisitEachChild(node)
-}
-
-// visitSuperProperty is the NodeVisitor callback for superPropertyNodeVisitor.
-func (tx *forawaitTransformer) visitSuperProperty(node *ast.Node) *ast.Node {
-	return tx.superPropertyVisitor(node)
 }
