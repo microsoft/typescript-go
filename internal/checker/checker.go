@@ -2299,7 +2299,7 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkImportEqualsDeclaration(node)
 	case ast.KindExportDeclaration:
 		c.checkExportDeclaration(node)
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		c.checkExportAssignment(node)
 	case ast.KindEmptyStatement:
 		c.checkGrammarStatementInAmbientContext(node)
@@ -5098,7 +5098,7 @@ func (c *Checker) checkModuleAugmentationElement(node *ast.Node) {
 		for _, decl := range node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 			c.checkModuleAugmentationElement(decl)
 		}
-	case ast.KindExportAssignment, ast.KindJSExportAssignment, ast.KindExportDeclaration:
+	case ast.KindExportAssignment, ast.KindExportDeclaration:
 		c.grammarErrorOnFirstToken(node, diagnostics.Exports_and_export_assignments_are_not_permitted_in_module_augmentations)
 	case ast.KindImportEqualsDeclaration:
 		// import a = e.x; in module augmentation is ok, but not import a = require('fs)
@@ -15158,13 +15158,37 @@ func (c *Checker) GetAmbientModules() []*ast.Symbol {
 }
 
 func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontResolveAlias bool) *ast.Symbol {
-	if moduleSymbol != nil {
-		exportEquals := c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], dontResolveAlias)
-		if exportEquals != nil {
-			return c.getMergedSymbol(exportEquals)
+	if moduleSymbol == nil {
+		return nil
+	}
+	exportEquals := c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], dontResolveAlias)
+	if exportEquals == nil {
+		return moduleSymbol
+	}
+	if exportEquals == c.unknownSymbol || exportEquals == moduleSymbol || exportEquals.Flags&ast.SymbolFlagsAlias != 0 || len(moduleSymbol.Exports) == 1 {
+		return c.getMergedSymbol(exportEquals)
+	}
+	// We have a module with an export= declaration along with other exported declarations. This combination may occur
+	// in .js files with module.exports assignments and JSDoc @typedef type declarations. Merge the exported symbols
+	// of the module into the exports of the export= symbol to make the types accessible.
+	links := c.moduleSymbolLinks.Get(exportEquals)
+	if links.mergedExportEquals != nil {
+		return links.mergedExportEquals
+	}
+	merged := c.cloneSymbol(exportEquals)
+	merged.Flags |= ast.SymbolFlagsValueModule
+	exports := ast.GetExports(merged)
+	for _, symbol := range moduleSymbol.Exports {
+		if symbol.Name != ast.InternalSymbolNameExportEquals {
+			if existing := exports[symbol.Name]; existing != nil {
+				exports[symbol.Name] = c.mergeSymbol(existing, symbol, false /*unidirectional*/)
+			} else {
+				exports[symbol.Name] = symbol
+			}
 		}
 	}
-	return moduleSymbol
+	links.mergedExportEquals = merged
+	return merged
 }
 
 // An external module with an 'export =' declaration may be referenced as an ES6 module provided the 'export ='
@@ -16203,13 +16227,13 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		result = c.checkShorthandPropertyAssignment(declaration, true /*inDestructuringPattern*/, CheckModeNormal)
 	case ast.KindMethodDeclaration:
 		result = c.checkObjectLiteralMethod(declaration, CheckModeNormal)
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		if declaration.Type() != nil {
 			result = c.getTypeFromTypeNode(declaration.Type())
 		} else {
 			result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.Expression()), declaration, false /*reportErrors*/)
 		}
-	case ast.KindBinaryExpression, ast.KindCallExpression, ast.KindCommonJSExport:
+	case ast.KindBinaryExpression, ast.KindCallExpression, ast.KindJSExportAssignment, ast.KindCommonJSExport:
 		result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 	case ast.KindJsxAttribute:
 		result = c.checkJsxAttribute(declaration, CheckModeNormal)
@@ -17661,7 +17685,7 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 	if t == nil {
 		var types []*Type
 		for i, declaration := range symbol.Declarations {
-			if ast.IsBinaryExpression(declaration) && declaration.Type() != nil {
+			if (ast.IsBinaryExpression(declaration) || ast.IsJSExportAssignment(declaration)) && declaration.Type() != nil {
 				t = c.getTypeFromTypeNode(declaration.Type())
 				break
 			}
@@ -17695,6 +17719,9 @@ func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type 
 	}
 	if ast.IsCallExpression(node) {
 		return c.getTypeFromPropertyDescriptor(node.Arguments()[2])
+	}
+	if ast.IsJSExportAssignment(node) {
+		return c.getRegularTypeOfLiteralType(c.checkExpressionCached(node.Expression()))
 	}
 	if ast.IsCommonJSExport(node) {
 		return c.getRegularTypeOfLiteralType(c.checkExpressionCached(node.Initializer()))
