@@ -125,7 +125,7 @@ const (
 // | 0-4         | uint32 | Index of `text` in the string offsets section     |
 // | 4-8         | uint32 | Index of `fileName` in the string offsets section |
 // | 8-12        | uint32 | Index of `path` in the string offsets section     |
-// | 12-16       | uint32 | Index of `id` in the string offsets section       |
+// | 12-16       | uint32 | Value of `languageVariant`                        |
 //
 // Nodes (24 bytes per node)
 // -------------------------
@@ -344,6 +344,11 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 		prevIndex = 0
 		parentIndex = currentIndex
 		visitor.VisitEachChild(node)
+		if sourceFile != nil {
+			for _, jsdoc := range node.JSDoc(sourceFile) {
+				visitor.Visit(jsdoc)
+			}
+		}
 		prevIndex = currentIndex
 		parentIndex = saveParentIndex
 		return node
@@ -357,6 +362,11 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 	nodes = appendUint32s(nodes, uint32(rootNode.Kind), uint32(rootNode.Pos()), uint32(rootNode.End()), 0, 0, getNodeData(rootNode, strs, &extendedData))
 
 	visitor.VisitEachChild(rootNode)
+	if sourceFile != nil {
+		for _, jsdoc := range rootNode.JSDoc(sourceFile) {
+			visitor.Visit(jsdoc)
+		}
+	}
 
 	var hash xxh3.Uint128
 	var parseOpts uint32
@@ -846,7 +856,7 @@ func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte)
 		textIndex := strs.add(sf.Text(), sf.Kind, sf.Pos(), sf.End())
 		fileNameIndex := strs.add(sf.FileName(), 0, 0, 0)
 		pathIndex := strs.add(string(sf.Path()), 0, 0, 0)
-		*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex)
+		*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant))
 	default:
 		var text, rawText string
 		var templateFlags uint32

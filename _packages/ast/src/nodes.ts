@@ -1,3 +1,4 @@
+import type { LanguageVariant } from "#enums/languageVariant";
 import type { NodeFlags } from "#enums/nodeFlags";
 import { SyntaxKind } from "#enums/syntaxKind";
 import { TokenFlags } from "#enums/tokenFlags";
@@ -15,6 +16,7 @@ export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
     readonly flags: NodeFlags;
     readonly parent: Node;
+    readonly jsDoc?: readonly Node[];
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
     getSourceFile(): SourceFile;
 }
@@ -26,6 +28,9 @@ export interface SourceFile extends Node {
     readonly text: string;
     readonly fileName: string;
     readonly path: Path;
+    readonly languageVariant: LanguageVariant;
+    /** @internal */
+    tokenCache?: Map<string, Node>;
 }
 
 export type TriviaSyntaxKind =
@@ -133,6 +138,7 @@ export type KeywordSyntaxKind =
     | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DeclareKeyword
     | SyntaxKind.DefaultKeyword
+    | SyntaxKind.DeferKeyword
     | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword

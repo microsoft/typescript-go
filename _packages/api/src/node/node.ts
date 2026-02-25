@@ -303,7 +303,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                         return result;
                     }
                 }
-                else {
+                else if (child.kind !== SyntaxKind.JSDoc) {
                     const result = visitNode(child);
                     if (result) {
                         return result;
@@ -313,6 +313,23 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             }
             while (next);
         }
+    }
+
+    get jsDoc(): readonly Node[] | undefined {
+        if (!this.hasChildren()) {
+            return undefined;
+        }
+        let result: Node[] | undefined;
+        let next = this.index + 1;
+        do {
+            const child = this.getOrCreateChildAtNodeIndex(next);
+            if (!(child instanceof RemoteNodeList) && child.kind === SyntaxKind.JSDoc) {
+                (result ??= []).push(child);
+            }
+            next = child.next;
+        }
+        while (next);
+        return result;
     }
 
     getSourceFile(): SourceFile {
@@ -855,6 +872,14 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                 const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 const stringIndex = this.view.getUint32(extendedDataOffset + 8, true);
                 return this.getString(stringIndex);
+        }
+    }
+
+    get languageVariant(): number | undefined {
+        switch (this.kind) {
+            case SyntaxKind.SourceFile:
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                return this.view.getUint32(extendedDataOffset + 12, true);
         }
     }
 
