@@ -103,6 +103,9 @@ function getNodeDataType(kind: SyntaxKind): number {
         case SyntaxKind.RegularExpressionLiteral:
         case SyntaxKind.NoSubstitutionTemplateLiteral:
         case SyntaxKind.JSDocText:
+        case SyntaxKind.JSDocLink:
+        case SyntaxKind.JSDocLinkCode:
+        case SyntaxKind.JSDocLinkPlain:
             return NODE_DATA_TYPE_STRING;
         case SyntaxKind.TemplateHead:
         case SyntaxKind.TemplateMiddle:

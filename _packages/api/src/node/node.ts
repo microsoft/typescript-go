@@ -836,7 +836,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.NoSubstitutionTemplateLiteral:
-            case SyntaxKind.JSDocText: {
+            case SyntaxKind.JSDocText:
+            case SyntaxKind.JSDocLink:
+            case SyntaxKind.JSDocLinkCode:
+            case SyntaxKind.JSDocLinkPlain: {
                 const stringIndex = this.data & NODE_STRING_INDEX_MASK;
                 return this.getString(stringIndex);
             }

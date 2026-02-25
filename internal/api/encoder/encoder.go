@@ -518,7 +518,10 @@ func getNodeDataType(node *ast.Node) uint32 {
 		ast.KindBigIntLiteral,
 		ast.KindRegularExpressionLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
-		ast.KindJSDocText:
+		ast.KindJSDocText,
+		ast.KindJSDocLink,
+		ast.KindJSDocLinkCode,
+		ast.KindJSDocLinkPlain:
 		return NodeDataTypeString
 	case ast.KindTemplateHead,
 		ast.KindTemplateMiddle,
@@ -926,6 +929,12 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 		return strs.add(node.AsNoSubstitutionTemplateLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindJSDocText:
 		return strs.add(node.AsJSDocText().Text(), node.Kind, node.Pos(), node.End())
+	case ast.KindJSDocLink:
+		return strs.add(node.AsJSDocLink().Text(), node.Kind, node.Pos(), node.End())
+	case ast.KindJSDocLinkCode:
+		return strs.add(node.AsJSDocLinkCode().Text(), node.Kind, node.Pos(), node.End())
+	case ast.KindJSDocLinkPlain:
+		return strs.add(node.AsJSDocLinkPlain().Text(), node.Kind, node.Pos(), node.End())
 	default:
 		panic(fmt.Sprintf("Unexpected node kind %v", node.Kind))
 	}
