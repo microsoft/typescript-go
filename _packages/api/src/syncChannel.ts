@@ -42,9 +42,9 @@ interface StdinWithHandle extends Writable {
 
 import {
     binHeaderSize,
-    MSGPACK_BIN8,
     MSGPACK_BIN16,
     MSGPACK_BIN32,
+    MSGPACK_BIN8,
     MSGPACK_FIXARRAY3,
     MSGPACK_UINT8,
     writeBinHeader,
@@ -596,5 +596,3 @@ export class SyncRpcChannel {
         }
     }
 }
-
-

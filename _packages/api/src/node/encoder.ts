@@ -25,6 +25,7 @@ import {
     NodeFlags,
     SyntaxKind,
 } from "@typescript/ast";
+import { MsgpackWriter } from "./msgpack.ts";
 import {
     childProperties,
     HEADER_SIZE,
@@ -35,7 +36,6 @@ import {
     NODE_LEN,
     PROTOCOL_VERSION,
 } from "./protocol.ts";
-import { MsgpackWriter } from "./msgpack.ts";
 
 const NODE_FIELDS = NODE_LEN / 4;
 const NODE_FIELD_NEXT = 3;
