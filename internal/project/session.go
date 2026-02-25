@@ -490,6 +490,17 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return languageService, nil
 }
 
+// GetLanguageServiceAndSnapshot returns a LanguageService and a ref'd snapshot.
+// The caller must call the returned release function when done.
+func (s *Session) GetLanguageServiceAndSnapshot(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, *Snapshot, func(), error) {
+	snapshot, _, languageService, err := s.getSnapshotAndDefaultProject(ctx, uri)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	snapshot.Ref()
+	return languageService, snapshot, s.createSnapshotRelease(snapshot), nil
+}
+
 func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []ls.Project, error) {
 	snapshot, project, defaultLs, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
@@ -540,11 +551,12 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 	return snapshot
 }
 
-// GetLanguageServiceWithAutoImports clones the current snapshot with a request to
-// prepare auto-imports for the given URI, then returns a LanguageService for the
-// default project of that URI. It should only be called after GetLanguageService.
-// !!! take snapshot that GetLanguageService initially returned
-func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+// GetCurrentLanguageServiceWithAutoImports flushes pending file changes, clones the
+// current snapshot with auto-import preparation for the given URI, then returns a
+// LanguageService for the default project. Use this only outside of request handling
+// (e.g. cache warming). For request handlers, use GetLanguageServiceWithAutoImports
+// with the request-level snapshot instead.
+func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	snapshot := s.getSnapshot(ctx, ResourceRequest{
 		Documents:   []lsproto.DocumentUri{uri},
 		AutoImports: uri,
@@ -554,6 +566,34 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsp
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
+}
+
+// GetLanguageServiceWithAutoImports clones the given snapshot with auto-import
+// preparation for the given URI, without flushing pending file changes. This
+// keeps the request bound to its original snapshot. The caller must call the
+// returned release function when done.
+func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, func(), error) {
+	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
+
+	newSnapshot := baseSnapshot.Clone(ctx, SnapshotChange{
+		reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
+		ResourceRequest: ResourceRequest{
+			Documents:   []lsproto.DocumentUri{uri},
+			AutoImports: uri,
+		},
+	}, baseSnapshot.fs.overlays, s)
+
+	project := newSnapshot.GetDefaultProject(uri)
+	if project == nil {
+		if newSnapshot.Deref() {
+			newSnapshot.dispose(s)
+		}
+		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
+	}
+
+	release := s.createSnapshotRelease(newSnapshot)
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), release, nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
@@ -992,6 +1032,6 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		) {
 			return
 		}
-		_, _ = s.GetLanguageServiceWithAutoImports(ctx, changedFile)
+		_, _ = s.GetCurrentLanguageServiceWithAutoImports(ctx, changedFile)
 	}
 }

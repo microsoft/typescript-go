@@ -433,8 +433,12 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 	}
 
+	if change.RequestedFile != "" && !b.specifierCache.Has(change.RequestedFile) {
+		b.specifierCache.Set(change.RequestedFile, &collections.SyncMap[tspath.Path, string]{})
+	}
+
 	for path := range b.base.specifierCache {
-		if _, ok := change.OpenFiles[path]; !ok {
+		if _, ok := change.OpenFiles[path]; !ok && path != change.RequestedFile {
 			b.specifierCache.Delete(path)
 		}
 	}
