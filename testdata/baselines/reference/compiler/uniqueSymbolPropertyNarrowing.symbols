@@ -1,0 +1,68 @@
+//// [tests/cases/compiler/uniqueSymbolPropertyNarrowing.ts] ////
+
+=== uniqueSymbolPropertyNarrowing.ts ===
+// Unique symbol defined as attribute should be narrowed correctly
+const Sym: unique symbol = Symbol("test");
+>Sym : Symbol(Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 1, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+
+const Objs = () => {};
+>Objs : Symbol(Objs, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 5))
+
+Objs.Sym = Sym;
+>Objs.Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+>Objs : Symbol(Objs, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 5))
+>Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+>Sym : Symbol(Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 1, 5))
+
+type Val = { attr: 1 } | typeof Objs.Sym;
+>Val : Symbol(Val, Decl(uniqueSymbolPropertyNarrowing.ts, 3, 15))
+>attr : Symbol(attr, Decl(uniqueSymbolPropertyNarrowing.ts, 5, 12))
+>Objs.Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+>Objs : Symbol(Objs, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 5))
+>Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+
+const vals: Val[] = [Objs.Sym];
+>vals : Symbol(vals, Decl(uniqueSymbolPropertyNarrowing.ts, 6, 5))
+>Val : Symbol(Val, Decl(uniqueSymbolPropertyNarrowing.ts, 3, 15))
+>Objs.Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+>Objs : Symbol(Objs, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 5))
+>Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+
+console.log(vals[0] != Objs.Sym && vals[0].attr);
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>vals : Symbol(vals, Decl(uniqueSymbolPropertyNarrowing.ts, 6, 5))
+>Objs.Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+>Objs : Symbol(Objs, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 5))
+>Sym : Symbol(Objs.Sym, Decl(uniqueSymbolPropertyNarrowing.ts, 2, 22))
+>vals[0].attr : Symbol(attr, Decl(uniqueSymbolPropertyNarrowing.ts, 5, 12))
+>vals : Symbol(vals, Decl(uniqueSymbolPropertyNarrowing.ts, 6, 5))
+>attr : Symbol(attr, Decl(uniqueSymbolPropertyNarrowing.ts, 5, 12))
+
+// Simpler case that should also work (and already does)
+const Sym2: unique symbol = Symbol("test2");
+>Sym2 : Symbol(Sym2, Decl(uniqueSymbolPropertyNarrowing.ts, 10, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+
+type Val2 = { attr: 1 } | typeof Sym2;
+>Val2 : Symbol(Val2, Decl(uniqueSymbolPropertyNarrowing.ts, 10, 44))
+>attr : Symbol(attr, Decl(uniqueSymbolPropertyNarrowing.ts, 11, 13))
+>Sym2 : Symbol(Sym2, Decl(uniqueSymbolPropertyNarrowing.ts, 10, 5))
+
+const vals2: Val2[] = [Sym2];
+>vals2 : Symbol(vals2, Decl(uniqueSymbolPropertyNarrowing.ts, 12, 5))
+>Val2 : Symbol(Val2, Decl(uniqueSymbolPropertyNarrowing.ts, 10, 44))
+>Sym2 : Symbol(Sym2, Decl(uniqueSymbolPropertyNarrowing.ts, 10, 5))
+
+console.log(vals2[0] != Sym2 && vals2[0].attr);
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>vals2 : Symbol(vals2, Decl(uniqueSymbolPropertyNarrowing.ts, 12, 5))
+>Sym2 : Symbol(Sym2, Decl(uniqueSymbolPropertyNarrowing.ts, 10, 5))
+>vals2[0].attr : Symbol(attr, Decl(uniqueSymbolPropertyNarrowing.ts, 11, 13))
+>vals2 : Symbol(vals2, Decl(uniqueSymbolPropertyNarrowing.ts, 12, 5))
+>attr : Symbol(attr, Decl(uniqueSymbolPropertyNarrowing.ts, 11, 13))
+

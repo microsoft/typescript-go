@@ -1,0 +1,88 @@
+//// [tests/cases/compiler/uniqueSymbolPropertyNarrowing.ts] ////
+
+=== uniqueSymbolPropertyNarrowing.ts ===
+// Unique symbol defined as attribute should be narrowed correctly
+const Sym: unique symbol = Symbol("test");
+>Sym : unique symbol
+>Symbol("test") : unique symbol
+>Symbol : SymbolConstructor
+>"test" : "test"
+
+const Objs = () => {};
+>Objs : { (): void; Sym: unique symbol; }
+>() => {} : { (): void; Sym: unique symbol; }
+
+Objs.Sym = Sym;
+>Objs.Sym = Sym : unique symbol
+>Objs.Sym : unique symbol
+>Objs : { (): void; Sym: unique symbol; }
+>Sym : unique symbol
+>Sym : unique symbol
+
+type Val = { attr: 1 } | typeof Objs.Sym;
+>Val : Val
+>attr : 1
+>Objs.Sym : unique symbol
+>Objs : { (): void; Sym: unique symbol; }
+>Sym : unique symbol
+
+const vals: Val[] = [Objs.Sym];
+>vals : Val[]
+>[Objs.Sym] : (unique symbol)[]
+>Objs.Sym : unique symbol
+>Objs : { (): void; Sym: unique symbol; }
+>Sym : unique symbol
+
+console.log(vals[0] != Objs.Sym && vals[0].attr);
+>console.log(vals[0] != Objs.Sym && vals[0].attr) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>vals[0] != Objs.Sym && vals[0].attr : 1 | false
+>vals[0] != Objs.Sym : boolean
+>vals[0] : Val
+>vals : Val[]
+>0 : 0
+>Objs.Sym : unique symbol
+>Objs : { (): void; Sym: unique symbol; }
+>Sym : unique symbol
+>vals[0].attr : 1
+>vals[0] : { attr: 1; }
+>vals : Val[]
+>0 : 0
+>attr : 1
+
+// Simpler case that should also work (and already does)
+const Sym2: unique symbol = Symbol("test2");
+>Sym2 : unique symbol
+>Symbol("test2") : unique symbol
+>Symbol : SymbolConstructor
+>"test2" : "test2"
+
+type Val2 = { attr: 1 } | typeof Sym2;
+>Val2 : Val2
+>attr : 1
+>Sym2 : unique symbol
+
+const vals2: Val2[] = [Sym2];
+>vals2 : Val2[]
+>[Sym2] : (unique symbol)[]
+>Sym2 : unique symbol
+
+console.log(vals2[0] != Sym2 && vals2[0].attr);
+>console.log(vals2[0] != Sym2 && vals2[0].attr) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>vals2[0] != Sym2 && vals2[0].attr : 1 | false
+>vals2[0] != Sym2 : boolean
+>vals2[0] : Val2
+>vals2 : Val2[]
+>0 : 0
+>Sym2 : unique symbol
+>vals2[0].attr : 1
+>vals2[0] : { attr: 1; }
+>vals2 : Val2[]
+>0 : 0
+>attr : 1
+

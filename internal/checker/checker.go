@@ -17689,7 +17689,20 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 
 func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type {
 	if ast.IsBinaryExpression(node) {
-		return c.checkExpressionForMutableLocation(node.AsBinaryExpression().Right, CheckModeNormal)
+		right := node.AsBinaryExpression().Right
+		t := c.checkExpressionEx(right, CheckModeNormal)
+		switch {
+		case c.isConstContext(right):
+			return c.getRegularTypeOfLiteralType(t)
+		case isTypeAssertion(right):
+			return t
+		default:
+			contextualType := c.instantiateContextualType(c.getContextualType(right, ContextFlagsNone), right, ContextFlagsNone)
+			if !c.isLiteralOfContextualType(t, contextualType) {
+				t = c.getWidenedLiteralType(t)
+			}
+			return c.getRegularTypeOfLiteralType(t)
+		}
 	}
 	if ast.IsCallExpression(node) {
 		return c.getTypeFromPropertyDescriptor(node.Arguments()[2])
