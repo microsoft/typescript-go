@@ -27,7 +27,7 @@ type asyncTransformer struct {
 	contextFlags asyncContextFlags
 
 	enclosingFunctionParameterNames *collections.Set[string]
-	capturedSuperProperties         *collections.Set[string]
+	capturedSuperProperties         *collections.OrderedSet[string]
 	hasSuperElementAccess           bool
 	hasSuperPropertyAssignment      bool
 	superBinding                    *ast.IdentifierNode
@@ -650,7 +650,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	savedHasSuperPropertyAssignment := tx.hasSuperPropertyAssignment
 	savedSuperBinding := tx.superBinding
 	savedSuperIndexBinding := tx.superIndexBinding
-	tx.capturedSuperProperties = &collections.Set[string]{}
+	tx.capturedSuperProperties = &collections.OrderedSet[string]{}
 	tx.hasSuperElementAccess = false
 	tx.hasSuperPropertyAssignment = false
 	tx.superBinding = tx.Factory().NewUniqueNameEx("_super", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
@@ -660,11 +660,11 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	updated := tx.EmitContext().VisitFunctionBody(node.Body(), tx.Visitor())
 
 	// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
-	emitSuperHelpers := (tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess) &&
+	emitSuperHelpers := (tx.capturedSuperProperties.Size() > 0 || tx.hasSuperElementAccess) &&
 		(ast.GetFunctionFlags(tx.getOriginalIfFunctionLike(node))&ast.FunctionFlagsAsyncGenerator) != ast.FunctionFlagsAsyncGenerator
 
 	if emitSuperHelpers {
-		if tx.capturedSuperProperties.Len() > 0 {
+		if tx.capturedSuperProperties.Size() > 0 {
 			tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 		}
 	}
@@ -806,7 +806,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	savedSuperBinding := tx.superBinding
 	savedSuperIndexBinding := tx.superIndexBinding
 	if !isArrow {
-		tx.capturedSuperProperties = &collections.Set[string]{}
+		tx.capturedSuperProperties = &collections.OrderedSet[string]{}
 		tx.hasSuperElementAccess = false
 		tx.hasSuperPropertyAssignment = false
 		tx.superBinding = tx.Factory().NewUniqueNameEx("_super", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
@@ -823,7 +823,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 	// Substitute super property accesses with _super/_superIndex helpers
 	emitSuperHelpers := tx.capturedSuperProperties != nil &&
-		(tx.capturedSuperProperties.Len() > 0 || tx.hasSuperElementAccess)
+		(tx.capturedSuperProperties.Size() > 0 || tx.hasSuperElementAccess)
 	if emitSuperHelpers {
 		asyncBody = tx.substituteSuperAccessesInBody(asyncBody)
 	}
@@ -834,7 +834,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		// Minor optimization, emit `_super` helper to capture `super` access in an arrow.
 		if emitSuperHelpers {
-			if tx.capturedSuperProperties.Len() > 0 {
+			if tx.capturedSuperProperties.Size() > 0 {
 				tx.EmitContext().AddInitializationStatement(tx.createSuperAccessVariableStatement())
 			}
 		}
@@ -1037,13 +1037,7 @@ func (tx *asyncTransformer) createSuperAccessVariableStatement() *ast.Node {
 	f := tx.Factory()
 	var accessors []*ast.Node
 
-	var sortedNames []string
-	for name := range tx.capturedSuperProperties.Keys() {
-		sortedNames = append(sortedNames, name)
-	}
-	slices.Sort(sortedNames)
-
-	for _, name := range sortedNames {
+	for name := range tx.capturedSuperProperties.Values() {
 		var descriptorProperties []*ast.Node
 
 		// getter: get: () => super.name
