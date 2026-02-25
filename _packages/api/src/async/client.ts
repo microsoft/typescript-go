@@ -148,7 +148,7 @@ export class Client {
         const response = await this.apiRequest<{ data: string; } | null>(method, params);
         if (!response) return undefined;
         const buffer = Buffer.from(response.data, "base64");
-        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength).slice();
     }
 
     async close(): Promise<void> {
