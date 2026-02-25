@@ -159,21 +159,24 @@ func (tx *asyncTransformer) argumentsAndSuperVisitor(node *ast.Node) *ast.Node {
 	return tx.argumentsAndSuperNodeVisitor.VisitEachChild(node)
 }
 
-// visitArgumentsAndSuper is the NodeVisitor callback for argumentsAndSuperNodeVisitor.
-// It wraps argumentsAndSuperVisitor with parent tracking for recursive calls.
-func (tx *asyncTransformer) visitArgumentsAndSuper(node *ast.Node) *ast.Node {
+func (tx *asyncTransformer) descendInto(node *ast.Node) func() {
 	savedParent := tx.parentNode
 	tx.parentNode = tx.currentNode
 	tx.currentNode = node
-	defer func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }()
+	return func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }
+}
+
+// visitArgumentsAndSuper is the NodeVisitor callback for argumentsAndSuperNodeVisitor.
+// It wraps argumentsAndSuperVisitor with parent tracking for recursive calls.
+func (tx *asyncTransformer) visitArgumentsAndSuper(node *ast.Node) *ast.Node {
+	cleanup := tx.descendInto(node)
+	defer cleanup()
 	return tx.argumentsAndSuperVisitor(node)
 }
 
 func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
-	savedParent := tx.parentNode
-	tx.parentNode = tx.currentNode
-	tx.currentNode = node
-	defer func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }()
+	cleanup := tx.descendInto(node)
+	defer cleanup()
 
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
 		return tx.argumentsAndSuperVisitor(node)
