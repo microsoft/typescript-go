@@ -166,8 +166,6 @@ describe("Encoder", () => {
     });
 
     test("boolean properties are encoded", () => {
-        const sf = makeSF("", "/test.ts", []);
-
         // Block with multiLine=true
         const block = createBlock([], true);
         const encoded = encodeNode(block);
