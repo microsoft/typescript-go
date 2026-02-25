@@ -18,8 +18,6 @@ export interface CommentDirective {
     type: CommentDirectiveType;
 }
 
-export type ErrorCallback = (message: string, length: number, arg0?: string) => void;
-
 // Internal-only, not exported
 const EscapeSequenceScanningFlags = {
     String: 1 << 0,
@@ -80,7 +78,6 @@ export interface Scanner {
     getText(): string;
     clearCommentDirectives(): void;
     setText(text: string | undefined, start?: number, length?: number): void;
-    setOnError(onError: ErrorCallback | undefined): void;
     setLanguageVariant(variant: LanguageVariant): void;
     setScriptKind(scriptKind: ScriptKind): void;
     setJSDocParsingMode(kind: JSDocParsingMode): void;
@@ -854,7 +851,6 @@ export function createScanner(
     skipTrivia: boolean,
     languageVariant: LanguageVariant = LanguageVariant.Standard,
     textInitial?: string,
-    onError?: ErrorCallback,
     start?: number,
     length?: number,
 ): Scanner {
@@ -928,7 +924,6 @@ export function createScanner(
         setLanguageVariant,
         setScriptKind,
         setJSDocParsingMode,
-        setOnError,
         resetTokenState,
         setSkipJsDocLeadingAsterisks,
         tryScan,
@@ -955,15 +950,6 @@ export function createScanner(
         return pos >= 0 && pos < end ? charCodeUnchecked(pos) : CharacterCodes.EOF;
     }
 
-    function error(message: string, errPos: number = pos, length?: number, arg0?: string): void {
-        if (onError) {
-            const oldPos = pos;
-            pos = errPos;
-            onError(message, length || 0, arg0);
-            pos = oldPos;
-        }
-    }
-
     function scanNumberFragment(): string {
         let start = pos;
         let allowSeparator = false;
@@ -980,12 +966,6 @@ export function createScanner(
                 }
                 else {
                     tokenFlags |= TokenFlags.ContainsInvalidSeparator;
-                    if (isPreviousTokenSeparator) {
-                        error("Multiple consecutive numeric separators are not permitted", pos, 1);
-                    }
-                    else {
-                        error("Numeric separators are not allowed here", pos, 1);
-                    }
                 }
                 pos++;
                 start = pos;
@@ -1001,7 +981,6 @@ export function createScanner(
         }
         if (charCodeUnchecked(pos - 1) === CharacterCodes._) {
             tokenFlags |= TokenFlags.ContainsInvalidSeparator;
-            error("Numeric separators are not allowed here", pos - 1, 1);
         }
         return result + text.substring(start, pos);
     }
@@ -1013,7 +992,6 @@ export function createScanner(
             pos++;
             if (charCodeUnchecked(pos) === CharacterCodes._) {
                 tokenFlags |= TokenFlags.ContainsSeparator | TokenFlags.ContainsInvalidSeparator;
-                error("Numeric separators are not allowed here", pos, 1);
                 pos--;
                 mainFragment = scanNumberFragment();
             }
@@ -1030,7 +1008,6 @@ export function createScanner(
                 const withMinus = token === SyntaxKind.MinusToken;
                 const literal = (withMinus ? "-" : "") + "0o" + (+tokenValue).toString(8);
                 if (withMinus) start--;
-                error("Octal literals are not allowed. Use the syntax '" + literal + "'.", start, pos - start);
                 return SyntaxKind.NumericLiteral;
             }
         }
@@ -1050,10 +1027,7 @@ export function createScanner(
             if (charCodeUnchecked(pos) === CharacterCodes.plus || charCodeUnchecked(pos) === CharacterCodes.minus) pos++;
             const preNumericPart = pos;
             const finalFragment = scanNumberFragment();
-            if (!finalFragment) {
-                error("Digit expected");
-            }
-            else {
+            if (finalFragment) {
                 scientificFragment = text.substring(end, preNumericPart) + finalFragment;
                 end = pos;
             }
@@ -1073,25 +1047,24 @@ export function createScanner(
         }
 
         if (tokenFlags & TokenFlags.ContainsLeadingZero) {
-            error("Decimals with leading zeros are not allowed", start, end - start);
             tokenValue = "" + +result;
             return SyntaxKind.NumericLiteral;
         }
 
         if (decimalFragment !== undefined || tokenFlags & TokenFlags.Scientific) {
-            checkForIdentifierStartAfterNumericLiteral(start, decimalFragment === undefined && !!(tokenFlags & TokenFlags.Scientific));
+            checkForIdentifierStartAfterNumericLiteral();
             tokenValue = "" + +result;
             return SyntaxKind.NumericLiteral;
         }
         else {
             tokenValue = result;
             const type = checkBigIntSuffix();
-            checkForIdentifierStartAfterNumericLiteral(start);
+            checkForIdentifierStartAfterNumericLiteral();
             return type;
         }
     }
 
-    function checkForIdentifierStartAfterNumericLiteral(numericStart: number, isScientific?: boolean) {
+    function checkForIdentifierStartAfterNumericLiteral() {
         if (!isIdentifierStart(codePointUnchecked(pos))) {
             return;
         }
@@ -1099,16 +1072,7 @@ export function createScanner(
         const identifierStart = pos;
         const { length } = scanIdentifierParts();
 
-        if (length === 1 && text[identifierStart] === "n") {
-            if (isScientific) {
-                error("A bigint literal cannot use exponential notation", numericStart, identifierStart - numericStart + 1);
-            }
-            else {
-                error("A bigint literal must be an integer", numericStart, identifierStart - numericStart + 1);
-            }
-        }
-        else {
-            error("An identifier or keyword cannot immediately follow a numeric literal", identifierStart, length);
+        if (!(length === 1 && text[identifierStart] === "n")) {
             pos = identifierStart;
         }
     }
@@ -1138,20 +1102,12 @@ export function createScanner(
     function scanHexDigits(minCount: number, scanAsManyAsPossible: boolean, canHaveSeparators: boolean): string {
         let valueChars: number[] = [];
         let allowSeparator = false;
-        let isPreviousTokenSeparator = false;
         while (valueChars.length < minCount || scanAsManyAsPossible) {
             let ch = charCodeUnchecked(pos);
             if (canHaveSeparators && ch === CharacterCodes._) {
                 tokenFlags |= TokenFlags.ContainsSeparator;
                 if (allowSeparator) {
                     allowSeparator = false;
-                    isPreviousTokenSeparator = true;
-                }
-                else if (isPreviousTokenSeparator) {
-                    error("Multiple consecutive numeric separators are not permitted", pos, 1);
-                }
-                else {
-                    error("Numeric separators are not allowed here", pos, 1);
                 }
                 pos++;
                 continue;
@@ -1168,13 +1124,9 @@ export function createScanner(
             }
             valueChars.push(ch);
             pos++;
-            isPreviousTokenSeparator = false;
         }
         if (valueChars.length < minCount) {
             valueChars = [];
-        }
-        if (charCodeUnchecked(pos - 1) === CharacterCodes._) {
-            error("Numeric separators are not allowed here", pos - 1, 1);
         }
         return String.fromCharCode(...valueChars);
     }
@@ -1188,7 +1140,6 @@ export function createScanner(
             if (pos >= end) {
                 result += text.substring(start, pos);
                 tokenFlags |= TokenFlags.Unterminated;
-                error("Unterminated string literal");
                 break;
             }
             const ch = charCodeUnchecked(pos);
@@ -1207,7 +1158,6 @@ export function createScanner(
             if ((ch === CharacterCodes.lineFeed || ch === CharacterCodes.carriageReturn) && !jsxAttributeString) {
                 result += text.substring(start, pos);
                 tokenFlags |= TokenFlags.Unterminated;
-                error("Unterminated string literal");
                 break;
             }
             pos++;
@@ -1227,7 +1177,6 @@ export function createScanner(
             if (pos >= end) {
                 contents += text.substring(start, pos);
                 tokenFlags |= TokenFlags.Unterminated;
-                error("Unterminated template literal");
                 resultingToken = startedWithBacktick ? SyntaxKind.NoSubstitutionTemplateLiteral : SyntaxKind.TemplateTail;
                 break;
             }
@@ -1279,7 +1228,6 @@ export function createScanner(
         const start = pos;
         pos++;
         if (pos >= end) {
-            error("Unexpected end of text");
             return "";
         }
         const ch = charCodeUnchecked(pos);
@@ -1307,7 +1255,6 @@ export function createScanner(
                 tokenFlags |= TokenFlags.ContainsInvalidEscape;
                 if (flags & EscapeSequenceScanningFlags.ReportInvalidEscapeErrors) {
                     const code = parseInt(text.substring(start + 1, pos), 8);
-                    error("Octal escape sequences are not allowed. Use the syntax '\\x" + code.toString(16).padStart(2, "0") + "'.", start, pos - start);
                     return String.fromCharCode(code);
                 }
                 return text.substring(start, pos);
@@ -1315,7 +1262,6 @@ export function createScanner(
             case CharacterCodes._9:
                 tokenFlags |= TokenFlags.ContainsInvalidEscape;
                 if (flags & EscapeSequenceScanningFlags.ReportInvalidEscapeErrors) {
-                    error("Escape sequence '" + text.substring(start, pos) + "' is not allowed.", start, pos - start);
                     return String.fromCharCode(ch);
                 }
                 return text.substring(start, pos);
@@ -1338,12 +1284,9 @@ export function createScanner(
             case CharacterCodes.u:
                 if (pos < end && charCodeUnchecked(pos) === CharacterCodes.openBrace) {
                     pos -= 2;
-                    const result = scanExtendedUnicodeEscape(!!(flags & EscapeSequenceScanningFlags.ReportInvalidEscapeErrors));
+                    const result = scanExtendedUnicodeEscape();
                     if (!(flags & EscapeSequenceScanningFlags.AllowExtendedUnicodeEscape)) {
                         tokenFlags |= TokenFlags.ContainsInvalidEscape;
-                        if (flags & EscapeSequenceScanningFlags.ReportInvalidEscapeErrors) {
-                            error("Unicode escape sequences are only available when the Unicode (u) flag or the Unicode Sets (v) flag is set.", start, pos - start);
-                        }
                     }
                     return result;
                 }
@@ -1351,9 +1294,6 @@ export function createScanner(
                 for (; pos < start + 6; pos++) {
                     if (!(pos < end && isHexDigit(charCodeUnchecked(pos)))) {
                         tokenFlags |= TokenFlags.ContainsInvalidEscape;
-                        if (flags & EscapeSequenceScanningFlags.ReportInvalidEscapeErrors) {
-                            error("Hexadecimal digit expected");
-                        }
                         return text.substring(start, pos);
                     }
                 }
@@ -1385,9 +1325,6 @@ export function createScanner(
                 for (; pos < start + 4; pos++) {
                     if (!(pos < end && isHexDigit(charCodeUnchecked(pos)))) {
                         tokenFlags |= TokenFlags.ContainsInvalidEscape;
-                        if (flags & EscapeSequenceScanningFlags.ReportInvalidEscapeErrors) {
-                            error("Hexadecimal digit expected");
-                        }
                         return text.substring(start, pos);
                     }
                 }
@@ -1408,40 +1345,27 @@ export function createScanner(
         }
     }
 
-    function scanExtendedUnicodeEscape(shouldEmitInvalidEscapeError: boolean): string {
+    function scanExtendedUnicodeEscape(): string {
         const start = pos;
         pos += 3;
-        const escapedStart = pos;
         const escapedValueString = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ false);
         const escapedValue = escapedValueString ? parseInt(escapedValueString, 16) : -1;
         let isInvalidExtendedEscape = false;
 
         if (escapedValue < 0) {
-            if (shouldEmitInvalidEscapeError) {
-                error("Hexadecimal digit expected");
-            }
             isInvalidExtendedEscape = true;
         }
         else if (escapedValue > 0x10FFFF) {
-            if (shouldEmitInvalidEscapeError) {
-                error("An extended Unicode escape value must be between 0x0 and 0x10FFFF inclusive.", escapedStart, pos - escapedStart);
-            }
             isInvalidExtendedEscape = true;
         }
 
         if (pos >= end) {
-            if (shouldEmitInvalidEscapeError) {
-                error("Unexpected end of text");
-            }
             isInvalidExtendedEscape = true;
         }
         else if (charCodeUnchecked(pos) === CharacterCodes.closeBrace) {
             pos++;
         }
         else {
-            if (shouldEmitInvalidEscapeError) {
-                error("Unterminated Unicode escape sequence");
-            }
             isInvalidExtendedEscape = true;
         }
 
@@ -1488,7 +1412,7 @@ export function createScanner(
             else if (ch === CharacterCodes.backslash) {
                 ch = peekExtendedUnicodeEscape();
                 if (ch >= 0 && isIdentifierPart(ch)) {
-                    result += scanExtendedUnicodeEscape(/*shouldEmitInvalidEscapeError*/ true);
+                    result += scanExtendedUnicodeEscape();
                     start = pos;
                     continue;
                 }
@@ -1536,12 +1460,6 @@ export function createScanner(
                     separatorAllowed = false;
                     isPreviousTokenSeparator = true;
                 }
-                else if (isPreviousTokenSeparator) {
-                    error("Multiple consecutive numeric separators are not permitted", pos, 1);
-                }
-                else {
-                    error("Numeric separators are not allowed here", pos, 1);
-                }
                 pos++;
                 continue;
             }
@@ -1552,9 +1470,6 @@ export function createScanner(
             value += text[pos];
             pos++;
             isPreviousTokenSeparator = false;
-        }
-        if (charCodeUnchecked(pos - 1) === CharacterCodes._) {
-            error("Numeric separators are not allowed here", pos - 1, 1);
         }
         return value;
     }
@@ -1796,10 +1711,6 @@ export function createScanner(
 
                         commentDirectives = appendIfCommentDirective(commentDirectives, text.slice(lastLineStart, pos), commentDirectiveRegExMultiLine, lastLineStart);
 
-                        if (!commentClosed) {
-                            error("'*/' expected");
-                        }
-
                         if (skipTrivia) {
                             continue;
                         }
@@ -1823,7 +1734,6 @@ export function createScanner(
                         pos += 2;
                         tokenValue = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ true);
                         if (!tokenValue) {
-                            error("Hexadecimal digit expected");
                             tokenValue = "0";
                         }
                         tokenValue = "0x" + tokenValue;
@@ -1834,7 +1744,6 @@ export function createScanner(
                         pos += 2;
                         tokenValue = scanBinaryOrOctalDigits(2);
                         if (!tokenValue) {
-                            error("Binary digit expected");
                             tokenValue = "0";
                         }
                         tokenValue = "0b" + tokenValue;
@@ -1845,7 +1754,6 @@ export function createScanner(
                         pos += 2;
                         tokenValue = scanBinaryOrOctalDigits(8);
                         if (!tokenValue) {
-                            error("Octal digit expected");
                             tokenValue = "0";
                         }
                         tokenValue = "0o" + tokenValue;
@@ -1994,7 +1902,7 @@ export function createScanner(
                 case CharacterCodes.backslash: {
                     const extendedCookedChar = peekExtendedUnicodeEscape();
                     if (extendedCookedChar >= 0 && isIdentifierStart(extendedCookedChar)) {
-                        tokenValue = scanExtendedUnicodeEscape(/*shouldEmitInvalidEscapeError*/ true) + scanIdentifierParts();
+                        tokenValue = scanExtendedUnicodeEscape() + scanIdentifierParts();
                         return token = getIdentifierToken();
                     }
 
@@ -2006,13 +1914,11 @@ export function createScanner(
                         return token = getIdentifierToken();
                     }
 
-                    error("Invalid character");
                     pos++;
                     return token = SyntaxKind.Unknown;
                 }
                 case CharacterCodes.hash:
                     if (pos !== 0 && text[pos + 1] === "!") {
-                        error("'#!' can only be used at the start of a file.", pos, 2);
                         pos++;
                         return token = SyntaxKind.Unknown;
                     }
@@ -2023,7 +1929,7 @@ export function createScanner(
                             pos++;
                             const extendedCookedChar = peekExtendedUnicodeEscape();
                             if (extendedCookedChar >= 0 && isIdentifierStart(extendedCookedChar)) {
-                                tokenValue = "#" + scanExtendedUnicodeEscape(/*shouldEmitInvalidEscapeError*/ true) + scanIdentifierParts();
+                                tokenValue = "#" + scanExtendedUnicodeEscape() + scanIdentifierParts();
                                 return token = SyntaxKind.PrivateIdentifier;
                             }
 
@@ -2043,12 +1949,10 @@ export function createScanner(
                         }
                         else {
                             tokenValue = "#";
-                            error("Invalid character", pos++, charSize(ch));
                         }
                         return token = SyntaxKind.PrivateIdentifier;
                     }
                 case CharacterCodes.replacementCharacter:
-                    error("File appears to be binary", 0, 0);
                     pos = end;
                     return token = SyntaxKind.NonTextFileMarkerTrivia;
                 default: {
@@ -2066,7 +1970,6 @@ export function createScanner(
                         continue;
                     }
                     const size = charSize(ch);
-                    error("Invalid character", pos, size);
                     pos += size;
                     return token = SyntaxKind.Unknown;
                 }
@@ -2220,7 +2123,6 @@ export function createScanner(
                     pos++;
                 }
                 while (isWhiteSpaceLike(charCodeChecked(pos - 1)) || charCodeChecked(pos - 1) === CharacterCodes.semicolon) pos--;
-                error("Unterminated regular expression literal", tokenStart, pos - tokenStart);
             }
             else {
                 pos++;
@@ -2233,16 +2135,7 @@ export function createScanner(
                     const size = charSize(ch);
                     const flag = characterCodeToRegularExpressionFlag(ch);
                     if (flag !== undefined) {
-                        if (regExpFlags & flag) {
-                            error("Duplicate regular expression flag", pos, size);
-                        }
-                        else if (((regExpFlags | flag) & RegularExpressionFlags.AnyUnicodeMode) === RegularExpressionFlags.AnyUnicodeMode) {
-                            error("The Unicode (u) flag and the Unicode Sets (v) flag cannot be set simultaneously", pos, size);
-                        }
                         regExpFlags |= flag;
-                    }
-                    else {
-                        error("Unknown regular expression flag", pos, size);
                     }
                     pos += size;
                 }
@@ -2361,12 +2254,6 @@ export function createScanner(
                     return token = SyntaxKind.ConflictMarkerTrivia;
                 }
                 break;
-            }
-            if (char === CharacterCodes.greaterThan) {
-                error("Unexpected token. Did you mean `{'>'} or &gt;`?", pos, 1);
-            }
-            if (char === CharacterCodes.closeBrace) {
-                error("Unexpected token. Did you mean `{'}'} or &rbrace;`?", pos, 1);
             }
 
             if (isLineBreak(char) && firstNonWhitespace === 0) {
@@ -2513,7 +2400,7 @@ export function createScanner(
                 {
                     const extendedCookedChar = peekExtendedUnicodeEscape();
                     if (extendedCookedChar >= 0 && isIdentifierStart(extendedCookedChar)) {
-                        tokenValue = scanExtendedUnicodeEscape(/*shouldEmitInvalidEscapeError*/ true) + scanIdentifierParts();
+                        tokenValue = scanExtendedUnicodeEscape() + scanIdentifierParts();
                         return token = getIdentifierToken();
                     }
 
@@ -2608,10 +2495,6 @@ export function createScanner(
         text = newText || "";
         end = length === undefined ? text.length : start! + length;
         resetTokenState(start || 0);
-    }
-
-    function setOnError(errorCallback: ErrorCallback | undefined) {
-        onError = errorCallback;
     }
 
     function setLanguageVariant(variant: LanguageVariant) {
