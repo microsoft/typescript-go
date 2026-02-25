@@ -504,6 +504,9 @@ func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		}
 		return isCompletedNode(n.AsIfStatement().ThenStatement, sourceFile)
 
+	case ast.KindDistributeStatement:
+		return isCompletedNode(n.AsDistributeStatement().Statement, sourceFile)
+
 	case ast.KindExpressionStatement:
 		return isCompletedNode(n.Expression(), sourceFile) ||
 			hasChildOfKind(n, ast.KindSemicolonToken, sourceFile)

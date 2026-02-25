@@ -680,6 +680,7 @@ func isStatementKindButNotDeclarationKind(kind Kind) bool {
 		KindForOfStatement,
 		KindForStatement,
 		KindIfStatement,
+		KindDistributeStatement,
 		KindLabeledStatement,
 		KindReturnStatement,
 		KindSwitchStatement,
@@ -1138,7 +1139,7 @@ func ForEachReturnStatement(body *Node, visitor func(stmt *Node) bool) bool {
 			return visitor(node)
 		case KindCaseBlock, KindBlock, KindIfStatement, KindDoStatement, KindWhileStatement, KindForStatement, KindForInStatement,
 			KindForOfStatement, KindWithStatement, KindSwitchStatement, KindCaseClause, KindDefaultClause, KindLabeledStatement,
-			KindTryStatement, KindCatchClause:
+			KindTryStatement, KindCatchClause, KindDistributeStatement:
 			return node.ForEachChild(traverse)
 		}
 		return false
@@ -1957,7 +1958,7 @@ func IsInExpressionContext(node *Node) bool {
 		return parent.Initializer() == node
 	case KindExpressionStatement, KindIfStatement, KindDoStatement, KindWhileStatement, KindReturnStatement, KindWithStatement, KindSwitchStatement,
 		KindCaseClause, KindDefaultClause, KindThrowStatement, KindTypeAssertionExpression, KindAsExpression, KindTemplateSpan, KindComputedPropertyName,
-		KindSatisfiesExpression:
+		KindSatisfiesExpression, KindDistributeStatement:
 		return parent.Expression() == node
 	case KindForStatement:
 		s := parent.AsForStatement()

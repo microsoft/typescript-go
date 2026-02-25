@@ -517,6 +517,11 @@ func (b *Binder) createFlowSwitchClause(antecedent *ast.FlowNode, switchStatemen
 	return b.newFlowNodeEx(ast.FlowFlagsSwitchClause, ast.NewFlowSwitchClauseData(switchStatement, clauseStart, clauseEnd), antecedent)
 }
 
+func (b *Binder) createFlowDistribute(antecedent *ast.FlowNode, node *ast.Node) *ast.FlowNode {
+	setFlowNodeReferenced(antecedent)
+	return b.newFlowNodeEx(ast.FlowFlagsDistribute, node, antecedent)
+}
+
 func (b *Binder) createFlowCall(antecedent *ast.FlowNode, node *ast.Node) *ast.FlowNode {
 	setFlowNodeReferenced(antecedent)
 	b.hasFlowEffects = true
@@ -1607,6 +1612,8 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindForInOrForOfStatement(node)
 	case ast.KindIfStatement:
 		b.bindIfStatement(node)
+	case ast.KindDistributeStatement:
+		b.bindDistributeStatement(node)
 	case ast.KindReturnStatement:
 		b.bindReturnStatement(node)
 	case ast.KindThrowStatement:
@@ -1864,6 +1871,24 @@ func (b *Binder) bindIfStatement(node *ast.Node) {
 	b.bind(stmt.ElseStatement)
 	b.addAntecedent(postIfLabel, b.currentFlow)
 	b.currentFlow = b.finishFlowLabel(postIfLabel)
+}
+
+func (b *Binder) bindDistributeStatement(node *ast.Node) {
+	stmt := node.AsDistributeStatement()
+	savedFlow := b.currentFlow
+	b.bind(stmt.Expression)
+	if ast.IsDottedName(stmt.Expression) {
+		b.currentFlow = b.createFlowDistribute(b.currentFlow, stmt.Expression)
+	} else {
+		b.errorOnNode(node, diagnostics.Distribute_statements_require_the_expression_to_be_an_identifier_or_qualified_name)
+	}
+	b.bind(stmt.Statement)
+	if ast.IsEmptyStatement(stmt.Statement) {
+		b.errorOnNode(node, diagnostics.The_body_of_an_distribute_statement_cannot_be_the_empty_statement)
+	}
+	if b.currentFlow != b.unreachableFlow {
+		b.currentFlow = savedFlow
+	}
 }
 
 func (b *Binder) bindReturnStatement(node *ast.Node) {
