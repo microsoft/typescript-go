@@ -46,7 +46,7 @@
         "prebench": "npm run generate",
         "bench": "npm run node -- test/api.bench.ts",
         "pretest": "npm run generate",
-        "test": "npm run node -- --test ./test/**/*.test.ts"
+        "test": "npm run node -- --test './test/**/*.test.ts'"
     },
     "devDependencies": {
         "tinybench": "^6.0.0"

@@ -28,6 +28,12 @@ import {
 import { MsgpackWriter } from "./msgpack.ts";
 import {
     childProperties,
+    HEADER_OFFSET_EXTENDED_DATA,
+    HEADER_OFFSET_METADATA,
+    HEADER_OFFSET_NODES,
+    HEADER_OFFSET_STRING_TABLE,
+    HEADER_OFFSET_STRING_TABLE_OFFSETS,
+    HEADER_OFFSET_STRUCTURED_DATA,
     HEADER_SIZE,
     KIND_NODE_LIST,
     NODE_DATA_TYPE_CHILDREN,
@@ -503,14 +509,14 @@ export function encodeNode(node: Node): Uint8Array {
     const header = new Uint8Array(HEADER_SIZE);
     const headerView = new DataView(header.buffer);
     const metadata = PROTOCOL_VERSION << 24;
-    headerView.setUint32(0, metadata, true); // metadata
+    headerView.setUint32(HEADER_OFFSET_METADATA, metadata, true);
     // bytes 4-19: hash (zero for non-SourceFile, we don't have access to xxh3 here)
     // byte 20-23: parse options (zero for non-SourceFile)
-    headerView.setUint32(24, offsetStringTableOffsets, true);
-    headerView.setUint32(28, offsetStringTableData, true);
-    headerView.setUint32(32, offsetExtendedData, true);
-    headerView.setUint32(36, offsetStructuredData, true);
-    headerView.setUint32(40, offsetNodes, true);
+    headerView.setUint32(HEADER_OFFSET_STRING_TABLE_OFFSETS, offsetStringTableOffsets, true);
+    headerView.setUint32(HEADER_OFFSET_STRING_TABLE, offsetStringTableData, true);
+    headerView.setUint32(HEADER_OFFSET_EXTENDED_DATA, offsetExtendedData, true);
+    headerView.setUint32(HEADER_OFFSET_STRUCTURED_DATA, offsetStructuredData, true);
+    headerView.setUint32(HEADER_OFFSET_NODES, offsetNodes, true);
 
     // Concatenate all sections
     const result = new Uint8Array(header.length + strsBytes.length + extendedDataBytes.length + structuredDataBytes.length + nodesBytes.length);

@@ -25,8 +25,11 @@ import {
     encodeSourceFile,
 } from "../src/node/encoder.ts";
 import { RemoteSourceFile } from "../src/node/node.ts";
-
-const NODE_LEN = 24;
+import {
+    HEADER_OFFSET_NODES,
+    NODE_LEN,
+    NODE_OFFSET_DATA,
+} from "../src/node/protocol.ts";
 
 function makeSF(text: string, fileName: string, statements: readonly Statement[]): SourceFile {
     const endOfFileToken = createToken(SyntaxKind.EndOfFile);
@@ -48,7 +51,7 @@ describe("Encoder", () => {
         // Verify header
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
         const metadata = view.getUint32(0, true);
-        assert.strictEqual(metadata >>> 24, 3, "protocol version should be 3");
+        assert.strictEqual(metadata >>> 24, 5, "protocol version should be 5");
 
         // Verify we can decode it
         const decoded = decode(encoded);
@@ -150,16 +153,16 @@ describe("Encoder", () => {
 
         // Root node at index 1 should be IfStatement
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
-        const offsetNodes = view.getUint32(36, true);
+        const offsetNodes = view.getUint32(HEADER_OFFSET_NODES, true);
         const rootKind = view.getUint32(offsetNodes + NODE_LEN, true);
         assert.strictEqual(rootKind, SyntaxKind.IfStatement);
     });
 
-    test("protocol version is 3", () => {
+    test("protocol version is 5", () => {
         const sf = makeSF("", "/test.ts", []);
         const encoded = encodeSourceFile(sf);
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
-        assert.strictEqual(view.getUint32(0, true) >>> 24, 3);
+        assert.strictEqual(view.getUint32(0, true) >>> 24, 5);
     });
 
     test("boolean properties are encoded", () => {
@@ -169,8 +172,8 @@ describe("Encoder", () => {
         const block = createBlock([], true);
         const encoded = encodeNode(block);
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
-        const offsetNodes = view.getUint32(36, true);
-        const data = view.getUint32(offsetNodes + NODE_LEN + 20, true);
+        const offsetNodes = view.getUint32(HEADER_OFFSET_NODES, true);
+        const data = view.getUint32(offsetNodes + NODE_LEN + NODE_OFFSET_DATA, true);
         // Bit 24 should be 1 (multiLine)
         assert.strictEqual((data >>> 24) & 1, 1);
     });
