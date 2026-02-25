@@ -573,9 +573,6 @@ func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, 
 // keeps the request bound to its original snapshot. The caller must call the
 // returned release function when done.
 func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, func(), error) {
-	s.snapshotUpdateMu.Lock()
-	defer s.snapshotUpdateMu.Unlock()
-
 	newSnapshot := baseSnapshot.Clone(ctx, SnapshotChange{
 		reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
 		ResourceRequest: ResourceRequest{
