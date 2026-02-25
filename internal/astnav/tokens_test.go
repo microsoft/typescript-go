@@ -45,7 +45,7 @@ func TestGetTokenAtPosition(t *testing.T) {
 
 	t.Run("go baseline json", func(t *testing.T) {
 		t.Parallel()
-		baselineGoTokensJSON(t, "GetTokenAtPosition", false, func(file *ast.SourceFile, pos int) *tokenInfo {
+		baselineGoTokensJSON(t, "GetTokenAtPosition", func(file *ast.SourceFile, pos int) *tokenInfo {
 			return toTokenInfo(astnav.GetTokenAtPosition(file, pos))
 		})
 	})
@@ -130,7 +130,7 @@ func TestGetTouchingPropertyName(t *testing.T) {
 
 	t.Run("go baseline json", func(t *testing.T) {
 		t.Parallel()
-		baselineGoTokensJSON(t, "GetTouchingPropertyName", false, func(file *ast.SourceFile, pos int) *tokenInfo {
+		baselineGoTokensJSON(t, "GetTouchingPropertyName", func(file *ast.SourceFile, pos int) *tokenInfo {
 			return toTokenInfo(astnav.GetTouchingPropertyName(file, pos))
 		})
 	})
@@ -195,7 +195,7 @@ type tokenRun struct {
 	NodeEnd  int    `json:"nodeEnd"`
 }
 
-func baselineGoTokensJSON(t *testing.T, testName string, includeEOF bool, getGoToken func(file *ast.SourceFile, pos int) *tokenInfo) {
+func baselineGoTokensJSON(t *testing.T, testName string, getGoToken func(file *ast.SourceFile, pos int) *tokenInfo) {
 	for _, fileName := range testFiles {
 		t.Run(filepath.Base(fileName), func(t *testing.T) {
 			t.Parallel()
@@ -207,7 +207,7 @@ func baselineGoTokensJSON(t *testing.T, testName string, includeEOF bool, getGoT
 				Path:     "/file.ts",
 			}, string(fileText), core.ScriptKindTS)
 
-			maxPos := len(fileText) + core.IfElse(includeEOF, 1, 0)
+			maxPos := len(fileText)
 			var runs []tokenRun
 			var current *tokenRun
 
@@ -240,7 +240,7 @@ func baselineGoTokensJSON(t *testing.T, testName string, includeEOF bool, getGoT
 
 			baseline.Run(
 				t,
-				fmt.Sprintf("%s.%s.go.baseline.json", testName, filepath.Base(fileName)),
+				fmt.Sprintf("%s.%s.baseline.json", testName, filepath.Base(fileName)),
 				output,
 				baseline.Options{
 					Subfolder: "astnav",

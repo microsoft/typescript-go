@@ -121,12 +121,12 @@ describe("astnav", () => {
     const testCases = [
         {
             name: "getTokenAtPosition",
-            baselineFile: "GetTokenAtPosition.mapCode.ts.go.baseline.json",
+            baselineFile: "GetTokenAtPosition.mapCode.ts.baseline.json",
             fn: getTokenAtPosition,
         },
         {
             name: "getTouchingPropertyName",
-            baselineFile: "GetTouchingPropertyName.mapCode.ts.go.baseline.json",
+            baselineFile: "GetTouchingPropertyName.mapCode.ts.baseline.json",
             fn: getTouchingPropertyName,
         },
     ];
