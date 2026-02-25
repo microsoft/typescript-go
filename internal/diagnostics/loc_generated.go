@@ -4,9 +4,7 @@ package diagnostics
 
 import (
 	"compress/gzip"
-	_ "embed"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/json"
 	"golang.org/x/text/language"
@@ -58,94 +56,3 @@ func loadLocaleData(data string) map[Key]string {
 	}
 	return result
 }
-
-//go:embed loc/zh-CN.json.gz
-var zhCNData string
-
-var zhCN = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(zhCNData)
-})
-
-//go:embed loc/zh-TW.json.gz
-var zhTWData string
-
-var zhTW = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(zhTWData)
-})
-
-//go:embed loc/cs-CZ.json.gz
-var csCZData string
-
-var csCZ = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(csCZData)
-})
-
-//go:embed loc/de-DE.json.gz
-var deDEData string
-
-var deDE = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(deDEData)
-})
-
-//go:embed loc/es-ES.json.gz
-var esESData string
-
-var esES = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(esESData)
-})
-
-//go:embed loc/fr-FR.json.gz
-var frFRData string
-
-var frFR = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(frFRData)
-})
-
-//go:embed loc/it-IT.json.gz
-var itITData string
-
-var itIT = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(itITData)
-})
-
-//go:embed loc/ja-JP.json.gz
-var jaJPData string
-
-var jaJP = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(jaJPData)
-})
-
-//go:embed loc/ko-KR.json.gz
-var koKRData string
-
-var koKR = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(koKRData)
-})
-
-//go:embed loc/pl-PL.json.gz
-var plPLData string
-
-var plPL = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(plPLData)
-})
-
-//go:embed loc/pt-BR.json.gz
-var ptBRData string
-
-var ptBR = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(ptBRData)
-})
-
-//go:embed loc/ru-RU.json.gz
-var ruRUData string
-
-var ruRU = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(ruRUData)
-})
-
-//go:embed loc/tr-TR.json.gz
-var trTRData string
-
-var trTR = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(trTRData)
-})

@@ -166,6 +166,9 @@ const builtLocal = "./built/local";
 const libsDir = "./internal/bundled/libs";
 const libsRegexp = /(?:^|[\\/])internal[\\/]bundled[\\/]libs[\\/]/;
 
+const locDir = "./internal/diagnostics/loc";
+const locRegexp = /(?:^|[\\/])internal[\\/]diagnostics[\\/]loc[\\/]/;
+
 /**
  * @param {string} out
  */
@@ -179,10 +182,29 @@ async function generateLibs(out) {
     }));
 }
 
+/**
+ * @param {string} out
+ */
+async function generateLocs(out) {
+    await fs.promises.mkdir(out, { recursive: true });
+
+    const locs = await fs.promises.readdir(locDir);
+
+    await Promise.all(locs.map(async loc => {
+        fs.promises.copyFile(path.join(locDir, loc), path.join(out, loc));
+    }));
+}
+
 export const lib = task({
     name: "lib",
     description: "Copies the libs to built/local.",
     run: () => generateLibs(builtLocal),
+});
+
+export const loc = task({
+    name: "loc",
+    description: "Copies the locale files to built/local.",
+    run: () => generateLocs(builtLocal),
 });
 
 /**
@@ -222,7 +244,7 @@ export const tsgoBuild = task({
 
 export const tsgo = task({
     name: "tsgo",
-    dependencies: [lib, tsgoBuild],
+    dependencies: [lib, loc, tsgoBuild],
 });
 
 export const local = task({
@@ -241,6 +263,7 @@ export const buildWatch = task({
     run: async () => {
         await watchDebounced("build:watch", async (paths, abortSignal) => {
             let libsChanged = false;
+            let locsChanged = false;
             let goChanged = false;
 
             if (paths) {
@@ -248,22 +271,31 @@ export const buildWatch = task({
                     if (libsRegexp.test(p)) {
                         libsChanged = true;
                     }
+                    else if (locRegexp.test(p)) {
+                        locsChanged = true;
+                    }
                     else if (p.endsWith(".go")) {
                         goChanged = true;
                     }
-                    if (libsChanged && goChanged) {
+                    if (libsChanged && locsChanged && goChanged) {
                         break;
                     }
                 }
             }
             else {
                 libsChanged = true;
+                locsChanged = true;
                 goChanged = true;
             }
 
             if (libsChanged) {
                 console.log("Generating libs...");
                 await generateLibs(builtLocal);
+            }
+
+            if (locsChanged) {
+                console.log("Copying locale files...");
+                await generateLocs(builtLocal);
             }
 
             if (goChanged) {

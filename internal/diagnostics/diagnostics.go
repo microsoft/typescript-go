@@ -13,9 +13,9 @@ import (
 	"golang.org/x/text/language"
 )
 
-//go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go -locdir ./loc
+//go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go -loc-embed ./loc_embed_generated.go -loc-noembed ./loc_noembed_generated.go -locdir ./loc
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Category -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w diagnostics_generated.go loc_generated.go stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w diagnostics_generated.go loc_generated.go loc_embed_generated.go loc_noembed_generated.go stringer_generated.go
 
 type Category int32
 

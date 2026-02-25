@@ -43,6 +43,12 @@ var libPath = sync.OnceValue(func() string {
 	return dir
 })
 
+// ExecutableDir returns the directory containing the running executable.
+// Only valid in noembed builds.
+func ExecutableDir() string {
+	return executableDir()
+}
+
 func IsBundled(path string) bool {
 	return false
 }
