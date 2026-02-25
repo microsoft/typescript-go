@@ -285,6 +285,7 @@ func (f *NodeFactory) CreateExpressionFromEntityName(node *ast.Node) *ast.Expres
 		left := f.CreateExpressionFromEntityName(node.AsQualifiedName().Left)
 		right := node.AsQualifiedName().Right.Clone(f.AsNodeFactory())
 		right.Loc = node.AsQualifiedName().Right.Loc
+		// TODO(rbuckton): Does this need to be parented?
 		right.Parent = node.AsQualifiedName().Right.Parent
 		propAccess := f.NewPropertyAccessExpression(left, nil, right, ast.NodeFlagsNone)
 		propAccess.Loc = node.Loc
@@ -292,6 +293,7 @@ func (f *NodeFactory) CreateExpressionFromEntityName(node *ast.Node) *ast.Expres
 	}
 	res := node.Clone(f.AsNodeFactory())
 	res.Loc = node.Loc
+	// TODO(rbuckton): Does this need to be parented?
 	res.Parent = node.Parent
 	return res
 }
