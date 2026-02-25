@@ -87,6 +87,24 @@ func (tx *forawaitTransformer) exitSubtree(ancestorFacts forAwaitHierarchyFacts)
 	tx.forAwaitHierarchyFacts = ancestorFacts
 }
 
+func (tx *forawaitTransformer) visitModifiersNoAsync(modifiers *ast.ModifierList) *ast.ModifierList {
+	return tx.noAsyncModifierVisitor.VisitModifiers(modifiers)
+}
+
+func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*forawaitTransformer, *ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
+	if tx.affectsSubtree(excludeFacts, includeFacts) {
+		ancestorFacts := tx.enterSubtree(excludeFacts, includeFacts)
+		result := cb(tx, node)
+		tx.exitSubtree(ancestorFacts)
+		return result
+	}
+	return cb(tx, node)
+}
+
+func (tx *forawaitTransformer) visitDefault(node *ast.Node) *ast.Node {
+	return tx.Visitor().VisitEachChild(node)
+}
+
 func (tx *forawaitTransformer) fallbackVisitor(node *ast.Node) *ast.Node {
 	if tx.capturedSuperProperties == nil {
 		return node
@@ -121,47 +139,81 @@ func (tx *forawaitTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitReturnStatement(node.AsReturnStatement())
 	case ast.KindLabeledStatement:
 		return tx.visitLabeledStatement(node.AsLabeledStatement())
+	case ast.KindDoStatement, ast.KindWhileStatement, ast.KindForInStatement:
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitDefault,
+			node,
+			forAwaitHierarchyFactsIterationStatementExcludes,
+			forAwaitHierarchyFactsIterationStatementIncludes,
+		)
 	case ast.KindForOfStatement:
 		return tx.visitForOfStatement(node.AsForInOrOfStatement(), nil)
-	case ast.KindForStatement, ast.KindDoStatement, ast.KindWhileStatement, ast.KindForInStatement:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitDefault, node, forAwaitHierarchyFactsIterationStatementExcludes, forAwaitHierarchyFactsIterationStatementIncludes)
+	case ast.KindForStatement:
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitDefault,
+			node,
+			forAwaitHierarchyFactsIterationStatementExcludes,
+			forAwaitHierarchyFactsIterationStatementIncludes,
+		)
 	case ast.KindConstructor:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitConstructorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitConstructorDeclaration,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	case ast.KindMethodDeclaration:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitMethodDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitMethodDeclaration,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	case ast.KindGetAccessor:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitGetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitGetAccessorDeclaration,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	case ast.KindSetAccessor:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitSetAccessorDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitSetAccessorDeclaration,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	case ast.KindFunctionDeclaration:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitFunctionDeclaration, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitFunctionDeclaration,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	case ast.KindFunctionExpression:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitFunctionExpression, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitFunctionExpression,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	case ast.KindArrowFunction:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitArrowFunction, node, forAwaitHierarchyFactsArrowFunctionExcludes, forAwaitHierarchyFactsArrowFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitArrowFunction,
+			node,
+			forAwaitHierarchyFactsArrowFunctionExcludes,
+			forAwaitHierarchyFactsArrowFunctionIncludes,
+		)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithHierarchyFacts((*forawaitTransformer).visitDefault, node, forAwaitHierarchyFactsClassOrFunctionExcludes, forAwaitHierarchyFactsClassOrFunctionIncludes)
+		return tx.doWithHierarchyFacts(
+			(*forawaitTransformer).visitDefault,
+			node,
+			forAwaitHierarchyFactsClassOrFunctionExcludes,
+			forAwaitHierarchyFactsClassOrFunctionIncludes,
+		)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
-}
-
-func (tx *forawaitTransformer) visitModifiersNoAsync(modifiers *ast.ModifierList) *ast.ModifierList {
-	return tx.noAsyncModifierVisitor.VisitModifiers(modifiers)
-}
-
-func (tx *forawaitTransformer) doWithHierarchyFacts(cb func(*forawaitTransformer, *ast.Node) *ast.Node, node *ast.Node, excludeFacts forAwaitHierarchyFacts, includeFacts forAwaitHierarchyFacts) *ast.Node {
-	if tx.affectsSubtree(excludeFacts, includeFacts) {
-		ancestorFacts := tx.enterSubtree(excludeFacts, includeFacts)
-		result := cb(tx, node)
-		tx.exitSubtree(ancestorFacts)
-		return result
-	}
-	return cb(tx, node)
-}
-
-func (tx *forawaitTransformer) visitDefault(node *ast.Node) *ast.Node {
-	return tx.Visitor().VisitEachChild(node)
 }
 
 func (tx *forawaitTransformer) visitAwaitExpression(node *ast.AwaitExpression) *ast.Node {
@@ -247,7 +299,7 @@ func (tx *forawaitTransformer) visitLabeledStatement(node *ast.LabeledStatement)
 		if statement.Kind == ast.KindForOfStatement && statement.AsForInOrOfStatement().AwaitModifier != nil {
 			return tx.visitForOfStatement(statement.AsForInOrOfStatement(), node)
 		}
-		return tx.restoreEnclosingLabel(tx.Visitor().VisitNode(statement), node)
+		return tx.Factory().RestoreEnclosingLabel(tx.Visitor().VisitNode(statement), node)
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
@@ -260,22 +312,6 @@ func unwrapInnermostStatementOfLabel(node *ast.LabeledStatement) *ast.Node {
 		}
 		node = node.Statement.AsLabeledStatement()
 	}
-}
-
-// restoreEnclosingLabel re-wraps a statement with its original label chain.
-func (tx *forawaitTransformer) restoreEnclosingLabel(node *ast.Node, outermostLabeledStatement *ast.LabeledStatement) *ast.Node {
-	if outermostLabeledStatement == nil {
-		return node
-	}
-	innerLabel := node
-	if ast.IsLabeledStatement(outermostLabeledStatement.Statement) {
-		innerLabel = tx.restoreEnclosingLabel(node, outermostLabeledStatement.Statement.AsLabeledStatement())
-	}
-	return tx.Factory().UpdateLabeledStatement(
-		outermostLabeledStatement,
-		outermostLabeledStatement.Label,
-		innerLabel,
-	)
 }
 
 func (tx *forawaitTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
@@ -297,7 +333,7 @@ func (tx *forawaitTransformer) visitForOfStatement(node *ast.ForInOrOfStatement,
 	if node.AwaitModifier != nil {
 		result = tx.transformForAwaitOfStatement(node, outermostLabeledStatement, ancestorFacts)
 	} else {
-		result = tx.restoreEnclosingLabel(tx.Visitor().VisitEachChild(node.AsNode()), outermostLabeledStatement)
+		result = tx.Factory().RestoreEnclosingLabel(tx.Visitor().VisitEachChild(node.AsNode()), outermostLabeledStatement)
 	}
 	tx.exitSubtree(ancestorFacts)
 	return result
@@ -428,7 +464,7 @@ func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfS
 
 	// Build the try/catch/finally
 	tryBlock := f.NewBlock(f.NewNodeList([]*ast.Node{
-		tx.restoreEnclosingLabel(forStatement, outermostLabeledStatement),
+		f.RestoreEnclosingLabel(forStatement, outermostLabeledStatement),
 	}), true)
 
 	// catch clause: { e_1 = { error: e_2 }; }

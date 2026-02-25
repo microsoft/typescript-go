@@ -298,6 +298,21 @@ func (f *NodeFactory) CreateExpressionFromEntityName(node *ast.Node) *ast.Expres
 	return res
 }
 
+func (f *NodeFactory) RestoreEnclosingLabel(node *ast.Node, outermostLabeledStatement *ast.LabeledStatement) *ast.Node {
+	if outermostLabeledStatement == nil {
+		return node
+	}
+	innerLabel := node
+	if ast.IsLabeledStatement(outermostLabeledStatement.Statement) {
+		innerLabel = f.RestoreEnclosingLabel(node, outermostLabeledStatement.Statement.AsLabeledStatement())
+	}
+	return f.UpdateLabeledStatement(
+		outermostLabeledStatement,
+		outermostLabeledStatement.Label,
+		innerLabel,
+	)
+}
+
 // CreateForOfBindingStatement creates a statement to bind the iteration value.
 func (f *NodeFactory) CreateForOfBindingStatement(node *ast.Node, boundValue *ast.Node) *ast.Node {
 	if ast.IsVariableDeclarationList(node) {
