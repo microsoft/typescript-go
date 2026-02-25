@@ -2216,7 +2216,18 @@ func (c *Checker) getInitialType(node *ast.Node) *Type {
 
 func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
 	if node.Initializer() != nil {
-		return c.getTypeOfInitializer(node.Initializer())
+		links := c.nodeLinks.Get(node)
+		if links.flags&NodeCheckFlagsResolvingInitialType != 0 {
+			// We're already computing the initial type of this variable declaration.
+			// This circularity can occur when a binding element's initializer references the
+			// destructuring source through flow analysis (e.g. destructuring loop variables).
+			// See: https://github.com/microsoft/TypeScript/issues/63192
+			return c.errorType
+		}
+		links.flags |= NodeCheckFlagsResolvingInitialType
+		result := c.getTypeOfInitializer(node.Initializer())
+		links.flags &^= NodeCheckFlagsResolvingInitialType
+		return result
 	}
 	if ast.IsForInStatement(node.Parent.Parent) {
 		return c.stringType
