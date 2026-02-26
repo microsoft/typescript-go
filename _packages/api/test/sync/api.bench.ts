@@ -71,21 +71,20 @@ export function runBenchmarks(options?: { filter?: string; singleIteration?: boo
     let file: SourceFile;
     let tsFile: ts.SourceFile;
 
-    // const programIdentifierCount = await (async () => {
-    //     await spawnAPI();
-    //     await loadSnapshot();
-    //     await getProgramTS();
-    //     let count = 0;
-    //     file!.forEachChild(function visit(node) {
-    //         if (node.kind === SyntaxKind.Identifier) {
-    //             count++;
-    //         }
-    //         node.forEachChild(visit);
-    //     });
-    //     await teardown();
-    //     return count;
-    // })();
-    const programIdentifierCount = 8000;
+    const programIdentifierCount = (() => {
+        spawnAPI();
+        loadSnapshot();
+        getProgramTS();
+        let count = 0;
+        file!.forEachChild(function visit(node) {
+            if (node.kind === SyntaxKind.Identifier) {
+                count++;
+            }
+            node.forEachChild(visit);
+        });
+        teardown();
+        return count;
+    })();
 
     // Tinybench's `isFnAsyncResource` probes each task function by *calling*
     // it once during `.add()` to detect whether it returns a Promise.
