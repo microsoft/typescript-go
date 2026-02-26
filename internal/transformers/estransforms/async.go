@@ -471,6 +471,16 @@ func (tx *asyncTransformer) visitFunctionExpression(node *ast.Node) *ast.Node {
 // This function will be called when one of the following conditions are met:
 // - The node is marked async
 func (tx *asyncTransformer) visitArrowFunction(node *ast.Node) *ast.Node {
+	// Class static blocks provide their own scope for `arguments`. When the classfields
+	// transformer lowers a static block to an arrow function IIFE, `arguments` references
+	// inside it should NOT be captured by the enclosing async function. This mirrors the
+	// checker's behavior where CaptureArguments is not set for `arguments` in static blocks.
+	if tx.EmitContext().MostOriginal(node).Kind == ast.KindClassStaticBlockDeclaration {
+		savedLexicalArguments := tx.lexicalArguments
+		tx.lexicalArguments = lexicalArgumentsInfo{}
+		defer func() { tx.lexicalArguments = savedLexicalArguments }()
+	}
+
 	decl := node.AsArrowFunction()
 	functionFlags := ast.GetFunctionFlags(node)
 

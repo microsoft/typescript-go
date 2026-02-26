@@ -124,17 +124,16 @@ class CC {
     }
 }
 function foo() {
-    var arguments_1 = arguments;
     return __awaiter(this, void 0, void 0, function* () {
         class C extends B {
         }
         (() => {
-            arguments_1;
+            arguments;
             yield ;
             function ff() {
-                var arguments_2 = arguments;
+                var arguments_1 = arguments;
                 return __awaiter(this, void 0, void 0, function* () {
-                    arguments_2;
+                    arguments_1;
                     yield ;
                 });
             }
