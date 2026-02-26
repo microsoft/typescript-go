@@ -5,6 +5,7 @@
 
  //// [a.js]
 -var _A_x;
++var _A_x, _a;
  import { __awaiter, __classPrivateFieldGet, __classPrivateFieldIn, __classPrivateFieldSet, __decorate } from "tslib";
 -let A = class A {
 -    constructor() {
@@ -16,7 +17,6 @@
 -    g(u) { return __classPrivateFieldIn(_A_x, u); }
 -};
 -_A_x = new WeakMap();
-+var _A_x, _a;
 +let A = (_a = class A {
 +        constructor() {
 +            _A_x.set(this, 1);

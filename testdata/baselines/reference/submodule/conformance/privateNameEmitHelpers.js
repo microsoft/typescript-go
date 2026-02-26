@@ -14,8 +14,8 @@ export declare function __classPrivateFieldSet<T extends object, V>(receiver: T,
 
 
 //// [main.js]
-import { __classPrivateFieldGet, __classPrivateFieldSet } from "tslib";
 var _C_instances, _C_a, _C_b, _C_c_set;
+import { __classPrivateFieldGet, __classPrivateFieldSet } from "tslib";
 export class C {
     constructor() {
         _C_instances.add(this);

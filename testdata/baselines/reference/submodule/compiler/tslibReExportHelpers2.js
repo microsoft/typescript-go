@@ -44,8 +44,8 @@ export class Foo {
 
 
 //// [index.mjs]
-import { __classPrivateFieldGet } from "tslib";
 var _a, _Foo_test;
+import { __classPrivateFieldGet } from "tslib";
 export class Foo {
     constructor() {
         console.log(__classPrivateFieldGet(_a, _a, "m", _Foo_test).call(_a));

@@ -23,8 +23,8 @@ export declare function __classPrivateFieldIn(a: any, b: any): boolean;
 
 
 //// [a.js]
-import { __awaiter, __classPrivateFieldGet, __classPrivateFieldIn, __classPrivateFieldSet, __decorate } from "tslib";
 var _A_x, _a;
+import { __awaiter, __classPrivateFieldGet, __classPrivateFieldIn, __classPrivateFieldSet, __decorate } from "tslib";
 let A = (_a = class A {
         constructor() {
             _A_x.set(this, 1);
