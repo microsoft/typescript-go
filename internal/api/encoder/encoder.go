@@ -304,10 +304,21 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 	var extendedData []byte
 	var structuredData []byte
 	var strs *stringTable
+	var positionMap *ast.PositionMap
 	if rootNode.Kind == ast.KindSourceFile {
 		strs = newStringTable(sourceFile.Text(), sourceFile.TextCount)
+		positionMap = sourceFile.GetPositionMap()
 	} else {
 		strs = newStringTable("", 0)
+		if sourceFile != nil {
+			positionMap = sourceFile.GetPositionMap()
+		}
+	}
+	if positionMap == nil {
+		positionMap = ast.ComputePositionMap("")
+	}
+	utf16 := func(pos int) uint32 {
+		return uint32(positionMap.UTF8ToUTF16(pos))
 	}
 	var initialNodeCount int
 	if sourceFile != nil {
@@ -356,7 +367,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 					nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 				}
 
-				nodes = appendUint32s(nodes, SyntaxKindNodeList, uint32(nodeList.Pos()), uint32(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes)), 0)
+				nodes = appendUint32s(nodes, SyntaxKindNodeList, utf16(nodeList.Pos()), utf16(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes)), 0)
 
 				saveParentIndex := parentIndex
 
@@ -388,7 +399,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 			nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 		}
 
-		nodes = appendUint32s(nodes, uint32(node.Kind), uint32(node.Pos()), uint32(node.End()), 0, parentIndex, getNodeData(node, strs, &extendedData, &structuredData), uint32(node.Flags))
+		nodes = appendUint32s(nodes, uint32(node.Kind), utf16(node.Pos()), utf16(node.End()), 0, parentIndex, getNodeData(node, strs, positionMap, &extendedData, &structuredData), uint32(node.Flags))
 
 		if nodeIndexMap != nil {
 			if _, ok := nodeIndexMap[node]; ok {
@@ -418,7 +429,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 	parentIndex++
 
 	sfExtendedDataOffset = len(extendedData)
-	nodes = appendUint32s(nodes, uint32(rootNode.Kind), uint32(rootNode.Pos()), uint32(rootNode.End()), 0, 0, getNodeData(rootNode, strs, &extendedData, &structuredData), uint32(rootNode.Flags))
+	nodes = appendUint32s(nodes, uint32(rootNode.Kind), utf16(rootNode.Pos()), utf16(rootNode.End()), 0, 0, getNodeData(rootNode, strs, positionMap, &extendedData, &structuredData), uint32(rootNode.Flags))
 
 	visitor.VisitEachChild(rootNode)
 	if sourceFile != nil {
@@ -494,7 +505,7 @@ func appendUint32s(buf []byte, values ...uint32) []byte {
 	return buf
 }
 
-func getNodeData(node *ast.Node, strs *stringTable, extendedData *[]byte, structuredData *[]byte) uint32 {
+func getNodeData(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) uint32 {
 	t := getNodeDataType(node)
 	switch t {
 	case NodeDataTypeChildren:
@@ -502,7 +513,7 @@ func getNodeData(node *ast.Node, strs *stringTable, extendedData *[]byte, struct
 	case NodeDataTypeString:
 		return t | getNodeDefinedData(node) | recordNodeStrings(node, strs)
 	case NodeDataTypeExtendedData:
-		return t | getNodeDefinedData(node) | recordExtendedData(node, strs, extendedData, structuredData)
+		return t | getNodeDefinedData(node) | recordExtendedData(node, strs, positionMap, extendedData, structuredData)
 	default:
 		panic("unreachable")
 	}
@@ -942,7 +953,7 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 
 const noStructuredData = 0xFFFFFFFF
 
-func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte, structuredData *[]byte) uint32 {
+func recordExtendedData(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) uint32 {
 	offset := uint32(len(*extendedData))
 	switch node.Kind {
 	case ast.KindSourceFile:
@@ -950,9 +961,9 @@ func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte,
 		textIndex := strs.add(sf.Text(), sf.Kind, sf.Pos(), sf.End())
 		fileNameIndex := strs.add(sf.FileName(), 0, 0, 0)
 		pathIndex := strs.add(string(sf.Path()), 0, 0, 0)
-		referencedFilesOffset := encodeFileReferences(sf.ReferencedFiles, structuredData)
-		typeRefDirectivesOffset := encodeFileReferences(sf.TypeReferenceDirectives, structuredData)
-		libRefDirectivesOffset := encodeFileReferences(sf.LibReferenceDirectives, structuredData)
+		referencedFilesOffset := encodeFileReferences(sf.ReferencedFiles, positionMap, structuredData)
+		typeRefDirectivesOffset := encodeFileReferences(sf.TypeReferenceDirectives, positionMap, structuredData)
+		libRefDirectivesOffset := encodeFileReferences(sf.LibReferenceDirectives, positionMap, structuredData)
 		// imports, moduleAugmentations, ambientModuleNames offsets are placeholders;
 		// they will be patched after the tree walk when node indices are known.
 		*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0)
@@ -993,7 +1004,7 @@ func boolToByte(b bool) byte {
 // encodeFileReferences encodes a slice of FileReferences as a msgpack array of tuples
 // into the structured data buffer. Returns the byte offset into the buffer, or
 // noStructuredData (0xFFFFFFFF) if the slice is empty.
-func encodeFileReferences(refs []*ast.FileReference, buf *[]byte) uint32 {
+func encodeFileReferences(refs []*ast.FileReference, positionMap *ast.PositionMap, buf *[]byte) uint32 {
 	if len(refs) == 0 {
 		return noStructuredData
 	}
@@ -1002,8 +1013,8 @@ func encodeFileReferences(refs []*ast.FileReference, buf *[]byte) uint32 {
 	for _, ref := range refs {
 		// Each entry is a 5-element tuple: [pos, end, fileName, resolutionMode, preserve]
 		*buf = msgpackWriteArrayHeader(*buf, 5)
-		*buf = msgpackWriteUint(*buf, uint32(ref.Pos()))
-		*buf = msgpackWriteUint(*buf, uint32(ref.End()))
+		*buf = msgpackWriteUint(*buf, uint32(positionMap.UTF8ToUTF16(ref.Pos())))
+		*buf = msgpackWriteUint(*buf, uint32(positionMap.UTF8ToUTF16(ref.End())))
 		*buf = msgpackWriteString(*buf, ref.FileName)
 		*buf = msgpackWriteUint(*buf, uint32(ref.ResolutionMode))
 		*buf = msgpackWriteBool(*buf, ref.Preserve)

@@ -176,3 +176,64 @@ describe("Encoder", () => {
         assert.strictEqual((data >>> 24) & 1, 1);
     });
 });
+
+describe("UTF-8 vs UTF-16 position encoding", () => {
+    // Positions in the encoded AST must be UTF-16 code unit offsets so that
+    // file.text.slice(node.pos, node.end) works correctly on JS strings.
+    // This is the same convention TypeScript uses.
+
+    function utf8ByteLength(s: string): number {
+        return new TextEncoder().encode(s).length;
+    }
+
+    // Returns the UTF-16 code unit position of a substring in a source string
+    function utf16Pos(source: string, substring: string): { pos: number; end: number; } {
+        const pos = source.indexOf(substring);
+        return { pos, end: pos + substring.length };
+    }
+
+    test("ASCII: text.slice(pos, end) works", () => {
+        const source = "const x = 1;";
+        assert.strictEqual(source.length, utf8ByteLength(source));
+
+        const { pos, end } = utf16Pos(source, "x");
+        assert.strictEqual(source.slice(pos, end), "x");
+    });
+
+    test("2-byte char: text.slice(pos, end) works", () => {
+        // é (U+00E9) is 1 UTF-16 code unit but 2 UTF-8 bytes
+        const source = "const café = 1;\nconst x = 2;";
+        assert.strictEqual(source.length, 28); // UTF-16 code units
+        assert.strictEqual(utf8ByteLength(source), 29); // UTF-8 bytes (1 extra from é)
+
+        const { pos, end } = utf16Pos(source, "x");
+        assert.strictEqual(source.slice(pos, end), "x");
+
+        // Positions after multi-byte characters must be UTF-16 code unit offsets, not UTF-8 byte offsets
+        assert.strictEqual(pos, 22); // UTF-16 position
+        assert.notStrictEqual(pos, 23); // NOT the UTF-8 byte offset
+    });
+
+    test("4-byte char (supplementary plane): text.slice(pos, end) works", () => {
+        // 🎉 (U+1F389) is 2 UTF-16 code units (surrogate pair) but 4 UTF-8 bytes
+        const source = 'const a = "🎉";\nconst b = 2;';
+        assert.strictEqual(source.length, 28); // UTF-16 code units
+        assert.strictEqual(utf8ByteLength(source), 30); // 2 extra bytes from 🎉
+
+        const { pos, end } = utf16Pos(source, "b");
+        assert.strictEqual(source.slice(pos, end), "b");
+
+        // Must use UTF-16 offset, not UTF-8 byte offset
+        assert.strictEqual(pos, 22); // UTF-16 position
+        assert.notStrictEqual(pos, 24); // NOT the UTF-8 byte offset (shifted by 2)
+    });
+
+    test("multi-byte identifier: text.slice(pos, end) works", () => {
+        // Identifier "café" has 4 UTF-16 code units but 5 UTF-8 bytes
+        const source = "let café = 1;";
+
+        const { pos, end } = utf16Pos(source, "café");
+        assert.strictEqual(source.slice(pos, end), "café");
+        assert.strictEqual(end - pos, 4); // UTF-16 length, not UTF-8 byte length (5)
+    });
+});
