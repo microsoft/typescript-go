@@ -13984,22 +13984,8 @@ func (c *Checker) recordMergedSymbol(target *ast.Symbol, source *ast.Symbol) {
 }
 
 func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.Symbol {
-	resolved1 := c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(s1)))
-	resolved2 := c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(s2)))
-	if resolved1 == resolved2 {
+	if c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(s1))) == c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(s2))) {
 		return s1
-	}
-	// Check through type aliases: a type alias that resolves to the same type
-	// as the other symbol should be treated as the same reference.
-	if resolved1.Flags&ast.SymbolFlagsTypeAlias != 0 {
-		if c.resolveTypeAliasSymbol(resolved1) == resolved2 {
-			return s1
-		}
-	}
-	if resolved2.Flags&ast.SymbolFlagsTypeAlias != 0 {
-		if c.resolveTypeAliasSymbol(resolved2) == resolved1 {
-			return s1
-		}
 	}
 	return nil
 }

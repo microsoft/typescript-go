@@ -610,11 +610,6 @@ func (ch *Checker) isAccessible(
 	if symbol == ch.getMergedSymbol(symbolFromSymbolTable) {
 		likeSymbols = true
 	}
-	if !likeSymbols && resolvedAliasSymbol != nil && resolvedAliasSymbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-		if ch.resolveTypeAliasSymbol(resolvedAliasSymbol) == symbol {
-			likeSymbols = true
-		}
-	}
 	if !likeSymbols {
 		return false
 	}

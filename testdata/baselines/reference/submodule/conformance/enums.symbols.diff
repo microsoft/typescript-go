@@ -1,0 +1,11 @@
+--- old.enums.symbols
++++ new.enums.symbols
+@@= skipped -68, +68 lines =@@
+ const flags: TypeFlag = SymbolFlags.Type;
+ >flags : Symbol(flags, Decl(c.ts, 2, 5))
+ >TypeFlag : Symbol(TypeFlag, Decl(c.ts, 1, 13))
+->SymbolFlags.Type : Symbol(SymbolFlags.Type, Decl(a.ts, 5, 24))
++>SymbolFlags.Type : Symbol(TypeFlag, Decl(a.ts, 5, 24))
+ >SymbolFlags : Symbol(SymbolFlags, Decl(c.ts, 0, 8))
+->Type : Symbol(SymbolFlags.Type, Decl(a.ts, 5, 24))
++>Type : Symbol(TypeFlag, Decl(a.ts, 5, 24))

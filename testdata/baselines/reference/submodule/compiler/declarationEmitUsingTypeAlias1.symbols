@@ -39,8 +39,8 @@ export const bar = (thing: SomeType) => {
 >SomeType : Symbol(SomeType, Decl(index.ts, 0, 8))
 
   return thing.arg;
->thing.arg : Symbol(arg, Decl(inner.d.ts, 1, 32))
+>thing.arg : Symbol(SomeType.arg, Decl(inner.d.ts, 1, 32))
 >thing : Symbol(thing, Decl(index.ts, 6, 20))
->arg : Symbol(arg, Decl(inner.d.ts, 1, 32))
+>arg : Symbol(SomeType.arg, Decl(inner.d.ts, 1, 32))
 
 };

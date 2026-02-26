@@ -21,8 +21,8 @@ export class NewAjax {
      * @param {LionRequestInit} [init]
      */
     case5_unexpectedlyResolvesPathToNodeModules(init) {}
->case5_unexpectedlyResolvesPathToNodeModules : (init?: import("./node_modules/@lion/ajax/dist-types/types/types.js").LionRequestInit | undefined) => void
->init : import("./node_modules/@lion/ajax/dist-types/types/types.js").LionRequestInit | undefined
+>case5_unexpectedlyResolvesPathToNodeModules : (init?: import("@lion/ajax").LionRequestInit | undefined) => void
+>init : import("@lion/ajax").LionRequestInit | undefined
 }
 
 /**

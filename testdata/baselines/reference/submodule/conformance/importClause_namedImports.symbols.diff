@@ -1,0 +1,14 @@
+--- old.importClause_namedImports.symbols
++++ new.importClause_namedImports.symbols
+@@= skipped -28, +28 lines =@@
+ >B : Symbol(B, Decl(d.ts, 0, 16))
+
+ b.b;
+->b.b : Symbol(b, Decl(abc.ts, 1, 18))
++>b.b : Symbol(B.b, Decl(abc.ts, 1, 18))
+ >b : Symbol(b, Decl(d.ts, 3, 11))
+->b : Symbol(b, Decl(abc.ts, 1, 18))
++>b : Symbol(B.b, Decl(abc.ts, 1, 18))
+
+ const c = { A };
+ >c : Symbol(c, Decl(d.ts, 5, 5))
