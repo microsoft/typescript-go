@@ -33,19 +33,7 @@
  2 >Emitted(5, 12) Source(20, 12) + SourceIndex(0)
  3 >Emitted(5, 17) Source(20, 17) + SourceIndex(0)
  4 >Emitted(5, 18) Source(20, 18) + SourceIndex(0)
-@@= skipped -29, +31 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(6, 1) Source(21, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(6, 1) Source(20, 18) + SourceIndex(0)
- 2 >Emitted(6, 2) Source(21, 2) + SourceIndex(0)
- ---
- >>>function getMultiRobot() {
+@@= skipped -38, +40 lines =@@
  1->
  2 >^^^^^^^^^
  3 >         ^^^^^^^^^^^^^
@@ -78,16 +66,3 @@
  2 >Emitted(8, 12) Source(23, 12) + SourceIndex(0)
  3 >Emitted(8, 22) Source(23, 22) + SourceIndex(0)
  4 >Emitted(8, 23) Source(23, 23) + SourceIndex(0)
-@@= skipped -38, +40 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(9, 1) Source(24, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(9, 1) Source(23, 23) + SourceIndex(0)
- 2 >Emitted(9, 2) Source(24, 2) + SourceIndex(0)
- ---
- >>>for (let { name: nameA = "noName" } = robot, i = 0; i < 1; i++) {

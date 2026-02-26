@@ -90,20 +90,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(5, 1) Source(9, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(5, 1) Source(8, 24) + SourceIndex(0)
- 2 >Emitted(5, 2) Source(9, 2) + SourceIndex(0)
- ---
- >>>function foo2([numberB = -1] = [-1, "name", "skill"]) {
-@@= skipped -15, +15 lines =@@
+@@= skipped -38, +38 lines =@@
  7 >                      ^^^
  8 >                         ^
  9 >                          ^
@@ -193,20 +180,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(8, 1) Source(13, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(8, 1) Source(12, 26) + SourceIndex(0)
- 2 >Emitted(8, 2) Source(13, 2) + SourceIndex(0)
- ---
- >>>function foo3([numberA2 = -1, nameA2 = "name", skillA2 = "skill"] = [-1, "name", "skill"]) {
-@@= skipped -23, +23 lines =@@
+@@= skipped -46, +46 lines =@@
  15>                                               ^^^^^^^
  16>                                                      ^^^
  17>                                                         ^^^^^^^
@@ -296,20 +270,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(11, 1) Source(17, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(11, 1) Source(16, 25) + SourceIndex(0)
- 2 >Emitted(11, 2) Source(17, 2) + SourceIndex(0)
- ---
- >>>function foo4([numberA3 = -1, ...robotAInfo] = [-1, "name", "skill"]) {
-@@= skipped -18, +18 lines =@@
+@@= skipped -41, +41 lines =@@
  10>                            ^^
  11>                              ^^^
  12>                                 ^^^^^^^^^^
@@ -399,16 +360,3 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(14, 1) Source(21, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(14, 1) Source(20, 29) + SourceIndex(0)
- 2 >Emitted(14, 2) Source(21, 2) + SourceIndex(0)
- ---
- >>>foo1(robotA);

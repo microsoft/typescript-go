@@ -34,19 +34,7 @@
  2 >Emitted(38, 12) Source(51, 12) + SourceIndex(0)
  3 >Emitted(38, 18) Source(51, 18) + SourceIndex(0)
  4 >Emitted(38, 19) Source(51, 19) + SourceIndex(0)
-@@= skipped -30, +32 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(39, 1) Source(52, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(39, 1) Source(51, 19) + SourceIndex(0)
- 2 >Emitted(39, 2) Source(52, 2) + SourceIndex(0)
- ---
- >>>function getMultiRobotB() {
+@@= skipped -39, +41 lines =@@
  1->
  2 >^^^^^^^^^
  3 >         ^^^^^^^^^^^^^^
@@ -80,16 +68,3 @@
  2 >Emitted(41, 12) Source(55, 12) + SourceIndex(0)
  3 >Emitted(41, 23) Source(55, 23) + SourceIndex(0)
  4 >Emitted(41, 24) Source(55, 24) + SourceIndex(0)
-@@= skipped -39, +41 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(42, 1) Source(56, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(42, 1) Source(55, 24) + SourceIndex(0)
- 2 >Emitted(42, 2) Source(56, 2) + SourceIndex(0)
- ---
- >>>//# sourceMappingURL=sourceMapValidationDestructuringVariableStatementArrayBindingPattern3.js.map

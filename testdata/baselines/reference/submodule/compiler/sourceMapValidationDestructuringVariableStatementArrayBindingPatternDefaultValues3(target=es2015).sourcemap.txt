@@ -1453,9 +1453,9 @@ sourceFile:sourceMapValidationDestructuringVariableStatementArrayBindingPatternD
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(37, 1) Source(49, 19) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(37, 1) Source(50, 1) + SourceIndex(0)
 2 >Emitted(37, 2) Source(50, 2) + SourceIndex(0)
 ---
 >>>function getMultiRobotB() {
@@ -1494,9 +1494,9 @@ sourceFile:sourceMapValidationDestructuringVariableStatementArrayBindingPatternD
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(40, 1) Source(53, 24) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(40, 1) Source(54, 1) + SourceIndex(0)
 2 >Emitted(40, 2) Source(54, 2) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=sourceMapValidationDestructuringVariableStatementArrayBindingPatternDefaultValues3.js.map

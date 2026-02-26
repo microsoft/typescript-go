@@ -78,13 +78,13 @@
 -2 >        constructor() { 
 -3 >                        }
 +2 >        constructor() 
-+3 >                      {
-+4 >                         }
++3 >                      { 
++4 >                        }
  1->Emitted(5, 9) Source(7, 21) + SourceIndex(0)
 -2 >Emitted(5, 25) Source(7, 37) + SourceIndex(0)
 -3 >Emitted(5, 26) Source(7, 38) + SourceIndex(0)
 +2 >Emitted(5, 23) Source(7, 35) + SourceIndex(0)
-+3 >Emitted(5, 25) Source(7, 36) + SourceIndex(0)
++3 >Emitted(5, 25) Source(7, 37) + SourceIndex(0)
 +4 >Emitted(5, 26) Source(7, 38) + SourceIndex(0)
  ---
  >>>    }
@@ -216,13 +216,8 @@
 +10>                     ^
 +11>                      ^^^^^^^^
  1->
--  >	
--2 >    }
-+2 >    
-+  >    
-+  >    		// Emit Foo
-+  >    		// Foo, <Foo />;
-+  >    	}
+   >	
+ 2 >    }
  3 >     
  4 >       S
  5 >        
@@ -239,11 +234,7 @@
    >                      		export class Bar { }
    >                      
    >                      		// Emit Foo
-   >                      		// Foo, <Foo />;
-   >                      	}
--1->Emitted(15, 5) Source(13, 2) + SourceIndex(0)
-+1->Emitted(15, 5) Source(9, 23) + SourceIndex(0)
- 2 >Emitted(15, 6) Source(13, 3) + SourceIndex(0)
+@@= skipped -24, +28 lines =@@
  3 >Emitted(15, 8) Source(8, 19) + SourceIndex(0)
  4 >Emitted(15, 9) Source(8, 20) + SourceIndex(0)
  5 >Emitted(15, 12) Source(8, 19) + SourceIndex(0)
@@ -260,27 +251,7 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -38, +47 lines =@@
- 6 >         ^
- 7 >          ^^^^^^^^
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -15, +15 lines =@@
-   >          		// Foo, <Foo />;
-   >          	}
-   >          }
--1 >Emitted(16, 1) Source(14, 1) + SourceIndex(0)
-+1 >Emitted(16, 1) Source(13, 3) + SourceIndex(0)
- 2 >Emitted(16, 2) Source(14, 2) + SourceIndex(0)
- 3 >Emitted(16, 4) Source(6, 11) + SourceIndex(0)
- 4 >Emitted(16, 5) Source(6, 12) + SourceIndex(0)
-@@= skipped -12, +12 lines =@@
+@@= skipped -41, +43 lines =@@
  1 >
  2 >^^^^^^^^^^^
  3 >           ^
@@ -571,10 +542,8 @@
 +10>                     ^
 +11>                      ^^^^^^^^
  1->
--  >	
--2 >    }
-+2 >    
-+  >    	}
+   >	
+ 2 >    }
  3 >     
  4 >       S
  5 >        
@@ -591,12 +560,7 @@
    >                      		// Emit M.Foo
    >                      		Foo, <Foo />;
    >                      
-   >                      		// Emit S.Bar
-   >                      		Bar, <Bar />;
-   >                      	}
--1->Emitted(26, 5) Source(26, 2) + SourceIndex(0)
-+1->Emitted(26, 5) Source(25, 16) + SourceIndex(0)
- 2 >Emitted(26, 6) Source(26, 3) + SourceIndex(0)
+@@= skipped -25, +29 lines =@@
  3 >Emitted(26, 8) Source(20, 19) + SourceIndex(0)
  4 >Emitted(26, 9) Source(20, 20) + SourceIndex(0)
  5 >Emitted(26, 12) Source(20, 19) + SourceIndex(0)
@@ -613,29 +577,7 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -39, +45 lines =@@
- 6 >         ^
- 7 >          ^^^^^^^^
- 1 >
--  >
--  >
--2 >}
-+2 >
-+  >
-+  >}
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -20, +20 lines =@@
-   >          	}
-   >          
-   >          }
--1 >Emitted(27, 1) Source(28, 1) + SourceIndex(0)
-+1 >Emitted(27, 1) Source(26, 3) + SourceIndex(0)
- 2 >Emitted(27, 2) Source(28, 2) + SourceIndex(0)
- 3 >Emitted(27, 4) Source(16, 11) + SourceIndex(0)
- 4 >Emitted(27, 5) Source(16, 12) + SourceIndex(0)
-@@= skipped -12, +12 lines =@@
+@@= skipped -46, +48 lines =@@
  1 >
  2 >^^^^^^^^^^^
  3 >           ^
@@ -750,27 +692,7 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -55, +49 lines =@@
- 6 >         ^
- 7 >          ^^^^^^^^
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -10, +10 lines =@@
-   >          	// Emit M.S.Bar
-   >          	S.Bar, <S.Bar />;
-   >          }
--1 >Emitted(31, 1) Source(33, 1) + SourceIndex(0)
-+1 >Emitted(31, 1) Source(32, 19) + SourceIndex(0)
- 2 >Emitted(31, 2) Source(33, 2) + SourceIndex(0)
- 3 >Emitted(31, 4) Source(30, 11) + SourceIndex(0)
- 4 >Emitted(31, 5) Source(30, 12) + SourceIndex(0)
-@@= skipped -12, +12 lines =@@
+@@= skipped -77, +71 lines =@@
  1 >
  2 >^^^^^^^^^^^
  3 >           ^^^
@@ -863,23 +785,3 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -44, +38 lines =@@
- 7 >          ^^^^^^^^
- 8 >                  ^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -11, +11 lines =@@
-   >          	// Emit M_1.Foo
-   >          	Foo, <Foo />;
-   >          }
--1 >Emitted(36, 1) Source(39, 1) + SourceIndex(0)
-+1 >Emitted(36, 1) Source(38, 15) + SourceIndex(0)
- 2 >Emitted(36, 2) Source(39, 2) + SourceIndex(0)
- 3 >Emitted(36, 4) Source(35, 11) + SourceIndex(0)
- 4 >Emitted(36, 5) Source(35, 12) + SourceIndex(0)

@@ -60,23 +60,3 @@
    >    
  2 >    var 
  3 >        x
-@@= skipped -77, +77 lines =@@
- 7 >              ^^^^^^^^
- 8 >                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   Foo
- 5 >      
-@@= skipped -12, +12 lines =@@
-   >              isn't this a lot of fun";
-   >                  var z = window.document;
-   >              }
--1 >Emitted(8, 1) Source(13, 1) + SourceIndex(0)
-+1 >Emitted(8, 1) Source(12, 29) + SourceIndex(0)
- 2 >Emitted(8, 2) Source(13, 2) + SourceIndex(0)
- 3 >Emitted(8, 4) Source(8, 11) + SourceIndex(0)
- 4 >Emitted(8, 7) Source(8, 14) + SourceIndex(0)

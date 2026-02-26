@@ -70,36 +70,3 @@
    >        
  2 >        // Test this
  1->Emitted(5, 9) Source(3, 9) + SourceIndex(0)
-@@= skipped -76, +79 lines =@@
- 2 >    ^
- 3 >     ^^^^^^^^^^^^^^->
- 1 >
--  >    
--2 >    }
--1 >Emitted(7, 5) Source(5, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(7, 5) Source(4, 19) + SourceIndex(0)
- 2 >Emitted(7, 6) Source(5, 6) + SourceIndex(0)
- ---
- >>>})(Q || (Q = {}));
-@@= skipped -15, +15 lines =@@
- 7 >          ^^^^^^^^
- 8 >                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1->
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   Q
- 5 >    
-@@= skipped -12, +12 lines =@@
-   >                  var a = 1;
-   >              }
-   >          }
--1->Emitted(8, 1) Source(6, 1) + SourceIndex(0)
-+1->Emitted(8, 1) Source(5, 6) + SourceIndex(0)
- 2 >Emitted(8, 2) Source(6, 2) + SourceIndex(0)
- 3 >Emitted(8, 4) Source(1, 11) + SourceIndex(0)
- 4 >Emitted(8, 5) Source(1, 12) + SourceIndex(0)

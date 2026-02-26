@@ -89,8 +89,8 @@ sourceFile:sourceMapValidationImport.ts
 8 >                     ^
 9 >                      ^^^^^^^^
 1->
-2 >
-  >}
+  >
+2 >}
 3 > 
 4 >   m
 5 >    
@@ -101,7 +101,7 @@ sourceFile:sourceMapValidationImport.ts
   >                          export class c {
   >                          }
   >                      }
-1->Emitted(9, 1) Source(3, 6) + SourceIndex(0)
+1->Emitted(9, 1) Source(4, 1) + SourceIndex(0)
 2 >Emitted(9, 2) Source(4, 2) + SourceIndex(0)
 3 >Emitted(9, 4) Source(1, 18) + SourceIndex(0)
 4 >Emitted(9, 5) Source(1, 19) + SourceIndex(0)

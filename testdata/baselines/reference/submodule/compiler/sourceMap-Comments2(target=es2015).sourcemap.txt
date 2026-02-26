@@ -49,9 +49,9 @@ sourceFile:sourceMap-Comments2.ts
 2 >^
 3 > ^^^->
 1 >
-2 >
-  >}
-1 >Emitted(4, 1) Source(2, 12) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(4, 1) Source(3, 1) + SourceIndex(0)
 2 >Emitted(4, 2) Source(3, 2) + SourceIndex(0)
 ---
 >>>/**
@@ -112,9 +112,9 @@ sourceFile:sourceMap-Comments2.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(10, 1) Source(9, 12) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(10, 1) Source(10, 1) + SourceIndex(0)
 2 >Emitted(10, 2) Source(10, 2) + SourceIndex(0)
 ---
 >>>// some sort of comment
@@ -169,9 +169,9 @@ sourceFile:sourceMap-Comments2.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(14, 1) Source(14, 12) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(14, 1) Source(15, 1) + SourceIndex(0)
 2 >Emitted(14, 2) Source(15, 2) + SourceIndex(0)
 ---
 >>>function qat(str, num) {
@@ -216,9 +216,9 @@ sourceFile:sourceMap-Comments2.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(17, 1) Source(18, 12) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(17, 1) Source(19, 1) + SourceIndex(0)
 2 >Emitted(17, 2) Source(19, 2) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=sourceMap-Comments2.js.map

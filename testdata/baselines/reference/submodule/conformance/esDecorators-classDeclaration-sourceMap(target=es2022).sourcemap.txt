@@ -126,8 +126,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >              return 
 6 >                     1
 7 >                      ;
-8 >                       
-9 >                         }
+8 >                        
+9 >                        }
 1->Emitted(10, 9) Source(12, 9) + SourceIndex(0)
 2 >Emitted(10, 10) Source(12, 10) + SourceIndex(0)
 3 >Emitted(10, 13) Source(12, 13) + SourceIndex(0)
@@ -135,7 +135,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >Emitted(10, 22) Source(12, 22) + SourceIndex(0)
 6 >Emitted(10, 23) Source(12, 23) + SourceIndex(0)
 7 >Emitted(10, 24) Source(12, 24) + SourceIndex(0)
-8 >Emitted(10, 25) Source(12, 24) + SourceIndex(0)
+8 >Emitted(10, 25) Source(12, 25) + SourceIndex(0)
 9 >Emitted(10, 26) Source(12, 26) + SourceIndex(0)
 ---
 >>>    @dec
@@ -176,14 +176,14 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >         (
 4 >          value: number
 5 >               ) 
-6 >                 {
-7 >                    }
+6 >                 { 
+7 >                   }
 1->Emitted(13, 9) Source(16, 9) + SourceIndex(0)
 2 >Emitted(13, 10) Source(16, 10) + SourceIndex(0)
 3 >Emitted(13, 11) Source(16, 11) + SourceIndex(0)
 4 >Emitted(13, 16) Source(16, 24) + SourceIndex(0)
 5 >Emitted(13, 18) Source(16, 26) + SourceIndex(0)
-6 >Emitted(13, 20) Source(16, 27) + SourceIndex(0)
+6 >Emitted(13, 20) Source(16, 28) + SourceIndex(0)
 7 >Emitted(13, 21) Source(16, 29) + SourceIndex(0)
 ---
 >>>    @dec
@@ -370,8 +370,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 7 >                      return 
 8 >                             1
 9 >                              ;
-10>                               
-11>                                 }
+10>                                
+11>                                }
 1->Emitted(25, 5) Source(32, 5) + SourceIndex(0)
 2 >Emitted(25, 11) Source(32, 11) + SourceIndex(0)
 3 >Emitted(25, 16) Source(32, 16) + SourceIndex(0)
@@ -381,7 +381,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 7 >Emitted(25, 30) Source(32, 30) + SourceIndex(0)
 8 >Emitted(25, 31) Source(32, 31) + SourceIndex(0)
 9 >Emitted(25, 32) Source(32, 32) + SourceIndex(0)
-10>Emitted(25, 33) Source(32, 32) + SourceIndex(0)
+10>Emitted(25, 33) Source(32, 33) + SourceIndex(0)
 11>Emitted(25, 34) Source(32, 34) + SourceIndex(0)
 ---
 >>>    @dec
@@ -426,8 +426,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >                 (
 6 >                  value: number
 7 >                       ) 
-8 >                         {
-9 >                            }
+8 >                         { 
+9 >                           }
 1->Emitted(28, 5) Source(36, 5) + SourceIndex(0)
 2 >Emitted(28, 11) Source(36, 11) + SourceIndex(0)
 3 >Emitted(28, 16) Source(36, 16) + SourceIndex(0)
@@ -435,7 +435,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >Emitted(28, 19) Source(36, 19) + SourceIndex(0)
 6 >Emitted(28, 24) Source(36, 32) + SourceIndex(0)
 7 >Emitted(28, 26) Source(36, 34) + SourceIndex(0)
-8 >Emitted(28, 28) Source(36, 35) + SourceIndex(0)
+8 >Emitted(28, 28) Source(36, 36) + SourceIndex(0)
 9 >Emitted(28, 29) Source(36, 37) + SourceIndex(0)
 ---
 >>>    @dec

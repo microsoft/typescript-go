@@ -24,17 +24,7 @@
    >        
  2 >        const 
  3 >              a
-@@= skipped -45, +45 lines =@@
- 2 >    ^
- 3 >     ^^^^^^^^->
- 1 >
--  >    
--2 >    }
--1 >Emitted(9, 5) Source(10, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(9, 5) Source(9, 11) + SourceIndex(0)
- 2 >Emitted(9, 6) Source(10, 6) + SourceIndex(0)
+@@= skipped -52, +52 lines =@@
  ---
  >>>    static {
  1->^^^^
@@ -50,7 +40,7 @@
  ---
  >>>        const a = 11;
  1->^^^^^^^^
-@@= skipped -20, +23 lines =@@
+@@= skipped -13, +16 lines =@@
  4 >               ^^^
  5 >                  ^^
  6 >                    ^
@@ -59,16 +49,3 @@
    >        
  2 >        const 
  3 >              a
-@@= skipped -44, +44 lines =@@
- 1 >^^^^
- 2 >    ^
- 1 >
--  >    
--2 >    }
--1 >Emitted(14, 5) Source(17, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(14, 5) Source(16, 11) + SourceIndex(0)
- 2 >Emitted(14, 6) Source(17, 6) + SourceIndex(0)
- ---
- >>>}

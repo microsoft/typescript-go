@@ -148,9 +148,9 @@ sourceFile:sourceMapValidationDestructuringParameterObjectBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(6, 1) Source(12, 24) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(6, 1) Source(13, 1) + SourceIndex(0)
 2 >Emitted(6, 2) Source(13, 2) + SourceIndex(0)
 ---
 >>>function foo2({ name: nameB, skill: skillB }) {
@@ -230,9 +230,9 @@ sourceFile:sourceMapValidationDestructuringParameterObjectBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(9, 1) Source(15, 24) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(9, 1) Source(16, 1) + SourceIndex(0)
 2 >Emitted(9, 2) Source(16, 2) + SourceIndex(0)
 ---
 >>>function foo3({ name }) {
@@ -294,9 +294,9 @@ sourceFile:sourceMapValidationDestructuringParameterObjectBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(12, 1) Source(18, 23) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(12, 1) Source(19, 1) + SourceIndex(0)
 2 >Emitted(12, 2) Source(19, 2) + SourceIndex(0)
 ---
 >>>foo1(robotA);

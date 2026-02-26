@@ -73,8 +73,8 @@
 +5 >            return 
 +6 >                   "this never gets used."
 +7 >                                          ;
-+8 >                                           
-+9 >                                             }
++8 >                                            
++9 >                                            }
 +1->Emitted(4, 5) Source(4, 5) + SourceIndex(0)
 +2 >Emitted(4, 8) Source(4, 8) + SourceIndex(0)
 +3 >Emitted(4, 11) Source(4, 11) + SourceIndex(0)
@@ -82,7 +82,7 @@
 +5 >Emitted(4, 20) Source(4, 20) + SourceIndex(0)
 +6 >Emitted(4, 43) Source(4, 43) + SourceIndex(0)
 +7 >Emitted(4, 44) Source(4, 44) + SourceIndex(0)
-+8 >Emitted(4, 45) Source(4, 44) + SourceIndex(0)
++8 >Emitted(4, 45) Source(4, 45) + SourceIndex(0)
 +9 >Emitted(4, 46) Source(4, 46) + SourceIndex(0)
  ---
  >>>    constructor(value) {
@@ -164,33 +164,7 @@
    >                
  2 >                return 
  3 >                       "well this looks kinda C-ish."
-@@= skipped -26, +29 lines =@@
- 1 >^^^^^^^^^^^^
- 2 >            ^
- 1 >
--  >            
--2 >            }
--1 >Emitted(10, 13) Source(11, 13) + SourceIndex(0)
-+2 >            
-+  >                        }
-+1 >Emitted(10, 13) Source(10, 55) + SourceIndex(0)
- 2 >Emitted(10, 14) Source(11, 14) + SourceIndex(0)
- ---
- >>>        };
-@@= skipped -18, +18 lines =@@
- 1 >^^^^
- 2 >    ^
- 1 >
--  >    
--2 >    }
--1 >Emitted(12, 5) Source(13, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(12, 5) Source(12, 10) + SourceIndex(0)
- 2 >Emitted(12, 6) Source(13, 6) + SourceIndex(0)
- ---
- >>>}
-@@= skipped -18, +18 lines =@@
+@@= skipped -62, +65 lines =@@
  3 >      ^
  4 >       ^^^^^^^^^
  5 >                ^
@@ -359,8 +333,8 @@
 +5 >                        return 
 +6 >                               "You win!!!!!"
 +7 >                                             
-+8 >                                              
-+9 >                                                }
++8 >                                               
++9 >                                               }
  1->Emitted(23, 17) Source(27, 17) + SourceIndex(0)
  2 >Emitted(23, 20) Source(27, 20) + SourceIndex(0)
 -3 >Emitted(23, 25) Source(27, 25) + SourceIndex(0)
@@ -374,21 +348,8 @@
 +5 >Emitted(23, 32) Source(27, 32) + SourceIndex(0)
 +6 >Emitted(23, 46) Source(27, 46) + SourceIndex(0)
 +7 >Emitted(23, 47) Source(27, 46) + SourceIndex(0)
-+8 >Emitted(23, 48) Source(27, 46) + SourceIndex(0)
++8 >Emitted(23, 48) Source(27, 47) + SourceIndex(0)
 +9 >Emitted(23, 49) Source(27, 48) + SourceIndex(0)
  ---
  >>>            };
  1 >^^^^^^^^^^^^^
-@@= skipped -64, +67 lines =@@
- 1 >^^^^
- 2 >    ^
- 1 >
--  >    
--2 >    }
--1 >Emitted(28, 5) Source(32, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(28, 5) Source(31, 25) + SourceIndex(0)
- 2 >Emitted(28, 6) Source(32, 6) + SourceIndex(0)
- ---
- >>>}

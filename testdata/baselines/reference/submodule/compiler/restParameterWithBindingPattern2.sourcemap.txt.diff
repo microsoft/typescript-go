@@ -21,8 +21,8 @@
 -11>                    ) { 
 -12>                        }
 +11>                    ) 
-+12>                      {
-+13>                         }
++12>                      { 
++13>                        }
  1 >Emitted(2, 1) Source(1, 1) + SourceIndex(0)
  2 >Emitted(2, 10) Source(1, 10) + SourceIndex(0)
  3 >Emitted(2, 11) Source(1, 11) + SourceIndex(0)
@@ -33,7 +33,7 @@
 -11>Emitted(2, 25) Source(1, 25) + SourceIndex(0)
 -12>Emitted(2, 26) Source(1, 26) + SourceIndex(0)
 +11>Emitted(2, 23) Source(1, 23) + SourceIndex(0)
-+12>Emitted(2, 25) Source(1, 24) + SourceIndex(0)
++12>Emitted(2, 25) Source(1, 25) + SourceIndex(0)
 +13>Emitted(2, 26) Source(1, 26) + SourceIndex(0)
  ---
  >>>//# sourceMappingURL=restParameterWithBindingPattern2.js.map

@@ -170,9 +170,9 @@ sourceFile:extendedEscapesForAstralsInVarsAndClasses.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(11, 5) Source(15, 35) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(11, 5) Source(16, 5) + SourceIndex(0)
 2 >Emitted(11, 6) Source(16, 6) + SourceIndex(0)
 ---
 >>>    methodA() {
@@ -213,9 +213,9 @@ sourceFile:extendedEscapesForAstralsInVarsAndClasses.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(14, 5) Source(18, 24) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(14, 5) Source(19, 5) + SourceIndex(0)
 2 >Emitted(14, 6) Source(19, 6) + SourceIndex(0)
 ---
 >>>}

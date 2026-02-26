@@ -195,9 +195,9 @@ sourceFile:sourceMapSample.ts
 2 >            ^
 3 >             ^^^^^^^^^->
 1 >: string) {
-2 >            
-  >                    }
-1 >Emitted(11, 13) Source(5, 47) + SourceIndex(0)
+  >        
+2 >            }
+1 >Emitted(11, 13) Source(6, 9) + SourceIndex(0)
 2 >Emitted(11, 14) Source(6, 10) + SourceIndex(0)
 ---
 >>>            greet() {
@@ -251,9 +251,9 @@ sourceFile:sourceMapSample.ts
 1 >^^^^^^^^^^^^
 2 >            ^
 1 >
-2 >            
-  >                    }
-1 >Emitted(14, 13) Source(9, 53) + SourceIndex(0)
+  >        
+2 >            }
+1 >Emitted(14, 13) Source(10, 9) + SourceIndex(0)
 2 >Emitted(14, 14) Source(10, 10) + SourceIndex(0)
 ---
 >>>        }
@@ -319,9 +319,9 @@ sourceFile:sourceMapSample.ts
 2 >        ^
 3 >         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >        
-  >            }
-1 >Emitted(18, 9) Source(15, 38) + SourceIndex(0)
+  >    
+2 >        }
+1 >Emitted(18, 9) Source(16, 5) + SourceIndex(0)
 2 >Emitted(18, 10) Source(16, 6) + SourceIndex(0)
 ---
 >>>        var greeter = new Greeter("Hello, world!");
@@ -616,9 +616,9 @@ sourceFile:sourceMapSample.ts
 2 >        ^
 3 >         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >        
-  >            }
-1 >Emitted(28, 9) Source(28, 25) + SourceIndex(0)
+  >    
+2 >        }
+1 >Emitted(28, 9) Source(29, 5) + SourceIndex(0)
 2 >Emitted(28, 10) Source(29, 6) + SourceIndex(0)
 ---
 >>>        var b = foo2("Hello", "World", "!");
@@ -772,8 +772,8 @@ sourceFile:sourceMapSample.ts
 10>                             ^^^
 11>                                ^^^^^^^^
 1->
-2 >    
-  >    }
+  >
+2 >    }
 3 >     
 4 >       Bar
 5 >          
@@ -817,7 +817,7 @@ sourceFile:sourceMapSample.ts
   >                                        b[j].greet();
   >                                    }
   >                                }
-1->Emitted(33, 5) Source(34, 6) + SourceIndex(0)
+1->Emitted(33, 5) Source(35, 1) + SourceIndex(0)
 2 >Emitted(33, 6) Source(35, 2) + SourceIndex(0)
 3 >Emitted(33, 8) Source(1, 15) + SourceIndex(0)
 4 >Emitted(33, 11) Source(1, 18) + SourceIndex(0)
@@ -841,7 +841,6 @@ sourceFile:sourceMapSample.ts
 9 >                      ^^^^^^^^^^^^^^^^^^^^->
 1 >
 2 >
-  >
 3 > 
 4 > namespace 
 5 >   Foo
@@ -882,7 +881,7 @@ sourceFile:sourceMapSample.ts
   >                      b[j].greet();
   >                  }
   >              }
-1 >Emitted(34, 1) Source(34, 6) + SourceIndex(0)
+1 >Emitted(34, 1) Source(35, 1) + SourceIndex(0)
 2 >Emitted(34, 2) Source(35, 1) + SourceIndex(0)
 3 >Emitted(34, 2) Source(1, 1) + SourceIndex(0)
 4 >Emitted(34, 4) Source(1, 11) + SourceIndex(0)

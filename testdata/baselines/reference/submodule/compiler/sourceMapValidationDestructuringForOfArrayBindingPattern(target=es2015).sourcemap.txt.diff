@@ -33,20 +33,7 @@
  2 >Emitted(6, 12) Source(11, 12) + SourceIndex(0)
  3 >Emitted(6, 18) Source(11, 18) + SourceIndex(0)
  4 >Emitted(6, 19) Source(11, 19) + SourceIndex(0)
-@@= skipped -29, +31 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(7, 1) Source(12, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(7, 1) Source(11, 19) + SourceIndex(0)
- 2 >Emitted(7, 2) Source(12, 2) + SourceIndex(0)
- ---
- >>>let multiRobotA = ["mower", ["mowing", ""]];
-@@= skipped -134, +134 lines =@@
+@@= skipped -163, +165 lines =@@
  1 >
  2 >^^^^^^^^^
  3 >         ^^^^^^^^^^^^^^
@@ -79,16 +66,3 @@
  2 >Emitted(12, 12) Source(18, 12) + SourceIndex(0)
  3 >Emitted(12, 23) Source(18, 23) + SourceIndex(0)
  4 >Emitted(12, 24) Source(18, 24) + SourceIndex(0)
-@@= skipped -29, +31 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(13, 1) Source(19, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(13, 1) Source(18, 24) + SourceIndex(0)
- 2 >Emitted(13, 2) Source(19, 2) + SourceIndex(0)
- ---
- >>>for (let [, nameA] of robots) {

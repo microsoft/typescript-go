@@ -73,16 +73,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -15, +15 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(10, 5) Source(16, 5) + SourceIndex(0)
 -2 >Emitted(10, 6) Source(16, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(11, 5) Source(15, 35) + SourceIndex(0)
++1 >Emitted(11, 5) Source(16, 5) + SourceIndex(0)
 +2 >Emitted(11, 6) Source(16, 6) + SourceIndex(0)
  ---
  >>>    methodA() {
@@ -103,7 +100,7 @@
  ---
  >>>        return this.𐊧;
  1->^^^^^^^^
-@@= skipped -35, +38 lines =@@
+@@= skipped -20, +23 lines =@@
  4 >                   ^
  5 >                    ^^
  6 >                      ^
@@ -130,15 +127,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -20, +20 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(13, 5) Source(19, 5) + SourceIndex(0)
 -2 >Emitted(13, 6) Source(19, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(14, 5) Source(18, 24) + SourceIndex(0)
++1 >Emitted(14, 5) Source(19, 5) + SourceIndex(0)
 +2 >Emitted(14, 6) Source(19, 6) + SourceIndex(0)
  ---
  >>>}
@@ -152,7 +147,7 @@
  ---
  >>>export var _𐊧 = new Foo().\u{102A7} + new Foo().methodA();
  1->
-@@= skipped -71, +71 lines =@@
+@@= skipped -51, +51 lines =@@
  17>                                                 methodA
  18>                                                        ()
  19>                                                          ;

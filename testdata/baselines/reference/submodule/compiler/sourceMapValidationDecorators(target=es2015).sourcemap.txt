@@ -108,9 +108,9 @@ sourceFile:sourceMapValidationDecorators.ts
   >      @ParameterDecorator1 
   >      @ParameterDecorator2(30) 
   >      ...b: string[]) {
-2 >    
-  >        }
-1 >Emitted(15, 5) Source(18, 24) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(15, 5) Source(19, 5) + SourceIndex(0)
 2 >Emitted(15, 6) Source(19, 6) + SourceIndex(0)
 ---
 >>>    greet() {
@@ -167,9 +167,9 @@ sourceFile:sourceMapValidationDecorators.ts
 2 >    ^
 3 >     ^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(18, 5) Source(24, 49) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(18, 5) Source(25, 5) + SourceIndex(0)
 2 >Emitted(18, 6) Source(25, 6) + SourceIndex(0)
 ---
 >>>    x;
@@ -267,9 +267,9 @@ sourceFile:sourceMapValidationDecorators.ts
 2 >    ^
 3 >     ^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(23, 5) Source(39, 30) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(23, 5) Source(40, 5) + SourceIndex(0)
 2 >Emitted(23, 6) Source(40, 6) + SourceIndex(0)
 ---
 >>>    get greetings() {
@@ -317,9 +317,9 @@ sourceFile:sourceMapValidationDecorators.ts
 2 >    ^
 3 >     ^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(26, 5) Source(45, 30) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(26, 5) Source(46, 5) + SourceIndex(0)
 2 >Emitted(26, 6) Source(46, 6) + SourceIndex(0)
 ---
 >>>    set greetings(greetings) {
@@ -376,9 +376,9 @@ sourceFile:sourceMapValidationDecorators.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(29, 5) Source(52, 35) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(29, 5) Source(53, 5) + SourceIndex(0)
 2 >Emitted(29, 6) Source(53, 6) + SourceIndex(0)
 ---
 >>>};

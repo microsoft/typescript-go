@@ -31,16 +31,3 @@
    >    
  2 >    var 
  3 >        x
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(4, 1) Source(3, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(4, 1) Source(2, 18) + SourceIndex(0)
- 2 >Emitted(4, 2) Source(3, 2) + SourceIndex(0)
- ---
- >>>//# sourceMappingURL=sourceMapValidationVarInDownLevelGenerator.js.map

@@ -64,16 +64,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -15, +15 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(4, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(4, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 25) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -95,7 +92,7 @@
  ---
  >>>        this.x = 42;
  1->^^^^^^^^
-@@= skipped -37, +40 lines =@@
+@@= skipped -22, +25 lines =@@
  5 >              ^^^
  6 >                 ^^
  7 >                   ^
@@ -125,15 +122,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -14, +14 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(7, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(7, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 21) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -146,7 +141,7 @@
  ---
  >>>//# sourceMappingURL=IdentifierNameWithEscape1.js.map===================================================================
  JsFile: IdentifierNameWithEscape2.js
-@@= skipped -48, +48 lines =@@
+@@= skipped -34, +34 lines =@@
  3 >Emitted(1, 14) Source(1, 14) + SourceIndex(0)
  4 >Emitted(1, 39) Source(1, 39) + SourceIndex(0)
  ---
@@ -210,16 +205,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -15, +15 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(4, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(4, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -241,7 +233,7 @@
  ---
  >>>        this.xx = 42;
  1->^^^^^^^^
-@@= skipped -37, +40 lines =@@
+@@= skipped -22, +25 lines =@@
  5 >               ^^^
  6 >                  ^^
  7 >                    ^
@@ -271,15 +263,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -14, +14 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(7, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(7, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -292,7 +282,7 @@
  ---
  >>>//# sourceMappingURL=IdentifierNameWithEscape2.js.map===================================================================
  JsFile: IdentifierNameWithExtendedEscape1.js
-@@= skipped -48, +48 lines =@@
+@@= skipped -34, +34 lines =@@
  3 >Emitted(1, 14) Source(1, 14) + SourceIndex(0)
  4 >Emitted(1, 47) Source(1, 47) + SourceIndex(0)
  ---
@@ -356,16 +346,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -15, +15 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(4, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(4, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 25) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -387,7 +374,7 @@
  ---
  >>>        this.x = 42;
  1->^^^^^^^^
-@@= skipped -37, +40 lines =@@
+@@= skipped -22, +25 lines =@@
  5 >              ^^^
  6 >                 ^^
  7 >                   ^
@@ -417,15 +404,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -14, +14 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(7, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(7, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 21) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -438,7 +423,7 @@
  ---
  >>>//# sourceMappingURL=IdentifierNameWithExtendedEscape1.js.map===================================================================
  JsFile: IdentifierNameWithExtendedEscape2.js
-@@= skipped -48, +48 lines =@@
+@@= skipped -34, +34 lines =@@
  3 >Emitted(1, 14) Source(1, 14) + SourceIndex(0)
  4 >Emitted(1, 47) Source(1, 47) + SourceIndex(0)
  ---
@@ -502,16 +487,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -15, +15 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(4, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(4, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -533,7 +515,7 @@
  ---
  >>>        this.xx = 42;
  1->^^^^^^^^
-@@= skipped -37, +40 lines =@@
+@@= skipped -22, +25 lines =@@
  5 >               ^^^
  6 >                  ^^
  7 >                    ^
@@ -563,15 +545,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -14, +14 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(7, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(7, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -584,7 +564,7 @@
  ---
  >>>//# sourceMappingURL=IdentifierNameWithExtendedEscape2.js.map===================================================================
  JsFile: PrivateIdentifierNameWithEscape1.js
-@@= skipped -34, +34 lines =@@
+@@= skipped -20, +20 lines =@@
  emittedFile:PrivateIdentifierNameWithEscape1.js
  sourceFile:PrivateIdentifierNameWithEscape1.ts
  -------------------------------------------------------------------
@@ -701,16 +681,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -56, +60 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(12, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(12, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -777,15 +754,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -44, +47 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(15, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(15, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -801,7 +776,7 @@
  >>>//# sourceMappingURL=PrivateIdentifierNameWithEscape1.js.map===================================================================
  JsFile: PrivateIdentifierNameWithEscape2.js
  mapUrl: PrivateIdentifierNameWithEscape2.js.map
-@@= skipped -121, +127 lines =@@
+@@= skipped -21, +20 lines =@@
  emittedFile:PrivateIdentifierNameWithEscape2.js
  sourceFile:PrivateIdentifierNameWithEscape2.ts
  -------------------------------------------------------------------
@@ -918,16 +893,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -56, +60 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(12, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(12, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 27) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -994,15 +966,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -44, +47 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(15, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(15, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 23) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -1018,7 +988,7 @@
  >>>//# sourceMappingURL=PrivateIdentifierNameWithEscape2.js.map===================================================================
  JsFile: PrivateIdentifierNameWithExtendedEscape1.js
  mapUrl: PrivateIdentifierNameWithExtendedEscape1.js.map
-@@= skipped -121, +127 lines =@@
+@@= skipped -21, +20 lines =@@
  emittedFile:PrivateIdentifierNameWithExtendedEscape1.js
  sourceFile:PrivateIdentifierNameWithExtendedEscape1.ts
  -------------------------------------------------------------------
@@ -1135,16 +1105,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -56, +60 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(12, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(12, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -1211,15 +1178,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -44, +47 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(15, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(15, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}
@@ -1235,7 +1200,7 @@
  >>>//# sourceMappingURL=PrivateIdentifierNameWithExtendedEscape1.js.map===================================================================
  JsFile: PrivateIdentifierNameWithExtendedEscape2.js
  mapUrl: PrivateIdentifierNameWithExtendedEscape2.js.map
-@@= skipped -121, +127 lines =@@
+@@= skipped -21, +20 lines =@@
  emittedFile:PrivateIdentifierNameWithExtendedEscape2.js
  sourceFile:PrivateIdentifierNameWithExtendedEscape2.ts
  -------------------------------------------------------------------
@@ -1352,16 +1317,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^->
+@@= skipped -56, +60 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(12, 5) Source(6, 5) + SourceIndex(0)
 -2 >Emitted(12, 6) Source(6, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(5, 27) + SourceIndex(0)
++1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 +2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
  ---
  >>>    doThing() {
@@ -1428,15 +1390,13 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
+@@= skipped -44, +47 lines =@@
  1 >
--  >    
--2 >    }
+   >    
+ 2 >    }
 -1 >Emitted(15, 5) Source(10, 5) + SourceIndex(0)
 -2 >Emitted(15, 6) Source(10, 6) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 23) + SourceIndex(0)
++1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 +2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
  ---
  >>>}

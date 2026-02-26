@@ -213,12 +213,11 @@
  2 >        ^
  3 >         ^^^^^^^^^^^^^^^^^^->
 -1 >) { 
--2 >        }
++1 >: number) { 
+ 2 >        }
 -1 >Emitted(11, 9) Source(12, 59) + SourceIndex(0)
 -2 >Emitted(11, 10) Source(12, 60) + SourceIndex(0)
-+1 >: number) {
-+2 >         }
-+1 >Emitted(13, 9) Source(12, 58) + SourceIndex(0)
++1 >Emitted(13, 9) Source(12, 59) + SourceIndex(0)
 +2 >Emitted(13, 10) Source(12, 60) + SourceIndex(0)
  ---
  >>>        // Instance member
@@ -365,8 +364,8 @@
 +24>                                                                     y
 +25>                                                                      )
 +26>                                                                       ;
-+27>                                                                        
-+28>                                                                          }
++27>                                                                         
++28>                                                                         }
 +1->Emitted(15, 9) Source(15, 9) + SourceIndex(0)
 +2 >Emitted(15, 16) Source(15, 16) + SourceIndex(0)
 +3 >Emitted(15, 19) Source(15, 19) + SourceIndex(0)
@@ -393,7 +392,7 @@
 +24>Emitted(15, 71) Source(15, 71) + SourceIndex(0)
 +25>Emitted(15, 72) Source(15, 72) + SourceIndex(0)
 +26>Emitted(15, 73) Source(15, 73) + SourceIndex(0)
-+27>Emitted(15, 74) Source(15, 73) + SourceIndex(0)
++27>Emitted(15, 74) Source(15, 74) + SourceIndex(0)
 +28>Emitted(15, 75) Source(15, 75) + SourceIndex(0)
  ---
 ->>>    }
@@ -590,14 +589,12 @@
  2 >    ^
  3 >     ^^^^^^^^^^^^^^^^^->
 -1 >() {
--  >    
--2 >    }
++1 >{
+   >    
+ 2 >    }
 -1 >Emitted(21, 5) Source(25, 5) + SourceIndex(0)
 -2 >Emitted(21, 6) Source(25, 6) + SourceIndex(0)
-+1 >{
-+2 >    
-+  >        }
-+1 >Emitted(23, 5) Source(24, 28) + SourceIndex(0)
++1 >Emitted(23, 5) Source(25, 5) + SourceIndex(0)
 +2 >Emitted(23, 6) Source(25, 6) + SourceIndex(0)
  ---
  >>>    Shapes.foo = foo;
@@ -669,18 +666,7 @@
  ---
  >>>})(Shapes || (Shapes = {}));
  1->
-@@= skipped -16, +16 lines =@@
- 6 >              ^^^^^^
- 7 >                    ^^^^^^^^
- 1->
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   Shapes
- 5 >         
-@@= skipped -31, +31 lines =@@
+@@= skipped -47, +47 lines =@@
    >                        */
    >                        var b = 10;
    >                    }
@@ -691,7 +677,7 @@
 -5 >Emitted(27, 15) Source(7, 11) + SourceIndex(0)
 -6 >Emitted(27, 21) Source(7, 17) + SourceIndex(0)
 -7 >Emitted(27, 29) Source(31, 2) + SourceIndex(0)
-+1->Emitted(29, 1) Source(30, 16) + SourceIndex(0)
++1->Emitted(29, 1) Source(31, 1) + SourceIndex(0)
 +2 >Emitted(29, 2) Source(31, 2) + SourceIndex(0)
 +3 >Emitted(29, 4) Source(7, 11) + SourceIndex(0)
 +4 >Emitted(29, 10) Source(7, 17) + SourceIndex(0)

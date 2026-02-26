@@ -86,27 +86,7 @@
  ---
  >>>})(m1 || (m1 = {}));
  1->
-@@= skipped -23, +26 lines =@@
- 6 >          ^^
- 7 >            ^^^^^^^^
- 1->
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   m1
- 5 >     
-@@= skipped -11, +11 lines =@@
-   >                export class c {
-   >                }
-   >            }
--1->Emitted(8, 1) Source(5, 1) + SourceIndex(0)
-+1->Emitted(8, 1) Source(4, 6) + SourceIndex(0)
- 2 >Emitted(8, 2) Source(5, 2) + SourceIndex(0)
- 3 >Emitted(8, 4) Source(1, 11) + SourceIndex(0)
- 4 >Emitted(8, 6) Source(1, 13) + SourceIndex(0)
-@@= skipped -12, +12 lines =@@
+@@= skipped -46, +49 lines =@@
  1 >
  2 >^^^^^^^^^^^
  3 >           ^^
@@ -134,23 +114,3 @@
    >    
  2 >    var 
  3 >        b
-@@= skipped -32, +32 lines =@@
- 7 >            ^^^^^^^^
- 8 >                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
- 4 >   m1
- 5 >     
-@@= skipped -9, +9 lines =@@
- 7 >             {
-   >                var b = new m1.c();
-   >            }
--1 >Emitted(11, 1) Source(8, 1) + SourceIndex(0)
-+1 >Emitted(11, 1) Source(7, 24) + SourceIndex(0)
- 2 >Emitted(11, 2) Source(8, 2) + SourceIndex(0)
- 3 >Emitted(11, 4) Source(6, 11) + SourceIndex(0)
- 4 >Emitted(11, 6) Source(6, 13) + SourceIndex(0)

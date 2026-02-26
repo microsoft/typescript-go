@@ -33,20 +33,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(6, 1) Source(13, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(6, 1) Source(12, 24) + SourceIndex(0)
- 2 >Emitted(6, 2) Source(13, 2) + SourceIndex(0)
- ---
- >>>function foo2({ name: nameB, skill: skillB }) {
-@@= skipped -19, +19 lines =@@
+@@= skipped -42, +42 lines =@@
  11>                                  ^^
  12>                                    ^^^^^^
  13>                                          ^^
@@ -79,20 +66,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(9, 1) Source(16, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(9, 1) Source(15, 24) + SourceIndex(0)
- 2 >Emitted(9, 2) Source(16, 2) + SourceIndex(0)
- ---
- >>>function foo3({ name }) {
-@@= skipped -13, +13 lines =@@
+@@= skipped -36, +36 lines =@@
  5 >              ^^
  6 >                ^^^^
  7 >                    ^^
@@ -139,16 +113,3 @@
  2 >Emitted(11, 12) Source(18, 12) + SourceIndex(0)
  3 >Emitted(11, 13) Source(18, 13) + SourceIndex(0)
  4 >Emitted(11, 16) Source(18, 16) + SourceIndex(0)
-@@= skipped -14, +14 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(12, 1) Source(19, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(12, 1) Source(18, 23) + SourceIndex(0)
- 2 >Emitted(12, 2) Source(19, 2) + SourceIndex(0)
- ---
- >>>foo1(robotA);

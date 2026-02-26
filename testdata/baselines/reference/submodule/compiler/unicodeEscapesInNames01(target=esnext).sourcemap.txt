@@ -283,9 +283,9 @@ sourceFile:IdentifierNameWithEscape1.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 25) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -330,9 +330,9 @@ sourceFile:IdentifierNameWithEscape1.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 21) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -419,9 +419,9 @@ sourceFile:IdentifierNameWithEscape2.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -466,9 +466,9 @@ sourceFile:IdentifierNameWithEscape2.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -555,9 +555,9 @@ sourceFile:IdentifierNameWithExtendedEscape1.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 25) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -602,9 +602,9 @@ sourceFile:IdentifierNameWithExtendedEscape1.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 21) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -691,9 +691,9 @@ sourceFile:IdentifierNameWithExtendedEscape2.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -738,9 +738,9 @@ sourceFile:IdentifierNameWithExtendedEscape2.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -827,9 +827,9 @@ sourceFile:PrivateIdentifierNameWithEscape1.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -874,9 +874,9 @@ sourceFile:PrivateIdentifierNameWithEscape1.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -963,9 +963,9 @@ sourceFile:PrivateIdentifierNameWithEscape2.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 27) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -1010,9 +1010,9 @@ sourceFile:PrivateIdentifierNameWithEscape2.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 23) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -1099,9 +1099,9 @@ sourceFile:PrivateIdentifierNameWithExtendedEscape1.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 26) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -1146,9 +1146,9 @@ sourceFile:PrivateIdentifierNameWithExtendedEscape1.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 22) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}
@@ -1235,9 +1235,9 @@ sourceFile:PrivateIdentifierNameWithExtendedEscape2.ts
 2 >    ^
 3 >     ^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(5, 5) Source(5, 27) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(5, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(5, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    doThing() {
@@ -1282,9 +1282,9 @@ sourceFile:PrivateIdentifierNameWithExtendedEscape2.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 23) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}

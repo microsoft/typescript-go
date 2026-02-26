@@ -312,8 +312,8 @@ sourceFile:recursiveClassReferenceTest.ts
 5 >                              return 
 6 >                                     "yo"
 7 >                                         ;
-8 >                                          
-9 >                                            }
+8 >                                           
+9 >                                           }
 1->Emitted(13, 21) Source(35, 10) + SourceIndex(0)
 2 >Emitted(13, 26) Source(35, 15) + SourceIndex(0)
 3 >Emitted(13, 29) Source(35, 18) + SourceIndex(0)
@@ -321,7 +321,7 @@ sourceFile:recursiveClassReferenceTest.ts
 5 >Emitted(13, 38) Source(35, 27) + SourceIndex(0)
 6 >Emitted(13, 42) Source(35, 31) + SourceIndex(0)
 7 >Emitted(13, 43) Source(35, 32) + SourceIndex(0)
-8 >Emitted(13, 44) Source(35, 32) + SourceIndex(0)
+8 >Emitted(13, 44) Source(35, 33) + SourceIndex(0)
 9 >Emitted(13, 45) Source(35, 34) + SourceIndex(0)
 ---
 >>>                    run(Thing) {
@@ -364,9 +364,9 @@ sourceFile:recursiveClassReferenceTest.ts
 1 >^^^^^^^^^^^^^^^^^^^^
 2 >                    ^
 1 >
-2 >                    
-  >                    		}
-1 >Emitted(16, 21) Source(39, 16) + SourceIndex(0)
+  >		
+2 >                    }
+1 >Emitted(16, 21) Source(40, 3) + SourceIndex(0)
 2 >Emitted(16, 22) Source(40, 4) + SourceIndex(0)
 ---
 >>>                }
@@ -415,8 +415,8 @@ sourceFile:recursiveClassReferenceTest.ts
 10>                                               ^^^^
 11>                                                   ^^^^^^^^
 1->
-2 >            
-  >            }
+  >
+2 >            }
 3 >             
 4 >               Find
 5 >                   
@@ -436,7 +436,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                                   		}
   >                                                   	}
   >                                                   }
-1->Emitted(19, 13) Source(41, 3) + SourceIndex(0)
+1->Emitted(19, 13) Source(42, 1) + SourceIndex(0)
 2 >Emitted(19, 14) Source(42, 2) + SourceIndex(0)
 3 >Emitted(19, 16) Source(32, 32) + SourceIndex(0)
 4 >Emitted(19, 20) Source(32, 36) + SourceIndex(0)
@@ -464,7 +464,6 @@ sourceFile:recursiveClassReferenceTest.ts
 13>                                                          ^->
 1 >
 2 >        
-  >        
 3 >         
 4 >         // Scenario 1: Test reqursive function call with "this" parameter
   >         // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -516,7 +515,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                                  		}
   >                                                  	}
   >                                                  }
-1 >Emitted(20, 9) Source(41, 3) + SourceIndex(0)
+1 >Emitted(20, 9) Source(42, 1) + SourceIndex(0)
 2 >Emitted(20, 10) Source(42, 1) + SourceIndex(0)
 3 >Emitted(20, 10) Source(1, 1) + SourceIndex(0)
 4 >Emitted(20, 12) Source(32, 26) + SourceIndex(0)
@@ -544,7 +543,6 @@ sourceFile:recursiveClassReferenceTest.ts
 12>                                                  ^^^^^^^^
 1->
 2 >    
-  >    
 3 >     
 4 >     // Scenario 1: Test reqursive function call with "this" parameter
   >     // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -596,7 +594,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                                  		}
   >                                                  	}
   >                                                  }
-1->Emitted(21, 5) Source(41, 3) + SourceIndex(0)
+1->Emitted(21, 5) Source(42, 1) + SourceIndex(0)
 2 >Emitted(21, 6) Source(42, 1) + SourceIndex(0)
 3 >Emitted(21, 6) Source(1, 1) + SourceIndex(0)
 4 >Emitted(21, 8) Source(32, 18) + SourceIndex(0)
@@ -620,7 +618,6 @@ sourceFile:recursiveClassReferenceTest.ts
 8 >                    ^^^^^^^^
 1 >
 2 >
-  >
 3 > 
 4 > // Scenario 1: Test reqursive function call with "this" parameter
   > // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -668,7 +665,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                    		}
   >                    	}
   >                    }
-1 >Emitted(22, 1) Source(41, 3) + SourceIndex(0)
+1 >Emitted(22, 1) Source(42, 1) + SourceIndex(0)
 2 >Emitted(22, 2) Source(42, 1) + SourceIndex(0)
 3 >Emitted(22, 2) Source(1, 1) + SourceIndex(0)
 4 >Emitted(22, 4) Source(32, 11) + SourceIndex(0)
@@ -1050,9 +1047,9 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >                ^
 3 >                 ^^^^^^^^^^^^^^->
 1 >
-2 >                
-  >                		}
-1 >Emitted(38, 17) Source(52, 46) + SourceIndex(0)
+  >		
+2 >                }
+1 >Emitted(38, 17) Source(53, 3) + SourceIndex(0)
 2 >Emitted(38, 18) Source(53, 4) + SourceIndex(0)
 ---
 >>>                getDomNode() {
@@ -1089,9 +1086,9 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >                ^
 3 >                 ^^^^^^^^^^^->
 1 >
-2 >                
-  >                		}
-1 >Emitted(41, 17) Source(56, 19) + SourceIndex(0)
+  >		
+2 >                }
+1 >Emitted(41, 17) Source(57, 3) + SourceIndex(0)
 2 >Emitted(41, 18) Source(57, 4) + SourceIndex(0)
 ---
 >>>                destroy() {
@@ -1111,10 +1108,10 @@ sourceFile:recursiveClassReferenceTest.ts
 1 >^^^^^^^^^^^^^^^^
 2 >                ^
 1 >{
-2 >                
-  >                
-  >                		}
-1 >Emitted(43, 17) Source(59, 21) + SourceIndex(0)
+  >
+  >		
+2 >                }
+1 >Emitted(43, 17) Source(61, 3) + SourceIndex(0)
 2 >Emitted(43, 18) Source(61, 4) + SourceIndex(0)
 ---
 >>>            }
@@ -1174,8 +1171,8 @@ sourceFile:recursiveClassReferenceTest.ts
 10>                                             ^^^^^^^
 11>                                                    ^^^^^^^^
 1->
-2 >        
-  >        }
+  >
+2 >        }
 3 >         
 4 >           Widgets
 5 >                  
@@ -1205,7 +1202,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                                    
   >                                                    	}
   >                                                    }
-1->Emitted(46, 9) Source(63, 3) + SourceIndex(0)
+1->Emitted(46, 9) Source(64, 1) + SourceIndex(0)
 2 >Emitted(46, 10) Source(64, 2) + SourceIndex(0)
 3 >Emitted(46, 12) Source(44, 24) + SourceIndex(0)
 4 >Emitted(46, 19) Source(44, 31) + SourceIndex(0)
@@ -1232,7 +1229,6 @@ sourceFile:recursiveClassReferenceTest.ts
 12>                                            ^^^^^^^^
 1 >
 2 >    
-  >    
 3 >     
 4 >     // Scenario 1: Test reqursive function call with "this" parameter
   >     // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -1306,7 +1302,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                            
   >                                            	}
   >                                            }
-1 >Emitted(47, 5) Source(63, 3) + SourceIndex(0)
+1 >Emitted(47, 5) Source(64, 1) + SourceIndex(0)
 2 >Emitted(47, 6) Source(64, 1) + SourceIndex(0)
 3 >Emitted(47, 6) Source(1, 1) + SourceIndex(0)
 4 >Emitted(47, 8) Source(44, 18) + SourceIndex(0)
@@ -1330,7 +1326,6 @@ sourceFile:recursiveClassReferenceTest.ts
 8 >                    ^^^^^^^^
 1 >
 2 >
-  >
 3 > 
 4 > // Scenario 1: Test reqursive function call with "this" parameter
   > // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -1400,7 +1395,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                    
   >                    	}
   >                    }
-1 >Emitted(48, 1) Source(63, 3) + SourceIndex(0)
+1 >Emitted(48, 1) Source(64, 1) + SourceIndex(0)
 2 >Emitted(48, 2) Source(64, 1) + SourceIndex(0)
 3 >Emitted(48, 2) Source(1, 1) + SourceIndex(0)
 4 >Emitted(48, 4) Source(44, 11) + SourceIndex(0)
@@ -1893,9 +1888,9 @@ sourceFile:recursiveClassReferenceTest.ts
 1 >^^^^^^^^^^^^^^^^^^^^
 2 >                    ^
 3 >                     ^^^^^^^^^->
-1 >: IMode) {
-2 >                     }
-1 >Emitted(63, 21) Source(79, 43) + SourceIndex(0)
+1 >: IMode) { 
+2 >                    }
+1 >Emitted(63, 21) Source(79, 44) + SourceIndex(0)
 2 >Emitted(63, 22) Source(79, 45) + SourceIndex(0)
 ---
 >>>                    clone() {
@@ -1931,9 +1926,9 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >                    ^
 3 >                     ^^^^^^^^^^^^^^^->
 1 >
-2 >                    
-  >                    		}
-1 >Emitted(66, 21) Source(81, 16) + SourceIndex(0)
+  >		
+2 >                    }
+1 >Emitted(66, 21) Source(82, 3) + SourceIndex(0)
 2 >Emitted(66, 22) Source(82, 4) + SourceIndex(0)
 ---
 >>>                    equals(other) {
@@ -1982,9 +1977,9 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >                    ^
 3 >                     ^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >                    
-  >                    		}
-1 >Emitted(69, 21) Source(85, 26) + SourceIndex(0)
+  >		
+2 >                    }
+1 >Emitted(69, 21) Source(86, 3) + SourceIndex(0)
 2 >Emitted(69, 22) Source(86, 4) + SourceIndex(0)
 ---
 >>>                    getMode() { return mode; }
@@ -2006,8 +2001,8 @@ sourceFile:recursiveClassReferenceTest.ts
 5 >                                return 
 6 >                                       mode
 7 >                                           ;
-8 >                                            
-9 >                                              }
+8 >                                             
+9 >                                             }
 1->Emitted(70, 21) Source(88, 10) + SourceIndex(0)
 2 >Emitted(70, 28) Source(88, 17) + SourceIndex(0)
 3 >Emitted(70, 31) Source(88, 27) + SourceIndex(0)
@@ -2015,7 +2010,7 @@ sourceFile:recursiveClassReferenceTest.ts
 5 >Emitted(70, 40) Source(88, 36) + SourceIndex(0)
 6 >Emitted(70, 44) Source(88, 40) + SourceIndex(0)
 7 >Emitted(70, 45) Source(88, 41) + SourceIndex(0)
-8 >Emitted(70, 46) Source(88, 41) + SourceIndex(0)
+8 >Emitted(70, 46) Source(88, 42) + SourceIndex(0)
 9 >Emitted(70, 47) Source(88, 43) + SourceIndex(0)
 ---
 >>>                }
@@ -2128,9 +2123,9 @@ sourceFile:recursiveClassReferenceTest.ts
 1 >^^^^^^^^^^^^^^^^^^^^
 2 >                    ^
 1 >
-2 >                    
-  >                    		}
-1 >Emitted(77, 21) Source(95, 27) + SourceIndex(0)
+  >		
+2 >                    }
+1 >Emitted(77, 21) Source(96, 3) + SourceIndex(0)
 2 >Emitted(77, 22) Source(96, 4) + SourceIndex(0)
 ---
 >>>                }
@@ -2181,8 +2176,8 @@ sourceFile:recursiveClassReferenceTest.ts
 10>                                                             ^^^^^^^^^
 11>                                                                      ^^^^^^^^
 1->
-2 >            
-  >            }
+  >
+2 >            }
 3 >             
 4 >               PlainText
 5 >                        
@@ -2216,7 +2211,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                                                      
   >                                                                      	}
   >                                                                      }
-1->Emitted(80, 13) Source(99, 3) + SourceIndex(0)
+1->Emitted(80, 13) Source(100, 1) + SourceIndex(0)
 2 >Emitted(80, 14) Source(100, 2) + SourceIndex(0)
 3 >Emitted(80, 16) Source(76, 34) + SourceIndex(0)
 4 >Emitted(80, 25) Source(76, 43) + SourceIndex(0)
@@ -2243,7 +2238,6 @@ sourceFile:recursiveClassReferenceTest.ts
 12>                                                          ^^^^^^^^
 1 >
 2 >        
-  >        
 3 >         
 4 >         // Scenario 1: Test reqursive function call with "this" parameter
   >         // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -2353,7 +2347,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                                          
   >                                                          	}
   >                                                          }
-1 >Emitted(81, 9) Source(99, 3) + SourceIndex(0)
+1 >Emitted(81, 9) Source(100, 1) + SourceIndex(0)
 2 >Emitted(81, 10) Source(100, 1) + SourceIndex(0)
 3 >Emitted(81, 10) Source(1, 1) + SourceIndex(0)
 4 >Emitted(81, 12) Source(76, 24) + SourceIndex(0)
@@ -2381,7 +2375,6 @@ sourceFile:recursiveClassReferenceTest.ts
 12>                                            ^^^^^^^^
 1 >
 2 >    
-  >    
 3 >     
 4 >     // Scenario 1: Test reqursive function call with "this" parameter
   >     // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -2491,7 +2484,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                                            
   >                                            	}
   >                                            }
-1 >Emitted(82, 5) Source(99, 3) + SourceIndex(0)
+1 >Emitted(82, 5) Source(100, 1) + SourceIndex(0)
 2 >Emitted(82, 6) Source(100, 1) + SourceIndex(0)
 3 >Emitted(82, 6) Source(1, 1) + SourceIndex(0)
 4 >Emitted(82, 8) Source(76, 18) + SourceIndex(0)
@@ -2516,7 +2509,6 @@ sourceFile:recursiveClassReferenceTest.ts
 9 >                            ^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
 2 >
-  >
 3 > 
 4 > // Scenario 1: Test reqursive function call with "this" parameter
   > // Scenario 2: Test recursive function call with cast and "this" parameter
@@ -2622,7 +2614,7 @@ sourceFile:recursiveClassReferenceTest.ts
   >                    
   >                    	}
   >                    }
-1 >Emitted(83, 1) Source(99, 3) + SourceIndex(0)
+1 >Emitted(83, 1) Source(100, 1) + SourceIndex(0)
 2 >Emitted(83, 2) Source(100, 1) + SourceIndex(0)
 3 >Emitted(83, 2) Source(1, 1) + SourceIndex(0)
 4 >Emitted(83, 4) Source(76, 11) + SourceIndex(0)

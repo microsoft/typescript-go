@@ -85,9 +85,9 @@ sourceFile:out-flag.ts
 2 >    ^
 3 >     ^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(8, 5) Source(9, 19) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>    SetCount(value) {
@@ -123,10 +123,9 @@ sourceFile:out-flag.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >            //
-  >        }
-1 >Emitted(11, 5) Source(13, 6) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(11, 5) Source(15, 5) + SourceIndex(0)
 2 >Emitted(11, 6) Source(15, 6) + SourceIndex(0)
 ---
 >>>}

@@ -61,9 +61,9 @@ sourceFile:test.tsx
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(7, 5) Source(9, 24) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(7, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(7, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>}

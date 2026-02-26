@@ -68,9 +68,9 @@ sourceFile:sourceMapValidationClass.ts
 2 >    ^
 3 >     ^^^^^^^^^->
 1 >: string, ...b: string[]) {
-2 >    
-  >        }
-1 >Emitted(6, 5) Source(2, 59) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(6, 5) Source(3, 5) + SourceIndex(0)
 2 >Emitted(6, 6) Source(3, 6) + SourceIndex(0)
 ---
 >>>    greet() {
@@ -124,9 +124,9 @@ sourceFile:sourceMapValidationClass.ts
 2 >    ^
 3 >     ^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(9, 5) Source(5, 49) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(9, 5) Source(6, 5) + SourceIndex(0)
 2 >Emitted(9, 6) Source(6, 6) + SourceIndex(0)
 ---
 >>>    x;
@@ -199,9 +199,9 @@ sourceFile:sourceMapValidationClass.ts
 2 >    ^
 3 >     ^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(14, 5) Source(10, 30) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(14, 5) Source(11, 5) + SourceIndex(0)
 2 >Emitted(14, 6) Source(11, 6) + SourceIndex(0)
 ---
 >>>    get greetings() {
@@ -246,9 +246,9 @@ sourceFile:sourceMapValidationClass.ts
 2 >    ^
 3 >     ^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(17, 5) Source(13, 30) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(17, 5) Source(14, 5) + SourceIndex(0)
 2 >Emitted(17, 6) Source(14, 6) + SourceIndex(0)
 ---
 >>>    set greetings(greetings) {
@@ -301,9 +301,9 @@ sourceFile:sourceMapValidationClass.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(20, 5) Source(16, 35) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(20, 5) Source(17, 5) + SourceIndex(0)
 2 >Emitted(20, 6) Source(17, 6) + SourceIndex(0)
 ---
 >>>}

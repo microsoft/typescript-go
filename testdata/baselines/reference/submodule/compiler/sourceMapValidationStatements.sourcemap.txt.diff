@@ -121,20 +121,7 @@
  ---
  >>>            x *= 2;
  1->^^^^^^^^^^^^
-@@= skipped -411, +405 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(81, 1) Source(78, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(81, 1) Source(77, 12) + SourceIndex(0)
- 2 >Emitted(81, 2) Source(78, 2) + SourceIndex(0)
- ---
- >>>var b = function () {
-@@= skipped -10, +10 lines =@@
+@@= skipped -421, +415 lines =@@
  2 >^^^^
  3 >    ^
  4 >     ^^^
@@ -173,17 +160,3 @@
  2 >Emitted(83, 9) Source(80, 9) + SourceIndex(0)
  3 >Emitted(83, 10) Source(80, 10) + SourceIndex(0)
  4 >Emitted(83, 13) Source(80, 13) + SourceIndex(0)
-@@= skipped -62, +64 lines =@@
- 3 > ^
- 4 >  ^^^->
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > ;
--1 >Emitted(85, 1) Source(82, 1) + SourceIndex(0)
-+1 >Emitted(85, 1) Source(81, 15) + SourceIndex(0)
- 2 >Emitted(85, 2) Source(82, 2) + SourceIndex(0)
- 3 >Emitted(85, 3) Source(82, 3) + SourceIndex(0)
- ---

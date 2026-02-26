@@ -47,20 +47,7 @@
  2 >Emitted(4, 12) Source(8, 12) + SourceIndex(0)
  3 >Emitted(4, 13) Source(8, 13) + SourceIndex(0)
  4 >Emitted(4, 16) Source(8, 16) + SourceIndex(0)
-@@= skipped -14, +14 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(5, 1) Source(9, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(5, 1) Source(8, 24) + SourceIndex(0)
- 2 >Emitted(5, 2) Source(9, 2) + SourceIndex(0)
- ---
- >>>function foo2([numberB]) {
-@@= skipped -13, +13 lines =@@
+@@= skipped -27, +27 lines =@@
  5 >              ^
  6 >               ^^^^^^^
  7 >                      ^
@@ -95,20 +82,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(8, 1) Source(13, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(8, 1) Source(12, 26) + SourceIndex(0)
- 2 >Emitted(8, 2) Source(13, 2) + SourceIndex(0)
- ---
- >>>function foo3([numberA2, nameA2, skillA2]) {
-@@= skipped -17, +17 lines =@@
+@@= skipped -40, +40 lines =@@
  9 >                               ^^
  10>                                 ^^^^^^^
  11>                                        ^
@@ -141,20 +115,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(11, 1) Source(17, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(11, 1) Source(16, 25) + SourceIndex(0)
- 2 >Emitted(11, 2) Source(17, 2) + SourceIndex(0)
- ---
- >>>function foo4([numberA3, ...robotAInfo]) {
-@@= skipped -16, +16 lines =@@
+@@= skipped -39, +39 lines =@@
  8 >                         ^^^
  9 >                            ^^^^^^^^^^
  10>                                      ^
@@ -187,16 +148,3 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(14, 1) Source(21, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(14, 1) Source(20, 29) + SourceIndex(0)
- 2 >Emitted(14, 2) Source(21, 2) + SourceIndex(0)
- ---
- >>>foo1(robotA);

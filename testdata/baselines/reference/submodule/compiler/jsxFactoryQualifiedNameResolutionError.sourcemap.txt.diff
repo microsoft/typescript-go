@@ -52,20 +52,7 @@
    >        
  2 >        return 
  3 >               <div />
-@@= skipped -41, +40 lines =@@
- 1 >^^^^
- 2 >    ^
- 1 >
--  >    
--2 >    }
--1 >Emitted(7, 5) Source(10, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(7, 5) Source(9, 24) + SourceIndex(0)
- 2 >Emitted(7, 6) Source(10, 6) + SourceIndex(0)
- ---
- >>>}
-@@= skipped -13, +13 lines =@@
+@@= skipped -54, +53 lines =@@
  1 >Emitted(8, 2) Source(11, 2) + SourceIndex(0)
  ---
  >>>exports.AppComponent = AppComponent;

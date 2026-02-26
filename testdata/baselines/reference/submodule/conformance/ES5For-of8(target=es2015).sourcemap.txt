@@ -56,9 +56,9 @@ sourceFile:ES5For-of8.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(4, 1) Source(2, 21) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(4, 1) Source(3, 1) + SourceIndex(0)
 2 >Emitted(4, 2) Source(3, 2) + SourceIndex(0)
 ---
 >>>for (foo().x of ['a', 'b', 'c']) {

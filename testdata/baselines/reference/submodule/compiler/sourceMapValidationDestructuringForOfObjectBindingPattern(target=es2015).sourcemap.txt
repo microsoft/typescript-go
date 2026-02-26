@@ -273,9 +273,9 @@ sourceFile:sourceMapValidationDestructuringForOfObjectBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(7, 1) Source(22, 19) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(7, 1) Source(23, 1) + SourceIndex(0)
 2 >Emitted(7, 2) Source(23, 2) + SourceIndex(0)
 ---
 >>>function getMultiRobots() {
@@ -314,9 +314,9 @@ sourceFile:sourceMapValidationDestructuringForOfObjectBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(10, 1) Source(26, 24) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(10, 1) Source(27, 1) + SourceIndex(0)
 2 >Emitted(10, 2) Source(27, 2) + SourceIndex(0)
 ---
 >>>for (let { name: nameA } of robots) {

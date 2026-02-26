@@ -5740,7 +5740,8 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 			pos = loc.Pos()
 		}
 		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+			pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+			p.emitSourcePos(p.sourceMapSource, pos)
 		}
 	}
 

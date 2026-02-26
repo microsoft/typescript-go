@@ -127,9 +127,9 @@ sourceFile:classStaticBlock25.ts
 2 >    ^
 3 >     ^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(9, 5) Source(9, 11) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(9, 5) Source(10, 5) + SourceIndex(0)
 2 >Emitted(9, 6) Source(10, 6) + SourceIndex(0)
 ---
 >>>    static {
@@ -194,9 +194,9 @@ sourceFile:classStaticBlock25.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(14, 5) Source(16, 11) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(14, 5) Source(17, 5) + SourceIndex(0)
 2 >Emitted(14, 6) Source(17, 6) + SourceIndex(0)
 ---
 >>>}

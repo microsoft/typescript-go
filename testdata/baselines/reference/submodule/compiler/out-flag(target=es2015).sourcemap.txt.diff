@@ -27,20 +27,7 @@
    >        
  2 >        return 
  3 >               42
-@@= skipped -28, +31 lines =@@
- 2 >    ^
- 3 >     ^^^^^^^^^^^^^^^^^->
- 1 >
--  >    
--2 >    }
--1 >Emitted(8, 5) Source(10, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(9, 19) + SourceIndex(0)
- 2 >Emitted(8, 6) Source(10, 6) + SourceIndex(0)
- ---
- >>>    SetCount(value) {
-@@= skipped -10, +10 lines =@@
+@@= skipped -38, +41 lines =@@
  2 >    ^^^^^^^^
  3 >            ^
  4 >             ^^^^^
@@ -68,17 +55,3 @@
    >        
  2 >        //
  1 >Emitted(10, 9) Source(14, 9) + SourceIndex(0)
-@@= skipped -25, +28 lines =@@
- 1 >^^^^
- 2 >    ^
- 1 >
--  >    
--2 >    }
--1 >Emitted(11, 5) Source(15, 5) + SourceIndex(0)
-+2 >    
-+  >            //
-+  >        }
-+1 >Emitted(11, 5) Source(13, 6) + SourceIndex(0)
- 2 >Emitted(11, 6) Source(15, 6) + SourceIndex(0)
- ---
- >>>}

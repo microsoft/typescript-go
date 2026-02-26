@@ -114,9 +114,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(5, 1) Source(8, 24) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(5, 1) Source(9, 1) + SourceIndex(0)
 2 >Emitted(5, 2) Source(9, 2) + SourceIndex(0)
 ---
 >>>function foo2([numberB]) {
@@ -180,9 +180,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(8, 1) Source(12, 26) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(8, 1) Source(13, 1) + SourceIndex(0)
 2 >Emitted(8, 2) Source(13, 2) + SourceIndex(0)
 ---
 >>>function foo3([numberA2, nameA2, skillA2]) {
@@ -257,9 +257,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(11, 1) Source(16, 25) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(11, 1) Source(17, 1) + SourceIndex(0)
 2 >Emitted(11, 2) Source(17, 2) + SourceIndex(0)
 ---
 >>>function foo4([numberA3, ...robotAInfo]) {
@@ -331,9 +331,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(14, 1) Source(20, 29) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(14, 1) Source(21, 1) + SourceIndex(0)
 2 >Emitted(14, 2) Source(21, 2) + SourceIndex(0)
 ---
 >>>foo1(robotA);

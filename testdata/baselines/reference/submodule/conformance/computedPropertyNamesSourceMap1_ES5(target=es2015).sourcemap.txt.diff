@@ -37,18 +37,6 @@
  ---
  >>>    }
  1 >^^^^
- 2 >    ^
- 3 >     ^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >    
--2 >    }
--1 >Emitted(5, 5) Source(4, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(5, 5) Source(3, 18) + SourceIndex(0)
- 2 >Emitted(5, 6) Source(4, 6) + SourceIndex(0)
- ---
- >>>    get ["goodbye"]() {
 @@= skipped -39, +39 lines =@@
  3 >        ^
  4 >         ^^^^^^^^^
@@ -78,16 +66,3 @@
    >		
  2 >        return 
  3 >               0
-@@= skipped -31, +34 lines =@@
- 1 >^^^^
- 2 >    ^
- 1 >
--  >    
--2 >    }
--1 >Emitted(8, 5) Source(7, 5) + SourceIndex(0)
-+2 >    
-+  >        }
-+1 >Emitted(8, 5) Source(6, 12) + SourceIndex(0)
- 2 >Emitted(8, 6) Source(7, 6) + SourceIndex(0)
- ---
- >>>}

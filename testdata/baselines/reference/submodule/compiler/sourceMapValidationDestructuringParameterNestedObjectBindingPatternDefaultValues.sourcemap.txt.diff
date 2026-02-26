@@ -48,20 +48,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(5, 1) Source(21, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(5, 1) Source(20, 27) + SourceIndex(0)
- 2 >Emitted(5, 2) Source(21, 2) + SourceIndex(0)
- ---
- >>>function foo2({ name: nameC = "name", skills: { primary: primaryB = "primary", secondary: secondaryB = "secondary" } = { primary: "SomeSkill", secondary: "someSkill" } } = robotA) {
-@@= skipped -42, +42 lines =@@
+@@= skipped -65, +65 lines =@@
  34>                                                                                                                                                        ^^
  35>                                                                                                                                                          ^^^^^^^^^^^
  36>                                                                                                                                                                     ^^
@@ -109,20 +96,7 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -23, +23 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(8, 1) Source(31, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(8, 1) Source(30, 29) + SourceIndex(0)
- 2 >Emitted(8, 2) Source(31, 2) + SourceIndex(0)
- ---
- >>>function foo3({ skills = { primary: "SomeSkill", secondary: "someSkill" } } = robotA) {
-@@= skipped -22, +22 lines =@@
+@@= skipped -45, +45 lines =@@
  14>                                                          ^^
  15>                                                            ^^^^^^^^^^^
  16>                                                                       ^^
@@ -170,16 +144,3 @@
    >    
  2 >    console
  3 >           .
-@@= skipped -27, +27 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(11, 1) Source(34, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(11, 1) Source(33, 33) + SourceIndex(0)
- 2 >Emitted(11, 2) Source(34, 2) + SourceIndex(0)
- ---
- >>>foo1(robotA);

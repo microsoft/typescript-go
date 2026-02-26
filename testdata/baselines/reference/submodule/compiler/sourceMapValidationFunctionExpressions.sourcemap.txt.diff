@@ -33,17 +33,3 @@
    >    
  2 >    greetings
  3 >             ++
-@@= skipped -31, +31 lines =@@
- 3 > ^
- 4 >  ^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
-+2 >
-+  >}
- 3 > 
--1 >Emitted(6, 1) Source(5, 1) + SourceIndex(0)
-+1 >Emitted(6, 1) Source(4, 22) + SourceIndex(0)
- 2 >Emitted(6, 2) Source(5, 2) + SourceIndex(0)
- 3 >Emitted(6, 3) Source(5, 2) + SourceIndex(0)
- ---

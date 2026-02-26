@@ -30,20 +30,7 @@
    >    
  2 >    greetings
  3 >             ++
-@@= skipped -30, +30 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(6, 1) Source(5, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(6, 1) Source(4, 22) + SourceIndex(0)
- 2 >Emitted(6, 2) Source(5, 2) + SourceIndex(0)
- ---
- >>>function greet2(greeting, n = 10, x, ...restParams) {
-@@= skipped -20, +20 lines =@@
+@@= skipped -50, +50 lines =@@
  12>                                   ^^
  13>                                     ^^^
  14>                                        ^^^^^^^^^^
@@ -76,20 +63,7 @@
    >    
  2 >    greetings
  3 >             ++
-@@= skipped -30, +30 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(10, 1) Source(9, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(10, 1) Source(8, 22) + SourceIndex(0)
- 2 >Emitted(10, 2) Source(9, 2) + SourceIndex(0)
- ---
- >>>function foo(greeting, n = 10, x, ...restParams) {
-@@= skipped -20, +20 lines =@@
+@@= skipped -50, +50 lines =@@
  12>                                ^^
  13>                                  ^^^
  14>                                     ^^^^^^^^^^
@@ -121,16 +95,3 @@
    >    
  2 >    return;
  1 >Emitted(12, 5) Source(12, 5) + SourceIndex(0)
-@@= skipped -16, +16 lines =@@
- 2 >^
- 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--  >
--2 >}
--1 >Emitted(13, 1) Source(13, 1) + SourceIndex(0)
-+2 >
-+  >}
-+1 >Emitted(13, 1) Source(12, 12) + SourceIndex(0)
- 2 >Emitted(13, 2) Source(13, 2) + SourceIndex(0)
- ---
- >>>//# sourceMappingURL=sourceMapValidationFunctions.js.map

@@ -54,9 +54,9 @@ sourceFile:computedPropertyNamesSourceMap1_ES6.ts
 2 >    ^
 3 >     ^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >    	}
-1 >Emitted(5, 5) Source(3, 18) + SourceIndex(0)
+  >	
+2 >    }
+1 >Emitted(5, 5) Source(4, 2) + SourceIndex(0)
 2 >Emitted(5, 6) Source(4, 3) + SourceIndex(0)
 ---
 >>>    get ["goodbye"]() {
@@ -99,9 +99,9 @@ sourceFile:computedPropertyNamesSourceMap1_ES6.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >    	}
-1 >Emitted(8, 5) Source(6, 12) + SourceIndex(0)
+  >	
+2 >    }
+1 >Emitted(8, 5) Source(7, 2) + SourceIndex(0)
 2 >Emitted(8, 6) Source(7, 3) + SourceIndex(0)
 ---
 >>>}

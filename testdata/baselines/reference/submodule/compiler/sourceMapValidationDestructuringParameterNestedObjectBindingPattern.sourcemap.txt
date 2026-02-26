@@ -177,9 +177,9 @@ sourceFile:sourceMapValidationDestructuringParameterNestedObjectBindingPattern.t
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(5, 1) Source(14, 27) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(5, 1) Source(15, 1) + SourceIndex(0)
 2 >Emitted(5, 2) Source(15, 2) + SourceIndex(0)
 ---
 >>>function foo2({ name: nameC, skills: { primary: primaryB, secondary: secondaryB } }) {
@@ -283,9 +283,9 @@ sourceFile:sourceMapValidationDestructuringParameterNestedObjectBindingPattern.t
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(8, 1) Source(17, 29) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(8, 1) Source(18, 1) + SourceIndex(0)
 2 >Emitted(8, 2) Source(18, 2) + SourceIndex(0)
 ---
 >>>function foo3({ skills }) {
@@ -354,9 +354,9 @@ sourceFile:sourceMapValidationDestructuringParameterNestedObjectBindingPattern.t
 2 >^
 3 > ^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(11, 1) Source(20, 33) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(11, 1) Source(21, 1) + SourceIndex(0)
 2 >Emitted(11, 2) Source(21, 2) + SourceIndex(0)
 ---
 >>>foo1(robotA);

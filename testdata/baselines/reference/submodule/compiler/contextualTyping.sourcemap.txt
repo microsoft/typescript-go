@@ -83,10 +83,10 @@ sourceFile:contextualTyping.ts
 2 >    ^
 3 >     ^
 1 >
-2 >    
-  >        }
+  >    
+2 >    }
 3 >     
-1 >Emitted(6, 5) Source(16, 18) + SourceIndex(0)
+1 >Emitted(6, 5) Source(17, 5) + SourceIndex(0)
 2 >Emitted(6, 6) Source(17, 6) + SourceIndex(0)
 3 >Emitted(6, 7) Source(17, 6) + SourceIndex(0)
 ---
@@ -181,10 +181,10 @@ sourceFile:contextualTyping.ts
 3 >     ^
 4 >      ^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
+  >    
+2 >    }
 3 >     
-1 >Emitted(13, 5) Source(23, 18) + SourceIndex(0)
+1 >Emitted(13, 5) Source(24, 5) + SourceIndex(0)
 2 >Emitted(13, 6) Source(24, 6) + SourceIndex(0)
 3 >Emitted(13, 7) Source(24, 6) + SourceIndex(0)
 ---
@@ -198,8 +198,8 @@ sourceFile:contextualTyping.ts
 7 >                ^^^^^^^^
 8 >                        ^^^^^^^^^->
 1->
-2 >
-  >}
+  >
+2 >}
 3 > 
 4 >   C2T5
 5 >       
@@ -209,7 +209,7 @@ sourceFile:contextualTyping.ts
   >                        return i;
   >                    }
   >                }
-1->Emitted(14, 1) Source(24, 6) + SourceIndex(0)
+1->Emitted(14, 1) Source(25, 1) + SourceIndex(0)
 2 >Emitted(14, 2) Source(25, 2) + SourceIndex(0)
 3 >Emitted(14, 4) Source(21, 11) + SourceIndex(0)
 4 >Emitted(14, 8) Source(21, 15) + SourceIndex(0)
@@ -258,8 +258,8 @@ sourceFile:contextualTyping.ts
 10>                           return 
 11>                                  s
 12>                                   
-13>                                    
-14>                                      }
+13>                                     
+14>                                     }
 15>                                      )
 16>                                       ;
 1->Emitted(16, 1) Source(28, 1) + SourceIndex(0)
@@ -274,7 +274,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(16, 35) Source(28, 57) + SourceIndex(0)
 11>Emitted(16, 36) Source(28, 58) + SourceIndex(0)
 12>Emitted(16, 37) Source(28, 58) + SourceIndex(0)
-13>Emitted(16, 38) Source(28, 58) + SourceIndex(0)
+13>Emitted(16, 38) Source(28, 59) + SourceIndex(0)
 14>Emitted(16, 39) Source(28, 60) + SourceIndex(0)
 15>Emitted(16, 40) Source(28, 61) + SourceIndex(0)
 16>Emitted(16, 41) Source(28, 62) + SourceIndex(0)
@@ -375,8 +375,8 @@ sourceFile:contextualTyping.ts
 9 >                                 {}
 10>                                   )
 11>                                    
-12>                                     
-13>                                       }
+12>                                      
+13>                                      }
 14>                                       ;
 1->Emitted(21, 1) Source(33, 1) + SourceIndex(0)
 2 >Emitted(21, 5) Source(33, 5) + SourceIndex(0)
@@ -389,7 +389,7 @@ sourceFile:contextualTyping.ts
 9 >Emitted(21, 36) Source(33, 53) + SourceIndex(0)
 10>Emitted(21, 37) Source(33, 54) + SourceIndex(0)
 11>Emitted(21, 38) Source(33, 54) + SourceIndex(0)
-12>Emitted(21, 39) Source(33, 54) + SourceIndex(0)
+12>Emitted(21, 39) Source(33, 55) + SourceIndex(0)
 13>Emitted(21, 40) Source(33, 56) + SourceIndex(0)
 14>Emitted(21, 41) Source(33, 57) + SourceIndex(0)
 ---
@@ -425,8 +425,8 @@ sourceFile:contextualTyping.ts
 11>                                  {}
 12>                                    )
 13>                                     
-14>                                      
-15>                                        }
+14>                                       
+15>                                       }
 16>                                        ;
 1->Emitted(22, 1) Source(34, 1) + SourceIndex(0)
 2 >Emitted(22, 5) Source(34, 5) + SourceIndex(0)
@@ -441,7 +441,7 @@ sourceFile:contextualTyping.ts
 11>Emitted(22, 37) Source(34, 63) + SourceIndex(0)
 12>Emitted(22, 38) Source(34, 64) + SourceIndex(0)
 13>Emitted(22, 39) Source(34, 64) + SourceIndex(0)
-14>Emitted(22, 40) Source(34, 64) + SourceIndex(0)
+14>Emitted(22, 40) Source(34, 65) + SourceIndex(0)
 15>Emitted(22, 41) Source(34, 66) + SourceIndex(0)
 16>Emitted(22, 42) Source(34, 67) + SourceIndex(0)
 ---
@@ -480,8 +480,8 @@ sourceFile:contextualTyping.ts
 13>                                     {}
 14>                                       )
 15>                                        
-16>                                         
-17>                                           }
+16>                                          
+17>                                          }
 18>                                           ;
 1->Emitted(23, 1) Source(35, 1) + SourceIndex(0)
 2 >Emitted(23, 5) Source(35, 5) + SourceIndex(0)
@@ -498,7 +498,7 @@ sourceFile:contextualTyping.ts
 13>Emitted(23, 40) Source(35, 77) + SourceIndex(0)
 14>Emitted(23, 41) Source(35, 78) + SourceIndex(0)
 15>Emitted(23, 42) Source(35, 78) + SourceIndex(0)
-16>Emitted(23, 43) Source(35, 78) + SourceIndex(0)
+16>Emitted(23, 43) Source(35, 79) + SourceIndex(0)
 17>Emitted(23, 44) Source(35, 80) + SourceIndex(0)
 18>Emitted(23, 45) Source(35, 81) + SourceIndex(0)
 ---
@@ -533,8 +533,8 @@ sourceFile:contextualTyping.ts
 9 >                          return 
 10>                                 n
 11>                                  ;
-12>                                   
-13>                                     }
+12>                                    
+13>                                    }
 14>                                     ;
 1 >Emitted(24, 1) Source(36, 1) + SourceIndex(0)
 2 >Emitted(24, 5) Source(36, 5) + SourceIndex(0)
@@ -547,7 +547,7 @@ sourceFile:contextualTyping.ts
 9 >Emitted(24, 34) Source(39, 26) + SourceIndex(0)
 10>Emitted(24, 35) Source(39, 27) + SourceIndex(0)
 11>Emitted(24, 36) Source(39, 28) + SourceIndex(0)
-12>Emitted(24, 37) Source(39, 28) + SourceIndex(0)
+12>Emitted(24, 37) Source(39, 29) + SourceIndex(0)
 13>Emitted(24, 38) Source(39, 30) + SourceIndex(0)
 14>Emitted(24, 39) Source(39, 31) + SourceIndex(0)
 ---
@@ -579,8 +579,8 @@ sourceFile:contextualTyping.ts
 9 >                          return 
 10>                                 n
 11>                                  ;
-12>                                   
-13>                                     }
+12>                                    
+13>                                    }
 14>                                     ;
 1->Emitted(25, 1) Source(41, 1) + SourceIndex(0)
 2 >Emitted(25, 5) Source(41, 5) + SourceIndex(0)
@@ -593,7 +593,7 @@ sourceFile:contextualTyping.ts
 9 >Emitted(25, 34) Source(41, 67) + SourceIndex(0)
 10>Emitted(25, 35) Source(41, 68) + SourceIndex(0)
 11>Emitted(25, 36) Source(41, 69) + SourceIndex(0)
-12>Emitted(25, 37) Source(41, 69) + SourceIndex(0)
+12>Emitted(25, 37) Source(41, 70) + SourceIndex(0)
 13>Emitted(25, 38) Source(41, 71) + SourceIndex(0)
 14>Emitted(25, 39) Source(41, 72) + SourceIndex(0)
 ---
@@ -711,8 +711,8 @@ sourceFile:contextualTyping.ts
 12>                               return 
 13>                                      s
 14>                                       ;
-15>                                        
-16>                                          }
+15>                                         
+16>                                         }
 17>                                          ]
 18>                                           ;
 1->Emitted(28, 1) Source(44, 1) + SourceIndex(0)
@@ -729,7 +729,7 @@ sourceFile:contextualTyping.ts
 12>Emitted(28, 39) Source(44, 75) + SourceIndex(0)
 13>Emitted(28, 40) Source(44, 76) + SourceIndex(0)
 14>Emitted(28, 41) Source(44, 77) + SourceIndex(0)
-15>Emitted(28, 42) Source(44, 77) + SourceIndex(0)
+15>Emitted(28, 42) Source(44, 78) + SourceIndex(0)
 16>Emitted(28, 43) Source(44, 79) + SourceIndex(0)
 17>Emitted(28, 44) Source(44, 80) + SourceIndex(0)
 18>Emitted(28, 45) Source(44, 81) + SourceIndex(0)
@@ -828,8 +828,8 @@ sourceFile:contextualTyping.ts
 10>                         return 
 11>                                s
 12>                                 ;
-13>                                  
-14>                                    }
+13>                                   
+14>                                   }
 1->Emitted(33, 5) Source(49, 5) + SourceIndex(0)
 2 >Emitted(33, 6) Source(49, 6) + SourceIndex(0)
 3 >Emitted(33, 8) Source(49, 8) + SourceIndex(0)
@@ -842,7 +842,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(33, 33) Source(49, 32) + SourceIndex(0)
 11>Emitted(33, 34) Source(49, 33) + SourceIndex(0)
 12>Emitted(33, 35) Source(49, 34) + SourceIndex(0)
-13>Emitted(33, 36) Source(49, 34) + SourceIndex(0)
+13>Emitted(33, 36) Source(49, 35) + SourceIndex(0)
 14>Emitted(33, 37) Source(49, 36) + SourceIndex(0)
 ---
 >>>});
@@ -1002,10 +1002,10 @@ sourceFile:contextualTyping.ts
 2 >        ^
 3 >         ^
 1 >
-2 >        
-  >                }
+  >        
+2 >        }
 3 >         
-1 >Emitted(44, 9) Source(60, 22) + SourceIndex(0)
+1 >Emitted(44, 9) Source(61, 9) + SourceIndex(0)
 2 >Emitted(44, 10) Source(61, 10) + SourceIndex(0)
 3 >Emitted(44, 11) Source(61, 10) + SourceIndex(0)
 ---
@@ -1013,9 +1013,9 @@ sourceFile:contextualTyping.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(45, 5) Source(61, 10) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(45, 5) Source(62, 5) + SourceIndex(0)
 2 >Emitted(45, 6) Source(62, 6) + SourceIndex(0)
 ---
 >>>}
@@ -1117,10 +1117,10 @@ sourceFile:contextualTyping.ts
 3 >     ^
 4 >      ^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
+  >    
+2 >    }
 3 >     
-1 >Emitted(52, 5) Source(69, 18) + SourceIndex(0)
+1 >Emitted(52, 5) Source(70, 5) + SourceIndex(0)
 2 >Emitted(52, 6) Source(70, 6) + SourceIndex(0)
 3 >Emitted(52, 7) Source(70, 6) + SourceIndex(0)
 ---
@@ -1134,8 +1134,8 @@ sourceFile:contextualTyping.ts
 7 >                ^^^^^^^^
 8 >                        ^^^^^^^^->
 1->
-2 >
-  >}
+  >
+2 >}
 3 > 
 4 >   C5T5
 5 >       
@@ -1146,7 +1146,7 @@ sourceFile:contextualTyping.ts
   >                        return s;
   >                    }
   >                }
-1->Emitted(53, 1) Source(70, 6) + SourceIndex(0)
+1->Emitted(53, 1) Source(71, 1) + SourceIndex(0)
 2 >Emitted(53, 2) Source(71, 2) + SourceIndex(0)
 3 >Emitted(53, 4) Source(66, 11) + SourceIndex(0)
 4 >Emitted(53, 8) Source(66, 15) + SourceIndex(0)
@@ -1209,8 +1209,8 @@ sourceFile:contextualTyping.ts
 10>                              {}
 11>                                )
 12>                                 
-13>                                  
-14>                                    }
+13>                                   
+14>                                   }
 15>                                    ;
 1->Emitted(56, 1) Source(75, 1) + SourceIndex(0)
 2 >Emitted(56, 5) Source(75, 5) + SourceIndex(0)
@@ -1224,7 +1224,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(56, 33) Source(75, 59) + SourceIndex(0)
 11>Emitted(56, 34) Source(75, 60) + SourceIndex(0)
 12>Emitted(56, 35) Source(75, 60) + SourceIndex(0)
-13>Emitted(56, 36) Source(75, 60) + SourceIndex(0)
+13>Emitted(56, 36) Source(75, 61) + SourceIndex(0)
 14>Emitted(56, 37) Source(75, 62) + SourceIndex(0)
 15>Emitted(56, 38) Source(75, 63) + SourceIndex(0)
 ---
@@ -1406,8 +1406,8 @@ sourceFile:contextualTyping.ts
 11>                           return 
 12>                                  s
 13>                                   
-14>                                    
-15>                                      }
+14>                                     
+15>                                     }
 16>                                      )
 17>                                       ;
 1->Emitted(61, 1) Source(122, 1) + SourceIndex(0)
@@ -1423,7 +1423,7 @@ sourceFile:contextualTyping.ts
 11>Emitted(61, 35) Source(122, 34) + SourceIndex(0)
 12>Emitted(61, 36) Source(122, 35) + SourceIndex(0)
 13>Emitted(61, 37) Source(122, 35) + SourceIndex(0)
-14>Emitted(61, 38) Source(122, 35) + SourceIndex(0)
+14>Emitted(61, 38) Source(122, 36) + SourceIndex(0)
 15>Emitted(61, 39) Source(122, 37) + SourceIndex(0)
 16>Emitted(61, 40) Source(122, 38) + SourceIndex(0)
 17>Emitted(61, 41) Source(122, 39) + SourceIndex(0)
@@ -1532,8 +1532,8 @@ sourceFile:contextualTyping.ts
 10>                                 {}
 11>                                   )
 12>                                    
-13>                                     
-14>                                       }
+13>                                      
+14>                                      }
 15>                                       ;
 1->Emitted(66, 1) Source(127, 1) + SourceIndex(0)
 2 >Emitted(66, 6) Source(127, 6) + SourceIndex(0)
@@ -1547,7 +1547,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(66, 36) Source(127, 41) + SourceIndex(0)
 11>Emitted(66, 37) Source(127, 42) + SourceIndex(0)
 12>Emitted(66, 38) Source(127, 42) + SourceIndex(0)
-13>Emitted(66, 39) Source(127, 42) + SourceIndex(0)
+13>Emitted(66, 39) Source(127, 43) + SourceIndex(0)
 14>Emitted(66, 40) Source(127, 44) + SourceIndex(0)
 15>Emitted(66, 41) Source(127, 45) + SourceIndex(0)
 ---
@@ -1585,8 +1585,8 @@ sourceFile:contextualTyping.ts
 12>                                  {}
 13>                                    )
 14>                                     
-15>                                      
-16>                                        }
+15>                                       
+16>                                       }
 17>                                        ;
 1->Emitted(67, 1) Source(128, 1) + SourceIndex(0)
 2 >Emitted(67, 6) Source(128, 6) + SourceIndex(0)
@@ -1602,7 +1602,7 @@ sourceFile:contextualTyping.ts
 12>Emitted(67, 37) Source(128, 42) + SourceIndex(0)
 13>Emitted(67, 38) Source(128, 43) + SourceIndex(0)
 14>Emitted(67, 39) Source(128, 43) + SourceIndex(0)
-15>Emitted(67, 40) Source(128, 43) + SourceIndex(0)
+15>Emitted(67, 40) Source(128, 44) + SourceIndex(0)
 16>Emitted(67, 41) Source(128, 45) + SourceIndex(0)
 17>Emitted(67, 42) Source(128, 46) + SourceIndex(0)
 ---
@@ -1643,8 +1643,8 @@ sourceFile:contextualTyping.ts
 14>                                     {}
 15>                                       )
 16>                                        
-17>                                         
-18>                                           }
+17>                                          
+18>                                          }
 19>                                           ;
 1->Emitted(68, 1) Source(129, 1) + SourceIndex(0)
 2 >Emitted(68, 6) Source(129, 6) + SourceIndex(0)
@@ -1662,7 +1662,7 @@ sourceFile:contextualTyping.ts
 14>Emitted(68, 40) Source(129, 45) + SourceIndex(0)
 15>Emitted(68, 41) Source(129, 46) + SourceIndex(0)
 16>Emitted(68, 42) Source(129, 46) + SourceIndex(0)
-17>Emitted(68, 43) Source(129, 46) + SourceIndex(0)
+17>Emitted(68, 43) Source(129, 47) + SourceIndex(0)
 18>Emitted(68, 44) Source(129, 48) + SourceIndex(0)
 19>Emitted(68, 45) Source(129, 49) + SourceIndex(0)
 ---
@@ -1696,8 +1696,8 @@ sourceFile:contextualTyping.ts
 10>                          return 
 11>                                 n
 12>                                  
-13>                                   
-14>                                     }
+13>                                    
+14>                                    }
 15>                                     ;
 1 >Emitted(69, 1) Source(130, 1) + SourceIndex(0)
 2 >Emitted(69, 6) Source(130, 6) + SourceIndex(0)
@@ -1711,7 +1711,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(69, 34) Source(130, 41) + SourceIndex(0)
 11>Emitted(69, 35) Source(130, 42) + SourceIndex(0)
 12>Emitted(69, 36) Source(130, 42) + SourceIndex(0)
-13>Emitted(69, 37) Source(130, 42) + SourceIndex(0)
+13>Emitted(69, 37) Source(130, 43) + SourceIndex(0)
 14>Emitted(69, 38) Source(130, 44) + SourceIndex(0)
 15>Emitted(69, 39) Source(130, 45) + SourceIndex(0)
 ---
@@ -1745,8 +1745,8 @@ sourceFile:contextualTyping.ts
 10>                          return 
 11>                                 n
 12>                                  ;
-13>                                   
-14>                                     }
+13>                                    
+14>                                    }
 15>                                     ;
 1->Emitted(70, 1) Source(132, 1) + SourceIndex(0)
 2 >Emitted(70, 6) Source(132, 6) + SourceIndex(0)
@@ -1760,7 +1760,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(70, 34) Source(132, 33) + SourceIndex(0)
 11>Emitted(70, 35) Source(132, 34) + SourceIndex(0)
 12>Emitted(70, 36) Source(132, 35) + SourceIndex(0)
-13>Emitted(70, 37) Source(132, 35) + SourceIndex(0)
+13>Emitted(70, 37) Source(132, 36) + SourceIndex(0)
 14>Emitted(70, 38) Source(132, 37) + SourceIndex(0)
 15>Emitted(70, 39) Source(132, 38) + SourceIndex(0)
 ---
@@ -1886,8 +1886,8 @@ sourceFile:contextualTyping.ts
 13>                               return 
 14>                                      s
 15>                                       ;
-16>                                        
-17>                                          }
+16>                                         
+17>                                         }
 18>                                          ]
 19>                                           ;
 1->Emitted(73, 1) Source(135, 1) + SourceIndex(0)
@@ -1905,7 +1905,7 @@ sourceFile:contextualTyping.ts
 13>Emitted(73, 39) Source(135, 38) + SourceIndex(0)
 14>Emitted(73, 40) Source(135, 39) + SourceIndex(0)
 15>Emitted(73, 41) Source(135, 40) + SourceIndex(0)
-16>Emitted(73, 42) Source(135, 40) + SourceIndex(0)
+16>Emitted(73, 42) Source(135, 41) + SourceIndex(0)
 17>Emitted(73, 43) Source(135, 42) + SourceIndex(0)
 18>Emitted(73, 44) Source(135, 43) + SourceIndex(0)
 19>Emitted(73, 45) Source(135, 44) + SourceIndex(0)
@@ -2010,8 +2010,8 @@ sourceFile:contextualTyping.ts
 10>                         return 
 11>                                s
 12>                                 ;
-13>                                  
-14>                                    }
+13>                                   
+14>                                   }
 1->Emitted(78, 5) Source(140, 5) + SourceIndex(0)
 2 >Emitted(78, 6) Source(140, 6) + SourceIndex(0)
 3 >Emitted(78, 8) Source(140, 8) + SourceIndex(0)
@@ -2024,7 +2024,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(78, 33) Source(140, 32) + SourceIndex(0)
 11>Emitted(78, 34) Source(140, 33) + SourceIndex(0)
 12>Emitted(78, 35) Source(140, 34) + SourceIndex(0)
-13>Emitted(78, 36) Source(140, 34) + SourceIndex(0)
+13>Emitted(78, 36) Source(140, 35) + SourceIndex(0)
 14>Emitted(78, 37) Source(140, 36) + SourceIndex(0)
 ---
 >>>});
@@ -2183,11 +2183,11 @@ sourceFile:contextualTyping.ts
 4 >  ^
 5 >   ^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
+  >
+2 >}
 3 > )
 4 >  ;
-1 >Emitted(88, 1) Source(148, 23) + SourceIndex(0)
+1 >Emitted(88, 1) Source(149, 1) + SourceIndex(0)
 2 >Emitted(88, 2) Source(149, 2) + SourceIndex(0)
 3 >Emitted(88, 3) Source(149, 3) + SourceIndex(0)
 4 >Emitted(88, 4) Source(149, 4) + SourceIndex(0)
@@ -2243,11 +2243,11 @@ sourceFile:contextualTyping.ts
 14>                                                        {}
 15>                                                          )
 16>                                                           
-17>                                                            
-18>                                                              }
+17>                                                             
+18>                                                             }
 19>                                                              
-20>                                                               
-21>                                                                 }
+20>                                                                
+21>                                                                }
 22>                                                                 ;
 1->Emitted(90, 1) Source(152, 1) + SourceIndex(0)
 2 >Emitted(90, 5) Source(152, 5) + SourceIndex(0)
@@ -2265,10 +2265,10 @@ sourceFile:contextualTyping.ts
 14>Emitted(90, 59) Source(152, 90) + SourceIndex(0)
 15>Emitted(90, 60) Source(152, 91) + SourceIndex(0)
 16>Emitted(90, 61) Source(152, 91) + SourceIndex(0)
-17>Emitted(90, 62) Source(152, 91) + SourceIndex(0)
+17>Emitted(90, 62) Source(152, 92) + SourceIndex(0)
 18>Emitted(90, 63) Source(152, 93) + SourceIndex(0)
 19>Emitted(90, 64) Source(152, 93) + SourceIndex(0)
-20>Emitted(90, 65) Source(152, 93) + SourceIndex(0)
+20>Emitted(90, 65) Source(152, 94) + SourceIndex(0)
 21>Emitted(90, 66) Source(152, 95) + SourceIndex(0)
 22>Emitted(90, 67) Source(152, 96) + SourceIndex(0)
 ---
@@ -2306,13 +2306,13 @@ sourceFile:contextualTyping.ts
 2 >    constructor(
 3 >                f: (n: number) => IFoo
 4 >                 ) 
-5 >                   {
-6 >                      }
+5 >                   { 
+6 >                     }
 1->Emitted(93, 5) Source(155, 15) + SourceIndex(0)
 2 >Emitted(93, 17) Source(155, 27) + SourceIndex(0)
 3 >Emitted(93, 18) Source(155, 49) + SourceIndex(0)
 4 >Emitted(93, 20) Source(155, 51) + SourceIndex(0)
-5 >Emitted(93, 22) Source(155, 52) + SourceIndex(0)
+5 >Emitted(93, 22) Source(155, 53) + SourceIndex(0)
 6 >Emitted(93, 23) Source(155, 54) + SourceIndex(0)
 ---
 >>>}
@@ -2368,8 +2368,8 @@ sourceFile:contextualTyping.ts
 14>                                         {}
 15>                                           )
 16>                                            
-17>                                             
-18>                                               }
+17>                                              
+18>                                              }
 19>                                               )
 20>                                                ;
 1->Emitted(96, 1) Source(156, 1) + SourceIndex(0)
@@ -2388,7 +2388,7 @@ sourceFile:contextualTyping.ts
 14>Emitted(96, 44) Source(156, 49) + SourceIndex(0)
 15>Emitted(96, 45) Source(156, 50) + SourceIndex(0)
 16>Emitted(96, 46) Source(156, 50) + SourceIndex(0)
-17>Emitted(96, 47) Source(156, 50) + SourceIndex(0)
+17>Emitted(96, 47) Source(156, 51) + SourceIndex(0)
 18>Emitted(96, 48) Source(156, 52) + SourceIndex(0)
 19>Emitted(96, 49) Source(156, 53) + SourceIndex(0)
 20>Emitted(96, 50) Source(156, 54) + SourceIndex(0)
@@ -2434,8 +2434,8 @@ sourceFile:contextualTyping.ts
 10>                            return 
 11>                                   s
 12>                                    
-13>                                     
-14>                                       }
+13>                                      
+14>                                      }
 15>                                       )
 16>                                        ;
 1->Emitted(98, 1) Source(159, 1) + SourceIndex(0)
@@ -2450,7 +2450,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(98, 36) Source(159, 59) + SourceIndex(0)
 11>Emitted(98, 37) Source(159, 60) + SourceIndex(0)
 12>Emitted(98, 38) Source(159, 60) + SourceIndex(0)
-13>Emitted(98, 39) Source(159, 60) + SourceIndex(0)
+13>Emitted(98, 39) Source(159, 61) + SourceIndex(0)
 14>Emitted(98, 40) Source(159, 62) + SourceIndex(0)
 15>Emitted(98, 41) Source(159, 63) + SourceIndex(0)
 16>Emitted(98, 42) Source(159, 64) + SourceIndex(0)
@@ -2551,8 +2551,8 @@ sourceFile:contextualTyping.ts
 9 >                                  {}
 10>                                    )
 11>                                     
-12>                                      
-13>                                        }
+12>                                       
+13>                                       }
 14>                                        ;
 1->Emitted(103, 1) Source(164, 1) + SourceIndex(0)
 2 >Emitted(103, 5) Source(164, 5) + SourceIndex(0)
@@ -2565,7 +2565,7 @@ sourceFile:contextualTyping.ts
 9 >Emitted(103, 37) Source(164, 55) + SourceIndex(0)
 10>Emitted(103, 38) Source(164, 56) + SourceIndex(0)
 11>Emitted(103, 39) Source(164, 56) + SourceIndex(0)
-12>Emitted(103, 40) Source(164, 56) + SourceIndex(0)
+12>Emitted(103, 40) Source(164, 57) + SourceIndex(0)
 13>Emitted(103, 41) Source(164, 58) + SourceIndex(0)
 14>Emitted(103, 42) Source(164, 59) + SourceIndex(0)
 ---
@@ -2601,8 +2601,8 @@ sourceFile:contextualTyping.ts
 11>                                   {}
 12>                                     )
 13>                                      
-14>                                       
-15>                                         }
+14>                                        
+15>                                        }
 16>                                         ;
 1->Emitted(104, 1) Source(165, 1) + SourceIndex(0)
 2 >Emitted(104, 5) Source(165, 5) + SourceIndex(0)
@@ -2617,7 +2617,7 @@ sourceFile:contextualTyping.ts
 11>Emitted(104, 38) Source(165, 65) + SourceIndex(0)
 12>Emitted(104, 39) Source(165, 66) + SourceIndex(0)
 13>Emitted(104, 40) Source(165, 66) + SourceIndex(0)
-14>Emitted(104, 41) Source(165, 66) + SourceIndex(0)
+14>Emitted(104, 41) Source(165, 67) + SourceIndex(0)
 15>Emitted(104, 42) Source(165, 68) + SourceIndex(0)
 16>Emitted(104, 43) Source(165, 69) + SourceIndex(0)
 ---
@@ -2656,8 +2656,8 @@ sourceFile:contextualTyping.ts
 13>                                      {}
 14>                                        )
 15>                                         
-16>                                          
-17>                                            }
+16>                                           
+17>                                           }
 18>                                            ;
 1->Emitted(105, 1) Source(166, 1) + SourceIndex(0)
 2 >Emitted(105, 5) Source(166, 5) + SourceIndex(0)
@@ -2674,7 +2674,7 @@ sourceFile:contextualTyping.ts
 13>Emitted(105, 41) Source(166, 79) + SourceIndex(0)
 14>Emitted(105, 42) Source(166, 80) + SourceIndex(0)
 15>Emitted(105, 43) Source(166, 80) + SourceIndex(0)
-16>Emitted(105, 44) Source(166, 80) + SourceIndex(0)
+16>Emitted(105, 44) Source(166, 81) + SourceIndex(0)
 17>Emitted(105, 45) Source(166, 82) + SourceIndex(0)
 18>Emitted(105, 46) Source(166, 83) + SourceIndex(0)
 ---
@@ -2709,8 +2709,8 @@ sourceFile:contextualTyping.ts
 9 >                           return 
 10>                                  n
 11>                                   
-12>                                    
-13>                                      }
+12>                                     
+13>                                     }
 14>                                      ;
 1 >Emitted(106, 1) Source(167, 1) + SourceIndex(0)
 2 >Emitted(106, 5) Source(167, 5) + SourceIndex(0)
@@ -2723,7 +2723,7 @@ sourceFile:contextualTyping.ts
 9 >Emitted(106, 35) Source(170, 32) + SourceIndex(0)
 10>Emitted(106, 36) Source(170, 33) + SourceIndex(0)
 11>Emitted(106, 37) Source(170, 33) + SourceIndex(0)
-12>Emitted(106, 38) Source(170, 33) + SourceIndex(0)
+12>Emitted(106, 38) Source(170, 34) + SourceIndex(0)
 13>Emitted(106, 39) Source(170, 35) + SourceIndex(0)
 14>Emitted(106, 40) Source(170, 36) + SourceIndex(0)
 ---
@@ -2755,8 +2755,8 @@ sourceFile:contextualTyping.ts
 9 >                           return 
 10>                                  n
 11>                                   ;
-12>                                    
-13>                                      }
+12>                                     
+13>                                     }
 14>                                      ;
 1->Emitted(107, 1) Source(172, 1) + SourceIndex(0)
 2 >Emitted(107, 5) Source(172, 5) + SourceIndex(0)
@@ -2769,7 +2769,7 @@ sourceFile:contextualTyping.ts
 9 >Emitted(107, 35) Source(172, 69) + SourceIndex(0)
 10>Emitted(107, 36) Source(172, 70) + SourceIndex(0)
 11>Emitted(107, 37) Source(172, 71) + SourceIndex(0)
-12>Emitted(107, 38) Source(172, 71) + SourceIndex(0)
+12>Emitted(107, 38) Source(172, 72) + SourceIndex(0)
 13>Emitted(107, 39) Source(172, 73) + SourceIndex(0)
 14>Emitted(107, 40) Source(172, 74) + SourceIndex(0)
 ---
@@ -2887,8 +2887,8 @@ sourceFile:contextualTyping.ts
 12>                                return 
 13>                                       s
 14>                                        ;
-15>                                         
-16>                                           }
+15>                                          
+16>                                          }
 17>                                           ]
 18>                                            ;
 1->Emitted(110, 1) Source(175, 1) + SourceIndex(0)
@@ -2905,7 +2905,7 @@ sourceFile:contextualTyping.ts
 12>Emitted(110, 40) Source(175, 77) + SourceIndex(0)
 13>Emitted(110, 41) Source(175, 78) + SourceIndex(0)
 14>Emitted(110, 42) Source(175, 79) + SourceIndex(0)
-15>Emitted(110, 43) Source(175, 79) + SourceIndex(0)
+15>Emitted(110, 43) Source(175, 80) + SourceIndex(0)
 16>Emitted(110, 44) Source(175, 81) + SourceIndex(0)
 17>Emitted(110, 45) Source(175, 82) + SourceIndex(0)
 18>Emitted(110, 46) Source(175, 83) + SourceIndex(0)
@@ -3004,8 +3004,8 @@ sourceFile:contextualTyping.ts
 10>                         return 
 11>                                s
 12>                                 ;
-13>                                  
-14>                                    }
+13>                                   
+14>                                   }
 1->Emitted(115, 5) Source(180, 5) + SourceIndex(0)
 2 >Emitted(115, 6) Source(180, 6) + SourceIndex(0)
 3 >Emitted(115, 8) Source(180, 8) + SourceIndex(0)
@@ -3018,7 +3018,7 @@ sourceFile:contextualTyping.ts
 10>Emitted(115, 33) Source(180, 32) + SourceIndex(0)
 11>Emitted(115, 34) Source(180, 33) + SourceIndex(0)
 12>Emitted(115, 35) Source(180, 34) + SourceIndex(0)
-13>Emitted(115, 36) Source(180, 34) + SourceIndex(0)
+13>Emitted(115, 36) Source(180, 35) + SourceIndex(0)
 14>Emitted(115, 37) Source(180, 36) + SourceIndex(0)
 ---
 >>>});
@@ -3118,8 +3118,8 @@ sourceFile:contextualTyping.ts
 12>                             +
 13>                                b
 14>                                 ;
-15>                                  
-16>                                    }
+15>                                   
+16>                                   }
 1->Emitted(120, 1) Source(191, 1) + SourceIndex(0)
 2 >Emitted(120, 10) Source(191, 10) + SourceIndex(0)
 3 >Emitted(120, 13) Source(191, 13) + SourceIndex(0)
@@ -3134,7 +3134,7 @@ sourceFile:contextualTyping.ts
 12>Emitted(120, 33) Source(191, 30) + SourceIndex(0)
 13>Emitted(120, 34) Source(191, 31) + SourceIndex(0)
 14>Emitted(120, 35) Source(191, 32) + SourceIndex(0)
-15>Emitted(120, 36) Source(191, 32) + SourceIndex(0)
+15>Emitted(120, 36) Source(191, 33) + SourceIndex(0)
 16>Emitted(120, 37) Source(191, 34) + SourceIndex(0)
 ---
 >>>var efv = EF1(1, 2);
@@ -3335,10 +3335,10 @@ sourceFile:contextualTyping.ts
 3 > ^
 4 >  ^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
+  >
+2 >}
 3 > ;
-1 >Emitted(125, 1) Source(210, 48) + SourceIndex(0)
+1 >Emitted(125, 1) Source(211, 1) + SourceIndex(0)
 2 >Emitted(125, 2) Source(211, 2) + SourceIndex(0)
 3 >Emitted(125, 3) Source(211, 3) + SourceIndex(0)
 ---
@@ -3482,9 +3482,9 @@ sourceFile:contextualTyping.ts
 1 >^^^^
 2 >    ^
 1 >
-2 >    
-  >        }
-1 >Emitted(131, 5) Source(217, 52) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(131, 5) Source(218, 5) + SourceIndex(0)
 2 >Emitted(131, 6) Source(218, 6) + SourceIndex(0)
 ---
 >>>};

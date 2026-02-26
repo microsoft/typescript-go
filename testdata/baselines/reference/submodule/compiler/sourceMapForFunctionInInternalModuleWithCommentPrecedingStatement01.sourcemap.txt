@@ -92,9 +92,9 @@ sourceFile:sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.t
 2 >    ^
 3 >     ^^^^^^^^^^^^^^->
 1 >
-2 >    
-  >        }
-1 >Emitted(7, 5) Source(4, 19) + SourceIndex(0)
+  >    
+2 >    }
+1 >Emitted(7, 5) Source(5, 5) + SourceIndex(0)
 2 >Emitted(7, 6) Source(5, 6) + SourceIndex(0)
 ---
 >>>})(Q || (Q = {}));
@@ -107,8 +107,8 @@ sourceFile:sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.t
 7 >          ^^^^^^^^
 8 >                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1->
-2 >
-  >}
+  >
+2 >}
 3 > 
 4 >   Q
 5 >    
@@ -119,7 +119,7 @@ sourceFile:sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.t
   >                  var a = 1;
   >              }
   >          }
-1->Emitted(8, 1) Source(5, 6) + SourceIndex(0)
+1->Emitted(8, 1) Source(6, 1) + SourceIndex(0)
 2 >Emitted(8, 2) Source(6, 2) + SourceIndex(0)
 3 >Emitted(8, 4) Source(1, 11) + SourceIndex(0)
 4 >Emitted(8, 5) Source(1, 12) + SourceIndex(0)

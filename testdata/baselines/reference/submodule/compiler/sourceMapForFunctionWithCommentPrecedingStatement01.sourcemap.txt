@@ -59,9 +59,9 @@ sourceFile:sourceMapForFunctionWithCommentPrecedingStatement01.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(5, 1) Source(3, 15) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(5, 1) Source(4, 1) + SourceIndex(0)
 2 >Emitted(5, 2) Source(4, 2) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=sourceMapForFunctionWithCommentPrecedingStatement01.js.map

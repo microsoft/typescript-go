@@ -88,9 +88,9 @@ sourceFile:sourceMapValidationDestructuringForArrayBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(5, 1) Source(9, 19) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(5, 1) Source(10, 1) + SourceIndex(0)
 2 >Emitted(5, 2) Source(10, 2) + SourceIndex(0)
 ---
 >>>let multiRobotA = ["mower", ["mowing", ""]];
@@ -220,9 +220,9 @@ sourceFile:sourceMapValidationDestructuringForArrayBindingPattern.ts
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(10, 1) Source(15, 24) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(10, 1) Source(16, 1) + SourceIndex(0)
 2 >Emitted(10, 2) Source(16, 2) + SourceIndex(0)
 ---
 >>>for (let [, nameA] = robotA, i = 0; i < 1; i++) {

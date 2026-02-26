@@ -169,9 +169,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPatternDefaultV
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(5, 1) Source(8, 25) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(5, 1) Source(9, 1) + SourceIndex(0)
 2 >Emitted(5, 2) Source(9, 2) + SourceIndex(0)
 ---
 >>>function foo2([nameMB = "noName"] = ["name", ["skill1", "skill2"]]) {
@@ -270,9 +270,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPatternDefaultV
 2 >^
 3 > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(8, 1) Source(12, 25) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(8, 1) Source(13, 1) + SourceIndex(0)
 2 >Emitted(8, 2) Source(13, 2) + SourceIndex(0)
 ---
 >>>function foo3([nameMA = "noName", [primarySkillA = "primary", secondarySkillA = "secondary"] = ["noSkill", "noSkill"]]) {
@@ -392,9 +392,9 @@ sourceFile:sourceMapValidationDestructuringParametertArrayBindingPatternDefaultV
 2 >^
 3 > ^^^^^^^^^^^^^->
 1 >
-2 >
-  >}
-1 >Emitted(11, 1) Source(19, 25) + SourceIndex(0)
+  >
+2 >}
+1 >Emitted(11, 1) Source(20, 1) + SourceIndex(0)
 2 >Emitted(11, 2) Source(20, 2) + SourceIndex(0)
 ---
 >>>foo1(robotA);
