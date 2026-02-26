@@ -66,10 +66,7 @@ const typeHandlers = {
     [0]: (p) => console.log(p.foo),
     [1]: (p) => console.log(p.a),
 };
-const onSomeEvent = (p) => {
-    var _a;
-    return (_a = typeHandlers[p.t]) === null || _a === void 0 ? void 0 : _a.call(typeHandlers, p);
-};
+const onSomeEvent = (p) => { var _a; return (_a = typeHandlers[p.t]) === null || _a === void 0 ? void 0 : _a.call(typeHandlers, p); };
 
 
 //// [mappedTypeGenericIndexedAccess.d.ts]
