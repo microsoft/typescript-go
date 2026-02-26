@@ -5278,7 +5278,7 @@ func (p *Printer) emitLeadingCommentsOfNode(node *ast.Node, emitFlags EmitFlags,
 		// We have to explicitly check that the node is JsxText because if the compilerOptions.jsx is "preserve" we will not do any transformation.
 		// It is expensive to walk entire tree just to set one kind of node to have no comments.
 		skipLeadingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoLeadingComments != 0 || node.Kind == ast.KindJsxText
-		skipTrailingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
+		skipTrailingComments := ast.PositionIsSynthesized(end) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
 
 		// Emit leading comments if the position is not synthesized and the node
 		// has not opted out from emitting leading comments.
