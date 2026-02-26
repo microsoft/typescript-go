@@ -1,0 +1,14 @@
+staticPropertyUsedBeforeInitInBaseClass.ts(2,15): error TS2729: Property 'S' is used before its initialization.
+
+
+==== staticPropertyUsedBeforeInitInBaseClass.ts (1 errors) ====
+    class Base {
+      p = Derived.S;
+                  ~
+!!! error TS2729: Property 'S' is used before its initialization.
+!!! related TS2728 staticPropertyUsedBeforeInitInBaseClass.ts:5:10: 'S' is declared here.
+    }
+    class Derived extends Base {
+      static S = 1;
+    }
+    

@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/staticPropertyUsedBeforeInitInBaseClass.ts] ////
+
+=== staticPropertyUsedBeforeInitInBaseClass.ts ===
+class Base {
+>Base : Base
+
+  p = Derived.S;
+>p : number
+>Derived.S : number
+>Derived : typeof Derived
+>S : number
+}
+class Derived extends Base {
+>Derived : Derived
+>Base : Base
+
+  static S = 1;
+>S : number
+>1 : 1
+}
+
