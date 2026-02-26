@@ -22,28 +22,16 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^->
 +1->
    >
    >    
 -1 >Emitted(2, 5) Source(4, 5) + SourceIndex(0)
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
  ---
  >>>        this.\u0078 = 0;
  1->^^^^^^^^
-@@= skipped -17, +32 lines =@@
- 5 >                   ^^^
- 6 >                      ^
- 7 >                       ^
--1->constructor() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -25, +37 lines =@@
  5 >                    = 
  6 >                      0
  7 >                       ;
@@ -75,33 +63,18 @@
  ---
  >>>    doThing() {
  1->^^^^
- 2 >    ^^^^^^^
--3 >           ^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^->
- 1->
+@@= skipped -11, +11 lines =@@
    >
    >    
  2 >    doThing
 -1->Emitted(5, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(5, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
  >>>        this.x = 42;
  1->^^^^^^^^
-@@= skipped -22, +25 lines =@@
- 5 >              ^^^
- 6 >                 ^^
- 7 >                   ^
--1->() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -19, +19 lines =@@
  5 >               = 
  6 >                 42
  7 >                   ;
@@ -163,28 +136,16 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^^->
 +1->
    >
    >    
 -1 >Emitted(2, 5) Source(4, 5) + SourceIndex(0)
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
  ---
  >>>        this.x\u0078 = 0;
  1->^^^^^^^^
-@@= skipped -17, +32 lines =@@
- 5 >                    ^^^
- 6 >                       ^
- 7 >                        ^
--1->constructor() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -25, +37 lines =@@
  5 >                     = 
  6 >                       0
  7 >                        ;
@@ -216,33 +177,18 @@
  ---
  >>>    doThing() {
  1->^^^^
- 2 >    ^^^^^^^
--3 >           ^^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^^->
- 1->
+@@= skipped -11, +11 lines =@@
    >
    >    
  2 >    doThing
 -1->Emitted(5, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(5, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
  >>>        this.xx = 42;
  1->^^^^^^^^
-@@= skipped -22, +25 lines =@@
- 5 >               ^^^
- 6 >                  ^^
- 7 >                    ^
--1->() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -19, +19 lines =@@
  5 >                = 
  6 >                  42
  7 >                    ;
@@ -304,28 +250,16 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^->
 +1->
    >
    >    
 -1 >Emitted(2, 5) Source(4, 5) + SourceIndex(0)
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
  ---
  >>>        this.\u{78} = 0;
  1->^^^^^^^^
-@@= skipped -17, +32 lines =@@
- 5 >                   ^^^
- 6 >                      ^
- 7 >                       ^
--1->constructor() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -25, +37 lines =@@
  5 >                    = 
  6 >                      0
  7 >                       ;
@@ -357,33 +291,18 @@
  ---
  >>>    doThing() {
  1->^^^^
- 2 >    ^^^^^^^
--3 >           ^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^->
- 1->
+@@= skipped -11, +11 lines =@@
    >
    >    
  2 >    doThing
 -1->Emitted(5, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(5, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
  >>>        this.x = 42;
  1->^^^^^^^^
-@@= skipped -22, +25 lines =@@
- 5 >              ^^^
- 6 >                 ^^
- 7 >                   ^
--1->() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -19, +19 lines =@@
  5 >               = 
  6 >                 42
  7 >                   ;
@@ -445,28 +364,16 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^^->
 +1->
    >
    >    
 -1 >Emitted(2, 5) Source(4, 5) + SourceIndex(0)
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
  ---
  >>>        this.x\u{78} = 0;
  1->^^^^^^^^
-@@= skipped -17, +32 lines =@@
- 5 >                    ^^^
- 6 >                       ^
- 7 >                        ^
--1->constructor() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -25, +37 lines =@@
  5 >                     = 
  6 >                       0
  7 >                        ;
@@ -498,33 +405,18 @@
  ---
  >>>    doThing() {
  1->^^^^
- 2 >    ^^^^^^^
--3 >           ^^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^^->
- 1->
+@@= skipped -11, +11 lines =@@
    >
    >    
  2 >    doThing
 -1->Emitted(5, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(5, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
  >>>        this.xx = 42;
  1->^^^^^^^^
-@@= skipped -22, +25 lines =@@
- 5 >               ^^^
- 6 >                  ^^
- 7 >                    ^
--1->() {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -19, +19 lines =@@
  5 >                = 
  6 >                  42
  7 >                    ;
@@ -633,14 +525,11 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^^->
 +1->
 +  >
 +  >    
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
 +---
 +>>>        this.#\u0078 = 0;
 +1->^^^^^^^^
@@ -650,7 +539,7 @@
 +5 >                    ^^^
 +6 >                       ^
 +7 >                        ^
-+1->{
++1->constructor() {
    >        
 -2 >        
 -3 >                               this
@@ -681,7 +570,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -56, +60 lines =@@
+@@= skipped -56, +57 lines =@@
  1 >
    >    
  2 >    }
@@ -694,18 +583,15 @@
  1->^^^^
  2 >    ^^^^^^^
 -3 >           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^^->
++3 >           ^^^^^^^^^^^->
  1->
    >
    >    
  2 >    doThing
 -1->Emitted(13, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(13, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
 ->>>        __classPrivateFieldSet(this, _PrivateIdentifierWithEscape1_x, 42, "f");
 +>>>        this.#x = 42;
@@ -716,14 +602,13 @@
 -5 >                                                                      ^^
 -6 >                                                                        ^^^^^^
 -7 >                                                                              ^
--1->() {
 +2 >        ^^^^
 +3 >            ^
 +4 >             ^^
 +5 >               ^^^
 +6 >                  ^^
 +7 >                    ^
-+1->{
+ 1->() {
    >        
 -2 >        
 -3 >                               this
@@ -754,7 +639,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -44, +47 lines =@@
+@@= skipped -44, +44 lines =@@
  1 >
    >    
  2 >    }
@@ -845,14 +730,11 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^^^->
 +1->
 +  >
 +  >    
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
 +---
 +>>>        this.#x\u0078 = 0;
 +1->^^^^^^^^
@@ -862,7 +744,7 @@
 +5 >                     ^^^
 +6 >                        ^
 +7 >                         ^
-+1->{
++1->constructor() {
    >        
 -2 >        
 -3 >                               this
@@ -893,7 +775,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -56, +60 lines =@@
+@@= skipped -56, +57 lines =@@
  1 >
    >    
  2 >    }
@@ -906,18 +788,15 @@
  1->^^^^
  2 >    ^^^^^^^
 -3 >           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^^^->
++3 >           ^^^^^^^^^^^^->
  1->
    >
    >    
  2 >    doThing
 -1->Emitted(13, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(13, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
 ->>>        __classPrivateFieldSet(this, _PrivateIdentifierWithEscape2_xx, 42, "f");
 +>>>        this.#xx = 42;
@@ -928,14 +807,13 @@
 -5 >                                                                       ^^
 -6 >                                                                         ^^^^^^
 -7 >                                                                               ^
--1->() {
 +2 >        ^^^^
 +3 >            ^
 +4 >             ^^^
 +5 >                ^^^
 +6 >                   ^^
 +7 >                     ^
-+1->{
+ 1->() {
    >        
 -2 >        
 -3 >                               this
@@ -966,7 +844,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -44, +47 lines =@@
+@@= skipped -44, +44 lines =@@
  1 >
    >    
  2 >    }
@@ -1057,14 +935,11 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^^->
 +1->
 +  >
 +  >    
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
 +---
 +>>>        this.#\u{78} = 0;
 +1->^^^^^^^^
@@ -1074,7 +949,7 @@
 +5 >                    ^^^
 +6 >                       ^
 +7 >                        ^
-+1->{
++1->constructor() {
    >        
 -2 >        
 -3 >                               this
@@ -1105,7 +980,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -56, +60 lines =@@
+@@= skipped -56, +57 lines =@@
  1 >
    >    
  2 >    }
@@ -1118,18 +993,15 @@
  1->^^^^
  2 >    ^^^^^^^
 -3 >           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^^->
++3 >           ^^^^^^^^^^^->
  1->
    >
    >    
  2 >    doThing
 -1->Emitted(13, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(13, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
 ->>>        __classPrivateFieldSet(this, _PrivateIdentifierWithExtendedEscape1_x, 42, "f");
 +>>>        this.#x = 42;
@@ -1140,14 +1012,13 @@
 -5 >                                                                              ^^
 -6 >                                                                                ^^^^^^
 -7 >                                                                                      ^
--1->() {
 +2 >        ^^^^
 +3 >            ^
 +4 >             ^^
 +5 >               ^^^
 +6 >                  ^^
 +7 >                    ^
-+1->{
+ 1->() {
    >        
 -2 >        
 -3 >                               this
@@ -1178,7 +1049,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -44, +47 lines =@@
+@@= skipped -44, +44 lines =@@
  1 >
    >    
  2 >    }
@@ -1269,14 +1140,11 @@
 +---
 +>>>    constructor() {
 +1->^^^^
-+2 >    ^^^^^^^^^^^^^^
-+3 >                  ^^^^^^^^^->
++2 >    ^^^^^^^^^^^^^^^^^^^^^^^->
 +1->
 +  >
 +  >    
-+2 >    constructor() 
 +1->Emitted(3, 5) Source(4, 5) + SourceIndex(0)
-+2 >Emitted(3, 19) Source(4, 19) + SourceIndex(0)
 +---
 +>>>        this.#x\u{78} = 0;
 +1->^^^^^^^^
@@ -1286,7 +1154,7 @@
 +5 >                     ^^^
 +6 >                        ^
 +7 >                         ^
-+1->{
++1->constructor() {
    >        
 -2 >        
 -3 >                               this
@@ -1317,7 +1185,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -56, +60 lines =@@
+@@= skipped -56, +57 lines =@@
  1 >
    >    
  2 >    }
@@ -1330,18 +1198,15 @@
  1->^^^^
  2 >    ^^^^^^^
 -3 >           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
-+3 >           ^^^
-+4 >              ^^^^^^^^^->
++3 >           ^^^^^^^^^^^^->
  1->
    >
    >    
  2 >    doThing
 -1->Emitted(13, 5) Source(8, 5) + SourceIndex(0)
 -2 >Emitted(13, 12) Source(8, 12) + SourceIndex(0)
-+3 >           () 
 +1->Emitted(6, 5) Source(8, 5) + SourceIndex(0)
 +2 >Emitted(6, 12) Source(8, 12) + SourceIndex(0)
-+3 >Emitted(6, 15) Source(8, 15) + SourceIndex(0)
  ---
 ->>>        __classPrivateFieldSet(this, _PrivateIdentifierWithExtendedEscape2_xx, 42, "f");
 +>>>        this.#xx = 42;
@@ -1352,14 +1217,13 @@
 -5 >                                                                               ^^
 -6 >                                                                                 ^^^^^^
 -7 >                                                                                       ^
--1->() {
 +2 >        ^^^^
 +3 >            ^
 +4 >             ^^^
 +5 >                ^^^
 +6 >                   ^^
 +7 >                     ^
-+1->{
+ 1->() {
    >        
 -2 >        
 -3 >                               this
@@ -1390,7 +1254,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -44, +47 lines =@@
+@@= skipped -44, +44 lines =@@
  1 >
    >    
  2 >    }

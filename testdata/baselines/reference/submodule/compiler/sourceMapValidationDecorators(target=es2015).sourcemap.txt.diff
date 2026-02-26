@@ -28,20 +28,17 @@
  >>>    constructor(greeting, ...b) {
  1->^^^^
  2 >    ^^^^^^^^^^^^
-@@= skipped -7, +20 lines =@@
- 4 >                        ^^
+@@= skipped -8, +21 lines =@@
  5 >                          ^^^
  6 >                             ^
--7 >                              ^^^^->
+ 7 >                              ^^^^->
 -1-> {
 -  >    
-+7 >                              ^^
-+8 >                                ^^->
 +1->
  2 >    constructor(
    >          @ParameterDecorator1 
    >          @ParameterDecorator2(20) 
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +13 lines =@@
    >                              
  5 >                          ...
  6 >                             b: string[]
@@ -51,14 +48,12 @@
 -4 >Emitted(12, 27) Source(18, 7) + SourceIndex(0)
 -5 >Emitted(12, 30) Source(18, 10) + SourceIndex(0)
 -6 >Emitted(12, 31) Source(18, 21) + SourceIndex(0)
-+7 >                              ) 
 +1->Emitted(13, 5) Source(11, 5) + SourceIndex(0)
 +2 >Emitted(13, 17) Source(14, 14) + SourceIndex(0)
 +3 >Emitted(13, 25) Source(14, 30) + SourceIndex(0)
 +4 >Emitted(13, 27) Source(18, 7) + SourceIndex(0)
 +5 >Emitted(13, 30) Source(18, 10) + SourceIndex(0)
 +6 >Emitted(13, 31) Source(18, 21) + SourceIndex(0)
-+7 >Emitted(13, 33) Source(18, 23) + SourceIndex(0)
  ---
  >>>        this.greeting = greeting;
 -1->^^^^^^^^
@@ -101,35 +96,18 @@
  ---
  >>>    greet() {
  1->^^^^
- 2 >    ^^^^^
--3 >         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
-+3 >         ^^^
-+4 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1->
-   >    
-   >    @PropertyDecorator1
+@@= skipped -48, +39 lines =@@
    >    @PropertyDecorator2(40)
    >    
  2 >    greet
 -1->Emitted(15, 5) Source(23, 5) + SourceIndex(0)
 -2 >Emitted(15, 10) Source(23, 10) + SourceIndex(0)
-+3 >         () 
 +1->Emitted(16, 5) Source(23, 5) + SourceIndex(0)
 +2 >Emitted(16, 10) Source(23, 10) + SourceIndex(0)
-+3 >Emitted(16, 13) Source(23, 13) + SourceIndex(0)
  ---
  >>>        return "<h1>" + this.greeting + "</h1>";
  1->^^^^^^^^
-@@= skipped -62, +58 lines =@@
- 8 >                                     ^^^
- 9 >                                        ^^^^^^^
- 10>                                               ^
--1->() {
-+1->{
-   >        
- 2 >        return 
- 3 >               "<h1>"
-@@= skipped -11, +11 lines =@@
+@@= skipped -25, +25 lines =@@
  8 >                                      + 
  9 >                                        "</h1>"
  10>                                               ;
@@ -219,7 +197,7 @@
  2 >    ^^
  3 >      ^
  4 >       ^
--5 >        ^^^^^^^^^^^^^^^^^^^^^^->
+ 5 >        ^^^^^^^^^^^^^^^^^^^^^^->
 -1->
 -  >
 -  >    @PropertyDecorator1
@@ -229,13 +207,11 @@
 -  >    @PropertyDecorator1
 -  >    @PropertyDecorator2(60)
 -  >    private static x1: number = 10;
-+5 >        ^^
-+6 >          ^^^^^^^^^^^^^^^^^^^^->
 +1 >
    >    
    >    private 
  2 >    fn
-@@= skipped -44, +83 lines =@@
+@@= skipped -44, +82 lines =@@
    >            @ParameterDecorator2(70) 
    >            
  4 >       x: number
@@ -243,24 +219,14 @@
 -2 >Emitted(18, 7) Source(35, 15) + SourceIndex(0)
 -3 >Emitted(18, 8) Source(38, 7) + SourceIndex(0)
 -4 >Emitted(18, 9) Source(38, 16) + SourceIndex(0)
-+5 >        ) 
 +1 >Emitted(21, 5) Source(35, 13) + SourceIndex(0)
 +2 >Emitted(21, 7) Source(35, 15) + SourceIndex(0)
 +3 >Emitted(21, 8) Source(38, 7) + SourceIndex(0)
 +4 >Emitted(21, 9) Source(38, 16) + SourceIndex(0)
-+5 >Emitted(21, 11) Source(38, 18) + SourceIndex(0)
  ---
  >>>        return this.greeting;
  1->^^^^^^^^
-@@= skipped -12, +14 lines =@@
- 4 >                   ^
- 5 >                    ^^^^^^^^
- 6 >                            ^
--1->) {
-+1->{
-   >        
- 2 >        return 
- 3 >               this
+@@= skipped -19, +19 lines =@@
  4 >                   .
  5 >                    greeting
  6 >                            ;
@@ -279,7 +245,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -21, +21 lines =@@
+@@= skipped -14, +14 lines =@@
  1 >
    >    
  2 >    }
@@ -290,38 +256,20 @@
  ---
  >>>    get greetings() {
  1->^^^^
- 2 >    ^^^^
- 3 >        ^^^^^^^^^
--4 >                 ^^^^^^^^^^^^^->
-+4 >                 ^^^
-+5 >                    ^^^^^^^^^^->
- 1->
-   >
-   >    @PropertyDecorator1
-@@= skipped -15, +16 lines =@@
+@@= skipped -15, +15 lines =@@
    >    
  2 >    get 
  3 >        greetings
 -1->Emitted(21, 5) Source(44, 5) + SourceIndex(0)
 -2 >Emitted(21, 9) Source(44, 9) + SourceIndex(0)
 -3 >Emitted(21, 18) Source(44, 18) + SourceIndex(0)
-+4 >                 () 
 +1->Emitted(24, 5) Source(44, 5) + SourceIndex(0)
 +2 >Emitted(24, 9) Source(44, 9) + SourceIndex(0)
 +3 >Emitted(24, 18) Source(44, 18) + SourceIndex(0)
-+4 >Emitted(24, 21) Source(44, 21) + SourceIndex(0)
  ---
  >>>        return this.greeting;
  1->^^^^^^^^
-@@= skipped -11, +13 lines =@@
- 4 >                   ^
- 5 >                    ^^^^^^^^
- 6 >                            ^
--1->() {
-+1->{
-   >        
- 2 >        return 
- 3 >               this
+@@= skipped -18, +18 lines =@@
  4 >                   .
  5 >                    greeting
  6 >                            ;
@@ -340,7 +288,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -21, +21 lines =@@
+@@= skipped -14, +14 lines =@@
  1 >
    >    
  2 >    }
@@ -351,17 +299,7 @@
  ---
  >>>    set greetings(greetings) {
  1->^^^^
-@@= skipped -9, +9 lines =@@
- 3 >        ^^^^^^^^^
- 4 >                 ^
- 5 >                  ^^^^^^^^^
--6 >                           ^^^^^^^^->
-+6 >                           ^^
-+7 >                             ^^^^^^->
- 1->
-   >
-   >    
-@@= skipped -11, +12 lines =@@
+@@= skipped -20, +20 lines =@@
    >                       @ParameterDecorator2(90) 
    >                       
  5 >                  greetings: string
@@ -370,26 +308,15 @@
 -3 >Emitted(24, 18) Source(48, 18) + SourceIndex(0)
 -4 >Emitted(24, 19) Source(51, 7) + SourceIndex(0)
 -5 >Emitted(24, 28) Source(51, 24) + SourceIndex(0)
-+6 >                           ) 
 +1->Emitted(27, 5) Source(48, 5) + SourceIndex(0)
 +2 >Emitted(27, 9) Source(48, 9) + SourceIndex(0)
 +3 >Emitted(27, 18) Source(48, 18) + SourceIndex(0)
 +4 >Emitted(27, 19) Source(51, 7) + SourceIndex(0)
 +5 >Emitted(27, 28) Source(51, 24) + SourceIndex(0)
-+6 >Emitted(27, 30) Source(51, 26) + SourceIndex(0)
  ---
  >>>        this.greeting = greetings;
  1->^^^^^^^^
-@@= skipped -14, +16 lines =@@
- 5 >                     ^^^
- 6 >                        ^^^^^^^^^
- 7 >                                 ^
--1->) {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -22, +22 lines =@@
  5 >                      = 
  6 >                        greetings
  7 >                                 ;

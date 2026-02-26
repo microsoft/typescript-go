@@ -26,15 +26,12 @@
  >>>    constructor(greeting, ...b) {
  1->^^^^
  2 >    ^^^^^^^^^^^^
-@@= skipped -7, +17 lines =@@
- 4 >                        ^^
+@@= skipped -8, +18 lines =@@
  5 >                          ^^^
  6 >                             ^
--7 >                              ^^^^->
+ 7 >                              ^^^^->
 -1-> {
 -  >    
-+7 >                              ^^
-+8 >                                ^^->
 +1->
  2 >    constructor(public 
  3 >                greeting: string
@@ -47,14 +44,12 @@
 -4 >Emitted(3, 27) Source(2, 42) + SourceIndex(0)
 -5 >Emitted(3, 30) Source(2, 45) + SourceIndex(0)
 -6 >Emitted(3, 31) Source(2, 56) + SourceIndex(0)
-+7 >                              ) 
 +1->Emitted(4, 5) Source(2, 5) + SourceIndex(0)
 +2 >Emitted(4, 17) Source(2, 24) + SourceIndex(0)
 +3 >Emitted(4, 25) Source(2, 40) + SourceIndex(0)
 +4 >Emitted(4, 27) Source(2, 42) + SourceIndex(0)
 +5 >Emitted(4, 30) Source(2, 45) + SourceIndex(0)
 +6 >Emitted(4, 31) Source(2, 56) + SourceIndex(0)
-+7 >Emitted(4, 33) Source(2, 58) + SourceIndex(0)
  ---
  >>>        this.greeting = greeting;
 -1->^^^^^^^^
@@ -111,33 +106,7 @@
  2 >    }
  1 >Emitted(6, 5) Source(3, 5) + SourceIndex(0)
  2 >Emitted(6, 6) Source(3, 6) + SourceIndex(0)
-@@= skipped -67, +38 lines =@@
- >>>    greet() {
- 1->^^^^
- 2 >    ^^^^^
--3 >         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
-+3 >         ^^^
-+4 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1->
-   >    
- 2 >    greet
-+3 >         () 
- 1->Emitted(7, 5) Source(4, 5) + SourceIndex(0)
- 2 >Emitted(7, 10) Source(4, 10) + SourceIndex(0)
-+3 >Emitted(7, 13) Source(4, 13) + SourceIndex(0)
- ---
- >>>        return "<h1>" + this.greeting + "</h1>";
- 1->^^^^^^^^
-@@= skipped -18, +21 lines =@@
- 8 >                                     ^^^
- 9 >                                        ^^^^^^^
- 10>                                               ^
--1->() {
-+1->{
-   >        
- 2 >        return 
- 3 >               "<h1>"
-@@= skipped -25, +25 lines =@@
+@@= skipped -109, +77 lines =@@
  >>>    }
  1 >^^^^
  2 >    ^
@@ -184,33 +153,21 @@
 -1->^^^^
 +1 >^^^^
  2 >    ^^
--3 >      ^^^^^^^^^^^^^^^^^^^^^^^^->
+ 3 >      ^^^^^^^^^^^^^^^^^^^^^^^^->
 -1->
 -  >    private x: string;
 -  >    private x1: number = 10;
-+3 >      ^^^
-+4 >         ^^^^^^^^^^^^^^^^^^^^^->
 +1 >
    >    private 
  2 >    fn
 -1->Emitted(10, 5) Source(9, 13) + SourceIndex(0)
 -2 >Emitted(10, 7) Source(9, 15) + SourceIndex(0)
-+3 >      () 
 +1 >Emitted(12, 5) Source(9, 13) + SourceIndex(0)
 +2 >Emitted(12, 7) Source(9, 15) + SourceIndex(0)
-+3 >Emitted(12, 10) Source(9, 18) + SourceIndex(0)
  ---
  >>>        return this.greeting;
  1->^^^^^^^^
-@@= skipped -26, +58 lines =@@
- 4 >                   ^
- 5 >                    ^^^^^^^^
- 6 >                            ^
--1->() {
-+1->{
-   >        
- 2 >        return 
- 3 >               this
+@@= skipped -33, +62 lines =@@
  4 >                   .
  5 >                    greeting
  6 >                            ;
@@ -229,7 +186,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -21, +21 lines =@@
+@@= skipped -14, +14 lines =@@
  1 >
    >    
  2 >    }
@@ -240,35 +197,20 @@
  ---
  >>>    get greetings() {
  1->^^^^
- 2 >    ^^^^
- 3 >        ^^^^^^^^^
--4 >                 ^^^^^^^^^^^^^->
-+4 >                 ^^^
-+5 >                    ^^^^^^^^^^->
- 1->
+@@= skipped -12, +12 lines =@@
    >    
  2 >    get 
  3 >        greetings
 -1->Emitted(13, 5) Source(12, 5) + SourceIndex(0)
 -2 >Emitted(13, 9) Source(12, 9) + SourceIndex(0)
 -3 >Emitted(13, 18) Source(12, 18) + SourceIndex(0)
-+4 >                 () 
 +1->Emitted(15, 5) Source(12, 5) + SourceIndex(0)
 +2 >Emitted(15, 9) Source(12, 9) + SourceIndex(0)
 +3 >Emitted(15, 18) Source(12, 18) + SourceIndex(0)
-+4 >Emitted(15, 21) Source(12, 21) + SourceIndex(0)
  ---
  >>>        return this.greeting;
  1->^^^^^^^^
-@@= skipped -23, +26 lines =@@
- 4 >                   ^
- 5 >                    ^^^^^^^^
- 6 >                            ^
--1->() {
-+1->{
-   >        
- 2 >        return 
- 3 >               this
+@@= skipped -18, +18 lines =@@
  4 >                   .
  5 >                    greeting
  6 >                            ;
@@ -287,7 +229,7 @@
  ---
  >>>    }
  1 >^^^^
-@@= skipped -21, +21 lines =@@
+@@= skipped -14, +14 lines =@@
  1 >
    >    
  2 >    }
@@ -298,16 +240,7 @@
  ---
  >>>    set greetings(greetings) {
  1->^^^^
-@@= skipped -9, +9 lines =@@
- 3 >        ^^^^^^^^^
- 4 >                 ^
- 5 >                  ^^^^^^^^^
--6 >                           ^^^^^^^^->
-+6 >                           ^^
-+7 >                             ^^^^^^->
- 1->
-   >    
- 2 >    set 
+@@= skipped -16, +16 lines =@@
  3 >        greetings
  4 >                 (
  5 >                  greetings: string
@@ -316,26 +249,15 @@
 -3 >Emitted(16, 18) Source(15, 18) + SourceIndex(0)
 -4 >Emitted(16, 19) Source(15, 19) + SourceIndex(0)
 -5 >Emitted(16, 28) Source(15, 36) + SourceIndex(0)
-+6 >                           ) 
 +1->Emitted(18, 5) Source(15, 5) + SourceIndex(0)
 +2 >Emitted(18, 9) Source(15, 9) + SourceIndex(0)
 +3 >Emitted(18, 18) Source(15, 18) + SourceIndex(0)
 +4 >Emitted(18, 19) Source(15, 19) + SourceIndex(0)
 +5 >Emitted(18, 28) Source(15, 36) + SourceIndex(0)
-+6 >Emitted(18, 30) Source(15, 38) + SourceIndex(0)
  ---
  >>>        this.greeting = greetings;
  1->^^^^^^^^
-@@= skipped -21, +24 lines =@@
- 5 >                     ^^^
- 6 >                        ^^^^^^^^^
- 7 >                                 ^
--1->) {
-+1->{
-   >        
- 2 >        this
- 3 >            .
-@@= skipped -8, +8 lines =@@
+@@= skipped -22, +22 lines =@@
  5 >                      = 
  6 >                        greetings
  7 >                                 ;
