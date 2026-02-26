@@ -579,11 +579,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 		if rightmostValidNode != nil {
 			endPos = rightmostValidNode.End()
 		}
-		result := find(rightmostValidNode, endPos)
-		if result == nil && n != containingNode {
-			return n
-		}
-		return result
+		return find(rightmostValidNode, endPos)
 	}
 
 	return find(containingNode, endPos)

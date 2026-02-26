@@ -1275,15 +1275,15 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 			if ch == '{' {
 				break
 			} else if ch == '@' && s.pos >= 0 {
-				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before non-whitespace
+				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before identifier
 				previous, _ := utf8.DecodeLastRuneInString(s.text[:s.pos])
 				if stringutil.IsWhiteSpaceSingleLine(previous) {
-					if s.pos+size >= len(s.text) {
-						// EOF counts as non-whitespace
-						break
-					}
-					next, _ := utf8.DecodeRuneInString(s.text[s.pos+size:])
-					if !stringutil.IsWhiteSpaceLike(next) {
+					saved := s.Mark()
+					s.pos += size
+					s.ScanJSDocToken()
+					isIdentifier := tokenIsIdentifierOrKeyword(s.token)
+					s.Rewind(saved)
+					if isIdentifier {
 						break
 					}
 				}

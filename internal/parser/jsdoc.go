@@ -221,11 +221,19 @@ loop:
 	for {
 		switch p.token {
 		case ast.KindAtToken:
+			savedNodePos := p.nodePos()
+			savedState := p.mark()
+			tag := p.parseTag(tags, indent)
+			if tag == nil {
+				p.rewind(savedState)
+				state = jsdocStateSavingComments
+				pushComment(p.scanner.TokenText())
+				break
+			}
 			comments = removeTrailingWhitespace(comments)
 			if commentsPos == -1 {
-				commentsPos = p.nodePos()
+				commentsPos = savedNodePos
 			}
-			tag := p.parseTag(tags, indent)
 			if tagsPos == -1 {
 				tagsPos = tag.Pos()
 			}
@@ -431,6 +439,10 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 	start := p.scanner.TokenStart()
 	p.nextTokenJSDoc()
 
+	if !p.canFollowJSDocAtToken() {
+		return nil
+	}
+
 	tagName := p.parseJSDocIdentifierName(nil)
 	indentText := p.skipWhitespaceOrAsterisk()
 
@@ -545,8 +557,12 @@ loop:
 			comments = append(comments, p.scanner.TokenText())
 			indent = 0
 		case ast.KindAtToken:
-			p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
-			break loop
+			if p.isStartOfJSDocTag() {
+				p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
+				break loop
+			}
+			state = jsdocStateSavingComments
+			pushComment(p.scanner.TokenText())
 		case ast.KindEndOfFile:
 			// Done
 			break loop
@@ -1086,7 +1102,7 @@ func (p *Parser) parseChildParameterOrPropertyTag(target propertyLikeParse, inde
 	for {
 		switch p.nextTokenJSDoc() {
 		case ast.KindAtToken:
-			if canParseTag {
+			if canParseTag && p.isStartOfJSDocTag() {
 				child := p.tryParseChildTag(target, indent)
 				if child != nil && name != nil &&
 					(child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag) &&
@@ -1248,4 +1264,20 @@ func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message
 	p.internIdentifier(text)
 	p.nextTokenJSDoc()
 	return p.finishNodeWithEnd(p.newIdentifier(text), pos, end)
+}
+
+func (p *Parser) isStartOfJSDocTag() bool {
+	return p.lookAhead(func(p *Parser) bool {
+		p.nextTokenJSDoc()
+		return p.canFollowJSDocAtToken()
+	})
+}
+
+// Whitespace, newline, and EOF are allowed after @ to support incomplete tags being
+// typed — completion providers use empty-named tags to offer tag name suggestions.
+func (p *Parser) canFollowJSDocAtToken() bool {
+	return tokenIsIdentifierOrKeyword(p.token) ||
+		p.token == ast.KindEndOfFile ||
+		p.token == ast.KindNewLineTrivia ||
+		p.token == ast.KindWhitespaceTrivia
 }
