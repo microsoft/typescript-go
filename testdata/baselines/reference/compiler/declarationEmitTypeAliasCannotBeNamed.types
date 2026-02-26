@@ -8,7 +8,7 @@ export type ExportBase = Base;
 
 === main.ts ===
 import type { ExportBase } from './lib.js'
->ExportBase : import("./lib.js").ExportBase
+>ExportBase : Base
 
 interface Clonable<T> {
     clone(): Clonable<T>
@@ -19,9 +19,9 @@ export default class C {
 >C : C
 
     async method(res: Clonable<{ key: ExportBase }>) {
->method : (res: Clonable<{ key: import("./lib.js").ExportBase; }>) => Promise<Clonable<{ key: import("./lib.js").ExportBase; }> | undefined>
->res : Clonable<{ key: import("./lib.js").ExportBase; }>
->key : import("./lib.js").ExportBase
+>method : (res: Clonable<{ key: Base; }>) => Promise<Clonable<{ key: Base; }> | undefined>
+>res : Clonable<{ key: Base; }>
+>key : Base
 
         if (Math.random() > 0.5) {
 >Math.random() > 0.5 : boolean
@@ -32,17 +32,17 @@ export default class C {
 >0.5 : 0.5
 
             res.clone();
->res.clone() : Clonable<{ key: import("./lib.js").ExportBase; }>
->res.clone : () => Clonable<{ key: import("./lib.js").ExportBase; }>
->res : Clonable<{ key: import("./lib.js").ExportBase; }>
->clone : () => Clonable<{ key: import("./lib.js").ExportBase; }>
+>res.clone() : Clonable<{ key: Base; }>
+>res.clone : () => Clonable<{ key: Base; }>
+>res : Clonable<{ key: Base; }>
+>clone : () => Clonable<{ key: Base; }>
 
         } else {
             return res.clone();
->res.clone() : Clonable<{ key: import("./lib.js").ExportBase; }>
->res.clone : () => Clonable<{ key: import("./lib.js").ExportBase; }>
->res : Clonable<{ key: import("./lib.js").ExportBase; }>
->clone : () => Clonable<{ key: import("./lib.js").ExportBase; }>
+>res.clone() : Clonable<{ key: Base; }>
+>res.clone : () => Clonable<{ key: Base; }>
+>res : Clonable<{ key: Base; }>
+>clone : () => Clonable<{ key: Base; }>
         }
     };
 }

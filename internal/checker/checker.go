@@ -13990,17 +13990,6 @@ func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.
 	return nil
 }
 
-// resolveTypeAliasSymbol resolves a type alias symbol to the symbol of its
-// declared type, if the declared type has a single symbol (e.g., an interface
-// or class). Returns nil for complex types like unions or intersections.
-func (c *Checker) resolveTypeAliasSymbol(symbol *ast.Symbol) *ast.Symbol {
-	declaredType := c.getDeclaredTypeOfTypeAlias(symbol)
-	if declaredType != nil && declaredType.symbol != nil {
-		return c.getMergedSymbol(declaredType.symbol)
-	}
-	return nil
-}
-
 func (c *Checker) getExportSymbolOfValueSymbolIfExported(symbol *ast.Symbol) *ast.Symbol {
 	if symbol != nil && symbol.Flags&ast.SymbolFlagsExportValue != 0 && symbol.ExportSymbol != nil {
 		symbol = symbol.ExportSymbol

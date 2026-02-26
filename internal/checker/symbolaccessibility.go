@@ -325,9 +325,8 @@ func (ch *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaratio
 
 	var bestContainers []*ast.Symbol
 	var alternativeContainers []*ast.Symbol
-	resolvedSymbol := ch.getMergedSymbol(ch.resolveSymbol(ch.getMergedSymbol(symbol)))
 	for _, container := range candidates {
-		if ch.getAliasForSymbolInContainer(container, symbol) == nil && !ch.hasTypeAliasForSymbol(container, resolvedSymbol) {
+		if ch.getAliasForSymbolInContainer(container, symbol) == nil {
 			continue
 		}
 		allAlts := ch.getWithAlternativeContainers(container, symbol, enclosingDeclaration, meaning)
@@ -369,20 +368,6 @@ func (ch *Checker) getAliasForSymbolInContainer(container *ast.Symbol, symbol *a
 		return candidates[0]
 	}
 	return nil
-}
-
-// hasTypeAliasForSymbol checks if a container has an exported type alias
-// whose declared type resolves to the given symbol. This is used to find
-// accessible names for symbols that are not directly exported but have
-// exported type aliases (e.g., `export type ExportBase = Base`).
-func (ch *Checker) hasTypeAliasForSymbol(container *ast.Symbol, resolvedSymbol *ast.Symbol) bool {
-	exports := ch.getExportsOfSymbol(container)
-	for _, exported := range exports {
-		if exported.Flags&ast.SymbolFlagsTypeAlias != 0 && ch.resolveTypeAliasSymbol(exported) == resolvedSymbol {
-			return true
-		}
-	}
-	return false
 }
 
 func (ch *Checker) getAccessibleSymbolChain(

@@ -53,7 +53,7 @@ export default class C {
     method(res: Clonable<{
         key: ExportBase;
     }>): Promise<Clonable<{
-        key: import("./lib.js").ExportBase;
+        key: Base;
     }> | undefined>;
 }
 export {};
