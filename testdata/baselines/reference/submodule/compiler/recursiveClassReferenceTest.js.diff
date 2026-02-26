@@ -1,29 +1,7 @@
 --- old.recursiveClassReferenceTest.js
 +++ new.recursiveClassReferenceTest.js
-@@= skipped -109, +109 lines =@@
- // Scenario 2: Test recursive function call with cast and "this" parameter
- var Sample;
- (function (Sample) {
--    var Actions;
-+    let Actions;
-     (function (Actions) {
--        var Thing;
-+        let Thing;
-         (function (Thing_1) {
--            var Find;
-+            let Find;
-             (function (Find) {
-                 class StartFindAction {
-                     getId() { return "yo"; }
-@@= skipped -18, +18 lines =@@
-     })(Actions = Sample.Actions || (Sample.Actions = {}));
- })(Sample || (Sample = {}));
- (function (Sample) {
--    var Thing;
-+    let Thing;
-     (function (Thing) {
--        var Widgets;
-+        let Widgets;
+@@= skipped -132, +132 lines =@@
+         var Widgets;
          (function (Widgets) {
              class FindWidget {
 +                codeThing;
@@ -37,18 +15,8 @@
                      // scenario 1
                      codeThing.addWidget("addWidget", this);
                  }
-@@= skipped -28, +29 lines =@@
-     getInitialState() { return null; }
- }
- (function (Sample) {
--    var Thing;
-+    let Thing;
-     (function (Thing) {
--        var Languages;
-+        let Languages;
-         (function (Languages) {
--            var PlainText;
-+            let PlainText;
+@@= skipped -30, +31 lines =@@
+             var PlainText;
              (function (PlainText) {
                  class State {
 +                    mode;

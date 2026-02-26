@@ -30,7 +30,7 @@ class Shape {
     id;
 }
 (function (Shape) {
-    let Utils;
+    var Utils;
     (function (Utils) {
         function convert() { return null; }
         Utils.convert = convert;
@@ -40,7 +40,7 @@ class Path extends Shape {
     name;
 }
 (function (Path) {
-    let Utils;
+    var Utils;
     (function (Utils) {
         function convert2() {
             return null;

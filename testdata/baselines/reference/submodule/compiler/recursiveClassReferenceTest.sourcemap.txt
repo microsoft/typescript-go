@@ -93,7 +93,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(5, 12) Source(32, 11) + SourceIndex(0)
 3 >Emitted(5, 18) Source(32, 17) + SourceIndex(0)
 ---
->>>    let Actions;
+>>>    var Actions;
 1 >^^^^
 2 >    ^^^^
 3 >        ^^^^^^^
@@ -129,7 +129,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(7, 16) Source(32, 18) + SourceIndex(0)
 3 >Emitted(7, 23) Source(32, 25) + SourceIndex(0)
 ---
->>>        let Thing;
+>>>        var Thing;
 1 >^^^^^^^^
 2 >        ^^^^
 3 >            ^^^^^
@@ -165,7 +165,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(9, 20) Source(32, 26) + SourceIndex(0)
 3 >Emitted(9, 27) Source(32, 31) + SourceIndex(0)
 ---
->>>            let Find;
+>>>            var Find;
 1 >^^^^^^^^^^^^
 2 >            ^^^^
 3 >                ^^^^
@@ -501,7 +501,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(23, 12) Source(44, 11) + SourceIndex(0)
 3 >Emitted(23, 18) Source(44, 17) + SourceIndex(0)
 ---
->>>    let Thing;
+>>>    var Thing;
 1 >^^^^
 2 >    ^^^^
 3 >        ^^^^^
@@ -548,7 +548,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(25, 16) Source(44, 18) + SourceIndex(0)
 3 >Emitted(25, 21) Source(44, 23) + SourceIndex(0)
 ---
->>>        let Widgets;
+>>>        var Widgets;
 1->^^^^^^^^
 2 >        ^^^^
 3 >            ^^^^^^^
@@ -1103,7 +1103,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(52, 12) Source(76, 11) + SourceIndex(0)
 3 >Emitted(52, 18) Source(76, 17) + SourceIndex(0)
 ---
->>>    let Thing;
+>>>    var Thing;
 1 >^^^^
 2 >    ^^^^
 3 >        ^^^^^
@@ -1154,7 +1154,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(54, 16) Source(76, 18) + SourceIndex(0)
 3 >Emitted(54, 21) Source(76, 23) + SourceIndex(0)
 ---
->>>        let Languages;
+>>>        var Languages;
 1->^^^^^^^^
 2 >        ^^^^
 3 >            ^^^^^^^^^
@@ -1204,7 +1204,7 @@ sourceFile:recursiveClassReferenceTest.ts
 2 >Emitted(56, 20) Source(76, 24) + SourceIndex(0)
 3 >Emitted(56, 29) Source(76, 33) + SourceIndex(0)
 ---
->>>            let PlainText;
+>>>            var PlainText;
 1 >^^^^^^^^^^^^
 2 >            ^^^^
 3 >                ^^^^^^^^^

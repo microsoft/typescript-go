@@ -64,9 +64,9 @@ var p;
 var p;
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let Z;
+        var Z;
         (function (Z) {
             class Line {
                 length;

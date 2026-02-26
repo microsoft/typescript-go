@@ -1,14 +1,6 @@
 --- old.crashRegressionTest.js
 +++ new.crashRegressionTest.js
-@@= skipped -30, +30 lines =@@
- "use strict";
- var MsPortal;
- (function (MsPortal) {
--    var Util;
-+    let Util;
-     (function (Util) {
--        var TemplateEngine;
-+        let TemplateEngine;
+@@= skipped -36, +36 lines =@@
          (function (TemplateEngine) {
              "use strict";
              class StringTemplate {
@@ -16,7 +8,7 @@
                  constructor(templateStorage) {
                      this._templateStorage = templateStorage;
                  }
-@@= skipped -14, +15 lines =@@
+@@= skipped -8, +9 lines =@@
                  }
              }
              class TemplateStorage {

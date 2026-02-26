@@ -1,29 +1,7 @@
 --- old.declFileGenericType2.js
 +++ new.declFileGenericType2.js
-@@= skipped -47, +47 lines =@@
- // Module
- var templa;
- (function (templa) {
--    var dom;
-+    let dom;
-     (function (dom) {
--        var mvc;
-+        let mvc;
-         (function (mvc) {
-             class AbstractElementController extends templa.mvc.AbstractController {
-                 constructor() {
-@@= skipped -15, +15 lines =@@
- })(templa || (templa = {}));
- // Module
- (function (templa) {
--    var dom;
-+    let dom;
-     (function (dom) {
--        var mvc;
-+        let mvc;
-         (function (mvc) {
--            var composite;
-+            let composite;
+@@= skipped -69, +69 lines =@@
+             var composite;
              (function (composite) {
                  class AbstractCompositeElementController extends templa.dom.mvc.AbstractElementController {
 +                    _controllers;

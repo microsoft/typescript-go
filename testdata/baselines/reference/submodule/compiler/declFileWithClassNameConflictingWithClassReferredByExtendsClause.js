@@ -25,9 +25,9 @@ namespace X.Y.base.Z {
 "use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let base;
+        var base;
         (function (base) {
             class W extends A.B.Base.W {
                 name;
@@ -37,11 +37,11 @@ var X;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let base;
+        var base;
         (function (base) {
-            let Z;
+            var Z;
             (function (Z) {
                 class W extends X.Y.base.W {
                     value;

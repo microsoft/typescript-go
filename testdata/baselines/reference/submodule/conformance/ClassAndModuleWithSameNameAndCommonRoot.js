@@ -44,7 +44,7 @@ var a: { id: string };
 "use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
         class Point {
             constructor(x, y) {
@@ -61,7 +61,7 @@ var X;
 "use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
         let Point;
         (function (Point) {

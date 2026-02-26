@@ -31,9 +31,9 @@ namespace MsPortal.Util.TemplateEngine {
 "use strict";
 var MsPortal;
 (function (MsPortal) {
-    let Util;
+    var Util;
     (function (Util) {
-        let TemplateEngine;
+        var TemplateEngine;
         (function (TemplateEngine) {
             "use strict";
             class StringTemplate {

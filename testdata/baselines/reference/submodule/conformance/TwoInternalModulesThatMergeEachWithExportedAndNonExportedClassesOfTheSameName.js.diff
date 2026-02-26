@@ -9,22 +9,15 @@
      }
      A.Point = Point;
  })(A || (A = {}));
-@@= skipped -15, +17 lines =@@
- var p;
- var X;
- (function (X) {
--    var Y;
-+    let Y;
-     (function (Y) {
--        var Z;
-+        let Z;
+@@= skipped -20, +22 lines =@@
+         var Z;
          (function (Z) {
              class Line {
 +                length;
              }
              Z.Line = Line;
          })(Z = Y.Z || (Y.Z = {}));
-@@= skipped -16, +17 lines =@@
+@@= skipped -11, +12 lines =@@
          let Z;
          (function (Z) {
              class Line {

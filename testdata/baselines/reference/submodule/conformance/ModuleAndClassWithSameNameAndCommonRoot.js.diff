@@ -1,24 +1,6 @@
 --- old.ModuleAndClassWithSameNameAndCommonRoot.js
 +++ new.ModuleAndClassWithSameNameAndCommonRoot.js
-@@= skipped -34, +34 lines =@@
- "use strict";
- var X;
- (function (X) {
--    var Y;
-+    let Y;
-     (function (Y) {
-         let Point;
-         (function (Point) {
-@@= skipped -12, +12 lines =@@
- "use strict";
- var X;
- (function (X) {
--    var Y;
-+    let Y;
-     (function (Y) {
-         // duplicate identifier
-         class Point {
-@@= skipped -8, +8 lines =@@
+@@= skipped -54, +54 lines =@@
                  this.x = x;
                  this.y = y;
              }

@@ -35,7 +35,7 @@ class A {
 "use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
         let Point;
         (function (Point) {
@@ -47,7 +47,7 @@ var X;
 "use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
         // duplicate identifier
         class Point {

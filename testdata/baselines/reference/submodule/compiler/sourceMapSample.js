@@ -41,7 +41,7 @@ namespace Foo.Bar {
 "use strict";
 var Foo;
 (function (Foo) {
-    let Bar;
+    var Bar;
     (function (Bar) {
         "use strict";
         class Greeter {

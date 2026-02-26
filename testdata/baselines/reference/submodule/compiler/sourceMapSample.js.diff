@@ -1,11 +1,6 @@
 --- old.sourceMapSample.js
 +++ new.sourceMapSample.js
-@@= skipped -40, +40 lines =@@
- "use strict";
- var Foo;
- (function (Foo) {
--    var Bar;
-+    let Bar;
+@@= skipped -44, +44 lines =@@
      (function (Bar) {
          "use strict";
          class Greeter {

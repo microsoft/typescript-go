@@ -40,7 +40,7 @@ var l: X.Y.Z.Line;
 "use strict";
 var A;
 (function (A) {
-    let B;
+    var B;
     (function (B) {
     })(B = A.B || (A.B = {}));
 })(A || (A = {}));
@@ -54,9 +54,9 @@ var x;
 var x = A.B.x;
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let Z;
+        var Z;
         (function (Z) {
             class Line {
                 length;

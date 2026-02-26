@@ -1,14 +1,6 @@
 --- old.ClassAndModuleWithSameNameAndCommonRoot.js
 +++ new.ClassAndModuleWithSameNameAndCommonRoot.js
-@@= skipped -43, +43 lines =@@
- "use strict";
- var X;
- (function (X) {
--    var Y;
-+    let Y;
-     (function (Y) {
-         class Point {
-             constructor(x, y) {
+@@= skipped -50, +50 lines =@@
                  this.x = x;
                  this.y = y;
              }
@@ -17,16 +9,7 @@
          }
          Y.Point = Point;
      })(Y = X.Y || (X.Y = {}));
-@@= skipped -15, +17 lines =@@
- "use strict";
- var X;
- (function (X) {
--    var Y;
-+    let Y;
-     (function (Y) {
-         let Point;
-         (function (Point) {
-@@= skipped -16, +16 lines =@@
+@@= skipped -24, +26 lines =@@
  //// [simple.js]
  "use strict";
  class A {

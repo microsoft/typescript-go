@@ -35,9 +35,9 @@ namespace M2 {
 "use strict";
 var A;
 (function (A) {
-    let B;
+    var B;
     (function (B) {
-        let C;
+        var C;
         (function (C) {
             class Point {
                 x;
@@ -58,7 +58,7 @@ var A;
 })(A || (A = {}));
 var M2;
 (function (M2) {
-    let X;
+    var X;
     (function (X) {
         class Point {
             x;

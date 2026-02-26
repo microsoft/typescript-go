@@ -1,24 +1,15 @@
 --- old.declFileWithExtendsClauseThatHasItsContainerNameConflict.js
 +++ new.declFileWithExtendsClauseThatHasItsContainerNameConflict.js
-@@= skipped -22, +22 lines =@@
- "use strict";
- var A;
- (function (A) {
--    var B;
-+    let B;
+@@= skipped -25, +25 lines =@@
+     var B;
      (function (B) {
          class EventManager {
 +            id;
          }
          B.EventManager = EventManager;
      })(B = A.B || (A.B = {}));
- })(A || (A = {}));
- (function (A) {
--    var B;
-+    let B;
-     (function (B) {
--        var C;
-+        let C;
+@@= skipped -10, +11 lines =@@
+         var C;
          (function (C) {
              class ContextMenu extends B.EventManager {
 +                name;

@@ -81,9 +81,9 @@ class ViewModel<TValue> implements Contract<TValue> {
 "use strict";
 var Portal;
 (function (Portal) {
-    let Controls;
+    var Controls;
     (function (Controls) {
-        let Validators;
+        var Validators;
         (function (Validators) {
             class Validator {
                 _subscription;
@@ -100,11 +100,11 @@ var Portal;
 })(Portal || (Portal = {}));
 var PortalFx;
 (function (PortalFx) {
-    let ViewModels;
+    var ViewModels;
     (function (ViewModels) {
-        let Controls;
+        var Controls;
         (function (Controls) {
-            let Validators;
+            var Validators;
             (function (Validators) {
                 class Validator extends Portal.Controls.Validators.Validator {
                     constructor(message) {
