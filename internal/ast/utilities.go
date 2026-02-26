@@ -2942,10 +2942,8 @@ func IsParameterPropertyModifier(kind Kind) bool {
 }
 
 func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
-	if node.Flags&NodeFlagsHasJSDoc != 0 {
-		if visitNodes(v, node.JSDoc(sourceFile)) {
-			return true
-		}
+	if visitNodes(v, node.JSDoc(sourceFile)) {
+		return true
 	}
 	return node.ForEachChild(v)
 }
@@ -3859,7 +3857,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 		// `1` in `let { 1: b } = ...`
 		if bindingElement.PropertyName() != nil {
 			propertyName := bindingElement.PropertyName()
-			// if ast.IsPrivateIdentifier(propertyName) {
+			// if IsPrivateIdentifier(propertyName) {
 			// 	return Debug.failBadSyntaxKind(propertyName) // !!!
 			// }
 			if IsComputedPropertyName(propertyName) && IsStringOrNumericLiteralLike(propertyName.Expression()) {
@@ -3874,7 +3872,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 		// `1` in `({ 1: b } = ...)`
 		if bindingElement.Name() != nil {
 			propertyName := bindingElement.Name()
-			// if ast.IsPrivateIdentifier(propertyName) {
+			// if IsPrivateIdentifier(propertyName) {
 			// 	return Debug.failBadSyntaxKind(propertyName) // !!!
 			// }
 			if IsComputedPropertyName(propertyName) && IsStringOrNumericLiteralLike(propertyName.Expression()) {
@@ -3884,7 +3882,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 		}
 	case KindSpreadAssignment:
 		// `a` in `({ ...a } = ...)`
-		// if ast.IsPrivateIdentifier(bindingElement.Name()) {
+		// if IsPrivateIdentifier(bindingElement.Name()) {
 		// 	return Debug.failBadSyntaxKind(bindingElement.Name()) // !!!
 		// }
 		return bindingElement.Name()
@@ -4246,7 +4244,7 @@ func GetAllAccessorDeclarationsForDeclaration(accessor *AccessorDeclaration, dec
 	} else {
 		panic(fmt.Sprintf("Unexpected node kind %q", accessor.Kind))
 	}
-	// otherAccessor := ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
+	// otherAccessor := GetDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
 	var otherAccessor *AccessorDeclaration
 	for _, d := range declarationsOfSymbol {
 		if d.Kind == otherKind {
@@ -4421,4 +4419,10 @@ func IsExpandoPropertyDeclaration(node *Node) bool {
 		return false
 	}
 	return IsPropertyAccessExpression(node) || IsElementAccessExpression(node) || IsBinaryExpression(node)
+}
+
+// IsSuperProperty checks if a node is super.x or super[x].
+func IsSuperProperty(node *Node) bool {
+	return (IsPropertyAccessExpression(node) || IsElementAccessExpression(node)) &&
+		node.Expression().Kind == KindSuperKeyword
 }

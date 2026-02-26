@@ -2173,13 +2173,11 @@ func (c *Checker) checkSourceElement(node *ast.Node) bool {
 }
 
 func (c *Checker) checkSourceElementWorker(node *ast.Node) {
-	if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
-		for _, jsdoc := range node.EagerJSDoc(nil) {
-			c.checkJSDocComments(jsdoc)
-			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
-				for _, tag := range tags.Nodes {
-					c.checkJSDocComments(tag)
-				}
+	for _, jsdoc := range node.EagerJSDoc(nil) {
+		c.checkJSDocComments(jsdoc)
+		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+			for _, tag := range tags.Nodes {
+				c.checkJSDocComments(tag)
 			}
 		}
 	}
@@ -5013,10 +5011,6 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	}
 	if ast.IsIdentifier(node.Name()) {
 		c.checkCollisionsForDeclarationName(node, node.Name())
-		if node.AsModuleDeclaration().Keyword == ast.KindModuleKeyword {
-			tokenRange := getNonModifierTokenRangeOfNode(node)
-			c.suggestionDiagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), tokenRange, diagnostics.A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead))
-		}
 	}
 	c.checkExportsOnMergedDeclarations(node)
 	symbol := c.getSymbolOfDeclaration(node)
@@ -5165,8 +5159,13 @@ func (c *Checker) checkImportDeclaration(node *ast.Node) {
 				!hasTypeJsonImportAttribute(node) {
 				c.error(moduleSpecifier, diagnostics.Importing_a_JSON_file_into_an_ECMAScript_module_requires_a_type_Colon_json_import_attribute_when_module_is_set_to_0, c.moduleKind.String())
 			}
-		} else if c.compilerOptions.NoUncheckedSideEffectImports.IsTrue() && importClause == nil {
-			c.resolveExternalModuleName(node, moduleSpecifier, false)
+		} else if c.compilerOptions.NoUncheckedSideEffectImports.IsTrueOrUnknown() && importClause == nil {
+			ignoreErrors := c.compilerOptions.NoCheck.IsTrue()
+			var errorMessage *diagnostics.Message
+			if !ignoreErrors {
+				errorMessage = diagnostics.Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
+			}
+			c.resolveExternalModuleNameWorker(node, moduleSpecifier, errorMessage, ignoreErrors, false /*isForAugmentation*/)
 		}
 	}
 	c.checkImportAttributes(node)
@@ -7773,11 +7772,6 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 	// //
 	// // For element access expressions (`super[x]`), we emit a generic helper that forwards the element access in both situations.
 	// if container.Kind == ast.KindMethodDeclaration && inAsyncFunction {
-	// 	if isSuperProperty(node.Parent) && isAssignmentTarget(node.Parent) {
-	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync
-	// 	} else {
-	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAccessInAsync
-	// 	}
 	// }
 	// if needToCaptureLexicalThis {
 	// 	// call expressions are allowed only in constructors so they should always capture correct 'this'
@@ -8058,9 +8052,12 @@ func (c *Checker) isForInVariableForNumericPropertyNames(expr *ast.Node) bool {
 func (c *Checker) getForInVariableSymbol(node *ast.Node) *ast.Symbol {
 	initializer := node.Initializer()
 	if ast.IsVariableDeclarationList(initializer) {
-		variable := initializer.AsVariableDeclarationList().Declarations.Nodes[0]
-		if variable != nil && !ast.IsBindingPattern(variable.Name()) {
-			return c.getSymbolOfDeclaration(variable)
+		declarations := initializer.AsVariableDeclarationList().Declarations.Nodes
+		if len(declarations) > 0 {
+			variable := declarations[0]
+			if variable != nil && !ast.IsBindingPattern(variable.Name()) {
+				return c.getSymbolOfDeclaration(variable)
+			}
 		}
 	} else if ast.IsIdentifier(initializer) {
 		return c.getResolvedSymbol(initializer)
@@ -9121,7 +9118,7 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 		return c.checkApplicableSignatureForJsxCallLikeElement(node, signature, relation, checkMode, reportErrors, diagnosticOutput)
 	}
 	thisType := c.getThisTypeOfSignature(signature)
-	if thisType != nil && thisType != c.voidType && !(ast.IsNewExpression(node) || ast.IsCallExpression(node) && isSuperProperty(node.Expression())) {
+	if thisType != nil && thisType != c.voidType && !(ast.IsNewExpression(node) || ast.IsCallExpression(node) && ast.IsSuperProperty(node.Expression())) {
 		// If the called expression is not of the form `x.f` or `x["f"]`, then sourceType = voidType
 		// If the signature's 'this' type is voidType, then the check is skipped -- anything is compatible.
 		// If the expression is a new expression or super call expression, then the check is skipped.
@@ -29016,7 +29013,9 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 			if ast.IsPropertyAccessExpression(left) {
 				name := left.Name()
 				if ast.IsPrivateIdentifier(name) {
-					symbol = c.getPropertyOfType(thisType, binder.GetSymbolNameForPrivateIdentifier(thisType.symbol, name.Text()))
+					if thisType.symbol != nil {
+						symbol = c.getPropertyOfType(thisType, binder.GetSymbolNameForPrivateIdentifier(thisType.symbol, name.Text()))
+					}
 				} else {
 					symbol = c.getPropertyOfType(thisType, name.Text())
 				}
@@ -30716,9 +30715,6 @@ func (c *Checker) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
 	// const node = getParseTreeNode(nodeIn);
 
 	// set ignoreErrors: true because any lookups invoked by the API shouldn't cause any new errors
-	if node.Parent == nil || node.Parent.Parent == nil {
-		return nil
-	}
 	return c.getSymbolAtLocation(ast.GetReparsedNodeForNode(node), true /*ignoreErrors*/)
 }
 
