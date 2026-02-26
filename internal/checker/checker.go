@@ -2045,6 +2045,7 @@ func isPropertyImmediatelyReferencedWithinDeclaration(declaration *ast.Node, usa
 			if stopAtAnyPropertyDeclaration && (ast.IsPropertyDeclaration(declaration) && node.Parent == declaration.Parent || ast.IsParameterPropertyDeclaration(declaration, declaration.Parent) && node.Parent == declaration.Parent.Parent) {
 				return true
 			}
+			return false
 		case ast.KindBlock:
 			switch node.Parent.Kind {
 			case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
