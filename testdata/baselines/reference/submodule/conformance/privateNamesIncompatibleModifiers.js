@@ -82,6 +82,8 @@ class A {
     set #bazProp(value) { } // Error
     get #quxProp() { return 3; } // Error
     set #quxProp(value) { } // Error
+    get #whatProp() { } // Error
+    set #whatProp(value) { } // Error
     get #asyncProp() { return 1; } // Error
     set #asyncProp(value) { } // Error
 }

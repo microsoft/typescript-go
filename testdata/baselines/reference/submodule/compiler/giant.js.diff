@@ -9,23 +9,15 @@
      pF() { }
      rF() { }
      pgF() { }
--    get pgF() { }
-     psF(param) { }
--    set psF(param) { }
-     rgF() { }
--    get rgF() { }
+@@= skipped -10, +12 lines =@@
+     get rgF() { }
      rsF(param) { }
--    set rsF(param) { }
+     set rsF(param) { }
 +    static tV;
      static tF() { }
      static tsF(param) { }
--    static set tsF(param) { }
-     static tgF() { }
--    static get tgF() { }
- }
- var M;
- (function (M_1) {
-@@= skipped -23, +20 lines =@@
+     static set tsF(param) { }
+@@= skipped -13, +14 lines =@@
      ;
      class C {
          constructor() { }
@@ -34,23 +26,15 @@
          pF() { }
          rF() { }
          pgF() { }
--        get pgF() { }
-         psF(param) { }
--        set psF(param) { }
-         rgF() { }
--        get rgF() { }
+@@= skipped -10, +12 lines =@@
+         get rgF() { }
          rsF(param) { }
--        set rsF(param) { }
+         set rsF(param) { }
 +        static tV;
          static tF() { }
          static tsF(param) { }
--        static set tsF(param) { }
-         static tgF() { }
--        static get tgF() { }
-     }
-     let M;
-     (function (M) {
-@@= skipped -44, +41 lines =@@
+         static set tsF(param) { }
+@@= skipped -34, +35 lines =@@
      ;
      class eC {
          constructor() { }
@@ -59,23 +43,15 @@
          pF() { }
          rF() { }
          pgF() { }
--        get pgF() { }
-         psF(param) { }
--        set psF(param) { }
-         rgF() { }
--        get rgF() { }
+@@= skipped -10, +12 lines =@@
+         get rgF() { }
          rsF(param) { }
--        set rsF(param) { }
+         set rsF(param) { }
 +        static tV;
          static tF() { }
          static tsF(param) { }
--        static set tsF(param) { }
-         static tgF() { }
--        static get tgF() { }
-     }
-     M_1.eC = eC;
-     let eM;
-@@= skipped -46, +43 lines =@@
+         static set tsF(param) { }
+@@= skipped -36, +37 lines =@@
  ;
  class eC {
      constructor() { }
@@ -84,23 +60,15 @@
      pF() { }
      rF() { }
      pgF() { }
--    get pgF() { }
-     psF(param) { }
--    set psF(param) { }
-     rgF() { }
--    get rgF() { }
+@@= skipped -10, +12 lines =@@
+     get rgF() { }
      rsF(param) { }
--    set rsF(param) { }
+     set rsF(param) { }
 +    static tV;
      static tF() { }
      static tsF(param) { }
--    static set tsF(param) { }
-     static tgF() { }
--    static get tgF() { }
- }
- exports.eC = eC;
- var eM;
-@@= skipped -24, +21 lines =@@
+     static set tsF(param) { }
+@@= skipped -14, +15 lines =@@
      ;
      class C {
          constructor() { }
@@ -109,23 +77,15 @@
          pF() { }
          rF() { }
          pgF() { }
--        get pgF() { }
-         psF(param) { }
--        set psF(param) { }
-         rgF() { }
--        get rgF() { }
+@@= skipped -10, +12 lines =@@
+         get rgF() { }
          rsF(param) { }
--        set rsF(param) { }
+         set rsF(param) { }
 +        static tV;
          static tF() { }
          static tsF(param) { }
--        static set tsF(param) { }
-         static tgF() { }
--        static get tgF() { }
-     }
-     let M;
-     (function (M) {
-@@= skipped -44, +41 lines =@@
+         static set tsF(param) { }
+@@= skipped -34, +35 lines =@@
      ;
      class eC {
          constructor() { }
@@ -134,19 +94,11 @@
          pF() { }
          rF() { }
          pgF() { }
--        get pgF() { }
-         psF(param) { }
--        set psF(param) { }
-         rgF() { }
--        get rgF() { }
+@@= skipped -10, +12 lines =@@
+         get rgF() { }
          rsF(param) { }
--        set rsF(param) { }
+         set rsF(param) { }
 +        static tV;
          static tF() { }
          static tsF(param) { }
--        static set tsF(param) { }
-         static tgF() { }
--        static get tgF() { }
-     }
-     eM_1.eC = eC;
-     let eM;
+         static set tsF(param) { }

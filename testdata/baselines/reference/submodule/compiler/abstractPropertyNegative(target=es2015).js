@@ -51,6 +51,7 @@ class B {
 }
 class C extends B {
     ro = "readonly please";
+    get concreteWithNoBody() { }
 }
 let c = new C();
 c.ro = "error: lhs of assignment can't be readonly";

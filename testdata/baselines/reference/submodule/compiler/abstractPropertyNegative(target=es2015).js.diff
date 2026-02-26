@@ -8,11 +8,11 @@
 -        super(...arguments);
 -        this.ro = "readonly please";
 -    }
--    get concreteWithNoBody() { }
 +    ro = "readonly please";
+     get concreteWithNoBody() { }
  }
  let c = new C();
- c.ro = "error: lhs of assignment can't be readonly";
+@@= skipped -11, +8 lines =@@
  class WrongTypeProperty {
  }
  class WrongTypePropertyImpl extends WrongTypeProperty {
@@ -24,7 +24,7 @@
  }
  class WrongTypeAccessor {
  }
-@@= skipped -22, +15 lines =@@
+@@= skipped -11, +8 lines =@@
      get num() { return "nope, wrong"; }
  }
  class WrongTypeAccessorImpl2 extends WrongTypeAccessor {

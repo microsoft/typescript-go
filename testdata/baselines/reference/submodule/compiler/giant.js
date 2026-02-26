@@ -712,13 +712,19 @@ class C {
     pF() { }
     rF() { }
     pgF() { }
+    get pgF() { }
     psF(param) { }
+    set psF(param) { }
     rgF() { }
+    get rgF() { }
     rsF(param) { }
+    set rsF(param) { }
     static tV;
     static tF() { }
     static tsF(param) { }
+    static set tsF(param) { }
     static tgF() { }
+    static get tgF() { }
 }
 var M;
 (function (M_1) {
@@ -732,13 +738,19 @@ var M;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
+        set rsF(param) { }
         static tV;
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     let M;
     (function (M) {
@@ -773,13 +785,19 @@ var M;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
+        set rsF(param) { }
         static tV;
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     M_1.eC = eC;
     let eM;
@@ -816,13 +834,19 @@ class eC {
     pF() { }
     rF() { }
     pgF() { }
+    get pgF() { }
     psF(param) { }
+    set psF(param) { }
     rgF() { }
+    get rgF() { }
     rsF(param) { }
+    set rsF(param) { }
     static tV;
     static tF() { }
     static tsF(param) { }
+    static set tsF(param) { }
     static tgF() { }
+    static get tgF() { }
 }
 exports.eC = eC;
 var eM;
@@ -837,13 +861,19 @@ var eM;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
+        set rsF(param) { }
         static tV;
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     let M;
     (function (M) {
@@ -878,13 +908,19 @@ var eM;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
+        set rsF(param) { }
         static tV;
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     eM_1.eC = eC;
     let eM;
