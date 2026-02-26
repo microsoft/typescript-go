@@ -57,6 +57,7 @@ function f(c) { var _r; if (c === void 0) { c = (_r = class {
     _r); } }
 let { c: c3 } = { c: (_d = class {
         },
+        __setFunctionName(_d, "c"),
         _d.x = { a: "a" },
         _d) };
 let { c: c4 = (_e = class {
@@ -70,6 +71,7 @@ let { c: c5 = (_f = class {
     _f.x = { a: "a" },
     _f) } = { c: (_g = class {
         },
+        __setFunctionName(_g, "c"),
         _g.x = { a: "a" },
         _g) };
 let [c6] = [(_h = class {
