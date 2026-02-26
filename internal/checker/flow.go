@@ -2235,6 +2235,10 @@ func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
 	if node.Initializer() != nil {
 		links := c.nodeLinks.Get(node)
 		if links.flags&NodeCheckFlagsResolvingInitialType != 0 {
+			// Circularity: we're already computing this variable declaration's initial type.
+			// This occurs when a binding element's type depends on the destructuring source
+			// through flow analysis (e.g. destructuring loop variables with default values).
+			// See: https://github.com/microsoft/TypeScript/issues/63192
 			return c.errorType
 		}
 		links.flags |= NodeCheckFlagsResolvingInitialType
