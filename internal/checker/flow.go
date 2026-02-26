@@ -1738,7 +1738,24 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 		if initializer != nil {
 			var initializerType *Type
 			if ast.IsBindingPattern(declaration.Parent) {
+				// Guard against circularity. When destructuring loop variables have default
+				// values (e.g. `const { children, index = 0 } = node`), evaluating the binding
+				// element type to compute a property name for flow analysis can circularly trigger
+				// flow analysis for the same reference again. This can't be caught by the existing
+				// pushTypeResolution in getTypeOfVariableOrParameterOrPropertyWorker because that
+				// path is never entered — the destructuring source variable (`node`) has an explicit
+				// type annotation, so getTypeOfSymbol returns immediately without entering type
+				// resolution. The cycle is entirely within flow analysis: isMatchingReference needs
+				// the binding element type to compute a property name, which triggers parent type
+				// inference, which evaluates the initializer, which triggers flow analysis again.
+				// See: https://github.com/microsoft/TypeScript/issues/63192
+				links := c.nodeLinks.Get(declaration)
+				if links.flags&NodeCheckFlagsResolvingInitialType != 0 {
+					return "", false
+				}
+				links.flags |= NodeCheckFlagsResolvingInitialType
 				initializerType = c.getTypeForBindingElement(declaration)
+				links.flags &^= NodeCheckFlagsResolvingInitialType
 			} else {
 				initializerType = c.getTypeOfExpression(initializer)
 			}
@@ -2218,10 +2235,6 @@ func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
 	if node.Initializer() != nil {
 		links := c.nodeLinks.Get(node)
 		if links.flags&NodeCheckFlagsResolvingInitialType != 0 {
-			// We're already computing the initial type of this variable declaration.
-			// This circularity can occur when a binding element's initializer references the
-			// destructuring source through flow analysis (e.g. destructuring loop variables).
-			// See: https://github.com/microsoft/TypeScript/issues/63192
 			return c.errorType
 		}
 		links.flags |= NodeCheckFlagsResolvingInitialType
