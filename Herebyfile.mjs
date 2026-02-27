@@ -852,6 +852,26 @@ function baselineAcceptTask(localBaseline, refBaseline) {
         return path.join(refBaseline, relative);
     }
 
+    /**
+     * Walk up from dir, removing empty directories until hitting root.
+     * @param {string} dir
+     * @param {string} root
+     */
+    async function removeEmptyDirsUp(dir, root) {
+        const resolvedRoot = path.resolve(root);
+        let current = path.resolve(dir);
+        while (current !== resolvedRoot) {
+            try {
+                await fs.promises.rmdir(current);
+            }
+            catch {
+                // Not empty or doesn't exist; stop walking up.
+                break;
+            }
+            current = path.dirname(current);
+        }
+    }
+
     return async () => {
         const toCopy = await glob(`${localBaseline}/**`, { nodir: true, ignore: `${localBaseline}/**/*.delete` });
         for (const p of toCopy) {
@@ -864,6 +884,21 @@ function baselineAcceptTask(localBaseline, refBaseline) {
             const out = localPathToRefPath(p).replace(/\.delete$/, "");
             await rimraf(out);
             await rimraf(p); // also delete the .delete file so that it no longer shows up in a diff tool.
+        }
+
+        // Remove empty directories left behind by deletions (walk up from each deleted path).
+        const cleaned = new Set();
+        for (const p of toDelete) {
+            const refDir = path.dirname(localPathToRefPath(p).replace(/\.delete$/, ""));
+            const localDir = path.dirname(p);
+            if (!cleaned.has(refDir)) {
+                cleaned.add(refDir);
+                await removeEmptyDirsUp(refDir, refBaseline);
+            }
+            if (!cleaned.has(localDir)) {
+                cleaned.add(localDir);
+                await removeEmptyDirsUp(localDir, localBaseline);
+            }
         }
     };
 }
