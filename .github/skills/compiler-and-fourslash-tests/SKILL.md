@@ -101,7 +101,7 @@ Use `// @symlink:` to create symlinks in the virtual filesystem:
 
 #### Via hereby (recommended)
 
-Always use `hereby test` for running tests. It ensures a clean state by clearing stale baselines before running, so results are always trustworthy. Do not assume test results are stale — `hereby test` handles this.
+Always use `hereby test` for running tests. It ensures a clean state by clearing stale baselines before running, so results are always trustworthy. Trust the results — if `hereby test` passes, the tests pass.
 
 ```bash
 npx hereby test                          # Run all tests (compiler + fourslash + others)
