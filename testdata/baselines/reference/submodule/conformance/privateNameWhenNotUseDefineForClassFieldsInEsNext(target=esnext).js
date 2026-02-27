@@ -55,7 +55,6 @@ class TestNonStatics {
 
 //// [privateNameWhenNotUseDefineForClassFieldsInEsNext.js]
 "use strict";
-var _a;
 class TestWithStatics {
     #prop = 0;
     static { this.dd = new TestWithStatics().#prop; } // OK
@@ -67,14 +66,14 @@ class TestWithStatics {
         static { this.C = class InnerInner {
             m() {
                 new TestWithStatics().#prop; // OK
-                new _a().#foo; // OK
+                new Inner().#foo; // OK
             }
         }; }
         static M() {
             return class {
                 m() {
                     new TestWithStatics().#prop; // OK
-                    new _a().#foo; // OK
+                    new Inner().#foo; // OK
                 }
             };
         }
@@ -82,7 +81,6 @@ class TestWithStatics {
 }
 class TestNonStatics {
     constructor() {
-        var _b;
         this.#prop = 0;
         this.dd = new TestNonStatics().#prop; // OK
         this["X_ z_ zz"] = class Inner {
@@ -91,7 +89,7 @@ class TestNonStatics {
                 this.C = class InnerInner {
                     m() {
                         new TestNonStatics().#prop; // Ok
-                        new _b().#foo; // Ok
+                        new Inner().#foo; // Ok
                     }
                 };
             }
@@ -103,7 +101,7 @@ class TestNonStatics {
                 return class {
                     m() {
                         new TestNonStatics().#prop; // OK
-                        new _b().#foo; // OK
+                        new Inner().#foo; // OK
                     }
                 };
             }

@@ -1696,11 +1696,36 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		}
 	}
 
+	// Pre-compute whether the class expression will need a temp variable wrapper.
+	// The TS reference only registers class aliases inside the
+	// `hasTransformableStatics || pendingExpressions` branch, so we must predict
+	// this condition before visiting members (since Go does alias substitution
+	// during transformation, not at emit time like the TS reference).
+	isClassWithConstructorReference := tx.classContainsConstructorReference(node)
+	staticPropertiesOrClassStaticBlocks := tx.getStaticPropertiesAndClassStaticBlock(node)
+	hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
+		core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
+			return ast.IsClassStaticBlockDeclaration(n) ||
+				ast.IsPrivateIdentifierClassElementDeclaration(n) ||
+				(tx.shouldTransformInitializers && ast.IsInitializedProperty(n))
+		})
+
+	// Private instance elements (fields, methods, accessors) transformed to
+	// WeakMap/WeakSet will add initialization expressions to pendingExpressions
+	// during transformClassMembers. Pre-detect this so we know whether the class
+	// will be wrapped with a temp variable.
+	willHavePrivatePendingExpressions := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
+		core.Some(node.Members(), func(n *ast.Node) bool {
+			return ast.IsPrivateIdentifierClassElementDeclaration(n) && !ast.HasStaticModifier(n) && tx.shouldTransformClassElementToWeakMap(n)
+		})
+	willNeedTempWrapper := hasTransformableStatics || willHavePrivatePendingExpressions
+
 	// Register class alias for substitution BEFORE visiting members, since substitution
 	// happens during transformation (unlike TS reference which uses onSubstituteNode at emit time).
-	isClassWithConstructorReference := tx.classContainsConstructorReference(node)
+	// Only register when the class will be wrapped with a temp, matching the TS reference which only
+	// registers class aliases inside the hasTransformableStatics || pendingExpressions branch.
 	deferTempDeclaration := false
-	if isClassWithConstructorReference && tx.getClassLexicalEnvironment().classConstructor == nil {
+	if isClassWithConstructorReference && willNeedTempWrapper && tx.getClassLexicalEnvironment().classConstructor == nil {
 		// Create temp early so the alias is available during member visiting, even though in the TS
 		// reference the temp would be created later in the pendingExpressions branch.
 		temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
@@ -1711,7 +1736,7 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		deferTempDeclaration = true
 		tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
 	}
-	if alias := tx.getClassLexicalEnvironment().classConstructor; isClassWithConstructorReference && alias != nil {
+	if alias := tx.getClassLexicalEnvironment().classConstructor; isClassWithConstructorReference && willNeedTempWrapper && alias != nil {
 		tx.classAliases[tx.EmitContext().MostOriginal(node)] = alias
 	}
 
@@ -1737,14 +1762,6 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 	if membersPrologue != nil {
 		expressions = append(expressions, membersPrologue)
 	}
-
-	staticPropertiesOrClassStaticBlocks := tx.getStaticPropertiesAndClassStaticBlock(node)
-	hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
-		core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
-			return ast.IsClassStaticBlockDeclaration(n) ||
-				ast.IsPrivateIdentifierClassElementDeclaration(n) ||
-				(tx.shouldTransformInitializers && ast.IsInitializedProperty(n))
-		})
 
 	if hasTransformableStatics || len(tx.pendingExpressions) > 0 {
 		if temp == nil {
