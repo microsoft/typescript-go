@@ -1554,8 +1554,6 @@ func (p *Printer) emitSignature(node *ast.Node) {
 }
 
 func (p *Printer) emitFunctionBody(body *ast.Block) {
-	// TypeScript's emitBlockFunctionBody calls onBeforeEmitNode/onAfterEmitNode but does NOT
-	// emit source maps for the body block. Suppress source maps via emit flags to match.
 	p.emitContext.AddEmitFlags(body.AsNode(), EFNoSourceMap)
 	state := p.enterNode(body.AsNode())
 	p.generateNames(body.AsNode())
