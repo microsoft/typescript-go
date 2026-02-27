@@ -1549,7 +1549,15 @@ func (p *Printer) emitSignature(node *ast.Node) {
 
 func (p *Printer) emitFunctionBody(body *ast.Block) {
 	p.emitContext.AddEmitFlags(body.AsNode(), EFNoSourceMap)
-	state := p.enterNode(body.AsNode())
+
+	// Use only notification hooks for the body block, not the full comment pipeline.
+	// Without this, trailing comments from the original method declaration
+	// (e.g., "// Error") leak into synthesized comma expressions when methods
+	// are hoisted into pending expressions.
+	if p.OnBeforeEmitNode != nil {
+		p.OnBeforeEmitNode(body.AsNode())
+	}
+
 	p.generateNames(body.AsNode())
 
 	// !!! Emit with comment after Strada migration
@@ -1577,7 +1585,9 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 	////p.emitTokenEx(ast.KindCloseBraceToken, body.Statements.End(), WriteKindPunctuation, body.AsNode(), tefNone)
 	p.emitTokenEx(ast.KindCloseBraceToken, body.Statements.End(), WriteKindPunctuation, body.AsNode(), tefNoComments)
 
-	p.exitNode(body.AsNode(), state)
+	if p.OnAfterEmitNode != nil {
+		p.OnAfterEmitNode(body.AsNode())
+	}
 }
 
 func (p *Printer) emitFunctionBodyNode(node *ast.BlockNode) {
