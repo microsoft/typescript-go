@@ -19,7 +19,7 @@
 // | ```tsx
 // | var a: { b: string; }
 // | ```
-// | 
+// | A description of 'a'
 // | ----------------------------------------------------------------------
 //     b;
 //     ^
@@ -27,7 +27,7 @@
 // | ```tsx
 // | var b: string
 // | ```
-// | 
+// | A description of 'b'
 // | ----------------------------------------------------------------------
 // }
 [
@@ -44,7 +44,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar a: { b: string; }\n```\n"
+        "value": "```tsx\nvar a: { b: string; }\n```\nA description of 'a'"
       },
       "range": {
         "start": {
@@ -71,7 +71,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar b: string\n```\n"
+        "value": "```tsx\nvar b: string\n```\nA description of 'b'"
       },
       "range": {
         "start": {

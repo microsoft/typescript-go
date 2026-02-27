@@ -35,11 +35,11 @@ const (
 type ContextFlags uint32
 
 const (
-	ContextFlagsNone                ContextFlags = 0
-	ContextFlagsSignature           ContextFlags = 1 << 0 // Obtaining contextual signature
-	ContextFlagsNoConstraints       ContextFlags = 1 << 1 // Don't obtain type variable constraints
-	ContextFlagsCompletions         ContextFlags = 1 << 2 // Ignore inference to current node and parent nodes out to the containing call for completions
-	ContextFlagsSkipBindingPatterns ContextFlags = 1 << 3 // Ignore contextual types applied by binding patterns
+	ContextFlagsNone                 ContextFlags = 0
+	ContextFlagsSignature            ContextFlags = 1 << 0 // Obtaining contextual signature
+	ContextFlagsNoConstraints        ContextFlags = 1 << 1 // Don't obtain type variable constraints
+	ContextFlagsIgnoreNodeInferences ContextFlags = 1 << 2 // Ignore inference to current node and parent nodes out to the containing call for, for example, completions
+	ContextFlagsSkipBindingPatterns  ContextFlags = 1 << 3 // Ignore contextual types applied by binding patterns
 )
 
 type TypeFormatFlags uint32
@@ -120,12 +120,13 @@ type SymbolReferenceLinks struct {
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType   *Type // Type of value symbol
-	writeType      *Type
-	target         *ast.Symbol
-	mapper         *TypeMapper
-	nameType       *Type
-	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	resolvedType                 *Type // Type of value symbol
+	writeType                    *Type
+	target                       *ast.Symbol
+	mapper                       *TypeMapper
+	nameType                     *Type
+	containingType               *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	functionOrConstructorChecked bool
 }
 
 // Additional links for mapped symbols
@@ -195,6 +196,7 @@ type DeclaredTypeLinks struct {
 	interfaceChecked       bool
 	indexSignaturesChecked bool
 	typeParametersChecked  bool
+	enumChecked            bool
 }
 
 // Links for switch clauses
@@ -308,9 +310,6 @@ const (
 	NodeCheckFlagsSuperInstance                            NodeCheckFlags = 1 << 4  // Instance 'super' reference
 	NodeCheckFlagsSuperStatic                              NodeCheckFlags = 1 << 5  // Static 'super' reference
 	NodeCheckFlagsContextChecked                           NodeCheckFlags = 1 << 6  // Contextual types have been assigned
-	NodeCheckFlagsMethodWithSuperPropertyAccessInAsync     NodeCheckFlags = 1 << 7  // A method that contains a SuperProperty access in an async context.
-	NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync NodeCheckFlags = 1 << 8  // A method that contains a SuperProperty assignment in an async context.
-	NodeCheckFlagsCaptureArguments                         NodeCheckFlags = 1 << 9  // Lexical 'arguments' used in body
 	NodeCheckFlagsEnumValuesComputed                       NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
 	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
 	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
@@ -450,7 +449,7 @@ const (
 	TypeFlagsInstantiable                  = TypeFlagsInstantiableNonPrimitive | TypeFlagsInstantiablePrimitive
 	TypeFlagsStructuredOrInstantiable      = TypeFlagsStructuredType | TypeFlagsInstantiable
 	TypeFlagsObjectFlagsType               = TypeFlagsAny | TypeFlagsNullable | TypeFlagsNever | TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
-	TypeFlagsSimplifiable                  = TypeFlagsIndexedAccess | TypeFlagsConditional
+	TypeFlagsSimplifiable                  = TypeFlagsIndexedAccess | TypeFlagsConditional | TypeFlagsIndex
 	TypeFlagsSingleton                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
 	// 'TypeFlagsNarrowable' types are types where narrowing actually narrows.
 	// This *should* be every type other than null, undefined, void, and never
@@ -941,6 +940,7 @@ type TupleType struct {
 }
 
 func (t *TupleType) FixedLength() int { return t.fixedLength }
+func (t *TupleType) IsReadonly() bool { return t.readonly }
 func (t *TupleType) ElementFlags() []ElementFlags {
 	elementFlags := make([]ElementFlags, len(t.elementInfos))
 	for i, info := range t.elementInfos {
@@ -1000,6 +1000,10 @@ type UnionOrIntersectionType struct {
 
 func (t *UnionOrIntersectionType) AsUnionOrIntersectionType() *UnionOrIntersectionType { return t }
 
+func (t *UnionOrIntersectionType) Types() []*Type {
+	return t.types
+}
+
 // UnionType
 
 type UnionType struct {
@@ -1030,6 +1034,8 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
+func (t *TypeParameter) IsThisType() bool { return t.isThisType }
+
 // IndexFlags
 
 type IndexFlags uint32
@@ -1049,6 +1055,8 @@ type IndexType struct {
 	indexFlags IndexFlags
 }
 
+func (t *IndexType) Target() *Type { return t.target }
+
 // IndexedAccessType
 
 type IndexedAccessType struct {
@@ -1058,22 +1066,33 @@ type IndexedAccessType struct {
 	accessFlags AccessFlags // Only includes AccessFlags.Persistent
 }
 
+func (t *IndexedAccessType) ObjectType() *Type { return t.objectType }
+func (t *IndexedAccessType) IndexType() *Type  { return t.indexType }
+
 type TemplateLiteralType struct {
 	ConstrainedType
 	texts []string // Always one element longer than types
 	types []*Type  // Always at least one element
 }
 
+func (t *TemplateLiteralType) Texts() []string { return t.texts }
+func (t *TemplateLiteralType) Types() []*Type  { return t.types }
+
 type StringMappingType struct {
 	ConstrainedType
 	target *Type
 }
+
+func (t *StringMappingType) Target() *Type { return t.target }
 
 type SubstitutionType struct {
 	ConstrainedType
 	baseType   *Type // Target type
 	constraint *Type // Constraint that target type is known to satisfy
 }
+
+func (t *SubstitutionType) BaseType() *Type        { return t.baseType }
+func (t *SubstitutionType) SubstConstraint() *Type { return t.constraint }
 
 type ConditionalRoot struct {
 	node                *ast.ConditionalTypeNode
@@ -1099,6 +1118,9 @@ type ConditionalType struct {
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
 }
+
+func (t *ConditionalType) CheckType() *Type   { return t.checkType }
+func (t *ConditionalType) ExtendsType() *Type { return t.extendsType }
 
 // SignatureFlags
 
@@ -1140,6 +1162,10 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) Flags() SignatureFlags {
+	return s.flags
 }
 
 func (s *Signature) TypeParameters() []*Type {

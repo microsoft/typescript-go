@@ -2027,6 +2027,37 @@ func TestTscIncremental(t *testing.T) {
 				},
 			},
 		},
+		{
+			subScenario: "js file with import in jsdoc in composite project",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `{"compilerOptions": {"allowJs": true, "composite": true}}`,
+				"/home/src/workspaces/project/index.js": stringtestutil.Dedent(`
+					test("", async function () {
+					  ;(/** @type {typeof import("a")} */ ({}))
+					})
+
+					test("", async function () {
+					  ;(/** @type {typeof import("a")} */ a)
+					})
+
+					test("", async function () {
+					  (/** @type {typeof import("a")} */ ({}))
+					  ;(/** @type {typeof import("a")} */ ({}))
+					})
+
+					test("", async function () {
+					  (/** @type {typeof import("a")} */ a)
+					  ;(/** @type {typeof import("a")} */ a)
+					})
+
+					test("", async function () {
+					  (/** @type {typeof import("a")} */ ({}))
+					  ;(/** @type {typeof import("a")} */ ({}))
+					})
+				`),
+			},
+			commandLineArgs: []string{"--noEmit"},
+		},
 	}
 
 	for _, test := range testCases {
@@ -3936,6 +3967,41 @@ func TestTscProjectReferences(t *testing.T) {
 					import referencedSource from "../../lib/src/a"; // Error
 					import referencedDeclaration from "../../lib/dist/a"; // Error
 					import ambiguous from "ambiguous-package"; // Ok`),
+			},
+			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
+		},
+		{
+			subScenario: "referenced project with esnext module disallows synthetic default imports",
+			files: FileMap{
+				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"module": "esnext",
+						"moduleResolution": "bundler",
+						"rootDir": "src",
+						"outDir": "dist"
+					},
+					"include": ["src"]
+				}`),
+				"/home/src/workspaces/project/lib/src/utils.ts":    "export const test = () => 'test';",
+				"/home/src/workspaces/project/lib/dist/utils.d.ts": "export declare const test: () => string;",
+				"/home/src/workspaces/project/app/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"module": "esnext",
+						"moduleResolution": "bundler"
+					},
+					"references": [
+						{ "path": "../lib" }
+					]
+				}`),
+				"/home/src/workspaces/project/app/index.ts": stringtestutil.Dedent(`
+					import TestSrc from '../lib/src/utils'; // Error
+					import TestDecl from '../lib/dist/utils'; // Error
+					console.log(TestSrc.test());
+					console.log(TestDecl.test());`),
 			},
 			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
 		},

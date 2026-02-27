@@ -103,7 +103,7 @@ default: false
 [94m--noUncheckedSideEffectImports[39m
 Check side effect imports.
 type: boolean
-default: false
+default: true
 
 [94m--paths[39m
 Specify a set of entries that re-map imports to additional lookup locations.
@@ -150,7 +150,7 @@ Specify type package names to be included without being referenced in a source f
 [94m--allowJs[39m
 Allow JavaScript files to be a part of your program. Use the 'checkJs' option to get errors from these files.
 type: boolean
-default: false
+default: `false`, unless `checkJs` is set
 
 [94m--checkJs[39m
 Enable error reporting in type-checked JavaScript files.

@@ -166,6 +166,11 @@ func organizeImportsWorker(
 
 		for _, importGroup := range grouped {
 			coalesced := coalesceImportsWorker(importGroup, comparer.moduleSpecifierComparer, specifierComparer, sourceFile, changeTracker)
+			if shouldSort {
+				slices.SortFunc(coalesced, func(a, b *ast.Statement) int {
+					return lsutil.CompareImportsOrRequireStatements(a, b, comparer.moduleSpecifierComparer)
+				})
+			}
 			newImportDecls = append(newImportDecls, coalesced...)
 		}
 	} else {
@@ -290,11 +295,12 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 			if hasModuleDeclarationMatchingSpecifier(sourceFile, moduleSpecifier) {
 				if sourceFile.IsDeclarationFile {
 					importDeclNode := importDecl.AsImportDeclaration()
-					newImportDecl := factory.NewImportDeclaration(
+					newImportDecl := factory.UpdateImportDeclaration(
+						importDeclNode,
 						importDeclNode.Modifiers(),
 						nil, // no import clause
 						importDeclNode.ModuleSpecifier,
-						nil, // no attributes
+						importDeclNode.Attributes,
 					)
 					usedImports = append(usedImports, newImportDecl)
 				} else {
