@@ -784,9 +784,13 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 		desc.DestructuringPattern = getLocation(pattern)
 	}
 
-	// First declaration
-	if symbol != nil && len(symbol.Declarations) > 0 {
-		desc.FirstDeclaration = getLocation(symbol.Declarations[0])
+	// First declaration - prefer aliasSymbol, matching TypeScript's `aliasSymbol ?? symbol`
+	firstDeclSymbol := aliasSymbol
+	if firstDeclSymbol == nil {
+		firstDeclSymbol = symbol
+	}
+	if firstDeclSymbol != nil && len(firstDeclSymbol.Declarations) > 0 {
+		desc.FirstDeclaration = getLocation(firstDeclSymbol.Declarations[0])
 	}
 
 	// Display text
