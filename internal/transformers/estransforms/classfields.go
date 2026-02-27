@@ -1556,6 +1556,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 			tx.getPrivateIdentifierEnvironment().data.weakSetName = tx.createHoistedVariableForClass(
 				"instances",
 				privateInstanceMethodsAndAccessors[0].Name(),
+				"",
 			)
 		}
 	}
@@ -2664,17 +2665,19 @@ func (tx *classFieldsTransformer) setPrivateIdentifier(env *privateEnvironment, 
 	env.members[name.Text()] = info
 }
 
-func (tx *classFieldsTransformer) createHoistedVariableForClass(nameText string, node *ast.Node) *ast.IdentifierNode {
+func (tx *classFieldsTransformer) createHoistedVariableForClass(nameText string, node *ast.Node, suffix string) *ast.IdentifierNode {
 	env := tx.getPrivateIdentifierEnvironment()
 	var identifier *ast.IdentifierNode
 	if env.data.className != nil {
 		prefix := "_" + env.data.className.Text() + "_"
 		identifier = tx.Factory().NewUniqueNameEx(prefix+nameText, printer.AutoGenerateOptions{
-			Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsReservedInNestedScopes,
+			Flags:  printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsReservedInNestedScopes,
+			Suffix: suffix,
 		})
 	} else {
 		identifier = tx.Factory().NewUniqueNameEx("_"+nameText, printer.AutoGenerateOptions{
-			Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsReservedInNestedScopes,
+			Flags:  printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsReservedInNestedScopes,
+			Suffix: suffix,
 		})
 	}
 	if tx.requiresBlockScopedVar() {
@@ -2716,10 +2719,7 @@ func (tx *classFieldsTransformer) createHoistedVariableForPrivateName(name *ast.
 	if len(text) >= 1 && text[0] == '#' {
 		text = text[1:] // strip leading '#'
 	}
-	if suffix != "" {
-		text = text + suffix
-	}
-	return tx.createHoistedVariableForClass(text, name)
+	return tx.createHoistedVariableForClass(text, name, suffix)
 }
 
 // --- Visitor Functions ---
