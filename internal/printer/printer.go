@@ -5703,7 +5703,7 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoLeadingSourceMap == 0 &&
 		!ast.PositionIsSynthesized(loc.Pos()) {
-		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
+		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos()))
 	}
 
 	if emitFlags&EFNoNestedSourceMaps != 0 {
@@ -5730,7 +5730,7 @@ func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceM
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoTrailingSourceMap == 0 &&
 		!ast.PositionIsSynthesized(loc.End()) {
-		p.emitSourcePos(p.sourceMapSource, loc.End()) // !!! support SourceMapRange from Strada?
+		p.emitSourcePos(p.sourceMapSource, loc.End())
 	}
 }
 
@@ -5769,7 +5769,7 @@ func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode 
 			pos = loc.End()
 		}
 		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+			p.emitSourcePos(p.sourceMapSource, pos)
 		}
 	}
 }
