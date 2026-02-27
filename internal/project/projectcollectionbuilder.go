@@ -146,20 +146,17 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 					b.apiOpenedProjects = make(map[tspath.Path]struct{})
 				}
 				b.apiOpenedProjects[configPath] = struct{}{}
-				b.updateProgram(entry, logger)
 			} else {
 				return fmt.Errorf("project not found for open: %s", configFileName)
 			}
 		}
 	}
 
-	if apiRequest.UpdateProjects != nil {
-		for configPath := range apiRequest.UpdateProjects.Keys() {
-			if entry, ok := b.configuredProjects.Load(configPath); ok {
-				b.updateProgram(entry, logger)
-			} else {
-				return fmt.Errorf("project not found for update: %s", configPath)
-			}
+	for configPath := range b.apiOpenedProjects {
+		if entry, ok := b.configuredProjects.Load(configPath); ok {
+			b.updateProgram(entry, logger)
+		} else {
+			return fmt.Errorf("project not found for update: %s", configPath)
 		}
 	}
 
@@ -1021,12 +1018,12 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 
 			dirtyFilePath = p.dirtyFilePath
 			for _, path := range paths {
+				if _, ok := p.affectingLocationsWatch.input[path]; ok {
+					dirty = true
+					dirtyFilePath = ""
+					break
+				}
 				if changeType == lsproto.FileChangeTypeCreated {
-					if _, ok := p.affectingLocationsWatch.input[path]; ok {
-						dirty = true
-						dirtyFilePath = ""
-						break
-					}
 					if _, ok := p.failedLookupsWatch.input[path]; ok {
 						dirty = true
 						dirtyFilePath = ""
