@@ -138,7 +138,7 @@ declare const console: { log(msg: any): void; };
 {"id":29,"recursionId":28,"unionTypes":[14,15],"flags":["Union"]},
 {"id":30,"recursionId":29,"unionTypes":[14,15,22],"flags":["Union"]},
 {"id":31,"recursionId":30,"unionTypes":[15,16],"flags":["Union"]},
-{"id":32,"recursionId":31,"flags":["TemplateLiteral"]},
+{"id":32,"recursionId":31,"flags":["TemplateLiteral"],"display":"`${number}`"},
 {"id":33,"recursionId":32,"unionTypes":[10,13,14,15,16,17,19],"flags":["Union"]},
 {"id":34,"intrinsicName":"never","recursionId":33,"flags":["Never"]},
 {"id":35,"recursionId":34,"flags":["Object"],"display":"{}"},
