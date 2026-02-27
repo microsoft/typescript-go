@@ -9,6 +9,7 @@ import (
 )
 
 func TestPositionMapASCII(t *testing.T) {
+	t.Parallel()
 	text := "const x = 1;"
 	pm := ast.ComputePositionMap(text)
 	if !pm.IsAsciiOnly() {
@@ -25,6 +26,7 @@ func TestPositionMapASCII(t *testing.T) {
 }
 
 func TestPositionMapTwoByte(t *testing.T) {
+	t.Parallel()
 	// "café" — é (U+00E9) is 2 bytes UTF-8, 1 code unit UTF-16
 	text := "const café = 1;\nconst x = 2;"
 	pm := ast.ComputePositionMap(text)
@@ -33,7 +35,7 @@ func TestPositionMapTwoByte(t *testing.T) {
 	}
 
 	// Everything before é (byte offset 9) should be identity
-	for i := 0; i <= 9; i++ {
+	for i := range 10 {
 		if got := pm.UTF8ToUTF16(i); got != i {
 			t.Errorf("before é: UTF8ToUTF16(%d) = %d, want %d", i, got, i)
 		}
@@ -64,6 +66,7 @@ func TestPositionMapTwoByte(t *testing.T) {
 }
 
 func TestPositionMapFourByte(t *testing.T) {
+	t.Parallel()
 	// 🎉 (U+1F389) is 4 bytes UTF-8, 2 code units UTF-16
 	text := `const a = "🎉";` + "\nconst b = 2;"
 	pm := ast.ComputePositionMap(text)
@@ -87,6 +90,7 @@ func TestPositionMapFourByte(t *testing.T) {
 }
 
 func TestPositionMapMultipleNonASCII(t *testing.T) {
+	t.Parallel()
 	// Mix of 2-byte and 4-byte characters
 	// "à" (U+00E0) = 2 bytes UTF-8, 1 code unit UTF-16 (delta +1)
 	// "🎉" (U+1F389) = 4 bytes UTF-8, 2 code units UTF-16 (delta +2)
@@ -116,6 +120,7 @@ func TestPositionMapMultipleNonASCII(t *testing.T) {
 }
 
 func TestPositionMapRoundtrip(t *testing.T) {
+	t.Parallel()
 	text := "let café = \"🎉\"; // naïve"
 	pm := ast.ComputePositionMap(text)
 
@@ -135,7 +140,7 @@ func BenchmarkComputePositionMap_ASCII(b *testing.B) {
 	line := "const variable = someFunction(argument1, argument2);\n"
 	text := strings.Repeat(line, 200)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		ast.ComputePositionMap(text)
 	}
 }
@@ -145,7 +150,7 @@ func BenchmarkComputePositionMap_NonASCII(b *testing.B) {
 	line := "const café = \"héllo wörld 🎉\";\n"
 	text := strings.Repeat(line, 200)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		ast.ComputePositionMap(text)
 	}
 }
@@ -156,7 +161,7 @@ func BenchmarkUTF8ToUTF16_ASCII(b *testing.B) {
 	pm := ast.ComputePositionMap(text)
 	positions := []int{0, 100, 500, 1000, 5000, len(text) - 1}
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		for _, p := range positions {
 			pm.UTF8ToUTF16(p)
 		}
@@ -169,7 +174,7 @@ func BenchmarkUTF8ToUTF16_NonASCII(b *testing.B) {
 	pm := ast.ComputePositionMap(text)
 	positions := []int{0, 100, 500, 1000, 5000, len(text) - 1}
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		for _, p := range positions {
 			pm.UTF8ToUTF16(p)
 		}
@@ -183,7 +188,7 @@ func BenchmarkUTF16ToUTF8_NonASCII(b *testing.B) {
 	utf16Len := pm.UTF8ToUTF16(len(text))
 	positions := []int{0, 100, 500, 1000, 3000, utf16Len - 1}
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		for _, p := range positions {
 			pm.UTF16ToUTF8(p)
 		}
@@ -197,7 +202,7 @@ func BenchmarkComputePositionMap_CheckerTS(b *testing.B) {
 	}
 	text := string(data)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		ast.ComputePositionMap(text)
 	}
 }
