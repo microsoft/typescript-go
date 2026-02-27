@@ -595,8 +595,7 @@
 +11>                                ^^^^^^^^
  1->
    >
--2 >    }
-+2 >    
+ 2 >    }
  3 >     
  4 >       Bar
  5 >          
@@ -627,7 +626,7 @@
 -8 >Emitted(33, 33) Source(1, 18) + SourceIndex(0)
 -9 >Emitted(33, 41) Source(36, 2) + SourceIndex(0)
 +1->Emitted(34, 5) Source(36, 1) + SourceIndex(0)
-+2 >Emitted(34, 6) Source(36, 1) + SourceIndex(0)
++2 >Emitted(34, 6) Source(36, 2) + SourceIndex(0)
 +3 >Emitted(34, 8) Source(1, 15) + SourceIndex(0)
 +4 >Emitted(34, 11) Source(1, 18) + SourceIndex(0)
 +5 >Emitted(34, 14) Source(1, 15) + SourceIndex(0)
@@ -640,16 +639,7 @@
  ---
  >>>})(Foo || (Foo = {}));
  1 >
-@@= skipped -20, +22 lines =@@
- 7 >              ^^^^^^^^
- 8 >                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--2 >}
-+2 >
- 3 > 
- 4 >   Foo
- 5 >      
-@@= skipped -41, +41 lines =@@
+@@= skipped -61, +63 lines =@@
    >                      b[j].greet();
    >                  }
    >              }
@@ -661,7 +651,7 @@
 -6 >Emitted(34, 15) Source(1, 14) + SourceIndex(0)
 -7 >Emitted(34, 23) Source(36, 2) + SourceIndex(0)
 +1 >Emitted(35, 1) Source(36, 1) + SourceIndex(0)
-+2 >Emitted(35, 2) Source(36, 1) + SourceIndex(0)
++2 >Emitted(35, 2) Source(36, 2) + SourceIndex(0)
 +3 >Emitted(35, 4) Source(1, 11) + SourceIndex(0)
 +4 >Emitted(35, 7) Source(1, 14) + SourceIndex(0)
 +5 >Emitted(35, 12) Source(1, 11) + SourceIndex(0)

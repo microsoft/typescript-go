@@ -105,7 +105,7 @@ sourceFile:sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.t
 8 >                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1->
   >
-2 >
+2 >}
 3 > 
 4 >   Q
 5 >    
@@ -117,7 +117,7 @@ sourceFile:sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.t
   >              }
   >          }
 1->Emitted(8, 1) Source(6, 1) + SourceIndex(0)
-2 >Emitted(8, 2) Source(6, 1) + SourceIndex(0)
+2 >Emitted(8, 2) Source(6, 2) + SourceIndex(0)
 3 >Emitted(8, 4) Source(1, 11) + SourceIndex(0)
 4 >Emitted(8, 5) Source(1, 12) + SourceIndex(0)
 5 >Emitted(8, 10) Source(1, 11) + SourceIndex(0)

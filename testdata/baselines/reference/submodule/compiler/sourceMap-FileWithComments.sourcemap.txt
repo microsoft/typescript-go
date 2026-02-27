@@ -475,7 +475,7 @@ sourceFile:sourceMap-FileWithComments.ts
 7 >                    ^^^^^^^^
 1->
   >
-2 >
+2 >}
 3 > 
 4 >   Shapes
 5 >         
@@ -506,7 +506,7 @@ sourceFile:sourceMap-FileWithComments.ts
   >                        var b = 10;
   >                    }
 1->Emitted(29, 1) Source(31, 1) + SourceIndex(0)
-2 >Emitted(29, 2) Source(31, 1) + SourceIndex(0)
+2 >Emitted(29, 2) Source(31, 2) + SourceIndex(0)
 3 >Emitted(29, 4) Source(7, 11) + SourceIndex(0)
 4 >Emitted(29, 10) Source(7, 17) + SourceIndex(0)
 5 >Emitted(29, 15) Source(7, 11) + SourceIndex(0)

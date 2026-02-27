@@ -216,7 +216,7 @@ sourceFile:Element.ts
 9 >                                        ^^^^^^^^
 1->
   >
-2 >
+2 >}
 3 > 
 4 >   Element
 5 >          
@@ -235,7 +235,7 @@ sourceFile:Element.ts
   >                                            }
   >                                        }
 1->Emitted(14, 1) Source(23, 1) + SourceIndex(0)
-2 >Emitted(14, 2) Source(23, 1) + SourceIndex(0)
+2 >Emitted(14, 2) Source(23, 2) + SourceIndex(0)
 3 >Emitted(14, 4) Source(13, 18) + SourceIndex(0)
 4 >Emitted(14, 11) Source(13, 25) + SourceIndex(0)
 5 >Emitted(14, 24) Source(13, 18) + SourceIndex(0)

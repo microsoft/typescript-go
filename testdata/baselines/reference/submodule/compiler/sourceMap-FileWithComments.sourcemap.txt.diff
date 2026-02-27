@@ -456,16 +456,7 @@
  ---
  >>>})(Shapes || (Shapes = {}));
  1->
-@@= skipped -17, +17 lines =@@
- 7 >                    ^^^^^^^^
- 1->
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   Shapes
- 5 >         
-@@= skipped -30, +30 lines =@@
+@@= skipped -47, +47 lines =@@
    >                        */
    >                        var b = 10;
    >                    }
@@ -477,7 +468,7 @@
 -6 >Emitted(27, 21) Source(7, 17) + SourceIndex(0)
 -7 >Emitted(27, 29) Source(31, 2) + SourceIndex(0)
 +1->Emitted(29, 1) Source(31, 1) + SourceIndex(0)
-+2 >Emitted(29, 2) Source(31, 1) + SourceIndex(0)
++2 >Emitted(29, 2) Source(31, 2) + SourceIndex(0)
 +3 >Emitted(29, 4) Source(7, 11) + SourceIndex(0)
 +4 >Emitted(29, 10) Source(7, 17) + SourceIndex(0)
 +5 >Emitted(29, 15) Source(7, 11) + SourceIndex(0)

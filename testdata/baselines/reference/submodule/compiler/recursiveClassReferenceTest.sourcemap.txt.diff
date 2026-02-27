@@ -82,8 +82,7 @@
 +11>                                                   ^^^^^^^^
  1->
    >
--2 >            }
-+2 >            
+ 2 >            }
  3 >             
  4 >               Find
  5 >                   
@@ -100,12 +99,7 @@
    >                                                   	export class StartFindAction implements Sample.Thing.IAction {
    >                                                   		
    >                                                   		public getId() { return "yo"; }
-@@= skipped -25, +29 lines =@@
-   >                                                   	}
-   >                                                   }
- 1->Emitted(19, 13) Source(42, 1) + SourceIndex(0)
--2 >Emitted(19, 14) Source(42, 2) + SourceIndex(0)
-+2 >Emitted(19, 14) Source(42, 1) + SourceIndex(0)
+@@= skipped -29, +33 lines =@@
  3 >Emitted(19, 16) Source(32, 32) + SourceIndex(0)
  4 >Emitted(19, 20) Source(32, 36) + SourceIndex(0)
  5 >Emitted(19, 23) Source(32, 32) + SourceIndex(0)
@@ -122,7 +116,7 @@
  ---
  >>>        })(Thing = Actions.Thing || (Actions.Thing = {}));
  1 >^^^^^^^^
-@@= skipped -15, +17 lines =@@
+@@= skipped -11, +13 lines =@@
  3 >         ^^
  4 >           ^^^^^
  5 >                ^^^
@@ -139,8 +133,7 @@
 +11>                                                  ^^^^^^^^
 +12>                                                          ^->
  1 >
--2 >        }
-+2 >        
+ 2 >        }
  3 >         
  4 >           Thing
  5 >                
@@ -157,12 +150,7 @@
    >                                                  	export class StartFindAction implements Sample.Thing.IAction {
    >                                                  		
    >                                                  		public getId() { return "yo"; }
-@@= skipped -25, +29 lines =@@
-   >                                                  	}
-   >                                                  }
- 1 >Emitted(20, 9) Source(42, 1) + SourceIndex(0)
--2 >Emitted(20, 10) Source(42, 2) + SourceIndex(0)
-+2 >Emitted(20, 10) Source(42, 1) + SourceIndex(0)
+@@= skipped -29, +33 lines =@@
  3 >Emitted(20, 12) Source(32, 26) + SourceIndex(0)
  4 >Emitted(20, 17) Source(32, 31) + SourceIndex(0)
  5 >Emitted(20, 20) Source(32, 26) + SourceIndex(0)
@@ -179,7 +167,7 @@
  ---
  >>>    })(Actions = Sample.Actions || (Sample.Actions = {}));
  1->^^^^
-@@= skipped -15, +17 lines =@@
+@@= skipped -11, +13 lines =@@
  3 >     ^^
  4 >       ^^^^^^^
  5 >              ^^^
@@ -194,8 +182,7 @@
 +10>                                           ^^^^^^^
 +11>                                                  ^^^^^^^^
  1->
--2 >    }
-+2 >    
+ 2 >    }
  3 >     
  4 >       Actions
  5 >              
@@ -212,12 +199,7 @@
    >                                                  	export class StartFindAction implements Sample.Thing.IAction {
    >                                                  		
    >                                                  		public getId() { return "yo"; }
-@@= skipped -24, +28 lines =@@
-   >                                                  	}
-   >                                                  }
- 1->Emitted(21, 5) Source(42, 1) + SourceIndex(0)
--2 >Emitted(21, 6) Source(42, 2) + SourceIndex(0)
-+2 >Emitted(21, 6) Source(42, 1) + SourceIndex(0)
+@@= skipped -28, +32 lines =@@
  3 >Emitted(21, 8) Source(32, 18) + SourceIndex(0)
  4 >Emitted(21, 15) Source(32, 25) + SourceIndex(0)
  5 >Emitted(21, 18) Source(32, 18) + SourceIndex(0)
@@ -234,25 +216,7 @@
  ---
  >>>})(Sample || (Sample = {}));
  1 >
-@@= skipped -18, +20 lines =@@
- 6 >              ^^^^^^
- 7 >                    ^^^^^^^^
- 1 >
--2 >}
-+2 >
- 3 > 
- 4 >   Sample
- 5 >         
-@@= skipped -17, +17 lines =@@
-   >                    	}
-   >                    }
- 1 >Emitted(22, 1) Source(42, 1) + SourceIndex(0)
--2 >Emitted(22, 2) Source(42, 2) + SourceIndex(0)
-+2 >Emitted(22, 2) Source(42, 1) + SourceIndex(0)
- 3 >Emitted(22, 4) Source(32, 11) + SourceIndex(0)
- 4 >Emitted(22, 10) Source(32, 17) + SourceIndex(0)
- 5 >Emitted(22, 15) Source(32, 11) + SourceIndex(0)
-@@= skipped -20, +20 lines =@@
+@@= skipped -51, +53 lines =@@
  2 >Emitted(23, 12) Source(44, 11) + SourceIndex(0)
  3 >Emitted(23, 18) Source(44, 17) + SourceIndex(0)
  ---
@@ -625,8 +589,7 @@
 +11>                                                    ^^^^^^^^
  1->
    >
--2 >        }
-+2 >        
+ 2 >        }
  3 >         
  4 >           Widgets
  5 >                  
@@ -657,7 +620,7 @@
 -8 >Emitted(45, 53) Source(44, 31) + SourceIndex(0)
 -9 >Emitted(45, 61) Source(64, 2) + SourceIndex(0)
 +1->Emitted(46, 9) Source(64, 1) + SourceIndex(0)
-+2 >Emitted(46, 10) Source(64, 1) + SourceIndex(0)
++2 >Emitted(46, 10) Source(64, 2) + SourceIndex(0)
 +3 >Emitted(46, 12) Source(44, 24) + SourceIndex(0)
 +4 >Emitted(46, 19) Source(44, 31) + SourceIndex(0)
 +5 >Emitted(46, 22) Source(44, 24) + SourceIndex(0)
@@ -685,8 +648,7 @@
 +10>                                       ^^^^^
 +11>                                            ^^^^^^^^
  1 >
--2 >    }
-+2 >    
+ 2 >    }
  3 >     
  4 >       Thing
  5 >            
@@ -717,7 +679,7 @@
 -8 >Emitted(46, 45) Source(44, 23) + SourceIndex(0)
 -9 >Emitted(46, 53) Source(64, 2) + SourceIndex(0)
 +1 >Emitted(47, 5) Source(64, 1) + SourceIndex(0)
-+2 >Emitted(47, 6) Source(64, 1) + SourceIndex(0)
++2 >Emitted(47, 6) Source(64, 2) + SourceIndex(0)
 +3 >Emitted(47, 8) Source(44, 18) + SourceIndex(0)
 +4 >Emitted(47, 13) Source(44, 23) + SourceIndex(0)
 +5 >Emitted(47, 16) Source(44, 18) + SourceIndex(0)
@@ -730,16 +692,7 @@
  ---
  >>>})(Sample || (Sample = {}));
  1 >
-@@= skipped -19, +21 lines =@@
- 6 >              ^^^^^^
- 7 >                    ^^^^^^^^
- 1 >
--2 >}
-+2 >
- 3 > 
- 4 >   Sample
- 5 >         
-@@= skipped -26, +26 lines =@@
+@@= skipped -45, +47 lines =@@
    >                    
    >                    	}
    >                    }
@@ -751,7 +704,7 @@
 -6 >Emitted(47, 21) Source(44, 17) + SourceIndex(0)
 -7 >Emitted(47, 29) Source(64, 2) + SourceIndex(0)
 +1 >Emitted(48, 1) Source(64, 1) + SourceIndex(0)
-+2 >Emitted(48, 2) Source(64, 1) + SourceIndex(0)
++2 >Emitted(48, 2) Source(64, 2) + SourceIndex(0)
 +3 >Emitted(48, 4) Source(44, 11) + SourceIndex(0)
 +4 >Emitted(48, 10) Source(44, 17) + SourceIndex(0)
 +5 >Emitted(48, 15) Source(44, 11) + SourceIndex(0)
@@ -1270,8 +1223,7 @@
 +11>                                                                      ^^^^^^^^
  1->
    >
--2 >            }
-+2 >            
+ 2 >            }
  3 >             
  4 >               PlainText
  5 >                        
@@ -1302,7 +1254,7 @@
 -8 >Emitted(78, 71) Source(76, 43) + SourceIndex(0)
 -9 >Emitted(78, 79) Source(100, 2) + SourceIndex(0)
 +1->Emitted(80, 13) Source(100, 1) + SourceIndex(0)
-+2 >Emitted(80, 14) Source(100, 1) + SourceIndex(0)
++2 >Emitted(80, 14) Source(100, 2) + SourceIndex(0)
 +3 >Emitted(80, 16) Source(76, 34) + SourceIndex(0)
 +4 >Emitted(80, 25) Source(76, 43) + SourceIndex(0)
 +5 >Emitted(80, 28) Source(76, 34) + SourceIndex(0)
@@ -1330,8 +1282,7 @@
 +10>                                                 ^^^^^^^^^
 +11>                                                          ^^^^^^^^
  1 >
--2 >        }
-+2 >        
+ 2 >        }
  3 >         
  4 >           Languages
  5 >                    
@@ -1362,7 +1313,7 @@
 -8 >Emitted(79, 59) Source(76, 33) + SourceIndex(0)
 -9 >Emitted(79, 67) Source(100, 2) + SourceIndex(0)
 +1 >Emitted(81, 9) Source(100, 1) + SourceIndex(0)
-+2 >Emitted(81, 10) Source(100, 1) + SourceIndex(0)
++2 >Emitted(81, 10) Source(100, 2) + SourceIndex(0)
 +3 >Emitted(81, 12) Source(76, 24) + SourceIndex(0)
 +4 >Emitted(81, 21) Source(76, 33) + SourceIndex(0)
 +5 >Emitted(81, 24) Source(76, 24) + SourceIndex(0)
@@ -1390,8 +1341,7 @@
 +10>                                       ^^^^^
 +11>                                            ^^^^^^^^
  1 >
--2 >    }
-+2 >    
+ 2 >    }
  3 >     
  4 >       Thing
  5 >            
@@ -1422,7 +1372,7 @@
 -8 >Emitted(80, 45) Source(76, 23) + SourceIndex(0)
 -9 >Emitted(80, 53) Source(100, 2) + SourceIndex(0)
 +1 >Emitted(82, 5) Source(100, 1) + SourceIndex(0)
-+2 >Emitted(82, 6) Source(100, 1) + SourceIndex(0)
++2 >Emitted(82, 6) Source(100, 2) + SourceIndex(0)
 +3 >Emitted(82, 8) Source(76, 18) + SourceIndex(0)
 +4 >Emitted(82, 13) Source(76, 23) + SourceIndex(0)
 +5 >Emitted(82, 16) Source(76, 18) + SourceIndex(0)
@@ -1435,16 +1385,7 @@
  ---
  >>>})(Sample || (Sample = {}));
  1 >
-@@= skipped -20, +22 lines =@@
- 7 >                    ^^^^^^^^
- 8 >                            ^^^^^^^^^^^^^^^^^^^^^^^^^^->
- 1 >
--2 >}
-+2 >
- 3 > 
- 4 >   Sample
- 5 >         
-@@= skipped -30, +30 lines =@@
+@@= skipped -50, +52 lines =@@
    >                    
    >                    	}
    >                    }
@@ -1456,7 +1397,7 @@
 -6 >Emitted(81, 21) Source(76, 17) + SourceIndex(0)
 -7 >Emitted(81, 29) Source(100, 2) + SourceIndex(0)
 +1 >Emitted(83, 1) Source(100, 1) + SourceIndex(0)
-+2 >Emitted(83, 2) Source(100, 1) + SourceIndex(0)
++2 >Emitted(83, 2) Source(100, 2) + SourceIndex(0)
 +3 >Emitted(83, 4) Source(76, 11) + SourceIndex(0)
 +4 >Emitted(83, 10) Source(76, 17) + SourceIndex(0)
 +5 >Emitted(83, 15) Source(76, 11) + SourceIndex(0)

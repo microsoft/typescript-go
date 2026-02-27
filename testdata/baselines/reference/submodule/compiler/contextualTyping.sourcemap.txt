@@ -193,7 +193,7 @@ sourceFile:contextualTyping.ts
 8 >                        ^^^^^^^^^->
 1->
   >
-2 >
+2 >}
 3 > 
 4 >   C2T5
 5 >       
@@ -204,7 +204,7 @@ sourceFile:contextualTyping.ts
   >                    }
   >                }
 1->Emitted(14, 1) Source(25, 1) + SourceIndex(0)
-2 >Emitted(14, 2) Source(25, 1) + SourceIndex(0)
+2 >Emitted(14, 2) Source(25, 2) + SourceIndex(0)
 3 >Emitted(14, 4) Source(21, 11) + SourceIndex(0)
 4 >Emitted(14, 8) Source(21, 15) + SourceIndex(0)
 5 >Emitted(14, 13) Source(21, 11) + SourceIndex(0)
@@ -1096,7 +1096,7 @@ sourceFile:contextualTyping.ts
 8 >                        ^^^^^^^^->
 1->
   >
-2 >
+2 >}
 3 > 
 4 >   C5T5
 5 >       
@@ -1108,7 +1108,7 @@ sourceFile:contextualTyping.ts
   >                    }
   >                }
 1->Emitted(53, 1) Source(71, 1) + SourceIndex(0)
-2 >Emitted(53, 2) Source(71, 1) + SourceIndex(0)
+2 >Emitted(53, 2) Source(71, 2) + SourceIndex(0)
 3 >Emitted(53, 4) Source(66, 11) + SourceIndex(0)
 4 >Emitted(53, 8) Source(66, 15) + SourceIndex(0)
 5 >Emitted(53, 13) Source(66, 11) + SourceIndex(0)

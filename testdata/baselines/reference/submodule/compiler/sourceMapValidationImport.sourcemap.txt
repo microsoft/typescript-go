@@ -91,7 +91,7 @@ sourceFile:sourceMapValidationImport.ts
 9 >                      ^^^^^^^^
 1->
   >
-2 >
+2 >}
 3 > 
 4 >   m
 5 >    
@@ -103,7 +103,7 @@ sourceFile:sourceMapValidationImport.ts
   >                          }
   >                      }
 1->Emitted(9, 1) Source(4, 1) + SourceIndex(0)
-2 >Emitted(9, 2) Source(4, 1) + SourceIndex(0)
+2 >Emitted(9, 2) Source(4, 2) + SourceIndex(0)
 3 >Emitted(9, 4) Source(1, 18) + SourceIndex(0)
 4 >Emitted(9, 5) Source(1, 19) + SourceIndex(0)
 5 >Emitted(9, 18) Source(1, 18) + SourceIndex(0)

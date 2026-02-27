@@ -83,8 +83,7 @@
 +9 >                                        ^^^^^^^^
  1->
    >
--2 >}
-+2 >
+ 2 >}
  3 > 
  4 >   Element
  5 >          
@@ -97,12 +96,8 @@
    >                                            export function isElement(el: any): el is JSX.Element {
    >                                                return el.markAsChildOfRootElement !== undefined;
    >                                            }
-@@= skipped -44, +51 lines =@@
-   >                                            }
-   >                                        }
- 1->Emitted(14, 1) Source(23, 1) + SourceIndex(0)
--2 >Emitted(14, 2) Source(23, 2) + SourceIndex(0)
-+2 >Emitted(14, 2) Source(23, 1) + SourceIndex(0)
+@@= skipped -47, +54 lines =@@
+ 2 >Emitted(14, 2) Source(23, 2) + SourceIndex(0)
  3 >Emitted(14, 4) Source(13, 18) + SourceIndex(0)
  4 >Emitted(14, 11) Source(13, 25) + SourceIndex(0)
 -5 >Emitted(14, 34) Source(13, 18) + SourceIndex(0)

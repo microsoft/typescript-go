@@ -76,8 +76,7 @@
 +11>                      ^^^^^^^^
  1->
    >	
--2 >    }
-+2 >    
+ 2 >    }
  3 >     
  4 >       S
  5 >        
@@ -94,11 +93,7 @@
    >                      		export class Bar { }
    >                      
    >                      		// Emit Foo
-   >                      		// Foo, <Foo />;
-   >                      	}
- 1->Emitted(15, 5) Source(13, 2) + SourceIndex(0)
--2 >Emitted(15, 6) Source(13, 3) + SourceIndex(0)
-+2 >Emitted(15, 6) Source(10, 1) + SourceIndex(0)
+@@= skipped -24, +28 lines =@@
  3 >Emitted(15, 8) Source(8, 19) + SourceIndex(0)
  4 >Emitted(15, 9) Source(8, 20) + SourceIndex(0)
  5 >Emitted(15, 12) Source(8, 19) + SourceIndex(0)
@@ -115,25 +110,7 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -39, +45 lines =@@
- 7 >          ^^^^^^^^
- 1 >
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -15, +15 lines =@@
-   >          	}
-   >          }
- 1 >Emitted(16, 1) Source(14, 1) + SourceIndex(0)
--2 >Emitted(16, 2) Source(14, 2) + SourceIndex(0)
-+2 >Emitted(16, 2) Source(14, 1) + SourceIndex(0)
- 3 >Emitted(16, 4) Source(6, 11) + SourceIndex(0)
- 4 >Emitted(16, 5) Source(6, 12) + SourceIndex(0)
- 5 >Emitted(16, 10) Source(6, 11) + SourceIndex(0)
-@@= skipped -33, +33 lines =@@
+@@= skipped -63, +65 lines =@@
  ---
  >>>    M.Foo, <M.Foo />;
  1->^^^^
@@ -343,8 +320,7 @@
 +11>                      ^^^^^^^^
  1->
    >	
--2 >    }
-+2 >    
+ 2 >    }
  3 >     
  4 >       S
  5 >        
@@ -361,12 +337,7 @@
    >                      		// Emit M.Foo
    >                      		Foo, <Foo />;
    >                      
-@@= skipped -21, +25 lines =@@
-   >                      		Bar, <Bar />;
-   >                      	}
- 1->Emitted(26, 5) Source(26, 2) + SourceIndex(0)
--2 >Emitted(26, 6) Source(26, 3) + SourceIndex(0)
-+2 >Emitted(26, 6) Source(26, 1) + SourceIndex(0)
+@@= skipped -25, +29 lines =@@
  3 >Emitted(26, 8) Source(20, 19) + SourceIndex(0)
  4 >Emitted(26, 9) Source(20, 20) + SourceIndex(0)
  5 >Emitted(26, 12) Source(20, 19) + SourceIndex(0)
@@ -383,25 +354,7 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -20, +22 lines =@@
- 1 >
-   >
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -19, +19 lines =@@
-   >          
-   >          }
- 1 >Emitted(27, 1) Source(28, 1) + SourceIndex(0)
--2 >Emitted(27, 2) Source(28, 2) + SourceIndex(0)
-+2 >Emitted(27, 2) Source(27, 1) + SourceIndex(0)
- 3 >Emitted(27, 4) Source(16, 11) + SourceIndex(0)
- 4 >Emitted(27, 5) Source(16, 12) + SourceIndex(0)
- 5 >Emitted(27, 10) Source(16, 11) + SourceIndex(0)
-@@= skipped -33, +33 lines =@@
+@@= skipped -68, +70 lines =@@
  ---
  >>>    M.S.Bar, <M.S.Bar />;
  1->^^^^
@@ -489,25 +442,7 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -56, +50 lines =@@
- 7 >          ^^^^^^^^
- 1 >
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -10, +10 lines =@@
-   >          	S.Bar, <S.Bar />;
-   >          }
- 1 >Emitted(31, 1) Source(33, 1) + SourceIndex(0)
--2 >Emitted(31, 2) Source(33, 2) + SourceIndex(0)
-+2 >Emitted(31, 2) Source(33, 1) + SourceIndex(0)
- 3 >Emitted(31, 4) Source(30, 11) + SourceIndex(0)
- 4 >Emitted(31, 5) Source(30, 12) + SourceIndex(0)
- 5 >Emitted(31, 10) Source(30, 11) + SourceIndex(0)
-@@= skipped -55, +55 lines =@@
+@@= skipped -121, +115 lines =@@
  ---
  >>>    M_1.Foo, <M_1.Foo />;
  1->^^^^
@@ -571,21 +506,3 @@
  ---
  >>>})(M || (M = {}));
  1 >
-@@= skipped -45, +39 lines =@@
- 8 >                  ^^^^^^^^^^^^^^->
- 1 >
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   M
- 5 >    
-@@= skipped -11, +11 lines =@@
-   >          	Foo, <Foo />;
-   >          }
- 1 >Emitted(36, 1) Source(39, 1) + SourceIndex(0)
--2 >Emitted(36, 2) Source(39, 2) + SourceIndex(0)
-+2 >Emitted(36, 2) Source(39, 1) + SourceIndex(0)
- 3 >Emitted(36, 4) Source(35, 11) + SourceIndex(0)
- 4 >Emitted(36, 5) Source(35, 12) + SourceIndex(0)
- 5 >Emitted(36, 10) Source(35, 11) + SourceIndex(0)

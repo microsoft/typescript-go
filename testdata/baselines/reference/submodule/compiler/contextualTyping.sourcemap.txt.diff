@@ -202,16 +202,7 @@
  ---
  >>>})(C2T5 || (C2T5 = {}));
  1->
-@@= skipped -15, +15 lines =@@
- 8 >                        ^^^^^^^^^->
- 1->
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   C2T5
- 5 >       
-@@= skipped -10, +10 lines =@@
+@@= skipped -25, +25 lines =@@
    >                        return i;
    >                    }
    >                }
@@ -223,7 +214,7 @@
 -6 >Emitted(16, 17) Source(21, 15) + SourceIndex(0)
 -7 >Emitted(16, 25) Source(25, 2) + SourceIndex(0)
 +1->Emitted(14, 1) Source(25, 1) + SourceIndex(0)
-+2 >Emitted(14, 2) Source(25, 1) + SourceIndex(0)
++2 >Emitted(14, 2) Source(25, 2) + SourceIndex(0)
 +3 >Emitted(14, 4) Source(21, 11) + SourceIndex(0)
 +4 >Emitted(14, 8) Source(21, 15) + SourceIndex(0)
 +5 >Emitted(14, 13) Source(21, 11) + SourceIndex(0)
@@ -1013,16 +1004,7 @@
  ---
  >>>})(C5T5 || (C5T5 = {}));
  1->
-@@= skipped -15, +15 lines =@@
- 8 >                        ^^^^^^^^->
- 1->
-   >
--2 >}
-+2 >
- 3 > 
- 4 >   C5T5
- 5 >       
-@@= skipped -11, +11 lines =@@
+@@= skipped -26, +26 lines =@@
    >                        return s;
    >                    }
    >                }
@@ -1034,7 +1016,7 @@
 -6 >Emitted(54, 17) Source(66, 15) + SourceIndex(0)
 -7 >Emitted(54, 25) Source(71, 2) + SourceIndex(0)
 +1->Emitted(53, 1) Source(71, 1) + SourceIndex(0)
-+2 >Emitted(53, 2) Source(71, 1) + SourceIndex(0)
++2 >Emitted(53, 2) Source(71, 2) + SourceIndex(0)
 +3 >Emitted(53, 4) Source(66, 11) + SourceIndex(0)
 +4 >Emitted(53, 8) Source(66, 15) + SourceIndex(0)
 +5 >Emitted(53, 13) Source(66, 11) + SourceIndex(0)

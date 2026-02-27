@@ -329,7 +329,7 @@ sourceFile:sourceMap-Comments.ts
 1->
   >
   >
-2 >    
+2 >    }
 3 >     
 4 >       tools
 5 >            
@@ -358,7 +358,7 @@ sourceFile:sourceMap-Comments.ts
   >                                      
   >                                      }
 1->Emitted(23, 5) Source(19, 1) + SourceIndex(0)
-2 >Emitted(23, 6) Source(18, 1) + SourceIndex(0)
+2 >Emitted(23, 6) Source(19, 2) + SourceIndex(0)
 3 >Emitted(23, 8) Source(1, 15) + SourceIndex(0)
 4 >Emitted(23, 13) Source(1, 20) + SourceIndex(0)
 5 >Emitted(23, 16) Source(1, 15) + SourceIndex(0)
@@ -379,7 +379,7 @@ sourceFile:sourceMap-Comments.ts
 7 >              ^^^^^^^^
 8 >                      ^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
-2 >
+2 >}
 3 > 
 4 >   sas
 5 >      
@@ -404,7 +404,7 @@ sourceFile:sourceMap-Comments.ts
   >              
   >              }
 1 >Emitted(24, 1) Source(19, 1) + SourceIndex(0)
-2 >Emitted(24, 2) Source(18, 1) + SourceIndex(0)
+2 >Emitted(24, 2) Source(19, 2) + SourceIndex(0)
 3 >Emitted(24, 4) Source(1, 11) + SourceIndex(0)
 4 >Emitted(24, 7) Source(1, 14) + SourceIndex(0)
 5 >Emitted(24, 12) Source(1, 11) + SourceIndex(0)

@@ -5191,7 +5191,12 @@ func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
 }
 
 func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) (*commentState, int) {
-	if flags&tefNoComments != 0 {
+	if flags&tefNoComments != 0 || p.commentsDisabled {
+		// Still skip trivia so that the returned pos correctly identifies the token position.
+		// This is needed for trailing source map positions (writeTokenText advances pos by token length).
+		if p.currentSourceFile != nil && !ast.PositionIsSynthesized(pos) {
+			pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+		}
 		return nil, pos
 	}
 
