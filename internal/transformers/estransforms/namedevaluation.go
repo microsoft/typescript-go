@@ -168,7 +168,7 @@ func getAssignedNameOfPropertyName(emitContext *printer.EmitContext, name *ast.P
 		return assignedName, name
 	}
 
-	if !ast.IsComputedPropertyName(expression) {
+	if !ast.IsComputedPropertyName(name) {
 		panic("Expected computed property name")
 	}
 

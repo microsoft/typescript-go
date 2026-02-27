@@ -383,6 +383,57 @@ func (f *NodeFactory) NewFunctionCallCall(target *ast.Expression, thisArg *ast.E
 	return f.NewMethodCall(target, f.NewIdentifier("call"), args)
 }
 
+func (f *NodeFactory) NewFunctionBindCall(target *ast.Expression, thisArg *ast.Expression, argumentsList []*ast.Node) *ast.Expression {
+	args := append([]*ast.Expression{thisArg}, argumentsList...)
+	return f.NewMethodCall(target, f.NewIdentifier("bind"), args)
+}
+
+func (f *NodeFactory) NewImmediatelyInvokedArrowFunction(statements []*ast.Statement) *ast.Expression {
+	body := f.NewBlock(f.NewNodeList(statements), true /*multiLine*/)
+	arrow := f.NewArrowFunction(
+		nil, /*modifiers*/
+		nil, /*typeParameters*/
+		f.NewNodeList([]*ast.Node{}),
+		nil, /*type*/
+		nil, /*equalsGreaterThanToken*/
+		f.NewToken(ast.KindEqualsGreaterThanToken),
+		body,
+	)
+	return f.NewCallExpression(
+		f.NewParenthesizedExpression(arrow),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{}),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewReflectGetCall(target *ast.Expression, propertyKey *ast.Expression, receiver *ast.Expression) *ast.Expression {
+	return f.NewCallExpression(
+		f.NewPropertyAccessExpression(
+			f.NewIdentifier("Reflect"), nil,
+			f.NewIdentifier("get"), ast.NodeFlagsNone,
+		),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{target, propertyKey, receiver}),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewReflectSetCall(target *ast.Expression, propertyKey *ast.Expression, value *ast.Expression, receiver *ast.Expression) *ast.Expression {
+	return f.NewCallExpression(
+		f.NewPropertyAccessExpression(
+			f.NewIdentifier("Reflect"), nil,
+			f.NewIdentifier("set"), ast.NodeFlagsNone,
+		),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{target, propertyKey, value, receiver}),
+		ast.NodeFlagsNone,
+	)
+}
+
 func (f *NodeFactory) NewArraySliceCall(array *ast.Expression, start int) *ast.Node {
 	var args []*ast.Node
 	if start != 0 {
@@ -835,6 +886,36 @@ func (f *NodeFactory) NewAwaiterHelper(
 			f.NewVoidZeroExpression(),
 			generatorFunc,
 		}),
+		ast.NodeFlagsNone,
+	)
+}
+
+// ES Decorator Helpers
+
+func (f *NodeFactory) NewESDecorateHelper(ctor *ast.Expression, descriptorIn *ast.Expression, decorators *ast.Expression, contextIn *ast.Expression, initializers *ast.Expression, extraInitializers *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(esDecorateHelper)
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__esDecorate"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers}),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewRunInitializersHelper(thisArg *ast.Expression, initializers *ast.Expression, value *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(runInitializersHelper)
+	var arguments []*ast.Expression
+	if value != nil {
+		arguments = []*ast.Expression{thisArg, initializers, value}
+	} else {
+		arguments = []*ast.Expression{thisArg, initializers}
+	}
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__runInitializers"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(arguments),
 		ast.NodeFlagsNone,
 	)
 }

@@ -73,7 +73,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		prologue, rest := tx.Factory().SplitStandardPrologue(result.Statements.Nodes)
 		statements := slices.Clone(prologue)
 		if externalHelpersImportDeclaration != nil {
-			statements = append(statements, externalHelpersImportDeclaration)
+			statements = append(statements, tx.Visitor().VisitNode(externalHelpersImportDeclaration))
 		}
 		if tx.importRequireStatements != nil {
 			statements = append(statements, tx.importRequireStatements.statements...)
