@@ -428,7 +428,7 @@ func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isT
 	// Generate documentation from the signature's declaration
 	var documentation *string
 	if declaration := candidate.Declaration(); declaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, declaration, docFormat, true /*commentOnly*/)
+		doc := l.getDocumentationFromDeclaration(c, nil, declaration, nil, docFormat, true /*commentOnly*/)
 		if doc != "" {
 			documentation = &doc
 		}
@@ -591,7 +591,7 @@ func (l *LanguageService) createSignatureHelpParameterForParameter(parameter *as
 	isRest := parameter.CheckFlags&ast.CheckFlagsRestParameter != 0
 	var documentation *lsproto.StringOrMarkupContent
 	if parameter.ValueDeclaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, parameter.ValueDeclaration, docFormat, true /*commentOnly*/)
+		doc := l.getDocumentationFromDeclaration(c, nil, parameter.ValueDeclaration, nil, docFormat, true /*commentOnly*/)
 		if doc != "" {
 			documentation = &lsproto.StringOrMarkupContent{
 				MarkupContent: &lsproto.MarkupContent{
@@ -1144,7 +1144,7 @@ func tryGetParameterInfo(startingToken *ast.Node, sourceFile *ast.SourceFile, c 
 	}
 
 	signatures := c.GetSignaturesOfType(nonNullableContextualType, checker.SignatureKindCall)
-	if signatures == nil || signatures[len(signatures)-1] == nil {
+	if len(signatures) == 0 {
 		return nil
 	}
 	signature := signatures[len(signatures)-1]
