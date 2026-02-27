@@ -3,7 +3,7 @@ name: compiler-and-fourslash-tests
 description: >
   How to write, run, and debug compiler tests and fourslash (LSP) tests in the
   typescript-go repository. Covers test file formats, directives, markers,
-  baseline management, the fourslash verification API, and debugging workflows.
+  baseline management, and the fourslash verification API.
 ---
 
 # Writing, Running, and Debugging Compiler Tests and Fourslash Tests
@@ -67,7 +67,7 @@ const msg: number = greet("world"); // type error
 
 #### Generating test variations
 
-Options that affect program behavior (those marked with `AffectsProgramStructure`, `AffectsEmit`, `AffectsModuleResolution`, `AffectsDiagnostics`, etc.) can specify multiple values to generate separate sub-test configurations:
+Options can specify multiple comma-separated values to generate separate sub-test configurations:
 
 ```typescript
 // @target: es2015, esnext
@@ -78,53 +78,45 @@ export const x = 1;
 
 This generates a sub-test for each combination, with names like `myTest.ts (target=es2015,module=commonjs,strict=true)`.
 
-Use `*` to test all valid values for an option, and `!value` to exclude specific ones:
+Note: `// @lib:` is **not** variant — commas add additional lib files rather than creating separate test configurations:
 
 ```typescript
-// @module: *
-// @target: *, !es3
+// @lib: es2020,dom
 ```
 
 #### Symlink tests
 
-Use `// @link:` to create symlinks in the virtual filesystem:
+Use `// @symlink:` to create symlinks in the virtual filesystem:
 
 ```typescript
-// @link: /src -> /node_modules/mylib
+// @symlink: /src -> /node_modules/mylib
 ```
 
 #### Other directives
 
 - `// @currentDirectory: /custom/path` — Set the working directory
 - `// @noImplicitReferences` — Don't auto-include referenced files
-- `// @lib: es2020,dom` — Specify lib files
 
 ### 1.3 Running Compiler Tests
 
-#### Via hereby (recommended for full runs)
+#### Via hereby (recommended)
+
+Always use `hereby test` for running tests. It ensures a clean state by clearing stale baselines before running, so results are always trustworthy. Do not assume test results are stale — `hereby test` handles this.
 
 ```bash
 npx hereby test                          # Run all tests (compiler + fourslash + others)
 npx hereby test --tests "myNewTest"      # Run tests matching a pattern (passed as -run flag)
 ```
 
-#### Via Go directly (faster for specific tests)
+#### Via Go directly (for print-debugging a single test)
+
+Use `go test` directly only when you need verbose output for a specific test to debug with print statements:
 
 ```bash
-# Run all local compiler tests
-go test ./internal/testrunner/ -run TestLocal
-
-# Run a specific test by name
-go test ./internal/testrunner/ -run 'TestLocal/compiler/myNewTest.ts'
-
-# Run submodule tests (from upstream TypeScript)
-go test ./internal/testrunner/ -run 'TestSubmodule/compiler/someTest.ts'
-
-# Run with verbose output
 go test ./internal/testrunner/ -run 'TestLocal/compiler/myNewTest.ts' -v
 ```
 
-The test entry points in `internal/testrunner/compiler_runner_test.go` are:
+The test entry points are:
 - `TestLocal` — runs tests from `testdata/tests/cases/` (both `compiler/` and `conformance/`)
 - `TestSubmodule` — runs tests from `_submodules/TypeScript/tests/cases/` and generates diff baselines
 
@@ -162,14 +154,17 @@ Baselines are the expected output files that test results are compared against.
 | `.sourcemap.txt` | Source map output |
 | `.trace.json` | Trace output |
 
+#### Viewing baseline diffs
+
+```bash
+git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local
+```
+
 #### Accepting baselines
 
 After running tests and reviewing the differences:
 
 ```bash
-# View baseline diffs (requires DIFF env var to be set to a diff tool)
-DIFF=code npx hereby diff
-
 # Accept all new baselines (copies local/ → reference/)
 npx hereby baseline-accept
 ```
@@ -177,72 +172,6 @@ npx hereby baseline-accept
 The `baseline-accept` task:
 1. Copies all files from `local/` to `reference/` (excluding `.delete` files)
 2. Deletes reference files that have corresponding `.delete` markers in `local/`
-
-#### Baseline tracking
-
-Every test package that uses baselines must include a `TestMain` with `baseline.Track()`:
-
-```go
-func TestMain(m *testing.M) {
-    defer baseline.Track()()
-    m.Run()
-}
-```
-
-When running via `npx hereby test`, the system:
-1. Sets the `TSGO_BASELINE_TRACKING_DIR` environment variable to a temp directory
-2. Each test records which baselines it uses
-3. After all tests complete, detects unused baselines
-4. Creates `.delete` markers for unused baselines
-5. Reports an error if unused baselines are found
-
-The `--dirty` flag skips this tracking and also skips clearing `local/` before tests.
-
-### 1.5 Debugging Compiler Tests
-
-#### Examine baseline diffs
-
-```bash
-# Set your diff tool
-export DIFF=code  # or vimdiff, meld, etc.
-npx hereby diff
-```
-
-Or manually inspect:
-```bash
-# View generated output
-cat testdata/baselines/local/compiler/myTest.errors.txt
-
-# Compare with expected
-diff testdata/baselines/reference/compiler/myTest.errors.txt \
-     testdata/baselines/local/compiler/myTest.errors.txt
-```
-
-#### Run with verbose output
-
-```bash
-go test ./internal/testrunner/ -run 'TestLocal/compiler/myNewTest.ts' -v
-```
-
-#### Debug with Delve
-
-Build tests with debug flags disabled so Delve can step through:
-
-```bash
-# Build with debug flags (disables optimizations and inlining)
-npx hereby test --debug --tests "myNewTest"
-```
-
-This passes `-gcflags=all=-N -l` to `go build`, which:
-- `-N` disables optimizations
-- `-l` disables inlining
-
-Then attach Delve to step through code.
-
-Alternatively, use Delve directly:
-```bash
-dlv test ./internal/testrunner/ -- -test.run 'TestLocal/compiler/myNewTest.ts'
-```
 
 ---
 
@@ -255,12 +184,12 @@ Fourslash tests validate language server (LSP) features: completions, hover/quic
 | Path | Purpose |
 |------|---------|
 | `internal/fourslash/tests/*.go` | Hand-written fourslash tests |
-| `internal/fourslash/tests/manual/*.go` | Hand-written tests (manual subdirectory) |
 | `internal/fourslash/tests/gen/*.go` | Auto-generated from upstream TypeScript fourslash tests |
+| `internal/fourslash/tests/manual/*.go` | `gen` tests migrated to manual with `npm run makemanual` |
 | `internal/fourslash/` | Test harness and utilities |
 | `internal/fourslash/tests/util/` | Shared test constants (`DefaultCommitCharacters`, etc.) |
 
-**Key difference**: Generated tests in `gen/` use `fourslash.SkipIfFailing(t)` for tests that are known to not yet work. Hand-written tests should always pass.
+**Key difference**: Generated tests in `gen/` use `fourslash.SkipIfFailing(t)` for tests that are known to not yet work. Hand-written tests should always pass. Tests in `manual/` are generated tests that have been migrated and possibly modified — they should not be created from scratch.
 
 ### 2.2 Writing a New Fourslash Test
 
@@ -479,20 +408,11 @@ f.VerifyOrganizeImports(t, expectedContent, actionKind, prefs)
 ### 2.4 Running Fourslash Tests
 
 ```bash
-# Run all fourslash tests
-go test ./internal/fourslash/tests/...
-
-# Run a specific test
-go test ./internal/fourslash/tests/... -run TestBasicQuickInfo
-
-# Run with pattern matching
-go test ./internal/fourslash/tests/... -run "TestCompletion.*"
-
-# Run with verbose output
-go test ./internal/fourslash/tests/... -run TestBasicQuickInfo -v
-
-# Via hereby (runs all tests including fourslash)
+# Via hereby (recommended — ensures clean state)
 npx hereby test --tests "TestBasicQuickInfo"
+
+# For print-debugging a specific test with verbose output
+go test ./internal/fourslash/tests -run TestBasicQuickInfo -v
 ```
 
 ### 2.5 Fourslash Baselines
@@ -516,103 +436,57 @@ Accept baselines the same way as compiler tests:
 npx hereby baseline-accept
 ```
 
-### 2.6 Debugging Fourslash Tests
-
-#### Run with verbose output
-```bash
-go test ./internal/fourslash/tests/... -run TestMyFeature -v
-```
-
-#### Debug with Delve
-```bash
-dlv test ./internal/fourslash/tests/... -- -test.run TestMyFeature
-```
-
-Or use the `--debug` flag with hereby:
-```bash
-npx hereby test --debug --tests "TestMyFeature"
-```
-
-#### Common issues
-
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| "marker not found" | Misspelled marker name | Check marker names are exact (case-sensitive) |
-| Unexpected completions | Missing `EditRange: Ignored` | Add `EditRange: Ignored` to `ItemDefaults` if you don't care about edit ranges |
-| Test panics | Missing `defer done()` | Always call `defer done()` after `NewFourslash` |
-| Baseline mismatch | Changed LSP output | Review diff and accept with `npx hereby baseline-accept` |
-
-### 2.7 Generated vs. Hand-Written Tests
+### 2.6 Generated vs. Hand-Written Tests
 
 Generated tests (in `gen/`) are auto-converted from the upstream TypeScript fourslash test suite using the script at `internal/fourslash/_scripts/convertFourslash.mts`. They:
 - Use `fourslash.SkipIfFailing(t)` for tests that don't pass yet
 - Should not be manually edited (they'll be overwritten on regeneration)
 - Provide coverage for ported TypeScript behavior
 
-Hand-written tests (directly in `internal/fourslash/tests/` or in `manual/`):
+Tests in `manual/` are `gen` tests that have been migrated with `npm run makemanual`. They should not be created from scratch — only use `makemanual` to move a generated test that needs modification.
+
+Hand-written tests (directly in `internal/fourslash/tests/`):
 - Must always pass (no `SkipIfFailing`)
 - Test specific behaviors, edge cases, or new features
 - Are the right place for custom regression tests
 
 ---
 
-## 3. General Testing Infrastructure
+## 3. General Testing Practices
 
 ### 3.1 Key hereby Commands
 
 | Command | Description |
 |---------|-------------|
-| `npx hereby test` | Run all tests with baseline tracking |
+| `npx hereby test` | Run all tests with baseline tracking (clears stale state) |
 | `npx hereby test --tests "Pattern"` | Run tests matching `-run=Pattern` |
-| `npx hereby test --debug` | Build with `-gcflags=all=-N -l` for Delve debugging |
-| `npx hereby test --dirty` | Skip clearing local baselines and baseline tracking |
-| `npx hereby test --race` | Enable Go race detector |
-| `npx hereby test --coverage` | Generate coverage profiles |
 | `npx hereby baseline-accept` | Accept local baselines as new reference |
-| `npx hereby diff` | Diff baselines with tool from `$DIFF` env var |
 | `npx hereby format` | Format code (uses dprint) |
 | `npx hereby lint` | Run linters (uses golangci-lint) |
 
-### 3.2 Environment Variables
-
-| Variable | Purpose |
-|----------|---------|
-| `TSGO_BASELINE_TRACKING_DIR` | Directory for baseline usage tracking files |
-| `TS_TEST_PROGRAM_SINGLE_THREADED` | Set to `false` for parallel test programs |
-| `DIFF` | Path to diff tool for `npx hereby diff` |
-| `TSGO_HEREBY_RACE` | Enable race detector via env var |
-| `TSGO_HEREBY_NOEMBED` | Skip embedding bundled assets |
-
-### 3.3 Typical Workflow
+### 3.2 Typical Workflow
 
 #### Adding a new compiler test
 1. Create `testdata/tests/cases/compiler/myTest.ts` with test code and directives
-2. Run: `go test ./internal/testrunner/ -run 'TestLocal/compiler/myTest.ts'`
-3. Review generated baselines in `testdata/baselines/local/compiler/`
+2. Run: `npx hereby test --tests "myTest"`
+3. Review generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 4. Accept: `npx hereby baseline-accept`
 
 #### Adding a new fourslash test
 1. Create `internal/fourslash/tests/myTest_test.go` with the test function
-2. Run: `go test ./internal/fourslash/tests/... -run TestMyTest`
-3. Review any generated baselines in `testdata/baselines/local/fourslash/`
+2. Run: `npx hereby test --tests "TestMyTest"`
+3. Review any generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 4. Accept: `npx hereby baseline-accept`
 
 #### Investigating a test failure
-1. Run the specific test: `go test ./internal/testrunner/ -run 'TestLocal/compiler/failingTest.ts' -v`
-2. Check baseline diffs: `diff testdata/baselines/reference/compiler/failingTest.errors.txt testdata/baselines/local/compiler/failingTest.errors.txt`
+1. Run the specific test with verbose output: `go test ./internal/testrunner/ -run 'TestLocal/compiler/failingTest.ts' -v`
+2. Check baseline diffs: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 3. If the new output is correct, accept: `npx hereby baseline-accept`
 4. If not, fix the code and re-run
 
-### 3.4 Key Source Files
-
-| File | Purpose |
-|------|---------|
-| `internal/testrunner/compiler_runner.go` | Compiler test runner |
-| `internal/testrunner/compiler_runner_test.go` | `TestLocal` and `TestSubmodule` entry points |
-| `internal/testrunner/test_case_parser.go` | Parses `// @` directives from test files |
-| `internal/fourslash/fourslash.go` | Fourslash test harness (all `Verify*` methods) |
-| `internal/fourslash/test_parser.go` | Parses markers (`/*name*/`, `[|range|]`) |
-| `internal/fourslash/baselineutil.go` | Fourslash baseline file generation |
-| `internal/fourslash/tests/util/` | Shared test constants (`DefaultCommitCharacters`, etc.) |
-| `internal/testutil/baseline/baseline.go` | Core baseline comparison and tracking |
-| `Herebyfile.mjs` | Build/test task definitions |
+#### Debugging an unrecovered panic
+If a test panics without a clear stack trace, run all tests in the package sequentially with verbose mode to identify which test caused the panic:
+```bash
+go test ./internal/testrunner/ -parallel=1 -v
+```
+The last test that shows as running before the panic output is the one that caused it.
