@@ -331,6 +331,22 @@ func (tr *Tracing) Pop() {
 	popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime)
 }
 
+// PopAll closes all open trace events on the shared trace buffer.
+// Safe to call on nil receiver.
+func (tr *Tracing) PopAll() {
+	if tr == nil || !tr.traceStarted {
+		return
+	}
+
+	tr.mu.Lock()
+	defer tr.mu.Unlock()
+
+	ts := tr.timestamp()
+	for i := len(tr.eventStack) - 1; i >= 0; i-- {
+		popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime)
+	}
+}
+
 // CheckerTracing manages per-checker trace events. Each checker gets its own
 // CheckerTracing whose events are combined with the shared global events to
 // produce checker-specific trace_N.json files.
@@ -376,6 +392,22 @@ func (ct *CheckerTracing) Pop() {
 		ts = ct.tr.timestamp()
 	}
 	popFrom(&ct.content, &ct.eventStack, ts, ct.tr.startTime)
+}
+
+// PopAll closes all open trace events on the per-checker trace buffer.
+// Safe to call on nil receiver.
+func (ct *CheckerTracing) PopAll() {
+	if ct == nil {
+		return
+	}
+
+	ct.mu.Lock()
+	defer ct.mu.Unlock()
+
+	ts := ct.tr.timestamp()
+	for i := len(ct.eventStack) - 1; i >= 0; i-- {
+		popFrom(&ct.content, &ct.eventStack, ts, ct.tr.startTime)
+	}
 }
 
 // Instant records an instant event on the per-checker trace buffer.

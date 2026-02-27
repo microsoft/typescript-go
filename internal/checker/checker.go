@@ -2435,7 +2435,7 @@ func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
 }
 
 func (c *Checker) checkDeferredNode(node *ast.Node) {
-	c.tracing.Push(tracing.PhaseCheck, "checkDeferredNode", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
+	c.tracing.Push(tracing.PhaseCheck, "checkDeferredNode", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
@@ -5623,7 +5623,7 @@ func (c *Checker) checkVariableDeclarationList(node *ast.Node) {
 }
 
 func (c *Checker) checkVariableDeclaration(node *ast.Node) {
-	c.tracing.Push(tracing.PhaseCheck, "checkVariableDeclaration", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
+	c.tracing.Push(tracing.PhaseCheck, "checkVariableDeclaration", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
 	c.checkGrammarVariableDeclaration(node.AsVariableDeclaration())
 	c.checkVariableLikeDeclaration(node)
 	c.tracing.Pop()
@@ -7356,7 +7356,7 @@ func (c *Checker) checkExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
-	c.tracing.Push(tracing.PhaseCheck, "checkExpression", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()))
+	c.tracing.Push(tracing.PhaseCheck, "checkExpression", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
