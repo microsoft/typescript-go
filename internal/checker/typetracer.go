@@ -266,14 +266,17 @@ func (a *tracedTypeAdapter) RecursionIdentity() any {
 }
 
 func (a *tracedTypeAdapter) Display() string {
-	// Only compute display for anonymous, literal, or template literal types, as it
-	// can be expensive for others. Matches TypeScript's try/catch around typeToString
-	// — incomplete types during tracing can cause panics, which we intentionally
-	// suppress (returning "").
+	// Compute display text for types where it's valuable for trace analysis.
+	// TypeScript only does this for Anonymous|Literal types, but we extend to
+	// unions, intersections, and template literals since they often lack
+	// firstDeclaration and the display text helps identify them.
+	// Incomplete types during tracing can cause panics, which we intentionally
+	// suppress (returning ""), matching TypeScript's try/catch around typeToString.
 	if a.checker == nil {
 		return ""
 	}
-	if a.t.objectFlags&ObjectFlagsAnonymous != 0 || a.t.flags&(TypeFlagsLiteral|TypeFlagsTemplateLiteral) != 0 {
+	if a.t.objectFlags&ObjectFlagsAnonymous != 0 ||
+		a.t.flags&(TypeFlagsLiteral|TypeFlagsTemplateLiteral|TypeFlagsUnion|TypeFlagsIntersection) != 0 {
 		defer func() {
 			_ = recover()
 		}()
