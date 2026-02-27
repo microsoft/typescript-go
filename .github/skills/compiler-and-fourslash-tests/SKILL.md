@@ -1,8 +1,14 @@
+---
+name: compiler-and-fourslash-tests
+description: >
+  How to write, run, and debug compiler tests and fourslash (LSP) tests in the
+  typescript-go repository. Covers test file formats, directives, markers,
+  baseline management, the fourslash verification API, and debugging workflows.
+---
+
 # Writing, Running, and Debugging Compiler Tests and Fourslash Tests
 
 This guide covers the complete testing workflow for the typescript-go repository, including compiler tests (type-checking, emit, diagnostics) and fourslash tests (language server features like completions, hover, go-to-definition).
-
----
 
 ## 1. Compiler Tests
 
