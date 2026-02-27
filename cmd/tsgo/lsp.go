@@ -15,7 +15,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/pprof"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
@@ -44,7 +43,7 @@ func runLSP(args []string) int {
 
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
-	typingsLocation := getGlobalTypingsCacheLocation()
+	typingsLocation := osvfs.GetGlobalTypingsCacheLocation()
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -72,21 +71,6 @@ func runLSP(args []string) int {
 		return 1
 	}
 	return 0
-}
-
-func getGlobalTypingsCacheLocation() string {
-	cacheDir, err := os.UserCacheDir()
-	if err != nil {
-		cacheDir = os.TempDir()
-	}
-
-	var subdir string
-	if runtime.GOOS == "windows" {
-		subdir = "Microsoft/TypeScript"
-	} else {
-		subdir = "typescript"
-	}
-	return tspath.CombinePaths(cacheDir, subdir, core.VersionMajorMinor())
 }
 
 // startParentProcessWatchdog starts a goroutine that monitors the parent process

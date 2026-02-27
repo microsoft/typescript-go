@@ -742,7 +742,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 				}
 				subTarget, _ := target.AsObject().Get(condition)
 				if result := r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, subTarget, subpath, isPattern, key); !result.shouldContinueSearching() {
-					if r.tracer != nil {
+					if result.isResolved() && r.tracer != nil {
 						r.tracer.write(diagnostics.Resolved_under_condition_0, condition)
 					}
 					if r.tracer != nil {
@@ -779,7 +779,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 		if r.tracer != nil {
 			r.tracer.write(diagnostics.X_package_json_scope_0_explicitly_maps_specifier_1_to_null, scope.PackageDirectory, moduleName)
 		}
-		return continueSearching()
+		return unresolved()
 	}
 
 	if r.tracer != nil {
@@ -1601,10 +1601,17 @@ func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions
 	if extensions&extensionsTypeScript != 0 && tspath.HasImplementationTSFileExtension(candidate) || extensions&extensionsDeclaration != 0 && tspath.IsDeclarationFileName(candidate) {
 		if path, ok := r.tryFile(candidate, onlyRecordFailures); ok {
 			extension := tspath.TryExtractTSExtension(path)
+			// resolvedUsingTsExtension should be true when the pattern ends with * and the
+			// candidate file ends in a TS extension. This means the * matched a TS extension
+			// from the module specifier. For example:
+			// - import "pkg/foo.ts" with pattern "./*" -> true
+			// - import "pkg/foo.ts.omg" with pattern "./*.omg" -> true (star matched .ts)
+			// - import "pkg/foo" with pattern "./*.ts" -> false (extension in pattern, not specifier)
+			resolvedUsingTsExtension := strings.HasSuffix(packageJSONValue, "*") && extension != ""
 			return &resolved{
 				path:                     path,
 				extension:                extension,
-				resolvedUsingTsExtension: packageJSONValue != "" && !strings.HasSuffix(packageJSONValue, extension),
+				resolvedUsingTsExtension: resolvedUsingTsExtension,
 			}
 		}
 		return continueSearching()

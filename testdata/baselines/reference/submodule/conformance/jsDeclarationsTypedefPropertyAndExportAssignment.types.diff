@@ -4,8 +4,8 @@
  === index.js ===
  const {taskGroups, taskNameToGroup} = require('./module.js');
  >taskGroups : { parseHTML: { id: "parseHTML"; label: string; }; styleLayout: { id: "styleLayout"; label: string; }; }
-->taskNameToGroup : { [x: string]: import("module").TaskGroup; }
-->require('./module.js') : typeof import("module")
+->taskNameToGroup : { [x: string]: import("./module.js").TaskGroup; }
+->require('./module.js') : typeof import("./module.js")
 +>taskNameToGroup : any
 +>require('./module.js') : { taskGroups: { parseHTML: { id: "parseHTML"; label: string; }; styleLayout: { id: "styleLayout"; label: string; }; }; taskNameToGroup: any; }
  >require : any

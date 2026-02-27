@@ -49,7 +49,7 @@ func (s *semicolonRemoverWriter) DecreaseIndent() {
 	s.inner.DecreaseIndent()
 }
 
-func (s *semicolonRemoverWriter) GetColumn() int {
+func (s *semicolonRemoverWriter) GetColumn() core.UTF16Offset {
 	return s.inner.GetColumn()
 }
 
@@ -182,7 +182,7 @@ func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 }
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	writer := printer.NewTextWriter("")
+	writer := printer.NewTextWriter("", 0)
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {

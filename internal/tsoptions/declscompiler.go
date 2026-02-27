@@ -368,7 +368,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.JavaScript_Support,
 		Description:              diagnostics.Allow_JavaScript_files_to_be_a_part_of_your_program_Use_the_checkJs_option_to_get_errors_from_these_files,
-		DefaultValueDescription:  false,
+		DefaultValueDescription:  diagnostics.X_false_unless_checkJs_is_set,
 	},
 	{
 		Name:                       "checkJs",
@@ -631,6 +631,15 @@ var optionsForCompiler = []*CommandLineOption{
 		Description:             diagnostics.Ensure_use_strict_is_always_emitted,
 		DefaultValueDescription: true,
 	},
+	{
+		Name:                       "stableTypeOrdering",
+		Kind:                       CommandLineOptionTypeBoolean,
+		AffectsSemanticDiagnostics: true,
+		AffectsBuildInfo:           true,
+		Category:                   diagnostics.Type_Checking,
+		Description:                diagnostics.Ensure_types_are_ordered_stably_and_deterministically_across_compilations,
+		DefaultValueDescription:    true,
+	},
 
 	// Additional Checks
 	{
@@ -869,7 +878,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsBuildInfo:           true,
 		Category:                   diagnostics.Modules,
 		Description:                diagnostics.Check_side_effect_imports,
-		DefaultValueDescription:    false,
+		DefaultValueDescription:    true,
 	},
 
 	// Source Maps
