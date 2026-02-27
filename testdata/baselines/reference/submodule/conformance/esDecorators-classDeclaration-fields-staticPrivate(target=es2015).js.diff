@@ -1,19 +1,20 @@
 --- old.esDecorators-classDeclaration-fields-staticPrivate(target=es2015).js
 +++ new.esDecorators-classDeclaration-fields-staticPrivate(target=es2015).js
-@@= skipped -18, +18 lines =@@
-
+@@= skipped -19, +19 lines =@@
  //// [esDecorators-classDeclaration-fields-staticPrivate.js]
  "use strict";
--let C = (() => {
+ let C = (() => {
 -    var _a, _C_field1;
--    let _static_private_field1_decorators;
--    let _static_private_field1_initializers = [];
--    let _static_private_field1_extraInitializers = [];
+     let _static_private_field1_decorators;
+     let _static_private_field1_initializers = [];
+     let _static_private_field1_extraInitializers = [];
 -    return _a = class C {
 -        },
 -        (() => {
--            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
--            _static_private_field1_decorators = [dec];
++    return class C {
++        static {
+             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+             _static_private_field1_decorators = [dec];
 -            __esDecorate(null, null, _static_private_field1_decorators, { kind: "field", name: "#field1", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_a, obj), get: obj => __classPrivateFieldGet(obj, _a, "f", _C_field1), set: (obj, value) => { __classPrivateFieldSet(obj, _a, value, "f", _C_field1); } }, metadata: _metadata }, _static_private_field1_initializers, _static_private_field1_extraInitializers);
 -            if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
 -        })(),
@@ -22,15 +23,39 @@
 -            __runInitializers(_a, _static_private_field1_extraInitializers);
 -        })(),
 -        _a;
--})();
--let D = (() => {
++            __esDecorate(null, null, _static_private_field1_decorators, { kind: "field", name: "#field1", static: true, private: true, access: { has: obj => #field1 in obj, get: obj => obj.#field1, set: (obj, value) => { obj.#field1 = value; } }, metadata: _metadata }, _static_private_field1_initializers, _static_private_field1_extraInitializers);
++            if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
++        }
++        static #field1 = __runInitializers(this, _static_private_field1_initializers, 0);
++        static {
++            __runInitializers(this, _static_private_field1_extraInitializers);
++        }
++    };
+ })();
+ let D = (() => {
 -    var _D_field1;
--    let _classDecorators = [dec];
--    let _classDescriptor;
--    let _classExtraInitializers = [];
--    let _classThis;
+     let _classDecorators = [dec];
+     let _classDescriptor;
+     let _classExtraInitializers = [];
+     let _classThis;
 -    var D = _classThis = class {
--    };
++    var D = class {
++        static { _classThis = this; }
++        static {
++            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
++            __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
++            D = _classThis = _classDescriptor.value;
++            if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
++        }
++        static #field1 = 0;
++        static {
++            _classThis.#field1;
++            _classThis.#field1 = 1;
++        }
++        static {
++            __runInitializers(_classThis, _classExtraInitializers);
++        }
+     };
 -    __setFunctionName(_classThis, "D");
 -    (() => {
 -        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
@@ -46,17 +71,5 @@
 -    (() => {
 -        __runInitializers(_classThis, _classExtraInitializers);
 -    })();
--    return D = _classThis;
--})();
-+class C {
-+    @dec
-+    static #field1 = 0;
-+}
-+@dec
-+class D {
-+    static #field1 = 0;
-+    static {
-+        this.#field1;
-+        this.#field1 = 1;
-+    }
-+}
+     return D = _classThis;
+ })();
