@@ -1,0 +1,6 @@
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration.ts ===
+// class C {
+//   [|x|]() {}
+//   constructor(public /*FIND ALL REFS*/[|x|]: number) {}
+// }
