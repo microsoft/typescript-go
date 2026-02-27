@@ -11,12 +11,6 @@
      method() {
          const loadAsync = Promise.resolve().then(() => __importStar(require("./0")));
          this.myModule.then(Zero => {
-             console.log(Zero.foo());
--        }, async (err) => {
-+        }, async err => {
-             console.log(err);
-             let one = await Promise.resolve().then(() => __importStar(require("./1")));
-             console.log(one.backup());
 @@= skipped -15, +13 lines =@@
      }
  }
@@ -28,9 +22,3 @@
      method() {
          const loadAsync = Promise.resolve().then(() => __importStar(require("./0")));
          this.myModule.then(Zero => {
-             console.log(Zero.foo());
--        }, async (err) => {
-+        }, async err => {
-             console.log(err);
-             let one = await Promise.resolve().then(() => __importStar(require("./1")));
-             console.log(one.backup());

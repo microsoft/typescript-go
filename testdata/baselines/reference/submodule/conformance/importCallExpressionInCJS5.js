@@ -98,7 +98,7 @@ class C {
         const loadAsync = Promise.resolve().then(() => __importStar(require("./0")));
         this.myModule.then(Zero => {
             console.log(Zero.foo());
-        }, async err => {
+        }, async (err) => {
             console.log(err);
             let one = await Promise.resolve().then(() => __importStar(require("./1")));
             console.log(one.backup());
@@ -111,7 +111,7 @@ class D {
         const loadAsync = Promise.resolve().then(() => __importStar(require("./0")));
         this.myModule.then(Zero => {
             console.log(Zero.foo());
-        }, async err => {
+        }, async (err) => {
             console.log(err);
             let one = await Promise.resolve().then(() => __importStar(require("./1")));
             console.log(one.backup());

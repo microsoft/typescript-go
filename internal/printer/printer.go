@@ -1506,16 +1506,10 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 	parent := parentNode.AsArrowFunction()
 	parameter := parameters.Nodes[0].AsParameterDeclaration()
 
-	// Only use modifiers for position check if they actually contain nodes.
-	// After transformation (e.g., async removal), modifiers may be an empty list with stale source positions.
-	modifiers := parent.Modifiers()
-	if modifiers != nil && len(modifiers.Nodes) == 0 {
-		modifiers = nil
-	}
-
-	return parameter.Pos() == greatestEnd(parent.Pos(), modifiers) && // may not have parsed tokens between modifiers/start of parent and parameter
+	return parameter.Pos() == parent.Pos() && // may not have parsed tokens between start of parent and parameter
 		parent.TypeParameters == nil && // parent may not have type parameters
 		parent.Type == nil && // parent may not have return type annotation
+		(parent.Modifiers() == nil || len(parent.Modifiers().Nodes) == 0) && // parent may not have modifiers
 		!parameters.HasTrailingComma() && // parameters may not have a trailing comma
 		parameter.Modifiers() == nil && // parameter may not have decorators or modifiers
 		parameter.DotDotDotToken == nil && // parameter may not be rest
