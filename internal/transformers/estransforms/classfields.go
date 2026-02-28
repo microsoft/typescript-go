@@ -106,13 +106,18 @@ type classFieldsTransformer struct {
 	pendingExpressions []*ast.Expression
 	// pendingStatements tracks what computed name expression statements and static property
 	// initializers must be emitted at the next execution site, in document order (for decorated classes).
-	pendingStatements          []*ast.Statement
-	lexicalEnvironment         *classLexicalEnv
-	currentClassContainer      *ast.ClassLikeDeclaration
-	currentClassElement        *ast.ClassElement
+	pendingStatements     []*ast.Statement
+	lexicalEnvironment    *classLexicalEnv
+	currentClassContainer *ast.ClassLikeDeclaration
+	currentClassElement   *ast.ClassElement
+	// classAliases maps class declarations to alias identifiers for substituting class name
+	// references in static initializers. Replaces Strada's onSubstituteNode/trySubstituteClassAlias.
 	classAliases               map[*ast.Node]*ast.IdentifierNode
 	enclosingClassDeclarations map[*ast.Node]bool
 	inIterationStatement       bool
+	// insideComputedPropertyName replaces Strada's onEmitNode for ComputedPropertyName, which
+	// switches to the outer lexical environment. Used by visitThisExpression() to apply
+	// the outer environment's substitution without requiring currentClassElement to be static.
 	insideComputedPropertyName bool
 
 	// Visitors
@@ -176,6 +181,7 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 // requiresBlockScopedVar returns true when private field temp variables should be
 // declared as block-scoped (let) rather than function-scoped (var). This occurs when
 // a class expression is directly inside a loop body.
+// Replaces Strada's resolver.hasNodeCheckFlag(node, NodeCheckFlags.BlockScopedBindingInLoop).
 func (tx *classFieldsTransformer) requiresBlockScopedVar() bool {
 	return tx.inIterationStatement && tx.currentClassContainer != nil && ast.IsClassExpression(tx.currentClassContainer)
 }
@@ -215,14 +221,16 @@ func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 		return node
 	}
 
+	// Strada's onSubstituteNode runs on ALL emitted nodes regardless of transform flags.
+	// Since we substitute eagerly, we must check for identifiers needing alias substitution
+	// even in subtrees with no class field transforms.
 	if node.Kind == ast.KindIdentifier && len(tx.classAliases) > 0 {
 		return tx.visitIdentifier(node.AsIdentifier())
 	}
 
 	if node.SubtreeFacts()&(ast.SubtreeContainsClassFields|ast.SubtreeContainsLexicalThisOrSuper) == 0 {
 		if tx.currentClassContainer != nil && len(tx.classAliases) > 0 {
-			// Need to continue visiting to find identifiers that need alias substitution,
-			// matching TypeScript's onSubstituteNode behavior which runs on all emitted nodes.
+			// Continue visiting for alias substitution even in non-class-field subtrees.
 			return tx.Visitor().VisitEachChild(node)
 		}
 		return node
@@ -392,6 +400,9 @@ func (tx *classFieldsTransformer) visitPropertyName(name *ast.PropertyName) *ast
 	return tx.Visitor().VisitNode(name)
 }
 
+// visitIdentifier replaces Strada's onSubstituteNode/trySubstituteClassAlias. Instead of
+// substituting at emit time using NodeCheckFlags.ConstructorReference, we resolve the
+// identifier to its declaration and check if that declaration has a registered alias.
 func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
 	if tx.resolver == nil {
 		return node.AsNode()
@@ -513,8 +524,8 @@ func (tx *classFieldsTransformer) injectPendingExpressions(expression *ast.Expre
 
 func (tx *classFieldsTransformer) visitComputedPropertyName(node *ast.ComputedPropertyName) *ast.Node {
 	// Computed property names are evaluated in the enclosing scope, not the current class.
-	// Switch to the outer lexical environment, matching the TS reference's onEmitNode behavior
-	// for ComputedPropertyName which uses lexicalEnvironment?.previous.
+	// Replaces Strada's onEmitNode for ComputedPropertyName which switches to
+	// lexicalEnvironment?.previous. We do this explicitly during transformation.
 	savedLexicalEnvironment := tx.lexicalEnvironment
 	savedInsideComputedPropertyName := tx.insideComputedPropertyName
 	tx.insideComputedPropertyName = true
@@ -1398,11 +1409,11 @@ func (tx *classFieldsTransformer) getPrivateInstanceMethodsAndAccessors(node *as
 	return core.Filter(node.Members(), isNonStaticMethodOrAccessorWithPrivateName)
 }
 
-// memberContainsConstructorReference checks if a class member's body contains
-// an identifier that resolves to the class declaration. This mirrors the checker's
-// NodeCheckFlags.ContainsConstructorReference without using NodeCheckFlags.
-// Only checks member bodies (not computed property names), since computed property
-// names are evaluated during class definition when the binding is still correct.
+// memberContainsConstructorReference checks if a class member's body contains an identifier
+// that resolves to the class declaration. Replaces Strada's resolver.hasNodeCheckFlag(member,
+// NodeCheckFlags.ContainsConstructorReference) by walking the AST with the EmitResolver.
+// Only checks member bodies (not computed property names), since computed property names
+// are evaluated during class definition when the binding is still correct.
 func (tx *classFieldsTransformer) memberContainsConstructorReference(member *ast.Node, classDecl *ast.Node) bool {
 	if tx.resolver == nil {
 		return false
@@ -1442,7 +1453,8 @@ func (tx *classFieldsTransformer) memberContainsConstructorReference(member *ast
 }
 
 // classContainsConstructorReference checks if any member of a class contains
-// references to the class's own constructor (i.e., uses the class name).
+// references to the class's own constructor. Replaces Strada's
+// resolver.hasNodeCheckFlag(node, NodeCheckFlags.ContainsConstructorReference).
 func (tx *classFieldsTransformer) classContainsConstructorReference(node *ast.Node) bool {
 	for _, member := range node.Members() {
 		if tx.memberContainsConstructorReference(member, node) {
@@ -1547,6 +1559,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 	original := tx.EmitContext().MostOriginal(node)
 	tx.enclosingClassDeclarations[original] = true
 
+	// !!! Strada also checks shouldAlwaysTransformPrivateStaticElements (InternalEmitFlags.TransformPrivateStaticElements) — not yet ported.
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		name := ast.GetNameOfDeclaration(node)
 		if name != nil && ast.IsIdentifier(name) {
@@ -1626,8 +1639,8 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 
 	isClassWithConstructorReference := tx.classContainsConstructorReference(node)
 
-	// Register class alias for substitution BEFORE visiting members, since substitution
-	// happens during transformation (unlike TS reference which uses onSubstituteNode at emit time).
+	// Register class alias BEFORE visiting members (Strada registers after, since its
+	// onSubstituteNode runs at emit time; we substitute eagerly during transformation).
 	alias := tx.getClassLexicalEnvironment().classConstructor
 	if isClassWithConstructorReference && alias != nil {
 		tx.classAliases[tx.EmitContext().MostOriginal(node)] = alias
@@ -1718,10 +1731,9 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 	}
 
 	// Pre-compute whether the class expression will need a temp variable wrapper.
-	// The TS reference only registers class aliases inside the
-	// `hasTransformableStatics || pendingExpressions` branch, so we must predict
-	// this condition before visiting members (since Go does alias substitution
-	// during transformation, not at emit time like the TS reference).
+	// Strada registers class aliases AFTER transformClassMembers (since onSubstituteNode runs
+	// at emit time), but we must predict this before visiting members since we substitute
+	// eagerly. This requires pre-detecting willHavePrivatePendingExpressions.
 	isClassWithConstructorReference := tx.classContainsConstructorReference(node)
 	staticPropertiesOrClassStaticBlocks := tx.getStaticPropertiesAndClassStaticBlock(node)
 	hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
@@ -1741,19 +1753,17 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		})
 	willNeedTempWrapper := hasTransformableStatics || willHavePrivatePendingExpressions
 
-	// Register class alias for substitution BEFORE visiting members, since substitution
-	// happens during transformation (unlike TS reference which uses onSubstituteNode at emit time).
-	// Only register when the class will be wrapped with a temp, matching the TS reference which only
-	// registers class aliases inside the hasTransformableStatics || pendingExpressions branch.
+	// Register class alias BEFORE visiting members (Strada registers after, since its
+	// onSubstituteNode runs at emit time). Only register when the class will be wrapped
+	// with a temp, matching Strada's conditional registration.
 	deferTempDeclaration := false
 	if isClassWithConstructorReference && willNeedTempWrapper && tx.getClassLexicalEnvironment().classConstructor == nil {
-		// Create temp early so the alias is available during member visiting, even though in the TS
+		// Create temp early so the alias is available during member visiting, even though in the Strada
 		// reference the temp would be created later in the pendingExpressions branch.
 		temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
 			Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
 		})
-		// Defer AddVariableDeclaration until after transformClassMembers to preserve
-		// the variable declaration ordering from the TS reference.
+		// Defer AddVariableDeclaration to preserve Strada's variable declaration ordering.
 		deferTempDeclaration = true
 		tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
 	}
@@ -1825,10 +1835,12 @@ func (tx *classFieldsTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 	return nil
 }
 
+// visitThisExpression replaces Strada's substituteThisExpression / onSubstituteNode.
+// Strada substitutes `this` at emit time; we do it eagerly during transformation.
+//
+// The Strada noSubstitution set (ensureDynamicThisIfNeeded) is not needed because
+// transformAutoAccessor() passes the receiver directly rather than emitting `this`.
 func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node {
-	// For computed property names, substitute `this` using the (already switched) outer lexical
-	// environment without requiring currentClassElement to be static. This matches the TS
-	// reference's emit-time substituteThisExpression which doesn't check currentClassElement.
 	if tx.insideComputedPropertyName && tx.shouldTransformThisInStaticInitializers &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
 		data := tx.lexicalEnvironment.data
@@ -2463,7 +2475,7 @@ func (tx *classFieldsTransformer) getPropertyNameExpressionIfNeeded(name *ast.Pr
 	}
 	cacheAssignment := findComputedPropertyNameCacheAssignment(tx.EmitContext(), name)
 	// Switch to outer lex env for computed property name expressions, matching
-	// TS reference's onEmitNode behavior for ComputedPropertyName.
+	// Strada reference's onEmitNode behavior for ComputedPropertyName.
 	savedLexicalEnvironment := tx.lexicalEnvironment
 	savedInsideComputedPropertyName := tx.insideComputedPropertyName
 	tx.insideComputedPropertyName = true
@@ -2894,7 +2906,7 @@ func (tx *classFieldsTransformer) createAssignmentTargetWrapper(paramName *ast.I
 	// We create an IIFE arrow: (_a) => (expression, _a)
 	// Actually, the TypeScript implementation creates a PropertyAccessExpression wrapping a call.
 	// Simplified: return an immediately invoked arrow that performs the set operation.
-	// The actual TS implementation:
+	// The actual Strada implementation:
 	// factory.createPropertyAccessExpression(
 	//   factory.createParenthesizedExpression(factory.createObjectLiteralExpression([
 	//     factory.createSetAccessorDeclaration(undefined, "value", [param], factory.createBlock([factory.createExpressionStatement(expression)]))
