@@ -26,21 +26,47 @@ func TestQuickInfoJSDocTypedefPropertyWithInvalidTag(t *testing.T) {
  * @property {number} age
  */
 
+/**
+ * @typedef {Object} MyType3
+ * @property {string} name
+ * @*stars
+ * @property {number} age
+ */
+
+/**
+ * @typedef {Object} MyType4
+ * @property {string} name
+ * @(parens)
+ * @property {number} age
+ */
+
 /** @type {/*t1*/MyType1} */
 const obj1 = { /*1n*/name: "", /*1a*/age: 10 };
 
 /** @type {/*t2*/MyType2} */
 const obj2 = { /*2n*/name: "", /*2a*/age: 10 };
+
+/** @type {/*t3*/MyType3} */
+const obj3 = { /*3n*/name: "", /*3a*/age: 10 };
+
+/** @type {/*t4*/MyType4} */
+const obj4 = { /*4n*/name: "", /*4a*/age: 10 };
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
 	f.VerifyQuickInfoAt(t, "t1", "type MyType1 = { name: string; age: number; }", "")
 	f.VerifyQuickInfoAt(t, "t2", "type MyType2 = { name: string; age: number; }", "")
+	f.VerifyQuickInfoAt(t, "t3", "type MyType3 = { name: string; age: number; }", "")
+	f.VerifyQuickInfoAt(t, "t4", "type MyType4 = { name: string; age: number; }", "")
 
 	f.VerifyQuickInfoAt(t, "1n", "(property) name: string", "@-rule\n")
 	f.VerifyQuickInfoAt(t, "2n", "(property) name: string", "some comment\n")
+	f.VerifyQuickInfoAt(t, "3n", "(property) name: string", "@*stars\n")
+	f.VerifyQuickInfoAt(t, "4n", "(property) name: string", "@(parens)\n")
 
+	f.VerifyQuickInfoAt(t, "3a", "(property) age: number", "")
+	f.VerifyQuickInfoAt(t, "4a", "(property) age: number", "")
 	f.VerifyQuickInfoAt(t, "1a", "(property) age: number", "")
 	f.VerifyQuickInfoAt(t, "2a", "(property) age: number", "")
 }
