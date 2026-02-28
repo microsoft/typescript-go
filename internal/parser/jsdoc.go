@@ -433,9 +433,6 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 	if p.token != ast.KindAtToken {
 		panic("should be called only at the start of a tag")
 	}
-	if !p.scanner.CanFollowJSDocAt() {
-		return nil
-	}
 	start := p.scanner.TokenStart()
 	p.nextTokenJSDoc()
 
