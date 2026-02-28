@@ -2291,6 +2291,13 @@ func (state *refState) forEachRelatedSymbol(
 		// For a parameter property, try both associated symbols (constructor parameter and class member).
 		// If neither yields a match, continue with the normal fallback flow.
 		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
+		if paramProp1 == nil || paramProp2 == nil {
+			return nil, entryKindNone
+		}
+		debug.Assert(
+			(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable) != 0 && (paramProp2.Flags&ast.SymbolFlagsClassMember) != 0,
+			"GetSymbolsOfParameterPropertyDeclaration must return (parameter, member) pair",
+		)
 		if (paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable == 0) || (paramProp2.Flags&ast.SymbolFlagsClassMember == 0) {
 			return nil, entryKindNone
 		}
