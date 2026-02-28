@@ -34,22 +34,32 @@ const (
 
 // privateIdentifierInfo stores information about a private identifier during transformation.
 type privateIdentifierInfo struct {
-	kind                 privateIdentifierKind
+	kind privateIdentifierKind
+	// brandCheckIdentifier can contain:
+	//  - For instance field: The WeakMap that will be the storage for the field.
+	//  - For instance methods or accessors: The WeakSet that will be used for brand checking.
+	//  - For static members: The constructor that will be used for brand checking.
 	brandCheckIdentifier *ast.IdentifierNode
-	isStatic             bool
-	isValid              bool
-	// For fields
-	variableName *ast.IdentifierNode // static fields only
-	// For methods
+	// isStatic stores if the identifier is static or not.
+	isStatic bool
+	// isValid stores if the identifier declaration is valid or not. Reserved names (e.g. #constructor)
+	// or duplicate identifiers are considered invalid.
+	isValid bool
+	// variableName contains the variable that will serve as the storage for a static field.
+	variableName *ast.IdentifierNode
+	// methodName is the identifier for a variable that will contain the private method implementation.
 	methodName *ast.IdentifierNode
-	// For accessors
+	// getterName is the identifier for a variable that will contain the private get accessor implementation, if any.
 	getterName *ast.IdentifierNode
+	// setterName is the identifier for a variable that will contain the private set accessor implementation, if any.
 	setterName *ast.IdentifierNode
 }
 
 // privateEnvironmentData stores class-scoped environment data for private identifiers.
 type privateEnvironmentData struct {
-	className   *ast.IdentifierNode
+	// className is used for prefixing generated variable names.
+	className *ast.IdentifierNode
+	// weakSetName is used for brand check on private methods.
 	weakSetName *ast.IdentifierNode
 }
 
@@ -61,9 +71,11 @@ type privateEnvironment struct {
 
 // classLexicalEnvironment stores information about the lexical environment of a class.
 type classLexicalEnvironment struct {
-	facts               classFacts
-	classConstructor    *ast.IdentifierNode
-	classThis           *ast.IdentifierNode
+	facts classFacts
+	// classConstructor is used for brand checks on static members, and `this` references in static initializers.
+	classConstructor *ast.IdentifierNode
+	classThis        *ast.IdentifierNode
+	// superClassReference is used for `super` references in static initializers.
 	superClassReference *ast.IdentifierNode
 }
 
@@ -89,8 +101,11 @@ type classFieldsTransformer struct {
 	shouldTransformSuperInStaticInitializers          bool
 	shouldTransformAnything                           bool
 
-	// State
-	pendingExpressions         []*ast.Expression
+	// pendingExpressions tracks what computed name expressions originating from elided names
+	// must be inlined at the next execution site, in document order.
+	pendingExpressions []*ast.Expression
+	// pendingStatements tracks what computed name expression statements and static property
+	// initializers must be emitted at the next execution site, in document order (for decorated classes).
 	pendingStatements          []*ast.Statement
 	lexicalEnvironment         *classLexicalEnv
 	currentClassContainer      *ast.ClassLikeDeclaration
@@ -165,8 +180,6 @@ func (tx *classFieldsTransformer) requiresBlockScopedVar() bool {
 	return tx.inIterationStatement && tx.currentClassContainer != nil && ast.IsClassExpression(tx.currentClassContainer)
 }
 
-// visit is the main visitor.
-
 func (tx *classFieldsTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	if node.IsDeclarationFile {
 		return node.AsNode()
@@ -182,8 +195,6 @@ func (tx *classFieldsTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.enclosingClassDeclarations = nil
 	return visited
 }
-
-// visitDiscardedValue visits a node in an expression whose result is discarded.
 
 func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 	if node.Kind == ast.KindAccessorKeyword {
@@ -301,8 +312,6 @@ func (tx *classFieldsTransformer) visitDiscardedValue(node *ast.Node) *ast.Node 
 }
 
 // visitHeritageClause visits a node in a HeritageClause.
-
-// visitHeritageClause visits a node in a HeritageClause.
 func (tx *classFieldsTransformer) visitHeritageClause(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindHeritageClause:
@@ -314,8 +323,7 @@ func (tx *classFieldsTransformer) visitHeritageClause(node *ast.Node) *ast.Node 
 	}
 }
 
-// visitClassElement visits a member of a class.
-
+// visitAssignmentTarget visits the assignment target of a destructuring assignment.
 func (tx *classFieldsTransformer) visitAssignmentTarget(node *ast.Node) *ast.Node {
 	if ast.IsObjectLiteralExpression(node) || ast.IsArrayLiteralExpression(node) {
 		return tx.visitAssignmentPattern(node)
@@ -376,14 +384,13 @@ func (tx *classFieldsTransformer) visitClassElement(node *ast.Node) *ast.Node {
 	}
 }
 
+// visitPropertyName visits a property name of a class member.
 func (tx *classFieldsTransformer) visitPropertyName(name *ast.PropertyName) *ast.PropertyName {
 	if ast.IsComputedPropertyName(name) {
 		return tx.visitComputedPropertyName(name.AsComputedPropertyName())
 	}
 	return tx.Visitor().VisitNode(name)
 }
-
-// --- Visitor Functions ---
 
 func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
 	if tx.resolver == nil {
@@ -401,6 +408,9 @@ func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Nod
 	return node.AsNode()
 }
 
+// visitPrivateIdentifier handles an undeclared private name. Replace it with an empty
+// identifier to indicate a problem with the code, unless we are in a statement position -
+// otherwise this will not trigger a SyntaxError.
 func (tx *classFieldsTransformer) visitPrivateIdentifier(node *ast.Node) *ast.Node {
 	if !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		return node
@@ -413,6 +423,7 @@ func (tx *classFieldsTransformer) visitPrivateIdentifier(node *ast.Node) *ast.No
 	return result
 }
 
+// transformPrivateIdentifierInInExpression visits `#id in expr`.
 func (tx *classFieldsTransformer) transformPrivateIdentifierInInExpression(node *ast.BinaryExpression) *ast.Node {
 	info := tx.accessPrivateIdentifier(node.Left)
 	if info != nil {
@@ -576,8 +587,6 @@ func (tx *classFieldsTransformer) setCurrentClassElementAnd(classElement *ast.Cl
 	return visitor(node)
 }
 
-// --- Private Identifier Environment ---
-
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
 	if !ast.IsPrivateIdentifier(node.Name()) {
 		return nil
@@ -613,10 +622,21 @@ func (tx *classFieldsTransformer) tryGetClassThis() *ast.Expression {
 	return nil
 }
 
+// transformAutoAccessor transforms an auto-accessor property:
+//
+//	accessor x = 1;
+//
+// into:
+//
+//	#x = 1;
+//	get x() { return this.#x; }
+//	set x(value) { this.#x = value; }
 func (tx *classFieldsTransformer) transformAutoAccessor(node *ast.PropertyDeclaration) *ast.Node {
 	commentRange := tx.EmitContext().CommentRange(node.AsNode())
 	sourceMapRange := tx.EmitContext().SourceMapRange(node.AsNode())
 
+	// Since we're creating two declarations where there was previously one, cache
+	// the expression for any computed property names.
 	name := node.Name()
 	getterName := name
 	setterName := name
@@ -842,10 +862,6 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAccessHelper(info *priv
 	return receiver
 }
 
-// --- Unary / Binary Expressions ---
-
-// --- Property Access / Element Access ---
-
 func (tx *classFieldsTransformer) visitPropertyAccessExpression(node *ast.PropertyAccessExpression) *ast.Node {
 	if ast.IsPrivateIdentifier(node.Name()) {
 		info := tx.accessPrivateIdentifier(node.Name())
@@ -865,6 +881,7 @@ func (tx *classFieldsTransformer) visitPropertyAccessExpression(node *ast.Proper
 			return tx.visitInvalidSuperProperty(node.AsNode())
 		}
 		if data.classConstructor != nil && data.superClassReference != nil {
+			// converts `super.x` into `Reflect.get(_baseTemp, "x", _classTemp)`
 			superProperty := tx.Factory().NewReflectGetCall(
 				data.superClassReference,
 				tx.Factory().NewStringLiteralFromNode(node.Name()),
@@ -888,6 +905,7 @@ func (tx *classFieldsTransformer) visitElementAccessExpression(node *ast.Element
 			return tx.visitInvalidSuperProperty(node.AsNode())
 		}
 		if data.classConstructor != nil && data.superClassReference != nil {
+			// converts `super[x]` into `Reflect.get(_baseTemp, x, _classTemp)`
 			superProperty := tx.Factory().NewReflectGetCall(
 				data.superClassReference,
 				tx.Visitor().VisitNode(node.ArgumentExpression),
@@ -900,8 +918,6 @@ func (tx *classFieldsTransformer) visitElementAccessExpression(node *ast.Element
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
-
-// --- Unary / Binary Expressions ---
 
 func (tx *classFieldsTransformer) visitPreOrPostfixUnaryExpression(node *ast.Node, discarded bool) *ast.Node {
 	var operator ast.Kind
@@ -1501,8 +1517,6 @@ func (tx *classFieldsTransformer) getClassFacts(node *ast.Node) classFacts {
 	return facts
 }
 
-// --- Private Identifier Environment Population ---
-
 func (tx *classFieldsTransformer) visitExpressionWithTypeArgumentsInHeritageClause(node *ast.ExpressionWithTypeArguments) *ast.Node {
 	facts := classFactsNone
 	if tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
@@ -1522,8 +1536,6 @@ func (tx *classFieldsTransformer) visitExpressionWithTypeArgumentsInHeritageClau
 	}
 	return tx.heritageClauseVisitor.VisitEachChild(node.AsNode())
 }
-
-// --- Class Declaration / Expression ---
 
 func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.Node, visitor func(node *ast.Node, facts classFacts) *ast.Node) *ast.Node {
 	savedCurrentClassContainer := tx.currentClassContainer
@@ -1578,14 +1590,14 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 	return result
 }
 
-// --- Class Declaration / Expression ---
-
 func (tx *classFieldsTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
 	return tx.visitInNewClassLexicalEnvironment(node.AsNode(), tx.visitClassDeclarationInNewClassLexicalEnvironment)
 }
 
 func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironment(node *ast.Node, facts classFacts) *ast.Node {
 	classDecl := node.AsClassDeclaration()
+	// If a class has private static fields, or a static field has a `this` or `super` reference,
+	// then we need to allocate a temp variable to hold on to that reference.
 	var pendingClassReferenceAssignment *ast.Expression
 	if facts&classFactsNeedsClassConstructorReference != 0 {
 		if tx.shouldTransformPrivateElementsOrClassStaticBlocks && tx.EmitContext().ClassThis(node) != nil {
@@ -1637,6 +1649,11 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 	}
 
 	if tx.shouldTransformInitializersUsingSet || tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+		// Emit static property assignment. Because classDeclaration is lexically evaluated,
+		// it is safe to emit static property assignment after classDeclaration
+		// From ES6 specification:
+		//   HasLexicalDeclaration (N) : Determines if the argument identifier has a binding in this environment record that was created using
+		//                               a lexical declaration such as a LexicalDeclaration or a ClassDeclaration.
 		staticProperties := tx.getStaticPropertiesAndClassStaticBlock(node)
 		if len(staticProperties) > 0 {
 			tx.addPropertyOrClassStaticBlockStatements(&statements, staticProperties, tx.Factory().GetDeclarationName(node))
@@ -1808,8 +1825,6 @@ func (tx *classFieldsTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 	return nil
 }
 
-// --- Class Members Transform ---
-
 func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node {
 	// For computed property names, substitute `this` using the (already switched) outer lexical
 	// environment without requiring currentClassElement to be static. This matches the TS
@@ -1838,10 +1853,6 @@ func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node 
 	}
 	return node
 }
-
-// --- Property Access / Element Access ---
-
-// --- Class Members Transform ---
 
 func (tx *classFieldsTransformer) transformClassMembers(node *ast.Node) (members *ast.NodeList, prologue *ast.Expression) {
 	// Declare private names
@@ -1977,10 +1988,6 @@ func (tx *classFieldsTransformer) createBrandCheckWeakSetForPrivateMethods() {
 	)
 }
 
-// --- Constructor Transform ---
-
-// --- Constructor Transform ---
-
 func (tx *classFieldsTransformer) transformConstructor(constructor *ast.ConstructorDeclaration, container *ast.Node) *ast.Node {
 	if tx.lexicalEnvironment == nil || tx.lexicalEnvironment.data == nil ||
 		tx.lexicalEnvironment.data.facts&classFactsWillHoistInitializersToConstructor == 0 {
@@ -2100,8 +2107,6 @@ func (tx *classFieldsTransformer) transformConstructorBodyWorker(
 	*statementsOut = append(*statementsOut, visited2...)
 }
 
-// --- Property / Static Block Statements ---
-
 func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, constructor *ast.ConstructorDeclaration, isDerivedClass bool) *ast.Node {
 	instanceProperties := tx.getProperties(container, false /*requireInitializer*/, false /*isStatic*/)
 	properties := instanceProperties
@@ -2123,7 +2128,16 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 	needsSyntheticConstructor := constructor == nil && isDerivedClass
 	var statements []*ast.Statement
 
-	// Add the property initializers
+	// Add the property initializers. Transforms this:
+	//
+	//  public x = 1;
+	//
+	// Into this:
+	//
+	//  constructor() {
+	//      this.x = 1;
+	//  }
+	//
 	var initializerStatements []*ast.Statement
 	receiver := tx.Factory().NewThisExpression()
 
@@ -2220,6 +2234,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 
 // --- Property / Static Block Statements ---
 
+// addPropertyOrClassStaticBlockStatements generates assignment statements for property initializers.
 func (tx *classFieldsTransformer) addPropertyOrClassStaticBlockStatements(statements *[]*ast.Node, properties []*ast.Node, receiver *ast.Expression) {
 	for _, property := range properties {
 		if ast.IsStatic(property) && !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
@@ -2273,6 +2288,7 @@ func (tx *classFieldsTransformer) transformPropertyOrClassStaticBlock(property *
 	return statement
 }
 
+// generateInitializedPropertyExpressionsOrClassStaticBlock generates assignment expressions for property initializers.
 func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassStaticBlock(
 	propertiesOrClassStaticBlocks []*ast.Node,
 	receiver *ast.Expression,
@@ -2299,6 +2315,7 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 	return expressions
 }
 
+// transformProperty transforms a property initializer into an assignment expression.
 func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
 	savedCurrentClassElement := tx.currentClassElement
 	transformed := tx.transformPropertyWorker(property, receiver)
@@ -2400,10 +2417,7 @@ func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.Property
 	return tx.Factory().NewObjectDefinePropertyCall(receiver, name, descriptor)
 }
 
-// --- Instance Method Statements ---
-
-// --- Instance Method Statements ---
-
+// addInstanceMethodStatements generates brand-check initializer for private methods.
 func (tx *classFieldsTransformer) addInstanceMethodStatements(statements *[]*ast.Statement, methods []*ast.Node, receiver *ast.Expression) {
 	if !tx.shouldTransformPrivateElementsOrClassStaticBlocks || len(methods) == 0 {
 		return
@@ -2422,8 +2436,6 @@ func (tx *classFieldsTransformer) addInstanceMethodStatements(statements *[]*ast
 	)
 }
 
-// --- Class Facts ---
-
 func (tx *classFieldsTransformer) visitInvalidSuperProperty(node *ast.Node) *ast.Node {
 	if ast.IsPropertyAccessExpression(node) {
 		return tx.Factory().UpdatePropertyAccessExpression(
@@ -2441,6 +2453,10 @@ func (tx *classFieldsTransformer) visitInvalidSuperProperty(node *ast.Node) *ast
 	)
 }
 
+// getPropertyNameExpressionIfNeeded transforms a computed property name, then either returns an expression
+// which caches the value of the result or the expression itself if the value is either unused or safe to
+// inline into multiple locations.
+// shouldHoist indicates whether the expression needs to be reused (i.e., for an initializer or a decorator).
 func (tx *classFieldsTransformer) getPropertyNameExpressionIfNeeded(name *ast.PropertyName, shouldHoist bool) *ast.Expression {
 	if !ast.IsComputedPropertyName(name) {
 		return nil
@@ -2725,8 +2741,8 @@ func (tx *classFieldsTransformer) createHoistedVariableForPrivateName(name *ast.
 	return tx.createHoistedVariableForClass(text, name, suffix)
 }
 
-// --- Visitor Functions ---
-
+// accessPrivateIdentifier accesses an already defined PrivateIdentifier in the current
+// PrivateIdentifierEnvironment.
 func (tx *classFieldsTransformer) accessPrivateIdentifier(name *ast.Node) *privateIdentifierInfo {
 	for env := tx.lexicalEnvironment; env != nil; env = env.previous {
 		if env.privateEnv != nil {
@@ -2933,20 +2949,14 @@ func createPrivateInstanceMethodInitializer(factory *printer.NodeFactory, receiv
 	return factory.NewMethodCall(weakSetName, factory.NewIdentifier("add"), []*ast.Node{receiver})
 }
 
-// --- Utility functions ---
-
 func (tx *classFieldsTransformer) isReservedPrivateName(node *ast.Node) bool {
 	return !(ast.IsPrivateIdentifier(node) && tx.EmitContext().HasAutoGenerateInfo(node)) && node.Text() == "#constructor"
 }
-
-// --- Utility functions ---
 
 func isStaticPropertyDeclarationOrClassStaticBlock(node *ast.Node) bool {
 	return ast.IsClassStaticBlockDeclaration(node) ||
 		(ast.IsPropertyDeclaration(node) && ast.HasStaticModifier(node))
 }
-
-// --- Utility Functions ---
 
 func (tx *classFieldsTransformer) getProperties(node *ast.Node, requireInitializer bool, isStatic bool) []*ast.Node {
 	var result []*ast.Node
