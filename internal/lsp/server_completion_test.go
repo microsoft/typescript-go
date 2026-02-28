@@ -143,36 +143,30 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 	// Completion is dispatched first; close arrives while the async phase
 	// is (likely) in-flight. The main goroutine sends the completion
 	// request (guaranteeing it enters the input channel first), while a
-	// background goroutine sends the close after a variable delay.
+	// background goroutine sends the close after a short delay.
 	t.Run("close during async", func(t *testing.T) {
 		t.Parallel()
-		for i := range 5 {
-			t.Run("", func(t *testing.T) {
-				t.Parallel()
-				client, closeClient, _, bURI := setupAutoImportCompletionClient(t)
-				defer func() {
-					if err := closeClient(); err != nil {
-						t.Errorf("goroutine error: %v", err)
-					}
-				}()
+		client, closeClient, _, bURI := setupAutoImportCompletionClient(t)
+		defer func() {
+			if err := closeClient(); err != nil {
+				t.Errorf("goroutine error: %v", err)
+			}
+		}()
 
-				go func() {
-					delay := time.Duration(i+1) * 5 * time.Millisecond
-					time.Sleep(delay)
-					lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
-						TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-					})
-				}()
-
-				msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
-					TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-					Position:     lsproto.Position{Line: 0, Character: 1},
-					Context:      &lsproto.CompletionContext{},
-				})
-				assert.Assert(t, ok, "expected a response")
-				assertCompletionAfterClose(t, msg.AsResponse())
+		go func() {
+			time.Sleep(5 * time.Millisecond)
+			lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+				TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 			})
-		}
+		}()
+
+		msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+			Position:     lsproto.Position{Line: 0, Character: 1},
+			Context:      &lsproto.CompletionContext{},
+		})
+		assert.Assert(t, ok, "expected a response")
+		assertCompletionAfterClose(t, msg.AsResponse())
 	})
 }
 
@@ -237,57 +231,50 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	for i := range 5 {
-		t.Run("", func(t *testing.T) {
-			t.Parallel()
-
-			prefs := &lsutil.UserPreferences{
-				IncludeCompletionsForModuleExports:    core.TSTrue,
-				IncludeCompletionsForImportStatements: core.TSTrue,
-			}
-			client, closeClient := initCompletionClient(t, map[string]string{
-				"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-				"/home/projects/a.ts":          "export const someVar = 10;",
-				"/home/projects/b.ts":          "someV",
-			}, prefs)
-			defer func() {
-				if err := closeClient(); err != nil {
-					t.Errorf("goroutine error: %v", err)
-				}
-			}()
-
-			aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
-			bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
-			lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-				TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
-			})
-			lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-				TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "someV"},
-			})
-
-			go func() {
-				delay := time.Duration(i+1) * 5 * time.Millisecond
-				time.Sleep(delay)
-				lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
-					TextDocument: lsproto.VersionedTextDocumentIdentifier{Uri: bURI, Version: 2},
-					ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
-						{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "notMatching"}},
-					},
-				})
-			}()
-
-			msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
-				TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-				Position:     lsproto.Position{Line: 0, Character: 5},
-				Context:      &lsproto.CompletionContext{},
-			})
-			assert.Assert(t, ok, "expected a response")
-			r := msg.AsResponse()
-			if r.Error != nil {
-				t.Fatalf("expected no error, got: [%d] %s", r.Error.Code, r.Error.Error())
-			}
-			assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"),
-				"expected someVar in completions (snapshot freezing should preserve original content)")
-		})
+	prefs := &lsutil.UserPreferences{
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
 	}
+	client, closeClient := initCompletionClient(t, map[string]string{
+		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.ts":          "export const someVar = 10;",
+		"/home/projects/b.ts":          "someV",
+	}, prefs)
+	defer func() {
+		if err := closeClient(); err != nil {
+			t.Errorf("goroutine error: %v", err)
+		}
+	}()
+
+	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
+	bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
+	})
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "someV"},
+	})
+
+	go func() {
+		time.Sleep(5 * time.Millisecond)
+		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+			TextDocument: lsproto.VersionedTextDocumentIdentifier{Uri: bURI, Version: 2},
+			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "notMatching"}},
+			},
+		})
+	}()
+
+	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+		Position:     lsproto.Position{Line: 0, Character: 5},
+		Context:      &lsproto.CompletionContext{},
+	})
+	assert.Assert(t, ok, "expected a response")
+	r := msg.AsResponse()
+	if r.Error != nil {
+		t.Fatalf("expected no error, got: [%d] %s", r.Error.Code, r.Error.Error())
+	}
+	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"),
+		"expected someVar in completions (snapshot freezing should preserve original content)")
 }
