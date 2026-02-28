@@ -1278,12 +1278,8 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before identifier
 				previous, _ := utf8.DecodeLastRuneInString(s.text[:s.pos])
 				if stringutil.IsWhiteSpaceSingleLine(previous) {
-					saved := s.Mark()
-					s.pos += size
-					s.ScanJSDocToken()
-					isIdentifier := tokenIsIdentifierOrKeyword(s.token)
-					s.Rewind(saved)
-					if isIdentifier {
+					next, _ := utf8.DecodeRuneInString(s.text[s.pos+size:])
+					if IsIdentifierStart(next) {
 						break
 					}
 				}
