@@ -28,7 +28,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var _a;
 export class C {
     constructor() {
         this.p = 1;
@@ -37,14 +36,13 @@ export class C {
 }
 C.s = 0;
 export { C as C2 };
-let D = (_a = class D {
-        constructor() {
-            this.p = 1;
-        }
-        method() { }
-    },
-    _a.s = 0,
-    _a);
+let D = class D {
+    constructor() {
+        this.p = 1;
+    }
+    method() { }
+};
+D.s = 0;
 D = __decorate([
     foo
 ], D);

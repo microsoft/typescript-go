@@ -100,6 +100,7 @@ type classFieldsTransformer struct {
 	shouldTransformThisInStaticInitializers           bool
 	shouldTransformSuperInStaticInitializers          bool
 	shouldTransformAnything                           bool
+	legacyDecorators                                  bool
 
 	// pendingExpressions tracks what computed name expressions originating from elided names
 	// must be inlined at the next execution site, in document order.
@@ -129,8 +130,9 @@ type classFieldsTransformer struct {
 
 func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &classFieldsTransformer{
-		compilerOptions: opts.CompilerOptions,
-		resolver:        opts.EmitResolver,
+		compilerOptions:  opts.CompilerOptions,
+		resolver:         opts.EmitResolver,
+		legacyDecorators: opts.CompilerOptions.ExperimentalDecorators.IsTrue(),
 	}
 
 	languageVersion := opts.CompilerOptions.GetEmitScriptTarget()
@@ -1486,6 +1488,13 @@ func (tx *classFieldsTransformer) classContainsConstructorReference(node *ast.No
 func (tx *classFieldsTransformer) getClassFacts(node *ast.Node) classFacts {
 	facts := classFactsNone
 
+	if tx.legacyDecorators {
+		original := tx.EmitContext().MostOriginal(node)
+		if ast.IsClassLike(original) && ast.ClassOrConstructorParameterIsDecorated(true /*useLegacyDecorators*/, original) {
+			facts |= classFactsClassWasDecorated
+		}
+	}
+
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
 		(classHasClassThisAssignment(tx.EmitContext(), node) || classHasExplicitlyAssignedName(tx.EmitContext(), node)) {
 		facts |= classFactsNeedsClassConstructorReference
@@ -1728,6 +1737,15 @@ func (tx *classFieldsTransformer) visitClassExpression(node *ast.ClassExpression
 func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironment(node *ast.Node, facts classFacts) *ast.Node {
 	classExpr := node.AsClassExpression()
 
+	// If this class expression is a transformation of a decorated class declaration,
+	// then we want to output the pendingExpressions as statements, not as inlined
+	// expressions with the class statement.
+	//
+	// In this case, we use pendingStatements to produce the same output as the
+	// class declaration transformation. The VariableStatement visitor will insert
+	// these statements after the class expression variable statement.
+	isDecoratedClassDeclaration := facts&classFactsClassWasDecorated != 0
+
 	if tx.EmitContext().ClassThis(node) != nil {
 		tx.getClassLexicalEnvironment().classThis = tx.EmitContext().ClassThis(node)
 	}
@@ -1751,58 +1769,118 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		}
 	}
 
-	// Pre-compute whether the class expression will need a temp variable wrapper.
-	// Strada registers class aliases AFTER transformClassMembers (since onSubstituteNode runs
-	// at emit time), but we must predict this before visiting members since we substitute
-	// eagerly. This requires pre-detecting willHavePrivatePendingExpressions.
-	isClassWithConstructorReference := tx.classContainsConstructorReference(node)
 	staticPropertiesOrClassStaticBlocks := tx.getStaticPropertiesAndClassStaticBlock(node)
-	hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
-		core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
-			return ast.IsClassStaticBlockDeclaration(n) ||
-				ast.IsPrivateIdentifierClassElementDeclaration(n) ||
-				(tx.shouldTransformInitializers && ast.IsInitializedProperty(n))
-		})
 
-	// Private instance elements (fields, methods, accessors) transformed to
-	// WeakMap/WeakSet will add initialization expressions to pendingExpressions
-	// during transformClassMembers. Pre-detect this so we know whether the class
-	// will be wrapped with a temp variable.
-	willHavePrivatePendingExpressions := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
-		core.Some(node.Members(), func(n *ast.Node) bool {
-			return ast.IsPrivateIdentifierClassElementDeclaration(n) && !ast.HasStaticModifier(n) && tx.shouldTransformClassElementToWeakMap(n)
-		})
-	willNeedTempWrapper := hasTransformableStatics || willHavePrivatePendingExpressions
+	if !isDecoratedClassDeclaration {
+		// Pre-compute whether the class expression will need a temp variable wrapper.
+		// Strada registers class aliases AFTER transformClassMembers (since onSubstituteNode runs
+		// at emit time), but we must predict this before visiting members since we substitute
+		// eagerly. This requires pre-detecting willHavePrivatePendingExpressions.
+		isClassWithConstructorReference := tx.classContainsConstructorReference(node)
+		hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
+			core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
+				return ast.IsClassStaticBlockDeclaration(n) ||
+					ast.IsPrivateIdentifierClassElementDeclaration(n) ||
+					(tx.shouldTransformInitializers && ast.IsInitializedProperty(n))
+			})
 
-	// Register class alias BEFORE visiting members (Strada registers after, since its
-	// onSubstituteNode runs at emit time). Only register when the class will be wrapped
-	// with a temp, matching Strada's conditional registration.
-	deferTempDeclaration := false
-	if isClassWithConstructorReference && willNeedTempWrapper && tx.getClassLexicalEnvironment().classConstructor == nil {
-		// Create temp early so the alias is available during member visiting, even though in the Strada
-		// reference the temp would be created later in the pendingExpressions branch.
-		temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
-			Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
-		})
-		// Defer AddVariableDeclaration to preserve Strada's variable declaration ordering.
-		deferTempDeclaration = true
-		tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
+		// Private instance elements (fields, methods, accessors) transformed to
+		// WeakMap/WeakSet will add initialization expressions to pendingExpressions
+		// during transformClassMembers. Pre-detect this so we know whether the class
+		// will be wrapped with a temp variable.
+		willHavePrivatePendingExpressions := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
+			core.Some(node.Members(), func(n *ast.Node) bool {
+				return ast.IsPrivateIdentifierClassElementDeclaration(n) && !ast.HasStaticModifier(n) && tx.shouldTransformClassElementToWeakMap(n)
+			})
+		willNeedTempWrapper := hasTransformableStatics || willHavePrivatePendingExpressions
+
+		// Register class alias BEFORE visiting members (Strada registers after, since its
+		// onSubstituteNode runs at emit time). Only register when the class will be wrapped
+		// with a temp, matching Strada's conditional registration.
+		deferTempDeclaration := false
+		if isClassWithConstructorReference && willNeedTempWrapper && tx.getClassLexicalEnvironment().classConstructor == nil {
+			// Create temp early so the alias is available during member visiting, even though in the Strada
+			// reference the temp would be created later in the pendingExpressions branch.
+			temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
+				Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
+			})
+			// Defer AddVariableDeclaration to preserve Strada's variable declaration ordering.
+			deferTempDeclaration = true
+			tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
+		}
+		if alias := tx.getClassLexicalEnvironment().classConstructor; isClassWithConstructorReference && willNeedTempWrapper && alias != nil {
+			tx.classAliases[tx.EmitContext().MostOriginal(node)] = alias
+		}
+
+		modifiers := tx.modifierVisitor.VisitModifiers(classExpr.Modifiers())
+		heritageClauses := tx.heritageClauseVisitor.VisitNodes(classExpr.HeritageClauses)
+		members, membersPrologue := tx.transformClassMembers(node)
+
+		if deferTempDeclaration {
+			if tx.classExpressionNeedsBlockScopedTemp() {
+				tx.EmitContext().AddLexicalDeclaration(temp)
+			} else {
+				tx.EmitContext().AddVariableDeclaration(temp)
+			}
+		}
+
+		classExpression := tx.Factory().UpdateClassExpression(
+			classExpr,
+			modifiers,
+			classExpr.Name(),
+			nil, /*typeParameters*/
+			heritageClauses,
+			members,
+		)
+
+		var expressions []*ast.Expression
+
+		if membersPrologue != nil {
+			expressions = append(expressions, membersPrologue)
+		}
+
+		if hasTransformableStatics || len(tx.pendingExpressions) > 0 {
+			if temp == nil {
+				temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
+					Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
+				})
+				if tx.classExpressionNeedsBlockScopedTemp() {
+					tx.EmitContext().AddLexicalDeclaration(temp)
+				} else {
+					tx.EmitContext().AddVariableDeclaration(temp)
+				}
+				tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
+				if isClassWithConstructorReference {
+					tx.classAliases[tx.EmitContext().MostOriginal(node)] = tx.getClassLexicalEnvironment().classConstructor
+				}
+			}
+
+			expressions = append(expressions, tx.Factory().NewAssignmentExpression(temp, classExpression))
+
+			// Add any pending expressions leftover from elided or relocated computed property names
+			expressions = append(expressions, tx.pendingExpressions...)
+
+			expressions = append(expressions, tx.generateInitializedPropertyExpressionsOrClassStaticBlock(staticPropertiesOrClassStaticBlocks, temp)...)
+			expressions = append(expressions, temp.Clone(tx.Factory()))
+		} else {
+			expressions = append(expressions, classExpression)
+		}
+
+		if len(expressions) > 1 {
+			tx.EmitContext().AddEmitFlags(classExpression, printer.EFIndented)
+			for _, expr := range expressions {
+				tx.EmitContext().AddEmitFlags(expr, printer.EFStartOnNewLine)
+			}
+		}
+
+		return tx.Factory().InlineExpressions(expressions)
 	}
-	if alias := tx.getClassLexicalEnvironment().classConstructor; isClassWithConstructorReference && willNeedTempWrapper && alias != nil {
-		tx.classAliases[tx.EmitContext().MostOriginal(node)] = alias
-	}
 
+	// Decorated class declaration path: emit static properties as separate statements
+	// via pendingStatements, matching the class declaration output structure.
 	modifiers := tx.modifierVisitor.VisitModifiers(classExpr.Modifiers())
 	heritageClauses := tx.heritageClauseVisitor.VisitNodes(classExpr.HeritageClauses)
 	members, membersPrologue := tx.transformClassMembers(node)
-
-	if deferTempDeclaration {
-		if tx.classExpressionNeedsBlockScopedTemp() {
-			tx.EmitContext().AddLexicalDeclaration(temp)
-		} else {
-			tx.EmitContext().AddVariableDeclaration(temp)
-		}
-	}
 
 	classExpression := tx.Factory().UpdateClassExpression(
 		classExpr,
@@ -1814,43 +1892,33 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 	)
 
 	var expressions []*ast.Expression
-
 	if membersPrologue != nil {
 		expressions = append(expressions, membersPrologue)
 	}
 
-	if hasTransformableStatics || len(tx.pendingExpressions) > 0 {
-		if temp == nil {
-			temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
-				Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
-			})
-			if tx.classExpressionNeedsBlockScopedTemp() {
-				tx.EmitContext().AddLexicalDeclaration(temp)
-			} else {
-				tx.EmitContext().AddVariableDeclaration(temp)
-			}
-			tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
-			if isClassWithConstructorReference {
-				tx.classAliases[tx.EmitContext().MostOriginal(node)] = tx.getClassLexicalEnvironment().classConstructor
-			}
+	// Write any pending expressions from elided or moved computed property names
+	if len(tx.pendingExpressions) > 0 {
+		for _, expr := range tx.pendingExpressions {
+			tx.pendingStatements = append(tx.pendingStatements, tx.Factory().NewExpressionStatement(expr))
 		}
-
-		expressions = append(expressions, tx.Factory().NewAssignmentExpression(temp, classExpression))
-
-		// Add any pending expressions leftover from elided or relocated computed property names
-		expressions = append(expressions, tx.pendingExpressions...)
-
-		expressions = append(expressions, tx.generateInitializedPropertyExpressionsOrClassStaticBlock(staticPropertiesOrClassStaticBlocks, temp)...)
-		expressions = append(expressions, temp.Clone(tx.Factory()))
-	} else {
-		expressions = append(expressions, classExpression)
 	}
 
-	if len(expressions) > 1 {
-		tx.EmitContext().AddEmitFlags(classExpression, printer.EFIndented)
-		for _, expr := range expressions {
-			tx.EmitContext().AddEmitFlags(expr, printer.EFStartOnNewLine)
+	// Emit static properties as statements (via pendingStatements) using the class's
+	// internal name as the receiver, matching the class declaration output structure.
+	if len(staticPropertiesOrClassStaticBlocks) > 0 {
+		classThisOrName := tx.EmitContext().ClassThis(node)
+		if classThisOrName == nil {
+			classThisOrName = tx.Factory().GetDeclarationName(node)
 		}
+		tx.addPropertyOrClassStaticBlockStatements(&tx.pendingStatements, staticPropertiesOrClassStaticBlocks, classThisOrName)
+	}
+
+	if temp != nil {
+		expressions = append(expressions, tx.Factory().NewAssignmentExpression(temp, classExpression))
+	} else if tx.shouldTransformPrivateElementsOrClassStaticBlocks && tx.EmitContext().ClassThis(node) != nil {
+		expressions = append(expressions, tx.Factory().NewAssignmentExpression(tx.EmitContext().ClassThis(node), classExpression))
+	} else {
+		expressions = append(expressions, classExpression)
 	}
 
 	return tx.Factory().InlineExpressions(expressions)
@@ -1890,6 +1958,12 @@ func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node 
 		}
 		if data.classConstructor != nil {
 			return data.classConstructor
+		}
+		// When the class was decorated with legacy decorators and no class constructor
+		// reference is available, the decorator may replace the constructor, so `this`
+		// cannot reliably point to the class. Use `(void 0)` instead.
+		if data.facts&classFactsClassWasDecorated != 0 && tx.legacyDecorators {
+			return tx.Factory().NewParenthesizedExpression(tx.Factory().NewVoidZeroExpression())
 		}
 	}
 	return node

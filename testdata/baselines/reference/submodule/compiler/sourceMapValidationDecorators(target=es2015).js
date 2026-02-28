@@ -67,26 +67,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
-let Greeter = (_a = class Greeter {
-        constructor(greeting, ...b) {
-            this.greeting = greeting;
-        }
-        greet() {
-            return "<h1>" + this.greeting + "</h1>";
-        }
-        fn(x) {
-            return this.greeting;
-        }
-        get greetings() {
-            return this.greeting;
-        }
-        set greetings(greetings) {
-            this.greeting = greetings;
-        }
-    },
-    _a.x1 = 10,
-    _a);
+let Greeter = class Greeter {
+    constructor(greeting, ...b) {
+        this.greeting = greeting;
+    }
+    greet() {
+        return "<h1>" + this.greeting + "</h1>";
+    }
+    fn(x) {
+        return this.greeting;
+    }
+    get greetings() {
+        return this.greeting;
+    }
+    set greetings(greetings) {
+        this.greeting = greetings;
+    }
+};
+Greeter.x1 = 10;
 __decorate([
     PropertyDecorator1,
     PropertyDecorator2(40)
