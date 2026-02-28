@@ -1,24 +1,14 @@
-// @strict: true
-// @target: esnext
-// @noEmit: true
 // @jsx: preserve
+// @noEmit: true
+// @strict: true
 
-// Repro: JSX parsing fails with spurious syntax errors in ternary expressions
-// when the truthy branch has a parenthesized identifier on a separate line,
-// and the falsy branch contains JSX with nested JSX attribute values containing
-// function calls with multiple arguments including multi-property object literals.
-
-/// <reference path="/.lib/react.d.ts" />
-
-import * as React from 'react';
-
+declare function memo<T>(f: T): T;
+declare const HoverCardText: (p: { label: any; text: any; className?: string }) => null;
+declare const DEFAULT_NULL_VALUE: string;
 declare function t(key: string, params?: Record<string, any>): string;
 declare function nf(v: any, opts: { precision: number; rounding: string }): string;
 
-const HoverCardText = (p: { label: any; text: any; className?: string }) => null;
-const DEFAULT_NULL_VALUE = '--';
-
-export const Example = React.memo(function Example() {
+export const Example = memo(function Example() {
   const isLogin = true;
 
   return (

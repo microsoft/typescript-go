@@ -3205,7 +3205,9 @@ func (p *Parser) parseParameters(flags ParseFlags) *ast.NodeList {
 		p.parseExpected(ast.KindCloseParenToken)
 		return parameters
 	}
-	return p.parseEmptyNodeList()
+	result := p.parseEmptyNodeList()
+	result.SetIsMissing()
+	return result
 }
 
 func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) *ast.NodeList {
@@ -4379,7 +4381,9 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	switch node.Kind {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
-	case ast.KindFunctionType, ast.KindConstructorType, ast.KindParenthesizedType:
+	case ast.KindFunctionType, ast.KindConstructorType:
+		return node.FunctionLikeData().Parameters.IsMissing() || typeHasArrowFunctionBlockingParseError(node.Type())
+	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.Type())
 	}
 	return false
