@@ -2766,6 +2766,9 @@ func (tx *classFieldsTransformer) wrapPrivateIdentifierForDestructuringTarget(no
 }
 
 func (tx *classFieldsTransformer) visitAssignmentElement(node *ast.Node) *ast.Node {
+	if isNamedEvaluationAnd(tx.EmitContext(), node, tx.isAnonymousClassNeedingAssignedName) {
+		node = transformNamedEvaluation(tx.EmitContext(), node, false /*ignoreEmptyStringLiteral*/, "" /*assignedName*/)
+	}
 	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		left := tx.visitAssignmentTarget(node.AsBinaryExpression().Left)
 		right := tx.Visitor().VisitNode(node.AsBinaryExpression().Right)
@@ -2800,22 +2803,7 @@ func (tx *classFieldsTransformer) visitArrayAssignmentElement(node *ast.Node) *a
 	if node.Kind == ast.KindOmittedExpression {
 		return node
 	}
-	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
-		left := tx.visitAssignmentTarget(node.AsBinaryExpression().Left)
-		right := tx.Visitor().VisitNode(node.AsBinaryExpression().Right)
-		return tx.Factory().UpdateBinaryExpression(
-			node.AsBinaryExpression(),
-			nil,
-			left,
-			nil,
-			node.AsBinaryExpression().OperatorToken,
-			right,
-		)
-	}
-	if ast.IsLeftHandSideExpression(node) {
-		return tx.visitAssignmentTarget(node)
-	}
-	return tx.Visitor().VisitEachChild(node)
+	return tx.visitAssignmentElement(node)
 }
 
 func (tx *classFieldsTransformer) visitAssignmentProperty(node *ast.Node) *ast.Node {
@@ -2842,14 +2830,23 @@ func (tx *classFieldsTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 	return tx.Visitor().VisitEachChild(node)
 }
 
+func (tx *classFieldsTransformer) visitShorthandAssignmentProperty(node *ast.Node) *ast.Node {
+	if isNamedEvaluationAnd(tx.EmitContext(), node, tx.isAnonymousClassNeedingAssignedName) {
+		node = transformNamedEvaluation(tx.EmitContext(), node, false /*ignoreEmptyStringLiteral*/, "" /*assignedName*/)
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
 func (tx *classFieldsTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
 	if ast.IsSpreadAssignment(node) {
 		return tx.visitAssignmentRestProperty(node)
 	}
+	if ast.IsShorthandPropertyAssignment(node) {
+		return tx.visitShorthandAssignmentProperty(node)
+	}
 	if ast.IsPropertyAssignment(node) {
 		return tx.visitAssignmentProperty(node)
 	}
-	// ShorthandPropertyAssignment or other
 	return tx.Visitor().VisitEachChild(node)
 }
 
