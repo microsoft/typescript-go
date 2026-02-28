@@ -186,6 +186,23 @@ func (tx *classFieldsTransformer) requiresBlockScopedVar() bool {
 	return tx.inIterationStatement && tx.currentClassContainer != nil && ast.IsClassExpression(tx.currentClassContainer)
 }
 
+// classExpressionNeedsBlockScopedTemp returns true when the class expression's temp variable
+// must be block-scoped. This is more specific than requiresBlockScopedVar: the class temp only
+// needs to be block-scoped when the class expression has a non-static property with a computed
+// property name inside a loop (matching the checker's BlockScopedBindingInLoop on the class node).
+func (tx *classFieldsTransformer) classExpressionNeedsBlockScopedTemp() bool {
+	if !tx.requiresBlockScopedVar() {
+		return false
+	}
+	for _, member := range tx.currentClassContainer.Members() {
+		if ast.IsPropertyDeclaration(member) && !ast.HasStaticModifier(member) &&
+			member.Name() != nil && ast.IsComputedPropertyName(member.Name()) {
+			return true
+		}
+	}
+	return false
+}
+
 func (tx *classFieldsTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	if node.IsDeclarationFile {
 		return node.AsNode()
@@ -1725,7 +1742,11 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 			temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
 				Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
 			})
-			tx.EmitContext().AddVariableDeclaration(temp)
+			if tx.classExpressionNeedsBlockScopedTemp() {
+				tx.EmitContext().AddLexicalDeclaration(temp)
+			} else {
+				tx.EmitContext().AddVariableDeclaration(temp)
+			}
 			tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
 		}
 	}
@@ -1776,7 +1797,11 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 	members, membersPrologue := tx.transformClassMembers(node)
 
 	if deferTempDeclaration {
-		tx.EmitContext().AddVariableDeclaration(temp)
+		if tx.classExpressionNeedsBlockScopedTemp() {
+			tx.EmitContext().AddLexicalDeclaration(temp)
+		} else {
+			tx.EmitContext().AddVariableDeclaration(temp)
+		}
 	}
 
 	classExpression := tx.Factory().UpdateClassExpression(
@@ -1799,7 +1824,11 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 			temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
 				Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
 			})
-			tx.EmitContext().AddVariableDeclaration(temp)
+			if tx.classExpressionNeedsBlockScopedTemp() {
+				tx.EmitContext().AddLexicalDeclaration(temp)
+			} else {
+				tx.EmitContext().AddVariableDeclaration(temp)
+			}
 			tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
 			if isClassWithConstructorReference {
 				tx.classAliases[tx.EmitContext().MostOriginal(node)] = tx.getClassLexicalEnvironment().classConstructor
