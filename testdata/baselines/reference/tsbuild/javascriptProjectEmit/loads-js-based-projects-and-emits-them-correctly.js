@@ -111,11 +111,6 @@ Output::
 [7m3[0m  * @typedef {T & {[Symbol.species]: Name}} Nominal
 [7m [0m [91m                          ~~~~~~~[0m
 
-[96mcommon/nominal.js[0m:[93m5[0m:[93m1[0m - [91merror[0m[90m TS1203: [0mExport assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-
-[7m5[0m module.exports = {};
-[7m [0m [91m~~~~~~~~~~~~~~~~~~~[0m
-
 [96msub-project/index.js[0m:[93m1[0m:[93m10[0m - [91merror[0m[90m TS2305: [0mModule '"../common/nominal"' has no exported member 'Nominal'.
 
 [7m1[0m import { Nominal } from '../common/nominal';
@@ -127,10 +122,10 @@ Output::
 [7m [0m [91m         ~~~~~~~~~[0m
 
 
-Found 4 errors in 3 files.
+Found 3 errors in 3 files.
 
 Errors  Files
-     2  common/nominal.js[90m:3[0m
+     1  common/nominal.js[90m:3[0m
      1  sub-project-2/index.js[90m:1[0m
      1  sub-project/index.js[90m:1[0m
 
@@ -175,7 +170,7 @@ export = _default;
 module.exports = {};
 
 //// [/home/src/workspaces/lib/common/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../../solution/common/nominal.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"a19075dfba5b2d593b761ed8d8cd526f-/**\n * @template T, Name\n * @typedef {T & {[Symbol.species]: Name}} Nominal\n */\nmodule.exports = {};","signature":"78da1fe1eee174b6f46c66b629c86122-export type Nominal<T, Name> = T & {};\n/**\n * @template T, Name\n * @typedef {T & {[Symbol.species]: Name}} Nominal\n */\ndeclare const _default: {};\nexport = _default;\n","impliedNodeFormat":1}],"options":{"allowJs":true,"checkJs":true,"composite":true,"declaration":true,"outDir":"..","rootDir":"../../solution","skipLibCheck":true},"semanticDiagnosticsPerFile":[[2,[{"pos":51,"end":58,"code":2339,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_2339","messageArgs":["species","SymbolConstructor"]},{"pos":80,"end":99,"code":1203,"category":1,"messageKey":"Export_assignment_cannot_be_used_when_targeting_ECMAScript_modules_Consider_using_export_default_or__1203"}]]],"latestChangedDtsFile":"./nominal.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../../solution/common/nominal.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"a19075dfba5b2d593b761ed8d8cd526f-/**\n * @template T, Name\n * @typedef {T & {[Symbol.species]: Name}} Nominal\n */\nmodule.exports = {};","signature":"78da1fe1eee174b6f46c66b629c86122-export type Nominal<T, Name> = T & {};\n/**\n * @template T, Name\n * @typedef {T & {[Symbol.species]: Name}} Nominal\n */\ndeclare const _default: {};\nexport = _default;\n","impliedNodeFormat":1}],"options":{"allowJs":true,"checkJs":true,"composite":true,"declaration":true,"outDir":"..","rootDir":"../../solution","skipLibCheck":true},"semanticDiagnosticsPerFile":[[2,[{"pos":51,"end":58,"code":2339,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_2339","messageArgs":["species","SymbolConstructor"]}]]],"latestChangedDtsFile":"./nominal.d.ts"}
 //// [/home/src/workspaces/lib/common/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -239,19 +234,12 @@ module.exports = {};
             "species",
             "SymbolConstructor"
           ]
-        },
-        {
-          "pos": 80,
-          "end": 99,
-          "code": 1203,
-          "category": 1,
-          "messageKey": "Export_assignment_cannot_be_used_when_targeting_ECMAScript_modules_Consider_using_export_default_or__1203"
         }
       ]
     ]
   ],
   "latestChangedDtsFile": "./nominal.d.ts",
-  "size": 1818
+  "size": 1652
 }
 //// [/home/src/workspaces/lib/sub-project-2/index.d.ts] *new* 
 declare const variable: {
