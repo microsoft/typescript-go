@@ -362,7 +362,7 @@ func (tx *classFieldsTransformer) visitAssignmentTarget(node *ast.Node) *ast.Nod
 					temp,
 					data.classConstructor,
 				)
-				return tx.createAssignmentTargetWrapper(temp, setExpr)
+				return tx.Factory().NewAssignmentTargetWrapper(temp, setExpr)
 			}
 		}
 	}
@@ -2790,7 +2790,7 @@ func (tx *classFieldsTransformer) wrapPrivateIdentifierForDestructuringTarget(no
 		)
 	}
 	assignExpr := tx.createPrivateIdentifierAssignment(info, receiver, parameter, ast.KindEqualsToken)
-	return tx.createAssignmentTargetWrapper(parameter, assignExpr)
+	return tx.Factory().NewAssignmentTargetWrapper(parameter, assignExpr)
 }
 
 func (tx *classFieldsTransformer) visitAssignmentElement(node *ast.Node) *ast.Node {
@@ -2898,40 +2898,6 @@ func (tx *classFieldsTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 	return tx.Factory().UpdateObjectLiteralExpression(
 		node.AsObjectLiteralExpression(),
 		tx.Factory().NewNodeList(visited),
-	)
-}
-
-func (tx *classFieldsTransformer) createAssignmentTargetWrapper(paramName *ast.IdentifierNode, expression *ast.Expression) *ast.Node {
-	// ({x} = ...) => Object.defineProperty({ set value(v) { x = v; }}, "value").value
-	// We create an IIFE arrow: (_a) => (expression, _a)
-	// Actually, the TypeScript implementation creates a PropertyAccessExpression wrapping a call.
-	// Simplified: return an immediately invoked arrow that performs the set operation.
-	// The actual Strada implementation:
-	// factory.createPropertyAccessExpression(
-	//   factory.createParenthesizedExpression(factory.createObjectLiteralExpression([
-	//     factory.createSetAccessorDeclaration(undefined, "value", [param], factory.createBlock([factory.createExpressionStatement(expression)]))
-	//   ])),
-	//   "value"
-	// )
-	setAccessor := tx.Factory().NewSetAccessorDeclaration(
-		nil,
-		tx.Factory().NewIdentifier("value"),
-		nil,
-		tx.Factory().NewNodeList([]*ast.Node{
-			tx.Factory().NewParameterDeclaration(nil, nil, paramName, nil, nil, nil),
-		}),
-		nil,
-		nil,
-		tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Node{
-			tx.Factory().NewExpressionStatement(expression),
-		}), false),
-	)
-	objLiteral := tx.Factory().NewObjectLiteralExpression(tx.Factory().NewNodeList([]*ast.Node{setAccessor}), false)
-	return tx.Factory().NewPropertyAccessExpression(
-		tx.Factory().NewParenthesizedExpression(objLiteral),
-		nil,
-		tx.Factory().NewIdentifier("value"),
-		ast.NodeFlagsNone,
 	)
 }
 

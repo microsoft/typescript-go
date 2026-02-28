@@ -1029,6 +1029,30 @@ func (f *NodeFactory) NewExportStarHelper(moduleExpression *ast.Expression, expo
 	)
 }
 
+func (f *NodeFactory) NewAssignmentTargetWrapper(paramName *ast.IdentifierNode, expression *ast.Expression) *ast.Node {
+	setAccessor := f.NewSetAccessorDeclaration(
+		nil, /*modifiers*/
+		f.NewIdentifier("value"),
+		nil, /*typeParameters*/
+		f.NewNodeList([]*ast.Node{
+			f.NewParameterDeclaration(nil, nil, paramName, nil, nil, nil),
+		}),
+		nil, /*returnType*/
+		nil, /*fullSignature*/
+		f.NewBlock(f.NewNodeList([]*ast.Node{
+			f.NewExpressionStatement(expression),
+		}), false),
+	)
+	objLiteral := f.NewObjectLiteralExpression(f.NewNodeList([]*ast.Node{setAccessor}), false)
+	// Explicit parens required because of v8 regression (https://bugs.chromium.org/p/v8/issues/detail?id=9560)
+	return f.NewPropertyAccessExpression(
+		f.NewParenthesizedExpression(objLiteral),
+		nil, /*questionDotToken*/
+		f.NewIdentifier("value"),
+		ast.NodeFlagsNone,
+	)
+}
+
 // Allocates a new Call expression to the `__rewriteRelativeImportExtension` helper.
 func (f *NodeFactory) NewRewriteRelativeImportExtensionsHelper(firstArgument *ast.Node, preserveJsx bool) *ast.Expression {
 	f.emitContext.RequestEmitHelper(rewriteRelativeImportExtensionsHelper)
