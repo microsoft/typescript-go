@@ -1223,7 +1223,10 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 		if ast.IsPropertyAccessExpression(left) && ast.IsPrivateIdentifier(left.Name()) {
 			info := tx.accessPrivateIdentifier(left.Name())
 			if info != nil {
-				return tx.createPrivateIdentifierAssignment(info, left.Expression(), node.Right, node.OperatorToken.Kind)
+				result := tx.createPrivateIdentifierAssignment(info, left.Expression(), node.Right, node.OperatorToken.Kind)
+				tx.EmitContext().SetOriginal(result, node.AsNode())
+				result.Loc = node.Loc
+				return result
 			}
 		}
 		// super property assignment in static initializers
