@@ -221,17 +221,16 @@ loop:
 	for {
 		switch p.token {
 		case ast.KindAtToken:
-			savedNodePos := p.nodePos()
-			tag := p.parseTag(tags, indent)
-			if tag == nil {
+			if !p.scanner.CanFollowJSDocAt() {
 				state = jsdocStateSavingComments
 				pushComment(p.scanner.TokenText())
 				break
 			}
 			comments = removeTrailingWhitespace(comments)
 			if commentsPos == -1 {
-				commentsPos = savedNodePos
+				commentsPos = p.nodePos()
 			}
+			tag := p.parseTag(tags, indent)
 			if tagsPos == -1 {
 				tagsPos = tag.Pos()
 			}
@@ -1262,4 +1261,3 @@ func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message
 	p.nextTokenJSDoc()
 	return p.finishNodeWithEnd(p.newIdentifier(text), pos, end)
 }
-
