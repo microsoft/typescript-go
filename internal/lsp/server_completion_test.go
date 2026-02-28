@@ -141,9 +141,9 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 	})
 
 	// Completion is dispatched first; close arrives while the async phase
-	// is (likely) in-flight. The sleep biases toward this ordering but
-	// goroutine scheduling makes it non-deterministic. Run multiple
-	// iterations to increase the chance of hitting both orderings.
+	// is (likely) in-flight. The main goroutine sends the completion
+	// request (guaranteeing it enters the input channel first), while a
+	// background goroutine sends the close after a variable delay.
 	t.Run("close during async", func(t *testing.T) {
 		t.Parallel()
 		for i := range 5 {
@@ -156,27 +156,21 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 					}
 				}()
 
-				type result struct{ msg *lsproto.Message }
-				ch := make(chan result, 1)
 				go func() {
-					msg, _, _ := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+					delay := time.Duration(i+1) * 5 * time.Millisecond
+					time.Sleep(delay)
+					lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 						TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-						Position:     lsproto.Position{Line: 0, Character: 1},
-						Context:      &lsproto.CompletionContext{},
 					})
-					ch <- result{msg}
 				}()
 
-				delay := time.Duration(i+1) * 5 * time.Millisecond
-				time.Sleep(delay)
-
-				lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+				msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 					TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+					Position:     lsproto.Position{Line: 0, Character: 1},
+					Context:      &lsproto.CompletionContext{},
 				})
-
-				r := <-ch
-				assert.Assert(t, r.msg != nil, "expected a response, not a crash")
-				assertCompletionAfterClose(t, r.msg.AsResponse())
+				assert.Assert(t, ok, "expected a response")
+				assertCompletionAfterClose(t, msg.AsResponse())
 			})
 		}
 	})
@@ -271,37 +265,28 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 				TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "someV"},
 			})
 
-			type result struct {
-				msg   *lsproto.Message
-				items []*lsproto.CompletionItem
-			}
-			ch := make(chan result, 1)
 			go func() {
-				msg, resp, _ := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
-					TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-					Position:     lsproto.Position{Line: 0, Character: 5},
-					Context:      &lsproto.CompletionContext{},
+				delay := time.Duration(i+1) * 5 * time.Millisecond
+				time.Sleep(delay)
+				lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+					TextDocument: lsproto.VersionedTextDocumentIdentifier{Uri: bURI, Version: 2},
+					ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+						{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "notMatching"}},
+					},
 				})
-				ch <- result{msg, completionItems(resp)}
 			}()
 
-			delay := time.Duration(i+1) * 5 * time.Millisecond
-			time.Sleep(delay)
-
-			lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
-				TextDocument: lsproto.VersionedTextDocumentIdentifier{Uri: bURI, Version: 2},
-				ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
-					{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "notMatching"}},
-				},
+			msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+				Position:     lsproto.Position{Line: 0, Character: 5},
+				Context:      &lsproto.CompletionContext{},
 			})
-
-			r := <-ch
-			assert.Assert(t, r.msg != nil, "expected a response, not a crash")
-			resp := r.msg.AsResponse()
-			if resp.Error != nil {
-				t.Fatalf("expected no error, got: [%d] %s", resp.Error.Code, resp.Error.Error())
+			assert.Assert(t, ok, "expected a response")
+			r := msg.AsResponse()
+			if r.Error != nil {
+				t.Fatalf("expected no error, got: [%d] %s", r.Error.Code, r.Error.Error())
 			}
-			assert.Assert(t, hasCompletionItem(r.items, "someVar"),
+			assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"),
 				"expected someVar in completions (snapshot freezing should preserve original content)")
 		})
 	}
