@@ -2104,7 +2104,7 @@ func (tx *classFieldsTransformer) transformConstructorBodyWorker(
 		for statementOffset < len(statementsIn) {
 			stmt := statementsIn[statementOffset]
 			orig := tx.EmitContext().MostOriginal(stmt)
-			if ast.IsParameterPropertyDeclaration(orig, orig.Parent) {
+			if ast.IsParameterPropertyDeclaration(orig, constructor.AsNode()) {
 				statementOffset++
 			} else {
 				break
@@ -2158,10 +2158,10 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 
 	if constructor != nil {
 		parameterProperties := core.Filter(instanceProperties, func(prop *ast.Node) bool {
-			return ast.IsParameterPropertyDeclaration(tx.EmitContext().MostOriginal(prop), tx.EmitContext().MostOriginal(prop).Parent)
+			return ast.IsParameterPropertyDeclaration(tx.EmitContext().MostOriginal(prop), constructor.AsNode())
 		})
 		nonParameterProperties := core.Filter(properties, func(prop *ast.Node) bool {
-			return !ast.IsParameterPropertyDeclaration(tx.EmitContext().MostOriginal(prop), tx.EmitContext().MostOriginal(prop).Parent)
+			return !ast.IsParameterPropertyDeclaration(tx.EmitContext().MostOriginal(prop), constructor.AsNode())
 		})
 		tx.addPropertyOrClassStaticBlockStatements(&initializerStatements, parameterProperties, receiver)
 		tx.addPropertyOrClassStaticBlockStatements(&initializerStatements, nonParameterProperties, receiver)
@@ -2190,7 +2190,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 			for statementOffset < len(body.Statements.Nodes) {
 				stmt := body.Statements.Nodes[statementOffset]
 				orig := tx.EmitContext().MostOriginal(stmt)
-				if ast.IsParameterPropertyDeclaration(orig, orig.Parent) {
+				if ast.IsParameterPropertyDeclaration(orig, constructor.AsNode()) {
 					statementOffset++
 				} else {
 					break
