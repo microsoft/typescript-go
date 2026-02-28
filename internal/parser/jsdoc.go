@@ -222,10 +222,8 @@ loop:
 		switch p.token {
 		case ast.KindAtToken:
 			savedNodePos := p.nodePos()
-			savedState := p.mark()
 			tag := p.parseTag(tags, indent)
 			if tag == nil {
-				p.rewind(savedState)
 				state = jsdocStateSavingComments
 				pushComment(p.scanner.TokenText())
 				break
@@ -436,12 +434,11 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 	if p.token != ast.KindAtToken {
 		panic("should be called only at the start of a tag")
 	}
-	start := p.scanner.TokenStart()
-	p.nextTokenJSDoc()
-
-	if !p.canFollowJSDocAtToken() {
+	if !p.scanner.CanFollowJSDocAt() {
 		return nil
 	}
+	start := p.scanner.TokenStart()
+	p.nextTokenJSDoc()
 
 	tagName := p.parseJSDocIdentifierName(nil)
 	indentText := p.skipWhitespaceOrAsterisk()
@@ -557,7 +554,7 @@ loop:
 			comments = append(comments, p.scanner.TokenText())
 			indent = 0
 		case ast.KindAtToken:
-			if p.isStartOfJSDocTag() {
+			if p.scanner.CanFollowJSDocAt() {
 				p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
 				break loop
 			}
@@ -1102,7 +1099,7 @@ func (p *Parser) parseChildParameterOrPropertyTag(target propertyLikeParse, inde
 	for {
 		switch p.nextTokenJSDoc() {
 		case ast.KindAtToken:
-			if canParseTag && p.isStartOfJSDocTag() {
+			if canParseTag && p.scanner.CanFollowJSDocAt() {
 				child := p.tryParseChildTag(target, indent)
 				if child != nil && name != nil &&
 					(child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag) &&
@@ -1266,18 +1263,3 @@ func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message
 	return p.finishNodeWithEnd(p.newIdentifier(text), pos, end)
 }
 
-func (p *Parser) isStartOfJSDocTag() bool {
-	return p.lookAhead(func(p *Parser) bool {
-		p.nextTokenJSDoc()
-		return p.canFollowJSDocAtToken()
-	})
-}
-
-// Whitespace, newline, and EOF are allowed after @ to support incomplete tags being
-// typed — completion providers use empty-named tags to offer tag name suggestions.
-func (p *Parser) canFollowJSDocAtToken() bool {
-	return tokenIsIdentifierOrKeyword(p.token) ||
-		p.token == ast.KindEndOfFile ||
-		p.token == ast.KindNewLineTrivia ||
-		p.token == ast.KindWhitespaceTrivia
-}

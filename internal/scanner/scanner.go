@@ -1295,6 +1295,17 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 	return s.token
 }
 
+// Peek at the character at the current scanner position (expected to be right after '@')
+// and return true if a JSDoc tag can follow. Identifier starts indicate a tag name.
+// Whitespace, newlines, and EOF are also accepted to support incomplete tags for code completion.
+func (s *Scanner) CanFollowJSDocAt() bool {
+	if s.pos >= len(s.text) {
+		return true
+	}
+	ch, _ := utf8.DecodeRuneInString(s.text[s.pos:])
+	return IsIdentifierStart(ch) || stringutil.IsWhiteSpaceSingleLine(ch) || stringutil.IsLineBreak(ch)
+}
+
 func (s *Scanner) ScanJSDocToken() ast.Kind {
 	s.fullStartPos = s.pos
 	s.tokenFlags = ast.TokenFlagsNone
