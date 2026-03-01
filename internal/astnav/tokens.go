@@ -56,9 +56,9 @@ func getTokenAtPosition(
 			prevSubtree = node
 		}
 
-		endIsInclusive := node.Kind == ast.KindEndOfFile ||
-			(ast.IsJSDocKind(node.Kind) && node.End() == len(sourceFile.Text()))
-		if node.End() < position || (!endIsInclusive && node.End() == position) {
+		if node.End() < position || node.End() == position &&
+			node.Kind != ast.KindEndOfFile &&
+			(!ast.IsJSDocKind(node.Kind) || node.End() != sourceFile.EndOfFileToken.End()) {
 			return -1
 		}
 		nodePos := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
