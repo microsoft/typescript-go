@@ -75,6 +75,13 @@ const (
 	RelationComparisonResultOverflow                                     = RelationComparisonResultComplexityOverflow | RelationComparisonResultStackDepthOverflow
 )
 
+// maxTypeRelationDepth is the maximum nesting depth of checkTypeRelatedToEx calls across
+// all Relater instances. This guards against stack overflow from unbounded recursion between
+// type relation checking and variance computation, where each cycle creates a new Relater with
+// fresh depth tracking. In JavaScript, the native call stack limit implicitly catches this;
+// in Go, goroutines can grow to 1GB, so an explicit limit is needed.
+const maxTypeRelationDepth = 200
+
 type DiagnosticAndArguments struct {
 	message   *diagnostics.Message
 	arguments []any
@@ -369,7 +376,7 @@ func (c *Checker) checkTypeRelatedToEx(
 	// doesn't prevent deep nesting across multiple Relater instances (e.g., through variance
 	// computation calling isTypeAssignableTo which creates a new Relater). In JavaScript, the
 	// native call stack limit implicitly prevents this, but Go goroutines can grow to 1GB.
-	if c.typeRelationDepth >= 200 {
+	if c.typeRelationDepth >= maxTypeRelationDepth {
 		return false
 	}
 	c.typeRelationDepth++
