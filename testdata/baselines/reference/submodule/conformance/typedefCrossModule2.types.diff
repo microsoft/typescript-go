@@ -11,13 +11,7 @@
  >require : any
  >'./mod1.js' : "./mod1.js"
 
-@@= skipped -11, +11 lines =@@
-
- /** @type {mod.Baz} */
- var bb;
-->bb : number
-+>bb : mod.Baz
-
+@@= skipped -16, +16 lines =@@
  var bbb = new mod.Baz();
  >bbb : Baz
  >new mod.Baz() : Baz
@@ -30,7 +24,7 @@
 
  === mod1.js ===
  // error
-@@= skipped -20, +20 lines =@@
+@@= skipped -15, +15 lines =@@
  exports.Bar = class { }
  >exports.Bar = class { } : typeof Bar
  >exports.Bar : typeof Bar

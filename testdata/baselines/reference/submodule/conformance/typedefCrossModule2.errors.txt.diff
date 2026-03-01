@@ -6,20 +6,20 @@
 -mod1.js(9,23): error TS2300: Duplicate identifier 'Baz'.
 -mod1.js(11,5): error TS2300: Duplicate identifier 'Baz'.
 -use.js(6,15): error TS18048: 'mod.Baz' is possibly 'undefined'.
+-
+-
+-==== use.js (1 errors) ====
 +mod1.js(10,1): error TS2300: Duplicate identifier 'export='.
 +mod1.js(10,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
 +mod1.js(24,5): error TS2353: Object literal may only specify known properties, and 'Quack' does not exist in type '{ Baz: typeof Baz; }'.
-+use.js(4,12): error TS2503: Cannot find namespace 'mod'.
-
-
- ==== use.js (1 errors) ====
-@@= skipped -9, +9 lines =@@
++
++
++==== use.js (0 errors) ====
+     var mod = require('./mod1.js');
      /** @type {import("./mod1.js").Baz} */
      var b;
      /** @type {mod.Baz} */
-+               ~~~
-+!!! error TS2503: Cannot find namespace 'mod'.
      var bb;
      var bbb = new mod.Baz();
 -                  ~~~~~~~
@@ -59,7 +59,7 @@
      
      // ok
      
-@@= skipped -39, +37 lines =@@
+@@= skipped -48, +43 lines =@@
      
      /** @typedef {number} Quack */
      module.exports = {
