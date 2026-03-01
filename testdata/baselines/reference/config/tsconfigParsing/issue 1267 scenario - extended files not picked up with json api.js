@@ -108,8 +108,8 @@ CompilerOptions::
     "node",
     "vitest/globals"
   ],
-  "baseUrl": "/",
   "allowSyntheticDefaultImports": true,
+  "baseUrl": "/",
   "esModuleInterop": true,
   "configFilePath": "/tsconfig.json"
 }
