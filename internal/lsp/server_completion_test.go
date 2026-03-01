@@ -76,31 +76,6 @@ func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.U
 	return client, closeClient
 }
 
-func setupAutoImportCompletionClient(t *testing.T) (*lsptestutil.LSPClient, func() error, lsproto.DocumentUri, lsproto.DocumentUri) {
-	t.Helper()
-
-	prefs := &lsutil.UserPreferences{
-		IncludeCompletionsForModuleExports:    core.TSTrue,
-		IncludeCompletionsForImportStatements: core.TSTrue,
-	}
-	client, closeClient := initCompletionClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/a.ts":          "export const someVar = 10;",
-		"/home/projects/b.ts":          "s",
-	}, prefs)
-
-	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
-	bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
-	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-		TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
-	})
-	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-		TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
-	})
-
-	return client, closeClient, aURI, bURI
-}
-
 func assertCompletionAfterClose(t *testing.T, resp *lsproto.ResponseMessage) {
 	t.Helper()
 	if resp.Error != nil {
@@ -120,12 +95,29 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 	// snapshot has b.ts removed from overlays.
 	t.Run("close before completion", func(t *testing.T) {
 		t.Parallel()
-		client, closeClient, _, bURI := setupAutoImportCompletionClient(t)
+		prefs := &lsutil.UserPreferences{
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
+		}
+		client, closeClient := initCompletionClient(t, map[string]string{
+			"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+			"/home/projects/a.ts":          "export const someVar = 10;",
+			"/home/projects/b.ts":          "s",
+		}, prefs)
 		defer func() {
 			if err := closeClient(); err != nil {
 				t.Errorf("goroutine error: %v", err)
 			}
 		}()
+
+		aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
+		bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
+		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
+		})
+		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
+		})
 
 		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 			TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
@@ -146,12 +138,29 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 	// background goroutine sends the close after a short delay.
 	t.Run("close during async", func(t *testing.T) {
 		t.Parallel()
-		client, closeClient, _, bURI := setupAutoImportCompletionClient(t)
+		prefs := &lsutil.UserPreferences{
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
+		}
+		client, closeClient := initCompletionClient(t, map[string]string{
+			"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+			"/home/projects/a.ts":          "export const someVar = 10;",
+			"/home/projects/b.ts":          "s",
+		}, prefs)
 		defer func() {
 			if err := closeClient(); err != nil {
 				t.Errorf("goroutine error: %v", err)
 			}
 		}()
+
+		aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
+		bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
+		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
+		})
+		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
+		})
 
 		go func() {
 			time.Sleep(5 * time.Millisecond)
