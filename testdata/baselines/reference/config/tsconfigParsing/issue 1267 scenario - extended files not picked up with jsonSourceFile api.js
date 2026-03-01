@@ -88,9 +88,7 @@ configFileName:: tsconfig.json
 CompilerOptions::
 {
   "allowJs": true,
-  "allowSyntheticDefaultImports": true,
   "emitDecoratorMetadata": true,
-  "esModuleInterop": true,
   "experimentalDecorators": true,
   "incremental": false,
   "lib": [
@@ -111,6 +109,8 @@ CompilerOptions::
     "vitest/globals"
   ],
   "baseUrl": "/",
+  "allowSyntheticDefaultImports": true,
+  "esModuleInterop": true,
   "configFilePath": "/tsconfig.json"
 }
 
