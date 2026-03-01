@@ -48,22 +48,8 @@ func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.U
 		DefaultLibraryPath: bundled.LibPath(),
 	}, onServerRequest)
 
-	ptrTrue := new(true)
 	initMsg, _, ok := lsptestutil.SendRequest(t, client, lsproto.InitializeInfo, &lsproto.InitializeParams{
-		Locale: new("en-US"),
-		Capabilities: &lsproto.ClientCapabilities{
-			TextDocument: &lsproto.TextDocumentClientCapabilities{
-				Completion: &lsproto.CompletionClientCapabilities{
-					CompletionItem: &lsproto.ClientCompletionItemOptions{
-						SnippetSupport:          ptrTrue,
-						CommitCharactersSupport: ptrTrue,
-					},
-					CompletionList: &lsproto.CompletionListCapabilities{
-						ItemDefaults: &[]string{"commitCharacters", "editRange"},
-					},
-				},
-			},
-		},
+		Capabilities: &lsproto.ClientCapabilities{},
 	})
 	assert.Assert(t, ok && initMsg.AsResponse().Error == nil, "Initialize failed")
 	lsptestutil.SendNotification(t, client, lsproto.InitializedInfo, &lsproto.InitializedParams{})
@@ -74,13 +60,6 @@ func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.U
 	})
 
 	return client, closeClient
-}
-
-func assertCompletionAfterClose(t *testing.T, resp *lsproto.ResponseMessage) {
-	t.Helper()
-	if resp.Error != nil {
-		t.Fatalf("expected no error, got: [%d] %s", resp.Error.Code, resp.Error.Error())
-	}
 }
 
 func TestAutoImportCompletionAfterFileClose(t *testing.T) {
@@ -129,7 +108,7 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 			Context:      &lsproto.CompletionContext{},
 		})
 		assert.Assert(t, ok, "expected a response")
-		assertCompletionAfterClose(t, msg.AsResponse())
+		assert.Assert(t, msg.AsResponse().Error == nil)
 	})
 
 	// Completion is dispatched first; close arrives while the async phase
@@ -175,7 +154,7 @@ func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 			Context:      &lsproto.CompletionContext{},
 		})
 		assert.Assert(t, ok, "expected a response")
-		assertCompletionAfterClose(t, msg.AsResponse())
+		assert.Assert(t, msg.AsResponse().Error == nil)
 	})
 }
 
