@@ -586,6 +586,7 @@ type Checker struct {
 	TotalInstantiationCount                     uint32
 	instantiationCount                          uint32
 	instantiationDepth                          uint32
+	typeRelationDepth                           uint32
 	inlineLevel                                 int
 	currentNode                                 *ast.Node
 	varianceTypeParameter                       *Type

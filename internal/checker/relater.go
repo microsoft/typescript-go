@@ -364,6 +364,15 @@ func (c *Checker) checkTypeRelatedToEx(
 	headMessage *diagnostics.Message,
 	diagnosticOutput *[]*ast.Diagnostic,
 ) bool {
+	// Guard against unbounded nesting of type relation checks. Each call to checkTypeRelatedToEx
+	// creates a fresh Relater with its own depth tracking, so the per-Relater depth limit of 100
+	// doesn't prevent deep nesting across multiple Relater instances (e.g., through variance
+	// computation calling isTypeAssignableTo which creates a new Relater). In JavaScript, the
+	// native call stack limit implicitly prevents this, but Go goroutines can grow to 1GB.
+	if c.typeRelationDepth >= 200 {
+		return false
+	}
+	c.typeRelationDepth++
 	r := c.getRelater()
 	r.relation = relation
 	r.errorNode = errorNode
@@ -393,6 +402,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		c.reportDiagnostic(createDiagnosticChainFromErrorChain(r.errorChain, r.errorNode, r.relatedInfo), diagnosticOutput)
 	}
 	c.putRelater(r)
+	c.typeRelationDepth--
 	return result != TernaryFalse
 }
 
