@@ -24,7 +24,6 @@ const (
 	EFNoHoisting                                      // Do not hoist this declaration in --module system
 	EFNoAsciiEscaping                                 // When synthesizing nodes that lack an original node or textSourceNode, we want to write the text on the node with ASCII escaping substitutions.
 	EFExternalHelpers                                 // This source file has external helpers
-	EFNeverApplyImportHelper                          // Do not apply an import helper to this node
 	EFStartOnNewLine                                  // Start this node on a new line
 	EFIndirectCall                                    // Emit CallExpression as an indirect call: `(0, f)()`
 	EFAsyncFunctionBody                               // The node was originally an async function body.
