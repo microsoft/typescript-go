@@ -568,7 +568,12 @@ func (tx *classFieldsTransformer) shouldTransformClassElementToWeakMap(node *ast
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		return true
 	}
-	// !!! InternalEmitFlags.TransformPrivateStaticElements not yet ported
+	return tx.shouldAlwaysTransformPrivateStaticElements(node)
+}
+
+func (tx *classFieldsTransformer) shouldAlwaysTransformPrivateStaticElements(node *ast.Node) bool {
+	// !!! return tx.EmitContext().GetInternalEmitFlags(node)&InternalEmitFlags.TransformPrivateStaticElements != 0
+	_ = node
 	return false
 }
 
@@ -755,6 +760,19 @@ func (tx *classFieldsTransformer) transformPrivateFieldInitializer(node *ast.Pro
 		if info == nil || !info.isValid {
 			return node.AsNode()
 		}
+
+		// If we encounter a valid private static field and we're not transforming
+		// class static blocks, convert to a static block initializer.
+		if info.isStatic && !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+			statement := tx.transformPropertyOrClassStaticBlock(node.AsNode(), tx.Factory().NewThisExpression())
+			if statement != nil {
+				return tx.Factory().NewClassStaticBlockDeclaration(
+					nil, /*modifiers*/
+					tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Node{statement}), true /*multiLine*/),
+				)
+			}
+		}
+
 		return nil // elide the declaration; it will be moved to constructor
 	}
 
@@ -848,7 +866,8 @@ func (tx *classFieldsTransformer) shouldTransformAutoAccessorsInCurrentClass() b
 
 func (tx *classFieldsTransformer) visitPropertyDeclaration(node *ast.Node) *ast.Node {
 	propDecl := node.AsPropertyDeclaration()
-	if ast.IsAutoAccessorPropertyDeclaration(node) && tx.shouldTransformAutoAccessorsInCurrentClass() {
+	if ast.IsAutoAccessorPropertyDeclaration(node) && (tx.shouldTransformAutoAccessorsInCurrentClass() ||
+		ast.HasStaticModifier(node) && tx.shouldAlwaysTransformPrivateStaticElements(node)) {
 		return tx.transformAutoAccessor(propDecl)
 	}
 	return tx.transformFieldInitializer(propDecl)
@@ -1226,7 +1245,8 @@ func (tx *classFieldsTransformer) isAnonymousClassNeedingAssignedName(node *anon
 		}) {
 			return false
 		}
-		hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
+		hasTransformableStatics := (tx.shouldTransformPrivateElementsOrClassStaticBlocks ||
+			tx.shouldAlwaysTransformPrivateStaticElements(node)) &&
 			core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
 				return ast.IsClassStaticBlockDeclaration(n) ||
 					ast.IsPrivateIdentifierClassElementDeclaration(n) ||
@@ -1585,8 +1605,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 	original := tx.EmitContext().MostOriginal(node)
 	tx.enclosingClassDeclarations[original] = true
 
-	// !!! Strada also checks shouldAlwaysTransformPrivateStaticElements (InternalEmitFlags.TransformPrivateStaticElements) — not yet ported.
-	if tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+	if tx.shouldTransformPrivateElementsOrClassStaticBlocks || tx.shouldAlwaysTransformPrivateStaticElements(node) {
 		name := ast.GetNameOfDeclaration(node)
 		if name != nil && ast.IsIdentifier(name) {
 			tx.getPrivateIdentifierEnvironment().data.className = name
@@ -1777,7 +1796,8 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		// at emit time), but we must predict this before visiting members since we substitute
 		// eagerly. This requires pre-detecting willHavePrivatePendingExpressions.
 		isClassWithConstructorReference := tx.classContainsConstructorReference(node)
-		hasTransformableStatics := tx.shouldTransformPrivateElementsOrClassStaticBlocks &&
+		hasTransformableStatics := (tx.shouldTransformPrivateElementsOrClassStaticBlocks ||
+			tx.shouldAlwaysTransformPrivateStaticElements(node)) &&
 			core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
 				return ast.IsClassStaticBlockDeclaration(n) ||
 					ast.IsPrivateIdentifierClassElementDeclaration(n) ||
