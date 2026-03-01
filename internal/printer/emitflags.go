@@ -21,7 +21,6 @@ const (
 	EFNoIndentation                                   // Do not indent the node.
 	EFReuseTempVariableScope                          // Reuse the existing temp variable scope during emit.
 	EFCustomPrologue                                  // Treat the statement as if it were a prologue directive (NOTE: Prologue directives are *not* transformed).
-	EFNoHoisting                                      // Do not hoist this declaration in --module system
 	EFNoAsciiEscaping                                 // When synthesizing nodes that lack an original node or textSourceNode, we want to write the text on the node with ASCII escaping substitutions.
 	EFExternalHelpers                                 // This source file has external helpers
 	EFStartOnNewLine                                  // Start this node on a new line
