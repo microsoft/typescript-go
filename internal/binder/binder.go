@@ -1022,6 +1022,21 @@ func (b *Binder) bindDeferredExpandoAssignments() {
 	}
 }
 
+// If the given module symbol has an export= symbol, promote exports with a type or namespace meaning
+// from the module symbol onto the export= symbol and, if any such exports exist, mark the export=
+// symbol as a namespace module.
+func (b *Binder) bindCommonJSTypeExports(moduleSymbol *ast.Symbol) {
+	moduleExports := moduleSymbol.Exports
+	if exportEquals := moduleExports[ast.InternalSymbolNameExportEquals]; exportEquals != nil {
+		for _, symbol := range moduleExports {
+			if symbol.Name != ast.InternalSymbolNameExportEquals && symbol.Flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				ast.GetExports(exportEquals)[symbol.Name] = symbol
+				exportEquals.Flags |= ast.SymbolFlagsNamespaceModule
+			}
+		}
+	}
+}
+
 func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {
 	parent := getParentOfPropertyAssignment(node)
 	symbol := b.lookupEntity(parent, b.blockScopeContainer)
@@ -1566,6 +1581,9 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
+	}
+	if ast.IsSourceFile(node) && ast.IsExternalOrCommonJSModule(node.AsSourceFile()) || ast.IsAmbientModule(node) {
+		b.bindCommonJSTypeExports(node.Symbol())
 	}
 	b.container = saveContainer
 	b.thisContainer = saveThisContainer
