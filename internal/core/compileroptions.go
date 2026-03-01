@@ -118,15 +118,15 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
 	// Deprecated: Do not use outside of options parsing and validation.
+	AllowSyntheticDefaultImports Tristate `json:"allowSyntheticDefaultImports,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
-	OutFile string `json:"outFile,omitzero"`
-	// Deprecated: Do not use outside of options parsing and validation.
-	AllowSyntheticDefaultImports Tristate `json:"allowSyntheticDefaultImports,omitzero"`
-	// Deprecated: Do not use outside of options parsing and validation.
 	ESModuleInterop Tristate `json:"esModuleInterop,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	OutFile string `json:"outFile,omitzero"`
 
 	// Internal fields
 	ConfigFilePath      string   `json:"configFilePath,omitzero"`
