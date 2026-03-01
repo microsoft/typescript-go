@@ -62,6 +62,25 @@ func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.U
 	return client, closeClient
 }
 
+func completionItems(resp lsproto.CompletionResponse) []*lsproto.CompletionItem {
+	if resp.List != nil {
+		return resp.List.Items
+	}
+	if resp.Items != nil {
+		return *resp.Items
+	}
+	return nil
+}
+
+func hasCompletionItem(items []*lsproto.CompletionItem, label string) bool {
+	for _, item := range items {
+		if item.Label == label {
+			return true
+		}
+	}
+	return false
+}
+
 func TestAutoImportCompletionAfterFileClose(t *testing.T) {
 	t.Parallel()
 
@@ -187,25 +206,6 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 	if resp.Error != nil {
 		t.Fatalf("expected no error, got: [%d] %s", resp.Error.Code, resp.Error.Error())
 	}
-}
-
-func completionItems(resp lsproto.CompletionResponse) []*lsproto.CompletionItem {
-	if resp.List != nil {
-		return resp.List.Items
-	}
-	if resp.Items != nil {
-		return *resp.Items
-	}
-	return nil
-}
-
-func hasCompletionItem(items []*lsproto.CompletionItem, label string) bool {
-	for _, item := range items {
-		if item.Label == label {
-			return true
-		}
-	}
-	return false
 }
 
 // TestCompletionSnapshotFreezing verifies that the auto-import retry uses the
