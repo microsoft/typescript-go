@@ -16,7 +16,6 @@ const (
 	EFHelperName                                      // The Identifier refers to an *unscoped* emit helper (one that is emitted at the top of the file)
 	EFExportName                                      // Ensure an export prefix is added for an identifier that points to an exported declaration with a local name (see SymbolFlags.ExportHasLocal).
 	EFLocalName                                       // Ensure an export prefix is not added for an identifier that points to an exported declaration.
-	EFInternalName                                    // The name is internal to an ES5 class body function.
 	EFIndented                                        // Adds an explicit extra indentation level for class and function bodies when printing (used to match old emitter).
 	EFNoIndentation                                   // Do not indent the node.
 	EFReuseTempVariableScope                          // Reuse the existing temp variable scope during emit.
