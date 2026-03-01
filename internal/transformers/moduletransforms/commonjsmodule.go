@@ -1781,15 +1781,15 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 		requireArguments = []*ast.Expression{arg}
 	}
 
-	requireCall := tx.Factory().NewCallExpression(
-		tx.Factory().NewIdentifier("require"),
-		nil, /*questionDotToken*/
-		nil, /*typeArguments*/
-		tx.Factory().NewNodeList(requireArguments),
-		ast.NodeFlagsNone,
+	requireCall := tx.Factory().NewImportStarHelper(
+		tx.Factory().NewCallExpression(
+			tx.Factory().NewIdentifier("require"),
+			nil, /*questionDotToken*/
+			nil, /*typeArguments*/
+			tx.Factory().NewNodeList(requireArguments),
+			ast.NodeFlagsNone,
+		),
 	)
-
-	requireCall = tx.Factory().NewImportStarHelper(requireCall)
 
 	var parameters []*ast.ParameterDeclarationNode
 	if needSyncEval {
