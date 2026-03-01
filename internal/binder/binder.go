@@ -871,7 +871,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
-		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsAll)
+		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, core.IfElse(ast.IsJSExportAssignment(node), 0, ast.SymbolFlagsAll))
 		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
 			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
 			SetValueDeclaration(symbol, node)
