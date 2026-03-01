@@ -34,7 +34,7 @@ function baz(y) {}
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	expectTagCompletions := &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1", "2", "3"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &DefaultCommitCharacters,
@@ -48,8 +48,5 @@ function baz(y) {}
 				},
 			},
 		},
-	}
-	f.VerifyCompletions(t, "1", expectTagCompletions)
-	f.VerifyCompletions(t, "2", expectTagCompletions)
-	f.VerifyCompletions(t, "3", nil)
+	})
 }
