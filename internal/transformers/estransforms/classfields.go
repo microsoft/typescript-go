@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -114,7 +115,7 @@ type classFieldsTransformer struct {
 	// classAliases maps class declarations to alias identifiers for substituting class name
 	// references in static initializers. Replaces Strada's onSubstituteNode/trySubstituteClassAlias.
 	classAliases               map[*ast.Node]*ast.IdentifierNode
-	enclosingClassDeclarations map[*ast.Node]bool
+	enclosingClassDeclarations collections.Set[*ast.Node]
 	inIterationStatement       bool
 	// insideComputedPropertyName replaces Strada's onEmitNode for ComputedPropertyName, which
 	// switches to the outer lexical environment. Used by visitThisExpression() to apply
@@ -213,11 +214,11 @@ func (tx *classFieldsTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 		return node.AsNode()
 	}
 	tx.classAliases = make(map[*ast.Node]*ast.IdentifierNode)
-	tx.enclosingClassDeclarations = make(map[*ast.Node]bool)
+	tx.enclosingClassDeclarations.Clear()
 	visited := tx.Visitor().VisitEachChild(node.AsNode())
 	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
 	tx.classAliases = nil
-	tx.enclosingClassDeclarations = nil
+	tx.enclosingClassDeclarations.Clear()
 	return visited
 }
 
@@ -428,7 +429,7 @@ func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Nod
 	}
 	declaration := tx.resolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode()))
 	if declaration != nil {
-		if alias, ok := tx.classAliases[declaration]; ok && tx.enclosingClassDeclarations[declaration] {
+		if alias, ok := tx.classAliases[declaration]; ok && tx.enclosingClassDeclarations.Has(declaration) {
 			clone := alias.Clone(tx.Factory())
 			tx.EmitContext().SetSourceMapRange(clone, node.Loc)
 			tx.EmitContext().SetCommentRange(clone, node.Loc)
@@ -1603,7 +1604,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 	tx.pendingExpressions = nil
 	tx.startClassLexicalEnvironment()
 	original := tx.EmitContext().MostOriginal(node)
-	tx.enclosingClassDeclarations[original] = true
+	tx.enclosingClassDeclarations.Add(original)
 
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks || tx.shouldAlwaysTransformPrivateStaticElements(node) {
 		name := ast.GetNameOfDeclaration(node)
@@ -1640,7 +1641,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 	}
 
 	result := visitor(node, facts)
-	delete(tx.enclosingClassDeclarations, original)
+	tx.enclosingClassDeclarations.Delete(original)
 	tx.endClassLexicalEnvironment()
 	tx.currentClassContainer = savedCurrentClassContainer
 	tx.pendingExpressions = savedPendingExpressions
