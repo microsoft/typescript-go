@@ -395,15 +395,7 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) createSnapshotRelease(snapshot *Snapshot) func() {
 	return func() {
-		if snapshot.Deref() {
-			// The session itself accounts for one reference to the snapshot, and it derefs
-			// in UpdateSnapshot while holding the snapshotMu lock, so the only way to end
-			// up here is for an external caller to release the snapshot after the session
-			// has already dereferenced it and moved to a new snapshot. In other words, we
-			// can assume that `snapshot != s.snapshot`, and therefor there's no way for
-			// anyone else to acquire a reference to this snapshot again.
-			snapshot.dispose(s)
-		}
+		snapshot.Deref(s)
 	}
 }
 
@@ -584,9 +576,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 
 	project := newSnapshot.GetDefaultProject(uri)
 	if project == nil {
-		if newSnapshot.Deref() {
-			newSnapshot.dispose(s)
-		}
+		newSnapshot.Deref(s)
 		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 
@@ -610,14 +600,10 @@ func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
 	if oldSnapshot == baseSnapshot {
 		s.snapshot = newSnapshot
 		s.snapshotMu.Unlock()
-		if oldSnapshot.Deref() {
-			oldSnapshot.dispose(s)
-		}
+		oldSnapshot.Deref(s)
 	} else {
 		s.snapshotMu.Unlock()
-		if newSnapshot.Deref() {
-			newSnapshot.dispose(s)
-		}
+		newSnapshot.Deref(s)
 	}
 }
 
@@ -628,9 +614,8 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
 
-	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
-	if shouldDispose {
-		oldSnapshot.dispose(s)
+	if newSnapshot != oldSnapshot {
+		oldSnapshot.Deref(s)
 	}
 
 	// Enqueue ATA updates if needed
