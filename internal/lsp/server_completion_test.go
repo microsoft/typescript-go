@@ -114,13 +114,14 @@ func TestCompletionAfterFileClose(t *testing.T) {
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 	})
 
-	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 		Position:     lsproto.Position{Line: 0, Character: 1},
 		Context:      &lsproto.CompletionContext{},
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
+	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"))
 }
 
 // Completion is dispatched first; close arrives while the async phase
@@ -160,13 +161,14 @@ func TestCompletionWithConcurrentFileClose(t *testing.T) {
 		})
 	}()
 
-	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 		Position:     lsproto.Position{Line: 0, Character: 1},
 		Context:      &lsproto.CompletionContext{},
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
+	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"))
 }
 
 func TestCompletionForUnopenedFile(t *testing.T) {
@@ -183,13 +185,14 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 	}, prefs)
 
 	cURI := lsconv.FileNameToDocumentURI("/home/projects/c.ts")
-	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: cURI},
 		Position:     lsproto.Position{Line: 0, Character: 5},
 		Context:      &lsproto.CompletionContext{},
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
+	assert.Assert(t, hasCompletionItem(completionItems(resp), "xyz"))
 }
 
 // TestCompletionSnapshotFreezing verifies that the auto-import retry uses the
