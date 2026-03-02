@@ -5702,6 +5702,7 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoLeadingSourceMap == 0 &&
+		p.currentSourceFile != nil &&
 		!ast.PositionIsSynthesized(loc.Pos()) {
 		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos()))
 	}
@@ -5745,7 +5746,7 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 		if hasLoc {
 			pos = loc.Pos()
 		}
-		if pos >= 0 {
+		if pos >= 0 && p.currentSourceFile != nil {
 			pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
 			p.emitSourcePos(p.sourceMapSource, pos)
 		}
