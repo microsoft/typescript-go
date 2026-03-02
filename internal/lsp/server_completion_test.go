@@ -17,7 +17,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.UserPreferences) (*lsptestutil.LSPClient, func() error) {
+func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.UserPreferences) *lsptestutil.LSPClient {
 	t.Helper()
 
 	fs := bundled.WrapFS(vfstest.FromMap(files, false))
@@ -47,6 +47,7 @@ func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.U
 		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 	}, onServerRequest)
+	t.Cleanup(func() { assert.NilError(t, closeClient()) })
 
 	initMsg, _, ok := lsptestutil.SendRequest(t, client, lsproto.InitializeInfo, &lsproto.InitializeParams{
 		Capabilities: &lsproto.ClientCapabilities{},
@@ -59,7 +60,7 @@ func initCompletionClient(t *testing.T, files map[string]string, prefs *lsutil.U
 		Settings: map[string]any{"typescript": prefs},
 	})
 
-	return client, closeClient
+	return client
 }
 
 func completionItems(resp lsproto.CompletionResponse) []*lsproto.CompletionItem {
@@ -81,100 +82,91 @@ func hasCompletionItem(items []*lsproto.CompletionItem, label string) bool {
 	return false
 }
 
-func TestAutoImportCompletionAfterFileClose(t *testing.T) {
+// Verifies that completion succeeds on a file that was already closed
+// by the time the server processes the completion request.
+func TestCompletionAfterFileClose(t *testing.T) {
 	t.Parallel()
 
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
 	}
 
-	// Close arrives before completion in the dispatch queue.
-	// The completion sync phase flushes the queued close, so the captured
-	// snapshot has b.ts removed from overlays.
-	t.Run("close before completion", func(t *testing.T) {
-		t.Parallel()
-		prefs := &lsutil.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		}
-		client, closeClient := initCompletionClient(t, map[string]string{
-			"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-			"/home/projects/a.ts":          "export const someVar = 10;",
-			"/home/projects/b.ts":          "s",
-		}, prefs)
-		defer func() {
-			if err := closeClient(); err != nil {
-				t.Errorf("goroutine error: %v", err)
-			}
-		}()
+	prefs := &lsutil.UserPreferences{
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
+	}
+	client := initCompletionClient(t, map[string]string{
+		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.ts":          "export const someVar = 10;",
+		"/home/projects/b.ts":          "s",
+	}, prefs)
 
-		aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
-		bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
-		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-			TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
-		})
-		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-			TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
-		})
+	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
+	bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
+	})
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
+	})
 
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+	})
+
+	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+		Position:     lsproto.Position{Line: 0, Character: 1},
+		Context:      &lsproto.CompletionContext{},
+	})
+	assert.Assert(t, ok, "expected a response")
+	assert.Assert(t, msg.AsResponse().Error == nil)
+}
+
+// Completion is dispatched first; close arrives while the async phase
+// is (likely) in-flight. The main goroutine sends the completion
+// request (guaranteeing it enters the input channel first), while a
+// background goroutine sends the close after a short delay.
+func TestCompletionWithConcurrentFileClose(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	prefs := &lsutil.UserPreferences{
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
+	}
+	client := initCompletionClient(t, map[string]string{
+		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.ts":          "export const someVar = 10;",
+		"/home/projects/b.ts":          "s",
+	}, prefs)
+
+	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
+	bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
+	})
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
+	})
+
+	go func() {
+		time.Sleep(5 * time.Millisecond)
 		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 			TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 		})
+	}()
 
-		msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-			Position:     lsproto.Position{Line: 0, Character: 1},
-			Context:      &lsproto.CompletionContext{},
-		})
-		assert.Assert(t, ok, "expected a response")
-		assert.Assert(t, msg.AsResponse().Error == nil)
+	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+		Position:     lsproto.Position{Line: 0, Character: 1},
+		Context:      &lsproto.CompletionContext{},
 	})
-
-	// Completion is dispatched first; close arrives while the async phase
-	// is (likely) in-flight. The main goroutine sends the completion
-	// request (guaranteeing it enters the input channel first), while a
-	// background goroutine sends the close after a short delay.
-	t.Run("close during async", func(t *testing.T) {
-		t.Parallel()
-		prefs := &lsutil.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		}
-		client, closeClient := initCompletionClient(t, map[string]string{
-			"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-			"/home/projects/a.ts":          "export const someVar = 10;",
-			"/home/projects/b.ts":          "s",
-		}, prefs)
-		defer func() {
-			if err := closeClient(); err != nil {
-				t.Errorf("goroutine error: %v", err)
-			}
-		}()
-
-		aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
-		bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
-		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-			TextDocument: &lsproto.TextDocumentItem{Uri: aURI, LanguageId: "typescript", Text: "export const someVar = 10;"},
-		})
-		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-			TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
-		})
-
-		go func() {
-			time.Sleep(5 * time.Millisecond)
-			lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
-				TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-			})
-		}()
-
-		msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-			Position:     lsproto.Position{Line: 0, Character: 1},
-			Context:      &lsproto.CompletionContext{},
-		})
-		assert.Assert(t, ok, "expected a response")
-		assert.Assert(t, msg.AsResponse().Error == nil)
-	})
+	assert.Assert(t, ok, "expected a response")
+	assert.Assert(t, msg.AsResponse().Error == nil)
 }
 
 func TestCompletionForUnopenedFile(t *testing.T) {
@@ -185,15 +177,10 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 	}
 
 	prefs := &lsutil.UserPreferences{}
-	client, closeClient := initCompletionClient(t, map[string]string{
+	client := initCompletionClient(t, map[string]string{
 		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
 		"/home/projects/c.ts":          "let xyz = 1;\n",
 	}, prefs)
-	defer func() {
-		if err := closeClient(); err != nil {
-			t.Errorf("goroutine error: %v", err)
-		}
-	}()
 
 	cURI := lsconv.FileNameToDocumentURI("/home/projects/c.ts")
 	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
@@ -202,10 +189,7 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 		Context:      &lsproto.CompletionContext{},
 	})
 	assert.Assert(t, ok, "expected a response")
-	resp := msg.AsResponse()
-	if resp.Error != nil {
-		t.Fatalf("expected no error, got: [%d] %s", resp.Error.Code, resp.Error.Error())
-	}
+	assert.Assert(t, msg.AsResponse().Error == nil)
 }
 
 // TestCompletionSnapshotFreezing verifies that the auto-import retry uses the
@@ -223,16 +207,11 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	}
-	client, closeClient := initCompletionClient(t, map[string]string{
+	client := initCompletionClient(t, map[string]string{
 		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
 		"/home/projects/a.ts":          "export const someVar = 10;",
 		"/home/projects/b.ts":          "someV",
 	}, prefs)
-	defer func() {
-		if err := closeClient(); err != nil {
-			t.Errorf("goroutine error: %v", err)
-		}
-	}()
 
 	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.ts")
 	bURI := lsconv.FileNameToDocumentURI("/home/projects/b.ts")
@@ -259,10 +238,7 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 		Context:      &lsproto.CompletionContext{},
 	})
 	assert.Assert(t, ok, "expected a response")
-	r := msg.AsResponse()
-	if r.Error != nil {
-		t.Fatalf("expected no error, got: [%d] %s", r.Error.Code, r.Error.Error())
-	}
+	assert.Assert(t, msg.AsResponse().Error == nil)
 	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"),
 		"expected someVar in completions (snapshot freezing should preserve original content)")
 }
