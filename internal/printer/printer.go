@@ -5742,14 +5742,14 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 
 	emitFlags := p.emitContext.EmitFlags(contextNode)
 	loc, hasLoc := p.emitContext.TokenSourceMapRange(contextNode, token)
-	if emitFlags&EFNoTokenLeadingSourceMaps == 0 {
-		if hasLoc {
-			pos = loc.Pos()
-		}
-		if pos >= 0 && p.currentSourceFile != nil {
-			pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
-			p.emitSourcePos(p.sourceMapSource, pos)
-		}
+	if hasLoc {
+		pos = loc.Pos()
+	}
+	if pos >= 0 && p.currentSourceFile != nil {
+		pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+	}
+	if emitFlags&EFNoTokenLeadingSourceMaps == 0 && pos >= 0 {
+		p.emitSourcePos(p.sourceMapSource, pos)
 	}
 
 	state := p.sourceMapStatePool.New()
