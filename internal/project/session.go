@@ -573,13 +573,14 @@ func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, 
 // keeps the request bound to its original snapshot. The caller must call the
 // returned release function when done.
 func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, func(), error) {
-	newSnapshot := baseSnapshot.Clone(ctx, SnapshotChange{
+	change := SnapshotChange{
 		reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
 		ResourceRequest: ResourceRequest{
 			Documents:   []lsproto.DocumentUri{uri},
 			AutoImports: uri,
 		},
-	}, baseSnapshot.fs.overlays, s)
+	}
+	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s)
 
 	project := newSnapshot.GetDefaultProject(uri)
 	if project == nil {
@@ -589,8 +590,35 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 
+	// Extra ref for the background adoption task.
+	newSnapshot.Ref()
+	s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
+		s.adoptSnapshotChange(baseSnapshot, newSnapshot)
+	})
+
 	release := s.createSnapshotRelease(newSnapshot)
 	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), release, nil
+}
+
+// adoptSnapshotChange promotes a cloned snapshot as the session's current
+// snapshot so future requests benefit from the work already done. If the
+// session has moved on, the snapshot is discarded; the next request needing
+// auto-imports will redo the work on the latest snapshot.
+func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
+	s.snapshotMu.Lock()
+	oldSnapshot := s.snapshot
+	if oldSnapshot == baseSnapshot {
+		s.snapshot = newSnapshot
+		s.snapshotMu.Unlock()
+		if oldSnapshot.Deref() {
+			oldSnapshot.dispose(s)
+		}
+	} else {
+		s.snapshotMu.Unlock()
+		if newSnapshot.Deref() {
+			newSnapshot.dispose(s)
+		}
+	}
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
