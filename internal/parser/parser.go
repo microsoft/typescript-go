@@ -109,6 +109,15 @@ func newParser() *Parser {
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
+// missingListNodes is a sentinel backing array used to distinguish "missing" node lists
+// (where the expected opening token was not found) from ordinary empty node lists.
+// This ports TypeScript's MissingList / isMissingList concept.
+var missingListNodes = make([]*ast.Node, 0, 1)
+
+func isMissingNodeList(list *ast.NodeList) bool {
+	return list != nil && cap(list.Nodes) > 0 && &list.Nodes[:1][0] == &missingListNodes[:1][0]
+}
+
 var parserPool = sync.Pool{
 	New: func() any {
 		return newParser()
@@ -656,7 +665,7 @@ func (p *Parser) parseEmptyNodeList() *ast.NodeList {
 
 func (p *Parser) createMissingList() *ast.NodeList {
 	result := p.parseEmptyNodeList()
-	result.SetIsMissing()
+	result.Nodes = missingListNodes
 	return result
 }
 
@@ -4386,7 +4395,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return node.FunctionLikeData().Parameters.IsMissing() || typeHasArrowFunctionBlockingParseError(node.Type())
+		return isMissingNodeList(node.FunctionLikeData().Parameters) || typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.Type())
 	}

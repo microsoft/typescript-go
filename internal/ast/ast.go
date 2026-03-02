@@ -178,9 +178,8 @@ func cloneNode(updated *Node, original *Node, hooks NodeFactoryHooks) *Node {
 // NodeList
 
 type NodeList struct {
-	Loc       core.TextRange
-	Nodes     []*Node
-	isMissing bool
+	Loc   core.TextRange
+	Nodes []*Node
 }
 
 func (f *NodeFactory) NewNodeList(nodes []*Node) *NodeList {
@@ -192,14 +191,6 @@ func (f *NodeFactory) NewNodeList(nodes []*Node) *NodeList {
 
 func (list *NodeList) Pos() int { return list.Loc.Pos() }
 func (list *NodeList) End() int { return list.Loc.End() }
-
-func (list *NodeList) IsMissing() bool {
-	return list != nil && list.isMissing
-}
-
-func (list *NodeList) SetIsMissing() {
-	list.isMissing = true
-}
 
 func (list *NodeList) HasTrailingComma() bool {
 	if len(list.Nodes) == 0 {
