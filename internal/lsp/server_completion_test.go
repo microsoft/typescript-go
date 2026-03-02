@@ -187,13 +187,13 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 	prefs := &lsutil.UserPreferences{}
 	client := initCompletionClient(t, map[string]string{
 		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/c.ts":          "let xyz = 1;\n",
+		"/home/projects/c.ts":          "let xyz = 1;\nxy",
 	}, prefs)
 
 	cURI := lsconv.FileNameToDocumentURI("/home/projects/c.ts")
 	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: cURI},
-		Position:     lsproto.Position{Line: 0, Character: 5},
+		Position:     lsproto.Position{Line: 1, Character: 2},
 		Context:      &lsproto.CompletionContext{},
 	})
 	assert.Assert(t, ok, "expected a response")
