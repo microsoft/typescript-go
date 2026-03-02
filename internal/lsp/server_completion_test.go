@@ -73,13 +73,13 @@ func completionItems(resp lsproto.CompletionResponse) []*lsproto.CompletionItem 
 	return nil
 }
 
-func hasCompletionItem(items []*lsproto.CompletionItem, label string) bool {
+func findCompletionItem(items []*lsproto.CompletionItem, label string) *lsproto.CompletionItem {
 	for _, item := range items {
 		if item.Label == label {
-			return true
+			return item
 		}
 	}
-	return false
+	return nil
 }
 
 // Verifies that completion succeeds on a file that was already closed
@@ -121,7 +121,10 @@ func TestCompletionAfterFileClose(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"))
+	item := findCompletionItem(completionItems(resp), "someVar")
+	assert.Assert(t, item != nil)
+	assert.Assert(t, item.Data != nil && item.Data.AutoImport != nil)
+	assert.Equal(t, item.Data.AutoImport.ModuleSpecifier, "./a")
 }
 
 // Completion is dispatched first; close arrives while the async phase
@@ -168,7 +171,10 @@ func TestCompletionWithConcurrentFileClose(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"))
+	item := findCompletionItem(completionItems(resp), "someVar")
+	assert.Assert(t, item != nil)
+	assert.Assert(t, item.Data != nil && item.Data.AutoImport != nil)
+	assert.Equal(t, item.Data.AutoImport.ModuleSpecifier, "./a")
 }
 
 func TestCompletionForUnopenedFile(t *testing.T) {
@@ -192,7 +198,38 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, hasCompletionItem(completionItems(resp), "xyz"))
+	assert.Assert(t, findCompletionItem(completionItems(resp), "xyz") != nil)
+}
+
+func TestAutoImportCompletionForUnopenedFile(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	prefs := &lsutil.UserPreferences{
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
+	}
+	client := initCompletionClient(t, map[string]string{
+		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.ts":          "export const someVar = 10;",
+		"/home/projects/c.ts":          "s",
+	}, prefs)
+
+	cURI := lsconv.FileNameToDocumentURI("/home/projects/c.ts")
+	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: cURI},
+		Position:     lsproto.Position{Line: 0, Character: 1},
+		Context:      &lsproto.CompletionContext{},
+	})
+	assert.Assert(t, ok, "expected a response")
+	assert.Assert(t, msg.AsResponse().Error == nil)
+	item := findCompletionItem(completionItems(resp), "someVar")
+	assert.Assert(t, item != nil)
+	assert.Assert(t, item.Data != nil && item.Data.AutoImport != nil)
+	assert.Equal(t, item.Data.AutoImport.ModuleSpecifier, "./a")
 }
 
 // TestCompletionSnapshotFreezing verifies that the auto-import retry uses the
@@ -242,6 +279,8 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, hasCompletionItem(completionItems(resp), "someVar"),
-		"expected someVar in completions (snapshot freezing should preserve original content)")
+	item := findCompletionItem(completionItems(resp), "someVar")
+	assert.Assert(t, item != nil, "expected someVar in completions (snapshot freezing should preserve original content)")
+	assert.Assert(t, item.Data != nil && item.Data.AutoImport != nil)
+	assert.Equal(t, item.Data.AutoImport.ModuleSpecifier, "./a")
 }
