@@ -13,26 +13,26 @@ func TestFindAllRefsParameterPropertyWithConflictingMember(t *testing.T) {
 	const content = `
 // @filename: c1.ts
 class C1 {
-  x() {}
-  constructor(public /*1*/x: number) {
-    x++;
+  [|x|]() {}
+  constructor(public [|x|]: number) {
+    [|x|]++;
   }
 }
-new C1(1).x;
+new C1(1).[|x|];
 
 // @filename: c2.ts
 interface C2 {
-  get x(): void
+  get [|x|](): void
 }
 class C2 {
-  constructor(public /*2*/x: number) {
-    x++;
+  constructor(public [|x|]: number) {
+    [|x|]++;
   }
 }
-new C2(1).x;
+new C2(1).[|x|];
 `
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyBaselineFindAllReferences(t, "1", "2")
+	f.VerifyBaselineFindAllReferences(t)
 }
