@@ -115,23 +115,9 @@ func moveRangePastModifiers(node *ast.Node) core.TextRange {
 	if lastModifier != nil && !ast.PositionIsSynthesized(lastModifier.End()) {
 		return core.NewTextRange(lastModifier.End(), node.End())
 	}
-	return moveRangePastDecorators(node)
+	return transformers.MoveRangePastDecorators(node)
 }
 
-func moveRangePastDecorators(node *ast.Node) core.TextRange {
-	var lastDecorator *ast.Node
-	if ast.CanHaveModifiers(node) {
-		nodes := node.ModifierNodes()
-		if nodes != nil {
-			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
-		}
-	}
-
-	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
-		return core.NewTextRange(lastDecorator.End(), node.End())
-	}
-	return node.Loc
-}
 
 func (tx *LegacyDecoratorsTransformer) finishClassElement(updated *ast.Node, original *ast.Node) *ast.Node {
 	if updated != original {

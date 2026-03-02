@@ -1,12 +1,49 @@
 package estransforms
 
 import (
+	"fmt"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
+
+// Class/Decorator evaluation order, as it pertains to this transformer:
+//
+// 1. Class decorators are evaluated outside of the private name scope of the class.
+//    - 15.8.20 RS: BindingClassDeclarationEvaluation
+//    - 15.8.21 RS: Evaluation
+//    - 8.3.5 RS: NamedEvaluation
+// 2. ClassHeritage clause is evaluated outside of the private name scope of the class.
+//    - 15.8.19 RS: ClassDefinitionEvaluation, Step 8.c.
+// 3. The name of the class is assigned.
+// 4. For each member:
+//    a. Member Decorators are evaluated.
+//       - 15.8.19 RS: ClassDefinitionEvaluation, Step 23.
+//       - Probably 15.7.13 RS: ClassElementEvaluation, but it's missing from spec text.
+//    b. Computed Property name is evaluated
+//       - 15.8.19 RS: ClassDefinitionEvaluation, Step 23.
+//       - 15.8.15 RS: ClassFieldDefinitionEvaluation, Step 1.
+//       - 15.4.5 RS: MethodDefinitionEvaluation, Step 1.
+// 5. Static non-field (method/getter/setter/auto-accessor) element decorators are applied
+// 6. Non-static non-field (method/getter/setter/auto-accessor) element decorators are applied
+// 7. Static field (excl. auto-accessor) element decorators are applied
+// 8. Non-static field (excl. auto-accessor) element decorators are applied
+// 9. Class decorators are applied
+// 10. Class binding is initialized
+// 11. Static method extra initializers are evaluated
+// 12. Static fields are initialized (incl. extra initializers) and static blocks are evaluated
+// 13. Class extra initializers are evaluated
+//
+// Class constructor evaluation order, as it pertains to this transformer:
+//
+// 1. Instance method extra initializers are evaluated
+// 2. For each instance field/auto-accessor:
+//    a. The field is initialized and defined on the instance.
+//    b. Extra initializers for the field are evaluated.
 
 // lexicalEntryKind discriminates the kind of lexical scope entry.
 type lexicalEntryKind int
@@ -32,24 +69,24 @@ type lexicalEntry struct {
 
 // memberInfo stores decoration-related data for a single class element.
 type memberInfo struct {
-	memberDecoratorsName        *ast.IdentifierNode
-	memberInitializersName      *ast.IdentifierNode
-	memberExtraInitializersName *ast.IdentifierNode
+	memberDecoratorsName        *ast.IdentifierNode // used in class definition step 4.a
+	memberInitializersName      *ast.IdentifierNode // used in class definition step 12 and constructor evaluation step 2.a
+	memberExtraInitializersName *ast.IdentifierNode // used in class definition step 12 and constructor evaluation step 2.b
 	memberDescriptorName        *ast.IdentifierNode
 }
 
 // classInfo stores all transformation data for a single decorated class.
 type classInfo struct {
 	class                                 *ast.Node
-	classDecoratorsName                   *ast.IdentifierNode
-	classDescriptorName                   *ast.IdentifierNode
-	classExtraInitializersName            *ast.IdentifierNode
-	classThis                             *ast.IdentifierNode
-	classSuper                            *ast.IdentifierNode
+	classDecoratorsName                   *ast.IdentifierNode // used in class definition step 2
+	classDescriptorName                   *ast.IdentifierNode // used in class definition step 10
+	classExtraInitializersName            *ast.IdentifierNode // used in class definition step 13
+	classThis                             *ast.IdentifierNode // `_classThis`, if needed.
+	classSuper                            *ast.IdentifierNode // `_classSuper`, if needed.
 	metadataReference                     *ast.IdentifierNode
-	memberInfos                           map[*ast.Node]*memberInfo
-	instanceMethodExtraInitializersName   *ast.IdentifierNode
-	staticMethodExtraInitializersName     *ast.IdentifierNode
+	memberInfos                           map[*ast.Node]*memberInfo // used in class definition step 4.a, 12, and constructor evaluation
+	instanceMethodExtraInitializersName   *ast.IdentifierNode       // used in constructor evaluation step 1
+	staticMethodExtraInitializersName     *ast.IdentifierNode       // used in class definition step 11
 	staticNonFieldDecorationStatements    []*ast.Statement
 	nonStaticNonFieldDecorationStatements []*ast.Statement
 	staticFieldDecorationStatements       []*ast.Statement
@@ -63,23 +100,36 @@ type classInfo struct {
 
 type esDecoratorTransformer struct {
 	transformers.Transformer
-	compilerOptions    *core.CompilerOptions
-	top                *lexicalEntry
-	classInfoStack     *classInfo
-	classThis          *ast.IdentifierNode
-	classSuper         *ast.IdentifierNode
-	pendingExpressions []*ast.Expression
-	discardedVisitor   *ast.NodeVisitor
+	compilerOptions         *core.CompilerOptions
+	top                     *lexicalEntry
+	classInfoStack          *classInfo
+	classThis               *ast.IdentifierNode
+	classSuper              *ast.IdentifierNode
+	pendingExpressions              []*ast.Expression
+	discardedVisitor                *ast.NodeVisitor
+	modifierVisitorObj              *ast.NodeVisitor
+	exportStrippingModifierVisitor  *ast.NodeVisitor
+	classElementVisitorObj          *ast.NodeVisitor
+	nonConstructorClassElementVisitor *ast.NodeVisitor
+	constructorClassElementVisitor   *ast.NodeVisitor
+	arrayAssignmentVisitor          *ast.NodeVisitor
+	objectAssignmentVisitor         *ast.NodeVisitor
 }
 
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &esDecoratorTransformer{compilerOptions: opts.CompilerOptions}
 	result := tx.NewTransformer(tx.visit, opts.Context)
-	tx.discardedVisitor = tx.EmitContext().NewNodeVisitor(tx.discardedValueVisit)
+	ec := tx.EmitContext()
+	tx.discardedVisitor = ec.NewNodeVisitor(tx.discardedValueVisit)
+	tx.modifierVisitorObj = ec.NewNodeVisitor(tx.modifierVisitor)
+	tx.exportStrippingModifierVisitor = ec.NewNodeVisitor(tx.exportStrippingModifierVisit)
+	tx.classElementVisitorObj = ec.NewNodeVisitor(tx.classElementVisitor)
+	tx.nonConstructorClassElementVisitor = ec.NewNodeVisitor(tx.nonConstructorClassElementVisit)
+	tx.constructorClassElementVisitor = ec.NewNodeVisitor(tx.constructorClassElementVisit)
+	tx.arrayAssignmentVisitor = ec.NewNodeVisitor(tx.visitArrayAssignmentElement)
+	tx.objectAssignmentVisitor = ec.NewNodeVisitor(tx.visitObjectAssignmentElement)
 	return result
 }
-
-// --- Lexical environment stack management ---
 
 func (tx *esDecoratorTransformer) updateState() {
 	tx.classInfoStack = nil
@@ -98,7 +148,7 @@ func (tx *esDecoratorTransformer) updateState() {
 		tx.classThis = tx.top.classThisData
 		tx.classSuper = tx.top.classSuperData
 	case lexicalEntryKindName:
-		// name -> class-element -> class -> ???
+		// name -> class-element -> class
 		if tx.top.next != nil && tx.top.next.next != nil && tx.top.next.next.next != nil {
 			grandparent := tx.top.next.next.next
 			if grandparent.kind == lexicalEntryKindClassElement {
@@ -124,32 +174,40 @@ func (tx *esDecoratorTransformer) enterClass(ci *classInfo) {
 }
 
 func (tx *esDecoratorTransformer) exitClass() {
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClass, "Incorrect value for top.kind.", fmt.Sprintf("Expected top.kind to be 'class' but got '%d' instead.", tx.top.kind))
 	tx.pendingExpressions = tx.top.savedPendingExpressions
 	tx.top = tx.top.next
 	tx.updateState()
 }
 
 func (tx *esDecoratorTransformer) enterClassElement(node *ast.Node) {
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClass, "Incorrect value for top.kind.", fmt.Sprintf("Expected top.kind to be 'class' but got '%d' instead.", tx.top.kind))
 	entry := &lexicalEntry{
 		kind: lexicalEntryKindClassElement,
 		next: tx.top,
 	}
-	if ast.IsClassStaticBlockDeclaration(node) || (ast.IsPropertyDeclaration(node) && ast.HasStaticModifier(node)) {
+	if ast.IsClassStaticBlockDeclaration(node) || ast.IsPropertyDeclaration(node) && ast.HasStaticModifier(node) {
 		if tx.top != nil && tx.top.classInfoData != nil {
 			entry.classThisData = tx.top.classInfoData.classThis
 			entry.classSuperData = tx.top.classInfoData.classSuper
 		}
+	} else {
+		entry.classThisData = nil
+		entry.classSuperData = nil
 	}
 	tx.top = entry
 	tx.updateState()
 }
 
 func (tx *esDecoratorTransformer) exitClassElement() {
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClassElement, "Incorrect value for top.kind.", fmt.Sprintf("Expected top.kind to be 'class-element' but got '%d' instead.", tx.top.kind))
+	debug.Assert(tx.top.next != nil && tx.top.next.kind == lexicalEntryKindClass, "Incorrect value for top.next.kind.", fmt.Sprintf("Expected top.next.kind to be 'class' but got '%d' instead.", tx.top.next.kind))
 	tx.top = tx.top.next
 	tx.updateState()
 }
 
 func (tx *esDecoratorTransformer) enterName() {
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClassElement, "Incorrect value for top.kind.", fmt.Sprintf("Expected top.kind to be 'class-element' but got '%d' instead.", tx.top.kind))
 	tx.top = &lexicalEntry{
 		kind: lexicalEntryKindName,
 		next: tx.top,
@@ -158,12 +216,14 @@ func (tx *esDecoratorTransformer) enterName() {
 }
 
 func (tx *esDecoratorTransformer) exitName() {
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindName, "Incorrect value for top.kind.", fmt.Sprintf("Expected top.kind to be 'name' but got '%d' instead.", tx.top.kind))
 	tx.top = tx.top.next
 	tx.updateState()
 }
 
 func (tx *esDecoratorTransformer) enterOther() {
 	if tx.top != nil && tx.top.kind == lexicalEntryKindOther {
+		debug.Assert(len(tx.pendingExpressions) == 0)
 		tx.top.depth++
 	} else {
 		tx.top = &lexicalEntry{
@@ -177,7 +237,9 @@ func (tx *esDecoratorTransformer) enterOther() {
 }
 
 func (tx *esDecoratorTransformer) exitOther() {
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindOther, "Incorrect value for top.kind.", fmt.Sprintf("Expected top.kind to be 'other' but got '%d' instead.", tx.top.kind))
 	if tx.top.depth > 0 {
+		debug.Assert(len(tx.pendingExpressions) == 0)
 		tx.top.depth--
 	} else {
 		tx.pendingExpressions = tx.top.savedPendingExpressions
@@ -185,8 +247,6 @@ func (tx *esDecoratorTransformer) exitOther() {
 		tx.updateState()
 	}
 }
-
-// --- Visitor dispatch ---
 
 func (tx *esDecoratorTransformer) shouldVisitNode(node *ast.Node) bool {
 	return node.SubtreeFacts()&ast.SubtreeContainsDecorators != 0 ||
@@ -200,11 +260,13 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 	}
 	switch node.Kind {
 	case ast.KindDecorator:
+		// Decorators are elided. They should normally be handled by `modifierVisitor`.
 		return nil
 	case ast.KindClassDeclaration:
 		return tx.visitClassDeclaration(node.AsClassDeclaration())
 	case ast.KindClassExpression:
 		return tx.visitClassExpression(node.AsClassExpression())
+	// Support NamedEvaluation to ensure the correct class name for class expressions.
 	case ast.KindParameter, ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindBindingElement:
 		return tx.visitNamedEvaluationSite(node, node.Initializer())
 	case ast.KindBinaryExpression:
@@ -231,6 +293,9 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitElementAccessExpression(node)
 	case ast.KindComputedPropertyName:
 		return tx.visitComputedPropertyName(node)
+	case ast.KindConstructor, ast.KindPropertyDeclaration, ast.KindClassStaticBlockDeclaration:
+		debug.Fail("Not supported outside of a class. Use 'classElementVisitor' instead.")
+		return nil
 	case ast.KindMethodDeclaration,
 		ast.KindSetAccessor,
 		ast.KindGetAccessor,
@@ -275,7 +340,10 @@ func (tx *esDecoratorTransformer) classElementVisitor(node *ast.Node) *ast.Node 
 		return tx.visitPropertyDeclaration(node)
 	case ast.KindClassStaticBlockDeclaration:
 		return tx.visitClassStaticBlockDeclaration(node)
+	case ast.KindSemicolonClassElement:
+		return tx.visit(node)
 	default:
+		debug.Fail("Unexpected class element kind.")
 		return tx.visit(node)
 	}
 }
@@ -287,34 +355,40 @@ func (tx *esDecoratorTransformer) modifierVisitor(node *ast.Node) *ast.Node {
 	return node
 }
 
-// --- Helper utilities ---
+func (tx *esDecoratorTransformer) nonConstructorClassElementVisit(node *ast.Node) *ast.Node {
+	if ast.IsConstructorDeclaration(node) {
+		return node // skip constructors in pass 1
+	}
+	return tx.classElementVisitor(node)
+}
+
+func (tx *esDecoratorTransformer) constructorClassElementVisit(node *ast.Node) *ast.Node {
+	if ast.IsConstructorDeclaration(node) {
+		return tx.classElementVisitor(node)
+	}
+	return node
+}
+
+func (tx *esDecoratorTransformer) exportStrippingModifierVisit(node *ast.Node) *ast.Node {
+	if node.Kind == ast.KindExportKeyword {
+		return nil
+	}
+	return tx.modifierVisitor(node)
+}
 
 func isDecoratedClassLike(node *ast.Node) bool {
 	return ast.ClassOrConstructorParameterIsDecorated(false, node) ||
 		ast.ChildIsDecorated(false, node, nil)
 }
 
-func moveRangePastDecorators(node *ast.Node) core.TextRange {
-	var lastDecorator *ast.Node
-	if ast.CanHaveModifiers(node) {
-		nodes := node.ModifierNodes()
-		if nodes != nil {
-			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
-		}
-	}
-	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
-		return core.NewTextRange(lastDecorator.End(), node.End())
-	}
-	return node.Loc
-}
 
-func getHelperVariableName(node *ast.Node) string {
+func getHelperVariableName(ec *printer.EmitContext, node *ast.Node) string {
 	name := node.Name()
 	declarationName := ""
 	switch {
-	case name != nil && ast.IsIdentifier(name):
+	case name != nil && ast.IsIdentifier(name) && !transformers.IsGeneratedIdentifier(ec, name):
 		declarationName = name.Text()
-	case name != nil && ast.IsPrivateIdentifier(name):
+	case name != nil && ast.IsPrivateIdentifier(name) && !ec.HasAutoGenerateInfo(name):
 		if text := name.Text(); len(text) > 1 {
 			declarationName = text[1:]
 		}
@@ -343,7 +417,7 @@ func getHelperVariableName(node *ast.Node) string {
 
 func (tx *esDecoratorTransformer) createHelperVariable(node *ast.Node, suffix string) *ast.IdentifierNode {
 	return tx.Factory().NewUniqueNameEx(
-		getHelperVariableName(node)+"_"+suffix,
+		getHelperVariableName(tx.EmitContext(), node)+"_"+suffix,
 		printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsReservedInNestedScopes},
 	)
 }
@@ -387,21 +461,6 @@ func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, memb
 	return stmts
 }
 
-// getAllDecoratorsOfClassElement returns the decorators for a class element (ES decorators).
-func getAllDecoratorsOfClassElement(member *ast.Node) []*ast.Node {
-	switch member.Kind {
-	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
-		if member.Body() == nil {
-			return nil
-		}
-		return member.Decorators()
-	case ast.KindPropertyDeclaration:
-		return member.Decorators()
-	default:
-		return nil
-	}
-}
-
 func (tx *esDecoratorTransformer) transformDecorator(decorator *ast.Node) *ast.Expression {
 	expression := tx.Visitor().VisitNode(decorator.AsDecorator().Expression)
 	tx.EmitContext().SetEmitFlags(expression, printer.EFNoComments)
@@ -416,22 +475,25 @@ func (tx *esDecoratorTransformer) transformDecorator(decorator *ast.Node) *ast.E
 	return expression
 }
 
-// createCallBinding is a simplified version of the factory's createCallBinding.
-func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) (target *ast.Expression, thisArg *ast.Expression) {
+func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) (*ast.Expression, *ast.Expression) {
+	f := tx.Factory()
 	callee := ast.SkipOuterExpressions(expression, ast.OEKAll)
 	if ast.IsSuperProperty(callee) {
-		return callee, tx.Factory().NewThisExpression()
+		return callee, f.NewThisExpression()
 	}
 	if callee.Kind == ast.KindSuperKeyword {
-		return callee, tx.Factory().NewThisExpression()
+		return callee, f.NewThisExpression()
+	}
+	if tx.EmitContext().EmitFlags(callee)&printer.EFHelperName != 0 {
+		return callee, f.NewVoidZeroExpression()
 	}
 	if ast.IsPropertyAccessExpression(callee) {
 		pa := callee.AsPropertyAccessExpression()
 		if tx.shouldBeCapturedInTempVariable(pa.Expression) {
-			thisArg = tx.Factory().NewTempVariable()
-			assign := tx.Factory().NewAssignmentExpression(thisArg, pa.Expression)
+			thisArg := f.NewTempVariable()
+			assign := f.NewAssignmentExpression(thisArg, pa.Expression)
 			assign.Loc = pa.Expression.Loc
-			target = tx.Factory().NewPropertyAccessExpression(assign, nil, pa.Name(), ast.NodeFlagsNone)
+			target := f.NewPropertyAccessExpression(assign, nil, pa.Name(), ast.NodeFlagsNone)
 			target.Loc = callee.Loc
 			return target, thisArg
 		}
@@ -440,24 +502,35 @@ func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) 
 	if ast.IsElementAccessExpression(callee) {
 		ea := callee.AsElementAccessExpression()
 		if tx.shouldBeCapturedInTempVariable(ea.Expression) {
-			thisArg = tx.Factory().NewTempVariable()
-			assign := tx.Factory().NewAssignmentExpression(thisArg, ea.Expression)
+			thisArg := f.NewTempVariable()
+			assign := f.NewAssignmentExpression(thisArg, ea.Expression)
 			assign.Loc = ea.Expression.Loc
-			target = tx.Factory().NewElementAccessExpression(assign, nil, ea.ArgumentExpression, ast.NodeFlagsNone)
+			target := f.NewElementAccessExpression(assign, nil, ea.ArgumentExpression, ast.NodeFlagsNone)
 			target.Loc = callee.Loc
 			return target, thisArg
 		}
 		return callee, ea.Expression
 	}
-	return expression, tx.Factory().NewVoidZeroExpression()
+	return expression, f.NewVoidZeroExpression()
 }
 
 func (tx *esDecoratorTransformer) shouldBeCapturedInTempVariable(node *ast.Expression) bool {
-	// Capture identifiers that are not simple (i.e., not just a name or "this")
-	if ast.IsIdentifier(node) || node.Kind == ast.KindThisKeyword {
+	// This is a simplified version of the general shouldBeCapturedInTempVariable from
+	// nodeFactory with cacheIdentifiers=true, since createCallBinding in this transform
+	// always caches identifiers.
+	target := ast.SkipParentheses(node)
+	switch target.Kind {
+	case ast.KindIdentifier:
+		// cacheIdentifiers is always true for this transform's createCallBinding
+		return true
+	case ast.KindThisKeyword,
+		ast.KindNumericLiteral,
+		ast.KindBigIntLiteral,
+		ast.KindStringLiteral:
 		return false
+	default:
+		return true
 	}
-	return true
 }
 
 func (tx *esDecoratorTransformer) transformAllDecoratorsOfDeclaration(decorators []*ast.Node) []*ast.Expression {
@@ -471,8 +544,6 @@ func (tx *esDecoratorTransformer) transformAllDecoratorsOfDeclaration(decorators
 	return result
 }
 
-// --- createClassInfo: creates bookkeeping struct for class transformation ---
-
 func (tx *esDecoratorTransformer) createClassInfo(node *ast.Node) *classInfo {
 	f := tx.Factory()
 	ci := &classInfo{
@@ -482,11 +553,16 @@ func (tx *esDecoratorTransformer) createClassInfo(node *ast.Node) *classInfo {
 		}),
 	}
 
+	// Before visiting we perform a first pass to collect information we'll need
+	// as we descend.
+
 	// If the class itself is decorated, create a _classThis binding
-	if ast.HasDecorators(node) && ast.NodeCanBeDecorated(false, node, nil, nil) {
+	if ast.NodeIsDecorated(false, node, nil, nil) {
 		needsUniqueClassThis := core.Some(node.Members(), func(member *ast.Node) bool {
 			return (ast.IsPrivateIdentifierClassElementDeclaration(member) || ast.IsAutoAccessorPropertyDeclaration(member)) && ast.HasStaticModifier(member)
 		})
+		// We do not mark _classThis as FileLevel if it may be reused by class private fields, which requires the
+		// ability access the captured `_classThis` of outer scopes.
 		var flags printer.GeneratedIdentifierFlags = printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel
 		if needsUniqueClassThis {
 			flags = printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsReservedInNestedScopes
@@ -512,7 +588,7 @@ func (tx *esDecoratorTransformer) createClassInfo(node *ast.Node) *classInfo {
 					if nameRange != nil {
 						tx.EmitContext().SetSourceMapRange(initializer, nameRange.Loc)
 					} else {
-						tx.EmitContext().SetSourceMapRange(initializer, moveRangePastDecorators(node))
+						tx.EmitContext().SetSourceMapRange(initializer, transformers.MoveRangePastDecorators(node))
 					}
 					ci.pendingStaticInitializers = append(ci.pendingStaticInitializers, initializer)
 				}
@@ -526,7 +602,7 @@ func (tx *esDecoratorTransformer) createClassInfo(node *ast.Node) *classInfo {
 					if nameRange != nil {
 						tx.EmitContext().SetSourceMapRange(initializer, nameRange.Loc)
 					} else {
-						tx.EmitContext().SetSourceMapRange(initializer, moveRangePastDecorators(node))
+						tx.EmitContext().SetSourceMapRange(initializer, transformers.MoveRangePastDecorators(node))
 					}
 					ci.pendingInstanceInitializers = append(ci.pendingInstanceInitializers, initializer)
 				}
@@ -562,15 +638,14 @@ func (tx *esDecoratorTransformer) createClassInfo(node *ast.Node) *classInfo {
 	return ci
 }
 
-// --- transformClassLike: the main transformation workhorse ---
-
 func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expression {
 	f := tx.Factory()
 	ec := tx.EmitContext()
 
 	ec.StartVariableEnvironment()
 
-	// When a class has class decorators, if it doesn't have an assigned name, give it one of "".
+	// When a class has class decorators we end up transforming it into a statement that would otherwise give it an
+	// assigned name. If the class doesn't have an assigned name, we'll give it an assigned name of `""`.
 	if !classHasDeclaredOrExplicitlyAssignedName(ec, node) && ast.ClassOrConstructorParameterIsDecorated(false, node) {
 		node = injectClassNamedEvaluationHelperBlockIfMissing(ec, node, f.NewStringLiteral("", 0), nil)
 	}
@@ -583,9 +658,18 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	var syntheticConstructor *ast.Node
 	var heritageClauses *ast.NodeList
 
-	// 1. Class decorators are evaluated outside the private name scope of the class
+	// 1. Class decorators are evaluated outside the private name scope of the class.
+	//
+	// - Since class decorators don't have privileged access to private names defined inside the class,
+	//   they must be evaluated outside of the class body.
+	// - Since a class decorator can replace the class constructor, we must define a variable to keep track
+	//   of the mutated class.
+	// - Since a class decorator can add extra initializers, we must define a variable to keep track of
+	//   extra initializers.
 	classDecorators := tx.transformAllDecoratorsOfDeclaration(node.Decorators())
 	if len(classDecorators) > 0 {
+		debug.Assert(ci.classThis != nil)
+
 		ci.classDecoratorsName = f.NewUniqueNameEx("_classDecorators", printer.AutoGenerateOptions{
 			Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel,
 		})
@@ -623,11 +707,13 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	}
 
 	if extendsExpression != nil {
+		// Rewrite `super` in static initializers so that we can use the correct `this`.
 		ci.classSuper = f.NewUniqueNameEx("_classSuper", printer.AutoGenerateOptions{
 			Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel,
 		})
 
-		// Ensure we do not give the class or function an assigned name
+		// Ensure we do not give the class or function an assigned name due to the variable by prefixing it
+		// with `0, `.
 		unwrapped := ast.SkipOuterExpressions(extendsExpression, ast.OEKAll)
 		safeExtendsExpression := extendsExpression
 		if (ast.IsClassExpression(unwrapped) && unwrapped.Name() == nil) ||
@@ -664,29 +750,23 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	// We visit members in two passes:
 	// - The first pass visits methods, accessors, and fields to collect decorators and computed property names.
 	// - The second pass visits the constructor to add instance initializers.
+	//
+	// NOTE: If there are no constructors, but there are instance initializers, a synthetic constructor is added.
 	tx.enterClass(ci)
 
 	leadingBlockStatements = append(leadingBlockStatements, tx.createMetadata(ci.metadataReference, ci.classSuper))
 
 	// Since the constructor can appear anywhere in the class body and its transform depends on other class elements,
 	// we must first visit all non-constructor members, then visit the constructor, all while maintaining document order.
-	nonConstructorVisitor := tx.EmitContext().NewNodeVisitor(func(n *ast.Node) *ast.Node {
-		if ast.IsConstructorDeclaration(n) {
-			return n // skip constructors in pass 1
-		}
-		return tx.classElementVisitor(n)
-	})
-	members := nonConstructorVisitor.VisitNodes(node.MemberList())
-	constructorVisitor := tx.EmitContext().NewNodeVisitor(func(n *ast.Node) *ast.Node {
-		if ast.IsConstructorDeclaration(n) {
-			return tx.classElementVisitor(n)
-		}
-		return n
-	})
-	members = constructorVisitor.VisitNodes(members)
+	members := tx.nonConstructorClassElementVisitor.VisitNodes(node.MemberList())
+	members = tx.constructorClassElementVisitor.VisitNodes(members)
 
 	// Handle pending expressions (computed property names and decorator evaluations)
 	if len(tx.pendingExpressions) > 0 {
+		// If a pending expression contains a lexical `this`, we'll need to capture the lexical `this` of the
+		// container and transform it in the expression. This ensures we use the correct `this` in the resulting
+		// class `static` block. We don't use substitution here because the size of the tree we are visiting
+		// is likely to be small and doesn't justify the complexity of introducing substitution.
 		var outerThis *ast.IdentifierNode
 		for _, expr := range tx.pendingExpressions {
 			// If a pending expression contains lexical `this`, capture it
@@ -788,7 +868,7 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 			ci.classExtraInitializersName,
 		)
 		esDecorateStatement := f.NewExpressionStatement(esDecorateHelper)
-		ec.SetSourceMapRange(esDecorateStatement, moveRangePastDecorators(node))
+		ec.SetSourceMapRange(esDecorateStatement, transformers.MoveRangePastDecorators(node))
 		leadingBlockStatements = append(leadingBlockStatements, esDecorateStatement)
 
 		// C = _classThis = _classDescriptor.value
@@ -819,18 +899,18 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		if node.Name() != nil {
 			ec.SetSourceMapRange(runClassInitializersStatement, node.Name().Loc)
 		} else {
-			ec.SetSourceMapRange(runClassInitializersStatement, moveRangePastDecorators(node))
+			ec.SetSourceMapRange(runClassInitializersStatement, transformers.MoveRangePastDecorators(node))
 		}
 		trailingBlockStatements = append(trailingBlockStatements, runClassInitializersStatement)
 	}
 
-	// If there are no static initializers, combine leading and trailing
+	// If there are no other static initializers to run, combine the leading and trailing block statements
 	if len(leadingBlockStatements) > 0 && len(trailingBlockStatements) > 0 && !ci.hasStaticInitializers {
 		leadingBlockStatements = append(leadingBlockStatements, trailingBlockStatements...)
 		trailingBlockStatements = nil
 	}
 
-	// Create leading static block
+	// prepare a leading `static {}` block, if necessary
 	var leadingStaticBlock *ast.Node
 	if len(leadingBlockStatements) > 0 {
 		leadingStaticBlock = f.NewClassStaticBlockDeclaration(
@@ -839,7 +919,7 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		)
 	}
 
-	// Create trailing static block
+	// prepare a trailing `static {}` block, if necessary
 	var trailingStaticBlock *ast.Node
 	if len(trailingBlockStatements) > 0 {
 		trailingStaticBlock = f.NewClassStaticBlockDeclaration(
@@ -892,6 +972,8 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 			classExpression = injectClassThisAssignmentIfMissing(ec, f, classExpression, ci.classThis)
 		}
 
+		// We use `var` instead of `let` so we can leverage NamedEvaluation to define the class name
+		// and still be able to ensure it is initialized prior to any use in `static {}`.
 		classReferenceDeclaration := f.NewVariableDeclaration(classReference, nil, nil, classExpression)
 		classReferenceVarDeclList := f.NewVariableDeclarationList(ast.NodeFlagsNone, f.NewNodeList([]*ast.Node{classReferenceDeclaration}))
 		var returnExpr *ast.Expression
@@ -951,24 +1033,19 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				exportStatement := tx.createExportDefault(f.GetDeclarationName(classNode))
 				ec.SetOriginal(exportStatement, classNode)
 				ec.AssignCommentRange(exportStatement, classNode)
-				ec.SetSourceMapRange(exportStatement, moveRangePastDecorators(classNode))
+				ec.SetSourceMapRange(exportStatement, transformers.MoveRangePastDecorators(classNode))
 				statements = append(statements, exportStatement)
 			} else {
 				exportStatement := tx.createExportDefault(iife)
 				ec.SetOriginal(exportStatement, classNode)
 				ec.AssignCommentRange(exportStatement, classNode)
-				ec.SetSourceMapRange(exportStatement, moveRangePastDecorators(classNode))
+				ec.SetSourceMapRange(exportStatement, transformers.MoveRangePastDecorators(classNode))
 				statements = append(statements, exportStatement)
 			}
 		} else {
+			debug.Assert(classNode.Name() != nil, "A class declaration that is not a default export must have a name.")
 			iife := tx.transformClassLike(classNode)
-			modifierVisitor := ec.NewNodeVisitor(func(n *ast.Node) *ast.Node {
-				if isExport && n.Kind == ast.KindExportKeyword {
-					return nil
-				}
-				return tx.modifierVisitor(n)
-			})
-			modifiers := modifierVisitor.VisitModifiers(classNode.Modifiers())
+			modifiers := tx.exportStrippingModifierVisitor.VisitModifiers(classNode.Modifiers())
 
 			declName := f.GetLocalNameEx(classNode, printer.AssignedNameOptions{AllowSourceMaps: true})
 			varDecl := f.NewVariableDeclaration(declName, nil, nil, iife)
@@ -993,12 +1070,10 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 	}
 
 	// Non-decorated class
-	modVisitor := tx.EmitContext().NewNodeVisitor(tx.modifierVisitor)
-	modifiers := modVisitor.VisitModifiers(node.Modifiers())
+	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
 	tx.enterClass(nil)
-	ceVisitor := tx.EmitContext().NewNodeVisitor(tx.classElementVisitor)
-	members := ceVisitor.VisitNodes(node.Members)
+	members := tx.classElementVisitorObj.VisitNodes(node.Members)
 	tx.exitClass()
 	return tx.Factory().UpdateClassDeclaration(node, modifiers, node.Name(), nil, heritageClauses, members)
 }
@@ -1010,17 +1085,19 @@ func (tx *esDecoratorTransformer) visitClassExpression(node *ast.ClassExpression
 		return iife
 	}
 
-	modVisitor := tx.EmitContext().NewNodeVisitor(tx.modifierVisitor)
-	modifiers := modVisitor.VisitModifiers(node.Modifiers())
+	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
 	tx.enterClass(nil)
-	ceVisitor := tx.EmitContext().NewNodeVisitor(tx.classElementVisitor)
-	members := ceVisitor.VisitNodes(node.Members)
+	members := tx.classElementVisitorObj.VisitNodes(node.Members)
 	tx.exitClass()
 	return tx.Factory().UpdateClassExpression(node, modifiers, node.Name(), nil, heritageClauses, members)
 }
 
 func (tx *esDecoratorTransformer) prepareConstructor(ci *classInfo) []*ast.Statement {
+	// Decorated instance members can add "extra" initializers to the instance. If a class contains any instance
+	// fields, we'll inject the `__runInitializers()` call for these extra initializers into the initializer of
+	// the first class member that will be initialized. However, if the class does not contain any fields that
+	// we can piggyback on, we need to synthesize a `__runInitializers()` call in the constructor instead.
 	if len(ci.pendingInstanceInitializers) == 0 {
 		return nil
 	}
@@ -1034,8 +1111,7 @@ func (tx *esDecoratorTransformer) prepareConstructor(ci *classInfo) []*ast.State
 
 func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
 	tx.enterClassElement(node)
-	modVisitor := tx.EmitContext().NewNodeVisitor(tx.modifierVisitor)
-	modifiers := modVisitor.VisitModifiers(node.Modifiers())
+	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
 	parameters := tx.Visitor().VisitNodes(node.ParameterList())
 
 	var body *ast.Node
@@ -1087,6 +1163,9 @@ func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *
 		tx.transformConstructorBodyWorker(&tryBlockStatements, tryBlock.Statements.Nodes, 0, superPath, superPathDepth+1, initializerStatements)
 
 		newTryBlock := tx.Factory().NewBlock(tx.Factory().NewNodeList(tryBlockStatements), true)
+		// Use the original try block's range even though the statements may differ due to
+		// injected initializer statements. This preserves source map fidelity for the enclosing
+		// try statement.
 		newTryBlock.Loc = tryBlockNode.Loc
 
 		var catchClause *ast.Node
@@ -1114,8 +1193,10 @@ func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *
 
 func (tx *esDecoratorTransformer) finishClassElement(updated *ast.Node, original *ast.Node) *ast.Node {
 	if updated != original {
+		// While we emit the source map for the node after skipping decorators and modifiers,
+		// we need to emit the comments for the original range.
 		tx.EmitContext().AssignCommentRange(updated, original)
-		tx.EmitContext().SetSourceMapRange(updated, moveRangePastDecorators(original))
+		tx.EmitContext().SetSourceMapRange(updated, transformers.MoveRangePastDecorators(original))
 	}
 	return updated
 }
@@ -1137,18 +1218,20 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 	ec := tx.EmitContext()
 
 	if ci == nil {
-		modVisitor := ec.NewNodeVisitor(tx.modifierVisitor)
-		modifiers := modVisitor.VisitModifiers(member.Modifiers())
+		modifiers := tx.modifierVisitorObj.VisitModifiers(member.Modifiers())
 		tx.enterName()
 		name := tx.visitPropertyName(member.Name())
 		tx.exitName()
 		return partialResult{modifiers: modifiers, name: name}
 	}
 
+	// Member decorators require privileged access to private names. However, computed property
+	// evaluation occurs interspersed with decorator evaluation. This means that if we encounter
+	// a computed property name we must inline decorator evaluation.
+
 	// Collect decorators for this member
-	memberDecorators := tx.transformAllDecoratorsOfDeclaration(getAllDecoratorsOfClassElement(member))
-	modVisitor := ec.NewNodeVisitor(tx.modifierVisitor)
-	modifiers := modVisitor.VisitModifiers(member.Modifiers())
+	memberDecorators := tx.transformAllDecoratorsOfDeclaration(member.Decorators())
+	modifiers := tx.modifierVisitorObj.VisitModifiers(member.Modifiers())
 
 	var result partialResult
 	result.modifiers = modifiers
@@ -1167,7 +1250,10 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 		ci.memberInfos[member] = mi
 		tx.pendingExpressions = append(tx.pendingExpressions, memberDecoratorsAssignment)
 
-		// Determine which decoration statement bucket to use
+		// 5. Static non-field (method/getter/setter/auto-accessor) element decorators are applied
+		// 6. Non-static non-field (method/getter/setter/auto-accessor) element decorators are applied
+		// 7. Static field (excl. auto-accessor) element decorators are applied
+		// 8. Non-static field (excl. auto-accessor) element decorators are applied
 		var statements *[]*ast.Statement
 		if ast.IsMethodOrAccessor(member) || ast.IsAutoAccessorPropertyDeclaration(member) {
 			if ast.IsStatic(member) {
@@ -1181,10 +1267,12 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			} else {
 				statements = &ci.nonStaticFieldDecorationStatements
 			}
+		} else {
+			debug.Fail("Unexpected class element kind.")
 		}
 
 		// Determine decorator kind
-		kind := ""
+		var kind string
 		switch {
 		case ast.IsGetAccessorDeclaration(member):
 			kind = "getter"
@@ -1196,6 +1284,8 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			kind = "accessor"
 		case ast.IsPropertyDeclaration(member):
 			kind = "field"
+		default:
+			debug.Fail("Unexpected class element kind.")
 		}
 
 		// Determine the property name for the context
@@ -1237,6 +1327,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			if ast.IsStatic(member) {
 				methodExtraInitializersName = ci.staticMethodExtraInitializersName
 			}
+			debug.Assert(methodExtraInitializersName != nil, "methodExtraInitializersName should be defined")
 
 			var descriptorArg *ast.Expression
 			if ast.IsPrivateIdentifierClassElementDeclaration(member) && createDescriptor != nil {
@@ -1260,7 +1351,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 				methodExtraInitializersName,
 			)
 			esDecorateStatement := f.NewExpressionStatement(esDecorateExpr)
-			ec.SetSourceMapRange(esDecorateStatement, moveRangePastDecorators(member))
+			ec.SetSourceMapRange(esDecorateStatement, transformers.MoveRangePastDecorators(member))
 			if statements != nil {
 				*statements = append(*statements, esDecorateStatement)
 			}
@@ -1273,7 +1364,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 				result.thisArg = ci.classThis
 			}
 
-			ctorArg := (*ast.Node)(nil)
+			var ctorArg *ast.Node
 			if ast.IsAutoAccessorPropertyDeclaration(member) {
 				ctorArg = f.NewThisExpression()
 			} else {
@@ -1289,7 +1380,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 				mi.memberExtraInitializersName,
 			)
 			esDecorateStatement := f.NewExpressionStatement(esDecorateExpr)
-			ec.SetSourceMapRange(esDecorateStatement, moveRangePastDecorators(member))
+			ec.SetSourceMapRange(esDecorateStatement, transformers.MoveRangePastDecorators(member))
 			if statements != nil {
 				*statements = append(*statements, esDecorateStatement)
 			}
@@ -1303,6 +1394,8 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 	}
 
 	if modifiers == nil && (ast.IsMethodDeclaration(member) || ast.IsPropertyDeclaration(member)) {
+		// Don't emit leading comments on the name for methods and properties without modifiers, otherwise we
+		// will end up printing duplicate comments.
 		ec.SetEmitFlags(result.name, printer.EFNoLeadingComments)
 	}
 
@@ -1362,10 +1455,23 @@ func (tx *esDecoratorTransformer) visitSetAccessorDeclaration(node *ast.Node) *a
 
 func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.Node {
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.Initializer()) {
-		node = transformNamedEvaluation(tx.EmitContext(), node, false, "")
+		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.Initializer()), "")
 	}
 
 	tx.enterClassElement(node)
+
+	// TODO(rbuckton): We support decorating `declare x` fields with legacyDecorators, but we currently don't
+	//                 support them with esDecorators. We need to consider whether we will support them in the
+	//                 future, and how. For now, these should be elided by the `ts` transform.
+	debug.Assert(!ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient), "Not yet implemented.")
+
+	// 10.2.1.3 RS: EvaluateBody
+	//   Initializer : `=` AssignmentExpression
+	//     ...
+	//     3. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true*, then
+	//        a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _functionObject_.[[ClassFieldInitializerName]].
+	//     ...
+
 	f := tx.Factory()
 	ec := tx.EmitContext()
 
@@ -1454,6 +1560,9 @@ func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 		if tx.classInfoStack != nil {
 			tx.classInfoStack.hasStaticInitializers = true
 			if len(tx.classInfoStack.pendingStaticInitializers) > 0 {
+				// If we tried to inject the pending initializers into the current block, we might run into
+				// variable name collisions due to sharing this blocks scope. To avoid this, we inject a new
+				// static block that contains the pending initializers that precedes this block.
 				stmts := []*ast.Statement{}
 				for _, init := range tx.classInfoStack.pendingStaticInitializers {
 					initStmt := f.NewExpressionStatement(init)
@@ -1534,9 +1643,48 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 // visitNamedEvaluationSite handles nodes that may contain a decorated class assigned
 // via named evaluation. The classExpr parameter is the expression to check (usually
 // node.Initializer() or node.Expression()).
+//
+// Applicable spec sections:
+//
+// 8.6.3 RS: IteratorBindingInitialization (ParameterDeclaration, BindingElement)
+//   SingleNameBinding : BindingIdentifier Initializer?
+//     ...
+//     5. If |Initializer| is present and _v_ is *undefined*, then
+//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//     ...
+//
+// 14.3.3.3 RS: KeyedBindingInitialization (ParameterDeclaration, BindingElement)
+//   SingleNameBinding : BindingIdentifier Initializer?
+//     ...
+//     4. If |Initializer| is present and _v_ is *undefined*, then
+//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//     ...
+//
+// 13.2.5.5 RS: PropertyDefinitionEvaluation (PropertyAssignment)
+//   PropertyAssignment : PropertyName `:` AssignmentExpression
+//     ...
+//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and _isProtoSetter_ is *false*, then
+//        a. Let _popValue_ be ? NamedEvaluation of |AssignmentExpression| with argument _propKey_.
+//     ...
+//
+// 14.3.1.2 RS: Evaluation (VariableDeclaration)
+//   LexicalBinding : BindingIdentifier Initializer
+//     ...
+//     3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//        a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//     ...
+//
+// 14.3.2.1 RS: Evaluation (VariableDeclaration)
+//   VariableDeclaration : BindingIdentifier Initializer
+//     ...
+//     3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//        a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//     ...
 func (tx *esDecoratorTransformer) visitNamedEvaluationSite(node *ast.Node, classExpr *ast.Node) *ast.Node {
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(classExpr) {
-		node = transformNamedEvaluation(tx.EmitContext(), node, false, "")
+		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(classExpr), "")
 	}
 	return tx.Visitor().VisitEachChild(node)
 }
@@ -1553,12 +1701,49 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 	}
 
 	if ast.IsAssignmentExpression(node, false) {
+		// 13.15.2 RS: Evaluation
+		//   AssignmentExpression : LeftHandSideExpression `=` AssignmentExpression
+		//     1. If |LeftHandSideExpression| is neither an |ObjectLiteral| nor an |ArrayLiteral|, then
+		//        a. Let _lref_ be ? Evaluation of |LeftHandSideExpression|.
+		//        b. If IsAnonymousFunctionDefinition(|AssignmentExpression|) and IsIdentifierRef of
+		//           |LeftHandSideExpression| are both *true*, then
+		//           i. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
+		//              _lref_.[[ReferencedName]].
+		//     ...
+		//
+		//   AssignmentExpression : LeftHandSideExpression `&&=` AssignmentExpression
+		//     ...
+		//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of
+		//        |LeftHandSideExpression| is *true*, then
+		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
+		//           _lref_.[[ReferencedName]].
+		//     ...
+		//
+		//   AssignmentExpression : LeftHandSideExpression `||=` AssignmentExpression
+		//     ...
+		//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of
+		//        |LeftHandSideExpression| is *true*, then
+		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
+		//           _lref_.[[ReferencedName]].
+		//     ...
+		//
+		//   AssignmentExpression : LeftHandSideExpression `??=` AssignmentExpression
+		//     ...
+		//     4. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of
+		//        |LeftHandSideExpression| is *true*, then
+		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
+		//           _lref_.[[ReferencedName]].
+		//     ...
 		if isNamedEvaluation(ec, node) && isAnonymousClassNeedingAssignedName(bin.Right) {
-			node = transformNamedEvaluation(ec, node, false, "")
+			node = transformNamedEvaluation(ec, node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
 			return tx.Visitor().VisitEachChild(node)
 		}
 
 		if ast.IsSuperProperty(bin.Left) && tx.classThis != nil && tx.classSuper != nil {
+			// super.x = ...
+			// super.x += ...
+			// super[x] = ...
+			// super[x] += ...
 			var setterName *ast.Expression
 			if ast.IsElementAccessExpression(bin.Left) {
 				setterName = tx.Visitor().VisitNode(bin.Left.AsElementAccessExpression().ArgumentExpression)
@@ -1567,7 +1752,7 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 			}
 			if setterName != nil {
 				expression := tx.Visitor().VisitNode(bin.Right)
-				if isCompoundAssignment(bin.OperatorToken.Kind) {
+				if ast.IsCompoundAssignment(bin.OperatorToken.Kind) {
 					getterName := setterName
 					if !transformers.IsSimpleInlineableExpression(setterName) {
 						getterName = f.NewTempVariable()
@@ -1581,7 +1766,7 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 						nil,
 						superPropertyGet,
 						nil,
-						f.NewToken(getNonAssignmentOperatorForCompoundAssignment(bin.OperatorToken.Kind)),
+						f.NewToken(transformers.GetNonAssignmentOperatorForCompoundAssignment(bin.OperatorToken.Kind)),
 						expression,
 					)
 					expression.Loc = node.Loc
@@ -1622,6 +1807,10 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 }
 
 func (tx *esDecoratorTransformer) visitExportAssignment(node *ast.Node) *ast.Node {
+	// 16.2.3.7 RS: Evaluation
+	//   ExportDeclaration : `export` `default` AssignmentExpression `;`
+	//     1. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true*, then
+	//        a. Let _value_ be ? NamedEvaluation of |AssignmentExpression| with argument `"default"`.
 	return tx.visitNamedEvaluationSite(node, node.Expression())
 }
 
@@ -1655,6 +1844,8 @@ func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 		operandNode = node.AsPostfixUnaryExpression().Operand
 	}
 
+	debug.Assert(operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken)
+
 	if operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken {
 		operand := ast.SkipParentheses(operandNode)
 		if ast.IsSuperProperty(operand) && tx.classThis != nil && tx.classSuper != nil {
@@ -1676,6 +1867,26 @@ func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 				ec.SetOriginal(expression, node)
 				expression.Loc = node.Loc
 
+				// If the result of this expression is discarded (i.e., it's in a position where the result
+				// will be otherwise unused, such as in an expression statement or the left side of a comma), we
+				// don't need to create an extra temp variable to hold the result:
+				//
+				//  source (discarded):
+				//    super.x++;
+				//  generated:
+				//    _a = Reflect.get(_super, "x"), _a++, Reflect.set(_super, "x", _a);
+				//
+				// Above, the temp variable `_a` is used to perform the correct coercion (i.e., number or
+				// bigint). Since the result of the postfix unary is discarded, we don't need to capture the
+				// result of the expression.
+				//
+				//  source (not discarded):
+				//    y = super.x++;
+				//  generated:
+				//    y = (_a = Reflect.get(_super, "x"), _b = _a++, Reflect.set(_super, "x", _a), _b);
+				//
+				// When the result isn't discarded, we introduce a new temp variable (`_b`) to capture the
+				// result of the operation so that we can provide it to `y` when the assignment is complete.
 				var temp *ast.Expression
 				if !discarded {
 					temp = f.NewTempVariable()
@@ -1704,6 +1915,10 @@ func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 }
 
 func (tx *esDecoratorTransformer) visitParenthesizedExpression(node *ast.Node, discarded bool) *ast.Node {
+	// 8.4.5 RS: NamedEvaluation
+	//   ParenthesizedExpression : `(` Expression `)`
+	//     ...
+	//     2. Return ? NamedEvaluation of |Expression| with argument _name_.
 	f := tx.Factory()
 	pe := node.AsParenthesizedExpression()
 	var expression *ast.Node
@@ -1724,8 +1939,6 @@ func (tx *esDecoratorTransformer) visitComputedPropertyName(node *ast.Node) *ast
 	return tx.Factory().UpdateComputedPropertyName(cpn, expression)
 }
 
-
-
 func (tx *esDecoratorTransformer) visitPropertyName(node *ast.Node) *ast.Node {
 	if ast.IsComputedPropertyName(node) {
 		return tx.visitComputedPropertyName(node)
@@ -1733,21 +1946,17 @@ func (tx *esDecoratorTransformer) visitPropertyName(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitNode(node)
 }
 
-func (tx *esDecoratorTransformer) visitReferencedPropertyName(node *ast.Node) (referencedName *ast.Expression, name *ast.Node) {
+func (tx *esDecoratorTransformer) visitReferencedPropertyName(node *ast.Node) (*ast.Expression, *ast.Node) {
 	if ast.IsPropertyNameLiteral(node) || ast.IsPrivateIdentifier(node) {
-		referencedName = tx.Factory().NewStringLiteralFromNode(node)
-		name = tx.Visitor().VisitNode(node)
-		return
+		return tx.Factory().NewStringLiteralFromNode(node), tx.Visitor().VisitNode(node)
 	}
 
 	cpn := node.AsComputedPropertyName()
 	if ast.IsPropertyNameLiteral(cpn.Expression) && !ast.IsIdentifier(cpn.Expression) {
-		referencedName = tx.Factory().NewStringLiteralFromNode(cpn.Expression)
-		name = tx.Visitor().VisitNode(node)
-		return
+		return tx.Factory().NewStringLiteralFromNode(cpn.Expression), tx.Visitor().VisitNode(node)
 	}
 
-	referencedName = tx.Factory().NewGeneratedNameForNode(node)
+	referencedName := tx.Factory().NewGeneratedNameForNode(node)
 	tx.EmitContext().AddVariableDeclaration(referencedName)
 
 	key := tx.Factory().NewPropKeyHelper(tx.Visitor().VisitNode(cpn.Expression))
@@ -1781,7 +1990,10 @@ func (tx *esDecoratorTransformer) prependExpressions(pending []*ast.Expression, 
 
 func (tx *esDecoratorTransformer) injectPendingExpressions(expression *ast.Expression) *ast.Expression {
 	result := tx.prependExpressions(tx.pendingExpressions, expression)
-	tx.pendingExpressions = nil
+	debug.Assert(result != nil)
+	if result != expression {
+		tx.pendingExpressions = nil
+	}
 	return result
 }
 
@@ -1793,7 +2005,9 @@ func (tx *esDecoratorTransformer) injectPendingInitializers(ci *classInfo, isSta
 		pending = &ci.pendingInstanceInitializers
 	}
 	result := tx.prependExpressions(*pending, expression)
-	*pending = nil
+	if result != expression {
+		*pending = nil
+	}
 	return result
 }
 
@@ -1856,10 +2070,14 @@ func (tx *esDecoratorTransformer) createESDecorateElementContext(
 }
 
 // createESDecorateClassElementAccessObject creates the "access" object for a class element decorator context.
-// Per the spec (15.7.3 CreateDecoratorAccessObject):
-//   - has: obj => name in obj
-//   - get: obj => obj.name  (or obj => obj[name] for computed)
-//   - set: (obj, value) => { obj.name = value; }  (or obj[name] for computed)
+//
+// 15.7.3 CreateDecoratorAccessObject (kind, name)
+//   2. If _kind_ is ~field~, ~method~, ~accessor~, or ~getter~, then
+//      a. Let _getAccess_ be a new Abstract Closure with parameters (_object_) that captures _kind_ and _name_ ...
+//      b. Perform ! CreateDataPropertyOrThrow(_access_, "get", _getAccess_).
+//   3. If _kind_ is ~field~, ~accessor~, or ~setter~, then
+//      a. Let _setAccess_ be a new Abstract Closure with parameters (_object_, _value_) that captures _kind_ and _name_ ...
+//      b. Perform ! CreateDataPropertyOrThrow(_access_, "set", _setAccess_).
 func (tx *esDecoratorTransformer) createESDecorateClassElementAccessObject(
 	nameComputed bool,
 	nameExpr *ast.Expression,
@@ -1984,6 +2202,9 @@ func (tx *esDecoratorTransformer) filterModifier(modifiers *ast.ModifierList, ki
 	if len(filtered) == 0 {
 		return nil
 	}
+	if len(filtered) == len(modifiers.Nodes) {
+		return modifiers
+	}
 	return tx.Factory().NewModifierList(filtered)
 }
 
@@ -2017,7 +2238,7 @@ func (tx *esDecoratorTransformer) createDescriptorMethod(
 		body,
 	)
 	ec.SetOriginal(funcExpr, original)
-	ec.SetSourceMapRange(funcExpr, moveRangePastDecorators(original))
+	ec.SetSourceMapRange(funcExpr, transformers.MoveRangePastDecorators(original))
 	ec.SetEmitFlags(funcExpr, printer.EFNoComments)
 
 	var prefix string
@@ -2029,7 +2250,7 @@ func (tx *esDecoratorTransformer) createDescriptorMethod(
 
 	method := f.NewPropertyAssignment(nil, f.NewIdentifier(kind), nil, nil, namedFunction)
 	ec.SetOriginal(method, original)
-	ec.SetSourceMapRange(method, moveRangePastDecorators(original))
+	ec.SetSourceMapRange(method, transformers.MoveRangePastDecorators(original))
 	ec.SetEmitFlags(method, printer.EFNoComments)
 	return method
 }
@@ -2076,6 +2297,8 @@ func (tx *esDecoratorTransformer) createSetAccessorDescriptorObject(member *ast.
 // createMethodDescriptorForwarder creates:
 //
 //	get #name() { return _descriptor.value; }
+//
+// strip off all but the `static` modifier
 func (tx *esDecoratorTransformer) createMethodDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.filterModifier(modifiers, ast.KindStaticKeyword)
@@ -2097,6 +2320,8 @@ func (tx *esDecoratorTransformer) createMethodDescriptorForwarder(modifiers *ast
 // createGetAccessorDescriptorForwarder creates:
 //
 //	get #name() { return _descriptor.get.call(this); }
+//
+// strip off all but the `static` modifier
 func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.filterModifier(modifiers, ast.KindStaticKeyword)
@@ -2122,6 +2347,8 @@ func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers
 // createSetAccessorDescriptorForwarder creates:
 //
 //	set #name(value) { return _descriptor.set.call(this, value); }
+//
+// strip off all but the `static` modifier
 func (tx *esDecoratorTransformer) createSetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.filterModifier(modifiers, ast.KindStaticKeyword)
@@ -2230,7 +2457,26 @@ func isAnonymousClassNeedingAssignedName(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
+	node = ast.SkipOuterExpressions(node, ast.OEKAll)
 	return ast.IsClassExpression(node) && node.Name() == nil && isDecoratedClassLike(node)
+}
+
+// canIgnoreEmptyStringLiteralInAssignedName checks whether an empty string literal assigned name can be ignored.
+// The IIFE produced for `(@dec class {})` will result in an assigned name of the form
+// `var class_1 = class { };`, and thus the empty string cannot be ignored. However, The IIFE
+// produced for `(class { @dec x; })` will not result in an assigned name since it
+// transforms to `return class { };`, and thus the empty string *can* be ignored.
+// canIgnoreEmptyStringLiteralInAssignedName checks whether an empty string literal assigned name can be ignored.
+// The IIFE produced for `(@dec class {})` will result in an assigned name of the form
+// `var class_1 = class { };`, and thus the empty string cannot be ignored. However, The IIFE
+// produced for `(class { @dec x; })` will not result in an assigned name since it
+// transforms to `return class { };`, and thus the empty string *can* be ignored.
+func canIgnoreEmptyStringLiteralInAssignedName(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	innerExpression := ast.SkipOuterExpressions(node, ast.OEKAll)
+	return ast.IsClassExpression(innerExpression) && innerExpression.Name() == nil && !ast.ClassOrConstructorParameterIsDecorated(false, innerExpression)
 }
 
 func classHasClassThisAssignment(ec *printer.EmitContext, node *ast.Node) bool {
@@ -2312,7 +2558,7 @@ func (tx *esDecoratorTransformer) visitDestructuringAssignmentTarget(node *ast.N
 			propertyName = f.NewStringLiteralFromNode(node.AsPropertyAccessExpression().Name())
 		}
 		if propertyName != nil {
-			expression := createAssignmentTargetWrapper(f, tx.classSuper, propertyName, tx.classThis)
+			expression := createReflectedAssignmentTargetWrapper(f, tx.classSuper, propertyName, tx.classThis)
 			ec.SetOriginal(expression, node)
 			expression.Loc = node.Loc
 			return expression
@@ -2324,16 +2570,13 @@ func (tx *esDecoratorTransformer) visitDestructuringAssignmentTarget(node *ast.N
 
 func (tx *esDecoratorTransformer) visitAssignmentPattern(node *ast.Node) *ast.Node {
 	f := tx.Factory()
-	ec := tx.EmitContext()
 	if ast.IsArrayLiteralExpression(node) {
 		ale := node.AsArrayLiteralExpression()
-		arrayVisitor := ec.NewNodeVisitor(tx.visitArrayAssignmentElement)
-		elements := arrayVisitor.VisitNodes(ale.Elements)
+		elements := tx.arrayAssignmentVisitor.VisitNodes(ale.Elements)
 		return f.UpdateArrayLiteralExpression(ale, elements)
 	}
 	ole := node.AsObjectLiteralExpression()
-	objVisitor := ec.NewNodeVisitor(tx.visitObjectAssignmentElement)
-	properties := objVisitor.VisitNodes(ole.Properties)
+	properties := tx.objectAssignmentVisitor.VisitNodes(ole.Properties)
 	return f.UpdateObjectLiteralExpression(ole, properties)
 }
 
@@ -2348,11 +2591,19 @@ func (tx *esDecoratorTransformer) visitArrayAssignmentElement(node *ast.Node) *a
 }
 
 func (tx *esDecoratorTransformer) visitAssignmentElement(node *ast.Node) *ast.Node {
+	// 13.15.5.5 RS: IteratorDestructuringAssignmentEvaluation
+	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
+	//     ...
+	//     4. If |Initializer| is present and _value_ is *undefined*, then
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
+	//           |DestructuringAssignmentTarget| are both *true*, then
+	//           i. Let _v_ be ? NamedEvaluation of |Initializer| with argument
+	//              _lref_.[[ReferencedName]].
 	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		f := tx.Factory()
 		bin := node.AsBinaryExpression()
 		if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(bin.Right) {
-			node = transformNamedEvaluation(tx.EmitContext(), node, false, "")
+			node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
 			bin = node.AsBinaryExpression()
 		}
 		assignmentTarget := tx.visitDestructuringAssignmentTarget(bin.Left)
@@ -2386,6 +2637,15 @@ func (tx *esDecoratorTransformer) visitObjectAssignmentElement(node *ast.Node) *
 }
 
 func (tx *esDecoratorTransformer) visitAssignmentPropertyNode(node *ast.Node) *ast.Node {
+	// 13.15.5.6 RS: KeyedDestructuringAssignmentEvaluation
+	//   AssignmentProperty : PropertyName `:` AssignmentElement
+	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
+	//     ...
+	//     3. If |Initializer| is present and _v_ is *undefined*, then
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
+	//           |DestructuringAssignmentTarget| are both *true*, then
+	//           i. Let _rhsValue_ be ? NamedEvaluation of |Initializer| with argument
+	//              _lref_.[[ReferencedName]].
 	f := tx.Factory()
 	pa := node.AsPropertyAssignment()
 	name := tx.Visitor().VisitNode(pa.Name())
@@ -2401,8 +2661,14 @@ func (tx *esDecoratorTransformer) visitAssignmentPropertyNode(node *ast.Node) *a
 }
 
 func (tx *esDecoratorTransformer) visitShorthandAssignmentProperty(node *ast.Node) *ast.Node {
+	// 13.15.5.3 RS: PropertyDestructuringAssignmentEvaluation
+	//   AssignmentProperty : IdentifierReference Initializer?
+	//     ...
+	//     4. If |Initializer?| is present and _v_ is *undefined*, then
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+	//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _P_.
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer) {
-		node = transformNamedEvaluation(tx.EmitContext(), node, false, "")
+		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer), "")
 	}
 	return tx.Visitor().VisitEachChild(node)
 }
@@ -2415,47 +2681,6 @@ func (tx *esDecoratorTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 		return f.UpdateSpreadAssignment(sa, expression)
 	}
 	return tx.Visitor().VisitEachChild(node)
-}
-
-func getNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
-	switch kind {
-	case ast.KindPlusEqualsToken:
-		return ast.KindPlusToken
-	case ast.KindMinusEqualsToken:
-		return ast.KindMinusToken
-	case ast.KindAsteriskEqualsToken:
-		return ast.KindAsteriskToken
-	case ast.KindAsteriskAsteriskEqualsToken:
-		return ast.KindAsteriskAsteriskToken
-	case ast.KindSlashEqualsToken:
-		return ast.KindSlashToken
-	case ast.KindPercentEqualsToken:
-		return ast.KindPercentToken
-	case ast.KindLessThanLessThanEqualsToken:
-		return ast.KindLessThanLessThanToken
-	case ast.KindGreaterThanGreaterThanEqualsToken:
-		return ast.KindGreaterThanGreaterThanToken
-	case ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
-		return ast.KindGreaterThanGreaterThanGreaterThanToken
-	case ast.KindAmpersandEqualsToken:
-		return ast.KindAmpersandToken
-	case ast.KindBarEqualsToken:
-		return ast.KindBarToken
-	case ast.KindCaretEqualsToken:
-		return ast.KindCaretToken
-	case ast.KindBarBarEqualsToken:
-		return ast.KindBarBarToken
-	case ast.KindAmpersandAmpersandEqualsToken:
-		return ast.KindAmpersandAmpersandToken
-	case ast.KindQuestionQuestionEqualsToken:
-		return ast.KindQuestionQuestionToken
-	default:
-		return ast.KindUnknown
-	}
-}
-
-func isCompoundAssignment(kind ast.Kind) bool {
-	return kind >= ast.KindFirstCompoundAssignment && kind <= ast.KindLastCompoundAssignment
 }
 
 func expandPreOrPostfixIncrementOrDecrementExpression(
@@ -2471,6 +2696,8 @@ func expandPreOrPostfixIncrementOrDecrementExpression(
 	} else {
 		operator = node.AsPostfixUnaryExpression().Operator
 	}
+
+	debug.Assert(operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken, "Expected 'node' to be a pre- or post-increment or pre- or post-decrement expression")
 
 	temp := f.NewTempVariable()
 	recordTempVariable(temp)
@@ -2501,8 +2728,8 @@ func expandPreOrPostfixIncrementOrDecrementExpression(
 	return expression
 }
 
-// createAssignmentTargetWrapper creates: ({ set value(_p) { Reflect.set(target, key, _p, receiver) } }).value
-func createAssignmentTargetWrapper(f *printer.NodeFactory, target *ast.Expression, propertyKey *ast.Expression, receiver *ast.Expression) *ast.Expression {
+// createReflectedAssignmentTargetWrapper creates: ({ set value(_p) { Reflect.set(target, key, _p, receiver) } }).value
+func createReflectedAssignmentTargetWrapper(f *printer.NodeFactory, target *ast.Expression, propertyKey *ast.Expression, receiver *ast.Expression) *ast.Expression {
 	paramName := f.NewTempVariable()
 	reflectSetCall := f.NewReflectSetCall(target, propertyKey, paramName, receiver)
 	statement := f.NewExpressionStatement(reflectSetCall)

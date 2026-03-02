@@ -37,7 +37,6 @@ module.exports = (() => {
     let _y_initializers = [];
     let _y_extraInitializers = [];
     return class {
-        static { __setFunctionName(this, ""); }
         static {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             _y_decorators = [dec];

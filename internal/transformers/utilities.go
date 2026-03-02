@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -265,4 +266,57 @@ func IsOriginalNodeSingleLine(emitContext *printer.EmitContext, node *ast.Node) 
  */
 func IsSimpleInlineableExpression(expression *ast.Expression) bool {
 	return !ast.IsIdentifier(expression) && IsSimpleCopiableExpression(expression)
+}
+
+// GetNonAssignmentOperatorForCompoundAssignment maps a compound assignment operator (e.g. +=)
+// to the corresponding non-assignment binary operator (e.g. +).
+func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
+	switch kind {
+	case ast.KindPlusEqualsToken:
+		return ast.KindPlusToken
+	case ast.KindMinusEqualsToken:
+		return ast.KindMinusToken
+	case ast.KindAsteriskEqualsToken:
+		return ast.KindAsteriskToken
+	case ast.KindAsteriskAsteriskEqualsToken:
+		return ast.KindAsteriskAsteriskToken
+	case ast.KindSlashEqualsToken:
+		return ast.KindSlashToken
+	case ast.KindPercentEqualsToken:
+		return ast.KindPercentToken
+	case ast.KindLessThanLessThanEqualsToken:
+		return ast.KindLessThanLessThanToken
+	case ast.KindGreaterThanGreaterThanEqualsToken:
+		return ast.KindGreaterThanGreaterThanToken
+	case ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
+		return ast.KindGreaterThanGreaterThanGreaterThanToken
+	case ast.KindAmpersandEqualsToken:
+		return ast.KindAmpersandToken
+	case ast.KindBarEqualsToken:
+		return ast.KindBarToken
+	case ast.KindCaretEqualsToken:
+		return ast.KindCaretToken
+	case ast.KindBarBarEqualsToken:
+		return ast.KindBarBarToken
+	case ast.KindAmpersandAmpersandEqualsToken:
+		return ast.KindAmpersandAmpersandToken
+	case ast.KindQuestionQuestionEqualsToken:
+		return ast.KindQuestionQuestionToken
+	default:
+		return ast.KindUnknown
+	}
+}
+
+func MoveRangePastDecorators(node *ast.Node) core.TextRange {
+	var lastDecorator *ast.Node
+	if ast.CanHaveModifiers(node) {
+		nodes := node.ModifierNodes()
+		if nodes != nil {
+			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
+		}
+	}
+	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
+		return core.NewTextRange(lastDecorator.End(), node.End())
+	}
+	return node.Loc
 }

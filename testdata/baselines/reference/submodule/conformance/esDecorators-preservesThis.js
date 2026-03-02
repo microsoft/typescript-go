@@ -51,9 +51,9 @@ let C = (() => {
     return class C {
         static {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-            _method1_decorators = [instance.decorate.bind(instance)];
-            _method2_decorators = [(instance["decorate"].bind(instance))];
-            _method3_decorators = [((instance.decorate.bind(instance)))];
+            _method1_decorators = [(_a = instance).decorate.bind(_a)];
+            _method2_decorators = [((_b = instance)["decorate"].bind(_b))];
+            _method3_decorators = [(((_c = instance).decorate.bind(_c)))];
             __esDecorate(this, null, _method1_decorators, { kind: "method", name: "method1", static: false, private: false, access: { has: obj => "method1" in obj, get: obj => obj.method1 }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _method2_decorators, { kind: "method", name: "method2", static: false, private: false, access: { has: obj => "method2" in obj, get: obj => obj.method2 }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _method3_decorators, { kind: "method", name: "method3", static: false, private: false, access: { has: obj => "method3" in obj, get: obj => obj.method3 }, metadata: _metadata }, null, _instanceExtraInitializers);

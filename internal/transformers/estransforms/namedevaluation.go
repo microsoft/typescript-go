@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
@@ -59,7 +60,10 @@ func classHasDeclaredOrExplicitlyAssignedName(emitContext *printer.EmitContext, 
 // the Identifier `__proto__`, or the string literal `"__proto__"`, but not for
 // computed property names.
 func isProtoSetter(node *ast.PropertyName) bool {
-	return ast.IsIdentifier(node) || ast.IsStringLiteral(node) && node.Text() == "__proto__"
+	if ast.IsIdentifier(node) {
+		return node.Text() == "__proto__"
+	}
+	return ast.IsStringLiteral(node) && node.Text() == "__proto__"
 }
 
 type anonymousFunctionDefinition = ast.Node // ClassExpression | FunctionExpression | ArrowFunction
@@ -136,7 +140,8 @@ func isNamedEvaluationAnd(emitContext *printer.EmitContext, node *ast.Node, cb f
 	case ast.KindExportAssignment:
 		return isAnonymousFunctionDefinition(emitContext, node.Expression(), cb)
 	default:
-		panic("Unhandled case in isNamedEvaluation")
+		debug.Fail("Unhandled case in isNamedEvaluation")
+		return false
 	}
 }
 
@@ -168,9 +173,7 @@ func getAssignedNameOfPropertyName(emitContext *printer.EmitContext, name *ast.P
 		return assignedName, name
 	}
 
-	if !ast.IsComputedPropertyName(name) {
-		panic("Expected computed property name")
-	}
+	debug.Assert(ast.IsComputedPropertyName(name), "Expected computed property name")
 
 	assignedName = factory.NewGeneratedNameForNode(name)
 	emitContext.AddVariableDeclaration(assignedName)
@@ -555,6 +558,7 @@ func transformNamedEvaluation(context *printer.EmitContext, node *ast.Node /*Nam
 	case ast.KindExportAssignment:
 		return transformNamedEvaluationOfExportAssignment(context, node.AsExportAssignment(), ignoreEmptyStringLiteral, assignedName)
 	default:
-		panic("Unhandled case in transformNamedEvaluation")
+		debug.Fail("Unhandled case in transformNamedEvaluation")
+		return node
 	}
 }

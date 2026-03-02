@@ -143,6 +143,10 @@ func IsAssignmentOperator(token Kind) bool {
 	return token >= KindFirstAssignment && token <= KindLastAssignment
 }
 
+func IsCompoundAssignment(token Kind) bool {
+	return token >= KindFirstCompoundAssignment && token <= KindLastCompoundAssignment
+}
+
 func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 	if node.Kind == KindBinaryExpression {
 		expr := node.AsBinaryExpression()
@@ -4103,7 +4107,7 @@ func NodeCanBeDecorated(useLegacyDecorators bool, node *Node, parent *Node, gran
 }
 
 func ClassOrConstructorParameterIsDecorated(useLegacyDecorators bool, node *Node) bool {
-	if nodeIsDecorated(useLegacyDecorators, node, nil, nil) {
+	if NodeIsDecorated(useLegacyDecorators, node, nil, nil) {
 		return true
 	}
 	constructor := GetFirstConstructorWithBody(node)
@@ -4129,7 +4133,7 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 	} else if IsMethodDeclaration(node) {
 		parameters = node.ParameterList()
 	}
-	if nodeIsDecorated(useLegacyDecorators, node, parent, nil) {
+	if NodeIsDecorated(useLegacyDecorators, node, parent, nil) {
 		return true
 	}
 	if parameters != nil && len(parameters.Nodes) > 0 {
@@ -4137,7 +4141,7 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 			if IsThisParameter(parameter) {
 				continue
 			}
-			if nodeIsDecorated(useLegacyDecorators, parameter, node, parent) {
+			if NodeIsDecorated(useLegacyDecorators, parameter, node, parent) {
 				return true
 			}
 		}
@@ -4145,12 +4149,12 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 	return false
 }
 
-func nodeIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
+func NodeIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
 	return HasDecorators(node) && NodeCanBeDecorated(useLegacyDecorators, node, parent, grandparent)
 }
 
 func NodeOrChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
-	return nodeIsDecorated(useLegacyDecorators, node, parent, grandparent) || ChildIsDecorated(useLegacyDecorators, node, parent)
+	return NodeIsDecorated(useLegacyDecorators, node, parent, grandparent) || ChildIsDecorated(useLegacyDecorators, node, parent)
 }
 
 func ChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
@@ -4163,7 +4167,7 @@ func ChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
 		KindSetAccessor,
 		KindConstructor:
 		return core.Some(node.Parameters(), func(p *Node) bool {
-			return nodeIsDecorated(useLegacyDecorators, p, node, parent)
+			return NodeIsDecorated(useLegacyDecorators, p, node, parent)
 		})
 	default:
 		return false

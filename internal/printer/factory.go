@@ -168,6 +168,7 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindJsxNamespacedName,
+		ast.KindStringLiteral,
 		ast.KindNumericLiteral,
 		ast.KindBigIntLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
