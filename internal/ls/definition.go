@@ -215,6 +215,36 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		contextualDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
 		return core.Concatenate(declarations, contextualDeclarations)
 	}
+
+	if ast.IsPropertyName(node) && ast.IsBindingElement(node.Parent) && ast.IsObjectBindingPattern(node.Parent.Parent) {
+		// If the node is the name of a BindingElement within an ObjectBindingPattern instead of just returning the
+		// declaration of the symbol (which is itself), we should try to get to the original type of the
+		// ObjectBindingPattern and return the property declaration for the referenced property.
+		// For example:
+		//      import('./foo').then(({ bar }) => undefined); => should navigate to the declaration in file "./foo"
+		//
+		//      function bar<T>(onfulfilled: (value: T) => void) { }
+		//      interface Test { prop1: number }
+		//      bar<Test>(({ prop1 }) => {});  => should navigate to prop1 in Test
+		bindingEl := node.Parent.AsBindingElement()
+		if bindingEl.DotDotDotToken == nil && node == core.OrElse(bindingEl.PropertyName, node.Parent.Name()) {
+			if name, ok := ast.TryGetTextOfPropertyName(node); ok {
+				t := c.GetTypeAtLocation(node.Parent.Parent)
+				types := []*checker.Type{t}
+				if t.IsUnion() {
+					types = t.Types()
+				}
+				var result []*ast.Node
+				for _, unionType := range types {
+					if prop := c.GetPropertyOfType(unionType, name); prop != nil {
+						result = append(result, prop.Declarations...)
+					}
+				}
+				return result
+			}
+		}
+	}
+
 	node = getDeclarationNameForKeyword(node)
 	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
 		if symbol.Flags&ast.SymbolFlagsClass != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable) == 0 && node.Kind == ast.KindConstructorKeyword {
@@ -227,12 +257,9 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 				symbol = resolved
 			}
 		}
-		if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod|ast.SymbolFlagsAccessor) != 0 && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsObjectLiteral != 0 {
-			if objectLiteral := core.FirstOrNil(symbol.Parent.Declarations); objectLiteral != nil {
-				if declarations := c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, symbol.Name); len(declarations) != 0 {
-					return declarations
-				}
-			}
+		objectLiteralElementDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
+		if len(objectLiteralElementDeclarations) > 0 {
+			return objectLiteralElementDeclarations
 		}
 		return symbol.Declarations
 	}
@@ -250,19 +277,27 @@ func getDeclarationsFromObjectLiteralElement(c *checker.Checker, node *ast.Node)
 		return nil
 	}
 
-	// Get the contextual type of the object literal
-	objectLiteral := element.Parent
-	if objectLiteral == nil || !ast.IsObjectLiteralExpression(objectLiteral) {
+	contextualType := c.GetContextualType(element.Parent, checker.ContextFlagsNone)
+	if contextualType == nil {
 		return nil
 	}
 
-	// Get the name of the property
-	name := ast.GetTextOfPropertyName(element.Name())
-	if name == "" {
-		return nil
+	properties := c.GetPropertySymbolsFromContextualType(element, contextualType, false /*unionSymbolOk*/)
+	if core.Some(properties, func(p *ast.Symbol) bool {
+		return p.ValueDeclaration != nil && ast.IsObjectLiteralExpression(p.ValueDeclaration.Parent) && ast.IsObjectLiteralElement(p.ValueDeclaration) && p.ValueDeclaration.Name() == node
+	}) {
+		if withoutNodeInferencesType := c.GetContextualType(element.Parent, checker.ContextFlagsIgnoreNodeInferences); withoutNodeInferencesType != nil {
+			if withoutNodeInferencesProperties := c.GetPropertySymbolsFromContextualType(element, withoutNodeInferencesType, false /*unionSymbolOk*/); len(withoutNodeInferencesProperties) > 0 {
+				properties = withoutNodeInferencesProperties
+			}
+		}
 	}
 
-	return c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, name)
+	var result []*ast.Node
+	for _, prop := range properties {
+		result = append(result, prop.Declarations...)
+	}
+	return result
 }
 
 // Returns a CallLikeExpression where `node` is the target being invoked.

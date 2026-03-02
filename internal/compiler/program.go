@@ -39,7 +39,6 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
-	JSDocParsingMode            ast.JSDocParsingMode
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -671,12 +670,9 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("outFile", "", "")
 	}
 
-	// if options.Target == core.ScriptTargetES3 {
-	// 	createRemovedOptionDiagnostic("target", "ES3", "")
-	// }
-	// if options.Target == core.ScriptTargetES5 {
-	// 	createRemovedOptionDiagnostic("target", "ES5", "")
-	// }
+	if options.Target == core.ScriptTargetES5 {
+		createRemovedOptionDiagnostic("target", "ES5", "")
+	}
 
 	if options.Module == core.ModuleKindAMD {
 		createRemovedOptionDiagnostic("module", "AMD", "")
@@ -688,9 +684,14 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
 
+	if options.AlwaysStrict.IsFalse() {
+		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
+	}
+
 	if options.ESModuleInterop.IsFalse() {
 		createRemovedOptionDiagnostic("esModuleInterop", "false", "")
 	}
+
 	if options.AllowSyntheticDefaultImports.IsFalse() {
 		createRemovedOptionDiagnostic("allowSyntheticDefaultImports", "false", "")
 	}
@@ -1587,6 +1588,10 @@ func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFil
 		}
 	}
 	return file
+}
+
+func (p *Program) FilesByPath() map[tspath.Path]*ast.SourceFile {
+	return p.filesByPath
 }
 
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
