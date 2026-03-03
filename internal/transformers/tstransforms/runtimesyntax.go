@@ -112,15 +112,18 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindVariableStatement:
 		node = tx.visitVariableStatement(node.AsVariableStatement())
 	case ast.KindExportDeclaration, ast.KindImportDeclaration, ast.KindImportClause:
-		if tx.currentNamespace != nil && tx.parentNode != nil && tx.parentNode.Kind == ast.KindModuleBlock {
+		if tx.currentNamespace != nil && tx.currentScope != nil && tx.currentScope.Kind != ast.KindBlock {
 			// do not emit ES6 imports and exports since they are illegal inside a namespace
 			node = nil
 		} else {
 			node = tx.Visitor().VisitEachChild(node)
 		}
 	case ast.KindImportEqualsDeclaration:
-		if tx.currentNamespace != nil && tx.parentNode != nil && tx.parentNode.Kind == ast.KindModuleBlock && node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
+		if tx.currentNamespace != nil && tx.currentScope != nil && tx.currentScope.Kind != ast.KindBlock && node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
 			// do not emit ES6 imports and exports since they are illegal inside a namespace
+			node = nil
+		} else if tx.currentNamespace != nil && tx.currentScope != nil && tx.currentScope.Kind == ast.KindBlock && node.AsImportEqualsDeclaration().ModuleReference.Kind != ast.KindExternalModuleReference {
+			// inside a block within a namespace, elide internal import aliases
 			node = nil
 		} else {
 			node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
@@ -181,7 +184,7 @@ func (tx *RuntimeSyntaxTransformer) isFirstDeclarationInScope(node *ast.Node) bo
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfNamespace(node *ast.Node) bool {
-	return tx.currentNamespace != nil && node.ModifierFlags()&ast.ModifierFlagsExport != 0
+	return tx.currentNamespace != nil && (tx.currentScope == nil || tx.currentScope.Kind != ast.KindBlock) && node.ModifierFlags()&ast.ModifierFlagsExport != 0
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfExternalModule(node *ast.Node) bool {
