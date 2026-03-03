@@ -128,6 +128,9 @@ type classFieldsTransformer struct {
 	discardedValueVisitor *ast.NodeVisitor
 	heritageClauseVisitor *ast.NodeVisitor
 	modifierVisitor       *ast.NodeVisitor
+
+	// Pre-bound callbacks to avoid repeated closure allocation.
+	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
 }
 
 func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -178,6 +181,7 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	tx.discardedValueVisitor = tx.EmitContext().NewNodeVisitor(tx.visitDiscardedValue)
 	tx.heritageClauseVisitor = tx.EmitContext().NewNodeVisitor(tx.visitHeritageClause)
 	tx.modifierVisitor = tx.EmitContext().NewNodeVisitor(tx.visitModifier)
+	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result
 }
@@ -311,13 +315,13 @@ func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		saved := tx.inIterationStatement
 		tx.inIterationStatement = false
-		result := tx.setCurrentClassElementAnd(nil, tx.Visitor().VisitEachChild, node)
+		result := tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
 		tx.inIterationStatement = saved
 		return result
 	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
 		saved := tx.inIterationStatement
 		tx.inIterationStatement = false
-		result := tx.setCurrentClassElementAnd(node, tx.Visitor().VisitEachChild, node)
+		result := tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitEachChildOfNode, node)
 		tx.inIterationStatement = saved
 		return result
 	default:
@@ -393,13 +397,13 @@ func (tx *classFieldsTransformer) visitAssignmentTarget(node *ast.Node) *ast.Nod
 func (tx *classFieldsTransformer) visitClassElement(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindConstructor:
-		return tx.setCurrentClassElementAnd(node, tx.visitConstructorDeclaration, node)
+		return tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitConstructorDeclaration, node)
 	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
-		return tx.setCurrentClassElementAnd(node, tx.visitMethodOrAccessorDeclaration, node)
+		return tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitMethodOrAccessorDeclaration, node)
 	case ast.KindPropertyDeclaration:
-		return tx.setCurrentClassElementAnd(node, tx.visitPropertyDeclaration, node)
+		return tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitPropertyDeclaration, node)
 	case ast.KindClassStaticBlockDeclaration:
-		return tx.setCurrentClassElementAnd(node, tx.visitClassStaticBlockDeclaration, node)
+		return tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitClassStaticBlockDeclaration, node)
 	case ast.KindComputedPropertyName:
 		return tx.visitComputedPropertyName(node.AsComputedPropertyName())
 	case ast.KindSemicolonClassElement:
@@ -679,15 +683,19 @@ func (tx *classFieldsTransformer) extractNonStaticNonAccessorModifiers(node *ast
 	return transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), ^(ast.ModifierFlagsStatic | ast.ModifierFlagsAccessor))
 }
 
-func (tx *classFieldsTransformer) setCurrentClassElementAnd(classElement *ast.ClassElement, visitor func(node *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
+func (tx *classFieldsTransformer) setCurrentClassElementAnd(classElement *ast.ClassElement, visitor func(tx *classFieldsTransformer, node *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
 	if classElement != tx.currentClassElement {
 		saved := tx.currentClassElement
 		tx.currentClassElement = classElement
-		result := visitor(node)
+		result := visitor(tx, node)
 		tx.currentClassElement = saved
 		return result
 	}
-	return visitor(node)
+	return visitor(tx, node)
+}
+
+func (tx *classFieldsTransformer) visitEachChildOfNode(node *ast.Node) *ast.Node {
+	return tx.Visitor().VisitEachChild(node)
 }
 
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
@@ -1322,7 +1330,7 @@ func (tx *classFieldsTransformer) setCurrentClassElementAndVisitStatements(class
 	return result
 }
 
-func (tx *classFieldsTransformer) isAnonymousClassNeedingAssignedName(node *anonymousFunctionDefinition) bool {
+func (tx *classFieldsTransformer) isAnonymousClassNeedingAssignedNameWorker(node *anonymousFunctionDefinition) bool {
 	if ast.IsClassExpression(node) && node.Name() == nil {
 		staticPropertiesOrClassStaticBlocks := tx.getStaticPropertiesAndClassStaticBlock(node)
 		if core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
@@ -1722,7 +1730,7 @@ func (tx *classFieldsTransformer) visitExpressionWithTypeArgumentsInHeritageClau
 	return tx.heritageClauseVisitor.VisitEachChild(node.AsNode())
 }
 
-func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.Node, visitor func(node *ast.Node, facts classFacts) *ast.Node) *ast.Node {
+func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.Node, visitor func(tx *classFieldsTransformer, node *ast.Node, facts classFacts) *ast.Node) *ast.Node {
 	savedCurrentClassContainer := tx.currentClassContainer
 	savedPendingExpressions := tx.pendingExpressions
 	savedLexicalEnvironment := tx.lexicalEnvironment
@@ -1766,7 +1774,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 		tx.getClassLexicalEnvironment().facts = facts
 	}
 
-	result := visitor(node, facts)
+	result := visitor(tx, node, facts)
 	tx.enclosingClassDeclarations.Delete(original)
 	tx.endClassLexicalEnvironment()
 	debug.Assert(tx.lexicalEnvironment == savedLexicalEnvironment)
@@ -1777,7 +1785,7 @@ func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.No
 }
 
 func (tx *classFieldsTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
-	return tx.visitInNewClassLexicalEnvironment(node.AsNode(), tx.visitClassDeclarationInNewClassLexicalEnvironment)
+	return tx.visitInNewClassLexicalEnvironment(node.AsNode(), (*classFieldsTransformer).visitClassDeclarationInNewClassLexicalEnvironment)
 }
 
 func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironment(node *ast.Node, facts classFacts) *ast.Node {
@@ -1887,7 +1895,7 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 }
 
 func (tx *classFieldsTransformer) visitClassExpression(node *ast.ClassExpression) *ast.Node {
-	return tx.visitInNewClassLexicalEnvironment(node.AsNode(), tx.visitClassExpressionInNewClassLexicalEnvironment)
+	return tx.visitInNewClassLexicalEnvironment(node.AsNode(), (*classFieldsTransformer).visitClassExpressionInNewClassLexicalEnvironment)
 }
 
 func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironment(node *ast.Node, facts classFacts) *ast.Node {
@@ -2528,9 +2536,7 @@ func (tx *classFieldsTransformer) addPropertyOrClassStaticBlockStatements(statem
 func (tx *classFieldsTransformer) transformPropertyOrClassStaticBlock(property *ast.Node, receiver *ast.Expression) *ast.Node {
 	var expression *ast.Expression
 	if ast.IsClassStaticBlockDeclaration(property) {
-		expression = tx.setCurrentClassElementAnd(property, func(n *ast.Node) *ast.Node {
-			return tx.transformClassStaticBlockDeclaration(n)
-		}, property)
+		expression = tx.setCurrentClassElementAnd(property, (*classFieldsTransformer).transformClassStaticBlockDeclaration, property)
 	} else {
 		expression = tx.transformProperty(property.AsPropertyDeclaration(), receiver)
 	}
@@ -2575,13 +2581,9 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 	for _, property := range propertiesOrClassStaticBlocks {
 		var expression *ast.Expression
 		if ast.IsClassStaticBlockDeclaration(property) {
-			expression = tx.setCurrentClassElementAnd(property, func(n *ast.Node) *ast.Node {
-				return tx.transformClassStaticBlockDeclaration(n)
-			}, property)
+			expression = tx.setCurrentClassElementAnd(property, (*classFieldsTransformer).transformClassStaticBlockDeclaration, property)
 		} else {
-			expression = tx.setCurrentClassElementAnd(property, func(n *ast.Node) *ast.Node {
-				return tx.transformProperty(n.AsPropertyDeclaration(), receiver)
-			}, property)
+			expression = tx.transformProperty(property.AsPropertyDeclaration(), receiver)
 		}
 		if expression == nil {
 			continue
