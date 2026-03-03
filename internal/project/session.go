@@ -3,8 +3,8 @@ package project
 import (
 	"context"
 	"fmt"
-	gometrics "runtime/metrics"
 	"runtime"
+	gometrics "runtime/metrics"
 	"slices"
 	"strings"
 	"sync"
@@ -867,7 +867,7 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 
 var runtimeMetricsSamples = sync.OnceValue(func() []gometrics.Sample {
 	descs := gometrics.All()
-	samples := make([]gometrics.Sample, 0, len(descs))
+	var samples []gometrics.Sample
 	for _, desc := range descs {
 		name := desc.Name
 		if strings.HasPrefix(name, "/memory/") || strings.HasPrefix(name, "/gc/") {
