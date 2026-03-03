@@ -24,7 +24,7 @@ class Foo {
         _Foo_y.set(this, null);
     }
     func() {
-        console.log(__classPrivateFieldGet(this, _Foo_y, "f").bind(this) `->>${this.#x}<<-`);
+        console.log(__classPrivateFieldGet(this, _Foo_y, "f").bind(this) `->>${__classPrivateFieldGet(this, _Foo_x, "f")}<<-`);
     }
 }
 _Foo_x = new WeakMap(), _Foo_y = new WeakMap();

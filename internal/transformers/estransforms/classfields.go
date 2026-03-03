@@ -1267,7 +1267,7 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 			bindExpr,
 			nil, /*questionDotToken*/
 			nil, /*typeArguments*/
-			node.Template,
+			tx.Visitor().VisitNode(node.Template),
 		)
 	}
 
@@ -1289,7 +1289,7 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 			invocation,
 			nil, /*questionDotToken*/
 			nil, /*typeArguments*/
-			node.Template,
+			tx.Visitor().VisitNode(node.Template),
 		)
 	}
 
