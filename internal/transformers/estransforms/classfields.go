@@ -1,6 +1,7 @@
 package estransforms
 
 import (
+	"iter"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -891,7 +892,9 @@ func (tx *classFieldsTransformer) transformPublicFieldInitializer(node *ast.Prop
 		// For computed property names, we still need to emit the expression.
 		expr := tx.getPropertyNameExpressionIfNeeded(node.Name(), node.Initializer != nil || tx.compilerOptions.GetUseDefineForClassFields())
 		if expr != nil {
-			tx.addPendingExpressions(flattenCommaList(expr)...)
+			for e := range flattenCommaList(expr) {
+				tx.addPendingExpressions(e)
+			}
 		}
 
 		// When target >= ES2022 (i.e., !shouldTransformPrivateElementsOrClassStaticBlocks) and we
@@ -3429,20 +3432,21 @@ func (tx *classFieldsTransformer) createAccessorPropertySetRedirector(node *ast.
 	)
 }
 
-// flattenCommaList decomposes a comma expression tree into a flat list of expressions.
-// This matches the TypeScript reference's `flattenCommaList` utility.
-func flattenCommaList(node *ast.Expression) []*ast.Expression {
-	return flattenCommaListWorker(node, nil)
+// flattenCommaList decomposes a comma expression tree into a sequence of expressions.
+func flattenCommaList(node *ast.Expression) iter.Seq[*ast.Expression] {
+	return func(yield func(*ast.Expression) bool) {
+		flattenCommaListWorker(node, yield)
+	}
 }
 
-func flattenCommaListWorker(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {
+func flattenCommaListWorker(node *ast.Expression, yield func(*ast.Expression) bool) bool {
 	if ast.IsParenthesizedExpression(node) && ast.NodeIsSynthesized(node) {
-		return flattenCommaListWorker(node.Expression(), expressions)
+		return flattenCommaListWorker(node.Expression(), yield)
 	} else if ast.IsCommaExpression(node.AsNode()) {
-		expressions = flattenCommaListWorker(node.AsBinaryExpression().Left, expressions)
-		return flattenCommaListWorker(node.AsBinaryExpression().Right, expressions)
+		return flattenCommaListWorker(node.AsBinaryExpression().Left, yield) &&
+			flattenCommaListWorker(node.AsBinaryExpression().Right, yield)
 	} else {
-		return append(expressions, node)
+		return yield(node)
 	}
 }
 
