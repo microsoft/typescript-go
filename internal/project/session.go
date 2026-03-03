@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	gometrics "runtime/metrics"
 	"slices"
 	"strings"
 	"sync"
@@ -579,6 +580,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 		if s.options.LoggingEnabled {
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
+			s.logRuntimeMetrics()
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
@@ -804,6 +806,35 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	if loggedProjectChanges || s.logger.IsVerbose() {
 		s.logCacheStats(newSnapshot)
 	}
+}
+
+func (s *Session) logRuntimeMetrics() {
+	descs := gometrics.All()
+	samples := make([]gometrics.Sample, 0, len(descs))
+	for _, desc := range descs {
+		name := desc.Name
+		if strings.HasPrefix(name, "/memory/") || strings.HasPrefix(name, "/gc/") {
+			samples = append(samples, gometrics.Sample{Name: name})
+		}
+	}
+	if len(samples) == 0 {
+		return
+	}
+	gometrics.Read(samples)
+
+	var builder strings.Builder
+	builder.WriteString("\n======== Runtime Metrics ========")
+	for _, sample := range samples {
+		switch sample.Value.Kind() {
+		case gometrics.KindUint64:
+			fmt.Fprintf(&builder, "\n%s = %d", sample.Name, sample.Value.Uint64())
+		case gometrics.KindFloat64:
+			fmt.Fprintf(&builder, "\n%s = %f", sample.Name, sample.Value.Float64())
+		case gometrics.KindFloat64Histogram:
+			// Skip histograms for log readability
+		}
+	}
+	s.logger.Log(builder.String())
 }
 
 func (s *Session) logCacheStats(snapshot *Snapshot) {
