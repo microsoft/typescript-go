@@ -1415,7 +1415,7 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 
 		if isNamedEvaluationAnd(tx.EmitContext(), node.AsNode(), tx.isAnonymousClassNeedingAssignedName) {
 			node = transformNamedEvaluation(tx.EmitContext(), node.AsNode(), false, "").AsBinaryExpression()
-			debug.AssertNode(node.AsNode(), ast.IsAssertionExpression)
+			debug.AssertNode(node.AsNode(), func(node *ast.Node) bool { return ast.IsAssignmentExpression(node, false) })
 		}
 
 		left := ast.SkipOuterExpressions(node.Left, ast.OEKPartiallyEmittedExpressions|ast.OEKParentheses)
