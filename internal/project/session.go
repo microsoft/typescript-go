@@ -808,7 +808,7 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	}
 }
 
-func (s *Session) logRuntimeMetrics() {
+var runtimeMetricsSamples = sync.OnceValue(func() []gometrics.Sample {
 	descs := gometrics.All()
 	samples := make([]gometrics.Sample, 0, len(descs))
 	for _, desc := range descs {
@@ -817,9 +817,11 @@ func (s *Session) logRuntimeMetrics() {
 			samples = append(samples, gometrics.Sample{Name: name})
 		}
 	}
-	if len(samples) == 0 {
-		return
-	}
+	return samples
+})
+
+func (s *Session) logRuntimeMetrics() {
+	samples := slices.Clone(runtimeMetricsSamples())
 	gometrics.Read(samples)
 
 	var builder strings.Builder
