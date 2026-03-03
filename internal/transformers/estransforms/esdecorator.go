@@ -100,20 +100,20 @@ type classInfo struct {
 
 type esDecoratorTransformer struct {
 	transformers.Transformer
-	compilerOptions         *core.CompilerOptions
-	top                     *lexicalEntry
-	classInfoStack          *classInfo
-	classThis               *ast.IdentifierNode
-	classSuper              *ast.IdentifierNode
-	pendingExpressions              []*ast.Expression
-	discardedVisitor                *ast.NodeVisitor
-	modifierVisitorObj              *ast.NodeVisitor
-	exportStrippingModifierVisitor  *ast.NodeVisitor
-	classElementVisitorObj          *ast.NodeVisitor
+	compilerOptions                   *core.CompilerOptions
+	top                               *lexicalEntry
+	classInfoStack                    *classInfo
+	classThis                         *ast.IdentifierNode
+	classSuper                        *ast.IdentifierNode
+	pendingExpressions                []*ast.Expression
+	discardedVisitor                  *ast.NodeVisitor
+	modifierVisitorObj                *ast.NodeVisitor
+	exportStrippingModifierVisitor    *ast.NodeVisitor
+	classElementVisitorObj            *ast.NodeVisitor
 	nonConstructorClassElementVisitor *ast.NodeVisitor
-	constructorClassElementVisitor   *ast.NodeVisitor
-	arrayAssignmentVisitor          *ast.NodeVisitor
-	objectAssignmentVisitor         *ast.NodeVisitor
+	constructorClassElementVisitor    *ast.NodeVisitor
+	arrayAssignmentVisitor            *ast.NodeVisitor
+	objectAssignmentVisitor           *ast.NodeVisitor
 }
 
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -380,7 +380,6 @@ func isDecoratedClassLike(node *ast.Node) bool {
 	return ast.ClassOrConstructorParameterIsDecorated(false, node) ||
 		ast.ChildIsDecorated(false, node, nil)
 }
-
 
 func getHelperVariableName(ec *printer.EmitContext, node *ast.Node) string {
 	name := node.Name()
@@ -1647,41 +1646,46 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 // Applicable spec sections:
 //
 // 8.6.3 RS: IteratorBindingInitialization (ParameterDeclaration, BindingElement)
-//   SingleNameBinding : BindingIdentifier Initializer?
-//     ...
-//     5. If |Initializer| is present and _v_ is *undefined*, then
-//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
-//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
-//     ...
+//
+//	SingleNameBinding : BindingIdentifier Initializer?
+//	  ...
+//	  5. If |Initializer| is present and _v_ is *undefined*, then
+//	     a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//	  ...
 //
 // 14.3.3.3 RS: KeyedBindingInitialization (ParameterDeclaration, BindingElement)
-//   SingleNameBinding : BindingIdentifier Initializer?
-//     ...
-//     4. If |Initializer| is present and _v_ is *undefined*, then
-//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
-//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
-//     ...
+//
+//	SingleNameBinding : BindingIdentifier Initializer?
+//	  ...
+//	  4. If |Initializer| is present and _v_ is *undefined*, then
+//	     a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//	  ...
 //
 // 13.2.5.5 RS: PropertyDefinitionEvaluation (PropertyAssignment)
-//   PropertyAssignment : PropertyName `:` AssignmentExpression
-//     ...
-//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and _isProtoSetter_ is *false*, then
-//        a. Let _popValue_ be ? NamedEvaluation of |AssignmentExpression| with argument _propKey_.
-//     ...
+//
+//	PropertyAssignment : PropertyName `:` AssignmentExpression
+//	  ...
+//	  5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and _isProtoSetter_ is *false*, then
+//	     a. Let _popValue_ be ? NamedEvaluation of |AssignmentExpression| with argument _propKey_.
+//	  ...
 //
 // 14.3.1.2 RS: Evaluation (VariableDeclaration)
-//   LexicalBinding : BindingIdentifier Initializer
-//     ...
-//     3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
-//        a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
-//     ...
+//
+//	LexicalBinding : BindingIdentifier Initializer
+//	  ...
+//	  3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//	     a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//	  ...
 //
 // 14.3.2.1 RS: Evaluation (VariableDeclaration)
-//   VariableDeclaration : BindingIdentifier Initializer
-//     ...
-//     3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
-//        a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
-//     ...
+//
+//	VariableDeclaration : BindingIdentifier Initializer
+//	  ...
+//	  3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//	     a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//	  ...
 func (tx *esDecoratorTransformer) visitNamedEvaluationSite(node *ast.Node, classExpr *ast.Node) *ast.Node {
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(classExpr) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(classExpr), "")
@@ -2072,12 +2076,12 @@ func (tx *esDecoratorTransformer) createESDecorateElementContext(
 // createESDecorateClassElementAccessObject creates the "access" object for a class element decorator context.
 //
 // 15.7.3 CreateDecoratorAccessObject (kind, name)
-//   2. If _kind_ is ~field~, ~method~, ~accessor~, or ~getter~, then
-//      a. Let _getAccess_ be a new Abstract Closure with parameters (_object_) that captures _kind_ and _name_ ...
-//      b. Perform ! CreateDataPropertyOrThrow(_access_, "get", _getAccess_).
-//   3. If _kind_ is ~field~, ~accessor~, or ~setter~, then
-//      a. Let _setAccess_ be a new Abstract Closure with parameters (_object_, _value_) that captures _kind_ and _name_ ...
-//      b. Perform ! CreateDataPropertyOrThrow(_access_, "set", _setAccess_).
+//  2. If _kind_ is ~field~, ~method~, ~accessor~, or ~getter~, then
+//     a. Let _getAccess_ be a new Abstract Closure with parameters (_object_) that captures _kind_ and _name_ ...
+//     b. Perform ! CreateDataPropertyOrThrow(_access_, "get", _getAccess_).
+//  3. If _kind_ is ~field~, ~accessor~, or ~setter~, then
+//     a. Let _setAccess_ be a new Abstract Closure with parameters (_object_, _value_) that captures _kind_ and _name_ ...
+//     b. Perform ! CreateDataPropertyOrThrow(_access_, "set", _setAccess_).
 func (tx *esDecoratorTransformer) createESDecorateClassElementAccessObject(
 	nameComputed bool,
 	nameExpr *ast.Expression,

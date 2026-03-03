@@ -118,7 +118,6 @@ func moveRangePastModifiers(node *ast.Node) core.TextRange {
 	return transformers.MoveRangePastDecorators(node)
 }
 
-
 func (tx *LegacyDecoratorsTransformer) finishClassElement(updated *ast.Node, original *ast.Node) *ast.Node {
 	if updated != original {
 		// While we emit the source map for the node after skipping decorators and modifiers,
