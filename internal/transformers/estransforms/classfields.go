@@ -2259,6 +2259,11 @@ func (tx *classFieldsTransformer) createBrandCheckWeakSetForPrivateMethods() {
 }
 
 func (tx *classFieldsTransformer) transformConstructor(constructor *ast.ConstructorDeclaration, container *ast.Node) *ast.Node {
+	// NOTE: The Strada reference pre-visits the constructor via `visitNode(constructor, visitor)` before
+	// checking WillHoistInitializersToConstructor. This is not done here because Go's variable environment
+	// (StartVariableEnvironment/EndAndMergeVariableEnvironment) is scoped inside transformConstructorBody.
+	// Pre-visiting would hoist variables outside that scope, causing them to appear after field initializers
+	// instead of before. Instead, we visit parameters and body separately within the correct scopes.
 	if tx.lexicalEnvironment == nil || tx.lexicalEnvironment.data == nil ||
 		tx.lexicalEnvironment.data.facts&classFactsWillHoistInitializersToConstructor == 0 {
 		if constructor != nil {
@@ -2270,17 +2275,17 @@ func (tx *classFieldsTransformer) transformConstructor(constructor *ast.Construc
 	extendsClauseElement := ast.GetClassExtendsHeritageElement(container)
 	isDerivedClass := extendsClauseElement != nil && ast.SkipOuterExpressions(extendsClauseElement.Expression(), ast.OEKAll).Kind != ast.KindNullKeyword
 
+	var parameters *ast.NodeList
+	if constructor != nil {
+		parameters = tx.Visitor().VisitNodes(constructor.Parameters)
+	}
+
 	body := tx.transformConstructorBody(container, constructor, isDerivedClass)
 	if body == nil {
 		if constructor != nil {
 			return tx.Visitor().VisitEachChild(constructor.AsNode())
 		}
 		return nil
-	}
-
-	var parameters *ast.NodeList
-	if constructor != nil {
-		parameters = tx.Visitor().VisitNodes(constructor.Parameters)
 	}
 
 	if constructor != nil {
