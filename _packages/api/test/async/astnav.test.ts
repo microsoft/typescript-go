@@ -5,6 +5,7 @@ import { API } from "@typescript/api/async"; // @sync-skip
 import { createVirtualFileSystem } from "@typescript/api/fs";
 import {
     findNextToken,
+    findPrecedingToken,
     formatSyntaxKind,
     getTokenAtPosition,
     getTouchingPropertyName,
@@ -227,5 +228,76 @@ describe("astnav", () => {
         assert.ok(openBrace !== undefined, "Expected a token after 'import'");
         assert.equal(openBrace.kind, SyntaxKind.OpenBraceToken, `Expected '{', got ${formatSyntaxKind(openBrace.kind)}`);
         assert.equal(openBrace.pos, importToken.end, `Expected next token pos === importToken.end (${importToken.end}), got ${openBrace.pos}`);
+    });
+
+    // ---------------------------------------------------------------------------
+    // findPrecedingToken tests
+    // ---------------------------------------------------------------------------
+
+    test("findPrecedingToken: result always ends at or before the given position", () => {
+        // For every position in the first 2000 characters, verify that the
+        // returned token ends at or before the position.
+        const limit = Math.min(fileText.length, 2000);
+        const failures: string[] = [];
+
+        for (let pos = 1; pos <= limit; pos++) {
+            const result = findPrecedingToken(sourceFile, pos);
+            if (result === undefined) continue;
+
+            if (result.end > pos) {
+                failures.push(
+                    `  pos ${pos}: token ${formatSyntaxKind(result.kind)} [${result.pos}, ${result.end}) ends after position`,
+                );
+                if (failures.length >= 10) break;
+            }
+        }
+
+        if (failures.length > 0) {
+            assert.fail(`findPrecedingToken: token.end > position:\n${failures.join("\n")}`);
+        }
+    });
+
+    test("findPrecedingToken: is consistent with findNextToken (roundtrip)", () => {
+        // For each unique non-EOF token, the preceding token of (token.end) should be
+        // the token itself (or one that ends at the same position).
+        const limit = Math.min(fileText.length, 2000);
+        const failures: string[] = [];
+        const seen = new Set<number>();
+
+        for (let pos = 0; pos < limit; pos++) {
+            const token = getTokenAtPosition(sourceFile, pos);
+            if (token.kind === SyntaxKind.EndOfFile) continue;
+            if (seen.has(token.pos)) continue;
+            seen.add(token.pos);
+
+            const preceding = findPrecedingToken(sourceFile, token.end);
+            if (preceding === undefined) {
+                failures.push(`  token ${formatSyntaxKind(token.kind)} [${token.pos}, ${token.end}): findPrecedingToken(${token.end}) returned undefined`);
+            }
+            else if (preceding.end !== token.end) {
+                failures.push(
+                    `  token ${formatSyntaxKind(token.kind)} [${token.pos}, ${token.end}): ` +
+                        `findPrecedingToken returned ${formatSyntaxKind(preceding.kind)} [${preceding.pos}, ${preceding.end}) with different end`,
+                );
+            }
+            if (failures.length >= 10) break;
+        }
+
+        if (failures.length > 0) {
+            assert.fail(`findPrecedingToken roundtrip failures:\n${failures.join("\n")}`);
+        }
+    });
+
+    test("findPrecedingToken: returns undefined at position 0", () => {
+        // There is no token before the very start of the file.
+        const result = findPrecedingToken(sourceFile, 0);
+        assert.equal(result, undefined);
+    });
+
+    test("findPrecedingToken: returns a token at end of file", () => {
+        // At the end of file there should be a valid preceding token.
+        const result = findPrecedingToken(sourceFile, fileText.length);
+        assert.ok(result !== undefined, "Expected a preceding token at end of file");
+        assert.notEqual(result.kind, SyntaxKind.EndOfFile);
     });
 });

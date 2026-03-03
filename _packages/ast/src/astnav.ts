@@ -103,6 +103,14 @@ export function findNextToken(previousToken: Node, parent: Node, sourceFile: Sou
     }
 }
 
+/**
+ * Finds the rightmost token satisfying `token.end <= position`,
+ * excluding `JsxText` tokens containing only whitespace.
+ */
+export function findPrecedingToken(sourceFile: SourceFile, position: number): Node | undefined {
+    return findPrecedingTokenImpl(sourceFile, position, sourceFile);
+}
+
 function getTokenAtPositionImpl(
     sourceFile: SourceFile,
     position: number,

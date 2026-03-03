@@ -6,8 +6,6 @@
 // Source: test/async/api.test.ts
 // Regenerate: npm run generate (from _packages/api)
 //
-import { createVirtualFileSystem } from "@typescript/api/fs";
-import type { FileSystem } from "@typescript/api/fs";
 import {
     API,
     type ConditionalType,
@@ -22,6 +20,8 @@ import {
     type TypeReference,
     type UnionOrIntersectionType,
 } from "@typescript/api/sync";
+import { createVirtualFileSystem } from "@typescript/api/fs";
+import type { FileSystem } from "@typescript/api/fs";
 import {
     cast,
     isCallExpression,
