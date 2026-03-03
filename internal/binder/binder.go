@@ -873,7 +873,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
 		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, core.IfElse(ast.IsJSExportAssignment(node), 0, ast.SymbolFlagsAll))
 		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
-			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
+			// Ensure export assignments have a ValueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
 	}
