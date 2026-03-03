@@ -248,12 +248,6 @@ var m0;
         static s1;
         static s2;
     }
-    var m2 = a;
-    var m3 = b;
-    var m4 = b.a;
-    var m5 = c;
-    var m6 = c.a;
-    var m7 = c.a.b;
 })(m0 || (m0 = {}));
 var m1;
 (function (m1) {
@@ -284,12 +278,6 @@ var m1;
         }
     }
     m1.c1 = c1;
-    var m2 = a;
-    var m3 = b;
-    var m4 = b.a;
-    var m5 = c;
-    var m6 = c.a;
-    var m7 = c.a.b;
 })(m1 || (m1 = {}));
 var m;
 (function (m) {

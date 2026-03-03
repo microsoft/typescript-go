@@ -34,8 +34,6 @@ var A;
 (function (A) {
     let M;
     (function (M_1) {
-        var M = Z.I;
-        var M = Z.M;
         function bar() {
         }
         M_1.bar = bar;

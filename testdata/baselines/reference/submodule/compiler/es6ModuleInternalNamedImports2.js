@@ -62,10 +62,8 @@ var M;
 (function (M) {
     // Reexports
     export { M_V as v };
-    export { M_I as i };
     export { M_C as c };
     export { M_M as m };
-    export { M_MU as mu };
     export { M_F as f };
     export { M_E as e };
     export { M_A as a };

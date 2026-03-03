@@ -424,8 +424,6 @@ var m1;
     var m1_im4_private_v4_private = m1_im4_private.f1();
     m1.m1_im1_public = m1_M1_public;
     m1.m1_im2_public = m1_M2_private;
-    export import m1_im3_public = require("m1_M3_public");
-    export import m1_im4_public = require("m1_M4_private");
 })(m1 || (exports.m1 = m1 = {}));
 var m2;
 (function (m2) {
@@ -489,8 +487,6 @@ var m2;
     var m1_im4_private_v4_private = m1_im4_private.f1();
     m2.m1_im1_public = m2_M1_public;
     m2.m1_im2_public = m2_M2_private;
-    export import m1_im3_public = require("m2_M3_public");
-    export import m1_im4_public = require("m2_M4_private");
 })(m2 || (m2 = {}));
 var glo_M1_public;
 (function (glo_M1_public) {
@@ -556,19 +552,15 @@ exports.glo_im2_public = glo_M3_private;
 exports.glo_im3_public = require("glo_M2_public");
 exports.glo_im4_public = require("glo_M4_private");
 (function (m2_1) {
-    import m3 = require("use_glo_M1_public");
     let m4;
     (function (m4) {
         var a = 10;
-        import m2 = require("use_glo_M1_public");
     })(m4 || (m4 = {}));
 })(m2 || (m2 = {}));
 var m3;
 (function (m3_1) {
-    import m3 = require("use_glo_M1_public");
     let m4;
     (function (m4) {
         var a = 10;
-        import m2 = require("use_glo_M1_public");
     })(m4 || (m4 = {}));
 })(m3 || (exports.m3 = m3 = {}));
