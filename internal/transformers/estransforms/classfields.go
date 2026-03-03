@@ -305,25 +305,13 @@ func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindForStatement:
 		return tx.visitForStatement(node.AsForStatement())
 	case ast.KindForInStatement, ast.KindForOfStatement, ast.KindDoStatement, ast.KindWhileStatement:
-		saved := tx.inIterationStatement
-		tx.inIterationStatement = true
-		result := tx.Visitor().VisitEachChild(node)
-		tx.inIterationStatement = saved
-		return result
+		return tx.setInIterationStatementAnd(true, (*classFieldsTransformer).visitEachChildOfNode, node)
 	case ast.KindThisKeyword:
 		return tx.visitThisExpression(node)
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		saved := tx.inIterationStatement
-		tx.inIterationStatement = false
-		result := tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
-		tx.inIterationStatement = saved
-		return result
+		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).clearClassElementAndVisitEachChild, node)
 	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
-		saved := tx.inIterationStatement
-		tx.inIterationStatement = false
-		result := tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitEachChildOfNode, node)
-		tx.inIterationStatement = saved
-		return result
+		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).setClassElementAndVisitEachChild, node)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
@@ -696,6 +684,25 @@ func (tx *classFieldsTransformer) setCurrentClassElementAnd(classElement *ast.Cl
 
 func (tx *classFieldsTransformer) visitEachChildOfNode(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *classFieldsTransformer) setInIterationStatementAnd(inIteration bool, visitor func(tx *classFieldsTransformer, node *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
+	if tx.inIterationStatement != inIteration {
+		saved := tx.inIterationStatement
+		tx.inIterationStatement = inIteration
+		result := visitor(tx, node)
+		tx.inIterationStatement = saved
+		return result
+	}
+	return visitor(tx, node)
+}
+
+func (tx *classFieldsTransformer) clearClassElementAndVisitEachChild(node *ast.Node) *ast.Node {
+	return tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
+}
+
+func (tx *classFieldsTransformer) setClassElementAndVisitEachChild(node *ast.Node) *ast.Node {
+	return tx.setCurrentClassElementAnd(node, (*classFieldsTransformer).visitEachChildOfNode, node)
 }
 
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
