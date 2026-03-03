@@ -644,8 +644,6 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	// loop, and not just if we see a list terminator. This is because the list
 	// may have ended incorrectly, but it is still important to know if there
 	// was a trailing comma.
-	// Check if the last token was a comma.
-	// Always preserve a trailing comma by marking it on the NodeArray
 	endPos := p.nodePos()
 	if commaStart < 0 && len(list) > 0 {
 		endPos = list[len(list)-1].End()
