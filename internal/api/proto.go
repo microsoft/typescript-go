@@ -186,16 +186,13 @@ func (d *DocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) error {
 			if err != nil {
 				return err
 			}
-			keyStr := key.String() // must save before next ReadToken voids the token
+			isURI := key.String() == "uri"
 			val, err := dec.ReadToken()
 			if err != nil {
 				return err
 			}
-			switch keyStr {
-			case "uri":
+			if isURI {
 				d.URI = lsproto.DocumentUri(val.String())
-			case "fileName":
-				d.FileName = val.String()
 			}
 		}
 		// Consume the closing brace
