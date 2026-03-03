@@ -3,6 +3,7 @@ package autoimport_test
 import (
 	"context"
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -555,6 +556,79 @@ export declare const otherValue: string;`,
 		isPrepared3 := snapshot3.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, newPreferences)
 		release3()
 		assert.Assert(t, isPrepared3, "IsPreparedForImportingFile should return true after bucket rebuild with new fileExcludePatterns")
+	})
+
+	t.Run("dedupes packages that resolve to same realpath across ancestor node_modules buckets", func(t *testing.T) {
+		t.Parallel()
+
+		repoRoot := "/home/src/autoimport-realpath-dedupe"
+		appDir := tspath.CombinePaths(repoRoot, "apps", "web")
+		sharedPkgDir := tspath.CombinePaths(repoRoot, "node_modules", "shared")
+		appIndex := tspath.CombinePaths(appDir, "src", "index.ts")
+
+		files := map[string]any{
+			tspath.CombinePaths(repoRoot, "package.json"): `{
+				"name": "repo-root",
+				"private": true,
+				"dependencies": { "shared": "*" }
+			}`,
+			tspath.CombinePaths(repoRoot, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"target": "esnext",
+					"strict": true
+				},
+				"include": ["apps/**/*"]
+			}`,
+			tspath.CombinePaths(appDir, "package.json"): `{
+				"name": "web",
+				"private": true,
+				"dependencies": { "shared": "*" }
+			}`,
+			tspath.CombinePaths(appDir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"target": "esnext",
+					"strict": true
+				},
+				"include": ["src"]
+			}`,
+			appIndex: "export const app = 1;\n",
+			tspath.CombinePaths(sharedPkgDir, "package.json"): `{
+				"name": "shared",
+				"version": "1.0.0",
+				"types": "index.d.ts"
+			}`,
+			tspath.CombinePaths(sharedPkgDir, "index.d.ts"):       "export declare const sharedValue: 1;\n",
+			tspath.CombinePaths(appDir, "node_modules", "shared"): vfstest.Symlink(sharedPkgDir),
+		}
+
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		appURI := lsconv.FileNameToDocumentURI(appIndex)
+		session.DidOpenFile(ctx, appURI, 1, files[appIndex].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, appURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		assert.Equal(t, len(stats.NodeModulesBuckets), 2, "expected both app and repo node_modules buckets")
+
+		minBucketExports := math.MaxInt
+		maxBucketExports := 0
+		for _, bucket := range stats.NodeModulesBuckets {
+			if bucket.ExportCount < minBucketExports {
+				minBucketExports = bucket.ExportCount
+			}
+			if bucket.ExportCount > maxBucketExports {
+				maxBucketExports = bucket.ExportCount
+			}
+		}
+
+		assert.Assert(t, maxBucketExports > 0, "expected at least one node_modules bucket to contain shared exports")
+		assert.Equal(t, minBucketExports, maxBucketExports, "expected every bucket to contain the shared exports (cache-based dedupe installs into all buckets)")
 	})
 }
 

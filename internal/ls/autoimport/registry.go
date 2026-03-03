@@ -666,6 +666,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		return true
 	})
 
+	processedPackageRealpaths := &collections.SyncMap[string, *perPackageExtractionResult]{}
 	tspath.ForEachAncestorDirectoryPath(change.RequestedFile, func(dirPath tspath.Path) (any, bool) {
 		if nodeModulesBucket, ok := b.nodeModules.Get(dirPath); ok {
 			dirName := core.FirstResult(b.directories.Get(dirPath)).Value().name
@@ -682,7 +683,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				task := &task{entry: nodeModulesBucket, dependencyNames: dependencies}
 				tasks = append(tasks, task)
 				wg.Go(func() {
-					result, err := b.buildNodeModulesBucket(ctx, dependencies, dirName, dirPath, projectReferenceOutputs, logger.Fork("Building node_modules bucket "+dirName))
+					result, err := b.buildNodeModulesBucket(ctx, dependencies, dirName, dirPath, projectReferenceOutputs, processedPackageRealpaths, logger.Fork("Building node_modules bucket "+dirName))
 					task.result = result
 					task.err = err
 				})
@@ -690,7 +691,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				task := &task{entry: nodeModulesBucket, dependencyNames: dependencies}
 				tasks = append(tasks, task)
 				wg.Go(func() {
-					result, err := b.updateNodeModulesBucket(ctx, nodeModulesBucket.Value(), dirtyPackages, dirName, dirPath, projectReferenceOutputs, logger.Fork("Updating node_modules bucket "+dirName))
+					result, err := b.updateNodeModulesBucket(ctx, nodeModulesBucket.Value(), dirtyPackages, dirName, dirPath, projectReferenceOutputs, processedPackageRealpaths, logger.Fork("Updating node_modules bucket "+dirName))
 					task.result = result
 					task.err = err
 				})
@@ -1002,6 +1003,19 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 	return dependencies
 }
 
+// perPackageExtractionResult holds the extraction output for one physical package.
+// This is cached by realpath across buckets so the expensive work (parse, bind,
+// check, extract exports) happens only once, but every bucket that needs the
+// package can install it into its own index and maps.
+type perPackageExtractionResult struct {
+	packageFiles     map[tspath.Path]string
+	entrypoints      *module.ResolvedEntrypoints
+	exports          map[tspath.Path][]*Export
+	ambientModules   map[string][]string
+	statsExports     int32
+	statsUsedChecker int32
+}
+
 // packageExtractionResult holds the results of extracting exports from a set of packages.
 type packageExtractionResult struct {
 	exports                                  map[tspath.Path][]*Export
@@ -1024,6 +1038,7 @@ func (b *registryBuilder) extractPackages(
 	dirPath tspath.Path,
 	projectReferenceOutputs map[tspath.Path]string,
 	fileExcludePatterns []*regexp2.Regexp,
+	processedPackageRealpaths *collections.SyncMap[string, *perPackageExtractionResult],
 ) *packageExtractionResult {
 	result := &packageExtractionResult{
 		exports:                                  make(map[tspath.Path][]*Export),
@@ -1105,6 +1120,37 @@ func (b *registryBuilder) extractPackages(
 				packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
 			}
 
+			// Check if this physical package was already extracted by another bucket.
+			// If so, reuse the cached result instead of re-extracting.
+			if processedPackageRealpaths != nil && packageJson.DirectoryExists {
+				realPackageDir := b.host.FS().Realpath(packageJson.PackageDirectory)
+				if realPackageDir != "" {
+					if cached, ok := processedPackageRealpaths.Load(realPackageDir); ok {
+						// Reuse cached extraction result
+						exportsMu.Lock()
+						for path, fileExports := range cached.exports {
+							result.exports[path] = fileExports
+						}
+						if result.packageFiles[packageName] == nil {
+							result.packageFiles[packageName] = make(map[tspath.Path]string, len(cached.packageFiles))
+						}
+						for path, fileName := range cached.packageFiles {
+							result.packageFiles[packageName][path] = fileName
+						}
+						for name, fileNames := range cached.ambientModules {
+							result.ambientModuleNames[name] = append(result.ambientModuleNames[name], fileNames...)
+						}
+						exportsMu.Unlock()
+						entrypointsMu.Lock()
+						result.entrypoints = append(result.entrypoints, cached.entrypoints)
+						entrypointsMu.Unlock()
+						result.stats.exports.Add(cached.statsExports)
+						result.stats.usedChecker.Add(cached.statsUsedChecker)
+						return
+					}
+				}
+			}
+
 			toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 			resolver := getModuleResolver(b.host, toRealpath)
 			packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
@@ -1134,36 +1180,66 @@ func (b *registryBuilder) extractPackages(
 			aliasResolver := createAliasResolver(packageName, packageEntrypoints.Entrypoints, toSymlink, resolver)
 			ch, _ := checker.NewChecker(aliasResolver)
 			extractor := b.newExportExtractor(dirPath, packageName, ch, resolver, toRealpath)
+
+			// Build a per-package result to cache for cross-bucket reuse.
+			pkgResult := &perPackageExtractionResult{
+				packageFiles:   make(map[tspath.Path]string),
+				entrypoints:    packageEntrypoints,
+				exports:        make(map[tspath.Path][]*Export),
+				ambientModules: make(map[string][]string),
+			}
+
 			for _, entrypoint := range aliasResolver.rootFiles {
 				if ctx.Err() != nil {
 					return
 				}
 
 				fileExports := extractor.extractFromFile(entrypoint)
-				exportsMu.Lock()
 				for _, name := range entrypoint.AmbientModuleNames {
-					result.ambientModuleNames[name] = append(result.ambientModuleNames[name], entrypoint.FileName())
+					pkgResult.ambientModules[name] = append(pkgResult.ambientModules[name], entrypoint.FileName())
 				}
-				if result.packageFiles[packageName] == nil {
-					result.packageFiles[packageName] = make(map[tspath.Path]string)
-				}
-				result.packageFiles[packageName][entrypoint.Path()] = entrypoint.FileName()
+				pkgResult.packageFiles[entrypoint.Path()] = entrypoint.FileName()
 				if symlink, ok := aliasResolver.symlinks[entrypoint.Path()]; ok {
-					result.packageFiles[packageName][symlink.path] = symlink.fileName
+					pkgResult.packageFiles[symlink.path] = symlink.fileName
 				}
 
 				if source, ok := result.possibleFailedAmbientModuleLookupSources.Load(entrypoint.Path()); !ok {
-					result.exports[entrypoint.Path()] = fileExports
+					pkgResult.exports[entrypoint.Path()] = fileExports
 				} else {
 					source.mu.Lock()
 					source.packageName = packageName
 					source.mu.Unlock()
 				}
-				exportsMu.Unlock()
 			}
 			stats := extractor.Stats()
-			result.stats.exports.Add(stats.exports.Load())
-			result.stats.usedChecker.Add(stats.usedChecker.Load())
+			pkgResult.statsExports = stats.exports.Load()
+			pkgResult.statsUsedChecker = stats.usedChecker.Load()
+
+			// Store in cross-bucket cache.
+			if processedPackageRealpaths != nil && packageJson.DirectoryExists {
+				realPackageDir := b.host.FS().Realpath(packageJson.PackageDirectory)
+				if realPackageDir != "" {
+					processedPackageRealpaths.LoadOrStore(realPackageDir, pkgResult)
+				}
+			}
+
+			// Install into this bucket's aggregated result.
+			exportsMu.Lock()
+			for path, fileExports := range pkgResult.exports {
+				result.exports[path] = fileExports
+			}
+			if result.packageFiles[packageName] == nil {
+				result.packageFiles[packageName] = make(map[tspath.Path]string, len(pkgResult.packageFiles))
+			}
+			for path, fileName := range pkgResult.packageFiles {
+				result.packageFiles[packageName][path] = fileName
+			}
+			for name, fileNames := range pkgResult.ambientModules {
+				result.ambientModuleNames[name] = append(result.ambientModuleNames[name], fileNames...)
+			}
+			exportsMu.Unlock()
+			result.stats.exports.Add(pkgResult.statsExports)
+			result.stats.usedChecker.Add(pkgResult.statsUsedChecker)
 		})
 	}
 
@@ -1177,6 +1253,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	dirName string,
 	dirPath tspath.Path,
 	projectReferenceOutputs map[tspath.Path]string,
+	processedPackageRealpaths *collections.SyncMap[string, *perPackageExtractionResult],
 	logger *logging.LogTree,
 ) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
@@ -1193,10 +1270,9 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	extractorStart := time.Now()
 	packageNames := core.Coalesce(dependencies, directoryPackageNames)
 
-	extraction := b.extractPackages(ctx, packageNames, dirName, dirPath, projectReferenceOutputs, fileExcludePatterns)
+	extraction := b.extractPackages(ctx, packageNames, dirName, dirPath, projectReferenceOutputs, fileExcludePatterns, processedPackageRealpaths)
 
 	indexStart := time.Now()
-
 	// Build PackageFiles with all directory package names; indexed packages have
 	// non-nil maps, unindexed packages have nil maps.
 	allPackageFiles := make(map[string]map[tspath.Path]string, directoryPackageNames.Len())
@@ -1264,6 +1340,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	dirName string,
 	dirPath tspath.Path,
 	projectReferenceOutputs map[tspath.Path]string,
+	processedPackageRealpaths *collections.SyncMap[string, *perPackageExtractionResult],
 	logger *logging.LogTree,
 ) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
@@ -1274,7 +1351,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 
 	// Extract only the dirty packages
-	extraction := b.extractPackages(ctx, dirtyPackages, dirName, dirPath, projectReferenceOutputs, fileExcludePatterns)
+	extraction := b.extractPackages(ctx, dirtyPackages, dirName, dirPath, projectReferenceOutputs, fileExcludePatterns, processedPackageRealpaths)
 
 	indexStart := time.Now()
 
