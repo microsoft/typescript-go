@@ -3,7 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
-	"runtime/debug"
+	"runtime"
 	"slices"
 	"strings"
 	"sync"
@@ -426,7 +426,7 @@ func (s *Session) scheduleIdleCacheClean() {
 			cleanDiskCache: true,
 		})
 
-		debug.FreeOSMemory()
+		runtime.GC()
 	})
 }
 

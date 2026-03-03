@@ -353,7 +353,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	// Clean cached disk files not touched by any open project on file open, close, save, delete,
+	// Clean cached disk files not touched by any open project on file open, close, delete,
 	// or when explicitly requested (e.g. by an idle timer).
 	shouldCleanDiskCache := change.cleanDiskCache ||
 		change.fileChanges.Opened != "" ||
