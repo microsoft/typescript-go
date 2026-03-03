@@ -12,5 +12,5 @@ var v = {
 var v = {
     a,
     b,
-    c,
+    c
 };
