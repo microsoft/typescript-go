@@ -155,9 +155,6 @@ type UserPreferences struct {
 	DisableLineTextInReferences bool // !!!
 	DisplayPartsForJSDoc        bool // !!!
 	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
-
-	// ForceGC triggers a runtime.GC() after idle disk cache cleanups.
-	ForceGC bool
 }
 
 type InlayHintsPreferences struct {
@@ -414,7 +411,7 @@ func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 		case "tsc":
 			// !!!
 		case "experimental":
-			p.parseExperimental(values)
+			// !!!
 		default:
 			p.Set(name, values)
 			p.FormatCodeSettings.Set(name, values)
@@ -593,19 +590,6 @@ func (p *UserPreferences) parseWorkspaceSymbols(prefs any) {
 	}
 }
 
-func (p *UserPreferences) parseExperimental(prefs any) {
-	experimentalPreferences, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range experimentalPreferences {
-		switch name {
-		case "forceGC":
-			p.ForceGC = parseBoolWithDefault(value, false)
-		}
-	}
-}
-
 func parseEnabledBool(v map[string]any) bool {
 	// vscode nested option
 	if enabled, ok := v["enabled"]; ok {
@@ -723,8 +707,6 @@ func (p *UserPreferences) Set(name string, value any) bool {
 		p.DisplayPartsForJSDoc = parseBoolWithDefault(value, true)
 	case "reportstylechecksaswarnings":
 		p.ReportStyleChecksAsWarnings = parseBoolWithDefault(value, true)
-	case "forcegc":
-		p.ForceGC = parseBoolWithDefault(value, false)
 	case "referencescodelensenabled":
 		p.CodeLens.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "implementationscodelensenabled":

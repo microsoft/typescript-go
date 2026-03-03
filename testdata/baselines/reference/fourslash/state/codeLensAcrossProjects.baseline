@@ -210,8 +210,7 @@ Config File Names::
         "DisableSuggestions": false,
         "DisableLineTextInReferences": false,
         "DisplayPartsForJSDoc": false,
-        "ReportStyleChecksAsWarnings": false,
-        "ForceGC": false
+        "ReportStyleChecksAsWarnings": false
       }
     }
   }
@@ -687,8 +686,7 @@ Config::
         "DisableSuggestions": false,
         "DisableLineTextInReferences": true,
         "DisplayPartsForJSDoc": true,
-        "ReportStyleChecksAsWarnings": true,
-        "ForceGC": false
+        "ReportStyleChecksAsWarnings": true
       }
     }
   }

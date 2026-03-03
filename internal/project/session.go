@@ -3,7 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
-	"runtime"
+	"runtime/debug"
 	"slices"
 	"strings"
 	"sync"
@@ -129,11 +129,11 @@ type Session struct {
 	diagnosticsRefreshCancel context.CancelFunc
 	diagnosticsRefreshMu     sync.Mutex
 
-	// idleCacheCleanCancel is the cancelation function for a scheduled
-	// idle disk cache clean. The timer resets on any file event (open, close,
-	// change, save, watch) and fires after 60 seconds of inactivity.
-	idleCacheCleanCancel context.CancelFunc
-	idleCacheCleanMu     sync.Mutex
+	// idleCacheCleanTimer is a resettable timer for scheduling idle disk
+	// cache cleans. The timer resets on any file event (open, close,
+	// change, save, watch) and fires after 30 seconds of inactivity.
+	idleCacheCleanTimer *time.Timer
+	idleCacheCleanMu    sync.Mutex
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
@@ -404,28 +404,19 @@ func (s *Session) scheduleIdleCacheClean() {
 	s.idleCacheCleanMu.Lock()
 	defer s.idleCacheCleanMu.Unlock()
 
-	if s.idleCacheCleanCancel != nil {
-		s.idleCacheCleanCancel()
+	if s.idleCacheCleanTimer != nil {
+		s.idleCacheCleanTimer.Stop()
 	}
 
-	ctx, cancel := context.WithCancel(s.backgroundCtx)
-	s.idleCacheCleanCancel = cancel
-
-	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
-		select {
-		case <-time.After(idleCacheCleanDelay):
-			// Idle period elapsed, proceed with cache clean
-		case <-ctx.Done():
-			return
-		}
-
+	s.idleCacheCleanTimer = time.AfterFunc(idleCacheCleanDelay, func() {
 		s.idleCacheCleanMu.Lock()
-		s.idleCacheCleanCancel = nil
+		s.idleCacheCleanTimer = nil
 		s.idleCacheCleanMu.Unlock()
 
 		s.snapshotUpdateMu.Lock()
 		defer s.snapshotUpdateMu.Unlock()
 
+		ctx := s.backgroundCtx
 		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 			reason:         UpdateReasonIdleCleanDiskCache,
@@ -435,21 +426,16 @@ func (s *Session) scheduleIdleCacheClean() {
 			cleanDiskCache: true,
 		})
 
-		s.snapshotMu.RLock()
-		forceGC := s.snapshot.UserPreferences().ForceGC
-		s.snapshotMu.RUnlock()
-		if forceGC {
-			runtime.GC()
-		}
+		debug.FreeOSMemory()
 	})
 }
 
 func (s *Session) cancelIdleCacheClean() {
 	s.idleCacheCleanMu.Lock()
 	defer s.idleCacheCleanMu.Unlock()
-	if s.idleCacheCleanCancel != nil {
-		s.idleCacheCleanCancel()
-		s.idleCacheCleanCancel = nil
+	if s.idleCacheCleanTimer != nil {
+		s.idleCacheCleanTimer.Stop()
+		s.idleCacheCleanTimer = nil
 	}
 }
 
