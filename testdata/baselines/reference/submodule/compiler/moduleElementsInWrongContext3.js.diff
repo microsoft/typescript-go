@@ -1,24 +1,17 @@
 --- old.moduleElementsInWrongContext3.js
 +++ new.moduleElementsInWrongContext3.js
-@@= skipped -41, +41 lines =@@
-         var v;
-         function foo() { }
-         export * from "ambient";
--        export { foo };
--        export { baz as b } from "ambient";
+@@= skipped -44, +44 lines =@@
+         export { foo };
+         export { baz as b } from "ambient";
          export default v;
 -        export default class C {
 +        class C {
          }
 -        export function bee() { }
--        import I2 = require("foo");
--        import * as Foo from "ambient";
--        import bar from "ambient";
--        import { baz } from "ambient";
 +        P.C = C;
 +        function bee() { }
 +        P.bee = bee;
 +        var I = M;
-         import "ambient";
-     }
- })(P || (P = {}));
+         import I2 = require("foo");
+         import * as Foo from "ambient";
+         import bar from "ambient";
