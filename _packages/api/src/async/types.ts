@@ -122,3 +122,25 @@ export interface StringMappingType extends Type {
     /** Get the mapped type */
     getTarget(): Promise<Type>;
 }
+
+/** A type predicate — e.g. `x is T` or `asserts x is T` */
+export interface TypePredicate {
+    /** The kind of type predicate (TypePredicateKind) */
+    readonly kind: number;
+    /** Parameter index for identifier predicates */
+    readonly parameterIndex?: number;
+    /** Parameter name for identifier predicates */
+    readonly parameterName?: string;
+    /** The type being narrowed to */
+    readonly type?: Type;
+}
+
+/** An index signature — e.g. `[key: string]: T` */
+export interface IndexInfo {
+    /** The index key type (e.g. string or number) */
+    readonly keyType: Type;
+    /** The index value type */
+    readonly valueType: Type;
+    /** Whether the index signature is readonly */
+    readonly isReadonly: boolean;
+}
