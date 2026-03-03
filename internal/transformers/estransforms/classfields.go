@@ -2404,7 +2404,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 
 	// Only generate synthetic constructor when there are property initializers to move.
 	if constructor == nil && !needsConstructorBody {
-		return nil
+		return tx.EmitContext().VisitFunctionBody(nil, tx.Visitor())
 	}
 
 	tx.EmitContext().StartVariableEnvironment()
