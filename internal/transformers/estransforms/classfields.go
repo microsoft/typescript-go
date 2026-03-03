@@ -2097,29 +2097,21 @@ func (tx *classFieldsTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node {
 	if tx.insideComputedPropertyName && tx.shouldTransformThisInStaticInitializers &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
-		data := tx.lexicalEnvironment.data
-		if data.classThis != nil {
-			return data.classThis
-		}
-		if data.classConstructor != nil {
-			return data.classConstructor
+		if classThis := tx.tryGetClassThis(); classThis != nil {
+			return classThis
 		}
 	}
 	if tx.shouldTransformThisInStaticInitializers && tx.currentClassElement != nil &&
 		(ast.IsClassStaticBlockDeclaration(tx.currentClassElement) ||
 			(ast.IsPropertyDeclaration(tx.currentClassElement) && ast.HasStaticModifier(tx.currentClassElement))) &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
-		data := tx.lexicalEnvironment.data
-		if data.classThis != nil {
-			return data.classThis
-		}
-		if data.classConstructor != nil {
-			return data.classConstructor
+		if classThis := tx.tryGetClassThis(); classThis != nil {
+			return classThis
 		}
 		// When the class was decorated with legacy decorators and no class constructor
 		// reference is available, the decorator may replace the constructor, so `this`
 		// cannot reliably point to the class. Use `(void 0)` instead.
-		if data.facts&classFactsClassWasDecorated != 0 && tx.legacyDecorators {
+		if tx.lexicalEnvironment.data.facts&classFactsClassWasDecorated != 0 && tx.legacyDecorators {
 			return tx.Factory().NewParenthesizedExpression(tx.Factory().NewVoidZeroExpression())
 		}
 	}
