@@ -981,6 +981,9 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if !newSnapshot.fs.isOpenFile(changedFile.FileName()) {
 			return
 		}
+		if !newSnapshot.GetPreferences(changedFile.FileName()).IncludeCompletionsForModuleExports.IsTrue() {
+			return
+		}
 		project := newSnapshot.GetDefaultProject(changedFile)
 		if project == nil {
 			return
