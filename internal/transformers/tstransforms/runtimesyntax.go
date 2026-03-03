@@ -111,8 +111,20 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitFunctionDeclaration(node.AsFunctionDeclaration())
 	case ast.KindVariableStatement:
 		node = tx.visitVariableStatement(node.AsVariableStatement())
+	case ast.KindExportDeclaration, ast.KindImportDeclaration, ast.KindImportClause:
+		if tx.currentNamespace != nil {
+			// do not emit ES6 imports and exports since they are illegal inside a namespace
+			node = nil
+		} else {
+			node = tx.Visitor().VisitEachChild(node)
+		}
 	case ast.KindImportEqualsDeclaration:
-		node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
+		if tx.currentNamespace != nil && node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
+			// do not emit ES6 imports and exports since they are illegal inside a namespace
+			node = nil
+		} else {
+			node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
+		}
 	case ast.KindIdentifier:
 		node = tx.visitIdentifier(node)
 	case ast.KindShorthandPropertyAssignment:
