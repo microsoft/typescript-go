@@ -1861,6 +1861,11 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 		statements = append(statements, tx.Factory().NewExpressionStatement(tx.Factory().InlineExpressions(tx.pendingExpressions)))
 	}
 
+	// A class declaration without a name needs a generated name if it has static
+	// initialized properties, since those will be moved outside the class body and
+	// need to reference the class by name.
+	name := classDecl.Name()
+
 	if tx.shouldTransformInitializersUsingSet || tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		// Emit static property assignment. Because classDeclaration is lexically evaluated,
 		// it is safe to emit static property assignment after classDeclaration
@@ -1869,6 +1874,9 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 		//                               a lexical declaration such as a LexicalDeclaration or a ClassDeclaration.
 		staticProperties := tx.getStaticPropertiesAndClassStaticBlock(node)
 		if len(staticProperties) > 0 {
+			if name == nil {
+				name = tx.Factory().NewGeneratedNameForNode(node)
+			}
 			statements = tx.addPropertyOrClassStaticBlockStatements(statements, staticProperties, tx.Factory().GetDeclarationName(node))
 		}
 	}
@@ -1885,7 +1893,7 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 	updatedClass := tx.Factory().UpdateClassDeclaration(
 		classDecl,
 		modifiers,
-		classDecl.Name(),
+		name,
 		nil, /*typeParameters*/
 		heritageClauses,
 		members,

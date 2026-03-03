@@ -776,13 +776,7 @@ func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclara
 		modifiers = tx.Visitor().VisitModifiers(node.Modifiers())
 	}
 
-	// A class declaration without a name needs a generated name if it has static
-	// initialized properties, since those will be moved outside the class body by
-	// the classfields transformer and need to reference the class by name.
 	name := tx.Visitor().VisitNode(node.Name())
-	if name == nil && hasStaticInitializedProperties(node.Members.Nodes) {
-		name = tx.Factory().NewGeneratedNameForNode(node.AsNode())
-	}
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
 	members := tx.Visitor().VisitNodes(node.Members)
 	parameterProperties := tx.getParameterProperties(core.Find(node.Members.Nodes, ast.IsConstructorDeclaration))
@@ -1141,13 +1135,4 @@ func getInnermostModuleDeclarationFromDottedModule(moduleDeclaration *ast.Module
 		moduleDeclaration = moduleDeclaration.Body.AsModuleDeclaration()
 	}
 	return moduleDeclaration
-}
-
-func hasStaticInitializedProperties(members []*ast.ClassElement) bool {
-	for _, member := range members {
-		if ast.IsPropertyDeclaration(member) && ast.HasStaticModifier(member) && member.Initializer() != nil {
-			return true
-		}
-	}
-	return false
 }
