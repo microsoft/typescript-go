@@ -134,6 +134,23 @@ func (tx *LegacyDecoratorsTransformer) visitParamerDeclaration(node *ast.Paramet
 	return updated
 }
 
+// visitPropertyNameOfClassElement visits the property name of a class element,
+// for use when emitting property initializers. For a computed property on a node
+// with decorators, a temporary value is stored for later use.
+func (tx *LegacyDecoratorsTransformer) visitPropertyNameOfClassElement(member *ast.Node) *ast.Node {
+	name := member.Name()
+	if ast.IsComputedPropertyName(name) && ast.HasDecorators(member) {
+		expression := tx.Visitor().VisitNode(name.AsComputedPropertyName().Expression)
+		innerExpression := ast.SkipPartiallyEmittedExpressions(expression)
+		if !transformers.IsSimpleInlineableExpression(innerExpression) {
+			generatedName := tx.Factory().NewGeneratedNameForNode(name)
+			tx.EmitContext().AddVariableDeclaration(generatedName)
+			return tx.Factory().UpdateComputedPropertyName(name.AsComputedPropertyName(), tx.Factory().NewAssignmentExpression(generatedName.AsNode(), expression))
+		}
+	}
+	return tx.Visitor().VisitNode(name)
+}
+
 func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.PropertyDeclaration) *ast.Node {
 	if (node.Flags & ast.NodeFlagsAmbient) != 0 {
 		return nil
@@ -146,7 +163,7 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.Proper
 		tx.Factory().UpdatePropertyDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			nil,
 			tx.Visitor().VisitNode(node.Initializer),
@@ -160,7 +177,7 @@ func (tx *LegacyDecoratorsTransformer) visitGetAccessorDeclaration(node *ast.Get
 		tx.Factory().UpdateGetAccessorDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil,
@@ -176,7 +193,7 @@ func (tx *LegacyDecoratorsTransformer) visitSetAccessorDeclaration(node *ast.Set
 		tx.Factory().UpdateSetAccessorDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil,
@@ -193,7 +210,7 @@ func (tx *LegacyDecoratorsTransformer) visitMethodDeclaration(node *ast.MethodDe
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
 			node.AsteriskToken,
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
