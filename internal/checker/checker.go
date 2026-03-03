@@ -15131,9 +15131,8 @@ func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontReso
 	return moduleSymbol
 }
 
-// An external module with an 'export =' declaration may be referenced as an ES6 module provided the 'export ='
-// references a symbol that is at least declared as a module or a variable. The target of the 'export =' may
-// combine other declarations with the module or variable (e.g. a class/module, function/module, interface/variable).
+// Resolves the given external module symbol, possibly removing call and construct signatures or creating a
+// wrapper module with a synthetic default.
 func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, node *ast.Node, moduleSpecifier *ast.Node) *ast.Symbol {
 	symbol := c.resolveExternalModuleSymbol(moduleSymbol, true /*dontResolveAlias*/)
 	if ast.IsNonLocalAlias(symbol, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) {
