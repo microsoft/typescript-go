@@ -660,7 +660,7 @@ func (tx *classFieldsTransformer) visitMethodOrAccessorDeclaration(node *ast.Nod
 
 		funcExpr := tx.Factory().NewFunctionExpression(modifiers, node.BodyData().AsteriskToken, functionName, nil, params, nil, nil, body)
 		assignment := tx.Factory().NewAssignmentExpression(functionName, funcExpr)
-		*tx.getPendingExpressions() = append(*tx.getPendingExpressions(), assignment)
+		tx.addPendingExpressions(assignment)
 	}
 
 	// remove method declaration from class
@@ -891,7 +891,7 @@ func (tx *classFieldsTransformer) transformPublicFieldInitializer(node *ast.Prop
 		// For computed property names, we still need to emit the expression.
 		expr := tx.getPropertyNameExpressionIfNeeded(node.Name(), node.Initializer != nil || tx.compilerOptions.GetUseDefineForClassFields())
 		if expr != nil {
-			*tx.getPendingExpressions() = append(*tx.getPendingExpressions(), flattenCommaList(expr)...)
+			tx.addPendingExpressions(flattenCommaList(expr)...)
 		}
 
 		// When target >= ES2022 (i.e., !shouldTransformPrivateElementsOrClassStaticBlocks) and we
@@ -1866,7 +1866,7 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 		//                               a lexical declaration such as a LexicalDeclaration or a ClassDeclaration.
 		staticProperties := tx.getStaticPropertiesAndClassStaticBlock(node)
 		if len(staticProperties) > 0 {
-			tx.addPropertyOrClassStaticBlockStatements(&statements, staticProperties, tx.Factory().GetDeclarationName(node))
+			statements = tx.addPropertyOrClassStaticBlockStatements(statements, staticProperties, tx.Factory().GetDeclarationName(node))
 		}
 	}
 
@@ -2082,7 +2082,7 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		if classThisOrName == nil {
 			classThisOrName = tx.Factory().GetDeclarationName(node)
 		}
-		tx.addPropertyOrClassStaticBlockStatements(&tx.pendingStatements, staticPropertiesOrClassStaticBlocks, classThisOrName)
+		tx.pendingStatements = tx.addPropertyOrClassStaticBlockStatements(tx.pendingStatements, staticPropertiesOrClassStaticBlocks, classThisOrName)
 	}
 
 	if temp != nil {
@@ -2253,7 +2253,7 @@ func (tx *classFieldsTransformer) createBrandCheckWeakSetForPrivateMethods() {
 	weakSetName := env.data.weakSetName
 	debug.Assert(weakSetName != nil, "weakSetName should be set in private identifier environment")
 
-	*tx.getPendingExpressions() = append(*tx.getPendingExpressions(),
+	tx.addPendingExpressions(
 		tx.Factory().NewAssignmentExpression(
 			weakSetName,
 			tx.Factory().NewNewExpression(
@@ -2324,27 +2324,26 @@ func (tx *classFieldsTransformer) transformConstructor(constructor *ast.Construc
 }
 
 func (tx *classFieldsTransformer) transformConstructorBodyWorker(
-	statementsOut *[]*ast.Statement,
+	statementsOut []*ast.Statement,
 	statementsIn []*ast.Statement,
 	statementOffset int,
 	superPath []int,
 	superPathDepth int,
 	initializerStatements []*ast.Statement,
 	constructor *ast.ConstructorDeclaration,
-) {
+) []*ast.Statement {
 	superStatementIndex := superPath[superPathDepth]
 	superStatement := statementsIn[superStatementIndex]
 
 	// Visit statements before super
 	visited, _ := tx.Visitor().VisitSlice(statementsIn[statementOffset:superStatementIndex])
-	*statementsOut = append(*statementsOut, visited...)
+	statementsOut = append(statementsOut, visited...)
 	statementOffset = superStatementIndex + 1
 
 	if ast.IsTryStatement(superStatement) {
 		tryBlock := superStatement.AsTryStatement().TryBlock.AsBlock()
-		var tryBlockStatements []*ast.Statement
-		tx.transformConstructorBodyWorker(
-			&tryBlockStatements,
+		tryBlockStatements := tx.transformConstructorBodyWorker(
+			nil,
 			tryBlock.Statements.Nodes,
 			0, /*statementOffset*/
 			superPath,
@@ -2364,10 +2363,10 @@ func (tx *classFieldsTransformer) transformConstructorBodyWorker(
 			catchClause,
 			finallyBlock,
 		)
-		*statementsOut = append(*statementsOut, updated)
+		statementsOut = append(statementsOut, updated)
 	} else {
 		visited, _ := tx.Visitor().VisitSlice(statementsIn[superStatementIndex : superStatementIndex+1])
-		*statementsOut = append(*statementsOut, visited...)
+		statementsOut = append(statementsOut, visited...)
 
 		// Add the property initializers. Transforms this:
 		//
@@ -2394,12 +2393,13 @@ func (tx *classFieldsTransformer) transformConstructorBodyWorker(
 			}
 		}
 
-		*statementsOut = append(*statementsOut, initializerStatements...)
+		statementsOut = append(statementsOut, initializerStatements...)
 	}
 
 	// Visit remaining statements
 	visited2, _ := tx.Visitor().VisitSlice(statementsIn[statementOffset:])
-	*statementsOut = append(*statementsOut, visited2...)
+	statementsOut = append(statementsOut, visited2...)
+	return statementsOut
 }
 
 func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, constructor *ast.ConstructorDeclaration, isDerivedClass bool) *ast.Node {
@@ -2438,7 +2438,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 	receiver := tx.Factory().NewThisExpression()
 
 	// private methods can be called in property initializers, they should execute first
-	tx.addInstanceMethodStatements(&initializerStatements, privateMethodsAndAccessors, receiver)
+	initializerStatements = tx.addInstanceMethodStatements(initializerStatements, privateMethodsAndAccessors, receiver)
 
 	if constructor != nil {
 		parameterProperties := core.Filter(instanceProperties, func(prop *ast.Node) bool {
@@ -2447,10 +2447,10 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 		nonParameterProperties := core.Filter(properties, func(prop *ast.Node) bool {
 			return !ast.IsParameterPropertyDeclaration(tx.EmitContext().MostOriginal(prop), constructor.AsNode())
 		})
-		tx.addPropertyOrClassStaticBlockStatements(&initializerStatements, parameterProperties, receiver)
-		tx.addPropertyOrClassStaticBlockStatements(&initializerStatements, nonParameterProperties, receiver)
+		initializerStatements = tx.addPropertyOrClassStaticBlockStatements(initializerStatements, parameterProperties, receiver)
+		initializerStatements = tx.addPropertyOrClassStaticBlockStatements(initializerStatements, nonParameterProperties, receiver)
 	} else {
-		tx.addPropertyOrClassStaticBlockStatements(&initializerStatements, properties, receiver)
+		initializerStatements = tx.addPropertyOrClassStaticBlockStatements(initializerStatements, properties, receiver)
 	}
 
 	if constructor != nil && constructor.Body != nil {
@@ -2468,7 +2468,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 
 		superPath := transformers.FindSuperStatementIndexPath(body.Statements.Nodes, statementOffset)
 		if len(superPath) > 0 {
-			tx.transformConstructorBodyWorker(&statements, body.Statements.Nodes, statementOffset, superPath, 0, initializerStatements, constructor)
+			statements = tx.transformConstructorBodyWorker(statements, body.Statements.Nodes, statementOffset, superPath, 0, initializerStatements, constructor)
 		} else {
 			// parameter-property assignments should occur immediately after the prologue and `super()`,
 			// so only count the statements that immediately follow.
@@ -2533,16 +2533,17 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 }
 
 // addPropertyOrClassStaticBlockStatements generates assignment statements for property initializers.
-func (tx *classFieldsTransformer) addPropertyOrClassStaticBlockStatements(statements *[]*ast.Node, properties []*ast.Node, receiver *ast.Expression) {
+func (tx *classFieldsTransformer) addPropertyOrClassStaticBlockStatements(statements []*ast.Node, properties []*ast.Node, receiver *ast.Expression) []*ast.Node {
 	for _, property := range properties {
 		if ast.IsStatic(property) && !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 			continue
 		}
 		statement := tx.transformPropertyOrClassStaticBlock(property, receiver)
 		if statement != nil {
-			*statements = append(*statements, statement)
+			statements = append(statements, statement)
 		}
 	}
+	return statements
 }
 
 func (tx *classFieldsTransformer) transformPropertyOrClassStaticBlock(property *ast.Node, receiver *ast.Expression) *ast.Node {
@@ -2721,16 +2722,16 @@ func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.Property
 }
 
 // addInstanceMethodStatements generates brand-check initializer for private methods.
-func (tx *classFieldsTransformer) addInstanceMethodStatements(statements *[]*ast.Statement, methods []*ast.Node, receiver *ast.Expression) {
+func (tx *classFieldsTransformer) addInstanceMethodStatements(statements []*ast.Statement, methods []*ast.Node, receiver *ast.Expression) []*ast.Statement {
 	if !tx.shouldTransformPrivateElementsOrClassStaticBlocks || len(methods) == 0 {
-		return
+		return statements
 	}
 
 	env := tx.getPrivateIdentifierEnvironment()
 	weakSetName := env.data.weakSetName
 	debug.Assert(weakSetName != nil, "weakSetName should be set in private identifier environment")
 
-	*statements = append(*statements,
+	return append(statements,
 		tx.Factory().NewExpressionStatement(
 			createPrivateInstanceMethodInitializer(tx.Factory(), receiver, weakSetName),
 		),
@@ -2816,8 +2817,8 @@ func (tx *classFieldsTransformer) getPrivateIdentifierEnvironment() *privateEnvi
 	return tx.lexicalEnvironment.privateEnv
 }
 
-func (tx *classFieldsTransformer) getPendingExpressions() *[]*ast.Expression {
-	return &tx.pendingExpressions
+func (tx *classFieldsTransformer) addPendingExpressions(exprs ...*ast.Expression) {
+	tx.pendingExpressions = append(tx.pendingExpressions, exprs...)
 }
 
 func (tx *classFieldsTransformer) addPrivateIdentifierPropertyDeclarationToEnvironment(node *ast.Node, name *ast.Node) {
@@ -2848,7 +2849,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierPropertyDeclarationToEnvir
 			brandCheckIdentifier: weakMapName,
 			isValid:              isValid,
 		})
-		*tx.getPendingExpressions() = append(*tx.getPendingExpressions(),
+		tx.addPendingExpressions(
 			tx.Factory().NewAssignmentExpression(
 				weakMapName,
 				tx.Factory().NewNewExpression(
@@ -3431,19 +3432,17 @@ func (tx *classFieldsTransformer) createAccessorPropertySetRedirector(node *ast.
 // flattenCommaList decomposes a comma expression tree into a flat list of expressions.
 // This matches the TypeScript reference's `flattenCommaList` utility.
 func flattenCommaList(node *ast.Expression) []*ast.Expression {
-	var expressions []*ast.Expression
-	flattenCommaListWorker(node, &expressions)
-	return expressions
+	return flattenCommaListWorker(node, nil)
 }
 
-func flattenCommaListWorker(node *ast.Expression, expressions *[]*ast.Expression) {
+func flattenCommaListWorker(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {
 	if ast.IsParenthesizedExpression(node) && ast.NodeIsSynthesized(node) {
-		flattenCommaListWorker(node.Expression(), expressions)
+		return flattenCommaListWorker(node.Expression(), expressions)
 	} else if ast.IsCommaExpression(node.AsNode()) {
-		flattenCommaListWorker(node.AsBinaryExpression().Left, expressions)
-		flattenCommaListWorker(node.AsBinaryExpression().Right, expressions)
+		expressions = flattenCommaListWorker(node.AsBinaryExpression().Left, expressions)
+		return flattenCommaListWorker(node.AsBinaryExpression().Right, expressions)
 	} else {
-		*expressions = append(*expressions, node)
+		return append(expressions, node)
 	}
 }
 
