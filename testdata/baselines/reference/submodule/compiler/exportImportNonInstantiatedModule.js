@@ -14,4 +14,7 @@ var x: B.A1.I = { x: 1 };
 
 //// [exportImportNonInstantiatedModule.js]
 "use strict";
+var B;
+(function (B) {
+})(B || (B = {}));
 var x = { x: 1 };
