@@ -96,7 +96,7 @@ let h = <MeetAndGreet extra-prop-name="World"/>;
 let i = <EmptyPropSFC prop1/>;
 let i1 = <EmptyPropSFC ref={x => x.greeting.substr(10)}/>;
 let o = {
-    prop1: true
+    prop1: true,
 };
 // OK as access properties are allow when spread
 let i2 = <EmptyPropSFC {...o}/>;

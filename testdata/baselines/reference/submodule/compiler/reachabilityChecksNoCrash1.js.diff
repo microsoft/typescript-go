@@ -8,7 +8,9 @@
   > ;
  Promise < T[] > {
      const: out = [],
-@@= skipped -8, +9 lines =@@
+     for: await (), const: v, of, asyncIterable,
+-    out, : .push(await v)
++    out, : .push(await v),
  };
  return out;
  ;

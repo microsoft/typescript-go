@@ -15,6 +15,6 @@ var y: {
 "use strict";
 // private indexers not allowed
 var x = {
-    [x]: string, string
+    [x]: string, string,
 };
 var y;

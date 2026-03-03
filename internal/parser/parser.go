@@ -588,7 +588,6 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
 	list := make([]*ast.Node, 0, 16)
-	commaStart := -1 // Meaning the previous token was not a comma
 	for {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
 			startPos := p.nodePos()
@@ -599,12 +598,10 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 				return nil
 			}
 			list = append(list, element)
-			commaStart = p.scanner.TokenStart()
 			if p.parseOptional(ast.KindCommaToken) {
 				// No need to check for a zero length node since we know we parsed a comma
 				continue
 			}
-			commaStart = -1 // Back to the state where the last token was not a comma
 			if p.isListTerminator(kind) {
 				break
 			}
@@ -640,15 +637,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	// Recording the trailing comma is deliberately done after the previous
-	// loop, and not just if we see a list terminator. This is because the list
-	// may have ended incorrectly, but it is still important to know if there
-	// was a trailing comma.
-	endPos := p.nodePos()
-	if commaStart < 0 && len(list) > 0 {
-		endPos = list[len(list)-1].End()
-	}
-	return p.newNodeList(core.NewTextRange(pos, endPos), p.nodeSlicePool.Clone(list))
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 }
 
 // Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found

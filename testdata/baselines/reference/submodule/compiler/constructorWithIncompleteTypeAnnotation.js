@@ -298,7 +298,7 @@ var TypeScriptAllInOne;
                 retValue = bfs.VARIABLES();
                 if (retValue != 0)
                      ^= {
-                        return: 1
+                        return: 1,
                     };
             }
             finally {

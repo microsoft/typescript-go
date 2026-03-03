@@ -22,7 +22,7 @@ class C6 extends []{ } // error
 "use strict";
 class C extends I {
 } // error
-class C2 extends { foo: string } {
+class C2 extends { foo: string, } {
 } // error
 class C3 extends x {
 } // error
