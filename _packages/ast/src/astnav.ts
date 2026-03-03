@@ -30,6 +30,79 @@ export function getTouchingToken(sourceFile: SourceFile, position: number): Node
     return getTokenAtPositionImpl(sourceFile, position, /*allowPositionInLeadingTrivia*/ false, /*includePrecedingTokenAtEndPosition*/ undefined);
 }
 
+/**
+ * Finds the token that starts immediately after `previousToken` ends, searching
+ * within `parent`.  Returns `undefined` if no such token exists.
+ */
+export function findNextToken(previousToken: Node, parent: Node, sourceFile: SourceFile): Node | undefined {
+    return find(parent);
+
+    function find(n: Node): Node | undefined {
+        if (isTokenKind(n.kind) && n.pos === previousToken.end) {
+            // This is the token that starts at the end of previousToken – return it.
+            return n;
+        }
+
+        // Find the child node that contains `previousToken` or starts immediately after it.
+        let foundNode: Node | undefined;
+
+        const visitChild = (node: Node) => {
+            if (node.flags & NodeFlags.Reparsed) {
+                return undefined;
+            }
+            if (node.pos <= previousToken.end && node.end > previousToken.end) {
+                foundNode = node;
+            }
+            return undefined;
+        };
+
+        // Visit JSDoc children first (mirrors Go's VisitEachChildAndJSDoc).
+        if (n.jsDoc) {
+            for (const jsdoc of n.jsDoc) {
+                visitChild(jsdoc);
+            }
+        }
+
+        n.forEachChild(
+            visitChild,
+            nodes => {
+                if (nodes.length > 0 && foundNode === undefined) {
+                    for (const node of nodes) {
+                        if (node.flags & NodeFlags.Reparsed) continue;
+                        if (node.pos > previousToken.end) break;
+                        if (node.end > previousToken.end) {
+                            foundNode = node;
+                            break;
+                        }
+                    }
+                }
+                return undefined;
+            },
+        );
+
+        // Recurse into the found child.
+        if (foundNode !== undefined) {
+            return find(foundNode);
+        }
+
+        // No AST child covers the position; use the scanner to find the syntactic token.
+        const startPos = previousToken.end;
+        if (startPos >= n.pos && startPos < n.end) {
+            const scanner = getScannerForSourceFile(sourceFile, startPos);
+            const token = scanner.getToken();
+            const tokenFullStart = scanner.getTokenFullStart();
+            const tokenStart = scanner.getTokenStart();
+            const tokenEnd = scanner.getTokenEnd();
+            const flags = scanner.getTokenFlags();
+            if (tokenStart === previousToken.end) {
+                return getOrCreateToken(sourceFile, token, tokenFullStart, tokenEnd, n, flags);
+            }
+        }
+
+        return undefined;
+    }
+}
+
 function getTokenAtPositionImpl(
     sourceFile: SourceFile,
     position: number,

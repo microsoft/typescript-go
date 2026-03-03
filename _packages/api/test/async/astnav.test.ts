@@ -4,10 +4,12 @@ import { API } from "@typescript/api/async"; // @sync-skip
 // @sync-only-end
 import { createVirtualFileSystem } from "@typescript/api/fs";
 import {
+    findNextToken,
     formatSyntaxKind,
     getTokenAtPosition,
     getTouchingPropertyName,
 } from "@typescript/ast";
+import { SyntaxKind } from "@typescript/ast";
 import type {
     Node,
     SourceFile,
@@ -162,4 +164,68 @@ describe("astnav", () => {
             }
         });
     }
+
+    // ---------------------------------------------------------------------------
+    // findNextToken tests
+    // ---------------------------------------------------------------------------
+
+    test("findNextToken: result always starts at the end of the previous token", () => {
+        // For each unique token in the first 2000 characters, verify that
+        // findNextToken returns a node whose pos equals the previous token's end.
+        const limit = Math.min(fileText.length, 2000);
+        const failures: string[] = [];
+        const seen = new Set<number>();
+
+        for (let pos = 0; pos < limit; pos++) {
+            const token = getTokenAtPosition(sourceFile, pos);
+            if (seen.has(token.pos)) continue;
+            seen.add(token.pos);
+
+            const result = findNextToken(token, sourceFile, sourceFile);
+            if (result === undefined) continue;
+
+            if (result.pos !== token.end) {
+                failures.push(
+                    `  token ${formatSyntaxKind(token.kind)} [${token.pos}, ${token.end}): ` +
+                        `next token ${formatSyntaxKind(result.kind)} [${result.pos}, ${result.end}) ` +
+                        `does not start at ${token.end}`,
+                );
+                if (failures.length >= 10) break;
+            }
+        }
+
+        if (failures.length > 0) {
+            assert.fail(`findNextToken: next token pos !== previous token end:\n${failures.join("\n")}`);
+        }
+    });
+
+    test("findNextToken: returns undefined when parent is the token itself", () => {
+        // When a token is its own parent, there is no next token within it.
+        const token = getTokenAtPosition(sourceFile, 0);
+        assert.notEqual(token.kind, SyntaxKind.EndOfFile);
+
+        const result = findNextToken(token, token, sourceFile);
+        assert.equal(result, undefined, `Expected undefined, got ${result !== undefined ? formatSyntaxKind(result.kind) : "undefined"}`);
+    });
+
+    test("findNextToken: returns undefined for EndOfFile token", () => {
+        // The EndOfFile token has no successor.
+        const eof = getTokenAtPosition(sourceFile, fileText.length);
+        assert.equal(eof.kind, SyntaxKind.EndOfFile);
+
+        const result = findNextToken(eof, sourceFile, sourceFile);
+        assert.equal(result, undefined);
+    });
+
+    test("findNextToken: finds punctuation tokens not directly stored in the AST", () => {
+        // mapCode.ts starts with `import {`.
+        // The `{` after `import` is a syntactic token found via the scanner.
+        const importToken = getTokenAtPosition(sourceFile, 0);
+        assert.equal(importToken.kind, SyntaxKind.ImportKeyword, "expected 'import' at pos 0");
+
+        const openBrace = findNextToken(importToken, sourceFile, sourceFile);
+        assert.ok(openBrace !== undefined, "Expected a token after 'import'");
+        assert.equal(openBrace.kind, SyntaxKind.OpenBraceToken, `Expected '{', got ${formatSyntaxKind(openBrace.kind)}`);
+        assert.equal(openBrace.pos, importToken.end, `Expected next token pos === importToken.end (${importToken.end}), got ${openBrace.pos}`);
+    });
 });
