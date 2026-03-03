@@ -270,23 +270,23 @@ func IsSimpleInlineableExpression(expression *ast.Expression) bool {
 
 // FindSuperStatementIndexPath finds a path of indices to a statement containing a `super()` call.
 func FindSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
-	var indices []int
-	findSuperStatementIndexPathWorker(statements, start, &indices)
+	indices := findSuperStatementIndexPathWorker(statements, start, nil)
+	slices.Reverse(indices)
 	return indices
 }
 
-func findSuperStatementIndexPathWorker(statements []*ast.Statement, start int, indices *[]int) bool {
+func findSuperStatementIndexPathWorker(statements []*ast.Statement, start int, indices []int) []int {
 	for i := start; i < len(statements); i++ {
 		statement := statements[i]
 		if GetSuperCallFromStatement(statement) != nil {
-			*indices = slices.Insert(*indices, 0, i)
-			return true
-		} else if ast.IsTryStatement(statement) && findSuperStatementIndexPathWorker(statement.AsTryStatement().TryBlock.Statements(), 0, indices) {
-			*indices = slices.Insert(*indices, 0, i)
-			return true
+			return append(indices, i)
+		} else if ast.IsTryStatement(statement) {
+			if result := findSuperStatementIndexPathWorker(statement.AsTryStatement().TryBlock.Statements(), 0, indices); result != nil {
+				return append(result, i)
+			}
 		}
 	}
-	return false
+	return nil
 }
 
 // GetSuperCallFromStatement extracts the super() call expression from an expression statement, if any.
