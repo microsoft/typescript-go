@@ -27,25 +27,23 @@ module.exports = j;
 
 
 //// [index.d.ts]
+declare const j: {
+    x: number;
+    y: number;
+    obj: {
+        items: ({
+            x: number;
+            y?: undefined;
+            err?: undefined;
+        } | {
+            x: number;
+            y: number;
+            err?: undefined;
+        } | {
+            y?: undefined;
+            x: number;
+            err: boolean;
+        })[];
+    };
+};
 export = j;
-
-
-//// [DtsFileErrors]
-
-
-out/index.d.ts(1,10): error TS2304: Cannot find name 'j'.
-
-
-==== out/index.d.ts (1 errors) ====
-    export = j;
-             ~
-!!! error TS2304: Cannot find name 'j'.
-    
-==== obj.json (0 errors) ====
-    {
-        "x": 12,
-        "y": 12,
-        "obj": {
-            "items": [{"x": 12}, {"x": 12, "y": 12}, {"x": 0}, {"x": -1, "err": true}]
-        }
-    }

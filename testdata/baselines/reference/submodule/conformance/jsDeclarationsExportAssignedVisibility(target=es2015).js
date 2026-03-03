@@ -43,25 +43,7 @@ declare const _default: {
 };
 export = _default;
 //// [index.d.ts]
+declare class Container {
+    constructor();
+}
 export = Container;
-
-
-//// [DtsFileErrors]
-
-
-out/index.d.ts(1,10): error TS2304: Cannot find name 'Container'.
-
-
-==== out/index.d.ts (1 errors) ====
-    export = Container;
-             ~~~~~~~~~
-!!! error TS2304: Cannot find name 'Container'.
-    
-==== out/obj.d.ts (0 errors) ====
-    declare const _default: {
-        new (): {
-            x: number;
-        };
-    };
-    export = _default;
-    

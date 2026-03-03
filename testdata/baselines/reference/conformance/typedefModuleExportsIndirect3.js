@@ -27,32 +27,11 @@ export type C = {
     a: 1;
     m: 1;
 };
+/** @typedef {{ a: 1, m: 1 }} C */
+declare const o: {};
 export = o;
 //// [use.d.ts]
 type C = import('./typedefModuleExportsIndirect3').C;
 /** @typedef {import('./typedefModuleExportsIndirect3').C} C */
 /** @type {C} */
 declare var c: C;
-
-
-//// [DtsFileErrors]
-
-
-dist/typedefModuleExportsIndirect3.d.ts(5,10): error TS2304: Cannot find name 'o'.
-
-
-==== dist/typedefModuleExportsIndirect3.d.ts (1 errors) ====
-    export type C = {
-        a: 1;
-        m: 1;
-    };
-    export = o;
-             ~
-!!! error TS2304: Cannot find name 'o'.
-    
-==== dist/use.d.ts (0 errors) ====
-    type C = import('./typedefModuleExportsIndirect3').C;
-    /** @typedef {import('./typedefModuleExportsIndirect3').C} C */
-    /** @type {C} */
-    declare var c: C;
-    

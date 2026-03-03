@@ -19,23 +19,6 @@ module.exports = items;
 
 
 //// [index.d.ts]
+/** @type {typeof import("/some-mod")} */
+declare const items: typeof import("/some-mod");
 export = items;
-
-
-//// [DtsFileErrors]
-
-
-/out/index.d.ts(1,10): error TS2304: Cannot find name 'items'.
-
-
-==== /some-mod.d.ts (0 errors) ====
-    interface Item {
-        x: string;
-    }
-    declare const items: Item[];
-    export = items;
-==== /out/index.d.ts (1 errors) ====
-    export = items;
-             ~~~~~
-!!! error TS2304: Cannot find name 'items'.
-    

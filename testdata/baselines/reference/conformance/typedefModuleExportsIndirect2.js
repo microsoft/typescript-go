@@ -27,32 +27,11 @@ export type C = {
     a: 1;
     m: 1;
 };
+/** @typedef {{ a: 1, m: 1 }} C */
+declare const f: () => void;
 export = f;
 //// [use.d.ts]
 type C = import('./typedefModuleExportsIndirect2').C;
 /** @typedef {import('./typedefModuleExportsIndirect2').C} C */
 /** @type {C} */
 declare var c: C;
-
-
-//// [DtsFileErrors]
-
-
-dist/typedefModuleExportsIndirect2.d.ts(5,10): error TS2304: Cannot find name 'f'.
-
-
-==== dist/typedefModuleExportsIndirect2.d.ts (1 errors) ====
-    export type C = {
-        a: 1;
-        m: 1;
-    };
-    export = f;
-             ~
-!!! error TS2304: Cannot find name 'f'.
-    
-==== dist/use.d.ts (0 errors) ====
-    type C = import('./typedefModuleExportsIndirect2').C;
-    /** @typedef {import('./typedefModuleExportsIndirect2').C} C */
-    /** @type {C} */
-    declare var c: C;
-    
