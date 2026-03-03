@@ -2670,6 +2670,12 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsTypeScript
 	case KindAccessorKeyword:
 		return SubtreeContainsClassFields
+	case KindAsyncKeyword:
+		return SubtreeContainsAnyAwait
+	case KindSuperKeyword:
+		return SubtreeContainsLexicalSuper
+	case KindThisKeyword:
+		return SubtreeContainsLexicalThis
 	case KindAsteriskAsteriskToken, KindAsteriskAsteriskEqualsToken:
 		return SubtreeContainsExponentiationOperator
 	case KindQuestionQuestionToken:
@@ -3294,7 +3300,8 @@ func (node *ReturnStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *ReturnStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	// return in an ES2018 async generator must be awaited
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
 }
 
 func IsReturnStatement(node *Node) bool {
@@ -6374,12 +6381,18 @@ func (node *BinaryExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
+	facts := propagateModifierListSubtreeFacts(node.modifiers) |
 		propagateSubtreeFacts(node.Left) |
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.OperatorToken) |
 		propagateSubtreeFacts(node.Right) |
 		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields|SubtreeContainsPrivateIdentifierInExpression, SubtreeFactsNone)
+	if node.OperatorToken.Kind == KindEqualsToken {
+		if (IsObjectLiteralExpression(node.Left) || IsArrayLiteralExpression(node.Left)) && ContainsObjectRestOrSpread(node.Left) {
+			facts |= SubtreeContainsObjectRestOrSpread
+		}
+	}
+	return facts
 }
 
 func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
@@ -7724,7 +7737,8 @@ func (node *AwaitExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *AwaitExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsAwait
+	// await in an ES2018 async generator must use `yield __await(expr)`
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsAwait | SubtreeContainsForAwaitOrAsyncGenerator
 }
 
 func IsAwaitExpression(node *Node) bool {
@@ -10967,6 +10981,7 @@ type SourceFile struct {
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
+	ContainsNonASCII            bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	Identifiers                 map[string]string
 	IdentifierCount             int
@@ -11016,6 +11031,11 @@ type SourceFile struct {
 	declarationMap   map[string][]*Node
 	nameTableOnce    sync.Once
 	nameTable        map[string]int
+
+	// Fields for UTF-8 to UTF-16 position mapping
+
+	positionMapOnce sync.Once
+	positionMap     *PositionMap
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -11135,6 +11155,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
+	node.ContainsNonASCII = other.ContainsNonASCII
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
 	node.Identifiers = other.Identifiers
 	node.imports = other.imports
@@ -11221,6 +11242,18 @@ func (file *SourceFile) GetNameTable() map[string]int {
 
 func (node *SourceFile) IsBound() bool {
 	return node.isBound.Load()
+}
+
+// GetPositionMap returns the PositionMap for this source file, computing it lazily.
+func (file *SourceFile) GetPositionMap() *PositionMap {
+	file.positionMapOnce.Do(func() {
+		if !file.ContainsNonASCII {
+			file.positionMap = &PositionMap{asciiOnly: true}
+		} else {
+			file.positionMap = ComputePositionMap(file.Text())
+		}
+	})
+	return file.positionMap
 }
 
 func (node *SourceFile) BindOnce(bind func()) {
