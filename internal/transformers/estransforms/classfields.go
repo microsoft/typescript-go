@@ -837,12 +837,6 @@ func (tx *classFieldsTransformer) transformAutoAccessor(node *ast.PropertyDeclar
 
 	// Visit the results in a second pass
 	visited, _ := tx.accessorFieldResultVisitor.VisitSlice([]*ast.Node{backingField, getter, setter})
-	if len(visited) == 0 {
-		return nil
-	}
-	if len(visited) == 1 {
-		return visited[0]
-	}
 	return tx.Factory().NewSyntaxList(visited)
 }
 
@@ -1926,10 +1920,6 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 	}
 	result = append(result, updatedClass)
 	result = append(result, statements...)
-
-	if len(result) == 1 {
-		return result[0]
-	}
 	return tx.Factory().NewSyntaxList(result)
 }
 
