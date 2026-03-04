@@ -3,8 +3,8 @@ package api_test
 import (
 	"testing"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/api"
+	"github.com/microsoft/typescript-go/internal/json"
 	"gotest.tools/v3/assert"
 )
 
@@ -39,7 +39,7 @@ func TestDocumentIdentifierUnmarshalJSON(t *testing.T) {
 		{
 			name:  "invalid type",
 			input: `42`,
-			err:   "json: cannot unmarshal into Go api.DocumentIdentifier: DocumentIdentifier: expected string or object, got number",
+			err:   "expected string or object, got number",
 		},
 	}
 
@@ -49,7 +49,7 @@ func TestDocumentIdentifierUnmarshalJSON(t *testing.T) {
 			var d api.DocumentIdentifier
 			err := json.Unmarshal([]byte(tt.input), &d)
 			if tt.err != "" {
-				assert.Error(t, err, tt.err)
+				assert.ErrorContains(t, err, tt.err)
 				return
 			}
 			assert.NilError(t, err)
