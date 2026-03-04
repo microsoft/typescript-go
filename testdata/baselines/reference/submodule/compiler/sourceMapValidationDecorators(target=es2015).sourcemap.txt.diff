@@ -53,25 +53,17 @@
  2 >^^^^^^^^^^
  3 >          ^^^
  4 >             ^^
--5 >               
--6 >               ^
+ 5 >               
+ 6 >               ^
 -1 >
-+5 >               ^
 +1->
  2 >x1
  3 >          : number = 
  4 >             10
--5 >               
--6 >               : number = 10;
+ 5 >               
+ 6 >               : number = 10;
 -1 >Emitted(28, 1) Source(33, 20) + SourceIndex(0)
-+5 >               ;
 +1->Emitted(28, 1) Source(33, 20) + SourceIndex(0)
  2 >Emitted(28, 11) Source(33, 22) + SourceIndex(0)
  3 >Emitted(28, 14) Source(33, 33) + SourceIndex(0)
  4 >Emitted(28, 16) Source(33, 35) + SourceIndex(0)
--5 >Emitted(28, 16) Source(33, 22) + SourceIndex(0)
--6 >Emitted(28, 17) Source(33, 36) + SourceIndex(0)
-+5 >Emitted(28, 17) Source(33, 36) + SourceIndex(0)
- ---
- >>>__decorate([
- 1 >

@@ -2639,6 +2639,12 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
 	savedCurrentClassElement := tx.currentClassElement
 	transformed := tx.transformPropertyWorker(property, receiver)
+	if transformed != nil && ast.HasStaticModifier(property.AsNode()) &&
+		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil && tx.lexicalEnvironment.data.facts != 0 {
+		// capture the lexical environment for the member
+		tx.EmitContext().SetOriginal(transformed, property.AsNode())
+		tx.EmitContext().SetSourceMapRange(transformed, tx.EmitContext().SourceMapRange(property.Name()))
+	}
 	tx.currentClassElement = savedCurrentClassElement
 	return transformed
 }

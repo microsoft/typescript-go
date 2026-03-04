@@ -1175,8 +1175,9 @@
 +1 >
 +2 >^^^^^^^^^^^^^^^^
 +3 >                ^
-+4 >                 ^^^
-+5 >                    ^^^^^^^^^^^^^^^^^^^^->
++4 >                 ^^
++5 >                   ^
++6 >                    ^^^^^^^^^^^^^^^^^^^^->
 +1 >
 +  >
 +  >    @dec
@@ -1184,18 +1185,21 @@
 +  >    static 
 +2 >#y = 
 +3 >                1
-+4 >                 ;
++4 >                 
++5 >                    = 1;
 +1 >Emitted(28, 1) Source(40, 12) + SourceIndex(0)
 +2 >Emitted(28, 17) Source(40, 17) + SourceIndex(0)
 +3 >Emitted(28, 18) Source(40, 18) + SourceIndex(0)
-+4 >Emitted(28, 21) Source(40, 19) + SourceIndex(0)
++4 >Emitted(28, 20) Source(40, 14) + SourceIndex(0)
++5 >Emitted(28, 21) Source(40, 19) + SourceIndex(0)
 +---
 +>>>_C_z_1_accessor_storage = { value: 1 };
 +1->
 +2 >^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +3 >                                   ^
-+4 >                                    ^^^
-+5 >                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^->
++4 >                                    ^^
++5 >                                      ^
++6 >                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^->
  1->
    >
    >    @dec
@@ -1226,16 +1230,18 @@
 ->>>})();
 +2 >#z = 
 +3 >                                   1
-+4 >                                    ;
++4 >                                    
++5 >                                       = 1;
 +1->Emitted(29, 1) Source(44, 21) + SourceIndex(0)
 +2 >Emitted(29, 36) Source(44, 26) + SourceIndex(0)
 +3 >Emitted(29, 37) Source(44, 27) + SourceIndex(0)
-+4 >Emitted(29, 40) Source(44, 28) + SourceIndex(0)
++4 >Emitted(29, 39) Source(44, 23) + SourceIndex(0)
++5 >Emitted(29, 40) Source(44, 28) + SourceIndex(0)
 +---
  >>>//# sourceMappingURL=esDecorators-classDeclaration-sourceMap.js.map===================================================================
  JsFile: esDecorators-classDeclaration-sourceMap.d.ts
  mapUrl: esDecorators-classDeclaration-sourceMap.d.ts.map
-@@= skipped -894, +421 lines =@@
+@@= skipped -894, +427 lines =@@
  >>>    method(): void;
  1 >^^^^
  2 >    ^^^^^^
