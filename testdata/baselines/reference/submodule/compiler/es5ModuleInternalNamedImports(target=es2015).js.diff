@@ -1,9 +1,0 @@
---- old.es5ModuleInternalNamedImports(target=es2015).js
-+++ new.es5ModuleInternalNamedImports(target=es2015).js
-@@= skipped -60, +60 lines =@@
-     let M_E;
-     (function (M_E) {
-     })(M_E = M.M_E || (M.M_E = {}));
--    // alias
-     M.M_A = M_M;
- })(M || (exports.M = M = {}));

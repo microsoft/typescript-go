@@ -114,6 +114,7 @@ var X;
 })(X || (X = {}));
 var Z;
 (function (Z) {
+    // 'y' should be a fundule here
     Z.y = X.Y;
 })(Z || (Z = {}));
 var m = Z.y();

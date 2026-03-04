@@ -710,7 +710,9 @@ func (tx *RuntimeSyntaxTransformer) visitImportEqualsDeclaration(node *ast.Impor
 		return varStatement
 	} else {
 		// exports.${name} = ${moduleReference};
-		return tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement := tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement.Loc = node.Loc
+		return statement
 	}
 }
 
