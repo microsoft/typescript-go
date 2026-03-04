@@ -611,7 +611,10 @@ func TestHiddenDirectoriesInNodeModules(t *testing.T) {
 		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
 		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		_, err := session.GetLanguageServiceWithAutoImports(ctx, indexURI)
+		_, release, err := session.GetLanguageServiceWithAutoImports(ctx, nil, indexURI)
+		if release != nil {
+			defer release()
+		}
 		assert.NilError(t, err)
 
 		stats := autoImportStats(t, session)
