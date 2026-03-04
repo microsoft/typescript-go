@@ -6,8 +6,10 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/autoimporttestutil"
@@ -496,6 +498,132 @@ export declare const otherValue: string;`,
 		stats = autoImportStats(t, session)
 		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
 		assert.Equal(t, nodeModulesBucket.State.Dirty(), false, "bucket should be clean after rebuild")
+	})
+
+	t.Run("changed fileExcludePatterns triggers bucket rebuild", func(t *testing.T) {
+		t.Parallel()
+		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
+		session := fixture.Session()
+		project := fixture.SingleProject()
+		mainFile := project.File(0)
+
+		ctx := context.Background()
+
+		// Open file and build auto-imports initially
+		session.DidOpenFile(ctx, mainFile.URI(), 1, mainFile.Content(), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+
+		// Verify buckets are clean after initial build
+		stats := autoImportStats(t, session)
+		projectBucket := singleBucket(t, stats.ProjectBuckets)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, false, projectBucket.State.Dirty())
+		assert.Equal(t, false, nodeModulesBucket.State.Dirty())
+
+		// IsPreparedForImportingFile should return true with no exclude patterns
+		snapshot, release := session.Snapshot()
+		defaultProject := snapshot.GetDefaultProject(mainFile.URI())
+		assert.Assert(t, defaultProject != nil)
+		projectPath := defaultProject.ConfigFilePath()
+		preferences := lsutil.NewDefaultUserPreferences()
+		preferences.IncludeCompletionsForModuleExports = core.TSTrue
+		preferences.IncludeCompletionsForImportStatements = core.TSTrue
+		isPrepared := snapshot.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, preferences)
+		release()
+		assert.Assert(t, isPrepared)
+
+		// Change the file exclude patterns preference
+		newPreferences := lsutil.NewDefaultUserPreferences()
+		newPreferences.IncludeCompletionsForModuleExports = core.TSTrue
+		newPreferences.IncludeCompletionsForImportStatements = core.TSTrue
+		newPreferences.AutoImportFileExcludePatterns = []string{"**/node_modules/**/*.d.ts"}
+		session.Configure(lsutil.NewUserConfig(newPreferences))
+
+		// IsPreparedForImportingFile should return false since exclude patterns changed
+		snapshot2, release2 := session.Snapshot()
+		isPrepared2 := snapshot2.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, newPreferences)
+		release2()
+		assert.Assert(t, !isPrepared2)
+
+		// After GetLanguageServiceWithAutoImports, buckets should be rebuilt
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+
+		// IsPreparedForImportingFile should return true now that buckets are rebuilt
+		snapshot3, release3 := session.Snapshot()
+		isPrepared3 := snapshot3.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, newPreferences)
+		release3()
+		assert.Assert(t, isPrepared3, "IsPreparedForImportingFile should return true after bucket rebuild with new fileExcludePatterns")
+	})
+}
+
+func TestHiddenDirectoriesInNodeModules(t *testing.T) {
+	t.Parallel()
+	t.Run("hidden dir resolved via import with nameless package.json", func(t *testing.T) {
+		// Simulates a layout where a symlinked package points into a hidden
+		// store directory (e.g. .store-fuse-unplugged) and the package.json
+		// in the store has no "name" or "version". When PackageId fails,
+		// collectPackageNames falls through to GetPackageNameFromDirectory,
+		// which extracts the hidden directory name from the realpath.
+		t.Parallel()
+		projectRoot := "/home/src/fuse-project"
+		storeDir := projectRoot + "/node_modules/.store-fuse-unplugged"
+		pkgStoreDir := storeDir + "/some-pkg-npm-1.0.0-abc123/package"
+
+		files := map[string]any{
+			projectRoot + "/tsconfig.json": `{
+				"compilerOptions": {
+					"module": "nodenext",
+					"target": "esnext",
+					"strict": true
+				}
+			}`,
+			projectRoot + "/package.json": `{
+				"name": "test-project",
+				"dependencies": {
+					"some-pkg": "*",
+					"real-package": "*"
+				}
+			}`,
+			projectRoot + "/index.ts": `import { something } from "some-pkg";`,
+
+			// Real package that should be indexed normally
+			projectRoot + "/node_modules/real-package/package.json": `{"name":"real-package","version":"1.0.0","types":"index.d.ts"}`,
+			projectRoot + "/node_modules/real-package/index.d.ts":   "export declare const realExport: number;\n",
+
+			// Symlink: node_modules/some-pkg -> .store-fuse-unplugged/.../package/
+			projectRoot + "/node_modules/some-pkg": vfstest.Symlink(pkgStoreDir),
+
+			// Store package with no name/version — PackageId will fail.
+			pkgStoreDir + "/package.json": `{"types":"index.d.ts"}`,
+			pkgStoreDir + "/index.d.ts":   "export declare const something: number;\n",
+
+			// Other content in the hidden store that should never be crawled
+			storeDir + "/other-pkg-npm-2.0.0-def456/package/package.json": `{"name":"other-pkg","types":"index.d.ts"}`,
+			storeDir + "/other-pkg-npm-2.0.0-def456/package/index.d.ts":   "export declare const other: string;\n",
+		}
+
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+
+		// .store-fuse-unplugged must not appear as a dependency name.
+		// If it does, extractPackages will try to process the entire hidden
+		// directory (ReadDirectory **/*), which is the CPU/memory blowup.
+		assert.Assert(t, nodeModulesBucket.DependencyNames != nil, "DependencyNames should not be nil")
+		for name := range nodeModulesBucket.DependencyNames.Keys() {
+			assert.Assert(t, name[0] != '.', "hidden directory %q should not appear as a dependency name", name)
+		}
 	})
 }
 

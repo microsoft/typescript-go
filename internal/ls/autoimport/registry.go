@@ -278,7 +278,6 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 		logger.Logf("Built autoimport registry in %v", time.Since(start))
 	}
 	registry := builder.Build()
-	builder.host.Dispose()
 	return registry, nil
 }
 
@@ -673,7 +672,9 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			dependencies := b.computeDependenciesForNodeModulesDirectory(change, allResolvedPackageNames, dirName, dirPath)
 			bucketState := nodeModulesBucket.Value().state
 			// !!! Optimization: handle different dependency set via granular updates
-			needsFullRebuild := bucketState.multipleFilesDirty || !nodeModulesBucket.Value().DependencyNames.Equals(dependencies)
+			needsFullRebuild := bucketState.multipleFilesDirty ||
+				!nodeModulesBucket.Value().DependencyNames.Equals(dependencies) ||
+				!core.UnorderedEqual(bucketState.fileExcludePatterns, b.userPreferences.AutoImportFileExcludePatterns)
 			dirtyPackages := bucketState.DirtyPackages()
 			canDoGranularUpdate := !needsFullRebuild && dirtyPackages.Len() > 0
 
@@ -701,7 +702,8 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	if project, hasProject := b.projects.Get(projectPath); hasProject {
 		program := b.host.GetProgramForProject(projectPath)
 		resolvedPackageNames := allResolvedPackageNames[projectPath]
-		shouldRebuild := project.Value().state.hasDirtyFileBesides(change.RequestedFile)
+		shouldRebuild := project.Value().state.hasDirtyFileBesides(change.RequestedFile) ||
+			!core.UnorderedEqual(project.Value().state.fileExcludePatterns, b.userPreferences.AutoImportFileExcludePatterns)
 		if !shouldRebuild && project.Value().state.newProgramStructure > 0 {
 			// Check if resolved package names changed, or if there are new non-node_modules files.
 			// If so, we need to rebuild both the project bucket and potentially node_modules buckets.
@@ -974,7 +976,7 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 	// If any open files are in scope of this directory but not in scope of any package.json,
 	// we need to add all packages in this node_modules directory.
 	for path := range change.OpenFiles {
-		if dirPath.ContainsPath(path) && b.getNearestAncestorDirectoryWithValidPackageJson(path) == nil {
+		if dirPath.ContainsPath(path) && b.getNearestAncestorDirectoryWithPackageJson(path) == nil {
 			return nil
 		}
 	}
@@ -1068,7 +1070,10 @@ func (b *registryBuilder) extractPackages(
 			}
 			wg.Go(func() {
 				file := b.host.GetSourceFile(realpathFileName, realpathPath)
-				binder.BindSourceFile(file)
+				// file may be nil due to symlink/realpath mismatch; see TestAutoImportBuilderFS
+				if file != nil {
+					binder.BindSourceFile(file)
+				}
 				rootFiles[i] = file
 			})
 		}
@@ -1372,9 +1377,9 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	return result, ctx.Err()
 }
 
-func (b *registryBuilder) getNearestAncestorDirectoryWithValidPackageJson(filePath tspath.Path) *directory {
+func (b *registryBuilder) getNearestAncestorDirectoryWithPackageJson(filePath tspath.Path) *directory {
 	return core.FirstResult(tspath.ForEachAncestorDirectoryPath(filePath.GetDirectoryPath(), func(dirPath tspath.Path) (result *directory, stop bool) {
-		if dirEntry, ok := b.directories.Get(dirPath); ok && dirEntry.Value().packageJson.Exists() && dirEntry.Value().packageJson.Contents.Parseable {
+		if dirEntry, ok := b.directories.Get(dirPath); ok && dirEntry.Value().packageJson.Exists() {
 			return dirEntry.Value(), true
 		}
 		return nil, false
