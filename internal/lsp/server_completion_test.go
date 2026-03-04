@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"testing"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -127,10 +126,8 @@ func TestCompletionAfterFileClose(t *testing.T) {
 	assert.Equal(t, item.Data.AutoImport.ModuleSpecifier, "./a")
 }
 
-// Completion is dispatched first; close arrives while the async phase
-// is (likely) in-flight. The main goroutine sends the completion
-// request (guaranteeing it enters the input channel first), while a
-// background goroutine sends the close after a short delay.
+// Completion request is enqueued first, then a close notification is sent.
+// This guarantees the completion enters the input channel before the close.
 func TestCompletionWithConcurrentFileClose(t *testing.T) {
 	t.Parallel()
 
@@ -157,18 +154,17 @@ func TestCompletionWithConcurrentFileClose(t *testing.T) {
 		TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "s"},
 	})
 
-	go func() {
-		time.Sleep(5 * time.Millisecond)
-		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
-			TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
-		})
-	}()
-
-	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+	waitForCompletion := lsptestutil.SendRequestAsync(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 		Position:     lsproto.Position{Line: 0, Character: 1},
 		Context:      &lsproto.CompletionContext{},
 	})
+
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
+	})
+
+	msg, resp, ok := waitForCompletion()
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
 	item := findCompletionItem(completionItems(resp), "someVar")
