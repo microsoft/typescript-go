@@ -8117,6 +8117,14 @@ func (c *Checker) checkImportCallExpression(node *ast.Node) *Type {
 		if importCallOptionsType != c.emptyObjectType {
 			c.checkTypeAssignableTo(optionsType, c.getNullableType(importCallOptionsType, TypeFlagsUndefined), args[1], nil)
 		}
+		if ast.IsObjectLiteralExpression(args[1]) {
+			for _, prop := range args[1].AsObjectLiteralExpression().Properties.Nodes {
+				if ast.IsPropertyAssignment(prop) && ast.IsIdentifier(prop.Name()) && prop.Name().Text() == "assert" {
+					c.error(prop.Name(), diagnostics.Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert)
+					break
+				}
+			}
+		}
 	}
 	// resolveExternalModuleName will return undefined if the moduleReferenceExpression is not a string literal
 	moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/)
