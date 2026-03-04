@@ -2693,6 +2693,7 @@ func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.Property
 		return nil
 	}
 
+	// TODO: can we get rid of this original checking and better coordinate with runtimesyntax?
 	if ast.HasAbstractModifier(tx.EmitContext().MostOriginal(property.AsNode())) {
 		return nil
 	}
