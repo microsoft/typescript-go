@@ -746,7 +746,7 @@ type CheckerSignatureParams struct {
 // TypePredicateResponse is the response for getTypePredicateOfSignature.
 type TypePredicateResponse struct {
 	Kind           int32         `json:"kind"`
-	ParameterIndex int32         `json:"parameterIndex,omitempty"`
+	ParameterIndex int32         `json:"parameterIndex"`
 	ParameterName  string        `json:"parameterName,omitempty"`
 	Type           *TypeResponse `json:"type,omitempty"`
 }
