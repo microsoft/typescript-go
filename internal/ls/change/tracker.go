@@ -3,7 +3,6 @@ package change
 import (
 	"context"
 	"slices"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -377,16 +376,13 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 		insertPos--
 	}
 	insertLSPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(insertPos))
-	// Build indentation string to include in prefix since FormatNodeGivenIndentation
-	// does not yet apply initial indentation for simple single-line nodes (SmartIndenter not fully implemented).
-	indentStr := strings.Repeat(" ", indentation)
 	t.ReplaceRange(
 		sourceFile,
 		lsproto.Range{Start: insertLSPos, End: insertLSPos},
 		newNode,
 		NodeOptions{
-			indentation: new(indentation),
-			Prefix:      t.newLine + indentStr,
+			indentation: &indentation,
+			Prefix:      t.newLine,
 		},
 	)
 }
@@ -396,35 +392,17 @@ func (t *Tracker) InsertImportSpecifierAtIndex(sourceFile *ast.SourceFile, newSp
 	namedImportsNode := namedImports.AsNamedImports()
 	elements := namedImportsNode.Elements.Nodes
 
-	if index >= len(elements) {
-		// Insert at the end (after the last element)
-		t.InsertNodeInListAfter(sourceFile, elements[len(elements)-1], newSpecifier, elements)
-	} else if index > 0 {
-		// Insert after the element at index-1
+	if index > 0 && index-1 < len(elements) {
 		t.InsertNodeInListAfter(sourceFile, elements[index-1], newSpecifier, elements)
 	} else {
-		// Insert before the first element
-		firstElement := elements[0]
-		firstElementStart := astnav.GetStartOfNode(firstElement, sourceFile, false)
+		firstElementStart := astnav.GetStartOfNode(elements[0], sourceFile, false)
 		importDeclStart := astnav.GetStartOfNode(namedImports.Parent.Parent, sourceFile, false)
-		multiline := !positionsAreOnSameLine(firstElementStart, importDeclStart, sourceFile)
-		if multiline {
-			// For multiline lists, insert at the start of the first element with explicit
-			// indentation, using a comma+newline as suffix so the existing element stays on its own line.
-			// We compute indentation from the existing first element's position.
-			firstElementLineStart := format.GetLineStartPositionForPosition(firstElementStart, sourceFile)
-			indentation := format.FindFirstNonWhitespaceColumn(firstElementLineStart, firstElementStart, sourceFile, t.formatSettings)
-			// Build indentation string
-			indentStr := strings.Repeat(" ", indentation)
-			// Insert right at the start of the line, so we control indentation ourselves
-			insertPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(firstElementLineStart))
-			t.ReplaceRange(sourceFile, lsproto.Range{Start: insertPos, End: insertPos}, newSpecifier, NodeOptions{
-				Prefix: indentStr,
-				Suffix: "," + t.newLine,
-			})
-		} else {
-			t.InsertNodeBefore(sourceFile, firstElement, newSpecifier, false)
-		}
+		t.InsertNodeBefore(
+			sourceFile,
+			elements[0],
+			newSpecifier,
+			!positionsAreOnSameLine(firstElementStart, importDeclStart, sourceFile),
+		)
 	}
 }
 

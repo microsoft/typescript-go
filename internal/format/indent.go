@@ -65,7 +65,7 @@ func GetIndentation(position int, sourceFile *ast.SourceFile, options *lsutil.Fo
 
 	containerList := getListByPosition(position, precedingToken.Parent, sourceFile)
 	// use list position if the preceding token is before any list items
-	if containerList != nil && !core.RangeContainsRange(containerList.Loc, precedingToken.Loc) {
+	if containerList != nil && !precedingToken.Loc.ContainedBy(containerList.Loc) {
 		useTheSameBaseIndentation := currentToken.Parent != nil && (currentToken.Parent.Kind == ast.KindFunctionExpression || currentToken.Parent.Kind == ast.KindArrowFunction)
 		indentSize := 0
 		if !useTheSameBaseIndentation {
@@ -146,7 +146,10 @@ func nextTokenIsCurlyBraceOnSameLineAsCursor(precedingToken *ast.Node, current *
 // A position belongs to a node if it's within its range, or if the node is incomplete.
 func positionBelongsToNode(candidate *ast.Node, position int, sourceFile *ast.SourceFile) bool {
 	debug.Assert(candidate.Pos() <= position)
-	return position < candidate.End() || !isCompletedNode(candidate, sourceFile)
+	// !!! isCompletedNode is a large function in TS services/utilities.ts that checks
+	// whether a node's syntax is complete. For textChanges use cases on complete source files,
+	// we approximate by always considering nodes complete.
+	return position < candidate.End()
 }
 
 func getSmartIndent(sourceFile *ast.SourceFile, position int, precedingToken *ast.Node, lineAtPosition int, assumeNewLineBeforeCloseBrace bool, options *lsutil.FormatCodeSettings) int {

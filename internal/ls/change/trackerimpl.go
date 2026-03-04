@@ -85,6 +85,8 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 	if !(change.options.indentation != nil && *change.options.indentation != 0 || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
 		noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
 	}
+	fmt.Printf("DEBUG computeNewText: pos=%d, text=%q, noIndent=%q, indentation=%v, lineStart=%d, prefix=%q, suffix=%q\n",
+		pos, text, noIndent, change.options.indentation, format.GetLineStartPositionForPosition(pos, targetSourceFile), change.options.Prefix, change.options.Suffix)
 	return change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
 }
 
@@ -96,8 +98,9 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 
 	var initialIndentation, delta int
 	if options.indentation == nil {
-		// !!! indentation for position
-		// initialIndentation = format.GetIndentationForPos(pos, sourceFile, formatOptions, options.prefix == ct.newLine || scanner.GetLineStartPositionForPosition(pos, targetFileLineMap) == pos);
+		initialIndentation = format.GetIndentation(pos, sourceFile, formatOptions, options.Prefix == t.newLine || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos)
+		fmt.Printf("DEBUG getFormattedTextOfNode: pos=%d, text=%q, initialIndentation=%d, prefix=%q, lineStart=%d, nodeKind=%v\n",
+			pos, text, initialIndentation, options.Prefix, format.GetLineStartPositionForPosition(pos, targetSourceFile), nodeIn.Kind)
 	} else {
 		initialIndentation = *options.indentation
 	}
