@@ -125,12 +125,14 @@ type classFieldsTransformer struct {
 	insideComputedPropertyName bool
 
 	// Visitors
-	modifierVisitor            *ast.NodeVisitor
-	discardedValueVisitor      *ast.NodeVisitor
-	heritageClauseVisitor      *ast.NodeVisitor
-	assignmentTargetVisitor    *ast.NodeVisitor
-	classElementVisitor        *ast.NodeVisitor
-	accessorFieldResultVisitor *ast.NodeVisitor
+	modifierVisitor                *ast.NodeVisitor
+	discardedValueVisitor          *ast.NodeVisitor
+	heritageClauseVisitor          *ast.NodeVisitor
+	assignmentTargetVisitor        *ast.NodeVisitor
+	classElementVisitor            *ast.NodeVisitor
+	accessorFieldResultVisitor     *ast.NodeVisitor
+	arrayAssignmentElementVisitor  *ast.NodeVisitor
+	objectAssignmentElementVisitor *ast.NodeVisitor
 
 	// Pre-bound callbacks to avoid repeated closure allocation.
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
@@ -186,6 +188,8 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	tx.assignmentTargetVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAssignmentTarget)
 	tx.classElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitClassElement)
 	tx.accessorFieldResultVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAccessorFieldResult)
+	tx.arrayAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArrayAssignmentElement)
+	tx.objectAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitObjectAssignmentElement)
 	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result
@@ -3236,14 +3240,9 @@ func (tx *classFieldsTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 		//
 		// Transformation:
 		// [ { set value(x) { this.#myProp = x; } }.value ] = [ "hello" ];
-		elements := node.AsArrayLiteralExpression().Elements
-		var visited []*ast.Node
-		for _, elem := range elements.Nodes {
-			visited = append(visited, tx.visitArrayAssignmentElement(elem))
-		}
 		return tx.Factory().UpdateArrayLiteralExpression(
 			node.AsArrayLiteralExpression(),
-			tx.Factory().NewNodeList(visited),
+			tx.arrayAssignmentElementVisitor.VisitNodes(node.AsArrayLiteralExpression().Elements),
 		)
 	}
 	// Transforms private names in destructuring assignment object bindings.
@@ -3254,14 +3253,9 @@ func (tx *classFieldsTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 	//
 	// Transformation:
 	// ({ stringProperty: { set value(x) { this.#myProp = x; } }.value }) = { stringProperty: "hello" };
-	props := node.AsObjectLiteralExpression().Properties
-	var visited []*ast.Node
-	for _, prop := range props.Nodes {
-		visited = append(visited, tx.visitObjectAssignmentElement(prop))
-	}
 	return tx.Factory().UpdateObjectLiteralExpression(
 		node.AsObjectLiteralExpression(),
-		tx.Factory().NewNodeList(visited),
+		tx.objectAssignmentElementVisitor.VisitNodes(node.AsObjectLiteralExpression().Properties),
 	)
 }
 
