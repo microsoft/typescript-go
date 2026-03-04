@@ -444,14 +444,18 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 			// If not, we cannot emit a valid numeric literal for the member initializer and emit `void 0` instead:
 			//  E["A"] = void 0;
 			//           ^^^^^^
-			expression = constantExpression(*autoValue, tx.Factory())
-			if expression != nil {
-				useExplicitReverseMapping = true
-				if len(memberName) > 0 {
-					tx.cacheEnumMemberValue(enum.AsNode(), memberName, evaluator.NewResult(*autoValue, false, false, false))
-				}
-			} else {
+			if autoValue.IsNaN() {
 				expression = tx.Factory().NewVoidZeroExpression()
+			} else {
+				expression = constantExpression(*autoValue, tx.Factory())
+				if expression != nil {
+					useExplicitReverseMapping = true
+					if len(memberName) > 0 {
+						tx.cacheEnumMemberValue(enum.AsNode(), memberName, evaluator.NewResult(*autoValue, false, false, false))
+					}
+				} else {
+					expression = tx.Factory().NewVoidZeroExpression()
+				}
 			}
 		}
 	} else {
@@ -1108,6 +1112,9 @@ func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast
 					result = memberCache[access.ArgumentExpression.Text()]
 				}
 			}
+		}
+		if result.Value == nil && ast.IsIdentifier(node) && ast.IsInfinityOrNaNString(node.Text()) {
+			result = evaluator.NewResult(jsnum.FromString(node.Text()), false, false, false)
 		}
 	}
 	return result

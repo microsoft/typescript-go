@@ -18,7 +18,7 @@ func constantExpression(value any, factory *printer.NodeFactory) *ast.Expression
 			return factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewIdentifier("Infinity"))
 		}
 		if value.IsNaN() {
-			return nil
+			return factory.NewIdentifier("NaN")
 		}
 		if value < 0 {
 			return factory.NewPrefixUnaryExpression(ast.KindMinusToken, constantExpression(-value, factory))
