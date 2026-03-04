@@ -1013,6 +1013,9 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAccessHelper(info *priv
 			"f",
 			f,
 		)
+	case privateIdentifierKindUntransformed:
+		debug.Fail("Access helpers should not be created for untransformed private elements")
+		return nil
 	}
 	debug.AssertNever(info, "Unknown private element type")
 	return nil
@@ -1601,6 +1604,9 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAssignment(info *privat
 			"f",
 			f,
 		)
+	case privateIdentifierKindUntransformed:
+		debug.Fail("Access helpers should not be created for untransformed private elements")
+		return nil
 	}
 	debug.AssertNever(info, "Unknown private element type")
 	return nil
