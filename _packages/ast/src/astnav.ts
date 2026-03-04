@@ -466,7 +466,6 @@ function findRightmostValidToken(sourceFile: SourceFile, endPos: number, contain
                     if (tokenStart >= position) break;
                     const tokenFullStart = scanner.getTokenFullStart();
                     const tokenEnd = scanner.getTokenEnd();
-                    if (tokenEnd > targetEnd) break;
                     const token = scanner.getToken();
                     const flags = scanner.getTokenFlags();
                     lastScannedToken = getOrCreateToken(sourceFile, token, tokenFullStart, tokenEnd, n, flags);
