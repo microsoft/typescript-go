@@ -1224,9 +1224,6 @@ func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions)
 	if options.OutFile != "" {
 		t.Skipf("unsupported outFile %s", options.OutFile)
 	}
-	if !options.DownlevelIteration.IsUnknown() {
-		t.Skipf("unsupported downlevelIteration")
-	}
 	switch options.Target {
 	case core.ScriptTargetES5:
 		t.Skipf("unsupported target %s", options.Target)
