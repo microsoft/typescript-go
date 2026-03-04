@@ -926,6 +926,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 
 		s.logger.Log("Auto Imports:")
 		autoImportStats := snapshot.AutoImportRegistry().GetCacheStats()
+		s.logger.Logf("\tUnique packages (by realpath): %d", autoImportStats.UniquePackageCount)
 		if len(autoImportStats.ProjectBuckets) > 0 {
 			s.logger.Log("\tProject buckets:")
 			for _, bucket := range autoImportStats.ProjectBuckets {
