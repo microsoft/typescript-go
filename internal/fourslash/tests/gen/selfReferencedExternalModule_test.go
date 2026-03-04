@@ -32,10 +32,12 @@ A./**/I`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "A",
-					Detail: new("import A = require('./app')")},
+					Detail: new("import A = require('./app')"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "I",
-					Detail: new("var I: number")},
+					Detail: new("var I: number"),
+				},
 			},
 		},
 	})

@@ -54,7 +54,8 @@ x[|./**/|]`
 							NewText: "0",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:      "1",
 					InsertText: new("[1]"),
@@ -70,7 +71,8 @@ x[|./**/|]`
 							NewText: "1",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

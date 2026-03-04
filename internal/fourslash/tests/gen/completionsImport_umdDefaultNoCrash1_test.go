@@ -66,7 +66,8 @@ func TestCompletionsImport_umdDefaultNoCrash1(t *testing.T) {
 							ModuleSpecifier: "dottie",
 						},
 					},
-					SortText: new(string(ls.SortTextAutoImportSuggestions))},
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

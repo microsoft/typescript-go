@@ -42,7 +42,8 @@ const i: I = {
 				&lsproto.CompletionItem{
 					Label:    "a",
 					SortText: new(string(ls.DeprecateSortText(ls.SortTextMemberDeclaredBySpreadAssignment))),
-					Kind:     new(lsproto.CompletionItemKindField)},
+					Kind:     new(lsproto.CompletionItemKindField),
+				},
 			},
 		},
 	})

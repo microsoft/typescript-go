@@ -58,7 +58,8 @@ var new/*9*/Var = new extMod.m1.m2./*10*/c();`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "NamespaceComment",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -78,7 +79,8 @@ var new/*9*/Var = new extMod.m1.m2./*10*/c();`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "b's comment",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "fooExport",
 					Detail: new("function extMod.m1.fooExport(): number"),
@@ -87,7 +89,8 @@ var new/*9*/Var = new extMod.m1.m2./*10*/c();`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "exported function",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "m2",
 					Detail: new("namespace extMod.m1.m2"),
@@ -96,7 +99,8 @@ var new/*9*/Var = new extMod.m1.m2./*10*/c();`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "m2 comments",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -120,7 +124,8 @@ var new/*9*/Var = new extMod.m1.m2./*10*/c();`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "class comment;",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i",
 					Detail: new("var extMod.m1.m2.i: extMod.m1.m2.c"),
@@ -129,7 +134,8 @@ var new/*9*/Var = new extMod.m1.m2./*10*/c();`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -69,7 +69,8 @@ function fn4() {
 					FilterText:       new("xyz"),
 					Detail:           new("(property) xyz?: number"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

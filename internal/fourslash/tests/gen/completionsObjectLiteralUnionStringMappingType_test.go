@@ -41,9 +41,11 @@ const obj2: UnionType = {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "key1"},
+					Label: "key1",
+				},
 				&lsproto.CompletionItem{
-					Label: "key2"},
+					Label: "key2",
+				},
 			},
 		},
 	})
@@ -56,7 +58,8 @@ const obj2: UnionType = {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "key2"},
+					Label: "key2",
+				},
 			},
 		},
 	})

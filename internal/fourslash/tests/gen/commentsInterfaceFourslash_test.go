@@ -111,7 +111,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 								Kind:  lsproto.MarkupKindMarkdown,
 								Value: "this is x",
 							},
-						}},
+						},
+					},
 					&lsproto.CompletionItem{
 						Label:  "foo",
 						Detail: new("(property) i2.foo: (b: number) => string"),
@@ -120,13 +121,16 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 								Kind:  lsproto.MarkupKindMarkdown,
 								Value: "this is foo",
 							},
-						}},
+						},
+					},
 					&lsproto.CompletionItem{
 						Label:  "nc_x",
-						Detail: new("(property) i2.nc_x: number")},
+						Detail: new("(property) i2.nc_x: number"),
+					},
 					&lsproto.CompletionItem{
 						Label:  "nc_foo",
-						Detail: new("(property) i2.nc_foo: (b: number) => string")},
+						Detail: new("(property) i2.nc_foo: (b: number) => string"),
+					},
 					&lsproto.CompletionItem{
 						Label:  "fnfoo",
 						Detail: new("(method) i2.fnfoo(b: number): string"),
@@ -135,10 +139,12 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 								Kind:  lsproto.MarkupKindMarkdown,
 								Value: "this is fnfoo",
 							},
-						}},
+						},
+					},
 					&lsproto.CompletionItem{
 						Label:  "nc_fnfoo",
-						Detail: new("(method) i2.nc_fnfoo(b: number): string")},
+						Detail: new("(method) i2.nc_fnfoo(b: number): string"),
+					},
 				}),
 		},
 	})
@@ -192,7 +198,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "i1_i",
-					Detail: new("var i1_i: i1")},
+					Detail: new("var i1_i: i1"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_i1_i",
 					Detail: new("var nc_i1_i: nc_i1"),
@@ -201,52 +208,68 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i",
-					Detail: new("var i2_i: i2")},
+					Detail: new("var i2_i: i2"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_x",
-					Detail: new("var i2_i_x: number")},
+					Detail: new("var i2_i_x: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_foo",
-					Detail: new("var i2_i_foo: (b: number) => string")},
+					Detail: new("var i2_i_foo: (b: number) => string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_foo_r",
-					Detail: new("var i2_i_foo_r: string")},
+					Detail: new("var i2_i_foo_r: string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_i2_si",
-					Detail: new("var i2_i_i2_si: number")},
+					Detail: new("var i2_i_i2_si: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_i2_ii",
-					Detail: new("var i2_i_i2_ii: number")},
+					Detail: new("var i2_i_i2_ii: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_n",
-					Detail: new("var i2_i_n: any")},
+					Detail: new("var i2_i_n: any"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_nc_x",
-					Detail: new("var i2_i_nc_x: number")},
+					Detail: new("var i2_i_nc_x: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_nc_foo",
-					Detail: new("var i2_i_nc_foo: (b: number) => string")},
+					Detail: new("var i2_i_nc_foo: (b: number) => string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_nc_foo_r",
-					Detail: new("var i2_i_nc_foo_r: string")},
+					Detail: new("var i2_i_nc_foo_r: string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_r",
-					Detail: new("var i2_i_r: number")},
+					Detail: new("var i2_i_r: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_fnfoo",
-					Detail: new("var i2_i_fnfoo: (b: number) => string")},
+					Detail: new("var i2_i_fnfoo: (b: number) => string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_fnfoo_r",
-					Detail: new("var i2_i_fnfoo_r: string")},
+					Detail: new("var i2_i_fnfoo_r: string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_nc_fnfoo",
-					Detail: new("var i2_i_nc_fnfoo: (b: number) => string")},
+					Detail: new("var i2_i_nc_fnfoo: (b: number) => string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_i_nc_fnfoo_r",
-					Detail: new("var i2_i_nc_fnfoo_r: string")},
+					Detail: new("var i2_i_nc_fnfoo_r: string"),
+				},
 			},
 			Excludes: []string{
 				"i1",
@@ -271,10 +294,12 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "this is interface 1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_i1",
-					Detail: new("interface nc_i1")},
+					Detail: new("interface nc_i1"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2",
 					Detail: new("interface i2"),
@@ -283,7 +308,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "this is interface 2 with members",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -303,7 +329,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i3_i a",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -318,7 +345,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "i3_i",
-					Detail: new("var i3_i: i3")},
+					Detail: new("var i3_i: i3"),
+				},
 			},
 			Excludes: []string{
 				"i3",
@@ -343,7 +371,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Function i3 f",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "l",
 					Detail: new("(property) i3.l: (b: number) => string"),
@@ -352,16 +381,20 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i3 l",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f",
-					Detail: new("(method) i3.nc_f(a: number): string")},
+					Detail: new("(method) i3.nc_f(a: number): string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l",
-					Detail: new("(property) i3.nc_l: (b: number) => string")},
+					Detail: new("(property) i3.nc_l: (b: number) => string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_x",
-					Detail: new("(property) i3.nc_x: number")},
+					Detail: new("(property) i3.nc_x: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "x",
 					Detail: new("(property) i3.x: number"),
@@ -370,7 +403,8 @@ i3_i.nc/*45q*/_l(/*45*/10);`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Comment i3 x",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

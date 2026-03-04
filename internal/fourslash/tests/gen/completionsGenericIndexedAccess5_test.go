@@ -51,7 +51,8 @@ f("component-one", {
 					Label:      "foo?",
 					InsertText: new("foo"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

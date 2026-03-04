@@ -41,12 +41,13 @@ function PointsFunc(): void {
 		{
 			Pattern:     "origin",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:          "origin1",
-				Kind:          lsproto.SymbolKindProperty,
-				Location:      f.Ranges()[5].LSLocation(),
-				ContainerName: new("OriginI"),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:          "origin1",
+					Kind:          lsproto.SymbolKindProperty,
+					Location:      f.Ranges()[5].LSLocation(),
+					ContainerName: new("OriginI"),
+				},
 				{
 					Name:          "originality",
 					Kind:          lsproto.SymbolKindProperty,
@@ -62,12 +63,13 @@ function PointsFunc(): void {
 		}, {
 			Pattern:     "distance",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:          "distanceFarFarAway",
-				Kind:          lsproto.SymbolKindProperty,
-				Location:      f.Ranges()[2].LSLocation(),
-				ContainerName: new("Point"),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:          "distanceFarFarAway",
+					Kind:          lsproto.SymbolKindProperty,
+					Location:      f.Ranges()[2].LSLocation(),
+					ContainerName: new("Point"),
+				},
 				{
 					Name:          "distanceFarFarAwayLocal",
 					Kind:          lsproto.SymbolKindVariable,
@@ -91,5 +93,6 @@ function PointsFunc(): void {
 			Pattern:     "mPointThatIJustInitiated wrongKeyWord",
 			Preferences: nil,
 			Exact:       new([]*lsproto.SymbolInformation{}),
-		}})
+		},
+	})
 }

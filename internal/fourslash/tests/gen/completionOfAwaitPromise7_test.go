@@ -39,7 +39,8 @@ func TestCompletionOfAwaitPromise7(t *testing.T) {
 							NewText: "trim",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

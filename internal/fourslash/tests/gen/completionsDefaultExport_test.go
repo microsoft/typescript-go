@@ -33,7 +33,8 @@ a./**/;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "default",
-					Detail: new("function f(): void")},
+					Detail: new("function f(): void"),
+				},
 			},
 		},
 	})

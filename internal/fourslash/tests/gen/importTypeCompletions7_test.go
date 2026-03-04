@@ -48,10 +48,12 @@ export = Foo;
 							NewText: "Foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

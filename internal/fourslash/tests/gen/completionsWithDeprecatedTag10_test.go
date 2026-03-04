@@ -41,7 +41,8 @@ export const foo = 0;
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Kind:                new(lsproto.CompletionItemKindVariable),
-					SortText:            new(string(ls.DeprecateSortText(ls.SortTextAutoImportSuggestions)))},
+					SortText:            new(string(ls.DeprecateSortText(ls.SortTextAutoImportSuggestions))),
+				},
 			},
 		},
 	})

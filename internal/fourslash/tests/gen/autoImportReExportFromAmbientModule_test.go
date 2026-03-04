@@ -52,7 +52,8 @@ access/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "accessSync",
 					Data: &lsproto.CompletionItemData{
@@ -61,7 +62,8 @@ access/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

@@ -47,7 +47,8 @@ alpha.f(new /*c1*/);`
 					Label:     "Name",
 					Detail:    new("namespace Name"),
 					Kind:      new(lsproto.CompletionItemKindModule),
-					Preselect: new(true)},
+					Preselect: new(true),
+				},
 			},
 		},
 	})
@@ -70,7 +71,8 @@ alpha.f(new /*c1*/);`
 					Kind:                new(lsproto.CompletionItemKindModule),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Preselect:           new(true),
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -86,7 +88,8 @@ alpha.f(new /*c1*/);`
 					Label:     "alpha",
 					Detail:    new("import alpha"),
 					Kind:      new(lsproto.CompletionItemKindVariable),
-					Preselect: new(true)},
+					Preselect: new(true),
+				},
 			},
 		},
 	})

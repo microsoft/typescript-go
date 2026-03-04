@@ -43,25 +43,32 @@ inst2.blah/*b*/;`
 				"property",
 				&lsproto.CompletionItem{
 					Label:    "blah",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "class2",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "constructor",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "inst2",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "instance",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "prototype",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "TestObj",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 			},
 		},
 	})

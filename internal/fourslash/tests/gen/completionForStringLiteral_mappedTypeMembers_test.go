@@ -40,7 +40,8 @@ type B = A["[|/**/|]"]`
 							NewText: "a",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -48,7 +49,8 @@ type B = A["[|/**/|]"]`
 							NewText: "b",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

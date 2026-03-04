@@ -41,12 +41,14 @@ class Foo implements IFoo {
 					Label:      "a",
 					InsertText: new("a?: number;"),
 					FilterText: new("a"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "b",
 					InsertText: new("b(x: number): void {\n}"),
 					FilterText: new("b"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

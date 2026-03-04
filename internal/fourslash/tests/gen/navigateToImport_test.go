@@ -27,29 +27,33 @@ import {foo, [|bar as baz|]} from './library';`
 		{
 			Pattern:     "foo",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "foo",
-				Kind:     lsproto.SymbolKindFunction,
-				Location: f.Ranges()[0].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "foo",
+					Kind:     lsproto.SymbolKindFunction,
+					Location: f.Ranges()[0].LSLocation(),
+				},
 			}),
 		}, {
 			Pattern:     "bar",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "bar",
-				Kind:     lsproto.SymbolKindFunction,
-				Location: f.Ranges()[1].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "bar",
+					Kind:     lsproto.SymbolKindFunction,
+					Location: f.Ranges()[1].LSLocation(),
+				},
 			}),
 		}, {
 			Pattern:     "baz",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "baz",
-				Kind:     lsproto.SymbolKindVariable,
-				Location: f.Ranges()[2].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "baz",
+					Kind:     lsproto.SymbolKindVariable,
+					Location: f.Ranges()[2].LSLocation(),
+				},
 			}),
-		}})
+		},
+	})
 }

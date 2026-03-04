@@ -45,7 +45,8 @@ export const m = 0;
 					},
 					Detail:              new("class C"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "T",
 					Data: &lsproto.CompletionItemData{
@@ -55,7 +56,8 @@ export const m = 0;
 					},
 					Detail:              new("type T = number"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 			Excludes: []string{
 				"x",

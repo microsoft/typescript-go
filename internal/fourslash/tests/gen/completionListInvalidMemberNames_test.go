@@ -46,7 +46,8 @@ x["[|/*b*/|]"];`
 							NewText: "foo ",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "bar",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -54,7 +55,8 @@ x["[|/*b*/|]"];`
 							NewText: "bar",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "break",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -62,7 +64,8 @@ x["[|/*b*/|]"];`
 							NewText: "break",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "any",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -70,7 +73,8 @@ x["[|/*b*/|]"];`
 							NewText: "any",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "#",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -78,7 +82,8 @@ x["[|/*b*/|]"];`
 							NewText: "#",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "$",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -86,7 +91,8 @@ x["[|/*b*/|]"];`
 							NewText: "$",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -94,7 +100,8 @@ x["[|/*b*/|]"];`
 							NewText: "b",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "1b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -102,7 +109,8 @@ x["[|/*b*/|]"];`
 							NewText: "1b",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -122,7 +130,8 @@ x["[|/*b*/|]"];`
 							NewText: "foo ",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				"bar",
 				"break",
 				"any",
@@ -134,7 +143,8 @@ x["[|/*b*/|]"];`
 							NewText: "#",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				"$",
 				"b",
 				&lsproto.CompletionItem{
@@ -145,7 +155,8 @@ x["[|/*b*/|]"];`
 							NewText: "1b",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

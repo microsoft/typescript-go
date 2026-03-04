@@ -32,11 +32,13 @@ const y2: 0 | "one" | 1n = 'one'/*2*/;`
 				&lsproto.CompletionItem{
 					Label:  "0",
 					Kind:   new(lsproto.CompletionItemKindConstant),
-					Detail: new("0")},
+					Detail: new("0"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "\"one\"",
 					Kind:   new(lsproto.CompletionItemKindConstant),
-					Detail: new("\"one\"")},
+					Detail: new("\"one\""),
+				},
 			},
 		},
 	})
@@ -51,15 +53,18 @@ const y2: 0 | "one" | 1n = 'one'/*2*/;`
 				&lsproto.CompletionItem{
 					Label:  "0",
 					Kind:   new(lsproto.CompletionItemKindConstant),
-					Detail: new("0")},
+					Detail: new("0"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "\"one\"",
 					Kind:   new(lsproto.CompletionItemKindConstant),
-					Detail: new("\"one\"")},
+					Detail: new("\"one\""),
+				},
 				&lsproto.CompletionItem{
 					Label:  "1n",
 					Kind:   new(lsproto.CompletionItemKindConstant),
-					Detail: new("1n")},
+					Detail: new("1n"),
+				},
 			},
 		},
 	})

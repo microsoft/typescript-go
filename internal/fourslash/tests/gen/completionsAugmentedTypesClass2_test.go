@@ -46,7 +46,8 @@ r./*2*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "foo",
-					Detail: new("(method) c5b.foo(): void")},
+					Detail: new("(method) c5b.foo(): void"),
+				},
 			},
 		},
 	})

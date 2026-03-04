@@ -42,7 +42,8 @@ foo({
 					InsertText: new("world"),
 					FilterText: new("world"),
 					Kind:       new(lsproto.CompletionItemKindField),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

@@ -42,7 +42,8 @@ class User {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "city",
-					Detail: new("(property) city: string")},
+					Detail: new("(property) city: string"),
+				},
 				&lsproto.CompletionItem{
 					Label:      "postal code",
 					InsertText: new("?.[\"postal code\"]"),
@@ -52,7 +53,8 @@ class User {
 							NewText: "postal code",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -65,9 +67,11 @@ class User {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "address"},
+					Label: "address",
+				},
 				&lsproto.CompletionItem{
-					Label: "bar"},
+					Label: "bar",
+				},
 			},
 		},
 	})
@@ -80,9 +84,11 @@ class User {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "address"},
+					Label: "address",
+				},
 				&lsproto.CompletionItem{
-					Label: "bar"},
+					Label: "bar",
+				},
 			},
 		},
 	})

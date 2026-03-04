@@ -32,7 +32,8 @@ var r = M./**/;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("var M.x: <T>(x: T) => T")},
+					Detail: new("var M.x: <T>(x: T) => T"),
+				},
 			},
 		},
 	})

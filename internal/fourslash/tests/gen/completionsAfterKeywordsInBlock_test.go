@@ -69,7 +69,8 @@ class C4 {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "defaultValue",
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})
@@ -83,7 +84,8 @@ class C4 {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "returnValue",
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

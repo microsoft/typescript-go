@@ -24,5 +24,6 @@ declare function`
 			Pattern:     "",
 			Preferences: nil,
 			Exact:       new([]*lsproto.SymbolInformation{}),
-		}})
+		},
+	})
 }

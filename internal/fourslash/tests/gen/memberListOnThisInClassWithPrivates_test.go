@@ -34,16 +34,20 @@ func TestMemberListOnThisInClassWithPrivates(t *testing.T) {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "privMeth",
-					Detail: new("(method) C1.privMeth(): void")},
+					Detail: new("(method) C1.privMeth(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "privProp",
-					Detail: new("(property) C1.privProp: number")},
+					Detail: new("(property) C1.privProp: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "pubMeth",
-					Detail: new("(method) C1.pubMeth(): void")},
+					Detail: new("(method) C1.pubMeth(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "pubProp",
-					Detail: new("(property) C1.pubProp: number")},
+					Detail: new("(property) C1.pubProp: number"),
+				},
 			},
 		},
 	})

@@ -39,10 +39,12 @@ console./*0*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "hello",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "goodbye",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 			},
 		},
 	})

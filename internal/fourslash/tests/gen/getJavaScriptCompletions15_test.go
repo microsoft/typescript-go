@@ -69,19 +69,24 @@ v.x.V./*4*/;`
 				"V",
 				&lsproto.CompletionItem{
 					Label:    "ref1",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "ref2",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "require",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "v",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "x",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 			},
 		},
 	})

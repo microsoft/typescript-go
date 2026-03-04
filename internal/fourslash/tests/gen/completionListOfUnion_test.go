@@ -33,13 +33,16 @@ f({ /*f*/ });`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: new("(property) a: string | number")},
+					Detail: new("(property) a: string | number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: new("(property) b: number | boolean")},
+					Detail: new("(property) b: number | boolean"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c",
-					Detail: new("(property) c: string")},
+					Detail: new("(property) c: string"),
+				},
 			},
 		},
 	})
@@ -53,7 +56,8 @@ f({ /*f*/ });`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: new("(property) I.a: number")},
+					Detail: new("(property) I.a: number"),
+				},
 			},
 		},
 	})

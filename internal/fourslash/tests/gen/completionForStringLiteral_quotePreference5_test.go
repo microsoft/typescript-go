@@ -30,9 +30,11 @@ const t: T = /**/`
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "'1'"},
+					Label: "'1'",
+				},
 				&lsproto.CompletionItem{
-					Label: "'0'"},
+					Label: "'0'",
+				},
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{QuotePreference: lsutil.QuotePreference("single")},

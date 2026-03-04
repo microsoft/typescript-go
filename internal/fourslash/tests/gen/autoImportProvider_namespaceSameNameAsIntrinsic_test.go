@@ -44,7 +44,8 @@ type A = { name: string/**/ }`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "string",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "string",
 					SortText: new(string(ls.SortTextAutoImportSuggestions)),
@@ -53,7 +54,8 @@ type A = { name: string/**/ }`
 							ModuleSpecifier: "fp-ts",
 						},
 					},
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 		},
 	})

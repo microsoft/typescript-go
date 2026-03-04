@@ -39,7 +39,8 @@ async function foo(x: Promise<Foo>) {
 							NewText: "foo-foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -35,7 +35,8 @@ f({ /**/ });`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "Object",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

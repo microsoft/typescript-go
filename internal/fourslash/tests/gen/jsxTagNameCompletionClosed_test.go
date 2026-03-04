@@ -66,7 +66,8 @@ function fn6() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Foo",
-					Detail: new("const Foo: NestedInterface")},
+					Detail: new("const Foo: NestedInterface"),
+				},
 			},
 		},
 	})
@@ -80,7 +81,8 @@ function fn6() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Foo",
-					Detail: new("const Foo: NestedInterface")},
+					Detail: new("const Foo: NestedInterface"),
+				},
 			},
 		},
 	})
@@ -94,7 +96,8 @@ function fn6() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Foo",
-					Detail: new("(property) NestedInterface.Foo: NestedInterface")},
+					Detail: new("(property) NestedInterface.Foo: NestedInterface"),
+				},
 			},
 		},
 	})
@@ -108,7 +111,8 @@ function fn6() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Foo",
-					Detail: new("(property) NestedInterface.Foo: NestedInterface")},
+					Detail: new("(property) NestedInterface.Foo: NestedInterface"),
+				},
 			},
 		},
 	})
@@ -122,7 +126,8 @@ function fn6() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Foo",
-					Detail: new("(property) NestedInterface.Foo: NestedInterface")},
+					Detail: new("(property) NestedInterface.Foo: NestedInterface"),
+				},
 			},
 		},
 	})
@@ -136,7 +141,8 @@ function fn6() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Foo",
-					Detail: new("(property) NestedInterface.Foo: NestedInterface")},
+					Detail: new("(property) NestedInterface.Foo: NestedInterface"),
+				},
 			},
 		},
 	})

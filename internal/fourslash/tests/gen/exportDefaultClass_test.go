@@ -33,7 +33,8 @@ func TestExportDefaultClass(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:  "C",
 					Detail: new("class C"),
-					Kind:   new(lsproto.CompletionItemKindClass)},
+					Kind:   new(lsproto.CompletionItemKindClass),
+				},
 			},
 		},
 	})

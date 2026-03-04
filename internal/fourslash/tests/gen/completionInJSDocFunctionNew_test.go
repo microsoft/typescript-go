@@ -33,7 +33,8 @@ var f = function () { return new/**/; }`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "new",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

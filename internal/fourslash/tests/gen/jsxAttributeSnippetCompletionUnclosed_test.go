@@ -87,7 +87,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -105,7 +106,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -123,7 +125,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -141,7 +144,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -159,7 +163,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -177,7 +182,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -195,7 +201,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -213,7 +220,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -231,7 +239,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -249,7 +258,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -267,7 +277,8 @@ function fn11() {
 					FilterText:       new("className"),
 					Detail:           new("(property) className?: string"),
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
-					SortText:         new(string(ls.SortTextOptionalMember))},
+					SortText:         new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

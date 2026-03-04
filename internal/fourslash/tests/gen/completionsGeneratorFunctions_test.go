@@ -67,7 +67,8 @@ const o: I = {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "Number",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

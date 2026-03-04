@@ -45,11 +45,14 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -62,11 +65,14 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -79,11 +85,14 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -96,11 +105,14 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -113,11 +125,14 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -130,9 +145,11 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 			},
 		},
 	})
@@ -145,9 +162,11 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 			},
 		},
 	})
@@ -160,9 +179,11 @@ const b: Foo[(("[|/*8*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 			},
 		},
 	})

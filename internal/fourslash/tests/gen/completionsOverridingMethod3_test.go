@@ -40,7 +40,8 @@ declare class Poltergeist implements Ghost {
 					Label:      "boo",
 					InsertText: new("boo(): string;"),
 					FilterText: new("boo"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

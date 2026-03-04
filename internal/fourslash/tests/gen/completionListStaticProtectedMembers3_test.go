@@ -52,13 +52,16 @@ C3./*2*/;`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "publicMethod",
-						SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+					},
 					&lsproto.CompletionItem{
 						Label:    "publicProperty",
-						SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: new(string(ls.SortTextLocationPriority))},
+						SortText: new(string(ls.SortTextLocationPriority)),
+					},
 				}),
 		},
 	})

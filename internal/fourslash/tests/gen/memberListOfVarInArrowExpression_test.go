@@ -41,7 +41,8 @@ function each<T>(items: T[], handler: (item: T) => void) { }`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a1",
-					Detail: new("(property) a1: string")},
+					Detail: new("(property) a1: string"),
+				},
 			},
 		},
 	})

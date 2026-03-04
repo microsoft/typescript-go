@@ -44,7 +44,8 @@ f/**/;`
 					Detail:              new("(alias) const foo: 0\nexport default foo"),
 					Kind:                new(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

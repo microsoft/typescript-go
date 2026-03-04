@@ -41,7 +41,8 @@ class Foo {
 				&lsproto.CompletionItem{
 					Label:    "this",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

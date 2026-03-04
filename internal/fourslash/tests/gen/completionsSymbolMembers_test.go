@@ -46,7 +46,8 @@ j[|./*j*/|];`
 							NewText: "s",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -67,7 +68,8 @@ j[|./*j*/|];`
 							NewText: "N",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

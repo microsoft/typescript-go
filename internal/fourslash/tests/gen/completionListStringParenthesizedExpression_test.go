@@ -35,11 +35,14 @@ const c = foo[(("[|/*3*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -52,11 +55,14 @@ const c = foo[(("[|/*3*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})
@@ -69,11 +75,14 @@ const c = foo[(("[|/*3*/|]"))];`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "a"},
+					Label: "a",
+				},
 				&lsproto.CompletionItem{
-					Label: "b"},
+					Label: "b",
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})

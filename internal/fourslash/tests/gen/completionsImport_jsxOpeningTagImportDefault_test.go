@@ -44,7 +44,8 @@ export function Index() {
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 			Excludes: []string{
 				"component",

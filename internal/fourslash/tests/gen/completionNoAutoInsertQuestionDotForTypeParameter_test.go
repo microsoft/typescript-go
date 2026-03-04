@@ -36,7 +36,8 @@ function f<T extends Address>(x: T) {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "city",
-					Detail: new("(property) Address.city: string")},
+					Detail: new("(property) Address.city: string"),
+				},
 				&lsproto.CompletionItem{
 					Label:      "postal code",
 					InsertText: new("[\"postal code\"]"),
@@ -46,7 +47,8 @@ function f<T extends Address>(x: T) {
 							NewText: "postal code",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

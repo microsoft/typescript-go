@@ -56,7 +56,8 @@ fooB/*1*/`
 					Detail:              new("(property) default: 0"),
 					Kind:                new(lsproto.CompletionItemKindField),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

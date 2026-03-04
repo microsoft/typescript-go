@@ -54,7 +54,8 @@ class Foo {
 							Value: "Label docs",
 						},
 					},
-					Kind: new(lsproto.CompletionItemKindField)},
+					Kind: new(lsproto.CompletionItemKindField),
+				},
 				&lsproto.CompletionItem{
 					Label:  "foo",
 					Detail: new("(property) foo: string"),
@@ -64,7 +65,8 @@ class Foo {
 							Value: "Doc",
 						},
 					},
-					Kind: new(lsproto.CompletionItemKindField)},
+					Kind: new(lsproto.CompletionItemKindField),
+				},
 			},
 		},
 	})

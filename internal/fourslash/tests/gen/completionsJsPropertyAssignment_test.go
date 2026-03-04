@@ -38,7 +38,8 @@ x.p = "[|/**/|]";`
 							NewText: "x",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "y",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -46,7 +47,8 @@ x.p = "[|/**/|]";`
 							NewText: "y",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

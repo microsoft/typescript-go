@@ -53,7 +53,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -73,7 +74,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -93,7 +95,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -113,7 +116,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -133,7 +137,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -153,7 +158,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -179,7 +185,8 @@ const test8: { foo: string } = { foo/*8*/ }`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "foo",
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

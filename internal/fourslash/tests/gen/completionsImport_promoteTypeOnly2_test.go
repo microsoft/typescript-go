@@ -34,7 +34,8 @@ SomeI/**/`
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "SomeInterface"},
+					Label: "SomeInterface",
+				},
 			},
 		},
 	})

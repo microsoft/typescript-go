@@ -39,7 +39,8 @@ test({
 					Label:      "pressed?",
 					InsertText: new("pressed"),
 					FilterText: new("pressed"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

@@ -38,7 +38,8 @@ t/**/`
 					&lsproto.CompletionItem{
 						Label:  "Test2",
 						Detail: new("(alias) function Test2(): void\nimport Test2"),
-						Kind:   new(lsproto.CompletionItemKindVariable)},
+						Kind:   new(lsproto.CompletionItemKindVariable),
+					},
 					&lsproto.CompletionItem{
 						Label: "Test1",
 						Data: &lsproto.CompletionItemData{
@@ -52,7 +53,8 @@ t/**/`
 						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 						LabelDetails: &lsproto.CompletionItemLabelDetails{
 							Description: new("./a"),
-						}},
+						},
+					},
 				}, true),
 		},
 	}).AndApplyCodeAction(t, &fourslash.CompletionsExpectedCodeAction{

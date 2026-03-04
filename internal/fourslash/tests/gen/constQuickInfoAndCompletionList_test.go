@@ -37,7 +37,8 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: new("const a: 10")},
+					Detail: new("const a: 10"),
+				},
 			},
 			Excludes: []string{
 				"b",
@@ -54,7 +55,8 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: new("const a: 10")},
+					Detail: new("const a: 10"),
+				},
 			},
 			Excludes: []string{
 				"b",
@@ -71,10 +73,12 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: new("const a: 10")},
+					Detail: new("const a: 10"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: new("const b: 20")},
+					Detail: new("const b: 20"),
+				},
 			},
 		},
 	})
@@ -88,10 +92,12 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "a",
-					Detail: new("const a: 10")},
+					Detail: new("const a: 10"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: new("const b: 20")},
+					Detail: new("const b: 20"),
+				},
 			},
 		},
 	})

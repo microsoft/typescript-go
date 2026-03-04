@@ -51,7 +51,8 @@ x.anotherProperty./*2*/;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Returns a date converted to a string using the current locale.",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "toString",
 					Detail: new("(method) toString(): string (+1 overload)"),
@@ -60,7 +61,8 @@ x.anotherProperty./*2*/;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Returns a string representation of a string.",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "valueOf",
 					Detail: new("(method) valueOf(): string | number"),
@@ -69,7 +71,8 @@ x.anotherProperty./*2*/;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Returns the primitive value of the specified object.",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -82,7 +85,8 @@ x.anotherProperty./*2*/;`
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "foo"},
+					Label: "foo",
+				},
 			},
 		},
 	})

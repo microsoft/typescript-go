@@ -43,7 +43,8 @@ p["[|/*3*/|]"];`
 							NewText: "bar",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "foo",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -51,7 +52,8 @@ p["[|/*3*/|]"];`
 							NewText: "foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "some other name",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -59,7 +61,8 @@ p["[|/*3*/|]"];`
 							NewText: "some other name",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -92,7 +95,8 @@ p["[|/*3*/|]"];`
 							NewText: "a",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -34,7 +34,8 @@ i/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "i",
-					Detail: new("var i: Iterator<string, number>")},
+					Detail: new("var i: Iterator<string, number>"),
+				},
 			},
 		},
 	})

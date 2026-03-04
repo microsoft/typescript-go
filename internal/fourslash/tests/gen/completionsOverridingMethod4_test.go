@@ -55,12 +55,14 @@ class Gossip extends Secret {
 					Label:      "hint",
 					InsertText: new("protected hint(): string {\n}"),
 					FilterText: new("hint"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "refuse",
 					InsertText: new("public refuse(): string {\n}"),
 					FilterText: new("refuse"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 			Excludes: []string{
 				"tell",

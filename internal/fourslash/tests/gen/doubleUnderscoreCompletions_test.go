@@ -36,13 +36,16 @@ instance./*1*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__property",
-					Detail: new("(property) MyObject.__property: number")},
+					Detail: new("(property) MyObject.__property: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:    "instance",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "MyObject",
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 			},
 		},
 	})

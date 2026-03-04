@@ -37,7 +37,8 @@ declare var AnalyserNode: {
 				&lsproto.CompletionItem{
 					Label:  "AnalyserNode",
 					Detail: new("interface AnalyserNode\nvar AnalyserNode: {\n    new (): AnalyserNode;\n    prototype: AnalyserNode;\n}"),
-					Kind:   new(lsproto.CompletionItemKindVariable)},
+					Kind:   new(lsproto.CompletionItemKindVariable),
+				},
 			},
 		},
 	})

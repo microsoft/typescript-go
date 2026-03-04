@@ -73,7 +73,8 @@ fooFrom/*mts*/`
 						},
 					},
 					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 			Excludes: []string{
 				"fooFromIndex",
@@ -97,7 +98,8 @@ fooFrom/*mts*/`
 						},
 					},
 					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 			Excludes: []string{
 				"fooFromLol",

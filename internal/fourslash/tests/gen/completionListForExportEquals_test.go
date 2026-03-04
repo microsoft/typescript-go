@@ -41,7 +41,8 @@ import { /**/ } from "foo";`
 				"Static",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

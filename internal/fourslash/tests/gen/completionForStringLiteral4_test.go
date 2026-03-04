@@ -49,7 +49,8 @@ f/*1*/('literal', 'literal', "[|o/*2*/ther1|]", 12);`
 							NewText: "other1",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "other2",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -57,7 +58,8 @@ f/*1*/('literal', 'literal', "[|o/*2*/ther1|]", 12);`
 							NewText: "other2",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

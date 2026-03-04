@@ -59,10 +59,12 @@ var y;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "Foo",
-					Kind:  new(lsproto.CompletionItemKindClass)},
+					Kind:  new(lsproto.CompletionItemKindClass),
+				},
 				&lsproto.CompletionItem{
 					Label: "I",
-					Kind:  new(lsproto.CompletionItemKindInterface)},
+					Kind:  new(lsproto.CompletionItemKindInterface),
+				},
 			},
 			Excludes: []string{
 				"Namespace",
@@ -88,7 +90,8 @@ var y;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "Namespace",
-					Kind:  new(lsproto.CompletionItemKindModule)},
+					Kind:  new(lsproto.CompletionItemKindModule),
+				},
 			},
 		},
 	})
@@ -102,7 +105,8 @@ var y;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "SomeType",
-					Kind:  new(lsproto.CompletionItemKindInterface)},
+					Kind:  new(lsproto.CompletionItemKindInterface),
+				},
 			},
 		},
 	})
@@ -116,16 +120,20 @@ var y;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "Foo",
-					Kind:  new(lsproto.CompletionItemKindClass)},
+					Kind:  new(lsproto.CompletionItemKindClass),
+				},
 				&lsproto.CompletionItem{
 					Label: "x",
-					Kind:  new(lsproto.CompletionItemKindVariable)},
+					Kind:  new(lsproto.CompletionItemKindVariable),
+				},
 				&lsproto.CompletionItem{
 					Label: "x1",
-					Kind:  new(lsproto.CompletionItemKindVariable)},
+					Kind:  new(lsproto.CompletionItemKindVariable),
+				},
 				&lsproto.CompletionItem{
 					Label: "y",
-					Kind:  new(lsproto.CompletionItemKindVariable)},
+					Kind:  new(lsproto.CompletionItemKindVariable),
+				},
 			},
 			Excludes: []string{
 				"I",
@@ -150,13 +158,16 @@ var y;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "method3",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 				&lsproto.CompletionItem{
 					Label: "method4",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 				&lsproto.CompletionItem{
 					Label: "property1",
-					Kind:  new(lsproto.CompletionItemKindField)},
+					Kind:  new(lsproto.CompletionItemKindField),
+				},
 			},
 		},
 	})
@@ -172,10 +183,12 @@ var y;`
 					&lsproto.CompletionItem{
 						Label:    "method1",
 						Kind:     new(lsproto.CompletionItemKindMethod),
-						SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: new(string(ls.SortTextLocationPriority))},
+						SortText: new(string(ls.SortTextLocationPriority)),
+					},
 				}),
 		},
 	})

@@ -64,7 +64,8 @@ fooFrom/**/`
 						},
 					},
 					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 			Excludes: []string{
 				"fooFromIndex",

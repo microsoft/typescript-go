@@ -45,7 +45,8 @@ export interface Foo {}
 							NewText: "Foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -74,7 +74,8 @@ fooFrom/**/`
 							},
 						},
 						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-						AdditionalTextEdits: fourslash.AnyTextEdits},
+						AdditionalTextEdits: fourslash.AnyTextEdits,
+					},
 				}, false),
 		},
 	})

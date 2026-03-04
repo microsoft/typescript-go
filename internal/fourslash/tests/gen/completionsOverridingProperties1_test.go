@@ -40,7 +40,8 @@ class Sub extends Base {
 					Label:      "foo",
 					InsertText: new("protected foo: string;"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

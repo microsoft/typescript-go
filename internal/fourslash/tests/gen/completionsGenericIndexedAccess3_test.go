@@ -48,7 +48,8 @@ create('component-two', { props: { /*2*/ } });`
 					Label:      "foo?",
 					InsertText: new("foo"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -64,7 +65,8 @@ create('component-two', { props: { /*2*/ } });`
 					Label:      "bar?",
 					InsertText: new("bar"),
 					FilterText: new("bar"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

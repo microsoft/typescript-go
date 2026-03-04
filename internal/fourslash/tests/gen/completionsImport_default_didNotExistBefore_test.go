@@ -42,7 +42,8 @@ f/**/;`
 					Detail:              new("function foo(): void"),
 					Kind:                new(lsproto.CompletionItemKindFunction),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

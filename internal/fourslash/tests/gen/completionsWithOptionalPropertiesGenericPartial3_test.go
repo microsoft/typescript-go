@@ -40,14 +40,17 @@ partialFoo({ a: true, b: true }, { /*1*/ });`
 					Label:      "a?",
 					InsertText: new("a"),
 					FilterText: new("a"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "b?",
 					InsertText: new("b"),
 					FilterText: new("b"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
-					Label: "c"},
+					Label: "c",
+				},
 			},
 		},
 	})

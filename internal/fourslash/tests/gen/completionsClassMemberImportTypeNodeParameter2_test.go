@@ -41,7 +41,8 @@ export declare class Derived extends Cls {
 					Label:               "method",
 					InsertText:          new("method(param: import(\"./doesntexist.js\").Foo);"),
 					FilterText:          new("method"),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 		},
 	})

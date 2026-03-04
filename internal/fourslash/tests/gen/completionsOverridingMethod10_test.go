@@ -42,17 +42,20 @@ class Sub implements Base {
 					Label:      "a",
 					InsertText: new("a: string;"),
 					FilterText: new("a"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "b",
 					InsertText: new("b(a: string): void {\n}"),
 					FilterText: new("b"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "c",
 					InsertText: new("c(a: string): string;\nc(a: number): number;\nc(a: unknown): string | number {\n}"),
 					FilterText: new("c"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

@@ -38,7 +38,8 @@ bar({ hello, /*1*/ });`
 					Label:      "world?",
 					InsertText: new("world"),
 					FilterText: new("world"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

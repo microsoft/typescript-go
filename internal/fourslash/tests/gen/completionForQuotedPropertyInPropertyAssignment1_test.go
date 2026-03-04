@@ -55,7 +55,8 @@ files = {
 							NewText: "jspm",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "jspm:browser",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -63,7 +64,8 @@ files = {
 							NewText: "jspm:browser",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

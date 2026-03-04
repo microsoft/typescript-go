@@ -33,7 +33,8 @@ v./**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "valueOf",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})

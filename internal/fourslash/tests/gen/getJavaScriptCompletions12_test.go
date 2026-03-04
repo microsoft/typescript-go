@@ -51,7 +51,8 @@ var test1 = function(x) { return x./*4*/ }, test2 = function(a) { return a./*5*/
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "charCodeAt",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})
@@ -65,7 +66,8 @@ var test1 = function(x) { return x./*4*/ }, test2 = function(a) { return a./*5*/
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "toExponential",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})
@@ -80,7 +82,8 @@ var test1 = function(x) { return x./*4*/ }, test2 = function(a) { return a./*5*/
 				&lsproto.CompletionItem{
 					Label:    "test1",
 					Kind:     new(lsproto.CompletionItemKindText),
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 			},
 		},
 	})

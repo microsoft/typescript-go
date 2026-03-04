@@ -36,7 +36,8 @@ o2./*2*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__proto__",
-					Detail: new("(property) \"__proto__\": number")},
+					Detail: new("(property) \"__proto__\": number"),
+				},
 			},
 		},
 	})
@@ -52,7 +53,8 @@ o2./*2*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__proto__",
-					Detail: new("(property) __proto__: number")},
+					Detail: new("(property) __proto__: number"),
+				},
 			},
 		},
 	})

@@ -24,16 +24,18 @@ const [|x: number = 1|];
 		{
 			Pattern:     "",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "x",
-				Kind:     lsproto.SymbolKindVariable,
-				Location: f.Ranges()[0].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "x",
+					Kind:     lsproto.SymbolKindVariable,
+					Location: f.Ranges()[0].LSLocation(),
+				},
 				{
 					Name:     "y",
 					Kind:     lsproto.SymbolKindFunction,
 					Location: f.Ranges()[1].LSLocation(),
 				},
 			}),
-		}})
+		},
+	})
 }

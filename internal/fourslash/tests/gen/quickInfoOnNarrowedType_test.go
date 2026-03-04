@@ -61,7 +61,8 @@ class Foo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "strOrNum",
-					Detail: new("(parameter) strOrNum: string | number")},
+					Detail: new("(parameter) strOrNum: string | number"),
+				},
 			},
 		},
 	})
@@ -75,7 +76,8 @@ class Foo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "strOrNum",
-					Detail: new("(parameter) strOrNum: number")},
+					Detail: new("(parameter) strOrNum: number"),
+				},
 			},
 		},
 	})
@@ -89,7 +91,8 @@ class Foo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "strOrNum",
-					Detail: new("(parameter) strOrNum: string")},
+					Detail: new("(parameter) strOrNum: string"),
+				},
 			},
 		},
 	})
@@ -103,7 +106,8 @@ class Foo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "s",
-					Detail: new("let s: string | undefined")},
+					Detail: new("let s: string | undefined"),
+				},
 			},
 		},
 	})
@@ -117,7 +121,8 @@ class Foo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "s",
-					Detail: new("let s: string")},
+					Detail: new("let s: string"),
+				},
 			},
 		},
 	})
@@ -131,7 +136,8 @@ class Foo {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "#privateProperty",
-					Detail: new("(property) Foo.#privateProperty: string[]")},
+					Detail: new("(property) Foo.#privateProperty: string[]"),
+				},
 			},
 		},
 	})

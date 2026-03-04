@@ -54,7 +54,8 @@ c./*quickInfoC*/x;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("(method) x(a: number): void")},
+					Detail: new("(method) x(a: number): void"),
+				},
 			},
 		},
 	})
@@ -68,7 +69,8 @@ c./*quickInfoC*/x;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("(property) x: (a: number) => void")},
+					Detail: new("(property) x: (a: number) => void"),
+				},
 			},
 		},
 	})

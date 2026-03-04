@@ -56,7 +56,8 @@ myFunction/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "myFunctionB",
 					Data: &lsproto.CompletionItemData{
@@ -65,7 +66,8 @@ myFunction/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"},
@@ -86,7 +88,8 @@ myFunction/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "myFunctionB",
 					Data: &lsproto.CompletionItemData{
@@ -95,7 +98,8 @@ myFunction/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierPreference: "relative"},
@@ -116,7 +120,8 @@ myFunction/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "myFunctionB",
 					Data: &lsproto.CompletionItemData{
@@ -125,7 +130,8 @@ myFunction/**/`
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"},

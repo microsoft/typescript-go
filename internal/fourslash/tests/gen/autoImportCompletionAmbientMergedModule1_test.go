@@ -62,7 +62,8 @@ export class MoveInsideNextQuote extends MoveQuoteMatch {/*1*/
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					}},
+					},
+				},
 			},
 		},
 	})

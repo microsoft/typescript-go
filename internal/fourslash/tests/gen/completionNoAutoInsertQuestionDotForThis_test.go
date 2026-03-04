@@ -36,9 +36,11 @@ class Address {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "city",
-					Detail: new("(property) Address.city: string")},
+					Detail: new("(property) Address.city: string"),
+				},
 				&lsproto.CompletionItem{
-					Label: "method"},
+					Label: "method",
+				},
 				&lsproto.CompletionItem{
 					Label:      "postal code",
 					InsertText: new("[\"postal code\"]"),
@@ -48,7 +50,8 @@ class Address {
 							NewText: "postal code",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

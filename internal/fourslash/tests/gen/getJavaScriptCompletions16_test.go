@@ -51,7 +51,8 @@ let x = new Something(/*sig*/);`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "toFixed",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})
@@ -70,7 +71,8 @@ let x = new Something(/*sig*/);`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "toFixed",
-					Kind:  new(lsproto.CompletionItemKindMethod)},
+					Kind:  new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})

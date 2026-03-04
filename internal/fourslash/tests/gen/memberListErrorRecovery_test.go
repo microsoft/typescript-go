@@ -33,7 +33,8 @@ Foo./**/;
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "fun",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 			},
 		},
 	})

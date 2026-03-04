@@ -33,7 +33,8 @@ let foo /*1*/
 			Exact: CompletionGlobalsPlus(
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
-						Label: "foo"},
+						Label: "foo",
+					},
 				}, false),
 		},
 	})

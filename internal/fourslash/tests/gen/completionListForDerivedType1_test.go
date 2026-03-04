@@ -38,7 +38,8 @@ f2./*2*/ // here bar has return type any, but bar2 is Foo2`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "bar",
-					Detail: new("(method) IFoo.bar(): IFoo")},
+					Detail: new("(method) IFoo.bar(): IFoo"),
+				},
 			},
 		},
 	})
@@ -52,10 +53,12 @@ f2./*2*/ // here bar has return type any, but bar2 is Foo2`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "bar",
-					Detail: new("(method) IFoo.bar(): IFoo")},
+					Detail: new("(method) IFoo.bar(): IFoo"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "bar2",
-					Detail: new("(method) IFoo2.bar2(): IFoo2")},
+					Detail: new("(method) IFoo2.bar2(): IFoo2"),
+				},
 			},
 		},
 	})

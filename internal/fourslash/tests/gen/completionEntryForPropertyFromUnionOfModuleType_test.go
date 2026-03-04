@@ -38,7 +38,8 @@ var j = q./*1*/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "n",
-					Detail: new("(property) n: number")},
+					Detail: new("(property) n: number"),
+				},
 			},
 		},
 	})

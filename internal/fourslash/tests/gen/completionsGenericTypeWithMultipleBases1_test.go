@@ -39,13 +39,16 @@ x./**/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "family",
-					Detail: new("(property) iScope<number>.family: number")},
+					Detail: new("(property) iScope<number>.family: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "moveUp",
-					Detail: new("(property) iMover.moveUp: () => void")},
+					Detail: new("(property) iMover.moveUp: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "watch",
-					Detail: new("(property) iBaseScope.watch: () => void")},
+					Detail: new("(property) iBaseScope.watch: () => void"),
+				},
 			},
 		},
 	})

@@ -50,7 +50,8 @@ R/*0*/`
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					Detail:              new("namespace RangeParser\nfunction RangeParser(): string")},
+					Detail:              new("namespace RangeParser\nfunction RangeParser(): string"),
+				},
 			},
 		},
 	})

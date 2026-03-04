@@ -46,7 +46,8 @@ Table/**/`
 							},
 						},
 						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-						AdditionalTextEdits: fourslash.AnyTextEdits},
+						AdditionalTextEdits: fourslash.AnyTextEdits,
+					},
 					&lsproto.CompletionItem{
 						Label: "Table",
 						Data: &lsproto.CompletionItemData{
@@ -55,7 +56,8 @@ Table/**/`
 							},
 						},
 						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-						AdditionalTextEdits: fourslash.AnyTextEdits},
+						AdditionalTextEdits: fourslash.AnyTextEdits,
+					},
 				}, false),
 		},
 	})

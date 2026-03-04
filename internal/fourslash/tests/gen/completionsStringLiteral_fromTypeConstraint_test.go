@@ -36,7 +36,8 @@ type T = Pick<Foo, "[|/**/|]">;`
 							NewText: "bar",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "foo",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -44,7 +45,8 @@ type T = Pick<Foo, "[|/**/|]">;`
 							NewText: "foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -54,10 +54,12 @@ D./*value*/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "m",
-						SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: new(string(ls.SortTextLocationPriority))},
+						SortText: new(string(ls.SortTextLocationPriority)),
+					},
 				}),
 		},
 	})

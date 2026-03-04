@@ -55,7 +55,8 @@ var y = class {
 				&lsproto.CompletionItem{
 					Label:  "myClass",
 					Detail: new("class myClass"),
-					Kind:   new(lsproto.CompletionItemKindClass)},
+					Kind:   new(lsproto.CompletionItemKindClass),
+				},
 			},
 		},
 	})
@@ -70,7 +71,8 @@ var y = class {
 				&lsproto.CompletionItem{
 					Label:  "myClass",
 					Detail: new("(local class) myClass"),
-					Kind:   new(lsproto.CompletionItemKindProperty)},
+					Kind:   new(lsproto.CompletionItemKindProperty),
+				},
 			},
 		},
 	})

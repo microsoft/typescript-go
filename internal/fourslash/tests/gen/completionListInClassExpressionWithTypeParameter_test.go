@@ -48,7 +48,8 @@ func TestCompletionListInClassExpressionWithTypeParameter(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:  "TypeParam",
 					Detail: new("(type parameter) TypeParam in myClass<TypeParam>"),
-					Kind:   new(lsproto.CompletionItemKindProperty)},
+					Kind:   new(lsproto.CompletionItemKindProperty),
+				},
 			},
 		},
 	})

@@ -50,7 +50,8 @@ fooba/*5*/;`
 				&lsproto.CompletionItem{
 					Label:    "Foo",
 					Kind:     new(lsproto.CompletionItemKindInterface),
-					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))},
+					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+				},
 			},
 		},
 	})
@@ -65,7 +66,8 @@ fooba/*5*/;`
 				&lsproto.CompletionItem{
 					Label:    "bar",
 					Kind:     new(lsproto.CompletionItemKindMethod),
-					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))},
+					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+				},
 			},
 		},
 	})
@@ -80,7 +82,8 @@ fooba/*5*/;`
 				&lsproto.CompletionItem{
 					Label:    "prop",
 					Kind:     new(lsproto.CompletionItemKindField),
-					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))},
+					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+				},
 			},
 		},
 	})
@@ -95,7 +98,8 @@ fooba/*5*/;`
 				&lsproto.CompletionItem{
 					Label:    "foobar",
 					Kind:     new(lsproto.CompletionItemKindFunction),
-					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))},
+					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+				},
 			},
 		},
 	})
@@ -110,7 +114,8 @@ fooba/*5*/;`
 				&lsproto.CompletionItem{
 					Label:    "foobar",
 					Kind:     new(lsproto.CompletionItemKindVariable),
-					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))},
+					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+				},
 			},
 		},
 	})

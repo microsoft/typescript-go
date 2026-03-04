@@ -37,7 +37,8 @@ var y = function () {
 				&lsproto.CompletionItem{
 					Label:  "foo",
 					Detail: new("function foo(): void"),
-					Kind:   new(lsproto.CompletionItemKindFunction)},
+					Kind:   new(lsproto.CompletionItemKindFunction),
+				},
 			},
 		},
 	})
@@ -52,7 +53,8 @@ var y = function () {
 				&lsproto.CompletionItem{
 					Label:  "foo",
 					Detail: new("(local function) foo(): void"),
-					Kind:   new(lsproto.CompletionItemKindFunction)},
+					Kind:   new(lsproto.CompletionItemKindFunction),
+				},
 			},
 		},
 	})

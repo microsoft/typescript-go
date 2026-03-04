@@ -33,7 +33,8 @@ f<string>({ a: { /*2*/ } });`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "x"},
+					Label: "x",
+				},
 			},
 		},
 	})
@@ -46,7 +47,8 @@ f<string>({ a: { /*2*/ } });`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "y"},
+					Label: "y",
+				},
 			},
 		},
 	})

@@ -38,7 +38,8 @@ let sixthCase: Foo["qu/*case_6*/"]`
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "bar"},
+					Label: "bar",
+				},
 			},
 		},
 	})
@@ -51,7 +52,8 @@ let sixthCase: Foo["qu/*case_6*/"]`
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "qux"},
+					Label: "qux",
+				},
 			},
 		},
 	})

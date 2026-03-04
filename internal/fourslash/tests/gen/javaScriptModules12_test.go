@@ -48,10 +48,12 @@ var b = '';
 				"x",
 				&lsproto.CompletionItem{
 					Label:    "a",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "b",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 			Excludes: []string{
 				"y",
@@ -69,10 +71,12 @@ var b = '';
 				"y",
 				&lsproto.CompletionItem{
 					Label:    "a",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "b",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 			Excludes: []string{
 				"x",
@@ -90,7 +94,8 @@ var b = '';
 				"a",
 				&lsproto.CompletionItem{
 					Label:    "b",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 			Excludes: []string{
 				"x",
@@ -108,7 +113,8 @@ var b = '';
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "a",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 				"b",
 			},
 			Excludes: []string{
@@ -127,10 +133,12 @@ var b = '';
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "a",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "b",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 			Excludes: []string{
 				"x",

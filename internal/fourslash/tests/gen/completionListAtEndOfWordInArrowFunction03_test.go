@@ -33,7 +33,8 @@ func TestCompletionListAtEndOfWordInArrowFunction03(t *testing.T) {
 					Label:    "default",
 					Detail:   new("default"),
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

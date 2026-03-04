@@ -38,7 +38,8 @@ fakeTest(() => {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo",
-					Kind:  new(lsproto.CompletionItemKindField)},
+					Kind:  new(lsproto.CompletionItemKindField),
+				},
 			},
 		},
 	})

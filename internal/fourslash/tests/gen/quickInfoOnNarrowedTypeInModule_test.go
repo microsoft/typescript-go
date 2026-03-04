@@ -63,7 +63,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: new("var nonExportedStrOrNum: string | number")},
+					Detail: new("var nonExportedStrOrNum: string | number"),
+				},
 			},
 		},
 	})
@@ -77,7 +78,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: new("var nonExportedStrOrNum: number")},
+					Detail: new("var nonExportedStrOrNum: number"),
+				},
 			},
 		},
 	})
@@ -91,7 +93,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: new("var nonExportedStrOrNum: string")},
+					Detail: new("var nonExportedStrOrNum: string"),
+				},
 			},
 		},
 	})
@@ -105,7 +108,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: new("var exportedStrOrNum: string | number")},
+					Detail: new("var exportedStrOrNum: string | number"),
+				},
 			},
 		},
 	})
@@ -119,7 +123,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: new("var exportedStrOrNum: number")},
+					Detail: new("var exportedStrOrNum: number"),
+				},
 			},
 		},
 	})
@@ -133,7 +138,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: new("var exportedStrOrNum: string")},
+					Detail: new("var exportedStrOrNum: string"),
+				},
 			},
 		},
 	})
@@ -147,7 +153,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: new("var m.exportedStrOrNum: string | number")},
+					Detail: new("var m.exportedStrOrNum: string | number"),
+				},
 			},
 		},
 	})
@@ -161,7 +168,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: new("var m.exportedStrOrNum: number")},
+					Detail: new("var m.exportedStrOrNum: number"),
+				},
 			},
 		},
 	})
@@ -175,7 +183,8 @@ else {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: new("var m.exportedStrOrNum: string")},
+					Detail: new("var m.exportedStrOrNum: string"),
+				},
 			},
 		},
 	})

@@ -41,7 +41,8 @@ class HSub extends HBase {
 					Label:      "foo",
 					InsertText: new("override foo(a: string): void {\n}"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

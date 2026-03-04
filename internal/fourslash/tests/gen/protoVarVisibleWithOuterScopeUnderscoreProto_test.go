@@ -34,10 +34,12 @@ function foo() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "__proto__",
-					Detail: new("(local var) __proto__: string")},
+					Detail: new("(local var) __proto__: string"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "___proto__",
-					Detail: new("var ___proto__: number")},
+					Detail: new("var ___proto__: number"),
+				},
 			},
 		},
 	})

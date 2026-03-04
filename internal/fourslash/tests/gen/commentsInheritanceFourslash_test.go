@@ -253,7 +253,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_f1",
 					Detail: new("(method) i1.i1_f1(): void"),
@@ -262,7 +263,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_l1",
 					Detail: new("(property) i1.i1_l1: () => void"),
@@ -271,34 +273,44 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_p1",
-					Detail: new("(property) i1.i1_nc_p1: number")},
+					Detail: new("(property) i1.i1_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_f1",
-					Detail: new("(method) i1.i1_nc_f1(): void")},
+					Detail: new("(method) i1.i1_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_l1",
-					Detail: new("(property) i1.i1_nc_l1: () => void")},
+					Detail: new("(property) i1.i1_nc_l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
-					Detail: new("(property) i1.p1: number")},
+					Detail: new("(property) i1.p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
-					Detail: new("(method) i1.f1(): void")},
+					Detail: new("(method) i1.f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "l1",
-					Detail: new("(property) i1.l1: () => void")},
+					Detail: new("(property) i1.l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) i1.nc_p1: number")},
+					Detail: new("(property) i1.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) i1.nc_f1(): void")},
+					Detail: new("(method) i1.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l1",
-					Detail: new("(property) i1.nc_l1: () => void")},
+					Detail: new("(property) i1.nc_l1: () => void"),
+				},
 			},
 		},
 	})
@@ -343,7 +355,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_f1",
 					Detail: new("(method) c1.i1_f1(): void"),
@@ -352,7 +365,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_l1",
 					Detail: new("(property) c1.i1_l1: () => void"),
@@ -361,16 +375,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_p1",
-					Detail: new("(property) c1.i1_nc_p1: number")},
+					Detail: new("(property) c1.i1_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_f1",
-					Detail: new("(method) c1.i1_nc_f1(): void")},
+					Detail: new("(method) c1.i1_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_l1",
-					Detail: new("(property) c1.i1_nc_l1: () => void")},
+					Detail: new("(property) c1.i1_nc_l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
 					Detail: new("(property) c1.p1: number"),
@@ -379,7 +397,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c1_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
 					Detail: new("(method) c1.f1(): void"),
@@ -388,7 +407,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c1_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "l1",
 					Detail: new("(property) c1.l1: () => void"),
@@ -397,7 +417,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c1_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
 					Detail: new("(property) c1.nc_p1: number"),
@@ -406,7 +427,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c1_nc_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
 					Detail: new("(method) c1.nc_f1(): void"),
@@ -415,7 +437,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c1_nc_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l1",
 					Detail: new("(property) c1.nc_l1: () => void"),
@@ -424,7 +447,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c1_nc_l1",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -469,7 +493,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_f1",
 					Detail: new("(method) i1.i1_f1(): void"),
@@ -478,7 +503,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_l1",
 					Detail: new("(property) i1.i1_l1: () => void"),
@@ -487,34 +513,44 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_p1",
-					Detail: new("(property) i1.i1_nc_p1: number")},
+					Detail: new("(property) i1.i1_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_f1",
-					Detail: new("(method) i1.i1_nc_f1(): void")},
+					Detail: new("(method) i1.i1_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i1_nc_l1",
-					Detail: new("(property) i1.i1_nc_l1: () => void")},
+					Detail: new("(property) i1.i1_nc_l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
-					Detail: new("(property) i1.p1: number")},
+					Detail: new("(property) i1.p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
-					Detail: new("(method) i1.f1(): void")},
+					Detail: new("(method) i1.f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "l1",
-					Detail: new("(property) i1.l1: () => void")},
+					Detail: new("(property) i1.l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) i1.nc_p1: number")},
+					Detail: new("(property) i1.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) i1.nc_f1(): void")},
+					Detail: new("(method) i1.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l1",
-					Detail: new("(property) i1.nc_l1: () => void")},
+					Detail: new("(property) i1.nc_l1: () => void"),
+				},
 			},
 		},
 	})
@@ -552,13 +588,16 @@ class c6 extends c5 {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "i1_i",
-					Detail: new("var i1_i: i1")},
+					Detail: new("var i1_i: i1"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c1",
-					Detail: new("class c1")},
+					Detail: new("class c1"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c1_i",
-					Detail: new("var c1_i: c1")},
+					Detail: new("var c1_i: c1"),
+				},
 			},
 			Excludes: []string{
 				"i1",
@@ -581,7 +620,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i1 is interface with properties",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -612,7 +652,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 c2_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_f1",
 					Detail: new("(method) c2.c2_f1(): void"),
@@ -621,7 +662,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 c2_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_prop",
 					Detail: new("(property) c2.c2_prop: number"),
@@ -630,16 +672,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 c2_prop",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_nc_p1",
-					Detail: new("(property) c2.c2_nc_p1: number")},
+					Detail: new("(property) c2.c2_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_nc_f1",
-					Detail: new("(method) c2.c2_nc_f1(): void")},
+					Detail: new("(method) c2.c2_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_nc_prop",
-					Detail: new("(property) c2.c2_nc_prop: number")},
+					Detail: new("(property) c2.c2_nc_prop: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
 					Detail: new("(property) c2.p1: number"),
@@ -648,7 +694,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
 					Detail: new("(method) c2.f1(): void"),
@@ -657,7 +704,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "prop",
 					Detail: new("(property) c2.prop: number"),
@@ -666,16 +714,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 prop",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) c2.nc_p1: number")},
+					Detail: new("(property) c2.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) c2.nc_f1(): void")},
+					Detail: new("(method) c2.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_prop",
-					Detail: new("(property) c2.nc_prop: number")},
+					Detail: new("(property) c2.nc_prop: number"),
+				},
 			},
 		},
 	})
@@ -707,7 +759,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 c2_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_f1",
 					Detail: new("(method) c2.c2_f1(): void"),
@@ -716,7 +769,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 c2_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_prop",
 					Detail: new("(property) c2.c2_prop: number"),
@@ -725,16 +779,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c2 c2_prop",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_nc_p1",
-					Detail: new("(property) c2.c2_nc_p1: number")},
+					Detail: new("(property) c2.c2_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_nc_f1",
-					Detail: new("(method) c2.c2_nc_f1(): void")},
+					Detail: new("(method) c2.c2_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_nc_prop",
-					Detail: new("(property) c2.c2_nc_prop: number")},
+					Detail: new("(property) c2.c2_nc_prop: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
 					Detail: new("(property) c3.p1: number"),
@@ -743,7 +801,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c3 p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
 					Detail: new("(method) c3.f1(): void"),
@@ -752,7 +811,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c3 f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "prop",
 					Detail: new("(property) c3.prop: number"),
@@ -761,16 +821,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "c3 prop",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) c3.nc_p1: number")},
+					Detail: new("(property) c3.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) c3.nc_f1(): void")},
+					Detail: new("(method) c3.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_prop",
-					Detail: new("(property) c3.nc_prop: number")},
+					Detail: new("(property) c3.nc_prop: number"),
+				},
 			},
 		},
 	})
@@ -812,22 +876,28 @@ class c6 extends c5 {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "c2",
-					Detail: new("class c2")},
+					Detail: new("class c2"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c2_i",
-					Detail: new("var c2_i: c2")},
+					Detail: new("var c2_i: c2"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c3",
-					Detail: new("class c3")},
+					Detail: new("class c3"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c3_i",
-					Detail: new("var c3_i: c3")},
+					Detail: new("var c3_i: c3"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c4",
-					Detail: new("class c4")},
+					Detail: new("class c4"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "c4_i",
-					Detail: new("var c4_i: c4")},
+					Detail: new("var c4_i: c4"),
+				},
 			},
 		},
 	})
@@ -847,7 +917,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_f1",
 					Detail: new("(method) i2.i2_f1(): void"),
@@ -856,7 +927,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_l1",
 					Detail: new("(property) i2.i2_l1: () => void"),
@@ -865,16 +937,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_p1",
-					Detail: new("(property) i2.i2_nc_p1: number")},
+					Detail: new("(property) i2.i2_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_f1",
-					Detail: new("(method) i2.i2_nc_f1(): void")},
+					Detail: new("(method) i2.i2_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_l1",
-					Detail: new("(property) i2.i2_nc_l1: () => void")},
+					Detail: new("(property) i2.i2_nc_l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
 					Detail: new("(property) i2.p1: number"),
@@ -883,7 +959,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2 p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
 					Detail: new("(method) i2.f1(): void"),
@@ -892,7 +969,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2 f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "l1",
 					Detail: new("(property) i2.l1: () => void"),
@@ -901,16 +979,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2 l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) i2.nc_p1: number")},
+					Detail: new("(property) i2.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) i2.nc_f1(): void")},
+					Detail: new("(method) i2.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l1",
-					Detail: new("(property) i2.nc_l1: () => void")},
+					Detail: new("(property) i2.nc_l1: () => void"),
+				},
 			},
 		},
 	})
@@ -956,7 +1038,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_f1",
 					Detail: new("(method) i2.i2_f1(): void"),
@@ -965,7 +1048,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_l1",
 					Detail: new("(property) i2.i2_l1: () => void"),
@@ -974,16 +1058,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_p1",
-					Detail: new("(property) i2.i2_nc_p1: number")},
+					Detail: new("(property) i2.i2_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_f1",
-					Detail: new("(method) i2.i2_nc_f1(): void")},
+					Detail: new("(method) i2.i2_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_l1",
-					Detail: new("(property) i2.i2_nc_l1: () => void")},
+					Detail: new("(property) i2.i2_nc_l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
 					Detail: new("(property) i3.p1: number"),
@@ -992,7 +1080,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i3 p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
 					Detail: new("(method) i3.f1(): void"),
@@ -1001,7 +1090,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i3 f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "l1",
 					Detail: new("(property) i3.l1: () => void"),
@@ -1010,16 +1100,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i3 l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) i3.nc_p1: number")},
+					Detail: new("(property) i3.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) i3.nc_f1(): void")},
+					Detail: new("(method) i3.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l1",
-					Detail: new("(property) i3.nc_l1: () => void")},
+					Detail: new("(property) i3.nc_l1: () => void"),
+				},
 			},
 		},
 	})
@@ -1063,7 +1157,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_f1",
 					Detail: new("(method) i2.i2_f1(): void"),
@@ -1072,7 +1167,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_l1",
 					Detail: new("(property) i2.i2_l1: () => void"),
@@ -1081,16 +1177,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2_l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_p1",
-					Detail: new("(property) i2.i2_nc_p1: number")},
+					Detail: new("(property) i2.i2_nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_f1",
-					Detail: new("(method) i2.i2_nc_f1(): void")},
+					Detail: new("(method) i2.i2_nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i2_nc_l1",
-					Detail: new("(property) i2.i2_nc_l1: () => void")},
+					Detail: new("(property) i2.i2_nc_l1: () => void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "p1",
 					Detail: new("(property) i2.p1: number"),
@@ -1099,7 +1199,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2 p1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "f1",
 					Detail: new("(method) i2.f1(): void"),
@@ -1108,7 +1209,8 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2 f1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "l1",
 					Detail: new("(property) i2.l1: () => void"),
@@ -1117,16 +1219,20 @@ class c6 extends c5 {
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "i2 l1",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_p1",
-					Detail: new("(property) i2.nc_p1: number")},
+					Detail: new("(property) i2.nc_p1: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_f1",
-					Detail: new("(method) i2.nc_f1(): void")},
+					Detail: new("(method) i2.nc_f1(): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "nc_l1",
-					Detail: new("(property) i2.nc_l1: () => void")},
+					Detail: new("(property) i2.nc_l1: () => void"),
+				},
 			},
 		},
 	})
@@ -1162,10 +1268,12 @@ class c6 extends c5 {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "i2_i",
-					Detail: new("var i2_i: i2")},
+					Detail: new("var i2_i: i2"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i3_i",
-					Detail: new("var i3_i: i3")},
+					Detail: new("var i3_i: i3"),
+				},
 			},
 			Excludes: []string{
 				"i2",
@@ -1183,10 +1291,12 @@ class c6 extends c5 {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "i2",
-					Detail: new("interface i2")},
+					Detail: new("interface i2"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "i3",
-					Detail: new("interface i3")},
+					Detail: new("interface i3"),
+				},
 			},
 		},
 	})

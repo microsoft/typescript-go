@@ -43,7 +43,8 @@ export declare class BlenderbotSmallPreTrainedModel extends PreTrainedModel {
 					Label:               "_get_generation_config",
 					InsertText:          new("_get_generation_config(param: import(\"./generation.js\").GenerationConfigType): import(\"./generation.js\").GenerationConfigType;"),
 					FilterText:          new("_get_generation_config"),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 		},
 	})

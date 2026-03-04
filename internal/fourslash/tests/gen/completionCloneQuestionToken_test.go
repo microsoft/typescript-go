@@ -42,7 +42,8 @@ class Foo extends Bar<TwoKeys> {
 				&lsproto.CompletionItem{
 					Label:      "baz",
 					InsertText: new("baz(a: { a?: (options: { thisFails?: any; }) => any; b?: (options: { thisFails?: any; }) => any; }): void {\n}"),
-					FilterText: new("baz")},
+					FilterText: new("baz"),
+				},
 			},
 		},
 	})

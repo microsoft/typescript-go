@@ -39,7 +39,8 @@ const value = "test";
 				&lsproto.CompletionItem{
 					Label:    "value",
 					Kind:     new(lsproto.CompletionItemKindVariable),
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

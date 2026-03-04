@@ -38,7 +38,8 @@ declare namespace JSX {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "className",
-					Detail: new("(property) className: string")},
+					Detail: new("(property) className: string"),
+				},
 			},
 		},
 	})

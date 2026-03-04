@@ -40,7 +40,8 @@ new Prv()['[|/**/|]'];`
 							NewText: "notSoPrivate",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

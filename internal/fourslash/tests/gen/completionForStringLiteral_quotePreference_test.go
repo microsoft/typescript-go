@@ -39,11 +39,14 @@ const b: B = {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "'A'"},
+					Label: "'A'",
+				},
 				&lsproto.CompletionItem{
-					Label: "'B'"},
+					Label: "'B'",
+				},
 				&lsproto.CompletionItem{
-					Label: "'C'"},
+					Label: "'C'",
+				},
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{QuotePreference: lsutil.QuotePreference("single")},

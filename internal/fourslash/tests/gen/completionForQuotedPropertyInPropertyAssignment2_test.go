@@ -60,7 +60,8 @@ config = {
 							NewText: "jspm",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "jspm:browser",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -68,7 +69,8 @@ config = {
 							NewText: "jspm:browser",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

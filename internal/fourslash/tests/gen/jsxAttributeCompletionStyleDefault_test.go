@@ -48,34 +48,44 @@ declare namespace JSX {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "prop_a"},
+					Label: "prop_a",
+				},
 				&lsproto.CompletionItem{
-					Label: "prop_b"},
+					Label: "prop_b",
+				},
 				&lsproto.CompletionItem{
-					Label: "prop_c"},
+					Label: "prop_c",
+				},
 				&lsproto.CompletionItem{
-					Label: "prop_d"},
+					Label: "prop_d",
+				},
 				&lsproto.CompletionItem{
-					Label: "prop_e"},
+					Label: "prop_e",
+				},
 				&lsproto.CompletionItem{
-					Label: "prop_f"},
+					Label: "prop_f",
+				},
 				&lsproto.CompletionItem{
-					Label: "prop_g"},
+					Label: "prop_g",
+				},
 				&lsproto.CompletionItem{
 					Label:      "prop_h?",
 					InsertText: new("prop_h"),
 					FilterText: new("prop_h"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "prop_i?",
 					InsertText: new("prop_i"),
 					FilterText: new("prop_i"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "prop_j?",
 					InsertText: new("prop_j"),
 					FilterText: new("prop_j"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

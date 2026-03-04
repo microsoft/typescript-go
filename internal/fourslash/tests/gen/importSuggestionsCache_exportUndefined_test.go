@@ -46,7 +46,8 @@ export = x;
 						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./undefinedAlias",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -66,7 +67,8 @@ export = x;
 						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./undefinedAlias",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

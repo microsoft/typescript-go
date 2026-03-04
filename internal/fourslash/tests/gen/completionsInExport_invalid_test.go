@@ -35,7 +35,8 @@ if (!!true) {
 				"topLevel",
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

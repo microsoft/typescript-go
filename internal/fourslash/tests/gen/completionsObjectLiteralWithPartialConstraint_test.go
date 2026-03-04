@@ -84,7 +84,8 @@ f4({
 					Label:      "world?",
 					InsertText: new("world"),
 					FilterText: new("world"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -100,12 +101,14 @@ f4({
 					Label:      "autoIncrement?",
 					InsertText: new("autoIncrement"),
 					FilterText: new("autoIncrement"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "keyPath?",
 					InsertText: new("keyPath"),
 					FilterText: new("keyPath"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -135,7 +138,8 @@ f4({
 					Label:      "a?",
 					InsertText: new("a"),
 					FilterText: new("a"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -151,7 +155,8 @@ f4({
 					Label:      "x?",
 					InsertText: new("x"),
 					FilterText: new("x"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

@@ -36,7 +36,7 @@ Builder<IThing>({
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "const value: any", "")
 	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
-		&lsproto.Diagnostic{
+		{
 			Message: "Property 'args' does not exist on type 'IThing'.",
 			Code:    &lsproto.IntegerOrString{Integer: new(int32(2339))},
 		},

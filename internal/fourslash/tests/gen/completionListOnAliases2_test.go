@@ -96,10 +96,12 @@ var tmp2: a./*7Type*/;`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "property",
-						SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+						SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: new(string(ls.SortTextLocationPriority))},
+						SortText: new(string(ls.SortTextLocationPriority)),
+					},
 				}),
 		},
 	})

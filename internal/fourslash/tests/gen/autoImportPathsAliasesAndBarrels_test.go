@@ -59,7 +59,8 @@ func TestAutoImportPathsAliasesAndBarrels(t *testing.T) {
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "Thing1B",
 					Data: &lsproto.CompletionItemData{
@@ -68,7 +69,8 @@ func TestAutoImportPathsAliasesAndBarrels(t *testing.T) {
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "Thing2B",
 					Data: &lsproto.CompletionItemData{
@@ -77,7 +79,8 @@ func TestAutoImportPathsAliasesAndBarrels(t *testing.T) {
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

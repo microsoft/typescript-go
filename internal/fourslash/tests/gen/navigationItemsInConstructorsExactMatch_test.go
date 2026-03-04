@@ -27,12 +27,13 @@ class Test {
 		{
 			Pattern:     "search",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:          "search1",
-				Kind:          lsproto.SymbolKindProperty,
-				Location:      f.Ranges()[0].LSLocation(),
-				ContainerName: new("Test"),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:          "search1",
+					Kind:          lsproto.SymbolKindProperty,
+					Location:      f.Ranges()[0].LSLocation(),
+					ContainerName: new("Test"),
+				},
 				{
 					Name:          "search2",
 					Kind:          lsproto.SymbolKindProperty,
@@ -46,5 +47,6 @@ class Test {
 					ContainerName: new("Test"),
 				},
 			}),
-		}})
+		},
+	})
 }

@@ -43,7 +43,8 @@ const x = 0;`
 							Value: "tee",
 						},
 					},
-					Kind: new(lsproto.CompletionItemKindClass)},
+					Kind: new(lsproto.CompletionItemKindClass),
+				},
 			},
 		},
 	})

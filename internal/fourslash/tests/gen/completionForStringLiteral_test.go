@@ -38,7 +38,8 @@ f("/*2*/`
 							NewText: "Option 1",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "Option 2",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -46,7 +47,8 @@ f("/*2*/`
 							NewText: "Option 2",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "Option 3",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -54,7 +56,8 @@ f("/*2*/`
 							NewText: "Option 3",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -73,7 +76,8 @@ f("/*2*/`
 							NewText: "Option 1",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "Option 2",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -81,7 +85,8 @@ f("/*2*/`
 							NewText: "Option 2",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "Option 3",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -89,7 +94,8 @@ f("/*2*/`
 							NewText: "Option 3",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

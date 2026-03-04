@@ -49,7 +49,8 @@ declare module "foo" {
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 					&lsproto.CompletionItem{
 						Label: "y",
 						Data: &lsproto.CompletionItemData{
@@ -58,7 +59,8 @@ declare module "foo" {
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 				}, false),
 		},
 		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/ambient1.d.ts"}},

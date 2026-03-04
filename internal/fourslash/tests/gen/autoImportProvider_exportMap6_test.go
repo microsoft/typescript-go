@@ -89,7 +89,8 @@ fooFrom/**/`
 						},
 					},
 					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 				&lsproto.CompletionItem{
 					Label: "fooFromLol",
 					Data: &lsproto.CompletionItemData{
@@ -98,7 +99,8 @@ fooFrom/**/`
 						},
 					},
 					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					AdditionalTextEdits: fourslash.AnyTextEdits},
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+				},
 			},
 		},
 	})

@@ -39,7 +39,8 @@ g("[|/*g*/|]");`
 							NewText: "a",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -58,7 +59,8 @@ g("[|/*g*/|]");`
 							NewText: "a",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -66,7 +68,8 @@ g("[|/*g*/|]");`
 							NewText: "b",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

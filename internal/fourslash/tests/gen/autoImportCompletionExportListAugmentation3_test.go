@@ -55,7 +55,8 @@ class FullPiece extends Piece {
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					}},
+					},
+				},
 			},
 		},
 	})

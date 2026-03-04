@@ -45,7 +45,8 @@ Ba/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "foo",
-						SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+						SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+					},
 					&lsproto.CompletionItem{
 						Label: "Bar",
 						Data: &lsproto.CompletionItemData{
@@ -54,7 +55,8 @@ Ba/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 					&lsproto.CompletionItem{
 						Label: "Bar",
 						Data: &lsproto.CompletionItemData{
@@ -63,7 +65,8 @@ Ba/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 				}, false),
 		},
 	})

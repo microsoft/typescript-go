@@ -39,7 +39,8 @@ let x: Foo["[|/*1*/|]"]`
 							NewText: "bar",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "foo",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -47,7 +48,8 @@ let x: Foo["[|/*1*/|]"]`
 							NewText: "foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -36,7 +36,8 @@ switch (e) {
 					Label:     "Enu",
 					Detail:    new("enum Enu"),
 					Kind:      new(lsproto.CompletionItemKindEnum),
-					Preselect: new(true)},
+					Preselect: new(true),
+				},
 			},
 		},
 	})

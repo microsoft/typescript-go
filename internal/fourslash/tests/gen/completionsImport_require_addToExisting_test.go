@@ -45,7 +45,8 @@ x/**/`
 					},
 					Detail:              new("(alias) const x: 0\nimport x"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

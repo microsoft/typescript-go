@@ -39,7 +39,8 @@ type Bar = Record<keyof Foo, any>["[|/**/|]"];`
 							NewText: "a",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -47,7 +48,8 @@ type Bar = Record<keyof Foo, any>["[|/**/|]"];`
 							NewText: "b",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "c",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -55,7 +57,8 @@ type Bar = Record<keyof Foo, any>["[|/**/|]"];`
 							NewText: "c",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

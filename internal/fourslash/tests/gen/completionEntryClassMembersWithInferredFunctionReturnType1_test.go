@@ -41,7 +41,8 @@ export default abstract class ExpressionParser extends Tokenizer {
 				&lsproto.CompletionItem{
 					Label:      "errorBuilder",
 					InsertText: new("errorBuilder(): (pos: number, lineStart: number, curLine: number) => void {\n}"),
-					FilterText: new("errorBuilder")},
+					FilterText: new("errorBuilder"),
+				},
 			},
 		},
 	})

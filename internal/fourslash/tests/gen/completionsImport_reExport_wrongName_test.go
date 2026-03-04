@@ -44,7 +44,8 @@ export { x as y } from "./a";
 					},
 					Detail:              new("const x: 0"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label: "y",
 					Data: &lsproto.CompletionItemData{
@@ -54,7 +55,8 @@ export { x as y } from "./a";
 					},
 					Detail:              new("(alias) const y: 0\nexport y"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

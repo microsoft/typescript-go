@@ -43,7 +43,8 @@ fo/**/`
 						Label:    "foo",
 						Detail:   new("var foo: number"),
 						Kind:     new(lsproto.CompletionItemKindVariable),
-						SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+						SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+					},
 					&lsproto.CompletionItem{
 						Label: "foo",
 						Data: &lsproto.CompletionItemData{
@@ -54,7 +55,8 @@ fo/**/`
 						Detail:              new("const foo: 0"),
 						Kind:                new(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 					&lsproto.CompletionItem{
 						Label: "foo",
 						Data: &lsproto.CompletionItemData{
@@ -65,7 +67,8 @@ fo/**/`
 						Detail:              new("const foo: 1"),
 						Kind:                new(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 				}, true),
 		},
 	})

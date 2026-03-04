@@ -35,7 +35,8 @@ count = ` + "`" + `[|/**/|]` + "`" + ``
 							NewText: "one",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "two",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -43,7 +44,8 @@ count = ` + "`" + `[|/**/|]` + "`" + ``
 							NewText: "two",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

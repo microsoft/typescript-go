@@ -34,7 +34,8 @@ type B = Parameters<typeof obj./*2*/>`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "getCompletions",
-					Detail: new("(method) getCompletions(): void")},
+					Detail: new("(method) getCompletions(): void"),
+				},
 			},
 		},
 	})
@@ -48,7 +49,8 @@ type B = Parameters<typeof obj./*2*/>`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "dance",
-					Detail: new("(property) dance: () => {}")},
+					Detail: new("(property) dance: () => {}"),
+				},
 			},
 		},
 	})

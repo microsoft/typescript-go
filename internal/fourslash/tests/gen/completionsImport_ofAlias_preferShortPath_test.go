@@ -46,7 +46,8 @@ fo/**/`
 						Detail:              new("(alias) const foo: 0\nexport foo"),
 						Kind:                new(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 				}, true),
 		},
 	})

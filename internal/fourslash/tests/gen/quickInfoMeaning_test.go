@@ -46,11 +46,12 @@ const i: bar/*bar_type*/ = { x: 1, y: 2 };`
 		{
 			Pattern:     "foo",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "foo",
-				Kind:     lsproto.SymbolKindVariable,
-				Location: f.Ranges()[0].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "foo",
+					Kind:     lsproto.SymbolKindVariable,
+					Location: f.Ranges()[0].LSLocation(),
+				},
 				{
 					Name:     "foo",
 					Kind:     lsproto.SymbolKindVariable,
@@ -62,7 +63,8 @@ const i: bar/*bar_type*/ = { x: 1, y: 2 };`
 					Location: f.Ranges()[1].LSLocation(),
 				},
 			}),
-		}})
+		},
+	})
 	f.GoToMarker(t, "foo_value")
 	f.VerifyQuickInfoIs(t, "const foo: number", "")
 	f.GoToMarker(t, "foo_type")
@@ -71,11 +73,12 @@ const i: bar/*bar_type*/ = { x: 1, y: 2 };`
 		{
 			Pattern:     "bar",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "bar",
-				Kind:     lsproto.SymbolKindInterface,
-				Location: f.Ranges()[3].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "bar",
+					Kind:     lsproto.SymbolKindInterface,
+					Location: f.Ranges()[3].LSLocation(),
+				},
 				{
 					Name:     "bar",
 					Kind:     lsproto.SymbolKindVariable,
@@ -87,7 +90,8 @@ const i: bar/*bar_type*/ = { x: 1, y: 2 };`
 					Location: f.Ranges()[4].LSLocation(),
 				},
 			}),
-		}})
+		},
+	})
 	f.GoToMarker(t, "bar_value")
 	f.VerifyQuickInfoIs(t, "(alias) const bar: number\nimport bar = require(\"bar_module\")", "")
 	f.GoToMarker(t, "bar_type")

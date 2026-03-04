@@ -38,7 +38,8 @@ var x = Alpha.[|{| "name" : "mem" |}x|]`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("var Alpha.x: number")},
+					Detail: new("var Alpha.x: number"),
+				},
 			},
 		},
 	})

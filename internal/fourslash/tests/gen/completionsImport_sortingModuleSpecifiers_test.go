@@ -51,7 +51,8 @@ normalize/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: &lsproto.CompletionItemData{
@@ -60,7 +61,8 @@ normalize/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: &lsproto.CompletionItemData{
@@ -69,7 +71,8 @@ normalize/**/`
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
-						SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+					},
 				}, false),
 		},
 	})

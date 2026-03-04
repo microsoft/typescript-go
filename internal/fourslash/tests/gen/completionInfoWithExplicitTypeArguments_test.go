@@ -34,9 +34,11 @@ g<I>("[|/*g*/|]");`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "x"},
+					Label: "x",
+				},
 				&lsproto.CompletionItem{
-					Label: "y"},
+					Label: "y",
+				},
 			},
 		},
 	})
@@ -55,7 +57,8 @@ g<I>("[|/*g*/|]");`
 							NewText: "x",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "y",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -63,7 +66,8 @@ g<I>("[|/*g*/|]");`
 							NewText: "y",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

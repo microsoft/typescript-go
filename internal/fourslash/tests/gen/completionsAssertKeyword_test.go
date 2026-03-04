@@ -44,7 +44,8 @@ func TestCompletionsAssertKeyword(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:    "assert",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -59,7 +60,8 @@ func TestCompletionsAssertKeyword(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:    "assert",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -86,7 +88,8 @@ func TestCompletionsAssertKeyword(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:    "assert",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -125,7 +128,8 @@ func TestCompletionsAssertKeyword(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:    "assert",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

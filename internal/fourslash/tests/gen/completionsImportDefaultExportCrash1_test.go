@@ -56,7 +56,8 @@ import $ from './dom7.js';
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "$"},
+					Label: "$",
+				},
 			},
 		},
 	})

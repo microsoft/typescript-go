@@ -35,7 +35,8 @@ a[|./**/|]`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "p1"},
+					Label: "p1",
+				},
 				&lsproto.CompletionItem{
 					Label:      "p2",
 					InsertText: new("[p2]"),
@@ -45,7 +46,8 @@ a[|./**/|]`
 							NewText: "p2",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

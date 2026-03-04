@@ -35,7 +35,8 @@ const e = 1
 				&lsproto.CompletionItem{
 					Label:  "c",
 					Detail: new("const c: \"s\""),
-					Kind:   new(lsproto.CompletionItemKindVariable)},
+					Kind:   new(lsproto.CompletionItemKindVariable),
+				},
 			},
 		},
 	})
@@ -50,7 +51,8 @@ const e = 1
 				&lsproto.CompletionItem{
 					Label:  "d",
 					Detail: new("const d: 1"),
-					Kind:   new(lsproto.CompletionItemKindVariable)},
+					Kind:   new(lsproto.CompletionItemKindVariable),
+				},
 			},
 		},
 	})
@@ -65,7 +67,8 @@ const e = 1
 				&lsproto.CompletionItem{
 					Label:  "e",
 					Detail: new("const e: 1"),
-					Kind:   new(lsproto.CompletionItemKindVariable)},
+					Kind:   new(lsproto.CompletionItemKindVariable),
+				},
 			},
 		},
 	})

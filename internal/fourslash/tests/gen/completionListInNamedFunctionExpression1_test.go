@@ -32,7 +32,8 @@ func TestCompletionListInNamedFunctionExpression1(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:  "foo",
 					Detail: new("(local function) foo(): void"),
-					Kind:   new(lsproto.CompletionItemKindFunction)},
+					Kind:   new(lsproto.CompletionItemKindFunction),
+				},
 			},
 		},
 	})

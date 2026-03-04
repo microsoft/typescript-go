@@ -36,7 +36,8 @@ func TestCompletionForStringLiteral15(t *testing.T) {
 							NewText: "foo",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

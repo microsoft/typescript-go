@@ -25,12 +25,14 @@ class C {
 		{
 			Pattern:     "iterator",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:          "iterator",
-				Kind:          lsproto.SymbolKindMethod,
-				Location:      f.Ranges()[0].LSLocation(),
-				ContainerName: new("C"),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:          "iterator",
+					Kind:          lsproto.SymbolKindMethod,
+					Location:      f.Ranges()[0].LSLocation(),
+					ContainerName: new("C"),
+				},
 			}),
-		}})
+		},
+	})
 }

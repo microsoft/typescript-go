@@ -53,28 +53,36 @@ class C1 extends Base {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "privateMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "privateProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "protectedMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "protectedProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "publicMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "publicProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "protectedOverriddenMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "protectedOverriddenProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 			},
 		},
 	})
@@ -88,22 +96,28 @@ class C1 extends Base {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "privateMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "privateProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "protectedMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "protectedProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "publicMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "publicProperty",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 			},
 			Excludes: []string{
 				"protectedOverriddenMethod",

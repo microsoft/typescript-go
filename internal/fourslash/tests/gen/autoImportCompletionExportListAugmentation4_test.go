@@ -62,7 +62,8 @@ class PingCommand extends CommandAlias {
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					}},
+					},
+				},
 			},
 		},
 	})

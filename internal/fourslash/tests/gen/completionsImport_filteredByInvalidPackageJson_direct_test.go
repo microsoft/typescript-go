@@ -59,7 +59,8 @@ const x = Re/**/`
 							ModuleSpecifier: "react",
 						},
 					},
-					SortText: new(string(ls.SortTextAutoImportSuggestions))},
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
+				},
 				&lsproto.CompletionItem{
 					Label:               "ReactFake",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -68,7 +69,8 @@ const x = Re/**/`
 							ModuleSpecifier: "fake-react",
 						},
 					},
-					SortText: new(string(ls.SortTextAutoImportSuggestions))},
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

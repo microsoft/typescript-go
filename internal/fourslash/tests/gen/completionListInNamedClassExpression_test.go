@@ -35,7 +35,8 @@ func TestCompletionListInNamedClassExpression(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:  "myClass",
 					Detail: new("(local class) myClass"),
-					Kind:   new(lsproto.CompletionItemKindProperty)},
+					Kind:   new(lsproto.CompletionItemKindProperty),
+				},
 			},
 		},
 	})

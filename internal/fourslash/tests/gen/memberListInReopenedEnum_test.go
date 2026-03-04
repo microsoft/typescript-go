@@ -37,16 +37,20 @@ func TestMemberListInReopenedEnum(t *testing.T) {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "A",
-					Detail: new("(enum member) E.A = 0")},
+					Detail: new("(enum member) E.A = 0"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "B",
-					Detail: new("(enum member) E.B = 1")},
+					Detail: new("(enum member) E.B = 1"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "C",
-					Detail: new("(enum member) E.C = 0")},
+					Detail: new("(enum member) E.C = 0"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "D",
-					Detail: new("(enum member) E.D = 1")},
+					Detail: new("(enum member) E.D = 1"),
+				},
 			},
 		},
 	})

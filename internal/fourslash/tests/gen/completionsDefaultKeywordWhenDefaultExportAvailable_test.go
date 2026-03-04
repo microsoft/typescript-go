@@ -33,7 +33,8 @@ def/*1*/`
 				&lsproto.CompletionItem{
 					Label:    "default",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

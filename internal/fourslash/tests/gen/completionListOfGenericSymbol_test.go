@@ -37,7 +37,8 @@ a./**/`
 							Value: "Gets or sets the length of the array. This is a number one higher than the highest index in the array.",
 						},
 					},
-					Kind: new(lsproto.CompletionItemKindField)},
+					Kind: new(lsproto.CompletionItemKindField),
+				},
 				&lsproto.CompletionItem{
 					Label:  "toString",
 					Detail: new("(method) Array<number>.toString(): string"),
@@ -47,7 +48,8 @@ a./**/`
 							Value: "Returns a string representation of an array.",
 						},
 					},
-					Kind: new(lsproto.CompletionItemKindMethod)},
+					Kind: new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})

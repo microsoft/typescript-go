@@ -50,7 +50,8 @@ i[|./**/|];`
 							NewText: "M",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

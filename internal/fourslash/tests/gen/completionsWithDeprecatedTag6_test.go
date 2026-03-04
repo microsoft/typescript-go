@@ -35,7 +35,8 @@ Foo./**/`
 				&lsproto.CompletionItem{
 					Label:    "foo",
 					Kind:     new(lsproto.CompletionItemKindVariable),
-					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))},
+					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+				},
 			},
 		},
 	})

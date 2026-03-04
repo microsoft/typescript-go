@@ -50,7 +50,8 @@ create('component-one', { props: { /*3*/ } });`
 					Label:      "foo?",
 					InsertText: new("foo"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -66,7 +67,8 @@ create('component-one', { props: { /*3*/ } });`
 					Label:      "bar?",
 					InsertText: new("bar"),
 					FilterText: new("bar"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})
@@ -82,7 +84,8 @@ create('component-one', { props: { /*3*/ } });`
 					Label:      "foo?",
 					InsertText: new("foo"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

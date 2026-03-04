@@ -33,9 +33,11 @@ testIt<Sample>({ /**/ });`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "name"},
+					Label: "name",
+				},
 				&lsproto.CompletionItem{
-					Label: "year"},
+					Label: "year",
+				},
 			},
 		},
 	})

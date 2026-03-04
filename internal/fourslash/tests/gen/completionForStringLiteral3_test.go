@@ -41,7 +41,8 @@ f("/*2*/`
 							NewText: "A",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "B",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -49,7 +50,8 @@ f("/*2*/`
 							NewText: "B",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "C",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -57,7 +59,8 @@ f("/*2*/`
 							NewText: "C",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

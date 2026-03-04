@@ -23,11 +23,13 @@ func TestNavto_excludeLib3(t *testing.T) {
 		{
 			Pattern:     "parseInt",
 			Preferences: nil,
-			Exact: new([]*lsproto.SymbolInformation{{
-				Name:     "parseInt",
-				Kind:     lsproto.SymbolKindFunction,
-				Location: f.Ranges()[0].LSLocation(),
-			},
+			Exact: new([]*lsproto.SymbolInformation{
+				{
+					Name:     "parseInt",
+					Kind:     lsproto.SymbolKindFunction,
+					Location: f.Ranges()[0].LSLocation(),
+				},
 			}),
-		}})
+		},
+	})
 }

@@ -32,7 +32,8 @@ A./*2*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "prototype",
-					Detail: new("(property) A.prototype: A")},
+					Detail: new("(property) A.prototype: A"),
+				},
 			},
 		},
 	})

@@ -43,12 +43,14 @@ fn({ a: "a", b: "b" }, {
 					Label:      "on_a?",
 					InsertText: new("on_a"),
 					FilterText: new("on_a"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "on_b?",
 					InsertText: new("on_b"),
 					FilterText: new("on_b"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

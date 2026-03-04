@@ -59,7 +59,8 @@ import Dottie from 'dottie';
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "Dottie"},
+					Label: "Dottie",
+				},
 			},
 		},
 	})

@@ -34,12 +34,14 @@ x./*a*/;
 					Label:      "a?",
 					InsertText: new("a"),
 					FilterText: new("a"),
-					Kind:       new(lsproto.CompletionItemKindField)},
+					Kind:       new(lsproto.CompletionItemKindField),
+				},
 				&lsproto.CompletionItem{
 					Label:      "method?",
 					InsertText: new("method"),
 					FilterText: new("method"),
-					Kind:       new(lsproto.CompletionItemKindMethod)},
+					Kind:       new(lsproto.CompletionItemKindMethod),
+				},
 			},
 		},
 	})

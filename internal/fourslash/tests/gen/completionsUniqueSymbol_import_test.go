@@ -59,7 +59,8 @@ i[|./**/|];`
 							NewText: "publicSym",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -2,12 +2,11 @@
 
 // Usage: node --experimental-strip-types --no-warnings convertFourslash.mts [inputFileList]
 
-import * as cp from "child_process";
+import { $ } from "execa";
 import * as fs from "fs";
 import * as path from "path";
 import * as ts from "typescript";
 import * as url from "url";
-import which from "which";
 
 const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
 
@@ -27,7 +26,7 @@ function getManualTests(): Set<string> {
     return new Set(manualTestsList);
 }
 
-export function main() {
+export async function main() {
     const args = process.argv.slice(2);
     const inputFilesPath = args[0];
     if (inputFilesPath) {
@@ -59,8 +58,7 @@ func TestMain(m *testing.M) {
 
     parseTypeScriptFiles(getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
-    const gofmt = which.sync("go");
-    cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.25", "-w", outputDir]);
+    await $`dprint fmt ${outputDir}/**/*.go`;
 }
 
 function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
@@ -3749,5 +3747,8 @@ function getInitializer(name: ts.Identifier): ts.Expression | undefined {
 }
 
 if (url.fileURLToPath(import.meta.url) == process.argv[1]) {
-    main();
+    main().catch(e => {
+        console.error(e);
+        process.exit(1);
+    });
 }

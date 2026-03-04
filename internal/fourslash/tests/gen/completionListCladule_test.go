@@ -42,13 +42,16 @@ f/*c3*/;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "x",
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "prototype",
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "staticMethod",
-					SortText: new(string(ls.SortTextLocalDeclarationPriority))},
+					SortText: new(string(ls.SortTextLocalDeclarationPriority)),
+				},
 			},
 		},
 	})

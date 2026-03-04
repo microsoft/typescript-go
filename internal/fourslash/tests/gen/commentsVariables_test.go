@@ -75,7 +75,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "This is my variable",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -95,7 +96,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "This is my variable",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "d",
 					Detail: new("var d: number"),
@@ -104,7 +106,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "d variable",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -124,7 +127,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "foos comment",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "fooVar",
 					Detail: new("var fooVar: () => void"),
@@ -133,7 +137,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "fooVar comment",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -159,7 +164,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "foos comment",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "fooVar",
 					Detail: new("var fooVar: () => void"),
@@ -168,7 +174,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "fooVar comment",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -195,7 +202,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "instance comment",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -215,7 +223,8 @@ var x = fo/*15*/o2;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "interface instance comments",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

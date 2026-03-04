@@ -54,7 +54,8 @@ export = React;
 							NewText: "React",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

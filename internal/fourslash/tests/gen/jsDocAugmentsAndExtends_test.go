@@ -38,7 +38,7 @@ declare class Thing<T> {
 	f.GoToMarker(t, "")
 	f.VerifyQuickInfoIs(t, "(local var) x: number", "")
 	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
-		&lsproto.Diagnostic{
+		{
 			Message: "Class declarations cannot have more than one '@augments' or '@extends' tag.",
 			Code:    &lsproto.IntegerOrString{Integer: new(int32(8025))},
 		},

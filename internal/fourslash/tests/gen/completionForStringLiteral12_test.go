@@ -37,7 +37,8 @@ foo("[|/**/|]")`
 							NewText: "bla",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

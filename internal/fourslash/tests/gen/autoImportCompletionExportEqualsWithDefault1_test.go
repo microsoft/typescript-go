@@ -80,7 +80,8 @@ export = Container;`
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					}},
+					},
+				},
 			},
 		},
 	})

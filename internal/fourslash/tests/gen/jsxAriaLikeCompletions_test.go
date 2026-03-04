@@ -41,7 +41,8 @@ const a = <div {...{}} /*1*/></div>;`
 					Label:      "aria-whatever?",
 					InsertText: new("aria-whatever"),
 					FilterText: new("aria-whatever"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

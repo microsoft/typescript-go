@@ -19,12 +19,12 @@ func TestCompletionsDotInArrayLiteralInObjectLiteral(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
-		&lsproto.Diagnostic{
+		{
 			Code:    &lsproto.IntegerOrString{Integer: new(int32(1109))},
 			Message: "Expression expected.",
 			Range:   f.Ranges()[0].LSRange,
 		},
-		&lsproto.Diagnostic{
+		{
 			Code:    &lsproto.IntegerOrString{Integer: new(int32(1003))},
 			Message: "Identifier expected.",
 			Range:   f.Ranges()[1].LSRange,

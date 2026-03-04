@@ -42,12 +42,14 @@ new Clazz({ /*1*/ })`
 					Label:      "someFunction?",
 					InsertText: new("someFunction"),
 					FilterText: new("someFunction"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 				&lsproto.CompletionItem{
 					Label:      "anotherFunction?",
 					InsertText: new("anotherFunction"),
 					FilterText: new("anotherFunction"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

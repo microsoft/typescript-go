@@ -39,16 +39,20 @@ function g(this: Restricted) {this./*4*/}`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "f",
-					Detail: new("(method) C1.f(this: this): void")},
+					Detail: new("(method) C1.f(this: this): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "g",
-					Detail: new("(method) C1.g(this: Restricted): void")},
+					Detail: new("(method) C1.g(this: Restricted): void"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "m",
-					Detail: new("(property) C1.m: number")},
+					Detail: new("(property) C1.m: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "n",
-					Detail: new("(property) C1.n: number")},
+					Detail: new("(property) C1.n: number"),
+				},
 			},
 		},
 	})
@@ -62,7 +66,8 @@ function g(this: Restricted) {this./*4*/}`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "n",
-					Detail: new("(property) Restricted.n: number")},
+					Detail: new("(property) Restricted.n: number"),
+				},
 			},
 		},
 	})

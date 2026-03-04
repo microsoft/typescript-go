@@ -44,7 +44,8 @@ user.address[|./**/|]`
 							NewText: "city",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:      "postal code",
 					InsertText: new("?.[\"postal code\"]"),
@@ -54,7 +55,8 @@ user.address[|./**/|]`
 							NewText: "postal code",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

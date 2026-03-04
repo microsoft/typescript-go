@@ -50,7 +50,8 @@ export interface VFS {
 						},
 					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	}).AndApplyCodeAction(t, &fourslash.CompletionsExpectedCodeAction{

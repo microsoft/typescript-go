@@ -52,7 +52,8 @@ import /**/`
 						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./baseline",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:      "TestClassExportList",
 					InsertText: new("import { TestClassExportList } from \"./exportList\";"),
@@ -60,7 +61,8 @@ import /**/`
 						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./exportList",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:      "TestClassReExport",
 					InsertText: new("import { TestClassReExport } from \"./reExport\";"),
@@ -68,7 +70,8 @@ import /**/`
 						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./reExport",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:      "TestDefaultClass",
 					InsertText: new("import TestDefaultClass from \"./default\";"),
@@ -76,7 +79,8 @@ import /**/`
 						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./default",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

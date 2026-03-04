@@ -37,7 +37,8 @@ c./**/ // test on c.`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "pub",
-					Detail: new("(property) M.C.pub: number")},
+					Detail: new("(property) M.C.pub: number"),
+				},
 			},
 		},
 	})

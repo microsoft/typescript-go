@@ -33,7 +33,8 @@ func TestExportDefaultFunction(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:  "func",
 					Detail: new("function func(): void"),
-					Kind:   new(lsproto.CompletionItemKindFunction)},
+					Kind:   new(lsproto.CompletionItemKindFunction),
+				},
 			},
 		},
 	})

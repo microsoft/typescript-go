@@ -42,10 +42,12 @@ point./*3*/x = 30;`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "b",
-					Detail: new("(property) b: number")},
+					Detail: new("(property) b: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("(property) x: number")},
+					Detail: new("(property) x: number"),
+				},
 			},
 		},
 	})

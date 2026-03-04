@@ -58,7 +58,8 @@ const x = Re/**/`
 							ModuleSpecifier: "react",
 						},
 					},
-					SortText: new(string(ls.SortTextAutoImportSuggestions))},
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 			Excludes: []string{
 				"ReactFake",

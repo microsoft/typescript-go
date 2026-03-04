@@ -40,7 +40,8 @@ class Foo implements IFoo {
 					Label:      "foo",
 					InsertText: new("foo(arg: string): number {\n}"),
 					FilterText: new("foo"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

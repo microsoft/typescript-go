@@ -38,11 +38,13 @@ export import foo = N.foo;
 					&lsproto.CompletionItem{
 						Label:  "foo",
 						Kind:   new(lsproto.CompletionItemKindVariable),
-						Detail: new("(alias) const foo: number\nimport foo = N.foo")},
+						Detail: new("(alias) const foo: number\nimport foo = N.foo"),
+					},
 					&lsproto.CompletionItem{
 						Label:  "N",
 						Kind:   new(lsproto.CompletionItemKindModule),
-						Detail: new("namespace N")},
+						Detail: new("namespace N"),
+					},
 				}, false),
 		},
 	})

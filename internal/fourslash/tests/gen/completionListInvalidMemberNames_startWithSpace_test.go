@@ -36,7 +36,8 @@ x[|./**/|];`
 							NewText: "foo ",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

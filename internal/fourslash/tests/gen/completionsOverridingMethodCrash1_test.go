@@ -40,7 +40,8 @@ class SubComponent extends Component<{}> {
 					Label:      "setState",
 					InsertText: new("setState(stateHandler: (oldState: {}, newState: {}) => void): void {\n}"),
 					FilterText: new("setState"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

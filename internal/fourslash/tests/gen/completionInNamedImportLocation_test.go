@@ -43,21 +43,27 @@ import { x, y, await as await_, interface as interface_, unique, /*6*/ } from ".
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "await",
-					InsertText: new("await as await_")},
+					InsertText: new("await as await_"),
+				},
 				&lsproto.CompletionItem{
 					Label:      "interface",
-					InsertText: new("interface as interface_")},
+					InsertText: new("interface as interface_"),
+				},
 				&lsproto.CompletionItem{
-					Label: "unique"},
+					Label: "unique",
+				},
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("var x: number")},
+					Detail: new("var x: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "y",
-					Detail: new("var y: number")},
+					Detail: new("var y: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -71,18 +77,23 @@ import { x, y, await as await_, interface as interface_, unique, /*6*/ } from ".
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "await",
-					InsertText: new("await as await_")},
+					InsertText: new("await as await_"),
+				},
 				&lsproto.CompletionItem{
 					Label:      "interface",
-					InsertText: new("interface as interface_")},
+					InsertText: new("interface as interface_"),
+				},
 				&lsproto.CompletionItem{
-					Label: "unique"},
+					Label: "unique",
+				},
 				&lsproto.CompletionItem{
 					Label:  "y",
-					Detail: new("var y: number")},
+					Detail: new("var y: number"),
+				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -96,15 +107,19 @@ import { x, y, await as await_, interface as interface_, unique, /*6*/ } from ".
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "await",
-					InsertText: new("await as await_")},
+					InsertText: new("await as await_"),
+				},
 				&lsproto.CompletionItem{
 					Label:      "interface",
-					InsertText: new("interface as interface_")},
+					InsertText: new("interface as interface_"),
+				},
 				&lsproto.CompletionItem{
-					Label: "unique"},
+					Label: "unique",
+				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -118,12 +133,15 @@ import { x, y, await as await_, interface as interface_, unique, /*6*/ } from ".
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "interface",
-					InsertText: new("interface as interface_")},
+					InsertText: new("interface as interface_"),
+				},
 				&lsproto.CompletionItem{
-					Label: "unique"},
+					Label: "unique",
+				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})
@@ -136,10 +154,12 @@ import { x, y, await as await_, interface as interface_, unique, /*6*/ } from ".
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "unique"},
+					Label: "unique",
+				},
 				&lsproto.CompletionItem{
 					Label:    "type",
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

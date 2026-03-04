@@ -64,7 +64,8 @@ const x = Re/**/`
 							ModuleSpecifier: "react",
 						},
 					},
-					SortText: new(string(ls.SortTextAutoImportSuggestions))},
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})
@@ -84,7 +85,8 @@ const x = Re/**/`
 							ModuleSpecifier: "redux",
 						},
 					},
-					SortText: new(string(ls.SortTextAutoImportSuggestions))},
+					SortText: new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

@@ -42,7 +42,8 @@ const c = <Component /**/ kind="component-one" />`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "foo"},
+					Label: "foo",
+				},
 			},
 		},
 	})

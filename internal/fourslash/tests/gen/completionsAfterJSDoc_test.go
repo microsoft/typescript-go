@@ -34,7 +34,8 @@ func TestCompletionsAfterJSDoc(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:    "readonly",
 					Kind:     new(lsproto.CompletionItemKindKeyword),
-					SortText: new(string(ls.SortTextGlobalsOrKeywords))},
+					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+				},
 			},
 		},
 	})

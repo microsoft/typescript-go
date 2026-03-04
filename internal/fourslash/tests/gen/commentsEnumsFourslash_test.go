@@ -50,7 +50,8 @@ x = Colors./*7*/FancyPink;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Enum of colors",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -70,7 +71,8 @@ x = Colors./*7*/FancyPink;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Fancy name for 'blue'",
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label:  "FancyPink",
 					Detail: new("(enum member) Colors.FancyPink = 1"),
@@ -79,7 +81,8 @@ x = Colors./*7*/FancyPink;`
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "Fancy name for 'pink'",
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

@@ -45,7 +45,8 @@ conca/**/`
 					Detail:              new("const concat: 0"),
 					Kind:                new(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

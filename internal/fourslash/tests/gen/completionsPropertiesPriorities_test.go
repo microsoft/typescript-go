@@ -45,23 +45,27 @@ const i: I = {
 				&lsproto.CompletionItem{
 					Label:    "d",
 					SortText: new(string(ls.SortTextLocationPriority)),
-					Kind:     new(lsproto.CompletionItemKindField)},
+					Kind:     new(lsproto.CompletionItemKindField),
+				},
 				&lsproto.CompletionItem{
 					Label:      "c?",
 					InsertText: new("c"),
 					FilterText: new("c"),
 					SortText:   new(string(ls.SortTextOptionalMember)),
-					Kind:       new(lsproto.CompletionItemKindField)},
+					Kind:       new(lsproto.CompletionItemKindField),
+				},
 				&lsproto.CompletionItem{
 					Label:    "a",
 					SortText: new(string(ls.SortTextMemberDeclaredBySpreadAssignment)),
-					Kind:     new(lsproto.CompletionItemKindField)},
+					Kind:     new(lsproto.CompletionItemKindField),
+				},
 				&lsproto.CompletionItem{
 					Label:      "B?",
 					InsertText: new("B"),
 					FilterText: new("B"),
 					SortText:   new(string(ls.SortTextMemberDeclaredBySpreadAssignment)),
-					Kind:       new(lsproto.CompletionItemKindField)},
+					Kind:       new(lsproto.CompletionItemKindField),
+				},
 			},
 		},
 	})

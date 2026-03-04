@@ -50,7 +50,8 @@ function fn3() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "button",
-					Detail: new("(property) JSX.IntrinsicElements.button: any")},
+					Detail: new("(property) JSX.IntrinsicElements.button: any"),
+				},
 			},
 		},
 	})
@@ -64,7 +65,8 @@ function fn3() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "button",
-					Detail: new("(property) JSX.IntrinsicElements.button: any")},
+					Detail: new("(property) JSX.IntrinsicElements.button: any"),
+				},
 			},
 		},
 	})
@@ -78,7 +80,8 @@ function fn3() {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "button",
-					Detail: new("(property) JSX.IntrinsicElements.button: any")},
+					Detail: new("(property) JSX.IntrinsicElements.button: any"),
+				},
 			},
 		},
 	})

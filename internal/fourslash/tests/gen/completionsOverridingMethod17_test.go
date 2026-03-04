@@ -42,7 +42,8 @@ export class Class implements Interface {
 					Label:      "method",
 					InsertText: new("method(): void {\n}"),
 					FilterText: new("method"),
-					SortText:   new(string(ls.SortTextLocationPriority))},
+					SortText:   new(string(ls.SortTextLocationPriority)),
+				},
 			},
 		},
 	})

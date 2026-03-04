@@ -33,7 +33,8 @@ func TestCompletionsJsdocTag(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:  "@property",
 					Detail: new("@property"),
-					Kind:   new(lsproto.CompletionItemKindKeyword)},
+					Kind:   new(lsproto.CompletionItemKindKeyword),
+				},
 			},
 		},
 	})

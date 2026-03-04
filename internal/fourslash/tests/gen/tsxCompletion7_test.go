@@ -39,11 +39,13 @@ var x = <div {...y} /**/ />;`
 				&lsproto.CompletionItem{
 					Label:    "TWO",
 					Kind:     new(lsproto.CompletionItemKindField),
-					SortText: new(string(ls.SortTextLocationPriority))},
+					SortText: new(string(ls.SortTextLocationPriority)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "ONE",
 					Kind:     new(lsproto.CompletionItemKindField),
-					SortText: new(string(ls.SortTextMemberDeclaredBySpreadAssignment))},
+					SortText: new(string(ls.SortTextMemberDeclaredBySpreadAssignment)),
+				},
 			},
 		},
 	})

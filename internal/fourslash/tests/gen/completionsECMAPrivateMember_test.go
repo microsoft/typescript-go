@@ -35,9 +35,11 @@ class K {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "#value"},
+					Label: "#value",
+				},
 				&lsproto.CompletionItem{
-					Label: "foo"},
+					Label: "foo",
+				},
 			},
 		},
 	})

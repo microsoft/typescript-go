@@ -33,7 +33,8 @@ class C implements I {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "prop"},
+					Label: "prop",
+				},
 			},
 		},
 	})

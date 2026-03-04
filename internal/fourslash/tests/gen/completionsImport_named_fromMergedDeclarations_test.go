@@ -48,7 +48,8 @@ declare module "m" {
 					Detail:              new("class M\ninterface M"),
 					Kind:                new(lsproto.CompletionItemKindClass),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions))},
+					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				},
 			},
 		},
 	})

@@ -42,7 +42,8 @@ bar({ deep: {/*1*/} });`
 					Label:      "another?",
 					InsertText: new("another"),
 					FilterText: new("another"),
-					SortText:   new(string(ls.SortTextOptionalMember))},
+					SortText:   new(string(ls.SortTextOptionalMember)),
+				},
 			},
 		},
 	})

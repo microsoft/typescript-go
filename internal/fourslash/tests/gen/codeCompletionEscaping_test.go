@@ -33,11 +33,13 @@ ___foo; __foo;/**/`
 				&lsproto.CompletionItem{
 					Label:    "__foo",
 					Kind:     new(lsproto.CompletionItemKindText),
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 				&lsproto.CompletionItem{
 					Label:    "___foo",
 					Kind:     new(lsproto.CompletionItemKindText),
-					SortText: new(string(ls.SortTextJavascriptIdentifiers))},
+					SortText: new(string(ls.SortTextJavascriptIdentifiers)),
+				},
 			},
 		},
 	})

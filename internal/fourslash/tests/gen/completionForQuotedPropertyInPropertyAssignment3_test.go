@@ -59,7 +59,8 @@ func TestCompletionForQuotedPropertyInPropertyAssignment3(t *testing.T) {
 							NewText: "jspm",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "jspm:browser",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -67,7 +68,8 @@ func TestCompletionForQuotedPropertyInPropertyAssignment3(t *testing.T) {
 							NewText: "jspm:browser",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

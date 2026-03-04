@@ -70,7 +70,8 @@ const divide = 1 //*divide*/`
 							NewText: "a",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -78,7 +79,8 @@ const divide = 1 //*divide*/`
 							NewText: "b",
 							Range:   f.Ranges()[0].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -98,7 +100,8 @@ const divide = 1 //*divide*/`
 							NewText: "a",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -106,7 +109,8 @@ const divide = 1 //*divide*/`
 							NewText: "b",
 							Range:   f.Ranges()[1].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})
@@ -126,7 +130,8 @@ const divide = 1 //*divide*/`
 							NewText: "a",
 							Range:   f.Ranges()[2].LSRange,
 						},
-					}},
+					},
+				},
 				&lsproto.CompletionItem{
 					Label: "b",
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -134,7 +139,8 @@ const divide = 1 //*divide*/`
 							NewText: "b",
 							Range:   f.Ranges()[2].LSRange,
 						},
-					}},
+					},
+				},
 			},
 		},
 	})

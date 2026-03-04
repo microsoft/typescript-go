@@ -37,10 +37,12 @@ let x: ns./**/`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "Box",
-					Detail: new("class ns.Box<T>")},
+					Detail: new("class ns.Box<T>"),
+				},
 				&lsproto.CompletionItem{
 					Label:  "Type",
-					Detail: new("type ns.Type = {}")},
+					Detail: new("type ns.Type = {}"),
+				},
 			},
 		},
 	})

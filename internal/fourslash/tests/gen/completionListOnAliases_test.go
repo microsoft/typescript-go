@@ -35,7 +35,8 @@ func TestCompletionListOnAliases(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "x",
-					Detail: new("(alias) namespace x\nimport x = M")},
+					Detail: new("(alias) namespace x\nimport x = M"),
+				},
 			},
 		},
 	})
