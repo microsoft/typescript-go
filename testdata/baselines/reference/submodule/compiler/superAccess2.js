@@ -35,7 +35,8 @@ class P {
 class Q extends P {
     z;
     xx = super.;
-    static yy = super.; // error for static initializer accessing super
+    static yy = super. // error for static initializer accessing super
+    ; // error for static initializer accessing super
     // Super is not allowed in constructor args
     constructor(z = super., zz = super., zzz = () => super.) {
         super();

@@ -2460,7 +2460,11 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 	if shouldEmitDotDot {
 		p.writePunctuation(".")
 	}
-	p.emitTokenNode(token)
+	if node.QuestionDotToken != nil {
+		p.emitTokenNode(token)
+	} else {
+		p.emitToken(ast.KindDotToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
+	}
 	linesAfterDot := p.getLinesBetweenNodes(node.AsNode(), token, node.Name())
 	p.writeLineRepeat(linesAfterDot)
 	p.increaseIndentIf(linesAfterDot > 0)

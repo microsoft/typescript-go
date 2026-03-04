@@ -31,6 +31,5 @@ var m_private;
 (function (m_private) {
     //import r2 = require('m'); // would be error
     m_private.C = r; // no error
-    m_private. // no error
-    C.m.foo();
+    m_private.C.m.foo();
 })(m_private || (m_private = {}));
