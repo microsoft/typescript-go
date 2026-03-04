@@ -86,17 +86,15 @@ export function findNextToken(previousToken: Node, parent: Node, sourceFile: Sou
         }
 
         // No AST child covers the position; use the scanner to find the syntactic token.
+        // The scanner is initialized at `previousToken.end`, so tokenFullStart === previousToken.end.
         const startPos = previousToken.end;
         if (startPos >= n.pos && startPos < n.end) {
             const scanner = getScannerForSourceFile(sourceFile, startPos);
             const token = scanner.getToken();
             const tokenFullStart = scanner.getTokenFullStart();
-            const tokenStart = scanner.getTokenStart();
             const tokenEnd = scanner.getTokenEnd();
             const flags = scanner.getTokenFlags();
-            if (tokenStart === previousToken.end) {
-                return getOrCreateToken(sourceFile, token, tokenFullStart, tokenEnd, n, flags);
-            }
+            return getOrCreateToken(sourceFile, token, tokenFullStart, tokenEnd, n, flags);
         }
 
         return undefined;
@@ -104,8 +102,10 @@ export function findNextToken(previousToken: Node, parent: Node, sourceFile: Sou
 }
 
 /**
- * Finds the rightmost token satisfying `token.end <= position`,
- * excluding `JsxText` tokens containing only whitespace.
+ * Finds the leftmost token satisfying `position < token.end`.
+ * If the position is in the trivia of that leftmost token, or the token is invalid,
+ * returns the rightmost valid token with `token.end <= position`.
+ * Excludes `JsxText` tokens containing only whitespace.
  */
 export function findPrecedingToken(sourceFile: SourceFile, position: number): Node | undefined {
     return findPrecedingTokenImpl(sourceFile, position, sourceFile);
@@ -325,6 +325,20 @@ function findPrecedingTokenImpl(sourceFile: SourceFile, position: number, startN
         let foundChild: Node | undefined;
         let prevChild: Node | undefined;
 
+        // Visit JSDoc nodes first (mirrors Go's VisitEachChildAndJSDoc).
+        if (n.jsDoc) {
+            for (const jsdoc of n.jsDoc) {
+                if (jsdoc.flags & NodeFlags.Reparsed) continue;
+                if (foundChild !== undefined) break;
+                if (position < jsdoc.end && (prevChild === undefined || prevChild.end <= position)) {
+                    foundChild = jsdoc;
+                }
+                else {
+                    prevChild = jsdoc;
+                }
+            }
+        }
+
         n.forEachChild(
             node => {
                 if (node.flags & NodeFlags.Reparsed) {
@@ -365,7 +379,7 @@ function findPrecedingTokenImpl(sourceFile: SourceFile, position: number, startN
         );
 
         if (foundChild !== undefined) {
-            const start = getTokenPosOfNode(foundChild, sourceFile);
+            const start = getTokenPosOfNode(foundChild, sourceFile, /*includeJSDoc*/ true);
             if (start >= position) {
                 // cursor in leading trivia; find rightmost valid token in prevChild
                 return findRightmostValidToken(sourceFile, foundChild.pos, n, position);
@@ -394,6 +408,18 @@ function findRightmostValidToken(sourceFile: SourceFile, endPos: number, contain
 
         let rightmostValidNode: Node | undefined;
         let hasChildren = false;
+
+        // Visit JSDoc nodes first (mirrors Go's VisitEachChildAndJSDoc).
+        if (n.jsDoc) {
+            hasChildren = true;
+            for (const jsdoc of n.jsDoc) {
+                if (jsdoc.flags & NodeFlags.Reparsed) continue;
+                if (jsdoc.end > endPos || getTokenPosOfNode(jsdoc, sourceFile) >= position) continue;
+                if (isValidPrecedingNode(jsdoc, sourceFile)) {
+                    rightmostValidNode = jsdoc;
+                }
+            }
+        }
 
         n.forEachChild(
             node => {
@@ -425,6 +451,33 @@ function findRightmostValidToken(sourceFile: SourceFile, endPos: number, contain
                 return undefined;
             },
         );
+
+        // Scan for syntactic tokens (e.g. `{`, `,`) between AST nodes, matching Go's
+        // findRightmostValidToken scanner step.
+        if (!shouldSkipChild(n)) {
+            const startPos = rightmostValidNode !== undefined ? rightmostValidNode.end : n.pos;
+            const targetEnd = Math.min(endPos, position);
+            if (startPos < targetEnd) {
+                const scanner = getScannerForSourceFile(sourceFile, startPos);
+                let pos = startPos;
+                let lastScannedToken: Node | undefined;
+                while (pos < targetEnd) {
+                    const tokenStart = scanner.getTokenStart();
+                    if (tokenStart >= position) break;
+                    const tokenFullStart = scanner.getTokenFullStart();
+                    const tokenEnd = scanner.getTokenEnd();
+                    if (tokenEnd > targetEnd) break;
+                    const token = scanner.getToken();
+                    const flags = scanner.getTokenFlags();
+                    lastScannedToken = getOrCreateToken(sourceFile, token, tokenFullStart, tokenEnd, n, flags);
+                    pos = tokenEnd;
+                    scanner.scan();
+                }
+                if (lastScannedToken !== undefined) {
+                    return lastScannedToken;
+                }
+            }
+        }
 
         if (!hasChildren) {
             if (n !== containingNode) {
