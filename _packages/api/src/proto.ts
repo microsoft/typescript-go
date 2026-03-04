@@ -169,7 +169,7 @@ export interface SignatureResponse {
 
 export interface TypePredicateResponse {
     kind: number;
-    parameterIndex?: number;
+    parameterIndex: number;
     parameterName?: string;
     type?: TypeResponse;
 }
