@@ -1602,6 +1602,7 @@ func (s *Session) handleGetTypeArguments(ctx context.Context, params *CheckerTyp
 
 	return results, nil
 }
+
 func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast.Node]) (*ast.Node, error) {
 	pos, end, kind, path, err := parseNodeHandle(handle)
 	if err != nil {

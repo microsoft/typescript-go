@@ -745,17 +745,17 @@ type CheckerSignatureParams struct {
 
 // TypePredicateResponse is the response for getTypePredicateOfSignature.
 type TypePredicateResponse struct {
-	Kind           int32        `json:"kind"`
-	ParameterIndex int32        `json:"parameterIndex,omitempty"`
-	ParameterName  string       `json:"parameterName,omitempty"`
+	Kind           int32         `json:"kind"`
+	ParameterIndex int32         `json:"parameterIndex,omitempty"`
+	ParameterName  string        `json:"parameterName,omitempty"`
 	Type           *TypeResponse `json:"type,omitempty"`
 }
 
 // IndexInfoResponse represents a single index signature.
 type IndexInfoResponse struct {
-	KeyType   TypeResponse `json:"keyType"`
-	ValueType TypeResponse `json:"valueType"`
-	IsReadonly bool        `json:"isReadonly,omitempty"`
+	KeyType    TypeResponse `json:"keyType"`
+	ValueType  TypeResponse `json:"valueType"`
+	IsReadonly bool         `json:"isReadonly,omitempty"`
 }
 
 // SourceFileResponse contains the binary-encoded AST data for a source file.
