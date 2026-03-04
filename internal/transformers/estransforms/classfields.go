@@ -1015,7 +1015,7 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAccessHelper(info *priv
 		)
 	}
 	debug.AssertNever(info, "Unknown private element type")
-	return receiver
+	return nil
 }
 
 func (tx *classFieldsTransformer) visitPropertyAccessExpression(node *ast.PropertyAccessExpression) *ast.Node {
@@ -1603,7 +1603,7 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAssignment(info *privat
 		)
 	}
 	debug.AssertNever(info, "Unknown private element type")
-	return tx.Factory().NewAssignmentExpression(receiver, right)
+	return nil
 }
 
 func (tx *classFieldsTransformer) getPrivateInstanceMethodsAndAccessors(node *ast.Node) []*ast.Node {
