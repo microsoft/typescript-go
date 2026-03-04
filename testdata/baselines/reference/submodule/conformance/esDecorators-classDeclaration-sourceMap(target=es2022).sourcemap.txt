@@ -323,34 +323,124 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 2 >    ^^^^^^
 3 >          ^^^^^
 4 >               ^^
-5 >                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-6 >                                                       ^^^^^^^->
+5 >                 ^^^^^^^^^^^^
+6 >                             ^
+7 >                              ^^^^^^^^^^^^^^^^^^^^^^^^^
+8 >                                                       ^^^^^^^->
 1->
 2 >    static
 3 >           accessor 
 4 >               #z
-5 >                  = 1;
+5 >                 
+6 >                             C
+7 >                               {
+  >                                  @dec
+  >                                  @dec
+  >                                  method() {}
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  get x() { return 1; }
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  set x(value: number) { }
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  y = 1;
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  accessor z = 1;
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  static #method() {}
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  static get #x() { return 1; }
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  static set #x(value: number) { }
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  static #y = 1;
+  >                              
+  >                                  @dec
+  >                                  @dec
+  >                                  static accessor #z = 1;
 1->Emitted(15, 5) Source(44, 5) + SourceIndex(0)
 2 >Emitted(15, 11) Source(44, 11) + SourceIndex(0)
 3 >Emitted(15, 16) Source(44, 21) + SourceIndex(0)
 4 >Emitted(15, 18) Source(44, 23) + SourceIndex(0)
-5 >Emitted(15, 56) Source(44, 28) + SourceIndex(0)
+5 >Emitted(15, 30) Source(5, 7) + SourceIndex(0)
+6 >Emitted(15, 31) Source(5, 8) + SourceIndex(0)
+7 >Emitted(15, 56) Source(44, 28) + SourceIndex(0)
 ---
 >>>    static set #z(value) { C.#z_1_accessor_storage = value; }
 1->^^^^
 2 >    ^^^^^^^^^^^
 3 >               ^^
-4 >                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4 >                 ^^^^^^^^^^
+5 >                           ^
+6 >                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1->
 2 >    @dec
   >        @dec
   >        static accessor 
 3 >               #z
-4 >                  = 1;
+4 >                 
+5 >                           C
+6 >                             {
+  >                                @dec
+  >                                @dec
+  >                                method() {}
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                get x() { return 1; }
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                set x(value: number) { }
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                y = 1;
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                accessor z = 1;
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                static #method() {}
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                static get #x() { return 1; }
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                static set #x(value: number) { }
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                static #y = 1;
+  >                            
+  >                                @dec
+  >                                @dec
+  >                                static accessor #z = 1;
 1->Emitted(16, 5) Source(42, 5) + SourceIndex(0)
 2 >Emitted(16, 16) Source(44, 21) + SourceIndex(0)
 3 >Emitted(16, 18) Source(44, 23) + SourceIndex(0)
-4 >Emitted(16, 62) Source(44, 28) + SourceIndex(0)
+4 >Emitted(16, 28) Source(5, 7) + SourceIndex(0)
+5 >Emitted(16, 29) Source(5, 8) + SourceIndex(0)
+6 >Emitted(16, 62) Source(44, 28) + SourceIndex(0)
 ---
 >>>}
 1 >^

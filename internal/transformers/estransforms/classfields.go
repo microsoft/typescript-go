@@ -749,6 +749,16 @@ func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.Id
 }
 
 func (tx *classFieldsTransformer) tryGetClassThis() *ast.Expression {
+	if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
+		return classThis
+	}
+	if tx.currentClassContainer != nil {
+		return tx.currentClassContainer.Name()
+	}
+	return nil
+}
+
+func (tx *classFieldsTransformer) tryGetClassThisNoContainer() *ast.Expression {
 	lex := tx.getClassLexicalEnvironment()
 	if lex.classThis != nil {
 		return lex.classThis
@@ -800,15 +810,13 @@ func (tx *classFieldsTransformer) transformAutoAccessor(node *ast.PropertyDeclar
 	tx.EmitContext().SetEmitFlags(backingField, printer.EFNoComments)
 	tx.EmitContext().SetSourceMapRange(backingField, sourceMapRange)
 
-	receiver := tx.tryGetClassThis()
-	if receiver == nil {
-		if ast.IsStatic(node.AsNode()) && tx.currentClassContainer != nil {
-			receiver = tx.Factory().GetDeclarationName(tx.currentClassContainer)
-		} else {
+	var receiver *ast.Expression
+	if ast.IsStatic(node.AsNode()) {
+		receiver = tx.tryGetClassThis()
+		if receiver == nil {
 			receiver = tx.Factory().NewThisExpression()
 		}
-	}
-	if !ast.IsStatic(node.AsNode()) {
+	} else {
 		receiver = tx.Factory().NewThisExpression()
 	}
 
@@ -2129,7 +2137,7 @@ func (tx *classFieldsTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node {
 	if tx.insideComputedPropertyName && tx.shouldTransformThisInStaticInitializers &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
-		if classThis := tx.tryGetClassThis(); classThis != nil {
+		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
 			return classThis
 		}
 	}
@@ -2137,7 +2145,7 @@ func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node 
 		(ast.IsClassStaticBlockDeclaration(tx.currentClassElement) ||
 			(ast.IsPropertyDeclaration(tx.currentClassElement) && ast.HasStaticModifier(tx.currentClassElement))) &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
-		if classThis := tx.tryGetClassThis(); classThis != nil {
+		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
 			return classThis
 		}
 		// When the class was decorated with legacy decorators and no class constructor
