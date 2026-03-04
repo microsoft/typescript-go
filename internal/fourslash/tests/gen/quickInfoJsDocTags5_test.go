@@ -1,0 +1,40 @@
+package fourslash_test
+
+import (
+	"testing"
+
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/testutil"
+)
+
+func TestQuickInfoJsDocTags5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @noEmit: true
+// @allowJs: true
+// @Filename: quickInfoJsDocTags5.js
+class Foo {
+    /**
+     * comment
+     * @author Me <me@domain.tld>
+     * @see x (the parameter)
+     * @param {number} x - x comment
+     * @param {number} y - y comment
+     * @returns The result
+     */
+    method(x, y) {
+       return x + y;
+    }
+}
+
+class Bar extends Foo {
+    /**/method(x, y) {
+        const res = super.method(x, y) + 100;
+        return res;
+    }
+}`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineHover(t)
+}

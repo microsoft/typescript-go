@@ -1,0 +1,32 @@
+package fourslash_test
+
+import (
+	"testing"
+
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/testutil"
+)
+
+func TestGoToDefinitionModifiers(t *testing.T) {
+	fourslash.SkipIfFailing(t)
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @Filename: /a.ts
+/*export*/export class A/*A*/ {
+
+    /*private*/private z/*z*/: string;
+
+    /*readonly*/readonly x/*x*/: string;
+
+    /*async*/async a/*a*/() {  }
+
+    /*override*/override b/*b*/() {}
+
+    /*public1*/public/*public2*/ as/*multipleModifiers*/ync c/*c*/() { }
+}
+
+exp/*exportFunction*/ort function foo/*foo*/() { }`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "export", "A", "private", "z", "readonly", "x", "async", "a", "override", "b", "public1", "public2", "multipleModifiers", "c", "exportFunction", "foo")
+}

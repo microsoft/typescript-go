@@ -377,13 +377,16 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 		insertPos--
 	}
 	insertLSPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(insertPos))
+	// Build indentation string to include in prefix since FormatNodeGivenIndentation
+	// does not yet apply initial indentation for simple single-line nodes (SmartIndenter not fully implemented).
+	indentStr := strings.Repeat(" ", indentation)
 	t.ReplaceRange(
 		sourceFile,
 		lsproto.Range{Start: insertLSPos, End: insertLSPos},
 		newNode,
 		NodeOptions{
 			indentation: new(indentation),
-			Prefix:      t.newLine,
+			Prefix:      t.newLine + indentStr,
 		},
 	)
 }
