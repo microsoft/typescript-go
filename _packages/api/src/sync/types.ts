@@ -9,6 +9,7 @@
 import type { ElementFlags } from "#enums/elementFlags";
 import type { ObjectFlags } from "#enums/objectFlags";
 import type { TypeFlags } from "#enums/typeFlags";
+import type { TypePredicateKind } from "#enums/typePredicateKind";
 import type { Symbol } from "./api.ts";
 
 /**
@@ -131,17 +132,46 @@ export interface StringMappingType extends Type {
     getTarget(): Type;
 }
 
-/** A type predicate — e.g. `x is T` or `asserts x is T` */
-export interface TypePredicate {
-    /** The kind of type predicate (TypePredicateKind) */
-    readonly kind: number;
-    /** Parameter index for identifier predicates */
-    readonly parameterIndex?: number;
-    /** Parameter name for identifier predicates */
-    readonly parameterName?: string;
-    /** The type being narrowed to */
-    readonly type?: Type;
+/** Base for all type predicates */
+export interface TypePredicateBase {
+    readonly kind: TypePredicateKind;
+    readonly type: Type | undefined;
 }
+
+/** `this is T` */
+export interface ThisTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.This;
+    readonly parameterName: undefined;
+    readonly parameterIndex: undefined;
+    readonly type: Type;
+}
+
+/** `x is T` */
+export interface IdentifierTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.Identifier;
+    readonly parameterName: string;
+    readonly parameterIndex: number;
+    readonly type: Type;
+}
+
+/** `asserts this is T` */
+export interface AssertsThisTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.AssertsThis;
+    readonly parameterName: undefined;
+    readonly parameterIndex: undefined;
+    readonly type: Type | undefined;
+}
+
+/** `asserts x is T` */
+export interface AssertsIdentifierTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.AssertsIdentifier;
+    readonly parameterName: string;
+    readonly parameterIndex: number;
+    readonly type: Type | undefined;
+}
+
+/** A type predicate — e.g. `x is T` or `asserts x is T` */
+export type TypePredicate = ThisTypePredicate | IdentifierTypePredicate | AssertsThisTypePredicate | AssertsIdentifierTypePredicate;
 
 /** An index signature — e.g. `[key: string]: T` */
 export interface IndexInfo {

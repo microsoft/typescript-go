@@ -59,7 +59,10 @@ import {
     type ClientSpawnOptions,
 } from "./client.ts";
 import type {
+    AssertsIdentifierTypePredicate,
+    AssertsThisTypePredicate,
     ConditionalType,
+    IdentifierTypePredicate,
     IndexedAccessType,
     IndexInfo,
     IndexType,
@@ -70,10 +73,12 @@ import type {
     StringMappingType,
     SubstitutionType,
     TemplateLiteralType,
+    ThisTypePredicate,
     TupleType,
     Type,
     TypeParameter,
     TypePredicate,
+    TypePredicateBase,
     TypeReference,
     UnionOrIntersectionType,
     UnionType,
@@ -81,7 +86,7 @@ import type {
 
 export { ElementFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { ConditionalType, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, TupleType, TypeParameter, TypePredicate, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -641,7 +646,7 @@ export class Checker {
             parameterIndex: data.parameterIndex,
             parameterName: data.parameterName,
             type: data.type ? this.objectRegistry.getOrCreateType(data.type) : undefined,
-        };
+        } as TypePredicate;
     }
 
     async getBaseTypes(type: Type): Promise<readonly Type[]> {
