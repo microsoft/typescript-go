@@ -173,7 +173,7 @@ var YYY2;
 })(YYY2 || (YYY2 = {}));
 var YYY3;
 (function (YYY3) {
-    let Module;
+    static let Module;
     (function (Module) {
         class A {
             s;
@@ -182,7 +182,7 @@ var YYY3;
 })(YYY3 || (YYY3 = {}));
 var YYY4;
 (function (YYY4) {
-    let Color;
+    static let Color;
     (function (Color) {
         Color[Color["Blue"] = 0] = "Blue";
         Color[Color["Red"] = 1] = "Red";

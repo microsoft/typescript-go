@@ -187,10 +187,6 @@ func (tx *RuntimeSyntaxTransformer) isExportOfNamespace(node *ast.Node) bool {
 	return tx.currentNamespace != nil && (tx.currentScope == nil || tx.currentScope.Kind != ast.KindBlock) && node.ModifierFlags()&ast.ModifierFlagsExport != 0
 }
 
-func (tx *RuntimeSyntaxTransformer) isExportOfExternalModule(node *ast.Node) bool {
-	return tx.currentNamespace == nil && node.ModifierFlags()&ast.ModifierFlagsExport != 0
-}
-
 // Gets an expression that represents a property name, such as `"foo"` for the identifier `foo`.
 func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.EnumMember) *ast.Expression {
 	name := member.Name()
@@ -267,29 +263,17 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 		return statements, false
 	}
 
-	if tx.isExportOfExternalModule(node) {
-		// export { name };
-		statements = append(statements, tx.Factory().NewExportDeclaration(
-			nil,   /*modifiers*/
-			false, /*isTypeOnly*/
-			tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{
-				tx.Factory().NewExportSpecifier(
-					false, /*isTypeOnly*/
-					nil,   /*propertyName*/
-					node.Name().Clone(tx.Factory()),
-				),
-			})),
-			nil, /*moduleSpecifier*/
-			nil, /*attributes*/
-		))
-	}
-
 	// var name;
 	name := tx.Factory().GetLocalNameEx(node, printer.AssignedNameOptions{AllowSourceMaps: true})
 	varDecl := tx.Factory().NewVariableDeclaration(name, nil, nil, nil)
 	varFlags := core.IfElse(tx.currentScope == tx.currentSourceFile, ast.NodeFlagsNone, ast.NodeFlagsLet)
 	varDecls := tx.Factory().NewVariableDeclarationList(varFlags, tx.Factory().NewNodeList([]*ast.Node{varDecl}))
-	varStatement := tx.Factory().NewVariableStatement(nil /*modifiers*/, varDecls)
+	allowedModifiers := ^ast.ModifierFlagsTypeScriptModifier
+	if tx.currentNamespace != nil {
+		allowedModifiers &= ^ast.ModifierFlagsExport
+	}
+	varModifiers := tx.Visitor().VisitModifiers(transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), allowedModifiers))
+	varStatement := tx.Factory().NewVariableStatement(varModifiers, varDecls)
 
 	tx.EmitContext().SetOriginal(varDecl, node)
 	// !!! synthetic comments

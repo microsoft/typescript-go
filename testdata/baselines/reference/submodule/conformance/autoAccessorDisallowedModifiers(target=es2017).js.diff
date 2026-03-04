@@ -67,16 +67,11 @@
 -    }
 -    get g() { return __classPrivateFieldGet(this, _C2_g_accessor_storage, "f"); }
 -    set g(value) { __classPrivateFieldSet(this, _C2_g_accessor_storage, value, "f"); }
--}
++    accessor g;
+ }
 -_C2_g_accessor_storage = new WeakMap();
 -class C3 {
--}
--accessor var E1;
-+    accessor g;
-+}
 +accessor class C3 {
-+}
-+var E1;
+ }
+ accessor var E1;
  (function (E1) {
- })(E1 || (E1 = {}));
- accessor var V1;

@@ -36,8 +36,7 @@ export namespace M {
 
 
 //// [es6ModuleInternalNamedImports2.js]
-export { M };
-var M;
+export var M;
 (function (M) {
     // variable
     M.M_V = 0;

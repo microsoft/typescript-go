@@ -40,9 +40,7 @@
 -c2.l = 30;
  new c();
  new c2();
--export var m1;
-+export { m1 };
-+var m1;
+ export var m1;
  (function (m1) {
      class c3 {
          constructor() {
@@ -56,7 +54,7 @@
          method1() {
          }
          method2() {
-@@= skipped -20, +21 lines =@@
+@@= skipped -20, +20 lines =@@
          static method4() {
          }
      }
