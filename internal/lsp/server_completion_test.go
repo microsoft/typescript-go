@@ -262,21 +262,20 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 		TextDocument: &lsproto.TextDocumentItem{Uri: bURI, LanguageId: "typescript", Text: "someV"},
 	})
 
-	go func() {
-		time.Sleep(5 * time.Millisecond)
-		lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
-			TextDocument: lsproto.VersionedTextDocumentIdentifier{Uri: bURI, Version: 2},
-			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
-				{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "notMatching"}},
-			},
-		})
-	}()
-
-	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+	waitForCompletion := lsptestutil.SendRequestAsync(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: bURI},
 		Position:     lsproto.Position{Line: 0, Character: 5},
 		Context:      &lsproto.CompletionContext{},
 	})
+
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+		TextDocument: lsproto.VersionedTextDocumentIdentifier{Uri: bURI, Version: 2},
+		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "notMatching"}},
+		},
+	})
+
+	msg, resp, ok := waitForCompletion()
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
 	item := findCompletionItem(completionItems(resp), "someVar")
