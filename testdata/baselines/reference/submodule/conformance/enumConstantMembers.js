@@ -62,9 +62,9 @@ var E3;
 })(E3 || (E3 = {}));
 var E5;
 (function (E5) {
-    E5[E5["a"] = 1 / 0] = "a";
-    E5[E5["b"] = 2 / 0.0] = "b";
-    E5[E5["c"] = 1.0 / 0.0] = "c";
+    E5[E5["a"] = Infinity] = "a";
+    E5[E5["b"] = Infinity] = "b";
+    E5[E5["c"] = Infinity] = "c";
     E5[E5["d"] = 0.0 / 0.0] = "d";
     E5["e"] = NaN;
     if (typeof E5.e !== "string") E5[E5.e] = "e";
