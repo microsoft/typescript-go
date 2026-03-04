@@ -225,7 +225,7 @@ func addToExistingImport(
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
 				return ct.NodeFactory.NewImportSpecifier(
-					shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
+					(!importClause.IsTypeOnly() || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
 					identifier,
 					ct.NodeFactory.NewIdentifier(namedImport.name),
 				)
