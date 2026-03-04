@@ -1120,23 +1120,19 @@ func (b *registryBuilder) extractPackages(
 				packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
 			}
 
-			// Check if this physical package was already extracted by another bucket.
-			// If so, reuse the cached result instead of re-extracting.
+			// Resolve the physical path once for both cache lookup and store.
+			var realPackageDir string
 			if processedPackageRealpaths != nil && packageJson.DirectoryExists {
-				realPackageDir := b.host.FS().Realpath(packageJson.PackageDirectory)
+				realPackageDir = b.host.FS().Realpath(packageJson.PackageDirectory)
 				if realPackageDir != "" {
 					if cached, ok := processedPackageRealpaths.Load(realPackageDir); ok {
-						// Reuse cached extraction result
+						// Reuse cached extraction result — install into this bucket.
 						exportsMu.Lock()
-						for path, fileExports := range cached.exports {
-							result.exports[path] = fileExports
-						}
+						maps.Copy(result.exports, cached.exports)
 						if result.packageFiles[packageName] == nil {
 							result.packageFiles[packageName] = make(map[tspath.Path]string, len(cached.packageFiles))
 						}
-						for path, fileName := range cached.packageFiles {
-							result.packageFiles[packageName][path] = fileName
-						}
+						maps.Copy(result.packageFiles[packageName], cached.packageFiles)
 						for name, fileNames := range cached.ambientModules {
 							result.ambientModuleNames[name] = append(result.ambientModuleNames[name], fileNames...)
 						}
@@ -1181,12 +1177,15 @@ func (b *registryBuilder) extractPackages(
 			ch, _ := checker.NewChecker(aliasResolver)
 			extractor := b.newExportExtractor(dirPath, packageName, ch, resolver, toRealpath)
 
-			// Build a per-package result to cache for cross-bucket reuse.
-			pkgResult := &perPackageExtractionResult{
-				packageFiles:   make(map[tspath.Path]string),
-				entrypoints:    packageEntrypoints,
-				exports:        make(map[tspath.Path][]*Export),
-				ambientModules: make(map[string][]string),
+			// Extract directly into result (no intermediate maps on the fresh path).
+			// Also collect thin references for the cross-bucket cache.
+			var cacheExports map[tspath.Path][]*Export
+			var cachePackageFiles map[tspath.Path]string
+			var cacheAmbientModules map[string][]string
+			if realPackageDir != "" {
+				cacheExports = make(map[tspath.Path][]*Export)
+				cachePackageFiles = make(map[tspath.Path]string)
+				cacheAmbientModules = make(map[string][]string)
 			}
 
 			for _, entrypoint := range aliasResolver.rootFiles {
@@ -1195,51 +1194,56 @@ func (b *registryBuilder) extractPackages(
 				}
 
 				fileExports := extractor.extractFromFile(entrypoint)
+				exportsMu.Lock()
 				for _, name := range entrypoint.AmbientModuleNames {
-					pkgResult.ambientModules[name] = append(pkgResult.ambientModules[name], entrypoint.FileName())
+					result.ambientModuleNames[name] = append(result.ambientModuleNames[name], entrypoint.FileName())
 				}
-				pkgResult.packageFiles[entrypoint.Path()] = entrypoint.FileName()
+				if result.packageFiles[packageName] == nil {
+					result.packageFiles[packageName] = make(map[tspath.Path]string)
+				}
+				result.packageFiles[packageName][entrypoint.Path()] = entrypoint.FileName()
 				if symlink, ok := aliasResolver.symlinks[entrypoint.Path()]; ok {
-					pkgResult.packageFiles[symlink.path] = symlink.fileName
+					result.packageFiles[packageName][symlink.path] = symlink.fileName
 				}
 
 				if source, ok := result.possibleFailedAmbientModuleLookupSources.Load(entrypoint.Path()); !ok {
-					pkgResult.exports[entrypoint.Path()] = fileExports
+					result.exports[entrypoint.Path()] = fileExports
 				} else {
 					source.mu.Lock()
 					source.packageName = packageName
 					source.mu.Unlock()
 				}
-			}
-			stats := extractor.Stats()
-			pkgResult.statsExports = stats.exports.Load()
-			pkgResult.statsUsedChecker = stats.usedChecker.Load()
+				exportsMu.Unlock()
 
-			// Store in cross-bucket cache.
-			if processedPackageRealpaths != nil && packageJson.DirectoryExists {
-				realPackageDir := b.host.FS().Realpath(packageJson.PackageDirectory)
+				// Populate cache entries from the same data (no copies, shared slices).
 				if realPackageDir != "" {
-					processedPackageRealpaths.LoadOrStore(realPackageDir, pkgResult)
+					for _, name := range entrypoint.AmbientModuleNames {
+						cacheAmbientModules[name] = append(cacheAmbientModules[name], entrypoint.FileName())
+					}
+					cachePackageFiles[entrypoint.Path()] = entrypoint.FileName()
+					if symlink, ok := aliasResolver.symlinks[entrypoint.Path()]; ok {
+						cachePackageFiles[symlink.path] = symlink.fileName
+					}
+					if exports, ok := result.exports[entrypoint.Path()]; ok {
+						cacheExports[entrypoint.Path()] = exports
+					}
 				}
 			}
+			stats := extractor.Stats()
+			result.stats.exports.Add(stats.exports.Load())
+			result.stats.usedChecker.Add(stats.usedChecker.Load())
 
-			// Install into this bucket's aggregated result.
-			exportsMu.Lock()
-			for path, fileExports := range pkgResult.exports {
-				result.exports[path] = fileExports
+			// Store in cross-bucket cache for later buckets to reuse.
+			if realPackageDir != "" {
+				processedPackageRealpaths.LoadOrStore(realPackageDir, &perPackageExtractionResult{
+					packageFiles:     cachePackageFiles,
+					entrypoints:      packageEntrypoints,
+					exports:          cacheExports,
+					ambientModules:   cacheAmbientModules,
+					statsExports:     stats.exports.Load(),
+					statsUsedChecker: stats.usedChecker.Load(),
+				})
 			}
-			if result.packageFiles[packageName] == nil {
-				result.packageFiles[packageName] = make(map[tspath.Path]string, len(pkgResult.packageFiles))
-			}
-			for path, fileName := range pkgResult.packageFiles {
-				result.packageFiles[packageName][path] = fileName
-			}
-			for name, fileNames := range pkgResult.ambientModules {
-				result.ambientModuleNames[name] = append(result.ambientModuleNames[name], fileNames...)
-			}
-			exportsMu.Unlock()
-			result.stats.exports.Add(pkgResult.statsExports)
-			result.stats.usedChecker.Add(pkgResult.statsUsedChecker)
 		})
 	}
 
