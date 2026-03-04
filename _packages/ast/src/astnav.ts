@@ -339,9 +339,13 @@ function findPrecedingTokenImpl(sourceFile: SourceFile, position: number, startN
             }
         }
 
+        let skipSingleCommentChildrenImpl = false;
         n.forEachChild(
             node => {
                 if (node.flags & NodeFlags.Reparsed) {
+                    return undefined;
+                }
+                if (skipSingleCommentChildrenImpl && isJSDocCommentChildKind(node.kind)) {
                     return undefined;
                 }
                 if (foundChild !== undefined) {
@@ -356,10 +360,11 @@ function findPrecedingTokenImpl(sourceFile: SourceFile, position: number, startN
                 return undefined;
             },
             nodes => {
+                skipSingleCommentChildrenImpl = isJSDocSingleCommentNodeList(nodes);
                 if (foundChild !== undefined) {
                     return undefined;
                 }
-                if (nodes.length > 0) {
+                if (nodes.length > 0 && !skipSingleCommentChildrenImpl) {
                     const index = binarySearchForPrecedingToken(nodes, position);
                     if (index >= 0 && !(nodes[index].flags & NodeFlags.Reparsed)) {
                         foundChild = nodes[index];
@@ -381,7 +386,27 @@ function findPrecedingTokenImpl(sourceFile: SourceFile, position: number, startN
         if (foundChild !== undefined) {
             const start = getTokenPosOfNode(foundChild, sourceFile, /*includeJSDoc*/ true);
             if (start >= position) {
-                // cursor in leading trivia; find rightmost valid token in prevChild
+                if (position >= foundChild.pos) {
+                    // We are in the leading trivia of foundChild. Check for JSDoc nodes of n
+                    // preceding foundChild, mirroring Go's findPrecedingToken logic.
+                    let jsDoc: Node | undefined;
+                    if (n.jsDoc) {
+                        for (let i = n.jsDoc.length - 1; i >= 0; i--) {
+                            if (n.jsDoc[i].pos >= foundChild.pos) {
+                                jsDoc = n.jsDoc[i];
+                                break;
+                            }
+                        }
+                    }
+                    if (jsDoc !== undefined) {
+                        if (position < jsDoc.end) {
+                            return find(jsDoc);
+                        }
+                        return findRightmostValidToken(sourceFile, jsDoc.end, n, position);
+                    }
+                    return findRightmostValidToken(sourceFile, foundChild.pos, n, -1);
+                }
+                // Answer is in tokens between two visited children.
                 return findRightmostValidToken(sourceFile, foundChild.pos, n, position);
             }
             return find(foundChild);
@@ -421,9 +446,13 @@ function findRightmostValidToken(sourceFile: SourceFile, endPos: number, contain
             }
         }
 
+        let skipSingleCommentChildren = false;
         n.forEachChild(
             node => {
                 if (node.flags & NodeFlags.Reparsed) {
+                    return undefined;
+                }
+                if (skipSingleCommentChildren && isJSDocCommentChildKind(node.kind)) {
                     return undefined;
                 }
                 hasChildren = true;
@@ -436,7 +465,10 @@ function findRightmostValidToken(sourceFile: SourceFile, endPos: number, contain
                 return undefined;
             },
             nodes => {
-                if (nodes.length > 0) {
+                // Skip single-comment JSDoc NodeLists (e.g. JSDocText children of a JSDoc node):
+                // In Go, these are stored as string properties and are never visited as children.
+                skipSingleCommentChildren = isJSDocSingleCommentNodeList(nodes);
+                if (nodes.length > 0 && !skipSingleCommentChildren) {
                     hasChildren = true;
                     for (let i = nodes.length - 1; i >= 0; i--) {
                         const node = nodes[i];
