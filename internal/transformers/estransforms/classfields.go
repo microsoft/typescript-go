@@ -3146,13 +3146,15 @@ func (tx *classFieldsTransformer) visitAssignmentRestElement(node *ast.Node) *as
 }
 
 func (tx *classFieldsTransformer) visitArrayAssignmentElement(node *ast.Node) *ast.Node {
-	if ast.IsSpreadElement(node) {
-		return tx.visitAssignmentRestElement(node)
+	if ast.IsArrayBindingOrAssignmentElement(node) {
+		if ast.IsSpreadElement(node) {
+			return tx.visitAssignmentRestElement(node)
+		}
+		if node.Kind != ast.KindOmittedExpression {
+			return tx.visitAssignmentElement(node)
+		}
 	}
-	if node.Kind == ast.KindOmittedExpression {
-		return node
-	}
-	return tx.visitAssignmentElement(node)
+	return tx.Visitor().VisitEachChild(node)
 }
 
 func (tx *classFieldsTransformer) visitAssignmentProperty(node *ast.Node) *ast.Node {
