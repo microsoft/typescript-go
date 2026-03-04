@@ -125,10 +125,12 @@ type classFieldsTransformer struct {
 	insideComputedPropertyName bool
 
 	// Visitors
-	classElementVisitor   *ast.NodeVisitor
-	discardedValueVisitor *ast.NodeVisitor
-	heritageClauseVisitor *ast.NodeVisitor
-	modifierVisitor       *ast.NodeVisitor
+	modifierVisitor            *ast.NodeVisitor
+	discardedValueVisitor      *ast.NodeVisitor
+	heritageClauseVisitor      *ast.NodeVisitor
+	assignmentTargetVisitor    *ast.NodeVisitor
+	classElementVisitor        *ast.NodeVisitor
+	accessorFieldResultVisitor *ast.NodeVisitor
 
 	// Pre-bound callbacks to avoid repeated closure allocation.
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
@@ -178,10 +180,12 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 		tx.shouldTransformAutoAccessors == core.TSTrue
 
 	result := tx.NewTransformer(tx.visit, opts.Context)
-	tx.classElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitClassElement)
+	tx.modifierVisitor = tx.EmitContext().NewNodeVisitor(tx.visitModifier)
 	tx.discardedValueVisitor = tx.EmitContext().NewNodeVisitor(tx.visitDiscardedValue)
 	tx.heritageClauseVisitor = tx.EmitContext().NewNodeVisitor(tx.visitHeritageClause)
-	tx.modifierVisitor = tx.EmitContext().NewNodeVisitor(tx.visitModifier)
+	tx.assignmentTargetVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAssignmentTarget)
+	tx.classElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitClassElement)
+	tx.accessorFieldResultVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAccessorFieldResult)
 	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result
@@ -342,6 +346,16 @@ func (tx *classFieldsTransformer) visitHeritageClause(node *ast.Node) *ast.Node 
 	}
 }
 
+// visitAssignmentTarget visits the assignment target of a destructuring assignment.
+func (tx *classFieldsTransformer) visitAssignmentTarget(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression:
+		return tx.visitAssignmentPattern(node)
+	default:
+		return tx.visit(node)
+	}
+}
+
 func (tx *classFieldsTransformer) visitDestructuringAssignmentTarget(node *ast.Node) *ast.Node {
 	if ast.IsObjectLiteralExpression(node) || ast.IsArrayLiteralExpression(node) {
 		return tx.visitAssignmentPattern(node)
@@ -408,6 +422,19 @@ func (tx *classFieldsTransformer) visitPropertyName(name *ast.PropertyName) *ast
 		return tx.visitComputedPropertyName(name.AsComputedPropertyName())
 	}
 	return tx.Visitor().VisitNode(name)
+}
+
+// visitAccessorFieldResult visits the results of an auto-accessor field transformation in a second pass.
+func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindPropertyDeclaration:
+		return tx.transformFieldInitializer(node.AsPropertyDeclaration())
+	case ast.KindGetAccessor, ast.KindSetAccessor:
+		return tx.visitClassElement(node)
+	default:
+		debug.AssertMissingNode(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
+		return nil
+	}
 }
 
 // visitIdentifier replaces Strada's onSubstituteNode/trySubstituteClassAlias. Instead of
@@ -801,25 +828,7 @@ func (tx *classFieldsTransformer) transformAutoAccessor(node *ast.PropertyDeclar
 	tx.EmitContext().SetSourceMapRange(setter, sourceMapRange)
 
 	// Visit the results in a second pass
-	results := []*ast.Node{backingField, getter, setter}
-	var visited []*ast.Node
-	for _, result := range results {
-		if result == nil {
-			continue
-		}
-		switch result.Kind {
-		case ast.KindPropertyDeclaration:
-			v := tx.transformFieldInitializer(result.AsPropertyDeclaration())
-			if v != nil {
-				visited = append(visited, v)
-			}
-		case ast.KindGetAccessor, ast.KindSetAccessor:
-			v := tx.visitClassElement(result)
-			if v != nil {
-				visited = append(visited, v)
-			}
-		}
-	}
+	visited, _ := tx.accessorFieldResultVisitor.VisitSlice([]*ast.Node{backingField, getter, setter})
 	if len(visited) == 0 {
 		return nil
 	}
@@ -861,7 +870,7 @@ func (tx *classFieldsTransformer) transformPrivateFieldInitializer(node *ast.Pro
 		tx.lexicalEnvironment.data.facts&classFactsWillHoistInitializersToConstructor != 0 {
 		return tx.Factory().UpdatePropertyDeclaration(
 			node,
-			tx.modifierVisitor.VisitModifiers(node.Modifiers()),
+			tx.Visitor().VisitModifiers(node.Modifiers()),
 			node.Name(),
 			nil, /*postfixToken*/
 			nil, /*typeNode*/
@@ -1367,7 +1376,7 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 		updated := tx.Factory().UpdateBinaryExpression(
 			node,
 			nil,
-			tx.visitDestructuringAssignmentTarget(node.Left),
+			tx.assignmentTargetVisitor.VisitNode(node.Left),
 			nil,
 			node.OperatorToken,
 			tx.Visitor().VisitNode(node.Right),
