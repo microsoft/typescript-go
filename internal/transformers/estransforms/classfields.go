@@ -1336,6 +1336,7 @@ func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast
 		iife := tx.Factory().NewImmediatelyInvokedArrowFunction(statements)
 		arrowFunction := ast.SkipParentheses(iife.Expression())
 		tx.EmitContext().SetOriginal(arrowFunction, node)
+		tx.EmitContext().AddEmitFlags(arrowFunction, printer.EFNoLexicalArguments)
 		// Preserve the statement list source range so the printer can emit detached comments
 		// (e.g., `// do` inside an otherwise empty static block)
 		arrowFunction.AsArrowFunction().Body.AsBlock().Statements.Loc = node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Loc
