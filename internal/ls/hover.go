@@ -158,14 +158,21 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 						} else {
 							writeCode(&b, "tsx", commentText)
 						}
-					} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
-						b.WriteString(" — ")
-						l.writeNameLink(&b, c, tag.AsJSDocSeeTag().NameExpression.Name(), "", false /*quote*/, isMarkdown)
-						if len(comments) != 0 {
-							b.WriteString(" ")
-							l.writeComments(&b, c, comments, isMarkdown)
-						}
-					} else if len(comments) != 0 {
+				} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
+					b.WriteString(" — ")
+					l.writeNameLink(&b, c, tag.AsJSDocSeeTag().NameExpression.Name(), "", false /*quote*/, isMarkdown)
+					if len(comments) != 0 {
+						b.WriteString(" ")
+						l.writeComments(&b, c, comments, isMarkdown)
+					}
+				} else if tag.Kind == ast.KindJSDocThrowsTag && tag.AsJSDocThrowsTag().TypeExpression != nil {
+					b.WriteString(" — ")
+					b.WriteString(scanner.GetTextOfNode(tag.AsJSDocThrowsTag().TypeExpression))
+					if len(comments) != 0 {
+						b.WriteString(" ")
+						l.writeComments(&b, c, comments, isMarkdown)
+					}
+				} else if len(comments) != 0 {
 						b.WriteString(" ")
 						if comments[0].Kind != ast.KindJSDocText || !strings.HasPrefix(comments[0].Text(), "-") {
 							b.WriteString("— ")

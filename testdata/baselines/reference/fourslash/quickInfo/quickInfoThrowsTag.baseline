@@ -1,17 +1,17 @@
 // === QuickInfo ===
 === /quickInfoThrowsTag.ts ===
 // class E extends Error {}
-// 
+//
 // /**
 //  * @throws {E}
 //  */
 // function f1() {}
-// 
+//
 // /**
 //  * @throws {E} description
 //  */
 // function f2() {}
-// 
+//
 // /**
 //  * @throws description
 //  */
@@ -22,9 +22,9 @@
 // | ```tsx
 // | function f1(): void
 // | ```
-// | 
-// | 
-// | *@throws*
+// |
+// |
+// | *@throws* — {E}
 // | ----------------------------------------------------------------------
 // f2()
 // ^^
@@ -32,10 +32,10 @@
 // | ```tsx
 // | function f2(): void
 // | ```
-// | 
-// | 
-// | *@throws* — description
-// | 
+// |
+// |
+// | *@throws* — {E} description
+// |
 // | ----------------------------------------------------------------------
 // f3()
 // ^^
@@ -43,10 +43,10 @@
 // | ```tsx
 // | function f3(): void
 // | ```
-// | 
-// | 
+// |
+// |
 // | *@throws* — description
-// | 
+// |
 // | ----------------------------------------------------------------------
 [
   {
@@ -62,7 +62,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f1(): void\n```\n\n\n*@throws*"
+        "value": "```tsx\nfunction f1(): void\n```\n\n\n*@throws* — {E}"
       },
       "range": {
         "start": {
@@ -89,7 +89,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f2(): void\n```\n\n\n*@throws* — description\n"
+        "value": "```tsx\nfunction f2(): void\n```\n\n\n*@throws* — {E} description\n"
       },
       "range": {
         "start": {
