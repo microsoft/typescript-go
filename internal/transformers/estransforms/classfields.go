@@ -289,9 +289,7 @@ func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindElementAccessExpression:
 		return tx.visitElementAccessExpression(node.AsElementAccessExpression())
-	case ast.KindPrefixUnaryExpression:
-		return tx.visitPreOrPostfixUnaryExpression(node, false /*discarded*/)
-	case ast.KindPostfixUnaryExpression:
+	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
 		return tx.visitPreOrPostfixUnaryExpression(node, false /*discarded*/)
 	case ast.KindBinaryExpression:
 		return tx.visitBinaryExpression(node.AsBinaryExpression(), false /*discarded*/)
@@ -344,8 +342,7 @@ func (tx *classFieldsTransformer) visitHeritageClause(node *ast.Node) *ast.Node 
 	}
 }
 
-// visitAssignmentTarget visits the assignment target of a destructuring assignment.
-func (tx *classFieldsTransformer) visitAssignmentTarget(node *ast.Node) *ast.Node {
+func (tx *classFieldsTransformer) visitDestructuringAssignmentTarget(node *ast.Node) *ast.Node {
 	if ast.IsObjectLiteralExpression(node) || ast.IsArrayLiteralExpression(node) {
 		return tx.visitAssignmentPattern(node)
 	}
@@ -455,7 +452,6 @@ func (tx *classFieldsTransformer) transformPrivateIdentifierInInExpression(node 
 		receiver := tx.Visitor().VisitNode(node.Right)
 		result := tx.Factory().NewClassPrivateFieldInHelper(info.brandCheckIdentifier, receiver)
 		tx.EmitContext().SetOriginal(result, node.AsNode())
-		result.Loc = node.Loc
 		return result
 	}
 	// Private name has not been declared. Subsequent transformers will handle this error
@@ -683,6 +679,7 @@ func (tx *classFieldsTransformer) setCurrentClassElementAnd(classElement *ast.Cl
 	return visitor(tx, node)
 }
 
+// visitEachChildOfNode just calls Visitor.VisitEachChild, but is necessary to avoid repeated closure allocations when passing as a callback.
 func (tx *classFieldsTransformer) visitEachChildOfNode(node *ast.Node) *ast.Node {
 	return tx.Visitor().VisitEachChild(node)
 }
@@ -1370,7 +1367,7 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 		updated := tx.Factory().UpdateBinaryExpression(
 			node,
 			nil,
-			tx.visitAssignmentTarget(node.Left),
+			tx.visitDestructuringAssignmentTarget(node.Left),
 			nil,
 			node.OperatorToken,
 			tx.Visitor().VisitNode(node.Right),
@@ -3108,7 +3105,7 @@ func (tx *classFieldsTransformer) visitAssignmentElement(node *ast.Node) *ast.No
 		node = transformNamedEvaluation(tx.EmitContext(), node, false /*ignoreEmptyStringLiteral*/, "" /*assignedName*/)
 	}
 	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
-		left := tx.visitAssignmentTarget(node.AsBinaryExpression().Left)
+		left := tx.visitDestructuringAssignmentTarget(node.AsBinaryExpression().Left)
 		right := tx.Visitor().VisitNode(node.AsBinaryExpression().Right)
 		return tx.Factory().UpdateBinaryExpression(
 			node.AsBinaryExpression(),
@@ -3120,7 +3117,7 @@ func (tx *classFieldsTransformer) visitAssignmentElement(node *ast.Node) *ast.No
 		)
 	}
 	if ast.IsLeftHandSideExpression(node) {
-		return tx.visitAssignmentTarget(node)
+		return tx.visitDestructuringAssignmentTarget(node)
 	}
 	return tx.Visitor().VisitEachChild(node)
 }
@@ -3128,7 +3125,7 @@ func (tx *classFieldsTransformer) visitAssignmentElement(node *ast.Node) *ast.No
 func (tx *classFieldsTransformer) visitAssignmentRestElement(node *ast.Node) *ast.Node {
 	spread := node.AsSpreadElement()
 	if ast.IsLeftHandSideExpression(spread.Expression) {
-		expr := tx.visitAssignmentTarget(spread.Expression)
+		expr := tx.visitDestructuringAssignmentTarget(spread.Expression)
 		return tx.Factory().UpdateSpreadElement(spread, expr)
 	}
 	return tx.Visitor().VisitEachChild(node)
@@ -3164,7 +3161,7 @@ func (tx *classFieldsTransformer) visitAssignmentProperty(node *ast.Node) *ast.N
 		return tx.Factory().UpdatePropertyAssignment(prop, nil, name, nil, nil, assignElem)
 	}
 	if ast.IsLeftHandSideExpression(init) {
-		target := tx.visitAssignmentTarget(init)
+		target := tx.visitDestructuringAssignmentTarget(init)
 		return tx.Factory().UpdatePropertyAssignment(prop, nil, name, nil, nil, target)
 	}
 	return tx.Visitor().VisitEachChild(node)
@@ -3190,7 +3187,7 @@ func (tx *classFieldsTransformer) visitShorthandAssignmentProperty(node *ast.Nod
 func (tx *classFieldsTransformer) visitAssignmentRestProperty(node *ast.Node) *ast.Node {
 	spread := node.AsSpreadAssignment()
 	if ast.IsLeftHandSideExpression(spread.Expression) {
-		expr := tx.visitAssignmentTarget(spread.Expression)
+		expr := tx.visitDestructuringAssignmentTarget(spread.Expression)
 		return tx.Factory().UpdateSpreadAssignment(spread, expr)
 	}
 	return tx.Visitor().VisitEachChild(node)
