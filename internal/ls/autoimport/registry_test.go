@@ -610,8 +610,11 @@ export declare const otherValue: string;`,
 		appURI := lsconv.FileNameToDocumentURI(appIndex)
 		session.DidOpenFile(ctx, appURI, 1, files[appIndex].(string), lsproto.LanguageKindTypeScript)
 
+		autoimport.ResetExportAllocCount()
 		_, err := session.GetLanguageServiceWithAutoImports(ctx, appURI)
 		assert.NilError(t, err)
+		allocCount := autoimport.ExportAllocCount()
+		t.Logf("Export allocations: %d", allocCount)
 
 		stats := autoImportStats(t, session)
 		assert.Equal(t, len(stats.NodeModulesBuckets), 2, "expected both app and repo node_modules buckets")

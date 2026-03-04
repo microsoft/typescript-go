@@ -1,6 +1,7 @@
 package autoimport
 
 import (
+	"fmt"
 	"slices"
 	"sync/atomic"
 
@@ -12,6 +13,20 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+// TODO(debug): temporary global counter for measuring Export allocation dedup.
+var globalExportAllocCount atomic.Int64
+
+// ExportAllocCount returns the current global Export allocation count.
+func ExportAllocCount() int64 { return globalExportAllocCount.Load() }
+
+// ResetExportAllocCount resets the counter and returns the previous value.
+func ResetExportAllocCount() int64 { return globalExportAllocCount.Swap(0) }
+
+// PrintExportAllocCount prints and resets the counter. Useful for quick debugging.
+func PrintExportAllocCount(label string) {
+	fmt.Printf("[ExportAlloc] %s: %d\n", label, ResetExportAllocCount())
+}
 
 type symbolExtractor struct {
 	nodeModulesDirectory tspath.Path
@@ -253,6 +268,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 		return nil, nil
 	}
 
+	globalExportAllocCount.Add(1)
 	export := &Export{
 		ExportID: ExportID{
 			ExportName: symbol.Name,

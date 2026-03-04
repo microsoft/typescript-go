@@ -3,7 +3,9 @@ package autoimport
 import (
 	"cmp"
 	"context"
+	"fmt"
 	"maps"
+	"os"
 	"slices"
 	"strings"
 	"sync"
@@ -800,6 +802,9 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 		logger.Logf("Built %d indexes in %v", len(tasks), time.Since(start))
 	}
+
+	// TODO(debug): temporary — log Export allocation count to stderr for profiling.
+	fmt.Fprintf(os.Stderr, "[ExportAlloc] updateIndexes done: %d total Export objects created\n", ExportAllocCount())
 }
 
 func hasNewNonNodeModulesFiles(program *compiler.Program, bucket *RegistryBucket) bool {
@@ -1008,6 +1013,7 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 // check, extract exports) happens only once, but every bucket that needs the
 // package can install it into its own index and maps.
 type perPackageExtractionResult struct {
+	done             chan struct{} // closed when extraction is complete
 	packageFiles     map[tspath.Path]string
 	entrypoints      *module.ResolvedEntrypoints
 	exports          map[tspath.Path][]*Export
@@ -1124,33 +1130,44 @@ func (b *registryBuilder) extractPackages(
 			var realPackageDir string
 			if processedPackageRealpaths != nil && packageJson.DirectoryExists {
 				realPackageDir = b.host.FS().Realpath(packageJson.PackageDirectory)
-				if realPackageDir != "" {
-					if cached, ok := processedPackageRealpaths.Load(realPackageDir); ok {
-						// Reuse cached extraction result — install into this bucket.
-						exportsMu.Lock()
-						maps.Copy(result.exports, cached.exports)
-						if result.packageFiles[packageName] == nil {
-							result.packageFiles[packageName] = make(map[tspath.Path]string, len(cached.packageFiles))
-						}
-						maps.Copy(result.packageFiles[packageName], cached.packageFiles)
-						for name, fileNames := range cached.ambientModules {
-							result.ambientModuleNames[name] = append(result.ambientModuleNames[name], fileNames...)
-						}
-						exportsMu.Unlock()
-						entrypointsMu.Lock()
-						result.entrypoints = append(result.entrypoints, cached.entrypoints)
-						entrypointsMu.Unlock()
-						result.stats.exports.Add(cached.statsExports)
-						result.stats.usedChecker.Add(cached.statsUsedChecker)
-						return
+			}
+
+			// Singleflight: if another goroutine is already extracting this realpath,
+			// wait for it and reuse the result instead of extracting again.
+			if realPackageDir != "" {
+				placeholder := &perPackageExtractionResult{done: make(chan struct{})}
+				if existing, loaded := processedPackageRealpaths.LoadOrStore(realPackageDir, placeholder); loaded {
+					// Another goroutine owns extraction — wait for it, then install.
+					<-existing.done
+					exportsMu.Lock()
+					maps.Copy(result.exports, existing.exports)
+					if result.packageFiles[packageName] == nil {
+						result.packageFiles[packageName] = make(map[tspath.Path]string, len(existing.packageFiles))
 					}
+					maps.Copy(result.packageFiles[packageName], existing.packageFiles)
+					for name, fileNames := range existing.ambientModules {
+						result.ambientModuleNames[name] = append(result.ambientModuleNames[name], fileNames...)
+					}
+					exportsMu.Unlock()
+					entrypointsMu.Lock()
+					result.entrypoints = append(result.entrypoints, existing.entrypoints)
+					entrypointsMu.Unlock()
+					result.stats.exports.Add(existing.statsExports)
+					result.stats.usedChecker.Add(existing.statsUsedChecker)
+					return
 				}
+				// We own extraction for this realpath. placeholder.done will be closed below.
 			}
 
 			toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 			resolver := getModuleResolver(b.host, toRealpath)
 			packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 			if packageEntrypoints == nil {
+				if realPackageDir != "" {
+					if p, ok := processedPackageRealpaths.Load(realPackageDir); ok {
+						close(p.done)
+					}
+				}
 				return
 			}
 			if len(fileExcludePatterns) > 0 {
@@ -1166,6 +1183,11 @@ func (b *registryBuilder) extractPackages(
 				atomic.AddInt32(&result.skippedEntrypointsCount, count-int32(len(packageEntrypoints.Entrypoints)))
 			}
 			if len(packageEntrypoints.Entrypoints) == 0 {
+				if realPackageDir != "" {
+					if p, ok := processedPackageRealpaths.Load(realPackageDir); ok {
+						close(p.done)
+					}
+				}
 				return
 			}
 
@@ -1233,16 +1255,17 @@ func (b *registryBuilder) extractPackages(
 			result.stats.exports.Add(stats.exports.Load())
 			result.stats.usedChecker.Add(stats.usedChecker.Load())
 
-			// Store in cross-bucket cache for later buckets to reuse.
+			// Signal completion so waiting goroutines can reuse this result.
 			if realPackageDir != "" {
-				processedPackageRealpaths.LoadOrStore(realPackageDir, &perPackageExtractionResult{
-					packageFiles:     cachePackageFiles,
-					entrypoints:      packageEntrypoints,
-					exports:          cacheExports,
-					ambientModules:   cacheAmbientModules,
-					statsExports:     stats.exports.Load(),
-					statsUsedChecker: stats.usedChecker.Load(),
-				})
+				if p, ok := processedPackageRealpaths.Load(realPackageDir); ok {
+					p.packageFiles = cachePackageFiles
+					p.entrypoints = packageEntrypoints
+					p.exports = cacheExports
+					p.ambientModules = cacheAmbientModules
+					p.statsExports = stats.exports.Load()
+					p.statsUsedChecker = stats.usedChecker.Load()
+					close(p.done)
+				}
 			}
 		})
 	}
