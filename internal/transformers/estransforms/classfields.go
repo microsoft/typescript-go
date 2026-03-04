@@ -2318,6 +2318,7 @@ func (tx *classFieldsTransformer) transformConstructor(constructor *ast.Construc
 	}
 
 	if constructor != nil {
+		debug.Assert(parameters != nil)
 		return tx.Factory().UpdateConstructorDeclaration(
 			constructor,
 			nil, /*modifiers*/
@@ -2824,6 +2825,7 @@ func (tx *classFieldsTransformer) endClassLexicalEnvironment() {
 }
 
 func (tx *classFieldsTransformer) getClassLexicalEnvironment() *classLexicalEnvironment {
+	debug.Assert(tx.lexicalEnvironment != nil)
 	if tx.lexicalEnvironment.data == nil {
 		tx.lexicalEnvironment.data = &classLexicalEnvironment{}
 	}
@@ -2831,6 +2833,7 @@ func (tx *classFieldsTransformer) getClassLexicalEnvironment() *classLexicalEnvi
 }
 
 func (tx *classFieldsTransformer) getPrivateIdentifierEnvironment() *privateEnvironment {
+	debug.Assert(tx.lexicalEnvironment != nil)
 	if tx.lexicalEnvironment.privateEnv == nil {
 		tx.lexicalEnvironment.privateEnv = &privateEnvironment{
 			members: make(map[string]*privateIdentifierInfo),
@@ -3210,6 +3213,7 @@ func (tx *classFieldsTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 }
 
 func (tx *classFieldsTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
+	debug.AssertNode(node, ast.IsObjectBindingOrAssignmentElement)
 	if ast.IsSpreadAssignment(node) {
 		return tx.visitAssignmentRestProperty(node)
 	}

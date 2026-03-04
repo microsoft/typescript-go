@@ -171,6 +171,17 @@ func IsDestructuringAssignment(node *Node) bool {
 	return false
 }
 
+func IsObjectBindingOrAssignmentElement(node *Node) bool {
+	switch node.Kind {
+	case KindBindingElement,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindSpreadAssignment:
+		return true
+	}
+	return false
+}
+
 func IsArrayBindingOrAssignmentElement(node *Node) bool {
 	switch node.Kind {
 	case KindBindingElement,
