@@ -13,15 +13,15 @@
         "@types/which": "^3.0.4",
         "adm-zip": "^0.5.16",
         "chokidar": "^5.0.0",
-        "dprint": "^0.51.1",
+        "dprint": "^0.52.0",
         "execa": "^9.6.1",
-        "glob": "^13.0.1",
-        "hereby": "^1.11.1",
+        "glob": "^13.0.6",
+        "hereby": "^1.12.0",
         "p-limit": "^7.3.0",
         "picocolors": "^1.1.1",
         "tmp": "^0.2.5",
         "typescript": "^5.9.3",
-        "which": "^6.0.0"
+        "which": "^6.0.1"
     },
     "scripts": {
         "build": "hereby build",
@@ -39,9 +39,9 @@
         "./_extension",
         "./_packages/*"
     ],
-    "packageManager": "npm@11.9.0+sha512.04166853ddba142ca98f86fb57b1258a7c6c59ccb82acb3cf141b77a315898acaaed47395e74f7e0c7b69c486008e68be6a6381ef1aee5a23dd82e0e61decd68",
+    "packageManager": "npm@11.11.0+sha512.f36811c4aae1fde639527368ae44c571d050006a608d67a191f195a801a52637a312d259186254aa3a3799b05335b7390539cf28656d18f0591a1125ba35f973",
     "volta": {
         "node": "22.22.0",
-        "npm": "11.9.0"
+        "npm": "11.11.0"
     }
 }

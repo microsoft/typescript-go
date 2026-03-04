@@ -285,7 +285,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			uniques := &collections.Set[string]{}
 			stringLiteralTypes := append(
 				getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsNone), uniques, typeChecker),
-				getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsCompletions), uniques, typeChecker)...,
+				getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsIgnoreNodeInferences), uniques, typeChecker)...,
 			)
 			return toStringLiteralCompletionsFromTypes(stringLiteralTypes)
 		}
@@ -345,7 +345,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		return l.getStringLiteralCompletionsFromModuleNames(file, node, l.GetProgram(), typeChecker)
 	case ast.KindCaseClause:
 		tracker := newCaseClauseTracker(typeChecker, parent.Parent.AsCaseBlock().Clauses.Nodes)
-		contextualTypes := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		contextualTypes := fromContextualType(checker.ContextFlagsIgnoreNodeInferences, node, typeChecker)
 		if contextualTypes == nil {
 			return nil
 		}
@@ -408,7 +408,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
 		}
 	default:
-		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		result := fromContextualType(checker.ContextFlagsIgnoreNodeInferences, node, typeChecker)
 		if result != nil {
 			return &stringLiteralCompletions{
 				fromTypes: result,
@@ -453,7 +453,13 @@ func fromUnionableLiteralType(
 	typeChecker *checker.Checker,
 ) *stringLiteralCompletions {
 	switch grandparent.Kind {
-	case ast.KindExpressionWithTypeArguments, ast.KindTypeReference:
+	case ast.KindCallExpression,
+		ast.KindExpressionWithTypeArguments,
+		ast.KindJsxOpeningElement,
+		ast.KindJsxSelfClosingElement,
+		ast.KindNewExpression,
+		ast.KindTaggedTemplateExpression,
+		ast.KindTypeReference:
 		typeArgument := ast.FindAncestor(parent, func(n *ast.Node) bool { return n.Parent == grandparent })
 		if typeArgument != nil {
 			t := typeChecker.GetTypeArgumentConstraint(typeArgument)
@@ -516,6 +522,13 @@ func fromUnionableLiteralType(
 		default:
 			return nil
 		}
+	case ast.KindPropertySignature:
+		return &stringLiteralCompletions{
+			fromTypes: &completionsFromTypes{
+				types:           getStringLiteralTypes(getConstraintOfTypeArgumentProperty(grandparent, typeChecker), nil, typeChecker),
+				isNewIdentifier: false,
+			},
+		}
 	default:
 		return nil
 	}
@@ -530,7 +543,7 @@ func stringLiteralCompletionsForObjectLiteral(
 		return nil
 	}
 
-	completionsType := typeChecker.GetContextualType(objectLiteralExpression, checker.ContextFlagsCompletions)
+	completionsType := typeChecker.GetContextualType(objectLiteralExpression, checker.ContextFlagsIgnoreNodeInferences)
 	symbols := getPropertiesForObjectExpression(
 		contextualType,
 		completionsType,
@@ -2045,7 +2058,7 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
 			if symbol.Name == name {
-				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/, docFormat)
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, docFormat)
 			}
 		}
 	case completion.fromTypes != nil:

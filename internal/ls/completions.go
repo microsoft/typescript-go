@@ -344,7 +344,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	}
 
 	preferences := l.UserPreferences()
-	data, err := l.getCompletionData(ctx, checker, file, position, preferences)
+	data, err := l.getCompletionData(ctx, checker, file, position, preferences, false /*forItemResolve*/)
 	if err != nil {
 		return nil, err
 	}
@@ -417,6 +417,7 @@ func (l *LanguageService) getCompletionData(
 	file *ast.SourceFile,
 	position int,
 	preferences *lsutil.UserPreferences,
+	forItemResolve bool,
 ) (completionData, error) {
 	inCheckedFile := isCheckedFile(file, l.GetProgram().Options())
 
@@ -670,7 +671,7 @@ func (l *LanguageService) getCompletionData(
 	symbolToSortTextMap := map[ast.SymbolId]SortText{}
 	var seenPropertySymbols collections.Set[ast.SymbolId]
 	isTypeOnlyLocation := insideJSDocTagTypeExpression || insideJsDocImportTag ||
-		importStatementCompletion != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
+		importStatementCompletion != nil && location.Parent != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
 		!isContextTokenValueLocation(contextToken) &&
 			(isPossiblyTypeArgumentPosition(contextToken, file, typeChecker) ||
 				ast.IsPartOfTypeNode(location) ||
@@ -972,7 +973,7 @@ func (l *LanguageService) getCompletionData(
 				}
 				return globalsSearchContinue, nil
 			}
-			completionsType := typeChecker.GetContextualType(objectLikeContainer, checker.ContextFlagsCompletions)
+			completionsType := typeChecker.GetContextualType(objectLikeContainer, checker.ContextFlagsIgnoreNodeInferences)
 			t := core.IfElse(completionsType != nil, completionsType, instantiatedType)
 			stringIndexType := typeChecker.GetStringIndexType(t)
 			numberIndexType := typeChecker.GetNumberIndexType(t)
@@ -1078,7 +1079,7 @@ func (l *LanguageService) getCompletionData(
 			return true
 		}
 		// If not already a module, must have modules enabled.
-		if !preferences.IncludeCompletionsForModuleExports.IsTrue() {
+		if preferences.IncludeCompletionsForModuleExports.IsFalse() {
 			return false
 		}
 		// Always using ES modules in 6.0+
@@ -1087,6 +1088,11 @@ func (l *LanguageService) getCompletionData(
 
 	// Mutates `symbols`, `symbolToOriginInfoMap`, and `symbolToSortTextMap`
 	collectAutoImports := func() error {
+		// `completionItem/resolve` for auto-import completions should be resolved via the completion item data,
+		// so we don't need to collect auto-import entries again.
+		if forItemResolve {
+			return nil
+		}
 		if !shouldOfferImportCompletions() {
 			return nil
 		}
@@ -1104,6 +1110,9 @@ func (l *LanguageService) getCompletionData(
 		view, err := l.getPreparedAutoImportView(file)
 		if err != nil {
 			return err
+		}
+		if view == nil {
+			return nil
 		}
 
 		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
@@ -1389,7 +1398,7 @@ func (l *LanguageService) getCompletionData(
 		if attrsType == nil {
 			return globalsSearchContinue, nil
 		}
-		completionsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsCompletions)
+		completionsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsIgnoreNodeInferences)
 		filteredSymbols, spreadMemberNames := filterJsxAttributes(
 			getPropertiesForObjectExpression(attrsType, completionsType, jsxContainer.Attributes(), typeChecker),
 			jsxContainer.Attributes().Properties(),
@@ -1588,9 +1597,12 @@ func (l *LanguageService) getCompletionData(
 		}
 	}
 
-	var contextualType *checker.Type
+	var contextualTypeOrConstraint *checker.Type
 	if previousToken != nil {
-		contextualType = getContextualType(previousToken, position, file, typeChecker)
+		contextualTypeOrConstraint = getContextualType(previousToken, position, file, typeChecker)
+		if contextualTypeOrConstraint == nil {
+			contextualTypeOrConstraint = getConstraintOfTypeArgumentProperty(previousToken, typeChecker)
+		}
 	}
 
 	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
@@ -1599,10 +1611,10 @@ func (l *LanguageService) getCompletionData(
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
-		if contextualType != nil && contextualType.IsUnion() {
-			types = contextualType.Types()
-		} else if contextualType != nil {
-			types = []*checker.Type{contextualType}
+		if contextualTypeOrConstraint != nil && contextualTypeOrConstraint.IsUnion() {
+			types = contextualTypeOrConstraint.Types()
+		} else if contextualTypeOrConstraint != nil {
+			types = []*checker.Type{contextualTypeOrConstraint}
 		}
 		literals = core.MapNonNil(types, func(t *checker.Type) literalValue {
 			if isLiteral(t) && !t.IsEnumLiteral() {
@@ -1613,8 +1625,8 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	var recommendedCompletion *ast.Symbol
-	if previousToken != nil && contextualType != nil {
-		recommendedCompletion = getRecommendedCompletion(previousToken, contextualType, typeChecker)
+	if previousToken != nil && contextualTypeOrConstraint != nil {
+		recommendedCompletion = getRecommendedCompletion(previousToken, contextualTypeOrConstraint, typeChecker)
 	}
 
 	if defaultCommitCharacters == nil {
@@ -2124,7 +2136,7 @@ func (l *LanguageService) createCompletionItem(
 		!data.isRightOfOpenTag &&
 		clientSupportsItemSnippet(ctx) &&
 		preferences.JsxAttributeCompletionStyle != lsutil.JsxAttributeCompletionStyleNone &&
-		!(ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
+		!(data.location.Parent != nil && ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
 		useBraces := preferences.JsxAttributeCompletionStyle == lsutil.JsxAttributeCompletionStyleBraces
 		t := typeChecker.GetTypeOfSymbolAtLocation(symbol, data.location)
 
@@ -2794,7 +2806,7 @@ func getContextualTypeForConditionalExpression(conditionalExpr *ast.Node, positi
 		return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
 	}
 	// Fall through to regular contextual type logic if not in an argument
-	contextualType := typeChecker.GetContextualType(conditionalExpr, checker.ContextFlagsCompletions)
+	contextualType := typeChecker.GetContextualType(conditionalExpr, checker.ContextFlagsIgnoreNodeInferences)
 	if contextualType != nil {
 		return contextualType
 	}
@@ -2882,7 +2894,7 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		// completion at `x ===/**/`
 		return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
 	} else {
-		contextualType := typeChecker.GetContextualType(previousToken, checker.ContextFlagsCompletions)
+		contextualType := typeChecker.GetContextualType(previousToken, checker.ContextFlagsIgnoreNodeInferences)
 		if contextualType != nil {
 			return contextualType
 		}
@@ -3629,8 +3641,11 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 		return nil
 	}
 
-	if ast.IsTypeNode(node) && ast.IsTypeReferenceType(node.Parent) {
-		return typeChecker.GetTypeArgumentConstraint(node)
+	if ast.IsTypeNode(node) {
+		constraint := typeChecker.GetTypeArgumentConstraint(node)
+		if constraint != nil {
+			return constraint
+		}
 	}
 
 	t := getConstraintOfTypeArgumentProperty(node.Parent, typeChecker)
@@ -3641,8 +3656,16 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 	switch node.Kind {
 	case ast.KindPropertySignature:
 		return typeChecker.GetTypeOfPropertyOfContextualType(t, node.Symbol().Name)
+	case ast.KindColonToken:
+		if node.Parent.Kind == ast.KindPropertySignature {
+			// The cursor is at a property value location like `Foo<{ x: | }`.
+			// `t` already refers to the appropriate property type.
+			return t
+		}
 	case ast.KindIntersectionType, ast.KindTypeLiteral, ast.KindUnionType:
 		return t
+	case ast.KindOpenBracketToken:
+		return typeChecker.GetElementTypeOfArrayType(t)
 	}
 
 	return nil
@@ -4869,7 +4892,6 @@ func (l *LanguageService) getCompletionItemDetails(
 			symbolDetails.symbol,
 			checker,
 			symbolDetails.location,
-			nil,
 			docFormat,
 		)
 	case symbolCompletion.literal != nil:
@@ -4918,7 +4940,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 		}
 	}
 
-	completionData, err := l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
+	completionData, err := l.getCompletionData(ctx, ch, file, position, l.UserPreferences(), true /*forItemResolve*/)
 	if err != nil {
 		panic(err)
 	}
@@ -5018,21 +5040,10 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	symbol *ast.Symbol,
 	checker *checker.Checker,
 	location *ast.Node,
-	actions []codeAction,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	details := make([]string, 0, len(actions)+1)
-	edits := make([]*lsproto.TextEdit, 0, len(actions))
-	for _, action := range actions {
-		details = append(details, action.description)
-		edits = append(edits, action.changes...)
-	}
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat)
-	details = append(details, quickInfo)
-	if len(edits) != 0 {
-		item.AdditionalTextEdits = &edits
-	}
-	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
+	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 
 func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Node, sourceFile *ast.SourceFile) importStatementCompletionInfo {
@@ -5254,7 +5265,7 @@ func tryGetTypeExpressionFromTag(tag *ast.JSDocTag) *ast.Node {
 func isTagWithTypeExpression(tag *ast.JSDocTag) bool {
 	switch tag.Kind {
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocReturnTag, ast.KindJSDocTypeTag,
-		ast.KindJSDocTypedefTag, ast.KindJSDocSatisfiesTag:
+		ast.KindJSDocTypedefTag, ast.KindJSDocThrowsTag, ast.KindJSDocSatisfiesTag:
 		return true
 	case ast.KindJSDocTemplateTag:
 		return tag.AsJSDocTemplateTag().Constraint != nil
@@ -5865,16 +5876,18 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			if err != nil {
 				return nil, err
 			}
-			importAdder = autoimport.NewImportAdder(
-				ctx,
-				program,
-				c,
-				file,
-				view,
-				l.FormatOptions(),
-				l.converters,
-				l.UserPreferences(),
-			)
+			if view != nil {
+				importAdder = autoimport.NewImportAdder(
+					ctx,
+					program,
+					c,
+					file,
+					view,
+					l.FormatOptions(),
+					l.converters,
+					l.UserPreferences(),
+				)
+			}
 		}
 
 		var elements []*ast.Expression

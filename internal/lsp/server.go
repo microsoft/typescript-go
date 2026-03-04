@@ -105,6 +105,9 @@ func (r *lspReader) Read() (*lsproto.Message, error) {
 
 	req := &lsproto.Message{}
 	if err := json.Unmarshal(data, req); err != nil {
+		if errors.Is(err, lsproto.ErrorCodeInvalidParams) {
+			return req, fmt.Errorf("%w: %w", lsproto.ErrorCodeInvalidParams, err)
+		}
 		return nil, fmt.Errorf("%w: %w", lsproto.ErrorCodeInvalidRequest, err)
 	}
 
@@ -281,7 +284,18 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		// if no configuration request capapbility, return default config
+		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.UserPreferences != nil {
+			s.logger.Logf(
+				"received formatting options from initialization: %T\n%+v",
+				*s.initializeParams.InitializationOptions.UserPreferences,
+				*s.initializeParams.InitializationOptions.UserPreferences,
+			)
+			// Any options received via initializationOptions will be used for both `js` and `ts` options
+			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
+				return lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences().ParseWorker(config)), nil
+			}
+		}
+		// if no configuration request capability, return default config
 		return lsutil.NewUserConfig(nil), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
@@ -295,12 +309,35 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 			{
 				Section: new("javascript"),
 			},
+			{
+				Section: new("editor"),
+			},
 		},
 	})
 	if err != nil {
 		return &lsutil.UserConfig{}, fmt.Errorf("configure request failed: %w", err)
 	}
-	return lsutil.ParseNewUserConfig(configs), nil
+	configMap := map[string]any{}
+	for i, config := range configs {
+		switch i {
+		case 0:
+			configMap["js/ts"] = config
+		case 1:
+			configMap["typescript"] = config
+		case 2:
+			configMap["javascript"] = config
+		case 3:
+			configMap["editor"] = config
+		}
+	}
+	s.logger.Logf(
+		"received options from workspace/configuration request:\njs/ts: %+v\n\ntypescript: %+v\n\njavascript: %+v\n\neditor: %+v\n",
+		configMap["js/ts"],
+		configMap["typescript"],
+		configMap["javascript"],
+		configMap["editor"],
+	)
+	return lsutil.ParseNewUserConfig(configMap), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -334,8 +371,14 @@ func (s *Server) readLoop(ctx context.Context) error {
 		}
 		msg, err := s.read()
 		if err != nil {
-			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
-				if err := s.sendError(nil, err); err != nil {
+			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) || errors.Is(err, lsproto.ErrorCodeInvalidParams) {
+				var id *jsonrpc.ID
+				if errors.Is(err, lsproto.ErrorCodeInvalidParams) {
+					if msg != nil && msg.Kind == jsonrpc.MessageKindRequest {
+						id = msg.AsRequest().ID
+					}
+				}
+				if err := s.sendError(id, err); err != nil {
 					return err
 				}
 				continue
@@ -415,32 +458,40 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 				s.pendingClientRequestsMu.Unlock()
 			}
 
-			handle := func() {
-				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
-					if errors.Is(err, context.Canceled) {
-						if err := s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled); err != nil {
-							lspExit(err)
-						}
-					} else if errors.Is(err, io.EOF) {
-						lspExit(nil)
-					} else {
-						if err := s.sendError(req.ID, err); err != nil {
-							lspExit(err)
-						}
+			handleError := func(err error) {
+				if errors.Is(err, context.Canceled) {
+					if err := s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled); err != nil {
+						lspExit(err)
 					}
-				}
-
-				if req.ID != nil {
-					s.pendingClientRequestsMu.Lock()
-					delete(s.pendingClientRequests, *req.ID)
-					s.pendingClientRequestsMu.Unlock()
+				} else if errors.Is(err, io.EOF) {
+					lspExit(nil)
+				} else {
+					if err := s.sendError(req.ID, err); err != nil {
+						lspExit(err)
+					}
 				}
 			}
 
-			if isBlockingMethod(req.Method) {
-				handle()
+			removeRequest := func() {
+				if req.ID != nil {
+					s.pendingClientRequestsMu.Lock()
+					defer s.pendingClientRequestsMu.Unlock()
+					delete(s.pendingClientRequests, *req.ID)
+				}
+			}
+
+			if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
+				handleError(err)
+				removeRequest()
+			} else if doAsyncWork != nil {
+				go func() {
+					if lsError := doAsyncWork(); lsError != nil {
+						handleError(lsError)
+					}
+					removeRequest()
+				}()
 			} else {
-				go handle()
+				removeRequest()
 			}
 		}
 	}
@@ -500,6 +551,12 @@ func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 }
 
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
+	// Do not send error response for notifications,
+	// except for parse errors which may occur before determining if the message is a request or notification.
+	if id == nil && !errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
+		s.logger.Errorf("error handling notification: %s", err)
+		return nil
+	}
 	code := lsproto.ErrorCodeInternalError
 	if errCode, ok := errors.AsType[lsproto.ErrorCode](err); ok {
 		code = errCode
@@ -532,27 +589,46 @@ func (s *Server) send(msg *lsproto.Message) error {
 	}
 }
 
-func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
+// handleRequestOrNotification looks up the handler for the given request or notification, executes its synchronous work
+// and returns any asynchronous work as a function to be executed by the caller.
+func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 	ctx = lsproto.WithClientCapabilities(ctx, &s.clientCapabilities)
 
 	if handler := handlers()[req.Method]; handler != nil {
 		start := time.Now()
-		err := handler(s, ctx, req)
+		doAsyncWork, err := handler(s, ctx, req)
 		idStr := ""
 		if req.ID != nil {
 			idStr = " (" + req.ID.String() + ")"
 		}
+		if err != nil {
+			s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
+			return nil, err
+		}
+		if doAsyncWork != nil {
+			return func() error {
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+				asyncWorkErr := doAsyncWork()
+				s.logger.Info(core.IfElse(asyncWorkErr != nil, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
+				return asyncWorkErr
+			}, nil
+		}
 		s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
-		return err
+		return nil, nil
 	}
 	s.logger.Warn("unknown method '", req.Method, "'")
 	if req.ID != nil {
-		return s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
+		return nil, s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
 	}
-	return nil
+	return nil, nil
 }
 
-type handlerMap map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) error
+// handlerMap maps LSP method to a handler function. The handler function executes any work that must be done synchronously
+// before other requests/notifications can be processed, and returns any additional work as a function to be executed
+// asynchronously after the synchronous work is complete.
+type handlerMap map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) (func() error, error)
 
 var handlers = sync.OnceValue(func() handlerMap {
 	handlers := make(handlerMap)
@@ -615,9 +691,9 @@ var handlers = sync.OnceValue(func() handlerMap {
 })
 
 func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
-	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 		if s.session == nil && req.Method != lsproto.MethodInitialized {
-			return lsproto.ErrorCodeServerNotInitialized
+			return nil, lsproto.ErrorCodeServerNotInitialized
 		}
 
 		var params Req
@@ -626,9 +702,9 @@ func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.Noti
 			params = req.Params.(Req)
 		}
 		if err := fn(s, ctx, params); err != nil {
-			return err
+			return nil, err
 		}
-		return ctx.Err()
+		return nil, ctx.Err()
 	}
 }
 
@@ -637,9 +713,9 @@ func registerRequestHandler[Req, Resp any](
 	info lsproto.RequestInfo[Req, Resp],
 	fn func(*Server, context.Context, Req, *lsproto.RequestMessage) (Resp, error),
 ) {
-	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 		if s.session == nil && req.Method != lsproto.MethodInitialize {
-			return lsproto.ErrorCodeServerNotInitialized
+			return nil, lsproto.ErrorCodeServerNotInitialized
 		}
 
 		var params Req
@@ -649,17 +725,17 @@ func registerRequestHandler[Req, Resp any](
 		}
 		resp, err := fn(s, ctx, params, req)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if ctx.Err() != nil {
-			return ctx.Err()
+			return nil, ctx.Err()
 		}
-		return s.sendResult(req.ID, resp)
+		return nil, s.sendResult(req.ID, resp)
 	}
 }
 
 func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
-	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 		var params Req
 		// Ignore empty params.
 		if req.Params != nil {
@@ -667,22 +743,24 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		}
 		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
-			return err
+			return nil, err
 		}
-		defer s.recover(ctx, req)
-		resp, err := fn(s, ctx, ls, params)
-		if err != nil {
-			return err
-		}
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
-		return s.sendResult(req.ID, resp)
+		return func() error {
+			defer s.recover(req)
+			resp, lsErr := fn(s, ctx, ls, params)
+			if lsErr != nil {
+				return lsErr
+			}
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
+			return s.sendResult(req.ID, resp)
+		}, nil
 	}
 }
 
 func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
-	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 		var params Req
 		// Ignore empty params.
 		if req.Params != nil {
@@ -690,30 +768,32 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		}
 		languageService, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
-			return err
+			return nil, err
 		}
-		defer s.recover(ctx, req)
-		resp, err := fn(s, ctx, languageService, params)
-		if errors.Is(err, ls.ErrNeedsAutoImports) {
-			languageService, err = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocumentURI())
-			if err != nil {
-				return err
+		return func() error {
+			defer s.recover(req)
+			resp, lsErr := fn(s, ctx, languageService, params)
+			if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
+				languageService, lsErr = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocumentURI())
+				if lsErr != nil {
+					return lsErr
+				}
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+				resp, lsErr = fn(s, ctx, languageService, params)
+				if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
+					panic(info.Method + " returned ErrNeedsAutoImports even after enabling auto imports")
+				}
+			}
+			if lsErr != nil {
+				return lsErr
 			}
 			if ctx.Err() != nil {
 				return ctx.Err()
 			}
-			resp, err = fn(s, ctx, languageService, params)
-			if errors.Is(err, ls.ErrNeedsAutoImports) {
-				panic(info.Method + " returned ErrNeedsAutoImports even after enabling auto imports")
-			}
-		}
-		if err != nil {
-			return err
-		}
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
-		return s.sendResult(req.ID, resp)
+			return s.sendResult(req.ID, resp)
+		}, nil
 	}
 }
 
@@ -722,7 +802,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	info lsproto.RequestInfo[Req, Resp],
 	fn func(*ls.LanguageService, context.Context, Req, ls.CrossProjectOrchestrator) (Resp, error),
 ) {
-	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 		var params Req
 		// Ignore empty params.
 		if req.Params != nil {
@@ -731,14 +811,16 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		// !!! sheetal: multiple projects that contain the file through symlinks
 		defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		defer s.recover(ctx, req)
-		resp, err := fn(defaultLs, ctx, params, orchestrator)
-		if err != nil {
-			return err
-		}
-		return s.sendResult(req.ID, resp)
+		return func() error {
+			defer s.recover(req)
+			resp, lsErr := fn(defaultLs, ctx, params, orchestrator)
+			if lsErr != nil {
+				return lsErr
+			}
+			return s.sendResult(req.ID, resp)
+		}, nil
 	}
 }
 
@@ -786,17 +868,17 @@ func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Conte
 	return defaultLs, orchestrator, err
 }
 
-func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
+func (s *Server) recover(req *lsproto.RequestMessage) {
 	if r := recover(); r != nil {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
 			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 			if err != nil {
-				panic(err)
+				return
 			}
 
-			err = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+			_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
 				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
 					Properties: &lsproto.RequestFailureTelemetryProperties{
 						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
@@ -805,9 +887,6 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 					},
 				},
 			})
-			if err != nil {
-				panic(err)
-			}
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
 		}
@@ -1001,7 +1080,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 				RegisterOptions: &lsproto.RegisterOptions{
 					DidChangeConfiguration: &lsproto.DidChangeConfigurationRegistrationOptions{
 						Section: &lsproto.StringOrStrings{
-							Strings: &[]string{"js/ts", "typescript", "javascript"},
+							Strings: &[]string{"js/ts", "typescript", "javascript", "editor"},
 						},
 					},
 				},
@@ -1033,14 +1112,10 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 }
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
-	// !!! only implemented because needed for fourslash
 	if params.Settings == nil {
 		return nil
-	} else if settings, ok := params.Settings.([]any); ok {
-		s.session.Configure(lsutil.ParseNewUserConfig(settings))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
-		// fourslash case
-		s.session.Configure(lsutil.ParseNewUserConfig([]any{settings["js/ts"], settings["typescript"], settings["javascript"]}))
+		s.session.Configure(lsutil.ParseNewUserConfig(settings))
 	}
 	return nil
 }
@@ -1133,7 +1208,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	defer s.recover(ctx, reqMsg)
+	defer s.recover(reqMsg)
 	return languageService.ResolveCompletionItem(
 		ctx,
 		params,
@@ -1170,7 +1245,7 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
 	snapshot := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
-	defer s.recover(ctx, reqMsg)
+	defer s.recover(reqMsg)
 
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 	return ls.ProvideWorkspaceSymbols(
@@ -1224,7 +1299,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 		// based on non-existent files and line maps from shortened files.
 		return codeLens, lsproto.ErrorCodeContentModified
 	}
-	defer s.recover(ctx, reqMsg)
+	defer s.recover(reqMsg)
 	return defaultLs.ResolveCodeLens(
 		ctx,
 		codeLens,
@@ -1303,8 +1378,24 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 			return
 		}
 
+		// Create a cancellable context for the API connection
+		apiCtx, apiCancel := context.WithCancel(s.backgroundCtx)
+		defer apiCancel()
+
+		// Run the connection with panic recovery
+		defer func() {
+			if r := recover(); r != nil {
+				stack := debug.Stack()
+				s.logger.Errorf("API session %s: panic: %v\n%s", apiSession.ID(), r, string(stack))
+				// Cancel the context to shut down the connection
+				apiCancel()
+				// Close the underlying connection
+				rwc.Close()
+			}
+		}()
+
 		conn := api.NewAsyncConn(rwc, apiSession)
-		if apiErr := conn.Run(s.backgroundCtx); apiErr != nil {
+		if apiErr := conn.Run(apiCtx); apiErr != nil {
 			s.logger.Errorf("API session %s: %v", apiSession.ID(), apiErr)
 		}
 	}()
@@ -1341,22 +1432,6 @@ func (s *Server) SetCompilerOptionsForInferredProjects(ctx context.Context, opti
 // NpmInstall implements ata.NpmExecutor
 func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 	return s.npmInstall(cwd, args)
-}
-
-func isBlockingMethod(method lsproto.Method) bool {
-	switch method {
-	case lsproto.MethodInitialize,
-		lsproto.MethodInitialized,
-		lsproto.MethodTextDocumentDidOpen,
-		lsproto.MethodTextDocumentDidChange,
-		lsproto.MethodTextDocumentDidSave,
-		lsproto.MethodTextDocumentDidClose,
-		lsproto.MethodWorkspaceDidChangeWatchedFiles,
-		lsproto.MethodWorkspaceDidChangeConfiguration,
-		lsproto.MethodWorkspaceConfiguration:
-		return true
-	}
-	return false
 }
 
 // Developer/debugging command handlers

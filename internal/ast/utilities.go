@@ -1191,6 +1191,44 @@ func IsVarUsing(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsUsing
 }
 
+// GetJSDocDeprecatedTag returns the first @deprecated JSDoc tag for the given node, or nil if none exists.
+func GetJSDocDeprecatedTag(node *Node) *Node {
+	for _, jsdoc := range node.JSDoc(nil) {
+		tags := jsdoc.AsJSDoc().Tags
+		if tags != nil {
+			for _, tag := range tags.Nodes {
+				if IsJSDocDeprecatedTag(tag) {
+					return tag
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// IsDeprecatedDeclaration reports whether the given declaration is marked as @deprecated.
+// It checks NodeFlagsPossiblyContainsDeprecatedTag on combined node flags, then confirms
+// by walking up to find the node with the flag and performing a JSDoc lookup.
+func IsDeprecatedDeclaration(declaration *Node) bool {
+	return IsDeprecatedDeclarationWithCachedFlags(declaration, GetCombinedNodeFlags(declaration))
+}
+
+// IsDeprecatedDeclarationWithCachedFlags is the core logic for IsDeprecatedDeclaration,
+// parameterized on pre-computed combined flags so the checker can supply cached flags.
+func IsDeprecatedDeclarationWithCachedFlags(declaration *Node, combinedFlags NodeFlags) bool {
+	if combinedFlags&NodeFlagsPossiblyContainsDeprecatedTag == 0 {
+		return false
+	}
+	// Walk up to find the node that directly has the flag, since JSDoc is
+	// attached to that node (e.g. VariableStatement, not VariableDeclaration).
+	for n := declaration; n != nil; n = n.Parent {
+		if n.Flags&NodeFlagsPossiblyContainsDeprecatedTag != 0 {
+			return GetJSDocDeprecatedTag(n) != nil
+		}
+	}
+	return false
+}
+
 // Gets whether a bound `VariableDeclaration` or `VariableDeclarationList` is part of a `const` declaration.
 func IsVarConst(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsConst
@@ -1810,11 +1848,18 @@ func IsInstanceOfExpression(node *Node) bool {
 }
 
 func IsAnyImportOrReExport(node *Node) bool {
-	return IsAnyImportSyntax(node) || IsExportDeclaration(node)
+	return IsImportNode(node) || IsExportDeclaration(node)
 }
 
+func IsImportNode(node *Node) bool {
+	return IsAnyImportSyntax(node) || NodeKindIs(node, KindJSImportDeclaration)
+}
+
+// Checks if the node is a genuine import declation. In particular the re-parsed KindJSImportDeclaration
+// is explicitly excluded because the callers of this function are typically not prepared to handle it properly.
+// For more permissive check, use IsImportNode.
 func IsAnyImportSyntax(node *Node) bool {
-	return NodeKindIs(node, KindImportDeclaration, KindJSImportDeclaration, KindImportEqualsDeclaration)
+	return NodeKindIs(node, KindImportDeclaration, KindImportEqualsDeclaration)
 }
 
 func IsJsonSourceFile(file *SourceFile) bool {
@@ -2742,20 +2787,34 @@ func GetPragmaArgument(pragma *Pragma, name string) string {
 // The variable must not be exported and must not have a type annotation, even a jsdoc one.
 // The initializer must be a call to `require` with a string literal or a string literal-like argument.
 func IsVariableDeclarationInitializedToRequire(node *Node) bool {
-	if !IsInJSFile(node) {
-		return false
-	}
 	if node.Kind == KindBindingElement {
 		node = node.Parent.Parent
+	}
+	return isVariableDeclarationInitializedWithRequireHelper(node, false /*allowAccessedRequire*/)
+}
+
+func IsVariableDeclarationInitializedToBareOrAccessedRequire(node *Node) bool {
+	return isVariableDeclarationInitializedWithRequireHelper(node, true /*allowAccessedRequire*/)
+}
+
+func isVariableDeclarationInitializedWithRequireHelper(node *Node, allowAccessedRequire bool) bool {
+	if !IsInJSFile(node) {
+		return false
 	}
 	if node.Kind != KindVariableDeclaration {
 		return false
 	}
+	initializer := node.Initializer()
+	if initializer == nil {
+		return false
+	}
+	if allowAccessedRequire {
+		initializer = GetLeftmostAccessExpression(initializer)
+	}
 
 	return node.Parent.Parent.ModifierFlags()&ModifierFlagsExport == 0 &&
-		node.Initializer() != nil &&
 		node.Type() == nil &&
-		IsRequireCall(node.Initializer(), true /*requireStringLiteralLikeArgument*/)
+		IsRequireCall(initializer, true /*requireStringLiteralLikeArgument*/)
 }
 
 func IsModuleExportsAccessExpression(node *Node) bool {
@@ -2897,12 +2956,20 @@ func IsParameterPropertyModifier(kind Kind) bool {
 }
 
 func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
-	if node.Flags&NodeFlagsHasJSDoc != 0 {
-		if visitNodes(v, node.JSDoc(sourceFile)) {
-			return true
-		}
+	if visitNodes(v, node.JSDoc(sourceFile)) {
+		return true
 	}
 	return node.ForEachChild(v)
+}
+
+func HasTypeArguments(node *Node) bool {
+	switch node.Kind {
+	case KindCallExpression, KindNewExpression, KindTaggedTemplateExpression,
+		KindTypeReference, KindExpressionWithTypeArguments, KindImportType,
+		KindTypeQuery, KindJsxOpeningElement, KindJsxSelfClosingElement:
+		return true
+	}
+	return false
 }
 
 func IsTypeReferenceType(node *Node) bool {
@@ -3680,7 +3747,7 @@ func hasComment(kind Kind) bool {
 		KindJSDocReadonlyTag, KindJSDocOverrideTag, KindJSDocCallbackTag, KindJSDocOverloadTag,
 		KindJSDocParameterTag, KindJSDocPropertyTag, KindJSDocReturnTag, KindJSDocThisTag,
 		KindJSDocTypeTag, KindJSDocTemplateTag, KindJSDocTypedefTag, KindJSDocSeeTag,
-		KindJSDocSatisfiesTag, KindJSDocImportTag:
+		KindJSDocThrowsTag, KindJSDocSatisfiesTag, KindJSDocImportTag:
 		return true
 	default:
 		return false
@@ -3795,7 +3862,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 		// `1` in `let { 1: b } = ...`
 		if bindingElement.PropertyName() != nil {
 			propertyName := bindingElement.PropertyName()
-			// if ast.IsPrivateIdentifier(propertyName) {
+			// if IsPrivateIdentifier(propertyName) {
 			// 	return Debug.failBadSyntaxKind(propertyName) // !!!
 			// }
 			if IsComputedPropertyName(propertyName) && IsStringOrNumericLiteralLike(propertyName.Expression()) {
@@ -3810,7 +3877,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 		// `1` in `({ 1: b } = ...)`
 		if bindingElement.Name() != nil {
 			propertyName := bindingElement.Name()
-			// if ast.IsPrivateIdentifier(propertyName) {
+			// if IsPrivateIdentifier(propertyName) {
 			// 	return Debug.failBadSyntaxKind(propertyName) // !!!
 			// }
 			if IsComputedPropertyName(propertyName) && IsStringOrNumericLiteralLike(propertyName.Expression()) {
@@ -3820,7 +3887,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 		}
 	case KindSpreadAssignment:
 		// `a` in `({ ...a } = ...)`
-		// if ast.IsPrivateIdentifier(bindingElement.Name()) {
+		// if IsPrivateIdentifier(bindingElement.Name()) {
 		// 	return Debug.failBadSyntaxKind(bindingElement.Name()) // !!!
 		// }
 		return bindingElement.Name()
@@ -4133,7 +4200,7 @@ func GetAllAccessorDeclarationsForDeclaration(accessor *AccessorDeclaration, dec
 	} else {
 		panic(fmt.Sprintf("Unexpected node kind %q", accessor.Kind))
 	}
-	// otherAccessor := ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
+	// otherAccessor := GetDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
 	var otherAccessor *AccessorDeclaration
 	for _, d := range declarationsOfSymbol {
 		if d.Kind == otherKind {
@@ -4301,4 +4368,10 @@ func findCloneInNode(node *Node, original *Node) *Node {
 			return nil
 		}
 	}
+}
+
+// IsSuperProperty checks if a node is super.x or super[x].
+func IsSuperProperty(node *Node) bool {
+	return (IsPropertyAccessExpression(node) || IsElementAccessExpression(node)) &&
+		node.Expression().Kind == KindSuperKeyword
 }

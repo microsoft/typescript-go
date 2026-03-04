@@ -159,9 +159,8 @@ func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []st
 }
 
 type APISnapshotRequest struct {
-	OpenProjects   *collections.Set[string]
-	CloseProjects  *collections.Set[tspath.Path]
-	UpdateProjects *collections.Set[tspath.Path]
+	OpenProjects  *collections.Set[string]
+	CloseProjects *collections.Set[tspath.Path]
 }
 
 type ProjectTreeRequest struct {
@@ -213,6 +212,8 @@ type SnapshotChange struct {
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
+	// cleanDiskCache triggers cleaning of cached disk files not referenced by any open project.
+	cleanDiskCache bool
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -270,6 +271,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", getDetails())
 		case UpdateReasonRequestedLoadProjectTree:
 			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
+		case UpdateReasonIdleCleanDiskCache:
+			logger.Logf("Reason: IdleCleanDiskCache")
 		}
 	}
 
@@ -277,7 +280,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
-		if !fs.watchChangesOverlapCache(change.fileChanges) {
+		if change.fileChanges.InvalidateAll {
+			fs.invalidateCache()
+			logger.Logf("InvalidateAll: invalidated file cache in %v", time.Since(invalidateStart))
+		} else if !fs.watchChangesOverlapCache(change.fileChanges) {
+			// All watch changes/deletes are files we haven't seen; should be irrelevant to us (probably an external tool's build or something)
 			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
 			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
 		} else if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
@@ -312,17 +319,17 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.extendedConfigCache,
 	)
 
-	var apiError error
-	if change.apiRequest != nil {
-		apiError = projectCollectionBuilder.HandleAPIRequest(change.apiRequest, logger.Fork("HandleAPIRequest"))
-	}
-
 	if len(change.ataChanges) != 0 {
 		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
 	}
 
 	if !change.fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))
+	}
+
+	var apiError error
+	if change.apiRequest != nil {
+		apiError = projectCollectionBuilder.HandleAPIRequest(change.apiRequest, logger.Fork("HandleAPIRequest"))
 	}
 
 	for _, uri := range change.Documents {
@@ -346,11 +353,17 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	// Clean cached disk files not touched by any open project. It's not important that we do this on
-	// file open specifically, but we don't need to do it on every snapshot clone.
-	if change.fileChanges.Opened != "" || change.fileChanges.Reopened != "" {
+	// Clean cached disk files not touched by any open project on file open, close, delete,
+	// or when explicitly requested (e.g. by an idle timer).
+	shouldCleanDiskCache := change.cleanDiskCache ||
+		change.fileChanges.Opened != "" ||
+		change.fileChanges.Reopened != "" ||
+		change.fileChanges.Closed.Len() > 0 ||
+		change.fileChanges.Deleted.Len() > 0
+	if shouldCleanDiskCache {
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
-		if len(projectsWithNewProgramStructure) > 0 {
+		// When cleanDiskCache is explicitly set, always attempt cleaning.
+		if len(projectsWithNewProgramStructure) > 0 || change.cleanDiskCache {
 			cleanFilesStart := time.Now()
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
@@ -364,7 +377,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 				return true
 			})
 			if session.options.LoggingEnabled {
-				logger.Logf("Removed %d cached files in %v", removedFiles, time.Since(cleanFilesStart))
+				logger.Logf("Removed %d cached file(s) in %v", removedFiles, time.Since(cleanFilesStart))
 			}
 		}
 	}
@@ -457,6 +470,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			}
 		}
 	}
+
+	autoImportHost.Dispose()
 
 	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot
