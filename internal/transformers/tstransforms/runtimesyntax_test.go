@@ -60,18 +60,14 @@ func TestEnumTransformer(t *testing.T) {
     var auto;
     E[E["A"] = auto = x] = "A";
     E[E["B"] = ++auto] = "B";
-    E["C"] = y;
-    if (typeof E.C !== "string") E[E.C] = "C";
+    E[E["C"] = y] = "C";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #6", input: "enum E {A = x,B = y,C = z}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E.A !== "string") E[E.A] = "A";
-    E["B"] = y;
-    if (typeof E.B !== "string") E[E.B] = "B";
-    E["C"] = z;
-    if (typeof E.C !== "string") E[E.C] = "C";
+    E[E["A"] = x] = "A";
+    E[E["B"] = y] = "B";
+    E[E["C"] = z] = "C";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #7", input: "enum E {A = 1,B,C,D='x'}", output: `var E;
@@ -165,26 +161,20 @@ func TestEnumTransformer(t *testing.T) {
 
 		{title: "enum self reference #2", input: "enum E {A=x,B=A}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E.A !== "string") E[E.A] = "A";
-    E["B"] = E.A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["A"] = x] = "A";
+    E[E["B"] = E.A] = "B";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #3", input: "enum E {'A'=x,B=A}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E["A"] !== "string") E[E["A"]] = "A";
-    E["B"] = E.A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["A"] = x] = "A";
+    E[E["B"] = E.A] = "B";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #4", input: "enum E {'A'=x,'B '=A}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E["A"] !== "string") E[E["A"]] = "A";
-    E["B "] = E.A;
-    if (typeof E["B "] !== "string") E[E["B "]] = "B ";
+    E[E["A"] = x] = "A";
+    E[E["B "] = E.A] = "B ";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #5", input: "enum E {A,B=E.A}", output: `var E;
@@ -206,8 +196,7 @@ func TestEnumTransformer(t *testing.T) {
     E[E["A"] = 0] = "A";
 })(E || (E = {}));
 (function (E) {
-    E["B"] = E.A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["B"] = E.A] = "B";
 })(E || (E = {}));`},
 
 		{title: "reverse map enum", input: `enum E {

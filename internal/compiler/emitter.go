@@ -90,6 +90,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
 	} else {
+		emitResolver = host.GetEmitResolver()
 		referenceResolver = binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
 	}
 
