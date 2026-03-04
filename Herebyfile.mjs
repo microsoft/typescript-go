@@ -853,23 +853,62 @@ function baselineAcceptTask(localBaseline, refBaseline) {
     }
 
     /**
-     * Walk up from dir, removing empty directories until hitting root.
-     * @param {string} dir
+     * Recursively find top-most empty subtrees under root, excluding root itself.
+     * Returns the highest ancestors whose entire subtrees contain only empty
+     * directories, so a single rimraf can remove each whole subtree at once.
      * @param {string} root
+     * @returns {string[]}
      */
-    async function removeEmptyDirsUp(dir, root) {
-        const resolvedRoot = path.resolve(root);
-        let current = path.resolve(dir);
-        while (current !== resolvedRoot) {
+    function findEmptySubtrees(root) {
+        /** @type {string[]} */
+        const result = [];
+
+        /**
+         * @param {string} dir
+         * @returns {boolean} true if dir is entirely empty
+         */
+        function visit(dir) {
+            /** @type {import("fs").Dirent[]} */
+            let entries;
             try {
-                await fs.promises.rmdir(current);
+                entries = fs.readdirSync(dir, { withFileTypes: true });
             }
             catch {
-                // Not empty or doesn't exist; stop walking up.
-                break;
+                return false;
             }
-            current = path.dirname(current);
+
+            let empty = true;
+            /** @type {string[]} */
+            const childEmpty = [];
+            for (const entry of entries) {
+                if (entry.isDirectory()) {
+                    const childPath = path.join(dir, entry.name);
+                    if (visit(childPath)) {
+                        childEmpty.push(childPath);
+                    }
+                    else {
+                        empty = false;
+                    }
+                }
+                else {
+                    empty = false;
+                }
+            }
+
+            if (!empty) {
+                // This dir is not fully empty, so collect the empty children
+                // we found (they are top-most empty subtrees).
+                result.push(...childEmpty);
+            }
+            // If empty, don't collect children — the caller will either
+            // collect this dir or propagate emptiness further up.
+            return empty;
         }
+
+        // If root itself is entirely empty, there's nothing to collect
+        // (we exclude root). Otherwise, visit already pushed the right subtrees.
+        visit(root);
+        return result;
     }
 
     return async () => {
@@ -886,19 +925,12 @@ function baselineAcceptTask(localBaseline, refBaseline) {
             await rimraf(p); // also delete the .delete file so that it no longer shows up in a diff tool.
         }
 
-        // Remove empty directories left behind by deletions (walk up from each deleted path).
-        const cleaned = new Set();
-        for (const p of toDelete) {
-            const refDir = path.dirname(localPathToRefPath(p).replace(/\.delete$/, ""));
-            const localDir = path.dirname(p);
-            if (!cleaned.has(refDir)) {
-                cleaned.add(refDir);
-                await removeEmptyDirsUp(refDir, refBaseline);
-            }
-            if (!cleaned.has(localDir)) {
-                cleaned.add(localDir);
-                await removeEmptyDirsUp(localDir, localBaseline);
-            }
+        // Remove empty directory trees left behind by deletions.
+        for (const dir of findEmptySubtrees(refBaseline)) {
+            await rimraf(dir);
+        }
+        for (const dir of findEmptySubtrees(localBaseline)) {
+            await rimraf(dir);
         }
     };
 }
