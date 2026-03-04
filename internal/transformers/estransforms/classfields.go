@@ -3137,10 +3137,7 @@ func (tx *classFieldsTransformer) visitAssignmentElement(node *ast.Node) *ast.No
 			right,
 		)
 	}
-	if ast.IsLeftHandSideExpression(node) {
-		return tx.visitDestructuringAssignmentTarget(node)
-	}
-	return tx.Visitor().VisitEachChild(node)
+	return tx.visitDestructuringAssignmentTarget(node)
 }
 
 func (tx *classFieldsTransformer) visitAssignmentRestElement(node *ast.Node) *ast.Node {
