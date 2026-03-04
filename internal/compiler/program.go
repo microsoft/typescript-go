@@ -688,6 +688,14 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
 
+	if options.ESModuleInterop.IsFalse() {
+		createRemovedOptionDiagnostic("esModuleInterop", "false", "")
+	}
+
+	if options.AllowSyntheticDefaultImports.IsFalse() {
+		createRemovedOptionDiagnostic("allowSyntheticDefaultImports", "false", "")
+	}
+
 	if !options.DownlevelIteration.IsUnknown() {
 		createRemovedOptionDiagnostic("downlevelIteration", "", "")
 	}
@@ -1584,6 +1592,10 @@ func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFil
 		}
 	}
 	return file
+}
+
+func (p *Program) FilesByPath() map[tspath.Path]*ast.SourceFile {
+	return p.filesByPath
 }
 
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {

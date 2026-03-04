@@ -342,7 +342,7 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 	}
 	parent := node.Parent
 	if parent.Kind == ast.KindExportSpecifier && useLocalSymbolForExportSpecifier {
-		return getLocalSymbolForExportSpecifier(node.AsIdentifier(), symbol, parent.AsExportSpecifier(), checker)
+		return getLocalSymbolForExportSpecifier(node, symbol, parent.AsExportSpecifier(), checker)
 	}
 	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
 	return core.FirstNonNil(symbol.Declarations, func(decl *ast.Node) *ast.Symbol {
@@ -594,7 +594,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if isRename && !isNodeEligibleForRename(node) {
+	if isRename && !isNodeEligibleForRename(node) || implementations && ast.IsSourceFile(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
 
@@ -1885,7 +1885,7 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 
 	// Use the parent symbol if the location is commonjs require syntax on javascript files only.
 	if ast.IsInJSFile(referenceLocation) && referenceLocation.Parent.Kind == ast.KindBindingElement &&
-		ast.IsVariableDeclarationInitializedToRequire(referenceLocation.Parent.Parent.Parent) {
+		ast.IsVariableDeclarationInitializedToBareOrAccessedRequire(referenceLocation.Parent.Parent.Parent) {
 		referenceSymbol = referenceLocation.Parent.Symbol()
 		// The parent will not have a symbol if it's an ObjectBindingPattern (when destructuring is used).  In
 		// this case, just skip it, since the bound identifiers are not an alias of the import.
@@ -2000,7 +2000,7 @@ func (state *refState) getReferencesAtExportSpecifier(
 	exportDeclaration := exportSpecifier.Parent.Parent.AsExportDeclaration()
 	propertyName := exportSpecifier.PropertyName
 	name := exportSpecifier.Name()
-	localSymbol := getLocalSymbolForExportSpecifier(referenceLocation.AsIdentifier(), referenceSymbol, exportSpecifier, state.checker)
+	localSymbol := getLocalSymbolForExportSpecifier(referenceLocation, referenceSymbol, exportSpecifier, state.checker)
 
 	if !alwaysGetReferences && !search.includes(localSymbol) {
 		return
