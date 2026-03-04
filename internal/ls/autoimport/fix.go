@@ -1028,9 +1028,33 @@ func promoteFromTypeOnly(
 		spec := aliasDeclaration.AsImportSpecifier()
 		if spec.IsTypeOnly {
 			if spec.Parent != nil && spec.Parent.Kind == ast.KindNamedImports {
-				// TypeScript creates a new specifier with isTypeOnly=false, computes insertion index,
-				// and if different from current position, deletes and re-inserts at new position.
-				// For now, we just delete the range from the first token (type keyword) to the property name or name.
+				namedImportsNode := spec.Parent.AsNamedImports()
+				elements := namedImportsNode.Elements.Nodes
+				if len(elements) > 1 {
+					// Create a synthetic specifier with isTypeOnly=false to compute sorted position
+					var propertyName *ast.Node
+					if spec.PropertyName != nil {
+						propertyName = changes.NodeFactory.NewIdentifier(spec.PropertyName.Text()).AsIdentifier().AsNode()
+					}
+					newSpecifier := changes.NodeFactory.NewImportSpecifier(
+						false, // isTypeOnly = false
+						propertyName,
+						changes.NodeFactory.NewIdentifier(spec.Name().Text()),
+					)
+					specifierComparer, _ := lsutil.GetNamedImportSpecifierComparerWithDetection(
+						spec.Parent.Parent.Parent, // ImportDeclaration
+						sourceFile,
+						preferences,
+					)
+					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(elements, newSpecifier, specifierComparer)
+					currentIndex := slices.Index(elements, aliasDeclaration)
+					if insertionIndex != currentIndex {
+						changes.Delete(sourceFile, aliasDeclaration)
+						changes.InsertImportSpecifierAtIndex(sourceFile, newSpecifier, spec.Parent, insertionIndex)
+						return aliasDeclaration
+					}
+				}
+				// If no re-sorting needed, just remove the 'type' keyword
 				firstToken := lsutil.GetFirstToken(aliasDeclaration, sourceFile)
 				typeKeywordPos := scanner.GetTokenPosOfNode(firstToken, sourceFile, false)
 				var targetNode *ast.DeclarationName

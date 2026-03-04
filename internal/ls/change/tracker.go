@@ -3,6 +3,7 @@ package change
 import (
 	"context"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -357,7 +358,7 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 	separatorString := scanner.TokenToString(separator)
 	end := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(after.End()))
 	if !multilineList {
-		t.ReplaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, NodeOptions{Prefix: separatorString})
+		t.ReplaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, NodeOptions{Prefix: separatorString + " "})
 		return
 	}
 
@@ -401,8 +402,26 @@ func (t *Tracker) InsertImportSpecifierAtIndex(sourceFile *ast.SourceFile, newSp
 	} else {
 		// Insert before the first element
 		firstElement := elements[0]
-		multiline := printer.GetLinesBetweenPositions(sourceFile, firstElement.Pos(), namedImports.Parent.Parent.Pos()) != 0
-		t.InsertNodeBefore(sourceFile, firstElement, newSpecifier, multiline)
+		firstElementStart := astnav.GetStartOfNode(firstElement, sourceFile, false)
+		importDeclStart := astnav.GetStartOfNode(namedImports.Parent.Parent, sourceFile, false)
+		multiline := !positionsAreOnSameLine(firstElementStart, importDeclStart, sourceFile)
+		if multiline {
+			// For multiline lists, insert at the start of the first element with explicit
+			// indentation, using a comma+newline as suffix so the existing element stays on its own line.
+			// We compute indentation from the existing first element's position.
+			firstElementLineStart := format.GetLineStartPositionForPosition(firstElementStart, sourceFile)
+			indentation := format.FindFirstNonWhitespaceColumn(firstElementLineStart, firstElementStart, sourceFile, t.formatSettings)
+			// Build indentation string
+			indentStr := strings.Repeat(" ", indentation)
+			// Insert right at the start of the line, so we control indentation ourselves
+			insertPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(firstElementLineStart))
+			t.ReplaceRange(sourceFile, lsproto.Range{Start: insertPos, End: insertPos}, newSpecifier, NodeOptions{
+				Prefix: indentStr,
+				Suffix: "," + t.newLine,
+			})
+		} else {
+			t.InsertNodeBefore(sourceFile, firstElement, newSpecifier, false)
+		}
 	}
 }
 
