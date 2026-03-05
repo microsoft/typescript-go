@@ -668,6 +668,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTextDocumentClosingTagCompletionInfo, (*Server).handleClosingTagCompletion)
 
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareRenameInfo, (*Server).handlePrepareRename)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRename)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementations)
@@ -986,7 +987,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				Boolean: new(true),
 			},
 			RenameProvider: &lsproto.BooleanOrRenameOptions{
-				Boolean: new(true),
+				RenameOptions: &lsproto.RenameOptions{
+					PrepareProvider: new(true),
+				},
 			},
 			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
 				Boolean: new(true),
@@ -1314,6 +1317,14 @@ func (s *Server) handlePrepareCallHierarchy(
 	params *lsproto.CallHierarchyPrepareParams,
 ) (lsproto.CallHierarchyPrepareResponse, error) {
 	return languageService.ProvidePrepareCallHierarchy(ctx, params.TextDocument.Uri, params.Position)
+}
+
+func (s *Server) handlePrepareRename(
+	ctx context.Context,
+	languageService *ls.LanguageService,
+	params *lsproto.PrepareRenameParams,
+) (lsproto.PrepareRenameResponse, error) {
+	return languageService.ProvidePrepareRename(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleCallHierarchyIncomingCalls(
