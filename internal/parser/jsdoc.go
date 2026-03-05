@@ -221,6 +221,11 @@ loop:
 	for {
 		switch p.token {
 		case ast.KindAtToken:
+			if !p.scanner.CanFollowJSDocAt() {
+				state = jsdocStateSavingComments
+				pushComment(p.scanner.TokenText())
+				break
+			}
 			comments = removeTrailingWhitespace(comments)
 			if commentsPos == -1 {
 				commentsPos = p.nodePos()
@@ -485,6 +490,8 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 		tag = p.parseSatisfiesTag(start, tagName, margin, indentText)
 	case "see":
 		tag = p.parseSeeTag(start, tagName, margin, indentText)
+	case "exception", "throws":
+		tag = p.parseThrowsTag(start, tagName, margin, indentText)
 	case "import":
 		tag = p.parseImportTag(start, tagName, margin, indentText)
 	default:
@@ -545,8 +552,12 @@ loop:
 			comments = append(comments, p.scanner.TokenText())
 			indent = 0
 		case ast.KindAtToken:
-			p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
-			break loop
+			if p.scanner.CanFollowJSDocAt() {
+				p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
+				break loop
+			}
+			state = jsdocStateSavingComments
+			pushComment(p.scanner.TokenText())
 		case ast.KindEndOfFile:
 			// Done
 			break loop
@@ -861,6 +872,12 @@ func (p *Parser) parseSatisfiesTag(start int, tagName *ast.IdentifierNode, margi
 	return p.finishNode(p.factory.NewJSDocSatisfiesTag(tagName, typeExpression, comments), start)
 }
 
+func (p *Parser) parseThrowsTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
+	typeExpression := p.tryParseTypeExpression()
+	comment := p.parseTrailingTagComments(start, p.nodePos(), margin, indentText)
+	return p.finishNode(p.factory.NewJSDocThrowsTag(tagName, typeExpression, comment), start)
+}
+
 func (p *Parser) parseImportTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	afterImportTagPos := p.scanner.TokenFullStart()
 
@@ -1086,7 +1103,7 @@ func (p *Parser) parseChildParameterOrPropertyTag(target propertyLikeParse, inde
 	for {
 		switch p.nextTokenJSDoc() {
 		case ast.KindAtToken:
-			if canParseTag {
+			if canParseTag && p.scanner.CanFollowJSDocAt() {
 				child := p.tryParseChildTag(target, indent)
 				if child != nil && name != nil &&
 					(child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag) &&
