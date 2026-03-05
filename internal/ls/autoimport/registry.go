@@ -378,6 +378,7 @@ type registryBuilder struct {
 	nodeModules     *dirty.Map[tspath.Path, *RegistryBucket]
 	projects        *dirty.Map[tspath.Path, *RegistryBucket]
 	specifierCache  *dirty.MapBuilder[tspath.Path, *collections.SyncMap[tspath.Path, string], *collections.SyncMap[tspath.Path, string]]
+	resolverOptions module.ResolverOptions
 }
 
 func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBuilder {
@@ -390,6 +391,10 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		nodeModules:     dirty.NewMap(registry.nodeModules),
 		projects:        dirty.NewMap(registry.projects),
 		specifierCache:  dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
+		resolverOptions: module.ResolverOptions{
+			PackageJsonCache:              packagejson.NewInfoCache(host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()),
+			SkipCollectingLookupLocations: true,
+		},
 	}
 }
 
@@ -769,7 +774,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			}
 		}
 		if len(rootFiles) > 0 {
-			moduleResolver := module.NewResolver(b.host, core.EmptyCompilerOptions, "", "")
+			moduleResolver := module.NewResolverWithOptions(b.host, core.EmptyCompilerOptions, "", "", b.resolverOptions)
 			aliasResolver := newAliasResolver(
 				slices.Collect(maps.Values(rootFiles)),
 				nil,
@@ -897,7 +902,7 @@ func (b *registryBuilder) buildProjectBucket(
 	var mu sync.Mutex
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
-	moduleResolver := module.NewResolver(b.host, core.EmptyCompilerOptions, "", "")
+	moduleResolver := module.NewResolverWithOptions(b.host, core.EmptyCompilerOptions, "", "", b.resolverOptions)
 	program := b.host.GetProgramForProject(projectPath)
 	symlinkCache := program.GetSymlinkCache()
 	getChecker, closePool, checkerCount := createCheckerPool(program)
@@ -1106,7 +1111,7 @@ func (b *registryBuilder) extractPackages(
 			}
 
 			toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
-			resolver := getModuleResolver(b.host, toRealpath)
+			resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
 			packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 			if packageEntrypoints == nil {
 				return
