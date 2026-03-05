@@ -1135,9 +1135,9 @@ type perPackageExtractionResult struct {
 	entrypoints                      *module.ResolvedEntrypoints
 	exports                          map[tspath.Path][]*Export
 	ambientModules                   map[string][]string
-	statsExports                     int32
-	statsUsedChecker                 int32
-	skippedEntrypoints               int32
+	statsExports                     int
+	statsUsedChecker                 int
+	skippedEntrypoints               int
 	isProjectReference               bool
 	failedAmbientModuleLookupSources map[tspath.Path]*failedAmbientModuleLookupSource
 	failedAmbientModuleLookupTargets *collections.Set[string]
@@ -1153,7 +1153,7 @@ type packageExtractionResult struct {
 	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
 	stats                                    extractorStats
-	skippedEntrypointsCount                  int32
+	skippedEntrypointsCount                  int
 }
 
 // discoverBucketPackages resolves the package.json and realpath for each package name
@@ -1203,9 +1203,9 @@ func (b *registryBuilder) extractPackage(
 		return nil
 	}
 
-	var skippedEntrypoints int32
+	var skippedEntrypoints int
 	if len(fileExcludePatterns) > 0 {
-		count := int32(len(packageEntrypoints.Entrypoints))
+		count := len(packageEntrypoints.Entrypoints)
 		packageEntrypoints.Entrypoints = slices.DeleteFunc(packageEntrypoints.Entrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
 			for _, excludePattern := range fileExcludePatterns {
 				if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
@@ -1214,7 +1214,7 @@ func (b *registryBuilder) extractPackage(
 			}
 			return false
 		})
-		skippedEntrypoints = count - int32(len(packageEntrypoints.Entrypoints))
+		skippedEntrypoints = count - len(packageEntrypoints.Entrypoints)
 	}
 	if len(packageEntrypoints.Entrypoints) == 0 {
 		return nil
@@ -1297,8 +1297,8 @@ func (b *registryBuilder) extractPackage(
 	}
 
 	stats := extractor.Stats()
-	result.statsExports = stats.exports.Load()
-	result.statsUsedChecker = stats.usedChecker.Load()
+	result.statsExports = int(stats.exports.Load())
+	result.statsUsedChecker = int(stats.usedChecker.Load())
 	return result
 }
 
@@ -1342,8 +1342,8 @@ func installExtractions(
 		if extraction.isProjectReference {
 			result.projectReferencePackages.Add(pkg.packageName)
 		}
-		result.stats.exports.Add(extraction.statsExports)
-		result.stats.usedChecker.Add(extraction.statsUsedChecker)
+		result.stats.exports.Add(int32(extraction.statsExports))
+		result.stats.usedChecker.Add(int32(extraction.statsUsedChecker))
 		result.skippedEntrypointsCount += extraction.skippedEntrypoints
 	}
 
