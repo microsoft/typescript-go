@@ -661,13 +661,22 @@ func (f *NodeFactory) NewDisposeResourcesHelper(envBinding *ast.Expression) *ast
 
 // Class Fields Helpers
 
-func (f *NodeFactory) NewClassPrivateFieldGetHelper(receiver *ast.Expression, state *ast.IdentifierNode, kind string, fn *ast.IdentifierNode) *ast.Expression {
+type PrivateIdentifierKind string
+
+const (
+	PrivateIdentifierKindField         PrivateIdentifierKind = "f"
+	PrivateIdentifierKindMethod        PrivateIdentifierKind = "m"
+	PrivateIdentifierKindAccessor      PrivateIdentifierKind = "a"
+	PrivateIdentifierKindUntransformed PrivateIdentifierKind = "untransformed"
+)
+
+func (f *NodeFactory) NewClassPrivateFieldGetHelper(receiver *ast.Expression, state *ast.IdentifierNode, kind PrivateIdentifierKind, fn *ast.IdentifierNode) *ast.Expression {
 	f.emitContext.RequestEmitHelper(classPrivateFieldGetHelper)
 	var args []*ast.Node
 	if fn == nil {
-		args = []*ast.Node{receiver, state, f.NewStringLiteral(kind, ast.TokenFlagsNone)}
+		args = []*ast.Node{receiver, state, f.NewStringLiteral(string(kind), ast.TokenFlagsNone)}
 	} else {
-		args = []*ast.Node{receiver, state, f.NewStringLiteral(kind, ast.TokenFlagsNone), fn}
+		args = []*ast.Node{receiver, state, f.NewStringLiteral(string(kind), ast.TokenFlagsNone), fn}
 	}
 	return f.NewCallExpression(
 		f.NewUnscopedHelperName("__classPrivateFieldGet"),
@@ -678,13 +687,13 @@ func (f *NodeFactory) NewClassPrivateFieldGetHelper(receiver *ast.Expression, st
 	)
 }
 
-func (f *NodeFactory) NewClassPrivateFieldSetHelper(receiver *ast.Expression, state *ast.IdentifierNode, value *ast.Expression, kind string, fn *ast.IdentifierNode) *ast.Expression {
+func (f *NodeFactory) NewClassPrivateFieldSetHelper(receiver *ast.Expression, state *ast.IdentifierNode, value *ast.Expression, kind PrivateIdentifierKind, fn *ast.IdentifierNode) *ast.Expression {
 	f.emitContext.RequestEmitHelper(classPrivateFieldSetHelper)
 	var args []*ast.Node
 	if fn == nil {
-		args = []*ast.Node{receiver, state, value, f.NewStringLiteral(kind, ast.TokenFlagsNone)}
+		args = []*ast.Node{receiver, state, value, f.NewStringLiteral(string(kind), ast.TokenFlagsNone)}
 	} else {
-		args = []*ast.Node{receiver, state, value, f.NewStringLiteral(kind, ast.TokenFlagsNone), fn}
+		args = []*ast.Node{receiver, state, value, f.NewStringLiteral(string(kind), ast.TokenFlagsNone), fn}
 	}
 	return f.NewCallExpression(
 		f.NewUnscopedHelperName("__classPrivateFieldSet"),

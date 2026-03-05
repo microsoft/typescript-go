@@ -26,18 +26,9 @@ const (
 )
 
 // privateIdentifierKind represents the kind of private identifier declaration.
-type privateIdentifierKind int
-
-const (
-	privateIdentifierKindField privateIdentifierKind = iota
-	privateIdentifierKindMethod
-	privateIdentifierKindAccessor
-	privateIdentifierKindUntransformed
-)
-
 // privateIdentifierInfo stores information about a private identifier during transformation.
 type privateIdentifierInfo struct {
-	kind privateIdentifierKind
+	kind printer.PrivateIdentifierKind
 	// brandCheckIdentifier can contain:
 	//  - For instance field: The WeakMap that will be the storage for the field.
 	//  - For instance methods or accessors: The WeakSet that will be used for brand checking.
@@ -738,10 +729,10 @@ func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.Id
 	debug.AssertNode(node.Name(), ast.IsPrivateIdentifier)
 	info := tx.accessPrivateIdentifier(node.Name())
 	debug.Assert(info != nil, "Undeclared private name for property declaration.")
-	if info.kind == privateIdentifierKindMethod {
+	if info.kind == printer.PrivateIdentifierKindMethod {
 		return info.methodName
 	}
-	if info.kind == privateIdentifierKindAccessor {
+	if info.kind == printer.PrivateIdentifierKindAccessor {
 		if ast.IsGetAccessorDeclaration(node) {
 			return info.getterName
 		}
@@ -986,21 +977,21 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAccessHelper(info *priv
 	tx.EmitContext().SetCommentRange(receiver, core.NewTextRange(-1, receiver.End()))
 
 	switch info.kind {
-	case privateIdentifierKindAccessor:
+	case printer.PrivateIdentifierKindAccessor:
 		return tx.Factory().NewClassPrivateFieldGetHelper(
 			receiver,
 			info.brandCheckIdentifier,
-			"a",
+			info.kind,
 			info.getterName,
 		)
-	case privateIdentifierKindMethod:
+	case printer.PrivateIdentifierKindMethod:
 		return tx.Factory().NewClassPrivateFieldGetHelper(
 			receiver,
 			info.brandCheckIdentifier,
-			"m",
+			info.kind,
 			info.methodName,
 		)
-	case privateIdentifierKindField:
+	case printer.PrivateIdentifierKindField:
 		var f *ast.IdentifierNode
 		if info.isStatic {
 			f = info.variableName
@@ -1008,10 +999,10 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAccessHelper(info *priv
 		return tx.Factory().NewClassPrivateFieldGetHelper(
 			receiver,
 			info.brandCheckIdentifier,
-			"f",
+			info.kind,
 			f,
 		)
-	case privateIdentifierKindUntransformed:
+	case printer.PrivateIdentifierKindUntransformed:
 		debug.Fail("Access helpers should not be created for untransformed private elements")
 		return nil
 	}
@@ -1574,23 +1565,23 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAssignment(info *privat
 	tx.EmitContext().SetCommentRange(receiver, core.NewTextRange(-1, receiver.End()))
 
 	switch info.kind {
-	case privateIdentifierKindAccessor:
+	case printer.PrivateIdentifierKindAccessor:
 		return tx.Factory().NewClassPrivateFieldSetHelper(
 			receiver,
 			info.brandCheckIdentifier,
 			right,
-			"a",
+			info.kind,
 			info.setterName,
 		)
-	case privateIdentifierKindMethod:
+	case printer.PrivateIdentifierKindMethod:
 		return tx.Factory().NewClassPrivateFieldSetHelper(
 			receiver,
 			info.brandCheckIdentifier,
 			right,
-			"m",
+			info.kind,
 			nil,
 		)
-	case privateIdentifierKindField:
+	case printer.PrivateIdentifierKindField:
 		var f *ast.IdentifierNode
 		if info.isStatic {
 			f = info.variableName
@@ -1599,10 +1590,10 @@ func (tx *classFieldsTransformer) createPrivateIdentifierAssignment(info *privat
 			receiver,
 			info.brandCheckIdentifier,
 			right,
-			"f",
+			info.kind,
 			f,
 		)
-	case privateIdentifierKindUntransformed:
+	case printer.PrivateIdentifierKindUntransformed:
 		debug.Fail("Access helpers should not be created for untransformed private elements")
 		return nil
 	}
@@ -2169,7 +2160,7 @@ func (tx *classFieldsTransformer) transformClassMembers(node *ast.Node) (members
 				} else {
 					env := tx.getPrivateIdentifierEnvironment()
 					tx.setPrivateIdentifier(env, member.Name(), &privateIdentifierInfo{
-						kind: privateIdentifierKindUntransformed,
+						kind: printer.PrivateIdentifierKindUntransformed,
 					})
 				}
 			}
@@ -2188,7 +2179,7 @@ func (tx *classFieldsTransformer) transformClassMembers(node *ast.Node) (members
 					} else {
 						env := tx.getPrivateIdentifierEnvironment()
 						tx.setPrivateIdentifier(env, storageName, &privateIdentifierInfo{
-							kind: privateIdentifierKindUntransformed,
+							kind: printer.PrivateIdentifierKindUntransformed,
 						})
 					}
 				}
@@ -2677,7 +2668,7 @@ func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.Property
 	if ast.IsPrivateIdentifier(propertyName) && tx.shouldTransformClassElementToWeakMap(property.AsNode()) {
 		info := tx.accessPrivateIdentifier(propertyName)
 		if info != nil {
-			if info.kind == privateIdentifierKindField {
+			if info.kind == printer.PrivateIdentifierKindField {
 				if !info.isStatic {
 					return createPrivateInstanceFieldInitializer(
 						tx.Factory(),
@@ -2874,7 +2865,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierPropertyDeclarationToEnvir
 		}
 		variableName := tx.createHoistedVariableForPrivateName(name, "")
 		tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{
-			kind:                 privateIdentifierKindField,
+			kind:                 printer.PrivateIdentifierKindField,
 			isStatic:             true,
 			brandCheckIdentifier: brandCheckIdentifier,
 			variableName:         variableName,
@@ -2883,7 +2874,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierPropertyDeclarationToEnvir
 	} else {
 		weakMapName := tx.createHoistedVariableForPrivateName(name, "")
 		tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{
-			kind:                 privateIdentifierKindField,
+			kind:                 printer.PrivateIdentifierKindField,
 			isStatic:             false,
 			brandCheckIdentifier: weakMapName,
 			isValid:              isValid,
@@ -2914,7 +2905,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierMethodToEnvironment(name *
 		brandCheckIdentifier = env.data.weakSetName
 	}
 	tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{
-		kind:                 privateIdentifierKindMethod,
+		kind:                 printer.PrivateIdentifierKindMethod,
 		methodName:           methodName,
 		brandCheckIdentifier: brandCheckIdentifier,
 		isStatic:             isStatic,
@@ -2936,11 +2927,11 @@ func (tx *classFieldsTransformer) addPrivateIdentifierGetAccessorToEnvironment(n
 		debug.Assert(brandCheckIdentifier != nil, "weakSetName should be set in private identifier environment")
 	}
 
-	if previousInfo != nil && previousInfo.kind == privateIdentifierKindAccessor && previousInfo.isStatic == isStatic && previousInfo.getterName == nil {
+	if previousInfo != nil && previousInfo.kind == printer.PrivateIdentifierKindAccessor && previousInfo.isStatic == isStatic && previousInfo.getterName == nil {
 		previousInfo.getterName = getterName
 	} else {
 		tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{
-			kind:                 privateIdentifierKindAccessor,
+			kind:                 printer.PrivateIdentifierKindAccessor,
 			getterName:           getterName,
 			brandCheckIdentifier: brandCheckIdentifier,
 			isStatic:             isStatic,
@@ -2963,11 +2954,11 @@ func (tx *classFieldsTransformer) addPrivateIdentifierSetAccessorToEnvironment(n
 		debug.Assert(brandCheckIdentifier != nil, "weakSetName should be set in private identifier environment")
 	}
 
-	if previousInfo != nil && previousInfo.kind == privateIdentifierKindAccessor && previousInfo.isStatic == isStatic && previousInfo.setterName == nil {
+	if previousInfo != nil && previousInfo.kind == printer.PrivateIdentifierKindAccessor && previousInfo.isStatic == isStatic && previousInfo.setterName == nil {
 		previousInfo.setterName = setterName
 	} else {
 		tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{
-			kind:                 privateIdentifierKindAccessor,
+			kind:                 printer.PrivateIdentifierKindAccessor,
 			setterName:           setterName,
 			brandCheckIdentifier: brandCheckIdentifier,
 			isStatic:             isStatic,
@@ -2992,7 +2983,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierAutoAccessorToEnvironment(
 	}
 
 	tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{
-		kind:                 privateIdentifierKindAccessor,
+		kind:                 printer.PrivateIdentifierKindAccessor,
 		getterName:           getterName,
 		setterName:           setterName,
 		brandCheckIdentifier: brandCheckIdentifier,
@@ -3089,7 +3080,7 @@ func (tx *classFieldsTransformer) accessPrivateIdentifier(name *ast.Node) *priva
 	for env := tx.lexicalEnvironment; env != nil; env = env.previous {
 		if env.privateEnv != nil {
 			if info, ok := env.privateEnv.members[name.Text()]; ok {
-				if info.kind == privateIdentifierKindUntransformed {
+				if info.kind == printer.PrivateIdentifierKindUntransformed {
 					return nil
 				}
 				return info
