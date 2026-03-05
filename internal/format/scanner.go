@@ -42,7 +42,6 @@ type formattingScanner struct {
 
 func newFormattingScanner(text string, languageVariant core.LanguageVariant, startPos int, endPos int, worker *formatSpanWorker) []core.TextChange {
 	scan := scanner.NewScanner()
-	scan.Reset()
 	scan.SetSkipTrivia(false)
 	scan.SetLanguageVariant(languageVariant)
 	scan.SetText(text)
