@@ -2288,26 +2288,12 @@ func (state *refState) forEachRelatedSymbol(
 	}
 
 	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
-		// For a parameter property, try both associated symbols (constructor parameter and class member).
-		// If neither yields a match, continue with the normal fallback flow.
 		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
-		if paramProp1 == nil || paramProp2 == nil {
-			return nil, entryKindNone
-		}
 		debug.Assert(
-			(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable) != 0 && (paramProp2.Flags&ast.SymbolFlagsClassMember) != 0,
+			paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsClassMember != 0,
 			"GetSymbolsOfParameterPropertyDeclaration must return (parameter, member) pair",
 		)
-		if (paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable == 0) || (paramProp2.Flags&ast.SymbolFlagsClassMember == 0) {
-			return nil, entryKindNone
-		}
-		if res := fromRoot(paramProp1); res != nil {
-			return res, entryKindNode
-		}
-		if res := fromRoot(paramProp2); res != nil {
-			return res, entryKindNode
-		}
-		return nil, entryKindNode
+		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNode
 	}
 
 	if exportSpecifier := ast.GetDeclarationOfKind(symbol, ast.KindExportSpecifier); exportSpecifier != nil && (!isForRenamePopulateSearchSymbolSet || exportSpecifier.PropertyName() == nil) {
