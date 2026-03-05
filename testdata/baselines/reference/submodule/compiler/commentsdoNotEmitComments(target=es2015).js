@@ -97,15 +97,15 @@ var shade: color = color.green;
 //// [commentsdoNotEmitComments.js]
 "use strict";
 var myVariable = 10;
-function foo(/** parameter comment*/ p) {
+function foo(p) {
 }
 var fooVar;
 foo(50);
 fooVar();
 class c {
     constructor() {
+        this.b = 10;
     }
-    b = 10;
     myFoo() {
         return this.b;
     }
@@ -124,7 +124,6 @@ var i1_i;
 var m1;
 (function (m1) {
     class b {
-        x;
         constructor(x) {
             this.x = x;
         }
@@ -136,7 +135,7 @@ var shade = 1;
 
 //// [commentsdoNotEmitComments.d.ts]
 declare var myVariable: number;
-declare function foo(/** parameter comment*/ p: number): void;
+declare function foo(p: number): void;
 declare var fooVar: () => void;
 declare class c {
     constructor();

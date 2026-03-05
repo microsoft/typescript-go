@@ -276,6 +276,12 @@ func (d *astDecoder) createStringNode(kind ast.Kind, data uint32, definedBits ui
 		return d.factory.NewJsxText(text, containsOnly), nil
 	case ast.KindJSDocText:
 		return d.factory.NewJSDocText([]string{text}), nil
+	case ast.KindJSDocLink:
+		return d.factory.NewJSDocLink(nil, []string{text}), nil
+	case ast.KindJSDocLinkCode:
+		return d.factory.NewJSDocLinkCode(nil, []string{text}), nil
+	case ast.KindJSDocLinkPlain:
+		return d.factory.NewJSDocLinkPlain(nil, []string{text}), nil
 	default:
 		return nil, fmt.Errorf("unknown string node kind %v", kind)
 	}
@@ -1049,6 +1055,13 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		comment := d.nodeListAt(it.nextIf(mask, 2))
 		return d.factory.NewJSDocSatisfiesTag(tagName, typeExpr, comment), nil
 
+	case ast.KindJSDocThrowsTag:
+		it := newChildIter(childIndices)
+		tagName := d.nodeAt(it.nextIf(mask, 0))
+		typeExpr := d.nodeAt(it.nextIf(mask, 1))
+		comment := d.nodeListAt(it.nextIf(mask, 2))
+		return d.factory.NewJSDocThrowsTag(tagName, typeExpr, comment), nil
+
 	case ast.KindJSDocThisTag:
 		it := newChildIter(childIndices)
 		tagName := d.nodeAt(it.nextIf(mask, 0))
@@ -1231,6 +1244,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewJSDocVariadicType(d.singleChild(childIndices)), nil
 	case ast.KindJSDocOptionalType:
 		return d.factory.NewJSDocOptionalType(d.singleChild(childIndices)), nil
+	case ast.KindJSDocNameReference:
+		return d.factory.NewJSDocNameReference(d.singleChild(childIndices)), nil
 
 	// Single NodeList child nodes (mask=0)
 	case ast.KindArrayLiteralExpression:
