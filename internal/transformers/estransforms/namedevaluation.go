@@ -523,8 +523,10 @@ func transformNamedEvaluationOfExportAssignment(emitContext *printer.EmitContext
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
 		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
-	} else {
+	} else if node.IsExportEquals {
 		assignedName = factory.NewStringLiteral("", ast.TokenFlagsNone)
+	} else {
+		assignedName = factory.NewStringLiteral("default", ast.TokenFlagsNone)
 	}
 	expression := finishTransformNamedEvaluation(emitContext, node.Expression, assignedName, ignoreEmptyStringLiteral)
 	return factory.UpdateExportAssignment(

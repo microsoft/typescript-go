@@ -25,8 +25,13 @@ func GetESTransformer(opts *transformers.TransformOptions) *transformers.Transfo
 	options := opts.CompilerOptions
 	switch options.GetEmitScriptTarget() {
 	case core.ScriptTargetESNext:
-		// At ESNext, only the class fields transformer is needed (it self-gates via shouldTransformAnything).
 		// The TS reference always runs transformClassFields unconditionally.
+		// When useDefineForClassFields is false and experimentalDecorators is not set,
+		// we also need to run the ES decorator transform, matching the TS reference:
+		//   if (!experimentalDecorators && (target < ESNext || !useDefineForClassFields))
+		if !options.ExperimentalDecorators.IsTrue() && !options.GetUseDefineForClassFields() {
+			return transformers.Chain(newESDecoratorTransformer, newClassFieldsTransformer)(opts)
+		}
 		return newClassFieldsTransformer(opts)
 	case core.ScriptTargetES2025, core.ScriptTargetES2024, core.ScriptTargetES2023, core.ScriptTargetES2022, core.ScriptTargetES2021:
 		return NewESNextTransformer(opts)

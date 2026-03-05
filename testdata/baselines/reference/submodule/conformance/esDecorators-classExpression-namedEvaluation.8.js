@@ -26,7 +26,7 @@ export default ((() => {
     let _classThis;
     var class_1 = class {
         static { _classThis = this; }
-        static { __setFunctionName(_classThis, ""); }
+        static { __setFunctionName(_classThis, "default"); }
         static {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
@@ -45,6 +45,7 @@ export default ((() => {
     let _y_initializers = [];
     let _y_extraInitializers = [];
     return class {
+        static { __setFunctionName(this, "default"); }
         static {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             _y_decorators = [dec];
