@@ -2517,7 +2517,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 	var multiLine bool
 	if constructor != nil && constructor.Body != nil &&
 		len(constructor.Body.AsBlock().Statements.Nodes) >= len(statements) {
-		multiLine = constructor.Body.AsBlock().Multiline || len(statements) > 0
+		multiLine = constructor.Body.AsBlock().Multiline
 	} else {
 		multiLine = len(statements) > 0
 	}
