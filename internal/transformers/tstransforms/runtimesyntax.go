@@ -268,12 +268,13 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 	varDecl := tx.Factory().NewVariableDeclaration(name, nil, nil, nil)
 	varFlags := core.IfElse(tx.currentScope == tx.currentSourceFile, ast.NodeFlagsNone, ast.NodeFlagsLet)
 	varDecls := tx.Factory().NewVariableDeclarationList(varFlags, tx.Factory().NewNodeList([]*ast.Node{varDecl}))
-	allowedModifiers := ^ast.ModifierFlagsTypeScriptModifier
+	// Replicate modifierVisitor: strip decorators, TypeScript modifiers, and export when in namespace.
+	modifierMask := ^(ast.ModifierFlagsTypeScriptModifier | ast.ModifierFlagsDecorator)
 	if tx.currentNamespace != nil {
-		allowedModifiers &= ^ast.ModifierFlagsExport
+		modifierMask &= ^ast.ModifierFlagsExport
 	}
-	varModifiers := tx.Visitor().VisitModifiers(transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), allowedModifiers))
-	varStatement := tx.Factory().NewVariableStatement(varModifiers, varDecls)
+	modifiers := transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), modifierMask)
+	varStatement := tx.Factory().NewVariableStatement(modifiers, varDecls)
 
 	tx.EmitContext().SetOriginal(varDecl, node)
 	// !!! synthetic comments
@@ -630,7 +631,8 @@ func (tx *RuntimeSyntaxTransformer) transformModuleBody(node *ast.ModuleDeclarat
 			statementsLocation = body.Statements.Loc
 			blockLocation = body.Loc
 		} else { // node.Body.Kind == ast.KindModuleDeclaration
-			tx.currentScope = node.AsNode()
+			// !!! Strada didn't do this; why?
+			// tx.currentScope = node.AsNode()
 			statements, _ = tx.Visitor().VisitSlice([]*ast.Node{node.Body})
 			moduleBlock := getInnermostModuleDeclarationFromDottedModule(node).Body.AsModuleBlock()
 			statementsLocation = moduleBlock.Statements.Loc.WithPos(-1)
@@ -898,10 +900,7 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 		}
 	}
 
-	var superPath []int
-	if ast.IsClassLike(grandparentOfBody) && ast.GetExtendsHeritageClauseElement(grandparentOfBody) != nil {
-		superPath = findSuperStatementIndexPath(rest, 0)
-	}
+	superPath := transformers.FindSuperStatementIndexPath(rest, 0)
 
 	if len(superPath) > 0 {
 		statements = append(statements, tx.transformConstructorBodyWorker(rest, superPath, parameterPropertyAssignments)...)
@@ -920,33 +919,6 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	tx.EmitContext().SetOriginal(updated, body.AsNode())
 	updated.Loc = body.Loc
 	return updated
-}
-
-// finds a path to a statement containing a `super` call, descending through `try` blocks
-func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
-	for i := start; i < len(statements); i++ {
-		statement := statements[i]
-		if getSuperCallFromStatement(statement) != nil {
-			indices := make([]int, 1, 2)
-			indices[0] = i
-			return indices
-		} else if ast.IsTryStatement(statement) {
-			return slices.Insert(findSuperStatementIndexPath(statement.AsTryStatement().TryBlock.Statements(), 0), 0, i)
-		}
-	}
-	return nil
-}
-
-func getSuperCallFromStatement(statement *ast.Statement) *ast.Node {
-	if !ast.IsExpressionStatement(statement) {
-		return nil
-	}
-
-	expression := ast.SkipParentheses(statement.Expression())
-	if ast.IsSuperCall(expression) {
-		return expression
-	}
-	return nil
 }
 
 func (tx *RuntimeSyntaxTransformer) transformConstructorBodyWorker(statementsIn []*ast.Statement, superPath []int, initializerStatements []*ast.Statement) []*ast.Statement {
