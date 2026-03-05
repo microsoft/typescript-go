@@ -306,14 +306,10 @@ func (r *Registry) GetCacheStats() *CacheStats {
 		if bucket.Index != nil {
 			exportCount = len(bucket.Index.entries)
 		}
-		fileCount := 0
-		for _, paths := range bucket.PackageFiles {
-			fileCount += len(paths)
-		}
 		stats.ProjectBuckets = append(stats.ProjectBuckets, BucketStats{
 			Path:            path,
 			ExportCount:     exportCount,
-			FileCount:       fileCount,
+			FileCount:       len(bucket.Paths),
 			State:           bucket.state,
 			DependencyNames: bucket.DependencyNames,
 			PackageNames:    nil,
@@ -396,11 +392,12 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		host: host,
 		base: registry,
 
-		userPreferences: registry.userPreferences.OrDefault(),
-		directories:     dirty.NewMap(registry.directories),
-		nodeModules:     dirty.NewMap(registry.nodeModules),
-		projects:        dirty.NewMap(registry.projects),
-		specifierCache:  dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
+		userPreferences:    registry.userPreferences.OrDefault(),
+		directories:        dirty.NewMap(registry.directories),
+		nodeModules:        dirty.NewMap(registry.nodeModules),
+		projects:           dirty.NewMap(registry.projects),
+		specifierCache:     dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
+		uniquePackageCount: registry.uniquePackageCount,
 	}
 }
 

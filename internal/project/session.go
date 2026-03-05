@@ -942,6 +942,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 				for packageName := range bucket.State.DirtyPackages().Keys() {
 					s.logger.Logf("\t\t\tNeeds granular update: %s", packageName)
 				}
+				s.logger.Logf("\t\t\tPackages: %d", bucket.PackageNames.Len())
 				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
 				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
 			}

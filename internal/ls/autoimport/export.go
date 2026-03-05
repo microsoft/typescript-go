@@ -3,7 +3,6 @@ package autoimport
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -61,7 +60,7 @@ type Export struct {
 	Target                     ExportID
 	IsTypeOnly                 bool
 	ScriptElementKind          lsutil.ScriptElementKind
-	ScriptElementKindModifiers collections.Set[lsutil.ScriptElementKindModifier]
+	ScriptElementKindModifiers lsutil.ScriptElementKindModifier
 
 	// The file where the export was found.
 	Path tspath.Path
