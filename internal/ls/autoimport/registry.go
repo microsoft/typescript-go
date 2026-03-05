@@ -645,12 +645,6 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 }
 
 func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChange, logger *logging.LogTree) {
-	type bucketResult struct {
-		entry  *dirty.MapEntry[tspath.Path, *RegistryBucket]
-		result *bucketBuildResult
-		err    error
-	}
-
 	type nodeModulesBucketTask struct {
 		entry           *dirty.MapEntry[tspath.Path, *RegistryBucket]
 		dependencyNames *collections.Set[string]
@@ -789,10 +783,10 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 
 	// --- Phase 3: Bucket building (parallel per bucket) ---
 	// Each bucket installs the shared extraction results and builds its index.
-	var allResults []*bucketResult
+	var allResults []*bucketBuildResult
 
 	for _, task := range nodeModulesTasks {
-		br := &bucketResult{entry: task.entry}
+		br := &bucketBuildResult{entry: task.entry}
 		allResults = append(allResults, br)
 		if task.discoverErr != nil {
 			br.err = task.discoverErr
@@ -800,12 +794,12 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 		wg.Go(func() {
 			if task.isUpdate {
-				br.result, br.err = b.updateNodeModulesBucket(
-					ctx, task.existingBucket, task.dirtyPackages, task.discovered, extractionCache,
+				b.updateNodeModulesBucket(
+					ctx, br, task.existingBucket, task.dirtyPackages, task.discovered, extractionCache,
 					logger.Fork("Updating node_modules bucket "+task.dirName))
 			} else {
-				br.result, br.err = b.buildNodeModulesBucket(
-					ctx, task.dependencyNames, task.dirPath, task.discovered, task.directoryPackageNames, extractionCache,
+				b.buildNodeModulesBucket(
+					ctx, br, task.dependencyNames, task.dirPath, task.discovered, task.directoryPackageNames, extractionCache,
 					logger.Fork("Building node_modules bucket "+task.dirName))
 			}
 		})
@@ -825,11 +819,11 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			}
 		}
 		if shouldRebuild {
-			br := &bucketResult{entry: project}
+			br := &bucketBuildResult{entry: project}
 			allResults = append(allResults, br)
 			wg.Go(func() {
-				br.result, br.err = b.buildProjectBucket(
-					ctx, projectPath, resolvedPackageNames,
+				b.buildProjectBucket(
+					ctx, br, projectPath, resolvedPackageNames,
 					logger.Fork("Building project bucket "+string(projectPath)))
 			})
 		}
@@ -842,13 +836,13 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		if br.err != nil {
 			continue
 		}
-		for _, path := range br.result.removedEntrypointPaths {
+		for _, path := range br.removedEntrypointPaths {
 			b.entrypoints.Delete(path)
 		}
-		for path, entries := range br.result.entrypoints {
+		for path, entries := range br.entrypoints {
 			b.entrypoints.Set(path, entries)
 		}
-		br.entry.Replace(br.result.bucket)
+		br.entry.Replace(br.bucket)
 	}
 
 	// If we failed to resolve any alias exports by ending up at a non-relative module specifier
@@ -867,11 +861,11 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		if br.err != nil {
 			continue
 		}
-		if br.result.possibleFailedAmbientModuleLookupTargets == nil {
+		if br.possibleFailedAmbientModuleLookupTargets == nil {
 			continue
 		}
 		rootFiles := make(map[string]*ast.SourceFile)
-		for target := range br.result.possibleFailedAmbientModuleLookupTargets.Keys() {
+		for target := range br.possibleFailedAmbientModuleLookupTargets.Keys() {
 			for _, fileName := range b.resolveAmbientModuleName(target, br.entry.Key()) {
 				if _, exists := rootFiles[fileName]; exists {
 					continue
@@ -893,12 +887,12 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				},
 			)
 			ch, _ := checker.NewChecker(aliasResolver)
-			br.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
+			br.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
 				extractor := b.newExportExtractor(source.packageName, ch, moduleResolver, b.host.FS().Realpath)
 				fileExports := extractor.extractFromFile(sourceFile)
 				for _, exp := range fileExports {
-					br.result.bucket.Index.insertAsWords(exp)
+					br.bucket.Index.insertAsWords(exp)
 				}
 				return true
 			})
@@ -988,6 +982,9 @@ type failedAmbientModuleLookupSource struct {
 }
 
 type bucketBuildResult struct {
+	entry *dirty.MapEntry[tspath.Path, *RegistryBucket]
+	err   error
+
 	bucket *RegistryBucket
 	// entrypoints are the resolved entrypoints from this bucket's packages,
 	// to be merged into the registry-level entrypoints map.
@@ -1003,18 +1000,20 @@ type bucketBuildResult struct {
 
 func (b *registryBuilder) buildProjectBucket(
 	ctx context.Context,
+	result *bucketBuildResult,
 	projectPath tspath.Path,
 	resolvedPackageNames *collections.Set[string],
 	logger *logging.LogTree,
-) (*bucketBuildResult, error) {
+) {
 	if ctx.Err() != nil {
-		return nil, ctx.Err()
+		result.err = ctx.Err()
+		return
 	}
 
 	start := time.Now()
 	var mu sync.Mutex
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
-	result := &bucketBuildResult{bucket: &RegistryBucket{}}
+	result.bucket = &RegistryBucket{}
 	moduleResolver := module.NewResolverWithOptions(b.host, core.EmptyCompilerOptions, "", "", b.resolverOptions)
 	program := b.host.GetProgramForProject(projectPath)
 	symlinkCache := program.GetSymlinkCache()
@@ -1087,7 +1086,6 @@ outer:
 		logger.Logf("Built index: %v", time.Since(indexStart))
 		logger.Logf("Bucket total: %v", time.Since(start))
 	}
-	return result, nil
 }
 
 func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change RegistryChange, allResolvedPackageNames map[tspath.Path]*collections.Set[string], dirName string, dirPath tspath.Path) *collections.Set[string] {
@@ -1354,15 +1352,17 @@ func installExtractions(
 
 func (b *registryBuilder) buildNodeModulesBucket(
 	ctx context.Context,
+	result *bucketBuildResult,
 	dependencies *collections.Set[string],
 	dirPath tspath.Path,
 	discovered []*discoveredPackage,
 	directoryPackageNames *collections.Set[string],
 	extractionCache map[string]*perPackageExtractionResult,
 	logger *logging.LogTree,
-) (*bucketBuildResult, error) {
+) {
 	if ctx.Err() != nil {
-		return nil, ctx.Err()
+		result.err = ctx.Err()
+		return
 	}
 
 	start := time.Now()
@@ -1387,21 +1387,19 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		}
 	}
 
-	result := &bucketBuildResult{
-		bucket: &RegistryBucket{
-			Index:              &Index[*Export]{},
-			DependencyNames:    dependencies,
-			PackageFiles:       allPackageFiles,
-			AmbientModuleNames: extraction.ambientModuleNames,
-			Paths:              paths,
-			state: BucketState{
-				fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
-			},
+	result.bucket = &RegistryBucket{
+		Index:              &Index[*Export]{},
+		DependencyNames:    dependencies,
+		PackageFiles:       allPackageFiles,
+		AmbientModuleNames: extraction.ambientModuleNames,
+		Paths:              paths,
+		state: BucketState{
+			fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
 		},
-		entrypoints:                              make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports)),
-		possibleFailedAmbientModuleLookupSources: extraction.possibleFailedAmbientModuleLookupSources,
-		possibleFailedAmbientModuleLookupTargets: extraction.possibleFailedAmbientModuleLookupTargets,
 	}
+	result.entrypoints = make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports))
+	result.possibleFailedAmbientModuleLookupSources = extraction.possibleFailedAmbientModuleLookupSources
+	result.possibleFailedAmbientModuleLookupTargets = extraction.possibleFailedAmbientModuleLookupTargets
 	for _, fileExports := range extraction.exports {
 		for _, exp := range fileExports {
 			result.bucket.Index.insertAsWords(exp)
@@ -1436,21 +1434,23 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		logger.Logf("Bucket total: %v", time.Since(start))
 	}
 
-	return result, ctx.Err()
+	result.err = ctx.Err()
 }
 
 // updateNodeModulesBucket performs a granular update of the node_modules bucket,
 // re-extracting only the dirty packages and merging with the existing bucket.
 func (b *registryBuilder) updateNodeModulesBucket(
 	ctx context.Context,
+	result *bucketBuildResult,
 	existingBucket *RegistryBucket,
 	dirtyPackages *collections.Set[string],
 	discovered []*discoveredPackage,
 	extractionCache map[string]*perPackageExtractionResult,
 	logger *logging.LogTree,
-) (*bucketBuildResult, error) {
+) {
 	if ctx.Err() != nil {
-		return nil, ctx.Err()
+		result.err = ctx.Err()
+		return
 	}
 
 	start := time.Now()
@@ -1533,22 +1533,20 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		}
 	}
 
-	result := &bucketBuildResult{
-		bucket: &RegistryBucket{
-			Index:              newIndex,
-			DependencyNames:    existingBucket.DependencyNames,
-			PackageFiles:       newPackageFiles,
-			AmbientModuleNames: newAmbientModuleNames,
-			Paths:              newPaths,
-			state: BucketState{
-				fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
-			},
+	result.bucket = &RegistryBucket{
+		Index:              newIndex,
+		DependencyNames:    existingBucket.DependencyNames,
+		PackageFiles:       newPackageFiles,
+		AmbientModuleNames: newAmbientModuleNames,
+		Paths:              newPaths,
+		state: BucketState{
+			fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
 		},
-		entrypoints:                              newEntrypoints,
-		removedEntrypointPaths:                   removedEntrypointPaths,
-		possibleFailedAmbientModuleLookupSources: extraction.possibleFailedAmbientModuleLookupSources,
-		possibleFailedAmbientModuleLookupTargets: extraction.possibleFailedAmbientModuleLookupTargets,
 	}
+	result.entrypoints = newEntrypoints
+	result.removedEntrypointPaths = removedEntrypointPaths
+	result.possibleFailedAmbientModuleLookupSources = extraction.possibleFailedAmbientModuleLookupSources
+	result.possibleFailedAmbientModuleLookupTargets = extraction.possibleFailedAmbientModuleLookupTargets
 
 	if logger != nil {
 		logger.Logf("Granular update of %d packages: %v (%d exports)", dirtyPackages.Len(), indexStart.Sub(start), extraction.stats.exports.Load())
@@ -1556,7 +1554,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		logger.Logf("Bucket total: %v", time.Since(start))
 	}
 
-	return result, ctx.Err()
+	result.err = ctx.Err()
 }
 
 func (b *registryBuilder) getNearestAncestorDirectoryWithPackageJson(filePath tspath.Path) *directory {
