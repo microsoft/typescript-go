@@ -340,7 +340,7 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
+	case ModuleKindSystem, ModuleKindUMD:
 		return false
 	}
 	return true
