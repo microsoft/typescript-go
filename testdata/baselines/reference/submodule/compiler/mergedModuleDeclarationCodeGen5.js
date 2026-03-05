@@ -1,11 +1,11 @@
 //// [tests/cases/compiler/mergedModuleDeclarationCodeGen5.ts] ////
 
 //// [mergedModuleDeclarationCodeGen5.ts]
-module M.buz.plop {
+namespace M.buz.plop {
     export function doom() { }
     export function M() { }
 }
-module M.buz.plop {
+namespace M.buz.plop {
     function gunk() { }
     function buz() { }
     export class fudge { }
@@ -21,6 +21,7 @@ module M.buz.plop {
 }
 
 //// [mergedModuleDeclarationCodeGen5.js]
+"use strict";
 var M;
 (function (M_1) {
     let buz;
@@ -50,8 +51,8 @@ var M;
             // Emit these references as follows
             var v1 = gunk; // gunk
             var v2 = buz; // buz
-            plop_1.v3 = doom; // _plop.doom
-            plop_1.v4 = M; // _plop.M
+            plop_1.v3 = plop_1.doom; // _plop.doom
+            plop_1.v4 = plop_1.M; // _plop.M
             plop_1.v5 = fudge; // fudge
             plop_1.v6 = plop; // plop
         })(plop = buz_1.plop || (buz_1.plop = {}));

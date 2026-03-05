@@ -1,7 +1,7 @@
 --- old.genericConstraintOnExtendedBuiltinTypes.js
 +++ new.genericConstraintOnExtendedBuiltinTypes.js
-@@= skipped -30, +30 lines =@@
- //// [genericConstraintOnExtendedBuiltinTypes.js]
+@@= skipped -31, +31 lines =@@
+ "use strict";
  var EndGate;
  (function (EndGate) {
 -    var Tweening;
@@ -19,8 +19,5 @@
 -    var Tweening;
 +    let Tweening;
      (function (Tweening) {
--        class NumberTween extends Tweening.Tween {
-+        class NumberTween extends Tween {
+         class NumberTween extends Tweening.Tween {
              constructor(from) {
-                 super(from);
-             }

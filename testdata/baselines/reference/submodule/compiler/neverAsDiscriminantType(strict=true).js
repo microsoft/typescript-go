@@ -68,10 +68,15 @@ export async function adaptSession(input: GatewayPayload) {
 
 
 //// [neverAsDiscriminantType.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GatewayOpcode = void 0;
-exports.adaptSession = adaptSession;
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 function f1(foo) {
     if (foo.kind === 'a') {
         foo.a;
@@ -82,6 +87,7 @@ function f2(foo) {
         foo.a;
     }
 }
+export { GatewayOpcode };
 var GatewayOpcode;
 (function (GatewayOpcode) {
     GatewayOpcode[GatewayOpcode["DISPATCH"] = 0] = "DISPATCH";
@@ -95,10 +101,12 @@ var GatewayOpcode;
     GatewayOpcode[GatewayOpcode["INVALID_SESSION"] = 9] = "INVALID_SESSION";
     GatewayOpcode[GatewayOpcode["HELLO"] = 10] = "HELLO";
     GatewayOpcode[GatewayOpcode["HEARTBEAT_ACK"] = 11] = "HEARTBEAT_ACK";
-})(GatewayOpcode || (exports.GatewayOpcode = GatewayOpcode = {}));
+})(GatewayOpcode || (GatewayOpcode = {}));
 function assertMessage(event) { }
-async function adaptSession(input) {
-    if (input.t === 'MESSAGE_CREATE') {
-        assertMessage(input.d);
-    }
+export function adaptSession(input) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (input.t === 'MESSAGE_CREATE') {
+            assertMessage(input.d);
+        }
+    });
 }

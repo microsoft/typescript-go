@@ -89,6 +89,7 @@ var n = ExpandoExpr3.prop + ExpandoExpr3.m(13) + new ExpandoExpr3().n
 
 
 //// [typeFromPropertyAssignment29.js]
+"use strict";
 function ExpandoDecl(n) {
     return n.toString();
 }
@@ -115,7 +116,7 @@ function ExpandoNested(n) {
     const nested = function (m) {
         return n + m;
     };
-    nested.total = n + 1_000_000;
+    nested.total = n + 1000000;
     return nested;
 }
 ExpandoNested.also = -1;

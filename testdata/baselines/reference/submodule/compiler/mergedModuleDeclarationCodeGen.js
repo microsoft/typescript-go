@@ -1,8 +1,8 @@
 //// [tests/cases/compiler/mergedModuleDeclarationCodeGen.ts] ////
 
 //// [mergedModuleDeclarationCodeGen.ts]
-export module X {
-    export module Y {
+export namespace X {
+    export namespace Y {
         class A {
             constructor(Y: any) {
                 new B();
@@ -10,8 +10,8 @@ export module X {
         }
     }
 }
-export module X {
-    export module Y {
+export namespace X {
+    export namespace Y {
         export class B {
         }
     }
@@ -27,7 +27,7 @@ var X;
     (function (Y_1) {
         class A {
             constructor(Y) {
-                new B();
+                new Y_1.B();
             }
         }
     })(Y = X.Y || (X.Y = {}));

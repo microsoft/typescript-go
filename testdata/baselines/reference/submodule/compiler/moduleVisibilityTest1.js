@@ -1,19 +1,19 @@
 //// [tests/cases/compiler/moduleVisibilityTest1.ts] ////
 
 //// [moduleVisibilityTest1.ts]
-module OuterMod {
+namespace OuterMod {
 	export function someExportedOuterFunc() { return -1; }
 
-	export module OuterInnerMod {
+	export namespace OuterInnerMod {
 		export function someExportedOuterInnerFunc() { return "foo"; }
 	}
 }
 
 import OuterInnerAlias = OuterMod.OuterInnerMod;
 
-module M {
+namespace M {
 
-	export module InnerMod {
+	export namespace InnerMod {
 		export function someExportedInnerFunc() { return -2; }
 	}
 
@@ -53,7 +53,7 @@ module M {
 	function someModuleFunction() { return 5;}
 }
 
-module M {
+namespace M {
 	export var c = x;
 	export var meb = M.E.B;
 }
@@ -68,6 +68,7 @@ c.someMethodThatCallsAnOuterMethod();
 
 
 //// [moduleVisibilityTest1.js]
+"use strict";
 var OuterMod;
 (function (OuterMod) {
     function someExportedOuterFunc() { return -1; }
@@ -78,6 +79,7 @@ var OuterMod;
         OuterInnerMod.someExportedOuterInnerFunc = someExportedOuterInnerFunc;
     })(OuterInnerMod = OuterMod.OuterInnerMod || (OuterMod.OuterInnerMod = {}));
 })(OuterMod || (OuterMod = {}));
+var OuterInnerAlias = OuterMod.OuterInnerMod;
 var M;
 (function (M) {
     let InnerMod;
@@ -112,7 +114,7 @@ var M;
     function someModuleFunction() { return 5; }
 })(M || (M = {}));
 (function (M) {
-    M.c = x;
+    M.c = M.x;
     M.meb = M.E.B;
 })(M || (M = {}));
 var cprime = null;

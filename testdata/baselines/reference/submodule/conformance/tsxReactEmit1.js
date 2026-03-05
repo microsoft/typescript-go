@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/jsx/tsxReactEmit1.tsx] ////
 
 //// [file.tsx]
-declare module JSX {
+declare namespace JSX {
 	interface Element { }
 	interface IntrinsicElements {
 		[s: string]: any;
@@ -44,19 +44,20 @@ var whitespace3 = <div>
 
 
 //// [file.js]
+"use strict";
 var p;
 var selfClosed1 = React.createElement("div", null);
 var selfClosed2 = React.createElement("div", { x: "1" });
-var selfClosed3 = React.createElement("div", { x: "1" });
-var selfClosed4 = React.createElement("div", { x: "1", y: "0" });
-var selfClosed5 = React.createElement("div", { x: 0, y: "0" });
-var selfClosed6 = React.createElement("div", { x: "1", y: "0" });
-var selfClosed7 = React.createElement("div", { x: p, y: "p", b: true });
+var selfClosed3 = React.createElement("div", { x: '1' });
+var selfClosed4 = React.createElement("div", { x: "1", y: '0' });
+var selfClosed5 = React.createElement("div", { x: 0, y: '0' });
+var selfClosed6 = React.createElement("div", { x: "1", y: '0' });
+var selfClosed7 = React.createElement("div", { x: p, y: 'p', b: true });
 var openClosed1 = React.createElement("div", null);
-var openClosed2 = React.createElement("div", { n: "m" }, "foo");
-var openClosed3 = React.createElement("div", { n: "m" }, p);
-var openClosed4 = React.createElement("div", { n: "m" }, p < p);
-var openClosed5 = React.createElement("div", { n: "m", b: true }, p > p);
+var openClosed2 = React.createElement("div", { n: 'm' }, "foo");
+var openClosed3 = React.createElement("div", { n: 'm' }, p);
+var openClosed4 = React.createElement("div", { n: 'm' }, p < p);
+var openClosed5 = React.createElement("div", { n: 'm', b: true }, p > p);
 class SomeClass {
     f() {
         var rewrites1 = React.createElement("div", null, () => this);

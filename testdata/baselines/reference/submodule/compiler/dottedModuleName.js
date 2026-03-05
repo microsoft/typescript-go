@@ -1,10 +1,10 @@
 //// [tests/cases/compiler/dottedModuleName.ts] ////
 
 //// [dottedModuleName.ts]
-module M {
-    export module N {
+namespace M {
+    export namespace N {
 	export function f(x:number)=>2*x;
-	export module X.Y.Z {
+	export namespace X.Y.Z {
 	    export var v2=f(v);
 	}
     }
@@ -12,9 +12,9 @@ module M {
 
 
 
-module M.N {
-    export module X {
-	export module Y.Z {
+namespace M.N {
+    export namespace X {
+	export namespace Y.Z {
 	    export var v=f(10);
 	}
     }
@@ -22,6 +22,7 @@ module M.N {
 
 
 //// [dottedModuleName.js]
+"use strict";
 var M;
 (function (M) {
     let N;
@@ -35,7 +36,7 @@ var M;
             (function (Y) {
                 let Z;
                 (function (Z) {
-                    Z.v2 = f(v);
+                    Z.v2 = f(Z.v);
                 })(Z = Y.Z || (Y.Z = {}));
             })(Y = X.Y || (X.Y = {}));
         })(X = N.X || (N.X = {}));
@@ -50,7 +51,7 @@ var M;
             (function (Y) {
                 let Z;
                 (function (Z) {
-                    Z.v = f(10);
+                    Z.v = N.f(10);
                 })(Z = Y.Z || (Y.Z = {}));
             })(Y = X.Y || (X.Y = {}));
         })(X = N.X || (N.X = {}));

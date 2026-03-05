@@ -6,6 +6,6 @@
  export const bar = (p?: Foo) => {}
 ->bar : (p?: Foo) => void
 ->(p?: Foo) => {} : (p?: Foo) => void
-+>bar : (p?: import("a").Foo | undefined) => void
-+>(p?: Foo) => {} : (p?: import("a").Foo | undefined) => void
- >p : import("a").Foo | undefined
++>bar : (p?: import("./a").Foo | undefined) => void
++>(p?: Foo) => {} : (p?: import("./a").Foo | undefined) => void
+ >p : import("./a").Foo | undefined

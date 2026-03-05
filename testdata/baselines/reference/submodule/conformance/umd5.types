@@ -10,7 +10,7 @@ Bar.fn();
 >Bar : typeof Bar
 >fn : () => void
 
-let x: Bar.Thing;
+declare let x: Bar.Thing;
 >x : Bar.Thing
 >Bar : any
 
@@ -37,5 +37,5 @@ export interface Thing { n: typeof x }
 >x : number
 
 export as namespace Foo;
->Foo : typeof import("foo")
+>Foo : typeof import("./foo")
 

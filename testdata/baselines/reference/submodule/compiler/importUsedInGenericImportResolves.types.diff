@@ -3,7 +3,7 @@
 @@= skipped -13, +13 lines =@@
  === test3.ts ===
  export const a: import("./test1").T<typeof import("./test2").theme> = null as any;
- >a : import("test1").T<{ a: string; }>
+ >a : import("./test1").T<{ a: string; }>
 ->theme : error
 +>theme : any
  >null as any : any

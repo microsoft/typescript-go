@@ -1,7 +1,7 @@
 --- old.mergedModuleDeclarationCodeGen3.js
 +++ new.mergedModuleDeclarationCodeGen3.js
-@@= skipped -12, +12 lines =@@
- //// [mergedModuleDeclarationCodeGen3.js]
+@@= skipped -13, +13 lines =@@
+ "use strict";
  var my;
  (function (my) {
 -    var data;
@@ -19,8 +19,4 @@
 +        let foo;
          (function (foo_1) {
              function data(my, foo) {
--                data_1.buz();
-+                buz();
-             }
-         })(foo = data_1.foo || (data_1.foo = {}));
-     })(data = my_1.data || (my_1.data = {}));
+                 data_1.buz();

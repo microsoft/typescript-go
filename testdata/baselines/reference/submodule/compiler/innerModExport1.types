@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/innerModExport1.ts] ////
 
 === innerModExport1.ts ===
-module Outer {
+namespace Outer {
 >Outer : typeof Outer
 
     // inner mod 1
@@ -39,8 +39,8 @@ module Outer {
 }
 
 Outer.ExportFunc();
->Outer.ExportFunc() : number
->Outer.ExportFunc : () => number
+>Outer.ExportFunc() : any
+>Outer.ExportFunc : any
 >Outer : typeof Outer
->ExportFunc : () => number
+>ExportFunc : any
 

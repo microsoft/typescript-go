@@ -1,4 +1,4 @@
-import { SyntaxKind } from "#syntaxKind";
+import { SyntaxKind } from "#enums/syntaxKind";
 import type {
     AbstractKeyword,
     AccessorKeyword,
@@ -1112,4 +1112,27 @@ export function isJSDocSatisfiesTag(node: Node): node is JSDocSatisfiesTag {
 
 export function isJSDocImportTag(node: Node): node is JSDocImportTag {
     return node.kind === SyntaxKind.JSDocImportTag;
+}
+
+export function isTokenKind(kind: SyntaxKind): boolean {
+    return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
+}
+
+export function isKeywordKind(kind: SyntaxKind): boolean {
+    return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
+}
+
+export function isJSDocKind(kind: SyntaxKind): boolean {
+    return kind >= SyntaxKind.FirstJSDocNode && kind <= SyntaxKind.LastJSDocNode;
+}
+
+export function isPropertyNameLiteral(node: Node): boolean {
+    switch (node.kind) {
+        case SyntaxKind.Identifier:
+        case SyntaxKind.StringLiteral:
+        case SyntaxKind.NoSubstitutionTemplateLiteral:
+        case SyntaxKind.NumericLiteral:
+            return true;
+    }
+    return false;
 }

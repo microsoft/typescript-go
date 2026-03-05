@@ -51,7 +51,9 @@ func GetModuleSpecifiersWithInfo(
 ) ([]string, ResultKind) {
 	ambient := tryGetModuleNameFromAmbientModule(moduleSymbol, checker)
 	if len(ambient) > 0 {
-		// !!! todo forAutoImport
+		if forAutoImports && IsExcludedByRegex(ambient, userPreferences.AutoImportSpecifierExcludeRegexes) {
+			return nil, ResultKindAmbient
+		}
 		return []string{ambient}, ResultKindAmbient
 	}
 
@@ -60,12 +62,35 @@ func GetModuleSpecifiersWithInfo(
 		return nil, ResultKindNone
 	}
 
+	// Use original source file name when file is from project reference output
+	moduleFileName := host.GetSourceOfProjectReferenceIfOutputIncluded(moduleSourceFile)
+
+	return GetModuleSpecifiersForFileWithInfo(
+		importingSourceFile,
+		moduleFileName,
+		compilerOptions,
+		host,
+		userPreferences,
+		options,
+		forAutoImports,
+	)
+}
+
+func GetModuleSpecifiersForFileWithInfo(
+	importingSourceFile SourceFileForSpecifierGeneration,
+	moduleFileName string,
+	compilerOptions *core.CompilerOptions,
+	host ModuleSpecifierGenerationHost,
+	userPreferences UserPreferences,
+	options ModuleSpecifierOptions,
+	forAutoImports bool,
+) ([]string, ResultKind) {
 	modulePaths := getAllModulePathsWorker(
 		getInfo(host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
-		moduleSourceFile.FileName(),
+		moduleFileName,
 		host,
-		// compilerOptions,
-		// options,
+		compilerOptions,
+		options,
 	)
 
 	return computeModuleSpecifiers(
@@ -81,7 +106,7 @@ func GetModuleSpecifiersWithInfo(
 
 func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker CheckerShape) string {
 	for _, decl := range moduleSymbol.Declarations {
-		if isNonGlobalAmbientModule(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
+		if ast.IsModuleWithStringLiteralName(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
 			return decl.Name().Text()
 		}
 	}
@@ -101,7 +126,7 @@ func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker Checker
 			continue
 		}
 
-		possibleContainer := ast.FindAncestor(d, isNonGlobalAmbientModule)
+		possibleContainer := ast.FindAncestor(d, ast.IsModuleWithStringLiteralName)
 		if possibleContainer == nil || possibleContainer.Parent == nil || !ast.IsSourceFile(possibleContainer.Parent) {
 			continue
 		}
@@ -163,7 +188,7 @@ func getAllModulePaths(
 	//     cached := cache.get(importingFilePath, importedFilePath, preferences, options);
 	//     if (cached.modulePaths) {return cached.modulePaths;}
 	// }
-	modulePaths := getAllModulePathsWorker(info, importedFileName, host) // , compilerOptions, options);
+	modulePaths := getAllModulePathsWorker(info, importedFileName, host, compilerOptions, options)
 	// if (cache != nil) {
 	//     cache.setModulePaths(importingFilePath, importedFilePath, preferences, options, modulePaths);
 	// }
@@ -174,32 +199,18 @@ func getAllModulePathsWorker(
 	info Info,
 	importedFileName string,
 	host ModuleSpecifierGenerationHost,
-	// compilerOptions *core.CompilerOptions,
-	// options ModuleSpecifierOptions,
+	compilerOptions *core.CompilerOptions,
+	options ModuleSpecifierOptions,
 ) []ModulePath {
-	// !!! TODO: Caches and symlink cache chicanery to support pulling in non-explicit package.json dep names
-	// cache := host.GetModuleResolutionCache() // !!!
-	// links := host.GetSymlinkCache() // !!!
-	// if cache != nil && links != nil && !strings.Contains(info.ImportingSourceFileName, "/node_modules/") {
-	//     // Debug.type<ModuleResolutionHost>(host); // !!!
-	//     // Cache resolutions for all `dependencies` of the `package.json` context of the input file.
-	//     // This should populate all the relevant symlinks in the symlink cache, and most, if not all, of these resolutions
-	//     // should get (re)used.
-	//     // const state = getTemporaryModuleResolutionState(cache.getPackageJsonInfoCache(), host, {});
-	//     // const packageJson = getPackageScopeForPath(getDirectoryPath(info.importingSourceFileName), state);
-	//     // if (packageJson) {
-	//     //     const toResolve = getAllRuntimeDependencies(packageJson.contents.packageJsonContent);
-	//     //     for (const depName of (toResolve || emptyArray)) {
-	//     //         const resolved = resolveModuleName(depName, combinePaths(packageJson.packageDirectory, "package.json"), compilerOptions, host, cache, /*redirectedReference*/ undefined, options.overrideImportMode);
-	//     //         links.setSymlinksFromResolution(resolved.resolvedModule);
-	//     //     }
-	//     // }
-	// }
-
 	allFileNames := make(map[string]ModulePath)
 	paths := GetEachFileNameOfModule(info.ImportingSourceFileName, importedFileName, host, true)
 	for _, p := range paths {
 		allFileNames[p.FileName] = p
+	}
+
+	useCaseSensitiveFileNames := info.UseCaseSensitiveFileNames
+	comparePaths := func(a, b ModulePath) int {
+		return comparePathsByRedirect(a, b, useCaseSensitiveFileNames)
 	}
 
 	// Sort by paths closest to importing file Name directory
@@ -214,7 +225,7 @@ func getAllModulePathsWorker(
 			}
 		}
 		if len(pathsInDirectory) > 0 {
-			slices.SortStableFunc(pathsInDirectory, comparePathsByRedirectAndNumberOfDirectorySeparators)
+			slices.SortFunc(pathsInDirectory, comparePaths)
 			sortedPaths = append(sortedPaths, pathsInDirectory...)
 		}
 		newDirectory := tspath.GetDirectoryPath(directory)
@@ -225,22 +236,27 @@ func getAllModulePathsWorker(
 	}
 	if len(allFileNames) > 0 {
 		remainingPaths := slices.Collect(maps.Values(allFileNames))
-		slices.SortStableFunc(remainingPaths, comparePathsByRedirectAndNumberOfDirectorySeparators)
+		slices.SortFunc(remainingPaths, comparePaths)
 		sortedPaths = append(sortedPaths, remainingPaths...)
 	}
 	return sortedPaths
 }
 
+// containsIgnoredPath checks if a path contains patterns that should be ignored.
+// This is a local helper that duplicates tspath.ContainsIgnoredPath for performance.
 func containsIgnoredPath(s string) bool {
 	return strings.Contains(s, "/node_modules/.") ||
 		strings.Contains(s, "/.git") ||
-		strings.Contains(s, "/.#")
+		strings.Contains(s, ".#")
 }
 
+// ContainsNodeModules checks if a path contains the node_modules directory.
 func ContainsNodeModules(s string) bool {
 	return strings.Contains(s, "/node_modules/")
 }
 
+// GetEachFileNameOfModule returns all possible file paths for a module, including symlink alternatives.
+// This function handles symlink resolution and provides multiple path options for module resolution.
 func GetEachFileNameOfModule(
 	importingFileName string,
 	importedFileName string,
@@ -267,8 +283,6 @@ func GetEachFileNameOfModule(
 
 	results := make([]ModulePath, 0, 2)
 	if !preferSymlinks {
-		// Symlinks inside ignored paths are already filtered out of the symlink cache,
-		// so we only need to remove them from the realpath filenames.
 		for _, p := range targets {
 			if !(shouldFilterIgnoredPaths && containsIgnoredPath(p)) {
 				results = append(results, ModulePath{
@@ -280,36 +294,51 @@ func GetEachFileNameOfModule(
 		}
 	}
 
-	// !!! TODO: Symlink directory handling
-	// const symlinkedDirectories = host.getSymlinkCache?.().getSymlinkedDirectoriesByRealpath();
-	// const fullImportedFileName = getNormalizedAbsolutePath(importedFileName, cwd);
-	// const result = symlinkedDirectories && forEachAncestorDirectoryStoppingAtGlobalCache(
-	//     host,
-	//     getDirectoryPath(fullImportedFileName),
-	//     realPathDirectory => {
-	//         const symlinkDirectories = symlinkedDirectories.get(ensureTrailingDirectorySeparator(toPath(realPathDirectory, cwd, getCanonicalFileName)));
-	//         if (!symlinkDirectories) return undefined; // Continue to ancestor directory
+	symlinkCache := host.GetSymlinkCache()
+	fullImportedFileName := tspath.GetNormalizedAbsolutePath(importedFileName, cwd)
+	if symlinkCache != nil {
+		tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(
+			host.GetGlobalTypingsCacheLocation(),
+			tspath.GetDirectoryPath(fullImportedFileName),
+			func(realPathDirectory string) (bool, bool) {
+				symlinkSet, ok := symlinkCache.DirectoriesByRealpath().Load(tspath.ToPath(realPathDirectory, cwd, host.UseCaseSensitiveFileNames()).EnsureTrailingDirectorySeparator())
+				if !ok {
+					return false, false
+				} // Continue to ancestor directory
 
-	//         // Don't want to a package to globally import from itself (importNameCodeFix_symlink_own_package.ts)
-	//         if (startsWithDirectory(importingFileName, realPathDirectory, getCanonicalFileName)) {
-	//             return false; // Stop search, each ancestor directory will also hit this condition
-	//         }
+				// Don't want to a package to globally import from itself (importNameCodeFix_symlink_own_package.ts)
+				if tspath.StartsWithDirectory(importingFileName, realPathDirectory, host.UseCaseSensitiveFileNames()) {
+					return false, true // Stop search, each ancestor directory will also hit this condition
+				}
 
-	//         return forEach(targets, target => {
-	//             if (!startsWithDirectory(target, realPathDirectory, getCanonicalFileName)) {
-	//                 return;
-	//             }
+				for _, target := range targets {
+					if !tspath.StartsWithDirectory(target, realPathDirectory, host.UseCaseSensitiveFileNames()) {
+						continue
+					}
 
-	//             const relative = getRelativePathFromDirectory(realPathDirectory, target, getCanonicalFileName);
-	//             for (const symlinkDirectory of symlinkDirectories) {
-	//                 const option = resolvePath(symlinkDirectory, relative);
-	//                 const result = cb(option, target === referenceRedirect);
-	//                 shouldFilterIgnoredPaths = true; // We found a non-ignored path in symlinks, so we can reject ignored-path realpaths
-	//                 if (result) return result;
-	//             }
-	//         });
-	//     },
-	// );
+					relative := tspath.GetRelativePathFromDirectory(
+						realPathDirectory,
+						target,
+						tspath.ComparePathsOptions{
+							UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+							CurrentDirectory:          cwd,
+						})
+					symlinkSet.Range(func(symlinkDirectory string) bool {
+						option := tspath.ResolvePath(symlinkDirectory, relative)
+						results = append(results, ModulePath{
+							FileName:        option,
+							IsInNodeModules: ContainsNodeModules(option),
+							IsRedirect:      target == referenceRedirect,
+						})
+						shouldFilterIgnoredPaths = true // We found a non-ignored path in symlinks, so we can reject ignored-path realpaths
+						return true
+					})
+				}
+
+				return false, false
+			},
+		)
+	}
 
 	if preferSymlinks {
 		for _, p := range targets {
@@ -389,7 +418,7 @@ func computeModuleSpecifiers(
 		if modulePath.IsInNodeModules {
 			specifier = tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
 		}
-		if len(specifier) > 0 && !(forAutoImport && isExcludedByRegex(specifier, preferences.excludeRegexes)) {
+		if len(specifier) > 0 && !(forAutoImport && IsExcludedByRegex(specifier, preferences.excludeRegexes)) {
 			nodeModulesSpecifiers = append(nodeModulesSpecifiers, specifier)
 			if modulePath.IsRedirect {
 				// If we got a specifier for a redirect, it was a bare package specifier (e.g. "@foo/bar",
@@ -411,7 +440,7 @@ func computeModuleSpecifiers(
 			preferences,
 			/*pathsOnly*/ modulePath.IsRedirect || len(specifier) > 0,
 		)
-		if len(local) == 0 || forAutoImport && isExcludedByRegex(local, preferences.excludeRegexes) {
+		if len(local) == 0 || forAutoImport && IsExcludedByRegex(local, preferences.excludeRegexes) {
 			continue
 		}
 		if modulePath.IsRedirect {
@@ -482,6 +511,13 @@ func getLocalModuleSpecifier(
 		})), allowedEndings, compilerOptions, host)
 	}
 
+	if (paths == nil && !compilerOptions.GetResolvePackageJsonImports()) || preferences.relativePreference == RelativePreferenceRelative {
+		if pathsOnly {
+			return ""
+		}
+		return relativePath
+	}
+
 	root := compilerOptions.GetPathsBasePath(host.GetCurrentDirectory())
 	baseDirectory := tspath.GetNormalizedAbsolutePath(root, host.GetCurrentDirectory())
 	relativeToBaseUrl := getRelativePathIfInSameVolume(moduleFileName, baseDirectory, host.UseCaseSensitiveFileNames())
@@ -530,8 +566,8 @@ func getLocalModuleSpecifier(
 		return relativePath
 	}
 
-	relativeIsExcluded := isExcludedByRegex(relativePath, preferences.excludeRegexes)
-	nonRelativeIsExcluded := isExcludedByRegex(maybeNonRelative, preferences.excludeRegexes)
+	relativeIsExcluded := IsExcludedByRegex(relativePath, preferences.excludeRegexes)
+	nonRelativeIsExcluded := IsExcludedByRegex(maybeNonRelative, preferences.excludeRegexes)
 	if !relativeIsExcluded && nonRelativeIsExcluded {
 		return relativePath
 	}
@@ -585,10 +621,13 @@ func getLocalModuleSpecifier(
 			//
 			return maybeNonRelative
 		}
+		if len(fromPackageJsonImports) > 0 {
+			return relativePath
+		}
 	}
 
 	// Prefer a relative import over a baseUrl import if it has fewer components.
-	if isPathRelativeToParent(maybeNonRelative) || strings.Count(relativePath, "/") < strings.Count(maybeNonRelative, "/") {
+	if isPathRelativeToParent(maybeNonRelative) || CountPathComponents(relativePath) < CountPathComponents(maybeNonRelative) {
 		return relativePath
 	}
 	return maybeNonRelative
@@ -611,13 +650,16 @@ func processEnding(
 
 	jsPriority := slices.Index(allowedEndings, ModuleSpecifierEndingJsExtension)
 	tsPriority := slices.Index(allowedEndings, ModuleSpecifierEndingTsExtension)
-	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts}) && tsPriority < jsPriority {
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts}) && tsPriority != -1 && tsPriority < jsPriority {
 		return fileName
 	}
-	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionDcts, tspath.ExtensionCts}) {
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDmts, tspath.ExtensionDcts}) {
 		inputExt := tspath.GetDeclarationFileExtension(fileName)
-		ext := getJsExtensionForDeclarationFileExtension(inputExt)
+		ext := GetJSExtensionForDeclarationFileExtension(inputExt)
 		return tspath.RemoveExtension(fileName, inputExt) + ext
+	}
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts}) {
+		return noExtension + getJSExtensionForFile(fileName, options)
 	}
 
 	switch allowedEndings[0] {
@@ -760,7 +802,7 @@ func tryGetModuleNameAsNodeModule(
 
 	// If the module was found in @types, get the actual Node package name
 	nodeModulesDirectoryName := moduleSpecifier[parts.TopLevelPackageNameIndex+1:]
-	return GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+	return module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
 }
 
 type pkgJsonDirAttemptResult struct {
@@ -809,7 +851,20 @@ func tryDirectoryWithPackageJson(
 		// name in the package.json content via url/filepath dependency specifiers. We need to
 		// use the actual directory name, so don't look at `packageJsonContent.name` here.
 		nodeModulesDirectoryName := packageRootPath[parts.TopLevelPackageNameIndex+1:]
-		packageName := GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+		packageName := module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+
+		// Determine resolution mode for package.json exports condition matching.
+		// TypeScript's tryDirectoryWithPackageJson uses the importing file's mode (moduleSpecifiers.ts:1257),
+		// but this causes incorrect exports resolution. We fix this by checking the target file's extension
+		// using the logic from getImpliedNodeFormatForEmitWorker (program.ts:4827-4838).
+		// .cjs/.cts/.d.cts → CommonJS → "require" condition
+		// .mjs/.mts/.d.mts → ESM → "import" condition
+		if tspath.FileExtensionIsOneOf(pathObj.FileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionDcts}) {
+			importMode = core.ResolutionModeCommonJS
+		} else if tspath.FileExtensionIsOneOf(pathObj.FileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts, tspath.ExtensionDmts}) {
+			importMode = core.ResolutionModeESM
+		}
+
 		conditions := module.GetConditions(options, importMode)
 
 		var fromExports string
@@ -1027,7 +1082,7 @@ func tryGetModuleNameFromPaths(
 			if len(pattern) == 0 {
 				pattern = normalized
 			}
-			indexOfStar := strings.Index(pattern, "*")
+			prefix, suffix, ok := strings.Cut(pattern, "*")
 
 			// In module resolution, if `pattern` itself has an extension, a file with that extension is looked up directly,
 			// meaning a '.ts' or '.d.ts' extension is allowed to resolve. This is distinct from the case where a '*' substitution
@@ -1086,9 +1141,7 @@ func tryGetModuleNameFromPaths(
 				})
 			}
 
-			if indexOfStar != -1 {
-				prefix := pattern[0:indexOfStar]
-				suffix := pattern[indexOfStar+1:]
+			if ok {
 				for _, c := range candidates {
 					value := c.value
 					if len(value) >= len(prefix)+len(suffix) &&
@@ -1152,7 +1205,7 @@ func tryGetModuleNameFromExportsOrImports(
 		pathOrPattern := tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(packageDirectory, strValue), "")
 		var extensionSwappedTarget string
 		if tspath.HasTSFileExtension(targetFilePath) {
-			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + tryGetJSExtensionForFile(targetFilePath, options)
+			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + module.TryGetJSExtensionForFile(targetFilePath, options)
 		}
 		canTryTsExtension := preferTsExtension && tspath.HasImplementationTSFileExtension(targetFilePath)
 
@@ -1195,26 +1248,26 @@ func tryGetModuleNameFromExportsOrImports(
 		case MatchingModePattern:
 			leadingSlice, trailingSlice, _ := strings.Cut(pathOrPattern, "*")
 			caseSensitive := host.UseCaseSensitiveFileNames()
-			if canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
+			if canTryTsExtension && stringutil.HasPrefixAndSuffixWithoutOverlap(targetFilePath, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if len(extensionSwappedTarget) > 0 && stringutil.HasPrefix(extensionSwappedTarget, leadingSlice, caseSensitive) && stringutil.HasSuffix(extensionSwappedTarget, trailingSlice, caseSensitive) {
+			if len(extensionSwappedTarget) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(extensionSwappedTarget, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := extensionSwappedTarget[len(leadingSlice) : len(extensionSwappedTarget)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if !canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
+			if !canTryTsExtension && stringutil.HasPrefixAndSuffixWithoutOverlap(targetFilePath, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if len(outputFile) > 0 && stringutil.HasPrefix(outputFile, leadingSlice, caseSensitive) && stringutil.HasSuffix(outputFile, trailingSlice, caseSensitive) {
+			if len(outputFile) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(outputFile, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := outputFile[len(leadingSlice) : len(outputFile)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if len(declarationFile) > 0 && stringutil.HasPrefix(declarationFile, leadingSlice, caseSensitive) && stringutil.HasSuffix(declarationFile, trailingSlice, caseSensitive) {
+			if len(declarationFile) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(declarationFile, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := declarationFile[len(leadingSlice) : len(declarationFile)-len(trailingSlice)]
 				substituted := replaceFirstStar(packageName, starReplacement)
-				jsExtension := tryGetJSExtensionForFile(declarationFile, options)
+				jsExtension := module.TryGetJSExtensionForFile(declarationFile, options)
 				if len(jsExtension) > 0 {
 					return tspath.ChangeFullExtension(substituted, jsExtension)
 				}
@@ -1233,7 +1286,7 @@ func tryGetModuleNameFromExportsOrImports(
 		// conditional mapping
 		obj := exports.AsObject()
 		for key, value := range obj.Entries() {
-			if key == "default" || slices.Contains(conditions, key) || isApplicableVersionedTypesKey(conditions, key) {
+			if key == "default" || slices.Contains(conditions, key) || slices.Contains(conditions, "types") && module.IsApplicableVersionedTypesKey(key) {
 				result := tryGetModuleNameFromExportsOrImports(options, host, targetFilePath, packageDirectory, packageName, value, conditions, mode, isImports, preferTsExtension)
 				if len(result) > 0 {
 					return result

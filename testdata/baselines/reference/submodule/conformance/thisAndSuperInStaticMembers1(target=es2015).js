@@ -42,6 +42,7 @@ class C extends B {
 
 
 //// [thisAndSuperInStaticMembers1.js]
+"use strict";
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -73,7 +74,7 @@ class C extends B {
     static z10 = [...super.a] = [0];
     static z11 = { x: super.a } = { x: 0 };
     static z12 = { x: super.a = 0 } = { x: 0 };
-    static z13 = (_a = { x: 0 }, super.a = __rest(_a, []));
+    static z13 = (_a = { x: 0 }, super.a = __rest(_a, []), _a);
     static z14 = ++super.a;
     static z15 = --super.a;
     static z16 = ++super[("a")];

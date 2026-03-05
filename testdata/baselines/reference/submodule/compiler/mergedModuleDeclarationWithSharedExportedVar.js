@@ -1,20 +1,21 @@
 //// [tests/cases/compiler/mergedModuleDeclarationWithSharedExportedVar.ts] ////
 
 //// [mergedModuleDeclarationWithSharedExportedVar.ts]
-module M {
+namespace M {
     export var v = 10;
     v;
 }
-module M {
+namespace M {
     v;
 }
 
 //// [mergedModuleDeclarationWithSharedExportedVar.js]
+"use strict";
 var M;
 (function (M) {
     M.v = 10;
     M.v;
 })(M || (M = {}));
 (function (M) {
-    v;
+    M.v;
 })(M || (M = {}));
