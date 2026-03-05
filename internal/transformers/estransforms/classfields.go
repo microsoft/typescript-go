@@ -2055,14 +2055,7 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 			expressions = append(expressions, classExpression)
 		}
 
-		if len(expressions) > 1 {
-			tx.EmitContext().AddEmitFlags(classExpression, printer.EFIndented)
-			for _, expr := range expressions {
-				tx.EmitContext().AddEmitFlags(expr, printer.EFStartOnNewLine)
-			}
-		}
-
-		return tx.Factory().InlineExpressions(expressions)
+		return tx.finishClassExpressionInlineExpressions(classExpression, expressions)
 	}
 
 	// Decorated class declaration path: emit static properties as separate statements
@@ -2110,6 +2103,16 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		expressions = append(expressions, classExpression)
 	}
 
+	return tx.finishClassExpressionInlineExpressions(classExpression, expressions)
+}
+
+func (tx *classFieldsTransformer) finishClassExpressionInlineExpressions(classExpression *ast.Expression, expressions []*ast.Expression) *ast.Expression {
+	if len(expressions) > 1 {
+		tx.EmitContext().AddEmitFlags(classExpression, printer.EFIndented)
+		for _, expr := range expressions {
+			tx.EmitContext().AddEmitFlags(expr, printer.EFStartOnNewLine)
+		}
+	}
 	return tx.Factory().InlineExpressions(expressions)
 }
 
