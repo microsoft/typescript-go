@@ -65,8 +65,7 @@ type Export struct {
 	// The file where the export was found.
 	Path tspath.Path
 
-	NodeModulesDirectory tspath.Path
-	PackageName          string
+	PackageName string
 }
 
 func (e *Export) Name() string {
@@ -99,7 +98,7 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 		return nil
 	}
 	moduleID, moduleFileName := getModuleIDAndFileNameOfModuleSymbol(symbol.Parent)
-	extractor := newSymbolExtractor("", "", ch, nil, nil)
+	extractor := newSymbolExtractor("", ch, nil, nil)
 
 	var exports []*Export
 	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)

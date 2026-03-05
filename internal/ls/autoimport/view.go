@@ -212,7 +212,6 @@ outer:
 						localName:                  e.localName,
 						Target:                     e.Target,
 						Path:                       e.Path,
-						NodeModulesDirectory:       e.NodeModulesDirectory,
 					})
 					continue outer
 				}
