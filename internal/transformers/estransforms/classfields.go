@@ -1959,13 +1959,16 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 
 	staticPropertiesOrClassStaticBlocks := tx.getStaticPropertiesAndClassStaticBlock(node)
 
+	// Pre-compute whether the class expression will need a temp variable wrapper.
+	// Strada registers class aliases AFTER transformClassMembers (since onSubstituteNode runs
+	// at emit time), but we must predict this before visiting members since we substitute
+	// eagerly. This requires pre-detecting willHavePrivatePendingExpressions.
+	isClassWithConstructorReference := false
+	hasTransformableStatics := false
+	deferTempDeclaration := false
 	if !isDecoratedClassDeclaration {
-		// Pre-compute whether the class expression will need a temp variable wrapper.
-		// Strada registers class aliases AFTER transformClassMembers (since onSubstituteNode runs
-		// at emit time), but we must predict this before visiting members since we substitute
-		// eagerly. This requires pre-detecting willHavePrivatePendingExpressions.
-		isClassWithConstructorReference := tx.classContainsConstructorReference(node)
-		hasTransformableStatics := (tx.shouldTransformPrivateElementsOrClassStaticBlocks ||
+		isClassWithConstructorReference = tx.classContainsConstructorReference(node)
+		hasTransformableStatics = (tx.shouldTransformPrivateElementsOrClassStaticBlocks ||
 			tx.shouldAlwaysTransformPrivateStaticElements(node)) &&
 			core.Some(staticPropertiesOrClassStaticBlocks, func(n *ast.Node) bool {
 				return ast.IsClassStaticBlockDeclaration(n) ||
@@ -1986,7 +1989,6 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		// Register class alias BEFORE visiting members (Strada registers after, since its
 		// onSubstituteNode runs at emit time). Only register when the class will be wrapped
 		// with a temp, matching Strada's conditional registration.
-		deferTempDeclaration := false
 		if isClassWithConstructorReference && willNeedTempWrapper && tx.getClassLexicalEnvironment().classConstructor == nil {
 			// Create temp early so the alias is available during member visiting, even though in the Strada
 			// reference the temp would be created later in the pendingExpressions branch.
@@ -2000,34 +2002,35 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		if alias := tx.getClassLexicalEnvironment().classConstructor; isClassWithConstructorReference && willNeedTempWrapper && alias != nil {
 			tx.classAliases[tx.EmitContext().MostOriginal(node)] = alias
 		}
+	}
 
-		modifiers := tx.modifierVisitor.VisitModifiers(classExpr.Modifiers())
-		heritageClauses := tx.heritageClauseVisitor.VisitNodes(classExpr.HeritageClauses)
-		members, membersPrologue := tx.transformClassMembers(node)
+	modifiers := tx.modifierVisitor.VisitModifiers(classExpr.Modifiers())
+	heritageClauses := tx.heritageClauseVisitor.VisitNodes(classExpr.HeritageClauses)
+	members, membersPrologue := tx.transformClassMembers(node)
 
-		if deferTempDeclaration {
-			if tx.classExpressionNeedsBlockScopedTemp() {
-				tx.EmitContext().AddLexicalDeclaration(temp)
-			} else {
-				tx.EmitContext().AddVariableDeclaration(temp)
-			}
+	if deferTempDeclaration {
+		if tx.classExpressionNeedsBlockScopedTemp() {
+			tx.EmitContext().AddLexicalDeclaration(temp)
+		} else {
+			tx.EmitContext().AddVariableDeclaration(temp)
 		}
+	}
 
-		classExpression := tx.Factory().UpdateClassExpression(
-			classExpr,
-			modifiers,
-			classExpr.Name(),
-			nil, /*typeParameters*/
-			heritageClauses,
-			members,
-		)
+	classExpression := tx.Factory().UpdateClassExpression(
+		classExpr,
+		modifiers,
+		classExpr.Name(),
+		nil, /*typeParameters*/
+		heritageClauses,
+		members,
+	)
 
-		var expressions []*ast.Expression
+	var expressions []*ast.Expression
+	if membersPrologue != nil {
+		expressions = append(expressions, membersPrologue)
+	}
 
-		if membersPrologue != nil {
-			expressions = append(expressions, membersPrologue)
-		}
-
+	if !isDecoratedClassDeclaration {
 		if hasTransformableStatics || len(tx.pendingExpressions) > 0 {
 			if temp == nil {
 				temp = tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
@@ -2054,59 +2057,36 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 		} else {
 			expressions = append(expressions, classExpression)
 		}
-
-		return tx.finishClassExpressionInlineExpressions(classExpression, expressions)
-	}
-
-	// Decorated class declaration path: emit static properties as separate statements
-	// via pendingStatements, matching the class declaration output structure.
-	modifiers := tx.modifierVisitor.VisitModifiers(classExpr.Modifiers())
-	heritageClauses := tx.heritageClauseVisitor.VisitNodes(classExpr.HeritageClauses)
-	members, membersPrologue := tx.transformClassMembers(node)
-
-	classExpression := tx.Factory().UpdateClassExpression(
-		classExpr,
-		modifiers,
-		classExpr.Name(),
-		nil, /*typeParameters*/
-		heritageClauses,
-		members,
-	)
-
-	var expressions []*ast.Expression
-	if membersPrologue != nil {
-		expressions = append(expressions, membersPrologue)
-	}
-
-	// Write any pending expressions from elided or moved computed property names
-	if len(tx.pendingExpressions) > 0 {
-		for _, expr := range tx.pendingExpressions {
-			tx.pendingStatements = append(tx.pendingStatements, tx.Factory().NewExpressionStatement(expr))
-		}
-	}
-
-	// Emit static properties as statements (via pendingStatements) using the class's
-	// internal name as the receiver, matching the class declaration output structure.
-	if len(staticPropertiesOrClassStaticBlocks) > 0 {
-		classThisOrName := tx.EmitContext().ClassThis(node)
-		if classThisOrName == nil {
-			classThisOrName = tx.Factory().GetLocalName(node)
-		}
-		tx.pendingStatements = tx.addPropertyOrClassStaticBlockStatements(tx.pendingStatements, staticPropertiesOrClassStaticBlocks, classThisOrName)
-	}
-
-	if temp != nil {
-		expressions = append(expressions, tx.Factory().NewAssignmentExpression(temp, classExpression))
-	} else if tx.shouldTransformPrivateElementsOrClassStaticBlocks && tx.EmitContext().ClassThis(node) != nil {
-		expressions = append(expressions, tx.Factory().NewAssignmentExpression(tx.EmitContext().ClassThis(node), classExpression))
 	} else {
-		expressions = append(expressions, classExpression)
+		// Decorated class declaration path: emit static properties as separate statements
+		// via pendingStatements, matching the class declaration output structure.
+
+		// Write any pending expressions from elided or moved computed property names
+		if len(tx.pendingExpressions) > 0 {
+			for _, expr := range tx.pendingExpressions {
+				tx.pendingStatements = append(tx.pendingStatements, tx.Factory().NewExpressionStatement(expr))
+			}
+		}
+
+		// Emit static properties as statements (via pendingStatements) using the class's
+		// internal name as the receiver, matching the class declaration output structure.
+		if len(staticPropertiesOrClassStaticBlocks) > 0 {
+			classThisOrName := tx.EmitContext().ClassThis(node)
+			if classThisOrName == nil {
+				classThisOrName = tx.Factory().GetLocalName(node)
+			}
+			tx.pendingStatements = tx.addPropertyOrClassStaticBlockStatements(tx.pendingStatements, staticPropertiesOrClassStaticBlocks, classThisOrName)
+		}
+
+		if temp != nil {
+			expressions = append(expressions, tx.Factory().NewAssignmentExpression(temp, classExpression))
+		} else if tx.shouldTransformPrivateElementsOrClassStaticBlocks && tx.EmitContext().ClassThis(node) != nil {
+			expressions = append(expressions, tx.Factory().NewAssignmentExpression(tx.EmitContext().ClassThis(node), classExpression))
+		} else {
+			expressions = append(expressions, classExpression)
+		}
 	}
 
-	return tx.finishClassExpressionInlineExpressions(classExpression, expressions)
-}
-
-func (tx *classFieldsTransformer) finishClassExpressionInlineExpressions(classExpression *ast.Expression, expressions []*ast.Expression) *ast.Expression {
 	if len(expressions) > 1 {
 		tx.EmitContext().AddEmitFlags(classExpression, printer.EFIndented)
 		for _, expr := range expressions {
