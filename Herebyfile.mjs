@@ -60,6 +60,7 @@ const { values: rawOptions } = parseArgs({
         debug: { type: "boolean" },
         dirty: { type: "boolean" },
         release: { type: "boolean" },
+        assert: { type: "boolean" },
 
         setPrerelease: { type: "string" },
         forRelease: { type: "boolean" },
@@ -209,7 +210,7 @@ function buildTsgo(opts) {
     opts ||= {};
     const out = opts.out ?? "./built/local/";
     const env = { ...goBuildEnv, ...opts.env };
-    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "noassert")} -o ${out} ./cmd/tsgo`;
+    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug || options.assert ? goBuildTags("noembed") : goBuildTags("noembed", "noassert")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
@@ -313,6 +314,7 @@ const enumDefs = [
     { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
+    { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     // @typescript/ast enums
     { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind.go", outDir: "_packages/ast/src/enums" },
     { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/ast/src/enums" },

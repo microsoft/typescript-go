@@ -18,7 +18,6 @@ type CompilerOptions struct {
 
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
 	AllowArbitraryExtensions                  Tristate                                  `json:"allowArbitraryExtensions,omitzero"`
-	AllowSyntheticDefaultImports              Tristate                                  `json:"allowSyntheticDefaultImports,omitzero"`
 	AllowImportingTsExtensions                Tristate                                  `json:"allowImportingTsExtensions,omitzero"`
 	AllowNonTsExtensions                      Tristate                                  `json:"allowNonTsExtensions,omitzero"`
 	AllowUmdGlobalAccess                      Tristate                                  `json:"allowUmdGlobalAccess,omitzero"`
@@ -41,7 +40,6 @@ type CompilerOptions struct {
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
 	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
-	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
 	ExperimentalDecorators                    Tristate                                  `json:"experimentalDecorators,omitzero"`
 	ForceConsistentCasingInFileNames          Tristate                                  `json:"forceConsistentCasingInFileNames,omitzero"`
@@ -121,9 +119,13 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
 	// Deprecated: Do not use outside of options parsing and validation.
+	AllowSyntheticDefaultImports Tristate `json:"allowSyntheticDefaultImports,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	ESModuleInterop Tristate `json:"esModuleInterop,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	OutFile string `json:"outFile,omitzero"`
 
@@ -256,16 +258,6 @@ func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
 
 func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) bool {
 	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
-}
-
-// Deprecated: always returns true
-func (options *CompilerOptions) GetESModuleInterop() bool {
-	return true
-}
-
-// Deprecated: always returns true
-func (options *CompilerOptions) GetAllowSyntheticDefaultImports() bool {
-	return true
 }
 
 func (options *CompilerOptions) GetResolveJsonModule() bool {
