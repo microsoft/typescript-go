@@ -310,9 +310,6 @@ const (
 	NodeCheckFlagsSuperInstance                            NodeCheckFlags = 1 << 4  // Instance 'super' reference
 	NodeCheckFlagsSuperStatic                              NodeCheckFlags = 1 << 5  // Static 'super' reference
 	NodeCheckFlagsContextChecked                           NodeCheckFlags = 1 << 6  // Contextual types have been assigned
-	NodeCheckFlagsMethodWithSuperPropertyAccessInAsync     NodeCheckFlags = 1 << 7  // A method that contains a SuperProperty access in an async context.
-	NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync NodeCheckFlags = 1 << 8  // A method that contains a SuperProperty assignment in an async context.
-	NodeCheckFlagsCaptureArguments                         NodeCheckFlags = 1 << 9  // Lexical 'arguments' used in body
 	NodeCheckFlagsEnumValuesComputed                       NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
 	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
 	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
@@ -1220,6 +1217,18 @@ func (typePredicate *TypePredicate) Type() *Type {
 	return typePredicate.t
 }
 
+func (typePredicate *TypePredicate) Kind() TypePredicateKind {
+	return typePredicate.kind
+}
+
+func (typePredicate *TypePredicate) ParameterIndex() int32 {
+	return typePredicate.parameterIndex
+}
+
+func (typePredicate *TypePredicate) ParameterName() string {
+	return typePredicate.parameterName
+}
+
 // IndexInfo
 
 type IndexInfo struct {
@@ -1228,6 +1237,18 @@ type IndexInfo struct {
 	isReadonly  bool
 	declaration *ast.Node   // IndexSignatureDeclaration
 	components  []*ast.Node // ElementWithComputedPropertyName
+}
+
+func (info *IndexInfo) KeyType() *Type {
+	return info.keyType
+}
+
+func (info *IndexInfo) ValueType() *Type {
+	return info.valueType
+}
+
+func (info *IndexInfo) IsReadonly() bool {
+	return info.isReadonly
 }
 
 /**
