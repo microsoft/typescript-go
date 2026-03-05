@@ -1506,16 +1506,10 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 	parent := parentNode.AsArrowFunction()
 	parameter := parameters.Nodes[0].AsParameterDeclaration()
 
-	// Only use modifiers for position check if they actually contain nodes.
-	// After transformation (e.g., async removal), modifiers may be an empty list with stale source positions.
-	modifiers := parent.Modifiers()
-	if modifiers != nil && len(modifiers.Nodes) == 0 {
-		modifiers = nil
-	}
-
-	return parameter.Pos() == greatestEnd(parent.Pos(), modifiers) && // may not have parsed tokens between modifiers/start of parent and parameter
+	return parameter.Pos() == parent.Pos() && // may not have parsed tokens between start of parent and parameter
 		parent.TypeParameters == nil && // parent may not have type parameters
 		parent.Type == nil && // parent may not have return type annotation
+		(parent.Modifiers() == nil || len(parent.Modifiers().Nodes) == 0) && // parent may not have modifiers
 		!parameters.HasTrailingComma() && // parameters may not have a trailing comma
 		parameter.Modifiers() == nil && // parameter may not have decorators or modifiers
 		parameter.DotDotDotToken == nil && // parameter may not be rest
@@ -1554,7 +1548,16 @@ func (p *Printer) emitSignature(node *ast.Node) {
 }
 
 func (p *Printer) emitFunctionBody(body *ast.Block) {
-	state := p.enterNode(body.AsNode())
+	p.emitContext.AddEmitFlags(body.AsNode(), EFNoSourceMap)
+
+	// Use only notification hooks for the body block, not the full comment pipeline.
+	// Without this, trailing comments from the original method declaration
+	// (e.g., "// Error") leak into synthesized comma expressions when methods
+	// are hoisted into pending expressions.
+	if p.OnBeforeEmitNode != nil {
+		p.OnBeforeEmitNode(body.AsNode())
+	}
+
 	p.generateNames(body.AsNode())
 
 	// !!! Emit with comment after Strada migration
@@ -1582,7 +1585,9 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 	////p.emitTokenEx(ast.KindCloseBraceToken, body.Statements.End(), WriteKindPunctuation, body.AsNode(), tefNone)
 	p.emitTokenEx(ast.KindCloseBraceToken, body.Statements.End(), WriteKindPunctuation, body.AsNode(), tefNoComments)
 
-	p.exitNode(body.AsNode(), state)
+	if p.OnAfterEmitNode != nil {
+		p.OnAfterEmitNode(body.AsNode())
+	}
 }
 
 func (p *Printer) emitFunctionBodyNode(node *ast.BlockNode) {
@@ -2459,7 +2464,11 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 	if shouldEmitDotDot {
 		p.writePunctuation(".")
 	}
-	p.emitTokenNode(token)
+	if node.QuestionDotToken != nil {
+		p.emitTokenNode(token)
+	} else {
+		p.emitToken(ast.KindDotToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
+	}
 	linesAfterDot := p.getLinesBetweenNodes(node.AsNode(), token, node.Name())
 	p.writeLineRepeat(linesAfterDot)
 	p.increaseIndentIf(linesAfterDot > 0)
@@ -3939,7 +3948,7 @@ func (p *Printer) emitImportAttribute(node *ast.ImportAttribute) {
 	p.writeSpace()
 	value := node.Value
 	if p.emitContext.EmitFlags(node.Value)&EFNoLeadingComments == 0 {
-		commentRange := getCommentRange(value)
+		commentRange := p.emitContext.CommentRange(value)
 		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 	}
 	p.emitExpression(value, ast.OperatorPrecedenceDisallowComma)
@@ -4412,7 +4421,7 @@ func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	// but rather a trailing comment on the previous node.
 	initializer := node.Initializer
 	if p.emitContext.EmitFlags(initializer)&EFNoLeadingComments == 0 {
-		commentRange := getCommentRange(initializer)
+		commentRange := p.emitContext.CommentRange(initializer)
 		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 	}
 	p.emitExpression(initializer, ast.OperatorPrecedenceDisallowComma)
@@ -4820,7 +4829,7 @@ func (p *Printer) emitListItems(
 				}
 
 				if shouldEmitInterveningComments && format&LFDelimitersMask != 0 && !ast.PositionIsSynthesized(child.Pos()) {
-					commentRange := getCommentRange(child)
+					commentRange := p.emitContext.CommentRange(child)
 					p.emitTrailingComments(commentRange.Pos(), core.IfElse(format&LFSpaceBetweenSiblings != 0, commentSeparatorBefore, commentSeparatorNone))
 				}
 
@@ -4836,7 +4845,7 @@ func (p *Printer) emitListItems(
 
 		// Emit this child.
 		if shouldEmitInterveningComments {
-			commentRange := getCommentRange(child)
+			commentRange := p.emitContext.CommentRange(child)
 			p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 		} else {
 			shouldEmitInterveningComments = mayEmitInterveningComments
@@ -5188,7 +5197,12 @@ func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
 }
 
 func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) (*commentState, int) {
-	if flags&tefNoComments != 0 {
+	if flags&tefNoComments != 0 || p.commentsDisabled {
+		// Still skip trivia so that the returned pos correctly identifies the token position.
+		// This is needed for trailing source map positions (writeTokenText advances pos by token length).
+		if p.currentSourceFile != nil && !ast.PositionIsSynthesized(pos) {
+			pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+		}
 		return nil, pos
 	}
 
@@ -5272,7 +5286,7 @@ func (p *Printer) emitLeadingCommentsOfNode(node *ast.Node, emitFlags EmitFlags,
 		// We have to explicitly check that the node is JsxText because if the compilerOptions.jsx is "preserve" we will not do any transformation.
 		// It is expensive to walk entire tree just to set one kind of node to have no comments.
 		skipLeadingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoLeadingComments != 0 || node.Kind == ast.KindJsxText
-		skipTrailingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
+		skipTrailingComments := ast.PositionIsSynthesized(end) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
 
 		// Emit leading comments if the position is not synthesized and the node
 		// has not opted out from emitting leading comments.
@@ -5440,6 +5454,9 @@ func (p *Printer) shouldEmitNewLineBeforeLeadingCommentOfPosition(pos int, comme
 }
 
 func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparator) {
+	if p.commentsDisabled {
+		return
+	}
 	// Emit the trailing comments only if the container's end doesn't match because the container should take care of emitting these comments
 	if p.commentsDisabled || p.currentSourceFile == nil || p.containerEnd != -1 && (pos == p.containerEnd || pos == p.declarationListContainerEnd) {
 		return
@@ -5696,8 +5713,9 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoLeadingSourceMap == 0 &&
+		p.currentSourceFile != nil &&
 		!ast.PositionIsSynthesized(loc.Pos()) {
-		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
+		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos()))
 	}
 
 	if emitFlags&EFNoNestedSourceMaps != 0 {
@@ -5724,7 +5742,7 @@ func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceM
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoTrailingSourceMap == 0 &&
 		!ast.PositionIsSynthesized(loc.End()) {
-		p.emitSourcePos(p.sourceMapSource, loc.End()) // !!! support SourceMapRange from Strada?
+		p.emitSourcePos(p.sourceMapSource, loc.End())
 	}
 }
 
@@ -5735,13 +5753,14 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 
 	emitFlags := p.emitContext.EmitFlags(contextNode)
 	loc, hasLoc := p.emitContext.TokenSourceMapRange(contextNode, token)
-	if emitFlags&EFNoTokenLeadingSourceMaps == 0 {
-		if hasLoc {
-			pos = loc.Pos()
-		}
-		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
-		}
+	if hasLoc {
+		pos = loc.Pos()
+	}
+	if pos >= 0 && p.currentSourceFile != nil {
+		pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+	}
+	if emitFlags&EFNoTokenLeadingSourceMaps == 0 && pos >= 0 {
+		p.emitSourcePos(p.sourceMapSource, pos)
 	}
 
 	state := p.sourceMapStatePool.New()
@@ -5762,7 +5781,7 @@ func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode 
 			pos = loc.End()
 		}
 		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+			p.emitSourcePos(p.sourceMapSource, pos)
 		}
 	}
 }

@@ -430,7 +430,7 @@ func (l *LanguageService) getCompletionData(
 	isInSnippetScope := false
 	if insideComment != nil {
 		if hasDocComment(file, position) {
-			if file.Text()[position] == '@' {
+			if position > 0 && file.Text()[position-1] == '@' {
 				// The current position is next to the '@' sign, when no tag name being provided yet.
 				// Provide a full list of tag names
 				return &completionDataJSDocTagName{}, nil
@@ -1079,7 +1079,7 @@ func (l *LanguageService) getCompletionData(
 			return true
 		}
 		// If not already a module, must have modules enabled.
-		if !preferences.IncludeCompletionsForModuleExports.IsTrue() {
+		if preferences.IncludeCompletionsForModuleExports.IsFalse() {
 			return false
 		}
 		// Always using ES modules in 6.0+
@@ -1110,6 +1110,9 @@ func (l *LanguageService) getCompletionData(
 		view, err := l.getPreparedAutoImportView(file)
 		if err != nil {
 			return err
+		}
+		if view == nil {
+			return nil
 		}
 
 		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
@@ -5262,7 +5265,7 @@ func tryGetTypeExpressionFromTag(tag *ast.JSDocTag) *ast.Node {
 func isTagWithTypeExpression(tag *ast.JSDocTag) bool {
 	switch tag.Kind {
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocReturnTag, ast.KindJSDocTypeTag,
-		ast.KindJSDocTypedefTag, ast.KindJSDocSatisfiesTag:
+		ast.KindJSDocTypedefTag, ast.KindJSDocThrowsTag, ast.KindJSDocSatisfiesTag:
 		return true
 	case ast.KindJSDocTemplateTag:
 		return tag.AsJSDocTemplateTag().Constraint != nil
@@ -5873,16 +5876,18 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			if err != nil {
 				return nil, err
 			}
-			importAdder = autoimport.NewImportAdder(
-				ctx,
-				program,
-				c,
-				file,
-				view,
-				l.FormatOptions(),
-				l.converters,
-				l.UserPreferences(),
-			)
+			if view != nil {
+				importAdder = autoimport.NewImportAdder(
+					ctx,
+					program,
+					c,
+					file,
+					view,
+					l.FormatOptions(),
+					l.converters,
+					l.UserPreferences(),
+				)
+			}
 		}
 
 		var elements []*ast.Expression
