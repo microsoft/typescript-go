@@ -12,10 +12,6 @@ import (
 // Test cases modeled after TypeScript's matchFiles tests in
 // _submodules/TypeScript/src/testRunner/unittests/config/matchFiles.ts
 
-func ptrTo[T any](v T) *T {
-	return &v
-}
-
 // readDirectoryFunc is a function type for ReadDirectory implementations
 type readDirectoryFunc func(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string
 
