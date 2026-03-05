@@ -2540,9 +2540,12 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 		return nil
 	}
 
-	multiLine := true
-	if constructor != nil && constructor.Body != nil {
+	var multiLine bool
+	if constructor != nil && constructor.Body != nil &&
+		len(constructor.Body.AsBlock().Statements.Nodes) >= len(statements) {
 		multiLine = constructor.Body.AsBlock().Multiline || len(statements) > 0
+	} else {
+		multiLine = len(statements) > 0
 	}
 
 	statementList := tx.Factory().NewNodeList(statements)
