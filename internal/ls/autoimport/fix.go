@@ -267,16 +267,16 @@ func addToExistingImport(
 					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
 					if insertionIndex >= len(existingSpecifiers) {
 						// Insert at the end
-						ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
+						ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), nil)
 					} else {
 						// Insert before the element at insertionIndex
-						ct.InsertNodeInListAfter(file, existingSpecifiers[insertionIndex], spec.AsNode(), existingSpecifiers)
+						ct.InsertNodeInListAfter(file, existingSpecifiers[insertionIndex], spec.AsNode(), nil)
 					}
 				}
 			} else if len(existingSpecifiers) > 0 {
 				// Existing specifiers may not be sorted, append to the end
 				for _, spec := range newSpecifiers {
-					ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
+					ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), nil)
 				}
 			} else {
 				if len(newSpecifiers) > 0 {
@@ -333,7 +333,7 @@ func addElementToBindingPattern(
 ) {
 	element := ct.NodeFactory.NewBindingElement(nil, nil, ct.NodeFactory.NewIdentifier(name), core.IfElse(propertyName == "", nil, ct.NodeFactory.NewIdentifier(propertyName)))
 	if len(bindingPattern.Elements.Nodes) > 0 {
-		ct.InsertNodeInListAfter(file, bindingPattern.Elements.Nodes[len(bindingPattern.Elements.Nodes)-1], element, bindingPattern.Elements.Nodes)
+		ct.InsertNodeInListAfter(file, bindingPattern.Elements.Nodes[len(bindingPattern.Elements.Nodes)-1], element, bindingPattern.Elements)
 	} else {
 		ct.ReplaceNode(file, bindingPattern.AsNode(), ct.NodeFactory.NewBindingPattern(ast.KindObjectBindingPattern, ct.AsNodeFactory().NewNodeList([]*ast.Node{element})), nil)
 	}
