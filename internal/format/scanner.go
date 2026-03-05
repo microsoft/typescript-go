@@ -46,6 +46,7 @@ func newFormattingScanner(text string, languageVariant core.LanguageVariant, sta
 	scan.SetSkipTrivia(false)
 	scan.SetLanguageVariant(languageVariant)
 	scan.SetText(text)
+	scan.ResetTokenState(startPos)
 
 	fmtScn := &formattingScanner{
 		s:          scan,
