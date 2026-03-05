@@ -1837,7 +1837,7 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 			tx.getClassLexicalEnvironment().classConstructor = classThis
 			pendingClassReferenceAssignment = tx.Factory().NewAssignmentExpression(
 				classThis,
-				tx.Factory().GetDeclarationName(node),
+				tx.Factory().GetLocalName(node),
 			)
 		} else {
 			temp := tx.Factory().NewTempVariableEx(printer.AutoGenerateOptions{
@@ -1847,7 +1847,7 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 			tx.getClassLexicalEnvironment().classConstructor = temp.Clone(tx.Factory())
 			pendingClassReferenceAssignment = tx.Factory().NewAssignmentExpression(
 				temp,
-				tx.Factory().GetDeclarationName(node),
+				tx.Factory().GetLocalName(node),
 			)
 		}
 	}
@@ -1896,7 +1896,7 @@ func (tx *classFieldsTransformer) visitClassDeclarationInNewClassLexicalEnvironm
 			if name == nil {
 				name = tx.Factory().NewGeneratedNameForNode(node)
 			}
-			statements = tx.addPropertyOrClassStaticBlockStatements(statements, staticProperties, tx.Factory().GetDeclarationName(node))
+			statements = tx.addPropertyOrClassStaticBlockStatements(statements, staticProperties, tx.Factory().GetLocalName(node))
 		}
 	}
 
@@ -2106,7 +2106,7 @@ func (tx *classFieldsTransformer) visitClassExpressionInNewClassLexicalEnvironme
 	if len(staticPropertiesOrClassStaticBlocks) > 0 {
 		classThisOrName := tx.EmitContext().ClassThis(node)
 		if classThisOrName == nil {
-			classThisOrName = tx.Factory().GetDeclarationName(node)
+			classThisOrName = tx.Factory().GetLocalName(node)
 		}
 		tx.pendingStatements = tx.addPropertyOrClassStaticBlockStatements(tx.pendingStatements, staticPropertiesOrClassStaticBlocks, classThisOrName)
 	}
