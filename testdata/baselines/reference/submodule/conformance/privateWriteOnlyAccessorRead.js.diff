@@ -1,9 +1,9 @@
 --- old.privateWriteOnlyAccessorRead.js
 +++ new.privateWriteOnlyAccessorRead.js
-@@= skipped -36, +36 lines =@@
-
+@@= skipped -37, +37 lines =@@
 
  //// [privateWriteOnlyAccessorRead.js]
+ "use strict";
 -var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
 -    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
 -    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
@@ -33,7 +33,6 @@
 +    set #valueCompound(v) { }
      m() {
 -        var _a, _b, _c, _d;
-+        var _a, _b;
          const foo = { bar: 1 };
 -        console.log(__classPrivateFieldGet(this, _Test_instances, "a")); // error
 -        __classPrivateFieldSet(this, _Test_instances, { foo }, "a", _Test_value_set); // ok
@@ -50,9 +49,9 @@
 +        this.#value = { foo }; // ok
 +        this.#value.foo = foo; // error
 +        ({ o: this.#value } = { o: { foo } }); //ok
-+        (_a = { foo }, this.#value = __rest(_a, [])); //ok
++        (this.#value = __rest({ foo }, [])); //ok
 +        ({ foo: this.#value.foo } = { foo }); //error
-+        (_b = { foo }, this.#value.foo = __rest(_b.foo, [])); //error
++        (this.#value.foo = __rest({ foo }.foo, [])); //error
 +        let r = { o: this.#value }; //error
 +        [this.#valueOne, ...this.#valueRest] = [1, 2, 3];
          let arr = [

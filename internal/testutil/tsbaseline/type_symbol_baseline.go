@@ -354,6 +354,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		// Don't try to get the type of something that's already a type.
 		// Exception for `T` in `type T = something` because that may evaluate to some interesting type.
 		if ast.IsPartOfTypeNode(node) ||
+			(node.Kind == ast.KindAsExpression || node.Kind == ast.KindSatisfiesExpression) && node.Type().Flags&ast.NodeFlagsReparsed != 0 ||
 			ast.IsIdentifier(node) &&
 				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
 				!(ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
@@ -397,7 +398,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			}
 
 			// !!! TODO: port underline printer, memoize
-			writer := printer.NewTextWriter("")
+			writer := printer.NewTextWriter("", 0)
 			printer := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, ctx)
 			printer.Write(typeNode, walker.currentSourceFile, writer, nil)
 			typeString = writer.String()
@@ -433,7 +434,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		}
 
 		declSourceFile := ast.GetSourceFileOfNode(declaration)
-		declLine, declChar := scanner.GetECMALineAndCharacterOfPosition(declSourceFile, declaration.Pos())
+		declLine, declChar := scanner.GetECMALineAndUTF16CharacterOfPosition(declSourceFile, declaration.Pos())
 		fileName := tspath.GetBaseFileName(declSourceFile.FileName())
 		symbolString.WriteString("Decl(")
 		symbolString.WriteString(fileName)
@@ -441,7 +442,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		if isDefaultLibraryFile(fileName) {
 			symbolString.WriteString("--, --)")
 		} else {
-			fmt.Fprintf(&symbolString, "%d, %d)", declLine, declChar)
+			fmt.Fprintf(&symbolString, "%d, %d)", declLine, int(declChar))
 		}
 	}
 	symbolString.WriteString(")")

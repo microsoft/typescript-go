@@ -14,6 +14,17 @@ var typeScriptVersion = semver.MustParse(core.Version())
 
 const InferredTypesContainingFile = "__inferred type names__.ts"
 
+func IsApplicableVersionedTypesKey(key string) bool {
+	if !strings.HasPrefix(key, "types@") {
+		return false
+	}
+	range_, ok := semver.TryParseVersionRange(key[len("types@"):])
+	if !ok {
+		return false
+	}
+	return range_.Test(&typeScriptVersion)
+}
+
 func ParseNodeModuleFromPath(resolved string, isFolder bool) string {
 	path := tspath.NormalizePath(resolved)
 	idx := strings.LastIndex(path, "/node_modules/")
@@ -56,15 +67,23 @@ func MangleScopedPackageName(packageName string) string {
 }
 
 func UnmangleScopedPackageName(packageName string) string {
-	idx := strings.Index(packageName, "__")
-	if idx != -1 {
-		return "@" + packageName[:idx] + "/" + packageName[idx+2:]
+	before, after, ok := strings.Cut(packageName, "__")
+	if ok {
+		return "@" + before + "/" + after
 	}
 	return packageName
 }
 
 func GetTypesPackageName(packageName string) string {
 	return "@types/" + MangleScopedPackageName(packageName)
+}
+
+func GetPackageNameFromTypesPackageName(mangledName string) string {
+	withoutAtTypePrefix := strings.TrimPrefix(mangledName, "@types/")
+	if withoutAtTypePrefix != mangledName {
+		return UnmangleScopedPackageName(withoutAtTypePrefix)
+	}
+	return mangledName
 }
 
 func ComparePatternKeys(a, b string) int {
@@ -151,5 +170,28 @@ func GetResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *Reso
 		return needResolveJsonModule()
 	default:
 		return needAllowArbitraryExtensions()
+	}
+}
+
+// TryGetJSExtensionForFile maps TS/JS/DTS extensions to the output JS-side extension.
+// Returns an empty string if the extension is unsupported.
+func TryGetJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
+	ext := tspath.TryGetExtensionFromPath(fileName)
+	switch ext {
+	case tspath.ExtensionTs, tspath.ExtensionDts:
+		return tspath.ExtensionJs
+	case tspath.ExtensionTsx:
+		if options.Jsx == core.JsxEmitPreserve {
+			return tspath.ExtensionJsx
+		}
+		return tspath.ExtensionJs
+	case tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionJson:
+		return ext
+	case tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs:
+		return tspath.ExtensionMjs
+	case tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs:
+		return tspath.ExtensionCjs
+	default:
+		return ""
 	}
 }

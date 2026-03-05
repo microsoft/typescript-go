@@ -1,50 +1,67 @@
 import * as vscode from "vscode";
 
-import { Client } from "./client";
+import { registerEnablementCommands } from "./commands";
 import {
-    registerEnablementCommands,
-    registerLanguageCommands,
-} from "./commands";
-import { setupStatusBar } from "./statusBar";
-import { needsExtHostRestartOnChange } from "./util";
-import { setupVersionStatusItem } from "./versionStatusItem";
+    aiConnectionString,
+    getUseTsgo,
+    getUseTsgoFalseSetting,
+    needsExtHostRestartOnChange,
+} from "./util";
 
-export async function activate(context: vscode.ExtensionContext) {
+import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
+import { SessionManager } from "./session";
+import { createTelemetryReporter } from "./telemetryReporting";
+
+export interface ExtensionAPI {
+    onLanguageServerInitialized: vscode.Event<void>;
+    initializeAPIConnection(pipe?: string): Promise<string>;
+}
+
+export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-    registerEnablementCommands(context);
-    const output = vscode.window.createOutputChannel("typescript-native-preview", "log");
-    const traceOutput = vscode.window.createOutputChannel("typescript-native-preview (LSP)");
+
+    const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
+    context.subscriptions.push(telemetryReporter);
+
+    registerEnablementCommands(context, telemetryReporter);
+
+    const output = vscode.window.createOutputChannel("typescript-native-preview", { log: true });
+    const traceOutput = vscode.window.createOutputChannel("typescript-native-preview (LSP)", { log: true });
     context.subscriptions.push(output, traceOutput);
 
-    let disposeLanguageFeatures: vscode.Disposable | undefined;
+    const languageServerInitializedEventEmitter = new vscode.EventEmitter<void>();
+    context.subscriptions.push(languageServerInitializedEventEmitter);
 
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async event => {
-        if (event.affectsConfiguration("typescript.experimental.useTsgo")) {
-            if (needsExtHostRestartOnChange()) {
-                // Delay because the command to change the config setting will restart
-                // the extension host, so no need to show a message
-                setTimeout(async () => {
+    const sessionManager = new SessionManager(context, output, traceOutput, languageServerInitializedEventEmitter, telemetryReporter);
+    context.subscriptions.push(sessionManager);
+
+    let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
+        if (event.affectsConfiguration("typescript.experimental.useTsgo") || event.affectsConfiguration("js/ts.experimental.useTsgo")) {
+            // Debounce to coalesce rapid events when both settings are updated together.
+            clearTimeout(configChangeTimeout);
+            configChangeTimeout = setTimeout(async () => {
+                if (needsExtHostRestartOnChange()) {
                     const selected = await vscode.window.showInformationMessage("TypeScript Native Preview setting has changed. Restart extensions to apply changes.", "Restart Extensions");
                     if (selected) {
                         vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                     }
-                }, 100);
-            }
-            else {
-                const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
-                if (useTsgo) {
-                    disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput);
-                    context.subscriptions.push(disposeLanguageFeatures);
                 }
                 else {
-                    disposeLanguageFeatures?.dispose();
-                    disposeLanguageFeatures = undefined;
+                    const useTsgo = getUseTsgo();
+                    if (useTsgo) {
+                        await sessionManager.restart(context);
+                    }
+                    else {
+                        await sessionManager.stop();
+                    }
                 }
-            }
+            }, 100);
         }
     }));
+    context.subscriptions.push({ dispose: () => clearTimeout(configChangeTimeout) });
 
-    const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
+    const useTsgo = getUseTsgo();
 
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
@@ -57,8 +74,9 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         }
         else if (useTsgo === false) {
+            const settingName = getUseTsgoFalseSetting() ?? "typescript.experimental.useTsgo";
             vscode.window.showWarningMessage(
-                'TypeScript Native Preview is running in development mode with "typescript.experimental.useTsgo" set to false.',
+                `TypeScript Native Preview is running in development mode with "${settingName}" set to false.`,
                 "Enable Setting",
                 "Ignore",
             ).then(selected => {
@@ -73,17 +91,19 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
     }
 
-    disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput);
-    context.subscriptions.push(disposeLanguageFeatures);
-}
+    await sessionManager.start(context);
 
-async function activateLanguageFeatures(context: vscode.ExtensionContext, output: vscode.OutputChannel, traceOutput: vscode.OutputChannel): Promise<vscode.Disposable> {
-    const disposables: vscode.Disposable[] = [];
+    function onLanguageServerInitialized(listener: () => void): vscode.Disposable {
+        if (sessionManager.currentSession?.client.isInitialized) {
+            listener();
+        }
+        return languageServerInitializedEventEmitter.event(listener);
+    }
 
-    const client = new Client(output, traceOutput);
-    disposables.push(...registerLanguageCommands(context, client, output, traceOutput));
-    disposables.push(await client.initialize(context));
-    disposables.push(setupStatusBar());
-    disposables.push(...setupVersionStatusItem(client));
-    return vscode.Disposable.from(...disposables);
+    return {
+        onLanguageServerInitialized: onLanguageServerInitialized,
+        async initializeAPIConnection(pipe?: string): Promise<string> {
+            return sessionManager.initializeAPIConnection(pipe);
+        },
+    };
 }

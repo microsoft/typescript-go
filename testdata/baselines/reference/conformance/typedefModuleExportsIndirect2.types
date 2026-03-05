@@ -9,7 +9,7 @@ const f = function() {};
 module.exports = f;
 >module.exports = f : () => void
 >module.exports : () => void
->module : { readonly f: () => void; }
+>module : { "export=": () => void; }
 >exports : () => void
 >f : () => void
 
@@ -17,5 +17,5 @@ module.exports = f;
 /** @typedef {import('./typedefModuleExportsIndirect2').C} C */
 /** @type {C} */
 var c
->c : import("typedefModuleExportsIndirect2").C
+>c : import("./typedefModuleExportsIndirect2").C
 

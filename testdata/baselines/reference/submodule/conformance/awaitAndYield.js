@@ -9,12 +9,13 @@ async function* test(x: Promise<number>) {
 }
 
 //// [awaitAndYield.js]
+"use strict";
 async function* test(x) {
     let E;
     (function (E) {
         E["foo"] = await x;
         if (typeof E.foo !== "string") E[E.foo] = "foo";
-        E["baz"] = (yield 1);
+        E["baz"] = yield 1;
         if (typeof E.baz !== "string") E[E.baz] = "baz";
     })(E || (E = {}));
 }

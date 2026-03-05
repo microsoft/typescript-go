@@ -13,6 +13,7 @@ class C {
 let x: E.A = new C().type;
 
 //// [declarationEmitEnumReadonlyProperty.js]
+"use strict";
 var E;
 (function (E) {
     E["A"] = "a";
@@ -30,6 +31,6 @@ declare enum E {
     B = "b"
 }
 declare class C {
-    readonly type: E;
+    readonly type = E.A;
 }
 declare let x: E.A;

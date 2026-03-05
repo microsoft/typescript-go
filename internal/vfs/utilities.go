@@ -27,9 +27,9 @@ type FileMatcherPatterns struct {
 type Usage string
 
 const (
-	usageFiles       Usage = "files"
-	usageDirectories Usage = "directories"
-	usageExclude     Usage = "exclude"
+	UsageFiles       Usage = "files"
+	UsageDirectories Usage = "directories"
+	UsageExclude     Usage = "exclude"
 )
 
 func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Usage) []string {
@@ -37,7 +37,7 @@ func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Us
 		return nil
 	}
 	return core.Map(specs, func(spec string) string {
-		return getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+		return GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	})
 }
 
@@ -81,11 +81,11 @@ func IsImplicitGlob(lastPathComponent string) bool {
 	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
 
-// Reserved characters, forces escaping of any non-word (or digit), non-whitespace character.
-// It may be inefficient (we could just match (/[-[\]{}()*+?.,\\^$|#\s]/g), but this is future
-// proof.
+// Reserved characters - only escape actual regex metacharacters.
+// Go's regexp doesn't support \x escape sequences for arbitrary characters,
+// so we only escape characters that have special meaning in regex.
 var (
-	reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[^\w\s/]`)
+	reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[\\.\+*?()\[\]{}^$|#]`)
 	wildcardCharCodes                       = []rune{'*', '?'}
 )
 
@@ -139,9 +139,9 @@ var excludeMatcher = WildcardMatcher{
 }
 
 var wildcardMatchers = map[Usage]WildcardMatcher{
-	usageFiles:       filesMatcher,
-	usageDirectories: directoriesMatcher,
-	usageExclude:     excludeMatcher,
+	UsageFiles:       filesMatcher,
+	UsageDirectories: directoriesMatcher,
+	UsageExclude:     excludeMatcher,
 }
 
 func GetPatternFromSpec(
@@ -149,7 +149,7 @@ func GetPatternFromSpec(
 	basePath string,
 	usage Usage,
 ) string {
-	pattern := getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+	pattern := GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	if pattern == "" {
 		return ""
 	}
@@ -157,7 +157,7 @@ func GetPatternFromSpec(
 	return fmt.Sprintf("^(%s)%s", pattern, ending)
 }
 
-func getSubPatternFromSpec(
+func GetSubPatternFromSpec(
 	spec string,
 	basePath string,
 	usage Usage,

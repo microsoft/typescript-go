@@ -63,7 +63,7 @@ interface T3 {
 >T3 : Symbol(T3, Decl(subtypingWithObjectMembersOptionality.ts, 28, 1))
 
     '1'?: Base;
->'1' : Symbol(T3["1"], Decl(subtypingWithObjectMembersOptionality.ts, 30, 14))
+>'1' : Symbol(T3['1'], Decl(subtypingWithObjectMembersOptionality.ts, 30, 14))
 >Base : Symbol(Base, Decl(subtypingWithObjectMembersOptionality.ts, 0, 0))
 }
 
@@ -72,7 +72,7 @@ interface S3 extends T3 {
 >T3 : Symbol(T3, Decl(subtypingWithObjectMembersOptionality.ts, 28, 1))
 
     '1.': Derived;
->'1.' : Symbol(S3["1"], Decl(subtypingWithObjectMembersOptionality.ts, 34, 25))
+>'1.' : Symbol(S3['1.'], Decl(subtypingWithObjectMembersOptionality.ts, 34, 25))
 >Derived : Symbol(Derived, Decl(subtypingWithObjectMembersOptionality.ts, 2, 31))
 }
 
@@ -92,11 +92,11 @@ var r = true ? a : b;
 >a : Symbol(a, Decl(subtypingWithObjectMembersOptionality.ts, 39, 3))
 >b : Symbol(b, Decl(subtypingWithObjectMembersOptionality.ts, 40, 3))
 
-module TwoLevels {
+namespace TwoLevels {
 >TwoLevels : Symbol(TwoLevels, Decl(subtypingWithObjectMembersOptionality.ts, 41, 21))
 
     interface T {
->T : Symbol(T, Decl(subtypingWithObjectMembersOptionality.ts, 43, 18))
+>T : Symbol(T, Decl(subtypingWithObjectMembersOptionality.ts, 43, 21))
 
         Foo?: Base;
 >Foo : Symbol(T.Foo, Decl(subtypingWithObjectMembersOptionality.ts, 44, 17))
@@ -105,7 +105,7 @@ module TwoLevels {
 
     interface S extends T {
 >S : Symbol(S, Decl(subtypingWithObjectMembersOptionality.ts, 46, 5))
->T : Symbol(T, Decl(subtypingWithObjectMembersOptionality.ts, 43, 18))
+>T : Symbol(T, Decl(subtypingWithObjectMembersOptionality.ts, 43, 21))
 
         Foo: Derived2 
 >Foo : Symbol(S.Foo, Decl(subtypingWithObjectMembersOptionality.ts, 48, 27))
@@ -133,7 +133,7 @@ module TwoLevels {
 >T3 : Symbol(T3, Decl(subtypingWithObjectMembersOptionality.ts, 58, 5))
 
         '1'?: Base;
->'1' : Symbol(T3["1"], Decl(subtypingWithObjectMembersOptionality.ts, 60, 18))
+>'1' : Symbol(T3['1'], Decl(subtypingWithObjectMembersOptionality.ts, 60, 18))
 >Base : Symbol(Base, Decl(subtypingWithObjectMembersOptionality.ts, 0, 0))
     }
 
@@ -142,7 +142,7 @@ module TwoLevels {
 >T3 : Symbol(T3, Decl(subtypingWithObjectMembersOptionality.ts, 58, 5))
 
         '1.': Derived2;
->'1.' : Symbol(S3["1"], Decl(subtypingWithObjectMembersOptionality.ts, 64, 29))
+>'1.' : Symbol(S3['1.'], Decl(subtypingWithObjectMembersOptionality.ts, 64, 29))
 >Derived2 : Symbol(Derived2, Decl(subtypingWithObjectMembersOptionality.ts, 3, 47))
     }
 

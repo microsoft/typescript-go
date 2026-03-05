@@ -177,6 +177,25 @@ Config File Names::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 1
+    },
+    "ch": "/",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -198,6 +217,25 @@ Config File Names::
         "text": "/"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 2
+    },
+    "ch": "/",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -227,6 +265,25 @@ Config File Names::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 3
+    },
+    "ch": " ",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -248,6 +305,25 @@ Config File Names::
         "text": "c"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 4
+    },
+    "ch": "c",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -277,6 +353,25 @@ Config File Names::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 5
+    },
+    "ch": "o",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -298,6 +393,25 @@ Config File Names::
         "text": "m"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 6
+    },
+    "ch": "m",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -327,6 +441,25 @@ Config File Names::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 7
+    },
+    "ch": "m",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -348,6 +481,25 @@ Config File Names::
         "text": "e"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 8
+    },
+    "ch": "e",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -377,6 +529,25 @@ Config File Names::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/babel-loader/src/index.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 9
+    },
+    "ch": "n",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -402,17 +573,20 @@ Config File Names::
 }
 
 {
-  "method": "textDocument/references",
+  "method": "textDocument/onTypeFormatting",
   "params": {
     "textDocument": {
-      "uri": "file:///packages/core/src/index.ts"
+      "uri": "file:///packages/babel-loader/src/index.ts"
     },
     "position": {
-      "line": 3,
-      "character": 1
+      "line": 0,
+      "character": 10
     },
-    "context": {
-      "includeDeclaration": true
+    "ch": "t",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
     }
   }
 }
@@ -431,6 +605,22 @@ Open Files::
   [/packages/core/src/index.ts] *modified*
     /packages/babel-loader/tsconfig.json  *deleted*
     /packages/core/tsconfig.json          (default) 
+
+{
+  "method": "textDocument/references",
+  "params": {
+    "textDocument": {
+      "uri": "file:///packages/core/src/index.ts"
+    },
+    "position": {
+      "line": 3,
+      "character": 1
+    },
+    "context": {
+      "includeDeclaration": true
+    }
+  }
+}
 
 
 

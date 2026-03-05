@@ -6,6 +6,7 @@ var unrelated;
 /** @typedef {number} B */
 
 //// [emitEndOfFileJSDocComments.js]
+"use strict";
 /** @typedef {number} A */
 var unrelated;
 /** @typedef {number} B */ 
