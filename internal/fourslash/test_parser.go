@@ -7,8 +7,8 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -380,7 +380,11 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 			continue
 		}
 		column++
-		previousCharacter = currentCharacter
+		if i >= lastNormalCharPosition {
+			previousCharacter = currentCharacter
+		} else {
+			previousCharacter = utf8.RuneError // reset to avoid accidentally reusing marker delimiters as part of other markers
+		}
 	}
 
 	// Add the remaining text

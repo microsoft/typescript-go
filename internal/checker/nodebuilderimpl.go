@@ -54,6 +54,7 @@ type NodeBuilderSymbolLinks struct {
 	specifierCache module.ModeAwareCache[string]
 }
 type NodeBuilderContext struct {
+	host                            Host
 	tracker                         nodebuilder.SymbolTracker
 	approximateLength               int
 	encounteredError                bool
@@ -577,7 +578,7 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 				// If ultimately we can only name the symbol with a reference that dives into a `node_modules` folder, we should error
 				// since declaration files with these kinds of references are liable to fail when published :(
 				b.ctx.encounteredError = true
-				b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(oldSpecifier)
+				b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(oldSpecifier, symbol.Name)
 			}
 		}
 
@@ -1157,7 +1158,7 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 			return stringutil.StripQuotes(symbol.Name)
 		}
 	}
-	if b.ctx.enclosingFile == nil || b.ctx.tracker.GetModuleSpecifierGenerationHost() == nil {
+	if b.ctx.enclosingFile == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
 			return stringutil.StripQuotes(symbol.Name)
 		}
@@ -1189,7 +1190,7 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	// just like how the declaration emitter does for the ambient module declarations - we can easily accomplish this
 	// using the `baseUrl` compiler option (which we would otherwise never use in declaration emit) and a non-relative
 	// specifier preference
-	host := b.ctx.tracker.GetModuleSpecifierGenerationHost()
+	host := b.ctx.host
 	specifierCompilerOptions := b.ch.compilerOptions
 	specifierPref := modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative
 	endingPref := modulespecifiers.ImportModuleSpecifierEndingPreferenceNone
@@ -2357,6 +2358,9 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 			if getDeclarationModifierFlagsFromSymbol(propertySymbol)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(propertySymbol.Name)
 			}
+			if IsPrivateIdentifierSymbol(propertySymbol) {
+				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(ast.SymbolName(propertySymbol))
+			}
 		}
 		if b.checkTruncationLength() && (i+2 < len(properties)-1) {
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
@@ -2552,6 +2556,9 @@ func (b *NodeBuilderImpl) typeToTypeNodeOrCircularityElision(t *Type) *ast.TypeN
 }
 
 func (b *NodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
+	if b.checkTruncationLength() {
+		return b.createElidedInformationPlaceholder()
+	}
 	t := _t.AsConditionalType()
 	checkTypeNode := b.typeToTypeNode(t.checkType)
 	b.ctx.approximateLength += 15

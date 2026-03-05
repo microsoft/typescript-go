@@ -3,7 +3,6 @@ package core
 import (
 	"reflect"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -18,14 +17,12 @@ type CompilerOptions struct {
 
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
 	AllowArbitraryExtensions                  Tristate                                  `json:"allowArbitraryExtensions,omitzero"`
-	AllowSyntheticDefaultImports              Tristate                                  `json:"allowSyntheticDefaultImports,omitzero"`
 	AllowImportingTsExtensions                Tristate                                  `json:"allowImportingTsExtensions,omitzero"`
 	AllowNonTsExtensions                      Tristate                                  `json:"allowNonTsExtensions,omitzero"`
 	AllowUmdGlobalAccess                      Tristate                                  `json:"allowUmdGlobalAccess,omitzero"`
 	AllowUnreachableCode                      Tristate                                  `json:"allowUnreachableCode,omitzero"`
 	AllowUnusedLabels                         Tristate                                  `json:"allowUnusedLabels,omitzero"`
 	AssumeChangesOnlyAffectDirectDependencies Tristate                                  `json:"assumeChangesOnlyAffectDirectDependencies,omitzero"`
-	AlwaysStrict                              Tristate                                  `json:"alwaysStrict,omitzero"`
 	CheckJs                                   Tristate                                  `json:"checkJs,omitzero"`
 	CustomConditions                          []string                                  `json:"customConditions,omitzero"`
 	Composite                                 Tristate                                  `json:"composite,omitzero"`
@@ -42,7 +39,6 @@ type CompilerOptions struct {
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
 	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
-	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
 	ExperimentalDecorators                    Tristate                                  `json:"experimentalDecorators,omitzero"`
 	ForceConsistentCasingInFileNames          Tristate                                  `json:"forceConsistentCasingInFileNames,omitzero"`
@@ -99,6 +95,7 @@ type CompilerOptions struct {
 	RootDir                                   string                                    `json:"rootDir,omitzero"`
 	RootDirs                                  []string                                  `json:"rootDirs,omitzero"`
 	SkipLibCheck                              Tristate                                  `json:"skipLibCheck,omitzero"`
+	StableTypeOrdering                        Tristate                                  `json:"stableTypeOrdering,omitzero"`
 	Strict                                    Tristate                                  `json:"strict,omitzero"`
 	StrictBindCallApply                       Tristate                                  `json:"strictBindCallApply,omitzero"`
 	StrictBuiltinIteratorReturn               Tristate                                  `json:"strictBuiltinIteratorReturn,omitzero"`
@@ -121,7 +118,13 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
 	// Deprecated: Do not use outside of options parsing and validation.
+	AllowSyntheticDefaultImports Tristate `json:"allowSyntheticDefaultImports,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	ESModuleInterop Tristate `json:"esModuleInterop,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	OutFile string `json:"outFile,omitzero"`
 
@@ -151,9 +154,6 @@ type CompilerOptions struct {
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
 	Checkers       *int     `json:"checkers,omitzero"`
-
-	sourceFileAffectingCompilerOptionsOnce sync.Once
-	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
 }
 
 // noCopy may be embedded into structs which must not be copied
@@ -259,16 +259,6 @@ func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) 
 	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
-// Deprecated: always returns true
-func (options *CompilerOptions) GetESModuleInterop() bool {
-	return true
-}
-
-// Deprecated: always returns true
-func (options *CompilerOptions) GetAllowSyntheticDefaultImports() bool {
-	return true
-}
-
 func (options *CompilerOptions) GetResolveJsonModule() bool {
 	if options.ResolveJsonModule != TSUnknown {
 		return options.ResolveJsonModule == TSTrue
@@ -340,6 +330,13 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 	return options.UseDefineForClassFields != TSFalse && options.GetEmitScriptTarget() >= ScriptTargetES2022
 }
 
+func (options *CompilerOptions) GetUseDefineForClassFields() bool {
+	if options.UseDefineForClassFields == TSUnknown {
+		return options.GetEmitScriptTarget() >= ScriptTargetES2022
+	}
+	return options.UseDefineForClassFields == TSTrue
+}
+
 func (options *CompilerOptions) GetEmitDeclarations() bool {
 	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
@@ -350,7 +347,7 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
+	case ModuleKindSystem, ModuleKindUMD:
 		return false
 	}
 	return true
@@ -366,21 +363,6 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 	return currentDirectory
 }
 
-// SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
-// affect the parse and bind of a source file.
-type SourceFileAffectingCompilerOptions struct {
-	BindInStrictMode bool
-}
-
-func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
-	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
-		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
-			BindInStrictMode: options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-		}
-	})
-	return options.sourceFileAffectingCompilerOptions
-}
-
 type ModuleDetectionKind int32
 
 const (
@@ -393,7 +375,6 @@ const (
 type ModuleKind int32
 
 const (
-	// Deprecated: Do not use outside of options parsing and validation.
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
 	// Deprecated: Do not use outside of options parsing and validation.
@@ -512,9 +493,9 @@ func (newLine NewLineKind) GetNewLineCharacter() string {
 type ScriptTarget int32
 
 const (
-	ScriptTargetNone           ScriptTarget = 0
-	ScriptTargetES3            ScriptTarget = 0 // Deprecated
-	ScriptTargetES5            ScriptTarget = 1 // Deprecated
+	ScriptTargetNone ScriptTarget = 0
+	// Deprecated: Do not use outside of options parsing and validation.
+	ScriptTargetES5            ScriptTarget = 1
 	ScriptTargetES2015         ScriptTarget = 2
 	ScriptTargetES2016         ScriptTarget = 3
 	ScriptTargetES2017         ScriptTarget = 4
@@ -525,10 +506,11 @@ const (
 	ScriptTargetES2022         ScriptTarget = 9
 	ScriptTargetES2023         ScriptTarget = 10
 	ScriptTargetES2024         ScriptTarget = 11
+	ScriptTargetES2025         ScriptTarget = 12
 	ScriptTargetESNext         ScriptTarget = 99
 	ScriptTargetJSON           ScriptTarget = 100
 	ScriptTargetLatest         ScriptTarget = ScriptTargetESNext
-	ScriptTargetLatestStandard ScriptTarget = ScriptTargetES2024
+	ScriptTargetLatestStandard ScriptTarget = ScriptTargetES2025
 )
 
 type JsxEmit int32

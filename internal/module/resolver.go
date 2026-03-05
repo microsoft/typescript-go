@@ -69,15 +69,16 @@ type resolutionState struct {
 	tracer   *tracer
 
 	// request fields
-	name                        string
-	containingDirectory         string
-	isConfigLookup              bool
-	features                    NodeResolutionFeatures
-	esmMode                     bool
-	conditions                  []string
-	extensions                  extensions
-	compilerOptions             *core.CompilerOptions
-	resolvePackageDirectoryOnly bool
+	name                          string
+	containingDirectory           string
+	isConfigLookup                bool
+	skipCollectingLookupLocations bool
+	features                      NodeResolutionFeatures
+	esmMode                       bool
+	conditions                    []string
+	extensions                    extensions
+	compilerOptions               *core.CompilerOptions
+	resolvePackageDirectoryOnly   bool
 
 	// state fields
 	candidateIsFromPackageJsonField bool
@@ -110,6 +111,8 @@ func newResolutionState(
 		resolver:            resolver,
 		tracer:              traceBuilder,
 	}
+
+	state.skipCollectingLookupLocations = resolver.skipCollectingLookupLocations
 
 	if isTypeReferenceDirective {
 		state.extensions = extensionsDeclaration
@@ -151,11 +154,17 @@ func GetCompilerOptionsWithRedirect(compilerOptions *core.CompilerOptions, redir
 
 type Resolver struct {
 	caches
-	host            ResolutionHost
-	compilerOptions *core.CompilerOptions
-	typingsLocation string
-	projectName     string
+	host                          ResolutionHost
+	compilerOptions               *core.CompilerOptions
+	typingsLocation               string
+	projectName                   string
+	skipCollectingLookupLocations bool
 	// reportDiagnostic: DiagnosticReporter
+}
+
+type ResolverOptions struct {
+	PackageJsonCache              *packagejson.InfoCache
+	SkipCollectingLookupLocations bool
 }
 
 func NewResolver(
@@ -171,6 +180,28 @@ func NewResolver(
 		typingsLocation: typingsLocation,
 		projectName:     projectName,
 	}
+}
+
+func NewResolverWithOptions(
+	host ResolutionHost,
+	compilerOptions *core.CompilerOptions,
+	typingsLocation string,
+	projectName string,
+	opts ResolverOptions,
+) *Resolver {
+	r := &Resolver{
+		host:                          host,
+		compilerOptions:               compilerOptions,
+		typingsLocation:               typingsLocation,
+		projectName:                   projectName,
+		skipCollectingLookupLocations: opts.SkipCollectingLookupLocations,
+	}
+	if opts.PackageJsonCache != nil {
+		r.packageJsonInfoCache = opts.PackageJsonCache
+	} else {
+		r.caches = newCaches(host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames(), compilerOptions)
+	}
+	return r
 }
 
 func (r *Resolver) newTraceBuilder() *tracer {
@@ -742,7 +773,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 				}
 				subTarget, _ := target.AsObject().Get(condition)
 				if result := r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, subTarget, subpath, isPattern, key); !result.shouldContinueSearching() {
-					if r.tracer != nil {
+					if result.isResolved() && r.tracer != nil {
 						r.tracer.write(diagnostics.Resolved_under_condition_0, condition)
 					}
 					if r.tracer != nil {
@@ -779,7 +810,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 		if r.tracer != nil {
 			r.tracer.write(diagnostics.X_package_json_scope_0_explicitly_maps_specifier_1_to_null, scope.PackageDirectory, moduleName)
 		}
-		return continueSearching()
+		return unresolved()
 	}
 
 	if r.tracer != nil {
@@ -1496,8 +1527,20 @@ func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 			r.tracer.write(diagnostics.File_0_does_not_exist, fileName)
 		}
 	}
-	r.failedLookupLocations = append(r.failedLookupLocations, fileName)
+	r.recordFailedLookup(fileName)
 	return false
+}
+
+func (r *resolutionState) recordFailedLookup(location string) {
+	if !r.skipCollectingLookupLocations {
+		r.failedLookupLocations = append(r.failedLookupLocations, location)
+	}
+}
+
+func (r *resolutionState) recordAffectingLocation(location string) {
+	if !r.skipCollectingLookupLocations {
+		r.affectingLocations = append(r.affectingLocations, location)
+	}
 }
 
 func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
@@ -1601,10 +1644,17 @@ func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions
 	if extensions&extensionsTypeScript != 0 && tspath.HasImplementationTSFileExtension(candidate) || extensions&extensionsDeclaration != 0 && tspath.IsDeclarationFileName(candidate) {
 		if path, ok := r.tryFile(candidate, onlyRecordFailures); ok {
 			extension := tspath.TryExtractTSExtension(path)
+			// resolvedUsingTsExtension should be true when the pattern ends with * and the
+			// candidate file ends in a TS extension. This means the * matched a TS extension
+			// from the module specifier. For example:
+			// - import "pkg/foo.ts" with pattern "./*" -> true
+			// - import "pkg/foo.ts.omg" with pattern "./*.omg" -> true (star matched .ts)
+			// - import "pkg/foo" with pattern "./*.ts" -> false (extension in pattern, not specifier)
+			resolvedUsingTsExtension := strings.HasSuffix(packageJSONValue, "*") && extension != ""
 			return &resolved{
 				path:                     path,
 				extension:                extension,
-				resolvedUsingTsExtension: packageJSONValue != "" && !strings.HasSuffix(packageJSONValue, extension),
+				resolvedUsingTsExtension: resolvedUsingTsExtension,
 			}
 		}
 		return continueSearching()
@@ -1646,7 +1696,7 @@ func (r *resolutionState) getPackageFile(extensions extensions, packageInfo *pac
 func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecordFailures bool) *packagejson.InfoCacheEntry {
 	packageJsonPath := tspath.CombinePaths(packageDirectory, "package.json")
 	if onlyRecordFailures {
-		r.failedLookupLocations = append(r.failedLookupLocations, packageJsonPath)
+		r.recordFailedLookup(packageJsonPath)
 		return nil
 	}
 
@@ -1655,7 +1705,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			if r.tracer != nil {
 				r.tracer.write(diagnostics.File_0_exists_according_to_earlier_cached_lookups, packageJsonPath)
 			}
-			r.affectingLocations = append(r.affectingLocations, packageJsonPath)
+			r.recordAffectingLocation(packageJsonPath)
 			if existing.PackageDirectory == packageDirectory {
 				return existing
 			}
@@ -1669,7 +1719,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			if existing.DirectoryExists && r.tracer != nil {
 				r.tracer.write(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups, packageJsonPath)
 			}
-			r.failedLookupLocations = append(r.failedLookupLocations, packageJsonPath)
+			r.recordFailedLookup(packageJsonPath)
 			return nil
 		}
 	}
@@ -1691,7 +1741,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			},
 		}
 		result = r.resolver.packageJsonInfoCache.Set(packageJsonPath, result)
-		r.affectingLocations = append(r.affectingLocations, packageJsonPath)
+		r.recordAffectingLocation(packageJsonPath)
 		return result
 	} else {
 		if directoryExists && r.tracer != nil {
@@ -1701,7 +1751,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			PackageDirectory: packageDirectory,
 			DirectoryExists:  directoryExists,
 		})
-		r.failedLookupLocations = append(r.failedLookupLocations, packageJsonPath)
+		r.recordFailedLookup(packageJsonPath)
 	}
 	return nil
 }
@@ -2050,7 +2100,7 @@ func (e *ResolvedEntrypoint) SymlinkOrRealpath() string {
 func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string) *ResolvedEntrypoints {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
-	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
+	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions, skipCollectingLookupLocations: r.skipCollectingLookupLocations}
 	if packageJson.Exists() && packageJson.Contents.Exports.IsPresent() {
 		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
 		return &ResolvedEntrypoints{

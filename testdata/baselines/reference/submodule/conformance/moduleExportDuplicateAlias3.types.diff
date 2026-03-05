@@ -6,7 +6,7 @@
  const { apply } = require('./moduleExportAliasDuplicateAlias')
 ->apply : number
 +>apply : "ok" | 1 | (() => void) | undefined
- >require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
+ >require('./moduleExportAliasDuplicateAlias') : typeof import("./moduleExportAliasDuplicateAlias")
  >require : any
  >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
 

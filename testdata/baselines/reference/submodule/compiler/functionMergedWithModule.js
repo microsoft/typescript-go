@@ -22,7 +22,7 @@ function foo(title) {
     var x = 10;
 }
 (function (foo) {
-    let Bar;
+    var Bar;
     (function (Bar) {
         function f() {
         }
@@ -30,10 +30,10 @@ function foo(title) {
     })(Bar = foo.Bar || (foo.Bar = {}));
 })(foo || (foo = {}));
 (function (foo) {
-    let Baz;
+    var Baz;
     (function (Baz) {
         function g() {
-            Bar.f();
+            foo.Bar.f();
         }
         Baz.g = g;
     })(Baz = foo.Baz || (foo.Baz = {}));

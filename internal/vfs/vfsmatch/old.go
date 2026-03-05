@@ -184,7 +184,9 @@ func getSubPatternFromSpec(
 			if usage != UsageExclude {
 				var componentPattern strings.Builder
 				if strings.HasPrefix(component, "*") {
-					componentPattern.WriteString("([^./]" + matcher.singleAsteriskRegexFragment + ")?")
+					componentPattern.WriteString("([^./]")
+					componentPattern.WriteString(matcher.singleAsteriskRegexFragment)
+					componentPattern.WriteString(")?")
 					component = component[1:]
 				} else if strings.HasPrefix(component, "?") {
 					componentPattern.WriteString("[^./]")

@@ -9,14 +9,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/json"
+
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
+	"github.com/microsoft/typescript-go/internal/testutil/lsptestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"gotest.tools/v3/assert"
@@ -56,7 +57,7 @@ func (f *FourslashTest) baselineRequestOrNotification(t *testing.T, method lspro
 		return
 	}
 
-	res, _ := json.Marshal(requestOrMessage{method, params}, jsontext.WithIndent("  "))
+	res, _ := json.Marshal(requestOrMessage{method, params}, json.WithIndent("  "))
 	f.stateBaseline.baseline.WriteString("\n" + string(res) + "\n")
 	f.stateBaseline.isInitialized = true
 }
@@ -67,7 +68,7 @@ func (f *FourslashTest) baselineProjectsAfterNotification(t *testing.T, fileName
 		return
 	}
 	// Do hover so we have snapshot to check things on!!
-	_, _, resultOk := sendRequestWorker(t, f, lsproto.TextDocumentHoverInfo, &lsproto.HoverParams{
+	_, _, resultOk := lsptestutil.SendRequest(t, f.client, lsproto.TextDocumentHoverInfo, &lsproto.HoverParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(fileName),
 		},
@@ -241,7 +242,7 @@ func (f *FourslashTest) printStateDiff(t *testing.T, w io.Writer) {
 	if !f.stateBaseline.isInitialized {
 		return
 	}
-	session := f.server.Session()
+	session := f.client.Server.Session()
 	snapshot, release := session.Snapshot()
 	defer release()
 

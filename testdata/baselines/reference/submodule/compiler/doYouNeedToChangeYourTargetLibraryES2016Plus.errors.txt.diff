@@ -14,12 +14,12 @@
  doYouNeedToChangeYourTargetLibraryES2016Plus.ts(17,111): error TS2550: Property 'groups' does not exist on type 'RegExpExecArray'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2018' or later.
  doYouNeedToChangeYourTargetLibraryES2016Plus.ts(18,33): error TS2550: Property 'dotAll' does not exist on type 'RegExp'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2018' or later.
  doYouNeedToChangeYourTargetLibraryES2016Plus.ts(19,38): error TS2550: Property 'PluralRules' does not exist on type 'typeof Intl'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2018' or later.
-@@= skipped -31, +25 lines =@@
- doYouNeedToChangeYourTargetLibraryES2016Plus.ts(44,33): error TS2550: Property 'replaceAll' does not exist on type '""'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2021' or later.
+@@= skipped -32, +26 lines =@@
+ doYouNeedToChangeYourTargetLibraryES2016Plus.ts(47,46): error TS2550: Property 'toTemporalInstant' does not exist on type 'Date'. Do you need to change your target library? Try changing the 'lib' compiler option to 'esnext' or later.
 
 
--==== doYouNeedToChangeYourTargetLibraryES2016Plus.ts (39 errors) ====
-+==== doYouNeedToChangeYourTargetLibraryES2016Plus.ts (33 errors) ====
+-==== doYouNeedToChangeYourTargetLibraryES2016Plus.ts (40 errors) ====
++==== doYouNeedToChangeYourTargetLibraryES2016Plus.ts (34 errors) ====
      // es2016
      const testIncludes = ["hello"].includes("world");
                                     ~~~~~~~~

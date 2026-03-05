@@ -189,8 +189,16 @@ class Derived3 extends Base2 {
 
 //// [thisTypeInFunctionsNegative.js]
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 class C {
-    n;
     explicitThis(m) {
         return this.n + m;
     }
@@ -208,7 +216,6 @@ class C {
     }
 }
 class D {
-    x;
     explicitThis(m) {
         return this.x + m;
     }
@@ -287,21 +294,17 @@ c.explicitVoid = d.explicitD;
 c.explicitVoid = d.explicitThis;
 /// class-based polymorphic assignability (with inheritance!) ///
 class Base1 {
-    x;
     polymorphic() { return this.x; }
     explicit() { return this.x; }
     static explicitStatic() { return this.x; }
 }
 class Derived1 extends Base1 {
-    y;
 }
 class Base2 {
-    y;
     polymorphic() { return this.y; }
     explicit() { return this.x; }
 }
 class Derived2 extends Base2 {
-    x;
 }
 let b1 = new Base1();
 let d1 = new Derived1();
@@ -316,7 +319,6 @@ function VoidThis() {
 let voidThis = new VoidThis();
 ///// syntax-ish errors /////
 class ThisConstructor {
-    n;
     constructor(n) {
         this.n = n;
     }
@@ -337,8 +339,8 @@ number;
 // can't name parameters 'this' in a lambda.
 c.explicitProperty = (m) => m + this.n;
 const f2 = (m) => m + this.n;
-const f3 = async (m) => m + this.n;
-const f4 = async (m) => m + this.n;
+const f3 = (m) => __awaiter(void 0, void 0, void 0, function* () { return m + this.n; });
+const f4 = (m) => __awaiter(void 0, void 0, void 0, function* () { return m + this.n; });
 class Derived3 extends Base2 {
     f() {
         super.polymorphic();

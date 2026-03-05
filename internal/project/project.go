@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -117,7 +116,6 @@ func NewInferredProject(
 			StrictNullChecks:           core.TSTrue,
 			StrictFunctionTypes:        core.TSTrue,
 			SourceMap:                  core.TSTrue,
-			ESModuleInterop:            core.TSTrue,
 			AllowNonTsExtensions:       core.TSTrue,
 			ResolveJsonModule:          core.TSTrue,
 		}
@@ -178,6 +176,10 @@ func NewProject(
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+func (p *Project) ID() tspath.Path {
+	return p.configFilePath
 }
 
 // ConfigFileName panics if Kind() is not KindConfigured.
@@ -337,7 +339,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 					checkerPool = newCheckerPool(4, program, p.log)
 					return checkerPool
@@ -391,7 +392,9 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder 
 		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
-				builder.WriteString("\t\t" + sourceFile.FileName() + "\n")
+				builder.WriteString("\t\t")
+				builder.WriteString(sourceFile.FileName())
+				builder.WriteString("\n")
 			}
 			// !!!
 			// if writeFileExplanation {}

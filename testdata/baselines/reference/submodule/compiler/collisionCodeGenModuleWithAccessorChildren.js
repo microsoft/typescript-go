@@ -53,7 +53,6 @@ var M;
 (function (M_1) {
     M_1.x = 3;
     class c {
-        y;
         set Z(M) {
             this.y = M_1.x;
         }
@@ -61,18 +60,16 @@ var M;
 })(M || (M = {}));
 (function (M_2) {
     class d {
-        y;
         set Z(p) {
             var M = 10;
-            this.y = x;
+            this.y = M_2.x;
         }
     }
 })(M || (M = {}));
 (function (M) {
     class e {
-        y;
         set M(p) {
-            this.y = x;
+            this.y = M.x;
         }
     }
 })(M || (M = {}));
@@ -80,14 +77,14 @@ var M;
     class f {
         get Z() {
             var M = 10;
-            return x;
+            return M_3.x;
         }
     }
 })(M || (M = {}));
 (function (M) {
     class e {
         get M() {
-            return x;
+            return M.x;
         }
     }
 })(M || (M = {}));

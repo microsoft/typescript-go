@@ -2008,6 +2008,8 @@ var This_expression_is_never_nullish = &Message{code: 2881, category: CategoryEr
 
 var Cannot_find_module_or_type_declarations_for_side_effect_import_of_0 = &Message{code: 2882, category: CategoryError, key: "Cannot_find_module_or_type_declarations_for_side_effect_import_of_0_2882", text: "Cannot find module or type declarations for side-effect import of '{0}'."}
 
+var The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_type_annotation_is_necessary = &Message{code: 2883, category: CategoryError, key: "The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_2883", text: "The inferred type of '{0}' cannot be named without a reference to '{2}' from '{1}'. This is likely not portable. A type annotation is necessary."}
+
 var Import_declaration_0_is_using_private_name_1 = &Message{code: 4000, category: CategoryError, key: "Import_declaration_0_is_using_private_name_1_4000", text: "Import declaration '{0}' is using private name '{1}'."}
 
 var Type_parameter_0_of_exported_class_has_or_is_using_private_name_1 = &Message{code: 4002, category: CategoryError, key: "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002", text: "Type parameter '{0}' of exported class has or is using private name '{1}'."}
@@ -3287,6 +3289,8 @@ var Check_side_effect_imports = &Message{code: 6806, category: CategoryMessage, 
 var This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2 = &Message{code: 6807, category: CategoryError, key: "This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2_6807", text: "This operation can be simplified. This shift is identical to `{0} {1} {2}`."}
 
 var Enable_lib_replacement = &Message{code: 6808, category: CategoryMessage, key: "Enable_lib_replacement_6808", text: "Enable lib replacement."}
+
+var Ensure_types_are_ordered_stably_and_deterministically_across_compilations = &Message{code: 6809, category: CategoryMessage, key: "Ensure_types_are_ordered_stably_and_deterministically_across_compilations_6809", text: "Ensure types are ordered stably and deterministically across compilations."}
 
 var X_one_of_Colon = &Message{code: 6900, category: CategoryMessage, key: "one_of_Colon_6900", text: "one of:"}
 
@@ -6292,6 +6296,8 @@ func keyToMessage(key Key) *Message {
 		return This_expression_is_never_nullish
 	case "Cannot_find_module_or_type_declarations_for_side_effect_import_of_0_2882":
 		return Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
+	case "The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_2883":
+		return The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_type_annotation_is_necessary
 	case "Import_declaration_0_is_using_private_name_1_4000":
 		return Import_declaration_0_is_using_private_name_1
 	case "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002":
@@ -7572,6 +7578,8 @@ func keyToMessage(key Key) *Message {
 		return This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2
 	case "Enable_lib_replacement_6808":
 		return Enable_lib_replacement
+	case "Ensure_types_are_ordered_stably_and_deterministically_across_compilations_6809":
+		return Ensure_types_are_ordered_stably_and_deterministically_across_compilations
 	case "one_of_Colon_6900":
 		return X_one_of_Colon
 	case "one_or_more_Colon_6901":

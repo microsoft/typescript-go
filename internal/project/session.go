@@ -3,6 +3,8 @@ package project
 import (
 	"context"
 	"fmt"
+	"runtime"
+	gometrics "runtime/metrics"
 	"slices"
 	"strings"
 	"sync"
@@ -37,6 +39,7 @@ const (
 	UpdateReasonRequestedLanguageServiceProjectDirty
 	UpdateReasonRequestedLoadProjectTree
 	UpdateReasonRequestedLanguageServiceWithAutoImports
+	UpdateReasonIdleCleanDiskCache
 )
 
 // SessionOptions are the immutable initialization options for a session.
@@ -126,6 +129,12 @@ type Session struct {
 	// after file watch changes and ATA updates.
 	diagnosticsRefreshCancel context.CancelFunc
 	diagnosticsRefreshMu     sync.Mutex
+
+	// idleCacheCleanTimer is a resettable timer for scheduling idle disk
+	// cache cleans. The timer resets on any file event (open, close,
+	// change, save, watch) and fires after 30 seconds of inactivity.
+	idleCacheCleanTimer *time.Timer
+	idleCacheCleanMu    sync.Mutex
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
@@ -245,6 +254,9 @@ func (s *Session) InitializeWithUserConfig(config *lsutil.UserConfig) {
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
+	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
 	s.pendingFileChangesMu.Lock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind:         FileChangeKindOpen,
@@ -266,6 +278,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -276,6 +289,7 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -288,6 +302,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -322,6 +337,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 	// Schedule a debounced diagnostics refresh
 	s.ScheduleDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 }
 
 func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
@@ -383,12 +399,57 @@ func (s *Session) cancelDiagnosticsRefresh() {
 	}
 }
 
+const idleCacheCleanDelay = 30 * time.Second
+
+func (s *Session) scheduleIdleCacheClean() {
+	s.idleCacheCleanMu.Lock()
+	defer s.idleCacheCleanMu.Unlock()
+
+	if s.idleCacheCleanTimer != nil {
+		s.idleCacheCleanTimer.Stop()
+	}
+
+	s.idleCacheCleanTimer = time.AfterFunc(idleCacheCleanDelay, func() {
+		s.idleCacheCleanMu.Lock()
+		s.idleCacheCleanTimer = nil
+		s.idleCacheCleanMu.Unlock()
+
+		s.snapshotUpdateMu.Lock()
+		defer s.snapshotUpdateMu.Unlock()
+
+		ctx := s.backgroundCtx
+		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:         UpdateReasonIdleCleanDiskCache,
+			fileChanges:    fileChanges,
+			ataChanges:     ataChanges,
+			newConfig:      newConfig,
+			cleanDiskCache: true,
+		})
+
+		runtime.GC()
+	})
+}
+
+func (s *Session) cancelIdleCacheClean() {
+	s.idleCacheCleanMu.Lock()
+	defer s.idleCacheCleanMu.Unlock()
+	if s.idleCacheCleanTimer != nil {
+		s.idleCacheCleanTimer.Stop()
+		s.idleCacheCleanTimer = nil
+	}
+}
+
 func (s *Session) Snapshot() (*Snapshot, func()) {
 	s.snapshotMu.RLock()
 	defer s.snapshotMu.RUnlock()
 	snapshot := s.snapshot
 	snapshot.Ref()
-	return snapshot, func() {
+	return snapshot, s.createSnapshotRelease(snapshot)
+}
+
+func (s *Session) createSnapshotRelease(snapshot *Snapshot) func() {
+	return func() {
 		if snapshot.Deref() {
 			// The session itself accounts for one reference to the snapshot, and it derefs
 			// in UpdateSnapshot while holding the snapshotMu lock, so the only way to end
@@ -573,6 +634,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 		if s.options.LoggingEnabled {
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
+			s.logRuntimeMetrics()
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
@@ -590,6 +652,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 // WaitForBackgroundTasks waits for all background tasks to complete.
 // This is intended to be used only for testing purposes.
 func (s *Session) WaitForBackgroundTasks() {
+	s.cancelIdleCacheClean()
 	s.backgroundQueue.Wait()
 }
 
@@ -731,6 +794,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 func (s *Session) Close() {
 	// Cancel any pending diagnostics refresh
 	s.cancelDiagnosticsRefresh()
+	// Cancel any pending idle cache clean
+	s.cancelIdleCacheClean()
 	s.backgroundQueue.Close()
 }
 
@@ -800,6 +865,37 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	}
 }
 
+var runtimeMetricsSamples = sync.OnceValue(func() []gometrics.Sample {
+	descs := gometrics.All()
+	var samples []gometrics.Sample
+	for _, desc := range descs {
+		name := desc.Name
+		if strings.HasPrefix(name, "/memory/") || strings.HasPrefix(name, "/gc/") {
+			samples = append(samples, gometrics.Sample{Name: name})
+		}
+	}
+	return samples
+})
+
+func (s *Session) logRuntimeMetrics() {
+	samples := slices.Clone(runtimeMetricsSamples())
+	gometrics.Read(samples)
+
+	var builder strings.Builder
+	builder.WriteString("\n======== Runtime Metrics ========")
+	for _, sample := range samples {
+		switch sample.Value.Kind() {
+		case gometrics.KindUint64:
+			fmt.Fprintf(&builder, "\n%s = %d", sample.Name, sample.Value.Uint64())
+		case gometrics.KindFloat64:
+			fmt.Fprintf(&builder, "\n%s = %f", sample.Name, sample.Value.Float64())
+		case gometrics.KindFloat64Histogram:
+			// Skip histograms for log readability
+		}
+	}
+	s.logger.Log(builder.String())
+}
+
 func (s *Session) logCacheStats(snapshot *Snapshot) {
 	var parseCacheSize int
 	var programCount int
@@ -830,6 +926,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 
 		s.logger.Log("Auto Imports:")
 		autoImportStats := snapshot.AutoImportRegistry().GetCacheStats()
+		s.logger.Logf("\tUnique packages (by realpath): %d", autoImportStats.UniquePackageCount)
 		if len(autoImportStats.ProjectBuckets) > 0 {
 			s.logger.Log("\tProject buckets:")
 			for _, bucket := range autoImportStats.ProjectBuckets {
@@ -845,6 +942,12 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 				for packageName := range bucket.State.DirtyPackages().Keys() {
 					s.logger.Logf("\t\t\tNeeds granular update: %s", packageName)
 				}
+				if bucket.DependencyNames != nil {
+					s.logger.Logf("\t\t\tCollected packages: %d", bucket.DependencyNames.Len())
+				} else {
+					s.logger.Logf("\t\t\tCollected packages: all, due to no package.json!")
+				}
+				s.logger.Logf("\t\t\tTotal packages: %d", bucket.PackageNames.Len())
 				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
 				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
 			}
@@ -973,6 +1076,9 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 			changedFile = uri
 		}
 		if !newSnapshot.fs.isOpenFile(changedFile.FileName()) {
+			return
+		}
+		if newSnapshot.GetPreferences(changedFile.FileName()).IncludeCompletionsForModuleExports.IsFalse() {
 			return
 		}
 		project := newSnapshot.GetDefaultProject(changedFile)
