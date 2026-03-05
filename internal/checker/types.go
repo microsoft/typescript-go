@@ -325,6 +325,7 @@ const (
 	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // Node has been partially type checked
 	NodeCheckFlagsInitializerIsUndefined                   NodeCheckFlags = 1 << 24
 	NodeCheckFlagsInitializerIsUndefinedComputed           NodeCheckFlags = 1 << 25
+	NodeCheckFlagsResolvingInitialType                     NodeCheckFlags = 1 << 26
 )
 
 // Common links

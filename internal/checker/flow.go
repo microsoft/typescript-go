@@ -1738,7 +1738,24 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 		if initializer != nil {
 			var initializerType *Type
 			if ast.IsBindingPattern(declaration.Parent) {
+				// Guard against circularity. When destructuring loop variables have default
+				// values (e.g. `const { children, index = 0 } = node`), evaluating the binding
+				// element type to compute a property name for flow analysis can circularly trigger
+				// flow analysis for the same reference again. This can't be caught by the existing
+				// pushTypeResolution in getTypeOfVariableOrParameterOrPropertyWorker because that
+				// path is never entered — the destructuring source variable (`node`) has an explicit
+				// type annotation, so getTypeOfSymbol returns immediately without entering type
+				// resolution. The cycle is entirely within flow analysis: isMatchingReference needs
+				// the binding element type to compute a property name, which triggers parent type
+				// inference, which evaluates the initializer, which triggers flow analysis again.
+				// See: https://github.com/microsoft/TypeScript/issues/63192
+				links := c.nodeLinks.Get(declaration)
+				if links.flags&NodeCheckFlagsResolvingInitialType != 0 {
+					return "", false
+				}
+				links.flags |= NodeCheckFlagsResolvingInitialType
 				initializerType = c.getTypeForBindingElement(declaration)
+				links.flags &^= NodeCheckFlagsResolvingInitialType
 			} else {
 				initializerType = c.getTypeOfExpression(initializer)
 			}
@@ -2216,7 +2233,18 @@ func (c *Checker) getInitialType(node *ast.Node) *Type {
 
 func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
 	if node.Initializer() != nil {
-		return c.getTypeOfInitializer(node.Initializer())
+		links := c.nodeLinks.Get(node)
+		if links.flags&NodeCheckFlagsResolvingInitialType != 0 {
+			// Circularity: we're already computing this variable declaration's initial type.
+			// This occurs when a binding element's type depends on the destructuring source
+			// through flow analysis (e.g. destructuring loop variables with default values).
+			// See: https://github.com/microsoft/TypeScript/issues/63192
+			return c.errorType
+		}
+		links.flags |= NodeCheckFlagsResolvingInitialType
+		result := c.getTypeOfInitializer(node.Initializer())
+		links.flags &^= NodeCheckFlagsResolvingInitialType
+		return result
 	}
 	if ast.IsForInStatement(node.Parent.Parent) {
 		return c.stringType
