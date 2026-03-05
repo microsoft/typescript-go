@@ -384,7 +384,7 @@ type registryBuilder struct {
 	resolverOptions module.ResolverOptions
 
 	uniquePackageCount int
-	entrypoints        map[tspath.Path][]*module.ResolvedEntrypoint
+	entrypoints        *dirty.MapBuilder[tspath.Path, []*module.ResolvedEntrypoint, []*module.ResolvedEntrypoint]
 }
 
 func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBuilder {
@@ -398,7 +398,7 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		projects:           dirty.NewMap(registry.projects),
 		specifierCache:     dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
 		uniquePackageCount: registry.uniquePackageCount,
-		entrypoints:        registry.entrypoints,
+		entrypoints:        dirty.NewMapBuilder(registry.entrypoints, core.Identity, core.Identity),
 	}
 }
 
@@ -411,7 +411,7 @@ func (b *registryBuilder) Build() *Registry {
 		projects:           core.FirstResult(b.projects.Finalize()),
 		specifierCache:     core.FirstResult(b.specifierCache.Build()),
 		uniquePackageCount: b.uniquePackageCount,
-		entrypoints:        b.entrypoints,
+		entrypoints:        b.entrypoints.Build(),
 	}
 }
 
@@ -838,29 +838,15 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	start := time.Now()
 	wg.Wait()
 
-	// Merge entrypoints from bucket results into the registry-level entrypoints map.
-	// Copy-on-write: clone only if any result has entrypoint changes.
-	entrypointsCloned := false
-	ensureEntrypointsCloned := func() {
-		if !entrypointsCloned {
-			b.entrypoints = maps.Clone(b.entrypoints)
-			if b.entrypoints == nil {
-				b.entrypoints = make(map[tspath.Path][]*module.ResolvedEntrypoint)
-			}
-			entrypointsCloned = true
-		}
-	}
-
 	for _, br := range allResults {
 		if br.err != nil {
 			continue
 		}
-		if br.result.entrypoints != nil || len(br.result.removedEntrypointPaths) > 0 {
-			ensureEntrypointsCloned()
-			for _, path := range br.result.removedEntrypointPaths {
-				delete(b.entrypoints, path)
-			}
-			maps.Copy(b.entrypoints, br.result.entrypoints)
+		for _, path := range br.result.removedEntrypointPaths {
+			b.entrypoints.Delete(path)
+		}
+		for path, entries := range br.result.entrypoints {
+			b.entrypoints.Set(path, entries)
 		}
 		br.entry.Replace(br.result.bucket)
 	}
