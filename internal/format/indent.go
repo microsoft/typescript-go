@@ -178,7 +178,10 @@ func getSmartIndent(sourceFile *ast.SourceFile, position int, precedingToken *as
 		}
 
 		// check if current node is a list item - if yes, take indentation from it
-		actualIndentation := getActualIndentationForListItem(current, sourceFile, options, true)
+		// do not consider parent-child line sharing yet:
+		// function foo(a
+		//    | preceding node 'a' does share line with its parent but indentation is expected
+		actualIndentation := getActualIndentationForListItem(current, sourceFile, options, true /*listIndentsChild*/)
 		if actualIndentation != -1 {
 			return actualIndentation
 		}
