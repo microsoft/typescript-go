@@ -159,9 +159,10 @@ class C {
         /*14*/
         /*16*/
         y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
+        #z_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
         /*17*/
-        /*19*/
-        accessor z = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
+        get z() { return this.#z_accessor_storage; }
+        set z(value) { this.#z_accessor_storage = value; }
         /*20*/
         /*22*/
         static get #method() { return _static_private_method_descriptor.value; }
@@ -174,9 +175,12 @@ class C {
         /*29*/
         /*31*/
         static #y = (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_private_y_initializers, 1));
+        /*34*/
+        static #z_1_accessor_storage = (__runInitializers(_classThis, _static_private_y_extraInitializers), __runInitializers(_classThis, _static_private_z_initializers, 1));
         /*32*/
         /*34*/
-        static accessor #z = (__runInitializers(_classThis, _static_private_y_extraInitializers), __runInitializers(_classThis, _static_private_z_initializers, 1));
+        static get #z() { return _classThis.#z_1_accessor_storage; }
+        static set #z(value) { _classThis.#z_1_accessor_storage = value; }
         constructor() {
             __runInitializers(this, _z_extraInitializers);
         }

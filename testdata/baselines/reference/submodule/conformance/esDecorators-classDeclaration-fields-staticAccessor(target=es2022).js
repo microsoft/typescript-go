@@ -42,9 +42,15 @@ let C = (() => {
             __esDecorate(this, null, _static_member_decorators_1, { kind: "accessor", name: _a, static: true, private: false, access: { has: obj => _a in obj, get: obj => obj[_a], set: (obj, value) => { obj[_a] = value; } }, metadata: _metadata }, _static_member_initializers_1, _static_member_extraInitializers_1);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        static accessor field1 = __runInitializers(this, _static_field1_initializers, 1);
-        static accessor ["field2"] = (__runInitializers(this, _static_field1_extraInitializers), __runInitializers(this, _static_member_initializers, 2));
-        static accessor [(_static_field1_decorators = [dec(1)], _static_member_decorators = [dec(2)], _static_member_decorators_1 = [dec(3)], _a = __propKey(field3))] = (__runInitializers(this, _static_member_extraInitializers), __runInitializers(this, _static_member_initializers_1, 3));
+        static #field1_accessor_storage = __runInitializers(this, _static_field1_initializers, 1);
+        static get field1() { return C.#field1_accessor_storage; }
+        static set field1(value) { C.#field1_accessor_storage = value; }
+        static #_a_accessor_storage = (__runInitializers(this, _static_field1_extraInitializers), __runInitializers(this, _static_member_initializers, 2));
+        static get ["field2"]() { return C.#_a_accessor_storage; }
+        static set ["field2"](value) { C.#_a_accessor_storage = value; }
+        static #_b_accessor_storage = (__runInitializers(this, _static_member_extraInitializers), __runInitializers(this, _static_member_initializers_1, 3));
+        static get [(_static_field1_decorators = [dec(1)], _static_member_decorators = [dec(2)], _static_member_decorators_1 = [dec(3)], _a = __propKey(field3))]() { return C.#_b_accessor_storage; }
+        static set [_a](value) { C.#_b_accessor_storage = value; }
         static {
             __runInitializers(this, _static_member_extraInitializers_1);
         }
@@ -63,7 +69,9 @@ let D = (() => {
             D = _classThis = _classDescriptor.value;
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        static accessor field1 = 1;
+        static #field1_accessor_storage = 1;
+        static get field1() { return _classThis.#field1_accessor_storage; }
+        static set field1(value) { _classThis.#field1_accessor_storage = value; }
         static {
             _classThis.field1;
             _classThis.field1 = 1;

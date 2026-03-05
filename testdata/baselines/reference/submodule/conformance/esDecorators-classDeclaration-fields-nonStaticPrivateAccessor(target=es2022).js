@@ -21,7 +21,9 @@ let C = (() => {
             __esDecorate(this, null, _private_field1_decorators, { kind: "accessor", name: "#field1", static: false, private: true, access: { has: obj => #field1 in obj, get: obj => obj.#field1, set: (obj, value) => { obj.#field1 = value; } }, metadata: _metadata }, _private_field1_initializers, _private_field1_extraInitializers);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        accessor #field1 = __runInitializers(this, _private_field1_initializers, 0);
+        #field1_accessor_storage = __runInitializers(this, _private_field1_initializers, 0);
+        get #field1() { return this.#field1_accessor_storage; }
+        set #field1(value) { this.#field1_accessor_storage = value; }
         constructor() {
             __runInitializers(this, _private_field1_extraInitializers);
         }

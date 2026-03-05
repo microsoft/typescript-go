@@ -30,7 +30,9 @@ let C = (() => {
         }
         static { _classThis; }
         static x = _classThis;
-        static accessor a = _classThis;
+        static #a_accessor_storage = _classThis;
+        static get a() { return _classThis.#a_accessor_storage; }
+        static set a(value) { _classThis.#a_accessor_storage = value; }
         static m() { this; }
         static get g() { return this; }
         static {

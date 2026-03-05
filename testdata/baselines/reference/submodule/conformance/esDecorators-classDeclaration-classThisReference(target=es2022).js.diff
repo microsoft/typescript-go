@@ -24,7 +24,9 @@
 -        }
 -        static get a() { return __classPrivateFieldGet(_classThis, _classThis, "f", _C_a_accessor_storage); }
 -        static set a(value) { __classPrivateFieldSet(_classThis, _classThis, value, "f", _C_a_accessor_storage); }
-+        static accessor a = _classThis;
++        static #a_accessor_storage = _classThis;
++        static get a() { return _classThis.#a_accessor_storage; }
++        static set a(value) { _classThis.#a_accessor_storage = value; }
          static m() { this; }
          static get g() { return this; }
          static {

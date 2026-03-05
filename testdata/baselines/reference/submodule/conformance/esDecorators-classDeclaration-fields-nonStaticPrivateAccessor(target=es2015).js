@@ -11,19 +11,26 @@ class C {
 //// [esDecorators-classDeclaration-fields-nonStaticPrivateAccessor.js]
 "use strict";
 let C = (() => {
+    var _C_instances, _a, _C_field1_get, _C_field1_set, _C_field1_accessor_storage;
     let _private_field1_decorators;
     let _private_field1_initializers = [];
     let _private_field1_extraInitializers = [];
-    return class C {
-        static {
+    return _a = class C {
+            constructor() {
+                _C_instances.add(this);
+                _C_field1_accessor_storage.set(this, __runInitializers(this, _private_field1_initializers, 0));
+                __runInitializers(this, _private_field1_extraInitializers);
+            }
+        },
+        _C_instances = new WeakSet(),
+        _C_field1_accessor_storage = new WeakMap(),
+        _C_field1_get = function _C_field1_get() { return __classPrivateFieldGet(this, _C_field1_accessor_storage, "f"); },
+        _C_field1_set = function _C_field1_set(value) { __classPrivateFieldSet(this, _C_field1_accessor_storage, value, "f"); },
+        (() => {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             _private_field1_decorators = [dec];
-            __esDecorate(this, null, _private_field1_decorators, { kind: "accessor", name: "#field1", static: false, private: true, access: { has: obj => #field1 in obj, get: obj => obj.#field1, set: (obj, value) => { obj.#field1 = value; } }, metadata: _metadata }, _private_field1_initializers, _private_field1_extraInitializers);
-            if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        }
-        accessor #field1 = __runInitializers(this, _private_field1_initializers, 0);
-        constructor() {
-            __runInitializers(this, _private_field1_extraInitializers);
-        }
-    };
+            __esDecorate(_a, null, _private_field1_decorators, { kind: "accessor", name: "#field1", static: false, private: true, access: { has: obj => __classPrivateFieldIn(_C_instances, obj), get: obj => __classPrivateFieldGet(obj, _C_instances, "a", _C_field1_get), set: (obj, value) => { __classPrivateFieldSet(obj, _C_instances, value, "a", _C_field1_set); } }, metadata: _metadata }, _private_field1_initializers, _private_field1_extraInitializers);
+            if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+        })(),
+        _a;
 })();

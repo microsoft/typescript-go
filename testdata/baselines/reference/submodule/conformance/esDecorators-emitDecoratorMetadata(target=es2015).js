@@ -51,6 +51,7 @@ class C {
 //// [esDecorators-emitDecoratorMetadata.js]
 "use strict";
 let C = (() => {
+    var _a;
     let _classDecorators = [dec];
     let _classDescriptor;
     let _classExtraInitializers = [];
@@ -67,9 +68,19 @@ let C = (() => {
     let _y_decorators;
     let _y_initializers = [];
     let _y_extraInitializers = [];
-    var C = class {
-        static { _classThis = this; }
-        static {
+    var C = (_a = class {
+            constructor(x) {
+                this.y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, void 0));
+                __runInitializers(this, _y_extraInitializers);
+            }
+            method(x) { }
+            set x(x) { }
+            static method(x) { }
+            static set x(x) { }
+        },
+        _classThis = _a,
+        __setFunctionName(_a, "C"),
+        (() => {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             _method_decorators = [dec];
             _set_x_decorators = [dec];
@@ -77,33 +88,26 @@ let C = (() => {
             _static_method_decorators = [dec];
             _static_set_x_decorators = [dec];
             _static_y_decorators = [dec];
-            __esDecorate(this, null, _static_method_decorators, { kind: "method", name: "method", static: true, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _staticExtraInitializers);
-            __esDecorate(this, null, _static_set_x_decorators, { kind: "setter", name: "x", static: true, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _staticExtraInitializers);
-            __esDecorate(this, null, _method_decorators, { kind: "method", name: "method", static: false, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _instanceExtraInitializers);
-            __esDecorate(this, null, _set_x_decorators, { kind: "setter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _static_method_decorators, { kind: "method", name: "method", static: true, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _staticExtraInitializers);
+            __esDecorate(_a, null, _static_set_x_decorators, { kind: "setter", name: "x", static: true, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _staticExtraInitializers);
+            __esDecorate(_a, null, _method_decorators, { kind: "method", name: "method", static: false, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _set_x_decorators, { kind: "setter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(null, null, _static_y_decorators, { kind: "field", name: "y", static: true, private: false, access: { has: obj => "y" in obj, get: obj => obj.y, set: (obj, value) => { obj.y = value; } }, metadata: _metadata }, _static_y_initializers, _static_y_extraInitializers);
             __esDecorate(null, null, _y_decorators, { kind: "field", name: "y", static: false, private: false, access: { has: obj => "y" in obj, get: obj => obj.y, set: (obj, value) => { obj.y = value; } }, metadata: _metadata }, _y_initializers, _y_extraInitializers);
             __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-            C = _classThis = _classDescriptor.value;
+            _a = _classThis = _classDescriptor.value;
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        }
-        constructor(x) {
-            __runInitializers(this, _y_extraInitializers);
-        }
-        method(x) { }
-        set x(x) { }
-        y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, void 0));
-        static method(x) { }
-        static set x(x) { }
-        static y = (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_y_initializers, void 0));
-        static {
+        })(),
+        _a.y = (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_y_initializers, void 0)),
+        (() => {
             __runInitializers(_classThis, _static_y_extraInitializers);
             __runInitializers(_classThis, _classExtraInitializers);
-        }
-    };
+        })(),
+        _a);
     return C = _classThis;
 })();
 ((() => {
+    var _a;
     let _classDecorators = [dec];
     let _classDescriptor;
     let _classExtraInitializers = [];
@@ -120,9 +124,19 @@ let C = (() => {
     let _y_decorators;
     let _y_initializers = [];
     let _y_extraInitializers = [];
-    var C = class {
-        static { _classThis = this; }
-        static {
+    var C = (_a = class {
+            constructor(x) {
+                this.y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, void 0));
+                __runInitializers(this, _y_extraInitializers);
+            }
+            method(x) { }
+            set x(x) { }
+            static method(x) { }
+            static set x(x) { }
+        },
+        _classThis = _a,
+        __setFunctionName(_a, "C"),
+        (() => {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             _method_decorators = [dec];
             _set_x_decorators = [dec];
@@ -130,29 +144,21 @@ let C = (() => {
             _static_method_decorators = [dec];
             _static_set_x_decorators = [dec];
             _static_y_decorators = [dec];
-            __esDecorate(this, null, _static_method_decorators, { kind: "method", name: "method", static: true, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _staticExtraInitializers);
-            __esDecorate(this, null, _static_set_x_decorators, { kind: "setter", name: "x", static: true, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _staticExtraInitializers);
-            __esDecorate(this, null, _method_decorators, { kind: "method", name: "method", static: false, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _instanceExtraInitializers);
-            __esDecorate(this, null, _set_x_decorators, { kind: "setter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _static_method_decorators, { kind: "method", name: "method", static: true, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _staticExtraInitializers);
+            __esDecorate(_a, null, _static_set_x_decorators, { kind: "setter", name: "x", static: true, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _staticExtraInitializers);
+            __esDecorate(_a, null, _method_decorators, { kind: "method", name: "method", static: false, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _set_x_decorators, { kind: "setter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(null, null, _static_y_decorators, { kind: "field", name: "y", static: true, private: false, access: { has: obj => "y" in obj, get: obj => obj.y, set: (obj, value) => { obj.y = value; } }, metadata: _metadata }, _static_y_initializers, _static_y_extraInitializers);
             __esDecorate(null, null, _y_decorators, { kind: "field", name: "y", static: false, private: false, access: { has: obj => "y" in obj, get: obj => obj.y, set: (obj, value) => { obj.y = value; } }, metadata: _metadata }, _y_initializers, _y_extraInitializers);
             __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
             C = _classThis = _classDescriptor.value;
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        }
-        constructor(x) {
-            __runInitializers(this, _y_extraInitializers);
-        }
-        method(x) { }
-        set x(x) { }
-        y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, void 0));
-        static method(x) { }
-        static set x(x) { }
-        static y = (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_y_initializers, void 0));
-        static {
+        })(),
+        _a.y = (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_y_initializers, void 0)),
+        (() => {
             __runInitializers(_classThis, _static_y_extraInitializers);
             __runInitializers(_classThis, _classExtraInitializers);
-        }
-    };
+        })(),
+        _a);
     return C = _classThis;
 })());

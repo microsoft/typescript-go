@@ -23,9 +23,8 @@ let C = (() => {
             __esDecorate(this, null, _speak_decorators, { kind: "method", name: "speak", static: false, private: false, access: { has: obj => "speak" in obj, get: obj => obj.speak }, metadata: _metadata }, null, _instanceExtraInitializers);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        message = __runInitializers(this, _instanceExtraInitializers);
         constructor(message) {
-            this.message = message;
+            this.message = (__runInitializers(this, _instanceExtraInitializers), message);
         }
         speak() {
         }

@@ -30,7 +30,9 @@ let C = (() => {
             __esDecorate(this, null, _static_private_field1_decorators, { kind: "accessor", name: "#field1", static: true, private: true, access: { has: obj => #field1 in obj, get: obj => obj.#field1, set: (obj, value) => { obj.#field1 = value; } }, metadata: _metadata }, _static_private_field1_initializers, _static_private_field1_extraInitializers);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        static accessor #field1 = __runInitializers(this, _static_private_field1_initializers, 0);
+        static #field1_accessor_storage = __runInitializers(this, _static_private_field1_initializers, 0);
+        static get #field1() { return C.#field1_accessor_storage; }
+        static set #field1(value) { C.#field1_accessor_storage = value; }
         static {
             __runInitializers(this, _static_private_field1_extraInitializers);
         }
@@ -49,7 +51,9 @@ let D = (() => {
             D = _classThis = _classDescriptor.value;
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        static accessor #field1 = 0;
+        static #field1_accessor_storage = 0;
+        static get #field1() { return _classThis.#field1_accessor_storage; }
+        static set #field1(value) { _classThis.#field1_accessor_storage = value; }
         static {
             _classThis.#field1;
             _classThis.#field1 = 1;

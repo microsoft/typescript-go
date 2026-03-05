@@ -1948,15 +1948,13 @@ func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 				//
 				// When the result isn't discarded, we introduce a new temp variable (`_b`) to capture the
 				// result of the operation so that we can provide it to `y` when the assignment is complete.
-				var temp *ast.Expression
+				var temp *ast.IdentifierNode
 				if !discarded {
 					temp = f.NewTempVariable()
 					ec.AddVariableDeclaration(temp)
 				}
 
-				expression = expandPreOrPostfixIncrementOrDecrementExpression(f, node, expression, func(name *ast.IdentifierNode) {
-					ec.AddVariableDeclaration(name)
-				}, temp)
+				expression = expandPreOrPostfixIncrementOrDecrementExpression(f, ec, node, expression, temp)
 
 				expression = f.NewReflectSetCall(tx.classSuper, setterName, expression, tx.classThis)
 				ec.SetOriginal(expression, node)
@@ -2521,16 +2519,6 @@ func canIgnoreEmptyStringLiteralInAssignedName(node *ast.Node) bool {
 	return ast.IsClassExpression(innerExpression) && innerExpression.Name() == nil && !ast.ClassOrConstructorParameterIsDecorated(false, innerExpression)
 }
 
-func classHasClassThisAssignment(ec *printer.EmitContext, node *ast.Node) bool {
-	classThisExpr := ec.ClassThis(node)
-	if classThisExpr == nil {
-		return false
-	}
-	return core.Some(node.Members(), func(m *ast.Node) bool {
-		return isClassThisAssignmentBlock(ec, m)
-	})
-}
-
 func injectClassThisAssignmentIfMissing(ec *printer.EmitContext, f *printer.NodeFactory, node *ast.Node, classThis *ast.IdentifierNode) *ast.Node {
 	if classHasClassThisAssignment(ec, node) {
 		return node
@@ -2723,76 +2711,6 @@ func (tx *esDecoratorTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 		return f.UpdateSpreadAssignment(sa, expression)
 	}
 	return tx.Visitor().VisitEachChild(node)
-}
-
-// Expands the read and increment/decrement operations of a pre- or post-increment or
-// pre- or post-decrement expression.
-//
-//	// input
-//	<expression>++
-//	// output (if result is not discarded)
-//	var <temp>;
-//	(<temp> = <expression>, <resultVariable> = <temp>++, <temp>)
-//	// output (if result is discarded)
-//	var <temp>;
-//	(<temp> = <expression>, <temp>++, <temp>)
-//
-//	// input
-//	++<expression>
-//	// output (if result is not discarded)
-//	var <temp>;
-//	(<temp> = <expression>, <resultVariable> = ++<temp>)
-//	// output (if result is discarded)
-//	var <temp>;
-//	(<temp> = <expression>, ++<temp>)
-//
-// It is up to the caller to supply a temporary variable for <resultVariable> if one is needed.
-// The temporary variable <temp> is injected so that ++ and -- work uniformly with number and bigint.
-// The result of the expression is always the final result of incrementing or decrementing the
-// expression, so that it can be used for storage.
-func expandPreOrPostfixIncrementOrDecrementExpression(
-	f *printer.NodeFactory,
-	node *ast.Node,
-	expression *ast.Expression,
-	recordTempVariable func(*ast.IdentifierNode),
-	resultVariable *ast.Expression,
-) *ast.Expression {
-	var operator ast.Kind
-	if ast.IsPrefixUnaryExpression(node) {
-		operator = node.AsPrefixUnaryExpression().Operator
-	} else {
-		operator = node.AsPostfixUnaryExpression().Operator
-	}
-
-	debug.Assert(operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken, "Expected 'node' to be a pre- or post-increment or pre- or post-decrement expression")
-
-	temp := f.NewTempVariable()
-	recordTempVariable(temp)
-	expression = f.NewAssignmentExpression(temp, expression)
-	expression.Loc = node.Loc
-
-	var operation *ast.Expression
-	if ast.IsPrefixUnaryExpression(node) {
-		operation = f.AsNodeFactory().NewPrefixUnaryExpression(operator, temp)
-	} else {
-		operation = f.AsNodeFactory().NewPostfixUnaryExpression(temp, operator)
-	}
-	operation.Loc = node.Loc
-
-	if resultVariable != nil {
-		operation = f.NewAssignmentExpression(resultVariable, operation)
-		operation.Loc = node.Loc
-	}
-
-	expression = f.NewCommaExpression(expression, operation)
-	expression.Loc = node.Loc
-
-	if ast.IsPostfixUnaryExpression(node) {
-		expression = f.NewCommaExpression(expression, temp)
-		expression.Loc = node.Loc
-	}
-
-	return expression
 }
 
 // Creates ({ set value(_p) { Reflect.set(target, key, _p, receiver) } }).value

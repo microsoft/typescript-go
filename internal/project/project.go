@@ -116,7 +116,6 @@ func NewInferredProject(
 			StrictNullChecks:           core.TSTrue,
 			StrictFunctionTypes:        core.TSTrue,
 			SourceMap:                  core.TSTrue,
-			ESModuleInterop:            core.TSTrue,
 			AllowNonTsExtensions:       core.TSTrue,
 			ResolveJsonModule:          core.TSTrue,
 		}
@@ -393,7 +392,9 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder 
 		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
-				builder.WriteString("\t\t" + sourceFile.FileName() + "\n")
+				builder.WriteString("\t\t")
+				builder.WriteString(sourceFile.FileName())
+				builder.WriteString("\n")
 			}
 			// !!!
 			// if writeFileExplanation {}

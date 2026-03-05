@@ -320,3 +320,53 @@ func MoveRangePastDecorators(node *ast.Node) core.TextRange {
 	}
 	return node.Loc
 }
+
+// FindSuperStatementIndexPath finds a path of indices to a statement containing a `super()` call.
+func FindSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
+	indices := findSuperStatementIndexPathWorker(statements, start, nil)
+	slices.Reverse(indices)
+	return indices
+}
+
+func findSuperStatementIndexPathWorker(statements []*ast.Statement, start int, indices []int) []int {
+	for i := start; i < len(statements); i++ {
+		statement := statements[i]
+		if GetSuperCallFromStatement(statement) != nil {
+			return append(indices, i)
+		} else if ast.IsTryStatement(statement) {
+			if result := findSuperStatementIndexPathWorker(statement.AsTryStatement().TryBlock.Statements(), 0, indices); result != nil {
+				return append(result, i)
+			}
+		}
+	}
+	return nil
+}
+
+// GetSuperCallFromStatement extracts the super() call expression from an expression statement, if any.
+func GetSuperCallFromStatement(statement *ast.Statement) *ast.Node {
+	if !ast.IsExpressionStatement(statement) {
+		return nil
+	}
+	expression := ast.SkipParentheses(statement.Expression())
+	if ast.IsSuperCall(expression) {
+		return expression
+	}
+	return nil
+}
+
+// MoveRangePastModifiers returns a text range that starts past any modifiers on the node.
+func MoveRangePastModifiers(node *ast.Node) core.TextRange {
+	if ast.IsPropertyDeclaration(node) || ast.IsMethodDeclaration(node) {
+		return core.NewTextRange(node.Name().Pos(), node.End())
+	}
+
+	var lastModifier *ast.Node
+	if ast.CanHaveModifiers(node) {
+		lastModifier = core.LastOrNil(node.ModifierNodes())
+	}
+
+	if lastModifier != nil && !ast.PositionIsSynthesized(lastModifier.End()) {
+		return core.NewTextRange(lastModifier.End(), node.End())
+	}
+	return MoveRangePastDecorators(node)
+}

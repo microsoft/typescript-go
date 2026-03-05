@@ -34,9 +34,15 @@ let C = (() => {
             __esDecorate(this, null, _member_decorators_1, { kind: "accessor", name: _a, static: false, private: false, access: { has: obj => _a in obj, get: obj => obj[_a], set: (obj, value) => { obj[_a] = value; } }, metadata: _metadata }, _member_initializers_1, _member_extraInitializers_1);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        accessor field1 = __runInitializers(this, _field1_initializers, 1);
-        accessor ["field2"] = (__runInitializers(this, _field1_extraInitializers), __runInitializers(this, _member_initializers, 2));
-        accessor [(_field1_decorators = [dec(1)], _member_decorators = [dec(2)], _member_decorators_1 = [dec(3)], _a = __propKey(field3))] = (__runInitializers(this, _member_extraInitializers), __runInitializers(this, _member_initializers_1, 3));
+        #field1_accessor_storage = __runInitializers(this, _field1_initializers, 1);
+        get field1() { return this.#field1_accessor_storage; }
+        set field1(value) { this.#field1_accessor_storage = value; }
+        #_a_accessor_storage = (__runInitializers(this, _field1_extraInitializers), __runInitializers(this, _member_initializers, 2));
+        get ["field2"]() { return this.#_a_accessor_storage; }
+        set ["field2"](value) { this.#_a_accessor_storage = value; }
+        #_b_accessor_storage = (__runInitializers(this, _member_extraInitializers), __runInitializers(this, _member_initializers_1, 3));
+        get [(_field1_decorators = [dec(1)], _member_decorators = [dec(2)], _member_decorators_1 = [dec(3)], _a = __propKey(field3))]() { return this.#_b_accessor_storage; }
+        set [_a](value) { this.#_b_accessor_storage = value; }
         constructor() {
             __runInitializers(this, _member_extraInitializers_1);
         }
