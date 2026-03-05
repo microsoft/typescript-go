@@ -103,9 +103,21 @@ func isValidCallHierarchyDeclaration(node *ast.Node) bool {
 		return ast.IsIdentifier(node.Name())
 	}
 
-	return ast.IsFunctionDeclaration(node) ||
-		ast.IsClassDeclaration(node) ||
-		ast.IsClassStaticBlockDeclaration(node) ||
+	if ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node) {
+		if name := node.Name(); ast.NodeIsPresent(name) {
+			return true
+		}
+		if modifiers := node.Modifiers(); modifiers != nil {
+			for _, mod := range modifiers.Nodes {
+				if mod.Kind == ast.KindDefaultKeyword {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
+	return ast.IsClassStaticBlockDeclaration(node) ||
 		ast.IsMethodDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsGetAccessorDeclaration(node) ||
@@ -419,7 +431,7 @@ func resolveCallHierarchyDeclaration(program *compiler.Program, location *ast.No
 			return findImplementationOrAllInitialDeclarations(c, location)
 		}
 
-		if isPossibleCallHierarchyDeclaration(location) {
+		if isPossibleCallHierarchyDeclaration(location) && !(followingSymbol && ast.IsClassLike(location)) {
 			ancestor := ast.FindAncestor(location, isValidCallHierarchyDeclaration)
 			if ancestor != nil {
 				return findImplementationOrAllInitialDeclarations(c, ancestor)
