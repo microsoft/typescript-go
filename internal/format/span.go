@@ -820,8 +820,10 @@ func (w *formatSpanWorker) trimTrailingWhitespacesForLines(line1 int, line2 int,
 
 		whitespaceStart := w.getTrailingWhitespaceStartPosition(lineStartPosition, lineEndPosition)
 		if whitespaceStart != -1 {
-			r, _ := utf8.DecodeRuneInString(w.sourceFile.Text()[whitespaceStart-1:])
-			debug.Assert(whitespaceStart == lineStartPosition || !stringutil.IsWhiteSpaceSingleLine(r))
+			if whitespaceStart != lineStartPosition {
+				r, _ := utf8.DecodeRuneInString(w.sourceFile.Text()[whitespaceStart-1:])
+				debug.Assert(!stringutil.IsWhiteSpaceSingleLine(r))
+			}
 			w.recordDelete(whitespaceStart, lineEndPosition+1-whitespaceStart)
 		}
 	}
@@ -889,7 +891,12 @@ func (w *formatSpanWorker) characterToColumn(startLinePosition int, characterInL
 }
 
 func (w *formatSpanWorker) indentationIsDifferent(indentationString string, startLinePosition int) bool {
-	return indentationString != w.sourceFile.Text()[startLinePosition:startLinePosition+len(indentationString)]
+	text := w.sourceFile.Text()
+	end := startLinePosition + len(indentationString)
+	if end > len(text) {
+		return true
+	}
+	return indentationString != text[startLinePosition:end]
 }
 
 func (w *formatSpanWorker) indentTriviaItems(trivia []TextRangeWithKind, commentIndentation int, indentNextTokenOrTrivia bool, indentSingleLine func(item TextRangeWithKind)) bool {

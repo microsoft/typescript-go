@@ -430,7 +430,7 @@ func (l *LanguageService) getCompletionData(
 	isInSnippetScope := false
 	if insideComment != nil {
 		if hasDocComment(file, position) {
-			if file.Text()[position] == '@' {
+			if position > 0 && file.Text()[position-1] == '@' {
 				// The current position is next to the '@' sign, when no tag name being provided yet.
 				// Provide a full list of tag names
 				return &completionDataJSDocTagName{}, nil
@@ -1080,7 +1080,7 @@ func (l *LanguageService) getCompletionData(
 			return true
 		}
 		// If not already a module, must have modules enabled.
-		if !preferences.IncludeCompletionsForModuleExports.IsTrue() {
+		if preferences.IncludeCompletionsForModuleExports.IsFalse() {
 			return false
 		}
 		// Always using ES modules in 6.0+
@@ -1111,6 +1111,9 @@ func (l *LanguageService) getCompletionData(
 		view, err := l.getPreparedAutoImportView(file)
 		if err != nil {
 			return err
+		}
+		if view == nil {
+			return nil
 		}
 
 		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
@@ -4309,10 +4312,10 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		lsutil.ScriptElementKindClassElement,
-		collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
-		nil, /*replacementSpan*/
-		nil, /*commitCharacters*/
-		nil, /*labelDetails*/
+		lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
+		nil,                                  /*replacementSpan*/
+		nil,                                  /*commitCharacters*/
+		nil,                                  /*labelDetails*/
 		file,
 		position,
 		true,  /*isMemberCompletion*/
@@ -4347,7 +4350,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	filterText string,
 	sortText SortText,
 	elementKind lsutil.ScriptElementKind,
-	kindModifiers collections.Set[lsutil.ScriptElementKindModifier],
+	kindModifiers lsutil.ScriptElementKindModifier,
 	replacementSpan *lsproto.Range,
 	commitCharacters *[]string,
 	labelDetails *lsproto.CompletionItemLabelDetails,
@@ -4393,7 +4396,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
-	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
+	if kindModifiers&lsutil.ScriptElementKindModifierOptional != 0 {
 		if insertText == "" {
 			insertText = name
 		}
@@ -4402,7 +4405,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		}
 		name = name + "?"
 	}
-	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
+	if kindModifiers&lsutil.ScriptElementKindModifierDeprecated != 0 {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
 	}
 
@@ -4484,10 +4487,10 @@ func (l *LanguageService) getLabelStatementCompletions(
 					"", /*filterText*/
 					SortTextLocationPriority,
 					lsutil.ScriptElementKindLabel,
-					collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
-					nil, /*replacementSpan*/
-					nil, /*commitCharacters*/
-					nil, /*labelDetails*/
+					lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
+					nil,                                  /*replacementSpan*/
+					nil,                                  /*commitCharacters*/
+					nil,                                  /*labelDetails*/
 					file,
 					position,
 					false, /*isMemberCompletion*/
@@ -5263,7 +5266,7 @@ func tryGetTypeExpressionFromTag(tag *ast.JSDocTag) *ast.Node {
 func isTagWithTypeExpression(tag *ast.JSDocTag) bool {
 	switch tag.Kind {
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocReturnTag, ast.KindJSDocTypeTag,
-		ast.KindJSDocTypedefTag, ast.KindJSDocSatisfiesTag:
+		ast.KindJSDocTypedefTag, ast.KindJSDocThrowsTag, ast.KindJSDocSatisfiesTag:
 		return true
 	case ast.KindJSDocTemplateTag:
 		return tag.AsJSDocTemplateTag().Constraint != nil
@@ -5874,16 +5877,18 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			if err != nil {
 				return nil, err
 			}
-			importAdder = autoimport.NewImportAdder(
-				ctx,
-				program,
-				c,
-				file,
-				view,
-				l.FormatOptions(),
-				l.converters,
-				l.UserPreferences(),
-			)
+			if view != nil {
+				importAdder = autoimport.NewImportAdder(
+					ctx,
+					program,
+					c,
+					file,
+					view,
+					l.FormatOptions(),
+					l.converters,
+					l.UserPreferences(),
+				)
+			}
 		}
 
 		var elements []*ast.Expression
