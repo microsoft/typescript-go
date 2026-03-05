@@ -3,7 +3,6 @@ package autoimport_test
 import (
 	"context"
 	"fmt"
-	"math"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -615,20 +614,7 @@ export declare const otherValue: string;`,
 
 		stats := autoImportStats(t, session)
 		assert.Equal(t, len(stats.NodeModulesBuckets), 2, "expected both app and repo node_modules buckets")
-
-		minBucketExports := math.MaxInt
-		maxBucketExports := 0
-		for _, bucket := range stats.NodeModulesBuckets {
-			if bucket.ExportCount < minBucketExports {
-				minBucketExports = bucket.ExportCount
-			}
-			if bucket.ExportCount > maxBucketExports {
-				maxBucketExports = bucket.ExportCount
-			}
-		}
-
-		assert.Assert(t, maxBucketExports > 0, "expected at least one node_modules bucket to contain shared exports")
-		assert.Equal(t, minBucketExports, maxBucketExports, "expected every bucket to contain the shared exports (cache-based dedupe installs into all buckets)")
+		assert.Equal(t, stats.UniquePackageCount, 1, "expected one unique package after realpath dedup")
 	})
 }
 
