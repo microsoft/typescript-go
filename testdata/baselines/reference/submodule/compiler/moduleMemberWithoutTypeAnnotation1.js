@@ -52,7 +52,7 @@ namespace TypeScript.Syntax {
 "use strict";
 var TypeScript;
 (function (TypeScript) {
-    let Parser;
+    var Parser;
     (function (Parser) {
         class SyntaxCursor {
             currentNode() {
@@ -66,7 +66,7 @@ var TypeScript;
     ;
     class PositionedElement {
         childIndex(child) {
-            return Syntax.childIndex();
+            return TypeScript.Syntax.childIndex();
         }
     }
     TypeScript.PositionedElement = PositionedElement;
@@ -89,13 +89,13 @@ var TypeScript;
     TypeScript.SyntaxNode = SyntaxNode;
 })(TypeScript || (TypeScript = {}));
 (function (TypeScript) {
-    let Syntax;
+    var Syntax;
     (function (Syntax) {
         function childIndex() { }
         Syntax.childIndex = childIndex;
         class VariableWidthTokenWithTrailingTrivia {
             findTokenInternal(parent, position, fullStart) {
-                return new PositionedToken(parent, this, fullStart);
+                return new TypeScript.PositionedToken(parent, this, fullStart);
             }
         }
         Syntax.VariableWidthTokenWithTrailingTrivia = VariableWidthTokenWithTrailingTrivia;

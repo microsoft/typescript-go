@@ -116,8 +116,8 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 
 [94m           --module, -m  [39mSpecify what module code is generated.
 
-                one of:  none, commonjs, amd, system, umd, es6/es2015, es2020, es2022, esnext, node16, node18, node20, n
-                         odenext, preserve
+                one of:  commonjs, amd, system, umd, es6/es2015, es2020, es2022, esnext, node16, node18, node20, nodenex
+                         t, preserve
 
                default:  undefined
 
@@ -197,7 +197,7 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 
                   type:  boolean
 
-               default:  false
+               default:  true
 
 
 You can learn about all of the compiler options at https://aka.ms/tsc

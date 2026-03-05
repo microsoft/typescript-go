@@ -9,24 +9,18 @@ import {
     StreamMessageReader,
     StreamMessageWriter,
 } from "vscode-jsonrpc/node";
+import {
+    type FileSystem,
+    fsCallbackNames,
+} from "../fs.ts";
+import {
+    type ClientOptions,
+    type ClientSocketOptions,
+    type ClientSpawnOptions,
+    isSpawnOptions,
+} from "../options.ts";
 
-export interface ClientSocketOptions {
-    /** Path to the Unix domain socket or Windows named pipe for API communication */
-    pipe: string;
-}
-
-export interface ClientSpawnOptions {
-    /** Path to the tsgo executable */
-    tsserverPath: string;
-    /** Current working directory */
-    cwd?: string;
-}
-
-export type ClientOptions = ClientSocketOptions | ClientSpawnOptions;
-
-function isSpawnOptions(options: ClientOptions): options is ClientSpawnOptions {
-    return "tsserverPath" in options;
-}
+export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions };
 
 /**
  * Client handles communication with the TypeScript API server
@@ -65,6 +59,19 @@ export class Client {
                 options.cwd ?? process.cwd(),
             ];
 
+            // Enable virtual FS callbacks for each provided FS function
+            const enabledCallbacks: string[] = [];
+            if (options.fs) {
+                for (const name of fsCallbackNames) {
+                    if (options.fs[name]) {
+                        enabledCallbacks.push(name);
+                    }
+                }
+            }
+            if (enabledCallbacks.length > 0) {
+                args.push(`--callbacks=${enabledCallbacks.join(",")}`);
+            }
+
             this.process = spawn(options.tsserverPath, args, {
                 stdio: ["pipe", "pipe", "inherit"],
             });
@@ -81,6 +88,7 @@ export class Client {
             const reader = new StreamMessageReader(this.process.stdout!);
             const writer = new StreamMessageWriter(this.process.stdin!);
             this.connection = createMessageConnection(reader, writer);
+            this.registerFSCallbacks(this.connection, options.fs);
             this.connection.listen();
         });
     }
@@ -104,6 +112,26 @@ export class Client {
         });
     }
 
+    private registerFSCallbacks(connection: MessageConnection, fs: FileSystem | undefined): void {
+        if (!fs) return;
+        for (const name of fsCallbackNames) {
+            const callback = fs[name];
+            if (callback) {
+                const requestType = new RequestType<unknown, unknown, void>(name);
+                connection.onRequest(requestType, (arg: unknown) => {
+                    const result = callback(arg as any);
+                    if (name === "readFile") {
+                        // readFile has 3 returns: string (content), null (not found), undefined (fall back).
+                        // JSON-RPC can't distinguish null from undefined, so wrap in object.
+                        if (result === undefined) return null;
+                        return { content: result };
+                    }
+                    return result ?? null;
+                });
+            }
+        }
+    }
+
     async apiRequest<T>(method: string, params?: unknown): Promise<T> {
         if (!this.connected) {
             await this.connect();
@@ -114,6 +142,13 @@ export class Client {
 
         const requestType = new RequestType<unknown, T, void>(method);
         return this.connection.sendRequest(requestType, params);
+    }
+
+    async apiRequestBinary(method: string, params?: unknown): Promise<Uint8Array | undefined> {
+        const response = await this.apiRequest<{ data: string; } | null>(method, params);
+        if (!response) return undefined;
+        const buffer = Buffer.from(response.data, "base64");
+        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
     }
 
     async close(): Promise<void> {

@@ -70,7 +70,6 @@ type Binder struct {
 	seenThisKeyword         bool
 	hasExplicitReturn       bool
 	hasFlowEffects          bool
-	inStrictMode            bool
 	inAssignmentPattern     bool
 	seenParseError          bool
 	symbolCount             int
@@ -81,10 +80,6 @@ type Binder struct {
 	flowListPool            core.Pool[ast.FlowList]
 	singleDeclarationsPool  core.Pool[*ast.Node]
 	expandoAssignments      []ExpandoAssignmentInfo
-}
-
-func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
-	return b.file.ParseOptions().CompilerOptions
 }
 
 type ActiveLabel struct {
@@ -128,7 +123,6 @@ func bindSourceFile(file *ast.SourceFile) {
 		b := getBinder()
 		defer putBinder(b)
 		b.file = file
-		b.inStrictMode = b.options().BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
 		b.bindDeferredExpandoAssignments()
@@ -590,7 +584,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:
 	//
@@ -692,7 +685,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindFunctionExpression, ast.KindArrowFunction:
 		b.bindFunctionExpression(node)
 	case ast.KindClassExpression, ast.KindClassDeclaration:
-		b.inStrictMode = true
 		b.bindClassLikeDeclaration(node)
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
@@ -723,14 +715,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		b.bindExportAssignment(node)
 	case ast.KindSourceFile:
-		b.updateStrictModeStatementList(node.StatementList())
 		b.bindSourceFileIfExternalModule()
-	case ast.KindBlock:
-		if ast.IsFunctionLikeOrClassStaticBlockDeclaration(node.Parent) {
-			b.updateStrictModeStatementList(node.StatementList())
-		}
-	case ast.KindModuleBlock:
-		b.updateStrictModeStatementList(node.StatementList())
 	case ast.KindJsxAttributes:
 		b.bindJsxAttributes(node)
 	case ast.KindJsxAttribute:
@@ -760,7 +745,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.Flags |= ast.NodeFlagsThisNodeOrAnySubNodesHasError
 		b.seenParseError = true
 	}
-	b.inStrictMode = saveInStrictMode
 	return false
 }
 
@@ -887,9 +871,9 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
-		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsAll)
+		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, core.IfElse(ast.IsJSExportAssignment(node), 0, ast.SymbolFlagsAll))
 		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
-			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
+			// Ensure export assignments have a ValueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
 	}
@@ -1038,6 +1022,21 @@ func (b *Binder) bindDeferredExpandoAssignments() {
 	}
 }
 
+// If the given module symbol has an export= symbol, promote exports with a type or namespace meaning
+// from the module symbol onto the export= symbol and, if any such exports exist, mark the export=
+// symbol as a namespace module.
+func (b *Binder) bindCommonJSTypeExports(moduleSymbol *ast.Symbol) {
+	moduleExports := moduleSymbol.Exports
+	if exportEquals := moduleExports[ast.InternalSymbolNameExportEquals]; exportEquals != nil {
+		for _, symbol := range moduleExports {
+			if symbol.Name != ast.InternalSymbolNameExportEquals && symbol.Flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				ast.GetExports(exportEquals)[symbol.Name] = symbol
+				exportEquals.Flags |= ast.SymbolFlagsNamespaceModule
+			}
+		}
+	}
+}
+
 func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {
 	parent := getParentOfPropertyAssignment(node)
 	symbol := b.lookupEntity(parent, b.blockScopeContainer)
@@ -1151,9 +1150,7 @@ func (b *Binder) bindEnumDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
-	if b.inStrictMode {
-		b.checkStrictModeEvalOrArguments(node, node.Name())
-	}
+	b.checkStrictModeEvalOrArguments(node, node.Name())
 	if name := node.Name(); name != nil && !ast.IsBindingPattern(name) {
 		switch {
 		case ast.IsVariableDeclarationInitializedToRequire(node):
@@ -1179,7 +1176,7 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 
 func (b *Binder) bindParameter(node *ast.Node) {
 	decl := node.AsParameterDeclaration()
-	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
 		// strict mode FunctionLikeDeclaration or FunctionExpression(13.1)
 		b.checkStrictModeEvalOrArguments(node, decl.Name())
@@ -1201,11 +1198,7 @@ func (b *Binder) bindParameter(node *ast.Node) {
 
 func (b *Binder) bindFunctionDeclaration(node *ast.Node) {
 	b.checkStrictModeFunctionName(node)
-	if b.inStrictMode {
-		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
-	} else {
-		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
-	}
+	b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
 }
 
 func (b *Binder) getInferTypeContainer(node *ast.Node) *ast.Node {
@@ -1298,7 +1291,7 @@ func (b *Binder) checkContextualIdentifier(node *ast.Node) {
 		if originalKeywordKind == ast.KindIdentifier {
 			return
 		}
-		if b.inStrictMode && originalKeywordKind >= ast.KindFirstFutureReservedWord && originalKeywordKind <= ast.KindLastFutureReservedWord {
+		if originalKeywordKind >= ast.KindFirstFutureReservedWord && originalKeywordKind <= ast.KindLastFutureReservedWord {
 			b.errorOnNode(node, b.getStrictModeIdentifierMessage(node), scanner.DeclarationNameToString(node))
 		} else if originalKeywordKind == ast.KindAwaitKeyword {
 			if ast.IsExternalModule(b.file) && ast.IsInTopLevelContext(node) {
@@ -1333,15 +1326,6 @@ func (b *Binder) getStrictModeIdentifierMessage(node *ast.Node) *diagnostics.Mes
 	return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode
 }
 
-func (b *Binder) updateStrictModeStatementList(statements *ast.NodeList) {
-	if !b.inStrictMode {
-		useStrictDirective := FindUseStrictPrologue(b.file, statements.Nodes)
-		if useStrictDirective != nil {
-			b.inStrictMode = true
-		}
-	}
-}
-
 // Should be called only on prologue directives (ast.IsPrologueDirective(node) should be true)
 func isUseStrictPrologueDirective(sourceFile *ast.SourceFile, node *ast.Node) bool {
 	nodeText := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, node.Expression(), false /*includeTrivia*/)
@@ -1365,7 +1349,7 @@ func FindUseStrictPrologue(sourceFile *ast.SourceFile, statements []*ast.Node) *
 }
 
 func (b *Binder) checkStrictModeFunctionName(node *ast.Node) {
-	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a strict mode FunctionDeclaration or FunctionExpression (13.1))
 		b.checkStrictModeEvalOrArguments(node, node.Name())
 	}
@@ -1384,7 +1368,7 @@ func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Nod
 
 func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	expr := node.AsBinaryExpression()
-	if b.inStrictMode && ast.IsLeftHandSideExpression(expr.Left) && ast.IsAssignmentOperator(expr.OperatorToken.Kind) {
+	if ast.IsLeftHandSideExpression(expr.Left) && ast.IsAssignmentOperator(expr.OperatorToken.Kind) {
 		// ECMA 262 (Annex C) The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 		// Assignment operator(11.13) or of a PostfixExpression(11.3)
 		b.checkStrictModeEvalOrArguments(node, expr.Left)
@@ -1395,7 +1379,7 @@ func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
 	// It is a SyntaxError if a TryStatement with a Catch occurs within strict code and the Identifier of the
 	// Catch production is eval or arguments
 	clause := node.AsCatchClause()
-	if b.inStrictMode && clause.VariableDeclaration != nil {
+	if clause.VariableDeclaration != nil {
 		b.checkStrictModeEvalOrArguments(node, clause.VariableDeclaration.AsVariableDeclaration().Name())
 	}
 }
@@ -1403,7 +1387,7 @@ func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
 func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
 	// Grammar checking
 	expr := node.AsDeleteExpression()
-	if b.inStrictMode && expr.Expression.Kind == ast.KindIdentifier {
+	if expr.Expression.Kind == ast.KindIdentifier {
 		// When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
 		// UnaryExpression is a direct reference to a variable, function argument, or function name
 		b.errorOnNode(expr.Expression, diagnostics.X_delete_cannot_be_called_on_an_identifier_in_strict_mode)
@@ -1415,35 +1399,27 @@ func (b *Binder) checkStrictModePostfixUnaryExpression(node *ast.Node) {
 	// The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 	// Assignment operator(11.13) or of a PostfixExpression(11.3) or as the UnaryExpression
 	// operated upon by a Prefix Increment(11.4.4) or a Prefix Decrement(11.4.5) operator.
-	if b.inStrictMode {
-		b.checkStrictModeEvalOrArguments(node, node.AsPostfixUnaryExpression().Operand)
-	}
+	b.checkStrictModeEvalOrArguments(node, node.AsPostfixUnaryExpression().Operand)
 }
 
 func (b *Binder) checkStrictModePrefixUnaryExpression(node *ast.Node) {
 	// Grammar checking
-	if b.inStrictMode {
-		expr := node.AsPrefixUnaryExpression()
-		if expr.Operator == ast.KindPlusPlusToken || expr.Operator == ast.KindMinusMinusToken {
-			b.checkStrictModeEvalOrArguments(node, expr.Operand)
-		}
+	expr := node.AsPrefixUnaryExpression()
+	if expr.Operator == ast.KindPlusPlusToken || expr.Operator == ast.KindMinusMinusToken {
+		b.checkStrictModeEvalOrArguments(node, expr.Operand)
 	}
 }
 
 func (b *Binder) checkStrictModeWithStatement(node *ast.Node) {
 	// Grammar checking for withStatement
-	if b.inStrictMode {
-		b.errorOnFirstToken(node, diagnostics.X_with_statements_are_not_allowed_in_strict_mode)
-	}
+	b.errorOnFirstToken(node, diagnostics.X_with_statements_are_not_allowed_in_strict_mode)
 }
 
 func (b *Binder) checkStrictModeLabeledStatement(node *ast.Node) {
 	// Grammar checking for labeledStatement
-	if b.inStrictMode {
-		data := node.AsLabeledStatement()
-		if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
-			b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
-		}
+	data := node.AsLabeledStatement()
+	if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
+		b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
 	}
 }
 
@@ -1605,6 +1581,9 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
+	}
+	if ast.IsSourceFile(node) && ast.IsExternalOrCommonJSModule(node.AsSourceFile()) || ast.IsAmbientModule(node) {
+		b.bindCommonJSTypeExports(node.Symbol())
 	}
 	b.container = saveContainer
 	b.thisContainer = saveThisContainer
