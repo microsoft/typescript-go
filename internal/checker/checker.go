@@ -25219,7 +25219,7 @@ func (c *Checker) removeStringLiteralsMatchedByTemplateLiterals(types []*Type) [
 
 func (c *Checker) isTypeMatchedByTemplateLiteralOrStringMapping(t *Type, template *Type) bool {
 	if template.flags&TypeFlagsTemplateLiteral != 0 {
-		return c.isTypeMatchedByTemplateLiteralType(t, template.AsTemplateLiteralType())
+		return c.isTypeMatchedByTemplateLiteralType(t, template.AsTemplateLiteralType(), c.compareTypesAssignable)
 	}
 	return c.isMemberOfStringMapping(t, template)
 }
