@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCompletionsForContextualConstraintTypeInJsDoc1(t *testing.T) {
+func TestCompletionsForContextualConstraintTypeInJsDoc(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
@@ -44,20 +44,8 @@ let x;
 	// However, that would not fix the case at marker 2 because
 	// there is no variable to attach the `@type` annotation, so the node basically
 	// doesn't exist for subsequent passes like the binder.
-	
-	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{CommitCharacters: &[]string{".", ",", ";"}},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				`"hello"`,
-				`"world"`,
-			},
-		},
-	})
 
-	// The assertion here is simply "does not crash/panic".
-	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, f.Markers(), &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{CommitCharacters: &[]string{".", ",", ";"}},
 		Items: &fourslash.CompletionsExpectedItems{
