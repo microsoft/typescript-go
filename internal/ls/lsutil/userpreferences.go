@@ -743,8 +743,5 @@ func (p *UserPreferences) ParsedAutoImportFileExcludePatterns(useCaseSensitiveFi
 }
 
 func (p *UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool {
-	if modulespecifiers.IsExcludedByRegex(moduleSpecifier, p.AutoImportSpecifierExcludeRegexes) {
-		return true
-	}
-	return false
+	return modulespecifiers.IsExcludedByRegex(moduleSpecifier, p.AutoImportSpecifierExcludeRegexes)
 }
