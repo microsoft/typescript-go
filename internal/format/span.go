@@ -719,8 +719,8 @@ func (w *formatSpanWorker) applyRuleEdits(rule *ruleImpl, previousRange TextRang
 			return LineActionLineAdded
 		}
 	case ruleActionInsertSpace:
-		// exit early if we on different lines and rule cannot change number of newlines
-		if rule.Flags() != ruleFlagsCanDeleteNewLines && previousStartLine != currentStartLine {
+		// exit early if EOF or on different lines and rule cannot change number of newlines
+		if currentRange.Kind == ast.KindEndOfFile || (rule.Flags() != ruleFlagsCanDeleteNewLines && previousStartLine != currentStartLine) {
 			return LineActionNone
 		}
 

@@ -417,6 +417,10 @@ function parseFormatStatement(funcName: string, args: readonly ts.Expression[]):
                 goStatement: `f.Configure(t, ${varName})`,
             }];
         case "selection":
+            return [{
+                kind: "format",
+                goStatement: `f.FormatSelection(t, ${getGoStringLiteral(getStringLiteralLike(args[0])!.text)}, ${getGoStringLiteral(getStringLiteralLike(args[1])!.text)})`,
+            }];
         case "onType":
         case "copyFormatOptions":
         case "setFormatOptions":
