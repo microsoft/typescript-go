@@ -529,6 +529,7 @@ func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) 
 		pa := callee.AsPropertyAccessExpression()
 		if tx.shouldBeCapturedInTempVariable(pa.Expression) {
 			thisArg := f.NewTempVariable()
+			tx.EmitContext().AddVariableDeclaration(thisArg)
 			assign := f.NewAssignmentExpression(thisArg, pa.Expression)
 			assign.Loc = pa.Expression.Loc
 			target := f.NewPropertyAccessExpression(assign, nil, pa.Name(), ast.NodeFlagsNone)
@@ -541,6 +542,7 @@ func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) 
 		ea := callee.AsElementAccessExpression()
 		if tx.shouldBeCapturedInTempVariable(ea.Expression) {
 			thisArg := f.NewTempVariable()
+			tx.EmitContext().AddVariableDeclaration(thisArg)
 			assign := f.NewAssignmentExpression(thisArg, ea.Expression)
 			assign.Loc = ea.Expression.Loc
 			target := f.NewElementAccessExpression(assign, nil, ea.ArgumentExpression, ast.NodeFlagsNone)
@@ -1338,8 +1340,12 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 	// evaluation occurs interspersed with decorator evaluation. This means that if we encounter
 	// a computed property name we must inline decorator evaluation.
 
-	// Collect decorators for this member
+	// Collect decorators for this member. Decorator expressions evaluate outside the class body,
+	// so `this` should NOT be replaced with `_classThis`.
+	savedClassThis := tx.classThis
+	tx.classThis = nil
 	memberDecorators := tx.transformAllDecoratorsOfDeclaration(member.Decorators())
+	tx.classThis = savedClassThis
 	modifiers := tx.modifierVisitorObj.VisitModifiers(member.Modifiers())
 
 	var result partialResult
@@ -1726,7 +1732,20 @@ func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 		result = tx.Visitor().VisitEachChild(node)
 		tx.classThis = savedClassThis
 	} else {
+		// Use a nested variable environment so temp vars generated during static block
+		// content transformation (e.g., super access temps) stay scoped to the static block.
+		ec := tx.EmitContext()
+		ec.StartVariableEnvironment()
 		result = tx.Visitor().VisitEachChild(node)
+		varStatements := ec.EndVariableEnvironment()
+		if len(varStatements) > 0 {
+			// Inject var declarations at the start of the static block's body
+			blockBody := result.AsClassStaticBlockDeclaration().Body.AsBlock()
+			newStmts := make([]*ast.Statement, 0, len(varStatements)+len(blockBody.Statements.Nodes))
+			newStmts = append(newStmts, varStatements...)
+			newStmts = append(newStmts, blockBody.Statements.Nodes...)
+			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.Multiline))
+		}
 		if tx.classInfoStack != nil {
 			tx.classInfoStack.hasStaticInitializers = true
 			if len(tx.classInfoStack.pendingStaticInitializers) > 0 {
@@ -2258,6 +2277,14 @@ func (tx *esDecoratorTransformer) createESDecorateClassElementAccessObject(
 	hasSet bool,
 ) *ast.Expression {
 	f := tx.Factory()
+
+	// Create a fresh copy of the name expression to avoid leaking source comments
+	// from the original member name into generated property access code.
+	// Only do this for source identifiers (not generated/synthesized ones).
+	if nameExpr != nil && ast.IsIdentifier(nameExpr) && !ast.PositionIsSynthesized(nameExpr.Pos()) {
+		nameExpr = f.NewIdentifier(nameExpr.Text())
+	}
+
 	accessProps := []*ast.Node{}
 
 	// "has" method: obj => name in obj

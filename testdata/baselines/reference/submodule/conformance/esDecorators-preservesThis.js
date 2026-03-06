@@ -78,6 +78,7 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
 };
 // preserve `this` for access
 let C = (() => {
+    var _a, _b, _c;
     let _instanceExtraInitializers = [];
     let _method1_decorators;
     let _method2_decorators;

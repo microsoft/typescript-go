@@ -1449,8 +1449,10 @@ func (p *Printer) emitParameterNode(node *ast.ParameterDeclarationNode) {
 }
 
 func (p *Printer) emitDecorator(node *ast.Decorator) {
+	state := p.enterNode(node.AsNode())
 	p.writePunctuation("@")
-	p.emitExpression(node.Expression, ast.OperatorPrecedenceMember)
+	p.emitExpression(node.Expression, ast.OperatorPrecedenceLeftHandSide)
+	p.exitNode(node.AsNode(), state)
 }
 
 func (p *Printer) emitModifierLike(node *ast.ModifierLike) {

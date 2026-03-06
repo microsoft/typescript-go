@@ -454,64 +454,42 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 ---
 >>>            __esDecorate(this, null, _method_decorators, { kind: "method", name: "method", static: false, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _instanceExtraInitializers);
 1 >^^^^^^^^^^^^
-2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                                                                                 ^^^^^^
-4 >                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1 >
-2 >            
-3 >                                                                                                                                                                                 method
-4 >                                                                                                                                                                                       () {}
+2 >            method() {}
 1 >Emitted(109, 13) Source(8, 5) + SourceIndex(0)
-2 >Emitted(109, 178) Source(8, 5) + SourceIndex(0)
-3 >Emitted(109, 184) Source(8, 11) + SourceIndex(0)
-4 >Emitted(109, 245) Source(8, 16) + SourceIndex(0)
+2 >Emitted(109, 245) Source(8, 16) + SourceIndex(0)
 ---
 >>>            __esDecorate(this, null, _get_x_decorators, { kind: "getter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, get: obj => obj.x }, metadata: _metadata }, null, _instanceExtraInitializers);
 1 >^^^^^^^^^^^^
-2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                                                                      ^
-4 >                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                                                                                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^->
+2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 >                                                                                                                                                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
   >
   >    @dec
   >    @dec
   >    
-2 >            get 
-3 >                                                                                                                                                                      x
-4 >                                                                                                                                                                       () { return 1; }
+2 >            get x() { return 1; }
 1 >Emitted(110, 13) Source(12, 5) + SourceIndex(0)
-2 >Emitted(110, 167) Source(12, 9) + SourceIndex(0)
-3 >Emitted(110, 168) Source(12, 10) + SourceIndex(0)
-4 >Emitted(110, 229) Source(12, 26) + SourceIndex(0)
+2 >Emitted(110, 229) Source(12, 26) + SourceIndex(0)
 ---
 >>>            __esDecorate(this, null, _set_x_decorators, { kind: "setter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _instanceExtraInitializers);
 1->^^^^^^^^^^^^
-2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                                                                                 ^
-4 >                                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                                                                                                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^->
+2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 >                                                                                                                                                                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^->
 1->
   >
   >    @dec
   >    @dec
   >    
-2 >            set 
-3 >                                                                                                                                                                                 x
-4 >                                                                                                                                                                                  (value: number) { }
+2 >            set x(value: number) { }
 1->Emitted(111, 13) Source(16, 5) + SourceIndex(0)
-2 >Emitted(111, 178) Source(16, 9) + SourceIndex(0)
-3 >Emitted(111, 179) Source(16, 10) + SourceIndex(0)
-4 >Emitted(111, 251) Source(16, 29) + SourceIndex(0)
+2 >Emitted(111, 251) Source(16, 29) + SourceIndex(0)
 ---
 >>>            __esDecorate(this, null, _z_decorators, { kind: "accessor", name: "z", static: false, private: false, access: { has: obj => "z" in obj, get: obj => obj.z, set: (obj, value) => { obj.z = value; } }, metadata: _metadata }, _z_initializers, _z_extraInitializers);
 1->^^^^^^^^^^^^
-2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                                                                    ^
-4 >                                                                                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                                                                                                                                  ^
-6 >                                                                                                                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-7 >                                                                                                                                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 >                                                                                                                                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1->
   >
   >    @dec
@@ -521,17 +499,9 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >    @dec
   >    @dec
   >    
-2 >            accessor 
-3 >                                                                                                                                                                    z
-4 >                                                                                                                                                                     
-5 >                                                                                                                                                                                                  z
-6 >                                                                                                                                                                                                    = 1;
+2 >            accessor z = 1;
 1->Emitted(112, 13) Source(24, 5) + SourceIndex(0)
-2 >Emitted(112, 165) Source(24, 14) + SourceIndex(0)
-3 >Emitted(112, 166) Source(24, 15) + SourceIndex(0)
-4 >Emitted(112, 195) Source(24, 14) + SourceIndex(0)
-5 >Emitted(112, 196) Source(24, 15) + SourceIndex(0)
-6 >Emitted(112, 273) Source(24, 20) + SourceIndex(0)
+2 >Emitted(112, 273) Source(24, 20) + SourceIndex(0)
 ---
 >>>            __esDecorate(null, null, _static_private_y_decorators, { kind: "field", name: "#y", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "f", _C_y), set: (obj, value) => { __classPrivateFieldSet(obj, _classThis, value, "f", _C_y); } }, metadata: _metadata }, _static_private_y_initializers, _static_private_y_extraInitializers);
 1->^^^^^^^^^^^^
@@ -559,23 +529,11 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 ---
 >>>            __esDecorate(null, null, _y_decorators, { kind: "field", name: "y", static: false, private: false, access: { has: obj => "y" in obj, get: obj => obj.y, set: (obj, value) => { obj.y = value; } }, metadata: _metadata }, _y_initializers, _y_extraInitializers);
 1 >^^^^^^^^^^^^
-2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                                                                 ^
-4 >                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                                                                                                                               ^
-6 >                                                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1 >
-2 >            
-3 >                                                                                                                                                                 y
-4 >                                                                                                                                                                  
-5 >                                                                                                                                                                                               y
-6 >                                                                                                                                                                                                 = 1;
+2 >            y = 1;
 1 >Emitted(114, 13) Source(20, 5) + SourceIndex(0)
-2 >Emitted(114, 162) Source(20, 5) + SourceIndex(0)
-3 >Emitted(114, 163) Source(20, 6) + SourceIndex(0)
-4 >Emitted(114, 192) Source(20, 5) + SourceIndex(0)
-5 >Emitted(114, 193) Source(20, 6) + SourceIndex(0)
-6 >Emitted(114, 270) Source(20, 11) + SourceIndex(0)
+2 >Emitted(114, 270) Source(20, 11) + SourceIndex(0)
 ---
 >>>            __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
 1 >^^^^^^^^^^^^
