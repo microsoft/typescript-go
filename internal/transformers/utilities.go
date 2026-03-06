@@ -268,59 +268,6 @@ func IsSimpleInlineableExpression(expression *ast.Expression) bool {
 	return !ast.IsIdentifier(expression) && IsSimpleCopiableExpression(expression)
 }
 
-// GetNonAssignmentOperatorForCompoundAssignment maps a compound assignment operator (e.g. +=)
-// to the corresponding non-assignment binary operator (e.g. +).
-func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
-	switch kind {
-	case ast.KindPlusEqualsToken:
-		return ast.KindPlusToken
-	case ast.KindMinusEqualsToken:
-		return ast.KindMinusToken
-	case ast.KindAsteriskEqualsToken:
-		return ast.KindAsteriskToken
-	case ast.KindAsteriskAsteriskEqualsToken:
-		return ast.KindAsteriskAsteriskToken
-	case ast.KindSlashEqualsToken:
-		return ast.KindSlashToken
-	case ast.KindPercentEqualsToken:
-		return ast.KindPercentToken
-	case ast.KindLessThanLessThanEqualsToken:
-		return ast.KindLessThanLessThanToken
-	case ast.KindGreaterThanGreaterThanEqualsToken:
-		return ast.KindGreaterThanGreaterThanToken
-	case ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
-		return ast.KindGreaterThanGreaterThanGreaterThanToken
-	case ast.KindAmpersandEqualsToken:
-		return ast.KindAmpersandToken
-	case ast.KindBarEqualsToken:
-		return ast.KindBarToken
-	case ast.KindCaretEqualsToken:
-		return ast.KindCaretToken
-	case ast.KindBarBarEqualsToken:
-		return ast.KindBarBarToken
-	case ast.KindAmpersandAmpersandEqualsToken:
-		return ast.KindAmpersandAmpersandToken
-	case ast.KindQuestionQuestionEqualsToken:
-		return ast.KindQuestionQuestionToken
-	default:
-		return ast.KindUnknown
-	}
-}
-
-func MoveRangePastDecorators(node *ast.Node) core.TextRange {
-	var lastDecorator *ast.Node
-	if ast.CanHaveModifiers(node) {
-		nodes := node.ModifierNodes()
-		if nodes != nil {
-			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
-		}
-	}
-	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
-		return core.NewTextRange(lastDecorator.End(), node.End())
-	}
-	return node.Loc
-}
-
 // FindSuperStatementIndexPath finds a path of indices to a statement containing a `super()` call.
 func FindSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
 	indices := findSuperStatementIndexPathWorker(statements, start, nil)
@@ -369,4 +316,57 @@ func MoveRangePastModifiers(node *ast.Node) core.TextRange {
 		return core.NewTextRange(lastModifier.End(), node.End())
 	}
 	return MoveRangePastDecorators(node)
+}
+
+// MoveRangePastDecorators returns a text range that starts past any decorators on the node.
+func MoveRangePastDecorators(node *ast.Node) core.TextRange {
+	var lastDecorator *ast.Node
+	if ast.CanHaveModifiers(node) {
+		nodes := node.ModifierNodes()
+		if nodes != nil {
+			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
+		}
+	}
+
+	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
+		return core.NewTextRange(lastDecorator.End(), node.End())
+	}
+	return node.Loc
+}
+
+// GetNonAssignmentOperatorForCompoundAssignment returns the non-assignment operator for a compound assignment.
+func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
+	switch kind {
+	case ast.KindPlusEqualsToken:
+		return ast.KindPlusToken
+	case ast.KindMinusEqualsToken:
+		return ast.KindMinusToken
+	case ast.KindAsteriskEqualsToken:
+		return ast.KindAsteriskToken
+	case ast.KindAsteriskAsteriskEqualsToken:
+		return ast.KindAsteriskAsteriskToken
+	case ast.KindSlashEqualsToken:
+		return ast.KindSlashToken
+	case ast.KindPercentEqualsToken:
+		return ast.KindPercentToken
+	case ast.KindLessThanLessThanEqualsToken:
+		return ast.KindLessThanLessThanToken
+	case ast.KindGreaterThanGreaterThanEqualsToken:
+		return ast.KindGreaterThanGreaterThanToken
+	case ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
+		return ast.KindGreaterThanGreaterThanGreaterThanToken
+	case ast.KindAmpersandEqualsToken:
+		return ast.KindAmpersandToken
+	case ast.KindBarEqualsToken:
+		return ast.KindBarToken
+	case ast.KindCaretEqualsToken:
+		return ast.KindCaretToken
+	case ast.KindBarBarEqualsToken:
+		return ast.KindBarBarToken
+	case ast.KindAmpersandAmpersandEqualsToken:
+		return ast.KindAmpersandAmpersandToken
+	case ast.KindQuestionQuestionEqualsToken:
+		return ast.KindQuestionQuestionToken
+	}
+	return kind
 }
