@@ -416,7 +416,18 @@ function parseFormatStatement(funcName: string, args: readonly ts.Expression[]):
                 kind: "format",
                 goStatement: `f.Configure(t, ${varName})`,
             }];
-        case "selection":
+        case "selection": {
+            const startMarker = getStringLiteralLike(args[0])?.text;
+            const endMarker = getStringLiteralLike(args[1])?.text;
+            if (startMarker === undefined || endMarker === undefined) {
+                console.error(`format.selection: expected two string literal marker names`);
+                break;
+            }
+            return [{
+                kind: "format",
+                goStatement: `f.FormatSelection(t, ${JSON.stringify(startMarker)}, ${JSON.stringify(endMarker)})`,
+            }];
+        }
         case "onType":
         case "copyFormatOptions":
         case "setFormatOptions":
@@ -3104,7 +3115,7 @@ interface EditCmd {
 }
 
 interface FormatCmd {
-    kind: "format"; // | "formatSelection" | "formatOnType" | "copyFormatOptions" | "setFormatOptions" | "setOption";
+    kind: "format";
     goStatement: string;
 }
 
@@ -3374,9 +3385,9 @@ function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoC
 }
 
 function generateOrganizeImports({ expectedContent, mode, preferences }: VerifyOrganizeImportsCmd): string {
-    return `f.VerifyOrganizeImports(t, 
-        ${getGoMultiLineStringLiteral(expectedContent)}, 
-        ${mode}, 
+    return `f.VerifyOrganizeImports(t,
+        ${getGoMultiLineStringLiteral(expectedContent)},
+        ${mode},
         ${preferences},
     )`;
 }
@@ -3606,9 +3617,9 @@ function generateCmd(cmd: Cmd): string {
         case "verifyErrorExistsAtRange":
             return `f.VerifyErrorExistsAtRange(t, ${cmd.range}, ${cmd.code}, ${getGoStringLiteral(cmd.message)})`;
         case "verifyCurrentLineContentIs":
-            return `f.VerifyCurrentLineContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+            return `f.VerifyCurrentLineContent(t, ${getGoStringLiteral(cmd.text)})`;
         case "verifyCurrentFileContentIs":
-            return `f.VerifyCurrentFileContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+            return `f.VerifyCurrentFileContent(t, ${getGoStringLiteral(cmd.text)})`;
         case "verifyErrorExistsBetweenMarkers":
             return `f.VerifyErrorExistsBetweenMarkers(t, ${getGoStringLiteral(cmd.startMarker)}, ${getGoStringLiteral(cmd.endMarker)})`;
         case "verifyErrorExistsAfterMarker":
