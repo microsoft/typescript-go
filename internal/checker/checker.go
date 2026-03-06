@@ -1314,7 +1314,7 @@ func (c *Checker) initializeChecker() {
 	c.valueSymbolLinks.Get(c.unknownSymbol).resolvedType = c.errorType
 	c.valueSymbolLinks.Get(c.globalThisSymbol).resolvedType = c.newObjectType(ObjectFlagsAnonymous, c.globalThisSymbol)
 	// Initialize special types
-	c.globalArrayType = c.getGlobalType("Array", 1 /*arity*/, true /*reportErrors*/)
+	c.getGlobalArrayType()
 	c.globalObjectType = c.getGlobalType("Object", 0 /*arity*/, true /*reportErrors*/)
 	c.globalFunctionType = c.getGlobalType("Function", 0 /*arity*/, true /*reportErrors*/)
 	c.globalCallableFunctionType = c.getGlobalStrictFunctionType("CallableFunction")
@@ -1329,10 +1329,7 @@ func (c *Checker) initializeChecker() {
 		// autoArrayType is used as a marker, so even if global Array type is not defined, it needs to be a unique type
 		c.autoArrayType = c.newAnonymousType(nil, nil, nil, nil, nil)
 	}
-	c.globalReadonlyArrayType = c.getGlobalType("ReadonlyArray", 1 /*arity*/, false /*reportErrors*/)
-	if c.globalReadonlyArrayType == c.emptyGenericType {
-		c.globalReadonlyArrayType = c.globalArrayType
-	}
+	c.getGlobalReadonlyArrayType()
 	c.anyReadonlyArrayType = c.createTypeFromGenericGlobalType(c.globalReadonlyArrayType, []*Type{c.anyType})
 	c.globalThisType = c.getGlobalType("ThisType", 1 /*arity*/, false /*reportErrors*/)
 	// merge _nonglobal_ module augmentations.
@@ -23431,11 +23428,42 @@ func (c *Checker) getArrayOrTupleTargetType(node *ast.Node) *Type {
 	elementType := c.getArrayElementTypeNode(node)
 	if elementType != nil {
 		if readonly {
-			return c.globalReadonlyArrayType
+			return c.getGlobalReadonlyArrayType()
 		}
-		return c.globalArrayType
+		return c.getGlobalArrayType()
 	}
 	return c.getTupleTargetType(core.Map(node.Elements(), c.getTupleElementInfo), readonly)
+}
+
+func (c *Checker) ensureGlobalSymbolTransient(name string) {
+	if sym, ok := c.globals[name]; ok && sym.Flags&ast.SymbolFlagsTransient == 0 {
+		cloned := c.cloneSymbol(sym)
+		for memberName, memberSym := range cloned.Members {
+			if memberSym.Flags&ast.SymbolFlagsTypeParameter != 0 && memberSym.Flags&ast.SymbolFlagsTransient == 0 {
+				cloned.Members[memberName] = c.cloneSymbol(memberSym)
+			}
+		}
+		c.globals[name] = cloned
+	}
+}
+
+func (c *Checker) getGlobalArrayType() *Type {
+	if c.globalArrayType == nil {
+		c.ensureGlobalSymbolTransient("Array")
+		c.globalArrayType = c.getGlobalType("Array", 1 /*arity*/, true /*reportErrors*/)
+	}
+	return c.globalArrayType
+}
+
+func (c *Checker) getGlobalReadonlyArrayType() *Type {
+	if c.globalReadonlyArrayType == nil {
+		c.ensureGlobalSymbolTransient("ReadonlyArray")
+		c.globalReadonlyArrayType = c.getGlobalType("ReadonlyArray", 1 /*arity*/, false /*reportErrors*/)
+		if c.globalReadonlyArrayType == c.emptyGenericType {
+			c.globalReadonlyArrayType = c.getGlobalArrayType()
+		}
+	}
+	return c.globalReadonlyArrayType
 }
 
 func (c *Checker) isReadonlyTypeOperator(node *ast.Node) bool {
