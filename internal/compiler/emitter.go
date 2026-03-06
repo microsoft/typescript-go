@@ -267,7 +267,8 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 				e.writer.RawWrite(core.IfElse(options.NewLine == core.NewLineKindCRLF, "\r\n", "\n"))
 			}
 			sourceMapUrlPos = e.writer.GetTextPos()
-			e.writer.WriteComment("//# sourceMappingURL=" + sourceMappingURL)
+			e.writer.WriteComment("//# sourceMappingURL=")
+			e.writer.WriteComment(sourceMappingURL)
 		}
 
 		// Write the source map
