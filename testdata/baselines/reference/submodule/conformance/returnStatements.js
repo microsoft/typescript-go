@@ -27,6 +27,7 @@ function fn13(): C { return null; }
 
 
 //// [returnStatements.js]
+"use strict";
 // all the following should be valid
 function fn1() { return 1; }
 function fn2() { return ''; }
@@ -37,11 +38,9 @@ function fn6() { return new Date(12); }
 function fn7() { return null; }
 function fn8() { return; } // OK, eq. to 'return undefined'
 class C {
-    id;
     dispose() { }
 }
 class D extends C {
-    name;
 }
 function fn10() { return { id: 12 }; }
 function fn11() { return new C(); }

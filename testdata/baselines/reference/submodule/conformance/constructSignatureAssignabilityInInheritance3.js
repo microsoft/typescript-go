@@ -4,13 +4,13 @@
 // checking subtype relations for function types as it relates to contextual signature instantiation
 // error cases
 
-module Errors {
+namespace Errors {
     class Base { foo: string; }
     class Derived extends Base { bar: string; }
     class Derived2 extends Derived { baz: string; }
     class OtherDerived extends Base { bing: string; }
 
-    module WithNonGenericSignaturesInBaseType {
+    namespace WithNonGenericSignaturesInBaseType {
         // base type with non-generic call signatures
         interface A {
             a2: new (x: number) => string[];
@@ -80,7 +80,7 @@ module Errors {
         }
     }
 
-    module WithGenericSignaturesInBaseType {
+    namespace WithGenericSignaturesInBaseType {
         // base type has generic call signature
         interface B {
             a2: new <T>(x: T) => T[];
@@ -114,20 +114,17 @@ module Errors {
 }
 
 //// [constructSignatureAssignabilityInInheritance3.js]
+"use strict";
 // checking subtype relations for function types as it relates to contextual signature instantiation
 // error cases
 var Errors;
 (function (Errors) {
     class Base {
-        foo;
     }
     class Derived extends Base {
-        bar;
     }
     class Derived2 extends Derived {
-        baz;
     }
     class OtherDerived extends Base {
-        bing;
     }
 })(Errors || (Errors = {}));

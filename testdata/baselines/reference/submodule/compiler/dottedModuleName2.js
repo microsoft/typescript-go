@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/dottedModuleName2.ts] ////
 
 //// [dottedModuleName2.ts]
-module A.B {
+namespace A.B {
  
   export var x = 1;
  
@@ -9,7 +9,7 @@ module A.B {
  
  
  
-module AA { export module B {
+namespace AA { export namespace B {
  
   export var x = 1;
  
@@ -22,7 +22,7 @@ var tmpOK = AA.B.x;
 var tmpError = A.B.x;
 
 
-module A.B.C
+namespace A.B.C
  
 {
  
@@ -32,7 +32,7 @@ module A.B.C
  
  
  
-module M
+namespace M
  
 {
  
@@ -46,9 +46,10 @@ module M
 
 
 //// [dottedModuleName2.js]
+"use strict";
 var A;
 (function (A) {
-    let B;
+    var B;
     (function (B) {
         B.x = 1;
     })(B = A.B || (A.B = {}));
@@ -63,9 +64,9 @@ var AA;
 var tmpOK = AA.B.x;
 var tmpError = A.B.x;
 (function (A) {
-    let B;
+    var B;
     (function (B) {
-        let C;
+        var C;
         (function (C) {
             C.x = 1;
         })(C = B.C || (B.C = {}));

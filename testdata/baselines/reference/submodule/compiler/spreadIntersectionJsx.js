@@ -9,12 +9,11 @@ let element = <div { ...intersected } />;
 
 
 //// [spreadIntersectionJsx.js]
+"use strict";
 const React = null;
 class A {
-    a;
 }
 class C {
-    c;
 }
 let intersected;
 let element = React.createElement("div", Object.assign({}, intersected));

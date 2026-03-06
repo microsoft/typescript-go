@@ -19,9 +19,13 @@ type triviaPositionKey interface { // *astNode | *ast.NodeList
 	End() int
 }
 
-func NewChangeTrackerWriter(newline string) *ChangeTrackerWriter {
+func NewChangeTrackerWriter(newline string, indentSize int) *ChangeTrackerWriter {
+	// TODO: Callers passing -1 should pass actual indent options once indent-related formatting is ported.
+	if indentSize < 0 {
+		indentSize = defaultIndentSize
+	}
 	ctw := &ChangeTrackerWriter{
-		textWriter:            textWriter{newLine: newline},
+		textWriter:            textWriter{newLine: newline, indentSize: indentSize},
 		lastNonTriviaPosition: 0,
 		pos:                   map[triviaPositionKey]int{},
 		end:                   map[triviaPositionKey]int{},
@@ -220,12 +224,12 @@ func (ct *ChangeTrackerWriter) WriteLiteral(s string) {
 	ct.textWriter.WriteLiteral(s)
 	ct.setLastNonTriviaPosition(s, true)
 }
-func (ct *ChangeTrackerWriter) GetTextPos() int          { return ct.textWriter.GetTextPos() }
-func (ct *ChangeTrackerWriter) GetLine() int             { return ct.textWriter.GetLine() }
-func (ct *ChangeTrackerWriter) GetColumn() int           { return ct.textWriter.GetColumn() }
-func (ct *ChangeTrackerWriter) GetIndent() int           { return ct.textWriter.GetIndent() }
-func (ct *ChangeTrackerWriter) IsAtStartOfLine() bool    { return ct.textWriter.IsAtStartOfLine() }
-func (ct *ChangeTrackerWriter) HasTrailingComment() bool { return ct.textWriter.HasTrailingComment() }
+func (ct *ChangeTrackerWriter) GetTextPos() int             { return ct.textWriter.GetTextPos() }
+func (ct *ChangeTrackerWriter) GetLine() int                { return ct.textWriter.GetLine() }
+func (ct *ChangeTrackerWriter) GetColumn() core.UTF16Offset { return ct.textWriter.GetColumn() }
+func (ct *ChangeTrackerWriter) GetIndent() int              { return ct.textWriter.GetIndent() }
+func (ct *ChangeTrackerWriter) IsAtStartOfLine() bool       { return ct.textWriter.IsAtStartOfLine() }
+func (ct *ChangeTrackerWriter) HasTrailingComment() bool    { return ct.textWriter.HasTrailingComment() }
 func (ct *ChangeTrackerWriter) HasTrailingWhitespace() bool {
 	return ct.textWriter.HasTrailingWhitespace()
 }

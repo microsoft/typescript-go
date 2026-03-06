@@ -18,7 +18,7 @@ connect().use(connect.static('foo')); // Error  1      The property 'static' doe
 >'foo' : "foo"
 
 === exportEqualErrorType_0.ts ===
-module server {
+namespace server {
     export interface connectModule {
         (res, req, next): void;
 >res : any
@@ -31,8 +31,8 @@ module server {
 >mod : connectModule
     }
 }
-var server: {
->server : { (): import("exportEqualErrorType_0").connectExport; foo: Date; }
+declare var server: {
+>server : { (): import("./exportEqualErrorType_0").connectExport; foo: Date; }
 
     (): server.connectExport;
 >server : any
@@ -42,5 +42,5 @@ var server: {
 
 };
 export = server;
->server : { (): import("exportEqualErrorType_0").connectExport; foo: Date; }
+>server : { (): import("./exportEqualErrorType_0").connectExport; foo: Date; }
  

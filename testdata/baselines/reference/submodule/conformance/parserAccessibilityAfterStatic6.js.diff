@@ -1,8 +1,0 @@
---- old.parserAccessibilityAfterStatic6.js
-+++ new.parserAccessibilityAfterStatic6.js
-@@= skipped -6, +6 lines =@@
-
- //// [parserAccessibilityAfterStatic6.js]
- class Outer {
-+    static public;
- }

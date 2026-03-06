@@ -88,8 +88,8 @@ numberOrObject.x *= 1;
 numberOrObject.x /= 1;
 
 //// [getterSetterSubtypeAssignment.js]
+"use strict";
 class NumberOrUndefined {
-    _x;
     get x() { var _a; return (_a = this._x) !== null && _a !== void 0 ? _a : 0; }
     set x(value) { this._x = value; }
     additionAssignment() {
@@ -111,7 +111,9 @@ numberOrUndefined.x -= 1;
 numberOrUndefined.x *= 1;
 numberOrUndefined.x /= 1;
 class NumberOrString {
-    _x = 0;
+    constructor() {
+        this._x = 0;
+    }
     get x() { return typeof this._x === 'number' ? this._x : Number(this._x); }
     set x(value) { this._x = value; }
     additionAssignmentNumber() {
@@ -137,7 +139,9 @@ numberOrString.x -= 1;
 numberOrString.x *= 1;
 numberOrString.x /= 1;
 class NumberOrObject {
-    _x = 0;
+    constructor() {
+        this._x = 0;
+    }
     get x() { return typeof this._x === 'number' ? this._x : this._x.bar; }
     set x(value) { this._x = value; }
     additionAssignment() {

@@ -17,26 +17,21 @@ class Property {
     public parent: Module | Class;
 }
 
-var c: Class;
-var p: Property;
+declare var c: Class;
+declare var p: Property;
 c = p;
 p = c;
 
 
 //// [unionTypeWithRecursiveSubtypeReduction2.js]
+"use strict";
 class Module {
-    members;
 }
 class Namespace {
-    members;
 }
 class Class {
-    parent;
 }
 class Property {
-    parent;
 }
-var c;
-var p;
 c = p;
 p = c;

@@ -217,6 +217,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.Composite = ParseTristate(value)
 	case "declarationDir":
 		allOptions.DeclarationDir = ParseString(value)
+	case "deduplicatePackages":
+		allOptions.DeduplicatePackages = ParseTristate(value)
 	case "diagnostics":
 		allOptions.Diagnostics = ParseTristate(value)
 	case "disableSizeLimit":
@@ -375,6 +377,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.RootDirs = ParseStringArray(value)
 	case "removeComments":
 		allOptions.RemoveComments = ParseTristate(value)
+	case "stableTypeOrdering":
+		allOptions.StableTypeOrdering = ParseTristate(value)
 	case "strict":
 		allOptions.Strict = ParseTristate(value)
 	case "strictBindCallApply":
@@ -528,6 +532,8 @@ func ParseBuildOptions(key string, value any, allOptions *core.BuildOptions) []*
 		allOptions.Dry = ParseTristate(value)
 	case "force":
 		allOptions.Force = ParseTristate(value)
+	case "builders":
+		allOptions.Builders = parseNumber(value)
 	case "stopBuildOnErrors":
 		allOptions.StopBuildOnErrors = ParseTristate(value)
 	case "verbose":

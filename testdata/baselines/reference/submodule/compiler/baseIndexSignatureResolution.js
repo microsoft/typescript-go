@@ -27,11 +27,10 @@ var z: Derived = b.foo();
 */
 
 //// [baseIndexSignatureResolution.js]
+"use strict";
 class Base {
-    a;
 }
 class Derived extends Base {
-    b;
 }
 var x = null;
 var y = x[0];

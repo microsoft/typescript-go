@@ -60,6 +60,7 @@ var v = import(String());
 
 
 //// [jsdocInTypeScript.js]
+"use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -94,7 +95,6 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 class T {
-    prop;
 }
 x.prop;
 // @param type has no effect.
@@ -113,6 +113,8 @@ z.x = 1; // Error
 /** @template T */
 function tem(t) { return {}; }
 let i; // Should succeed thanks to type parameter default
+/** @typedef {string} N.Str */
+var M = N; // Error: @typedef does not create namespaces in TypeScript code.
 // Not legal JSDoc, but that shouldn't matter in TypeScript.
 /**
  * @type {{foo: (function(string, string): string)}}

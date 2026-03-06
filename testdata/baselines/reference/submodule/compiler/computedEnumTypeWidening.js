@@ -135,10 +135,12 @@ const c2 = E.B;
 let v1 = E.B;
 let v2 = E.B;
 class C {
-    p1 = E.B;
-    p2 = E.B;
-    p3 = E.B;
-    p4 = E.B;
+    constructor() {
+        this.p1 = E.B;
+        this.p2 = E.B;
+        this.p3 = E.B;
+        this.p4 = E.B;
+    }
 }
 // Repro from #52531
 var MyEnum;
@@ -178,7 +180,7 @@ declare let v2: E.B;
 declare class C {
     p1: E;
     p2: E.B;
-    readonly p3: E;
+    readonly p3 = E.B;
     readonly p4: E.B;
 }
 declare enum MyEnum {

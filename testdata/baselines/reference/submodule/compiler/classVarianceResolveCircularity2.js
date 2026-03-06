@@ -21,17 +21,16 @@ class Foo<T> {
 }
 
 //// [classVarianceResolveCircularity2.js]
-"use strict";
 // Issue #52813
-Object.defineProperty(exports, "__esModule", { value: true });
 class Bar {
-    num;
-    Value = callme(new Foo(this)).bar.num;
-    Field = callme(new Foo(this)).bar.num;
+    constructor() {
+        this.Value = callme(new Foo(this)).bar.num;
+        this.Field = callme(new Foo(this)).bar.num;
+    }
 }
 class Foo {
-    bar;
     constructor(bar) {
         this.bar = bar;
     }
 }
+export {};

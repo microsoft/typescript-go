@@ -41,7 +41,7 @@ func toFileSystemWatcherKey(w *lsproto.FileSystemWatcher) fileSystemWatcherKey {
 	}
 	kind := w.Kind
 	if kind == nil {
-		kind = ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete)
+		kind = new(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete)
 	}
 	return fileSystemWatcherKey{pattern: *w.GlobPattern.Pattern, kind: *kind}
 }
@@ -118,6 +118,9 @@ func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
 }
 
 func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
+	if w == nil {
+		return nil
+	}
 	w.mu.RLock()
 	defer w.mu.RUnlock()
 	return &WatchedFiles[T]{
@@ -281,10 +284,6 @@ func perceivedOsRootLengthForWatching(pathComponents []string) int {
 		return min(3, length)
 	}
 	return 1
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
 
 type resolutionWithLookupLocations interface {

@@ -19,11 +19,11 @@ class D extends Base {
 
 
 //// [superCallBeforeThisAccessing1.js]
+"use strict";
 class Base {
     constructor(c) { }
 }
 class D extends Base {
-    _t;
     constructor() {
         super(i);
         var s = {

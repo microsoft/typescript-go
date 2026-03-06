@@ -10,11 +10,14 @@ async function f(): X.MyPromise<void> {
 }
 
 //// [asyncQualifiedReturnType_es6.js]
+"use strict";
 var X;
 (function (X) {
     class MyPromise extends Promise {
     }
     X.MyPromise = MyPromise;
 })(X || (X = {}));
-async function f() {
+function f() {
+    return __awaiter(this, void 0, void 0, function* () {
+    });
 }

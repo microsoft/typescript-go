@@ -20,9 +20,9 @@ var myView = new MyView(m); // was error
 
 
 //// [specializedInheritedConstructors1.js]
+"use strict";
 class View {
     constructor(options) { }
-    model;
 }
 class Model {
 }

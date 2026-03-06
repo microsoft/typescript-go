@@ -1,9 +1,9 @@
 --- old.esDecorators-classExpression-namedEvaluation.10.js
 +++ new.esDecorators-classExpression-namedEvaluation.10.js
-@@= skipped -34, +34 lines =@@
-
+@@= skipped -35, +35 lines =@@
 
  //// [esDecorators-classExpression-namedEvaluation.10.js]
+ "use strict";
 -var _a, _b;
  // 10.2.1.3 RS: EvaluateBody
  //   Initializer : `=` AssignmentExpression
@@ -428,7 +428,6 @@
 +{
 +    class C {
 +        static x = class {
-+            @dec
 +            y;
 +        };
 +    }
@@ -436,7 +435,6 @@
 +{
 +    class C {
 +        static "x" = class {
-+            @dec
 +            y;
 +        };
 +    }
@@ -444,7 +442,6 @@
 +{
 +    class C {
 +        static 0 = class {
-+            @dec
 +            y;
 +        };
 +    }
@@ -452,7 +449,6 @@
 +{
 +    class C {
 +        static ["x"] = class {
-+            @dec
 +            y;
 +        };
 +    }
@@ -460,7 +456,6 @@
 +{
 +    class C {
 +        static [0] = class {
-+            @dec
 +            y;
 +        };
 +    }
@@ -478,7 +473,6 @@
 +{
 +    class C {
 +        static __proto__ = class {
-+            @dec
 +            y;
 +        };
 +    }
@@ -486,7 +480,6 @@
 +{
 +    class C {
 +        static "__proto__" = class {
-+            @dec
 +            y;
 +        };
      }
@@ -526,7 +519,6 @@
 -                __runInitializers(this, _static_x_extraInitializers);
 -            }
 +    class C {
-+        @dec
 +        static x = 
 +        @dec
 +        class {

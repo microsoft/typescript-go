@@ -12,9 +12,9 @@ var x: Foo< { a: string }, { a: string; b: number }>; // Error 2 Type '{ a: stri
 
 
 //// [constraintsThatReferenceOtherContstraints1.js]
+"use strict";
 class Foo {
 }
 class Bar {
-    data; // Error 1 Type 'Object' does not satisfy the constraint 'T' for type parameter 'U extends T'.
 }
 var x; // Error 2 Type '{ a: string; b: number; }' does not satisfy the constraint 'T' for type 

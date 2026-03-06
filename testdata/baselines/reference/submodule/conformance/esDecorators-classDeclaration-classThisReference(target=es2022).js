@@ -14,11 +14,13 @@ class C {
 
 
 //// [esDecorators-classDeclaration-classThisReference.js]
-@dec
+"use strict";
 class C {
     static { this; }
     static x = this;
-    static accessor a = this;
+    static #a_accessor_storage = this;
+    static get a() { return C.#a_accessor_storage; }
+    static set a(value) { C.#a_accessor_storage = value; }
     static m() { this; }
     static get g() { return this; }
 }

@@ -31,8 +31,8 @@ class Derived4 extends Base {
 }
 
 //// [derivedClassSuperCallsWithThisArg.js]
+"use strict";
 class Base {
-    x;
     constructor(a) { }
 }
 class Derived extends Base {
@@ -41,21 +41,18 @@ class Derived extends Base {
     }
 }
 class Derived2 extends Base {
-    a;
     constructor(a) {
         super(this); // error
         this.a = a;
     }
 }
 class Derived3 extends Base {
-    a;
     constructor(a) {
         super(() => this); // error
         this.a = a;
     }
 }
 class Derived4 extends Base {
-    a;
     constructor(a) {
         super(function () { return this; }); // ok
         this.a = a;

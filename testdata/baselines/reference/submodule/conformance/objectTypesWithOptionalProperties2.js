@@ -29,15 +29,14 @@ var b = {
 }
 
 //// [objectTypesWithOptionalProperties2.js]
+"use strict";
 // Illegal attempts to define optional methods
 var a;
 class C {
     x() { }
-    number; // error
 }
 class C2 {
     x() { }
-    T; // error
 }
 var b = {
     x() { }, 1:  // error

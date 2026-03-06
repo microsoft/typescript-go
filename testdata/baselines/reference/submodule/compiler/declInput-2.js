@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/declInput-2.ts] ////
 
 //// [declInput-2.ts]
-module M {
+namespace M {
     class C { }
     export class E {}
     export interface I1 {}
@@ -24,6 +24,7 @@ module M {
 }
 
 //// [declInput-2.js]
+"use strict";
 var M;
 (function (M) {
     class C {
@@ -32,13 +33,6 @@ var M;
     }
     M.E = E;
     class D {
-        c; // don't generate
-        m1;
-        m2;
-        m22; // don't generate
-        m23;
-        m24;
-        m25; // don't generate
         m232() { return null; }
         m242() { return null; }
         m252() { return null; } // don't generate

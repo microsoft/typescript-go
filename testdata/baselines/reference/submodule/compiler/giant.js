@@ -78,7 +78,7 @@ interface I {
     p7(pa1, pa2): void;
     p7? (pa1, pa2): void;
 }
-module M {
+namespace M {
     var V;
     function F() { };
     class C {
@@ -142,21 +142,21 @@ module M {
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
     }
-    module M {
+    namespace M {
         var V;
         function F() { };
         class C { };
         interface I { };
-        module M { };
+        namespace M { };
         export var eV;
         export function eF() { };
         export class eC { };
         export interface eI { };
-        export module eM { };
+        export namespace eM { };
         export declare var eaV;
         export declare function eaF() { };
         export declare class eaC { };
-        export declare module eaM { };
+        export declare namespace eaM { };
     }
     export var eV;
     export function eF() { };
@@ -221,21 +221,21 @@ module M {
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
     }
-    export module eM {
+    export namespace eM {
         var V;
         function F() { };
         class C { };
         interface I { };
-        module M { };
+        namespace M { };
         export var eV;
         export function eF() { };
         export class eC { };
         export interface eI { };
-        export module eM { };
+        export namespace eM { };
         export declare var eaV;
         export declare function eaF() { };
         export declare class eaC { };
-        export declare module eaM { };
+        export declare namespace eaM { };
     }
     export declare var eaV;
     export declare function eaF() { };
@@ -260,17 +260,17 @@ module M {
         static tgF() { }
         static get tgF()
     }
-    export declare module eaM {
+    export declare namespace eaM {
         var V;
         function F() { };
         class C { }
         interface I { }
-        module M { }
+        namespace M { }
         export var eV;
         export function eF() { };
         export class eC { }
         export interface eI { }
-        export module eM { }
+        export namespace eM { }
     }
 }
 export var eV;
@@ -336,7 +336,7 @@ export interface eI {
     p7(pa1, pa2): void;
     p7? (pa1, pa2): void;
 }
-export module eM {
+export namespace eM {
     var V;
     function F() { };
     class C {
@@ -400,21 +400,21 @@ export module eM {
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
     }
-    module M {
+    namespace M {
         var V;
         function F() { };
         class C { };
         interface I { };
-        module M { };
+        namespace M { };
         export var eV;
         export function eF() { };
         export class eC { };
         export interface eI { };
-        export module eM { };
+        export namespace eM { };
         export declare var eaV;
         export declare function eaF() { };
         export declare class eaC { };
-        export declare module eaM { };
+        export declare namespace eaM { };
     }
     export var eV;
     export function eF() { };
@@ -479,21 +479,21 @@ export module eM {
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
     }
-    export module eM {
+    export namespace eM {
         var V;
         function F() { };
         class C { };
         interface I { };
-        module M { };
+        namespace M { };
         export var eV;
         export function eF() { };
         export class eC { };
         export interface eI { };
-        export module eM { };
+        export namespace eM { };
         export declare var eaV;
         export declare function eaF() { };
         export declare class eaC { };
-        export declare module eaM { };
+        export declare namespace eaM { };
     }
     export declare var eaV;
     export declare function eaF() { };
@@ -518,17 +518,17 @@ export module eM {
         static tgF() { }
         static get tgF()
     }
-    export declare module eaM {
+    export declare namespace eaM {
         var V;
         function F() { };
         class C { }
         interface I { }
-        module M { }
+        namespace M { }
         export var eV;
         export function eF() { };
         export class eC { }
         export interface eI { }
-        export module eM { }
+        export namespace eM { }
     }
 }
 export declare var eaV;
@@ -554,7 +554,7 @@ export declare class eaC {
     static tgF() { }
     static get tgF()
 }
-export declare module eaM {
+export declare namespace eaM {
     var V;
     function F() { };
     class C {
@@ -604,21 +604,21 @@ export declare module eaM {
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
     }
-    module M {
+    namespace M {
         var V;
         function F() { };
         class C { }
         interface I { }
-        module M { }
+        namespace M { }
         export var eV;
         export function eF() { };
         export class eC { }
         export interface eI { }
-        export module eM { }
+        export namespace eM { }
         export declare var eaV
         export declare function eaF() { };
         export declare class eaC { }
-        export declare module eaM { }
+        export declare namespace eaM { }
     }
     export var eV;
     export function eF() { };
@@ -670,16 +670,16 @@ export declare module eaM {
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
     }
-    export module eM {
+    export namespace eM {
         var V;
         function F() { };
         class C { }
-        module M { }
+        namespace M { }
         export var eV;
         export function eF() { };
         export class eC { }
         export interface eI { }
-        export module eM { }
+        export namespace eM { }
     }
 }
 
@@ -707,18 +707,21 @@ function F() { }
 ;
 class C {
     constructor() { }
-    pV;
-    rV;
     pF() { }
     rF() { }
     pgF() { }
+    get pgF() { }
     psF(param) { }
+    set psF(param) { }
     rgF() { }
+    get rgF() { }
     rsF(param) { }
-    static tV;
+    set rsF(param) { }
     static tF() { }
     static tsF(param) { }
+    static set tsF(param) { }
     static tgF() { }
+    static get tgF() { }
 }
 var M;
 (function (M_1) {
@@ -727,18 +730,21 @@ var M;
     ;
     class C {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
-        static tV;
+        set rsF(param) { }
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     let M;
     (function (M) {
@@ -768,18 +774,21 @@ var M;
     ;
     class eC {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
-        static tV;
+        set rsF(param) { }
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     M_1.eC = eC;
     let eM;
@@ -811,18 +820,21 @@ function eF() { }
 ;
 class eC {
     constructor() { }
-    pV;
-    rV;
     pF() { }
     rF() { }
     pgF() { }
+    get pgF() { }
     psF(param) { }
+    set psF(param) { }
     rgF() { }
+    get rgF() { }
     rsF(param) { }
-    static tV;
+    set rsF(param) { }
     static tF() { }
     static tsF(param) { }
+    static set tsF(param) { }
     static tgF() { }
+    static get tgF() { }
 }
 exports.eC = eC;
 var eM;
@@ -832,18 +844,21 @@ var eM;
     ;
     class C {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
-        static tV;
+        set rsF(param) { }
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     let M;
     (function (M) {
@@ -873,18 +888,21 @@ var eM;
     ;
     class eC {
         constructor() { }
-        pV;
-        rV;
         pF() { }
         rF() { }
         pgF() { }
+        get pgF() { }
         psF(param) { }
+        set psF(param) { }
         rgF() { }
+        get rgF() { }
         rsF(param) { }
-        static tV;
+        set rsF(param) { }
         static tF() { }
         static tsF(param) { }
+        static set tsF(param) { }
         static tgF() { }
+        static get tgF() { }
     }
     eM_1.eC = eC;
     let eM;

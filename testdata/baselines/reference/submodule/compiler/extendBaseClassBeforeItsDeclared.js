@@ -6,10 +6,10 @@ class derived extends base { }
 class base { constructor (public n: number) { } }
 
 //// [extendBaseClassBeforeItsDeclared.js]
+"use strict";
 class derived extends base {
 }
 class base {
-    n;
     constructor(n) {
         this.n = n;
     }

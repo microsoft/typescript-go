@@ -49,7 +49,6 @@ exports.circularReference = class C {
 // repro from #15066
 class FooItem {
     foo() { }
-    name;
 }
 exports.FooItem = FooItem;
 function WithTags(Base) {
@@ -92,7 +91,7 @@ export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
-        name?: string;
+        name?: string | undefined;
     };
     getTags(): void;
 } & T;
@@ -100,7 +99,7 @@ declare const Test_base: {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
-        name?: string;
+        name?: string | undefined;
     };
     getTags(): void;
 } & typeof FooItem;

@@ -23,11 +23,11 @@ let b = new Bar();
 b.bar()
 
 //// [superAccessCastedCall.js]
+"use strict";
 class Foo {
     bar() { }
 }
 class Bar extends Foo {
-    x;
     constructor() {
         super();
         this.x = 2;

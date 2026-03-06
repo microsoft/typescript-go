@@ -38,6 +38,9 @@ type CommandLineOption struct {
 	// What kind of extra validation `validateJsonOptionValue` should do
 	extraValidation extraValidation
 
+	// checks that option with number type has value >= minValue
+	minValue int
+
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
 	allowConfigDirTemplateSubstitution bool
@@ -189,7 +192,7 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 // CommandLineOption.DeprecatedKeys()
 var commandLineOptionDeprecated = map[string]*collections.Set[string]{
 	"moduleResolution": collections.NewSetFromItems("node", "classic", "node10"),
-	"target":           collections.NewSetFromItems("es3"),
+	"target":           collections.NewSetFromItems("es5"),
 }
 
 // todo: revisit to see if this can be improved

@@ -103,8 +103,8 @@ let unspecifiedLambdaToSpecified: (this: {y: number}, x: number) => number = uns
 let specifiedLambdaToSpecified: (this: {y: number}, x: number) => number = specifiedLambda;
 
 
-let explicitCFunction: (this: C, m: number) => number;
-let explicitPropertyFunction: (this: {n: number}, m: number) => number;
+declare let explicitCFunction: (this: C, m: number) => number;
+declare let explicitPropertyFunction: (this: {n: number}, m: number) => number;
 c.explicitC = explicitCFunction;
 c.explicitC = function(this: C, m: number) { return this.n + m };
 c.explicitProperty = explicitPropertyFunction;
@@ -197,12 +197,11 @@ function missingTypeIsImplicitAny(this, a: number) { return this.anything + a; }
 
 
 //// [thisTypeInFunctions.js]
+"use strict";
 // body checking
 class B {
-    n;
 }
 class C {
-    n;
     explicitThis(m) {
         return this.n + m;
     }
@@ -282,8 +281,6 @@ let unspecifiedLambda = x => x + 12;
 let specifiedLambda = x => x + 12;
 let unspecifiedLambdaToSpecified = unspecifiedLambda;
 let specifiedLambdaToSpecified = specifiedLambda;
-let explicitCFunction;
-let explicitPropertyFunction;
 c.explicitC = explicitCFunction;
 c.explicitC = function (m) { return this.n + m; };
 c.explicitProperty = explicitPropertyFunction;
@@ -313,22 +310,17 @@ c.explicitC = function (m) { return this.n + m; };
 c.explicitVoid = n => n;
 // class-based assignability
 class Base1 {
-    x;
     polymorphic() { return this.x; }
     explicit() { return this.x; }
     static explicitStatic() { return this.y; }
-    static y;
 }
 class Derived1 extends Base1 {
-    y;
 }
 class Base2 {
-    y;
     polymorphic() { return this.y; }
     explicit() { return this.x; }
 }
 class Derived2 extends Base2 {
-    x;
 }
 let b1 = new Base1();
 let b2 = new Base2();

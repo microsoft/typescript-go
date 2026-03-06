@@ -1,7 +1,5 @@
 package tstransforms
 
-// !!! Unqualified enum member references across merged enum declarations are not currently supported (e.g `enum E {A}; enum E {B=A}`)
-// !!! Unqualified namespace member references across merged namespace declarations are not currently supported (e.g `namespace N { export var x = 1; }; namespace N { x; }`).
 // !!! SourceMaps and Comments need to be validated
 
 import (
@@ -190,10 +188,10 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 		return tx.Visitor().VisitNode(n.Expression)
 	case ast.KindIdentifier:
 		return tx.Factory().NewStringLiteralFromNode(name)
-	case ast.KindStringLiteral:
-		return tx.Factory().NewStringLiteral(name.Text())
+	case ast.KindStringLiteral: // !!! propagate token flags (will produce new diffs)
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	case ast.KindNumericLiteral:
-		return tx.Factory().NewNumericLiteral(name.Text())
+		return tx.Factory().NewNumericLiteral(name.Text(), ast.TokenFlagsNone)
 	default:
 		return name
 	}
@@ -276,14 +274,24 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 	varDecl := tx.Factory().NewVariableDeclaration(name, nil, nil, nil)
 	varFlags := core.IfElse(tx.currentScope == tx.currentSourceFile, ast.NodeFlagsNone, ast.NodeFlagsLet)
 	varDecls := tx.Factory().NewVariableDeclarationList(varFlags, tx.Factory().NewNodeList([]*ast.Node{varDecl}))
-	varStatement := tx.Factory().NewVariableStatement(nil /*modifiers*/, varDecls)
+	// Replicate modifierVisitor: strip decorators, TypeScript modifiers, and export when in namespace.
+	modifierMask := ^(ast.ModifierFlagsTypeScriptModifier | ast.ModifierFlagsDecorator)
+	if tx.currentNamespace != nil || tx.isExportOfExternalModule(node) {
+		modifierMask &= ^ast.ModifierFlagsExport
+	}
+	modifiers := transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), modifierMask)
+	varStatement := tx.Factory().NewVariableStatement(modifiers, varDecls)
 
 	tx.EmitContext().SetOriginal(varDecl, node)
 	// !!! synthetic comments
 	tx.EmitContext().SetOriginal(varStatement, node)
 
 	// Adjust the source map emit to match the old emitter.
-	tx.EmitContext().SetSourceMapRange(varDecls, node.Loc)
+	if ast.IsEnumDeclaration(node) {
+		tx.EmitContext().SetSourceMapRange(varDecls, node.Loc)
+	} else {
+		tx.EmitContext().SetSourceMapRange(varStatement, node.Loc)
+	}
 
 	// Trailing comments for enum declaration should be emitted after the function closure
 	// instead of the variable statement:
@@ -530,7 +538,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		ifStatement := tx.Factory().NewIfStatement(
 			tx.Factory().NewStrictInequalityExpression(
 				tx.Factory().NewTypeOfExpression(tx.getEnumQualifiedReference(enum, member)),
-				tx.Factory().NewStringLiteral("string"),
+				tx.Factory().NewStringLiteral("string", ast.TokenFlagsNone),
 			),
 			tx.Factory().NewExpressionStatement(
 				tx.Factory().NewAssignmentExpression(
@@ -629,7 +637,8 @@ func (tx *RuntimeSyntaxTransformer) transformModuleBody(node *ast.ModuleDeclarat
 			statementsLocation = body.Statements.Loc
 			blockLocation = body.Loc
 		} else { // node.Body.Kind == ast.KindModuleDeclaration
-			tx.currentScope = node.AsNode()
+			// !!! Strada didn't do this; why?
+			// tx.currentScope = node.AsNode()
 			statements, _ = tx.Visitor().VisitSlice([]*ast.Node{node.Body})
 			moduleBlock := getInnermostModuleDeclarationFromDottedModule(node).Body.AsModuleBlock()
 			statementsLocation = moduleBlock.Statements.Loc.WithPos(-1)
@@ -678,8 +687,8 @@ func (tx *RuntimeSyntaxTransformer) visitImportEqualsDeclaration(node *ast.Impor
 		return tx.Visitor().VisitEachChild(node.AsNode())
 	}
 
-	moduleReference := convertEntityNameToExpression(tx.EmitContext(), node.ModuleReference)
-	tx.EmitContext().SetEmitFlags(moduleReference, printer.EFNoComments|printer.EFNoNestedSourceMaps)
+	moduleReference := tx.Factory().CreateExpressionFromEntityName(node.ModuleReference)
+	tx.EmitContext().SetEmitFlags(moduleReference, printer.EFNoComments|printer.EFNoNestedComments)
 	if !tx.isExportOfNamespace(node.AsNode()) {
 		//  export var ${name} = ${moduleReference};
 		//  var ${name} = ${moduleReference};
@@ -693,7 +702,9 @@ func (tx *RuntimeSyntaxTransformer) visitImportEqualsDeclaration(node *ast.Impor
 		return varStatement
 	} else {
 		// exports.${name} = ${moduleReference};
-		return tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement := tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement.Loc = node.Loc
+		return statement
 	}
 }
 
@@ -895,10 +906,7 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 		}
 	}
 
-	var superPath []int
-	if ast.IsClassLike(grandparentOfBody) && ast.GetExtendsHeritageClauseElement(grandparentOfBody) != nil {
-		superPath = findSuperStatementIndexPath(rest, 0)
-	}
+	superPath := transformers.FindSuperStatementIndexPath(rest, 0)
 
 	if len(superPath) > 0 {
 		statements = append(statements, tx.transformConstructorBodyWorker(rest, superPath, parameterPropertyAssignments)...)
@@ -917,33 +925,6 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	tx.EmitContext().SetOriginal(updated, body.AsNode())
 	updated.Loc = body.Loc
 	return updated
-}
-
-// finds a path to a statement containing a `super` call, descending through `try` blocks
-func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
-	for i := start; i < len(statements); i++ {
-		statement := statements[i]
-		if getSuperCallFromStatement(statement) != nil {
-			indices := make([]int, 1, 2)
-			indices[0] = i
-			return indices
-		} else if ast.IsTryStatement(statement) {
-			return slices.Insert(findSuperStatementIndexPath(statement.AsTryStatement().TryBlock.Statements(), 0), 0, i)
-		}
-	}
-	return nil
-}
-
-func getSuperCallFromStatement(statement *ast.Statement) *ast.Node {
-	if !ast.IsExpressionStatement(statement) {
-		return nil
-	}
-
-	expression := ast.SkipParentheses(statement.Expression())
-	if ast.IsSuperCall(expression) {
-		return expression
-	}
-	return nil
 }
 
 func (tx *RuntimeSyntaxTransformer) transformConstructorBodyWorker(statementsIn []*ast.Statement, superPath []int, initializerStatements []*ast.Statement) []*ast.Statement {
@@ -1048,7 +1029,7 @@ func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.Identifi
 			tx.resolver = binder.NewReferenceResolver(tx.compilerOptions, binder.ReferenceResolverHooks{})
 		}
 		container := tx.resolver.GetReferencedExportContainer(location, false /*prefixLocals*/)
-		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) && container.Contains(location) {
+		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) {
 			containerName := tx.getNamespaceContainerName(container)
 
 			memberName := node.Clone(tx.Factory())

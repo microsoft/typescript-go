@@ -47,9 +47,11 @@ const testPromiseAny = Promise.any([]);
 const testStringReplaceAll = "".replaceAll();
 
 // esnext
+const testDateToTemporalInstant = new Date().toTemporalInstant();
 
 
 //// [doYouNeedToChangeYourTargetLibraryES2016Plus.js]
+"use strict";
 // es2016
 const testIncludes = ["hello"].includes("world");
 // es2017
@@ -90,3 +92,4 @@ const testBigInt = BigInt(123);
 const testPromiseAny = Promise.any([]);
 const testStringReplaceAll = "".replaceAll();
 // esnext
+const testDateToTemporalInstant = new Date().toTemporalInstant();

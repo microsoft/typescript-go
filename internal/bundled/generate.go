@@ -21,8 +21,8 @@ import (
 )
 
 var (
-	libInputDir     = filepath.Join(repo.TypeScriptSubmodulePath, "src", "lib")
-	copyrightNotice = filepath.Join(repo.TypeScriptSubmodulePath, "scripts", "CopyrightNotice.txt")
+	libInputDir     = filepath.Join(repo.TypeScriptSubmodulePath(), "src", "lib")
+	copyrightNotice = filepath.Join(repo.TypeScriptSubmodulePath(), "scripts", "CopyrightNotice.txt")
 )
 
 func main() {
@@ -188,7 +188,7 @@ func readLibs() []lib {
 
 	var libs []lib
 	for _, libName := range libNames {
-		sources := []string{"header.d.ts", libName + ".d.ts"}
+		sources := []string{libName + ".d.ts"}
 		var target string
 		if path, ok := paths[libName]; ok {
 			target = path

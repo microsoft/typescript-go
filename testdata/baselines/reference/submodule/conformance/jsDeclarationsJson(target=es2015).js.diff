@@ -1,0 +1,15 @@
+--- old.jsDeclarationsJson(target=es2015).js
++++ new.jsDeclarationsJson(target=es2015).js
+@@= skipped -26, +26 lines =@@
+
+
+ //// [index.d.ts]
+-export = j;
+ declare const j: {
+     x: number;
+     y: number;
+@@= skipped -20, +19 lines =@@
+         })[];
+     };
+ };
++export = j;

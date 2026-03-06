@@ -1,20 +1,20 @@
 //// [tests/cases/compiler/declarationEmitNameConflicts3.ts] ////
 
 //// [declarationEmitNameConflicts3.ts]
-module M {
+namespace M {
     export interface D { }
-    export module D {
+    export namespace D {
         export function f() { }
     }
-    export module C {
+    export namespace C {
         export function f() { }
     }
-    export module E {
+    export namespace E {
         export function f() { }
     }
 }
 
-module M.P {
+namespace M.P {
     export class C {
         static f() { }
     }
@@ -29,6 +29,7 @@ module M.P {
 }
 
 //// [declarationEmitNameConflicts3.js]
+"use strict";
 var M;
 (function (M) {
     let D;
@@ -48,7 +49,7 @@ var M;
     })(E = M.E || (M.E = {}));
 })(M || (M = {}));
 (function (M) {
-    let P;
+    var P;
     (function (P) {
         class C {
             static f() { }

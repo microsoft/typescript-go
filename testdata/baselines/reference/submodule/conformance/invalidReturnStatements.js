@@ -23,6 +23,7 @@ function fn11(): D { return new C(); }
 
 
 //// [invalidReturnStatements.js]
+"use strict";
 // all the following should be error
 function fn1() { }
 function fn2() { }
@@ -30,11 +31,9 @@ function fn3() { }
 function fn4() { }
 function fn7() { } // should be valid: any includes void
 class C {
-    id;
     dispose() { }
 }
 class D extends C {
-    name;
 }
 function fn10() { return { id: 12 }; }
 function fn11() { return new C(); }

@@ -73,15 +73,13 @@ function goo(x: A) {
 
 
 //// [instanceofWithStructurallyIdenticalTypes.js]
+"use strict";
 // Repro from #7271
 class C1 {
-    item;
 }
 class C2 {
-    item;
 }
 class C3 {
-    item;
 }
 function foo1(x) {
     if (x instanceof C1) {
@@ -112,15 +110,12 @@ function foo2(x) {
 }
 // More tests
 class A {
-    a;
 }
 class A1 extends A {
 }
 class A2 {
-    a;
 }
 class B extends A {
-    b;
 }
 function goo(x) {
     if (x instanceof A) {

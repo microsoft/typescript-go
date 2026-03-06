@@ -1,9 +1,9 @@
 --- old.esDecorators-classDeclaration-methods-nonStaticPrivate(target=es2015).js
 +++ new.esDecorators-classDeclaration-methods-nonStaticPrivate(target=es2015).js
-@@= skipped -8, +8 lines =@@
-
+@@= skipped -9, +9 lines =@@
 
  //// [esDecorators-classDeclaration-methods-nonStaticPrivate.js]
+ "use strict";
 -let C = (() => {
 -    var _C_instances, _a, _C_method1_get;
 -    let _instanceExtraInitializers = [];
@@ -25,7 +25,10 @@
 -        })(),
 -        _a;
 -})();
++var _C_instances, _C_method1;
 +class C {
-+    @dec
-+    #method1() { }
++    constructor() {
++        _C_instances.add(this);
++    }
 +}
++_C_instances = new WeakSet(), _C_method1 = function _C_method1() { };

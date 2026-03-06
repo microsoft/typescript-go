@@ -89,7 +89,7 @@ interface I14 {
 
 
 function f() { }
-module f {
+namespace f {
     export var bar = 1;
 }
 interface I15 {
@@ -99,7 +99,7 @@ interface I15 {
 
 
 class c { baz: string }
-module c {
+namespace c {
     export var bar = 1;
 }
 interface I16 {
@@ -133,12 +133,11 @@ interface I20 {
 
 
 //// [anyAssignableToEveryType2.js]
+"use strict";
 // any is not a subtype of any other types, but is assignable, all the below should work
 class A {
-    foo;
 }
 class A2 {
-    foo;
 }
 var E;
 (function (E) {
@@ -149,7 +148,6 @@ function f() { }
     f.bar = 1;
 })(f || (f = {}));
 class c {
-    baz;
 }
 (function (c) {
     c.bar = 1;

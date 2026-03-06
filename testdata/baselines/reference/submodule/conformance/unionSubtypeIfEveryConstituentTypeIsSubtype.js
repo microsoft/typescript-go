@@ -105,7 +105,7 @@ interface I14 {
 
 
 function f() { }
-module f {
+namespace f {
     export var bar = 1;
 }
 interface I15 {
@@ -116,7 +116,7 @@ interface I15 {
 
 
 class c { baz: string }
-module c {
+namespace c {
     export var bar = 1;
 }
 interface I16 {
@@ -146,16 +146,15 @@ interface I20 {
 }
 
 //// [unionSubtypeIfEveryConstituentTypeIsSubtype.js]
+"use strict";
 var e;
 (function (e) {
     e[e["e1"] = 0] = "e1";
     e[e["e2"] = 1] = "e2";
 })(e || (e = {}));
 class A {
-    foo;
 }
 class A2 {
-    foo;
 }
 var E2;
 (function (E2) {
@@ -166,7 +165,6 @@ function f() { }
     f.bar = 1;
 })(f || (f = {}));
 class c {
-    baz;
 }
 (function (c) {
     c.bar = 1;

@@ -315,6 +315,7 @@ function negative(t: Something) {
 
 
 //// [inferTypePredicates.js]
+"use strict";
 // https://github.com/microsoft/TypeScript/issues/16069
 const numsOrNull = [1, 2, 3, 4, null];
 const filteredNumsTruthy = numsOrNull.filter(x => !!x); // should error
@@ -465,7 +466,10 @@ class C1 {
     }
 }
 class C2 extends C1 {
-    z = 0;
+    constructor() {
+        super(...arguments);
+        this.z = 0;
+    }
 }
 if (c.isC2()) {
     let c2 = c; // should error

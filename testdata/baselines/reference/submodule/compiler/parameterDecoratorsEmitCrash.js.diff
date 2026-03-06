@@ -60,8 +60,8 @@
 -        _a;
 -})();
 +class C {
++    constructor(
 +    @dec
-+    x;
-+    constructor(x) { }
++    x) { }
 +}
  exports.C = C;

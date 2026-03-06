@@ -7,7 +7,7 @@ declare module "GlobalWidgets" {
     }
     export function createWidget3(): Widget3;
 
-    export module SpecializedGlobalWidget {
+    export namespace SpecializedGlobalWidget {
         export class Widget4 {
             name: string;
         }
@@ -23,7 +23,7 @@ export function createWidget1() {
     return new Widget1();
 }
 
-export module SpecializedWidget {
+export namespace SpecializedWidget {
     export class Widget2 {
         name = 'one';
     }
@@ -155,13 +155,16 @@ function privateFunctionWithPrivateModuleParameterTypes1(param= exporter.createE
 }
 
 //// [privacyFunctionCannotNameParameterTypeDeclFile_GlobalWidgets.js]
+"use strict";
 //// [privacyFunctionCannotNameParameterTypeDeclFile_Widgets.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpecializedWidget = exports.Widget1 = void 0;
 exports.createWidget1 = createWidget1;
 class Widget1 {
-    name = 'one';
+    constructor() {
+        this.name = 'one';
+    }
 }
 exports.Widget1 = Widget1;
 function createWidget1() {
@@ -170,7 +173,9 @@ function createWidget1() {
 var SpecializedWidget;
 (function (SpecializedWidget) {
     class Widget2 {
-        name = 'one';
+        constructor() {
+            this.name = 'one';
+        }
     }
     SpecializedWidget.Widget2 = Widget2;
     function createWidget2() {
@@ -210,8 +215,6 @@ exports.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivat
 exports.publicFunctionWithPrivateModuleParameterTypes1 = publicFunctionWithPrivateModuleParameterTypes1;
 const exporter = require("./privacyFunctionCannotNameParameterTypeDeclFile_exporter");
 class publicClassWithWithPrivateParmeterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget1()) {
     }
     static myPrivateStaticMethod(param = exporter.createExportedWidget1()) {
@@ -227,8 +230,6 @@ class publicClassWithWithPrivateParmeterTypes {
 }
 exports.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
 class publicClassWithWithPrivateParmeterTypes1 {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget3()) {
     }
     static myPrivateStaticMethod(param = exporter.createExportedWidget3()) {
@@ -244,8 +245,6 @@ class publicClassWithWithPrivateParmeterTypes1 {
 }
 exports.publicClassWithWithPrivateParmeterTypes1 = publicClassWithWithPrivateParmeterTypes1;
 class privateClassWithWithPrivateParmeterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget1()) {
     }
     static myPrivateStaticMethod(param = exporter.createExportedWidget1()) {
@@ -260,8 +259,6 @@ class privateClassWithWithPrivateParmeterTypes {
     }
 }
 class privateClassWithWithPrivateParmeterTypes2 {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget3()) {
     }
     static myPrivateStaticMethod(param = exporter.createExportedWidget3()) {
@@ -284,8 +281,6 @@ function publicFunctionWithPrivateParmeterTypes1(param = exporter.createExported
 function privateFunctionWithPrivateParmeterTypes1(param = exporter.createExportedWidget3()) {
 }
 class publicClassWithPrivateModuleParameterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget2()) {
     }
     myPublicMethod(param = exporter.createExportedWidget2()) {
@@ -297,8 +292,6 @@ class publicClassWithPrivateModuleParameterTypes {
 }
 exports.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModuleParameterTypes;
 class publicClassWithPrivateModuleParameterTypes2 {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget4()) {
     }
     myPublicMethod(param = exporter.createExportedWidget4()) {
@@ -314,8 +307,6 @@ function publicFunctionWithPrivateModuleParameterTypes(param = exporter.createEx
 function publicFunctionWithPrivateModuleParameterTypes1(param = exporter.createExportedWidget4()) {
 }
 class privateClassWithPrivateModuleParameterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget2()) {
     }
     myPublicMethod(param = exporter.createExportedWidget2()) {
@@ -326,8 +317,6 @@ class privateClassWithPrivateModuleParameterTypes {
     }
 }
 class privateClassWithPrivateModuleParameterTypes1 {
-    param1;
-    param2;
     static myPublicStaticMethod(param = exporter.createExportedWidget4()) {
     }
     myPublicMethod(param = exporter.createExportedWidget4()) {

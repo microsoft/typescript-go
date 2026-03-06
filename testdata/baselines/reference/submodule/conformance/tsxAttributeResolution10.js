@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/jsx/tsxAttributeResolution10.tsx] ////
 
 //// [react.d.ts]
-declare module JSX {
+declare namespace JSX {
 	interface Element { }
 	interface IntrinsicElements {
 	}
@@ -37,7 +37,6 @@ exports.MyComponent = void 0;
 class MyComponent {
     render() {
     }
-    props;
 }
 exports.MyComponent = MyComponent;
 // Should be an error

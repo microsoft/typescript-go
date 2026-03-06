@@ -661,21 +661,14 @@ const cf2 = <T extends { [P in K | "cool"]: string; }, K extends keyof T>(t: T, 
 
 
 //// [keyofAndIndexedAccess.js]
+"use strict";
 class Shape {
-    name;
-    width;
-    height;
-    visible;
 }
 class TaggedShape extends Shape {
-    tag;
 }
 class Item {
-    name;
-    price;
 }
 class Options {
-    visible;
 }
 function getProperty(obj, key) {
     return obj[key];
@@ -706,7 +699,6 @@ function f13(foo, bar) {
     let z = getProperty(foo, bar); // any
 }
 class Component {
-    props;
     getProperty(key) {
         return this.props[key];
     }
@@ -748,9 +740,6 @@ function f34(ts) {
     let tag2 = getProperty(ts, "tag");
 }
 class C {
-    x;
-    y;
-    z;
 }
 // Indexed access expressions have always permitted access to private and protected members.
 // For consistency we also permit such access in indexed access types.
@@ -840,7 +829,6 @@ function f84() {
     let x2 = f83({ bar: { x: 42 } }, "bar"); // number
 }
 class C1 {
-    x;
     get(key) {
         return this[key];
     }
@@ -891,7 +879,6 @@ class Base {
     }
 }
 class Person extends Base {
-    parts;
     constructor(parts) {
         super();
         this.set("parts", parts);
@@ -901,7 +888,6 @@ class Person extends Base {
     }
 }
 class OtherPerson {
-    parts;
     constructor(parts) {
         setProperty(this, "parts", parts);
     }
@@ -962,7 +948,6 @@ function updateIds2(obj, key, stringMap) {
 }
 // Repro from #13604
 class A {
-    props;
 }
 class B extends A {
     f(p) {
@@ -971,14 +956,12 @@ class B extends A {
 }
 // Repro from #13749
 class Form {
-    childFormFactories;
     set(prop, value) {
         this.childFormFactories[prop](value);
     }
 }
 // Repro from #13787
 class SampleClass {
-    props;
     constructor(props) {
         this.props = Object.freeze(props);
     }

@@ -1,8 +1,0 @@
---- old.propertyOverridingPrototype.js
-+++ new.propertyOverridingPrototype.js
-@@= skipped -17, +17 lines =@@
-     }
- }
- class Derived extends Base {
-+    foo;
- }

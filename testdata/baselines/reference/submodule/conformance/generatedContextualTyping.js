@@ -186,30 +186,30 @@ var x177: () => { [n: number]: Base; } = function() { return [d1, d2]; };
 var x178: () => {n: Base[]; }  = function() { return { n: [d1, d2] }; };
 var x179: () => (s: Base[]) => any = function() { return n => { var n: Base[]; return null; }; };
 var x180: () => Genric<Base> = function() { return { func: n => { return [d1, d2]; } }; };
-module x181 { var t: () => Base[] = () => [d1, d2]; }
-module x182 { var t: () => Base[] = function() { return [d1, d2] }; }
-module x183 { var t: () => Base[] = function named() { return [d1, d2] }; }
-module x184 { var t: { (): Base[]; } = () => [d1, d2]; }
-module x185 { var t: { (): Base[]; } = function() { return [d1, d2] }; }
-module x186 { var t: { (): Base[]; } = function named() { return [d1, d2] }; }
-module x187 { var t: Base[] = [d1, d2]; }
-module x188 { var t: Array<Base> = [d1, d2]; }
-module x189 { var t: { [n: number]: Base; } = [d1, d2]; }
-module x190 { var t: {n: Base[]; }  = { n: [d1, d2] }; }
-module x191 { var t: (s: Base[]) => any = n => { var n: Base[]; return null; }; }
-module x192 { var t: Genric<Base> = { func: n => { return [d1, d2]; } }; }
-module x193 { export var t: () => Base[] = () => [d1, d2]; }
-module x194 { export var t: () => Base[] = function() { return [d1, d2] }; }
-module x195 { export var t: () => Base[] = function named() { return [d1, d2] }; }
-module x196 { export var t: { (): Base[]; } = () => [d1, d2]; }
-module x197 { export var t: { (): Base[]; } = function() { return [d1, d2] }; }
-module x198 { export var t: { (): Base[]; } = function named() { return [d1, d2] }; }
-module x199 { export var t: Base[] = [d1, d2]; }
-module x200 { export var t: Array<Base> = [d1, d2]; }
-module x201 { export var t: { [n: number]: Base; } = [d1, d2]; }
-module x202 { export var t: {n: Base[]; }  = { n: [d1, d2] }; }
-module x203 { export var t: (s: Base[]) => any = n => { var n: Base[]; return null; }; }
-module x204 { export var t: Genric<Base> = { func: n => { return [d1, d2]; } }; }
+namespace x181 { var t: () => Base[] = () => [d1, d2]; }
+namespace x182 { var t: () => Base[] = function() { return [d1, d2] }; }
+namespace x183 { var t: () => Base[] = function named() { return [d1, d2] }; }
+namespace x184 { var t: { (): Base[]; } = () => [d1, d2]; }
+namespace x185 { var t: { (): Base[]; } = function() { return [d1, d2] }; }
+namespace x186 { var t: { (): Base[]; } = function named() { return [d1, d2] }; }
+namespace x187 { var t: Base[] = [d1, d2]; }
+namespace x188 { var t: Array<Base> = [d1, d2]; }
+namespace x189 { var t: { [n: number]: Base; } = [d1, d2]; }
+namespace x190 { var t: {n: Base[]; }  = { n: [d1, d2] }; }
+namespace x191 { var t: (s: Base[]) => any = n => { var n: Base[]; return null; }; }
+namespace x192 { var t: Genric<Base> = { func: n => { return [d1, d2]; } }; }
+namespace x193 { export var t: () => Base[] = () => [d1, d2]; }
+namespace x194 { export var t: () => Base[] = function() { return [d1, d2] }; }
+namespace x195 { export var t: () => Base[] = function named() { return [d1, d2] }; }
+namespace x196 { export var t: { (): Base[]; } = () => [d1, d2]; }
+namespace x197 { export var t: { (): Base[]; } = function() { return [d1, d2] }; }
+namespace x198 { export var t: { (): Base[]; } = function named() { return [d1, d2] }; }
+namespace x199 { export var t: Base[] = [d1, d2]; }
+namespace x200 { export var t: Array<Base> = [d1, d2]; }
+namespace x201 { export var t: { [n: number]: Base; } = [d1, d2]; }
+namespace x202 { export var t: {n: Base[]; }  = { n: [d1, d2] }; }
+namespace x203 { export var t: (s: Base[]) => any = n => { var n: Base[]; return null; }; }
+namespace x204 { export var t: Genric<Base> = { func: n => { return [d1, d2]; } }; }
 var x206 = <() => Base[]>function() { return [d1, d2] };
 var x207 = <() => Base[]>function named() { return [d1, d2] };
 var x209 = <{ (): Base[]; }>function() { return [d1, d2] };
@@ -357,14 +357,12 @@ var x355 = function(n: (s: Base[]) => any) { }; x355(n => { var n: Base[]; retur
 var x356 = function(n: Genric<Base>) { }; x356({ func: n => { return [d1, d2]; } });
 
 //// [generatedContextualTyping.js]
+"use strict";
 class Base {
-    p;
 }
 class Derived1 extends Base {
-    m;
 }
 class Derived2 extends Base {
-    n;
 }
 var b = new Base(), d1 = new Derived1(), d2 = new Derived2();
 var x1 = () => [d1, d2];
@@ -380,221 +378,293 @@ var x10 = { n: [d1, d2] };
 var x11 = n => { var n; return null; };
 var x12 = { func: n => { return [d1, d2]; } };
 class x13 {
-    member = () => [d1, d2];
+    constructor() {
+        this.member = () => [d1, d2];
+    }
 }
 class x14 {
-    member = function () { return [d1, d2]; };
+    constructor() {
+        this.member = function () { return [d1, d2]; };
+    }
 }
 class x15 {
-    member = function named() { return [d1, d2]; };
+    constructor() {
+        this.member = function named() { return [d1, d2]; };
+    }
 }
 class x16 {
-    member = () => [d1, d2];
+    constructor() {
+        this.member = () => [d1, d2];
+    }
 }
 class x17 {
-    member = function () { return [d1, d2]; };
+    constructor() {
+        this.member = function () { return [d1, d2]; };
+    }
 }
 class x18 {
-    member = function named() { return [d1, d2]; };
+    constructor() {
+        this.member = function named() { return [d1, d2]; };
+    }
 }
 class x19 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x20 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x21 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x22 {
-    member = { n: [d1, d2] };
+    constructor() {
+        this.member = { n: [d1, d2] };
+    }
 }
 class x23 {
-    member = n => { var n; return null; };
+    constructor() {
+        this.member = n => { var n; return null; };
+    }
 }
 class x24 {
-    member = { func: n => { return [d1, d2]; } };
+    constructor() {
+        this.member = { func: n => { return [d1, d2]; } };
+    }
 }
 class x25 {
-    member = () => [d1, d2];
+    constructor() {
+        this.member = () => [d1, d2];
+    }
 }
 class x26 {
-    member = function () { return [d1, d2]; };
+    constructor() {
+        this.member = function () { return [d1, d2]; };
+    }
 }
 class x27 {
-    member = function named() { return [d1, d2]; };
+    constructor() {
+        this.member = function named() { return [d1, d2]; };
+    }
 }
 class x28 {
-    member = () => [d1, d2];
+    constructor() {
+        this.member = () => [d1, d2];
+    }
 }
 class x29 {
-    member = function () { return [d1, d2]; };
+    constructor() {
+        this.member = function () { return [d1, d2]; };
+    }
 }
 class x30 {
-    member = function named() { return [d1, d2]; };
+    constructor() {
+        this.member = function named() { return [d1, d2]; };
+    }
 }
 class x31 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x32 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x33 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x34 {
-    member = { n: [d1, d2] };
+    constructor() {
+        this.member = { n: [d1, d2] };
+    }
 }
 class x35 {
-    member = n => { var n; return null; };
+    constructor() {
+        this.member = n => { var n; return null; };
+    }
 }
 class x36 {
-    member = { func: n => { return [d1, d2]; } };
+    constructor() {
+        this.member = { func: n => { return [d1, d2]; } };
+    }
 }
 class x37 {
-    member = () => [d1, d2];
+    constructor() {
+        this.member = () => [d1, d2];
+    }
 }
 class x38 {
-    member = function () { return [d1, d2]; };
+    constructor() {
+        this.member = function () { return [d1, d2]; };
+    }
 }
 class x39 {
-    member = function named() { return [d1, d2]; };
+    constructor() {
+        this.member = function named() { return [d1, d2]; };
+    }
 }
 class x40 {
-    member = () => [d1, d2];
+    constructor() {
+        this.member = () => [d1, d2];
+    }
 }
 class x41 {
-    member = function () { return [d1, d2]; };
+    constructor() {
+        this.member = function () { return [d1, d2]; };
+    }
 }
 class x42 {
-    member = function named() { return [d1, d2]; };
+    constructor() {
+        this.member = function named() { return [d1, d2]; };
+    }
 }
 class x43 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x44 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x45 {
-    member = [d1, d2];
+    constructor() {
+        this.member = [d1, d2];
+    }
 }
 class x46 {
-    member = { n: [d1, d2] };
+    constructor() {
+        this.member = { n: [d1, d2] };
+    }
 }
 class x47 {
-    member = n => { var n; return null; };
+    constructor() {
+        this.member = n => { var n; return null; };
+    }
 }
 class x48 {
-    member = { func: n => { return [d1, d2]; } };
+    constructor() {
+        this.member = { func: n => { return [d1, d2]; } };
+    }
 }
 class x49 {
-    static member = () => [d1, d2];
 }
+x49.member = () => [d1, d2];
 class x50 {
-    static member = function () { return [d1, d2]; };
 }
+x50.member = function () { return [d1, d2]; };
 class x51 {
-    static member = function named() { return [d1, d2]; };
 }
+x51.member = function named() { return [d1, d2]; };
 class x52 {
-    static member = () => [d1, d2];
 }
+x52.member = () => [d1, d2];
 class x53 {
-    static member = function () { return [d1, d2]; };
 }
+x53.member = function () { return [d1, d2]; };
 class x54 {
-    static member = function named() { return [d1, d2]; };
 }
+x54.member = function named() { return [d1, d2]; };
 class x55 {
-    static member = [d1, d2];
 }
+x55.member = [d1, d2];
 class x56 {
-    static member = [d1, d2];
 }
+x56.member = [d1, d2];
 class x57 {
-    static member = [d1, d2];
 }
+x57.member = [d1, d2];
 class x58 {
-    static member = { n: [d1, d2] };
 }
+x58.member = { n: [d1, d2] };
 class x59 {
-    static member = n => { var n; return null; };
 }
+x59.member = n => { var n; return null; };
 class x60 {
-    static member = { func: n => { return [d1, d2]; } };
 }
+x60.member = { func: n => { return [d1, d2]; } };
 class x61 {
-    static member = () => [d1, d2];
 }
+x61.member = () => [d1, d2];
 class x62 {
-    static member = function () { return [d1, d2]; };
 }
+x62.member = function () { return [d1, d2]; };
 class x63 {
-    static member = function named() { return [d1, d2]; };
 }
+x63.member = function named() { return [d1, d2]; };
 class x64 {
-    static member = () => [d1, d2];
 }
+x64.member = () => [d1, d2];
 class x65 {
-    static member = function () { return [d1, d2]; };
 }
+x65.member = function () { return [d1, d2]; };
 class x66 {
-    static member = function named() { return [d1, d2]; };
 }
+x66.member = function named() { return [d1, d2]; };
 class x67 {
-    static member = [d1, d2];
 }
+x67.member = [d1, d2];
 class x68 {
-    static member = [d1, d2];
 }
+x68.member = [d1, d2];
 class x69 {
-    static member = [d1, d2];
 }
+x69.member = [d1, d2];
 class x70 {
-    static member = { n: [d1, d2] };
 }
+x70.member = { n: [d1, d2] };
 class x71 {
-    static member = n => { var n; return null; };
 }
+x71.member = n => { var n; return null; };
 class x72 {
-    static member = { func: n => { return [d1, d2]; } };
 }
+x72.member = { func: n => { return [d1, d2]; } };
 class x73 {
-    static member = () => [d1, d2];
 }
+x73.member = () => [d1, d2];
 class x74 {
-    static member = function () { return [d1, d2]; };
 }
+x74.member = function () { return [d1, d2]; };
 class x75 {
-    static member = function named() { return [d1, d2]; };
 }
+x75.member = function named() { return [d1, d2]; };
 class x76 {
-    static member = () => [d1, d2];
 }
+x76.member = () => [d1, d2];
 class x77 {
-    static member = function () { return [d1, d2]; };
 }
+x77.member = function () { return [d1, d2]; };
 class x78 {
-    static member = function named() { return [d1, d2]; };
 }
+x78.member = function named() { return [d1, d2]; };
 class x79 {
-    static member = [d1, d2];
 }
+x79.member = [d1, d2];
 class x80 {
-    static member = [d1, d2];
 }
+x80.member = [d1, d2];
 class x81 {
-    static member = [d1, d2];
 }
+x81.member = [d1, d2];
 class x82 {
-    static member = { n: [d1, d2] };
 }
+x82.member = { n: [d1, d2] };
 class x83 {
-    static member = n => { var n; return null; };
 }
+x83.member = n => { var n; return null; };
 class x84 {
-    static member = { func: n => { return [d1, d2]; } };
 }
+x84.member = { func: n => { return [d1, d2]; } };
 class x85 {
     constructor(parm = () => [d1, d2]) { }
 }
@@ -632,145 +702,121 @@ class x96 {
     constructor(parm = { func: n => { return [d1, d2]; } }) { }
 }
 class x97 {
-    parm;
     constructor(parm = () => [d1, d2]) {
         this.parm = parm;
     }
 }
 class x98 {
-    parm;
     constructor(parm = function () { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x99 {
-    parm;
     constructor(parm = function named() { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x100 {
-    parm;
     constructor(parm = () => [d1, d2]) {
         this.parm = parm;
     }
 }
 class x101 {
-    parm;
     constructor(parm = function () { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x102 {
-    parm;
     constructor(parm = function named() { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x103 {
-    parm;
     constructor(parm = [d1, d2]) {
         this.parm = parm;
     }
 }
 class x104 {
-    parm;
     constructor(parm = [d1, d2]) {
         this.parm = parm;
     }
 }
 class x105 {
-    parm;
     constructor(parm = [d1, d2]) {
         this.parm = parm;
     }
 }
 class x106 {
-    parm;
     constructor(parm = { n: [d1, d2] }) {
         this.parm = parm;
     }
 }
 class x107 {
-    parm;
     constructor(parm = n => { var n; return null; }) {
         this.parm = parm;
     }
 }
 class x108 {
-    parm;
     constructor(parm = { func: n => { return [d1, d2]; } }) {
         this.parm = parm;
     }
 }
 class x109 {
-    parm;
     constructor(parm = () => [d1, d2]) {
         this.parm = parm;
     }
 }
 class x110 {
-    parm;
     constructor(parm = function () { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x111 {
-    parm;
     constructor(parm = function named() { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x112 {
-    parm;
     constructor(parm = () => [d1, d2]) {
         this.parm = parm;
     }
 }
 class x113 {
-    parm;
     constructor(parm = function () { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x114 {
-    parm;
     constructor(parm = function named() { return [d1, d2]; }) {
         this.parm = parm;
     }
 }
 class x115 {
-    parm;
     constructor(parm = [d1, d2]) {
         this.parm = parm;
     }
 }
 class x116 {
-    parm;
     constructor(parm = [d1, d2]) {
         this.parm = parm;
     }
 }
 class x117 {
-    parm;
     constructor(parm = [d1, d2]) {
         this.parm = parm;
     }
 }
 class x118 {
-    parm;
     constructor(parm = { n: [d1, d2] }) {
         this.parm = parm;
     }
 }
 class x119 {
-    parm;
     constructor(parm = n => { var n; return null; }) {
         this.parm = parm;
     }
 }
 class x120 {
-    parm;
     constructor(parm = { func: n => { return [d1, d2]; } }) {
         this.parm = parm;
     }

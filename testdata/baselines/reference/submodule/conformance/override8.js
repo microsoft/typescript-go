@@ -33,12 +33,10 @@ class DDD extends BB {
 }
 
 //// [override8.js]
+"use strict";
 class B {
-    a;
 }
 class D extends B {
-    a;
-    b;
     constructor(a, b) {
         super();
         this.a = a;
@@ -46,20 +44,17 @@ class D extends B {
     }
 }
 class BB {
-    a;
     constructor(a) {
         this.a = a;
     }
 }
 class DD extends BB {
-    a;
     constructor(a) {
         super(a);
         this.a = a;
     }
 }
 class DDD extends BB {
-    a;
     constructor(a) {
         super(a);
         this.a = a;

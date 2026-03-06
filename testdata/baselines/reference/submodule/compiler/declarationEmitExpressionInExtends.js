@@ -16,9 +16,9 @@ var q: B;
 q.s;
 
 //// [declarationEmitExpressionInExtends.js]
+"use strict";
 var x;
 class Q {
-    s;
 }
 class B extends x {
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -93,8 +94,8 @@ func (c *ProjectCollection) InferredProject() *Project {
 	return c.inferredProject
 }
 
-func (c *ProjectCollection) GetProjectsContainingFile(path tspath.Path) []*Project {
-	var projects []*Project
+func (c *ProjectCollection) GetProjectsContainingFile(path tspath.Path) []ls.Project {
+	var projects []ls.Project
 	for _, project := range c.ConfiguredProjects() {
 		if project.containsFile(path) {
 			projects = append(projects, project)
@@ -107,7 +108,7 @@ func (c *ProjectCollection) GetProjectsContainingFile(path tspath.Path) []*Proje
 }
 
 // !!! result could be cached
-func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path) *Project {
+func (c *ProjectCollection) GetDefaultProject(path tspath.Path) *Project {
 	if result, ok := c.fileDefaultProjects[path]; ok {
 		if result == inferredProjectName {
 			return c.inferredProject
@@ -154,20 +155,20 @@ func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path)
 		return firstConfiguredProject
 	}
 	// Multiple projects include the file directly.
-	if defaultProject := c.findDefaultConfiguredProject(fileName, path); defaultProject != nil {
+	if defaultProject := c.findDefaultConfiguredProject(path); defaultProject != nil {
 		return defaultProject
 	}
 	return firstConfiguredProject
 }
 
-func (c *ProjectCollection) findDefaultConfiguredProject(fileName string, path tspath.Path) *Project {
+func (c *ProjectCollection) findDefaultConfiguredProject(path tspath.Path) *Project {
 	if configFileName := c.configFileRegistry.GetConfigFileName(path); configFileName != "" {
-		return c.findDefaultConfiguredProjectWorker(fileName, path, configFileName, nil, nil)
+		return c.findDefaultConfiguredProjectWorker(path, configFileName, nil, nil)
 	}
 	return nil
 }
 
-func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, path tspath.Path, configFileName string, visited *collections.SyncSet[*Project], fallback *Project) *Project {
+func (c *ProjectCollection) findDefaultConfiguredProjectWorker(path tspath.Path, configFileName string, visited *collections.SyncSet[*Project], fallback *Project) *Project {
 	configFilePath := c.toPath(configFileName)
 	project, ok := c.configuredProjects[configFilePath]
 	if !ok {
@@ -184,7 +185,8 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 			if project.CommandLine == nil {
 				return nil
 			}
-			return core.Map(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
+			// A referenced project may not be loaded if `disableReferencedProjectLoad` is true.
+			return core.MapNonNil(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
 				return c.configuredProjects[c.toPath(configFileName)]
 			})
 		},
@@ -217,7 +219,7 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 		return fallback
 	}
 	if ancestorConfigName := c.configFileRegistry.GetAncestorConfigFileName(path, configFileName); ancestorConfigName != "" {
-		return c.findDefaultConfiguredProjectWorker(fileName, path, ancestorConfigName, visited, fallback)
+		return c.findDefaultConfiguredProjectWorker(path, ancestorConfigName, visited, fallback)
 	}
 	return fallback
 }
@@ -226,9 +228,11 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 func (c *ProjectCollection) clone() *ProjectCollection {
 	return &ProjectCollection{
 		toPath:              c.toPath,
+		configFileRegistry:  c.configFileRegistry,
 		configuredProjects:  c.configuredProjects,
 		inferredProject:     c.inferredProject,
 		fileDefaultProjects: c.fileDefaultProjects,
+		apiOpenedProjects:   c.apiOpenedProjects,
 	}
 }
 

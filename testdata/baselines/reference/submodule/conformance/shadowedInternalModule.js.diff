@@ -1,6 +1,6 @@
 --- old.shadowedInternalModule.js
 +++ new.shadowedInternalModule.js
-@@= skipped -75, +75 lines =@@
+@@= skipped -76, +76 lines =@@
  var B;
  (function (B) {
      var A = { x: 0, y: 0 };
@@ -8,10 +8,7 @@
  })(B || (B = {}));
  var X;
  (function (X) {
-     class Y {
-+        name;
-     }
-     X.Y = Y;
+@@= skipped -9, +10 lines =@@
  })(X || (X = {}));
  var Z;
  (function (Z) {
@@ -24,7 +21,7 @@
  })(b || (b = {}));
  //
  var q;
-@@= skipped -25, +29 lines =@@
+@@= skipped -16, +18 lines =@@
  })(r || (r = {}));
  var s;
  (function (s) {

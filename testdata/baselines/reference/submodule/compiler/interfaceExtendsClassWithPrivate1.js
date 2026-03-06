@@ -17,8 +17,8 @@ class D extends C implements I {
 } 
 
 var c: C;
-var i: I;
-var d: D;
+declare var i: I;
+declare var d: D;
 
 c = i;
 i = c; // error
@@ -30,9 +30,12 @@ c = d;
 d = c; // error
 
 //// [interfaceExtendsClassWithPrivate1.js]
+"use strict";
 class C {
+    constructor() {
+        this.x = 1;
+    }
     foo(x) { return x; }
-    x = 1;
 }
 class D extends C {
     foo(x) { return x; }
@@ -40,8 +43,6 @@ class D extends C {
     bar() { }
 }
 var c;
-var i;
-var d;
 c = i;
 i = c; // error
 i = d;

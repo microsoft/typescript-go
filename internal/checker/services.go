@@ -3,11 +3,15 @@ package checker
 import (
 	"maps"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func (c *Checker) GetSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags) []*ast.Symbol {
@@ -26,7 +30,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
 	// and it doesn't already exists in the symbol table.
 	copySymbol := func(symbol *ast.Symbol, meaning ast.SymbolFlags) {
-		if GetCombinedLocalAndExportSymbolFlags(symbol)&meaning != 0 {
+		if symbol.CombinedLocalAndExportSymbolFlags()&meaning != 0 {
 			id := symbol.Name
 			// We will copy all symbol regardless of its reserved name because
 			// symbolsToArray will check whether the key is a reserved name and
@@ -239,6 +243,10 @@ func (c *Checker) GetNumberIndexType(t *Type) *Type {
 	return c.getIndexTypeOfType(t, c.numberType)
 }
 
+func (c *Checker) GetElementTypeOfArrayType(t *Type) *Type {
+	return c.getElementTypeOfArrayType(t)
+}
+
 func (c *Checker) GetCallSignatures(t *Type) []*Signature {
 	return c.getSignaturesOfType(t, SignatureKindCall)
 }
@@ -306,7 +314,7 @@ func (c *Checker) shouldTreatPropertiesOfExternalModuleAsExports(resolvedExterna
 }
 
 func (c *Checker) GetContextualType(node *ast.Expression, contextFlags ContextFlags) *Type {
-	if contextFlags&ContextFlagsCompletions != 0 {
+	if contextFlags&ContextFlagsIgnoreNodeInferences != 0 {
 		return runWithInferenceBlockedFromSourceNode(c, node, func() *Type { return c.getContextualType(node, contextFlags) })
 	}
 	return c.getContextualType(node, contextFlags)
@@ -391,6 +399,13 @@ func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 		result = append(result, c.GetRootSymbols(root)...)
 	}
 	return result
+}
+
+func (c *Checker) GetMappedTypeSymbolOfProperty(symbol *ast.Symbol) *ast.Symbol {
+	if valueLinks := c.valueSymbolLinks.TryGet(symbol); valueLinks != nil {
+		return valueLinks.containingType.symbol
+	}
+	return nil
 }
 
 func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
@@ -492,6 +507,146 @@ func (c *Checker) GetSymbolsOfParameterPropertyDeclaration(parameter *ast.Node /
 	panic("There should exist two symbols, one as property declaration and one as parameter declaration")
 }
 
+// IsDeclarationUsed checks if an import declaration identifier is used in the source file.
+// This is primarily used for organizing imports to determine which imports can be removed.
+func (c *Checker) IsDeclarationUsed(
+	sourceFile *ast.SourceFile,
+	identifier *ast.Identifier,
+	jsxElementsPresent bool,
+	jsxModeNeedsExplicitImport bool,
+) bool {
+	if jsxElementsPresent && jsxModeNeedsExplicitImport {
+		jsxNamespace := c.getJsxNamespace(sourceFile.AsNode())
+		jsxFragmentFactory := c.GetJsxFragmentFactory(sourceFile.AsNode())
+		identifierText := identifier.Text
+		if identifierText == jsxNamespace {
+			return true
+		}
+		if jsxFragmentFactory != "" && identifierText == jsxFragmentFactory {
+			return true
+		}
+	}
+
+	symbol := c.GetSymbolAtLocation(identifier.AsNode())
+	if symbol == nil {
+		return true
+	}
+
+	return c.IsSymbolReferencedInFile(sourceFile, identifier, symbol)
+}
+
+// IsSymbolReferencedInFile checks if a symbol is referenced in the source file (besides its definition).
+// This is used as a quick check for whether a symbol is used at all in a file.
+func (c *Checker) IsSymbolReferencedInFile(
+	sourceFile *ast.SourceFile,
+	definition *ast.Identifier,
+	symbol *ast.Symbol,
+) bool {
+	identifierText := definition.Text
+	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
+		if !ast.IsIdentifier(token) {
+			continue
+		}
+		id := token.AsIdentifier()
+		if id == definition || id.Text != identifierText {
+			continue
+		}
+		refSymbol := c.GetSymbolAtLocation(token)
+		if refSymbol == symbol {
+			return true
+		}
+		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
+			shorthandSymbol := c.GetShorthandAssignmentValueSymbol(token.Parent)
+			if shorthandSymbol == symbol {
+				return true
+			}
+		}
+		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
+			localSymbol := c.getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier())
+			if localSymbol == symbol {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (c *Checker) getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier) *ast.Symbol {
+	if isExportSpecifierAlias(referenceLocation, exportSpecifier) {
+		if symbol := c.GetExportSpecifierLocalTargetSymbol(exportSpecifier.AsNode()); symbol != nil {
+			return symbol
+		}
+	}
+	return referenceSymbol
+}
+
+func isExportSpecifierAlias(referenceLocation *ast.Identifier, exportSpecifier *ast.ExportSpecifier) bool {
+	debug.Assert(exportSpecifier.PropertyName == referenceLocation.AsNode() || exportSpecifier.Name() == referenceLocation.AsNode(), "referenceLocation is not export specifier name or property name")
+	propertyName := exportSpecifier.PropertyName
+	if propertyName != nil {
+		// Given `export { foo as bar } [from "someModule"]`: It's an alias at `foo`, but at `bar` it's a new symbol.
+		return propertyName == referenceLocation.AsNode()
+	} else {
+		// `export { foo } from "foo"` is a re-export.
+		// `export { foo };` is not a re-export, it creates an alias for the local variable `foo`.
+		return exportSpecifier.Parent.Parent.ModuleSpecifier() == nil
+	}
+}
+
+func getPossibleSymbolReferenceNodes(sourceFile *ast.SourceFile, symbolName string, container *ast.Node) []*ast.Node {
+	return core.MapNonNil(getPossibleSymbolReferencePositions(sourceFile, symbolName, container), func(pos int) *ast.Node {
+		if referenceLocation := astnav.GetTouchingPropertyName(sourceFile, pos); referenceLocation != sourceFile.AsNode() {
+			return referenceLocation
+		}
+		return nil
+	})
+}
+
+func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName string, container *ast.Node) []int {
+	positions := []int{}
+
+	// TODO: Cache symbol existence for files to save text search
+	// Also, need to make this work for unicode escapes.
+
+	// Be resilient in the face of a symbol with no name or zero length name
+	if symbolName == "" {
+		return positions
+	}
+
+	text := sourceFile.Text()
+	sourceLength := len(text)
+	symbolNameLength := len(symbolName)
+
+	if container == nil {
+		container = sourceFile.AsNode()
+	}
+
+	position := strings.Index(text[container.Pos():], symbolName)
+	endPos := container.End()
+	for position >= 0 && position < endPos {
+		// We found a match.  Make sure it's not part of a larger word (i.e. the char
+		// before and after it have to be a non-identifier char).
+		endPosition := position + symbolNameLength
+
+		if (position == 0 || !scanner.IsIdentifierPart(rune(text[position-1]))) &&
+			(endPosition == sourceLength || !scanner.IsIdentifierPart(rune(text[endPosition]))) {
+			// Found a real match.  Keep searching.
+			positions = append(positions, position)
+		}
+		startIndex := position + symbolNameLength + 1
+		if startIndex > len(text) {
+			break
+		}
+		if foundIndex := strings.Index(text[startIndex:], symbolName); foundIndex != -1 {
+			position = startIndex + foundIndex
+		} else {
+			break
+		}
+	}
+
+	return positions
+}
+
 func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
 	if !ast.IsTypeNode(node) {
 		return nil
@@ -499,24 +654,110 @@ func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
 	return c.getTypeArgumentConstraint(node)
 }
 
-func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
-	typeReferenceNode := core.IfElse(ast.IsTypeReferenceType(node.Parent), node.Parent, nil)
-	if typeReferenceNode == nil {
+// getUninstantiatedSignatures gets generic signatures from the function's/constructor's type.
+func (c *Checker) getUninstantiatedSignatures(node *ast.Node) []*Signature {
+	switch node.Kind {
+	case ast.KindCallExpression, ast.KindDecorator:
+		return c.getSignaturesOfType(c.getTypeOfExpression(node.Expression()), SignatureKindCall)
+	case ast.KindNewExpression:
+		return c.getSignaturesOfType(c.getTypeOfExpression(node.Expression()), SignatureKindConstruct)
+	case ast.KindJsxSelfClosingElement, ast.KindJsxOpeningElement:
+		if isJsxIntrinsicTagName(node.TagName()) {
+			return nil
+		}
+		return c.getSignaturesOfType(c.getTypeOfExpression(node.TagName()), SignatureKindCall)
+	case ast.KindTaggedTemplateExpression:
+		return c.getSignaturesOfType(c.getTypeOfExpression(node.AsTaggedTemplateExpression().Tag), SignatureKindCall)
+	case ast.KindBinaryExpression, ast.KindJsxOpeningFragment:
 		return nil
 	}
-	typeParameters := c.getTypeParametersForTypeReferenceOrImport(typeReferenceNode)
-	if len(typeParameters) == 0 {
-		return nil
+	return nil
+}
+
+func (c *Checker) getTypeParameterConstraintForPositionAcrossSignatures(signatures []*Signature, position int) *Type {
+	var relevantConstraints []*Type
+	for _, signature := range signatures {
+		if position >= len(signature.typeParameters) {
+			continue
+		}
+		relevantTypeParameter := signature.typeParameters[position]
+		relevantConstraint := c.getConstraintOfTypeParameter(relevantTypeParameter)
+		if relevantConstraint != nil {
+			relevantConstraints = append(relevantConstraints, relevantConstraint)
+		}
+	}
+	return c.getUnionType(relevantConstraints)
+}
+
+func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
+	var typeArgumentPosition int = -1
+	if ast.HasTypeArguments(node.Parent) {
+		typeArgs := node.Parent.TypeArguments()
+		for i, arg := range typeArgs {
+			if arg == node {
+				typeArgumentPosition = i
+				break
+			}
+		}
 	}
 
-	typeParamIndex := core.FindIndex(typeReferenceNode.TypeArguments(), func(n *ast.Node) bool {
-		return n == node
-	})
-	constraint := c.getConstraintOfTypeParameter(typeParameters[typeParamIndex])
-	if constraint != nil {
-		return c.instantiateType(
-			constraint,
-			newTypeMapper(typeParameters, c.getEffectiveTypeArguments(typeReferenceNode, typeParameters)))
+	if typeArgumentPosition >= 0 {
+		// The node could be a type argument of a call, a `new` expression, a decorator, an
+		// instantiation expression, or a generic type instantiation.
+
+		if ast.IsCallLikeExpression(node.Parent) {
+			return c.getTypeParameterConstraintForPositionAcrossSignatures(
+				c.getUninstantiatedSignatures(node.Parent),
+				typeArgumentPosition,
+			)
+		}
+
+		if ast.IsDecorator(node.Parent.Parent) {
+			return c.getTypeParameterConstraintForPositionAcrossSignatures(
+				c.getUninstantiatedSignatures(node.Parent.Parent),
+				typeArgumentPosition,
+			)
+		}
+
+		if ast.IsExpressionWithTypeArguments(node.Parent) && ast.IsExpressionStatement(node.Parent.Parent) {
+			uninstantiatedType := c.checkExpression(node.Parent.Expression())
+
+			callConstraint := c.getTypeParameterConstraintForPositionAcrossSignatures(
+				c.getSignaturesOfType(uninstantiatedType, SignatureKindCall),
+				typeArgumentPosition,
+			)
+			constructConstraint := c.getTypeParameterConstraintForPositionAcrossSignatures(
+				c.getSignaturesOfType(uninstantiatedType, SignatureKindConstruct),
+				typeArgumentPosition,
+			)
+
+			// An instantiation expression instantiates both call and construct signatures, so
+			// if both exist type arguments must be assignable to both constraints.
+			if constructConstraint.flags&TypeFlagsNever != 0 {
+				return callConstraint
+			}
+			if callConstraint.flags&TypeFlagsNever != 0 {
+				return constructConstraint
+			}
+			return c.getIntersectionType([]*Type{callConstraint, constructConstraint})
+		}
+
+		if ast.IsTypeReferenceType(node.Parent) {
+			typeParameters := c.getTypeParametersForTypeReferenceOrImport(node.Parent)
+			if len(typeParameters) == 0 {
+				return nil
+			}
+			if typeArgumentPosition >= len(typeParameters) {
+				return nil
+			}
+			relevantTypeParameter := typeParameters[typeArgumentPosition]
+			constraint := c.getConstraintOfTypeParameter(relevantTypeParameter)
+			if constraint != nil {
+				return c.instantiateType(
+					constraint,
+					newTypeMapper(typeParameters, c.getEffectiveTypeArguments(node.Parent, typeParameters)))
+			}
+		}
 	}
 	return nil
 }
@@ -650,25 +891,34 @@ func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
 	return t
 }
 
-func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral *ast.Node, name string) []*ast.Node {
-	var result []*ast.Node
-	if t := c.getApparentTypeOfContextualType(objectLiteral, ContextFlagsNone); t != nil {
-		for _, t := range t.Distributed() {
-			prop := c.getPropertyOfType(t, name)
-			if prop != nil {
-				for _, declaration := range prop.Declarations {
-					result = core.AppendIfUnique(result, declaration)
-				}
-			} else {
-				for _, info := range c.getApplicableIndexInfos(t, c.getStringLiteralType(name)) {
-					if info.declaration != nil {
-						result = core.AppendIfUnique(result, info.declaration)
-					}
-				}
+// GetContextualTypeForArrayLiteralAtPosition returns the contextual type for an element at the given position
+// in an array with the given contextual type.
+func (c *Checker) GetContextualTypeForArrayLiteralAtPosition(contextualArrayType *Type, arrayLiteral *ast.Node, position int) *Type {
+	if contextualArrayType == nil {
+		return nil
+	}
+	firstSpreadIndex, lastSpreadIndex := -1, -1
+	elementIndex := 0
+	elements := arrayLiteral.Elements()
+	for i, elem := range elements {
+		if elem.Pos() < position {
+			elementIndex++
+		}
+		if ast.IsSpreadElement(elem) {
+			if firstSpreadIndex == -1 {
+				firstSpreadIndex = i
 			}
+			lastSpreadIndex = i
 		}
 	}
-	return result
+	// The array may be incomplete, so we don't know its final length.
+	return c.getContextualTypeForElementExpression(
+		contextualArrayType,
+		elementIndex,
+		-1, /*length*/
+		firstSpreadIndex,
+		lastSpreadIndex,
+	)
 }
 
 var knownGenericTypeNames = map[string]struct{}{
@@ -700,7 +950,7 @@ func isKnownGenericTypeName(name string) bool {
 }
 
 func (c *Checker) GetFirstTypeArgumentFromKnownType(t *Type) *Type {
-	if t.objectFlags&ObjectFlagsReference != 0 && isKnownGenericTypeName(t.symbol.Name) {
+	if t.objectFlags&ObjectFlagsReference != 0 && t.symbol != nil && isKnownGenericTypeName(t.symbol.Name) {
 		symbol := c.getGlobalSymbol(t.symbol.Name, ast.SymbolFlagsType, nil)
 		if symbol != nil && symbol == t.Target().symbol {
 			return core.FirstOrNil(c.getTypeArguments(t))

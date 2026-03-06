@@ -514,6 +514,109 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///script.ts", 1, files["/script.ts"].(string), lsproto.LanguageKindTypeScript)
 		// Test should terminate
 	})
+
+	t.Run("file moves to inferred project after import is deleted", func(t *testing.T) {
+		t.Parallel()
+		// This test verifies that when a node_modules dependency file is open and its import
+		// is deleted from the project root, requesting language service for the dependency
+		// correctly moves it to an inferred project.
+		files := map[string]any{
+			"/project/tsconfig.json":               `{"compilerOptions": {"strict": true}}`,
+			"/project/index.ts":                    `import { helper } from "./node_modules/dep/index";`,
+			"/project/node_modules/dep/index.d.ts": `export declare function helper(): void;`,
+		}
+		session, _ := projecttestutil.Setup(files)
+
+		// Step 1: Open the project root file
+		rootUri := lsproto.DocumentUri("file:///project/index.ts")
+		session.DidOpenFile(context.Background(), rootUri, 1, files["/project/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), rootUri)
+		assert.NilError(t, err)
+
+		// Step 2: Open the node_modules dependency file - should be in the configured project
+		depUri := lsproto.DocumentUri("file:///project/node_modules/dep/index.d.ts")
+		session.DidOpenFile(context.Background(), depUri, 1, files["/project/node_modules/dep/index.d.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		snapshot, release := session.Snapshot()
+		configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/project/tsconfig.json"))
+		assert.Assert(t, configuredProject != nil, "configured project should exist")
+		defaultProject := snapshot.GetDefaultProject(depUri)
+		assert.Equal(t, defaultProject, configuredProject, "dependency should be in the configured project initially")
+		release()
+
+		// Step 3: Delete the import from the root file
+		session.DidChangeFile(context.Background(), rootUri, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
+			WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `// import removed`},
+		}})
+
+		// Step 4: Request language service for the dependency - it should now be in an inferred project
+		ls, err := session.GetLanguageService(context.Background(), depUri)
+		assert.NilError(t, err)
+		assert.Assert(t, ls != nil, "language service should be available for dependency")
+
+		snapshot, release = session.Snapshot()
+		defer release()
+		defaultProject = snapshot.GetDefaultProject(depUri)
+		assert.Assert(t, defaultProject != nil, "dependency should have a default project")
+		assert.Equal(t, defaultProject.Kind, project.KindInferred, "dependency should be in an inferred project after import is deleted")
+	})
+
+	t.Run("should update project on package.json change", func(t *testing.T) {
+		t.Parallel()
+		// Set up a project with package.json "imports" that affect module resolution.
+		// The package.json is not a program file, but it IS an affecting location.
+		// When it changes, the project should be marked dirty and the program should be rebuilt.
+		packageJsonFiles := map[string]any{
+			"/home/projects/myproject/tsconfig.json": `{
+				"compilerOptions": {
+					"module": "nodenext",
+					"moduleResolution": "nodenext",
+					"noLib": true,
+					"noEmit": true
+				}
+			}`,
+			"/home/projects/myproject/package.json": `{
+				"name": "myproject",
+				"type": "module",
+				"imports": {
+					"#utils": "./src/utils.ts"
+				}
+			}`,
+			"/home/projects/myproject/src/index.ts": `import { add } from "#utils";`,
+			"/home/projects/myproject/src/utils.ts": `export function add(a: number, b: number) { return a + b; }`,
+		}
+
+		session, utils := projecttestutil.Setup(packageJsonFiles)
+		indexUri := lsproto.DocumentUri("file:///home/projects/myproject/src/index.ts")
+		session.DidOpenFile(context.Background(), indexUri, 1, packageJsonFiles["/home/projects/myproject/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Verify initial state: #utils resolves to utils.ts, so utils.ts is in the program
+		ls, err := session.GetLanguageService(context.Background(), indexUri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		assert.Equal(t, len(program.GetSemanticDiagnostics(context.Background(), nil)), 0, "should have no diagnostics with correct package.json")
+
+		// Now change the package.json to point #utils at a non-existent file
+		err = utils.FS().WriteFile("/home/projects/myproject/package.json", `{
+			"name": "myproject",
+			"type": "module",
+			"imports": {
+				"#utils": "./src/nonexistent.ts"
+			}
+		}`, false)
+		assert.NilError(t, err)
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{
+				Uri:  lsproto.DocumentUri("file:///home/projects/myproject/package.json"),
+				Type: lsproto.FileChangeTypeChanged,
+			},
+		})
+
+		ls, err = session.GetLanguageService(context.Background(), indexUri)
+		assert.NilError(t, err)
+		updatedProgram := ls.GetProgram()
+		assert.Equal(t, len(updatedProgram.GetSemanticDiagnostics(context.Background(), nil)), 1, "should have diagnostics after package.json change")
+	})
 }
 
 func filesForSolutionConfigFile(solutionRefs []string, compilerOptions string, ownFiles []string) map[string]any {

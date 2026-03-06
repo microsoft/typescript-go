@@ -2,7 +2,7 @@
 
 //// [privacyLocalInternalReferenceImportWithExport.ts]
 // private elements
-module m_private {
+namespace m_private {
     export class c_private {
     }
     export enum e_private {
@@ -15,18 +15,18 @@ module m_private {
     export var v_private = new c_private();
     export interface i_private {
     }
-    export module mi_private {
+    export namespace mi_private {
         export class c {
         }
     }
-    export module mu_private {
+    export namespace mu_private {
         export interface i {
         }
     }
 }
 
 // Public elements
-export module m_public {
+export namespace m_public {
     export class c_public {
     }
     export enum e_public {
@@ -39,17 +39,17 @@ export module m_public {
     export var v_public = 10;
     export interface i_public {
     }
-    export module mi_public {
+    export namespace mi_public {
         export class c {
         }
     }
-    export module mu_public {
+    export namespace mu_public {
         export interface i {
         }
     }
 }
 
-export module import_public {
+export namespace import_public {
     // Privacy errors - importing private elements
     export import im_public_c_private = m_private.c_private;
     export import im_public_e_private = m_private.e_private;
@@ -102,7 +102,7 @@ export module import_public {
     export var publicUse_im_public_mu_public: im_public_mu_public.i;
 }
 
-module import_private {
+namespace import_private {
     // No Privacy errors - importing private elements
     export import im_private_c_private = m_private.c_private;
     export import im_private_e_private = m_private.e_private;
@@ -206,6 +206,7 @@ var m_public;
 })(m_public || (exports.m_public = m_public = {}));
 var import_public;
 (function (import_public) {
+    // Privacy errors - importing private elements
     import_public.im_public_c_private = m_private.c_private;
     import_public.im_public_e_private = m_private.e_private;
     import_public.im_public_f_private = m_private.f_private;
@@ -226,6 +227,7 @@ var import_public;
     var privateUse_im_public_mi_private = new import_public.im_public_mi_private.c();
     import_public.publicUse_im_public_mi_private = new import_public.im_public_mi_private.c();
     var privateUse_im_public_mu_private;
+    // No Privacy errors - importing public elements
     import_public.im_public_c_public = m_public.c_public;
     import_public.im_public_e_public = m_public.e_public;
     import_public.im_public_f_public = m_public.f_public;
@@ -249,6 +251,7 @@ var import_public;
 })(import_public || (exports.import_public = import_public = {}));
 var import_private;
 (function (import_private) {
+    // No Privacy errors - importing private elements
     import_private.im_private_c_private = m_private.c_private;
     import_private.im_private_e_private = m_private.e_private;
     import_private.im_private_f_private = m_private.f_private;
@@ -269,6 +272,7 @@ var import_private;
     var privateUse_im_private_mi_private = new import_private.im_private_mi_private.c();
     import_private.publicUse_im_private_mi_private = new import_private.im_private_mi_private.c();
     var privateUse_im_private_mu_private;
+    // No privacy Error - importing public elements
     import_private.im_private_c_public = m_public.c_public;
     import_private.im_private_e_public = m_public.e_public;
     import_private.im_private_f_public = m_public.f_public;

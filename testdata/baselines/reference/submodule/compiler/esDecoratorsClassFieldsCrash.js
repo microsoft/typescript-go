@@ -18,15 +18,10 @@ const Foo = class {
 
 
 //// [esDecoratorsClassFieldsCrash.js]
+"use strict";
 // https://github.com/microsoft/TypeScript/issues/58436
 const dec = (x, y, z, t) => (_, ctx) => { };
 const Foo = class {
-    @dec(1, 3, 3, 1)
-    field;
-    @dec(2, 2, 0, 0)
-    static field;
-    @dec(3, 1, 4, 1)
     accessor accessor;
-    @dec(4, 0, 1, 0)
     static accessor accessor;
 };

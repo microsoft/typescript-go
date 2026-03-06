@@ -38,13 +38,9 @@ var cookieMonster: IceCreamMonster;
 cookieMonster = new IceCreamMonster("Chocolate Chip", false, "COOOOOKIE", "Cookie Monster");
 
 //// [matchReturnTypeInAllBranches.js]
+"use strict";
 // Represents a monster who enjoys ice cream
 class IceCreamMonster {
-    iceCreamFlavor;
-    iceCreamRemaining;
-    wantsSprinkles;
-    soundsWhenEating;
-    name;
     constructor(iceCreamFlavor, wantsSprinkles, soundsWhenEating, name) {
         this.iceCreamFlavor = iceCreamFlavor;
         this.iceCreamRemaining = 100;

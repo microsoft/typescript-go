@@ -25,11 +25,10 @@ a = b = new A();
 
 
 //// [chainedAssignment3.js]
+"use strict";
 class A {
-    id;
 }
 class B extends A {
-    value;
 }
 var a;
 var b;

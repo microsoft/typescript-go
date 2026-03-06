@@ -27,9 +27,8 @@ function f({ priv, prot, privateMethod }: K) {
 
 
 //// [privateProtectedMembersAreNotAccessibleDestructuring.js]
+"use strict";
 class K {
-    priv;
-    prot;
     privateMethod() { }
     m() {
         let { priv: a, prot: b } = this; // ok

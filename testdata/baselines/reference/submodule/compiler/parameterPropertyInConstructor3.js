@@ -7,8 +7,8 @@ class Foo {
 
 
 //// [parameterPropertyInConstructor3.js]
+"use strict";
 class Foo {
-    constructor;
     constructor(constructor) {
         this.constructor = constructor;
     }

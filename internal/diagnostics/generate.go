@@ -22,8 +22,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"golang.org/x/text/language"
 )
@@ -81,7 +81,7 @@ func main() {
 		return
 	}
 
-	rawDiagnosticMessages := readRawMessages(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler", "diagnosticMessages.json"))
+	rawDiagnosticMessages := readRawMessages(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler", "diagnosticMessages.json"))
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -186,7 +186,7 @@ func generateLocalizations(knownKeys map[string]bool, locDir string) *bytes.Buff
 	buf.WriteString("\t\"strings\"\n")
 	buf.WriteString("\t\"sync\"\n")
 	buf.WriteString("\t\"golang.org/x/text/language\"\n")
-	buf.WriteString("\t\"github.com/go-json-experiment/json\"\n")
+	buf.WriteString("\t\"github.com/microsoft/typescript-go/internal/json\"\n")
 	buf.WriteString(")\n")
 
 	// Remove and recreate the loc directory for a clean state
@@ -198,12 +198,12 @@ func generateLocalizations(knownKeys map[string]bool, locDir string) *bytes.Buff
 	}
 
 	// Generate locale maps
-	localeFiles, err := filepath.Glob(filepath.Join(repo.TypeScriptSubmodulePath, "src", "loc", "lcl", "*", "diagnosticMessages", "diagnosticMessages.generated.json.lcl"))
+	localeFiles, err := filepath.Glob(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "loc", "lcl", "*", "diagnosticMessages", "diagnosticMessages.generated.json.lcl"))
 	if err != nil {
 		log.Fatalf("failed to find locale files: %v", err)
 	}
 	if len(localeFiles) == 0 {
-		log.Fatalf("no locale files found in %s", filepath.Join(repo.TypeScriptSubmodulePath, "src", "loc", "lcl"))
+		log.Fatalf("no locale files found in %s", filepath.Join(repo.TypeScriptSubmodulePath(), "src", "loc", "lcl"))
 	}
 	slices.Sort(localeFiles)
 

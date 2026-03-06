@@ -13,10 +13,10 @@ enum E {
 const enum D {
     A, B, C
 }
-module M {
+namespace M {
     export var x;
 }
-module N {
+namespace N {
     export interface I {
     }
 }
@@ -53,6 +53,8 @@ var E;
 var M;
 (function (M) {
 })(M || (exports.M = M = {}));
+var a = M.x;
+exports.a = a;
 //// [t2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,6 +1,8 @@
 package tstransforms
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -121,6 +123,11 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.Factory().UpdateExpressionWithTypeArguments(n, tx.Visitor().VisitNode(n.Expression), nil)
 
 	case ast.KindPropertyDeclaration:
+		if tx.compilerOptions.ExperimentalDecorators.IsTrue() && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) && ast.HasDecorators(node) {
+			// declare/abstract props with decorators must be preserved until the decorator transform can process them and remove them
+			n := node.AsPropertyDeclaration()
+			return tx.Factory().UpdatePropertyDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		}
 		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) {
 			// TypeScript `declare` fields are elided
 			return nil
@@ -146,19 +153,27 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindGetAccessor:
 		n := node.AsGetAccessorDeclaration()
-		if n.Body == nil {
-			// TypeScript overloads are elided
+		if n.Body == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
+			// Abstract accessors are elided
 			return nil
 		}
-		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
+		body := tx.Visitor().VisitNode(n.Body)
+		if body == nil {
+			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false)
+		}
+		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, body)
 
 	case ast.KindSetAccessor:
 		n := node.AsSetAccessorDeclaration()
-		if n.Body == nil {
-			// TypeScript overloads are elided
+		if n.Body == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
+			// Abstract accessors are elided
 			return nil
 		}
-		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
+		body := tx.Visitor().VisitNode(n.Body)
+		if body == nil {
+			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false)
+		}
+		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, body)
 
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
@@ -206,6 +221,16 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		var modifiers *ast.ModifierList
 		if ast.IsParameterPropertyDeclaration(node, tx.parentNode) {
 			modifiers = transformers.ExtractModifiers(tx.EmitContext(), n.Modifiers(), ast.ModifierFlagsParameterPropertyModifier)
+		}
+		// preserve decorators for the decorator transforms
+		if ast.HasDecorators(node) {
+			decorators := node.Decorators()
+			visited, _ := tx.Visitor().VisitSlice(decorators)
+			if modifiers == nil {
+				modifiers = tx.Factory().NewModifierList(visited)
+			} else {
+				modifiers = tx.Factory().NewModifierList(slices.Concat(modifiers.Nodes, visited))
+			}
 		}
 		return tx.Factory().UpdateParameterDeclaration(n, modifiers, n.DotDotDotToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
 

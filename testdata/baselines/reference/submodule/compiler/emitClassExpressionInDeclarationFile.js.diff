@@ -13,11 +13,7 @@
  // repro from #15066
  class FooItem {
      foo() { }
-+    name;
- }
- exports.FooItem = FooItem;
- function WithTags(Base) {
-@@= skipped -38, +38 lines =@@
+@@= skipped -38, +37 lines =@@
      getTags(c: {
          tags(c: /*elided*/ any): /*elided*/ any;
      }): {
@@ -26,3 +22,21 @@
      };
  };
  export declare class FooItem {
+@@= skipped -12, +12 lines =@@
+     new (...args: any[]): {
+         tags(): void;
+         foo(): void;
+-        name?: string;
++        name?: string | undefined;
+     };
+     getTags(): void;
+ } & T;
+@@= skipped -8, +8 lines =@@
+     new (...args: any[]): {
+         tags(): void;
+         foo(): void;
+-        name?: string;
++        name?: string | undefined;
+     };
+     getTags(): void;
+ } & typeof FooItem;

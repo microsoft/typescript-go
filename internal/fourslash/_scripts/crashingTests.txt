@@ -1,0 +1,3 @@
+TestFindReferencesBindingPatternInJsdocNoCrash1
+TestFindReferencesBindingPatternInJsdocNoCrash2
+TestQuickInfoBindingPatternInJsdocNoCrash1

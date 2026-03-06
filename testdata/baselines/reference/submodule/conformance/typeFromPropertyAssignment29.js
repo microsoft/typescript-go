@@ -89,6 +89,7 @@ var n = ExpandoExpr3.prop + ExpandoExpr3.m(13) + new ExpandoExpr3().n
 
 
 //// [typeFromPropertyAssignment29.js]
+"use strict";
 function ExpandoDecl(n) {
     return n.toString();
 }
@@ -115,7 +116,7 @@ function ExpandoNested(n) {
     const nested = function (m) {
         return n + m;
     };
-    nested.total = n + 1_000_000;
+    nested.total = n + 1000000;
     return nested;
 }
 ExpandoNested.also = -1;
@@ -150,7 +151,9 @@ ExpandoExpr2.m = function (n) {
 var n = ExpandoExpr2.prop + ExpandoExpr2.m(12) + ExpandoExpr2(101).length;
 // Should not work in typescript -- classes already have statics
 class ExpandoClass {
-    n = 1001;
+    constructor() {
+        this.n = 1001;
+    }
 }
 ExpandoClass.prop = 2;
 ExpandoClass.m = function (n) {
@@ -159,7 +162,9 @@ ExpandoClass.m = function (n) {
 var n = ExpandoClass.prop + ExpandoClass.m(12) + new ExpandoClass().n;
 // Class expressions shouldn't work in typescript either
 var ExpandoExpr3 = class {
-    n = 10001;
+    constructor() {
+        this.n = 10001;
+    }
 };
 ExpandoExpr3.prop = 3;
 ExpandoExpr3.m = function (n) {
