@@ -7368,6 +7368,28 @@
 >"hebrew" : "hebrew"
 
     // => 1970-02-21[u-ca=hebrew]
+    md = Temporal.PlainMonthDay.from({ month: 6, day: 15, era: "am", eraYear: 5779, calendar: "hebrew" });
+>md = Temporal.PlainMonthDay.from({ month: 6, day: 15, era: "am", eraYear: 5779, calendar: "hebrew" }) : Temporal.PlainMonthDay
+>md : Temporal.PlainMonthDay
+>Temporal.PlainMonthDay.from({ month: 6, day: 15, era: "am", eraYear: 5779, calendar: "hebrew" }) : Temporal.PlainMonthDay
+>Temporal.PlainMonthDay.from : (item: Temporal.PlainMonthDayLike, options?: Temporal.OverflowOptions | undefined) => Temporal.PlainMonthDay
+>Temporal.PlainMonthDay : Temporal.PlainMonthDayConstructor
+>Temporal : typeof Temporal
+>PlainMonthDay : Temporal.PlainMonthDayConstructor
+>from : (item: Temporal.PlainMonthDayLike, options?: Temporal.OverflowOptions | undefined) => Temporal.PlainMonthDay
+>{ month: 6, day: 15, era: "am", eraYear: 5779, calendar: "hebrew" } : { month: number; day: number; era: string; eraYear: number; calendar: string; }
+>month : number
+>6 : 6
+>day : number
+>15 : 15
+>era : string
+>"am" : "am"
+>eraYear : number
+>5779 : 5779
+>calendar : string
+>"hebrew" : "hebrew"
+
+    // => 1970-02-21[u-ca=hebrew]
     /* WRONG */ md = Temporal.PlainMonthDay.from({ month: 6, day: 15, calendar: "hebrew" });
 >md = Temporal.PlainMonthDay.from({ month: 6, day: 15, calendar: "hebrew" }) : Temporal.PlainMonthDay
 >md : Temporal.PlainMonthDay
