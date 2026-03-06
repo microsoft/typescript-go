@@ -23431,7 +23431,13 @@ func (c *Checker) getArrayOrTupleTargetType(node *ast.Node) *Type {
 	elementType := c.getArrayElementTypeNode(node)
 	if elementType != nil {
 		if readonly {
+			if c.globalReadonlyArrayType == nil {
+				return c.emptyGenericType
+			}
 			return c.globalReadonlyArrayType
+		}
+		if c.globalArrayType == nil {
+			return c.emptyGenericType
 		}
 		return c.globalArrayType
 	}
