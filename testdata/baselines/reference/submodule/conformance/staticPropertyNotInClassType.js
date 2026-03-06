@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/classes/members/classTypes/staticPropertyNotInClassType.ts] ////
 
 //// [staticPropertyNotInClassType.ts]
-module NonGeneric {
+namespace NonGeneric {
     class C {
         fn() { return this; }
         static get x() { return 1; }
@@ -10,7 +10,7 @@ module NonGeneric {
         static foo: string; // not reflected in class type
     }
 
-    module C {
+    namespace C {
         export var bar = ''; // not reflected in class type
     }
 
@@ -21,7 +21,7 @@ module NonGeneric {
     var r6 = c.x; // error
 }
 
-module Generic {
+namespace Generic {
     class C<T, U> {
         fn() { return this; }
         static get x() { return 1; }
@@ -30,7 +30,7 @@ module Generic {
         static foo: T; // not reflected in class type
     }
 
-    module C {
+    namespace C {
         export var bar = ''; // not reflected in class type
     }
 
@@ -42,11 +42,10 @@ module Generic {
 }
 
 //// [staticPropertyNotInClassType.js]
+"use strict";
 var NonGeneric;
 (function (NonGeneric) {
     class C {
-        a;
-        b;
         fn() { return this; }
         static get x() { return 1; }
         static set x(v) { }
@@ -54,7 +53,6 @@ var NonGeneric;
             this.a = a;
             this.b = b;
         }
-        static foo; // not reflected in class type
     }
     (function (C) {
         C.bar = ''; // not reflected in class type
@@ -68,8 +66,6 @@ var NonGeneric;
 var Generic;
 (function (Generic) {
     class C {
-        a;
-        b;
         fn() { return this; }
         static get x() { return 1; }
         static set x(v) { }
@@ -77,7 +73,6 @@ var Generic;
             this.a = a;
             this.b = b;
         }
-        static foo; // not reflected in class type
     }
     (function (C) {
         C.bar = ''; // not reflected in class type

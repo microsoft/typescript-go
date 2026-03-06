@@ -30,8 +30,8 @@ function test<T>(x: A<T> | B<T>) {
 }
 
 //// [narrowingGenericTypeFromInstanceof01.js]
+"use strict";
 class A {
-    a;
     constructor(a) {
         this.a = a;
     }

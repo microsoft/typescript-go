@@ -49,11 +49,11 @@ class ExportedThing {
 >ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 9, 1))
 
     z = "ok"
->z : Symbol(z, Decl(mixed.js, 10, 21))
+>z : Symbol(ExportedThing.z, Decl(mixed.js, 10, 21))
 }
 module.exports = {
 >module.exports : Symbol(export=, Decl(mixed.js, 12, 1))
->module : Symbol(module.exports)
+>module : Symbol("./mixed", Decl(mixed.js, 0, 0))
 >exports : Symbol(export=, Decl(mixed.js, 12, 1))
 
     doTheThing,
@@ -67,6 +67,6 @@ class LocalThing {
 >LocalThing : Symbol(LocalThing, Decl(mixed.js, 16, 2))
 
     y = "ok"
->y : Symbol(y, Decl(mixed.js, 17, 18))
+>y : Symbol(LocalThing.y, Decl(mixed.js, 17, 18))
 }
 

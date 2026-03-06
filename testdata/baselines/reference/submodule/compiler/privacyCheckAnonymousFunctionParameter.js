@@ -5,7 +5,7 @@ export var x = 1;  // Makes this an external module
 interface Iterator<T> {
 }
 
-module Query {
+namespace Query {
     export function fromDoWhile<T>(doWhile: (test: Iterator<T>) => boolean): Iterator<T> {
         return null;
     }
@@ -38,4 +38,4 @@ var Query;
 
 
 //// [privacyCheckAnonymousFunctionParameter.d.ts]
-export declare var x: number; // Makes this an external module
+export declare var x: number;

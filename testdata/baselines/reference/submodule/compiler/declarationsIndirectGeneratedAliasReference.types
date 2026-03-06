@@ -30,17 +30,17 @@ import * as ns from "mod";
 >ns : typeof ns
 
 const Ctor = ns.default;
->Ctor : import("mod").CtorConstructor
->ns.default : import("mod").CtorConstructor
+>Ctor : import("mod/ctor").CtorConstructor
+>ns.default : import("mod/ctor").CtorConstructor
 >ns : typeof ns
->default : import("mod").CtorConstructor
+>default : import("mod/ctor").CtorConstructor
 
 export const MyComp = Ctor.extends({foo: "bar"});
->MyComp : import("mod").ExtendedCtor<import("mod").Ctor>
->Ctor.extends({foo: "bar"}) : import("mod").ExtendedCtor<import("mod").Ctor>
->Ctor.extends : <T>(x: T) => import("mod").ExtendedCtor<T extends unknown ? import("mod").Ctor : undefined>
->Ctor : import("mod").CtorConstructor
->extends : <T>(x: T) => import("mod").ExtendedCtor<T extends unknown ? import("mod").Ctor : undefined>
+>MyComp : import("mod/ctor").ExtendedCtor<import("mod").default>
+>Ctor.extends({foo: "bar"}) : import("mod/ctor").ExtendedCtor<import("mod").default>
+>Ctor.extends : <T>(x: T) => import("mod/ctor").ExtendedCtor<T extends unknown ? import("mod").default : undefined>
+>Ctor : import("mod/ctor").CtorConstructor
+>extends : <T>(x: T) => import("mod/ctor").ExtendedCtor<T extends unknown ? import("mod").default : undefined>
 >{foo: "bar"} : { foo: string; }
 >foo : string
 >"bar" : "bar"

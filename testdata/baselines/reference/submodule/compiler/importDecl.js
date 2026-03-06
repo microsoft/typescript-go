@@ -43,7 +43,7 @@ export var x4 = m4.x;
 export var d4 = m4.d;
 export var f4 = m4.foo();
 
-export module m1 {
+export namespace m1 {
     export var x2 = m4.x;
     export var d2 = m4.d;
     export var f2 = m4.foo();
@@ -64,7 +64,7 @@ export var useFncOnly_m4_f4 = fncOnly_m4.foo();
 
 // only used privately no need to emit
 import private_m4 = require("./importDecl_require3");
-export module usePrivate_m4_m1 {
+export namespace usePrivate_m4_m1 {
     var x3 = private_m4.x;
     var d3 = private_m4.d;
     var f3 = private_m4.foo();
@@ -87,7 +87,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.d = void 0;
 exports.foo = foo;
 class d {
-    foo;
 }
 exports.d = d;
 function foo() { return null; }
@@ -97,7 +96,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.d = void 0;
 exports.foo = foo;
 class d {
-    bar;
 }
 exports.d = d;
 var x;
@@ -108,7 +106,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.d = void 0;
 exports.foo = foo;
 class d {
-    baz;
 }
 exports.d = d;
 function foo() { return null; }
@@ -118,7 +115,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.d = void 0;
 exports.foo = foo;
 class d {
-    bing;
 }
 exports.d = d;
 function foo() { return null; }
@@ -201,7 +197,7 @@ export declare function foo(): d;
 import m4 = require("./importDecl_require");
 export declare function foo2(): m4.d;
 //// [importDecl_1.d.ts]
-import m4 = require("./importDecl_require"); // Emit used
+import m4 = require("./importDecl_require");
 export declare var x4: m4.d;
 export declare var d4: typeof m4.d;
 export declare var f4: m4.d;
@@ -210,11 +206,9 @@ export declare namespace m1 {
     var d2: typeof m4.d;
     var f2: m4.d;
 }
-//Emit global only usage
 import glo_m4 = require("./importDecl_require1");
 export declare var useGlo_m4_d4: typeof glo_m4.d;
 export declare var useGlo_m4_f4: glo_m4.d;
-//Emit even when used just in function type
 import fncOnly_m4 = require("./importDecl_require2");
 export declare var useFncOnly_m4_f4: fncOnly_m4.d;
 export declare namespace usePrivate_m4_m1 {

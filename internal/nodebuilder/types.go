@@ -1,22 +1,18 @@
-// Exports interfaces and types defining the node builder - concrete implmentations are on top of the checker, but these types and interfaces are used by the emit resolver in the printer
+// Exports interfaces and types defining the node builder - concrete implementations are on top of the checker, but these types and interfaces are used by the emit resolver in the printer
 package nodebuilder
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
 
 // TODO: previously all symboltracker methods were optional, but now they're required.
 type SymbolTracker interface {
-	GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost
-	GetInnerSymbolTracker() SymbolTracker
-
 	TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool
 	ReportInaccessibleThisError()
 	ReportPrivateInBaseOfClassExpression(propertyName string)
 	ReportInaccessibleUniqueSymbolError()
 	ReportCyclicStructureError()
-	ReportLikelyUnsafeImportRequiredError(specifier string)
+	ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string)
 	ReportTruncationError()
 	ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol)
 	ReportNonSerializableProperty(propertyName string)
@@ -27,7 +23,7 @@ type SymbolTracker interface {
 }
 
 // NOTE: If modifying this enum, must modify `TypeFormatFlags` too!
-type Flags int32
+type Flags uint32
 
 const (
 	FlagsNone Flags = 0

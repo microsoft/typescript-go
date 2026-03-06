@@ -19,7 +19,7 @@ function test1(x: Foo) {
 }
 
 class Bar {
-    a: number;
+    a: number = 0;
     b?: number;
     c? = 2;
     constructor(public d?: number, public e = 10) {}
@@ -59,6 +59,7 @@ class Derived extends Base {
 
 
 //// [optionalMethods.js]
+"use strict";
 function test1(x) {
     x.a;
     x.b;
@@ -69,14 +70,11 @@ function test1(x) {
     let g2 = x.g ? x.g() : 0;
 }
 class Bar {
-    d;
-    e;
-    a;
-    b;
-    c = 2;
     constructor(d, e = 10) {
         this.d = d;
         this.e = e;
+        this.a = 0;
+        this.c = 2;
     }
     f() {
         return 1;
@@ -100,10 +98,12 @@ function test2(x) {
     let h2 = x.h ? x.h() : 0;
 }
 class Base {
-    a;
 }
 class Derived extends Base {
-    a = 1;
+    constructor() {
+        super(...arguments);
+        this.a = 1;
+    }
     f() { return 1; }
 }
 
@@ -124,7 +124,7 @@ declare class Bar {
     c?: number | undefined;
     constructor(d?: number | undefined, e?: number);
     f(): number;
-    g?(): number; // Body of optional method can be omitted
+    g?(): number;
     h?(): number;
 }
 declare function test2(x: Bar): void;

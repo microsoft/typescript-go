@@ -88,8 +88,6 @@ function funcInferredReturnType(obj) {
     return obj;
 }
 class ClassWithPrivateNamedProperties {
-    [s];
-    static [s];
 }
 exports.ClassWithPrivateNamedProperties = ClassWithPrivateNamedProperties;
 class ClassWithPrivateNamedMethods {
@@ -111,7 +109,6 @@ declare const s: unique symbol;
 interface I {
     readonly readonlyType: unique symbol;
 }
-// not allowed when emitting declarations
 export declare const obj: {
     method1(p: typeof s): typeof s;
     method2(p: I["readonlyType"]): I["readonlyType"];

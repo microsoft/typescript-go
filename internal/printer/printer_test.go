@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
 
@@ -22,7 +23,7 @@ func TestEmit(t *testing.T) {
 		{title: "StringLiteral#1", input: `;"test"`, output: ";\n\"test\";"},
 		{title: "StringLiteral#2", input: `;'test'`, output: ";\n'test';"},
 		{title: "NumericLiteral#1", input: `0`, output: `0;`},
-		{title: "NumericLiteral#2", input: `10_000`, output: `10_000;`},
+		{title: "NumericLiteral#2", input: `10_000`, output: `10000;`},
 		{title: "BigIntLiteral#1", input: `0n`, output: `0n;`},
 		{title: "BigIntLiteral#2", input: `10_000n`, output: `10000n;`}, // TODO: Preserve numeric literal separators after Strada migration
 		{title: "BooleanLiteral#1", input: `true`, output: `true;`},
@@ -93,7 +94,7 @@ func TestEmit(t *testing.T) {
 		{title: "ArrowFunction#2", input: `()=>{}`, output: `() => { };`},
 		{title: "ArrowFunction#3", input: `(a)=>{}`, output: `(a) => { };`},
 		{title: "ArrowFunction#4", input: `<T>(a)=>{}`, output: `<T>(a) => { };`},
-		{title: "ArrowFunction#5", input: `async a=>{}`, output: `async a => { };`},
+		{title: "ArrowFunction#5", input: `async a=>{}`, output: `async (a) => { };`},
 		{title: "ArrowFunction#6", input: `async()=>{}`, output: `async () => { };`},
 		{title: "ArrowFunction#7", input: `async<T>()=>{}`, output: `async <T>() => { };`},
 		{title: "ArrowFunction#8", input: `():T=>{}`, output: `(): T => { };`},
@@ -254,8 +255,6 @@ func TestEmit(t *testing.T) {
 		{title: "EnumDeclaration#1", input: `enum a{}`, output: "enum a {\n}"},
 		{title: "EnumDeclaration#2", input: `enum a{b}`, output: "enum a {\n    b\n}"},
 		{title: "EnumDeclaration#3", input: `enum a{b=c}`, output: "enum a {\n    b = c\n}"},
-		{title: "ModuleDeclaration#1", input: `module a{}`, output: "module a { }"},
-		{title: "ModuleDeclaration#2", input: `module a.b{}`, output: "module a.b { }"},
 		{title: "ModuleDeclaration#3", input: `module "a";`, output: "module \"a\";"},
 		{title: "ModuleDeclaration#4", input: `module "a"{}`, output: "module \"a\" { }"},
 		{title: "ModuleDeclaration#5", input: `namespace a{}`, output: "namespace a { }"},
@@ -1061,7 +1060,7 @@ func TestParenthesizeTaggedTemplate1(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral(""),
+					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
 					ast.NodeFlagsNone,
 				),
 			),
@@ -1089,7 +1088,7 @@ func TestParenthesizeTaggedTemplate2(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral(""),
+					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
 					ast.NodeFlagsNone,
 				),
 			),
@@ -2467,7 +2466,7 @@ func TestNoTrailingCommaAfterTransform(t *testing.T) {
 	visitor = emitContext.NewNodeVisitor(func(node *ast.Node) *ast.Node {
 		switch node.Kind {
 		case ast.KindNonNullExpression:
-			node = node.AsNonNullExpression().Expression
+			node = node.Expression()
 		default:
 			node = node.VisitEachChild(visitor)
 		}
@@ -2488,7 +2487,7 @@ func TestTrailingCommaAfterTransform(t *testing.T) {
 	visitor = emitContext.NewNodeVisitor(func(node *ast.Node) *ast.Node {
 		switch node.Kind {
 		case ast.KindNonNullExpression:
-			node = node.AsNonNullExpression().Expression
+			node = node.Expression()
 		default:
 			node = node.VisitEachChild(visitor)
 		}
@@ -2510,9 +2509,77 @@ func TestPartiallyEmittedExpression(t *testing.T) {
     .expression;`, false /*jsx*/)
 
 	emitContext := printer.NewEmitContext()
-	file = tstransforms.NewTypeEraserTransformer(emitContext, compilerOptions).TransformSourceFile(file)
+	file = tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: emitContext}).TransformSourceFile(file)
 	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), `return container.parent
     .left
     .expression
     .expression;`)
+}
+
+func TestParenthesizeBinaryExpressionMixingNullishCoalescing(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		title   string
+		innerOp ast.Kind
+		outerOp ast.Kind
+		side    string
+		output  string
+	}{
+		// inner ?? on left side of || or &&
+		{title: "BarBarWithLeftQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindBarBarToken, side: "left", output: "(a ?? b) || c;"},
+		{title: "AmpersandAmpersandWithLeftQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindAmpersandAmpersandToken, side: "left", output: "(a ?? b) && c;"},
+		// inner ?? on right side of || or &&
+		{title: "BarBarWithRightQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindBarBarToken, side: "right", output: "a || (b ?? c);"},
+		{title: "AmpersandAmpersandWithRightQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindAmpersandAmpersandToken, side: "right", output: "a && (b ?? c);"},
+		// inner || or && on left side of ??
+		{title: "QuestionQuestionWithLeftBarBar", innerOp: ast.KindBarBarToken, outerOp: ast.KindQuestionQuestionToken, side: "left", output: "(a || b) ?? c;"},
+		{title: "QuestionQuestionWithLeftAmpersandAmpersand", innerOp: ast.KindAmpersandAmpersandToken, outerOp: ast.KindQuestionQuestionToken, side: "left", output: "(a && b) ?? c;"},
+		// inner || or && on right side of ??
+		{title: "QuestionQuestionWithRightBarBar", innerOp: ast.KindBarBarToken, outerOp: ast.KindQuestionQuestionToken, side: "right", output: "a ?? (b || c);"},
+		{title: "QuestionQuestionWithRightAmpersandAmpersand", innerOp: ast.KindAmpersandAmpersandToken, outerOp: ast.KindQuestionQuestionToken, side: "right", output: "a ?? (b && c);"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			t.Parallel()
+			var factory ast.NodeFactory
+			innerExpr := factory.NewBinaryExpression(
+				nil, /*modifiers*/
+				factory.NewIdentifier("a"),
+				nil, /*typeNode*/
+				factory.NewToken(tt.innerOp),
+				factory.NewIdentifier("b"),
+			)
+			var outerExpr *ast.Node
+			if tt.side == "left" {
+				outerExpr = factory.NewBinaryExpression(
+					nil,       /*modifiers*/
+					innerExpr, /*left: (a innerOp b)*/
+					nil,       /*typeNode*/
+					factory.NewToken(tt.outerOp),
+					factory.NewIdentifier("c"),
+				)
+			} else {
+				outerExpr = factory.NewBinaryExpression(
+					nil, /*modifiers*/
+					factory.NewIdentifier("a"),
+					nil, /*typeNode*/
+					factory.NewToken(tt.outerOp),
+					innerExpr, /*right: (b innerOp c)*/
+				)
+				// adjust identifiers for right side
+				innerExpr.AsBinaryExpression().Left = factory.NewIdentifier("b")
+				innerExpr.AsBinaryExpression().Right = factory.NewIdentifier("c")
+			}
+			file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.ts", Path: "/file.ts"}, "", factory.NewNodeList(
+				[]*ast.Node{
+					factory.NewExpressionStatement(outerExpr),
+				},
+			), factory.NewToken(ast.KindEndOfFile))
+
+			parsetestutil.MarkSyntheticRecursive(file)
+			emittestutil.CheckEmit(t, nil, file.AsSourceFile(), tt.output)
+		})
+	}
 }

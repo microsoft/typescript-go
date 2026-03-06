@@ -69,16 +69,10 @@ class Server<X extends NeededInfo> {}
 export class MyServer extends Server<MyInfo> {} // not assignable error at `MyInfo`
 
 //// [varianceProblingAndZeroOrderIndexSignatureRelationsAlign.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MyServer = void 0;
 class Left {
-    value;
-    _tag = 'Left';
-    _A;
-    _L;
     constructor(value) {
         this.value = value;
+        this._tag = 'Left';
     }
     /** The given function is applied if this is a `Right` */
     map(f) {
@@ -89,12 +83,9 @@ class Left {
     }
 }
 class Right {
-    value;
-    _tag = 'Right';
-    _A;
-    _L;
     constructor(value) {
         this.value = value;
+        this._tag = 'Right';
     }
     map(f) {
         return new Right(f(this.value));
@@ -104,13 +95,6 @@ class Right {
     }
 }
 class Type {
-    name;
-    is;
-    validate;
-    encode;
-    _A;
-    _O;
-    _I;
     constructor(
     /** a unique name for this codec */
     name, 
@@ -133,6 +117,5 @@ function tmp2(n) { }
 tmp2(tmp1); // uncommenting this line removes a type error from a completely unrelated line ??
 class Server {
 }
-class MyServer extends Server {
+export class MyServer extends Server {
 } // not assignable error at `MyInfo`
-exports.MyServer = MyServer;

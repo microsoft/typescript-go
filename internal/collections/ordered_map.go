@@ -9,8 +9,7 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
+	"github.com/microsoft/typescript-go/internal/json"
 )
 
 // OrderedMap is an insertion ordered map.
@@ -78,6 +77,19 @@ func (m *OrderedMap[K, V]) Get(key K) (V, bool) {
 // GetOrZero retrieves a value from the map, or returns the zero value of the value type if the key is not present.
 func (m *OrderedMap[K, V]) GetOrZero(key K) V {
 	return m.mp[key]
+}
+
+// EntryAt retrieves the key-value pair at the specified index.
+func (m *OrderedMap[K, V]) EntryAt(index int) (K, V, bool) {
+	if index < 0 || index >= len(m.keys) {
+		var zero K
+		var zeroV V
+		return zero, zeroV, false
+	}
+
+	key := m.keys[index]
+	value := m.mp[key]
+	return key, value, true
 }
 
 // Has returns true if the map contains the key.
@@ -202,8 +214,8 @@ func (m *OrderedMap[K, V]) clone() OrderedMap[K, V] {
 
 var _ json.MarshalerTo = (*OrderedMap[string, string])(nil)
 
-func (m *OrderedMap[K, V]) MarshalJSONTo(enc *jsontext.Encoder) error {
-	if err := enc.WriteToken(jsontext.BeginObject); err != nil {
+func (m *OrderedMap[K, V]) MarshalJSONTo(enc *json.Encoder) error {
+	if err := enc.WriteToken(json.BeginObject); err != nil {
 		return err
 	}
 
@@ -223,14 +235,14 @@ func (m *OrderedMap[K, V]) MarshalJSONTo(enc *jsontext.Encoder) error {
 		}
 	}
 
-	return enc.WriteToken(jsontext.EndObject)
+	return enc.WriteToken(json.EndObject)
 }
 
 func resolveKeyName(k reflect.Value) (string, error) {
 	if k.Kind() == reflect.String {
 		return k.String(), nil
 	}
-	if tm, ok := k.Interface().(encoding.TextMarshaler); ok {
+	if tm, ok := reflect.TypeAssert[encoding.TextMarshaler](k); ok {
 		if k.Kind() == reflect.Pointer && k.IsNil() {
 			return "", nil
 		}
@@ -248,22 +260,22 @@ func resolveKeyName(k reflect.Value) (string, error) {
 
 var _ json.UnmarshalerFrom = (*OrderedMap[string, string])(nil)
 
-func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *json.Decoder) error {
 	token, err := dec.ReadToken()
 	if err != nil {
 		return err
 	}
-	if token.Kind() == 'n' { // jsontext.Null.Kind()
+	if token.Kind() == 'n' { // json.Null.Kind()
 		// By convention, to approximate the behavior of Unmarshal itself,
 		// Unmarshalers implement UnmarshalJSON([]byte("null")) as a no-op.
 		// https://pkg.go.dev/encoding/json#Unmarshaler
 		// TODO: reconsider
 		return nil
 	}
-	if token.Kind() != '{' { // jsontext.ObjectStart.Kind()
+	if token.Kind() != '{' { // json.ObjectStart.Kind()
 		return errors.New("cannot unmarshal non-object JSON value into Map")
 	}
-	for dec.PeekKind() != '}' { // jsontext.ObjectEnd.Kind()
+	for dec.PeekKind() != '}' { // json.ObjectEnd.Kind()
 		var key K
 		var value V
 		if err := json.UnmarshalDecode(dec, &key); err != nil {
@@ -278,4 +290,27 @@ func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 	return nil
+}
+
+func DiffOrderedMaps[K comparable, V comparable](m1 *OrderedMap[K, V], m2 *OrderedMap[K, V], onAdded func(key K, value V), onRemoved func(key K, value V), onModified func(key K, oldValue V, newValue V)) {
+	DiffOrderedMapsFunc(m1, m2, func(a, b V) bool {
+		return a == b
+	}, onAdded, onRemoved, onModified)
+}
+
+func DiffOrderedMapsFunc[K comparable, V any](m1 *OrderedMap[K, V], m2 *OrderedMap[K, V], equalValues func(a, b V) bool, onAdded func(key K, value V), onRemoved func(key K, value V), onModified func(key K, oldValue V, newValue V)) {
+	for k, v2 := range m2.Entries() {
+		if _, ok := m1.Get(k); !ok {
+			onAdded(k, v2)
+		}
+	}
+	for k, v1 := range m1.Entries() {
+		if v2, ok := m2.Get(k); ok {
+			if !equalValues(v1, v2) {
+				onModified(k, v1, v2)
+			}
+		} else {
+			onRemoved(k, v1)
+		}
+	}
 }

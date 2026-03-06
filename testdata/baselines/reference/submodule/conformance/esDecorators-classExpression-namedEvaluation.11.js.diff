@@ -1,8 +1,8 @@
 --- old.esDecorators-classExpression-namedEvaluation.11.js
 +++ new.esDecorators-classExpression-namedEvaluation.11.js
-@@= skipped -15, +15 lines =@@
-
+@@= skipped -16, +16 lines =@@
  //// [esDecorators-classExpression-namedEvaluation.11.js]
+ "use strict";
  // No NamedEvaluation, no class name
 -((() => {
 -    let _classDecorators = [dec];
@@ -44,7 +44,6 @@
 +class {
 +});
 +(class {
-+    @dec
 +    y;
 +});
  // No NamedEvaluation, class name
@@ -87,6 +86,5 @@
 +class C {
 +});
 +(class C {
-+    @dec
 +    y;
 +});

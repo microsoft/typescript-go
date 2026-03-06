@@ -5,7 +5,7 @@ class Foo {
 >Foo : Symbol(Foo, Decl(file.ts, 0, 0))
 
     x: number;
->x : Symbol(x, Decl(file.ts, 0, 11))
+>x : Symbol(Foo.x, Decl(file.ts, 0, 11))
 }
 
 declare global {
@@ -25,6 +25,6 @@ export = Foo;
 
 module.exports = /** @type {FooFun} */(void 0);
 >module.exports : Symbol(export=, Decl(something.js, 0, 0))
->module : Symbol(module.exports)
+>module : Symbol("./something", Decl(something.js, 0, 0))
 >exports : Symbol(export=, Decl(something.js, 0, 0))
 

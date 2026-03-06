@@ -186,11 +186,6 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 					inference.priority = n.priority
 				}
 				if n.priority == inference.priority {
-					// Inferring A to [A[0]] is a zero information inference (it guarantees A becomes its constraint), but oft arises from generic argument list inferences
-					// By discarding it early, we can allow more fruitful results to be used instead.
-					if c.isTupleOfSelf(inference.typeParameter, candidate) {
-						return
-					}
 					// We make contravariant inferences only if we are in a pure contravariant position,
 					// i.e. only if we have not descended into a bivariant position.
 					if n.contravariant && !n.bivariant {
@@ -547,7 +542,7 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 									return source
 								case left.flags&TypeFlagsTemplateLiteral != 0:
 									return left
-								case right.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, right.AsTemplateLiteralType()):
+								case right.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, right.AsTemplateLiteralType(), c.compareTypesAssignable):
 									return source
 								case left.flags&TypeFlagsStringMapping != 0:
 									return left
@@ -1024,7 +1019,7 @@ func (c *Checker) inferReverseMappedTypeWorker(source *Type, target *Type, const
 	templateType := c.getTemplateTypeFromMappedType(target)
 	inference := newInferenceInfo(typeParameter)
 	c.inferTypes([]*InferenceInfo{inference}, source, templateType, InferencePriorityNone, false)
-	return core.OrElse(c.getTypeFromInference(inference), c.unknownType)
+	return c.getWidenedType(core.OrElse(c.getTypeFromInference(inference), c.unknownType))
 }
 
 func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
@@ -1035,7 +1030,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 	optionalMask := core.IfElse(modifiers&MappedTypeModifiersIncludeOptional != 0, 0, ast.SymbolFlagsOptional)
 	var indexInfos []*IndexInfo
 	if indexInfo != nil {
-		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, core.OrElse(c.inferReverseMappedType(indexInfo.valueType, r.mappedType, r.constraintType), c.unknownType), readonlyMask && indexInfo.isReadonly, nil)}
+		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, core.OrElse(c.inferReverseMappedType(indexInfo.valueType, r.mappedType, r.constraintType), c.unknownType), readonlyMask && indexInfo.isReadonly, nil, nil)}
 	}
 	members := make(ast.SymbolTable)
 	limitedConstraint := c.getLimitedConstraint(t)
@@ -1174,7 +1169,7 @@ func (c *Checker) createEmptyObjectTypeFromStringLiteral(t *Type) *Type {
 	}
 	var indexInfos []*IndexInfo
 	if t.flags&TypeFlagsString != 0 {
-		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, c.emptyObjectType, false /*isReadonly*/, nil)}
+		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, c.emptyObjectType, false /*isReadonly*/, nil, nil)}
 	}
 	return c.newAnonymousType(nil, members, nil, nil, indexInfos)
 }
@@ -1347,6 +1342,19 @@ func (c *Checker) getMapperFromContext(n *InferenceContext) *TypeMapper {
 		return nil
 	}
 	return n.mapper
+}
+
+// Return a type mapper that combines the context's return mapper with a mapper that erases any additional type parameters
+// to their inferences at the time of creation.
+func (c *Checker) createOuterReturnMapper(context *InferenceContext) *TypeMapper {
+	if context.outerReturnMapper == nil {
+		mapper := c.cloneInferenceContext(context, InferenceFlagsNone).mapper
+		if context.returnMapper != nil {
+			mapper = newMergedTypeMapper(context.returnMapper, mapper)
+		}
+		context.outerReturnMapper = mapper
+	}
+	return context.outerReturnMapper
 }
 
 func (c *Checker) getCovariantInference(inference *InferenceInfo, signature *Signature) *Type {
@@ -1538,11 +1546,6 @@ func (c *Checker) isFromInferenceBlockedSource(t *Type) bool {
 
 func (c *Checker) isSkipDirectInferenceNode(node *ast.Node) bool {
 	return c.skipDirectInferenceNodes.Has(node)
-}
-
-// Returns `true` if `type` has the shape `[T[0]]` where `T` is `typeParameter`
-func (c *Checker) isTupleOfSelf(tp *Type, t *Type) bool {
-	return isTupleType(t) && c.getTupleElementType(t, 0) == c.getIndexedAccessType(tp, c.getNumberLiteralType(0)) && c.getTypeOfPropertyOfType(t, "1") == nil
 }
 
 func newInferenceInfo(typeParameter *Type) *InferenceInfo {

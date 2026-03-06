@@ -7,7 +7,6 @@ var unrelated;
 
 //// [emitEndOfFileJSDocComments.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @typedef {number} A */
 var unrelated;
 /** @typedef {number} B */ 

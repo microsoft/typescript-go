@@ -15,14 +15,14 @@ var f = function foo(...x: number) { }
 var f2 = (...x: Date, ...y: boolean) => { }
 >f2 : Symbol(f2, Decl(restParametersOfNonArrayTypes.ts, 4, 3))
 >x : Symbol(x, Decl(restParametersOfNonArrayTypes.ts, 4, 10))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >y : Symbol(y, Decl(restParametersOfNonArrayTypes.ts, 4, 21))
 
 class C {
 >C : Symbol(C, Decl(restParametersOfNonArrayTypes.ts, 4, 43))
 
     foo(...x: C) { }
->foo : Symbol(foo, Decl(restParametersOfNonArrayTypes.ts, 6, 9))
+>foo : Symbol(C.foo, Decl(restParametersOfNonArrayTypes.ts, 6, 9))
 >x : Symbol(x, Decl(restParametersOfNonArrayTypes.ts, 7, 8))
 >C : Symbol(C, Decl(restParametersOfNonArrayTypes.ts, 4, 43))
 }
@@ -34,7 +34,7 @@ interface I {
 >x : Symbol(x, Decl(restParametersOfNonArrayTypes.ts, 11, 5))
 
     foo(...x: number, ...y: number);
->foo : Symbol(foo, Decl(restParametersOfNonArrayTypes.ts, 11, 19))
+>foo : Symbol(I.foo, Decl(restParametersOfNonArrayTypes.ts, 11, 19))
 >x : Symbol(x, Decl(restParametersOfNonArrayTypes.ts, 12, 8))
 >y : Symbol(y, Decl(restParametersOfNonArrayTypes.ts, 12, 21))
 }
@@ -62,7 +62,7 @@ var b = {
 >foo : Symbol(foo, Decl(restParametersOfNonArrayTypes.ts, 22, 6))
 >x : Symbol(x, Decl(restParametersOfNonArrayTypes.ts, 22, 20))
 >y : Symbol(y, Decl(restParametersOfNonArrayTypes.ts, 22, 33))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
     b: (...x: string) => { }
 >b : Symbol(b, Decl(restParametersOfNonArrayTypes.ts, 22, 50))

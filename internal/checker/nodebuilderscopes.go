@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
 
@@ -23,12 +24,12 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 	// export const y: <T_1>(x: T_1) => T_1
 	oldMustCreateTypeParameterSymbolList := context.hasCreatedTypeParameterSymbolList
 	oldMustCreateTypeParametersNamesLookups := context.hasCreatedTypeParametersNamesLookups
-	context.hasCreatedTypeParameterSymbolList = false
-	context.hasCreatedTypeParametersNamesLookups = false
 	oldTypeParameterNames := context.typeParameterNames
 	oldTypeParameterNamesByText := context.typeParameterNamesByText
 	oldTypeParameterNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount
 	oldTypeParameterSymbolList := context.typeParameterSymbolList
+	context.hasCreatedTypeParameterSymbolList = oldTypeParameterSymbolList != nil
+	context.hasCreatedTypeParametersNamesLookups = oldTypeParameterNames != nil
 	context.typeParameterNames = maps.Clone(context.typeParameterNames)
 	context.typeParameterNamesByText = maps.Clone(context.typeParameterNamesByText)
 	context.typeParameterNamesByTextNextNameCount = maps.Clone(context.typeParameterNamesByTextNextNameCount)
@@ -48,7 +49,7 @@ type localsRecord struct {
 	oldSymbol *ast.Symbol
 }
 
-func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
+func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
 	cleanupContext := cloneNodeBuilderContext(b.ctx)
 	// For regular function/method declarations, the enclosing declaration will already be signature.declaration,
 	// so this is a no-op, but for arrow functions and function expressions, the enclosing declaration will be
@@ -88,7 +89,7 @@ func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 		// traverse all ancestors.
 		pushFakeScope := func(kind string, addAll func(addSymbol func(name string, symbol *ast.Symbol))) func() {
 			// We only ever need to look two declarations upward.
-			// Debug.assert(context.enclosingDeclaration) // !!!
+			debug.AssertIsDefined(b.ctx.enclosingDeclaration)
 			var existingFakeScope *ast.Node
 			if b.links.Has(b.ctx.enclosingDeclaration) {
 				links := b.links.Get(b.ctx.enclosingDeclaration)
@@ -104,7 +105,7 @@ func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 					}
 				}
 			}
-			// Debug.assertOptionalNode(existingFakeScope, isBlock) // !!!
+			debug.AssertOptionalNode(existingFakeScope, ast.IsBlock)
 
 			var locals ast.SymbolTable
 			if existingFakeScope != nil {

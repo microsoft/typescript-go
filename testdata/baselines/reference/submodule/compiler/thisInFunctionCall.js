@@ -39,8 +39,8 @@ class Test {
 
 
 //// [thisInFunctionCall.js]
+"use strict";
 class Test {
-    data;
     constructor() {
         this.data = [1, 2, 3];
     }

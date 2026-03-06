@@ -47,6 +47,7 @@ var u: Proxy<Blah>; // ok
 
 
 //// [nonPrimitiveInGeneric.js]
+"use strict";
 function generic(t) {
     var o = t; // expect error
 }
@@ -86,10 +87,10 @@ declare function bound2<T extends object>(): void;
 declare function bound3<T extends {}>(t: T): void;
 interface Proxy<T extends object> {
 }
-declare var x: Proxy<number>; // error
-declare var y: Proxy<null>; // ok
-declare var z: Proxy<undefined>; // ok
+declare var x: Proxy<number>;
+declare var y: Proxy<null>;
+declare var z: Proxy<undefined>;
 interface Blah {
     foo: number;
 }
-declare var u: Proxy<Blah>; // ok
+declare var u: Proxy<Blah>;

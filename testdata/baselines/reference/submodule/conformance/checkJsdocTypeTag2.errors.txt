@@ -1,12 +1,20 @@
 0.js(3,5): error TS2322: Type 'boolean' is not assignable to type 'String'.
 0.js(6,5): error TS2322: Type 'string' is not assignable to type 'number'.
 0.js(8,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+0.js(8,21): error TS1005: '}' expected.
+0.js(9,13): error TS7006: Parameter 'a' implicitly has an 'any' type.
 0.js(12,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+0.js(12,21): error TS1005: '}' expected.
+0.js(13,13): error TS7006: Parameter 'a' implicitly has an 'any' type.
 0.js(19,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+0.js(19,21): error TS1005: '}' expected.
+0.js(20,13): error TS7006: Parameter 'a' implicitly has an 'any' type.
 0.js(23,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+0.js(23,21): error TS1005: '}' expected.
+0.js(24,13): error TS7006: Parameter 'a' implicitly has an 'any' type.
 
 
-==== 0.js (6 errors) ====
+==== 0.js (14 errors) ====
     // @ts-check
     /** @type {String} */
     var S = true;
@@ -22,14 +30,22 @@
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+                        ~
+!!! error TS1005: '}' expected.
     const x1 = (a) => a + 1;
+                ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
     x1("string");
     
     /** @type {function (number): number} */
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+                        ~
+!!! error TS1005: '}' expected.
     const x2 = (a) => a + 1;
+                ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
     
     /** @type {string} */
     var a;
@@ -39,12 +55,20 @@
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+                        ~
+!!! error TS1005: '}' expected.
     const x3 = (a) => a.concat("hi");
+                ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
     x3(0);
     
     /** @type {function (number): string} */
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+                        ~
+!!! error TS1005: '}' expected.
     const x4 = (a) => a + 1;
+                ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
     x4(0);

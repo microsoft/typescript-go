@@ -6,7 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -15,89 +15,92 @@ import (
 ///
 
 type (
-	optionSelector                  = func(options *FormatCodeSettings) core.Tristate
-	anyOptionSelector[T comparable] = func(options *FormatCodeSettings) T
+	optionSelector                  = func(options *lsutil.FormatCodeSettings) core.Tristate
+	anyOptionSelector[T comparable] = func(options *lsutil.FormatCodeSettings) T
 )
 
-func semicolonOption(options *FormatCodeSettings) SemicolonPreference { return options.Semicolons }
-func insertSpaceAfterCommaDelimiterOption(options *FormatCodeSettings) core.Tristate {
+func semicolonOption(options *lsutil.FormatCodeSettings) lsutil.SemicolonPreference {
+	return options.Semicolons
+}
+
+func insertSpaceAfterCommaDelimiterOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterCommaDelimiter
 }
 
-func insertSpaceAfterSemicolonInForStatementsOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterSemicolonInForStatementsOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterSemicolonInForStatements
 }
 
-func insertSpaceBeforeAndAfterBinaryOperatorsOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceBeforeAndAfterBinaryOperatorsOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceBeforeAndAfterBinaryOperators
 }
 
-func insertSpaceAfterConstructorOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterConstructorOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterConstructor
 }
 
-func insertSpaceAfterKeywordsInControlFlowStatementsOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterKeywordsInControlFlowStatementsOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterKeywordsInControlFlowStatements
 }
 
-func insertSpaceAfterFunctionKeywordForAnonymousFunctionsOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterFunctionKeywordForAnonymousFunctionsOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingEmptyBracesOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterOpeningAndBeforeClosingEmptyBracesOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces
 }
 
-func insertSpaceAfterTypeAssertionOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceAfterTypeAssertionOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterTypeAssertion
 }
 
-func insertSpaceBeforeFunctionParenthesisOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceBeforeFunctionParenthesisOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceBeforeFunctionParenthesis
 }
 
-func placeOpenBraceOnNewLineForFunctionsOption(options *FormatCodeSettings) core.Tristate {
+func placeOpenBraceOnNewLineForFunctionsOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.PlaceOpenBraceOnNewLineForFunctions
 }
 
-func placeOpenBraceOnNewLineForControlBlocksOption(options *FormatCodeSettings) core.Tristate {
+func placeOpenBraceOnNewLineForControlBlocksOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.PlaceOpenBraceOnNewLineForControlBlocks
 }
 
-func insertSpaceBeforeTypeAnnotationOption(options *FormatCodeSettings) core.Tristate {
+func insertSpaceBeforeTypeAnnotationOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceBeforeTypeAnnotation
 }
 
-func indentMultiLineObjectLiteralBeginningOnBlankLineOption(options *FormatCodeSettings) core.Tristate {
+func indentMultiLineObjectLiteralBeginningOnBlankLineOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.IndentMultiLineObjectLiteralBeginningOnBlankLine
 }
 
-func indentSwitchCaseOption(options *FormatCodeSettings) core.Tristate {
+func indentSwitchCaseOption(options *lsutil.FormatCodeSettings) core.Tristate {
 	return options.IndentSwitchCase
 }
 
 func optionEquals[T comparable](optionName anyOptionSelector[T], optionValue T) contextPredicate {
-	return func(context *formattingContext) bool {
+	return func(context *FormattingContext) bool {
 		if context.Options == nil {
 			return false
 		}
@@ -106,7 +109,7 @@ func optionEquals[T comparable](optionName anyOptionSelector[T], optionValue T) 
 }
 
 func isOptionEnabled(optionName optionSelector) contextPredicate {
-	return func(context *formattingContext) bool {
+	return func(context *FormattingContext) bool {
 		if context.Options == nil {
 			return false
 		}
@@ -115,7 +118,7 @@ func isOptionEnabled(optionName optionSelector) contextPredicate {
 }
 
 func isOptionDisabled(optionName optionSelector) contextPredicate {
-	return func(context *formattingContext) bool {
+	return func(context *FormattingContext) bool {
 		if context.Options == nil {
 			return true
 		}
@@ -124,7 +127,7 @@ func isOptionDisabled(optionName optionSelector) contextPredicate {
 }
 
 func isOptionDisabledOrUndefined(optionName optionSelector) contextPredicate {
-	return func(context *formattingContext) bool {
+	return func(context *FormattingContext) bool {
 		if context.Options == nil {
 			return true
 		}
@@ -133,7 +136,7 @@ func isOptionDisabledOrUndefined(optionName optionSelector) contextPredicate {
 }
 
 func isOptionDisabledOrUndefinedOrTokensOnSameLine(optionName optionSelector) contextPredicate {
-	return func(context *formattingContext) bool {
+	return func(context *FormattingContext) bool {
 		if context.Options == nil {
 			return true
 		}
@@ -142,7 +145,7 @@ func isOptionDisabledOrUndefinedOrTokensOnSameLine(optionName optionSelector) co
 }
 
 func isOptionEnabledOrUndefined(optionName optionSelector) contextPredicate {
-	return func(context *formattingContext) bool {
+	return func(context *FormattingContext) bool {
 		if context.Options == nil {
 			return true
 		}
@@ -150,15 +153,15 @@ func isOptionEnabledOrUndefined(optionName optionSelector) contextPredicate {
 	}
 }
 
-func isForContext(context *formattingContext) bool {
+func isForContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindForStatement
 }
 
-func isNotForContext(context *formattingContext) bool {
+func isNotForContext(context *FormattingContext) bool {
 	return !isForContext(context)
 }
 
-func isBinaryOpContext(context *formattingContext) bool {
+func isBinaryOpContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindBinaryExpression:
 		return context.contextNode.AsBinaryExpression().OperatorToken.Kind != ast.KindCommaToken
@@ -207,15 +210,15 @@ func isBinaryOpContext(context *formattingContext) bool {
 	return false
 }
 
-func isNotBinaryOpContext(context *formattingContext) bool {
+func isNotBinaryOpContext(context *FormattingContext) bool {
 	return !isBinaryOpContext(context)
 }
 
-func isNotTypeAnnotationContext(context *formattingContext) bool {
+func isNotTypeAnnotationContext(context *FormattingContext) bool {
 	return !isTypeAnnotationContext(context)
 }
 
-func isTypeAnnotationContext(context *formattingContext) bool {
+func isTypeAnnotationContext(context *FormattingContext) bool {
 	contextKind := context.contextNode.Kind
 	return contextKind == ast.KindPropertyDeclaration ||
 		contextKind == ast.KindPropertySignature ||
@@ -224,47 +227,47 @@ func isTypeAnnotationContext(context *formattingContext) bool {
 		ast.IsFunctionLikeKind(contextKind)
 }
 
-func isOptionalPropertyContext(context *formattingContext) bool {
-	return ast.IsPropertyDeclaration(context.contextNode) && context.contextNode.AsPropertyDeclaration().PostfixToken != nil && context.contextNode.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken
+func isOptionalPropertyContext(context *FormattingContext) bool {
+	return ast.IsPropertyDeclaration(context.contextNode) && ast.HasQuestionToken(context.contextNode)
 }
 
-func isNonOptionalPropertyContext(context *formattingContext) bool {
+func isNonOptionalPropertyContext(context *FormattingContext) bool {
 	return !isOptionalPropertyContext(context)
 }
 
-func isConditionalOperatorContext(context *formattingContext) bool {
+func isConditionalOperatorContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindConditionalExpression ||
 		context.contextNode.Kind == ast.KindConditionalType
 }
 
-func isSameLineTokenOrBeforeBlockContext(context *formattingContext) bool {
+func isSameLineTokenOrBeforeBlockContext(context *FormattingContext) bool {
 	return context.TokensAreOnSameLine() || isBeforeBlockContext(context)
 }
 
-func isBraceWrappedContext(context *formattingContext) bool {
+func isBraceWrappedContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindObjectBindingPattern ||
 		context.contextNode.Kind == ast.KindMappedType ||
 		isSingleLineBlockContext(context)
 }
 
 // This check is done before an open brace in a control construct, a function, or a typescript block declaration
-func isBeforeMultilineBlockContext(context *formattingContext) bool {
+func isBeforeMultilineBlockContext(context *FormattingContext) bool {
 	return isBeforeBlockContext(context) && !(context.NextNodeAllOnSameLine() || context.NextNodeBlockIsOnOneLine())
 }
 
-func isMultilineBlockContext(context *formattingContext) bool {
+func isMultilineBlockContext(context *FormattingContext) bool {
 	return isBlockContext(context) && !(context.ContextNodeAllOnSameLine() || context.ContextNodeBlockIsOnOneLine())
 }
 
-func isSingleLineBlockContext(context *formattingContext) bool {
+func isSingleLineBlockContext(context *FormattingContext) bool {
 	return isBlockContext(context) && (context.ContextNodeAllOnSameLine() || context.ContextNodeBlockIsOnOneLine())
 }
 
-func isBlockContext(context *formattingContext) bool {
+func isBlockContext(context *FormattingContext) bool {
 	return nodeIsBlockContext(context.contextNode)
 }
 
-func isBeforeBlockContext(context *formattingContext) bool {
+func isBeforeBlockContext(context *FormattingContext) bool {
 	return nodeIsBlockContext(context.nextTokenParent)
 }
 
@@ -286,7 +289,7 @@ func nodeIsBlockContext(node *ast.Node) bool {
 	return false
 }
 
-func isFunctionDeclContext(context *formattingContext) bool {
+func isFunctionDeclContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindFunctionDeclaration,
 		ast.KindMethodDeclaration,
@@ -312,15 +315,15 @@ func isFunctionDeclContext(context *formattingContext) bool {
 	return false
 }
 
-func isNotFunctionDeclContext(context *formattingContext) bool {
+func isNotFunctionDeclContext(context *FormattingContext) bool {
 	return !isFunctionDeclContext(context)
 }
 
-func isFunctionDeclarationOrFunctionExpressionContext(context *formattingContext) bool {
+func isFunctionDeclarationOrFunctionExpressionContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindFunctionDeclaration || context.contextNode.Kind == ast.KindFunctionExpression
 }
 
-func isTypeScriptDeclWithBlockContext(context *formattingContext) bool {
+func isTypeScriptDeclWithBlockContext(context *FormattingContext) bool {
 	return nodeIsTypeScriptDeclWithBlockContext(context.contextNode)
 }
 
@@ -342,7 +345,7 @@ func nodeIsTypeScriptDeclWithBlockContext(node *ast.Node) bool {
 	return false
 }
 
-func isAfterCodeBlockContext(context *formattingContext) bool {
+func isAfterCodeBlockContext(context *FormattingContext) bool {
 	switch context.currentTokenParent.Kind {
 	case ast.KindClassDeclaration,
 		ast.KindModuleDeclaration,
@@ -361,7 +364,7 @@ func isAfterCodeBlockContext(context *formattingContext) bool {
 	return false
 }
 
-func isControlDeclContext(context *formattingContext) bool {
+func isControlDeclContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindIfStatement,
 		ast.KindSwitchStatement,
@@ -383,83 +386,83 @@ func isControlDeclContext(context *formattingContext) bool {
 	}
 }
 
-func isObjectContext(context *formattingContext) bool {
+func isObjectContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindObjectLiteralExpression
 }
 
-func isFunctionCallContext(context *formattingContext) bool {
+func isFunctionCallContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindCallExpression
 }
 
-func isNewContext(context *formattingContext) bool {
+func isNewContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindNewExpression
 }
 
-func isFunctionCallOrNewContext(context *formattingContext) bool {
+func isFunctionCallOrNewContext(context *FormattingContext) bool {
 	return isFunctionCallContext(context) || isNewContext(context)
 }
 
-func isPreviousTokenNotComma(context *formattingContext) bool {
+func isPreviousTokenNotComma(context *FormattingContext) bool {
 	return context.currentTokenSpan.Kind != ast.KindCommaToken
 }
 
-func isNextTokenNotCloseBracket(context *formattingContext) bool {
+func isNextTokenNotCloseBracket(context *FormattingContext) bool {
 	return context.nextTokenSpan.Kind != ast.KindCloseBracketToken
 }
 
-func isNextTokenNotCloseParen(context *formattingContext) bool {
+func isNextTokenNotCloseParen(context *FormattingContext) bool {
 	return context.nextTokenSpan.Kind != ast.KindCloseParenToken
 }
 
-func isArrowFunctionContext(context *formattingContext) bool {
+func isArrowFunctionContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindArrowFunction
 }
 
-func isImportTypeContext(context *formattingContext) bool {
+func isImportTypeContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindImportType
 }
 
-func isNonJsxSameLineTokenContext(context *formattingContext) bool {
+func isNonJsxSameLineTokenContext(context *FormattingContext) bool {
 	return context.TokensAreOnSameLine() && context.contextNode.Kind != ast.KindJsxText
 }
 
-func isNonJsxTextContext(context *formattingContext) bool {
+func isNonJsxTextContext(context *FormattingContext) bool {
 	return context.contextNode.Kind != ast.KindJsxText
 }
 
-func isNonJsxElementOrFragmentContext(context *formattingContext) bool {
+func isNonJsxElementOrFragmentContext(context *FormattingContext) bool {
 	return context.contextNode.Kind != ast.KindJsxElement && context.contextNode.Kind != ast.KindJsxFragment
 }
 
-func isJsxExpressionContext(context *formattingContext) bool {
+func isJsxExpressionContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindJsxExpression || context.contextNode.Kind == ast.KindJsxSpreadAttribute
 }
 
-func isNextTokenParentJsxAttribute(context *formattingContext) bool {
+func isNextTokenParentJsxAttribute(context *FormattingContext) bool {
 	return context.nextTokenParent.Kind == ast.KindJsxAttribute || (context.nextTokenParent.Kind == ast.KindJsxNamespacedName && context.nextTokenParent.Parent.Kind == ast.KindJsxAttribute)
 }
 
-func isJsxAttributeContext(context *formattingContext) bool {
+func isJsxAttributeContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindJsxAttribute
 }
 
-func isNextTokenParentNotJsxNamespacedName(context *formattingContext) bool {
+func isNextTokenParentNotJsxNamespacedName(context *FormattingContext) bool {
 	return context.nextTokenParent.Kind != ast.KindJsxNamespacedName
 }
 
-func isNextTokenParentJsxNamespacedName(context *formattingContext) bool {
+func isNextTokenParentJsxNamespacedName(context *FormattingContext) bool {
 	return context.nextTokenParent.Kind == ast.KindJsxNamespacedName
 }
 
-func isJsxSelfClosingElementContext(context *formattingContext) bool {
+func isJsxSelfClosingElementContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindJsxSelfClosingElement
 }
 
-func isNotBeforeBlockInFunctionDeclarationContext(context *formattingContext) bool {
+func isNotBeforeBlockInFunctionDeclarationContext(context *FormattingContext) bool {
 	return !isFunctionDeclContext(context) && !isBeforeBlockContext(context)
 }
 
-func isEndOfDecoratorContextOnSameLine(context *formattingContext) bool {
+func isEndOfDecoratorContextOnSameLine(context *FormattingContext) bool {
 	return context.TokensAreOnSameLine() &&
 		ast.HasDecorators(context.contextNode) &&
 		nodeIsInDecoratorContext(context.currentTokenParent) &&
@@ -473,24 +476,24 @@ func nodeIsInDecoratorContext(node *ast.Node) bool {
 	return node != nil && node.Kind == ast.KindDecorator
 }
 
-func isStartOfVariableDeclarationList(context *formattingContext) bool {
+func isStartOfVariableDeclarationList(context *FormattingContext) bool {
 	return context.currentTokenParent.Kind == ast.KindVariableDeclarationList &&
 		scanner.GetTokenPosOfNode(context.currentTokenParent, context.SourceFile, false) == context.currentTokenSpan.Loc.Pos()
 }
 
-func isNotFormatOnEnter(context *formattingContext) bool {
+func isNotFormatOnEnter(context *FormattingContext) bool {
 	return context.FormattingRequestKind != FormatRequestKindFormatOnEnter
 }
 
-func isModuleDeclContext(context *formattingContext) bool {
+func isModuleDeclContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindModuleDeclaration
 }
 
-func isObjectTypeContext(context *formattingContext) bool {
+func isObjectTypeContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindTypeLiteral // && context.contextNode.parent.Kind != ast.KindInterfaceDeclaration;
 }
 
-func isConstructorSignatureContext(context *formattingContext) bool {
+func isConstructorSignatureContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindConstructSignature
 }
 
@@ -521,36 +524,36 @@ func isTypeArgumentOrParameterOrAssertion(token TextRangeWithKind, parent *ast.N
 	}
 }
 
-func isTypeArgumentOrParameterOrAssertionContext(context *formattingContext) bool {
+func isTypeArgumentOrParameterOrAssertionContext(context *FormattingContext) bool {
 	return isTypeArgumentOrParameterOrAssertion(context.currentTokenSpan, context.currentTokenParent) ||
 		isTypeArgumentOrParameterOrAssertion(context.nextTokenSpan, context.nextTokenParent)
 }
 
-func isTypeAssertionContext(context *formattingContext) bool {
+func isTypeAssertionContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindTypeAssertionExpression
 }
 
-func isNonTypeAssertionContext(context *formattingContext) bool {
+func isNonTypeAssertionContext(context *FormattingContext) bool {
 	return !isTypeAssertionContext(context)
 }
 
-func isVoidOpContext(context *formattingContext) bool {
+func isVoidOpContext(context *FormattingContext) bool {
 	return context.currentTokenSpan.Kind == ast.KindVoidKeyword && context.currentTokenParent.Kind == ast.KindVoidExpression
 }
 
-func isYieldOrYieldStarWithOperand(context *formattingContext) bool {
-	return context.contextNode.Kind == ast.KindYieldExpression && context.contextNode.AsYieldExpression().Expression != nil
+func isYieldOrYieldStarWithOperand(context *FormattingContext) bool {
+	return context.contextNode.Kind == ast.KindYieldExpression && context.contextNode.Expression() != nil
 }
 
-func isNonNullAssertionContext(context *formattingContext) bool {
+func isNonNullAssertionContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindNonNullExpression
 }
 
-func isNotStatementConditionContext(context *formattingContext) bool {
+func isNotStatementConditionContext(context *FormattingContext) bool {
 	return !isStatementConditionContext(context)
 }
 
-func isStatementConditionContext(context *formattingContext) bool {
+func isStatementConditionContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindIfStatement,
 		ast.KindForStatement,
@@ -565,7 +568,7 @@ func isStatementConditionContext(context *formattingContext) bool {
 	}
 }
 
-func isSemicolonDeletionContext(context *formattingContext) bool {
+func isSemicolonDeletionContext(context *FormattingContext) bool {
 	nextTokenKind := context.nextTokenSpan.Kind
 	nextTokenStart := context.nextTokenSpan.Loc.Pos()
 	if ast.IsTrivia(nextTokenKind) {
@@ -584,8 +587,8 @@ func isSemicolonDeletionContext(context *formattingContext) bool {
 		nextTokenStart = scanner.GetTokenPosOfNode(nextRealToken, context.SourceFile, false)
 	}
 
-	startLine, _ := scanner.GetLineAndCharacterOfPosition(context.SourceFile, context.currentTokenSpan.Loc.Pos())
-	endLine, _ := scanner.GetLineAndCharacterOfPosition(context.SourceFile, nextTokenStart)
+	startLine := scanner.GetECMALineOfPosition(context.SourceFile, context.currentTokenSpan.Loc.Pos())
+	endLine := scanner.GetECMALineOfPosition(context.SourceFile, nextTokenStart)
 	if startLine == endLine {
 		return nextTokenKind == ast.KindCloseBraceToken || nextTokenKind == ast.KindEndOfFile
 	}
@@ -633,11 +636,11 @@ func isSemicolonDeletionContext(context *formattingContext) bool {
 		nextTokenKind != ast.KindDotToken
 }
 
-func isSemicolonInsertionContext(context *formattingContext) bool {
+func isSemicolonInsertionContext(context *FormattingContext) bool {
 	return lsutil.PositionIsASICandidate(context.currentTokenSpan.Loc.End(), context.currentTokenParent, context.SourceFile)
 }
 
-func isNotPropertyAccessOnIntegerLiteral(context *formattingContext) bool {
+func isNotPropertyAccessOnIntegerLiteral(context *FormattingContext) bool {
 	return !ast.IsPropertyAccessExpression(context.contextNode) ||
 		!ast.IsNumericLiteral(context.contextNode.Expression()) ||
 		strings.Contains(context.contextNode.Expression().Text(), ".")

@@ -150,8 +150,7 @@ let t: UseQueryOptions<X, 'role.user.role'>
 
 
 //// [recursiveConditionalCrash3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+// #43529
 /**
  * These two functions work as charm, also they are superfast and as expected they don't use additional Memory
  */
@@ -164,3 +163,4 @@ let y2;
  *
  */
 let t;
+export {};

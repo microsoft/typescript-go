@@ -30,12 +30,13 @@ const obj2 = { d: 'd' } as const
 
 
 //// [forwardRefInTypeDeclaration.js]
+"use strict";
 const s1 = "x";
 const s2 = "x";
 const s3 = "x";
 const s4 = "x";
 const s5 = "x";
 class Cls2 {
-    static b = "b";
 }
+Cls2.b = "b";
 const obj2 = { d: 'd' };

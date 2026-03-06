@@ -28,9 +28,9 @@ opts.objectRef || opts.getObjectRef();
 >opts.objectRef : Symbol(objectRef, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 8, 6), Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 9, 6))
 >opts : Symbol(opts, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 7, 11))
 >objectRef : Symbol(objectRef, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 8, 6), Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 9, 6))
->opts.getObjectRef : Symbol(getObjectRef, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 8, 29), Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 9, 24))
+>opts.getObjectRef : Symbol(getObjectRef, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 8, 29))
 >opts : Symbol(opts, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 7, 11))
->getObjectRef : Symbol(getObjectRef, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 8, 29), Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 9, 24))
+>getObjectRef : Symbol(getObjectRef, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 8, 29))
 
 // repro #49643 issuecomment-1174455723
 
@@ -38,31 +38,31 @@ interface X {
 >X : Symbol(X, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 11, 38))
 
     foo: string;
->foo : Symbol(foo, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 15, 13))
+>foo : Symbol(X.foo, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 15, 13))
 }
 
 interface Y {
 >Y : Symbol(Y, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 17, 1))
 
     baz: number;
->baz : Symbol(baz, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 19, 13))
+>baz : Symbol(Y.baz, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 19, 13))
 }
 
 interface A2 {
 >A2 : Symbol(A2, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 21, 1))
 
     result: unknown;
->result : Symbol(result, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 23, 14))
+>result : Symbol(A2.result, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 23, 14))
 
     error: undefined;
->error : Symbol(error, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 24, 20))
+>error : Symbol(A2.error, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 24, 20))
 }
 
 interface B2 {
 >B2 : Symbol(B2, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 26, 1))
 
     error: X | Y;
->error : Symbol(error, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 28, 14))
+>error : Symbol(B2.error, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 28, 14))
 >X : Symbol(X, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 11, 38))
 >Y : Symbol(Y, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 17, 1))
 }

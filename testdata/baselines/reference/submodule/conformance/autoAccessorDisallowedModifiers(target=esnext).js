@@ -48,7 +48,6 @@ class C1 {
     accessor d;
     accessor e;
     accessor f;
-    accessor g;
     accessor static h;
     accessor i() { }
     accessor get j() { return false; }
@@ -62,7 +61,7 @@ class C2 extends C1 {
 }
 accessor class C3 {
 }
-var E1;
+accessor var E1;
 (function (E1) {
 })(E1 || (E1 = {}));
 accessor var V1;

@@ -1,0 +1,35 @@
+--- old.argumentsReferenceInMethod5_Js.types
++++ new.argumentsReferenceInMethod5_Js.types
+@@= skipped -17, +17 lines =@@
+ 	 */
+ 	m(foo = {}) {
+ >m : (foo?: object) => void
+->foo : object | undefined
++>foo : object
+ >{} : {}
+
+ 		/**
+@@= skipped -8, +8 lines =@@
+ 		 */
+ 		this.foo = foo;
+ >this.foo = foo : object
+->this.foo : object | undefined
++>this.foo : object
+ >this : this
+->foo : object | undefined
++>foo : object
+ >foo : object
+
+ 		/**
+@@= skipped -10, +10 lines =@@
+ 		 */
+ 		this.bar = bar.arguments;
+ >this.bar = bar.arguments : {}
+->this.bar : object | undefined
++>this.bar : object
+ >this : this
+->bar : object | undefined
++>bar : object
+ >bar.arguments : {}
+ >bar : { arguments: {}; }
+ >arguments : {}

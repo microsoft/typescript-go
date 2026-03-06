@@ -4,18 +4,18 @@
 const MW = require("./MW");
 >MW : Symbol(MW, Decl(MC.js, 0, 5))
 >require : Symbol(require)
->"./MW" : Symbol("MW", Decl(MW.js, 0, 0))
+>"./MW" : Symbol("./MW", Decl(MW.js, 0, 0))
 
 /** @typedef {number} Cictema */
 
 module.exports = class MC {
->module.exports : Symbol(MC, Decl(MC.js, 4, 16))
->module : Symbol(module.exports)
->exports : Symbol(MC, Decl(MC.js, 4, 16))
+>module.exports : Symbol(export=, Decl(MC.js, 0, 27))
+>module : Symbol("./MC", Decl(MC.js, 0, 0))
+>exports : Symbol(export=, Decl(MC.js, 0, 27))
 >MC : Symbol(MC, Decl(MC.js, 4, 16))
 
   watch() {
->watch : Symbol(watch, Decl(MC.js, 4, 27))
+>watch : Symbol(MC.watch, Decl(MC.js, 4, 27))
 
     return new MW(this);
 >MW : Symbol(MW, Decl(MC.js, 0, 5))
@@ -36,16 +36,16 @@ class MW {
 >compiler : Symbol(compiler, Decl(MW.js, 6, 14))
 
     this.compiler = compiler;
->this.compiler : Symbol(compiler, Decl(MW.js, 6, 25))
+>this.compiler : Symbol(MW.compiler, Decl(MW.js, 6, 25))
 >this : Symbol(MW, Decl(MW.js, 0, 0))
->compiler : Symbol(compiler, Decl(MW.js, 6, 25))
+>compiler : Symbol(MW.compiler, Decl(MW.js, 6, 25))
 >compiler : Symbol(compiler, Decl(MW.js, 6, 14))
   }
 }
 
 module.exports = MW;
->module.exports : Symbol(MW, Decl(MW.js, 0, 0))
->module : Symbol(module.exports)
->exports : Symbol(MW, Decl(MW.js, 0, 0))
+>module.exports : Symbol(MW, Decl(MW.js, 9, 1))
+>module : Symbol("./MW", Decl(MW.js, 0, 0))
+>exports : Symbol(MW, Decl(MW.js, 9, 1))
 >MW : Symbol(MW, Decl(MW.js, 0, 0))
 

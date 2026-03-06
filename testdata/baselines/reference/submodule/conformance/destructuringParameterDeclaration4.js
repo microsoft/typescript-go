@@ -40,6 +40,9 @@ foo1(1, 2, "string", E1.a, E.b);  // Error
 
 
 //// [destructuringParameterDeclaration4.js]
+"use strict";
+// If the parameter is a rest parameter, the parameter type is any[]
+// A type annotation for a rest parameter must denote an array type.
 function a0(...x) { } // Error, rest parameter must be array type
 function a1(...x) { }
 function a2(...a) { } // Error, rest parameter must be array type
@@ -54,7 +57,6 @@ a5([1, 2]); // Error, parameter type is [any, any, [[any]]]
 a6([1, 2, "string"]); // Error, parameter type is number[]
 var temp = [1, 2, 3];
 class C {
-    temp;
     constructor(...temp) {
         this.temp = temp;
     } // Error, rest parameter can't have properties

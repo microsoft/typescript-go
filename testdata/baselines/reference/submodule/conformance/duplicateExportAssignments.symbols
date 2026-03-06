@@ -27,7 +27,7 @@ export = y;
 >y : Symbol(y, Decl(foo2.ts, 0, 11))
 
 === foo3.ts ===
-module x {
+namespace x {
 >x : Symbol(x, Decl(foo3.ts, 0, 0))
 
 	export var x = 10;
@@ -37,7 +37,7 @@ class y {
 >y : Symbol(y, Decl(foo3.ts, 2, 1))
 
 	y: number;
->y : Symbol(y, Decl(foo3.ts, 3, 9))
+>y : Symbol(y.y, Decl(foo3.ts, 3, 9))
 }
 export = x;
 >x : Symbol(x, Decl(foo3.ts, 0, 0))

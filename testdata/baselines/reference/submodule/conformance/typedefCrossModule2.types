@@ -2,25 +2,25 @@
 
 === use.js ===
 var mod = require('./mod1.js');
->mod : { Baz: typeof Baz; }
->require('./mod1.js') : { Baz: typeof Baz; }
+>mod : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
+>require('./mod1.js') : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 >require : any
 >'./mod1.js' : "./mod1.js"
 
 /** @type {import("./mod1.js").Baz} */
 var b;
->b : any
+>b : number
 
 /** @type {mod.Baz} */
 var bb;
->bb : mod.Baz
+>bb : number
 
 var bbb = new mod.Baz();
 >bbb : Baz
 >new mod.Baz() : Baz
->mod.Baz : typeof Baz
->mod : { Baz: typeof Baz; }
->Baz : typeof Baz
+>mod.Baz : typeof Baz | undefined
+>mod : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
+>Baz : typeof Baz | undefined
 
 === mod1.js ===
 // error
@@ -32,17 +32,17 @@ class Foo { } // should error
 /** @typedef {number} Bar */
 exports.Bar = class { }
 >exports.Bar = class { } : typeof Bar
->exports.Bar : any
+>exports.Bar : typeof Bar
 >exports : typeof import("./mod1")
->Bar : any
+>Bar : typeof Bar
 >class { } : typeof Bar
 
 /** @typedef {number} Baz */
 module.exports = {
 >module.exports = {    Baz: class { }} : { Baz: typeof Baz; }
->module.exports : { Baz: typeof Baz; }
->module : { "export=": { Baz: typeof Baz; }; }
->exports : { Baz: typeof Baz; }
+>module.exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
+>module : { "export=": { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }; }
+>exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 >{    Baz: class { }} : { Baz: typeof Baz; }
 
     Baz: class { }
@@ -60,17 +60,17 @@ var Qux = 2;
 /** @typedef {number} Quid */
 exports.Quid = 2;
 >exports.Quid = 2 : 2
->exports.Quid : any
+>exports.Quid : 2
 >exports : typeof import("./mod1")
->Quid : any
+>Quid : 2
 >2 : 2
 
 /** @typedef {number} Quack */
 module.exports = {
 >module.exports = {    Quack: 2} : { Quack: number; }
->module.exports : { Baz: typeof Baz; }
->module : { "export=": { Baz: typeof Baz; }; }
->exports : { Baz: typeof Baz; }
+>module.exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
+>module : { "export=": { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }; }
+>exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 >{    Quack: 2} : { Quack: number; }
 
     Quack: 2

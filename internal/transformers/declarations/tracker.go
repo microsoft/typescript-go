@@ -5,8 +5,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -16,15 +14,6 @@ type SymbolTrackerImpl struct {
 	state         *SymbolTrackerSharedState
 	host          DeclarationEmitHost
 	fallbackStack []*ast.Node
-}
-
-// GetModuleSpecifierGenerationHost implements checker.SymbolTracker.
-func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
-	return s.host
-}
-
-func (s *SymbolTrackerImpl) GetInnerSymbolTracker() nodebuilder.SymbolTracker {
-	return nil
 }
 
 // PopErrorFallbackNode implements checker.SymbolTracker.
@@ -78,10 +67,14 @@ func (s *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
 }
 
 // ReportLikelyUnsafeImportRequiredError implements checker.SymbolTracker.
-func (s *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string) {
+func (s *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string) {
 	location := s.errorLocation()
 	if location != nil {
-		s.state.addDiagnostic(createDiagnosticForNode(location, diagnostics.The_inferred_type_of_0_cannot_be_named_without_a_reference_to_1_This_is_likely_not_portable_A_type_annotation_is_necessary, s.errorDeclarationNameWithFallback(), specifier))
+		if symbolName != "" {
+			s.state.addDiagnostic(createDiagnosticForNode(location, diagnostics.The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_type_annotation_is_necessary, s.errorDeclarationNameWithFallback(), specifier, symbolName))
+		} else {
+			s.state.addDiagnostic(createDiagnosticForNode(location, diagnostics.The_inferred_type_of_0_cannot_be_named_without_a_reference_to_1_This_is_likely_not_portable_A_type_annotation_is_necessary, s.errorDeclarationNameWithFallback(), specifier))
+		}
 	}
 }
 
@@ -209,6 +202,7 @@ type SymbolTrackerSharedState struct {
 	getSymbolAccessibilityDiagnostic GetSymbolAccessibilityDiagnostic
 	errorNameNode                    *ast.Node
 	isolatedDeclarations             bool
+	stripInternal                    bool
 	currentSourceFile                *ast.SourceFile
 	resolver                         printer.EmitResolver
 	reportExpandoFunctionErrors      func(node *ast.Node)

@@ -39,12 +39,10 @@ export function css<S extends { [K in keyof S]: string }>(styles: S, ...classNam
 
 
 //// [recursiveTypeRelations.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.css = css;
+// Repro from #14896
 class Query {
 }
-function css(styles, ...classNames) {
+export function css(styles, ...classNames) {
     const args = classNames.map(arg => {
         if (arg == null) {
             return null;

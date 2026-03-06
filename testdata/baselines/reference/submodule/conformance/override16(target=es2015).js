@@ -11,9 +11,12 @@ class B extends A {
 
 
 //// [override16.js]
+"use strict";
 class A {
-    foo;
 }
 class B extends A {
-    foo = "string";
+    constructor() {
+        super(...arguments);
+        this.foo = "string";
+    }
 }

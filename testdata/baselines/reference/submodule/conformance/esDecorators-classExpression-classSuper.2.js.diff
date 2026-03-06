@@ -1,8 +1,8 @@
 --- old.esDecorators-classExpression-classSuper.2.js
 +++ new.esDecorators-classExpression-classSuper.2.js
-@@= skipped -29, +29 lines =@@
-
+@@= skipped -30, +30 lines =@@
  //// [esDecorators-classExpression-classSuper.2.js]
+ "use strict";
  // class expression in extends should not get an assigned name
 -((() => {
 -    let _classDecorators = [dec];
@@ -28,9 +28,7 @@
 -    };
 -    return C1 = _classThis;
 -})());
-+(
-+@dec
-+class C1 extends class {
++(class C1 extends class {
 +} {
 +    static {
 +        super.name;
@@ -60,9 +58,7 @@
 -    };
 -    return C2 = _classThis;
 -})());
-+(
-+@dec
-+class C2 extends function () { } {
++(class C2 extends function () { } {
 +    static {
 +        super.name;
 +    }
@@ -91,9 +87,7 @@
 -    };
 -    return C3 = _classThis;
 -})());
-+(
-+@dec
-+class C3 extends (() => { }) {
++(class C3 extends (() => { }) {
 +    static {
 +        super.name;
 +    }

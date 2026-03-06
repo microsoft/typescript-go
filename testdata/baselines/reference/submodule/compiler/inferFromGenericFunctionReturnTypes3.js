@@ -235,9 +235,8 @@ let arr = [[1, 2]];
 let mappedArr = arr.map(([x, y]) => {
     return [x, y];
 });
-export { DiagnosticSeverity };
 // Repro from #13594
-var DiagnosticSeverity;
+export var DiagnosticSeverity;
 (function (DiagnosticSeverity) {
     DiagnosticSeverity.Error = 1;
     DiagnosticSeverity.Warning = 2;
@@ -316,7 +315,6 @@ baz(makeFoo(Enum.A), makeFoo(Enum.A));
 
 
 //// [inferFromGenericFunctionReturnTypes3.d.ts]
-// Repro from #13594
 export declare namespace DiagnosticSeverity {
     const Error = 1;
     const Warning = 2;
@@ -330,7 +328,6 @@ export interface Diagnostic {
     source?: string;
     message: string;
 }
-// Repro from #27074
 interface OK<T> {
     kind: "OK";
     value: T;

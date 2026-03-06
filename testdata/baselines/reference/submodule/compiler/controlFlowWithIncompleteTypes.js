@@ -30,6 +30,8 @@ function foo2() {
 }
 
 //// [controlFlowWithIncompleteTypes.js]
+"use strict";
+// Repro from #11000
 function foo1() {
     let x = 0;
     while (cond) {

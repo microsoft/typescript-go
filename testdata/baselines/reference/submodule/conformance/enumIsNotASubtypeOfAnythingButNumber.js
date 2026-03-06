@@ -90,7 +90,7 @@ interface I14 {
 
 
 function f() { }
-module f {
+namespace f {
     export var bar = 1;
 }
 interface I15 {
@@ -100,7 +100,7 @@ interface I15 {
 
 
 class c { baz: string }
-module c {
+namespace c {
     export var bar = 1;
 }
 interface I16 {
@@ -133,16 +133,15 @@ interface I20 {
 }
 
 //// [enumIsNotASubtypeOfAnythingButNumber.js]
+"use strict";
 // enums are only subtypes of number, any and no other types
 var E;
 (function (E) {
     E[E["A"] = 0] = "A";
 })(E || (E = {}));
 class A {
-    foo;
 }
 class A2 {
-    foo;
 }
 var E2;
 (function (E2) {
@@ -153,7 +152,6 @@ function f() { }
     f.bar = 1;
 })(f || (f = {}));
 class c {
-    baz;
 }
 (function (c) {
     c.bar = 1;

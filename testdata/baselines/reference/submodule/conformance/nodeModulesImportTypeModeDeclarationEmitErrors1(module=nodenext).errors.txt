@@ -1,5 +1,5 @@
-/index.ts(2,51): error TS1453: `resolution-mode` should be either `require` or `import`.
-/index.ts(5,78): error TS1453: `resolution-mode` should be either `require` or `import`.
+/index.ts(2,49): error TS1453: `resolution-mode` should be either `require` or `import`.
+/index.ts(5,76): error TS1453: `resolution-mode` should be either `require` or `import`.
 /other.ts(3,7): error TS1340: Module 'pkg' does not refer to a type, but is used as a type here. Did you mean 'typeof import('pkg')'?
 /other.ts(3,22): error TS1005: 'with' expected.
 /other.ts(3,39): error TS1005: ';' expected.
@@ -39,10 +39,7 @@
 /other3.ts(3,55): error TS1005: ';' expected.
 /other3.ts(3,56): error TS1128: Declaration or statement expected.
 /other3.ts(3,57): error TS2304: Cannot find name 'RequireInterface'.
-/other3.ts(4,21): error TS2322: Type '{ "resolution-mode": string; }[]' is not assignable to type 'ImportCallOptions'.
-  Types of property 'with' are incompatible.
-    Type '(index: number, value: { "resolution-mode": string; }) => { "resolution-mode": string; }[]' is not assignable to type 'ImportAttributes'.
-      Index signature for type 'string' is missing in type '(index: number, value: { "resolution-mode": string; }) => { "resolution-mode": string; }[]'.
+/other3.ts(4,21): error TS2559: Type '{ "resolution-mode": string; }[]' has no properties in common with type 'ImportCallOptions'.
 /other3.ts(4,56): error TS2339: Property 'ImportInterface' does not exist on type 'Promise<{ default: typeof import("/node_modules/pkg/import"); }>'.
 /other3.ts(6,34): error TS1340: Module 'pkg' does not refer to a type, but is used as a type here. Did you mean 'typeof import('pkg')'?
 /other3.ts(6,48): error TS1005: '{' expected.
@@ -93,15 +90,15 @@
     export interface RequireInterface {}
 ==== /index.ts (2 errors) ====
     export type LocalInterface =
-        & import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface
-                                                      ~~~~~~~~
+        & import("pkg", { with: {"resolution-mode": "foobar"} }).RequireInterface
+                                                    ~~~~~~~~
 !!! error TS1453: `resolution-mode` should be either `require` or `import`.
-        & import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface;
+        & import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface;
     
-    export const a = (null as any as import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface);
-                                                                                 ~~~~~~~~
+    export const a = (null as any as import("pkg", { with: {"resolution-mode": "foobar"} }).RequireInterface);
+                                                                               ~~~~~~~~
 !!! error TS1453: `resolution-mode` should be either `require` or `import`.
-    export const b = (null as any as import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface);
+    export const b = (null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface);
 ==== /other.ts (27 errors) ====
     // missing assert:
     export type LocalInterface =
@@ -206,10 +203,7 @@
 !!! error TS2304: Cannot find name 'RequireInterface'.
         & import("pkg", [ {"resolution-mode": "import"} ]).ImportInterface;
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type '{ "resolution-mode": string; }[]' is not assignable to type 'ImportCallOptions'.
-!!! error TS2322:   Types of property 'with' are incompatible.
-!!! error TS2322:     Type '(index: number, value: { "resolution-mode": string; }) => { "resolution-mode": string; }[]' is not assignable to type 'ImportAttributes'.
-!!! error TS2322:       Index signature for type 'string' is missing in type '(index: number, value: { "resolution-mode": string; }) => { "resolution-mode": string; }[]'.
+!!! error TS2559: Type '{ "resolution-mode": string; }[]' has no properties in common with type 'ImportCallOptions'.
                                                            ~~~~~~~~~~~~~~~
 !!! error TS2339: Property 'ImportInterface' does not exist on type 'Promise<{ default: typeof import("/node_modules/pkg/import"); }>'.
     

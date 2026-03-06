@@ -15,10 +15,10 @@ interface Left<E> {
 >E : Symbol(E, Decl(nonInferrableTypePropagation2.ts, 4, 15))
 
     readonly _tag: 'Left'
->_tag : Symbol(_tag, Decl(nonInferrableTypePropagation2.ts, 4, 19))
+>_tag : Symbol(Left._tag, Decl(nonInferrableTypePropagation2.ts, 4, 19))
 
     readonly left: E
->left : Symbol(left, Decl(nonInferrableTypePropagation2.ts, 5, 25))
+>left : Symbol(Left.left, Decl(nonInferrableTypePropagation2.ts, 5, 25))
 >E : Symbol(E, Decl(nonInferrableTypePropagation2.ts, 4, 15))
 }
   
@@ -27,10 +27,10 @@ interface Right<A> {
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 9, 16))
 
     readonly _tag: 'Right'
->_tag : Symbol(_tag, Decl(nonInferrableTypePropagation2.ts, 9, 20))
+>_tag : Symbol(Right._tag, Decl(nonInferrableTypePropagation2.ts, 9, 20))
 
     readonly right: A
->right : Symbol(right, Decl(nonInferrableTypePropagation2.ts, 10, 26))
+>right : Symbol(Right.right, Decl(nonInferrableTypePropagation2.ts, 10, 26))
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 9, 16))
 }
 
@@ -68,9 +68,9 @@ declare const filter: {
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 21, 5))
 >B : Symbol(B, Decl(nonInferrableTypePropagation2.ts, 21, 7))
 >as : Symbol(as, Decl(nonInferrableTypePropagation2.ts, 21, 53))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 21, 5))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >B : Symbol(B, Decl(nonInferrableTypePropagation2.ts, 21, 7))
 
     <A>(predicate: Predicate<A>): <B extends A>(bs: ReadonlyArray<B>) => ReadonlyArray<B>
@@ -81,9 +81,9 @@ declare const filter: {
 >B : Symbol(B, Decl(nonInferrableTypePropagation2.ts, 22, 35))
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 22, 5))
 >bs : Symbol(bs, Decl(nonInferrableTypePropagation2.ts, 22, 48))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >B : Symbol(B, Decl(nonInferrableTypePropagation2.ts, 22, 35))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >B : Symbol(B, Decl(nonInferrableTypePropagation2.ts, 22, 35))
 
     <A>(predicate: Predicate<A>): (as: ReadonlyArray<A>) => ReadonlyArray<A>
@@ -92,9 +92,9 @@ declare const filter: {
 >Predicate : Symbol(Predicate, Decl(nonInferrableTypePropagation2.ts, 0, 0))
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 23, 5))
 >as : Symbol(as, Decl(nonInferrableTypePropagation2.ts, 23, 35))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 23, 5))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 23, 5))
 
 };

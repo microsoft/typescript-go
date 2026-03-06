@@ -1,53 +1,31 @@
 --- old.jsDeclarationsTypedefAndImportTypes.js
 +++ new.jsDeclarationsTypedefAndImportTypes.js
-@@= skipped -34, +34 lines =@@
-
-
- //// [conn.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /**
-  * @typedef {string | number} Whatever
-  */
- class Conn {
--    constructor() {
--        this.item = 3;
--    }
-+    constructor() { }
-+    item = 3;
-     method() { }
- }
-+export = Conn;
- module.exports = Conn;
- //// [usage.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /**
-  * @typedef {import("./conn")} Conn
-  */
-@@= skipped -30, +34 lines =@@
+@@= skipped -66, +66 lines =@@
 
 
  //// [conn.d.ts]
+-export = Conn;
+ /**
+  * @typedef {string | number} Whatever
+  */
 +export type Whatever = string | number;
- export = Conn;
--/**
-- * @typedef {string | number} Whatever
-- */
--declare class Conn {
--    item: number;
--    method(): void;
--}
+ declare class Conn {
++    constructor();
+     item: number;
+     method(): void;
+ }
 -declare namespace Conn {
 -    export { Whatever };
 -}
 -type Whatever = string | number;
++export = Conn;
  //// [usage.d.ts]
- export type Conn = import("./conn");
+-export type Conn = import("./conn");
  /**
   * @typedef {import("./conn")} Conn
   */
 -export class Wrap {
++export type Conn = import("./conn");
 +declare class Wrap {
      /**
       * @param {Conn} c

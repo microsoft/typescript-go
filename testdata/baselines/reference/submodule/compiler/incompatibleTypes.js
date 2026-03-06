@@ -78,6 +78,7 @@ var fp1: () =>any = a => 0;
 
 
 //// [incompatibleTypes.js]
+"use strict";
 class C1 {
     p1() {
         return "s";
@@ -89,10 +90,8 @@ class C2 {
     }
 }
 class C3 {
-    p1;
 }
 class C4 {
-    p1;
 }
 function if1(a) { }
 var c1;

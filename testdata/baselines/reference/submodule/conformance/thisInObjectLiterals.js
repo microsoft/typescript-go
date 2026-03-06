@@ -22,8 +22,8 @@ var obj: { f: () => any; };
 
 
 //// [thisInObjectLiterals.js]
+"use strict";
 class MyClass {
-    t;
     fn() {
         //type of 'this' in an object literal is the containing scope's this
         var t = { x: this, y: this.t };

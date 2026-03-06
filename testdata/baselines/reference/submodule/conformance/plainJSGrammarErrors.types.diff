@@ -1,0 +1,11 @@
+--- old.plainJSGrammarErrors.types
++++ new.plainJSGrammarErrors.types
+@@= skipped -180, +180 lines =@@
+ >C : typeof C
+
+ function nestedExports() {
+->nestedExports : () => void
++>nestedExports : { (): void; default: 12; }
+
+     export { staticParam }
+ >staticParam : any

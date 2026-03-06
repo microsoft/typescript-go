@@ -1,9 +1,9 @@
 --- old.esDecorators-classExpression-namedEvaluation.2.js
 +++ new.esDecorators-classExpression-namedEvaluation.2.js
-@@= skipped -33, +33 lines =@@
- ({ ["__proto__"]: @dec class { } });
+@@= skipped -34, +34 lines =@@
 
  //// [esDecorators-classExpression-namedEvaluation.2.js]
+ "use strict";
 -var _a, _b;
  let x, f;
  // 13.2.5.5 RS: PropertyDefinitionEvaluation
@@ -229,7 +229,6 @@
 +    class {
 +    } });
 +({ x: class {
-+        @dec
 +        y;
 +    } });
 +({ "x": 
@@ -237,7 +236,6 @@
 +    class {
 +    } });
 +({ "x": class {
-+        @dec
 +        y;
 +    } });
 +({ 0: 
@@ -245,7 +243,6 @@
 +    class {
 +    } });
 +({ 0: class {
-+        @dec
 +        y;
 +    } });
 +({ ["x"]: 
@@ -253,7 +250,6 @@
 +    class {
 +    } });
 +({ ["x"]: class {
-+        @dec
 +        y;
 +    } });
 +({ [0]: 
@@ -261,7 +257,6 @@
 +    class {
 +    } });
 +({ [0]: class {
-+        @dec
 +        y;
 +    } });
 +({ [f()]: 
@@ -269,7 +264,6 @@
 +    class {
 +    } });
 +({ [f()]: class {
-+        @dec
 +        y;
 +    } });
  // __proto__ setters do not perform NamedEvaluation

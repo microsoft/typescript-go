@@ -9,19 +9,20 @@
 -
 -
 -==== emitBOM.js (2 errors) ====
--    ï»¿// JS and d.ts output should have a BOM but not the sourcemap
+-    ï»¿"use strict";
 -     ~
 -!!! error TS1127: Invalid character.
 -      ~
 -!!! error TS1127: Invalid character.
+-    // JS and d.ts output should have a BOM but not the sourcemap
 -    var x;
 -    //# sourceMappingURL=emitBOM.js.map
 +//// [emitBOM.js]
-+﻿// JS and d.ts output should have a BOM but not the sourcemap
++﻿"use strict";
++// JS and d.ts output should have a BOM but not the sourcemap
 +var x;
 +//# sourceMappingURL=emitBOM.js.map
 
  //// [emitBOM.d.ts]
 -ï»¿declare var x: any;
-+﻿// JS and d.ts output should have a BOM but not the sourcemap
-+declare var x: any;
++﻿declare var x: any;

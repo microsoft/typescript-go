@@ -1,9 +1,9 @@
 --- old.esDecorators-classDeclaration-classThisReference(target=es2022).js
 +++ new.esDecorators-classDeclaration-classThisReference(target=es2022).js
-@@= skipped -13, +13 lines =@@
-
+@@= skipped -14, +14 lines =@@
 
  //// [esDecorators-classDeclaration-classThisReference.js]
+ "use strict";
 -let C = (() => {
 -    var _C_a_accessor_storage;
 -    let _classDecorators = [dec];
@@ -34,11 +34,12 @@
 -    };
 -    return C = _classThis;
 -})();
-+@dec
 +class C {
 +    static { this; }
 +    static x = this;
-+    static accessor a = this;
++    static #a_accessor_storage = this;
++    static get a() { return C.#a_accessor_storage; }
++    static set a(value) { C.#a_accessor_storage = value; }
 +    static m() { this; }
 +    static get g() { return this; }
 +}

@@ -43,11 +43,11 @@ class D extends A {
 
 
 //// [esDecorators-classDeclaration-classSuper.7.js]
+"use strict";
 class A {
 }
 class B extends A {
     constructor() {
-        'inject';
         'inject';
         super();
         const a = 1;

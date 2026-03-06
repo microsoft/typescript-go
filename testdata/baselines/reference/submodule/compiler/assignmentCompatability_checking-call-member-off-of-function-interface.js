@@ -33,6 +33,8 @@ fn(a => { });
 
 
 //// [assignmentCompatability_checking-call-member-off-of-function-interface.js]
+"use strict";
+// 3.8.4 Assignment Compatibility 
 var x;
 // Should fail
 x = '';

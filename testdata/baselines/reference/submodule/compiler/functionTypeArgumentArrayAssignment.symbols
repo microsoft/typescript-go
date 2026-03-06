@@ -1,19 +1,19 @@
 //// [tests/cases/compiler/functionTypeArgumentArrayAssignment.ts] ////
 
 === functionTypeArgumentArrayAssignment.ts ===
-module test {
+namespace test {
 >test : Symbol(test, Decl(functionTypeArgumentArrayAssignment.ts, 0, 0))
 
     interface Array<T> {
->Array : Symbol(Array, Decl(functionTypeArgumentArrayAssignment.ts, 0, 13))
+>Array : Symbol(Array, Decl(functionTypeArgumentArrayAssignment.ts, 0, 16))
 >T : Symbol(T, Decl(functionTypeArgumentArrayAssignment.ts, 1, 20))
 
         foo: T;
->foo : Symbol(foo, Decl(functionTypeArgumentArrayAssignment.ts, 1, 24))
+>foo : Symbol(Array.foo, Decl(functionTypeArgumentArrayAssignment.ts, 1, 24))
 >T : Symbol(T, Decl(functionTypeArgumentArrayAssignment.ts, 1, 20))
 
         length: number;
->length : Symbol(length, Decl(functionTypeArgumentArrayAssignment.ts, 2, 15))
+>length : Symbol(Array.length, Decl(functionTypeArgumentArrayAssignment.ts, 2, 15))
     }
 
     function map<U>() {

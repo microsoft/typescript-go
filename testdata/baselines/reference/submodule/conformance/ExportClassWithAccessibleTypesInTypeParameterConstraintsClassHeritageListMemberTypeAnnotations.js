@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/exportDeclarations/ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.ts] ////
 
 //// [ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.ts]
-module A {
+namespace A {
 
     export class Point {
         x: number;
@@ -23,22 +23,18 @@ module A {
 
 
 //// [ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.js]
+"use strict";
 var A;
 (function (A) {
     class Point {
-        x;
-        y;
     }
     A.Point = Point;
     A.Origin = { x: 0, y: 0 };
     class Point3d extends Point {
-        z;
     }
     A.Point3d = Point3d;
     A.Origin3d = { x: 0, y: 0, z: 0 };
     class Line {
-        start;
-        end;
         constructor(start, end) {
             this.start = start;
             this.end = end;

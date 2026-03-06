@@ -18,7 +18,7 @@ var AgeGroups;
     AgeGroups[AgeGroups["45-59"] = 5] = "45-59";
     AgeGroups[AgeGroups["60-150"] = 6] = "60-150";
 })(AgeGroups || (AgeGroups = {}));
-exports.SpotifyAgeGroupEnum = { ...AgeGroups };
+exports.SpotifyAgeGroupEnum = Object.assign({}, AgeGroups);
 
 
 //// [declarationEmitSpreadStringlyKeyedEnum.d.ts]

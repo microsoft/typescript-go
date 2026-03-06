@@ -3,7 +3,7 @@
 //// [classExtendsShadowedConstructorFunction.ts]
 class C { foo: string; }
 
-module M {
+namespace M {
     var C = 1;
     class D extends C { // error, C must evaluate to constructor function
         bar: string;
@@ -11,13 +11,12 @@ module M {
 }
 
 //// [classExtendsShadowedConstructorFunction.js]
+"use strict";
 class C {
-    foo;
 }
 var M;
 (function (M) {
     var C = 1;
     class D extends C {
-        bar;
     }
 })(M || (M = {}));

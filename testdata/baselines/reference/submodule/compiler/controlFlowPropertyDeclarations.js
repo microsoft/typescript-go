@@ -151,9 +151,7 @@ export class StyleParser {
 }
 
 //// [controlFlowPropertyDeclarations.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StyleParser = exports.HTMLtoJSX = void 0;
+// Repro from ##8913
 var HTMLDOMPropertyConfig = require('react/lib/HTMLDOMPropertyConfig');
 // Populate property map with ReactJS's attribute and property mappings
 // TODO handle/use .Properties value eg: MUST_USE_PROPERTY is not HTML attr
@@ -237,53 +235,52 @@ function isEmpty(string) {
 function isConvertiblePixelValue(value) {
     return /^\d+px$/.test(value);
 }
-class HTMLtoJSX {
-    output;
-    level;
-    _inPreTag;
-    /**
-     * Handles processing of the specified text node
-     *
-     * @param {TextNode} node
-     */
-    _visitText = (node) => {
-        var parentTag = node.parentNode && node.parentNode.tagName.toLowerCase();
-        if (parentTag === 'textarea' || parentTag === 'style') {
-            // Ignore text content of textareas and styles, as it will have already been moved
-            // to a "defaultValue" attribute and "dangerouslySetInnerHTML" attribute respectively.
-            return;
-        }
-        var text = '';
-        if (this._inPreTag) {
-            // If this text is contained within a <pre>, we need to ensure the JSX
-            // whitespace coalescing rules don't eat the whitespace. This means
-            // wrapping newlines and sequences of two or more spaces in variables.
-            text = text
-                .replace(/\r/g, '')
-                .replace(/( {2,}|\n|\t|\{|\})/g, function (whitespace) {
-                return '{' + JSON.stringify(whitespace) + '}';
-            });
-        }
-        else {
-            // If there's a newline in the text, adjust the indent level
-            if (text.indexOf('\n') > -1) {
+export class HTMLtoJSX {
+    constructor() {
+        /**
+         * Handles processing of the specified text node
+         *
+         * @param {TextNode} node
+         */
+        this._visitText = (node) => {
+            var parentTag = node.parentNode && node.parentNode.tagName.toLowerCase();
+            if (parentTag === 'textarea' || parentTag === 'style') {
+                // Ignore text content of textareas and styles, as it will have already been moved
+                // to a "defaultValue" attribute and "dangerouslySetInnerHTML" attribute respectively.
+                return;
             }
-        }
-        this.output += text;
-    };
+            var text = '';
+            if (this._inPreTag) {
+                // If this text is contained within a <pre>, we need to ensure the JSX
+                // whitespace coalescing rules don't eat the whitespace. This means
+                // wrapping newlines and sequences of two or more spaces in variables.
+                text = text
+                    .replace(/\r/g, '')
+                    .replace(/( {2,}|\n|\t|\{|\})/g, function (whitespace) {
+                    return '{' + JSON.stringify(whitespace) + '}';
+                });
+            }
+            else {
+                // If there's a newline in the text, adjust the indent level
+                if (text.indexOf('\n') > -1) {
+                }
+            }
+            this.output += text;
+        };
+    }
 }
-exports.HTMLtoJSX = HTMLtoJSX;
 ;
 /**
  * Handles parsing of inline styles
  */
-class StyleParser {
-    styles = {};
-    toJSXString = () => {
-        for (var key in this.styles) {
-            if (!this.styles.hasOwnProperty(key)) {
+export class StyleParser {
+    constructor() {
+        this.styles = {};
+        this.toJSXString = () => {
+            for (var key in this.styles) {
+                if (!this.styles.hasOwnProperty(key)) {
+                }
             }
-        }
-    };
+        };
+    }
 }
-exports.StyleParser = StyleParser;

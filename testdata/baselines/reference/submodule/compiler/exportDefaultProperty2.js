@@ -19,11 +19,13 @@ const x: B = { c: B };
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class C {
-    static B;
 }
 exports.default = C.B;
 //// [b.js]
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const a_1 = require("./a");
+const a_1 = __importDefault(require("./a"));
 const x = { c: a_1.default };

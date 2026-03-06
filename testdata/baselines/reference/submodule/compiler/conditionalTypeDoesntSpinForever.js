@@ -121,10 +121,9 @@ export enum PubSubRecordIsStoredInRedisAsA {
   const PubSubRecordType = buildPubSubRecordType({});
 
 //// [conditionalTypeDoesntSpinForever.js]
-export { PubSubRecordIsStoredInRedisAsA };
 // A *self-contained* demonstration of the problem follows...
 // Test this by running `tsc --target es6` on the command-line, rather than through another build tool such as Gulp, Webpack, etc.
-var PubSubRecordIsStoredInRedisAsA;
+export var PubSubRecordIsStoredInRedisAsA;
 (function (PubSubRecordIsStoredInRedisAsA) {
     PubSubRecordIsStoredInRedisAsA["redisHash"] = "redisHash";
     PubSubRecordIsStoredInRedisAsA["jsonEncodedRedisString"] = "jsonEncodedRedisString";

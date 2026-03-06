@@ -1,4 +1,4 @@
-package compiler
+package compiler_test
 
 import (
 	"path/filepath"
@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -40,6 +41,7 @@ var esnextLibs = []string{
 	"lib.es2022.d.ts",
 	"lib.es2023.d.ts",
 	"lib.es2024.d.ts",
+	"lib.es2025.d.ts",
 	"lib.esnext.d.ts",
 	"lib.dom.d.ts",
 	"lib.dom.iterable.d.ts",
@@ -102,14 +104,22 @@ var esnextLibs = []string{
 	"lib.es2024.regexp.d.ts",
 	"lib.es2024.sharedmemory.d.ts",
 	"lib.es2024.string.d.ts",
+	"lib.es2025.collection.d.ts",
+	"lib.es2025.float16.d.ts",
+	"lib.es2025.intl.d.ts",
+	"lib.es2025.iterator.d.ts",
+	"lib.es2025.promise.d.ts",
+	"lib.es2025.regexp.d.ts",
 	"lib.esnext.array.d.ts",
 	"lib.esnext.collection.d.ts",
-	"lib.esnext.intl.d.ts",
-	"lib.esnext.disposable.d.ts",
-	"lib.esnext.promise.d.ts",
+	"lib.esnext.date.d.ts",
 	"lib.esnext.decorators.d.ts",
-	"lib.esnext.iterator.d.ts",
-	"lib.esnext.float16.d.ts",
+	"lib.esnext.disposable.d.ts",
+	"lib.esnext.error.d.ts",
+	"lib.esnext.intl.d.ts",
+	"lib.esnext.sharedmemory.d.ts",
+	"lib.esnext.temporal.d.ts",
+	"lib.esnext.typedarrays.d.ts",
 	"lib.decorators.d.ts",
 	"lib.decorators.legacy.d.ts",
 	"lib.esnext.full.d.ts",
@@ -233,14 +243,14 @@ func TestProgram(t *testing.T) {
 
 			opts := core.CompilerOptions{Target: testCase.target}
 
-			program := NewProgram(ProgramOptions{
+			program := compiler.NewProgram(compiler.ProgramOptions{
 				Config: &tsoptions.ParsedCommandLine{
 					ParsedConfig: &core.ParsedOptions{
 						FileNames:       []string{"c:/dev/src/index.ts"},
 						CompilerOptions: &opts,
 					},
 				},
-				Host: NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil),
 			})
 
 			actualFiles := []string{}
@@ -270,18 +280,18 @@ func BenchmarkNewProgram(b *testing.B) {
 			}
 
 			opts := core.CompilerOptions{Target: testCase.target}
-			programOpts := ProgramOptions{
+			programOpts := compiler.ProgramOptions{
 				Config: &tsoptions.ParsedCommandLine{
 					ParsedConfig: &core.ParsedOptions{
 						FileNames:       []string{"c:/dev/src/index.ts"},
 						CompilerOptions: &opts,
 					},
 				},
-				Host: NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil),
 			}
 
 			for b.Loop() {
-				NewProgram(programOpts)
+				compiler.NewProgram(programOpts)
 			}
 		})
 	}
@@ -289,23 +299,23 @@ func BenchmarkNewProgram(b *testing.B) {
 	b.Run("compiler", func(b *testing.B) {
 		repo.SkipIfNoTypeScriptSubmodule(b)
 
-		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 
 		fs := osvfs.FS()
 		fs = bundled.WrapFS(fs)
 
-		host := NewCompilerHost(rootPath, fs, bundled.LibPath(), nil)
+		host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 
-		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, host, nil)
+		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, nil, host, nil)
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 
-		opts := ProgramOptions{
+		opts := compiler.ProgramOptions{
 			Config: parsed,
 			Host:   host,
 		}
 
 		for b.Loop() {
-			NewProgram(opts)
+			compiler.NewProgram(opts)
 		}
 	})
 }

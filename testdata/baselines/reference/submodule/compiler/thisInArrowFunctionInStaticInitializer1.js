@@ -11,10 +11,13 @@ class Vector {
 }
 
 //// [thisInArrowFunctionInStaticInitializer1.js]
+"use strict";
+var _a;
 function log(a) { }
 class Vector {
-    static foo = () => {
-        // 'this' should be allowed in a static initializer.
-        log(this);
-    };
 }
+_a = Vector;
+Vector.foo = () => {
+    // 'this' should be allowed in a static initializer.
+    log(_a);
+};

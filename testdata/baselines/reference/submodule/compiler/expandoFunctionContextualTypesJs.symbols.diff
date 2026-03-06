@@ -25,15 +25,12 @@
   * @type {MyComponentProps}
   */
  MyComponent2.defaultProps = {
-->MyComponent2.defaultProps : Symbol(MyComponent2.defaultProps, Decl(input.js, 15, 32))
+ >MyComponent2.defaultProps : Symbol(MyComponent2.defaultProps, Decl(input.js, 15, 32))
 ->MyComponent2 : Symbol(MyComponent2, Decl(input.js, 15, 5), Decl(input.js, 15, 32))
-->defaultProps : Symbol(MyComponent2.defaultProps, Decl(input.js, 15, 32))
-+>MyComponent2.defaultProps : Symbol(defaultProps, Decl(input.js, 15, 32))
 +>MyComponent2 : Symbol(MyComponent2, Decl(input.js, 15, 5))
-+>defaultProps : Symbol(defaultProps, Decl(input.js, 15, 32))
+ >defaultProps : Symbol(MyComponent2.defaultProps, Decl(input.js, 15, 32))
 
      color: "red"
- >color : Symbol(color, Decl(input.js, 20, 29))
 @@= skipped -19, +19 lines =@@
   */
  const check = MyComponent2;
@@ -64,7 +61,7 @@
 ->module.exports : Symbol(module.exports, Decl(input.js, 0, 0))
 ->module : Symbol(export=, Decl(input.js, 42, 1))
 +>module.exports : Symbol(export=, Decl(input.js, 42, 1))
-+>module : Symbol(module.exports)
++>module : Symbol("./input", Decl(input.js, 0, 0))
  >exports : Symbol(export=, Decl(input.js, 42, 1))
 
      color: "red"
@@ -76,5 +73,5 @@
 ->module : Symbol(module, Decl(input.js, 42, 1), Decl(input.js, 51, 22))
 ->exports : Symbol(module.exports, Decl(input.js, 0, 0))
 +>module.exports : Symbol(export=, Decl(input.js, 42, 1))
-+>module : Symbol(module.exports)
++>module : Symbol("./input", Decl(input.js, 0, 0))
 +>exports : Symbol(export=, Decl(input.js, 42, 1))

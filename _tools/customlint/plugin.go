@@ -17,9 +17,10 @@ func (f *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 	return []*analysis.Analyzer{
 		emptyCaseAnalyzer,
 		shadowAnalyzer,
+		unexportedAPIAnalyzer,
 	}, nil
 }
 
 func (f *plugin) GetLoadMode() string {
-	return register.LoadModeSyntax
+	return register.LoadModeTypesInfo
 }

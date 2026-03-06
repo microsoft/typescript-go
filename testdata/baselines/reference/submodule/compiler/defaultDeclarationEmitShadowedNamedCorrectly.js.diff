@@ -1,20 +1,6 @@
 --- old.defaultDeclarationEmitShadowedNamedCorrectly.js
 +++ new.defaultDeclarationEmitShadowedNamedCorrectly.js
-@@= skipped -25, +25 lines =@@
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.Something = void 0;
- exports.make = make;
--var me = require("./this");
-+const me = require("./this");
- function make(x) {
-     return null;
- }
- class MyComponent {
-+    props;
- }
- exports.default = MyComponent;
- var Something;
-@@= skipped -31, +32 lines =@@
+@@= skipped -89, +89 lines =@@
      props: Props;
  }
  export declare namespace Something {

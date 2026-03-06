@@ -29,15 +29,17 @@ class Bar<T extends string> {
 
 
 //// [variance.js]
+"use strict";
+// Test cases for parameter variances affected by conditional types.
 const foo = { prop: true };
 const x = foo;
 const y = foo;
 const z = x;
 // Repro from #30118
 class Bar {
-    static instance = [];
     cast(_name) { }
     pushThis() {
         Bar.instance.push(this);
     }
 }
+Bar.instance = [];

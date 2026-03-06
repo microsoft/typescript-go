@@ -46,8 +46,8 @@ function foo<T, U, V extends Date>(x: T, y: U, z: V) {
 //}
 
 //// [nullAssignableToEveryType.js]
+"use strict";
 class C {
-    foo;
 }
 var ac;
 var ai;

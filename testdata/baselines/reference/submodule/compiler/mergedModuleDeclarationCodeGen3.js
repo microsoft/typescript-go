@@ -1,31 +1,32 @@
 //// [tests/cases/compiler/mergedModuleDeclarationCodeGen3.ts] ////
 
 //// [mergedModuleDeclarationCodeGen3.ts]
-module my.data {
+namespace my.data {
     export function buz() { }
 }
-module my.data.foo {
+namespace my.data.foo {
     function data(my, foo) {
         buz();
     }
 }
 
 //// [mergedModuleDeclarationCodeGen3.js]
+"use strict";
 var my;
 (function (my) {
-    let data;
+    var data;
     (function (data) {
         function buz() { }
         data.buz = buz;
     })(data = my.data || (my.data = {}));
 })(my || (my = {}));
 (function (my_1) {
-    let data;
+    var data;
     (function (data_1) {
-        let foo;
+        var foo;
         (function (foo_1) {
             function data(my, foo) {
-                buz();
+                data_1.buz();
             }
         })(foo = data_1.foo || (data_1.foo = {}));
     })(data = my_1.data || (my_1.data = {}));

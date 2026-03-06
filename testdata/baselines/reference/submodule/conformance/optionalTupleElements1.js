@@ -48,6 +48,7 @@ t4 = [];
 
 
 //// [optionalTupleElements1.js]
+"use strict";
 function f1(t1, t2, t3, t4) {
     t1 = t1;
     t1 = t2; // Error
@@ -89,7 +90,7 @@ type L1 = T1["length"];
 type L2 = T2["length"];
 type L3 = T3["length"];
 type L4 = T4["length"];
-type T5 = [number, string?, boolean]; // Error
+type T5 = [number, string?, boolean];
 declare function f1(t1: T1, t2: T2, t3: T3, t4: T4): void;
 declare let t2: T2;
 declare let t3: T3;

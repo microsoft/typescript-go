@@ -1,8 +1,8 @@
 //// [tests/cases/compiler/privacyCheckTypeOfInvisibleModuleNoError.ts] ////
 
 //// [privacyCheckTypeOfInvisibleModuleNoError.ts]
-module Outer {
-    module Inner {
+namespace Outer {
+    namespace Inner {
         export var m: number;
     }
 
@@ -11,6 +11,7 @@ module Outer {
 
 
 //// [privacyCheckTypeOfInvisibleModuleNoError.js]
+"use strict";
 var Outer;
 (function (Outer) {
     let Inner;
@@ -24,6 +25,6 @@ declare namespace Outer {
     namespace Inner {
         var m: number;
     }
-    export var f: typeof Inner; // Since we dont unwind inner any more, it is error here
+    export var f: typeof Inner;
     export {};
 }

@@ -13,7 +13,9 @@ const a = class { private p = 10; };
 tsgo -w
 ExitStatus:: Success
 Output::
-//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+build starting at HH:MM:SS AM
+build finished in d.ddds
+//// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -37,8 +39,9 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 Signatures::
 
@@ -49,9 +52,12 @@ const a = "hello";
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
+tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
@@ -67,10 +73,14 @@ Edit [1]:: emit after fixing error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 //// [/home/src/workspaces/project/a.js] *new* 
+"use strict";
 const a = "hello";
 
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -86,7 +96,10 @@ Edit [2]:: no emit run after fixing error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -97,9 +110,12 @@ const a = class { private p = 10; };
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
+tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
@@ -115,12 +131,16 @@ Edit [4]:: emit when error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 //// [/home/src/workspaces/project/a.js] *modified* 
+"use strict";
 const a = class {
     p = 10;
 };
 
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -136,6 +156,9 @@ Edit [5]:: no emit run when error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::

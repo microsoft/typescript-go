@@ -32,13 +32,12 @@ class FooIteratorIterator {
 }
 
 //// [iterableArrayPattern16.js]
+"use strict";
 function fun(...[a, b]) { }
 fun(...new FooIteratorIterator);
 class Bar {
-    x;
 }
 class Foo extends Bar {
-    y;
 }
 class FooIterator {
     next() {

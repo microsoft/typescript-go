@@ -41,6 +41,8 @@ m.child; // ok
 
 
 //// [inferTypeParameterConstraints.js]
+"use strict";
+// Repro from #42636
 // https://github.com/microsoft/TypeScript/issues/57286#issuecomment-1927920336
 class BaseClass {
     fake() {
@@ -48,6 +50,9 @@ class BaseClass {
     }
 }
 class Klass extends BaseClass {
-    child = true;
+    constructor() {
+        super(...arguments);
+        this.child = true;
+    }
 }
 m.child; // ok

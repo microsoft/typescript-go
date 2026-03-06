@@ -78,7 +78,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 //// [mixed.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
  */
@@ -90,19 +89,23 @@ function doTheThing(x) {
     return { x: "" + x };
 }
 class ExportedThing {
-    z = "ok";
+    constructor() {
+        this.z = "ok";
+    }
 }
 module.exports = {
     doTheThing,
     ExportedThing,
 };
 class LocalThing {
-    y = "ok";
+    constructor() {
+        this.y = "ok";
+    }
 }
 
 
 //// [index.d.ts]
-export {}; // flag file as module
+export {};
 export type PropName = string | number | symbol;
 export type NumberToStringCb = (a: number) => string;
 export type MixinName<T> = T & {

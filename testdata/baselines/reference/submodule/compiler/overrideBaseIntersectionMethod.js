@@ -33,6 +33,8 @@ class Foo extends WithLocation(Point) {
 
 
 //// [overrideBaseIntersectionMethod.js]
+"use strict";
+// Repro from #14615
 const WithLocation = (Base) => class extends Base {
     getLocation() {
         const [x, y] = super.getLocation();
@@ -40,8 +42,6 @@ const WithLocation = (Base) => class extends Base {
     }
 };
 class Point {
-    x;
-    y;
     constructor(x, y) {
         this.x = x;
         this.y = y;

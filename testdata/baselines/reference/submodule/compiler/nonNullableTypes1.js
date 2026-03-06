@@ -38,6 +38,7 @@ class A {
 
 
 //// [nonNullableTypes1.js]
+"use strict";
 function f1(x) {
     let y = x || "hello"; // NonNullable<T> | string
 }
@@ -62,7 +63,9 @@ function f4(obj) {
     }
 }
 class A {
-    x = "hello";
+    constructor() {
+        this.x = "hello";
+    }
     foo() {
         let zz = this === null || this === void 0 ? void 0 : this.x; // string
     }

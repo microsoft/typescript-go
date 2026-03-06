@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -216,7 +217,7 @@ func StripQuotes(name string) string {
 	return name
 }
 
-var matchSlashSomething = regexp.MustCompile(`\.`)
+var matchSlashSomething = regexp.MustCompile(`\\.`)
 
 func matchSlashReplacer(in string) string {
 	return in[1:]
@@ -228,4 +229,29 @@ func UnquoteString(str string) string {
 	// In strada we do str.replace(/\\./g, s => s.substring(1)) - which is to say, replace all backslash-something with just something
 	// That's replicated here faithfully, but it seems wrong! This should probably be an actual unquote operation?
 	return matchSlashSomething.ReplaceAllStringFunc(inner, matchSlashReplacer)
+}
+
+func LowerFirstChar(str string) string {
+	char, size := utf8.DecodeRuneInString(str)
+	if size > 0 {
+		return string(unicode.ToLower(char)) + str[size:]
+	}
+	return str
+}
+
+func TruncateByRunes(str string, maxLength int) string {
+	if len(str) < maxLength {
+		return str
+	}
+	if maxLength <= 0 {
+		return ""
+	}
+	var runeCount int
+	for i := range str {
+		runeCount++
+		if runeCount >= maxLength {
+			return str[:i]
+		}
+	}
+	return str
 }

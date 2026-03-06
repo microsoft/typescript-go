@@ -1,0 +1,51 @@
+// === SignatureHelp ===
+=== /dummy.js ===
+// /**
+//  * Find an item
+//  * @template T
+//  * @param {T[]} l
+//  * @param {T} x
+//  * @returns {?T}  The names of the found item(s).
+//  */
+// function find(l, x) {
+// }
+// find('');
+//        ^
+// | ----------------------------------------------------------------------
+// | find(**l: unknown[]**, x: unknown): unknown
+// | Find an item
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 154,
+      "LSPosition": {
+        "line": 9,
+        "character": 7
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "find(l: unknown[], x: unknown): unknown",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Find an item"
+          },
+          "parameters": [
+            {
+              "label": "l: unknown[]"
+            },
+            {
+              "label": "x: unknown"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

@@ -1,33 +1,11 @@
 --- old.jsDeclarationsTypedefPropertyAndExportAssignment.js
 +++ new.jsDeclarationsTypedefPropertyAndExportAssignment.js
-@@= skipped -54, +54 lines =@@
- module.exports = MainThreadTasks;
-
- //// [module.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
- /**
-  * @typedef TaskGroup
-@@= skipped -27, +29 lines =@@
-     taskNameToGroup,
- };
- //// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- const { taskGroups, taskNameToGroup } = require('./module.js');
- /** @typedef {import('./module.js').TaskGroup} TaskGroup */
- /**
-@@= skipped -16, +18 lines =@@
-      */
-     constructor(x, y) { }
- }
-+export = MainThreadTasks;
- module.exports = MainThreadTasks;
+@@= skipped -103, +103 lines =@@
 
 
  //// [module.d.ts]
 -export type TaskGroupIds = "parseHTML" | "styleLayout";
++/** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 +export type TaskGroupIds = 'parseHTML' | 'styleLayout';
  export type TaskGroup = {
      id: TaskGroupIds;
@@ -67,34 +45,32 @@
 +export = _default;
  //// [index.d.ts]
 -export = MainThreadTasks;
--/** @typedef {import('./module.js').TaskGroup} TaskGroup */
--/**
-- * @typedef TaskNode
-- * @prop {TaskNode[]} children
-- * @prop {TaskNode|undefined} parent
-- * @prop {TaskGroup} group
-- */
--/** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
--declare class MainThreadTasks {
--    /**
--     * @param {TaskGroup} x
--     * @param {TaskNode} y
--     */
--    constructor(x: TaskGroup, y: TaskNode);
--}
++export type TaskGroup = import('./module.js').TaskGroup;
++export type TaskNode = {
++    children: TaskNode[];
++    parent: TaskNode | undefined;
++    group: TaskGroup;
++};
++export type PriorTaskData = {
++    timers: Map<string, TaskNode>;
++};
+ /** @typedef {import('./module.js').TaskGroup} TaskGroup */
+ /**
+  * @typedef TaskNode
+@@= skipped -41, +46 lines =@@
+      */
+     constructor(x: TaskGroup, y: TaskNode);
+ }
 -declare namespace MainThreadTasks {
 -    export { TaskGroup, TaskNode, PriorTaskData };
 -}
 -type TaskGroup = import("./module.js").TaskGroup;
 -type TaskNode = {
-+export type TaskGroup = import('./module.js').TaskGroup;
-+export type TaskNode = {
-     children: TaskNode[];
-     parent: TaskNode | undefined;
-     group: TaskGroup;
- };
+-    children: TaskNode[];
+-    parent: TaskNode | undefined;
+-    group: TaskGroup;
+-};
 -type PriorTaskData = {
-+export type PriorTaskData = {
-     timers: Map<string, TaskNode>;
- };
+-    timers: Map<string, TaskNode>;
+-};
 +export = MainThreadTasks;

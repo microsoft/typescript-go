@@ -6,13 +6,15 @@ import (
 )
 
 type SyncMap[K comparable, V any] struct {
+	_ [0]K
+	_ [0]V
 	m sync.Map
 }
 
 func (s *SyncMap[K, V]) Load(key K) (value V, ok bool) {
 	val, ok := s.m.Load(key)
-	if !ok {
-		return
+	if !ok || val == nil {
+		return value, ok
 	}
 	return val.(V), true
 }
@@ -23,6 +25,10 @@ func (s *SyncMap[K, V]) Store(key K, value V) {
 
 func (s *SyncMap[K, V]) LoadOrStore(key K, value V) (actual V, loaded bool) {
 	actualAny, loaded := s.m.LoadOrStore(key, value)
+	if actualAny == nil {
+		return actual, loaded
+	}
+
 	return actualAny.(V), loaded
 }
 
@@ -36,7 +42,17 @@ func (s *SyncMap[K, V]) Clear() {
 
 func (s *SyncMap[K, V]) Range(f func(key K, value V) bool) {
 	s.m.Range(func(key, value any) bool {
-		return f(key.(K), value.(V))
+		var k K
+		if key != nil {
+			k = key.(K)
+		}
+
+		var v V
+		if value != nil {
+			v = value.(V)
+		}
+
+		return f(k, v)
 	})
 }
 
@@ -70,4 +86,13 @@ func (s *SyncMap[K, V]) Keys() iter.Seq[K] {
 			return true
 		})
 	}
+}
+
+func (s *SyncMap[K, V]) Clone() *SyncMap[K, V] {
+	clone := &SyncMap[K, V]{}
+	s.m.Range(func(key, value any) bool {
+		clone.m.Store(key, value)
+		return true
+	})
+	return clone
 }

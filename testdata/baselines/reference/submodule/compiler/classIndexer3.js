@@ -13,11 +13,10 @@ class D123 extends C123 {
 }
 
 //// [classIndexer3.js]
+"use strict";
 class C123 {
     constructor() {
     }
 }
 class D123 extends C123 {
-    x;
-    y;
 }

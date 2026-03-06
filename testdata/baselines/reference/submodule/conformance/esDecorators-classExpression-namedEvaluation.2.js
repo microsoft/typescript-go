@@ -34,6 +34,7 @@ let x: any, f: any;
 ({ ["__proto__"]: @dec class { } });
 
 //// [esDecorators-classExpression-namedEvaluation.2.js]
+"use strict";
 let x, f;
 // 13.2.5.5 RS: PropertyDefinitionEvaluation
 //  PropertyAssignment : PropertyName `:` AssignmentExpression
@@ -42,7 +43,6 @@ let x, f;
     class {
     } });
 ({ x: class {
-        @dec
         y;
     } });
 ({ "x": 
@@ -50,7 +50,6 @@ let x, f;
     class {
     } });
 ({ "x": class {
-        @dec
         y;
     } });
 ({ 0: 
@@ -58,7 +57,6 @@ let x, f;
     class {
     } });
 ({ 0: class {
-        @dec
         y;
     } });
 ({ ["x"]: 
@@ -66,7 +64,6 @@ let x, f;
     class {
     } });
 ({ ["x"]: class {
-        @dec
         y;
     } });
 ({ [0]: 
@@ -74,7 +71,6 @@ let x, f;
     class {
     } });
 ({ [0]: class {
-        @dec
         y;
     } });
 ({ [f()]: 
@@ -82,7 +78,6 @@ let x, f;
     class {
     } });
 ({ [f()]: class {
-        @dec
         y;
     } });
 // __proto__ setters do not perform NamedEvaluation

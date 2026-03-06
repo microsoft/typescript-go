@@ -23,6 +23,7 @@ function fn1(x: C): List<C> { return asList(x); }
 function fn2(x: D): List<D> { return asList(x); }
 
 //// [enumLiteralUnionNotWidened.js]
+"use strict";
 // repro from #22093
 var A;
 (function (A) {
@@ -37,7 +38,9 @@ var B;
 })(B || (B = {}));
 ;
 class List {
-    items = [];
+    constructor() {
+        this.items = [];
+    }
 }
 function asList(arg) { return new List(); }
 // TypeScript incorrectly infers the return type of "asList(x)" to be "List<A | B>"

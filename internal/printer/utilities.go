@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -252,7 +253,7 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 		// If a NoSubstitutionTemplateLiteral appears to have a substitution in it, the original text
 		// had to include a backslash: `not \${a} substitution`.
 		var b strings.Builder
-		text := node.TemplateLiteralLikeData().Text
+		text := node.Text()
 		rawText := node.TemplateLiteralLikeData().RawText
 		raw := len(rawText) > 0 || len(text) == 0
 
@@ -330,12 +331,12 @@ func isNotPrologueDirective(node *ast.Node) bool {
 	return !ast.IsPrologueDirective(node)
 }
 
-func rangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
+func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
 	return rangeStartIsOnSameLineAsRangeEnd(r, r, sourceFile)
 }
 
 func rangeStartPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
-	return positionsAreOnSameLine(
+	return PositionsAreOnSameLine(
 		getStartPositionOfRange(range1, sourceFile, false /*includeComments*/),
 		getStartPositionOfRange(range2, sourceFile, false /*includeComments*/),
 		sourceFile,
@@ -343,15 +344,15 @@ func rangeStartPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRan
 }
 
 func rangeEndPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
-	return positionsAreOnSameLine(range1.End(), range2.End(), sourceFile)
+	return PositionsAreOnSameLine(range1.End(), range2.End(), sourceFile)
 }
 
 func rangeStartIsOnSameLineAsRangeEnd(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
-	return positionsAreOnSameLine(getStartPositionOfRange(range1, sourceFile, false /*includeComments*/), range2.End(), sourceFile)
+	return PositionsAreOnSameLine(getStartPositionOfRange(range1, sourceFile, false /*includeComments*/), range2.End(), sourceFile)
 }
 
 func rangeEndIsOnSameLineAsRangeStart(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
-	return positionsAreOnSameLine(range1.End(), getStartPositionOfRange(range2, sourceFile, false /*includeComments*/), sourceFile)
+	return PositionsAreOnSameLine(range1.End(), getStartPositionOfRange(range2, sourceFile, false /*includeComments*/), sourceFile)
 }
 
 func getStartPositionOfRange(r core.TextRange, sourceFile *ast.SourceFile, includeComments bool) int {
@@ -361,15 +362,15 @@ func getStartPositionOfRange(r core.TextRange, sourceFile *ast.SourceFile, inclu
 	return scanner.SkipTriviaEx(sourceFile.Text(), r.Pos(), &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 }
 
-func positionsAreOnSameLine(pos1 int, pos2 int, sourceFile *ast.SourceFile) bool {
-	return getLinesBetweenPositions(sourceFile, pos1, pos2) == 0
+func PositionsAreOnSameLine(pos1 int, pos2 int, sourceFile *ast.SourceFile) bool {
+	return GetLinesBetweenPositions(sourceFile, pos1, pos2) == 0
 }
 
-func getLinesBetweenPositions(sourceFile *ast.SourceFile, pos1 int, pos2 int) int {
+func GetLinesBetweenPositions(sourceFile *ast.SourceFile, pos1 int, pos2 int) int {
 	if pos1 == pos2 {
 		return 0
 	}
-	lineStarts := scanner.GetLineStarts(sourceFile)
+	lineStarts := scanner.GetECMALineStarts(sourceFile)
 	lower := core.IfElse(pos1 < pos2, pos1, pos2)
 	isNegative := lower == pos2
 	upper := core.IfElse(isNegative, pos1, pos2)
@@ -384,18 +385,18 @@ func getLinesBetweenPositions(sourceFile *ast.SourceFile, pos1 int, pos2 int) in
 
 func getLinesBetweenRangeEndAndRangeStart(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile, includeSecondRangeComments bool) int {
 	range2Start := getStartPositionOfRange(range2, sourceFile, includeSecondRangeComments)
-	return getLinesBetweenPositions(sourceFile, range1.End(), range2Start)
+	return GetLinesBetweenPositions(sourceFile, range1.End(), range2Start)
 }
 
 func getLinesBetweenPositionAndPrecedingNonWhitespaceCharacter(pos int, stopPos int, sourceFile *ast.SourceFile, includeComments bool) int {
 	startPos := scanner.SkipTriviaEx(sourceFile.Text(), pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 	prevPos := getPreviousNonWhitespacePosition(startPos, stopPos, sourceFile)
-	return getLinesBetweenPositions(sourceFile, core.IfElse(prevPos >= 0, prevPos, stopPos), startPos)
+	return GetLinesBetweenPositions(sourceFile, core.IfElse(prevPos >= 0, prevPos, stopPos), startPos)
 }
 
 func getLinesBetweenPositionAndNextNonWhitespaceCharacter(pos int, stopPos int, sourceFile *ast.SourceFile, includeComments bool) int {
 	nextPos := scanner.SkipTriviaEx(sourceFile.Text(), pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
-	return getLinesBetweenPositions(sourceFile, pos, core.IfElse(stopPos < nextPos, stopPos, nextPos))
+	return GetLinesBetweenPositions(sourceFile, pos, core.IfElse(stopPos < nextPos, stopPos, nextPos))
 }
 
 func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.SourceFile) int {
@@ -405,11 +406,6 @@ func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.Sour
 		}
 	}
 	return -1
-}
-
-func getCommentRange(node *ast.Node) core.TextRange {
-	// TODO(rbuckton)
-	return node.Loc
 }
 
 func siblingNodePositionsAreComparable(previousNode *ast.Node, nextNode *ast.Node) bool {
@@ -443,14 +439,8 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 	switch node.Kind {
 	case ast.KindTypeParameter:
 		switch {
-		case ast.IsFunctionLike(parent):
-			return parent.FunctionLikeData().TypeParameters
-		case ast.IsClassLike(parent):
-			return parent.ClassLikeData().TypeParameters
-		case ast.IsInterfaceDeclaration(parent):
-			return parent.AsInterfaceDeclaration().TypeParameters
-		case ast.IsTypeOrJSTypeAliasDeclaration(parent):
-			return parent.AsTypeAliasDeclaration().TypeParameters
+		case ast.IsFunctionLike(parent) || ast.IsClassLike(parent) || ast.IsInterfaceDeclaration(parent) || ast.IsTypeOrJSTypeAliasDeclaration(parent):
+			return parent.TypeParameterList()
 		case ast.IsInferTypeNode(parent):
 			break
 		default:
@@ -487,32 +477,20 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 	// }
 
 	switch parent.Kind {
-	case ast.KindTypeLiteral:
+	case ast.KindTypeLiteral, ast.KindInterfaceDeclaration:
 		if ast.IsTypeElement(node) {
-			return parent.AsTypeLiteralNode().Members
-		}
-	case ast.KindInterfaceDeclaration:
-		if ast.IsTypeElement(node) {
-			return parent.AsInterfaceDeclaration().Members
+			return parent.MemberList()
 		}
 	case ast.KindUnionType:
 		return parent.AsUnionTypeNode().Types
 	case ast.KindIntersectionType:
 		return parent.AsIntersectionTypeNode().Types
-	case ast.KindTupleType:
-		return parent.AsTupleTypeNode().Elements
-	case ast.KindArrayLiteralExpression:
-		return parent.AsArrayLiteralExpression().Elements
+	case ast.KindArrayLiteralExpression, ast.KindTupleType, ast.KindNamedImports, ast.KindNamedExports:
+		return parent.ElementList()
 	case ast.KindCommaListExpression:
 		panic("not implemented")
-	case ast.KindNamedImports:
-		return parent.AsNamedImports().Elements
-	case ast.KindNamedExports:
-		return parent.AsNamedExports().Elements
-	case ast.KindObjectLiteralExpression:
-		return parent.AsObjectLiteralExpression().Properties
-	case ast.KindJsxAttributes:
-		return parent.AsJsxAttributes().Properties
+	case ast.KindObjectLiteralExpression, ast.KindJsxAttributes:
+		return parent.PropertyList()
 	case ast.KindCallExpression:
 		p := parent.AsCallExpression()
 		switch {
@@ -529,41 +507,29 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		case node != p.Expression:
 			return p.Arguments
 		}
-	case ast.KindJsxElement:
+	case ast.KindJsxElement, ast.KindJsxFragment:
 		if ast.IsJsxChild(node) {
-			return parent.AsJsxElement().Children
+			return parent.Children()
 		}
-	case ast.KindJsxFragment:
-		if ast.IsJsxChild(node) {
-			return parent.AsJsxFragment().Children
-		}
-	case ast.KindJsxOpeningElement:
+	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		if ast.IsTypeNode(node) {
-			return parent.AsJsxOpeningElement().TypeArguments
+			return parent.TypeArgumentList()
 		}
-	case ast.KindJsxSelfClosingElement:
-		if ast.IsTypeNode(node) {
-			return parent.AsJsxSelfClosingElement().TypeArguments
-		}
-	case ast.KindBlock:
-		return parent.AsBlock().Statements
-	case ast.KindCaseClause, ast.KindDefaultClause:
-		return parent.AsCaseOrDefaultClause().Statements
-	case ast.KindModuleBlock:
-		return parent.AsModuleBlock().Statements
+	case ast.KindBlock, ast.KindModuleBlock, ast.KindCaseClause, ast.KindDefaultClause:
+		return parent.StatementList()
 	case ast.KindCaseBlock:
 		return parent.AsCaseBlock().Clauses
 	case ast.KindClassDeclaration, ast.KindClassExpression:
 		if ast.IsClassElement(node) {
-			return parent.ClassLikeData().Members
+			return parent.MemberList()
 		}
 	case ast.KindEnumDeclaration:
 		if ast.IsEnumMember(node) {
-			return parent.AsEnumDeclaration().Members
+			return parent.MemberList()
 		}
 	case ast.KindSourceFile:
 		if ast.IsStatement(node) {
-			return parent.AsSourceFile().Statements
+			return parent.StatementList()
 		}
 	}
 
@@ -640,13 +606,13 @@ func greatestEnd(end int, nodes ...interface{ End() int }) int {
 
 func skipSynthesizedParentheses(node *ast.Node) *ast.Node {
 	for node.Kind == ast.KindParenthesizedExpression && ast.NodeIsSynthesized(node) {
-		node = node.AsParenthesizedExpression().Expression
+		node = node.Expression()
 	}
 	return node
 }
 
 func isNewExpressionWithoutArguments(node *ast.Node) bool {
-	return node.Kind == ast.KindNewExpression && node.AsNewExpression().Arguments == nil
+	return node.Kind == ast.KindNewExpression && node.ArgumentList() == nil
 }
 
 func isBinaryOperation(node *ast.Node, token ast.Kind) bool {
@@ -655,12 +621,22 @@ func isBinaryOperation(node *ast.Node, token ast.Kind) bool {
 		node.AsBinaryExpression().OperatorToken.Kind == token
 }
 
+func mixingBinaryOperatorsRequiresParentheses(a ast.Kind, b ast.Kind) bool {
+	if a == ast.KindQuestionQuestionToken {
+		return b == ast.KindAmpersandAmpersandToken || b == ast.KindBarBarToken
+	}
+	if b == ast.KindQuestionQuestionToken {
+		return a == ast.KindAmpersandAmpersandToken || a == ast.KindBarBarToken
+	}
+	return false
+}
+
 func isImmediatelyInvokedFunctionExpressionOrArrowFunction(node *ast.Expression) bool {
 	node = ast.SkipPartiallyEmittedExpressions(node)
 	if !ast.IsCallExpression(node) {
 		return false
 	}
-	node = ast.SkipPartiallyEmittedExpressions(node.AsCallExpression().Expression)
+	node = ast.SkipPartiallyEmittedExpressions(node.Expression())
 	return ast.IsFunctionExpression(node) || ast.IsArrowFunction(node)
 }
 
@@ -817,7 +793,7 @@ func matchQuotedString(text string, pos *int) bool {
 // /// <reference no-default-lib="..." />
 // /// <amd-dependency path="..." />
 // /// <amd-module />
-func isRecognizedTripleSlashComment(text string, commentRange ast.CommentRange) bool {
+func IsRecognizedTripleSlashComment(text string, commentRange ast.CommentRange) bool {
 	if commentRange.Kind == ast.KindSingleLineCommentTrivia &&
 		commentRange.Len() > 2 &&
 		text[commentRange.Pos()+1] == '/' &&
@@ -881,7 +857,7 @@ func isJSDocLikeText(text string, comment ast.CommentRange) bool {
 		text[comment.Pos()+3] != '/'
 }
 
-func isPinnedComment(text string, comment ast.CommentRange) bool {
+func IsPinnedComment(text string, comment ast.CommentRange) bool {
 	return comment.Kind == ast.KindMultiLineCommentTrivia &&
 		comment.Len() > 5 &&
 		text[comment.Pos()+2] == '!'
@@ -889,7 +865,7 @@ func isPinnedComment(text string, comment ast.CommentRange) bool {
 
 func calculateIndent(text string, pos int, end int) int {
 	currentLineIndent := 0
-	indentSize := len(getIndentString(1))
+	indentSize := GetDefaultIndentSize()
 	for pos < end {
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		if !stringutil.IsWhiteSpaceSingleLine(ch) {
@@ -906,4 +882,46 @@ func calculateIndent(text string, pos int, end int) int {
 	}
 
 	return currentLineIndent
+}
+
+// lineCharacterCache provides cached line/character lookups for a source file,
+// optimized for monotonically increasing positions (e.g., during source map emit).
+//
+// When positions increase within the same line, only the delta between the last
+// position and the new position needs to be scanned for UTF-16 code unit counts,
+// turning what would be O(n²) into O(n) for long lines.
+//
+// Character offsets are measured in UTF-16 code units per the source map specification.
+type lineCharacterCache struct {
+	lineMap    []core.TextPos
+	text       string
+	cachedLine int
+	cachedPos  int
+	cachedChar core.UTF16Offset
+	hasCached  bool
+}
+
+func newLineCharacterCache(source sourcemap.Source) *lineCharacterCache {
+	return &lineCharacterCache{
+		lineMap: source.ECMALineMap(),
+		text:    source.Text(),
+	}
+}
+
+// getLineAndCharacter returns the 0-based line number and UTF-16 code unit
+// offset from the start of that line for the given byte position.
+func (c *lineCharacterCache) getLineAndCharacter(pos int) (line int, character core.UTF16Offset) {
+	line = scanner.ComputeLineOfPosition(c.lineMap, pos)
+	if c.hasCached && line == c.cachedLine && pos >= c.cachedPos {
+		// Incremental: only count UTF-16 code units from the last cached position.
+		character = c.cachedChar + core.UTF16Len(c.text[c.cachedPos:pos])
+	} else {
+		// Full computation from line start.
+		character = core.UTF16Len(c.text[c.lineMap[line]:pos])
+	}
+	c.cachedLine = line
+	c.cachedPos = pos
+	c.cachedChar = character
+	c.hasCached = true
+	return line, character
 }

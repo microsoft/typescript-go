@@ -19,14 +19,11 @@ inJsArrow(2); // no error gets linted as expected
 
 
 //// [typeTagOnFunctionReferencesGeneric.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.inJs = inJs;
 /**
  * @typedef {<T>(m : T) => T} IFn
  */
 /**@type {IFn}*/
-function inJs(l) {
+export function inJs(l) {
     return l;
 }
 inJs(1); // lints error. Why?
@@ -38,9 +35,9 @@ inJsArrow(2); // no error gets linted as expected
 
 
 //// [typeTagOnFunctionReferencesGeneric.d.ts]
-export type IFn = <T>(m: T) => T;
 /**
  * @typedef {<T>(m : T) => T} IFn
  */
+export type IFn = <T>(m: T) => T;
 /**@type {IFn}*/
 export declare function inJs<T>(l: T): T;

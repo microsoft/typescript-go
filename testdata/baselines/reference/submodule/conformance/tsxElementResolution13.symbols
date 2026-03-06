@@ -1,16 +1,16 @@
 //// [tests/cases/conformance/jsx/tsxElementResolution13.tsx] ////
 
 === file.tsx ===
-declare module JSX {
+declare namespace JSX {
 >JSX : Symbol(JSX, Decl(file.tsx, 0, 0))
 
 	interface Element { }
->Element : Symbol(Element, Decl(file.tsx, 0, 20))
+>Element : Symbol(Element, Decl(file.tsx, 0, 23))
 
 	interface ElementAttributesProperty { pr1: any; pr2: any; }
 >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(file.tsx, 1, 22))
->pr1 : Symbol(pr1, Decl(file.tsx, 2, 38))
->pr2 : Symbol(pr2, Decl(file.tsx, 2, 48))
+>pr1 : Symbol(ElementAttributesProperty.pr1, Decl(file.tsx, 2, 38))
+>pr2 : Symbol(ElementAttributesProperty.pr2, Decl(file.tsx, 2, 48))
 }
 
 interface Obj1 {

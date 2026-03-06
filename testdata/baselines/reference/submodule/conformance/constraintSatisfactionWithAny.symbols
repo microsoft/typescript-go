@@ -6,7 +6,7 @@
 function foo<T extends String>(x: T): T { return null; }
 >foo : Symbol(foo, Decl(constraintSatisfactionWithAny.ts, 0, 0))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 2, 13))
->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
 >x : Symbol(x, Decl(constraintSatisfactionWithAny.ts, 2, 31))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 2, 13))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 2, 13))
@@ -69,10 +69,10 @@ foo4<any>(b);
 class C<T extends String> {
 >C : Symbol(C, Decl(constraintSatisfactionWithAny.ts, 16, 13))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 22, 8))
->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
 
     constructor(public x: T) { }
->x : Symbol(x, Decl(constraintSatisfactionWithAny.ts, 23, 16))
+>x : Symbol(C.x, Decl(constraintSatisfactionWithAny.ts, 23, 16))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 22, 8))
 }
 
@@ -92,7 +92,7 @@ class C2<T extends { x: number }> {
 >x : Symbol(x, Decl(constraintSatisfactionWithAny.ts, 29, 20))
 
     constructor(public x: T) { }
->x : Symbol(x, Decl(constraintSatisfactionWithAny.ts, 30, 16))
+>x : Symbol(C2.x, Decl(constraintSatisfactionWithAny.ts, 30, 16))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 29, 9))
 }
 
@@ -122,7 +122,7 @@ class C4<T extends <T>(x:T) => T> {
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 43, 20))
 
     constructor(public x: T) { }
->x : Symbol(x, Decl(constraintSatisfactionWithAny.ts, 44, 16))
+>x : Symbol(C4.x, Decl(constraintSatisfactionWithAny.ts, 44, 16))
 >T : Symbol(T, Decl(constraintSatisfactionWithAny.ts, 43, 9))
 }
 

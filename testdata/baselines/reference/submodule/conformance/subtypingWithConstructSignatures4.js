@@ -114,18 +114,15 @@ var r18arg: new (x: new <T>(a: T) => T) => any[];
 var r18 = foo18(r18arg);
 
 //// [subtypingWithConstructSignatures4.js]
+"use strict";
 // checking subtype relations for function types as it relates to contextual signature instantiation
 class Base {
-    foo;
 }
 class Derived extends Base {
-    bar;
 }
 class Derived2 extends Derived {
-    baz;
 }
 class OtherDerived extends Base {
-    bing;
 }
 var r1arg;
 var r1arg2;

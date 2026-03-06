@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/importDeclarations/importAliasIdentifiers.ts] ////
 
 //// [importAliasIdentifiers.ts]
-module moduleA {
+namespace moduleA {
     export class Point {
         constructor(public x: number, public y: number) { }
     }
@@ -17,7 +17,7 @@ class clodule {
     name: string;
 }
 
-module clodule {
+namespace clodule {
     export interface Point {
         x: number; y: number;
     }
@@ -35,7 +35,7 @@ function fundule() {
     return { x: 0, y: 0 };
 }
 
-module fundule {
+namespace fundule {
     export interface Point {
         x: number; y: number;
     }
@@ -49,11 +49,10 @@ var p: fundule.Point;
 var p: { x: number; y: number; };
 
 //// [importAliasIdentifiers.js]
+"use strict";
 var moduleA;
 (function (moduleA) {
     class Point {
-        x;
-        y;
         constructor(x, y) {
             this.x = x;
             this.y = y;
@@ -61,15 +60,16 @@ var moduleA;
     }
     moduleA.Point = Point;
 })(moduleA || (moduleA = {}));
+var alias = moduleA;
 var p;
 var p;
 var p;
 class clodule {
-    name;
 }
 (function (clodule) {
     var Point = { x: 0, y: 0 };
 })(clodule || (clodule = {}));
+var clolias = clodule;
 var p;
 var p;
 var p;
@@ -79,6 +79,7 @@ function fundule() {
 (function (fundule) {
     var Point = { x: 0, y: 0 };
 })(fundule || (fundule = {}));
+var funlias = fundule;
 var p;
 var p;
 var p;

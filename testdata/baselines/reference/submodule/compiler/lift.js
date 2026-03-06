@@ -20,12 +20,11 @@ class C extends B {
 
 
 //// [lift.js]
+"use strict";
 class B {
-    y;
     constructor(y) {
         this.y = y;
     }
-    ll; // to be shadowed
 }
 class C extends B {
     constructor(y, z, w) {

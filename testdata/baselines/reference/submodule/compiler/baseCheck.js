@@ -32,6 +32,7 @@ function f() {
 
 
 //// [baseCheck.js]
+"use strict";
 class C {
     constructor(x, y) { }
 }
@@ -49,21 +50,18 @@ class ELocVar extends C {
     }
 }
 class D extends C {
-    z;
     constructor(z) {
         super(this.z);
         this.z = z;
     }
 } // too few params
 class E extends C {
-    z;
     constructor(z) {
         super(0, this.z);
         this.z = z;
     }
 }
 class F extends C {
-    z;
     constructor(z) {
         super("hello", this.z);
         this.z = z;

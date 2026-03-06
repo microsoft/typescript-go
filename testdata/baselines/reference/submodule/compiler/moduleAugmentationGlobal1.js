@@ -22,7 +22,6 @@ let y = x.getA().x;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.A = void 0;
 class A {
-    x;
 }
 exports.A = A;
 //// [f2.js]
@@ -38,7 +37,6 @@ export declare class A {
 }
 //// [f2.d.ts]
 import { A } from "./f1";
-// change the shape of Array<T>
 declare global {
     interface Array<T> {
         getA(): A;

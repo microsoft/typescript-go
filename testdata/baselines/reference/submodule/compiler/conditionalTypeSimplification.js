@@ -14,3 +14,5 @@ interface AnySchemaType<S extends AbstractSchema<any, any>, V> extends AbstractS
 
 
 //// [conditionalTypeSimplification.js]
+"use strict";
+// Repro from #30794

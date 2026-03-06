@@ -11,6 +11,7 @@ fn2({ headers: { foo: 1 } });
 
 
 //// [parameterDestructuringObjectLiteral.js]
+"use strict";
 // Repro from #22644
 const fn1 = (options) => { };
 fn1({ headers: { foo: 1 } });
@@ -19,10 +20,9 @@ fn2({ headers: { foo: 1 } });
 
 
 //// [parameterDestructuringObjectLiteral.d.ts]
-// Repro from #22644
 declare const fn1: (options: {
-    headers?: {};
+    headers?: {} | undefined;
 }) => void;
 declare const fn2: ({ headers }: {
-    headers?: {};
+    headers?: {} | undefined;
 }) => void;

@@ -37,15 +37,11 @@ class Item<data> extends BaseClass {
 }
 
 //// [conflictingTypeParameterSymbolTransfer.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C2 = void 0;
 // @strict
 // Via #56620
 class Base {
 }
-class C2 extends Base {
-    T;
+export class C2 extends Base {
     constructor(T) {
         super();
         // Should not error
@@ -54,20 +50,21 @@ class C2 extends Base {
         let a = null;
     }
 }
-exports.C2 = C2;
 // via #56689
 class Leg {
 }
 class Foo extends Leg {
-    t = {};
-    // should allow this access since t was declared as a property on Foo
-    foo = this.t;
+    constructor() {
+        super(...arguments);
+        this.t = {};
+        // should allow this access since t was declared as a property on Foo
+        this.foo = this.t;
+    }
 }
 // via #56661
 class BaseClass {
 }
 class Item extends BaseClass {
-    data;
     getData() {
         // should OK
         return this.data;

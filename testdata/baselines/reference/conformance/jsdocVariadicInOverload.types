@@ -41,8 +41,8 @@ export class Processor {
    *   Current processor.
    */
   use(value, ...parameters) {
->use : { (preset?: string): Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>; <Parameters extends unknown[] = [], Input extends string | Node = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
->value : string | number | boolean
+>use : { (preset?: string | null | undefined): Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>; <Parameters extends unknown[] = [], Input extends string | Node | undefined = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
+>value : string | number | boolean | null | undefined
 >parameters : unknown[]
 
     return this;
@@ -64,9 +64,9 @@ var x = 1, y = 2, z = 3;
 
 p.use(x, y, z);
 >p.use(x, y, z) : Processor<undefined, undefined, undefined, undefined, undefined>
->p.use : { (preset?: string): Processor<undefined, undefined, undefined, undefined, undefined>; <Parameters extends unknown[] = [], Input extends string | Node = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
+>p.use : { (preset?: string | null | undefined): Processor<undefined, undefined, undefined, undefined, undefined>; <Parameters extends unknown[] = [], Input extends string | Node | undefined = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
 >p : Processor<undefined, undefined, undefined, undefined, undefined>
->use : { (preset?: string): Processor<undefined, undefined, undefined, undefined, undefined>; <Parameters extends unknown[] = [], Input extends string | Node = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
+>use : { (preset?: string | null | undefined): Processor<undefined, undefined, undefined, undefined, undefined>; <Parameters extends unknown[] = [], Input extends string | Node | undefined = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
 >x : number
 >y : number
 >z : number

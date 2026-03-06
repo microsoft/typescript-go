@@ -23,6 +23,26 @@ type Symbol struct {
 	GlobalExports                SymbolTable            // Conditional global UMD exports
 }
 
+func (s *Symbol) IsExternalModule() bool {
+	return s.Flags&SymbolFlagsModule != 0 && len(s.Name) > 0 && s.Name[0] == '"'
+}
+
+func (s *Symbol) IsStatic() bool {
+	if s.ValueDeclaration == nil {
+		return false
+	}
+	modifierFlags := s.ValueDeclaration.ModifierFlags()
+	return modifierFlags&ModifierFlagsStatic != 0
+}
+
+// See comment on `declareModuleMember` in `binder.go`.
+func (s *Symbol) CombinedLocalAndExportSymbolFlags() SymbolFlags {
+	if s.ExportSymbol != nil {
+		return s.Flags | s.ExportSymbol.Flags
+	}
+	return s.Flags
+}
+
 // SymbolTable
 
 type SymbolTable map[string]*Symbol
@@ -43,7 +63,6 @@ const (
 	InternalSymbolNameClass                   = InternalSymbolNamePrefix + "class"                   // Unnamed class expression
 	InternalSymbolNameFunction                = InternalSymbolNamePrefix + "function"                // Unnamed function expression
 	InternalSymbolNameComputed                = InternalSymbolNamePrefix + "computed"                // Computed property name declaration with dynamic name
-	InternalSymbolNameResolving               = InternalSymbolNamePrefix + "resolving"               // Indicator symbol used to mark partially resolved type aliases
 	InternalSymbolNameInstantiationExpression = InternalSymbolNamePrefix + "instantiationExpression" // Instantiation expressions
 	InternalSymbolNameImportAttributes        = InternalSymbolNamePrefix + "importAttributes"
 	InternalSymbolNameExportEquals            = "export=" // Export assignment symbol

@@ -31,21 +31,16 @@ function foo2() {
 
 
 //// [anyAndUnknownHaveFalsyComponents.js]
+"use strict";
 const y1 = x1 && 3;
 function foo1() {
-    return {
-        display: "block",
-        ...(isTreeHeader1 && {
-            display: "flex",
-        })
-    };
+    return Object.assign({ display: "block" }, (isTreeHeader1 && {
+        display: "flex",
+    }));
 }
 const y2 = x2 && 3;
 function foo2() {
-    return {
-        display: "block",
-        ...(isTreeHeader1 && {
-            display: "flex",
-        })
-    };
+    return Object.assign({ display: "block" }, (isTreeHeader1 && {
+        display: "flex",
+    }));
 }

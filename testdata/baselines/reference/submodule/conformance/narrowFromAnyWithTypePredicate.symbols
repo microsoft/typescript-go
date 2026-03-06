@@ -8,7 +8,7 @@ declare function isFunction(x): x is Function;
 >isFunction : Symbol(isFunction, Decl(narrowFromAnyWithTypePredicate.ts, 0, 19))
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 1, 28))
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 1, 28))
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 declare function isObject(x): x is Object;
 >isObject : Symbol(isObject, Decl(narrowFromAnyWithTypePredicate.ts, 1, 46))
@@ -31,7 +31,7 @@ declare function isDate(x): x is Date;
 >isDate : Symbol(isDate, Decl(narrowFromAnyWithTypePredicate.ts, 4, 40))
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 5, 24))
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 5, 24))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 
 if (isFunction(x)) { // 'any' is not narrowed when target type is 'Function'
@@ -78,9 +78,9 @@ if (isError(x)) {
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))
 
     x.message;
->x.message : Symbol(message, Decl(lib.es5.d.ts, --, --))
+>x.message : Symbol(Error.message, Decl(lib.es5.d.ts, --, --))
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))
->message : Symbol(message, Decl(lib.es5.d.ts, --, --))
+>message : Symbol(Error.message, Decl(lib.es5.d.ts, --, --))
 
     x.mesage;
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))
@@ -91,9 +91,9 @@ if (isDate(x)) {
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))
 
     x.getDate();
->x.getDate : Symbol(getDate, Decl(lib.es5.d.ts, --, --))
+>x.getDate : Symbol(Date.getDate, Decl(lib.es5.d.ts, --, --))
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))
->getDate : Symbol(getDate, Decl(lib.es5.d.ts, --, --))
+>getDate : Symbol(Date.getDate, Decl(lib.es5.d.ts, --, --))
 
     x.getHuors();
 >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))

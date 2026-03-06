@@ -16,6 +16,7 @@ var r = c.foo('');
 var r2 = r({ length: 3, charAt: (x: number) => { '' } }); // error
 
 //// [wrappedAndRecursiveConstraints4.js]
+"use strict";
 class C {
     constructor(x) { }
     foo(x) {
@@ -28,6 +29,5 @@ class C {
 var c = new C({ length: 2 });
 var r = c.foo('');
 var r2 = r({ length: 3, charAt: (x) => {
-        '';
         '';
     } }); // error

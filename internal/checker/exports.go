@@ -10,6 +10,50 @@ func (c *Checker) GetStringType() *Type {
 	return c.stringType
 }
 
+func (c *Checker) GetNumberType() *Type {
+	return c.numberType
+}
+
+func (c *Checker) GetBooleanType() *Type {
+	return c.booleanType
+}
+
+func (c *Checker) GetVoidType() *Type {
+	return c.voidType
+}
+
+func (c *Checker) GetUndefinedType() *Type {
+	return c.undefinedType
+}
+
+func (c *Checker) GetNullType() *Type {
+	return c.nullType
+}
+
+func (c *Checker) GetAnyType() *Type {
+	return c.anyType
+}
+
+func (c *Checker) GetNeverType() *Type {
+	return c.neverType
+}
+
+func (c *Checker) GetUnknownType() *Type {
+	return c.unknownType
+}
+
+func (c *Checker) GetBigIntType() *Type {
+	return c.bigintType
+}
+
+func (c *Checker) GetESSymbolType() *Type {
+	return c.esSymbolType
+}
+
+func (c *Checker) GetBaseTypeOfLiteralType(t *Type) *Type {
+	return c.getBaseTypeOfLiteralType(t)
+}
+
 func (c *Checker) GetUnknownSymbol() *ast.Symbol {
 	return c.unknownSymbol
 }
@@ -24,6 +68,26 @@ func (c *Checker) GetGlobalSymbol(name string, meaning ast.SymbolFlags, diagnost
 
 func (c *Checker) GetMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(symbol)
+}
+
+func (c *Checker) TryFindAmbientModule(moduleName string) *ast.Symbol {
+	return c.tryFindAmbientModule(moduleName, true /* withAugmentations */)
+}
+
+func (c *Checker) GetImmediateAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.getImmediateAliasedSymbol(symbol)
+}
+
+func (c *Checker) GetTypeOnlyAliasDeclaration(symbol *ast.Symbol) *ast.Node {
+	return c.getTypeOnlyAliasDeclaration(symbol)
+}
+
+func (c *Checker) ResolveExternalModuleName(moduleSpecifier *ast.Node) *ast.Symbol {
+	return c.resolveExternalModuleName(moduleSpecifier, moduleSpecifier, true /*ignoreErrors*/)
+}
+
+func (c *Checker) ResolveExternalModuleSymbol(moduleSymbol *ast.Symbol) *ast.Symbol {
+	return c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
 }
 
 func (c *Checker) GetTypeFromTypeNode(node *ast.Node) *Type {
@@ -149,4 +213,44 @@ func (c *Checker) GetIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 
 func (c *Checker) GetResolvedSymbol(node *ast.Node) *ast.Symbol {
 	return c.getResolvedSymbol(node)
+}
+
+func (c *Checker) GetJsxNamespace(location *ast.Node) string {
+	return c.getJsxNamespace(location)
+}
+
+func (c *Checker) GetJsxFragmentFactory(location *ast.Node) string {
+	entity := c.getJsxFragmentFactoryEntity(location)
+	if entity != nil {
+		return ast.GetFirstIdentifier(entity).Text()
+	}
+	return ""
+}
+
+func (c *Checker) ResolveName(name string, location *ast.Node, meaning ast.SymbolFlags, excludeGlobals bool) *ast.Symbol {
+	return c.resolveName(location, name, meaning, nil, true, excludeGlobals)
+}
+
+func (c *Checker) GetSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
+	return c.getSymbolFlags(symbol)
+}
+
+func (c *Checker) GetBaseTypes(t *Type) []*Type {
+	return c.getBaseTypes(t)
+}
+
+func (c *Checker) GetRestTypeOfSignature(sig *Signature) *Type {
+	return c.getRestTypeOfSignature(sig)
+}
+
+func (c *Checker) GetTypeArguments(t *Type) []*Type {
+	return c.getTypeArguments(t)
+}
+
+func (c *Checker) GetIndexInfosOfType(t *Type) []*IndexInfo {
+	return c.getIndexInfosOfType(t)
+}
+
+func (c *Checker) IsContextSensitive(node *ast.Node) bool {
+	return c.isContextSensitive(node)
 }

@@ -14,9 +14,9 @@ expr2[s] = 0
 
 //// [expandoFunctionExpressionsWithDynamicNames.js]
 "use strict";
+// https://github.com/microsoft/TypeScript/issues/54809
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.expr2 = exports.expr = void 0;
-// https://github.com/microsoft/TypeScript/issues/54809
 const s = "X";
 const expr = () => { };
 exports.expr = expr;
@@ -27,11 +27,11 @@ exports.expr2[s] = 0;
 
 
 //// [expandoFunctionExpressionsWithDynamicNames.d.ts]
-export declare const expr: {
-    (): void;
-    X: number;
-};
-export declare const expr2: {
-    (): void;
-    X: number;
-};
+export declare function expr(): void;
+export declare namespace expr {
+    var X: number;
+}
+export declare function expr2(): void;
+export declare namespace expr2 {
+    var X: number;
+}

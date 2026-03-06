@@ -19,16 +19,14 @@ var diddy = funky(1)
 
 //// [commonJSAliasedExport.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const donkey = (ast) => ast;
 function funky(declaration) {
     return false;
 }
-export = donkey;
 module.exports = donkey;
-export var funky = funky;
 module.exports.funky = funky;
 //// [bug43713.js]
+"use strict";
 const { funky } = require('./commonJSAliasedExport');
 /** @type {boolean} */
 var diddy;
@@ -36,7 +34,9 @@ var diddy = funky(1);
 
 
 //// [commonJSAliasedExport.d.ts]
+declare const donkey: (ast: any) => any;
+declare function funky(declaration: any): boolean;
 export = donkey;
-export var funky = funky;
+export declare var funky: typeof funky;
 //// [bug43713.d.ts]
 export {};

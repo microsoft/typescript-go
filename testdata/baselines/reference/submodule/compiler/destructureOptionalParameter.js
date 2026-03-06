@@ -26,6 +26,7 @@ interface QueryMetadataFactory {
 
 
 //// [destructureOptionalParameter.js]
+"use strict";
 function f2({ a, b } = { a: 0, b: 0 }) {
     a;
     b;
@@ -41,7 +42,6 @@ declare function f2({ a, b }?: {
     a: number;
     b: number;
 }): void;
-// Repro from #8681
 interface Type {
     t: void;
 }

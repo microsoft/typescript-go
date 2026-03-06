@@ -31,7 +31,8 @@ if (true) {
     foo2[|?.|]/*5*/
 }
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -41,10 +42,10 @@ if (true) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "a bc",
-					Kind:       PtrTo(lsproto.CompletionItemKindField),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
-					InsertText: PtrTo("[\"a bc\"]"),
-					FilterText: PtrTo(".a bc"),
+					Kind:       new(lsproto.CompletionItemKindField),
+					SortText:   new(string(ls.SortTextLocationPriority)),
+					InsertText: new("[\"a bc\"]"),
+					FilterText: new(".a bc"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "[\"a bc\"]",
@@ -65,10 +66,10 @@ if (true) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "a bc",
-					Kind:       PtrTo(lsproto.CompletionItemKindField),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
-					InsertText: PtrTo("[\"a bc\"]"),
-					FilterText: PtrTo(".a bc"),
+					Kind:       new(lsproto.CompletionItemKindField),
+					SortText:   new(string(ls.SortTextLocationPriority)),
+					InsertText: new("[\"a bc\"]"),
+					FilterText: new(".a bc"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "[\"a bc\"]",
@@ -88,10 +89,10 @@ if (true) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "a bc",
-					Kind:       PtrTo(lsproto.CompletionItemKindField),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
-					InsertText: PtrTo("?.[\"a bc\"]"),
-					FilterText: PtrTo(".a bc"),
+					Kind:       new(lsproto.CompletionItemKindField),
+					SortText:   new(string(ls.SortTextLocationPriority)),
+					InsertText: new("?.[\"a bc\"]"),
+					FilterText: new(".a bc"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "?.[\"a bc\"]",
@@ -112,10 +113,10 @@ if (true) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "a bc",
-					Kind:       PtrTo(lsproto.CompletionItemKindField),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
-					InsertText: PtrTo("?.[\"a bc\"]"),
-					FilterText: PtrTo(".a bc"),
+					Kind:       new(lsproto.CompletionItemKindField),
+					SortText:   new(string(ls.SortTextLocationPriority)),
+					InsertText: new("?.[\"a bc\"]"),
+					FilterText: new(".a bc"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "?.[\"a bc\"]",
@@ -135,10 +136,10 @@ if (true) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:      "a bc",
-					Kind:       PtrTo(lsproto.CompletionItemKindField),
-					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
-					InsertText: PtrTo("?.[\"a bc\"]"),
-					FilterText: PtrTo("?.a bc"),
+					Kind:       new(lsproto.CompletionItemKindField),
+					SortText:   new(string(ls.SortTextLocationPriority)),
+					InsertText: new("?.[\"a bc\"]"),
+					FilterText: new("?.a bc"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "?.[\"a bc\"]",

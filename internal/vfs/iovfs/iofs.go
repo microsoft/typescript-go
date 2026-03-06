@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"strings"
+	"time"
 	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -23,6 +24,12 @@ type WritableFS interface {
 	MkdirAll(path string, perm fs.FileMode) error
 	// Removes `path` and all its contents. Will return the first error it encounters.
 	Remove(path string) error
+	Chtimes(path string, aTime time.Time, mTime time.Time) error
+}
+
+type FsWithSys interface {
+	vfs.FS
+	FSys() fs.FS
 }
 
 // From creates a new FS from an [fs.FS].
@@ -34,7 +41,7 @@ type WritableFS interface {
 //
 // From does not actually handle case-insensitivity; ensure the passed in [fs.FS]
 // respects case-insensitive file names if needed. Consider using [vfstest.FromMap] for testing.
-func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
+func From(fsys fs.FS, useCaseSensitiveFileNames bool) FsWithSys {
 	var realpath func(path string) (string, error)
 	if fsys, ok := fsys.(RealpathFS); ok {
 		realpath = func(path string) (string, error) {
@@ -57,6 +64,7 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 	var writeFile func(path string, content string, writeByteOrderMark bool) error
 	var mkdirAll func(path string) error
 	var remove func(path string) error
+	var chtimes func(path string, aTime time.Time, mTime time.Time) error
 	if fsys, ok := fsys.(WritableFS); ok {
 		writeFile = func(path string, content string, writeByteOrderMark bool) error {
 			rest, _ := strings.CutPrefix(path, "/")
@@ -77,6 +85,10 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 			rest, _ := strings.CutPrefix(path, "/")
 			return fsys.Remove(rest)
 		}
+		chtimes = func(path string, aTime time.Time, mTime time.Time) error {
+			rest, _ := strings.CutPrefix(path, "/")
+			return fsys.Chtimes(rest, aTime, mTime)
+		}
 	} else {
 		writeFile = func(string, string, bool) error {
 			panic("writeFile not supported")
@@ -86,6 +98,9 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 		}
 		remove = func(string) error {
 			panic("remove not supported")
+		}
+		chtimes = func(string, time.Time, time.Time) error {
+			panic("chtimes not supported")
 		}
 	}
 
@@ -99,6 +114,9 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 				p := tspath.RemoveTrailingDirectorySeparator(root)
 				sub, err := fs.Sub(fsys, p)
 				if err != nil {
+					if tspath.IsUrl(root) {
+						return nil
+					}
 					panic(fmt.Sprintf("vfs: failed to create sub file system for %q: %v", p, err))
 				}
 				return sub
@@ -109,6 +127,8 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 		writeFile:                 writeFile,
 		mkdirAll:                  mkdirAll,
 		remove:                    remove,
+		chtimes:                   chtimes,
+		fsys:                      fsys,
 	}
 }
 
@@ -120,9 +140,11 @@ type ioFS struct {
 	writeFile                 func(path string, content string, writeByteOrderMark bool) error
 	mkdirAll                  func(path string) error
 	remove                    func(path string) error
+	chtimes                   func(path string, aTime time.Time, mTime time.Time) error
+	fsys                      fs.FS
 }
 
-var _ vfs.FS = (*ioFS)(nil)
+var _ FsWithSys = (*ioFS)(nil)
 
 func (vfs *ioFS) UseCaseSensitiveFileNames() bool {
 	return vfs.useCaseSensitiveFileNames
@@ -158,6 +180,11 @@ func (vfs *ioFS) Remove(path string) error {
 	return vfs.remove(path)
 }
 
+func (vfs *ioFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	_ = internal.RootLength(path) // Assert path is rooted
+	return vfs.chtimes(path, aTime, mTime)
+}
+
 func (vfs *ioFS) Realpath(path string) string {
 	root, rest := internal.SplitPath(path)
 	// splitPath normalizes the path into parts (e.g. "c:/foo/bar" -> "c:/", "foo/bar")
@@ -178,4 +205,8 @@ func (vfs *ioFS) WriteFile(path string, content string, writeByteOrderMark bool)
 		return err
 	}
 	return vfs.writeFile(path, content, writeByteOrderMark)
+}
+
+func (vfs *ioFS) FSys() fs.FS {
+	return vfs.fsys
 }

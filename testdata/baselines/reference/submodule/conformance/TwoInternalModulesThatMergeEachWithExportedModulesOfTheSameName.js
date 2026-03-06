@@ -1,12 +1,12 @@
 //// [tests/cases/conformance/internalModules/DeclarationMerging/TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts] ////
 
 //// [TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts]
-module A.B {
+namespace A.B {
     export var x: number;
 }
 
-module A{ 
-    module B {
+namespace A{ 
+    namespace B {
         export var x: string;
     }
 }
@@ -15,15 +15,15 @@ module A{
 var x: number;
 var x = A.B.x;
 
-module X.Y.Z {
+namespace X.Y.Z {
     export class Line {
         length: number;
     }
 }
 
-module X {
-    export module Y {
-        module Z {
+namespace X {
+    export namespace Y {
+        namespace Z {
             export class Line {
                 name: string;
             }
@@ -37,9 +37,10 @@ var l: X.Y.Z.Line;
 
 
 //// [TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.js]
+"use strict";
 var A;
 (function (A) {
-    let B;
+    var B;
     (function (B) {
     })(B = A.B || (A.B = {}));
 })(A || (A = {}));
@@ -53,12 +54,11 @@ var x;
 var x = A.B.x;
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let Z;
+        var Z;
         (function (Z) {
             class Line {
-                length;
             }
             Z.Line = Line;
         })(Z = Y.Z || (Y.Z = {}));
@@ -70,7 +70,6 @@ var X;
         let Z;
         (function (Z) {
             class Line {
-                name;
             }
             Z.Line = Line;
         })(Z || (Z = {}));

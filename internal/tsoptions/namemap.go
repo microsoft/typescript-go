@@ -9,7 +9,7 @@ import (
 var (
 	CompilerNameMap = GetNameMapFromList(OptionsDeclarations)
 	BuildNameMap    = GetNameMapFromList(BuildOpts)
-	WatchNameMap    = GetNameMapFromList(optionsForWatch)
+	WatchNameMap    = GetNameMapFromList(OptionsForWatch)
 )
 
 func GetNameMapFromList(optDecls []*CommandLineOption) *NameMap {
@@ -46,6 +46,7 @@ func (nm *NameMap) GetFromShort(shortName string) *CommandLineOption {
 }
 
 func (nm *NameMap) GetOptionDeclarationFromName(optionName string, allowShort bool) *CommandLineOption {
+	optionName = strings.ToLower(optionName)
 	// Try to translate short option names to their full equivalents.
 	if allowShort {
 		short := nm.shortOptionNames[optionName]

@@ -112,8 +112,8 @@ var propAcc1 = {
 };
 var propAcc1: { m: any; }
 
-// Property access of module member
-module M2 {
+// Property access of namespace member
+namespace M2 {
     export var x = M2.x;
     var y = x;
     var y: any;
@@ -139,6 +139,7 @@ var qq: any;
 
 
 //// [witness.js]
+"use strict";
 // Initializers
 var varInit = varInit; // any
 var pInit;
@@ -146,7 +147,9 @@ function fn(pInit = pInit) {
     var pInit;
 }
 class InitClass {
-    x = this.x;
+    constructor() {
+        this.x = this.x;
+    }
     fn() {
         var y = this.x;
         var y;
@@ -233,7 +236,7 @@ var propAcc1 = {
     m: propAcc1.m
 };
 var propAcc1;
-// Property access of module member
+// Property access of namespace member
 var M2;
 (function (M2) {
     M2.x = M2.x;
@@ -242,14 +245,16 @@ var M2;
 })(M2 || (M2 = {}));
 // Property access of class instance type
 class C2 {
-    n = this.n; // n: any
+    constructor() {
+        this.n = this.n; // n: any
+    }
 }
 var c2inst = new C2().n;
 var c2inst;
 // Constructor function property access
 class C3 {
-    static q = C3.q;
 }
+C3.q = C3.q;
 var qq = C3.q;
 var qq;
 // Parentheses - tested a bunch above

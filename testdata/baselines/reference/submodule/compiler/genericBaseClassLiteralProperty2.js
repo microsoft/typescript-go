@@ -18,10 +18,10 @@ class DataView2 extends BaseCollection2<CollectionItem2> {
 
 
 //// [genericBaseClassLiteralProperty2.js]
+"use strict";
 class CollectionItem2 {
 }
 class BaseCollection2 {
-    _itemsByKey;
     constructor() {
         this._itemsByKey = {};
     }

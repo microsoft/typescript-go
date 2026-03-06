@@ -1,13 +1,13 @@
-astralAsSurrogatePair.ts(1,16): error TS1127: Invalid character.
-astralAsSurrogatePair.ts(1,17): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uD800'.
-astralAsSurrogatePair.ts(1,22): error TS1127: Invalid character.
-astralAsSurrogatePair.ts(1,23): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uDEA7'.
+astralAsSurrogatePair.ts(1,17): error TS1127: Invalid character.
+astralAsSurrogatePair.ts(1,18): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uD800'.
+astralAsSurrogatePair.ts(1,23): error TS1127: Invalid character.
+astralAsSurrogatePair.ts(1,24): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uDEA7'.
 
 
 ==== extendedEscapesForAstralsInVarsAndClasses.ts (0 errors) ====
     // U+102A7 CARIAN LETTER A2
-    var 𐊧: string;
-    var \u{102A7}: string;
+    declare var 𐊧: string;
+    declare var \u{102A7}: string;
     
     if (Math.random()) {
         𐊧 = "hello";

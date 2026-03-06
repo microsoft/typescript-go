@@ -22,7 +22,8 @@ function foo(x: number): number;
 function foo(x: any): any {
     return x;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -32,9 +33,9 @@ function foo(x: any): any {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:    "foo",
-					Kind:     PtrTo(lsproto.CompletionItemKindFunction),
-					SortText: PtrTo(string(ls.SortTextLocationPriority)),
-					Detail:   PtrTo("function foo(x: string): string\nfunction foo(x: number): number"),
+					Kind:     new(lsproto.CompletionItemKindFunction),
+					SortText: new(string(ls.SortTextLocationPriority)),
+					Detail:   new("function foo(x: string): string\nfunction foo(x: number): number"),
 				},
 			},
 		},
