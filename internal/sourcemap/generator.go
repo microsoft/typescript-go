@@ -356,7 +356,7 @@ func (gen *Generator) Base64DataURL() string {
 	sb.Grow(len(prefix) + base64.StdEncoding.EncodedLen(len(data)))
 	sb.WriteString(prefix)
 	encoder := base64.NewEncoder(base64.StdEncoding, &sb)
-	encoder.Write(data)
+	_, _ = encoder.Write(data)
 	encoder.Close()
 	return sb.String()
 }
