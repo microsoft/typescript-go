@@ -5,7 +5,6 @@ import (
 	"errors"
 	"slices"
 	"strings"
-	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -353,10 +352,13 @@ func (gen *Generator) String() string {
 func (gen *Generator) Base64DataURL() string {
 	const prefix = "data:application/json;base64,"
 	data := gen.bytes()
-	buf := make([]byte, len(prefix)+base64.StdEncoding.EncodedLen(len(data)))
-	copy(buf, prefix)
-	base64.StdEncoding.Encode(buf[len(prefix):], data)
-	return unsafe.String(unsafe.SliceData(buf), len(buf))
+	var sb strings.Builder
+	sb.Grow(len(prefix) + base64.StdEncoding.EncodedLen(len(data)))
+	sb.WriteString(prefix)
+	encoder := base64.NewEncoder(base64.StdEncoding, &sb)
+	encoder.Write(data)
+	encoder.Close()
+	return sb.String()
 }
 
 func base64FormatEncode(value int) rune {
