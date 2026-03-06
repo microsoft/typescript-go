@@ -607,9 +607,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		}
 		if doAsyncWork != nil {
 			return func() error {
-				if ctx.Err() != nil {
-					return ctx.Err()
-				}
+				// note: ctx.Err() has to be checked in the async work to allow async handlers to cleanup resources correctly
 				asyncWorkErr := doAsyncWork()
 				s.logger.Info(core.IfElse(asyncWorkErr != nil, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
 				return asyncWorkErr
@@ -821,6 +819,9 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			resp, lsErr := fn(defaultLs, ctx, params, orchestrator)
 			if lsErr != nil {
 				return lsErr
+			}
+			if ctx.Err() != nil {
+				return ctx.Err()
 			}
 			return s.sendResult(req.ID, resp)
 		}, nil
