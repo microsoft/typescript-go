@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/statements/switchStatements/switchStatements.ts] ////
 
 //// [switchStatements.ts]
-module M {
+namespace M {
     export function fn(x: number) {
         return '';
     }
@@ -58,6 +58,7 @@ switch ((<T>(x: T) => '')(1)) { }
 
 
 //// [switchStatements.js]
+"use strict";
 var M;
 (function (M) {
     function fn(x) {
@@ -88,10 +89,8 @@ switch (x) {
 }
 // basic assignable check, rest covered in tests for 'assignment compatibility'
 class C {
-    id;
 }
 class D extends C {
-    name;
 }
 switch (new C()) {
     case new D():

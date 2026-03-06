@@ -11,6 +11,7 @@ namespace ExpandoMerge {
 
 
 //// [expando.js]
+"use strict";
 // #27032
 function ExpandoMerge(n) {
     return n;
@@ -18,7 +19,6 @@ function ExpandoMerge(n) {
 
 
 //// [expando.d.ts]
-// #27032
 declare function ExpandoMerge(n: number): number;
 declare namespace ExpandoMerge {
     interface I {

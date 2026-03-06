@@ -13,9 +13,10 @@ i = new C;
 var c: C = i;
 
 //// [symbolProperty10.js]
+"use strict";
 class C {
-    [Symbol.iterator];
 }
+Symbol.iterator;
 var i;
 i = new C;
 var c = i;

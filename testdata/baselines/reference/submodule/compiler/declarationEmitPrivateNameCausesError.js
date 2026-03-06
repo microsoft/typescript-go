@@ -17,20 +17,25 @@ exports.ignoreExtraVariables = ignoreExtraVariables;
 const IGNORE_EXTRA_VARIABLES = Symbol(); //Notice how this is unexported
 //This is exported
 function ignoreExtraVariables(ctor) {
-    return class extends ctor {
-        [IGNORE_EXTRA_VARIABLES] = true; //An unexported constant is used
-    };
+    var _a, _b;
+    return _b = class extends ctor {
+            constructor() {
+                super(...arguments);
+                this[_a] = true; //An unexported constant is used
+            }
+        },
+        _a = IGNORE_EXTRA_VARIABLES,
+        _b;
 }
 
 
 //// [file.d.ts]
-declare const IGNORE_EXTRA_VARIABLES: unique symbol; //Notice how this is unexported
-//This is exported
+declare const IGNORE_EXTRA_VARIABLES: unique symbol;
 export declare function ignoreExtraVariables<CtorT extends {
     new (...args: any[]): {};
 }>(ctor: CtorT): {
     new (...args: any[]): {
-        [IGNORE_EXTRA_VARIABLES]: boolean; //An unexported constant is used
+        [IGNORE_EXTRA_VARIABLES]: boolean;
     };
 } & CtorT;
 export {};

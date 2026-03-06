@@ -18,8 +18,8 @@ class C extends A {
 
 
 //// [abstractProperty.js]
+"use strict";
 class A {
-    x;
     foo() {
         console.log(this.x);
     }

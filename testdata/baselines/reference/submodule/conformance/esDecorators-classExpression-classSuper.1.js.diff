@@ -1,8 +1,8 @@
 --- old.esDecorators-classExpression-classSuper.1.js
 +++ new.esDecorators-classExpression-classSuper.1.js
-@@= skipped -23, +23 lines =@@
-
+@@= skipped -24, +24 lines =@@
  //// [esDecorators-classExpression-classSuper.1.js]
+ "use strict";
  const method = "method";
 -((() => {
 -    let _classDecorators = [dec];
@@ -32,9 +32,7 @@
 -    };
 -    return C = _classThis;
 -})());
-+(
-+@dec
-+class C extends Base {
++(class C extends Base {
 +    static {
 +        super.method();
 +        super["method"]();

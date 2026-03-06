@@ -31,8 +31,8 @@ class parser {
 }
 
 //// [arrayconcat.js]
+"use strict";
 class parser {
-    options;
     m() {
         this.options = this.options.sort(function (a, b) {
             var aName = a.name.toLowerCase();

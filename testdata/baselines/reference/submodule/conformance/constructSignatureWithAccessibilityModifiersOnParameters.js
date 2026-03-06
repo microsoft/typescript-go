@@ -32,23 +32,20 @@ var b: {
 }
 
 //// [constructSignatureWithAccessibilityModifiersOnParameters.js]
+"use strict";
 // Parameter properties are only valid in constructor definitions, not even in other forms of construct signatures
 class C {
-    x;
-    y;
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 }
 class C2 {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class C3 {
-    x;
     constructor(x) {
         this.x = x;
     }

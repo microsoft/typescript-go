@@ -19,18 +19,19 @@ class B {
 }
 
 //// [constructorParametersInVariableDeclarations.js]
+"use strict";
 class A {
-    a = x;
-    b = { p: x };
-    c = () => x;
     constructor(x) {
+        this.a = x;
+        this.b = { p: x };
+        this.c = () => x;
     }
 }
 class B {
-    a = x;
-    b = { p: x };
-    c = () => x;
     constructor() {
+        this.a = x;
+        this.b = { p: x };
+        this.c = () => x;
         var x = 1;
     }
 }

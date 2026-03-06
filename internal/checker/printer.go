@@ -22,8 +22,10 @@ func createPrinterWithRemoveCommentsOmitTrailingSemicolon(emitContext *printer.E
 }
 
 func createPrinterWithRemoveCommentsNeverAsciiEscape(emitContext *printer.EmitContext) *printer.Printer {
-	// TODO: NeverAsciiEscape support
-	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
+	return printer.NewPrinter(printer.PrinterOptions{
+		RemoveComments:   true,
+		NeverAsciiEscape: true,
+	}, printer.PrintHandlers{}, emitContext)
 }
 
 type semicolonRemoverWriter struct {
@@ -47,7 +49,7 @@ func (s *semicolonRemoverWriter) DecreaseIndent() {
 	s.inner.DecreaseIndent()
 }
 
-func (s *semicolonRemoverWriter) GetColumn() int {
+func (s *semicolonRemoverWriter) GetColumn() core.UTF16Offset {
 	return s.inner.GetColumn()
 }
 
@@ -180,7 +182,7 @@ func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 }
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	writer := printer.NewTextWriter("")
+	writer := printer.NewTextWriter("", 0)
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {
@@ -256,6 +258,7 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
 	var printer_ *printer.Printer
+	// add neverAsciiEscape for GH#39027
 	if enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile {
 		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape(nodeBuilder.EmitContext())
 	} else {
@@ -368,4 +371,14 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 		result = append(result, c.undefinedType)
 	}
 	return result
+}
+
+func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
+	return nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
+}
+
+func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypePredicateNodeNode {
+	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
+	return nodeBuilder.TypePredicateToTypePredicateNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }

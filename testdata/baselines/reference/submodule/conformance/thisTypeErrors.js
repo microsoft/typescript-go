@@ -59,6 +59,7 @@ class C3 {
 
 
 //// [thisTypeErrors.js]
+"use strict";
 var x1;
 var x2;
 var x3;
@@ -67,29 +68,25 @@ function f1(x) {
     return this;
 }
 class C1 {
-    a;
-    b;
-    c;
-    d;
-    e;
 }
 class C2 {
-    static x;
-    static y = undefined;
     static foo(x) {
         return undefined;
     }
 }
+C2.y = undefined;
 var N1;
 (function (N1) {
     N1.y = this;
 })(N1 || (N1 = {}));
 class C3 {
-    x1 = {
-        g(x) {
-            return undefined;
-        }
-    };
+    constructor() {
+        this.x1 = {
+            g(x) {
+                return undefined;
+            }
+        };
+    }
     f() {
         function g(x) {
             return undefined;

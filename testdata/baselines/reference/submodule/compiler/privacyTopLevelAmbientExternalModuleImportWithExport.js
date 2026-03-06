@@ -49,14 +49,15 @@ export var publicUse_im_public_mi_public = new im_public_mi_public.c_private();
 
 
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require2.js]
+"use strict";
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require3.js]
+"use strict";
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c_public = void 0;
 // Public elements
 class c_public {
-    foo;
 }
 exports.c_public = c_public;
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require1.js]
@@ -64,7 +65,6 @@ exports.c_public = c_public;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c_public = void 0;
 class c_public {
-    bar;
 }
 exports.c_public = c_public;
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_core.js]
@@ -90,8 +90,6 @@ exports.publicUse_im_public_mi_public = new exports.im_public_mi_public.c_privat
 
 
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require2.d.ts]
-// private elements
-// Export - Error ambient modules allowed only in global
 declare module 'm' {
     class c_private {
         baz: string;
@@ -104,7 +102,6 @@ declare module 'm2' {
     }
 }
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require.d.ts]
-// Public elements
 export declare class c_public {
     foo: string;
 }
@@ -113,7 +110,6 @@ export declare class c_public {
     bar: string;
 }
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_core.d.ts]
-// Privacy errors - importing private elements
 export import im_public_mi_private = require("./privacyTopLevelAmbientExternalModuleImportWithExport_require");
 export import im_public_mu_private = require("./privacyTopLevelAmbientExternalModuleImportWithExport_require1");
 export import im_public_mi_public = require("m");

@@ -4,7 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type SubtreeFacts int32
+type SubtreeFacts uint32
 
 const (
 	// Facts
@@ -20,7 +20,7 @@ const (
 	SubtreeContainsNullishCoalescing
 	SubtreeContainsOptionalChaining
 	SubtreeContainsMissingCatchClauseVariable
-	SubtreeContainsESObjectRestOrSpread
+	SubtreeContainsESObjectRestOrSpread // subtree has a `...` somewhere inside it, never cleared
 	SubtreeContainsForAwaitOrAsyncGenerator
 	SubtreeContainsAnyAwait
 	SubtreeContainsExponentiationOperator
@@ -30,13 +30,14 @@ const (
 
 	SubtreeContainsLexicalThis
 	SubtreeContainsLexicalSuper
-	SubtreeContainsRest
-	SubtreeContainsObjectRestOrSpread
+	SubtreeContainsRestOrSpread       // marker on any `...` - cleared on binding pattern exit
+	SubtreeContainsObjectRestOrSpread // marker on any `{...x}` - cleared on most scope exits
 	SubtreeContainsAwait
 	SubtreeContainsDynamicImport
 	SubtreeContainsClassFields
 	SubtreeContainsDecorators
 	SubtreeContainsIdentifier
+	SubtreeContainsPrivateIdentifierInExpression
 
 	SubtreeFactsComputed              // NOTE: This should always be last
 	SubtreeFactsNone     SubtreeFacts = 0
@@ -76,7 +77,7 @@ const (
 	SubtreeExclusionsVariableDeclarationList = SubtreeExclusionsNode | SubtreeContainsObjectRestOrSpread
 	SubtreeExclusionsParameter               = SubtreeExclusionsNode
 	SubtreeExclusionsCatchClause             = SubtreeExclusionsNode | SubtreeContainsObjectRestOrSpread
-	SubtreeExclusionsBindingPattern          = SubtreeExclusionsNode | SubtreeContainsRest
+	SubtreeExclusionsBindingPattern          = SubtreeExclusionsNode | SubtreeContainsRestOrSpread
 
 	// Masks
 	// - Additional bitmasks
@@ -94,15 +95,15 @@ func propagateEraseableSyntaxSubtreeFacts(child *TypeNode) SubtreeFacts {
 
 func propagateObjectBindingElementSubtreeFacts(child *BindingElementNode) SubtreeFacts {
 	facts := propagateSubtreeFacts(child)
-	if facts&SubtreeContainsRest != 0 {
-		facts &= ^SubtreeContainsRest
-		facts |= SubtreeContainsObjectRestOrSpread
+	if facts&SubtreeContainsRestOrSpread != 0 {
+		facts &= ^SubtreeContainsRestOrSpread
+		facts |= SubtreeContainsObjectRestOrSpread | SubtreeContainsESObjectRestOrSpread
 	}
 	return facts
 }
 
 func propagateBindingElementSubtreeFacts(child *BindingElementNode) SubtreeFacts {
-	return propagateSubtreeFacts(child) & ^SubtreeContainsRest
+	return propagateSubtreeFacts(child) & ^SubtreeContainsRestOrSpread
 }
 
 func propagateSubtreeFacts(child *Node) SubtreeFacts {

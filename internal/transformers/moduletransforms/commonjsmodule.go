@@ -29,11 +29,14 @@ type CommonJSModuleTransformer struct {
 	currentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
-func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+func NewCommonJSModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	emitContext := opts.Context
+	resolver := opts.Resolver
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
@@ -48,7 +51,7 @@ func (tx *CommonJSModuleTransformer) pushNode(node *ast.Node) (grandparentNode *
 	grandparentNode = tx.parentNode
 	tx.parentNode = tx.currentNode
 	tx.currentNode = node
-	return
+	return grandparentNode
 }
 
 // Pops the last child node off the ancestor tracking stack, restoring the grandparent node.
@@ -244,7 +247,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
 		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
-		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
+		(tx.currentSourceFile.ExternalModuleIndicator == nil || tx.currentSourceFile.ExternalModuleIndicator.Kind == ast.KindSourceFile) {
 		return false
 	}
 	if tx.currentModuleInfo.exportEquals == nil && ast.IsExternalModule(tx.currentSourceFile) {
@@ -266,7 +269,7 @@ func (tx *CommonJSModuleTransformer) createUnderscoreUnderscoreESModule() *ast.S
 			nil, /*typeArguments*/
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().NewIdentifier("exports"),
-				tx.Factory().NewStringLiteral("__esModule"),
+				tx.Factory().NewStringLiteral("__esModule", ast.TokenFlagsNone),
 				tx.Factory().NewObjectLiteralExpression(
 					tx.Factory().NewNodeList([]*ast.Node{
 						tx.Factory().NewPropertyAssignment(
@@ -293,12 +296,6 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	// emit standard prologue directives (e.g. "use strict")
 	prologue, rest := tx.Factory().SplitStandardPrologue(node.Statements.Nodes)
 	statements := slices.Clone(prologue)
-
-	// ensure "use strict" if not present
-	if ast.IsExternalModule(tx.currentSourceFile) ||
-		tx.compilerOptions.AlwaysStrict.DefaultIfUnknown(tx.compilerOptions.Strict).IsTrue() {
-		statements = tx.Factory().EnsureUseStrict(statements)
-	}
 
 	// emit custom prologues from other transformations
 	custom, rest := tx.Factory().SplitCustomPrologue(rest)
@@ -386,7 +383,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 // - The `statements` parameter is a statement list to which the down-level export statements are to be appended.
 func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*ast.Statement) []*ast.Statement {
 	if tx.currentModuleInfo.exportEquals != nil {
-		expressionResult := tx.Visitor().VisitNode(tx.currentModuleInfo.exportEquals.Expression)
+		expressionResult := tx.visitExportEquals(tx.currentModuleInfo.exportEquals)
 		if expressionResult != nil {
 			statement := tx.Factory().NewExpressionStatement(
 				tx.Factory().NewAssignmentExpression(
@@ -406,6 +403,12 @@ func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*as
 		}
 	}
 	return statements
+}
+
+func (tx *CommonJSModuleTransformer) visitExportEquals(node *ast.ExportAssignment) *ast.Expression {
+	grandparentNode := tx.pushNode(node.AsNode())
+	defer tx.popNode(grandparentNode)
+	return tx.Visitor().VisitNode(node.Expression)
 }
 
 // Appends the exports of an ImportDeclaration to a statement list, returning the statement list.
@@ -434,7 +437,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfImportDeclaration(statements
 			statements = tx.appendExportsOfDeclaration(statements, namedBindings, seen, false /*liveBinding*/)
 
 		case ast.KindNamedImports:
-			for _, importBinding := range namedBindings.AsNamedImports().Elements.Nodes {
+			for _, importBinding := range namedBindings.Elements() {
 				statements = tx.appendExportsOfDeclaration(statements, importBinding, seen, true /*liveBinding*/)
 			}
 		}
@@ -477,7 +480,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfBindingElement(statements []
 	}
 
 	if ast.IsBindingPattern(decl.Name()) {
-		for _, element := range decl.Name().AsBindingPattern().Elements.Nodes {
+		for _, element := range decl.Name().Elements() {
 			e := element.AsBindingElement()
 			if e.DotDotDotToken == nil && e.Name() == nil {
 				statements = tx.appendExportsOfBindingElement(statements, element, isForInOrOfInitializer)
@@ -687,7 +690,7 @@ func (tx *CommonJSModuleTransformer) createRequireCall(node *ast.Node /*ImportDe
 }
 
 func (tx *CommonJSModuleTransformer) getHelperExpressionForExport(node *ast.ExportDeclaration, innerExpr *ast.Expression) *ast.Expression {
-	if !tx.compilerOptions.GetESModuleInterop() || tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper != 0 {
+	if tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper != 0 {
 		return innerExpr
 	}
 	if getExportNeedsImportStarHelper(node) {
@@ -697,7 +700,7 @@ func (tx *CommonJSModuleTransformer) getHelperExpressionForExport(node *ast.Expo
 }
 
 func (tx *CommonJSModuleTransformer) getHelperExpressionForImport(node *ast.ImportDeclaration, innerExpr *ast.Expression) *ast.Expression {
-	if !tx.compilerOptions.GetESModuleInterop() || tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper != 0 {
+	if tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper != 0 {
 		return innerExpr
 	}
 	if getImportNeedsImportStarHelper(node) {
@@ -847,10 +850,9 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		tx.EmitContext().AssignCommentAndSourceMapRanges(varStatement, node.AsNode())
 		statements = append(statements, varStatement)
 
-		for _, specifier := range node.ExportClause.AsNamedExports().Elements.Nodes {
+		for _, specifier := range node.ExportClause.Elements() {
 			specifierName := specifier.PropertyNameOrName()
-			exportNeedsImportDefault := tx.compilerOptions.GetESModuleInterop() &&
-				tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper == 0 &&
+			exportNeedsImportDefault := tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper == 0 &&
 				ast.ModuleExportNameIsDefault(specifierName)
 
 			var target *ast.Node
@@ -1077,7 +1079,14 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 					propertyAccess,
 					v.Name().Clone(tx.Factory()),
 				))
+			} else if ast.IsIdentifier(v.Name()) {
+				expression := tx.transformInitializedVariable(v)
+				if expression != nil {
+					pushExpression(tx.Visitor().VisitNode(expression))
+				}
 			} else {
+				// For binding patterns, we can't do exports.{pattern} = value
+				// Just emit the assignment and let appendExportsOfVariableStatement handle the exports
 				expression := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), v)
 				if expression != nil {
 					pushExpression(tx.Visitor().VisitNode(expression))
@@ -1091,6 +1100,21 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 		return transformers.SingleOrMany(statements, tx.Factory())
 	}
 	return tx.visitTopLevelNestedVariableStatement(node)
+}
+
+func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.VariableDeclaration) *ast.Expression {
+	if node.Initializer == nil {
+		return nil
+	}
+	name := node.Name()
+	propertyAccess := tx.Factory().NewPropertyAccessExpression(
+		tx.Factory().NewIdentifier("exports"),
+		nil, /*questionDotToken*/
+		name,
+		ast.NodeFlagsNone,
+	)
+	tx.EmitContext().AssignCommentAndSourceMapRanges(propertyAccess, name)
+	return tx.Factory().NewAssignmentExpression(propertyAccess, node.Initializer)
 }
 
 // Visits a top-level nested variable statement as it may contain `var` declarations that are hoisted and may still be
@@ -1757,17 +1781,15 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 		requireArguments = []*ast.Expression{arg}
 	}
 
-	requireCall := tx.Factory().NewCallExpression(
-		tx.Factory().NewIdentifier("require"),
-		nil, /*questionDotToken*/
-		nil, /*typeArguments*/
-		tx.Factory().NewNodeList(requireArguments),
-		ast.NodeFlagsNone,
+	requireCall := tx.Factory().NewImportStarHelper(
+		tx.Factory().NewCallExpression(
+			tx.Factory().NewIdentifier("require"),
+			nil, /*questionDotToken*/
+			nil, /*typeArguments*/
+			tx.Factory().NewNodeList(requireArguments),
+			ast.NodeFlagsNone,
+		),
 	)
-
-	if tx.compilerOptions.GetESModuleInterop() {
-		requireCall = tx.Factory().NewImportStarHelper(requireCall)
-	}
 
 	var parameters []*ast.ParameterDeclarationNode
 	if needSyncEval {

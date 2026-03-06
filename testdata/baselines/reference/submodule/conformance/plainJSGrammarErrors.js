@@ -242,6 +242,8 @@ class C {
     export cantExportProperty = 1;
     export cantExportMethod() {
     }
+    // accessor mistakes
+    get incorporeal() { }
     get parametric(n) { return 1; }
     set invariant() { }
     set binary(fst, snd) { }
@@ -303,8 +305,8 @@ const { e: eep, m: em, ...rest: noRestAllowed } = doom;
 const { e: erp, m: erm, ...noInitialiser = true } = doom;
 // left-over parsing
 var ;
-var x = (1 || 2) ?? 3;
-var x = 2 ?? (3 || 4);
+var x = 1 || 2 ?? 3;
+var x = 2 ?? 3 || 4;
 const arr = x => x + 1;
 var a = [1, 2];
 a `length`;

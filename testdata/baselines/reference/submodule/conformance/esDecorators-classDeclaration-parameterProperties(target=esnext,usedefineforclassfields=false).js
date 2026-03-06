@@ -12,12 +12,11 @@ class C {
 
 
 //// [esDecorators-classDeclaration-parameterProperties.js]
+"use strict";
 class C {
-    message;
     constructor(message) {
         this.message = message;
     }
-    @bound
     speak() {
     }
 }

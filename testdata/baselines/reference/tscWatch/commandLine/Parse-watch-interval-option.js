@@ -14,7 +14,9 @@ export const a = 1
 tsgo -w --watchInterval 1000
 ExitStatus:: Success
 Output::
-//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+build starting at HH:MM:SS AM
+build finished in d.ddds
+//// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -38,7 +40,8 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/first.ts
 Signatures::

@@ -13,9 +13,9 @@ class Chain2<T extends { length: number }> {
 }
 
 //// [promiseChaining1.js]
+"use strict";
 // same example but with constraints on each type parameter
 class Chain2 {
-    value;
     constructor(value) {
         this.value = value;
     }

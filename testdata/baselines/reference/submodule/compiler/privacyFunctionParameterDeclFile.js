@@ -131,7 +131,7 @@ function privateFunctionWithPrivateModuleParameterTypes(param: privateModule.pub
 }
 declare function privateAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
 
-export module publicModule {
+export namespace publicModule {
     class privateClass {
     }
 
@@ -265,7 +265,7 @@ export module publicModule {
 
 }
 
-module privateModule {
+namespace privateModule {
     class privateClass {
     }
 
@@ -421,14 +421,14 @@ function publicFunctionWithPublicParmeterTypesInGlobal(param: publicClassInGloba
 }
 declare function publicAmbientFunctionWithPublicParmeterTypesInGlobal(param: publicClassInGlobal): void;
 
-module publicModuleInGlobal {
+namespace publicModuleInGlobal {
     class privateClass {
     }
 
     export class publicClass {
     }
 
-    module privateModule {
+    namespace privateModule {
         class privateClass {
         }
 
@@ -698,8 +698,6 @@ class publicClass {
 }
 exports.publicClass = publicClass;
 class publicClassWithWithPrivateParmeterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -715,8 +713,6 @@ class publicClassWithWithPrivateParmeterTypes {
 }
 exports.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
 class publicClassWithWithPublicParmeterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -732,8 +728,6 @@ class publicClassWithWithPublicParmeterTypes {
 }
 exports.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
 class privateClassWithWithPrivateParmeterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -748,8 +742,6 @@ class privateClassWithWithPrivateParmeterTypes {
     }
 }
 class privateClassWithWithPublicParmeterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -772,8 +764,6 @@ function privateFunctionWithPrivateParmeterTypes(param) {
 function privateFunctionWithPublicParmeterTypes(param) {
 }
 class publicClassWithPrivateModuleParameterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     myPublicMethod(param) {
@@ -787,8 +777,6 @@ exports.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModul
 function publicFunctionWithPrivateModuleParameterTypes(param) {
 }
 class privateClassWithPrivateModuleParameterTypes {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     myPublicMethod(param) {
@@ -808,8 +796,6 @@ var publicModule;
     }
     publicModule.publicClass = publicClass;
     class publicClassWithWithPrivateParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -825,8 +811,6 @@ var publicModule;
     }
     publicModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
     class publicClassWithWithPublicParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -842,8 +826,6 @@ var publicModule;
     }
     publicModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
     class privateClassWithWithPrivateParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -858,8 +840,6 @@ var publicModule;
         }
     }
     class privateClassWithWithPublicParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -884,8 +864,6 @@ var publicModule;
     function privateFunctionWithPublicParmeterTypes(param) {
     }
     class publicClassWithPrivateModuleParameterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -900,8 +878,6 @@ var publicModule;
     }
     publicModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
     class privateClassWithPrivateModuleParameterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -922,8 +898,6 @@ var privateModule;
     }
     privateModule.publicClass = publicClass;
     class publicClassWithWithPrivateParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -939,8 +913,6 @@ var privateModule;
     }
     privateModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
     class publicClassWithWithPublicParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -956,8 +928,6 @@ var privateModule;
     }
     privateModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
     class privateClassWithWithPrivateParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -972,8 +942,6 @@ var privateModule;
         }
     }
     class privateClassWithWithPublicParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -998,8 +966,6 @@ var privateModule;
     function privateFunctionWithPublicParmeterTypes(param) {
     }
     class publicClassWithPrivateModuleParameterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -1014,8 +980,6 @@ var privateModule;
     }
     privateModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
     class privateClassWithPrivateModuleParameterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -1029,11 +993,10 @@ var privateModule;
     }
 })(privateModule || (privateModule = {}));
 //// [privacyFunctionParameterDeclFile_GlobalFile.js]
+"use strict";
 class publicClassInGlobal {
 }
 class publicClassWithWithPublicParmeterTypesInGlobal {
-    param1;
-    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -1064,8 +1027,6 @@ var publicModuleInGlobal;
         }
         privateModule.publicClass = publicClass;
         class publicClassWithWithPrivateParmeterTypes {
-            param1;
-            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1081,8 +1042,6 @@ var publicModuleInGlobal;
         }
         privateModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
         class publicClassWithWithPublicParmeterTypes {
-            param1;
-            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1098,8 +1057,6 @@ var publicModuleInGlobal;
         }
         privateModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
         class privateClassWithWithPrivateParmeterTypes {
-            param1;
-            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1114,8 +1071,6 @@ var publicModuleInGlobal;
             }
         }
         class privateClassWithWithPublicParmeterTypes {
-            param1;
-            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1140,8 +1095,6 @@ var publicModuleInGlobal;
         function privateFunctionWithPublicParmeterTypes(param) {
         }
         class publicClassWithPrivateModuleParameterTypes {
-            param1;
-            param2;
             static myPublicStaticMethod(param) {
             }
             myPublicMethod(param) {
@@ -1156,8 +1109,6 @@ var publicModuleInGlobal;
         }
         privateModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
         class privateClassWithPrivateModuleParameterTypes {
-            param1;
-            param2;
             static myPublicStaticMethod(param) {
             }
             myPublicMethod(param) {
@@ -1171,8 +1122,6 @@ var publicModuleInGlobal;
         }
     })(privateModule || (privateModule = {}));
     class publicClassWithWithPrivateParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1188,8 +1137,6 @@ var publicModuleInGlobal;
     }
     publicModuleInGlobal.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
     class publicClassWithWithPublicParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1205,8 +1152,6 @@ var publicModuleInGlobal;
     }
     publicModuleInGlobal.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
     class privateClassWithWithPrivateParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1221,8 +1166,6 @@ var publicModuleInGlobal;
         }
     }
     class privateClassWithWithPublicParmeterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1247,8 +1190,6 @@ var publicModuleInGlobal;
     function privateFunctionWithPublicParmeterTypes(param) {
     }
     class publicClassWithPrivateModuleParameterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -1263,8 +1204,6 @@ var publicModuleInGlobal;
     }
     publicModuleInGlobal.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
     class privateClassWithPrivateModuleParameterTypes {
-        param1;
-        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -1285,9 +1224,9 @@ declare class privateClass {
 export declare class publicClass {
 }
 export interface publicInterfaceWithPrivateParmeterTypes {
-    new (param: privateClass): publicClass; // Error
-    (param: privateClass): publicClass; // Error
-    myMethod(param: privateClass): void; // Error
+    new (param: privateClass): publicClass;
+    (param: privateClass): publicClass;
+    myMethod(param: privateClass): void;
 }
 export interface publicInterfaceWithPublicParmeterTypes {
     new (param: publicClass): publicClass;
@@ -1314,12 +1253,12 @@ export declare class publicClassWithWithPublicParmeterTypes {
 }
 export declare function publicFunctionWithPrivateParmeterTypes(param: privateClass): void;
 export declare function publicFunctionWithPublicParmeterTypes(param: publicClass): void;
-export declare function publicAmbientFunctionWithPrivateParmeterTypes(param: privateClass): void; // Error
+export declare function publicAmbientFunctionWithPrivateParmeterTypes(param: privateClass): void;
 export declare function publicAmbientFunctionWithPublicParmeterTypes(param: publicClass): void;
 export interface publicInterfaceWithPrivateModuleParameterTypes {
-    new (param: privateModule.publicClass): publicClass; // Error
-    (param: privateModule.publicClass): publicClass; // Error
-    myMethod(param: privateModule.publicClass): void; // Error
+    new (param: privateModule.publicClass): publicClass;
+    (param: privateModule.publicClass): publicClass;
+    myMethod(param: privateModule.publicClass): void;
 }
 export declare class publicClassWithPrivateModuleParameterTypes {
     private param1;
@@ -1329,16 +1268,16 @@ export declare class publicClassWithPrivateModuleParameterTypes {
     constructor(param: privateModule.publicClass, param1: privateModule.publicClass, param2: privateModule.publicClass);
 }
 export declare function publicFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
-export declare function publicAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void; // Error
+export declare function publicAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
 export declare namespace publicModule {
     class privateClass {
     }
     export class publicClass {
     }
     export interface publicInterfaceWithPrivateParmeterTypes {
-        new (param: privateClass): publicClass; // Error
-        (param: privateClass): publicClass; // Error
-        myMethod(param: privateClass): void; // Error
+        new (param: privateClass): publicClass;
+        (param: privateClass): publicClass;
+        myMethod(param: privateClass): void;
     }
     export interface publicInterfaceWithPublicParmeterTypes {
         new (param: publicClass): publicClass;
@@ -1365,12 +1304,12 @@ export declare namespace publicModule {
     }
     export function publicFunctionWithPrivateParmeterTypes(param: privateClass): void;
     export function publicFunctionWithPublicParmeterTypes(param: publicClass): void;
-    export function publicAmbientFunctionWithPrivateParmeterTypes(param: privateClass): void; // Error
+    export function publicAmbientFunctionWithPrivateParmeterTypes(param: privateClass): void;
     export function publicAmbientFunctionWithPublicParmeterTypes(param: publicClass): void;
     export interface publicInterfaceWithPrivateModuleParameterTypes {
-        new (param: privateModule.publicClass): publicClass; // Error
-        (param: privateModule.publicClass): publicClass; // Error
-        myMethod(param: privateModule.publicClass): void; // Error
+        new (param: privateModule.publicClass): publicClass;
+        (param: privateModule.publicClass): publicClass;
+        myMethod(param: privateModule.publicClass): void;
     }
     export class publicClassWithPrivateModuleParameterTypes {
         private param1;
@@ -1380,7 +1319,7 @@ export declare namespace publicModule {
         constructor(param: privateModule.publicClass, param1: privateModule.publicClass, param2: privateModule.publicClass);
     }
     export function publicFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
-    export function publicAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void; // Error
+    export function publicAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
     export {};
 }
 declare namespace privateModule {
@@ -1515,9 +1454,9 @@ declare namespace publicModuleInGlobal {
         export {};
     }
     export interface publicInterfaceWithPrivateParmeterTypes {
-        new (param: privateClass): publicClass; // Error
-        (param: privateClass): publicClass; // Error
-        myMethod(param: privateClass): void; // Error
+        new (param: privateClass): publicClass;
+        (param: privateClass): publicClass;
+        myMethod(param: privateClass): void;
     }
     export interface publicInterfaceWithPublicParmeterTypes {
         new (param: publicClass): publicClass;
@@ -1544,12 +1483,12 @@ declare namespace publicModuleInGlobal {
     }
     export function publicFunctionWithPrivateParmeterTypes(param: privateClass): void;
     export function publicFunctionWithPublicParmeterTypes(param: publicClass): void;
-    export function publicAmbientFunctionWithPrivateParmeterTypes(param: privateClass): void; // Error
+    export function publicAmbientFunctionWithPrivateParmeterTypes(param: privateClass): void;
     export function publicAmbientFunctionWithPublicParmeterTypes(param: publicClass): void;
     export interface publicInterfaceWithPrivateModuleParameterTypes {
-        new (param: privateModule.publicClass): publicClass; // Error
-        (param: privateModule.publicClass): publicClass; // Error
-        myMethod(param: privateModule.publicClass): void; // Error
+        new (param: privateModule.publicClass): publicClass;
+        (param: privateModule.publicClass): publicClass;
+        myMethod(param: privateModule.publicClass): void;
     }
     export class publicClassWithPrivateModuleParameterTypes {
         private param1;
@@ -1559,6 +1498,6 @@ declare namespace publicModuleInGlobal {
         constructor(param: privateModule.publicClass, param1: privateModule.publicClass, param2: privateModule.publicClass);
     }
     export function publicFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
-    export function publicAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void; // Error
+    export function publicAmbientFunctionWithPrivateModuleParameterTypes(param: privateModule.publicClass): void;
     export {};
 }

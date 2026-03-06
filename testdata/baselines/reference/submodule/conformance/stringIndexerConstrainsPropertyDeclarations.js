@@ -100,18 +100,10 @@ var b: { [x: string]: string; } = {
 }
 
 //// [stringIndexerConstrainsPropertyDeclarations.js]
+"use strict";
+// String indexer types constrain the types of named properties in their containing type
 class C {
     constructor() { } // ok
-    a; // ok
-    b; // error
-    c; // error
-    "d"; // ok
-    "e"; // error
-    1.0; // ok
-    2.0; // error
-    "3.0"; // ok
-    "4.0"; // error
-    f; // error
     get X() {
         return '';
     }
@@ -119,8 +111,6 @@ class C {
     foo() {
         return '';
     }
-    static sa; // ok
-    static sb; // ok
     static foo() { } // ok
     static get X() {
         return 1;

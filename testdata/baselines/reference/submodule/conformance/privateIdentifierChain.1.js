@@ -16,8 +16,8 @@ class A {
 
 
 //// [privateIdentifierChain.1.js]
+"use strict";
 class A {
-    a;
     #b;
     getA() {
         return new A();

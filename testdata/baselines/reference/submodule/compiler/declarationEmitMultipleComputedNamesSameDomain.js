@@ -10,20 +10,21 @@ export class Test {
 }
 
 //// [declarationEmitMultipleComputedNamesSameDomain.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Test = void 0;
-class Test {
-    [x] = 10;
-    [y] = 10;
+var _a, _b;
+export class Test {
+    constructor() {
+        this[_a] = 10;
+        this[_b] = 10;
+    }
 }
-exports.Test = Test;
+_a = x, _b = y;
 
 
 //// [declarationEmitMultipleComputedNamesSameDomain.d.ts]
+declare const x: string;
 declare const y: "y";
 export declare class Test {
-    [x: string]: number;
+    [x]: number;
     [y]: number;
 }
 export {};

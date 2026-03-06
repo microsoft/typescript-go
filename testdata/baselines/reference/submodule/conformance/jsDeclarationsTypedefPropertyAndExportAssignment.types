@@ -26,14 +26,14 @@ class MainThreadTasks {
      * @param {TaskNode} y
      */
     constructor(x, y){}
->x : any
+>x : import("./module.js").TaskGroup
 >y : TaskNode
 }
 
 module.exports = MainThreadTasks;
 >module.exports = MainThreadTasks : typeof MainThreadTasks
 >module.exports : typeof MainThreadTasks
->module : { MainThreadTasks: typeof MainThreadTasks; }
+>module : { "export=": typeof MainThreadTasks; }
 >exports : typeof MainThreadTasks
 >MainThreadTasks : typeof MainThreadTasks
 

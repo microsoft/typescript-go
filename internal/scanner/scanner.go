@@ -7,10 +7,12 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -50,6 +52,7 @@ var textToKeyword = map[string]ast.Kind{
 	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"default":     ast.KindDefaultKeyword,
+	"defer":       ast.KindDeferKeyword,
 	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
@@ -207,17 +210,17 @@ type ScannerState struct {
 }
 
 type Scanner struct {
-	text             string
-	languageVariant  core.LanguageVariant
-	onError          ErrorCallback
-	skipTrivia       bool
-	JSDocParsingMode ast.JSDocParsingMode
-	scriptKind       core.ScriptKind
+	text            string
+	languageVariant core.LanguageVariant
+	onError         ErrorCallback
+	skipTrivia      bool
+	scriptKind      core.ScriptKind
 	ScannerState
 
-	numberCache    map[string]string
-	hexNumberCache map[string]string
-	hexDigitCache  map[string]string
+	containsNonASCII bool
+	numberCache      map[string]string
+	hexNumberCache   map[string]string
+	hexDigitCache    map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -327,6 +330,13 @@ func (s *Scanner) HasUnicodeEscape() bool {
 	return s.tokenFlags&ast.TokenFlagsUnicodeEscape != 0
 }
 
+// ContainsNonASCII returns true if the scanner encountered any non-ASCII bytes
+// during scanning. This is useful for determining whether UTF-8 byte offsets
+// may differ from UTF-16 code unit offsets.
+func (s *Scanner) ContainsNonASCII() bool {
+	return s.containsNonASCII
+}
+
 func (s *Scanner) HasExtendedUnicodeEscape() bool {
 	return s.tokenFlags&ast.TokenFlagsExtendedUnicodeEscape != 0
 }
@@ -343,6 +353,54 @@ func (s *Scanner) HasPrecedingJSDocLeadingAsterisks() bool {
 	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocLeadingAsterisks != 0
 }
 
+func (s *Scanner) HasPrecedingJSDocWithDeprecatedTag() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated != 0
+}
+
+func (s *Scanner) HasPrecedingJSDocWithSeeOrLink() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink != 0
+}
+
+// scanJSDocCommentForTags scans a JSDoc comment for @deprecated, @see, and @link tags,
+// setting the appropriate token flags. Called during scanning when a JSDoc comment is detected.
+func (s *Scanner) scanJSDocCommentForTags(commentText string) {
+	for {
+		i := strings.IndexByte(commentText, '@')
+		if i < 0 {
+			return
+		}
+		commentText = commentText[i+1:]
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated == 0 && hasJSDocTag(commentText, "deprecated") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithDeprecated
+		}
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink == 0 && hasJSDocTag(commentText, "see", "link", "linkcode", "linkplain") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithSeeOrLink
+		}
+		if s.tokenFlags&(ast.TokenFlagsPrecedingJSDocWithDeprecated|ast.TokenFlagsPrecedingJSDocWithSeeOrLink) ==
+			(ast.TokenFlagsPrecedingJSDocWithDeprecated | ast.TokenFlagsPrecedingJSDocWithSeeOrLink) {
+			return
+		}
+	}
+}
+
+// hasJSDocTag reports whether text starts with one of the given tag names followed
+// by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string).
+func hasJSDocTag(text string, tags ...string) bool {
+	for _, tag := range tags {
+		if !strings.HasPrefix(text, tag) {
+			continue
+		}
+		if len(text) == len(tag) {
+			return true
+		}
+		ch := text[len(tag)]
+		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*' {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Scanner) SetText(text string) {
 	s.text = text
 	s.ScannerState = ScannerState{}
@@ -354,10 +412,6 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 
 func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
 	s.scriptKind = scriptKind
-}
-
-func (s *Scanner) SetJSDocParsingMode(kind ast.JSDocParsingMode) {
-	s.JSDocParsingMode = kind
 }
 
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
@@ -393,37 +447,11 @@ func (s *Scanner) charAt(offset int) rune {
 }
 
 func (s *Scanner) charAndSize() (rune, int) {
-	return utf8.DecodeRuneInString(s.text[s.pos:])
-}
-
-func (s *Scanner) shouldParseJSDoc() bool {
-	switch s.JSDocParsingMode {
-	case ast.JSDocParsingModeParseAll:
-		return true
-	case ast.JSDocParsingModeParseNone:
-		return false
+	r, size := utf8.DecodeRuneInString(s.text[s.pos:])
+	if size > 1 {
+		s.containsNonASCII = true
 	}
-	if s.scriptKind != core.ScriptKindTS && s.scriptKind != core.ScriptKindTSX {
-		// If outside of TS, we need JSDoc to get any type info.
-		return true
-	}
-	if s.JSDocParsingMode == ast.JSDocParsingModeParseForTypeInfo {
-		// If we're in TS, but we don't need to produce reliable errors,
-		// we don't need to parse to find @see or @link.
-		return false
-	}
-	text := s.text[s.fullStartPos:s.pos]
-	for {
-		i := strings.IndexByte(text, '@')
-		if i < 0 {
-			break
-		}
-		text = text[i+1:]
-		if strings.HasPrefix(text, "see") || strings.HasPrefix(text, "link") {
-			return true
-		}
-	}
-	return false
+	return r, size
 }
 
 func (s *Scanner) Scan() ast.Kind {
@@ -612,8 +640,9 @@ func (s *Scanner) Scan() ast.Kind {
 					}
 				}
 
-				if isJSDoc && s.shouldParseJSDoc() {
+				if isJSDoc {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
+					s.scanJSDocCommentForTags(s.text[s.tokenStart:s.pos])
 				}
 
 				s.processCommentDirective(lastLineStart, s.pos, true)
@@ -1258,15 +1287,11 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 			if ch == '{' {
 				break
 			} else if ch == '@' && s.pos >= 0 {
-				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before non-whitespace
+				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before identifier
 				previous, _ := utf8.DecodeLastRuneInString(s.text[:s.pos])
 				if stringutil.IsWhiteSpaceSingleLine(previous) {
-					if s.pos+size >= len(s.text) {
-						// EOF counts as non-whitespace
-						break
-					}
 					next, _ := utf8.DecodeRuneInString(s.text[s.pos+size:])
-					if !stringutil.IsWhiteSpaceLike(next) {
+					if IsIdentifierStart(next) {
 						break
 					}
 				}
@@ -1280,6 +1305,17 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 	s.tokenValue = s.text[s.tokenStart:s.pos]
 	s.token = ast.KindJSDocCommentTextToken
 	return s.token
+}
+
+// Peek at the character at the current scanner position (expected to be right after '@')
+// and return true if a JSDoc tag can follow. Identifier starts indicate a tag name.
+// Whitespace, newlines, and EOF are also accepted to support incomplete tags for code completion.
+func (s *Scanner) CanFollowJSDocAt() bool {
+	if s.pos >= len(s.text) {
+		return true
+	}
+	ch, _ := utf8.DecodeRuneInString(s.text[s.pos:])
+	return IsIdentifierStart(ch) || stringutil.IsWhiteSpaceSingleLine(ch) || stringutil.IsLineBreak(ch)
 }
 
 func (s *Scanner) ScanJSDocToken() ast.Kind {
@@ -1361,7 +1397,8 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 			s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 			s.token = GetIdentifierToken(s.tokenValue)
 		} else {
-			s.scanInvalidCharacter()
+			s.pos++
+			s.token = ast.KindUnknown
 		}
 		return s.token
 	}
@@ -1453,6 +1490,9 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
 	// Fast path for simple strings without escape sequences.
 	strLen := strings.IndexRune(s.text[s.pos:], quote)
@@ -1624,6 +1664,13 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
@@ -1818,7 +1865,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1826,7 +1873,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1851,7 +1898,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
@@ -2051,14 +2099,13 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[ast.Kind]string
-
-func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToToken))
-	for text, key := range textToToken {
-		tokenToText[key] = text
+var tokenToText = func() [ast.KindCount]string {
+	var result [ast.KindCount]string
+	for text, kind := range textToToken {
+		result[kind] = text
 	}
-}
+	return result
+}()
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
@@ -2329,14 +2376,13 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
 	pos := SkipTrivia(sourceFile.Text(), node.Pos())
-	body := node.AsArrowFunction().Body
+	body := node.Body()
 	if body != nil && body.Kind == ast.KindBlock {
-		startLine, _ := GetLineAndCharacterOfPosition(sourceFile, body.Pos())
-		endLine, _ := GetLineAndCharacterOfPosition(sourceFile, body.End())
+		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
+		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
-			// The arrow function spans multiple lines,
-			// make the error span be the first line, inclusive.
-			return core.NewTextRange(pos, GetEndLinePosition(sourceFile, startLine))
+			// The arrow function spans multiple lines, make the error span be the first line, inclusive.
+			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine)+1)
 		}
 	}
 	return core.NewTextRange(pos, node.End())
@@ -2368,7 +2414,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	case ast.KindCaseClause, ast.KindDefaultClause:
 		start := SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.End()
-		statements := node.AsCaseOrDefaultClause().Statements.Nodes
+		statements := node.Statements()
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
@@ -2424,58 +2470,130 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
-	return sourceFile.LineMap()
+func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
+	return sourceFile.ECMALineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
-	lineMap := GetLineStarts(sourceFile)
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
+}
+
+// GetECMALineAndUTF16CharacterOfPosition returns the 0-based line number and the
+// UTF-16 code unit offset from the start of that line for the given byte position.
+// Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
+func GetECMALineAndUTF16CharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character core.UTF16Offset) {
+	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
-	return
+	character = core.UTF16Len(sourceFile.Text()[lineMap[line]:pos])
+	return line, character
 }
 
-func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
-	pos := int(GetLineStarts(sourceFile)[line])
+// GetECMALineAndByteOffsetOfPosition returns the 0-based line number and the
+// raw UTF-8 byte offset from the start of that line for the given byte position.
+// Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
+// Unlike GetECMALineAndUTF16CharacterOfPosition, the offset is in bytes, not UTF-16 code units.
+func GetECMALineAndByteOffsetOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, byteOffset int) {
+	lineMap := GetECMALineStarts(sourceFile)
+	line = ComputeLineOfPosition(lineMap, pos)
+	byteOffset = pos - int(lineMap[line])
+	return line, byteOffset
+}
+
+func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
+	pos := int(GetECMALineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
-			return pos
+			return pos - 1
 		}
 		pos += size
 	}
 }
 
-func GetPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
-	return ComputePositionOfLineAndCharacter(GetLineStarts(sourceFile), line, character)
+// GetECMAPositionOfLineAndUTF16Character converts a 0-based line number and UTF-16
+// code unit character offset back to an absolute byte position in the source text.
+// Uses ECMAScript line separators.
+func GetECMAPositionOfLineAndUTF16Character(sourceFile ast.SourceFileLike, line int, character core.UTF16Offset) int {
+	lineStarts := GetECMALineStarts(sourceFile)
+	return ComputePositionOfLineAndUTF16Character(lineStarts, line, character, sourceFile.Text(), false)
 }
 
-func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, character int) int {
-	/// !!! debugText, allowEdits
+// GetECMAPositionOfLineAndByteOffset converts a 0-based line number and byte offset
+// from line start back to an absolute byte position in the source text.
+// Uses ECMAScript line separators.
+func GetECMAPositionOfLineAndByteOffset(sourceFile ast.SourceFileLike, line int, byteOffset int) int {
+	return ComputePositionOfLineAndByteOffset(GetECMALineStarts(sourceFile), line, byteOffset)
+}
+
+// ComputePositionOfLineAndByteOffset computes a byte position from a line and
+// raw byte offset from the line start. This is a simple addition with validation.
+func ComputePositionOfLineAndByteOffset(lineStarts []core.TextPos, line int, byteOffset int) int {
 	if line < 0 || line >= len(lineStarts) {
-		// if (allowEdits) {
-		//     // Clamp line to nearest allowable value
-		//     line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
-		// }
 		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
 	}
+	return int(lineStarts[line]) + byteOffset
+}
 
-	res := int(lineStarts[line]) + character
-
-	// !!!
-	// if (allowEdits) {
-	//     // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
-	//     // TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
-	//     // apply them to the computed position to improve accuracy
-	//     return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
-	// }
-	if line < len(lineStarts)-1 && res >= int(lineStarts[line+1]) {
-		panic("Computed position is beyond that of the following line.")
+// ComputePositionOfLineAndUTF16Character converts a line and UTF-16 character offset
+// back to a byte position. The character parameter is measured in UTF-16 code units.
+// It scans from the line start to correctly handle multi-byte characters.
+// When allowEdits is true, out-of-range values are clamped instead of panicking.
+func ComputePositionOfLineAndUTF16Character(lineStarts []core.TextPos, line int, character core.UTF16Offset, text string, allowEdits bool) int {
+	if line < 0 || line >= len(lineStarts) {
+		if allowEdits {
+			// Clamp line to nearest allowable value
+			if line < 0 {
+				line = 0
+			} else if line >= len(lineStarts) {
+				line = len(lineStarts) - 1
+			}
+		} else {
+			panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+		}
 	}
-	// !!!
-	// else if (debugText !== undefined) {
-	//     Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
-	// }
+
+	lineStart := int(lineStarts[line])
+
+	if character > 0 {
+		// UTF-16 character offset: scan from line start counting UTF-16 code units.
+		lineEnd := len(text)
+		if line+1 < len(lineStarts) {
+			lineEnd = int(lineStarts[line+1])
+		}
+		utf16Count := core.UTF16Offset(0)
+		pos := lineStart
+		for pos < lineEnd {
+			if utf16Count >= character {
+				break
+			}
+			r, size := utf8.DecodeRuneInString(text[pos:])
+			utf16Count += core.UTF16Offset(utf16.RuneLen(r))
+			pos += size
+		}
+		if !allowEdits {
+			if pos == lineEnd && utf16Count < character {
+				panic(fmt.Sprintf("Bad UTF-16 character offset. Line: %d, character: %d.", line, character))
+			}
+			debug.Assert(pos <= len(text))
+			return pos
+		}
+		if pos > len(text) {
+			return len(text)
+		}
+		return pos
+	}
+
+	// Character is 0: line start position.
+	res := lineStart
+
+	if allowEdits {
+		if res > len(text) {
+			return len(text)
+		}
+		return res
+	}
+	debug.Assert(res <= len(text)) // Allow single character overflow for trailing newline
 	return res
 }
 

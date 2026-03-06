@@ -44,7 +44,7 @@ Output::
 
 Found 1 error in index.tsx[90m:10[0m
 
-//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+//// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -68,20 +68,31 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/index.js] *new* 
-(React.createElement(Component, null, React.createElement("div", null), React.createElement("div", null)));
+"use strict";
+(React.createElement(Component, null,
+    React.createElement("div", null),
+    React.createElement("div", null)));
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8ca521424834f2ae3377cc3ccc9dd3ef-declare namespace JSX {\n    interface ElementChildrenAttribute { children: {}; }\n    interface IntrinsicElements { div: {} }\n}\n\ndeclare var React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\n(<Component>\n    <div />\n    <div />\n</Component>)","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":265,"end":274,"code":2769,"category":1,"message":"No overload matches this call.","messageChain":[{"pos":265,"end":274,"code":2770,"category":1,"message":"The last overload gave the following error.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.","messageChain":[{"pos":265,"end":274,"code":2326,"category":1,"message":"Types of property 'children' are incompatible.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type 'any[]' is not assignable to type 'number'."}]}]}]}],"relatedInformation":[{"pos":217,"end":226,"code":2771,"category":1,"message":"The last overload is declared here."}]}]]]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./index.tsx"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8ca521424834f2ae3377cc3ccc9dd3ef-declare namespace JSX {\n    interface ElementChildrenAttribute { children: {}; }\n    interface IntrinsicElements { div: {} }\n}\n\ndeclare var React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\n(<Component>\n    <div />\n    <div />\n</Component>)","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":265,"end":274,"code":2769,"category":1,"messageKey":"No_overload_matches_this_call_2769","messageChain":[{"pos":265,"end":274,"code":2770,"category":1,"messageKey":"The_last_overload_gave_the_following_error_2770","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["{ children: any[]; }","{ children?: number | undefined; }"],"messageChain":[{"pos":265,"end":274,"code":2326,"category":1,"messageKey":"Types_of_property_0_are_incompatible_2326","messageArgs":["children"],"messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["any[]","number"]}]}]}]}],"relatedInformation":[{"pos":217,"end":226,"code":2771,"category":1,"messageKey":"The_last_overload_is_declared_here_2771"}]}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
+  "root": [
+    {
+      "files": [
+        "./index.tsx"
+      ],
+      "original": 2
+    }
+  ],
   "fileNames": [
-    "../../tslibs/TS/Lib/lib.d.ts",
+    "lib.es2025.full.d.ts",
     "./index.tsx"
   ],
   "fileInfos": [
     {
-      "fileName": "../../tslibs/TS/Lib/lib.d.ts",
+      "fileName": "lib.es2025.full.d.ts",
       "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "signature": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
@@ -119,35 +130,46 @@ declare const console: { log(msg: any): void; };
           "end": 274,
           "code": 2769,
           "category": 1,
-          "message": "No overload matches this call.",
+          "messageKey": "No_overload_matches_this_call_2769",
           "messageChain": [
             {
               "pos": 265,
               "end": 274,
               "code": 2770,
               "category": 1,
-              "message": "The last overload gave the following error.",
+              "messageKey": "The_last_overload_gave_the_following_error_2770",
               "messageChain": [
                 {
                   "pos": 265,
                   "end": 274,
                   "code": 2322,
                   "category": 1,
-                  "message": "Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.",
+                  "messageKey": "Type_0_is_not_assignable_to_type_1_2322",
+                  "messageArgs": [
+                    "{ children: any[]; }",
+                    "{ children?: number | undefined; }"
+                  ],
                   "messageChain": [
                     {
                       "pos": 265,
                       "end": 274,
                       "code": 2326,
                       "category": 1,
-                      "message": "Types of property 'children' are incompatible.",
+                      "messageKey": "Types_of_property_0_are_incompatible_2326",
+                      "messageArgs": [
+                        "children"
+                      ],
                       "messageChain": [
                         {
                           "pos": 265,
                           "end": 274,
                           "code": 2322,
                           "category": 1,
-                          "message": "Type 'any[]' is not assignable to type 'number'."
+                          "messageKey": "Type_0_is_not_assignable_to_type_1_2322",
+                          "messageArgs": [
+                            "any[]",
+                            "number"
+                          ]
                         }
                       ]
                     }
@@ -162,18 +184,19 @@ declare const console: { log(msg: any): void; };
               "end": 226,
               "code": 2771,
               "category": 1,
-              "message": "The last overload is declared here."
+              "messageKey": "The_last_overload_is_declared_here_2771"
             }
           ]
         }
       ]
     ]
   ],
-  "size": 2118
+  "size": 2221
 }
 
+tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/index.tsx
 Signatures::
 
@@ -200,5 +223,6 @@ Output::
 Found 1 error in index.tsx[90m:10[0m
 
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::

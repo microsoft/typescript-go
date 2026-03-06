@@ -6,16 +6,17 @@ class C {
 }
 
 //// [classExpressionInClassStaticDeclarations.js]
+"use strict";
 class C {
-    static D = class extends C {
-    };
 }
+C.D = class extends C {
+};
 
 
 //// [classExpressionInClassStaticDeclarations.d.ts]
 declare class C {
     static D: {
         new (): {};
-        D: any;
+        D: /*elided*/ any;
     };
 }

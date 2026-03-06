@@ -1,0 +1,45 @@
+--- old.checkJsObjectLiteralIndexSignatures.types
++++ new.checkJsObjectLiteralIndexSignatures.types
+@@= skipped -15, +15 lines =@@
+ >n : number
+
+ const numericIndex = { [n]: 1 };
+->numericIndex : { [n]: number; }
+->{ [n]: 1 } : { [n]: number; }
++>numericIndex : { [x: number]: number; }
++>{ [n]: 1 } : { [x: number]: number; }
+ >[n] : number
+ >n : number
+ >1 : 1
+
+ numericIndex[n].toFixed();
+ >numericIndex[n].toFixed() : string
+->numericIndex[n].toFixed : (fractionDigits?: number) => string
++>numericIndex[n].toFixed : (fractionDigits?: number | undefined) => string
+ >numericIndex[n] : number
+->numericIndex : { [n]: number; }
++>numericIndex : { [x: number]: number; }
+ >n : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+
+ const stringIndex = { [s]: 1 };
+->stringIndex : { [s]: number; }
+->{ [s]: 1 } : { [s]: number; }
++>stringIndex : { [x: string]: number; }
++>{ [s]: 1 } : { [x: string]: number; }
+ >[s] : number
+ >s : string
+ >1 : 1
+
+ stringIndex[s].toFixed();
+ >stringIndex[s].toFixed() : string
+->stringIndex[s].toFixed : (fractionDigits?: number) => string
++>stringIndex[s].toFixed : (fractionDigits?: number | undefined) => string
+ >stringIndex[s] : number
+->stringIndex : { [s]: number; }
++>stringIndex : { [x: string]: number; }
+ >s : string
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+

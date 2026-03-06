@@ -41,6 +41,7 @@ function f8(foo1: string, bar = foo1) { }
 
 
 //// [parameterInitializersForwardReferencing1_es6.js]
+"use strict";
 let foo = "";
 function f1(bar = foo) {
     var foo = 2;
@@ -66,8 +67,6 @@ function f7({ [foo]: bar }) {
     let foo = 2;
 }
 class Foo {
-    x;
-    y;
     constructor(x = 12, y = x) {
         this.x = x;
         this.y = y;

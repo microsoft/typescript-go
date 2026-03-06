@@ -40,6 +40,7 @@ function f<
 
 
 //// [collectionPatternNoError.js]
+"use strict";
 class Message {
     clone() {
         return this;
@@ -49,8 +50,6 @@ function fetchMsg(protoCtor) {
     return null;
 }
 class DataProvider {
-    message;
-    messageList;
     constructor(message, messageList) {
         this.message = message;
         this.messageList = messageList;

@@ -23,7 +23,6 @@ function test(param) {
 
 //// [emitEndOfFileJSDocComments2.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @typedef {number} A */
 /**
  * JSDoc comment for function

@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 	"unicode"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/internal"
@@ -20,8 +22,8 @@ func FS() vfs.FS {
 
 var osVFS vfs.FS = &osFS{
 	common: internal.Common{
-		RootFor:  os.DirFS,
-		Realpath: osFSRealpath,
+		RootFor:        os.DirFS,
+		IsReparsePoint: isReparsePoint,
 	},
 }
 
@@ -169,4 +171,23 @@ func (vfs *osFS) WriteFile(path string, content string, writeByteOrderMark bool)
 func (vfs *osFS) Remove(path string) error {
 	// todo: #701 add retry mechanism?
 	return os.RemoveAll(path)
+}
+
+func (vfs *osFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	return os.Chtimes(path, aTime, mTime)
+}
+
+func GetGlobalTypingsCacheLocation() string {
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		cacheDir = os.TempDir()
+	}
+
+	var subdir string
+	if runtime.GOOS == "windows" {
+		subdir = "Microsoft/TypeScript"
+	} else {
+		subdir = "typescript"
+	}
+	return tspath.CombinePaths(cacheDir, subdir, core.VersionMajorMinor())
 }

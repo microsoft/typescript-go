@@ -6,6 +6,6 @@ var x = 1
 
 
 //// [index.js]
-export = {};
+"use strict";
 module.exports = {};
 var x = 1;

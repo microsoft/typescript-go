@@ -1,8 +1,8 @@
 //// [tests/cases/compiler/declarationEmitImportInExportAssignmentModule.ts] ////
 
 //// [declarationEmitImportInExportAssignmentModule.ts]
-module m {
-    export module c {
+namespace m {
+    export namespace c {
         export class c {
         }
     }
@@ -21,7 +21,6 @@ var m;
         }
         c_1.c = c;
     })(c = m.c || (m.c = {}));
-    var x = c;
 })(m || (m = {}));
 module.exports = m;
 

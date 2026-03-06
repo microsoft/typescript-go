@@ -31,10 +31,10 @@ type TComeOnBar = typeof Bar<?string?>;
 
 
 //// [expressionWithJSDocTypeArguments.js]
+"use strict";
 // Repro from #51802
 function foo(x) { return x; }
 class Bar {
-    x;
     constructor(x) {
         this.x = x;
     }

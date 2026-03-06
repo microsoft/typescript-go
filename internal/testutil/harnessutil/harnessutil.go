@@ -3,6 +3,7 @@ package harnessutil
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/fs"
 	"maps"
 	"os"
@@ -20,6 +21,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute/incremental"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -33,6 +37,8 @@ import (
 
 // Posix-style path to additional test libraries
 const testLibFolder = "/.lib"
+
+const FakeTSVersion = "FakeTSVersion"
 
 type TestFile struct {
 	UnitName string
@@ -98,7 +104,7 @@ func CompileFiles(
 
 	// Parse harness and compiler options from the test configuration
 	if testConfig != nil {
-		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions)
+		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions, currentDirectory)
 	}
 
 	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, compilerOptions, currentDirectory, symlinks, tsconfig)
@@ -221,10 +227,11 @@ func CompileFilesEx(
 		Errors:     errors,
 	}, harnessOptions)
 	result.Symlinks = symlinks
+	result.Trace = host.tracer.String()
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := compilerOptions.Clone()
-		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions)
+		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions, currentDirectory)
 		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
@@ -232,7 +239,7 @@ func CompileFilesEx(
 
 var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	testfs := make(map[string]any)
-	libfs := os.DirFS(filepath.Join(repo.TypeScriptSubmodulePath, "tests", "lib"))
+	libfs := os.DirFS(filepath.Join(repo.TypeScriptSubmodulePath(), "tests", "lib"))
 	err := fs.WalkDir(libfs, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -255,7 +262,7 @@ var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	return testfs
 })
 
-func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions) {
+func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, currentDirectory string) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {
 			continue
@@ -263,7 +270,7 @@ func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration
 
 		commandLineOption := getCommandLineOption(name)
 		if commandLineOption != nil {
-			parsedValue := getOptionValue(t, commandLineOption, value)
+			parsedValue := getOptionValue(t, commandLineOption, value, currentDirectory)
 			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
 			if len(errors) > 0 {
 				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
@@ -272,7 +279,7 @@ func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration
 	}
 }
 
-func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions) {
+func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions, currentDirectory string) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {
 			continue
@@ -280,7 +287,7 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 
 		commandLineOption := getCommandLineOption(name)
 		if commandLineOption != nil {
-			parsedValue := getOptionValue(t, commandLineOption, value)
+			parsedValue := getOptionValue(t, commandLineOption, value, currentDirectory)
 			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
 			if len(errors) > 0 {
 				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
@@ -289,7 +296,7 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 		}
 		harnessOption := getHarnessOption(name)
 		if harnessOption != nil {
-			parsedValue := getOptionValue(t, harnessOption, value)
+			parsedValue := getOptionValue(t, harnessOption, value, currentDirectory)
 			parseHarnessOption(t, harnessOption.Name, parsedValue, harnessOptions)
 			continue
 		}
@@ -395,7 +402,10 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 	case "fileName":
 		harnessOptions.FileName = value.(string)
 	case "libFiles":
-		harnessOptions.LibFiles = value.([]string)
+		harnessOptions.LibFiles = make([]string, 0, len(value.([]any)))
+		for _, v := range value.([]any) {
+			harnessOptions.LibFiles = append(harnessOptions.LibFiles, v.(string))
+		}
 	case "noImplicitReferences":
 		harnessOptions.NoImplicitReferences = value.(bool)
 	case "currentDirectory":
@@ -419,11 +429,12 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 	}
 }
 
-var deprecatedModuleResolution []string = []string{"node", "classic", "node10"}
-
-func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string) tsoptions.CompilerOptionsValue {
+func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string, cwd string) tsoptions.CompilerOptionsValue {
 	switch option.Kind {
 	case tsoptions.CommandLineOptionTypeString:
+		if option.IsFilePath {
+			return tspath.GetNormalizedAbsolutePath(value, cwd)
+		}
 		return value
 	case tsoptions.CommandLineOptionTypeNumber:
 		numVal, err := strconv.Atoi(value)
@@ -448,6 +459,11 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 		return enumVal
 	case tsoptions.CommandLineOptionTypeList, tsoptions.CommandLineOptionTypeListOrElement:
 		listVal, errors := tsoptions.ParseListTypeOption(option, value)
+		if option.Elements().IsFilePath {
+			return core.Map(listVal, func(item any) any {
+				return tspath.GetNormalizedAbsolutePath(item.(string), cwd)
+			})
+		}
 		if len(errors) > 0 {
 			t.Fatalf("Unknown value '%s' for compiler option '%s'", value, option.Name)
 		}
@@ -460,6 +476,7 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 
 type cachedCompilerHost struct {
 	compiler.CompilerHost
+	tracer *TracerForBaselining
 }
 
 var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
@@ -500,9 +517,99 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 	return result
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) compiler.CompilerHost {
+type TracerForBaselining struct {
+	opts             tspath.ComparePathsOptions
+	packageJsonCache map[tspath.Path]bool
+	builder          *strings.Builder
+}
+
+func NewTracerForBaselining(opts tspath.ComparePathsOptions, builder *strings.Builder) *TracerForBaselining {
+	return &TracerForBaselining{
+		opts:             opts,
+		packageJsonCache: make(map[tspath.Path]bool),
+		builder:          builder,
+	}
+}
+
+func (t *TracerForBaselining) Trace(msg *diagnostics.Message, args ...any) {
+	t.TraceWithWriter(t.builder, msg.Localize(locale.Default, args...), true)
+}
+
+func (t *TracerForBaselining) TraceWithWriter(w io.Writer, msg string, usePackageJsonCache bool) {
+	fmt.Fprintln(w, t.sanitizeTrace(msg, usePackageJsonCache))
+}
+
+func (t *TracerForBaselining) sanitizeTrace(msg string, usePackageJsonCache bool) string {
+	// Version
+	if str := strings.Replace(msg, "'"+core.Version()+"'", "'"+FakeTSVersion+"'", 1); str != msg {
+		return str
+	}
+	// caching of fs in trace to be replaces with non caching version
+	if str, ok := strings.CutSuffix(msg, "' does not exist according to earlier cached lookups."); ok {
+		file := strings.TrimPrefix(str, "File '")
+		if usePackageJsonCache {
+			filePath := tspath.ToPath(file, t.opts.CurrentDirectory, t.opts.UseCaseSensitiveFileNames)
+			if _, has := t.packageJsonCache[filePath]; has {
+				return msg
+			} else {
+				t.packageJsonCache[filePath] = false
+			}
+		}
+		return fmt.Sprintf("File '%s' does not exist.", file)
+	}
+	if str, ok := strings.CutSuffix(msg, "' exists according to earlier cached lookups."); ok {
+		file := strings.TrimPrefix(str, "File '")
+		if usePackageJsonCache {
+			filePath := tspath.ToPath(file, t.opts.CurrentDirectory, t.opts.UseCaseSensitiveFileNames)
+			if _, has := t.packageJsonCache[filePath]; has {
+				return msg
+			} else {
+				t.packageJsonCache[filePath] = true
+			}
+		}
+		return fmt.Sprintf("Found 'package.json' at '%s'.", file)
+	}
+	if usePackageJsonCache {
+		if str, ok := strings.CutSuffix(msg, "' does not exist."); ok {
+			file := strings.TrimPrefix(str, "File '")
+			filePath := tspath.ToPath(file, t.opts.CurrentDirectory, t.opts.UseCaseSensitiveFileNames)
+			if _, has := t.packageJsonCache[filePath]; !has {
+				t.packageJsonCache[filePath] = false
+				return msg
+			} else {
+				return fmt.Sprintf("File '%s' does not exist according to earlier cached lookups.", file)
+			}
+		}
+		if str, ok := strings.CutPrefix(msg, "Found 'package.json' at '"); ok {
+			file := strings.TrimSuffix(str, "'.")
+			filePath := tspath.ToPath(file, t.opts.CurrentDirectory, t.opts.UseCaseSensitiveFileNames)
+			if _, has := t.packageJsonCache[filePath]; !has {
+				t.packageJsonCache[filePath] = true
+				return msg
+			} else {
+				return fmt.Sprintf("File '%s' exists according to earlier cached lookups.", file)
+			}
+		}
+	}
+	return msg
+}
+
+func (t *TracerForBaselining) String() string {
+	return t.builder.String()
+}
+
+func (t *TracerForBaselining) Reset() {
+	t.packageJsonCache = make(map[tspath.Path]bool)
+}
+
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) *cachedCompilerHost {
+	tracer := NewTracerForBaselining(tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
+		CurrentDirectory:          currentDirectory,
+	}, &strings.Builder{})
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace),
+		tracer:       tracer,
 	}
 }
 
@@ -581,13 +688,13 @@ func compileFilesWithHost(
 	}
 	emitResult := program.Emit(ctx, compiler.EmitOptions{})
 
-	return newCompilationResult(config.CompilerOptions(), program, emitResult, diagnostics, harnessOptions)
+	return newCompilationResult(host, config.CompilerOptions(), program, emitResult, diagnostics, harnessOptions)
 }
 
 type CompilationResult struct {
 	Diagnostics      []*ast.Diagnostic
 	Result           *compiler.EmitResult
-	Program          *compiler.Program
+	Program          compiler.ProgramLike
 	Options          *core.CompilerOptions
 	HarnessOptions   *HarnessOptions
 	JS               collections.OrderedMap[string, *TestFile]
@@ -598,6 +705,8 @@ type CompilationResult struct {
 	outputs          []*TestFile
 	inputs           []*TestFile
 	inputsAndOutputs collections.OrderedMap[string, *CompilationOutput]
+	Trace            string
+	Host             compiler.CompilerHost
 }
 
 type CompilationOutput struct {
@@ -608,8 +717,9 @@ type CompilationOutput struct {
 }
 
 func newCompilationResult(
+	host compiler.CompilerHost,
 	options *core.CompilerOptions,
-	program *compiler.Program,
+	program compiler.ProgramLike,
 	result *compiler.EmitResult,
 	diagnostics []*ast.Diagnostic,
 	harnessOptions *HarnessOptions,
@@ -624,9 +734,10 @@ func newCompilationResult(
 		Program:        program,
 		Options:        options,
 		HarnessOptions: harnessOptions,
+		Host:           host,
 	}
 
-	fs := program.Host().FS().(*OutputRecorderFS)
+	fs := host.FS().(*OutputRecorderFS)
 	if fs != nil && program != nil {
 		// Corsa, unlike Strada, can use multiple threads for emit. As a result, the order of outputs is non-deterministic.
 		// To make the order deterministic, we sort the outputs by the order of the inputs.
@@ -696,7 +807,7 @@ func compareTestFiles(a *TestFile, b *TestFile) int {
 }
 
 func (c *CompilationResult) getOutputPath(path string, ext string) string {
-	path = tspath.ResolvePath(c.Program.GetCurrentDirectory(), path)
+	path = tspath.ResolvePath(c.Host.GetCurrentDirectory(), path)
 	var outDir string
 	if ext == ".d.ts" || ext == ".d.mts" || ext == ".d.cts" || (strings.HasSuffix(ext, ".ts") && strings.Contains(ext, ".d.")) {
 		outDir = c.Options.DeclarationDir
@@ -710,17 +821,17 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 		common := c.Program.CommonSourceDirectory()
 		if common != "" {
 			path = tspath.GetRelativePathFromDirectory(common, path, tspath.ComparePathsOptions{
-				UseCaseSensitiveFileNames: c.Program.UseCaseSensitiveFileNames(),
-				CurrentDirectory:          c.Program.GetCurrentDirectory(),
+				UseCaseSensitiveFileNames: c.Host.FS().UseCaseSensitiveFileNames(),
+				CurrentDirectory:          c.Host.GetCurrentDirectory(),
 			})
-			path = tspath.CombinePaths(tspath.ResolvePath(c.Program.GetCurrentDirectory(), c.Options.OutDir), path)
+			path = tspath.CombinePaths(tspath.ResolvePath(c.Host.GetCurrentDirectory(), c.Options.OutDir), path)
 		}
 	}
 	return tspath.ChangeExtension(path, ext)
 }
 
 func (r *CompilationResult) FS() vfs.FS {
-	return r.Program.Host().FS()
+	return r.Host.FS()
 }
 
 func (r *CompilationResult) GetNumberOfJSFiles(includeJson bool) int {
@@ -745,7 +856,7 @@ func (c *CompilationResult) Outputs() []*TestFile {
 }
 
 func (c *CompilationResult) GetInputsAndOutputsForFile(path string) *CompilationOutput {
-	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.GetCurrentDirectory(), path))
+	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Host.GetCurrentDirectory(), path))
 }
 
 func (c *CompilationResult) GetInputsForFile(path string) []*TestFile {
@@ -808,7 +919,24 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 	return sourceMapRecorder.String()
 }
 
-func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) *compiler.Program {
+type testBuildInfoReader struct {
+	inner incremental.BuildInfoReader
+}
+
+func (t *testBuildInfoReader) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.BuildInfo {
+	r := t.inner.ReadBuildInfo(config)
+	if r == nil {
+		return nil
+	}
+	r.Version = core.Version()
+	return r
+}
+
+func getTestBuildInfoReader(host compiler.CompilerHost) *testBuildInfoReader {
+	return &testBuildInfoReader{inner: incremental.NewBuildInfoReader(host)}
+}
+
+func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) compiler.ProgramLike {
 	var singleThreaded core.Tristate
 	if testutil.TestProgramIsSingleThreaded() {
 		singleThreaded = core.TSTrue
@@ -820,6 +948,11 @@ func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLi
 		SingleThreaded: singleThreaded,
 	}
 	program := compiler.NewProgram(programOptions)
+	if config.CompilerOptions().Incremental.IsTrue() {
+		oldProgram := incremental.ReadBuildInfoProgram(config, getTestBuildInfoReader(host), host)
+		incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), false)
+		return incrementalProgram
+	}
 	return program
 }
 
@@ -836,7 +969,7 @@ func listFiles(path string, spec *regexp.Regexp, recursive bool) ([]string, erro
 }
 
 func listFilesWorker(spec *regexp.Regexp, recursive bool, folder string) ([]string, error) {
-	folder = tspath.GetNormalizedAbsolutePath(folder, repo.TestDataPath)
+	folder = tspath.GetNormalizedAbsolutePath(folder, repo.TestDataPath())
 	entries, err := os.ReadDir(folder)
 	if err != nil {
 		return nil, err
@@ -926,7 +1059,7 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 	star := false
 	var includes []string
 	var excludes []string
-	for _, s := range strings.Split(value, ",") {
+	for s := range strings.SplitSeq(value, ",") {
 		s = strings.TrimSpace(s)
 		if len(s) == 0 {
 			continue
@@ -968,7 +1101,12 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 
 	// remove all excluded entries
 	for _, exclude := range excludes {
-		value := getValueOfOptionString(t, option, exclude)
+		value, ok := tryGetValueOfOptionString(option, exclude)
+		if !ok {
+			// The excluded value is not recognized (e.g., a removed option like "es3").
+			// Just skip it since there's nothing to remove.
+			continue
+		}
 		delete(variations, value)
 	}
 
@@ -979,15 +1117,35 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 }
 
 func getValueOfOptionString(t *testing.T, option string, value string) tsoptions.CompilerOptionsValue {
+	result, ok := tryGetValueOfOptionString(option, value)
+	if !ok {
+		t.Fatalf("Unknown value '%s' for option '%s'", value, option)
+	}
+	return result
+}
+
+func tryGetValueOfOptionString(option string, value string) (tsoptions.CompilerOptionsValue, bool) {
 	optionDecl := getCommandLineOption(option)
 	if optionDecl == nil {
-		t.Fatalf("Unknown option '%s'", option)
+		return nil, false
 	}
-	// TODO(gabritto): remove this when we deprecate the tests containing those option values
-	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
-		return value
+	switch optionDecl.Kind {
+	case tsoptions.CommandLineOptionTypeEnum:
+		enumVal, ok := optionDecl.EnumMap().Get(strings.ToLower(value))
+		if !ok {
+			return nil, false
+		}
+		return enumVal, true
+	case tsoptions.CommandLineOptionTypeBoolean:
+		switch strings.ToLower(value) {
+		case "true":
+			return true, true
+		case "false":
+			return false, true
+		}
+		return nil, false
 	}
-	return getOptionValue(t, optionDecl, value)
+	return value, true
 }
 
 func getCommandLineOption(option string) *tsoptions.CommandLineOption {
@@ -1042,4 +1200,35 @@ func GetConfigNameFromFileName(filename string) string {
 		return basenameLower
 	}
 	return ""
+}
+
+func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions) {
+	t.Helper()
+	switch options.Module {
+	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
+		t.Skipf("unsupported module kind %s", options.Module)
+	}
+	switch options.ModuleResolution {
+	case core.ModuleResolutionKindNode10, core.ModuleResolutionKindClassic:
+		t.Skipf("unsupported module resolution kind %d", options.ModuleResolution)
+	}
+	if options.ESModuleInterop.IsFalse() {
+		t.Skipf("esModuleInterop=false is unsupported")
+	}
+	if options.AllowSyntheticDefaultImports.IsFalse() {
+		t.Skipf("allowSyntheticDefaultImports=false is unsupported")
+	}
+	if options.BaseUrl != "" {
+		t.Skipf("unsupported baseUrl %s", options.BaseUrl)
+	}
+	if options.OutFile != "" {
+		t.Skipf("unsupported outFile %s", options.OutFile)
+	}
+	switch options.Target {
+	case core.ScriptTargetES5:
+		t.Skipf("unsupported target %s", options.Target)
+	}
+	if options.AlwaysStrict.IsFalse() {
+		t.Skipf("alwaysStrict=false is unsupported")
+	}
 }

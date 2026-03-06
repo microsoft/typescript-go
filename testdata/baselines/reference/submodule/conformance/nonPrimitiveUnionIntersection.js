@@ -12,6 +12,7 @@ const bar: object & {err: string} = {bar: 'bar'}; // error
 
 
 //// [nonPrimitiveUnionIntersection.js]
+"use strict";
 var a = ""; // error
 var b = ""; // ok
 var c = 123; // error
@@ -22,10 +23,10 @@ const bar = { bar: 'bar' }; // error
 
 
 //// [nonPrimitiveUnionIntersection.d.ts]
-declare var a: object & string; // error
-declare var b: object | string; // ok
-declare var c: object & {}; // error
-declare const foo: object & {}; // ok
+declare var a: object & string;
+declare var b: object | string;
+declare var c: object & {};
+declare const foo: object & {};
 declare const bar: object & {
     err: string;
-}; // error
+};

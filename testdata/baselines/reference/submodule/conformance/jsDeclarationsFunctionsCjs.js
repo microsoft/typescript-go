@@ -63,22 +63,12 @@ module.exports.j = function j() {}
 
 //// [index.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-export var a = function a() { };
 module.exports.a = function a() { };
-export var b = function b() { };
 module.exports.b = function b() { };
 module.exports.b.cat = "cat";
-export var c = function c() { };
 module.exports.c = function c() { };
 module.exports.c.Cls = class {
 };
-/**
- * @param {number} a
- * @param {number} b
- * @return {string}
- */
-export var d = function d(a, b) { return /** @type {*} */ (null as ); };
 /**
  * @param {number} a
  * @param {number} b
@@ -91,21 +81,7 @@ module.exports.d = function d(a, b) { return /** @type {*} */ null; };
  * @param {U} b
  * @return {T & U}
  */
-export var e = function e(a, b) { return /** @type {*} */ (null as ); };
-/**
- * @template T,U
- * @param {T} a
- * @param {U} b
- * @return {T & U}
- */
 module.exports.e = function e(a, b) { return /** @type {*} */ null; };
-/**
- * @template T
- * @param {T} a
- */
-export var f = function f(a) {
-    return a;
-};
 /**
  * @template T
  * @param {T} a
@@ -121,7 +97,6 @@ module.exports.f.self = module.exports.f;
 function g(a, b) {
     return a.x && b.y();
 }
-export var g = g;
 module.exports.g = g;
 /**
  * @param {{x: string}} a
@@ -130,47 +105,42 @@ module.exports.g = g;
 function hh(a, b) {
     return a.x && b.y();
 }
-export var h = hh;
 module.exports.h = hh;
-export var i = function i() { };
 module.exports.i = function i() { };
-export var ii = module.exports.i;
 module.exports.ii = module.exports.i;
 // note that this last one doesn't make much sense in cjs, since exports aren't hoisted bindings
-export var jj = module.exports.j;
-// note that this last one doesn't make much sense in cjs, since exports aren't hoisted bindings
 module.exports.jj = module.exports.j;
-export var j = function j() { };
 module.exports.j = function j() { };
 
 
 //// [index.d.ts]
-export var a = function a();;
-export var b = function b();;
-export var c = function c();;
+export declare var a: () => void;
+export declare var b: () => void;
+export declare var c: () => void;
+export declare var d: (a: number, b: number) => string;
+export declare var e: <T, U>(a: T, b: U) => T & U;
+export declare var f: <T>(a: T) => T;
 /**
- * @param {number} a
- * @param {number} b
- * @return {string}
+ * @param {{x: string}} a
+ * @param {{y: typeof module.exports.b}} b
  */
-export var d = function d(a, b);;
+declare function g(a: {
+    x: string;
+}, b: {
+    y: typeof module.exports.b;
+}): void | "";
+export declare var g: typeof g;
 /**
- * @template T,U
- * @param {T} a
- * @param {U} b
- * @return {T & U}
+ * @param {{x: string}} a
+ * @param {{y: typeof module.exports.b}} b
  */
-export var e = function e(a, b);;
-/**
- * @template T
- * @param {T} a
- */
-export var f = function f(a);;
-export var g = g;
-export var h = hh;
-export var i = function i();;
-export var ii = module.exports.i;
-// note that this last one doesn't make much sense in cjs, since exports aren't hoisted bindings
-export var jj = module.exports.j;
-export var j = function j();;
-export {};
+declare function hh(a: {
+    x: string;
+}, b: {
+    y: typeof module.exports.b;
+}): void | "";
+export declare var h: typeof hh;
+export declare var i: () => void;
+export declare var ii: () => void;
+export declare var jj: () => void;
+export declare var j: () => void;

@@ -57,7 +57,7 @@ export type MapType = {
 };
 
 /**
- * Represents an `and`type
+ * Represents an `and` type
  * (e.g. TextDocumentParams & WorkDoneProgressParams`).
  */
 export type AndType = {
@@ -87,7 +87,7 @@ export type TupleType = {
  * Represents a literal structure
  * (e.g. `property: { start: uinteger; end: uinteger; }`).
  */
-export type StructureLiteralType =  {
+export type StructureLiteralType = {
 	kind: 'literal';
 	value: StructureLiteral;
 };
@@ -202,6 +202,16 @@ export type Request = {
 	 * the property contains the deprecation message.
 	 */
 	deprecated?: string;
+
+	/**
+	 * The client capability property path if any.
+	 */
+	clientCapability?: string;
+
+	/**
+	 * The server capability property path if any.
+	 */
+	serverCapability?: string;
 };
 
 /**
@@ -269,6 +279,16 @@ export type Notification = {
 	 * the property contains the deprecation message.
 	 */
 	deprecated?: string;
+
+	/**
+	 * The client capability property path if any.
+	 */
+	clientCapability?: string;
+
+	/**
+	 * The server capability property path if any.
+	 */
+	serverCapability?: string;
 };
 
 /**
@@ -319,6 +339,12 @@ export type Property = {
 	 * the property contains the deprecation message.
 	 */
 	deprecated?: string;
+
+	/**
+	 * Whether this property uses omitzero without being a pointer.
+	 * Custom extension for special value types.
+	 */
+	omitzeroValue?: boolean;
 };
 
 /**
@@ -437,7 +463,7 @@ export type TypeAlias = {
 	/**
 	 * An optional documentation.
 	 */
-	 documentation?: string;
+	documentation?: string;
 
 	/**
 	 * Since when (release number) this structure is
@@ -451,7 +477,7 @@ export type TypeAlias = {
 	 */
 	sinceTags?: string[];
 
-	 /**
+	/**
 	 * Whether this is a proposed type alias. If omitted,
 	 * the type alias is final.
 	 */
@@ -481,7 +507,7 @@ export type EnumerationEntry = {
 	/**
 	 * An optional documentation.
 	 */
-	 documentation?: string;
+	documentation?: string;
 
 	/**
 	 * Since when (release number) this enumeration entry is
@@ -495,7 +521,7 @@ export type EnumerationEntry = {
 	 */
 	sinceTags?: string[];
 
-	 /**
+	/**
 	 * Whether this is a proposed enumeration entry. If omitted,
 	 * the enumeration entry is final.
 	 */
@@ -539,7 +565,7 @@ export type Enumeration = {
 	/**
 	 * An optional documentation.
 	 */
-	 documentation?: string;
+	documentation?: string;
 
 	/**
 	 * Since when (release number) this enumeration is
@@ -553,7 +579,7 @@ export type Enumeration = {
 	 */
 	sinceTags?: string[];
 
-	 /**
+	/**
 	 * Whether this is a proposed enumeration. If omitted,
 	 * the enumeration is final.
 	 */

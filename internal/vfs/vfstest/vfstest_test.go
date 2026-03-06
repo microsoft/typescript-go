@@ -34,7 +34,7 @@ func TestInsensitive(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, false /*useCaseSensitiveFileNames*/)
+	}, false /*useCaseSensitiveFileNames*/, nil)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -97,7 +97,7 @@ func TestInsensitiveUpper(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, false /*useCaseSensitiveFileNames*/)
+	}, false /*useCaseSensitiveFileNames*/, nil)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -142,7 +142,7 @@ func TestSensitive(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, true /*useCaseSensitiveFileNames*/)
+	}, true /*useCaseSensitiveFileNames*/, nil)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -170,7 +170,7 @@ func TestSensitiveDuplicatePath(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/, nil)
 	}, `duplicate path: "Foo" and "foo" have the same canonical path`)
 }
 
@@ -186,7 +186,7 @@ func TestInsensitiveDuplicatePath(t *testing.T) {
 		},
 	}
 
-	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/)
+	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/, nil)
 }
 
 func dirEntriesToNames(entries []fs.DirEntry) []string {
@@ -274,10 +274,7 @@ func TestStress(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range runtime.GOMAXPROCS(0) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+		wg.Go(func() {
 			randomOps := slices.Clone(ops)
 			rand.Shuffle(len(randomOps), func(i, j int) {
 				randomOps[i], randomOps[j] = randomOps[j], randomOps[i]
@@ -286,8 +283,9 @@ func TestStress(t *testing.T) {
 			for i := range 10000 {
 				randomOps[i%len(randomOps)]()
 			}
-		}()
+		})
 	}
+	wg.Wait()
 }
 
 func TestParentDirFile(t *testing.T) {
@@ -303,7 +301,7 @@ func TestParentDirFile(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/, nil)
 	}, `failed to create intermediate directories for "foo/oops": mkdir "foo": path exists but is not a directory`)
 }
 

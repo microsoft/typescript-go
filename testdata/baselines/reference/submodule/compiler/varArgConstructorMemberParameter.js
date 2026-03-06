@@ -15,17 +15,16 @@ class Foo3 {
 
 
 //// [varArgConstructorMemberParameter.js]
+"use strict";
 class Foo1 {
     constructor(...args) { }
 }
 class Foo2 {
-    args;
     constructor(args) {
         this.args = args;
     }
 }
 class Foo3 {
-    args;
     constructor(...args) {
         this.args = args;
     }

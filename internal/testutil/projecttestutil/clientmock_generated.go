@@ -21,13 +21,22 @@ var _ project.Client = &ClientMock{}
 //
 //		// make and configure a mocked project.Client
 //		mockedClient := &ClientMock{
+//			PublishDiagnosticsFunc: func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+//				panic("mock out the PublishDiagnostics method")
+//			},
+//			RefreshCodeLensFunc: func(ctx context.Context) error {
+//				panic("mock out the RefreshCodeLens method")
+//			},
 //			RefreshDiagnosticsFunc: func(ctx context.Context) error {
 //				panic("mock out the RefreshDiagnostics method")
 //			},
-//			UnwatchFilesFunc: func(ctx context.Context, handle project.WatcherHandle) error {
+//			RefreshInlayHintsFunc: func(ctx context.Context) error {
+//				panic("mock out the RefreshInlayHints method")
+//			},
+//			UnwatchFilesFunc: func(ctx context.Context, id project.WatcherID) error {
 //				panic("mock out the UnwatchFiles method")
 //			},
-//			WatchFilesFunc: func(ctx context.Context, watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
+//			WatchFilesFunc: func(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
 //				panic("mock out the WatchFiles method")
 //			},
 //		}
@@ -37,19 +46,45 @@ var _ project.Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
+	// PublishDiagnosticsFunc mocks the PublishDiagnostics method.
+	PublishDiagnosticsFunc func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
+
+	// RefreshCodeLensFunc mocks the RefreshCodeLens method.
+	RefreshCodeLensFunc func(ctx context.Context) error
+
 	// RefreshDiagnosticsFunc mocks the RefreshDiagnostics method.
 	RefreshDiagnosticsFunc func(ctx context.Context) error
 
+	// RefreshInlayHintsFunc mocks the RefreshInlayHints method.
+	RefreshInlayHintsFunc func(ctx context.Context) error
+
 	// UnwatchFilesFunc mocks the UnwatchFiles method.
-	UnwatchFilesFunc func(ctx context.Context, handle project.WatcherHandle) error
+	UnwatchFilesFunc func(ctx context.Context, id project.WatcherID) error
 
 	// WatchFilesFunc mocks the WatchFiles method.
-	WatchFilesFunc func(ctx context.Context, watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error)
+	WatchFilesFunc func(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// PublishDiagnostics holds details about calls to the PublishDiagnostics method.
+		PublishDiagnostics []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Params is the params argument value.
+			Params *lsproto.PublishDiagnosticsParams
+		}
+		// RefreshCodeLens holds details about calls to the RefreshCodeLens method.
+		RefreshCodeLens []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+		}
 		// RefreshDiagnostics holds details about calls to the RefreshDiagnostics method.
 		RefreshDiagnostics []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+		}
+		// RefreshInlayHints holds details about calls to the RefreshInlayHints method.
+		RefreshInlayHints []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 		}
@@ -57,20 +92,95 @@ type ClientMock struct {
 		UnwatchFiles []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
-			// Handle is the handle argument value.
-			Handle project.WatcherHandle
+			// ID is the id argument value.
+			ID project.WatcherID
 		}
 		// WatchFiles holds details about calls to the WatchFiles method.
 		WatchFiles []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
+			// ID is the id argument value.
+			ID project.WatcherID
 			// Watchers is the watchers argument value.
 			Watchers []*lsproto.FileSystemWatcher
 		}
 	}
+	lockPublishDiagnostics sync.RWMutex
+	lockRefreshCodeLens    sync.RWMutex
 	lockRefreshDiagnostics sync.RWMutex
+	lockRefreshInlayHints  sync.RWMutex
 	lockUnwatchFiles       sync.RWMutex
 	lockWatchFiles         sync.RWMutex
+}
+
+// PublishDiagnostics calls PublishDiagnosticsFunc.
+func (mock *ClientMock) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+	callInfo := struct {
+		Ctx    context.Context
+		Params *lsproto.PublishDiagnosticsParams
+	}{
+		Ctx:    ctx,
+		Params: params,
+	}
+	mock.lockPublishDiagnostics.Lock()
+	mock.calls.PublishDiagnostics = append(mock.calls.PublishDiagnostics, callInfo)
+	mock.lockPublishDiagnostics.Unlock()
+	if mock.PublishDiagnosticsFunc == nil {
+		var errOut error
+		return errOut
+	}
+	return mock.PublishDiagnosticsFunc(ctx, params)
+}
+
+// PublishDiagnosticsCalls gets all the calls that were made to PublishDiagnostics.
+// Check the length with:
+//
+//	len(mockedClient.PublishDiagnosticsCalls())
+func (mock *ClientMock) PublishDiagnosticsCalls() []struct {
+	Ctx    context.Context
+	Params *lsproto.PublishDiagnosticsParams
+} {
+	var calls []struct {
+		Ctx    context.Context
+		Params *lsproto.PublishDiagnosticsParams
+	}
+	mock.lockPublishDiagnostics.RLock()
+	calls = mock.calls.PublishDiagnostics
+	mock.lockPublishDiagnostics.RUnlock()
+	return calls
+}
+
+// RefreshCodeLens calls RefreshCodeLensFunc.
+func (mock *ClientMock) RefreshCodeLens(ctx context.Context) error {
+	callInfo := struct {
+		Ctx context.Context
+	}{
+		Ctx: ctx,
+	}
+	mock.lockRefreshCodeLens.Lock()
+	mock.calls.RefreshCodeLens = append(mock.calls.RefreshCodeLens, callInfo)
+	mock.lockRefreshCodeLens.Unlock()
+	if mock.RefreshCodeLensFunc == nil {
+		var errOut error
+		return errOut
+	}
+	return mock.RefreshCodeLensFunc(ctx)
+}
+
+// RefreshCodeLensCalls gets all the calls that were made to RefreshCodeLens.
+// Check the length with:
+//
+//	len(mockedClient.RefreshCodeLensCalls())
+func (mock *ClientMock) RefreshCodeLensCalls() []struct {
+	Ctx context.Context
+} {
+	var calls []struct {
+		Ctx context.Context
+	}
+	mock.lockRefreshCodeLens.RLock()
+	calls = mock.calls.RefreshCodeLens
+	mock.lockRefreshCodeLens.RUnlock()
+	return calls
 }
 
 // RefreshDiagnostics calls RefreshDiagnosticsFunc.
@@ -106,14 +216,47 @@ func (mock *ClientMock) RefreshDiagnosticsCalls() []struct {
 	return calls
 }
 
-// UnwatchFiles calls UnwatchFilesFunc.
-func (mock *ClientMock) UnwatchFiles(ctx context.Context, handle project.WatcherHandle) error {
+// RefreshInlayHints calls RefreshInlayHintsFunc.
+func (mock *ClientMock) RefreshInlayHints(ctx context.Context) error {
 	callInfo := struct {
-		Ctx    context.Context
-		Handle project.WatcherHandle
+		Ctx context.Context
 	}{
-		Ctx:    ctx,
-		Handle: handle,
+		Ctx: ctx,
+	}
+	mock.lockRefreshInlayHints.Lock()
+	mock.calls.RefreshInlayHints = append(mock.calls.RefreshInlayHints, callInfo)
+	mock.lockRefreshInlayHints.Unlock()
+	if mock.RefreshInlayHintsFunc == nil {
+		var errOut error
+		return errOut
+	}
+	return mock.RefreshInlayHintsFunc(ctx)
+}
+
+// RefreshInlayHintsCalls gets all the calls that were made to RefreshInlayHints.
+// Check the length with:
+//
+//	len(mockedClient.RefreshInlayHintsCalls())
+func (mock *ClientMock) RefreshInlayHintsCalls() []struct {
+	Ctx context.Context
+} {
+	var calls []struct {
+		Ctx context.Context
+	}
+	mock.lockRefreshInlayHints.RLock()
+	calls = mock.calls.RefreshInlayHints
+	mock.lockRefreshInlayHints.RUnlock()
+	return calls
+}
+
+// UnwatchFiles calls UnwatchFilesFunc.
+func (mock *ClientMock) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
+	callInfo := struct {
+		Ctx context.Context
+		ID  project.WatcherID
+	}{
+		Ctx: ctx,
+		ID:  id,
 	}
 	mock.lockUnwatchFiles.Lock()
 	mock.calls.UnwatchFiles = append(mock.calls.UnwatchFiles, callInfo)
@@ -122,7 +265,7 @@ func (mock *ClientMock) UnwatchFiles(ctx context.Context, handle project.Watcher
 		var errOut error
 		return errOut
 	}
-	return mock.UnwatchFilesFunc(ctx, handle)
+	return mock.UnwatchFilesFunc(ctx, id)
 }
 
 // UnwatchFilesCalls gets all the calls that were made to UnwatchFiles.
@@ -130,12 +273,12 @@ func (mock *ClientMock) UnwatchFiles(ctx context.Context, handle project.Watcher
 //
 //	len(mockedClient.UnwatchFilesCalls())
 func (mock *ClientMock) UnwatchFilesCalls() []struct {
-	Ctx    context.Context
-	Handle project.WatcherHandle
+	Ctx context.Context
+	ID  project.WatcherID
 } {
 	var calls []struct {
-		Ctx    context.Context
-		Handle project.WatcherHandle
+		Ctx context.Context
+		ID  project.WatcherID
 	}
 	mock.lockUnwatchFiles.RLock()
 	calls = mock.calls.UnwatchFiles
@@ -144,25 +287,24 @@ func (mock *ClientMock) UnwatchFilesCalls() []struct {
 }
 
 // WatchFiles calls WatchFilesFunc.
-func (mock *ClientMock) WatchFiles(ctx context.Context, watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
+func (mock *ClientMock) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
 	callInfo := struct {
 		Ctx      context.Context
+		ID       project.WatcherID
 		Watchers []*lsproto.FileSystemWatcher
 	}{
 		Ctx:      ctx,
+		ID:       id,
 		Watchers: watchers,
 	}
 	mock.lockWatchFiles.Lock()
 	mock.calls.WatchFiles = append(mock.calls.WatchFiles, callInfo)
 	mock.lockWatchFiles.Unlock()
 	if mock.WatchFilesFunc == nil {
-		var (
-			watcherHandleOut project.WatcherHandle
-			errOut           error
-		)
-		return watcherHandleOut, errOut
+		var errOut error
+		return errOut
 	}
-	return mock.WatchFilesFunc(ctx, watchers)
+	return mock.WatchFilesFunc(ctx, id, watchers)
 }
 
 // WatchFilesCalls gets all the calls that were made to WatchFiles.
@@ -171,10 +313,12 @@ func (mock *ClientMock) WatchFiles(ctx context.Context, watchers []*lsproto.File
 //	len(mockedClient.WatchFilesCalls())
 func (mock *ClientMock) WatchFilesCalls() []struct {
 	Ctx      context.Context
+	ID       project.WatcherID
 	Watchers []*lsproto.FileSystemWatcher
 } {
 	var calls []struct {
 		Ctx      context.Context
+		ID       project.WatcherID
 		Watchers []*lsproto.FileSystemWatcher
 	}
 	mock.lockWatchFiles.RLock()

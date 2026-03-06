@@ -10,4 +10,10 @@
 var x = 10;
 
 //// [emitPinnedCommentsOnTopOfFile.js]
+"use strict";
+/*!
+
+    multi line
+    comment
+*/
 var x = 10;

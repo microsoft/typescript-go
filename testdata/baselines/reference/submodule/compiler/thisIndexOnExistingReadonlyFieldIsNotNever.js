@@ -25,15 +25,19 @@ class CoachMarkAnchorDecorator {
 
 
 //// [thisIndexOnExistingReadonlyFieldIsNotNever.js]
+"use strict";
 class CoachMarkAnchorDecorator {
     decorateComponent(anchor) {
         return class CoachMarkAnchor extends Component {
-            _onAnchorRef = (anchor) => {
-                const anchorRef = this.props.anchorRef;
-                if (anchorRef) {
-                    anchorRef(anchor);
-                }
-            };
+            constructor() {
+                super(...arguments);
+                this._onAnchorRef = (anchor) => {
+                    const anchorRef = this.props.anchorRef;
+                    if (anchorRef) {
+                        anchorRef(anchor);
+                    }
+                };
+            }
         };
     }
 }

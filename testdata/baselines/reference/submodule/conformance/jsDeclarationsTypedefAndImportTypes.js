@@ -36,20 +36,18 @@ module.exports = {
 
 //// [conn.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {string | number} Whatever
  */
 class Conn {
-    constructor() { }
-    item = 3;
+    constructor() {
+        this.item = 3;
+    }
     method() { }
 }
-export = Conn;
 module.exports = Conn;
 //// [usage.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {import("./conn")} Conn
  */
@@ -69,13 +67,21 @@ module.exports = {
 
 
 //// [conn.d.ts]
+/**
+ * @typedef {string | number} Whatever
+ */
 export type Whatever = string | number;
+declare class Conn {
+    constructor();
+    item: number;
+    method(): void;
+}
 export = Conn;
 //// [usage.d.ts]
-export type Conn = import("./conn");
 /**
  * @typedef {import("./conn")} Conn
  */
+export type Conn = import("./conn");
 declare class Wrap {
     /**
      * @param {Conn} c

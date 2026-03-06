@@ -1,0 +1,14 @@
+======== Resolving type reference directive 'JqUeRy', containing file '/a.ts', root directory '/node_modules/@types'. ========
+Resolving with primary search path '/node_modules/@types'.
+Looking up in 'node_modules' folder, initial location '/'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+File '/node_modules/JqUeRy.d.ts' does not exist.
+File '/node_modules/@types/JqUeRy.d.ts' does not exist.
+======== Type reference directive 'JqUeRy' was not resolved. ========
+======== Resolving type reference directive '*', containing file '/__inferred type names__.ts', root directory '/node_modules/@types'. ========
+Resolving with primary search path '/node_modules/@types'.
+Looking up in 'node_modules' folder, initial location '/'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+File '/node_modules/*.d.ts' does not exist.
+File '/node_modules/@types/*.d.ts' does not exist.
+======== Type reference directive '*' was not resolved. ========

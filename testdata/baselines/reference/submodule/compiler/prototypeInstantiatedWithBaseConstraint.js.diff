@@ -1,9 +1,0 @@
---- old.prototypeInstantiatedWithBaseConstraint.js
-+++ new.prototypeInstantiatedWithBaseConstraint.js
-@@= skipped -8, +8 lines =@@
-
- //// [prototypeInstantiatedWithBaseConstraint.js]
- class C {
-+    x;
- }
- C.prototype.x.boo; // No error, prototype is instantiated to any

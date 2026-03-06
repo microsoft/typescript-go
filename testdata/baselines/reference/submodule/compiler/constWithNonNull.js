@@ -8,4 +8,6 @@ x!++;
 
 
 //// [constWithNonNull.js]
+"use strict";
+// Fixes #21848
 x++;

@@ -12,16 +12,13 @@ console.log(value)
 
 
 //// [mod.js]
-export = {
-    x: {
-        y: "value"
-    }
-};
+"use strict";
 module.exports = {
     x: {
         y: "value"
     }
 };
 //// [requireTwoPropertyAccesses.js]
+"use strict";
 const value = require("./mod").x.y;
 console.log(value);

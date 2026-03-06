@@ -1,37 +1,6 @@
 --- old.javascriptThisAssignmentInStaticBlock.js
 +++ new.javascriptThisAssignmentInStaticBlock.js
-@@= skipped -20, +20 lines =@@
- ElementsArray.isArray(new ElementsArray());
-
- //// [a.js]
--var _a, _b;
- class Thing {
-+    static {
-+        this.doSomething = () => { };
-+    }
- }
--_a = Thing;
--(() => {
--    _a.doSomething = () => { };
--})();
- Thing.doSomething();
- // GH#46468
- class ElementsArray extends Array {
-+    static {
-+        const superisArray = super.isArray;
-+        const customIsArray = (arg) => superisArray(arg);
-+        this.isArray = customIsArray;
-+    }
- }
--_b = ElementsArray;
--(() => {
--    const superisArray = super.isArray;
--    const customIsArray = (arg) => superisArray(arg);
--    _b.isArray = customIsArray;
--})();
- ElementsArray.isArray(new ElementsArray());
-
-
+@@= skipped -44, +44 lines =@@
  //// [a.d.ts]
  declare class Thing {
  }
@@ -39,6 +8,5 @@
 -    constructor(arrayLength?: number);
 -    constructor(arrayLength: number);
 -    constructor(...items: any[]);
-+// GH#46468
 +declare class ElementsArray extends Array {
  }

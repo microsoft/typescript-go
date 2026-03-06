@@ -33,6 +33,7 @@ const test = (base) => {
 
 
 //// [base.js]
+"use strict";
 class Base {
     constructor() { }
 }
@@ -40,9 +41,9 @@ const BaseFactory = () => {
     return new Base();
 };
 BaseFactory.Base = Base;
-export = BaseFactory;
 module.exports = BaseFactory;
 //// [file.js]
+"use strict";
 /** @typedef {import('./base')} BaseFactory */
 /**
  * @callback BaseFactoryFactory
@@ -58,11 +59,30 @@ const couldntThinkOfAny = {};
 const test = (base) => {
     return base;
 };
-export {};
 
 
 //// [base.d.ts]
+declare class Base {
+    constructor();
+}
+declare function BaseFactory(): Base;
+declare namespace BaseFactory {
+    var Base: typeof Base;
+}
 export = BaseFactory;
 //// [file.d.ts]
-export type BaseFactory = import('./base');
-export type BaseFactoryFactory = (factory: import('./base')) ;
+type BaseFactory = import('./base');
+type BaseFactoryFactory = (factory: import('./base')) => any;
+/** @typedef {import('./base')} BaseFactory */
+/**
+ * @callback BaseFactoryFactory
+ * @param {import('./base')} factory
+ */
+/** @enum {import('./base')} */
+declare const couldntThinkOfAny: {};
+/**
+ *
+ * @param {InstanceType<BaseFactory["Base"]>} base
+ * @returns {InstanceType<BaseFactory["Base"]>}
+ */
+declare const test: (base: any) => any;

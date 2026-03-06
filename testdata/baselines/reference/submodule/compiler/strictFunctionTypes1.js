@@ -53,6 +53,7 @@ const t6: A[] = coAndContraArray([], acceptA);
 
 
 //// [strictFunctionTypes1.js]
+"use strict";
 const x1 = f1(fo, fs); // (x: string) => void
 const x2 = f2("abc", fo, fs); // "abc"
 const x3 = f3("abc", fo, fx); // "abc" | "def"
@@ -79,17 +80,15 @@ declare function f4<T>(f1: Func<T>, f2: Func<T>): Func<T>;
 declare function fo(x: Object): void;
 declare function fs(x: string): void;
 declare function fx(f: (x: "def") => void): void;
-declare const x1: (x: string) => void; // (x: string) => void
-declare const x2 = "abc"; // "abc"
-declare const x3: string; // "abc" | "def"
-declare const x4: Func<string>; // Func<string>
+declare const x1: (x: string) => void;
+declare const x2 = "abc";
+declare const x3: string;
+declare const x4: Func<string>;
 declare const never: never;
-declare const x10: string; // string
-declare const x11: "def"; // "def"
-// Repro from #21112
+declare const x10: string;
+declare const x11: "def";
 declare function foo<T>(a: ReadonlyArray<T>): T;
-declare let x: never; // never
-// Modified repros from #26127
+declare let x: never;
 interface A {
     a: string;
 }

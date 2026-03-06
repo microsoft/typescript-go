@@ -8,14 +8,13 @@ var n = { w: null, x: '', y: () => { }, z: 32 };
 
 
 //// [declFileRegressionTests.js]
+"use strict";
 // 'null' not converted to 'any' in d.ts
 // function types not piped through correctly
 var n = { w: null, x: '', y: () => { }, z: 32 };
 
 
 //// [declFileRegressionTests.d.ts]
-// 'null' not converted to 'any' in d.ts
-// function types not piped through correctly
 declare var n: {
     w: any;
     x: string;

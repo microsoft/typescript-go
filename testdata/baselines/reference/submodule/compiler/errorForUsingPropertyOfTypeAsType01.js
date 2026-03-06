@@ -47,6 +47,7 @@ namespace Test5 {
 import lol = Test5.Foo.
 
 //// [errorForUsingPropertyOfTypeAsType01.js]
+"use strict";
 var Test1;
 (function (Test1) {
     var x = "";
@@ -55,7 +56,6 @@ var Test1;
 var Test2;
 (function (Test2) {
     class Foo {
-        bar;
     }
     Test2.Foo = Foo;
     var x = "";
@@ -76,3 +76,4 @@ var Test5;
     var x = "";
     var y = "";
 })(Test5 || (Test5 = {}));
+var lol = Test5.Foo.;

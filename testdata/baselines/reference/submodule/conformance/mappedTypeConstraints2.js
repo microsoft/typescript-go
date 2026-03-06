@@ -45,6 +45,14 @@ function f6<K extends string>(obj: Mapped6<K>, key: keyof Mapped6<K>) {
   let s: `_${string}` = obj[key]; // Error
 }
 
+type Mapped7<K extends string> = {
+  [P in K as [P] extends [`_${string}`] ? P : never]: P;
+};
+
+function f7<K extends string>(obj: Mapped7<K>, key: keyof Mapped7<K>) {
+  let s: `_${string}` = obj[key];
+}
+
 // Repro from #47794
 
 type Foo<T extends string> = {
@@ -87,6 +95,7 @@ function genericTest<K extends string>(objectWithUnderscoredKeys: ObjectWithUnde
 
 
 //// [mappedTypeConstraints2.js]
+"use strict";
 function f1(obj, key) {
     const x = obj[key];
 }
@@ -104,6 +113,9 @@ function f5(obj, key) {
 }
 function f6(obj, key) {
     let s = obj[key]; // Error
+}
+function f7(obj, key) {
+    let s = obj[key];
 }
 const get = (t, foo) => foo[`get${t}`]; // Type 'Foo<T>[`get${T}`]' is not assignable to type 'T'
 function validate(obj, bounds) {
@@ -149,17 +161,18 @@ type Mapped5<K extends string> = {
     [P in K as P extends `_${string}` ? P : never]: P;
 };
 declare function f5<K extends string>(obj: Mapped5<K>, key: keyof Mapped5<K>): void;
-// repro from #53066#issuecomment-1913384757
 type Mapped6<K extends string> = {
     [P in K as `_${P}`]: P;
 };
 declare function f6<K extends string>(obj: Mapped6<K>, key: keyof Mapped6<K>): void;
-// Repro from #47794
+type Mapped7<K extends string> = {
+    [P in K as [P] extends [`_${string}`] ? P : never]: P;
+};
+declare function f7<K extends string>(obj: Mapped7<K>, key: keyof Mapped7<K>): void;
 type Foo<T extends string> = {
     [RemappedT in T as `get${RemappedT}`]: RemappedT;
 };
-declare const get: <T extends string>(t: T, foo: Foo<T>) => T; // Type 'Foo<T>[`get${T}`]' is not assignable to type 'T'
-// Repro from #48626
+declare const get: <T extends string>(t: T, foo: Foo<T>) => T;
 interface Bounds {
     min: number;
     max: number;
@@ -168,7 +181,6 @@ type NumericBoundsOf<T> = {
     [K in keyof T as T[K] extends number | undefined ? K : never]: Bounds;
 };
 declare function validate<T extends object>(obj: T, bounds: NumericBoundsOf<T>): boolean;
-// repro from #50030
 type ObjectWithUnderscoredKeys<K extends string> = {
     [k in K as `_${k}`]: true;
 };

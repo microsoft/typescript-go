@@ -32,7 +32,7 @@ export class TestRunner {
             try {
                 testResult = testcase.test();
             }
-            catch (e) {
+            catch (e: any) {
                 exception = true;
                 testResult = false;
                 if (typeof testcase.errorMessageRegEx === "string") {
@@ -347,13 +347,12 @@ export var tests: TestRunner = (function () {
 
 //// [duplicateLocalVariable1.js]
 "use strict";
+//import FileManager = require('filemanager');
+//import App = require('app');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tests = exports.TestRunner = exports.TestCase = void 0;
 var TestFileDir = ".\\TempTestFiles";
 class TestCase {
-    name;
-    test;
-    errorMessageRegEx;
     constructor(name, test, errorMessageRegEx) {
         this.name = name;
         this.test = test;
@@ -362,7 +361,9 @@ class TestCase {
 }
 exports.TestCase = TestCase;
 class TestRunner {
-    tests = [];
+    constructor() {
+        this.tests = [];
+    }
     static arrayCompare(arg1, arg2) {
         return (arg1.every(function (val, index) { return val === arg2[index]; }));
     }

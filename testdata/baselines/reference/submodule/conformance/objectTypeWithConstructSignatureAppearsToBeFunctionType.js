@@ -7,12 +7,12 @@ interface I {
     new(): number;
 }
 
-var i: I;
+declare var i: I;
 var r2: number = i();
 var r2b: number = new i();
 var r2c: (x: any, y?: any) => any = i.apply;
 
-var b: {
+declare var b: {
     new(): number;
 }
 
@@ -21,11 +21,11 @@ var r4b: number = new b();
 var r4c: (x: any, y?: any) => any = b.apply;
 
 //// [objectTypeWithConstructSignatureAppearsToBeFunctionType.js]
-var i;
+"use strict";
+// no errors expected below 
 var r2 = i();
 var r2b = new i();
 var r2c = i.apply;
-var b;
 var r4 = b();
 var r4b = new b();
 var r4c = b.apply;

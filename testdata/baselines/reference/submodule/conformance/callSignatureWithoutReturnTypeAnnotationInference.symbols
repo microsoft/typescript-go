@@ -110,7 +110,7 @@ interface I {
 >I : Symbol(I, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 53, 17))
 
     foo: string;
->foo : Symbol(foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 55, 13))
+>foo : Symbol(I.foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 55, 13))
 }
 function foo9(x: number) {
 >foo9 : Symbol(foo9, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 57, 1))
@@ -131,7 +131,7 @@ class C {
 >C : Symbol(C, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 62, 17))
 
     foo: string;
->foo : Symbol(foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 64, 9))
+>foo : Symbol(C.foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 64, 9))
 }
 function foo10(x: number) {
 >foo10 : Symbol(foo10, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 66, 1))
@@ -148,7 +148,7 @@ var r10 = foo10(1);
 >r10 : Symbol(r10, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 71, 3))
 >foo10 : Symbol(foo10, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 66, 1))
 
-module M {
+namespace M {
 >M : Symbol(M, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 71, 19))
 
     export var x = 1;
@@ -156,7 +156,7 @@ module M {
 
     export class C { foo: string }
 >C : Symbol(C, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 74, 21))
->foo : Symbol(foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 75, 20))
+>foo : Symbol(C.foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 75, 20))
 }
 function foo11() {
 >foo11 : Symbol(foo11, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 76, 1))
@@ -173,13 +173,13 @@ interface I2 {
 >I2 : Symbol(I2, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 80, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 85, 1))
 
     x: number;
->x : Symbol(x, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 83, 14))
+>x : Symbol(I2.x, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 83, 14))
 }
 interface I2 {
 >I2 : Symbol(I2, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 80, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 85, 1))
 
     y: number;
->y : Symbol(y, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 86, 14))
+>y : Symbol(I2.y, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 86, 14))
 }
 function foo12() {
 >foo12 : Symbol(foo12, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 88, 1))
@@ -198,30 +198,30 @@ var r12 = foo12();
 function m1() { return 1; }
 >m1 : Symbol(m1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 93, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 95, 27))
 
-module m1 { export var y = 2; }
+namespace m1 { export var y = 2; }
 >m1 : Symbol(m1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 93, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 95, 27))
->y : Symbol(y, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 96, 22))
+>y : Symbol(y, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 96, 25))
 
 function foo13() {
->foo13 : Symbol(foo13, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 96, 31))
+>foo13 : Symbol(foo13, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 96, 34))
 
     return m1;
 >m1 : Symbol(m1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 93, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 95, 27))
 }
 var r13 = foo13();
 >r13 : Symbol(r13, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 100, 3))
->foo13 : Symbol(foo13, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 96, 31))
+>foo13 : Symbol(foo13, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 96, 34))
 
 class c1 {
 >c1 : Symbol(c1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 100, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 105, 1))
 
     foo: string;
->foo : Symbol(foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 102, 10))
+>foo : Symbol(c1.foo, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 102, 10))
 
     constructor(x) { }
 >x : Symbol(x, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 104, 16))
 }
-module c1 {
+namespace c1 {
 >c1 : Symbol(c1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 100, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 105, 1))
 
     export var x = 1;
@@ -239,19 +239,19 @@ var r14 = foo14();
 
 enum e1 { A }
 >e1 : Symbol(e1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 112, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 114, 13))
->A : Symbol(A, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 114, 9))
+>A : Symbol(e1.A, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 114, 9))
 
-module e1 { export var y = 1; }
+namespace e1 { export var y = 1; }
 >e1 : Symbol(e1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 112, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 114, 13))
->y : Symbol(y, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 115, 22))
+>y : Symbol(y, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 115, 25))
 
 function foo15() {
->foo15 : Symbol(foo15, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 115, 31))
+>foo15 : Symbol(foo15, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 115, 34))
 
     return e1;
 >e1 : Symbol(e1, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 112, 18), Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 114, 13))
 }
 var r15 = foo15();
 >r15 : Symbol(r15, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 119, 3))
->foo15 : Symbol(foo15, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 115, 31))
+>foo15 : Symbol(foo15, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 115, 34))
 

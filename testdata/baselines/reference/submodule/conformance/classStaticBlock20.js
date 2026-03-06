@@ -17,14 +17,15 @@ class C {
 
 
 //// [classStaticBlock20.js]
+"use strict";
 class C {
-    static {
-        // something
-    }
-    static {
-        // something
-    }
-    static {
-        // something
-    }
 }
+(() => {
+    // something
+})();
+(() => {
+    // something
+})();
+(() => {
+    // something
+})();

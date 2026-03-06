@@ -1,9 +1,0 @@
---- old.autoAsiForStaticsInClassDeclaration.js
-+++ new.autoAsiForStaticsInClassDeclaration.js
-@@= skipped -7, +7 lines =@@
-
- //// [autoAsiForStaticsInClassDeclaration.js]
- class C {
-+    static x;
-+    static y;
- }

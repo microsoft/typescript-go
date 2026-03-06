@@ -13,7 +13,8 @@ func TestStringCompletionDetails(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a: "aa" | "bb" = "/**/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -23,8 +24,8 @@ func TestStringCompletionDetails(t *testing.T) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "aa",
-					Kind:   PtrTo(lsproto.CompletionItemKindConstant),
-					Detail: PtrTo("aa"),
+					Kind:   new(lsproto.CompletionItemKindConstant),
+					Detail: new("aa"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							Range: lsproto.Range{

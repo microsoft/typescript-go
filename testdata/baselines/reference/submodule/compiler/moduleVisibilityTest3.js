@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/moduleVisibilityTest3.ts] ////
 
 //// [moduleVisibilityTest3.ts]
-module _modes {
+namespace _modes {
  export interface IMode {
   
  }
@@ -13,7 +13,7 @@ module _modes {
 
 //_modes. // produces an internal error - please implement in derived class
 
-module editor {
+namespace editor {
  import modes = _modes;
  
  var i : modes.IMode;
@@ -29,6 +29,7 @@ module editor {
 
 
 //// [moduleVisibilityTest3.js]
+"use strict";
 var _modes;
 (function (_modes) {
     class Mode {
@@ -37,7 +38,6 @@ var _modes;
 //_modes. // produces an internal error - please implement in derived class
 var editor;
 (function (editor) {
-    var modes = _modes;
     var i;
     // If you just use p1:modes, the compiler accepts it - should be an error
     class Bug {

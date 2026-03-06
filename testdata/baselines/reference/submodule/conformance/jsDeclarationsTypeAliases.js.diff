@@ -1,37 +1,10 @@
 --- old.jsDeclarationsTypeAliases.js
 +++ new.jsDeclarationsTypeAliases.js
-@@= skipped -76, +76 lines =@@
-  * @returns {T}
-  */
- //// [mixed.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /**
-  * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
-  */
-@@= skipped -11, +13 lines =@@
-     return { x: "" + x };
- }
- class ExportedThing {
--    constructor() {
--        this.z = "ok";
--    }
-+    z = "ok";
- }
- module.exports = {
-     doTheThing,
-     ExportedThing,
- };
- class LocalThing {
--    constructor() {
--        this.y = "ok";
--    }
-+    y = "ok";
- }
+@@= skipped -104, +104 lines =@@
 
 
  //// [index.d.ts]
-+export {}; // flag file as module
++export {};
  export type PropName = string | number | symbol;
 -/**
 - * Callback
@@ -69,7 +42,7 @@
  //// [mixed.d.ts]
  export type SomeType = {
      x: string;
-@@= skipped -39, +52 lines =@@
+@@= skipped -23, +40 lines =@@
   * @param {number} x
   * @returns {SomeType}
   */

@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
 
@@ -35,10 +36,10 @@ func TestTypeEraser(t *testing.T) {
 		{title: "MethodDeclaration1", input: "class C { m(); }", output: "class C {\n}"},
 		{title: "MethodDeclaration2", input: "class C { public m<T>(): U {} }", output: "class C {\n    m() { }\n}"},
 		{title: "MethodDeclaration3", input: "class C { public static m<T>(): U {} }", output: "class C {\n    static m() { }\n}"},
-		{title: "GetAccessorDeclaration1", input: "class C { get m(); }", output: "class C {\n}"},
+		{title: "GetAccessorDeclaration1", input: "class C { get m(); }", output: "class C {\n    get m() { }\n}"},
 		{title: "GetAccessorDeclaration2", input: "class C { public get m<T>(): U {} }", output: "class C {\n    get m() { }\n}"},
 		{title: "GetAccessorDeclaration3", input: "class C { public static get m<T>(): U {} }", output: "class C {\n    static get m() { }\n}"},
-		{title: "SetAccessorDeclaration1", input: "class C { set m(v); }", output: "class C {\n}"},
+		{title: "SetAccessorDeclaration1", input: "class C { set m(v); }", output: "class C {\n    set m(v) { }\n}"},
 		{title: "SetAccessorDeclaration2", input: "class C { public set m<T>(v): U {} }", output: "class C {\n    set m(v) { }\n}"},
 		{title: "SetAccessorDeclaration3", input: "class C { public static set m<T>(v): U {} }", output: "class C {\n    static set m(v) { }\n}"},
 		{title: "IndexSignature", input: "class C { [key: string]: number; }", output: "class C {\n}"},
@@ -99,7 +100,7 @@ func TestTypeEraser(t *testing.T) {
 			if rec.vms {
 				compilerOptions.VerbatimModuleSyntax = core.TSTrue
 			}
-			emittestutil.CheckEmit(t, nil, tstransforms.NewTypeEraserTransformer(printer.NewEmitContext(), compilerOptions).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, nil, tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: printer.NewEmitContext()}).TransformSourceFile(file), rec.output)
 		})
 	}
 }

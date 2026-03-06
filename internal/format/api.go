@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -28,16 +29,18 @@ const (
 	formatNewlineKey
 )
 
-func WithFormatCodeSettings(ctx context.Context, options *FormatCodeSettings, newLine string) context.Context {
+func WithFormatCodeSettings(ctx context.Context, options *lsutil.FormatCodeSettings, newLine string) context.Context {
 	ctx = context.WithValue(ctx, formatOptionsKey, options)
 	ctx = context.WithValue(ctx, formatNewlineKey, newLine)
 	// In strada, the rules map was both globally cached *and* cached into the context, for some reason. We skip that here and just use the global one.
 	return ctx
 }
 
-func GetFormatCodeSettingsFromContext(ctx context.Context) *FormatCodeSettings {
-	opt := ctx.Value(formatOptionsKey).(*FormatCodeSettings)
-	return opt
+func GetFormatCodeSettingsFromContext(ctx context.Context) *lsutil.FormatCodeSettings {
+	if opt := ctx.Value(formatOptionsKey); opt != nil {
+		return opt.(*lsutil.FormatCodeSettings)
+	}
+	return nil
 }
 
 func GetNewLineOrDefaultFromContext(ctx context.Context) string { // TODO: Move into broader LS - more than just the formatter uses the newline editor setting/host new line
@@ -75,12 +78,31 @@ func FormatSpan(ctx context.Context, span core.TextRange, file *ast.SourceFile, 
 	)
 }
 
+func FormatNodeGivenIndentation(ctx context.Context, node *ast.Node, file *ast.SourceFile, languageVariant core.LanguageVariant, initialIndentation int, delta int) []core.TextChange {
+	textRange := core.NewTextRange(node.Pos(), node.End())
+	return newFormattingScanner(
+		file.Text(),
+		languageVariant,
+		textRange.Pos(),
+		textRange.End(),
+		newFormatSpanWorker(
+			ctx,
+			textRange,
+			node,
+			initialIndentation,
+			delta,
+			FormatRequestKindFormatSelection,
+			func(core.TextRange) bool { return false }, // assume that node does not have any errors
+			file,
+		))
+}
+
 func formatNodeLines(ctx context.Context, sourceFile *ast.SourceFile, node *ast.Node, requestKind FormatRequestKind) []core.TextChange {
 	if node == nil {
 		return nil
 	}
 	tokenStart := scanner.GetTokenPosOfNode(node, sourceFile, false)
-	lineStart := getLineStartPositionForPosition(tokenStart, sourceFile)
+	lineStart := GetLineStartPositionForPosition(tokenStart, sourceFile)
 	span := core.NewTextRange(lineStart, node.End())
 	return FormatSpan(ctx, span, sourceFile, requestKind)
 }
@@ -90,7 +112,7 @@ func FormatDocument(ctx context.Context, sourceFile *ast.SourceFile) []core.Text
 }
 
 func FormatSelection(ctx context.Context, sourceFile *ast.SourceFile, start int, end int) []core.TextChange {
-	return FormatSpan(ctx, core.NewTextRange(getLineStartPositionForPosition(start, sourceFile), end), sourceFile, FormatRequestKindFormatSelection)
+	return FormatSpan(ctx, core.NewTextRange(GetLineStartPositionForPosition(start, sourceFile), end), sourceFile, FormatRequestKindFormatSelection)
 }
 
 func FormatOnOpeningCurly(ctx context.Context, sourceFile *ast.SourceFile, position int) []core.TextChange {
@@ -112,7 +134,7 @@ func FormatOnOpeningCurly(ctx context.Context, sourceFile *ast.SourceFile, posit
 	 * ```
 	 * and we wouldn't want to move the closing brace.
 	 */
-	textRange := core.NewTextRange(getLineStartPositionForPosition(scanner.GetTokenPosOfNode(outermostNode, sourceFile, false), sourceFile), position)
+	textRange := core.NewTextRange(GetLineStartPositionForPosition(scanner.GetTokenPosOfNode(outermostNode, sourceFile, false), sourceFile), position)
 	return FormatSpan(ctx, textRange, sourceFile, FormatRequestKindFormatOnOpeningCurlyBrace)
 }
 
@@ -127,18 +149,18 @@ func FormatOnSemicolon(ctx context.Context, sourceFile *ast.SourceFile, position
 }
 
 func FormatOnEnter(ctx context.Context, sourceFile *ast.SourceFile, position int) []core.TextChange {
-	line, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, position)
+	line := scanner.GetECMALineOfPosition(sourceFile, position)
 	if line == 0 {
 		return nil
 	}
 	// get start position for the previous line
-	startPos := int(scanner.GetLineStarts(sourceFile)[line-1])
+	startPos := int(scanner.GetECMALineStarts(sourceFile)[line-1])
 	// After the enter key, the cursor is now at a new line. The new line may or may not contain non-whitespace characters.
 	// If the new line has only whitespaces, we won't want to format this line, because that would remove the indentation as
 	// trailing whitespaces. So the end of the formatting span should be the later one between:
 	//  1. the end of the previous line
 	//  2. the last non-whitespace character in the current line
-	endOfFormatSpan := scanner.GetEndLinePosition(sourceFile, line)
+	endOfFormatSpan := scanner.GetECMAEndLinePosition(sourceFile, line)
 	for endOfFormatSpan > startPos {
 		ch, s := utf8.DecodeRuneInString(sourceFile.Text()[endOfFormatSpan:])
 		if s == 0 || stringutil.IsWhiteSpaceSingleLine(ch) { // on multibyte character keep backing up

@@ -36,15 +36,13 @@ function createInstance() {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.spread = void 0;
 const bug_1 = require("./bug");
-exports.spread = {
-    ...(0, bug_1.createInstance)(),
-};
+exports.spread = Object.assign({}, (0, bug_1.createInstance)());
 
 
 //// [bug.d.ts]
 export declare const SYMBOL: unique symbol;
 export interface Interface {
-    readonly [SYMBOL]: string; // remove readonly and @showEmit to see the expected error
+    readonly [SYMBOL]: string;
 }
 export declare function createInstance(): Interface;
 //// [index.d.ts]

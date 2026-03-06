@@ -1,74 +1,13 @@
 --- old.classConstructorAccessibility2.js
 +++ new.classConstructorAccessibility2.js
-@@= skipped -48, +48 lines =@@
-
- //// [classConstructorAccessibility2.js]
- class BaseA {
-+    x;
-     constructor(x) {
-         this.x = x;
-     }
-     createInstance() { new BaseA(1); }
- }
- class BaseB {
-+    x;
-     constructor(x) {
-         this.x = x;
-     }
-     createInstance() { new BaseB(2); }
- }
- class BaseC {
-+    x;
-     constructor(x) {
-         this.x = x;
-     }
-@@= skipped -19, +22 lines =@@
-     static staticInstance() { new BaseC(4); }
- }
- class DerivedA extends BaseA {
-+    x;
-     constructor(x) {
-         super(x);
-         this.x = x;
-@@= skipped -9, +10 lines =@@
-     static staticBaseInstance() { new BaseA(7); }
- }
- class DerivedB extends BaseB {
-+    x;
-     constructor(x) {
-         super(x);
-         this.x = x;
-@@= skipped -9, +10 lines =@@
-     static staticBaseInstance() { new BaseB(9); } // ok
- }
- class DerivedC extends BaseC {
-+    x;
-     constructor(x) {
-         super(x);
-         this.x = x;
-@@= skipped -44, +45 lines =@@
-     x: number;
-     constructor(x: number);
-     createInstance(): void;
--    createBaseInstance(): void;
--    static staticBaseInstance(): void;
-+    createBaseInstance(): void; // ok
-+    static staticBaseInstance(): void; // ok
- }
- declare class DerivedC extends BaseC {
-     x: number;
-     constructor(x: number);
-     createInstance(): void;
--    createBaseInstance(): void;
--    static staticBaseInstance(): void;
-+    createBaseInstance(): void; // error
-+    static staticBaseInstance(): void; // error
+@@= skipped -141, +141 lines =@@
+     static staticBaseInstance(): void;
  }
  declare var ba: BaseA;
 -declare var bb: any;
 -declare var bc: any;
-+declare var bb: any; // error
-+declare var bc: any; // error
++declare var bb: BaseB;
++declare var bc: BaseC;
  declare var da: DerivedA;
  declare var db: DerivedB;
  declare var dc: DerivedC;

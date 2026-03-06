@@ -15,9 +15,8 @@ import (
 func ParseTypeScript(text string, jsx bool) *ast.SourceFile {
 	fileName := core.IfElse(jsx, "/main.tsx", "/main.ts")
 	file := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName:         fileName,
-		Path:             tspath.Path(fileName),
-		JSDocParsingMode: ast.JSDocParsingModeParseNone,
+		FileName: fileName,
+		Path:     tspath.Path(fileName),
 	}, text, core.GetScriptKindFromFileName(fileName))
 	return file
 }
@@ -27,7 +26,7 @@ func CheckDiagnostics(t *testing.T, file *ast.SourceFile) {
 	t.Helper()
 	if len(file.Diagnostics()) > 0 {
 		var b strings.Builder
-		diagnosticwriter.WriteFormatDiagnostics(&b, file.Diagnostics(), &diagnosticwriter.FormattingOptions{
+		diagnosticwriter.WriteFormatDiagnostics(&b, diagnosticwriter.FromASTDiagnostics(file.Diagnostics()), &diagnosticwriter.FormattingOptions{
 			NewLine: "\n",
 		})
 		t.Error(b.String())
@@ -39,7 +38,7 @@ func CheckDiagnosticsMessage(t *testing.T, file *ast.SourceFile, message string)
 	t.Helper()
 	if len(file.Diagnostics()) > 0 {
 		var b strings.Builder
-		diagnosticwriter.WriteFormatDiagnostics(&b, file.Diagnostics(), &diagnosticwriter.FormattingOptions{
+		diagnosticwriter.WriteFormatDiagnostics(&b, diagnosticwriter.FromASTDiagnostics(file.Diagnostics()), &diagnosticwriter.FormattingOptions{
 			NewLine: "\n",
 		})
 		t.Error(message + b.String())

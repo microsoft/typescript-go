@@ -33,6 +33,8 @@ const res3 = test({
 
 
 //// [inferenceAndSelfReferentialConstraint.js]
+"use strict";
+// @strict
 function test(arg) {
     return arg;
 }

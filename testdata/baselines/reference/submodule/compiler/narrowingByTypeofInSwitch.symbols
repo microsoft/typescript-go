@@ -44,7 +44,7 @@ function assertSymbol(x: symbol) {
 function assertFunction(x: Function) {
 >assertFunction : Symbol(assertFunction, Decl(narrowingByTypeofInSwitch.ts, 18, 1))
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 20, 24))
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
     return x;
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 20, 24))
@@ -101,7 +101,7 @@ function assertBooleanOrObject(x: boolean | object) {
 
 type Basic = number | boolean | string | symbol | object | Function | undefined;
 >Basic : Symbol(Basic, Decl(narrowingByTypeofInSwitch.ts, 46, 1))
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 function testUnion(x: Basic) {
 >testUnion : Symbol(testUnion, Decl(narrowingByTypeofInSwitch.ts, 48, 80))
@@ -377,9 +377,9 @@ function exhaustiveChecks(x: number | string | L | R): string {
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 137, 26))
 
         case 'number': return x.toString(2);
->x.toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
+>x.toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 137, 26))
->toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
+>toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 
         case 'string': return x;
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 137, 26))
@@ -406,9 +406,9 @@ function exhaustiveChecksGenerics<T extends L | R | number | string>(x: T): stri
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 146, 69))
 
         case 'number': return x.toString(2);
->x.toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
+>x.toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 146, 69))
->toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
+>toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 
         case 'string': return x;
 >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 146, 69))

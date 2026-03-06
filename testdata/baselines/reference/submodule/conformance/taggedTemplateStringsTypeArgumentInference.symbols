@@ -282,20 +282,20 @@ interface A91 {
 >A91 : Symbol(A91, Decl(taggedTemplateStringsTypeArgumentInference.ts, 62, 12))
 
     x: number;
->x : Symbol(x, Decl(taggedTemplateStringsTypeArgumentInference.ts, 65, 15))
+>x : Symbol(A91.x, Decl(taggedTemplateStringsTypeArgumentInference.ts, 65, 15))
 
     y?: string;
->y : Symbol(y, Decl(taggedTemplateStringsTypeArgumentInference.ts, 66, 14))
+>y : Symbol(A91.y, Decl(taggedTemplateStringsTypeArgumentInference.ts, 66, 14))
 }
 interface A92 {
 >A92 : Symbol(A92, Decl(taggedTemplateStringsTypeArgumentInference.ts, 68, 1))
 
     x: number;
->x : Symbol(x, Decl(taggedTemplateStringsTypeArgumentInference.ts, 69, 15))
+>x : Symbol(A92.x, Decl(taggedTemplateStringsTypeArgumentInference.ts, 69, 15))
 
     z?: Date;
->z : Symbol(z, Decl(taggedTemplateStringsTypeArgumentInference.ts, 70, 14))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>z : Symbol(A92.z, Decl(taggedTemplateStringsTypeArgumentInference.ts, 70, 14))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 }
 
 var a9e = someGenerics9 `${ undefined }${ { x: 6, z: new Date() } }${ { x: 6, y: '' } }`;
@@ -304,7 +304,7 @@ var a9e = someGenerics9 `${ undefined }${ { x: 6, z: new Date() } }${ { x: 6, y:
 >undefined : Symbol(undefined)
 >x : Symbol(x, Decl(taggedTemplateStringsTypeArgumentInference.ts, 74, 43))
 >z : Symbol(z, Decl(taggedTemplateStringsTypeArgumentInference.ts, 74, 49))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >x : Symbol(x, Decl(taggedTemplateStringsTypeArgumentInference.ts, 74, 71))
 >y : Symbol(y, Decl(taggedTemplateStringsTypeArgumentInference.ts, 74, 77))
 

@@ -4,7 +4,9 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func IsGeneratedIdentifier(emitContext *printer.EmitContext, name *ast.IdentifierNode) bool {
@@ -78,36 +80,30 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		// only an `Initializer()` child that can be `Identifier` would be an instance of `IdentifierReference`
 		return parent.Initializer() == name
 	case ast.KindForStatement:
-		return parent.AsForStatement().Initializer == name ||
+		return parent.Initializer() == name ||
 			parent.AsForStatement().Condition == name ||
 			parent.AsForStatement().Incrementor == name
 	case ast.KindForInStatement,
 		ast.KindForOfStatement:
-		return parent.AsForInOrOfStatement().Initializer == name ||
-			parent.AsForInOrOfStatement().Expression == name
+		return parent.Initializer() == name ||
+			parent.Expression() == name
 	case ast.KindImportEqualsDeclaration:
 		return parent.AsImportEqualsDeclaration().ModuleReference == name
 	case ast.KindArrowFunction:
-		return parent.AsArrowFunction().Body == name
+		return parent.Body() == name
 	case ast.KindConditionalExpression:
 		return parent.AsConditionalExpression().Condition == name ||
 			parent.AsConditionalExpression().WhenTrue == name ||
 			parent.AsConditionalExpression().WhenFalse == name
-	case ast.KindCallExpression:
-		return parent.AsCallExpression().Expression == name ||
-			slices.Contains(parent.AsCallExpression().Arguments.Nodes, name)
-	case ast.KindNewExpression:
-		return parent.AsNewExpression().Expression == name ||
-			parent.AsNewExpression().Arguments.Nodes != nil &&
-				slices.Contains(parent.AsNewExpression().Arguments.Nodes, name)
+	case ast.KindCallExpression, ast.KindNewExpression:
+		return parent.Expression() == name ||
+			slices.Contains(parent.Arguments(), name)
 	case ast.KindTaggedTemplateExpression:
 		return parent.AsTaggedTemplateExpression().Tag == name
 	case ast.KindImportAttribute:
 		return parent.AsImportAttribute().Value == name
-	case ast.KindJsxOpeningElement:
-		return parent.AsJsxOpeningElement().TagName == name
-	case ast.KindJsxClosingElement:
-		return parent.AsJsxClosingElement().TagName == name
+	case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
+		return parent.TagName() == name
 	default:
 		return false
 	}
@@ -244,4 +240,133 @@ func IsSimpleCopiableExpression(expression *ast.Expression) bool {
 		ast.IsNumericLiteral(expression) ||
 		ast.IsKeywordKind(expression.Kind) ||
 		ast.IsIdentifier(expression)
+}
+
+func IsOriginalNodeSingleLine(emitContext *printer.EmitContext, node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	original := emitContext.MostOriginal(node)
+	if original == nil {
+		return false
+	}
+	source := ast.GetSourceFileOfNode(original)
+	if source == nil {
+		return false
+	}
+	startLine := scanner.GetECMALineOfPosition(source, original.Loc.Pos())
+	endLine := scanner.GetECMALineOfPosition(source, original.Loc.End())
+	return startLine == endLine
+}
+
+/**
+ * A simple inlinable expression is an expression which can be copied into multiple locations
+ * without risk of repeating any sideeffects and whose value could not possibly change between
+ * any such locations
+ */
+func IsSimpleInlineableExpression(expression *ast.Expression) bool {
+	return !ast.IsIdentifier(expression) && IsSimpleCopiableExpression(expression)
+}
+
+// FindSuperStatementIndexPath finds a path of indices to a statement containing a `super()` call.
+func FindSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
+	indices := findSuperStatementIndexPathWorker(statements, start, nil)
+	slices.Reverse(indices)
+	return indices
+}
+
+func findSuperStatementIndexPathWorker(statements []*ast.Statement, start int, indices []int) []int {
+	for i := start; i < len(statements); i++ {
+		statement := statements[i]
+		if GetSuperCallFromStatement(statement) != nil {
+			return append(indices, i)
+		} else if ast.IsTryStatement(statement) {
+			if result := findSuperStatementIndexPathWorker(statement.AsTryStatement().TryBlock.Statements(), 0, indices); result != nil {
+				return append(result, i)
+			}
+		}
+	}
+	return nil
+}
+
+// GetSuperCallFromStatement extracts the super() call expression from an expression statement, if any.
+func GetSuperCallFromStatement(statement *ast.Statement) *ast.Node {
+	if !ast.IsExpressionStatement(statement) {
+		return nil
+	}
+	expression := ast.SkipParentheses(statement.Expression())
+	if ast.IsSuperCall(expression) {
+		return expression
+	}
+	return nil
+}
+
+// MoveRangePastModifiers returns a text range that starts past any modifiers on the node.
+func MoveRangePastModifiers(node *ast.Node) core.TextRange {
+	if ast.IsPropertyDeclaration(node) || ast.IsMethodDeclaration(node) {
+		return core.NewTextRange(node.Name().Pos(), node.End())
+	}
+
+	var lastModifier *ast.Node
+	if ast.CanHaveModifiers(node) {
+		lastModifier = core.LastOrNil(node.ModifierNodes())
+	}
+
+	if lastModifier != nil && !ast.PositionIsSynthesized(lastModifier.End()) {
+		return core.NewTextRange(lastModifier.End(), node.End())
+	}
+	return MoveRangePastDecorators(node)
+}
+
+// MoveRangePastDecorators returns a text range that starts past any decorators on the node.
+func MoveRangePastDecorators(node *ast.Node) core.TextRange {
+	var lastDecorator *ast.Node
+	if ast.CanHaveModifiers(node) {
+		nodes := node.ModifierNodes()
+		if nodes != nil {
+			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
+		}
+	}
+
+	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
+		return core.NewTextRange(lastDecorator.End(), node.End())
+	}
+	return node.Loc
+}
+
+// GetNonAssignmentOperatorForCompoundAssignment returns the non-assignment operator for a compound assignment.
+func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
+	switch kind {
+	case ast.KindPlusEqualsToken:
+		return ast.KindPlusToken
+	case ast.KindMinusEqualsToken:
+		return ast.KindMinusToken
+	case ast.KindAsteriskEqualsToken:
+		return ast.KindAsteriskToken
+	case ast.KindAsteriskAsteriskEqualsToken:
+		return ast.KindAsteriskAsteriskToken
+	case ast.KindSlashEqualsToken:
+		return ast.KindSlashToken
+	case ast.KindPercentEqualsToken:
+		return ast.KindPercentToken
+	case ast.KindLessThanLessThanEqualsToken:
+		return ast.KindLessThanLessThanToken
+	case ast.KindGreaterThanGreaterThanEqualsToken:
+		return ast.KindGreaterThanGreaterThanToken
+	case ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
+		return ast.KindGreaterThanGreaterThanGreaterThanToken
+	case ast.KindAmpersandEqualsToken:
+		return ast.KindAmpersandToken
+	case ast.KindBarEqualsToken:
+		return ast.KindBarToken
+	case ast.KindCaretEqualsToken:
+		return ast.KindCaretToken
+	case ast.KindBarBarEqualsToken:
+		return ast.KindBarBarToken
+	case ast.KindAmpersandAmpersandEqualsToken:
+		return ast.KindAmpersandAmpersandToken
+	case ast.KindQuestionQuestionEqualsToken:
+		return ast.KindQuestionQuestionToken
+	}
+	return kind
 }

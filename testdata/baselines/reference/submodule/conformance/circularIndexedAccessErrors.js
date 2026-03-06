@@ -42,14 +42,11 @@ function foo<T extends Foo | T["hello"]>() {
 
 
 //// [circularIndexedAccessErrors.js]
+"use strict";
 let x2x = x2.x;
 class C1 {
-    x; // Error
 }
 class C2 {
-    x;
-    y;
-    z;
 }
 function foo() {
 }
@@ -57,10 +54,10 @@ function foo() {
 
 //// [circularIndexedAccessErrors.d.ts]
 type T1 = {
-    x: T1["x"]; // Error
+    x: T1["x"];
 };
 type T2<K extends "x" | "y"> = {
-    x: T2<K>[K]; // Error
+    x: T2<K>[K];
     y: number;
 };
 declare let x2: T2<"x">;
@@ -69,17 +66,16 @@ interface T3<T extends T3<T>> {
     x: T["x"];
 }
 interface T4<T extends T4<T>> {
-    x: T4<T>["x"]; // Error
+    x: T4<T>["x"];
 }
 declare class C1 {
-    x: C1["x"]; // Error
+    x: C1["x"];
 }
 declare class C2 {
     x: this["y"];
     y: this["z"];
     z: this["x"];
 }
-// Repro from #12627
 interface Foo {
     hello: boolean;
 }

@@ -38,25 +38,16 @@ class D implements A<boolean> {
 }
 
 //// [mergedInterfacesWithMultipleBases3.js]
+"use strict";
 // merged interfaces behave as if all extends clauses from each declaration are merged together
 // no errors expected
 class C {
-    a;
 }
 class C2 {
-    b;
 }
 class C3 {
-    c;
 }
 class C4 {
-    d;
 }
 class D {
-    a;
-    b;
-    c;
-    d;
-    y;
-    z;
 }

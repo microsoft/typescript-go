@@ -1,0 +1,16 @@
+--- old.truthinessCallExpressionCoercion4.errors.txt
++++ new.truthinessCallExpressionCoercion4.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(3,12): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++
++
++==== a.js (1 errors) ====
++    function fn() {}
++    
++    if (typeof module === 'object' && module.exports) {
++               ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++        module.exports = fn;
++    }
++    

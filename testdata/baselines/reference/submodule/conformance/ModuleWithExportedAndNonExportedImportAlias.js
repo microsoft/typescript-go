@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/exportDeclarations/ModuleWithExportedAndNonExportedImportAlias.ts] ////
 
 //// [ModuleWithExportedAndNonExportedImportAlias.ts]
-module A {
+namespace A {
     export interface Point {
         x: number;
         y: number;
@@ -12,13 +12,13 @@ module A {
     }
 }
 
-module B {
+namespace B {
     export class Line {
         constructor(public start: A.Point, public end: A.Point) { }
     }
 }
 
-module Geometry {
+namespace Geometry {
     export import Points = A;
     import Lines = B;
 
@@ -42,11 +42,10 @@ var line = Geometry.Lines.Line;
 
 
 //// [ModuleWithExportedAndNonExportedImportAlias.js]
+"use strict";
 var B;
 (function (B) {
     class Line {
-        start;
-        end;
         constructor(start, end) {
             this.start = start;
             this.end = end;
@@ -56,7 +55,6 @@ var B;
 })(B || (B = {}));
 var Geometry;
 (function (Geometry) {
-    Geometry.Points = A;
     var Lines = B;
     Geometry.Origin = { x: 0, y: 0 };
     // this is valid since B.Line _is_ visible outside Geometry

@@ -19,13 +19,21 @@ function foo() {
 export const asdf = 123;
 
 //// [unusedLocalsAndObjectSpread2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.asdf = void 0;
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 const { children, // here!
-active: _a, // here!
-...rest } = props;
+active: _a } = props, // here!
+rest = __rest(props, ["children", "active"]);
 function foo() {
-    const { children, active: _a, ...rest } = props;
+    const { children, active: _a } = props, rest = __rest(props, ["children", "active"]);
 }
-exports.asdf = 123;
+export const asdf = 123;

@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"maps"
+
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -18,11 +20,7 @@ func (t *projectReferenceParseTask) parse(projectReferenceParser *projectReferen
 	if t.resolved == nil {
 		return
 	}
-	if t.resolved.SourceToOutput() == nil {
-		projectReferenceParser.wg.Queue(func() {
-			t.resolved.ParseInputOutputNames()
-		})
-	}
+	t.resolved.ParseInputOutputNames()
 	if subReferences := t.resolved.ResolvedProjectReferencePaths(); len(subReferences) > 0 {
 		t.subTasks = createProjectReferenceParseTasks(subReferences)
 	}
@@ -68,10 +66,10 @@ func (p *projectReferenceParser) initMapper(tasks []*projectReferenceParseTask) 
 	totalReferences := p.tasksByFileName.Size() + 1
 	p.loader.projectReferenceFileMapper.configToProjectReference = make(map[tspath.Path]*tsoptions.ParsedCommandLine, totalReferences)
 	p.loader.projectReferenceFileMapper.referencesInConfigFile = make(map[tspath.Path][]tspath.Path, totalReferences)
-	p.loader.projectReferenceFileMapper.sourceToOutput = make(map[tspath.Path]*tsoptions.OutputDtsAndProjectReference)
-	p.loader.projectReferenceFileMapper.outputDtsToSource = make(map[tspath.Path]*tsoptions.SourceAndProjectReference)
+	p.loader.projectReferenceFileMapper.sourceToProjectReference = make(map[tspath.Path]*tsoptions.SourceOutputAndProjectReference)
+	p.loader.projectReferenceFileMapper.outputDtsToProjectReference = make(map[tspath.Path]*tsoptions.SourceOutputAndProjectReference)
 	p.loader.projectReferenceFileMapper.referencesInConfigFile[p.loader.opts.Config.ConfigFile.SourceFile.Path()] = p.initMapperWorker(tasks, &collections.Set[*projectReferenceParseTask]{})
-	if p.loader.projectReferenceFileMapper.opts.canUseProjectReferenceSource() && len(p.loader.projectReferenceFileMapper.outputDtsToSource) != 0 {
+	if p.loader.projectReferenceFileMapper.opts.canUseProjectReferenceSource() && len(p.loader.projectReferenceFileMapper.outputDtsToProjectReference) != 0 {
 		p.loader.projectReferenceFileMapper.host = newProjectReferenceDtsFakingHost(p.loader)
 	}
 }
@@ -95,12 +93,8 @@ func (p *projectReferenceParser) initMapperWorker(tasks []*projectReferenceParse
 		if task.resolved == nil || p.loader.projectReferenceFileMapper.opts.Config.ConfigFile == task.resolved.ConfigFile {
 			continue
 		}
-		for key, value := range task.resolved.SourceToOutput() {
-			p.loader.projectReferenceFileMapper.sourceToOutput[key] = value
-		}
-		for key, value := range task.resolved.OutputDtsToSource() {
-			p.loader.projectReferenceFileMapper.outputDtsToSource[key] = value
-		}
+		maps.Copy(p.loader.projectReferenceFileMapper.sourceToProjectReference, task.resolved.SourceToProjectReference())
+		maps.Copy(p.loader.projectReferenceFileMapper.outputDtsToProjectReference, task.resolved.OutputDtsToProjectReference())
 		if p.loader.projectReferenceFileMapper.opts.canUseProjectReferenceSource() {
 			declDir := task.resolved.CompilerOptions().DeclarationDir
 			if declDir == "" {

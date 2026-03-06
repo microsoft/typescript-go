@@ -38,20 +38,13 @@ enum E {
 }
 
 //// [duplicateIdentifierEnum_A.js]
+"use strict";
 var A;
 (function (A) {
     A[A["bar"] = 0] = "bar";
 })(A || (A = {}));
 class A {
-    foo;
 }
-var B;
-(function (B) {
-    B[B["bar"] = 0] = "bar";
-})(B || (B = {}));
-var C;
-(function (C) {
-})(C || (C = {}));
 function C() {
     return 0;
 }
@@ -60,10 +53,10 @@ var D;
     D[D["bar"] = 0] = "bar";
 })(D || (D = {}));
 class E {
-    foo;
 }
 // also make sure the error appears when trying to merge an enum in a separate file.
 //// [duplicateIdentifierEnum_B.js]
+"use strict";
 function D() {
     return 0;
 }

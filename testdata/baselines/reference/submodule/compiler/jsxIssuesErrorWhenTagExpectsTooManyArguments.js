@@ -27,10 +27,8 @@ declare function MyTagWithOptionalNonJSXBits(props: MyProps, context: any, nonRe
 const d = <MyTagWithOptionalNonJSXBits x={2} />; // Technically OK, but probably questionable
 
 //// [jsxIssuesErrorWhenTagExpectsTooManyArguments.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="react16.d.ts" />
-const React = require("react");
+/// <reference path="/.lib/react16.d.ts" />
+import * as React from "react";
 function MyComp4(props, context, bad, verybad) {
     return React.createElement("div", null);
 }

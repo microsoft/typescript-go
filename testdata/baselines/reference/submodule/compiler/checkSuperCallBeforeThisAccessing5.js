@@ -3,18 +3,18 @@
 //// [checkSuperCallBeforeThisAccessing5.ts]
 class Based { constructor(...arg) { } }
 class Derived extends Based {
-    public x: number;
+    public x!: number;
     constructor() {
         super(this.x);
     }
 }
 
 //// [checkSuperCallBeforeThisAccessing5.js]
+"use strict";
 class Based {
     constructor(...arg) { }
 }
 class Derived extends Based {
-    x;
     constructor() {
         super(this.x);
     }

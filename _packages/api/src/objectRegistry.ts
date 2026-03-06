@@ -1,85 +1,89 @@
-import {
-    Project,
-    Symbol,
-    Type,
-} from "./api.ts";
-import type { Client } from "./client.ts";
 import type {
-    ProjectResponse,
+    SignatureResponse,
     SymbolResponse,
     TypeResponse,
 } from "./proto.ts";
 
-export class ObjectRegistry {
-    private client: Client;
-    private projects: Map<string, Project> = new Map();
-    private symbols: Map<string, Symbol> = new Map();
-    private types: Map<string, Type> = new Map();
+/**
+ * Interface for objects with an ID that can be tracked by the registry.
+ */
+export interface Identifiable {
+    readonly id: string;
+}
 
-    constructor(client: Client) {
-        this.client = client;
+/**
+ * Factory functions for creating API objects.
+ */
+export interface ObjectFactories<TSymbol extends Identifiable, TType extends Identifiable, TSignature extends Identifiable = Identifiable> {
+    createSymbol(data: SymbolResponse): TSymbol;
+    createType(data: TypeResponse): TType;
+    createSignature(data: SignatureResponse): TSignature;
+}
+
+/**
+ * Object registry scoped to a single snapshot.
+ *
+ * This registry ensures that the same server-side object ID always maps to
+ * the same client-side object instance within a snapshot, enabling proper
+ * object identity semantics across API calls against the same snapshot.
+ *
+ * Symbol and type lifetimes are tied to the snapshot - when the snapshot
+ * is disposed, all its objects are implicitly released.
+ */
+export class ObjectRegistry<
+    TSymbol extends Identifiable,
+    TType extends Identifiable,
+    TSignature extends Identifiable = Identifiable,
+> {
+    private symbols: Map<string, TSymbol> = new Map();
+    private types: Map<string, TType> = new Map();
+    private signatures: Map<string, TSignature> = new Map();
+    private factories: ObjectFactories<TSymbol, TType, TSignature>;
+
+    constructor(factories: ObjectFactories<TSymbol, TType, TSignature>) {
+        this.factories = factories;
     }
 
-    getProject(data: ProjectResponse): Project {
-        let project = this.projects.get(data.id);
-        if (project) {
-            return project;
-        }
-
-        project = new Project(this.client, this, data);
-        this.projects.set(data.id, project);
-        return project;
-    }
-
-    getSymbol(data: SymbolResponse): Symbol {
+    getOrCreateSymbol(data: SymbolResponse): TSymbol {
         let symbol = this.symbols.get(data.id);
         if (symbol) {
             return symbol;
         }
 
-        symbol = new Symbol(this.client, this, data);
+        symbol = this.factories.createSymbol(data);
         this.symbols.set(data.id, symbol);
         return symbol;
     }
 
-    getType(data: TypeResponse): Type {
+    getOrCreateType(data: TypeResponse): TType {
         let type = this.types.get(data.id);
         if (type) {
             return type;
         }
 
-        type = new Type(this.client, this, data);
+        type = this.factories.createType(data);
         this.types.set(data.id, type);
         return type;
     }
 
-    release(object: object): void {
-        if (object instanceof Project) {
-            this.releaseProject(object);
-        }
-        else if (object instanceof Symbol) {
-            this.releaseSymbol(object);
-        }
-        else if (object instanceof Type) {
-            this.releaseType(object);
-        }
-        else {
-            throw new Error("Unknown object type");
-        }
+    getType(id: string): TType | undefined {
+        return this.types.get(id);
     }
 
-    releaseProject(project: Project): void {
-        this.projects.delete(project.id);
-        this.client.request("release", project.id);
+    getOrCreateSignature(data: SignatureResponse): TSignature {
+        let signature = this.signatures.get(data.id);
+        if (signature) {
+            return signature;
+        }
+
+        signature = this.factories.createSignature(data);
+        this.signatures.set(data.id, signature);
+        return signature;
     }
 
-    releaseSymbol(symbol: Symbol): void {
-        this.symbols.delete(symbol.id);
-        this.client.request("release", symbol.id);
-    }
-
-    releaseType(type: Type): void {
-        this.types.delete(type.id);
-        this.client.request("release", type.id);
+    clear(): void {
+        this.symbols.clear();
+        this.types.clear();
+        this.signatures.clear();
     }
 }

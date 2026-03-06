@@ -19,9 +19,10 @@ var i: I;
 bar(i);
 
 //// [symbolProperty16.js]
+"use strict";
 class C {
-    [Symbol.iterator];
 }
+Symbol.iterator;
 foo(new C);
 var i;
 bar(i);

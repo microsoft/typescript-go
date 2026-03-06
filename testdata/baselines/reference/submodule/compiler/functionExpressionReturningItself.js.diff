@@ -1,8 +1,8 @@
 --- old.functionExpressionReturningItself.js
 +++ new.functionExpressionReturningItself.js
-@@= skipped -7, +7 lines =@@
+@@= skipped -8, +8 lines =@@
 
 
  //// [functionExpressionReturningItself.d.ts]
 -declare var x: () => () => /*elided*/ any;
-+declare var x: () => any;
++declare var x: () => /*elided*/ any;

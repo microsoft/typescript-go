@@ -7,8 +7,11 @@ class Greeter {
 }
 
 //// [sourceMapValidationClassWithDefaultConstructorAndCapturedThisStatement.js]
+"use strict";
 class Greeter {
-    a = 10;
-    returnA = () => this.a;
+    constructor() {
+        this.a = 10;
+        this.returnA = () => this.a;
+    }
 }
 //# sourceMappingURL=sourceMapValidationClassWithDefaultConstructorAndCapturedThisStatement.js.map

@@ -1,9 +1,9 @@
 --- old.esDecorators-classDeclaration-fields-staticPrivate(target=es2022).js
 +++ new.esDecorators-classDeclaration-fields-staticPrivate(target=es2022).js
-@@= skipped -17, +17 lines =@@
-
+@@= skipped -18, +18 lines =@@
 
  //// [esDecorators-classDeclaration-fields-staticPrivate.js]
+ "use strict";
 -let C = (() => {
 -    let _static_private_field1_decorators;
 -    let _static_private_field1_initializers = [];
@@ -50,10 +50,8 @@
 -    return D = _classThis;
 -})();
 +class C {
-+    @dec
 +    static #field1 = 0;
 +}
-+@dec
 +class D {
 +    static #field1 = 0;
 +    static {

@@ -5,13 +5,13 @@ export const a = "hello";
 export const x: string = a, y = x;
 const b = y;
 const c: string = b, d = c;
-export module m1 {
+export namespace m1 {
     export const k = a;
     export const l: string = b, m = k;
     const n = m1.k;
     const o: string = n, p = k;
 }
-module m2 {
+namespace m2 {
     export const k = a;
     export const l: string = b, m = k;
     const n = m1.k;
@@ -23,8 +23,7 @@ export const a = "hello";
 export const x = a, y = x;
 const b = y;
 const c = b, d = c;
-export { m1 };
-var m1;
+export var m1;
 (function (m1) {
     m1.k = a;
     m1.l = b, m1.m = m1.k;

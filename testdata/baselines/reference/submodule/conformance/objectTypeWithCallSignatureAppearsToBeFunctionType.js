@@ -20,6 +20,9 @@ var r4: void = b();
 var rb4: (x: any, y?: any) => any = b.apply;
 
 //// [objectTypeWithCallSignatureAppearsToBeFunctionType.js]
+"use strict";
+// objects with call signatures should be permitted where function types are expected
+// no errors expected below
 var i;
 var r2 = i();
 var r2b = i.apply;

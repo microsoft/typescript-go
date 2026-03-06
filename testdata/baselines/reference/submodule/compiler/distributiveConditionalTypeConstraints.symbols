@@ -57,7 +57,7 @@ function f3<T extends string[]>(x: IsArray<T>) {
 function f4<T extends Function>(x: IsArray<T>) {
 >f4 : Symbol(f4, Decl(distributiveConditionalTypeConstraints.ts, 15, 1))
 >T : Symbol(T, Decl(distributiveConditionalTypeConstraints.ts, 17, 12))
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >x : Symbol(x, Decl(distributiveConditionalTypeConstraints.ts, 17, 32))
 >IsArray : Symbol(IsArray, Decl(distributiveConditionalTypeConstraints.ts, 0, 0))
 >T : Symbol(T, Decl(distributiveConditionalTypeConstraints.ts, 17, 12))
@@ -125,16 +125,16 @@ function f20<T extends string>(x: Foo<T>) {
 
 interface A { foo(): void; }
 >A : Symbol(A, Decl(distributiveConditionalTypeConstraints.ts, 38, 1))
->foo : Symbol(foo, Decl(distributiveConditionalTypeConstraints.ts, 42, 13))
+>foo : Symbol(A.foo, Decl(distributiveConditionalTypeConstraints.ts, 42, 13))
 
 interface B { bar(): void; }
 >B : Symbol(B, Decl(distributiveConditionalTypeConstraints.ts, 42, 28))
->bar : Symbol(bar, Decl(distributiveConditionalTypeConstraints.ts, 43, 13))
+>bar : Symbol(B.bar, Decl(distributiveConditionalTypeConstraints.ts, 43, 13))
 
 interface C { foo(): void, bar(): void }
 >C : Symbol(C, Decl(distributiveConditionalTypeConstraints.ts, 43, 28))
->foo : Symbol(foo, Decl(distributiveConditionalTypeConstraints.ts, 44, 13))
->bar : Symbol(bar, Decl(distributiveConditionalTypeConstraints.ts, 44, 26))
+>foo : Symbol(C.foo, Decl(distributiveConditionalTypeConstraints.ts, 44, 13))
+>bar : Symbol(C.bar, Decl(distributiveConditionalTypeConstraints.ts, 44, 26))
 
 function test1<T extends A>(y: T extends B ? number : string) {
 >test1 : Symbol(test1, Decl(distributiveConditionalTypeConstraints.ts, 44, 40))

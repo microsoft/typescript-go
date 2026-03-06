@@ -18,10 +18,7 @@ c.position;
 
 
 //// [controlFlowJSClassProperty.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
+export class C {
     name = "CompileDiagnostic";
     /**
      * @param {[number, number] | undefined} position
@@ -32,7 +29,6 @@ class C {
         }
     }
 }
-exports.C = C;
 var c = new C([1, 2]);
 c.position;
 

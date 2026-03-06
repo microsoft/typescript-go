@@ -13,8 +13,8 @@ class C extends A<number, string> {
 }
 
 //// [superCallParameterContextualTyping2.js]
+"use strict";
 class A {
-    map;
     constructor(map) {
         this.map = map;
     }

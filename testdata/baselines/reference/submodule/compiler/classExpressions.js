@@ -11,10 +11,12 @@ let x = class B implements A {
 };
 
 //// [classExpressions.js]
+"use strict";
 let x = class B {
-    prop;
+    constructor() {
+        this.func = () => {
+        };
+    }
     onStart() {
     }
-    func = () => {
-    };
 };

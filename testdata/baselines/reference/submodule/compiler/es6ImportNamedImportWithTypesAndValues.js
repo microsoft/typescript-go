@@ -24,11 +24,15 @@ export var cVal = new C();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.C2 = exports.C = void 0;
 class C {
-    prop = "hello";
+    constructor() {
+        this.prop = "hello";
+    }
 }
 exports.C = C;
 class C2 {
-    prop2 = "world";
+    constructor() {
+        this.prop2 = "world";
+    }
 }
 exports.C2 = C2;
 //// [client.js]
@@ -53,6 +57,6 @@ export declare class C2 implements I2 {
     prop2: string;
 }
 //// [client.d.ts]
-import { C, I } from "./server"; // Shouldnt emit I and C2 into the js file and emit C and I in .d.ts file
+import { C, I } from "./server";
 export type cValInterface = I;
 export declare var cVal: C;

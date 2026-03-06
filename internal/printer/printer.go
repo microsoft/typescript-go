@@ -24,7 +24,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -38,17 +37,17 @@ type PrinterOptions struct {
 	NoEmitHelpers bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
-	// Target                        core.ScriptTarget
+	Target                      core.ScriptTarget
 	SourceMap                   bool
 	InlineSourceMap             bool
 	InlineSources               bool
 	OmitBraceSourceMapPositions bool
 	// ExtendedDiagnostics           bool
 	OnlyPrintJSDocStyle bool
-	// NeverAsciiEscape              bool
+	NeverAsciiEscape    bool
 	// StripInternal                 bool
-	PreserveSourceNewlines bool
-	// TerminateUnterminatedLiterals bool
+	PreserveSourceNewlines        bool
+	TerminateUnterminatedLiterals bool // !!!
 }
 
 type PrintHandlers struct {
@@ -126,6 +125,7 @@ type Printer struct {
 	sourceMapSource                   sourcemap.Source
 	sourceMapSourceIndex              sourcemap.SourceIndex
 	sourceMapSourceIsJson             bool
+	sourceMapLineCharCache            *lineCharacterCache
 	mostRecentSourceMapSource         sourcemap.Source
 	mostRecentSourceMapSourceIndex    sourcemap.SourceIndex
 	containerPos                      int
@@ -177,6 +177,9 @@ func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *Emi
 	printer.nameGenerator.Context = printer.emitContext
 	printer.nameGenerator.GetTextOfNode = func(node *ast.Node) string { return printer.getTextOfNode(node, false) }
 	printer.nameGenerator.IsFileLevelUniqueNameInCurrentFile = printer.isFileLevelUniqueNameInCurrentFile
+	printer.makeFileLevelOptimisticUniqueName = func(name string) string {
+		return printer.nameGenerator.MakeFileLevelOptimisticUniqueName(name)
+	}
 	printer.containerPos = -1
 	printer.containerEnd = -1
 	printer.declarationListContainerEnd = -1
@@ -207,11 +210,12 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 			}
 		}
 	}
-
 	// !!! Printer option to control whether to terminate unterminated literals
-	// !!! If necessary, printer option to control whether to preserve numeric separators
 	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
+	}
+	if p.Options.Target >= core.ScriptTargetES2021 {
+		flags |= getLiteralTextFlagsAllowNumericSeparator
 	}
 	return getLiteralText(node, core.Coalesce(sourceFile, p.currentSourceFile), flags)
 }
@@ -501,7 +505,7 @@ func (p *Printer) getLeadingLineTerminatorCount(parentNode *ast.Node, firstChild
 		}
 
 		if firstChild == nil {
-			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && rangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && RangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.nextListElementPos > 0 && firstChild.Pos() == p.nextListElementPos {
 			// If this child starts at the beginning of a list item in a parent list, its leading
@@ -596,7 +600,7 @@ func (p *Printer) getClosingLineTerminatorCount(parentNode *ast.Node, lastChild 
 			return 1
 		}
 		if lastChild == nil {
-			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && rangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && RangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.currentSourceFile != nil && parentNode != nil && !ast.PositionIsSynthesized(parentNode.Pos()) && !ast.NodeIsSynthesized(lastChild) && (lastChild.Parent == nil || lastChild.Parent == parentNode) {
 			if p.Options.PreserveSourceNewlines {
@@ -630,15 +634,19 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 	}
 
 	text := p.currentSourceFile.Text()
-	if comment.Kind == ast.KindMultiLineCommentTrivia {
-		lineMap := p.currentSourceFile.LineMap()
-		indentSize := len(getIndentString(1))
-		firstLine := scanner.ComputeLineOfPosition(lineMap, comment.Pos())
+	lineMap := p.currentSourceFile.ECMALineMap()
+	p.writeCommentRangeWorker(text, lineMap, comment.Kind, comment.TextRange)
+}
+
+func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, kind ast.Kind, loc core.TextRange) {
+	if kind == ast.KindMultiLineCommentTrivia {
+		indentSize := GetDefaultIndentSize()
+		firstLine := scanner.ComputeLineOfPosition(lineMap, loc.Pos())
 		lineCount := len(lineMap)
 		firstCommentLineIndent := -1
-		pos := comment.Pos()
+		pos := loc.Pos()
 		currentLine := firstLine
-		for ; pos < comment.End(); currentLine++ {
+		for ; pos < loc.End(); currentLine++ {
 			var nextLineStart int
 			if currentLine+1 == lineCount {
 				nextLineStart = len(text) + 1
@@ -646,10 +654,10 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 				nextLineStart = int(lineMap[currentLine+1])
 			}
 
-			if pos != comment.Pos() {
+			if pos != loc.Pos() {
 				// If we are not emitting first line, we need to write the spaces to adjust the alignment
 				if firstCommentLineIndent == -1 {
-					firstCommentLineIndent = calculateIndent(text, int(lineMap[firstLine]), comment.Pos())
+					firstCommentLineIndent = calculateIndent(text, int(lineMap[firstLine]), loc.Pos())
 				}
 
 				// These are number of spaces writer is going to write at current indent
@@ -672,7 +680,7 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 				spacesToEmit := currentWriterIndentSpacing - firstCommentLineIndent + calculateIndent(text, pos, nextLineStart)
 				if spacesToEmit > 0 {
 					numberOfSingleSpacesToEmit := spacesToEmit % indentSize
-					indentSizeSpaceString := getIndentString((spacesToEmit - numberOfSingleSpacesToEmit) / indentSize)
+					indentSizeSpaceString := getIndentString((spacesToEmit-numberOfSingleSpacesToEmit)/indentSize, indentSize)
 
 					// Write indent size string ( in eg 1: = "", 2: "" , 3: string with 8 spaces 4: string with 12 spaces
 					p.writer.RawWrite(indentSizeSpaceString)
@@ -689,11 +697,11 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 			}
 
 			// Write the comment line text
-			end := min(comment.End(), nextLineStart-1)
+			end := min(loc.End(), nextLineStart-1)
 			currentLineText := strings.TrimSpace(text[pos:end])
 			if len(currentLineText) > 0 {
 				p.writeComment(currentLineText)
-				if end != comment.End() {
+				if end != loc.End() {
 					p.writeLine()
 				}
 			} else {
@@ -705,18 +713,13 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 		}
 	} else {
 		// Single line comment of style //....
-		p.writeComment(text[comment.Pos():comment.End()])
+		p.writeComment(text[loc.Pos():loc.End()])
 	}
 }
 
 //
 // Custom emit behavior stubs (i.e., from `EmitNode`, `EmitFlags`, etc.)
 //
-
-func (p *Printer) getConstantValue(node *ast.Node) any {
-	// !!! Const-enum inlining (low priority)
-	return nil
-}
 
 func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 	return !p.commentsDisabled &&
@@ -727,7 +730,7 @@ func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 func (p *Printer) shouldWriteComment(comment ast.CommentRange) bool {
 	return !p.Options.OnlyPrintJSDocStyle ||
 		p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text(), comment) ||
-		p.currentSourceFile != nil && isPinnedComment(p.currentSourceFile.Text(), comment)
+		p.currentSourceFile != nil && IsPinnedComment(p.currentSourceFile.Text(), comment)
 }
 
 func (p *Printer) shouldEmitIndented(node *ast.Node) bool {
@@ -763,7 +766,7 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 		return false
 	}
 
-	if !ast.NodeIsSynthesized(body.AsNode()) && p.currentSourceFile != nil && !rangeIsOnSingleLine(body.Loc, p.currentSourceFile) {
+	if !ast.NodeIsSynthesized(body.AsNode()) && p.currentSourceFile != nil && !RangeIsOnSingleLine(body.Loc, p.currentSourceFile) {
 		return false
 	}
 
@@ -785,7 +788,9 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 }
 
 func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
-	// !!! if startsOnNewLine := getStartsOnNewLine(node); startsOnNewLine != nil { return *startsOnNewLine }
+	if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
+		return true
+	}
 	return format&LFPreferNewLine != 0
 }
 
@@ -868,10 +873,9 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindImportAttributes:
 		return true
 	case ast.KindClassExpression,
-		ast.KindClassDeclaration:
-		return list == node.ClassLikeData().TypeParameters
-	case ast.KindInterfaceDeclaration:
-		return list == node.AsInterfaceDeclaration().TypeParameters
+		ast.KindClassDeclaration,
+		ast.KindInterfaceDeclaration:
+		return list == node.TypeParameterList()
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindMethodDeclaration:
@@ -974,7 +978,11 @@ func (p *Printer) emitTokenNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 //	SyntaxKindTemplateMiddle
 //	SyntaxKindTemplateTail
 func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFlags) {
-	// !!! Printer option to control whether to escape non-ASCII characters
+	// Add NeverAsciiEscape flag if the printer option is set
+	if p.Options.NeverAsciiEscape {
+		flags |= getLiteralTextFlagsNeverAsciiEscape
+	}
+
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
 	// !!! Printer option to control source map emit, which causes us to use a different write method on the
@@ -996,7 +1004,7 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	state := p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -1498,9 +1506,10 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 	parent := parentNode.AsArrowFunction()
 	parameter := parameters.Nodes[0].AsParameterDeclaration()
 
-	return parameter.Pos() == greatestEnd(parent.Pos(), parent.Modifiers()) && // may not have parsed tokens between modifiers/start of parent and parameter
+	return parameter.Pos() == parent.Pos() && // may not have parsed tokens between start of parent and parameter
 		parent.TypeParameters == nil && // parent may not have type parameters
 		parent.Type == nil && // parent may not have return type annotation
+		(parent.Modifiers() == nil || len(parent.Modifiers().Nodes) == 0) && // parent may not have modifiers
 		!parameters.HasTrailingComma() && // parameters may not have a trailing comma
 		parameter.Modifiers() == nil && // parameter may not have decorators or modifiers
 		parameter.DotDotDotToken == nil && // parameter may not be rest
@@ -1539,7 +1548,16 @@ func (p *Printer) emitSignature(node *ast.Node) {
 }
 
 func (p *Printer) emitFunctionBody(body *ast.Block) {
-	state := p.enterNode(body.AsNode())
+	p.emitContext.AddEmitFlags(body.AsNode(), EFNoSourceMap)
+
+	// Use only notification hooks for the body block, not the full comment pipeline.
+	// Without this, trailing comments from the original method declaration
+	// (e.g., "// Error") leak into synthesized comma expressions when methods
+	// are hoisted into pending expressions.
+	if p.OnBeforeEmitNode != nil {
+		p.OnBeforeEmitNode(body.AsNode())
+	}
+
 	p.generateNames(body.AsNode())
 
 	// !!! Emit with comment after Strada migration
@@ -1554,10 +1572,10 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 
 	if p.shouldEmitBlockFunctionBodyOnSingleLine(body) && statementOffset == 0 && pos == p.writer.GetTextPos() {
 		p.decreaseIndent()
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements, statementOffset, -1)
 		p.increaseIndent()
 	} else {
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements, statementOffset, -1)
 	}
 
 	p.emitDetachedCommentsAfterStatementList(body.AsNode(), body.Statements.Loc, detachedState)
@@ -1567,7 +1585,9 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 	////p.emitTokenEx(ast.KindCloseBraceToken, body.Statements.End(), WriteKindPunctuation, body.AsNode(), tefNone)
 	p.emitTokenEx(ast.KindCloseBraceToken, body.Statements.End(), WriteKindPunctuation, body.AsNode(), tefNoComments)
 
-	p.exitNode(body.AsNode(), state)
+	if p.OnAfterEmitNode != nil {
+		p.OnAfterEmitNode(body.AsNode())
+	}
 }
 
 func (p *Printer) emitFunctionBodyNode(node *ast.BlockNode) {
@@ -2421,12 +2441,6 @@ func (p *Printer) mayNeedDotDotForPropertyAccess(expression *ast.Expression) boo
 			!strings.Contains(text, scanner.TokenToString(ast.KindDotToken)) &&
 			!strings.Contains(text, "E") &&
 			!strings.Contains(text, "e")
-	} else if ast.IsAccessExpression(expression) {
-		// check if constant enum value is a non-negative integer
-		if constantValue, ok := p.getConstantValue(expression).(jsnum.Number); ok {
-			return !constantValue.IsInf() && constantValue >= 0 && constantValue.Floor() == constantValue
-		}
-		return false
 	}
 	return false
 }
@@ -2450,7 +2464,11 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 	if shouldEmitDotDot {
 		p.writePunctuation(".")
 	}
-	p.emitTokenNode(token)
+	if node.QuestionDotToken != nil {
+		p.emitTokenNode(token)
+	} else {
+		p.emitToken(ast.KindDotToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
+	}
 	linesAfterDot := p.getLinesBetweenNodes(node.AsNode(), token, node.Name())
 	p.writeLineRepeat(linesAfterDot)
 	p.increaseIndentIf(linesAfterDot > 0)
@@ -2716,15 +2734,8 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 		break
 	case ast.OperatorPrecedenceAssignment:
 		// assignment is right-associative
-		leftPrec = ast.OperatorPrecedenceLeftHandSide
-	case ast.OperatorPrecedenceCoalesce:
-		// allow coalesce on the left, but short circuit to BitwiseOR
-		if isBinaryOperation(node.Left, ast.KindQuestionQuestionToken) {
-			leftPrec = ast.OperatorPrecedenceCoalesce
-		} else {
-			leftPrec = ast.OperatorPrecedenceBitwiseOR
-		}
-		rightPrec = ast.OperatorPrecedenceBitwiseOR
+		leftPrec = ast.OperatorPrecedenceConditional
+		rightPrec = ast.OperatorPrecedenceYield
 	case ast.OperatorPrecedenceLogicalOR:
 		rightPrec = ast.OperatorPrecedenceLogicalAND
 	case ast.OperatorPrecedenceLogicalAND:
@@ -2783,6 +2794,12 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 
 func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 	leftPrec, rightPrec := p.getBinaryExpressionPrecedence(node)
+	if emittedLeft := ast.SkipPartiallyEmittedExpressions(node.Left); ast.NodeIsSynthesized(emittedLeft) && emittedLeft.Kind == ast.KindBinaryExpression && mixingBinaryOperatorsRequiresParentheses(node.OperatorToken.Kind, emittedLeft.AsBinaryExpression().OperatorToken.Kind) {
+		leftPrec = ast.OperatorPrecedenceHighest
+	}
+	if emittedRight := ast.SkipPartiallyEmittedExpressions(node.Right); ast.NodeIsSynthesized(emittedRight) && emittedRight.Kind == ast.KindBinaryExpression && mixingBinaryOperatorsRequiresParentheses(node.OperatorToken.Kind, emittedRight.AsBinaryExpression().OperatorToken.Kind) {
+		rightPrec = ast.OperatorPrecedenceHighest
+	}
 	state := p.enterNode(node.AsNode())
 	p.emitExpression(node.Left, leftPrec)
 	linesBeforeOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
@@ -2930,7 +2947,7 @@ func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, precedence ast.OperatorPrecedence) {
+func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression) {
 	// avoid reprinting parens for nested partially emitted expressions
 	type entry struct {
 		node  *ast.PartiallyEmittedExpression
@@ -2946,7 +2963,7 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 		node = node.Expression.AsPartiallyEmittedExpression()
 	}
 
-	p.emitExpression(node.Expression, precedence)
+	p.emitExpression(node.Expression, ast.OperatorPrecedenceLowest)
 
 	// unwind stack
 	for stack.Len() > 0 {
@@ -2956,29 +2973,163 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 	}
 }
 
+func (p *Printer) commentWillEmitNewLine(comment ast.CommentRange) bool {
+	return comment.Kind == ast.KindSingleLineCommentTrivia || comment.HasTrailingNewLine
+}
+
+func (p *Printer) syntheticCommentWillEmitNewLine(comment SynthesizedComment) bool {
+	return comment.Kind == ast.KindSingleLineCommentTrivia || comment.HasTrailingNewLine
+}
+
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
-	return false // !!! check if node will emit a leading comment that contains a trailing newline
+	if p.currentSourceFile == nil {
+		return false
+	}
+	hasLeadingCommentRanges := false
+	hasNewLineComment := false
+	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), node.Pos()) {
+		hasLeadingCommentRanges = true
+		if p.commentWillEmitNewLine(comment) {
+			hasNewLineComment = true
+		}
+	}
+	if hasLeadingCommentRanges {
+		parseNode := p.emitContext.ParseNode(node)
+		if parseNode != nil && ast.IsParenthesizedExpression(parseNode.Parent) {
+			return true
+		}
+	}
+	if hasNewLineComment {
+		return true
+	}
+	if slices.ContainsFunc(p.emitContext.GetSyntheticLeadingComments(node), p.syntheticCommentWillEmitNewLine) {
+		return true
+	}
+	if ast.IsPartiallyEmittedExpression(node) {
+		pee := node.AsPartiallyEmittedExpression()
+		if node.Pos() != pee.Expression.Pos() {
+			for comment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pee.Expression.Pos()) {
+				if p.commentWillEmitNewLine(comment) {
+					return true
+				}
+			}
+		}
+		return p.willEmitLeadingNewLine(pee.Expression)
+	}
+	return false
+}
+
+// parenthesizeExpressionForNoAsi wraps an expression in parens if we would emit a leading comment
+// that would introduce a line separator between the node and its parent.
+func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expression {
+	if !p.commentsDisabled {
+		switch node.Kind {
+		case ast.KindPartiallyEmittedExpression:
+			if p.willEmitLeadingNewLine(node) {
+				pee := node.AsPartiallyEmittedExpression()
+				parseNode := p.emitContext.ParseNode(node)
+				if parseNode != nil && ast.IsParenthesizedExpression(parseNode) {
+					// If the original node was a parenthesized expression, restore it to preserve comment and source map emit
+					parens := p.emitContext.Factory.NewParenthesizedExpression(pee.Expression)
+					p.emitContext.SetOriginal(parens, node)
+					parens.Loc = parseNode.Loc
+					return parens
+				}
+				return p.emitContext.Factory.NewParenthesizedExpression(node)
+			}
+			pee := node.AsPartiallyEmittedExpression()
+			return p.emitContext.Factory.UpdatePartiallyEmittedExpression(
+				pee,
+				p.parenthesizeExpressionForNoAsi(pee.Expression),
+			)
+		case ast.KindPropertyAccessExpression:
+			pae := node.AsPropertyAccessExpression()
+			return p.emitContext.Factory.UpdatePropertyAccessExpression(
+				pae,
+				p.parenthesizeExpressionForNoAsi(pae.Expression),
+				pae.QuestionDotToken,
+				pae.Name(),
+			)
+		case ast.KindElementAccessExpression:
+			eae := node.AsElementAccessExpression()
+			return p.emitContext.Factory.UpdateElementAccessExpression(
+				eae,
+				p.parenthesizeExpressionForNoAsi(eae.Expression),
+				eae.QuestionDotToken,
+				eae.ArgumentExpression,
+			)
+		case ast.KindCallExpression:
+			ce := node.AsCallExpression()
+			return p.emitContext.Factory.UpdateCallExpression(
+				ce,
+				p.parenthesizeExpressionForNoAsi(ce.Expression),
+				ce.QuestionDotToken,
+				ce.TypeArguments,
+				ce.Arguments,
+			)
+		case ast.KindTaggedTemplateExpression:
+			tte := node.AsTaggedTemplateExpression()
+			return p.emitContext.Factory.UpdateTaggedTemplateExpression(
+				tte,
+				p.parenthesizeExpressionForNoAsi(tte.Tag),
+				tte.QuestionDotToken,
+				tte.TypeArguments,
+				tte.Template,
+			)
+		case ast.KindPostfixUnaryExpression:
+			pue := node.AsPostfixUnaryExpression()
+			return p.emitContext.Factory.UpdatePostfixUnaryExpression(
+				pue,
+				p.parenthesizeExpressionForNoAsi(pue.Operand),
+			)
+		case ast.KindBinaryExpression:
+			be := node.AsBinaryExpression()
+			return p.emitContext.Factory.UpdateBinaryExpression(
+				be,
+				be.Modifiers(),
+				p.parenthesizeExpressionForNoAsi(be.Left),
+				be.Type,
+				be.OperatorToken,
+				be.Right,
+			)
+		case ast.KindConditionalExpression:
+			ce := node.AsConditionalExpression()
+			return p.emitContext.Factory.UpdateConditionalExpression(
+				ce,
+				p.parenthesizeExpressionForNoAsi(ce.Condition),
+				ce.QuestionToken,
+				ce.WhenTrue,
+				ce.ColonToken,
+				ce.WhenFalse,
+			)
+		case ast.KindAsExpression:
+			ae := node.AsAsExpression()
+			return p.emitContext.Factory.UpdateAsExpression(
+				ae,
+				p.parenthesizeExpressionForNoAsi(ae.Expression),
+				ae.Type,
+			)
+		case ast.KindSatisfiesExpression:
+			se := node.AsSatisfiesExpression()
+			return p.emitContext.Factory.UpdateSatisfiesExpression(
+				se,
+				p.parenthesizeExpressionForNoAsi(se.Expression),
+				se.Type,
+			)
+		case ast.KindNonNullExpression:
+			nne := node.AsNonNullExpression()
+			return p.emitContext.Factory.UpdateNonNullExpression(
+				nne,
+				p.parenthesizeExpressionForNoAsi(nne.Expression),
+			)
+		}
+	}
+	return node
 }
 
 func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.OperatorPrecedence) {
-	// !!! restore parens when necessary to ensure a leading single-line comment doesn't introduce ASI:
-	//	function f() {
-	//	  return (// comment
-	//	    a as T
-	//	  )
-	//	}
-	// If we do not restore the parens, we would produce the following incorrect output:
-	//	function f() {
-	//	  return // comment
-	//	    a;
-	//	}
-	// Due to ASI, this would result in a `return` with no value followed by an unreachable expression statement.
-	if !p.commentsDisabled && node.Kind == ast.KindPartiallyEmittedExpression && p.willEmitLeadingNewLine(node) {
-		// !!! if there is an original parse tree node, restore it with location to preserve comments and source maps.
-		p.emitExpression(node, ast.OperatorPrecedenceParentheses)
-	} else {
-		p.emitExpression(node, precedence)
-	}
+	node = p.parenthesizeExpressionForNoAsi(node)
+	p.emitExpression(node, precedence)
 }
 
 func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPrecedence) {
@@ -3092,7 +3243,7 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindNotEmittedStatement:
 		return
 	case ast.KindPartiallyEmittedExpression:
-		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
 	case ast.KindSyntheticReferenceExpression:
 		panic("SyntheticReferenceExpression should not be printed")
 
@@ -3662,8 +3813,8 @@ func (p *Printer) emitImportDeclaration(node *ast.ImportDeclaration) {
 
 func (p *Printer) emitImportClause(node *ast.ImportClause) {
 	state := p.enterNode(node.AsNode())
-	if node.IsTypeOnly {
-		p.emitToken(ast.KindTypeKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	if node.PhaseModifier != ast.KindUnknown {
+		p.emitToken(node.PhaseModifier, node.Pos(), WriteKindKeyword, node.AsNode())
 		p.writeSpace()
 	}
 	if name := node.Name(); name != nil {
@@ -3754,24 +3905,6 @@ func (p *Printer) emitExportAssignment(node *ast.ExportAssignment) {
 	p.exitNode(node.AsNode(), state)
 }
 
-// export declare var <name> = <initialiser>;
-func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindExportKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	p.writeKeyword("var")
-	p.writeSpace()
-	if node.Name().Kind == ast.KindStringLiteral {
-		// TODO: This doesn't work for illegal names.
-		p.write(node.Name().AsStringLiteral().Text)
-	} else {
-		p.emitBindingName(node.Name())
-	}
-	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitExportDeclaration(node *ast.ExportDeclaration) {
 	state := p.enterNode(node.AsNode())
 	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
@@ -3813,8 +3946,12 @@ func (p *Printer) emitImportAttribute(node *ast.ImportAttribute) {
 	p.emitImportAttributeName(node.Name())
 	p.writePunctuation(":")
 	p.writeSpace()
-	/// !!! emit trailing comments of value
-	p.emitExpression(node.Value, ast.OperatorPrecedenceDisallowComma)
+	value := node.Value
+	if p.emitContext.EmitFlags(node.Value)&EFNoLeadingComments == 0 {
+		commentRange := p.emitContext.CommentRange(value)
+		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+	}
+	p.emitExpression(value, ast.OperatorPrecedenceDisallowComma)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -3974,7 +4111,7 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 	case ast.KindExportDeclaration:
 		p.emitExportDeclaration(node.AsExportDeclaration())
 	case ast.KindCommonJSExport:
-		p.emitCommonJSExport(node.AsCommonJSExport())
+		break
 
 	default:
 		panic(fmt.Sprintf("unhandled statement: %v", node.Kind))
@@ -4031,7 +4168,7 @@ func (p *Printer) emitJsxOpeningElement(node *ast.JsxOpeningElement) {
 	indented := p.writeLineSeparatorsAndIndentBefore(node.TagName, node.AsNode())
 	p.emitJsxTagName(node.TagName)
 	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	if attributes := node.Attributes.AsJsxAttributes(); len(attributes.Properties.Nodes) > 0 {
+	if len(node.Attributes.Properties()) > 0 {
 		p.writeSpace()
 	}
 	p.emitJsxAttributes(node.Attributes.AsJsxAttributes())
@@ -4108,7 +4245,7 @@ func (p *Printer) emitJsxAttributeLike(node *ast.JsxAttributeLike) {
 func (p *Printer) emitJsxExpression(node *ast.JsxExpression) {
 	state := p.enterNode(node.AsNode())
 	if node.Expression != nil || !p.commentsDisabled && !ast.NodeIsSynthesized(node.AsNode()) && p.hasCommentsAtPosition(node.Pos()) { // preserve empty expressions if they contain comments!
-		indented := p.currentSourceFile != nil && !ast.NodeIsSynthesized(node.AsNode()) && getLinesBetweenPositions(p.currentSourceFile, node.Pos(), node.End()) != 0
+		indented := p.currentSourceFile != nil && !ast.NodeIsSynthesized(node.AsNode()) && GetLinesBetweenPositions(p.currentSourceFile, node.Pos(), node.End()) != 0
 		p.increaseIndentIf(indented)
 		end := p.emitToken(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
 		p.emitTokenNode(node.DotDotDotToken)
@@ -4283,9 +4420,10 @@ func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	// "comment1" is not considered to be leading comment for node.initializer
 	// but rather a trailing comment on the previous node.
 	initializer := node.Initializer
-
-	// !!! emit trailing comments of initializer
-
+	if p.emitContext.EmitFlags(initializer)&EFNoLeadingComments == 0 {
+		commentRange := p.emitContext.CommentRange(initializer)
+		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+	}
 	p.emitExpression(initializer, ast.OperatorPrecedenceDisallowComma)
 	p.exitNode(node.AsNode(), state)
 }
@@ -4340,6 +4478,9 @@ func (p *Printer) emitJSDocNode(node *ast.Node) {
 //
 
 func (p *Printer) emitShebangIfNeeded(node *ast.SourceFile) {
+	if ast.NodeIsSynthesized(node.AsNode()) {
+		return
+	}
 	shebang := scanner.GetShebang(node.Text())
 	if shebang != "" {
 		p.writeComment(shebang)
@@ -4394,18 +4535,24 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	state := p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
 
 	index := 0
+	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
+	} else {
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
 
 	// !!! Emit triple-slash directives
@@ -4446,7 +4593,7 @@ func (p *Printer) emitDirective(kind string, refs []*ast.FileReference) {
 
 func (p *Printer) emitList(emit func(p *Printer, node *ast.Node), parentNode *ast.Node, children *ast.NodeList, format ListFormat) {
 	if p.shouldEmitOnMultipleLines(parentNode) {
-		format |= LFPreferNewLine
+		format |= LFPreferNewLine | LFIndented
 	}
 
 	p.emitListRange(emit, parentNode, children, format, -1 /*start*/, -1 /*count*/)
@@ -4496,7 +4643,7 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 
 	if isEmpty {
 		// Write a line terminator if the parent node was multi-line
-		if format&LFMultiLine != 0 && !(p.Options.PreserveSourceNewlines && (parentNode == nil || p.currentSourceFile != nil && rangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile))) {
+		if format&LFMultiLine != 0 && !(p.Options.PreserveSourceNewlines && (parentNode == nil || p.currentSourceFile != nil && RangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile))) {
 			p.writeLine()
 		} else if format&LFSpaceBetweenBraces != 0 && format&LFNoSpaceIfEmpty == 0 {
 			p.writeSpace()
@@ -4542,9 +4689,9 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 	originalList := children
 	switch originalParent.Kind {
 	case ast.KindObjectLiteralExpression:
-		originalList = originalParent.AsObjectLiteralExpression().Properties
+		originalList = originalParent.PropertyList()
 	case ast.KindArrayLiteralExpression:
-		originalList = originalParent.AsArrayLiteralExpression().Elements
+		originalList = originalParent.ElementList()
 	case ast.KindCallExpression, ast.KindNewExpression:
 		switch children {
 		case parentNode.TypeArgumentList():
@@ -4576,13 +4723,11 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		switch children {
-		case parentNode.AsBindingPattern().Elements:
-			originalList = originalParent.AsBindingPattern().Elements
+		case parentNode.ElementList():
+			originalList = originalParent.ElementList()
 		}
-	case ast.KindNamedImports:
-		originalList = originalParent.AsNamedImports().Elements
-	case ast.KindNamedExports:
-		originalList = originalParent.AsNamedExports().Elements
+	case ast.KindNamedImports, ast.KindNamedExports:
+		originalList = originalParent.ElementList()
 	case ast.KindImportAttributes:
 		originalList = originalParent.AsImportAttributes().Attributes
 	}
@@ -4684,7 +4829,7 @@ func (p *Printer) emitListItems(
 				}
 
 				if shouldEmitInterveningComments && format&LFDelimitersMask != 0 && !ast.PositionIsSynthesized(child.Pos()) {
-					commentRange := getCommentRange(child)
+					commentRange := p.emitContext.CommentRange(child)
 					p.emitTrailingComments(commentRange.Pos(), core.IfElse(format&LFSpaceBetweenSiblings != 0, commentSeparatorBefore, commentSeparatorNone))
 				}
 
@@ -4700,7 +4845,7 @@ func (p *Printer) emitListItems(
 
 		// Emit this child.
 		if shouldEmitInterveningComments {
-			commentRange := getCommentRange(child)
+			commentRange := p.emitContext.CommentRange(child)
 			p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
 		} else {
 			shouldEmitInterveningComments = mayEmitInterveningComments
@@ -4761,7 +4906,7 @@ func (p *Printer) emitListItems(
 func (p *Printer) Emit(node *ast.Node, sourceFile *ast.SourceFile) string {
 	// ensure a reusable writer
 	if p.ownWriter == nil {
-		p.ownWriter = NewTextWriter(p.Options.NewLine.GetNewLineCharacter())
+		p.ownWriter = NewTextWriter(p.Options.NewLine.GetNewLineCharacter(), 0)
 	}
 
 	p.Write(node, sourceFile, p.ownWriter, nil /*sourceMapGenerator*/)
@@ -4798,15 +4943,22 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	savedSourceMapGenerator := p.sourceMapGenerator
 	savedSourceMapSource := p.sourceMapSource
 	savedSourceMapSourceIndex := p.sourceMapSourceIndex
+	savedSourceMapLineCharCache := p.sourceMapLineCharCache
 
 	p.sourceMapsDisabled = sourceMapGenerator == nil
 	p.sourceMapGenerator = sourceMapGenerator
 	p.sourceMapSource = nil
 	p.sourceMapSourceIndex = -1
+	p.sourceMapLineCharCache = nil
 
 	p.setSourceFile(sourceFile)
 	p.writer = writer
 	p.writer.Clear()
+	if sourceFile != nil {
+		if grower, ok := p.writer.(interface{ Grow(n int) }); ok {
+			grower.Grow(len(sourceFile.Text()))
+		}
+	}
 
 	switch node.Kind {
 	// Pseudo-literals
@@ -4958,9 +5110,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	case ast.KindSourceFile:
 		p.emitSourceFile(node.AsSourceFile())
 
-	case ast.KindBundle:
-		panic("not implemented")
-
 	// Transformation nodes
 	case ast.KindNotEmittedTypeElement:
 		p.emitNotEmittedTypeElement(node.AsNotEmittedTypeElement())
@@ -4991,6 +5140,7 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	p.sourceMapGenerator = savedSourceMapGenerator
 	p.sourceMapSource = savedSourceMapSource
 	p.sourceMapSourceIndex = savedSourceMapSourceIndex
+	p.sourceMapLineCharCache = savedSourceMapLineCharCache
 }
 
 //
@@ -5010,7 +5160,7 @@ func (p *Printer) emitCommentsBeforeNode(node *ast.Node) *commentState {
 
 	// Emit leading comments
 	p.emitLeadingCommentsOfNode(node, emitFlags, commentRange)
-	p.emitLeadingSyntheticCommentsOfNode(node)
+	p.emitLeadingSyntheticCommentsOfNode(node, emitFlags)
 	if emitFlags&EFNoNestedComments != 0 {
 		p.commentsDisabled = true
 	}
@@ -5036,7 +5186,7 @@ func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
 		p.commentsDisabled = false
 	}
 
-	p.emitTrailingSyntheticCommentsOfNode(node)
+	p.emitTrailingSyntheticCommentsOfNode(node, emitFlags)
 	p.emitTrailingCommentsOfNode(node, emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd)
 
 	// !!! Preserve comments from type annotation:
@@ -5047,7 +5197,12 @@ func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
 }
 
 func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) (*commentState, int) {
-	if flags&tefNoComments != 0 {
+	if flags&tefNoComments != 0 || p.commentsDisabled {
+		// Still skip trivia so that the returned pos correctly identifies the token position.
+		// This is needed for trailing source map positions (writeTokenText advances pos by token length).
+		if p.currentSourceFile != nil && !ast.PositionIsSynthesized(pos) {
+			pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+		}
 		return nil, pos
 	}
 
@@ -5064,7 +5219,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 
 	if contextNode.Pos() != startPos {
 		indentLeading := flags&tefIndentLeadingComments != 0
-		needsIndent := indentLeading && p.currentSourceFile != nil && !positionsAreOnSameLine(startPos, pos, p.currentSourceFile)
+		needsIndent := indentLeading && p.currentSourceFile != nil && !PositionsAreOnSameLine(startPos, pos, p.currentSourceFile)
 		p.increaseIndentIf(needsIndent)
 		p.emitLeadingComments(startPos, false /*elided*/)
 		p.decreaseIndentIf(needsIndent)
@@ -5093,7 +5248,7 @@ func (p *Printer) emitDetachedCommentsBeforeStatementList(node *ast.Node, detach
 	containerPos := p.containerPos
 	containerEnd := p.containerEnd
 	declarationListContainerEnd := p.declarationListContainerEnd
-	skipLeadingComments := emitFlags&EFNoLeadingComments == 0 && !ast.PositionIsSynthesized(detachedRange.Pos())
+	skipLeadingComments := ast.PositionIsSynthesized(detachedRange.Pos()) || emitFlags&EFNoLeadingComments != 0
 
 	if !skipLeadingComments {
 		p.emitDetachedCommentsAndUpdateCommentsInfo(detachedRange)
@@ -5131,7 +5286,7 @@ func (p *Printer) emitLeadingCommentsOfNode(node *ast.Node, emitFlags EmitFlags,
 		// We have to explicitly check that the node is JsxText because if the compilerOptions.jsx is "preserve" we will not do any transformation.
 		// It is expensive to walk entire tree just to set one kind of node to have no comments.
 		skipLeadingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoLeadingComments != 0 || node.Kind == ast.KindJsxText
-		skipTrailingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
+		skipTrailingComments := ast.PositionIsSynthesized(end) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
 
 		// Emit leading comments if the position is not synthesized and the node
 		// has not opted out from emitting leading comments.
@@ -5175,17 +5330,67 @@ func (p *Printer) emitTrailingCommentsOfNode(node *ast.Node, emitFlags EmitFlags
 	}
 }
 
-func (p *Printer) emitLeadingSyntheticCommentsOfNode(node *ast.Node) {
-	// !!!
+func (p *Printer) emitLeadingSyntheticCommentsOfNode(node *ast.Node, emitFlags EmitFlags) {
+	if emitFlags&EFNoLeadingComments != 0 {
+		return
+	}
+	synth := p.emitContext.GetSyntheticLeadingComments(node)
+	for _, c := range synth {
+		p.emitLeadingSynthesizedComment(c)
+	}
 }
 
-func (p *Printer) emitTrailingSyntheticCommentsOfNode(node *ast.Node) {
-	// !!!
+func (p *Printer) emitLeadingSynthesizedComment(comment SynthesizedComment) {
+	if comment.HasLeadingNewLine || comment.Kind == ast.KindSingleLineCommentTrivia {
+		p.writer.WriteLine()
+	}
+	p.writeSynthesizedComment(comment)
+	if comment.HasTrailingNewLine || comment.Kind == ast.KindSingleLineCommentTrivia {
+		p.writer.WriteLine()
+	} else {
+		p.writer.WriteSpace(" ")
+	}
+}
+
+func (p *Printer) emitTrailingSyntheticCommentsOfNode(node *ast.Node, emitFlags EmitFlags) {
+	if emitFlags&EFNoTrailingComments != 0 {
+		return
+	}
+	synth := p.emitContext.GetSyntheticTrailingComments(node)
+	for _, c := range synth {
+		p.emitTrailingSynthesizedComment(c)
+	}
+}
+
+func (p *Printer) emitTrailingSynthesizedComment(comment SynthesizedComment) {
+	if !p.writer.IsAtStartOfLine() {
+		p.writer.WriteSpace(" ")
+	}
+	p.writeSynthesizedComment(comment)
+	if comment.HasTrailingNewLine {
+		p.writer.WriteLine()
+	}
+}
+
+func formatSynthesizedComment(comment SynthesizedComment) string {
+	if comment.Kind == ast.KindMultiLineCommentTrivia {
+		return "/*" + comment.Text + "*/"
+	}
+	return "//" + comment.Text
+}
+
+func (p *Printer) writeSynthesizedComment(comment SynthesizedComment) {
+	text := formatSynthesizedComment(comment)
+	var lineMap []core.TextPos
+	if comment.Kind == ast.KindMultiLineCommentTrivia {
+		lineMap = core.ComputeECMALineStarts(text)
+	}
+	p.writeCommentRangeWorker(text, lineMap, comment.Kind, core.NewTextRange(0, len(text)))
 }
 
 func (p *Printer) emitLeadingComments(pos int, elided bool) bool {
 	// Emit the leading comments only if the container's pos doesn't match because the container should take care of emitting these comments
-	if p.currentSourceFile == nil || ast.PositionIsSynthesized(pos) || pos == p.containerPos {
+	if p.commentsDisabled || p.currentSourceFile == nil || ast.PositionIsSynthesized(pos) || pos == p.containerPos {
 		return false
 	}
 
@@ -5245,12 +5450,15 @@ func (p *Printer) shouldEmitNewLineBeforeLeadingCommentOfPosition(pos int, comme
 	// If the leading comments start on different line than the start of node, write new line
 	return p.currentSourceFile != nil &&
 		pos != commentPos &&
-		scanner.ComputeLineOfPosition(p.currentSourceFile.LineMap(), pos) != scanner.ComputeLineOfPosition(p.currentSourceFile.LineMap(), commentPos)
+		scanner.ComputeLineOfPosition(p.currentSourceFile.ECMALineMap(), pos) != scanner.ComputeLineOfPosition(p.currentSourceFile.ECMALineMap(), commentPos)
 }
 
 func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparator) {
+	if p.commentsDisabled {
+		return
+	}
 	// Emit the trailing comments only if the container's end doesn't match because the container should take care of emitting these comments
-	if p.currentSourceFile == nil || p.containerEnd != -1 && (pos == p.containerEnd || pos == p.declarationListContainerEnd) {
+	if p.commentsDisabled || p.currentSourceFile == nil || p.containerEnd != -1 && (pos == p.containerEnd || pos == p.declarationListContainerEnd) {
 		return
 	}
 
@@ -5280,7 +5488,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 	}
 
 	text := p.currentSourceFile.Text()
-	lineMap := p.currentSourceFile.LineMap()
+	lineMap := p.currentSourceFile.ECMALineMap()
 
 	var leadingComments []ast.CommentRange
 	if p.commentsDisabled {
@@ -5291,7 +5499,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 		//      var x = 10;
 		if textRange.Pos() == 0 {
 			for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()) {
-				if isPinnedComment(text, comment) {
+				if IsPinnedComment(text, comment) {
 					leadingComments = append(leadingComments, comment)
 				}
 			}
@@ -5394,7 +5602,7 @@ func (p *Printer) emitComment(comment ast.CommentRange) {
 
 func (p *Printer) isTripleSlashComment(comment ast.CommentRange) bool {
 	return p.currentSourceFile != nil &&
-		isRecognizedTripleSlashComment(p.currentSourceFile.Text(), comment)
+		IsRecognizedTripleSlashComment(p.currentSourceFile.Text(), comment)
 }
 
 //
@@ -5407,6 +5615,7 @@ func (p *Printer) setSourceMapSource(source sourcemap.Source) {
 	}
 
 	p.sourceMapSource = source
+	p.sourceMapLineCharCache = newLineCharacterCache(source)
 	if p.mostRecentSourceMapSource == source {
 		p.sourceMapSourceIndex = p.mostRecentSourceMapSourceIndex
 		return
@@ -5433,7 +5642,7 @@ func (p *Printer) emitPos(pos int) {
 		return
 	}
 
-	sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
+	sourceLine, sourceCharacter := p.sourceMapLineCharCache.getLineAndCharacter(pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),
 		p.writer.GetColumn(),
@@ -5469,10 +5678,12 @@ func (p *Printer) emitSourcePos(source sourcemap.Source, pos int) {
 	if source != p.sourceMapSource {
 		savedSourceMapSource := p.sourceMapSource
 		savedSourceMapSourceIndex := p.sourceMapSourceIndex
+		savedSourceMapLineCharCache := p.sourceMapLineCharCache
 		p.setSourceMapSource(source)
 		p.emitPos(pos)
 		p.sourceMapSource = savedSourceMapSource
 		p.sourceMapSourceIndex = savedSourceMapSourceIndex
+		p.sourceMapLineCharCache = savedSourceMapLineCharCache
 	} else {
 		p.emitPos(pos)
 	}
@@ -5502,8 +5713,9 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoLeadingSourceMap == 0 &&
+		p.currentSourceFile != nil &&
 		!ast.PositionIsSynthesized(loc.Pos()) {
-		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
+		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos()))
 	}
 
 	if emitFlags&EFNoNestedSourceMaps != 0 {
@@ -5530,7 +5742,7 @@ func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceM
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoTrailingSourceMap == 0 &&
 		!ast.PositionIsSynthesized(loc.End()) {
-		p.emitSourcePos(p.sourceMapSource, loc.End()) // !!! support SourceMapRange from Strada?
+		p.emitSourcePos(p.sourceMapSource, loc.End())
 	}
 }
 
@@ -5541,13 +5753,14 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 
 	emitFlags := p.emitContext.EmitFlags(contextNode)
 	loc, hasLoc := p.emitContext.TokenSourceMapRange(contextNode, token)
-	if emitFlags&EFNoTokenLeadingSourceMaps == 0 {
-		if hasLoc {
-			pos = loc.Pos()
-		}
-		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
-		}
+	if hasLoc {
+		pos = loc.Pos()
+	}
+	if pos >= 0 && p.currentSourceFile != nil {
+		pos = scanner.SkipTrivia(p.currentSourceFile.Text(), pos)
+	}
+	if emitFlags&EFNoTokenLeadingSourceMaps == 0 && pos >= 0 {
+		p.emitSourcePos(p.sourceMapSource, pos)
 	}
 
 	state := p.sourceMapStatePool.New()
@@ -5568,7 +5781,7 @@ func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode 
 			pos = loc.End()
 		}
 		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+			p.emitSourcePos(p.sourceMapSource, pos)
 		}
 	}
 }
@@ -5604,31 +5817,20 @@ func (p *Printer) generateNames(node *ast.Node) {
 	}
 
 	switch node.Kind {
-	case ast.KindBlock:
-		p.generateAllNames(node.AsBlock().Statements)
-	case ast.KindLabeledStatement:
-		p.generateNames(node.AsLabeledStatement().Statement)
-	case ast.KindWithStatement:
-		p.generateNames(node.AsWithStatement().Statement)
-	case ast.KindDoStatement:
-		p.generateNames(node.AsDoStatement().Statement)
-	case ast.KindWhileStatement:
-		p.generateNames(node.AsWhileStatement().Statement)
+	case ast.KindBlock, ast.KindCaseClause, ast.KindDefaultClause:
+		p.generateAllNames(node.StatementList())
+	case ast.KindLabeledStatement, ast.KindWithStatement, ast.KindDoStatement, ast.KindWhileStatement:
+		p.generateNames(node.Statement())
 	case ast.KindIfStatement:
 		p.generateNames(node.AsIfStatement().ThenStatement)
 		p.generateNames(node.AsIfStatement().ElseStatement)
-	case ast.KindForStatement:
-		p.generateNames(node.AsForStatement().Initializer)
-		p.generateNames(node.AsForStatement().Statement)
-	case ast.KindForOfStatement, ast.KindForInStatement:
-		p.generateNames(node.AsForInOrOfStatement().Initializer)
-		p.generateNames(node.AsForInOrOfStatement().Statement)
+	case ast.KindForStatement, ast.KindForOfStatement, ast.KindForInStatement:
+		p.generateNames(node.Initializer())
+		p.generateNames(node.Statement())
 	case ast.KindSwitchStatement:
 		p.generateNames(node.AsSwitchStatement().CaseBlock)
 	case ast.KindCaseBlock:
 		p.generateAllNames(node.AsCaseBlock().Clauses)
-	case ast.KindCaseClause, ast.KindDefaultClause:
-		p.generateAllNames(node.AsCaseOrDefaultClause().Statements)
 	case ast.KindTryStatement:
 		p.generateNames(node.AsTryStatement().TryBlock)
 		p.generateNames(node.AsTryStatement().CatchClause)
@@ -5649,7 +5851,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 			p.generateNames(node.AsFunctionDeclaration().Body)
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
-		p.generateAllNames(node.AsBindingPattern().Elements)
+		p.generateAllNames(node.ElementList())
 	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.generateNames(node.AsImportDeclaration().ImportClause)
 	case ast.KindImportClause:
@@ -5658,7 +5860,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 	case ast.KindNamespaceImport, ast.KindNamespaceExport:
 		p.generateNameIfNeeded(node.Name())
 	case ast.KindNamedImports:
-		p.generateAllNames(node.AsNamedImports().Elements)
+		p.generateAllNames(node.ElementList())
 	case ast.KindImportSpecifier:
 		n := node.AsImportSpecifier()
 		if n.PropertyName != nil {

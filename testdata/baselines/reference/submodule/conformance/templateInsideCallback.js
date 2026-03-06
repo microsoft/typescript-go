@@ -59,7 +59,6 @@ function flatMap(array, iterable = identity) {
 
 //// [templateInsideCallback.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef Oops
  * @template T
@@ -114,10 +113,29 @@ function flatMap(array, iterable = identity) {
 
 
 //// [templateInsideCallback.d.ts]
-export type Call = () ;
-export type Nested = {
+type Call = () => any;
+/**
+ * @typedef Oops
+ * @template T
+ * @property {T} a
+ * @property {T} b
+ */
+/**
+ * @callback Call
+ * @template T
+ * @param {T} x
+ * @returns {T}
+ */
+/**
+ * @template T
+ * @type {Call<T>}
+ */
+declare const identity: Call<T>;
+type Nested = {
     oh: {
         no: number;
         noooooo: string;
     };
 };
+declare function flatMap(): any;
+declare function flatMap(): any;

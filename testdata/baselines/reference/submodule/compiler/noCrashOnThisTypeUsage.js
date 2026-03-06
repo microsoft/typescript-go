@@ -27,15 +27,12 @@ export class ObservableValue<T> {
 }
 
 //// [noCrashOnThisTypeUsage.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ObservableValue = void 0;
 function notifyListeners(listenable, change) {
 }
-class ObservableValue {
-    value;
+export class ObservableValue {
     constructor(value) {
         this.value = value;
+        this.changeListeners = [];
         const newValue = value;
         const oldValue = null;
         notifyListeners(this, {
@@ -45,7 +42,5 @@ class ObservableValue {
             oldValue
         });
     }
-    changeListeners = [];
     observe(handler, fireImmediately) { }
 }
-exports.ObservableValue = ObservableValue;

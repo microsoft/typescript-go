@@ -56,7 +56,6 @@ module.exports = MainThreadTasks;
 
 //// [module.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 /**
  * @typedef TaskGroup
@@ -85,7 +84,6 @@ module.exports = {
 };
 //// [index.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const { taskGroups, taskNameToGroup } = require('./module.js');
 /** @typedef {import('./module.js').TaskGroup} TaskGroup */
 /**
@@ -102,11 +100,11 @@ class MainThreadTasks {
      */
     constructor(x, y) { }
 }
-export = MainThreadTasks;
 module.exports = MainThreadTasks;
 
 
 //// [module.d.ts]
+/** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 export type TaskGroupIds = 'parseHTML' | 'styleLayout';
 export type TaskGroup = {
     id: TaskGroupIds;
@@ -137,4 +135,19 @@ export type TaskNode = {
 export type PriorTaskData = {
     timers: Map<string, TaskNode>;
 };
+/** @typedef {import('./module.js').TaskGroup} TaskGroup */
+/**
+ * @typedef TaskNode
+ * @prop {TaskNode[]} children
+ * @prop {TaskNode|undefined} parent
+ * @prop {TaskGroup} group
+ */
+/** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
+declare class MainThreadTasks {
+    /**
+     * @param {TaskGroup} x
+     * @param {TaskNode} y
+     */
+    constructor(x: TaskGroup, y: TaskNode);
+}
 export = MainThreadTasks;

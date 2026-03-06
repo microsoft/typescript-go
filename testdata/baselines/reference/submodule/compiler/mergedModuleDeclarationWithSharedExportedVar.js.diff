@@ -1,9 +1,0 @@
---- old.mergedModuleDeclarationWithSharedExportedVar.js
-+++ new.mergedModuleDeclarationWithSharedExportedVar.js
-@@= skipped -15, +15 lines =@@
-     M.v;
- })(M || (M = {}));
- (function (M) {
--    M.v;
-+    v;
- })(M || (M = {}));

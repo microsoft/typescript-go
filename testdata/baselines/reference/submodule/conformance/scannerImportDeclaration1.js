@@ -4,3 +4,5 @@
 import TypeScript = TypeScriptServices.TypeScript;
 
 //// [scannerImportDeclaration1.js]
+"use strict";
+var TypeScript = TypeScriptServices.TypeScript;

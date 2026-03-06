@@ -8,20 +8,20 @@ const 𝑀 = 5;
 >𝑀 : Symbol(𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 1, 5))
 
 console.log(𝑀 + 𝑚); // 9
->console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
->log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >𝑀 : Symbol(𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 1, 5))
 >𝑚 : Symbol(𝑚, Decl(extendedUnicodePlaneIdentifiers.ts, 0, 5))
 
 class K {
->K : Symbol(K, Decl(extendedUnicodePlaneIdentifiers.ts, 2, 19))
+>K : Symbol(K, Decl(extendedUnicodePlaneIdentifiers.ts, 2, 21))
 
     #𝑚 = 4;
->#𝑚 : Symbol(#𝑚, Decl(extendedUnicodePlaneIdentifiers.ts, 4, 9))
+>#𝑚 : Symbol(K.#𝑚, Decl(extendedUnicodePlaneIdentifiers.ts, 4, 9))
 
     #𝑀 = 5;
->#𝑀 : Symbol(#𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 5, 11))
+>#𝑀 : Symbol(K.#𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 5, 12))
 }
 
 // lower 8 bits look like 'a'
@@ -29,9 +29,9 @@ const ၡ = 6;
 >ၡ : Symbol(ၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 10, 5))
 
 console.log(ၡ ** ၡ);
->console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
->log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >ၡ : Symbol(ၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 10, 5))
 >ၡ : Symbol(ၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 10, 5))
 
@@ -40,9 +40,9 @@ const ဒ = 7;
 >ဒ : Symbol(ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 14, 5))
 
 console.log(ဒ ** ဒ);
->console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
->log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >ဒ : Symbol(ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 14, 5))
 >ဒ : Symbol(ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 14, 5))
 
@@ -51,9 +51,9 @@ const ဒၡ𝑀 = 7;
 >ဒၡ𝑀 : Symbol(ဒၡ𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 18, 5))
 
 console.log(ဒၡ𝑀 ** ဒၡ𝑀);
->console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
->log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >ဒၡ𝑀 : Symbol(ဒၡ𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 18, 5))
 >ဒၡ𝑀 : Symbol(ဒၡ𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 18, 5))
 
@@ -61,9 +61,9 @@ const ၡ𝑀ဒ = 7;
 >ၡ𝑀ဒ : Symbol(ၡ𝑀ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 21, 5))
 
 console.log(ၡ𝑀ဒ ** ၡ𝑀ဒ);
->console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
->log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >ၡ𝑀ဒ : Symbol(ၡ𝑀ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 21, 5))
 >ၡ𝑀ဒ : Symbol(ၡ𝑀ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 21, 5))
 
@@ -71,9 +71,9 @@ const 𝑀ဒၡ = 7;
 >𝑀ဒၡ : Symbol(𝑀ဒၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 24, 5))
 
 console.log(𝑀ဒၡ ** 𝑀ဒၡ);
->console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
->log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 >𝑀ဒၡ : Symbol(𝑀ဒၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 24, 5))
 >𝑀ဒၡ : Symbol(𝑀ဒၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 24, 5))
 

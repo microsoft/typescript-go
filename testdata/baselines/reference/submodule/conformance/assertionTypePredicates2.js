@@ -26,9 +26,6 @@ export const main = () => {
 
 
 //// [assertionTypePredicates2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = void 0;
 /**
  * @typedef {{ x: number }} A
  */
@@ -44,9 +41,8 @@ const foo = (a) => {
         throw TypeError();
     return undefined;
 };
-const main = () => {
+export const main = () => {
     /** @type { A } */
     const a = { x: 1 };
     foo(a);
 };
-exports.main = main;

@@ -2,7 +2,6 @@ package estransforms
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
@@ -44,8 +43,8 @@ func (ch *exponentiationTransformer) visitExponentiationAssignmentExpression(nod
 		argumentExpressionTemp := ch.Factory().NewTempVariable()
 		ch.EmitContext().AddVariableDeclaration(argumentExpressionTemp)
 
-		objExpr := ch.Factory().NewAssignmentExpression(expressionTemp, left.AsElementAccessExpression().Expression)
-		objExpr.Loc = left.AsElementAccessExpression().Expression.Loc
+		objExpr := ch.Factory().NewAssignmentExpression(expressionTemp, left.Expression())
+		objExpr.Loc = left.Expression().Loc
 		accessExpr := ch.Factory().NewAssignmentExpression(argumentExpressionTemp, left.AsElementAccessExpression().ArgumentExpression)
 		accessExpr.Loc = left.AsElementAccessExpression().ArgumentExpression.Loc
 
@@ -85,7 +84,7 @@ func (ch *exponentiationTransformer) visitExponentiationExpression(node *ast.Bin
 	return result
 }
 
-func newExponentiationTransformer(emitContext *printer.EmitContext) *transformers.Transformer {
+func newExponentiationTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &exponentiationTransformer{}
-	return tx.NewTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, opts.Context)
 }

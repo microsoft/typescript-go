@@ -15,11 +15,11 @@ export interface ImportInterface {}
 export interface RequireInterface {}
 //// [index.ts]
 export type LocalInterface =
-    & import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface
-    & import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface;
+    & import("pkg", { with: {"resolution-mode": "foobar"} }).RequireInterface
+    & import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface;
 
-export const a = (null as any as import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface);
-export const b = (null as any as import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface);
+export const a = (null as any as import("pkg", { with: {"resolution-mode": "foobar"} }).RequireInterface);
+export const b = (null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface);
 //// [other.ts]
 // missing assert:
 export type LocalInterface =
@@ -120,21 +120,18 @@ exports.b = null;
 
 
 //// [index.d.ts]
-export type LocalInterface = import("pkg", { assert: { "resolution-mode": "foobar" } }).RequireInterface & import("pkg", { assert: { "resolution-mode": "import" } }).ImportInterface;
+export type LocalInterface = import("pkg", { with: { "resolution-mode": "foobar" } }).RequireInterface & import("pkg", { with: { "resolution-mode": "import" } }).ImportInterface;
 export declare const a: import("pkg").RequireInterface;
 export declare const b: import("pkg", { with: { "resolution-mode": "import" } }).ImportInterface;
 //// [other.d.ts]
-// missing assert:
 export type LocalInterface = import("pkg", { with: {} });
 export declare const a: any;
 export declare const b: any;
 //// [other2.d.ts]
-// wrong assertion key
 export type LocalInterface = import("pkg", { assert: { "bad": "require" } }).RequireInterface & import("pkg", { assert: { "bad": "import" } }).ImportInterface;
 export declare const a: import("pkg").RequireInterface;
 export declare const b: any;
 //// [other3.d.ts]
-// Array instead of object-y thing
 export type LocalInterface = import("pkg", { with: {} })[{
     "resolution-mode": "require";
 }];

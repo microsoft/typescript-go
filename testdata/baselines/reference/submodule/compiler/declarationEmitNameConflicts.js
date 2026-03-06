@@ -1,15 +1,15 @@
 //// [tests/cases/compiler/declarationEmitNameConflicts.ts] ////
 
 //// [declarationEmit_nameConflicts_1.ts]
-module f { export class c { } }
+namespace f { export class c { } }
 export = f;
 
 //// [declarationEmit_nameConflicts_0.ts]
 import im = require('./declarationEmit_nameConflicts_1');
-export module M {
+export namespace M {
     export function f() { }
     export class C { }
-    export module N {
+    export namespace N {
         export function g() { };
         export interface I { }
     }
@@ -20,10 +20,10 @@ export module M {
     export import d = im;
 }
 
-export module M.P {
+export namespace M.P {
     export function f() { }
     export class C { }
-    export module N {
+    export namespace N {
         export function g() { };
         export interface I { }
     }
@@ -35,16 +35,16 @@ export module M.P {
     export var d = M.d; // emitted incorrectly as typeof im
 }
 
-export module M.Q {
+export namespace M.Q {
     export function f() { }
     export class C { }
-    export module N {
+    export namespace N {
         export function g() { };
         export interface I { }
     }
     export interface b extends M.b { } // ok
     export interface I extends M.c.I { } // ok
-    export module c {
+    export namespace c {
         export interface I extends M.c.I { } // ok
     }
 }
@@ -82,7 +82,7 @@ var M;
     M.d = im;
 })(M || (exports.M = M = {}));
 (function (M) {
-    let P;
+    var P;
     (function (P) {
         function f() { }
         P.f = f;
@@ -104,7 +104,7 @@ var M;
     })(P = M.P || (M.P = {}));
 })(M || (exports.M = M = {}));
 (function (M) {
-    let Q;
+    var Q;
     (function (Q) {
         function f() { }
         Q.f = f;
@@ -153,11 +153,11 @@ export declare namespace M.P {
         }
     }
     export import im = M.P.f;
-    var a: typeof M.f; // emitted incorrectly as typeof f
-    var b: typeof M.C; // ok
-    var c: typeof M.N; // ok
-    var g: typeof M.c.g; // ok
-    var d: typeof import("./declarationEmit_nameConflicts_1"); // emitted incorrectly as typeof im
+    var a: typeof M.f;
+    var b: typeof M.C;
+    var c: typeof M.N;
+    var g: typeof M.c.g;
+    var d: typeof import("./declarationEmit_nameConflicts_1");
 }
 export declare namespace M.Q {
     function f(): void;
@@ -169,11 +169,11 @@ export declare namespace M.Q {
         }
     }
     interface b extends M.b {
-    } // ok
+    }
     interface I extends M.c.I {
-    } // ok
+    }
     namespace c {
         interface I extends M.c.I {
-        } // ok
+        }
     }
 }

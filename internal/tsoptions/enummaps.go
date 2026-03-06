@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+var LibMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	// JavaScript only
 	{Key: "es5", Value: "lib.es5.d.ts"},
 	{Key: "es6", Value: "lib.es2015.d.ts"},
@@ -23,6 +23,7 @@ var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 	{Key: "es2022", Value: "lib.es2022.d.ts"},
 	{Key: "es2023", Value: "lib.es2023.d.ts"},
 	{Key: "es2024", Value: "lib.es2024.d.ts"},
+	{Key: "es2025", Value: "lib.es2025.d.ts"},
 	{Key: "esnext", Value: "lib.esnext.d.ts"},
 	// Host only
 	{Key: "dom", Value: "lib.dom.d.ts"},
@@ -33,7 +34,7 @@ var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 	{Key: "webworker.iterable", Value: "lib.webworker.iterable.d.ts"},
 	{Key: "webworker.asynciterable", Value: "lib.webworker.asynciterable.d.ts"},
 	{Key: "scripthost", Value: "lib.scripthost.d.ts"},
-	// ES2015 Or ESNext By-feature options
+	// ES2015 and later By-feature options
 	{Key: "es2015.core", Value: "lib.es2015.core.d.ts"},
 	{Key: "es2015.collection", Value: "lib.es2015.collection.d.ts"},
 	{Key: "es2015.generator", Value: "lib.es2015.generator.d.ts"},
@@ -90,31 +91,42 @@ var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 	{Key: "es2024.regexp", Value: "lib.es2024.regexp.d.ts"},
 	{Key: "es2024.sharedmemory", Value: "lib.es2024.sharedmemory.d.ts"},
 	{Key: "es2024.string", Value: "lib.es2024.string.d.ts"},
-	{Key: "esnext.array", Value: "lib.es2023.array.d.ts"},
-	{Key: "esnext.collection", Value: "lib.esnext.collection.d.ts"},
-	{Key: "esnext.symbol", Value: "lib.es2019.symbol.d.ts"},
+	{Key: "es2025.collection", Value: "lib.es2025.collection.d.ts"},
+	{Key: "es2025.float16", Value: "lib.es2025.float16.d.ts"},
+	{Key: "es2025.intl", Value: "lib.es2025.intl.d.ts"},
+	{Key: "es2025.iterator", Value: "lib.es2025.iterator.d.ts"},
+	{Key: "es2025.promise", Value: "lib.es2025.promise.d.ts"},
+	{Key: "es2025.regexp", Value: "lib.es2025.regexp.d.ts"},
+	// Fallback for backward compatibility
 	{Key: "esnext.asynciterable", Value: "lib.es2018.asynciterable.d.ts"},
-	{Key: "esnext.intl", Value: "lib.esnext.intl.d.ts"},
-	{Key: "esnext.disposable", Value: "lib.esnext.disposable.d.ts"},
+	{Key: "esnext.symbol", Value: "lib.es2019.symbol.d.ts"},
 	{Key: "esnext.bigint", Value: "lib.es2020.bigint.d.ts"},
-	{Key: "esnext.string", Value: "lib.es2022.string.d.ts"},
-	{Key: "esnext.promise", Value: "lib.es2024.promise.d.ts"},
 	{Key: "esnext.weakref", Value: "lib.es2021.weakref.d.ts"},
-	{Key: "esnext.decorators", Value: "lib.esnext.decorators.d.ts"},
 	{Key: "esnext.object", Value: "lib.es2024.object.d.ts"},
-	{Key: "esnext.array", Value: "lib.esnext.array.d.ts"},
 	{Key: "esnext.regexp", Value: "lib.es2024.regexp.d.ts"},
 	{Key: "esnext.string", Value: "lib.es2024.string.d.ts"},
-	{Key: "esnext.iterator", Value: "lib.esnext.iterator.d.ts"},
-	{Key: "esnext.promise", Value: "lib.esnext.promise.d.ts"},
-	{Key: "esnext.float16", Value: "lib.esnext.float16.d.ts"},
+	{Key: "esnext.float16", Value: "lib.es2025.float16.d.ts"},
+	{Key: "esnext.iterator", Value: "lib.es2025.iterator.d.ts"},
+	{Key: "esnext.promise", Value: "lib.es2025.promise.d.ts"},
+	// ESNext By-feature options
+	{Key: "esnext.array", Value: "lib.esnext.array.d.ts"},
+	{Key: "esnext.collection", Value: "lib.esnext.collection.d.ts"},
+	{Key: "esnext.date", Value: "lib.esnext.date.d.ts"},
+	{Key: "esnext.decorators", Value: "lib.esnext.decorators.d.ts"},
+	{Key: "esnext.disposable", Value: "lib.esnext.disposable.d.ts"},
+	{Key: "esnext.error", Value: "lib.esnext.error.d.ts"},
+	{Key: "esnext.intl", Value: "lib.esnext.intl.d.ts"},
+	{Key: "esnext.sharedmemory", Value: "lib.esnext.sharedmemory.d.ts"},
+	{Key: "esnext.temporal", Value: "lib.esnext.temporal.d.ts"},
+	{Key: "esnext.typedarrays", Value: "lib.esnext.typedarrays.d.ts"},
+	// Decorators
 	{Key: "decorators", Value: "lib.decorators.d.ts"},
 	{Key: "decorators.legacy", Value: "lib.decorators.legacy.d.ts"},
 })
 
 var (
-	Libs        = slices.Collect(libMap.Keys())
-	LibFilesSet = collections.NewSetFromItems(core.Map(slices.Collect(libMap.Values()), func(s any) string { return s.(string) })...)
+	Libs        = slices.Collect(LibMap.Keys())
+	LibFilesSet = collections.NewSetFromItems(core.Map(slices.Collect(LibMap.Values()), func(s any) string { return s.(string) })...)
 )
 
 func GetLibFileName(libName string) (string, bool) {
@@ -123,7 +135,7 @@ func GetLibFileName(libName string) (string, bool) {
 	if LibFilesSet.Has(libName) {
 		return libName, true
 	}
-	lib, ok := libMap.Get(libName)
+	lib, ok := LibMap.Get(libName)
 	if !ok {
 		return "", false
 	}
@@ -134,13 +146,12 @@ var moduleResolutionOptionMap = collections.NewOrderedMapFromList([]collections.
 	{Key: "node16", Value: core.ModuleResolutionKindNode16},
 	{Key: "nodenext", Value: core.ModuleResolutionKindNodeNext},
 	{Key: "bundler", Value: core.ModuleResolutionKindBundler},
-	{Key: "node", Value: core.ModuleResolutionKindBundler},    // TODO: remove when node is fully deprecated -- this is helpful for testing porting
-	{Key: "classic", Value: core.ModuleResolutionKindBundler}, // TODO: remove when fully deprecated
-	{Key: "node10", Value: core.ModuleResolutionKindBundler},  // TODO: remove when fully deprecated
+	{Key: "classic", Value: core.ModuleResolutionKindClassic},
+	{Key: "node", Value: core.ModuleResolutionKindNode10},
+	{Key: "node10", Value: core.ModuleResolutionKindNode10},
 })
 
 var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "es3", Value: core.ScriptTargetES3},
 	{Key: "es5", Value: core.ScriptTargetES5},
 	{Key: "es6", Value: core.ScriptTargetES2015},
 	{Key: "es2015", Value: core.ScriptTargetES2015},
@@ -153,11 +164,11 @@ var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 	{Key: "es2022", Value: core.ScriptTargetES2022},
 	{Key: "es2023", Value: core.ScriptTargetES2023},
 	{Key: "es2024", Value: core.ScriptTargetES2024},
+	{Key: "es2025", Value: core.ScriptTargetES2025},
 	{Key: "esnext", Value: core.ScriptTargetESNext},
 })
 
 var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "none", Value: core.ModuleKindNone},
 	{Key: "commonjs", Value: core.ModuleKindCommonJS},
 	{Key: "amd", Value: core.ModuleKindAMD},
 	{Key: "system", Value: core.ModuleKindSystem},
@@ -169,6 +180,7 @@ var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 	{Key: "esnext", Value: core.ModuleKindESNext},
 	{Key: "node16", Value: core.ModuleKindNode16},
 	{Key: "node18", Value: core.ModuleKindNode18},
+	{Key: "node20", Value: core.ModuleKindNode20},
 	{Key: "nodenext", Value: core.ModuleKindNodeNext},
 	{Key: "preserve", Value: core.ModuleKindPreserve},
 })
@@ -182,9 +194,9 @@ var moduleDetectionOptionMap = collections.NewOrderedMapFromList([]collections.M
 var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "preserve", Value: core.JsxEmitPreserve},
 	{Key: "react-native", Value: core.JsxEmitReactNative},
-	{Key: "react", Value: core.JsxEmitReact},
 	{Key: "react-jsx", Value: core.JsxEmitReactJSX},
 	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
+	{Key: "react", Value: core.JsxEmitReact},
 })
 
 var InverseJsxOptionMap = collections.NewOrderedMapFromList(func() []collections.MapEntry[core.JsxEmit, string] {
@@ -205,6 +217,7 @@ var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[
 
 var targetToLibMap = map[core.ScriptTarget]string{
 	core.ScriptTargetESNext: "lib.esnext.full.d.ts",
+	core.ScriptTargetES2025: "lib.es2025.full.d.ts",
 	core.ScriptTargetES2024: "lib.es2024.full.d.ts",
 	core.ScriptTargetES2023: "lib.es2023.full.d.ts",
 	core.ScriptTargetES2022: "lib.es2022.full.d.ts",

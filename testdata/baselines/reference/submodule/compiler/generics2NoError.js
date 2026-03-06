@@ -20,6 +20,7 @@ var v2: G<{ a: string }, C>;   // Ok, equivalent to G<A, C>
 var v4: G<G<A, B>, C>;         // Ok
 
 //// [generics2NoError.js]
+"use strict";
 var v1; // Ok
 var v2; // Ok, equivalent to G<A, C>
 var v4; // Ok
@@ -48,8 +49,8 @@ declare var v1: {
         b: string;
         c: string;
     };
-}; // Ok
+};
 declare var v2: G<{
     a: string;
-}, C>; // Ok, equivalent to G<A, C>
-declare var v4: G<G<A, B>, C>; // Ok
+}, C>;
+declare var v4: G<G<A, B>, C>;

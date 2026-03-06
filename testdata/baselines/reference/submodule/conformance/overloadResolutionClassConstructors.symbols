@@ -5,31 +5,31 @@ class SomeBase {
 >SomeBase : Symbol(SomeBase, Decl(overloadResolutionClassConstructors.ts, 0, 0))
 
     private n;
->n : Symbol(n, Decl(overloadResolutionClassConstructors.ts, 0, 16))
+>n : Symbol(SomeBase.n, Decl(overloadResolutionClassConstructors.ts, 0, 16))
 
     public s: string;
->s : Symbol(s, Decl(overloadResolutionClassConstructors.ts, 1, 14))
+>s : Symbol(SomeBase.s, Decl(overloadResolutionClassConstructors.ts, 1, 14))
 }
 class SomeDerived1 extends SomeBase {
 >SomeDerived1 : Symbol(SomeDerived1, Decl(overloadResolutionClassConstructors.ts, 4, 1))
 >SomeBase : Symbol(SomeBase, Decl(overloadResolutionClassConstructors.ts, 0, 0))
 
     private m;
->m : Symbol(m, Decl(overloadResolutionClassConstructors.ts, 5, 37))
+>m : Symbol(SomeDerived1.m, Decl(overloadResolutionClassConstructors.ts, 5, 37))
 }
 class SomeDerived2 extends SomeBase {
 >SomeDerived2 : Symbol(SomeDerived2, Decl(overloadResolutionClassConstructors.ts, 7, 1))
 >SomeBase : Symbol(SomeBase, Decl(overloadResolutionClassConstructors.ts, 0, 0))
 
     private m;
->m : Symbol(m, Decl(overloadResolutionClassConstructors.ts, 8, 37))
+>m : Symbol(SomeDerived2.m, Decl(overloadResolutionClassConstructors.ts, 8, 37))
 }
 class SomeDerived3 extends SomeBase {
 >SomeDerived3 : Symbol(SomeDerived3, Decl(overloadResolutionClassConstructors.ts, 10, 1))
 >SomeBase : Symbol(SomeBase, Decl(overloadResolutionClassConstructors.ts, 0, 0))
 
     private m;
->m : Symbol(m, Decl(overloadResolutionClassConstructors.ts, 11, 37))
+>m : Symbol(SomeDerived3.m, Decl(overloadResolutionClassConstructors.ts, 11, 37))
 }
 
 
@@ -74,7 +74,7 @@ class fn2<T> {
 var d = new fn2<Date>(0, undefined);
 >d : Symbol(d, Decl(overloadResolutionClassConstructors.ts, 35, 3))
 >fn2 : Symbol(fn2, Decl(overloadResolutionClassConstructors.ts, 26, 12))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >undefined : Symbol(undefined)
 
 // Generic and non - generic overload where generic overload is the only candidate when called without type arguments
@@ -85,7 +85,7 @@ var s = new fn2(0, '');
 // Generic and non - generic overload where non - generic overload is the only candidate when called with type arguments
 new fn2<Date>('', 0); // OK
 >fn2 : Symbol(fn2, Decl(overloadResolutionClassConstructors.ts, 26, 12))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 // Generic and non - generic overload where non - generic overload is the only candidate when called without type arguments
 new fn2('', 0); // OK
@@ -186,7 +186,7 @@ new fn4('', null);
 // Generic overloads with constraints called with type arguments that do not satisfy the constraints
 new fn4<boolean, Date>(null, null); // Error
 >fn4 : Symbol(fn4, Decl(overloadResolutionClassConstructors.ts, 64, 42))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 // Generic overloads with constraints called without type arguments but with types that do not satisfy the constraints
 new fn4(true, null); // Error
@@ -218,9 +218,9 @@ new fn5((n) => n.toFixed());
 new fn5((n) => n.substr(0));
 >fn5 : Symbol(fn5, Decl(overloadResolutionClassConstructors.ts, 87, 20))
 >n : Symbol(n, Decl(overloadResolutionClassConstructors.ts, 96, 9))
->n.substr : Symbol(substr, Decl(lib.es5.d.ts, --, --))
+>n.substr : Symbol(String.substr, Decl(lib.es5.d.ts, --, --))
 >n : Symbol(n, Decl(overloadResolutionClassConstructors.ts, 96, 9))
->substr : Symbol(substr, Decl(lib.es5.d.ts, --, --))
+>substr : Symbol(String.substr, Decl(lib.es5.d.ts, --, --))
 
 new fn5((n) => n.blah); // Error
 >fn5 : Symbol(fn5, Decl(overloadResolutionClassConstructors.ts, 87, 20))

@@ -20,6 +20,7 @@ declare let dec: any;
 
 
 //// [esDecorators-classExpression-namedEvaluation.3.js]
+"use strict";
 // 14.3.1.2 RS: Evaluation
 //   LexicalBinding : BindingIdentifier Initializer
 {
@@ -30,7 +31,6 @@ declare let dec: any;
 }
 {
     let x = class {
-        @dec
         y;
     };
 }
@@ -42,7 +42,6 @@ declare let dec: any;
 }
 {
     const x = class {
-        @dec
         y;
     };
 }
@@ -56,7 +55,6 @@ declare let dec: any;
 }
 {
     var x1 = class {
-        @dec
         y;
     };
 }

@@ -2,7 +2,7 @@
 
 //// [privacyLocalInternalReferenceImportWithExport.ts]
 // private elements
-module m_private {
+namespace m_private {
     export class c_private {
     }
     export enum e_private {
@@ -15,18 +15,18 @@ module m_private {
     export var v_private = new c_private();
     export interface i_private {
     }
-    export module mi_private {
+    export namespace mi_private {
         export class c {
         }
     }
-    export module mu_private {
+    export namespace mu_private {
         export interface i {
         }
     }
 }
 
 // Public elements
-export module m_public {
+export namespace m_public {
     export class c_public {
     }
     export enum e_public {
@@ -39,17 +39,17 @@ export module m_public {
     export var v_public = 10;
     export interface i_public {
     }
-    export module mi_public {
+    export namespace mi_public {
         export class c {
         }
     }
-    export module mu_public {
+    export namespace mu_public {
         export interface i {
         }
     }
 }
 
-export module import_public {
+export namespace import_public {
     // Privacy errors - importing private elements
     export import im_public_c_private = m_private.c_private;
     export import im_public_e_private = m_private.e_private;
@@ -102,7 +102,7 @@ export module import_public {
     export var publicUse_im_public_mu_public: im_public_mu_public.i;
 }
 
-module import_private {
+namespace import_private {
     // No Privacy errors - importing private elements
     export import im_private_c_private = m_private.c_private;
     export import im_private_e_private = m_private.e_private;
@@ -206,13 +206,12 @@ var m_public;
 })(m_public || (exports.m_public = m_public = {}));
 var import_public;
 (function (import_public) {
+    // Privacy errors - importing private elements
     import_public.im_public_c_private = m_private.c_private;
     import_public.im_public_e_private = m_private.e_private;
     import_public.im_public_f_private = m_private.f_private;
     import_public.im_public_v_private = m_private.v_private;
-    import_public.im_public_i_private = m_private.i_private;
     import_public.im_public_mi_private = m_private.mi_private;
-    import_public.im_public_mu_private = m_private.mu_private;
     // Usage of privacy error imports
     var privateUse_im_public_c_private = new import_public.im_public_c_private();
     import_public.publicUse_im_public_c_private = new import_public.im_public_c_private();
@@ -226,13 +225,12 @@ var import_public;
     var privateUse_im_public_mi_private = new import_public.im_public_mi_private.c();
     import_public.publicUse_im_public_mi_private = new import_public.im_public_mi_private.c();
     var privateUse_im_public_mu_private;
+    // No Privacy errors - importing public elements
     import_public.im_public_c_public = m_public.c_public;
     import_public.im_public_e_public = m_public.e_public;
     import_public.im_public_f_public = m_public.f_public;
     import_public.im_public_v_public = m_public.v_public;
-    import_public.im_public_i_public = m_public.i_public;
     import_public.im_public_mi_public = m_public.mi_public;
-    import_public.im_public_mu_public = m_public.mu_public;
     // Usage of above
     var privateUse_im_public_c_public = new import_public.im_public_c_public();
     import_public.publicUse_im_public_c_public = new import_public.im_public_c_public();
@@ -249,13 +247,12 @@ var import_public;
 })(import_public || (exports.import_public = import_public = {}));
 var import_private;
 (function (import_private) {
+    // No Privacy errors - importing private elements
     import_private.im_private_c_private = m_private.c_private;
     import_private.im_private_e_private = m_private.e_private;
     import_private.im_private_f_private = m_private.f_private;
     import_private.im_private_v_private = m_private.v_private;
-    import_private.im_private_i_private = m_private.i_private;
     import_private.im_private_mi_private = m_private.mi_private;
-    import_private.im_private_mu_private = m_private.mu_private;
     // Usage of above decls
     var privateUse_im_private_c_private = new import_private.im_private_c_private();
     import_private.publicUse_im_private_c_private = new import_private.im_private_c_private();
@@ -269,13 +266,12 @@ var import_private;
     var privateUse_im_private_mi_private = new import_private.im_private_mi_private.c();
     import_private.publicUse_im_private_mi_private = new import_private.im_private_mi_private.c();
     var privateUse_im_private_mu_private;
+    // No privacy Error - importing public elements
     import_private.im_private_c_public = m_public.c_public;
     import_private.im_private_e_public = m_public.e_public;
     import_private.im_private_f_public = m_public.f_public;
     import_private.im_private_v_public = m_public.v_public;
-    import_private.im_private_i_public = m_public.i_public;
     import_private.im_private_mi_public = m_public.mi_public;
-    import_private.im_private_mu_public = m_public.mu_public;
     // Usage of no privacy error imports
     var privateUse_im_private_c_public = new import_private.im_private_c_public();
     import_private.publicUse_im_private_c_public = new import_private.im_private_c_public();
@@ -293,7 +289,6 @@ var import_private;
 
 
 //// [privacyLocalInternalReferenceImportWithExport.d.ts]
-// private elements
 declare namespace m_private {
     class c_private {
     }
@@ -314,7 +309,6 @@ declare namespace m_private {
         }
     }
 }
-// Public elements
 export declare namespace m_public {
     class c_public {
     }
@@ -336,7 +330,6 @@ export declare namespace m_public {
     }
 }
 export declare namespace import_public {
-    // Privacy errors - importing private elements
     export import im_public_c_private = m_private.c_private;
     export import im_public_e_private = m_private.e_private;
     export import im_public_f_private = m_private.f_private;
@@ -351,7 +344,6 @@ export declare namespace import_public {
     var publicUse_im_public_i_private: im_public_i_private;
     var publicUse_im_public_mi_private: im_public_mi_private.c;
     var publicUse_im_public_mu_private: im_public_mu_private.i;
-    // No Privacy errors - importing public elements
     export import im_public_c_public = m_public.c_public;
     export import im_public_e_public = m_public.e_public;
     export import im_public_f_public = m_public.f_public;

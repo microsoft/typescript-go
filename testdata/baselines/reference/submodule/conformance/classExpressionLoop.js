@@ -10,9 +10,12 @@ for (let i = 0; i < 10; ++i) {
 
 
 //// [classExpressionLoop.js]
+"use strict";
 let arr = [];
 for (let i = 0; i < 10; ++i) {
     arr.push(class C {
-        prop = i;
+        constructor() {
+            this.prop = i;
+        }
     });
 }

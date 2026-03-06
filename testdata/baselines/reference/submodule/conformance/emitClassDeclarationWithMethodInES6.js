@@ -25,8 +25,8 @@ class D {
 }
 
 //// [emitClassDeclarationWithMethodInES6.js]
+"use strict";
 class D {
-    _bar;
     foo() { }
     ["computedName1"]() { }
     ["computedName2"](a) { }

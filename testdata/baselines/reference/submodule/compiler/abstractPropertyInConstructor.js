@@ -96,8 +96,11 @@ class C2 {
 
 
 //// [abstractPropertyInConstructor.js]
+"use strict";
 class AbstractClass {
     constructor(str, other) {
+        this.other = this.prop;
+        this.fn = () => this.prop;
         this.method(parseInt(str));
         let val = this.prop.toLowerCase();
         if (!str) {
@@ -111,18 +114,14 @@ class AbstractClass {
         // OK, references are to another instance
         other.cb(other.prop);
     }
-    prop;
-    cb;
-    other = this.prop;
-    fn = () => this.prop;
     method2() {
         this.prop = this.prop + "!";
     }
 }
 class DerivedAbstractClass extends AbstractClass {
-    cb = (s) => { };
     constructor(str, other, yetAnother) {
         super(str, other);
+        this.cb = (s) => { };
         // there is no implementation of 'prop' in any base class
         this.cb(this.prop.toLowerCase());
         this.method(1);
@@ -132,10 +131,10 @@ class DerivedAbstractClass extends AbstractClass {
     }
 }
 class Implementation extends DerivedAbstractClass {
-    prop = "";
-    cb = (s) => { };
     constructor(str, other, yetAnother) {
         super(str, other, yetAnother);
+        this.prop = "";
+        this.cb = (s) => { };
         this.cb(this.prop);
     }
     method(n) {
@@ -151,8 +150,6 @@ class User {
     }
 }
 class C1 {
-    x;
-    y;
     constructor() {
         let self = this; // ok
         let { x, y: y1 } = this; // error
@@ -160,8 +157,6 @@ class C1 {
     }
 }
 class C2 {
-    x;
-    y;
     constructor() {
         let self = this; // ok
         let { x, y: y1 } = this; // ok

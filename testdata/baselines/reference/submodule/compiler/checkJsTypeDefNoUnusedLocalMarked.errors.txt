@@ -1,9 +1,12 @@
-something.js(5,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+file.ts(2,5): error TS2564: Property 'x' has no initializer and is not definitely assigned in the constructor.
+something.js(5,29): error TS2352: Conversion of type 'undefined' to type 'FooFun' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 
 
-==== file.ts (0 errors) ====
+==== file.ts (1 errors) ====
     class Foo {
         x: number;
+        ~
+!!! error TS2564: Property 'x' has no initializer and is not definitely assigned in the constructor.
     }
     
     declare global {
@@ -17,5 +20,5 @@ something.js(5,1): error TS2309: An export assignment cannot be used in a module
     /** @typedef {(foo: Foo) => string} FooFun */
     
     module.exports = /** @type {FooFun} */(void 0);
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+                                ~~~~~~
+!!! error TS2352: Conversion of type 'undefined' to type 'FooFun' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
