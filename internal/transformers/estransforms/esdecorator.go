@@ -100,20 +100,21 @@ type classInfo struct {
 
 type esDecoratorTransformer struct {
 	transformers.Transformer
-	compilerOptions                   *core.CompilerOptions
-	top                               *lexicalEntry
-	classInfoStack                    *classInfo
-	classThis                         *ast.IdentifierNode
-	classSuper                        *ast.IdentifierNode
-	pendingExpressions                []*ast.Expression
-	discardedVisitor                  *ast.NodeVisitor
-	modifierVisitorObj                *ast.NodeVisitor
-	exportStrippingModifierVisitor    *ast.NodeVisitor
-	classElementVisitorObj            *ast.NodeVisitor
-	nonConstructorClassElementVisitor *ast.NodeVisitor
-	constructorClassElementVisitor    *ast.NodeVisitor
-	arrayAssignmentVisitor            *ast.NodeVisitor
-	objectAssignmentVisitor           *ast.NodeVisitor
+	compilerOptions                            *core.CompilerOptions
+	top                                        *lexicalEntry
+	classInfoStack                             *classInfo
+	classThis                                  *ast.IdentifierNode
+	classSuper                                 *ast.IdentifierNode
+	pendingExpressions                         []*ast.Expression
+	shouldTransformPrivateStaticElementsInFile bool
+	discardedVisitor                           *ast.NodeVisitor
+	modifierVisitorObj                         *ast.NodeVisitor
+	exportStrippingModifierVisitor             *ast.NodeVisitor
+	classElementVisitorObj                     *ast.NodeVisitor
+	nonConstructorClassElementVisitor          *ast.NodeVisitor
+	constructorClassElementVisitor             *ast.NodeVisitor
+	arrayAssignmentVisitor                     *ast.NodeVisitor
+	objectAssignmentVisitor                    *ast.NodeVisitor
 }
 
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -262,6 +263,18 @@ func (tx *esDecoratorTransformer) exitOther() {
 	}
 }
 
+func (tx *esDecoratorTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
+	tx.top = nil
+	tx.shouldTransformPrivateStaticElementsInFile = false
+	visited := tx.Visitor().VisitEachChild(node.AsNode())
+	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
+	if tx.shouldTransformPrivateStaticElementsInFile {
+		tx.EmitContext().AddEmitFlags(visited, printer.EFTransformPrivateStaticElements)
+		tx.shouldTransformPrivateStaticElementsInFile = false
+	}
+	return visited
+}
+
 func (tx *esDecoratorTransformer) shouldVisitNode(node *ast.Node) bool {
 	return node.SubtreeFacts()&ast.SubtreeContainsDecorators != 0 ||
 		(tx.classThis != nil && node.SubtreeFacts()&ast.SubtreeContainsLexicalThis != 0) ||
@@ -269,6 +282,18 @@ func (tx *esDecoratorTransformer) shouldVisitNode(node *ast.Node) bool {
 }
 
 func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
+	// When experimentalDecorators is set, the legacy decorator transformer has already
+	// removed all decorators before this transform runs, so this is a no-op.
+	// When targeting ESNext with useDefineForClassFields, there's nothing to transform either,
+	// matching the TS reference condition:
+	//   if (!experimentalDecorators && (target < ESNext || !useDefineForClassFields))
+	if tx.compilerOptions.ExperimentalDecorators.IsTrue() ||
+		(tx.compilerOptions.GetEmitScriptTarget() >= core.ScriptTargetESNext && tx.compilerOptions.GetUseDefineForClassFields()) {
+		return node
+	}
+	if node.Kind == ast.KindSourceFile {
+		return tx.visitSourceFile(node.AsSourceFile())
+	}
 	if !tx.shouldVisitNode(node) {
 		return node
 	}
@@ -706,6 +731,12 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		)
 	}
 
+	shouldTransformPrivateStaticElementsInClass := false
+	if len(classDecorators) > 0 && ci.hasStaticPrivateClassElements {
+		shouldTransformPrivateStaticElementsInClass = true
+		tx.shouldTransformPrivateStaticElementsInFile = true
+	}
+
 	// 2. ClassHeritage clause is evaluated outside of the private name scope of the class.
 	extendsClause := ast.GetHeritageClause(node, ast.KindExtendsKeyword)
 	var extendsElement *ast.Node
@@ -944,6 +975,13 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		)
 	}
 
+	if leadingStaticBlock != nil && shouldTransformPrivateStaticElementsInClass {
+		// We use EFTransformPrivateStaticElements as a marker on a class static block
+		// to inform the classFields transform that it shouldn't rename `this` to `_classThis` in the
+		// transformed class static block.
+		ec.SetEmitFlags(leadingStaticBlock, printer.EFTransformPrivateStaticElements)
+	}
+
 	// prepare a trailing `static {}` block, if necessary
 	//
 	// produces:
@@ -1023,6 +1061,15 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		classExpression = f.NewClassExpression(nil, node.Name(), nil, heritageClauses, members)
 		ec.SetOriginal(classExpression, node)
 		classDefinitionStatements = append(classDefinitionStatements, f.NewReturnStatement(classExpression))
+	}
+
+	if shouldTransformPrivateStaticElementsInClass {
+		ec.AddEmitFlags(classExpression, printer.EFTransformPrivateStaticElements)
+		for _, member := range classExpression.Members() {
+			if (ast.IsPrivateIdentifierClassElementDeclaration(member) || ast.IsAutoAccessorPropertyDeclaration(member)) && ast.HasStaticModifier(member) {
+				ec.AddEmitFlags(member, printer.EFTransformPrivateStaticElements)
+			}
+		}
 	}
 
 	// produces:
@@ -1441,9 +1488,19 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 				ctorArg = f.NewToken(ast.KindNullKeyword)
 			}
 
+			var descriptorArg *ast.Expression
+			if ast.IsPrivateIdentifierClassElementDeclaration(member) && ast.HasAccessorModifier(member) && createDescriptor != nil {
+				descriptor := createDescriptor(member, nil)
+				mi.memberDescriptorName = tx.createHelperVariable(member, "descriptor")
+				result.descriptorName = mi.memberDescriptorName
+				descriptorArg = f.NewAssignmentExpression(mi.memberDescriptorName, descriptor)
+			} else {
+				descriptorArg = f.NewToken(ast.KindNullKeyword)
+			}
+
 			esDecorateExpr := f.NewESDecorateHelper(
 				ctorArg,
-				f.NewToken(ast.KindNullKeyword),
+				descriptorArg,
 				memberDecoratorsName,
 				contextObj,
 				mi.memberInitializersName,
@@ -1545,7 +1602,11 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 	f := tx.Factory()
 	ec := tx.EmitContext()
 
-	result := tx.partialTransformClassElement(node, tx.classInfoStack, nil)
+	var createDescriptor createDescriptorFunc
+	if ast.HasAccessorModifier(node) {
+		createDescriptor = tx.createAccessorPropertyDescriptorObject
+	}
+	result := tx.partialTransformClassElement(node, tx.classInfoStack, createDescriptor)
 
 	ec.StartVariableEnvironment()
 
@@ -1600,6 +1661,45 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 	}
 
 	tx.exitClassElement()
+
+	if ast.HasAccessorModifier(node) && result.descriptorName != nil {
+		// given:
+		//  accessor #x = 1;
+		//
+		// emits:
+		//  static {
+		//      _esDecorate(null, _private_x_descriptor = { get() { return this.#x_1; }, set(value) { this.#x_1 = value; } }, ...)
+		//  }
+		//  ...
+		//  #x_1 = 1;
+		//  get #x() { return _private_x_descriptor.get.call(this); }
+		//  set #x(value) { _private_x_descriptor.set.call(this, value); }
+
+		commentRange := ec.CommentRange(node)
+		sourceMapRange := ec.SourceMapRange(node)
+
+		modifiersWithoutAccessor := tx.filterOutModifier(result.modifiers, ast.KindAccessorKeyword)
+
+		backingFieldName := f.NewGeneratedPrivateNameForNodeEx(node.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"})
+		prop := node.AsPropertyDeclaration()
+		backingField := f.UpdatePropertyDeclaration(prop, modifiersWithoutAccessor, backingFieldName, nil, nil, initializer)
+		ec.SetOriginal(backingField, node)
+		ec.SetEmitFlags(backingField, printer.EFNoComments)
+		ec.SetSourceMapRange(backingField, sourceMapRange)
+		ec.SetSourceMapRange(backingField.AsPropertyDeclaration().Name(), ec.SourceMapRange(node.Name()))
+
+		getter := tx.createGetAccessorDescriptorForwarder(modifiersWithoutAccessor, result.name, result.descriptorName)
+		ec.SetOriginal(getter, node)
+		ec.SetCommentRange(getter, commentRange)
+		ec.SetSourceMapRange(getter, sourceMapRange)
+
+		setter := tx.createSetAccessorDescriptorForwarder(modifiersWithoutAccessor, result.name, result.descriptorName)
+		ec.SetOriginal(setter, node)
+		ec.SetEmitFlags(setter, printer.EFNoComments)
+		ec.SetSourceMapRange(setter, sourceMapRange)
+
+		return transformers.SingleOrMany([]*ast.Node{backingField, getter, setter}, f)
+	}
 
 	prop := node.AsPropertyDeclaration()
 	return tx.finishClassElement(
@@ -2281,6 +2381,26 @@ func (tx *esDecoratorTransformer) filterModifier(modifiers *ast.ModifierList, ki
 	return tx.Factory().NewModifierList(filtered)
 }
 
+// filterOutModifier returns a modifier list with all modifiers except those of the given kind.
+func (tx *esDecoratorTransformer) filterOutModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
+	if modifiers == nil {
+		return nil
+	}
+	var filtered []*ast.Node
+	for _, mod := range modifiers.Nodes {
+		if mod.Kind != kind {
+			filtered = append(filtered, mod)
+		}
+	}
+	if len(filtered) == 0 {
+		return nil
+	}
+	if len(filtered) == len(modifiers.Nodes) {
+		return modifiers
+	}
+	return tx.Factory().NewModifierList(filtered)
+}
+
 // Creates a "value", "get", or "set" method for a pseudo-PropertyDescriptor object created for
 // a private element.
 func (tx *esDecoratorTransformer) createDescriptorMethod(
@@ -2361,6 +2481,41 @@ func (tx *esDecoratorTransformer) createSetAccessorDescriptorObject(member *ast.
 	return f.NewObjectLiteralExpression(
 		f.NewNodeList([]*ast.Node{
 			tx.createDescriptorMethod(member, member.Name(), modifiers, nil, "set", parameters, body),
+		}),
+		false,
+	)
+}
+
+// Creates a pseudo-PropertyDescriptor object used when decorating a private auto-accessor PropertyDeclaration.
+// The descriptor contains get/set methods that access the generated backing field.
+func (tx *esDecoratorTransformer) createAccessorPropertyDescriptorObject(member *ast.Node, _ *ast.ModifierList) *ast.Expression {
+	f := tx.Factory()
+	backingFieldName := f.NewGeneratedPrivateNameForNodeEx(member.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"})
+	return f.NewObjectLiteralExpression(
+		f.NewNodeList([]*ast.Node{
+			tx.createDescriptorMethod(
+				member, member.Name(), nil, nil, "get",
+				f.NewNodeList([]*ast.Node{}),
+				f.NewBlock(f.NewNodeList([]*ast.Node{
+					f.NewReturnStatement(
+						f.NewPropertyAccessExpression(f.NewThisExpression(), nil, backingFieldName, ast.NodeFlagsNone),
+					),
+				}), false),
+			),
+			tx.createDescriptorMethod(
+				member, member.Name(), nil, nil, "set",
+				f.NewNodeList([]*ast.Node{
+					f.NewParameterDeclaration(nil, nil, f.NewIdentifier("value"), nil, nil, nil),
+				}),
+				f.NewBlock(f.NewNodeList([]*ast.Node{
+					f.NewExpressionStatement(
+						f.NewAssignmentExpression(
+							f.NewPropertyAccessExpression(f.NewThisExpression(), nil, backingFieldName, ast.NodeFlagsNone),
+							f.NewIdentifier("value"),
+						),
+					),
+				}), false),
+			),
 		}),
 		false,
 	)

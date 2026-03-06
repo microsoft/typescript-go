@@ -16,12 +16,14 @@ class C {
 //// [esDecorators-classDeclaration-classThisReference.js]
 "use strict";
 let C = (() => {
+    var _C_a_accessor_storage;
     let _classDecorators = [dec];
     let _classDescriptor;
     let _classExtraInitializers = [];
     let _classThis;
     var C = class {
         static { _classThis = this; }
+        static { __setFunctionName(this, "C"); }
         static {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
@@ -30,9 +32,11 @@ let C = (() => {
         }
         static { _classThis; }
         static x = _classThis;
-        static #a_accessor_storage = _classThis;
-        static get a() { return _classThis.#a_accessor_storage; }
-        static set a(value) { _classThis.#a_accessor_storage = value; }
+        static {
+            _C_a_accessor_storage = { value: _classThis };
+        }
+        static get a() { return __classPrivateFieldGet(_classThis, _classThis, "f", _C_a_accessor_storage); }
+        static set a(value) { __classPrivateFieldSet(_classThis, _classThis, value, "f", _C_a_accessor_storage); }
         static m() { this; }
         static get g() { return this; }
         static {

@@ -68,45 +68,39 @@ function appendMeta(key, value) {
     };
 }
 let C = (() => {
-    var _a;
     let _classDecorators = [appendMeta('a', 'x')];
     let _classDescriptor;
     let _classExtraInitializers = [];
     let _classThis;
-    var C = (_a = class {
-        },
-        _classThis = _a,
-        __setFunctionName(_a, "C"),
-        (() => {
-            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-            __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-            _a = _classThis = _classDescriptor.value;
-            if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-            __runInitializers(_classThis, _classExtraInitializers);
-        })(),
-        _a);
+    var C = _classThis = class {
+    };
+    __setFunctionName(_classThis, "C");
+    (() => {
+        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
+        C = _classThis = _classDescriptor.value;
+        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+        __runInitializers(_classThis, _classExtraInitializers);
+    })();
     return C = _classThis;
 })();
 let D = (() => {
-    var _a;
     let _classDecorators = [appendMeta('a', 'z')];
     let _classDescriptor;
     let _classExtraInitializers = [];
     let _classThis;
     let _classSuper = C;
-    var D = (_a = class extends _classSuper {
-        },
-        _classThis = _a,
-        __setFunctionName(_a, "D"),
-        (() => {
-            var _b;
-            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create((_b = _classSuper[Symbol.metadata]) !== null && _b !== void 0 ? _b : null) : void 0;
-            __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-            _a = _classThis = _classDescriptor.value;
-            if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-            __runInitializers(_classThis, _classExtraInitializers);
-        })(),
-        _a);
+    var D = _classThis = class extends _classSuper {
+    };
+    __setFunctionName(_classThis, "D");
+    (() => {
+        var _a;
+        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create((_a = _classSuper[Symbol.metadata]) !== null && _a !== void 0 ? _a : null) : void 0;
+        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
+        D = _classThis = _classDescriptor.value;
+        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+        __runInitializers(_classThis, _classExtraInitializers);
+    })();
     return D = _classThis;
 })();
 C[Symbol.metadata].a; // ['x']

@@ -252,6 +252,7 @@ func injectClassNamedEvaluationHelperBlockIfMissing(
 	membersList := factory.NewNodeList(members)
 	membersList.Loc = node.MemberList().Loc
 
+	oldNode := node
 	if ast.IsClassDeclaration(node) {
 		node = factory.UpdateClassDeclaration(
 			node.AsClassDeclaration(),
@@ -273,6 +274,13 @@ func injectClassNamedEvaluationHelperBlockIfMissing(
 	}
 
 	emitContext.SetAssignedName(node, assignedName)
+
+	// Transfer ClassThis from old to new node, since UpdateClassExpression creates
+	// a new node that won't have ClassThis set on it.
+	if ct := emitContext.ClassThis(oldNode); ct != nil {
+		emitContext.SetClassThis(node, ct)
+	}
+
 	return node
 }
 
