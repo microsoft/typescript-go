@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/internal"
@@ -141,8 +142,10 @@ func (vfs *osFS) writeFile(path string, content string, writeByteOrderMark bool)
 	defer file.Close()
 
 	if writeByteOrderMark {
-		if _, err := file.WriteString("\uFEFF"); err != nil {
-			return err
+		if bom := stringutil.GetUTF8ByteOrderMark(content); bom != "" {
+			if _, err := file.WriteString(bom); err != nil {
+				return err
+			}
 		}
 	}
 

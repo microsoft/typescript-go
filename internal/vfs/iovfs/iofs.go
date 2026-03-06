@@ -19,7 +19,7 @@ type RealpathFS interface {
 
 type WritableFS interface {
 	fs.FS
-	WriteFile(path string, data []byte, perm fs.FileMode) error
+	WriteFile(path string, data string, perm fs.FileMode) error
 	MkdirAll(path string, perm fs.FileMode) error
 	// Removes `path` and all its contents. Will return the first error it encounters.
 	Remove(path string) error
@@ -73,7 +73,7 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) FsWithSys {
 				// \xEF\xBB\xBF.
 				content = stringutil.AddUTF8ByteOrderMark(content)
 			}
-			return fsys.WriteFile(rest, []byte(content), 0o666)
+			return fsys.WriteFile(rest, content, 0o666)
 		}
 		mkdirAll = func(path string) error {
 			rest, _ := strings.CutPrefix(path, "/")

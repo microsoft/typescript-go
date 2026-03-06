@@ -202,10 +202,17 @@ func RemoveByteOrderMark(text string) string {
 }
 
 func AddUTF8ByteOrderMark(text string) string {
-	if getByteOrderMarkLength(text) == 0 {
-		return "\xEF\xBB\xBF" + text
+	if bom := GetUTF8ByteOrderMark(text); bom != "" {
+		return bom + text
 	}
 	return text
+}
+
+func GetUTF8ByteOrderMark(text string) string {
+	if getByteOrderMarkLength(text) == 0 {
+		return "\xEF\xBB\xBF"
+	}
+	return ""
 }
 
 func StripQuotes(name string) string {
