@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
@@ -951,5 +952,51 @@ func TestSession(t *testing.T) {
 		// "typescript" options should not change
 		assert.DeepEqual(t, *actualConfig2.TS(), *expectedPrefs1)
 		assert.DeepEqual(t, *actualConfig2.JS(), *expectedPrefs2)
+	})
+
+	t.Run("definition with stale position after file shrink does not panic", func(t *testing.T) {
+		t.Parallel()
+		defer testutil.RecoverAndFail(t, "Panic on definition with stale position")
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{"compilerOptions": {"noLib": true}}`,
+			"/home/projects/TS/p1/src/index.ts":  "0\n1\n",
+		}
+		session, _ := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, "0\n1\n", lsproto.LanguageKindTypeScript)
+
+		session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{
+				Partial: &lsproto.TextDocumentContentChangePartial{
+					Range: lsproto.Range{
+						Start: lsproto.Position{Line: 0, Character: 0},
+						End:   lsproto.Position{Line: 2, Character: 0},
+					},
+					Text: "0\n",
+				},
+			},
+		})
+
+		ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+		assert.NilError(t, err)
+
+		_, err = ls.ProvideDefinition(context.Background(), "file:///home/projects/TS/p1/src/index.ts", lsproto.Position{Line: 2, Character: 0})
+		assert.NilError(t, err)
+	})
+
+	t.Run("definition with out-of-bounds position does not panic", func(t *testing.T) {
+		t.Parallel()
+		defer testutil.RecoverAndFail(t, "Panic on definition with out-of-bounds position")
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{"compilerOptions": {"noLib": true}}`,
+			"/home/projects/TS/p1/src/index.ts":  "let x = 1;",
+		}
+		session, _ := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, "let x = 1;", lsproto.LanguageKindTypeScript)
+
+		ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+		assert.NilError(t, err)
+
+		_, err = ls.ProvideDefinition(context.Background(), "file:///home/projects/TS/p1/src/index.ts", lsproto.Position{Line: 999, Character: 0})
+		assert.NilError(t, err)
 	})
 }
