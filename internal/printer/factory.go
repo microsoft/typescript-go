@@ -168,6 +168,7 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindJsxNamespacedName,
+		ast.KindStringLiteral,
 		ast.KindNumericLiteral,
 		ast.KindBigIntLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
@@ -966,6 +967,36 @@ func (f *NodeFactory) NewAwaiterHelper(
 			f.NewVoidZeroExpression(),
 			generatorFunc,
 		}),
+		ast.NodeFlagsNone,
+	)
+}
+
+// ES Decorator Helpers
+
+func (f *NodeFactory) NewESDecorateHelper(ctor *ast.Expression, descriptorIn *ast.Expression, decorators *ast.Expression, contextIn *ast.Expression, initializers *ast.Expression, extraInitializers *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(esDecorateHelper)
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__esDecorate"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers}),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewRunInitializersHelper(thisArg *ast.Expression, initializers *ast.Expression, value *ast.Expression) *ast.Expression {
+	f.emitContext.RequestEmitHelper(runInitializersHelper)
+	var arguments []*ast.Expression
+	if value != nil {
+		arguments = []*ast.Expression{thisArg, initializers, value}
+	} else {
+		arguments = []*ast.Expression{thisArg, initializers}
+	}
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__runInitializers"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(arguments),
 		ast.NodeFlagsNone,
 	)
 }
