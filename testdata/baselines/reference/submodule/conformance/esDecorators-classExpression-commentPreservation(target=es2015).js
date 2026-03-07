@@ -175,6 +175,4 @@ class C {
         __runInitializers(_classThis, _classExtraInitializers);
     })();
     return C = _classThis;
-})()
-/*2*/
-);
+})());
