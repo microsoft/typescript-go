@@ -1,4 +1,4 @@
-ExtendedClass.js(17,5): error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+ExtendedClass.js(17,5): error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
 
 
 ==== typing.d.ts (0 errors) ====
@@ -29,6 +29,6 @@ ExtendedClass.js(17,5): error TS6425: A module with nested CommonJS export const
         const module = {};
         module.exports = ExtendedClass
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+!!! error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
         return module.exports;
     });

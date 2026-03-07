@@ -1,5 +1,5 @@
-index.js(3,5): error TS6425: A module with nested CommonJS export constructs cannot be serialized.
-index.js(9,5): error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+index.js(3,5): error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
+index.js(9,5): error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
 
 
 ==== index.js (2 errors) ====
@@ -11,12 +11,12 @@ index.js(9,5): error TS6425: A module with nested CommonJS export constructs can
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         };
     ~~~~~
-!!! error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+!!! error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
         const m = function () {
             // I have no idea what to put here
         }
         exports.methods = m;
         ~~~~~~~~~~~~~~~~~~~
-!!! error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+!!! error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
     }
     

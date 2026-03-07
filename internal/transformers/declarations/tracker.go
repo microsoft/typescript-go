@@ -88,13 +88,13 @@ func (s *SymbolTrackerImpl) ReportNonSerializableProperty(propertyName string) {
 
 func (s *SymbolTrackerImpl) ReportMultipleModuleExports(nodes []*ast.Node) {
 	for _, node := range nodes {
-		s.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.A_module_with_multiple_module_exports_assignments_cannot_be_serialized))
+		s.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit))
 	}
 }
 
 func (s *SymbolTrackerImpl) ReportNestedCJSExports(nodes []*ast.Node) {
 	for _, node := range nodes {
-		s.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.A_module_with_nested_CommonJS_export_constructs_cannot_be_serialized))
+		s.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit))
 	}
 }
 

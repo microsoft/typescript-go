@@ -63,11 +63,11 @@
         "category": "Message",
         "code": 6423
     },
-    "A module with multiple 'module.exports' assignments cannot be serialized.": {
+    "Multiple 'module.exports' assignments cannot be serialized for declaration emit.": {
         "category": "Error",
         "code": 6424
     },
-    "A module with nested CommonJS export constructs cannot be serialized.": {
+    "Nested CommonJS export constructs cannot be serialized for declaration emit.": {
         "category": "Error",
         "code": 6425
     },

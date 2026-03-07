@@ -659,7 +659,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
-		b.checkNestedExport(node)
+		b.trackNestedCJSExport(node)
 		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
@@ -863,7 +863,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 	container := b.container
 	if ast.IsJSExportAssignment(node) {
 		container = b.file.AsNode()
-		b.checkNestedExport(node)
+		b.trackNestedCJSExport(node)
 	}
 	if container.Symbol() == nil && ast.IsExportAssignment(node) {
 		// Incorrect export assignment in some sort of block construct
@@ -883,7 +883,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 	}
 }
 
-func (b *Binder) checkNestedExport(node *ast.Node) {
+func (b *Binder) trackNestedCJSExport(node *ast.Node) {
 	if !(ast.IsSourceFile(node.Parent) || ast.IsExpressionStatement(node.Parent) && ast.IsSourceFile(node.Parent.Parent)) {
 		b.nestedCJSExports = append(b.nestedCJSExports, node)
 	}
@@ -1079,7 +1079,7 @@ func getParentOfPropertyAssignment(node *ast.Node) *ast.Node {
 
 func (b *Binder) bindObjectDefinePropertyExport(node *ast.Node) {
 	if b.setCommonJSModuleIndicator(node) {
-		b.checkNestedExport(node)
+		b.trackNestedCJSExport(node)
 		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	}
 }
