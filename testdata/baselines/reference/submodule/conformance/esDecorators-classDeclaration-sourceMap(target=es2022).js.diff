@@ -1,17 +1,6 @@
 --- old.esDecorators-classDeclaration-sourceMap(target=es2022).js
 +++ new.esDecorators-classDeclaration-sourceMap(target=es2022).js
-@@= skipped -87, +87 lines =@@
-     if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-     return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
- };
-+var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-+    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-+    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-+};
- var __classPrivateFieldIn = (this && this.__classPrivateFieldIn) || function(state, receiver) {
-     if (receiver === null || (typeof receiver !== "object" && typeof receiver !== "function")) throw new TypeError("Cannot use 'in' operator on non-object");
-     return typeof state === "function" ? receiver === state : state.has(receiver);
-@@= skipped -80, +84 lines =@@
+@@= skipped -167, +167 lines =@@
          set x(value) { }
          y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
          #z_1_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
