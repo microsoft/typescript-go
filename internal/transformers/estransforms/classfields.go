@@ -2116,8 +2116,13 @@ func (tx *classFieldsTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 func (tx *classFieldsTransformer) visitThisExpression(node *ast.Node) *ast.Node {
 	if tx.insideComputedPropertyName && tx.shouldTransformThisInStaticInitializers &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil {
-		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
-			return classThis
+		// Don't replace `this` in computed property names for ES-decorated classes.
+		// The esDecorator transformer wraps them in an arrow IIFE where `this` already
+		// refers to the correct outer scope.
+		if tx.lexicalEnvironment.data.facts&classFactsClassWasDecorated == 0 || tx.legacyDecorators {
+			if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
+				return classThis
+			}
 		}
 	}
 	if tx.shouldTransformThisInStaticInitializers && tx.currentClassElement != nil &&

@@ -1587,6 +1587,10 @@ func (tx *esDecoratorTransformer) visitSetAccessorDeclaration(node *ast.Node) *a
 }
 
 func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.Node {
+	// Keep a reference to the original node before named evaluation may replace it.
+	// This is used as the key in ci.memberInfos so that emitMemberInfoDeclarations
+	// (which iterates original class members) can find the entry.
+	originalNode := node
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.Initializer()) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.Initializer()), "")
 	}
@@ -1613,6 +1617,15 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 		createDescriptor = tx.createAccessorPropertyDescriptorObject
 	}
 	result := tx.partialTransformClassElement(node, tx.classInfoStack, createDescriptor)
+
+	// If the node was replaced by transformNamedEvaluation, re-key the memberInfos entry
+	// so that emitMemberInfoDeclarations (which iterates original members) can find it.
+	if originalNode != node && tx.classInfoStack != nil && tx.classInfoStack.memberInfos != nil {
+		if mi, ok := tx.classInfoStack.memberInfos[node]; ok {
+			tx.classInfoStack.memberInfos[originalNode] = mi
+			delete(tx.classInfoStack.memberInfos, node)
+		}
+	}
 
 	ec.StartVariableEnvironment()
 
