@@ -58,9 +58,13 @@ type privateEnvironmentData struct {
 }
 
 // privateEnvironment stores a map of private identifier names to their transform info.
+// Like Strada, it uses two separate maps: one for non-generated identifiers (keyed by text)
+// and one for generated identifiers (keyed by original AST node). This prevents collisions
+// when different auto-accessors produce generated backing field names with the same text.
 type privateEnvironment struct {
-	data    privateEnvironmentData
-	members map[string]*privateIdentifierInfo
+	data                 privateEnvironmentData
+	members              map[string]*privateIdentifierInfo
+	generatedIdentifiers map[*ast.Node]*privateIdentifierInfo
 }
 
 // classLexicalEnvironment stores information about the lexical environment of a class.
@@ -2173,7 +2177,7 @@ func (tx *classFieldsTransformer) transformClassMembers(node *ast.Node) (members
 						// Only register as untransformed if it hasn't already been registered
 						// by the first loop (e.g., if esDecorators expanded a private auto-accessor
 						// into a backing field with the same generated name).
-						if _, ok := env.members[storageName.Text()]; !ok {
+						if _, ok := tx.getPrivateIdentifier(env, storageName); !ok {
 							tx.setPrivateIdentifier(env, storageName, &privateIdentifierInfo{
 								kind: printer.PrivateIdentifierKindUntransformed,
 							})
@@ -2852,7 +2856,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierPropertyDeclarationToEnvir
 	lex := tx.getClassLexicalEnvironment()
 	env := tx.getPrivateIdentifierEnvironment()
 	isStatic := ast.HasStaticModifier(node)
-	previousInfo := env.members[name.Text()]
+	previousInfo, _ := tx.getPrivateIdentifier(env, name)
 	isValid := !tx.isReservedPrivateName(name) && previousInfo == nil
 
 	if isStatic {
@@ -2994,7 +2998,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierToEnvironment(node *ast.No
 	env := tx.getPrivateIdentifierEnvironment()
 	name := node.Name()
 	isStatic := ast.HasStaticModifier(node)
-	previousInfo := env.members[name.Text()]
+	previousInfo, _ := tx.getPrivateIdentifier(env, name)
 	isValid := !tx.isReservedPrivateName(name) && previousInfo == nil
 
 	if ast.IsAutoAccessorPropertyDeclaration(node) {
@@ -3011,7 +3015,23 @@ func (tx *classFieldsTransformer) addPrivateIdentifierToEnvironment(node *ast.No
 }
 
 func (tx *classFieldsTransformer) setPrivateIdentifier(env *privateEnvironment, name *ast.Node, info *privateIdentifierInfo) {
-	env.members[name.Text()] = info
+	if tx.EmitContext().HasAutoGenerateInfo(name) {
+		if env.generatedIdentifiers == nil {
+			env.generatedIdentifiers = make(map[*ast.Node]*privateIdentifierInfo)
+		}
+		env.generatedIdentifiers[tx.EmitContext().GetNodeForGeneratedName(name)] = info
+	} else {
+		env.members[name.Text()] = info
+	}
+}
+
+func (tx *classFieldsTransformer) getPrivateIdentifier(env *privateEnvironment, name *ast.Node) (*privateIdentifierInfo, bool) {
+	if tx.EmitContext().HasAutoGenerateInfo(name) {
+		info, ok := env.generatedIdentifiers[tx.EmitContext().GetNodeForGeneratedName(name)]
+		return info, ok
+	}
+	info, ok := env.members[name.Text()]
+	return info, ok
 }
 
 func (tx *classFieldsTransformer) createHoistedVariableForClass(nameText string, node *ast.Node, suffix string) *ast.IdentifierNode {
@@ -3076,7 +3096,7 @@ func (tx *classFieldsTransformer) createHoistedVariableForPrivateName(name *ast.
 func (tx *classFieldsTransformer) accessPrivateIdentifier(name *ast.Node) *privateIdentifierInfo {
 	for env := tx.lexicalEnvironment; env != nil; env = env.previous {
 		if env.privateEnv != nil {
-			if info, ok := env.privateEnv.members[name.Text()]; ok {
+			if info, ok := tx.getPrivateIdentifier(env.privateEnv, name); ok {
 				if info.kind == printer.PrivateIdentifierKindUntransformed {
 					return nil
 				}
