@@ -87,8 +87,8 @@ let B = (() => {
             this[_b] = (__runInitializers(this, _b_extraInitializers), 3);
         }
     };
-    _a = f(_classThis);
-    _b = (_b_decorators = [dec(_classThis)], f(_classThis));
+    _a = f(this);
+    _b = (_b_decorators = [dec(this)], f(this));
     __setFunctionName(_classThis, "B");
     (() => {
         const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;

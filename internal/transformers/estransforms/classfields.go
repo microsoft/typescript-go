@@ -118,6 +118,9 @@ type classFieldsTransformer struct {
 	// insideComputedPropertyName replaces Strada's onEmitNode for ComputedPropertyName, which
 	// switches to the outer lexical environment. Used by visitThisExpression() to apply
 	// the outer environment's substitution without requiring currentClassElement to be static.
+	// This flag is only set when the lex env actually switched (i.e., previous != nil).
+	// When previous is nil (top-level class), the lex env stays the same and `this` in
+	// computed property names should NOT be substituted — it refers to the outer scope's `this`.
 	insideComputedPropertyName bool
 
 	// Visitors
@@ -629,9 +632,9 @@ func (tx *classFieldsTransformer) visitComputedPropertyName(node *ast.ComputedPr
 	// lexicalEnvironment?.previous. We do this explicitly during transformation.
 	savedLexicalEnvironment := tx.lexicalEnvironment
 	savedInsideComputedPropertyName := tx.insideComputedPropertyName
-	tx.insideComputedPropertyName = true
 	if tx.lexicalEnvironment != nil && tx.lexicalEnvironment.previous != nil {
 		tx.lexicalEnvironment = tx.lexicalEnvironment.previous
+		tx.insideComputedPropertyName = true
 	}
 	expression := tx.Visitor().VisitNode(node.Expression)
 	tx.lexicalEnvironment = savedLexicalEnvironment
@@ -2832,9 +2835,9 @@ func (tx *classFieldsTransformer) getPropertyNameExpressionIfNeeded(name *ast.Pr
 	// Strada reference's onEmitNode behavior for ComputedPropertyName.
 	savedLexicalEnvironment := tx.lexicalEnvironment
 	savedInsideComputedPropertyName := tx.insideComputedPropertyName
-	tx.insideComputedPropertyName = true
 	if tx.lexicalEnvironment != nil && tx.lexicalEnvironment.previous != nil {
 		tx.lexicalEnvironment = tx.lexicalEnvironment.previous
+		tx.insideComputedPropertyName = true
 	}
 	expression := tx.Visitor().VisitNode(name.Expression())
 	tx.lexicalEnvironment = savedLexicalEnvironment
