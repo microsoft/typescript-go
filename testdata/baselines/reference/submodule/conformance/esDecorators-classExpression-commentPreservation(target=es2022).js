@@ -175,6 +175,4 @@ class C {
         }
     };
     return C = _classThis;
-})()
-/*2*/
-);
+})());

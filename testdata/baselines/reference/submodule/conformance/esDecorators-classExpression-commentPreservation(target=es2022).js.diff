@@ -11,11 +11,3 @@
          static {
              /*29*/
              _C_y = { value: (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_private_y_initializers, 1)) };
-@@= skipped -18, +18 lines =@@
-         }
-     };
-     return C = _classThis;
--})());
-+})()
-+/*2*/
-+);

@@ -31,9 +31,3 @@
      (() => {
          __runInitializers(_classThis, _static_private_z_extraInitializers);
          __runInitializers(_classThis, _classExtraInitializers);
-     })();
-     return C = _classThis;
--})());
-+})()
-+/*2*/
-+);
