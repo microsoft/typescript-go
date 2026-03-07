@@ -314,7 +314,7 @@ func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindThisKeyword:
 		return tx.visitThisExpression(node)
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).clearClassElementAndVisitEachChild, node)
+		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).visitFunctionExpressionOrDeclaration, node)
 	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
 		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).setClassElementAndVisitEachChild, node)
 	default:
@@ -729,6 +729,41 @@ func (tx *classFieldsTransformer) setInIterationStatementAnd(inIteration bool, v
 }
 
 func (tx *classFieldsTransformer) clearClassElementAndVisitEachChild(node *ast.Node) *ast.Node {
+	return tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
+}
+
+// visitFunctionExpressionOrDeclaration handles lexical environment scoping for function
+// expressions and declarations, mirroring Strada's onEmitNode behavior.
+//
+// In Strada, onEmitNode checks whether a FunctionExpression has been registered in
+// lexicalEnvironmentMap (via its original node). If found, the lexical environment is
+// restored; otherwise it is cleared (since regular functions create a new `this` scope).
+// Additionally, if enableSubstitutionForClassStaticThisOrSuperReference has not been
+// called, onEmitNode is never invoked for FunctionExpression at all, and the outer
+// lexical environment is implicitly preserved.
+//
+// Since Corsa performs substitution eagerly (no emit-time hooks), we replicate this by
+// preserving currentClassElement for function expressions whose original node is a class
+// member of the current class. This allows visitThisExpression to correctly substitute
+// `this` -> `_classThis` inside synthesized functions (e.g., ES decorator descriptor
+// methods for static private auto-accessors).
+func (tx *classFieldsTransformer) visitFunctionExpressionOrDeclaration(node *ast.Node) *ast.Node {
+	if tx.currentClassElement != nil {
+		original := tx.EmitContext().MostOriginal(node)
+		if original != node && tx.currentClassContainer != nil {
+			for _, member := range tx.currentClassContainer.Members() {
+				if tx.EmitContext().MostOriginal(member) == original && ast.IsStatic(member) {
+					// The function expression originates from a static class member (e.g., a
+					// descriptor method synthesized by the ES decorator transformer for a
+					// static private auto-accessor). Preserve the current class element so
+					// that visitThisExpression can substitute `this` with `_classThis`.
+					// Non-static members must NOT preserve the class element because `this`
+					// inside their descriptor functions should remain dynamic.
+					return tx.visitEachChildOfNode(node)
+				}
+			}
+		}
+	}
 	return tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
 }
 

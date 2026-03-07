@@ -723,12 +723,12 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >Emitted(123, 123) Source(24, 19) + SourceIndex(0)
 4 >Emitted(123, 126) Source(24, 20) + SourceIndex(0)
 ---
->>>        get z() { return __classPrivateFieldGet(this, _classThis, "f", _C_z_accessor_storage); }
+>>>        get z() { return this.#z_1_accessor_storage; }
 1 >^^^^^^^^
 2 >        ^^^^
 3 >            ^
-4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                                ^^^^^^->
+4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5 >                                                      ^^^^^^^->
 1 >
 2 >        accessor 
 3 >            z
@@ -736,13 +736,13 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 1 >Emitted(124, 9) Source(24, 5) + SourceIndex(0)
 2 >Emitted(124, 13) Source(24, 14) + SourceIndex(0)
 3 >Emitted(124, 14) Source(24, 15) + SourceIndex(0)
-4 >Emitted(124, 97) Source(24, 20) + SourceIndex(0)
+4 >Emitted(124, 55) Source(24, 20) + SourceIndex(0)
 ---
->>>        set z(value) { __classPrivateFieldSet(this, _classThis, value, "f", _C_z_accessor_storage); }
+>>>        set z(value) { this.#z_1_accessor_storage = value; }
 1->^^^^^^^^
 2 >        ^^^^
 3 >            ^
-4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1->
 2 >        accessor 
 3 >            z
@@ -750,7 +750,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 1->Emitted(125, 9) Source(24, 5) + SourceIndex(0)
 2 >Emitted(125, 13) Source(24, 14) + SourceIndex(0)
 3 >Emitted(125, 14) Source(24, 15) + SourceIndex(0)
-4 >Emitted(125, 102) Source(24, 20) + SourceIndex(0)
+4 >Emitted(125, 61) Source(24, 20) + SourceIndex(0)
 ---
 >>>        static {
 >>>            _C_y = { value: (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_private_y_initializers, 1)) };

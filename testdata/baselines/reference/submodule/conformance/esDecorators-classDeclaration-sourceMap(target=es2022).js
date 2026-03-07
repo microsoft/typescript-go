@@ -172,8 +172,8 @@ let C = (() => {
         set x(value) { }
         y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
         #z_1_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
-        get z() { return __classPrivateFieldGet(this, _classThis, "f", _C_z_accessor_storage); }
-        set z(value) { __classPrivateFieldSet(this, _classThis, value, "f", _C_z_accessor_storage); }
+        get z() { return this.#z_1_accessor_storage; }
+        set z(value) { this.#z_1_accessor_storage = value; }
         static {
             _C_y = { value: (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_private_y_initializers, 1)) };
         }
