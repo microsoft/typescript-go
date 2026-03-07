@@ -13103,6 +13103,9 @@ func (c *Checker) hasDefaultValue(node *ast.Node) bool {
 
 func (c *Checker) isConstContext(node *ast.Node) bool {
 	parent := node.Parent
+	if c.compilerOptions.ImportJsonAsConst == core.TSTrue && parent.Kind == ast.KindExpressionStatement && ast.IsSourceFile(parent.Parent) && ast.IsJsonSourceFile(parent.Parent.AsSourceFile()) {
+		return true
+	}
 	return ast.IsConstAssertion(parent) ||
 		c.isValidConstAssertionArgument(node) && c.isConstTypeVariable(c.getContextualType(node, ContextFlagsNone), 0) ||
 		(ast.IsParenthesizedExpression(parent) || ast.IsArrayLiteralExpression(parent) || ast.IsSpreadElement(parent)) && c.isConstContext(parent) ||
@@ -15994,6 +15997,9 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		statements := declaration.Statements()
 		if len(statements) == 0 {
 			return c.emptyObjectType
+		}
+		if c.compilerOptions.ImportJsonAsConst == core.TSTrue {
+			return c.checkExpression(statements[0].Expression())
 		}
 		return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(statements[0].Expression())))
 	}
