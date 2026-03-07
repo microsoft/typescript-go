@@ -3658,18 +3658,17 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 
 func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
 	// !!! set preferences
-	params := &lsproto.RenameParams{
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit != nil {
-		t.Fatalf(prefix+"Expected rename to fail, but got changes: %s", cmp.Diff(result.WorkspaceEdit, nil))
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.Range != nil || result.PrepareRenamePlaceholder != nil || result.PrepareRenameDefaultBehavior != nil {
+		t.Fatalf(prefix + "Expected rename to fail, but prepareRename succeeded")
 	}
 }
 

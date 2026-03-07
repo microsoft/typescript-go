@@ -594,6 +594,9 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
+	if isRename {
+		node = getAdjustedRenameLocation(node)
+	}
 	if isRename && !isNodeEligibleForRename(node) || implementations && ast.IsSourceFile(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
@@ -2376,8 +2379,10 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 
 func isNodeEligibleForRename(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindThisKeyword:
 		return true
+	case ast.KindNumericLiteral:
+		return isLiteralNameOfPropertyDeclarationOrIndexAccess(node)
 	default:
 		return false
 	}
