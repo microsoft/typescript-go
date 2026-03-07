@@ -263,12 +263,22 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements.Loc = statements.Loc // setTextRange
-	if ast.IsExternalOrCommonJSModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
-		marker := createEmptyExports(tx.Factory().AsNodeFactory())
-		newList := append(combinedStatements.Nodes, marker)
-		withMarker := tx.Factory().NewNodeList(newList)
-		withMarker.Loc = combinedStatements.Loc
-		combinedStatements = withMarker
+	if ast.IsExternalOrCommonJSModule(node) {
+		if ast.IsInJSFile(node.AsNode()) {
+			if exportEquals := node.Symbol.Exports[ast.InternalSymbolNameExportEquals]; exportEquals != nil && len(exportEquals.Declarations) > 1 {
+				tx.tracker.ReportMultipleModuleExports(exportEquals.Declarations)
+			}
+			if len(node.NestedCJSExports) != 0 {
+				tx.tracker.ReportNestedCJSExports(node.NestedCJSExports)
+			}
+		}
+		if !tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker) {
+			marker := createEmptyExports(tx.Factory().AsNodeFactory())
+			newList := append(combinedStatements.Nodes, marker)
+			withMarker := tx.Factory().NewNodeList(newList)
+			withMarker.Loc = combinedStatements.Loc
+			combinedStatements = withMarker
+		}
 	}
 	outputFilePath := tspath.GetDirectoryPath(tspath.NormalizeSlashes(tx.declarationFilePath))
 	result := tx.Factory().UpdateSourceFile(node, combinedStatements, node.EndOfFileToken)

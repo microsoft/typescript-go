@@ -63,6 +63,14 @@
         "category": "Message",
         "code": 6423
     },
+    "A module with multiple 'module.exports' assignments cannot be serialized.": {
+        "category": "Error",
+        "code": 6424
+    },
+    "A module with nested CommonJS export constructs cannot be serialized.": {
+        "category": "Error",
+        "code": 6425
+    },
     "Locale must be an IETF BCP 47 language tag. Examples: '{0}', '{1}'.": {
         "category": "Error",
         "code": 6048
