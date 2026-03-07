@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -84,9 +85,9 @@ type classInfo struct {
 	classThis                             *ast.IdentifierNode // `_classThis`, if needed.
 	classSuper                            *ast.IdentifierNode // `_classSuper`, if needed.
 	metadataReference                     *ast.IdentifierNode
-	memberInfos                           map[*ast.Node]*memberInfo // used in class definition step 4.a, 12, and constructor evaluation
-	instanceMethodExtraInitializersName   *ast.IdentifierNode       // used in constructor evaluation step 1
-	staticMethodExtraInitializersName     *ast.IdentifierNode       // used in class definition step 11
+	memberInfos                           collections.OrderedMap[*ast.Node, *memberInfo] // used in class definition step 4.a, 12, and constructor evaluation
+	instanceMethodExtraInitializersName   *ast.IdentifierNode                            // used in constructor evaluation step 1
+	staticMethodExtraInitializersName     *ast.IdentifierNode                            // used in class definition step 11
 	staticNonFieldDecorationStatements    []*ast.Statement
 	nonStaticNonFieldDecorationStatements []*ast.Statement
 	staticFieldDecorationStatements       []*ast.Statement
@@ -473,15 +474,11 @@ func (tx *esDecoratorTransformer) createLet(name *ast.IdentifierNode, initialize
 }
 
 // Generates let declarations for member decorator info variables, filtered by static/non-static.
-func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, members []*ast.Node, isStatic bool) []*ast.Statement {
+func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, isStatic bool) []*ast.Statement {
 	f := tx.Factory()
 	var stmts []*ast.Statement
-	for _, member := range members {
+	for member, mi := range ci.memberInfos.Entries() {
 		if ast.IsStatic(member) != isStatic {
-			continue
-		}
-		mi, ok := ci.memberInfos[member]
-		if !ok {
 			continue
 		}
 		stmts = append(stmts, tx.createLet(mi.memberDecoratorsName, nil))
@@ -879,9 +876,9 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 
 	// Emit member info variable declarations
 	// The reference implementation emits static member vars first, then non-static
-	if ci.memberInfos != nil {
-		classDefinitionStatements = append(classDefinitionStatements, tx.emitMemberInfoDeclarations(ci, node.Members(), true /*isStatic*/)...)
-		classDefinitionStatements = append(classDefinitionStatements, tx.emitMemberInfoDeclarations(ci, node.Members(), false /*isStatic*/)...)
+	if ci.memberInfos.Size() > 0 {
+		classDefinitionStatements = append(classDefinitionStatements, tx.emitMemberInfoDeclarations(ci, true /*isStatic*/)...)
+		classDefinitionStatements = append(classDefinitionStatements, tx.emitMemberInfoDeclarations(ci, false /*isStatic*/)...)
 	}
 
 	// 5. Static non-field element decorators are applied
@@ -1359,10 +1356,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 		)
 		memberDecoratorsAssignment := f.NewAssignmentExpression(memberDecoratorsName, memberDecoratorsArray)
 		mi := &memberInfo{memberDecoratorsName: memberDecoratorsName}
-		if ci.memberInfos == nil {
-			ci.memberInfos = make(map[*ast.Node]*memberInfo)
-		}
-		ci.memberInfos[member] = mi
+		ci.memberInfos.Set(member, mi)
 		tx.pendingExpressions = append(tx.pendingExpressions, memberDecoratorsAssignment)
 
 		// 5. Static non-field (method/getter/setter/auto-accessor) element decorators are applied

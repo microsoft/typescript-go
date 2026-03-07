@@ -398,6 +398,9 @@ var _a, _b;
 // ensure nested named evaluation happens when field is also transformed
 {
     let C = (() => {
+        let _static_x_decorators;
+        let _static_x_initializers = [];
+        let _static_x_extraInitializers = [];
         return class C {
             static {
                 const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
