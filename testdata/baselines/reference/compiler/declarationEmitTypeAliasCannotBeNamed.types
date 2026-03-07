@@ -1,0 +1,49 @@
+//// [tests/cases/compiler/declarationEmitTypeAliasCannotBeNamed.ts] ////
+
+=== lib.ts ===
+interface Base { }
+
+export type ExportBase = Base;
+>ExportBase : Base
+
+=== main.ts ===
+import type { ExportBase } from './lib.js'
+>ExportBase : Base
+
+interface Clonable<T> {
+    clone(): Clonable<T>
+>clone : () => Clonable<T>
+}
+
+export default class C {
+>C : C
+
+    async method(res: Clonable<{ key: ExportBase }>) {
+>method : (res: Clonable<{ key: Base; }>) => Promise<Clonable<{ key: Base; }> | undefined>
+>res : Clonable<{ key: Base; }>
+>key : Base
+
+        if (Math.random() > 0.5) {
+>Math.random() > 0.5 : boolean
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+>0.5 : 0.5
+
+            res.clone();
+>res.clone() : Clonable<{ key: Base; }>
+>res.clone : () => Clonable<{ key: Base; }>
+>res : Clonable<{ key: Base; }>
+>clone : () => Clonable<{ key: Base; }>
+
+        } else {
+            return res.clone();
+>res.clone() : Clonable<{ key: Base; }>
+>res.clone : () => Clonable<{ key: Base; }>
+>res : Clonable<{ key: Base; }>
+>clone : () => Clonable<{ key: Base; }>
+        }
+    };
+}
+
