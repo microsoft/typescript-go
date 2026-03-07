@@ -1,9 +1,0 @@
---- old.decoratedClassExportsCommonJS1.js
-+++ new.decoratedClassExportsCommonJS1.js
-@@= skipped -24, +24 lines =@@
- exports.Testing123 = Testing123;
- Testing123.prop1 = Testing123_1.prop0;
- exports.Testing123 = Testing123 = Testing123_1 = __decorate([
--    Something({ v: () => Testing123 })
-+    Something({ v: () => Testing123_1 })
- ], Testing123);

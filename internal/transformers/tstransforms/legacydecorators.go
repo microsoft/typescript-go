@@ -568,7 +568,19 @@ func (tx *LegacyDecoratorsTransformer) getConstructorDecorationStatement(node *a
  */
 func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(node *ast.ClassDeclaration) *ast.Node {
 	allDecorators := getAllDecoratorsOfClass(node, true)
+	// Decorator expressions are evaluated outside the class body, so references to the
+	// class name should use the original binding, not the class alias. In Strada, this is
+	// handled by NodeCheckFlags.ConstructorReference which is only set for identifiers
+	// inside the class body. Since Corsa lacks per-node flags, we temporarily pop the
+	// enclosing class to prevent alias substitution during decorator expression visiting.
+	hasAlias := len(tx.enclosingClasses) > 0 && tx.enclosingClasses[len(tx.enclosingClasses)-1] == node
+	if hasAlias {
+		tx.popEnclosingClass()
+	}
 	decoratorExpressions := tx.transformAllDecoratorsOfDeclaration(allDecorators)
+	if hasAlias {
+		tx.pushEnclosingClass(node)
+	}
 	if len(decoratorExpressions) == 0 {
 		return nil
 	}
