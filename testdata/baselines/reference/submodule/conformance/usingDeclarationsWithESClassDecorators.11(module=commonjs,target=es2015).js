@@ -16,7 +16,6 @@ using after = null;
 
 //// [usingDeclarationsWithESClassDecorators.11.js]
 "use strict";
-var after;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.C = void 0;
 let C = (() => {
@@ -37,6 +36,7 @@ let C = (() => {
     return C = _classThis;
 })();
 exports.C = C;
+var after;
 const env_1 = { stack: [], error: void 0, hasError: false };
 try {
     after = __addDisposableResource(env_1, null, false);

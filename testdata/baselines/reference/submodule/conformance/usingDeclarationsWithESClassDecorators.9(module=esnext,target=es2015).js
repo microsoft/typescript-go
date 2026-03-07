@@ -16,7 +16,6 @@ using after = null;
 
 
 //// [usingDeclarationsWithESClassDecorators.9.js]
-var after;
 let C = (() => {
     let _classDecorators = [dec];
     let _classDescriptor;
@@ -36,6 +35,7 @@ let C = (() => {
 })();
 export default C;
 void C;
+var after;
 const env_1 = { stack: [], error: void 0, hasError: false };
 try {
     after = __addDisposableResource(env_1, null, false);
