@@ -741,12 +741,17 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
-		if err != nil {
-			return nil, err
-		}
+		// GetLanguageService is moved into the async closure to avoid blocking the
+		// dispatch loop. Previously, acquiring the language service synchronously could
+		// block on snapshotUpdateMu if another operation (e.g. DidOpenFile, idle cache
+		// clean, or a concurrent snapshot update) was holding the lock, causing the
+		// dispatch loop to stall and preventing responses from being sent. See #2857.
 		return func() error {
 			defer s.recover(req)
+			ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+			if err != nil {
+				return err
+			}
 			resp, lsErr := fn(s, ctx, ls, params)
 			if lsErr != nil {
 				return lsErr
