@@ -1,0 +1,26 @@
+x.js(2,5): error TS6424: A module with multiple 'module.exports' assignments cannot be serialized.
+x.js(2,5): error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+x.js(5,5): error TS6424: A module with multiple 'module.exports' assignments cannot be serialized.
+x.js(5,5): error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+
+
+==== y.js (0 errors) ====
+    const x = require("./x");
+    const a = x.a;
+    const b = x.b;
+    
+==== x.js (4 errors) ====
+    if (!!true) {
+        module.exports = { a: 1 };
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS6424: A module with multiple 'module.exports' assignments cannot be serialized.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+    }
+    else {
+        module.exports = { b: "hello" };
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS6424: A module with multiple 'module.exports' assignments cannot be serialized.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS6425: A module with nested CommonJS export constructs cannot be serialized.
+    }
