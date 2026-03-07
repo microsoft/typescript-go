@@ -1,14 +1,6 @@
 --- old.esDecorators-classExpression-commentPreservation(target=es2015).js
 +++ new.esDecorators-classExpression-commentPreservation(target=es2015).js
-@@= skipped -118, +118 lines =@@
-     let _z_extraInitializers = [];
-     var C = _classThis = class {
-         /*5*/
-+        /*7*/
-         method() { }
-         /*8*/
-         get x() { return 1; }
-@@= skipped -56, +57 lines =@@
+@@= skipped -174, +174 lines =@@
          __runInitializers(_classThis, _classExtraInitializers);
      })();
      return C = _classThis;

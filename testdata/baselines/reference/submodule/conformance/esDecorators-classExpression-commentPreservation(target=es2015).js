@@ -119,7 +119,6 @@ class C {
     let _z_extraInitializers = [];
     var C = _classThis = class {
         /*5*/
-        /*7*/
         method() { }
         /*8*/
         get x() { return 1; }
