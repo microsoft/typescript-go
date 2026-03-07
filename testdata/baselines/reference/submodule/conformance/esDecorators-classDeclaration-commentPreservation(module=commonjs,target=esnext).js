@@ -196,6 +196,7 @@ exports.D = void 0;
 @dec
 /*35*/
 @dec
+/*36*/
 class D {
 }
 exports.D = D;
@@ -203,6 +204,7 @@ exports.D = D;
 @dec
 /*38*/
 @dec
+/*39*/
 class E {
 }
 exports.default = E;
