@@ -154,7 +154,6 @@ let C = (() => {
     let _z_extraInitializers = [];
     var C = _classThis = class {
         /*4*/
-        /*6*/
         method() { }
         /*7*/
         get x() { return 1; }

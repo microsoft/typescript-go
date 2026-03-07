@@ -183,14 +183,12 @@ let C = (() => {
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
         /*4*/
-        /*6*/
         method() { }
         /*7*/
         get x() { return 1; }
         /*10*/
         set x(value) { }
         /*13*/
-        /*15*/
         y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
         #z_1_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
         /*16*/

@@ -1526,7 +1526,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 		tx.exitName()
 	}
 
-	if modifiers == nil && (ast.IsMethodDeclaration(member) || ast.IsPropertyDeclaration(member)) {
+	if (modifiers == nil || len(modifiers.Nodes) == 0) && (ast.IsMethodDeclaration(member) || ast.IsPropertyDeclaration(member)) {
 		// Don't emit leading comments on the name for methods and properties without modifiers, otherwise we
 		// will end up printing duplicate comments.
 		ec.SetEmitFlags(result.name, printer.EFNoLeadingComments)

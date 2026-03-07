@@ -148,14 +148,12 @@ class C {
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
         /*5*/
-        /*7*/
         method() { }
         /*8*/
         get x() { return 1; }
         /*11*/
         set x(value) { }
         /*14*/
-        /*16*/
         y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
         #z_1_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
         /*17*/

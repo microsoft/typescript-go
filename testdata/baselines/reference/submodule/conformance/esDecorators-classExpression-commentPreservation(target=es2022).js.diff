@@ -1,17 +1,6 @@
 --- old.esDecorators-classExpression-commentPreservation(target=es2022).js
 +++ new.esDecorators-classExpression-commentPreservation(target=es2022).js
-@@= skipped -147, +147 lines =@@
-             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-         }
-         /*5*/
-+        /*7*/
-         method() { }
-         /*8*/
-         get x() { return 1; }
-         /*11*/
-         set x(value) { }
-         /*14*/
-+        /*16*/
+@@= skipped -156, +156 lines =@@
          y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
          #z_1_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
          /*17*/
@@ -22,7 +11,7 @@
          static {
              /*29*/
              _C_y = { value: (__runInitializers(_classThis, _staticExtraInitializers), __runInitializers(_classThis, _static_private_y_initializers, 1)) };
-@@= skipped -27, +29 lines =@@
+@@= skipped -18, +18 lines =@@
          }
      };
      return C = _classThis;

@@ -1,12 +1,6 @@
 --- old.esDecorators-classExpression-commentPreservation(target=es2015).js
 +++ new.esDecorators-classExpression-commentPreservation(target=es2015).js
-@@= skipped -118, +118 lines =@@
-     let _z_extraInitializers = [];
-     var C = _classThis = class {
-         /*5*/
-+        /*7*/
-         method() { }
-         /*8*/
+@@= skipped -123, +123 lines =@@
          get x() { return 1; }
          /*11*/
          set x(value) { }
@@ -19,7 +13,7 @@
          constructor() {
              /*14*/
              this.y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
-@@= skipped -37, +41 lines =@@
+@@= skipped -32, +35 lines =@@
          __esDecorate(_classThis, _static_private_method_descriptor = { value: __setFunctionName(function () { }, "#method") }, _static_private_method_decorators, { kind: "method", name: "#method", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "a", _C_method_get) }, metadata: _metadata }, null, _staticExtraInitializers);
          __esDecorate(_classThis, _static_private_get_x_descriptor = { get: __setFunctionName(function () { return 1; }, "#x", "get") }, _static_private_get_x_decorators, { kind: "getter", name: "#x", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "a", _C_x_get) }, metadata: _metadata }, null, _staticExtraInitializers);
          __esDecorate(_classThis, _static_private_set_x_descriptor = { set: __setFunctionName(function (value) { }, "#x", "set") }, _static_private_set_x_decorators, { kind: "setter", name: "#x", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), set: (obj, value) => { __classPrivateFieldSet(obj, _classThis, value, "a", _C_x_set); } }, metadata: _metadata }, null, _staticExtraInitializers);
