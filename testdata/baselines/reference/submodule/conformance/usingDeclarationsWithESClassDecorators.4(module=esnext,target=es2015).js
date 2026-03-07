@@ -13,8 +13,8 @@ export default class {
 
 
 //// [usingDeclarationsWithESClassDecorators.4.js]
-var before, _default;
 export { _default as default };
+var before, _default;
 const env_1 = { stack: [], error: void 0, hasError: false };
 try {
     before = __addDisposableResource(env_1, null, false);
