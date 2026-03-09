@@ -11,6 +11,12 @@ func (p *Parser) finishReparsedNode(node *ast.Node, locationNode *ast.Node) {
 	p.overrideParentInImmediateChildren(node)
 }
 
+func (p *Parser) newReparsedNodeList(loc core.TextRange, nodes []*ast.Node) *ast.NodeList {
+	list := p.newNodeList(loc, nodes)
+	list.Flags = ast.NodeFlagsReparsed
+	return list
+}
+
 func (p *Parser) finishMutatedNode(node *ast.Node) {
 	p.overrideParentInImmediateChildren(node)
 }
@@ -189,7 +195,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 		parameters = append(parameters, parameter)
 		p.reparseJSDocComment(parameter, param)
 	}
-	signature.FunctionLikeData().Parameters = p.newNodeList(jsSignature.AsJSDocSignature().Parameters.Loc, parameters)
+	signature.FunctionLikeData().Parameters = p.newReparsedNodeList(jsSignature.AsJSDocSignature().Parameters.Loc, parameters)
 
 	if jsSignature.Type() != nil && jsSignature.Type().TypeExpression() != nil {
 		signature.FunctionLikeData().Type = p.addDeepCloneReparse(jsSignature.Type().TypeExpression().Type())
@@ -224,7 +230,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 			properties = append(properties, property)
 			p.reparseJSDocComment(property, prop)
 		}
-		t = p.factory.NewTypeLiteralNode(p.newNodeList(jstypeliteral.Loc, properties))
+		t = p.factory.NewTypeLiteralNode(p.newReparsedNodeList(jstypeliteral.Loc, properties))
 		if isArrayType {
 			p.finishReparsedNode(t, jstypeliteral.AsNode())
 			t = p.factory.NewArrayTypeNode(t)
@@ -300,7 +306,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 	if len(typeParameters) == 0 {
 		return nil
 	} else {
-		return p.newNodeList(core.NewTextRange(pos, endPos), typeParameters)
+		return p.newReparsedNodeList(core.NewTextRange(pos, endPos), typeParameters)
 	}
 }
 
@@ -529,13 +535,13 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					return
 				}
 			}
-			typesList := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(p.addDeepCloneReparse(implementsTag.ClassName)))
+			typesList := p.newReparsedNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(p.addDeepCloneReparse(implementsTag.ClassName)))
 
 			heritageClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, typesList)
 			p.finishReparsedNode(heritageClause, implementsTag.ClassName)
 
 			if class.HeritageClauses == nil {
-				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(heritageClause))
+				heritageClauses := p.newReparsedNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(heritageClause))
 				class.HeritageClauses = heritageClauses
 			} else {
 				class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
@@ -555,7 +561,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 						for i, arg := range source.TypeArguments.Nodes {
 							newArguments[i] = p.addDeepCloneReparse(arg)
 						}
-						target.TypeArguments = p.newNodeList(source.TypeArguments.Loc, newArguments)
+						target.TypeArguments = p.newReparsedNodeList(source.TypeArguments.Loc, newArguments)
 						p.finishMutatedNode(target.AsNode())
 					}
 				}

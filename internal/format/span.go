@@ -447,7 +447,7 @@ func (w *formatSpanWorker) processChildNodes(
 
 	// node range is outside the target range - do not dive inside
 	if !w.originalRange.Overlaps(nodes.Loc) {
-		if nodes.End() < w.originalRange.Pos() {
+		if nodes.End() < w.originalRange.Pos() && nodes.Flags&ast.NodeFlagsReparsed == 0 {
 			w.formattingScanner.skipToEndOf(&nodes.Loc)
 		}
 		return

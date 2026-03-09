@@ -179,6 +179,7 @@ func cloneNode(updated *Node, original *Node, hooks NodeFactoryHooks) *Node {
 
 type NodeList struct {
 	Loc   core.TextRange
+	Flags NodeFlags
 	Nodes []*Node
 }
 
