@@ -2272,13 +2272,6 @@ func (tx *esDecoratorTransformer) createESDecorateClassElementAccessObject(
 ) *ast.Expression {
 	f := tx.Factory()
 
-	// Create a fresh copy of the name expression to avoid leaking source comments
-	// from the original member name into generated property access code.
-	// Only do this for source identifiers (not generated/synthesized ones).
-	if nameExpr != nil && ast.IsIdentifier(nameExpr) && !ast.PositionIsSynthesized(nameExpr.Pos()) {
-		nameExpr = f.NewIdentifier(nameExpr.Text())
-	}
-
 	accessProps := []*ast.Node{}
 
 	// "has" method: obj => name in obj
