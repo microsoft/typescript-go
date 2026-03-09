@@ -979,6 +979,28 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	return f.NewImmediatelyInvokedArrowFunction(mergedStatements)
 }
 
+// Generates let declarations for member decorator info variables, filtered by static/non-static.
+func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, isStatic bool) []*ast.Statement {
+	f := tx.Factory()
+	var stmts []*ast.Statement
+	for member, mi := range ci.memberInfos.Entries() {
+		if ast.IsStatic(member) != isStatic {
+			continue
+		}
+		stmts = append(stmts, tx.createLet(mi.memberDecoratorsName, nil))
+		if mi.memberInitializersName != nil {
+			stmts = append(stmts, tx.createLet(mi.memberInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
+		}
+		if mi.memberExtraInitializersName != nil {
+			stmts = append(stmts, tx.createLet(mi.memberExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
+		}
+		if mi.memberDescriptorName != nil {
+			stmts = append(stmts, tx.createLet(mi.memberDescriptorName, nil))
+		}
+	}
+	return stmts
+}
+
 func isDecoratedClassLike(node *ast.Node) bool {
 	return ast.ClassOrConstructorParameterIsDecorated(false, node) ||
 		ast.ChildIsDecorated(false, node, nil)
@@ -2588,28 +2610,6 @@ func (tx *esDecoratorTransformer) createSymbolMetadataReference(classSuper *ast.
 	symbolMetadata := f.NewPropertyAccessExpression(f.NewIdentifier("Symbol"), nil, f.NewIdentifier("metadata"), ast.NodeFlagsNone)
 	elementAccess := f.NewElementAccessExpression(classSuper, nil, symbolMetadata, ast.NodeFlagsNone)
 	return f.NewBinaryExpression(nil, elementAccess, nil, f.NewToken(ast.KindQuestionQuestionToken), f.NewToken(ast.KindNullKeyword))
-}
-
-// Generates let declarations for member decorator info variables, filtered by static/non-static.
-func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, isStatic bool) []*ast.Statement {
-	f := tx.Factory()
-	var stmts []*ast.Statement
-	for member, mi := range ci.memberInfos.Entries() {
-		if ast.IsStatic(member) != isStatic {
-			continue
-		}
-		stmts = append(stmts, tx.createLet(mi.memberDecoratorsName, nil))
-		if mi.memberInitializersName != nil {
-			stmts = append(stmts, tx.createLet(mi.memberInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
-		}
-		if mi.memberExtraInitializersName != nil {
-			stmts = append(stmts, tx.createLet(mi.memberExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
-		}
-		if mi.memberDescriptorName != nil {
-			stmts = append(stmts, tx.createLet(mi.memberDescriptorName, nil))
-		}
-	}
-	return stmts
 }
 
 // filterModifier returns a modifier list containing only modifiers of the given kind, if any.
