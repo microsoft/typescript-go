@@ -1168,7 +1168,7 @@ func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *a
 			prologue, rest := tx.Factory().SplitStandardPrologue(ctor.Body.AsBlock().Statements.Nodes)
 			stmts = append(stmts, prologue...)
 
-			superStatementIndices := findSuperStatementIndexPath(rest, 0)
+			superStatementIndices := transformers.FindSuperStatementIndexPath(rest, 0)
 			if len(superStatementIndices) > 0 {
 				tx.transformConstructorBodyWorker(&stmts, rest, 0, superStatementIndices, 0, initializerStatements)
 			} else {
@@ -2874,26 +2874,6 @@ func injectClassThisAssignmentIfMissing(ec *printer.EmitContext, f *printer.Node
 	}
 	ec.SetClassThis(updatedNode, classThis)
 	return updatedNode
-}
-
-func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
-	for i := start; i < len(statements); i++ {
-		stmt := statements[i]
-		if ast.IsExpressionStatement(stmt) {
-			expr := stmt.Expression()
-			if ast.IsCallExpression(expr) && expr.AsCallExpression().Expression.Kind == ast.KindSuperKeyword {
-				return []int{i}
-			}
-		}
-		if ast.IsTryStatement(stmt) {
-			tryBlock := stmt.AsTryStatement().TryBlock.AsBlock()
-			path := findSuperStatementIndexPath(tryBlock.Statements.Nodes, 0)
-			if len(path) > 0 {
-				return append([]int{i}, path...)
-			}
-		}
-	}
-	return nil
 }
 
 // Creates ({ set value(_p) { Reflect.set(target, key, _p, receiver) } }).value
