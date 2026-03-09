@@ -102,6 +102,7 @@ func (w *Watcher) compileAndEmit() {
 		Sys:                w.sys,
 		ProgramLike:        w.program,
 		Program:            w.program.GetProgram(),
+		Config:             w.config,
 		ReportDiagnostic:   w.reportDiagnostic,
 		ReportErrorSummary: w.reportErrorSummary,
 		Writer:             w.sys.Writer(),
