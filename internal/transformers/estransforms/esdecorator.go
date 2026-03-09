@@ -350,20 +350,11 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
-func (tx *esDecoratorTransformer) discardedValueVisit(node *ast.Node) *ast.Node {
-	if !tx.shouldVisitNode(node) {
-		return node
+func (tx *esDecoratorTransformer) modifierVisitor(node *ast.Node) *ast.Node {
+	if node.Kind == ast.KindDecorator {
+		return nil
 	}
-	switch node.Kind {
-	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
-		return tx.visitPreOrPostfixUnaryExpression(node, true /*discarded*/)
-	case ast.KindBinaryExpression:
-		return tx.visitBinaryExpression(node, true /*discarded*/)
-	case ast.KindParenthesizedExpression:
-		return tx.visitParenthesizedExpression(node, true /*discarded*/)
-	default:
-		return tx.visit(node)
-	}
+	return node
 }
 
 func (tx *esDecoratorTransformer) classElementVisitor(node *ast.Node) *ast.Node {
@@ -388,11 +379,20 @@ func (tx *esDecoratorTransformer) classElementVisitor(node *ast.Node) *ast.Node 
 	}
 }
 
-func (tx *esDecoratorTransformer) modifierVisitor(node *ast.Node) *ast.Node {
-	if node.Kind == ast.KindDecorator {
-		return nil
+func (tx *esDecoratorTransformer) discardedValueVisit(node *ast.Node) *ast.Node {
+	if !tx.shouldVisitNode(node) {
+		return node
 	}
-	return node
+	switch node.Kind {
+	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
+		return tx.visitPreOrPostfixUnaryExpression(node, true /*discarded*/)
+	case ast.KindBinaryExpression:
+		return tx.visitBinaryExpression(node, true /*discarded*/)
+	case ast.KindParenthesizedExpression:
+		return tx.visitParenthesizedExpression(node, true /*discarded*/)
+	default:
+		return tx.visit(node)
+	}
 }
 
 func (tx *esDecoratorTransformer) nonConstructorClassElementVisit(node *ast.Node) *ast.Node {
@@ -414,11 +414,6 @@ func (tx *esDecoratorTransformer) exportStrippingModifierVisit(node *ast.Node) *
 		return nil
 	}
 	return tx.modifierVisitor(node)
-}
-
-func isDecoratedClassLike(node *ast.Node) bool {
-	return ast.ClassOrConstructorParameterIsDecorated(false, node) ||
-		ast.ChildIsDecorated(false, node, nil)
 }
 
 func getHelperVariableName(ec *printer.EmitContext, node *ast.Node) string {
@@ -471,115 +466,6 @@ func (tx *esDecoratorTransformer) createLet(name *ast.IdentifierNode, initialize
 			}),
 		),
 	)
-}
-
-// Generates let declarations for member decorator info variables, filtered by static/non-static.
-func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, isStatic bool) []*ast.Statement {
-	f := tx.Factory()
-	var stmts []*ast.Statement
-	for member, mi := range ci.memberInfos.Entries() {
-		if ast.IsStatic(member) != isStatic {
-			continue
-		}
-		stmts = append(stmts, tx.createLet(mi.memberDecoratorsName, nil))
-		if mi.memberInitializersName != nil {
-			stmts = append(stmts, tx.createLet(mi.memberInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
-		}
-		if mi.memberExtraInitializersName != nil {
-			stmts = append(stmts, tx.createLet(mi.memberExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
-		}
-		if mi.memberDescriptorName != nil {
-			stmts = append(stmts, tx.createLet(mi.memberDescriptorName, nil))
-		}
-	}
-	return stmts
-}
-
-// Transforms a decorator into an expression.
-func (tx *esDecoratorTransformer) transformDecorator(decorator *ast.Node) *ast.Expression {
-	expression := tx.Visitor().VisitNode(decorator.AsDecorator().Expression)
-	tx.EmitContext().SetEmitFlags(expression, printer.EFNoComments)
-
-	// preserve the 'this' binding for an access expression
-	innerExpression := ast.SkipOuterExpressions(expression, ast.OEKAll)
-	if ast.IsAccessExpression(innerExpression) {
-		target, thisArg := tx.createCallBinding(expression)
-		bindCall := tx.Factory().NewFunctionBindCall(target, thisArg, nil)
-		return tx.Factory().RestoreOuterExpressions(expression, bindCall, ast.OEKAll)
-	}
-	return expression
-}
-
-func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) (*ast.Expression, *ast.Expression) {
-	f := tx.Factory()
-	callee := ast.SkipOuterExpressions(expression, ast.OEKAll)
-	if ast.IsSuperProperty(callee) {
-		return callee, f.NewThisExpression()
-	}
-	if callee.Kind == ast.KindSuperKeyword {
-		return callee, f.NewThisExpression()
-	}
-	if tx.EmitContext().EmitFlags(callee)&printer.EFHelperName != 0 {
-		return callee, f.NewVoidZeroExpression()
-	}
-	if ast.IsPropertyAccessExpression(callee) {
-		pa := callee.AsPropertyAccessExpression()
-		if tx.shouldBeCapturedInTempVariable(pa.Expression) {
-			thisArg := f.NewTempVariable()
-			tx.EmitContext().AddVariableDeclaration(thisArg)
-			assign := f.NewAssignmentExpression(thisArg, pa.Expression)
-			assign.Loc = pa.Expression.Loc
-			target := f.NewPropertyAccessExpression(assign, nil, pa.Name(), ast.NodeFlagsNone)
-			target.Loc = callee.Loc
-			return target, thisArg
-		}
-		return callee, pa.Expression
-	}
-	if ast.IsElementAccessExpression(callee) {
-		ea := callee.AsElementAccessExpression()
-		if tx.shouldBeCapturedInTempVariable(ea.Expression) {
-			thisArg := f.NewTempVariable()
-			tx.EmitContext().AddVariableDeclaration(thisArg)
-			assign := f.NewAssignmentExpression(thisArg, ea.Expression)
-			assign.Loc = ea.Expression.Loc
-			target := f.NewElementAccessExpression(assign, nil, ea.ArgumentExpression, ast.NodeFlagsNone)
-			target.Loc = callee.Loc
-			return target, thisArg
-		}
-		return callee, ea.Expression
-	}
-	return expression, f.NewVoidZeroExpression()
-}
-
-func (tx *esDecoratorTransformer) shouldBeCapturedInTempVariable(node *ast.Expression) bool {
-	// This is a simplified version of the general shouldBeCapturedInTempVariable from
-	// nodeFactory with cacheIdentifiers=true, since createCallBinding in this transform
-	// always caches identifiers.
-	target := ast.SkipParentheses(node)
-	switch target.Kind {
-	case ast.KindIdentifier:
-		// cacheIdentifiers is always true for this transform's createCallBinding
-		return true
-	case ast.KindThisKeyword,
-		ast.KindNumericLiteral,
-		ast.KindBigIntLiteral,
-		ast.KindStringLiteral:
-		return false
-	default:
-		return true
-	}
-}
-
-// Transforms all of the decorators for a declaration into an array of expressions.
-func (tx *esDecoratorTransformer) transformAllDecoratorsOfDeclaration(decorators []*ast.Node) []*ast.Expression {
-	if len(decorators) == 0 {
-		return nil
-	}
-	result := make([]*ast.Expression, 0, len(decorators))
-	for _, d := range decorators {
-		result = append(result, tx.transformDecorator(d))
-	}
-	return result
 }
 
 func (tx *esDecoratorTransformer) createClassInfo(node *ast.Node) *classInfo {
@@ -1093,6 +979,11 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	return f.NewImmediatelyInvokedArrowFunction(mergedStatements)
 }
 
+func isDecoratedClassLike(node *ast.Node) bool {
+	return ast.ClassOrConstructorParameterIsDecorated(false, node) ||
+		ast.ChildIsDecorated(false, node, nil)
+}
+
 func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
 	if isDecoratedClassLike(node.AsNode()) {
 		f := tx.Factory()
@@ -1215,44 +1106,6 @@ func (tx *esDecoratorTransformer) prepareConstructor(ci *classInfo) []*ast.State
 	return statements
 }
 
-func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
-	tx.enterClassElement(node)
-	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
-	parameters := tx.Visitor().VisitNodes(node.ParameterList())
-
-	var body *ast.Node
-	ctor := node.AsConstructorDeclaration()
-	if ctor.Body != nil && tx.classInfoStack != nil {
-		// If there are instance extra initializers we need to add them to the body along with any
-		// field initializers
-		initializerStatements := tx.prepareConstructor(tx.classInfoStack)
-		if len(initializerStatements) > 0 {
-			stmts := []*ast.Statement{}
-			prologue, rest := tx.Factory().SplitStandardPrologue(ctor.Body.AsBlock().Statements.Nodes)
-			stmts = append(stmts, prologue...)
-
-			superStatementIndices := findSuperStatementIndexPath(rest, 0)
-			if len(superStatementIndices) > 0 {
-				tx.transformConstructorBodyWorker(&stmts, rest, 0, superStatementIndices, 0, initializerStatements)
-			} else {
-				stmts = append(stmts, initializerStatements...)
-				visited, _ := tx.Visitor().VisitSlice(rest)
-				stmts = append(stmts, visited...)
-			}
-
-			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(stmts), true)
-			tx.EmitContext().SetOriginal(body, ctor.Body.AsNode())
-			body.Loc = ctor.Body.Loc
-		}
-	}
-
-	if body == nil {
-		body = tx.Visitor().VisitNode(ctor.Body.AsNode())
-	}
-	tx.exitClassElement()
-	return tx.Factory().UpdateConstructorDeclaration(ctor, modifiers, nil, parameters, nil, nil, body)
-}
-
 func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *[]*ast.Statement, statementsIn []*ast.Statement, statementOffset int, superPath []int, superPathDepth int, initializerStatements []*ast.Statement) {
 	superStatementIndex := superPath[superPathDepth]
 	// Visit statements before super
@@ -1297,6 +1150,44 @@ func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *
 			*statementsOut = append(*statementsOut, tx.Visitor().VisitNode(s))
 		}
 	}
+}
+
+func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
+	tx.enterClassElement(node)
+	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
+	parameters := tx.Visitor().VisitNodes(node.ParameterList())
+
+	var body *ast.Node
+	ctor := node.AsConstructorDeclaration()
+	if ctor.Body != nil && tx.classInfoStack != nil {
+		// If there are instance extra initializers we need to add them to the body along with any
+		// field initializers
+		initializerStatements := tx.prepareConstructor(tx.classInfoStack)
+		if len(initializerStatements) > 0 {
+			stmts := []*ast.Statement{}
+			prologue, rest := tx.Factory().SplitStandardPrologue(ctor.Body.AsBlock().Statements.Nodes)
+			stmts = append(stmts, prologue...)
+
+			superStatementIndices := findSuperStatementIndexPath(rest, 0)
+			if len(superStatementIndices) > 0 {
+				tx.transformConstructorBodyWorker(&stmts, rest, 0, superStatementIndices, 0, initializerStatements)
+			} else {
+				stmts = append(stmts, initializerStatements...)
+				visited, _ := tx.Visitor().VisitSlice(rest)
+				stmts = append(stmts, visited...)
+			}
+
+			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(stmts), true)
+			tx.EmitContext().SetOriginal(body, ctor.Body.AsNode())
+			body.Loc = ctor.Body.Loc
+		}
+	}
+
+	if body == nil {
+		body = tx.Visitor().VisitNode(ctor.Body.AsNode())
+	}
+	tx.exitClassElement()
+	return tx.Factory().UpdateConstructorDeclaration(ctor, modifiers, nil, parameters, nil, nil, body)
 }
 
 func (tx *esDecoratorTransformer) finishClassElement(updated *ast.Node, original *ast.Node) *ast.Node {
@@ -1580,6 +1471,64 @@ func (tx *esDecoratorTransformer) visitSetAccessorDeclaration(node *ast.Node) *a
 	)
 }
 
+func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Node) *ast.Node {
+	tx.enterClassElement(node)
+	f := tx.Factory()
+
+	var result *ast.Node
+	if isClassNamedEvaluationHelperBlock(tx.EmitContext(), node) {
+		result = tx.Visitor().VisitEachChild(node)
+		// Transfer AssignedName metadata to the new node so isClassNamedEvaluationHelperBlock
+		// can still find it after visiting (visiting may create a new node when this->_classThis)
+		if assignedName := tx.EmitContext().AssignedName(node); assignedName != nil && result != node {
+			tx.EmitContext().SetAssignedName(result, assignedName)
+		}
+	} else if isClassThisAssignmentBlock(tx.EmitContext(), node) {
+		savedClassThis := tx.classThis
+		tx.classThis = nil
+		result = tx.Visitor().VisitEachChild(node)
+		tx.classThis = savedClassThis
+	} else {
+		// Use a nested variable environment so temp vars generated during static block
+		// content transformation (e.g., super access temps) stay scoped to the static block.
+		ec := tx.EmitContext()
+		ec.StartVariableEnvironment()
+		result = tx.Visitor().VisitEachChild(node)
+		varStatements := ec.EndVariableEnvironment()
+		if len(varStatements) > 0 {
+			// Inject var declarations at the start of the static block's body
+			blockBody := result.AsClassStaticBlockDeclaration().Body.AsBlock()
+			newStmts := make([]*ast.Statement, 0, len(varStatements)+len(blockBody.Statements.Nodes))
+			newStmts = append(newStmts, varStatements...)
+			newStmts = append(newStmts, blockBody.Statements.Nodes...)
+			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.Multiline))
+		}
+		if tx.classInfoStack != nil {
+			tx.classInfoStack.hasStaticInitializers = true
+			if len(tx.classInfoStack.pendingStaticInitializers) > 0 {
+				// If we tried to inject the pending initializers into the current block, we might run into
+				// variable name collisions due to sharing this blocks scope. To avoid this, we inject a new
+				// static block that contains the pending initializers that precedes this block.
+				stmts := []*ast.Statement{}
+				for _, init := range tx.classInfoStack.pendingStaticInitializers {
+					initStmt := f.NewExpressionStatement(init)
+					tx.EmitContext().SetSourceMapRange(initStmt, tx.EmitContext().SourceMapRange(init))
+					stmts = append(stmts, initStmt)
+				}
+				body := f.NewBlock(f.NewNodeList(stmts), true)
+				staticBlock := f.NewClassStaticBlockDeclaration(nil, body)
+				tx.classInfoStack.pendingStaticInitializers = nil
+				// Return both the new static block and the original
+				tx.exitClassElement()
+				return transformers.SingleOrMany([]*ast.Node{staticBlock, result}, tx.Factory())
+			}
+		}
+	}
+
+	tx.exitClassElement()
+	return result
+}
+
 func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.Node {
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.Initializer()) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.Initializer()), "")
@@ -1708,64 +1657,6 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 	)
 }
 
-func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Node) *ast.Node {
-	tx.enterClassElement(node)
-	f := tx.Factory()
-
-	var result *ast.Node
-	if isClassNamedEvaluationHelperBlock(tx.EmitContext(), node) {
-		result = tx.Visitor().VisitEachChild(node)
-		// Transfer AssignedName metadata to the new node so isClassNamedEvaluationHelperBlock
-		// can still find it after visiting (visiting may create a new node when this->_classThis)
-		if assignedName := tx.EmitContext().AssignedName(node); assignedName != nil && result != node {
-			tx.EmitContext().SetAssignedName(result, assignedName)
-		}
-	} else if isClassThisAssignmentBlock(tx.EmitContext(), node) {
-		savedClassThis := tx.classThis
-		tx.classThis = nil
-		result = tx.Visitor().VisitEachChild(node)
-		tx.classThis = savedClassThis
-	} else {
-		// Use a nested variable environment so temp vars generated during static block
-		// content transformation (e.g., super access temps) stay scoped to the static block.
-		ec := tx.EmitContext()
-		ec.StartVariableEnvironment()
-		result = tx.Visitor().VisitEachChild(node)
-		varStatements := ec.EndVariableEnvironment()
-		if len(varStatements) > 0 {
-			// Inject var declarations at the start of the static block's body
-			blockBody := result.AsClassStaticBlockDeclaration().Body.AsBlock()
-			newStmts := make([]*ast.Statement, 0, len(varStatements)+len(blockBody.Statements.Nodes))
-			newStmts = append(newStmts, varStatements...)
-			newStmts = append(newStmts, blockBody.Statements.Nodes...)
-			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.Multiline))
-		}
-		if tx.classInfoStack != nil {
-			tx.classInfoStack.hasStaticInitializers = true
-			if len(tx.classInfoStack.pendingStaticInitializers) > 0 {
-				// If we tried to inject the pending initializers into the current block, we might run into
-				// variable name collisions due to sharing this blocks scope. To avoid this, we inject a new
-				// static block that contains the pending initializers that precedes this block.
-				stmts := []*ast.Statement{}
-				for _, init := range tx.classInfoStack.pendingStaticInitializers {
-					initStmt := f.NewExpressionStatement(init)
-					tx.EmitContext().SetSourceMapRange(initStmt, tx.EmitContext().SourceMapRange(init))
-					stmts = append(stmts, initStmt)
-				}
-				body := f.NewBlock(f.NewNodeList(stmts), true)
-				staticBlock := f.NewClassStaticBlockDeclaration(nil, body)
-				tx.classInfoStack.pendingStaticInitializers = nil
-				// Return both the new static block and the original
-				tx.exitClassElement()
-				return transformers.SingleOrMany([]*ast.Node{staticBlock, result}, tx.Factory())
-			}
-		}
-	}
-
-	tx.exitClassElement()
-	return result
-}
-
 func (tx *esDecoratorTransformer) visitThisExpression(node *ast.Node) *ast.Node {
 	if tx.classThis != nil {
 		return tx.classThis
@@ -1875,6 +1766,42 @@ func (tx *esDecoratorTransformer) visitNamedEvaluationSite(node *ast.Node, class
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(classExpr), "")
 	}
 	return tx.Visitor().VisitEachChild(node)
+}
+
+func isAnonymousClassNeedingAssignedName(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	node = ast.SkipOuterExpressions(node, ast.OEKAll)
+	return ast.IsClassExpression(node) && node.Name() == nil && isDecoratedClassLike(node)
+}
+
+// The IIFE produced for `(@dec class {})` will result in an assigned name of the form
+// `var class_1 = class { };`, and thus the empty string cannot be ignored. However, The IIFE
+// produced for `(class { @dec x; })` will not result in an assigned name since it
+// transforms to `return class { };`, and thus the empty string *can* be ignored.
+func canIgnoreEmptyStringLiteralInAssignedName(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	innerExpression := ast.SkipOuterExpressions(node, ast.OEKAll)
+	return ast.IsClassExpression(innerExpression) && innerExpression.Name() == nil && !ast.ClassOrConstructorParameterIsDecorated(false, innerExpression)
+}
+
+func (tx *esDecoratorTransformer) visitForStatement(node *ast.Node) *ast.Node {
+	f := tx.Factory()
+	forStmt := node.AsForStatement()
+	return f.UpdateForStatement(
+		forStmt,
+		tx.discardedVisitor.VisitNode(forStmt.Initializer),
+		tx.Visitor().VisitNode(forStmt.Condition),
+		tx.discardedVisitor.VisitNode(forStmt.Incrementor),
+		tx.Visitor().VisitNode(forStmt.Statement),
+	)
+}
+
+func (tx *esDecoratorTransformer) visitExpressionStatement(node *ast.Node) *ast.Node {
+	return tx.discardedVisitor.VisitEachChild(node)
 }
 
 func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarded bool) *ast.Node {
@@ -1994,30 +1921,6 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 	return tx.Visitor().VisitEachChild(node)
 }
 
-func (tx *esDecoratorTransformer) visitExportAssignment(node *ast.Node) *ast.Node {
-	// 16.2.3.7 RS: Evaluation
-	//   ExportDeclaration : `export` `default` AssignmentExpression `;`
-	//     1. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true*, then
-	//        a. Let _value_ be ? NamedEvaluation of |AssignmentExpression| with argument `"default"`.
-	return tx.visitNamedEvaluationSite(node, node.Expression())
-}
-
-func (tx *esDecoratorTransformer) visitForStatement(node *ast.Node) *ast.Node {
-	f := tx.Factory()
-	forStmt := node.AsForStatement()
-	return f.UpdateForStatement(
-		forStmt,
-		tx.discardedVisitor.VisitNode(forStmt.Initializer),
-		tx.Visitor().VisitNode(forStmt.Condition),
-		tx.discardedVisitor.VisitNode(forStmt.Incrementor),
-		tx.Visitor().VisitNode(forStmt.Statement),
-	)
-}
-
-func (tx *esDecoratorTransformer) visitExpressionStatement(node *ast.Node) *ast.Node {
-	return tx.discardedVisitor.VisitEachChild(node)
-}
-
 func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Node, discarded bool) *ast.Node {
 	f := tx.Factory()
 	ec := tx.EmitContext()
@@ -2100,38 +2003,6 @@ func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 	return tx.Visitor().VisitEachChild(node)
 }
 
-func (tx *esDecoratorTransformer) visitParenthesizedExpression(node *ast.Node, discarded bool) *ast.Node {
-	// 8.4.5 RS: NamedEvaluation
-	//   ParenthesizedExpression : `(` Expression `)`
-	//     ...
-	//     2. Return ? NamedEvaluation of |Expression| with argument _name_.
-	f := tx.Factory()
-	pe := node.AsParenthesizedExpression()
-	var expression *ast.Node
-	if discarded {
-		expression = tx.discardedVisitor.VisitNode(pe.Expression)
-	} else {
-		expression = tx.Visitor().VisitNode(pe.Expression)
-	}
-	return f.UpdateParenthesizedExpression(pe, expression)
-}
-
-func (tx *esDecoratorTransformer) visitComputedPropertyName(node *ast.Node) *ast.Node {
-	cpn := node.AsComputedPropertyName()
-	expression := tx.Visitor().VisitNode(cpn.Expression)
-	if !transformers.IsSimpleInlineableExpression(expression) {
-		expression = tx.injectPendingExpressions(expression)
-	}
-	return tx.Factory().UpdateComputedPropertyName(cpn, expression)
-}
-
-func (tx *esDecoratorTransformer) visitPropertyName(node *ast.Node) *ast.Node {
-	if ast.IsComputedPropertyName(node) {
-		return tx.visitComputedPropertyName(node)
-	}
-	return tx.Visitor().VisitNode(node)
-}
-
 func (tx *esDecoratorTransformer) visitReferencedPropertyName(node *ast.Node) (*ast.Expression, *ast.Node) {
 	if ast.IsPropertyNameLiteral(node) || ast.IsPrivateIdentifier(node) {
 		return tx.Factory().NewStringLiteralFromNode(node), tx.Visitor().VisitNode(node)
@@ -2149,6 +2020,186 @@ func (tx *esDecoratorTransformer) visitReferencedPropertyName(node *ast.Node) (*
 	assignment := tx.Factory().NewAssignmentExpression(referencedName, key)
 	updatedName := tx.Factory().UpdateComputedPropertyName(cpn, tx.injectPendingExpressions(assignment))
 	return referencedName, updatedName
+}
+
+func (tx *esDecoratorTransformer) visitPropertyName(node *ast.Node) *ast.Node {
+	if ast.IsComputedPropertyName(node) {
+		return tx.visitComputedPropertyName(node)
+	}
+	return tx.Visitor().VisitNode(node)
+}
+
+func (tx *esDecoratorTransformer) visitComputedPropertyName(node *ast.Node) *ast.Node {
+	cpn := node.AsComputedPropertyName()
+	expression := tx.Visitor().VisitNode(cpn.Expression)
+	if !transformers.IsSimpleInlineableExpression(expression) {
+		expression = tx.injectPendingExpressions(expression)
+	}
+	return tx.Factory().UpdateComputedPropertyName(cpn, expression)
+}
+
+func (tx *esDecoratorTransformer) visitDestructuringAssignmentTarget(node *ast.Node) *ast.Node {
+	if ast.IsObjectLiteralExpression(node) || ast.IsArrayLiteralExpression(node) {
+		return tx.visitAssignmentPattern(node)
+	}
+
+	if ast.IsSuperProperty(node) && tx.classThis != nil && tx.classSuper != nil {
+		f := tx.Factory()
+		ec := tx.EmitContext()
+		var propertyName *ast.Expression
+		if ast.IsElementAccessExpression(node) {
+			propertyName = tx.Visitor().VisitNode(node.AsElementAccessExpression().ArgumentExpression)
+		} else if ast.IsPropertyAccessExpression(node) && ast.IsIdentifier(node.AsPropertyAccessExpression().Name()) {
+			propertyName = f.NewStringLiteralFromNode(node.AsPropertyAccessExpression().Name())
+		}
+		if propertyName != nil {
+			expression := createReflectedAssignmentTargetWrapper(f, tx.classSuper, propertyName, tx.classThis)
+			ec.SetOriginal(expression, node)
+			expression.Loc = node.Loc
+			return expression
+		}
+	}
+
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitAssignmentElement(node *ast.Node) *ast.Node {
+	// 13.15.5.5 RS: IteratorDestructuringAssignmentEvaluation
+	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
+	//     ...
+	//     4. If |Initializer| is present and _value_ is *undefined*, then
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
+	//           |DestructuringAssignmentTarget| are both *true*, then
+	//           i. Let _v_ be ? NamedEvaluation of |Initializer| with argument
+	//              _lref_.[[ReferencedName]].
+	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
+		f := tx.Factory()
+		bin := node.AsBinaryExpression()
+		if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(bin.Right) {
+			node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
+			bin = node.AsBinaryExpression()
+		}
+		assignmentTarget := tx.visitDestructuringAssignmentTarget(bin.Left)
+		initializer := tx.Visitor().VisitNode(bin.Right)
+		return f.UpdateBinaryExpression(bin, nil, assignmentTarget, nil, bin.OperatorToken, initializer)
+	}
+	return tx.visitDestructuringAssignmentTarget(node)
+}
+
+func (tx *esDecoratorTransformer) visitAssignmentRestElement(node *ast.Node) *ast.Node {
+	se := node.AsSpreadElement()
+	if ast.IsLeftHandSideExpression(se.Expression) {
+		f := tx.Factory()
+		expression := tx.visitDestructuringAssignmentTarget(se.Expression)
+		return f.UpdateSpreadElement(se, expression)
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitArrayAssignmentElement(node *ast.Node) *ast.Node {
+	if ast.IsSpreadElement(node) {
+		return tx.visitAssignmentRestElement(node)
+	}
+	if !ast.IsOmittedExpression(node) {
+		return tx.visitAssignmentElement(node)
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitAssignmentPropertyNode(node *ast.Node) *ast.Node {
+	// 13.15.5.6 RS: KeyedDestructuringAssignmentEvaluation
+	//   AssignmentProperty : PropertyName `:` AssignmentElement
+	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
+	//     ...
+	//     3. If |Initializer| is present and _v_ is *undefined*, then
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
+	//           |DestructuringAssignmentTarget| are both *true*, then
+	//           i. Let _rhsValue_ be ? NamedEvaluation of |Initializer| with argument
+	//              _lref_.[[ReferencedName]].
+	f := tx.Factory()
+	pa := node.AsPropertyAssignment()
+	name := tx.Visitor().VisitNode(pa.Name())
+	if ast.IsAssignmentExpression(pa.Initializer, true /*excludeCompoundAssignment*/) {
+		assignmentElement := tx.visitAssignmentElement(pa.Initializer)
+		return f.UpdatePropertyAssignment(pa, nil, name, nil, nil, assignmentElement)
+	}
+	if ast.IsLeftHandSideExpression(pa.Initializer) {
+		assignmentElement := tx.visitDestructuringAssignmentTarget(pa.Initializer)
+		return f.UpdatePropertyAssignment(pa, nil, name, nil, nil, assignmentElement)
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitShorthandAssignmentProperty(node *ast.Node) *ast.Node {
+	// 13.15.5.3 RS: PropertyDestructuringAssignmentEvaluation
+	//   AssignmentProperty : IdentifierReference Initializer?
+	//     ...
+	//     4. If |Initializer?| is present and _v_ is *undefined*, then
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+	//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _P_.
+	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer) {
+		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer), "")
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitAssignmentRestProperty(node *ast.Node) *ast.Node {
+	sa := node.AsSpreadAssignment()
+	if ast.IsLeftHandSideExpression(sa.Expression) {
+		f := tx.Factory()
+		expression := tx.visitDestructuringAssignmentTarget(sa.Expression)
+		return f.UpdateSpreadAssignment(sa, expression)
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
+	if ast.IsSpreadAssignment(node) {
+		return tx.visitAssignmentRestProperty(node)
+	}
+	if ast.IsShorthandPropertyAssignment(node) {
+		return tx.visitShorthandAssignmentProperty(node)
+	}
+	if ast.IsPropertyAssignment(node) {
+		return tx.visitAssignmentPropertyNode(node)
+	}
+	return tx.Visitor().VisitEachChild(node)
+}
+
+func (tx *esDecoratorTransformer) visitAssignmentPattern(node *ast.Node) *ast.Node {
+	f := tx.Factory()
+	if ast.IsArrayLiteralExpression(node) {
+		ale := node.AsArrayLiteralExpression()
+		elements := tx.arrayAssignmentVisitor.VisitNodes(ale.Elements)
+		return f.UpdateArrayLiteralExpression(ale, elements)
+	}
+	ole := node.AsObjectLiteralExpression()
+	properties := tx.objectAssignmentVisitor.VisitNodes(ole.Properties)
+	return f.UpdateObjectLiteralExpression(ole, properties)
+}
+
+func (tx *esDecoratorTransformer) visitExportAssignment(node *ast.Node) *ast.Node {
+	// 16.2.3.7 RS: Evaluation
+	//   ExportDeclaration : `export` `default` AssignmentExpression `;`
+	//     1. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true*, then
+	//        a. Let _value_ be ? NamedEvaluation of |AssignmentExpression| with argument `"default"`.
+	return tx.visitNamedEvaluationSite(node, node.Expression())
+}
+
+func (tx *esDecoratorTransformer) visitParenthesizedExpression(node *ast.Node, discarded bool) *ast.Node {
+	// 8.4.5 RS: NamedEvaluation
+	//   ParenthesizedExpression : `(` Expression `)`
+	//     ...
+	//     2. Return ? NamedEvaluation of |Expression| with argument _name_.
+	f := tx.Factory()
+	pe := node.AsParenthesizedExpression()
+	var expression *ast.Node
+	if discarded {
+		expression = tx.discardedVisitor.VisitNode(pe.Expression)
+	} else {
+		expression = tx.Visitor().VisitNode(pe.Expression)
+	}
+	return f.UpdateParenthesizedExpression(pe, expression)
 }
 
 // prependExpressions prepends a list of expressions before a target expression, preserving
@@ -2197,222 +2248,91 @@ func (tx *esDecoratorTransformer) injectPendingInitializers(ci *classInfo, isSta
 	return result
 }
 
-func (tx *esDecoratorTransformer) createESDecorateClassContext(nameExpr *ast.Expression, metadata *ast.IdentifierNode) *ast.Expression {
-	f := tx.Factory()
-	props := []*ast.Node{
-		f.NewPropertyAssignment(nil, f.NewIdentifier("kind"), nil, nil, f.NewStringLiteral("class", 0)),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("name"), nil, nil, nameExpr),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("metadata"), nil, nil, metadata),
-	}
-	return f.NewObjectLiteralExpression(f.NewNodeList(props), false)
-}
-
-func (tx *esDecoratorTransformer) createESDecorateElementContext(
-	kind string,
-	nameComputed bool,
-	nameExpr *ast.Expression,
-	isStatic bool,
-	isPrivate bool,
-	hasGet bool,
-	hasSet bool,
-	metadata *ast.IdentifierNode,
-) *ast.Expression {
-	f := tx.Factory()
-
-	// Build the name value for the context's "name" property
-	var nameValue *ast.Expression
-	if !nameComputed && nameExpr != nil && (ast.IsPrivateIdentifier(nameExpr) || ast.IsIdentifier(nameExpr)) {
-		nameValue = f.NewStringLiteralFromNode(nameExpr)
-	} else {
-		nameValue = nameExpr
-	}
-
-	// Build the access object with has/get/set arrow functions
-	accessObj := tx.createESDecorateClassElementAccessObject(nameComputed, nameExpr, hasGet, hasSet)
-
-	var staticExpr *ast.Node
-	if isStatic {
-		staticExpr = f.NewTrueExpression()
-	} else {
-		staticExpr = f.NewFalseExpression()
-	}
-
-	var privateExpr *ast.Node
-	if isPrivate {
-		privateExpr = f.NewTrueExpression()
-	} else {
-		privateExpr = f.NewFalseExpression()
-	}
-
-	props := []*ast.Node{
-		f.NewPropertyAssignment(nil, f.NewIdentifier("kind"), nil, nil, f.NewStringLiteral(kind, 0)),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("name"), nil, nil, nameValue),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("static"), nil, nil, staticExpr),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("private"), nil, nil, privateExpr),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("access"), nil, nil, accessObj),
-		f.NewPropertyAssignment(nil, f.NewIdentifier("metadata"), nil, nil, metadata),
-	}
-	return f.NewObjectLiteralExpression(f.NewNodeList(props), false)
-}
-
-// Creates the "access" object for a class element decorator context.
-//
-// 15.7.3 CreateDecoratorAccessObject (kind, name)
-//  2. If _kind_ is ~field~, ~method~, ~accessor~, or ~getter~, then
-//     a. Let _getAccess_ be a new Abstract Closure with parameters (_object_) that captures _kind_ and _name_ ...
-//     b. Perform ! CreateDataPropertyOrThrow(_access_, "get", _getAccess_).
-//  3. If _kind_ is ~field~, ~accessor~, or ~setter~, then
-//     a. Let _setAccess_ be a new Abstract Closure with parameters (_object_, _value_) that captures _kind_ and _name_ ...
-//     b. Perform ! CreateDataPropertyOrThrow(_access_, "set", _setAccess_).
-func (tx *esDecoratorTransformer) createESDecorateClassElementAccessObject(
-	nameComputed bool,
-	nameExpr *ast.Expression,
-	hasGet bool,
-	hasSet bool,
-) *ast.Expression {
-	f := tx.Factory()
-
-	accessProps := []*ast.Node{}
-
-	// "has" method: obj => name in obj
-	accessProps = append(accessProps, tx.createESDecorateClassElementAccessHasMethod(nameComputed, nameExpr))
-
-	// "get" method: obj => obj.name or obj => obj[name]
-	if hasGet {
-		accessProps = append(accessProps, tx.createESDecorateClassElementAccessGetMethod(nameComputed, nameExpr))
-	}
-
-	// "set" method: (obj, value) => { obj.name = value; } or (obj, value) => { obj[name] = value; }
-	if hasSet {
-		accessProps = append(accessProps, tx.createESDecorateClassElementAccessSetMethod(nameComputed, nameExpr))
-	}
-
-	return f.NewObjectLiteralExpression(f.NewNodeList(accessProps), false)
-}
-
-func (tx *esDecoratorTransformer) createESDecorateClassElementAccessHasMethod(
-	nameComputed bool,
-	nameExpr *ast.Expression,
-) *ast.Node {
-	f := tx.Factory()
-
-	// The property name for the "in" expression
-	var propertyName *ast.Expression
-	if !nameComputed && nameExpr != nil && ast.IsIdentifier(nameExpr) {
-		propertyName = f.NewStringLiteralFromNode(nameExpr)
-	} else {
-		propertyName = nameExpr
-	}
-
-	objParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("obj"), nil, nil, nil)
-	inExpr := f.NewBinaryExpression(nil, propertyName, nil, f.NewToken(ast.KindInKeyword), f.NewIdentifier("obj"))
-
-	arrow := f.NewArrowFunction(
-		nil, nil,
-		f.NewNodeList([]*ast.Node{objParam}),
-		nil, nil,
-		f.NewToken(ast.KindEqualsGreaterThanToken),
-		inExpr,
-	)
-
-	return f.NewPropertyAssignment(nil, f.NewIdentifier("has"), nil, nil, arrow)
-}
-
-func (tx *esDecoratorTransformer) createESDecorateClassElementAccessGetMethod(
-	nameComputed bool,
-	nameExpr *ast.Expression,
-) *ast.Node {
-	f := tx.Factory()
-
-	var accessor *ast.Expression
-	if nameComputed {
-		accessor = f.NewElementAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
-	} else {
-		accessor = f.NewPropertyAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
-	}
-
-	objParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("obj"), nil, nil, nil)
-
-	arrow := f.NewArrowFunction(
-		nil, nil,
-		f.NewNodeList([]*ast.Node{objParam}),
-		nil, nil,
-		f.NewToken(ast.KindEqualsGreaterThanToken),
-		accessor,
-	)
-
-	return f.NewPropertyAssignment(nil, f.NewIdentifier("get"), nil, nil, arrow)
-}
-
-func (tx *esDecoratorTransformer) createESDecorateClassElementAccessSetMethod(
-	nameComputed bool,
-	nameExpr *ast.Expression,
-) *ast.Node {
-	f := tx.Factory()
-
-	var accessor *ast.Expression
-	if nameComputed {
-		accessor = f.NewElementAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
-	} else {
-		accessor = f.NewPropertyAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
-	}
-
-	assignment := f.NewAssignmentExpression(accessor, f.NewIdentifier("value"))
-	stmt := f.NewExpressionStatement(assignment)
-	body := f.NewBlock(f.NewNodeList([]*ast.Node{stmt}), false)
-
-	objParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("obj"), nil, nil, nil)
-	valueParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("value"), nil, nil, nil)
-
-	arrow := f.NewArrowFunction(
-		nil, nil,
-		f.NewNodeList([]*ast.Node{objParam, valueParam}),
-		nil, nil,
-		f.NewToken(ast.KindEqualsGreaterThanToken),
-		body,
-	)
-
-	return f.NewPropertyAssignment(nil, f.NewIdentifier("set"), nil, nil, arrow)
-}
-
-// filterModifier returns a modifier list containing only modifiers of the given kind, if any.
-func (tx *esDecoratorTransformer) filterModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
-	if modifiers == nil {
+// Transforms all of the decorators for a declaration into an array of expressions.
+func (tx *esDecoratorTransformer) transformAllDecoratorsOfDeclaration(decorators []*ast.Node) []*ast.Expression {
+	if len(decorators) == 0 {
 		return nil
 	}
-	var filtered []*ast.Node
-	for _, mod := range modifiers.Nodes {
-		if mod.Kind == kind {
-			filtered = append(filtered, mod)
+	result := make([]*ast.Expression, 0, len(decorators))
+	for _, d := range decorators {
+		result = append(result, tx.transformDecorator(d))
+	}
+	return result
+}
+
+// Transforms a decorator into an expression.
+func (tx *esDecoratorTransformer) transformDecorator(decorator *ast.Node) *ast.Expression {
+	expression := tx.Visitor().VisitNode(decorator.AsDecorator().Expression)
+	tx.EmitContext().SetEmitFlags(expression, printer.EFNoComments)
+
+	// preserve the 'this' binding for an access expression
+	innerExpression := ast.SkipOuterExpressions(expression, ast.OEKAll)
+	if ast.IsAccessExpression(innerExpression) {
+		target, thisArg := tx.createCallBinding(expression)
+		bindCall := tx.Factory().NewFunctionBindCall(target, thisArg, nil)
+		return tx.Factory().RestoreOuterExpressions(expression, bindCall, ast.OEKAll)
+	}
+	return expression
+}
+
+func (tx *esDecoratorTransformer) createCallBinding(expression *ast.Expression) (*ast.Expression, *ast.Expression) {
+	f := tx.Factory()
+	callee := ast.SkipOuterExpressions(expression, ast.OEKAll)
+	if ast.IsSuperProperty(callee) {
+		return callee, f.NewThisExpression()
+	}
+	if callee.Kind == ast.KindSuperKeyword {
+		return callee, f.NewThisExpression()
+	}
+	if tx.EmitContext().EmitFlags(callee)&printer.EFHelperName != 0 {
+		return callee, f.NewVoidZeroExpression()
+	}
+	if ast.IsPropertyAccessExpression(callee) {
+		pa := callee.AsPropertyAccessExpression()
+		if tx.shouldBeCapturedInTempVariable(pa.Expression) {
+			thisArg := f.NewTempVariable()
+			tx.EmitContext().AddVariableDeclaration(thisArg)
+			assign := f.NewAssignmentExpression(thisArg, pa.Expression)
+			assign.Loc = pa.Expression.Loc
+			target := f.NewPropertyAccessExpression(assign, nil, pa.Name(), ast.NodeFlagsNone)
+			target.Loc = callee.Loc
+			return target, thisArg
 		}
+		return callee, pa.Expression
 	}
-	if len(filtered) == 0 {
-		return nil
+	if ast.IsElementAccessExpression(callee) {
+		ea := callee.AsElementAccessExpression()
+		if tx.shouldBeCapturedInTempVariable(ea.Expression) {
+			thisArg := f.NewTempVariable()
+			tx.EmitContext().AddVariableDeclaration(thisArg)
+			assign := f.NewAssignmentExpression(thisArg, ea.Expression)
+			assign.Loc = ea.Expression.Loc
+			target := f.NewElementAccessExpression(assign, nil, ea.ArgumentExpression, ast.NodeFlagsNone)
+			target.Loc = callee.Loc
+			return target, thisArg
+		}
+		return callee, ea.Expression
 	}
-	if len(filtered) == len(modifiers.Nodes) {
-		return modifiers
-	}
-	return tx.Factory().NewModifierList(filtered)
+	return expression, f.NewVoidZeroExpression()
 }
 
-// filterOutModifier returns a modifier list with all modifiers except those of the given kind.
-func (tx *esDecoratorTransformer) filterOutModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
-	if modifiers == nil {
-		return nil
+func (tx *esDecoratorTransformer) shouldBeCapturedInTempVariable(node *ast.Expression) bool {
+	// This is a simplified version of the general shouldBeCapturedInTempVariable from
+	// nodeFactory with cacheIdentifiers=true, since createCallBinding in this transform
+	// always caches identifiers.
+	target := ast.SkipParentheses(node)
+	switch target.Kind {
+	case ast.KindIdentifier:
+		// cacheIdentifiers is always true for this transform's createCallBinding
+		return true
+	case ast.KindThisKeyword,
+		ast.KindNumericLiteral,
+		ast.KindBigIntLiteral,
+		ast.KindStringLiteral:
+		return false
+	default:
+		return true
 	}
-	var filtered []*ast.Node
-	for _, mod := range modifiers.Nodes {
-		if mod.Kind != kind {
-			filtered = append(filtered, mod)
-		}
-	}
-	if len(filtered) == 0 {
-		return nil
-	}
-	if len(filtered) == len(modifiers.Nodes) {
-		return modifiers
-	}
-	return tx.Factory().NewModifierList(filtered)
 }
 
 // Creates a "value", "get", or "set" method for a pseudo-PropertyDescriptor object created for
@@ -2670,6 +2590,246 @@ func (tx *esDecoratorTransformer) createSymbolMetadataReference(classSuper *ast.
 	return f.NewBinaryExpression(nil, elementAccess, nil, f.NewToken(ast.KindQuestionQuestionToken), f.NewToken(ast.KindNullKeyword))
 }
 
+// Generates let declarations for member decorator info variables, filtered by static/non-static.
+func (tx *esDecoratorTransformer) emitMemberInfoDeclarations(ci *classInfo, isStatic bool) []*ast.Statement {
+	f := tx.Factory()
+	var stmts []*ast.Statement
+	for member, mi := range ci.memberInfos.Entries() {
+		if ast.IsStatic(member) != isStatic {
+			continue
+		}
+		stmts = append(stmts, tx.createLet(mi.memberDecoratorsName, nil))
+		if mi.memberInitializersName != nil {
+			stmts = append(stmts, tx.createLet(mi.memberInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
+		}
+		if mi.memberExtraInitializersName != nil {
+			stmts = append(stmts, tx.createLet(mi.memberExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)))
+		}
+		if mi.memberDescriptorName != nil {
+			stmts = append(stmts, tx.createLet(mi.memberDescriptorName, nil))
+		}
+	}
+	return stmts
+}
+
+func (tx *esDecoratorTransformer) createESDecorateClassContext(nameExpr *ast.Expression, metadata *ast.IdentifierNode) *ast.Expression {
+	f := tx.Factory()
+	props := []*ast.Node{
+		f.NewPropertyAssignment(nil, f.NewIdentifier("kind"), nil, nil, f.NewStringLiteral("class", 0)),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("name"), nil, nil, nameExpr),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("metadata"), nil, nil, metadata),
+	}
+	return f.NewObjectLiteralExpression(f.NewNodeList(props), false)
+}
+
+func (tx *esDecoratorTransformer) createESDecorateElementContext(
+	kind string,
+	nameComputed bool,
+	nameExpr *ast.Expression,
+	isStatic bool,
+	isPrivate bool,
+	hasGet bool,
+	hasSet bool,
+	metadata *ast.IdentifierNode,
+) *ast.Expression {
+	f := tx.Factory()
+
+	// Build the name value for the context's "name" property
+	var nameValue *ast.Expression
+	if !nameComputed && nameExpr != nil && (ast.IsPrivateIdentifier(nameExpr) || ast.IsIdentifier(nameExpr)) {
+		nameValue = f.NewStringLiteralFromNode(nameExpr)
+	} else {
+		nameValue = nameExpr
+	}
+
+	// Build the access object with has/get/set arrow functions
+	accessObj := tx.createESDecorateClassElementAccessObject(nameComputed, nameExpr, hasGet, hasSet)
+
+	var staticExpr *ast.Node
+	if isStatic {
+		staticExpr = f.NewTrueExpression()
+	} else {
+		staticExpr = f.NewFalseExpression()
+	}
+
+	var privateExpr *ast.Node
+	if isPrivate {
+		privateExpr = f.NewTrueExpression()
+	} else {
+		privateExpr = f.NewFalseExpression()
+	}
+
+	props := []*ast.Node{
+		f.NewPropertyAssignment(nil, f.NewIdentifier("kind"), nil, nil, f.NewStringLiteral(kind, 0)),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("name"), nil, nil, nameValue),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("static"), nil, nil, staticExpr),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("private"), nil, nil, privateExpr),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("access"), nil, nil, accessObj),
+		f.NewPropertyAssignment(nil, f.NewIdentifier("metadata"), nil, nil, metadata),
+	}
+	return f.NewObjectLiteralExpression(f.NewNodeList(props), false)
+}
+
+// Creates the "access" object for a class element decorator context.
+//
+// 15.7.3 CreateDecoratorAccessObject (kind, name)
+//  2. If _kind_ is ~field~, ~method~, ~accessor~, or ~getter~, then
+//     a. Let _getAccess_ be a new Abstract Closure with parameters (_object_) that captures _kind_ and _name_ ...
+//     b. Perform ! CreateDataPropertyOrThrow(_access_, "get", _getAccess_).
+//  3. If _kind_ is ~field~, ~accessor~, or ~setter~, then
+//     a. Let _setAccess_ be a new Abstract Closure with parameters (_object_, _value_) that captures _kind_ and _name_ ...
+//     b. Perform ! CreateDataPropertyOrThrow(_access_, "set", _setAccess_).
+func (tx *esDecoratorTransformer) createESDecorateClassElementAccessObject(
+	nameComputed bool,
+	nameExpr *ast.Expression,
+	hasGet bool,
+	hasSet bool,
+) *ast.Expression {
+	f := tx.Factory()
+
+	accessProps := []*ast.Node{}
+
+	// "has" method: obj => name in obj
+	accessProps = append(accessProps, tx.createESDecorateClassElementAccessHasMethod(nameComputed, nameExpr))
+
+	// "get" method: obj => obj.name or obj => obj[name]
+	if hasGet {
+		accessProps = append(accessProps, tx.createESDecorateClassElementAccessGetMethod(nameComputed, nameExpr))
+	}
+
+	// "set" method: (obj, value) => { obj.name = value; } or (obj, value) => { obj[name] = value; }
+	if hasSet {
+		accessProps = append(accessProps, tx.createESDecorateClassElementAccessSetMethod(nameComputed, nameExpr))
+	}
+
+	return f.NewObjectLiteralExpression(f.NewNodeList(accessProps), false)
+}
+
+func (tx *esDecoratorTransformer) createESDecorateClassElementAccessHasMethod(
+	nameComputed bool,
+	nameExpr *ast.Expression,
+) *ast.Node {
+	f := tx.Factory()
+
+	// The property name for the "in" expression
+	var propertyName *ast.Expression
+	if !nameComputed && nameExpr != nil && ast.IsIdentifier(nameExpr) {
+		propertyName = f.NewStringLiteralFromNode(nameExpr)
+	} else {
+		propertyName = nameExpr
+	}
+
+	objParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("obj"), nil, nil, nil)
+	inExpr := f.NewBinaryExpression(nil, propertyName, nil, f.NewToken(ast.KindInKeyword), f.NewIdentifier("obj"))
+
+	arrow := f.NewArrowFunction(
+		nil, nil,
+		f.NewNodeList([]*ast.Node{objParam}),
+		nil, nil,
+		f.NewToken(ast.KindEqualsGreaterThanToken),
+		inExpr,
+	)
+
+	return f.NewPropertyAssignment(nil, f.NewIdentifier("has"), nil, nil, arrow)
+}
+
+func (tx *esDecoratorTransformer) createESDecorateClassElementAccessGetMethod(
+	nameComputed bool,
+	nameExpr *ast.Expression,
+) *ast.Node {
+	f := tx.Factory()
+
+	var accessor *ast.Expression
+	if nameComputed {
+		accessor = f.NewElementAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
+	} else {
+		accessor = f.NewPropertyAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
+	}
+
+	objParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("obj"), nil, nil, nil)
+
+	arrow := f.NewArrowFunction(
+		nil, nil,
+		f.NewNodeList([]*ast.Node{objParam}),
+		nil, nil,
+		f.NewToken(ast.KindEqualsGreaterThanToken),
+		accessor,
+	)
+
+	return f.NewPropertyAssignment(nil, f.NewIdentifier("get"), nil, nil, arrow)
+}
+
+func (tx *esDecoratorTransformer) createESDecorateClassElementAccessSetMethod(
+	nameComputed bool,
+	nameExpr *ast.Expression,
+) *ast.Node {
+	f := tx.Factory()
+
+	var accessor *ast.Expression
+	if nameComputed {
+		accessor = f.NewElementAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
+	} else {
+		accessor = f.NewPropertyAccessExpression(f.NewIdentifier("obj"), nil, nameExpr, ast.NodeFlagsNone)
+	}
+
+	assignment := f.NewAssignmentExpression(accessor, f.NewIdentifier("value"))
+	stmt := f.NewExpressionStatement(assignment)
+	body := f.NewBlock(f.NewNodeList([]*ast.Node{stmt}), false)
+
+	objParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("obj"), nil, nil, nil)
+	valueParam := f.NewParameterDeclaration(nil, nil, f.NewIdentifier("value"), nil, nil, nil)
+
+	arrow := f.NewArrowFunction(
+		nil, nil,
+		f.NewNodeList([]*ast.Node{objParam, valueParam}),
+		nil, nil,
+		f.NewToken(ast.KindEqualsGreaterThanToken),
+		body,
+	)
+
+	return f.NewPropertyAssignment(nil, f.NewIdentifier("set"), nil, nil, arrow)
+}
+
+// filterModifier returns a modifier list containing only modifiers of the given kind, if any.
+func (tx *esDecoratorTransformer) filterModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
+	if modifiers == nil {
+		return nil
+	}
+	var filtered []*ast.Node
+	for _, mod := range modifiers.Nodes {
+		if mod.Kind == kind {
+			filtered = append(filtered, mod)
+		}
+	}
+	if len(filtered) == 0 {
+		return nil
+	}
+	if len(filtered) == len(modifiers.Nodes) {
+		return modifiers
+	}
+	return tx.Factory().NewModifierList(filtered)
+}
+
+// filterOutModifier returns a modifier list with all modifiers except those of the given kind.
+func (tx *esDecoratorTransformer) filterOutModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
+	if modifiers == nil {
+		return nil
+	}
+	var filtered []*ast.Node
+	for _, mod := range modifiers.Nodes {
+		if mod.Kind != kind {
+			filtered = append(filtered, mod)
+		}
+	}
+	if len(filtered) == 0 {
+		return nil
+	}
+	if len(filtered) == len(modifiers.Nodes) {
+		return modifiers
+	}
+	return tx.Factory().NewModifierList(filtered)
+}
+
 func (tx *esDecoratorTransformer) createExportDefault(expression *ast.Expression) *ast.Statement {
 	f := tx.Factory()
 	return f.NewExportAssignment(nil, false, nil, expression)
@@ -2680,26 +2840,6 @@ func (tx *esDecoratorTransformer) createExternalModuleExport(name *ast.Identifie
 	specifier := f.NewExportSpecifier(false, nil, name)
 	namedExports := f.NewNamedExports(f.NewNodeList([]*ast.Node{specifier}))
 	return f.NewExportDeclaration(nil, false, namedExports, nil, nil)
-}
-
-func isAnonymousClassNeedingAssignedName(node *ast.Node) bool {
-	if node == nil {
-		return false
-	}
-	node = ast.SkipOuterExpressions(node, ast.OEKAll)
-	return ast.IsClassExpression(node) && node.Name() == nil && isDecoratedClassLike(node)
-}
-
-// The IIFE produced for `(@dec class {})` will result in an assigned name of the form
-// `var class_1 = class { };`, and thus the empty string cannot be ignored. However, The IIFE
-// produced for `(class { @dec x; })` will not result in an assigned name since it
-// transforms to `return class { };`, and thus the empty string *can* be ignored.
-func canIgnoreEmptyStringLiteralInAssignedName(node *ast.Node) bool {
-	if node == nil {
-		return false
-	}
-	innerExpression := ast.SkipOuterExpressions(node, ast.OEKAll)
-	return ast.IsClassExpression(innerExpression) && innerExpression.Name() == nil && !ast.ClassOrConstructorParameterIsDecorated(false, innerExpression)
 }
 
 func injectClassThisAssignmentIfMissing(ec *printer.EmitContext, f *printer.NodeFactory, node *ast.Node, classThis *ast.IdentifierNode) *ast.Node {
@@ -2754,146 +2894,6 @@ func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
 		}
 	}
 	return nil
-}
-
-func (tx *esDecoratorTransformer) visitDestructuringAssignmentTarget(node *ast.Node) *ast.Node {
-	if ast.IsObjectLiteralExpression(node) || ast.IsArrayLiteralExpression(node) {
-		return tx.visitAssignmentPattern(node)
-	}
-
-	if ast.IsSuperProperty(node) && tx.classThis != nil && tx.classSuper != nil {
-		f := tx.Factory()
-		ec := tx.EmitContext()
-		var propertyName *ast.Expression
-		if ast.IsElementAccessExpression(node) {
-			propertyName = tx.Visitor().VisitNode(node.AsElementAccessExpression().ArgumentExpression)
-		} else if ast.IsPropertyAccessExpression(node) && ast.IsIdentifier(node.AsPropertyAccessExpression().Name()) {
-			propertyName = f.NewStringLiteralFromNode(node.AsPropertyAccessExpression().Name())
-		}
-		if propertyName != nil {
-			expression := createReflectedAssignmentTargetWrapper(f, tx.classSuper, propertyName, tx.classThis)
-			ec.SetOriginal(expression, node)
-			expression.Loc = node.Loc
-			return expression
-		}
-	}
-
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *esDecoratorTransformer) visitAssignmentPattern(node *ast.Node) *ast.Node {
-	f := tx.Factory()
-	if ast.IsArrayLiteralExpression(node) {
-		ale := node.AsArrayLiteralExpression()
-		elements := tx.arrayAssignmentVisitor.VisitNodes(ale.Elements)
-		return f.UpdateArrayLiteralExpression(ale, elements)
-	}
-	ole := node.AsObjectLiteralExpression()
-	properties := tx.objectAssignmentVisitor.VisitNodes(ole.Properties)
-	return f.UpdateObjectLiteralExpression(ole, properties)
-}
-
-func (tx *esDecoratorTransformer) visitArrayAssignmentElement(node *ast.Node) *ast.Node {
-	if ast.IsSpreadElement(node) {
-		return tx.visitAssignmentRestElement(node)
-	}
-	if !ast.IsOmittedExpression(node) {
-		return tx.visitAssignmentElement(node)
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *esDecoratorTransformer) visitAssignmentElement(node *ast.Node) *ast.Node {
-	// 13.15.5.5 RS: IteratorDestructuringAssignmentEvaluation
-	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
-	//     ...
-	//     4. If |Initializer| is present and _value_ is *undefined*, then
-	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
-	//           |DestructuringAssignmentTarget| are both *true*, then
-	//           i. Let _v_ be ? NamedEvaluation of |Initializer| with argument
-	//              _lref_.[[ReferencedName]].
-	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
-		f := tx.Factory()
-		bin := node.AsBinaryExpression()
-		if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(bin.Right) {
-			node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
-			bin = node.AsBinaryExpression()
-		}
-		assignmentTarget := tx.visitDestructuringAssignmentTarget(bin.Left)
-		initializer := tx.Visitor().VisitNode(bin.Right)
-		return f.UpdateBinaryExpression(bin, nil, assignmentTarget, nil, bin.OperatorToken, initializer)
-	}
-	return tx.visitDestructuringAssignmentTarget(node)
-}
-
-func (tx *esDecoratorTransformer) visitAssignmentRestElement(node *ast.Node) *ast.Node {
-	se := node.AsSpreadElement()
-	if ast.IsLeftHandSideExpression(se.Expression) {
-		f := tx.Factory()
-		expression := tx.visitDestructuringAssignmentTarget(se.Expression)
-		return f.UpdateSpreadElement(se, expression)
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *esDecoratorTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
-	if ast.IsSpreadAssignment(node) {
-		return tx.visitAssignmentRestProperty(node)
-	}
-	if ast.IsShorthandPropertyAssignment(node) {
-		return tx.visitShorthandAssignmentProperty(node)
-	}
-	if ast.IsPropertyAssignment(node) {
-		return tx.visitAssignmentPropertyNode(node)
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *esDecoratorTransformer) visitAssignmentPropertyNode(node *ast.Node) *ast.Node {
-	// 13.15.5.6 RS: KeyedDestructuringAssignmentEvaluation
-	//   AssignmentProperty : PropertyName `:` AssignmentElement
-	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
-	//     ...
-	//     3. If |Initializer| is present and _v_ is *undefined*, then
-	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
-	//           |DestructuringAssignmentTarget| are both *true*, then
-	//           i. Let _rhsValue_ be ? NamedEvaluation of |Initializer| with argument
-	//              _lref_.[[ReferencedName]].
-	f := tx.Factory()
-	pa := node.AsPropertyAssignment()
-	name := tx.Visitor().VisitNode(pa.Name())
-	if ast.IsAssignmentExpression(pa.Initializer, true /*excludeCompoundAssignment*/) {
-		assignmentElement := tx.visitAssignmentElement(pa.Initializer)
-		return f.UpdatePropertyAssignment(pa, nil, name, nil, nil, assignmentElement)
-	}
-	if ast.IsLeftHandSideExpression(pa.Initializer) {
-		assignmentElement := tx.visitDestructuringAssignmentTarget(pa.Initializer)
-		return f.UpdatePropertyAssignment(pa, nil, name, nil, nil, assignmentElement)
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *esDecoratorTransformer) visitShorthandAssignmentProperty(node *ast.Node) *ast.Node {
-	// 13.15.5.3 RS: PropertyDestructuringAssignmentEvaluation
-	//   AssignmentProperty : IdentifierReference Initializer?
-	//     ...
-	//     4. If |Initializer?| is present and _v_ is *undefined*, then
-	//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
-	//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _P_.
-	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer) {
-		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer), "")
-	}
-	return tx.Visitor().VisitEachChild(node)
-}
-
-func (tx *esDecoratorTransformer) visitAssignmentRestProperty(node *ast.Node) *ast.Node {
-	sa := node.AsSpreadAssignment()
-	if ast.IsLeftHandSideExpression(sa.Expression) {
-		f := tx.Factory()
-		expression := tx.visitDestructuringAssignmentTarget(sa.Expression)
-		return f.UpdateSpreadAssignment(sa, expression)
-	}
-	return tx.Visitor().VisitEachChild(node)
 }
 
 // Creates ({ set value(_p) { Reflect.set(target, key, _p, receiver) } }).value
