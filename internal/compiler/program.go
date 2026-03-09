@@ -39,6 +39,7 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
+	ResolverOptions             module.ResolverOptions
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
