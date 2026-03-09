@@ -25,7 +25,8 @@ func GetIndentation(position int, sourceFile *ast.SourceFile, options *lsutil.Fo
 		return options.BaseIndentSize // past EOF
 	}
 
-	// no indentation when the indent style is set to none
+	// no indentation when the indent style is set to none,
+	// so we can return fast
 	if options.IndentStyle == lsutil.IndentStyleNone {
 		return 0
 	}
@@ -48,8 +49,30 @@ func GetIndentation(position int, sourceFile *ast.SourceFile, options *lsutil.Fo
 
 	lineAtPosition := scanner.GetECMALineOfPosition(sourceFile, position)
 
+	// indentation is first non-whitespace character in a previous line
+	// for block indentation, we should look for a line which contains something that's not
+	// whitespace.
 	currentToken := astnav.GetTokenAtPosition(sourceFile, position)
 	// For object literals, we want indentation to work just like with blocks.
+	// If the `{` starts in any position (even in the middle of a line), then
+	// the following indentation should treat `{` as the start of that line (including leading whitespace).
+	// ```
+	//     const a: { x: undefined, y: undefined } = {}       // leading 4 whitespaces and { starts in the middle of line
+	// ->
+	//     const a: { x: undefined, y: undefined } = {
+	//         x: undefined,
+	//         y: undefined,
+	//     }
+	// ---------------------
+	//     const a: {x : undefined, y: undefined } =
+	//      {}
+	// ->
+	//     const a: { x: undefined, y: undefined } =
+	//      {                                                  // leading 5 whitespaces and { starts at 6 column
+	//          x: undefined,
+	//          y: undefined,
+	//      }
+	// ```
 	isObjectLiteral := currentToken.Kind == ast.KindOpenBraceToken && currentToken.Parent != nil && currentToken.Parent.Kind == ast.KindObjectLiteralExpression
 	if options.IndentStyle == lsutil.IndentStyleBlock || isObjectLiteral {
 		return getBlockIndent(sourceFile, position, options)
@@ -142,16 +165,6 @@ func nextTokenIsCurlyBraceOnSameLineAsCursor(precedingToken *ast.Node, current *
 	return nextTokenKindUnknown
 }
 
-// positionBelongsToNode returns true if the position belongs to the node.
-// A position belongs to a node if it's within its range, or if the node is incomplete.
-func positionBelongsToNode(candidate *ast.Node, position int, sourceFile *ast.SourceFile) bool {
-	debug.Assert(candidate.Pos() <= position)
-	// !!! isCompletedNode is a large function in TS services/utilities.ts that checks
-	// whether a node's syntax is complete. For textChanges use cases on complete source files,
-	// we approximate by always considering nodes complete.
-	return position < candidate.End()
-}
-
 func getSmartIndent(sourceFile *ast.SourceFile, position int, precedingToken *ast.Node, lineAtPosition int, assumeNewLineBeforeCloseBrace bool, options *lsutil.FormatCodeSettings) int {
 	// try to find node that can contribute to indentation and includes 'position' starting from 'precedingToken'
 	// if such node is found - compute initial indentation for 'position' inside this node
@@ -159,7 +172,7 @@ func getSmartIndent(sourceFile *ast.SourceFile, position int, precedingToken *as
 	current := precedingToken
 
 	for current != nil {
-		if positionBelongsToNode(current, position, sourceFile) && ShouldIndentChildNode(options, current, previous, sourceFile, true) {
+		if lsutil.PositionBelongsToNode(current, position, sourceFile) && ShouldIndentChildNode(options, current, previous, sourceFile, true) {
 			currentStartLine, currentStartChar := getStartLineAndCharacterForNode(current, sourceFile)
 			ntk := nextTokenIsCurlyBraceOnSameLineAsCursor(precedingToken, current, lineAtPosition, sourceFile)
 			var indentationDelta int
