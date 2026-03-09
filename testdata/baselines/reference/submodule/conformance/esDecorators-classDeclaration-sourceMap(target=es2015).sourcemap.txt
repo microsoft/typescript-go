@@ -179,7 +179,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >              ^^^^^
 6 >                   ^^^^
 7 >                       ^
-8 >                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+8 >                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
   >
   >    @dec
@@ -199,11 +199,12 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 6 >Emitted(88, 24) Source(16, 28) + SourceIndex(0)
 7 >Emitted(88, 25) Source(16, 29) + SourceIndex(0)
 ---
->>>        #z_1_accessor_storage = (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1));
+>>>        get z() { return __classPrivateFieldGet(this, _C_z_1_accessor_storage, "f"); }
 1->^^^^^^^^
-2 >        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                         ^
-4 >                                                                                                                          ^^^
+2 >        ^^^^
+3 >            ^
+4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5 >                                                                                      ^^^^^^->
 1->
   >
   >    @dec
@@ -213,86 +214,27 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >    @dec
   >    @dec
   >    
-2 >        accessor z = 
-3 >                                                                                                                         1
-4 >                                                                                                                          ;
-1->Emitted(89, 9) Source(24, 5) + SourceIndex(0)
-2 >Emitted(89, 122) Source(24, 18) + SourceIndex(0)
-3 >Emitted(89, 123) Source(24, 19) + SourceIndex(0)
-4 >Emitted(89, 126) Source(24, 20) + SourceIndex(0)
----
->>>        get z() { return __classPrivateFieldGet(this, _C_z_1_accessor_storage, "f"); }
-1 >^^^^^^^^
-2 >        ^^^^
-3 >            ^
-4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                      ^^^^^^->
-1 >
 2 >        accessor 
 3 >            z
 4 >              = 1;
-1 >Emitted(90, 9) Source(24, 5) + SourceIndex(0)
-2 >Emitted(90, 13) Source(24, 14) + SourceIndex(0)
-3 >Emitted(90, 14) Source(24, 15) + SourceIndex(0)
-4 >Emitted(90, 87) Source(24, 20) + SourceIndex(0)
+1->Emitted(89, 9) Source(24, 5) + SourceIndex(0)
+2 >Emitted(89, 13) Source(24, 14) + SourceIndex(0)
+3 >Emitted(89, 14) Source(24, 15) + SourceIndex(0)
+4 >Emitted(89, 87) Source(24, 20) + SourceIndex(0)
 ---
 >>>        set z(value) { __classPrivateFieldSet(this, _C_z_1_accessor_storage, value, "f"); }
 1->^^^^^^^^
 2 >        ^^^^
 3 >            ^
 4 >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1->
 2 >        accessor 
 3 >            z
 4 >              = 1;
-1->Emitted(91, 9) Source(24, 5) + SourceIndex(0)
-2 >Emitted(91, 13) Source(24, 14) + SourceIndex(0)
-3 >Emitted(91, 14) Source(24, 15) + SourceIndex(0)
-4 >Emitted(91, 92) Source(24, 20) + SourceIndex(0)
----
->>>        static #z_accessor_storage = (__runInitializers(_classThis, _static_private_y_extraInitializers), __runInitializers(_classThis, _static_private_z_initializers, 1));
-1->^^^^^^^^
-2 >        ^^^^^^
-3 >              ^
-4 >               ^^^^^^^^^^^^^^^^^^^
-5 >                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-6 >                                                                                                                                                                        ^
-7 >                                                                                                                                                                         ^^^
-1->
-  >
-  >    @dec
-  >    @dec
-  >    static #method() {}
-  >
-  >    @dec
-  >    @dec
-  >    static get #x() { return 1; }
-  >
-  >    @dec
-  >    @dec
-  >    static set #x(value: number) { }
-  >
-  >    @dec
-  >    @dec
-  >    static #y = 1;
-  >
-  >    @dec
-  >    @dec
-  >    
-2 >        static
-3 >               accessor 
-4 >               #z
-5 >                                   = 
-6 >                                                                                                                                                                        1
-7 >                                                                                                                                                                         ;
-1->Emitted(92, 9) Source(44, 5) + SourceIndex(0)
-2 >Emitted(92, 15) Source(44, 11) + SourceIndex(0)
-3 >Emitted(92, 16) Source(44, 21) + SourceIndex(0)
-4 >Emitted(92, 35) Source(44, 23) + SourceIndex(0)
-5 >Emitted(92, 169) Source(44, 26) + SourceIndex(0)
-6 >Emitted(92, 170) Source(44, 27) + SourceIndex(0)
-7 >Emitted(92, 173) Source(44, 28) + SourceIndex(0)
+1->Emitted(90, 9) Source(24, 5) + SourceIndex(0)
+2 >Emitted(90, 13) Source(24, 14) + SourceIndex(0)
+3 >Emitted(90, 14) Source(24, 15) + SourceIndex(0)
+4 >Emitted(90, 92) Source(24, 20) + SourceIndex(0)
 ---
 >>>        constructor() {
 >>>            this.y = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _y_initializers, 1));
@@ -326,13 +268,13 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >                                                                             y = 
 6 >                                                                                                                    1
 7 >                                                                                                                     ;
-1 >Emitted(94, 13) Source(20, 5) + SourceIndex(0)
-2 >Emitted(94, 19) Source(20, 6) + SourceIndex(0)
-3 >Emitted(94, 23) Source(5, 7) + SourceIndex(0)
-4 >Emitted(94, 74) Source(5, 8) + SourceIndex(0)
-5 >Emitted(94, 117) Source(20, 9) + SourceIndex(0)
-6 >Emitted(94, 118) Source(20, 10) + SourceIndex(0)
-7 >Emitted(94, 121) Source(20, 11) + SourceIndex(0)
+1 >Emitted(92, 13) Source(20, 5) + SourceIndex(0)
+2 >Emitted(92, 19) Source(20, 6) + SourceIndex(0)
+3 >Emitted(92, 23) Source(5, 7) + SourceIndex(0)
+4 >Emitted(92, 74) Source(5, 8) + SourceIndex(0)
+5 >Emitted(92, 117) Source(20, 9) + SourceIndex(0)
+6 >Emitted(92, 118) Source(20, 10) + SourceIndex(0)
+7 >Emitted(92, 121) Source(20, 11) + SourceIndex(0)
 ---
 >>>            _C_z_1_accessor_storage.set(this, (__runInitializers(this, _y_extraInitializers), __runInitializers(this, _z_initializers, 1)));
 1->^^^^^^^^^^^^
@@ -347,10 +289,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 2 >            z = 
 3 >                                                                                                                                       1
 4 >                                                                                                                                        ;
-1->Emitted(95, 13) Source(24, 14) + SourceIndex(0)
-2 >Emitted(95, 136) Source(24, 18) + SourceIndex(0)
-3 >Emitted(95, 137) Source(24, 19) + SourceIndex(0)
-4 >Emitted(95, 141) Source(24, 20) + SourceIndex(0)
+1->Emitted(93, 13) Source(24, 14) + SourceIndex(0)
+2 >Emitted(93, 136) Source(24, 18) + SourceIndex(0)
+3 >Emitted(93, 137) Source(24, 19) + SourceIndex(0)
+4 >Emitted(93, 141) Source(24, 20) + SourceIndex(0)
 ---
 >>>            __runInitializers(this, _z_extraInitializers);
 >>>        }
@@ -375,10 +317,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                 
   >                                     @
 4 >                                   dec
-1 >Emitted(108, 31) Source(6, 6) + SourceIndex(0)
-2 >Emitted(108, 34) Source(6, 9) + SourceIndex(0)
-3 >Emitted(108, 36) Source(7, 6) + SourceIndex(0)
-4 >Emitted(108, 39) Source(7, 9) + SourceIndex(0)
+1 >Emitted(106, 31) Source(6, 6) + SourceIndex(0)
+2 >Emitted(106, 34) Source(6, 9) + SourceIndex(0)
+3 >Emitted(106, 36) Source(7, 6) + SourceIndex(0)
+4 >Emitted(106, 39) Source(7, 9) + SourceIndex(0)
 ---
 >>>        _get_x_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -394,10 +336,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                
   >                                    @
 4 >                                  dec
-1->Emitted(109, 30) Source(10, 6) + SourceIndex(0)
-2 >Emitted(109, 33) Source(10, 9) + SourceIndex(0)
-3 >Emitted(109, 35) Source(11, 6) + SourceIndex(0)
-4 >Emitted(109, 38) Source(11, 9) + SourceIndex(0)
+1->Emitted(107, 30) Source(10, 6) + SourceIndex(0)
+2 >Emitted(107, 33) Source(10, 9) + SourceIndex(0)
+3 >Emitted(107, 35) Source(11, 6) + SourceIndex(0)
+4 >Emitted(107, 38) Source(11, 9) + SourceIndex(0)
 ---
 >>>        _set_x_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -412,10 +354,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                
   >                                    @
 4 >                                  dec
-1->Emitted(110, 30) Source(14, 6) + SourceIndex(0)
-2 >Emitted(110, 33) Source(14, 9) + SourceIndex(0)
-3 >Emitted(110, 35) Source(15, 6) + SourceIndex(0)
-4 >Emitted(110, 38) Source(15, 9) + SourceIndex(0)
+1->Emitted(108, 30) Source(14, 6) + SourceIndex(0)
+2 >Emitted(108, 33) Source(14, 9) + SourceIndex(0)
+3 >Emitted(108, 35) Source(15, 6) + SourceIndex(0)
+4 >Emitted(108, 38) Source(15, 9) + SourceIndex(0)
 ---
 >>>        _y_decorators = [dec, dec];
 1 >^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -431,10 +373,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                            
   >                                @
 4 >                              dec
-1 >Emitted(111, 26) Source(18, 6) + SourceIndex(0)
-2 >Emitted(111, 29) Source(18, 9) + SourceIndex(0)
-3 >Emitted(111, 31) Source(19, 6) + SourceIndex(0)
-4 >Emitted(111, 34) Source(19, 9) + SourceIndex(0)
+1 >Emitted(109, 26) Source(18, 6) + SourceIndex(0)
+2 >Emitted(109, 29) Source(18, 9) + SourceIndex(0)
+3 >Emitted(109, 31) Source(19, 6) + SourceIndex(0)
+4 >Emitted(109, 34) Source(19, 9) + SourceIndex(0)
 ---
 >>>        _z_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -450,10 +392,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                            
   >                                @
 4 >                              dec
-1->Emitted(112, 26) Source(22, 6) + SourceIndex(0)
-2 >Emitted(112, 29) Source(22, 9) + SourceIndex(0)
-3 >Emitted(112, 31) Source(23, 6) + SourceIndex(0)
-4 >Emitted(112, 34) Source(23, 9) + SourceIndex(0)
+1->Emitted(110, 26) Source(22, 6) + SourceIndex(0)
+2 >Emitted(110, 29) Source(22, 9) + SourceIndex(0)
+3 >Emitted(110, 31) Source(23, 6) + SourceIndex(0)
+4 >Emitted(110, 34) Source(23, 9) + SourceIndex(0)
 ---
 >>>        _static_private_method_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -469,10 +411,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                                
   >                                                    @
 4 >                                                  dec
-1->Emitted(113, 46) Source(26, 6) + SourceIndex(0)
-2 >Emitted(113, 49) Source(26, 9) + SourceIndex(0)
-3 >Emitted(113, 51) Source(27, 6) + SourceIndex(0)
-4 >Emitted(113, 54) Source(27, 9) + SourceIndex(0)
+1->Emitted(111, 46) Source(26, 6) + SourceIndex(0)
+2 >Emitted(111, 49) Source(26, 9) + SourceIndex(0)
+3 >Emitted(111, 51) Source(27, 6) + SourceIndex(0)
+4 >Emitted(111, 54) Source(27, 9) + SourceIndex(0)
 ---
 >>>        _static_private_get_x_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -488,10 +430,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                               
   >                                                   @
 4 >                                                 dec
-1->Emitted(114, 45) Source(30, 6) + SourceIndex(0)
-2 >Emitted(114, 48) Source(30, 9) + SourceIndex(0)
-3 >Emitted(114, 50) Source(31, 6) + SourceIndex(0)
-4 >Emitted(114, 53) Source(31, 9) + SourceIndex(0)
+1->Emitted(112, 45) Source(30, 6) + SourceIndex(0)
+2 >Emitted(112, 48) Source(30, 9) + SourceIndex(0)
+3 >Emitted(112, 50) Source(31, 6) + SourceIndex(0)
+4 >Emitted(112, 53) Source(31, 9) + SourceIndex(0)
 ---
 >>>        _static_private_set_x_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -506,10 +448,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                               
   >                                                   @
 4 >                                                 dec
-1->Emitted(115, 45) Source(34, 6) + SourceIndex(0)
-2 >Emitted(115, 48) Source(34, 9) + SourceIndex(0)
-3 >Emitted(115, 50) Source(35, 6) + SourceIndex(0)
-4 >Emitted(115, 53) Source(35, 9) + SourceIndex(0)
+1->Emitted(113, 45) Source(34, 6) + SourceIndex(0)
+2 >Emitted(113, 48) Source(34, 9) + SourceIndex(0)
+3 >Emitted(113, 50) Source(35, 6) + SourceIndex(0)
+4 >Emitted(113, 53) Source(35, 9) + SourceIndex(0)
 ---
 >>>        _static_private_y_decorators = [dec, dec];
 1 >^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -525,10 +467,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                           
   >                                               @
 4 >                                             dec
-1 >Emitted(116, 41) Source(38, 6) + SourceIndex(0)
-2 >Emitted(116, 44) Source(38, 9) + SourceIndex(0)
-3 >Emitted(116, 46) Source(39, 6) + SourceIndex(0)
-4 >Emitted(116, 49) Source(39, 9) + SourceIndex(0)
+1 >Emitted(114, 41) Source(38, 6) + SourceIndex(0)
+2 >Emitted(114, 44) Source(38, 9) + SourceIndex(0)
+3 >Emitted(114, 46) Source(39, 6) + SourceIndex(0)
+4 >Emitted(114, 49) Source(39, 9) + SourceIndex(0)
 ---
 >>>        _static_private_z_decorators = [dec, dec];
 1->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -544,10 +486,10 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >                                           
   >                                               @
 4 >                                             dec
-1->Emitted(117, 41) Source(42, 6) + SourceIndex(0)
-2 >Emitted(117, 44) Source(42, 9) + SourceIndex(0)
-3 >Emitted(117, 46) Source(43, 6) + SourceIndex(0)
-4 >Emitted(117, 49) Source(43, 9) + SourceIndex(0)
+1->Emitted(115, 41) Source(42, 6) + SourceIndex(0)
+2 >Emitted(115, 44) Source(42, 9) + SourceIndex(0)
+3 >Emitted(115, 46) Source(43, 6) + SourceIndex(0)
+4 >Emitted(115, 49) Source(43, 9) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, _static_private_method_descriptor = { value: __setFunctionName(function () { }, "#method") }, _static_private_method_decorators, { kind: "method", name: "#method", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "a", _C_method_get) }, metadata: _metadata }, null, _staticExtraInitializers);
 1->^^^^^^^^
@@ -564,13 +506,13 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >                                                                                                              }
 6 >                                                                                                               
 7 >                                                                                                                           
-1->Emitted(118, 9) Source(28, 5) + SourceIndex(0)
-2 >Emitted(118, 72) Source(28, 5) + SourceIndex(0)
-3 >Emitted(118, 97) Source(28, 5) + SourceIndex(0)
-4 >Emitted(118, 111) Source(28, 23) + SourceIndex(0)
-5 >Emitted(118, 112) Source(28, 24) + SourceIndex(0)
-6 >Emitted(118, 124) Source(28, 24) + SourceIndex(0)
-7 >Emitted(118, 419) Source(28, 24) + SourceIndex(0)
+1->Emitted(116, 9) Source(28, 5) + SourceIndex(0)
+2 >Emitted(116, 72) Source(28, 5) + SourceIndex(0)
+3 >Emitted(116, 97) Source(28, 5) + SourceIndex(0)
+4 >Emitted(116, 111) Source(28, 23) + SourceIndex(0)
+5 >Emitted(116, 112) Source(28, 24) + SourceIndex(0)
+6 >Emitted(116, 124) Source(28, 24) + SourceIndex(0)
+7 >Emitted(116, 419) Source(28, 24) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, _static_private_get_x_descriptor = { get: __setFunctionName(function () { return 1; }, "#x", "get") }, _static_private_get_x_decorators, { kind: "getter", name: "#x", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "a", _C_x_get) }, metadata: _metadata }, null, _staticExtraInitializers);
 1 >^^^^^^^^
@@ -600,17 +542,17 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 9 >                                                                                                                     }
 10>                                                                                                                      
 11>                                                                                                                                    
-1 >Emitted(119, 9) Source(32, 5) + SourceIndex(0)
-2 >Emitted(119, 71) Source(32, 5) + SourceIndex(0)
-3 >Emitted(119, 94) Source(32, 5) + SourceIndex(0)
-4 >Emitted(119, 108) Source(32, 23) + SourceIndex(0)
-5 >Emitted(119, 115) Source(32, 30) + SourceIndex(0)
-6 >Emitted(119, 116) Source(32, 31) + SourceIndex(0)
-7 >Emitted(119, 117) Source(32, 32) + SourceIndex(0)
-8 >Emitted(119, 118) Source(32, 33) + SourceIndex(0)
-9 >Emitted(119, 119) Source(32, 34) + SourceIndex(0)
-10>Emitted(119, 133) Source(32, 34) + SourceIndex(0)
-11>Emitted(119, 417) Source(32, 34) + SourceIndex(0)
+1 >Emitted(117, 9) Source(32, 5) + SourceIndex(0)
+2 >Emitted(117, 71) Source(32, 5) + SourceIndex(0)
+3 >Emitted(117, 94) Source(32, 5) + SourceIndex(0)
+4 >Emitted(117, 108) Source(32, 23) + SourceIndex(0)
+5 >Emitted(117, 115) Source(32, 30) + SourceIndex(0)
+6 >Emitted(117, 116) Source(32, 31) + SourceIndex(0)
+7 >Emitted(117, 117) Source(32, 32) + SourceIndex(0)
+8 >Emitted(117, 118) Source(32, 33) + SourceIndex(0)
+9 >Emitted(117, 119) Source(32, 34) + SourceIndex(0)
+10>Emitted(117, 133) Source(32, 34) + SourceIndex(0)
+11>Emitted(117, 417) Source(32, 34) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, _static_private_set_x_descriptor = { set: __setFunctionName(function (value) { }, "#x", "set") }, _static_private_set_x_decorators, { kind: "setter", name: "#x", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), set: (obj, value) => { __classPrivateFieldSet(obj, _classThis, value, "a", _C_x_set); } }, metadata: _metadata }, null, _staticExtraInitializers);
 1->^^^^^^^^
@@ -622,7 +564,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 7 >                                                                                                                ^
 8 >                                                                                                                 ^^^^^^^^^^^^^^
 9 >                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-10>                                                                                                                                                                                                                                                                                                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+10>                                                                                                                                                                                                                                                                                                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1->
   >
   >    @dec
@@ -636,27 +578,27 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 7 >                                                                                                                }
 8 >                                                                                                                 
 9 >                                                                                                                               
-1->Emitted(120, 9) Source(36, 5) + SourceIndex(0)
-2 >Emitted(120, 71) Source(36, 5) + SourceIndex(0)
-3 >Emitted(120, 94) Source(36, 5) + SourceIndex(0)
-4 >Emitted(120, 104) Source(36, 19) + SourceIndex(0)
-5 >Emitted(120, 109) Source(36, 32) + SourceIndex(0)
-6 >Emitted(120, 113) Source(36, 36) + SourceIndex(0)
-7 >Emitted(120, 114) Source(36, 37) + SourceIndex(0)
-8 >Emitted(120, 128) Source(36, 37) + SourceIndex(0)
-9 >Emitted(120, 433) Source(36, 37) + SourceIndex(0)
+1->Emitted(118, 9) Source(36, 5) + SourceIndex(0)
+2 >Emitted(118, 71) Source(36, 5) + SourceIndex(0)
+3 >Emitted(118, 94) Source(36, 5) + SourceIndex(0)
+4 >Emitted(118, 104) Source(36, 19) + SourceIndex(0)
+5 >Emitted(118, 109) Source(36, 32) + SourceIndex(0)
+6 >Emitted(118, 113) Source(36, 36) + SourceIndex(0)
+7 >Emitted(118, 114) Source(36, 37) + SourceIndex(0)
+8 >Emitted(118, 128) Source(36, 37) + SourceIndex(0)
+9 >Emitted(118, 433) Source(36, 37) + SourceIndex(0)
 ---
->>>        __esDecorate(_classThis, _static_private_z_descriptor = { get: __setFunctionName(function () { return __classPrivateFieldGet(this, _C_z_1_accessor_storage, "f"); }, "#z", "get"), set: __setFunctionName(function (value) { __classPrivateFieldSet(this, _C_z_1_accessor_storage, value, "f"); }, "#z", "set") }, _static_private_z_decorators, { kind: "accessor", name: "#z", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "a", _C_z_get), set: (obj, value) => { __classPrivateFieldSet(obj, _classThis, value, "a", _C_z_set); } }, metadata: _metadata }, _static_private_z_initializers, _static_private_z_extraInitializers);
+>>>        __esDecorate(_classThis, _static_private_z_descriptor = { get: __setFunctionName(function () { return __classPrivateFieldGet(_classThis, _classThis, "f", _C_z_accessor_storage); }, "#z", "get"), set: __setFunctionName(function (value) { __classPrivateFieldSet(_classThis, _classThis, value, "f", _C_z_accessor_storage); }, "#z", "set") }, _static_private_z_decorators, { kind: "accessor", name: "#z", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "a", _C_z_get), set: (obj, value) => { __classPrivateFieldSet(obj, _classThis, value, "a", _C_z_set); } }, metadata: _metadata }, _static_private_z_initializers, _static_private_z_extraInitializers);
 1->^^^^^^^^
 2 >        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3 >                                                                  ^^^^^^^^^^^^^^^^^^^^^^^
-4 >                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-5 >                                                                                                                                                                           ^^^^^^^^^^^^^^
-6 >                                                                                                                                                                                         ^^
-7 >                                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^
-8 >                                                                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-9 >                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^^
-10>                                                                                                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4 >                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5 >                                                                                                                                                                                           ^^^^^^^^^^^^^^
+6 >                                                                                                                                                                                                         ^^
+7 >                                                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^
+8 >                                                                                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9 >                                                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^^
+10>                                                                                                                                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1->
   >
   >    @dec
@@ -669,30 +611,30 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 2 >        
 3 >                                                                  
 4 >                                                                                         static accessor #z = 1;
-5 >                                                                                                                                                                           
-6 >                                                                                                                                                                                         
-7 >                                                                                                                                                                                           
-8 >                                                                                                                                                                                                                  static accessor #z = 1;
-9 >                                                                                                                                                                                                                                                                                                         
-10>                                                                                                                                                                                                                                                                                                                       
-1->Emitted(121, 9) Source(44, 5) + SourceIndex(0)
-2 >Emitted(121, 67) Source(44, 5) + SourceIndex(0)
-3 >Emitted(121, 90) Source(44, 5) + SourceIndex(0)
-4 >Emitted(121, 172) Source(44, 28) + SourceIndex(0)
-5 >Emitted(121, 186) Source(44, 28) + SourceIndex(0)
-6 >Emitted(121, 188) Source(44, 5) + SourceIndex(0)
-7 >Emitted(121, 211) Source(44, 5) + SourceIndex(0)
-8 >Emitted(121, 298) Source(44, 28) + SourceIndex(0)
-9 >Emitted(121, 312) Source(44, 28) + SourceIndex(0)
-10>Emitted(121, 720) Source(44, 28) + SourceIndex(0)
+5 >                                                                                                                                                                                           
+6 >                                                                                                                                                                                                         
+7 >                                                                                                                                                                                                           
+8 >                                                                                                                                                                                                                                  static accessor #z = 1;
+9 >                                                                                                                                                                                                                                                                                                                                         
+10>                                                                                                                                                                                                                                                                                                                                                       
+1->Emitted(119, 9) Source(44, 5) + SourceIndex(0)
+2 >Emitted(119, 67) Source(44, 5) + SourceIndex(0)
+3 >Emitted(119, 90) Source(44, 5) + SourceIndex(0)
+4 >Emitted(119, 188) Source(44, 28) + SourceIndex(0)
+5 >Emitted(119, 202) Source(44, 28) + SourceIndex(0)
+6 >Emitted(119, 204) Source(44, 5) + SourceIndex(0)
+7 >Emitted(119, 227) Source(44, 5) + SourceIndex(0)
+8 >Emitted(119, 330) Source(44, 28) + SourceIndex(0)
+9 >Emitted(119, 344) Source(44, 28) + SourceIndex(0)
+10>Emitted(119, 752) Source(44, 28) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, null, _method_decorators, { kind: "method", name: "method", static: false, private: false, access: { has: obj => "method" in obj, get: obj => obj.method }, metadata: _metadata }, null, _instanceExtraInitializers);
 1 >^^^^^^^^
 2 >        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1 >
 2 >        method() {}
-1 >Emitted(122, 9) Source(8, 5) + SourceIndex(0)
-2 >Emitted(122, 247) Source(8, 16) + SourceIndex(0)
+1 >Emitted(120, 9) Source(8, 5) + SourceIndex(0)
+2 >Emitted(120, 247) Source(8, 16) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, null, _get_x_decorators, { kind: "getter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, get: obj => obj.x }, metadata: _metadata }, null, _instanceExtraInitializers);
 1 >^^^^^^^^
@@ -704,8 +646,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >    @dec
   >    
 2 >        get x() { return 1; }
-1 >Emitted(123, 9) Source(12, 5) + SourceIndex(0)
-2 >Emitted(123, 231) Source(12, 26) + SourceIndex(0)
+1 >Emitted(121, 9) Source(12, 5) + SourceIndex(0)
+2 >Emitted(121, 231) Source(12, 26) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, null, _set_x_decorators, { kind: "setter", name: "x", static: false, private: false, access: { has: obj => "x" in obj, set: (obj, value) => { obj.x = value; } }, metadata: _metadata }, null, _instanceExtraInitializers);
 1->^^^^^^^^
@@ -717,8 +659,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >    @dec
   >    
 2 >        set x(value: number) { }
-1->Emitted(124, 9) Source(16, 5) + SourceIndex(0)
-2 >Emitted(124, 253) Source(16, 29) + SourceIndex(0)
+1->Emitted(122, 9) Source(16, 5) + SourceIndex(0)
+2 >Emitted(122, 253) Source(16, 29) + SourceIndex(0)
 ---
 >>>        __esDecorate(_classThis, null, _z_decorators, { kind: "accessor", name: "z", static: false, private: false, access: { has: obj => "z" in obj, get: obj => obj.z, set: (obj, value) => { obj.z = value; } }, metadata: _metadata }, _z_initializers, _z_extraInitializers);
 1->^^^^^^^^
@@ -734,8 +676,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >    @dec
   >    
 2 >        accessor z = 1;
-1->Emitted(125, 9) Source(24, 5) + SourceIndex(0)
-2 >Emitted(125, 275) Source(24, 20) + SourceIndex(0)
+1->Emitted(123, 9) Source(24, 5) + SourceIndex(0)
+2 >Emitted(123, 275) Source(24, 20) + SourceIndex(0)
 ---
 >>>        __esDecorate(null, null, _static_private_y_decorators, { kind: "field", name: "#y", static: true, private: true, access: { has: obj => __classPrivateFieldIn(_classThis, obj), get: obj => __classPrivateFieldGet(obj, _classThis, "f", _C_y), set: (obj, value) => { __classPrivateFieldSet(obj, _classThis, value, "f", _C_y); } }, metadata: _metadata }, _static_private_y_initializers, _static_private_y_extraInitializers);
 1->^^^^^^^^
@@ -758,16 +700,16 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >    @dec
   >    
 2 >        static #y = 1;
-1->Emitted(126, 9) Source(40, 5) + SourceIndex(0)
-2 >Emitted(126, 427) Source(40, 19) + SourceIndex(0)
+1->Emitted(124, 9) Source(40, 5) + SourceIndex(0)
+2 >Emitted(124, 427) Source(40, 19) + SourceIndex(0)
 ---
 >>>        __esDecorate(null, null, _y_decorators, { kind: "field", name: "y", static: false, private: false, access: { has: obj => "y" in obj, get: obj => obj.y, set: (obj, value) => { obj.y = value; } }, metadata: _metadata }, _y_initializers, _y_extraInitializers);
 1 >^^^^^^^^
 2 >        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1 >
 2 >        y = 1;
-1 >Emitted(127, 9) Source(20, 5) + SourceIndex(0)
-2 >Emitted(127, 266) Source(20, 11) + SourceIndex(0)
+1 >Emitted(125, 9) Source(20, 5) + SourceIndex(0)
+2 >Emitted(125, 266) Source(20, 11) + SourceIndex(0)
 ---
 >>>        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
 1 >^^^^^^^^
@@ -814,8 +756,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
   >            @dec
   >            static accessor #z = 1;
   >        }
-1 >Emitted(128, 9) Source(5, 1) + SourceIndex(0)
-2 >Emitted(128, 182) Source(45, 2) + SourceIndex(0)
+1 >Emitted(126, 9) Source(5, 1) + SourceIndex(0)
+2 >Emitted(126, 182) Source(45, 2) + SourceIndex(0)
 ---
 >>>        C = _classThis = _classDescriptor.value;
 >>>        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
@@ -828,7 +770,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >                                                                                                                                            ^
 6 >                                                                                                                                             ^^^^
 7 >                                                                                                                                                 ^
-8 >                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+8 >                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1 >
 2 >    
 3 >                     C
@@ -871,34 +813,34 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 5 >                                                                                                                                            1
 6 >                                                                                                                                             
 7 >                                                                                                                                                  = 1;
-1 >Emitted(132, 5) Source(40, 12) + SourceIndex(0)
-2 >Emitted(132, 22) Source(5, 7) + SourceIndex(0)
-3 >Emitted(132, 77) Source(5, 8) + SourceIndex(0)
-4 >Emitted(132, 141) Source(40, 17) + SourceIndex(0)
-5 >Emitted(132, 142) Source(40, 18) + SourceIndex(0)
-6 >Emitted(132, 146) Source(40, 14) + SourceIndex(0)
-7 >Emitted(132, 147) Source(40, 19) + SourceIndex(0)
+1 >Emitted(130, 5) Source(40, 12) + SourceIndex(0)
+2 >Emitted(130, 22) Source(5, 7) + SourceIndex(0)
+3 >Emitted(130, 77) Source(5, 8) + SourceIndex(0)
+4 >Emitted(130, 141) Source(40, 17) + SourceIndex(0)
+5 >Emitted(130, 142) Source(40, 18) + SourceIndex(0)
+6 >Emitted(130, 146) Source(40, 14) + SourceIndex(0)
+7 >Emitted(130, 147) Source(40, 19) + SourceIndex(0)
 ---
->>>    _C_z_1_accessor_storage.set(_classThis, (__runInitializers(_classThis, _static_private_y_extraInitializers), __runInitializers(_classThis, _static_private_z_initializers, 1)));
+>>>    _C_z_accessor_storage = { value: (__runInitializers(_classThis, _static_private_y_extraInitializers), __runInitializers(_classThis, _static_private_z_initializers, 1)) };
 1->^^^^
-2 >    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                                                                                                                                                                               ^
-4 >                                                                                                                                                                                ^^^
-5 >                                                                                                                                                                                   ^
+2 >    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 >                                                                                                                                                                        ^
+4 >                                                                                                                                                                         ^^^^
+5 >                                                                                                                                                                             ^
 1->
   >
   >    @dec
   >    @dec
   >    static accessor 
 2 >    #z = 
-3 >                                                                                                                                                                               1
-4 >                                                                                                                                                                                
-5 >                                                                                                                                                                                    = 1;
-1->Emitted(133, 5) Source(44, 21) + SourceIndex(0)
-2 >Emitted(133, 176) Source(44, 26) + SourceIndex(0)
-3 >Emitted(133, 177) Source(44, 27) + SourceIndex(0)
-4 >Emitted(133, 180) Source(44, 23) + SourceIndex(0)
-5 >Emitted(133, 181) Source(44, 28) + SourceIndex(0)
+3 >                                                                                                                                                                        1
+4 >                                                                                                                                                                         
+5 >                                                                                                                                                                              = 1;
+1->Emitted(131, 5) Source(44, 21) + SourceIndex(0)
+2 >Emitted(131, 169) Source(44, 26) + SourceIndex(0)
+3 >Emitted(131, 170) Source(44, 27) + SourceIndex(0)
+4 >Emitted(131, 174) Source(44, 23) + SourceIndex(0)
+5 >Emitted(131, 175) Source(44, 28) + SourceIndex(0)
 ---
 >>>    (() => {
 >>>        __runInitializers(_classThis, _static_private_z_extraInitializers);
@@ -907,8 +849,8 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 2 >        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1 >
 2 >        C
-1 >Emitted(136, 9) Source(5, 7) + SourceIndex(0)
-2 >Emitted(136, 64) Source(5, 8) + SourceIndex(0)
+1 >Emitted(134, 9) Source(5, 7) + SourceIndex(0)
+2 >Emitted(134, 64) Source(5, 8) + SourceIndex(0)
 ---
 >>>    })();
 >>>    return C = _classThis;

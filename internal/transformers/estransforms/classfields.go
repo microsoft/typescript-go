@@ -58,9 +58,13 @@ type privateEnvironmentData struct {
 }
 
 // privateEnvironment stores a map of private identifier names to their transform info.
+// Like Strada, it uses two separate maps: one for non-generated identifiers (keyed by text)
+// and one for generated identifiers (keyed by original AST node). This prevents collisions
+// when different auto-accessors produce generated backing field names with the same text.
 type privateEnvironment struct {
-	data    privateEnvironmentData
-	members map[string]*privateIdentifierInfo
+	data                 privateEnvironmentData
+	members              map[string]*privateIdentifierInfo
+	generatedIdentifiers map[*ast.Node]*privateIdentifierInfo
 }
 
 // classLexicalEnvironment stores information about the lexical environment of a class.
@@ -310,7 +314,7 @@ func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindThisKeyword:
 		return tx.visitThisExpression(node)
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).clearClassElementAndVisitEachChild, node)
+		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).visitFunctionExpressionOrDeclaration, node)
 	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
 		return tx.setInIterationStatementAnd(false, (*classFieldsTransformer).setClassElementAndVisitEachChild, node)
 	default:
@@ -725,6 +729,38 @@ func (tx *classFieldsTransformer) setInIterationStatementAnd(inIteration bool, v
 }
 
 func (tx *classFieldsTransformer) clearClassElementAndVisitEachChild(node *ast.Node) *ast.Node {
+	return tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
+}
+
+// visitFunctionExpressionOrDeclaration handles lexical environment scoping for function
+// expressions and declarations, mirroring Strada's onEmitNode behavior.
+//
+// In Strada, onEmitNode checks whether a FunctionExpression has been registered in
+// lexicalEnvironmentMap (via its original node). If found, the lexical environment is
+// restored; otherwise it is cleared (since regular functions create a new `this` scope).
+//
+// Since Corsa performs substitution eagerly (no emit-time hooks), we replicate this by
+// preserving currentClassElement for function expressions whose original node is a class
+// member of the current class. This allows visitThisExpression to correctly substitute
+// `this` -> `_classThis` inside synthesized functions (e.g., ES decorator descriptor
+// methods for static private auto-accessors).
+func (tx *classFieldsTransformer) visitFunctionExpressionOrDeclaration(node *ast.Node) *ast.Node {
+	if tx.currentClassElement != nil {
+		original := tx.EmitContext().MostOriginal(node)
+		if original != node && tx.currentClassContainer != nil {
+			for _, member := range tx.currentClassContainer.Members() {
+				if tx.EmitContext().MostOriginal(member) == original && ast.IsStatic(member) {
+					// The function expression originates from a static class member (e.g., a
+					// descriptor method synthesized by the ES decorator transformer for a
+					// static private auto-accessor). Preserve the current class element so
+					// that visitThisExpression can substitute `this` with `_classThis`.
+					// Non-static members must NOT preserve the class element because `this`
+					// inside their descriptor functions should remain dynamic.
+					return tx.visitEachChildOfNode(node)
+				}
+			}
+		}
+	}
 	return tx.setCurrentClassElementAnd(nil, (*classFieldsTransformer).visitEachChildOfNode, node)
 }
 
@@ -2178,7 +2214,7 @@ func (tx *classFieldsTransformer) transformClassMembers(node *ast.Node) (members
 						// Only register as untransformed if it hasn't already been registered
 						// by the first loop (e.g., if esDecorators expanded a private auto-accessor
 						// into a backing field with the same generated name).
-						if _, ok := env.members[storageName.Text()]; !ok {
+						if _, ok := tx.getPrivateIdentifier(env, storageName); !ok {
 							tx.setPrivateIdentifier(env, storageName, &privateIdentifierInfo{
 								kind: printer.PrivateIdentifierKindUntransformed,
 							})
@@ -2857,7 +2893,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierPropertyDeclarationToEnvir
 	lex := tx.getClassLexicalEnvironment()
 	env := tx.getPrivateIdentifierEnvironment()
 	isStatic := ast.HasStaticModifier(node)
-	previousInfo := env.members[name.Text()]
+	previousInfo, _ := tx.getPrivateIdentifier(env, name)
 	isValid := !tx.isReservedPrivateName(name) && previousInfo == nil
 
 	if isStatic {
@@ -2999,7 +3035,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierToEnvironment(node *ast.No
 	env := tx.getPrivateIdentifierEnvironment()
 	name := node.Name()
 	isStatic := ast.HasStaticModifier(node)
-	previousInfo := env.members[name.Text()]
+	previousInfo, _ := tx.getPrivateIdentifier(env, name)
 	isValid := !tx.isReservedPrivateName(name) && previousInfo == nil
 
 	if ast.IsAutoAccessorPropertyDeclaration(node) {
@@ -3016,7 +3052,23 @@ func (tx *classFieldsTransformer) addPrivateIdentifierToEnvironment(node *ast.No
 }
 
 func (tx *classFieldsTransformer) setPrivateIdentifier(env *privateEnvironment, name *ast.Node, info *privateIdentifierInfo) {
-	env.members[name.Text()] = info
+	if tx.EmitContext().HasAutoGenerateInfo(name) {
+		if env.generatedIdentifiers == nil {
+			env.generatedIdentifiers = make(map[*ast.Node]*privateIdentifierInfo)
+		}
+		env.generatedIdentifiers[tx.EmitContext().GetNodeForGeneratedName(name)] = info
+	} else {
+		env.members[name.Text()] = info
+	}
+}
+
+func (tx *classFieldsTransformer) getPrivateIdentifier(env *privateEnvironment, name *ast.Node) (*privateIdentifierInfo, bool) {
+	if tx.EmitContext().HasAutoGenerateInfo(name) {
+		info, ok := env.generatedIdentifiers[tx.EmitContext().GetNodeForGeneratedName(name)]
+		return info, ok
+	}
+	info, ok := env.members[name.Text()]
+	return info, ok
 }
 
 func (tx *classFieldsTransformer) createHoistedVariableForClass(nameText string, node *ast.Node, suffix string) *ast.IdentifierNode {
@@ -3081,7 +3133,7 @@ func (tx *classFieldsTransformer) createHoistedVariableForPrivateName(name *ast.
 func (tx *classFieldsTransformer) accessPrivateIdentifier(name *ast.Node) *privateIdentifierInfo {
 	for env := tx.lexicalEnvironment; env != nil; env = env.previous {
 		if env.privateEnv != nil {
-			if info, ok := env.privateEnv.members[name.Text()]; ok {
+			if info, ok := tx.getPrivateIdentifier(env.privateEnv, name); ok {
 				if info.kind == printer.PrivateIdentifierKindUntransformed {
 					return nil
 				}
