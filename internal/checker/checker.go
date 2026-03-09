@@ -864,6 +864,7 @@ type Checker struct {
 	couldContainTypeVariables                   func(*Type) bool
 	isStringIndexSignatureOnlyType              func(*Type) bool
 	markNodeAssignments                         func(*ast.Node) bool
+	compareTypesAssignable                      TypeComparer
 	emitResolver                                *EmitResolver
 	emitResolverOnce                            sync.Once
 	_jsxNamespace                               string
@@ -1234,6 +1235,7 @@ func (c *Checker) initializeClosures() {
 	c.couldContainTypeVariables = c.couldContainTypeVariablesWorker
 	c.isStringIndexSignatureOnlyType = c.isStringIndexSignatureOnlyTypeWorker
 	c.markNodeAssignments = c.markNodeAssignmentsWorker
+	c.compareTypesAssignable = c.compareTypesAssignableWorker
 }
 
 func (c *Checker) initializeIterationResolvers() {
@@ -13678,47 +13680,17 @@ func (c *Checker) reportMergeSymbolError(target *ast.Symbol, source *ast.Symbol)
 	default:
 		message = diagnostics.Duplicate_identifier_0
 	}
-	// sourceSymbolFile := ast.GetSourceFileOfNode(getFirstDeclaration(source))
-	// targetSymbolFile := ast.GetSourceFileOfNode(getFirstDeclaration(target))
+	sourceSymbolFile := ast.GetSourceFileOfNode(getFirstDeclaration(source))
+	targetSymbolFile := ast.GetSourceFileOfNode(getFirstDeclaration(target))
+	isSourcePlainJS := ast.IsPlainJSFile(sourceSymbolFile, c.compilerOptions.CheckJs)
+	isTargetPlainJS := ast.IsPlainJSFile(targetSymbolFile, c.compilerOptions.CheckJs)
 	symbolName := c.symbolToString(source)
-	// !!!
-	// Collect top-level duplicate identifier errors into one mapping, so we can then merge their diagnostics if there are a bunch
-	// if sourceSymbolFile != nil && targetSymbolFile != nil && c.amalgamatedDuplicates && !isEitherEnum && sourceSymbolFile != targetSymbolFile {
-	// 	var firstFile SourceFile
-	// 	if comparePaths(sourceSymbolFile.path, targetSymbolFile.path) == ComparisonLessThan {
-	// 		firstFile = sourceSymbolFile
-	// 	} else {
-	// 		firstFile = targetSymbolFile
-	// 	}
-	// 	var secondFile SourceFile
-	// 	if firstFile == sourceSymbolFile {
-	// 		secondFile = targetSymbolFile
-	// 	} else {
-	// 		secondFile = sourceSymbolFile
-	// 	}
-	// 	filesDuplicates := getOrUpdate(c.amalgamatedDuplicates, __TEMPLATE__(firstFile.path, "|", secondFile.path), func() DuplicateInfoForFiles {
-	// 		return (map[any]any{ /* TODO(TS-TO-GO): was object literal */
-	// 			"firstFile":          firstFile,
-	// 			"secondFile":         secondFile,
-	// 			"conflictingSymbols": NewMap(),
-	// 		})
-	// 	})
-	// 	conflictingSymbolInfo := getOrUpdate(filesDuplicates.conflictingSymbols, symbolName, func() DuplicateInfoForSymbol {
-	// 		return (map[any]any{ /* TODO(TS-TO-GO): was object literal */
-	// 			"isBlockScoped":       isEitherBlockScoped,
-	// 			"firstFileLocations":  []never{},
-	// 			"secondFileLocations": []never{},
-	// 		})
-	// 	})
-	// 	if !isSourcePlainJS {
-	// 		addDuplicateLocations(conflictingSymbolInfo.firstFileLocations, source)
-	// 	}
-	// 	if !isTargetPlainJS {
-	// 		addDuplicateLocations(conflictingSymbolInfo.secondFileLocations, target)
-	// 	}
-	// } else {
-	c.addDuplicateDeclarationErrorsForSymbols(source, message, symbolName, target)
-	c.addDuplicateDeclarationErrorsForSymbols(target, message, symbolName, source)
+	if !isSourcePlainJS {
+		c.addDuplicateDeclarationErrorsForSymbols(source, message, symbolName, target)
+	}
+	if !isTargetPlainJS {
+		c.addDuplicateDeclarationErrorsForSymbols(target, message, symbolName, source)
+	}
 }
 
 func (c *Checker) addDuplicateDeclarationErrorsForSymbols(target *ast.Symbol, message *diagnostics.Message, symbolName string, source *ast.Symbol) {
@@ -16136,6 +16108,10 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		}
 	}
 	if ast.IsParameter(declaration) {
+		if declaration.Symbol() == nil {
+			// parameters of function types defined in JSDoc in TS files don't have symbols
+			return nil
+		}
 		fn := declaration.Parent
 		// For a parameter of a set accessor, use the type of the get accessor if one is present
 		if ast.IsSetAccessorDeclaration(fn) && c.hasBindableName(fn) {
@@ -25134,7 +25110,7 @@ func (c *Checker) removeStringLiteralsMatchedByTemplateLiterals(types []*Type) [
 
 func (c *Checker) isTypeMatchedByTemplateLiteralOrStringMapping(t *Type, template *Type) bool {
 	if template.flags&TypeFlagsTemplateLiteral != 0 {
-		return c.isTypeMatchedByTemplateLiteralType(t, template.AsTemplateLiteralType())
+		return c.isTypeMatchedByTemplateLiteralType(t, template.AsTemplateLiteralType(), c.compareTypesAssignable)
 	}
 	return c.isMemberOfStringMapping(t, template)
 }
@@ -26240,11 +26216,17 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 		}
 		prop := c.getPropertyOfType(objectType, propName)
 		if prop != nil {
-			// !!!
-			// if accessFlags&AccessFlagsReportDeprecated != 0 && accessNode != nil && len(prop.declarations) != 0 && c.isDeprecatedSymbol(prop) && c.isUncalledFunctionReference(accessNode, prop) {
-			// 	deprecatedNode := /* TODO(TS-TO-GO) QuestionQuestionToken BinaryExpression: accessExpression?.argumentExpression ?? (isIndexedAccessTypeNode(accessNode) ? accessNode.indexType : accessNode) */ TODO
-			// 	c.addDeprecatedSuggestion(deprecatedNode, prop.declarations, propName /* as string */)
-			// }
+			if accessFlags&AccessFlagsReportDeprecated != 0 && accessNode != nil && len(prop.Declarations) != 0 && c.isDeprecatedSymbol(prop) && c.isUncalledFunctionReference(accessNode, prop) {
+				var deprecatedNode *ast.Node
+				if accessExpression != nil {
+					deprecatedNode = accessExpression.AsElementAccessExpression().ArgumentExpression
+				} else if ast.IsIndexedAccessTypeNode(accessNode) {
+					deprecatedNode = accessNode.AsIndexedAccessTypeNode().IndexType
+				} else {
+					deprecatedNode = accessNode
+				}
+				c.addDeprecatedSuggestion(deprecatedNode, prop.Declarations, propName)
+			}
 			if accessExpression != nil {
 				c.markPropertyAsReferenced(prop, accessExpression, c.isSelfTypeAccess(accessExpression.Expression(), objectType.symbol))
 				if c.isAssignmentToReadonlyEntity(accessExpression, prop, getAssignmentTargetKind(accessExpression)) {

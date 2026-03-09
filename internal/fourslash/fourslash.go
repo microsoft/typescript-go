@@ -806,14 +806,23 @@ func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
 	f.applyTextEdits(t, *result.TextEdits)
 }
 
-func (f *FourslashTest) FormatSelection(t *testing.T, startName, endName string) {
-	startMarker := f.MarkerByName(t, startName)
-	endMarker := f.MarkerByName(t, endName)
-	assert.Equal(t, startMarker.fileName, endMarker.fileName)
-
+func (f *FourslashTest) FormatSelection(t *testing.T, startMarkerName string, endMarkerName string) {
+	t.Helper()
+	startMarker, ok := f.testData.MarkerPositions[startMarkerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", startMarkerName)
+	}
+	endMarker, ok := f.testData.MarkerPositions[endMarkerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", endMarkerName)
+	}
+	if startMarker.FileName() != endMarker.FileName() {
+		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
+	}
+	filename := startMarker.FileName()
 	result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsconv.FileNameToDocumentURI(startMarker.fileName),
+			Uri: lsconv.FileNameToDocumentURI(filename),
 		},
 		Range: lsproto.Range{
 			Start: startMarker.LSPosition,

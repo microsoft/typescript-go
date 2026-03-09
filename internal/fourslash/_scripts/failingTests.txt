@@ -197,8 +197,6 @@ TestExportEqualTypes
 TestFindAllRefs_importType_js1
 TestFindAllRefs_importType_js2
 TestFindAllRefs_importType_js3
-TestFindReferencesBindingPatternInJsdocNoCrash1
-TestFindReferencesBindingPatternInJsdocNoCrash2
 TestFormatDocumentPreserveTrailingWhitespace
 TestFormatDotAfterNumber
 TestFormatImplicitModule
@@ -227,8 +225,6 @@ TestFormattingOnModuleIndentation
 TestFormattingOnNestedDoWhileByEnter
 TestFormattingOnNestedStatements
 TestFormattingOnObjectLiteral
-TestFormattingSpaceAfterCommaBeforeOpenParen
-TestFormattingTemplates
 TestFormattingVoid
 TestFormatTrimRemainingRange
 TestFormatTsxClosingAfterJsxText
@@ -510,4 +506,3 @@ TestTsxQuickInfo6
 TestTsxQuickInfo7
 TestTypeCheckAfterResolve
 TestTypeOperatorNodeBuilding
-TestWhiteSpaceTrimming2

@@ -416,11 +416,18 @@ function parseFormatStatement(funcName: string, args: readonly ts.Expression[]):
                 kind: "format",
                 goStatement: `f.Configure(t, ${varName})`,
             }];
-        case "selection":
+        case "selection": {
+            const startMarker = getStringLiteralLike(args[0])?.text;
+            const endMarker = getStringLiteralLike(args[1])?.text;
+            if (startMarker === undefined || endMarker === undefined) {
+                console.error(`format.selection: expected two string literal marker names`);
+                break;
+            }
             return [{
                 kind: "format",
-                goStatement: `f.FormatSelection(t, ${getGoStringLiteral(getStringLiteralLike(args[0])!.text)}, ${getGoStringLiteral(getStringLiteralLike(args[1])!.text)})`,
+                goStatement: `f.FormatSelection(t, ${JSON.stringify(startMarker)}, ${JSON.stringify(endMarker)})`,
             }];
+        }
         case "onType":
         case "copyFormatOptions":
         case "setFormatOptions":
@@ -1552,7 +1559,7 @@ function parseExpectedDiagnostic(expr: ts.Expression): string | undefined {
     const diagnosticProps: string[] = [];
 
     for (const prop of expr.properties) {
-        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+        if (!ts.isPropertyAssignment(prop) || !(ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name))) {
             console.error(`Expected property assignment with identifier name for expected diagnostic, got ${prop.getText()}`);
             return undefined;
         }
@@ -1902,6 +1909,13 @@ function parseBaselineMarkerOrRangeArg(arg: ts.Expression): string | undefined {
             }
         }
     }
+    else if (ts.isElementAccessExpression(arg) && ts.isCallExpression(arg.expression) && arg.expression.getText().includes("ranges")) {
+        // `test.ranges()[n]`
+        const index = arg.argumentExpression?.getText();
+        if (index !== undefined) {
+            return `f.Ranges()[${index}]`;
+        }
+    }
     else if (ts.isCallExpression(arg)) {
         const result = getRangesByTextArg(arg);
         if (result) {
@@ -1933,6 +1947,12 @@ function parseRangeVariable(arg: ts.Identifier | ts.ElementAccessExpression): st
                         // `const [range_0, ..., ...rest] = test.ranges();` and arg is `rest`
                         return `ToAny(f.Ranges()[${i}:])...`;
                     }
+                }
+            }
+            // `const ranges = test.ranges();` and arg is `ranges[n]`
+            if (ts.isIdentifier(decl.name) && decl.name.text === argName && decl.initializer?.getText().includes("ranges")) {
+                if (ts.isElementAccessExpression(arg)) {
+                    return `f.Ranges()[${arg.argumentExpression!.getText()}]`;
                 }
             }
         }
@@ -3108,7 +3128,7 @@ interface EditCmd {
 }
 
 interface FormatCmd {
-    kind: "format"; // | "formatSelection" | "formatOnType" | "copyFormatOptions" | "setFormatOptions" | "setOption";
+    kind: "format";
     goStatement: string;
 }
 
