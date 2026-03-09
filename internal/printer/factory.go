@@ -792,6 +792,18 @@ func (f *NodeFactory) NewImmediatelyInvokedArrowFunction(statements []*ast.State
 	)
 }
 
+// Creates `export default <expression>;`.
+func (f *NodeFactory) NewExportDefault(expression *ast.Expression) *ast.Statement {
+	return f.NewExportAssignment(nil, false, nil, expression)
+}
+
+// Creates `export { <name> };`.
+func (f *NodeFactory) NewExternalModuleExport(name *ast.IdentifierNode) *ast.Statement {
+	specifier := f.NewExportSpecifier(false, nil, name)
+	namedExports := f.NewNamedExports(f.NewNodeList([]*ast.Node{specifier}))
+	return f.NewExportDeclaration(nil, false, namedExports, nil, nil)
+}
+
 // ES2018 Helpers
 // Chains a sequence of expressions using the __assign helper or Object.assign if available in the target
 func (f *NodeFactory) NewAssignHelper(attributesSegments []*ast.Expression, scriptTarget core.ScriptTarget) *ast.Expression {

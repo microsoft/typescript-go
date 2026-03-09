@@ -1043,7 +1043,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				varStatement := f.NewVariableStatement(nil, varDecls)
 				statements = append(statements, varStatement)
 
-				exportStatement := tx.createExportDefault(f.GetDeclarationName(classNode))
+				exportStatement := f.NewExportDefault(f.GetDeclarationName(classNode))
 				ec.SetOriginal(exportStatement, classNode)
 				ec.AssignCommentRange(exportStatement, classNode)
 				ec.SetSourceMapRange(exportStatement, transformers.MoveRangePastDecorators(classNode))
@@ -1051,7 +1051,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 			} else {
 				// produces:
 				//   export default (() => { ... })();
-				exportStatement := tx.createExportDefault(iife)
+				exportStatement := f.NewExportDefault(iife)
 				ec.SetOriginal(exportStatement, classNode)
 				ec.AssignCommentRange(exportStatement, classNode)
 				ec.SetSourceMapRange(exportStatement, transformers.MoveRangePastDecorators(classNode))
@@ -1076,7 +1076,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 			if isExport {
 				// produces:
 				//   export { C };
-				exportStatement := tx.createExternalModuleExport(declName)
+				exportStatement := f.NewExternalModuleExport(declName)
 				ec.SetOriginal(exportStatement, classNode)
 				statements = append(statements, exportStatement)
 			}
@@ -2650,18 +2650,6 @@ func (tx *esDecoratorTransformer) filterOutModifier(modifiers *ast.ModifierList,
 		return modifiers
 	}
 	return tx.Factory().NewModifierList(filtered)
-}
-
-func (tx *esDecoratorTransformer) createExportDefault(expression *ast.Expression) *ast.Statement {
-	f := tx.Factory()
-	return f.NewExportAssignment(nil, false, nil, expression)
-}
-
-func (tx *esDecoratorTransformer) createExternalModuleExport(name *ast.IdentifierNode) *ast.Statement {
-	f := tx.Factory()
-	specifier := f.NewExportSpecifier(false, nil, name)
-	namedExports := f.NewNamedExports(f.NewNodeList([]*ast.Node{specifier}))
-	return f.NewExportDeclaration(nil, false, namedExports, nil, nil)
 }
 
 func injectClassThisAssignmentIfMissing(ec *printer.EmitContext, f *printer.NodeFactory, node *ast.Node, classThis *ast.IdentifierNode) *ast.Node {

@@ -483,21 +483,9 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 	if isExport {
 		var exportStatement *ast.Node
 		if isDefault {
-			exportStatement = tx.Factory().NewExportAssignment(nil, false, nil, declName)
+			exportStatement = tx.Factory().NewExportDefault(declName)
 		} else {
-			exportStatement = tx.Factory().NewExportDeclaration(
-				nil,
-				false,
-				tx.Factory().NewNamedExports(
-					tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(
-						false,
-						nil,
-						tx.Factory().GetDeclarationName(node.AsNode()),
-					)}),
-				),
-				nil,
-				nil,
-			)
+			exportStatement = tx.Factory().NewExternalModuleExport(tx.Factory().GetDeclarationName(node.AsNode()))
 		}
 		statements = append(statements, exportStatement)
 	}
