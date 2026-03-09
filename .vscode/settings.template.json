@@ -32,4 +32,7 @@
     // "go.lintOnSave": "package",
     // "go.lintOnSave": "file",
     "go.lintOnSave": "off"
+
+    // To try the native TypeScript language service in VS Code, enable:
+    // "js/ts.experimental.useTsgo": true
 }
