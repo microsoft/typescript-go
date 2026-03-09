@@ -161,7 +161,7 @@ export const bar = 2;`,
 
 		fs := sessionUtils.FS()
 		updatePackageJSON := func(content string) {
-			assert.NilError(t, fs.WriteFile(packageJSON.FileName(), content, false))
+			assert.NilError(t, fs.WriteFile(packageJSON.FileName(), content))
 			session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{
 				{Type: lsproto.FileChangeTypeChanged, Uri: packageJSON.URI()},
 			})
@@ -555,6 +555,66 @@ export declare const otherValue: string;`,
 		isPrepared3 := snapshot3.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, newPreferences)
 		release3()
 		assert.Assert(t, isPrepared3, "IsPreparedForImportingFile should return true after bucket rebuild with new fileExcludePatterns")
+	})
+
+	t.Run("dedupes packages that resolve to same realpath across ancestor node_modules buckets", func(t *testing.T) {
+		t.Parallel()
+
+		repoRoot := "/home/src/autoimport-realpath-dedupe"
+		appDir := tspath.CombinePaths(repoRoot, "apps", "web")
+		sharedPkgDir := tspath.CombinePaths(repoRoot, "node_modules", "shared")
+		appIndex := tspath.CombinePaths(appDir, "src", "index.ts")
+
+		files := map[string]any{
+			tspath.CombinePaths(repoRoot, "package.json"): `{
+				"name": "repo-root",
+				"private": true,
+				"dependencies": { "shared": "*" }
+			}`,
+			tspath.CombinePaths(repoRoot, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"target": "esnext",
+					"strict": true
+				},
+				"include": ["apps/**/*"]
+			}`,
+			tspath.CombinePaths(appDir, "package.json"): `{
+				"name": "web",
+				"private": true,
+				"dependencies": { "shared": "*" }
+			}`,
+			tspath.CombinePaths(appDir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"target": "esnext",
+					"strict": true
+				},
+				"include": ["src"]
+			}`,
+			appIndex: "export const app = 1;\n",
+			tspath.CombinePaths(sharedPkgDir, "package.json"): `{
+				"name": "shared",
+				"version": "1.0.0",
+				"types": "index.d.ts"
+			}`,
+			tspath.CombinePaths(sharedPkgDir, "index.d.ts"):       "export declare const sharedValue: 1;\n",
+			tspath.CombinePaths(appDir, "node_modules", "shared"): vfstest.Symlink(sharedPkgDir),
+		}
+
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		appURI := lsconv.FileNameToDocumentURI(appIndex)
+		session.DidOpenFile(ctx, appURI, 1, files[appIndex].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, appURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		assert.Equal(t, len(stats.NodeModulesBuckets), 2, "expected both app and repo node_modules buckets")
+		assert.Equal(t, stats.UniquePackageCount, 1, "expected one unique package after realpath dedup")
 	})
 }
 
