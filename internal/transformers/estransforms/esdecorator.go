@@ -2075,7 +2075,16 @@ func (tx *esDecoratorTransformer) visitDestructuringAssignmentTarget(node *ast.N
 			propertyName = f.NewStringLiteralFromNode(node.AsPropertyAccessExpression().Name())
 		}
 		if propertyName != nil {
-			expression := createReflectedAssignmentTargetWrapper(f, tx.classSuper, propertyName, tx.classThis)
+			paramName := f.NewTempVariable()
+			expression := f.NewAssignmentTargetWrapper(
+				paramName,
+				f.NewReflectSetCall(
+					tx.classSuper,
+					propertyName,
+					paramName,
+					tx.classThis,
+				),
+			)
 			ec.SetOriginal(expression, node)
 			expression.Loc = node.Loc
 			return expression
@@ -2684,17 +2693,4 @@ func injectClassThisAssignmentIfMissing(ec *printer.EmitContext, f *printer.Node
 	}
 	ec.SetClassThis(updatedNode, classThis)
 	return updatedNode
-}
-
-// Creates ({ set value(_p) { Reflect.set(target, key, _p, receiver) } }).value
-func createReflectedAssignmentTargetWrapper(f *printer.NodeFactory, target *ast.Expression, propertyKey *ast.Expression, receiver *ast.Expression) *ast.Expression {
-	paramName := f.NewTempVariable()
-	reflectSetCall := f.NewReflectSetCall(target, propertyKey, paramName, receiver)
-	statement := f.NewExpressionStatement(reflectSetCall)
-	body := f.NewBlock(f.NewNodeList([]*ast.Node{statement}), false)
-	param := f.NewParameterDeclaration(nil, nil, paramName, nil, nil, nil)
-	setter := f.NewSetAccessorDeclaration(nil, f.NewIdentifier("value"), nil, f.NewNodeList([]*ast.Node{param}), nil, nil, body)
-	obj := f.NewObjectLiteralExpression(f.NewNodeList([]*ast.Node{setter}), false)
-	paren := f.NewParenthesizedExpression(obj)
-	return f.NewPropertyAccessExpression(paren, nil, f.NewIdentifier("value"), ast.NodeFlagsNone)
 }
