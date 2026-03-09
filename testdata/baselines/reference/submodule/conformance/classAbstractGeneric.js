@@ -30,6 +30,7 @@ class G<T> extends A<T> {
 //// [classAbstractGeneric.js]
 "use strict";
 class A {
+    t;
 }
 class B extends A {
 }

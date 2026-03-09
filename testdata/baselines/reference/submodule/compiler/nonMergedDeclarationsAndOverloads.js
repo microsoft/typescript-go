@@ -13,6 +13,7 @@ class A {
 //// [nonMergedDeclarationsAndOverloads.js]
 "use strict";
 class A {
+    m1;
     f() { }
     m1(a) {
     }

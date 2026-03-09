@@ -28,6 +28,7 @@ class Foo {
     bar() { }
 }
 class Bar extends Foo {
+    x;
     constructor() {
         super();
         this.x = 2;

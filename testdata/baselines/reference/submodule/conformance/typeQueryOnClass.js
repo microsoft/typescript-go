@@ -61,13 +61,14 @@ var r4: typeof d;
 //// [typeQueryOnClass.js]
 "use strict";
 class C {
+    x;
     constructor(x) {
         this.x = x;
-        this.ia = 1;
-        this.ib = () => this.ia;
     }
     static foo(x) { }
     static bar(x) { }
+    static sa = 1;
+    static sb = () => 1;
     static get sc() {
         return 1;
     }
@@ -77,6 +78,8 @@ class C {
         return 1;
     }
     baz(x) { return ''; }
+    ia = 1;
+    ib = () => this.ia;
     get ic() {
         return 1;
     }
@@ -86,16 +89,16 @@ class C {
         return 1;
     }
 }
-C.sa = 1;
-C.sb = () => 1;
 var c;
 // BUG 820454
 var r1;
 var r2;
 class D {
+    y;
     constructor(y) {
         this.y = y;
     }
+    x;
     foo() { }
 }
 var d;

@@ -11,9 +11,7 @@ class Any extends Type {
 //// [parser509630.js]
 "use strict";
 class Type {
-    constructor() {
-        this.examples = []; // typing here
-    }
+    examples = []; // typing here
 }
 class Any extends Type {
 }

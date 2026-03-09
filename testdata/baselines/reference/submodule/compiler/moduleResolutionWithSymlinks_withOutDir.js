@@ -22,6 +22,7 @@ y = x;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyClass = void 0;
 class MyClass {
+    x;
 }
 exports.MyClass = MyClass;
 //// [/src/bin/library-b/index.js]

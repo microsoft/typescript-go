@@ -60,6 +60,7 @@ objA.a--, M.n--;
 "use strict";
 function foo() { return true; }
 class A {
+    a;
     static foo() { return true; }
 }
 var M;

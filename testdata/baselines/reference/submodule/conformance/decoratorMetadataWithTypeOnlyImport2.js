@@ -39,6 +39,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Main = void 0;
 class Main {
+    field;
 }
 exports.Main = Main;
 __decorate([

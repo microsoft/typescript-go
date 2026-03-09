@@ -29,9 +29,7 @@ class GetterOnly {
 "use strict";
 // these should be errors
 class GetAndSet {
-    constructor() {
-        this.getAndSet = null; // error at "getAndSet"
-    }
+    getAndSet = null; // error at "getAndSet"
     get haveGetAndSet() {
         return this.getAndSet;
     }

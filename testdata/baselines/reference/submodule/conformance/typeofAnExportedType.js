@@ -61,6 +61,7 @@ exports.foo = foo;
 exports.x = 1;
 exports.y = { foo: '' };
 class C {
+    foo;
 }
 exports.C = C;
 var c2;
@@ -69,6 +70,7 @@ var M;
 (function (M) {
     M.foo = '';
     class C {
+        foo;
     }
     M.C = C;
 })(M || (exports.M = M = {}));
@@ -81,6 +83,7 @@ function foo() { }
 (function (foo) {
     foo.y = 1;
     class C {
+        foo;
     }
     foo.C = C;
 })(foo || (exports.foo = foo = {}));

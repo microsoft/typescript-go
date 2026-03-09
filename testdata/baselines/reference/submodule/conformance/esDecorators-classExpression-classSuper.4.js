@@ -23,7 +23,9 @@ class C extends Base {
 //// [esDecorators-classExpression-classSuper.4.js]
 "use strict";
 const method = "method";
-(class C extends Base {
+(
+@dec
+class C extends Base {
     static a = super.method();
     static b = super["method"]();
     static c = super[method]();

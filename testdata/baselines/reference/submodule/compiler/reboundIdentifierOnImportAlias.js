@@ -18,4 +18,5 @@ var Foo;
 var Bar;
 (function (Bar) {
     var Foo = 1;
+    var F = Foo;
 })(Bar || (Bar = {}));

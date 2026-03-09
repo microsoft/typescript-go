@@ -17,6 +17,7 @@ var y: typeof undefined;
 //// [undefinedTypeAssignment4.js]
 "use strict";
 class undefined {
+    foo;
 }
 (function (undefined) {
     undefined.x = 42;

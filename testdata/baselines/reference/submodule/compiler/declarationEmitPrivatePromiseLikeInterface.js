@@ -37,11 +37,9 @@ export class Api<SecurityDataType = unknown> {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpClient = void 0;
 class HttpClient {
-    constructor() {
-        this.request = () => {
-            return '';
-        };
-    }
+    request = () => {
+        return '';
+    };
 }
 exports.HttpClient = HttpClient;
 //// [Api.js]
@@ -49,12 +47,13 @@ exports.HttpClient = HttpClient;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Api = void 0;
 class Api {
+    http;
     constructor(http) {
         this.http = http;
-        this.abc1 = () => this.http.request();
-        this.abc2 = () => this.http.request();
-        this.abc3 = () => this.http.request();
     }
+    abc1 = () => this.http.request();
+    abc2 = () => this.http.request();
+    abc3 = () => this.http.request();
 }
 exports.Api = Api;
 

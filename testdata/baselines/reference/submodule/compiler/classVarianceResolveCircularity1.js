@@ -15,8 +15,7 @@ declare function callme(x: object): string;
 "use strict";
 // Issue #52813
 class Bar {
-    constructor() {
-        this.Value = callme(this).num;
-        this.Field = callme(this).num;
-    }
+    num;
+    Value = callme(this).num;
+    Field = callme(this).num;
 }

@@ -129,9 +129,11 @@ var r4 = foo6(E.A);
 var r4 = foo7(E.A);
 var r4 = foo8(E.A);
 class A {
+    foo;
 }
 var r4 = foo9(E.A);
 class A2 {
+    foo;
 }
 var r4 = foo10(E.A);
 var r4 = foo11(E.A);
@@ -147,6 +149,7 @@ function f() { }
 })(f || (f = {}));
 var r4 = foo14(E.A);
 class CC {
+    baz;
 }
 (function (CC) {
     CC.bar = 1;

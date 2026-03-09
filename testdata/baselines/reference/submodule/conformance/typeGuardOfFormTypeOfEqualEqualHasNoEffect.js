@@ -40,6 +40,7 @@ else {
 //// [typeGuardOfFormTypeOfEqualEqualHasNoEffect.js]
 "use strict";
 class C {
+    p;
 }
 ;
 // typeof x == s has not effect on typeguard

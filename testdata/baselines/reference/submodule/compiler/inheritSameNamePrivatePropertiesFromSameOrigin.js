@@ -15,6 +15,7 @@ interface A extends C, C2 { // ok
 //// [inheritSameNamePrivatePropertiesFromSameOrigin.js]
 "use strict";
 class B {
+    x;
 }
 class C extends B {
 }

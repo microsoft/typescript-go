@@ -64,6 +64,7 @@ z: typeof M.n;
 var STRING1 = ["", "abc"];
 function foo() { return "abc"; }
 class A {
+    a;
     static foo() { return ""; }
 }
 var M;

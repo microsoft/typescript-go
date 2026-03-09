@@ -35,9 +35,7 @@ namespace Test {
 var Test;
 (function (Test) {
     class Gar {
-        constructor() {
-            this.moo = 0;
-        }
+        moo = 0;
     }
     Test.Gar = Gar;
     function bug() {

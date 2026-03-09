@@ -32,8 +32,10 @@ var b = {
 // Basic uses of optional properties
 var a;
 class C {
+    x; // ok
 }
 class C2 {
+    x; // ok
 }
 var b = {
     x: 1 // error

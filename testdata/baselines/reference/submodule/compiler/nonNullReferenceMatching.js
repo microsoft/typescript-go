@@ -38,17 +38,16 @@ class Component {
 //// [nonNullReferenceMatching.js]
 "use strict";
 class Component {
-    constructor() {
-        this.thumbYElementRef = (ref) => {
-            typeof this.props.thumbYProps.elementRef === 'function' && this.props.thumbYProps.elementRef(ref);
-            typeof (this.props.thumbYProps.elementRef) === 'function' && this.props.thumbYProps.elementRef(ref);
-            typeof ((this.props).thumbYProps.elementRef) === 'function' && this.props.thumbYProps.elementRef(ref);
-            typeof this.props.thumbXProps.elementRef === 'function' && this.props.thumbXProps.elementRef(ref);
-            typeof this.props.thumbXProps.elementRef === 'function' && (this.props).thumbXProps.elementRef(ref);
-            typeof this.props.thumbXProps.elementRef === 'function' && (this.props.thumbXProps).elementRef(ref);
-            typeof this.props.thumbXProps.elementRef === 'function' && ((this.props).thumbXProps).elementRef(ref);
-            typeof (this.props.thumbXProps).elementRef === 'function' && ((this.props).thumbXProps).elementRef(ref);
-            typeof this.props.thumbXProps.elementRef === 'function' && ((this.props).thumbXProps).elementRef(ref);
-        };
-    }
+    props;
+    thumbYElementRef = (ref) => {
+        typeof this.props.thumbYProps.elementRef === 'function' && this.props.thumbYProps.elementRef(ref);
+        typeof (this.props.thumbYProps.elementRef) === 'function' && this.props.thumbYProps.elementRef(ref);
+        typeof ((this.props).thumbYProps.elementRef) === 'function' && this.props.thumbYProps.elementRef(ref);
+        typeof this.props.thumbXProps.elementRef === 'function' && this.props.thumbXProps.elementRef(ref);
+        typeof this.props.thumbXProps.elementRef === 'function' && (this.props).thumbXProps.elementRef(ref);
+        typeof this.props.thumbXProps.elementRef === 'function' && (this.props.thumbXProps).elementRef(ref);
+        typeof this.props.thumbXProps.elementRef === 'function' && ((this.props).thumbXProps).elementRef(ref);
+        typeof (this.props.thumbXProps).elementRef === 'function' && ((this.props).thumbXProps).elementRef(ref);
+        typeof this.props.thumbXProps.elementRef === 'function' && ((this.props).thumbXProps).elementRef(ref);
+    };
 }

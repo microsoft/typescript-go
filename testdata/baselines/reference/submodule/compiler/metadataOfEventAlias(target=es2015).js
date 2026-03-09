@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SomeClass = void 0;
 function Input(target, key) { }
 class SomeClass {
+    event;
 }
 exports.SomeClass = SomeClass;
 __decorate([

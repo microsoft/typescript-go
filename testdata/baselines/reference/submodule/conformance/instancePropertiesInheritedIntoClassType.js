@@ -49,6 +49,9 @@ namespace Generic {
 var NonGeneric;
 (function (NonGeneric) {
     class C {
+        a;
+        b;
+        x;
         get y() {
             return 1;
         }
@@ -60,6 +63,7 @@ var NonGeneric;
         }
     }
     class D extends C {
+        e;
     }
     var d = new D(1, 2);
     var r = d.fn();
@@ -71,6 +75,9 @@ var NonGeneric;
 var Generic;
 (function (Generic) {
     class C {
+        a;
+        b;
+        x;
         get y() {
             return null;
         }
@@ -82,6 +89,7 @@ var Generic;
         }
     }
     class D extends C {
+        e;
     }
     var d = new D(1, '');
     var r = d.fn();

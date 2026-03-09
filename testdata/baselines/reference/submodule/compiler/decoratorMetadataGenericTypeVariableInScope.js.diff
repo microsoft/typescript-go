@@ -1,0 +1,10 @@
+--- old.decoratorMetadataGenericTypeVariableInScope.js
++++ new.decoratorMetadataGenericTypeVariableInScope.js
+@@= skipped -26, +26 lines =@@
+ class TypeVariable {
+ }
+ class C {
++    member;
+ }
+ exports.C = C;
+ __decorate([

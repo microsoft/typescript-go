@@ -14,9 +14,7 @@ class X {
 //// [thisCapture1.js]
 "use strict";
 class X {
-    constructor() {
-        this.y = 0;
-    }
+    y = 0;
     getSettings(keys) {
         var ret;
         return ret.always(() => {

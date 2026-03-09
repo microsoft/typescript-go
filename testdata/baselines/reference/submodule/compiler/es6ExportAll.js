@@ -18,7 +18,8 @@ export * from "server";
 //// [server.js]
 export class c {
 }
-export var m;
+export { m };
+var m;
 (function (m) {
     m.x = 10;
 })(m || (m = {}));

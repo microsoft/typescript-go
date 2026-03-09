@@ -43,6 +43,8 @@ export class Foo<T> extends Base<T> {
 //// [inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.js]
 // simple example
 export class Test {
+    a;
+    b;
     constructor(a, b) {
         this.a = a;
         this.b = b;
@@ -52,6 +54,8 @@ export class Test {
     }
 }
 export class Zip {
+    left;
+    right;
     constructor(left, right) {
         this.left = left;
         this.right = right;
@@ -61,6 +65,7 @@ export class Zip {
     }
 }
 class Base {
+    t;
     constructor(t) {
         this.t = t;
     }

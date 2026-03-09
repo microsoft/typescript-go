@@ -11,11 +11,9 @@ module.exports = new Foo();
 //// [index.js]
 "use strict";
 class Foo {
-    constructor() {
-        this.member = 10;
-    }
+    static stat = 10;
+    member = 10;
 }
-Foo.stat = 10;
 module.exports = new Foo();
 
 

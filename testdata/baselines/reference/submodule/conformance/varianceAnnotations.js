@@ -186,10 +186,8 @@ sub_contravariant = super_contravariant;
 super_invariant = sub_invariant; // Error
 sub_invariant = super_invariant; // Error
 class C {
-    constructor() {
-        this.a = 0; // Error
-        this.b = 0; // Error
-    }
+    in a = 0; // Error
+    out b = 0; // Error
 }
 baz1 = baz2; // Error
 baz2 = baz1; // Error

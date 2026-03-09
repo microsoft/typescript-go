@@ -32,6 +32,7 @@ declare let dec: any, obj: any;
 }
 {
     const [x = class {
+        @dec
         y;
     }] = obj;
 }
@@ -45,6 +46,7 @@ declare let dec: any, obj: any;
 }
 {
     const { x = class {
+        @dec
         y;
     } } = obj;
 }
@@ -56,6 +58,7 @@ declare let dec: any, obj: any;
 }
 {
     const { y: x = class {
+        @dec
         y;
     } } = obj;
 }

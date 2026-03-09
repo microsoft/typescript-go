@@ -1,0 +1,10 @@
+--- old.negateOperatorWithBooleanType.js
++++ new.negateOperatorWithBooleanType.js
+@@= skipped -40, +40 lines =@@
+ "use strict";
+ function foo() { return true; }
+ class A {
++    a;
+     static foo() { return false; }
+ }
+ var M;

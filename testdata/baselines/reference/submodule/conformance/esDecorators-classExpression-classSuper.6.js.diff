@@ -33,7 +33,9 @@
 -    };
 -    return C = _classThis;
 -})());
-+(class C extends Base {
++(
++@dec
++class C extends Base {
 +    static m() { super.method(); }
 +    static get x() { return super.method(); }
 +    static set x(v) { super.method(); }

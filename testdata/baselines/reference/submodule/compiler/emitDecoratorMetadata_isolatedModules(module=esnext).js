@@ -60,6 +60,9 @@ import { C3 } from "./class3";
 class HelloWorld {
     handleEvent1(event) { } // Error
     handleEvent2(event) { } // Ok
+    p1; // Error
+    p1_ns; // Ok
+    p2; // Ok
     handleEvent3(event) { return undefined; } // Ok, Error
 }
 __decorate([

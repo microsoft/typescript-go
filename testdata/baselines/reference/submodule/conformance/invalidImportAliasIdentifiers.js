@@ -32,6 +32,7 @@ import i = I;
 var V = 12;
 var v = V;
 class C {
+    name;
 }
 var c = C;
 var E;

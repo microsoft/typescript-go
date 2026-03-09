@@ -134,6 +134,14 @@ var r13 = i[-01]
 // indexed numerically the value is converted to a number
 // no errors expected below
 class C {
+    "0.1";
+    ".1";
+    "1";
+    "1.";
+    "1..";
+    "1.0";
+    "-1.0";
+    "-1";
 }
 var r1 = c['0.1'];
 var r2 = c['.1'];

@@ -31,9 +31,11 @@ i = c;
 "use strict";
 // no errors expected
 class C {
+    x;
     y(a) { return null; }
     get z() { return 1; }
     set z(v) { }
+    0;
 }
 var c;
 var i;

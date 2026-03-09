@@ -67,6 +67,7 @@ var C;
     function F6(x) { return null; }
     C.F6 = F6;
     class D {
+        val;
         constructor(val) {
             this.val = val;
         }

@@ -28,12 +28,11 @@ class Bar {
 //// [propertyOrdering.js]
 "use strict";
 class Foo {
-    constructor(store) {
-        this._store = store; // no repro if this is first line in class body
-    }
+    constructor(store) { }
     foo() {
         return this._store.length; // shouldn't be an error
     }
+    _store = store; // no repro if this is first line in class body
     bar() { return this.store; } // should be an error
 }
 class Bar {

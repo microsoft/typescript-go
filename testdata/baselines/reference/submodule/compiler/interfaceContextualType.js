@@ -27,6 +27,7 @@ class Bug {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Bug {
+    values;
     ok() {
         this.values = {};
         this.values['comments'] = { italic: true };

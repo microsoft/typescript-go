@@ -330,13 +330,6 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 	return options.UseDefineForClassFields != TSFalse && options.GetEmitScriptTarget() >= ScriptTargetES2022
 }
 
-func (options *CompilerOptions) GetUseDefineForClassFields() bool {
-	if options.UseDefineForClassFields == TSUnknown {
-		return options.GetEmitScriptTarget() >= ScriptTargetES2022
-	}
-	return options.UseDefineForClassFields == TSTrue
-}
-
 func (options *CompilerOptions) GetEmitDeclarations() bool {
 	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
@@ -347,7 +340,7 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	switch options.GetEmitModuleKind() {
-	case ModuleKindSystem, ModuleKindUMD:
+	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
 		return false
 	}
 	return true
@@ -375,6 +368,7 @@ const (
 type ModuleKind int32
 
 const (
+	// Deprecated: Do not use outside of options parsing and validation.
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
 	// Deprecated: Do not use outside of options parsing and validation.

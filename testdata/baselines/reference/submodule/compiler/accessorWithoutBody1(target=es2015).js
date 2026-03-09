@@ -5,4 +5,4 @@ var v = { get foo() }
 
 //// [accessorWithoutBody1.js]
 "use strict";
-var v = { get foo() { } };
+var v = {};

@@ -89,6 +89,7 @@ new ctorUnion2("");
 var M;
 (function (M) {
     class T {
+        x;
     }
     M.T = T;
 })(M || (M = {}));

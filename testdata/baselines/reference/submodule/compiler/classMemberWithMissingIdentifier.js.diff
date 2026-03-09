@@ -1,0 +1,10 @@
+--- old.classMemberWithMissingIdentifier.js
++++ new.classMemberWithMissingIdentifier.js
+@@= skipped -7, +7 lines =@@
+ //// [classMemberWithMissingIdentifier.js]
+ "use strict";
+ class C {
++    ;
+ }
+ { }
+ ;

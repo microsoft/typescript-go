@@ -394,6 +394,7 @@ test({
 });
 // Repro from #41712
 class Wrapper {
+    value;
 }
 createMappingComponent({
     setup() {

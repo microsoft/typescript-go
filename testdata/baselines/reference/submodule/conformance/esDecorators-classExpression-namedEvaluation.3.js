@@ -31,6 +31,7 @@ declare let dec: any;
 }
 {
     let x = class {
+        @dec
         y;
     };
 }
@@ -42,6 +43,7 @@ declare let dec: any;
 }
 {
     const x = class {
+        @dec
         y;
     };
 }
@@ -55,6 +57,7 @@ declare let dec: any;
 }
 {
     var x1 = class {
+        @dec
         y;
     };
 }

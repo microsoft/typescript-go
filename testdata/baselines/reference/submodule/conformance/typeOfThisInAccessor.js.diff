@@ -1,0 +1,10 @@
+--- old.typeOfThisInAccessor.js
++++ new.typeOfThisInAccessor.js
+@@= skipped -45, +45 lines =@@
+     }
+ }
+ class D {
++    a;
+     get x() {
+         var r = this; // D<T>
+         return 1;

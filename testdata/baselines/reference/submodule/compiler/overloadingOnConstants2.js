@@ -32,16 +32,12 @@ var f: C = bar("um", []); // C
 //// [overloadingOnConstants2.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = 1;
-    }
+    x = 1;
 }
 class D extends C {
 }
 class E {
-    constructor() {
-        this.y = 1;
-    }
+    y = 1;
 }
 function foo(x, items) {
     return null;

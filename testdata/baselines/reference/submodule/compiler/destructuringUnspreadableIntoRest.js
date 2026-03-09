@@ -104,6 +104,9 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 class A {
+    publicProp;
+    privateProp;
+    protectedProp;
     constructor(publicProp, privateProp, protectedProp) {
         this.publicProp = publicProp;
         this.privateProp = privateProp;

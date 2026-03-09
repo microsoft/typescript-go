@@ -24,11 +24,9 @@ class Foo {
 
 //// [thisInOuterClassBody.js]
 "use strict";
-var _a;
 class Foo {
-    constructor() {
-        this.x = this;
-    }
+    x = this;
+    static y = this;
     bar() {
         this.x; // 'this' is type 'Foo'
         var f = () => this.x; // 'this' should be type 'Foo' as well
@@ -40,5 +38,3 @@ class Foo {
         var b = this.x;
     }
 }
-_a = Foo;
-Foo.y = _a;

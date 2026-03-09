@@ -38,23 +38,22 @@ function f(b: boolean) {
 //// [classBlockScoping.js]
 "use strict";
 function f(b) {
-    var _a;
     let Foo;
     if (b) {
-        Foo = (_a = class Foo {
-                static x() {
-                    new _a();
-                }
-                m() {
-                    new _a();
-                }
-            },
-            _a.y = new _a(),
-            _a);
+        Foo = class Foo {
+            static y = new Foo();
+            static x() {
+                new Foo();
+            }
+            m() {
+                new Foo();
+            }
+        };
         new Foo();
     }
     else {
         class Foo {
+            static y = new Foo();
             static x() {
                 new Foo();
             }
@@ -62,7 +61,6 @@ function f(b) {
                 new Foo();
             }
         }
-        Foo.y = new Foo();
         new Foo();
     }
 }

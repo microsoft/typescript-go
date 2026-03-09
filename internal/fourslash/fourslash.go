@@ -108,7 +108,12 @@ func (s *scriptInfo) GetLineContent(line int) string {
 		end = core.TextPos(len(s.content))
 	}
 
-	return strings.TrimRight(s.content[start:end], "\r\n")
+	// delete trailing newline
+	content := s.content[start:end]
+	if len(content) > 0 && content[len(content)-1] == '\n' {
+		content = content[:len(content)-1]
+	}
+	return content
 }
 
 const rootDir = "/"
@@ -797,36 +802,6 @@ func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
 	result := sendRequest(t, f, lsproto.TextDocumentFormattingInfo, &lsproto.DocumentFormattingParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(filename),
-		},
-		Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
-	})
-	if result.TextEdits == nil {
-		return
-	}
-	f.applyTextEdits(t, *result.TextEdits)
-}
-
-func (f *FourslashTest) FormatSelection(t *testing.T, startMarkerName string, endMarkerName string) {
-	t.Helper()
-	startMarker, ok := f.testData.MarkerPositions[startMarkerName]
-	if !ok {
-		t.Fatalf("Marker '%s' not found", startMarkerName)
-	}
-	endMarker, ok := f.testData.MarkerPositions[endMarkerName]
-	if !ok {
-		t.Fatalf("Marker '%s' not found", endMarkerName)
-	}
-	if startMarker.FileName() != endMarker.FileName() {
-		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
-	}
-	filename := startMarker.FileName()
-	result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
-		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsconv.FileNameToDocumentURI(filename),
-		},
-		Range: lsproto.Range{
-			Start: startMarker.LSPosition,
-			End:   endMarker.LSPosition,
 		},
 		Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
 	})
@@ -4227,6 +4202,30 @@ func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *Rang
 		}
 	}
 	t.Fatalf("Expected error with code %d at range %v but it was not found", code, rangeMarker.LSRange)
+}
+
+// VerifyCurrentLineContentIs verifies that the current line content matches the expected text.
+func (f *FourslashTest) VerifyCurrentLineContentIs(t *testing.T, expectedText string) {
+	script := f.getScriptInfo(f.activeFilename)
+	lines := strings.Split(script.content, "\n")
+	lineNum := int(f.currentCaretPosition.Line)
+	if lineNum >= len(lines) {
+		t.Fatalf("Current line %d is out of range (file has %d lines)", lineNum, len(lines))
+	}
+	actualLine := lines[lineNum]
+	// Handle \r if present
+	actualLine = strings.TrimSuffix(actualLine, "\r")
+	if actualLine != expectedText {
+		t.Fatalf("Current line content mismatch.\nExpected: %q\nActual: %q", expectedText, actualLine)
+	}
+}
+
+// VerifyCurrentFileContentIs verifies that the current file content matches the expected text.
+func (f *FourslashTest) VerifyCurrentFileContentIs(t *testing.T, expectedText string) {
+	script := f.getScriptInfo(f.activeFilename)
+	if script.content != expectedText {
+		t.Fatalf("Current file content mismatch.\nExpected: %q\nActual: %q", expectedText, script.content)
+	}
 }
 
 // VerifyErrorExistsBetweenMarkers verifies that an error exists between the two markers.

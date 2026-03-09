@@ -11,5 +11,6 @@ var a: X<boolean>;
 //// [specializedLambdaTypeArguments.js]
 "use strict";
 class X {
+    prop;
 }
 var a;

@@ -29,14 +29,13 @@ class TypeSymbol extends InferenceSymbol {
 //// [recursiveComplicatedClasses.js]
 "use strict";
 class Signature {
-    constructor() {
-        this.parameters = null;
-    }
+    parameters = null;
 }
 function aEnclosesB(a) {
     return true;
 }
 class Symbol {
+    bound;
     visible() {
         var b;
         return aEnclosesB(b);

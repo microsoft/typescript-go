@@ -34,7 +34,8 @@ import CJSy3 from "./decl"; // ok in esModuleInterop
 import * as types from "./types"; // ok
 CJSy;
 //// [ns.js]
-export var ns;
+export { ns };
+var ns;
 (function (ns) {
     let A;
     (function (A) {

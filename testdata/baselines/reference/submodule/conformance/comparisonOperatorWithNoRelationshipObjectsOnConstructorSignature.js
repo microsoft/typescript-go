@@ -173,10 +173,13 @@ var r8b7 = b7 !== a7;
 //// [comparisonOperatorWithNoRelationshipObjectsOnConstructorSignature.js]
 "use strict";
 class Base {
+    a;
 }
 class Derived extends Base {
+    b;
 }
 class C {
+    c;
 }
 // operator <
 var r1a1 = a1 < b1;

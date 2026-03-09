@@ -26,9 +26,7 @@ namespace N {
 var M;
 (function (M) {
     class B {
-        constructor() {
-            this.x = 10;
-        }
+        x = 10;
     }
     M.B = B;
     class C extends B {

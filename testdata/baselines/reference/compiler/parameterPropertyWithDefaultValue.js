@@ -7,6 +7,7 @@ export class SomeClass {
 
 //// [parameterPropertyWithDefaultValue.js]
 export class SomeClass {
+    timestamp;
     constructor(timestamp = new Date()) {
         this.timestamp = timestamp;
     }

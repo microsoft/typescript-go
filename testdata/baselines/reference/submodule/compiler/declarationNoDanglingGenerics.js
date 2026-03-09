@@ -46,21 +46,17 @@ function register(kind) {
     kindCache[kind] = true;
 }
 function ClassFactory(kind) {
-    var _a;
     register(kind);
-    return _a = class {
-            constructor() {
-                this.kind = kind;
-            }
-        },
-        _a.THE_KIND = kind,
-        _a;
+    return class {
+        static THE_KIND = kind;
+        kind = kind;
+    };
 }
 class Kinds {
+    static A = "A";
+    static B = "B";
+    static C = "C";
 }
-Kinds.A = "A";
-Kinds.B = "B";
-Kinds.C = "C";
 class AKind extends ClassFactory(Kinds.A) {
 }
 exports.AKind = AKind;

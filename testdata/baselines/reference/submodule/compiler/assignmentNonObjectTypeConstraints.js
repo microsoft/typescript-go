@@ -29,8 +29,10 @@ function foo(x) {
 foo(5);
 foo(0 /* E.A */);
 class A {
+    a;
 }
 class B {
+    b;
 }
 function bar(x) {
     var y = x; // Ok

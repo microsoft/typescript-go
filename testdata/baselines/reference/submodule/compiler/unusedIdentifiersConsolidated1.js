@@ -109,6 +109,10 @@ function greeter(person) {
     var unused = 20;
 }
 class Dummy {
+    unusedprivatevariable;
+    greeting;
+    unusedpublicvariable;
+    typedvariable;
     constructor(message) {
         var unused2 = 22;
         this.greeting = "Dummy Message";

@@ -95,37 +95,26 @@ class Customer extends PersonMixin(Person) {
 "use strict";
 // Repro from #13830
 class A {
-    constructor() {
-        this.pb = 2;
-        this.ptd = 1;
-        this.pvt = 0;
-    }
+    pb = 2;
+    ptd = 1;
+    pvt = 0;
 }
 function mixB(Cls) {
     return class extends Cls {
-        constructor() {
-            super(...arguments);
-            this.ptd = 10;
-            this.pvt = 0;
-        }
+        ptd = 10;
+        pvt = 0;
     };
 }
 function mixB2(Cls) {
     return class extends Cls {
-        constructor() {
-            super(...arguments);
-            this.ptd = 10;
-        }
+        ptd = 10;
     };
 }
 const AB = mixB(A), AB2 = mixB2(A);
 function mixC(Cls) {
     return class extends Cls {
-        constructor() {
-            super(...arguments);
-            this.ptd = 100;
-            this.pvt = 0;
-        }
+        ptd = 100;
+        pvt = 0;
     };
 }
 const AB2C = mixC(AB2), ABC = mixC(AB);
@@ -144,6 +133,7 @@ ab2c.ptd.toFixed(); // Error
 ab2c.pvt.toFixed(); // Error
 // Repro from #13924
 class Person {
+    name;
     constructor(name) {
         this.name = name;
     }
@@ -163,6 +153,7 @@ function PersonMixin(Base) {
     };
 }
 class Customer extends PersonMixin(Person) {
+    accountBalance;
     f() {
     }
 }

@@ -32,10 +32,8 @@ d = c; // error
 //// [interfaceExtendsClassWithPrivate1.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = 1;
-    }
     foo(x) { return x; }
+    x = 1;
 }
 class D extends C {
     foo(x) { return x; }

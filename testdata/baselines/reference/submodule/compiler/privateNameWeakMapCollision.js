@@ -13,13 +13,9 @@ function test() {
 //// [privateNameWeakMapCollision.js]
 "use strict";
 function test() {
-    var _C_x;
     let WeakMap;
     let WeakSet;
     class C {
-        constructor() {
-            _C_x.set(this, void 0);
-        }
+        #x;
     }
-    _C_x = new WeakMap();
 }

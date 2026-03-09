@@ -65,16 +65,21 @@ namespace Y {
 var A;
 (function (A_1) {
     class A {
+        s;
     }
     class AA {
+        s;
     }
     class B extends AA {
+        id;
     }
     class BB extends A {
+        id;
     }
     let Module;
     (function (Module) {
         class A {
+            s;
         }
     })(Module || (Module = {}));
     let Color;
@@ -95,20 +100,25 @@ var A;
 var Y;
 (function (Y) {
     class A {
+        s;
     }
     Y.A = A;
     class AA {
+        s;
     }
     Y.AA = AA;
     class B extends AA {
+        id;
     }
     Y.B = B;
     class BB extends A {
+        id;
     }
     Y.BB = BB;
     let Module;
     (function (Module) {
         class A {
+            s;
         }
     })(Module = Y.Module || (Y.Module = {}));
     let Color;

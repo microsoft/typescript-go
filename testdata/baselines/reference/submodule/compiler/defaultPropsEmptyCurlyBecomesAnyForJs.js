@@ -31,6 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyFoo = void 0;
 const library_1 = require("./library");
 class MyFoo extends library_1.Foo {
+    member;
 }
 exports.MyFoo = MyFoo;
 //// [typed_component.js]

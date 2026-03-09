@@ -28,6 +28,8 @@ import x =/*3*/
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
 		},
-		Items: &fourslash.CompletionsExpectedItems{},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{}, // no crash check
+		},
 	})
 }

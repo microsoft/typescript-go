@@ -32,6 +32,7 @@ x = true;
 x = '';
 x = {};
 class C {
+    foo;
 }
 x = C;
 x = c;

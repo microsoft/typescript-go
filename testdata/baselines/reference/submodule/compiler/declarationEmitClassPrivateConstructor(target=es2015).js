@@ -29,12 +29,15 @@ class ExportedClass1 {
 }
 exports.ExportedClass1 = ExportedClass1;
 class ExportedClass2 {
+    data;
     constructor(data) {
         this.data = data;
     }
 }
 exports.ExportedClass2 = ExportedClass2;
 class ExportedClass3 {
+    data;
+    n;
     constructor(data, n) {
         this.data = data;
         this.n = n;
@@ -42,6 +45,8 @@ class ExportedClass3 {
 }
 exports.ExportedClass3 = ExportedClass3;
 class ExportedClass4 {
+    data;
+    n;
     constructor(data, n) {
         this.data = data;
         this.n = n;

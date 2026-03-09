@@ -53,6 +53,8 @@ var p: { x: number; y: number; };
 var moduleA;
 (function (moduleA) {
     class Point {
+        x;
+        y;
         constructor(x, y) {
             this.x = x;
             this.y = y;
@@ -65,6 +67,7 @@ var p;
 var p;
 var p;
 class clodule {
+    name;
 }
 (function (clodule) {
     var Point = { x: 0, y: 0 };

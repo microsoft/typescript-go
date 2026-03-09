@@ -58,5 +58,6 @@ var c: {
 class P {
 }
 class Q extends P {
+    t;
 }
 var c;

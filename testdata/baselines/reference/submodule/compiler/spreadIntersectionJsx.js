@@ -12,8 +12,10 @@ let element = <div { ...intersected } />;
 "use strict";
 const React = null;
 class A {
+    a;
 }
 class C {
+    c;
 }
 let intersected;
 let element = React.createElement("div", Object.assign({}, intersected));

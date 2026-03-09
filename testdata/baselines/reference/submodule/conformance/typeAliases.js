@@ -98,6 +98,7 @@ var x5;
 var x6;
 var x6;
 class C7 {
+    x;
 }
 var x7;
 var x7;

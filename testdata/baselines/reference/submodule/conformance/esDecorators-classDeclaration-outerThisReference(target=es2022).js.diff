@@ -31,7 +31,9 @@
 -    };
 -    return A = _classThis;
 -})();
++@dec(this)
 +class A {
++    @dec(this)
 +    b = 2;
 +}
  // `this` should point to the outer `this`, and maintain the correct evaluation order with respect to computed
@@ -62,9 +64,11 @@
 -    };
 -    return B = _classThis;
 -})();
++@dec(this)
 +class B {
 +    // @ts-ignore
 +    [f(this)] = 1;
++    @dec(this)
 +    b = 2;
 +    // @ts-ignore
 +    [f(this)] = 3;
@@ -99,7 +103,9 @@
 -    };
 -    return C = _classThis;
 -})();
++@dec(this)
 +class C {
 +    #a = 1;
++    @dec(this, (x) => x.#a)
 +    b = 2;
 +}

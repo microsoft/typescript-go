@@ -476,6 +476,9 @@ namespace TypeScript {
 var TypeScript;
 (function (TypeScript) {
     class AssignScopeContext {
+        scopeChain;
+        typeFlow;
+        modDeclChain;
         constructor(scopeChain, typeFlow, modDeclChain) {
             this.scopeChain = scopeChain;
             this.typeFlow = typeFlow;
@@ -509,11 +512,13 @@ var TypeScript;
     }
     TypeScript.instanceFilterStop = instanceFilterStop;
     class ScopeSearchFilter {
+        select;
+        stop;
         constructor(select, stop) {
             this.select = select;
             this.stop = stop;
-            this.result = null;
         }
+        result = null;
         reset() {
             this.result = null;
         }

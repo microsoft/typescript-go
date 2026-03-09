@@ -44,9 +44,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 export class FeatureRunner {
-    constructor() {
-        this.cleaners = [];
-    }
+    cleaners = [];
     runFeature() {
         return __awaiter(this, void 0, void 0, function* () {
             const objectWhichShouldBeConst = {

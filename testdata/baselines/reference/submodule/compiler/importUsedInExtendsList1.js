@@ -16,6 +16,7 @@ var r: string = s.foo;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Super = void 0;
 class Super {
+    foo;
 }
 exports.Super = Super;
 //// [importUsedInExtendsList1_1.js]

@@ -22,12 +22,15 @@ export type Foo = {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Derived2 = exports.Derived = exports.Base = void 0;
 class Base {
+    foo;
 }
 exports.Base = Base;
 class Derived extends Base {
+    bar;
 }
 exports.Derived = Derived;
 class Derived2 extends Derived {
+    baz;
 }
 exports.Derived2 = Derived2;
 

@@ -14,10 +14,7 @@ class Greeter extends AbstractGreeter {
 class AbstractGreeter {
 }
 class Greeter extends AbstractGreeter {
-    constructor() {
-        super(...arguments);
-        this.a = 10;
-        this.nameA = "Ten";
-    }
+    a = 10;
+    nameA = "Ten";
 }
 //# sourceMappingURL=sourceMapValidationClassWithDefaultConstructorAndExtendsClause.js.map

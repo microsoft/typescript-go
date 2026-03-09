@@ -29,15 +29,12 @@ class CoachMarkAnchorDecorator {
 class CoachMarkAnchorDecorator {
     decorateComponent(anchor) {
         return class CoachMarkAnchor extends Component {
-            constructor() {
-                super(...arguments);
-                this._onAnchorRef = (anchor) => {
-                    const anchorRef = this.props.anchorRef;
-                    if (anchorRef) {
-                        anchorRef(anchor);
-                    }
-                };
-            }
+            _onAnchorRef = (anchor) => {
+                const anchorRef = this.props.anchorRef;
+                if (anchorRef) {
+                    anchorRef(anchor);
+                }
+            };
         };
     }
 }

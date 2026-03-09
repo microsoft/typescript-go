@@ -51,6 +51,7 @@ var ResultIsBoolean14 = !!!(STRING + STRING);
 var STRING1 = ["", "abc"];
 function foo() { return "abc"; }
 class A {
+    a;
     static foo() { return ""; }
 }
 var M;

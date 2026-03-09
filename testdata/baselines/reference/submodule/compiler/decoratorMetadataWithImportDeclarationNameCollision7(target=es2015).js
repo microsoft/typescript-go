@@ -41,6 +41,7 @@ function someDecorator(target) {
     return target;
 }
 let MyClass = class MyClass {
+    db; //error
     constructor(db) {
         this.db = db;
         this.db.doSomething();

@@ -13,4 +13,5 @@ import r = M.X;
 "use strict";
 var M;
 (function (M) {
+    M.X = N;
 })(M || (M = {}));

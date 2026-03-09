@@ -1,0 +1,10 @@
+--- old.parameterPropertyInConstructor3.js
++++ new.parameterPropertyInConstructor3.js
+@@= skipped -8, +8 lines =@@
+ //// [parameterPropertyInConstructor3.js]
+ "use strict";
+ class Foo {
++    constructor;
+     constructor(constructor) {
+         this.constructor = constructor;
+     }

@@ -48,10 +48,7 @@ function wrapClass(param) {
 }
 function Timestamped(Base) {
     return class extends Base {
-        constructor() {
-            super(...arguments);
-            this.timestamp = Date.now();
-        }
+        timestamp = Date.now();
     };
 }
 //// [index.js]
@@ -62,9 +59,7 @@ const wrapClass_1 = require("./wrapClass");
 exports.default = (0, wrapClass_1.wrapClass)(0);
 // Simple class
 class User {
-    constructor() {
-        this.name = '';
-    }
+    name = '';
 }
 exports.User = User;
 // User that is Timestamped

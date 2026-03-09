@@ -21,11 +21,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TypeScript = void 0;
 var TypeScript;
 (function (TypeScript) {
-    var Strasse;
+    let Strasse;
     (function (Strasse) {
-        var Street;
+        let Street;
         (function (Street) {
             class Rue {
+                address;
             }
             Street.Rue = Rue;
         })(Street = Strasse.Street || (Strasse.Street = {}));

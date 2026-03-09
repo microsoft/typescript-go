@@ -1,0 +1,10 @@
+--- old.interfaceClassMerging.js
++++ new.interfaceClassMerging.js
+@@= skipped -44, +44 lines =@@
+ //// [interfaceClassMerging.js]
+ "use strict";
+ class Foo {
++    additionalProperty;
+     additionalMethod(a) {
+         return this.method(0);
+     }

@@ -15,8 +15,10 @@ function Choice<T>(...v_args: T[]): A<T> {
 //// [overloadGenericFunctionWithRestArgs.js]
 "use strict";
 class B {
+    id;
 }
 class A {
+    GetEnumerator;
 }
 function Choice(...v_args) {
     return new A();

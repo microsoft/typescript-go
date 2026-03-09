@@ -24,6 +24,7 @@ namespace M {
 var M;
 (function (M) {
     class XX {
+        m1;
         constructor(m1) {
             this.m1 = m1;
         }

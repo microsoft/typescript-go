@@ -26,6 +26,7 @@ var c: { y: { z: IHasVisualizationModel } } = { y: { z: moduleA } };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Model = void 0;
 class Model {
+    someData;
 }
 exports.Model = Model;
 //// [aliasUsageInObjectLiteral_moduleA.js]

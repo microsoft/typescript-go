@@ -37,6 +37,7 @@ var M;
 })(M || (M = {}));
 (function (M_2) {
     class d {
+        M;
         constructor(M, p = M_2.x) {
             this.M = M;
         }

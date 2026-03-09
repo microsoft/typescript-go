@@ -35,12 +35,13 @@ class Foo extends Base {
     }
 }
 class Foo2 extends Base {
+    p = 0;
     constructor() {
         super(this); // error
-        this.p = 0;
     }
 }
 class Foo3 extends Base {
+    p;
     constructor(p) {
         super(this); // error
         this.p = p;

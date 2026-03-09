@@ -1,0 +1,18 @@
+--- old.typeOfThisInMemberFunctions.js
++++ new.typeOfThisInMemberFunctions.js
+@@= skipped -43, +43 lines =@@
+     }
+ }
+ class D {
++    x;
+     foo() {
+         var r = this;
+     }
+@@= skipped -8, +9 lines =@@
+     }
+ }
+ class E {
++    x;
+     foo() {
+         var r = this;
+     }

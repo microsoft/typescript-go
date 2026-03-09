@@ -1,0 +1,10 @@
+--- old.exportAssignClassAndModule.js
++++ new.exportAssignClassAndModule.js
+@@= skipped -20, +20 lines =@@
+ //// [exportAssignClassAndModule_0.js]
+ "use strict";
+ class Foo {
++    x;
+ }
+ module.exports = Foo;
+ //// [exportAssignClassAndModule_1.js]

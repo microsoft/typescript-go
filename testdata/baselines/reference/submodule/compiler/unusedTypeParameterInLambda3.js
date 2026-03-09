@@ -11,5 +11,6 @@ var y: new <T,U>(a:T)=>void;
 //// [unusedTypeParameterInLambda3.js]
 "use strict";
 class A {
+    x;
 }
 var y;

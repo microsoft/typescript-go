@@ -14,8 +14,13 @@ class C {
 //// [computedPropertyNames42_ES6.js]
 "use strict";
 class Foo {
+    x;
 }
 class Foo2 {
+    x;
+    y;
 }
 class C {
+    // Computed properties
+    [""];
 }

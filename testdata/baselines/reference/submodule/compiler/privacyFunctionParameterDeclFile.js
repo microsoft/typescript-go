@@ -698,6 +698,8 @@ class publicClass {
 }
 exports.publicClass = publicClass;
 class publicClassWithWithPrivateParmeterTypes {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -713,6 +715,8 @@ class publicClassWithWithPrivateParmeterTypes {
 }
 exports.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
 class publicClassWithWithPublicParmeterTypes {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -728,6 +732,8 @@ class publicClassWithWithPublicParmeterTypes {
 }
 exports.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
 class privateClassWithWithPrivateParmeterTypes {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -742,6 +748,8 @@ class privateClassWithWithPrivateParmeterTypes {
     }
 }
 class privateClassWithWithPublicParmeterTypes {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -764,6 +772,8 @@ function privateFunctionWithPrivateParmeterTypes(param) {
 function privateFunctionWithPublicParmeterTypes(param) {
 }
 class publicClassWithPrivateModuleParameterTypes {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     myPublicMethod(param) {
@@ -777,6 +787,8 @@ exports.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModul
 function publicFunctionWithPrivateModuleParameterTypes(param) {
 }
 class privateClassWithPrivateModuleParameterTypes {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     myPublicMethod(param) {
@@ -796,6 +808,8 @@ var publicModule;
     }
     publicModule.publicClass = publicClass;
     class publicClassWithWithPrivateParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -811,6 +825,8 @@ var publicModule;
     }
     publicModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
     class publicClassWithWithPublicParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -826,6 +842,8 @@ var publicModule;
     }
     publicModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
     class privateClassWithWithPrivateParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -840,6 +858,8 @@ var publicModule;
         }
     }
     class privateClassWithWithPublicParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -864,6 +884,8 @@ var publicModule;
     function privateFunctionWithPublicParmeterTypes(param) {
     }
     class publicClassWithPrivateModuleParameterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -878,6 +900,8 @@ var publicModule;
     }
     publicModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
     class privateClassWithPrivateModuleParameterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -898,6 +922,8 @@ var privateModule;
     }
     privateModule.publicClass = publicClass;
     class publicClassWithWithPrivateParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -913,6 +939,8 @@ var privateModule;
     }
     privateModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
     class publicClassWithWithPublicParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -928,6 +956,8 @@ var privateModule;
     }
     privateModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
     class privateClassWithWithPrivateParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -942,6 +972,8 @@ var privateModule;
         }
     }
     class privateClassWithWithPublicParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -966,6 +998,8 @@ var privateModule;
     function privateFunctionWithPublicParmeterTypes(param) {
     }
     class publicClassWithPrivateModuleParameterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -980,6 +1014,8 @@ var privateModule;
     }
     privateModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
     class privateClassWithPrivateModuleParameterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -997,6 +1033,8 @@ var privateModule;
 class publicClassInGlobal {
 }
 class publicClassWithWithPublicParmeterTypesInGlobal {
+    param1;
+    param2;
     static myPublicStaticMethod(param) {
     }
     static myPrivateStaticMethod(param) {
@@ -1027,6 +1065,8 @@ var publicModuleInGlobal;
         }
         privateModule.publicClass = publicClass;
         class publicClassWithWithPrivateParmeterTypes {
+            param1;
+            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1042,6 +1082,8 @@ var publicModuleInGlobal;
         }
         privateModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
         class publicClassWithWithPublicParmeterTypes {
+            param1;
+            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1057,6 +1099,8 @@ var publicModuleInGlobal;
         }
         privateModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
         class privateClassWithWithPrivateParmeterTypes {
+            param1;
+            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1071,6 +1115,8 @@ var publicModuleInGlobal;
             }
         }
         class privateClassWithWithPublicParmeterTypes {
+            param1;
+            param2;
             static myPublicStaticMethod(param) {
             }
             static myPrivateStaticMethod(param) {
@@ -1095,6 +1141,8 @@ var publicModuleInGlobal;
         function privateFunctionWithPublicParmeterTypes(param) {
         }
         class publicClassWithPrivateModuleParameterTypes {
+            param1;
+            param2;
             static myPublicStaticMethod(param) {
             }
             myPublicMethod(param) {
@@ -1109,6 +1157,8 @@ var publicModuleInGlobal;
         }
         privateModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
         class privateClassWithPrivateModuleParameterTypes {
+            param1;
+            param2;
             static myPublicStaticMethod(param) {
             }
             myPublicMethod(param) {
@@ -1122,6 +1172,8 @@ var publicModuleInGlobal;
         }
     })(privateModule || (privateModule = {}));
     class publicClassWithWithPrivateParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1137,6 +1189,8 @@ var publicModuleInGlobal;
     }
     publicModuleInGlobal.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
     class publicClassWithWithPublicParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1152,6 +1206,8 @@ var publicModuleInGlobal;
     }
     publicModuleInGlobal.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
     class privateClassWithWithPrivateParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1166,6 +1222,8 @@ var publicModuleInGlobal;
         }
     }
     class privateClassWithWithPublicParmeterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         static myPrivateStaticMethod(param) {
@@ -1190,6 +1248,8 @@ var publicModuleInGlobal;
     function privateFunctionWithPublicParmeterTypes(param) {
     }
     class publicClassWithPrivateModuleParameterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {
@@ -1204,6 +1264,8 @@ var publicModuleInGlobal;
     }
     publicModuleInGlobal.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
     class privateClassWithPrivateModuleParameterTypes {
+        param1;
+        param2;
         static myPublicStaticMethod(param) {
         }
         myPublicMethod(param) {

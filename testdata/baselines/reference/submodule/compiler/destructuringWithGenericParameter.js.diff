@@ -1,0 +1,10 @@
+--- old.destructuringWithGenericParameter.js
++++ new.destructuringWithGenericParameter.js
+@@= skipped -18, +18 lines =@@
+ //// [destructuringWithGenericParameter.js]
+ "use strict";
+ class GenericClass {
++    payload;
+ }
+ var genericObject = new GenericClass();
+ function genericFunction(object, callback) {

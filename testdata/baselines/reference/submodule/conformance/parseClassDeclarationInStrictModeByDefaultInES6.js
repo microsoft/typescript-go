@@ -13,9 +13,7 @@ class C {
 //// [parseClassDeclarationInStrictModeByDefaultInES6.js]
 "use strict";
 class C {
-    constructor() {
-        this.interface = 10;
-    }
+    interface = 10;
     implements() { }
     foo(arguments) { }
     bar(eval) {

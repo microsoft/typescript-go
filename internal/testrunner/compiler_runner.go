@@ -115,14 +115,6 @@ var skippedTests = []string{
 	"noImplicitUseStrict_amd.ts",
 	"noImplicitAnyIndexingSuppressed.ts",
 	"excessPropertyErrorsSuppressed.ts",
-	"moduleNoneDynamicImport.ts",
-	"moduleNoneErrors.ts",
-	"moduleNoneOutFile.ts",
-	"noErrorUsingImportExportModuleAugmentationInDeclarationFile1.ts",
-	"noErrorUsingImportExportModuleAugmentationInDeclarationFile2.ts",
-	"noErrorUsingImportExportModuleAugmentationInDeclarationFile3.ts",
-	"requireOfJsonFileWithModuleEmitNone.ts",
-	"requireOfJsonFileWithModuleNodeResolutionEmitNone.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {

@@ -14,11 +14,9 @@ class D {
 //// [emitClassDeclarationWithStaticPropertyAssignmentInES6.js]
 "use strict";
 class C {
+    static z = "Foo";
 }
-C.z = "Foo";
 class D {
-    constructor() {
-        this.x = 20000;
-    }
+    x = 20000;
+    static b = true;
 }
-D.b = true;

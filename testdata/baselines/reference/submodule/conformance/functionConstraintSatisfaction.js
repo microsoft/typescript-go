@@ -69,6 +69,7 @@ function foo2<T extends { (): void }, U extends { (): void }>(x: T, y: U) {
 function foo(x) { return x; }
 var i;
 class C {
+    foo;
 }
 var a;
 var b;
@@ -84,6 +85,7 @@ var r7 = foo(b);
 var r8 = foo(c);
 var i2;
 class C2 {
+    foo;
 }
 var a2;
 var b2;

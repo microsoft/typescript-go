@@ -86,6 +86,7 @@ import { PartialType } from './utils';
 class Common {
 }
 export class Sub extends PartialType(Common) {
+    id;
 }
 
 //// [D:/Work/pkg1/dist/src/utils/index.d.ts] *new* 

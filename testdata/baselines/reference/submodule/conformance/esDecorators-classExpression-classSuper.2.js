@@ -31,20 +31,26 @@ class C3 extends ((() => {}) as any) {
 //// [esDecorators-classExpression-classSuper.2.js]
 "use strict";
 // class expression in extends should not get an assigned name
-(class C1 extends class {
+(
+@dec
+class C1 extends class {
 } {
     static {
         super.name;
     }
 });
 // function expression in extends should not get an assigned name
-(class C2 extends function () { } {
+(
+@dec
+class C2 extends function () { } {
     static {
         super.name;
     }
 });
 // arrow function in extends should not get an assigned name
-(class C3 extends (() => { }) {
+(
+@dec
+class C3 extends (() => { }) {
     static {
         super.name;
     }

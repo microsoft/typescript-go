@@ -11,6 +11,7 @@ class A {
 //// [unusedParameterProperty2.js]
 "use strict";
 class A {
+    used;
     constructor(used) {
         this.used = used;
         let foge = used;

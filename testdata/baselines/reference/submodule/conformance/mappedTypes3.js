@@ -43,6 +43,7 @@ function f3(bb: BoxifiedBacon) {
 //// [mappedTypes3.js]
 "use strict";
 class Box {
+    value;
 }
 function f1(b) {
     let bb = boxify(b);

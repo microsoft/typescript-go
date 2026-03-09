@@ -172,10 +172,13 @@ declare function newError3(x: number): x is NeedsFoo<number>; // should error
 //// [typeGuardFunctionErrors.js]
 "use strict";
 class A {
+    propA;
 }
 class B {
+    propB;
 }
 class C extends A {
+    propC;
 }
 function hasANonBooleanReturnStatement(x) {
     return '';

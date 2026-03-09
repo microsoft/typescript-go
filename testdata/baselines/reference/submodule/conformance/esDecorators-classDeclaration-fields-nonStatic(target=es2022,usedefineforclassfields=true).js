@@ -16,7 +16,10 @@ class C {
 "use strict";
 const field3 = "field3";
 class C {
+    @dec(1)
     field1 = 1;
+    @dec(2)
     ["field2"] = 2;
+    @dec(3)
     [field3] = 3;
 }

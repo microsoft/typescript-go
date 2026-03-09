@@ -17,6 +17,8 @@ type Z<T extends A & B> = T["a"];
 //// [indexedAccessPrivateMemberOfGenericConstraint.js]
 "use strict";
 class A {
+    a;
 }
 class B {
+    a;
 }

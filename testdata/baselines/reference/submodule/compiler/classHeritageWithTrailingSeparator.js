@@ -8,6 +8,7 @@ class D extends C, {
 //// [classHeritageWithTrailingSeparator.js]
 "use strict";
 class C {
+    foo;
 }
 class D extends C {
 }

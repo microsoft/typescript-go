@@ -14,16 +14,16 @@ namespace my.data.foo {
 "use strict";
 var my;
 (function (my) {
-    var data;
+    let data;
     (function (data) {
         function buz() { }
         data.buz = buz;
     })(data = my.data || (my.data = {}));
 })(my || (my = {}));
 (function (my_1) {
-    var data;
+    let data;
     (function (data_1) {
-        var foo;
+        let foo;
         (function (foo_1) {
             function data(my, foo) {
                 data_1.buz();

@@ -18,6 +18,8 @@ class C {
 //// [declFilePrivateStatic.js]
 "use strict";
 class C {
+    static x = 1;
+    static y = 1;
     static a() { }
     static b() { }
     static get c() { return 1; }
@@ -25,8 +27,6 @@ class C {
     static set e(v) { }
     static set f(v) { }
 }
-C.x = 1;
-C.y = 1;
 
 
 //// [declFilePrivateStatic.d.ts]

@@ -1,0 +1,10 @@
+--- old.declarationEmitReadonly.js
++++ new.declarationEmitReadonly.js
+@@= skipped -7, +7 lines =@@
+ //// [declarationEmitReadonly.js]
+ "use strict";
+ class C {
++    x;
+     constructor(x) {
+         this.x = x;
+     }

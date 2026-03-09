@@ -81,11 +81,15 @@ class ViewModel<TValue> implements Contract<TValue> {
 "use strict";
 var Portal;
 (function (Portal) {
-    var Controls;
+    let Controls;
     (function (Controls) {
-        var Validators;
+        let Validators;
         (function (Validators) {
             class Validator {
+                _subscription;
+                message;
+                validationState;
+                validate;
                 constructor(message) { }
                 destroy() { }
                 _validate(value) { return 0; }
@@ -96,11 +100,11 @@ var Portal;
 })(Portal || (Portal = {}));
 var PortalFx;
 (function (PortalFx) {
-    var ViewModels;
+    let ViewModels;
     (function (ViewModels) {
-        var Controls;
+        let Controls;
         (function (Controls) {
-            var Validators;
+            let Validators;
             (function (Validators) {
                 class Validator extends Portal.Controls.Validators.Validator {
                     constructor(message) {
@@ -113,7 +117,5 @@ var PortalFx;
     })(ViewModels = PortalFx.ViewModels || (PortalFx.ViewModels = {}));
 })(PortalFx || (PortalFx = {}));
 class ViewModel {
-    constructor() {
-        this.validators = ko.observableArray();
-    }
+    validators = ko.observableArray();
 }

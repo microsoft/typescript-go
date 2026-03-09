@@ -36,6 +36,7 @@ class SomeClass2 {
 //// [typeOfThisInstanceMemberNarrowedWithLoopAntecedent.js]
 "use strict";
 class SomeClass {
+    state;
     method() {
         while (0) { }
         this.state.data;
@@ -45,6 +46,7 @@ class SomeClass {
     }
 }
 class SomeClass2 {
+    state;
     method() {
         var _a;
         const c = false;

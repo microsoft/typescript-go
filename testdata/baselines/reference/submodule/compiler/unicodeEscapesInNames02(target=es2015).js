@@ -38,6 +38,7 @@ else {
     \u{102A7} = "hallo";
 }
 class Foo {
+    \u{102A7};
     constructor() {
         this.\u{102A7} = " world";
     }

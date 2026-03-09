@@ -408,6 +408,11 @@ func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.Sour
 	return -1
 }
 
+func getCommentRange(node *ast.Node) core.TextRange {
+	// TODO(rbuckton)
+	return node.Loc
+}
+
 func siblingNodePositionsAreComparable(previousNode *ast.Node, nextNode *ast.Node) bool {
 	if nextNode.Pos() < previousNode.End() {
 		return false

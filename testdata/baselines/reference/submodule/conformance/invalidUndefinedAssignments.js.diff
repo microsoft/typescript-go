@@ -1,0 +1,10 @@
+--- old.invalidUndefinedAssignments.js
++++ new.invalidUndefinedAssignments.js
+@@= skipped -32, +32 lines =@@
+ E = x;
+ E.A = x;
+ class C {
++    foo;
+ }
+ var f;
+ C = x;

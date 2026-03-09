@@ -14,8 +14,9 @@ export class C {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.C = void 0;
 class C {
+    static x;
+    static {
+        C.x = 1;
+    }
 }
 exports.C = C;
-(() => {
-    C.x = 1;
-})();

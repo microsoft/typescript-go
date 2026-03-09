@@ -17,12 +17,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 let D = class D {
-    constructor() {
-        this.p = 1;
-    }
+    static s = 0;
+    p = 1;
     method() { }
 };
-D.s = 0;
 D = __decorate([
     foo
 ], D);

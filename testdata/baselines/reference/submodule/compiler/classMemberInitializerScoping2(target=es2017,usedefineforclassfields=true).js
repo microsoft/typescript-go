@@ -12,12 +12,6 @@ class C {
 "use strict";
 const x = 1;
 class C {
-    constructor(x) {
-        Object.defineProperty(this, "p", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: x
-        });
-    }
+    p = x;
+    constructor(x) { }
 }

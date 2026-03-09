@@ -33,6 +33,7 @@ function compare(x, y) {
     return x.comparer(y);
 }
 class ComparableString {
+    currentValue;
     constructor(currentValue) {
         this.currentValue = currentValue;
     }

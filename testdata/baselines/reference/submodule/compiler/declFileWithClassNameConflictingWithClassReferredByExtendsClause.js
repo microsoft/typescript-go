@@ -25,24 +25,26 @@ namespace X.Y.base.Z {
 "use strict";
 var X;
 (function (X) {
-    var Y;
+    let Y;
     (function (Y) {
-        var base;
+        let base;
         (function (base) {
             class W extends A.B.Base.W {
+                name;
             }
             base.W = W;
         })(base = Y.base || (Y.base = {}));
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
 (function (X) {
-    var Y;
+    let Y;
     (function (Y) {
-        var base;
+        let base;
         (function (base) {
-            var Z;
+            let Z;
             (function (Z) {
                 class W extends X.Y.base.W {
+                    value;
                 }
                 Z.W = W;
             })(Z = base.Z || (base.Z = {}));

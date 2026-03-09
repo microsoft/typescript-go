@@ -1,0 +1,10 @@
+--- old.interfaceSubtyping.js
++++ new.interfaceSubtyping.js
+@@= skipped -13, +13 lines =@@
+ //// [interfaceSubtyping.js]
+ "use strict";
+ class Camera {
++    str;
+     constructor(str) {
+         this.str = str;
+     }

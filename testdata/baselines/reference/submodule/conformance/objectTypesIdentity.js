@@ -94,10 +94,13 @@ function foo14(x: any) { }
 "use strict";
 // object types are identical structurally
 class A {
+    foo;
 }
 class B {
+    foo;
 }
 class C {
+    foo;
 }
 var a;
 var b = { foo: '' };

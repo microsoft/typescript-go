@@ -28,7 +28,9 @@
 -    };
 -    return C1 = _classThis;
 -})());
-+(class C1 extends class {
++(
++@dec
++class C1 extends class {
 +} {
 +    static {
 +        super.name;
@@ -58,7 +60,9 @@
 -    };
 -    return C2 = _classThis;
 -})());
-+(class C2 extends function () { } {
++(
++@dec
++class C2 extends function () { } {
 +    static {
 +        super.name;
 +    }
@@ -87,7 +91,9 @@
 -    };
 -    return C3 = _classThis;
 -})());
-+(class C3 extends (() => { }) {
++(
++@dec
++class C3 extends (() => { }) {
 +    static {
 +        super.name;
 +    }

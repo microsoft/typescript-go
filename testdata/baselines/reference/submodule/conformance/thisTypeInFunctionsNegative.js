@@ -199,6 +199,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class C {
+    n;
     explicitThis(m) {
         return this.n + m;
     }
@@ -216,6 +217,7 @@ class C {
     }
 }
 class D {
+    x;
     explicitThis(m) {
         return this.x + m;
     }
@@ -294,17 +296,21 @@ c.explicitVoid = d.explicitD;
 c.explicitVoid = d.explicitThis;
 /// class-based polymorphic assignability (with inheritance!) ///
 class Base1 {
+    x;
     polymorphic() { return this.x; }
     explicit() { return this.x; }
     static explicitStatic() { return this.x; }
 }
 class Derived1 extends Base1 {
+    y;
 }
 class Base2 {
+    y;
     polymorphic() { return this.y; }
     explicit() { return this.x; }
 }
 class Derived2 extends Base2 {
+    x;
 }
 let b1 = new Base1();
 let d1 = new Derived1();
@@ -319,6 +325,7 @@ function VoidThis() {
 let voidThis = new VoidThis();
 ///// syntax-ish errors /////
 class ThisConstructor {
+    n;
     constructor(n) {
         this.n = n;
     }

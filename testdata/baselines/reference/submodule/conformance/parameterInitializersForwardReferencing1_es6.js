@@ -67,6 +67,8 @@ function f7({ [foo]: bar }) {
     let foo = 2;
 }
 class Foo {
+    x;
+    y;
     constructor(x = 12, y = x) {
         this.x = x;
         this.y = y;

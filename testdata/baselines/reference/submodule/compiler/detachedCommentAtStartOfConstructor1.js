@@ -15,6 +15,8 @@ class TestFile {
 //// [detachedCommentAtStartOfConstructor1.js]
 "use strict";
 class TestFile {
+    message;
+    name;
     constructor(message) {
         /// <summary>Test summary</summary>
         /// <param name="message" type="String" />

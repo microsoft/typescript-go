@@ -22,6 +22,8 @@ var p: m.Point; // Error
 var M;
 (function (M) {
     class Point {
+        x;
+        y;
     }
     M.Point = Point;
     M.Point = 1; // Error

@@ -19,9 +19,7 @@ class C3 extends C1 {
 class C1 {
 }
 class C2 extends C1 {
-    #a_accessor_storage = 1;
-    get a() { return this.#a_accessor_storage; }
-    set a(value) { this.#a_accessor_storage = value; }
+    accessor a = 1;
 }
 class C3 extends C1 {
     get a() { return 1; }

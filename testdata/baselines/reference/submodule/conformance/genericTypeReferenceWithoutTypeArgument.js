@@ -44,6 +44,7 @@ var k = <M.E>null;
 // it is an error to use a generic type without type arguments
 // all of these are errors 
 class C {
+    foo;
 }
 var c;
 var a;
@@ -57,6 +58,7 @@ class D extends C {
 var M;
 (function (M) {
     class E {
+        foo;
     }
     M.E = E;
 })(M || (M = {}));

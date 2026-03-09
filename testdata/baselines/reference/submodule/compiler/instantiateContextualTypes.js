@@ -209,29 +209,27 @@ var N1;
 })(N1 || (N1 = {}));
 passContentsToFunc(outerBoxOfString, box => box.value);
 class Interesting {
-    constructor() {
-        this.compiles = () => {
-            return Promise.resolve().then(() => {
-                if (1 < 2) {
-                    return 'SOMETHING';
-                }
-                return 'ELSE';
-            });
-        };
-        this.doesnt = () => {
-            return Promise.resolve().then(() => {
-                return 'ELSE';
-            });
-        };
-        this.slightlyDifferentErrorMessage = () => {
-            return Promise.resolve().then(() => {
-                if (1 < 2) {
-                    return 'SOMETHING';
-                }
+    compiles = () => {
+        return Promise.resolve().then(() => {
+            if (1 < 2) {
                 return 'SOMETHING';
-            });
-        };
-    }
+            }
+            return 'ELSE';
+        });
+    };
+    doesnt = () => {
+        return Promise.resolve().then(() => {
+            return 'ELSE';
+        });
+    };
+    slightlyDifferentErrorMessage = () => {
+        return Promise.resolve().then(() => {
+            if (1 < 2) {
+                return 'SOMETHING';
+            }
+            return 'SOMETHING';
+        });
+    };
 }
 let xx = invoke(() => 1);
 let obj = {

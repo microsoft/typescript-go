@@ -177,6 +177,7 @@ function foo9(x) {
 }
 var r9 = foo9(1);
 class C {
+    foo;
 }
 function foo10(x) {
     var c;
@@ -187,6 +188,7 @@ var M;
 (function (M) {
     M.x = 1;
     class C {
+        foo;
     }
     M.C = C;
 })(M || (M = {}));
@@ -208,6 +210,7 @@ function foo13() {
 }
 var r13 = foo13();
 class c1 {
+    foo;
     constructor(x) { }
 }
 (function (c1) {

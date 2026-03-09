@@ -52,11 +52,12 @@ c["foo"];
 "use strict";
 class C1 {
     iFn(n, s) { }
+    iAny;
+    iNum;
+    iObj;
 }
 class C2 {
-    constructor() {
-        this.x = 1;
-    }
+    x = 1;
 }
 var a = function () {
     return new C2();

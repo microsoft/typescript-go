@@ -27,6 +27,8 @@ var p = new A.Point(0, 0); // unexpected error here, bug 840000
 var A;
 (function (A) {
     class Point {
+        x;
+        y;
         constructor(x, y) {
             this.x = x;
             this.y = y;

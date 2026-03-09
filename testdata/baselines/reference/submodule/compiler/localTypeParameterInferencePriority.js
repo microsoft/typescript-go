@@ -24,6 +24,7 @@ const ColumnSelectView2: new <S extends Schema>() => Table<UnrollOnHover<S>> = T
 
 //// [localTypeParameterInferencePriority.js]
 class Table {
+    __schema;
     // Removing this line, removes the error 
     getRows() {
         return null;

@@ -23,9 +23,7 @@ class myCls {
 //// [thisInLambda.js]
 "use strict";
 class Foo {
-    constructor() {
-        this.x = "hello";
-    }
+    x = "hello";
     bar() {
         this.x; // 'this' is type 'Foo'
         var f = () => this.x; // 'this' should be type 'Foo' as well

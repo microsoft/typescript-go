@@ -26,6 +26,7 @@ var r4 = b.foo;
 //// [propertyNameWithoutTypeAnnotation.js]
 "use strict";
 class C {
+    foo;
 }
 var a;
 var b = {

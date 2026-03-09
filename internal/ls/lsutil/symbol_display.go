@@ -82,82 +82,47 @@ const (
 	ScriptElementKindLinkText
 )
 
-type ScriptElementKindModifier uint32
+type ScriptElementKindModifier string
 
 const (
-	ScriptElementKindModifierNone   ScriptElementKindModifier = 0
-	ScriptElementKindModifierPublic ScriptElementKindModifier = 1 << iota
-	ScriptElementKindModifierPrivate
-	ScriptElementKindModifierProtected
-	ScriptElementKindModifierExported
-	ScriptElementKindModifierAmbient
-	ScriptElementKindModifierStatic
-	ScriptElementKindModifierAbstract
-	ScriptElementKindModifierOptional
-	ScriptElementKindModifierDeprecated
-	ScriptElementKindModifierDts
-	ScriptElementKindModifierTs
-	ScriptElementKindModifierTsx
-	ScriptElementKindModifierJs
-	ScriptElementKindModifierJsx
-	ScriptElementKindModifierJson
-	ScriptElementKindModifierDmts
-	ScriptElementKindModifierMts
-	ScriptElementKindModifierMjs
-	ScriptElementKindModifierDcts
-	ScriptElementKindModifierCts
-	ScriptElementKindModifierCjs
+	ScriptElementKindModifierNone       ScriptElementKindModifier = ""
+	ScriptElementKindModifierPublic     ScriptElementKindModifier = "public"
+	ScriptElementKindModifierPrivate    ScriptElementKindModifier = "private"
+	ScriptElementKindModifierProtected  ScriptElementKindModifier = "protected"
+	ScriptElementKindModifierExported   ScriptElementKindModifier = "export"
+	ScriptElementKindModifierAmbient    ScriptElementKindModifier = "declare"
+	ScriptElementKindModifierStatic     ScriptElementKindModifier = "static"
+	ScriptElementKindModifierAbstract   ScriptElementKindModifier = "abstract"
+	ScriptElementKindModifierOptional   ScriptElementKindModifier = "optional"
+	ScriptElementKindModifierDeprecated ScriptElementKindModifier = "deprecated"
+	ScriptElementKindModifierDts        ScriptElementKindModifier = ".d.ts"
+	ScriptElementKindModifierTs         ScriptElementKindModifier = ".ts"
+	ScriptElementKindModifierTsx        ScriptElementKindModifier = ".tsx"
+	ScriptElementKindModifierJs         ScriptElementKindModifier = ".js"
+	ScriptElementKindModifierJsx        ScriptElementKindModifier = ".jsx"
+	ScriptElementKindModifierJson       ScriptElementKindModifier = ".json"
+	ScriptElementKindModifierDmts       ScriptElementKindModifier = ".d.mts"
+	ScriptElementKindModifierMts        ScriptElementKindModifier = ".mts"
+	ScriptElementKindModifierMjs        ScriptElementKindModifier = ".mjs"
+	ScriptElementKindModifierDcts       ScriptElementKindModifier = ".d.cts"
+	ScriptElementKindModifierCts        ScriptElementKindModifier = ".cts"
+	ScriptElementKindModifierCjs        ScriptElementKindModifier = ".cjs"
 )
 
-var scriptElementKindModifierNames = []struct {
-	flag ScriptElementKindModifier
-	name string
-}{
-	{ScriptElementKindModifierPublic, "public"},
-	{ScriptElementKindModifierPrivate, "private"},
-	{ScriptElementKindModifierProtected, "protected"},
-	{ScriptElementKindModifierExported, "export"},
-	{ScriptElementKindModifierAmbient, "declare"},
-	{ScriptElementKindModifierStatic, "static"},
-	{ScriptElementKindModifierAbstract, "abstract"},
-	{ScriptElementKindModifierOptional, "optional"},
-	{ScriptElementKindModifierDeprecated, "deprecated"},
-	{ScriptElementKindModifierDts, ".d.ts"},
-	{ScriptElementKindModifierTs, ".ts"},
-	{ScriptElementKindModifierTsx, ".tsx"},
-	{ScriptElementKindModifierJs, ".js"},
-	{ScriptElementKindModifierJsx, ".jsx"},
-	{ScriptElementKindModifierJson, ".json"},
-	{ScriptElementKindModifierDmts, ".d.mts"},
-	{ScriptElementKindModifierMts, ".mts"},
-	{ScriptElementKindModifierMjs, ".mjs"},
-	{ScriptElementKindModifierDcts, ".d.cts"},
-	{ScriptElementKindModifierCts, ".cts"},
-	{ScriptElementKindModifierCjs, ".cjs"},
+var FileExtensionKindModifiers = []ScriptElementKindModifier{
+	ScriptElementKindModifierDts,
+	ScriptElementKindModifierTs,
+	ScriptElementKindModifierTsx,
+	ScriptElementKindModifierJs,
+	ScriptElementKindModifierJsx,
+	ScriptElementKindModifierJson,
+	ScriptElementKindModifierDmts,
+	ScriptElementKindModifierMts,
+	ScriptElementKindModifierMjs,
+	ScriptElementKindModifierDcts,
+	ScriptElementKindModifierCts,
+	ScriptElementKindModifierCjs,
 }
-
-func (m ScriptElementKindModifier) Strings() collections.Set[string] {
-	result := collections.Set[string]{}
-	for _, entry := range scriptElementKindModifierNames {
-		if m&entry.flag != 0 {
-			result.Add(entry.name)
-		}
-	}
-	return result
-}
-
-var FileExtensionKindModifiers = ScriptElementKindModifierDts |
-	ScriptElementKindModifierTs |
-	ScriptElementKindModifierTsx |
-	ScriptElementKindModifierJs |
-	ScriptElementKindModifierJsx |
-	ScriptElementKindModifierJson |
-	ScriptElementKindModifierDmts |
-	ScriptElementKindModifierMts |
-	ScriptElementKindModifierMjs |
-	ScriptElementKindModifierDcts |
-	ScriptElementKindModifierCts |
-	ScriptElementKindModifierCjs
 
 func GetSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {
 	result := getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker, symbol, location)
@@ -346,27 +311,30 @@ func isLocalVariableOrFunction(symbol *ast.Symbol) bool {
 	return false
 }
 
-func GetSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) ScriptElementKindModifier {
+func GetSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) collections.Set[ScriptElementKindModifier] {
 	if symbol == nil {
-		return ScriptElementKindModifierNone
+		return collections.Set[ScriptElementKindModifier]{}
 	}
 
 	modifiers := getNormalizedSymbolModifiers(typeChecker, symbol)
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 && typeChecker != nil {
 		resolvedSymbol := typeChecker.GetAliasedSymbol(symbol)
 		if resolvedSymbol != symbol {
-			modifiers |= getNormalizedSymbolModifiers(typeChecker, resolvedSymbol)
+			aliasModifiers := getNormalizedSymbolModifiers(typeChecker, resolvedSymbol)
+			for modifier := range aliasModifiers.Keys() {
+				modifiers.Add(modifier)
+			}
 		}
 	}
 	if symbol.Flags&ast.SymbolFlagsOptional != 0 {
-		modifiers |= ScriptElementKindModifierOptional
+		modifiers.Add(ScriptElementKindModifierOptional)
 	}
 
 	return modifiers
 }
 
-func getNormalizedSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) ScriptElementKindModifier {
-	var modifierSet ScriptElementKindModifier
+func getNormalizedSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) collections.Set[ScriptElementKindModifier] {
+	var modifierSet collections.Set[ScriptElementKindModifier]
 	if len(symbol.Declarations) > 0 {
 		declaration := symbol.Declarations[0]
 		declarations := symbol.Declarations[1:]
@@ -392,42 +360,42 @@ func isDeprecatedDeclaration(typeChecker *checker.Checker, declaration *ast.Node
 	return ast.IsDeprecatedDeclaration(declaration)
 }
 
-func getNodeModifiers(node *ast.Node, excludeFlags ast.ModifierFlags) ScriptElementKindModifier {
-	var result ScriptElementKindModifier
+func getNodeModifiers(node *ast.Node, excludeFlags ast.ModifierFlags) collections.Set[ScriptElementKindModifier] {
+	var result collections.Set[ScriptElementKindModifier]
 	var flags ast.ModifierFlags
 	if ast.IsDeclaration(node) {
 		flags = ast.GetCombinedModifierFlags(node) & ^excludeFlags // !!! include jsdoc node flags
 	}
 
 	if flags&ast.ModifierFlagsPrivate != 0 {
-		result |= ScriptElementKindModifierPrivate
+		result.Add(ScriptElementKindModifierPrivate)
 	}
 	if flags&ast.ModifierFlagsProtected != 0 {
-		result |= ScriptElementKindModifierProtected
+		result.Add(ScriptElementKindModifierProtected)
 	}
 	if flags&ast.ModifierFlagsPublic != 0 {
-		result |= ScriptElementKindModifierPublic
+		result.Add(ScriptElementKindModifierPublic)
 	}
 	if flags&ast.ModifierFlagsStatic != 0 {
-		result |= ScriptElementKindModifierStatic
+		result.Add(ScriptElementKindModifierStatic)
 	}
 	if flags&ast.ModifierFlagsAbstract != 0 {
-		result |= ScriptElementKindModifierAbstract
+		result.Add(ScriptElementKindModifierAbstract)
 	}
 	if flags&ast.ModifierFlagsExport != 0 {
-		result |= ScriptElementKindModifierExported
+		result.Add(ScriptElementKindModifierExported)
 	}
 	if flags&ast.ModifierFlagsDeprecated != 0 {
-		result |= ScriptElementKindModifierDeprecated
+		result.Add(ScriptElementKindModifierDeprecated)
 	}
 	if flags&ast.ModifierFlagsAmbient != 0 {
-		result |= ScriptElementKindModifierAmbient
+		result.Add(ScriptElementKindModifierAmbient)
 	}
 	if node.Flags&ast.NodeFlagsAmbient != 0 {
-		result |= ScriptElementKindModifierAmbient
+		result.Add(ScriptElementKindModifierAmbient)
 	}
 	if node.Kind == ast.KindExportAssignment {
-		result |= ScriptElementKindModifierExported
+		result.Add(ScriptElementKindModifierExported)
 	}
 
 	return result

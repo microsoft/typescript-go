@@ -117,12 +117,14 @@ class c2NoError {
     }
 }
 class c3 {
+    arguments;
     constructor(arguments, ...restParameters) {
         this.arguments = arguments;
         var arguments = 10; // no error
     }
 }
 class c3NoError {
+    arguments;
     constructor(arguments) {
         this.arguments = arguments;
         var arguments = 10; // no error

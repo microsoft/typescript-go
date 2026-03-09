@@ -28,6 +28,8 @@ AAA = A;
 //// [classAbstractClinterfaceAssignability.js]
 "use strict";
 class A {
+    x;
+    static y;
 }
 AA = I;
 AAA = A;

@@ -29,6 +29,7 @@ class D extends C<IHasVisualizationModel> {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Model = void 0;
 class Model {
+    someData;
 }
 exports.Model = Model;
 //// [aliasUsageInTypeArgumentOfExtendsClause_moduleA.js]
@@ -44,10 +45,8 @@ exports.VisualizationModel = VisualizationModel;
 Object.defineProperty(exports, "__esModule", { value: true });
 const moduleA = require("./aliasUsageInTypeArgumentOfExtendsClause_moduleA");
 class C {
+    x;
 }
 class D extends C {
-    constructor() {
-        super(...arguments);
-        this.x = moduleA;
-    }
+    x = moduleA;
 }

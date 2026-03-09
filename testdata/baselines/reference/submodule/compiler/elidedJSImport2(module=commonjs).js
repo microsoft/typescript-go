@@ -78,14 +78,10 @@ const z = new other_js_2.default();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Foo = void 0;
 class Foo {
-    constructor() {
-        this.bar = 2.4;
-    }
+    bar = 2.4;
 }
 exports.Foo = Foo;
 class Bar {
-    constructor() {
-        this.foo = 1.2;
-    }
+    foo = 1.2;
 }
 exports.default = Bar;

@@ -46,6 +46,8 @@ var line = Geometry.Lines.Line;
 var B;
 (function (B) {
     class Line {
+        start;
+        end;
         constructor(start, end) {
             this.start = start;
             this.end = end;
@@ -55,6 +57,7 @@ var B;
 })(B || (B = {}));
 var Geometry;
 (function (Geometry) {
+    Geometry.Points = A;
     var Lines = B;
     Geometry.Origin = { x: 0, y: 0 };
     // this is valid since B.Line _is_ visible outside Geometry

@@ -38,6 +38,7 @@ var f2 = function f2(this: A): number {
 //// [unusedParametersThis.js]
 "use strict";
 class A {
+    a;
     method() {
         return this.a;
     }

@@ -29,6 +29,7 @@ var r2 = foo({ a: <IHasVisualizationModel>null });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Model = void 0;
 class Model {
+    someData;
 }
 exports.Model = Model;
 //// [aliasUsageInGenericFunction_moduleA.js]

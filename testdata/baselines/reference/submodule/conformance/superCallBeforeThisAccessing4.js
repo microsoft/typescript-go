@@ -20,12 +20,14 @@ class E extends null {
 //// [superCallBeforeThisAccessing4.js]
 "use strict";
 class D extends null {
+    _t;
     constructor() {
         this._t;
         super();
     }
 }
 class E extends null {
+    _t;
     constructor() {
         super();
         this._t;

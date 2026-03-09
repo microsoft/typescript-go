@@ -11,9 +11,7 @@ function called(@dec() this: C) { return this.n; }
 //// [decoratorOnFunctionParameter.js]
 "use strict";
 class C {
-    constructor() {
-        this.n = true;
-    }
+    n = true;
 }
 function direct() { return this.n; }
 function called() { return this.n; }

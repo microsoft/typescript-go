@@ -33,6 +33,7 @@ var y3: C1 = <C1> {};
 var s = ({});
 var x = {};
 class C1 {
+    x;
 }
 class C2 extends C1 {
 }

@@ -94,8 +94,10 @@ namespace ObjectTypes {
 var SimpleTypes;
 (function (SimpleTypes) {
     class S {
+        foo;
     }
     class T {
+        foo;
     }
     var s;
     var t;
@@ -128,8 +130,10 @@ var SimpleTypes;
 var ObjectTypes;
 (function (ObjectTypes) {
     class S {
+        foo;
     }
     class T {
+        foo;
     }
     var s;
     var t;

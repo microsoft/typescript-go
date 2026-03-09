@@ -67,10 +67,14 @@ namespace Interface {
 // Generic call with constraints infering type parameter from object member properties
 // No errors expected
 class C {
+    x;
 }
 class D {
+    x;
+    y;
 }
 class X {
+    x;
 }
 var Class;
 (function (Class) {

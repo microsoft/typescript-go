@@ -44,6 +44,10 @@ func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	return *new(V)
 }
 
+func isCompoundAssignment(token ast.Kind) bool {
+	return token >= ast.KindFirstCompoundAssignment && token <= ast.KindLastCompoundAssignment
+}
+
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 	return token >= ast.KindIdentifier
 }

@@ -62,9 +62,8 @@ function fn() {
     var n;
 }
 class C {
-    constructor() {
-        this.n = this.s;
-    }
+    s;
+    n = this.s;
     x() {
         var p = this.n;
         var p;

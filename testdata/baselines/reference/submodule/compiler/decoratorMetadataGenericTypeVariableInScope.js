@@ -27,6 +27,7 @@ exports.C = void 0;
 class TypeVariable {
 }
 class C {
+    member;
 }
 exports.C = C;
 __decorate([

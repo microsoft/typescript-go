@@ -14,14 +14,11 @@ class C {
 //// [esDecorators-classDeclaration-parameterProperties.js]
 "use strict";
 class C {
+    message;
     constructor(message) {
-        Object.defineProperty(this, "message", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: message
-        });
+        this.message = message;
     }
+    @bound
     speak() {
     }
 }

@@ -38,7 +38,8 @@ let b2: boolean[][] = foo([true], [false]);
 
 //// [arrayLiteralInference.js]
 // Repro from #31204
-export var AppType;
+export { AppType };
+var AppType;
 (function (AppType) {
     AppType["HeaderDetail"] = "HeaderDetail";
     AppType["HeaderMultiDetail"] = "HeaderMultiDetail";
@@ -50,7 +51,8 @@ export var AppType;
     AppType["ListOnly"] = "ListOnly";
     AppType["ModuleSettings"] = "ModuleSettings";
 })(AppType || (AppType = {}));
-export var AppStyle;
+export { AppStyle };
+var AppStyle;
 (function (AppStyle) {
     AppStyle[AppStyle["Tree"] = 0] = "Tree";
     AppStyle[AppStyle["TreeEntity"] = 1] = "TreeEntity";

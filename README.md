@@ -17,7 +17,7 @@ To use this, set this in your VS Code settings:
 
 ```json
 {
-    "js/ts.experimental.useTsgo": true
+    "typescript.experimental.useTsgo": true
 }
 ```
 

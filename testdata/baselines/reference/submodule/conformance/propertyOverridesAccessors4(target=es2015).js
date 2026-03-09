@@ -13,13 +13,5 @@ class Lion extends Animal {
 //// [propertyOverridesAccessors4.js]
 "use strict";
 class Lion extends Animal {
-    constructor() {
-        super(...arguments);
-        Object.defineProperty(this, "sound", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'RAWR!'
-        }); // error here
-    }
+    sound = 'RAWR!'; // error here
 }

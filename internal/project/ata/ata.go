@@ -469,7 +469,7 @@ func (ti *TypingsInstaller) ensureTypingsLocationExists(fs vfs.FS, logger loggin
 
 	if !fs.FileExists(npmConfigPath) {
 		logger.Log(fmt.Sprintf("ATA:: Npm config file: '%s' is missing, creating new one...", npmConfigPath))
-		err := fs.WriteFile(npmConfigPath, "{ \"private\": true }")
+		err := fs.WriteFile(npmConfigPath, "{ \"private\": true }", false)
 		if err != nil {
 			logger.Log(fmt.Sprintf("ATA:: Npm config file write failed: %v", err))
 		}

@@ -13,6 +13,7 @@ var one = new Bar({}); // Error
 //// [noErrorsInCallback.js]
 "use strict";
 class Bar {
+    foo;
     constructor(foo) {
         this.foo = foo;
     }

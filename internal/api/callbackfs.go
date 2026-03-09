@@ -196,8 +196,8 @@ func (fs *callbackFS) Realpath(path string) string {
 }
 
 // WriteFile implements vfs.FS - always delegates to base (no callback support).
-func (fs *callbackFS) WriteFile(path string, data string) error {
-	return fs.base.WriteFile(path, data)
+func (fs *callbackFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+	return fs.base.WriteFile(path, data, writeByteOrderMark)
 }
 
 // Remove implements vfs.FS - always delegates to base (no callback support).

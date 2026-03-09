@@ -1,0 +1,10 @@
+--- old.symbolLinkDeclarationEmitModuleNames.js
++++ new.symbolLinkDeclarationEmitModuleNames.js
+@@= skipped -31, +31 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.BindingKey = void 0;
+ class BindingKey {
++    __type;
+     static create(ctor) {
+         return new BindingKey();
+     }

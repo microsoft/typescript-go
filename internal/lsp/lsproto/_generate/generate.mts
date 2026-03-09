@@ -1,11 +1,10 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 
-// Usage: node --experimental-strip-types generate.mts
-
-import { $ } from "execa";
+import cp from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+import which from "which";
 import type {
     Enumeration,
     MetaModel,
@@ -1935,17 +1934,22 @@ function getLocationUriProperty(structure: Structure) {
 /**
  * Main function
  */
-async function main() {
-    collectTypeDefinitions();
-    const generatedCode = generateCode();
-    fs.writeFileSync(out, generatedCode);
+function main() {
+    try {
+        collectTypeDefinitions();
+        const generatedCode = generateCode();
+        fs.writeFileSync(out, generatedCode);
 
-    await $`dprint fmt ${out}`;
+        // Format with gofmt
+        const gofmt = which.sync("go");
+        cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.26", "-w", out]);
 
-    console.log(`Successfully generated ${out}`);
+        console.log(`Successfully generated ${out}`);
+    }
+    catch (error) {
+        console.error("Error generating code:", error);
+        process.exit(1);
+    }
 }
 
-main().catch(e => {
-    console.error(e);
-    process.exit(1);
-});
+main();

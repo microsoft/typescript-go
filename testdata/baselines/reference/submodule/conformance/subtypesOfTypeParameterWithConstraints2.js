@@ -189,8 +189,10 @@ function f3(x, y) {
     var r3 = true ? new Date() : y;
 }
 class C1 {
+    foo;
 }
 class C2 {
+    foo;
 }
 var E;
 (function (E) {
@@ -201,6 +203,7 @@ function f() { }
     f.bar = 1;
 })(f || (f = {}));
 class c {
+    baz;
 }
 (function (c) {
     c.bar = 1;

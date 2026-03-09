@@ -466,10 +466,7 @@ class C1 {
     }
 }
 class C2 extends C1 {
-    constructor() {
-        super(...arguments);
-        this.z = 0;
-    }
+    z = 0;
 }
 if (c.isC2()) {
     let c2 = c; // should error

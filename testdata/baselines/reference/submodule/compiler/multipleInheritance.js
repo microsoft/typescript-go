@@ -43,8 +43,10 @@ class Baad extends Good {
 //// [multipleInheritance.js]
 "use strict";
 class B1 {
+    x;
 }
 class B2 {
+    x;
 }
 class C extends B1, B2 {
 }
@@ -55,13 +57,13 @@ class D2 extends B2 {
 class E extends D1, D2 {
 }
 class N {
+    y;
 }
 class ND extends N {
+    y;
 }
 class Good {
-    constructor() {
-        this.f = function () { return 0; };
-    }
+    f = function () { return 0; };
     g() { return 0; }
 }
 class Baad extends Good {

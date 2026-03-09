@@ -13,6 +13,8 @@ interface F2 extends E2, D2 { } // error
 //// [interfacePropertiesWithSameName3.js]
 "use strict";
 class D2 {
+    a;
 }
 class E2 {
+    a;
 }

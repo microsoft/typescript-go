@@ -33,6 +33,7 @@ foo({
 //// [didYouMeanElaborationsForExpressionsWhichCouldBeCalled.js]
 "use strict";
 class Bar {
+    x;
 }
 foo({
     x: Bar,

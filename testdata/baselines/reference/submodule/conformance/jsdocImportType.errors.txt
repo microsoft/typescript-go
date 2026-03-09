@@ -1,3 +1,4 @@
+mod1.js(7,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 use.js(5,1): error TS2454: Variable 'c' is used before being assigned.
 use.js(10,1): error TS2454: Variable 'd' is used before being assigned.
 
@@ -22,7 +23,7 @@ use.js(10,1): error TS2454: Variable 'd' is used before being assigned.
     declare function require(name: string): any;
     declare var exports: any;
     declare var module: { exports: any };
-==== mod1.js (0 errors) ====
+==== mod1.js (1 errors) ====
     /// <reference path='./types.d.ts'/>
     class Chunk {
         constructor() {
@@ -30,4 +31,6 @@ use.js(10,1): error TS2454: Variable 'd' is used before being assigned.
         }
     }
     module.exports = Chunk;
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
     

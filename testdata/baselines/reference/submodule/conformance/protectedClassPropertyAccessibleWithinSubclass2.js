@@ -99,6 +99,7 @@ d4.x;                   // Error, neither within their declaring class nor class
 //// [protectedClassPropertyAccessibleWithinSubclass2.js]
 "use strict";
 class Base {
+    x;
     method() {
         var b = undefined;
         var d1 = undefined;
@@ -141,6 +142,7 @@ class Derived2 extends Base {
     }
 }
 class Derived3 extends Derived1 {
+    x;
     method3() {
         var b = undefined;
         var d1 = undefined;

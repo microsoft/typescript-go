@@ -16,8 +16,5 @@ class B extends A {
 //// [staticMismatchBecauseOfPrototype.js]
 "use strict";
 class B extends A {
-    constructor() {
-        super(...arguments);
-        this.n = "";
-    }
+    n = "";
 }

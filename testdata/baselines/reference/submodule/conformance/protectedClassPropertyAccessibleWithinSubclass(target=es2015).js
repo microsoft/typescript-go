@@ -25,6 +25,8 @@ class C extends B {
 "use strict";
 // no errors
 class B {
+    x;
+    static x;
 }
 class C extends B {
     get y() { return this.x; }

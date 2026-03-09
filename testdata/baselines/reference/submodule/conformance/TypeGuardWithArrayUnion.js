@@ -15,6 +15,7 @@ function saySize(message: Message | Message[]) {
 //// [TypeGuardWithArrayUnion.js]
 "use strict";
 class Message {
+    value;
 }
 function saySize(message) {
     if (message instanceof Array) {

@@ -18,6 +18,7 @@ y = moduleA; // should be error
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.someClass = void 0;
 class someClass {
+    someData;
 }
 exports.someClass = someClass;
 //// [aliasAssignments_1.js]

@@ -14,7 +14,5 @@ class BestLanguage {
 // Repro from #8967
 const LANG = "Turbo Pascal";
 class BestLanguage {
-    constructor() {
-        this.name = LANG;
-    }
+    name = LANG;
 }

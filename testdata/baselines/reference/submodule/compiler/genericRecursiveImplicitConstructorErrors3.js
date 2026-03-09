@@ -44,16 +44,11 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 (function (TypeScript) {
     class PullSymbol {
-        constructor() {
-            this.type = null;
-        }
+        type = null;
     }
     TypeScript.PullSymbol = PullSymbol;
     class PullTypeSymbol extends PullSymbol {
-        constructor() {
-            super(...arguments);
-            this._elementType = null;
-        }
+        _elementType = null;
         toString(scopeSymbol, useConstraintInName) {
             var s = this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
             return s;

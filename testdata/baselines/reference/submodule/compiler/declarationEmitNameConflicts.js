@@ -82,7 +82,7 @@ var M;
     M.d = im;
 })(M || (exports.M = M = {}));
 (function (M) {
-    var P;
+    let P;
     (function (P) {
         function f() { }
         P.f = f;
@@ -104,7 +104,7 @@ var M;
     })(P = M.P || (M.P = {}));
 })(M || (exports.M = M = {}));
 (function (M) {
-    var Q;
+    let Q;
     (function (Q) {
         function f() { }
         Q.f = f;

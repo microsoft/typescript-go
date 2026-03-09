@@ -82,6 +82,7 @@ class F extends B {
     bar() { return 2; }
 }
 class G {
+    y;
 }
 class H {
 }

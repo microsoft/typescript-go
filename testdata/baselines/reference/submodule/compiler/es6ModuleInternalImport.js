@@ -22,14 +22,16 @@ namespace m2 {
 }
 
 //// [es6ModuleInternalImport.js]
-export var m;
+export { m };
+var m;
 (function (m) {
     m.a = 10;
 })(m || (m = {}));
 export var a1 = m.a;
 var a2 = m.a;
 var x = a1 + a2;
-export var m1;
+export { m1 };
+var m1;
 (function (m1) {
     m1.a3 = m.a;
     var a4 = m.a;

@@ -9,7 +9,8 @@ export namespace TypeGuards {
 }
 
 //// [typeGuardOnContainerTypeNoHang.js]
-export var TypeGuards;
+export { TypeGuards };
+var TypeGuards;
 (function (TypeGuards) {
     function IsObject(value) {
         return typeof (value) === 'object';

@@ -147,9 +147,7 @@ function fn(pInit = pInit) {
     var pInit;
 }
 class InitClass {
-    constructor() {
-        this.x = this.x;
-    }
+    x = this.x;
     fn() {
         var y = this.x;
         var y;
@@ -245,16 +243,14 @@ var M2;
 })(M2 || (M2 = {}));
 // Property access of class instance type
 class C2 {
-    constructor() {
-        this.n = this.n; // n: any
-    }
+    n = this.n; // n: any
 }
 var c2inst = new C2().n;
 var c2inst;
 // Constructor function property access
 class C3 {
+    static q = C3.q;
 }
-C3.q = C3.q;
 var qq = C3.q;
 var qq;
 // Parentheses - tested a bunch above

@@ -43,6 +43,7 @@ let x, f;
     class {
     } });
 ({ x: class {
+        @dec
         y;
     } });
 ({ "x": 
@@ -50,6 +51,7 @@ let x, f;
     class {
     } });
 ({ "x": class {
+        @dec
         y;
     } });
 ({ 0: 
@@ -57,6 +59,7 @@ let x, f;
     class {
     } });
 ({ 0: class {
+        @dec
         y;
     } });
 ({ ["x"]: 
@@ -64,6 +67,7 @@ let x, f;
     class {
     } });
 ({ ["x"]: class {
+        @dec
         y;
     } });
 ({ [0]: 
@@ -71,6 +75,7 @@ let x, f;
     class {
     } });
 ({ [0]: class {
+        @dec
         y;
     } });
 ({ [f()]: 
@@ -78,6 +83,7 @@ let x, f;
     class {
     } });
 ({ [f()]: class {
+        @dec
         y;
     } });
 // __proto__ setters do not perform NamedEvaluation

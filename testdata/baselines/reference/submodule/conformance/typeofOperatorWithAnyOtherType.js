@@ -86,6 +86,7 @@ function foo() {
     return a;
 }
 class A {
+    a;
     static foo() {
         var a;
         return a;

@@ -22,6 +22,7 @@ let y = x.getA().x;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.A = void 0;
 class A {
+    x;
 }
 exports.A = A;
 //// [f2.js]

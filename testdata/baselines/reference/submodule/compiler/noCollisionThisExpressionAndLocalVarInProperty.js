@@ -24,22 +24,20 @@ class class2 {
 //// [noCollisionThisExpressionAndLocalVarInProperty.js]
 "use strict";
 class class1 {
-    constructor() {
-        this.prop1 = {
-            doStuff: (callback) => () => {
-                var _this = 2;
-                return callback(_this);
-            }
-        };
-    }
+    prop1 = {
+        doStuff: (callback) => () => {
+            var _this = 2;
+            return callback(_this);
+        }
+    };
 }
 class class2 {
     constructor() {
-        this.prop1 = {
-            doStuff: (callback) => () => {
-                return callback(10);
-            }
-        };
         var _this = 2;
     }
+    prop1 = {
+        doStuff: (callback) => () => {
+            return callback(10);
+        }
+    };
 }

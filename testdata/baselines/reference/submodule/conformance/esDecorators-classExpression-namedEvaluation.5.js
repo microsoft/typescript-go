@@ -19,5 +19,6 @@ declare let dec: any, obj: any, x: any;
     class {
     } } = obj);
 ({ x = class {
+        @dec
         y;
     } } = obj);

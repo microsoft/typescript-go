@@ -1,0 +1,10 @@
+--- old.interfaceExtendingClass.js
++++ new.interfaceExtendingClass.js
+@@= skipped -23, +23 lines =@@
+ //// [interfaceExtendingClass.js]
+ "use strict";
+ class Foo {
++    x;
+     y() { }
+     get Z() {
+         return 1;

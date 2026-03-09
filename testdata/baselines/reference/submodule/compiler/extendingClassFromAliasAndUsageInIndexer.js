@@ -37,6 +37,7 @@ var visModel = new moduleMap[moduleName].VisualizationModel();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Model = void 0;
 class Model {
+    someData;
 }
 exports.Model = Model;
 //// [extendingClassFromAliasAndUsageInIndexer_moduleA.js]

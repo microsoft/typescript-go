@@ -34,7 +34,8 @@
     }
 
 //// [parserModule1.js]
-export var CompilerDiagnostics;
+export { CompilerDiagnostics };
+var CompilerDiagnostics;
 (function (CompilerDiagnostics) {
     CompilerDiagnostics.debug = false;
     CompilerDiagnostics.diagnosticWriter = null;

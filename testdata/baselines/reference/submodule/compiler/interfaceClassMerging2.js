@@ -41,11 +41,13 @@ foo = bar;
 //// [interfaceClassMerging2.js]
 "use strict";
 class Foo {
+    classFooProperty;
     classFooMethod() {
         return this;
     }
 }
 class Bar extends Foo {
+    classBarProperty;
     classBarMethod() {
         return this;
     }

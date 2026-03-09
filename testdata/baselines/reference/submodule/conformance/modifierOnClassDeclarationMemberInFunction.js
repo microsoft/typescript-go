@@ -13,9 +13,7 @@ function f() {
 "use strict";
 function f() {
     class C {
-        constructor() {
-            this.baz = 1;
-        }
+        baz = 1;
         static foo() { }
         bar() { }
     }

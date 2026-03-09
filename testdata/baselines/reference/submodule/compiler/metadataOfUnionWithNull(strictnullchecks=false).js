@@ -59,6 +59,18 @@ function PropDeco(target, propKey) { }
 class A {
 }
 class B {
+    x;
+    y;
+    z;
+    a;
+    b;
+    c;
+    d;
+    e;
+    f;
+    g;
+    h;
+    j;
 }
 __decorate([
     PropDeco,

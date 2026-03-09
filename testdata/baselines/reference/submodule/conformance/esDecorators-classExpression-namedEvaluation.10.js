@@ -107,6 +107,7 @@ declare let dec: any, f: any;
 {
     class C {
         static x = class {
+            @dec
             y;
         };
     }
@@ -114,6 +115,7 @@ declare let dec: any, f: any;
 {
     class C {
         static "x" = class {
+            @dec
             y;
         };
     }
@@ -121,6 +123,7 @@ declare let dec: any, f: any;
 {
     class C {
         static 0 = class {
+            @dec
             y;
         };
     }
@@ -128,6 +131,7 @@ declare let dec: any, f: any;
 {
     class C {
         static ["x"] = class {
+            @dec
             y;
         };
     }
@@ -135,6 +139,7 @@ declare let dec: any, f: any;
 {
     class C {
         static [0] = class {
+            @dec
             y;
         };
     }
@@ -152,6 +157,7 @@ declare let dec: any, f: any;
 {
     class C {
         static __proto__ = class {
+            @dec
             y;
         };
     }
@@ -159,6 +165,7 @@ declare let dec: any, f: any;
 {
     class C {
         static "__proto__" = class {
+            @dec
             y;
         };
     }
@@ -166,6 +173,7 @@ declare let dec: any, f: any;
 // ensure nested named evaluation happens when field is also transformed
 {
     class C {
+        @dec
         static x = 
         @dec
         class {

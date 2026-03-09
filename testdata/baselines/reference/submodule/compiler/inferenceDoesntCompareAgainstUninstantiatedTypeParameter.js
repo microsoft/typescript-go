@@ -37,15 +37,15 @@ var thisIsOk = new ClassA<ConcreteClass>(new ConcreteClass(), {
 
 //// [inferenceDoesntCompareAgainstUninstantiatedTypeParameter.js]
 class ClassA {
+    entity;
+    settings;
     constructor(entity, settings) {
         this.entity = entity;
         this.settings = settings;
     }
 }
 class ConcreteClass {
-    constructor() {
-        this.theName = 'myClass';
-    }
+    theName = 'myClass';
 }
 var thisGetsTheFalseError = new ClassA(new ConcreteClass(), {
     values: o => [

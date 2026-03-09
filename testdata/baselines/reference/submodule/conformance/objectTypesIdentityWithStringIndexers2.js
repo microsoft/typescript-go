@@ -131,8 +131,10 @@ function foo16(x: any) { }
 "use strict";
 // object types are identical structurally
 class Base {
+    foo;
 }
 class Derived extends Base {
+    bar;
 }
 class A {
 }

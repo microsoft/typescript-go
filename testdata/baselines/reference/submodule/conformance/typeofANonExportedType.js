@@ -60,6 +60,7 @@ exports.r13 = exports.r12 = exports.r11 = exports.r10 = exports.r9 = exports.r8 
 var x = 1;
 var y = { foo: '' };
 class C {
+    foo;
 }
 var c2;
 var i2;
@@ -67,6 +68,7 @@ var M;
 (function (M) {
     M.foo = '';
     class C {
+        foo;
     }
     M.C = C;
 })(M || (M = {}));
@@ -78,6 +80,7 @@ function foo() { }
 (function (foo) {
     foo.y = 1;
     class C {
+        foo;
     }
     foo.C = C;
 })(foo || (foo = {}));

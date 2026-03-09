@@ -23,6 +23,9 @@ class DatasourceCommandWidgetElement {
 //// [controlFlowForCompoundAssignmentToThisMember.js]
 "use strict";
 class DatasourceCommandWidgetElement {
+    _commandBased;
+    _commandElement;
+    commandElement;
     constructor(target) {
         if (target instanceof DatasourceCommandWidgetElement) {
             this._commandBased = true;

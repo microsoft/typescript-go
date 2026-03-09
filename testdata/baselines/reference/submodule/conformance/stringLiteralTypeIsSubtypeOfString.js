@@ -134,6 +134,7 @@ class C {
     toUpperCase() { return null; }
     toLocaleUpperCase() { return null; }
     trim() { return null; }
+    length;
     substr(from, length) { return null; }
     valueOf() { return null; }
 }

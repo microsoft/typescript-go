@@ -20,6 +20,7 @@ function fn(y, set) {
     return undefined;
 }
 class C {
+    x;
     constructor(y, x = fn(y, (y, x) => y.x = x) // expected to work, but actually doesn't
     ) {
         this.x = x;

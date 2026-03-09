@@ -1,0 +1,11 @@
+--- old.decoratorMetadataNoStrictNull.js
++++ new.decoratorMetadataNoStrictNull.js
+@@= skipped -20, +20 lines =@@
+ };
+ const dec = (obj, prop) => undefined;
+ class Foo {
++    foo;
++    bar;
+ }
+ __decorate([
+     dec,

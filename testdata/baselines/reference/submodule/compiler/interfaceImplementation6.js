@@ -31,8 +31,10 @@ export class Test {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Test = void 0;
 class C1 {
+    item;
 }
 class C2 {
+    item;
 }
 class C3 {
     constructor() {
@@ -40,8 +42,6 @@ class C3 {
     }
 }
 class Test {
-    constructor() {
-        this.pt = { item: 1 };
-    }
+    pt = { item: 1 };
 }
 exports.Test = Test;

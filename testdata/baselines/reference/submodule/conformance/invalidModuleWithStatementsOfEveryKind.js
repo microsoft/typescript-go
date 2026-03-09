@@ -86,15 +86,19 @@ namespace YYY4 {
 var Y;
 (function (Y) {
     class A {
+        s;
     }
     class BB extends A {
+        id;
     }
 })(Y || (Y = {}));
 var Y2;
 (function (Y2) {
     class AA {
+        s;
     }
     class B extends AA {
+        id;
     }
 })(Y2 || (Y2 = {}));
 var Y3;
@@ -102,6 +106,7 @@ var Y3;
     let Module;
     (function (Module) {
         class A {
+            s;
         }
     })(Module || (Module = {}));
 })(Y3 || (Y3 = {}));
@@ -116,15 +121,19 @@ var Y4;
 var YY;
 (function (YY) {
     class A {
+        s;
     }
     class BB extends A {
+        id;
     }
 })(YY || (YY = {}));
 var YY2;
 (function (YY2) {
     class AA {
+        s;
     }
     class B extends AA {
+        id;
     }
 })(YY2 || (YY2 = {}));
 var YY3;
@@ -132,6 +141,7 @@ var YY3;
     let Module;
     (function (Module) {
         class A {
+            s;
         }
     })(Module || (Module = {}));
 })(YY3 || (YY3 = {}));
@@ -146,28 +156,33 @@ var YY4;
 var YYY;
 (function (YYY) {
     static class A {
+        s;
     }
     static class BB extends A {
+        id;
     }
 })(YYY || (YYY = {}));
 var YYY2;
 (function (YYY2) {
     static class AA {
+        s;
     }
     static class B extends AA {
+        id;
     }
 })(YYY2 || (YYY2 = {}));
 var YYY3;
 (function (YYY3) {
-    static let Module;
+    let Module;
     (function (Module) {
         class A {
+            s;
         }
     })(Module || (Module = {}));
 })(YYY3 || (YYY3 = {}));
 var YYY4;
 (function (YYY4) {
-    static let Color;
+    let Color;
     (function (Color) {
         Color[Color["Blue"] = 0] = "Blue";
         Color[Color["Red"] = 1] = "Red";

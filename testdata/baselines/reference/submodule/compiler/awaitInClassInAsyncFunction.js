@@ -22,8 +22,6 @@ async function bar() {
 }
 async function foo() {
     return new class {
-        constructor() {
-            this.baz = await bar();
-        }
+        baz = await bar();
     };
 }

@@ -434,21 +434,41 @@ class publicClass {
 }
 exports.publicClass = publicClass;
 class publicClassWithWithPrivatePropertyTypes {
+    static myPublicStaticProperty; // Error
+    static myPrivateStaticProperty;
+    myPublicProperty; // Error
+    myPrivateProperty;
 }
 exports.publicClassWithWithPrivatePropertyTypes = publicClassWithWithPrivatePropertyTypes;
 class publicClassWithWithPublicPropertyTypes {
+    static myPublicStaticProperty;
+    static myPrivateStaticProperty;
+    myPublicProperty;
+    myPrivateProperty;
 }
 exports.publicClassWithWithPublicPropertyTypes = publicClassWithWithPublicPropertyTypes;
 class privateClassWithWithPrivatePropertyTypes {
+    static myPublicStaticProperty;
+    static myPrivateStaticProperty;
+    myPublicProperty;
+    myPrivateProperty;
 }
 class privateClassWithWithPublicPropertyTypes {
+    static myPublicStaticProperty;
+    static myPrivateStaticProperty;
+    myPublicProperty;
+    myPrivateProperty;
 }
 var privateVarWithPrivatePropertyTypes;
 var privateVarWithPublicPropertyTypes;
 class publicClassWithPrivateModulePropertyTypes {
+    static myPublicStaticProperty; // Error
+    myPublicProperty; // Error
 }
 exports.publicClassWithPrivateModulePropertyTypes = publicClassWithPrivateModulePropertyTypes;
 class privateClassWithPrivateModulePropertyTypes {
+    static myPublicStaticProperty;
+    myPublicProperty;
 }
 var privateVarWithPrivateModulePropertyTypes;
 var publicModule;
@@ -459,21 +479,41 @@ var publicModule;
     }
     publicModule.publicClass = publicClass;
     class publicClassWithWithPrivatePropertyTypes {
+        static myPublicStaticProperty; // Error
+        static myPrivateStaticProperty;
+        myPublicProperty; // Error
+        myPrivateProperty;
     }
     publicModule.publicClassWithWithPrivatePropertyTypes = publicClassWithWithPrivatePropertyTypes;
     class publicClassWithWithPublicPropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     publicModule.publicClassWithWithPublicPropertyTypes = publicClassWithWithPublicPropertyTypes;
     class privateClassWithWithPrivatePropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     class privateClassWithWithPublicPropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     var privateVarWithPrivatePropertyTypes;
     var privateVarWithPublicPropertyTypes;
     class publicClassWithPrivateModulePropertyTypes {
+        static myPublicStaticProperty; // Error
+        myPublicProperty; // Error
     }
     publicModule.publicClassWithPrivateModulePropertyTypes = publicClassWithPrivateModulePropertyTypes;
     class privateClassWithPrivateModulePropertyTypes {
+        static myPublicStaticProperty;
+        myPublicProperty;
     }
     var privateVarWithPrivateModulePropertyTypes;
 })(publicModule || (exports.publicModule = publicModule = {}));
@@ -485,21 +525,41 @@ var privateModule;
     }
     privateModule.publicClass = publicClass;
     class publicClassWithWithPrivatePropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     privateModule.publicClassWithWithPrivatePropertyTypes = publicClassWithWithPrivatePropertyTypes;
     class publicClassWithWithPublicPropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     privateModule.publicClassWithWithPublicPropertyTypes = publicClassWithWithPublicPropertyTypes;
     class privateClassWithWithPrivatePropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     class privateClassWithWithPublicPropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     var privateVarWithPrivatePropertyTypes;
     var privateVarWithPublicPropertyTypes;
     class publicClassWithPrivateModulePropertyTypes {
+        static myPublicStaticProperty;
+        myPublicProperty;
     }
     privateModule.publicClassWithPrivateModulePropertyTypes = publicClassWithPrivateModulePropertyTypes;
     class privateClassWithPrivateModulePropertyTypes {
+        static myPublicStaticProperty;
+        myPublicProperty;
     }
     var privateVarWithPrivateModulePropertyTypes;
 })(privateModule || (privateModule = {}));
@@ -508,6 +568,10 @@ var privateModule;
 class publicClassInGlobal {
 }
 class publicClassWithWithPublicPropertyTypesInGlobal {
+    static myPublicStaticProperty;
+    static myPrivateStaticProperty;
+    myPublicProperty;
+    myPrivateProperty;
 }
 var publicVarWithPublicPropertyTypesInGlobal;
 var publicModuleInGlobal;
@@ -525,40 +589,80 @@ var publicModuleInGlobal;
         }
         privateModule.publicClass = publicClass;
         class publicClassWithWithPrivatePropertyTypes {
+            static myPublicStaticProperty;
+            static myPrivateStaticProperty;
+            myPublicProperty;
+            myPrivateProperty;
         }
         privateModule.publicClassWithWithPrivatePropertyTypes = publicClassWithWithPrivatePropertyTypes;
         class publicClassWithWithPublicPropertyTypes {
+            static myPublicStaticProperty;
+            static myPrivateStaticProperty;
+            myPublicProperty;
+            myPrivateProperty;
         }
         privateModule.publicClassWithWithPublicPropertyTypes = publicClassWithWithPublicPropertyTypes;
         class privateClassWithWithPrivatePropertyTypes {
+            static myPublicStaticProperty;
+            static myPrivateStaticProperty;
+            myPublicProperty;
+            myPrivateProperty;
         }
         class privateClassWithWithPublicPropertyTypes {
+            static myPublicStaticProperty;
+            static myPrivateStaticProperty;
+            myPublicProperty;
+            myPrivateProperty;
         }
         var privateVarWithPrivatePropertyTypes;
         var privateVarWithPublicPropertyTypes;
         class publicClassWithPrivateModulePropertyTypes {
+            static myPublicStaticProperty;
+            myPublicProperty;
         }
         privateModule.publicClassWithPrivateModulePropertyTypes = publicClassWithPrivateModulePropertyTypes;
         class privateClassWithPrivateModulePropertyTypes {
+            static myPublicStaticProperty;
+            myPublicProperty;
         }
         var privateVarWithPrivateModulePropertyTypes;
     })(privateModule || (privateModule = {}));
     class publicClassWithWithPrivatePropertyTypes {
+        static myPublicStaticProperty; // Error
+        static myPrivateStaticProperty;
+        myPublicProperty; // Error
+        myPrivateProperty;
     }
     publicModuleInGlobal.publicClassWithWithPrivatePropertyTypes = publicClassWithWithPrivatePropertyTypes;
     class publicClassWithWithPublicPropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     publicModuleInGlobal.publicClassWithWithPublicPropertyTypes = publicClassWithWithPublicPropertyTypes;
     class privateClassWithWithPrivatePropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     class privateClassWithWithPublicPropertyTypes {
+        static myPublicStaticProperty;
+        static myPrivateStaticProperty;
+        myPublicProperty;
+        myPrivateProperty;
     }
     var privateVarWithPrivatePropertyTypes;
     var privateVarWithPublicPropertyTypes;
     class publicClassWithPrivateModulePropertyTypes {
+        static myPublicStaticProperty; // Error
+        myPublicProperty; // Error
     }
     publicModuleInGlobal.publicClassWithPrivateModulePropertyTypes = publicClassWithPrivateModulePropertyTypes;
     class privateClassWithPrivateModulePropertyTypes {
+        static myPublicStaticProperty;
+        myPublicProperty;
     }
     var privateVarWithPrivateModulePropertyTypes;
 })(publicModuleInGlobal || (publicModuleInGlobal = {}));

@@ -38,9 +38,7 @@ var B;
 })(B || (B = {}));
 ;
 class List {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
 }
 function asList(arg) { return new List(); }
 // TypeScript incorrectly infers the return type of "asList(x)" to be "List<A | B>"

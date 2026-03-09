@@ -104,9 +104,7 @@ class Message {
     secret() { }
 }
 class MessageWrapper {
-    constructor() {
-        this.message = new Message();
-    }
+    message = new Message();
     wrap() {
         let m = this.message;
         let f = function () {

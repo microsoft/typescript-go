@@ -1,10 +1,10 @@
-#!/usr/bin/env -S node --conditions=@typescript/source --experimental-strip-types --no-warnings
+#!/usr/bin/env node
 
 /**
  * Code generator for the monomorphic NodeObject class and factory functions.
  *
  * Usage:
- *   node --conditions=@typescript/source --experimental-strip-types --no-warnings generateFactory.ts
+ *   node _packages/ast/scripts/generateFactory.ts
  *
  * Reads:  _packages/ast/src/nodes.ts
  * Writes: _packages/ast/src/factory.ts

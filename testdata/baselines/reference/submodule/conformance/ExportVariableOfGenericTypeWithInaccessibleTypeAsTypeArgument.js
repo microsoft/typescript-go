@@ -15,6 +15,7 @@ namespace A {
 var A;
 (function (A) {
     class B {
+        id;
     }
     A.beez2 = new Array();
 })(A || (A = {}));

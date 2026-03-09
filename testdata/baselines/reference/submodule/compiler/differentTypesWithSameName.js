@@ -23,6 +23,7 @@ m.doSomething(v);
 var m;
 (function (m) {
     class variable {
+        s;
     }
     m.variable = variable;
     function doSomething(v) {
@@ -30,6 +31,7 @@ var m;
     m.doSomething = doSomething;
 })(m || (m = {}));
 class variable {
+    t;
 }
 var v = new variable();
 m.doSomething(v);

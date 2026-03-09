@@ -20,6 +20,8 @@ var d: MyList<number> = a.clone(); // error
 //// [genericCloneReturnTypes2.js]
 "use strict";
 class MyList {
+    size;
+    data;
     constructor(n) {
         this.size = n;
         this.data = new Array(this.size);

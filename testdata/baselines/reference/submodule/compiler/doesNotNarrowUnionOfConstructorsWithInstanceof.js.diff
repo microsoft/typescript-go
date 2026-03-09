@@ -1,0 +1,16 @@
+--- old.doesNotNarrowUnionOfConstructorsWithInstanceof.js
++++ new.doesNotNarrowUnionOfConstructorsWithInstanceof.js
+@@= skipped -31, +31 lines =@@
+ //// [doesNotNarrowUnionOfConstructorsWithInstanceof.js]
+ "use strict";
+ class A {
++    length;
+     constructor() {
+         this.length = 1;
+     }
+ }
+ class B {
++    length;
+     constructor() {
+         this.length = 2;
+     }

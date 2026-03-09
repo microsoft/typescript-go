@@ -25,7 +25,7 @@ namespace SomeOther.Thing {
 "use strict";
 var My;
 (function (My) {
-    var Internal;
+    let Internal;
     (function (Internal) {
         function getThing() { }
         Internal.getThing = getThing;
@@ -36,10 +36,11 @@ var My;
 /// <reference path="./internal.ts" preserve="true" />
 var SomeOther;
 (function (SomeOther) {
-    var Thing;
+    let Thing;
     (function (Thing) {
         var Internal = My.Internal;
         class Foo {
+            _which;
             constructor() {
                 Internal.getThing();
                 0 /* Internal.WhichThing.A */ ? "foo" : "bar";

@@ -13,12 +13,9 @@ class D<T> {
 //// [thisInInstanceMemberInitializer.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = this;
-    }
+    x = this;
 }
 class D {
-    constructor() {
-        this.x = this;
-    }
+    x = this;
+    y;
 }

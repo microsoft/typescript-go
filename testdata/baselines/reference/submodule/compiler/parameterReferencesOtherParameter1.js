@@ -14,6 +14,7 @@ class UI {
 //// [parameterReferencesOtherParameter1.js]
 "use strict";
 class Model {
+    name;
 }
 class UI {
     constructor(model, foo = model.name) {

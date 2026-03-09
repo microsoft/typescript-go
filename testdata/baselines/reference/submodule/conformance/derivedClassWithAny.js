@@ -64,10 +64,12 @@ var r = c.foo(); // e.foo would return string
 //// [derivedClassWithAny.js]
 "use strict";
 class C {
+    x;
     get X() { return 1; }
     foo() {
         return 1;
     }
+    static y;
     static get Y() {
         return 1;
     }
@@ -76,12 +78,14 @@ class C {
     }
 }
 class D extends C {
+    x;
     get X() {
         return null;
     }
     foo() {
         return 1;
     }
+    static y;
     static get Y() {
         return null;
     }
@@ -91,10 +95,12 @@ class D extends C {
 }
 // if D is a valid class definition than E is now not safe tranisitively through C
 class E extends D {
+    x;
     get X() { return ''; }
     foo() {
         return '';
     }
+    static y;
     static get Y() {
         return '';
     }

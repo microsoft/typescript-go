@@ -13,7 +13,11 @@
  // repro from #15066
  class FooItem {
      foo() { }
-@@= skipped -38, +37 lines =@@
++    name;
+ }
+ exports.FooItem = FooItem;
+ function WithTags(Base) {
+@@= skipped -38, +38 lines =@@
      getTags(c: {
          tags(c: /*elided*/ any): /*elided*/ any;
      }): {

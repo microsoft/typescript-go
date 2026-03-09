@@ -13,23 +13,8 @@ class B extends A {
 //// [override18.js]
 "use strict";
 class A {
-    constructor() {
-        Object.defineProperty(this, "foo", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-    }
+    foo;
 }
 class B extends A {
-    constructor() {
-        super(...arguments);
-        Object.defineProperty(this, "foo", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: "string"
-        });
-    }
+    foo = "string";
 }

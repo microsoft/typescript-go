@@ -43,7 +43,4 @@ declare const _default: {
 };
 export = _default;
 //// [index.d.ts]
-declare class Container {
-    constructor();
-}
 export = Container;

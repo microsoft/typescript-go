@@ -351,7 +351,6 @@ export class ExportedStaticArgumentsFn {
 }
 
 //// [staticPropertyNameConflicts.js]
-var _a, _b, _c, _d, _e;
 const FunctionPropertyNames = {
     name: 'name',
     length: 'length',
@@ -361,10 +360,13 @@ const FunctionPropertyNames = {
 };
 // name
 class StaticName {
+    static name; // error without useDefineForClassFields
+    name; // ok
 }
 class StaticName2 {
+    static [FunctionPropertyNames.name]; // error without useDefineForClassFields
+    [FunctionPropertyNames.name]; // ok
 }
-FunctionPropertyNames.name, FunctionPropertyNames.name;
 class StaticNameFn {
     static name() { } // error without useDefineForClassFields
     name() { } // ok
@@ -375,10 +377,13 @@ class StaticNameFn2 {
 }
 // length
 class StaticLength {
+    static length; // error without useDefineForClassFields
+    length; // ok
 }
 class StaticLength2 {
+    static [FunctionPropertyNames.length]; // error without useDefineForClassFields
+    [FunctionPropertyNames.length]; // ok
 }
-FunctionPropertyNames.length, FunctionPropertyNames.length;
 class StaticLengthFn {
     static length() { } // error without useDefineForClassFields
     length() { } // ok
@@ -389,10 +394,13 @@ class StaticLengthFn2 {
 }
 // prototype
 class StaticPrototype {
+    static prototype; // always an error
+    prototype; // ok
 }
 class StaticPrototype2 {
+    static [FunctionPropertyNames.prototype]; // always an error
+    [FunctionPropertyNames.prototype]; // ok
 }
-FunctionPropertyNames.prototype, FunctionPropertyNames.prototype;
 class StaticPrototypeFn {
     static prototype() { } // always an error
     prototype() { } // ok
@@ -403,10 +411,13 @@ class StaticPrototypeFn2 {
 }
 // caller
 class StaticCaller {
+    static caller; // error without useDefineForClassFields
+    caller; // ok
 }
 class StaticCaller2 {
+    static [FunctionPropertyNames.caller]; // error without useDefineForClassFields
+    [FunctionPropertyNames.caller]; // ok
 }
-FunctionPropertyNames.caller, FunctionPropertyNames.caller;
 class StaticCallerFn {
     static caller() { } // error without useDefineForClassFields
     caller() { } // ok
@@ -417,10 +428,13 @@ class StaticCallerFn2 {
 }
 // arguments
 class StaticArguments {
+    static arguments; // error without useDefineForClassFields
+    arguments; // ok
 }
 class StaticArguments2 {
+    static [FunctionPropertyNames.arguments]; // error without useDefineForClassFields
+    [FunctionPropertyNames.arguments]; // ok
 }
-FunctionPropertyNames.arguments, FunctionPropertyNames.arguments;
 class StaticArgumentsFn {
     static arguments() { } // error without useDefineForClassFields
     arguments() { } // ok
@@ -432,12 +446,13 @@ class StaticArgumentsFn2 {
 // === Static properties on anonymous classes ===
 // name
 var StaticName_Anonymous = class {
+    static name; // error without useDefineForClassFields
+    name; // ok
 };
-var StaticName_Anonymous2 = (_a = class {
-    },
-    FunctionPropertyNames.name,
-    FunctionPropertyNames.name,
-    _a);
+var StaticName_Anonymous2 = class {
+    static [FunctionPropertyNames.name]; // error without useDefineForClassFields
+    [FunctionPropertyNames.name]; // ok
+};
 var StaticNameFn_Anonymous = class {
     static name() { } // error without useDefineForClassFields
     name() { } // ok
@@ -448,12 +463,13 @@ var StaticNameFn_Anonymous2 = class {
 };
 // length
 var StaticLength_Anonymous = class {
+    static length; // error without useDefineForClassFields
+    length; // ok
 };
-var StaticLength_Anonymous2 = (_b = class {
-    },
-    FunctionPropertyNames.length,
-    FunctionPropertyNames.length,
-    _b);
+var StaticLength_Anonymous2 = class {
+    static [FunctionPropertyNames.length]; // error without useDefineForClassFields
+    [FunctionPropertyNames.length]; // ok
+};
 var StaticLengthFn_Anonymous = class {
     static length() { } // error without useDefineForClassFields
     length() { } // ok
@@ -464,12 +480,13 @@ var StaticLengthFn_Anonymous2 = class {
 };
 // prototype
 var StaticPrototype_Anonymous = class {
+    static prototype; // always an error
+    prototype; // ok
 };
-var StaticPrototype_Anonymous2 = (_c = class {
-    },
-    FunctionPropertyNames.prototype,
-    FunctionPropertyNames.prototype,
-    _c);
+var StaticPrototype_Anonymous2 = class {
+    static [FunctionPropertyNames.prototype]; // always an error
+    [FunctionPropertyNames.prototype]; // ok
+};
 var StaticPrototypeFn_Anonymous = class {
     static prototype() { } // always an error
     prototype() { } // ok
@@ -480,12 +497,13 @@ var StaticPrototypeFn_Anonymous2 = class {
 };
 // caller
 var StaticCaller_Anonymous = class {
+    static caller; // error without useDefineForClassFields
+    caller; // ok
 };
-var StaticCaller_Anonymous2 = (_d = class {
-    },
-    FunctionPropertyNames.caller,
-    FunctionPropertyNames.caller,
-    _d);
+var StaticCaller_Anonymous2 = class {
+    static [FunctionPropertyNames.caller]; // error without useDefineForClassFields
+    [FunctionPropertyNames.caller]; // ok
+};
 var StaticCallerFn_Anonymous = class {
     static caller() { } // error without useDefineForClassFields
     caller() { } // ok
@@ -496,12 +514,13 @@ var StaticCallerFn_Anonymous2 = class {
 };
 // arguments
 var StaticArguments_Anonymous = class {
+    static arguments; // error without useDefineForClassFields
+    arguments; // ok
 };
-var StaticArguments_Anonymous2 = (_e = class {
-    },
-    FunctionPropertyNames.arguments,
-    FunctionPropertyNames.arguments,
-    _e);
+var StaticArguments_Anonymous2 = class {
+    static [FunctionPropertyNames.arguments]; // error without useDefineForClassFields
+    [FunctionPropertyNames.arguments]; // ok
+};
 var StaticArgumentsFn_Anonymous = class {
     static arguments() { } // error without useDefineForClassFields
     arguments() { } // ok
@@ -515,11 +534,14 @@ var StaticArgumentsFn_Anonymous2 = class {
 var TestOnDefaultExportedClass_1;
 (function (TestOnDefaultExportedClass_1) {
     class StaticName {
+        static name; // error without useDefineForClassFields
+        name; // ok
     }
 })(TestOnDefaultExportedClass_1 || (TestOnDefaultExportedClass_1 = {}));
 export class ExportedStaticName {
+    static [FunctionPropertyNames.name]; // error without useDefineForClassFields
+    [FunctionPropertyNames.name]; // ok
 }
-FunctionPropertyNames.name, FunctionPropertyNames.name;
 var TestOnDefaultExportedClass_2;
 (function (TestOnDefaultExportedClass_2) {
     class StaticNameFn {
@@ -535,12 +557,15 @@ export class ExportedStaticNameFn {
 var TestOnDefaultExportedClass_3;
 (function (TestOnDefaultExportedClass_3) {
     class StaticLength {
+        static length; // error without useDefineForClassFields
+        length; // ok
     }
     TestOnDefaultExportedClass_3.StaticLength = StaticLength;
 })(TestOnDefaultExportedClass_3 || (TestOnDefaultExportedClass_3 = {}));
 export class ExportedStaticLength {
+    static [FunctionPropertyNames.length]; // error without useDefineForClassFields
+    [FunctionPropertyNames.length]; // ok
 }
-FunctionPropertyNames.length, FunctionPropertyNames.length;
 var TestOnDefaultExportedClass_4;
 (function (TestOnDefaultExportedClass_4) {
     class StaticLengthFn {
@@ -557,12 +582,15 @@ export class ExportedStaticLengthFn {
 var TestOnDefaultExportedClass_5;
 (function (TestOnDefaultExportedClass_5) {
     class StaticPrototype {
+        static prototype; // always an error
+        prototype; // ok
     }
     TestOnDefaultExportedClass_5.StaticPrototype = StaticPrototype;
 })(TestOnDefaultExportedClass_5 || (TestOnDefaultExportedClass_5 = {}));
 export class ExportedStaticPrototype {
+    static [FunctionPropertyNames.prototype]; // always an error
+    [FunctionPropertyNames.prototype]; // ok
 }
-FunctionPropertyNames.prototype, FunctionPropertyNames.prototype;
 var TestOnDefaultExportedClass_6;
 (function (TestOnDefaultExportedClass_6) {
     class StaticPrototypeFn {
@@ -579,12 +607,15 @@ export class ExportedStaticPrototypeFn {
 var TestOnDefaultExportedClass_7;
 (function (TestOnDefaultExportedClass_7) {
     class StaticCaller {
+        static caller; // error without useDefineForClassFields
+        caller; // ok
     }
     TestOnDefaultExportedClass_7.StaticCaller = StaticCaller;
 })(TestOnDefaultExportedClass_7 || (TestOnDefaultExportedClass_7 = {}));
 export class ExportedStaticCaller {
+    static [FunctionPropertyNames.caller]; // error without useDefineForClassFields
+    [FunctionPropertyNames.caller]; // ok
 }
-FunctionPropertyNames.caller, FunctionPropertyNames.caller;
 var TestOnDefaultExportedClass_8;
 (function (TestOnDefaultExportedClass_8) {
     class StaticCallerFn {
@@ -601,12 +632,15 @@ export class ExportedStaticCallerFn {
 var TestOnDefaultExportedClass_9;
 (function (TestOnDefaultExportedClass_9) {
     class StaticArguments {
+        static arguments; // error without useDefineForClassFields
+        arguments; // ok
     }
     TestOnDefaultExportedClass_9.StaticArguments = StaticArguments;
 })(TestOnDefaultExportedClass_9 || (TestOnDefaultExportedClass_9 = {}));
 export class ExportedStaticArguments {
+    static [FunctionPropertyNames.arguments]; // error without useDefineForClassFields
+    [FunctionPropertyNames.arguments]; // ok
 }
-FunctionPropertyNames.arguments, FunctionPropertyNames.arguments;
 var TestOnDefaultExportedClass_10;
 (function (TestOnDefaultExportedClass_10) {
     class StaticArgumentsFn {

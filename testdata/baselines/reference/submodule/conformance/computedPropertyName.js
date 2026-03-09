@@ -46,17 +46,14 @@ declare class H {
 //// [framework-hooks.js]
 export const onInit = Symbol("onInit");
 //// [component.js]
-var _a;
 const o = {
     [onInit]: 0 // Error
 };
 class C {
+    [onInit]; // Error (because class fields)
 }
 class D {
-    constructor() {
-        this[_a] = 0; // Error
-    }
-    static { _a = onInit; }
+    [onInit] = 0; // Error
 }
 class E {
     [onInit]() { } // Error

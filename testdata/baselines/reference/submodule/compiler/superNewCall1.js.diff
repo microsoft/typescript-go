@@ -1,0 +1,10 @@
+--- old.superNewCall1.js
++++ new.superNewCall1.js
+@@= skipped -15, +15 lines =@@
+ //// [superNewCall1.js]
+ "use strict";
+ class A {
++    map;
+     constructor(map) {
+         this.map = map;
+     }

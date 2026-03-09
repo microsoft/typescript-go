@@ -57,6 +57,7 @@ var strOrNum;
 var strOrNumOrBool;
 var numOrBool;
 class C {
+    p;
 }
 var c;
 var cOrBool;

@@ -18,6 +18,7 @@ class Child extends Parent {
 class Parent {
 }
 class Child extends Parent {
+    _x;
     set message(str) {
         this._x = str;
     }

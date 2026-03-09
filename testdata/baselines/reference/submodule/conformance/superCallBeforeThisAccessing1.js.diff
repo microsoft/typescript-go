@@ -1,0 +1,10 @@
+--- old.superCallBeforeThisAccessing1.js
++++ new.superCallBeforeThisAccessing1.js
+@@= skipped -23, +23 lines =@@
+     constructor(c) { }
+ }
+ class D extends Base {
++    _t;
+     constructor() {
+         super(i);
+         var s = {

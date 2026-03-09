@@ -27,18 +27,20 @@ namespace Path.Utils {
 //// [clodulesDerivedClasses.js]
 "use strict";
 class Shape {
+    id;
 }
 (function (Shape) {
-    var Utils;
+    let Utils;
     (function (Utils) {
         function convert() { return null; }
         Utils.convert = convert;
     })(Utils = Shape.Utils || (Shape.Utils = {}));
 })(Shape || (Shape = {}));
 class Path extends Shape {
+    name;
 }
 (function (Path) {
-    var Utils;
+    let Utils;
     (function (Utils) {
         function convert2() {
             return null;

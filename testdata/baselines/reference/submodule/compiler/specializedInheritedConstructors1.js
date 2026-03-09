@@ -23,6 +23,7 @@ var myView = new MyView(m); // was error
 "use strict";
 class View {
     constructor(options) { }
+    model;
 }
 class Model {
 }

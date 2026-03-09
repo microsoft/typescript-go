@@ -41,14 +41,10 @@ type _5 = (Foo | (Foo & Bar))['foo']; // Prev error, now ok
 //// [unionPropertyOfProtectedAndIntersectionProperty.js]
 "use strict";
 class Foo {
-    constructor() {
-        this.foo = 0;
-    }
+    foo = 0;
 }
 class Bar {
-    constructor() {
-        this.foo = 0;
-    }
+    foo = 0;
 }
 // V[P] in `Nothing<V[P]>` is the substitution type `V[P] & Foo`. When
 // checking if that's assignable to `Foo` in the constraint of `Nothing`,

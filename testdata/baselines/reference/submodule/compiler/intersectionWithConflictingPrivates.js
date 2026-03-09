@@ -62,8 +62,12 @@ class Foo {
 //// [intersectionWithConflictingPrivates.js]
 "use strict";
 class A {
+    x;
+    y;
 }
 class B {
+    x;
+    y;
 }
 ab.y = 'hello';
 ab = {};
@@ -84,12 +88,16 @@ class ViewRefNode extends ViewNode {
 class ViewRefFileNode extends ViewRefNode {
 }
 class CommitFileNode extends ViewRefFileNode {
+    _id;
 }
 class ResultsFileNode extends ViewRefFileNode {
+    _id;
 }
 class StashFileNode extends CommitFileNode {
+    _id2;
 }
 class StatusFileNode extends ViewNode {
+    _id;
 }
 class Foo {
     async foo(node) {

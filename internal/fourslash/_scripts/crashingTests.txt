@@ -1,1 +1,4 @@
-
+TestFindReferencesBindingPatternInJsdocNoCrash1
+TestFindReferencesBindingPatternInJsdocNoCrash2
+TestFormattingJsxTexts4
+TestQuickInfoBindingPatternInJsdocNoCrash1

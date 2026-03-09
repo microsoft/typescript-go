@@ -42,10 +42,11 @@ namespace Foo.Bar {
 "use strict";
 var Foo;
 (function (Foo) {
-    var Bar;
+    let Bar;
     (function (Bar) {
         "use strict";
         class Greeter {
+            greeting;
             constructor(greeting) {
                 this.greeting = greeting;
             }

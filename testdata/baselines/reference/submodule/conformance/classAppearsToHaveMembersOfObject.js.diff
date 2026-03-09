@@ -1,0 +1,10 @@
+--- old.classAppearsToHaveMembersOfObject.js
++++ new.classAppearsToHaveMembersOfObject.js
+@@= skipped -12, +12 lines =@@
+ //// [classAppearsToHaveMembersOfObject.js]
+ "use strict";
+ class C {
++    foo;
+ }
+ var c;
+ var r = c.toString();

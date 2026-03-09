@@ -12,7 +12,5 @@ class C {
 //// [conflictMarkerTrivia1.js]
 "use strict";
 class C {
-    constructor() {
-        this.v = 1;
-    }
+    v = 1;
 }

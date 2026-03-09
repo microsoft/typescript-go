@@ -21,9 +21,7 @@ class C {
 //// [noUnusedLocals_destructuringAssignment.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = 0;
-    }
+    x = 0;
     m() {
         let x;
         ({ x } = this);

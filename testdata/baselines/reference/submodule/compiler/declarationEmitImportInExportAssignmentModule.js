@@ -21,6 +21,7 @@ var m;
         }
         c_1.c = c;
     })(c = m.c || (m.c = {}));
+    var x = c;
 })(m || (m = {}));
 module.exports = m;
 

@@ -42,10 +42,10 @@ type formattingScanner struct {
 
 func newFormattingScanner(text string, languageVariant core.LanguageVariant, startPos int, endPos int, worker *formatSpanWorker) []core.TextChange {
 	scan := scanner.NewScanner()
+	scan.Reset()
 	scan.SetSkipTrivia(false)
 	scan.SetLanguageVariant(languageVariant)
 	scan.SetText(text)
-	scan.ResetTokenState(startPos)
 
 	fmtScn := &formattingScanner{
 		s:          scan,
@@ -114,8 +114,7 @@ func shouldRescanJsxIdentifier(node *ast.Node) bool {
 		case ast.KindJsxAttribute,
 			ast.KindJsxOpeningElement,
 			ast.KindJsxClosingElement,
-			ast.KindJsxSelfClosingElement,
-			ast.KindJsxNamespacedName:
+			ast.KindJsxSelfClosingElement:
 			// May parse an identifier like `module-layout`; that will be scanned as a keyword at first, but we should parse the whole thing to get an identifier.
 			return ast.IsKeywordKind(node.Kind) || node.Kind == ast.KindIdentifier
 		}

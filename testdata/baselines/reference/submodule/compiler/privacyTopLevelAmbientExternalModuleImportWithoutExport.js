@@ -57,6 +57,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.c_public = void 0;
 // Public elements
 class c_public {
+    foo;
 }
 exports.c_public = c_public;
 //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require1.js]
@@ -64,6 +65,7 @@ exports.c_public = c_public;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c_public = void 0;
 class c_public {
+    bar;
 }
 exports.c_public = c_public;
 //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_core.js]

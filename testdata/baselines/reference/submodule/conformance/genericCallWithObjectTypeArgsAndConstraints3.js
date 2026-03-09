@@ -43,10 +43,13 @@ var r6 = f3(x => x, null);
 "use strict";
 // Generic call with constraints infering type parameter from object member properties
 class Base {
+    x;
 }
 class Derived extends Base {
+    y;
 }
 class Derived2 extends Base {
+    z;
 }
 function f(a) {
     var r;

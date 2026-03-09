@@ -12,4 +12,5 @@ class C {
 class C {
     f() { }
     ;
+    m;
 }

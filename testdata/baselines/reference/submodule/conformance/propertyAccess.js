@@ -155,8 +155,10 @@ var x3: A;
 //// [propertyAccess.js]
 "use strict";
 class A {
+    a;
 }
 class B extends A {
+    b;
 }
 var Compass;
 (function (Compass) {

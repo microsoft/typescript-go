@@ -59,8 +59,10 @@ if (ab.type === 'a') {
 }
 // Repro from #11185
 class Square {
+    kind;
 }
 class Circle {
+    kind;
 }
 function isShape(s) {
     return !Array.isArray(s);

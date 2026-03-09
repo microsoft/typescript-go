@@ -23,6 +23,7 @@ var __test1__;
 var __test2__;
 (function (__test2__) {
     class classWithPublic {
+        one;
         constructor(one) {
             this.one = one;
         }

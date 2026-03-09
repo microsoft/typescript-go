@@ -53,6 +53,7 @@ foo()--;
 var NUMBER1 = [1, 2];
 function foo() { return 1; }
 class A {
+    a;
     static foo() { return 1; }
 }
 var M;

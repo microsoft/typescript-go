@@ -1,0 +1,11 @@
+--- old.inheritanceStaticMembersCompatible.js
++++ new.inheritanceStaticMembersCompatible.js
+@@= skipped -11, +11 lines =@@
+ //// [inheritanceStaticMembersCompatible.js]
+ "use strict";
+ class a {
++    static x;
+ }
+ class b extends a {
++    static x;
+ }

@@ -1,0 +1,10 @@
+--- old.cloduleGenericOnSelfMember.js
++++ new.cloduleGenericOnSelfMember.js
+@@= skipped -15, +15 lines =@@
+ //// [cloduleGenericOnSelfMember.js]
+ "use strict";
+ class ServiceBase {
++    field;
+ }
+ class Service extends ServiceBase {
+ }

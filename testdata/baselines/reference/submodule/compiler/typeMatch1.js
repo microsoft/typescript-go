@@ -32,8 +32,10 @@ var x3 = i;
 var x4 = i2;
 var x5 = i2;
 class C {
+    x;
 }
 class D {
+    x;
 }
 var x6 = new C();
 var x7 = new D();

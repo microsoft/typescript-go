@@ -380,10 +380,7 @@ class Test {
     }
 }
 class Test2 extends Test {
-    constructor() {
-        super(...arguments);
-        this.z = 0;
-    }
+    z = 0;
 }
 class Derived extends Test {
     foo(x) {
@@ -421,18 +418,14 @@ function example1(things) {
     }
 }
 class TestPropertyDeclaration1 {
-    constructor() {
-        this.assert = (value) => { };
-    }
+    assert = (value) => { };
     other(x) {
         this.assert(x); // error
         x;
     }
 }
 class TestPropertyDeclaration2 {
-    constructor() {
-        this.assert = (value) => { };
-    }
+    assert = (value) => { };
     other(x) {
         this.assert(x); // ok
         x;

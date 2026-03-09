@@ -30,6 +30,7 @@ class SubText extends TextBase {
     }
 }
 class TextBase {
+    foo;
     subText(span) {
         return new SubText(this, span);
     }

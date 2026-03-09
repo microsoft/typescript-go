@@ -21,22 +21,15 @@ class SubclassOfSubclass extends Subclass {
 //// [subSubClassCanAccessProtectedConstructor.js]
 "use strict";
 class Base {
-    constructor() {
-        this.instance1 = new Base(); // allowed
-    }
+    constructor() { }
+    instance1 = new Base(); // allowed
 }
 class Subclass extends Base {
-    constructor() {
-        super(...arguments);
-        this.instance1_1 = new Base(); // allowed
-        this.instance1_2 = new Subclass(); // allowed
-    }
+    instance1_1 = new Base(); // allowed
+    instance1_2 = new Subclass(); // allowed
 }
 class SubclassOfSubclass extends Subclass {
-    constructor() {
-        super(...arguments);
-        this.instance2_1 = new Base(); // allowed
-        this.instance2_2 = new Subclass(); // allowed
-        this.instance2_3 = new SubclassOfSubclass(); // allowed
-    }
+    instance2_1 = new Base(); // allowed
+    instance2_2 = new Subclass(); // allowed
+    instance2_3 = new SubclassOfSubclass(); // allowed
 }

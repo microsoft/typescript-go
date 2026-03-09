@@ -39,6 +39,7 @@ var Events;
 var Consumer;
 (function (Consumer) {
     class EventEmitterConsummer {
+        emitter;
         constructor(emitter) {
             this.emitter = emitter;
         }

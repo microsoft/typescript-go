@@ -48,12 +48,16 @@ b16 = x.a16;
 "use strict";
 // checking assignment compatibility relations for function types. All valid.
 class Base {
+    foo;
 }
 class Derived extends Base {
+    bar;
 }
 class Derived2 extends Derived {
+    baz;
 }
 class OtherDerived extends Base {
+    bing;
 }
 x.a = b;
 b = x.a;

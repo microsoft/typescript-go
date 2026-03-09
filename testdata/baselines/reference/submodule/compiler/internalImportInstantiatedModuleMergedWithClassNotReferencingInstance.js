@@ -18,6 +18,7 @@ namespace B {
 //// [internalImportInstantiatedModuleMergedWithClassNotReferencingInstance.js]
 "use strict";
 class A {
+    aProp;
 }
 (function (A) {
     A.a = 10;
@@ -25,4 +26,5 @@ class A {
 var B;
 (function (B) {
     var A = 1;
+    var Y = A;
 })(B || (B = {}));

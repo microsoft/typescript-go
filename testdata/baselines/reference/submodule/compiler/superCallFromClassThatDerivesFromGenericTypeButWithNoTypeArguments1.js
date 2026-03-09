@@ -14,6 +14,7 @@ class B extends A {
 //// [superCallFromClassThatDerivesFromGenericTypeButWithNoTypeArguments1.js]
 "use strict";
 class A {
+    map;
     constructor(map) {
         this.map = map;
     }

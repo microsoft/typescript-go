@@ -29,26 +29,23 @@ class F extends D{
 //// [emitClassDeclarationWithPropertyAssignmentInES6.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = "Hello world";
-    }
+    x = "Hello world";
 }
 class D {
+    x = "Hello world";
+    y;
     constructor() {
-        this.x = "Hello world";
         this.y = 10;
     }
 }
 class E extends D {
-    constructor() {
-        super(...arguments);
-        this.z = true;
-    }
+    z = true;
 }
 class F extends D {
+    z = true;
+    j;
     constructor() {
         super();
-        this.z = true;
         this.j = "HI";
     }
 }

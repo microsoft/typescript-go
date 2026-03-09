@@ -428,6 +428,7 @@
 +{
 +    class C {
 +        static x = class {
++            @dec
 +            y;
 +        };
 +    }
@@ -435,6 +436,7 @@
 +{
 +    class C {
 +        static "x" = class {
++            @dec
 +            y;
 +        };
 +    }
@@ -442,6 +444,7 @@
 +{
 +    class C {
 +        static 0 = class {
++            @dec
 +            y;
 +        };
 +    }
@@ -449,6 +452,7 @@
 +{
 +    class C {
 +        static ["x"] = class {
++            @dec
 +            y;
 +        };
 +    }
@@ -456,6 +460,7 @@
 +{
 +    class C {
 +        static [0] = class {
++            @dec
 +            y;
 +        };
 +    }
@@ -473,6 +478,7 @@
 +{
 +    class C {
 +        static __proto__ = class {
++            @dec
 +            y;
 +        };
 +    }
@@ -480,6 +486,7 @@
 +{
 +    class C {
 +        static "__proto__" = class {
++            @dec
 +            y;
 +        };
      }
@@ -519,6 +526,7 @@
 -                __runInitializers(this, _static_x_extraInitializers);
 -            }
 +    class C {
++        @dec
 +        static x = 
 +        @dec
 +        class {

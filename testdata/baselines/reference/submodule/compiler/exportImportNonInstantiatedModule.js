@@ -16,5 +16,6 @@ var x: B.A1.I = { x: 1 };
 "use strict";
 var B;
 (function (B) {
+    B.A1 = A;
 })(B || (B = {}));
 var x = { x: 1 };

@@ -35,11 +35,11 @@ declare namespace MsPortal.Controls.Base.ItemList {
 "use strict";
 var MsPortal;
 (function (MsPortal) {
-    var Controls;
+    let Controls;
     (function (Controls) {
-        var Base;
+        let Base;
         (function (Base) {
-            var ItemList;
+            let ItemList;
             (function (ItemList) {
                 class ItemValue {
                     constructor(value) {

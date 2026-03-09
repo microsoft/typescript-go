@@ -12,12 +12,11 @@ var v = class C {
 
 //// [classExpressionWithStaticPropertiesES62.js]
 "use strict";
-var _a;
-var v = (_a = class C {
-    },
-    _a.a = 1,
-    _a.c = {
+var v = class C {
+    static a = 1;
+    static b;
+    static c = {
         x: "hi"
-    },
-    _a.d = _a.c.x + " world",
-    _a);
+    };
+    static d = C.c.x + " world";
+};

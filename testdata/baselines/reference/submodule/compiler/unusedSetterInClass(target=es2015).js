@@ -12,6 +12,7 @@ class Employee {
 //// [unusedSetterInClass.js]
 "use strict";
 class Employee {
+    _fullName;
     set fullName(newName) {
         this._fullName = newName;
     }

@@ -11,7 +11,5 @@ class C implements I {
 //// [implementPublicPropertyAsPrivate.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = 0; // should raise error at class decl
-    }
+    x = 0; // should raise error at class decl
 }

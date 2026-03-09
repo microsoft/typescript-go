@@ -1,0 +1,10 @@
+--- old.genericGetter.js
++++ new.genericGetter.js
+@@= skipped -13, +13 lines =@@
+ //// [genericGetter.js]
+ "use strict";
+ class C {
++    data;
+     get x() {
+         return this.data;
+     }

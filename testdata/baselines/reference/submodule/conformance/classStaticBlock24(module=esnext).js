@@ -11,7 +11,8 @@ export class C {
 
 //// [classStaticBlock24.js]
 export class C {
+    static x;
+    static {
+        C.x = 1;
+    }
 }
-(() => {
-    C.x = 1;
-})();

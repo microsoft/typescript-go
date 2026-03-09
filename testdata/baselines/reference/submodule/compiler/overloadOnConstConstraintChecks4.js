@@ -20,10 +20,7 @@ function foo(name: any): Z {
 class Z {
 }
 class A extends Z {
-    constructor() {
-        super(...arguments);
-        this.x = 1;
-    }
+    x = 1;
 }
 class B extends A {
 }

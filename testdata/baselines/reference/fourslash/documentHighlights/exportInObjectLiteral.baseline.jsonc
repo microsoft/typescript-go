@@ -1,5 +1,0 @@
-// === documentHighlights ===
-// === /a.ts ===
-// const k = {
-//     /*HIGHLIGHTS*/export f() { }
-// }

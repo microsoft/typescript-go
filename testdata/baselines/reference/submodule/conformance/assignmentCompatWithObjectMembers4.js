@@ -99,14 +99,19 @@ namespace WithBase {
 var OnlyDerived;
 (function (OnlyDerived) {
     class Base {
+        foo;
     }
     class Derived extends Base {
+        bar;
     }
     class Derived2 extends Base {
+        baz;
     }
     class S {
+        foo;
     }
     class T {
+        foo;
     }
     var a2 = { foo: new Derived() };
     var b2 = { foo: new Derived2() };
@@ -133,14 +138,19 @@ var OnlyDerived;
 var WithBase;
 (function (WithBase) {
     class Base {
+        foo;
     }
     class Derived extends Base {
+        bar;
     }
     class Derived2 extends Base {
+        baz;
     }
     class S {
+        foo;
     }
     class T {
+        foo;
     }
     var a2 = { foo: new Base() };
     var b2 = { foo: new Derived2() };

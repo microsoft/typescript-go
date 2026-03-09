@@ -53,6 +53,7 @@ class BigGreeter extends React.Component {
     render() {
         return <div></div>;
     }
+    greeting;
 }
 // OK
 let a = <Greet />;

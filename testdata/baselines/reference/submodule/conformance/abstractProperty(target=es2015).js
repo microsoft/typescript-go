@@ -25,15 +25,7 @@ class A {
     }
 }
 class B extends A {
-    constructor() {
-        super(...arguments);
-        Object.defineProperty(this, "x", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'B.x'
-        });
-    }
+    x = 'B.x';
 }
 class C extends A {
     get x() { return 'C.x'; }

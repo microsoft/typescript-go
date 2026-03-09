@@ -25,8 +25,10 @@ obj[x];
 //// [duplicateErrorClassExpression.js]
 "use strict";
 class Base {
+    foo;
 }
 const x = class Derived extends Base {
+    foo;
 };
 let obj = { 3: "three" };
 obj[x];

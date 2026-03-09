@@ -40,8 +40,10 @@
 -    return D = _classThis;
 -})();
 +class C {
++    @dec
 +    static #method1() { }
 +}
++@dec
 +class D {
 +    static #method1() { }
 +}

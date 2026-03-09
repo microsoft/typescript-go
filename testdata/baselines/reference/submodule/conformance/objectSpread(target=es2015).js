@@ -192,9 +192,7 @@ let anything;
 let spreadAny = Object.assign({}, anything);
 // methods are not enumerable
 class C {
-    constructor() {
-        this.p = 1;
-    }
+    p = 1;
     m() { }
 }
 let c = new C();

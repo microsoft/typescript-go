@@ -14,6 +14,7 @@ class D<T> extends C<T> {
 //// [superWithTypeArgument2.js]
 "use strict";
 class C {
+    foo;
 }
 class D extends C {
     constructor(x) {

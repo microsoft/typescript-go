@@ -143,9 +143,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpecializedWidget = exports.Widget1 = void 0;
 exports.createWidget1 = createWidget1;
 class Widget1 {
-    constructor() {
-        this.name = 'one';
-    }
+    name = 'one';
 }
 exports.Widget1 = Widget1;
 function createWidget1() {
@@ -154,9 +152,7 @@ function createWidget1() {
 var SpecializedWidget;
 (function (SpecializedWidget) {
     class Widget2 {
-        constructor() {
-            this.name = 'one';
-        }
+        name = 'one';
     }
     SpecializedWidget.Widget2 = Widget2;
     function createWidget2() {

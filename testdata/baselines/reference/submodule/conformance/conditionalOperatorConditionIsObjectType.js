@@ -71,6 +71,7 @@ var resultIsStringOrBoolean3 = C.doIt() ? exprString1 : exprBoolean1; // union
 function foo() { }
 ;
 class C {
+    static doIt;
 }
 ;
 //Cond is an object type variable

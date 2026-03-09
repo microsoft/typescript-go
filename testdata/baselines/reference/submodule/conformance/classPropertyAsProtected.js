@@ -28,9 +28,11 @@ C.foo();
 //// [classPropertyAsProtected.js]
 "use strict";
 class C {
+    x;
     get y() { return null; }
     set y(x) { }
     foo() { }
+    static a;
     static get b() { return null; }
     static set b(x) { }
     static foo() { }

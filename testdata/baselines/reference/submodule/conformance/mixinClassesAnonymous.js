@@ -70,26 +70,29 @@ const Timestamped = <CT extends Constructor<object>>(Base: CT) => {
 //// [mixinClassesAnonymous.js]
 "use strict";
 class Base {
+    x;
+    y;
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 }
 class Derived extends Base {
+    z;
     constructor(x, y, z) {
         super(x, y);
         this.z = z;
     }
 }
-const Printable = (superClass) => { var _a; return _a = class extends superClass {
-        print() {
-            const output = this.x + "," + this.y;
-        }
-    },
-    _a.message = "hello",
-    _a; };
+const Printable = (superClass) => class extends superClass {
+    static message = "hello";
+    print() {
+        const output = this.x + "," + this.y;
+    }
+};
 function Tagged(superClass) {
     class C extends superClass {
+        _tag;
         constructor(...args) {
             super(...args);
             this._tag = "hello";
@@ -123,9 +126,6 @@ class Thing3 extends Thing2 {
 // Repro from #13805
 const Timestamped = (Base) => {
     return class extends Base {
-        constructor() {
-            super(...arguments);
-            this.timestamp = new Date();
-        }
+        timestamp = new Date();
     };
 };

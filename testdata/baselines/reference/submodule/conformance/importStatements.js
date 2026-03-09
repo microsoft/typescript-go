@@ -41,6 +41,8 @@ namespace E {
 var A;
 (function (A) {
     class Point {
+        x;
+        y;
         constructor(x, y) {
             this.x = x;
             this.y = y;
@@ -52,6 +54,7 @@ var A;
 // no code gen expected
 var C;
 (function (C) {
+    var a = A; //Error generates 'var <Alias> = <EntityName>;'
     var m;
     var p;
     var p = { x: 0, y: 0 };

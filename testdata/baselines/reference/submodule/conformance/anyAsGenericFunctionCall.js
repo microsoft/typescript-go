@@ -20,6 +20,7 @@ var x;
 var a = x();
 var b = x('hello');
 class C {
+    foo;
 }
 var c = x(x);
 var d = x(x);

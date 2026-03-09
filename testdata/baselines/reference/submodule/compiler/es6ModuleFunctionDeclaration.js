@@ -37,7 +37,8 @@ function foo2() {
 }
 foo();
 foo2();
-export var m1;
+export { m1 };
+var m1;
 (function (m1) {
     function foo3() {
     }

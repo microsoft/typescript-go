@@ -26,7 +26,8 @@ export function A() {
 export function B() {
     return 'B';
 }
-export var C;
+export { C };
+var C;
 (function (C) {
     C[C["C"] = 0] = "C";
 })(C || (C = {}));

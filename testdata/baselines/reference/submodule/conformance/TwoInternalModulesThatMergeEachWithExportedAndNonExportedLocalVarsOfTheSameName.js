@@ -63,6 +63,8 @@ var A;
     let Utils;
     (function (Utils) {
         class Plane {
+            tl;
+            br;
             constructor(tl, br) {
                 this.tl = tl;
                 this.br = br;

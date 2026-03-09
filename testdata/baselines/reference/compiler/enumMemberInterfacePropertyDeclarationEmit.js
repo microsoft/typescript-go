@@ -16,7 +16,8 @@ export const wwmfMap: WWMFMap = {};
 
 
 //// [enum.js]
-export var WWMF;
+export { WWMF };
+var WWMF;
 (function (WWMF) {
     WWMF["AAR"] = "AAR";
 })(WWMF || (WWMF = {}));

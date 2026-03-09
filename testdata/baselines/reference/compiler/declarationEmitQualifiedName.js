@@ -20,7 +20,8 @@ export const B = { ...A } as const
 
 
 //// [e.js]
-export var E;
+export { E };
+var E;
 (function (E) {
     E["A"] = "a";
     E["B"] = "b";

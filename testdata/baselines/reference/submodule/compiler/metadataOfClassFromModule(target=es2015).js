@@ -32,6 +32,7 @@ var MyModule;
     }
     MyModule.Leg = Leg;
     class Person {
+        leftLeg;
     }
     __decorate([
         inject,

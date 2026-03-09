@@ -13,6 +13,7 @@ namespace M {
 var M;
 (function (M) {
     class C {
+        x;
     }
     M.C = C;
 })(M || (M = {}));

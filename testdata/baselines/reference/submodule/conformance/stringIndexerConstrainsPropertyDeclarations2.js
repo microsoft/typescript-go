@@ -51,6 +51,10 @@ class B extends A {
     bar() { return ''; }
 }
 class Foo {
+    a; // ok
+    b; // ok
+    c; // error
+    d; // error
 }
 var a;
 // error

@@ -10,8 +10,6 @@ var { x } = new C;
 //// [destructuringWithNewExpression.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = 0;
-    }
+    x = 0;
 }
 var { x } = new C;

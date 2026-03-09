@@ -23,19 +23,21 @@ namespace A.B.C {
 "use strict";
 var A;
 (function (A) {
-    var B;
+    let B;
     (function (B) {
         class EventManager {
+            id;
         }
         B.EventManager = EventManager;
     })(B = A.B || (A.B = {}));
 })(A || (A = {}));
 (function (A) {
-    var B;
+    let B;
     (function (B) {
-        var C;
+        let C;
         (function (C) {
             class ContextMenu extends B.EventManager {
+                name;
             }
             C.ContextMenu = ContextMenu;
         })(C = B.C || (B.C = {}));

@@ -17,9 +17,7 @@ function foo(name: any): A {
 //// [overloadOnConstConstraintChecks3.js]
 "use strict";
 class A {
-    constructor() {
-        this.x = 1;
-    }
+    x = 1;
 }
 class B extends A {
 }

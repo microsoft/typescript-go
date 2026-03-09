@@ -47,6 +47,7 @@ var a: Foo = {
 //// [interfaceWithPropertyOfEveryType.js]
 "use strict";
 class C {
+    foo;
 }
 function f1() { }
 var M;

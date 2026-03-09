@@ -105,12 +105,16 @@ b18 = a18; // ok
 "use strict";
 // these are all permitted with the current rules, since we do not do contextual signature instantiation
 class Base {
+    foo;
 }
 class Derived extends Base {
+    bar;
 }
 class Derived2 extends Derived {
+    baz;
 }
 class OtherDerived extends Base {
+    bing;
 }
 a = b; // ok
 b = a; // ok

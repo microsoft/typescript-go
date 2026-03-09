@@ -37,12 +37,8 @@ const y = other.Foo();
 const z = new defaultFoo();
 //// [other.js]
 export class Foo {
-    constructor() {
-        this.bar = 2.4;
-    }
+    bar = 2.4;
 }
 export default class Bar {
-    constructor() {
-        this.foo = 1.2;
-    }
+    foo = 1.2;
 }

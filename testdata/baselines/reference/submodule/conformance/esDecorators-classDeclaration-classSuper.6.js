@@ -30,6 +30,7 @@ class C extends Base {
 //// [esDecorators-classDeclaration-classSuper.6.js]
 "use strict";
 // none of the following should result in caching `super`
+@dec
 class C extends Base {
     static m() { super.method(); }
     static get x() { return super.method(); }

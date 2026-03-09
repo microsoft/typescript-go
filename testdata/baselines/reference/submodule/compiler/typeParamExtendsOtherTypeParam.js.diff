@@ -1,0 +1,10 @@
+--- old.typeParamExtendsOtherTypeParam.js
++++ new.typeParamExtendsOtherTypeParam.js
+@@= skipped -36, +36 lines =@@
+ class A {
+ }
+ class B {
++    data;
+ }
+ // Below 2 should compile without error 
+ var x;

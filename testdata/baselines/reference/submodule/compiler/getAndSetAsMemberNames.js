@@ -26,11 +26,11 @@ class C5 {
 //// [getAndSetAsMemberNames.js]
 "use strict";
 class C1 {
-    constructor() {
-        this.get = 1;
-    }
+    set;
+    get = 1;
 }
 class C2 {
+    set;
 }
 class C3 {
     set(x) {
@@ -38,14 +38,10 @@ class C3 {
     }
 }
 class C4 {
-    constructor() {
-        this.get = true;
-    }
+    get = true;
 }
 class C5 {
-    constructor() {
-        this.set = function () { return true; };
-    }
+    set = function () { return true; };
     get() { return true; }
     set t(x) { }
 }

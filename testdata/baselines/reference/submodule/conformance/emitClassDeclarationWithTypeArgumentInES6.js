@@ -19,6 +19,8 @@ class B<T> {
 //// [emitClassDeclarationWithTypeArgumentInES6.js]
 "use strict";
 class B {
+    x;
+    B;
     constructor(a) { this.B = a; }
     foo() {
         return this.x;

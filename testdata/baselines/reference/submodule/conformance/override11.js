@@ -15,11 +15,10 @@ class Sub extends Base {
 //// [override11.js]
 "use strict";
 class Base {
-    constructor() {
-        this.foo = 1;
-    }
+    foo = 1;
 }
 class Sub extends Base {
+    foo;
     constructor(foo) {
         super();
         this.foo = foo;

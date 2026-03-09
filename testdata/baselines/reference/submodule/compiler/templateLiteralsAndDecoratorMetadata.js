@@ -18,9 +18,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 export class Greeter {
-    constructor() {
-        this.greeting = `employee`; //template literals on this line cause the issue
-    }
+    greeting = `employee`; //template literals on this line cause the issue
 }
 __decorate([
     format("Hello, %s"),

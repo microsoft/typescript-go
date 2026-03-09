@@ -1,0 +1,10 @@
+--- old.intraExpressionInferences.js
++++ new.intraExpressionInferences.js
+@@= skipped -393, +393 lines =@@
+ });
+ // Repro from #41712
+ class Wrapper {
++    value;
+ }
+ createMappingComponent({
+     setup() {

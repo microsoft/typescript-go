@@ -64,6 +64,7 @@ function make(x) {
     return null;
 }
 class MyComponent {
+    props;
 }
 exports.default = MyComponent;
 var Something;

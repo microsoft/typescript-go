@@ -21,8 +21,9 @@ class C {
     }
 }
 class D {
+    x;
     constructor(x) {
-        super(); // error
         this.x = x;
+        super(); // error
     }
 }

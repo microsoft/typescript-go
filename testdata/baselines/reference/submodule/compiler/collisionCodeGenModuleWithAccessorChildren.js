@@ -53,6 +53,7 @@ var M;
 (function (M_1) {
     M_1.x = 3;
     class c {
+        y;
         set Z(M) {
             this.y = M_1.x;
         }
@@ -60,6 +61,7 @@ var M;
 })(M || (M = {}));
 (function (M_2) {
     class d {
+        y;
         set Z(p) {
             var M = 10;
             this.y = M_2.x;
@@ -68,6 +70,7 @@ var M;
 })(M || (M = {}));
 (function (M) {
     class e {
+        y;
         set M(p) {
             this.y = M.x;
         }

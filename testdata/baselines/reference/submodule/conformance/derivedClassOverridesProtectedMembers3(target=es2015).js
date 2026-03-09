@@ -77,17 +77,22 @@ class Derived10 extends Base {
 var x;
 var y;
 class Base {
+    a;
     b(a) { }
     get c() { return x; }
     set c(v) { }
+    d;
+    static r;
     static s(a) { }
     static get t() { return x; }
     static set t(v) { }
+    static u;
     constructor(a) { }
 }
 // Errors
 // decrease visibility of all public members to protected
 class Derived1 extends Base {
+    a;
     constructor(a) { super(a); }
 }
 class Derived2 extends Base {
@@ -103,9 +108,11 @@ class Derived4 extends Base {
     constructor(a) { super(a); }
 }
 class Derived5 extends Base {
+    d;
     constructor(a) { super(a); }
 }
 class Derived6 extends Base {
+    static r;
     constructor(a) { super(a); }
 }
 class Derived7 extends Base {
@@ -121,5 +128,6 @@ class Derived9 extends Base {
     constructor(a) { super(a); }
 }
 class Derived10 extends Base {
+    static u;
     constructor(a) { super(a); }
 }

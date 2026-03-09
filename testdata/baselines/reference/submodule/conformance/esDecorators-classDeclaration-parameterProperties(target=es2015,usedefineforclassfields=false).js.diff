@@ -24,9 +24,11 @@
 -        _a;
 -})();
 +class C {
++    message;
 +    constructor(message) {
 +        this.message = message;
 +    }
++    @bound
 +    speak() {
 +    }
 +}

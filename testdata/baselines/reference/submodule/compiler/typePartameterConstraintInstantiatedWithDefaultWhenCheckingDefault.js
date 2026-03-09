@@ -31,6 +31,7 @@ let test2: Test2<number>;
 "use strict";
 // implement
 class Identity {
+    item;
     constructor(value) {
         this.item = value;
     }

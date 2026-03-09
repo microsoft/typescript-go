@@ -158,26 +158,20 @@ bar();
 let x14 = f;
 void bar();
 class C1 {
+    static specialFoo = f;
+    static bar = 123;
 }
-C1.specialFoo = f;
-C1.bar = 123;
 class C2 {
-    constructor() {
-        this.specialFoo = f;
-        this.bar = 123;
-    }
+    specialFoo = f;
+    bar = 123;
 }
 class C3 {
-    constructor() {
-        this.specialFoo = f;
-        this.bar = 123;
-    }
+    specialFoo = f;
+    bar = 123;
 }
 class C4 {
-    constructor() {
-        this.specialFoo = f;
-        this.bar = 123;
-    }
+    specialFoo = f;
+    bar = 123;
 }
 let ver = 21;
 const a = ver < (1 /* MyVer.v1 */ >= 2 /* MyVer.v2 */ ? 1 /* MyVer.v1 */ : 2 /* MyVer.v2 */);

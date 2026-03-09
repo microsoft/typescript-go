@@ -17,7 +17,8 @@ export enum Bar {
 }
 
 //// [foo.js]
-export var Foo;
+export { Foo };
+var Foo;
 (function (Foo) {
     Foo[Foo["a"] = 1] = "a";
     Foo[Foo["b"] = 2] = "b";
@@ -25,7 +26,8 @@ export var Foo;
 })(Foo || (Foo = {}));
 //// [bar.js]
 import { Foo } from './foo.js';
-export var Bar;
+export { Bar };
+var Bar;
 (function (Bar) {
     Bar["a"] = Foo.a;
     if (typeof Bar.a !== "string") Bar[Bar.a] = "a";

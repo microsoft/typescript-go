@@ -27,6 +27,7 @@ let k4 = <Button> <h2> Hello </h2> </Button>;
 //// [file.jsx]
 "use strict";
 class Button {
+    props;
     render() {
         return (<div>My Button</div>);
     }

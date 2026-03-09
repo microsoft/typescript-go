@@ -17,6 +17,7 @@ var z: number = y.test.b;
 //// [foo_0.js]
 "use strict";
 class Foo {
+    test;
     constructor(x) { }
 }
 module.exports = Foo;

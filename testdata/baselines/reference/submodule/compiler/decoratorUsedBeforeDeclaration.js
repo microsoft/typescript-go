@@ -87,6 +87,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 let Greeter = class Greeter {
+    greeting;
     constructor(message) {
         this.greeting = message;
     }
@@ -135,6 +136,7 @@ var Enum;
 })(Enum || (Enum = {}));
 const lambda = (...args) => { };
 let Greeter1 = class Greeter1 {
+    greeting;
     constructor(message) {
         this.greeting = message;
     }

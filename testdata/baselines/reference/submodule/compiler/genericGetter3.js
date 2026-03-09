@@ -18,6 +18,7 @@ var r: string = c.x;
 class A {
 }
 class C {
+    data;
     get x() {
         return this.data;
     }

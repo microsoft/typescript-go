@@ -44,6 +44,7 @@ var A;
     A[A["bar"] = 0] = "bar";
 })(A || (A = {}));
 class A {
+    foo;
 }
 function C() {
     return 0;
@@ -53,6 +54,7 @@ var D;
     D[D["bar"] = 0] = "bar";
 })(D || (D = {}));
 class E {
+    foo;
 }
 // also make sure the error appears when trying to merge an enum in a separate file.
 //// [duplicateIdentifierEnum_B.js]

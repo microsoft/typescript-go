@@ -1,0 +1,9 @@
+--- old.propertyNamedPrototype.js
++++ new.propertyNamedPrototype.js
+@@= skipped -8, +8 lines =@@
+ //// [propertyNamedPrototype.js]
+ "use strict";
+ class C {
++    prototype; // ok
++    static prototype; // error
+ }

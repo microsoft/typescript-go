@@ -104,6 +104,16 @@ var b: { [x: number]: string; } = {
 // String indexer types constrain the types of named properties in their containing type
 class C {
     constructor() { } // ok
+    a; // ok
+    b; // ok
+    c; // ok
+    "d"; // ok
+    "e"; // ok
+    1.0; // ok
+    2.0; // error
+    "3.0"; // ok
+    "4.0"; // error
+    3.0; // error
     get X() {
         return '';
     }
@@ -111,6 +121,8 @@ class C {
     foo() {
         return '';
     }
+    static sa; // ok
+    static sb; // ok
     static foo() { } // ok
     static get X() {
         return 1;

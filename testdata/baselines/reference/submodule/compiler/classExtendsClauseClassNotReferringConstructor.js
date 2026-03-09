@@ -11,10 +11,12 @@ namespace Foo {
 //// [classExtendsClauseClassNotReferringConstructor.js]
 "use strict";
 class A {
+    a;
 }
 var Foo;
 (function (Foo) {
     var A = 1;
     class B extends A {
+        b;
     }
 })(Foo || (Foo = {}));

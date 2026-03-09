@@ -34,16 +34,12 @@ bar(arr); // ok because arr is Array<Giraffe|Elephant> not {}[]
 //// [arrayLiteralContextualType.js]
 "use strict";
 class Giraffe {
-    constructor() {
-        this.name = "Giraffe";
-        this.neckLength = "3m";
-    }
+    name = "Giraffe";
+    neckLength = "3m";
 }
 class Elephant {
-    constructor() {
-        this.name = "Elephant";
-        this.trunkDiameter = "20cm";
-    }
+    name = "Elephant";
+    trunkDiameter = "20cm";
 }
 function foo(animals) { }
 function bar(animals) { }

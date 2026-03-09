@@ -89,10 +89,8 @@ function foo() {
     return "hello world"; // this should not be an error
 }
 class C {
-    constructor() {
-        this.bar = null; // this should be an error
-        this.foo = undefined; // this should be an error
-    }
+    bar = null; // this should be an error
+    foo = undefined; // this should be an error
     get tempVar() {
         return 0; // this should not be an error
     }
@@ -104,9 +102,7 @@ class C {
     }
 }
 class C1 {
-    constructor() {
-        this.getValue = null; // this should be an error
-    }
+    getValue = null; // this should be an error
     get castedGet() {
         return this.getValue; // this should not be an error
     }

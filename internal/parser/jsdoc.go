@@ -221,11 +221,6 @@ loop:
 	for {
 		switch p.token {
 		case ast.KindAtToken:
-			if !p.scanner.CanFollowJSDocAt() {
-				state = jsdocStateSavingComments
-				pushComment(p.scanner.TokenText())
-				break
-			}
 			comments = removeTrailingWhitespace(comments)
 			if commentsPos == -1 {
 				commentsPos = p.nodePos()
@@ -552,12 +547,8 @@ loop:
 			comments = append(comments, p.scanner.TokenText())
 			indent = 0
 		case ast.KindAtToken:
-			if p.scanner.CanFollowJSDocAt() {
-				p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
-				break loop
-			}
-			state = jsdocStateSavingComments
-			pushComment(p.scanner.TokenText())
+			p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
+			break loop
 		case ast.KindEndOfFile:
 			// Done
 			break loop
@@ -1103,7 +1094,7 @@ func (p *Parser) parseChildParameterOrPropertyTag(target propertyLikeParse, inde
 	for {
 		switch p.nextTokenJSDoc() {
 		case ast.KindAtToken:
-			if canParseTag && p.scanner.CanFollowJSDocAt() {
+			if canParseTag {
 				child := p.tryParseChildTag(target, indent)
 				if child != nil && name != nil &&
 					(child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag) &&

@@ -103,9 +103,11 @@ var r3 = foo3(a); // any
 var r3 = foo3(a); // any
 var r3 = foo3(a); // any
 class A {
+    foo;
 }
 var r3 = foo3(a); // any
 class A2 {
+    foo;
 }
 var r3 = foo3(a); // any
 var r3 = foo3(a); // any
@@ -121,6 +123,7 @@ function f() { }
 })(f || (f = {}));
 var r3 = foo3(a); // any
 class CC {
+    baz;
 }
 (function (CC) {
     CC.bar = 1;

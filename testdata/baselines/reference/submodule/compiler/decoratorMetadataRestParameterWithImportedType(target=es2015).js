@@ -44,6 +44,7 @@ export class ClassA {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SomeClass = void 0;
 class SomeClass {
+    field;
 }
 exports.SomeClass = SomeClass;
 //// [aux1.js]
@@ -51,6 +52,7 @@ exports.SomeClass = SomeClass;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SomeClass1 = void 0;
 class SomeClass1 {
+    field;
 }
 exports.SomeClass1 = SomeClass1;
 //// [aux2.js]
@@ -58,6 +60,7 @@ exports.SomeClass1 = SomeClass1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SomeClass2 = void 0;
 class SomeClass2 {
+    field;
 }
 exports.SomeClass2 = SomeClass2;
 //// [main.js]
@@ -82,6 +85,7 @@ function annotation1() {
     return (target) => { };
 }
 let ClassA = class ClassA {
+    array;
     constructor(...init) {
         this.array = init;
     }

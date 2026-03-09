@@ -34,7 +34,8 @@ export namespace M {
 
 
 //// [es6ModuleInternalNamedImports.js]
-export var M;
+export { M };
+var M;
 (function (M) {
     // variable
     M.M_V = 0;
@@ -54,6 +55,14 @@ export var M;
     let M_E;
     (function (M_E) {
     })(M_E = M.M_E || (M.M_E = {}));
-    // alias
     M.M_A = M_M;
+    // Reexports
+    export { M_V as v };
+    export { M_I as i };
+    export { M_C as c };
+    export { M_M as m };
+    export { M_MU as mu };
+    export { M_F as f };
+    export { M_E as e };
+    export { M_A as a };
 })(M || (M = {}));

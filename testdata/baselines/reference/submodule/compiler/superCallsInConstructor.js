@@ -29,6 +29,7 @@ class C {
     bar() { }
 }
 class Base {
+    x;
 }
 class Derived extends Base {
     constructor() {

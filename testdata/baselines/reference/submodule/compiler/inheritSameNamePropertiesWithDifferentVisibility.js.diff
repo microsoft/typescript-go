@@ -1,0 +1,11 @@
+--- old.inheritSameNamePropertiesWithDifferentVisibility.js
++++ new.inheritSameNamePropertiesWithDifferentVisibility.js
+@@= skipped -15, +15 lines =@@
+ //// [inheritSameNamePropertiesWithDifferentVisibility.js]
+ "use strict";
+ class C {
++    x;
+ }
+ class C2 {
++    x;
+ }

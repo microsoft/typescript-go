@@ -49,9 +49,12 @@ export class MyClass4 extends getExportedClass<LocalInterface>(undefined)<Export
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyClass4 = exports.MyClass3 = exports.MyClass2 = exports.MyClass = exports.ExportedClass = void 0;
 class ExportedClass {
+    x;
 }
 exports.ExportedClass = ExportedClass;
 class LocalClass {
+    x;
+    y;
 }
 function getLocalClass(c) {
     return LocalClass;

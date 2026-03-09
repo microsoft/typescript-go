@@ -45,6 +45,7 @@ class E extends D {
 "use strict";
 // Tests that readonly parameter properties behave like regular readonly properties
 class A {
+    x;
     constructor(x) {
         this.x = x;
         this.x = 0;
@@ -58,6 +59,7 @@ class B extends A {
     }
 }
 class C extends A {
+    x;
     // This is the usual behavior of readonly properties:
     // if one is redeclared in a base class, then it can be assigned to.
     constructor(x) {
@@ -67,6 +69,7 @@ class C extends A {
     }
 }
 class D {
+    x;
     constructor(x) {
         this.x = x;
         this.x = 0;
@@ -74,6 +77,7 @@ class D {
 }
 // Fails, can't redeclare readonly property
 class E extends D {
+    x;
     constructor(x) {
         super(x);
         this.x = x;

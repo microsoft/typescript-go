@@ -23,7 +23,8 @@ export let a = "hello";
 export let x = a, y = x;
 let b = y;
 let c = b, d = c;
-export var m1;
+export { m1 };
+var m1;
 (function (m1) {
     m1.k = a;
     m1.l = b, m1.m = m1.k;

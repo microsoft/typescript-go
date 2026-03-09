@@ -70,11 +70,14 @@ function test1(x) {
     let g2 = x.g ? x.g() : 0;
 }
 class Bar {
+    d;
+    e;
+    a = 0;
+    b;
+    c = 2;
     constructor(d, e = 10) {
         this.d = d;
         this.e = e;
-        this.a = 0;
-        this.c = 2;
     }
     f() {
         return 1;
@@ -98,12 +101,10 @@ function test2(x) {
     let h2 = x.h ? x.h() : 0;
 }
 class Base {
+    a;
 }
 class Derived extends Base {
-    constructor() {
-        super(...arguments);
-        this.a = 1;
-    }
+    a = 1;
     f() { return 1; }
 }
 

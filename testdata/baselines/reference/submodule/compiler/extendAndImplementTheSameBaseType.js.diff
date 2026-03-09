@@ -1,0 +1,10 @@
+--- old.extendAndImplementTheSameBaseType.js
++++ new.extendAndImplementTheSameBaseType.js
+@@= skipped -17, +17 lines =@@
+ //// [extendAndImplementTheSameBaseType.js]
+ "use strict";
+ class C {
++    foo;
+     bar() { }
+ }
+ class D extends C {

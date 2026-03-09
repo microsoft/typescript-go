@@ -18,12 +18,10 @@ if(foo.C1.s1){
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.C1 = void 0;
 class C1 {
-    constructor() {
-        this.m1 = 42;
-    }
+    m1 = 42;
+    static s1 = true;
 }
 exports.C1 = C1;
-C1.s1 = true;
 //// [foo_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

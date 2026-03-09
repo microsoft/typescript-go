@@ -8,4 +8,5 @@ class C {
 //// [parserComputedPropertyName8.js]
 "use strict";
 class C {
+    [e];
 }

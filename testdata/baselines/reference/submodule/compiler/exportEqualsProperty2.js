@@ -18,6 +18,7 @@ const x: B = { c: B };
 //// [a.js]
 "use strict";
 class C {
+    static B;
 }
 module.exports = C.B;
 //// [b.js]

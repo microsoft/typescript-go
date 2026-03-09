@@ -135,19 +135,4 @@ export type TaskNode = {
 export type PriorTaskData = {
     timers: Map<string, TaskNode>;
 };
-/** @typedef {import('./module.js').TaskGroup} TaskGroup */
-/**
- * @typedef TaskNode
- * @prop {TaskNode[]} children
- * @prop {TaskNode|undefined} parent
- * @prop {TaskGroup} group
- */
-/** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
-declare class MainThreadTasks {
-    /**
-     * @param {TaskGroup} x
-     * @param {TaskNode} y
-     */
-    constructor(x: TaskGroup, y: TaskNode);
-}
 export = MainThreadTasks;

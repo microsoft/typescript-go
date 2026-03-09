@@ -114,6 +114,7 @@ export default foo;
 //// [index.js]
 "use strict";
 class MyClassErr {
+    foo;
     // No parameter properties
     constructor(foo) {
         this.foo = foo;

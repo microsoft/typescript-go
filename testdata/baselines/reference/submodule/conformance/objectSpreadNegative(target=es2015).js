@@ -82,11 +82,10 @@ spreadObj.a; // error 'a' is not in {}
 let o = { a: 1, b: 'no' };
 /// private propagates
 class PrivateOptionalX {
+    x;
 }
 class PublicX {
-    constructor() {
-        this.x = 42;
-    }
+    x = 42;
 }
 let o2 = Object.assign(Object.assign({}, publicX), privateOptionalX);
 let sn = o2.x; // error, x is private
@@ -127,9 +126,7 @@ let setterOnly = Object.assign({ set b(bad) { } });
 setterOnly.b = 12; // error, 'b' does not exist
 // methods are skipped because they aren't enumerable
 class C {
-    constructor() {
-        this.p = 1;
-    }
+    p = 1;
     m() { }
 }
 let c = new C();

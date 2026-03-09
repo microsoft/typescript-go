@@ -32,4 +32,5 @@ class A {
     baz() { }
 }
 class B {
+    x;
 }

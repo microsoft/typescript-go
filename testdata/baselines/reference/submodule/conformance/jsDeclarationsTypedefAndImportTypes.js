@@ -40,9 +40,8 @@ module.exports = {
  * @typedef {string | number} Whatever
  */
 class Conn {
-    constructor() {
-        this.item = 3;
-    }
+    constructor() { }
+    item = 3;
     method() { }
 }
 module.exports = Conn;
@@ -71,11 +70,6 @@ module.exports = {
  * @typedef {string | number} Whatever
  */
 export type Whatever = string | number;
-declare class Conn {
-    constructor();
-    item: number;
-    method(): void;
-}
 export = Conn;
 //// [usage.d.ts]
 /**

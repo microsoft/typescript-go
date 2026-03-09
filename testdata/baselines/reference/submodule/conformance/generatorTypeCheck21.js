@@ -11,8 +11,10 @@ function* g(): IterableIterator<Foo> {
 //// [generatorTypeCheck21.js]
 "use strict";
 class Foo {
+    x;
 }
 class Bar extends Foo {
+    y;
 }
 function* g() {
     yield;

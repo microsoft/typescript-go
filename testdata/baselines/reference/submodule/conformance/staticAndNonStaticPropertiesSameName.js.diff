@@ -1,0 +1,11 @@
+--- old.staticAndNonStaticPropertiesSameName.js
++++ new.staticAndNonStaticPropertiesSameName.js
+@@= skipped -11, +11 lines =@@
+ //// [staticAndNonStaticPropertiesSameName.js]
+ "use strict";
+ class C {
++    x;
++    static x;
+     f() { }
+     static f() { }
+ }

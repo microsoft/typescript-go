@@ -101,12 +101,14 @@ class DerivedInConditionalWithProperties extends Object {
 //// [derivedClassSuperStatementPosition.js]
 "use strict";
 class DerivedBasic extends Object {
+    prop = 1;
     constructor() {
         super();
-        this.prop = 1;
     }
 }
 class DerivedAfterParameterDefault extends Object {
+    x1;
+    x2;
     constructor(x = false) {
         this.x1 = x;
         super(x);
@@ -114,6 +116,8 @@ class DerivedAfterParameterDefault extends Object {
     }
 }
 class DerivedAfterRestParameter extends Object {
+    x1;
+    x2;
     constructor(...x) {
         this.x1 = x;
         super(x);
@@ -121,6 +125,7 @@ class DerivedAfterRestParameter extends Object {
     }
 }
 class DerivedComments extends Object {
+    x;
     constructor() {
         // c1
         console.log(); // c2
@@ -132,6 +137,7 @@ class DerivedComments extends Object {
     }
 }
 class DerivedCommentsInvalidThis extends Object {
+    x;
     constructor() {
         // c0
         this;
@@ -145,16 +151,16 @@ class DerivedCommentsInvalidThis extends Object {
     }
 }
 class DerivedInConditional extends Object {
+    prop = 1;
     constructor() {
-        this.prop = 1;
         Math.random()
             ? super(1)
             : super(0);
     }
 }
 class DerivedInIf extends Object {
+    prop = 1;
     constructor() {
-        this.prop = 1;
         if (Math.random()) {
             super(1);
         }
@@ -164,18 +170,20 @@ class DerivedInIf extends Object {
     }
 }
 class DerivedInBlockWithProperties extends Object {
+    paramProp;
+    prop = 1;
     constructor(paramProp = 2) {
         this.paramProp = paramProp;
-        this.prop = 1;
         {
             super();
         }
     }
 }
 class DerivedInConditionalWithProperties extends Object {
+    paramProp;
+    prop = 1;
     constructor(paramProp = 2) {
         this.paramProp = paramProp;
-        this.prop = 1;
         if (Math.random()) {
             super(1);
         }

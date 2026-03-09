@@ -9,12 +9,11 @@ foo(class { static prop = "hello" }).length;
 
 //// [typeArgumentInferenceWithClassExpression1.js]
 "use strict";
-var _a;
 function foo(x = class {
+    static prop;
 }) {
     return undefined;
 }
-foo((_a = class {
-    },
-    _a.prop = "hello",
-    _a)).length;
+foo(class {
+    static prop = "hello";
+}).length;

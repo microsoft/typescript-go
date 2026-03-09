@@ -19,5 +19,6 @@ class {
 //// [b.js]
 "use strict";
 module.exports = class {
+    @dec
     y;
 };

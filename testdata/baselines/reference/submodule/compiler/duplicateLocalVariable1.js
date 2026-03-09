@@ -353,6 +353,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tests = exports.TestRunner = exports.TestCase = void 0;
 var TestFileDir = ".\\TempTestFiles";
 class TestCase {
+    name;
+    test;
+    errorMessageRegEx;
     constructor(name, test, errorMessageRegEx) {
         this.name = name;
         this.test = test;
@@ -361,9 +364,7 @@ class TestCase {
 }
 exports.TestCase = TestCase;
 class TestRunner {
-    constructor() {
-        this.tests = [];
-    }
+    tests = [];
     static arrayCompare(arg1, arg2) {
         return (arg1.every(function (val, index) { return val === arg2[index]; }));
     }

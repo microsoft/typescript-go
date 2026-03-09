@@ -1,0 +1,10 @@
+--- old.definiteAssignmentOfDestructuredVariable.js
++++ new.definiteAssignmentOfDestructuredVariable.js
+@@= skipped -19, +19 lines =@@
+ //// [definiteAssignmentOfDestructuredVariable.js]
+ "use strict";
+ class C {
++    foo;
+     method() {
+         let { a, b } = this.foo;
+         !(a && b);

@@ -11,9 +11,7 @@ function* g() {
 "use strict";
 function* g() {
     class C {
-        constructor() {
-            this.x = yield 0;
-        }
+        x = yield 0;
     }
     ;
 }

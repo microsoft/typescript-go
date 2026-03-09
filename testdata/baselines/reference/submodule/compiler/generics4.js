@@ -12,5 +12,6 @@ a = b; // Not ok - return types of "f" are different
 //// [generics4.js]
 "use strict";
 class C {
+    x;
 }
 a = b; // Not ok - return types of "f" are different

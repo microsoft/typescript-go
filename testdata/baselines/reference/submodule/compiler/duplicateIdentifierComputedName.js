@@ -10,4 +10,6 @@ class C {
 //// [duplicateIdentifierComputedName.js]
 "use strict";
 class C {
+    ["a"];
+    ["a"];
 }

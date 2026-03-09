@@ -102,12 +102,43 @@ func elideModifiers(f *printer.NodeFactory, nodes *ast.ModifierList) *ast.Modifi
 	return replacement
 }
 
+func moveRangePastModifiers(node *ast.Node) core.TextRange {
+	if ast.IsPropertyDeclaration(node) || ast.IsMethodDeclaration(node) {
+		return core.NewTextRange(node.Name().Pos(), node.End())
+	}
+
+	var lastModifier *ast.Node
+	if ast.CanHaveModifiers(node) {
+		lastModifier = core.LastOrNil(node.ModifierNodes())
+	}
+
+	if lastModifier != nil && !ast.PositionIsSynthesized(lastModifier.End()) {
+		return core.NewTextRange(lastModifier.End(), node.End())
+	}
+	return moveRangePastDecorators(node)
+}
+
+func moveRangePastDecorators(node *ast.Node) core.TextRange {
+	var lastDecorator *ast.Node
+	if ast.CanHaveModifiers(node) {
+		nodes := node.ModifierNodes()
+		if nodes != nil {
+			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
+		}
+	}
+
+	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
+		return core.NewTextRange(lastDecorator.End(), node.End())
+	}
+	return node.Loc
+}
+
 func (tx *LegacyDecoratorsTransformer) finishClassElement(updated *ast.Node, original *ast.Node) *ast.Node {
 	if updated != original {
 		// While we emit the source map for the node after skipping decorators and modifiers,
 		// we need to emit the comments for the original range.
 		tx.EmitContext().SetCommentRange(updated, original.Loc)
-		tx.EmitContext().SetSourceMapRange(updated, transformers.MoveRangePastModifiers(original))
+		tx.EmitContext().SetSourceMapRange(updated, moveRangePastModifiers(original))
 	}
 	return updated
 }
@@ -126,29 +157,12 @@ func (tx *LegacyDecoratorsTransformer) visitParamerDeclaration(node *ast.Paramet
 		// While we emit the source map for the node after skipping decorators and modifiers,
 		// we need to emit the comments for the original range.
 		tx.EmitContext().SetCommentRange(updated, node.Loc)
-		newLoc := transformers.MoveRangePastModifiers(node.AsNode())
+		newLoc := moveRangePastModifiers(node.AsNode())
 		updated.Loc = newLoc
 		tx.EmitContext().SetSourceMapRange(updated, newLoc)
 		tx.EmitContext().SetEmitFlags(updated.Name(), printer.EFNoTrailingSourceMap)
 	}
 	return updated
-}
-
-// visitPropertyNameOfClassElement visits the property name of a class element,
-// for use when emitting property initializers. For a computed property on a node
-// with decorators, a temporary value is stored for later use.
-func (tx *LegacyDecoratorsTransformer) visitPropertyNameOfClassElement(member *ast.Node) *ast.Node {
-	name := member.Name()
-	if ast.IsComputedPropertyName(name) && ast.HasDecorators(member) {
-		expression := tx.Visitor().VisitNode(name.AsComputedPropertyName().Expression)
-		innerExpression := ast.SkipPartiallyEmittedExpressions(expression)
-		if !transformers.IsSimpleInlineableExpression(innerExpression) {
-			generatedName := tx.Factory().NewGeneratedNameForNode(name)
-			tx.EmitContext().AddVariableDeclaration(generatedName)
-			return tx.Factory().UpdateComputedPropertyName(name.AsComputedPropertyName(), tx.Factory().NewAssignmentExpression(generatedName.AsNode(), expression))
-		}
-	}
-	return tx.Visitor().VisitNode(name)
 }
 
 func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.PropertyDeclaration) *ast.Node {
@@ -163,7 +177,7 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.Proper
 		tx.Factory().UpdatePropertyDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.visitPropertyNameOfClassElement(node.AsNode()),
+			tx.Visitor().VisitNode(node.Name()),
 			nil,
 			nil,
 			tx.Visitor().VisitNode(node.Initializer),
@@ -177,7 +191,7 @@ func (tx *LegacyDecoratorsTransformer) visitGetAccessorDeclaration(node *ast.Get
 		tx.Factory().UpdateGetAccessorDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.visitPropertyNameOfClassElement(node.AsNode()),
+			tx.Visitor().VisitNode(node.Name()),
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil,
@@ -193,7 +207,7 @@ func (tx *LegacyDecoratorsTransformer) visitSetAccessorDeclaration(node *ast.Set
 		tx.Factory().UpdateSetAccessorDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.visitPropertyNameOfClassElement(node.AsNode()),
+			tx.Visitor().VisitNode(node.Name()),
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil,
@@ -210,7 +224,7 @@ func (tx *LegacyDecoratorsTransformer) visitMethodDeclaration(node *ast.MethodDe
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
 			node.AsteriskToken,
-			tx.visitPropertyNameOfClassElement(node.AsNode()),
+			tx.Visitor().VisitNode(node.Name()),
 			nil,
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
@@ -404,7 +418,7 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 		}
 	}
 
-	location := transformers.MoveRangePastModifiers(node.AsNode())
+	location := moveRangePastModifiers(node.AsNode())
 	classAlias := tx.getClassAliasIfNeeded(node)
 	if classAlias != nil {
 		tx.pushEnclosingClass(node)
@@ -588,7 +602,7 @@ func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(n
 	}
 	expression := tx.Factory().NewAssignmentExpression(localName, assignmentTarget)
 	tx.EmitContext().SetEmitFlags(expression, printer.EFNoComments)
-	tx.EmitContext().SetSourceMapRange(expression, transformers.MoveRangePastModifiers(node.AsNode()))
+	tx.EmitContext().SetSourceMapRange(expression, moveRangePastModifiers(node.AsNode()))
 	return expression
 }
 
@@ -925,7 +939,7 @@ func (tx *LegacyDecoratorsTransformer) generateClassElementDecorationExpression(
 	)
 
 	tx.EmitContext().SetEmitFlags(helper, printer.EFNoComments)
-	tx.EmitContext().SetSourceMapRange(helper, transformers.MoveRangePastModifiers(member))
+	tx.EmitContext().SetSourceMapRange(helper, moveRangePastModifiers(member))
 	return helper
 }
 

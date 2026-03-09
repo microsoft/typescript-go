@@ -41,6 +41,7 @@ class NumberField {
     }
 }
 class ObjectField {
+    fields;
     constructor(fields) {
         this.fields = fields;
     }

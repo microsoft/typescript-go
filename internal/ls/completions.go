@@ -430,7 +430,7 @@ func (l *LanguageService) getCompletionData(
 	isInSnippetScope := false
 	if insideComment != nil {
 		if hasDocComment(file, position) {
-			if position > 0 && file.Text()[position-1] == '@' {
+			if file.Text()[position] == '@' {
 				// The current position is next to the '@' sign, when no tag name being provided yet.
 				// Provide a full list of tag names
 				return &completionDataJSDocTagName{}, nil
@@ -4311,10 +4311,10 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		lsutil.ScriptElementKindClassElement,
-		lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
-		nil,                                  /*replacementSpan*/
-		nil,                                  /*commitCharacters*/
-		nil,                                  /*labelDetails*/
+		collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
+		nil, /*replacementSpan*/
+		nil, /*commitCharacters*/
+		nil, /*labelDetails*/
 		file,
 		position,
 		true,  /*isMemberCompletion*/
@@ -4349,7 +4349,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	filterText string,
 	sortText SortText,
 	elementKind lsutil.ScriptElementKind,
-	kindModifiers lsutil.ScriptElementKindModifier,
+	kindModifiers collections.Set[lsutil.ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
 	commitCharacters *[]string,
 	labelDetails *lsproto.CompletionItemLabelDetails,
@@ -4395,7 +4395,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
-	if kindModifiers&lsutil.ScriptElementKindModifierOptional != 0 {
+	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
 		if insertText == "" {
 			insertText = name
 		}
@@ -4404,7 +4404,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		}
 		name = name + "?"
 	}
-	if kindModifiers&lsutil.ScriptElementKindModifierDeprecated != 0 {
+	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
 	}
 
@@ -4486,10 +4486,10 @@ func (l *LanguageService) getLabelStatementCompletions(
 					"", /*filterText*/
 					SortTextLocationPriority,
 					lsutil.ScriptElementKindLabel,
-					lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
-					nil,                                  /*replacementSpan*/
-					nil,                                  /*commitCharacters*/
-					nil,                                  /*labelDetails*/
+					collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
+					nil, /*replacementSpan*/
+					nil, /*commitCharacters*/
+					nil, /*labelDetails*/
 					file,
 					position,
 					false, /*isMemberCompletion*/

@@ -11,6 +11,7 @@ class Square {
 //// [staticVisibility2.js]
 "use strict";
 class Square {
+    static sideLength;
     constructor(sideLength) {
         this.sideLength = sideLength;
     }

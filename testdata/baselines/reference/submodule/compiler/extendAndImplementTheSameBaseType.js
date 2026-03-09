@@ -18,6 +18,7 @@ d.foo;
 //// [extendAndImplementTheSameBaseType.js]
 "use strict";
 class C {
+    foo;
     bar() { }
 }
 class D extends C {

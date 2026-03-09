@@ -25,6 +25,7 @@ class Derived extends Base {
 //// [derivedClassWithPrivateStaticShadowingProtectedStatic.js]
 "use strict";
 class Base {
+    static x;
     static fn() {
         return '';
     }
@@ -33,6 +34,7 @@ class Base {
 }
 // should be error
 class Derived extends Base {
+    static x;
     static fn() {
         return '';
     }

@@ -1,0 +1,10 @@
+--- old.deleteOperatorWithBooleanType.js
++++ new.deleteOperatorWithBooleanType.js
+@@= skipped -43, +43 lines =@@
+ "use strict";
+ function foo() { return true; }
+ class A {
++    a;
+     static foo() { return false; }
+ }
+ var M;

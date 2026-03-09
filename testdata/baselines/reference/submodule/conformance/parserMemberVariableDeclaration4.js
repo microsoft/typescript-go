@@ -8,4 +8,5 @@ class C {
 //// [parserMemberVariableDeclaration4.js]
 "use strict";
 class C {
+    export Foo;
 }

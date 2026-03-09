@@ -22,8 +22,12 @@ namespace A {
 var A;
 (function (A) {
     class Point {
+        x;
+        y;
     }
     class Line {
+        start;
+        end;
         constructor(start, end) {
             this.start = start;
             this.end = end;

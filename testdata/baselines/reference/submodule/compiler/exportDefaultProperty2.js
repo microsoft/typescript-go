@@ -19,6 +19,7 @@ const x: B = { c: B };
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class C {
+    static B;
 }
 exports.default = C.B;
 //// [b.js]

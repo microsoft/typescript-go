@@ -34,14 +34,12 @@ var Hello1;
     Hello1[Hello1["World1"] = 0] = "World1";
 })(Hello1 || (Hello1 = {}));
 class Foo {
-    constructor() {
-        // Same names + string => OK
-        this.Bar = Bar;
-        // Same names + enum => OK
-        this.Hello = Hello;
-        // Different names + enum => OK
-        this.Hello2 = Hello1;
-    }
+    // Same names + string => OK
+    Bar = Bar;
+    // Same names + enum => OK
+    Hello = Hello;
+    // Different names + enum => OK
+    Hello2 = Hello1;
 }
 
 

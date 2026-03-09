@@ -13,4 +13,5 @@ var x = class C {
 //// [classExpressionWithResolutionOfNamespaceOfSameName01.js]
 "use strict";
 var x = class C {
+    prop;
 };

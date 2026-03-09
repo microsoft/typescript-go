@@ -18,6 +18,7 @@ class C {
     constructor(message) {
         this.message = message;
     }
+    @bound
     speak() {
     }
 }

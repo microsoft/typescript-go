@@ -50,18 +50,21 @@ var dc = new DerivedC(1);
 //// [classConstructorAccessibility2.js]
 "use strict";
 class BaseA {
+    x;
     constructor(x) {
         this.x = x;
     }
     createInstance() { new BaseA(1); }
 }
 class BaseB {
+    x;
     constructor(x) {
         this.x = x;
     }
     createInstance() { new BaseB(2); }
 }
 class BaseC {
+    x;
     constructor(x) {
         this.x = x;
     }
@@ -69,6 +72,7 @@ class BaseC {
     static staticInstance() { new BaseC(4); }
 }
 class DerivedA extends BaseA {
+    x;
     constructor(x) {
         super(x);
         this.x = x;
@@ -78,6 +82,7 @@ class DerivedA extends BaseA {
     static staticBaseInstance() { new BaseA(7); }
 }
 class DerivedB extends BaseB {
+    x;
     constructor(x) {
         super(x);
         this.x = x;
@@ -87,6 +92,7 @@ class DerivedB extends BaseB {
     static staticBaseInstance() { new BaseB(9); } // ok
 }
 class DerivedC extends BaseC {
+    x;
     constructor(x) {
         super(x);
         this.x = x;

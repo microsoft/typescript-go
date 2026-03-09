@@ -26,12 +26,11 @@ c.data = c.foo();
 //// [typeParametersAvailableInNestedScope.js]
 "use strict";
 class C {
-    constructor() {
-        this.x = (a) => {
-            var y;
-            return y;
-        };
-    }
+    data;
+    x = (a) => {
+        var y;
+        return y;
+    };
     foo() {
         function temp(a) {
             var y;

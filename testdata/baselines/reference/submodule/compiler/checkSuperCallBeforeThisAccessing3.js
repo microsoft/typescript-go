@@ -22,8 +22,10 @@ class Derived extends Based {
 class Based {
 }
 class Derived extends Based {
+    x;
     constructor() {
         class innver {
+            y;
             constructor() {
                 this.y = true;
             }

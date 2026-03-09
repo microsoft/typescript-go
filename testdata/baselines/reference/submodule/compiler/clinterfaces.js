@@ -37,7 +37,9 @@ var M;
     }
 })(M || (M = {}));
 class Foo {
+    b;
 }
 class Bar {
+    b;
 }
 module.exports = Foo;

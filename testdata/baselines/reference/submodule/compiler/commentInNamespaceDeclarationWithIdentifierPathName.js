@@ -12,9 +12,9 @@ namespace hello.hi.world
 "use strict";
 var hello;
 (function (hello) {
-    var hi;
+    let hi;
     (function (hi) {
-        var world;
+        let world;
         (function (world) {
             function foo() { }
             // TODO, blah

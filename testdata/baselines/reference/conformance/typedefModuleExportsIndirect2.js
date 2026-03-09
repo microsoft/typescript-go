@@ -27,8 +27,6 @@ export type C = {
     a: 1;
     m: 1;
 };
-/** @typedef {{ a: 1, m: 1 }} C */
-declare const f: () => void;
 export = f;
 //// [use.d.ts]
 type C = import('./typedefModuleExportsIndirect2').C;

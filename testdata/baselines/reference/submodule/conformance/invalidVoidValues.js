@@ -41,6 +41,7 @@ var E;
 x = E;
 x = E.A;
 class C {
+    foo;
 }
 x = a;
 x = b;

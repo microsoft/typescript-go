@@ -72,17 +72,15 @@ class RegisteredUser4 extends User {
 //// [superInLambdas.js]
 "use strict";
 class User {
-    constructor() {
-        this.name = "Bob";
-    }
+    name = "Bob";
     sayHello() {
         //console.log("Hello, " + this.name);
     }
 }
 class RegisteredUser extends User {
+    name = "Frank";
     constructor() {
         super();
-        this.name = "Frank";
         // super call in a constructor
         super.sayHello();
         // super call in a lambda in a constructor 
@@ -96,9 +94,9 @@ class RegisteredUser extends User {
     }
 }
 class RegisteredUser2 extends User {
+    name = "Joe";
     constructor() {
         super();
-        this.name = "Joe";
         // super call in a nested lambda in a constructor 
         var x = () => () => () => super.sayHello();
     }
@@ -108,9 +106,9 @@ class RegisteredUser2 extends User {
     }
 }
 class RegisteredUser3 extends User {
+    name = "Sam";
     constructor() {
         super();
-        this.name = "Sam";
         // super property in a nested lambda in a constructor 
         var superName = () => () => () => super.name;
     }
@@ -120,9 +118,9 @@ class RegisteredUser3 extends User {
     }
 }
 class RegisteredUser4 extends User {
+    name = "Mark";
     constructor() {
         super();
-        this.name = "Mark";
         // super in a nested lambda in a constructor 
         var x = () => () => super.;
     }

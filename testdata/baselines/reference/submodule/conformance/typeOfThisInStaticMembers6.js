@@ -12,11 +12,9 @@ class D extends C {
 
 //// [typeOfThisInStaticMembers6.js]
 "use strict";
-var _a, _b;
 class C {
+    static f = 1;
 }
-C.f = 1;
-class D extends (_b = C) {
+class D extends C {
+    static c = super();
 }
-_a = D;
-D.c = super();

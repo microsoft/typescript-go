@@ -24,6 +24,7 @@ class I4 {
 "use strict";
 var v0;
 class I0 {
+    x;
 }
 var v3;
 class I3 {

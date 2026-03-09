@@ -68,6 +68,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class SomeAbstractClass extends SomeBaseClass {
+    foo;
+    bar;
 }
 class SomeClass extends SomeAbstractClass {
     baz(context) {

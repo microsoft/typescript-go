@@ -19,6 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiffEditor = exports.ID = void 0;
 exports.ID = "test";
 class DiffEditor {
+    previousDiffAction;
     constructor(id = exports.ID) {
     }
 }

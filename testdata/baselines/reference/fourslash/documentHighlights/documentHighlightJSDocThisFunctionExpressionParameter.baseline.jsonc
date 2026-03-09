@@ -1,3 +1,0 @@
-// === documentHighlights ===
-// === /a.js ===
-// /**@this{A}*/x=function(/*HIGHLIGHTS*/[|a|]){};

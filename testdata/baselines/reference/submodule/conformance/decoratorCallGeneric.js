@@ -24,6 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 function dec(c) { }
 let C = class C {
+    _brand;
     static m() { }
 };
 C = __decorate([

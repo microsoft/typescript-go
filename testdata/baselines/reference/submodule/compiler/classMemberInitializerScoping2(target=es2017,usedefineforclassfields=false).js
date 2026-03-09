@@ -12,7 +12,6 @@ class C {
 "use strict";
 const x = 1;
 class C {
-    constructor(x) {
-        this.p = x;
-    }
+    p = x;
+    constructor(x) { }
 }

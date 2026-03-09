@@ -63,16 +63,14 @@ var t2 = function f() {
     var x;
 };
 class C {
-    constructor() {
-        this.x = function () {
-            var q;
-            var q = this;
-        };
-        this.y = function ff() {
-            var q;
-            var q = this;
-        };
-    }
+    x = function () {
+        var q;
+        var q = this;
+    };
+    y = function ff() {
+        var q;
+        var q = this;
+    };
 }
 var M;
 (function (M) {

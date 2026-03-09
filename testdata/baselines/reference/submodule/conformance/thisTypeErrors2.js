@@ -25,6 +25,8 @@ class Base {
 class Generic {
 }
 class Derived {
+    host;
+    n;
     constructor(host) {
         this.host = host;
         let self = this;

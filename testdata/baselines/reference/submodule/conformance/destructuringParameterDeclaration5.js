@@ -59,12 +59,15 @@ class Class {
     constructor() { }
 }
 class SubClass extends Class {
+    foo;
     constructor() { super(); }
 }
 class D {
+    foo;
     constructor() { }
 }
 class SubD extends D {
+    bar;
     constructor() {
         super();
     }

@@ -79,6 +79,7 @@ function g1(a) {
     return Object.assign({}, z);
 }
 class Foo {
+    data;
     bar() {
         if (this.hasData()) {
             this.data.toLocaleLowerCase();

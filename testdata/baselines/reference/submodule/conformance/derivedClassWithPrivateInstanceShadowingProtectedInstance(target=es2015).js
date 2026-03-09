@@ -26,6 +26,7 @@ class Derived extends Base {
 //// [derivedClassWithPrivateInstanceShadowingProtectedInstance.js]
 "use strict";
 class Base {
+    x;
     fn() {
         return '';
     }
@@ -34,6 +35,7 @@ class Base {
 }
 // error, not a subtype
 class Derived extends Base {
+    x;
     fn() {
         return '';
     }

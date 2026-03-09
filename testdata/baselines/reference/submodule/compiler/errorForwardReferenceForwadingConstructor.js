@@ -20,6 +20,7 @@ function f() {
     var d2 = new derived(4);
 }
 class base {
+    n;
     constructor(n) {
         this.n = n;
     }

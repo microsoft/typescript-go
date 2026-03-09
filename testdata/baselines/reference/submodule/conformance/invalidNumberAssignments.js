@@ -33,6 +33,7 @@ var b = x;
 var c = x;
 var d = x;
 class C {
+    foo;
 }
 var e = x;
 var f = x;

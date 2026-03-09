@@ -15,6 +15,7 @@ class Based {
     constructor(...arg) { }
 }
 class Derived extends Based {
+    x;
     constructor() {
         super(this.x);
     }

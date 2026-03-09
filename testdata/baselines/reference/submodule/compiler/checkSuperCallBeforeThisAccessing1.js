@@ -17,6 +17,7 @@ class Derived extends Based {
 class Based {
 }
 class Derived extends Based {
+    x;
     constructor() {
         super();
         this;

@@ -97,8 +97,10 @@ while (target) {
 "use strict";
 // Repro from #8383
 class A {
+    prop;
 }
 class B {
+    prop;
 }
 function isA(x) {
     return x instanceof A;
@@ -128,34 +130,32 @@ function f2(x) {
 }
 // Repro from #28100
 class Foo1 {
+    x; // Error
     constructor() {
         if (this instanceof Boolean) {
         }
     }
 }
 class Foo2 {
+    x; // Error
     constructor() {
     }
 }
 // Repro from  #29513
 class AInfo {
-    constructor() {
-        this.a_count = 1;
-    }
+    a_count = 1;
 }
 class BInfo {
-    constructor() {
-        this.b_count = 1;
-    }
+    b_count = 1;
 }
 class Base {
-    constructor() {
-        this.id = 0;
-    }
+    id = 0;
 }
 class A2 extends Base {
+    info;
 }
 class B2 extends Base {
+    info;
 }
 let target = null;
 while (target) {

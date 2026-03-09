@@ -13,12 +13,8 @@ class C1 extends null {
 class C2 extends (null) {
 }
 class C3 extends null {
-    constructor() {
-        this.x = 1;
-    }
+    x = 1;
 }
 class C4 extends (null) {
-    constructor() {
-        this.x = 1;
-    }
+    x = 1;
 }

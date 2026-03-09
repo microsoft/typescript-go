@@ -6,7 +6,6 @@ export default class {
 }
 
 //// [exportDefaultClassWithStaticPropertyAssignmentsInES6.js]
-class default_1 {
+export default class {
+    static z = "Foo";
 }
-default_1.z = "Foo";
-export default default_1;

@@ -264,8 +264,10 @@ var r8b11 = b11 !== a11;
 //// [comparisonOperatorWithSubtypeObjectOnCallSignature.js]
 "use strict";
 class Base {
+    a;
 }
 class Derived extends Base {
+    b;
 }
 var a1;
 var b1;

@@ -981,6 +981,7 @@ func TestTscExtends(t *testing.T) {
 								"types": [],
 							},
 						}`),
+						false,
 					)
 				},
 			},
@@ -1442,7 +1443,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Add new file and update main file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.ts`, "function foo() { return 20; }")
+						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.ts`, "function foo() { return 20; }", false)
 						sys.prependFile(
 							`/home/src/workspaces/project/src/main.ts`,
 							`/// <reference path="./newFile.ts"/>
@@ -1454,7 +1455,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Write file that could not be resolved",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.ts`, "function something2() { return 20; }")
+						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.ts`, "function something2() { return 20; }", false)
 					},
 				},
 				{
@@ -1541,7 +1542,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Modify imports used in global file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
+						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
 					},
 					expectedDiff: "Currently there is issue with d.ts emit for export default = 1 to widen in dts which is why we are not re-computing errors and results in incorrect error reporting",
 				},
@@ -1567,7 +1568,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Modify imports used in global file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
+						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
 					},
 					expectedDiff: "Currently there is issue with d.ts emit for export default = 1 to widen in dts which is why we are not re-computing errors and results in incorrect error reporting",
 				},
@@ -2735,7 +2736,7 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the alternateResult in @types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/index.d.ts", getTscModuleResolutionAlternateResultDts("bar"))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/index.d.ts", getTscModuleResolutionAlternateResultDts("bar"), false)
 					},
 					// !!! repopulateInfo on diagnostics not yet implemented
 					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
@@ -2743,31 +2744,31 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the alternateResult in package/types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/index.d.ts", getTscModuleResolutionAlternateResultDts("foo"))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/index.d.ts", getTscModuleResolutionAlternateResultDts("foo"), false)
 					},
 				},
 				{
 					caption: "update package.json from @types so error is fixed",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar" /*addTypesCondition*/, true))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar" /*addTypesCondition*/, true), false)
 					},
 				},
 				{
 					caption: "update package.json so error is fixed",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/package.json", getTscModuleResolutionAlternateResultPackageJson("foo" /*addTypes*/, true /*addTypesCondition*/, true))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/package.json", getTscModuleResolutionAlternateResultPackageJson("foo" /*addTypes*/, true /*addTypesCondition*/, true), false)
 					},
 				},
 				{
 					caption: "update package.json from @types so error is introduced",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar2" /*addTypesCondition*/, false))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar2" /*addTypesCondition*/, false), false)
 					},
 				},
 				{
 					caption: "update package.json so error is introduced",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/package.json", getTscModuleResolutionAlternateResultPackageJson("foo2" /*addTypes*/, true /*addTypesCondition*/, false))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/package.json", getTscModuleResolutionAlternateResultPackageJson("foo2" /*addTypes*/, true /*addTypesCondition*/, false), false)
 					},
 				},
 				{
@@ -2789,7 +2790,7 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the alternateResult in @types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/index.d.ts", getTscModuleResolutionAlternateResultDts("bar2"))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/index.d.ts", getTscModuleResolutionAlternateResultDts("bar2"), false)
 					},
 					// !!! repopulateInfo on diagnostics not yet implemented
 					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
@@ -2797,7 +2798,7 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the ndoe10Result in package/types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/index.d.ts", getTscModuleResolutionAlternateResultDts("foo2"))
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/index.d.ts", getTscModuleResolutionAlternateResultDts("foo2"), false)
 					},
 				},
 			},
@@ -3054,13 +3055,13 @@ func TestTscNoCheck(t *testing.T) {
 		fixErrorNoCheck := &tscEdit{
 			caption: "Fix `a` error with noCheck",
 			edit: func(sys *TestSys) {
-				sys.writeFileNoError("/home/src/workspaces/project/a.ts", `export const a = "hello";`)
+				sys.writeFileNoError("/home/src/workspaces/project/a.ts", `export const a = "hello";`, false)
 			},
 		}
 		addErrorNoCheck := &tscEdit{
 			caption: "Introduce error with noCheck",
 			edit: func(sys *TestSys) {
-				sys.writeFileNoError("/home/src/workspaces/project/a.ts", scenario.aText)
+				sys.writeFileNoError("/home/src/workspaces/project/a.ts", scenario.aText, false)
 			},
 		}
 		return &tscInput{
@@ -3092,7 +3093,7 @@ func TestTscNoCheck(t *testing.T) {
 				{
 					caption: "Add file with error",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/c.ts", `export const c: number = "hello";`)
+						sys.writeFileNoError("/home/src/workspaces/project/c.ts", `export const c: number = "hello";`, false)
 					},
 					commandLineArgs: commandLineArgs,
 				},
@@ -3215,7 +3216,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Fix error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent, false)
 						},
 					},
 					noChange,
@@ -3227,7 +3228,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Introduce error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText, false)
 						},
 					},
 					{
@@ -3252,7 +3253,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Fix error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent, false)
 						},
 					},
 					{
@@ -3270,7 +3271,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Introduce error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText, false)
 						},
 					},
 					{
@@ -3546,13 +3547,13 @@ func TestTscNoEmit(t *testing.T) {
 				{
 					caption: "No change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, sys.readFileNoError(`/user/username/projects/myproject/a.js`))
+						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, sys.readFileNoError(`/user/username/projects/myproject/a.js`), false)
 					},
 				},
 				{
 					caption: "change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, "const x = 10;")
+						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, "const x = 10;", false)
 					},
 				},
 			},
@@ -3631,7 +3632,7 @@ func TestTscNoEmitOnError(t *testing.T) {
 				{
 					caption: "Fix error",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent)
+						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent, false)
 					},
 				},
 				noChange,
@@ -3677,7 +3678,7 @@ func TestTscNoEmitOnError(t *testing.T) {
 				edits = append(edits, &tscEdit{
 					caption: scenario.subScenario,
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, scenario.mainErrorContent)
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, scenario.mainErrorContent, false)
 					},
 				})
 			}
@@ -3685,19 +3686,19 @@ func TestTscNoEmitOnError(t *testing.T) {
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`))
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`), false)
 					},
 				},
 				&tscEdit{
 					caption: "Fix " + scenario.subScenario,
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent)
+						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent, false)
 					},
 				},
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`))
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`), false)
 					},
 				},
 			)

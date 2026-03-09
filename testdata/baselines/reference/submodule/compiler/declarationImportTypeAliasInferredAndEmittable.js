@@ -23,9 +23,8 @@ export class Wrap {
 //// [foo.js]
 "use strict";
 class Conn {
-    constructor() {
-        this.item = 3;
-    }
+    constructor() { }
+    item = 3;
     method() { }
 }
 module.exports = Conn;
@@ -34,6 +33,7 @@ module.exports = Conn;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wrap = void 0;
 class Wrap {
+    connItem;
     constructor(c = x) {
         this.connItem = c.item;
     }

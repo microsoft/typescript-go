@@ -9,5 +9,5 @@ const obj = {
 //// [privateNameInObjectLiteral-1.js]
 "use strict";
 const obj = {
-    : 1
+    #foo: 1
 };

@@ -25,9 +25,8 @@ function f() {
     console.log(b.Value);
 }
 class Bar {
-    constructor() {
-        // Or swap these two lines
-        this.Field = this.num;
-        this.Value = this.num;
-    }
+    num;
+    // Or swap these two lines
+    Field = this.num;
+    Value = this.num;
 }

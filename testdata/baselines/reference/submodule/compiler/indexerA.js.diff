@@ -1,0 +1,10 @@
+--- old.indexerA.js
++++ new.indexerA.js
+@@= skipped -14, +14 lines =@@
+ //// [indexerA.js]
+ "use strict";
+ class JQueryElement {
++    id;
+ }
+ class JQuery {
+ }

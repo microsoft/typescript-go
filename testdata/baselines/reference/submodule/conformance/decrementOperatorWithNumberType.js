@@ -47,6 +47,7 @@ objA.a--, M.n--;
 var NUMBER;
 var NUMBER1 = [1, 2];
 class A {
+    a;
 }
 var M;
 (function (M) {

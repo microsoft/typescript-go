@@ -50,6 +50,8 @@ function fetchMsg(protoCtor) {
     return null;
 }
 class DataProvider {
+    message;
+    messageList;
     constructor(message, messageList) {
         this.message = message;
         this.messageList = messageList;

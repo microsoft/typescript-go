@@ -42,6 +42,8 @@ const WithLocation = (Base) => class extends Base {
     }
 };
 class Point {
+    x;
+    y;
     constructor(x, y) {
         this.x = x;
         this.y = y;

@@ -86,6 +86,7 @@ x = f;
 var g;
 x = g;
 class C {
+    bar;
 }
 var h;
 x = h;

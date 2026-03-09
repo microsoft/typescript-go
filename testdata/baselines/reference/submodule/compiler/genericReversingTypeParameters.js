@@ -15,6 +15,7 @@ var r2b = i.get(1);
 //// [genericReversingTypeParameters.js]
 "use strict";
 class BiMap {
+    inverseBiMap;
     get(key) { return null; }
     inverse() { return null; }
 }

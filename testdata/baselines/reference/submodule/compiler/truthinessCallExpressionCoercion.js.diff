@@ -1,0 +1,10 @@
+--- old.truthinessCallExpressionCoercion.js
++++ new.truthinessCallExpressionCoercion.js
+@@= skipped -145, +145 lines =@@
+     }
+ }
+ class Foo {
++    maybeIsUser;
+     isUser() {
+         return true;
+     }

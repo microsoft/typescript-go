@@ -27,11 +27,9 @@ class Foo {
 //// [asiInES6Classes.js]
 "use strict";
 class Foo {
-    constructor() {
-        this.defaults = {
-            done: false
-        };
-    }
+    defaults = {
+        done: false
+    };
     bar() {
         return 3;
     }

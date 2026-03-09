@@ -15,6 +15,7 @@ jq[0].id;
 //// [indexerA.js]
 "use strict";
 class JQueryElement {
+    id;
 }
 class JQuery {
 }

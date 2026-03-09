@@ -26,7 +26,7 @@ namespace sas.tools {
 "use strict";
 var sas;
 (function (sas) {
-    var tools;
+    let tools;
     (function (tools) {
         class Test {
             doX() {

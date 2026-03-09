@@ -1,0 +1,13 @@
+--- old.nonNullableTypes1.js
++++ new.nonNullableTypes1.js
+@@= skipped -62, +62 lines =@@
+     }
+ }
+ class A {
+-    constructor() {
+-        this.x = "hello";
+-    }
++    x = "hello";
+     foo() {
+         let zz = this === null || this === void 0 ? void 0 : this.x; // string
+     }

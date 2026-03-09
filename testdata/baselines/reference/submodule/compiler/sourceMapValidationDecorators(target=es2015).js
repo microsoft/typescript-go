@@ -68,12 +68,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 let Greeter = class Greeter {
+    greeting;
     constructor(greeting, ...b) {
         this.greeting = greeting;
     }
     greet() {
         return "<h1>" + this.greeting + "</h1>";
     }
+    x;
+    static x1 = 10;
     fn(x) {
         return this.greeting;
     }
@@ -84,7 +87,6 @@ let Greeter = class Greeter {
         this.greeting = greetings;
     }
 };
-Greeter.x1 = 10;
 __decorate([
     PropertyDecorator1,
     PropertyDecorator2(40)

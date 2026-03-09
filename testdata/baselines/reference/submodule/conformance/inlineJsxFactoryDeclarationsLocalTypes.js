@@ -102,6 +102,8 @@ const MySFC = (props) => (0, renderer2_1.predom)("p", null,
     ...this.props.children);
 exports.MySFC = MySFC;
 class MyClass {
+    props;
+    __predomBrand;
     constructor(props) {
         this.props = props;
     }
@@ -169,6 +171,8 @@ const DOMSFC = (props) => (0, renderer_1.dom)("p", null,
     props.x + props.y,
     props.children);
 class DOMClass {
+    props;
+    __domBrand;
     constructor(props) {
         this.props = props;
     }

@@ -94,10 +94,13 @@ namespace SourceHasOptional {
 "use strict";
 // Derived member is not optional but base member is, should be ok
 class Base {
+    foo;
 }
 class Derived extends Base {
+    bar;
 }
 class Derived2 extends Derived {
+    baz;
 }
 var TargetHasOptional;
 (function (TargetHasOptional) {

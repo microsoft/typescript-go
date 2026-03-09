@@ -35,6 +35,7 @@ var ns;
     let nested;
     (function (nested) {
         class NestedClass {
+            a;
         }
         nested.NestedClass = NestedClass;
     })(nested = ns.nested || (ns.nested = {}));

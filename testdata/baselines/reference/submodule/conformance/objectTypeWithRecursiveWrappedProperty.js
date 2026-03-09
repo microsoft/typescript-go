@@ -19,6 +19,8 @@ list1 = list3; // error
 "use strict";
 // Basic recursive type
 class List {
+    data;
+    next;
 }
 var list1 = new List();
 var list2 = new List();

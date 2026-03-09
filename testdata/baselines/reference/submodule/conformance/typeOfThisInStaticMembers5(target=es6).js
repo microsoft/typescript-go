@@ -12,11 +12,10 @@ class C {
 
 //// [typeOfThisInStaticMembers5.js]
 "use strict";
-var _a;
 class C {
+    foo;
+    static create = () => new this("yep");
     constructor(foo) {
         this.foo = foo;
     }
 }
-_a = C;
-C.create = () => new _a("yep");

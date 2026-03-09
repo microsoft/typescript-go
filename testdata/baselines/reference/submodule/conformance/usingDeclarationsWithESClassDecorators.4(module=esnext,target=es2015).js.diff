@@ -5,7 +5,6 @@
 
  //// [usingDeclarationsWithESClassDecorators.4.js]
 -export { _default as default };
-+var _a;
  var before, _default;
 +export { _default as default };
  const env_1 = { stack: [], error: void 0, hasError: false };
@@ -28,10 +27,11 @@
 -        })();
 -        return default_1 = _classThis;
 -    })();
-+    _default = (_a = class {
-+        },
-+        __setFunctionName(_a, "default"),
-+        _a);
++    _default = 
++    @dec
++    class {
++        static { __setFunctionName(this, "default"); }
++    };
  }
  catch (e_1) {
      env_1.error = e_1;

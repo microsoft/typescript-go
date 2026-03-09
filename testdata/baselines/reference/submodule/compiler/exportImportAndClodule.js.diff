@@ -1,0 +1,10 @@
+--- old.exportImportAndClodule.js
++++ new.exportImportAndClodule.js
+@@= skipped -25, +25 lines =@@
+ var K;
+ (function (K) {
+     class L {
++        name;
+         constructor(name) {
+             this.name = name;
+         }

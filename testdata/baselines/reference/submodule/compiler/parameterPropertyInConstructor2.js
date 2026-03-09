@@ -15,6 +15,8 @@ namespace mod {
 var mod;
 (function (mod) {
     class Customers {
+        names;
+        ages;
         constructor(names, ages) {
             this.names = names;
             this.ages = ages;

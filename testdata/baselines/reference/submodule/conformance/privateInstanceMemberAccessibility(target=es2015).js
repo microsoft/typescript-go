@@ -18,13 +18,14 @@ class Derived extends Base {
 //// [privateInstanceMemberAccessibility.js]
 "use strict";
 class Base {
+    foo;
 }
 class Derived extends Base {
-    constructor() {
-        super(...arguments);
-        this.x = super.foo; // error
-    }
+    x = super.foo; // error
     y() {
         return super.foo; // error
     }
+    z; // error
+    a;
+    foo; // error
 }

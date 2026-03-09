@@ -24,6 +24,7 @@ export function applyModelsAndClientExtensions(client: Client) {
 //// [circularConstructorWithReturn.js]
 export function getPrismaClient(options) {
     class PrismaClient {
+        self;
         constructor(options) {
             return (this.self = applyModelsAndClientExtensions(this));
         }

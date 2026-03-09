@@ -10,10 +10,7 @@ class C {
 
 //// [esDecorators-classDeclaration-fields-nonStaticPrivate.js]
 "use strict";
-var _C_field1;
 class C {
-    constructor() {
-        _C_field1.set(this, 0);
-    }
+    @dec
+    #field1 = 0;
 }
-_C_field1 = new WeakMap();

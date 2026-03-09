@@ -144,6 +144,7 @@ function checksPropertyAccess() {
     }
 }
 class Foo {
+    maybeIsUser;
     isUser() {
         return true;
     }

@@ -75,9 +75,7 @@ function test() {
 }
 ;
 class Foo {
-    constructor() {
-        this.abortController = undefined;
-    }
+    abortController = undefined;
     operation() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.abortController !== undefined) {

@@ -15,6 +15,7 @@ var y:number = x.test;
 //// [foo_0.js]
 "use strict";
 class Foo {
+    test;
 }
 module.exports = Foo;
 //// [foo_1.js]

@@ -27,6 +27,8 @@ namespace A {
 //// [ClassAndModuleThatMergeWithStaticFunctionAndExportedFunctionThatShareAName.js]
 "use strict";
 class Point {
+    x;
+    y;
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -40,6 +42,8 @@ class Point {
 var A;
 (function (A) {
     class Point {
+        x;
+        y;
         constructor(x, y) {
             this.x = x;
             this.y = y;

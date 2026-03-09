@@ -82,6 +82,8 @@ var p1;
 var M2;
 (function (M2) {
     class Point {
+        x;
+        y;
         static Origin() {
             return { x: 0, y: 0 };
         }

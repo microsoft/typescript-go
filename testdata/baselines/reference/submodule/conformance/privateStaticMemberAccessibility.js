@@ -13,11 +13,9 @@ class Derived extends Base {
 //// [privateStaticMemberAccessibility.js]
 "use strict";
 class Base {
+    static foo;
 }
 class Derived extends Base {
-    constructor() {
-        super(...arguments);
-        this.bing = () => Base.foo; // error
-    }
+    static bar = Base.foo; // error
+    bing = () => Base.foo; // error
 }
-Derived.bar = Base.foo; // error

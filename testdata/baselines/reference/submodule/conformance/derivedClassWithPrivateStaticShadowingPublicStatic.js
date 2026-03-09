@@ -38,6 +38,7 @@ Derived.a = 2; // error
 //// [derivedClassWithPrivateStaticShadowingPublicStatic.js]
 "use strict";
 class Base {
+    static x;
     static fn() {
         return '';
     }
@@ -47,6 +48,7 @@ class Base {
 // BUG 847404
 // should be error
 class Derived extends Base {
+    static x;
     static fn() {
         return '';
     }

@@ -19,9 +19,13 @@ class D {
 "use strict";
 class C {
     a() { return 0; } // error: duplicate identifier
+    a;
 }
 class K {
+    b; // error: duplicate identifier
     b() { return 0; }
 }
 class D {
+    c;
+    c;
 }

@@ -20,20 +20,14 @@ class C236 {
 //// [numericClassMembers1.js]
 "use strict";
 class C234 {
-    constructor() {
-        this[0] = 1;
-        this[0.0] = 2;
-    }
+    0 = 1;
+    0.0 = 2;
 }
 class C235 {
-    constructor() {
-        this[0.0] = 1;
-        this['0'] = 2;
-    }
+    0.0 = 1;
+    '0' = 2;
 }
 class C236 {
-    constructor() {
-        this['0.0'] = 1;
-        this['0'] = 2;
-    }
+    '0.0' = 1;
+    '0' = 2;
 }

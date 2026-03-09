@@ -45,10 +45,13 @@ var r3: Base = new a('hm');
 "use strict";
 // basic uses of specialized signatures without errors
 class Base {
+    foo;
 }
 class Derived1 extends Base {
+    bar;
 }
 class Derived2 extends Base {
+    baz;
 }
 class C {
     constructor(x) {

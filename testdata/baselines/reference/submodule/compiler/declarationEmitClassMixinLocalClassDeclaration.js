@@ -36,10 +36,7 @@ class Base {
 exports.Base = Base;
 class XmlElement2 extends (0, exports.Mixin)([Base], (base) => {
     class XmlElement2 extends base {
-        constructor() {
-            super(...arguments);
-            this.num = 0;
-        }
+        num = 0;
     }
     return XmlElement2;
 }) {

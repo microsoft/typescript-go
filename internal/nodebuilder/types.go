@@ -12,7 +12,7 @@ type SymbolTracker interface {
 	ReportPrivateInBaseOfClassExpression(propertyName string)
 	ReportInaccessibleUniqueSymbolError()
 	ReportCyclicStructureError()
-	ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string)
+	ReportLikelyUnsafeImportRequiredError(specifier string)
 	ReportTruncationError()
 	ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol)
 	ReportNonSerializableProperty(propertyName string)

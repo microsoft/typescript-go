@@ -1,0 +1,9 @@
+--- old.duplicateIdentifierComputedName.js
++++ new.duplicateIdentifierComputedName.js
+@@= skipped -9, +9 lines =@@
+ //// [duplicateIdentifierComputedName.js]
+ "use strict";
+ class C {
++    ["a"];
++    ["a"];
+ }

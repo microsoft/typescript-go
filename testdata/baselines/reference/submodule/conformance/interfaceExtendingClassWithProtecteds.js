@@ -20,6 +20,7 @@ var r2 = i.x; // error
 //// [interfaceExtendingClassWithProtecteds.js]
 "use strict";
 class Foo {
+    x;
 }
 var r = i.y;
 var r2 = i.x; // error

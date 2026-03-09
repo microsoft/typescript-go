@@ -5,7 +5,6 @@ import { SignatureFlags } from "#enums/signatureFlags";
 import { SignatureKind } from "#enums/signatureKind";
 import { SymbolFlags } from "#enums/symbolFlags";
 import { TypeFlags } from "#enums/typeFlags";
-import { TypePredicateKind } from "#enums/typePredicateKind";
 import type {
     Expression,
     Node,
@@ -40,13 +39,11 @@ import type {
     ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
-    IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
     ProjectResponse,
     SignatureResponse,
     SymbolResponse,
-    TypePredicateResponse,
     TypeResponse,
     UpdateSnapshotParams,
     UpdateSnapshotResponse,
@@ -59,12 +56,8 @@ import {
     type ClientSpawnOptions,
 } from "./client.ts";
 import type {
-    AssertsIdentifierTypePredicate,
-    AssertsThisTypePredicate,
     ConditionalType,
-    IdentifierTypePredicate,
     IndexedAccessType,
-    IndexInfo,
     IndexType,
     InterfaceType,
     IntersectionType,
@@ -73,20 +66,17 @@ import type {
     StringMappingType,
     SubstitutionType,
     TemplateLiteralType,
-    ThisTypePredicate,
     TupleType,
     Type,
     TypeParameter,
-    TypePredicate,
-    TypePredicateBase,
     TypeReference,
     UnionOrIntersectionType,
     UnionType,
 } from "./types.ts";
 
-export { ElementFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export { ElementFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { ConditionalType, IndexedAccessType, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, TupleType, TypeParameter, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -610,97 +600,6 @@ export class Checker {
             location: enclosingDeclaration ? getNodeId(enclosingDeclaration) : undefined,
             flags,
         });
-    }
-
-    async isContextSensitive(node: Node): Promise<boolean> {
-        return this.client.apiRequest<boolean>("isContextSensitive", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            location: getNodeId(node),
-        });
-    }
-
-    async getReturnTypeOfSignature(signature: Signature): Promise<Type | undefined> {
-        const data = await this.client.apiRequest<TypeResponse | null>("getReturnTypeOfSignature", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            signature: signature.id,
-        });
-        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
-    }
-
-    async getRestTypeOfSignature(signature: Signature): Promise<Type | undefined> {
-        const data = await this.client.apiRequest<TypeResponse | null>("getRestTypeOfSignature", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            signature: signature.id,
-        });
-        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
-    }
-
-    async getTypePredicateOfSignature(signature: Signature): Promise<TypePredicate | undefined> {
-        const data = await this.client.apiRequest<TypePredicateResponse | null>("getTypePredicateOfSignature", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            signature: signature.id,
-        });
-        if (!data) return undefined;
-        return {
-            kind: data.kind,
-            parameterIndex: data.parameterIndex,
-            parameterName: data.parameterName,
-            type: data.type ? this.objectRegistry.getOrCreateType(data.type) : undefined,
-        } as TypePredicate;
-    }
-
-    async getBaseTypes(type: Type): Promise<readonly Type[]> {
-        const data = await this.client.apiRequest<TypeResponse[] | null>("getBaseTypes", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            type: type.id,
-        });
-        return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
-    }
-
-    async getPropertiesOfType(type: Type): Promise<readonly Symbol[]> {
-        const data = await this.client.apiRequest<SymbolResponse[] | null>("getPropertiesOfType", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            type: type.id,
-        });
-        return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
-    }
-
-    async getIndexInfosOfType(type: Type): Promise<readonly IndexInfo[]> {
-        const data = await this.client.apiRequest<IndexInfoResponse[] | null>("getIndexInfosOfType", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            type: type.id,
-        });
-        if (!data) return [];
-        return data.map(d => ({
-            keyType: this.objectRegistry.getOrCreateType(d.keyType),
-            valueType: this.objectRegistry.getOrCreateType(d.valueType),
-            isReadonly: d.isReadonly ?? false,
-        }));
-    }
-
-    async getConstraintOfTypeParameter(type: Type): Promise<Type | undefined> {
-        const data = await this.client.apiRequest<TypeResponse | null>("getConstraintOfTypeParameter", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            type: type.id,
-        });
-        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
-    }
-
-    async getTypeArguments(type: Type): Promise<readonly Type[]> {
-        const data = await this.client.apiRequest<TypeResponse[] | null>("getTypeArguments", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            type: type.id,
-        });
-        return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
     }
 }
 

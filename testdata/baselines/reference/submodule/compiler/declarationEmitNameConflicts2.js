@@ -21,9 +21,9 @@ namespace X.Y.base.Z {
 "use strict";
 var X;
 (function (X) {
-    var Y;
+    let Y;
     (function (Y) {
-        var base;
+        let base;
         (function (base) {
             function f() { }
             base.f = f;
@@ -40,11 +40,11 @@ var X;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
 (function (X) {
-    var Y;
+    let Y;
     (function (Y) {
-        var base;
+        let base;
         (function (base) {
-            var Z;
+            let Z;
             (function (Z) {
                 Z.f = X.Y.base.f; // Should be base.f
                 Z.C = X.Y.base.C; // Should be base.C

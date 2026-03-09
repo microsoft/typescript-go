@@ -33,6 +33,7 @@ y = x;
 function fn(s) { }
 // This should issue a large error, not a small one
 class WorkerFS {
+    read;
 }
 // Only one of these errors should be large
 x = y;

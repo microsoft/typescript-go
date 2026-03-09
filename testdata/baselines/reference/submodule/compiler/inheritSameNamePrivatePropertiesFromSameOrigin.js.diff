@@ -1,0 +1,10 @@
+--- old.inheritSameNamePrivatePropertiesFromSameOrigin.js
++++ new.inheritSameNamePrivatePropertiesFromSameOrigin.js
+@@= skipped -14, +14 lines =@@
+ //// [inheritSameNamePrivatePropertiesFromSameOrigin.js]
+ "use strict";
+ class B {
++    x;
+ }
+ class C extends B {
+ }

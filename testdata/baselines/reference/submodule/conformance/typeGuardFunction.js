@@ -87,10 +87,13 @@ let union3: boolean | B = isA(union2) || union2;
 //// [typeGuardFunction.js]
 "use strict";
 class A {
+    propA;
 }
 class B {
+    propB;
 }
 class C extends A {
+    propC;
 }
 var a;
 var b;

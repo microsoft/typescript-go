@@ -16,6 +16,7 @@ var M;
 (function (M) {
     var x = 1;
     class C {
+        foo;
     }
 })(M || (M = {}));
 var r;

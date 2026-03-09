@@ -305,24 +305,22 @@ namespace TypeScript {
 var TypeScript;
 (function (TypeScript) {
     class BlockIntrinsics {
+        prototype = undefined;
+        toString = undefined;
+        toLocaleString = undefined;
+        valueOf = undefined;
+        hasOwnProperty = undefined;
+        propertyIsEnumerable = undefined;
+        isPrototypeOf = undefined;
         constructor() {
-            this.prototype = undefined;
-            this.toString = undefined;
-            this.toLocaleString = undefined;
-            this.valueOf = undefined;
-            this.hasOwnProperty = undefined;
-            this.propertyIsEnumerable = undefined;
-            this.isPrototypeOf = undefined;
             // initialize the 'constructor' field
             this["constructor"] = undefined;
         }
     }
     TypeScript.BlockIntrinsics = BlockIntrinsics;
     class StringHashTable {
-        constructor() {
-            this.itemCount = 0;
-            this.table = new BlockIntrinsics();
-        }
+        itemCount = 0;
+        table = new BlockIntrinsics();
         getAllKeys() {
             var result = [];
             for (var k in this.table) {
@@ -395,10 +393,12 @@ var TypeScript;
     // transientTable may reference different objects over time
     // REVIEW:  WARNING:  For performance reasons, neither the primary nor secondary table may be null
     class DualStringHashTable {
+        primaryTable;
+        secondaryTable;
+        insertPrimary = true;
         constructor(primaryTable, secondaryTable) {
             this.primaryTable = primaryTable;
             this.secondaryTable = secondaryTable;
-            this.insertPrimary = true;
         }
         getAllKeys() {
             return this.primaryTable.getAllKeys().concat(this.secondaryTable.getAllKeys());
@@ -458,6 +458,9 @@ var TypeScript;
     }
     TypeScript.combineHashes = combineHashes;
     class HashEntry {
+        key;
+        data;
+        next;
         constructor(key, data) {
             this.key = key;
             this.data = data;
@@ -465,12 +468,15 @@ var TypeScript;
     }
     TypeScript.HashEntry = HashEntry;
     class HashTable {
+        size;
+        hashFn;
+        equalsFn;
+        itemCount = 0;
+        table = new HashEntry[];
         constructor(size, hashFn, equalsFn) {
             this.size = size;
             this.hashFn = hashFn;
             this.equalsFn = equalsFn;
-            this.itemCount = 0;
-            this.table = new HashEntry[];
             for (var i = 0; i < this.size; i++) {
                 this.table[i] = null;
             }
@@ -528,10 +534,8 @@ var TypeScript;
     TypeScript.HashTable = HashTable;
     // Simple Hash table with list of keys and values matching each other at the given index
     class SimpleHashTable {
-        constructor() {
-            this.keys = [];
-            this.values = [];
-        }
+        keys = [];
+        values = [];
         lookup(key, findValue) {
             var searchArray = this.keys;
             if (findValue) {

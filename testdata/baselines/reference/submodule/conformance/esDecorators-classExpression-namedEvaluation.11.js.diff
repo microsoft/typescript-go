@@ -44,6 +44,7 @@
 +class {
 +});
 +(class {
++    @dec
 +    y;
 +});
  // No NamedEvaluation, class name
@@ -86,5 +87,6 @@
 +class C {
 +});
 +(class C {
++    @dec
 +    y;
 +});

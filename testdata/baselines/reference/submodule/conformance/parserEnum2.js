@@ -9,7 +9,8 @@
     }
 
 //// [parserEnum2.js]
-export var SignatureFlags;
+export { SignatureFlags };
+var SignatureFlags;
 (function (SignatureFlags) {
     SignatureFlags[SignatureFlags["None"] = 0] = "None";
     SignatureFlags[SignatureFlags["IsIndexer"] = 1] = "IsIndexer";

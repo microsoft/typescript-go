@@ -155,7 +155,7 @@ var M5;
 })(M5 || (M5 = {}));
 var M6;
 (function (M6) {
-    var A;
+    let A;
     (function (A) {
         let Color;
         (function (Color) {

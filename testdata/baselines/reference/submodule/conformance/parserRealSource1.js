@@ -200,6 +200,12 @@ var TypeScript;
     }
     TypeScript.NullLogger = NullLogger;
     class LoggerAdapter {
+        logger;
+        _information;
+        _debug;
+        _warning;
+        _error;
+        _fatal;
         constructor(logger) {
             this.logger = logger;
             this._information = this.logger.information();
@@ -219,9 +225,7 @@ var TypeScript;
     }
     TypeScript.LoggerAdapter = LoggerAdapter;
     class BufferedLogger {
-        constructor() {
-            this.logContents = [];
-        }
+        logContents = [];
         information() { return false; }
         debug() { return false; }
         warning() { return false; }

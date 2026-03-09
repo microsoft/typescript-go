@@ -30,6 +30,9 @@ class A {
 //// [inlinedAliasAssignableToConstraintSameAsAlias.js]
 "use strict";
 class A {
+    x;
+    y;
+    z;
     whereRelated() {
         return 1;
     }

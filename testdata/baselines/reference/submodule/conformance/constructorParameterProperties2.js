@@ -37,22 +37,29 @@ var r4 = f.y; // error
 //// [constructorParameterProperties2.js]
 "use strict";
 class C {
+    y;
     constructor(y) { } // ok
 }
 var r = c.y;
 class D {
+    y;
+    y;
     constructor(y) {
         this.y = y;
     } // error
 }
 var r2 = d.y;
 class E {
+    y;
+    y;
     constructor(y) {
         this.y = y;
     } // error
 }
 var r3 = e.y; // error
 class F {
+    y;
+    y;
     constructor(y) {
         this.y = y;
     } // error

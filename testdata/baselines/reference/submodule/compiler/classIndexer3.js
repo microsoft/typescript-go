@@ -19,4 +19,6 @@ class C123 {
     }
 }
 class D123 extends C123 {
+    x;
+    y;
 }

@@ -19,9 +19,9 @@ namespace X {
 "use strict";
 var A;
 (function (A) {
-    var B;
+    let B;
     (function (B) {
-        var C;
+        let C;
         (function (C) {
             var XYZ = X.Y.Z;
             function ping(x) {

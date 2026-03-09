@@ -28,13 +28,11 @@
 -        __runInitializers(_classThis, _classExtraInitializers);
 -    })();
 -    return C = _classThis;
-+var _a;
+-})();
++@dec
 +class C {
++    static { this; }
++    static x = this;
 +    static m() { this; }
 +    static get g() { return this; }
 +}
-+_a = C;
-+(() => {
-+    _a;
- })();
-+C.x = _a;

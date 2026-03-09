@@ -1,0 +1,8 @@
+--- old.parser509546_1.js
++++ new.parser509546_1.js
+@@= skipped -7, +7 lines =@@
+
+ //// [parser509546_1.js]
+ export class Logger {
++    public;
+ }

@@ -171,11 +171,7 @@ func getImportersForExport(
 	// Adds a module and all of its transitive dependencies as possible indirect users
 	var addIndirectUser func(*ast.Node, bool)
 	addIndirectUser = func(sourceFileLike *ast.Node, addTransitiveDependencies bool) {
-		// When isAvailableThroughGlobal, getIndirectUsers already returns all source files,
-		// so indirectUserDeclarations is never consulted. Nothing to do here.
-		if isAvailableThroughGlobal {
-			return
-		}
+		debug.Assert(!isAvailableThroughGlobal)
 		if !markSeenIndirectUser(sourceFileLike) {
 			return
 		}

@@ -24,6 +24,8 @@ var r3 = r.foo;
 //// [classWithStaticMembers.js]
 "use strict";
 class C {
+    a;
+    b;
     static fn() { return this; }
     static get x() { return 1; }
     static set x(v) { }
@@ -31,11 +33,13 @@ class C {
         this.a = a;
         this.b = b;
     }
+    static foo;
 }
 var r = C.fn();
 var r2 = r.x;
 var r3 = r.foo;
 class D extends C {
+    bar;
 }
 var r = D.fn();
 var r2 = r.x;

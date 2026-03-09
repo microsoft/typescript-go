@@ -111,12 +111,16 @@ function f(i: Indexed) {
 //// [typeGuardOfFromPropNameInUnionType.js]
 "use strict";
 class A {
+    a;
 }
 class B {
+    b;
 }
 class C {
+    b;
 }
 class D {
+    a;
 }
 function namedClasses(x) {
     if ("a" in x) {
@@ -143,8 +147,10 @@ function anonymousClasses(x) {
     }
 }
 class AWithOptionalProp {
+    a;
 }
 class BWithOptionalProp {
+    b;
 }
 function positiveTestClassesWithOptionalProperties(x) {
     if ("a" in x) {
@@ -165,6 +171,7 @@ function inParenthesizedExpression(x) {
     }
 }
 class ClassWithUnionProp {
+    prop;
 }
 function inProperty(x) {
     if ("a" in x.prop) {
@@ -175,6 +182,7 @@ function inProperty(x) {
     }
 }
 class NestedClassWithProp {
+    outer;
 }
 function innestedProperty(x) {
     if ("a" in x.outer.prop) {
@@ -185,6 +193,7 @@ function innestedProperty(x) {
     }
 }
 class InMemberOfClass {
+    prop;
     inThis() {
         if ("a" in this.prop) {
             let y = this.prop.a;
@@ -196,6 +205,7 @@ class InMemberOfClass {
 }
 // added for completeness
 class SelfAssert {
+    a;
     inThis() {
         if ("a" in this) {
             let y = this.a;

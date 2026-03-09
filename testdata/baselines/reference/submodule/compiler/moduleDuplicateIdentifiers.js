@@ -56,15 +56,11 @@ var FooBar;
     FooBar.member2 = 42;
 })(FooBar || (exports.FooBar = FooBar = {}));
 class Kettle {
-    constructor() {
-        this.member1 = 2;
-    }
+    member1 = 2;
 }
 exports.Kettle = Kettle;
 class Kettle {
-    constructor() {
-        this.member2 = 42;
-    }
+    member2 = 42;
 }
 exports.Kettle = Kettle;
 exports.Pot = 2;

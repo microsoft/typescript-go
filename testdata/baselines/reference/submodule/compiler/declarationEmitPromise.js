@@ -39,6 +39,7 @@ exports.bluebird = void 0;
 exports.runSampleWorks = runSampleWorks;
 exports.runSampleBreaks = runSampleBreaks;
 class bluebird {
+    static all;
 }
 exports.bluebird = bluebird;
 function runSampleWorks(a, b, c, d, e) {

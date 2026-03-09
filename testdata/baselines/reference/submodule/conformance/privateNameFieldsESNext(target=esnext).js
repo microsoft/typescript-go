@@ -25,13 +25,9 @@ class C {
 //// [privateNameFieldsESNext.js]
 "use strict";
 class C {
-    constructor() {
-        this.a = 123;
-        this.#a = 10;
-        this.c = "hello";
-        this.#something = () => 1234;
-    }
-    #a;
+    a = 123;
+    #a = 10;
+    c = "hello";
     #b;
     method() {
         console.log(this.#a);
@@ -44,5 +40,5 @@ class C {
         console.log(this.#m);
         console.log(this.#x = "test");
     }
-    #something;
+    #something = () => 1234;
 }

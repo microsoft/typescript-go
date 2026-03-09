@@ -1,0 +1,13 @@
+--- old.functionOverloadsRecursiveGenericReturnType.js
++++ new.functionOverloadsRecursiveGenericReturnType.js
+@@= skipped -18, +18 lines =@@
+ //// [functionOverloadsRecursiveGenericReturnType.js]
+ "use strict";
+ class B {
++    id;
+ }
+ class A {
++    GetEnumerator;
+ }
+ function Choice(...v_args) {
+     return new A();

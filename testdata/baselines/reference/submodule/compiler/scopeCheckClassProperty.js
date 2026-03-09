@@ -16,12 +16,10 @@ class A {
 "use strict";
 class C {
     constructor() {
-        this.x = new A().p; // should also be ok
         new A().p; // ok
     }
+    x = new A().p; // should also be ok
 }
 class A {
-    constructor() {
-        this.p = '';
-    }
+    p = '';
 }

@@ -22,6 +22,8 @@ namespace A {
 var A;
 (function (A) {
     class Point {
+        x;
+        y;
     }
     class points {
     }

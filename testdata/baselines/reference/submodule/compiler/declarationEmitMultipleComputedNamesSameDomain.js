@@ -10,14 +10,10 @@ export class Test {
 }
 
 //// [declarationEmitMultipleComputedNamesSameDomain.js]
-var _a, _b;
 export class Test {
-    constructor() {
-        this[_a] = 10;
-        this[_b] = 10;
-    }
+    [x] = 10;
+    [y] = 10;
 }
-_a = x, _b = y;
 
 
 //// [declarationEmitMultipleComputedNamesSameDomain.d.ts]

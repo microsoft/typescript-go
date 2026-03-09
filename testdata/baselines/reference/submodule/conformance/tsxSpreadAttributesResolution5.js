@@ -57,6 +57,7 @@ class EmptyProp extends React.Component {
     render() {
         return <div>Default hi</div>;
     }
+    greeting;
 }
 let o = {
     prop1: false

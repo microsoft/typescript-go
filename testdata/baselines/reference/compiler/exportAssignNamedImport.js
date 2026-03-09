@@ -19,9 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bar = void 0;
 exports.baz = baz;
 class Bar {
-    constructor() {
-        this.name = "bar";
-    }
+    name = "bar";
 }
 exports.Bar = Bar;
 function baz() {

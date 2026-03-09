@@ -1,0 +1,10 @@
+--- old.incompatibleAssignmentOfIdenticallyNamedTypes.js
++++ new.incompatibleAssignmentOfIdenticallyNamedTypes.js
+@@= skipped -13, +13 lines =@@
+ //// [incompatibleAssignmentOfIdenticallyNamedTypes.js]
+ "use strict";
+ class Foo {
++    x;
+     fn() {
+         this.x = a;
+     }

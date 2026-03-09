@@ -10,11 +10,10 @@ foo(class { prop = "hello" }).length;
 //// [typeArgumentInferenceWithClassExpression3.js]
 "use strict";
 function foo(x = class {
+    prop;
 }) {
     return undefined;
 }
 foo(class {
-    constructor() {
-        this.prop = "hello";
-    }
+    prop = "hello";
 }).length;

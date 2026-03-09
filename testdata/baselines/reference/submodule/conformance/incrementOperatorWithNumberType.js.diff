@@ -1,0 +1,10 @@
+--- old.incrementOperatorWithNumberType.js
++++ new.incrementOperatorWithNumberType.js
+@@= skipped -46, +46 lines =@@
+ var NUMBER;
+ var NUMBER1 = [1, 2];
+ class A {
++    a;
+ }
+ var M;
+ (function (M) {

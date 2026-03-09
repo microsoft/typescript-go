@@ -56,6 +56,7 @@ var T;
     var x = 2;
     (function (x) {
         class Bar {
+            test;
         }
         x.Bar = Bar;
     })(x || (x = {}));

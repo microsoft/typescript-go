@@ -33,16 +33,12 @@ var y = 0;
 function f1() { }
 function f2() { }
 class C1 {
-    constructor() {
-        this.p1 = 0;
-    }
+    p1 = 0;
     p2() { }
 }
 exports.C1 = C1;
 class C2 {
-    constructor() {
-        this.p1 = 0;
-    }
+    p1 = 0;
     p2() { }
 }
 var E1;

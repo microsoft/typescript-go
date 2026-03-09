@@ -76,9 +76,7 @@ class Test1 {
     }
 }
 class Test2 {
-    constructor() {
-        this.p = 0;
-    }
+    p = 0;
     test() {
         var x = new Test2();
         x.p;
@@ -103,21 +101,20 @@ class Test4 {
     }
 }
 class Test5 {
+    p;
     test() {
         var x = new Test5();
         x.p;
     }
 }
 class Test6 {
-    constructor() {
-        this.b = 0;
-    }
     get a() {
         return 0;
     }
     set a(v) {
         v;
     }
+    b = 0;
     test() {
         var x = new Test6();
         x.a++;

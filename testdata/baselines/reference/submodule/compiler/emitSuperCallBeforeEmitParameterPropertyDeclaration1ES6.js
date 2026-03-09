@@ -18,11 +18,10 @@ class B extends A {
 //// [emitSuperCallBeforeEmitParameterPropertyDeclaration1ES6.js]
 "use strict";
 class A {
-    constructor() {
-        this.blub = 6;
-    }
+    blub = 6;
 }
 class B extends A {
+    x;
     constructor(x) {
         "use strict";
         'someStringForEgngInject';

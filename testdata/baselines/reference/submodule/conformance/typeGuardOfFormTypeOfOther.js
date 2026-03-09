@@ -86,6 +86,7 @@ else {
 //// [typeGuardOfFormTypeOfOther.js]
 "use strict";
 class C {
+    p;
 }
 ;
 var str;

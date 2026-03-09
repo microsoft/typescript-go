@@ -25,17 +25,15 @@ namespace M
 var M;
 (function (M) {
     class Test {
-        constructor() {
-            this.name = "hello";
-            this.setName = function (value) {
-                (function () {
-                    name = value;
-                })();
-            };
-            this.getName = function () {
-                return name;
-            };
-        }
+        name = "hello";
+        setName = function (value) {
+            (function () {
+                name = value;
+            })();
+        };
+        getName = function () {
+            return name;
+        };
     }
     M.Test = Test;
 })(M || (M = {}));

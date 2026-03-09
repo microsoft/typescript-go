@@ -17,6 +17,7 @@ class C<T> {
 //// [comparabilityTypeParametersRelatedByUnion.js]
 "use strict";
 class C {
+    x;
     constructor(x) {
         this.x = x;
     }

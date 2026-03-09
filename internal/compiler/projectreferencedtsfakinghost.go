@@ -75,7 +75,7 @@ func (fs *projectReferenceDtsFakingVfs) ReadFile(path string) (contents string, 
 }
 
 // WriteFile implements vfs.FS.
-func (fs *projectReferenceDtsFakingVfs) WriteFile(path string, data string) error {
+func (fs *projectReferenceDtsFakingVfs) WriteFile(path string, data string, writeByteOrderMark bool) error {
 	panic("should not be called by resolver")
 }
 

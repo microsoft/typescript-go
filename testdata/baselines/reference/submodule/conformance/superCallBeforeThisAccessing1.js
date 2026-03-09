@@ -24,6 +24,7 @@ class Base {
     constructor(c) { }
 }
 class D extends Base {
+    _t;
     constructor() {
         super(i);
         var s = {

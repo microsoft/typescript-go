@@ -11,5 +11,6 @@ class C {
 //// [esDecorators-classDeclaration-fields-nonStaticPrivate.js]
 "use strict";
 class C {
+    @dec
     #field1 = 0;
 }

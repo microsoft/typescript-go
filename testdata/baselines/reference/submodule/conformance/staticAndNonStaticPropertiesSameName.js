@@ -12,6 +12,8 @@ class C {
 //// [staticAndNonStaticPropertiesSameName.js]
 "use strict";
 class C {
+    x;
+    static x;
     f() { }
     static f() { }
 }

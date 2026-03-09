@@ -1,0 +1,22 @@
+--- old.moduleSharesNameWithImportDeclarationInsideIt6.js
++++ new.moduleSharesNameWithImportDeclarationInsideIt6.js
+@@= skipped -15, +15 lines =@@
+ "use strict";
+ var Z;
+ (function (Z) {
+-    var M;
++    let M;
+     (function (M) {
+         function bar() {
+             return "";
+@@= skipped -10, +10 lines =@@
+ })(Z || (Z = {}));
+ var A;
+ (function (A) {
+-    var M;
++    let M;
+     (function (M_1) {
++        var M = Z.M;
+         function bar() {
+         }
+         M_1.bar = bar;

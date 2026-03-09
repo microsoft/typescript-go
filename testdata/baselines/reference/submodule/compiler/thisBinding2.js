@@ -26,6 +26,7 @@ var messenger = {
 //// [thisBinding2.js]
 "use strict";
 class C {
+    x;
     constructor() {
         this.x = (() => {
             var x = 1;

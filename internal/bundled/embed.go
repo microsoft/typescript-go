@@ -152,11 +152,11 @@ func (vfs *wrappedFS) Realpath(path string) string {
 	return vfs.fs.Realpath(path)
 }
 
-func (vfs *wrappedFS) WriteFile(path string, data string) error {
+func (vfs *wrappedFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
 	if _, ok := splitPath(path); ok {
 		panic("cannot write to embedded file system")
 	}
-	return vfs.fs.WriteFile(path, data)
+	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
 }
 
 func (vfs *wrappedFS) Remove(path string) error {

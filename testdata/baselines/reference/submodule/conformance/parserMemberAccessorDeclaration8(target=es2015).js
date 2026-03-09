@@ -8,5 +8,6 @@ class C {
 //// [parserMemberAccessorDeclaration8.js]
 "use strict";
 class C {
+    static static;
     get Foo() { }
 }

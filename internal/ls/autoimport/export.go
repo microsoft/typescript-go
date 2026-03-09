@@ -3,6 +3,7 @@ package autoimport
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -60,12 +61,13 @@ type Export struct {
 	Target                     ExportID
 	IsTypeOnly                 bool
 	ScriptElementKind          lsutil.ScriptElementKind
-	ScriptElementKindModifiers lsutil.ScriptElementKindModifier
+	ScriptElementKindModifiers collections.Set[lsutil.ScriptElementKindModifier]
 
 	// The file where the export was found.
 	Path tspath.Path
 
-	PackageName string
+	NodeModulesDirectory tspath.Path
+	PackageName          string
 }
 
 func (e *Export) Name() string {
@@ -98,7 +100,7 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 		return nil
 	}
 	moduleID, moduleFileName := getModuleIDAndFileNameOfModuleSymbol(symbol.Parent)
-	extractor := newSymbolExtractor("", ch, nil, nil)
+	extractor := newSymbolExtractor("", "", ch, nil, nil)
 
 	var exports []*Export
 	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)

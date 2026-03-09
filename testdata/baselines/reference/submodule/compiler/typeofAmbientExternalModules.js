@@ -23,11 +23,13 @@ y2 = ext;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.C = void 0;
 class C {
+    foo;
 }
 exports.C = C;
 //// [typeofAmbientExternalModules_1.js]
 "use strict";
 class D {
+    bar;
 }
 module.exports = D;
 //// [typeofAmbientExternalModules_2.js]

@@ -16,9 +16,6 @@ export default class extends Foo {
 class Foo {
 }
 export default class extends Foo {
-    constructor() {
-        super(...arguments);
-        this.observer = this.handleIntersection;
-        this.handleIntersection = () => { };
-    }
+    observer = this.handleIntersection;
+    handleIntersection = () => { };
 }

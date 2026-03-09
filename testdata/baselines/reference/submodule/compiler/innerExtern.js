@@ -22,9 +22,7 @@ var A;
     let B;
     (function (B) {
         class C {
-            constructor() {
-                this.x = BB.Elephant.X;
-            }
+            x = BB.Elephant.X;
         }
         B.C = C;
     })(B = A.B || (A.B = {}));

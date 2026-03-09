@@ -219,6 +219,7 @@ namespace TypeScript {
 var TypeScript;
 (function (TypeScript) {
     class Binder {
+        checker;
         constructor(checker) {
             this.checker = checker;
         }
