@@ -733,7 +733,7 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	if len(ci.pendingInstanceInitializers) > 0 && ast.GetFirstConstructorWithBody(node) == nil {
 		initializerStatements := tx.prepareConstructor(ci)
 		if len(initializerStatements) > 0 {
-			isDerivedClass := extendsClause != nil
+			isDerivedClass := extendsElement != nil && ast.SkipOuterExpressions(extendsElement.AsExpressionWithTypeArguments().Expression, ast.OEKAll).Kind != ast.KindNullKeyword
 			constructorStatements := []*ast.Statement{}
 			if isDerivedClass {
 				spreadArguments := f.NewSpreadElement(f.NewIdentifier("arguments"))
@@ -1649,6 +1649,28 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 		commentRange := ec.CommentRange(node)
 		sourceMapRange := ec.SourceMapRange(node)
 
+		// Since we're creating two declarations where there was previously one, cache
+		// the expression for any computed property names.
+		propName := node.Name()
+		getterName := result.name
+		setterName := result.name
+		if ast.IsComputedPropertyName(propName) && !transformers.IsSimpleInlineableExpression(propName.Expression()) {
+			cacheAssignment := findComputedPropertyNameCacheAssignment(ec, propName)
+			if cacheAssignment != nil {
+				getterName = f.UpdateComputedPropertyName(propName.AsComputedPropertyName(), tx.Visitor().VisitNode(propName.Expression()))
+				setterName = f.UpdateComputedPropertyName(propName.AsComputedPropertyName(), cacheAssignment.Left)
+			} else {
+				temp := f.NewTempVariable()
+				ec.SetSourceMapRange(temp, propName.Expression().Loc)
+				ec.AddVariableDeclaration(temp)
+				expression := tx.Visitor().VisitNode(propName.Expression())
+				assignment := f.NewAssignmentExpression(temp, expression)
+				ec.SetSourceMapRange(assignment, propName.Expression().Loc)
+				getterName = f.UpdateComputedPropertyName(propName.AsComputedPropertyName(), assignment)
+				setterName = f.UpdateComputedPropertyName(propName.AsComputedPropertyName(), temp)
+			}
+		}
+
 		modifiersWithoutAccessor := tx.filterOutModifier(result.modifiers, ast.KindAccessorKeyword)
 
 		backingFieldName := f.NewGeneratedPrivateNameForNodeEx(node.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"})
@@ -1659,12 +1681,12 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 		ec.SetSourceMapRange(backingField, sourceMapRange)
 		ec.SetSourceMapRange(backingField.AsPropertyDeclaration().Name(), ec.SourceMapRange(node.Name()))
 
-		getter := tx.createGetAccessorDescriptorForwarder(modifiersWithoutAccessor, result.name, result.descriptorName)
+		getter := tx.createGetAccessorDescriptorForwarder(modifiersWithoutAccessor, getterName, result.descriptorName)
 		ec.SetOriginal(getter, node)
 		ec.SetCommentRange(getter, commentRange)
 		ec.SetSourceMapRange(getter, sourceMapRange)
 
-		setter := tx.createSetAccessorDescriptorForwarder(modifiersWithoutAccessor, result.name, result.descriptorName)
+		setter := tx.createSetAccessorDescriptorForwarder(modifiersWithoutAccessor, setterName, result.descriptorName)
 		ec.SetOriginal(setter, node)
 		ec.SetEmitFlags(setter, printer.EFNoComments)
 		ec.SetSourceMapRange(setter, sourceMapRange)
@@ -1818,7 +1840,7 @@ func (tx *esDecoratorTransformer) visitForStatement(node *ast.Node) *ast.Node {
 		tx.discardedVisitor.VisitNode(forStmt.Initializer),
 		tx.Visitor().VisitNode(forStmt.Condition),
 		tx.discardedVisitor.VisitNode(forStmt.Incrementor),
-		tx.Visitor().VisitNode(forStmt.Statement),
+		tx.EmitContext().VisitIterationBody(forStmt.Statement, tx.Visitor()),
 	)
 }
 
