@@ -9,6 +9,7 @@ export { ScriptTarget } from "#enums/scriptTarget";
 export { SyntaxKind } from "#enums/syntaxKind";
 export { TokenFlags } from "#enums/tokenFlags";
 export * from "./astnav.ts";
+export * from "./clone.ts";
 export * from "./is.ts";
 export * from "./nodes.ts";
 export * from "./scanner.ts";

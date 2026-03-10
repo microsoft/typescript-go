@@ -181,14 +181,19 @@ for (const [name] of interfaces) {
 }
 
 // Also collect type aliases that resolve to node types (unions of node types, Token<X>, etc.)
+// Uses a fixpoint loop because aliases can reference other aliases (e.g. BindingName -> BindingPattern).
 const nodeTypeAliases = new Set<string>();
-for (const stmt of sourceFile.statements) {
-    if (!ts.isTypeAliasDeclaration(stmt)) continue;
-    const aliasName = stmt.name.text;
-    if (nodeTypeInterfaces.has(aliasName)) continue;
-    // Check if it resolves to a node type
-    if (isNodeType(stmt.type)) {
-        nodeTypeAliases.add(aliasName);
+let changed = true;
+while (changed) {
+    changed = false;
+    for (const stmt of sourceFile.statements) {
+        if (!ts.isTypeAliasDeclaration(stmt)) continue;
+        const aliasName = stmt.name.text;
+        if (nodeTypeInterfaces.has(aliasName) || nodeTypeAliases.has(aliasName)) continue;
+        if (isNodeType(stmt.type)) {
+            nodeTypeAliases.add(aliasName);
+            changed = true;
+        }
     }
 }
 
@@ -542,6 +547,115 @@ emit("    const arr = elements as unknown as NodeArray<T> & { pos: number; end: 
 emit("    arr.pos = pos;");
 emit("    arr.end = end;");
 emit("    return arr;");
+emit("}");
+emit("");
+
+// cloneNode — dispatch table that reads properties via getters, so it works
+// with any Node implementation (NodeObject, RemoteNode, etc.).
+emit("/**");
+emit(" * Shallow-clone a node, producing a NodeObject copy.");
+emit(" * Reads all properties via the getter interface so it works with any");
+emit(" * Node implementation (NodeObject, RemoteNode, etc.).");
+emit(" */");
+emit("export function cloneNode<T extends Node>(node: T): T {");
+emit("    const data = cloneNodeData(node);");
+emit("    const clone = new NodeObject(node.kind, data);");
+emit("    (clone as any).flags = node.flags;");
+emit("    (clone as any).pos = node.pos;");
+emit("    (clone as any).end = node.end;");
+emit("    return clone as unknown as T;");
+emit("}");
+emit("");
+
+// Build clone data table: a switch on SyntaxKind that reads each property via
+// the getter interface.
+emit("function cloneNodeData(node: any): any {");
+emit("    switch (node.kind) {");
+for (const def of factoryDefs) {
+    if (def.params.length === 0) continue;
+    emit(`        case ${def.syntaxKind}: return {`);
+    for (const p of def.params) {
+        emit(`            ${p.name}: node.${p.name},`);
+    }
+    emit("        };");
+}
+emit("    }");
+emit("    return undefined;");
+emit("}");
+emit("");
+
+// setParent
+emit("/**");
+emit(" * Set the parent of a node.");
+emit(" */");
+emit("export function setParent<T extends Node>(child: T, parent: Node | undefined): T;");
+emit("export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined;");
+emit("export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined {");
+emit("    if (child) (child as any).parent = parent;");
+emit("    return child;");
+emit("}");
+emit("");
+
+// setParentRecursive
+emit("/**");
+emit(" * Set the parent pointers for all children of a tree, recursively.");
+emit(" */");
+emit("export function setParentRecursive<T extends Node>(rootNode: T, incremental: boolean): T;");
+emit("export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined;");
+emit("export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined {");
+emit("    if (rootNode === undefined) return rootNode;");
+emit("    forEachChildRecursively(rootNode, incremental ? (child, parent) => {");
+emit("        if (child.parent !== parent) {");
+emit("            (child as any).parent = parent;");
+emit("            return undefined;");
+emit("        }");
+emit('        return "skip";');
+emit("    } : (child, parent) => {");
+emit("        (child as any).parent = parent;");
+emit("        return undefined;");
+emit("    });");
+emit("    return rootNode;");
+emit("}");
+emit("");
+
+// forEachChildRecursively
+emit("/**");
+emit(" * Walk a tree recursively in a preorder traversal, calling callbacks for each node.");
+emit(' * If the callback returns "skip", the node\'s children are not visited.');
+emit(" */");
+emit("export function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | \"skip\" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | \"skip\" | undefined): T | undefined {");
+emit("    const queue: (Node | NodeArray<Node>)[] = [rootNode];");
+emit("    const parents: Node[] = [];");
+emit("    while (parents.length >= 0) {");
+emit("        const parent = parents.pop()!;");
+emit("        const current = queue.pop()!;");
+emit("        if (current === undefined) break;");
+emit("        if (Array.isArray(current)) {");
+emit("            if (cbNodes) {");
+emit("                const result = cbNodes(current as NodeArray<Node>, parent);");
+emit('                if (result === "skip") continue;');
+emit("                if (result !== undefined) return result;");
+emit("            }");
+emit("            for (let i = current.length - 1; i >= 0; i--) {");
+emit("                queue.push((current as NodeArray<Node>)[i]);");
+emit("                parents.push(parent);");
+emit("            }");
+emit("        }");
+emit("        else {");
+emit("            const node = current as Node;");
+emit("            const result = cbNode(node, parent);");
+emit('            if (result === "skip") continue;');
+emit("            if (result !== undefined) return result;");
+emit("            // Push children in reverse order so we visit left-to-right");
+emit("            const children: (Node | NodeArray<Node>)[] = [];");
+emit("            node.forEachChild(child => { children.push(child); return undefined; }, arr => { children.push(arr); return undefined; });");
+emit("            for (let i = children.length - 1; i >= 0; i--) {");
+emit("                queue.push(children[i]);");
+emit("                parents.push(node);");
+emit("            }");
+emit("        }");
+emit("    }");
+emit("    return undefined;");
 emit("}");
 emit("");
 

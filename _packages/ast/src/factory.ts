@@ -673,6 +673,1092 @@ export function createNodeArray<T extends Node>(elements: readonly T[], pos: num
     return arr;
 }
 
+/**
+ * Shallow-clone a node, producing a NodeObject copy.
+ * Reads all properties via the getter interface so it works with any
+ * Node implementation (NodeObject, RemoteNode, etc.).
+ */
+export function cloneNode<T extends Node>(node: T): T {
+    const data = cloneNodeData(node);
+    const clone = new NodeObject(node.kind, data);
+    (clone as any).flags = node.flags;
+    (clone as any).pos = node.pos;
+    (clone as any).end = node.end;
+    return clone as unknown as T;
+}
+
+function cloneNodeData(node: any): any {
+    switch (node.kind) {
+        case SyntaxKind.ArrayBindingPattern:
+            return {
+                elements: node.elements,
+            };
+        case SyntaxKind.ArrayLiteralExpression:
+            return {
+                elements: node.elements,
+                multiLine: node.multiLine,
+            };
+        case SyntaxKind.ArrayType:
+            return {
+                elementType: node.elementType,
+            };
+        case SyntaxKind.ArrowFunction:
+            return {
+                modifiers: node.modifiers,
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+                equalsGreaterThanToken: node.equalsGreaterThanToken,
+                body: node.body,
+            };
+        case SyntaxKind.AsExpression:
+            return {
+                expression: node.expression,
+                type: node.type,
+            };
+        case SyntaxKind.AwaitExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.BigIntLiteral:
+            return {
+                text: node.text,
+            };
+        case SyntaxKind.BinaryExpression:
+            return {
+                left: node.left,
+                operatorToken: node.operatorToken,
+                right: node.right,
+            };
+        case SyntaxKind.BindingElement:
+            return {
+                dotDotDotToken: node.dotDotDotToken,
+                propertyName: node.propertyName,
+                name: node.name,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.Block:
+            return {
+                statements: node.statements,
+                multiLine: node.multiLine,
+            };
+        case SyntaxKind.BreakStatement:
+            return {
+                label: node.label,
+            };
+        case SyntaxKind.CallExpression:
+            return {
+                expression: node.expression,
+                questionDotToken: node.questionDotToken,
+                typeArguments: node.typeArguments,
+                arguments: node.arguments,
+            };
+        case SyntaxKind.CallSignature:
+            return {
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.CaseBlock:
+            return {
+                clauses: node.clauses,
+            };
+        case SyntaxKind.CaseClause:
+            return {
+                expression: node.expression,
+                statements: node.statements,
+            };
+        case SyntaxKind.CatchClause:
+            return {
+                variableDeclaration: node.variableDeclaration,
+                block: node.block,
+            };
+        case SyntaxKind.ClassDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                typeParameters: node.typeParameters,
+                heritageClauses: node.heritageClauses,
+                members: node.members,
+            };
+        case SyntaxKind.ClassExpression:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                typeParameters: node.typeParameters,
+                heritageClauses: node.heritageClauses,
+                members: node.members,
+            };
+        case SyntaxKind.ClassStaticBlockDeclaration:
+            return {
+                body: node.body,
+            };
+        case SyntaxKind.CommaListExpression:
+            return {
+                elements: node.elements,
+            };
+        case SyntaxKind.ComputedPropertyName:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.ConditionalExpression:
+            return {
+                condition: node.condition,
+                questionToken: node.questionToken,
+                whenTrue: node.whenTrue,
+                colonToken: node.colonToken,
+                whenFalse: node.whenFalse,
+            };
+        case SyntaxKind.ConditionalType:
+            return {
+                checkType: node.checkType,
+                extendsType: node.extendsType,
+                trueType: node.trueType,
+                falseType: node.falseType,
+            };
+        case SyntaxKind.Constructor:
+            return {
+                modifiers: node.modifiers,
+                parameters: node.parameters,
+                body: node.body,
+            };
+        case SyntaxKind.ConstructorType:
+            return {
+                modifiers: node.modifiers,
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.ConstructSignature:
+            return {
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.ContinueStatement:
+            return {
+                label: node.label,
+            };
+        case SyntaxKind.Decorator:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.DefaultClause:
+            return {
+                statements: node.statements,
+            };
+        case SyntaxKind.DeleteExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.DoStatement:
+            return {
+                statement: node.statement,
+                expression: node.expression,
+            };
+        case SyntaxKind.ElementAccessExpression:
+            return {
+                expression: node.expression,
+                questionDotToken: node.questionDotToken,
+                argumentExpression: node.argumentExpression,
+            };
+        case SyntaxKind.EnumDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                members: node.members,
+            };
+        case SyntaxKind.EnumMember:
+            return {
+                name: node.name,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.ExportAssignment:
+            return {
+                modifiers: node.modifiers,
+                expression: node.expression,
+                isExportEquals: node.isExportEquals,
+            };
+        case SyntaxKind.ExportDeclaration:
+            return {
+                modifiers: node.modifiers,
+                exportClause: node.exportClause,
+                moduleSpecifier: node.moduleSpecifier,
+                attributes: node.attributes,
+                isTypeOnly: node.isTypeOnly,
+            };
+        case SyntaxKind.ExportSpecifier:
+            return {
+                propertyName: node.propertyName,
+                name: node.name,
+                isTypeOnly: node.isTypeOnly,
+            };
+        case SyntaxKind.ExpressionStatement:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.ExpressionWithTypeArguments:
+            return {
+                expression: node.expression,
+                typeArguments: node.typeArguments,
+            };
+        case SyntaxKind.ExternalModuleReference:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.ForInStatement:
+            return {
+                initializer: node.initializer,
+                expression: node.expression,
+                statement: node.statement,
+            };
+        case SyntaxKind.ForOfStatement:
+            return {
+                awaitModifier: node.awaitModifier,
+                initializer: node.initializer,
+                expression: node.expression,
+                statement: node.statement,
+            };
+        case SyntaxKind.ForStatement:
+            return {
+                initializer: node.initializer,
+                condition: node.condition,
+                incrementor: node.incrementor,
+                statement: node.statement,
+            };
+        case SyntaxKind.FunctionDeclaration:
+            return {
+                modifiers: node.modifiers,
+                asteriskToken: node.asteriskToken,
+                name: node.name,
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+                body: node.body,
+            };
+        case SyntaxKind.FunctionExpression:
+            return {
+                modifiers: node.modifiers,
+                asteriskToken: node.asteriskToken,
+                name: node.name,
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+                body: node.body,
+            };
+        case SyntaxKind.FunctionType:
+            return {
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.GetAccessor:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                parameters: node.parameters,
+                type: node.type,
+                body: node.body,
+            };
+        case SyntaxKind.HeritageClause:
+            return {
+                token: node.token,
+                types: node.types,
+            };
+        case SyntaxKind.Identifier:
+            return {
+                text: node.text,
+            };
+        case SyntaxKind.IfStatement:
+            return {
+                expression: node.expression,
+                thenStatement: node.thenStatement,
+                elseStatement: node.elseStatement,
+            };
+        case SyntaxKind.ImportAttribute:
+            return {
+                name: node.name,
+                value: node.value,
+            };
+        case SyntaxKind.ImportAttributes:
+            return {
+                token: node.token,
+                elements: node.elements,
+                multiLine: node.multiLine,
+            };
+        case SyntaxKind.ImportClause:
+            return {
+                name: node.name,
+                namedBindings: node.namedBindings,
+                phaseModifier: node.phaseModifier,
+            };
+        case SyntaxKind.ImportDeclaration:
+            return {
+                modifiers: node.modifiers,
+                importClause: node.importClause,
+                moduleSpecifier: node.moduleSpecifier,
+                attributes: node.attributes,
+            };
+        case SyntaxKind.ImportEqualsDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                moduleReference: node.moduleReference,
+                isTypeOnly: node.isTypeOnly,
+            };
+        case SyntaxKind.ImportSpecifier:
+            return {
+                propertyName: node.propertyName,
+                name: node.name,
+                isTypeOnly: node.isTypeOnly,
+            };
+        case SyntaxKind.ImportType:
+            return {
+                argument: node.argument,
+                attributes: node.attributes,
+                qualifier: node.qualifier,
+                typeArguments: node.typeArguments,
+                isTypeOf: node.isTypeOf,
+            };
+        case SyntaxKind.IndexedAccessType:
+            return {
+                objectType: node.objectType,
+                indexType: node.indexType,
+            };
+        case SyntaxKind.IndexSignature:
+            return {
+                modifiers: node.modifiers,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.InferType:
+            return {
+                typeParameter: node.typeParameter,
+            };
+        case SyntaxKind.InterfaceDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                typeParameters: node.typeParameters,
+                heritageClauses: node.heritageClauses,
+                members: node.members,
+            };
+        case SyntaxKind.IntersectionType:
+            return {
+                types: node.types,
+            };
+        case SyntaxKind.JSDoc:
+            return {
+                comment: node.comment,
+                tags: node.tags,
+            };
+        case SyntaxKind.JSDocAugmentsTag:
+            return {
+                tagName: node.tagName,
+                class: node.class,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocCallbackTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                fullName: node.fullName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocDeprecatedTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocImplementsTag:
+            return {
+                tagName: node.tagName,
+                class: node.class,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocImportTag:
+            return {
+                tagName: node.tagName,
+                importClause: node.importClause,
+                moduleSpecifier: node.moduleSpecifier,
+                attributes: node.attributes,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocLink:
+            return {
+                name: node.name,
+                text: node.text,
+            };
+        case SyntaxKind.JSDocLinkCode:
+            return {
+                name: node.name,
+                text: node.text,
+            };
+        case SyntaxKind.JSDocLinkPlain:
+            return {
+                name: node.name,
+                text: node.text,
+            };
+        case SyntaxKind.JSDocMemberName:
+            return {
+                left: node.left,
+                right: node.right,
+            };
+        case SyntaxKind.JSDocNameReference:
+            return {
+                name: node.name,
+            };
+        case SyntaxKind.JSDocNonNullableType:
+            return {
+                type: node.type,
+                postfix: node.postfix,
+            };
+        case SyntaxKind.JSDocNullableType:
+            return {
+                type: node.type,
+                postfix: node.postfix,
+            };
+        case SyntaxKind.JSDocOptionalType:
+            return {
+                type: node.type,
+            };
+        case SyntaxKind.JSDocOverloadTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocOverrideTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocParameterTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+                isNameFirst: node.isNameFirst,
+                isBracketed: node.isBracketed,
+            };
+        case SyntaxKind.JSDocPrivateTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocPropertyTag:
+            return {
+                comment: node.comment,
+                isNameFirst: node.isNameFirst,
+                isBracketed: node.isBracketed,
+            };
+        case SyntaxKind.JSDocProtectedTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocPublicTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocReadonlyTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocReturnTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocSatisfiesTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocSeeTag:
+            return {
+                tagName: node.tagName,
+                name: node.name,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocSignature:
+            return {
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.JSDocTemplateTag:
+            return {
+                tagName: node.tagName,
+                constraint: node.constraint,
+                typeParameters: node.typeParameters,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocText:
+            return {
+                text: node.text,
+            };
+        case SyntaxKind.JSDocThisTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocTypedefTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                fullName: node.fullName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocTypeExpression:
+            return {
+                type: node.type,
+            };
+        case SyntaxKind.JSDocTypeLiteral:
+            return {
+                jsDocPropertyTags: node.jsDocPropertyTags,
+                isArrayType: node.isArrayType,
+            };
+        case SyntaxKind.JSDocTypeTag:
+            return {
+                tagName: node.tagName,
+                typeExpression: node.typeExpression,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocTag:
+            return {
+                tagName: node.tagName,
+                comment: node.comment,
+            };
+        case SyntaxKind.JSDocVariadicType:
+            return {
+                type: node.type,
+            };
+        case SyntaxKind.JsxAttribute:
+            return {
+                name: node.name,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.JsxAttributes:
+            return {
+                properties: node.properties,
+            };
+        case SyntaxKind.JsxClosingElement:
+            return {
+                tagName: node.tagName,
+            };
+        case SyntaxKind.JsxElement:
+            return {
+                openingElement: node.openingElement,
+                children: node.children,
+                closingElement: node.closingElement,
+            };
+        case SyntaxKind.JsxExpression:
+            return {
+                dotDotDotToken: node.dotDotDotToken,
+                expression: node.expression,
+            };
+        case SyntaxKind.JsxFragment:
+            return {
+                openingFragment: node.openingFragment,
+                children: node.children,
+                closingFragment: node.closingFragment,
+            };
+        case SyntaxKind.JsxNamespacedName:
+            return {
+                name: node.name,
+                namespace: node.namespace,
+            };
+        case SyntaxKind.JsxOpeningElement:
+            return {
+                tagName: node.tagName,
+                typeArguments: node.typeArguments,
+                attributes: node.attributes,
+            };
+        case SyntaxKind.JsxSelfClosingElement:
+            return {
+                tagName: node.tagName,
+                typeArguments: node.typeArguments,
+                attributes: node.attributes,
+            };
+        case SyntaxKind.JsxSpreadAttribute:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.JsxText:
+            return {
+                text: node.text,
+                containsOnlyTriviaWhiteSpaces: node.containsOnlyTriviaWhiteSpaces,
+            };
+        case SyntaxKind.LabeledStatement:
+            return {
+                label: node.label,
+                statement: node.statement,
+            };
+        case SyntaxKind.LiteralType:
+            return {
+                literal: node.literal,
+            };
+        case SyntaxKind.MappedType:
+            return {
+                readonlyToken: node.readonlyToken,
+                typeParameter: node.typeParameter,
+                nameType: node.nameType,
+                questionToken: node.questionToken,
+                type: node.type,
+                members: node.members,
+            };
+        case SyntaxKind.MetaProperty:
+            return {
+                keywordToken: node.keywordToken,
+                name: node.name,
+            };
+        case SyntaxKind.MethodDeclaration:
+            return {
+                modifiers: node.modifiers,
+                asteriskToken: node.asteriskToken,
+                name: node.name,
+                postfixToken: node.postfixToken,
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+                body: node.body,
+            };
+        case SyntaxKind.MethodSignature:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                postfixToken: node.postfixToken,
+                typeParameters: node.typeParameters,
+                parameters: node.parameters,
+                type: node.type,
+            };
+        case SyntaxKind.ModuleBlock:
+            return {
+                statements: node.statements,
+            };
+        case SyntaxKind.ModuleDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                body: node.body,
+            };
+        case SyntaxKind.NamedExports:
+            return {
+                elements: node.elements,
+            };
+        case SyntaxKind.NamedImports:
+            return {
+                elements: node.elements,
+            };
+        case SyntaxKind.NamedTupleMember:
+            return {
+                dotDotDotToken: node.dotDotDotToken,
+                name: node.name,
+                questionToken: node.questionToken,
+                type: node.type,
+            };
+        case SyntaxKind.NamespaceExport:
+            return {
+                name: node.name,
+            };
+        case SyntaxKind.NamespaceExportDeclaration:
+            return {
+                name: node.name,
+            };
+        case SyntaxKind.NamespaceImport:
+            return {
+                name: node.name,
+            };
+        case SyntaxKind.NewExpression:
+            return {
+                expression: node.expression,
+                typeArguments: node.typeArguments,
+                arguments: node.arguments,
+            };
+        case SyntaxKind.NonNullExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.NoSubstitutionTemplateLiteral:
+            return {
+                text: node.text,
+                rawText: node.rawText,
+                templateFlags: node.templateFlags,
+            };
+        case SyntaxKind.NumericLiteral:
+            return {
+                text: node.text,
+                numericLiteralFlags: node.numericLiteralFlags,
+            };
+        case SyntaxKind.ObjectBindingPattern:
+            return {
+                elements: node.elements,
+            };
+        case SyntaxKind.ObjectLiteralExpression:
+            return {
+                properties: node.properties,
+                multiLine: node.multiLine,
+            };
+        case SyntaxKind.OptionalType:
+            return {
+                type: node.type,
+            };
+        case SyntaxKind.Parameter:
+            return {
+                modifiers: node.modifiers,
+                dotDotDotToken: node.dotDotDotToken,
+                name: node.name,
+                questionToken: node.questionToken,
+                type: node.type,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.ParenthesizedExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.ParenthesizedType:
+            return {
+                type: node.type,
+            };
+        case SyntaxKind.PartiallyEmittedExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.PostfixUnaryExpression:
+            return {
+                operand: node.operand,
+                operator: node.operator,
+            };
+        case SyntaxKind.PrefixUnaryExpression:
+            return {
+                operator: node.operator,
+                operand: node.operand,
+            };
+        case SyntaxKind.PrivateIdentifier:
+            return {
+                escapedText: node.escapedText,
+            };
+        case SyntaxKind.PropertyAccessExpression:
+            return {
+                expression: node.expression,
+                questionDotToken: node.questionDotToken,
+                name: node.name,
+            };
+        case SyntaxKind.PropertyAssignment:
+            return {
+                name: node.name,
+                postfixToken: node.postfixToken,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.PropertyDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                postfixToken: node.postfixToken,
+                type: node.type,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.PropertySignature:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                postfixToken: node.postfixToken,
+                type: node.type,
+            };
+        case SyntaxKind.QualifiedName:
+            return {
+                left: node.left,
+                right: node.right,
+            };
+        case SyntaxKind.RegularExpressionLiteral:
+            return {
+                text: node.text,
+            };
+        case SyntaxKind.RestType:
+            return {
+                type: node.type,
+            };
+        case SyntaxKind.ReturnStatement:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.SatisfiesExpression:
+            return {
+                expression: node.expression,
+                type: node.type,
+            };
+        case SyntaxKind.SetAccessor:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                parameters: node.parameters,
+                body: node.body,
+            };
+        case SyntaxKind.ShorthandPropertyAssignment:
+            return {
+                name: node.name,
+                postfixToken: node.postfixToken,
+                equalsToken: node.equalsToken,
+                objectAssignmentInitializer: node.objectAssignmentInitializer,
+            };
+        case SyntaxKind.SourceFile:
+            return {
+                statements: node.statements,
+                endOfFileToken: node.endOfFileToken,
+                text: node.text,
+                fileName: node.fileName,
+                path: node.path,
+            };
+        case SyntaxKind.SpreadAssignment:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.SpreadElement:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.StringLiteral:
+            return {
+                text: node.text,
+            };
+        case SyntaxKind.SwitchStatement:
+            return {
+                expression: node.expression,
+                caseBlock: node.caseBlock,
+                possiblyExhaustive: node.possiblyExhaustive,
+            };
+        case SyntaxKind.TaggedTemplateExpression:
+            return {
+                tag: node.tag,
+                typeArguments: node.typeArguments,
+                template: node.template,
+            };
+        case SyntaxKind.TemplateExpression:
+            return {
+                head: node.head,
+                templateSpans: node.templateSpans,
+            };
+        case SyntaxKind.TemplateHead:
+            return {
+                text: node.text,
+                rawText: node.rawText,
+                templateFlags: node.templateFlags,
+            };
+        case SyntaxKind.TemplateLiteralType:
+            return {
+                head: node.head,
+                templateSpans: node.templateSpans,
+            };
+        case SyntaxKind.TemplateLiteralTypeSpan:
+            return {
+                type: node.type,
+                literal: node.literal,
+            };
+        case SyntaxKind.TemplateMiddle:
+            return {
+                text: node.text,
+                rawText: node.rawText,
+                templateFlags: node.templateFlags,
+            };
+        case SyntaxKind.TemplateSpan:
+            return {
+                expression: node.expression,
+                literal: node.literal,
+            };
+        case SyntaxKind.TemplateTail:
+            return {
+                text: node.text,
+                rawText: node.rawText,
+                templateFlags: node.templateFlags,
+            };
+        case SyntaxKind.ThrowStatement:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.TryStatement:
+            return {
+                tryBlock: node.tryBlock,
+                catchClause: node.catchClause,
+                finallyBlock: node.finallyBlock,
+            };
+        case SyntaxKind.TupleType:
+            return {
+                elements: node.elements,
+            };
+        case SyntaxKind.TypeAliasDeclaration:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                typeParameters: node.typeParameters,
+                type: node.type,
+            };
+        case SyntaxKind.TypeAssertionExpression:
+            return {
+                type: node.type,
+                expression: node.expression,
+            };
+        case SyntaxKind.TypeLiteral:
+            return {
+                members: node.members,
+            };
+        case SyntaxKind.TypeOfExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.TypeOperator:
+            return {
+                operator: node.operator,
+                type: node.type,
+            };
+        case SyntaxKind.TypeParameter:
+            return {
+                modifiers: node.modifiers,
+                name: node.name,
+                constraint: node.constraint,
+                default: node.default,
+            };
+        case SyntaxKind.TypePredicate:
+            return {
+                assertsModifier: node.assertsModifier,
+                parameterName: node.parameterName,
+                type: node.type,
+            };
+        case SyntaxKind.TypeQuery:
+            return {
+                exprName: node.exprName,
+                typeArguments: node.typeArguments,
+            };
+        case SyntaxKind.TypeReference:
+            return {
+                typeName: node.typeName,
+                typeArguments: node.typeArguments,
+            };
+        case SyntaxKind.UnionType:
+            return {
+                types: node.types,
+            };
+        case SyntaxKind.VariableDeclaration:
+            return {
+                name: node.name,
+                exclamationToken: node.exclamationToken,
+                type: node.type,
+                initializer: node.initializer,
+            };
+        case SyntaxKind.VariableDeclarationList:
+            return {
+                declarations: node.declarations,
+            };
+        case SyntaxKind.VariableStatement:
+            return {
+                modifiers: node.modifiers,
+                declarationList: node.declarationList,
+            };
+        case SyntaxKind.VoidExpression:
+            return {
+                expression: node.expression,
+            };
+        case SyntaxKind.WhileStatement:
+            return {
+                expression: node.expression,
+                statement: node.statement,
+            };
+        case SyntaxKind.WithStatement:
+            return {
+                expression: node.expression,
+                statement: node.statement,
+            };
+        case SyntaxKind.YieldExpression:
+            return {
+                asteriskToken: node.asteriskToken,
+                expression: node.expression,
+            };
+    }
+    return undefined;
+}
+
+/**
+ * Set the parent of a node.
+ */
+export function setParent<T extends Node>(child: T, parent: Node | undefined): T;
+export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined;
+export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined {
+    if (child) (child as any).parent = parent;
+    return child;
+}
+
+/**
+ * Set the parent pointers for all children of a tree, recursively.
+ */
+export function setParentRecursive<T extends Node>(rootNode: T, incremental: boolean): T;
+export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined;
+export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined {
+    if (rootNode === undefined) return rootNode;
+    forEachChildRecursively(
+        rootNode,
+        incremental ? (child, parent) => {
+            if (child.parent !== parent) {
+                (child as any).parent = parent;
+                return undefined;
+            }
+            return "skip";
+        } : (child, parent) => {
+            (child as any).parent = parent;
+            return undefined;
+        },
+    );
+    return rootNode;
+}
+
+/**
+ * Walk a tree recursively in a preorder traversal, calling callbacks for each node.
+ * If the callback returns "skip", the node's children are not visited.
+ */
+export function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | "skip" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | "skip" | undefined): T | undefined {
+    const queue: (Node | NodeArray<Node>)[] = [rootNode];
+    const parents: Node[] = [];
+    while (parents.length >= 0) {
+        const parent = parents.pop()!;
+        const current = queue.pop()!;
+        if (current === undefined) break;
+        if (Array.isArray(current)) {
+            if (cbNodes) {
+                const result = cbNodes(current as NodeArray<Node>, parent);
+                if (result === "skip") continue;
+                if (result !== undefined) return result;
+            }
+            for (let i = current.length - 1; i >= 0; i--) {
+                queue.push((current as NodeArray<Node>)[i]);
+                parents.push(parent);
+            }
+        }
+        else {
+            const node = current as Node;
+            const result = cbNode(node, parent);
+            if (result === "skip") continue;
+            if (result !== undefined) return result;
+            // Push children in reverse order so we visit left-to-right
+            const children: (Node | NodeArray<Node>)[] = [];
+            node.forEachChild(child => {
+                children.push(child);
+                return undefined;
+            }, arr => {
+                children.push(arr);
+                return undefined;
+            });
+            for (let i = children.length - 1; i >= 0; i--) {
+                queue.push(children[i]);
+                parents.push(node);
+            }
+        }
+    }
+    return undefined;
+}
+
 type ForEachChildFunction = (data: any, cbNode: (node: Node) => any, cbNodes?: (nodes: NodeArray<Node>) => any) => any;
 
 const forEachChildTable: Record<number, ForEachChildFunction> = {
@@ -697,6 +1783,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.BindingElement]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.dotDotDotToken) ||
         visitNode(cbNode, data.propertyName) ||
+        visitNode(cbNode, data.name) ||
         visitNode(cbNode, data.initializer),
     [SyntaxKind.Block]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.statements),
     [SyntaxKind.BreakStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
@@ -995,7 +2082,8 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.ModuleBlock]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.statements),
     [SyntaxKind.ModuleDeclaration]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name),
+        visitNode(cbNode, data.name) ||
+        visitNode(cbNode, data.body),
     [SyntaxKind.NamedExports]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
     [SyntaxKind.NamedImports]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
     [SyntaxKind.NamedTupleMember]: (data, cbNode, cbNodes) =>
@@ -1017,6 +2105,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.Parameter]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.dotDotDotToken) ||
+        visitNode(cbNode, data.name) ||
         visitNode(cbNode, data.questionToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
@@ -1120,6 +2209,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.typeArguments),
     [SyntaxKind.UnionType]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.types),
     [SyntaxKind.VariableDeclaration]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.name) ||
         visitNode(cbNode, data.exclamationToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
@@ -2063,7 +3153,7 @@ export function createModuleBlock(statements: readonly Statement[]): ModuleBlock
     }) as unknown as ModuleBlock;
 }
 
-export function createModuleDeclaration(modifiers: readonly ModifierLike[] | undefined, name: ModuleName, body?: ModuleBody | JSDocNamespaceDeclaration): ModuleDeclaration {
+export function createModuleDeclaration(modifiers: readonly ModifierLike[] | undefined, name: ModuleName, body: ModuleBody | JSDocNamespaceDeclaration | undefined): ModuleDeclaration {
     return new NodeObject(SyntaxKind.ModuleDeclaration, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         name,
@@ -2592,9 +3682,9 @@ export function updateBinaryExpression(node: BinaryExpression, left: Expression,
     return createBinaryExpression(left, operatorToken, right);
 }
 
-export function updateBindingElement(node: BindingElement, dotDotDotToken: DotDotDotToken | undefined, propertyName: PropertyName | undefined, initializer: Expression | undefined): BindingElement {
-    if (node.dotDotDotToken === dotDotDotToken && node.propertyName === propertyName && node.initializer === initializer) return node;
-    return createBindingElement(dotDotDotToken, propertyName, node.name, initializer);
+export function updateBindingElement(node: BindingElement, dotDotDotToken: DotDotDotToken | undefined, propertyName: PropertyName | undefined, name: BindingName, initializer: Expression | undefined): BindingElement {
+    if (node.dotDotDotToken === dotDotDotToken && node.propertyName === propertyName && node.name === name && node.initializer === initializer) return node;
+    return createBindingElement(dotDotDotToken, propertyName, name, initializer);
 }
 
 export function updateBlock(node: Block, statements: readonly Statement[]): Block {
@@ -3102,9 +4192,9 @@ export function updateModuleBlock(node: ModuleBlock, statements: readonly Statem
     return createModuleBlock(statements);
 }
 
-export function updateModuleDeclaration(node: ModuleDeclaration, modifiers: readonly ModifierLike[] | undefined, name: ModuleName): ModuleDeclaration {
-    if (node.modifiers === modifiers && node.name === name) return node;
-    return createModuleDeclaration(modifiers, name, node.body);
+export function updateModuleDeclaration(node: ModuleDeclaration, modifiers: readonly ModifierLike[] | undefined, name: ModuleName, body: ModuleBody | JSDocNamespaceDeclaration | undefined): ModuleDeclaration {
+    if (node.modifiers === modifiers && node.name === name && node.body === body) return node;
+    return createModuleDeclaration(modifiers, name, body);
 }
 
 export function updateNamedExports(node: NamedExports, elements: readonly ExportSpecifier[]): NamedExports {
@@ -3162,9 +4252,9 @@ export function updateOptionalTypeNode(node: OptionalTypeNode, type: TypeNode): 
     return createOptionalTypeNode(type);
 }
 
-export function updateParameterDeclaration(node: ParameterDeclaration, modifiers: readonly ModifierLike[] | undefined, dotDotDotToken: DotDotDotToken | undefined, questionToken: QuestionToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): ParameterDeclaration {
-    if (node.modifiers === modifiers && node.dotDotDotToken === dotDotDotToken && node.questionToken === questionToken && node.type === type && node.initializer === initializer) return node;
-    return createParameterDeclaration(modifiers, dotDotDotToken, node.name, questionToken, type, initializer);
+export function updateParameterDeclaration(node: ParameterDeclaration, modifiers: readonly ModifierLike[] | undefined, dotDotDotToken: DotDotDotToken | undefined, name: BindingName, questionToken: QuestionToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): ParameterDeclaration {
+    if (node.modifiers === modifiers && node.dotDotDotToken === dotDotDotToken && node.name === name && node.questionToken === questionToken && node.type === type && node.initializer === initializer) return node;
+    return createParameterDeclaration(modifiers, dotDotDotToken, name, questionToken, type, initializer);
 }
 
 export function updateParenthesizedExpression(node: ParenthesizedExpression, expression: Expression): ParenthesizedExpression {
@@ -3352,9 +4442,9 @@ export function updateUnionTypeNode(node: UnionTypeNode, types: readonly TypeNod
     return createUnionTypeNode(types);
 }
 
-export function updateVariableDeclaration(node: VariableDeclaration, exclamationToken: ExclamationToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): VariableDeclaration {
-    if (node.exclamationToken === exclamationToken && node.type === type && node.initializer === initializer) return node;
-    return createVariableDeclaration(node.name, exclamationToken, type, initializer);
+export function updateVariableDeclaration(node: VariableDeclaration, name: BindingName, exclamationToken: ExclamationToken | undefined, type: TypeNode | undefined, initializer: Expression | undefined): VariableDeclaration {
+    if (node.name === name && node.exclamationToken === exclamationToken && node.type === type && node.initializer === initializer) return node;
+    return createVariableDeclaration(name, exclamationToken, type, initializer);
 }
 
 export function updateVariableDeclarationList(node: VariableDeclarationList, declarations: readonly VariableDeclaration[]): VariableDeclarationList {

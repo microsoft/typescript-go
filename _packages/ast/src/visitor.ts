@@ -383,7 +383,8 @@ export function visitNodes(nodes: NodeArray<Node> | undefined, visitor: Visitor)
             if (visited) updated.push(visited);
         }
         else if (visited !== node) {
-            updated = nodes.slice(0, i) as unknown as Node[];
+            updated = [];
+            for (let j = 0; j < i; j++) updated.push(nodes[j]);
             if (visited) updated.push(visited);
         }
     }
@@ -448,8 +449,9 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.BindingElement]: (node: BindingElement, visitor: Visitor): BindingElement => {
         const _dotDotDotToken = visitNode(node.dotDotDotToken, visitor);
         const _propertyName = visitNode(node.propertyName, visitor);
+        const _name = visitNode(node.name, visitor)!;
         const _initializer = visitNode(node.initializer, visitor);
-        return updateBindingElement(node, _dotDotDotToken, _propertyName, _initializer);
+        return updateBindingElement(node, _dotDotDotToken, _propertyName, _name, _initializer);
     },
     [SyntaxKind.Block]: (node: Block, visitor: Visitor): Block => {
         const _statements = visitNodes(node.statements, visitor);
@@ -992,7 +994,8 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.ModuleDeclaration]: (node: ModuleDeclaration, visitor: Visitor): ModuleDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _name = visitNode(node.name, visitor)!;
-        return updateModuleDeclaration(node, _modifiers, _name);
+        const _body = visitNode(node.body, visitor);
+        return updateModuleDeclaration(node, _modifiers, _name, _body);
     },
     [SyntaxKind.NamedExports]: (node: NamedExports, visitor: Visitor): NamedExports => {
         const _elements = visitNodes(node.elements, visitor);
@@ -1046,10 +1049,11 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.Parameter]: (node: ParameterDeclaration, visitor: Visitor): ParameterDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _dotDotDotToken = visitNode(node.dotDotDotToken, visitor);
+        const _name = visitNode(node.name, visitor)!;
         const _questionToken = visitNode(node.questionToken, visitor);
         const _type = visitNode(node.type, visitor);
         const _initializer = visitNode(node.initializer, visitor);
-        return updateParameterDeclaration(node, _modifiers, _dotDotDotToken, _questionToken, _type, _initializer);
+        return updateParameterDeclaration(node, _modifiers, _dotDotDotToken, _name, _questionToken, _type, _initializer);
     },
     [SyntaxKind.ParenthesizedExpression]: (node: ParenthesizedExpression, visitor: Visitor): ParenthesizedExpression => {
         const _expression = visitNode(node.expression, visitor)!;
@@ -1240,10 +1244,11 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         return updateUnionTypeNode(node, _types);
     },
     [SyntaxKind.VariableDeclaration]: (node: VariableDeclaration, visitor: Visitor): VariableDeclaration => {
+        const _name = visitNode(node.name, visitor)!;
         const _exclamationToken = visitNode(node.exclamationToken, visitor);
         const _type = visitNode(node.type, visitor);
         const _initializer = visitNode(node.initializer, visitor);
-        return updateVariableDeclaration(node, _exclamationToken, _type, _initializer);
+        return updateVariableDeclaration(node, _name, _exclamationToken, _type, _initializer);
     },
     [SyntaxKind.VariableDeclarationList]: (node: VariableDeclarationList, visitor: Visitor): VariableDeclarationList => {
         const _declarations = visitNodes(node.declarations, visitor);

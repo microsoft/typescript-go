@@ -162,12 +162,17 @@ for (const [name] of interfaces) {
 }
 
 const nodeTypeAliases = new Set<string>();
-for (const stmt of sourceFile.statements) {
-    if (!ts.isTypeAliasDeclaration(stmt)) continue;
-    const aliasName = stmt.name.text;
-    if (nodeTypeInterfaces.has(aliasName)) continue;
-    if (isNodeType(stmt.type)) {
-        nodeTypeAliases.add(aliasName);
+let changed = true;
+while (changed) {
+    changed = false;
+    for (const stmt of sourceFile.statements) {
+        if (!ts.isTypeAliasDeclaration(stmt)) continue;
+        const aliasName = stmt.name.text;
+        if (nodeTypeInterfaces.has(aliasName) || nodeTypeAliases.has(aliasName)) continue;
+        if (isNodeType(stmt.type)) {
+            nodeTypeAliases.add(aliasName);
+            changed = true;
+        }
     }
 }
 
@@ -485,7 +490,8 @@ emit("        if (updated) {");
 emit("            if (visited) updated.push(visited);");
 emit("        }");
 emit("        else if (visited !== node) {");
-emit("            updated = nodes.slice(0, i) as unknown as Node[];");
+emit("            updated = [];");
+emit("            for (let j = 0; j < i; j++) updated.push(nodes[j]);");
 emit("            if (visited) updated.push(visited);");
 emit("        }");
 emit("    }");
