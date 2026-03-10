@@ -2,7 +2,7 @@
 // @noEmit: true
 
 // Verifies that template literal type inference handles multi-byte characters correctly,
-// slicing by UTF-16 code unit instead of by byte.
+// slicing by Unicode code point (rune) instead of by byte.
 
 type GetFirst<S extends string> = S extends `${infer Head}${string}` ? Head : never;
 type GetRest<S extends string> = S extends `${string}${infer Rest}` ? Rest : never;
