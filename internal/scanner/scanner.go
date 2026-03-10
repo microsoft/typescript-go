@@ -1166,27 +1166,27 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 				}
 				p += size
 			}
-		if shouldReportErrors {
-			s.pos = startOfRegExpBody
-			saveEnd := s.end
-			saveTokenPos := s.tokenStart
-			saveTokenFlags := s.tokenFlags
-			s.end = endOfRegExpBody
-			parser := &regExpParser{
-				scanner:            s,
-				end:                endOfRegExpBody,
-				regExpFlags:        regExpFlags,
-				anyUnicodeMode:     regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
-				unicodeSetsMode:    regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
-				annexB:             true,
-				namedCaptureGroups: namedCaptureGroups,
-				groupSpecifiers:    make(map[string]bool),
-			}
-			parser.run()
-			s.end = saveEnd
-			s.pos = p
-			s.tokenStart = saveTokenPos
-			s.tokenFlags = saveTokenFlags
+			if shouldReportErrors {
+				s.pos = startOfRegExpBody
+				saveEnd := s.end
+				saveTokenPos := s.tokenStart
+				saveTokenFlags := s.tokenFlags
+				s.end = endOfRegExpBody
+				parser := &regExpParser{
+					scanner:            s,
+					end:                endOfRegExpBody,
+					regExpFlags:        regExpFlags,
+					anyUnicodeMode:     regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
+					unicodeSetsMode:    regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+					annexB:             true,
+					namedCaptureGroups: namedCaptureGroups,
+					groupSpecifiers:    make(map[string]bool),
+				}
+				parser.run()
+				s.end = saveEnd
+				s.pos = p
+				s.tokenStart = saveTokenPos
+				s.tokenFlags = saveTokenFlags
 			} else {
 				s.pos = p
 			}
