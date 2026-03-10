@@ -6,7 +6,13 @@ import {
     createStringLiteral,
     setParentRecursive,
 } from "./factory.ts";
-import type { Node, NodeArray, NumericLiteral, ReadonlyTextRange, StringLiteral } from "./nodes.ts";
+import type {
+    Node,
+    NodeArray,
+    NumericLiteral,
+    ReadonlyTextRange,
+    StringLiteral,
+} from "./nodes.ts";
 import { visitEachChild } from "./visitor.ts";
 
 function setTextRange<T extends Node>(node: T, range: ReadonlyTextRange | undefined): T {

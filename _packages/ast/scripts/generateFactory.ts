@@ -623,7 +623,7 @@ emit("/**");
 emit(" * Walk a tree recursively in a preorder traversal, calling callbacks for each node.");
 emit(' * If the callback returns "skip", the node\'s children are not visited.');
 emit(" */");
-emit("export function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | \"skip\" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | \"skip\" | undefined): T | undefined {");
+emit('export function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | "skip" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | "skip" | undefined): T | undefined {');
 emit("    const queue: (Node | NodeArray<Node>)[] = [rootNode];");
 emit("    const parents: Node[] = [];");
 emit("    while (parents.length >= 0) {");
