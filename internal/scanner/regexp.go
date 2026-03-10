@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"strconv"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -51,7 +52,7 @@ func CharacterCodeToRegularExpressionFlag(ch rune) (RegularExpressionFlags, bool
 
 func (s *Scanner) checkRegularExpressionFlagAvailability(flag RegularExpressionFlags, pos int, size int) {
 	if availableFrom, ok := regExpFlagToFirstAvailableLanguageVersion[flag]; ok && s.languageVersion() < availableFrom {
-		s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, pos, size, GetNameOfScriptTarget(availableFrom))
+		s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, pos, size, strings.ToLower(availableFrom.String()))
 	}
 }
 
@@ -1013,36 +1014,5 @@ func (p *regExpParser) run() {
 				p.error(diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_no_capturing_groups_in_this_regular_expression, escape.pos, escape.end-escape.pos)
 			}
 		}
-	}
-}
-
-func GetNameOfScriptTarget(target core.ScriptTarget) string {
-	switch target {
-	case core.ScriptTargetES5:
-		return "es5"
-	case core.ScriptTargetES2015:
-		return "es2015"
-	case core.ScriptTargetES2016:
-		return "es2016"
-	case core.ScriptTargetES2017:
-		return "es2017"
-	case core.ScriptTargetES2018:
-		return "es2018"
-	case core.ScriptTargetES2019:
-		return "es2019"
-	case core.ScriptTargetES2020:
-		return "es2020"
-	case core.ScriptTargetES2021:
-		return "es2021"
-	case core.ScriptTargetES2022:
-		return "es2022"
-	case core.ScriptTargetES2023:
-		return "es2023"
-	case core.ScriptTargetES2024:
-		return "es2024"
-	case core.ScriptTargetESNext:
-		return "esnext"
-	default:
-		return ""
 	}
 }
