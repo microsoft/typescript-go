@@ -4683,6 +4683,7 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 }
 
 func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type, target *Type) {
+	headMessage := message
 	sourceType, targetType := r.c.getTypeNamesForErrorDisplay(source, target)
 	generalizedSource := source
 	generalizedSourceType := sourceType
@@ -4745,16 +4746,16 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			return
 		}
 	// Suppress if next message is a missing property message for source and target and we're not
-	// reporting on conversion or interface implementation
+	// reporting with an explicit head message
 	case diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2:
-		if !isConversionOrInterfaceImplementationMessage(message) && r.chainArgsMatch(nil, generalizedSourceType, targetType) {
+		if headMessage == nil && r.chainArgsMatch(nil, generalizedSourceType, targetType) {
 			return
 		}
 	// Suppress if next message is a missing property message for source and target and we're not
-	// reporting on conversion or interface implementation
+	// reporting with an explicit head message
 	case diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more,
 		diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2:
-		if !isConversionOrInterfaceImplementationMessage(message) && r.chainArgsMatch(generalizedSourceType, targetType) {
+		if headMessage == nil && r.chainArgsMatch(generalizedSourceType, targetType) {
 			return
 		}
 	}
@@ -4864,11 +4865,6 @@ func getPropertyNameArg(arg any) string {
 	return s
 }
 
-func isConversionOrInterfaceImplementationMessage(message *diagnostics.Message) bool {
-	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
-		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass ||
-		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first
-}
 
 func chainDepth(chain *ErrorChain) int {
 	depth := 0
