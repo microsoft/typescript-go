@@ -109,9 +109,9 @@ type esDecoratorTransformer struct {
 	pendingExpressions                         []*ast.Expression
 	shouldTransformPrivateStaticElementsInFile bool
 	discardedVisitor                           *ast.NodeVisitor
-	modifierVisitorObj                         *ast.NodeVisitor
+	modifierVisitor                            *ast.NodeVisitor
 	exportStrippingModifierVisitor             *ast.NodeVisitor
-	classElementVisitorObj                     *ast.NodeVisitor
+	classElementVisitor                        *ast.NodeVisitor
 	nonConstructorClassElementVisitor          *ast.NodeVisitor
 	constructorClassElementVisitor             *ast.NodeVisitor
 	arrayAssignmentVisitor                     *ast.NodeVisitor
@@ -123,9 +123,9 @@ func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformer
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	ec := tx.EmitContext()
 	tx.discardedVisitor = ec.NewNodeVisitor(tx.discardedValueVisit)
-	tx.modifierVisitorObj = ec.NewNodeVisitor(tx.modifierVisitor)
+	tx.modifierVisitor = ec.NewNodeVisitor(tx.modifierVisitorVisit)
 	tx.exportStrippingModifierVisitor = ec.NewNodeVisitor(tx.exportStrippingModifierVisit)
-	tx.classElementVisitorObj = ec.NewNodeVisitor(tx.classElementVisitor)
+	tx.classElementVisitor = ec.NewNodeVisitor(tx.classElementVisitorVisit)
 	tx.nonConstructorClassElementVisitor = ec.NewNodeVisitor(tx.nonConstructorClassElementVisit)
 	tx.constructorClassElementVisitor = ec.NewNodeVisitor(tx.constructorClassElementVisit)
 	tx.arrayAssignmentVisitor = ec.NewNodeVisitor(tx.visitArrayAssignmentElement)
@@ -352,14 +352,14 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
-func (tx *esDecoratorTransformer) modifierVisitor(node *ast.Node) *ast.Node {
+func (tx *esDecoratorTransformer) modifierVisitorVisit(node *ast.Node) *ast.Node {
 	if node.Kind == ast.KindDecorator {
 		return nil
 	}
 	return node
 }
 
-func (tx *esDecoratorTransformer) classElementVisitor(node *ast.Node) *ast.Node {
+func (tx *esDecoratorTransformer) classElementVisitorVisit(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindConstructor:
 		return tx.visitConstructorDeclaration(node)
@@ -401,12 +401,12 @@ func (tx *esDecoratorTransformer) nonConstructorClassElementVisit(node *ast.Node
 	if ast.IsConstructorDeclaration(node) {
 		return node // skip constructors in pass 1
 	}
-	return tx.classElementVisitor(node)
+	return tx.classElementVisitorVisit(node)
 }
 
 func (tx *esDecoratorTransformer) constructorClassElementVisit(node *ast.Node) *ast.Node {
 	if ast.IsConstructorDeclaration(node) {
-		return tx.classElementVisitor(node)
+		return tx.classElementVisitorVisit(node)
 	}
 	return node
 }
@@ -415,7 +415,7 @@ func (tx *esDecoratorTransformer) exportStrippingModifierVisit(node *ast.Node) *
 	if node.Kind == ast.KindExportKeyword {
 		return nil
 	}
-	return tx.modifierVisitor(node)
+	return tx.modifierVisitorVisit(node)
 }
 
 func getHelperVariableName(ec *printer.EmitContext, node *ast.Node) string {
@@ -1095,10 +1095,10 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 	}
 
 	// Non-decorated class
-	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
+	modifiers := tx.modifierVisitor.VisitModifiers(node.Modifiers())
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
 	tx.enterClass(nil)
-	members := tx.classElementVisitorObj.VisitNodes(node.Members)
+	members := tx.classElementVisitor.VisitNodes(node.Members)
 	tx.exitClass()
 	return tx.Factory().UpdateClassDeclaration(node, modifiers, node.Name(), nil, heritageClauses, members)
 }
@@ -1110,10 +1110,10 @@ func (tx *esDecoratorTransformer) visitClassExpression(node *ast.ClassExpression
 		return iife
 	}
 
-	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
+	modifiers := tx.modifierVisitor.VisitModifiers(node.Modifiers())
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
 	tx.enterClass(nil)
-	members := tx.classElementVisitorObj.VisitNodes(node.Members)
+	members := tx.classElementVisitor.VisitNodes(node.Members)
 	tx.exitClass()
 	return tx.Factory().UpdateClassExpression(node, modifiers, node.Name(), nil, heritageClauses, members)
 }
@@ -1182,7 +1182,7 @@ func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *
 
 func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
 	tx.enterClassElement(node)
-	modifiers := tx.modifierVisitorObj.VisitModifiers(node.Modifiers())
+	modifiers := tx.modifierVisitor.VisitModifiers(node.Modifiers())
 	parameters := tx.Visitor().VisitNodes(node.ParameterList())
 
 	var body *ast.Node
@@ -1245,7 +1245,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 	ec := tx.EmitContext()
 
 	if ci == nil {
-		modifiers := tx.modifierVisitorObj.VisitModifiers(member.Modifiers())
+		modifiers := tx.modifierVisitor.VisitModifiers(member.Modifiers())
 		tx.enterName()
 		name := tx.visitPropertyName(member.Name())
 		tx.exitName()
@@ -1262,7 +1262,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 	tx.classThis = nil
 	memberDecorators := tx.transformAllDecoratorsOfDeclaration(member.Decorators())
 	tx.classThis = savedClassThis
-	modifiers := tx.modifierVisitorObj.VisitModifiers(member.Modifiers())
+	modifiers := tx.modifierVisitor.VisitModifiers(member.Modifiers())
 
 	var result partialResult
 	result.modifiers = modifiers
