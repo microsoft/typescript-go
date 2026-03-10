@@ -1068,29 +1068,35 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 		inCharacterClass := false
 	loop:
 		for {
+			// If we reach the end of a file, or hit a newline, then this is an unterminated
+			// regex. Report error and return what we have so far.
 			if p >= s.end {
 				s.tokenFlags |= ast.TokenFlagsUnterminated
 				break loop
 			}
 			ch := rune(s.text[p])
-			if stringutil.IsLineBreak(ch) {
+			switch {
+			case stringutil.IsLineBreak(ch):
 				s.tokenFlags |= ast.TokenFlagsUnterminated
 				break loop
-			}
-			if inEscape {
+			case inEscape:
+				// Parsing an escape character;
+				// reset the flag and just advance to the next char.
 				inEscape = false
-			} else if ch == '/' && !inCharacterClass {
+			case ch == '/' && !inCharacterClass:
+				// A slash within a character class is permissible,
+				// but in general it signals the end of the regexp literal.
 				break loop
-			} else if ch == '[' {
+			case ch == '[':
 				inCharacterClass = true
-			} else if ch == '\\' {
+			case ch == '\\':
 				inEscape = true
-			} else if ch == ']' {
+			case ch == ']':
 				inCharacterClass = false
-			} else if !inCharacterClass && ch == '(' &&
+			case !inCharacterClass && ch == '(' &&
 				p+1 < s.end && s.text[p+1] == '?' &&
 				p+2 < s.end && s.text[p+2] == '<' &&
-				(p+3 >= s.end || (s.text[p+3] != '=' && s.text[p+3] != '!')) {
+				(p+3 >= s.end || (s.text[p+3] != '=' && s.text[p+3] != '!')):
 				namedCaptureGroups = true
 			}
 			p++
