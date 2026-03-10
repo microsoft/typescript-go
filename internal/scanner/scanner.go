@@ -1068,7 +1068,7 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 		inCharacterClass := false
 	loop:
 		for {
-			if p >= len(s.text) {
+			if p >= s.end {
 				s.tokenFlags |= ast.TokenFlagsUnterminated
 				break loop
 			}
@@ -1088,9 +1088,9 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 			} else if ch == ']' {
 				inCharacterClass = false
 			} else if !inCharacterClass && ch == '(' &&
-				p+1 < len(s.text) && s.text[p+1] == '?' &&
-				p+2 < len(s.text) && s.text[p+2] == '<' &&
-				(p+3 >= len(s.text) || (s.text[p+3] != '=' && s.text[p+3] != '!')) {
+				p+1 < s.end && s.text[p+1] == '?' &&
+				p+2 < s.end && s.text[p+2] == '<' &&
+				(p+3 >= s.end || (s.text[p+3] != '=' && s.text[p+3] != '!')) {
 				namedCaptureGroups = true
 			}
 			p++
@@ -1146,7 +1146,7 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 			// Consume the slash character
 			p++
 			var regExpFlags RegularExpressionFlags
-			for p < len(s.text) {
+			for p < s.end {
 				ch, size := utf8.DecodeRuneInString(s.text[p:])
 				if ch == utf8.RuneError || !IsIdentifierPart(ch) {
 					break
