@@ -3801,7 +3801,6 @@ func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
 		}
 
 		if len(results) == 0 {
-			fmt.Fprint(baselineBuilder, file.Content)
 			fmt.Fprintf(baselineBuilder, "%s\n\n--No linked edits found--\n\n", file.Content)
 			continue
 		}
@@ -3835,7 +3834,7 @@ func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
 		}
 
 		// sort baselineDetails by position
-		slices.SortFunc(baselineDetails, func(a, b baselineDetail) int {
+		slices.SortStableFunc(baselineDetails, func(a, b baselineDetail) int {
 			return lsproto.ComparePositions(a.pos, b.pos)
 		})
 
