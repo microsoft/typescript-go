@@ -960,7 +960,8 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 	} else if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	} else {
-		sig := tx.Factory().NewMethodDeclaration(
+		return tx.Factory().UpdateMethodDeclaration(
+			input,
 			tx.ensureModifiers(input.AsNode()),
 			nil,
 			input.Name(),
@@ -971,8 +972,6 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			nil,
 			nil,
 		)
-		tx.preserveJsDoc(sig, input.AsNode())
-		return sig
 	}
 }
 

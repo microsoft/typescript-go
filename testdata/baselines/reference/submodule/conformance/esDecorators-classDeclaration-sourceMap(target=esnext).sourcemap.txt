@@ -617,14 +617,17 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 >>>    method(): void;
 1 >^^^^
 2 >    ^^^^^^
-3 >          ^^^^^^^^^^^->
+3 >          ^^^^^^^^^
+4 >                   ^^->
 1 > {
   >    @dec
   >    @dec
   >    
 2 >    method
+3 >          () {}
 1 >Emitted(4, 5) Source(8, 5) + SourceIndex(0)
 2 >Emitted(4, 11) Source(8, 11) + SourceIndex(0)
+3 >Emitted(4, 20) Source(8, 16) + SourceIndex(0)
 ---
 >>>    get x(): number;
 1->^^^^
@@ -632,7 +635,7 @@ sourceFile:esDecorators-classDeclaration-sourceMap.ts
 3 >        ^
 4 >         ^^^^^^^^^^^
 5 >                    ^^^^^^->
-1->() {}
+1->
   >
   >    
 2 >    @dec
