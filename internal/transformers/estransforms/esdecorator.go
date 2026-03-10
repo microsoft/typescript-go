@@ -1282,22 +1282,6 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 		// 6. Non-static non-field (method/getter/setter/auto-accessor) element decorators are applied
 		// 7. Static field (excl. auto-accessor) element decorators are applied
 		// 8. Non-static field (excl. auto-accessor) element decorators are applied
-		var statements *[]*ast.Statement
-		if ast.IsMethodOrAccessor(member) || ast.IsAutoAccessorPropertyDeclaration(member) {
-			if ast.IsStatic(member) {
-				statements = &ci.staticNonFieldDecorationStatements
-			} else {
-				statements = &ci.nonStaticNonFieldDecorationStatements
-			}
-		} else if ast.IsPropertyDeclaration(member) && !ast.IsAutoAccessorPropertyDeclaration(member) {
-			if ast.IsStatic(member) {
-				statements = &ci.staticFieldDecorationStatements
-			} else {
-				statements = &ci.nonStaticFieldDecorationStatements
-			}
-		} else {
-			debug.Fail("Unexpected class element kind.")
-		}
 
 		// Determine decorator kind
 		var kind string
@@ -1398,9 +1382,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			)
 			esDecorateStatement := f.NewExpressionStatement(esDecorateExpr)
 			ec.SetSourceMapRange(esDecorateStatement, transformers.MoveRangePastDecorators(member))
-			if statements != nil {
-				*statements = append(*statements, esDecorateStatement)
-			}
+			tx.appendDecorationStatement(ci, member, esDecorateStatement)
 		} else if ast.IsPropertyDeclaration(member) {
 			mi.memberInitializersName = tx.createHelperVariable(member, "initializers")
 			mi.memberExtraInitializersName = tx.createHelperVariable(member, "extraInitializers")
@@ -1440,9 +1422,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			)
 			esDecorateStatement := f.NewExpressionStatement(esDecorateExpr)
 			ec.SetSourceMapRange(esDecorateStatement, transformers.MoveRangePastDecorators(member))
-			if statements != nil {
-				*statements = append(*statements, esDecorateStatement)
-			}
+			tx.appendDecorationStatement(ci, member, esDecorateStatement)
 		}
 	}
 
@@ -1476,6 +1456,26 @@ func (tx *esDecoratorTransformer) visitMethodDeclaration(node *ast.Node) *ast.No
 		tx.Factory().UpdateMethodDeclaration(method, result.modifiers, method.AsteriskToken, result.name, nil, nil, parameters, nil, nil, body),
 		node,
 	)
+}
+
+// appendDecorationStatement appends an __esDecorate statement to the appropriate
+// decoration statement list on classInfo based on the member's kind and static-ness.
+func (tx *esDecoratorTransformer) appendDecorationStatement(ci *classInfo, member *ast.Node, stmt *ast.Statement) {
+	if ast.IsMethodOrAccessor(member) || ast.IsAutoAccessorPropertyDeclaration(member) {
+		if ast.IsStatic(member) {
+			ci.staticNonFieldDecorationStatements = append(ci.staticNonFieldDecorationStatements, stmt)
+		} else {
+			ci.nonStaticNonFieldDecorationStatements = append(ci.nonStaticNonFieldDecorationStatements, stmt)
+		}
+	} else if ast.IsPropertyDeclaration(member) && !ast.IsAutoAccessorPropertyDeclaration(member) {
+		if ast.IsStatic(member) {
+			ci.staticFieldDecorationStatements = append(ci.staticFieldDecorationStatements, stmt)
+		} else {
+			ci.nonStaticFieldDecorationStatements = append(ci.nonStaticFieldDecorationStatements, stmt)
+		}
+	} else {
+		debug.Fail("Unexpected class element kind.")
+	}
 }
 
 func (tx *esDecoratorTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Node {
