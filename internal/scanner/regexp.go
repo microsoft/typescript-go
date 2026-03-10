@@ -94,6 +94,11 @@ type regExpParser struct {
 	groupNameReferences     []groupNameReference
 	decimalEscapes          []decimalEscapeValue
 	namedCapturingGroups    []map[string]bool
+
+	// pendingLowSurrogate holds the low surrogate to emit on the next
+	// scanSourceCharacter call when a non-BMP character is split into two
+	// surrogate code units in non-unicode mode.
+	pendingLowSurrogate rune
 }
 
 func (p *regExpParser) pos() int {
@@ -301,6 +306,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				p.scanClassSetExpression()
 			} else {
 				p.scanClassRanges()
+				p.pendingLowSurrogate = 0
 			}
 			p.scanExpectedChar(']')
 			isPreviousTermQuantifiable = true
@@ -471,6 +477,7 @@ func (p *regExpParser) isClassContentExit(ch rune) bool {
 
 // ClassRanges ::= '^'? (ClassAtom ('-' ClassAtom)?)*
 func (p *regExpParser) scanClassRanges() {
+	p.pendingLowSurrogate = 0
 	if p.charAt(p.pos()) == '^' {
 		p.incPos(1)
 	}
@@ -499,8 +506,8 @@ func (p *regExpParser) scanClassRanges() {
 			if minCharacter == "" {
 				continue
 			}
-			minCharacterValue, minSize := utf8.DecodeRuneInString(minCharacter)
-			maxCharacterValue, maxSize := utf8.DecodeRuneInString(maxCharacter)
+			minCharacterValue, minSize := decodeClassAtomRune(minCharacter)
+			maxCharacterValue, maxSize := decodeClassAtomRune(maxCharacter)
 			if len(minCharacter) == minSize && len(maxCharacter) == maxSize && minCharacterValue > maxCharacterValue {
 				p.error(diagnostics.Range_out_of_order_in_character_class, minStart, p.pos()-minStart)
 			}
@@ -595,8 +602,8 @@ func (p *regExpParser) scanClassSetExpression() {
 				if secondOperand == "" {
 					p.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, secondStart, p.pos()-secondStart)
 				} else if operand != "" {
-					minCharacterValue, minSize := utf8.DecodeRuneInString(operand)
-					maxCharacterValue, maxSize := utf8.DecodeRuneInString(secondOperand)
+					minCharacterValue, minSize := decodeClassAtomRune(operand)
+					maxCharacterValue, maxSize := decodeClassAtomRune(secondOperand)
 					if len(operand) == minSize && len(secondOperand) == maxSize && minCharacterValue > maxCharacterValue {
 						p.error(diagnostics.Range_out_of_order_in_character_class, start, p.pos()-start)
 					}
@@ -953,8 +960,30 @@ func (p *regExpParser) scanSourceCharacter() string {
 		return ""
 	}
 	if !p.anyUnicodeMode {
-		ch := p.text()[p.pos()]
-		p.incPos(1)
+		if p.pendingLowSurrogate != 0 {
+			// Second of two surrogate code units for the same non-BMP character.
+			// Now advance past the full UTF-8 sequence (the high surrogate call did not advance).
+			_, size := utf8.DecodeRuneInString(p.text()[p.pos():])
+			p.incPos(size)
+			low := p.pendingLowSurrogate
+			p.pendingLowSurrogate = 0
+			return encodeSurrogate(low)
+		}
+		ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
+		if ch == utf8.RuneError || size == 0 {
+			// Not a valid rune; consume one raw byte.
+			p.incPos(1)
+			return string(p.text()[p.pos()-1])
+		}
+		if ch >= surrSelf {
+			// Non-BMP character: emit the high surrogate first WITHOUT advancing.
+			// The low surrogate will be emitted on the next call, which also advances.
+			high := surr1 + (ch-surrSelf)>>10
+			low := surr2 + (ch-surrSelf)&0x3FF
+			p.pendingLowSurrogate = low
+			return encodeSurrogate(high)
+		}
+		p.incPos(size)
 		return string(ch)
 	}
 	ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
