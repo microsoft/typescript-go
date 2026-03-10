@@ -285,9 +285,7 @@ func (tx *esDecoratorTransformer) shouldVisitNode(node *ast.Node) bool {
 func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 	// When experimentalDecorators is set, the legacy decorator transformer has already
 	// removed all decorators before this transform runs, so this is a no-op.
-	// When targeting ESNext with useDefineForClassFields, there's nothing to transform either,
-	// matching the TS reference condition:
-	//   if (!experimentalDecorators && (target < ESNext || !useDefineForClassFields))
+	// When targeting ESNext with useDefineForClassFields, there's nothing to transform either.
 	if tx.compilerOptions.ExperimentalDecorators.IsTrue() ||
 		(tx.compilerOptions.GetEmitScriptTarget() >= core.ScriptTargetESNext && tx.compilerOptions.GetUseDefineForClassFields()) {
 		return node
@@ -300,7 +298,9 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 	}
 	switch node.Kind {
 	case ast.KindDecorator:
-		// Decorators are elided. They should normally be handled by `modifierVisitor`.
+		// Decorators are elided. In Strada, a separate `fallbackVisitor` drops decorators
+		// before they reach `visitor` via visitEachChild. Here, `visit` serves as both
+		// visitor and fallback, so decorators from modifier lists reach it directly.
 		return nil
 	case ast.KindClassDeclaration:
 		return tx.visitClassDeclaration(node.AsClassDeclaration())
