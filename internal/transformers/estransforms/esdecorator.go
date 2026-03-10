@@ -1678,9 +1678,7 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 
 		modifiersWithoutAccessor := tx.filterOutModifier(result.modifiers, ast.KindAccessorKeyword)
 
-		backingFieldName := f.NewGeneratedPrivateNameForNodeEx(node.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"})
-		prop := node.AsPropertyDeclaration()
-		backingField := f.UpdatePropertyDeclaration(prop, modifiersWithoutAccessor, backingFieldName, nil, nil, initializer)
+		backingField := createAccessorPropertyBackingField(f, node.AsPropertyDeclaration(), modifiersWithoutAccessor, initializer)
 		ec.SetOriginal(backingField, node)
 		ec.SetEmitFlags(backingField, printer.EFNoComments)
 		ec.SetSourceMapRange(backingField, sourceMapRange)

@@ -843,7 +843,7 @@ func (tx *classFieldsTransformer) transformAutoAccessor(node *ast.PropertyDeclar
 	}
 
 	modifiers := tx.modifierVisitor.VisitModifiers(node.Modifiers())
-	backingField := tx.createAccessorPropertyBackingField(node, modifiers, node.Initializer)
+	backingField := createAccessorPropertyBackingField(tx.Factory(), node, modifiers, node.Initializer)
 	tx.EmitContext().SetOriginal(backingField, node.AsNode())
 	tx.EmitContext().AddEmitFlags(backingField, printer.EFNoComments)
 	tx.EmitContext().SetSourceMapRange(backingField, sourceMapRange)
@@ -3437,17 +3437,6 @@ func shouldBeCapturedInTempVariable(node *ast.Node) bool {
 	default:
 		return true
 	}
-}
-
-func (tx *classFieldsTransformer) createAccessorPropertyBackingField(node *ast.PropertyDeclaration, modifiers *ast.ModifierList, initializer *ast.Expression) *ast.Node {
-	return tx.Factory().UpdatePropertyDeclaration(
-		node,
-		modifiers,
-		tx.Factory().NewGeneratedPrivateNameForNodeEx(node.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"}),
-		nil, /*postfixToken*/
-		nil, /*typeNode*/
-		initializer,
-	)
 }
 
 func (tx *classFieldsTransformer) createAccessorPropertyGetRedirector(node *ast.PropertyDeclaration, modifiers *ast.ModifierList, name *ast.PropertyName, receiver *ast.Expression) *ast.Node {
