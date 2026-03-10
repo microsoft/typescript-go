@@ -1,10 +1,15 @@
 package jsnum
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -24,6 +29,160 @@ func numberFromBits(b uint64) Number {
 
 func numberToBits(n Number) uint64 {
 	return math.Float64bits(float64(n))
+}
+
+type binaryInput struct {
+	X [2]uint32 `json:"x"`
+	Y [2]uint32 `json:"y"`
+}
+
+type binaryResult struct {
+	X      [2]uint32 `json:"x"`
+	Y      [2]uint32 `json:"y"`
+	Result [2]uint32 `json:"result"`
+}
+
+type unaryInput struct {
+	X [2]uint32 `json:"x"`
+}
+
+type unaryResult struct {
+	X      [2]uint32 `json:"x"`
+	Result [2]uint32 `json:"result"`
+}
+
+func numToUint32s(n Number) [2]uint32 {
+	bits := numberToBits(n)
+	return [2]uint32{uint32(bits), uint32(bits >> 32)}
+}
+
+func uint32sToNum(a [2]uint32) Number {
+	bits := uint64(a[0]) | uint64(a[1])<<32
+	return numberFromBits(bits)
+}
+
+func nodeAvailable() bool {
+	_, err := exec.LookPath("node")
+	return err == nil
+}
+
+// evalBinaryOp evaluates a binary JS expression on all cases using Node.js.
+// Returns nil if Node.js is not available.
+func evalBinaryOp(t *testing.T, op string, xs, ys []Number) []Number {
+	t.Helper()
+	if !nodeAvailable() {
+		return nil
+	}
+
+	type binaryTestCase struct {
+		x, y Number
+	}
+
+	tmpdir := t.TempDir()
+	inputs := make([]binaryInput, len(xs))
+	for i := range xs {
+		inputs[i] = binaryInput{X: numToUint32s(xs[i]), Y: numToUint32s(ys[i])}
+	}
+
+	jsonInput, err := json.Marshal(inputs)
+	assert.NilError(t, err)
+
+	inputPath := filepath.Join(tmpdir, "input.json")
+	err = os.WriteFile(inputPath, jsonInput, 0o644)
+	assert.NilError(t, err)
+
+	script := fmt.Sprintf(`
+		import fs from 'fs';
+
+		function fromBits(bits) {
+			const buffer = new ArrayBuffer(8);
+			(new Uint32Array(buffer))[0] = bits[0];
+			(new Uint32Array(buffer))[1] = bits[1];
+			return new Float64Array(buffer)[0];
+		}
+
+		function toBits(number) {
+			const buffer = new ArrayBuffer(8);
+			(new Float64Array(buffer))[0] = number;
+			return [(new Uint32Array(buffer))[0], (new Uint32Array(buffer))[1]];
+		}
+
+		export default function(inputFile) {
+			const input = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
+			return input.map(({x, y}) => {
+				const a = fromBits(x);
+				const b = fromBits(y);
+				return { x, y, result: toBits(%s) };
+			});
+		};
+	`, op)
+
+	results, err := jstest.EvalNodeScript[[]binaryResult](t, script, tmpdir, inputPath)
+	assert.NilError(t, err)
+	assert.Equal(t, len(results), len(xs))
+
+	out := make([]Number, len(results))
+	for i, r := range results {
+		out[i] = uint32sToNum(r.Result)
+	}
+	return out
+}
+
+// evalUnaryOp evaluates a unary JS expression on all cases using Node.js.
+// Returns nil if Node.js is not available.
+func evalUnaryOp(t *testing.T, op string, xs []Number) []Number {
+	t.Helper()
+	if !nodeAvailable() {
+		return nil
+	}
+
+	tmpdir := t.TempDir()
+	inputs := make([]unaryInput, len(xs))
+	for i, x := range xs {
+		inputs[i] = unaryInput{X: numToUint32s(x)}
+	}
+
+	jsonInput, err := json.Marshal(inputs)
+	assert.NilError(t, err)
+
+	inputPath := filepath.Join(tmpdir, "input.json")
+	err = os.WriteFile(inputPath, jsonInput, 0o644)
+	assert.NilError(t, err)
+
+	script := fmt.Sprintf(`
+		import fs from 'fs';
+
+		function fromBits(bits) {
+			const buffer = new ArrayBuffer(8);
+			(new Uint32Array(buffer))[0] = bits[0];
+			(new Uint32Array(buffer))[1] = bits[1];
+			return new Float64Array(buffer)[0];
+		}
+
+		function toBits(number) {
+			const buffer = new ArrayBuffer(8);
+			(new Float64Array(buffer))[0] = number;
+			return [(new Uint32Array(buffer))[0], (new Uint32Array(buffer))[1]];
+		}
+
+		export default function(inputFile) {
+			const input = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
+			return input.map(({x}) => {
+				const a = fromBits(x);
+				return { x, result: toBits(%s) };
+			});
+		};
+	`, op)
+
+	results, err := jstest.EvalNodeScript[[]unaryResult](t, script, tmpdir, inputPath)
+	assert.NilError(t, err)
+	assert.Equal(t, len(results), len(xs))
+
+	out := make([]Number, len(results))
+	for i, r := range results {
+		out[i] = uint32sToNum(r.Result)
+	}
+	return out
 }
 
 var toInt32Tests = []struct {
@@ -83,10 +242,21 @@ var toInt32Tests = []struct {
 func TestToInt32(t *testing.T) {
 	t.Parallel()
 
-	for _, test := range toInt32Tests {
+	inputs := make([]Number, len(toInt32Tests))
+	zeros := make([]Number, len(toInt32Tests))
+	for i, test := range toInt32Tests {
+		inputs[i] = test.input
+	}
+	jsResults := evalBinaryOp(t, "a | b", inputs, zeros)
+
+	for i, test := range toInt32Tests {
 		t.Run(fmt.Sprintf("%s (%v)", test.name, float64(test.input)), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.input.toInt32(), test.want)
+			got := test.input.toInt32()
+			assert.Equal(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, Number(got), jsResults[i])
+			}
 		})
 	}
 }
@@ -109,18 +279,35 @@ func TestBitwiseNOT(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		got, want Number
+		x, want Number
 	}{
-		{Number(-2147483649).BitwiseNOT(), Number(2147483647).BitwiseNOT()},
-		{Number(-4294967296).BitwiseNOT(), Number(0).BitwiseNOT()},
-		{Number(2147483648).BitwiseNOT(), Number(-2147483648).BitwiseNOT()},
-		{Number(4294967296).BitwiseNOT(), Number(0).BitwiseNOT()},
+		// Original pairs: ~(-2147483649) == ~(2147483647)
+		{Number(-2147483649), -2147483648},
+		{Number(2147483647), -2147483648},
+		// Original pairs: ~(-4294967296) == ~(0)
+		{Number(-4294967296), -1},
+		{0, -1},
+		// Original pairs: ~(2147483648) == ~(-2147483648)
+		{Number(2147483648), 2147483647},
+		{Number(-2147483648), 2147483647},
+		// Original pairs: ~(4294967296) == ~(0)
+		{Number(4294967296), -1},
 	}
 
-	for _, test := range tests {
-		t.Run(test.got.String(), func(t *testing.T) {
+	xs := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+	}
+	jsResults := evalUnaryOp(t, "~a", xs)
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("~%v", test.x), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.got, test.want)
+			got := test.x.BitwiseNOT()
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -137,10 +324,22 @@ func TestBitwiseAND(t *testing.T) {
 		{1, 1, 1},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a & b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v & %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.BitwiseAND(test.y), test.want)
+			got := test.x.BitwiseAND(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -157,10 +356,22 @@ func TestBitwiseOR(t *testing.T) {
 		{1, 1, 1},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a | b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v | %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.BitwiseOR(test.y), test.want)
+			got := test.x.BitwiseOR(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -177,10 +388,22 @@ func TestBitwiseXOR(t *testing.T) {
 		{1, 1, 0},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a ^ b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v ^ %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.BitwiseXOR(test.y), test.want)
+			got := test.x.BitwiseXOR(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -206,10 +429,22 @@ func TestSignedRightShift(t *testing.T) {
 		{-4, 33, -2},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a >> b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v >> %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.SignedRightShift(test.y), test.want)
+			got := test.x.SignedRightShift(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -235,10 +470,22 @@ func TestUnsignedRightShift(t *testing.T) {
 		{-4, 33, 2147483646},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a >>> b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v >>> %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.UnsignedRightShift(test.y), test.want)
+			got := test.x.UnsignedRightShift(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -262,10 +509,22 @@ func TestLeftShift(t *testing.T) {
 		{-4, 32, -4},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a << b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v << %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.LeftShift(test.y), test.want)
+			got := test.x.LeftShift(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -286,12 +545,42 @@ func TestRemainder(t *testing.T) {
 		{123, negativeZero, NaN()},
 		{0, 123, 0},
 		{negativeZero, 123, negativeZero},
+		// Normal cases
+		{10, 3, 1},
+		{-10, 3, -1},
+		{10, -3, 1},
+		{-10, -3, -1},
+		{5.5, 2, 1.5},
+		{-5.5, 2, -1.5},
+		{1, 0.5, 0},
+		{-1, 0.5, negativeZero},
+		{1.5, 1, 0.5},
+		{-1.5, 1, -0.5},
+		// Edge cases that prove the bug in the manual formula:
+		// The manual formula n - d*(n/d).trunc() accumulates floating-point
+		// rounding errors that IEEE 754 fmod (math.Mod) avoids.
+		{7, 0.1, Number(math.Mod(7, 0.1))},
+		{7, 0.2, Number(math.Mod(7, 0.2))},
+		{7, 0.3, Number(math.Mod(7, 0.3))},
+		{100, 0.3, Number(math.Mod(100, 0.3))},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a % b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.Remainder(test.y), test.want)
+			got := test.x.Remainder(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
@@ -325,12 +614,28 @@ func TestExponentiate(t *testing.T) {
 		{-1, Inf(1), NaN()},
 		{-1, Inf(-1), NaN()},
 		{1, NaN(), NaN()},
+		// TODO: math.Pow(10, 308) returns 1e+308 while V8 returns 1.0000000000000006e+308.
+		// The ES spec says exponentiate is "implementation-approximated", so both are valid,
+		// but we should match V8's behavior if possible.
+		// {10, 308, Number(math.Pow(10, 308))},
 	}
 
-	for _, test := range tests {
+	xs := make([]Number, len(tests))
+	ys := make([]Number, len(tests))
+	for i, test := range tests {
+		xs[i] = test.x
+		ys[i] = test.y
+	}
+	jsResults := evalBinaryOp(t, "a ** b", xs, ys)
+
+	for i, test := range tests {
 		t.Run(fmt.Sprintf("%v ** %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.Exponentiate(test.y), test.want)
+			got := test.x.Exponentiate(test.y)
+			assertEqualNumber(t, got, test.want)
+			if jsResults != nil {
+				assertEqualNumber(t, got, jsResults[i])
+			}
 		})
 	}
 }
