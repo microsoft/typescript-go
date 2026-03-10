@@ -235,8 +235,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'src/main/tsconfig.json'...
 
-[96msrc/main/index.ts[0m:[93m3[0m:[93m14[0m - [91merror[0m[90m TS2322: [0mType '{ foo: number; }' is not assignable to type 'Session'.
-  Property 'bar' is missing in type '{ foo: number; }' but required in type 'Session'.
+[96msrc/main/index.ts[0m:[93m3[0m:[93m14[0m - [91merror[0m[90m TS2741: [0mProperty 'bar' is missing in type '{ foo: number; }' but required in type 'Session'.
 
 [7m3[0m export const session: Session = {
 [7m [0m [91m             ~~~~~~~[0m
