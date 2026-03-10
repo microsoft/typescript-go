@@ -2083,20 +2083,19 @@ func (p *Parser) parseEnumDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers
 }
 
 func (p *Parser) parseModuleDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList) *ast.Statement {
+	keyword := ast.KindModuleKeyword
 	if p.token == ast.KindGlobalKeyword {
 		// global augmentation
 		return p.parseAmbientExternalModuleDeclaration(pos, jsdoc, modifiers)
 	} else if p.parseOptional(ast.KindNamespaceKeyword) {
-		// namespace keyword always produces a namespace declaration
-		return p.parseModuleOrNamespaceDeclaration(pos, jsdoc, modifiers, false /*nested*/, false /*isIllegalModuleKeyword*/)
+		keyword = ast.KindNamespaceKeyword
 	} else {
 		p.parseExpected(ast.KindModuleKeyword)
 		if p.token == ast.KindStringLiteral {
 			return p.parseAmbientExternalModuleDeclaration(pos, jsdoc, modifiers)
 		}
-		// `module X {}` is illegal; use `namespace` instead
-		return p.parseModuleOrNamespaceDeclaration(pos, jsdoc, modifiers, false /*nested*/, true /*isIllegalModuleKeyword*/)
 	}
+	return p.parseModuleOrNamespaceDeclaration(pos, jsdoc, modifiers, false /*nested*/, keyword)
 }
 
 func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList) *ast.Node {
@@ -2135,7 +2134,7 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 	return p.finishNode(p.factory.NewModuleBlock(statements), pos)
 }
 
-func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList, nested bool, isIllegalModuleKeyword bool) *ast.Node {
+func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList, nested bool, keyword ast.Kind) *ast.Node {
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	var name *ast.Node
 	if nested {
@@ -2143,21 +2142,17 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, jsdoc jsdocScannerIn
 	} else {
 		name = p.parseIdentifier()
 	}
-	if isIllegalModuleKeyword && !nested {
-		errorStart := scanner.SkipTrivia(p.sourceText, name.Pos())
-		p.parseErrorAt(errorStart, name.End(), diagnostics.A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead)
-	}
 	var body *ast.Node
 	if p.parseOptional(ast.KindDotToken) {
 		implicitExport := p.factory.NewModifier(ast.KindExportKeyword)
 		implicitExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 		implicitExport.Flags = ast.NodeFlagsReparsed
 		implicitModifiers := p.newModifierList(implicitExport.Loc, p.nodeSlicePool.NewSlice1(implicitExport))
-		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), 0 /*jsdoc*/, implicitModifiers, true /*nested*/, isIllegalModuleKeyword)
+		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), 0 /*jsdoc*/, implicitModifiers, true /*nested*/, keyword)
 	} else {
 		body = p.parseModuleBlock()
 	}
-	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, ast.KindNamespaceKeyword, name, body), pos)
+	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, body), pos)
 	p.withJSDoc(result, jsdoc)
 	p.checkJSSyntax(result)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
@@ -2433,6 +2428,9 @@ func (p *Parser) parseModuleExportName(disallowKeywords bool) (node *ast.Node, n
 
 func (p *Parser) tryParseImportAttributes() *ast.Node {
 	if p.token == ast.KindWithKeyword || (p.token == ast.KindAssertKeyword && !p.hasPrecedingLineBreak()) {
+		if p.token == ast.KindAssertKeyword {
+			p.parseErrorAtCurrentToken(diagnostics.Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert)
+		}
 		return p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	return nil
@@ -2497,6 +2495,9 @@ func (p *Parser) parseExportDeclaration(pos int, jsdoc jsdocScannerInfo, modifie
 		}
 	}
 	if moduleSpecifier != nil && (p.token == ast.KindWithKeyword || p.token == ast.KindAssertKeyword) && !p.hasPrecedingLineBreak() {
+		if p.token == ast.KindAssertKeyword {
+			p.parseErrorAtCurrentToken(diagnostics.Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert)
+		}
 		attributes = p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	p.parseSemicolon()
@@ -2968,6 +2969,9 @@ func (p *Parser) parseImportType() *ast.Node {
 		p.parseExpected(ast.KindOpenBraceToken)
 		currentToken := p.token
 		if currentToken == ast.KindWithKeyword || currentToken == ast.KindAssertKeyword {
+			if currentToken == ast.KindAssertKeyword {
+				p.parseErrorAtCurrentToken(diagnostics.Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert)
+			}
 			p.nextToken()
 		} else {
 			p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindWithKeyword))
