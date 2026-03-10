@@ -139,11 +139,7 @@ func (n Number) Remainder(d Number) Number {
 	case n == 0:
 		return n
 	}
-	r := n - d*(n/d).trunc()
-	if r == 0 && n < 0 {
-		return negativeZero
-	}
-	return r
+	return Number(math.Mod(float64(n), float64(d)))
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-exponentiate
