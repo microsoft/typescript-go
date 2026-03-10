@@ -1,21 +1,5 @@
 --- old.regularExpressionWithNonBMPFlags.errors.txt
 +++ new.regularExpressionWithNonBMPFlags.errors.txt
-@@= skipped -0, +0 lines =@@
--regularExpressionWithNonBMPFlags.ts(7,23): error TS1499: Unknown regular expression flag.
--regularExpressionWithNonBMPFlags.ts(7,25): error TS1499: Unknown regular expression flag.
--regularExpressionWithNonBMPFlags.ts(7,28): error TS1499: Unknown regular expression flag.
--regularExpressionWithNonBMPFlags.ts(7,41): error TS1499: Unknown regular expression flag.
--regularExpressionWithNonBMPFlags.ts(7,43): error TS1499: Unknown regular expression flag.
--regularExpressionWithNonBMPFlags.ts(7,45): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,18): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,19): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,21): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,30): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,31): error TS1499: Unknown regular expression flag.
-+regularExpressionWithNonBMPFlags.ts(7,32): error TS1499: Unknown regular expression flag.
-
-
- ==== regularExpressionWithNonBMPFlags.ts (6 errors) ====
 @@= skipped -13, +13 lines =@@
      //
      // See https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols

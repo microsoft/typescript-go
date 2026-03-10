@@ -1751,7 +1751,12 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		}
 		if codePoint < 0 {
 			return s.text[start:s.pos]
-		} else if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 && codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' && s.charAt(2) != '{' {
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' && s.charAt(2) != '{' {
+			// In TypeScript (UTF-16), \uHigh \uLow forms a valid surrogate pair string value.
+			// In Go (UTF-8), lone surrogates are invalid, so we always combine adjacent pairs
+			// regardless of unicode mode to preserve the intended code point.
+			// In regexp AnyUnicodeMode, this also aligns with the spec treatment of surrogate pairs
+			// as a single character for character class range ordering.
 			savedPos := s.pos
 			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 			if codePointIsLowSurrogate(nextCodePoint) {
@@ -2439,6 +2444,7 @@ func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
 	s.text = sourceFile.Text()
 	s.pos = pos
+	s.end = len(s.text)
 	s.languageVariant = sourceFile.LanguageVariant
 	s.Scan()
 	return s
