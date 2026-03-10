@@ -1120,12 +1120,12 @@ func (tx *esDecoratorTransformer) prepareConstructor(ci *classInfo) []*ast.State
 	return statements
 }
 
-func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *[]*ast.Statement, statementsIn []*ast.Statement, statementOffset int, superPath []int, superPathDepth int, initializerStatements []*ast.Statement) {
+func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut []*ast.Statement, statementsIn []*ast.Statement, statementOffset int, superPath []int, superPathDepth int, initializerStatements []*ast.Statement) []*ast.Statement {
 	superStatementIndex := superPath[superPathDepth]
 	// Visit statements before super
 	if superStatementIndex > statementOffset {
 		for _, s := range statementsIn[statementOffset:superStatementIndex] {
-			*statementsOut = append(*statementsOut, tx.Visitor().VisitNode(s))
+			statementsOut = append(statementsOut, tx.Visitor().VisitNode(s))
 		}
 	}
 
@@ -1134,8 +1134,7 @@ func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *
 		// Recurse into try block
 		tryBlockNode := superStatement.AsTryStatement().TryBlock
 		tryBlock := tryBlockNode.AsBlock()
-		tryBlockStatements := []*ast.Statement{}
-		tx.transformConstructorBodyWorker(&tryBlockStatements, tryBlock.Statements.Nodes, 0, superPath, superPathDepth+1, initializerStatements)
+		tryBlockStatements := tx.transformConstructorBodyWorker(nil, tryBlock.Statements.Nodes, 0, superPath, superPathDepth+1, initializerStatements)
 
 		newTryBlock := tx.Factory().NewBlock(tx.Factory().NewNodeList(tryBlockStatements), true)
 		// Use the original try block's range even though the statements may differ due to
@@ -1152,18 +1151,19 @@ func (tx *esDecoratorTransformer) transformConstructorBodyWorker(statementsOut *
 			finallyBlock = tx.Visitor().VisitNode(superStatement.AsTryStatement().FinallyBlock)
 		}
 		updated := tx.Factory().UpdateTryStatement(superStatement.AsTryStatement(), newTryBlock, catchClause, finallyBlock)
-		*statementsOut = append(*statementsOut, updated)
+		statementsOut = append(statementsOut, updated)
 	} else {
-		*statementsOut = append(*statementsOut, tx.Visitor().VisitNode(superStatement))
-		*statementsOut = append(*statementsOut, initializerStatements...)
+		statementsOut = append(statementsOut, tx.Visitor().VisitNode(superStatement))
+		statementsOut = append(statementsOut, initializerStatements...)
 	}
 
 	// Visit statements after super
 	if superStatementIndex+1 < len(statementsIn) {
 		for _, s := range statementsIn[superStatementIndex+1:] {
-			*statementsOut = append(*statementsOut, tx.Visitor().VisitNode(s))
+			statementsOut = append(statementsOut, tx.Visitor().VisitNode(s))
 		}
 	}
+	return statementsOut
 }
 
 func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *ast.Node {
@@ -1184,7 +1184,7 @@ func (tx *esDecoratorTransformer) visitConstructorDeclaration(node *ast.Node) *a
 
 			superStatementIndices := transformers.FindSuperStatementIndexPath(rest, 0)
 			if len(superStatementIndices) > 0 {
-				tx.transformConstructorBodyWorker(&stmts, rest, 0, superStatementIndices, 0, initializerStatements)
+				stmts = tx.transformConstructorBodyWorker(stmts, rest, 0, superStatementIndices, 0, initializerStatements)
 			} else {
 				stmts = append(stmts, initializerStatements...)
 				visited, _ := tx.Visitor().VisitSlice(rest)
