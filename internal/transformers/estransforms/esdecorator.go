@@ -144,22 +144,15 @@ func (tx *esDecoratorTransformer) updateState() {
 	case lexicalEntryKindClass:
 		tx.classInfoStack = tx.top.classInfoData
 	case lexicalEntryKindClassElement:
-		if tx.top.next != nil {
-			tx.classInfoStack = tx.top.next.classInfoData
-		}
+		tx.classInfoStack = tx.top.next.classInfoData
 		tx.classThis = tx.top.classThisData
 		tx.classSuper = tx.top.classSuperData
 	case lexicalEntryKindName:
-		// name -> class-element -> class
-		if tx.top.next != nil && tx.top.next.next != nil && tx.top.next.next.next != nil {
-			grandparent := tx.top.next.next.next
-			if grandparent.kind == lexicalEntryKindClassElement {
-				if grandparent.next != nil {
-					tx.classInfoStack = grandparent.next.classInfoData
-				}
-				tx.classThis = grandparent.classThisData
-				tx.classSuper = grandparent.classSuperData
-			}
+		grandparent := tx.top.next.next.next
+		if grandparent != nil && grandparent.kind == lexicalEntryKindClassElement {
+			tx.classInfoStack = grandparent.next.classInfoData
+			tx.classThis = grandparent.classThisData
+			tx.classSuper = grandparent.classSuperData
 		}
 	}
 }
@@ -188,20 +181,16 @@ func (tx *esDecoratorTransformer) enterClassElement(node *ast.Node) {
 	if tx.top == nil || tx.top.kind != lexicalEntryKindClass {
 		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'class' but got '%d' instead.", tx.top.kind))
 	}
-	entry := &lexicalEntry{
+	tx.top = &lexicalEntry{
 		kind: lexicalEntryKindClassElement,
 		next: tx.top,
 	}
 	if ast.IsClassStaticBlockDeclaration(node) || ast.IsPropertyDeclaration(node) && ast.HasStaticModifier(node) {
-		if tx.top != nil && tx.top.classInfoData != nil {
-			entry.classThisData = tx.top.classInfoData.classThis
-			entry.classSuperData = tx.top.classInfoData.classSuper
+		if tx.top.next.classInfoData != nil {
+			tx.top.classThisData = tx.top.next.classInfoData.classThis
+			tx.top.classSuperData = tx.top.next.classInfoData.classSuper
 		}
-	} else {
-		entry.classThisData = nil
-		entry.classSuperData = nil
 	}
-	tx.top = entry
 	tx.updateState()
 }
 
@@ -306,17 +295,16 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitClassDeclaration(node.AsClassDeclaration())
 	case ast.KindClassExpression:
 		return tx.visitClassExpression(node.AsClassExpression())
+	case ast.KindConstructor, ast.KindPropertyDeclaration, ast.KindClassStaticBlockDeclaration:
+		debug.Fail("Not supported outside of a class. Use 'classElementVisitor' instead.")
+		return nil
 	case ast.KindParameter:
 		return tx.visitParameterDeclaration(node.AsParameterDeclaration())
 	// Support NamedEvaluation to ensure the correct class name for class expressions.
-	case ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindBindingElement:
-		return tx.visitNamedEvaluationSite(node, node.Initializer())
 	case ast.KindBinaryExpression:
 		return tx.visitBinaryExpression(node, false /*discarded*/)
-	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
-		return tx.visitPreOrPostfixUnaryExpression(node, false /*discarded*/)
-	case ast.KindParenthesizedExpression:
-		return tx.visitParenthesizedExpression(node, false /*discarded*/)
+	case ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindBindingElement:
+		return tx.visitNamedEvaluationSite(node, node.Initializer())
 	case ast.KindExportAssignment:
 		return tx.visitExportAssignment(node)
 	case ast.KindThisKeyword:
@@ -325,19 +313,22 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitForStatement(node)
 	case ast.KindExpressionStatement:
 		return tx.visitExpressionStatement(node)
+	case ast.KindParenthesizedExpression:
+		return tx.visitParenthesizedExpression(node, false /*discarded*/)
+	case ast.KindPartiallyEmittedExpression:
+		return tx.visitPartiallyEmittedExpression(node, false /*discarded*/)
 	case ast.KindCallExpression:
 		return tx.visitCallExpression(node)
 	case ast.KindTaggedTemplateExpression:
 		return tx.visitTaggedTemplateExpression(node)
+	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
+		return tx.visitPreOrPostfixUnaryExpression(node, false /*discarded*/)
 	case ast.KindPropertyAccessExpression:
 		return tx.visitPropertyAccessExpression(node)
 	case ast.KindElementAccessExpression:
 		return tx.visitElementAccessExpression(node)
 	case ast.KindComputedPropertyName:
 		return tx.visitComputedPropertyName(node)
-	case ast.KindConstructor, ast.KindPropertyDeclaration, ast.KindClassStaticBlockDeclaration:
-		debug.Fail("Not supported outside of a class. Use 'classElementVisitor' instead.")
-		return nil
 	case ast.KindMethodDeclaration,
 		ast.KindSetAccessor,
 		ast.KindGetAccessor,
@@ -373,18 +364,12 @@ func (tx *esDecoratorTransformer) classElementVisitorVisit(node *ast.Node) *ast.
 		return tx.visitPropertyDeclaration(node)
 	case ast.KindClassStaticBlockDeclaration:
 		return tx.visitClassStaticBlockDeclaration(node)
-	case ast.KindSemicolonClassElement:
-		return tx.visit(node)
 	default:
-		debug.Fail("Unexpected class element kind.")
 		return tx.visit(node)
 	}
 }
 
 func (tx *esDecoratorTransformer) discardedValueVisit(node *ast.Node) *ast.Node {
-	if !tx.shouldVisitNode(node) {
-		return node
-	}
 	switch node.Kind {
 	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
 		return tx.visitPreOrPostfixUnaryExpression(node, true /*discarded*/)
@@ -392,6 +377,8 @@ func (tx *esDecoratorTransformer) discardedValueVisit(node *ast.Node) *ast.Node 
 		return tx.visitBinaryExpression(node, true /*discarded*/)
 	case ast.KindParenthesizedExpression:
 		return tx.visitParenthesizedExpression(node, true /*discarded*/)
+	case ast.KindPartiallyEmittedExpression:
+		return tx.visitPartiallyEmittedExpression(node, true /*discarded*/)
 	default:
 		return tx.visit(node)
 	}
@@ -583,6 +570,7 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	var trailingBlockStatements []*ast.Statement
 	var syntheticConstructor *ast.Node
 	var heritageClauses *ast.NodeList
+	shouldTransformPrivateStaticElementsInClass := false
 
 	// 1. Class decorators are evaluated outside the private name scope of the class.
 	//
@@ -616,12 +604,11 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 			tx.createLet(ci.classExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)),
 			tx.createLet(ci.classThis, nil),
 		)
-	}
 
-	shouldTransformPrivateStaticElementsInClass := false
-	if len(classDecorators) > 0 && ci.hasStaticPrivateClassElements {
-		shouldTransformPrivateStaticElementsInClass = true
-		tx.shouldTransformPrivateStaticElementsInFile = true
+		if len(classDecorators) > 0 && ci.hasStaticPrivateClassElements {
+			shouldTransformPrivateStaticElementsInClass = true
+			tx.shouldTransformPrivateStaticElementsInFile = true
+		}
 	}
 
 	// 2. ClassHeritage clause is evaluated outside of the private name scope of the class.
@@ -934,6 +921,26 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 
 		// We use `var` instead of `let` so we can leverage NamedEvaluation to define the class name
 		// and still be able to ensure it is initialized prior to any use in `static {}`.
+
+		// produces:
+		//   (() => {
+		//       let _classDecorators = [...];
+		//       let _classDescriptor;
+		//       let _classExtraInitializers = [];
+		//       let _classThis;
+		//       ...
+		//       var C = class {
+		//           static {
+		//               __esDecorate(null, _classDescriptor = { value: this }, _classDecorators, ...);
+		//               C = _classThis = _classDescriptor.value;
+		//           }
+		//           static x = 1;
+		//           static y = C.x; // `C` will already be defined here.
+		//           static { ... }
+		//       };
+		//       return C;
+		//   })();
+
 		classReferenceDeclaration := f.NewVariableDeclaration(classReference, nil, nil, classExpression)
 		classReferenceVarDeclList := f.NewVariableDeclarationList(ast.NodeFlagsNone, f.NewNodeList([]*ast.Node{classReferenceDeclaration}))
 		var returnExpr *ast.Expression
@@ -963,24 +970,6 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		}
 	}
 
-	// produces:
-	//   (() => {
-	//       let _classDecorators = [...];
-	//       let _classDescriptor;
-	//       let _classExtraInitializers = [];
-	//       let _classThis;
-	//       ...
-	//       var C = class {
-	//           static {
-	//               __esDecorate(null, _classDescriptor = { value: this }, _classDecorators, ...);
-	//               C = _classThis = _classDescriptor.value;
-	//           }
-	//           static x = 1;
-	//           static y = C.x; // `C` will already be defined here.
-	//           static { ... }
-	//       };
-	//       return C;
-	//   })();
 	mergedStatements := ec.MergeEnvironment(classDefinitionStatements, lexicalEnvironment)
 	return f.NewImmediatelyInvokedArrowFunction(mergedStatements)
 }
@@ -1088,9 +1077,6 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 			}
 		}
 
-		if len(statements) == 1 {
-			return statements[0]
-		}
 		return transformers.SingleOrMany(statements, f)
 	}
 
@@ -1441,23 +1427,6 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 	return result
 }
 
-func (tx *esDecoratorTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
-	tx.enterClassElement(node)
-	result := tx.partialTransformClassElement(node, tx.classInfoStack, tx.createMethodDescriptorObject)
-	if result.descriptorName != nil {
-		tx.exitClassElement()
-		return tx.finishClassElement(tx.createMethodDescriptorForwarder(result.modifiers, result.name, result.descriptorName), node)
-	}
-	parameters := tx.Visitor().VisitNodes(node.ParameterList())
-	body := tx.Visitor().VisitNode(node.Body())
-	tx.exitClassElement()
-	method := node.AsMethodDeclaration()
-	return tx.finishClassElement(
-		tx.Factory().UpdateMethodDeclaration(method, result.modifiers, method.AsteriskToken, result.name, nil, nil, parameters, nil, nil, body),
-		node,
-	)
-}
-
 // appendDecorationStatement appends an __esDecorate statement to the appropriate
 // decoration statement list on classInfo based on the member's kind and static-ness.
 func (tx *esDecoratorTransformer) appendDecorationStatement(ci *classInfo, member *ast.Node, stmt *ast.Statement) {
@@ -1476,6 +1445,23 @@ func (tx *esDecoratorTransformer) appendDecorationStatement(ci *classInfo, membe
 	} else {
 		debug.Fail("Unexpected class element kind.")
 	}
+}
+
+func (tx *esDecoratorTransformer) visitMethodDeclaration(node *ast.Node) *ast.Node {
+	tx.enterClassElement(node)
+	result := tx.partialTransformClassElement(node, tx.classInfoStack, tx.createMethodDescriptorObject)
+	if result.descriptorName != nil {
+		tx.exitClassElement()
+		return tx.finishClassElement(tx.createMethodDescriptorForwarder(result.modifiers, result.name, result.descriptorName), node)
+	}
+	parameters := tx.Visitor().VisitNodes(node.ParameterList())
+	body := tx.Visitor().VisitNode(node.Body())
+	tx.exitClassElement()
+	method := node.AsMethodDeclaration()
+	return tx.finishClassElement(
+		tx.Factory().UpdateMethodDeclaration(method, result.modifiers, method.AsteriskToken, result.name, nil, nil, parameters, nil, nil, body),
+		node,
+	)
 }
 
 func (tx *esDecoratorTransformer) visitGetAccessorDeclaration(node *ast.Node) *ast.Node {
@@ -1925,45 +1911,34 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 		//   AssignmentExpression : LeftHandSideExpression `=` AssignmentExpression
 		//     1. If |LeftHandSideExpression| is neither an |ObjectLiteral| nor an |ArrayLiteral|, then
 		//        a. Let _lref_ be ? Evaluation of |LeftHandSideExpression|.
-		//        b. If IsAnonymousFunctionDefinition(|AssignmentExpression|) and IsIdentifierRef of
-		//           |LeftHandSideExpression| are both *true*, then
-		//           i. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
-		//              _lref_.[[ReferencedName]].
+		//        b. If IsAnonymousFunctionDefinition(|AssignmentExpression|) and IsIdentifierRef of |LeftHandSideExpression| are both *true*, then
+		//           i. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument _lref_.[[ReferencedName]].
 		//     ...
 		//
 		//   AssignmentExpression : LeftHandSideExpression `&&=` AssignmentExpression
 		//     ...
-		//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of
-		//        |LeftHandSideExpression| is *true*, then
-		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
-		//           _lref_.[[ReferencedName]].
+		//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of |LeftHandSideExpression| is *true*, then
+		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument _lref_.[[ReferencedName]].
 		//     ...
 		//
 		//   AssignmentExpression : LeftHandSideExpression `||=` AssignmentExpression
 		//     ...
-		//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of
-		//        |LeftHandSideExpression| is *true*, then
-		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
-		//           _lref_.[[ReferencedName]].
+		//     5. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of |LeftHandSideExpression| is *true*, then
+		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument _lref_.[[ReferencedName]].
 		//     ...
 		//
 		//   AssignmentExpression : LeftHandSideExpression `??=` AssignmentExpression
 		//     ...
-		//     4. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of
-		//        |LeftHandSideExpression| is *true*, then
-		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument
-		//           _lref_.[[ReferencedName]].
+		//     4. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true* and IsIdentifierRef of |LeftHandSideExpression| is *true*, then
+		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument _lref_.[[ReferencedName]].
 		//     ...
+
 		if isNamedEvaluation(ec, node) && isAnonymousClassNeedingAssignedName(bin.Right) {
 			node = transformNamedEvaluation(ec, node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
 			return tx.Visitor().VisitEachChild(node)
 		}
 
 		if ast.IsSuperProperty(bin.Left) && tx.classThis != nil && tx.classSuper != nil {
-			// super.x = ...
-			// super.x += ...
-			// super[x] = ...
-			// super[x] += ...
 			var setterName *ast.Expression
 			if ast.IsElementAccessExpression(bin.Left) {
 				setterName = tx.Visitor().VisitNode(bin.Left.AsElementAccessExpression().ArgumentExpression)
@@ -1971,6 +1946,10 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 				setterName = f.NewStringLiteralFromNode(bin.Left.AsPropertyAccessExpression().Name())
 			}
 			if setterName != nil {
+				// super.x = ...
+				// super.x += ...
+				// super[x] = ...
+				// super[x] += ...
 				expression := tx.Visitor().VisitNode(bin.Right)
 				if ast.IsCompoundAssignment(bin.OperatorToken.Kind) {
 					getterName := setterName
@@ -2039,8 +2018,6 @@ func (tx *esDecoratorTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 		operator = node.AsPostfixUnaryExpression().Operator
 		operandNode = node.AsPostfixUnaryExpression().Operand
 	}
-
-	debug.Assert(operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken)
 
 	if operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken {
 		operand := ast.SkipParentheses(operandNode)
@@ -2182,10 +2159,9 @@ func (tx *esDecoratorTransformer) visitAssignmentElement(node *ast.Node) *ast.No
 	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
 	//     ...
 	//     4. If |Initializer| is present and _value_ is *undefined*, then
-	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
-	//           |DestructuringAssignmentTarget| are both *true*, then
-	//           i. Let _v_ be ? NamedEvaluation of |Initializer| with argument
-	//              _lref_.[[ReferencedName]].
+	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of |DestructuringAssignmentTarget| are both *true*, then
+	//           i. Let _v_ be ? NamedEvaluation of |Initializer| with argument _lref_.[[ReferencedName]].
+	//     ...
 	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		f := tx.Factory()
 		bin := node.AsBinaryExpression()
@@ -2222,15 +2198,17 @@ func (tx *esDecoratorTransformer) visitArrayAssignmentElement(node *ast.Node) *a
 }
 
 func (tx *esDecoratorTransformer) visitAssignmentPropertyNode(node *ast.Node) *ast.Node {
+	// AssignmentProperty : PropertyName `:` AssignmentElement
+	// AssignmentElement : DestructuringAssignmentTarget Initializer?
+
 	// 13.15.5.6 RS: KeyedDestructuringAssignmentEvaluation
-	//   AssignmentProperty : PropertyName `:` AssignmentElement
 	//   AssignmentElement : DestructuringAssignmentTarget Initializer?
 	//     ...
 	//     3. If |Initializer| is present and _v_ is *undefined*, then
-	//        a. If IsAnonymousFunctionDefinition(|Initializer|) and IsIdentifierRef of
-	//           |DestructuringAssignmentTarget| are both *true*, then
-	//           i. Let _rhsValue_ be ? NamedEvaluation of |Initializer| with argument
-	//              _lref_.[[ReferencedName]].
+	//        a. If IsAnonymousfunctionDefinition(|Initializer|) and IsIdentifierRef of |DestructuringAssignmentTarget| are both *true*, then
+	//           i. Let _rhsValue_ be ? NamedEvaluation of |Initializer| with argument _lref_.[[ReferencedName]].
+	//     ...
+
 	f := tx.Factory()
 	pa := node.AsPropertyAssignment()
 	name := tx.Visitor().VisitNode(pa.Name())
@@ -2246,12 +2224,15 @@ func (tx *esDecoratorTransformer) visitAssignmentPropertyNode(node *ast.Node) *a
 }
 
 func (tx *esDecoratorTransformer) visitShorthandAssignmentProperty(node *ast.Node) *ast.Node {
+	// AssignmentProperty : IdentifierReference Initializer?
+
 	// 13.15.5.3 RS: PropertyDestructuringAssignmentEvaluation
 	//   AssignmentProperty : IdentifierReference Initializer?
 	//     ...
 	//     4. If |Initializer?| is present and _v_ is *undefined*, then
 	//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
 	//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _P_.
+	//     ...
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer), "")
 	}
@@ -2299,6 +2280,7 @@ func (tx *esDecoratorTransformer) visitExportAssignment(node *ast.Node) *ast.Nod
 	//   ExportDeclaration : `export` `default` AssignmentExpression `;`
 	//     1. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true*, then
 	//        a. Let _value_ be ? NamedEvaluation of |AssignmentExpression| with argument `"default"`.
+	//     ...
 	return tx.visitNamedEvaluationSite(node, node.Expression())
 }
 
@@ -2307,6 +2289,7 @@ func (tx *esDecoratorTransformer) visitParenthesizedExpression(node *ast.Node, d
 	//   ParenthesizedExpression : `(` Expression `)`
 	//     ...
 	//     2. Return ? NamedEvaluation of |Expression| with argument _name_.
+
 	f := tx.Factory()
 	pe := node.AsParenthesizedExpression()
 	var expression *ast.Node
@@ -2316,6 +2299,18 @@ func (tx *esDecoratorTransformer) visitParenthesizedExpression(node *ast.Node, d
 		expression = tx.Visitor().VisitNode(pe.Expression)
 	}
 	return f.UpdateParenthesizedExpression(pe, expression)
+}
+
+func (tx *esDecoratorTransformer) visitPartiallyEmittedExpression(node *ast.Node, discarded bool) *ast.Node {
+	// Emulates 8.4.5 RS: NamedEvaluation
+	pe := node.AsPartiallyEmittedExpression()
+	var expression *ast.Node
+	if discarded {
+		expression = tx.discardedVisitor.VisitNode(pe.Expression)
+	} else {
+		expression = tx.Visitor().VisitNode(pe.Expression)
+	}
+	return tx.Factory().UpdatePartiallyEmittedExpression(pe, expression)
 }
 
 // prependExpressions prepends a list of expressions before a target expression, preserving
