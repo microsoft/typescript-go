@@ -1769,7 +1769,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			if codePointIsLowSurrogate(nextCodePoint) {
 				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
 			}
-			s.pos = savedPos
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
