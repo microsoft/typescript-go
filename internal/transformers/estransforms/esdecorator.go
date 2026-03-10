@@ -107,7 +107,9 @@ type esDecoratorTransformer struct {
 	classThis                                  *ast.IdentifierNode
 	classSuper                                 *ast.IdentifierNode
 	pendingExpressions                         []*ast.Expression
+	outerThis                                  *ast.IdentifierNode
 	shouldTransformPrivateStaticElementsInFile bool
+	outerThisVisitor                           *ast.NodeVisitor
 	discardedVisitor                           *ast.NodeVisitor
 	modifierVisitor                            *ast.NodeVisitor
 	exportStrippingModifierVisitor             *ast.NodeVisitor
@@ -122,6 +124,7 @@ func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformer
 	tx := &esDecoratorTransformer{compilerOptions: opts.CompilerOptions}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	ec := tx.EmitContext()
+	tx.outerThisVisitor = ec.NewNodeVisitor(tx.outerThisVisit)
 	tx.discardedVisitor = ec.NewNodeVisitor(tx.discardedValueVisit)
 	tx.modifierVisitor = ec.NewNodeVisitor(tx.modifierVisitorVisit)
 	tx.exportStrippingModifierVisitor = ec.NewNodeVisitor(tx.exportStrippingModifierVisit)
@@ -263,6 +266,21 @@ func (tx *esDecoratorTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 		tx.shouldTransformPrivateStaticElementsInFile = false
 	}
 	return visited
+}
+
+func (tx *esDecoratorTransformer) outerThisVisit(n *ast.Node) *ast.Node {
+	if n.SubtreeFacts()&ast.SubtreeContainsLexicalThis == 0 && n.Kind != ast.KindThisKeyword {
+		return n
+	}
+	if n.Kind == ast.KindThisKeyword {
+		if tx.outerThis == nil {
+			tx.outerThis = tx.Factory().NewUniqueNameEx("_outerThis", printer.AutoGenerateOptions{
+				Flags: printer.GeneratedIdentifierFlagsOptimistic,
+			})
+		}
+		return tx.outerThis
+	}
+	return tx.outerThisVisitor.VisitEachChild(n)
 }
 
 func (tx *esDecoratorTransformer) shouldVisitNode(node *ast.Node) bool {
@@ -686,33 +704,20 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		// container and transform it in the expression. This ensures we use the correct `this` in the resulting
 		// class `static` block. We don't use substitution here because the size of the tree we are visiting
 		// is likely to be small and doesn't justify the complexity of introducing substitution.
-		var outerThis *ast.IdentifierNode
+		tx.outerThis = nil
 		for _, expr := range tx.pendingExpressions {
 			// If a pending expression contains lexical `this`, capture it
 			if expr.SubtreeFacts()&ast.SubtreeContainsLexicalThis != 0 {
-				var thisVisitor *ast.NodeVisitor
-				thisVisitor = ec.NewNodeVisitor(func(n *ast.Node) *ast.Node {
-					if n.SubtreeFacts()&ast.SubtreeContainsLexicalThis == 0 && n.Kind != ast.KindThisKeyword {
-						return n
-					}
-					if n.Kind == ast.KindThisKeyword {
-						if outerThis == nil {
-							outerThis = f.NewUniqueNameEx("_outerThis", printer.AutoGenerateOptions{
-								Flags: printer.GeneratedIdentifierFlagsOptimistic,
-							})
-							classDefinitionStatements = append(
-								[]*ast.Statement{tx.createLet(outerThis, f.NewThisExpression())},
-								classDefinitionStatements...,
-							)
-						}
-						return outerThis
-					}
-					return thisVisitor.VisitEachChild(n)
-				})
-				expr = thisVisitor.VisitNode(expr)
+				expr = tx.outerThisVisitor.VisitNode(expr)
 			}
 			statement := f.NewExpressionStatement(expr)
 			leadingBlockStatements = append(leadingBlockStatements, statement)
+		}
+		if tx.outerThis != nil {
+			classDefinitionStatements = append(
+				[]*ast.Statement{tx.createLet(tx.outerThis, f.NewThisExpression())},
+				classDefinitionStatements...,
+			)
 		}
 		tx.pendingExpressions = nil
 	}
