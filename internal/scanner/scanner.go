@@ -1132,6 +1132,7 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 						} else if ch == ')' && groupDepth != 0 {
 							groupDepth--
 						} else if ch == ')' || ch == ']' || ch == '}' {
+							// We encountered an unbalanced bracket outside a character class. Treat this position as the end of regex.
 							break
 						}
 					}
