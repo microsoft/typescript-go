@@ -951,6 +951,11 @@ func (p *regExpParser) scanSourceCharacter() string {
 	if p.pos() >= p.end {
 		return ""
 	}
+	if !p.anyUnicodeMode {
+		ch := p.text()[p.pos()]
+		p.incPos(1)
+		return string(ch)
+	}
 	ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
 	if size == 0 || ch == utf8.RuneError {
 		return ""
