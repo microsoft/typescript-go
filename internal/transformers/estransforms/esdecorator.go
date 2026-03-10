@@ -1557,7 +1557,7 @@ func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 }
 
 func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.Node {
-	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.Initializer()) {
+	if isNamedEvaluationAnd(tx.EmitContext(), node, isAnonymousClassNeedingAssignedName) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.Initializer()), "")
 	}
 
@@ -1780,7 +1780,7 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 //	  ...
 func (tx *esDecoratorTransformer) visitParameterDeclaration(node *ast.ParameterDeclaration) *ast.Node {
 	paramNode := node.AsNode()
-	if isNamedEvaluation(tx.EmitContext(), paramNode) && isAnonymousClassNeedingAssignedName(paramNode.Initializer()) {
+	if isNamedEvaluationAnd(tx.EmitContext(), paramNode, isAnonymousClassNeedingAssignedName) {
 		paramNode = transformNamedEvaluation(tx.EmitContext(), paramNode, canIgnoreEmptyStringLiteralInAssignedName(paramNode.Initializer()), "")
 		node = paramNode.AsParameterDeclaration()
 	}
@@ -1851,17 +1851,13 @@ func (tx *esDecoratorTransformer) visitParameterDeclaration(node *ast.ParameterD
 //	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
 //	  ...
 func (tx *esDecoratorTransformer) visitNamedEvaluationSite(node *ast.Node, classExpr *ast.Node) *ast.Node {
-	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(classExpr) {
+	if isNamedEvaluationAnd(tx.EmitContext(), node, isAnonymousClassNeedingAssignedName) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(classExpr), "")
 	}
 	return tx.Visitor().VisitEachChild(node)
 }
 
 func isAnonymousClassNeedingAssignedName(node *ast.Node) bool {
-	if node == nil {
-		return false
-	}
-	node = ast.SkipOuterExpressions(node, ast.OEKAll)
 	return ast.IsClassExpression(node) && node.Name() == nil && isDecoratedClassLike(node)
 }
 
@@ -1931,7 +1927,7 @@ func (tx *esDecoratorTransformer) visitBinaryExpression(node *ast.Node, discarde
 		//        a. Let _rval_ be ? NamedEvaluation of |AssignmentExpression| with argument _lref_.[[ReferencedName]].
 		//     ...
 
-		if isNamedEvaluation(ec, node) && isAnonymousClassNeedingAssignedName(bin.Right) {
+		if isNamedEvaluationAnd(ec, node, isAnonymousClassNeedingAssignedName) {
 			node = transformNamedEvaluation(ec, node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
 			return tx.Visitor().VisitEachChild(node)
 		}
@@ -2163,7 +2159,7 @@ func (tx *esDecoratorTransformer) visitAssignmentElement(node *ast.Node) *ast.No
 	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		f := tx.Factory()
 		bin := node.AsBinaryExpression()
-		if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(bin.Right) {
+		if isNamedEvaluationAnd(tx.EmitContext(), node, isAnonymousClassNeedingAssignedName) {
 			node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(bin.Right), "")
 			bin = node.AsBinaryExpression()
 		}
@@ -2231,7 +2227,7 @@ func (tx *esDecoratorTransformer) visitShorthandAssignmentProperty(node *ast.Nod
 	//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
 	//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _P_.
 	//     ...
-	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer) {
+	if isNamedEvaluationAnd(tx.EmitContext(), node, isAnonymousClassNeedingAssignedName) {
 		node = transformNamedEvaluation(tx.EmitContext(), node, canIgnoreEmptyStringLiteralInAssignedName(node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer), "")
 	}
 	return tx.Visitor().VisitEachChild(node)
