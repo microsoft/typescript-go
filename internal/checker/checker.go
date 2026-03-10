@@ -246,13 +246,6 @@ type NonExistentPropertyKey struct {
 	isUncheckedJS  bool
 }
 
-// IndexSymbolKey
-
-type IndexSymbolKey struct {
-	objectType *Type
-	keyType    *Type
-}
-
 // FlowLoopKey
 
 type FlowLoopKey struct {
@@ -636,7 +629,6 @@ type Checker struct {
 	substitutionTypes                           map[SubstitutionTypeKey]*Type
 	reverseMappedCache                          map[ReverseMappedTypeKey]*Type
 	reverseHomomorphicMappedCache               map[ReverseMappedTypeKey]*Type
-	indexSymbols                                map[IndexSymbolKey]*ast.Symbol
 	iterationTypesCache                         map[IterationTypesKey]IterationTypes
 	markerTypes                                 collections.Set[*Type]
 	undefinedSymbol                             *ast.Symbol
@@ -31024,36 +31016,30 @@ func (c *Checker) getApplicableIndexInfos(t *Type, keyType *Type) []*IndexInfo {
 }
 
 func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
-	key := IndexSymbolKey{objectType: t, keyType: keyType}
-	if cached := c.indexSymbols[key]; cached != nil {
-		return cached
-	}
 	if info := c.getApplicableIndexInfo(t, keyType); info != nil && info != c.anyBaseTypeIndexInfo {
-		var declarations []*ast.Node
-		if info.declaration != nil {
-			declarations = []*ast.Node{info.declaration}
-		} else {
-			for _, info := range c.getIndexInfosOfType(t) {
-				if info.declaration != nil && c.isApplicableIndexType(keyType, info.keyType) {
-					declarations = append(declarations, info.declaration)
+		if info.indexSymbol == nil {
+			var declarations []*ast.Node
+			if info.declaration != nil {
+				declarations = []*ast.Node{info.declaration}
+			} else {
+				for _, info := range c.getIndexInfosOfType(t) {
+					if info.declaration != nil && c.isApplicableIndexType(keyType, info.keyType) {
+						declarations = append(declarations, info.declaration)
+					}
 				}
 			}
+			if len(declarations) != 0 {
+				symbol := c.newSymbol(ast.SymbolFlagsProperty, ast.InternalSymbolNameIndex)
+				symbol.CheckFlags |= ast.CheckFlagsIndexSymbol
+				symbol.Declarations = declarations
+				symbol.ValueDeclaration = declarations[0]
+				symbol.Parent = t.symbol
+				links := c.valueSymbolLinks.Get(symbol)
+				links.resolvedType = info.valueType
+				info.indexSymbol = symbol
+			}
 		}
-		if len(declarations) == 0 {
-			return nil
-		}
-		symbol := c.newSymbol(ast.SymbolFlagsProperty, ast.InternalSymbolNameIndex)
-		symbol.CheckFlags |= ast.CheckFlagsIndexSymbol
-		symbol.Declarations = declarations
-		symbol.ValueDeclaration = declarations[0]
-		symbol.Parent = t.symbol
-		links := c.valueSymbolLinks.Get(symbol)
-		links.resolvedType = info.valueType
-		if c.indexSymbols == nil {
-			c.indexSymbols = make(map[IndexSymbolKey]*ast.Symbol)
-		}
-		c.indexSymbols[key] = symbol
-		return symbol
+		return info.indexSymbol
 	}
 	return nil
 }
