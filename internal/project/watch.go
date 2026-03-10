@@ -176,8 +176,13 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 		if includeLib {
 			globs = append(globs, getRecursiveGlobPattern(string(libDirectoryPath)))
 		}
-		for dir := range nodeModulesDirectories.Keys() {
-			globs = append(globs, getRecursiveGlobPattern(string(dir)))
+		if nodeModulesDirectories.Len() > 0 {
+			nodeModulesGlobs := make([]string, 0, nodeModulesDirectories.Len())
+			for dir := range nodeModulesDirectories.Keys() {
+				nodeModulesGlobs = append(nodeModulesGlobs, getRecursiveGlobPattern(string(dir)))
+			}
+			slices.Sort(nodeModulesGlobs)
+			globs = append(globs, nodeModulesGlobs...)
 		}
 		if externalDirectories.Len() > 0 {
 			externalDirStrings := make([]string, 0, externalDirectories.Len())

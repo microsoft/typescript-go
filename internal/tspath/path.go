@@ -993,6 +993,9 @@ func ContainsPath(parent string, child string, options ComparePathsOptions) bool
 // Since Path values are already rooted, reduced, and case-canonicalized,
 // this is a simple string prefix check.
 func (p Path) ContainsPath(child Path) bool {
+	if len(p) == 0 {
+		return false
+	}
 	return p == child || len(child) > len(p) && strings.HasPrefix(string(child), string(p)) && (p[len(p)-1] == '/' || child[len(p)] == '/')
 }
 
