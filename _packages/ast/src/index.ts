@@ -13,3 +13,4 @@ export * from "./is.ts";
 export * from "./nodes.ts";
 export * from "./scanner.ts";
 export * from "./utils.ts";
+export * from "./visitor.ts";

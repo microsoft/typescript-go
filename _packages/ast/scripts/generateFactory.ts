@@ -758,6 +758,65 @@ for (const def of factoryDefs) {
     emit("");
 }
 
+// Update functions: take original node + child params, return original if nothing changed
+for (const def of factoryDefs) {
+    const { interfaceName, factoryName, params } = def;
+    const updateName = `update${interfaceName}`;
+
+    // Only child params are taken as arguments to update
+    const childParams = params.filter(p => classifyProperty(p) !== "data");
+    if (childParams.length === 0) continue;
+
+    // Build param list for the update function: node + child params
+    const updateParamList: string[] = [`node: ${interfaceName}`];
+    for (const p of childParams) {
+        const safe = safeParamName(p.name);
+        const elemTypeNode = getNodeArrayElementType(p.typeNode);
+        if (elemTypeNode) {
+            const elemText = printElementType(elemTypeNode, p.substitutions);
+            if (p.optional) {
+                updateParamList.push(`${safe}: readonly ${elemText}[] | undefined`);
+            }
+            else {
+                updateParamList.push(`${safe}: readonly ${elemText}[]`);
+            }
+        }
+        else {
+            let typeText = printType(p);
+            if (p.optional && !typeText.includes("undefined")) {
+                typeText += " | undefined";
+            }
+            updateParamList.push(`${safe}: ${typeText}`);
+        }
+    }
+
+    emit(`export function ${updateName}(${updateParamList.join(", ")}): ${interfaceName} {`);
+
+    // Build identity check
+    const checks: string[] = [];
+    for (const p of childParams) {
+        const safe = safeParamName(p.name);
+        checks.push(`node.${p.name} === ${safe}`);
+    }
+    emit(`    if (${checks.join(" && ")}) return node;`);
+
+    // Call createXxx with all params (child from args, data from node)
+    const createArgs: string[] = [];
+    for (const p of params) {
+        const safe = safeParamName(p.name);
+        const isChild = classifyProperty(p) !== "data";
+        if (isChild) {
+            createArgs.push(safe);
+        }
+        else {
+            createArgs.push(`node.${p.name}`);
+        }
+    }
+    emit(`    return ${factoryName}(${createArgs.join(", ")});`);
+    emit("}");
+    emit("");
+}
+
 // ---------------------------------------------------------------------------
 // Step 7: Write output
 // ---------------------------------------------------------------------------
