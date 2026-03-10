@@ -1,0 +1,106 @@
+package ls
+
+import (
+	"context"
+
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
+)
+
+func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
+	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
+	position := l.converters.LineAndCharacterToPosition(sourceFile, params.Position)
+	token := astnav.FindPrecedingToken(sourceFile, int(position))
+
+	if token == nil || token.Parent.Kind == ast.KindSourceFile {
+		return lsproto.LinkedEditingRangeResponse{}, nil
+	}
+
+	// allow the client to match more than valid tag names. This allows linked editing when typing is in progress or tag name is incomplete
+	jsxTagWordPattern := "[a-zA-Z0-9:\\-\\._$]*"
+
+	if ast.IsJsxFragment(token.Parent.Parent) {
+		fragment := token.Parent.Parent.AsJsxFragment()
+		openFragment := fragment.OpeningFragment
+		closeFragment := fragment.ClosingFragment
+		if ast.ContainsParseError(openFragment) || ast.ContainsParseError(closeFragment) {
+			return lsproto.LinkedEditingRangeResponse{}, nil
+		}
+
+		openPos := core.TextPos(astnav.GetStartOfNode(openFragment.AsNode(), sourceFile, false) + 1)   // "<".length
+		closePos := core.TextPos(astnav.GetStartOfNode(closeFragment.AsNode(), sourceFile, false) + 2) // "</".length
+
+		// only allows linked editing right after opening bracket: <| ></| >
+		if (position != openPos) && (position != closePos) {
+			return lsproto.LinkedEditingRangeResponse{}, nil
+		}
+
+		openLineChar := l.converters.PositionToLineAndCharacter(sourceFile, openPos)
+		closeLineChar := l.converters.PositionToLineAndCharacter(sourceFile, closePos)
+		return lsproto.LinkedEditingRangeResponse{
+			LinkedEditingRanges: &lsproto.LinkedEditingRanges{
+				Ranges: []lsproto.Range{
+					{Start: openLineChar, End: openLineChar}, // only return start position for opening tag since the length of a fragment is always 3 and it is unlikely user will type in the middle of a fragment tag
+					{Start: closeLineChar, End: closeLineChar},
+				},
+				WordPattern: &jsxTagWordPattern,
+			},
+		}, nil
+	} else {
+		// determines if the cursor is in an element tag
+		tag := ast.FindAncestor(token.Parent, func(n *ast.Node) bool {
+			if ast.IsJsxOpeningElement(n) || ast.IsJsxClosingElement(n) {
+				return true
+			}
+			return false
+		})
+		if tag == nil {
+			return lsproto.LinkedEditingRangeResponse{}, nil
+		}
+		debug.Assert(ast.IsJsxOpeningElement(tag) || ast.IsJsxClosingElement(tag), "tag should be opening or closing element")
+
+		jsxElement := tag.Parent.AsJsxElement()
+		openTag := jsxElement.OpeningElement
+		closeTag := jsxElement.ClosingElement
+
+		openTagNameStart := core.TextPos(astnav.GetStartOfNode(openTag.TagName().AsNode(), sourceFile, false))
+		openTagNameEnd := core.TextPos(openTag.TagName().End())
+		closeTagNameStart := core.TextPos(astnav.GetStartOfNode(closeTag.TagName().AsNode(), sourceFile, false))
+		closeTagNameEnd := core.TextPos(closeTag.TagName().End())
+		// do not return linked cursors if tags are not well-formed
+		if openTagNameStart == core.TextPos(astnav.GetStartOfNode(openTag.AsNode(), sourceFile, false)) || closeTagNameStart == core.TextPos(astnav.GetStartOfNode(closeTag.AsNode(), sourceFile, false)) ||
+			openTagNameEnd == core.TextPos(openTag.End()) || closeTagNameEnd == core.TextPos(closeTag.End()) {
+			return lsproto.LinkedEditingRangeResponse{}, nil
+		}
+		// only return linked cursors if the cursor is within a tag name
+		if !(openTagNameStart <= position && position <= openTagNameEnd || closeTagNameStart <= position && position <= closeTagNameEnd) {
+			return lsproto.LinkedEditingRangeResponse{}, nil
+		}
+
+		// only return linked cursors if text in both tags is identical
+		openingTagText := scanner.GetTextOfNode(openTag.TagName().AsNode())
+		if openingTagText != scanner.GetTextOfNode(closeTag.TagName().AsNode()) {
+			return lsproto.LinkedEditingRangeResponse{}, nil
+		}
+
+		return lsproto.LinkedEditingRangeResponse{
+			LinkedEditingRanges: &lsproto.LinkedEditingRanges{
+				Ranges: []lsproto.Range{
+					{
+						Start: l.converters.PositionToLineAndCharacter(sourceFile, openTagNameStart),
+						End:   l.converters.PositionToLineAndCharacter(sourceFile, openTagNameEnd),
+					},
+					{
+						Start: l.converters.PositionToLineAndCharacter(sourceFile, closeTagNameStart),
+						End:   l.converters.PositionToLineAndCharacter(sourceFile, closeTagNameEnd),
+					},
+				},
+				WordPattern: &jsxTagWordPattern,
+			},
+		}, nil
+	}
+}

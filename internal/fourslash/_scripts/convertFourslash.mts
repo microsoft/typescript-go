@@ -251,6 +251,10 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return parseBaselineRenameArgs(func.text, callExpression.arguments);
                 case "baselineInlayHints":
                     return parseBaselineInlayHints(callExpression.arguments);
+                case "baselineLinkedEditing":
+                    return [{ kind: "verifyBaselineLinkedEditing" }];
+                case "linkedEditing":
+                    return parseVerifyLinkedEditing(callExpression.arguments);
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
@@ -1527,6 +1531,14 @@ function parseBaselineInlayHints(args: readonly ts.Expression[]): [VerifyBaselin
         kind: "verifyBaselineInlayHints",
         span: "nil /*span*/", // Only supporteed manually
         preferences: preferences ? preferences : "nil /*preferences*/",
+    }];
+}
+
+function parseVerifyLinkedEditing(args: readonly ts.Expression[]): [VerifyLinkedEditingCmd] | undefined {
+    var ranges = "map[string][]lsproto.Range" + args[0].getText().replaceAll("undefined", "nil");
+    return [{
+        kind: "verifyLinkedEditing",
+        ranges,
     }];
 }
 
@@ -3156,6 +3168,14 @@ interface VerifyRenameInfoCmd {
     preferences: string;
 }
 
+interface VerifyBaselineLinkedEditingCmd {
+    kind: "verifyBaselineLinkedEditing";
+}
+interface VerifyLinkedEditingCmd {
+    kind: "verifyLinkedEditing";
+    ranges: string;
+}
+
 interface VerifyDiagnosticsCmd {
     kind: "verifyDiagnostics";
     arg: string;
@@ -3281,6 +3301,8 @@ type Cmd =
     | VerifyOrganizeImportsCmd
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
+    | VerifyBaselineLinkedEditingCmd
+    | VerifyLinkedEditingCmd
     | VerifyNavToCmd
     | VerifyNavTreeCmd
     | VerifyBaselineInlayHintsCmd
@@ -3578,6 +3600,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyBaselineSelectionRanges(t)`;
         case "verifyBaselineCallHierarchy":
             return `f.VerifyBaselineCallHierarchy(t)`;
+        case "verifyLinkedEditing":
+            return `f.VerifyLinkedEditing(t, ${cmd.ranges})`;
         case "goTo":
             return generateGoToCommand(cmd);
         case "edit":
@@ -3600,6 +3624,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
         case "verifyBaselineInlayHints":
             return generateBaselineInlayHints(cmd);
+        case "verifyBaselineLinkedEditing":
+            return `f.VerifyBaselineLinkedEditing(t)`;
         case "verifyImportFixAtPosition":
             return generateImportFixAtPosition(cmd);
         case "verifyImportFixModuleSpecifiers":
