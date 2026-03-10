@@ -760,8 +760,8 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		)
 	}
 
-	// Emit member info variable declarations
-	// The reference implementation emits static member vars first, then non-static
+	// Used in class definition steps 7, 8, 12, and construction.
+	// Emit member info variable declarations; the reference implementation emits static member vars first, then non-static.
 	if ci.memberInfos.Size() > 0 {
 		classDefinitionStatements = append(classDefinitionStatements, tx.emitMemberInfoDeclarations(ci, true /*isStatic*/)...)
 		classDefinitionStatements = append(classDefinitionStatements, tx.emitMemberInfoDeclarations(ci, false /*isStatic*/)...)
@@ -895,7 +895,9 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 			}
 		}
 
+		// add the leading `static {}` block
 		if leadingStaticBlock != nil {
+			// add the `static {}` block after any existing NamedEvaluation helper block, if one exists.
 			newMembers = append(newMembers, members.Nodes[:existingNamedEvaluationHelperBlockIndex+1]...)
 			newMembers = append(newMembers, leadingStaticBlock)
 			newMembers = append(newMembers, members.Nodes[existingNamedEvaluationHelperBlockIndex+1:]...)
@@ -903,10 +905,12 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 			newMembers = append(newMembers, members.Nodes...)
 		}
 
+		// append the synthetic constructor, if necessary
 		if syntheticConstructor != nil {
 			newMembers = append(newMembers, syntheticConstructor)
 		}
 
+		// append a trailing `static {}` block, if necessary
 		if trailingStaticBlock != nil {
 			newMembers = append(newMembers, trailingStaticBlock)
 		}
@@ -1339,20 +1343,30 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			propertyNameExpr,
 			ast.IsStatic(member),
 			member.Name() != nil && ast.IsPrivateIdentifier(member.Name()),
+			// 15.7.3 CreateDecoratorAccessObject (kind, name)
+			// 2. If _kind_ is ~field~, ~method~, ~accessor~, or ~getter~, then ...
 			ast.IsPropertyDeclaration(member) || ast.IsGetAccessorDeclaration(member) || ast.IsMethodDeclaration(member),
+			// 3. If _kind_ is ~field~, ~accessor~, or ~setter~, then ...
 			ast.IsPropertyDeclaration(member) || ast.IsSetAccessorDeclaration(member),
 			ci.metadataReference,
 		)
 
-		// produces (public elements):
-		//   __esDecorate(this, null, _member_decorators, { kind: "method"|"getter"|"setter", name: "...", ... }, _extraInitializers);
-		//
-		// produces (private elements):
-		//   __esDecorate(this, _member_descriptor = { value()|get()|set() { ... } }, _member_decorators, { kind: "method"|"getter"|"setter", name: "...", ... }, _extraInitializers);
-		//
-		// produces (fields):
-		//   __esDecorate(null, null, _member_decorators, { kind: "field"|"accessor", name: "...", ... }, _member_initializers, _member_extraInitializers);
 		if ast.IsMethodOrAccessor(member) {
+			// produces (public elements):
+			//   __esDecorate(this, null, _static_member_decorators, { kind: "method", name: "...", static: true, private: false, access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(this, null, _member_decorators, { kind: "method", name: "...", static: false, private: false, access: { ... } }, _instanceExtraInitializers);
+			//   __esDecorate(this, null, _static_member_decorators, { kind: "getter", name: "...", static: true, private: false, access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(this, null, _member_decorators, { kind: "getter", name: "...", static: false, private: false, access: { ... } }, _instanceExtraInitializers);
+			//   __esDecorate(this, null, _static_member_decorators, { kind: "setter", name: "...", static: true, private: false, access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(this, null, _member_decorators, { kind: "setter", name: "...", static: false, private: false, access: { ... } }, _instanceExtraInitializers);
+			//
+			// produces (private elements):
+			//   __esDecorate(this, _static_member_descriptor = { value() { ... } }, _static_member_decorators, { kind: "method", name: "...", static: true, private: true, access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(this, _member_descriptor = { value() { ... } }, _member_decorators, { kind: "method", name: "...", static: false, private: true, access: { ... } }, _instanceExtraInitializers);
+			//   __esDecorate(this, _static_member_descriptor = { get() { ... } }, _static_member_decorators, { kind: "getter", name: "...", static: true, private: true, access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(this, _member_descriptor = { get() { ... } }, _member_decorators, { kind: "getter", name: "...", static: false, private: true, access: { ... } }, _instanceExtraInitializers);
+			//   __esDecorate(this, _static_member_descriptor = { set() { ... } }, _static_member_decorators, { kind: "setter", name: "...", static: true, private: true, access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(this, _member_descriptor = { set() { ... } }, _member_decorators, { kind: "setter", name: "...", static: false, private: true, access: { ... } }, _instanceExtraInitializers);
 			methodExtraInitializersName := ci.instanceMethodExtraInitializersName
 			if ast.IsStatic(member) {
 				methodExtraInitializersName = ci.staticMethodExtraInitializersName
@@ -1411,6 +1425,9 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 				descriptorArg = f.NewToken(ast.KindNullKeyword)
 			}
 
+			// produces:
+			//   __esDecorate(null, null, _static_member_decorators, { kind: "field", name: "...", static: true, private: ..., access: { ... } }, _staticExtraInitializers);
+			//   __esDecorate(null, null, _member_decorators, { kind: "field", name: "...", static: false, private: ..., access: { ... } }, _instanceExtraInitializers);
 			esDecorateExpr := f.NewESDecorateHelper(
 				ctorArg,
 				descriptorArg,
@@ -2476,6 +2493,10 @@ func (tx *esDecoratorTransformer) createSetAccessorDescriptorObject(member *ast.
 // Creates a pseudo-PropertyDescriptor object used when decorating a private auto-accessor PropertyDeclaration.
 // The descriptor contains get/set methods that access the generated backing field.
 func (tx *esDecoratorTransformer) createAccessorPropertyDescriptorObject(member *ast.Node, _ *ast.ModifierList) *ast.Expression {
+	//  {
+	//      get() { return this.${privateName}; },
+	//      set(value) { this.${privateName} = value; },
+	//  }
 	f := tx.Factory()
 	backingFieldName := f.NewGeneratedPrivateNameForNodeEx(member.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"})
 	return f.NewObjectLiteralExpression(
