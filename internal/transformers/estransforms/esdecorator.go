@@ -306,8 +306,10 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitClassDeclaration(node.AsClassDeclaration())
 	case ast.KindClassExpression:
 		return tx.visitClassExpression(node.AsClassExpression())
+	case ast.KindParameter:
+		return tx.visitParameterDeclaration(node.AsParameterDeclaration())
 	// Support NamedEvaluation to ensure the correct class name for class expressions.
-	case ast.KindParameter, ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindBindingElement:
+	case ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindBindingElement:
 		return tx.visitNamedEvaluationSite(node, node.Initializer())
 	case ast.KindBinaryExpression:
 		return tx.visitBinaryExpression(node, false /*discarded*/)
@@ -1775,13 +1777,7 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 	return tx.Visitor().VisitEachChild(node)
 }
 
-// visitNamedEvaluationSite handles nodes that may contain a decorated class assigned
-// via named evaluation. The classExpr parameter is the expression to check (usually
-// node.Initializer() or node.Expression()).
-//
-// Applicable spec sections:
-//
-// 8.6.3 RS: IteratorBindingInitialization (ParameterDeclaration, BindingElement)
+// 8.6.3 RS: IteratorBindingInitialization
 //
 //	SingleNameBinding : BindingIdentifier Initializer?
 //	  ...
@@ -1790,7 +1786,7 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 //	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
 //	  ...
 //
-// 14.3.3.3 RS: KeyedBindingInitialization (ParameterDeclaration, BindingElement)
+// 14.3.3.3 RS: KeyedBindingInitialization
 //
 //	SingleNameBinding : BindingIdentifier Initializer?
 //	  ...
@@ -1798,6 +1794,36 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 //	     a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
 //	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
 //	  ...
+func (tx *esDecoratorTransformer) visitParameterDeclaration(node *ast.ParameterDeclaration) *ast.Node {
+	paramNode := node.AsNode()
+	if isNamedEvaluation(tx.EmitContext(), paramNode) && isAnonymousClassNeedingAssignedName(paramNode.Initializer()) {
+		paramNode = transformNamedEvaluation(tx.EmitContext(), paramNode, canIgnoreEmptyStringLiteralInAssignedName(paramNode.Initializer()), "")
+		node = paramNode.AsParameterDeclaration()
+	}
+
+	updated := tx.Factory().UpdateParameterDeclaration(
+		node,
+		nil, // modifiers - strip all modifiers (including decorators)
+		node.DotDotDotToken,
+		tx.Visitor().VisitNode(node.Name()),
+		nil, // questionToken
+		nil, // type
+		tx.Visitor().VisitNode(node.Initializer),
+	)
+	if updated != paramNode {
+		// While we emit the source map for the node after skipping decorators and modifiers,
+		// we need to emit the comments for the original range.
+		tx.EmitContext().SetCommentRange(updated, paramNode.Loc)
+		newLoc := transformers.MoveRangePastModifiers(paramNode)
+		updated.Loc = newLoc
+		tx.EmitContext().SetSourceMapRange(updated, newLoc)
+		tx.EmitContext().SetEmitFlags(updated.Name(), printer.EFNoTrailingSourceMap)
+	}
+	return updated
+}
+
+// visitNamedEvaluationSite replaces Strada's visitPropertyAssignment, visitVariableDeclaration,
+// and visitBindingElement, which all share the same logic.
 //
 // 13.2.5.5 RS: PropertyDefinitionEvaluation (PropertyAssignment)
 //
@@ -1821,6 +1847,24 @@ func (tx *esDecoratorTransformer) visitElementAccessExpression(node *ast.Node) *
 //	  ...
 //	  3. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
 //	     a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//	  ...
+//
+// 8.6.3 RS: IteratorBindingInitialization (BindingElement)
+//
+//	SingleNameBinding : BindingIdentifier Initializer?
+//	  ...
+//	  5. If |Initializer| is present and _v_ is *undefined*, then
+//	     a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
+//	  ...
+//
+// 14.3.3.3 RS: KeyedBindingInitialization (BindingElement)
+//
+//	SingleNameBinding : BindingIdentifier Initializer?
+//	  ...
+//	  4. If |Initializer| is present and _v_ is *undefined*, then
+//	     a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
+//	        i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _bindingId_.
 //	  ...
 func (tx *esDecoratorTransformer) visitNamedEvaluationSite(node *ast.Node, classExpr *ast.Node) *ast.Node {
 	if isNamedEvaluation(tx.EmitContext(), node) && isAnonymousClassNeedingAssignedName(classExpr) {
