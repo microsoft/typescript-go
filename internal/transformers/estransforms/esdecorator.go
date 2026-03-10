@@ -1548,7 +1548,7 @@ func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 				// If we tried to inject the pending initializers into the current block, we might run into
 				// variable name collisions due to sharing this blocks scope. To avoid this, we inject a new
 				// static block that contains the pending initializers that precedes this block.
-				stmts := []*ast.Statement{}
+				stmts := []*ast.Node{}
 				for _, init := range tx.classInfoStack.pendingStaticInitializers {
 					initStmt := f.NewExpressionStatement(init)
 					tx.EmitContext().SetSourceMapRange(initStmt, tx.EmitContext().SourceMapRange(init))
