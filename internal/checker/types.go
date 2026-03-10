@@ -1276,6 +1276,8 @@ type LanguageFeatureMinimumTargetMap struct {
 	UsingAndAwaitUsing                core.ScriptTarget
 	ClassAndClassElementDecorators    core.ScriptTarget
 	RegularExpressionFlagsUnicodeSets core.ScriptTarget
+	RegularExpressionFlagsUnicode     core.ScriptTarget
+	RegularExpressionFlagsSticky      core.ScriptTarget
 }
 
 var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
@@ -1298,7 +1300,9 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	ShebangComments:                   core.ScriptTargetESNext,
 	UsingAndAwaitUsing:                core.ScriptTargetESNext,
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
-	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
+	RegularExpressionFlagsUnicodeSets: core.ScriptTargetES2024,
+	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
+	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
 }
 
 // Aliases for types

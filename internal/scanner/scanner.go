@@ -212,6 +212,7 @@ type ScannerState struct {
 type Scanner struct {
 	text            string
 	languageVariant core.LanguageVariant
+	languageVersion core.ScriptTarget
 	onError         ErrorCallback
 	skipTrivia      bool
 	scriptKind      core.ScriptKind
@@ -416,6 +417,10 @@ func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
 
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
 	s.languageVariant = languageVariant
+}
+
+func (s *Scanner) SetScriptTarget(target core.ScriptTarget) {
+	s.languageVersion = target
 }
 
 func (s *Scanner) error(diagnostic *diagnostics.Message) {
@@ -1035,11 +1040,13 @@ func (s *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
 }
 
 // !!! https://github.com/microsoft/TypeScript/pull/55600
-func (s *Scanner) ReScanSlashToken() ast.Kind {
+func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
+	shouldReportErrors := len(reportErrors) > 0 && reportErrors[0]
 	if s.token == ast.KindSlashToken || s.token == ast.KindSlashEqualsToken {
 		s.pos = s.tokenStart + 1
 		startOfRegExpBody := s.pos
 		inEscape := false
+		namedCaptureGroups := false
 		inCharacterClass := false
 	loop:
 		for {
@@ -1064,13 +1071,19 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 				inEscape = true
 			case ch == ']':
 				inCharacterClass = false
+			case !inCharacterClass && ch == '(':
+				if s.pos+1 < len(s.text) && s.text[s.pos+1] == '?' &&
+					s.pos+2 < len(s.text) && s.text[s.pos+2] == '<' &&
+					s.pos+3 < len(s.text) && s.text[s.pos+3] != '=' && s.text[s.pos+3] != '!' {
+					namedCaptureGroups = true
+				}
 			}
 			s.pos += size
 		}
+		endOfRegExpBody := s.pos
 		if s.tokenFlags&ast.TokenFlagsUnterminated != 0 {
 			// Search for the nearest unbalanced bracket for better recovery. Since the expression is
 			// invalid anyways, we take nested square brackets into consideration for the best guess.
-			endOfRegExpBody := s.pos
 			s.pos = startOfRegExpBody
 			inEscape = false
 			characterClassDepth := 0
@@ -1117,12 +1130,46 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 		} else {
 			// Consume the slash character
 			s.pos++
+			var regExpFlags RegularExpressionFlags
 			for {
 				ch, size := s.charAndSize()
 				if size == 0 || !IsIdentifierPart(ch) {
 					break
 				}
+				if shouldReportErrors {
+					flag := characterCodeToRegularExpressionFlag(ch)
+					if flag == RegularExpressionFlagsNone {
+						s.errorAt(diagnostics.Unknown_regular_expression_flag, s.pos, size)
+					} else if regExpFlags&flag != 0 {
+						s.errorAt(diagnostics.Duplicate_regular_expression_flag, s.pos, size)
+					} else if (regExpFlags|flag)&RegularExpressionFlagsAnyUnicodeMode == RegularExpressionFlagsAnyUnicodeMode {
+						s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, s.pos, size)
+					} else {
+						regExpFlags |= flag
+						s.checkRegularExpressionFlagAvailability(flag, size)
+					}
+				}
 				s.pos += size
+			}
+			if shouldReportErrors {
+				// Save scanner state
+				savedPos := s.pos
+				savedTokenStart := s.tokenStart
+				savedTokenFlags := s.tokenFlags
+				savedTokenValue := s.tokenValue
+				savedToken := s.token
+
+				// Set up to scan the regex body
+				s.pos = startOfRegExpBody
+				w := newRegExpWorker(s, endOfRegExpBody, regExpFlags, true, namedCaptureGroups)
+				w.run()
+
+				// Restore scanner state
+				s.pos = savedPos
+				s.tokenStart = savedTokenStart
+				s.tokenFlags = savedTokenFlags
+				s.tokenValue = savedTokenValue
+				s.token = savedToken
 			}
 		}
 		s.tokenValue = s.text[s.tokenStart:s.pos]
@@ -1629,7 +1676,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			code, _ := strconv.ParseInt(s.text[start+1:s.pos], 8, 32)
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
-				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, fmt.Sprintf("%02x", code))
+				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
 			} else {
 				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
 			}
