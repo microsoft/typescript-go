@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -2410,7 +2411,8 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			addMatch(s, p)
 			pos += len(delim)
 		} else if pos < len(getSourceText(seg)) {
-			addMatch(seg, pos+1)
+			_, size := utf8.DecodeRuneInString(getSourceText(seg)[pos:])
+			addMatch(seg, pos+size)
 		} else if seg < lastSourceIndex {
 			addMatch(seg+1, 0)
 		} else {

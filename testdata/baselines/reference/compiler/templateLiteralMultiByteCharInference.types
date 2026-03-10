@@ -25,28 +25,28 @@ type ABC_Split = Split<"ABC">;  // ["A", "BC"]
 
 // Multi-byte characters (Japanese, 3 bytes in UTF-8, 1 code unit in UTF-16)
 type Ah = GetFirst<"あいう">;  // "あ"
->Ah : "�"
+>Ah : "あ"
 
 type IU = GetRest<"あいう">;  // "いう"
->IU : "��いう"
+>IU : "いう"
 
 type AIU_Split = Split<"あいう">;  // ["あ", "いう"]
->AIU_Split : ["�", "��いう"]
+>AIU_Split : ["あ", "いう"]
 
 // Mixed single-byte and multi-byte
 type M1 = GetFirst<"aあ">;  // "a"
 >M1 : "a"
 
 type M2 = GetFirst<"あa">;  // "あ"
->M2 : "�"
+>M2 : "あ"
 
 // 2-byte UTF-8 characters (Latin Extended, 1 code unit in UTF-16)
 type E = GetFirst<"éàü">;  // "é"
->E : "�"
+>E : "é"
 
 // Emoji (4 bytes in UTF-8, 2 code units in UTF-16 as surrogate pair)
 type Emoji = GetFirst<"😀abc">;
->Emoji : "�"
+>Emoji : "😀"
 
 // Verification
 type Expect<T, Expected> = T extends Expected ? true : false;
@@ -59,7 +59,7 @@ const check1: Expect<A, "A"> = true;
 >true : true
 
 const check2: Expect<Ah, "あ"> = true;
->check2 : false
+>check2 : true
 >true : true
 
 const check3: Expect<BC, "BC"> = true;
@@ -67,7 +67,7 @@ const check3: Expect<BC, "BC"> = true;
 >true : true
 
 const check4: Expect<IU, "いう"> = true;
->check4 : false
+>check4 : true
 >true : true
 
 const check5: Expect<M1, "a"> = true;
@@ -75,10 +75,10 @@ const check5: Expect<M1, "a"> = true;
 >true : true
 
 const check6: Expect<M2, "あ"> = true;
->check6 : false
+>check6 : true
 >true : true
 
 const check7: Expect<E, "é"> = true;
->check7 : false
+>check7 : true
 >true : true
 
