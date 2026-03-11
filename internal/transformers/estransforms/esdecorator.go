@@ -302,13 +302,6 @@ func (tx *esDecoratorTransformer) shouldVisitNode(node *ast.Node) bool {
 }
 
 func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
-	// When experimentalDecorators is set, the legacy decorator transformer has already
-	// removed all decorators before this transform runs, so this is a no-op.
-	// When targeting ESNext with useDefineForClassFields, there's nothing to transform either.
-	if tx.compilerOptions.ExperimentalDecorators.IsTrue() ||
-		(tx.compilerOptions.GetEmitScriptTarget() >= core.ScriptTargetESNext && tx.compilerOptions.GetUseDefineForClassFields()) {
-		return node
-	}
 	if node.Kind == ast.KindSourceFile {
 		return tx.visitSourceFile(node.AsSourceFile())
 	}

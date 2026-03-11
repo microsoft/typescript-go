@@ -97,7 +97,6 @@ type classFieldsTransformer struct {
 	shouldTransformAutoAccessors                      core.Tristate
 	shouldTransformThisInStaticInitializers           bool
 	shouldTransformSuperInStaticInitializers          bool
-	shouldTransformAnything                           bool
 	shouldTransformPrivateStaticElementsInFile        bool
 	legacyDecorators                                  bool
 
@@ -166,10 +165,8 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	// We may need to transform `accessor` fields when `useDefineForClassFields: false`
 	if languageVersion < core.ScriptTargetESNext {
 		tx.shouldTransformAutoAccessors = core.TSTrue
-	} else if !useDefineForClassFields {
-		tx.shouldTransformAutoAccessors = core.TSUnknown // Ternary.Maybe
 	} else {
-		tx.shouldTransformAutoAccessors = core.TSFalse
+		tx.shouldTransformAutoAccessors = core.TSUnknown // Ternary.Maybe
 	}
 
 	// We need to transform `this` in a static initializer into a reference to the class
@@ -179,10 +176,6 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	// Since target is always >= ES2015, this is always the same as
 	// shouldTransformThisInStaticInitializers.
 	tx.shouldTransformSuperInStaticInitializers = tx.shouldTransformThisInStaticInitializers
-
-	tx.shouldTransformAnything = tx.shouldTransformInitializers ||
-		tx.shouldTransformPrivateElementsOrClassStaticBlocks ||
-		tx.shouldTransformAutoAccessors == core.TSTrue
 
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.modifierVisitor = tx.EmitContext().NewNodeVisitor(tx.visitModifier)
@@ -229,9 +222,6 @@ func (tx *classFieldsTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	}
 	tx.lexicalEnvironment = nil
 	tx.shouldTransformPrivateStaticElementsInFile = tx.EmitContext().EmitFlags(node.AsNode())&printer.EFTransformPrivateStaticElements != 0
-	if !tx.shouldTransformAnything && !tx.shouldTransformPrivateStaticElementsInFile {
-		return node.AsNode()
-	}
 	tx.classAliases = make(map[*ast.Node]*ast.IdentifierNode)
 	tx.enclosingClassDeclarations.Clear()
 	visited := tx.Visitor().VisitEachChild(node.AsNode())
@@ -256,10 +246,6 @@ func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 
 // visit is the main visitor.
 func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
-	if !tx.shouldTransformAnything && !tx.shouldTransformPrivateStaticElementsInFile {
-		return node
-	}
-
 	// Strada's onSubstituteNode runs on ALL emitted nodes regardless of transform flags.
 	// Since we substitute eagerly, we must check for identifiers needing alias substitution
 	// even in subtrees with no class field transforms.
