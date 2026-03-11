@@ -113,12 +113,11 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		for _, e := range elements {
 			res = append(res, b.pseudoTypeToNode(e))
 		}
-		// !!! TODO: pseudo-tuples are implicitly `readonly` since they originate from `as const` contexts
-		// but strada fails to add the `readonly` modifier to the generated node. We replicate that bug here.
-		// return b.f.NewTypeOperatorNode(ast.KindReadonlyKeyword, b.f.NewTupleTypeNode(b.f.NewNodeList(res)))
+		// pseudo-tuples are implicitly `readonly` since they originate from `as const` contexts
+		// but strada *sometimes* fails to add the `readonly` modifier to the generated node.
 		result := b.f.NewTupleTypeNode(b.f.NewNodeList(res))
 		b.e.AddEmitFlags(result, printer.EFSingleLine)
-		return result
+		return b.f.NewTypeOperatorNode(ast.KindReadonlyKeyword, result)
 	case pseudochecker.PseudoTypeKindObjectLiteral:
 		elements := t.AsPseudoTypeObjectLiteral().Elements
 		if len(elements) == 0 {
