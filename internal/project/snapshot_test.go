@@ -178,7 +178,7 @@ func BenchmarkSnapshotCloneRefCost(b *testing.B) {
 		b.Skip("bundled files are not embedded")
 	}
 
-	for _, largeProjectSize := range []int{100, 1000, 100_000} {
+	for _, largeProjectSize := range []int{100, 1000, 10_000} {
 		b.Run(fmt.Sprintf("largeProject_%d_files", largeProjectSize), func(b *testing.B) {
 			files := map[string]any{
 				// Small project: 100 files
