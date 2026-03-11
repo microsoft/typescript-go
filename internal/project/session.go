@@ -955,9 +955,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 			parseCacheSize++
 			return true
 		})
-		s.programCounter.mu.Lock()
-		programCount = len(s.programCounter.refs)
-		s.programCounter.mu.Unlock()
+		programCount = s.programCounter.Len()
 		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *refCountCacheEntry[*ExtendedConfigCacheEntry]) bool {
 			extendedConfigCount++
 			return true

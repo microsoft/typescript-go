@@ -38,3 +38,9 @@ func (c *programCounter) Deref(program *compiler.Program) bool {
 	c.refs[program] = count
 	return false
 }
+
+func (c *programCounter) Len() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return len(c.refs)
+}
