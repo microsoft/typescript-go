@@ -449,8 +449,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 					session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 				}
 			}
-		}
-		if project.ProgramLastUpdate == newSnapshotID {
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
 			// so it's GC'd and to ensure the project can't access any data not already in the
