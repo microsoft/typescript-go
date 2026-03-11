@@ -142,7 +142,6 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 		session := setup(files)
 		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///project/src/main.ts"), 1, files["/project/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
 		snapshot, release := session.Snapshot()
-		defer release()
 
 		config := snapshot.ConfigFileRegistry.GetConfig("/project/tsconfig.json")
 		assert.Assert(t, config != nil)

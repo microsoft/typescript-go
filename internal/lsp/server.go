@@ -855,7 +855,9 @@ func (c *crossProjectOrchestrator) GetProjectsForFile(ctx context.Context, uri l
 
 func (c *crossProjectOrchestrator) GetProjectsLoadingProjectTree(ctx context.Context, requestedProjectTrees *collections.Set[tspath.Path]) iter.Seq[ls.Project] {
 	return func(yield func(ls.Project) bool) {
-		for _, p := range c.server.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
+		snapshot, release := c.server.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees)
+		defer release()
+		for _, p := range snapshot.ProjectCollection.Projects() {
 			if !yield(p) {
 				return
 			}
@@ -1248,7 +1250,8 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 }
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
-	snapshot := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
+	snapshot, release := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
+	defer release()
 	defer s.recover(reqMsg)
 
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
