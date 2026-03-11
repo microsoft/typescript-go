@@ -739,11 +739,12 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		ls, release, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
 			return nil, err
 		}
 		return func() error {
+			defer release()
 			defer s.recover(req)
 			resp, lsErr := fn(s, ctx, ls, params)
 			if lsErr != nil {
@@ -810,11 +811,12 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			params = req.Params.(Req)
 		}
 		// !!! sheetal: multiple projects that contain the file through symlinks
-		defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
+		defaultLs, orchestrator, release, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
 		if err != nil {
 			return nil, err
 		}
 		return func() error {
+			defer release()
 			defer s.recover(req)
 			resp, lsErr := fn(defaultLs, ctx, params, orchestrator)
 			if lsErr != nil {
@@ -845,7 +847,7 @@ func (c *crossProjectOrchestrator) GetAllProjectsForInitialRequest() []ls.Projec
 	return c.allProjects
 }
 
-func (c *crossProjectOrchestrator) GetLanguageServiceForProjectWithFile(ctx context.Context, p ls.Project, uri lsproto.DocumentUri) *ls.LanguageService {
+func (c *crossProjectOrchestrator) GetLanguageServiceForProjectWithFile(ctx context.Context, p ls.Project, uri lsproto.DocumentUri) (*ls.LanguageService, func()) {
 	return c.server.session.GetLanguageServiceForProjectWithFile(ctx, p.(*project.Project), uri)
 }
 
@@ -865,13 +867,13 @@ func (c *crossProjectOrchestrator) GetProjectsLoadingProjectTree(ctx context.Con
 	}
 }
 
-func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Context, uri lsproto.DocumentUri, req *lsproto.RequestMessage) (*ls.LanguageService, ls.CrossProjectOrchestrator, error) {
-	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Context, uri lsproto.DocumentUri, req *lsproto.RequestMessage) (*ls.LanguageService, ls.CrossProjectOrchestrator, func(), error) {
+	defaultProject, defaultLs, release, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
 	var orchestrator ls.CrossProjectOrchestrator
 	if err == nil {
 		orchestrator = &crossProjectOrchestrator{s, req, defaultProject, allProjects}
 	}
-	return defaultLs, orchestrator, err
+	return defaultLs, orchestrator, release, err
 }
 
 func (s *Server) recover(req *lsproto.RequestMessage) {
@@ -1210,10 +1212,11 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
 	data := params.Data
-	languageService, err := s.session.GetLanguageService(ctx, lsconv.FileNameToDocumentURI(data.FileName))
+	languageService, release, err := s.session.GetLanguageService(ctx, lsconv.FileNameToDocumentURI(data.FileName))
 	if err != nil {
 		return nil, err
 	}
+	defer release()
 	defer s.recover(reqMsg)
 	return languageService.ResolveCompletionItem(
 		ctx,
@@ -1292,8 +1295,9 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
-	defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, codeLens.Data.Uri, reqMsg)
+	defaultLs, orchestrator, release, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, codeLens.Data.Uri, reqMsg)
 	if ctx.Err() != nil {
+		release()
 		return nil, ctx.Err()
 	}
 	if err != nil {
@@ -1306,6 +1310,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 		// based on non-existent files and line maps from shortened files.
 		return codeLens, lsproto.ErrorCodeContentModified
 	}
+	defer release()
 	defer s.recover(reqMsg)
 	return defaultLs.ResolveCodeLens(
 		ctx,
@@ -1328,10 +1333,11 @@ func (s *Server) handleCallHierarchyIncomingCalls(
 	params *lsproto.CallHierarchyIncomingCallsParams,
 	reqMsg *lsproto.RequestMessage,
 ) (lsproto.CallHierarchyIncomingCallsResponse, error) {
-	defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.Item.Uri, reqMsg)
+	defaultLs, orchestrator, release, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.Item.Uri, reqMsg)
 	if err != nil {
 		return lsproto.CallHierarchyIncomingCallsOrNull{}, err
 	}
+	defer release()
 	return defaultLs.ProvideCallHierarchyIncomingCalls(ctx, params.Item, orchestrator)
 }
 
@@ -1340,10 +1346,11 @@ func (s *Server) handleCallHierarchyOutgoingCalls(
 	params *lsproto.CallHierarchyOutgoingCallsParams,
 	_ *lsproto.RequestMessage,
 ) (lsproto.CallHierarchyOutgoingCallsResponse, error) {
-	languageService, err := s.session.GetLanguageService(ctx, params.Item.Uri)
+	languageService, release, err := s.session.GetLanguageService(ctx, params.Item.Uri)
 	if err != nil {
 		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
 	}
+	defer release()
 	return languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
 }
 

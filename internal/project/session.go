@@ -534,13 +534,12 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	return snapshot, release, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
-func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, func(), error) {
 	_, release, _, languageService, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
-		return nil, err
+		return nil, func() {}, err
 	}
-	release()
-	return languageService, nil
+	return languageService, release, nil
 }
 
 // GetLanguageServiceAndSnapshot returns a LanguageService and a ref'd snapshot.
@@ -548,20 +547,19 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 func (s *Session) GetLanguageServiceAndSnapshot(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, *Snapshot, func(), error) {
 	snapshot, release, _, languageService, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, func() {}, err
 	}
 	return languageService, snapshot, release, nil
 }
 
-func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []ls.Project, error) {
+func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, func(), []ls.Project, error) {
 	snapshot, release, project, defaultLs, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, func() {}, nil, err
 	}
-	defer release()
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
 	allProjects := snapshot.GetProjectsContainingFile(uri)
-	return project, defaultLs, allProjects, nil
+	return project, defaultLs, release, allProjects, nil
 }
 
 func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]ls.Project, error) {
@@ -576,22 +574,23 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	return allProjects, nil
 }
 
-func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {
+func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) (*ls.LanguageService, func()) {
 	snapshot, release := s.getSnapshot(
 		ctx,
 		ResourceRequest{Projects: []tspath.Path{project.Id()}},
 	)
-	defer release()
 	// Ensure we have updated project
 	project = snapshot.ProjectCollection.GetProjectByPath(project.Id())
 	if project == nil {
-		return nil
+		release()
+		return nil, func() {}
 	}
 	// if program doesnt contain this file any more ignore it
 	if !project.HasFile(uri.FileName()) {
-		return nil
+		release()
+		return nil, func() {}
 	}
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName())
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), release
 }
 
 func (s *Session) GetSnapshotLoadingProjectTree(
@@ -610,17 +609,17 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 // LanguageService for the default project. Use this only outside of request handling
 // (e.g. cache warming). For request handlers, use GetLanguageServiceWithAutoImports
 // with the request-level snapshot instead.
-func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, func(), error) {
 	snapshot, release := s.getSnapshot(ctx, ResourceRequest{
 		Documents:   []lsproto.DocumentUri{uri},
 		AutoImports: uri,
 	})
-	defer release()
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {
-		return nil, fmt.Errorf("no project found for URI %s", uri)
+		release()
+		return nil, func() {}, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), release, nil
 }
 
 // GetLanguageServiceWithAutoImports clones the given snapshot with auto-import
@@ -640,7 +639,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 	project := newSnapshot.GetDefaultProject(uri)
 	if project == nil {
 		newSnapshot.Deref(s)
-		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
+		return nil, func() {}, fmt.Errorf("no project found for URI %s", uri)
 	}
 
 	// Extra ref for the background adoption task.
@@ -1142,6 +1141,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		) {
 			return
 		}
-		_, _ = s.GetCurrentLanguageServiceWithAutoImports(ctx, changedFile)
+		_, release, _ := s.GetCurrentLanguageServiceWithAutoImports(ctx, changedFile)
+		release()
 	}
 }

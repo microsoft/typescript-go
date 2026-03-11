@@ -98,7 +98,8 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 			},
 		},
 	})
-	_, _ = server.session.GetLanguageService(ctx, "file:///test/index.ts")
+	_, release, _ := server.session.GetLanguageService(ctx, "file:///test/index.ts")
+	release()
 	server.session.WaitForBackgroundTasks()
 
 	server.session.Close()

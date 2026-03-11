@@ -290,8 +290,9 @@ func TestProjectReferencesProgram(t *testing.T) {
 			},
 		})
 
-		_, err = session.GetLanguageService(context.Background(), uri)
+		_, release2, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
+		release2()
 		snapshot, release = session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)

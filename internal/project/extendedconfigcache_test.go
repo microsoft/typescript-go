@@ -292,8 +292,9 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 			},
 		})
 		// This call triggered the panic
-		_, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/projectB/src/main.ts")
+		_, release, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/projectB/src/main.ts")
 		assert.NilError(t, err)
+		release()
 	})
 }
 

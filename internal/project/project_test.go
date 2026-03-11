@@ -29,8 +29,9 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release := session.Snapshot()
 		defer release()
 		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
@@ -46,13 +47,15 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		session.DidChangeFile(context.Background(), "file:///src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
 			Partial: &lsproto.TextDocumentContentChangePartial{Text: "\n", Range: lsproto.Range{Start: lsproto.Position{Line: 0, Character: 20}, End: lsproto.Position{Line: 0, Character: 20}}},
 		}})
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release := session.Snapshot()
 		defer release()
 		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
@@ -68,13 +71,15 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		err = utils.FS().WriteFile("/src/tsconfig.json", `{"compilerOptions": {"strict": false}}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tsconfig.json"), Type: lsproto.FileChangeTypeChanged}})
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release := session.Snapshot()
 		defer release()
 		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
@@ -90,15 +95,17 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		content := "export const y = 2;"
 		err = utils.FS().WriteFile("/src/newfile.ts", content)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/newfile.ts"), Type: lsproto.FileChangeTypeCreated}})
 		session.DidOpenFile(context.Background(), "file:///src/newfile.ts", 1, content, lsproto.LanguageKindTypeScript)
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/newfile.ts"))
+		_, releaseLS, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/newfile.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release := session.Snapshot()
 		defer release()
 		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
@@ -115,14 +122,16 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		// Change index.ts to add an unresolvable import
 		session.DidChangeFile(context.Background(), "file:///src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
 			Partial: &lsproto.TextDocumentContentChangePartial{Text: "\nimport \"./does-not-exist\";\n", Range: lsproto.Range{Start: lsproto.Position{Line: 0, Character: 0}, End: lsproto.Position{Line: 0, Character: 0}}},
 		}})
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release := session.Snapshot()
 		defer release()
 		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
@@ -161,8 +170,9 @@ func TestProject(t *testing.T) {
 		// Sanity check: ensure ATA performed at least one install
 		npmCalls := utils.NpmExecutor().NpmInstallCalls()
 		assert.Assert(t, len(npmCalls) > 0, "expected at least one npm install call from ATA")
-		_, err := session.GetLanguageService(context.Background(), uri1)
+		_, releaseLS, err := session.GetLanguageService(context.Background(), uri1)
 		assert.NilError(t, err)
+		releaseLS()
 
 		// 3) Open another inferred project file
 		uri2 := lsproto.DocumentUri("file:///user/username/projects/project2/app.js")
@@ -171,8 +181,9 @@ func TestProject(t *testing.T) {
 		// 4) Get a language service for the second file
 		//    If commandLineWithTypingsFiles was not reset, the new program command line
 		//    won't include the newly opened file and this will fail.
-		_, err = session.GetLanguageService(context.Background(), uri2)
+		_, releaseLS, err = session.GetLanguageService(context.Background(), uri2)
 		assert.NilError(t, err)
+		releaseLS()
 	})
 }
 
@@ -190,8 +201,9 @@ func TestPushDiagnostics(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 
 		session.WaitForBackgroundTasks()
 
@@ -223,15 +235,17 @@ func TestPushDiagnostics(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		session.WaitForBackgroundTasks()
 
 		// Open a file in a different project to trigger cleanup of the first
 		session.DidCloseFile(context.Background(), "file:///src/index.ts")
 		session.DidOpenFile(context.Background(), "file:///src2/index.ts", 1, files["/src2/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src2/index.ts"))
+		_, releaseLS, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src2/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
@@ -260,8 +274,9 @@ func TestPushDiagnostics(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		session.WaitForBackgroundTasks()
 
 		initialCallCount := len(utils.Client().PublishDiagnosticsCalls())
@@ -270,8 +285,9 @@ func TestPushDiagnostics(t *testing.T) {
 		err = utils.FS().WriteFile("/src/tsconfig.json", `{"compilerOptions": {}}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tsconfig.json"), Type: lsproto.FileChangeTypeChanged}})
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
@@ -300,8 +316,9 @@ func TestPushDiagnostics(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()

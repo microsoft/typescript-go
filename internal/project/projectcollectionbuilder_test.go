@@ -38,8 +38,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json")) != nil)
 
 		// Ensure request can use existing snapshot
-		_, err := session.GetLanguageService(context.Background(), uri)
+		_, releaseLS, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
+		releaseLS()
 		requestSnapshot, requestRelease := session.Snapshot()
 		defer requestRelease()
 		assert.Equal(t, requestSnapshot, snapshot)
@@ -530,8 +531,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		// Step 1: Open the project root file
 		rootUri := lsproto.DocumentUri("file:///project/index.ts")
 		session.DidOpenFile(context.Background(), rootUri, 1, files["/project/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), rootUri)
+		_, releaseLS, err := session.GetLanguageService(context.Background(), rootUri)
 		assert.NilError(t, err)
+		releaseLS()
 
 		// Step 2: Open the node_modules dependency file - should be in the configured project
 		depUri := lsproto.DocumentUri("file:///project/node_modules/dep/index.d.ts")
@@ -550,9 +552,10 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		}})
 
 		// Step 4: Request language service for the dependency - it should now be in an inferred project
-		ls, err := session.GetLanguageService(context.Background(), depUri)
+		ls, releaseLS2, err := session.GetLanguageService(context.Background(), depUri)
 		assert.NilError(t, err)
 		assert.Assert(t, ls != nil, "language service should be available for dependency")
+		releaseLS2()
 
 		snapshot, release = session.Snapshot()
 		defer release()
@@ -591,10 +594,11 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), indexUri, 1, packageJsonFiles["/home/projects/myproject/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Verify initial state: #utils resolves to utils.ts, so utils.ts is in the program
-		ls, err := session.GetLanguageService(context.Background(), indexUri)
+		ls, releaseLS, err := session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		assert.Equal(t, len(program.GetSemanticDiagnostics(context.Background(), nil)), 0, "should have no diagnostics with correct package.json")
+		releaseLS()
 
 		// Now change the package.json to point #utils at a non-existent file
 		err = utils.FS().WriteFile("/home/projects/myproject/package.json", `{
@@ -612,10 +616,11 @@ func TestProjectCollectionBuilder(t *testing.T) {
 			},
 		})
 
-		ls, err = session.GetLanguageService(context.Background(), indexUri)
+		ls, releaseLS2, err := session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
 		updatedProgram := ls.GetProgram()
 		assert.Equal(t, len(updatedProgram.GetSemanticDiagnostics(context.Background(), nil)), 1, "should have diagnostics after package.json change")
+		releaseLS2()
 	})
 }
 

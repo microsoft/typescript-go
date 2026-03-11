@@ -279,8 +279,9 @@ func TestProjectLifetime(t *testing.T) {
 		})
 
 		// Should now have one configured project only (file is now under src/)
-		_, err = session.GetLanguageService(context.Background(), srcIndexUri)
+		_, releaseLS, err := session.GetLanguageService(context.Background(), srcIndexUri)
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release = session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
@@ -336,8 +337,9 @@ func TestProjectLifetime(t *testing.T) {
 		})
 
 		// Should now have one configured project only (tsconfig.json now includes src/index.ts)
-		_, err = session.GetLanguageService(context.Background(), indexUri)
+		_, releaseLS, err := session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
+		releaseLS()
 		snapshot, release = session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
@@ -374,11 +376,12 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), xUri, 1, files["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Verify initial state - both files should be in the project
-		ls, err := session.GetLanguageService(context.Background(), indexUri)
+		ls, releaseLS, err := session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/index.ts") != nil, "index.ts should be in project")
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil, "x.ts should be in project")
+		releaseLS()
 
 		// Step 2: In a single batch change:
 		// - Delete x.ts from disk (but leave it open)
@@ -402,19 +405,21 @@ func TestProjectLifetime(t *testing.T) {
 
 		// Step 3 & 4: Request LS for the deleted but still open file
 		// Project should include: index.ts, x.ts (open overlay), y.ts (new disk file)
-		ls, err = session.GetLanguageService(context.Background(), xUri)
+		ls, releaseLS, err = session.GetLanguageService(context.Background(), xUri)
 		assert.NilError(t, err)
 		program = ls.GetProgram()
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/index.ts") != nil, "index.ts should still be in project")
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil, "x.ts should still be in project (open overlay)")
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/y.ts") != nil, "y.ts should be in project (new file)")
+		releaseLS()
 
 		// Step 5: Close the deleted file
 		session.DidCloseFile(context.Background(), xUri)
 
 		// Step 6: On next LS request, x.ts should be excluded
-		ls, err = session.GetLanguageService(context.Background(), indexUri)
+		ls, releaseLS, err = session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
+		defer releaseLS()
 		program = ls.GetProgram()
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/index.ts") != nil, "index.ts should still be in project")
 		assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil, "x.ts should no longer be in project (closed and deleted)")

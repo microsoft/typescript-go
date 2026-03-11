@@ -68,8 +68,9 @@ func TestRefCountingCaches(t *testing.T) {
 					},
 				},
 			})
-			ls, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			newMain := ls.GetProgram().GetSourceFile("/user/username/projects/myproject/src/main.ts")
 			newMainEntry, _ := session.parseCache.entries.Load(NewParseCacheKey(newMain.ParseOptions(), newMain.Hash, newMain.ScriptKind))
 			assert.Assert(t, newMain != main)
@@ -101,8 +102,9 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Equal(t, utilsEntry.refCount, 1)
 
 			session.DidCloseFile(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
-			_, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/utils.ts")
+			_, releaseLS2, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/utils.ts")
 			assert.NilError(t, err)
+			releaseLS2()
 			assert.Equal(t, utilsEntry.refCount, 1)
 			assert.Equal(t, mainEntry.refCount, 0)
 			mainEntry, ok := session.parseCache.entries.Load(NewParseCacheKey(main.ParseOptions(), main.Hash, main.ScriptKind))
@@ -141,7 +143,7 @@ func TestRefCountingCaches(t *testing.T) {
 			})
 
 			// Get second snapshot - main.ts should be reused (program is new but shares source files)
-			ls, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
 			assert.NilError(t, err)
 			program2 := ls.GetProgram()
 			main2 := program2.GetSourceFile("/user/username/projects/myproject/src/main.ts")
@@ -158,6 +160,9 @@ func TestRefCountingCaches(t *testing.T) {
 			mainEntry, ok := session.parseCache.entries.Load(NewParseCacheKey(main.ParseOptions(), main.Hash, main.ScriptKind))
 			assert.Assert(t, ok, "entry should still exist after releasing old snapshot")
 			assert.Equal(t, mainEntry.refCount, 1, "refCount should be 1 after releasing old snapshot")
+
+			// Release the LS before closing files so refcounts drop as expected
+			releaseLS()
 
 			// Close files to trigger cleanup
 			session.DidCloseFile(context.Background(), "file:///user/username/projects/myproject/src/main.ts")

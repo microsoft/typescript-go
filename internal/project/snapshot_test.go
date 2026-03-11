@@ -57,8 +57,9 @@ func TestSnapshot(t *testing.T) {
 				},
 			},
 		})
-		_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+		_, release2, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
 		assert.NilError(t, err)
+		release2()
 		snapshotAfter, release := session.Snapshot()
 		defer release()
 
@@ -172,7 +173,8 @@ func TestSnapshot(t *testing.T) {
 		})
 
 		// Now trigger snapshot clone with both program update and auto-imports registry building.
-		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, otherIndexURI)
+		_, release, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, otherIndexURI)
 		assert.NilError(t, err)
+		release()
 	})
 }

@@ -53,8 +53,9 @@ x++;`
 	session.DidOpenFile(ctx, "file:///Untitled-2.ts", 1, testContent, lsproto.LanguageKindTypeScript)
 
 	// Get language service
-	languageService, err := session.GetLanguageService(ctx, "file:///Untitled-2.ts")
+	languageService, release, err := session.GetLanguageService(ctx, "file:///Untitled-2.ts")
 	assert.NilError(t, err)
+	defer release()
 
 	// Test the filename that the source file reports
 	program := languageService.GetProgram()
@@ -125,8 +126,9 @@ x++;`
 	assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 	// Get language service for the untitled file
-	languageService, err := session.GetLanguageService(ctx, "untitled:Untitled-2")
+	languageService, release2, err := session.GetLanguageService(ctx, "untitled:Untitled-2")
 	assert.NilError(t, err)
+	defer release2()
 
 	program := languageService.GetProgram()
 	untitledFileName := lsproto.DocumentUri("untitled:Untitled-2").FileName()
@@ -179,6 +181,7 @@ func TestImportsInUntitled(t *testing.T) {
 
 	// 2) Wait for ATA/background tasks to finish, then get a language service for the first file
 	session.WaitForBackgroundTasks()
-	_, err := session.GetLanguageService(context.Background(), uri1)
+	_, release, err := session.GetLanguageService(context.Background(), uri1)
 	assert.NilError(t, err)
+	release()
 }

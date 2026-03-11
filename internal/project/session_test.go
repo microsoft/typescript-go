@@ -57,8 +57,9 @@ func TestSession(t *testing.T) {
 			assert.Assert(t, configuredProject != nil)
 
 			// Get language service to access the program
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program := ls.GetProgram()
 			assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
 			assert.Equal(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "export const x = 1;")
@@ -110,8 +111,9 @@ func TestSession(t *testing.T) {
 			defer release()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.js")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.js")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program := ls.GetProgram()
 			assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/index.js") != nil)
 		})
@@ -125,9 +127,10 @@ func TestSession(t *testing.T) {
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+			lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
+			releaseBefore()
 
 			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
@@ -147,8 +150,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+			lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
+			defer releaseAfter()
 			programAfter := lsAfter.GetProgram()
 
 			// Program should change due to the file content change
@@ -162,10 +166,11 @@ func TestSession(t *testing.T) {
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+			lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 			indexFileBefore := programBefore.GetSourceFile("/home/projects/TS/p1/src/index.ts")
+			releaseBefore()
 
 			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
@@ -185,8 +190,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+			lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
+			defer releaseAfter()
 			programAfter := lsAfter.GetProgram()
 
 			// Unchanged file should be reused
@@ -202,10 +208,11 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Verify y.ts is not initially in the program
-			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 			assert.Check(t, programBefore.GetSourceFile("/home/projects/TS/p1/y.ts") == nil)
+			releaseBefore()
 
 			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
@@ -225,8 +232,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseAfter()
 			programAfter := lsAfter.GetProgram()
 
 			// y.ts should now be included in the program
@@ -248,10 +256,11 @@ func TestSession(t *testing.T) {
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 			assert.Equal(t, len(programBefore.GetSourceFiles()), 2)
+			releaseBefore()
 
 			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
@@ -288,8 +297,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseAfter()
 			programAfter := lsAfter.GetProgram()
 			assert.Equal(t, len(programAfter.GetSourceFiles()), 3)
 		})
@@ -310,18 +320,20 @@ func TestSession(t *testing.T) {
 				assert.NilError(t, utils.FS().Remove("/home/projects/TS/p1/src/x.ts"))
 
 				session.DidCloseFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
-				ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+				ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 				assert.NilError(t, err)
 				program := ls.GetProgram()
 				assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
+				releaseLS()
 
 				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "")
 				assert.NilError(t, err)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, "", lsproto.LanguageKindTypeScript)
 
-				ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+				ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 				assert.NilError(t, err)
+				defer releaseLS()
 				program = ls.GetProgram()
 				assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
 				assert.Equal(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "")
@@ -344,18 +356,20 @@ func TestSession(t *testing.T) {
 
 				session.DidCloseFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 
-				ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+				ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 				assert.NilError(t, err)
 				program := ls.GetProgram()
 				assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
+				releaseLS()
 
 				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "")
 				assert.NilError(t, err)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, "", lsproto.LanguageKindTypeScript)
 
-				ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+				ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 				assert.NilError(t, err)
+				defer releaseLS()
 				program = ls.GetProgram()
 				assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
 				assert.Equal(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "")
@@ -458,12 +472,14 @@ func TestSession(t *testing.T) {
 			defer release()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
-			ls1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls1, releaseLS1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS1()
 			program1 := ls1.GetProgram()
 
-			ls2, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p2/src/index.ts")
+			ls2, releaseLS2, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p2/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS2()
 			program2 := ls2.GetProgram()
 
 			assert.Equal(t,
@@ -494,12 +510,14 @@ func TestSession(t *testing.T) {
 			defer release()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
-			ls1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls1, releaseLS1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS1()
 			program1 := ls1.GetProgram()
 
-			ls2, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p2/src/index.ts")
+			ls2, releaseLS2, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p2/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS2()
 			program2 := ls2.GetProgram()
 
 			x1 := program1.GetSourceFile("/home/projects/TS/p1/src/x.ts")
@@ -520,9 +538,10 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, files["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
+			releaseBefore()
 
 			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`)
 			assert.NilError(t, err)
@@ -534,8 +553,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseAfter()
 			// Program should remain the same since the file is open and changes are handled through DidChangeTextDocument
 			assert.Equal(t, programBefore, lsAfter.GetProgram())
 		})
@@ -547,9 +567,10 @@ func TestSession(t *testing.T) {
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
+			releaseBefore()
 
 			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`)
 			assert.NilError(t, err)
@@ -561,8 +582,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseAfter()
 			assert.Check(t, lsAfter.GetProgram() != programBefore)
 		})
 
@@ -593,9 +615,10 @@ func TestSession(t *testing.T) {
 						LoggingEnabled:     true,
 					})
 					session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-					lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+					lsBefore, releaseBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 					assert.NilError(t, err)
 					programBefore := lsBefore.GetProgram()
+					releaseBefore()
 					session.WaitForBackgroundTasks()
 
 					var xWatched bool
@@ -621,8 +644,9 @@ func TestSession(t *testing.T) {
 						},
 					})
 
-					lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+					lsAfter, releaseAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 					assert.NilError(t, err)
+					defer releaseAfter()
 					assert.Check(t, lsAfter.GetProgram() != programBefore)
 				})
 			}
@@ -646,10 +670,11 @@ func TestSession(t *testing.T) {
 			session, utils := projecttestutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			releaseLS()
 
 			err = utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", `{
 				"compilerOptions": {
@@ -666,8 +691,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program = ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 		})
@@ -687,11 +713,12 @@ func TestSession(t *testing.T) {
 			session, utils := projecttestutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
 			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/x.ts"))
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			releaseLS()
 
 			err = utils.FS().Remove("/home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
@@ -703,8 +730,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program = ls.GetProgram()
 			// File name is still in the command line, was explicitly included
 			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/x.ts"))
@@ -733,11 +761,12 @@ func TestSession(t *testing.T) {
 			session, utils := projecttestutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, files["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
 			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 0)
+			releaseLS()
 
 			err = utils.FS().Remove("/home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
@@ -749,8 +778,9 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
+			ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program = ls.GetProgram()
 			// File name is gone from the command line, was originally included via wildcard
 			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
@@ -777,12 +807,13 @@ func TestSession(t *testing.T) {
 			session, utils := projecttestutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
 
 			// Initially should have an error because y.ts is missing
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			releaseLS()
 
 			// Add the missing file
 			err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`)
@@ -796,8 +827,9 @@ func TestSession(t *testing.T) {
 			})
 
 			// Error should be resolved
-			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program = ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/y.ts") != nil)
@@ -817,12 +849,13 @@ func TestSession(t *testing.T) {
 			session, utils := projecttestutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
 
 			// Initially should have an error because z.ts is missing
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			releaseLS()
 
 			// Add a new file through failed lookup watch
 			err = utils.FS().WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`)
@@ -836,8 +869,9 @@ func TestSession(t *testing.T) {
 			})
 
 			// Error should be resolved and the new file should be included in the program
-			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program = ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/z.ts") != nil)
@@ -857,12 +891,13 @@ func TestSession(t *testing.T) {
 			session, utils := projecttestutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
 
 			// Initially should have an error because declaration for 'a' is missing
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			releaseLS()
 
 			// Add a new file through wildcard watch
 			err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`)
@@ -876,8 +911,9 @@ func TestSession(t *testing.T) {
 			})
 
 			// Error should be resolved and the new file should be included in the program
-			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			ls, releaseLS, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
+			defer releaseLS()
 			program = ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/a.ts") != nil)
@@ -892,8 +928,9 @@ func TestSession(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 
 		session.Configure(lsutil.NewUserConfig(nil))
 		// Change user preferences for code lens and inlay hints.
@@ -917,8 +954,9 @@ func TestSession(t *testing.T) {
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, releaseLS, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
+		releaseLS()
 
 		configMap1 := map[string]any{
 			"UseAliasesForRename":       true,
