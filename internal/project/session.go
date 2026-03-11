@@ -86,6 +86,10 @@ type Session struct {
 	// extendedConfigCache is the ref-counted cache of tsconfig ASTs
 	// that are used in the "extends" of another tsconfig.
 	extendedConfigCache *ExtendedConfigCache
+	// programCounter counts how many snapshots reference a program.
+	// When a program is no longer referenced, its source files are
+	// released from the parseCache.
+	programCounter *programCounter
 
 	// read-only after initialization
 	initialUserConfig *lsutil.UserConfig
@@ -160,6 +164,7 @@ func NewSession(init *SessionInit) *Session {
 		fs:                  overlayFS,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
+		programCounter:      &programCounter{},
 		backgroundQueue:     background.NewQueue(),
 		snapshot: NewSnapshot(
 			uint64(0),

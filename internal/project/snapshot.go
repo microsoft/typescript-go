@@ -438,9 +438,14 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		if project.Program != nil {
-			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+		session.programCounter.Ref(project.Program)
+		if project.ProgramLastUpdate == newSnapshotID {
+			// Only ref source files when the program was created/updated in this snapshot.
+			// This matches dispose, which only derefs when programCounter reaches zero.
+			if project.Program != nil {
+				for _, file := range project.Program.SourceFiles() {
+					session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
 			}
 		}
 		if project.ProgramLastUpdate == newSnapshotID {
@@ -482,7 +487,7 @@ func (s *Snapshot) Dispose(session *Session) {
 
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
-		if project.Program != nil {
+		if project.Program != nil && session.programCounter.Deref(project.Program) {
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}
