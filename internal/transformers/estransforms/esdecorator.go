@@ -305,9 +305,9 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 	}
 	switch node.Kind {
 	case ast.KindDecorator:
-		// Decorators are elided. In Strada, a separate `fallbackVisitor` drops decorators
+		// Decorators are elided. In Strada, a separate `modifierVisitor` drops decorators
 		// before they reach `visitor` via visitEachChild. Here, `visit` serves as both
-		// visitor and fallback, so decorators from modifier lists reach it directly.
+		// visitors, so decorators from modifier lists reach it directly.
 		return nil
 	case ast.KindClassDeclaration:
 		return tx.visitClassDeclaration(node.AsClassDeclaration())
