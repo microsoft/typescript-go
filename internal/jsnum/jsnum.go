@@ -164,11 +164,13 @@ func (base Number) Exponentiate(exponent Number) Number {
 	// round halfway ties differently), but will always be within 1 ULP
 	// (unit in the last place, i.e. the least significant bit of the result).
 	if b >= math.MinInt64 && b <= math.MaxInt64 && b == math.Trunc(b) &&
-		e >= 0 && e == math.Trunc(e) && !math.IsInf(e, 0) &&
-		e*math.Log2(math.Abs(b)) > 53 {
-		ri := new(big.Int).Exp(big.NewInt(int64(b)), big.NewInt(int64(e)), nil)
-		result, _ := new(big.Float).SetPrec(256).SetInt(ri).Float64()
-		return Number(result)
+		e >= 0 && e <= math.MaxInt64 && e == math.Trunc(e) && !math.IsInf(e, 0) {
+		magnitude := e * math.Log2(math.Abs(b))
+		if magnitude > 53 && magnitude <= math.Log2(math.MaxFloat64) {
+			ri := new(big.Int).Exp(big.NewInt(int64(b)), big.NewInt(int64(e)), nil)
+			result, _ := new(big.Float).SetPrec(256).SetInt(ri).Float64()
+			return Number(result)
+		}
 	}
 
 	return Number(math.Pow(b, e))

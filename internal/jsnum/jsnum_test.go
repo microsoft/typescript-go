@@ -1,14 +1,15 @@
 package jsnum
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
 )
@@ -30,6 +31,10 @@ func assertWithinOneULP(t *testing.T, got, want Number) {
 
 	if got.IsNaN() || want.IsNaN() {
 		assert.Equal(t, got.IsNaN(), want.IsNaN(), "got: %v, want: %v", got, want)
+		return
+	}
+
+	if got == want {
 		return
 	}
 
@@ -90,10 +95,10 @@ func uint32sToNum(a [2]uint32) Number {
 	return numberFromBits(bits)
 }
 
-func nodeAvailable() bool {
+var nodeAvailable = sync.OnceValue(func() bool {
 	_, err := exec.LookPath("node")
 	return err == nil
-}
+})
 
 // evalBinaryOp evaluates a binary JS expression on all cases using Node.js.
 // Returns nil if Node.js is not available.
@@ -101,10 +106,6 @@ func evalBinaryOp(t *testing.T, op string, xs, ys []Number) []Number {
 	t.Helper()
 	if !nodeAvailable() {
 		return nil
-	}
-
-	type binaryTestCase struct {
-		x, y Number
 	}
 
 	tmpdir := t.TempDir()
