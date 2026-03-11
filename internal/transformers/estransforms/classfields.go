@@ -135,14 +135,21 @@ type classFieldsTransformer struct {
 }
 
 func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	languageVersion := opts.CompilerOptions.GetEmitScriptTarget()
+	useDefineForClassFields := opts.CompilerOptions.GetUseDefineForClassFields()
+
+	// When targeting ESNext+ with useDefineForClassFields (the default), there are no class
+	// field transformations to perform and no prior transform sets EFTransformPrivateStaticElements,
+	// so every node would be returned unchanged. Skip entirely.
+	if languageVersion >= core.ScriptTargetESNext && useDefineForClassFields {
+		return nil
+	}
+
 	tx := &classFieldsTransformer{
 		compilerOptions:  opts.CompilerOptions,
 		resolver:         opts.EmitResolver,
 		legacyDecorators: opts.CompilerOptions.ExperimentalDecorators.IsTrue(),
 	}
-
-	languageVersion := opts.CompilerOptions.GetEmitScriptTarget()
-	useDefineForClassFields := opts.CompilerOptions.GetUseDefineForClassFields()
 
 	// Always transform field initializers using Set semantics when `useDefineForClassFields: false`.
 	tx.shouldTransformInitializersUsingSet = !useDefineForClassFields

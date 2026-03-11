@@ -122,6 +122,13 @@ type esDecoratorTransformer struct {
 }
 
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	// When experimentalDecorators is set, the legacy decorator transformer handles all
+	// decorators. When targeting ESNext with useDefineForClassFields, there's nothing to
+	// transform. In either case every node would be returned unchanged, so skip entirely.
+	if opts.CompilerOptions.ExperimentalDecorators.IsTrue() ||
+		(opts.CompilerOptions.GetEmitScriptTarget() >= core.ScriptTargetESNext && opts.CompilerOptions.GetUseDefineForClassFields()) {
+		return nil
+	}
 	tx := &esDecoratorTransformer{compilerOptions: opts.CompilerOptions}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	ec := tx.EmitContext()
