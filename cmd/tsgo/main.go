@@ -1,3 +1,5 @@
+//go:debug tracebackancestors=5
+
 package main
 
 import (

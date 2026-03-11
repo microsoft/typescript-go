@@ -530,6 +530,7 @@ function goTestFlags(taskName) {
 }
 
 const goTestEnv = {
+    GODEBUG: "tracebackancestors=5",
     ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
     // Go test caching takes a long time on Windows.
     // https://github.com/golang/go/issues/72992
