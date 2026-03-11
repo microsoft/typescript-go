@@ -142,7 +142,7 @@ func GuessIndentation(lines []string) int {
 // https://tc39.es/ecma262/multipage/global-object.html#sec-encodeuri-uri
 func EncodeURI(s string) string {
 	var builder strings.Builder
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		b := s[i]
 		if !shouldEscapeForEncodeURI(b) {
 			builder.WriteByte(b)
