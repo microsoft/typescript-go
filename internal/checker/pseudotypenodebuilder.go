@@ -236,7 +236,8 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 	return b.f.NewParameterDeclaration(
 		nil,
 		dotDotDot,
-		b.reuseNode(p.Name),
+		// matches strada behavior of always reserializing param names from scratch
+		b.parameterToParameterDeclarationName(p.Name.Parent.Symbol(), p.Name.Parent),
 		questionMark,
 		b.pseudoTypeToNode(p.Type),
 		nil,
