@@ -11,6 +11,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
+// allow the client to match more than valid tag names. This allows linked editing when typing is in progress or tag name is incomplete
+var jsxTagWordPattern = new("[a-zA-Z0-9:\\-\\._$]*")
+
 func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := l.converters.LineAndCharacterToPosition(sourceFile, params.Position)
@@ -19,9 +22,6 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 	if token == nil || token.Parent.Kind == ast.KindSourceFile {
 		return lsproto.LinkedEditingRangeResponse{}, nil
 	}
-
-	// allow the client to match more than valid tag names. This allows linked editing when typing is in progress or tag name is incomplete
-	jsxTagWordPattern := "[a-zA-Z0-9:\\-\\._$]*"
 
 	if ast.IsJsxFragment(token.Parent.Parent) {
 		fragment := token.Parent.Parent.AsJsxFragment()
@@ -47,7 +47,7 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 					{Start: openLineChar, End: openLineChar}, // only return start position for opening tag since the length of a fragment is always 3 and it is unlikely user will type in the middle of a fragment tag
 					{Start: closeLineChar, End: closeLineChar},
 				},
-				WordPattern: &jsxTagWordPattern,
+				WordPattern: jsxTagWordPattern,
 			},
 		}, nil
 	} else {
@@ -100,7 +100,7 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 						End:   l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(closeTagNameEnd)),
 					},
 				},
-				WordPattern: &jsxTagWordPattern,
+				WordPattern: jsxTagWordPattern,
 			},
 		}, nil
 	}
