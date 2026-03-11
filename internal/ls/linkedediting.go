@@ -27,7 +27,7 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 		fragment := token.Parent.Parent.AsJsxFragment()
 		openFragment := fragment.OpeningFragment
 		closeFragment := fragment.ClosingFragment
-		if ast.ContainsParseError(openFragment) || ast.ContainsParseError(closeFragment) {
+		if openFragment.Flags&ast.NodeFlagsThisNodeHasError != 0 || closeFragment.Flags&ast.NodeFlagsThisNodeHasError != 0 {
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
 

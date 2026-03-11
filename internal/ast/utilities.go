@@ -993,26 +993,6 @@ func IsNodeDescendantOf(node *Node, ancestor *Node) bool {
 	return false
 }
 
-func ContainsParseError(node *Node) bool {
-	if node.Flags&NodeFlagsHasAggregatedChildData != 0 {
-		// A node is considered to contain a parse error if:
-		//  a) the parser explicitly marked that it had an error
-		//  b) any of it's children reported that it had an error.
-		thisNodeOrAnySubNodesHasError := (node.Flags&NodeFlagsThisNodeHasError) != 0 || node.ForEachChild(ContainsParseError)
-
-		// If so, mark ourselves accordingly.
-		if thisNodeOrAnySubNodesHasError {
-			node.Flags |= NodeFlagsThisNodeOrAnySubNodesHasError
-		}
-
-		// Also mark that we've propagated the child information to this node.  This way we can
-		// always consult the bit directly on this node without needing to check its children
-		// again.
-		node.Flags |= NodeFlagsHasAggregatedChildData
-	}
-	return (node.Flags & NodeFlagsThisNodeOrAnySubNodesHasError) != 0
-}
-
 func ModifierToFlag(token Kind) ModifierFlags {
 	switch token {
 	case KindStaticKeyword:
