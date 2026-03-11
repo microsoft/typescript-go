@@ -8,6 +8,7 @@ import (
 )
 
 func init() {
+	// See https://github.com/golang/go/issues/71283
 	const tracebackAncestors = "tracebackancestors"
 	const tracebackAncestorsSetting = tracebackAncestors + "=5"
 	godebug := os.Getenv("GODEBUG")
