@@ -438,7 +438,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		session.programCounter.Ref(project.Program)
+		if project.Program != nil {
+			session.programCounter.Ref(project.Program)
+		}
 		if project.ProgramLastUpdate == newSnapshotID {
 			// Only ref source files when the program was created/updated in this snapshot.
 			// This matches dispose, which only derefs when programCounter reaches zero.

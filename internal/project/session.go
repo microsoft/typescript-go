@@ -941,6 +941,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	s.logger.Logf("Config count:      %6d", len(snapshot.ConfigFileRegistry.configs))
 	if s.logger.IsVerbose() {
 		s.logger.Logf("Parse cache size:           %6d", parseCacheSize)
+		s.logger.Logf("Program count:              %6d", s.programCounter.Len())
 		s.logger.Logf("Extended config cache size: %6d", extendedConfigCount)
 
 		s.logger.Log("Auto Imports:")
