@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"fmt"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -193,18 +191,14 @@ func (tx *esDecoratorTransformer) enterClass(ci *classInfo) {
 }
 
 func (tx *esDecoratorTransformer) exitClass() {
-	if tx.top == nil || tx.top.kind != lexicalEntryKindClass {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'class' but got '%d' instead.", tx.top.kind))
-	}
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClass, "Incorrect value for top.kind. Expected top.kind to be 'class' but got '", tx.top.kind, "' instead.")
 	tx.pendingExpressions = tx.top.savedPendingExpressions
 	tx.top = tx.top.next
 	tx.updateState()
 }
 
 func (tx *esDecoratorTransformer) enterClassElement(node *ast.Node) {
-	if tx.top == nil || tx.top.kind != lexicalEntryKindClass {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'class' but got '%d' instead.", tx.top.kind))
-	}
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClass, "Incorrect value for top.kind. Expected top.kind to be 'class' but got '", tx.top.kind, "' instead.")
 	tx.top = &lexicalEntry{
 		kind: lexicalEntryKindClassElement,
 		next: tx.top,
@@ -219,20 +213,14 @@ func (tx *esDecoratorTransformer) enterClassElement(node *ast.Node) {
 }
 
 func (tx *esDecoratorTransformer) exitClassElement() {
-	if tx.top == nil || tx.top.kind != lexicalEntryKindClassElement {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'class-element' but got '%d' instead.", tx.top.kind))
-	}
-	if tx.top.next == nil || tx.top.next.kind != lexicalEntryKindClass {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.next.kind. Expected top.next.kind to be 'class' but got '%d' instead.", tx.top.next.kind))
-	}
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClassElement, "Incorrect value for top.kind. Expected top.kind to be 'class-element' but got '", tx.top.kind, "' instead.")
+	debug.Assert(tx.top.next != nil && tx.top.next.kind == lexicalEntryKindClass, "Incorrect value for top.next.kind. Expected top.next.kind to be 'class' but got '", tx.top.next.kind, "' instead.")
 	tx.top = tx.top.next
 	tx.updateState()
 }
 
 func (tx *esDecoratorTransformer) enterName() {
-	if tx.top == nil || tx.top.kind != lexicalEntryKindClassElement {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'class-element' but got '%d' instead.", tx.top.kind))
-	}
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindClassElement, "Incorrect value for top.kind. Expected top.kind to be 'class-element' but got '", tx.top.kind, "' instead.")
 	tx.top = &lexicalEntry{
 		kind: lexicalEntryKindName,
 		next: tx.top,
@@ -241,9 +229,7 @@ func (tx *esDecoratorTransformer) enterName() {
 }
 
 func (tx *esDecoratorTransformer) exitName() {
-	if tx.top == nil || tx.top.kind != lexicalEntryKindName {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'name' but got '%d' instead.", tx.top.kind))
-	}
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindName, "Incorrect value for top.kind. Expected top.kind to be 'name' but got '", tx.top.kind, "' instead.")
 	tx.top = tx.top.next
 	tx.updateState()
 }
@@ -264,9 +250,7 @@ func (tx *esDecoratorTransformer) enterOther() {
 }
 
 func (tx *esDecoratorTransformer) exitOther() {
-	if tx.top == nil || tx.top.kind != lexicalEntryKindOther {
-		debug.Fail(fmt.Sprintf("Incorrect value for top.kind. Expected top.kind to be 'other' but got '%d' instead.", tx.top.kind))
-	}
+	debug.Assert(tx.top != nil && tx.top.kind == lexicalEntryKindOther, "Incorrect value for top.kind. Expected top.kind to be 'other' but got '", tx.top.kind, "' instead.")
 	if tx.top.depth > 0 {
 		debug.Assert(len(tx.pendingExpressions) == 0)
 		tx.top.depth--
