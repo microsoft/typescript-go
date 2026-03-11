@@ -118,6 +118,9 @@ type esDecoratorTransformer struct {
 	constructorClassElementVisitor             *ast.NodeVisitor
 	arrayAssignmentVisitor                     *ast.NodeVisitor
 	objectAssignmentVisitor                    *ast.NodeVisitor
+	staticOnlyModifierVisitor                  *ast.NodeVisitor
+	asyncOnlyModifierVisitor                   *ast.NodeVisitor
+	accessorStrippingModifierVisitor           *ast.NodeVisitor
 }
 
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -133,6 +136,24 @@ func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformer
 	tx.constructorClassElementVisitor = ec.NewNodeVisitor(tx.constructorClassElementVisit)
 	tx.arrayAssignmentVisitor = ec.NewNodeVisitor(tx.visitArrayAssignmentElement)
 	tx.objectAssignmentVisitor = ec.NewNodeVisitor(tx.visitObjectAssignmentElement)
+	tx.staticOnlyModifierVisitor = ec.NewNodeVisitor(func(node *ast.Node) *ast.Node {
+		if node.Kind == ast.KindStaticKeyword {
+			return node
+		}
+		return nil
+	})
+	tx.asyncOnlyModifierVisitor = ec.NewNodeVisitor(func(node *ast.Node) *ast.Node {
+		if node.Kind == ast.KindAsyncKeyword {
+			return node
+		}
+		return nil
+	})
+	tx.accessorStrippingModifierVisitor = ec.NewNodeVisitor(func(node *ast.Node) *ast.Node {
+		if node.Kind == ast.KindAccessorKeyword {
+			return nil
+		}
+		return node
+	})
 	return result
 }
 
@@ -1354,7 +1375,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			if ast.IsPrivateIdentifierClassElementDeclaration(member) && createDescriptor != nil {
 				// For private members, extract the method/accessor body into a descriptor object.
 				// Filter modifiers to only keep async.
-				asyncMods := tx.filterModifier(modifiers, ast.KindAsyncKeyword)
+				asyncMods := tx.asyncOnlyModifierVisitor.VisitModifiers(modifiers)
 				descriptor := createDescriptor(member, asyncMods)
 				mi.memberDescriptorName = tx.createHelperVariable(member, "descriptor")
 				result.descriptorName = mi.memberDescriptorName
@@ -1681,7 +1702,7 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 			}
 		}
 
-		modifiersWithoutAccessor := tx.filterOutModifier(result.modifiers, ast.KindAccessorKeyword)
+		modifiersWithoutAccessor := tx.accessorStrippingModifierVisitor.VisitModifiers(result.modifiers)
 
 		backingField := createAccessorPropertyBackingField(f, node.AsPropertyDeclaration(), modifiersWithoutAccessor, initializer)
 		ec.SetOriginal(backingField, node)
@@ -2572,7 +2593,7 @@ func (tx *esDecoratorTransformer) createAccessorPropertyDescriptorObject(member 
 // Creates a MethodDeclaration that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createMethodDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
-	staticOnly := tx.filterModifier(modifiers, ast.KindStaticKeyword)
+	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)
 	return f.NewGetAccessorDeclaration(
 		staticOnly,
 		name,
@@ -2591,7 +2612,7 @@ func (tx *esDecoratorTransformer) createMethodDescriptorForwarder(modifiers *ast
 // Creates a GetAccessorDeclaration that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
-	staticOnly := tx.filterModifier(modifiers, ast.KindStaticKeyword)
+	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)
 	return f.NewGetAccessorDeclaration(
 		staticOnly,
 		name,
@@ -2614,7 +2635,7 @@ func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers
 // Creates a SetAccessorDeclaration that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createSetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
-	staticOnly := tx.filterModifier(modifiers, ast.KindStaticKeyword)
+	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)
 	return f.NewSetAccessorDeclaration(
 		staticOnly,
 		name,
@@ -2702,46 +2723,6 @@ func (tx *esDecoratorTransformer) createSymbolMetadataReference(classSuper *ast.
 	symbolMetadata := f.NewPropertyAccessExpression(f.NewIdentifier("Symbol"), nil, f.NewIdentifier("metadata"), ast.NodeFlagsNone)
 	elementAccess := f.NewElementAccessExpression(classSuper, nil, symbolMetadata, ast.NodeFlagsNone)
 	return f.NewBinaryExpression(nil, elementAccess, nil, f.NewToken(ast.KindQuestionQuestionToken), f.NewToken(ast.KindNullKeyword))
-}
-
-// filterModifier returns a modifier list containing only modifiers of the given kind, if any.
-func (tx *esDecoratorTransformer) filterModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
-	if modifiers == nil {
-		return nil
-	}
-	var filtered []*ast.Node
-	for _, mod := range modifiers.Nodes {
-		if mod.Kind == kind {
-			filtered = append(filtered, mod)
-		}
-	}
-	if len(filtered) == 0 {
-		return nil
-	}
-	if len(filtered) == len(modifiers.Nodes) {
-		return modifiers
-	}
-	return tx.Factory().NewModifierList(filtered)
-}
-
-// filterOutModifier returns a modifier list with all modifiers except those of the given kind.
-func (tx *esDecoratorTransformer) filterOutModifier(modifiers *ast.ModifierList, kind ast.Kind) *ast.ModifierList {
-	if modifiers == nil {
-		return nil
-	}
-	var filtered []*ast.Node
-	for _, mod := range modifiers.Nodes {
-		if mod.Kind != kind {
-			filtered = append(filtered, mod)
-		}
-	}
-	if len(filtered) == 0 {
-		return nil
-	}
-	if len(filtered) == len(modifiers.Nodes) {
-		return modifiers
-	}
-	return tx.Factory().NewModifierList(filtered)
 }
 
 func injectClassThisAssignmentIfMissing(ec *printer.EmitContext, f *printer.NodeFactory, node *ast.Node, classThis *ast.IdentifierNode) *ast.Node {
