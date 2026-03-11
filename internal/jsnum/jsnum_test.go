@@ -644,9 +644,13 @@ func TestExponentiate(t *testing.T) {
 		{-1, Inf(-1), NaN()},
 		{1, NaN(), NaN()},
 		// Cases where math.Pow diverges from V8 by >1 ULP.
-		{10, 308, Number(math.Pow(10, 308))},
-		{5, 210, Number(math.Pow(5, 210))},
-		{10, 200, Number(math.Pow(10, 200))},
+		// Expected values are the correctly-rounded IEEE 754 results
+		// computed via exact integer arithmetic (big.Int).
+		// Cross-engine testing (V8, SpiderMonkey, QuickJS, XS via jsvu)
+		// confirmed these match the majority of JS engines.
+		{10, 308, numberFromBits(0x7fe1ccf385ebc8a0)},
+		{5, 210, numberFromBits(0x5e68557f31326bbb)},
+		{10, 200, numberFromBits(0x6974e718d7d7625a)},
 	}
 
 	xs := make([]Number, len(tests))
@@ -667,6 +671,29 @@ func TestExponentiate(t *testing.T) {
 				// Different JS engines (V8, SpiderMonkey, JSC) use different pow
 				// implementations that can differ by 1 ULP. Allow that tolerance.
 				assertWithinOneULP(t, got, jsResults[i])
+			}
+		})
+	}
+}
+
+func BenchmarkExponentiate(b *testing.B) {
+	cases := []struct {
+		name     string
+		base     Number
+		exponent Number
+	}{
+		{"2**10_exact", 2, 10},           // small, fits in 53 bits → math.Pow
+		{"2**53_exact", 2, 53},           // boundary, exactly 53 bits → math.Pow
+		{"10**20_bigint", 10, 20},        // exceeds 53 bits → big.Int
+		{"10**308_bigint", 10, 308},      // large exponent → big.Int
+		{"3**34_bigint", 3, 34},          // medium → big.Int
+		{"0.5**-0.5_mathpow", 0.5, -0.5}, // non-integer → math.Pow
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			for b.Loop() {
+				c.base.Exponentiate(c.exponent)
 			}
 		})
 	}

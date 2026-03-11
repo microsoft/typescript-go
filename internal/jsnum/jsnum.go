@@ -3,6 +3,7 @@ package jsnum
 
 import (
 	"math"
+	"math/big"
 )
 
 const (
@@ -151,5 +152,24 @@ func (base Number) Exponentiate(exponent Number) Number {
 		return NaN()
 	}
 
-	return Number(math.Pow(float64(base), float64(exponent)))
+	b := float64(base)
+	e := float64(exponent)
+
+	// For integer base ** integer exponent where the result exceeds 53 bits,
+	// math.Pow can be off by multiple ULPs vs JS engines. Use exact big.Int
+	// arithmetic and IEEE 754 round-to-nearest-even conversion instead.
+	// The ES spec (§6.1.6.1.3) says exponentiate returns an
+	// "implementation-approximated" value, so engines are allowed to differ.
+	// This won't exactly match every engine (V8's fdlibm-compiled pow can
+	// round halfway ties differently), but will always be within 1 ULP
+	// (unit in the last place, i.e. the least significant bit of the result).
+	if b >= math.MinInt64 && b <= math.MaxInt64 && b == math.Trunc(b) &&
+		e >= 0 && e == math.Trunc(e) && !math.IsInf(e, 0) &&
+		e*math.Log2(math.Abs(b)) > 53 {
+		ri := new(big.Int).Exp(big.NewInt(int64(b)), big.NewInt(int64(e)), nil)
+		result, _ := new(big.Float).SetPrec(256).SetInt(ri).Float64()
+		return Number(result)
+	}
+
+	return Number(math.Pow(b, e))
 }
