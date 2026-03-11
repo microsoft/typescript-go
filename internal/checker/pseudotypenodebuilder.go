@@ -133,8 +133,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// Just something to keep in mind if the ID checker keeps growing.
 		isConst := b.ch.isConstContext(elements[0].Name)
 		newElements := make([]*ast.Node, 0, len(elements))
-		// TODO: strada's ID logic is piecemeal in `name` reuse validation - only methods remap `new` to `"new"`
-		// we should have a unified `reuseName` codepath that remaps keyword ID names to string literal names
+
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
 			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
@@ -152,7 +151,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoObjectMethod()
 				newProp = b.f.NewMethodSignatureDeclaration(
 					modifiers,
-					b.reuseNode(e.Name),
+					b.reuseName(e.Name),
 					nil,
 					nil,
 					b.pseudoParametersToNodeList(d.Parameters),
@@ -162,7 +161,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoPropertyAssignment()
 				newProp = b.f.NewPropertySignatureDeclaration(
 					modifiers,
-					b.reuseNode(e.Name),
+					b.reuseName(e.Name),
 					nil,
 					b.pseudoTypeToNode(d.Type),
 					nil,
@@ -171,7 +170,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoSetAccessor()
 				newProp = b.f.NewSetAccessorDeclaration(
 					nil,
-					b.reuseNode(e.Name),
+					b.reuseName(e.Name),
 					nil,
 					b.f.NewNodeList([]*ast.Node{b.pseudoParameterToNode(d.Parameter)}),
 					nil,
@@ -182,7 +181,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoGetAccessor()
 				newProp = b.f.NewGetAccessorDeclaration(
 					nil,
-					b.reuseNode(e.Name),
+					b.reuseName(e.Name),
 					nil,
 					nil,
 					b.pseudoTypeToNode(d.Type),

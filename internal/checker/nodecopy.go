@@ -17,6 +17,18 @@ func (b *NodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
 	return b.tryReuseExistingNodeHelper(node)
 }
 
+// a wrapper around `reuseNode` that handles renaming `new` to `"new"` so we don't accidentally emit constructor signatures when we don't mean to
+func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
+	res := b.reuseNode(node)
+	if res != nil && res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
+		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
+		b.e.SetOriginal(str, res)
+		str.Loc = res.Loc
+		return str
+	}
+	return res
+}
+
 func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	if node == nil {
 		return node
