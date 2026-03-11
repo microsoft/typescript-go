@@ -43,8 +43,7 @@ func TestSnapshot(t *testing.T) {
 		session := setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-		snapshotBefore, release := session.Snapshot()
-		defer release()
+		snapshotBefore := session.Snapshot()
 
 		session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{
@@ -59,8 +58,7 @@ func TestSnapshot(t *testing.T) {
 		})
 		_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
 		assert.NilError(t, err)
-		snapshotAfter, release := session.Snapshot()
-		defer release()
+		snapshotAfter := session.Snapshot()
 
 		// Configured project was updated by a clone
 		assert.Equal(t, snapshotAfter.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")).ProgramUpdateKind, ProgramUpdateKindCloned)
@@ -84,8 +82,7 @@ func TestSnapshot(t *testing.T) {
 		session := setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p2/index.ts", 1, files["/home/projects/TS/p2/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		snapshotBefore, release := session.Snapshot()
-		defer release()
+		snapshotBefore := session.Snapshot()
 
 		// a.ts and b.ts are cached
 		assert.Check(t, snapshotBefore.fs.diskFiles["/home/projects/ts/p1/a.ts"] != nil)
@@ -95,8 +92,7 @@ func TestSnapshot(t *testing.T) {
 		session.DidCloseFile(context.Background(), "file:///home/projects/TS/p1/index.ts")
 		// Next open file is unrelated to p1, triggers p1 closing and file cache cleanup
 		session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-		snapshotAfter, release := session.Snapshot()
-		defer release()
+		snapshotAfter := session.Snapshot()
 
 		// a.ts is cleaned up, b.ts is still cached
 		assert.Check(t, snapshotAfter.fs.diskFiles["/home/projects/ts/p1/a.ts"] == nil)
@@ -111,8 +107,7 @@ func TestSnapshot(t *testing.T) {
 		}
 		session := setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 
 		handle := snapshot.GetFile("/home/projects/TS/p1/nonexistent.ts")
 		assert.Check(t, handle == nil, "GetFile should return nil for non-existent file")
