@@ -103,22 +103,6 @@ func (this *SymbolTrackerImpl) ReportNonSerializableProperty(propertyName string
 	this.inner.ReportNonSerializableProperty(propertyName)
 }
 
-func (this *SymbolTrackerImpl) ReportMultipleModuleExports(nodes []*ast.Node) {
-	this.onDiagnosticReported()
-	if this.inner == nil {
-		return
-	}
-	this.inner.ReportMultipleModuleExports(nodes)
-}
-
-func (this *SymbolTrackerImpl) ReportNestedCJSExports(nodes []*ast.Node) {
-	this.onDiagnosticReported()
-	if this.inner == nil {
-		return
-	}
-	this.inner.ReportNestedCJSExports(nodes)
-}
-
 func (this *SymbolTrackerImpl) onDiagnosticReported() {
 	this.context.reportedDiagnostic = true
 }

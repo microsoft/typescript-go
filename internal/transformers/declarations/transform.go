@@ -266,10 +266,12 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	if ast.IsExternalOrCommonJSModule(node) {
 		if ast.IsInJSFile(node.AsNode()) {
 			if exportEquals := node.Symbol.Exports[ast.InternalSymbolNameExportEquals]; exportEquals != nil && len(exportEquals.Declarations) > 1 {
-				tx.tracker.ReportMultipleModuleExports(exportEquals.Declarations)
+				for _, node := range exportEquals.Declarations {
+					tx.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit))
+				}
 			}
-			if len(node.NestedCJSExports) != 0 {
-				tx.tracker.ReportNestedCJSExports(node.NestedCJSExports)
+			for _, node := range node.NestedCJSExports {
+				tx.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit))
 			}
 		}
 		if !tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker) {

@@ -16,8 +16,6 @@ type SymbolTracker interface {
 	ReportTruncationError()
 	ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol)
 	ReportNonSerializableProperty(propertyName string)
-	ReportMultipleModuleExports(nodes []*ast.Node)
-	ReportNestedCJSExports(nodes []*ast.Node)
 
 	ReportInferenceFallback(node *ast.Node)
 	PushErrorFallbackNode(node *ast.Node)

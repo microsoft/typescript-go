@@ -86,18 +86,6 @@ func (s *SymbolTrackerImpl) ReportNonSerializableProperty(propertyName string) {
 	}
 }
 
-func (s *SymbolTrackerImpl) ReportMultipleModuleExports(nodes []*ast.Node) {
-	for _, node := range nodes {
-		s.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit))
-	}
-}
-
-func (s *SymbolTrackerImpl) ReportNestedCJSExports(nodes []*ast.Node) {
-	for _, node := range nodes {
-		s.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit))
-	}
-}
-
 // ReportNonlocalAugmentation implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol) {
 	primaryDeclaration := core.Find(parentSymbol.Declarations, func(d *ast.Node) bool { return ast.GetSourceFileOfNode(d) == containingFile })
