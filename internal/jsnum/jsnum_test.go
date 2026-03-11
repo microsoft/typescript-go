@@ -23,6 +23,35 @@ func assertEqualNumber(t *testing.T, got, want Number) {
 	}
 }
 
+// assertWithinOneULP checks that got and want are either equal or differ by
+// at most 1 ULP (unit in the last place).
+func assertWithinOneULP(t *testing.T, got, want Number) {
+	t.Helper()
+
+	if got.IsNaN() || want.IsNaN() {
+		assert.Equal(t, got.IsNaN(), want.IsNaN(), "got: %v, want: %v", got, want)
+		return
+	}
+
+	gotBits := math.Float64bits(float64(got))
+	wantBits := math.Float64bits(float64(want))
+	if gotBits == wantBits {
+		return
+	}
+
+	var ulpDist uint64
+	if gotBits > wantBits {
+		ulpDist = gotBits - wantBits
+	} else {
+		ulpDist = wantBits - gotBits
+	}
+
+	if ulpDist > 1 {
+		t.Errorf("got %v (%016x), want %v (%016x) within 1 ULP (off by %d ULPs)",
+			got, gotBits, want, wantBits, ulpDist)
+	}
+}
+
 func numberFromBits(b uint64) Number {
 	return Number(math.Float64frombits(b))
 }
@@ -614,10 +643,10 @@ func TestExponentiate(t *testing.T) {
 		{-1, Inf(1), NaN()},
 		{-1, Inf(-1), NaN()},
 		{1, NaN(), NaN()},
-		// TODO: math.Pow(10, 308) returns 1e+308 while V8 returns 1.0000000000000006e+308.
-		// The ES spec says exponentiate is "implementation-approximated", so both are valid,
-		// but we should match V8's behavior if possible.
-		// {10, 308, Number(math.Pow(10, 308))},
+		// Cases where math.Pow diverges from V8 by >1 ULP.
+		{10, 308, Number(math.Pow(10, 308))},
+		{5, 210, Number(math.Pow(5, 210))},
+		{10, 200, Number(math.Pow(10, 200))},
 	}
 
 	xs := make([]Number, len(tests))
@@ -634,7 +663,10 @@ func TestExponentiate(t *testing.T) {
 			got := test.x.Exponentiate(test.y)
 			assertEqualNumber(t, got, test.want)
 			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
+				// The ES spec says exponentiate is "implementation-approximated".
+				// Different JS engines (V8, SpiderMonkey, JSC) use different pow
+				// implementations that can differ by 1 ULP. Allow that tolerance.
+				assertWithinOneULP(t, got, jsResults[i])
 			}
 		})
 	}
