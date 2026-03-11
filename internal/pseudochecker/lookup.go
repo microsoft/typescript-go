@@ -629,7 +629,7 @@ func (ch *PseudoChecker) cloneParameters(nodes *ast.NodeList) []*PseudoParameter
 		result = append(result, NewPseudoParameter(
 			e.AsParameterDeclaration().DotDotDotToken != nil,
 			e.Name(),
-			e.AsParameterDeclaration().QuestionToken != nil,
+			e.AsParameterDeclaration().QuestionToken != nil || e.AsParameterDeclaration().Initializer != nil,
 			ch.typeFromParameter(e.AsParameterDeclaration()),
 		))
 	}

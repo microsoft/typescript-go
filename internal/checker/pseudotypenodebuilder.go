@@ -17,6 +17,14 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindInferred:
 		node := t.AsPseudoTypeInferred().Expression
 		b.ctx.tracker.ReportInferenceFallback(node)
+		if ast.IsDeclaration(node.Parent) {
+			// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
+			if ast.IsFunctionLike(node.Parent) && !ast.IsAccessor(node.Parent) {
+				return b.serializeReturnTypeForSignature(b.ch.getSignatureFromDeclaration(node.Parent), false)
+			}
+			return b.serializeTypeForDeclaration(node.Parent, nil, nil, false)
+		}
+		// Parent wasn't a declaration - likely a return expression stitched into a pseudotype. TODO: This probably still needs some kind of widening logic.
 		ty := b.ch.getTypeOfExpression(node)
 		return b.typeToTypeNode(ty)
 	case pseudochecker.PseudoTypeKindNoResult:
