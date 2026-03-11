@@ -1,12 +1,22 @@
-//go:debug tracebackancestors=5
-
 package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/execute"
 )
+
+func init() {
+	const tracebackAncestors = "tracebackancestors"
+	const tracebackAncestorsSetting = tracebackAncestors + "=5"
+	godebug := os.Getenv("GODEBUG")
+	if godebug == "" {
+		os.Setenv("GODEBUG", tracebackAncestorsSetting)
+	} else if !strings.Contains(godebug, tracebackAncestors+"=") {
+		os.Setenv("GODEBUG", godebug+","+tracebackAncestorsSetting)
+	}
+}
 
 func main() {
 	os.Exit(runMain())
