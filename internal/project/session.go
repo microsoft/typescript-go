@@ -517,7 +517,6 @@ func (s *Session) getSnapshot(
 			reason:          updateReason,
 			ResourceRequest: request,
 		})
-		return snapshot, s.createSnapshotRelease(snapshot)
 	}
 	return snapshot, s.createSnapshotRelease(snapshot)
 }
