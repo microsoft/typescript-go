@@ -71,9 +71,14 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
 	if externalHelpersImportDeclaration != nil || tx.importRequireStatements != nil {
 		prologue, rest := tx.Factory().SplitStandardPrologue(result.Statements.Nodes)
+		custom, rest := tx.Factory().SplitCustomPrologue(rest)
 		statements := slices.Clone(prologue)
+		statements = append(statements, custom...)
 		if externalHelpersImportDeclaration != nil {
-			statements = append(statements, externalHelpersImportDeclaration)
+			// The helpers import must be visited so that `import x = require("tslib")`
+			// (TypeScript-only syntax) is transformed to `const x = require("tslib")`
+			// for CJS output files via visitImportEqualsDeclaration.
+			statements = append(statements, tx.Visitor().VisitNode(externalHelpersImportDeclaration))
 		}
 		if tx.importRequireStatements != nil {
 			statements = append(statements, tx.importRequireStatements.statements...)

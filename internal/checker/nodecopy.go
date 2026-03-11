@@ -94,8 +94,8 @@ func (w *wrappingTracker) ReportInferenceFallback(node *ast.Node) {
 	w.wrapped.ReportInferenceFallback(node) // Should this also be deferred?
 }
 
-func (w *wrappingTracker) ReportLikelyUnsafeImportRequiredError(specifier string) {
-	w.bound.markError(func() { w.wrapped.ReportLikelyUnsafeImportRequiredError(specifier) })
+func (w *wrappingTracker) ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string) {
+	w.bound.markError(func() { w.wrapped.ReportLikelyUnsafeImportRequiredError(specifier, symbolName) })
 }
 
 func (w *wrappingTracker) ReportNonSerializableProperty(propertyName string) {
@@ -191,7 +191,7 @@ func (b *NodeBuilderImpl) getModuleSpecifierOverride(parent *ast.Node, lit *ast.
 		}
 		if len(name) > 0 && strings.Contains(name, "/node_modules/") {
 			b.ctx.encounteredError = true
-			b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(name)
+			b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(name, "")
 		}
 		if name != originalName {
 			return name

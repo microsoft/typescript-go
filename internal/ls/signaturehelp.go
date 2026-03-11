@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -428,7 +427,7 @@ func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isT
 	// Generate documentation from the signature's declaration
 	var documentation *string
 	if declaration := candidate.Declaration(); declaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, declaration, docFormat, true /*commentOnly*/)
+		doc := l.getDocumentationFromDeclaration(c, nil, declaration, nil, docFormat, true /*commentOnly*/)
 		if doc != "" {
 			documentation = &doc
 		}
@@ -591,7 +590,7 @@ func (l *LanguageService) createSignatureHelpParameterForParameter(parameter *as
 	isRest := parameter.CheckFlags&ast.CheckFlagsRestParameter != 0
 	var documentation *lsproto.StringOrMarkupContent
 	if parameter.ValueDeclaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, parameter.ValueDeclaration, docFormat, true /*commentOnly*/)
+		doc := l.getDocumentationFromDeclaration(c, nil, parameter.ValueDeclaration, nil, docFormat, true /*commentOnly*/)
 		if doc != "" {
 			documentation = &lsproto.StringOrMarkupContent{
 				MarkupContent: &lsproto.MarkupContent{
@@ -775,7 +774,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
-		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), fmt.Sprintf("Not a subspan. Child: %s, parent: %s", n.KindString(), n.Parent.KindString()))
+		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), "Not a subspan. Child: ", n.KindString(), ", parent: ", n.Parent.KindString())
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo

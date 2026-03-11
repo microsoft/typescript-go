@@ -3,6 +3,8 @@ package project
 import (
 	"context"
 	"fmt"
+	"runtime"
+	gometrics "runtime/metrics"
 	"slices"
 	"strings"
 	"sync"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -37,6 +38,7 @@ const (
 	UpdateReasonRequestedLanguageServiceProjectDirty
 	UpdateReasonRequestedLoadProjectTree
 	UpdateReasonRequestedLanguageServiceWithAutoImports
+	UpdateReasonIdleCleanDiskCache
 )
 
 // SessionOptions are the immutable initialization options for a session.
@@ -126,6 +128,12 @@ type Session struct {
 	// after file watch changes and ATA updates.
 	diagnosticsRefreshCancel context.CancelFunc
 	diagnosticsRefreshMu     sync.Mutex
+
+	// idleCacheCleanTimer is a resettable timer for scheduling idle disk
+	// cache cleans. The timer resets on any file event (open, close,
+	// change, save, watch) and fires after 30 seconds of inactivity.
+	idleCacheCleanTimer *time.Timer
+	idleCacheCleanMu    sync.Mutex
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
@@ -245,6 +253,7 @@ func (s *Session) InitializeWithUserConfig(config *lsutil.UserConfig) {
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
 	s.pendingFileChangesMu.Lock()
@@ -268,6 +277,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -278,6 +288,7 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -290,6 +301,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.cancelDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -324,6 +336,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 	// Schedule a debounced diagnostics refresh
 	s.ScheduleDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
 }
 
 func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
@@ -385,26 +398,51 @@ func (s *Session) cancelDiagnosticsRefresh() {
 	}
 }
 
-func (s *Session) Snapshot() (*Snapshot, func()) {
-	s.snapshotMu.RLock()
-	defer s.snapshotMu.RUnlock()
-	snapshot := s.snapshot
-	snapshot.Ref()
-	return snapshot, s.createSnapshotRelease(snapshot)
+const idleCacheCleanDelay = 30 * time.Second
+
+func (s *Session) scheduleIdleCacheClean() {
+	s.idleCacheCleanMu.Lock()
+	defer s.idleCacheCleanMu.Unlock()
+
+	if s.idleCacheCleanTimer != nil {
+		s.idleCacheCleanTimer.Stop()
+	}
+
+	s.idleCacheCleanTimer = time.AfterFunc(idleCacheCleanDelay, func() {
+		s.idleCacheCleanMu.Lock()
+		s.idleCacheCleanTimer = nil
+		s.idleCacheCleanMu.Unlock()
+
+		s.snapshotUpdateMu.Lock()
+		defer s.snapshotUpdateMu.Unlock()
+
+		ctx := s.backgroundCtx
+		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:         UpdateReasonIdleCleanDiskCache,
+			fileChanges:    fileChanges,
+			ataChanges:     ataChanges,
+			newConfig:      newConfig,
+			cleanDiskCache: true,
+		})
+
+		runtime.GC()
+	})
 }
 
-func (s *Session) createSnapshotRelease(snapshot *Snapshot) func() {
-	return func() {
-		if snapshot.Deref() {
-			// The session itself accounts for one reference to the snapshot, and it derefs
-			// in UpdateSnapshot while holding the snapshotMu lock, so the only way to end
-			// up here is for an external caller to release the snapshot after the session
-			// has already dereferenced it and moved to a new snapshot. In other words, we
-			// can assume that `snapshot != s.snapshot`, and therefor there's no way for
-			// anyone else to acquire a reference to this snapshot again.
-			snapshot.dispose(s)
-		}
+func (s *Session) cancelIdleCacheClean() {
+	s.idleCacheCleanMu.Lock()
+	defer s.idleCacheCleanMu.Unlock()
+	if s.idleCacheCleanTimer != nil {
+		s.idleCacheCleanTimer.Stop()
+		s.idleCacheCleanTimer = nil
 	}
+}
+
+func (s *Session) Snapshot() *Snapshot {
+	s.snapshotMu.RLock()
+	defer s.snapshotMu.RUnlock()
+	return s.snapshot
 }
 
 func (s *Session) getSnapshot(
@@ -490,6 +528,15 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return languageService, nil
 }
 
+// GetLanguageServiceAndSnapshot returns a LanguageService and the current snapshot.
+func (s *Session) GetLanguageServiceAndSnapshot(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, *Snapshot, error) {
+	snapshot, _, languageService, err := s.getSnapshotAndDefaultProject(ctx, uri)
+	if err != nil {
+		return nil, nil, err
+	}
+	return languageService, snapshot, nil
+}
+
 func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []ls.Project, error) {
 	snapshot, project, defaultLs, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
@@ -540,11 +587,12 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 	return snapshot
 }
 
-// GetLanguageServiceWithAutoImports clones the current snapshot with a request to
-// prepare auto-imports for the given URI, then returns a LanguageService for the
-// default project of that URI. It should only be called after GetLanguageService.
-// !!! take snapshot that GetLanguageService initially returned
-func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+// GetCurrentLanguageServiceWithAutoImports flushes pending file changes, clones the
+// current snapshot with auto-import preparation for the given URI, then returns a
+// LanguageService for the default project. Use this only outside of request handling
+// (e.g. cache warming). For request handlers, use GetLanguageServiceWithAutoImports
+// with the request-level snapshot instead.
+func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	snapshot := s.getSnapshot(ctx, ResourceRequest{
 		Documents:   []lsproto.DocumentUri{uri},
 		AutoImports: uri,
@@ -556,6 +604,49 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsp
 	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
+// GetLanguageServiceWithAutoImports clones the given snapshot with auto-import
+// preparation for the given URI, without flushing pending file changes. This
+// keeps the request bound to its original snapshot.
+func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+	change := SnapshotChange{
+		reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
+		ResourceRequest: ResourceRequest{
+			Documents:   []lsproto.DocumentUri{uri},
+			AutoImports: uri,
+		},
+	}
+	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s)
+
+	project := newSnapshot.GetDefaultProject(uri)
+	if project == nil {
+		newSnapshot.Dispose(s)
+		return nil, fmt.Errorf("no project found for URI %s", uri)
+	}
+
+	s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
+		s.adoptSnapshotChange(baseSnapshot, newSnapshot)
+	})
+
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), nil
+}
+
+// adoptSnapshotChange promotes a cloned snapshot as the session's current
+// snapshot so future requests benefit from the work already done. If the
+// session has moved on, the snapshot is discarded; the next request needing
+// auto-imports will redo the work on the latest snapshot.
+func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
+	s.snapshotMu.Lock()
+	oldSnapshot := s.snapshot
+	if oldSnapshot == baseSnapshot {
+		s.snapshot = newSnapshot
+		s.snapshotMu.Unlock()
+		oldSnapshot.Dispose(s)
+	} else {
+		s.snapshotMu.Unlock()
+		newSnapshot.Dispose(s)
+	}
+}
+
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
@@ -563,9 +654,8 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
 
-	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
-	if shouldDispose {
-		oldSnapshot.dispose(s)
+	if newSnapshot != oldSnapshot {
+		oldSnapshot.Dispose(s)
 	}
 
 	// Enqueue ATA updates if needed
@@ -579,6 +669,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 		if s.options.LoggingEnabled {
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
+			s.logRuntimeMetrics()
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
@@ -596,6 +687,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 // WaitForBackgroundTasks waits for all background tasks to complete.
 // This is intended to be used only for testing purposes.
 func (s *Session) WaitForBackgroundTasks() {
+	s.cancelIdleCacheClean()
 	s.backgroundQueue.Wait()
 }
 
@@ -696,25 +788,15 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(_ tspath.Path, addedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.programFilesWatch)...)
-			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.affectingLocationsWatch)...)
-			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.failedLookupsWatch)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.typingsWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.programFilesWatch, nil)...)
-			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.affectingLocationsWatch, nil)...)
-			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.failedLookupsWatch, nil)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.typingsWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
-			}
-			if oldProject.affectingLocationsWatch.ID() != newProject.affectingLocationsWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.affectingLocationsWatch, newProject.affectingLocationsWatch)...)
-			}
-			if oldProject.failedLookupsWatch.ID() != newProject.failedLookupsWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
 			}
 			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
@@ -737,6 +819,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 func (s *Session) Close() {
 	// Cancel any pending diagnostics refresh
 	s.cancelDiagnosticsRefresh()
+	// Cancel any pending idle cache clean
+	s.cancelIdleCacheClean()
 	s.backgroundQueue.Close()
 }
 
@@ -806,17 +890,43 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	}
 }
 
+var runtimeMetricsSamples = sync.OnceValue(func() []gometrics.Sample {
+	descs := gometrics.All()
+	var samples []gometrics.Sample
+	for _, desc := range descs {
+		name := desc.Name
+		if strings.HasPrefix(name, "/memory/") || strings.HasPrefix(name, "/gc/") {
+			samples = append(samples, gometrics.Sample{Name: name})
+		}
+	}
+	return samples
+})
+
+func (s *Session) logRuntimeMetrics() {
+	samples := slices.Clone(runtimeMetricsSamples())
+	gometrics.Read(samples)
+
+	var builder strings.Builder
+	builder.WriteString("\n======== Runtime Metrics ========")
+	for _, sample := range samples {
+		switch sample.Value.Kind() {
+		case gometrics.KindUint64:
+			fmt.Fprintf(&builder, "\n%s = %d", sample.Name, sample.Value.Uint64())
+		case gometrics.KindFloat64:
+			fmt.Fprintf(&builder, "\n%s = %f", sample.Name, sample.Value.Float64())
+		case gometrics.KindFloat64Histogram:
+			// Skip histograms for log readability
+		}
+	}
+	s.logger.Log(builder.String())
+}
+
 func (s *Session) logCacheStats(snapshot *Snapshot) {
 	var parseCacheSize int
-	var programCount int
 	var extendedConfigCount int
 	if s.logger.IsVerbose() {
 		s.parseCache.entries.Range(func(_ ParseCacheKey, _ *refCountCacheEntry[*ast.SourceFile]) bool {
 			parseCacheSize++
-			return true
-		})
-		s.programCounter.refs.Range(func(_ *compiler.Program, _ *atomic.Int32) bool {
-			programCount++
 			return true
 		})
 		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *refCountCacheEntry[*ExtendedConfigCacheEntry]) bool {
@@ -831,11 +941,12 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	s.logger.Logf("Config count:      %6d", len(snapshot.ConfigFileRegistry.configs))
 	if s.logger.IsVerbose() {
 		s.logger.Logf("Parse cache size:           %6d", parseCacheSize)
-		s.logger.Logf("Program count:              %6d", programCount)
+		s.logger.Logf("Program count:              %6d", s.programCounter.Len())
 		s.logger.Logf("Extended config cache size: %6d", extendedConfigCount)
 
 		s.logger.Log("Auto Imports:")
 		autoImportStats := snapshot.AutoImportRegistry().GetCacheStats()
+		s.logger.Logf("\tUnique packages (by realpath): %d", autoImportStats.UniquePackageCount)
 		if len(autoImportStats.ProjectBuckets) > 0 {
 			s.logger.Log("\tProject buckets:")
 			for _, bucket := range autoImportStats.ProjectBuckets {
@@ -851,6 +962,12 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 				for packageName := range bucket.State.DirtyPackages().Keys() {
 					s.logger.Logf("\t\t\tNeeds granular update: %s", packageName)
 				}
+				if bucket.DependencyNames != nil {
+					s.logger.Logf("\t\t\tCollected packages: %d", bucket.DependencyNames.Len())
+				} else {
+					s.logger.Logf("\t\t\tCollected packages: all, due to no package.json!")
+				}
+				s.logger.Logf("\t\t\tTotal packages: %d", bucket.PackageNames.Len())
 				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
 				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
 			}
@@ -981,6 +1098,9 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if !newSnapshot.fs.isOpenFile(changedFile.FileName()) {
 			return
 		}
+		if newSnapshot.GetPreferences(changedFile.FileName()).IncludeCompletionsForModuleExports.IsFalse() {
+			return
+		}
 		project := newSnapshot.GetDefaultProject(changedFile)
 		if project == nil {
 			return
@@ -992,6 +1112,6 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		) {
 			return
 		}
-		_, _ = s.GetLanguageServiceWithAutoImports(ctx, changedFile)
+		_, _ = s.GetCurrentLanguageServiceWithAutoImports(ctx, changedFile)
 	}
 }

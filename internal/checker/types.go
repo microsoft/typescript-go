@@ -262,10 +262,6 @@ const (
 	VarianceFlagsAllowsStructuralFallback               = VarianceFlagsUnmeasurable | VarianceFlagsUnreliable
 )
 
-type IndexSymbolLinks struct {
-	filteredIndexSymbolCache map[CacheHashKey]*ast.Symbol // Symbol with applicable declarations
-}
-
 type MarkedAssignmentSymbolLinks struct {
 	lastAssignmentPos     int32
 	hasDefiniteAssignment bool // Symbol is definitely assigned somewhere
@@ -302,32 +298,14 @@ const (
 type NodeCheckFlags uint32
 
 const (
-	NodeCheckFlagsNone                                     NodeCheckFlags = 0
-	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // Node has been type checked
-	NodeCheckFlagsLexicalThis                              NodeCheckFlags = 1 << 1  // Lexical 'this' reference
-	NodeCheckFlagsCaptureThis                              NodeCheckFlags = 1 << 2  // Lexical 'this' used in body
-	NodeCheckFlagsCaptureNewTarget                         NodeCheckFlags = 1 << 3  // Lexical 'new.target' used in body
-	NodeCheckFlagsSuperInstance                            NodeCheckFlags = 1 << 4  // Instance 'super' reference
-	NodeCheckFlagsSuperStatic                              NodeCheckFlags = 1 << 5  // Static 'super' reference
-	NodeCheckFlagsContextChecked                           NodeCheckFlags = 1 << 6  // Contextual types have been assigned
-	NodeCheckFlagsMethodWithSuperPropertyAccessInAsync     NodeCheckFlags = 1 << 7  // A method that contains a SuperProperty access in an async context.
-	NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync NodeCheckFlags = 1 << 8  // A method that contains a SuperProperty assignment in an async context.
-	NodeCheckFlagsCaptureArguments                         NodeCheckFlags = 1 << 9  // Lexical 'arguments' used in body
-	NodeCheckFlagsEnumValuesComputed                       NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
-	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
-	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
-	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // Block-scoped binding that is captured in some function
-	NodeCheckFlagsBlockScopedBindingInLoop                 NodeCheckFlags = 1 << 15 // Block-scoped binding with declaration nested inside iteration statement
-	NodeCheckFlagsNeedsLoopOutParameter                    NodeCheckFlags = 1 << 16 // Block scoped binding whose value should be explicitly copied outside of the converted loop
-	NodeCheckFlagsAssignmentsMarked                        NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
-	NodeCheckFlagsContainsConstructorReference             NodeCheckFlags = 1 << 18 // Class or class element that contains a binding that references the class constructor.
-	NodeCheckFlagsConstructorReference                     NodeCheckFlags = 1 << 29 // Binding to a class constructor inside of the class's body.
-	NodeCheckFlagsContainsClassWithPrivateIdentifiers      NodeCheckFlags = 1 << 20 // Marked on all block-scoped containers containing a class with private identifiers.
-	NodeCheckFlagsContainsSuperPropertyInStaticInitializer NodeCheckFlags = 1 << 21 // Marked on all block-scoped containers containing a static initializer with 'super.x' or 'super[x]'.
-	NodeCheckFlagsInCheckIdentifier                        NodeCheckFlags = 1 << 22
-	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // Node has been partially type checked
-	NodeCheckFlagsInitializerIsUndefined                   NodeCheckFlags = 1 << 24
-	NodeCheckFlagsInitializerIsUndefinedComputed           NodeCheckFlags = 1 << 25
+	NodeCheckFlagsNone                           NodeCheckFlags = 0
+	NodeCheckFlagsTypeChecked                    NodeCheckFlags = 1 << 0  // Node has been type checked
+	NodeCheckFlagsContextChecked                 NodeCheckFlags = 1 << 6  // Contextual types have been assigned
+	NodeCheckFlagsEnumValuesComputed             NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
+	NodeCheckFlagsAssignmentsMarked              NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
+	NodeCheckFlagsInCheckIdentifier              NodeCheckFlags = 1 << 22
+	NodeCheckFlagsInitializerIsUndefined         NodeCheckFlags = 1 << 24
+	NodeCheckFlagsInitializerIsUndefinedComputed NodeCheckFlags = 1 << 25
 )
 
 // Common links
@@ -943,6 +921,7 @@ type TupleType struct {
 }
 
 func (t *TupleType) FixedLength() int { return t.fixedLength }
+func (t *TupleType) IsReadonly() bool { return t.readonly }
 func (t *TupleType) ElementFlags() []ElementFlags {
 	elementFlags := make([]ElementFlags, len(t.elementInfos))
 	for i, info := range t.elementInfos {
@@ -1002,6 +981,10 @@ type UnionOrIntersectionType struct {
 
 func (t *UnionOrIntersectionType) AsUnionOrIntersectionType() *UnionOrIntersectionType { return t }
 
+func (t *UnionOrIntersectionType) Types() []*Type {
+	return t.types
+}
+
 // UnionType
 
 type UnionType struct {
@@ -1032,6 +1015,8 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
+func (t *TypeParameter) IsThisType() bool { return t.isThisType }
+
 // IndexFlags
 
 type IndexFlags uint32
@@ -1051,6 +1036,8 @@ type IndexType struct {
 	indexFlags IndexFlags
 }
 
+func (t *IndexType) Target() *Type { return t.target }
+
 // IndexedAccessType
 
 type IndexedAccessType struct {
@@ -1060,22 +1047,33 @@ type IndexedAccessType struct {
 	accessFlags AccessFlags // Only includes AccessFlags.Persistent
 }
 
+func (t *IndexedAccessType) ObjectType() *Type { return t.objectType }
+func (t *IndexedAccessType) IndexType() *Type  { return t.indexType }
+
 type TemplateLiteralType struct {
 	ConstrainedType
 	texts []string // Always one element longer than types
 	types []*Type  // Always at least one element
 }
 
+func (t *TemplateLiteralType) Texts() []string { return t.texts }
+func (t *TemplateLiteralType) Types() []*Type  { return t.types }
+
 type StringMappingType struct {
 	ConstrainedType
 	target *Type
 }
+
+func (t *StringMappingType) Target() *Type { return t.target }
 
 type SubstitutionType struct {
 	ConstrainedType
 	baseType   *Type // Target type
 	constraint *Type // Constraint that target type is known to satisfy
 }
+
+func (t *SubstitutionType) BaseType() *Type        { return t.baseType }
+func (t *SubstitutionType) SubstConstraint() *Type { return t.constraint }
 
 type ConditionalRoot struct {
 	node                *ast.ConditionalTypeNode
@@ -1101,6 +1099,9 @@ type ConditionalType struct {
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
 }
+
+func (t *ConditionalType) CheckType() *Type   { return t.checkType }
+func (t *ConditionalType) ExtendsType() *Type { return t.extendsType }
 
 // SignatureFlags
 
@@ -1142,6 +1143,10 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) Flags() SignatureFlags {
+	return s.flags
 }
 
 func (s *Signature) TypeParameters() []*Type {
@@ -1193,6 +1198,18 @@ func (typePredicate *TypePredicate) Type() *Type {
 	return typePredicate.t
 }
 
+func (typePredicate *TypePredicate) Kind() TypePredicateKind {
+	return typePredicate.kind
+}
+
+func (typePredicate *TypePredicate) ParameterIndex() int32 {
+	return typePredicate.parameterIndex
+}
+
+func (typePredicate *TypePredicate) ParameterName() string {
+	return typePredicate.parameterName
+}
+
 // IndexInfo
 
 type IndexInfo struct {
@@ -1200,7 +1217,20 @@ type IndexInfo struct {
 	valueType   *Type
 	isReadonly  bool
 	declaration *ast.Node   // IndexSignatureDeclaration
+	indexSymbol *ast.Symbol // Synthetic property symbol for this index signature
 	components  []*ast.Node // ElementWithComputedPropertyName
+}
+
+func (info *IndexInfo) KeyType() *Type {
+	return info.keyType
+}
+
+func (info *IndexInfo) ValueType() *Type {
+	return info.valueType
+}
+
+func (info *IndexInfo) IsReadonly() bool {
+	return info.isReadonly
 }
 
 /**

@@ -1,9 +1,12 @@
-import * as cp from "child_process";
+#!/usr/bin/env -S node --experimental-strip-types --no-warnings
+
+// Usage: node --experimental-strip-types --no-warnings convertFourslash.mts [inputFileList]
+
+import { $ } from "execa";
 import * as fs from "fs";
 import * as path from "path";
 import * as ts from "typescript";
 import * as url from "url";
-import which from "which";
 
 const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
 
@@ -23,7 +26,7 @@ function getManualTests(): Set<string> {
     return new Set(manualTestsList);
 }
 
-export function main() {
+export async function main() {
     const args = process.argv.slice(2);
     const inputFilesPath = args[0];
     if (inputFilesPath) {
@@ -55,8 +58,7 @@ func TestMain(m *testing.M) {
 
     parseTypeScriptFiles(getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
-    const gofmt = which.sync("go");
-    cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.25", "-w", outputDir]);
+    await $`dprint fmt ${outputDir}/**/*.go`;
 }
 
 function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
@@ -414,7 +416,18 @@ function parseFormatStatement(funcName: string, args: readonly ts.Expression[]):
                 kind: "format",
                 goStatement: `f.Configure(t, ${varName})`,
             }];
-        case "selection":
+        case "selection": {
+            const startMarker = getStringLiteralLike(args[0])?.text;
+            const endMarker = getStringLiteralLike(args[1])?.text;
+            if (startMarker === undefined || endMarker === undefined) {
+                console.error(`format.selection: expected two string literal marker names`);
+                break;
+            }
+            return [{
+                kind: "format",
+                goStatement: `f.FormatSelection(t, ${JSON.stringify(startMarker)}, ${JSON.stringify(endMarker)})`,
+            }];
+        }
         case "onType":
         case "copyFormatOptions":
         case "setFormatOptions":
@@ -1546,7 +1559,7 @@ function parseExpectedDiagnostic(expr: ts.Expression): string | undefined {
     const diagnosticProps: string[] = [];
 
     for (const prop of expr.properties) {
-        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+        if (!ts.isPropertyAssignment(prop) || !(ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name))) {
             console.error(`Expected property assignment with identifier name for expected diagnostic, got ${prop.getText()}`);
             return undefined;
         }
@@ -1896,6 +1909,13 @@ function parseBaselineMarkerOrRangeArg(arg: ts.Expression): string | undefined {
             }
         }
     }
+    else if (ts.isElementAccessExpression(arg) && ts.isCallExpression(arg.expression) && arg.expression.getText().includes("ranges")) {
+        // `test.ranges()[n]`
+        const index = arg.argumentExpression?.getText();
+        if (index !== undefined) {
+            return `f.Ranges()[${index}]`;
+        }
+    }
     else if (ts.isCallExpression(arg)) {
         const result = getRangesByTextArg(arg);
         if (result) {
@@ -1927,6 +1947,12 @@ function parseRangeVariable(arg: ts.Identifier | ts.ElementAccessExpression): st
                         // `const [range_0, ..., ...rest] = test.ranges();` and arg is `rest`
                         return `ToAny(f.Ranges()[${i}:])...`;
                     }
+                }
+            }
+            // `const ranges = test.ranges();` and arg is `ranges[n]`
+            if (ts.isIdentifier(decl.name) && decl.name.text === argName && decl.initializer?.getText().includes("ranges")) {
+                if (ts.isElementAccessExpression(arg)) {
+                    return `f.Ranges()[${arg.argumentExpression!.getText()}]`;
                 }
             }
         }
@@ -3102,7 +3128,7 @@ interface EditCmd {
 }
 
 interface FormatCmd {
-    kind: "format"; // | "formatSelection" | "formatOnType" | "copyFormatOptions" | "setFormatOptions" | "setOption";
+    kind: "format";
     goStatement: string;
 }
 
@@ -3372,9 +3398,9 @@ function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoC
 }
 
 function generateOrganizeImports({ expectedContent, mode, preferences }: VerifyOrganizeImportsCmd): string {
-    return `f.VerifyOrganizeImports(t, 
-        ${getGoMultiLineStringLiteral(expectedContent)}, 
-        ${mode}, 
+    return `f.VerifyOrganizeImports(t,
+        ${getGoMultiLineStringLiteral(expectedContent)},
+        ${mode},
         ${preferences},
     )`;
 }
@@ -3604,9 +3630,9 @@ function generateCmd(cmd: Cmd): string {
         case "verifyErrorExistsAtRange":
             return `f.VerifyErrorExistsAtRange(t, ${cmd.range}, ${cmd.code}, ${getGoStringLiteral(cmd.message)})`;
         case "verifyCurrentLineContentIs":
-            return `f.VerifyCurrentLineContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+            return `f.VerifyCurrentLineContent(t, ${getGoStringLiteral(cmd.text)})`;
         case "verifyCurrentFileContentIs":
-            return `f.VerifyCurrentFileContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+            return `f.VerifyCurrentFileContent(t, ${getGoStringLiteral(cmd.text)})`;
         case "verifyErrorExistsBetweenMarkers":
             return `f.VerifyErrorExistsBetweenMarkers(t, ${getGoStringLiteral(cmd.startMarker)}, ${getGoStringLiteral(cmd.endMarker)})`;
         case "verifyErrorExistsAfterMarker":
@@ -3648,7 +3674,10 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
         imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);
     }
     imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
-    const template = `package fourslash_test
+    const template = `// Code generated by convertFourslash; DO NOT EDIT.
+// To modify this test, run "npm run makemanual ${test.name}"
+
+package fourslash_test
 
 import (
 	"testing"
@@ -3742,5 +3771,8 @@ function getInitializer(name: ts.Identifier): ts.Expression | undefined {
 }
 
 if (url.fileURLToPath(import.meta.url) == process.argv[1]) {
-    main();
+    main().catch(e => {
+        console.error(e);
+        process.exit(1);
+    });
 }
