@@ -67,17 +67,18 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 		openTag := jsxElement.OpeningElement
 		closeTag := jsxElement.ClosingElement
 
-		openTagNameStart := core.TextPos(astnav.GetStartOfNode(openTag.TagName().AsNode(), sourceFile, false))
-		openTagNameEnd := core.TextPos(openTag.TagName().End())
-		closeTagNameStart := core.TextPos(astnav.GetStartOfNode(closeTag.TagName().AsNode(), sourceFile, false))
-		closeTagNameEnd := core.TextPos(closeTag.TagName().End())
+		openTagNameStart := astnav.GetStartOfNode(openTag.TagName().AsNode(), sourceFile, false)
+		openTagNameEnd := openTag.TagName().End()
+		closeTagNameStart := astnav.GetStartOfNode(closeTag.TagName().AsNode(), sourceFile, false)
+		closeTagNameEnd := closeTag.TagName().End()
 		// do not return linked cursors if tags are not well-formed
-		if openTagNameStart == core.TextPos(astnav.GetStartOfNode(openTag.AsNode(), sourceFile, false)) || closeTagNameStart == core.TextPos(astnav.GetStartOfNode(closeTag.AsNode(), sourceFile, false)) ||
-			openTagNameEnd == core.TextPos(openTag.End()) || closeTagNameEnd == core.TextPos(closeTag.End()) {
+		if openTagNameStart == astnav.GetStartOfNode(openTag.AsNode(), sourceFile, false) || closeTagNameStart == astnav.GetStartOfNode(closeTag.AsNode(), sourceFile, false) ||
+			openTagNameEnd == openTag.End() || closeTagNameEnd == closeTag.End() {
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
 		// only return linked cursors if the cursor is within a tag name
-		if !(openTagNameStart <= position && position <= openTagNameEnd || closeTagNameStart <= position && position <= closeTagNameEnd) {
+		positionInt := int(position)
+		if !(openTagNameStart <= positionInt && positionInt <= openTagNameEnd || closeTagNameStart <= positionInt && positionInt <= closeTagNameEnd) {
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
 
@@ -91,12 +92,12 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 			LinkedEditingRanges: &lsproto.LinkedEditingRanges{
 				Ranges: []lsproto.Range{
 					{
-						Start: l.converters.PositionToLineAndCharacter(sourceFile, openTagNameStart),
-						End:   l.converters.PositionToLineAndCharacter(sourceFile, openTagNameEnd),
+						Start: l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(openTagNameStart)),
+						End:   l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(openTagNameEnd)),
 					},
 					{
-						Start: l.converters.PositionToLineAndCharacter(sourceFile, closeTagNameStart),
-						End:   l.converters.PositionToLineAndCharacter(sourceFile, closeTagNameEnd),
+						Start: l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(closeTagNameStart)),
+						End:   l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(closeTagNameEnd)),
 					},
 				},
 				WordPattern: &jsxTagWordPattern,
