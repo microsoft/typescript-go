@@ -20,12 +20,13 @@ const (
 	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.HoverResponse, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
 
 	program, file := l.getProgramAndFile(documentURI)
-	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
+	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
+	node := astnav.GetTouchingPropertyName(file, position)
 	if node.Kind == ast.KindSourceFile {
 		// Avoid giving quickInfo for the sourceFile as a whole.
 		return lsproto.HoverOrNull{}, nil
@@ -34,7 +35,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	defer done()
 	rangeNode := getNodeForQuickInfo(node)
 	symbol := getSymbolAtLocationForQuickInfo(c, node)
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, position, contentFormat)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -60,8 +61,8 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	}, nil
 }
 
-func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) (string, string) {
-	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node)
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, position int, contentFormat lsproto.MarkupKind) (string, string) {
+	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node, position)
 	if quickInfo == "" {
 		return "", ""
 	}
@@ -206,12 +207,38 @@ func formatQuickInfo(quickInfo string) string {
 	return b.String()
 }
 
-func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
+func shouldGetType(node *ast.Node, position int) bool {
+	file := ast.GetSourceFileOfNode(node)
+	switch node.Kind {
+	case ast.KindIdentifier:
+		if node.Flags&ast.NodeFlagsJSDoc != 0 && ast.IsInJSFile(node) &&
+			((node.Parent.Kind == ast.KindPropertyDeclaration && node.Parent.Name() == node) ||
+				ast.FindAncestor(node, func(n *ast.Node) bool { return n.Kind == ast.KindParameter }) != nil) {
+			// if we'd request type at those locations we'd get `errorType` that displays confusingly as `any`
+			return false
+		}
+		return !ast.IsLabelName(node) && !ast.IsTagName(node) && !ast.IsConstTypeReference(node.Parent)
+	case ast.KindPropertyAccessExpression, ast.KindQualifiedName:
+		// Don't return quickInfo if inside the comment in `a/**/.b`
+		return isInComment(file, position, astnav.GetTokenAtPosition(file, position)) == nil
+	case ast.KindThisKeyword, ast.KindThisType, ast.KindSuperKeyword, ast.KindNamedTupleMember:
+		return true
+	case ast.KindMetaProperty:
+		return ast.IsImportMeta(node)
+	default:
+		return false
+	}
+}
+
+func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, position int) (string, *ast.Node) {
 	container := getContainerNode(node)
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
 		return "this: " + c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
 	}
 	if symbol == nil {
+		if shouldGetType(node, position) {
+			return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
+		}
 		return "", nil
 	}
 	var b strings.Builder
@@ -295,36 +322,38 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0 {
 			writeNewLine()
-			switch {
-			case flags&ast.SymbolFlagsProperty != 0:
-				b.WriteString("(property) ")
-			case flags&ast.SymbolFlagsAccessor != 0:
-				b.WriteString("(accessor) ")
-			default:
-				decl := symbol.ValueDeclaration
-				if decl != nil {
-					switch {
-					case ast.IsParameter(decl):
-						b.WriteString("(parameter) ")
-					case ast.IsVarLet(decl):
-						b.WriteString("let ")
-					case ast.IsVarConst(decl):
-						b.WriteString("const ")
-					case ast.IsVarUsing(decl):
-						b.WriteString("using ")
-					case ast.IsVarAwaitUsing(decl):
-						b.WriteString("await using ")
-					default:
-						b.WriteString("var ")
+			if symbol.CheckFlags&ast.CheckFlagsIndexSymbol == 0 {
+				switch {
+				case flags&ast.SymbolFlagsProperty != 0:
+					b.WriteString("(property) ")
+				case flags&ast.SymbolFlagsAccessor != 0:
+					b.WriteString("(accessor) ")
+				default:
+					decl := symbol.ValueDeclaration
+					if decl != nil {
+						switch {
+						case ast.IsParameter(decl):
+							b.WriteString("(parameter) ")
+						case ast.IsVarLet(decl):
+							b.WriteString("let ")
+						case ast.IsVarConst(decl):
+							b.WriteString("const ")
+						case ast.IsVarUsing(decl):
+							b.WriteString("using ")
+						case ast.IsVarAwaitUsing(decl):
+							b.WriteString("await using ")
+						default:
+							b.WriteString("var ")
+						}
 					}
 				}
+				if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
+					b.WriteString("exports")
+				} else {
+					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+				}
+				b.WriteString(": ")
 			}
-			if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
-				b.WriteString("exports")
-			} else {
-				b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-			}
-			b.WriteString(": ")
 			if callNode := getCallOrNewExpression(node); callNode != nil {
 				b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
 			} else {
