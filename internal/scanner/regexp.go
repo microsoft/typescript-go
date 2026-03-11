@@ -246,31 +246,31 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 			p.incPos(1)
 			digitsStart := p.pos()
 			p.scanDigits()
-			min := p.scanner.tokenValue
-			if !p.anyUnicodeModeOrNonAnnexB && min == "" {
+			minStr := p.scanner.tokenValue
+			if !p.anyUnicodeModeOrNonAnnexB && minStr == "" {
 				isPreviousTermQuantifiable = true
 				continue
 			}
 			if p.charAt(p.pos()) == ',' {
 				p.incPos(1)
 				p.scanDigits()
-				max := p.scanner.tokenValue
-				if min == "" {
-					if max != "" || p.charAt(p.pos()) == '}' {
+				maxStr := p.scanner.tokenValue
+				if minStr == "" {
+					if maxStr != "" || p.charAt(p.pos()) == '}' {
 						p.error(diagnostics.Incomplete_quantifier_Digit_expected, digitsStart, 0)
 					} else {
 						p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
 						isPreviousTermQuantifiable = true
 						continue
 					}
-				} else if max != "" {
-					minVal, _ := strconv.Atoi(min)
-					maxVal, _ := strconv.Atoi(max)
+				} else if maxStr != "" {
+					minVal, _ := strconv.Atoi(minStr)
+					maxVal, _ := strconv.Atoi(maxStr)
 					if minVal > maxVal && (p.anyUnicodeModeOrNonAnnexB || p.charAt(p.pos()) == '}') {
 						p.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, p.pos()-digitsStart)
 					}
 				}
-			} else if min == "" {
+			} else if minStr == "" {
 				if p.anyUnicodeModeOrNonAnnexB {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
 				}
@@ -417,7 +417,7 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 		ch = p.charAt(p.pos())
 		if stringutil.IsASCIILetter(ch) {
 			p.incPos(1)
-			return string(rune(ch & 0x1f))
+			return string(ch & 0x1f)
 		}
 		if p.anyUnicodeModeOrNonAnnexB {
 			p.error(diagnostics.X_c_must_be_followed_by_an_ASCII_letter, p.pos()-2, 2)
