@@ -130,13 +130,13 @@ func generateEmbedded(libs []lib) {
 var (
 	// Match escaped characters, double-quoted strings, single-line comments, and multi-line comments.
 	reJSONComments = regexp.MustCompile(`\\.|"(?:\\.|[^"])*"|//.*|/\*[\s\S]*?\*/`)
-	// Match trailing commas before ] or }.
-	reTrailingComma = regexp.MustCompile(`,\s*([}\]])`)
+	// Match double-quoted strings (to skip) or trailing commas before ] or }.
+	reTrailingComma = regexp.MustCompile(`"(?:\\.|[^"])*"|,\s*([}\]])`)
 )
 
-// stripJSONComments replaces single-line (//) and multi-line (/* */) comments
-// and trailing commas with spaces in JSONC content, producing valid JSON.
-func stripJSONComments(b []byte) {
+// stripJSONC replaces comments and trailing commas with spaces in JSONC content,
+// producing valid JSON. The input slice is mutated in place.
+func stripJSONC(b []byte) {
 	for _, loc := range reJSONComments.FindAllIndex(b, -1) {
 		if b[loc[0]] == '/' {
 			for i := loc[0]; i < loc[1]; i++ {
@@ -147,7 +147,10 @@ func stripJSONComments(b []byte) {
 		}
 	}
 	for _, loc := range reTrailingComma.FindAllSubmatchIndex(b, -1) {
-		// loc[0]:loc[1] is the full match, loc[2]:loc[3] is the capture group.
+		// loc[2]:loc[3] is the capture group; -1 means this matched a string, not a comma.
+		if loc[2] < 0 {
+			continue
+		}
 		// Blank the comma (at loc[0]), keep whitespace and closing bracket.
 		b[loc[0]] = ' '
 	}
@@ -160,7 +163,7 @@ func readLibs() []lib {
 	if err != nil {
 		log.Fatalf("failed to open libs.json: %v", err)
 	}
-	stripJSONComments(b)
+	stripJSONC(b)
 
 	var meta struct {
 		Libs  []string          `json:"libs"`
