@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/json"
@@ -95,18 +93,11 @@ func uint32sToNum(a [2]uint32) Number {
 	return numberFromBits(bits)
 }
 
-var nodeAvailable = sync.OnceValue(func() bool {
-	_, err := exec.LookPath("node")
-	return err == nil
-})
-
 // evalBinaryOp evaluates a binary JS expression on all cases using Node.js.
-// Returns nil if Node.js is not available.
+// Skips the calling test if Node.js is not available.
 func evalBinaryOp(t *testing.T, op string, xs, ys []Number) []Number {
 	t.Helper()
-	if !nodeAvailable() {
-		return nil
-	}
+	jstest.SkipIfNoNodeJS(t)
 
 	tmpdir := t.TempDir()
 	inputs := make([]binaryInput, len(xs))
@@ -159,12 +150,10 @@ func evalBinaryOp(t *testing.T, op string, xs, ys []Number) []Number {
 }
 
 // evalUnaryOp evaluates a unary JS expression on all cases using Node.js.
-// Returns nil if Node.js is not available.
+// Skips the calling test if Node.js is not available.
 func evalUnaryOp(t *testing.T, op string, xs []Number) []Number {
 	t.Helper()
-	if !nodeAvailable() {
-		return nil
-	}
+	jstest.SkipIfNoNodeJS(t)
 
 	tmpdir := t.TempDir()
 	inputs := make([]unaryInput, len(xs))
@@ -277,18 +266,23 @@ func TestToInt32(t *testing.T) {
 	for i, test := range toInt32Tests {
 		inputs[i] = test.input
 	}
-	jsResults := evalBinaryOp(t, "a | b", inputs, zeros)
-
-	for i, test := range toInt32Tests {
+	for _, test := range toInt32Tests {
 		t.Run(fmt.Sprintf("%s (%v)", test.name, float64(test.input)), func(t *testing.T) {
 			t.Parallel()
 			got := test.input.toInt32()
 			assert.Equal(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, Number(got), jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a | b", inputs, zeros)
+		for i, test := range toInt32Tests {
+			t.Run(fmt.Sprintf("%s (%v)", test.name, float64(test.input)), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, Number(test.input.toInt32()), jsResults[i])
+			})
+		}
+	})
 }
 
 func BenchmarkToInt32(b *testing.B) {
@@ -328,18 +322,23 @@ func TestBitwiseNOT(t *testing.T) {
 	for i, test := range tests {
 		xs[i] = test.x
 	}
-	jsResults := evalUnaryOp(t, "~a", xs)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("~%v", test.x), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.BitwiseNOT()
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalUnaryOp(t, "~a", xs)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("~%v", test.x), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.BitwiseNOT(), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestBitwiseAND(t *testing.T) {
@@ -360,18 +359,23 @@ func TestBitwiseAND(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a & b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v & %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.BitwiseAND(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a & b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v & %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.BitwiseAND(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestBitwiseOR(t *testing.T) {
@@ -392,18 +396,23 @@ func TestBitwiseOR(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a | b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v | %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.BitwiseOR(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a | b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v | %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.BitwiseOR(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestBitwiseXOR(t *testing.T) {
@@ -424,18 +433,23 @@ func TestBitwiseXOR(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a ^ b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v ^ %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.BitwiseXOR(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a ^ b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v ^ %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.BitwiseXOR(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestSignedRightShift(t *testing.T) {
@@ -465,18 +479,23 @@ func TestSignedRightShift(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a >> b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v >> %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.SignedRightShift(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a >> b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v >> %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.SignedRightShift(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestUnsignedRightShift(t *testing.T) {
@@ -506,18 +525,23 @@ func TestUnsignedRightShift(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a >>> b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v >>> %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.UnsignedRightShift(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a >>> b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v >>> %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.UnsignedRightShift(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestLeftShift(t *testing.T) {
@@ -545,18 +569,23 @@ func TestLeftShift(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a << b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v << %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.LeftShift(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a << b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v << %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.LeftShift(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestRemainder(t *testing.T) {
@@ -601,18 +630,23 @@ func TestRemainder(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a % b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.Remainder(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				assertEqualNumber(t, got, jsResults[i])
-			}
 		})
 	}
+
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a % b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, test.x.Remainder(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func TestExponentiate(t *testing.T) {
@@ -660,21 +694,26 @@ func TestExponentiate(t *testing.T) {
 		xs[i] = test.x
 		ys[i] = test.y
 	}
-	jsResults := evalBinaryOp(t, "a ** b", xs, ys)
-
-	for i, test := range tests {
+	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v ** %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
 			got := test.x.Exponentiate(test.y)
 			assertEqualNumber(t, got, test.want)
-			if jsResults != nil {
-				// The ES spec says exponentiate is "implementation-approximated".
-				// Different JS engines (V8, SpiderMonkey, JSC) use different pow
-				// implementations that can differ by 1 ULP. Allow that tolerance.
-				assertWithinOneULP(t, got, jsResults[i])
-			}
 		})
 	}
+
+	// The ES spec says exponentiate is "implementation-approximated".
+	// Different JS engines (V8, SpiderMonkey, JSC) use different pow
+	// implementations that can differ by 1 ULP. Allow that tolerance.
+	t.Run("Node", func(t *testing.T) {
+		jsResults := evalBinaryOp(t, "a ** b", xs, ys)
+		for i, test := range tests {
+			t.Run(fmt.Sprintf("%v ** %v", test.x, test.y), func(t *testing.T) {
+				t.Parallel()
+				assertWithinOneULP(t, test.x.Exponentiate(test.y), jsResults[i])
+			})
+		}
+	})
 }
 
 func BenchmarkExponentiate(b *testing.B) {
