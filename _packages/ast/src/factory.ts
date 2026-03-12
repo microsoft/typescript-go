@@ -1681,51 +1681,6 @@ function cloneNodeData(node: any): any {
     return undefined;
 }
 
-/**
- * Walk a tree recursively in a preorder traversal, calling callbacks for each node.
- * If the callback returns "skip", the node's children are not visited.
- */
-export function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | "skip" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | "skip" | undefined): T | undefined {
-    const queue: (Node | NodeArray<Node>)[] = [rootNode];
-    const parents: Node[] = [];
-    while (parents.length >= 0) {
-        const parent = parents.pop()!;
-        const current = queue.pop()!;
-        if (current === undefined) break;
-        if (Array.isArray(current)) {
-            if (cbNodes) {
-                const result = cbNodes(current as NodeArray<Node>, parent);
-                if (result === "skip") continue;
-                if (result !== undefined) return result;
-            }
-            for (let i = current.length - 1; i >= 0; i--) {
-                queue.push((current as NodeArray<Node>)[i]);
-                parents.push(parent);
-            }
-        }
-        else {
-            const node = current as Node;
-            const result = cbNode(node, parent);
-            if (result === "skip") continue;
-            if (result !== undefined) return result;
-            // Push children in reverse order so we visit left-to-right
-            const children: (Node | NodeArray<Node>)[] = [];
-            node.forEachChild(child => {
-                children.push(child);
-                return undefined;
-            }, arr => {
-                children.push(arr);
-                return undefined;
-            });
-            for (let i = children.length - 1; i >= 0; i--) {
-                queue.push(children[i]);
-                parents.push(node);
-            }
-        }
-    }
-    return undefined;
-}
-
 type ForEachChildFunction = (data: any, cbNode: (node: Node) => any, cbNodes?: (nodes: NodeArray<Node>) => any) => any;
 
 const forEachChildTable: Record<number, ForEachChildFunction> = {

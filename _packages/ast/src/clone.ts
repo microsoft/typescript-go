@@ -4,7 +4,6 @@ import {
     createNodeArray,
     createNumericLiteral,
     createStringLiteral,
-    forEachChildRecursively,
 } from "./factory.ts";
 import type {
     Node,
@@ -14,6 +13,60 @@ import type {
     StringLiteral,
 } from "./nodes.ts";
 import { visitEachChild } from "./visitor.ts";
+
+function isArray(value: any): value is readonly unknown[] {
+    // See: https://github.com/microsoft/TypeScript/issues/17002
+    return Array.isArray(value);
+}
+
+function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | "skip" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | "skip" | undefined): T | undefined {
+    const queue: (Node | NodeArray<Node>)[] = gatherPossibleChildren(rootNode);
+    const parents: Node[] = []; // tracks parent references for elements in queue
+    while (parents.length < queue.length) {
+        parents.push(rootNode);
+    }
+    while (queue.length !== 0) {
+        const current = queue.pop()!;
+        const parent = parents.pop()!;
+        if (isArray(current)) {
+            if (cbNodes) {
+                const res = cbNodes(current, parent);
+                if (res) {
+                    if (res === "skip") continue;
+                    return res;
+                }
+            }
+            for (let i = current.length - 1; i >= 0; --i) {
+                queue.push(current[i]);
+                parents.push(parent);
+            }
+        }
+        else {
+            const res = cbNode(current, parent);
+            if (res) {
+                if (res === "skip") continue;
+                return res;
+            }
+            if (current.kind >= SyntaxKind.FirstNode) {
+                // add children in reverse order to the queue, so popping gives the first child
+                for (const child of gatherPossibleChildren(current)) {
+                    queue.push(child);
+                    parents.push(current);
+                }
+            }
+        }
+    }
+}
+
+function gatherPossibleChildren(node: Node) {
+    const children: (Node | NodeArray<Node>)[] = [];
+    node.forEachChild(addWorkItem, addWorkItem); // By using a stack above and `unshift` here, we emulate a depth-first preorder traversal
+    return children;
+
+    function addWorkItem(n: Node | NodeArray<Node>) {
+        children.unshift(n);
+    }
+}
 
 function setParentRecursive<T extends Node>(rootNode: T | undefined): T | undefined {
     if (rootNode === undefined) return rootNode;

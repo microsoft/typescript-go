@@ -28,7 +28,6 @@ import {
     createNumericLiteral,
     createStringLiteral,
     createToken,
-    forEachChildRecursively,
     NodeObject,
 } from "@typescript/ast/factory";
 import {
@@ -123,52 +122,6 @@ describe("cloneNode", () => {
 
         assert.notStrictEqual(clone, tok);
         assert.strictEqual(clone.kind, SyntaxKind.SemicolonToken);
-    });
-});
-
-// ---------------------------------------------------------------------------
-// forEachChildRecursively
-// ---------------------------------------------------------------------------
-
-describe("forEachChildRecursively", () => {
-    test("visits all descendants", () => {
-        const left = createIdentifier("a");
-        const right = createNumericLiteral("1", TokenFlags.None);
-        const op = createToken(SyntaxKind.PlusToken);
-        const bin = createBinaryExpression(left, op, right);
-        const exprStmt = createExpressionStatement(bin);
-
-        const visited: SyntaxKind[] = [];
-        forEachChildRecursively(exprStmt, node => {
-            visited.push(node.kind);
-            return undefined;
-        });
-
-        assert.ok(visited.includes(SyntaxKind.BinaryExpression));
-        assert.ok(visited.includes(SyntaxKind.Identifier));
-        assert.ok(visited.includes(SyntaxKind.PlusToken));
-        assert.ok(visited.includes(SyntaxKind.NumericLiteral));
-    });
-
-    test("skip prevents descending into children", () => {
-        const left = createIdentifier("a");
-        const right = createNumericLiteral("1", TokenFlags.None);
-        const op = createToken(SyntaxKind.PlusToken);
-        const bin = createBinaryExpression(left, op, right);
-        const exprStmt = createExpressionStatement(bin);
-
-        const visited: SyntaxKind[] = [];
-        forEachChildRecursively(exprStmt, node => {
-            visited.push(node.kind);
-            if (node.kind === SyntaxKind.BinaryExpression) return "skip";
-            return undefined;
-        });
-
-        // BinaryExpression should be visited, but not its children
-        assert.ok(visited.includes(SyntaxKind.BinaryExpression));
-        assert.ok(!visited.includes(SyntaxKind.Identifier));
-        assert.ok(!visited.includes(SyntaxKind.PlusToken));
-        assert.ok(!visited.includes(SyntaxKind.NumericLiteral));
     });
 });
 
@@ -699,8 +652,9 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
             assert.deepStrictEqual(collectKinds(clone), collectKinds(firstStmt));
 
             // But be entirely separate objects
-            forEachChildRecursively(clone, node => {
+            clone.forEachChild(function visit(node) {
                 assert.ok(node instanceof NodeObject);
+                node.forEachChild(visit);
             });
         }
         finally {

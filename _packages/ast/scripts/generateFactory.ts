@@ -584,47 +584,6 @@ emit("    return undefined;");
 emit("}");
 emit("");
 
-// forEachChildRecursively
-emit("/**");
-emit(" * Walk a tree recursively in a preorder traversal, calling callbacks for each node.");
-emit(' * If the callback returns "skip", the node\'s children are not visited.');
-emit(" */");
-emit('export function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | "skip" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | "skip" | undefined): T | undefined {');
-emit("    const queue: (Node | NodeArray<Node>)[] = [rootNode];");
-emit("    const parents: Node[] = [];");
-emit("    while (parents.length >= 0) {");
-emit("        const parent = parents.pop()!;");
-emit("        const current = queue.pop()!;");
-emit("        if (current === undefined) break;");
-emit("        if (Array.isArray(current)) {");
-emit("            if (cbNodes) {");
-emit("                const result = cbNodes(current as NodeArray<Node>, parent);");
-emit('                if (result === "skip") continue;');
-emit("                if (result !== undefined) return result;");
-emit("            }");
-emit("            for (let i = current.length - 1; i >= 0; i--) {");
-emit("                queue.push((current as NodeArray<Node>)[i]);");
-emit("                parents.push(parent);");
-emit("            }");
-emit("        }");
-emit("        else {");
-emit("            const node = current as Node;");
-emit("            const result = cbNode(node, parent);");
-emit('            if (result === "skip") continue;');
-emit("            if (result !== undefined) return result;");
-emit("            // Push children in reverse order so we visit left-to-right");
-emit("            const children: (Node | NodeArray<Node>)[] = [];");
-emit("            node.forEachChild(child => { children.push(child); return undefined; }, arr => { children.push(arr); return undefined; });");
-emit("            for (let i = children.length - 1; i >= 0; i--) {");
-emit("                queue.push(children[i]);");
-emit("                parents.push(node);");
-emit("            }");
-emit("        }");
-emit("    }");
-emit("    return undefined;");
-emit("}");
-emit("");
-
 // Structural check for NodeArray<X> types — returns the element TypeNode if matched.
 // Also handles `NodeArray<X> | undefined` since the `?` optional marker already covers undefined.
 function getNodeArrayElementType(typeNode: ts.TypeNode): ts.TypeNode | undefined {
