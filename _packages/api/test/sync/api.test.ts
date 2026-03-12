@@ -38,7 +38,6 @@ import {
     isTemplateMiddle,
     isTemplateTail,
     isVariableDeclarationList,
-    isVariableStatement,
     NodeFlags,
 } from "@typescript/ast";
 import { SyntaxKind } from "@typescript/ast";
@@ -2129,9 +2128,6 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
                 if (isVariableDeclarationList(node)) {
                     declList = node;
                 }
-                if (isVariableStatement(node)) {
-                    node.forEachChild(visit);
-                }
                 node.forEachChild(visit);
             });
             assert.ok(declList, "Should find VariableDeclarationList");
@@ -2157,9 +2153,6 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
             sourceFile.forEachChild(function visit(node) {
                 if (isVariableDeclarationList(node)) {
                     declList = node;
-                }
-                if (isVariableStatement(node)) {
-                    node.forEachChild(visit);
                 }
                 node.forEachChild(visit);
             });
