@@ -254,13 +254,6 @@ func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, ar
 	p.parseErrorAtRange(core.NewTextRange(pos, pos+length), message, args...)
 }
 
-func (p *Parser) lastDiagnostic() *ast.Diagnostic {
-	if len(p.diagnostics) > 0 {
-		return p.diagnostics[len(p.diagnostics)-1]
-	}
-	return nil
-}
-
 func (p *Parser) parseErrorAt(pos int, end int, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	return p.parseErrorAtRange(core.NewTextRange(pos, end), message, args...)
 }
