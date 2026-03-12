@@ -748,6 +748,52 @@ func TestSession(t *testing.T) {
 			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts") == nil)
 		})
 
+		t.Run("delete directory with wildcard included files", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `import { x } from "./sub/x";`,
+				"/home/projects/TS/p1/src/sub/x.ts": `export const x = 1;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/sub/x.ts"))
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+
+			// Delete the entire subdirectory from the file system.
+			err = utils.FS().Remove("/home/projects/TS/p1/src/sub")
+			assert.NilError(t, err)
+
+			// When a directory is deleted, the client typically sends a single deletion
+			// event for the directory itself. Because the registered glob pattern includes
+			// file extensions (e.g. **/*.{ts,...}), the directory path does not match
+			// and the event is filtered out, so the server is never notified.
+			// Simulate this by sending a delete event for the directory URI.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/src/sub",
+				},
+			})
+
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			// The directory was deleted, so the file should no longer be in the program.
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/sub/x.ts"))
+			// The import should now be an error since the module is missing.
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+		})
+
 		t.Run("create explicitly included file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
