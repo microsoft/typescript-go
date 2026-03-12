@@ -92,6 +92,16 @@ func (e Env) GetBooleanValue(value bool) (Value, error) {
 	return Value{raw: result}, nil
 }
 
+// BooleanValueToBool converts a NAPI boolean value to a Go bool.
+func (e Env) BooleanValueToBool(value Value) (bool, error) {
+	var result C.bool
+	status := C.napi_get_value_bool(e.raw, value.raw, &result)
+	if err := napiStatusToError(status); err != nil {
+		return false, err
+	}
+	return bool(result), nil
+}
+
 // GetGlobal returns the global object.
 func (e Env) GetGlobal() (Value, error) {
 	var result C.napi_value
@@ -231,6 +241,100 @@ func (e Env) CreateFunction(name string, fn CallbackFunction) (Value, error) {
 		&result,
 	)
 
+	if err := napiStatusToError(status); err != nil {
+		return Value{}, err
+	}
+	return Value{raw: result}, nil
+}
+
+// CallFunction calls a JS function with the given arguments.
+// recv is the `this` value (use GetUndefinedValue for global calls).
+func (e Env) CallFunction(recv Value, fn Value, args []Value) (Value, error) {
+	var result C.napi_value
+	argc := C.size_t(len(args))
+	var argv *C.napi_value
+	if len(args) > 0 {
+		cArgs := make([]C.napi_value, len(args))
+		for i, a := range args {
+			cArgs[i] = a.raw
+		}
+		argv = &cArgs[0]
+	}
+	status := C.napi_call_function(e.raw, recv.raw, fn.raw, argc, argv, &result)
+	if err := napiStatusToError(status); err != nil {
+		return Value{}, err
+	}
+	return Value{raw: result}, nil
+}
+
+// Ref wraps a napi_ref handle to prevent garbage collection of a JS value.
+type Ref struct {
+	raw C.napi_ref
+}
+
+// CreateReference creates a strong reference to a JS value.
+func (e Env) CreateReference(value Value) (Ref, error) {
+	var ref C.napi_ref
+	status := C.napi_create_reference(e.raw, value.raw, 1, &ref)
+	if err := napiStatusToError(status); err != nil {
+		return Ref{}, err
+	}
+	return Ref{raw: ref}, nil
+}
+
+// GetReferenceValue retrieves the JS value from a reference.
+func (e Env) GetReferenceValue(ref Ref) (Value, error) {
+	var result C.napi_value
+	status := C.napi_get_reference_value(e.raw, ref.raw, &result)
+	if err := napiStatusToError(status); err != nil {
+		return Value{}, err
+	}
+	return Value{raw: result}, nil
+}
+
+// DeleteReference deletes a reference, allowing the value to be GC'd.
+func (e Env) DeleteReference(ref Ref) error {
+	status := C.napi_delete_reference(e.raw, ref.raw)
+	return napiStatusToError(status)
+}
+
+// TypeOf returns the JavaScript type of a value as a string.
+func (e Env) TypeOf(value Value) (string, error) {
+	var result C.napi_valuetype
+	status := C.napi_typeof(e.raw, value.raw, &result)
+	if err := napiStatusToError(status); err != nil {
+		return "", err
+	}
+	switch result {
+	case C.napi_undefined:
+		return "undefined", nil
+	case C.napi_null:
+		return "null", nil
+	case C.napi_boolean:
+		return "boolean", nil
+	case C.napi_number:
+		return "number", nil
+	case C.napi_string:
+		return "string", nil
+	case C.napi_symbol:
+		return "symbol", nil
+	case C.napi_object:
+		return "object", nil
+	case C.napi_function:
+		return "function", nil
+	case C.napi_external:
+		return "external", nil
+	default:
+		return "unknown", nil
+	}
+}
+
+// GetNamedProperty gets a named property from a JS object.
+func (e Env) GetNamedProperty(object Value, name string) (Value, error) {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	var result C.napi_value
+	status := C.napi_get_named_property(e.raw, object.raw, cName, &result)
 	if err := napiStatusToError(status); err != nil {
 		return Value{}, err
 	}

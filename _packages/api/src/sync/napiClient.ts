@@ -12,9 +12,18 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import type { FileSystem } from "../fs.ts";
+
+interface NapiCallbacks {
+    readFile?: (path: string) => string | null | undefined;
+    fileExists?: (path: string) => boolean | undefined;
+    directoryExists?: (path: string) => boolean | undefined;
+    getAccessibleEntries?: (path: string) => string | undefined;
+    realpath?: (path: string) => string | undefined;
+}
 
 interface NapiModule {
-    createSession(cwd: string, defaultLibraryPath?: string, callbacks?: string): void;
+    createSession(cwd: string, defaultLibraryPath?: string, fsCallbacks?: NapiCallbacks): void;
     request(method: string, payload: string): string;
     requestBinary(method: string, payload: Uint8Array): Uint8Array;
     close(): void;
@@ -56,6 +65,8 @@ export interface NapiClientOptions {
      * directory containing the .node addon.
      */
     defaultLibraryPath?: string;
+    /** Virtual filesystem callbacks */
+    fs?: FileSystem;
 }
 
 export class NapiClient {
@@ -71,7 +82,40 @@ export class NapiClient {
         const require = createRequire(import.meta.url);
         this.module = require(modulePath) as NapiModule;
 
-        this.module.createSession(cwd, defaultLibraryPath);
+        // Build the FS callbacks object if any callbacks are provided.
+        // The Go side inspects which properties are present to decide
+        // which operations to delegate.
+        let fsCallbacks: NapiCallbacks | undefined;
+        if (options.fs) {
+            const fs = options.fs;
+            fsCallbacks = {};
+            if (fs.readFile) {
+                const readFile = fs.readFile;
+                fsCallbacks.readFile = (p: string) => readFile(p);
+            }
+            if (fs.fileExists) {
+                const fileExists = fs.fileExists;
+                fsCallbacks.fileExists = (p: string) => fileExists(p);
+            }
+            if (fs.directoryExists) {
+                const directoryExists = fs.directoryExists;
+                fsCallbacks.directoryExists = (p: string) => directoryExists(p);
+            }
+            if (fs.getAccessibleEntries) {
+                const getAccessibleEntries = fs.getAccessibleEntries;
+                fsCallbacks.getAccessibleEntries = (p: string) => {
+                    const result = getAccessibleEntries(p);
+                    if (result === undefined) return undefined;
+                    return JSON.stringify(result);
+                };
+            }
+            if (fs.realpath) {
+                const realpath = fs.realpath;
+                fsCallbacks.realpath = (p: string) => realpath(p);
+            }
+        }
+
+        this.module.createSession(cwd, defaultLibraryPath, fsCallbacks);
     }
 
     apiRequest<T>(method: string, params?: unknown): T {

@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"runtime/debug"
-	"strings"
 	"sync"
 	"time"
 
@@ -26,6 +25,7 @@ type sessionState struct {
 	projectSession *project.Session
 	ctx            context.Context
 	cancel         context.CancelFunc
+	callbackFS     *napiCallbackFS
 }
 
 var (
@@ -73,7 +73,7 @@ func initModule(env napi.Env, exports napi.Value) (napi.Value, error) {
 	return exports, nil
 }
 
-// createSession(cwd: string, defaultLibraryPath?: string, callbacks?: string): void
+// createSession(cwd: string, defaultLibraryPath?: string, fsCallbacks?: object): void
 func createSession(env napi.Env, args []napi.Value) napi.Value {
 	if len(args) < 1 {
 		_ = env.ThrowError("createSession requires at least 1 argument (cwd)")
@@ -92,17 +92,21 @@ func createSession(env napi.Env, args []napi.Value) napi.Value {
 	// libs are not compiled into the binary).
 	var externalLibPath string
 	if len(args) > 1 {
-		s, err := env.StringValueToString(args[1])
-		if err == nil {
-			externalLibPath = s
+		typ, _ := env.TypeOf(args[1])
+		if typ == "string" {
+			s, err2 := env.StringValueToString(args[1])
+			if err2 == nil {
+				externalLibPath = s
+			}
 		}
 	}
 
-	var callbacksList []string
+	// Optional: FS callbacks object with methods like readFile, fileExists, etc.
+	var fsCallbacksObj *napi.Value
 	if len(args) > 2 {
-		callbacksStr, err := env.StringValueToString(args[2])
-		if err == nil && callbacksStr != "" {
-			callbacksList = strings.Split(callbacksStr, ",")
+		typ, _ := env.TypeOf(args[2])
+		if typ == "object" {
+			fsCallbacksObj = &args[2]
 		}
 	}
 
@@ -113,35 +117,36 @@ func createSession(env napi.Env, args []napi.Value) napi.Value {
 	if currentSession != nil {
 		currentSession.session.Close()
 		currentSession.cancel()
+		if currentSession.callbackFS != nil {
+			currentSession.callbackFS.release(env)
+		}
 		currentSession = nil
 	}
 
-	// Determine the default library path. In embed mode, bundled.LibPath()
-	// returns a virtual "bundled:///" URI and the libs are served from the
-	// Go embed FS. In noembed mode the libs must exist on disk; use the
-	// path provided by the JS caller so it doesn't depend on os.Executable().
+	// Determine the default library path.
 	var defaultLibraryPath string
 	if bundled.Embedded {
 		defaultLibraryPath = bundled.LibPath()
 	} else if externalLibPath != "" {
 		defaultLibraryPath = externalLibPath
 	} else {
-		// Fallback: try bundled.LibPath() which will look next to the
-		// executable. This will panic if the libs aren't there, but it
-		// preserves the existing behavior for callers that don't pass a path.
 		defaultLibraryPath = bundled.LibPath()
 	}
 
 	var fs vfs.FS = bundled.WrapFS(osvfs.FS())
 
-	// Wrap the base FS with callbackFS if callbacks are requested
+	// Wrap the base FS with callbackFS if a JS FS object is provided
 	var callbackFS *napiCallbackFS
-	if len(callbacksList) > 0 {
-		callbackFS = newNapiCallbackFS(fs, callbacksList)
+	if fsCallbacksObj != nil {
+		var err2 error
+		callbackFS, err2 = newNapiCallbackFS(env, fs, *fsCallbacksObj)
+		if err2 != nil {
+			_ = env.ThrowError(fmt.Sprintf("createSession: failed to set up FS callbacks: %v", err2))
+			undef, _ := env.GetUndefinedValue()
+			return undef
+		}
 		fs = callbackFS
 	}
-	// Suppress unused variable warning
-	_ = callbackFS
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -166,10 +171,17 @@ func createSession(env napi.Env, args []napi.Value) napi.Value {
 		projectSession: projectSession,
 		ctx:            ctx,
 		cancel:         cancel,
+		callbackFS:     callbackFS,
 	}
 
 	undef, _ := env.GetUndefinedValue()
 	return undef
+}
+
+// handleRequestResult is the result of a HandleRequest call from a goroutine.
+type handleRequestResult struct {
+	result []byte
+	err    error
 }
 
 // request(method: string, payload: string): string
@@ -202,7 +214,7 @@ func request(env napi.Env, args []napi.Value) napi.Value {
 		return undef
 	}
 
-	result, callErr := handleRequest(state, method, []byte(payload))
+	result, callErr := dispatchRequest(env, state, method, []byte(payload))
 	if callErr != nil {
 		_ = env.ThrowError(callErr.Error())
 		return undef
@@ -247,7 +259,7 @@ func requestBinary(env napi.Env, args []napi.Value) napi.Value {
 		return undef
 	}
 
-	result, callErr := handleRequest(state, method, payload)
+	result, callErr := dispatchRequest(env, state, method, payload)
 	if callErr != nil {
 		_ = env.ThrowError(callErr.Error())
 		return undef
@@ -260,6 +272,43 @@ func requestBinary(env napi.Env, args []napi.Value) napi.Value {
 	}
 
 	return buf
+}
+
+// dispatchRequest runs HandleRequest. If the session has FS callbacks,
+// it runs the handler in a goroutine and pumps the callback channel on
+// the main thread so that goroutines spawned by the handler can call
+// JS functions through the main thread. If there are no callbacks, it
+// runs the handler directly on the current (main) thread.
+func dispatchRequest(env napi.Env, state *sessionState, method string, payload []byte) ([]byte, error) {
+	if state.callbackFS == nil {
+		// No callbacks — run directly, no goroutine needed.
+		return handleRequest(state, method, payload)
+	}
+
+	// Run HandleRequest in a goroutine so the main thread can pump callbacks.
+	doneCh := make(chan handleRequestResult, 1)
+	cbFS := state.callbackFS
+
+	// Activate the callback channel for this request. Goroutines
+	// calling FS methods will send callbackRequests here.
+	cbFS.activate()
+	defer cbFS.deactivate()
+
+	go func() {
+		result, err := handleRequest(state, method, payload)
+		doneCh <- handleRequestResult{result: result, err: err}
+	}()
+
+	// Pump: service callback requests from goroutines on the main thread.
+	for {
+		select {
+		case result := <-doneCh:
+			return result.result, result.err
+		case req := <-cbFS.callbackCh:
+			// Execute the JS callback on the main thread.
+			req.response <- cbFS.executeCallback(env, req)
+		}
+	}
 }
 
 // handleRequest dispatches a request to the session handler.
@@ -300,6 +349,9 @@ func closeSession(env napi.Env, args []napi.Value) napi.Value {
 	if currentSession != nil {
 		currentSession.session.Close()
 		currentSession.cancel()
+		if currentSession.callbackFS != nil {
+			currentSession.callbackFS.release(env)
+		}
 		currentSession = nil
 	}
 
@@ -307,46 +359,260 @@ func closeSession(env napi.Env, args []napi.Value) napi.Value {
 	return undef
 }
 
-// napiCallbackFS wraps a base filesystem and delegates certain operations
-// to JS callbacks via NAPI. This is a simplified version that doesn't
-// support callbacks yet - it just uses the base FS.
-type napiCallbackFS struct {
-	base             vfs.FS
-	enabledCallbacks map[string]bool
+// ── Callback FS with channel-based main-thread dispatch ─────────
+
+// callbackRequest is sent from a goroutine to the main thread when a
+// FS method needs to call a JS callback.
+type callbackRequest struct {
+	ref      *napi.Ref               // reference to the JS callback function
+	arg      string                  // string argument (typically a file path)
+	response chan<- callbackResponse // channel to send the result back
 }
 
-func newNapiCallbackFS(base vfs.FS, callbacks []string) *napiCallbackFS {
-	enabled := make(map[string]bool, len(callbacks))
-	for _, cb := range callbacks {
-		enabled[cb] = true
+// callbackResponse is the result of a JS callback execution.
+type callbackResponse struct {
+	resultType string // "undefined", "null", "boolean", "string", "object"
+	strResult  string // valid when resultType is "string"
+	boolResult bool   // valid when resultType is "boolean"
+	err        error
+}
+
+// napiCallbackFS wraps a base filesystem and delegates certain operations
+// to JS callbacks. When called from any goroutine, it marshals the call
+// to the main Node.js thread via a channel, preserving full Go parallelism.
+type napiCallbackFS struct {
+	base vfs.FS
+
+	// References to JS callback functions, preventing GC.
+	// nil means the callback is not enabled.
+	readFileRef             *napi.Ref
+	fileExistsRef           *napi.Ref
+	directoryExistsRef      *napi.Ref
+	getAccessibleEntriesRef *napi.Ref
+	realpathRef             *napi.Ref
+
+	// callbackCh receives callback requests from goroutines.
+	// The main thread pumps this channel during request dispatch.
+	callbackCh chan callbackRequest
+
+	// activeMu protects the active flag.
+	activeMu sync.Mutex
+	active   bool
+}
+
+func newNapiCallbackFS(env napi.Env, base vfs.FS, fsObj napi.Value) (*napiCallbackFS, error) {
+	fs := &napiCallbackFS{
+		base:       base,
+		callbackCh: make(chan callbackRequest),
 	}
-	return &napiCallbackFS{
-		base:             base,
-		enabledCallbacks: enabled,
+
+	// For each known callback name, check if the JS object has that method
+	// and create a reference to it.
+	fs.readFileRef = extractCallbackRef(env, fsObj, "readFile")
+	fs.fileExistsRef = extractCallbackRef(env, fsObj, "fileExists")
+	fs.directoryExistsRef = extractCallbackRef(env, fsObj, "directoryExists")
+	fs.getAccessibleEntriesRef = extractCallbackRef(env, fsObj, "getAccessibleEntries")
+	fs.realpathRef = extractCallbackRef(env, fsObj, "realpath")
+
+	return fs, nil
+}
+
+// extractCallbackRef checks if a JS object has a function property with the
+// given name. If so, creates and returns a reference to it; otherwise nil.
+func extractCallbackRef(env napi.Env, obj napi.Value, name string) *napi.Ref {
+	val, err := env.GetNamedProperty(obj, name)
+	if err != nil {
+		return nil
 	}
+	typ, err := env.TypeOf(val)
+	if err != nil || typ != "function" {
+		return nil
+	}
+	ref, err := env.CreateReference(val)
+	if err != nil {
+		return nil
+	}
+	return &ref
+}
+
+// release deletes all callback references.
+func (fs *napiCallbackFS) release(env napi.Env) {
+	for _, ref := range []*napi.Ref{
+		fs.readFileRef,
+		fs.fileExistsRef,
+		fs.directoryExistsRef,
+		fs.getAccessibleEntriesRef,
+		fs.realpathRef,
+	} {
+		if ref != nil {
+			_ = env.DeleteReference(*ref)
+		}
+	}
+}
+
+// activate enables the callback channel for a request dispatch cycle.
+func (fs *napiCallbackFS) activate() {
+	fs.activeMu.Lock()
+	fs.active = true
+	fs.activeMu.Unlock()
+}
+
+// deactivate disables the callback channel after a request completes.
+func (fs *napiCallbackFS) deactivate() {
+	fs.activeMu.Lock()
+	fs.active = false
+	fs.activeMu.Unlock()
+}
+
+// sendCallback sends a callback request to the main thread and blocks
+// until the JS callback has been executed and the response is available.
+func (fs *napiCallbackFS) sendCallback(ref *napi.Ref, arg string) callbackResponse {
+	fs.activeMu.Lock()
+	isActive := fs.active
+	fs.activeMu.Unlock()
+
+	if !isActive {
+		// Not inside a request dispatch cycle — this shouldn't happen in
+		// normal operation but return a fallthrough response to be safe.
+		return callbackResponse{resultType: "undefined"}
+	}
+
+	respCh := make(chan callbackResponse, 1)
+	fs.callbackCh <- callbackRequest{
+		ref:      ref,
+		arg:      arg,
+		response: respCh,
+	}
+	return <-respCh
+}
+
+// executeCallback runs a JS callback on the main thread (called by the
+// callback pump in dispatchRequest).
+func (fs *napiCallbackFS) executeCallback(env napi.Env, req callbackRequest) callbackResponse {
+	fn, err := env.GetReferenceValue(*req.ref)
+	if err != nil {
+		return callbackResponse{err: fmt.Errorf("failed to get callback reference: %w", err)}
+	}
+	argVal, err := env.StringToStringValue(req.arg)
+	if err != nil {
+		return callbackResponse{err: fmt.Errorf("failed to create string arg: %w", err)}
+	}
+	undef, _ := env.GetUndefinedValue()
+	result, err := env.CallFunction(undef, fn, []napi.Value{argVal})
+	if err != nil {
+		return callbackResponse{err: fmt.Errorf("callback failed: %w", err)}
+	}
+
+	typ, _ := env.TypeOf(result)
+	resp := callbackResponse{resultType: typ}
+
+	switch typ {
+	case "string":
+		resp.strResult, _ = env.StringValueToString(result)
+	case "boolean":
+		resp.boolResult, _ = env.BooleanValueToBool(result)
+	}
+
+	return resp
 }
 
 func (fs *napiCallbackFS) UseCaseSensitiveFileNames() bool {
 	return fs.base.UseCaseSensitiveFileNames()
 }
 
-func (fs *napiCallbackFS) ReadFile(path string) (string, bool) {
+// ReadFile implements vfs.FS.
+//
+// The readFile callback follows the same contract as the JS FileSystem interface:
+//   - Return undefined → fall back to real FS
+//   - Return null → file not found (no fallback)
+//   - Return string → file content
+func (fs *napiCallbackFS) ReadFile(path string) (contents string, ok bool) {
+	if fs.readFileRef != nil {
+		resp := fs.sendCallback(fs.readFileRef, path)
+		if resp.err != nil {
+			panic(fmt.Sprintf("napiCallbackFS.ReadFile: %v", resp.err))
+		}
+		switch resp.resultType {
+		case "undefined":
+			// Fall through to real FS
+		case "null":
+			return "", false
+		case "string":
+			return resp.strResult, true
+		}
+	}
 	return fs.base.ReadFile(path)
 }
 
+// FileExists implements vfs.FS.
 func (fs *napiCallbackFS) FileExists(path string) bool {
+	if fs.fileExistsRef != nil {
+		resp := fs.sendCallback(fs.fileExistsRef, path)
+		if resp.err != nil {
+			panic(fmt.Sprintf("napiCallbackFS.FileExists: %v", resp.err))
+		}
+		if resp.resultType == "boolean" {
+			return resp.boolResult
+		}
+		// undefined/null → fall through
+	}
 	return fs.base.FileExists(path)
 }
 
+// DirectoryExists implements vfs.FS.
 func (fs *napiCallbackFS) DirectoryExists(path string) bool {
+	if fs.directoryExistsRef != nil {
+		resp := fs.sendCallback(fs.directoryExistsRef, path)
+		if resp.err != nil {
+			panic(fmt.Sprintf("napiCallbackFS.DirectoryExists: %v", resp.err))
+		}
+		if resp.resultType == "boolean" {
+			return resp.boolResult
+		}
+		// undefined/null → fall through
+	}
 	return fs.base.DirectoryExists(path)
 }
 
+// GetAccessibleEntries implements vfs.FS.
 func (fs *napiCallbackFS) GetAccessibleEntries(path string) vfs.Entries {
+	if fs.getAccessibleEntriesRef != nil {
+		resp := fs.sendCallback(fs.getAccessibleEntriesRef, path)
+		if resp.err != nil {
+			panic(fmt.Sprintf("napiCallbackFS.GetAccessibleEntries: %v", resp.err))
+		}
+		if resp.resultType == "string" {
+			var rawEntries *struct {
+				Files       []string `json:"files"`
+				Directories []string `json:"directories"`
+			}
+			if err := json.Unmarshal([]byte(resp.strResult), &rawEntries); err != nil {
+				panic(fmt.Sprintf("napiCallbackFS.GetAccessibleEntries: failed to unmarshal: %v", err))
+			}
+			if rawEntries != nil {
+				return vfs.Entries{
+					Files:       rawEntries.Files,
+					Directories: rawEntries.Directories,
+				}
+			}
+		}
+		// undefined/null → fall through
+	}
 	return fs.base.GetAccessibleEntries(path)
 }
 
+// Realpath implements vfs.FS.
 func (fs *napiCallbackFS) Realpath(path string) string {
+	if fs.realpathRef != nil {
+		resp := fs.sendCallback(fs.realpathRef, path)
+		if resp.err != nil {
+			panic(fmt.Sprintf("napiCallbackFS.Realpath: %v", resp.err))
+		}
+		if resp.resultType == "string" {
+			return resp.strResult
+		}
+		// undefined/null → fall through
+	}
 	return fs.base.Realpath(path)
 }
 
