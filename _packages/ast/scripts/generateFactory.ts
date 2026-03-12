@@ -584,40 +584,6 @@ emit("    return undefined;");
 emit("}");
 emit("");
 
-// setParent
-emit("/**");
-emit(" * Set the parent of a node.");
-emit(" */");
-emit("export function setParent<T extends Node>(child: T, parent: Node | undefined): T;");
-emit("export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined;");
-emit("export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined {");
-emit("    if (child) (child as any).parent = parent;");
-emit("    return child;");
-emit("}");
-emit("");
-
-// setParentRecursive
-emit("/**");
-emit(" * Set the parent pointers for all children of a tree, recursively.");
-emit(" */");
-emit("export function setParentRecursive<T extends Node>(rootNode: T, incremental: boolean): T;");
-emit("export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined;");
-emit("export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined {");
-emit("    if (rootNode === undefined) return rootNode;");
-emit("    forEachChildRecursively(rootNode, incremental ? (child, parent) => {");
-emit("        if (child.parent !== parent) {");
-emit("            (child as any).parent = parent;");
-emit("            return undefined;");
-emit("        }");
-emit('        return "skip";');
-emit("    } : (child, parent) => {");
-emit("        (child as any).parent = parent;");
-emit("        return undefined;");
-emit("    });");
-emit("    return rootNode;");
-emit("}");
-emit("");
-
 // forEachChildRecursively
 emit("/**");
 emit(" * Walk a tree recursively in a preorder traversal, calling callbacks for each node.");

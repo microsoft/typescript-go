@@ -4,7 +4,7 @@ import {
     createNodeArray,
     createNumericLiteral,
     createStringLiteral,
-    setParentRecursive,
+    forEachChildRecursively,
 } from "./factory.ts";
 import type {
     Node,
@@ -14,6 +14,15 @@ import type {
     StringLiteral,
 } from "./nodes.ts";
 import { visitEachChild } from "./visitor.ts";
+
+function setParentRecursive<T extends Node>(rootNode: T | undefined): T | undefined {
+    if (rootNode === undefined) return rootNode;
+    forEachChildRecursively(rootNode, (child, parent) => {
+        (child as any).parent = parent;
+        return undefined;
+    });
+    return rootNode;
+}
 
 function setTextRange<T extends Node>(node: T, range: ReadonlyTextRange | undefined): T {
     if (range) {
@@ -38,7 +47,7 @@ export function getSynthesizedDeepClone<T extends Node>(node: T | undefined, inc
         (clone as any).pos = -1;
         (clone as any).end = -1;
     }
-    return setParentRecursive(clone, /*incremental*/ false);
+    return setParentRecursive(clone);
 }
 
 /**

@@ -1682,39 +1682,6 @@ function cloneNodeData(node: any): any {
 }
 
 /**
- * Set the parent of a node.
- */
-export function setParent<T extends Node>(child: T, parent: Node | undefined): T;
-export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined;
-export function setParent<T extends Node>(child: T | undefined, parent: Node | undefined): T | undefined {
-    if (child) (child as any).parent = parent;
-    return child;
-}
-
-/**
- * Set the parent pointers for all children of a tree, recursively.
- */
-export function setParentRecursive<T extends Node>(rootNode: T, incremental: boolean): T;
-export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined;
-export function setParentRecursive<T extends Node>(rootNode: T | undefined, incremental: boolean): T | undefined {
-    if (rootNode === undefined) return rootNode;
-    forEachChildRecursively(
-        rootNode,
-        incremental ? (child, parent) => {
-            if (child.parent !== parent) {
-                (child as any).parent = parent;
-                return undefined;
-            }
-            return "skip";
-        } : (child, parent) => {
-            (child as any).parent = parent;
-            return undefined;
-        },
-    );
-    return rootNode;
-}
-
-/**
  * Walk a tree recursively in a preorder traversal, calling callbacks for each node.
  * If the callback returns "skip", the node's children are not visited.
  */

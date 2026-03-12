@@ -33,7 +33,6 @@ import {
     createVariableStatement,
     forEachChildRecursively,
     NodeObject,
-    setParentRecursive,
 } from "@typescript/ast/factory";
 import {
     visitEachChild,
@@ -131,24 +130,8 @@ describe("cloneNode", () => {
 });
 
 // ---------------------------------------------------------------------------
-// setParentRecursive & forEachChildRecursively
+// forEachChildRecursively
 // ---------------------------------------------------------------------------
-
-describe("setParentRecursive", () => {
-    test("sets parent pointers on a simple tree", () => {
-        const id = createIdentifier("x");
-        const decl = createVariableDeclaration(id, undefined, undefined, undefined);
-        const declList = createVariableDeclarationList([decl]);
-        const stmt = createVariableStatement(undefined, declList);
-
-        setParentRecursive(stmt, /*incremental*/ false);
-
-        assert.strictEqual(declList.parent, stmt);
-        // The variable declaration list's declarations should have parent set
-        const firstDecl = declList.declarations.at(0)!;
-        assert.strictEqual(firstDecl.parent, declList);
-    });
-});
 
 describe("forEachChildRecursively", () => {
     test("visits all descendants", () => {
