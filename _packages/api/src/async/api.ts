@@ -538,6 +538,15 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
+    async getResolvedSymbol(symbol: Symbol): Promise<Symbol> {
+        const data = await this.client.apiRequest<SymbolResponse>("getResolvedSymbol", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+        return this.objectRegistry.getOrCreateSymbol(data);
+    }
+
     async getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getTypeOfSymbolAtLocation", {
             snapshot: this.snapshotId,

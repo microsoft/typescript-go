@@ -546,6 +546,15 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
+    getResolvedSymbol(symbol: Symbol): Symbol {
+        const data = this.client.apiRequest<SymbolResponse>("getResolvedSymbol", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+        return this.objectRegistry.getOrCreateSymbol(data);
+    }
+
     getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Type | undefined {
         const data = this.client.apiRequest<TypeResponse | null>("getTypeOfSymbolAtLocation", {
             snapshot: this.snapshotId,
