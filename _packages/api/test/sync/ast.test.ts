@@ -28,9 +28,6 @@ import {
     createNumericLiteral,
     createStringLiteral,
     createToken,
-    createVariableDeclaration,
-    createVariableDeclarationList,
-    createVariableStatement,
     forEachChildRecursively,
     NodeObject,
 } from "@typescript/ast/factory";
