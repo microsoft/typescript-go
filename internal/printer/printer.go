@@ -5574,7 +5574,7 @@ func (p *Printer) emitComments(comments []ast.CommentRange, commentSeparator com
 		return false
 	}
 
-	if commentSeparator == commentSeparatorBefore && !p.writer.IsAtStartOfLine() {
+	if commentSeparator == commentSeparatorBefore {
 		p.writeSpace()
 	}
 
@@ -5593,7 +5593,7 @@ func (p *Printer) emitComments(comments []ast.CommentRange, commentSeparator com
 		}
 	}
 
-	if interveningSeparator && commentSeparator == commentSeparatorAfter && !p.writer.IsAtStartOfLine() {
+	if interveningSeparator && commentSeparator == commentSeparatorAfter {
 		p.writeSpace()
 	}
 
