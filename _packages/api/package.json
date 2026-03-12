@@ -21,6 +21,10 @@
             "@typescript/source": "./src/sync/api.ts",
             "default": "./dist/sync/api.js"
         },
+        "./napi": {
+            "@typescript/source": "./src/sync/napiApi.ts",
+            "default": "./dist/sync/napiApi.js"
+        },
         "./async": {
             "@typescript/source": "./src/async/api.ts",
             "default": "./dist/async/api.js"
