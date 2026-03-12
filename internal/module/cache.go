@@ -52,7 +52,7 @@ func (c *typeRefDirectiveResolutionCache) Set(key typeRefDirectiveResolutionCach
 type caches struct {
 	packageJsonInfoCache *packagejson.InfoCache
 
-	moduleResolutionCache              moduleResolutionCache
+	moduleResolutionCache           moduleResolutionCache
 	typeRefDirectiveResolutionCache typeRefDirectiveResolutionCache
 
 	// Cached representation for `core.CompilerOptions.paths`.
