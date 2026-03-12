@@ -194,6 +194,37 @@ function isNodeType(typeNode: ts.TypeNode): boolean {
     return false;
 }
 
+function getEffectiveTypeName(typeNode: ts.TypeNode, substitutions?: Map<string, string>): string | undefined {
+    if (ts.isTypeReferenceNode(typeNode)) {
+        if (ts.isIdentifier(typeNode.typeName)) {
+            let name = typeNode.typeName.text;
+            if (substitutions?.has(name)) {
+                name = substitutions.get(name)!;
+            }
+            if (nodeTypeInterfaces.has(name) || nodeTypeAliases.has(name)) {
+                return name;
+            }
+        }
+        return undefined;
+    }
+    if (ts.isUnionTypeNode(typeNode)) {
+        const nonUndefined = typeNode.types.filter(t => t.kind !== ts.SyntaxKind.UndefinedKeyword);
+        if (nonUndefined.length === 1) {
+            return getEffectiveTypeName(nonUndefined[0], substitutions);
+        }
+        // Multiple non-undefined types - can't narrow to a single test function
+        return undefined;
+    }
+    if (ts.isIntersectionTypeNode(typeNode)) {
+        for (const t of typeNode.types) {
+            const name = getEffectiveTypeName(t, substitutions);
+            if (name) return name;
+        }
+        return undefined;
+    }
+    return undefined;
+}
+
 // ---------------------------------------------------------------------------
 // Step 3: Resolve all properties for an interface (including inherited)
 // ---------------------------------------------------------------------------
@@ -417,6 +448,100 @@ for (const def of visitorDefs) {
 factoryImports.add("createNodeArray");
 const sortedFactoryImports = [...factoryImports].sort();
 
+// Collect is* function names needed for visitNode type checks
+const isImports = new Set<string>();
+
+// Test function overrides for properties where getEffectiveTypeName can't determine the correct
+// test function (e.g. multi-member union types, Token<SyntaxKind.X> types).
+// Keyed by "InterfaceName.propertyName", value is the test function name.
+const TEST_FUNCTION_OVERRIDES: Record<string, string> = {
+    "JSDocCallbackTag.fullName": "isIdentifierOrJSDocNamespaceDeclaration",
+    "JSDocLink.name": "isEntityNameOrJSDocMemberName",
+    "JSDocLinkCode.name": "isEntityNameOrJSDocMemberName",
+    "JSDocLinkPlain.name": "isEntityNameOrJSDocMemberName",
+    "JSDocMemberName.left": "isEntityNameOrJSDocMemberName",
+    "JSDocNameReference.name": "isEntityNameOrJSDocMemberName",
+    "JSDocTypedefTag.fullName": "isIdentifierOrJSDocNamespaceDeclaration",
+    "JSDocTypedefTag.typeExpression": "isJSDocTypeExpressionOrJSDocTypeLiteral",
+    "JsxExpression.dotDotDotToken": "isDotDotDotToken",
+    "LiteralTypeNode.literal": "isLiteralTypeLiteral",
+    "MappedTypeNode.questionToken": "isQuestionOrPlusOrMinusToken",
+    "MappedTypeNode.readonlyToken": "isReadonlyKeywordOrPlusOrMinusToken",
+    "ModuleDeclaration.body": "isModuleBody",
+    "NamedTupleMember.dotDotDotToken": "isDotDotDotToken",
+    "NamedTupleMember.questionToken": "isQuestionToken",
+    "PropertyDeclaration.postfixToken": "isQuestionOrExclamationToken",
+    "TemplateLiteralTypeSpan.literal": "isTemplateMiddleOrTemplateTail",
+    "TemplateSpan.literal": "isTemplateMiddleOrTemplateTail",
+    "TypePredicateNode.parameterName": "isIdentifierOrThisTypeNode",
+};
+
+// Properties where the visitNode result needs to be cast to the property type
+// (for intersection types where the test function's return type is too broad).
+const CAST_PROPERTIES = new Set<string>([
+    "JSDocAugmentsTag.class",
+    "JSDocImplementsTag.class",
+]);
+
+// Pre-generate the visitEachChildTable entries so isImports is populated before we emit
+interface TableEntry {
+    syntaxKind: string;
+    interfaceName: string;
+    bodyLines: string[];
+    updateArgs: string[];
+}
+const tableEntries: TableEntry[] = [];
+
+for (const def of visitorDefs) {
+    const childParams = def.params.filter(p => classifyProperty(p) !== "data");
+    if (childParams.length === 0) continue;
+
+    const visitedVars: { name: string; varName: string; kind: "node" | "nodeArray"; }[] = [];
+    const bodyLines: string[] = [];
+
+    for (const cp of childParams) {
+        const kind = classifyProperty(cp);
+        const varName = `_${cp.name}`;
+        visitedVars.push({ name: cp.name, varName, kind: kind as "node" | "nodeArray" });
+        if (kind === "nodeArray") {
+            bodyLines.push(`        const ${varName} = visitNodes(node.${cp.name}, visitor);`);
+        }
+        else {
+            const overrideKey = `${def.interfaceName}.${cp.name}`;
+            const overrideTestFn = TEST_FUNCTION_OVERRIDES[overrideKey];
+            const needsCast = CAST_PROPERTIES.has(overrideKey);
+
+            let testFn: string | undefined;
+            if (overrideTestFn) {
+                testFn = overrideTestFn;
+            }
+            else {
+                const typeName = getEffectiveTypeName(cp.typeNode, cp.substitutions);
+                testFn = typeName ? `is${typeName}` : undefined;
+            }
+
+            const castSuffix = needsCast ? ` as typeof node.${cp.name}` : "";
+
+            if (testFn) {
+                isImports.add(testFn);
+                bodyLines.push(`        const ${varName} = visitNode(node.${cp.name}, visitor, ${testFn})${castSuffix};`);
+            }
+            else {
+                const isRequired = !cp.optional && !typeIncludesUndefined(cp.typeNode);
+                const assert = isRequired ? "!" : "";
+                bodyLines.push(`        const ${varName} = visitNode(node.${cp.name}, visitor)${assert}${castSuffix};`);
+            }
+        }
+    }
+
+    tableEntries.push({
+        syntaxKind: def.syntaxKind,
+        interfaceName: def.interfaceName,
+        bodyLines,
+        updateArgs: visitedVars.map(v => v.varName),
+    });
+}
+
 // ---------------------------------------------------------------------------
 // Step 7: Emit output
 // ---------------------------------------------------------------------------
@@ -442,6 +567,14 @@ for (const f of sortedFactoryImports) {
     emit(`    ${f},`);
 }
 emit(`} from "./factory.ts";`);
+if (isImports.size > 0) {
+    const sortedIsImports = [...isImports].sort();
+    emit(`import {`);
+    for (const f of sortedIsImports) {
+        emit(`    ${f},`);
+    }
+    emit(`} from "./is.ts";`);
+}
 emit(`import type {`);
 for (const t of sortedTypeImports) {
     emit(`    ${t},`);
@@ -462,12 +595,41 @@ emit(" * Visits a Node using the supplied visitor, possibly returning a new Node
 emit(" *");
 emit(" * - If the input node is undefined, then the output is undefined.");
 emit(" * - If the visitor returns undefined, then the output is undefined.");
+emit(" * - If the output node is not undefined, then it will satisfy the test function.");
+emit(" * - In order to obtain a return type that is more specific than `Node`, a test");
+emit(" *   function _must_ be provided, and that function must be a type predicate.");
+emit(" *");
+emit(" * @param node The Node to visit.");
+emit(" * @param visitor The callback used to visit the Node.");
+emit(" * @param test A callback to execute to verify the Node is valid.");
 emit(" */");
-emit("export function visitNode<T extends Node>(node: T, visitor: Visitor): T | undefined;");
-emit("export function visitNode<T extends Node>(node: T | undefined, visitor: Visitor): T | undefined;");
-emit("export function visitNode(node: Node | undefined, visitor: Visitor): Node | undefined {");
+emit("export function visitNode<TIn extends Node | undefined, TOut extends Node>(");
+emit("    node: TIn,");
+emit("    visitor: Visitor,");
+emit("    test: (node: Node) => node is TOut,");
+emit("): TOut | (TIn & undefined);");
+emit("/**");
+emit(" * Visits a Node using the supplied visitor, possibly returning a new Node in its place.");
+emit(" *");
+emit(" * - If the input node is undefined, then the output is undefined.");
+emit(" * - If the visitor returns undefined, then the output is undefined.");
+emit(" *");
+emit(" * @param node The Node to visit.");
+emit(" * @param visitor The callback used to visit the Node.");
+emit(" * @param test An optional callback to execute to verify the Node is valid.");
+emit(" */");
+emit("export function visitNode<TIn extends Node | undefined>(");
+emit("    node: TIn,");
+emit("    visitor: Visitor,");
+emit("    test?: (node: Node) => boolean,");
+emit("): Node | (TIn & undefined);");
+emit("export function visitNode(node: Node | undefined, visitor: Visitor, test?: (node: Node) => boolean): Node | undefined {");
 emit("    if (node === undefined) return undefined;");
-emit("    return visitor(node);");
+emit("    const visited = visitor(node);");
+emit("    if (visited !== undefined && test !== undefined && !test(visited)) {");
+emit('        throw new Error("Visited node failed test assertion.");');
+emit("    }");
+emit("    return visited;");
 emit("}");
 emit("");
 
@@ -524,39 +686,13 @@ emit("");
 // The dispatch table
 emit("const visitEachChildTable: Record<number, VisitEachChildFunction> = {");
 
-for (const def of visitorDefs) {
-    const childParams = def.params.filter(p => classifyProperty(p) !== "data");
-    if (childParams.length === 0) continue;
-
-    const updateName = `update${def.interfaceName}`;
-
-    // For each child prop, visit and collect visited vars
-    const visitedVars: { name: string; varName: string; kind: "node" | "nodeArray"; }[] = [];
-    const bodyLines: string[] = [];
-
-    for (const cp of childParams) {
-        const kind = classifyProperty(cp);
-        const varName = `_${cp.name}`;
-        visitedVars.push({ name: cp.name, varName, kind: kind as "node" | "nodeArray" });
-        if (kind === "nodeArray") {
-            bodyLines.push(`        const ${varName} = visitNodes(node.${cp.name}, visitor);`);
-        }
-        else {
-            // visitNode always returns T | undefined; add ! assertion for required properties
-            const isRequired = !cp.optional && !typeIncludesUndefined(cp.typeNode);
-            const assert = isRequired ? "!" : "";
-            bodyLines.push(`        const ${varName} = visitNode(node.${cp.name}, visitor)${assert};`);
-        }
-    }
-
-    // Build update call arguments: just the visited child params
-    const updateArgs = visitedVars.map(v => v.varName);
-
-    emit(`    [${def.syntaxKind}]: (node: ${def.interfaceName}, visitor: Visitor): ${def.interfaceName} => {`);
-    for (const line of bodyLines) {
+for (const entry of tableEntries) {
+    const updateName = `update${entry.interfaceName}`;
+    emit(`    [${entry.syntaxKind}]: (node: ${entry.interfaceName}, visitor: Visitor): ${entry.interfaceName} => {`);
+    for (const line of entry.bodyLines) {
         emit(line);
     }
-    emit(`        return ${updateName}(node, ${updateArgs.join(", ")});`);
+    emit(`        return ${updateName}(node, ${entry.updateArgs.join(", ")});`);
     emit("    },");
 }
 
