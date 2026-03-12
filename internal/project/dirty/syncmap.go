@@ -203,6 +203,8 @@ func NewSyncMap[K comparable, V Cloneable[V]](base map[K]V) *SyncMap[K, V] {
 
 func (m *SyncMap[K, V]) Load(key K) (*SyncMapEntry[K, V], bool) {
 	if entry, ok := m.dirty.Load(key); ok {
+		entry.mu.Lock()
+		defer entry.mu.Unlock()
 		if entry.delete {
 			return nil, false
 		}
@@ -281,6 +283,8 @@ func (m *SyncMap[K, V]) Range(fn func(*SyncMapEntry[K, V]) bool) {
 	seenInDirty := make(map[K]struct{})
 	m.dirty.Range(func(key K, entry *SyncMapEntry[K, V]) bool {
 		seenInDirty[key] = struct{}{}
+		entry.mu.Lock()
+		defer entry.mu.Unlock()
 		if !entry.delete && !fn(entry) {
 			return false
 		}
@@ -322,6 +326,8 @@ func (m *SyncMap[K, V]) finalize(hooks FinalizationHooks[K, V]) (map[K]V, bool) 
 	}
 
 	m.dirty.Range(func(key K, entry *SyncMapEntry[K, V]) bool {
+		entry.mu.Lock()
+		defer entry.mu.Unlock()
 		if entry.delete {
 			ensureCloned()
 			if hooks.OnDelete != nil {

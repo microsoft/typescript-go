@@ -61,16 +61,7 @@ func (a *autoImportBuilderFS) GetAccessibleEntries(path string) vfs.Entries {
 
 // FileExists implements FileSource.
 func (a *autoImportBuilderFS) FileExists(fileName string, path tspath.Path) bool {
-	if _, ok := a.snapshotFSBuilder.overlays[path]; ok {
-		return true
-	}
-	if entry, ok := a.snapshotFSBuilder.diskFiles.Load(path); ok {
-		return entry.Value() != nil
-	}
-	if fh, ok := a.untrackedFiles.Load(path); ok {
-		return fh != nil
-	}
-	return a.snapshotFSBuilder.fs.FileExists(fileName)
+	return a.snapshotFSBuilder.FileExists(fileName, path)
 }
 
 type autoImportRegistryCloneHost struct {
