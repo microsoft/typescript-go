@@ -4842,7 +4842,7 @@ func (p *Printer) emitListItems(
 					shouldDecreaseIndentAfterEmit = true
 				}
 
-				if shouldEmitInterveningComments && format&LFDelimitersMask != 0 && !ast.PositionIsSynthesized(child.Pos()) {
+				if shouldEmitInterveningComments && format&LFDelimitersMask != 0 && !ast.PositionIsSynthesized(child.Pos()) && p.shouldEmitLeadingComments(child) {
 					commentRange := p.emitContext.CommentRange(child)
 					p.emitTrailingCommentsOfPosition(commentRange.Pos(), format&LFSpaceBetweenSiblings != 0, true /*forceNoNewline*/)
 				}
@@ -4858,7 +4858,7 @@ func (p *Printer) emitListItems(
 		}
 
 		// Emit this child.
-		if shouldEmitInterveningComments {
+		if shouldEmitInterveningComments && p.shouldEmitLeadingComments(child) {
 			commentRange := p.emitContext.CommentRange(child)
 			p.emitTrailingCommentsOfPosition(commentRange.Pos(), false /*prefixSpace*/, false /*forceNoNewline*/)
 		} else {
