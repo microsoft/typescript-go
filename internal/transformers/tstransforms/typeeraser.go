@@ -254,6 +254,9 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindParenthesizedExpression:
 		n := node.AsParenthesizedExpression()
+		if ast.IsJSDocTypeAssertion(node) {
+			return tx.Visitor().VisitEachChild(node)
+		}
 		expression := ast.SkipOuterExpressions(n.Expression, ^(ast.OEKAssertions | ast.OEKExpressionsWithTypeArguments))
 		if ast.IsAssertionExpression(expression) || ast.IsSatisfiesExpression(expression) {
 			partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(n.Expression))

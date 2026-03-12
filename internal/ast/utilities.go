@@ -800,8 +800,23 @@ func IsJSDocKind(kind Kind) bool {
 	return KindFirstJSDocNode <= kind && kind <= KindLastJSDocNode
 }
 
-func isJSDocTypeAssertion(_ *Node) bool {
-	return false // !!!
+func IsJSDocTypeAssertion(node *Node) bool {
+	if node == nil || !IsParenthesizedExpression(node) || !IsInJSFile(node) {
+		return false
+	}
+	for _, jsdoc := range node.JSDoc(nil) {
+		if jsdoc == nil || !jsdoc.IsJSDoc() {
+			continue
+		}
+		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+			for _, tag := range tags.Nodes {
+				if IsJSDocTypeTag(tag) {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func IsPrologueDirective(node *Node) bool {
@@ -827,7 +842,7 @@ const (
 func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 	switch node.Kind {
 	case KindParenthesizedExpression:
-		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && isJSDocTypeAssertion(node))
+		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && IsJSDocTypeAssertion(node))
 	case KindTypeAssertionExpression, KindAsExpression:
 		return kinds&OEKTypeAssertions != 0
 	case KindSatisfiesExpression:
