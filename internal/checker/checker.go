@@ -15891,6 +15891,9 @@ func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.No
 }
 
 func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
+	if symbol == nil {
+		return c.unknownType
+	}
 	if symbol.CheckFlags&ast.CheckFlagsDeferredType != 0 {
 		return c.getTypeOfSymbolWithDeferredType(symbol)
 	}
