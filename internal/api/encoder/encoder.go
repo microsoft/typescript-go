@@ -17,6 +17,7 @@ const (
 	NodeOffsetParent
 	NodeOffsetData
 	NodeOffsetFlags
+	NodeOffsetModifierFlags
 	// NodeSize is the number of bytes that represents a single node in the encoded format.
 	NodeSize
 )
@@ -53,7 +54,7 @@ const (
 )
 
 const (
-	ProtocolVersion uint8 = 5
+	ProtocolVersion uint8 = 6
 )
 
 // Source File Binary Format
@@ -367,7 +368,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 					nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 				}
 
-				nodes = appendUint32s(nodes, SyntaxKindNodeList, utf16(nodeList.Pos()), utf16(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes)), 0)
+				nodes = appendUint32s(nodes, SyntaxKindNodeList, utf16(nodeList.Pos()), utf16(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes)), 0, 0)
 
 				saveParentIndex := parentIndex
 
@@ -399,7 +400,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, error) 
 			nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 		}
 
-		nodes = appendUint32s(nodes, uint32(node.Kind), utf16(node.Pos()), utf16(node.End()), 0, parentIndex, getNodeData(node, strs, positionMap, &extendedData, &structuredData), uint32(node.Flags))
+		nodes = appendUint32s(nodes, uint32(node.Kind), utf16(node.Pos()), utf16(node.End()), 0, parentIndex, getNodeData(node, strs, positionMap, &extendedData, &structuredData), uint32(node.Flags), uint32(node.ModifierFlags()))
 
 		if nodeIndexMap != nil {
 			if _, ok := nodeIndexMap[node]; ok {

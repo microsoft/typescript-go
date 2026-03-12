@@ -66,6 +66,7 @@ const NODE_OFFSET_NEXT = 12;
 const NODE_OFFSET_PARENT = 16;
 const NODE_OFFSET_DATA = 20;
 const NODE_OFFSET_FLAGS = 24;
+const NODE_OFFSET_MODIFIER_FLAGS = 28;
 
 export class RemoteNodeBase {
     parent: RemoteNode;
@@ -961,6 +962,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     // Other properties
     get flags(): number {
         return this.view.getUint32(this._byteIndex + NODE_OFFSET_FLAGS, true);
+    }
+
+    get modifierFlags(): number {
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_MODIFIER_FLAGS, true);
     }
 
     get phaseModifier(): SyntaxKind {
