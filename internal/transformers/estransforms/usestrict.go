@@ -36,8 +36,10 @@ func (tx *useStrictTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node 
 	moduleKind := tx.compilerOptions.GetEmitModuleKind()
 	format := tx.getEmitModuleFormatOfFile(node)
 
+	// ESM is always strict. If the file is ESM, and CJS emit
+	// has not been requested, then skip adding "use strict".
 	if isExternalModule && moduleKind >= core.ModuleKindES2015 &&
-		(format >= core.ModuleKindES2015 || moduleKind >= core.ModuleKindPreserve) {
+		(moduleKind == core.ModuleKindPreserve || format >= core.ModuleKindES2015) {
 		return node.AsNode()
 	}
 
