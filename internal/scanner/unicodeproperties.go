@@ -1,5 +1,7 @@
 package scanner
 
+import "github.com/microsoft/typescript-go/internal/collections"
+
 // Table 66: Non-binary Unicode property aliases and their canonical property names
 // https://tc39.es/ecma262/#table-nonbinary-unicode-properties
 var nonBinaryUnicodeProperties = map[string]string{
@@ -13,7 +15,7 @@ var nonBinaryUnicodeProperties = map[string]string{
 
 // Table 67: Binary Unicode property aliases and their canonical property names
 // https://tc39.es/ecma262/#table-binary-unicode-properties
-var binaryUnicodeProperties = newStringSet(
+var binaryUnicodeProperties = collections.NewSetFromItems(
 	"ASCII", "ASCII_Hex_Digit", "AHex", "Alphabetic", "Alpha", "Any", "Assigned",
 	"Bidi_Control", "Bidi_C", "Bidi_Mirrored", "Bidi_M",
 	"Case_Ignorable", "CI", "Cased",
@@ -50,15 +52,15 @@ var binaryUnicodeProperties = newStringSet(
 
 // Table 68: Binary Unicode properties of strings
 // https://tc39.es/ecma262/#table-binary-unicode-properties-of-strings
-var binaryUnicodePropertiesOfStrings = newStringSet(
+var binaryUnicodePropertiesOfStrings = collections.NewSetFromItems(
 	"Basic_Emoji", "Emoji_Keycap_Sequence", "RGI_Emoji_Modifier_Sequence",
 	"RGI_Emoji_Flag_Sequence", "RGI_Emoji_Tag_Sequence",
 	"RGI_Emoji_ZWJ_Sequence", "RGI_Emoji",
 )
 
 // Unicode 15.1
-var valuesOfNonBinaryUnicodeProperties = map[string]map[string]bool{
-	"General_Category": newStringSet(
+var valuesOfNonBinaryUnicodeProperties = map[string]*collections.Set[string]{
+	"General_Category": collections.NewSetFromItems(
 		"C", "Other", "Cc", "Control", "cntrl", "Cf", "Format", "Cn", "Unassigned",
 		"Co", "Private_Use", "Cs", "Surrogate",
 		"L", "Letter", "LC", "Cased_Letter", "Ll", "Lowercase_Letter", "Lm", "Modifier_Letter",
@@ -74,7 +76,7 @@ var valuesOfNonBinaryUnicodeProperties = map[string]map[string]bool{
 		"Z", "Separator", "Zl", "Line_Separator", "Zp", "Paragraph_Separator",
 		"Zs", "Space_Separator",
 	),
-	"Script": newStringSet(
+	"Script": collections.NewSetFromItems(
 		"Adlm", "Adlam", "Aghb", "Caucasian_Albanian", "Ahom", "Arab", "Arabic",
 		"Armi", "Imperial_Aramaic", "Armn", "Armenian", "Avst", "Avestan",
 		"Bali", "Balinese", "Bamu", "Bamum", "Bass", "Bassa_Vah", "Batk", "Batak",
@@ -155,12 +157,4 @@ var valuesOfNonBinaryUnicodeProperties = map[string]map[string]bool{
 
 func init() {
 	valuesOfNonBinaryUnicodeProperties["Script_Extensions"] = valuesOfNonBinaryUnicodeProperties["Script"]
-}
-
-func newStringSet(values ...string) map[string]bool {
-	m := make(map[string]bool, len(values))
-	for _, v := range values {
-		m[v] = true
-	}
-	return m
 }

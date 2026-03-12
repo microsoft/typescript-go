@@ -860,7 +860,7 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 					p.error(diagnostics.Expected_a_Unicode_property_value, p.pos(), 0)
 				} else if propertyName != "" {
 					values := valuesOfNonBinaryUnicodeProperties[propertyName]
-					if values != nil && !values[propertyValue] {
+					if values != nil && !values.Has(propertyValue) {
 						p.error(diagnostics.Unknown_Unicode_property_value, propertyValueStart, p.pos()-propertyValueStart)
 						suggestion := p.getSpellingSuggestionForUnicodePropertyValue(propertyName, propertyValue)
 						if suggestion != "" {
@@ -871,7 +871,7 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 			} else {
 				if p.pos() == propertyNameOrValueStart {
 					p.error(diagnostics.Expected_a_Unicode_property_name_or_value, p.pos(), 0)
-				} else if binaryUnicodePropertiesOfStrings[propertyNameOrValue] {
+				} else if binaryUnicodePropertiesOfStrings.Has(propertyNameOrValue) {
 					if !p.unicodeSetsMode {
 						p.error(diagnostics.Any_Unicode_property_that_would_possibly_match_more_than_a_single_character_is_only_available_when_the_Unicode_Sets_v_flag_is_set, propertyNameOrValueStart, p.pos()-propertyNameOrValueStart)
 					} else if isCharacterComplement {
@@ -879,7 +879,7 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 					} else {
 						p.mayContainStrings = true
 					}
-				} else if !valuesOfNonBinaryUnicodeProperties["General_Category"][propertyNameOrValue] && !binaryUnicodeProperties[propertyNameOrValue] {
+				} else if !valuesOfNonBinaryUnicodeProperties["General_Category"].Has(propertyNameOrValue) && !binaryUnicodeProperties.Has(propertyNameOrValue) {
 					p.error(diagnostics.Unknown_Unicode_property_name_or_value, propertyNameOrValueStart, p.pos()-propertyNameOrValueStart)
 					suggestion := p.getSpellingSuggestionForUnicodePropertyNameOrValue(propertyNameOrValue)
 					if suggestion != "" {
@@ -915,8 +915,8 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName
 	if values == nil {
 		return ""
 	}
-	candidates := make([]string, 0, len(values))
-	for k := range values {
+	candidates := make([]string, 0, values.Len())
+	for k := range values.Keys() {
 		candidates = append(candidates, k)
 	}
 	return core.GetSpellingSuggestion(value, candidates, func(s string) string { return s })
@@ -924,13 +924,13 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyNameOrValue(name string) string {
 	var candidates []string
-	for k := range valuesOfNonBinaryUnicodeProperties["General_Category"] {
+	for k := range valuesOfNonBinaryUnicodeProperties["General_Category"].Keys() {
 		candidates = append(candidates, k)
 	}
-	for k := range binaryUnicodeProperties {
+	for k := range binaryUnicodeProperties.Keys() {
 		candidates = append(candidates, k)
 	}
-	for k := range binaryUnicodePropertiesOfStrings {
+	for k := range binaryUnicodePropertiesOfStrings.Keys() {
 		candidates = append(candidates, k)
 	}
 	return core.GetSpellingSuggestion(name, candidates, func(s string) string { return s })
