@@ -804,19 +804,8 @@ func IsJSDocTypeAssertion(node *Node) bool {
 	if node == nil || !IsParenthesizedExpression(node) || !IsInJSFile(node) {
 		return false
 	}
-	for _, jsdoc := range node.JSDoc(nil) {
-		if jsdoc == nil || !jsdoc.IsJSDoc() {
-			continue
-		}
-		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
-			for _, tag := range tags.Nodes {
-				if IsJSDocTypeTag(tag) {
-					return true
-				}
-			}
-		}
-	}
-	return false
+	expr := node.Expression()
+	return IsAsExpression(expr) && expr.Type() != nil && expr.Type().Flags&NodeFlagsReparsed != 0
 }
 
 func IsPrologueDirective(node *Node) bool {
