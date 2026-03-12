@@ -66,7 +66,47 @@ const NODE_OFFSET_NEXT = 12;
 const NODE_OFFSET_PARENT = 16;
 const NODE_OFFSET_DATA = 20;
 const NODE_OFFSET_FLAGS = 24;
-const NODE_OFFSET_MODIFIER_FLAGS = 28;
+
+// ModifierFlags constants matching Go's ast.ModifierFlags values
+const ModifierFlagsNone = 0;
+const ModifierFlagsPublic = 1 << 0;
+const ModifierFlagsPrivate = 1 << 1;
+const ModifierFlagsProtected = 1 << 2;
+const ModifierFlagsReadonly = 1 << 3;
+const ModifierFlagsOverride = 1 << 4;
+const ModifierFlagsExport = 1 << 5;
+const ModifierFlagsAbstract = 1 << 6;
+const ModifierFlagsAmbient = 1 << 7;
+const ModifierFlagsStatic = 1 << 8;
+const ModifierFlagsAccessor = 1 << 9;
+const ModifierFlagsAsync = 1 << 10;
+const ModifierFlagsDefault = 1 << 11;
+const ModifierFlagsConst = 1 << 12;
+const ModifierFlagsIn = 1 << 13;
+const ModifierFlagsOut = 1 << 14;
+const ModifierFlagsDecorator = 1 << 15;
+
+function modifierToFlag(kind: SyntaxKind): number {
+    switch (kind) {
+        case SyntaxKind.StaticKeyword: return ModifierFlagsStatic;
+        case SyntaxKind.PublicKeyword: return ModifierFlagsPublic;
+        case SyntaxKind.ProtectedKeyword: return ModifierFlagsProtected;
+        case SyntaxKind.PrivateKeyword: return ModifierFlagsPrivate;
+        case SyntaxKind.AbstractKeyword: return ModifierFlagsAbstract;
+        case SyntaxKind.AccessorKeyword: return ModifierFlagsAccessor;
+        case SyntaxKind.ExportKeyword: return ModifierFlagsExport;
+        case SyntaxKind.DeclareKeyword: return ModifierFlagsAmbient;
+        case SyntaxKind.ConstKeyword: return ModifierFlagsConst;
+        case SyntaxKind.DefaultKeyword: return ModifierFlagsDefault;
+        case SyntaxKind.AsyncKeyword: return ModifierFlagsAsync;
+        case SyntaxKind.ReadonlyKeyword: return ModifierFlagsReadonly;
+        case SyntaxKind.OverrideKeyword: return ModifierFlagsOverride;
+        case SyntaxKind.InKeyword: return ModifierFlagsIn;
+        case SyntaxKind.OutKeyword: return ModifierFlagsOut;
+        case SyntaxKind.Decorator: return ModifierFlagsDecorator;
+        default: return ModifierFlagsNone;
+    }
+}
 
 export class RemoteNodeBase {
     parent: RemoteNode;
@@ -965,7 +1005,13 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     get modifierFlags(): number {
-        return this.view.getUint32(this._byteIndex + NODE_OFFSET_MODIFIER_FLAGS, true);
+        const mods = this.modifiers;
+        if (!mods) return 0;
+        let flags = 0;
+        for (const mod of mods) {
+            flags |= modifierToFlag(mod.kind);
+        }
+        return flags;
     }
 
     get phaseModifier(): SyntaxKind {

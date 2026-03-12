@@ -353,8 +353,6 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetExportsOfSymbol(ctx, parsed.(*GetExportsOfSymbolParams))
 	case string(MethodGetExportSymbolOfSymbol):
 		return s.handleGetExportSymbolOfSymbol(ctx, parsed.(*GetExportSymbolOfSymbolParams))
-	case string(MethodGetResolvedSymbol):
-		return s.handleGetResolvedSymbol(ctx, parsed.(*GetResolvedSymbolParams))
 	case string(MethodGetSymbolOfType):
 		return s.handleGetSymbolOfType(ctx, parsed.(*GetSymbolOfTypeParams))
 	case string(MethodGetSignaturesOfType):
@@ -938,35 +936,6 @@ func (s *Session) handleGetExportSymbolOfSymbol(ctx context.Context, params *Get
 	}
 
 	return sd.registerSymbol(symbol), nil
-}
-
-// handleGetResolvedSymbol returns the resolved symbol following alias chains.
-func (s *Session) handleGetResolvedSymbol(ctx context.Context, params *GetResolvedSymbolParams) (*SymbolResponse, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return nil, err
-	}
-	defer setup.done()
-
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
-	if err != nil {
-		return nil, err
-	}
-	if symbol == nil {
-		return nil, nil
-	}
-
-	if symbol.Flags&ast.SymbolFlagsAlias == 0 {
-		// Not an alias, return the same symbol
-		return setup.sd.registerSymbol(symbol), nil
-	}
-
-	resolved, ok := setup.checker.ResolveAlias(symbol)
-	if !ok || resolved == nil {
-		return setup.sd.registerSymbol(symbol), nil
-	}
-
-	return setup.sd.registerSymbol(resolved), nil
 }
 
 // handleGetSymbolOfType returns the symbol associated with a type.

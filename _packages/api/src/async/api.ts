@@ -511,6 +511,12 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
+    async getResolvedSymbol(node: Node): Promise<Symbol | undefined> {
+        const text = (node as any).text;
+        if (!text) return undefined;
+        return this.resolveName(text, SymbolFlags.Value | SymbolFlags.ExportValue, node);
+    }
+
     async getContextualType(node: Expression): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getContextualType", {
             snapshot: this.snapshotId,
@@ -536,15 +542,6 @@ export class Checker {
             location: getNodeId(node),
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
-    }
-
-    async getResolvedSymbol(symbol: Symbol): Promise<Symbol> {
-        const data = await this.client.apiRequest<SymbolResponse>("getResolvedSymbol", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            symbol: symbol.id,
-        });
-        return this.objectRegistry.getOrCreateSymbol(data);
     }
 
     async getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Promise<Type | undefined> {

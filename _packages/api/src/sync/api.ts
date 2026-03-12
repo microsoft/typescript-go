@@ -519,6 +519,12 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
+    getResolvedSymbol(node: Node): Symbol | undefined {
+        const text = (node as any).text;
+        if (!text) return undefined;
+        return this.resolveName(text, SymbolFlags.Value | SymbolFlags.ExportValue, node);
+    }
+
     getContextualType(node: Expression): Type | undefined {
         const data = this.client.apiRequest<TypeResponse | null>("getContextualType", {
             snapshot: this.snapshotId,
@@ -544,15 +550,6 @@ export class Checker {
             location: getNodeId(node),
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
-    }
-
-    getResolvedSymbol(symbol: Symbol): Symbol {
-        const data = this.client.apiRequest<SymbolResponse>("getResolvedSymbol", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            symbol: symbol.id,
-        });
-        return this.objectRegistry.getOrCreateSymbol(data);
     }
 
     getTypeOfSymbolAtLocation(symbol: Symbol, location: Node): Type | undefined {
