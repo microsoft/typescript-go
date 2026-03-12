@@ -40,9 +40,7 @@ var charCodeToRegExpFlag = map[rune]RegularExpressionFlags{
 var regExpFlagToFirstAvailableLanguageVersion = map[RegularExpressionFlags]core.ScriptTarget{
 	RegularExpressionFlagsHasIndices:  core.ScriptTargetES2022,
 	RegularExpressionFlagsDotAll:      core.ScriptTargetES2018,
-	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetES2024,
-	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
 }
 
 func CharacterCodeToRegularExpressionFlag(ch rune) (RegularExpressionFlags, bool) {
