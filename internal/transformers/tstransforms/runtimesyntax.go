@@ -425,9 +425,53 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	//             ^
 	expression := member.Initializer // NOTE: already visited
 
-	var useConditionalReverseMapping bool
 	var useExplicitReverseMapping bool
-	if expression == nil {
+	var useConditionalReverseMapping bool
+
+	// Try to get the checker-computed value for this member via the emit resolver, matching Strada's approach
+	// of using resolver.getEnumMemberValue(member) for every member.
+	var checkerValue evaluator.Result
+	var hasCheckerValue bool
+	if tx.emitResolver != nil {
+		if parseMember := tx.EmitContext().ParseNode(memberNode); parseMember != nil {
+			checkerValue = tx.emitResolver.GetEnumMemberValue(parseMember)
+			hasCheckerValue = true
+		}
+	}
+
+	if hasCheckerValue && checkerValue.Value != nil {
+		// The checker computed a known value for this member. Emit a constant literal.
+		switch value := checkerValue.Value.(type) {
+		case jsnum.Number:
+			*autoValue = value
+			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+			useExplicitReverseMapping = true
+			*useAutoVar = false
+			if len(memberName) > 0 {
+				tx.cacheEnumMemberValue(enum.AsNode(), memberName, checkerValue)
+			}
+		case string:
+			*autoValue = jsnum.NaN()
+			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+			*useAutoVar = false
+			if len(memberName) > 0 {
+				tx.cacheEnumMemberValue(enum.AsNode(), memberName, checkerValue)
+			}
+		}
+	} else if hasCheckerValue {
+		// The checker could not compute a value for this member.
+		*autoValue = jsnum.NaN()
+		*useAutoVar = false
+		if expression != nil {
+			// Has initializer but value is unknowable - emit the visited initializer with explicit reverse mapping.
+			useExplicitReverseMapping = !checkerValue.IsSyntacticallyString
+		} else {
+			// No initializer and no computable value - emit void 0 with explicit reverse mapping.
+			expression = tx.Factory().NewVoidZeroExpression()
+			useExplicitReverseMapping = true
+		}
+	} else if expression == nil {
+		// Fallback path (no emit resolver, e.g. unit tests): auto-numbering logic.
 		// Enum members without an initializer are auto-numbered. We will use constant values if there was no preceding
 		// initialized member, or if the preceding initialized member was a numeric literal.
 		if *useAutoVar {
@@ -438,13 +482,10 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 			//             ^^^^^^
 			expression = tx.Factory().NewPrefixUnaryExpression(ast.KindPlusPlusToken, *autoVar)
 			useExplicitReverseMapping = true
-		} else {
+		} else if !autoValue.IsNaN() {
 			// If the preceding auto value is a finite number, we can emit a numeric literal for the member initializer:
 			//  E[E["A"] = 0] = "A";
 			//             ^
-			// If not, we cannot emit a valid numeric literal for the member initializer and emit `void 0` instead:
-			//  E["A"] = void 0;
-			//           ^^^^^^
 			expression = constantExpression(*autoValue, tx.Factory())
 			if expression != nil {
 				useExplicitReverseMapping = true
@@ -454,13 +495,20 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 			} else {
 				expression = tx.Factory().NewVoidZeroExpression()
 			}
+		} else {
+			// If not, we cannot emit a valid numeric literal for the member initializer and emit `void 0` instead:
+			//  E["A"] = void 0;
+			//           ^^^^^^
+			expression = tx.Factory().NewVoidZeroExpression()
 		}
 	} else {
+		// Fallback path (no emit resolver): use local evaluator.
+		//
 		// Enum members with an initializer may restore auto-numbering if the initializer is a numeric literal. If we
 		// cannot syntactically determine the initializer value and the following enum member is auto-numbered, we will
 		// use an `auto` variable to perform the remaining auto-numbering at runtime.
 		if tx.evaluator == nil {
-			tx.evaluator = evaluator.NewEvaluator(tx.evaluateEntity, ast.OEKAll)
+			tx.evaluator = evaluator.NewEvaluator(tx.evaluateEntity, ast.OEKParentheses)
 		}
 
 		var hasNumericInitializer, hasStringInitializer bool
@@ -469,12 +517,12 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		case jsnum.Number:
 			hasNumericInitializer = true
 			*autoValue = value
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression) // TODO: preserve original expression after Strada migration
+			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
 			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
 		case string:
 			hasStringInitializer = true
 			*autoValue = jsnum.NaN()
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression) // TODO: preserve original expression after Strada migration
+			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
 			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
 		default:
 			*autoValue = jsnum.NaN()
@@ -527,8 +575,8 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	// conditionally define the reverse mapping for the enum member.
 	if useConditionalReverseMapping {
 		//  E["A"] = x;
-		//  if (typeof E.A !== "string") E.A = "A";
-		//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		//  if (typeof E.A !== "string") E[E.A] = "A";
+		//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 		ifStatement := tx.Factory().NewIfStatement(
 			tx.Factory().NewStrictInequalityExpression(
