@@ -2,24 +2,9 @@ package main
 
 import (
 	"os"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/execute"
 )
-
-func init() {
-	// See:
-	//   - https://github.com/golang/go/issues/71283
-	//   - https://github.com/golang/go/issues/52093
-	const tracebackAncestors = "tracebackancestors"
-	const tracebackAncestorsSetting = tracebackAncestors + "=5"
-	godebug := os.Getenv("GODEBUG")
-	if godebug == "" {
-		os.Setenv("GODEBUG", tracebackAncestorsSetting)
-	} else if !strings.Contains(godebug, tracebackAncestors+"=") {
-		os.Setenv("GODEBUG", godebug+","+tracebackAncestorsSetting)
-	}
-}
 
 func main() {
 	os.Exit(runMain())
