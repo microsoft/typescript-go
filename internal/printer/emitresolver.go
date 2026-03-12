@@ -107,6 +107,7 @@ type EmitResolver interface {
 	IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node) bool
 	IsImplementationOfOverload(node *ast.SignatureDeclaration) bool
 	GetEnumMemberValue(node *ast.Node) evaluator.Result
+	EvaluateEntityExpression(expr *ast.Node) evaluator.Result
 	IsLateBound(node *ast.Node) bool
 	IsOptionalParameter(node *ast.Node) bool
 

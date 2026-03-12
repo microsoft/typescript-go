@@ -26,6 +26,7 @@ type RuntimeSyntaxTransformer struct {
 	currentEnum                         *ast.EnumDeclarationNode
 	currentNamespace                    *ast.ModuleDeclarationNode
 	resolver                            binder.ReferenceResolver
+	emitResolver                        printer.EmitResolver
 	evaluator                           evaluator.Evaluator
 	enumMemberCache                     map[*ast.EnumDeclarationNode]map[string]evaluator.Result
 }
@@ -33,7 +34,7 @@ type RuntimeSyntaxTransformer struct {
 func NewRuntimeSyntaxTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
-	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: opt.Resolver}
+	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: opt.Resolver, emitResolver: opt.EmitResolver}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 
@@ -1107,6 +1108,13 @@ func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast
 				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) && ast.IsStringLiteralLike(access.ArgumentExpression) {
 					result = memberCache[access.ArgumentExpression.Text()]
 				}
+			}
+		}
+		// If the local cache didn't resolve the value (e.g., cross-enum reference like Imported.Option1),
+		// use the emit resolver to look up the value from the checker's computed enum member values.
+		if result.Value == nil && tx.emitResolver != nil {
+			if parseNode := tx.EmitContext().ParseNode(node); parseNode != nil {
+				result = tx.emitResolver.EvaluateEntityExpression(parseNode)
 			}
 		}
 	}

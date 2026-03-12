@@ -102,6 +102,15 @@ func (r *EmitResolver) GetEnumMemberValue(node *ast.Node) evaluator.Result {
 	return r.checker.enumMemberLinks.Get(node).value
 }
 
+func (r *EmitResolver) EvaluateEntityExpression(expr *ast.Node) evaluator.Result {
+	if !ast.IsParseTreeNode(expr) {
+		return evaluator.NewResult(nil, false, false, false)
+	}
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.evaluateEntity(expr, nil)
+}
+
 func (r *EmitResolver) IsDeclarationVisible(node *ast.Node) bool {
 	// Only lock on external API func to prevent deadlocks
 	r.checkerMu.Lock()

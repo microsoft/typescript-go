@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/enumMemberReferencesImportedEnum.ts] ////
+
+=== imported.ts ===
+export enum Imported {
+>Imported : Imported
+
+	Option1 = 1,
+>Option1 : Imported.Option1
+>1 : 1
+
+	Option2 = "hello",
+>Option2 : Imported.Option2
+>"hello" : "hello"
+}
+
+=== usage.ts ===
+import { Imported } from "./imported.js";
+>Imported : typeof Imported
+
+export enum Usage {
+>Usage : Usage
+
+	Option1 = Imported.Option1,
+>Option1 : Usage.Option1
+>Imported.Option1 : Imported.Option1
+>Imported : typeof Imported
+>Option1 : Imported.Option1
+
+	Option2 = 2,
+>Option2 : Usage.Option2
+>2 : 2
+
+	Option3 = Imported.Option2,
+>Option3 : Usage.Option3
+>Imported.Option2 : Imported.Option2
+>Imported : typeof Imported
+>Option2 : Imported.Option2
+}
+
