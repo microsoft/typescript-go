@@ -1,6 +1,7 @@
 package format
 
 import (
+	"iter"
 	"slices"
 	"unicode/utf8"
 
@@ -31,9 +32,12 @@ func GetIndentation(position int, sourceFile *ast.SourceFile, options *lsutil.Fo
 		return 0
 	}
 
-	precedingToken := astnav.FindPrecedingToken(sourceFile, position)
+	precedingToken := astnav.FindPrecedingTokenEx(sourceFile, position, nil /*startNode*/, true /*excludeJSDoc*/)
 
-	// !!! enclosing comment range check omitted for now - not needed for textChanges import cases
+	enclosingCommentRange := getRangeOfEnclosingComment(sourceFile, position, precedingToken)
+	if enclosingCommentRange != nil && enclosingCommentRange.Kind == ast.KindMultiLineCommentTrivia {
+		return getCommentIndent(sourceFile, position, options, enclosingCommentRange)
+	}
 
 	if precedingToken == nil {
 		return options.BaseIndentSize
@@ -102,6 +106,72 @@ func GetIndentation(position int, sourceFile *ast.SourceFile, options *lsutil.Fo
 	}
 
 	return getSmartIndent(sourceFile, position, precedingToken, lineAtPosition, assumeNewLineBeforeCloseBrace, options)
+}
+
+func getCommentIndent(sourceFile *ast.SourceFile, position int, options *lsutil.FormatCodeSettings, enclosingCommentRange *ast.CommentRange) int {
+	previousLine := scanner.GetECMALineOfPosition(sourceFile, position) - 1
+	commentStartLine := scanner.GetECMALineOfPosition(sourceFile, enclosingCommentRange.Pos())
+
+	debug.Assert(commentStartLine >= 0, "commentStartLine >= 0")
+
+	if previousLine <= commentStartLine {
+		lineStarts := scanner.GetECMALineStarts(sourceFile)
+		return FindFirstNonWhitespaceColumn(int(lineStarts[commentStartLine]), position, sourceFile, options)
+	}
+
+	lineStarts := scanner.GetECMALineStarts(sourceFile)
+	startPositionOfLine := int(lineStarts[previousLine])
+	character, column := findFirstNonWhitespaceCharacterAndColumn(startPositionOfLine, position, sourceFile, options)
+
+	if column == 0 {
+		return column
+	}
+
+	firstNonWhitespaceCharacterCode := sourceFile.Text()[startPositionOfLine+character]
+	if firstNonWhitespaceCharacterCode == '*' {
+		return column - 1
+	}
+	return column
+}
+
+func getLeadingCommentRangesOfNode(node *ast.Node, file *ast.SourceFile) iter.Seq[ast.CommentRange] {
+	if node.Kind == ast.KindJsxText {
+		return nil
+	}
+	return scanner.GetLeadingCommentRanges(&ast.NodeFactory{}, file.Text(), node.Pos())
+}
+
+func getRangeOfEnclosingComment(
+	sourceFile *ast.SourceFile,
+	position int,
+	precedingToken *ast.Node,
+) *ast.CommentRange {
+	tokenAtPosition := astnav.GetTokenAtPosition(sourceFile, position)
+	jsdoc := ast.FindAncestor(tokenAtPosition, (*ast.Node).IsJSDoc)
+	if jsdoc != nil {
+		tokenAtPosition = jsdoc.Parent
+	}
+	tokenStart := astnav.GetStartOfNode(tokenAtPosition, sourceFile, false /*includeJSDoc*/)
+	if tokenStart <= position && position < tokenAtPosition.End() {
+		return nil
+	}
+
+	// Between two consecutive tokens, all comments are either trailing on the former
+	// or leading on the latter (and none are in both lists).
+	var trailingRangesOfPreviousToken iter.Seq[ast.CommentRange]
+	if precedingToken != nil {
+		trailingRangesOfPreviousToken = scanner.GetTrailingCommentRanges(&ast.NodeFactory{}, sourceFile.Text(), precedingToken.End())
+	}
+	leadingRangesOfNextToken := getLeadingCommentRangesOfNode(tokenAtPosition, sourceFile)
+	commentRanges := core.ConcatenateSeq(trailingRangesOfPreviousToken, leadingRangesOfNextToken)
+	for commentRange := range commentRanges {
+		if commentRange.ContainsExclusive(position) ||
+			position == commentRange.End() &&
+				(commentRange.Kind == ast.KindSingleLineCommentTrivia || position == len(sourceFile.Text())) {
+			return &commentRange
+		}
+	}
+	return nil
 }
 
 func getBlockIndent(sourceFile *ast.SourceFile, position int, options *lsutil.FormatCodeSettings) int {
