@@ -27,7 +27,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	program, file := l.getProgramAndFile(documentURI)
 	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
 	node := astnav.GetTouchingPropertyName(file, position)
-	if node.Kind == ast.KindSourceFile || node.Kind == ast.KindPropertyAccessExpression && isInComment(file, position, node) == nil {
+	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
 		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
 		return lsproto.HoverOrNull{}, nil
 	}
