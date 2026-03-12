@@ -32,14 +32,12 @@ func (tx *useStrictTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node 
 		return node.AsNode()
 	}
 
-	if tx.compilerOptions.GetEmitModuleKind() == core.ModuleKindPreserve {
-		return node.AsNode()
-	}
-
 	isExternalModule := ast.IsExternalModule(node)
+	moduleKind := tx.compilerOptions.GetEmitModuleKind()
 	format := tx.getEmitModuleFormatOfFile(node)
 
-	if isExternalModule && format >= core.ModuleKindES2015 {
+	if isExternalModule && moduleKind >= core.ModuleKindES2015 &&
+		(format >= core.ModuleKindES2015 || moduleKind >= core.ModuleKindPreserve) {
 		return node.AsNode()
 	}
 
