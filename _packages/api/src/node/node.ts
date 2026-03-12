@@ -7,6 +7,7 @@ import {
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
+import { ModifierFlags } from "#enums/modifierFlags";
 import { MsgpackReader } from "./msgpack.ts";
 import {
     childProperties,
@@ -67,44 +68,25 @@ const NODE_OFFSET_PARENT = 16;
 const NODE_OFFSET_DATA = 20;
 const NODE_OFFSET_FLAGS = 24;
 
-// ModifierFlags constants matching Go's ast.ModifierFlags values
-const ModifierFlagsNone = 0;
-const ModifierFlagsPublic = 1 << 0;
-const ModifierFlagsPrivate = 1 << 1;
-const ModifierFlagsProtected = 1 << 2;
-const ModifierFlagsReadonly = 1 << 3;
-const ModifierFlagsOverride = 1 << 4;
-const ModifierFlagsExport = 1 << 5;
-const ModifierFlagsAbstract = 1 << 6;
-const ModifierFlagsAmbient = 1 << 7;
-const ModifierFlagsStatic = 1 << 8;
-const ModifierFlagsAccessor = 1 << 9;
-const ModifierFlagsAsync = 1 << 10;
-const ModifierFlagsDefault = 1 << 11;
-const ModifierFlagsConst = 1 << 12;
-const ModifierFlagsIn = 1 << 13;
-const ModifierFlagsOut = 1 << 14;
-const ModifierFlagsDecorator = 1 << 15;
-
-function modifierToFlag(kind: SyntaxKind): number {
+function modifierToFlag(kind: SyntaxKind): ModifierFlags {
     switch (kind) {
-        case SyntaxKind.StaticKeyword: return ModifierFlagsStatic;
-        case SyntaxKind.PublicKeyword: return ModifierFlagsPublic;
-        case SyntaxKind.ProtectedKeyword: return ModifierFlagsProtected;
-        case SyntaxKind.PrivateKeyword: return ModifierFlagsPrivate;
-        case SyntaxKind.AbstractKeyword: return ModifierFlagsAbstract;
-        case SyntaxKind.AccessorKeyword: return ModifierFlagsAccessor;
-        case SyntaxKind.ExportKeyword: return ModifierFlagsExport;
-        case SyntaxKind.DeclareKeyword: return ModifierFlagsAmbient;
-        case SyntaxKind.ConstKeyword: return ModifierFlagsConst;
-        case SyntaxKind.DefaultKeyword: return ModifierFlagsDefault;
-        case SyntaxKind.AsyncKeyword: return ModifierFlagsAsync;
-        case SyntaxKind.ReadonlyKeyword: return ModifierFlagsReadonly;
-        case SyntaxKind.OverrideKeyword: return ModifierFlagsOverride;
-        case SyntaxKind.InKeyword: return ModifierFlagsIn;
-        case SyntaxKind.OutKeyword: return ModifierFlagsOut;
-        case SyntaxKind.Decorator: return ModifierFlagsDecorator;
-        default: return ModifierFlagsNone;
+        case SyntaxKind.StaticKeyword: return ModifierFlags.Static;
+        case SyntaxKind.PublicKeyword: return ModifierFlags.Public;
+        case SyntaxKind.ProtectedKeyword: return ModifierFlags.Protected;
+        case SyntaxKind.PrivateKeyword: return ModifierFlags.Private;
+        case SyntaxKind.AbstractKeyword: return ModifierFlags.Abstract;
+        case SyntaxKind.AccessorKeyword: return ModifierFlags.Accessor;
+        case SyntaxKind.ExportKeyword: return ModifierFlags.Export;
+        case SyntaxKind.DeclareKeyword: return ModifierFlags.Ambient;
+        case SyntaxKind.ConstKeyword: return ModifierFlags.Const;
+        case SyntaxKind.DefaultKeyword: return ModifierFlags.Default;
+        case SyntaxKind.AsyncKeyword: return ModifierFlags.Async;
+        case SyntaxKind.ReadonlyKeyword: return ModifierFlags.Readonly;
+        case SyntaxKind.OverrideKeyword: return ModifierFlags.Override;
+        case SyntaxKind.InKeyword: return ModifierFlags.In;
+        case SyntaxKind.OutKeyword: return ModifierFlags.Out;
+        case SyntaxKind.Decorator: return ModifierFlags.Decorator;
+        default: return ModifierFlags.None;
     }
 }
 
@@ -1004,10 +986,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.view.getUint32(this._byteIndex + NODE_OFFSET_FLAGS, true);
     }
 
-    get modifierFlags(): number {
+    get modifierFlags(): ModifierFlags {
         const mods = this.modifiers;
-        if (!mods) return 0;
-        let flags = 0;
+        if (!mods) return ModifierFlags.None;
+        let flags: ModifierFlags = ModifierFlags.None;
         for (const mod of mods) {
             flags |= modifierToFlag(mod.kind);
         }
