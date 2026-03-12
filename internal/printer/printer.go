@@ -4836,7 +4836,7 @@ func (p *Printer) emitListItems(
 
 				if shouldEmitInterveningComments && format&LFDelimitersMask != 0 && !ast.PositionIsSynthesized(child.Pos()) {
 					commentRange := p.emitContext.CommentRange(child)
-					p.emitTrailingComments(commentRange.Pos(), core.IfElse(format&LFSpaceBetweenSiblings != 0, commentSeparatorBefore, commentSeparatorNone))
+					p.emitTrailingCommentsOfPosition(commentRange.Pos(), format&LFSpaceBetweenSiblings != 0, true /*forceNoNewline*/)
 				}
 
 				for range separatingLineTerminatorCount {
@@ -4852,7 +4852,7 @@ func (p *Printer) emitListItems(
 		// Emit this child.
 		if shouldEmitInterveningComments {
 			commentRange := p.emitContext.CommentRange(child)
-			p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+			p.emitTrailingCommentsOfPosition(commentRange.Pos(), false /*prefixSpace*/, false /*forceNoNewline*/)
 		} else {
 			shouldEmitInterveningComments = mayEmitInterveningComments
 		}
@@ -5477,6 +5477,41 @@ func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparato
 
 	// trailing comments are normally emitted as space/*trailing comment1*/space/*trailing comment2*/
 	p.emitComments(comments, commentSeparator)
+}
+
+func (p *Printer) emitTrailingCommentsOfPosition(pos int, prefixSpace bool, forceNoNewline bool) {
+	if p.commentsDisabled || p.currentSourceFile == nil {
+		return
+	}
+	if p.containerEnd != -1 && (pos == p.containerEnd || pos == p.declarationListContainerEnd) {
+		return
+	}
+
+	var comments []ast.CommentRange
+	for comment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pos) {
+		comments = append(comments, comment)
+	}
+	if len(comments) == 0 {
+		return
+	}
+
+	if prefixSpace && !p.writer.IsAtStartOfLine() {
+		p.writeSpace()
+	}
+
+	for _, comment := range comments {
+		p.emitComment(comment)
+		switch {
+		case forceNoNewline:
+			if comment.Kind == ast.KindSingleLineCommentTrivia {
+				p.writeLine()
+			}
+		case comment.HasTrailingNewLine:
+			p.writeLine()
+		default:
+			p.writeSpace()
+		}
+	}
 }
 
 func (p *Printer) emitDetachedCommentsAndUpdateCommentsInfo(textRange core.TextRange) {
