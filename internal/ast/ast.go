@@ -6337,6 +6337,13 @@ func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string, templateFlag
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
+func (node *NoSubstitutionTemplateLiteral) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
+}
+
 func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
@@ -7251,7 +7258,8 @@ func (node *TemplateSpan) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *TemplateSpan) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	return propagateSubtreeFacts(node.Expression) |
+		propagateSubtreeFacts(node.Literal)
 }
 
 func IsTemplateSpan(node *Node) bool {
@@ -8868,6 +8876,13 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	return f.newNode(KindTemplateHead, data)
 }
 
+func (node *TemplateHead) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
+}
+
 func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
@@ -8892,6 +8907,13 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	return f.newNode(KindTemplateMiddle, data)
 }
 
+func (node *TemplateMiddle) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
+}
+
 func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
@@ -8914,6 +8936,13 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateTail, data)
+}
+
+func (node *TemplateTail) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
 }
 
 func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {

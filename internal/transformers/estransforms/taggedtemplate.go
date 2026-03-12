@@ -24,6 +24,9 @@ func newTaggedTemplateLiftRestrictionTransformer(opts *transformers.TransformOpt
 }
 
 func (tx *taggedTemplateTransformer) visit(node *ast.Node) *ast.Node {
+	if node.SubtreeFacts()&ast.SubtreeContainsInvalidTemplateEscape == 0 {
+		return node
+	}
 	switch node.Kind {
 	case ast.KindSourceFile:
 		return tx.visitSourceFile(node.AsSourceFile())
@@ -63,29 +66,11 @@ func (tx *taggedTemplateTransformer) visitTaggedTemplateExpression(node *ast.Tag
 	return tx.processTaggedTemplateExpression(node)
 }
 
-func hasInvalidEscape(template *ast.Node) bool {
-	if ast.IsNoSubstitutionTemplateLiteral(template) {
-		return template.TemplateLiteralLikeData().TemplateFlags&ast.TokenFlagsContainsInvalidEscape != 0
-	}
-	if ast.IsTemplateExpression(template) {
-		te := template.AsTemplateExpression()
-		if te.Head.TemplateLiteralLikeData().TemplateFlags&ast.TokenFlagsContainsInvalidEscape != 0 {
-			return true
-		}
-		for _, span := range te.TemplateSpans.Nodes {
-			if span.AsTemplateSpan().Literal.TemplateLiteralLikeData().TemplateFlags&ast.TokenFlagsContainsInvalidEscape != 0 {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func (tx *taggedTemplateTransformer) processTaggedTemplateExpression(node *ast.TaggedTemplateExpression) *ast.Node {
 	tag := tx.Visitor().VisitNode(node.Tag)
 	template := node.Template
 
-	if !hasInvalidEscape(template) {
+	if template.SubtreeFacts()&ast.SubtreeContainsInvalidTemplateEscape == 0 {
 		return tx.Visitor().VisitEachChild(node.AsNode())
 	}
 
