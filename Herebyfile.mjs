@@ -531,7 +531,7 @@ function goTestFlags(taskName) {
 
 function getGODEBUG() {
     const key = "tracebackancestors";
-    const setting = `${key}=5`;
+    const setting = `${key}=10`;
     const existing = process.env.GODEBUG ?? "";
     if (!existing) return setting;
     if (existing.includes(`${key}=`)) return existing;
