@@ -1152,19 +1152,19 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 		} else {
 			// Consume the slash character
 			p++
-			var regExpFlags RegularExpressionFlags
+			var regExpFlags regularExpressionFlags
 			for p < s.end {
 				ch, size := utf8.DecodeRuneInString(s.text[p:])
 				if ch == utf8.RuneError || !IsIdentifierPart(ch) {
 					break
 				}
 				if shouldReportErrors {
-					flag, ok := CharacterCodeToRegularExpressionFlag(ch)
+					flag, ok := charCodeToRegExpFlag[ch]
 					if !ok {
 						s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
 					} else if regExpFlags&flag != 0 {
 						s.errorAt(diagnostics.Duplicate_regular_expression_flag, p, size)
-					} else if (regExpFlags|flag)&RegularExpressionFlagsAnyUnicodeMode == RegularExpressionFlagsAnyUnicodeMode {
+					} else if (regExpFlags|flag)&regularExpressionFlagsAnyUnicodeMode == regularExpressionFlagsAnyUnicodeMode {
 						s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
 					} else {
 						regExpFlags |= flag
@@ -1183,8 +1183,8 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 					scanner:            s,
 					end:                endOfRegExpBody,
 					regExpFlags:        regExpFlags,
-					anyUnicodeMode:     regExpFlags&RegularExpressionFlagsAnyUnicodeMode != 0,
-					unicodeSetsMode:    regExpFlags&RegularExpressionFlagsUnicodeSets != 0,
+					anyUnicodeMode:     regExpFlags&regularExpressionFlagsAnyUnicodeMode != 0,
+					unicodeSetsMode:    regExpFlags&regularExpressionFlagsUnicodeSets != 0,
 					annexB:             true,
 					namedCaptureGroups: namedCaptureGroups,
 					groupSpecifiers:    make(map[string]bool),

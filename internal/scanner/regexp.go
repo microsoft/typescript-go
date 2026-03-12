@@ -10,45 +10,40 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-type RegularExpressionFlags int32
+type regularExpressionFlags int32
 
 const (
-	RegularExpressionFlagsNone           RegularExpressionFlags = 0
-	RegularExpressionFlagsHasIndices     RegularExpressionFlags = 1 << 0 // d
-	RegularExpressionFlagsGlobal         RegularExpressionFlags = 1 << 1 // g
-	RegularExpressionFlagsIgnoreCase     RegularExpressionFlags = 1 << 2 // i
-	RegularExpressionFlagsMultiline      RegularExpressionFlags = 1 << 3 // m
-	RegularExpressionFlagsDotAll         RegularExpressionFlags = 1 << 4 // s
-	RegularExpressionFlagsUnicode        RegularExpressionFlags = 1 << 5 // u
-	RegularExpressionFlagsUnicodeSets    RegularExpressionFlags = 1 << 6 // v
-	RegularExpressionFlagsSticky         RegularExpressionFlags = 1 << 7 // y
-	RegularExpressionFlagsAnyUnicodeMode RegularExpressionFlags = RegularExpressionFlagsUnicode | RegularExpressionFlagsUnicodeSets
-	RegularExpressionFlagsModifiers      RegularExpressionFlags = RegularExpressionFlagsIgnoreCase | RegularExpressionFlagsMultiline | RegularExpressionFlagsDotAll
+	regularExpressionFlagsNone           regularExpressionFlags = 0
+	regularExpressionFlagsHasIndices     regularExpressionFlags = 1 << 0 // d
+	regularExpressionFlagsGlobal         regularExpressionFlags = 1 << 1 // g
+	regularExpressionFlagsIgnoreCase     regularExpressionFlags = 1 << 2 // i
+	regularExpressionFlagsMultiline      regularExpressionFlags = 1 << 3 // m
+	regularExpressionFlagsDotAll         regularExpressionFlags = 1 << 4 // s
+	regularExpressionFlagsUnicode        regularExpressionFlags = 1 << 5 // u
+	regularExpressionFlagsUnicodeSets    regularExpressionFlags = 1 << 6 // v
+	regularExpressionFlagsSticky         regularExpressionFlags = 1 << 7 // y
+	regularExpressionFlagsAnyUnicodeMode regularExpressionFlags = regularExpressionFlagsUnicode | regularExpressionFlagsUnicodeSets
+	regularExpressionFlagsModifiers      regularExpressionFlags = regularExpressionFlagsIgnoreCase | regularExpressionFlagsMultiline | regularExpressionFlagsDotAll
 )
 
-var charCodeToRegExpFlag = map[rune]RegularExpressionFlags{
-	'd': RegularExpressionFlagsHasIndices,
-	'g': RegularExpressionFlagsGlobal,
-	'i': RegularExpressionFlagsIgnoreCase,
-	'm': RegularExpressionFlagsMultiline,
-	's': RegularExpressionFlagsDotAll,
-	'u': RegularExpressionFlagsUnicode,
-	'v': RegularExpressionFlagsUnicodeSets,
-	'y': RegularExpressionFlagsSticky,
+var charCodeToRegExpFlag = map[rune]regularExpressionFlags{
+	'd': regularExpressionFlagsHasIndices,
+	'g': regularExpressionFlagsGlobal,
+	'i': regularExpressionFlagsIgnoreCase,
+	'm': regularExpressionFlagsMultiline,
+	's': regularExpressionFlagsDotAll,
+	'u': regularExpressionFlagsUnicode,
+	'v': regularExpressionFlagsUnicodeSets,
+	'y': regularExpressionFlagsSticky,
 }
 
-var regExpFlagToFirstAvailableLanguageVersion = map[RegularExpressionFlags]core.ScriptTarget{
-	RegularExpressionFlagsHasIndices:  core.ScriptTargetES2022,
-	RegularExpressionFlagsDotAll:      core.ScriptTargetES2018,
-	RegularExpressionFlagsUnicodeSets: core.ScriptTargetES2024,
+var regExpFlagToFirstAvailableLanguageVersion = map[regularExpressionFlags]core.ScriptTarget{
+	regularExpressionFlagsHasIndices:  core.ScriptTargetES2022,
+	regularExpressionFlagsDotAll:      core.ScriptTargetES2018,
+	regularExpressionFlagsUnicodeSets: core.ScriptTargetES2024,
 }
 
-func CharacterCodeToRegularExpressionFlag(ch rune) (RegularExpressionFlags, bool) {
-	flag, ok := charCodeToRegExpFlag[ch]
-	return flag, ok
-}
-
-func (s *Scanner) checkRegularExpressionFlagAvailability(flag RegularExpressionFlags, pos int, size int) {
+func (s *Scanner) checkRegularExpressionFlagAvailability(flag regularExpressionFlags, pos int, size int) {
 	if availableFrom, ok := regExpFlagToFirstAvailableLanguageVersion[flag]; ok && s.languageVersion() < availableFrom {
 		s.errorAt(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, pos, size, strings.ToLower(availableFrom.String()))
 	}
@@ -78,7 +73,7 @@ type decimalEscapeValue struct {
 type regExpParser struct {
 	scanner         *Scanner
 	end             int
-	regExpFlags     RegularExpressionFlags
+	regExpFlags     regularExpressionFlags
 	anyUnicodeMode  bool
 	unicodeSetsMode bool
 	annexB          bool
@@ -223,7 +218,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 					}
 				default:
 					flagsStart := p.pos()
-					setFlags := p.scanPatternModifiers(RegularExpressionFlagsNone)
+					setFlags := p.scanPatternModifiers(regularExpressionFlagsNone)
 					if p.charAt(p.pos()) == '-' {
 						p.incPos(1)
 						p.scanPatternModifiers(setFlags)
@@ -328,18 +323,18 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 	}
 }
 
-func (p *regExpParser) scanPatternModifiers(currFlags RegularExpressionFlags) RegularExpressionFlags {
+func (p *regExpParser) scanPatternModifiers(currFlags regularExpressionFlags) regularExpressionFlags {
 	for p.pos() < p.end {
 		ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
 		if ch == utf8.RuneError || !IsIdentifierPart(ch) {
 			break
 		}
-		flag, ok := CharacterCodeToRegularExpressionFlag(ch)
+		flag, ok := charCodeToRegExpFlag[ch]
 		if !ok {
 			p.error(diagnostics.Unknown_regular_expression_flag, p.pos(), size)
 		} else if currFlags&flag != 0 {
 			p.error(diagnostics.Duplicate_regular_expression_flag, p.pos(), size)
-		} else if flag&RegularExpressionFlagsModifiers == 0 {
+		} else if flag&regularExpressionFlagsModifiers == 0 {
 			p.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, p.pos(), size)
 		} else {
 			currFlags |= flag
