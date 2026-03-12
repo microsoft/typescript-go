@@ -1110,7 +1110,7 @@ func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast
 				}
 			}
 		}
-		// If the local cache didn't resolve the value (e.g., cross-enum reference like Imported.Option1),
+		// If the local cache didn't resolve the value (e.g., cross-enum reference imported from another module),
 		// use the emit resolver to look up the value from the checker's computed enum member values.
 		if result.Value == nil && tx.emitResolver != nil {
 			if parseNode := tx.EmitContext().ParseNode(node); parseNode != nil {
