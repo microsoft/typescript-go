@@ -69,22 +69,19 @@ type resolutionState struct {
 	tracer   *tracer
 
 	// request fields
-	name                          string
-	containingDirectory           string
-	isConfigLookup                bool
-	skipCollectingLookupLocations bool
-	features                      NodeResolutionFeatures
-	esmMode                       bool
-	conditions                    []string
-	extensions                    extensions
-	compilerOptions               *core.CompilerOptions
-	resolvePackageDirectoryOnly   bool
+	name                        string
+	containingDirectory         string
+	isConfigLookup              bool
+	features                    NodeResolutionFeatures
+	esmMode                     bool
+	conditions                  []string
+	extensions                  extensions
+	compilerOptions             *core.CompilerOptions
+	resolvePackageDirectoryOnly bool
 
 	// state fields
 	candidateIsFromPackageJsonField bool
 	resolvedPackageDirectory        bool
-	failedLookupLocations           []string
-	affectingLocations              []string
 	diagnostics                     []*ast.Diagnostic
 
 	// Similar to whats on resolver but only done if compilerOptions are for project reference redirect
@@ -111,8 +108,6 @@ func newResolutionState(
 		resolver:            resolver,
 		tracer:              traceBuilder,
 	}
-
-	state.skipCollectingLookupLocations = resolver.skipCollectingLookupLocations
 
 	if isTypeReferenceDirective {
 		state.extensions = extensionsDeclaration
@@ -154,17 +149,15 @@ func GetCompilerOptionsWithRedirect(compilerOptions *core.CompilerOptions, redir
 
 type Resolver struct {
 	caches
-	host                          ResolutionHost
-	compilerOptions               *core.CompilerOptions
-	typingsLocation               string
-	projectName                   string
-	skipCollectingLookupLocations bool
+	host            ResolutionHost
+	compilerOptions *core.CompilerOptions
+	typingsLocation string
+	projectName     string
 	// reportDiagnostic: DiagnosticReporter
 }
 
 type ResolverOptions struct {
-	PackageJsonCache              *packagejson.InfoCache
-	SkipCollectingLookupLocations bool
+	PackageJsonCache *packagejson.InfoCache
 }
 
 func NewResolver(
@@ -190,11 +183,10 @@ func NewResolverWithOptions(
 	opts ResolverOptions,
 ) *Resolver {
 	r := &Resolver{
-		host:                          host,
-		compilerOptions:               compilerOptions,
-		typingsLocation:               typingsLocation,
-		projectName:                   projectName,
-		skipCollectingLookupLocations: opts.SkipCollectingLookupLocations,
+		host:            host,
+		compilerOptions: compilerOptions,
+		typingsLocation: typingsLocation,
+		projectName:     projectName,
 	}
 	if opts.PackageJsonCache != nil {
 		r.packageJsonInfoCache = opts.PackageJsonCache
@@ -227,10 +219,26 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 	resolutionMode core.ResolutionMode,
 	redirectedReference ResolvedProjectReference,
 ) (*ResolvedTypeReferenceDirective, []DiagAndArgs) {
+	containingDirectory := tspath.GetDirectoryPath(containingFile)
 	traceBuilder := r.newTraceBuilder()
 
+	fromInferredTypesContainingFile := strings.HasSuffix(containingFile, InferredTypesContainingFile)
+
+	cacheKey := typeRefDirectiveResolutionCacheKey{
+		containingDirectory:             containingDirectory,
+		typeReferenceName:               typeReferenceDirectiveName,
+		resolutionMode:                  resolutionMode,
+		redirectConfigName:              getRedirectConfigName(redirectedReference),
+		fromInferredTypesContainingFile: fromInferredTypesContainingFile,
+	}
+
+	if traceBuilder == nil {
+		if cached, ok := r.typeRefDirectiveResolutionCache.Get(cacheKey); ok {
+			return cached, nil
+		}
+	}
+
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
-	containingDirectory := tspath.GetDirectoryPath(containingFile)
 
 	typeRoots, fromConfig := compilerOptions.GetEffectiveTypeRoots(r.host.GetCurrentDirectory())
 	if traceBuilder != nil {
@@ -239,22 +247,39 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 	}
 
 	state := newResolutionState(typeReferenceDirectiveName, containingDirectory, true /*isTypeReferenceDirective*/, resolutionMode, compilerOptions, redirectedReference, r, traceBuilder)
-	result := state.resolveTypeReferenceDirective(typeRoots, fromConfig, strings.HasSuffix(containingFile, InferredTypesContainingFile))
+	result := state.resolveTypeReferenceDirective(typeRoots, fromConfig, fromInferredTypesContainingFile)
 
 	if traceBuilder != nil {
 		traceBuilder.traceTypeReferenceDirectiveResult(typeReferenceDirectiveName, result)
 	}
+
+	r.typeRefDirectiveResolutionCache.Set(cacheKey, result)
+
 	return result, traceBuilder.getTraces()
 }
 
 func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []DiagAndArgs) {
+	containingDirectory := tspath.GetDirectoryPath(containingFile)
 	traceBuilder := r.newTraceBuilder()
+
+	cacheKey := moduleResolutionCacheKey{
+		containingDirectory: containingDirectory,
+		moduleName:          moduleName,
+		resolutionMode:      resolutionMode,
+		redirectConfigName:  getRedirectConfigName(redirectedReference),
+	}
+
+	if traceBuilder == nil {
+		if cached, ok := r.moduleResolutionCache.Get(cacheKey); ok {
+			return cached, nil
+		}
+	}
+
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
 	if traceBuilder != nil {
 		traceBuilder.write(diagnostics.Resolving_module_0_from_1, moduleName, containingFile)
 		traceBuilder.traceResolutionUsingProjectReference(redirectedReference)
 	}
-	containingDirectory := tspath.GetDirectoryPath(containingFile)
 
 	moduleResolution := compilerOptions.GetModuleResolutionKind()
 	if compilerOptions.ModuleResolution != moduleResolution {
@@ -288,7 +313,10 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 		}
 	}
 
-	return r.tryResolveFromTypingsLocation(moduleName, containingDirectory, result, traceBuilder), traceBuilder.getTraces()
+	finalResult := r.tryResolveFromTypingsLocation(moduleName, containingDirectory, result, traceBuilder)
+	r.moduleResolutionCache.Set(cacheKey, finalResult)
+
+	return finalResult, traceBuilder.getTraces()
 }
 
 func (r *Resolver) ResolvePackageDirectory(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) *ResolvedModule {
@@ -327,8 +355,6 @@ func (r *Resolver) tryResolveFromTypingsLocation(moduleName string, containingDi
 		return originalResult
 	}
 	result := state.createResolvedModule(globalResolved, true)
-	result.FailedLookupLocations = append(originalResult.FailedLookupLocations, result.FailedLookupLocations...)
-	result.AffectingLocations = append(originalResult.AffectingLocations, result.AffectingLocations...)
 	result.ResolutionDiagnostics = append(originalResult.ResolutionDiagnostics, result.ResolutionDiagnostics...)
 	return result
 }
@@ -1086,11 +1112,7 @@ func (r *resolutionState) createResolvedModuleHandlingSymlink(resolved *resolved
 
 func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLibraryImport bool) *ResolvedModule {
 	var resolvedModule ResolvedModule
-	resolvedModule.LookupLocations = LookupLocations{
-		FailedLookupLocations: r.failedLookupLocations,
-		AffectingLocations:    r.affectingLocations,
-		ResolutionDiagnostics: r.diagnostics,
-	}
+	resolvedModule.ResolutionDiagnostics = r.diagnostics
 
 	if resolved != nil {
 		resolvedModule.ResolvedFileName = resolved.path
@@ -1105,11 +1127,7 @@ func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLib
 
 func (r *resolutionState) createResolvedTypeReferenceDirective(resolved *resolved, primary bool) *ResolvedTypeReferenceDirective {
 	var resolvedTypeReferenceDirective ResolvedTypeReferenceDirective
-	resolvedTypeReferenceDirective.LookupLocations = LookupLocations{
-		FailedLookupLocations: r.failedLookupLocations,
-		AffectingLocations:    r.affectingLocations,
-		ResolutionDiagnostics: r.diagnostics,
-	}
+	resolvedTypeReferenceDirective.ResolutionDiagnostics = r.diagnostics
 
 	if resolved.isResolved() {
 		if !tspath.ExtensionIsTs(resolved.extension) {
@@ -1527,20 +1545,7 @@ func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 			r.tracer.write(diagnostics.File_0_does_not_exist, fileName)
 		}
 	}
-	r.recordFailedLookup(fileName)
 	return false
-}
-
-func (r *resolutionState) recordFailedLookup(location string) {
-	if !r.skipCollectingLookupLocations {
-		r.failedLookupLocations = append(r.failedLookupLocations, location)
-	}
-}
-
-func (r *resolutionState) recordAffectingLocation(location string) {
-	if !r.skipCollectingLookupLocations {
-		r.affectingLocations = append(r.affectingLocations, location)
-	}
 }
 
 func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
@@ -1696,7 +1701,6 @@ func (r *resolutionState) getPackageFile(extensions extensions, packageInfo *pac
 func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecordFailures bool) *packagejson.InfoCacheEntry {
 	packageJsonPath := tspath.CombinePaths(packageDirectory, "package.json")
 	if onlyRecordFailures {
-		r.recordFailedLookup(packageJsonPath)
 		return nil
 	}
 
@@ -1705,7 +1709,6 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			if r.tracer != nil {
 				r.tracer.write(diagnostics.File_0_exists_according_to_earlier_cached_lookups, packageJsonPath)
 			}
-			r.recordAffectingLocation(packageJsonPath)
 			if existing.PackageDirectory == packageDirectory {
 				return existing
 			}
@@ -1719,7 +1722,6 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			if existing.DirectoryExists && r.tracer != nil {
 				r.tracer.write(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups, packageJsonPath)
 			}
-			r.recordFailedLookup(packageJsonPath)
 			return nil
 		}
 	}
@@ -1741,7 +1743,6 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			},
 		}
 		result = r.resolver.packageJsonInfoCache.Set(packageJsonPath, result)
-		r.recordAffectingLocation(packageJsonPath)
 		return result
 	} else {
 		if directoryExists && r.tracer != nil {
@@ -1751,7 +1752,6 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			PackageDirectory: packageDirectory,
 			DirectoryExists:  directoryExists,
 		})
-		r.recordFailedLookup(packageJsonPath)
 	}
 	return nil
 }
@@ -2026,11 +2026,15 @@ func ResolveConfig(moduleName string, containingFile string, host ResolutionHost
 }
 
 func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host ResolutionHost) []string {
-	if options.Types != nil {
-		return options.Types
+	if !options.UsesWildcardTypes() {
+		if options.Types != nil {
+			return options.Types
+		}
+		return []string{}
 	}
 
-	var result []string
+	// Walk the primary type lookup locations
+	var wildcardMatches []string
 	typeRoots, _ := options.GetEffectiveTypeRoots(host.GetCurrentDirectory())
 	for _, root := range typeRoots {
 		if host.FS().DirectoryExists(root) {
@@ -2048,18 +2052,24 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 				if !isNotNeededPackage {
 					baseFileName := tspath.GetBaseFileName(normalized)
 					if !strings.HasPrefix(baseFileName, ".") {
-						result = append(result, baseFileName)
+						wildcardMatches = append(wildcardMatches, baseFileName)
 					}
 				}
 			}
 		}
 	}
-	return result
-}
 
-type ResolvedEntrypoints struct {
-	Entrypoints           []*ResolvedEntrypoint
-	FailedLookupLocations []string
+	// Order potentially matters in program construction, so substitute
+	// in the wildcard in the position it was specified in the types array
+	var result []string
+	for _, t := range options.Types {
+		if t == "*" {
+			result = append(result, wildcardMatches...)
+		} else {
+			result = append(result, t)
+		}
+	}
+	return core.Deduplicate(result)
 }
 
 type Ending int
@@ -2097,19 +2107,16 @@ func (e *ResolvedEntrypoint) SymlinkOrRealpath() string {
 	return e.ResolvedFileName
 }
 
-func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string) *ResolvedEntrypoints {
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string) []*ResolvedEntrypoint {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
-	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions, skipCollectingLookupLocations: r.skipCollectingLookupLocations}
+	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
 	if packageJson.Exists() && packageJson.Contents.Exports.IsPresent() {
 		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
-		return &ResolvedEntrypoints{
-			Entrypoints:           entrypoints,
-			FailedLookupLocations: state.failedLookupLocations,
-		}
+		return entrypoints
 	}
 
-	result := &ResolvedEntrypoints{}
+	var result []*ResolvedEntrypoint
 	mainResolution := state.loadNodeModuleFromDirectoryWorker(
 		extensions,
 		packageJson.PackageDirectory,
@@ -2128,7 +2135,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 	)
 
 	if mainResolution.isResolved() {
-		result.Entrypoints = append(result.Entrypoints, r.createResolvedEntrypointHandlingSymlink(
+		result = append(result, r.createResolvedEntrypointHandlingSymlink(
 			mainResolution.path,
 			packageName,
 			nil,
@@ -2143,7 +2150,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 			continue
 		}
 
-		result.Entrypoints = append(result.Entrypoints, r.createResolvedEntrypointHandlingSymlink(
+		result = append(result, r.createResolvedEntrypointHandlingSymlink(
 			file,
 			tspath.ResolvePath(packageName, tspath.GetRelativePathFromDirectory(packageJson.PackageDirectory, file, comparePathsOptions)),
 			nil,
@@ -2152,8 +2159,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		))
 	}
 
-	if len(result.Entrypoints) > 0 {
-		result.FailedLookupLocations = state.failedLookupLocations
+	if len(result) > 0 {
 		return result
 	}
 	return nil

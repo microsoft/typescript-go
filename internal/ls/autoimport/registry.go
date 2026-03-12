@@ -222,7 +222,7 @@ func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspat
 	}
 	projectBucket, ok := r.projects[projectPath]
 	if !ok {
-		panic("project bucket missing")
+		return false
 	}
 	path := r.toPath(fileName)
 	if projectBucket.state.possiblyNeedsRebuildForFile(path, preferences) {
@@ -444,8 +444,15 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 	}
 
+	if change.RequestedFile != "" {
+		neededProjects[core.FirstResult(b.host.GetDefaultProject(change.RequestedFile))] = struct{}{}
+		if !b.specifierCache.Has(change.RequestedFile) {
+			b.specifierCache.Set(change.RequestedFile, &collections.SyncMap[tspath.Path, string]{})
+		}
+	}
+
 	for path := range b.base.specifierCache {
-		if _, ok := change.OpenFiles[path]; !ok {
+		if _, ok := change.OpenFiles[path]; !ok && path != change.RequestedFile {
 			b.specifierCache.Delete(path)
 		}
 	}
@@ -1132,7 +1139,7 @@ type discoveredPackage struct {
 // into every bucket that needs it during the bucket-building phase.
 type perPackageExtractionResult struct {
 	packageFiles                     map[tspath.Path]string
-	entrypoints                      *module.ResolvedEntrypoints
+	entrypoints                      []*module.ResolvedEntrypoint
 	exports                          map[tspath.Path][]*Export
 	ambientModules                   map[string][]string
 	statsExports                     int
@@ -1148,7 +1155,7 @@ type packageExtractionResult struct {
 	exports                                  map[tspath.Path][]*Export
 	packageFiles                             map[string]map[tspath.Path]string
 	ambientModuleNames                       map[string][]string
-	entrypoints                              []*module.ResolvedEntrypoints
+	entrypoints                              [][]*module.ResolvedEntrypoint
 	projectReferencePackages                 *collections.Set[string]
 	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
@@ -1205,8 +1212,8 @@ func (b *registryBuilder) extractPackage(
 
 	var skippedEntrypoints int
 	if len(fileExcludePatterns) > 0 {
-		count := len(packageEntrypoints.Entrypoints)
-		packageEntrypoints.Entrypoints = slices.DeleteFunc(packageEntrypoints.Entrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
+		count := len(packageEntrypoints)
+		packageEntrypoints = slices.DeleteFunc(packageEntrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
 			for _, excludePattern := range fileExcludePatterns {
 				if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
 					return true
@@ -1214,9 +1221,9 @@ func (b *registryBuilder) extractPackage(
 			}
 			return false
 		})
-		skippedEntrypoints = count - len(packageEntrypoints.Entrypoints)
+		skippedEntrypoints = count - len(packageEntrypoints)
 	}
-	if len(packageEntrypoints.Entrypoints) == 0 {
+	if len(packageEntrypoints) == 0 {
 		return nil
 	}
 
@@ -1231,11 +1238,11 @@ func (b *registryBuilder) extractPackage(
 	}
 
 	// Resolve entrypoint source files and build the alias resolver.
-	seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints.Entrypoints))
-	rootFiles := make([]*ast.SourceFile, len(packageEntrypoints.Entrypoints))
+	seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints))
+	rootFiles := make([]*ast.SourceFile, len(packageEntrypoints))
 	symlinks := make(map[tspath.Path]pathAndFileName)
 	var wg sync.WaitGroup
-	for i, entrypoint := range packageEntrypoints.Entrypoints {
+	for i, entrypoint := range packageEntrypoints {
 		fileName := entrypoint.SymlinkOrRealpath()
 		realpathFileName := entrypoint.ResolvedFileName
 		realpathPath := b.base.toPath(realpathFileName)
@@ -1406,7 +1413,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		}
 	}
 	for _, entrypointSet := range extraction.entrypoints {
-		for _, entrypoint := range entrypointSet.Entrypoints {
+		for _, entrypoint := range entrypointSet {
 			path := b.base.toPath(entrypoint.ResolvedFileName)
 			result.entrypoints[path] = append(result.entrypoints[path], entrypoint)
 		}
@@ -1520,7 +1527,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	// Build new entrypoints from extraction
 	newEntrypoints := make(map[tspath.Path][]*module.ResolvedEntrypoint)
 	for _, entrypointSet := range extraction.entrypoints {
-		for _, entrypoint := range entrypointSet.Entrypoints {
+		for _, entrypoint := range entrypointSet {
 			path := b.base.toPath(entrypoint.ResolvedFileName)
 			newEntrypoints[path] = append(newEntrypoints[path], entrypoint)
 		}
