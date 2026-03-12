@@ -261,20 +261,7 @@ func addToExistingImport(
 					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
 					ct.InsertImportSpecifierAtIndex(file, spec, importClause.NamedBindings, insertionIndex)
 				}
-			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
-				// Existing specifiers are sorted, so insert each new specifier at the correct position
-				for _, spec := range newSpecifiers {
-					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
-					if insertionIndex >= len(existingSpecifiers) {
-						// Insert at the end
-						ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), nil)
-					} else {
-						// Insert before the element at insertionIndex
-						ct.InsertNodeInListAfter(file, existingSpecifiers[insertionIndex], spec.AsNode(), nil)
-					}
-				}
 			} else if len(existingSpecifiers) > 0 {
-				// Existing specifiers may not be sorted, append to the end
 				for _, spec := range newSpecifiers {
 					ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), nil)
 				}

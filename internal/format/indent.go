@@ -179,11 +179,11 @@ func getBlockIndent(sourceFile *ast.SourceFile, position int, options *lsutil.Fo
 	// then find the first non-whitespace character for that line.
 	current := position
 	for current > 0 {
-		ch, _ := utf8.DecodeRuneInString(sourceFile.Text()[current:])
+		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[current:])
 		if !stringutil.IsWhiteSpaceLike(ch) {
 			break
 		}
-		current--
+		current -= size
 	}
 
 	lineStart := GetLineStartPositionForPosition(current, sourceFile)
