@@ -284,8 +284,9 @@ func (m *SyncMap[K, V]) Range(fn func(*SyncMapEntry[K, V]) bool) {
 	m.dirty.Range(func(key K, entry *SyncMapEntry[K, V]) bool {
 		seenInDirty[key] = struct{}{}
 		entry.mu.Lock()
-		defer entry.mu.Unlock()
-		if !entry.delete && !fn(entry) {
+		deleted := entry.delete
+		entry.mu.Unlock()
+		if !deleted && !fn(entry) {
 			return false
 		}
 		return true
