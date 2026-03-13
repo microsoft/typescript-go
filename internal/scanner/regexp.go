@@ -107,17 +107,11 @@ func (p *regExpParser) incPos(n int) {
 }
 
 func (p *regExpParser) char() rune {
-	if p.pos() < p.end {
-		return rune(p.scanner.text[p.pos()])
-	}
-	return -1
+	return p.scanner.char()
 }
 
 func (p *regExpParser) charAt(pos int) rune {
-	if pos < p.end {
-		return rune(p.scanner.text[pos])
-	}
-	return -1
+	return p.scanner.charAt(pos - p.pos())
 }
 
 func (p *regExpParser) error(msg *diagnostics.Message, pos int, length int, args ...any) {
