@@ -70,7 +70,7 @@ func (tx *taggedTemplateTransformer) processTaggedTemplateExpression(node *ast.T
 	tag := tx.Visitor().VisitNode(node.Tag)
 	template := node.Template
 
-	if template.SubtreeFacts()&ast.SubtreeContainsInvalidTemplateEscape == 0 {
+	if !hasInvalidEscape(template) {
 		return tx.Visitor().VisitEachChild(node.AsNode())
 	}
 
@@ -117,7 +117,9 @@ func (tx *taggedTemplateTransformer) processTaggedTemplateExpression(node *ast.T
 		templateArguments[0] = helperCall
 	}
 
-	return f.NewCallExpression(tag, nil /*questionDotToken*/, nil /*typeArguments*/, f.NewNodeList(templateArguments), ast.NodeFlagsNone)
+	call := f.NewCallExpression(tag, nil /*questionDotToken*/, nil /*typeArguments*/, f.NewNodeList(templateArguments), ast.NodeFlagsNone)
+	call.Loc = node.Loc
+	return call
 }
 
 func createTemplateCooked(f *printer.NodeFactory, template *ast.TemplateLiteralLikeBase) *ast.Node {
@@ -151,4 +153,20 @@ func getRawLiteral(f *printer.NodeFactory, node *ast.Node) *ast.Node {
 	result := f.NewStringLiteral(text, ast.TokenFlagsNone)
 	result.Loc = node.Loc
 	return result
+}
+
+func hasInvalidEscape(template *ast.Node) bool {
+	if ast.IsNoSubstitutionTemplateLiteral(template) {
+		return template.TemplateLiteralLikeData().TemplateFlags&ast.TokenFlagsContainsInvalidEscape != 0
+	}
+	te := template.AsTemplateExpression()
+	if te.Head.TemplateLiteralLikeData().TemplateFlags&ast.TokenFlagsContainsInvalidEscape != 0 {
+		return true
+	}
+	for _, span := range te.TemplateSpans.Nodes {
+		if span.AsTemplateSpan().Literal.TemplateLiteralLikeData().TemplateFlags&ast.TokenFlagsContainsInvalidEscape != 0 {
+			return true
+		}
+	}
+	return false
 }
