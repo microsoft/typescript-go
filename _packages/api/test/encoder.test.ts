@@ -28,7 +28,10 @@ import {
     encodeNode,
     encodeSourceFile,
 } from "../src/node/encoder.ts";
-import { RemoteNodeList, RemoteSourceFile } from "../src/node/node.ts";
+import {
+    RemoteNodeList,
+    RemoteSourceFile,
+} from "../src/node/node.ts";
 import {
     HEADER_OFFSET_NODES,
     NODE_LEN,
