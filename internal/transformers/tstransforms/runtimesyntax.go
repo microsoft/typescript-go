@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -27,8 +26,6 @@ type RuntimeSyntaxTransformer struct {
 	currentNamespace                    *ast.ModuleDeclarationNode
 	resolver                            binder.ReferenceResolver
 	emitResolver                        printer.EmitResolver
-	evaluator                           evaluator.Evaluator
-	enumMemberCache                     map[*ast.EnumDeclarationNode]map[string]evaluator.Result
 }
 
 func NewRuntimeSyntaxTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
@@ -358,20 +355,13 @@ func (tx *RuntimeSyntaxTransformer) transformEnumBody(node *ast.EnumDeclaration)
 	if len(node.Members.Nodes) > 0 {
 		tx.EmitContext().StartVariableEnvironment()
 
-		var autoValue jsnum.Number
-		var autoVar *ast.IdentifierNode
-		var useAutoVar bool
 		for i := range len(node.Members.Nodes) {
 			//  E[E["A"] = 0] = "A";
 			statements = tx.transformEnumMember(
 				statements,
 				node,
 				i,
-				&autoValue,
-				&autoVar,
-				&useAutoVar,
 			)
-			autoValue++
 		}
 
 		statements = tx.EmitContext().EndAndMergeVariableEnvironment(statements)
@@ -389,17 +379,9 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	statements []*ast.Statement,
 	enum *ast.EnumDeclaration,
 	index int,
-	autoValue *jsnum.Number,
-	autoVar **ast.IdentifierNode,
-	useAutoVar *bool,
 ) []*ast.Statement {
 	memberNode := enum.Members.Nodes[index]
 	member := memberNode.AsEnumMember()
-
-	var memberName string
-	if ast.IsIdentifier(member.Name()) || ast.IsStringLiteralLike(member.Name()) {
-		memberName = member.Name().Text()
-	}
 
 	savedParent := tx.parentNode
 	tx.parentNode = tx.currentNode
@@ -411,119 +393,28 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 
 	var useExplicitReverseMapping bool
 
-	// When the emit resolver is available, use the checker's evaluation for all members (like Strada).
-	// This bypasses the autoVar mechanism entirely.
-	if tx.emitResolver != nil {
-		if parseNode := tx.EmitContext().ParseNode(memberNode); parseNode != nil {
-			result := tx.emitResolver.GetEnumMemberValue(parseNode)
-			switch value := result.Value.(type) {
-			case jsnum.Number:
-				*autoValue = value
-				expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
-				useExplicitReverseMapping = true
-			case string:
-				*autoValue = jsnum.NaN()
-				expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
-			default:
-				*autoValue = jsnum.NaN()
-				if expression == nil {
-					expression = tx.Factory().NewVoidZeroExpression()
-				}
-				useExplicitReverseMapping = !result.IsSyntacticallyString
-			}
-			if len(memberName) > 0 {
-				tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
-			}
-			goto applyReverseMapping
-		}
-	}
-
-	if expression == nil {
-		// Enum members without an initializer are auto-numbered. We will use constant values if there was no preceding
-		// initialized member, or if the preceding initialized member was a numeric literal.
-		if *useAutoVar {
-			// If you are using an auto-numbered member following a non-numeric literal, we assume the previous member
-			// produced a valid numeric value. This assumption is intended to be validated by the type checker prior to
-			// emit.
-			//  E[E["A"] = ++auto] = "A";
-			//             ^^^^^^
-			expression = tx.Factory().NewPrefixUnaryExpression(ast.KindPlusPlusToken, *autoVar)
-			useExplicitReverseMapping = true
-		} else {
-			// If the preceding auto value is a finite number, we can emit a numeric literal for the member initializer:
-			//  E[E["A"] = 0] = "A";
-			//             ^
-			// If not, we cannot emit a valid numeric literal for the member initializer and emit `void 0` instead:
-			//  E["A"] = void 0;
-			//           ^^^^^^
-			if autoValue.IsNaN() {
-				expression = tx.Factory().NewVoidZeroExpression()
-			} else {
-				expression = constantExpression(*autoValue, tx.Factory())
-				if expression != nil {
-					useExplicitReverseMapping = true
-					if len(memberName) > 0 {
-						tx.cacheEnumMemberValue(enum.AsNode(), memberName, evaluator.NewResult(*autoValue, false, false, false))
-					}
-				} else {
-					expression = tx.Factory().NewVoidZeroExpression()
-				}
-			}
-		}
-	} else {
-		// Enum members with an initializer may restore auto-numbering if the initializer is a numeric literal. If we
-		// cannot syntactically determine the initializer value and the following enum member is auto-numbered, we will
-		// use an `auto` variable to perform the remaining auto-numbering at runtime.
-		if tx.evaluator == nil {
-			tx.evaluator = evaluator.NewEvaluator(tx.evaluateEntity, ast.OEKAll)
-		}
-
-		var hasNumericInitializer, hasStringInitializer bool
-		var result evaluator.Result
-		usedEmitResolver := false
-		if tx.emitResolver != nil {
-			if parseNode := tx.EmitContext().ParseNode(memberNode); parseNode != nil {
-				result = tx.emitResolver.GetEnumMemberValue(parseNode)
-				usedEmitResolver = true
-			}
-		}
-		if !usedEmitResolver {
-			result = tx.evaluator(expression, enum.AsNode())
-		}
+	if parseNode := tx.EmitContext().ParseNode(memberNode); parseNode != nil {
+		result := tx.emitResolver.GetEnumMemberValue(parseNode)
 		switch value := result.Value.(type) {
 		case jsnum.Number:
-			hasNumericInitializer = true
-			*autoValue = value
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression) // TODO: preserve original expression after Strada migration
-			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
+			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+			useExplicitReverseMapping = true
 		case string:
-			hasStringInitializer = true
-			*autoValue = jsnum.NaN()
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression) // TODO: preserve original expression after Strada migration
-			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
+			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
 		default:
-			*autoValue = jsnum.NaN()
-			if len(memberName) > 0 {
-				tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
+			if expression == nil {
+				expression = tx.Factory().NewVoidZeroExpression()
 			}
+			useExplicitReverseMapping = !result.IsSyntacticallyString
 		}
-
-		nextIsAuto := index+1 < len(enum.Members.Nodes) && enum.Members.Nodes[index+1].AsEnumMember().Initializer == nil
-		useExplicitReverseMapping = !hasStringInitializer && !result.IsSyntacticallyString
-		if *useAutoVar = nextIsAuto && !hasNumericInitializer && !hasStringInitializer; *useAutoVar {
-			//  E[E["A"] = auto = x] = "A";
-			//             ^^^^^^^^
-			if *autoVar == nil {
-				*autoVar = tx.Factory().NewUniqueNameEx("auto", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				tx.EmitContext().AddVariableDeclaration(*autoVar)
-			}
-			expression = tx.Factory().NewAssignmentExpression(*autoVar, expression)
+	} else {
+		if expression == nil {
+			expression = tx.Factory().NewVoidZeroExpression()
 		}
 	}
 
-applyReverseMapping:
 	// Define the enum member property:
-	//  E[E["A"] = ++auto] = "A";
+	//  E[E["A"] = 0] = "A";
 	//    ^^^^^^^^--_____
 	expression = tx.Factory().NewAssignmentExpression(
 		tx.getEnumQualifiedElement(enum, member),
@@ -1063,55 +954,6 @@ func (tx *RuntimeSyntaxTransformer) createExportStatement(name *ast.IdentifierNo
 	tx.EmitContext().SetOriginal(exportStatement, original)
 	tx.EmitContext().SetSourceMapRange(exportStatement, exportStatementSourceMapRange)
 	return exportStatement
-}
-
-func (tx *RuntimeSyntaxTransformer) cacheEnumMemberValue(enum *ast.EnumDeclarationNode, memberName string, result evaluator.Result) {
-	if tx.enumMemberCache == nil {
-		tx.enumMemberCache = make(map[*ast.EnumDeclarationNode]map[string]evaluator.Result)
-	}
-	memberCache := tx.enumMemberCache[enum]
-	if memberCache == nil {
-		memberCache = make(map[string]evaluator.Result)
-		tx.enumMemberCache[enum] = memberCache
-	}
-	memberCache[memberName] = result
-}
-
-func (tx *RuntimeSyntaxTransformer) isReferenceToEnum(reference *ast.IdentifierNode, enum *ast.EnumDeclarationNode) bool {
-	if transformers.IsGeneratedIdentifier(tx.EmitContext(), reference) {
-		originalEnum := tx.EmitContext().MostOriginal(enum)
-		return tx.EmitContext().GetNodeForGeneratedName(reference) == originalEnum
-	}
-	return reference.Text() == enum.Name().Text()
-}
-
-func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast.Node) evaluator.Result {
-	var result evaluator.Result
-	if ast.IsEnumDeclaration(location) {
-		memberCache := tx.enumMemberCache[location]
-		if memberCache != nil {
-			switch {
-			case ast.IsIdentifier(node):
-				result = memberCache[node.Text()]
-			case ast.IsPropertyAccessExpression(node):
-				access := node.AsPropertyAccessExpression()
-				expression := access.Expression
-				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) {
-					result = memberCache[access.Name().Text()]
-				}
-			case ast.IsElementAccessExpression(node):
-				access := node.AsElementAccessExpression()
-				expression := access.Expression
-				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) && ast.IsStringLiteralLike(access.ArgumentExpression) {
-					result = memberCache[access.ArgumentExpression.Text()]
-				}
-			}
-		}
-		if result.Value == nil && ast.IsIdentifier(node) && ast.IsInfinityOrNaNString(node.Text()) {
-			result = evaluator.NewResult(jsnum.FromString(node.Text()), false, false, false)
-		}
-	}
-	return result
 }
 
 func (tx *RuntimeSyntaxTransformer) shouldEmitEnumDeclaration(node *ast.EnumDeclaration) bool {
