@@ -387,24 +387,19 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 
 	var useExplicitReverseMapping bool
 
-	if parseNode := tx.EmitContext().ParseNode(memberNode); parseNode != nil {
-		result := tx.emitResolver.GetEnumMemberValue(parseNode)
-		switch value := result.Value.(type) {
-		case jsnum.Number:
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
-			useExplicitReverseMapping = true
-		case string:
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
-		default:
-			if expression == nil {
-				expression = tx.Factory().NewVoidZeroExpression()
-			}
-			useExplicitReverseMapping = !result.IsSyntacticallyString
-		}
-	} else {
+	parseNode := tx.EmitContext().ParseNode(memberNode)
+	result := tx.emitResolver.GetEnumMemberValue(parseNode)
+	switch value := result.Value.(type) {
+	case jsnum.Number:
+		expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+		useExplicitReverseMapping = true
+	case string:
+		expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+	default:
 		if expression == nil {
 			expression = tx.Factory().NewVoidZeroExpression()
 		}
+		useExplicitReverseMapping = !result.IsSyntacticallyString
 	}
 
 	// Define the enum member property:
@@ -900,9 +895,6 @@ func (tx *RuntimeSyntaxTransformer) visitIdentifier(node *ast.IdentifierNode) *a
 func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.IdentifierNode) *ast.Node {
 	if (tx.currentEnum != nil || tx.currentNamespace != nil) && !transformers.IsGeneratedIdentifier(tx.EmitContext(), node) && !transformers.IsLocalName(tx.EmitContext(), node) {
 		location := tx.EmitContext().MostOriginal(node.AsNode())
-		if tx.resolver == nil {
-			tx.resolver = binder.NewReferenceResolver(tx.compilerOptions, binder.ReferenceResolverHooks{})
-		}
 		container := tx.resolver.GetReferencedExportContainer(location, false /*prefixLocals*/)
 		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) {
 			containerName := tx.getNamespaceContainerName(container)
