@@ -352,19 +352,13 @@ func (tx *RuntimeSyntaxTransformer) transformEnumBody(node *ast.EnumDeclaration)
 	node = tx.Visitor().VisitEachChild(node.AsNode()).AsEnumDeclaration()
 
 	statements := []*ast.Statement{}
-	if len(node.Members.Nodes) > 0 {
-		tx.EmitContext().StartVariableEnvironment()
-
-		for i := range len(node.Members.Nodes) {
-			//  E[E["A"] = 0] = "A";
-			statements = tx.transformEnumMember(
-				statements,
-				node,
-				i,
-			)
-		}
-
-		statements = tx.EmitContext().EndAndMergeVariableEnvironment(statements)
+	for i := range len(node.Members.Nodes) {
+		//  E[E["A"] = 0] = "A";
+		statements = tx.transformEnumMember(
+			statements,
+			node,
+			i,
+		)
 	}
 
 	statementList := tx.Factory().NewNodeList(statements)
@@ -421,11 +415,9 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		expression,
 	)
 
-	// If this is syntactically a numeric literal initializer, or is auto numbered, then we unconditionally define the
-	// reverse mapping for the enum member.
 	if useExplicitReverseMapping {
-		//  E[E["A"] = A = ++auto] = "A";
-		//  ^^-------------------^^^^^^^
+		//  E[E["A"] = 0] = "A";
+		//  ^^--------------^^^^^
 		expression = tx.Factory().NewAssignmentExpression(
 			tx.Factory().NewElementAccessExpression(
 				tx.getNamespaceContainerName(enum.AsNode()),
