@@ -760,9 +760,9 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			continue
 		}
 		for _, pkg := range task.discovered {
-			if pkg.realpath != "" {
-				if _, exists := uniquePackages[pkg.realpath]; !exists {
-					uniquePackages[pkg.realpath] = pkg
+			if rp := pkg.effectiveRealpath(); rp != "" {
+				if _, exists := uniquePackages[rp]; !exists {
+					uniquePackages[rp] = pkg
 				}
 			}
 		}
@@ -781,7 +781,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			result := b.extractPackage(ctx, pkg, projectReferenceOutputs, fileExcludePatterns)
 			if result != nil {
 				extractionMu.Lock()
-				extractionCache[pkg.realpath] = result
+				extractionCache[pkg.effectiveRealpath()] = result
 				extractionMu.Unlock()
 			}
 		})
@@ -1127,14 +1127,25 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 
 // discoveredPackage represents a package found during the discovery phase.
 // It holds the resolved package.json and realpath for deduplication.
+// When both a real package and a corresponding @types package exist (e.g., react + @types/react),
+// both are stored so extraction can fall back to the @types package if the real package has no
+// TypeScript entrypoints.
 type discoveredPackage struct {
-	packageName string
-	packageJson *packagejson.InfoCacheEntry
-	// typesPackageJson is the @types package.json fallback, used when the main
-	// package exists but has no TypeScript entrypoints (e.g., react + @types/react).
-	typesPackageJson *packagejson.InfoCacheEntry
+	packageName      string
+	packageJson      *packagejson.InfoCacheEntry
 	realpath         string
+	typesPackageJson *packagejson.InfoCacheEntry
+	typesRealpath    string
 	dirPath          tspath.Path // bucket directory path (used as extraction context)
+}
+
+// effectiveRealpath returns the realpath used for deduplication and cache keying.
+// It prefers the main package's realpath, falling back to the @types package's realpath.
+func (p *discoveredPackage) effectiveRealpath() string {
+	if p.realpath != "" {
+		return p.realpath
+	}
+	return p.typesRealpath
 }
 
 // perPackageExtractionResult holds the extraction output for one physical package.
@@ -1178,11 +1189,7 @@ func (b *registryBuilder) discoverBucketPackages(
 		typesPackageName := module.GetTypesPackageName(packageName)
 		packageJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", packageName, "package.json"))
 		var typesPackageJson *packagejson.InfoCacheEntry
-		if !packageJson.DirectoryExists {
-			packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
-		} else if packageName != typesPackageName {
-			// If the real package exists, also check for a corresponding @types package
-			// as a fallback for when the real package has no TypeScript entrypoints.
+		if packageName != typesPackageName {
 			typesJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
 			if typesJson.DirectoryExists {
 				typesPackageJson = typesJson
@@ -1192,15 +1199,38 @@ func (b *registryBuilder) discoverBucketPackages(
 		if packageJson.DirectoryExists {
 			realpath = b.host.FS().Realpath(packageJson.PackageDirectory)
 		}
+		var typesRealpath string
+		if typesPackageJson != nil {
+			typesRealpath = b.host.FS().Realpath(typesPackageJson.PackageDirectory)
+		}
 		result = append(result, &discoveredPackage{
 			packageName:      packageName,
 			packageJson:      packageJson,
-			typesPackageJson: typesPackageJson,
 			realpath:         realpath,
+			typesPackageJson: typesPackageJson,
+			typesRealpath:    typesRealpath,
 			dirPath:          dirPath,
 		})
 	}
 	return result
+}
+
+// getPackageEntrypoints resolves TypeScript entrypoints for a package.json entry.
+// Returns nil for both if the package doesn't exist or has no TypeScript entrypoints.
+func (b *registryBuilder) getPackageEntrypoints(
+	packageJson *packagejson.InfoCacheEntry,
+	packageName string,
+) (*packagejson.InfoCacheEntry, []*module.ResolvedEntrypoint) {
+	if packageJson == nil || !packageJson.DirectoryExists {
+		return nil, nil
+	}
+	toRealpath, _ := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
+	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
+	entrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
+	if entrypoints == nil {
+		return nil, nil
+	}
+	return packageJson, entrypoints
 }
 
 // extractPackage extracts exports from a single discovered package.
@@ -1212,25 +1242,20 @@ func (b *registryBuilder) extractPackage(
 	projectReferenceOutputs map[tspath.Path]string,
 	fileExcludePatterns []*regexp2.Regexp,
 ) *perPackageExtractionResult {
-	packageJson := pkg.packageJson
 	packageName := pkg.packageName
+
+	// Try the main package first, then fall back to the @types package if the main
+	// package doesn't exist or has no TypeScript entrypoints (e.g., react + @types/react).
+	packageJson, packageEntrypoints := b.getPackageEntrypoints(pkg.packageJson, packageName)
+	if packageEntrypoints == nil && pkg.typesPackageJson != nil {
+		packageJson, packageEntrypoints = b.getPackageEntrypoints(pkg.typesPackageJson, packageName)
+	}
+	if packageEntrypoints == nil {
+		return nil
+	}
 
 	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
-	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
-	if packageEntrypoints == nil {
-		// If the main package has no TypeScript entrypoints, try using the @types
-		// fallback (e.g., react has no .d.ts files, but @types/react does).
-		if pkg.typesPackageJson != nil {
-			packageJson = pkg.typesPackageJson
-			toRealpath, toSymlink = getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
-			resolver = getModuleResolver(b.host, toRealpath, b.resolverOptions)
-			packageEntrypoints = resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
-		}
-		if packageEntrypoints == nil {
-			return nil
-		}
-	}
 
 	var skippedEntrypoints int
 	if len(fileExcludePatterns) > 0 {
@@ -1347,7 +1372,7 @@ func installExtractions(
 	}
 
 	for _, pkg := range discovered {
-		extraction := extractionCache[pkg.realpath]
+		extraction := extractionCache[pkg.effectiveRealpath()]
 		if extraction == nil {
 			continue
 		}
