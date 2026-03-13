@@ -299,6 +299,24 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 	assert.Assert(t, thisExpr.AsKeywordExpression() != nil)
 }
 
+func TestDecodeSourceFile_EmptyModuleBlock(t *testing.T) {
+	t.Parallel()
+	sf := parseSourceFile("namespace N { }")
+	buf, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	// Navigate: namespace N { } -> ModuleDeclaration -> ModuleBlock
+	mod := decoded.Statements.Nodes[0].AsModuleDeclaration()
+	assert.Assert(t, mod.Body != nil)
+	block := mod.Body.AsModuleBlock()
+	// Statements must be non-nil even when empty, otherwise the printer panics
+	assert.Assert(t, block.Statements != nil)
+	assert.Equal(t, len(block.Statements.Nodes), 0)
+}
+
 func BenchmarkDecodeSourceFile(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")

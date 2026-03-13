@@ -1275,7 +1275,11 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindNamedExports:
 		return d.factory.NewNamedExports(d.singleNodeListChild(childIndices)), nil
 	case ast.KindModuleBlock:
-		return d.factory.NewModuleBlock(d.singleNodeListChild(childIndices)), nil
+		stmts := d.singleNodeListChild(childIndices)
+		if stmts == nil {
+			stmts = d.factory.NewNodeList(nil)
+		}
+		return d.factory.NewModuleBlock(stmts), nil
 	case ast.KindCaseBlock:
 		return d.factory.NewCaseBlock(d.singleNodeListChild(childIndices)), nil
 	case ast.KindTypeLiteral:
@@ -1337,6 +1341,12 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	// Keyword expressions (must be KeywordExpression, not Token, for the printer)
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindImportKeyword:
 		return d.factory.NewKeywordExpression(kind), nil
+
+	// JSX fragment tokens (must be their own types, not Token, for the printer)
+	case ast.KindJsxOpeningFragment:
+		return d.factory.NewJsxOpeningFragment(), nil
+	case ast.KindJsxClosingFragment:
+		return d.factory.NewJsxClosingFragment(), nil
 
 	// Token/keyword nodes with no children
 	default:

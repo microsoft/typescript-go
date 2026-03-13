@@ -1510,7 +1510,7 @@ func (p *Printer) emitParameters(parentNode *ast.Node, parameters *ast.Parameter
 
 func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList) bool {
 	// only arrow functions with a single parameter may have simple arrow head
-	if !ast.IsArrowFunction(parentNode) || len(parameters.Nodes) != 1 {
+	if parameters == nil || !ast.IsArrowFunction(parentNode) || len(parameters.Nodes) != 1 {
 		return false
 	}
 
