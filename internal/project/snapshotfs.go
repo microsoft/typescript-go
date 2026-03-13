@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -398,10 +399,81 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 	for uri := range change.Deleted.Keys() {
 		path := s.toPath(uri.FileName())
 		if entry, ok := s.diskFiles.Load(path); ok {
-			entry.Change(func(file *diskFile) {
-				file.needsReload = true
-			})
+			entry.Delete()
 		}
+	}
+}
+
+// hasRelevantWatchExtension returns true if the given path ends with a file
+// extension relevant to TypeScript compilation. This is used to quickly filter
+// out watch events for files that cannot affect the project.
+func hasRelevantWatchExtension(path string) bool {
+	i := strings.LastIndexByte(path, '.')
+	if i < 0 {
+		return false
+	}
+	switch path[i:] {
+	case ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json":
+		return true
+	}
+	return false
+}
+
+// expandAndFilterWatchEvents expands directory deletion URIs into individual
+// file deletion URIs using the cached directory structure, and filters out
+// watch events for paths that are neither known directories nor have relevant
+// file extensions.
+func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary) FileChangeSummary {
+	if change.Deleted.Len() > 0 {
+		var filteredDeleted collections.Set[lsproto.DocumentUri]
+		for uri := range change.Deleted.Keys() {
+			path := s.toPath(uri.FileName())
+			if _, ok := s.diskDirectories.Get(path); ok {
+				s.collectFilesRecursive(path, &filteredDeleted)
+			} else if hasRelevantWatchExtension(string(path)) {
+				filteredDeleted.Add(uri)
+			}
+		}
+		change.Deleted = filteredDeleted
+	}
+
+	if change.Changed.Len() > 0 {
+		var filteredChanged collections.Set[lsproto.DocumentUri]
+		for uri := range change.Changed.Keys() {
+			if hasRelevantWatchExtension(string(s.toPath(uri.FileName()))) {
+				filteredChanged.Add(uri)
+			}
+		}
+		change.Changed = filteredChanged
+	}
+
+	if change.Created.Len() > 0 {
+		var filteredCreated collections.Set[lsproto.DocumentUri]
+		for uri := range change.Created.Keys() {
+			if hasRelevantWatchExtension(string(s.toPath(uri.FileName()))) {
+				filteredCreated.Add(uri)
+			}
+		}
+		change.Created = filteredCreated
+	}
+
+	return change
+}
+
+// collectFilesRecursive recursively collects all cached file URIs under the
+// given directory path using the diskDirectories and diskFiles maps.
+func (s *snapshotFSBuilder) collectFilesRecursive(dirPath tspath.Path, files *collections.Set[lsproto.DocumentUri]) {
+	dirEntry, ok := s.diskDirectories.Get(dirPath)
+	if !ok {
+		return
+	}
+	for childPath := range dirEntry.Value() {
+		if entry, ok := s.diskFiles.Load(childPath); ok {
+			if file := entry.Value(); file != nil {
+				files.Add(lsconv.FileNameToDocumentURI(file.FileName()))
+			}
+		}
+		s.collectFilesRecursive(childPath, files)
 	}
 }
 
