@@ -829,7 +829,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		varStatement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsConst,
+				ast.NodeFlagsNone,
 				tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						generatedName,
@@ -1675,9 +1675,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 	if needsRewrite {
 		return tx.shimOrRewriteImportOrRequireCall(node.AsCallExpression())
 	}
-	if ast.IsIdentifier(node.Expression) &&
-		!transformers.IsGeneratedIdentifier(tx.EmitContext(), node.Expression) &&
-		!transformers.IsHelperName(tx.EmitContext(), node.Expression) {
+	if ast.IsIdentifier(node.Expression) {
 		// given:
 		//   import { f } from "mod";
 		//   f();
@@ -1694,7 +1692,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 			nil, /*typeArguments*/
 			tx.Visitor().VisitNodes(node.Arguments),
 		)
-		if !ast.IsIdentifier(expression) {
+		if !ast.IsIdentifier(expression) && !transformers.IsHelperName(tx.EmitContext(), node.Expression) {
 			tx.EmitContext().AddEmitFlags(updated, printer.EFIndirectCall)
 		}
 		return updated
@@ -1857,7 +1855,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 
 // Visits a tagged template expression that might reference an imported symbol and thus require an indirect call.
 func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.TaggedTemplateExpression) *ast.Node {
-	if ast.IsIdentifier(node.Tag) && !transformers.IsGeneratedIdentifier(tx.EmitContext(), node.Tag) && !transformers.IsHelperName(tx.EmitContext(), node.Tag) {
+	if ast.IsIdentifier(node.Tag) {
 		// given:
 		//   import { f } from "mod";
 		//   f``;
@@ -1875,7 +1873,7 @@ func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.Tag
 			nil, /*typeArguments*/
 			tx.Visitor().VisitNode(node.Template),
 		)
-		if !ast.IsIdentifier(expression) {
+		if !ast.IsIdentifier(expression) && !transformers.IsHelperName(tx.EmitContext(), node.Tag) {
 			tx.EmitContext().AddEmitFlags(updated, printer.EFIndirectCall)
 		}
 		return updated

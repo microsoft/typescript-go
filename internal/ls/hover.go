@@ -20,14 +20,15 @@ const (
 	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.HoverResponse, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
 
 	program, file := l.getProgramAndFile(documentURI)
-	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
-	if node.Kind == ast.KindSourceFile {
-		// Avoid giving quickInfo for the sourceFile as a whole.
+	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
+	node := astnav.GetTouchingPropertyName(file, position)
+	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
+		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
 		return lsproto.HoverOrNull{}, nil
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -206,12 +207,30 @@ func formatQuickInfo(quickInfo string) string {
 	return b.String()
 }
 
+func shouldGetType(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindIdentifier:
+		// If we're in a JSDoc node with no associated symbol, no binding has taken place for the node and
+		// we can't answer questions about types of declaration nodes (such as property declarations).
+		return !(node.Flags&ast.NodeFlagsJSDoc != 0 && ast.IsDeclarationName(node)) && !ast.IsLabelName(node) && !ast.IsTagName(node) && !ast.IsConstTypeReference(node.Parent)
+	case ast.KindThisKeyword, ast.KindThisType, ast.KindSuperKeyword, ast.KindNamedTupleMember:
+		return true
+	case ast.KindMetaProperty:
+		return ast.IsImportMeta(node)
+	default:
+		return false
+	}
+}
+
 func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
 	container := getContainerNode(node)
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
 		return "this: " + c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
 	}
 	if symbol == nil {
+		if shouldGetType(node) {
+			return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
+		}
 		return "", nil
 	}
 	var b strings.Builder
@@ -295,36 +314,38 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0 {
 			writeNewLine()
-			switch {
-			case flags&ast.SymbolFlagsProperty != 0:
-				b.WriteString("(property) ")
-			case flags&ast.SymbolFlagsAccessor != 0:
-				b.WriteString("(accessor) ")
-			default:
-				decl := symbol.ValueDeclaration
-				if decl != nil {
-					switch {
-					case ast.IsParameter(decl):
-						b.WriteString("(parameter) ")
-					case ast.IsVarLet(decl):
-						b.WriteString("let ")
-					case ast.IsVarConst(decl):
-						b.WriteString("const ")
-					case ast.IsVarUsing(decl):
-						b.WriteString("using ")
-					case ast.IsVarAwaitUsing(decl):
-						b.WriteString("await using ")
-					default:
-						b.WriteString("var ")
+			if symbol.CheckFlags&ast.CheckFlagsIndexSymbol == 0 {
+				switch {
+				case flags&ast.SymbolFlagsProperty != 0:
+					b.WriteString("(property) ")
+				case flags&ast.SymbolFlagsAccessor != 0:
+					b.WriteString("(accessor) ")
+				default:
+					decl := symbol.ValueDeclaration
+					if decl != nil {
+						switch {
+						case ast.IsParameter(decl):
+							b.WriteString("(parameter) ")
+						case ast.IsVarLet(decl):
+							b.WriteString("let ")
+						case ast.IsVarConst(decl):
+							b.WriteString("const ")
+						case ast.IsVarUsing(decl):
+							b.WriteString("using ")
+						case ast.IsVarAwaitUsing(decl):
+							b.WriteString("await using ")
+						default:
+							b.WriteString("var ")
+						}
 					}
 				}
+				if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
+					b.WriteString("exports")
+				} else {
+					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+				}
+				b.WriteString(": ")
 			}
-			if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
-				b.WriteString("exports")
-			} else {
-				b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-			}
-			b.WriteString(": ")
 			if callNode := getCallOrNewExpression(node); callNode != nil {
 				b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
 			} else {
