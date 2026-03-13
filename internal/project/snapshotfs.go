@@ -419,6 +419,33 @@ func hasRelevantWatchExtension(path string) bool {
 	return false
 }
 
+// isTrackedNodeModulesDirectory returns true if the path is a node_modules
+// directory, a node_modules scope subdirectory, or a node_modules package directory.
+func isTrackedNodeModulesDirectory(fileName string) bool {
+	nodeModulesIndex := strings.Index(fileName, "/node_modules")
+	if nodeModulesIndex == -1 {
+		return false
+	}
+	if len(fileName) == nodeModulesIndex+len("/node_modules") {
+		return true
+	}
+	if fileName[nodeModulesIndex+len("/node_modules")] != '/' {
+		return false
+	}
+	remaining := fileName[nodeModulesIndex+len("/node_modules/"):]
+	if len(remaining) == 0 {
+		return false
+	}
+	if remaining[0] == '@' {
+		slashIndex := strings.IndexByte(remaining, '/')
+		if slashIndex == -1 {
+			return true // @scope dir
+		}
+		remaining = remaining[slashIndex+1:]
+	}
+	return len(remaining) > 0 && strings.IndexByte(remaining, '/') == -1
+}
+
 // expandAndFilterWatchEvents expands directory deletion URIs into individual
 // file deletion URIs using the cached directory structure, and filters out
 // watch events for paths that are neither known directories nor have relevant
@@ -450,7 +477,8 @@ func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary)
 	if change.Created.Len() > 0 {
 		var filteredCreated collections.Set[lsproto.DocumentUri]
 		for uri := range change.Created.Keys() {
-			if hasRelevantWatchExtension(string(s.toPath(uri.FileName()))) {
+			fileName := uri.FileName()
+			if hasRelevantWatchExtension(fileName) || isTrackedNodeModulesDirectory(fileName) {
 				filteredCreated.Add(uri)
 			}
 		}
@@ -554,7 +582,11 @@ func (fs *sourceFS) GetFileByPath(fileName string, path tspath.Path) FileHandle 
 
 // DirectoryExists implements vfs.FS.
 func (fs *sourceFS) DirectoryExists(path string) bool {
-	return fs.source.FS().DirectoryExists(path)
+	exists := fs.source.FS().DirectoryExists(path)
+	if !exists && fs.tracking && isTrackedNodeModulesDirectory(path) {
+		fs.seenFiles.Add(fs.toPath(path))
+	}
+	return exists
 }
 
 // FileExists implements vfs.FS.

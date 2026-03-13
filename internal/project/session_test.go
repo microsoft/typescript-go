@@ -2,6 +2,7 @@ package project_test
 
 import (
 	"context"
+	"io/fs"
 	"maps"
 	"slices"
 	"strings"
@@ -15,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -1004,6 +1006,58 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			program = ls.GetProgram()
 			assert.Equal(t, program, oldProgram, "program should not be rebuilt for irrelevant extension changes")
+		})
+
+		t.Run("pnpm install links local package", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/pnpm/pnpm-workspace.yaml": `packages:
+  - 'packages/*'`,
+				"/home/projects/pnpm/packages/alpha/package.json": `{ "name": "@repo/alpha", "main": "index.ts" }`,
+				"/home/projects/pnpm/packages/alpha/tsconfig.json": `{
+					"compilerOptions": { "noLib": true, "composite": true }
+				}`,
+				"/home/projects/pnpm/packages/alpha/index.ts":    `export const alpha = 1;`,
+				"/home/projects/pnpm/packages/beta/package.json": `{ "name": "@repo/beta" }`,
+				"/home/projects/pnpm/packages/beta/tsconfig.json": `{
+					"compilerOptions": { "noLib": true }
+				}`,
+				"/home/projects/pnpm/packages/beta/index.ts": `import { alpha } from "@repo/alpha";`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/pnpm/packages/beta/index.ts", 1, files["/home/projects/pnpm/packages/beta/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			// Before pnpm install: the import is unresolved because node_modules/@repo/alpha doesn't exist.
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/pnpm/packages/beta/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/pnpm/packages/beta/index.ts"))), 1)
+
+			// Simulate pnpm install: create a symlink from beta's node_modules/@repo/alpha to packages/alpha.
+			mapFS := utils.FsFromFileMap().FSys().(*vfstest.MapFS)
+			err = mapFS.MkdirAll("home/projects/pnpm/packages/beta/node_modules/@repo", fs.ModePerm)
+			assert.NilError(t, err)
+			mapFS.AddSymlink("home/projects/pnpm/packages/beta/node_modules/@repo/alpha", "home/projects/pnpm/packages/alpha")
+
+			// Fire watch events mimicking what VS Code sends for a pnpm install.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/packages/beta/node_modules"},
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/%40repo"},
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/%40repo/alpha"},
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/pnpm-lock.yaml"},
+				{Type: lsproto.FileChangeTypeChanged, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/.bin/tsc"},
+				{Type: lsproto.FileChangeTypeChanged, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/.bin/tsserver"},
+			})
+
+			// After pnpm install: the import should resolve.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/pnpm/packages/beta/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			diags := program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/pnpm/packages/beta/index.ts"))
+			for _, d := range diags {
+				t.Logf("diagnostic: %s", d.String())
+			}
+			assert.Equal(t, len(diags), 0)
 		})
 	})
 
