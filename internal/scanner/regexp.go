@@ -106,6 +106,13 @@ func (p *regExpParser) incPos(n int) {
 	p.scanner.pos += n
 }
 
+func (p *regExpParser) char() rune {
+	if p.pos() < p.end {
+		return rune(p.scanner.text[p.pos()])
+	}
+	return -1
+}
+
 func (p *regExpParser) charAt(pos int) rune {
 	if pos < p.end {
 		return rune(p.scanner.text[pos])
@@ -127,7 +134,7 @@ func (p *regExpParser) scanDisjunction(isInGroup bool) {
 		p.namedCapturingGroups = append(p.namedCapturingGroups, make(map[string]bool))
 		p.scanAlternative(isInGroup)
 		p.namedCapturingGroups = p.namedCapturingGroups[:len(p.namedCapturingGroups)-1]
-		if p.charAt(p.pos()) != '|' {
+		if p.char() != '|' {
 			return
 		}
 		p.incPos(1)
@@ -176,14 +183,14 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 	isPreviousTermQuantifiable := false
 	for p.pos() < p.end {
 		start := p.pos()
-		ch := p.charAt(p.pos())
+		ch := p.char()
 		switch ch {
 		case '^', '$':
 			p.incPos(1)
 			isPreviousTermQuantifiable = false
 		case '\\':
 			p.incPos(1)
-			switch p.charAt(p.pos()) {
+			switch p.char() {
 			case 'b', 'B':
 				p.incPos(1)
 				isPreviousTermQuantifiable = false
@@ -193,9 +200,9 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 			}
 		case '(':
 			p.incPos(1)
-			if p.charAt(p.pos()) == '?' {
+			if p.char() == '?' {
 				p.incPos(1)
-				switch p.charAt(p.pos()) {
+				switch p.char() {
 				case '=', '!':
 					p.incPos(1)
 					// In Annex B, `(?=Disjunction)` and `(?!Disjunction)` are quantifiable
@@ -203,7 +210,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				case '<':
 					groupNameStart := p.pos()
 					p.incPos(1)
-					switch p.charAt(p.pos()) {
+					switch p.char() {
 					case '=', '!':
 						p.incPos(1)
 						isPreviousTermQuantifiable = false
@@ -219,7 +226,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				default:
 					flagsStart := p.pos()
 					setFlags := p.scanPatternModifiers(regularExpressionFlagsNone)
-					if p.charAt(p.pos()) == '-' {
+					if p.char() == '-' {
 						p.incPos(1)
 						p.scanPatternModifiers(setFlags)
 						if p.pos() == flagsStart+1 {
@@ -244,12 +251,12 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				isPreviousTermQuantifiable = true
 				continue
 			}
-			if p.charAt(p.pos()) == ',' {
+			if p.char() == ',' {
 				p.incPos(1)
 				p.scanDigits()
 				maxStr := p.scanner.tokenValue
 				if minStr == "" {
-					if maxStr != "" || p.charAt(p.pos()) == '}' {
+					if maxStr != "" || p.char() == '}' {
 						p.error(diagnostics.Incomplete_quantifier_Digit_expected, digitsStart, 0)
 					} else {
 						p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start, 1, string(ch))
@@ -259,7 +266,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				} else if maxStr != "" {
 					minVal, _ := strconv.Atoi(minStr)
 					maxVal, _ := strconv.Atoi(maxStr)
-					if minVal > maxVal && (p.anyUnicodeModeOrNonAnnexB || p.charAt(p.pos()) == '}') {
+					if minVal > maxVal && (p.anyUnicodeModeOrNonAnnexB || p.char() == '}') {
 						p.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, p.pos()-digitsStart)
 					}
 				}
@@ -270,7 +277,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 				isPreviousTermQuantifiable = true
 				continue
 			}
-			if p.charAt(p.pos()) != '}' {
+			if p.char() != '}' {
 				if p.anyUnicodeModeOrNonAnnexB {
 					p.error(diagnostics.X_0_expected, p.pos(), 0, "}")
 					p.incPos(-1)
@@ -283,7 +290,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 			fallthrough
 		case '*', '+', '?':
 			p.incPos(1)
-			if p.charAt(p.pos()) == '?' {
+			if p.char() == '?' {
 				p.incPos(1)
 			}
 			if !isPreviousTermQuantifiable {
@@ -352,10 +359,10 @@ func (p *regExpParser) scanPatternModifiers(currFlags regularExpressionFlags) re
 //	| CharacterEscape
 //	| 'k<' RegExpIdentifierName '>'
 func (p *regExpParser) scanAtomEscape() {
-	switch p.charAt(p.pos()) {
+	switch p.char() {
 	case 'k':
 		p.incPos(1)
-		if p.charAt(p.pos()) == '<' {
+		if p.char() == '<' {
 			p.incPos(1)
 			p.scanGroupName(true /*isReference*/)
 			p.scanExpectedChar('>')
@@ -378,7 +385,7 @@ func (p *regExpParser) scanAtomEscape() {
 
 // DecimalEscape ::= [1-9] [0-9]*
 func (p *regExpParser) scanDecimalEscape() bool {
-	ch := p.charAt(p.pos())
+	ch := p.char()
 	if ch >= '1' && ch <= '9' {
 		start := p.pos()
 		p.scanDigits()
@@ -400,14 +407,14 @@ func (p *regExpParser) scanDecimalEscape() bool {
 //	| '^' | '$' | '/' | '\' | '.' | '*' | '+' | '?' | '(' | ')' | '[' | ']' | '{' | '}' | '|'
 //	| [~AnyUnicodeMode] (any other non-identifier characters)
 func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
-	ch := p.charAt(p.pos())
+	ch := p.char()
 	switch ch {
 	case -1:
 		p.error(diagnostics.Undetermined_character_escape, p.pos()-1, 1)
 		return "\\"
 	case 'c':
 		p.incPos(1)
-		ch = p.charAt(p.pos())
+		ch = p.char()
 		if stringutil.IsASCIILetter(ch) {
 			p.incPos(1)
 			return string(ch & 0x1f)
@@ -471,19 +478,19 @@ func (p *regExpParser) isClassContentExit(ch rune) bool {
 // ClassRanges ::= '^'? (ClassAtom ('-' ClassAtom)?)*
 func (p *regExpParser) scanClassRanges() {
 	p.pendingLowSurrogate = 0
-	if p.charAt(p.pos()) == '^' {
+	if p.char() == '^' {
 		p.incPos(1)
 	}
 	for p.pos() < p.end {
-		ch := p.charAt(p.pos())
+		ch := p.char()
 		if p.isClassContentExit(ch) {
 			return
 		}
 		minStart := p.pos()
 		minCharacter := p.scanClassAtom()
-		if p.charAt(p.pos()) == '-' {
+		if p.char() == '-' {
 			p.incPos(1)
-			ch = p.charAt(p.pos())
+			ch = p.char()
 			if p.isClassContentExit(ch) {
 				return
 			}
@@ -515,12 +522,12 @@ func (p *regExpParser) scanClassRanges() {
 // ClassSetRange ::= ClassSetCharacter '-' ClassSetCharacter
 func (p *regExpParser) scanClassSetExpression() {
 	isCharacterComplement := false
-	if p.charAt(p.pos()) == '^' {
+	if p.char() == '^' {
 		p.incPos(1)
 		isCharacterComplement = true
 	}
 	expressionMayContainStrings := false
-	ch := p.charAt(p.pos())
+	ch := p.char()
 	if p.isClassContentExit(ch) {
 		return
 	}
@@ -537,7 +544,7 @@ func (p *regExpParser) scanClassSetExpression() {
 	default:
 		operand = p.scanClassSetOperand()
 	}
-	switch p.charAt(p.pos()) {
+	switch p.char() {
 	case '-':
 		if p.pos()+1 < p.end && p.charAt(p.pos()+1) == '-' {
 			if isCharacterComplement && p.mayContainStrings {
@@ -567,11 +574,11 @@ func (p *regExpParser) scanClassSetExpression() {
 		expressionMayContainStrings = p.mayContainStrings
 	}
 	for p.pos() < p.end {
-		ch = p.charAt(p.pos())
+		ch = p.char()
 		switch ch {
 		case '-':
 			p.incPos(1)
-			ch = p.charAt(p.pos())
+			ch = p.char()
 			if p.isClassContentExit(ch) {
 				p.mayContainStrings = !isCharacterComplement && expressionMayContainStrings
 				return
@@ -605,10 +612,10 @@ func (p *regExpParser) scanClassSetExpression() {
 		case '&':
 			start = p.pos()
 			p.incPos(1)
-			if p.charAt(p.pos()) == '&' {
+			if p.char() == '&' {
 				p.incPos(1)
 				p.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, p.pos()-2, 2)
-				if p.charAt(p.pos()) == '&' {
+				if p.char() == '&' {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 					p.incPos(1)
 				}
@@ -618,7 +625,7 @@ func (p *regExpParser) scanClassSetExpression() {
 			operand = p.text()[start:p.pos()]
 			continue
 		}
-		if p.isClassContentExit(p.charAt(p.pos())) {
+		if p.isClassContentExit(p.char()) {
 			break
 		}
 		start = p.pos()
@@ -641,14 +648,14 @@ func (p *regExpParser) scanClassSetExpression() {
 func (p *regExpParser) scanClassSetSubExpression(expressionType classSetExpressionType) {
 	expressionMayContainStrings := p.mayContainStrings
 	for p.pos() < p.end {
-		ch := p.charAt(p.pos())
+		ch := p.char()
 		if p.isClassContentExit(ch) {
 			break
 		}
 		switch ch {
 		case '-':
 			p.incPos(1)
-			if p.charAt(p.pos()) == '-' {
+			if p.char() == '-' {
 				p.incPos(1)
 				if expressionType != classSetExpressionTypeClassSubtraction {
 					p.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, p.pos()-2, 2)
@@ -658,12 +665,12 @@ func (p *regExpParser) scanClassSetSubExpression(expressionType classSetExpressi
 			}
 		case '&':
 			p.incPos(1)
-			if p.charAt(p.pos()) == '&' {
+			if p.char() == '&' {
 				p.incPos(1)
 				if expressionType != classSetExpressionTypeClassIntersection {
 					p.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, p.pos()-2, 2)
 				}
-				if p.charAt(p.pos()) == '&' {
+				if p.char() == '&' {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 					p.incPos(1)
 				}
@@ -678,7 +685,7 @@ func (p *regExpParser) scanClassSetSubExpression(expressionType classSetExpressi
 				p.error(diagnostics.X_0_expected, p.pos(), 0, "&&")
 			}
 		}
-		ch = p.charAt(p.pos())
+		ch = p.char()
 		if p.isClassContentExit(ch) {
 			p.error(diagnostics.Expected_a_class_set_operand, p.pos(), 0)
 			break
@@ -699,7 +706,7 @@ func (p *regExpParser) scanClassSetSubExpression(expressionType classSetExpressi
 //	| ClassSetCharacter
 func (p *regExpParser) scanClassSetOperand() string {
 	p.mayContainStrings = false
-	switch p.charAt(p.pos()) {
+	switch p.char() {
 	case '[':
 		p.incPos(1)
 		p.scanClassSetExpression()
@@ -709,9 +716,9 @@ func (p *regExpParser) scanClassSetOperand() string {
 		p.incPos(1)
 		if p.scanCharacterClassEscape() {
 			return ""
-		} else if p.charAt(p.pos()) == 'q' {
+		} else if p.char() == 'q' {
 			p.incPos(1)
-			if p.charAt(p.pos()) == '{' {
+			if p.char() == '{' {
 				p.incPos(1)
 				p.scanClassStringDisjunctionContents()
 				p.scanExpectedChar('}')
@@ -732,7 +739,7 @@ func (p *regExpParser) scanClassSetOperand() string {
 func (p *regExpParser) scanClassStringDisjunctionContents() {
 	characterCount := 0
 	for p.pos() < p.end {
-		ch := p.charAt(p.pos())
+		ch := p.char()
 		switch ch {
 		case '}':
 			if characterCount != 1 {
@@ -757,10 +764,10 @@ func (p *regExpParser) scanClassStringDisjunctionContents() {
 //	| SourceCharacter -- ClassSetSyntaxCharacter -- ClassSetReservedDoublePunctuator
 //	| '\' (CharacterEscape | ClassSetReservedPunctuator | 'b')
 func (p *regExpParser) scanClassSetCharacter() string {
-	ch := p.charAt(p.pos())
+	ch := p.char()
 	if ch == '\\' {
 		p.incPos(1)
-		innerCh := p.charAt(p.pos())
+		innerCh := p.char()
 		switch innerCh {
 		case 'b':
 			p.incPos(1)
@@ -800,9 +807,9 @@ func (p *regExpParser) scanClassSetCharacter() string {
 //	| CharacterClassEscape
 //	| CharacterEscape
 func (p *regExpParser) scanClassAtom() string {
-	if p.charAt(p.pos()) == '\\' {
+	if p.char() == '\\' {
 		p.incPos(1)
-		ch := p.charAt(p.pos())
+		ch := p.char()
 		switch ch {
 		case 'b':
 			p.incPos(1)
@@ -828,7 +835,7 @@ func (p *regExpParser) scanClassAtom() string {
 func (p *regExpParser) scanCharacterClassEscape() bool {
 	isCharacterComplement := false
 	start := p.pos() - 1
-	ch := p.charAt(p.pos())
+	ch := p.char()
 	switch ch {
 	case 'd', 'D', 's', 'S', 'w', 'W':
 		p.incPos(1)
@@ -838,11 +845,11 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 		fallthrough
 	case 'p':
 		p.incPos(1)
-		if p.charAt(p.pos()) == '{' {
+		if p.char() == '{' {
 			p.incPos(1)
 			propertyNameOrValueStart := p.pos()
 			propertyNameOrValue := p.scanWordCharacters()
-			if p.charAt(p.pos()) == '=' {
+			if p.char() == '=' {
 				propertyName := nonBinaryUnicodeProperties[propertyNameOrValue]
 				if p.pos() == propertyNameOrValueStart {
 					p.error(diagnostics.Expected_a_Unicode_property_name, p.pos(), 0)
@@ -939,7 +946,7 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyNameOrValue(name s
 func (p *regExpParser) scanWordCharacters() string {
 	start := p.pos()
 	for p.pos() < p.end {
-		ch := p.charAt(p.pos())
+		ch := p.char()
 		if !isWordCharacter(ch) {
 			break
 		}
@@ -988,7 +995,7 @@ func (p *regExpParser) scanSourceCharacter() string {
 }
 
 func (p *regExpParser) scanExpectedChar(ch rune) {
-	if p.charAt(p.pos()) == ch {
+	if p.char() == ch {
 		p.incPos(1)
 	} else {
 		p.error(diagnostics.X_0_expected, p.pos(), 0, string(ch))
@@ -997,7 +1004,7 @@ func (p *regExpParser) scanExpectedChar(ch rune) {
 
 func (p *regExpParser) scanDigits() {
 	start := p.pos()
-	for p.pos() < p.end && stringutil.IsDigit(p.charAt(p.pos())) {
+	for p.pos() < p.end && stringutil.IsDigit(p.char()) {
 		p.incPos(1)
 	}
 	p.scanner.tokenValue = p.text()[start:p.pos()]
