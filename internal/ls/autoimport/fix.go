@@ -518,7 +518,7 @@ func insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*as
 			})
 			if insertionIndex == 0 {
 				// If the first import is top-of-file, insert after the leading comment which is likely the header
-				ct.InsertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(existingImportStatements[0], sourceFile, false)), newImport.AsNode(), change.NodeOptions{})
+				ct.InsertNodeBefore(sourceFile, existingImportStatements[0].AsNode(), newImport.AsNode(), false /*blankLineBetween*/)
 			} else {
 				prevImport := existingImportStatements[insertionIndex-1]
 				ct.InsertNodeAfter(sourceFile, prevImport.AsNode(), newImport.AsNode())
