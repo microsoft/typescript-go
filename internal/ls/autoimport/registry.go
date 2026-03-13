@@ -1130,8 +1130,11 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 type discoveredPackage struct {
 	packageName string
 	packageJson *packagejson.InfoCacheEntry
-	realpath    string
-	dirPath     tspath.Path // bucket directory path (used as extraction context)
+	// typesPackageJson is the @types package.json fallback, used when the main
+	// package exists but has no TypeScript entrypoints (e.g., react + @types/react).
+	typesPackageJson *packagejson.InfoCacheEntry
+	realpath         string
+	dirPath          tspath.Path // bucket directory path (used as extraction context)
 }
 
 // perPackageExtractionResult holds the extraction output for one physical package.
@@ -1174,18 +1177,27 @@ func (b *registryBuilder) discoverBucketPackages(
 	for packageName := range packageNames.Keys() {
 		typesPackageName := module.GetTypesPackageName(packageName)
 		packageJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", packageName, "package.json"))
+		var typesPackageJson *packagejson.InfoCacheEntry
 		if !packageJson.DirectoryExists {
 			packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
+		} else if packageName != typesPackageName {
+			// If the real package exists, also check for a corresponding @types package
+			// as a fallback for when the real package has no TypeScript entrypoints.
+			typesJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
+			if typesJson.DirectoryExists {
+				typesPackageJson = typesJson
+			}
 		}
 		var realpath string
 		if packageJson.DirectoryExists {
 			realpath = b.host.FS().Realpath(packageJson.PackageDirectory)
 		}
 		result = append(result, &discoveredPackage{
-			packageName: packageName,
-			packageJson: packageJson,
-			realpath:    realpath,
-			dirPath:     dirPath,
+			packageName:      packageName,
+			packageJson:      packageJson,
+			typesPackageJson: typesPackageJson,
+			realpath:         realpath,
+			dirPath:          dirPath,
 		})
 	}
 	return result
@@ -1207,7 +1219,17 @@ func (b *registryBuilder) extractPackage(
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
 	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 	if packageEntrypoints == nil {
-		return nil
+		// If the main package has no TypeScript entrypoints, try using the @types
+		// fallback (e.g., react has no .d.ts files, but @types/react does).
+		if pkg.typesPackageJson != nil {
+			packageJson = pkg.typesPackageJson
+			toRealpath, toSymlink = getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
+			resolver = getModuleResolver(b.host, toRealpath, b.resolverOptions)
+			packageEntrypoints = resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
+		}
+		if packageEntrypoints == nil {
+			return nil
+		}
 	}
 
 	var skippedEntrypoints int
