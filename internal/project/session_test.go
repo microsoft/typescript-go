@@ -1059,6 +1059,46 @@ func TestSession(t *testing.T) {
 			}
 			assert.Equal(t, len(diags), 0)
 		})
+
+		t.Run("create file in non-existent directory", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["src/index.ts"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `import { helper } from "./lib/helper";`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			// Initially should have an error because lib/helper.ts doesn't exist
+			// and src/lib/ directory doesn't exist either.
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+
+			// Create the directory and file.
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/lib/helper.ts", `export const helper = 1;`)
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/lib/helper.ts",
+				},
+			})
+
+			// Error should be resolved.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/lib/helper.ts") != nil)
+		})
 	})
 
 	t.Run("refreshes code lenses and inlay hints when relevant user preferences change", func(t *testing.T) {

@@ -479,6 +479,12 @@ func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary)
 		for uri := range change.Created.Keys() {
 			fileName := uri.FileName()
 			if hasRelevantWatchExtension(fileName) || isTrackedNodeModulesDirectory(fileName) {
+				// !!! Doing any amount of filtering here can break symlink directory creation where
+				//     the realpath directory contains a failed lookup location. isTrackedNodeModulesDirectory
+				//     handles the common case of package manager installs, but simply removing this filter
+				//     and letting it happen in markDirtyFiles would cause more stuff to work. The question
+				//     is whether that would be expensive. I think it would probably be fine, but we're starting
+				//     conservatively.
 				filteredCreated.Add(uri)
 			}
 		}
@@ -532,10 +538,11 @@ func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummar
 
 // sourceFS is a vfs.FS that sources files from a FileSource and tracks seen files.
 type sourceFS struct {
-	tracking  bool
-	toPath    func(fileName string) tspath.Path
-	seenFiles *collections.SyncSet[tspath.Path]
-	source    FileSource
+	tracking           bool
+	toPath             func(fileName string) tspath.Path
+	missingDirectories *collections.SyncSet[tspath.Path]
+	seenFiles          *collections.SyncSet[tspath.Path]
+	source             FileSource
 }
 
 func newSourceFS(tracking bool, source FileSource, toPath func(fileName string) tspath.Path) *sourceFS {
@@ -546,6 +553,7 @@ func newSourceFS(tracking bool, source FileSource, toPath func(fileName string) 
 	}
 	if tracking {
 		fs.seenFiles = &collections.SyncSet[tspath.Path]{}
+		fs.missingDirectories = &collections.SyncSet[tspath.Path]{}
 	}
 	return fs
 }
@@ -563,11 +571,31 @@ func (fs *sourceFS) Track(fileName string) {
 	fs.seenFiles.Add(fs.toPath(fileName))
 }
 
-func (fs *sourceFS) Seen(path tspath.Path) bool {
+func (fs *sourceFS) SeenFile(path tspath.Path) bool {
 	if fs.seenFiles == nil {
 		return false
 	}
 	return fs.seenFiles.Has(path)
+}
+
+func (fs *sourceFS) SeenFileOrMissingParentDirectory(path tspath.Path) bool {
+	if fs.seenFiles != nil && fs.seenFiles.Has(path) {
+		return true
+	}
+	if fs.missingDirectories != nil && !fs.missingDirectories.IsEmpty() {
+		for {
+			if fs.missingDirectories.Has(path) {
+				return true
+			}
+
+			parent := path.GetDirectoryPath()
+			if parent == path {
+				break
+			}
+			path = parent
+		}
+	}
+	return false
 }
 
 func (fs *sourceFS) GetFile(fileName string) FileHandle {
@@ -583,8 +611,8 @@ func (fs *sourceFS) GetFileByPath(fileName string, path tspath.Path) FileHandle 
 // DirectoryExists implements vfs.FS.
 func (fs *sourceFS) DirectoryExists(path string) bool {
 	exists := fs.source.FS().DirectoryExists(path)
-	if !exists && fs.tracking && isTrackedNodeModulesDirectory(path) {
-		fs.seenFiles.Add(fs.toPath(path))
+	if !exists && fs.tracking {
+		fs.missingDirectories.Add(fs.toPath(path))
 	}
 	return exists
 }
