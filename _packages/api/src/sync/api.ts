@@ -17,6 +17,7 @@ import { TypeFlags } from "#enums/typeFlags";
 import { TypePredicateKind } from "#enums/typePredicateKind";
 import type {
     Expression,
+    Identifier,
     Node,
     Path,
     SourceFile,
@@ -520,8 +521,8 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
-    getResolvedSymbol(node: Node): Symbol | undefined {
-        const text = (node as any).text;
+    getResolvedSymbol(node: Identifier): Symbol | undefined {
+        const text = node.text;
         if (!text) return undefined;
         return this.resolveName(text, SymbolFlags.Value | SymbolFlags.ExportValue, node);
     }
