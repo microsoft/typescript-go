@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
@@ -87,7 +88,7 @@ type classLexicalEnv struct {
 type classFieldsTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
-	resolver        printer.EmitResolver
+	resolver        binder.ReferenceResolver
 
 	// Computed configuration flags
 	shouldTransformInitializersUsingSet               bool
@@ -137,7 +138,7 @@ type classFieldsTransformer struct {
 func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &classFieldsTransformer{
 		compilerOptions:  opts.CompilerOptions,
-		resolver:         opts.EmitResolver,
+		resolver:         opts.Resolver,
 		legacyDecorators: opts.CompilerOptions.ExperimentalDecorators.IsTrue(),
 	}
 
