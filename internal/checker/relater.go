@@ -374,7 +374,9 @@ func (c *Checker) checkTypeRelatedToEx(
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
 		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
 		relation.set(id, RelationComparisonResultFailed|core.IfElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
-		c.tracing.Instant(tracing.PhaseCheckTypes, "checkTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
+		if c.tracing != nil {
+			c.tracing.Instant(tracing.PhaseCheckTypes, "checkTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
+		}
 		message := core.IfElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 		if errorNode == nil {
 			errorNode = c.currentNode
@@ -1335,7 +1337,9 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
 	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
-		c.tracing.Push(tracing.PhaseCheckTypes, "getVariancesWorker", false, "arity", strconv.Itoa(len(typeParameters)), "id", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10))
+		if c.tracing != nil {
+			c.tracing.Push(tracing.PhaseCheckTypes, "getVariancesWorker", false, "arity", strconv.Itoa(len(typeParameters)), "id", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10))
+		}
 		oldVarianceComputation := c.inVarianceComputation
 		saveResolutionStart := c.resolutionStart
 		if !c.inVarianceComputation {
@@ -1387,7 +1391,9 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			c.inVarianceComputation = false
 			c.resolutionStart = saveResolutionStart
 		}
-		c.tracing.Pop()
+		if c.tracing != nil {
+			c.tracing.Pop()
+		}
 		links.variances = variances
 	}
 	return links.variances
@@ -3081,12 +3087,18 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	r.c.reliabilityFlags = 0
 	var result Ternary
 	if r.expandingFlags == ExpandingFlagsBoth {
-		r.c.tracing.Instant(tracing.PhaseCheckTypes, "recursiveTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
+		if r.c.tracing != nil {
+			r.c.tracing.Instant(tracing.PhaseCheckTypes, "recursiveTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
+		}
 		result = TernaryMaybe
 	} else {
-		r.c.tracing.Push(tracing.PhaseCheckTypes, "structuredTypeRelatedTo", false, "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10))
+		if r.c.tracing != nil {
+			r.c.tracing.Push(tracing.PhaseCheckTypes, "structuredTypeRelatedTo", false, "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10))
+		}
 		result = r.structuredTypeRelatedTo(source, target, reportErrors, intersectionState)
-		r.c.tracing.Pop()
+		if r.c.tracing != nil {
+			r.c.tracing.Pop()
+		}
 	}
 	propagatingVarianceFlags := r.c.reliabilityFlags
 	r.c.reliabilityFlags |= saveReliabilityFlags
@@ -3964,7 +3976,9 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	for _, sourceProperty := range sourcePropertiesFiltered {
 		numCombinations *= countTypes(r.c.getNonMissingTypeOfSymbol(sourceProperty))
 		if numCombinations > 25 {
-			r.c.tracing.Instant(tracing.PhaseCheckTypes, "typeRelatedToDiscriminatedType_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "numCombinations", strconv.Itoa(numCombinations))
+			if r.c.tracing != nil {
+				r.c.tracing.Instant(tracing.PhaseCheckTypes, "typeRelatedToDiscriminatedType_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "numCombinations", strconv.Itoa(numCombinations))
+			}
 			return TernaryFalse
 		}
 		if numCombinations == 0 {

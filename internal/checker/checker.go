@@ -2134,7 +2134,9 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 	c.checkNotCanceled()
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
-		c.tracing.Push(tracing.PhaseCheck, "checkSourceFile", true, "path", string(sourceFile.Path()))
+		if c.tracing != nil {
+			c.tracing.Push(tracing.PhaseCheck, "checkSourceFile", true, "path", string(sourceFile.Path()))
+		}
 		c.ctx = ctx
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
@@ -2158,7 +2160,9 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		}
 		c.ctx = nil
 		c.reportedUnreachableNodes.Clear()
-		c.tracing.Pop()
+		if c.tracing != nil {
+			c.tracing.Pop()
+		}
 		links.typeChecked = true
 	}
 }
@@ -2437,7 +2441,9 @@ func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
 }
 
 func (c *Checker) checkDeferredNode(node *ast.Node) {
-	c.tracing.Push(tracing.PhaseCheck, "checkDeferredNode", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
+	if c.tracing != nil {
+		c.tracing.Push(tracing.PhaseCheck, "checkDeferredNode", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
+	}
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
@@ -2468,7 +2474,9 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 		}
 	}
 	c.currentNode = saveCurrentNode
-	c.tracing.Pop()
+	if c.tracing != nil {
+		c.tracing.Pop()
+	}
 }
 
 func (c *Checker) checkJSDocComments(node *ast.Node) {
@@ -2568,14 +2576,18 @@ func (c *Checker) checkTypeParameterDeferred(node *ast.Node) {
 			if ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && c.getDeclaredTypeOfSymbol(symbol).objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) == 0 {
 				c.error(node, diagnostics.Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_types)
 			} else if modifiers == ast.ModifierFlagsIn || modifiers == ast.ModifierFlagsOut {
-				c.tracing.Push(tracing.PhaseCheckTypes, "checkTypeParameterDeferred", false, "parent", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10), "id", strconv.FormatUint(uint64(typeParameter.id), 10))
+				if c.tracing != nil {
+					c.tracing.Push(tracing.PhaseCheckTypes, "checkTypeParameterDeferred", false, "parent", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10), "id", strconv.FormatUint(uint64(typeParameter.id), 10))
+				}
 				source := c.createMarkerType(symbol, typeParameter, core.IfElse(modifiers == ast.ModifierFlagsOut, c.markerSubTypeForCheck, c.markerSuperTypeForCheck))
 				target := c.createMarkerType(symbol, typeParameter, core.IfElse(modifiers == ast.ModifierFlagsOut, c.markerSuperTypeForCheck, c.markerSubTypeForCheck))
 				saveVarianceTypeParameter := typeParameter
 				c.varianceTypeParameter = typeParameter
 				c.checkTypeAssignableTo(source, target, node, diagnostics.Type_0_is_not_assignable_to_type_1_as_implied_by_variance_annotation)
 				c.varianceTypeParameter = saveVarianceTypeParameter
-				c.tracing.Pop()
+				if c.tracing != nil {
+					c.tracing.Pop()
+				}
 			}
 		}
 	}
@@ -5625,10 +5637,14 @@ func (c *Checker) checkVariableDeclarationList(node *ast.Node) {
 }
 
 func (c *Checker) checkVariableDeclaration(node *ast.Node) {
-	c.tracing.Push(tracing.PhaseCheck, "checkVariableDeclaration", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
+	if c.tracing != nil {
+		c.tracing.Push(tracing.PhaseCheck, "checkVariableDeclaration", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
+	}
 	c.checkGrammarVariableDeclaration(node.AsVariableDeclaration())
 	c.checkVariableLikeDeclaration(node)
-	c.tracing.Pop()
+	if c.tracing != nil {
+		c.tracing.Pop()
+	}
 }
 
 // Check variable, parameter, or property declaration
@@ -7358,7 +7374,9 @@ func (c *Checker) checkExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
-	c.tracing.Push(tracing.PhaseCheck, "checkExpression", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
+	if c.tracing != nil {
+		c.tracing.Push(tracing.PhaseCheck, "checkExpression", false, "kind", strconv.Itoa(int(node.Kind)), "pos", strconv.Itoa(node.Pos()), "end", strconv.Itoa(node.End()), "path", ast.GetSourceFileOfNode(node).FileName())
+	}
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
@@ -7368,7 +7386,9 @@ func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
 		c.checkConstEnumAccess(node, t)
 	}
 	c.currentNode = saveCurrentNode
-	c.tracing.Pop()
+	if c.tracing != nil {
+		c.tracing.Pop()
+	}
 	return t
 }
 
@@ -21667,7 +21687,9 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 		// We have reached 100 recursive type instantiations, or 5M type instantiations caused by the same statement
 		// or expression. There is a very high likelihood we're dealing with a combination of infinite generic types
 		// that perpetually generate new type identities, so we stop the recursion here by yielding the error type.
-		c.tracing.Instant(tracing.PhaseCheckTypes, "instantiateType_DepthLimit", "typeId", strconv.FormatUint(uint64(t.id), 10), "instantiationDepth", strconv.FormatUint(uint64(c.instantiationDepth), 10), "instantiationCount", strconv.FormatUint(uint64(c.instantiationCount), 10))
+		if c.tracing != nil {
+			c.tracing.Instant(tracing.PhaseCheckTypes, "instantiateType_DepthLimit", "typeId", strconv.FormatUint(uint64(t.id), 10), "instantiationDepth", strconv.FormatUint(uint64(c.instantiationDepth), 10), "instantiationCount", strconv.FormatUint(uint64(c.instantiationCount), 10))
+		}
 		c.error(c.currentNode, diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite)
 		return c.errorType
 	}
@@ -25432,7 +25454,9 @@ func (c *Checker) removeSubtypes(types []*Type, hasObjectTypes bool) []*Type {
 						// caps union types at 1000 unique object types.
 						estimatedCount := (count / (length - i)) * length
 						if estimatedCount > 1000000 {
-							c.tracing.Instant(tracing.PhaseCheckTypes, "removeSubtypes_DepthLimit", "estimatedCount", strconv.Itoa(estimatedCount))
+							if c.tracing != nil {
+								c.tracing.Instant(tracing.PhaseCheckTypes, "removeSubtypes_DepthLimit", "estimatedCount", strconv.Itoa(estimatedCount))
+							}
 							c.error(c.currentNode, diagnostics.Expression_produces_a_union_type_that_is_too_complex_to_represent)
 							return nil
 						}
@@ -26066,7 +26090,9 @@ func compareTypeIds(t1, t2 *Type) int {
 func (c *Checker) checkCrossProductUnion(types []*Type) bool {
 	size := c.getCrossProductUnionSize(types)
 	if size >= 100_000 {
-		c.tracing.Instant(tracing.PhaseCheckTypes, "checkCrossProductUnion_DepthLimit", "size", strconv.Itoa(size))
+		if c.tracing != nil {
+			c.tracing.Instant(tracing.PhaseCheckTypes, "checkCrossProductUnion_DepthLimit", "size", strconv.Itoa(size))
+		}
 		c.error(c.currentNode, diagnostics.Expression_produces_a_union_type_that_is_too_complex_to_represent)
 		return false
 	}

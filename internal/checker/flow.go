@@ -118,7 +118,9 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 	if f.depth == 2000 {
 		// We have made 2000 recursive invocations. To avoid overflowing the call stack we report an error
 		// and disable further control flow analysis in the containing function or module body.
-		c.tracing.Instant(tracing.PhaseCheckTypes, "getTypeAtFlowNode_DepthLimit", "depth", strconv.Itoa(f.depth))
+		if c.tracing != nil {
+			c.tracing.Instant(tracing.PhaseCheckTypes, "getTypeAtFlowNode_DepthLimit", "depth", strconv.Itoa(f.depth))
+		}
 		c.flowAnalysisDisabled = true
 		c.reportFlowControlError(f.reference)
 		return FlowType{t: c.errorType}
