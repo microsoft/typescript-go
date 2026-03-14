@@ -327,12 +327,15 @@ func (tx *JSXTransformer) convertJsxChildrenToChildrenPropAssignment(children []
 		}
 		return tx.Factory().NewPropertyAssignment(nil, tx.Factory().NewIdentifier("children"), nil, nil, result)
 	}
+	// For multiple children in the children property array, don't set StartOnNewLine
+	// on child elements — the array literal is single-line.
 	results := make([]*ast.Node, 0, len(nonWhitespceChildren))
 	for _, child := range nonWhitespceChildren {
 		res := tx.transformJsxChildToExpression(child)
 		if res == nil {
 			continue
 		}
+		tx.EmitContext().SetEmitFlags(res, tx.EmitContext().EmitFlags(res) & ^printer.EFStartOnNewLine)
 		results = append(results, res)
 	}
 	if len(results) == 0 {
