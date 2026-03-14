@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -22,7 +23,7 @@ type JSXTransformer struct {
 
 	importSpecifier                string
 	filenameDeclaration            *ast.Node
-	utilizedImplicitRuntimeImports map[string]map[string]*ast.Node
+	utilizedImplicitRuntimeImports collections.OrderedMap[string, map[string]*ast.Node]
 	inJsxChild                     bool
 
 	currentSourceFile *ast.SourceFile
@@ -78,14 +79,15 @@ func (tx *JSXTransformer) getImplicitImportForName(name string) *ast.Node {
 	if name != "createElement" {
 		importSource = ast.GetJSXRuntimeImport(importSource, tx.compilerOptions)
 	}
-	existing, ok := tx.utilizedImplicitRuntimeImports[importSource]
+	existing, ok := tx.utilizedImplicitRuntimeImports.Get(importSource)
 	if ok {
 		elem, ok := existing[name]
 		if ok {
 			return elem.AsImportSpecifier().Name()
 		}
 	} else {
-		tx.utilizedImplicitRuntimeImports[importSource] = make(map[string]*ast.Node)
+		existing = make(map[string]*ast.Node)
+		tx.utilizedImplicitRuntimeImports.Set(importSource, existing)
 	}
 
 	generatedName := tx.Factory().NewUniqueNameEx("_"+name, printer.AutoGenerateOptions{
@@ -93,7 +95,7 @@ func (tx *JSXTransformer) getImplicitImportForName(name string) *ast.Node {
 	})
 	specifier := tx.Factory().NewImportSpecifier(false, tx.Factory().NewIdentifier(name), generatedName)
 	tx.emitResolver.SetReferencedImportDeclaration(generatedName, specifier)
-	tx.utilizedImplicitRuntimeImports[importSource][name] = specifier
+	existing[name] = specifier
 	return specifier.Name()
 }
 
@@ -178,18 +180,6 @@ func (tx *JSXTransformer) insertStatementAfterCustomPrologue(to []*ast.Node, sta
 	return insertStatementAfterPrologue(to, statement, (*JSXTransformer).isAnyPrologueDirective, tx)
 }
 
-func sortByImportDeclarationSource(a *ast.Node, b *ast.Node) int {
-	return stringutil.CompareStringsCaseSensitive(a.ModuleSpecifier().Text(), b.ModuleSpecifier().Text())
-}
-
-func getSpecifierOfRequireCall(s *ast.Node) string {
-	return s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].Initializer().Arguments()[0].Text()
-}
-
-func sortByRequireSource(a *ast.Node, b *ast.Node) int {
-	return stringutil.CompareStringsCaseSensitive(getSpecifierOfRequireCall(a), getSpecifierOfRequireCall(b))
-}
-
 func sortImportSpecifiers(a *ast.Node, b *ast.Node) int {
 	res := stringutil.CompareStringsCaseSensitive(a.PropertyName().Text(), b.PropertyName().Text())
 	if res != 0 {
@@ -212,7 +202,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 	tx.currentSourceFile = file
 	tx.importSpecifier = ast.GetJSXImplicitImportBase(tx.compilerOptions, file)
 	tx.filenameDeclaration = nil
-	tx.utilizedImplicitRuntimeImports = make(map[string]map[string]*ast.Node)
+	tx.utilizedImplicitRuntimeImports.Clear()
 
 	visited := tx.Visitor().VisitEachChild(file.AsNode())
 	tx.EmitContext().AddEmitHelper(visited.AsNode(), tx.EmitContext().ReadEmitHelpers()...)
@@ -226,12 +216,11 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 		statementsUpdated = true
 	}
 
-	if len(tx.utilizedImplicitRuntimeImports) > 0 {
-		// A key difference from strada is that these imports are sorted in corsa, rather than appearing in a use-defined order
+	if tx.utilizedImplicitRuntimeImports.Size() > 0 {
 		if ast.IsExternalModule(file) {
 			statementsUpdated = true
-			newStatements := make([]*ast.Node, 0, len(tx.utilizedImplicitRuntimeImports))
-			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports {
+			newStatements := make([]*ast.Node, 0, tx.utilizedImplicitRuntimeImports.Size())
+			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports.Entries() {
 				s := tx.Factory().NewImportDeclaration(
 					nil,
 					tx.Factory().NewImportClause(ast.KindUnknown, nil, tx.Factory().NewNamedImports(tx.Factory().NewNodeList(getSortedSpecifiers(importSpecifiersMap)))),
@@ -242,14 +231,13 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 				newStatements = append(newStatements, s)
 
 			}
-			slices.SortFunc(newStatements, sortByImportDeclarationSource)
 			for _, e := range newStatements {
 				statements = tx.insertStatementAfterCustomPrologue(statements, e)
 			}
 		} else if ast.IsExternalOrCommonJSModule(file) {
 			statementsUpdated = true
-			newStatements := make([]*ast.Node, 0, len(tx.utilizedImplicitRuntimeImports))
-			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports {
+			newStatements := make([]*ast.Node, 0, tx.utilizedImplicitRuntimeImports.Size())
+			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports.Entries() {
 				sorted := getSortedSpecifiers(importSpecifiersMap)
 				asBindingElems := make([]*ast.Node, 0, len(sorted))
 				for _, elem := range sorted {
@@ -268,7 +256,6 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)
 			}
-			slices.SortFunc(newStatements, sortByRequireSource)
 			for _, e := range newStatements {
 				statements = tx.insertStatementAfterCustomPrologue(statements, e)
 			}
@@ -284,7 +271,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 	tx.currentSourceFile = nil
 	tx.importSpecifier = ""
 	tx.filenameDeclaration = nil
-	tx.utilizedImplicitRuntimeImports = nil
+	tx.utilizedImplicitRuntimeImports.Clear()
 
 	return visited
 }
