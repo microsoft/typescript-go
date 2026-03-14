@@ -320,7 +320,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 					)
 				} else {
 					name := nextId.Clone(tx.Factory())
-					tx.EmitContext().SetEmitFlags(name, printer.EFNoSourceMap) // TODO: Strada emits comments here, but shouldn't
+					tx.EmitContext().SetEmitFlags(name, printer.EFNoSourceMap|printer.EFNoComments)
 					left = tx.Factory().NewPropertyAccessExpression(
 						tx.Factory().NewIdentifier("exports"),
 						nil, /*questionDotToken*/
@@ -1465,13 +1465,17 @@ func (tx *CommonJSModuleTransformer) createAllExportExpressions(name *ast.Identi
 		if tx.isDirectExport(name) {
 			// Create exports.name = value to handle the direct export assignment,
 			// since the Go port doesn't have an onSubstituteNode mechanism to rewrite identifiers.
+			exportName := name.Clone(tx.Factory())
+			tx.EmitContext().AddEmitFlags(exportName, printer.EFNoComments|printer.EFNoSourceMap)
 			propertyAccess := tx.Factory().NewPropertyAccessExpression(
 				tx.Factory().NewIdentifier("exports"),
 				nil, /*questionDotToken*/
-				name.Clone(tx.Factory()),
+				exportName,
 				ast.NodeFlagsNone,
 			)
+			tx.EmitContext().AddEmitFlags(propertyAccess, printer.EFNoComments)
 			expression = tx.Factory().NewAssignmentExpression(propertyAccess, value)
+			tx.EmitContext().AssignCommentAndSourceMapRanges(expression, name)
 		} else {
 			expression = tx.Factory().NewAssignmentExpression(name, value)
 		}
@@ -1483,13 +1487,18 @@ func (tx *CommonJSModuleTransformer) createAllExportExpressions(name *ast.Identi
 	// If the identifier is directly exported but has no additional export aliases,
 	// still write to exports.name.
 	if tx.isDirectExport(name) {
+		exportName := name.Clone(tx.Factory())
+		tx.EmitContext().AddEmitFlags(exportName, printer.EFNoComments|printer.EFNoSourceMap)
 		propertyAccess := tx.Factory().NewPropertyAccessExpression(
 			tx.Factory().NewIdentifier("exports"),
 			nil, /*questionDotToken*/
-			name.Clone(tx.Factory()),
+			exportName,
 			ast.NodeFlagsNone,
 		)
-		return tx.Factory().NewAssignmentExpression(propertyAccess, value)
+		tx.EmitContext().AddEmitFlags(propertyAccess, printer.EFNoComments)
+		result := tx.Factory().NewAssignmentExpression(propertyAccess, value)
+		tx.EmitContext().AssignCommentAndSourceMapRanges(result, name)
+		return result
 	}
 	return tx.Factory().NewAssignmentExpression(name, value)
 }
