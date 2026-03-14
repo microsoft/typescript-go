@@ -477,8 +477,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfBindingElement(statements []
 
 	if ast.IsBindingPattern(decl.Name()) {
 		for _, element := range decl.Name().Elements() {
-			e := element.AsBindingElement()
-			if e.DotDotDotToken == nil && e.Name() == nil {
+			if !ast.IsOmittedExpression(element) {
 				statements = tx.appendExportsOfBindingElement(statements, element, isForInOrOfInitializer)
 			}
 		}
