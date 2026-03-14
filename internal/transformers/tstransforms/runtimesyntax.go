@@ -582,9 +582,26 @@ func (tx *RuntimeSyntaxTransformer) visitVariableStatement(node *ast.VariableSta
 	if tx.isExportOfNamespace(node.AsNode()) {
 		expressions := []*ast.Expression{}
 		for _, declaration := range node.DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-			expression := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), declaration.AsVariableDeclaration())
-			if expression != nil {
-				expressions = append(expressions, expression)
+			v := declaration.AsVariableDeclaration()
+			if v.Initializer == nil {
+				continue
+			}
+			if ast.IsBindingPattern(v.Name()) {
+				expression := transformers.FlattenDestructuringAssignment(
+					&tx.Transformer,
+					tx.Visitor().VisitNode(declaration),
+					false, /*needsValue*/
+					transformers.FlattenLevelAll,
+					tx.createNamespaceExportExpression,
+				)
+				if expression != nil {
+					expressions = append(expressions, expression)
+				}
+			} else {
+				expression := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), v)
+				if expression != nil {
+					expressions = append(expressions, expression)
+				}
 			}
 		}
 		if len(expressions) == 0 {
@@ -603,6 +620,17 @@ func (tx *RuntimeSyntaxTransformer) visitVariableStatement(node *ast.VariableSta
 		return statement
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
+}
+
+// createNamespaceExportExpression creates an assignment to a namespace member for use as a
+// callback during destructuring flattening.
+func (tx *RuntimeSyntaxTransformer) createNamespaceExportExpression(exportName *ast.IdentifierNode, exportValue *ast.Expression, location *core.TextRange) *ast.Expression {
+	memberName := tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(tx.currentNamespace), exportName)
+	expression := tx.Factory().NewAssignmentExpression(memberName, exportValue)
+	if location != nil {
+		expression.Loc = *location
+	}
+	return expression
 }
 
 func (tx *RuntimeSyntaxTransformer) visitFunctionDeclaration(node *ast.FunctionDeclaration) *ast.Node {

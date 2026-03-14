@@ -17,15 +17,12 @@
      }
  }
  exports.Foo = Foo;
--/**
--* comment5
--*/
++exports.
+ /**
+ * comment5
+ */
 -exports.someMethod = null.someMethod;
-+({ 
-+    /**
-+    * comment5
-+    */
-+    someMethod: exports.someMethod } = null);
++someMethod = null.someMethod;
 
 
  //// [declarationEmitRetainsJsdocyComments.d.ts]

@@ -1072,6 +1072,13 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 				if expression != nil {
 					pushExpression(tx.Visitor().VisitNode(expression))
 				}
+			} else if ast.IsBindingPattern(v.Name()) {
+				// For binding patterns with export modifier, use flattenDestructuringAssignment
+				// to decompose into individual export assignments
+				expression := tx.transformInitializedVariable(v)
+				if expression != nil {
+					pushExpression(expression)
+				}
 			} else {
 				// For binding patterns, we can't do exports.{pattern} = value
 				// Just emit the assignment and let appendExportsOfVariableStatement handle the exports
@@ -1095,6 +1102,15 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 		return nil
 	}
 	name := node.Name()
+	if ast.IsBindingPattern(name) {
+		return transformers.FlattenDestructuringAssignment(
+			&tx.Transformer,
+			tx.Visitor().VisitNode(node.AsNode()),
+			false, /*needsValue*/
+			transformers.FlattenLevelAll,
+			tx.createAllExportExpressions,
+		)
+	}
 	propertyAccess := tx.Factory().NewPropertyAccessExpression(
 		tx.Factory().NewIdentifier("exports"),
 		nil, /*questionDotToken*/
@@ -1342,6 +1358,10 @@ func (tx *CommonJSModuleTransformer) visitPartiallyEmittedExpression(node *ast.P
 // Visits a binary expression whose value may be discarded, or which might contain an assignment to an exported
 // identifier.
 func (tx *CommonJSModuleTransformer) visitBinaryExpression(node *ast.BinaryExpression, resultIsDiscarded bool) *ast.Node {
+	if ast.IsDestructuringAssignment(node.AsNode()) {
+		return tx.visitDestructuringAssignment(node, resultIsDiscarded)
+	}
+
 	if ast.IsAssignmentExpression(node.AsNode(), false /*excludeCompoundAssignment*/) {
 		return tx.visitAssignmentExpression(node)
 	}
@@ -1354,10 +1374,6 @@ func (tx *CommonJSModuleTransformer) visitBinaryExpression(node *ast.BinaryExpre
 }
 
 func (tx *CommonJSModuleTransformer) visitAssignmentExpression(node *ast.BinaryExpression) *ast.Node {
-	if ast.IsDestructuringAssignment(node.AsNode()) {
-		return tx.visitDestructuringAssignment(node)
-	}
-
 	// When we see an assignment expression whose left-hand side is an exported symbol,
 	// we should ensure all exports of that symbol are updated with the correct value.
 	//
@@ -1382,15 +1398,108 @@ func (tx *CommonJSModuleTransformer) visitAssignmentExpression(node *ast.BinaryE
 }
 
 // Visits a destructuring assignment which might target an exported identifier.
-func (tx *CommonJSModuleTransformer) visitDestructuringAssignment(node *ast.BinaryExpression) *ast.Node {
-	return tx.Factory().UpdateBinaryExpression(
-		node,
-		nil, /*modifiers*/
-		tx.assignmentPatternVisitor.VisitNode(node.Left),
-		nil, /*typeNode*/
-		node.OperatorToken,
-		tx.Visitor().VisitNode(node.Right),
-	)
+func (tx *CommonJSModuleTransformer) visitDestructuringAssignment(node *ast.BinaryExpression, valueIsDiscarded bool) *ast.Node {
+	if tx.destructuringNeedsFlattening(node.Left) {
+		return transformers.FlattenDestructuringAssignment(
+			&tx.Transformer,
+			node.AsNode(),
+			!valueIsDiscarded, /*needsValue*/
+			transformers.FlattenLevelAll,
+			tx.createAllExportExpressions,
+		)
+	}
+	return tx.Visitor().VisitEachChild(node.AsNode())
+}
+
+// destructuringNeedsFlattening checks whether a destructuring assignment target contains any
+// exported identifiers that need to be flattened into individual export assignments.
+func (tx *CommonJSModuleTransformer) destructuringNeedsFlattening(node *ast.Node) bool {
+	if ast.IsObjectLiteralExpression(node) {
+		for _, elem := range node.Properties() {
+			switch elem.Kind {
+			case ast.KindPropertyAssignment:
+				if tx.destructuringNeedsFlattening(elem.Initializer()) {
+					return true
+				}
+			case ast.KindShorthandPropertyAssignment:
+				if tx.destructuringNeedsFlattening(elem.Name()) {
+					return true
+				}
+			case ast.KindSpreadAssignment:
+				if tx.destructuringNeedsFlattening(elem.Expression()) {
+					return true
+				}
+			case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+				return false
+			}
+		}
+	} else if ast.IsArrayLiteralExpression(node) {
+		for _, elem := range node.AsArrayLiteralExpression().Elements.Nodes {
+			if ast.IsSpreadElement(elem) {
+				if tx.destructuringNeedsFlattening(elem.Expression()) {
+					return true
+				}
+			} else if tx.destructuringNeedsFlattening(elem) {
+				return true
+			}
+		}
+	} else if ast.IsIdentifier(node) {
+		exportedNames := tx.getExports(node)
+		threshold := 0
+		if transformers.IsExportName(tx.EmitContext(), node) {
+			threshold = 1
+		}
+		return len(exportedNames) > threshold
+	}
+	return false
+}
+
+// createAllExportExpressions is the callback used during destructuring flattening to create
+// export expressions for each exported identifier binding.
+func (tx *CommonJSModuleTransformer) createAllExportExpressions(name *ast.IdentifierNode, value *ast.Expression, location *core.TextRange) *ast.Expression {
+	exportedNames := tx.getExports(name)
+	if len(exportedNames) > 0 {
+		// If the name is directly exported (i.e., `export let x`), assign to exports.name directly.
+		// Otherwise, assign to the local binding first (i.e., `let x; export { x }`).
+		var expression *ast.Expression
+		if tx.isDirectExport(name) {
+			// Create exports.name = value to handle the direct export assignment,
+			// since the Go port doesn't have an onSubstituteNode mechanism to rewrite identifiers.
+			propertyAccess := tx.Factory().NewPropertyAccessExpression(
+				tx.Factory().NewIdentifier("exports"),
+				nil, /*questionDotToken*/
+				name.Clone(tx.Factory()),
+				ast.NodeFlagsNone,
+			)
+			expression = tx.Factory().NewAssignmentExpression(propertyAccess, value)
+		} else {
+			expression = tx.Factory().NewAssignmentExpression(name, value)
+		}
+		for _, exportName := range exportedNames {
+			expression = tx.createExportExpression(exportName, expression, location, false /*liveBinding*/)
+		}
+		return expression
+	}
+	// If the identifier is directly exported but has no additional export aliases,
+	// still write to exports.name.
+	if tx.isDirectExport(name) {
+		propertyAccess := tx.Factory().NewPropertyAccessExpression(
+			tx.Factory().NewIdentifier("exports"),
+			nil, /*questionDotToken*/
+			name.Clone(tx.Factory()),
+			ast.NodeFlagsNone,
+		)
+		return tx.Factory().NewAssignmentExpression(propertyAccess, value)
+	}
+	return tx.Factory().NewAssignmentExpression(name, value)
+}
+
+// isDirectExport checks whether the identifier is directly exported from the source file
+// (e.g., `export let x` or `export function f()`), as opposed to being re-exported via
+// `export { x }` for a locally-declared variable.
+func (tx *CommonJSModuleTransformer) isDirectExport(name *ast.IdentifierNode) bool {
+	exportContainer := tx.resolver.GetReferencedExportContainer(tx.EmitContext().MostOriginal(name), false /*prefixLocals*/)
+	return exportContainer != nil && ast.IsSourceFile(exportContainer)
 }
 
 func (tx *CommonJSModuleTransformer) visitAssignmentProperty(node *ast.PropertyAssignment) *ast.Node {
