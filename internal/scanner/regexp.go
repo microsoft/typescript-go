@@ -122,6 +122,24 @@ func (p *regExpParser) text() string {
 	return p.scanner.text
 }
 
+func compareDecimalStrings(a string, b string) int {
+	a = strings.TrimLeft(a, "0")
+	b = strings.TrimLeft(b, "0")
+	if a == "" {
+		a = "0"
+	}
+	if b == "" {
+		b = "0"
+	}
+	if len(a) != len(b) {
+		if len(a) < len(b) {
+			return -1
+		}
+		return 1
+	}
+	return strings.Compare(a, b)
+}
+
 // Disjunction ::= Alternative ('|' Alternative)*
 func (p *regExpParser) scanDisjunction(isInGroup bool) {
 	for {
@@ -258,9 +276,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 						continue
 					}
 				} else if maxStr != "" {
-					minVal, _ := strconv.Atoi(minStr)
-					maxVal, _ := strconv.Atoi(maxStr)
-					if minVal > maxVal && (p.anyUnicodeModeOrNonAnnexB || p.char() == '}') {
+					if compareDecimalStrings(minStr, maxStr) > 0 && (p.anyUnicodeModeOrNonAnnexB || p.char() == '}') {
 						p.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, p.pos()-digitsStart)
 					}
 				}
