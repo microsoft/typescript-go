@@ -83,12 +83,10 @@ func (p *checkerPool) createCheckers() {
 		for i := range checkerCount {
 			wg.Queue(func() {
 				var tracer checker.TypeTracer
-				var checkerTracing *tracing.CheckerTracing
 				if p.tracing != nil {
-					tracer = checker.NewTracingTypeTracer(p.tracing.NewTypeTracer(i))
-					checkerTracing = p.tracing.NewCheckerTracing(i)
+					tracer = checker.NewTracingTypeTracer(p.tracing.NewTypeTracer(i), p.tracing.NewCheckerTracing(i))
 				}
-				p.checkers[i], p.locks[i] = checker.NewCheckerWithTracer(p.program, tracer, checkerTracing)
+				p.checkers[i], p.locks[i] = checker.NewCheckerWithTracer(p.program, tracer)
 			})
 		}
 

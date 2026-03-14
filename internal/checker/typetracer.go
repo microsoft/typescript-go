@@ -9,6 +9,7 @@ import (
 // This allows for optional tracing without creating a circular dependency.
 type TypeTracer interface {
 	RecordType(t *Type)
+	CheckerTracing() *tracing.CheckerTracing
 }
 
 // tracedTypeAdapter adapts a Type to the tracing.TracedType interface
@@ -305,14 +306,19 @@ func wrapTypes(types []*Type) []tracing.TracedType {
 
 // tracingTypeTracer wraps a tracing.Tracer to implement TypeTracer
 type tracingTypeTracer struct {
-	tracer tracing.Tracer
+	tracer  tracing.Tracer
+	tracing *tracing.CheckerTracing
 }
 
 func (t *tracingTypeTracer) RecordType(typ *Type) {
 	t.tracer.RecordType(wrapType(typ))
 }
 
-// NewTracingTypeTracer creates a TypeTracer from a tracing.Tracer
-func NewTracingTypeTracer(tracer tracing.Tracer) TypeTracer {
-	return &tracingTypeTracer{tracer: tracer}
+func (t *tracingTypeTracer) CheckerTracing() *tracing.CheckerTracing {
+	return t.tracing
+}
+
+// NewTracingTypeTracer creates a TypeTracer from a tracing.Tracer and CheckerTracing
+func NewTracingTypeTracer(tracer tracing.Tracer, checkerTracing *tracing.CheckerTracing) TypeTracer {
+	return &tracingTypeTracer{tracer: tracer, tracing: checkerTracing}
 }

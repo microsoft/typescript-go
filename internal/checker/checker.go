@@ -888,16 +888,18 @@ type Checker struct {
 }
 
 func NewChecker(program Program) (*Checker, *sync.Mutex) {
-	return NewCheckerWithTracer(program, nil, nil)
+	return NewCheckerWithTracer(program, nil)
 }
 
-func NewCheckerWithTracer(program Program, tracer TypeTracer, tr *tracing.CheckerTracing) (*Checker, *sync.Mutex) {
+func NewCheckerWithTracer(program Program, tracer TypeTracer) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}
 	c.id = nextCheckerID.Add(1)
 	c.tracer = tracer
-	c.tracing = tr
+	if tracer != nil {
+		c.tracing = tracer.CheckerTracing()
+	}
 	c.program = program
 	c.compilerOptions = program.Options()
 	c.files = program.SourceFiles()
