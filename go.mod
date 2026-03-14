@@ -18,12 +18,15 @@ require (
 require (
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/matryer/moq v0.6.0 // indirect
+	github.com/pkg/diff v0.0.0-20200914180035-5b29258ca4f7 // indirect
+	github.com/tailscale/depaware v0.0.0-20251001183927-9c2ad255ef3f // indirect
 	golang.org/x/mod v0.34.0 // indirect
 	golang.org/x/tools v0.43.0 // indirect
 )
 
 tool (
 	github.com/matryer/moq
+	github.com/tailscale/depaware
 	golang.org/x/tools/cmd/stringer
 )
 

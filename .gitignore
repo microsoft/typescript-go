@@ -201,3 +201,5 @@ custom-gcl.hash
 !internal/fourslash/_scripts/manualTests.txt
 !internal/fourslash/_scripts/crashingTests.txt
 !internal/fourslash/_scripts/unparsedTests.txt
+
+!depaware.txt
