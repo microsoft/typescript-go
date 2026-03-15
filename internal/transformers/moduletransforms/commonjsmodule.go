@@ -980,7 +980,6 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 		commitPendingVariables := func() {
 			if len(variables) > 0 {
 				variableList := tx.Factory().NewNodeList(variables)
-				variableList.Loc = node.DeclarationList.AsVariableDeclarationList().Declarations.Loc
 				statement := tx.Factory().UpdateVariableStatement(
 					node,
 					modifiers,
@@ -1051,7 +1050,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 				}
 
 				pushVariable(variable)
-			} else if v.Initializer != nil && !ast.IsBindingPattern(v.Name()) && (ast.IsArrowFunction(v.Initializer) || (ast.IsFunctionExpression(v.Initializer) || ast.IsClassExpression(v.Initializer)) && v.Initializer.Name() == nil) {
+			} else if v.Initializer != nil && !ast.IsBindingPattern(v.Name()) && (ast.IsArrowFunction(v.Initializer) || ast.IsFunctionExpression(v.Initializer) || ast.IsClassExpression(v.Initializer)) {
 				// preserve variable declarations for functions and classes to assign names
 
 				pushVariable(tx.Factory().NewVariableDeclaration(
