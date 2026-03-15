@@ -3355,8 +3355,10 @@ func (p *Printer) emitExpressionStatement(node *ast.ExpressionStatement) {
 		// !!! In strada, this was handled by an undefined parenthesizerRule, so this is a hack.
 		p.emitExpression(node.Expression, ast.OperatorPrecedenceComma)
 	} else if isImmediatelyInvokedFunctionExpressionOrArrowFunction(node.Expression) {
-		// !!! introduce parentheses around callee
-		p.emitExpression(node.Expression, ast.OperatorPrecedenceParentheses)
+		// For IIFEs, parenthesize just the callee (not the whole call), matching TypeScript's
+		// parenthesizeExpressionOfExpressionStatement which wraps the function/arrow in parens:
+		//   (function() { })()  -- not (function() { }())
+		p.emitIIFEWithParenthesizedCallee(node.Expression)
 	} else {
 		switch ast.GetLeftmostExpression(node.Expression, false /*stopAtCallExpression*/).Kind {
 		case ast.KindFunctionExpression, ast.KindClassExpression, ast.KindObjectLiteralExpression:
@@ -3375,6 +3377,29 @@ func (p *Printer) emitExpressionStatement(node *ast.ExpressionStatement) {
 	}
 
 	p.exitNode(node.AsNode(), state)
+}
+
+// emitIIFEWithParenthesizedCallee emits a call expression that is an IIFE,
+// wrapping just the callee in parens rather than the entire call expression.
+// This matches TypeScript's parenthesizeExpressionOfExpressionStatement behavior:
+//
+//	(function() { })()   -- parens around callee only
+//
+// instead of:
+//
+//	(function() { }())   -- parens around entire call
+func (p *Printer) emitIIFEWithParenthesizedCallee(node *ast.Expression) {
+	// Walk through PartiallyEmittedExpression wrappers to find the call
+	call := ast.SkipPartiallyEmittedExpressions(node).AsCallExpression()
+	state := p.enterNode(call.AsNode())
+	// Emit the callee wrapped in parens
+	p.writePunctuation("(")
+	p.emitExpression(call.Expression, ast.OperatorPrecedenceLowest)
+	p.writePunctuation(")")
+	p.emitTokenNode(call.QuestionDotToken)
+	p.emitTypeArguments(call.AsNode(), call.TypeArguments)
+	p.emitList((*Printer).emitArgument, call.AsNode(), call.Arguments, LFCallExpressionArguments)
+	p.exitNode(call.AsNode(), state)
 }
 
 func (p *Printer) emitIfStatement(node *ast.IfStatement) {
