@@ -2610,7 +2610,12 @@ func (p *Printer) emitConciseBody(node *ast.BlockOrExpression) {
 	case ast.IsBlock(node):
 		p.emitFunctionBody(node.AsBlock())
 	case ast.IsObjectLiteralExpression(ast.GetLeftmostExpression(node, false /*stopAtCallExpressions*/)):
-		p.emitExpression(node, ast.OperatorPrecedenceParentheses)
+		// Wrap in ParenthesizedExpression to ensure parens are emitted after any leading
+		// PartiallyEmittedExpression comments, matching TypeScript's factory-time wrapping
+		// via parenthesizeConciseBodyOfArrowFunction.
+		paren := p.emitContext.Factory.NewParenthesizedExpression(node)
+		paren.Loc = node.Loc
+		p.emitExpression(paren, ast.OperatorPrecedenceLowest)
 	case ast.IsExpression(node):
 		p.emitExpression(node, ast.OperatorPrecedenceYield)
 	default:
