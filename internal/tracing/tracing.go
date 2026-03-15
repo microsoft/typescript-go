@@ -495,14 +495,14 @@ func (tr *Tracing) StopTracing() error {
 					full.WriteString(ct.content.String())
 				}
 				full.WriteString("\n]\n")
-				if err := tr.fs.WriteFile(tracePath, full.String(), false); err != nil {
+				if err := tr.fs.WriteFile(tracePath, full.String()); err != nil {
 					return fmt.Errorf("failed to write trace file: %w", err)
 				}
 			}
 		} else {
 			// No per-checker tracings: write shared content to trace_0.json
 			tracePath := tspath.CombinePaths(tr.traceDir, "trace_0.json")
-			if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n", false); err != nil {
+			if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n"); err != nil {
 				return fmt.Errorf("failed to write trace file: %w", err)
 			}
 		}
@@ -520,7 +520,7 @@ func (tr *Tracing) StopTracing() error {
 	if err != nil {
 		return fmt.Errorf("failed to marshal legend file: %w", err)
 	}
-	if err := tr.fs.WriteFile(legendPath, string(legendData), false); err != nil {
+	if err := tr.fs.WriteFile(legendPath, string(legendData)); err != nil {
 		return fmt.Errorf("failed to write legend file: %w", err)
 	}
 
@@ -577,7 +577,7 @@ func (t *typeTracer) DumpTypes() error {
 
 	sb.WriteString("]\n")
 
-	return t.fs.WriteFile(t.typesPath, sb.String(), false)
+	return t.fs.WriteFile(t.typesPath, sb.String())
 }
 
 // TypeDescriptor represents a type in the output JSON
@@ -823,18 +823,18 @@ func getLocation(node *ast.Node) *Location {
 		return nil
 	}
 
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(file, node.Pos())
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(file, node.End())
+	startLine, startChar := scanner.GetECMALineAndUTF16CharacterOfPosition(file, node.Pos())
+	endLine, endChar := scanner.GetECMALineAndUTF16CharacterOfPosition(file, node.End())
 
 	return &Location{
 		Path: string(tspath.ToPath(file.FileName(), "", false)),
 		Start: &LineAndChar{
 			Line:      startLine + 1,
-			Character: startChar + 1,
+			Character: int(startChar) + 1,
 		},
 		End: &LineAndChar{
 			Line:      endLine + 1,
-			Character: endChar + 1,
+			Character: int(endChar) + 1,
 		},
 	}
 }

@@ -193,8 +193,7 @@ func TestEnumTransformer(t *testing.T) {
     E[E["B"] = 0] = "B";
 })(E || (E = {}));`},
 
-		{title: "export enum", input: "export enum E {A, B}", output: `export { E };
-var E;
+		{title: "export enum", input: "export enum E {A, B}", output: `export var E;
 (function (E) {
     E[E["A"] = 0] = "A";
     E[E["B"] = 1] = "B";
@@ -207,7 +206,7 @@ var E;
     E[E["A"] = 0] = "A";
 })(E || (E = {}));
 (function (E) {
-    E["B"] = A;
+    E["B"] = E.A;
     if (typeof E.B !== "string") E[E.B] = "B";
 })(E || (E = {}));`},
 
@@ -268,7 +267,7 @@ func TestNamespaceTransformer(t *testing.T) {
     N.x = 1;
 })(N || (N = {}));
 (function (N) {
-    x;
+    N.x;
 })(N || (N = {}));`},
 
 		{title: "exported array binding pattern", input: "namespace N { export var [x] = [1]; }", output: `var N;

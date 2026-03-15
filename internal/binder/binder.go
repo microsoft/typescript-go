@@ -80,6 +80,7 @@ type Binder struct {
 	flowListPool            core.Pool[ast.FlowList]
 	singleDeclarationsPool  core.Pool[*ast.Node]
 	expandoAssignments      []ExpandoAssignmentInfo
+	nestedCJSExports        []*ast.Node
 }
 
 type ActiveLabel struct {
@@ -128,6 +129,7 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.bindDeferredExpandoAssignments()
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
+		file.NestedCJSExports = b.nestedCJSExports
 	})
 }
 
@@ -657,6 +659,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
+		b.trackNestedCJSExport(node)
 		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
@@ -860,6 +863,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 	container := b.container
 	if ast.IsJSExportAssignment(node) {
 		container = b.file.AsNode()
+		b.trackNestedCJSExport(node)
 	}
 	if container.Symbol() == nil && ast.IsExportAssignment(node) {
 		// Incorrect export assignment in some sort of block construct
@@ -871,11 +875,17 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
-		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsAll)
+		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, core.IfElse(ast.IsJSExportAssignment(node), 0, ast.SymbolFlagsAll))
 		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
-			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
+			// Ensure export assignments have a ValueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
+	}
+}
+
+func (b *Binder) trackNestedCJSExport(node *ast.Node) {
+	if !(ast.IsSourceFile(node.Parent) || ast.IsExpressionStatement(node.Parent) && ast.IsSourceFile(node.Parent.Parent)) {
+		b.nestedCJSExports = append(b.nestedCJSExports, node)
 	}
 }
 
@@ -1022,6 +1032,21 @@ func (b *Binder) bindDeferredExpandoAssignments() {
 	}
 }
 
+// If the given module symbol has an export= symbol, promote exports with a type or namespace meaning
+// from the module symbol onto the export= symbol and, if any such exports exist, mark the export=
+// symbol as a namespace module.
+func (b *Binder) bindCommonJSTypeExports(moduleSymbol *ast.Symbol) {
+	moduleExports := moduleSymbol.Exports
+	if exportEquals := moduleExports[ast.InternalSymbolNameExportEquals]; exportEquals != nil {
+		for _, symbol := range moduleExports {
+			if symbol.Name != ast.InternalSymbolNameExportEquals && symbol.Flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				ast.GetExports(exportEquals)[symbol.Name] = symbol
+				exportEquals.Flags |= ast.SymbolFlagsNamespaceModule
+			}
+		}
+	}
+}
+
 func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {
 	parent := getParentOfPropertyAssignment(node)
 	symbol := b.lookupEntity(parent, b.blockScopeContainer)
@@ -1054,6 +1079,7 @@ func getParentOfPropertyAssignment(node *ast.Node) *ast.Node {
 
 func (b *Binder) bindObjectDefinePropertyExport(node *ast.Node) {
 	if b.setCommonJSModuleIndicator(node) {
+		b.trackNestedCJSExport(node)
 		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	}
 }
@@ -1566,6 +1592,9 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
+	}
+	if ast.IsSourceFile(node) && ast.IsExternalOrCommonJSModule(node.AsSourceFile()) || ast.IsAmbientModule(node) {
+		b.bindCommonJSTypeExports(node.Symbol())
 	}
 	b.container = saveContainer
 	b.thisContainer = saveThisContainer

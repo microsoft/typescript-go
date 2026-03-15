@@ -114,7 +114,6 @@ export default foo;
 //// [index.js]
 "use strict";
 class MyClassErr {
-    foo;
     // No parameter properties
     constructor(foo) {
         this.foo = foo;
@@ -173,5 +172,6 @@ function* gen() {
 const foo = require("./other.cjs");
 module.exports = foo;
 //// [esm.mjs]
+"use strict";
 const foo = 1234;
 export default foo;

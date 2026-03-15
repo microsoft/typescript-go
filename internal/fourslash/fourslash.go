@@ -108,12 +108,7 @@ func (s *scriptInfo) GetLineContent(line int) string {
 		end = core.TextPos(len(s.content))
 	}
 
-	// delete trailing newline
-	content := s.content[start:end]
-	if len(content) > 0 && content[len(content)-1] == '\n' {
-		content = content[:len(content)-1]
-	}
-	return content
+	return strings.TrimRight(s.content[start:end], "\r\n")
 }
 
 const rootDir = "/"
@@ -585,14 +580,13 @@ func (f *FourslashTest) GetOptions() *lsutil.UserPreferences {
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
 	// !!!
-	// Callers to this function may need to consider
-	// sending a more specific configuration for 'javascript'
-	// or 'js/ts' as well. For now, we only send 'typescript',
-	// and most tests probably just want this.
+	// We send 'js/ts' by default because that is what we expect the primary config to be in vscode and VS (one
+	// set of preferences for both languages). This should be fine in fourslash since tests that need
+	// multiple options usually send reconfiguration commands for each `verify` anyways
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
 		Settings: map[string]any{
-			"typescript": config,
+			"js/ts": config,
 		},
 	})
 }
@@ -812,6 +806,36 @@ func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
 	f.applyTextEdits(t, *result.TextEdits)
 }
 
+func (f *FourslashTest) FormatSelection(t *testing.T, startMarkerName string, endMarkerName string) {
+	t.Helper()
+	startMarker, ok := f.testData.MarkerPositions[startMarkerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", startMarkerName)
+	}
+	endMarker, ok := f.testData.MarkerPositions[endMarkerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", endMarkerName)
+	}
+	if startMarker.FileName() != endMarker.FileName() {
+		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
+	}
+	filename := startMarker.FileName()
+	result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(filename),
+		},
+		Range: lsproto.Range{
+			Start: startMarker.LSPosition,
+			End:   endMarker.LSPosition,
+		},
+		Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
+	})
+	if result.TextEdits == nil {
+		return
+	}
+	f.applyTextEdits(t, *result.TextEdits)
+}
+
 func (f *FourslashTest) VerifyCurrentFileContent(t *testing.T, expectedContent string) {
 	t.Helper()
 	actualContent := f.getScriptInfo(f.activeFilename).content
@@ -967,6 +991,11 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	list := f.getCompletions(t, userPreferences)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
+}
+
+func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
+	t.Helper()
+	return f.getCompletions(t, userPreferences)
 }
 
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
@@ -1285,6 +1314,11 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 	}
 
 	return ""
+}
+
+func (f *FourslashTest) ResolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
+	t.Helper()
+	return f.resolveCompletionItem(t, item)
 }
 
 func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
@@ -4193,30 +4227,6 @@ func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *Rang
 		}
 	}
 	t.Fatalf("Expected error with code %d at range %v but it was not found", code, rangeMarker.LSRange)
-}
-
-// VerifyCurrentLineContentIs verifies that the current line content matches the expected text.
-func (f *FourslashTest) VerifyCurrentLineContentIs(t *testing.T, expectedText string) {
-	script := f.getScriptInfo(f.activeFilename)
-	lines := strings.Split(script.content, "\n")
-	lineNum := int(f.currentCaretPosition.Line)
-	if lineNum >= len(lines) {
-		t.Fatalf("Current line %d is out of range (file has %d lines)", lineNum, len(lines))
-	}
-	actualLine := lines[lineNum]
-	// Handle \r if present
-	actualLine = strings.TrimSuffix(actualLine, "\r")
-	if actualLine != expectedText {
-		t.Fatalf("Current line content mismatch.\nExpected: %q\nActual: %q", expectedText, actualLine)
-	}
-}
-
-// VerifyCurrentFileContentIs verifies that the current file content matches the expected text.
-func (f *FourslashTest) VerifyCurrentFileContentIs(t *testing.T, expectedText string) {
-	script := f.getScriptInfo(f.activeFilename)
-	if script.content != expectedText {
-		t.Fatalf("Current file content mismatch.\nExpected: %q\nActual: %q", expectedText, script.content)
-	}
 }
 
 // VerifyErrorExistsBetweenMarkers verifies that an error exists between the two markers.

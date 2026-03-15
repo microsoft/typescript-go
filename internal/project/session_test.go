@@ -43,14 +43,12 @@ func TestSession(t *testing.T) {
 		t.Run("create configured project", func(t *testing.T) {
 			t.Parallel()
 			session, _ := projecttestutil.Setup(defaultFiles)
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 
 			configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json"))
@@ -71,8 +69,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/config.ts", 1, defaultFiles["/home/projects/TS/p1/config.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Find tsconfig, load, notice config.ts is not included, create inferred project
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
 			// Should have both configured project (for tsconfig.json) and inferred project
@@ -90,8 +87,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "x", lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "untitled:Untitled-2", 1, "y", lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 			assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
@@ -106,8 +102,7 @@ func TestSession(t *testing.T) {
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.js", 1, jsFiles["/home/projects/TS/p1/index.js"].(string), lsproto.LanguageKindJavaScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.js")
@@ -278,7 +273,7 @@ func TestSession(t *testing.T) {
 					"strict": true
 				},
 				"include": ["./**/*"]
-			}`, false)
+			}`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -315,7 +310,7 @@ func TestSession(t *testing.T) {
 				program := ls.GetProgram()
 				assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 
-				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "", false)
+				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "")
 				assert.NilError(t, err)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, "", lsproto.LanguageKindTypeScript)
@@ -349,7 +344,7 @@ func TestSession(t *testing.T) {
 				program := ls.GetProgram()
 				assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 
-				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "", false)
+				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "")
 				assert.NilError(t, err)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, "", lsproto.LanguageKindTypeScript)
@@ -379,8 +374,7 @@ func TestSession(t *testing.T) {
 			session, _ := projecttestutil.Setup(defaultFiles)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			session.DidSaveFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -392,15 +386,13 @@ func TestSession(t *testing.T) {
 			})
 
 			session.WaitForBackgroundTasks()
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			// We didn't need a snapshot change, but the session overlays should be updated.
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			// Open another file to force a snapshot update so we can see the changes.
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			assert.Equal(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts").MatchesDiskText(), true)
 		})
 
@@ -409,8 +401,7 @@ func TestSession(t *testing.T) {
 			session, _ := projecttestutil.Setup(defaultFiles)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -422,15 +413,13 @@ func TestSession(t *testing.T) {
 			session.DidSaveFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 
 			session.WaitForBackgroundTasks()
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			// We didn't need a snapshot change, but the session overlays should be updated.
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			// Open another file to force a snapshot update so we can see the changes.
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			assert.Equal(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts").MatchesDiskText(), true)
 		})
 	})
@@ -454,8 +443,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p2/src/index.ts", 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
 			ls1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -490,8 +478,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p2/src/index.ts", 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
 			ls1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -524,7 +511,7 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -551,7 +538,7 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -602,7 +589,8 @@ func TestSession(t *testing.T) {
 				outer:
 					for _, call := range utils.Client().WatchFilesCalls() {
 						for _, watcher := range call.Watchers {
-							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/TS/x.ts") {
+							// On case-insensitive FS, glob patterns use lowercased paths.
+							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/ts/x.ts") {
 								xWatched = true
 								break outer
 							}
@@ -610,7 +598,7 @@ func TestSession(t *testing.T) {
 					}
 					assert.Check(t, xWatched)
 
-					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`, false)
+					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`)
 					assert.NilError(t, err)
 
 					session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -655,7 +643,7 @@ func TestSession(t *testing.T) {
 					"noLib": false,
 					"strict": true
 				}
-			}`, false)
+			}`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -712,8 +700,7 @@ func TestSession(t *testing.T) {
 
 			// Open file to trigger cleanup
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/x.ts") == nil)
 		})
 
@@ -757,8 +744,7 @@ func TestSession(t *testing.T) {
 
 			// Open file to trigger cleanup
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts") == nil)
 		})
 
@@ -784,7 +770,7 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add the missing file
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -824,7 +810,7 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through failed lookup watch
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -864,7 +850,7 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through wildcard watch
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -925,7 +911,7 @@ func TestSession(t *testing.T) {
 			"OrganizeImportsIgnoreCase": true,
 		}
 		// set "typescript" options only
-		session.Configure(lsutil.ParseNewUserConfig([]any{nil, configMap1, nil}))
+		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"typescript": configMap1}))
 		actualConfig1 := session.Config()
 		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs1.UseAliasesForRename = core.TSTrue
@@ -942,7 +928,7 @@ func TestSession(t *testing.T) {
 			"OrganizeImportsIgnoreCase": false,
 		}
 		// set "javascript" options only
-		session.Configure(lsutil.ParseNewUserConfig([]any{nil, nil, configMap2}))
+		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"javascript": configMap2}))
 		actualConfig2 := session.Config()
 		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs2.UseAliasesForRename = core.TSFalse

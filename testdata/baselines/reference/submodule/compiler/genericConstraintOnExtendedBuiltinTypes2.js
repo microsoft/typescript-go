@@ -31,10 +31,9 @@ namespace EndGate.Tweening {
 "use strict";
 var EndGate;
 (function (EndGate) {
-    let Tweening;
+    var Tweening;
     (function (Tweening) {
         class Tween {
-            _from;
             constructor(from) {
                 this._from = from.Clone();
             }
@@ -43,9 +42,9 @@ var EndGate;
     })(Tweening = EndGate.Tweening || (EndGate.Tweening = {}));
 })(EndGate || (EndGate = {}));
 (function (EndGate) {
-    let Tweening;
+    var Tweening;
     (function (Tweening) {
-        class NumberTween extends Tween {
+        class NumberTween extends Tweening.Tween {
             constructor(from) {
                 super(from);
             }

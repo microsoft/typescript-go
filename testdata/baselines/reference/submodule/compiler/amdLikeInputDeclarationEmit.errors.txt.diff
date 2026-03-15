@@ -2,7 +2,7 @@
 +++ new.amdLikeInputDeclarationEmit.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+ExtendedClass.js(17,5): error TS1231: An export assignment must be at the top level of a file or module declaration.
++ExtendedClass.js(17,5): error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
 +
 +
 +==== typing.d.ts (0 errors) ====
@@ -32,7 +32,7 @@
 +        // Exports the module in a way tsc recognize class export 
 +        const module = {};
 +        module.exports = ExtendedClass
-+        ~~~~~~
-+!!! error TS1231: An export assignment must be at the top level of a file or module declaration.
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS6425: Nested CommonJS export constructs cannot be serialized for declaration emit.
 +        return module.exports;
 +    });

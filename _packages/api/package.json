@@ -7,21 +7,13 @@
         "node": ">=20.19"
     },
     "imports": {
-        "#symbolFlags": {
+        "#enums/*": {
             "@typescript/source": {
-                "types": "./src/symbolFlags.enum.ts",
-                "default": "./src/symbolFlags.ts"
+                "types": "./src/enums/*.enum.ts",
+                "default": "./src/enums/*.ts"
             },
-            "types": "./dist/symbolFlags.enum.d.ts",
-            "default": "./dist/symbolFlags.js"
-        },
-        "#typeFlags": {
-            "@typescript/source": {
-                "types": "./src/typeFlags.enum.ts",
-                "default": "./src/typeFlags.ts"
-            },
-            "types": "./dist/typeFlags.enum.d.ts",
-            "default": "./dist/typeFlags.js"
+            "types": "./dist/enums/*.enum.d.ts",
+            "default": "./dist/enums/*.js"
         }
     },
     "exports": {
@@ -32,10 +24,6 @@
         "./async": {
             "@typescript/source": "./src/async/api.ts",
             "default": "./dist/async/api.js"
-        },
-        "./base/*": {
-            "@typescript/source": "./src/base/*.ts",
-            "default": "./dist/base/*.js"
         },
         "./fs": {
             "@typescript/source": "./src/fs.ts",
@@ -48,17 +36,23 @@
     },
     "scripts": {
         "node": "node --experimental-strip-types --no-warnings --conditions @typescript/source",
+        "generate": "npm run -w @typescript/ast generate:factory && npm run generate:enums && npm run generate:sync",
+        "generate:sync": "node --experimental-strip-types --no-warnings scripts/generateSync.ts",
+        "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
+        "prebuild": "npm run generate",
         "build": "tsc -b",
-        "watch": "tsc -b --watch",
+        "prebuild:test": "npm run generate",
         "build:test": "tsc -b test",
+        "prebench": "npm run generate",
         "bench": "npm run node -- test/api.bench.ts",
-        "test": "npm run node -- --test ./test/**/*.test.ts"
+        "pretest": "npm run generate",
+        "test": "npm run node -- --test './test/**/*.test.ts'"
     },
     "devDependencies": {
         "tinybench": "^6.0.0"
     },
     "dependencies": {
-        "@types/node": "^25.2.3",
+        "@types/node": "^25.3.3",
         "@typescript/ast": "1.0.0",
         "vscode-jsonrpc": "^9.0.0-next.11"
     }

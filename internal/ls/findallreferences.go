@@ -342,7 +342,7 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 	}
 	parent := node.Parent
 	if parent.Kind == ast.KindExportSpecifier && useLocalSymbolForExportSpecifier {
-		return getLocalSymbolForExportSpecifier(node.AsIdentifier(), symbol, parent.AsExportSpecifier(), checker)
+		return getLocalSymbolForExportSpecifier(node, symbol, parent.AsExportSpecifier(), checker)
 	}
 	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
 	return core.FirstNonNil(symbol.Declarations, func(decl *ast.Node) *ast.Symbol {
@@ -594,7 +594,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if isRename && !isNodeEligibleForRename(node) {
+	if isRename && !isNodeEligibleForRename(node) || implementations && ast.IsSourceFile(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
 
@@ -621,7 +621,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 
 		entry := queue[0]
 		queue = queue[1:]
-		if !seenNodes.Has(entry.node) {
+		if entry.node != nil && !seenNodes.Has(entry.node) {
 			seenNodes.Add(entry.node)
 			addToQueue(l.getSymbolAndEntries(ctx, entry.node.Pos(), entry.node, program, isRename, implementations))
 		}
@@ -1885,7 +1885,7 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 
 	// Use the parent symbol if the location is commonjs require syntax on javascript files only.
 	if ast.IsInJSFile(referenceLocation) && referenceLocation.Parent.Kind == ast.KindBindingElement &&
-		ast.IsVariableDeclarationInitializedToRequire(referenceLocation.Parent.Parent.Parent) {
+		ast.IsVariableDeclarationInitializedToBareOrAccessedRequire(referenceLocation.Parent.Parent.Parent) {
 		referenceSymbol = referenceLocation.Parent.Symbol()
 		// The parent will not have a symbol if it's an ObjectBindingPattern (when destructuring is used).  In
 		// this case, just skip it, since the bound identifiers are not an alias of the import.
@@ -2000,7 +2000,7 @@ func (state *refState) getReferencesAtExportSpecifier(
 	exportDeclaration := exportSpecifier.Parent.Parent.AsExportDeclaration()
 	propertyName := exportSpecifier.PropertyName
 	name := exportSpecifier.Name()
-	localSymbol := getLocalSymbolForExportSpecifier(referenceLocation.AsIdentifier(), referenceSymbol, exportSpecifier, state.checker)
+	localSymbol := getLocalSymbolForExportSpecifier(referenceLocation, referenceSymbol, exportSpecifier, state.checker)
 
 	if !alwaysGetReferences && !search.includes(localSymbol) {
 		return
@@ -2288,15 +2288,11 @@ func (state *refState) forEachRelatedSymbol(
 	}
 
 	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
-		// For a parameter property, now try on the other symbol (property if this was a parameter, parameter if this was a property).
-		if symbol.ValueDeclaration == nil || symbol.ValueDeclaration.Kind != ast.KindParameter {
-			panic("expected symbol.ValueDeclaration to be a parameter")
-		}
 		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
-		debug.Assert((paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0) && (paramProp2.Flags&ast.SymbolFlagsProperty != 0)) // is [parameter, property]
-		if !(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsProperty != 0) {
-			panic("Expected a parameter and a property")
-		}
+		debug.Assert(
+			paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsClassMember != 0,
+			"GetSymbolsOfParameterPropertyDeclaration must return (parameter, member) pair",
+		)
 		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNode
 	}
 
