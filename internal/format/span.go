@@ -344,12 +344,6 @@ func (w *formatSpanWorker) processChildNode(
 	debug.Assert(!ast.NodeIsSynthesized(child))
 
 	if ast.NodeIsMissing(child) || isGrammarError(parent, child) || child.Flags&ast.NodeFlagsReparsed != 0 {
-		// Skipped malformed/reparsed children should be opaque to the parent.
-		// Otherwise the parent can sweep through the child's text with the wrong
-		// scanning context and desynchronize from the recovered AST.
-		if w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < child.Pos() {
-			w.formattingScanner.skipToEndOf(&child.Loc)
-		}
 		return inheritedIndentation
 	}
 
