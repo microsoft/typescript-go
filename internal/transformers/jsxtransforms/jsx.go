@@ -567,7 +567,7 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementOrFragmentJSX(
 	}
 
 	if tx.compilerOptions.Jsx == core.JsxEmitReactJSXDev {
-		originalFile := tx.EmitContext().Original(tx.currentSourceFile.AsNode())
+		originalFile := tx.EmitContext().MostOriginal(tx.currentSourceFile.AsNode())
 		if originalFile != nil && ast.IsSourceFile(originalFile) {
 			// "maybeKey" has to be replaced with "void 0" to not break the jsxDEV signature
 			if keyAttr == nil {
