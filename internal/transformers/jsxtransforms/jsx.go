@@ -635,6 +635,15 @@ func (tx *JSXTransformer) createReactNamespace(reactNamespace string, parent *as
 	// Set the parent that is in parse tree
 	// this makes sure that parent chain is intact for checker to traverse complete scope tree
 	react.Parent = tx.EmitContext().ParseNode(parent)
+
+	// If the identifier refers to an exported member of a namespace, substitute with
+	// a qualified namespace property access (e.g., `React` -> `M.React`).
+	// See also: RuntimeSyntaxTransformer.visitExpressionIdentifier in runtimesyntax.go
+	if container := tx.emitResolver.GetReferencedExportContainer(react, false /*prefixLocals*/); container != nil && ast.IsModuleDeclaration(container) {
+		containerName := tx.Factory().NewGeneratedNameForNode(container)
+		return tx.Factory().NewPropertyAccessExpression(containerName, nil, react, ast.NodeFlagsNone)
+	}
+
 	return react
 }
 
