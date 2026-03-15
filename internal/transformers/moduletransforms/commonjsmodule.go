@@ -339,8 +339,14 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	// initialize exports for function declarations, e.g.:
 	//  exports.f = f;
 	//  function f() {}
+	// These are marked as custom prologue so they are ordered before the external helpers
+	// import declaration (e.g., `const tslib_1 = require("tslib")`), matching TypeScript's emit order.
+	exportedFunctionsStart := len(statements)
 	for f := range tx.currentModuleInfo.exportedFunctions.Values() {
 		statements = tx.appendExportsOfClassOrFunctionDeclaration(statements, f.AsNode())
+	}
+	for _, s := range statements[exportedFunctionsStart:] {
+		tx.EmitContext().AddEmitFlags(s, printer.EFCustomPrologue)
 	}
 
 	// visit the remaining statements in the source file
