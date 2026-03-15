@@ -3644,8 +3644,7 @@ func (p *Printer) emitVariableDeclaration(node *ast.VariableDeclaration) {
 	p.emitBindingName(node.Name())
 	p.emitPunctuationNode(node.ExclamationToken)
 	p.emitTypeAnnotation(node.Type)
-	// !!! old compiler can set a type node purely for emit. Is this necessary?
-	p.emitInitializer(node.Initializer, greatestEnd(node.Name().End(), node.Type /*, node.Name().emitNode?.typeNode*/), node.AsNode())
+	p.emitInitializer(node.Initializer, greatestEnd(node.Name().End(), node.Type, p.emitContext.GetTypeNode(node.Name())), node.AsNode())
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -4378,7 +4377,7 @@ func (p *Printer) emitJsxAttributeValue(node *ast.JsxAttributeValue) {
 // Clauses
 //
 
-func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClause) {
+func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClause, colonPos int) {
 	emitAsSingleStatement := len(node.Statements.Nodes) == 1 &&
 		// treat synthesized nodes as located on the same line for emit purposes
 		(p.currentSourceFile == nil ||
@@ -4388,8 +4387,13 @@ func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClaus
 
 	format := LFCaseOrDefaultClauseStatements
 	if emitAsSingleStatement {
+		// When emitting as a single statement, use writeToken (no comments) for the colon
+		// to avoid duplicating trailing comments that will be picked up by the statement list.
+		p.writeTokenText(ast.KindColonToken, WriteKindPunctuation, colonPos)
 		p.writeSpace()
 		format &= ^(LFMultiLine | LFIndented)
+	} else {
+		p.emitToken(ast.KindColonToken, colonPos, WriteKindPunctuation, node.AsNode())
 	}
 
 	p.emitList((*Printer).emitStatement, node.AsNode(), node.Statements, format)
@@ -4400,16 +4404,14 @@ func (p *Printer) emitCaseClause(node *ast.CaseOrDefaultClause) {
 	p.emitToken(ast.KindCaseKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
 	p.emitExpression(node.Expression, ast.OperatorPrecedenceLowest)
-	p.emitToken(ast.KindColonToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
-	p.emitCaseOrDefaultClauseStatements(node)
+	p.emitCaseOrDefaultClauseStatements(node, node.Expression.End())
 	p.exitNode(node.AsNode(), state)
 }
 
 func (p *Printer) emitDefaultClause(node *ast.CaseOrDefaultClause) {
 	state := p.enterNode(node.AsNode())
 	pos := p.emitToken(ast.KindDefaultKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.emitToken(ast.KindColonToken, pos, WriteKindPunctuation, node.AsNode())
-	p.emitCaseOrDefaultClauseStatements(node)
+	p.emitCaseOrDefaultClauseStatements(node, pos)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -4930,7 +4932,13 @@ func (p *Printer) emitListItems(
 	//          /* end of element 2 */
 	//       ];
 	if previousSibling != nil && parentEnd != previousSibling.End() && format&LFDelimitersMask != 0 && !skipTrailingComments {
-		p.emitLeadingComments(greatestEnd(previousSibling.End(), childrenTextRange), false /*elided*/)
+		var commentsPos int
+		if emitTrailingComma && childrenTextRange.End() > 0 {
+			commentsPos = childrenTextRange.End()
+		} else {
+			commentsPos = previousSibling.End()
+		}
+		p.emitLeadingComments(commentsPos, false /*elided*/)
 	}
 
 	// Decrease the indent, if requested.
@@ -5239,11 +5247,10 @@ func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
 	p.emitTrailingSyntheticCommentsOfNode(node, emitFlags)
 	p.emitTrailingCommentsOfNode(node, emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd)
 
-	// !!! Preserve comments from type annotation:
-	// typeNode := node.Type()
-	// if typeNode != nil {
-	// 	p.emitTrailingCommentsOfNode(node, typeNode.Pos(), typeNode.End(), state)
-	// }
+	// Preserve comments from erased type annotation
+	if typeNode := p.emitContext.GetTypeNode(node); typeNode != nil {
+		p.emitTrailingCommentsOfNode(node, emitFlags, typeNode.Loc, containerPos, containerEnd, declarationListContainerEnd)
+	}
 }
 
 func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) (*commentState, int) {
