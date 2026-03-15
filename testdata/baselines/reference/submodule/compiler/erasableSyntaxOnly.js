@@ -165,8 +165,8 @@ function* gen() {
 (function () { });
 // at the start of an ExpressionStatement if followed by an anonymous class expression
 // note that this exact syntax currently emits invalid JS (no parenthesis added like for function above)
-(class {
-});
+class {
+};
 //// [commonjs.cjs]
 "use strict";
 const foo = require("./other.cjs");

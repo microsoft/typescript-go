@@ -3366,7 +3366,7 @@ func (p *Printer) emitExpressionStatement(node *ast.ExpressionStatement) {
 		p.emitIIFEWithParenthesizedCallee(node.Expression)
 	} else {
 		switch ast.GetLeftmostExpression(node.Expression, false /*stopAtCallExpression*/).Kind {
-		case ast.KindFunctionExpression, ast.KindClassExpression, ast.KindObjectLiteralExpression:
+		case ast.KindFunctionExpression, ast.KindObjectLiteralExpression:
 			p.emitExpression(node.Expression, ast.OperatorPrecedenceParentheses)
 		default:
 			p.emitExpression(node.Expression, ast.OperatorPrecedenceComma)
