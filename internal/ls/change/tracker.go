@@ -182,8 +182,12 @@ func (t *Tracker) InsertNodesAfter(sourceFile *ast.SourceFile, after *ast.Node, 
 	t.InsertNodesAt(sourceFile, endPosition, newNodes, t.getInsertNodeAfterOptions(sourceFile, after))
 }
 
-func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool) {
-	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, LeadingTriviaOptionNone, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
+func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool, leadingTriviaOption ...LeadingTriviaOption) {
+	option := LeadingTriviaOptionNone
+	if len(leadingTriviaOption) > 0 {
+		option = leadingTriviaOption[0]
+	}
+	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, option, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
 }
 
 // InsertModifierBefore inserts a modifier token (like 'type') before a node with a trailing space.
