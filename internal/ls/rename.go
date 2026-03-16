@@ -146,7 +146,8 @@ func nodeIsEligibleForRename(node *ast.Node) bool {
 		ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindThisKeyword:
 		return true
-	// !!! case ast.KindNumericLiteral: return isLiteralNameOfPropertyDeclarationOrIndexAccess(node)
+	case ast.KindNumericLiteral:
+		return isLiteralNameOfPropertyDeclarationOrIndexAccess(node)
 	default:
 		return false
 	}
