@@ -14,7 +14,7 @@ func ComparePositions(pos, other Position) int {
 }
 
 // Implements a cmp.Compare like function for two Range
-// CompareRanges(lsRange, other) == cmp.Compare(lsrange, other)
+// CompareRanges(lsRange, other) == cmp.Compare(lsRange, other)
 //
 //	Range.Start is compared before Range.End
 func CompareRanges(lsRange, other Range) int {
