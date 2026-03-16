@@ -347,9 +347,14 @@ func (p *ParsedCommandLine) PossiblyMatchesDirectoryName(directoryPath tspath.Pa
 	for wildcardDir, recursive := range p.WildcardDirectories() {
 		wildcardDirPath := tspath.ToPath(wildcardDir, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 		if recursive {
-			return wildcardDirPath.ContainsPath(directoryPath)
+			if wildcardDirPath.ContainsPath(directoryPath) {
+				return true
+			}
+		} else {
+			if wildcardDirPath == directoryPath {
+				return true
+			}
 		}
-		return wildcardDirPath == directoryPath
 	}
 	return false
 }
