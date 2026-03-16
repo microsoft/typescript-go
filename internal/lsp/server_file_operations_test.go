@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -92,101 +91,4 @@ func TestInitializeAdvertisesRenameFileOperations(t *testing.T) {
 	assert.Equal(t, *willRename.Filters[0].Scheme, "file")
 	assert.Equal(t, willRename.Filters[0].Pattern.Glob, "**/*")
 	assert.Equal(t, *willRename.Filters[0].Pattern.Matches, lsproto.FileOperationPatternKindFile)
-}
-
-func TestWillRenameFilesUpdatesImports(t *testing.T) {
-	t.Parallel()
-
-	client, _, _ := initFileOperationsClient(t, map[string]string{
-		"/home/projects/tsconfig.json":  `{"compilerOptions":{"module":"esnext","moduleResolution":"bundler","target":"esnext","noLib":true},"include":["**/*.ts"]}`,
-		"/home/projects/shared/util.ts": `export const util = 1;`,
-		"/home/projects/foo.ts":         "import { util } from './shared/util';\nexport const foo = util;\n",
-		"/home/projects/main.ts":        "import { foo } from \"./foo\";\nfoo;\n",
-	}, nil)
-
-	fooURI := lsconv.FileNameToDocumentURI("/home/projects/foo.ts")
-	mainURI := lsconv.FileNameToDocumentURI("/home/projects/main.ts")
-
-	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceWillRenameFilesInfo, &lsproto.RenameFilesParams{
-		Files: []*lsproto.FileRename{
-			{
-				OldUri: string(fooURI),
-				NewUri: string(lsconv.FileNameToDocumentURI("/home/projects/nested/foo.ts")),
-			},
-		},
-	})
-	assert.Assert(t, ok, "expected a response")
-	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, resp.WorkspaceEdit != nil)
-	assert.Assert(t, resp.WorkspaceEdit.Changes != nil)
-
-	changes := *resp.WorkspaceEdit.Changes
-	assert.Equal(t, len(changes), 2)
-
-	mainEdits := changes[mainURI]
-	assert.Equal(t, len(mainEdits), 1)
-	assert.Equal(t, mainEdits[0].NewText, `"./nested/foo"`)
-
-	fooEdits := changes[fooURI]
-	assert.Equal(t, len(fooEdits), 1)
-	assert.Equal(t, fooEdits[0].NewText, `'../shared/util'`)
-}
-
-func TestWillRenameFilesReturnsNoEditsForNonRelativeImports(t *testing.T) {
-	t.Parallel()
-
-	client, _, _ := initFileOperationsClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions":{"module":"esnext","moduleResolution":"bundler","target":"esnext","noLib":true},"include":["**/*.ts"]}`,
-		"/home/projects/index.ts":      "import { readFileSync } from 'node:fs';\nexport const value = readFileSync;\n",
-	}, nil)
-
-	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceWillRenameFilesInfo, &lsproto.RenameFilesParams{
-		Files: []*lsproto.FileRename{
-			{
-				OldUri: string(lsconv.FileNameToDocumentURI("/home/projects/index.ts")),
-				NewUri: string(lsconv.FileNameToDocumentURI("/home/projects/nested/index.ts")),
-			},
-		},
-	})
-	assert.Assert(t, ok, "expected a response")
-	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, resp.WorkspaceEdit == nil)
-}
-
-func TestWillRenameFilesHandlesBatchRenames(t *testing.T) {
-	t.Parallel()
-
-	client, _, _ := initFileOperationsClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions":{"module":"esnext","moduleResolution":"bundler","target":"esnext","noLib":true},"include":["**/*.ts"]}`,
-		"/home/projects/a.ts":          "export const a = 1;\n",
-		"/home/projects/b.ts":          "export const b = 1;\n",
-		"/home/projects/main.ts":       "import { a } from \"./a\";\nimport { b } from './b';\na;\nb;\n",
-	}, nil)
-
-	mainURI := lsconv.FileNameToDocumentURI("/home/projects/main.ts")
-
-	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceWillRenameFilesInfo, &lsproto.RenameFilesParams{
-		Files: []*lsproto.FileRename{
-			{
-				OldUri: string(lsconv.FileNameToDocumentURI("/home/projects/a.ts")),
-				NewUri: string(lsconv.FileNameToDocumentURI("/home/projects/nested/a.ts")),
-			},
-			{
-				OldUri: string(lsconv.FileNameToDocumentURI("/home/projects/b.ts")),
-				NewUri: string(lsconv.FileNameToDocumentURI("/home/projects/nested/b.ts")),
-			},
-		},
-	})
-	assert.Assert(t, ok, "expected a response")
-	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Assert(t, resp.WorkspaceEdit != nil)
-	assert.Assert(t, resp.WorkspaceEdit.Changes != nil)
-
-	changes := *resp.WorkspaceEdit.Changes
-	assert.Equal(t, len(changes), 1)
-
-	mainEdits := changes[mainURI]
-	assert.Equal(t, len(mainEdits), 2)
-	assert.Equal(t, mainEdits[0].NewText, `"./nested/a"`)
-	assert.Equal(t, mainEdits[1].NewText, `'./nested/b'`)
 }

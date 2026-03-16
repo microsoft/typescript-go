@@ -565,6 +565,59 @@ func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.N
 	lsptestutil.SendNotification(t, f.client, info, params)
 }
 
+func (f *FourslashTest) GetEditsForFileRename(t *testing.T, oldPath string, newPath string) lsproto.WorkspaceEditOrNull {
+	t.Helper()
+	return f.GetEditsForFileRenames(t, []*lsproto.FileRename{
+		{
+			OldUri: string(lsconv.FileNameToDocumentURI(oldPath)),
+			NewUri: string(lsconv.FileNameToDocumentURI(newPath)),
+		},
+	})
+}
+
+func (f *FourslashTest) GetEditsForFileRenames(t *testing.T, files []*lsproto.FileRename) lsproto.WorkspaceEditOrNull {
+	t.Helper()
+
+	params := &lsproto.RenameFilesParams{Files: files}
+	resMsg, result, ok := lsptestutil.SendRequest(t, f.client, lsproto.WorkspaceWillRenameFilesInfo, params)
+	if !ok {
+		t.Fatalf("workspace/willRenameFiles request failed")
+	}
+	if resMsg == nil {
+		t.Fatalf("nil response received for workspace/willRenameFiles request")
+	}
+	if resp := resMsg.AsResponse(); resp.Error != nil {
+		t.Fatalf("workspace/willRenameFiles request returned error: %s", resp.Error.String())
+	}
+	return result
+}
+
+func (f *FourslashTest) ApplyTextEdits(t *testing.T, fileName string, edits []*lsproto.TextEdit) string {
+	t.Helper()
+
+	script := f.getScriptInfo(fileName)
+	if script == nil {
+		t.Fatalf("file %q not found", fileName)
+	}
+	if len(edits) == 0 {
+		return script.content
+	}
+
+	sortedEdits := append([]*lsproto.TextEdit(nil), edits...)
+	slices.SortFunc(sortedEdits, func(a, b *lsproto.TextEdit) int {
+		return lsproto.ComparePositions(b.Range.Start, a.Range.Start)
+	})
+
+	updatedContent := script.content
+	for _, edit := range sortedEdits {
+		start := f.converters.LineAndCharacterToPosition(script, edit.Range.Start)
+		end := f.converters.LineAndCharacterToPosition(script, edit.Range.End)
+		updatedContent = updatedContent[:start] + edit.NewText + updatedContent[end:]
+	}
+
+	return updatedContent
+}
+
 func (f *FourslashTest) updateState(method lsproto.Method, params any) {
 	switch method {
 	case lsproto.MethodTextDocumentDidOpen:
