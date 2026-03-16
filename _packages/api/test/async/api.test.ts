@@ -2034,9 +2034,10 @@ describe("modifierFlags", () => {
                 node.forEachChild(visit);
             });
             assert.ok(fnNode, "Should find a function declaration");
-            assert.ok(fnNode.modifierFlags & ModifierFlags.Export, "Should have Export flag");
-            assert.ok(fnNode.modifierFlags & ModifierFlags.Async, "Should have Async flag");
-            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.Export | ModifierFlags.Async);
+            const fnModifierFlags = (fnNode as any).modifierFlags as number;
+            assert.ok(fnModifierFlags & ModifierFlags.Export, "Should have Export flag");
+            assert.ok(fnModifierFlags & ModifierFlags.Async, "Should have Async flag");
+            assert.strictEqual(fnModifierFlags, ModifierFlags.Export | ModifierFlags.Async);
         }
         finally {
             await api.close();
@@ -2062,7 +2063,7 @@ describe("modifierFlags", () => {
                 node.forEachChild(visit);
             });
             assert.ok(fnNode, "Should find a function declaration");
-            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.None);
+            assert.strictEqual((fnNode as any).modifierFlags, ModifierFlags.None);
         }
         finally {
             await api.close();
@@ -2083,7 +2084,7 @@ describe("Checker - getResolvedSymbol", () => {
             assert.ok(sourceFile);
 
             // Find the 'x' identifier in `const y = x`
-            let refNode: import("@typescript/ast").Node | undefined;
+            let refNode: import("@typescript/ast").Identifier | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isIdentifier(node) && node.text === "x") {
                     // We want the reference, not the declaration - take the last one
