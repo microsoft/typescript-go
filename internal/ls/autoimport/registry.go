@@ -754,59 +754,60 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 
 	// --- Phase 2: Extraction (parallel per unique realpath) ---
 	// Extract from main packages first. If a main package has no TypeScript entrypoints,
-	// it gets queued for a deduplicated @types fallback pass. Packages with no main
+	// we fall back to extracting from @types in a second pass. Packages with no main
 	// package extract directly from @types in the primary pass.
 	seen := make(map[string]bool)
 	extractionCache := make(map[string]*perPackageExtractionResult)
 	var extractionMu sync.Mutex
-	var needsFallback []*discoveredPackage
+	// Collect all packages that have an @types fallback. After the primary pass, we
+	// filter to only those whose main extraction failed, then deduplicate by typesRealpath.
+	var typesFallbackCandidates []*discoveredPackage
 	for _, task := range nodeModulesTasks {
 		if task.discoverErr != nil {
 			continue
 		}
 		for _, pkg := range task.discovered {
 			if pkg.realpath != "" {
-				if seen[pkg.realpath] {
-					continue
+				if !seen[pkg.realpath] {
+					seen[pkg.realpath] = true
+					wg.Go(func() {
+						if ctx.Err() != nil {
+							return
+						}
+						result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+						if result != nil {
+							extractionMu.Lock()
+							extractionCache[pkg.realpath] = result
+							extractionMu.Unlock()
+						}
+					})
 				}
-				seen[pkg.realpath] = true
-				wg.Go(func() {
-					if ctx.Err() != nil {
-						return
-					}
-					result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
-					extractionMu.Lock()
-					if result != nil {
-						extractionCache[pkg.realpath] = result
-					} else if pkg.typesRealpath != "" {
-						needsFallback = append(needsFallback, pkg)
-					}
-					extractionMu.Unlock()
-				})
+				if pkg.typesRealpath != "" {
+					typesFallbackCandidates = append(typesFallbackCandidates, pkg)
+				}
 			} else if pkg.typesRealpath != "" {
-				if seen[pkg.typesRealpath] {
-					continue
+				if !seen[pkg.typesRealpath] {
+					seen[pkg.typesRealpath] = true
+					wg.Go(func() {
+						if ctx.Err() != nil {
+							return
+						}
+						result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+						if result != nil {
+							extractionMu.Lock()
+							extractionCache[pkg.typesRealpath] = result
+							extractionMu.Unlock()
+						}
+					})
 				}
-				seen[pkg.typesRealpath] = true
-				wg.Go(func() {
-					if ctx.Err() != nil {
-						return
-					}
-					result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
-					if result != nil {
-						extractionMu.Lock()
-						extractionCache[pkg.typesRealpath] = result
-						extractionMu.Unlock()
-					}
-				})
 			}
 		}
 	}
 	wg.Wait()
 
-	// Deduplicate and extract from @types packages where the main package had no entrypoints.
-	for _, pkg := range needsFallback {
-		if seen[pkg.typesRealpath] {
+	// For packages whose main extraction yielded nothing, fall back to @types.
+	for _, pkg := range typesFallbackCandidates {
+		if extractionCache[pkg.realpath] != nil || seen[pkg.typesRealpath] {
 			continue
 		}
 		seen[pkg.typesRealpath] = true
@@ -1243,24 +1244,6 @@ func (b *registryBuilder) discoverBucketPackages(
 	return result
 }
 
-// getPackageEntrypoints resolves TypeScript entrypoints for a package.json entry.
-// Returns nil for both if the package doesn't exist or has no TypeScript entrypoints.
-func (b *registryBuilder) getPackageEntrypoints(
-	packageJson *packagejson.InfoCacheEntry,
-	packageName string,
-) (*packagejson.InfoCacheEntry, []*module.ResolvedEntrypoint) {
-	if packageJson == nil || !packageJson.DirectoryExists {
-		return nil, nil
-	}
-	toRealpath, _ := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
-	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
-	entrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
-	if entrypoints == nil {
-		return nil, nil
-	}
-	return packageJson, entrypoints
-}
-
 // extractPackage extracts exports from a single package.json.
 // This runs once per unique realpath during the extraction phase.
 // Returns nil if the package has no extractable entrypoints.
@@ -1271,13 +1254,15 @@ func (b *registryBuilder) extractPackage(
 	projectReferenceOutputs map[tspath.Path]string,
 	fileExcludePatterns []*regexp2.Regexp,
 ) *perPackageExtractionResult {
-	_, packageEntrypoints := b.getPackageEntrypoints(packageJson, packageName)
+	if packageJson == nil || !packageJson.DirectoryExists {
+		return nil
+	}
+	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
+	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
+	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 	if packageEntrypoints == nil {
 		return nil
 	}
-
-	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
-	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
 
 	var skippedEntrypoints int
 	if len(fileExcludePatterns) > 0 {
