@@ -6545,6 +6545,8 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 			importText := "import(\"" + specifierText + "\")"
 			if ast.IsImportSpecifier(node) {
 				importText = importText + "." + identifierText
+			} else if ast.IsImportClause(node) {
+				importText = importText + ".default"
 			}
 			c.error(errorNode, diagnostics.X_0_is_a_type_and_cannot_be_imported_in_JavaScript_files_Use_1_in_a_JSDoc_type_annotation, identifierText, importText)
 		}
