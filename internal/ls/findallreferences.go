@@ -594,6 +594,10 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
+	if isRename {
+		// Adjust modifier/keyword nodes to the declaration name, matching Strada's findRenameLocations.
+		node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
+	}
 	if isRename && !nodeIsEligibleForRename(node) || implementations && ast.IsSourceFile(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
