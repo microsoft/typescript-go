@@ -74,7 +74,7 @@ export const platform = "web" as const;
 }
 
 tsgo --b --verbose
-ExitStatus:: DiagnosticsPresent_OutputsSkipped
+ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * pkg/tsconfig.native.json
@@ -92,14 +92,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output file 'tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
-
-[96mapp.ts[0m:[93m2[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType '"web"' is not assignable to type '"native"'.
-
-[7m2[0m const check: "native" = platform;
-[7m [0m [91m      ~~~~~[0m
-
-
-Found 1 error in app.ts[90m:2[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -342,7 +334,7 @@ export declare const platform: "native";
   "size": 1681
 }
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["./app.ts"],"semanticErrors":true}
+{"version":"FakeTSVersion","root":["./app.ts"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -354,8 +346,7 @@ export declare const platform: "native";
       "original": "./app.ts"
     }
   ],
-  "size": 69,
-  "semanticErrors": true
+  "size": 47
 }
 
 pkg/tsconfig.native.json::
@@ -382,7 +373,7 @@ Signatures::
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*refresh*    /home/src/workspaces/project/pkg/dist/src/util.d.ts
+*refresh*    /home/src/workspaces/project/pkg/dist/src/util.native.d.ts
 *refresh*    /home/src/workspaces/project/pkg/dist/index.native.d.ts
 *refresh*    /home/src/workspaces/project/app.ts
 Signatures::
