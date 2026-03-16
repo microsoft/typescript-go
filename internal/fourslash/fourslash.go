@@ -3681,8 +3681,15 @@ func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.Use
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
-	if result.Range != nil || result.PrepareRenamePlaceholder != nil || result.PrepareRenameDefaultBehavior != nil {
+	f.baselineState(t)
+	f.baselineRequestOrNotification(t, lsproto.TextDocumentPrepareRenameInfo.Method, params)
+	resMsg, result, _ := lsptestutil.SendRequest(t, f.client, lsproto.TextDocumentPrepareRenameInfo, params)
+	f.baselineState(t)
+
+	// prepareRename can reject via an error response (with a localized message) or a null result.
+	if resMsg != nil && resMsg.AsResponse().Error != nil {
+		// Error response — rename was rejected with a message. This is expected.
+	} else if result.Range != nil || result.PrepareRenamePlaceholder != nil || result.PrepareRenameDefaultBehavior != nil {
 		t.Fatalf("%sExpected rename to fail, but prepareRename returned a result", prefix)
 	}
 

@@ -550,6 +550,12 @@ func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 	})
 }
 
+// requestFailedError is an error with LSP RequestFailed (-32803) code and a clean user-facing message.
+type requestFailedError string
+
+func (e requestFailedError) Error() string { return string(e) }
+func (e requestFailedError) Unwrap() error { return lsproto.ErrorCodeRequestFailed }
+
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	// Do not send error response for notifications,
 	// except for parse errors which may occur before determining if the message is a request or notification.
@@ -1175,7 +1181,7 @@ func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params
 func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.LanguageService, params *lsproto.PrepareRenameParams) (lsproto.PrepareRenameResponse, error) {
 	info := languageService.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
 	if !info.CanRename {
-		return lsproto.PrepareRenameResponse{}, nil
+		return lsproto.PrepareRenameResponse{}, requestFailedError(info.LocalizedErrorMessage)
 	}
 	return lsproto.PrepareRenameResponse{
 		PrepareRenamePlaceholder: &lsproto.PrepareRenamePlaceholder{

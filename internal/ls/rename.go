@@ -10,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -19,13 +21,10 @@ import (
 // RenameInfo represents the result of a rename validation check.
 // It is used by the `textDocument/prepareRename` LSP handler.
 type RenameInfo struct {
-	CanRename bool
-	// !!! LocalizedErrorMessage is not currently surfaced via the LSP prepareRename response,
-	// !!! which only supports returning null to indicate failure. If the LSP spec adds error
-	// !!! message support to prepareRename, this field and the diagnostic messages in
-	// !!! renameBlockedReason/wouldRenameInOtherNodeModules should be restored.
-	DisplayName string
-	TriggerSpan lsproto.Range
+	CanRename             bool
+	LocalizedErrorMessage string
+	DisplayName           string
+	TriggerSpan           lsproto.Range
 }
 
 func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, orchestrator CrossProjectOrchestrator) (lsproto.WorkspaceEditOrNull, error) {
@@ -54,8 +53,7 @@ func (l *LanguageService) GetRenameInfo(ctx context.Context, documentURI lsproto
 			return renameInfo
 		}
 	}
-	// !!! diagnostics.You_cannot_rename_this_element
-	return RenameInfo{}
+	return getRenameInfoError(ctx, diagnostics.You_cannot_rename_this_element)
 }
 
 func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
@@ -124,13 +122,13 @@ func (l *LanguageService) getRenameInfoForNode(ctx context.Context, node *ast.No
 		return RenameInfo{}, false
 	}
 
-	if l.isRenameBlocked(sourceFile, node, symbol, ch, program) {
-		return RenameInfo{}, true
+	if msg := l.renameBlockedReason(sourceFile, node, symbol, ch, program); msg != nil {
+		return getRenameInfoError(ctx, msg), true
 	}
 
 	if ast.IsStringLiteralLike(node) && ast.TryGetImportFromModuleSpecifier(node) != nil {
 		if l.UserPreferences().AllowRenameOfImportPath.IsTrue() {
-			return l.getRenameInfoForModule(node, sourceFile, symbol)
+			return l.getRenameInfoForModule(ctx, node, sourceFile, symbol)
 		}
 		return RenameInfo{}, false
 	}
@@ -153,27 +151,25 @@ func nodeIsEligibleForRename(node *ast.Node) bool {
 	}
 }
 
-// isRenameBlocked returns true if the rename should be blocked
+// renameBlockedReason returns a non-nil diagnostic message if the rename should be blocked
 // because the symbol is a library definition, a default keyword, or would cross node_modules boundaries.
-func (l *LanguageService) isRenameBlocked(sourceFile *ast.SourceFile, node *ast.Node, symbol *ast.Symbol, ch *checker.Checker, program *compiler.Program) bool {
+func (l *LanguageService) renameBlockedReason(sourceFile *ast.SourceFile, node *ast.Node, symbol *ast.Symbol, ch *checker.Checker, program *compiler.Program) *diagnostics.Message {
 	for _, declaration := range symbol.Declarations {
 		if isDefinedInLibraryFile(program, declaration) {
-			// !!! diagnostics.You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library
-			return true
+			return diagnostics.You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library
 		}
 	}
 
 	// Cannot rename `default` as in `import { default as foo } from "./someModule"`
 	if ast.IsIdentifier(node) && node.Text() == "default" && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
-		// !!! diagnostics.You_cannot_rename_this_element
-		return true
+		return diagnostics.You_cannot_rename_this_element
 	}
 
-	if wouldRenameInOtherNodeModules(sourceFile, symbol, ch, l.UserPreferences()) {
-		return true
+	if msg := wouldRenameInOtherNodeModules(sourceFile, symbol, ch, l.UserPreferences()); msg != nil {
+		return msg
 	}
 
-	return false
+	return nil
 }
 
 // isDefinedInLibraryFile checks if a declaration is from a default library file (e.g., lib.d.ts).
@@ -183,7 +179,7 @@ func isDefinedInLibraryFile(program *compiler.Program, declaration *ast.Node) bo
 }
 
 // wouldRenameInOtherNodeModules checks if renaming the symbol would affect node_modules.
-func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Symbol, ch *checker.Checker, preferences *lsutil.UserPreferences) bool {
+func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Symbol, ch *checker.Checker, preferences *lsutil.UserPreferences) *diagnostics.Message {
 	sym := symbol
 	if !preferences.UseAliasesForRename.IsTrue() && sym.Flags&ast.SymbolFlagsAlias != 0 {
 		importSpecifier := core.Find(sym.Declarations, ast.IsImportSpecifier)
@@ -194,7 +190,7 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 
 	declarations := sym.Declarations
 	if len(declarations) == 0 {
-		return false
+		return nil
 	}
 
 	originalPackage := getPackagePathComponents(originalFile.FileName())
@@ -202,11 +198,10 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 		// Original source file is not in node_modules.
 		for _, declaration := range declarations {
 			if isInsideNodeModules(ast.GetSourceFileOfNode(declaration).FileName()) {
-				// !!! diagnostics.You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder
-				return true
+				return diagnostics.You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder
 			}
 		}
-		return false
+		return nil
 	}
 
 	// Original source file is in node_modules.
@@ -223,13 +218,12 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 					declComp = declPackage[i]
 				}
 				if origComp != declComp {
-					// !!! diagnostics.You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder
-					return true
+					return diagnostics.You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder
 				}
 			}
 		}
 	}
-	return false
+	return nil
 }
 
 // getPackagePathComponents returns the path components up to and including the package name
@@ -251,10 +245,9 @@ func getPackagePathComponents(filePath string) []string {
 }
 
 // getRenameInfoForModule handles rename validation for module specifiers.
-func (l *LanguageService) getRenameInfoForModule(node *ast.Node, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
+func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
 	if !tspath.IsExternalModuleNameRelative(node.Text()) {
-		// !!! diagnostics.You_cannot_rename_a_module_via_a_global_import
-		return RenameInfo{}, true
+		return getRenameInfoError(ctx, diagnostics.You_cannot_rename_a_module_via_a_global_import), true
 	}
 
 	moduleSourceFile := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
@@ -334,6 +327,13 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 		}
 	}
 	return newText
+}
+
+func getRenameInfoError(ctx context.Context, message *diagnostics.Message) RenameInfo {
+	return RenameInfo{
+		CanRename:             false,
+		LocalizedErrorMessage: message.Localize(locale.FromContext(ctx)),
+	}
 }
 
 func getRenameInfoSuccess(node *ast.Node, sourceFile *ast.SourceFile, displayName string, converters *lsconv.Converters) RenameInfo {
