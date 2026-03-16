@@ -83,7 +83,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 			continue
 		}
 		textEdit := &lsproto.TextEdit{
-			Range:   *l.getRangeOfEntry(entry),
+			Range:   l.getRangeOfEntry(entry),
 			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, ch),
 		}
 		changes[uri] = append(changes[uri], textEdit)
