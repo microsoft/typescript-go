@@ -139,6 +139,9 @@ func isNodeEligibleForRename(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
 		return true
+	// !!! The reference code also allows StringLiteral, NoSubstitutionTemplateLiteral,
+	// !!! ThisKeyword, and (conditionally) NumericLiteral. These are not yet supported because
+	// !!! the find-all-references rename flow in provideSymbolsAndEntries doesn't handle them.
 	default:
 		return false
 	}
