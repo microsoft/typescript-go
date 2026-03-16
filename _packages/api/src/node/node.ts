@@ -1,6 +1,6 @@
-import { ModifierFlags } from "#enums/modifierFlags";
 import {
     type FileReference,
+    ModifierFlags,
     type Node,
     type NodeArray,
     NodeFlags,

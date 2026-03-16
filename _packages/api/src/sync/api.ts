@@ -8,21 +8,21 @@
 //
 /// <reference path="../node/node.ts" preserve="true" />
 import { ElementFlags } from "#enums/elementFlags";
-import { ModifierFlags } from "#enums/modifierFlags";
 import { ObjectFlags } from "#enums/objectFlags";
 import { SignatureFlags } from "#enums/signatureFlags";
 import { SignatureKind } from "#enums/signatureKind";
 import { SymbolFlags } from "#enums/symbolFlags";
 import { TypeFlags } from "#enums/typeFlags";
 import { TypePredicateKind } from "#enums/typePredicateKind";
-import type {
-    Expression,
-    Identifier,
-    Node,
-    Path,
-    SourceFile,
-    SyntaxKind,
-    TypeNode,
+import {
+    type Expression,
+    type Identifier,
+    ModifierFlags,
+    type Node,
+    type Path,
+    type SourceFile,
+    type SyntaxKind,
+    type TypeNode,
 } from "@typescript/ast";
 import {
     encodeNode,
