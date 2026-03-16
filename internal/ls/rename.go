@@ -49,7 +49,7 @@ func (l *LanguageService) GetRenameInfo(ctx context.Context, documentURI lsproto
 	node := astnav.GetTouchingPropertyName(sourceFile, pos)
 	node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
 
-	if isNodeEligibleForRename(node) {
+	if nodeIsEligibleForRename(node) {
 		if renameInfo, ok := l.getRenameInfoForNode(ctx, node, sourceFile, program); ok {
 			return renameInfo
 		}
@@ -59,7 +59,7 @@ func (l *LanguageService) GetRenameInfo(ctx context.Context, documentURI lsproto
 }
 
 func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
-	if !isNodeEligibleForRename(data.OriginalNode) {
+	if !nodeIsEligibleForRename(data.OriginalNode) {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
@@ -135,7 +135,7 @@ func (l *LanguageService) getRenameInfoForNode(ctx context.Context, node *ast.No
 	return getRenameInfoSuccess(node, sourceFile, ch.SymbolToString(symbol), l.converters), true
 }
 
-func isNodeEligibleForRename(node *ast.Node) bool {
+func nodeIsEligibleForRename(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
 		return true
