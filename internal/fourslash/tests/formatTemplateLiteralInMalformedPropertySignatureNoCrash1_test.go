@@ -28,4 +28,18 @@ export default ResourceCard
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
+	f.VerifyCurrentFileContent(t, `interface Props {
+    iconOnly?: boolean
+
+
+const ResourceCard: React.FC<Props> = (props) => {
+    return (
+        <IoLayersOutline
+            className={`+"`"+`${match ? 'text-primary-foreground' : 'text-foreground'}`+"`"+`}
+        />
+    )
+}
+
+export default ResourceCard
+`)
 }

@@ -343,9 +343,10 @@ func (w *formatSpanWorker) processChildNode(
 ) int {
 	debug.Assert(!ast.NodeIsSynthesized(child))
 
-	if ast.NodeIsMissing(child) || isGrammarError(parent, child) || child.Flags&ast.NodeFlagsReparsed != 0 {
+	if ast.NodeIsMissing(child) || child.Flags&ast.NodeFlagsReparsed != 0 {
 		return inheritedIndentation
 	}
+	isErrorMemberListElement := isMemberListElement(parent, child) && child.Flags&ast.NodeFlagsThisNodeHasError != 0
 
 	childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
 	childStartLine := scanner.GetECMALineOfPosition(w.sourceFile, childStartPos)
@@ -358,7 +359,7 @@ func (w *formatSpanWorker) processChildNode(
 	// if child is a list item - try to get its indentation, only if parent is within the original range.
 	childIndentationAmount := -1
 
-	if isListItem && parent.Loc.ContainedBy(w.originalRange) {
+	if !isErrorMemberListElement && isListItem && parent.Loc.ContainedBy(w.originalRange) {
 		childIndentationAmount = w.tryComputeIndentationForListItem(childStartPos, child.End(), parentStartLine, w.originalRange, inheritedIndentation)
 		if childIndentationAmount != -1 {
 			inheritedIndentation = childIndentationAmount
@@ -413,7 +414,13 @@ func (w *formatSpanWorker) processChildNode(
 	if child.Kind == ast.KindDecorator {
 		effectiveParentStartLine = childStartLine
 	}
-	childIndentation, delta := w.computeIndentation(child, childStartLine, childIndentationAmount, node, parentDynamicIndentation, effectiveParentStartLine)
+	childIndentation := 0
+	delta := 0
+	if isErrorMemberListElement {
+		childIndentation = w.getCurrentIndentationAtPosition(childStartPos)
+	} else {
+		childIndentation, delta = w.computeIndentation(child, childStartLine, childIndentationAmount, node, parentDynamicIndentation, effectiveParentStartLine)
+	}
 
 	w.processNode(child, w.childContextNode, childStartLine, undecoratedChildStartLine, childIndentation, delta)
 
@@ -474,8 +481,7 @@ func (w *formatSpanWorker) processChildNodes(
 					// }: {};
 					indentationOnListStartToken = w.indentationOnLastIndentedLine
 				} else {
-					startLinePosition := GetLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
-					indentationOnListStartToken = FindFirstNonWhitespaceColumn(startLinePosition, tokenInfo.token.Loc.Pos(), w.sourceFile, w.formattingContext.Options)
+					indentationOnListStartToken = w.getCurrentIndentationAtPosition(tokenInfo.token.Loc.Pos())
 				}
 
 				listDynamicIndentation = w.getDynamicIndentation(parent, parentStartLine, indentationOnListStartToken, w.formattingContext.Options.IndentSize)
@@ -532,6 +538,11 @@ func (w *formatSpanWorker) executeProcessNodeVisitor(node *ast.Node, indenter *d
 	w.visitingUndecoratedNodeStartLine = oldUndecoratedStart
 }
 
+func (w *formatSpanWorker) getCurrentIndentationAtPosition(pos int) int {
+	startLinePosition := GetLineStartPositionForPosition(pos, w.sourceFile)
+	return FindFirstNonWhitespaceColumn(startLinePosition, pos, w.sourceFile, w.formattingContext.Options)
+}
+
 func (w *formatSpanWorker) computeIndentation(node *ast.Node, startLine int, inheritedIndentation int, parent *ast.Node, parentDynamicIndentation *dynamicIndenter, effectiveParentStartLine int) (indentation int, delta int) {
 	delta = 0
 	if ShouldIndentChildNode(w.formattingContext.Options, node, nil, nil) {
@@ -584,8 +595,7 @@ func (w *formatSpanWorker) tryComputeIndentationForListItem(startPos int, endPos
 		}
 	} else {
 		startLine := scanner.GetECMALineOfPosition(w.sourceFile, startPos)
-		startLinePosition := GetLineStartPositionForPosition(startPos, w.sourceFile)
-		column := FindFirstNonWhitespaceColumn(startLinePosition, startPos, w.sourceFile, w.formattingContext.Options)
+		column := w.getCurrentIndentationAtPosition(startPos)
 		if startLine != parentStartLine || startPos == column {
 			// Use the base indent size if it is greater than
 			// the indentation of the inherited predecessor.
