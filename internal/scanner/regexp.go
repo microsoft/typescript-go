@@ -91,8 +91,9 @@ type regExpParser struct {
 	namedCapturingGroups    []map[string]bool
 
 	// pendingLowSurrogate holds the low surrogate to emit on the next
-	// scanSourceCharacter call when a non-BMP character is split into two
-	// surrogate code units in non-unicode mode.
+	// scanSourceCharacter call when Corsa has to split a non-BMP rune into
+	// UTF-16 surrogate code units in non-unicode mode. Strada did not need
+	// this bookkeeping because its source text was already indexed as UTF-16.
 	pendingLowSurrogate rune
 }
 
