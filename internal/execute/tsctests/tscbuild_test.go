@@ -4104,3 +4104,105 @@ func TestBuildSolutionProject(t *testing.T) {
 		test.run(t, "solution")
 	}
 }
+
+func TestBuildProjectReferenceRedirectMultipleSubProjects(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "file in multiple sub-projects uses correct customConditions",
+			files: FileMap{
+				// Consumer app that uses react-native conditions and references pkg
+				"/home/src/workspaces/project/app/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"module": "nodenext",
+						"moduleResolution": "nodenext",
+						"customConditions": ["react-native"],
+						"rootDir": ".",
+						"outDir": "../dist/app",
+						"skipDefaultLibCheck": true
+					},
+					"references": [
+						{ "path": "../pkg" }
+					]
+				}`),
+				"/home/src/workspaces/project/app/app.ts": stringtestutil.Dedent(`
+					import { platform } from "../pkg/index.js";
+					const p: "native" = platform;
+				`),
+				// Package with two tsconfigs: web (default) and native
+				// Web tsconfig includes all files (via default include) and references native
+				"/home/src/workspaces/project/pkg/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"module": "nodenext",
+						"moduleResolution": "nodenext",
+						"rootDir": ".",
+						"outDir": "../dist/pkg",
+						"skipDefaultLibCheck": true
+					},
+					"references": [
+						{ "path": "./tsconfig.native.json" }
+					]
+				}`),
+				// Native tsconfig with customConditions and moduleSuffixes
+				"/home/src/workspaces/project/pkg/tsconfig.native.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"module": "nodenext",
+						"moduleResolution": "nodenext",
+						"customConditions": ["react-native"],
+						"moduleSuffixes": [".native", ""],
+						"rootDir": ".",
+						"outDir": "../dist/pkg-native",
+						"skipDefaultLibCheck": true
+					}
+				}`),
+				// Package entry point - included in both tsconfigs
+				"/home/src/workspaces/project/pkg/index.ts": stringtestutil.Dedent(`
+					export { platform } from "./src/util.js";
+				`),
+				// Native entry point - also included in both tsconfigs
+				"/home/src/workspaces/project/pkg/index.native.ts": stringtestutil.Dedent(`
+					export { platform } from "./src/util.js";
+				`),
+				// Web utility
+				"/home/src/workspaces/project/pkg/src/util.ts": stringtestutil.Dedent(`
+					export const platform = "web" as const;
+				`),
+				// Native utility - should be resolved when customConditions includes react-native
+				"/home/src/workspaces/project/pkg/src/util.native.ts": stringtestutil.Dedent(`
+					export const platform = "native" as const;
+				`),
+				// Package.json with conditional exports
+				"/home/src/workspaces/project/pkg/package.json": stringtestutil.Dedent(`
+				{
+					"name": "pkg",
+					"type": "module",
+					"exports": {
+						".": {
+							"react-native": {
+								"types": "./index.native.ts",
+								"default": "./index.native.js"
+							},
+							"types": "./index.ts",
+							"default": "./index.js"
+						}
+					}
+				}`),
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "app", "--verbose"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "projectReferenceRedirectMultipleSubProjects")
+	}
+}

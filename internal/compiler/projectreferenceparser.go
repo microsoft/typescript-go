@@ -86,24 +86,26 @@ func (p *projectReferenceParser) initMapperWorker(tasks []*projectReferenceParse
 		if !seen.AddIfAbsent(task) {
 			continue
 		}
-		var referencesInConfig []tspath.Path
-		referencesInConfig = p.initMapperWorker(task.subTasks, seen)
 		p.loader.projectReferenceFileMapper.configToProjectReference[path] = task.resolved
+		if task.resolved != nil && p.loader.projectReferenceFileMapper.opts.Config.ConfigFile != task.resolved.ConfigFile {
+			// Copy this task's source/output maps before recursing into sub-references,
+			// so that child (more specific) project references can overwrite parent mappings
+			// for files that belong to multiple sub-projects. This matches the ordering in
+			// TypeScript's parseProjectReferenceConfigFile which sets maps before recursing.
+			maps.Copy(p.loader.projectReferenceFileMapper.sourceToProjectReference, task.resolved.SourceToProjectReference())
+			maps.Copy(p.loader.projectReferenceFileMapper.outputDtsToProjectReference, task.resolved.OutputDtsToProjectReference())
+			if p.loader.projectReferenceFileMapper.opts.canUseProjectReferenceSource() {
+				declDir := task.resolved.CompilerOptions().DeclarationDir
+				if declDir == "" {
+					declDir = task.resolved.CompilerOptions().OutDir
+				}
+				if declDir != "" {
+					p.loader.dtsDirectories.Add(p.loader.toPath(declDir))
+				}
+			}
+		}
+		referencesInConfig := p.initMapperWorker(task.subTasks, seen)
 		p.loader.projectReferenceFileMapper.referencesInConfigFile[path] = referencesInConfig
-		if task.resolved == nil || p.loader.projectReferenceFileMapper.opts.Config.ConfigFile == task.resolved.ConfigFile {
-			continue
-		}
-		maps.Copy(p.loader.projectReferenceFileMapper.sourceToProjectReference, task.resolved.SourceToProjectReference())
-		maps.Copy(p.loader.projectReferenceFileMapper.outputDtsToProjectReference, task.resolved.OutputDtsToProjectReference())
-		if p.loader.projectReferenceFileMapper.opts.canUseProjectReferenceSource() {
-			declDir := task.resolved.CompilerOptions().DeclarationDir
-			if declDir == "" {
-				declDir = task.resolved.CompilerOptions().OutDir
-			}
-			if declDir != "" {
-				p.loader.dtsDirectories.Add(p.loader.toPath(declDir))
-			}
-		}
 	}
 	return results
 }
