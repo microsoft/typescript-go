@@ -2034,7 +2034,7 @@ describe("modifierFlags", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
-            let fnNode: import("@typescript/ast").Node | undefined;
+            let fnNode: import("@typescript/ast").FunctionDeclaration | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isFunctionDeclaration(node)) {
                     fnNode = node;
@@ -2042,10 +2042,9 @@ describe("modifierFlags", () => {
                 node.forEachChild(visit);
             });
             assert.ok(fnNode, "Should find a function declaration");
-            const fnModifierFlags = (fnNode as any).modifierFlags as number;
-            assert.ok(fnModifierFlags & ModifierFlags.Export, "Should have Export flag");
-            assert.ok(fnModifierFlags & ModifierFlags.Async, "Should have Async flag");
-            assert.strictEqual(fnModifierFlags, ModifierFlags.Export | ModifierFlags.Async);
+            assert.ok(fnNode.modifierFlags & ModifierFlags.Export, "Should have Export flag");
+            assert.ok(fnNode.modifierFlags & ModifierFlags.Async, "Should have Async flag");
+            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.Export | ModifierFlags.Async);
         }
         finally {
             api.close();
@@ -2063,7 +2062,7 @@ describe("modifierFlags", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
-            let fnNode: import("@typescript/ast").Node | undefined;
+            let fnNode: import("@typescript/ast").FunctionDeclaration | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isFunctionDeclaration(node)) {
                     fnNode = node;
@@ -2071,7 +2070,7 @@ describe("modifierFlags", () => {
                 node.forEachChild(visit);
             });
             assert.ok(fnNode, "Should find a function declaration");
-            assert.strictEqual((fnNode as any).modifierFlags, ModifierFlags.None);
+            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.None);
         }
         finally {
             api.close();
