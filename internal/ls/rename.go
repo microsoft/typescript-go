@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -193,8 +194,8 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 		return nil
 	}
 
-	originalPackage := getPackagePathComponents(originalFile.FileName())
-	if originalPackage == nil {
+	originalPackage := module.ParseNodeModuleFromPath(originalFile.FileName(), false /*isFolder*/)
+	if originalPackage == "" {
 		// Original source file is not in node_modules.
 		for _, declaration := range declarations {
 			if isInsideNodeModules(ast.GetSourceFileOfNode(declaration).FileName()) {
@@ -206,42 +207,12 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 
 	// Original source file is in node_modules.
 	for _, declaration := range declarations {
-		declPackage := getPackagePathComponents(ast.GetSourceFileOfNode(declaration).FileName())
-		if declPackage != nil {
-			length := min(len(originalPackage), len(declPackage))
-			for i := 0; i <= length; i++ {
-				var origComp, declComp string
-				if i < len(originalPackage) {
-					origComp = originalPackage[i]
-				}
-				if i < len(declPackage) {
-					declComp = declPackage[i]
-				}
-				if origComp != declComp {
-					return diagnostics.You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder
-				}
-			}
+		declPackage := module.ParseNodeModuleFromPath(ast.GetSourceFileOfNode(declaration).FileName(), false /*isFolder*/)
+		if declPackage != "" && declPackage != originalPackage {
+			return diagnostics.You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder
 		}
 	}
 	return nil
-}
-
-// getPackagePathComponents returns the path components up to and including the package name
-// within node_modules, or nil if the path is not inside node_modules.
-func getPackagePathComponents(filePath string) []string {
-	components := tspath.GetPathComponents(filePath, "")
-	nodeModulesIdx := -1
-	for i := len(components) - 1; i >= 0; i-- {
-		if components[i] == "node_modules" {
-			nodeModulesIdx = i
-			break
-		}
-	}
-	if nodeModulesIdx == -1 {
-		return nil
-	}
-	end := min(nodeModulesIdx+2, len(components))
-	return components[:end]
 }
 
 // getRenameInfoForModule handles rename validation for module specifiers.
