@@ -550,11 +550,10 @@ func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 	})
 }
 
-// requestFailedError is an error with LSP RequestFailed (-32803) code and a clean user-facing message.
-type requestFailedError string
+type userFacingRequestFailedError string
 
-func (e requestFailedError) Error() string { return string(e) }
-func (e requestFailedError) Unwrap() error { return lsproto.ErrorCodeRequestFailed }
+func (e userFacingRequestFailedError) Error() string { return string(e) }
+func (e userFacingRequestFailedError) Unwrap() error { return lsproto.ErrorCodeRequestFailed }
 
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	// Do not send error response for notifications,
@@ -608,14 +607,20 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			idStr = " (" + req.ID.String() + ")"
 		}
 		if err != nil {
-			s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
+			if _, ok := errors.AsType[userFacingRequestFailedError](err); !ok {
+				s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
+			} else {
+				s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+			}
 			return nil, err
 		}
 		if doAsyncWork != nil {
 			return func() error {
 				// note: ctx.Err() has to be checked in the async work to allow async handlers to cleanup resources correctly
 				asyncWorkErr := doAsyncWork()
-				s.logger.Info(core.IfElse(asyncWorkErr != nil, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
+				_, isUserFacing := errors.AsType[userFacingRequestFailedError](asyncWorkErr)
+				isRealError := asyncWorkErr != nil && !isUserFacing
+				s.logger.Info(core.IfElse(isRealError, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
 				return asyncWorkErr
 			}, nil
 		}
@@ -1181,7 +1186,7 @@ func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params
 func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.LanguageService, params *lsproto.PrepareRenameParams) (lsproto.PrepareRenameResponse, error) {
 	info := languageService.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
 	if !info.CanRename {
-		return lsproto.PrepareRenameResponse{}, requestFailedError(info.LocalizedErrorMessage)
+		return lsproto.PrepareRenameResponse{}, userFacingRequestFailedError(info.LocalizedErrorMessage)
 	}
 	return lsproto.PrepareRenameResponse{
 		PrepareRenamePlaceholder: &lsproto.PrepareRenamePlaceholder{
