@@ -296,7 +296,6 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 					continue
 				}
 			}
-			// falls through to quantifier handling
 			fallthrough
 		case '*', '+', '?':
 			p.incPos(1)
