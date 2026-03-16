@@ -3640,36 +3640,62 @@ func (f *FourslashTest) verifyBaselineRename(
 }
 
 func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.UserPreferences) {
-	// !!! set preferences
-	params := &lsproto.RenameParams{
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit == nil || result.WorkspaceEdit.Changes == nil || len(*result.WorkspaceEdit.Changes) == 0 {
-		t.Fatal(prefix + "Expected rename to succeed, but got no changes")
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.Range == nil && result.PrepareRenamePlaceholder == nil && result.PrepareRenameDefaultBehavior == nil {
+		t.Fatal(prefix + "Expected rename to succeed, but prepareRename returned null")
+	}
+
+	// Also verify that textDocument/rename produces edits, since prepareRename is optional.
+	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "RENAME_SUCCEEDED_TEST",
+	})
+	if renameResult.WorkspaceEdit == nil || renameResult.WorkspaceEdit.Changes == nil || len(*renameResult.WorkspaceEdit.Changes) == 0 {
+		t.Fatal(prefix + "prepareRename succeeded but textDocument/rename returned no changes")
 	}
 }
 
 func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
-	// !!! set preferences
-	params := &lsproto.RenameParams{
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit != nil {
-		t.Fatalf(prefix+"Expected rename to fail, but got changes: %s", cmp.Diff(result.WorkspaceEdit, nil))
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.Range != nil || result.PrepareRenamePlaceholder != nil || result.PrepareRenameDefaultBehavior != nil {
+		t.Fatalf("%sExpected rename to fail, but prepareRename returned a result", prefix)
+	}
+
+	// Also verify that textDocument/rename produces no edits, since prepareRename is optional.
+	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "RENAME_FAILED_TEST",
+	})
+	if renameResult.WorkspaceEdit != nil && renameResult.WorkspaceEdit.Changes != nil && len(*renameResult.WorkspaceEdit.Changes) > 0 {
+		t.Fatalf("%sprepareRename returned null but textDocument/rename returned changes", prefix)
 	}
 }
 
