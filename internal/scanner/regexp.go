@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"math"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -403,7 +404,10 @@ func (p *regExpParser) scanDecimalEscape() bool {
 	if ch >= '1' && ch <= '9' {
 		start := p.pos()
 		p.scanDigits()
-		val, _ := strconv.Atoi(p.scanner.tokenValue)
+		val, err := strconv.Atoi(p.scanner.tokenValue)
+		if err != nil {
+			val = math.MaxInt
+		}
 		p.decimalEscapes = append(p.decimalEscapes, decimalEscapeValue{pos: start, end: p.pos(), value: val})
 		return true
 	}
