@@ -6,6 +6,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -369,6 +370,7 @@ func (p *regExpParser) scanPatternModifiers(currFlags regularExpressionFlags) re
 //	| CharacterEscape
 //	| 'k<' RegExpIdentifierName '>'
 func (p *regExpParser) scanAtomEscape() {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '\\')
 	switch p.char() {
 	case 'k':
 		p.incPos(1)
@@ -388,13 +390,15 @@ func (p *regExpParser) scanAtomEscape() {
 		fallthrough
 	default:
 		if !p.scanCharacterClassEscape() && !p.scanDecimalEscape() {
-			p.scanCharacterEscape(true /*atomEscape*/)
+			// Regex literals cannot contain line breaks here, so a character escape must consume something.
+			debug.Assert(p.scanCharacterEscape(true /*atomEscape*/) != "")
 		}
 	}
 }
 
 // DecimalEscape ::= [1-9] [0-9]*
 func (p *regExpParser) scanDecimalEscape() bool {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '\\')
 	ch := p.char()
 	if ch >= '1' && ch <= '9' {
 		start := p.pos()
@@ -417,6 +421,7 @@ func (p *regExpParser) scanDecimalEscape() bool {
 //	| '^' | '$' | '/' | '\' | '.' | '*' | '+' | '?' | '(' | ')' | '[' | ']' | '{' | '}' | '|'
 //	| [~AnyUnicodeMode] (any other non-identifier characters)
 func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '\\')
 	ch := p.char()
 	switch ch {
 	case -1:
@@ -456,6 +461,7 @@ func (p *regExpParser) scanCharacterEscape(atomEscape bool) string {
 }
 
 func (p *regExpParser) scanGroupName(isReference bool) {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '<')
 	p.scanner.tokenStart = p.pos()
 	p.scanner.scanIdentifier(0)
 	if p.pos() == p.scanner.tokenStart {
@@ -487,6 +493,7 @@ func (p *regExpParser) isClassContentExit(ch rune) bool {
 
 // ClassRanges ::= '^'? (ClassAtom ('-' ClassAtom)?)*
 func (p *regExpParser) scanClassRanges() {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '[')
 	p.pendingLowSurrogate = 0
 	if p.char() == '^' {
 		p.incPos(1)
@@ -531,6 +538,7 @@ func (p *regExpParser) scanClassRanges() {
 // ClassSubtraction ::= ClassSetOperand ('--' ClassSetOperand)+
 // ClassSetRange ::= ClassSetCharacter '-' ClassSetCharacter
 func (p *regExpParser) scanClassSetExpression() {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '[')
 	isCharacterComplement := false
 	if p.char() == '^' {
 		p.incPos(1)
@@ -747,6 +755,7 @@ func (p *regExpParser) scanClassSetOperand() string {
 
 // ClassStringDisjunctionContents ::= ClassSetCharacter* ('|' ClassSetCharacter*)*
 func (p *regExpParser) scanClassStringDisjunctionContents() {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '{')
 	characterCount := 0
 	for p.pos() < p.end {
 		ch := p.char()
@@ -843,6 +852,7 @@ func (p *regExpParser) scanClassAtom() string {
 //	| 'd' | 'D' | 's' | 'S' | 'w' | 'W'
 //	| [+AnyUnicodeMode] ('P' | 'p') '{' UnicodePropertyValueExpression '}'
 func (p *regExpParser) scanCharacterClassEscape() bool {
+	debug.Assert(p.pos() > 0 && p.text()[p.pos()-1] == '\\')
 	isCharacterComplement := false
 	start := p.pos() - 1
 	ch := p.char()
