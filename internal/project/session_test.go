@@ -1099,6 +1099,53 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/lib/helper.ts") != nil)
 		})
+
+		t.Run("create symlink directory matching include pattern", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts":   `export const x = 1;`,
+				"/home/projects/TS/shared/utils.ts":   `export const util = "hello";`,
+				"/home/projects/TS/shared/helpers.ts": `export const helper = 42;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+
+			// Initially, project only has the one file in src/.
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/utils.ts"))
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/helpers.ts"))
+
+			// Create a symlink directory inside src/ that points to the shared directory.
+			mapFS := utils.FsFromFileMap().FSys().(*vfstest.MapFS)
+			mapFS.AddSymlink("home/projects/TS/p1/src/linked", "home/projects/TS/shared")
+
+			// Send directory creation event (what VS Code sends when a symlink directory appears).
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/linked",
+				},
+			})
+
+			// After the symlink directory is created, the files inside it should be
+			// picked up by the wildcard include pattern.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/utils.ts"))
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/helpers.ts"))
+		})
 	})
 
 	t.Run("refreshes code lenses and inlay hints when relevant user preferences change", func(t *testing.T) {

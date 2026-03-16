@@ -474,22 +474,9 @@ func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary)
 		change.Changed = filteredChanged
 	}
 
-	if change.Created.Len() > 0 {
-		var filteredCreated collections.Set[lsproto.DocumentUri]
-		for uri := range change.Created.Keys() {
-			fileName := uri.FileName()
-			if hasRelevantWatchExtension(fileName) || isTrackedNodeModulesDirectory(fileName) {
-				// !!! Doing any amount of filtering here can break symlink directory creation where
-				//     the realpath directory contains a failed lookup location. isTrackedNodeModulesDirectory
-				//     handles the common case of package manager installs, but simply removing this filter
-				//     and letting it happen in markDirtyFiles would cause more stuff to work. The question
-				//     is whether that would be expensive. I think it would probably be fine, but we're starting
-				//     conservatively.
-				filteredCreated.Add(uri)
-			}
-		}
-		change.Created = filteredCreated
-	}
+	// We can't filter created events because any created path could be a directory symlink
+	// that includes relevant files. configFileRegistryBuilder will do check if these paths
+	// are directories if they fall within a config's wildcard directories.
 
 	return change
 }
