@@ -137,11 +137,12 @@ func (l *LanguageService) getRenameInfoForNode(ctx context.Context, node *ast.No
 
 func nodeIsEligibleForRename(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+	case ast.KindIdentifier,
+		ast.KindPrivateIdentifier,
+		ast.KindStringLiteral,
+		ast.KindNoSubstitutionTemplateLiteral:
 		return true
-	// !!! The reference code also allows StringLiteral, NoSubstitutionTemplateLiteral,
-	// !!! ThisKeyword, and (conditionally) NumericLiteral. These are not yet supported because
-	// !!! the find-all-references rename flow in provideSymbolsAndEntries doesn't handle them.
+	// !!! The reference code also allows ThisKeyword and (conditionally) NumericLiteral.
 	default:
 		return false
 	}
