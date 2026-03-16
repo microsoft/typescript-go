@@ -300,6 +300,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 		case '*', '+', '?':
 			p.incPos(1)
 			if p.char() == '?' {
+				// Non-greedy
 				p.incPos(1)
 			}
 			if !isPreviousTermQuantifiable {
