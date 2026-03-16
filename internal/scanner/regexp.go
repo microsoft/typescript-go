@@ -802,7 +802,7 @@ func (p *regExpParser) scanClassSetCharacter() string {
 		default:
 			return p.scanCharacterEscape(false /*atomEscape*/)
 		}
-	} else if p.pos()+1 < p.end && ch == rune(p.scanner.text[p.pos()+1]) {
+	} else if p.pos()+1 < p.end && ch == p.charAt(p.pos()+1) {
 		switch ch {
 		case '&', '!', '#', '%', '*', '+', ',', '.', ':', ';', '<', '=', '>', '?', '@', '`', '~':
 			p.error(diagnostics.A_character_class_must_not_contain_a_reserved_double_punctuator_Did_you_mean_to_escape_it_with_backslash, p.pos(), 2)
