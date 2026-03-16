@@ -65,8 +65,11 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 
 	program := l.GetProgram()
 
-	// Validate rename eligibility even if the client skipped textDocument/prepareRename.
-	if !l.canRenameNode(ctx, data.OriginalNode, program) {
+	// Defense-in-depth: validate rename eligibility even if the client skipped prepareRename.
+	// Use getRenameInfoForNode directly with the already-resolved node to avoid
+	// re-resolving the position and polluting state baselines.
+	sourceFile := ast.GetSourceFileOfNode(data.OriginalNode)
+	if info, ok := l.getRenameInfoForNode(ctx, data.OriginalNode, sourceFile, program); !ok || !info.CanRename {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
@@ -140,28 +143,13 @@ func nodeIsEligibleForRename(node *ast.Node) bool {
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindStringLiteral,
-		ast.KindNoSubstitutionTemplateLiteral:
+		ast.KindNoSubstitutionTemplateLiteral,
+		ast.KindThisKeyword:
 		return true
-	// !!! The reference code also allows ThisKeyword and (conditionally) NumericLiteral.
+	// !!! case ast.KindNumericLiteral: return isLiteralNameOfPropertyDeclarationOrIndexAccess(node)
 	default:
 		return false
 	}
-}
-
-func (l *LanguageService) canRenameNode(ctx context.Context, node *ast.Node, program *compiler.Program) bool {
-	ch, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	symbol := ch.GetSymbolAtLocation(node)
-	if symbol == nil {
-		return true // Let the rename flow handle no-symbol cases (labels, string literals)
-	}
-
-	if l.isRenameBlocked(ast.GetSourceFileOfNode(node), node, symbol, ch, program) {
-		return false
-	}
-
-	return true
 }
 
 // isRenameBlocked returns true if the rename should be blocked
