@@ -65,6 +65,7 @@ func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressi
 		c.regExpScanner.SetLanguageVariant(sourceFile.LanguageVariant)
 		c.regExpScanner.SetOnError(func(message *diagnostics.Message, start int, length int, args ...any) {
 			if message.Category() == diagnostics.CategoryMessage && lastError != nil && start == lastError.Pos() && length == lastError.Len() {
+				// For providing spelling suggestions.
 				err := ast.NewDiagnostic(nil, core.NewTextRange(start, start+length), message, args...)
 				lastError.AddRelatedInfo(err)
 			} else if lastError == nil || start != lastError.Pos() {

@@ -83,12 +83,18 @@ type regExpParser struct {
 	anyUnicodeModeOrNonAnnexB bool
 	namedCaptureGroups        bool
 
-	mayContainStrings       bool
+	// See scanClassSetExpression.
+	mayContainStrings bool
+	// The number of all (named and unnamed) capturing groups defined in the regex.
 	numberOfCapturingGroups int
-	groupSpecifiers         map[string]bool
-	groupNameReferences     []groupNameReference
-	decimalEscapes          []decimalEscapeValue
-	namedCapturingGroups    []map[string]bool
+	// All named capturing groups defined in the regex.
+	groupSpecifiers map[string]bool
+	// All references to named capturing groups in the regex.
+	groupNameReferences []groupNameReference
+	// All numeric backreferences within the regex.
+	decimalEscapes []decimalEscapeValue
+	// A stack of scopes for named capturing groups. See scanGroupName.
+	namedCapturingGroups []map[string]bool
 
 	// pendingLowSurrogate holds the low surrogate to emit on the next
 	// scanSourceCharacter call when Corsa has to split a non-BMP rune into
@@ -536,6 +542,16 @@ func (p *regExpParser) scanClassRanges() {
 		}
 	}
 }
+
+// Static Semantics: MayContainStrings
+//     ClassUnion: ClassSetOperands.some(ClassSetOperand => ClassSetOperand.MayContainStrings)
+//     ClassIntersection: ClassSetOperands.every(ClassSetOperand => ClassSetOperand.MayContainStrings)
+//     ClassSubtraction: ClassSetOperands[0].MayContainStrings
+//     ClassSetOperand:
+//         || ClassStringDisjunctionContents.MayContainStrings
+//         || CharacterClassEscape.UnicodePropertyValueExpression.LoneUnicodePropertyNameOrValue.MayContainStrings
+//     ClassStringDisjunctionContents: ClassStrings.some(ClassString => ClassString.ClassSetCharacters.length !== 1)
+//     LoneUnicodePropertyNameOrValue: isBinaryUnicodePropertyOfStrings(LoneUnicodePropertyNameOrValue)
 
 // ClassSetExpression ::= '^'? (ClassUnion | ClassIntersection | ClassSubtraction)
 // ClassUnion ::= (ClassSetRange | ClassSetOperand)*
