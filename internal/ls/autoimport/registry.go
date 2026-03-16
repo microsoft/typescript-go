@@ -752,41 +752,78 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 	wg.Wait()
 
-	// --- Deduplicate by realpath ---
-	// Collect unique realpaths across all buckets so each physical package is extracted only once.
-	uniquePackages := make(map[string]*discoveredPackage)
+	// --- Phase 2: Extraction (parallel per unique realpath) ---
+	// Extract from main packages first. If a main package has no TypeScript entrypoints,
+	// it gets queued for a deduplicated @types fallback pass. Packages with no main
+	// package extract directly from @types in the primary pass.
+	seen := make(map[string]bool)
+	extractionCache := make(map[string]*perPackageExtractionResult)
+	var extractionMu sync.Mutex
+	var needsFallback []*discoveredPackage
 	for _, task := range nodeModulesTasks {
 		if task.discoverErr != nil {
 			continue
 		}
 		for _, pkg := range task.discovered {
-			if rp := pkg.effectiveRealpath(); rp != "" {
-				if _, exists := uniquePackages[rp]; !exists {
-					uniquePackages[rp] = pkg
+			if pkg.realpath != "" {
+				if seen[pkg.realpath] {
+					continue
 				}
+				seen[pkg.realpath] = true
+				wg.Go(func() {
+					if ctx.Err() != nil {
+						return
+					}
+					result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+					extractionMu.Lock()
+					if result != nil {
+						extractionCache[pkg.realpath] = result
+					} else if pkg.typesRealpath != "" {
+						needsFallback = append(needsFallback, pkg)
+					}
+					extractionMu.Unlock()
+				})
+			} else if pkg.typesRealpath != "" {
+				if seen[pkg.typesRealpath] {
+					continue
+				}
+				seen[pkg.typesRealpath] = true
+				wg.Go(func() {
+					if ctx.Err() != nil {
+						return
+					}
+					result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+					if result != nil {
+						extractionMu.Lock()
+						extractionCache[pkg.typesRealpath] = result
+						extractionMu.Unlock()
+					}
+				})
 			}
 		}
 	}
-	b.uniquePackageCount = len(uniquePackages)
+	wg.Wait()
 
-	// --- Phase 2: Extraction (parallel per unique realpath) ---
-	// Each physical package is extracted exactly once, regardless of how many buckets reference it.
-	extractionCache := make(map[string]*perPackageExtractionResult, len(uniquePackages))
-	var extractionMu sync.Mutex
-	for _, pkg := range uniquePackages {
+	// Deduplicate and extract from @types packages where the main package had no entrypoints.
+	for _, pkg := range needsFallback {
+		if seen[pkg.typesRealpath] {
+			continue
+		}
+		seen[pkg.typesRealpath] = true
 		wg.Go(func() {
 			if ctx.Err() != nil {
 				return
 			}
-			result := b.extractPackage(ctx, pkg, projectReferenceOutputs, fileExcludePatterns)
+			result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
 			if result != nil {
 				extractionMu.Lock()
-				extractionCache[pkg.effectiveRealpath()] = result
+				extractionCache[pkg.typesRealpath] = result
 				extractionMu.Unlock()
 			}
 		})
 	}
 	wg.Wait()
+	b.uniquePackageCount = len(seen)
 
 	// --- Phase 3: Bucket building (parallel per bucket) ---
 	// Each bucket installs the shared extraction results and builds its index.
@@ -1139,15 +1176,6 @@ type discoveredPackage struct {
 	dirPath          tspath.Path // bucket directory path (used as extraction context)
 }
 
-// effectiveRealpath returns the realpath used for deduplication and cache keying.
-// It prefers the main package's realpath, falling back to the @types package's realpath.
-func (p *discoveredPackage) effectiveRealpath() string {
-	if p.realpath != "" {
-		return p.realpath
-	}
-	return p.typesRealpath
-}
-
 // perPackageExtractionResult holds the extraction output for one physical package.
 // Produced once per unique realpath during the extraction phase, then installed
 // into every bucket that needs it during the bucket-building phase.
@@ -1233,23 +1261,17 @@ func (b *registryBuilder) getPackageEntrypoints(
 	return packageJson, entrypoints
 }
 
-// extractPackage extracts exports from a single discovered package.
+// extractPackage extracts exports from a single package.json.
 // This runs once per unique realpath during the extraction phase.
 // Returns nil if the package has no extractable entrypoints.
 func (b *registryBuilder) extractPackage(
 	ctx context.Context,
-	pkg *discoveredPackage,
+	packageJson *packagejson.InfoCacheEntry,
+	packageName string,
 	projectReferenceOutputs map[tspath.Path]string,
 	fileExcludePatterns []*regexp2.Regexp,
 ) *perPackageExtractionResult {
-	packageName := pkg.packageName
-
-	// Try the main package first, then fall back to the @types package if the main
-	// package doesn't exist or has no TypeScript entrypoints (e.g., react + @types/react).
-	packageJson, packageEntrypoints := b.getPackageEntrypoints(pkg.packageJson, packageName)
-	if packageEntrypoints == nil && pkg.typesPackageJson != nil {
-		packageJson, packageEntrypoints = b.getPackageEntrypoints(pkg.typesPackageJson, packageName)
-	}
+	_, packageEntrypoints := b.getPackageEntrypoints(packageJson, packageName)
 	if packageEntrypoints == nil {
 		return nil
 	}
@@ -1372,7 +1394,10 @@ func installExtractions(
 	}
 
 	for _, pkg := range discovered {
-		extraction := extractionCache[pkg.effectiveRealpath()]
+		extraction := extractionCache[pkg.realpath]
+		if extraction == nil {
+			extraction = extractionCache[pkg.typesRealpath]
+		}
 		if extraction == nil {
 			continue
 		}
