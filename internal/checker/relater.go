@@ -4714,10 +4714,6 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			r.reportError(diagnostics.X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1, targetType, generalizedSourceType)
 		}
 	}
-	// Track whether an explicit head message was provided. When a head message is explicitly
-	// provided by the caller, we should not suppress the relation error even if the chain already
-	// contains a more specific property error, matching TypeScript's reportErrorResults behavior.
-	headMessageProvided := message != nil
 	if message == nil {
 		switch {
 		case r.relation == r.c.comparableRelation:
@@ -4750,17 +4746,17 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		if r.chainArgsMatch(generalizedSourceType, targetType) {
 			return
 		}
-	// Suppress if next message is a missing property message for source and target and no explicit
-	// head message was provided
+	// Suppress if next message is a missing property message for source and target and we're not
+	// reporting on conversion or interface implementation
 	case diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2:
-		if !headMessageProvided && r.chainArgsMatch(nil, generalizedSourceType, targetType) {
+		if !isConversionOrInterfaceImplementationMessage(message) && r.chainArgsMatch(nil, generalizedSourceType, targetType) {
 			return
 		}
-	// Suppress if next message is a missing property message for source and target and no explicit
-	// head message was provided
+	// Suppress if next message is a missing property message for source and target and we're not
+	// reporting on conversion or interface implementation
 	case diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more,
 		diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2:
-		if !headMessageProvided && r.chainArgsMatch(generalizedSourceType, targetType) {
+		if !isConversionOrInterfaceImplementationMessage(message) && r.chainArgsMatch(generalizedSourceType, targetType) {
 			return
 		}
 	}
@@ -4870,6 +4866,14 @@ func getPropertyNameArg(arg any) string {
 	return s
 }
 
+func isConversionOrInterfaceImplementationMessage(message *diagnostics.Message) bool {
+	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
+		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass ||
+		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first ||
+		message == diagnostics.Its_instance_type_0_is_not_a_valid_JSX_element ||
+		message == diagnostics.Its_return_type_0_is_not_a_valid_JSX_element ||
+		message == diagnostics.Its_element_type_0_is_not_a_valid_JSX_element
+}
 
 func chainDepth(chain *ErrorChain) int {
 	depth := 0
