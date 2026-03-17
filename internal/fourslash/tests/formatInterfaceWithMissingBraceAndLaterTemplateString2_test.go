@@ -31,7 +31,7 @@ FormCheck.displayName = 'FormCheck';
 const FormCheck: DynamicRefForwardingComponent<'input', FormCheckProps> =
     React.forwardRef(
         () => {
-            return <div className={` + "`" + `${bsPrefix}-reverse` + "`" + `} />;
+            return <div className={`+"`"+`${bsPrefix}-reverse`+"`"+`} />;
         },
     );
 
