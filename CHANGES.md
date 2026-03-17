@@ -104,6 +104,29 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 
 ### Miscellaneous
 
+#### When a call fails to match any overload, Corsa only shows errors from the last overload.
+
+Strada shows errors from all overloads when there are 2 or 3 overloads:
+
+```ts
+function f(x: number): void;
+function f(x: string): void;
+function f(x: any): void {}
+
+f(true);
+// Strada reports:
+// No overload matches this call.
+//   Overload 1 of 2, '(x: number): void', gave the following error.
+//     Argument of type 'boolean' is not assignable to parameter of type 'number'.
+//   Overload 2 of 2, '(x: string): void', gave the following error.
+//     Argument of type 'boolean' is not assignable to parameter of type 'string'.
+
+// Corsa reports:
+// No overload matches this call.
+//   The last overload gave the following error.
+//     Argument of type 'boolean' is not assignable to parameter of type 'string'.
+```
+
 #### With `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
 
 ```js
