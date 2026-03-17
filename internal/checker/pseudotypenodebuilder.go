@@ -46,7 +46,11 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// see checkExpressionWithContextualType for general literal widening rules which need to be emulated here, plus
 		// checkTemplateLiteralExpression for template literal widening rules if the pseudochecker ever supports literalized templates
 		isInConstContext := b.ch.isConstContext(d.Node)
-		if !isInConstContext {
+		if !isInConstContext && pseudochecker.IsInConstContext(d.Node) {
+			// Only consult the contextual type if the pseudochecker's syntactic check also puts us in a const context.
+			// getContextualType returns post-inference results at node-printing time which may not have existed
+			// during initial checking (e.g. when the contextual type depends on inference), causing incorrect
+			// literal type preservation.
 			contextualType := b.ch.getContextualType(d.Node, ContextFlagsNone)
 			t := b.pseudoTypeToType(d.ConstType)
 			if t != nil && b.ch.isLiteralOfContextualType(t, b.ch.instantiateContextualType(contextualType, d.Node, ContextFlagsNone)) {

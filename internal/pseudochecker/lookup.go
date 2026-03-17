@@ -438,7 +438,7 @@ func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) 
 }
 
 func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpression) bool {
-	if !ch.isInConstContext(node.AsNode()) {
+	if !IsInConstContext(node.AsNode()) {
 		return false
 	}
 	for _, e := range node.Elements.Nodes {
@@ -449,9 +449,9 @@ func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpres
 	return true
 }
 
-// Traverses up the parent chain to determine if the node is within a const context without needing any
+// IsInConstContext traverses up the parent chain to determine if the node is within a const context without needing any
 // persistent traversal scope tracking (which could be unreliable in the presence of `typeof` queries anyway!)
-func (ch *PseudoChecker) isInConstContext(node *ast.Node) bool {
+func IsInConstContext(node *ast.Node) bool {
 	// An expression is in a const context if an ancestor is a const type maybeAssertion expression
 	maybeAssertion := ast.FindAncestor(
 		node,
