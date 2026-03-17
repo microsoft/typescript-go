@@ -104,6 +104,38 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 
 ### Miscellaneous
 
+#### Unused type parameters now report TS6196 instead of TS6133.
+
+When `noUnusedParameters` is enabled, unused type parameters are reported with error TS6196 ("'T' is declared but never used") instead of TS6133 ("'T' is declared but its value is never read").
+TS6133 is for value-space identifiers; TS6196 is the correct code for type parameters, which have no runtime value.
+
+#### Type assignability errors now use more specific error codes instead of TS2345.
+
+Where Strada reported the generic TS2345 ("Argument of type 'X' is not assignable to parameter of type 'Y'"), Corsa reports a more specific code that identifies the root cause:
+
+- TS2739 — Type is missing properties from another type
+- TS2740 — Type is missing some properties from another type
+- TS2741 — Property is missing in type but required in another type
+- TS2322 — Type is not assignable to type (used in assignment/return contexts)
+
+The diagnostics convey the same semantic error with more actionable detail.
+
+#### Circular import alias errors (TS2303) are now also reported on export statements.
+
+Strada only reported TS2303 on import declarations. Corsa reports the same error on both imports and exports when a circular alias is detected.
+
+#### Duplicate identifier errors are now reported individually (TS2300) rather than batched (TS6200).
+
+Related error spans and wording have also been updated.
+
+#### Isolated declaration error codes have changed.
+
+Some error codes for `isolatedDeclarations` violations have changed (e.g. TS9023 → TS9013). The errors still describe the same isolation constraints.
+
+#### Type assignability error wording has changed for call and construct signatures.
+
+Where Strada said "Call signature return types are incompatible" or wrapped the root cause in "Types of construct signatures are incompatible. Type X is not assignable to type Y.", Corsa reports "Type X is not assignable to type Y." directly. The meaning is the same.
+
 #### With `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
 
 ```js
@@ -348,3 +380,48 @@ exports.foo = exports.bar = void 0;
 exports.foo = 123  // Exported type is `123`
 exports.bar = "abc"  // Exported type is `"abc"`
 ```
+
+## Extreme Trivia
+
+These changes are listed only for the purposes of completely accounting for all error diffs.
+
+#### Multi-overload "no overload matches" errors now show only the last overload's failure.
+
+Where Strada listed every overload's failure ("Overload 1 of N, '(sig)', gave the following error. ..."), Corsa shows only "The last overload gave the following error." with a TS2771 related info span pointing to the last overload's declaration. The error position may also shift to highlight the specific argument that failed.
+
+#### Optional parameter types no longer include `| undefined` in most error messages.
+
+Corsa omits the redundant `| undefined` from optional parameter types in error messages. For example, `(p?: string | undefined) => T` is printed as `(p?: string) => T`.
+
+#### Type names may be displayed differently in error messages.
+
+Some type names are represented differently:
+
+- `DateConstructor` is now displayed as `typeof Date`.
+- Unqualified names may be fully qualified (e.g. `ReactNode` → `React.ReactNode`, `connectExport` → `server.connectExport`).
+- Mixin anonymous class types omit their generic type arguments in display.
+- `undefined` optional properties may appear as `never` in certain intersection contexts.
+
+#### String literal types use single quotes in type displays.
+
+Where Strada printed string literal types with double quotes (`"value"`), Corsa uses single quotes (`'value'`).
+
+#### When all destructured elements are unused, a single error replaces individual TS6133 errors.
+
+Where Strada reported individual TS6133 ("'x' is declared but its value is never read") for each unused element in a destructuring pattern, Corsa reports a single TS6198 ("All destructured elements are unused") covering the whole pattern. Similarly, when all type parameters are unused, TS6205 ("All type parameters are unused") replaces individual TS6133 errors.
+
+#### Unused identifier error spans are narrower.
+
+For unused imports, the error squiggle covers only the imported name rather than the entire import statement. For unused type parameters, the span covers only the parameter name (not the surrounding angle brackets).
+
+#### Related info message text is displayed inline with its source location.
+
+Where Strada printed related info text on a separate line below the file:line:col location, Corsa prints it on the same line: `file.ts:1:5 - message text`.
+
+#### Duplicate identifier errors are now also reported on the first declaration.
+
+Strada reported TS2300 only on the second (and later) occurrences of a duplicate identifier. Corsa also reports it on the first occurrence.
+
+#### The 'Object' class name restriction (TS2725) has been removed.
+
+Strada reported TS2725 when a class inside a namespace was named `Object` when targeting ES5 with CommonJS. Corsa removes this check.
