@@ -346,7 +346,7 @@ func (w *formatSpanWorker) processChildNode(
 	if ast.NodeIsMissing(child) || child.Flags&ast.NodeFlagsReparsed != 0 {
 		return inheritedIndentation
 	}
-	isErrorMemberListElement := isMemberListElement(parent, child) && child.Flags&ast.NodeFlagsThisNodeHasError != 0
+	isErrorMemberListElement := child.Flags&ast.NodeFlagsThisNodeHasError != 0 && isMemberListElement(parent, child)
 
 	childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
 	childStartLine := scanner.GetECMALineOfPosition(w.sourceFile, childStartPos)
