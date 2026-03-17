@@ -77,7 +77,7 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
         if (stat.isDirectory()) {
             parseTypeScriptFiles(manualTests, filePath);
         }
-        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
+        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3)) && file !== "fourslash.ts") {
             const content = fs.readFileSync(filePath, "utf-8");
             const isServer = filePath.split(path.sep).includes("server");
             try {
