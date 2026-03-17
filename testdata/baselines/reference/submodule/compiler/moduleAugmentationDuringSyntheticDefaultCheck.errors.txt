@@ -1,0 +1,38 @@
+idx.test.ts(1,22): error TS6053: File 'idx' not found.
+
+
+==== idx.test.ts (1 errors) ====
+    /// <reference path="./idx" />
+                         ~~~~~
+!!! error TS6053: File 'idx' not found.
+    
+    import moment = require("moment-timezone");
+    
+==== node_modules/moment/index.d.ts (0 errors) ====
+    declare function moment(): moment.Moment;
+    declare namespace moment {
+      interface Moment extends Object {
+        valueOf(): number;
+      }
+    }
+    export = moment;
+==== node_modules/moment-timezone/index.d.ts (0 errors) ====
+    import * as moment from 'moment';
+    export = moment;
+    declare module "moment" {
+        interface Moment {
+            tz(): string;
+        }
+    }
+==== idx.ts (0 errors) ====
+    import * as _moment from "moment";
+    declare module "moment" {
+        interface Moment {
+            strftime(pattern: string): string;
+        }
+    }
+    declare module "moment-timezone" {
+        interface Moment {
+            strftime(pattern: string): string;
+        }
+    }

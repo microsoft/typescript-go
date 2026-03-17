@@ -1,0 +1,9 @@
+declarationEmitInvalidReferenceAllowJs.ts(1,22): error TS6053: File 'invalid' not found.
+
+
+==== declarationEmitInvalidReferenceAllowJs.ts (1 errors) ====
+    /// <reference path="invalid" />
+                         ~~~~~~~
+!!! error TS6053: File 'invalid' not found.
+    var x = 0; 
+    

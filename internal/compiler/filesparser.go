@@ -86,15 +86,6 @@ func (t *parseTask) load(loader *fileLoader) {
 							args:             []any{t.normalizedFilePath},
 						},
 					})
-				} else {
-					t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
-						kind: processingDiagnosticKindExplainingFileInclude,
-						data: &includeExplainingDiagnostic{
-							diagnosticReason: t.includeReason,
-							message:          diagnostics.File_0_not_found,
-							args:             []any{t.normalizedFilePath},
-						},
-					})
 				}
 				return
 			}
