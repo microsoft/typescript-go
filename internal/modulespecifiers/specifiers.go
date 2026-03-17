@@ -1031,8 +1031,12 @@ func tryGetModuleNameFromPackageJsonImports(
 		top := imports.AsObject()
 		entries := top.Entries()
 		for k, value := range entries {
-			// Node-style imports keys cannot start with "#/" except for the root wildcard form "#/*".
-			if !strings.HasPrefix(k, "#") || k == "#" || strings.HasPrefix(k, "#/") && !strings.HasPrefix(k, "#/*") {
+			// Node-style imports keys cannot start with "#/" except for the root wildcard form
+			// "#/*", which we only accept in moduleResolution nodenext/bundler.
+			allowRootWildcardImportsKey := strings.HasPrefix(k, "#/*") &&
+				(options.GetModuleResolutionKind() == core.ModuleResolutionKindNodeNext ||
+					options.GetModuleResolutionKind() == core.ModuleResolutionKindBundler)
+			if !strings.HasPrefix(k, "#") || k == "#" || strings.HasPrefix(k, "#/") && !allowRootWildcardImportsKey {
 				continue // invalid imports entry
 			}
 			mode := MatchingModeExact

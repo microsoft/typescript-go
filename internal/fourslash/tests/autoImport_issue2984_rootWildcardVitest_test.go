@@ -1,6 +1,7 @@
 package fourslash_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
@@ -63,4 +64,49 @@ entit/**/`
 
 	verifyTopSpecifier(modulespecifiers.ImportModuleSpecifierPreferenceShortest, "#/domain/entities/entity.js")
 	verifyTopSpecifier(modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, "#/domain/entities/entity.js")
+}
+
+func TestAutoImport_issue2984_rootWildcardNotAllowedInNode16(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @Filename: /tsconfig.json
+{
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16"
+  }
+}
+// @Filename: /package.json
+{
+  "imports": {
+    "#/*": "./src/*"
+  }
+}
+// @Filename: /src/domain/entities/entity.ts
+export const entity = 1;
+// @Filename: /deep/feature/path/consumer.ts
+entit/**/`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.GoToMarker(t, "")
+
+	completions := f.GetCompletions(t, &lsutil.UserPreferences{
+		ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceShortest,
+	})
+	var moduleSpecifiers []string
+	for _, item := range completions.Items {
+		if item.Label != "entity" || item.SortText == nil || *item.SortText != string(ls.SortTextAutoImportSuggestions) {
+			continue
+		}
+		if item.Data == nil || item.Data.AutoImport == nil {
+			continue
+		}
+		moduleSpecifiers = append(moduleSpecifiers, item.Data.AutoImport.ModuleSpecifier)
+	}
+	if len(moduleSpecifiers) == 0 {
+		t.Fatalf("No auto-import completion specifier found for 'entity'")
+	}
+	if strings.HasPrefix(moduleSpecifiers[0], "#/") {
+		t.Fatalf("Expected root wildcard imports key to be ignored outside nodenext/bundler, got %q", moduleSpecifiers[0])
+	}
 }
