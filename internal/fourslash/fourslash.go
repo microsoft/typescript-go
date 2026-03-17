@@ -3817,6 +3817,7 @@ func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
 
 	// write to baseline in order of file appearance in test data
 	for _, file := range f.testData.Files {
+		fmt.Fprint(baselineBuilder, "// === Linked Editing ===\n")
 		fmt.Fprintf(baselineBuilder, "=== %s ===\n", file.FileName())
 		results := []*lsproto.LinkedEditingRanges{}
 		found := map[lsproto.Range]bool{}
@@ -3837,7 +3838,7 @@ func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
 		}
 
 		if len(results) == 0 {
-			fmt.Fprintf(baselineBuilder, "%s\n\n--No linked edits found--\n\n", file.Content)
+			fmt.Fprintf(baselineBuilder, "%s\n\n--No linked edits found--\n\n\n", file.Content)
 			continue
 		}
 
@@ -3886,7 +3887,7 @@ func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
 		baselineBuilder.WriteString(foundEditInfoBuilder.String() + "\n\n\n")
 	}
 
-	f.writeToBaseline("linkedEditing", baselineBuilder.String())
+	f.writeToBaseline(linkedEditingCmd, baselineBuilder.String())
 }
 
 func (f *FourslashTest) VerifyLinkedEditing(t *testing.T, markerNamesToExpected map[string][]lsproto.Range) {
