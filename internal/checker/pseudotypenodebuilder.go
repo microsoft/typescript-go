@@ -293,11 +293,14 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			return false
 		}
 		targetProps := b.ch.getPropertiesOfType(type_)
-		if len(pt.Elements) != len(targetProps) {
-			// Property count mismatch; fail open if no error reporting needed, since the type may
-			// contain index signatures or other structural features the pseudo object can't represent.
-			// When reporting errors, we can't tell which element is wrong, so just bail.
-			return len(pt.Elements) <= len(targetProps)
+		// Count total declarations across all target prop symbols to handle getter/setter pairs,
+		// which are two elements in pt.Elements but only one symbol in targetProps.
+		targetDeclCount := 0
+		for _, prop := range targetProps {
+			targetDeclCount += len(prop.Declarations)
+		}
+		if len(pt.Elements) != targetDeclCount {
+			return false
 		}
 		for _, e := range pt.Elements {
 			var targetProp *ast.Symbol
