@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -279,6 +280,8 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 }
 
 func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
+	p.program.Tracing().Push(tracing.PhaseEmit, "emitBuildInfo", true)
+	defer p.program.Tracing().Pop()
 	buildInfoFileName := outputpaths.GetBuildInfoFileName(p.snapshot.options, tspath.ComparePathsOptions{
 		CurrentDirectory:          p.program.GetCurrentDirectory(),
 		UseCaseSensitiveFileNames: p.program.UseCaseSensitiveFileNames(),

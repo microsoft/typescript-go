@@ -1,0 +1,43 @@
+/app.ts(2,38): error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+/app.ts(3,39): error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+/app.ts(5,50): error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+/app.ts(6,51): error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+
+
+==== /node_modules/@types/foo/package.json (0 errors) ====
+    {
+      "name": "@types/foo",
+      "version": "1.0.0",
+      "exports": {
+        ".": {
+          "import": "./index.d.mts",
+          "require": "./index.d.cts"
+        }
+      }
+    }
+    
+==== /node_modules/@types/foo/index.d.mts (0 errors) ====
+    export declare const x: "module";
+    
+==== /node_modules/@types/foo/index.d.cts (0 errors) ====
+    export declare const x: "script";
+    
+==== /app.ts (4 errors) ====
+    type Default = typeof import("foo").x;
+    type Import = typeof import("foo", { assert: { "resolution-mode": "import" } }).x;
+                                         ~~~~~~
+!!! error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+    type Require = typeof import("foo", { assert: { "resolution-mode": "require" } }).x;
+                                          ~~~~~~
+!!! error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+    // resolution-mode does not enforce file extension in `bundler`, just sets conditions
+    type ImportRelative = typeof import("./other", { assert: { "resolution-mode": "import" } }).x;
+                                                     ~~~~~~
+!!! error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+    type RequireRelative = typeof import("./other", { assert: { "resolution-mode": "require" } }).x;
+                                                      ~~~~~~
+!!! error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+    
+==== /other.ts (0 errors) ====
+    export const x = "other";
+    

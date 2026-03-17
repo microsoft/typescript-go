@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/symlinks"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -39,6 +40,7 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
+	Tracing                     *tracing.Tracing
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -256,9 +258,11 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
+	p.opts.Tracing.Push(tracing.PhaseProgram, "createProgram", true, "configFilePath", opts.Config.CompilerOptions().ConfigFilePath)
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.initCheckerPool()
 	p.verifyCompilerOptions()
+	p.opts.Tracing.Pop()
 	return p
 }
 
@@ -310,7 +314,7 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(p)
+		p.checkerPool = newCheckerPoolWithTracing(p, p.opts.Tracing)
 	}
 }
 
@@ -389,12 +393,19 @@ func (p *Program) SingleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
+// Tracing returns the tracing session associated with this program, or nil if tracing is not enabled.
+func (p *Program) Tracing() *tracing.Tracing {
+	return p.opts.Tracing
+}
+
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
+				p.opts.Tracing.Push(tracing.PhaseBind, "bindSourceFile", true, "path", string(file.Path()))
 				binder.BindSourceFile(file)
+				p.opts.Tracing.Pop()
 			})
 		}
 	}
@@ -1455,6 +1466,9 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
+	p.opts.Tracing.Push(tracing.PhaseEmit, "emit", true)
+	defer p.opts.Tracing.Pop()
+
 	if options.EmitOnly != EmitOnlyForcedDts {
 		result := HandleNoEmitOnError(
 			ctx,
@@ -1482,6 +1496,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			sourceFile: sourceFile,
 			emitOnly:   options.EmitOnly,
 			writeFile:  options.WriteFile,
+			tr:         p.opts.Tracing,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {
