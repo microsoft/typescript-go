@@ -89,7 +89,6 @@ Found 2 errors in 2 files.
 Errors  Files
      1  pkg3/src/keys.ts[90m:2[0m
      1  pkg3/tsconfig.json[90m:5[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

@@ -26,7 +26,7 @@ Output::
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
-[7m [0m [91m                ~[0m
+[7m [0m [91m                [0m
 
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
@@ -203,7 +203,7 @@ Output::
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
-[7m [0m [91m                ~[0m
+[7m [0m [91m                [0m
 
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
@@ -254,7 +254,7 @@ Output::
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
-[7m [0m [91m                ~[0m
+[7m [0m [91m                [0m
 
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
@@ -295,7 +295,7 @@ Output::
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
-[7m [0m [91m                ~[0m
+[7m [0m [91m                [0m
 
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 

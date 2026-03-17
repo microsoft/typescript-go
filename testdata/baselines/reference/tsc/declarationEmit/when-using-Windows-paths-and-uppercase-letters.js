@@ -73,7 +73,6 @@ Found 2 errors in 2 files.
 Errors  Files
      1  src/main.ts[90m:6[0m
      1  src/utils/index.ts[90m:8[0m
-
 //// [D:/Work/pkg1/dist/src/main.d.ts] *new* 
 declare const Sub_base: import("./utils/type-helpers").MyReturnType;
 export declare class Sub extends Sub_base {

@@ -128,7 +128,6 @@ Errors  Files
      1  common/nominal.js[90m:3[0m
      1  sub-project-2/index.js[90m:1[0m
      1  sub-project/index.js[90m:1[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

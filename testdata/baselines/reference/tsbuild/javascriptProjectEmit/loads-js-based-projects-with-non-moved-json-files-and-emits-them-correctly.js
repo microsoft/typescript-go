@@ -102,7 +102,6 @@ Found 3 errors in 2 files.
 Errors  Files
      2  common/index.ts[90m:1[0m
      1  sub-project/index.js[90m:1[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

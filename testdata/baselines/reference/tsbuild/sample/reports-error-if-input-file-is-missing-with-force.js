@@ -90,7 +90,6 @@ Found 2 errors in 2 files.
 Errors  Files
      1  logic/index.ts[90m:5[0m
      1  tests/index.ts[90m:7[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

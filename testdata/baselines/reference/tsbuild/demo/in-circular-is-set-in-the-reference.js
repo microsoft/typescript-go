@@ -211,7 +211,6 @@ Errors  Files
      1  b/tsconfig.json[90m:3[0m
      1  core/tsconfig.json[90m:3[0m
      1  zoo/tsconfig.json[90m:3[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

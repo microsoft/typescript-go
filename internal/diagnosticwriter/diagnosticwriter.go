@@ -123,10 +123,7 @@ func FormatDiagnosticsWithColorAndContext(output io.Writer, diags []Diagnostic, 
 	if len(diags) == 0 {
 		return
 	}
-	for i, diagnostic := range diags {
-		if i > 0 {
-			fmt.Fprint(output, formatOpts.NewLine)
-		}
+	for _, diagnostic := range diags {
 		FormatDiagnosticWithColorAndContext(output, diagnostic, formatOpts)
 	}
 }
@@ -146,10 +143,10 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic Diagnostic
 	if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 		fmt.Fprint(output, formatOpts.NewLine)
 		writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), "", formatOpts)
-		fmt.Fprint(output, formatOpts.NewLine)
 	}
 
 	if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
+		fmt.Fprint(output, formatOpts.NewLine)
 		for _, relatedInformation := range diagnostic.RelatedInformation() {
 			file := relatedInformation.File()
 			if file != nil {
@@ -157,21 +154,19 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic Diagnostic
 				fmt.Fprint(output, "  ")
 				pos := relatedInformation.Pos()
 				WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
-				fmt.Fprint(output, " - ")
-				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine, formatOpts.Locale)
 				writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, "    ", formatOpts)
 			}
 			fmt.Fprint(output, formatOpts.NewLine)
+			fmt.Fprint(output, "    ")
+			WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine, formatOpts.Locale)
 		}
 	}
+	fmt.Fprint(output, formatOpts.NewLine)
 }
 
 func writeCodeSnippet(writer io.Writer, sourceFile FileLike, start int, length int, squiggleColor string, indent string, formatOpts *FormattingOptions) {
 	firstLine, firstLineChar := scanner.GetECMALineAndUTF16CharacterOfPosition(sourceFile, start)
 	lastLine, lastLineChar := scanner.GetECMALineAndUTF16CharacterOfPosition(sourceFile, start+length)
-	if length == 0 {
-		lastLineChar++ // When length is zero, squiggle the character right after the start position.
-	}
 
 	lastLineOfFile := scanner.GetECMALineOfPosition(sourceFile, len(sourceFile.Text()))
 
@@ -370,7 +365,6 @@ func WriteErrorSummaryText(output io.Writer, allDiagnostics []Diagnostic, format
 	fmt.Fprint(output, formatOpts.NewLine)
 	if numErroringFiles > 1 {
 		writeTabularErrorsDisplay(output, errorSummary, formatOpts)
-		fmt.Fprint(output, formatOpts.NewLine)
 	}
 }
 

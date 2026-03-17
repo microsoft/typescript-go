@@ -337,18 +337,20 @@ Output::
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/indirectUse.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'prop' does not exist on type 'classC'. Did you mean 'prop1'?
 
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/noChangeFileWithEmitSpecificError.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS1100: [0mInvalid use of 'arguments' in strict mode.
 
@@ -362,7 +364,6 @@ Errors  Files
      1  src/directUse.ts[90m:2[0m
      1  src/indirectUse.ts[90m:2[0m
      1  src/noChangeFileWithEmitSpecificError.ts[90m:1[0m
-
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.es2025.full.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"f5da9f4ab128bbaf87adf83ca7ae8e2d-export class classC {\n    prop1 = 1;\n}","signature":"e36cbd492db9c71062d723d518b6277f-export declare class classC {\n    prop1: number;\n}\n","impliedNodeFormat":1},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":1},"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":1},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"semanticDiagnosticsPerFile":[[4,[{"pos":76,"end":80,"code":2551,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_Did_you_mean_2_2551","messageArgs":["prop","classC","prop1"],"relatedInformation":[{"file":2,"pos":26,"end":31,"code":2728,"category":3,"messageKey":"_0_is_declared_here_2728","messageArgs":["prop1"]}]}]],[5,[{"pos":76,"end":80,"code":2551,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_Did_you_mean_2_2551","messageArgs":["prop","classC","prop1"],"relatedInformation":[{"file":2,"pos":26,"end":31,"code":2728,"category":3,"messageKey":"_0_is_declared_here_2728","messageArgs":["prop1"]}]}]],[7,[{"pos":18,"end":27,"code":1100,"category":1,"messageKey":"Invalid_use_of_0_in_strict_mode_1100","messageArgs":["arguments"]}]]],"affectedFilesPendingEmit":[2,[4],3,[5]],"latestChangedDtsFile":"./src/noChangeFileWithEmitSpecificError.d.ts","emitSignatures":[[2,"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n"],[4,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"],[5,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
@@ -910,18 +911,20 @@ Output::
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/indirectUse.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'prop' does not exist on type 'classC'. Did you mean 'prop1'?
 
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/noChangeFileWithEmitSpecificError.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS1100: [0mInvalid use of 'arguments' in strict mode.
 
@@ -935,7 +938,6 @@ Errors  Files
      1  src/directUse.ts[90m:2[0m
      1  src/indirectUse.ts[90m:2[0m
      1  src/noChangeFileWithEmitSpecificError.ts[90m:1[0m
-
 //// [/home/src/workspaces/project/src/class.d.ts] *modified* 
 export declare class classC {
     prop1: number;
@@ -1185,18 +1187,20 @@ Output::
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/indirectUse.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'prop' does not exist on type 'classC'. Did you mean 'prop1'?
 
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/noChangeFileWithEmitSpecificError.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS1100: [0mInvalid use of 'arguments' in strict mode.
 
@@ -1210,7 +1214,6 @@ Errors  Files
      1  src/directUse.ts[90m:2[0m
      1  src/indirectUse.ts[90m:2[0m
      1  src/noChangeFileWithEmitSpecificError.ts[90m:1[0m
-
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -1227,18 +1230,20 @@ Output::
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/indirectUse.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'prop' does not exist on type 'classC'. Did you mean 'prop1'?
 
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/noChangeFileWithEmitSpecificError.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS1100: [0mInvalid use of 'arguments' in strict mode.
 
@@ -1252,7 +1257,6 @@ Errors  Files
      1  src/directUse.ts[90m:2[0m
      1  src/indirectUse.ts[90m:2[0m
      1  src/noChangeFileWithEmitSpecificError.ts[90m:1[0m
-
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -1269,18 +1273,20 @@ Output::
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/indirectUse.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'prop' does not exist on type 'classC'. Did you mean 'prop1'?
 
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/noChangeFileWithEmitSpecificError.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS1100: [0mInvalid use of 'arguments' in strict mode.
 
@@ -1294,7 +1300,6 @@ Errors  Files
      1  src/directUse.ts[90m:2[0m
      1  src/indirectUse.ts[90m:2[0m
      1  src/noChangeFileWithEmitSpecificError.ts[90m:1[0m
-
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -1311,18 +1316,20 @@ Output::
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/indirectUse.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'prop' does not exist on type 'classC'. Did you mean 'prop1'?
 
 [7m2[0m new indirectClass().classC.prop;
 [7m [0m [91m                           ~~~~[0m
 
-  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
+  [96msrc/class.ts[0m:[93m2[0m:[93m5[0m
     [7m2[0m     prop1 = 1;
     [7m [0m [96m    ~~~~~[0m
+    'prop1' is declared here.
 
 [96msrc/noChangeFileWithEmitSpecificError.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS1100: [0mInvalid use of 'arguments' in strict mode.
 
@@ -1336,7 +1343,6 @@ Errors  Files
      1  src/directUse.ts[90m:2[0m
      1  src/indirectUse.ts[90m:2[0m
      1  src/noChangeFileWithEmitSpecificError.ts[90m:1[0m
-
 
 tsconfig.json::
 SemanticDiagnostics::

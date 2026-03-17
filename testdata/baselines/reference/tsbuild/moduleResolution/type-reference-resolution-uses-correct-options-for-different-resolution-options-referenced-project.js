@@ -57,7 +57,6 @@ Found 2 errors in 2 files.
 Errors  Files
      1  packages/pkg1_index.ts[90m:1[0m
      1  packages/pkg2_index.ts[90m:1[0m
-
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
