@@ -86,6 +86,15 @@ func (t *parseTask) load(loader *fileLoader) {
 							args:             []any{t.normalizedFilePath},
 						},
 					})
+				} else {
+					t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
+						kind: processingDiagnosticKindExplainingFileInclude,
+						data: &includeExplainingDiagnostic{
+							diagnosticReason: t.includeReason,
+							message:          diagnostics.File_0_not_found,
+							args:             []any{t.normalizedFilePath},
+						},
+					})
 				}
 				return
 			}
@@ -104,6 +113,16 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	file := loader.parseSourceFile(t)
 	if file == nil {
+		if loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) == nil {
+			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
+				kind: processingDiagnosticKindExplainingFileInclude,
+				data: &includeExplainingDiagnostic{
+					diagnosticReason: t.includeReason,
+					message:          diagnostics.File_0_not_found,
+					args:             []any{t.normalizedFilePath},
+				},
+			})
+		}
 		return
 	}
 
