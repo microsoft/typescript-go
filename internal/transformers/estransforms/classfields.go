@@ -319,6 +319,8 @@ func (tx *classFieldsTransformer) visitDiscardedValue(node *ast.Node) *ast.Node 
 		return tx.visitPreOrPostfixUnaryExpression(node, true /*discarded*/)
 	case ast.KindBinaryExpression:
 		return tx.visitBinaryExpression(node.AsBinaryExpression(), true /*discarded*/)
+	case ast.KindCommaListExpression:
+		return tx.visitCommaListExpression(node.AsCommaListExpression(), true /*discarded*/)
 	case ast.KindParenthesizedExpression:
 		return tx.visitParenthesizedExpression(node.AsParenthesizedExpression(), true /*discarded*/)
 	default:
@@ -1551,6 +1553,16 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 	}
 
 	return tx.Visitor().VisitEachChild(node.AsNode())
+}
+
+func (tx *classFieldsTransformer) visitCommaListExpression(node *ast.CommaListExpression, discarded bool) *ast.Node {
+	var elements *ast.NodeList
+	if discarded {
+		elements = ast.VisitCommaListElements(node.Elements, tx.discardedValueVisitor, nil)
+	} else {
+		elements = ast.VisitCommaListElements(node.Elements, tx.Visitor(), tx.discardedValueVisitor)
+	}
+	return tx.Factory().UpdateCommaListExpression(node, elements)
 }
 
 func (tx *classFieldsTransformer) visitParenthesizedExpression(node *ast.ParenthesizedExpression, discarded bool) *ast.Node {
@@ -3481,6 +3493,11 @@ func flattenCommaList(node *ast.Expression) iter.Seq[*ast.Expression] {
 func flattenCommaListWorker(node *ast.Expression, yield func(*ast.Expression) bool) bool {
 	if ast.IsParenthesizedExpression(node) && ast.NodeIsSynthesized(node) {
 		return flattenCommaListWorker(node.Expression(), yield)
+	} else if ast.IsCommaListExpression(node) {
+		for _, child := range node.AsCommaListExpression().Elements.Nodes {
+			flattenCommaListWorker(child, yield)
+		}
+		return true
 	} else if ast.IsCommaExpression(node.AsNode()) {
 		return flattenCommaListWorker(node.AsBinaryExpression().Left, yield) &&
 			flattenCommaListWorker(node.AsBinaryExpression().Right, yield)
@@ -3493,6 +3510,11 @@ func findComputedPropertyNameCacheAssignment(emitContext *printer.EmitContext, n
 	node := name.Expression()
 	for {
 		node = ast.SkipOuterExpressions(node, 0)
+		if ast.IsCommaListExpression(node) {
+			elems := node.AsCommaListExpression().Elements.Nodes
+			node = elems[len(elems)-1]
+			continue
+		}
 		if ast.IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
 			node = node.AsBinaryExpression().Right
 			continue

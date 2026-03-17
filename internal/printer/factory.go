@@ -243,12 +243,20 @@ func (f *NodeFactory) NewVoidZeroExpression() *ast.Expression {
 }
 
 func flattenCommaElement(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {
-	if ast.IsBinaryExpression(node) && ast.NodeIsSynthesized(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
-		expressions = flattenCommaElement(node.AsBinaryExpression().Left, expressions)
-		expressions = flattenCommaElement(node.AsBinaryExpression().Right, expressions)
-	} else {
-		expressions = append(expressions, node)
+	if ast.NodeIsSynthesized(node) {
+		if ast.IsCommaListExpression(node) {
+			for _, elem := range node.AsCommaListExpression().Elements.Nodes {
+				expressions = flattenCommaElement(elem, expressions)
+			}
+			return expressions
+		}
+		if ast.IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
+			expressions = flattenCommaElement(node.AsBinaryExpression().Left, expressions)
+			expressions = flattenCommaElement(node.AsBinaryExpression().Right, expressions)
+			return expressions
+		}
 	}
+	expressions = append(expressions, node)
 	return expressions
 }
 
@@ -261,7 +269,7 @@ func flattenCommaElements(expressions []*ast.Expression) []*ast.Expression {
 }
 
 // Converts a slice of expressions into a single comma-delimited expression. Returns nil if expressions is nil or empty.
-// NOTE: Unlike Strada, the Corsa implementation does not currently use `ast.KindCommaListExpression`.
+// Uses CommaListExpression for >10 elements to avoid deeply nested binary comma trees.
 func (f *NodeFactory) InlineExpressions(expressions []*ast.Expression) *ast.Expression {
 	if len(expressions) == 0 {
 		return nil
@@ -270,6 +278,9 @@ func (f *NodeFactory) InlineExpressions(expressions []*ast.Expression) *ast.Expr
 		return expressions[0]
 	}
 	expressions = flattenCommaElements(expressions)
+	if len(expressions) > 10 {
+		return f.NewCommaListExpression(f.NewNodeList(expressions))
+	}
 	expression := expressions[0]
 	for _, next := range expressions[1:] {
 		expression = f.NewCommaExpression(expression, next)

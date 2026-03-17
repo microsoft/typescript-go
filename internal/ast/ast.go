@@ -1107,6 +1107,8 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsArrayLiteralExpression().Elements
 	case KindTupleType:
 		return n.AsTupleTypeNode().Elements
+	case KindCommaListExpression:
+		return n.AsCommaListExpression().Elements
 	}
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
 }
@@ -1711,6 +1713,10 @@ func (n *Node) AsYieldExpression() *YieldExpression {
 
 func (n *Node) AsPartiallyEmittedExpression() *PartiallyEmittedExpression {
 	return n.data.(*PartiallyEmittedExpression)
+}
+
+func (n *Node) AsCommaListExpression() *CommaListExpression {
+	return n.data.(*CommaListExpression)
 }
 
 func (n *Node) AsSpreadElement() *SpreadElement {
@@ -9101,6 +9107,51 @@ func (node *PartiallyEmittedExpression) propagateSubtreeFacts() SubtreeFacts {
 
 func IsPartiallyEmittedExpression(node *Node) bool {
 	return node.Kind == KindPartiallyEmittedExpression
+}
+
+// CommaListExpression
+// A list of comma-separated expressions. This node is only created by transformations.
+
+type CommaListExpression struct {
+	ExpressionBase
+	Elements *NodeList // NodeList[*Expression]
+}
+
+func (f *NodeFactory) NewCommaListExpression(elements *NodeList) *Node {
+	data := &CommaListExpression{}
+	data.Elements = elements
+	return newNode(KindCommaListExpression, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdateCommaListExpression(node *CommaListExpression, elements *NodeList) *Node {
+	if elements != node.Elements {
+		return updateNode(f.NewCommaListExpression(elements), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *CommaListExpression) ForEachChild(v Visitor) bool {
+	return visitNodeList(v, node.Elements)
+}
+
+func (node *CommaListExpression) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateCommaListExpression(node, v.visitNodes(node.Elements))
+}
+
+func (node *CommaListExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCommaListExpression(node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func (node *CommaListExpression) computeSubtreeFacts() SubtreeFacts {
+	return propagateNodeListSubtreeFacts(node.Elements, propagateSubtreeFacts)
+}
+
+func (node *CommaListExpression) propagateSubtreeFacts() SubtreeFacts {
+	return node.SubtreeFacts() & ^SubtreeExclusionsNode
+}
+
+func IsCommaListExpression(node *Node) bool {
+	return node.Kind == KindCommaListExpression
 }
 
 /// A JSX expression of the form <TagName attrs>...</TagName>

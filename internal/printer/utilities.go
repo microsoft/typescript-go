@@ -485,10 +485,8 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		return parent.AsUnionTypeNode().Types
 	case ast.KindIntersectionType:
 		return parent.AsIntersectionTypeNode().Types
-	case ast.KindArrayLiteralExpression, ast.KindTupleType, ast.KindNamedImports, ast.KindNamedExports:
+	case ast.KindArrayLiteralExpression, ast.KindTupleType, ast.KindNamedImports, ast.KindNamedExports, ast.KindCommaListExpression:
 		return parent.ElementList()
-	case ast.KindCommaListExpression:
-		panic("not implemented")
 	case ast.KindObjectLiteralExpression, ast.KindJsxAttributes:
 		return parent.PropertyList()
 	case ast.KindCallExpression:

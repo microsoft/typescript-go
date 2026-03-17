@@ -1097,6 +1097,15 @@ func expressionResultIsUnused(node *ast.Node) bool {
 		if ast.IsExpressionStatement(parent) || ast.IsVoidExpression(parent) || ast.IsForStatement(parent) && (parent.Initializer() == node || parent.AsForStatement().Incrementor == node) {
 			return true
 		}
+		if ast.IsCommaListExpression(parent) {
+			// left side of comma is always unused
+			if node != parent.AsCommaListExpression().Elements.Nodes[len(parent.AsCommaListExpression().Elements.Nodes)-1] {
+				return true
+			}
+			// right side of comma is unused if parent is unused
+			node = parent
+			continue
+		}
 		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
 			// left side of comma is always unused
 			if node == parent.AsBinaryExpression().Left {

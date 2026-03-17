@@ -336,6 +336,8 @@ func (tx *esDecoratorTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitForStatement(node)
 	case ast.KindExpressionStatement:
 		return tx.visitExpressionStatement(node)
+	case ast.KindCommaListExpression:
+		return tx.visitCommaListExpression(node.AsCommaListExpression(), false /*discarded*/)
 	case ast.KindParenthesizedExpression:
 		return tx.visitParenthesizedExpression(node, false /*discarded*/)
 	case ast.KindPartiallyEmittedExpression:
@@ -398,6 +400,8 @@ func (tx *esDecoratorTransformer) discardedValueVisit(node *ast.Node) *ast.Node 
 		return tx.visitPreOrPostfixUnaryExpression(node, true /*discarded*/)
 	case ast.KindBinaryExpression:
 		return tx.visitBinaryExpression(node, true /*discarded*/)
+	case ast.KindCommaListExpression:
+		return tx.visitCommaListExpression(node.AsCommaListExpression(), true /*discarded*/)
 	case ast.KindParenthesizedExpression:
 		return tx.visitParenthesizedExpression(node, true /*discarded*/)
 	case ast.KindPartiallyEmittedExpression:
@@ -405,6 +409,16 @@ func (tx *esDecoratorTransformer) discardedValueVisit(node *ast.Node) *ast.Node 
 	default:
 		return tx.visit(node)
 	}
+}
+
+func (tx *esDecoratorTransformer) visitCommaListExpression(node *ast.CommaListExpression, discarded bool) *ast.Node {
+	var elements *ast.NodeList
+	if discarded {
+		elements = ast.VisitCommaListElements(node.Elements, tx.discardedVisitor, nil)
+	} else {
+		elements = ast.VisitCommaListElements(node.Elements, tx.Visitor(), tx.discardedVisitor)
+	}
+	return tx.Factory().UpdateCommaListExpression(node, elements)
 }
 
 func (tx *esDecoratorTransformer) nonConstructorClassElementVisit(node *ast.Node) *ast.Node {
