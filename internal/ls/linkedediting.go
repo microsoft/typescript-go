@@ -31,8 +31,8 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
 
-		openPos := core.TextPos(astnav.GetStartOfNode(openFragment.AsNode(), sourceFile, false) + 1)   // "<".length
-		closePos := core.TextPos(astnav.GetStartOfNode(closeFragment.AsNode(), sourceFile, false) + 2) // "</".length
+		openPos := core.TextPos(astnav.GetStartOfNode(openFragment.AsNode(), sourceFile, false) + len("<"))
+		closePos := core.TextPos(astnav.GetStartOfNode(closeFragment.AsNode(), sourceFile, false) + len("</"))
 
 		// only allows linked editing right after opening bracket: <| ></| >
 		if (position != openPos) && (position != closePos) {
