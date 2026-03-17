@@ -10,7 +10,8 @@ import (
 func TestFormatInterfaceWithMissingBraceAndLaterTemplateString1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	content := `// @Filename: /resource-card.tsx
+	content := `
+// @Filename: /resource-card.tsx
 interface Props {
   iconOnly?: boolean
 
