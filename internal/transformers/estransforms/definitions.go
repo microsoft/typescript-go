@@ -5,10 +5,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
-// !!! TODO: This fixed layering scheme assumes you can't swap out the es decorator transform for the legacy one,
-// or the proper es class field transform for the legacy one
 var (
-	NewESNextTransformer = transformers.Chain(newESDecoratorTransformer, newUsingDeclarationTransformer, newClassFieldsTransformer)
+	esDecoratorAndClassFields = transformers.Chain(newESDecoratorTransformer, newClassFieldsTransformer)
+	NewESNextTransformer      = transformers.Chain(newUsingDeclarationTransformer, esDecoratorAndClassFields)
 	// 2025: only module system syntax (import attributes, json modules), untransformed regex modifiers
 	// 2024: no new downlevel syntax
 	// 2023: no new downlevel syntax
@@ -16,7 +15,7 @@ var (
 	NewES2021Transformer = transformers.Chain(NewESNextTransformer, newLogicalAssignmentTransformer)
 	NewES2020Transformer = transformers.Chain(NewES2021Transformer, newNullishCoalescingTransformer, newOptionalChainTransformer)
 	NewES2019Transformer = transformers.Chain(NewES2020Transformer, newOptionalCatchTransformer)
-	NewES2018Transformer = transformers.Chain(NewES2019Transformer, newObjectRestSpreadTransformer, newforawaitTransformer)
+	NewES2018Transformer = transformers.Chain(NewES2019Transformer, newObjectRestSpreadTransformer, newforawaitTransformer, newTaggedTemplateLiftRestrictionTransformer)
 	NewES2017Transformer = transformers.Chain(NewES2018Transformer, newAsyncTransformer)
 	NewES2016Transformer = transformers.Chain(NewES2017Transformer, newExponentiationTransformer)
 )
@@ -25,9 +24,7 @@ func GetESTransformer(opts *transformers.TransformOptions) *transformers.Transfo
 	options := opts.CompilerOptions
 	switch options.GetEmitScriptTarget() {
 	case core.ScriptTargetESNext:
-		// At ESNext, only the class fields transformer is needed (it self-gates via shouldTransformAnything).
-		// The TS reference always runs transformClassFields unconditionally.
-		return newClassFieldsTransformer(opts)
+		return esDecoratorAndClassFields(opts)
 	case core.ScriptTargetES2025, core.ScriptTargetES2024, core.ScriptTargetES2023, core.ScriptTargetES2022, core.ScriptTargetES2021:
 		return NewESNextTransformer(opts)
 	case core.ScriptTargetES2020:

@@ -26,7 +26,7 @@ import (
 type Snapshot struct {
 	id       uint64
 	parentId uint64
-	refCount atomic.Int32
+	disposed atomic.Bool
 
 	// Session options are immutable for the server lifetime,
 	// so can be a pointer.
@@ -77,7 +77,6 @@ func NewSnapshot(
 		autoImportsWatch:                   autoImportsWatch,
 	}
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
-	s.refCount.Store(1)
 	return s
 }
 
@@ -295,6 +294,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
 		}
 	} else {
+		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
@@ -368,7 +368,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
 				for _, project := range projectCollection.Projects() {
-					if project.host != nil && project.host.sourceFS.Seen(entry.Key()) {
+					if project.host != nil && project.host.sourceFS.SeenFile(entry.Key()) {
 						return true
 					}
 				}
@@ -439,7 +439,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		session.programCounter.Ref(project.Program)
+		if project.Program != nil {
+			session.programCounter.Ref(project.Program)
+		}
 		if project.ProgramLastUpdate == newSnapshotID {
 			// Only ref source files when the program was created/updated in this snapshot.
 			// This matches dispose, which only derefs when programCounter reaches zero.
@@ -477,14 +479,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	return newSnapshot
 }
 
-func (s *Snapshot) Ref() {
-	s.refCount.Add(1)
-}
-
-func (s *Snapshot) Deref(session *Session) {
-	if s.refCount.Add(-1) == 0 {
-		s.dispose(session)
+func (s *Snapshot) Dispose(session *Session) {
+	if !s.disposed.CompareAndSwap(false, true) {
+		panic(fmt.Sprintf("snapshot %d: double dispose, parentId=%d", s.id, s.parentId))
 	}
+	s.dispose(session)
 }
 
 func (s *Snapshot) dispose(session *Session) {

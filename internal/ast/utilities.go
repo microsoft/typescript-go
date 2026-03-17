@@ -800,8 +800,12 @@ func IsJSDocKind(kind Kind) bool {
 	return KindFirstJSDocNode <= kind && kind <= KindLastJSDocNode
 }
 
-func isJSDocTypeAssertion(_ *Node) bool {
-	return false // !!!
+func IsJSDocTypeAssertion(node *Node) bool {
+	if node == nil || !IsParenthesizedExpression(node) || !IsInJSFile(node) {
+		return false
+	}
+	expr := node.Expression()
+	return IsAsExpression(expr) && expr.Type() != nil && expr.Type().Flags&NodeFlagsReparsed != 0
 }
 
 func IsPrologueDirective(node *Node) bool {
@@ -827,7 +831,7 @@ const (
 func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 	switch node.Kind {
 	case KindParenthesizedExpression:
-		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && isJSDocTypeAssertion(node))
+		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && IsJSDocTypeAssertion(node))
 	case KindTypeAssertionExpression, KindAsExpression:
 		return kinds&OEKTypeAssertions != 0
 	case KindSatisfiesExpression:
@@ -3285,6 +3289,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			modifierArray,
 			node.Name(),
 			node.AsTypeParameter().Constraint,
+			node.AsTypeParameter().Expression,
 			node.AsTypeParameter().DefaultType,
 		)
 	case KindParameter:
@@ -4147,7 +4152,7 @@ func NodeCanBeDecorated(useLegacyDecorators bool, node *Node, parent *Node, gran
 }
 
 func ClassOrConstructorParameterIsDecorated(useLegacyDecorators bool, node *Node) bool {
-	if nodeIsDecorated(useLegacyDecorators, node, nil, nil) {
+	if NodeIsDecorated(useLegacyDecorators, node, nil, nil) {
 		return true
 	}
 	constructor := GetFirstConstructorWithBody(node)
@@ -4173,7 +4178,7 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 	} else if IsMethodDeclaration(node) {
 		parameters = node.ParameterList()
 	}
-	if nodeIsDecorated(useLegacyDecorators, node, parent, nil) {
+	if NodeIsDecorated(useLegacyDecorators, node, parent, nil) {
 		return true
 	}
 	if parameters != nil && len(parameters.Nodes) > 0 {
@@ -4181,7 +4186,7 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 			if IsThisParameter(parameter) {
 				continue
 			}
-			if nodeIsDecorated(useLegacyDecorators, parameter, node, parent) {
+			if NodeIsDecorated(useLegacyDecorators, parameter, node, parent) {
 				return true
 			}
 		}
@@ -4189,12 +4194,12 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 	return false
 }
 
-func nodeIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
+func NodeIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
 	return HasDecorators(node) && NodeCanBeDecorated(useLegacyDecorators, node, parent, grandparent)
 }
 
 func NodeOrChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
-	return nodeIsDecorated(useLegacyDecorators, node, parent, grandparent) || ChildIsDecorated(useLegacyDecorators, node, parent)
+	return NodeIsDecorated(useLegacyDecorators, node, parent, grandparent) || ChildIsDecorated(useLegacyDecorators, node, parent)
 }
 
 func ChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
@@ -4207,7 +4212,7 @@ func ChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
 		KindSetAccessor,
 		KindConstructor:
 		return core.Some(node.Parameters(), func(p *Node) bool {
-			return nodeIsDecorated(useLegacyDecorators, p, node, parent)
+			return NodeIsDecorated(useLegacyDecorators, p, node, parent)
 		})
 	default:
 		return false
@@ -4341,7 +4346,7 @@ func TagNamesAreEquivalent(lhs *Expression, rhs *Expression) bool {
 	panic("Unhandled case in TagNamesAreEquivalent")
 }
 
-func isTagName(node *Node) bool {
+func IsTagName(node *Node) bool {
 	return node.Parent != nil && IsJSDocTag(node.Parent) && node.Parent.TagName() == node
 }
 
