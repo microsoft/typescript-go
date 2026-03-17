@@ -10,7 +10,10 @@ import (
 func TestFormatInterfaceWithMissingBraceAndLaterTemplateString1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	content := `
+	// Before the fix, the recovered erroneous member was skipped, so the formatter
+	// swept raw leftover tokens within the bounds of the erroneous member.
+	// That failed to rescan the later `}`/` as template tokens, and crashed.
+	const content = `
 // @Filename: /resource-card.tsx
 interface Props {
   iconOnly?: boolean
