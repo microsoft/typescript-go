@@ -1031,7 +1031,8 @@ func tryGetModuleNameFromPackageJsonImports(
 		top := imports.AsObject()
 		entries := top.Entries()
 		for k, value := range entries {
-			if !strings.HasPrefix(k, "#") || k == "#" || strings.HasPrefix(k, "#/") {
+			// Node-style imports keys cannot start with "#/" except for the root wildcard form "#/*".
+			if !strings.HasPrefix(k, "#") || k == "#" || strings.HasPrefix(k, "#/") && !strings.HasPrefix(k, "#/*") {
 				continue // invalid imports entry
 			}
 			mode := MatchingModeExact
