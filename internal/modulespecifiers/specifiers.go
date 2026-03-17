@@ -1031,12 +1031,11 @@ func tryGetModuleNameFromPackageJsonImports(
 		top := imports.AsObject()
 		entries := top.Entries()
 		for k, value := range entries {
-			// Keys starting with "#/" are only valid in moduleResolution nodenext/bundler.
-			rejectHashSlash := strings.HasPrefix(k, "#/") &&
-				options.GetModuleResolutionKind() != core.ModuleResolutionKindNodeNext &&
-				options.GetModuleResolutionKind() != core.ModuleResolutionKindBundler
-			if !strings.HasPrefix(k, "#") || k == "#" || rejectHashSlash {
+			if k == "#" || k == "#/" || !strings.HasPrefix(k, "#") {
 				continue // invalid imports entry
+			}
+			if strings.HasPrefix(k, "#/") && options.GetModuleResolutionKind() != core.ModuleResolutionKindNodeNext && options.GetModuleResolutionKind() != core.ModuleResolutionKindBundler {
+				continue // "#/" imports keys are only valid in nodenext/bundler
 			}
 			mode := MatchingModeExact
 			if strings.HasSuffix(k, "/") {
