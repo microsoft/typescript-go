@@ -64,6 +64,11 @@ func TestMain(m *testing.M) {
     await $`dprint fmt ${outputDir}/**/*.go`;
 }
 
+function hasTSExtension(file: string): boolean {
+    return file.endsWith(".ts") ||
+        file.endsWith(".tsx");
+}
+
 function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
@@ -77,7 +82,7 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
         if (stat.isDirectory()) {
             parseTypeScriptFiles(manualTests, filePath);
         }
-        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3)) && file !== "fourslash.ts") {
+        else if (hasTSExtension(file) && !manualTests.has(file.slice(0, -3)) && file !== "fourslash.ts") {
             const content = fs.readFileSync(filePath, "utf-8");
             const isServer = filePath.split(path.sep).includes("server");
             try {
@@ -100,7 +105,7 @@ function parseFileContent(filename: string, content: string): GoTest {
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
     const goTest: GoTest = {
-        name: filename.replace(".ts", "").replace(".", ""),
+        name: filename.replace(".tsx", "").replace(".ts", "").replace(".", ""),
         content: getTestInput(content),
         commands: [],
     };
