@@ -800,8 +800,12 @@ func IsJSDocKind(kind Kind) bool {
 	return KindFirstJSDocNode <= kind && kind <= KindLastJSDocNode
 }
 
-func isJSDocTypeAssertion(_ *Node) bool {
-	return false // !!!
+func IsJSDocTypeAssertion(node *Node) bool {
+	if node == nil || !IsParenthesizedExpression(node) || !IsInJSFile(node) {
+		return false
+	}
+	expr := node.Expression()
+	return IsAsExpression(expr) && expr.Type() != nil && expr.Type().Flags&NodeFlagsReparsed != 0
 }
 
 func IsPrologueDirective(node *Node) bool {
@@ -827,7 +831,7 @@ const (
 func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 	switch node.Kind {
 	case KindParenthesizedExpression:
-		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && isJSDocTypeAssertion(node))
+		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && IsJSDocTypeAssertion(node))
 	case KindTypeAssertionExpression, KindAsExpression:
 		return kinds&OEKTypeAssertions != 0
 	case KindSatisfiesExpression:
@@ -3294,6 +3298,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			modifierArray,
 			node.Name(),
 			node.AsTypeParameter().Constraint,
+			node.AsTypeParameter().Expression,
 			node.AsTypeParameter().DefaultType,
 		)
 	case KindParameter:
