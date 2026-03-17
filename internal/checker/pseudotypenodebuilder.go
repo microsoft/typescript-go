@@ -288,12 +288,134 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	// otherwise, fallback to actual pseudo/type cross-comparisons
 	switch t.Kind {
 	case pseudochecker.PseudoTypeKindObjectLiteral:
-		// !!! TODO: validate, don't assume the pseudochecker is being conservative
-		// pt := t.AsPseudoTypeObjectLiteral()
+		pt := t.AsPseudoTypeObjectLiteral()
+		if type_ == nil {
+			return false
+		}
+		targetProps := b.ch.getPropertiesOfType(type_)
+		if len(pt.Elements) != len(targetProps) {
+			// Property count mismatch; fail open if no error reporting needed, since the type may
+			// contain index signatures or other structural features the pseudo object can't represent.
+			// When reporting errors, we can't tell which element is wrong, so just bail.
+			return len(pt.Elements) <= len(targetProps)
+		}
+		for _, e := range pt.Elements {
+			var targetProp *ast.Symbol
+			elemSymbol := e.Name.Parent.Symbol()
+			if elemSymbol != nil {
+				targetProp = b.ch.getPropertyOfType(type_, elemSymbol.Name)
+			}
+			if targetProp == nil {
+				// Name lookup failed or returned no result; search target properties
+				// for one whose declaration name node matches the one we have
+				for _, prop := range targetProps {
+					if prop.ValueDeclaration != nil && prop.ValueDeclaration.Name() == e.Name {
+						targetProp = prop
+						break
+					}
+				}
+				if targetProp == nil {
+					if reportErrors {
+						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					}
+					return false
+				}
+			}
+			targetIsOptional := targetProp.Flags&ast.SymbolFlagsOptional != 0
+			if e.Optional != targetIsOptional {
+				if reportErrors {
+					b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+				}
+				return false
+			}
+			propType := b.ch.getTypeOfSymbol(targetProp)
+			propType = b.ch.removeMissingType(propType, targetIsOptional)
+			switch e.Kind {
+			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
+				d := e.AsPseudoPropertyAssignment()
+				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
+					if reportErrors {
+						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					}
+					return false
+				}
+			case pseudochecker.PseudoObjectElementKindMethod:
+				d := e.AsPseudoObjectMethod()
+				targetSig := b.ch.getSingleCallSignature(propType)
+				if targetSig == nil {
+					// Target property type doesn't have a single call signature; can't validate
+					continue
+				}
+				if len(targetSig.parameters) != len(d.Parameters) {
+					if reportErrors {
+						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					}
+					return false
+				}
+				for i, p := range d.Parameters {
+					targetParam := targetSig.parameters[i]
+					paramType := b.ch.getTypeOfParameter(targetParam)
+					if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
+						if reportErrors {
+							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+						}
+						return false
+					}
+				}
+				targetPredicate := b.ch.getTypePredicateOfSignature(targetSig)
+				if targetPredicate != nil {
+					if !b.pseudoReturnTypeMatchesPredicate(d.ReturnType, targetPredicate) {
+						if reportErrors {
+							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+						}
+						return false
+					}
+				} else if !b.pseudoTypeEquivalentToType(d.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, false) {
+					if reportErrors {
+						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					}
+					return false
+				}
+			case pseudochecker.PseudoObjectElementKindGetAccessor:
+				d := e.AsPseudoGetAccessor()
+				if !b.pseudoTypeEquivalentToType(d.Type, propType, false, false) {
+					if reportErrors {
+						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					}
+					return false
+				}
+			case pseudochecker.PseudoObjectElementKindSetAccessor:
+				d := e.AsPseudoSetAccessor()
+				writeType := b.ch.getWriteTypeOfSymbol(targetProp)
+				if !b.pseudoTypeEquivalentToType(d.Parameter.Type, writeType, false, false) {
+					if reportErrors {
+						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					}
+					return false
+				}
+			}
+		}
 		return true
 	case pseudochecker.PseudoTypeKindTuple:
-		// !!! TODO: validate, don't assume the pseudochecker is being conservative
-		// pt := t.AsPseudoTypeTuple()
+		pt := t.AsPseudoTypeTuple()
+		if type_ == nil || !isTupleType(type_) {
+			return false
+		}
+		tupleTarget := type_.TargetTupleType()
+		// Pseudo-tuples come from `as const` array literals, so they only ever have required elements.
+		// If the target tuple has optional, rest, or variadic elements, the structures can't match.
+		if tupleTarget.combinedFlags&ElementFlagsNonRequired != 0 {
+			return false
+		}
+		elementTypes := b.ch.getTypeArguments(type_)
+		if len(pt.Elements) != len(elementTypes) {
+			return false
+		}
+		for i, elem := range pt.Elements {
+			if !b.pseudoTypeEquivalentToType(elem, elementTypes[i], false, reportErrors) {
+				return false
+			}
+		}
 		return true
 	case pseudochecker.PseudoTypeKindSingleCallSignature:
 		targetSig := b.ch.getSingleCallSignature(type_)
@@ -329,10 +451,15 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 				return false
 			}
 		}
-		if b.ch.getTypePredicateOfSignature(targetSig) != nil {
-			return true
-		}
-		if !b.pseudoTypeEquivalentToType(pt.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, reportErrors) {
+		targetPredicate := b.ch.getTypePredicateOfSignature(targetSig)
+		if targetPredicate != nil {
+			if !b.pseudoReturnTypeMatchesPredicate(pt.ReturnType, targetPredicate) {
+				if reportErrors {
+					b.ctx.tracker.ReportInferenceFallback(pt.Signature)
+				}
+				return false
+			}
+		} else if !b.pseudoTypeEquivalentToType(pt.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, reportErrors) {
 			// error reported within the return type
 			return false
 		}
@@ -350,6 +477,52 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	default:
 		return false
 	}
+}
+
+// pseudoReturnTypeMatchesPredicate checks if a pseudo return type (which should be a Direct type
+// wrapping a TypePredicateNode) matches the given type predicate from the checker.
+func (b *NodeBuilderImpl) pseudoReturnTypeMatchesPredicate(rt *pseudochecker.PseudoType, predicate *TypePredicate) bool {
+	if rt.Kind != pseudochecker.PseudoTypeKindDirect {
+		return false
+	}
+	node := rt.AsPseudoTypeDirect().TypeNode
+	if !ast.IsTypePredicateNode(node) {
+		return false
+	}
+	tp := node.AsTypePredicateNode()
+	// Check asserts modifier matches
+	isAsserts := tp.AssertsModifier != nil
+	predicateIsAsserts := predicate.kind == TypePredicateKindAssertsThis || predicate.kind == TypePredicateKindAssertsIdentifier
+	if isAsserts != predicateIsAsserts {
+		return false
+	}
+	// Check this vs identifier matches
+	isThis := ast.IsThisTypeNode(tp.ParameterName)
+	predicateIsThis := predicate.kind == TypePredicateKindThis || predicate.kind == TypePredicateKindAssertsThis
+	if isThis != predicateIsThis {
+		return false
+	}
+	// For identifier predicates, check parameter name matches
+	if !isThis {
+		if tp.ParameterName.Text() != predicate.parameterName {
+			return false
+		}
+	}
+	// Check the narrowed type, if any
+	if predicate.t != nil {
+		if tp.Type == nil {
+			return false
+		}
+		predicateTypeFromNode := b.ch.getTypeFromTypeNode(tp.Type)
+		if predicateTypeFromNode != predicate.t {
+			if b.ch.compareTypesIdentical(predicateTypeFromNode, predicate.t) != TernaryTrue {
+				return false
+			}
+		}
+	} else if tp.Type != nil {
+		return false
+	}
+	return true
 }
 
 func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
