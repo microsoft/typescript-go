@@ -279,7 +279,9 @@ func formatNewBaseline(
 ) string {
 	var formatted strings.Builder
 	formatted.WriteString("Args::\n")
-	formatted.WriteString("[\"" + strings.Join(commandLine, "\", \"") + "\"]")
+	formatted.WriteString("[\"")
+	formatted.WriteString(strings.Join(commandLine, "\", \""))
+	formatted.WriteString("\"]")
 	formatted.WriteString("\n\nCompilerOptions::\n")
 	formatted.Write(opts)
 	// todo: watch options not implemented
@@ -396,7 +398,9 @@ func formatNewBaselineBuild(
 	if len(commandLine) == 0 {
 		formatted.WriteString("[]")
 	} else {
-		formatted.WriteString("[\"" + strings.Join(commandLine, "\", \"") + "\"]")
+		formatted.WriteString("[\"")
+		formatted.WriteString(strings.Join(commandLine, "\", \""))
+		formatted.WriteString("\"]")
 	}
 	formatted.WriteString("\n\nbuildOptions::\n")
 	formatted.Write(opts)
