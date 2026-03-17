@@ -16,7 +16,7 @@ const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
-const unparsedFiles: { file: string, error: string }[] = [];
+const unparsedFiles: { file: string; error: string; }[] = [];
 const unparsedReportPath = path.join(import.meta.dirname, "unparsedTests.txt");
 
 function getManualTests(): Set<string> {
@@ -59,7 +59,7 @@ func TestMain(m *testing.M) {
 
     parseTypeScriptFiles(getManualTests(), stradaFourslashPath);
 
-    fs.writeFileSync(unparsedReportPath, unparsedFiles.map(({ file, error}) => `${file} parse error: ${JSON.stringify(error)}`).join("\n"), "utf-8");
+    fs.writeFileSync(unparsedReportPath, unparsedFiles.map(({ file, error }) => `${file} parse error: ${JSON.stringify(error)}`).join("\n"), "utf-8");
     console.log(`Failed to parse ${unparsedFiles.length} files. See ${unparsedReportPath} for details.`);
     await $`dprint fmt ${outputDir}/**/*.go`;
 }
@@ -85,7 +85,8 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
                 const testContent = generateGoTest(test, isServer);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");
-            } catch (e) {
+            }
+            catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
                 console.error(`Error parsing file ${file}: ${message}`);
                 unparsedFiles.push({ file, error: message });
@@ -1615,7 +1616,7 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                     break;
                 case "quotePreference":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
-                       throw new Error(`Expected string literal for quotePreference, got ${prop.initializer.getText()}`);
+                        throw new Error(`Expected string literal for quotePreference, got ${prop.initializer.getText()}`);
                     }
                     preferences.push(`QuotePreference: lsutil.QuotePreference(${getGoStringLiteral(prop.initializer.text)})`);
                     break;
