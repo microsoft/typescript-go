@@ -346,8 +346,6 @@ func (w *formatSpanWorker) processChildNode(
 	if ast.NodeIsMissing(child) || child.Flags&ast.NodeFlagsReparsed != 0 {
 		return inheritedIndentation
 	}
-	isErrorMemberListElement := child.Flags&ast.NodeFlagsThisNodeHasError != 0 && isMemberListElement(parent, child)
-
 	childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
 	childStartLine := scanner.GetECMALineOfPosition(w.sourceFile, childStartPos)
 
@@ -356,6 +354,7 @@ func (w *formatSpanWorker) processChildNode(
 		undecoratedChildStartLine = scanner.GetECMALineOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(child, w.sourceFile))
 	}
 
+	isErrorMemberListElement := child.Flags&ast.NodeFlagsThisNodeHasError != 0 && isMemberListElement(parent, child)
 	// if child is a list item - try to get its indentation, only if parent is within the original range.
 	childIndentationAmount := -1
 
