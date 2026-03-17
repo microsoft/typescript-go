@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -35,32 +37,30 @@ func TestAutoImport_issue2984_rootWildcardVitest(t *testing.T) {
 export const entity = 1;
 // @Filename: /feature/very/deep/path/consumer.ts
 entit/**/`
-
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
+	f.GoToMarker(t, "")
 
-	assertBest := func(prefs *lsutil.UserPreferences, prefName string) {
-		f.GoToMarker(t, "")
-		completions := f.GetCompletions(t, prefs)
-		if completions == nil {
-			t.Fatalf("%s: expected completions list", prefName)
-		}
-		var entitySpecifiers []string
+	verifyTopSpecifier := func(pref modulespecifiers.ImportModuleSpecifierPreference, expected string) {
+		completions := f.GetCompletions(t, &lsutil.UserPreferences{ImportModuleSpecifierPreference: pref})
+		var moduleSpecifiers []string
 		for _, item := range completions.Items {
-			if item.Label != "entity" || item.Data == nil || item.Data.AutoImport == nil {
+			if item.Label != "entity" || item.SortText == nil || *item.SortText != string(ls.SortTextAutoImportSuggestions) {
 				continue
 			}
-			entitySpecifiers = append(entitySpecifiers, item.Data.AutoImport.ModuleSpecifier)
+			if item.Data == nil || item.Data.AutoImport == nil {
+				continue
+			}
+			moduleSpecifiers = append(moduleSpecifiers, item.Data.AutoImport.ModuleSpecifier)
 		}
-		if len(entitySpecifiers) == 0 {
-			t.Fatalf("%s: expected auto-import completion for entity", prefName)
+		if len(moduleSpecifiers) == 0 {
+			t.Fatalf("No auto-import completion specifier found for 'entity' with preference %q", pref)
 		}
-		t.Logf("%s entity specifiers: %v", prefName, entitySpecifiers)
-		if entitySpecifiers[0] != "#/domain/entities/entity.js" {
-			t.Fatalf("%s: expected top module specifier %q, got %q", prefName, "#/domain/entities/entity.js", entitySpecifiers[0])
+		if moduleSpecifiers[0] != expected {
+			t.Fatalf("Unexpected first auto-import module specifier for preference %q.\nExpected: %s\nActual: %s\nAll: %v", pref, expected, moduleSpecifiers[0], moduleSpecifiers)
 		}
 	}
 
-	assertBest(&lsutil.UserPreferences{ImportModuleSpecifierPreference: "shortest"}, "shortest")
-	assertBest(&lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"}, "non-relative")
+	verifyTopSpecifier(modulespecifiers.ImportModuleSpecifierPreferenceShortest, "#/domain/entities/entity.js")
+	verifyTopSpecifier(modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, "#/domain/entities/entity.js")
 }
