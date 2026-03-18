@@ -2619,7 +2619,7 @@ function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutlini
     }];
 }
 
-function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [VerifySemanticClassificationsCmd] {
+function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [VerifySemanticClassificationsCmd] | [] {
     if (args.length < 1) {
         throw new Error("semanticClassificationsAre requires at least a format argument");
     }
@@ -2634,7 +2634,7 @@ function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [Verif
     // Only handle "2020" format for semantic tokens
     if (format !== "2020") {
         // Skip other formats like "original"
-        return [{ kind: "verifySemanticClassifications", format, tokens: [] }];
+        return [];
     }
 
     const tokens: Array<{ type: string; text: string; }> = [];
