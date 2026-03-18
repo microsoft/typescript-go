@@ -87,6 +87,7 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
             const isServer = filePath.split(path.sep).includes("server");
             try {
                 const test = parseFileContent(file, content);
+                if (test === NO_TEST) return;
                 const testContent = generateGoTest(test, isServer);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");
@@ -100,7 +101,10 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
     });
 }
 
-function parseFileContent(filename: string, content: string): GoTest {
+const NO_TEST: unique symbol = Symbol("NO_TEST");
+type NoTest = typeof NO_TEST;
+
+function parseFileContent(filename: string, content: string): GoTest | NoTest {
     console.error(`Parsing file: ${filename}`);
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
@@ -114,7 +118,8 @@ function parseFileContent(filename: string, content: string): GoTest {
         goTest.commands.push(...result);
     }
     if (goTest.commands.length === 0) {
-        throw new Error(`No commands parsed in file: ${filename}`);
+        console.error(`No commands parsed in file (skipping): ${filename}`);
+        return NO_TEST;
     }
     return goTest;
 }
