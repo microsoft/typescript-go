@@ -1,0 +1,26 @@
+	package bitclear
+	
+	type Flags uint32
+	
+	const (
+		FlagA Flags = 1 << iota
+		FlagB
+		FlagC
+	)
+	
+	func bad(f Flags) {
+		f &= ^FlagA
+		  ~~~~~~~~~
+!!! bitclear: use `&^=` instead of `&= ^`
+		f &= ^(FlagA | FlagB)
+		  ~~~~~~~~~~~~~~~~~~~
+!!! bitclear: use `&^=` instead of `&= ^`
+		_ = f
+	}
+	
+	func good(f Flags) {
+		f &^= FlagA
+		f &^= FlagA | FlagB
+		_ = f
+	}
+	
