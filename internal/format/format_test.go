@@ -49,11 +49,9 @@ func TestFormatNoTrailingSpace(t *testing.T) {
 			edits := format.FormatDocument(ctx, sourceFile)
 			newText := applyBulkEdits(tc.text, edits)
 			// Formatting should not add trailing whitespace at end of file
-			trimmed := strings.TrimRight(newText, " \t")
-			if strings.HasSuffix(tc.text, "\n") {
-				assert.Assert(t, strings.HasSuffix(newText, "\n"), "Formatter should preserve trailing newline")
-			} else {
-				assert.Equal(t, newText, trimmed, "Formatter should not add trailing space at end of file")
+			for i, line := range strings.Split(newText, "\n") {
+				trimmed := strings.TrimRight(line, " \t")
+				assert.Equal(t, line, trimmed, "Formatter should not add trailing whitespace on line %d", i+1)
 			}
 		})
 	}
