@@ -89,7 +89,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 		// traverse all ancestors.
 		pushFakeScope := func(kind string, addAll func(addSymbol func(name string, symbol *ast.Symbol))) func() {
 			// We only ever need to look two declarations upward.
-			debug.AssertIsDefined(b.ctx.enclosingDeclaration)
+			debug.Assert(b.ctx.enclosingDeclaration != nil)
 			var existingFakeScope *ast.Node
 			if b.links.Has(b.ctx.enclosingDeclaration) {
 				links := b.links.Get(b.ctx.enclosingDeclaration)

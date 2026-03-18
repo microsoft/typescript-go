@@ -6,30 +6,36 @@ import (
 	"fmt"
 )
 
-func Assert(expression bool, message ...any) {
-	if !expression {
-		var msg string
-		if len(message) > 0 {
-			msg = "False expression: " + fmt.Sprint(message...)
-		} else {
-			msg = "False expression."
-		}
-		Fail(msg)
-	}
-}
-
 func isZero[T comparable](value T) bool {
 	var zero T
 	return value == zero
 }
 
-func AssertNil[T comparable](value T, message ...any) {
+func Assert[T comparable](value T, message ...any) {
+	if isZero(value) {
+		var prefix string
+		if _, ok := any(value).(bool); ok {
+			prefix = "False expression"
+		} else {
+			prefix = "Expected non-zero value"
+		}
+		var msg string
+		if len(message) > 0 {
+			msg = prefix + ": " + fmt.Sprint(message...)
+		} else {
+			msg = prefix + "."
+		}
+		Fail(msg)
+	}
+}
+
+func AssertZero[T comparable](value T, message ...any) {
 	if !isZero(value) {
 		var msg string
 		if len(message) > 0 {
-			msg = "Nil expression: " + fmt.Sprint(message...)
+			msg = "Expected zero value: " + fmt.Sprint(message...)
 		} else {
-			msg = "Nil expression."
+			msg = "Expected zero value."
 		}
 		Fail(msg)
 	}
@@ -95,31 +101,19 @@ func AssertGreaterThanOrEqual(a int, b int, message ...any) {
 	}
 }
 
-func AssertIsDefined[T comparable](value T, message ...any) {
-	if isZero(value) {
-		var msg string
-		if len(message) == 0 {
-			msg = ""
-		} else {
-			msg = fmt.Sprint(message...)
-		}
-		Fail(msg)
-	}
-}
-
-func CheckDefined[T comparable](value T, message ...any) T {
-	AssertIsDefined(value, message...)
+func CheckNonZero[T comparable](value T, message ...any) T {
+	Assert(value, message...)
 	return value
 }
 
-func AssertEachIsDefined[TElem comparable](value []TElem, message ...any) {
+func AssertEach[TElem any](value []TElem, test func(TElem) bool, message ...any) {
 	for _, elem := range value {
-		AssertIsDefined(elem, message...)
+		Assert(test(elem), message...)
 	}
 }
 
-func CheckEachIsDefined[TElem comparable](value []TElem, message ...any) []TElem {
-	AssertEachIsDefined(value, message...)
+func CheckEach[TElem any](value []TElem, test func(TElem) bool, message ...any) []TElem {
+	AssertEach(value, test, message...)
 	return value
 }
 
@@ -138,7 +132,7 @@ func AssertNode[TElem comparable](node TElem, test func(elem TElem) bool, messag
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
-	AssertIsDefined(node, message...)
+	Assert(node, message...)
 	if test != nil {
 		Assert(test(node), message...)
 	}
