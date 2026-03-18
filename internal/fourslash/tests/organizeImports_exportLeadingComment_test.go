@@ -13,13 +13,13 @@ func TestOrganizeImports_exportLeadingComment_notDuplicated(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// a
 export { a } from "a";
-void 0;`
+console.log(a);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOrganizeImports(t,
 		`// a
 export { a } from "a";
-void 0;`,
+console.log(a);`,
 		lsproto.CodeActionKindSourceSortImports,
 		nil,
 	)
@@ -31,14 +31,14 @@ func TestOrganizeImports_exportLeadingComment_multipleComments_notDuplicated(t *
 	const content = `// a
 // a
 export { a } from "a";
-void 0;`
+console.log(a);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOrganizeImports(t,
 		`// a
 // a
 export { a } from "a";
-void 0;`,
+console.log(a);`,
 		lsproto.CodeActionKindSourceSortImports,
 		nil,
 	)
@@ -50,14 +50,14 @@ func TestOrganizeImports_exportLeadingComment_withBlankLine_notDuplicated(t *tes
 	const content = `// a
 
 export { a } from "a";
-void 0;`
+console.log(a);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOrganizeImports(t,
 		`// a
 
 export { a } from "a";
-void 0;`,
+console.log(a);`,
 		lsproto.CodeActionKindSourceSortImports,
 		nil,
 	)
