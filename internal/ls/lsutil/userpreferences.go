@@ -735,7 +735,13 @@ func (p *UserPreferences) Set(name string, value any) bool {
 	case "implementationscodelensshowonallclassmethods":
 		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	case "customconfigfilename":
-		p.CustomConfigFileName = strings.TrimSpace(tsoptions.ParseString(value))
+		name := strings.TrimSpace(tsoptions.ParseString(value))
+		// Validate that the custom config file name is a plain base file name
+		// (no path separators or ".." segments) to prevent path traversal.
+		if name != "" && (strings.ContainsAny(name, "/\\") || name == ".." || name == ".") {
+			name = ""
+		}
+		p.CustomConfigFileName = name
 	default:
 		if p.FormatCodeSettings == nil {
 			p.FormatCodeSettings = GetDefaultFormatCodeSettings()

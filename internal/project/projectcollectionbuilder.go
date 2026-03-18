@@ -563,6 +563,7 @@ func (b *ProjectCollectionBuilder) DidChangeCustomConfigFileName(logger *logging
 
 	b.fileDefaultProjects = nil
 	b.defaultProjectsInvalidated = true
+	b.programStructureChanged = true
 }
 
 func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(
