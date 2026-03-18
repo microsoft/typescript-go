@@ -185,8 +185,12 @@ func (p *ProjectTreeRequest) Projects() []tspath.Path {
 type ResourceRequest struct {
 	// Documents are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
-	// If the requested Documents are not open, ensure that their default project is created
 	Documents []lsproto.DocumentUri
+	// OptionalDocuments are URIs for which configured projects should be ensured,
+	// but no inferred project should be created if no configured project is found.
+	// This is used by cross-project operations like find-all-references that need to load
+	// configured projects for definition files without creating unnecessary inferred projects.
+	OptionalDocuments []lsproto.DocumentUri
 	// Update requested Projects.
 	// this is used when we want to get LS and from all the Projects the file can be part of
 	Projects []tspath.Path
@@ -333,7 +337,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	for _, uri := range change.Documents {
-		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
+		projectCollectionBuilder.DidRequestFile(uri, false, logger.Fork("DidRequestFile"))
+	}
+
+	for _, uri := range change.OptionalDocuments {
+		projectCollectionBuilder.DidRequestFile(uri, true, logger.Fork("DidRequestFile (optional)"))
 	}
 
 	for _, projectId := range change.Projects {

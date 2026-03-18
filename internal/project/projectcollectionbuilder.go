@@ -349,7 +349,26 @@ func (b *ProjectCollectionBuilder) cleanupInferredProject(logger *logging.LogTre
 	b.updateInferredProjectRoots(inferredProjectFiles, logger)
 }
 
-func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logger *logging.LogTree) {
+func (b *ProjectCollectionBuilder) ensureInferredProjectIncludesClosedFile(fileName string, logger *logging.LogTree) {
+	// Collect existing inferred project roots (open files not in configured projects)
+	// plus this closed file.
+	var inferredProjectFiles []string
+	for path, overlay := range b.fs.overlays {
+		if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
+			inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+		}
+	}
+	inferredProjectFiles = append(inferredProjectFiles, fileName)
+	b.updateInferredProjectRoots(inferredProjectFiles, logger)
+	if b.inferredProject.Value() != nil {
+		b.updateProgram(b.inferredProject, logger)
+	}
+}
+
+// DidRequestFile ensures projects are loaded for the given URI. If optional is false and no
+// configured project is found for a closed file, an inferred project will be created.
+// If optional is true, only configured projects are ensured; no inferred project is created.
+func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, optional bool, logger *logging.LogTree) {
 	startTime := time.Now()
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
@@ -393,7 +412,12 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		// really even have an error condition until it tries to ask us language questions about
 		// a non-TS-handleable file.
 	} else {
-		b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		result := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		if result.project == nil && !optional {
+			// No configured project found for this closed file.
+			// Add it to the inferred project so language service requests can be served.
+			b.ensureInferredProjectIncludesClosedFile(fileName, logger)
+		}
 	}
 
 	if logger != nil {

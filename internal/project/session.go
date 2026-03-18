@@ -479,23 +479,24 @@ func (s *Session) getSnapshot(
 	} else if request.AutoImports != "" {
 		updateReason = UpdateReasonRequestedLanguageServiceWithAutoImports
 	} else {
-		for _, document := range request.Documents {
-			if snapshot.fs.isOpenFile(document.FileName()) {
-				// The current snapshot does not have an up to date project for the URI,
-				// so we need to update the snapshot to ensure the project is loaded.
-				// !!! Allow multiple projects to update in parallel
-				project := snapshot.GetDefaultProject(document)
-				if project == nil {
-					updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
-					break
-				} else if project.dirty {
-					updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
-					break
+		checkDocuments := func(documents []lsproto.DocumentUri) UpdateReason {
+			for _, document := range documents {
+				if snapshot.fs.isOpenFile(document.FileName()) {
+					project := snapshot.GetDefaultProject(document)
+					if project == nil {
+						return UpdateReasonRequestedLanguageServiceProjectNotLoaded
+					} else if project.dirty {
+						return UpdateReasonRequestedLanguageServiceProjectDirty
+					}
+				} else {
+					return UpdateReasonRequestedLanguageServiceForFileNotOpen
 				}
-			} else {
-				updateReason = UpdateReasonRequestedLanguageServiceForFileNotOpen
-				break
 			}
+			return UpdateReasonUnknown
+		}
+		updateReason = checkDocuments(request.Documents)
+		if updateReason == UpdateReasonUnknown {
+			updateReason = checkDocuments(request.OptionalDocuments)
 		}
 	}
 
@@ -550,7 +551,7 @@ func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri 
 func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]ls.Project, error) {
 	snapshot := s.getSnapshot(
 		ctx,
-		ResourceRequest{Documents: []lsproto.DocumentUri{uri}},
+		ResourceRequest{OptionalDocuments: []lsproto.DocumentUri{uri}},
 	)
 
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
