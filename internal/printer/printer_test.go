@@ -1193,49 +1193,6 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "() => ({}.a);")
 }
 
-func TestArrowFunctionNilParameters(t *testing.T) {
-	t.Parallel()
-
-	// Decoded ArrowFunction nodes may have nil Parameters when the encoder
-	// skips encoding empty NodeLists. Verify the printer handles this
-	// without panicking in canEmitSimpleArrowHead.
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.ts", Path: "/file.ts"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewReturnStatement(
-				factory.NewObjectLiteralExpression(
-					factory.NewNodeList([]*ast.Node{
-						factory.NewPropertyAssignment(
-							nil, /*modifiers*/
-							factory.NewIdentifier("b"),
-							nil, /*postfixToken*/
-							nil, /*typeNode*/
-							factory.NewArrowFunction(
-								nil, /*modifiers*/
-								nil, /*typeParameters*/
-								nil, /*parameters — nil, as produced by decoder for empty params*/
-								nil, /*returnType*/
-								nil, /*fullSignature*/
-								factory.NewToken(ast.KindEqualsGreaterThanToken),
-								factory.NewBlock(
-									factory.NewNodeList([]*ast.Node{
-										factory.NewReturnStatement(factory.NewNumericLiteral("1", ast.TokenFlagsNone)),
-									}),
-									false, /*multiLine*/
-								),
-							),
-						),
-					}),
-					false, /*multiLine*/
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "return { b: () => { return 1; } };")
-}
-
 func TestParenthesizeDelete(t *testing.T) {
 	t.Parallel()
 

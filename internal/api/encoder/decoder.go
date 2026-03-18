@@ -487,7 +487,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		params := d.nodeListAt(it.nextIf(mask, 4))
 		retType := d.nodeAt(it.nextIf(mask, 5))
 		body := d.nodeAt(it.nextIf(mask, 6))
-		return d.factory.NewFunctionDeclaration(mods, asterisk, name, typeParams, params, retType, nil, body), nil
+		return d.factory.NewFunctionDeclaration(mods, asterisk, name, typeParams, d.emptyIfNil(params), retType, nil, body), nil
 
 	case ast.KindInterfaceDeclaration:
 		it := newChildIter(childIndices)
@@ -600,14 +600,14 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeParams := d.nodeListAt(it.nextIf(mask, 0))
 		params := d.nodeListAt(it.nextIf(mask, 1))
 		retType := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewCallSignatureDeclaration(typeParams, params, retType), nil
+		return d.factory.NewCallSignatureDeclaration(typeParams, d.emptyIfNil(params), retType), nil
 
 	case ast.KindConstructSignature:
 		it := newChildIter(childIndices)
 		typeParams := d.nodeListAt(it.nextIf(mask, 0))
 		params := d.nodeListAt(it.nextIf(mask, 1))
 		retType := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewConstructSignatureDeclaration(typeParams, params, retType), nil
+		return d.factory.NewConstructSignatureDeclaration(typeParams, d.emptyIfNil(params), retType), nil
 
 	case ast.KindConstructor:
 		it := newChildIter(childIndices)
@@ -616,7 +616,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		params := d.nodeListAt(it.nextIf(mask, 2))
 		retType := d.nodeAt(it.nextIf(mask, 3))
 		body := d.nodeAt(it.nextIf(mask, 4))
-		return d.factory.NewConstructorDeclaration(mods, typeParams, params, retType, nil, body), nil
+		return d.factory.NewConstructorDeclaration(mods, typeParams, d.emptyIfNil(params), retType, nil, body), nil
 
 	case ast.KindGetAccessor:
 		it := newChildIter(childIndices)
@@ -626,7 +626,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		params := d.nodeListAt(it.nextIf(mask, 3))
 		retType := d.nodeAt(it.nextIf(mask, 4))
 		body := d.nodeAt(it.nextIf(mask, 5))
-		return d.factory.NewGetAccessorDeclaration(mods, name, typeParams, params, retType, nil, body), nil
+		return d.factory.NewGetAccessorDeclaration(mods, name, typeParams, d.emptyIfNil(params), retType, nil, body), nil
 
 	case ast.KindSetAccessor:
 		it := newChildIter(childIndices)
@@ -636,14 +636,14 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		params := d.nodeListAt(it.nextIf(mask, 3))
 		retType := d.nodeAt(it.nextIf(mask, 4))
 		body := d.nodeAt(it.nextIf(mask, 5))
-		return d.factory.NewSetAccessorDeclaration(mods, name, typeParams, params, retType, nil, body), nil
+		return d.factory.NewSetAccessorDeclaration(mods, name, typeParams, d.emptyIfNil(params), retType, nil, body), nil
 
 	case ast.KindIndexSignature:
 		it := newChildIter(childIndices)
 		mods := d.modifierListAt(it.nextIf(mask, 0))
 		params := d.nodeListAt(it.nextIf(mask, 1))
 		retType := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewIndexSignatureDeclaration(mods, params, retType), nil
+		return d.factory.NewIndexSignatureDeclaration(mods, d.emptyIfNil(params), retType), nil
 
 	case ast.KindMethodSignature:
 		it := newChildIter(childIndices)
@@ -653,7 +653,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeParams := d.nodeListAt(it.nextIf(mask, 3))
 		params := d.nodeListAt(it.nextIf(mask, 4))
 		retType := d.nodeAt(it.nextIf(mask, 5))
-		return d.factory.NewMethodSignatureDeclaration(mods, name, postfix, typeParams, params, retType), nil
+		return d.factory.NewMethodSignatureDeclaration(mods, name, postfix, typeParams, d.emptyIfNil(params), retType), nil
 
 	case ast.KindMethodDeclaration:
 		it := newChildIter(childIndices)
@@ -665,7 +665,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		params := d.nodeListAt(it.nextIf(mask, 5))
 		retType := d.nodeAt(it.nextIf(mask, 6))
 		body := d.nodeAt(it.nextIf(mask, 7))
-		return d.factory.NewMethodDeclaration(mods, asterisk, name, postfix, typeParams, params, retType, nil, body), nil
+		return d.factory.NewMethodDeclaration(mods, asterisk, name, postfix, typeParams, d.emptyIfNil(params), retType, nil, body), nil
 
 	case ast.KindPropertySignature:
 		it := newChildIter(childIndices)
@@ -706,7 +706,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		retType := d.nodeAt(it.nextIf(mask, 3))
 		eqGt := d.nodeAt(it.nextIf(mask, 4))
 		body := d.nodeAt(it.nextIf(mask, 5))
-		return d.factory.NewArrowFunction(mods, typeParams, params, retType, nil, eqGt, body), nil
+		return d.factory.NewArrowFunction(mods, typeParams, d.emptyIfNil(params), retType, nil, eqGt, body), nil
 
 	case ast.KindFunctionExpression:
 		it := newChildIter(childIndices)
@@ -717,7 +717,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		params := d.nodeListAt(it.nextIf(mask, 4))
 		retType := d.nodeAt(it.nextIf(mask, 5))
 		body := d.nodeAt(it.nextIf(mask, 6))
-		return d.factory.NewFunctionExpression(mods, asterisk, name, typeParams, params, retType, nil, body), nil
+		return d.factory.NewFunctionExpression(mods, asterisk, name, typeParams, d.emptyIfNil(params), retType, nil, body), nil
 
 	case ast.KindAsExpression:
 		it := newChildIter(childIndices)
@@ -889,7 +889,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeParams := d.nodeListAt(it.nextIf(mask, 0))
 		params := d.nodeListAt(it.nextIf(mask, 1))
 		retType := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewFunctionTypeNode(typeParams, params, retType), nil
+		return d.factory.NewFunctionTypeNode(typeParams, d.emptyIfNil(params), retType), nil
 
 	case ast.KindConstructorType:
 		it := newChildIter(childIndices)
@@ -897,7 +897,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeParams := d.nodeListAt(it.nextIf(mask, 1))
 		params := d.nodeListAt(it.nextIf(mask, 2))
 		retType := d.nodeAt(it.nextIf(mask, 3))
-		return d.factory.NewConstructorTypeNode(mods, typeParams, params, retType), nil
+		return d.factory.NewConstructorTypeNode(mods, typeParams, d.emptyIfNil(params), retType), nil
 
 	case ast.KindTemplateLiteralType:
 		it := newChildIter(childIndices)
@@ -1161,7 +1161,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		if len(childIndices) > 0 {
 			stmts = d.nodeListAt(childIndices[0])
 		}
-		return d.factory.NewBlock(stmts, multiline), nil
+		return d.factory.NewBlock(d.emptyIfNil(stmts), multiline), nil
 
 	case ast.KindVariableDeclarationList:
 		flags := ast.NodeFlags(definedBits)
@@ -1369,6 +1369,16 @@ func (d *astDecoder) singleNodeListChild(childIndices []int) *ast.NodeList {
 		return nil
 	}
 	return d.nodeLists[childIndices[0]]
+}
+
+// emptyIfNil returns the nodeList as-is if non-nil, or an empty NodeList if nil.
+// The encoder skips empty NodeLists, so the decoder must reconstruct them for fields
+// that the parser always creates as non-nil (e.g., Block.Statements, function parameters).
+func (d *astDecoder) emptyIfNil(nl *ast.NodeList) *ast.NodeList {
+	if nl == nil {
+		return d.factory.NewNodeList(nil)
+	}
+	return nl
 }
 
 func readLE32(data []byte, offset int) uint32 {
