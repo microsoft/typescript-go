@@ -45,9 +45,7 @@ func AssertZero[T comparable](value T, message ...any) {
 func AssertEqual[T comparable](a T, b T, message ...any) {
 	if a != b {
 		var msg string
-		if len(message) == 0 {
-			msg = ""
-		} else {
+		if len(message) > 0 {
 			msg = fmt.Sprint(message...)
 		}
 		Fail(fmt.Sprintf("Expected %v == %v. %s", a, b, msg))
@@ -57,9 +55,7 @@ func AssertEqual[T comparable](a T, b T, message ...any) {
 func AssertLessThan[T cmp.Ordered](a T, b T, message ...any) {
 	if a >= b {
 		var msg string
-		if len(message) == 0 {
-			msg = ""
-		} else {
+		if len(message) > 0 {
 			msg = fmt.Sprint(message...)
 		}
 		Fail(fmt.Sprintf("Expected %v < %v. %s", a, b, msg))
@@ -69,9 +65,7 @@ func AssertLessThan[T cmp.Ordered](a T, b T, message ...any) {
 func AssertLessThanOrEqual[T cmp.Ordered](a T, b T, message ...any) {
 	if a > b {
 		var msg string
-		if len(message) == 0 {
-			msg = ""
-		} else {
+		if len(message) > 0 {
 			msg = fmt.Sprint(message...)
 		}
 		Fail(fmt.Sprintf("Expected %v <= %v. %s", a, b, msg))
@@ -81,9 +75,7 @@ func AssertLessThanOrEqual[T cmp.Ordered](a T, b T, message ...any) {
 func AssertGreaterThan[T cmp.Ordered](a T, b T, message ...any) {
 	if a <= b {
 		var msg string
-		if len(message) == 0 {
-			msg = ""
-		} else {
+		if len(message) > 0 {
 			msg = fmt.Sprint(message...)
 		}
 		Fail(fmt.Sprintf("Expected %v > %v. %s", a, b, msg))
@@ -93,9 +85,7 @@ func AssertGreaterThan[T cmp.Ordered](a T, b T, message ...any) {
 func AssertGreaterThanOrEqual[T cmp.Ordered](a T, b T, message ...any) {
 	if a < b {
 		var msg string
-		if len(message) == 0 {
-			msg = ""
-		} else {
+		if len(message) > 0 {
 			msg = fmt.Sprint(message...)
 		}
 		Fail(fmt.Sprintf("Expected %v >= %v. %s", a, b, msg))
