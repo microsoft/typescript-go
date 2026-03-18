@@ -2198,7 +2198,9 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 	for i, marker := range markers {
 		if i > 0 {
 			result.WriteString(newLine)
-			result.WriteString(strings.Repeat("=", 80))
+			for range 80 {
+				result.WriteByte('=')
+			}
 			result.WriteString(newLine)
 			result.WriteString(newLine)
 		}
