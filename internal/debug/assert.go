@@ -132,9 +132,19 @@ func assertGreaterThanOrEqualSlow[T cmp.Ordered](a T, b T, message ...any) {
 func CheckNonZero[T comparable](value T, message ...any) T {
 	var zero T
 	if value == zero {
-		assertSlow(value, message...)
+		checkNonZeroSlow(message...)
 	}
 	return value
+}
+
+func checkNonZeroSlow(message ...any) {
+	var msg string
+	if len(message) > 0 {
+		msg = "Expected non-zero value: " + fmt.Sprint(message...)
+	} else {
+		msg = "Expected non-zero value."
+	}
+	Fail(msg)
 }
 
 func AssertEach[TElem any](value []TElem, test func(TElem) bool, message ...any) {
