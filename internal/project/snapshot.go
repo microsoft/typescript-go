@@ -340,11 +340,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	for _, uri := range change.Documents {
-		projectCollectionBuilder.DidRequestFile(uri, false, logger.Fork("DidRequestFile"))
+		projectCollectionBuilder.DidRequestFile(uri, false /*configuredProjectsOnly*/, logger.Fork("DidRequestFile"))
 	}
 
 	for _, uri := range change.ConfiguredProjectDocuments {
-		projectCollectionBuilder.DidRequestFile(uri, true, logger.Fork("DidRequestFile (optional)"))
+		projectCollectionBuilder.DidRequestFile(uri, true /*configuredProjectsOnly*/, logger.Fork("DidRequestFile (optional)"))
 	}
 
 	for _, projectId := range change.Projects {

@@ -364,10 +364,10 @@ func (b *ProjectCollectionBuilder) ensureInferredProjectIncludesClosedFile(fileN
 	}
 }
 
-// DidRequestFile ensures projects are loaded for the given URI. If optional is false and no
-// configured project is found for a closed file, an inferred project will be created.
-// If optional is true, only configured projects are ensured; no inferred project is created.
-func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, optional bool, logger *logging.LogTree) {
+// DidRequestFile ensures projects are loaded for the given URI.
+// If configuredProjectsOnly is true, only configured projects are loaded; no inferred project is created
+// and it is not guaranteed that there will be any project containing the file in the resulting snapshot.
+func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, configuredProjectsOnly bool, logger *logging.LogTree) {
 	startTime := time.Now()
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
@@ -412,7 +412,7 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, optio
 		// a non-TS-handleable file.
 	} else {
 		result := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
-		if result.project == nil && !optional {
+		if result.project == nil && !configuredProjectsOnly {
 			// No configured project found for this closed file.
 			// Add it to the inferred project so language service requests can be served.
 			b.ensureInferredProjectIncludesClosedFile(fileName, logger)
