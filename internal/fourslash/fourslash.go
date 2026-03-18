@@ -565,17 +565,29 @@ func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.N
 	lsptestutil.SendNotification(t, f.client, info, params)
 }
 
-func (f *FourslashTest) GetEditsForFileRename(t *testing.T, oldPath string, newPath string) lsproto.WorkspaceEditOrNull {
+func (f *FourslashTest) VerifyGetEditsForFileRename(t *testing.T, oldPath string, newPath string, expectedContents map[string]string) {
 	t.Helper()
-	return f.GetEditsForFileRenames(t, []*lsproto.FileRename{
+
+	result := f.getEditsForFileRenames(t, []*lsproto.FileRename{
 		{
 			OldUri: string(lsconv.FileNameToDocumentURI(oldPath)),
 			NewUri: string(lsconv.FileNameToDocumentURI(newPath)),
 		},
 	})
+
+	actualContents := map[string]string{}
+	if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
+		for uri, edits := range *result.WorkspaceEdit.Changes {
+			actualContents[uri.FileName()] = f.applyTextEditsToContent(t, uri.FileName(), edits)
+		}
+	}
+
+	if diff := cmp.Diff(expectedContents, actualContents); diff != "" {
+		t.Fatalf("file rename edits mismatch (-want +got):\n%s", diff)
+	}
 }
 
-func (f *FourslashTest) GetEditsForFileRenames(t *testing.T, files []*lsproto.FileRename) lsproto.WorkspaceEditOrNull {
+func (f *FourslashTest) getEditsForFileRenames(t *testing.T, files []*lsproto.FileRename) lsproto.WorkspaceEditOrNull {
 	t.Helper()
 
 	params := &lsproto.RenameFilesParams{Files: files}
@@ -592,7 +604,7 @@ func (f *FourslashTest) GetEditsForFileRenames(t *testing.T, files []*lsproto.Fi
 	return result
 }
 
-func (f *FourslashTest) ApplyTextEdits(t *testing.T, fileName string, edits []*lsproto.TextEdit) string {
+func (f *FourslashTest) applyTextEditsToContent(t *testing.T, fileName string, edits []*lsproto.TextEdit) string {
 	t.Helper()
 
 	script := f.getScriptInfo(fileName)

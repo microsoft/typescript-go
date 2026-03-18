@@ -39,3 +39,30 @@ function bar() { return "b"; }`,
 		testContent,
 		cmp.AllowUnexported(testCaseContent{}, testUnit{}))
 }
+
+func TestParseTestFilesAndSymlinksWithOptionsKeepsExplicitEmptyFirstFile(t *testing.T) {
+	t.Parallel()
+
+	type parsedFile struct {
+		name    string
+		content string
+	}
+
+	files, _, _, _, err := ParseTestFilesAndSymlinksWithOptions(
+		`// @filename: /src/foo/a.ts
+
+// @filename: /src/old.ts
+import a from "./foo/a";`,
+		"implicit.ts",
+		func(filename string, content string, _ map[string]string) (parsedFile, error) {
+			return parsedFile{name: filename, content: content}, nil
+		},
+		ParseTestFilesOptions{AllowImplicitFirstFile: true},
+	)
+	assert.NilError(t, err)
+	expected := []parsedFile{
+		{name: "/src/foo/a.ts", content: ""},
+		{name: "/src/old.ts", content: `import a from "./foo/a";`},
+	}
+	assert.Assert(t, cmp.Diff(expected, files, cmp.AllowUnexported(parsedFile{})) == "")
+}
