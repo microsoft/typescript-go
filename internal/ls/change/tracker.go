@@ -182,8 +182,8 @@ func (t *Tracker) InsertNodesAfter(sourceFile *ast.SourceFile, after *ast.Node, 
 	t.InsertNodesAt(sourceFile, endPosition, newNodes, t.getInsertNodeAfterOptions(sourceFile, after))
 }
 
-func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool) {
-	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, LeadingTriviaOptionNone, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
+func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool, leadingTriviaOption LeadingTriviaOption) {
+	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, leadingTriviaOption, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
 }
 
 // InsertModifierBefore inserts a modifier token (like 'type') before a node with a trailing space.
@@ -408,6 +408,7 @@ func (t *Tracker) InsertImportSpecifierAtIndex(sourceFile *ast.SourceFile, newSp
 			elements[0],
 			newSpecifier,
 			!positionsAreOnSameLine(astnav.GetStartOfNode(elements[0], sourceFile, false), astnav.GetStartOfNode(namedImports.Parent.Parent, sourceFile, false), sourceFile),
+			LeadingTriviaOptionNone,
 		)
 	}
 }
