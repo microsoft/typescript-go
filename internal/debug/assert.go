@@ -161,7 +161,7 @@ func AssertEachNode[TElem NodeLike](nodes []TElem, test func(elem TElem) bool, m
 
 func AssertNode[TElem NodeLike](node TElem, test func(elem TElem) bool, message ...any) {
 	var zero TElem
-	if node != zero && (test == nil || test(node)) {
+	if node != zero && test(node) {
 		return
 	}
 	assertNodeSlow(node, test, message...)
@@ -175,14 +175,14 @@ func assertNodeSlow[TElem NodeLike](node TElem, test func(elem TElem) bool, mess
 	if node == zero {
 		Fail("False expression: " + fmt.Sprint(message...))
 	}
-	if test != nil && !test(node) {
+	if !test(node) {
 		Fail("False expression: " + fmt.Sprint(message...))
 	}
 }
 
 func AssertNotNode[TElem NodeLike](node TElem, test func(elem TElem) bool, message ...any) {
 	var zero TElem
-	if node == zero || test == nil || !test(node) {
+	if node == zero || !test(node) {
 		return
 	}
 	assertNodeFail(message...)
@@ -190,7 +190,7 @@ func AssertNotNode[TElem NodeLike](node TElem, test func(elem TElem) bool, messa
 
 func AssertOptionalNode[TElem NodeLike](node TElem, test func(elem TElem) bool, message ...any) {
 	var zero TElem
-	if node == zero || test == nil || test(node) {
+	if node == zero || test(node) {
 		return
 	}
 	assertNodeFail(message...)
