@@ -33,10 +33,9 @@ func TestCustomConfigFileName(t *testing.T) {
 		ls, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
-		snapshot, release := session.Snapshot()
+		snapshot := session.Snapshot()
 		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
-		release()
 
 		prefs := lsutil.NewDefaultUserPreferences()
 		prefs.CustomConfigFileName = "tsconfig.all.json"
@@ -45,8 +44,7 @@ func TestCustomConfigFileName(t *testing.T) {
 		ls, err = session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.all.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue)
 	})
@@ -64,8 +62,7 @@ func TestCustomConfigFileName(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
 	})
 
@@ -81,8 +78,78 @@ func TestCustomConfigFileName(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+	})
+
+	t.Run("reverts to tsconfig.json when custom config preference is cleared", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+
+		// Step 1: Open file, verify it uses tsconfig.json (strict: false)
+		session.DidOpenFile(context.Background(), uri, 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+
+		snapshot := session.Snapshot()
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
+
+		// Step 2: Switch to custom config (strict: true)
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.CustomConfigFileName = "tsconfig.all.json"
+		session.Configure(lsutil.NewUserConfig(prefs))
+
+		ls, err = session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+
+		snapshot = session.Snapshot()
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.all.json")
+		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue)
+
+		// Step 3: Clear custom config preference, should revert to tsconfig.json (strict: false)
+		prefs = lsutil.NewDefaultUserPreferences()
+		prefs.CustomConfigFileName = ""
+		session.Configure(lsutil.NewUserConfig(prefs))
+
+		ls, err = session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+
+		snapshot = session.Snapshot()
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
+	})
+
+	// This test demonstrates the bug reported in #2020: after changing
+	// customConfigFileName, the server does not schedule a diagnostics refresh,
+	// so the VS Code client never knows to re-pull diagnostics and shows stale results.
+	t.Run("schedules diagnostics refresh when custom config preference changes", func(t *testing.T) {
+		t.Parallel()
+		session, utils := projecttestutil.Setup(files)
+
+		session.DidOpenFile(context.Background(), uri, 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// Record baseline refresh call count
+		baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+		// Change the custom config preference
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.CustomConfigFileName = "tsconfig.all.json"
+		session.Configure(lsutil.NewUserConfig(prefs))
+
+		// GetLanguageService triggers the snapshot update with the new config
+		_, err = session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// The server should have scheduled a diagnostics refresh to tell the client
+		// to re-pull diagnostics with the new project configuration.
+		refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+		assert.Assert(t, refreshCount > baselineRefreshCount,
+			"expected RefreshDiagnostics to be called after customConfigFileName change, got %d calls (baseline %d)",
+			refreshCount, baselineRefreshCount)
 	})
 }
