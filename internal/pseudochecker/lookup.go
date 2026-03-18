@@ -468,12 +468,16 @@ func IsInConstContext(node *ast.Node) bool {
 }
 
 func (ch *PseudoChecker) typeFromPrimitiveLiteralPrefix(node *ast.PrefixUnaryExpression) *PseudoType {
+	expr := node.AsNode()
+	if node.Operator == ast.KindPlusToken {
+		expr = node.Operand
+	}
 	inner := node.Operand
 	if inner.Kind == ast.KindBigIntLiteral {
-		return NewPseudoTypeMaybeConstLocation(node.AsNode(), NewPseudoTypeBigIntLiteral(node.AsNode()), PseudoTypeBigInt)
+		return NewPseudoTypeMaybeConstLocation(node.AsNode(), NewPseudoTypeBigIntLiteral(expr.AsNode()), PseudoTypeBigInt)
 	}
 	if inner.Kind == ast.KindNumericLiteral {
-		return NewPseudoTypeMaybeConstLocation(node.AsNode(), NewPseudoTypeNumericLiteral(node.AsNode()), PseudoTypeNumber)
+		return NewPseudoTypeMaybeConstLocation(node.AsNode(), NewPseudoTypeNumericLiteral(expr.AsNode()), PseudoTypeNumber)
 	}
 	debug.FailBadSyntaxKind(inner)
 	return nil
