@@ -119,7 +119,7 @@ func CheckEach[TElem any](value []TElem, test func(TElem) bool, message ...any) 
 
 var unexpectedNode []any = []any{"Unexpected node."}
 
-func AssertEachNode[TElem comparable](nodes []TElem, test func(elem TElem) bool, message ...any) {
+func AssertEachNode[TElem NodeLike](nodes []TElem, test func(elem TElem) bool, message ...any) {
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
@@ -128,7 +128,7 @@ func AssertEachNode[TElem comparable](nodes []TElem, test func(elem TElem) bool,
 	}
 }
 
-func AssertNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {
+func AssertNode[TElem NodeLike](node TElem, test func(elem TElem) bool, message ...any) {
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
@@ -138,7 +138,7 @@ func AssertNode[TElem comparable](node TElem, test func(elem TElem) bool, messag
 	}
 }
 
-func AssertNotNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {
+func AssertNotNode[TElem NodeLike](node TElem, test func(elem TElem) bool, message ...any) {
 	if isZero(node) {
 		return
 	}
@@ -151,7 +151,7 @@ func AssertNotNode[TElem comparable](node TElem, test func(elem TElem) bool, mes
 	Assert(!test(node), message...)
 }
 
-func AssertOptionalNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {
+func AssertOptionalNode[TElem NodeLike](node TElem, test func(elem TElem) bool, message ...any) {
 	if isZero(node) {
 		return
 	}
@@ -174,7 +174,7 @@ func AssertOptionalToken[TElem NodeLike](node TElem, kind int16, message ...any)
 	Assert(node.KindValue() == kind, message...)
 }
 
-func AssertMissingNode[TElem comparable](node TElem, message ...any) {
+func AssertMissingNode[TElem NodeLike](node TElem, message ...any) {
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
