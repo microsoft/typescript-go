@@ -72,10 +72,10 @@ func (tx *LegacyDecoratorsTransformer) visitIdentifier(node *ast.Identifier) *as
 	// takes the place of `substituteIdentifier` in the strada transform.
 	// Skip identifiers that are the name part of a property access expression (e.g., MyEnum.Foo)
 	// since those are not standalone references to the class.
-	original := tx.EmitContext().MostOriginal(node.AsNode())
-	if original.Parent != nil && ast.IsPropertyAccessExpression(original.Parent) && original.Parent.Name() == original {
+	if transformers.IsPropertyAccessName(tx.EmitContext(), node.AsNode()) {
 		return node.AsNode()
 	}
+	original := tx.EmitContext().MostOriginal(node.AsNode())
 	for _, d := range tx.enclosingClasses {
 		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(original) == tx.EmitContext().MostOriginal(d.AsNode()) {
 			return tx.classAliases[d.AsNode()]
