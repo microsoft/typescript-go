@@ -115,6 +115,10 @@ func (ch *PseudoChecker) typeFromProperty(node *ast.Node) *PseudoType {
 		if init != nil && !isContextuallyTyped(node) {
 			expr := ch.typeFromExpression(init)
 			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+				if expr.Kind != PseudoTypeKindDirect && node.AsPropertyDeclaration().PostfixToken != nil && node.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken {
+					// type comes from the initializer expression on a property with a `?` - add `| undefined` to the type
+					return addUndefinedIfDefinitelyRequired(expr)
+				}
 				return expr
 			}
 			// fallback to NoResult if PseudoTypeKindInferred
