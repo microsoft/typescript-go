@@ -432,8 +432,14 @@ func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.
 // visitIdentifier replaces Strada's onSubstituteNode/trySubstituteClassAlias. Instead of
 // substituting at emit time using NodeCheckFlags.ConstructorReference, we resolve the
 // identifier to its declaration and check if that declaration has a registered alias.
+// Skip identifiers that are the name part of a property access expression (e.g., MyEnum.Foo)
+// since those are not standalone references to the class.
 func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
-	declaration := tx.resolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode()))
+	original := tx.EmitContext().MostOriginal(node.AsNode())
+	if original.Parent != nil && ast.IsPropertyAccessExpression(original.Parent) && original.Parent.Name() == original {
+		return node.AsNode()
+	}
+	declaration := tx.resolver.GetReferencedValueDeclaration(original)
 	if declaration != nil {
 		if alias, ok := tx.classAliases[declaration]; ok && tx.enclosingClassDeclarations.Has(declaration) {
 			clone := alias.Clone(tx.Factory())

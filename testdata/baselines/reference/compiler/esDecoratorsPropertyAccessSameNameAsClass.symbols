@@ -1,0 +1,99 @@
+//// [tests/cases/compiler/esDecoratorsPropertyAccessSameNameAsClass.ts] ////
+
+=== esDecoratorsPropertyAccessSameNameAsClass.ts ===
+export enum MyEnum {
+>MyEnum : Symbol(MyEnum, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 0))
+
+    Foo = "FooValue",
+>Foo : Symbol(MyEnum.Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 20))
+
+    Bar = "BarValue",
+>Bar : Symbol(MyEnum.Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 1, 21))
+}
+
+function myDecorator(target: any, context: ClassDecoratorContext) {
+>myDecorator : Symbol(myDecorator, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 3, 1))
+>target : Symbol(target, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 5, 21))
+>context : Symbol(context, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 5, 33))
+>ClassDecoratorContext : Symbol(ClassDecoratorContext, Decl(lib.decorators.d.ts, --, --))
+
+    return target;
+>target : Symbol(target, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 5, 21))
+}
+
+// ES decorators with enum member access sharing a class name
+@myDecorator
+>myDecorator : Symbol(myDecorator, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 3, 1))
+
+export class Foo {
+>Foo : Symbol(Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 7, 1))
+
+    type: MyEnum = MyEnum.Foo;
+>type : Symbol(Foo.type, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 11, 18))
+>MyEnum : Symbol(MyEnum, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 0))
+>MyEnum.Foo : Symbol(MyEnum.Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 20))
+>MyEnum : Symbol(MyEnum, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 0))
+>Foo : Symbol(MyEnum.Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 20))
+
+    getType(): MyEnum {
+>getType : Symbol(Foo.getType, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 12, 30))
+>MyEnum : Symbol(MyEnum, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 0))
+
+        return this.type || MyEnum.Foo;
+>this.type : Symbol(Foo.type, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 11, 18))
+>this : Symbol(Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 7, 1))
+>type : Symbol(Foo.type, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 11, 18))
+>MyEnum.Foo : Symbol(MyEnum.Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 20))
+>MyEnum : Symbol(MyEnum, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 0))
+>Foo : Symbol(MyEnum.Foo, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 0, 20))
+    }
+}
+
+// Property access on objects
+declare const obj: { Bar: string };
+>obj : Symbol(obj, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 13))
+>Bar : Symbol(Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 20))
+
+@myDecorator
+>myDecorator : Symbol(myDecorator, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 3, 1))
+
+export class Bar {
+>Bar : Symbol(Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 35))
+
+    prop = obj.Bar;
+>prop : Symbol(Bar.prop, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 23, 18))
+>obj.Bar : Symbol(Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 20))
+>obj : Symbol(obj, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 13))
+>Bar : Symbol(Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 20))
+
+    method() {
+>method : Symbol(Bar.method, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 24, 19))
+
+        return obj.Bar;
+>obj.Bar : Symbol(Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 20))
+>obj : Symbol(obj, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 13))
+>Bar : Symbol(Bar, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 20, 20))
+    }
+}
+
+// Static member of another class
+class Other {
+>Other : Symbol(Other, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 29, 1))
+
+    static Baz = 42;
+>Baz : Symbol(Other.Baz, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 32, 13))
+}
+
+@myDecorator
+>myDecorator : Symbol(myDecorator, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 3, 1))
+
+export class Baz {
+>Baz : Symbol(Baz, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 34, 1))
+
+    prop = Other.Baz;
+>prop : Symbol(Baz.prop, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 37, 18))
+>Other.Baz : Symbol(Other.Baz, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 32, 13))
+>Other : Symbol(Other, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 29, 1))
+>Baz : Symbol(Other.Baz, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 32, 13))
+}
+
