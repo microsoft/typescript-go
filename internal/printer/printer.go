@@ -4364,7 +4364,7 @@ func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClaus
 	format := LFCaseOrDefaultClauseStatements
 	if emitAsSingleStatement {
 		p.writeSpace()
-		format &= ^(LFMultiLine | LFIndented)
+		format &^= LFMultiLine | LFIndented
 	}
 
 	p.emitList((*Printer).emitStatement, node.AsNode(), node.Statements, format)
