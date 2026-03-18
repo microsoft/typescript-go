@@ -3,10 +3,13 @@ package tsoptions
 import (
 	"reflect"
 
+	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 // TSConfig represents the output structure for --showConfig
@@ -28,9 +31,23 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 		UseCaseSensitiveFileNames: configParseResult.UseCaseSensitiveFileNames(),
 	}
 
-	// Build file list
+	// Build file list, filtering out files that match the include/exclude specs
+	var fileFilter func(string) bool
+	if configParseResult.ConfigFile != nil && configParseResult.ConfigFile.configFileSpecs != nil &&
+		len(configParseResult.ConfigFile.configFileSpecs.validatedIncludeSpecs) > 0 {
+		fileFilter = matchesSpecs(
+			configFileName,
+			configParseResult.ConfigFile.configFileSpecs.validatedIncludeSpecs,
+			configParseResult.ConfigFile.configFileSpecs.validatedExcludeSpecs,
+			configParseResult.UseCaseSensitiveFileNames(),
+			configParseResult.GetCurrentDirectory(),
+		)
+	}
 	var files []string
 	for _, f := range configParseResult.FileNames() {
+		if fileFilter != nil && !fileFilter(f) {
+			continue
+		}
 		normalizedFilePath := tspath.GetNormalizedAbsolutePath(f, configParseResult.GetCurrentDirectory())
 		relativePath := tspath.GetRelativePathFromFile(normalizedConfigPath, normalizedFilePath, comparePathsOptions)
 		files = append(files, relativePath)
@@ -56,11 +73,7 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 		var references []any
 		for _, r := range refs {
 			ref := &collections.OrderedMap[string, any]{}
-			path := r.OriginalPath
-			if path == "" {
-				path = r.Path
-			}
-			ref.Set("path", path)
+			ref.Set("path", r.OriginalPath)
 			if r.Circular {
 				ref.Set("circular", true)
 			}
@@ -81,9 +94,7 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 		if len(include) > 0 {
 			config.Include = include
 		}
-		if len(specs.validatedExcludeSpecs) > 0 {
-			config.Exclude = specs.validatedExcludeSpecs
-		}
+		config.Exclude = specs.validatedExcludeSpecs
 	}
 
 	// Add compileOnSave
@@ -164,7 +175,9 @@ func serializeCompilerOptions(options *core.CompilerOptions, configFilePath stri
 		}
 
 		switch optionDecl.Kind {
-		case CommandLineOptionTypeList, CommandLineOptionTypeListOrElement:
+		case CommandLineOptionTypeListOrElement:
+			debug.Assert(false, "listOrElement option should not reach serialization")
+		case CommandLineOptionTypeList:
 			elem := optionDecl.Elements()
 			if elem != nil && elem.IsFilePath {
 				// List of file paths - make relative
@@ -248,4 +261,45 @@ func serializeEnumValue(value any, enumMap *collections.OrderedMap[string, any])
 	}
 	// Fallback: direct comparison
 	return getNameOfCompilerOptionValue(value, enumMap)
+}
+
+// matchesSpecs returns a filter function that returns true for files that should be
+// included in the --showConfig "files" list. Files that match the include globs (and
+// are not excluded) are filtered OUT, since they're already covered by the "include" field.
+func matchesSpecs(configFileName string, includeSpecs []string, excludeSpecs []string, useCaseSensitiveFileNames bool, currentDirectory string) func(string) bool {
+	if len(includeSpecs) == 0 {
+		return nil
+	}
+	path := tspath.NormalizePath(configFileName)
+	currentDirectory = tspath.NormalizePath(currentDirectory)
+	absolutePath := tspath.CombinePaths(currentDirectory, path)
+
+	includeFilePattern := vfs.GetRegularExpressionForWildcard(includeSpecs, absolutePath, vfs.UsageFiles)
+	excludePattern := vfs.GetRegularExpressionForWildcard(excludeSpecs, absolutePath, vfs.UsageExclude)
+
+	var includeRe *regexp2.Regexp
+	if includeFilePattern != "" {
+		includeRe = vfs.GetRegexFromPattern(includeFilePattern, useCaseSensitiveFileNames)
+	}
+	var excludeRe *regexp2.Regexp
+	if excludePattern != "" {
+		excludeRe = vfs.GetRegexFromPattern(excludePattern, useCaseSensitiveFileNames)
+	}
+
+	if includeRe != nil {
+		if excludeRe != nil {
+			return func(path string) bool {
+				return !(core.Must(includeRe.MatchString(path)) && !core.Must(excludeRe.MatchString(path)))
+			}
+		}
+		return func(path string) bool {
+			return !core.Must(includeRe.MatchString(path))
+		}
+	}
+	if excludeRe != nil {
+		return func(path string) bool {
+			return core.Must(excludeRe.MatchString(path))
+		}
+	}
+	return nil
 }
