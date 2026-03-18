@@ -164,10 +164,7 @@ func AssertOptionalNode[TElem comparable](node TElem, test func(elem TElem) bool
 	Assert(test(node), message...)
 }
 
-func AssertOptionalToken[TElem interface {
-	comparable
-	KindValue() int16
-}](node TElem, kind int16, message ...any) {
+func AssertOptionalToken[TElem NodeLike](node TElem, kind int16, message ...any) {
 	if isZero(node) {
 		return
 	}

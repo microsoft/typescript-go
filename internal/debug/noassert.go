@@ -20,9 +20,6 @@ func AssertEachNode[TElem comparable](nodes []TElem, test func(elem TElem) bool,
 func AssertNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any)         {}
 func AssertNotNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any)      {}
 func AssertOptionalNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {}
-func AssertOptionalToken[TElem interface {
-	comparable
-	KindValue() int16
-}](node TElem, kind int16, message ...any) {
+func AssertOptionalToken[TElem NodeLike](node TElem, kind int16, message ...any) {
 }
 func AssertMissingNode[TElem comparable](node TElem, message ...any) {}

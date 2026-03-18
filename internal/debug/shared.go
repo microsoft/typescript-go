@@ -41,3 +41,8 @@ func AssertNever(member any, message ...any) {
 	}
 	Fail(fmt.Sprintf("%s %s", msg, detail))
 }
+
+type NodeLike interface {
+	comparable
+	KindValue() int16
+}
