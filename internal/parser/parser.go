@@ -115,7 +115,7 @@ var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 var missingListNodes = make([]*ast.Node, 0, 1)
 
 func isMissingNodeList(list *ast.NodeList) bool {
-	return list != nil && cap(list.Nodes) > 0 && &list.Nodes[:1][0] == &missingListNodes[:1][0]
+	return list != nil && cap(list.Nodes) == 1 && &list.Nodes[:1][0] == &missingListNodes[:1][0]
 }
 
 var parserPool = sync.Pool{
