@@ -508,6 +508,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				visitor.VisitModifiers(node.Modifiers()),
 				newName,
 				visitor.VisitNode(node.AsTypeParameter().Constraint),
+				visitor.VisitNode(node.AsTypeParameter().Expression),
 				visitor.VisitNode(node.AsTypeParameter().DefaultType),
 			)
 		}
