@@ -37,9 +37,9 @@ function myDecorator(target) {
     return target;
 }
 let Foo = Foo_1 = class Foo {
-    type = MyEnum.Foo_1;
+    type = MyEnum.Foo;
     getType() {
-        return this.type || MyEnum.Foo_1;
+        return this.type || MyEnum.Foo;
     }
 };
 Foo = Foo_1 = __decorate([
