@@ -160,6 +160,26 @@ func TestShowConfig(t *testing.T) {
 			},
 			commandLineArgs: []string{"-p", "tsconfig.json", "--showConfig"},
 		},
+		{
+			subScenario: "Show TSConfig with files and include",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": `export const a = 1;`,
+				"/home/src/workspaces/project/extra.ts":    `export const c = 3;`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true
+					},
+					"files": [
+						"extra.ts"
+					],
+					"include": [
+						"src/**/*"
+					]
+				}`),
+			},
+			commandLineArgs: []string{"-p", "tsconfig.json", "--showConfig"},
+		},
 	}
 
 	for _, test := range testCases {

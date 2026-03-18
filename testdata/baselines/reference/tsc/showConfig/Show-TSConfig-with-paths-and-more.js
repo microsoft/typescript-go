@@ -64,9 +64,6 @@ Output::
         "baseUrl": "./",
         "esModuleInterop": true
     },
-    "files": [
-        "./src/index.ts"
-    ],
     "include": [
         "./src/**/*"
     ],

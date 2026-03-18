@@ -5,13 +5,14 @@ Input::
 export const c = 3;
 //// [/home/src/workspaces/project/src/main.ts] *new* 
 export const a = 1;
-//// [/home/src/workspaces/project/src/util.ts] *new* 
-export const b = 2;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
     "compilerOptions": {
         "strict": true
     },
+    "files": [
+        "extra.ts"
+    ],
     "include": [
         "src/**/*"
     ]
@@ -24,6 +25,9 @@ Output::
     "compilerOptions": {
         "strict": true
     },
+    "files": [
+        "./extra.ts"
+    ],
     "include": [
         "src/**/*"
     ]

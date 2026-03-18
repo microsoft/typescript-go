@@ -263,19 +263,20 @@ func serializeEnumValue(value any, enumMap *collections.OrderedMap[string, any])
 	return getNameOfCompilerOptionValue(value, enumMap)
 }
 
-// matchesSpecs returns a filter function that returns true for files that should be
-// included in the --showConfig "files" list. Files that match the include globs (and
-// are not excluded) are filtered OUT, since they're already covered by the "include" field.
+// matchesSpecs returns a filter function that determines whether a file should appear
+// in the --showConfig "files" list. It returns true for files to keep, false for files
+// to omit. Files that match the include globs (and are not excluded) return false,
+// since they're already covered by the "include" field.
 func matchesSpecs(configFileName string, includeSpecs []string, excludeSpecs []string, useCaseSensitiveFileNames bool, currentDirectory string) func(string) bool {
 	if len(includeSpecs) == 0 {
 		return nil
 	}
-	path := tspath.NormalizePath(configFileName)
-	currentDirectory = tspath.NormalizePath(currentDirectory)
-	absolutePath := tspath.CombinePaths(currentDirectory, path)
+	// Use the directory containing the tsconfig, not the file itself, as the base path
+	// for wildcard pattern matching.
+	configDir := tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(configFileName, currentDirectory))
 
-	includeFilePattern := vfs.GetRegularExpressionForWildcard(includeSpecs, absolutePath, vfs.UsageFiles)
-	excludePattern := vfs.GetRegularExpressionForWildcard(excludeSpecs, absolutePath, vfs.UsageExclude)
+	includeFilePattern := vfs.GetRegularExpressionForWildcard(includeSpecs, configDir, vfs.UsageFiles)
+	excludePattern := vfs.GetRegularExpressionForWildcard(excludeSpecs, configDir, vfs.UsageExclude)
 
 	var includeRe *regexp2.Regexp
 	if includeFilePattern != "" {

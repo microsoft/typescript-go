@@ -39,9 +39,6 @@ Output::
             "path": "./test"
         }
     ],
-    "files": [
-        "./src/index.ts"
-    ],
     "include": [
         "src/*"
     ],

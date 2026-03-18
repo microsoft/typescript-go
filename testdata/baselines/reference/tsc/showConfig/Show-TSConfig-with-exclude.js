@@ -22,9 +22,6 @@ Output::
     "compilerOptions": {
         "strict": true
     },
-    "files": [
-        "./src/index.ts"
-    ],
     "exclude": [
         "test"
     ]
