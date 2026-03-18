@@ -9,14 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-// IsPropertyAccessName returns true if the original node is the name (right-hand side) of a
-// PropertyAccessExpression. Identifiers in this position are not expression references and
-// should not be substituted with class aliases.
-func IsPropertyAccessName(emitContext *printer.EmitContext, node *ast.Node) bool {
-	original := emitContext.MostOriginal(node)
-	return original.Parent != nil && ast.IsPropertyAccessExpression(original.Parent) && original.Parent.Name() == original
-}
-
 func IsGeneratedIdentifier(emitContext *printer.EmitContext, name *ast.IdentifierNode) bool {
 	return emitContext.HasAutoGenerateInfo(name)
 }

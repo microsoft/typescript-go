@@ -30727,7 +30727,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 
 func (c *Checker) getIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 	var signatures []*ast.Node
-	if ast.IsIdentifier(node) && ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node {
+	if ast.IsIdentifier(node) && ast.IsRightSideOfPropertyAccess(node) {
 		keyType := c.getLiteralTypeFromPropertyName(node)
 		objectType := c.getTypeOfExpression(node.Parent.Expression())
 		for _, t := range objectType.Distributed() {
