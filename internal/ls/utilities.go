@@ -1554,7 +1554,7 @@ func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Chec
 }
 
 func getContextualTypeFromParentOrAncestorTypeNode(node *ast.Expression, typeChecker *checker.Checker) *checker.Type {
-	if node.Flags&(ast.NodeFlagsJSDoc & ^ast.NodeFlagsJavaScriptFile) != 0 {
+	if node.Flags&ast.NodeFlagsJSDoc != 0 && node.Flags&ast.NodeFlagsJavaScriptFile == 0 {
 		return nil
 	}
 
