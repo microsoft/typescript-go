@@ -4179,11 +4179,11 @@ func TestBuildProjectReferenceRedirectWithMultipleSubProjects(t *testing.T) {
 						}
 					}`),
 				// Web entry point
-				"/home/src/workspaces/project/pkg/index.ts":        `export { platform } from "./src/util";`,
+				"/home/src/workspaces/project/pkg/index.ts": `export { platform } from "./src/util";`,
 				// Native entry point (same content, but should resolve internal imports using native tsconfig)
 				"/home/src/workspaces/project/pkg/index.native.ts": `export { platform } from "./src/util";`,
 				// Web util
-				"/home/src/workspaces/project/pkg/src/util.ts":        `export const platform = "web" as const;`,
+				"/home/src/workspaces/project/pkg/src/util.ts": `export const platform = "web" as const;`,
 				// Native util
 				"/home/src/workspaces/project/pkg/src/util.native.ts": `export const platform = "native" as const;`,
 				// node_modules symlink
