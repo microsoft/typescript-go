@@ -479,24 +479,27 @@ func (s *Session) getSnapshot(
 	} else if request.AutoImports != "" {
 		updateReason = UpdateReasonRequestedLanguageServiceWithAutoImports
 	} else {
-		checkDocuments := func(documents []lsproto.DocumentUri) UpdateReason {
-			for _, document := range documents {
+		for _, document := range request.Documents {
+			project := snapshot.GetDefaultProject(document)
+			if project == nil {
+				updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
+			} else if project.dirty {
+				updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
+			}
+		}
+		if updateReason == UpdateReasonUnknown {
+			for _, document := range request.ConfiguredProjectDocuments {
 				if snapshot.fs.isOpenFile(document.FileName()) {
 					project := snapshot.GetDefaultProject(document)
 					if project == nil {
-						return UpdateReasonRequestedLanguageServiceProjectNotLoaded
+						updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
 					} else if project.dirty {
-						return UpdateReasonRequestedLanguageServiceProjectDirty
+						updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
 					}
 				} else {
-					return UpdateReasonRequestedLanguageServiceForFileNotOpen
+					updateReason = UpdateReasonRequestedLanguageServiceForFileNotOpen
 				}
 			}
-			return UpdateReasonUnknown
-		}
-		updateReason = checkDocuments(request.Documents)
-		if updateReason == UpdateReasonUnknown {
-			updateReason = checkDocuments(request.ConfiguredProjectDocuments)
 		}
 	}
 

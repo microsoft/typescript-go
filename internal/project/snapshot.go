@@ -251,6 +251,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			if len(change.Documents) != 0 {
 				details += fmt.Sprintf(" Documents: %v", change.Documents)
 			}
+			if len(change.ConfiguredProjectDocuments) != 0 {
+				details += fmt.Sprintf(" ConfiguredProjectDocuments: %v", change.ConfiguredProjectDocuments)
+			}
 			if len(change.Projects) != 0 {
 				details += fmt.Sprintf(" Projects: %v", change.Projects)
 			}

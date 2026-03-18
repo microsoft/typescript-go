@@ -324,7 +324,6 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 				b.deleteConfiguredProject(p, logger)
 			}
 		}
-		slices.Sort(inferredProjectFiles)
 		b.updateInferredProjectRoots(inferredProjectFiles, logger)
 		b.configFileRegistryBuilder.Cleanup()
 	}
@@ -936,6 +935,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 		return false
 	}
 
+	slices.Sort(rootFileNames)
 	if b.inferredProject.Value() == nil {
 		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, b.compilerOptionsForInferredProjects, rootFileNames, b, logger))
 	} else {
