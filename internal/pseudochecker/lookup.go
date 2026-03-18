@@ -460,8 +460,8 @@ func IsInConstContext(node *ast.Node) bool {
 	maybeAssertion := ast.FindAncestor(
 		node,
 		func(n *ast.Node) bool {
-			// stop traversing up at assertions, new scopes, and anything not an expression - they're contextual barriers
-			return ast.IsAssertionExpression(n) || ast.IsFunctionLike(n) || !ast.IsExpressionNode(n)
+			// stop traversing at assertions or anything not an array/object literal, since only those create or transfer const-ness
+			return ast.IsAssertionExpression(n) || !(ast.IsArrayLiteralExpression(n) || ast.IsObjectLiteralExpression(n) || ast.IsParenthesizedExpression(n))
 		},
 	)
 	return ast.IsConstAssertion(maybeAssertion)

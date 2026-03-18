@@ -168,6 +168,20 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindMethod:
 				d := e.AsPseudoObjectMethod()
+				if isConst {
+					newProp = b.f.NewPropertySignatureDeclaration(
+						modifiers,
+						b.reuseName(e.Name),
+						nil,
+						b.f.NewFunctionTypeNode(
+							nil,
+							b.pseudoParametersToNodeList(d.Parameters),
+							b.pseudoTypeToNode(d.ReturnType),
+						),
+						nil,
+					)
+					break
+				}
 				newProp = b.f.NewMethodSignatureDeclaration(
 					modifiers,
 					b.reuseName(e.Name),
@@ -541,7 +555,7 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.getTypeFromTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
 		node := t.AsPseudoTypeInferred().Expression
-		ty := b.ch.getTypeOfExpression(node)
+		ty := b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(node))
 		return ty
 	case pseudochecker.PseudoTypeKindNoResult:
 		return nil // TODO: extract type selection logic from `serializeTypeForDeclaration`, not needed for current usecases but needed if completeness becomes required
@@ -598,7 +612,7 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.trueType
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
-		return b.ch.getTypeOfExpression(source) // big shortcut, uses cached expression types where possible
+		return b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(source)) // big shortcut, uses cached expression types where possible
 	default:
 		return nil
 	}
