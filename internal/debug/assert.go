@@ -1,16 +1,16 @@
 //go:build !noassert
 
-// Functions in this file use "mid-stack inlining" to ensure the fast path
-// (assertion passing) is inlined at call sites, leaving only the slow path
-// (assertion failure) as an out-of-line call.
-// See https://dave.cheney.net/2020/05/02/mid-stack-inlining-in-go
-
 package debug
 
 import (
 	"cmp"
 	"fmt"
 )
+
+// Functions in this file use "mid-stack inlining" to ensure the fast path
+// (assertion passing) is inlined at call sites, leaving only the slow path
+// (assertion failure) as an out-of-line call.
+// See https://dave.cheney.net/2020/05/02/mid-stack-inlining-in-go
 
 func Assert[T comparable](value T, message ...any) {
 	var zero T
