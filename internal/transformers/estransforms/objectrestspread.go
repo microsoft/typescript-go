@@ -861,7 +861,7 @@ func (ch *objectRestSpreadTransformer) emitExpression(node *ast.Node) {
 }
 
 func (ch *objectRestSpreadTransformer) emitAssignment(target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node) {
-	debug.AssertNode(target, ast.IsExpression)
+	debug.Assert(ast.IsExpression(target))
 	expr := ch.Factory().NewAssignmentExpression(ch.Visitor().VisitNode(target), value)
 	expr.Loc = location
 	ch.EmitContext().SetOriginal(expr, original)
@@ -873,7 +873,7 @@ func isBindingName(node *ast.Node) bool {
 }
 
 func (ch *objectRestSpreadTransformer) emitBinding(target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node) {
-	debug.AssertNode(target, isBindingName)
+	debug.Assert(isBindingName(target))
 	if len(ch.ctx.currentExpressions) > 0 {
 		value = ch.Factory().InlineExpressions(append(ch.ctx.currentExpressions, value))
 		ch.ctx.currentExpressions = nil

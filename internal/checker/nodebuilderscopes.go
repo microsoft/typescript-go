@@ -105,7 +105,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 					}
 				}
 			}
-			debug.AssertOptionalNode(existingFakeScope, ast.IsBlock)
+			debug.Assert(existingFakeScope == nil || ast.IsBlock(existingFakeScope))
 
 			var locals ast.SymbolTable
 			if existingFakeScope != nil {
