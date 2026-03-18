@@ -186,11 +186,11 @@ type ResourceRequest struct {
 	// Documents are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
 	Documents []lsproto.DocumentUri
-	// OptionalDocuments are URIs for which configured projects should be ensured,
+	// ConfiguredProjectDocuments are URIs for which configured projects should be loaded
+	// (if disableSolutionSearching/disableReferencedProjectLoad settings allow),
 	// but no inferred project should be created if no configured project is found.
-	// This is used by cross-project operations like find-all-references that need to load
-	// configured projects for definition files without creating unnecessary inferred projects.
-	OptionalDocuments []lsproto.DocumentUri
+	// This is used by cross-project operations like find-all-references.
+	ConfiguredProjectDocuments []lsproto.DocumentUri
 	// Update requested Projects.
 	// this is used when we want to get LS and from all the Projects the file can be part of
 	Projects []tspath.Path
@@ -340,7 +340,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollectionBuilder.DidRequestFile(uri, false, logger.Fork("DidRequestFile"))
 	}
 
-	for _, uri := range change.OptionalDocuments {
+	for _, uri := range change.ConfiguredProjectDocuments {
 		projectCollectionBuilder.DidRequestFile(uri, true, logger.Fork("DidRequestFile (optional)"))
 	}
 

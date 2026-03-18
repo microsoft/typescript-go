@@ -496,7 +496,7 @@ func (s *Session) getSnapshot(
 		}
 		updateReason = checkDocuments(request.Documents)
 		if updateReason == UpdateReasonUnknown {
-			updateReason = checkDocuments(request.OptionalDocuments)
+			updateReason = checkDocuments(request.ConfiguredProjectDocuments)
 		}
 	}
 
@@ -551,7 +551,7 @@ func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri 
 func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]ls.Project, error) {
 	snapshot := s.getSnapshot(
 		ctx,
-		ResourceRequest{OptionalDocuments: []lsproto.DocumentUri{uri}},
+		ResourceRequest{ConfiguredProjectDocuments: []lsproto.DocumentUri{uri}},
 	)
 
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
