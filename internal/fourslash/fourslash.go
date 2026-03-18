@@ -3565,10 +3565,13 @@ func (f *FourslashTest) verifyBaselineRename(
 	preferences *lsutil.UserPreferences,
 	markerOrRanges []MarkerOrRange,
 ) {
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+
 	for _, markerOrRange := range markerOrRanges {
 		f.GoToMarkerOrRange(t, markerOrRange)
 
-		// !!! set preferences
 		params := &lsproto.RenameParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -3640,36 +3643,69 @@ func (f *FourslashTest) verifyBaselineRename(
 }
 
 func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.UserPreferences) {
-	// !!! set preferences
-	params := &lsproto.RenameParams{
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit == nil || result.WorkspaceEdit.Changes == nil || len(*result.WorkspaceEdit.Changes) == 0 {
-		t.Fatal(prefix + "Expected rename to succeed, but got no changes")
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.Range == nil && result.PrepareRenamePlaceholder == nil && result.PrepareRenameDefaultBehavior == nil {
+		t.Fatal(prefix + "Expected rename to succeed, but prepareRename returned null")
+	}
+
+	// Also verify that textDocument/rename produces edits, since prepareRename is optional.
+	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "RENAME_SUCCEEDED_TEST",
+	})
+	if renameResult.WorkspaceEdit == nil || renameResult.WorkspaceEdit.Changes == nil || len(*renameResult.WorkspaceEdit.Changes) == 0 {
+		t.Fatal(prefix + "prepareRename succeeded but textDocument/rename returned no changes")
 	}
 }
 
 func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
-	// !!! set preferences
-	params := &lsproto.RenameParams{
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit != nil {
-		t.Fatalf(prefix+"Expected rename to fail, but got changes: %s", cmp.Diff(result.WorkspaceEdit, nil))
+	f.baselineState(t)
+	f.baselineRequestOrNotification(t, lsproto.TextDocumentPrepareRenameInfo.Method, params)
+	resMsg, result, _ := lsptestutil.SendRequest(t, f.client, lsproto.TextDocumentPrepareRenameInfo, params)
+	f.baselineState(t)
+
+	// prepareRename can reject via an error response (with a localized message) or a null result.
+	if resMsg != nil && resMsg.AsResponse().Error != nil {
+		// Error response — rename was rejected with a message. This is expected.
+	} else if result.Range != nil || result.PrepareRenamePlaceholder != nil || result.PrepareRenameDefaultBehavior != nil {
+		t.Fatalf("%sExpected rename to fail, but prepareRename returned a result", prefix)
+	}
+
+	// Also verify that textDocument/rename produces no edits, since prepareRename is optional.
+	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "RENAME_FAILED_TEST",
+	})
+	if renameResult.WorkspaceEdit != nil && renameResult.WorkspaceEdit.Changes != nil && len(*renameResult.WorkspaceEdit.Changes) > 0 {
+		t.Fatalf("%sprepareRename returned null but textDocument/rename returned changes", prefix)
 	}
 }
 
@@ -3773,6 +3809,112 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	f.addResultToBaseline(t, inlayHintsCmd, strings.Join(annotations, "\n\n"))
+}
+
+func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
+	baselineBuilder := &strings.Builder{}
+	offset := 0
+
+	// write to baseline in order of file appearance in test data
+	for _, file := range f.testData.Files {
+		fmt.Fprint(baselineBuilder, "// === Linked Editing ===\n")
+		fmt.Fprintf(baselineBuilder, "=== %s ===\n", file.FileName())
+		results := []*lsproto.LinkedEditingRanges{}
+		found := map[lsproto.Range]bool{}
+
+		// request linkedEditing at every position in the file
+		for i := range file.Content {
+			params := &lsproto.LinkedEditingRangeParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(file.FileName()),
+				},
+				Position: f.converters.PositionToLineAndCharacter(f.getScriptInfo(file.FileName()), core.TextPos(i)),
+			}
+			result := sendRequest(t, f, lsproto.TextDocumentLinkedEditingRangeInfo, params)
+			if result.LinkedEditingRanges != nil && len(result.LinkedEditingRanges.Ranges) > 0 && !found[result.LinkedEditingRanges.Ranges[0]] {
+				results = append(results, result.LinkedEditingRanges)
+				found[result.LinkedEditingRanges.Ranges[0]] = true
+			}
+		}
+
+		if len(results) == 0 {
+			fmt.Fprintf(baselineBuilder, "%s\n\n--No linked edits found--\n\n\n", file.Content)
+			continue
+		}
+
+		// sort entries in each file
+		slices.SortFunc(results, func(a, b *lsproto.LinkedEditingRanges) int {
+			return lsproto.ComparePositions(a.Ranges[0].Start, b.Ranges[0].Start)
+		})
+		baselineDetails := []baselineDetail{}
+		foundEditInfoBuilder := &strings.Builder{}
+		for _, edit := range results {
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[0].Start,
+				positionMarker: fmt.Sprintf("[|/*%d*/", offset),
+			})
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[0].End,
+				positionMarker: "|]",
+			})
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[1].Start,
+				positionMarker: fmt.Sprintf("[|/*%d*/", offset),
+			})
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[1].End,
+				positionMarker: "|]",
+			})
+
+			fmt.Fprintf(foundEditInfoBuilder, "\n\n=== %d ===\n%s", offset, core.Must(core.StringifyJson(edit, "", "  ")))
+			offset++
+		}
+
+		// sort baselineDetails by position
+		slices.SortStableFunc(baselineDetails, func(a, b baselineDetail) int {
+			return lsproto.ComparePositions(a.pos, b.pos)
+		})
+
+		// write file content with inline annotations for linked edits
+		lastPosition := 0
+		for _, detail := range baselineDetails {
+			currentPosition := f.converters.LineAndCharacterToPosition(f.getScriptInfo(file.FileName()), detail.pos)
+			fmt.Fprint(baselineBuilder, file.Content[lastPosition:currentPosition])
+			fmt.Fprint(baselineBuilder, detail.positionMarker)
+			lastPosition = int(currentPosition)
+		}
+		fmt.Fprint(baselineBuilder, file.Content[lastPosition:])
+		baselineBuilder.WriteString(foundEditInfoBuilder.String() + "\n\n\n")
+	}
+
+	f.writeToBaseline(linkedEditingCmd, baselineBuilder.String())
+}
+
+func (f *FourslashTest) VerifyLinkedEditing(t *testing.T, markerNamesToExpected map[string][]lsproto.Range) {
+	for markerName, expectedRanges := range markerNamesToExpected {
+		f.GoToMarker(t, markerName)
+		params := &lsproto.LinkedEditingRangeParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+		result := sendRequest(t, f, lsproto.TextDocumentLinkedEditingRangeInfo, params)
+		actualRanges := result.LinkedEditingRanges
+		if len(expectedRanges) == 0 {
+			if actualRanges != nil && len(actualRanges.Ranges) != 0 {
+				t.Fatalf("Expected no linked editing ranges for marker '%s', but found %v", markerName, actualRanges)
+			}
+			continue
+		} else {
+			if actualRanges == nil || len(actualRanges.Ranges) == 0 {
+				t.Fatalf("Expected linked editing ranges for marker '%s', but found none", markerName)
+			}
+
+			assertDeepEqual(t, actualRanges.Ranges[0], expectedRanges[0], fmt.Sprintf("Linked editing ranges for opening element do not match expected for marker '%s'", markerName))
+			assertDeepEqual(t, actualRanges.Ranges[1], expectedRanges[1], fmt.Sprintf("Linked editing ranges for closing element do not match expected for marker '%s'", markerName))
+		}
+	}
 }
 
 func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {

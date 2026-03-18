@@ -127,16 +127,16 @@ func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 	}
 }
 
-func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) *lsproto.Range {
-	return &l.resolveEntry(entry).lspRange.Range
+func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) lsproto.Range {
+	return l.resolveEntry(entry).lspRange.Range
 }
 
 func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) lsproto.DocumentUri {
 	return l.resolveEntry(entry).lspRange.Uri
 }
 
-func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) *lsproto.Location {
-	return l.resolveEntry(entry).lspRange
+func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) lsproto.Location {
+	return *l.resolveEntry(entry).lspRange
 }
 
 func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
@@ -281,7 +281,7 @@ func getContextNode(node *ast.Node) *ast.Node {
 }
 
 // utils
-func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) lsproto.Range {
 	if sourceFile == nil {
 		sourceFile = ast.GetSourceFileOfNode(node)
 	}
@@ -594,7 +594,11 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if isRename && !isNodeEligibleForRename(node) || implementations && ast.IsSourceFile(node) {
+	if isRename {
+		// Adjust modifier/keyword nodes to the declaration name, matching Strada's findRenameLocations.
+		node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
+	}
+	if isRename && !nodeIsEligibleForRename(node) || implementations && ast.IsSourceFile(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
 
@@ -709,97 +713,6 @@ func (l *LanguageService) symbolAndEntriesToImplementations(ctx context.Context,
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, orchestrator CrossProjectOrchestrator) (lsproto.WorkspaceEditOrNull, error) {
-	return handleCrossProject(
-		l,
-		ctx,
-		params,
-		orchestrator,
-		(*LanguageService).symbolAndEntriesToRename,
-		combineRenameResponse,
-		true,  /*isRename*/
-		false, /*implementations*/
-		symbolEntryTransformOptions{},
-	)
-}
-
-func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
-	if !isNodeEligibleForRename(data.OriginalNode) {
-		return lsproto.WorkspaceEditOrNull{}, nil
-	}
-
-	program := l.GetProgram()
-	entries := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
-	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	for _, entry := range entries {
-		uri := l.getFileNameOfEntry(entry)
-		if l.UserPreferences().AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && ast.TryGetImportFromModuleSpecifier(entry.node) != nil {
-			continue
-		}
-		textEdit := &lsproto.TextEdit{
-			Range:   *l.getRangeOfEntry(entry),
-			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, checker),
-		}
-		changes[uri] = append(changes[uri], textEdit)
-	}
-	return lsproto.WorkspaceEditOrNull{
-		WorkspaceEdit: &lsproto.WorkspaceEdit{
-			Changes: &changes,
-		},
-	}, nil
-}
-
-func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, checker *checker.Checker) string {
-	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
-		node := ast.GetReparsedNodeForNode(entry.node)
-		kind := entry.kind
-		parent := node.Parent
-		name := originalNode.Text()
-		isShorthandAssignment := ast.IsShorthandPropertyAssignment(parent)
-		switch {
-		case isShorthandAssignment || (isObjectBindingElementWithoutPropertyName(parent) && parent.Name() == node && parent.AsBindingElement().DotDotDotToken == nil):
-			if kind == entryKindSearchedLocalFoundProperty {
-				return name + ": " + newText
-			}
-			if kind == entryKindSearchedPropertyFoundLocal {
-				return newText + ": " + name
-			}
-			// In `const o = { x }; o.x`, symbolAtLocation at `x` in `{ x }` is the property symbol.
-			// For a binding element `const { x } = o;`, symbolAtLocation at `x` is the property symbol.
-			if isShorthandAssignment {
-				grandParent := parent.Parent
-				if ast.IsObjectLiteralExpression(grandParent) && ast.IsBinaryExpression(grandParent.Parent) && ast.IsModuleExportsAccessExpression(grandParent.Parent.AsBinaryExpression().Left) {
-					return name + ": " + newText
-				}
-				return newText + ": " + name
-			}
-			return name + ": " + newText
-		case ast.IsImportSpecifier(parent) && parent.PropertyName() == nil:
-			// If the original symbol was using this alias, just rename the alias.
-			var originalSymbol *ast.Symbol
-			if ast.IsExportSpecifier(originalNode.Parent) {
-				originalSymbol = checker.GetExportSpecifierLocalTargetSymbol(originalNode.Parent)
-			} else {
-				originalSymbol = checker.GetSymbolAtLocation(originalNode)
-			}
-			if slices.Contains(originalSymbol.Declarations, parent) {
-				return name + " as " + newText
-			}
-			return newText
-		case ast.IsExportSpecifier(parent) && parent.PropertyName() == nil:
-			// If the symbol for the node is same as declared node symbol use prefix text
-			if originalNode == entry.node || checker.GetSymbolAtLocation(originalNode) == checker.GetSymbolAtLocation(entry.node) {
-				return name + " as " + newText
-			}
-			return newText + " as " + name
-		}
-	}
-	return newText
-}
-
 // == functions for conversions ==
 func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries, includeDeclarations bool) []lsproto.Location {
 	references := s.references
@@ -841,7 +754,7 @@ func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
 func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
 	locations := make([]lsproto.Location, len(entries))
 	for i, entry := range entries {
-		locations[i] = *l.getLocationOfEntry(entry)
+		locations[i] = l.getLocationOfEntry(entry)
 	}
 	return locations
 }
@@ -851,7 +764,8 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 	for i, entry := range entries {
 
 		// Get the selection range (the actual reference)
-		targetSelectionRange := &l.getLocationOfEntry(entry).Range
+		loc := l.getLocationOfEntry(entry)
+		targetSelectionRange := loc.Range
 		targetRange := targetSelectionRange
 
 		// For entries with nodes, compute ranges directly from the node
@@ -860,14 +774,14 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 			contextTextRange := toContextRange(entry.textRange, l.program.GetSourceFile(entry.fileName), entry.context)
 			if contextTextRange != nil {
 				contextLocation := l.getMappedLocation(entry.fileName, *contextTextRange)
-				targetRange = &contextLocation.Range
+				targetRange = contextLocation.Range
 			}
 		}
 
 		links[i] = &lsproto.LocationLink{
 			TargetUri:            lsconv.FileNameToDocumentURI(entry.fileName),
-			TargetRange:          *targetRange,
-			TargetSelectionRange: *targetSelectionRange,
+			TargetRange:          targetRange,
+			TargetSelectionRange: targetSelectionRange,
 		}
 	}
 	return links
@@ -2372,13 +2286,4 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 	// Update cache with the actual result
 	state.inheritsFromCache[key] = inherits
 	return inherits
-}
-
-func isNodeEligibleForRename(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		return true
-	default:
-		return false
-	}
 }
