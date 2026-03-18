@@ -32,11 +32,7 @@ type CommonJSModuleTransformer struct {
 func NewCommonJSModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opts.CompilerOptions
 	emitContext := opts.Context
-	resolver := opts.Resolver
-	if resolver == nil {
-		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
-	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: opts.Resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
@@ -690,9 +686,6 @@ func (tx *CommonJSModuleTransformer) createRequireCall(node *ast.Node /*ImportDe
 }
 
 func (tx *CommonJSModuleTransformer) getHelperExpressionForExport(node *ast.ExportDeclaration, innerExpr *ast.Expression) *ast.Expression {
-	if tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper != 0 {
-		return innerExpr
-	}
 	if getExportNeedsImportStarHelper(node) {
 		return tx.Visitor().VisitNode(tx.Factory().NewImportStarHelper(innerExpr))
 	}
@@ -700,9 +693,6 @@ func (tx *CommonJSModuleTransformer) getHelperExpressionForExport(node *ast.Expo
 }
 
 func (tx *CommonJSModuleTransformer) getHelperExpressionForImport(node *ast.ImportDeclaration, innerExpr *ast.Expression) *ast.Expression {
-	if tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper != 0 {
-		return innerExpr
-	}
 	if getImportNeedsImportStarHelper(node) {
 		return tx.Visitor().VisitNode(tx.Factory().NewImportStarHelper(innerExpr))
 	}
@@ -835,7 +825,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		varStatement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsConst,
+				ast.NodeFlagsNone,
 				tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						generatedName,
@@ -852,8 +842,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 
 		for _, specifier := range node.ExportClause.Elements() {
 			specifierName := specifier.PropertyNameOrName()
-			exportNeedsImportDefault := tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper == 0 &&
-				ast.ModuleExportNameIsDefault(specifierName)
+			exportNeedsImportDefault := ast.ModuleExportNameIsDefault(specifierName)
 
 			var target *ast.Node
 			if exportNeedsImportDefault {
@@ -1682,9 +1671,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 	if needsRewrite {
 		return tx.shimOrRewriteImportOrRequireCall(node.AsCallExpression())
 	}
-	if ast.IsIdentifier(node.Expression) &&
-		!transformers.IsGeneratedIdentifier(tx.EmitContext(), node.Expression) &&
-		!transformers.IsHelperName(tx.EmitContext(), node.Expression) {
+	if ast.IsIdentifier(node.Expression) {
 		// given:
 		//   import { f } from "mod";
 		//   f();
@@ -1701,7 +1688,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 			nil, /*typeArguments*/
 			tx.Visitor().VisitNodes(node.Arguments),
 		)
-		if !ast.IsIdentifier(expression) {
+		if !ast.IsIdentifier(expression) && !transformers.IsHelperName(tx.EmitContext(), node.Expression) {
 			tx.EmitContext().AddEmitFlags(updated, printer.EFIndirectCall)
 		}
 		return updated
@@ -1864,7 +1851,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 
 // Visits a tagged template expression that might reference an imported symbol and thus require an indirect call.
 func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.TaggedTemplateExpression) *ast.Node {
-	if ast.IsIdentifier(node.Tag) && !transformers.IsGeneratedIdentifier(tx.EmitContext(), node.Tag) && !transformers.IsHelperName(tx.EmitContext(), node.Tag) {
+	if ast.IsIdentifier(node.Tag) {
 		// given:
 		//   import { f } from "mod";
 		//   f``;
@@ -1882,7 +1869,7 @@ func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.Tag
 			nil, /*typeArguments*/
 			tx.Visitor().VisitNode(node.Template),
 		)
-		if !ast.IsIdentifier(expression) {
+		if !ast.IsIdentifier(expression) && !transformers.IsHelperName(tx.EmitContext(), node.Tag) {
 			tx.EmitContext().AddEmitFlags(updated, printer.EFIndirectCall)
 		}
 		return updated

@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
+//go:generate npx dprint fmt stringer_generated.go
 
 // ParseFlags
 
@@ -261,10 +261,6 @@ const (
 	VarianceFlagsUnreliable               VarianceFlags = 1 << 4                                                                                                  // Variance result is unreliable - checking may produce false negatives, but not false positives
 	VarianceFlagsAllowsStructuralFallback               = VarianceFlagsUnmeasurable | VarianceFlagsUnreliable
 )
-
-type IndexSymbolLinks struct {
-	filteredIndexSymbolCache map[CacheHashKey]*ast.Symbol // Symbol with applicable declarations
-}
 
 type MarkedAssignmentSymbolLinks struct {
 	lastAssignmentPos     int32
@@ -1221,6 +1217,7 @@ type IndexInfo struct {
 	valueType   *Type
 	isReadonly  bool
 	declaration *ast.Node   // IndexSignatureDeclaration
+	indexSymbol *ast.Symbol // Synthetic property symbol for this index signature
 	components  []*ast.Node // ElementWithComputedPropertyName
 }
 

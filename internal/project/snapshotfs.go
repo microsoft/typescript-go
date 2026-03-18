@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -19,6 +20,7 @@ type FileSource interface {
 	FS() vfs.FS
 	GetFile(fileName string) FileHandle
 	GetFileByPath(fileName string, path tspath.Path) FileHandle
+	FileExists(fileName string, path tspath.Path) bool
 	GetAccessibleEntries(path string) vfs.Entries
 }
 
@@ -45,6 +47,16 @@ func (s *SnapshotFS) FS() vfs.FS {
 
 func (s *SnapshotFS) GetFile(fileName string) FileHandle {
 	return s.GetFileByPath(fileName, s.toPath(fileName))
+}
+
+func (s *SnapshotFS) FileExists(fileName string, path tspath.Path) bool {
+	if _, ok := s.overlays[path]; ok {
+		return true
+	}
+	if _, ok := s.diskFiles[path]; ok {
+		return true
+	}
+	return s.fs.FileExists(fileName)
 }
 
 func (s *SnapshotFS) GetFileByPath(fileName string, path tspath.Path) FileHandle {
@@ -229,6 +241,25 @@ func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {
 	return s.GetFileByPath(fileName, path)
 }
 
+func (s *snapshotFSBuilder) FileExists(fileName string, path tspath.Path) bool {
+	if _, ok := s.overlays[path]; ok {
+		return true
+	}
+	if entry, ok := s.diskFiles.Load(path); ok {
+		val := entry.Value()
+		if val == nil {
+			return false
+		}
+		if val.MatchesDiskText() {
+			return true
+		}
+		// Entry is dirty — reload to check current state on disk.
+		return s.reloadEntryIfNeeded(entry) != nil
+	}
+	// Path never loaded into diskFiles — use cached stat (no file read).
+	return s.fs.FileExists(fileName)
+}
+
 func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) FileHandle {
 	if file, ok := s.overlays[path]; ok {
 		return file
@@ -258,39 +289,66 @@ func (s *snapshotFSBuilder) getDiskFile(fileName string, path tspath.Path, force
 }
 
 func (s *snapshotFSBuilder) reloadEntry(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
-	entry.Locked(func(entry dirty.Value[*diskFile]) {
-		if entry.Value() != nil {
-			s.reloadLockedEntry(entry)
+	var fileName string
+	entry.Locked(func(e dirty.Value[*diskFile]) {
+		if e.Value() != nil {
+			fileName = e.Value().fileName
 		}
 	})
-	if entry == nil || entry.Value() == nil {
+	if fileName == "" {
+		return nil
+	}
+	// Read file outside the lock to avoid blocking other goroutines.
+	content, ok := s.fs.ReadFile(fileName)
+	entry.Locked(func(e dirty.Value[*diskFile]) {
+		if e.Value() == nil {
+			return
+		}
+		if ok {
+			e.Change(func(file *diskFile) {
+				file.content = content
+				file.hash = xxh3.HashString128(content)
+				file.needsReload = false
+			})
+		} else {
+			e.Delete()
+		}
+	})
+	if entry.Value() == nil {
 		return nil
 	}
 	return entry.Value()
 }
 
 func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
-	entry.Locked(func(entry dirty.Value[*diskFile]) {
-		if entry.Value() != nil && !entry.Value().MatchesDiskText() {
-			s.reloadLockedEntry(entry)
+	var fileName string
+	entry.Locked(func(e dirty.Value[*diskFile]) {
+		if e.Value() != nil && !e.Value().MatchesDiskText() {
+			fileName = e.Value().fileName
 		}
 	})
-	if entry == nil || entry.Value() == nil {
+	if fileName != "" {
+		// Read file outside the lock to avoid blocking other goroutines.
+		content, ok := s.fs.ReadFile(fileName)
+		entry.Locked(func(e dirty.Value[*diskFile]) {
+			if e.Value() == nil || e.Value().MatchesDiskText() {
+				return // another goroutine already reloaded it
+			}
+			if ok {
+				e.Change(func(file *diskFile) {
+					file.content = content
+					file.hash = xxh3.HashString128(content)
+					file.needsReload = false
+				})
+			} else {
+				e.Delete()
+			}
+		})
+	}
+	if entry.Value() == nil {
 		return nil
 	}
 	return entry.Value()
-}
-
-func (s *snapshotFSBuilder) reloadLockedEntry(entry dirty.Value[*diskFile]) {
-	if content, ok := s.fs.ReadFile(entry.Value().fileName); ok {
-		entry.Change(func(file *diskFile) {
-			file.content = content
-			file.hash = xxh3.HashString128(content)
-			file.needsReload = false
-		})
-	} else {
-		entry.Delete()
-	}
 }
 
 func (s *snapshotFSBuilder) watchChangesOverlapCache(change FileChangeSummary) bool {
@@ -341,10 +399,83 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 	for uri := range change.Deleted.Keys() {
 		path := s.toPath(uri.FileName())
 		if entry, ok := s.diskFiles.Load(path); ok {
-			entry.Change(func(file *diskFile) {
-				file.needsReload = true
-			})
+			entry.Delete()
 		}
+	}
+}
+
+// isRelevantFileName returns true if the given URI refers to a file that
+// could affect the project: it has a TypeScript-relevant extension, is a
+// dynamic (e.g. untitled) file, or is currently open as an overlay.
+func (s *snapshotFSBuilder) isRelevantFileName(uri lsproto.DocumentUri) bool {
+	fileName := uri.FileName()
+	if tspath.IsDynamicFileName(fileName) {
+		return true
+	}
+	path := s.toPath(fileName)
+	if _, ok := s.overlays[path]; ok {
+		return true
+	}
+	i := strings.LastIndexByte(string(path), '.')
+	if i < 0 {
+		return false
+	}
+	switch string(path)[i:] {
+	case ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json":
+		return true
+	}
+	return false
+}
+
+// expandAndFilterWatchEvents expands directory deletion URIs into individual
+// file deletion URIs using the cached directory structure, and filters out
+// watch events for paths that are neither known directories nor have relevant
+// file extensions.
+func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary) FileChangeSummary {
+	if change.Deleted.Len() > 0 {
+		var filteredDeleted collections.Set[lsproto.DocumentUri]
+		for uri := range change.Deleted.Keys() {
+			path := s.toPath(uri.FileName())
+			if _, ok := s.diskDirectories.Get(path); ok {
+				s.collectFilesRecursive(path, &filteredDeleted)
+			} else if s.isRelevantFileName(uri) {
+				filteredDeleted.Add(uri)
+			}
+		}
+		change.Deleted = filteredDeleted
+	}
+
+	if change.Changed.Len() > 0 {
+		var filteredChanged collections.Set[lsproto.DocumentUri]
+		for uri := range change.Changed.Keys() {
+			if s.isRelevantFileName(uri) {
+				filteredChanged.Add(uri)
+			}
+		}
+		change.Changed = filteredChanged
+	}
+
+	// We can't filter created events because any created path could be a directory symlink
+	// that includes relevant files. configFileRegistryBuilder will do check if these paths
+	// are directories if they fall within a config's wildcard directories.
+
+	return change
+}
+
+// collectFilesRecursive recursively collects all cached file URIs under the
+// given directory path using the diskDirectories and diskFiles maps.
+func (s *snapshotFSBuilder) collectFilesRecursive(dirPath tspath.Path, files *collections.Set[lsproto.DocumentUri]) {
+	dirEntry, ok := s.diskDirectories.Get(dirPath)
+	if !ok {
+		return
+	}
+	for childPath := range dirEntry.Value() {
+		if entry, ok := s.diskFiles.Load(childPath); ok {
+			if file := entry.Value(); file != nil {
+				files.Add(lsconv.FileNameToDocumentURI(file.FileName()))
+			}
+		}
+		s.collectFilesRecursive(childPath, files)
 	}
 }
 
@@ -375,10 +506,11 @@ func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummar
 
 // sourceFS is a vfs.FS that sources files from a FileSource and tracks seen files.
 type sourceFS struct {
-	tracking  bool
-	toPath    func(fileName string) tspath.Path
-	seenFiles *collections.SyncSet[tspath.Path]
-	source    FileSource
+	tracking           bool
+	toPath             func(fileName string) tspath.Path
+	missingDirectories *collections.SyncSet[tspath.Path]
+	seenFiles          *collections.SyncSet[tspath.Path]
+	source             FileSource
 }
 
 func newSourceFS(tracking bool, source FileSource, toPath func(fileName string) tspath.Path) *sourceFS {
@@ -389,6 +521,7 @@ func newSourceFS(tracking bool, source FileSource, toPath func(fileName string) 
 	}
 	if tracking {
 		fs.seenFiles = &collections.SyncSet[tspath.Path]{}
+		fs.missingDirectories = &collections.SyncSet[tspath.Path]{}
 	}
 	return fs
 }
@@ -406,11 +539,31 @@ func (fs *sourceFS) Track(fileName string) {
 	fs.seenFiles.Add(fs.toPath(fileName))
 }
 
-func (fs *sourceFS) Seen(path tspath.Path) bool {
+func (fs *sourceFS) SeenFile(path tspath.Path) bool {
 	if fs.seenFiles == nil {
 		return false
 	}
 	return fs.seenFiles.Has(path)
+}
+
+func (fs *sourceFS) SeenFileOrMissingParentDirectory(path tspath.Path) bool {
+	if fs.seenFiles != nil && fs.seenFiles.Has(path) {
+		return true
+	}
+	if fs.missingDirectories != nil && !fs.missingDirectories.IsEmpty() {
+		for {
+			if fs.missingDirectories.Has(path) {
+				return true
+			}
+
+			parent := path.GetDirectoryPath()
+			if parent == path {
+				break
+			}
+			path = parent
+		}
+	}
+	return false
 }
 
 func (fs *sourceFS) GetFile(fileName string) FileHandle {
@@ -425,15 +578,17 @@ func (fs *sourceFS) GetFileByPath(fileName string, path tspath.Path) FileHandle 
 
 // DirectoryExists implements vfs.FS.
 func (fs *sourceFS) DirectoryExists(path string) bool {
-	return fs.source.FS().DirectoryExists(path)
+	exists := fs.source.FS().DirectoryExists(path)
+	if !exists && fs.tracking {
+		fs.missingDirectories.Add(fs.toPath(path))
+	}
+	return exists
 }
 
 // FileExists implements vfs.FS.
 func (fs *sourceFS) FileExists(path string) bool {
-	if fh := fs.GetFile(path); fh != nil {
-		return true
-	}
-	return fs.source.FS().FileExists(path)
+	fs.Track(path)
+	return fs.source.FileExists(path, fs.toPath(path))
 }
 
 // GetAccessibleEntries implements vfs.FS.
@@ -470,7 +625,7 @@ func (fs *sourceFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 // WriteFile implements vfs.FS.
-func (fs *sourceFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (fs *sourceFS) WriteFile(path string, data string) error {
 	panic("unimplemented")
 }
 
