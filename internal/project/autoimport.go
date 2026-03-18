@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -58,6 +57,11 @@ func (a *autoImportBuilderFS) GetFileByPath(fileName string, path tspath.Path) F
 
 func (a *autoImportBuilderFS) GetAccessibleEntries(path string) vfs.Entries {
 	return a.snapshotFSBuilder.GetAccessibleEntries(path)
+}
+
+// FileExists implements FileSource.
+func (a *autoImportBuilderFS) FileExists(fileName string, path tspath.Path) bool {
+	return a.snapshotFSBuilder.FileExists(fileName, path)
 }
 
 type autoImportRegistryCloneHost struct {
@@ -152,9 +156,8 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		return nil
 	}
 	opts := ast.SourceFileParseOptions{
-		FileName:        fileName,
-		Path:            path,
-		CompilerOptions: core.EmptyCompilerOptions.SourceFileAffecting(),
+		FileName: fileName,
+		Path:     path,
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
 	result := a.parseCache.Load(key, fh)

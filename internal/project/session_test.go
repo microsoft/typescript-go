@@ -2,6 +2,7 @@ package project_test
 
 import (
 	"context"
+	"io/fs"
 	"maps"
 	"slices"
 	"strings"
@@ -15,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -43,14 +45,12 @@ func TestSession(t *testing.T) {
 		t.Run("create configured project", func(t *testing.T) {
 			t.Parallel()
 			session, _ := projecttestutil.Setup(defaultFiles)
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 
 			configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json"))
@@ -71,8 +71,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/config.ts", 1, defaultFiles["/home/projects/TS/p1/config.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Find tsconfig, load, notice config.ts is not included, create inferred project
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
 			// Should have both configured project (for tsconfig.json) and inferred project
@@ -90,8 +89,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "x", lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "untitled:Untitled-2", 1, "y", lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 			assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
@@ -106,8 +104,7 @@ func TestSession(t *testing.T) {
 
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.js", 1, jsFiles["/home/projects/TS/p1/index.js"].(string), lsproto.LanguageKindJavaScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.js")
@@ -278,7 +275,7 @@ func TestSession(t *testing.T) {
 					"strict": true
 				},
 				"include": ["./**/*"]
-			}`, false)
+			}`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -315,7 +312,7 @@ func TestSession(t *testing.T) {
 				program := ls.GetProgram()
 				assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 
-				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "", false)
+				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "")
 				assert.NilError(t, err)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, "", lsproto.LanguageKindTypeScript)
@@ -349,7 +346,7 @@ func TestSession(t *testing.T) {
 				program := ls.GetProgram()
 				assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 
-				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "", false)
+				err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", "")
 				assert.NilError(t, err)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, "", lsproto.LanguageKindTypeScript)
@@ -379,8 +376,7 @@ func TestSession(t *testing.T) {
 			session, _ := projecttestutil.Setup(defaultFiles)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			session.DidSaveFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -392,15 +388,13 @@ func TestSession(t *testing.T) {
 			})
 
 			session.WaitForBackgroundTasks()
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			// We didn't need a snapshot change, but the session overlays should be updated.
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			// Open another file to force a snapshot update so we can see the changes.
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			assert.Equal(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts").MatchesDiskText(), true)
 		})
 
@@ -409,8 +403,7 @@ func TestSession(t *testing.T) {
 			session, _ := projecttestutil.Setup(defaultFiles)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -422,15 +415,13 @@ func TestSession(t *testing.T) {
 			session.DidSaveFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 
 			session.WaitForBackgroundTasks()
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			// We didn't need a snapshot change, but the session overlays should be updated.
 			assert.Equal(t, snapshot.ID(), uint64(1))
 
 			// Open another file to force a snapshot update so we can see the changes.
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
-			snapshot, release = session.Snapshot()
-			defer release()
+			snapshot = session.Snapshot()
 			assert.Equal(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts").MatchesDiskText(), true)
 		})
 	})
@@ -454,8 +445,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p2/src/index.ts", 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
 			ls1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -477,9 +467,12 @@ func TestSession(t *testing.T) {
 			files := maps.Clone(defaultFiles)
 			files["/home/projects/TS/p2/tsconfig.json"] = `{
 				"compilerOptions": {
+					"noLib": true,
 					"module": "nodenext",
-					"jsx": "react"
-				}
+					"strict": true,
+					"moduleDetection": "auto"
+				},
+				"include": ["src"]
 			}`
 			files["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
 			session, _ := projecttestutil.Setup(files)
@@ -487,8 +480,7 @@ func TestSession(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p2/src/index.ts", 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
 			ls1, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -521,7 +513,7 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -548,7 +540,7 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -599,7 +591,8 @@ func TestSession(t *testing.T) {
 				outer:
 					for _, call := range utils.Client().WatchFilesCalls() {
 						for _, watcher := range call.Watchers {
-							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/TS/x.ts") {
+							// On case-insensitive FS, glob patterns use lowercased paths.
+							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/ts/x.ts") {
 								xWatched = true
 								break outer
 							}
@@ -607,7 +600,7 @@ func TestSession(t *testing.T) {
 					}
 					assert.Check(t, xWatched)
 
-					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`, false)
+					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`)
 					assert.NilError(t, err)
 
 					session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -652,7 +645,7 @@ func TestSession(t *testing.T) {
 					"noLib": false,
 					"strict": true
 				}
-			}`, false)
+			}`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -709,8 +702,7 @@ func TestSession(t *testing.T) {
 
 			// Open file to trigger cleanup
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/x.ts") == nil)
 		})
 
@@ -754,9 +746,98 @@ func TestSession(t *testing.T) {
 
 			// Open file to trigger cleanup
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-			snapshot, release := session.Snapshot()
-			defer release()
+			snapshot := session.Snapshot()
 			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts") == nil)
+		})
+
+		t.Run("delete directory with wildcard included files", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `import { x } from "./sub/x";`,
+				"/home/projects/TS/p1/src/sub/x.ts": `export const x = 1;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/sub/x.ts"))
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+
+			// Delete the entire subdirectory from the file system.
+			err = utils.FS().Remove("/home/projects/TS/p1/src/sub")
+			assert.NilError(t, err)
+
+			// When a directory is deleted, the client typically sends a single deletion
+			// event for the directory itself. Because the registered glob pattern includes
+			// file extensions (e.g. **/*.{ts,...}), the directory path does not match
+			// and the event is filtered out, so the server is never notified.
+			// Simulate this by sending a delete event for the directory URI.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/src/sub",
+				},
+			})
+
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			// The directory was deleted, so the file should no longer be in the program.
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/sub/x.ts"))
+			// The import should now be an error since the module is missing.
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+		})
+
+		t.Run("delete directory with program-only files", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["src/index.ts"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `import { x } from "./sub/x";`,
+				"/home/projects/TS/p1/src/sub/x.ts": `export const x = 1;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
+			// x.ts is not in "files" but is pulled in via the import.
+			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/sub/x.ts") != nil)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+
+			// Delete the entire subdirectory from the file system.
+			err = utils.FS().Remove("/home/projects/TS/p1/src/sub")
+			assert.NilError(t, err)
+
+			// Send a delete event for the directory URI.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/src/sub",
+				},
+			})
+
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			// The directory was deleted, so the file should no longer be resolvable.
+			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/sub/x.ts") == nil)
+			// The import should now be an error since the module is missing.
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 		})
 
 		t.Run("create explicitly included file", func(t *testing.T) {
@@ -781,7 +862,7 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add the missing file
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -821,7 +902,7 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through failed lookup watch
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -861,7 +942,7 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through wildcard watch
-			err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -877,6 +958,193 @@ func TestSession(t *testing.T) {
 			program = ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/a.ts") != nil)
+		})
+
+		t.Run("irrelevant extension changes are filtered out", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `export const x = 1;`,
+				"/home/projects/TS/p1/src/data.txt": `some text`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			oldProgram := program
+
+			// Modify an irrelevant file and send change/create events for files with
+			// extensions that are not relevant to TypeScript compilation.
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/data.txt", `updated text`)
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeChanged,
+					Uri:  "file:///home/projects/TS/p1/src/data.txt",
+				},
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/styles.css",
+				},
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/image.png",
+				},
+			})
+
+			// The program should not have been rebuilt since all events had irrelevant extensions.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			assert.Equal(t, program, oldProgram, "program should not be rebuilt for irrelevant extension changes")
+		})
+
+		t.Run("pnpm install links local package", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/pnpm/pnpm-workspace.yaml": `packages:
+  - 'packages/*'`,
+				"/home/projects/pnpm/packages/alpha/package.json": `{ "name": "@repo/alpha", "main": "index.ts" }`,
+				"/home/projects/pnpm/packages/alpha/tsconfig.json": `{
+					"compilerOptions": { "noLib": true, "composite": true }
+				}`,
+				"/home/projects/pnpm/packages/alpha/index.ts":    `export const alpha = 1;`,
+				"/home/projects/pnpm/packages/beta/package.json": `{ "name": "@repo/beta" }`,
+				"/home/projects/pnpm/packages/beta/tsconfig.json": `{
+					"compilerOptions": { "noLib": true }
+				}`,
+				"/home/projects/pnpm/packages/beta/index.ts": `import { alpha } from "@repo/alpha";`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/pnpm/packages/beta/index.ts", 1, files["/home/projects/pnpm/packages/beta/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			// Before pnpm install: the import is unresolved because node_modules/@repo/alpha doesn't exist.
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/pnpm/packages/beta/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/pnpm/packages/beta/index.ts"))), 1)
+
+			// Simulate pnpm install: create a symlink from beta's node_modules/@repo/alpha to packages/alpha.
+			mapFS := utils.FsFromFileMap().FSys().(*vfstest.MapFS)
+			err = mapFS.MkdirAll("home/projects/pnpm/packages/beta/node_modules/@repo", fs.ModePerm)
+			assert.NilError(t, err)
+			mapFS.AddSymlink("home/projects/pnpm/packages/beta/node_modules/@repo/alpha", "home/projects/pnpm/packages/alpha")
+
+			// Fire watch events mimicking what VS Code sends for a pnpm install.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/packages/beta/node_modules"},
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/%40repo"},
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/%40repo/alpha"},
+				{Type: lsproto.FileChangeTypeCreated, Uri: "file:///home/projects/pnpm/pnpm-lock.yaml"},
+				{Type: lsproto.FileChangeTypeChanged, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/.bin/tsc"},
+				{Type: lsproto.FileChangeTypeChanged, Uri: "file:///home/projects/pnpm/packages/beta/node_modules/.bin/tsserver"},
+			})
+
+			// After pnpm install: the import should resolve.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/pnpm/packages/beta/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			diags := program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/pnpm/packages/beta/index.ts"))
+			for _, d := range diags {
+				t.Logf("diagnostic: %s", d.String())
+			}
+			assert.Equal(t, len(diags), 0)
+		})
+
+		t.Run("create file in non-existent directory", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["src/index.ts"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `import { helper } from "./lib/helper";`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			// Initially should have an error because lib/helper.ts doesn't exist
+			// and src/lib/ directory doesn't exist either.
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+
+			// Create the directory and file.
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/lib/helper.ts", `export const helper = 1;`)
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/lib/helper.ts",
+				},
+			})
+
+			// Error should be resolved.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/lib/helper.ts") != nil)
+		})
+
+		t.Run("create symlink directory matching include pattern", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts":   `export const x = 1;`,
+				"/home/projects/TS/shared/utils.ts":   `export const util = "hello";`,
+				"/home/projects/TS/shared/helpers.ts": `export const helper = 42;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+
+			// Initially, project only has the one file in src/.
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/utils.ts"))
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/helpers.ts"))
+
+			// Create a symlink directory inside src/ that points to the shared directory.
+			mapFS := utils.FsFromFileMap().FSys().(*vfstest.MapFS)
+			mapFS.AddSymlink("home/projects/TS/p1/src/linked", "home/projects/TS/shared")
+
+			// Send directory creation event (what VS Code sends when a symlink directory appears).
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/linked",
+				},
+			})
+
+			// After the symlink directory is created, the files inside it should be
+			// picked up by the wildcard include pattern.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/utils.ts"))
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/linked/helpers.ts"))
 		})
 	})
 
@@ -922,7 +1190,7 @@ func TestSession(t *testing.T) {
 			"OrganizeImportsIgnoreCase": true,
 		}
 		// set "typescript" options only
-		session.Configure(lsutil.ParseNewUserConfig([]any{nil, configMap1, nil}))
+		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"typescript": configMap1}))
 		actualConfig1 := session.Config()
 		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs1.UseAliasesForRename = core.TSTrue
@@ -939,7 +1207,7 @@ func TestSession(t *testing.T) {
 			"OrganizeImportsIgnoreCase": false,
 		}
 		// set "javascript" options only
-		session.Configure(lsutil.ParseNewUserConfig([]any{nil, nil, configMap2}))
+		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"javascript": configMap2}))
 		actualConfig2 := session.Config()
 		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs2.UseAliasesForRename = core.TSFalse

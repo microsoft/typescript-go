@@ -148,20 +148,17 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 					b.apiOpenedProjects = make(map[tspath.Path]struct{})
 				}
 				b.apiOpenedProjects[configPath] = struct{}{}
-				b.updateProgram(entry, logger)
 			} else {
 				return fmt.Errorf("project not found for open: %s", configFileName)
 			}
 		}
 	}
 
-	if apiRequest.UpdateProjects != nil {
-		for configPath := range apiRequest.UpdateProjects.Keys() {
-			if entry, ok := b.configuredProjects.Load(configPath); ok {
-				b.updateProgram(entry, logger)
-			} else {
-				return fmt.Errorf("project not found for update: %s", configPath)
-			}
+	for configPath := range b.apiOpenedProjects {
+		if entry, ok := b.configuredProjects.Load(configPath); ok {
+			b.updateProgram(entry, logger)
+		} else {
+			return fmt.Errorf("project not found for update: %s", configPath)
 		}
 	}
 
@@ -1015,10 +1012,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				}
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
-					programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
-					project.programFilesWatch = programFilesWatch
-					project.failedLookupsWatch = failedLookupsWatch
-					project.affectingLocationsWatch = affectingLocationsWatch
+					project.programFilesWatch = project.CloneWatchers()
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""
@@ -1043,18 +1037,7 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 
 			dirtyFilePath = p.dirtyFilePath
 			for _, path := range paths {
-				if changeType == lsproto.FileChangeTypeCreated {
-					if _, ok := p.affectingLocationsWatch.input[path]; ok {
-						dirty = true
-						dirtyFilePath = ""
-						break
-					}
-					if _, ok := p.failedLookupsWatch.input[path]; ok {
-						dirty = true
-						dirtyFilePath = ""
-						break
-					}
-				} else if p.containsFile(path) {
+				if p.containsFile(path) {
 					dirty = true
 					if changeType == lsproto.FileChangeTypeDeleted {
 						dirtyFilePath = ""
@@ -1066,6 +1049,12 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 						dirtyFilePath = ""
 						break
 					}
+				} else if p.host != nil &&
+					(changeType == lsproto.FileChangeTypeCreated && p.host.sourceFS.SeenFileOrMissingParentDirectory(path) ||
+						changeType != lsproto.FileChangeTypeCreated && p.host.sourceFS.SeenFile(path)) {
+					dirty = true
+					dirtyFilePath = ""
+					break
 				}
 			}
 			return dirty || p.dirtyFilePath != dirtyFilePath

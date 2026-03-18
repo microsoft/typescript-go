@@ -266,7 +266,7 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaData {
-	packageJsonScope := p.resolver.GetPackageScopeForPath(fileName)
+	packageJsonScope := p.resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName))
 	moduleResolutionKind := p.opts.Config.CompilerOptions().GetModuleResolutionKind()
 
 	var packageJsonType, packageJsonDirectory string
@@ -294,7 +294,6 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	sourceFile := p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
 		FileName:                       t.normalizedFilePath,
 		Path:                           path,
-		CompilerOptions:                ast.GetSourceFileAffectingCompilerOptions(t.normalizedFilePath, options),
 		ExternalModuleIndicatorOptions: ast.GetExternalModuleIndicatorOptions(t.normalizedFilePath, options, t.metadata),
 	})
 	return sourceFile
@@ -470,11 +469,8 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 	defer p.factoryMu.Unlock()
 	externalHelpersModuleReference := p.factory.NewStringLiteral(text, ast.TokenFlagsNone)
 	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference, nil)
-	// !!! addInternalEmitFlags(importDecl, InternalEmitFlags.NeverApplyImportHelper);
 	externalHelpersModuleReference.Parent = importDecl
 	importDecl.Parent = file.AsNode()
-	// !!! externalHelpersModuleReference.Flags &^= ast.NodeFlagsSynthesized
-	// !!! importDecl.Flags &^= ast.NodeFlagsSynthesized
 	return externalHelpersModuleReference
 }
 

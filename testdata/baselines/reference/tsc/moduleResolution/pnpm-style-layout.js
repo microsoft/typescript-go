@@ -121,8 +121,6 @@ Found 'package.json' at '/home/src/projects/component-type-checker/packages/app/
 Loading module '@component-type-checker/sdk' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/projects/component-type-checker/packages/app/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/packages/app/src/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__sdk'
 Found 'package.json' at '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/sdk/package.json'.
 File '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/sdk.ts' does not exist.
 File '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/sdk.tsx' does not exist.
@@ -143,8 +141,6 @@ File '/home/src/projects/component-type-checker/packages/app/package.json' exist
 Loading module '@component-type-checker/components' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/projects/component-type-checker/packages/app/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/packages/app/src/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__components'
 Found 'package.json' at '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/components/package.json'.
 File '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/components.ts' does not exist.
 File '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/components.tsx' does not exist.
@@ -168,8 +164,6 @@ File '/home/src/projects/component-type-checker/packages/app/package.json' exist
 Loading module '@component-type-checker/button' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/projects/component-type-checker/packages/app/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/packages/app/src/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 Found 'package.json' at '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/button/package.json'.
 File '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/button.ts' does not exist.
 File '/home/src/projects/component-type-checker/packages/app/node_modules/@component-type-checker/button.tsx' does not exist.
@@ -190,8 +184,6 @@ Found 'package.json' at '/home/src/projects/component-type-checker/packages/sdk/
 Loading module '@component-type-checker/components' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/projects/component-type-checker/packages/sdk/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/packages/sdk/src/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__components'
 Found 'package.json' at '/home/src/projects/component-type-checker/packages/sdk/node_modules/@component-type-checker/components/package.json'.
 File '/home/src/projects/component-type-checker/packages/sdk/node_modules/@component-type-checker/components.ts' does not exist.
 File '/home/src/projects/component-type-checker/packages/sdk/node_modules/@component-type-checker/components.tsx' does not exist.
@@ -215,14 +207,8 @@ Found 'package.json' at '/home/src/projects/component-type-checker/node_modules/
 Loading module '@component-type-checker/button' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/components/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/components/src/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/components/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/components/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 File '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/button/package.json' exists according to earlier cached lookups.
 File '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/button.ts' does not exist.
 File '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.1/node_modules/@component-type-checker/button.tsx' does not exist.
@@ -243,14 +229,8 @@ Found 'package.json' at '/home/src/projects/component-type-checker/node_modules/
 Loading module '@component-type-checker/button' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/components/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/components/src/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/components/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/components/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'component-type-checker__button'
 File '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/button/package.json' exists according to earlier cached lookups.
 File '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/button.ts' does not exist.
 File '/home/src/projects/component-type-checker/node_modules/.pnpm/@component-type-checker+components@0.0.1_@component-type-checker+button@0.0.2/node_modules/@component-type-checker/button.tsx' does not exist.
@@ -268,6 +248,12 @@ Resolving real path for '/home/src/projects/component-type-checker/node_modules/
 [7m3[0m         "target": "es5",
 [7m [0m [91m                  ~~~~~[0m
 
+[96mtsconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TS5011: [0mThe common source directory of 'tsconfig.json' is './src'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.
+  Visit https://aka.ms/ts6 for migration information.
+
+[7m7[0m         "outDir": "dist",
+[7m [0m [91m        ~~~~~~~~[0m
+
 ../../../../tslibs/TS/Lib/lib.es5.d.ts
    Library 'lib.es5.d.ts' specified in compilerOptions
 ../../node_modules/.pnpm/@component-type-checker+button@0.0.1/node_modules/@component-type-checker/button/src/index.ts
@@ -284,7 +270,7 @@ Resolving real path for '/home/src/projects/component-type-checker/node_modules/
 src/app.tsx
    Matched by include pattern 'src' in 'tsconfig.json'
 
-Found 1 error in tsconfig.json[90m:3[0m
+Found 2 errors in the same file, starting at: tsconfig.json[90m:3[0m
 
 //// [/home/src/projects/component-type-checker/packages/app/dist/src/app.js] *new* 
 import { createButton } from "@component-type-checker/button";

@@ -44,10 +44,6 @@ func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	return *new(V)
 }
 
-func isCompoundAssignment(token ast.Kind) bool {
-	return token >= ast.KindFirstCompoundAssignment && token <= ast.KindLastCompoundAssignment
-}
-
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 	return token >= ast.KindIdentifier
 }
@@ -1027,15 +1023,6 @@ func isSuperCall(n *ast.Node) bool {
 	return ast.IsCallExpression(n) && n.Expression().Kind == ast.KindSuperKeyword
 }
 
-/**
- * Determines whether a node is a property or element access expression for `super`.
- *
- * @internal
- */
-func isSuperProperty(node *ast.Node) bool {
-	return ast.IsAccessExpression(node) && node.Expression().Kind == ast.KindSuperKeyword
-}
-
 func getMembersOfDeclaration(node *ast.Node) []*ast.Node {
 	switch node.Kind {
 	case ast.KindInterfaceDeclaration, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindTypeLiteral:
@@ -1044,42 +1031,6 @@ func getMembersOfDeclaration(node *ast.Node) []*ast.Node {
 		return node.Properties()
 	}
 	return nil
-}
-
-type FunctionFlags uint32
-
-const (
-	FunctionFlagsNormal         FunctionFlags = 0
-	FunctionFlagsGenerator      FunctionFlags = 1 << 0
-	FunctionFlagsAsync          FunctionFlags = 1 << 1
-	FunctionFlagsInvalid        FunctionFlags = 1 << 2
-	FunctionFlagsAsyncGenerator FunctionFlags = FunctionFlagsAsync | FunctionFlagsGenerator
-)
-
-func getFunctionFlags(node *ast.Node) FunctionFlags {
-	if node == nil {
-		return FunctionFlagsInvalid
-	}
-	data := node.BodyData()
-	if data == nil {
-		return FunctionFlagsInvalid
-	}
-	flags := FunctionFlagsNormal
-	switch node.Kind {
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindMethodDeclaration:
-		if data.AsteriskToken != nil {
-			flags |= FunctionFlagsGenerator
-		}
-		fallthrough
-	case ast.KindArrowFunction:
-		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) {
-			flags |= FunctionFlagsAsync
-		}
-	}
-	if data.Body == nil {
-		flags |= FunctionFlagsInvalid
-	}
-	return flags
 }
 
 func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
@@ -1260,14 +1211,6 @@ func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
 		}
 	}
 	return minValue, maxValue
-}
-
-func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
-	pos := node.Pos()
-	if last := ast.FindLastVisibleNode(node.ModifierNodes()); last != nil {
-		pos = last.Pos()
-	}
-	return scanner.GetRangeOfTokenAtPosition(ast.GetSourceFileOfNode(node), pos)
 }
 
 type FeatureMapEntry struct {
@@ -1530,6 +1473,9 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"AsyncDisposableStack": {
 			{lib: "esnext", props: []string{}},
+		},
+		"Date": {
+			{lib: "esnext", props: []string{"toTemporalInstant"}},
 		},
 	}
 })
