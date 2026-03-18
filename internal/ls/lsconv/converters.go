@@ -2,7 +2,6 @@ package lsconv
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"slices"
 	"strings"
@@ -149,13 +148,16 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	line := core.TextPos(lineAndCharacter.Line)
 	char := core.TextPos(lineAndCharacter.Character)
 
-	if line < 0 || int(line) >= len(lineMap.LineStarts) {
-		panic(fmt.Sprintf("bad line number. Line: %d, lineMap length: %d", line, len(lineMap.LineStarts)))
+	if line < 0 {
+		line = 0
+	} else if int(line) >= len(lineMap.LineStarts) {
+		line = core.TextPos(len(lineMap.LineStarts) - 1)
 	}
 
+	textLen := core.TextPos(len(script.Text()))
 	start := lineMap.LineStarts[line]
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
-		return start + char
+		return min(start+char, textLen)
 	}
 
 	var utf8Char core.TextPos
@@ -170,7 +172,7 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 		utf8Char = core.TextPos(i + utf8.RuneLen(r))
 	}
 
-	return start + utf8Char
+	return min(start+utf8Char, textLen)
 }
 
 func (c *Converters) PositionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
