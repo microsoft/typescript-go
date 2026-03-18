@@ -1,5 +1,3 @@
-//go:build !noassert
-
 package debug
 
 import (
