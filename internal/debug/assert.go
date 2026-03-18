@@ -42,7 +42,7 @@ func AssertZero[T comparable](value T, message ...any) {
 	}
 }
 
-func AssertEqual(a fmt.Stringer, b fmt.Stringer, message ...any) {
+func AssertEqual[T comparable](a T, b T, message ...any) {
 	if a != b {
 		var msg string
 		if len(message) == 0 {
@@ -50,7 +50,7 @@ func AssertEqual(a fmt.Stringer, b fmt.Stringer, message ...any) {
 		} else {
 			msg = fmt.Sprint(message...)
 		}
-		Fail(fmt.Sprintf("Expected %s == %s. %s", a.String(), b.String(), msg))
+		Fail(fmt.Sprintf("Expected %v == %v. %s", a, b, msg))
 	}
 }
 

@@ -4,12 +4,11 @@ package debug
 
 import (
 	"cmp"
-	"fmt"
 )
 
 func Assert[T comparable](value T, message ...any)                                              {}
 func AssertZero[T comparable](value T, message ...any)                                          {}
-func AssertEqual(a fmt.Stringer, b fmt.Stringer, msg ...any)                                    {}
+func AssertEqual[T comparable](a T, b T, msg ...any)                                            {}
 func AssertLessThan[T cmp.Ordered](a T, b T, message ...any)                                    {}
 func AssertLessThanOrEqual[T cmp.Ordered](a T, b T, message ...any)                             {}
 func AssertGreaterThan[T cmp.Ordered](a T, b T, message ...any)                                 {}
