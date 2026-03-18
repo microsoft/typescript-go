@@ -587,6 +587,22 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 	return snapshot
 }
 
+func (s *Session) GetSnapshotLoadingDocumentsAndProjectTree(
+	ctx context.Context,
+	documents []lsproto.DocumentUri,
+	// If null, all project trees need to be loaded, otherwise only those that are referenced
+	requestedProjectTrees *collections.Set[tspath.Path],
+) *Snapshot {
+	snapshot := s.getSnapshot(
+		ctx,
+		ResourceRequest{
+			Documents:   documents,
+			ProjectTree: &ProjectTreeRequest{requestedProjectTrees},
+		},
+	)
+	return snapshot
+}
+
 // GetCurrentLanguageServiceWithAutoImports flushes pending file changes, clones the
 // current snapshot with auto-import preparation for the given URI, then returns a
 // LanguageService for the default project. Use this only outside of request handling

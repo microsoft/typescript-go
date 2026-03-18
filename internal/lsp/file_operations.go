@@ -139,6 +139,7 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
+	documents := make([]lsproto.DocumentUri, 0, len(params.Files))
 	for _, file := range params.Files {
 		if file == nil {
 			continue
@@ -149,15 +150,10 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 			continue
 		}
 
-		if _, err := s.session.GetProjectsForFile(ctx, oldURI); err != nil {
-			return lsproto.WorkspaceEditOrNull{}, err
-		}
-		if ctx.Err() != nil {
-			return lsproto.WorkspaceEditOrNull{}, ctx.Err()
-		}
+		documents = append(documents, oldURI)
 	}
 
-	snapshot := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
+	snapshot := s.session.GetSnapshotLoadingDocumentsAndProjectTree(ctx, documents, nil)
 	var results []lsproto.WorkspaceEditOrNull
 	for _, project := range snapshot.ProjectCollection.Projects() {
 		if ctx.Err() != nil {

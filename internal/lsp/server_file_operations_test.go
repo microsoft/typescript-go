@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -91,4 +92,34 @@ func TestInitializeAdvertisesRenameFileOperations(t *testing.T) {
 	assert.Equal(t, *willRename.Filters[0].Scheme, "file")
 	assert.Equal(t, willRename.Filters[0].Pattern.Glob, "**/*")
 	assert.Equal(t, *willRename.Filters[0].Pattern.Matches, lsproto.FileOperationPatternKindFile)
+}
+
+func TestWillRenameFilesLoadsProjectsForUnopenedFiles(t *testing.T) {
+	t.Parallel()
+
+	client, _, _ := initFileOperationsClient(t, map[string]string{
+		"/home/projects/tsconfig.json":  `{"compilerOptions":{"module":"esnext","moduleResolution":"bundler","target":"esnext","noLib":true},"include":["**/*.ts"]}`,
+		"/home/projects/shared/util.ts": `export const util = 1;`,
+		"/home/projects/foo.ts":         "import { util } from './shared/util';\nexport const foo = util;\n",
+		"/home/projects/main.ts":        "import { foo } from \"./foo\";\nfoo;\n",
+	}, nil)
+
+	resMsg, result, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceWillRenameFilesInfo, &lsproto.RenameFilesParams{
+		Files: []*lsproto.FileRename{
+			{
+				OldUri: string(lsconv.FileNameToDocumentURI("/home/projects/foo.ts")),
+				NewUri: string(lsconv.FileNameToDocumentURI("/home/projects/nested/foo.ts")),
+			},
+		},
+	})
+	assert.Assert(t, ok && resMsg.AsResponse().Error == nil, "workspace/willRenameFiles failed")
+	assert.Assert(t, result.WorkspaceEdit != nil)
+	assert.Assert(t, result.WorkspaceEdit.Changes != nil)
+
+	changes := *result.WorkspaceEdit.Changes
+	assert.Equal(t, len(changes), 2)
+
+	mainEdits := changes[lsconv.FileNameToDocumentURI("/home/projects/main.ts")]
+	assert.Assert(t, len(mainEdits) > 0)
+	assert.Equal(t, mainEdits[0].NewText, "\"./nested/foo\"")
 }
