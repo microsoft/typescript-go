@@ -3,6 +3,7 @@
 package debug
 
 import (
+	"cmp"
 	"fmt"
 )
 
@@ -53,7 +54,7 @@ func AssertEqual(a fmt.Stringer, b fmt.Stringer, message ...any) {
 	}
 }
 
-func AssertLessThan(a int, b int, message ...any) {
+func AssertLessThan[T cmp.Ordered](a T, b T, message ...any) {
 	if a >= b {
 		var msg string
 		if len(message) == 0 {
@@ -61,11 +62,11 @@ func AssertLessThan(a int, b int, message ...any) {
 		} else {
 			msg = fmt.Sprint(message...)
 		}
-		Fail(fmt.Sprintf("Expected %d < %d. %s", a, b, msg))
+		Fail(fmt.Sprintf("Expected %v < %v. %s", a, b, msg))
 	}
 }
 
-func AssertLessThanOrEqual(a int, b int, message ...any) {
+func AssertLessThanOrEqual[T cmp.Ordered](a T, b T, message ...any) {
 	if a > b {
 		var msg string
 		if len(message) == 0 {
@@ -73,11 +74,11 @@ func AssertLessThanOrEqual(a int, b int, message ...any) {
 		} else {
 			msg = fmt.Sprint(message...)
 		}
-		Fail(fmt.Sprintf("Expected %d <= %d. %s", a, b, msg))
+		Fail(fmt.Sprintf("Expected %v <= %v. %s", a, b, msg))
 	}
 }
 
-func AssertGreaterThan(a int, b int, message ...any) {
+func AssertGreaterThan[T cmp.Ordered](a T, b T, message ...any) {
 	if a <= b {
 		var msg string
 		if len(message) == 0 {
@@ -85,11 +86,11 @@ func AssertGreaterThan(a int, b int, message ...any) {
 		} else {
 			msg = fmt.Sprint(message...)
 		}
-		Fail(fmt.Sprintf("Expected %d > %d. %s", a, b, msg))
+		Fail(fmt.Sprintf("Expected %v > %v. %s", a, b, msg))
 	}
 }
 
-func AssertGreaterThanOrEqual(a int, b int, message ...any) {
+func AssertGreaterThanOrEqual[T cmp.Ordered](a T, b T, message ...any) {
 	if a < b {
 		var msg string
 		if len(message) == 0 {
@@ -97,7 +98,7 @@ func AssertGreaterThanOrEqual(a int, b int, message ...any) {
 		} else {
 			msg = fmt.Sprint(message...)
 		}
-		Fail(fmt.Sprintf("Expected %d >= %d. %s", a, b, msg))
+		Fail(fmt.Sprintf("Expected %v >= %v. %s", a, b, msg))
 	}
 }
 
