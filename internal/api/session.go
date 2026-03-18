@@ -1651,6 +1651,16 @@ func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast
 		if found != nil {
 			return found, nil
 		}
+		// Try walking up parents to find the matching node
+		for parent := node.Parent; parent != nil; parent = parent.Parent {
+			if parent.Pos() == pos && parent.End() == end && parent.Kind == kind {
+				return parent, nil
+			}
+			// Stop if we've gone past the expected range
+			if parent.Pos() < pos || parent.End() > end {
+				break
+			}
+		}
 		// Return the node we found even if it doesn't match exactly
 	}
 
