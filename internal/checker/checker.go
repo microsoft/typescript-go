@@ -879,6 +879,7 @@ type Checker struct {
 	withinUnreachableCode                       bool
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
+	deferredDiagnosticCallbacks                 []func()
 
 	mu sync.Mutex
 }
@@ -6115,10 +6116,14 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		}
 	}
 	if errorNode != nil {
-		diagnostic := c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
-		for _, d := range diags {
-			diagnostic.AddRelatedInfo(d)
-		}
+		// We defer the diagnostic because TypeToString may attempt to resolve symbols that are already being
+		// resolved, possibly causing circularities.
+		c.addDeferredDiagnostic(func() {
+			diagnostic := c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
+			for _, d := range diags {
+				diagnostic.AddRelatedInfo(d)
+			}
+		})
 	}
 	return IterationTypes{}
 }
@@ -13471,13 +13476,26 @@ func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile
 		links := c.sourceFileLinks.Get(sourceFile)
 		c.checkUnusedIdentifiers(links.identifierCheckNodes)
 	}
+	c.collectDeferredDiagnostics()
 
 	return collection.GetDiagnosticsForFile(sourceFile.FileName())
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
 	c.checkNotCanceled()
+	c.collectDeferredDiagnostics()
 	return c.diagnostics.GetGlobalDiagnostics()
+}
+
+func (c *Checker) addDeferredDiagnostic(callback func()) {
+	c.deferredDiagnosticCallbacks = append(c.deferredDiagnosticCallbacks, callback)
+}
+
+func (c *Checker) collectDeferredDiagnostics() {
+	for _, cb := range c.deferredDiagnosticCallbacks {
+		cb()
+	}
+	c.deferredDiagnosticCallbacks = nil
 }
 
 func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
