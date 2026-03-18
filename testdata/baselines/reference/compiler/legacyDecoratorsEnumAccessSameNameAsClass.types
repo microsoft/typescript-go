@@ -1,0 +1,49 @@
+//// [tests/cases/compiler/legacyDecoratorsEnumAccessSameNameAsClass.ts] ////
+
+=== legacyDecoratorsEnumAccessSameNameAsClass.ts ===
+export enum MyEnum {
+>MyEnum : MyEnum
+
+    Foo = "FooValue",
+>Foo : MyEnum.Foo
+>"FooValue" : "FooValue"
+
+    Bar = "BarValue",
+>Bar : MyEnum.Bar
+>"BarValue" : "BarValue"
+}
+
+function myDecorator(target: any) {
+>myDecorator : (target: any) => any
+>target : any
+
+    return target;
+>target : any
+}
+
+@myDecorator
+>myDecorator : (target: any) => any
+
+export class Foo {
+>Foo : Foo
+
+    type: MyEnum = MyEnum.Foo;
+>type : MyEnum
+>MyEnum.Foo : MyEnum.Foo
+>MyEnum : typeof MyEnum
+>Foo : MyEnum.Foo
+
+    getType(): MyEnum {
+>getType : () => MyEnum
+
+        return this.type || MyEnum.Foo;
+>this.type || MyEnum.Foo : MyEnum
+>this.type : MyEnum
+>this : this
+>type : MyEnum
+>MyEnum.Foo : MyEnum.Foo
+>MyEnum : typeof MyEnum
+>Foo : MyEnum.Foo
+    }
+}
+

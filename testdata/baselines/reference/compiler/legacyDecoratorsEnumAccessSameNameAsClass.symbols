@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/legacyDecoratorsEnumAccessSameNameAsClass.ts] ////
+
+=== legacyDecoratorsEnumAccessSameNameAsClass.ts ===
+export enum MyEnum {
+>MyEnum : Symbol(MyEnum, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 0))
+
+    Foo = "FooValue",
+>Foo : Symbol(MyEnum.Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 20))
+
+    Bar = "BarValue",
+>Bar : Symbol(MyEnum.Bar, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 1, 21))
+}
+
+function myDecorator(target: any) {
+>myDecorator : Symbol(myDecorator, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 3, 1))
+>target : Symbol(target, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 5, 21))
+
+    return target;
+>target : Symbol(target, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 5, 21))
+}
+
+@myDecorator
+>myDecorator : Symbol(myDecorator, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 3, 1))
+
+export class Foo {
+>Foo : Symbol(Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 7, 1))
+
+    type: MyEnum = MyEnum.Foo;
+>type : Symbol(Foo.type, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 10, 18))
+>MyEnum : Symbol(MyEnum, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 0))
+>MyEnum.Foo : Symbol(MyEnum.Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 20))
+>MyEnum : Symbol(MyEnum, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 0))
+>Foo : Symbol(MyEnum.Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 20))
+
+    getType(): MyEnum {
+>getType : Symbol(Foo.getType, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 11, 30))
+>MyEnum : Symbol(MyEnum, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 0))
+
+        return this.type || MyEnum.Foo;
+>this.type : Symbol(Foo.type, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 10, 18))
+>this : Symbol(Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 7, 1))
+>type : Symbol(Foo.type, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 10, 18))
+>MyEnum.Foo : Symbol(MyEnum.Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 20))
+>MyEnum : Symbol(MyEnum, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 0))
+>Foo : Symbol(MyEnum.Foo, Decl(legacyDecoratorsEnumAccessSameNameAsClass.ts, 0, 20))
+    }
+}
+
