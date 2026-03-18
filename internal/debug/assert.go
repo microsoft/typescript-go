@@ -4,7 +4,6 @@ package debug
 
 import (
 	"fmt"
-	"reflect"
 )
 
 func Assert(expression bool, message ...any) {
@@ -19,22 +18,13 @@ func Assert(expression bool, message ...any) {
 	}
 }
 
-func isNil[T any](value T) bool {
-	v := reflect.ValueOf(value)
-	switch v.Kind() {
-	case reflect.Pointer, reflect.UnsafePointer, reflect.Interface, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func:
-		{
-			return v.IsNil()
-		}
-	default:
-		{
-			return false
-		}
-	}
+func isZero[T comparable](value T) bool {
+	var zero T
+	return value == zero
 }
 
-func AssertNil(value any, message ...any) {
-	if value != nil && !isNil(value) {
+func AssertNil[T comparable](value T, message ...any) {
+	if !isZero(value) {
 		var msg string
 		if len(message) > 0 {
 			msg = "Nil expression: " + fmt.Sprint(message...)
@@ -105,8 +95,8 @@ func AssertGreaterThanOrEqual(a int, b int, message ...any) {
 	}
 }
 
-func AssertIsDefined(value any, message ...any) {
-	if value == nil || isNil(value) { // handle all `nil` interfaces
+func AssertIsDefined[T comparable](value T, message ...any) {
+	if isZero(value) {
 		var msg string
 		if len(message) == 0 {
 			msg = ""
@@ -117,25 +107,25 @@ func AssertIsDefined(value any, message ...any) {
 	}
 }
 
-func CheckDefined[T any](value T, message ...any) T {
+func CheckDefined[T comparable](value T, message ...any) T {
 	AssertIsDefined(value, message...)
 	return value
 }
 
-func AssertEachIsDefined[TElem any](value []TElem, message ...any) {
+func AssertEachIsDefined[TElem comparable](value []TElem, message ...any) {
 	for _, elem := range value {
 		AssertIsDefined(elem, message...)
 	}
 }
 
-func CheckEachIsDefined[TElem any](value []TElem, message ...any) []TElem {
+func CheckEachIsDefined[TElem comparable](value []TElem, message ...any) []TElem {
 	AssertEachIsDefined(value, message...)
 	return value
 }
 
 var unexpectedNode []any = []any{"Unexpected node."}
 
-func AssertEachNode[TElem any](nodes []TElem, test func(elem TElem) bool, message ...any) {
+func AssertEachNode[TElem comparable](nodes []TElem, test func(elem TElem) bool, message ...any) {
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
@@ -144,7 +134,7 @@ func AssertEachNode[TElem any](nodes []TElem, test func(elem TElem) bool, messag
 	}
 }
 
-func AssertNode[TElem any](node TElem, test func(elem TElem) bool, message ...any) {
+func AssertNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
@@ -154,8 +144,8 @@ func AssertNode[TElem any](node TElem, test func(elem TElem) bool, message ...an
 	}
 }
 
-func AssertNotNode[TElem any](node TElem, test func(elem TElem) bool, message ...any) {
-	if isNil(node) {
+func AssertNotNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {
+	if isZero(node) {
 		return
 	}
 	if test == nil {
@@ -167,8 +157,8 @@ func AssertNotNode[TElem any](node TElem, test func(elem TElem) bool, message ..
 	Assert(!test(node), message...)
 }
 
-func AssertOptionalNode[TElem any](node TElem, test func(elem TElem) bool, message ...any) {
-	if isNil(node) {
+func AssertOptionalNode[TElem comparable](node TElem, test func(elem TElem) bool, message ...any) {
+	if isZero(node) {
 		return
 	}
 	if test == nil {
@@ -180,8 +170,11 @@ func AssertOptionalNode[TElem any](node TElem, test func(elem TElem) bool, messa
 	Assert(test(node), message...)
 }
 
-func AssertOptionalToken[TElem interface{ KindValue() int16 }](node TElem, kind int16, message ...any) {
-	if isNil(node) {
+func AssertOptionalToken[TElem interface {
+	comparable
+	KindValue() int16
+}](node TElem, kind int16, message ...any) {
+	if isZero(node) {
 		return
 	}
 	if len(message) == 0 {
@@ -190,9 +183,9 @@ func AssertOptionalToken[TElem interface{ KindValue() int16 }](node TElem, kind 
 	Assert(node.KindValue() == kind, message...)
 }
 
-func AssertMissingNode[TElem any](node TElem, message ...any) {
+func AssertMissingNode[TElem comparable](node TElem, message ...any) {
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
-	Assert(isNil(node), message...)
+	Assert(isZero(node), message...)
 }

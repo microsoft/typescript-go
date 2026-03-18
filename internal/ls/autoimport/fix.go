@@ -469,7 +469,7 @@ func getNewRequires(
 		statements = append(statements, declaration)
 	}
 
-	debug.AssertIsDefined(statements)
+	debug.Assert(statements != nil)
 	return statements
 }
 
