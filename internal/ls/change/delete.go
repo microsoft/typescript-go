@@ -131,7 +131,7 @@ func deleteImportBinding(t *Tracker, sourceFile *ast.SourceFile, node *ast.Node)
 		// import d|, * as ns| from './file'
 		// import d|, { a }| from './file'
 		previousToken := astnav.GetTokenAtPosition(sourceFile, node.Pos()-1)
-		debug.Assert(previousToken != nil, "previousToken should not be nil")
+		debug.Assert(previousToken, "previousToken should not be nil")
 		startPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(astnav.GetStartOfNode(previousToken, sourceFile, false)))
 		endPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(node.End()))
 		t.ReplaceRangeWithText(sourceFile, lsproto.Range{Start: startPos, End: endPos}, "")
@@ -140,7 +140,7 @@ func deleteImportBinding(t *Tracker, sourceFile *ast.SourceFile, node *ast.Node)
 		// |import * as ns from './file'|
 		// |import { a } from './file'|
 		importDecl := ast.FindAncestorKind(node, ast.KindImportDeclaration)
-		debug.Assert(importDecl != nil, "importDecl should not be nil")
+		debug.Assert(importDecl, "importDecl should not be nil")
 		deleteNode(t, sourceFile, importDecl, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude)
 	}
 }
@@ -194,7 +194,7 @@ func deleteNode(t *Tracker, sourceFile *ast.SourceFile, node *ast.Node, leadingT
 
 func deleteNodeInList(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourceFile *ast.SourceFile, node *ast.Node) {
 	containingList := format.GetContainingList(node, sourceFile)
-	debug.Assert(containingList != nil, "containingList should not be nil")
+	debug.Assert(containingList, "containingList should not be nil")
 	index := slices.Index(containingList.Nodes, node)
 	debug.Assert(index != -1, "node should be in containing list")
 

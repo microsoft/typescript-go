@@ -660,7 +660,7 @@ func (tx *classFieldsTransformer) visitMethodOrAccessorDeclaration(node *ast.Nod
 
 	// leave invalid code untransformed
 	info := tx.accessPrivateIdentifier(node.Name())
-	debug.Assert(info != nil, "Undeclared private name for property declaration.")
+	debug.Assert(info, "Undeclared private name for property declaration.")
 	if !info.isValid {
 		return node
 	}
@@ -758,7 +758,7 @@ func (tx *classFieldsTransformer) setClassElementAndVisitEachChild(node *ast.Nod
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
 	debug.AssertNode(node.Name(), ast.IsPrivateIdentifier)
 	info := tx.accessPrivateIdentifier(node.Name())
-	debug.Assert(info != nil, "Undeclared private name for property declaration.")
+	debug.Assert(info, "Undeclared private name for property declaration.")
 	if info.kind == printer.PrivateIdentifierKindMethod {
 		return info.methodName
 	}
@@ -869,7 +869,7 @@ func (tx *classFieldsTransformer) transformPrivateFieldInitializer(node *ast.Pro
 	if tx.shouldTransformClassElementToWeakMap(node.AsNode()) {
 		// If we are transforming private elements into WeakMap/WeakSet, we should elide the node.
 		info := tx.accessPrivateIdentifier(node.Name())
-		debug.Assert(info != nil, "Undeclared private name for property declaration.")
+		debug.Assert(info, "Undeclared private name for property declaration.")
 
 		// Leave invalid code untransformed
 		if !info.isValid {
@@ -2285,7 +2285,7 @@ func (tx *classFieldsTransformer) transformClassMembers(node *ast.Node) (members
 func (tx *classFieldsTransformer) createBrandCheckWeakSetForPrivateMethods() {
 	env := tx.getPrivateIdentifierEnvironment()
 	weakSetName := env.data.weakSetName
-	debug.Assert(weakSetName != nil, "weakSetName should be set in private identifier environment")
+	debug.Assert(weakSetName, "weakSetName should be set in private identifier environment")
 
 	tx.addPendingExpressions(
 		tx.Factory().NewAssignmentExpression(
@@ -2330,7 +2330,7 @@ func (tx *classFieldsTransformer) transformConstructor(constructor *ast.Construc
 	}
 
 	if constructor != nil {
-		debug.Assert(parameters != nil)
+		debug.Assert(parameters)
 		return tx.Factory().UpdateConstructorDeclaration(
 			constructor,
 			nil, /*modifiers*/
@@ -2774,7 +2774,7 @@ func (tx *classFieldsTransformer) addInstanceMethodStatements(statements []*ast.
 
 	env := tx.getPrivateIdentifierEnvironment()
 	weakSetName := env.data.weakSetName
-	debug.Assert(weakSetName != nil, "weakSetName should be set in private identifier environment")
+	debug.Assert(weakSetName, "weakSetName should be set in private identifier environment")
 
 	return append(statements,
 		tx.Factory().NewExpressionStatement(
@@ -2847,7 +2847,7 @@ func (tx *classFieldsTransformer) endClassLexicalEnvironment() {
 }
 
 func (tx *classFieldsTransformer) getClassLexicalEnvironment() *classLexicalEnvironment {
-	debug.Assert(tx.lexicalEnvironment != nil)
+	debug.Assert(tx.lexicalEnvironment)
 	if tx.lexicalEnvironment.data == nil {
 		tx.lexicalEnvironment.data = &classLexicalEnvironment{}
 	}
@@ -2855,7 +2855,7 @@ func (tx *classFieldsTransformer) getClassLexicalEnvironment() *classLexicalEnvi
 }
 
 func (tx *classFieldsTransformer) getPrivateIdentifierEnvironment() *privateEnvironment {
-	debug.Assert(tx.lexicalEnvironment != nil)
+	debug.Assert(tx.lexicalEnvironment)
 	if tx.lexicalEnvironment.privateEnv == nil {
 		tx.lexicalEnvironment.privateEnv = &privateEnvironment{
 			members: make(map[string]*privateIdentifierInfo),
@@ -2917,7 +2917,7 @@ func (tx *classFieldsTransformer) addPrivateIdentifierMethodToEnvironment(name *
 		if brandCheckIdentifier == nil {
 			brandCheckIdentifier = lex.classConstructor
 		}
-		debug.Assert(brandCheckIdentifier != nil, "classConstructor should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "classConstructor should be set in private identifier environment")
 	} else {
 		brandCheckIdentifier = env.data.weakSetName
 	}
@@ -2938,10 +2938,10 @@ func (tx *classFieldsTransformer) addPrivateIdentifierGetAccessorToEnvironment(n
 		if brandCheckIdentifier == nil {
 			brandCheckIdentifier = lex.classConstructor
 		}
-		debug.Assert(brandCheckIdentifier != nil, "classConstructor should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "classConstructor should be set in private identifier environment")
 	} else {
 		brandCheckIdentifier = env.data.weakSetName
-		debug.Assert(brandCheckIdentifier != nil, "weakSetName should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "weakSetName should be set in private identifier environment")
 	}
 
 	if previousInfo != nil && previousInfo.kind == printer.PrivateIdentifierKindAccessor && previousInfo.isStatic == isStatic && previousInfo.getterName == nil {
@@ -2965,10 +2965,10 @@ func (tx *classFieldsTransformer) addPrivateIdentifierSetAccessorToEnvironment(n
 		if brandCheckIdentifier == nil {
 			brandCheckIdentifier = lex.classConstructor
 		}
-		debug.Assert(brandCheckIdentifier != nil, "classConstructor should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "classConstructor should be set in private identifier environment")
 	} else {
 		brandCheckIdentifier = env.data.weakSetName
-		debug.Assert(brandCheckIdentifier != nil, "weakSetName should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "weakSetName should be set in private identifier environment")
 	}
 
 	if previousInfo != nil && previousInfo.kind == printer.PrivateIdentifierKindAccessor && previousInfo.isStatic == isStatic && previousInfo.setterName == nil {
@@ -2993,10 +2993,10 @@ func (tx *classFieldsTransformer) addPrivateIdentifierAutoAccessorToEnvironment(
 		if brandCheckIdentifier == nil {
 			brandCheckIdentifier = lex.classConstructor
 		}
-		debug.Assert(brandCheckIdentifier != nil, "classConstructor should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "classConstructor should be set in private identifier environment")
 	} else {
 		brandCheckIdentifier = env.data.weakSetName
-		debug.Assert(brandCheckIdentifier != nil, "weakSetName should be set in private identifier environment")
+		debug.Assert(brandCheckIdentifier, "weakSetName should be set in private identifier environment")
 	}
 
 	tx.setPrivateIdentifier(env, name, &privateIdentifierInfo{

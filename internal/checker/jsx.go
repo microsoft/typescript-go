@@ -760,7 +760,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				}
 				if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(attributeDecl) {
 					inferenceContext := c.getInferenceContext(attributes)
-					debug.Assert(inferenceContext != nil)
+					debug.Assert(inferenceContext)
 					// In CheckMode.Inferential we should always have an inference context
 					inferenceNode := attributeDecl.Initializer().Expression()
 					c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, exprType)

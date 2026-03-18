@@ -213,7 +213,7 @@ func addToExistingImport(
 		}
 
 		if defaultImport != nil {
-			debug.Assert(importClause.Name() == nil, "Cannot add a default import to an import clause that already has one")
+			debug.AssertZero(importClause.Name(), "Cannot add a default import to an import clause that already has one")
 			ct.InsertNodeAt(file, core.TextPos(astnav.GetStartOfNode(importClause.AsNode(), file, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), change.NodeOptions{Suffix: ", "})
 		}
 
@@ -320,7 +320,7 @@ func getTypeKeywordOfTypeOnlyImport(importClause *ast.ImportClause, sourceFile *
 	// import type { foo } from './bar'
 	//        ^^^^
 	typeKeyword := astnav.FindChildOfKind(importClause.AsNode(), ast.KindTypeKeyword, sourceFile)
-	debug.Assert(typeKeyword != nil, "type-only import clause should have a type keyword")
+	debug.Assert(typeKeyword, "type-only import clause should have a type keyword")
 	return typeKeyword
 }
 

@@ -605,7 +605,7 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 	//   extra initializers.
 	classDecorators := tx.transformAllDecoratorsOfDeclaration(node.Decorators())
 	if len(classDecorators) > 0 {
-		debug.Assert(ci.classThis != nil)
+		debug.Assert(ci.classThis)
 
 		ci.classDecoratorsName = f.NewUniqueNameEx("_classDecorators", printer.AutoGenerateOptions{
 			Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel,
@@ -1063,7 +1063,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				statements = append(statements, exportStatement)
 			}
 		} else {
-			debug.Assert(classNode.Name() != nil, "A class declaration that is not a default export must have a name.")
+			debug.Assert(classNode.Name(), "A class declaration that is not a default export must have a name.")
 			// produces:
 			//   let C = (() => { ... })();
 			iife := tx.transformClassLike(classNode)
@@ -1353,7 +1353,7 @@ func (tx *esDecoratorTransformer) partialTransformClassElement(member *ast.Node,
 			if ast.IsStatic(member) {
 				methodExtraInitializersName = ci.staticMethodExtraInitializersName
 			}
-			debug.Assert(methodExtraInitializersName != nil, "methodExtraInitializersName should be defined")
+			debug.Assert(methodExtraInitializersName, "methodExtraInitializersName should be defined")
 
 			var descriptorArg *ast.Expression
 			if ast.IsPrivateIdentifierClassElementDeclaration(member) && createDescriptor != nil {
@@ -2342,7 +2342,7 @@ func (tx *esDecoratorTransformer) prependExpressions(pending []*ast.Expression, 
 
 func (tx *esDecoratorTransformer) injectPendingExpressions(expression *ast.Expression) *ast.Expression {
 	result := tx.prependExpressions(tx.pendingExpressions, expression)
-	debug.Assert(result != nil)
+	debug.Assert(result)
 	if result != expression {
 		tx.pendingExpressions = nil
 	}

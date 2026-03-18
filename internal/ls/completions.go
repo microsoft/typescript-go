@@ -5571,7 +5571,7 @@ func getJSDocParamAnnotation(
 	tabstopCounter *int,
 ) string {
 	if isSnippet {
-		debug.Assert(tabstopCounter != nil)
+		debug.Assert(tabstopCounter)
 	}
 	if initializer != nil {
 		paramName = getJSDocParamNameWithInitializer(paramName, initializer)
@@ -5897,8 +5897,8 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		for _, t := range switchType.Types() {
 			// Enums
 			if t.IsEnumLiteral() {
-				debug.Assert(t.Symbol() != nil, "An enum member type should have a symbol")
-				debug.Assert(t.Symbol().Parent != nil, "An enum member type should have a parent symbol (the enum symbol)")
+				debug.Assert(t.Symbol(), "An enum member type should have a symbol")
+				debug.Assert(t.Symbol().Parent, "An enum member type should have a parent symbol (the enum symbol)")
 				// Filter existing enums by their values
 				var enumValue any
 				if t.Symbol().ValueDeclaration != nil {
