@@ -42,7 +42,7 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 	// Remove command-line-only options from the output
 	for _, name := range []string{
 		"showConfig", "configFile", "configFilePath", "help", "init",
-		"listFiles", "listEmittedFiles", "project", "build", "version",
+		"listFilesOnly", "listEmittedFiles", "project", "build", "version",
 	} {
 		optionMap.Delete(name)
 	}
