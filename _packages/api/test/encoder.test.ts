@@ -205,8 +205,9 @@ describe("Encoder", () => {
         // Walk to JsxOpeningElement → attributes (JsxAttributes)
         const varStmt = decoded.statements!.at(0)!;
         const declList = varStmt.declarationList!;
-        const declarations = declList.declarations! as unknown as RemoteNodeList;
-        const varDecl = declarations.at(0)!;
+        const declarationsNode = declList.declarations!;
+        assert.ok(declarationsNode instanceof RemoteNodeList);
+        const varDecl = (declarationsNode as RemoteNodeList).at(0)!
         const jsxElem = varDecl.initializer!;
         assert.strictEqual(jsxElem.kind, SyntaxKind.JsxElement);
         const openingElem = jsxElem.openingElement!;

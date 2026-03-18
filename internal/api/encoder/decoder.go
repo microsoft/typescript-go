@@ -1265,34 +1265,30 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewObjectLiteralExpression(props, multiLine), nil
 
 	case ast.KindUnionType:
-		return d.factory.NewUnionTypeNode(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewUnionTypeNode(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindIntersectionType:
-		return d.factory.NewIntersectionTypeNode(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewIntersectionTypeNode(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindTupleType:
-		return d.factory.NewTupleTypeNode(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewTupleTypeNode(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindNamedImports:
-		return d.factory.NewNamedImports(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewNamedImports(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindNamedExports:
-		return d.factory.NewNamedExports(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewNamedExports(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindModuleBlock:
-		stmts := d.singleNodeListChild(childIndices)
-		if stmts == nil {
-			stmts = d.factory.NewNodeList(nil)
-		}
-		return d.factory.NewModuleBlock(stmts), nil
+		return d.factory.NewModuleBlock(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindCaseBlock:
-		return d.factory.NewCaseBlock(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewCaseBlock(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindTypeLiteral:
-		return d.factory.NewTypeLiteralNode(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewTypeLiteralNode(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 	case ast.KindJsxAttributes:
-		return d.factory.NewJsxAttributes(d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewJsxAttributes(d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 
 	case ast.KindArrayBindingPattern, ast.KindObjectBindingPattern:
-		return d.factory.NewBindingPattern(kind, d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewBindingPattern(kind, d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 
 	case ast.KindHeritageClause:
 		// Token (KindExtendsKeyword or KindImplementsKeyword) is not encoded; default to 0.
-		return d.factory.NewHeritageClause(0, d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewHeritageClause(0, d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 
 	case ast.KindJSDocTypeLiteral:
 		isArrayType := definedBits&1 != 0
