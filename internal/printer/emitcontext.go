@@ -997,8 +997,8 @@ func (c *EmitContext) SetTypeNode(node *ast.Node, typeNode *ast.TypeNode) {
 
 // GetTypeNode gets the type node stored on a name node by the type eraser.
 func (c *EmitContext) GetTypeNode(node *ast.Node) *ast.TypeNode {
-	if c.emitNodes.Has(node) {
-		return c.emitNodes.Get(node).typeNode
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		return emitNode.typeNode
 	}
 	return nil
 }

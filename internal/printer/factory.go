@@ -579,7 +579,8 @@ func (f *NodeFactory) GetNamespaceMemberName(ns *ast.IdentifierNode, name *ast.I
 // `"exports."` when emitted as an expression if the name points to an exported symbol.
 func (f *NodeFactory) GetExternalModuleOrNamespaceExportName(ns *ast.IdentifierNode, node *ast.Declaration, allowComments bool, allowSourceMaps bool) *ast.Node {
 	if ns != nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) {
-		return f.GetNamespaceMemberName(ns, f.GetDeclarationNameEx(node, NameOptions{AllowComments: allowComments, AllowSourceMaps: allowSourceMaps}), NameOptions{AllowComments: allowComments, AllowSourceMaps: allowSourceMaps})
+		nameOpts := NameOptions{AllowComments: allowComments, AllowSourceMaps: allowSourceMaps}
+		return f.GetNamespaceMemberName(ns, f.GetDeclarationNameEx(node, nameOpts), nameOpts)
 	}
 	return f.GetExportNameEx(node, AssignedNameOptions{AllowComments: allowComments, AllowSourceMaps: allowSourceMaps})
 }
