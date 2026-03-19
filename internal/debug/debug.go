@@ -41,3 +41,21 @@ func AssertNever(member any, message ...any) {
 	}
 	Fail(fmt.Sprintf("%s %s", msg, detail))
 }
+
+func Assert(value bool, message ...any) {
+	if value {
+		return
+	}
+	assertSlow(message...)
+}
+
+func assertSlow(message ...any) {
+	// See https://dave.cheney.net/2020/05/02/mid-stack-inlining-in-go
+	var msg string
+	if len(message) > 0 {
+		msg = "False expression: " + fmt.Sprint(message...)
+	} else {
+		msg = "False expression."
+	}
+	Fail(msg)
+}
