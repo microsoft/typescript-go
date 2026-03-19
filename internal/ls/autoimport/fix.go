@@ -213,7 +213,7 @@ func addToExistingImport(
 		}
 
 		if defaultImport != nil {
-			debug.AssertZero(importClause.Name(), "Cannot add a default import to an import clause that already has one")
+			debug.Assert(importClause.Name() == nil, "Cannot add a default import to an import clause that already has one")
 			ct.InsertNodeAt(file, core.TextPos(astnav.GetStartOfNode(importClause.AsNode(), file, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), change.NodeOptions{Suffix: ", "})
 		}
 

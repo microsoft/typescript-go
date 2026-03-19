@@ -5582,7 +5582,7 @@ func getJSDocParamAnnotation(
 	if isJS {
 		t := "*"
 		if isObject {
-			debug.AssertZero(dotDotDotToken, `Cannot annotate a rest parameter with type 'object'.`)
+			debug.Assert(dotDotDotToken == nil, `Cannot annotate a rest parameter with type 'object'.`)
 			t = "object"
 		} else {
 			if initializer != nil {
