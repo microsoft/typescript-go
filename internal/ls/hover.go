@@ -574,6 +574,23 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 					}
 				}
 			}
+			// For static members on intersection base types (e.g., from mixins),
+			// baseType.Symbol() may be nil, preventing access to the constructor type.
+			// Fall back to using heritage clause expressions to get the constructor type directly.
+			if isStatic {
+				for _, superTypeNode := range getAllSuperTypeNodes(node.Parent) {
+					if superTypeNode == nil {
+						continue
+					}
+					if expr := superTypeNode.Expression(); expr != nil {
+						if prop := c.GetPropertyOfType(c.GetTypeAtLocation(expr), symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+							if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
+								return jsDoc
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	return nil
