@@ -1804,7 +1804,7 @@ export const allChecks = task({
         await $`npm run convertfourslash`;
         await $`npm run updatefailing`;
         await runFormat();
-        await runTests();
         await runLint();
+        await runTests();
     },
 });
