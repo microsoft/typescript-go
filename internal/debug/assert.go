@@ -27,9 +27,3 @@ func assertSlow(message ...any) {
 	}
 	Fail(msg)
 }
-
-func AssertEach[TElem any](value []TElem, test func(TElem) bool, message ...any) {
-	for _, elem := range value {
-		Assert(test(elem), message...)
-	}
-}
