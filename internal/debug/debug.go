@@ -32,10 +32,10 @@ func AssertNever(member any, message ...any) {
 		msg = fmt.Sprint(message...)
 	}
 	var detail string
-	if member, ok := member.(interface{ KindString() string }); ok {
-		detail = member.KindString()
-	} else if member, ok := member.(fmt.Stringer); ok {
-		detail = member.String()
+	if m, ok := member.(interface{ KindString() string }); ok {
+		detail = m.KindString()
+	} else if m, ok := member.(fmt.Stringer); ok {
+		detail = m.String()
 	} else {
 		detail = fmt.Sprintf("%v", member)
 	}
