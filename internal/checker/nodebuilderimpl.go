@@ -1281,7 +1281,8 @@ func (b *NodeBuilderImpl) setTextRange(range_ *ast.Node, location *ast.Node) *as
 	}
 	if !ast.NodeIsSynthesized(range_) || (range_.Flags&ast.NodeFlagsSynthesized == 0) || b.ctx.enclosingFile == nil || b.ctx.enclosingFile != ast.GetSourceFileOfNode(b.e.MostOriginal(range_)) {
 		original := range_
-		range_ = b.f.DeepCloneNode(range_) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions, deep clone so inner nodes have positions stripped
+		range_ = range_.Clone(b.f) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions
+		range_.Loc = core.NewTextRange(-1, -1)
 		if symbol, ok := b.idToSymbol[original]; ok {
 			b.idToSymbol[range_] = symbol
 		}
@@ -1299,9 +1300,11 @@ func (b *NodeBuilderImpl) setTextRange(range_ *ast.Node, location *ast.Node) *as
 	}
 
 	// only set positions if range comes from the same file since copying text across files isn't supported by the emitter
-	if b.ctx.enclosingFile != nil && b.ctx.enclosingFile == ast.GetSourceFileOfNode(b.e.MostOriginal(range_)) {
+	if b.ctx.enclosingFile != nil && b.ctx.enclosingFile == ast.GetSourceFileOfNode(b.e.MostOriginal(location)) {
 		range_.Loc = location.Loc
 		return range_
+	} else {
+		range_.Loc = core.NewTextRange(-1, -1)
 	}
 	return range_
 }

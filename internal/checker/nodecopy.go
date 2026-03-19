@@ -23,8 +23,7 @@ func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
 	if res != nil && res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
 		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
 		b.e.SetOriginal(str, res)
-		str.Loc = res.Loc
-		return str
+		return b.setTextRange(str, res)
 	}
 	return res
 }
@@ -236,8 +235,8 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 	var visitor *ast.NodeVisitor
 	// note: also handles renaming type parameters renamed within the current context
 	attachSymbolToLeftmostIdentifier := func(leftmost *ast.Node, node *ast.Node, sym *ast.Symbol) *ast.Node {
-		var visitor func(node *ast.Node) *ast.Node
-		visitor = func(node *ast.Node) *ast.Node {
+		var vis *ast.NodeVisitor
+		visitorFunc := func(node *ast.Node) *ast.Node {
 			if node == leftmost {
 				var type_ *Type
 				var name *ast.Node
@@ -248,22 +247,16 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 					}
 				}
 				if name == nil {
-					name = node.Clone(b.f)
+					name = b.newIdentifier(node.Text(), sym)
 				}
-				if name.DeclarationData() != nil {
-					name.DeclarationData().Symbol = sym // TODO: does this work? does quickinfo need this anymore?
-				}
-				name.Loc = node.Loc
+				name = b.setTextRange(name, node)
 				b.e.AddEmitFlags(name, printer.EFNoAsciiEscaping)
 				return name
 			}
-			res := node.VisitEachChild(ast.NewNodeVisitor(visitor, b.f, ast.NodeVisitorHooks{}))
-			if res != node {
-				res.Loc = node.Loc
-			}
-			return res
+			return b.setTextRange(node.VisitEachChild(vis), node)
 		}
-		return visitor(node)
+		vis = ast.NewNodeVisitor(visitorFunc, b.f, ast.NodeVisitorHooks{})
+		return visitorFunc(node)
 	}
 	trackExistingEntityName := func(node *ast.Node, overrideEnclosing *ast.Node) (bool, *ast.Node, *ast.Symbol) {
 		enclosingDeclaration := b.ctx.enclosingDeclaration
@@ -274,7 +267,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		leftmost := ast.GetFirstIdentifier(node)
 		if ast.IsInJSFile(node) && (ast.IsExportsIdentifier(leftmost) || ast.IsModuleExportsAccessExpression(leftmost.Parent) || (ast.IsQualifiedName(leftmost.Parent) && ast.IsModuleIdentifier(leftmost.Parent.AsQualifiedName().Left) && ast.IsExportsIdentifier(leftmost.Parent.AsQualifiedName().Right))) {
 			introducesError = true
-			return introducesError, node, nil
+			return introducesError, b.setTextRange(b.f.DeepCloneNode(node), node), nil
 		}
 		meaning := getMeaningOfEntityNameReference(node)
 		var sym *ast.Symbol
@@ -308,7 +301,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 					b.ctx.tracker.ReportInferenceFallback(node)
 				}
 				introducesError = true
-				return introducesError, node, sym
+				return introducesError, b.setTextRange(b.f.DeepCloneNode(node), node), sym
 			} else {
 				sym = symAtLocation
 			}
@@ -330,7 +323,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			}
 			return introducesError, attachSymbolToLeftmostIdentifier(leftmost, node, sym), nil
 		}
-		return introducesError, node, nil
+		return introducesError, b.setTextRange(b.f.DeepCloneNode(node), node), nil
 	}
 	var tryVisitSimpleTypeNode func(node *ast.Node) *ast.Node
 	tryVisitIndexedAccess := func(node *ast.Node) *ast.Node {
@@ -359,8 +352,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 
 		serializedName := b.serializeTypeName(node.AsTypeQueryNode().ExprName, true, visitor.VisitNodes(node.AsTypeQueryNode().TypeArguments))
 		if serializedName != nil {
-			serializedName.Loc = node.AsTypeQueryNode().ExprName.Loc
-			return serializedName
+			return b.setTextRange(serializedName, node.AsTypeQueryNode().ExprName)
 		}
 		return nil
 	}
@@ -390,8 +382,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		} else {
 			serializedName := b.serializeTypeName(node.AsTypeReferenceNode().TypeName, false, visitor.VisitNodes(node.AsTypeReferenceNode().TypeArguments))
 			if serializedName != nil {
-				serializedName.Loc = node.AsTypeReferenceNode().TypeName.Loc
-				return serializedName
+				return b.setTextRange(serializedName, node.AsTypeReferenceNode().TypeName)
 			}
 			return nil
 		}
@@ -719,7 +710,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			}
 			return factory.UpdateTypePredicateNode(
 				node.AsTypePredicateNode(),
-				node.AsTypePredicateNode().AssertsModifier,
+				visitor.VisitNode(node.AsTypePredicateNode().AssertsModifier),
 				parameterName,
 				visitor.VisitNode(node.AsTypePredicateNode().Type),
 			)
@@ -746,7 +737,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			res := visitor.VisitEachChild(node)
 			if res == node {
 				res = res.Clone(factory)
-				b.setTextRange(res, node)
+				res = b.setTextRange(res, node)
 			}
 			b.e.AddEmitFlags(res, printer.EFSingleLine)
 			return res
@@ -761,6 +752,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 
 		return visitor.VisitEachChild(node)
 	}
+	nonLocalNode := true
 	visitor = ast.NewNodeVisitor(func(node *ast.Node) *ast.Node {
 		// If there was an error in a sibling node bail early, the result will be discarded anyway
 		if bound.hadError {
@@ -788,15 +780,8 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			exit()
 		}
 
-		if bound.hadError {
-			if ast.IsTypeNode(node) && !ast.IsTypePredicateNode(node) {
-				bound.endRecoveryScope(recover_)
-				// TODO: this fallback matches strada behavior, but it lacks any verification that the type from `node` actually matches
-				// the type we'd expect at this traversal position within the parent type.
-				t := b.getTypeFromTypeNode(node, false)
-				return b.typeToTypeNode(t)
-			}
-			return node
+		if result == node && !ast.NodeIsSynthesized(node) {
+			result = b.f.DeepCloneNode(node) // always clone a new node
 		}
 
 		// We want to clone the subtree, so when we mark it up with __pos and __end in quickfixes,
@@ -805,7 +790,40 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		//  is set to build for (even though we are reusing the node structure, the position information
 		//  would make the printer print invalid spans for literals and identifiers, and the formatter would
 		//  choke on the mismatched positonal spans between a parent and an injected child from another file).
-		return b.setTextRange(result, node)
-	}, b.f, ast.NodeVisitorHooks{})
+		result = b.setTextRange(result, node)
+
+		if bound.hadError {
+			if ast.IsTypeNode(node) && !ast.IsTypePredicateNode(node) {
+				bound.endRecoveryScope(recover_)
+				// TODO: this fallback matches strada behavior, but it lacks any verification that the type from `node` actually matches
+				// the type we'd expect at this traversal position within the parent type.
+				t := b.getTypeFromTypeNode(node, false)
+				return b.typeToTypeNode(t)
+			}
+			return b.setTextRange(node.Clone(b.f), node)
+		}
+
+		return result
+	}, b.f, ast.NodeVisitorHooks{
+		VisitNodes: func(nodes *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
+			res := v.VisitNodes(nodes)
+			if nonLocalNode && res != nil {
+				// Remove position data from node lists originating in other files
+				if res == nodes {
+					res = nodes.Clone(b.f)
+				}
+				res.Loc = core.NewTextRange(-1, -1)
+			}
+			return res
+		},
+		VisitNode: func(node *ast.Node, v *ast.NodeVisitor) *ast.Node {
+			// Capture if the current node is in the current file so node lists knoww if they can keep positions or not
+			oldNonLocalNode := nonLocalNode
+			nonLocalNode = b.ctx.enclosingFile == nil || b.ctx.enclosingFile != ast.GetSourceFileOfNode(b.e.MostOriginal(node))
+			res := v.VisitNode(node)
+			nonLocalNode = oldNonLocalNode
+			return res
+		},
+	})
 	return visitor
 }
