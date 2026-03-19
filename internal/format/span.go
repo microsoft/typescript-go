@@ -295,7 +295,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			tokenInfo = w.formattingScanner.readTokenInfo(w.enclosingNode).token
 		}
 
-		if tokenInfo.Loc.Pos() == w.previousRangeTriviaEnd {
+		if tokenInfo.Loc.Pos() == w.previousRangeTriviaEnd && w.previousRangeTriviaEnd <= w.originalRange.End() {
 			// We need to check that tokenInfo and previousRange are contiguous: the `originalRange`
 			// may have ended in the middle of a token, which means we will have stopped formatting
 			// on that token, leaving `previousRange` pointing to the token before it, but already
@@ -306,6 +306,11 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			// to perform a trailing edit at the end of the selection range: but there can be no valid
 			// edit in the middle of a token where the range ended, so if we have a non-contiguous
 			// pair here, we're already done and we can ignore it.
+			//
+			// Similarly, if previousRangeTriviaEnd extends beyond originalRange.End(), it means
+			// trailing trivia (e.g., a block comment) was consumed but not processed because it
+			// extends past the selection range. Processing such a pair would produce edits that
+			// delete the unprocessed comment trivia between previousRange and tokenInfo.
 			parent := astnav.FindPrecedingToken(w.sourceFile, tokenInfo.Loc.End())
 			if parent != nil {
 				parent = parent.Parent
