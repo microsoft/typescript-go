@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParamNamed.ts] ////
+
+=== /dep.js ===
+function something(module) {
+>something : Symbol(something, Decl(dep.js, 0, 0))
+>module : Symbol(module, Decl(dep.js, 0, 19))
+
+    module.exports = 8;
+>module : Symbol(module, Decl(dep.js, 0, 19))
+}
+
+export const foo = 7;
+>foo : Symbol(foo, Decl(dep.js, 4, 12))
+
+=== /main.ts ===
+import { foo } from "./dep.js";
+>foo : Symbol(foo, Decl(main.ts, 0, 8))
+
+export const bar = foo + 1;
+>bar : Symbol(bar, Decl(main.ts, 2, 12))
+>foo : Symbol(foo, Decl(main.ts, 0, 8))
+

@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/exportsInFunctionParam.ts] ////
+
+=== /dep.js ===
+function something(exports) {
+>something : (exports: any) => void
+>exports : any
+
+    exports.foo = 8;
+>exports.foo = 8 : 8
+>exports.foo : any
+>exports : any
+>foo : any
+>8 : 8
+}
+
+export const foo = 7;
+>foo : 7
+>7 : 7
+
+=== /main.ts ===
+import { foo } from "./dep.js";
+>foo : 7
+
+export const bar = foo + 1;
+>bar : number
+>foo + 1 : number
+>foo : 7
+>1 : 1
+

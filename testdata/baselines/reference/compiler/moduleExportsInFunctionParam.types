@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParam.ts] ////
+
+=== /dep.js ===
+function something(module) {
+>something : (module: any) => void
+>module : any
+
+    module.exports = 8;
+>module.exports = 8 : 8
+>module.exports : any
+>module : any
+>exports : any
+>8 : 8
+}
+
+export default 7;
+
+=== /main.ts ===
+import DefaultExport from "./dep.js";
+>DefaultExport : 7
+
+export default 3 + DefaultExport;
+>3 + DefaultExport : number
+>3 : 3
+>DefaultExport : 7
+
