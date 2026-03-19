@@ -104,7 +104,15 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	file := loader.parseSourceFile(t)
 	if file == nil {
-		if loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) == nil {
+		// Only report file-not-found for files with extensions (extensionless paths need extension
+		// probing which isn't done at this level). Also skip reporting for project reference output
+		// files (the checker reports TS6305 for those), and skip when noResolve is set for reference
+		// file and type reference directive reasons (matching TypeScript's behavior of not processing
+		// these references when noResolve is true).
+		if tspath.HasExtension(t.normalizedFilePath) &&
+			loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) == nil &&
+			!(loader.opts.Config.CompilerOptions().NoResolve.IsTrue() &&
+				(t.includeReason.kind == fileIncludeKindReferenceFile || t.includeReason.kind == fileIncludeKindTypeReferenceDirective)) {
 			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 				kind: processingDiagnosticKindExplainingFileInclude,
 				data: &includeExplainingDiagnostic{
