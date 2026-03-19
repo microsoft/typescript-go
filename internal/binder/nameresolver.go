@@ -93,7 +93,11 @@ loop:
 			}
 			fallthrough
 		case ast.KindModuleDeclaration:
-			moduleExports := r.getSymbolOfDeclaration(location).Exports
+			moduleSymbol := r.getSymbolOfDeclaration(location)
+			if moduleSymbol == nil {
+				break
+			}
+			moduleExports := moduleSymbol.Exports
 			if ast.IsSourceFile(location) || (ast.IsModuleDeclaration(location) && location.Flags&ast.NodeFlagsAmbient != 0 && !ast.IsGlobalScopeAugmentation(location)) {
 				// It's an external module. First see if the module has an export default and if the local
 				// name of that export default matches.
@@ -128,7 +132,11 @@ loop:
 				}
 			}
 		case ast.KindEnumDeclaration:
-			result = r.lookup(r.getSymbolOfDeclaration(location).Exports, name, meaning&ast.SymbolFlagsEnumMember)
+			enumSymbol := r.getSymbolOfDeclaration(location)
+			if enumSymbol == nil {
+				break
+			}
+			result = r.lookup(enumSymbol.Exports, name, meaning&ast.SymbolFlagsEnumMember)
 			if result != nil {
 				if nameNotFoundMessage != nil && r.CompilerOptions.GetIsolatedModules() && location.Flags&ast.NodeFlagsAmbient == 0 && ast.GetSourceFileOfNode(location) != ast.GetSourceFileOfNode(result.ValueDeclaration) {
 					isolatedModulesLikeFlagName := core.IfElse(r.CompilerOptions.VerbatimModuleSyntax == core.TSTrue, "verbatimModuleSyntax", "isolatedModules")
