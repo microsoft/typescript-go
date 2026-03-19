@@ -453,6 +453,17 @@ func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpres
 	return true
 }
 
+// See `isConstContext` in `checker.go` - this is basically any node kind mentioned in that
+func isConstContextPropagatingKind(kind ast.Kind) bool {
+	switch kind {
+	case ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression,
+		ast.KindParenthesizedExpression, ast.KindSpreadElement, ast.KindPropertyAssignment,
+		ast.KindShorthandPropertyAssignment, ast.KindTemplateSpan, ast.KindPrefixUnaryExpression:
+		return true
+	}
+	return false
+}
+
 // IsInConstContext traverses up the parent chain to determine if the node is within a const context without needing any
 // persistent traversal scope tracking (which could be unreliable in the presence of `typeof` queries anyway!)
 func IsInConstContext(node *ast.Node) bool {
@@ -461,7 +472,7 @@ func IsInConstContext(node *ast.Node) bool {
 		node,
 		func(n *ast.Node) bool {
 			// stop traversing at assertions or anything not an array/object literal, since only those create or transfer const-ness
-			return ast.IsAssertionExpression(n) || !(ast.IsArrayLiteralExpression(n) || ast.IsObjectLiteralExpression(n) || ast.IsParenthesizedExpression(n) || ast.IsShorthandPropertyAssignment(n) || ast.IsPropertyAssignment(n) || ast.IsPrefixUnaryExpression(n))
+			return ast.IsAssertionExpression(n) || !isConstContextPropagatingKind(n.Kind)
 		},
 	)
 	return ast.IsConstAssertion(maybeAssertion)
