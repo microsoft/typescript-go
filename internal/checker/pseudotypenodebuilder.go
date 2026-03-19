@@ -591,7 +591,7 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 			}
 			return b.ch.neverType
 		}
-		return b.ch.newUnionType(ObjectFlagsNone, res)
+		return b.ch.getUnionType(res)
 	case pseudochecker.PseudoTypeKindUndefined:
 		return b.ch.undefinedWideningType
 	case pseudochecker.PseudoTypeKindNull:
