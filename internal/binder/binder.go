@@ -659,6 +659,12 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
+		if !ast.IsSourceFile(b.container) && b.lookupName("exports", b.container) != nil {
+			if b.file.CommonJSModuleIndicator == node {
+				b.file.CommonJSModuleIndicator = nil
+			}
+			break
+		}
 		b.trackNestedCJSExport(node)
 		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
@@ -862,6 +868,12 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 func (b *Binder) bindExportAssignment(node *ast.Node) {
 	container := b.container
 	if ast.IsJSExportAssignment(node) {
+		if !ast.IsSourceFile(container) && b.lookupName("module", container) != nil {
+			if b.file.CommonJSModuleIndicator == node {
+				b.file.CommonJSModuleIndicator = nil
+			}
+			return
+		}
 		container = b.file.AsNode()
 		b.trackNestedCJSExport(node)
 	}
