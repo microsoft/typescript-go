@@ -605,6 +605,7 @@ type Checker struct {
 	exactOptionalPropertyTypes                  bool
 	canCollectSymbolAliasAccessibilityData      bool
 	wasCanceled                                 bool
+	saveDeferredDiagnostics                     bool
 	arrayVariances                              []VarianceFlags
 	globals                                     ast.SymbolTable
 	evaluate                                    evaluator.Evaluator
@@ -2125,11 +2126,11 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
-	c.checkNotCanceled()
+func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool) {
+	c.ctx = ctx
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
-		c.ctx = ctx
+		c.saveDeferredDiagnostics = true
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
@@ -2139,21 +2140,25 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			c.checkExternalModuleExports(sourceFile.AsNode())
 			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
 		}
-		if ctx.Err() == nil {
-			// This relies on the results of other lazy diagnostics, so must be computed after them
-			if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
-				c.checkUnusedIdentifiers(links.identifierCheckNodes)
-			}
-			if !sourceFile.IsDeclarationFile {
-				c.checkUnusedRenamedBindingElements()
-			}
-		} else {
-			c.wasCanceled = true
+		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
+			c.checkUnusedRenamedBindingElements()
 		}
-		c.ctx = nil
+		c.saveDeferredDiagnostics = false
+		c.produceDeferredDiagnostics()
 		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
 	}
+	if checkUnused && !links.unusedChecked {
+		// The unused identifiers check relies on a full type check having first been performed
+		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
+			c.checkUnusedIdentifiers(links.identifierCheckNodes)
+		}
+		links.unusedChecked = true
+	}
+	if c.isCanceled() {
+		c.wasCanceled = true
+	}
+	c.ctx = nil
 }
 
 func (c *Checker) checkSourceElements(nodes []*ast.Node) {
@@ -13462,36 +13467,26 @@ func (c *Checker) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 
 func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection) []*ast.Diagnostic {
 	c.checkNotCanceled()
-	isSuggestionDiagnostics := collection == &c.suggestionDiagnostics
-
-	c.checkSourceFile(ctx, sourceFile)
+	checkUnused := c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue() || collection == &c.suggestionDiagnostics
+	c.checkSourceFile(ctx, sourceFile, checkUnused)
 	if c.wasCanceled {
 		return nil
 	}
-
-	// Check unused identifiers as suggestions if we're collecting suggestion diagnostics
-	// and they are not configured as errors
-	if isSuggestionDiagnostics && !sourceFile.IsDeclarationFile &&
-		!(c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
-		links := c.sourceFileLinks.Get(sourceFile)
-		c.checkUnusedIdentifiers(links.identifierCheckNodes)
-	}
-	c.collectDeferredDiagnostics()
-
 	return collection.GetDiagnosticsForFile(sourceFile.FileName())
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
 	c.checkNotCanceled()
-	c.collectDeferredDiagnostics()
 	return c.diagnostics.GetGlobalDiagnostics()
 }
 
 func (c *Checker) addDeferredDiagnostic(callback func()) {
-	c.deferredDiagnosticCallbacks = append(c.deferredDiagnosticCallbacks, callback)
+	if c.saveDeferredDiagnostics {
+		c.deferredDiagnosticCallbacks = append(c.deferredDiagnosticCallbacks, callback)
+	}
 }
 
-func (c *Checker) collectDeferredDiagnostics() {
+func (c *Checker) produceDeferredDiagnostics() {
 	for _, cb := range c.deferredDiagnosticCallbacks {
 		cb()
 	}
