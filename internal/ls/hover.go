@@ -563,26 +563,26 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		}
 		if ast.IsClassOrInterfaceLike(node.Parent) {
 			isStatic := ast.HasStaticModifier(node)
+			foundInBase := false
 			for _, baseType := range c.GetBaseTypes(c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())) {
 				t := baseType
 				if isStatic && baseType.Symbol() != nil {
 					t = c.GetTypeOfSymbol(baseType.Symbol())
 				}
 				if prop := c.GetPropertyOfType(t, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+					foundInBase = true
 					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 						return jsDoc
 					}
 				}
 			}
-			// For static members on intersection base types (e.g., from mixins),
-			// baseType.Symbol() may be nil, preventing access to the constructor type.
-			// Fall back to using heritage clause expressions to get the constructor type directly.
-			if isStatic {
-				for _, superTypeNode := range getAllSuperTypeNodes(node.Parent) {
-					if superTypeNode == nil {
-						continue
-					}
-					if expr := superTypeNode.Expression(); expr != nil {
+			// When a class extends an intersection constructor type (e.g., from a mixin
+			// returning typeof MixinClass & T), GetBaseTypes resolves to the return type
+			// of the first construct signature, which may not contain all static members.
+			// Fall back to the extends clause expression to get the full constructor type.
+			if isStatic && !foundInBase {
+				if extendsNode := ast.GetClassExtendsHeritageElement(node.Parent); extendsNode != nil {
+					if expr := extendsNode.Expression(); expr != nil {
 						if prop := c.GetPropertyOfType(c.GetTypeAtLocation(expr), symbol.Name); prop != nil && prop.ValueDeclaration != nil {
 							if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 								return jsDoc
