@@ -2902,24 +2902,6 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 	}
 }
 
-func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Checker, contextFlags checker.ContextFlags) *checker.Type {
-	parent := ast.WalkUpParenthesizedExpressions(node.Parent)
-	switch parent.Kind {
-	case ast.KindNewExpression:
-		return typeChecker.GetContextualType(parent, contextFlags)
-	case ast.KindBinaryExpression:
-		if isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
-			return typeChecker.GetTypeAtLocation(
-				core.IfElse(node == parent.AsBinaryExpression().Right, parent.AsBinaryExpression().Left, parent.AsBinaryExpression().Right))
-		}
-		return typeChecker.GetContextualType(node, contextFlags)
-	case ast.KindCaseClause:
-		return getSwitchedType(parent, typeChecker)
-	default:
-		return typeChecker.GetContextualType(node, contextFlags)
-	}
-}
-
 func getSwitchedType(caseClause *ast.CaseClauseNode, typeChecker *checker.Checker) *checker.Type {
 	return typeChecker.GetTypeAtLocation(caseClause.Parent.Parent.Expression())
 }
@@ -3655,7 +3637,20 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 
 	switch node.Kind {
 	case ast.KindPropertySignature:
-		return typeChecker.GetTypeOfPropertyOfContextualType(t, node.Symbol().Name)
+		// Try to get the reparsed node first - we may be in JSDoc.
+		reparsed := ast.GetReparsedNodeForNode(node)
+		if symbol := reparsed.Symbol(); symbol != nil {
+			return typeChecker.GetTypeOfPropertyOfContextualType(t, symbol.Name)
+		}
+
+		// In some cases, we won't have a corresponding symbol
+		// (e.g. JSDoc types that never get re-attached) so we'll use
+		// the name as declared by the property as a best-effort.
+		if name, ok := ast.TryGetTextOfPropertyName(reparsed.Name()); ok {
+			return typeChecker.GetTypeOfPropertyOfContextualType(t, name)
+		}
+
+		return nil
 	case ast.KindColonToken:
 		if node.Parent.Kind == ast.KindPropertySignature {
 			// The cursor is at a property value location like `Foo<{ x: | }`.
