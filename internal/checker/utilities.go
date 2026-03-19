@@ -215,7 +215,8 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 }
 
 func isRightSideOfAccessExpression(node *ast.Node) bool {
-	return (node.Parent != nil && ast.IsRightSideOfPropertyAccess(node)) || ast.IsArgumentExpressionOfElementAccess(node)
+	return node.Parent != nil && (ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node ||
+		ast.IsElementAccessExpression(node.Parent) && node.Parent.AsElementAccessExpression().ArgumentExpression == node)
 }
 
 func isTopLevelInExternalModuleAugmentation(node *ast.Node) bool {

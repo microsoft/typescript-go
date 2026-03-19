@@ -36,6 +36,8 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindIdentifier:
 		return tx.visitIdentifier(node.AsIdentifier())
+	case ast.KindPropertyAccessExpression:
+		return tx.visitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindDecorator:
 		// Decorators are elided. They will be emitted as part of `visitClassDeclaration`.
 		return nil
@@ -69,17 +71,22 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 }
 
 func (tx *LegacyDecoratorsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
-	// takes the place of `substituteIdentifier` in the strada transform.
-	// Skip identifiers that are the name part of a property access expression (e.g., MyEnum.Foo)
-	// since those are not standalone references to the class.
-	original := tx.EmitContext().MostOriginal(node.AsNode())
-	if original.Parent != nil && ast.IsRightSideOfPropertyAccess(original) {
-		return node.AsNode()
-	}
+	// takes the place of `substituteIdentifier` in the strada transform
 	for _, d := range tx.enclosingClasses {
-		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(original) == tx.EmitContext().MostOriginal(d.AsNode()) {
+		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode())) == tx.EmitContext().MostOriginal(d.AsNode()) {
 			return tx.classAliases[d.AsNode()]
 		}
+	}
+	return node.AsNode()
+}
+
+func (tx *LegacyDecoratorsTransformer) visitPropertyAccessExpression(node *ast.PropertyAccessExpression) *ast.Node {
+	// Visit the expression but not the name, since property access names should not be substituted.
+	// In TypeScript, onSubstituteNode only fires for EmitHint.Expression, which excludes the
+	// .name of PropertyAccessExpression.
+	expression := tx.Visitor().VisitNode(node.Expression)
+	if expression != node.Expression {
+		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name())
 	}
 	return node.AsNode()
 }
