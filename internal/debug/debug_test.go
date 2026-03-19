@@ -29,14 +29,14 @@ func TestFailBadSyntaxKindNoMessage(t *testing.T) {
 	t.Parallel()
 	testutil.AssertPanics(t, func() {
 		debug.FailBadSyntaxKind(mockNode{"FooNode"})
-	}, "Debug failure. Unexpected node.\r\nNode FooNode was unexpected.")
+	}, "Debug failure. Unexpected node.\nNode FooNode was unexpected.")
 }
 
 func TestFailBadSyntaxKindWithMessage(t *testing.T) {
 	t.Parallel()
 	testutil.AssertPanics(t, func() {
 		debug.FailBadSyntaxKind(mockNode{"BarNode"}, "custom message")
-	}, "Debug failure. custom message\r\nNode BarNode was unexpected.")
+	}, "Debug failure. custom message\nNode BarNode was unexpected.")
 }
 
 func TestAssertNeverDefaultMessageKindString(t *testing.T) {

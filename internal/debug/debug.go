@@ -21,7 +21,7 @@ func FailBadSyntaxKind(node interface{ KindString() string }, message ...any) {
 	} else {
 		msg = fmt.Sprint(message...)
 	}
-	Fail(fmt.Sprintf("%s\r\nNode %s was unexpected.", msg, node.KindString()))
+	Fail(fmt.Sprintf("%s\nNode %s was unexpected.", msg, node.KindString()))
 }
 
 func AssertNever(member any, message ...any) {
