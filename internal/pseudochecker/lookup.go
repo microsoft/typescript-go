@@ -461,7 +461,7 @@ func IsInConstContext(node *ast.Node) bool {
 		node,
 		func(n *ast.Node) bool {
 			// stop traversing at assertions or anything not an array/object literal, since only those create or transfer const-ness
-			return ast.IsAssertionExpression(n) || !(ast.IsArrayLiteralExpression(n) || ast.IsObjectLiteralExpression(n) || ast.IsParenthesizedExpression(n))
+			return ast.IsAssertionExpression(n) || !(ast.IsArrayLiteralExpression(n) || ast.IsObjectLiteralExpression(n) || ast.IsParenthesizedExpression(n) || ast.IsShorthandPropertyAssignment(n) || ast.IsPropertyAssignment(n) || ast.IsPrefixUnaryExpression(n))
 		},
 	)
 	return ast.IsConstAssertion(maybeAssertion)
