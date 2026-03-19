@@ -1697,9 +1697,7 @@ func (c *Checker) getSuggestionForSymbolNameLookup(symbols ast.SymbolTable, name
 		return symbol
 	}
 	allSymbols := make([]*ast.Symbol, 0, len(symbols))
-	for _, s := range symbols {
-		allSymbols = append(allSymbols, s)
-	}
+	allSymbols = slices.AppendSeq(allSymbols, maps.Values(symbols))
 	if meaning&ast.SymbolFlagsGlobalLookup != 0 {
 		for _, s := range []string{"stringString", "numberNumber", "booleanBoolean", "objectObject", "bigintBigInt", "symbolSymbol"} {
 			if _, ok := symbols[s[len(s)/2:]]; ok {
