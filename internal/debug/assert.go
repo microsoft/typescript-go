@@ -53,9 +53,13 @@ func checkNonZeroSlow(message ...any) {
 	Fail(msg)
 }
 
-func CheckEach[TElem any](value []TElem, test func(TElem) bool, message ...any) []TElem {
+func AssertEach[TElem any](value []TElem, test func(TElem) bool, message ...any) {
 	for _, elem := range value {
 		Assert(test(elem), message...)
 	}
+}
+
+func CheckEach[TElem any](value []TElem, test func(TElem) bool, message ...any) []TElem {
+	AssertEach(value, test, message...)
 	return value
 }
