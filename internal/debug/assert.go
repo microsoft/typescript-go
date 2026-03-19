@@ -11,26 +11,19 @@ import (
 // (assertion failure) as an out-of-line call.
 // See https://dave.cheney.net/2020/05/02/mid-stack-inlining-in-go
 
-func Assert[T comparable](value T, message ...any) {
-	var zero T
-	if value != zero {
+func Assert(value bool, message ...any) {
+	if value {
 		return
 	}
-	assertSlow(value, message...)
+	assertSlow(message...)
 }
 
-func assertSlow[T comparable](value T, message ...any) {
-	var prefix string
-	if _, ok := any(value).(bool); ok {
-		prefix = "False expression"
-	} else {
-		prefix = "Expected non-zero value"
-	}
+func assertSlow(message ...any) {
 	var msg string
 	if len(message) > 0 {
-		msg = prefix + ": " + fmt.Sprint(message...)
+		msg = "False expression: " + fmt.Sprint(message...)
 	} else {
-		msg = prefix + "."
+		msg = "False expression."
 	}
 	Fail(msg)
 }

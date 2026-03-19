@@ -6573,7 +6573,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 			switch node.Kind {
 			case ast.KindImportClause, ast.KindImportSpecifier, ast.KindImportEqualsDeclaration:
 				if c.compilerOptions.VerbatimModuleSyntax.IsTrue() {
-					debug.Assert(node.Name(), "An ImportClause with a symbol should have a name")
+					debug.Assert(node.Name() != nil, "An ImportClause with a symbol should have a name")
 					var message *diagnostics.Message
 					switch {
 					case c.compilerOptions.VerbatimModuleSyntax.IsTrue() && ast.IsInternalModuleImportEqualsDeclaration(node):
@@ -8971,7 +8971,7 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 	typeArgumentTypes := c.fillMissingTypeArguments(core.Map(typeArgumentNodes, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters), isJavaScript)
 	var mapper *TypeMapper
 	for i := range typeArgumentNodes {
-		debug.Assert(typeParameters[i], "Should not call checkTypeArguments with too many type arguments")
+		debug.Assert(typeParameters[i] != nil, "Should not call checkTypeArguments with too many type arguments")
 		constraint := c.getConstraintOfTypeParameter(typeParameters[i])
 		if constraint != nil {
 			typeArgumentHeadMessage := core.OrElse(headMessage, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
@@ -15438,7 +15438,7 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 // @param lateSymbols The late-bound symbols of the parent.
 // @param decl The member to bind.
 func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTable, lateSymbols ast.SymbolTable, decl *ast.Node) *ast.Symbol {
-	debug.Assert(decl.Symbol(), "The member is expected to have a symbol.")
+	debug.Assert(decl.Symbol() != nil, "The member is expected to have a symbol.")
 	links := c.symbolNodeLinks.Get(decl)
 	if links.resolvedSymbol == nil {
 		// In the event we attempt to resolve the late-bound name of this member recursively,
@@ -16003,7 +16003,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		members["exports"] = fileSymbol
 		return c.newAnonymousType(symbol, members, nil, nil, nil)
 	}
-	debug.Assert(symbol.ValueDeclaration)
+	debug.Assert(symbol.ValueDeclaration != nil)
 	declaration := symbol.ValueDeclaration
 	if ast.IsSourceFile(declaration) && ast.IsJsonSourceFile(declaration.AsSourceFile()) {
 		statements := declaration.Statements()
@@ -20532,7 +20532,7 @@ func (c *Checker) getUnionSignatures(signatureLists [][]*Signature) []*Signature
 		for _, signatures := range signatureLists {
 			if !core.Same(signatures, masterList) {
 				signature := signatures[0]
-				debug.Assert(signature, "getUnionSignatures bails early on empty signature lists and should not have empty lists on second pass")
+				debug.Assert(signature != nil, "getUnionSignatures bails early on empty signature lists and should not have empty lists on second pass")
 				if len(signature.typeParameters) != 0 && core.Some(results, func(s *Signature) bool {
 					return len(s.typeParameters) != 0 && !c.compareTypeParametersIdentical(signature.typeParameters, s.typeParameters)
 				}) {
@@ -23052,7 +23052,7 @@ func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) [
 			return initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer)
 		})
 	}
-	debug.Assert(declaration, "Class was missing valueDeclaration -OR- non-class had no interface declarations")
+	debug.Assert(declaration != nil, "Class was missing valueDeclaration -OR- non-class had no interface declarations")
 	return c.getOuterTypeParameters(declaration, false /*includeThisTypes*/)
 }
 
@@ -27936,7 +27936,7 @@ func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisT
 		}
 	}
 	if len(candidates) == 0 {
-		debug.Assert(thisTypeForError)
+		debug.Assert(thisTypeForError != nil)
 		if thisTypeForErrorOut != nil {
 			*thisTypeForErrorOut = thisTypeForError
 		}

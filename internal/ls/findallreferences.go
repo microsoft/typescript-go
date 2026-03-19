@@ -1262,7 +1262,7 @@ func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *
 }
 
 func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
-	debug.Assert(symbol.ValueDeclaration)
+	debug.Assert(symbol.ValueDeclaration != nil)
 
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
@@ -1342,7 +1342,7 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 				} else if ast.IsExportAssignment(decl) {
 					// Find the export keyword
 					node = astnav.FindChildOfKind(decl, ast.KindExportKeyword, sourceFile)
-					debug.Assert(node, "Expected to find export keyword")
+					debug.Assert(node != nil, "Expected to find export keyword")
 				} else {
 					node = ast.GetNameOfDeclaration(decl)
 					if node == nil {
@@ -1939,7 +1939,7 @@ func (state *refState) getReferencesAtExportSpecifier(
 
 		if addReferencesHere && state.options.use != referenceUseRename && state.markSeenReExportRHS(name) {
 			exportSymbol := exportSpecifier.AsNode().Symbol()
-			debug.Assert(exportSymbol, "exportSpecifier.Symbol() should not be nil")
+			debug.Assert(exportSymbol != nil, "exportSpecifier.Symbol() should not be nil")
 			state.addReference(name, exportSymbol, entryKindNode)
 		}
 	} else {
@@ -1956,7 +1956,7 @@ func (state *refState) getReferencesAtExportSpecifier(
 			exportKind = ExportKindDefault
 		}
 		exportSymbol := exportSpecifier.AsNode().Symbol()
-		debug.Assert(exportSymbol, "exportSpecifier.Symbol() should not be nil")
+		debug.Assert(exportSymbol != nil, "exportSpecifier.Symbol() should not be nil")
 		exportInfo := getExportInfo(exportSymbol, exportKind, state.checker)
 		if exportInfo != nil {
 			state.searchForImportsOfExport(referenceLocation, exportSymbol, exportInfo)

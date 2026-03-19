@@ -320,7 +320,7 @@ func getTypeKeywordOfTypeOnlyImport(importClause *ast.ImportClause, sourceFile *
 	// import type { foo } from './bar'
 	//        ^^^^
 	typeKeyword := astnav.FindChildOfKind(importClause.AsNode(), ast.KindTypeKeyword, sourceFile)
-	debug.Assert(typeKeyword, "type-only import clause should have a type keyword")
+	debug.Assert(typeKeyword != nil, "type-only import clause should have a type keyword")
 	return typeKeyword
 }
 
