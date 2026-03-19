@@ -206,6 +206,11 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, file *ast.Source
 func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	p.panicIfNoProgram("Emit")
 
+	// Cache declaration transforms so that if HandleNoEmitOnError runs
+	// GetDeclarationDiagnostics, the subsequent emit can reuse the results.
+	p.program.BeginCacheDeclarationTransforms()
+	defer p.program.EndCacheDeclarationTransforms()
+
 	var result *compiler.EmitResult
 	if p.snapshot.options.NoEmit.IsTrue() {
 		result = &compiler.EmitResult{EmitSkipped: true}

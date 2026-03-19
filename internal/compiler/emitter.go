@@ -31,6 +31,15 @@ const (
 	EmitOnlyForcedDts
 )
 
+// cachedDeclarationTransform holds the result of a prior declaration transform,
+// allowing emitDeclarationFile to skip re-running the transform.
+type cachedDeclarationTransform struct {
+	sourceFile     *ast.SourceFile
+	diagnostics    []*ast.Diagnostic
+	emitContext    *printer.EmitContext
+	putEmitContext func()
+}
+
 type emitter struct {
 	host               EmitHost
 	emitOnly           EmitOnly
@@ -40,6 +49,14 @@ type emitter struct {
 	sourceFile         *ast.SourceFile
 	emitResult         EmitResult
 	writeFile          func(fileName string, text string, data *WriteFileData) error
+
+	// Populated from the program's declarationTransformCache when available.
+	cachedDtsTransform *cachedDeclarationTransform
+
+	// Set during emitDeclarationFile when the declaration transform runs.
+	// Used to populate the declaration diagnostic cache in Program.Emit.
+	declarationDiagnostics    []*ast.Diagnostic
+	hasDeclarationDiagnostics bool
 }
 
 func (e *emitter) emit() {
@@ -196,12 +213,26 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	}
 
 	var diags []*ast.Diagnostic
-	emitContext, putEmitContext := printer.GetEmitContext()
-	defer putEmitContext()
-	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
-		sourceFile = transformer.TransformSourceFile(sourceFile)
-		diags = append(diags, transformer.GetDiagnostics()...)
+	var emitContext *printer.EmitContext
+	var putEmitContext func()
+
+	// Check for a cached declaration transform result from a prior GetDeclarationDiagnostics call.
+	if e.cachedDtsTransform != nil {
+		sourceFile = e.cachedDtsTransform.sourceFile
+		diags = e.cachedDtsTransform.diagnostics
+		emitContext = e.cachedDtsTransform.emitContext
+		putEmitContext = e.cachedDtsTransform.putEmitContext
+		e.cachedDtsTransform = nil
+	} else {
+		emitContext, putEmitContext = printer.GetEmitContext()
+		for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
+			sourceFile = transformer.TransformSourceFile(sourceFile)
+			diags = append(diags, transformer.GetDiagnostics()...)
+		}
 	}
+	defer putEmitContext()
+	e.declarationDiagnostics = diags
+	e.hasDeclarationDiagnostics = true
 
 	// !!! strada skipped emit if there were diagnostics
 
@@ -481,16 +512,4 @@ func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFile *ast
 
 func isSourceFileNotJson(file *ast.SourceFile) bool {
 	return !ast.IsJsonSourceFile(file)
-}
-
-func getDeclarationDiagnostics(host EmitHost, file *ast.SourceFile) []*ast.Diagnostic {
-	// TODO: use p.getSourceFilesToEmit cache
-	fullFiles := core.Filter(getSourceFilesToEmit(host, file, false), isSourceFileNotJson)
-	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == file }) {
-		return []*ast.Diagnostic{}
-	}
-	options := host.Options()
-	transform := declarations.NewDeclarationTransformer(host, nil, options, "", "")
-	transform.TransformSourceFile(file)
-	return transform.GetDiagnostics()
 }

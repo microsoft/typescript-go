@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/symlinks"
+	"github.com/microsoft/typescript-go/internal/transformers/declarations"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -86,7 +87,9 @@ type Program struct {
 	commonSourceDirectory     string
 	commonSourceDirectoryOnce sync.Once
 
-	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
+	declarationDiagnosticCache    collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
+	declarationTransformCache     collections.SyncMap[*ast.SourceFile, *cachedDeclarationTransform]
+	preserveDeclarationTransforms bool
 
 	programDiagnostics         []*ast.Diagnostic
 	hasEmitBlockingDiagnostics collections.Set[tspath.Path]
@@ -596,6 +599,33 @@ func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDt
 		return p.sourceFilesToEmit
 	}
 	return getSourceFilesToEmit(p, targetSourceFile, forceDtsEmit)
+}
+
+// clearDeclarationTransformCache cleans up any cached declaration transform results
+// that were not consumed by emit.
+func (p *Program) clearDeclarationTransformCache() {
+	p.declarationTransformCache.Range(func(_ *ast.SourceFile, cached *cachedDeclarationTransform) bool {
+		cached.putEmitContext()
+		return true
+	})
+	p.declarationTransformCache.Clear()
+}
+
+// BeginCacheDeclarationTransforms tells getDeclarationDiagnosticsForFile to preserve
+// declaration transform results (transformed AST + EmitContext) so that a subsequent
+// emitDeclarationFile call can reuse them instead of re-running the transform.
+// Must be paired with EndCacheDeclarationTransforms to clean up.
+// The caller must ensure all concurrent work between Begin and End completes before
+// End is called (e.g., via a WaitGroup), providing the happens-before guarantee.
+func (p *Program) BeginCacheDeclarationTransforms() {
+	p.preserveDeclarationTransforms = true
+}
+
+// EndCacheDeclarationTransforms clears the preservation flag and releases any cached
+// declaration transform results that were not consumed by emit.
+func (p *Program) EndCacheDeclarationTransforms() {
+	p.preserveDeclarationTransforms = false
+	p.clearDeclarationTransformCache()
 }
 
 func (p *Program) verifyCompilerOptions() {
@@ -1288,8 +1318,43 @@ func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFi
 
 	host, done := newEmitHost(ctx, p, sourceFile)
 	defer done()
-	diagnostics := getDeclarationDiagnostics(host, sourceFile)
-	diagnostics, _ = p.declarationDiagnosticCache.LoadOrStore(sourceFile, diagnostics)
+
+	fullFiles := core.Filter(getSourceFilesToEmit(p, sourceFile, false), isSourceFileNotJson)
+	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == sourceFile }) {
+		diagnostics, _ := p.declarationDiagnosticCache.LoadOrStore(sourceFile, []*ast.Diagnostic{})
+		return diagnostics
+	}
+
+	options := host.Options()
+	paths := outputpaths.GetOutputPathsFor(sourceFile, options, host, false)
+	declarationFilePath := paths.DeclarationFilePath()
+	declarationMapPath := paths.DeclarationMapPath()
+
+	if declarationFilePath == "" {
+		diagnostics, _ := p.declarationDiagnosticCache.LoadOrStore(sourceFile, []*ast.Diagnostic{})
+		return diagnostics
+	}
+
+	// Run the declaration transform with correct output paths.
+	emitContext, putEmitContext := printer.GetEmitContext()
+	transform := declarations.NewDeclarationTransformer(host, emitContext, options, declarationFilePath, declarationMapPath)
+	transformedFile := transform.TransformSourceFile(sourceFile)
+	diags := transform.GetDiagnostics()
+
+	// If Emit requested transform preservation, cache the full result for reuse
+	// by emitDeclarationFile, avoiding a redundant transform during emit.
+	if p.preserveDeclarationTransforms {
+		p.declarationTransformCache.Store(sourceFile, &cachedDeclarationTransform{
+			sourceFile:     transformedFile,
+			diagnostics:    diags,
+			emitContext:    emitContext,
+			putEmitContext: putEmitContext,
+		})
+	} else {
+		putEmitContext()
+	}
+
+	diagnostics, _ := p.declarationDiagnosticCache.LoadOrStore(sourceFile, diags)
 	return diagnostics
 }
 
@@ -1497,6 +1562,17 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
+	// Tell getDeclarationDiagnosticsForFile to preserve transform results so
+	// emitDeclarationFile can reuse them instead of re-running the transform.
+	// Skip if already set by an outer caller (e.g., incremental.Program.Emit).
+	if !p.preserveDeclarationTransforms {
+		p.preserveDeclarationTransforms = true
+		defer func() {
+			p.preserveDeclarationTransforms = false
+			p.clearDeclarationTransformCache()
+		}()
+	}
+
 	if options.EmitOnly != EmitOnlyForcedDts {
 		result := HandleNoEmitOnError(
 			ctx,
@@ -1519,11 +1595,18 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
 
 	for _, sourceFile := range sourceFiles {
+		// Check if a prior GetDeclarationDiagnostics call cached the transform result.
+		var cached *cachedDeclarationTransform
+		if c, ok := p.declarationTransformCache.Load(sourceFile); ok {
+			p.declarationTransformCache.Delete(sourceFile)
+			cached = c
+		}
 		emitter := &emitter{
-			writer:     nil,
-			sourceFile: sourceFile,
-			emitOnly:   options.EmitOnly,
-			writeFile:  options.WriteFile,
+			writer:             nil,
+			sourceFile:         sourceFile,
+			emitOnly:           options.EmitOnly,
+			writeFile:          options.WriteFile,
+			cachedDtsTransform: cached,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {
@@ -1548,6 +1631,14 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 
 	// wait for emit to complete
 	wg.RunAndWait()
+
+	// Cache declaration diagnostics from emitters that ran the declaration transform,
+	// so that subsequent calls to GetDeclarationDiagnostics can skip redundant work.
+	for _, e := range emitters {
+		if e.hasDeclarationDiagnostics {
+			p.declarationDiagnosticCache.LoadOrStore(e.sourceFile, e.declarationDiagnostics)
+		}
+	}
 
 	// collect results from emit, preserving input order
 	return CombineEmitResults(core.Map(emitters, func(e *emitter) *EmitResult {
