@@ -109,10 +109,11 @@ func (t *parseTask) load(loader *fileLoader) {
 		// files (the checker reports TS6305 for those), and skip when noResolve is set for reference
 		// file and type reference directive reasons (matching TypeScript's behavior of not processing
 		// these references when noResolve is true).
-		if tspath.HasExtension(t.normalizedFilePath) &&
-			loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) == nil &&
-			!(loader.opts.Config.CompilerOptions().NoResolve.IsTrue() &&
-				(t.includeReason.kind == fileIncludeKindReferenceFile || t.includeReason.kind == fileIncludeKindTypeReferenceDirective)) {
+		hasExtension := tspath.HasExtension(t.normalizedFilePath)
+		isProjectRefOutput := loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) != nil
+		shouldSkipForNoResolve := loader.opts.Config.CompilerOptions().NoResolve.IsTrue() &&
+			(t.includeReason.kind == fileIncludeKindReferenceFile || t.includeReason.kind == fileIncludeKindTypeReferenceDirective)
+		if hasExtension && !isProjectRefOutput && !shouldSkipForNoResolve {
 			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 				kind: processingDiagnosticKindExplainingFileInclude,
 				data: &includeExplainingDiagnostic{
