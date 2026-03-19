@@ -21508,6 +21508,9 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 		// or expression. There is a very high likelihood we're dealing with a combination of infinite generic types
 		// that perpetually generate new type identities, so we stop the recursion here by yielding the error type.
 		c.error(c.currentNode, diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite)
+		// Set this to a max value to "propagate" the error through any further instantiations within the currently checked node.
+		// This can skip a bunch of redundant work in the case of hitting the depth limit.
+		c.instantiationCount = 5_000_000
 		return c.errorType
 	}
 	index := c.findActiveMapper(m)
