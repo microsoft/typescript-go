@@ -742,13 +742,13 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			b.e.AddEmitFlags(res, printer.EFSingleLine)
 			return res
 		}
-		// !!! TODO: support single-quoted strings
-		// if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().SingleQuote {
-		// 	// set single quote on string literals
-		// 	c := node.Clone(b.f)
-		// 	c.AsStringLiteral().SingleQuote = true
-		// 	return c
-		// }
+
+		if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
+			// set single quote on string literals
+			c := node.Clone(b.f)
+			c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			return c
+		}
 
 		return visitor.VisitEachChild(node)
 	}
