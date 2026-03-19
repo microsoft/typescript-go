@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/napi"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/tsgorun"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
@@ -67,6 +68,14 @@ func initModule(env napi.Env, exports napi.Value) (napi.Value, error) {
 		return napi.Value{}, err
 	}
 	if err2 := env.SetNamedProperty(exports, "close", closeFn); err2 != nil {
+		return napi.Value{}, err2
+	}
+
+	runMainFn, err := env.CreateFunction("runMain", napiRunMain)
+	if err != nil {
+		return napi.Value{}, err
+	}
+	if err2 := env.SetNamedProperty(exports, "runMain", runMainFn); err2 != nil {
 		return napi.Value{}, err2
 	}
 
@@ -634,6 +643,57 @@ func (fs *napiCallbackFS) WriteFile(path string, data string) error {
 
 func (fs *napiCallbackFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
 	return fs.base.Chtimes(path, aTime, mTime)
+}
+
+// napiRunMain(args: string[], defaultLibraryPath?: string): number
+func napiRunMain(env napi.Env, args []napi.Value) napi.Value {
+	undef, _ := env.GetUndefinedValue()
+
+	if len(args) < 1 {
+		_ = env.ThrowError("runMain requires at least 1 argument (args: string[])")
+		return undef
+	}
+
+	length, err := env.GetArrayLength(args[0])
+	if err != nil {
+		_ = env.ThrowError(fmt.Sprintf("runMain: args must be an array: %v", err))
+		return undef
+	}
+
+	goArgs := make([]string, length)
+	for i := range length {
+		elem, elemErr := env.GetElement(args[0], i)
+		if elemErr != nil {
+			_ = env.ThrowError(fmt.Sprintf("runMain: failed to get arg at index %d: %v", i, elemErr))
+			return undef
+		}
+		s, strErr := env.StringValueToString(elem)
+		if strErr != nil {
+			_ = env.ThrowError(fmt.Sprintf("runMain: arg at index %d must be a string: %v", i, strErr))
+			return undef
+		}
+		goArgs[i] = s
+	}
+
+	var defaultLibraryPath string
+	if len(args) > 1 {
+		typ, _ := env.TypeOf(args[1])
+		if typ == "string" {
+			libPath, libErr := env.StringValueToString(args[1])
+			if libErr == nil {
+				defaultLibraryPath = libPath
+			}
+		}
+	}
+
+	exitCode := tsgorun.RunMain(goArgs, defaultLibraryPath)
+
+	result, err := env.CreateInt32(exitCode)
+	if err != nil {
+		_ = env.ThrowError(fmt.Sprintf("runMain: failed to create result: %v", err))
+		return undef
+	}
+	return result
 }
 
 func main() {}

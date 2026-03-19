@@ -1,4 +1,4 @@
-package main
+package tsgorun
 
 import (
 	"golang.org/x/sys/windows"

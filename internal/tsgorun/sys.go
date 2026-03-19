@@ -1,4 +1,4 @@
-package main
+package tsgorun
 
 import (
 	"fmt"
@@ -59,17 +59,23 @@ func (s *osSys) GetEnvironmentVariable(name string) string {
 	return os.Getenv(name)
 }
 
-func newSystem() *osSys {
+// NewSystem creates a new OS-backed system for the compiler.
+// If defaultLibraryPath is empty, the bundled library path is used.
+func NewSystem(defaultLibraryPath string) tsc.System {
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		os.Exit(int(tsc.ExitStatusInvalidProject_OutputsSkipped))
 	}
 
+	if defaultLibraryPath == "" {
+		defaultLibraryPath = bundled.LibPath()
+	}
+
 	return &osSys{
 		cwd:                tspath.NormalizePath(cwd),
 		fs:                 bundled.WrapFS(osvfs.FS()),
-		defaultLibraryPath: bundled.LibPath(),
+		defaultLibraryPath: defaultLibraryPath,
 		writer:             os.Stdout,
 		start:              time.Now(),
 	}

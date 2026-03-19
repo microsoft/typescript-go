@@ -250,6 +250,20 @@ export const tsgoNapiBuild = task({
     description: "Builds the tsgo NAPI native addon.",
     run: async () => {
         await buildTsgoNapi({ extraFlags: options.release ? getReleaseBuildFlags() : [] });
+
+        // Generate the JS entrypoint that loads the .node addon and runs main.
+        const jsEntry = `#!/usr/bin/env node
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const tsgo = require(path.resolve(__dirname, "tsgo.node"));
+
+process.exitCode = tsgo.runMain(process.argv.slice(2), __dirname);
+`;
+        fs.writeFileSync("./built/local/tsgo-napi.js", jsEntry, { mode: 0o755 });
     },
 });
 

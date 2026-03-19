@@ -340,3 +340,33 @@ func (e Env) GetNamedProperty(object Value, name string) (Value, error) {
 	}
 	return Value{raw: result}, nil
 }
+
+// GetArrayLength returns the length of a JS array.
+func (e Env) GetArrayLength(value Value) (int, error) {
+	var result C.uint32_t
+	status := C.napi_get_array_length(e.raw, value.raw, &result)
+	if err := napiStatusToError(status); err != nil {
+		return 0, err
+	}
+	return int(result), nil
+}
+
+// GetElement gets an element from a JS array by index.
+func (e Env) GetElement(object Value, index int) (Value, error) {
+	var result C.napi_value
+	status := C.napi_get_element(e.raw, object.raw, C.uint32_t(index), &result)
+	if err := napiStatusToError(status); err != nil {
+		return Value{}, err
+	}
+	return Value{raw: result}, nil
+}
+
+// CreateInt32 creates a NAPI int32 value from a Go int.
+func (e Env) CreateInt32(val int) (Value, error) {
+	var result C.napi_value
+	status := C.napi_create_int32(e.raw, C.int32_t(val), &result)
+	if err := napiStatusToError(status); err != nil {
+		return Value{}, err
+	}
+	return Value{raw: result}, nil
+}

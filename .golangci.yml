@@ -92,7 +92,7 @@ linters:
       - path: internal/fourslash/tests/gen/
         linters:
           - misspell
-      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled)|cmd/tsgo'
+      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled|tsgorun)|cmd/tsgo'
         text: should likely be used instead
       - path: '(.+)_test\.go$'
         text: should likely be used instead

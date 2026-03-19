@@ -1,4 +1,4 @@
-package main
+package tsgorun
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-func runAPI(args []string) int {
+func RunAPI(args []string) int {
 	flag := flag.NewFlagSet("api", flag.ContinueOnError)
 	cwd := flag.String("cwd", core.Must(os.Getwd()), "current working directory")
 	pipePath := flag.String("pipe", "", "use named pipe or Unix domain socket for communication instead of stdio")
