@@ -45,7 +45,7 @@ func newCompilerHost(
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
-		sourceFS: newSourceFS(true, builder.fs, builder.toPath),
+		sourceFS:          newSourceFS(true, builder.fs, builder.toPath),
 		sourceFilesByPath: &collections.SyncMap[tspath.Path, *loadedSourceFile]{},
 
 		project: project,
