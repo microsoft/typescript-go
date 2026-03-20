@@ -129,6 +129,7 @@ type classFieldsTransformer struct {
 	accessorFieldResultVisitor     *ast.NodeVisitor
 	arrayAssignmentElementVisitor  *ast.NodeVisitor
 	objectAssignmentElementVisitor *ast.NodeVisitor
+	substitutionVisitor            *ast.NodeVisitor
 
 	// Pre-bound callbacks to avoid repeated closure allocation.
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
@@ -183,6 +184,7 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	tx.accessorFieldResultVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAccessorFieldResult)
 	tx.arrayAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArrayAssignmentElement)
 	tx.objectAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitObjectAssignmentElement)
+	tx.substitutionVisitor = tx.EmitContext().NewNodeVisitor(tx.visitForSubstitution)
 	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result
@@ -241,30 +243,27 @@ func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 	return nil
 }
 
+// visitForSubstitution visits nodes solely for class alias substitution in subtrees
+// that don't contain class field or lexical this/super transforms. It substitutes
+// identifiers that reference class declarations with their aliases, while skipping
+// the .Name() of PropertyAccessExpressions to match TypeScript's emit-time behavior
+// where onSubstituteNode only fires for EmitHint.Expression.
+func (tx *classFieldsTransformer) visitForSubstitution(node *ast.Node) *ast.Node {
+	if node.Kind == ast.KindIdentifier {
+		return tx.visitIdentifier(node.AsIdentifier())
+	}
+	if node.Kind == ast.KindPropertyAccessExpression && ast.IsIdentifier(node.AsPropertyAccessExpression().Name()) {
+		return tx.visitPropertyAccessExpressionForSubstitution(node.AsPropertyAccessExpression())
+	}
+	return tx.substitutionVisitor.VisitEachChild(node)
+}
+
 // visit is the main visitor.
 func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
-	// Strada's onSubstituteNode runs on ALL emitted nodes regardless of transform flags.
-	// Since we substitute eagerly, we must check for identifiers needing alias substitution
-	// even in subtrees with no class field transforms.
-	// However, we must handle PropertyAccessExpression before identifiers so that the
-	// .Name() of a property access is not visited as a standalone identifier. In TypeScript,
-	// onSubstituteNode only fires for EmitHint.Expression, which excludes property names.
-	if len(tx.classAliases) > 0 {
-		if node.Kind == ast.KindPropertyAccessExpression && ast.IsIdentifier(node.AsPropertyAccessExpression().Name()) {
-			if node.SubtreeFacts()&(ast.SubtreeContainsClassFields|ast.SubtreeContainsLexicalThisOrSuper) != 0 {
-				return tx.visitPropertyAccessExpression(node.AsPropertyAccessExpression())
-			}
-			return tx.visitPropertyAccessExpressionForSubstitution(node.AsPropertyAccessExpression())
-		}
-		if node.Kind == ast.KindIdentifier {
-			return tx.visitIdentifier(node.AsIdentifier())
-		}
-	}
-
 	if node.SubtreeFacts()&(ast.SubtreeContainsClassFields|ast.SubtreeContainsLexicalThisOrSuper) == 0 {
 		if tx.currentClassContainer != nil && len(tx.classAliases) > 0 {
 			// Continue visiting for alias substitution even in non-class-field subtrees.
-			return tx.Visitor().VisitEachChild(node)
+			return tx.visitForSubstitution(node)
 		}
 		return node
 	}
