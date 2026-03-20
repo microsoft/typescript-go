@@ -313,6 +313,12 @@ func (p *Project) CreateProgram() CreateProgramResult {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
+			for _, file := range newProgram.SourceFiles() {
+				if file.Path() != p.dirtyFilePath {
+					// UpdateProgram acquired the changed file only, so we need to ref everything else
+					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
 		}
 	} else {
 		var typingsLocation string

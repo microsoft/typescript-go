@@ -161,7 +161,7 @@ func TestRefCountingCaches(t *testing.T) {
 			// Entry should now be gone (refCount 0, deleted)
 			mainEntry, ok := session.parseCache.entries.Load(NewParseCacheKey(main.ParseOptions(), main.Hash, main.ScriptKind))
 			if ok {
-				t.Logf("Entry still exists with refCount=%d, deleted=%v", mainEntry.refCount, mainEntry.deleted)
+				t.Logf("Entry still exists with refCount=%d", mainEntry.refCount)
 			}
 			assert.Assert(t, !ok, "entry should be deleted after program is disposed")
 		})
@@ -187,12 +187,13 @@ func TestRefCountingCaches(t *testing.T) {
 			config := snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json")
 			assert.Equal(t, config.ExtendedSourceFiles()[0], "/user/username/projects/myproject/tsconfig.base.json")
 			extendedConfigEntry, _ := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tsconfig.base.json")
-			assert.Equal(t, extendedConfigEntry.refCount, 1)
+			assert.Equal(t, len(extendedConfigEntry.owners), 1)
 
 			session.DidCloseFile(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
 			session.WaitForBackgroundTasks()
-			assert.Equal(t, extendedConfigEntry.refCount, 0)
+			_, ok := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tsconfig.base.json")
+			assert.Equal(t, ok, false)
 		})
 	})
 }

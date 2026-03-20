@@ -452,7 +452,6 @@ func (s *Session) getSnapshot(
 	var snapshot *Snapshot
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
-
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
 	if updateSnapshot {
@@ -933,7 +932,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 			parseCacheSize++
 			return true
 		})
-		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *refCountCacheEntry[*ExtendedConfigCacheEntry]) bool {
+		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *ownerCacheEntry[*ExtendedConfigCacheEntry]) bool {
 			extendedConfigCount++
 			return true
 		})

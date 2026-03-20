@@ -27,6 +27,7 @@ type configFileRegistryBuilder struct {
 	fs                  *sourceFS
 	isOpenFile          func(tspath.Path) bool
 	extendedConfigCache *ExtendedConfigCache
+	snapshotID          uint64
 	sessionOptions      *SessionOptions
 
 	base            *ConfigFileRegistry
@@ -38,6 +39,7 @@ func newConfigFileRegistryBuilder(
 	fs *snapshotFSBuilder,
 	oldConfigFileRegistry *ConfigFileRegistry,
 	extendedConfigCache *ExtendedConfigCache,
+	snapshotID uint64,
 	sessionOptions *SessionOptions,
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
@@ -47,6 +49,7 @@ func newConfigFileRegistryBuilder(
 		base:                oldConfigFileRegistry,
 		sessionOptions:      sessionOptions,
 		extendedConfigCache: extendedConfigCache,
+		snapshotID:          snapshotID,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -651,7 +654,7 @@ func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspa
 		content = fh.Content()
 	}
 
-	return c.extendedConfigCache.Load(path, ExtendedConfigParseArgs{
+	return c.extendedConfigCache.LoadAndAcquire(path, c.snapshotID, ExtendedConfigParseArgs{
 		FileName:        fileName,
 		Content:         content,
 		FS:              c.fs.source,
