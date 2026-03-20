@@ -165,11 +165,11 @@ git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/b
 
 #### Accepting baselines
 
-After running tests and reviewing the differences:
+**Important**: Only accept baselines immediately after a successful `npx hereby test` run. The `hereby test` command clears stale baselines before running, so accepting after it guarantees you're only accepting baselines from the current test run. If you accept without running `hereby test` first, you risk accepting old/stale baselines from previous runs.
 
 ```bash
-# Accept all new baselines (copies local/ → reference/)
-npx hereby baseline-accept
+npx hereby test              # MUST run this first — clears stale state
+npx hereby baseline-accept   # Then accept the baselines
 ```
 
 The `baseline-accept` task:
@@ -434,8 +434,9 @@ File extensions vary by command:
 - `.baseline.md` — auto imports
 - `.callHierarchy.txt` — call hierarchy
 
-Accept baselines the same way as compiler tests:
+Accept baselines the same way as compiler tests — but only after running `npx hereby test`:
 ```bash
+npx hereby test              # MUST run first to clear stale baselines
 npx hereby baseline-accept
 ```
 
@@ -472,19 +473,19 @@ Hand-written tests (directly in `internal/fourslash/tests/`):
 1. Create `testdata/tests/cases/compiler/myTest.ts` with test code and directives
 2. Run all tests: `npx hereby test`
 3. Review generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
-4. Accept: `npx hereby baseline-accept`
+4. Accept (only after `hereby test`): `npx hereby baseline-accept`
 
 #### Adding a new fourslash test
 1. Create `internal/fourslash/tests/myTest_test.go` with the test function
 2. Run all tests: `npx hereby test`
 3. Review any generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
-4. Accept: `npx hereby baseline-accept`
+4. Accept (only after `hereby test`): `npx hereby baseline-accept`
 
 #### Investigating a test failure
 1. Run all tests: `npx hereby test`
 2. If a test fails, use the package and test name from the output to re-run with verbose output: `go test ./internal/testrunner/ -run 'TestLocal/failingTest' -v`
 3. Check baseline diffs: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
-4. If the new output is correct, accept: `npx hereby baseline-accept`
+4. If the new output is correct, run `npx hereby test` again, then accept: `npx hereby baseline-accept`
 5. If not, fix the code and re-run
 
 #### Debugging an unrecovered panic
