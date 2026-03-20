@@ -307,7 +307,8 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 		referencedFileName = tspath.CombinePaths(basePath, moduleName)
 	}
 	return resolvedRef{
-		fileName: tspath.NormalizePath(referencedFileName),
+		fileName:         tspath.NormalizePath(referencedFileName),
+		originalFileName: tspath.NormalizePath(moduleName),
 		includeReason: &FileIncludeReason{
 			kind: fileIncludeKindReferenceFile,
 			data: &referencedFileData{

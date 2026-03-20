@@ -16,6 +16,7 @@ import (
 
 type parseTask struct {
 	normalizedFilePath          string
+	originalFileName            string // original reference string for diagnostics; empty if same as normalizedFilePath
 	path                        tspath.Path
 	file                        *ast.SourceFile
 	libFile                     *LibFile
@@ -110,12 +111,18 @@ func (t *parseTask) load(loader *fileLoader) {
 		hasExtension := tspath.HasExtension(t.normalizedFilePath)
 		isProjectRefOutput := loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) != nil
 		if hasExtension && !isProjectRefOutput {
+			// Use the original reference string in the diagnostic when available,
+			// falling back to the resolved path.
+			diagnosticFileName := t.normalizedFilePath
+			if t.originalFileName != "" {
+				diagnosticFileName = t.originalFileName
+			}
 			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 				kind: processingDiagnosticKindExplainingFileInclude,
 				data: &includeExplainingDiagnostic{
 					diagnosticReason: t.includeReason,
 					message:          diagnostics.File_0_not_found,
-					args:             []any{t.normalizedFilePath},
+					args:             []any{diagnosticFileName},
 				},
 			})
 		}
@@ -183,17 +190,19 @@ func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 }
 
 type resolvedRef struct {
-	fileName      string
-	increaseDepth bool
-	elideOnDepth  bool
-	includeReason *FileIncludeReason
-	packageId     module.PackageId
+	fileName         string
+	originalFileName string // original reference string (normalized); used in diagnostics when available
+	increaseDepth    bool
+	elideOnDepth     bool
+	includeReason    *FileIncludeReason
+	packageId        module.PackageId
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
 	subTask := &parseTask{
 		normalizedFilePath: normalizedFilePath,
+		originalFileName:   ref.originalFileName,
 		libFile:            libFile,
 		increaseDepth:      ref.increaseDepth,
 		elideOnDepth:       ref.elideOnDepth,
