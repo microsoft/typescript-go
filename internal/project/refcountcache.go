@@ -42,21 +42,14 @@ func NewRefCountCache[K comparable, V any, AcquireArgs any](
 //
 // The caller is responsible for calling Deref when done with the value.
 func (c *RefCountCache[K, V, AcquireArgs]) Acquire(identity K, acquireArgs AcquireArgs) V {
-	value, _ := c.AcquireWithStatus(identity, acquireArgs)
-	return value
-}
-
-// AcquireWithStatus behaves like Acquire and additionally reports whether the
-// returned value was reused from the cache without reparsing.
-func (c *RefCountCache[K, V, AcquireArgs]) AcquireWithStatus(identity K, acquireArgs AcquireArgs) (V, bool) {
 	entry, loaded := c.loadOrStoreNewLockedEntry(identity)
 	defer entry.mu.Unlock()
 	if !loaded {
 		// New entry - parse the value
 		entry.value = c.parse(identity, acquireArgs)
-		return entry.value, false
+		return entry.value
 	}
-	return entry.value, true
+	return entry.value
 }
 
 func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
