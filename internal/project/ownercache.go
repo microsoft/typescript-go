@@ -12,6 +12,12 @@ type ownerCacheEntry[V any] struct {
 	owners map[uint64]struct{}
 }
 
+// OwnerCache is like RefCountCache, but each entry tracks the set of its
+// owners instead of a count. We use this to associate extended config cache
+// entries with each snapshot that contains them, since the same config can
+// be Acquired multiple times during config parsing while only appearing once in
+// the ParsedCommandLine's list of extended files. When updating this code, check
+// if the same changes should be made to RefCountCache as well.
 type OwnerCache[K comparable, V any, LoadArgs any] struct {
 	entries collections.SyncMap[K, *ownerCacheEntry[V]]
 
