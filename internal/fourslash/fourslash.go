@@ -1483,6 +1483,238 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 	}
 }
 
+// VerifyCodeFixOptions are the options for VerifyCodeFix.
+type VerifyCodeFixOptions struct {
+	Description    string
+	NewFileContent string
+	Index          int
+	ApplyChanges   bool
+}
+
+// VerifyCodeFixAllOptions are the options for VerifyCodeFixAll.
+type VerifyCodeFixAllOptions struct {
+	FixID          string
+	NewFileContent string
+}
+
+// VerifyCodeFix verifies that applying a code fix produces the expected file content.
+func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if len(actions) == 0 {
+		t.Fatalf("No code fixes returned.")
+	}
+	if options.Index >= len(actions) {
+		t.Fatalf("Code fix index %d out of range (got %d fixes)", options.Index, len(actions))
+	}
+
+	// In TS, index refers to the Nth fix overall (not per description).
+	// Description is verified to match the fix at that index.
+	if options.Index >= len(actions) {
+		t.Fatalf("Code fix index %d out of range (got %d fixes)", options.Index, len(actions))
+	}
+	matchingAction := actions[options.Index]
+	if matchingAction.Title != options.Description {
+		// Try finding by description match as fallback (for tests where diagnostic ordering differs)
+		found := false
+		for _, action := range actions {
+			if action.Title == options.Description {
+				matchingAction = action
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("No code fix with description %q at index %d found. Available fixes: %v", options.Description, options.Index, titles)
+		}
+	}
+
+	if options.ApplyChanges {
+		// Apply changes to the actual file (like TS's applyChanges: true)
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			for _, edits := range *matchingAction.Edit.Changes {
+				f.applyTextEdits(t, edits)
+			}
+		}
+		actual := f.getScriptInfo(f.activeFilename).content
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+	} else {
+		// Compute the new content without mutating the file (matching TS behavior where
+		// verify.codeFix without applyChanges does not modify the file).
+		actual := f.getScriptInfo(f.activeFilename).content
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			for _, edits := range *matchingAction.Edit.Changes {
+				actual = f.applyEditsToContent(actual, edits)
+			}
+		}
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+	}
+}
+
+// VerifyCodeFixAvailable verifies that code fixes with the given descriptions are available.
+func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescriptions []string) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if expectedDescriptions == nil {
+		// Just checking that some fixes are available
+		if len(actions) == 0 {
+			t.Fatalf("Expected code fixes to be available, but got none.")
+		}
+		return
+	}
+
+	if len(expectedDescriptions) == 0 {
+		if len(actions) != 0 {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected no code fixes, but got: %v", titles)
+		}
+		return
+	}
+
+	for _, expected := range expectedDescriptions {
+		found := false
+		for _, action := range actions {
+			if action.Title == expected {
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected code fix with description %q not found. Available fixes: %v", expected, titles)
+		}
+	}
+}
+
+// VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
+// For each diagnostic, it requests code actions and applies only the first one (the annotation fix).
+func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllOptions) {
+	t.Helper()
+
+	applied := false
+	// Re-fetch diagnostics after each fix application to handle position shifts
+	for {
+		diagParams := &lsproto.DocumentDiagnosticParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+		}
+		diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+
+		var diagnostics []*lsproto.Diagnostic
+		if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+			diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+		}
+
+		appliedThisRound := false
+		for _, diag := range diagnostics {
+			params := &lsproto.CodeActionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Range: lsproto.Range{
+					Start: diag.Range.Start,
+					End:   diag.Range.End,
+				},
+				Context: &lsproto.CodeActionContext{
+					Diagnostics: []*lsproto.Diagnostic{diag},
+				},
+			}
+			result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+			if result.CommandOrCodeActionArray == nil {
+				continue
+			}
+			// Apply only the first quick fix for each diagnostic
+			for _, item := range *result.CommandOrCodeActionArray {
+				if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+					if item.CodeAction.Edit != nil && item.CodeAction.Edit.Changes != nil {
+						for _, edits := range *item.CodeAction.Edit.Changes {
+							f.applyTextEdits(t, edits)
+						}
+						applied = true
+						appliedThisRound = true
+					}
+					break // Only apply the first fix per diagnostic
+				}
+			}
+			if appliedThisRound {
+				break // Re-fetch diagnostics after applying a fix
+			}
+		}
+		if !appliedThisRound {
+			break // No more fixes to apply
+		}
+	}
+
+	if !applied {
+		t.Fatalf("No code fixes applied for fixId %q", options.FixID)
+	}
+
+	actual := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
+}
+
+// getCodeFixActions gets all quick fix code actions for the current file by gathering diagnostics.
+func (f *FourslashTest) getCodeFixActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+
+	diagParams := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+
+	var diagnostics []*lsproto.Diagnostic
+	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+	}
+
+	if len(diagnostics) == 0 {
+		return nil
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: diagnostics[0].Range.Start,
+			End:   diagnostics[0].Range.End,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: diagnostics,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
 func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []string, preferences *lsutil.UserPreferences) {
 	t.Helper()
 	fileName := f.activeFilename
@@ -2852,6 +3084,25 @@ func (f *FourslashTest) getSelection() core.TextRange {
 		int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition)),
 		int(f.converters.LineAndCharacterToPosition(script, *f.selectionEnd)),
 	)
+}
+
+// applyEditsToContent applies text edits to a content string without mutating the file.
+// Returns the new content.
+func (f *FourslashTest) applyEditsToContent(content string, edits []*lsproto.TextEdit) string {
+	script := f.getScriptInfo(f.activeFilename)
+	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
+		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
+		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
+		return int(aStart) - int(bStart)
+	})
+	// Apply edits in reverse order to avoid affecting positions
+	for i := len(edits) - 1; i >= 0; i-- {
+		edit := edits[i]
+		start := int(f.converters.LineAndCharacterToPosition(script, edit.Range.Start))
+		end := int(f.converters.LineAndCharacterToPosition(script, edit.Range.End))
+		content = content[:start] + edit.NewText + content[end:]
+	}
+	return content
 }
 
 // Updates f.currentCaretPosition
