@@ -211,3 +211,11 @@ conformance/typedefMultipleTypeParameters.types.diff
 conformance/typesWithSpecializedCallSignatures.types.diff
 conformance/typesWithSpecializedConstructSignatures.types.diff
 conformance/unionTypeReduction2.types.diff
+
+## Different union ordering ##
+compiler/es2018ObjectAssign.types.diff
+compiler/stableTypeOrdering(stabletypeordering=false).types.diff
+compiler/typePredicatesOptionalChaining3.types.diff
+conformance/typeGuardFunctionErrors.types.diff
+conformance/typeGuardNarrowsToLiteralTypeUnion.types.diff
+conformance/usePromiseFinally(target=es2015).types.diff
