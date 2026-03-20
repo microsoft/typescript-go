@@ -284,5 +284,42 @@ func TestRefCountingCaches(t *testing.T) {
 			_, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
 			assert.Assert(t, !ok)
 		})
+
+		t.Run("stale clone does not create nil-valued extended config entry", func(t *testing.T) {
+			t.Parallel()
+
+			session := setup(files)
+			uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
+			session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+			_, err := session.GetLanguageService(context.Background(), uri)
+			assert.NilError(t, err)
+			staleSnapshot := session.Snapshot()
+
+			extendedConfigPath := tspath.Path("/user/username/projects/myproject/tsconfig.base.json")
+			entry, ok := session.extendedConfigCache.entries.Load(extendedConfigPath)
+			assert.Assert(t, ok)
+			assert.Assert(t, entry.value != nil)
+
+			session.DidCloseFile(context.Background(), uri)
+			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
+			session.WaitForBackgroundTasks()
+
+			_, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
+			assert.Assert(t, !ok)
+
+			clone := staleSnapshot.Clone(context.Background(), SnapshotChange{
+				reason: UpdateReasonRequestedLanguageServiceProjectNotLoaded,
+				ResourceRequest: ResourceRequest{
+					Documents: []lsproto.DocumentUri{uri},
+				},
+			}, staleSnapshot.fs.overlays, session)
+
+			project := clone.GetDefaultProject(uri)
+			assert.Assert(t, project != nil)
+
+			entry, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
+			assert.Assert(t, ok)
+			assert.Assert(t, entry.value != nil)
+		})
 	})
 }
