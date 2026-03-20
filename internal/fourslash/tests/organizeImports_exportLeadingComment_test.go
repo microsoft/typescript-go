@@ -44,6 +44,46 @@ console.log(a);`,
 	)
 }
 
+func TestOrganizeImports_exportLeadingComment_secondExport_notDuplicated(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `export { a } from "a";
+// b
+export { b } from "b";
+console.log(a, b);`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyOrganizeImports(t,
+		`export { a } from "a";
+// b
+export { b } from "b";
+console.log(a, b);`,
+		lsproto.CodeActionKindSourceSortImports,
+		nil,
+	)
+}
+
+func TestOrganizeImports_exportLeadingComment_secondExport_withBlankLine_notDuplicated(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `export { a } from "a";
+
+// b
+export { b } from "b";
+console.log(a, b);`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyOrganizeImports(t,
+		`export { a } from "a";
+
+// b
+export { b } from "b";
+console.log(a, b);`,
+		lsproto.CodeActionKindSourceSortImports,
+		nil,
+	)
+}
+
 func TestOrganizeImports_exportLeadingComment_withBlankLine_notDuplicated(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
