@@ -659,7 +659,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
-		if !ast.IsSourceFile(b.container) && b.lookupName("exports", b.container) != nil {
+		if !ast.IsSourceFile(b.blockScopeContainer) && b.lookupName("exports", b.blockScopeContainer) != nil {
 			if b.file.CommonJSModuleIndicator == node {
 				b.file.CommonJSModuleIndicator = nil
 			}
@@ -868,7 +868,7 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 func (b *Binder) bindExportAssignment(node *ast.Node) {
 	container := b.container
 	if ast.IsJSExportAssignment(node) {
-		if !ast.IsSourceFile(container) && b.lookupName("module", container) != nil {
+		if !ast.IsSourceFile(b.blockScopeContainer) && b.lookupName("module", b.blockScopeContainer) != nil {
 			if b.file.CommonJSModuleIndicator == node {
 				b.file.CommonJSModuleIndicator = nil
 			}
