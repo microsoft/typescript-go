@@ -1801,8 +1801,8 @@ export const allChecks = task({
     name: "all-checks",
     description: "Runs all checks for the Go code (fourslash, lint, tests, etc.)",
     run: async () => {
-        await runTests();
         await $`npm run convertfourslash`;
+        await runTests();
         await $`npm run updatefailing`;
         await runFormat();
         await runLint();
