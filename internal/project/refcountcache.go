@@ -22,19 +22,16 @@ type RefCountCache[K comparable, V any, AcquireArgs any] struct {
 	Options RefCountCacheOptions
 	entries collections.SyncMap[K, *refCountCacheEntry[V]]
 
-	isExpired func(K, V, AcquireArgs) bool
-	parse     func(K, AcquireArgs) V
+	parse func(K, AcquireArgs) V
 }
 
 func NewRefCountCache[K comparable, V any, AcquireArgs any](
 	options RefCountCacheOptions,
 	parse func(K, AcquireArgs) V,
-	isExpired func(K, V, AcquireArgs) bool,
 ) *RefCountCache[K, V, AcquireArgs] {
 	return &RefCountCache[K, V, AcquireArgs]{
-		Options:   options,
-		isExpired: isExpired,
-		parse:     parse,
+		Options: options,
+		parse:   parse,
 	}
 }
 
@@ -54,7 +51,7 @@ func (c *RefCountCache[K, V, AcquireArgs]) Acquire(identity K, acquireArgs Acqui
 func (c *RefCountCache[K, V, AcquireArgs]) AcquireWithStatus(identity K, acquireArgs AcquireArgs) (V, bool) {
 	entry, loaded := c.loadOrStoreNewLockedEntry(identity)
 	defer entry.mu.Unlock()
-	if !loaded || c.isExpired != nil && c.isExpired(identity, entry.value, acquireArgs) {
+	if !loaded {
 		// New entry - parse the value
 		entry.value = c.parse(identity, acquireArgs)
 		return entry.value, false
