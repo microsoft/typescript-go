@@ -213,6 +213,7 @@ conformance/typesWithSpecializedConstructSignatures.types.diff
 conformance/unionTypeReduction2.types.diff
 
 ## Different union ordering ##
+## Tracked at https://github.com/microsoft/typescript-go/issues/3180
 compiler/es2018ObjectAssign.types.diff
 compiler/stableTypeOrdering(stabletypeordering=false).types.diff
 compiler/typePredicatesOptionalChaining3.types.diff
