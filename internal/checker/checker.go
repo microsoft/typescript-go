@@ -15646,9 +15646,11 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 	// A CommonJS module defined by an 'export=' might also export typedefs, stored on the original module
 	if originalModule != nil && len(originalModule.Exports) > 1 {
 		for _, symbol := range originalModule.Exports {
+			if symbol.Name == ast.InternalSymbolNameExportEquals || symbol.Name == ast.InternalSymbolNameExportStar {
+				continue
+			}
 			flags := c.getSymbolFlags(symbol)
-			if symbol.Name != ast.InternalSymbolNameExportEquals &&
-				flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 &&
+			if flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 &&
 				flags&ast.SymbolFlagsValue == 0 &&
 				exports[symbol.Name] == nil {
 				exports[symbol.Name] = symbol
