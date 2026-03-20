@@ -10,95 +10,55 @@ import (
 
 func TestOrganizeImports_exportLeadingComment_notDuplicated(t *testing.T) {
 	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// a
-export { a } from "a";
-console.log(a);`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	f.VerifyOrganizeImports(t,
-		`// a
+
+	cases := []struct {
+		name    string
+		content string
+	}{
+		{
+			name: "singleComment",
+			content: `// a
 export { a } from "a";
 console.log(a);`,
-		lsproto.CodeActionKindSourceSortImports,
-		nil,
-	)
-}
-
-func TestOrganizeImports_exportLeadingComment_multipleComments_notDuplicated(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// a
-// a
-export { a } from "a";
-console.log(a);`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	f.VerifyOrganizeImports(t,
-		`// a
+		},
+		{
+			name: "multipleComments",
+			content: `// a
 // a
 export { a } from "a";
 console.log(a);`,
-		lsproto.CodeActionKindSourceSortImports,
-		nil,
-	)
-}
-
-func TestOrganizeImports_exportLeadingComment_secondExport_notDuplicated(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export { a } from "a";
-// b
-export { b } from "b";
-console.log(a, b);`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	f.VerifyOrganizeImports(t,
-		`export { a } from "a";
+		},
+		{
+			name: "secondExport",
+			content: `export { a } from "a";
 // b
 export { b } from "b";
 console.log(a, b);`,
-		lsproto.CodeActionKindSourceSortImports,
-		nil,
-	)
-}
-
-func TestOrganizeImports_exportLeadingComment_secondExport_withBlankLine_notDuplicated(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export { a } from "a";
-
-// b
-export { b } from "b";
-console.log(a, b);`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	f.VerifyOrganizeImports(t,
-		`export { a } from "a";
+		},
+		{
+			name: "secondExportWithBlankLine",
+			content: `export { a } from "a";
 
 // b
 export { b } from "b";
 console.log(a, b);`,
-		lsproto.CodeActionKindSourceSortImports,
-		nil,
-	)
-}
-
-func TestOrganizeImports_exportLeadingComment_withBlankLine_notDuplicated(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// a
-
-export { a } from "a";
-console.log(a);`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	f.VerifyOrganizeImports(t,
-		`// a
+		},
+		{
+			name: "commentWithBlankLine",
+			content: `// a
 
 export { a } from "a";
 console.log(a);`,
-		lsproto.CodeActionKindSourceSortImports,
-		nil,
-	)
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+			f, done := fourslash.NewFourslash(t, nil /*capabilities*/, tc.content)
+			defer done()
+			f.VerifyOrganizeImports(t, tc.content, lsproto.CodeActionKindSourceSortImports, nil)
+		})
+	}
 }

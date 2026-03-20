@@ -805,7 +805,7 @@ func organizeExportsWorker(
 			)
 		} else {
 			for _, exp := range newExportDecls {
-				changeTracker.SetEmitFlags(exp.AsNode(), printer.EFNoLeadingComments)
+				changeTracker.AddEmitFlags(exp.AsNode(), printer.EFNoLeadingComments)
 			}
 
 			options := change.NodeOptions{
