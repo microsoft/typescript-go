@@ -70,7 +70,7 @@ func (t *parseTask) load(loader *fileLoader) {
 		if !allowNonTsExtensions {
 			canonicalFileName := tspath.GetCanonicalFileName(t.normalizedFilePath, loader.opts.Host.FS().UseCaseSensitiveFileNames())
 			supported := false
-			for _, ext := range loader.supportedExtensions {
+			for _, ext := range core.Flatten(loader.supportedExtensionsWithJsonIfResolveJsonModule) {
 				if tspath.FileExtensionIs(canonicalFileName, ext) {
 					supported = true
 					break
@@ -110,13 +110,20 @@ func (t *parseTask) load(loader *fileLoader) {
 	t.file = file
 	t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
 
-	for index, ref := range file.ReferencedFiles {
-		resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
-		t.addSubTask(resolvedPath, nil)
-	}
-
 	compilerOptions := loader.opts.Config.CompilerOptions()
-	loader.resolveTypeReferenceDirectives(t)
+	if !compilerOptions.NoResolve.IsTrue() {
+		for index, ref := range file.ReferencedFiles {
+			resolution := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
+			if resolution.ref != nil {
+				t.addSubTask(*resolution.ref, nil)
+			}
+			if resolution.diagnostic != nil {
+				t.processingDiagnostics = append(t.processingDiagnostics, resolution.diagnostic)
+			}
+		}
+
+		loader.resolveTypeReferenceDirectives(t)
+	}
 
 	if compilerOptions.NoLib != core.TSTrue {
 		for index, lib := range file.LibReferenceDirectives {
@@ -165,11 +172,12 @@ func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 }
 
 type resolvedRef struct {
-	fileName      string
-	increaseDepth bool
-	elideOnDepth  bool
-	includeReason *FileIncludeReason
-	packageId     module.PackageId
+	fileName             string
+	increaseDepth        bool
+	elideOnDepth         bool
+	includeReason        *FileIncludeReason
+	packageId            module.PackageId
+	processingDiagnostic *processingDiagnostic
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
@@ -181,6 +189,9 @@ func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 		elideOnDepth:       ref.elideOnDepth,
 		includeReason:      ref.includeReason,
 		packageId:          ref.packageId,
+	}
+	if ref.processingDiagnostic != nil {
+		subTask.processingDiagnostics = append(subTask.processingDiagnostics, ref.processingDiagnostic)
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }
@@ -402,7 +413,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			}
 
 			if file == nil {
-				// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 				missingFiles = append(missingFiles, task.normalizedFilePath)
 				continue
 			}

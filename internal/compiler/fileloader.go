@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -27,12 +28,18 @@ type LibFile struct {
 	Replaced bool
 }
 
+type tripleslashReferenceResolution struct {
+	ref        *resolvedRef
+	diagnostic *processingDiagnostic
+}
+
 type fileLoader struct {
-	opts                ProgramOptions
-	resolver            *module.Resolver
-	defaultLibraryPath  string
-	comparePathsOptions tspath.ComparePathsOptions
-	supportedExtensions []string
+	opts                                           ProgramOptions
+	resolver                                       *module.Resolver
+	defaultLibraryPath                             string
+	comparePathsOptions                            tspath.ComparePathsOptions
+	supportedExtensions                            [][]string
+	supportedExtensionsWithJsonIfResolveJsonModule [][]string
 
 	filesParser *filesParser
 	rootTasks   []*parseTask
@@ -121,7 +128,8 @@ func processAllProgramFiles(
 			maxDepth: maxNodeModuleJsDepth,
 		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
-		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
+		supportedExtensions: supportedExtensions,
+		supportedExtensionsWithJsonIfResolveJsonModule: tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions),
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
@@ -299,21 +307,123 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	return sourceFile
 }
 
-func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string, index int) resolvedRef {
+func (p *fileLoader) getSourceFileFromReferenceWorker(
+	fileName string,
+	referenceText string,
+	containingFile string,
+	getSourceFile func(string) bool,
+	fail func(*diagnostics.Message, ...any),
+) string {
+	options := p.opts.Config.CompilerOptions()
+	allowNonTsExtensions := options.AllowNonTsExtensions.IsTrue()
+	diagnosticFileName := tspath.NormalizeSlashes(referenceText)
+
+	if tspath.HasExtension(fileName) {
+		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
+		if !allowNonTsExtensions {
+			supported := false
+			for _, ext := range core.Flatten(p.supportedExtensionsWithJsonIfResolveJsonModule) {
+				if tspath.FileExtensionIs(canonicalFileName, ext) {
+					supported = true
+					break
+				}
+			}
+			if !supported {
+				if fail != nil {
+					if tspath.HasJSFileExtension(canonicalFileName) {
+						fail(diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, diagnosticFileName)
+					} else {
+						fail(diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, diagnosticFileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
+					}
+				}
+				return ""
+			}
+		}
+
+		if !getSourceFile(fileName) {
+			if fail != nil {
+				fail(diagnostics.File_0_not_found, diagnosticFileName)
+			}
+			return ""
+		}
+
+		if tspath.GetCanonicalFileName(containingFile, p.opts.Host.FS().UseCaseSensitiveFileNames()) == canonicalFileName {
+			if fail != nil {
+				fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
+			}
+			return ""
+		}
+		return fileName
+	}
+
+	if allowNonTsExtensions && getSourceFile(fileName) {
+		return fileName
+	}
+
+	if fail != nil && allowNonTsExtensions {
+		fail(diagnostics.File_0_not_found, diagnosticFileName)
+		return ""
+	}
+
+	for _, ext := range p.supportedExtensions[0] {
+		candidate := fileName + ext
+		if getSourceFile(candidate) {
+			return candidate
+		}
+	}
+
+	if fail != nil {
+		fail(diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, fileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
+	}
+	return ""
+}
+
+func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string, index int) tripleslashReferenceResolution {
 	basePath := tspath.GetDirectoryPath(containingFile)
 	referencedFileName := moduleName
 
 	if !tspath.IsRootedDiskPath(moduleName) {
 		referencedFileName = tspath.CombinePaths(basePath, moduleName)
 	}
-	return resolvedRef{
-		fileName: tspath.NormalizePath(referencedFileName),
-		includeReason: &FileIncludeReason{
-			kind: fileIncludeKindReferenceFile,
-			data: &referencedFileData{
-				file:  p.toPath(containingFile),
-				index: index,
-			},
+	normalizedFileName := tspath.NormalizePath(referencedFileName)
+	includeReason := &FileIncludeReason{
+		kind: fileIncludeKindReferenceFile,
+		data: &referencedFileData{
+			file:  p.toPath(containingFile),
+			index: index,
+		},
+	}
+
+	var diagnostic *processingDiagnostic
+	resolvedFileName := p.getSourceFileFromReferenceWorker(
+		normalizedFileName,
+		moduleName,
+		containingFile,
+		func(fileName string) bool {
+			return p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
+				FileName: fileName,
+				Path:     p.toPath(fileName),
+			}) != nil
+		},
+		func(message *diagnostics.Message, args ...any) {
+			diagnostic = &processingDiagnostic{
+				kind: processingDiagnosticKindExplainingFileInclude,
+				data: &includeExplainingDiagnostic{
+					diagnosticReason: includeReason,
+					message:          message,
+					args:             args,
+				},
+			}
+		},
+	)
+	if resolvedFileName == "" {
+		return tripleslashReferenceResolution{diagnostic: diagnostic}
+	}
+
+	return tripleslashReferenceResolution{
+		ref: &resolvedRef{
+			fileName:      resolvedFileName,
+			includeReason: includeReason,
 		},
 	}
 }
