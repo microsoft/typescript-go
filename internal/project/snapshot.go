@@ -451,7 +451,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.Program != nil {
-			session.programCounter.Ref(project.Program)
+			if project.ProgramLastUpdate == newSnapshotID {
+				session.programCounter.Add(project.Program)
+			} else {
+				session.programCounter.Ref(project.Program)
+			}
 		}
 		if project.ProgramLastUpdate == newSnapshotID {
 			// If the program was updated during this clone, the project and its host are new

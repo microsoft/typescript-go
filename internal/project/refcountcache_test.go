@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -165,6 +166,57 @@ func TestRefCountingCaches(t *testing.T) {
 			}
 			assert.Assert(t, !ok, "entry should be deleted after program is disposed")
 		})
+
+		t.Run("cloning disposed snapshot does not deref reused files", func(t *testing.T) {
+			t.Parallel()
+
+			files := map[string]any{
+				"/user/username/projects/myproject/src/main.ts":  `import { util } from "./utils"; const x = util();`,
+				"/user/username/projects/myproject/src/utils.ts": "export function util() { return 1; }",
+			}
+			session := setup(files)
+			mainURI := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
+			session.DidOpenFile(context.Background(), mainURI, 1, files["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			lsBefore, err := session.GetLanguageService(context.Background(), mainURI)
+			assert.NilError(t, err)
+			snapshot1 := session.Snapshot()
+			program1 := lsBefore.GetProgram()
+			utils1 := program1.GetSourceFile("/user/username/projects/myproject/src/utils.ts")
+			utilsKey := NewParseCacheKey(utils1.ParseOptions(), utils1.Hash, utils1.ScriptKind)
+			utilsEntry, ok := session.parseCache.entries.Load(utilsKey)
+			assert.Assert(t, ok)
+			assert.Equal(t, utilsEntry.refCount, 1)
+
+			session.DidChangeFile(context.Background(), mainURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					Partial: &lsproto.TextDocumentContentChangePartial{
+						Range: lsproto.Range{
+							Start: lsproto.Position{Line: 0, Character: 10},
+							End:   lsproto.Position{Line: 0, Character: 11},
+						},
+						Text: "2",
+					},
+				},
+			})
+
+			lsAfter, err := session.GetLanguageService(context.Background(), mainURI)
+			assert.NilError(t, err)
+			program2 := lsAfter.GetProgram()
+			assert.Equal(t, program2.GetSourceFile("/user/username/projects/myproject/src/utils.ts"), utils1)
+
+			staleClone := snapshot1.Clone(context.Background(), SnapshotChange{
+				reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
+				ResourceRequest: ResourceRequest{
+					Documents: []lsproto.DocumentUri{mainURI},
+				},
+			}, snapshot1.fs.overlays, session)
+			staleClone.Dispose(session)
+
+			utilsEntry, ok = session.parseCache.entries.Load(utilsKey)
+			assert.Assert(t, ok)
+			assert.Equal(t, utilsEntry.refCount, 1)
+		})
 	})
 
 	t.Run("extendedConfigCache", func(t *testing.T) {
@@ -194,6 +246,43 @@ func TestRefCountingCaches(t *testing.T) {
 			session.WaitForBackgroundTasks()
 			_, ok := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tsconfig.base.json")
 			assert.Equal(t, ok, false)
+		})
+
+		t.Run("release cache entries for unretained clone", func(t *testing.T) {
+			t.Parallel()
+
+			session := setup(files)
+			uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
+			baseSnapshot := session.Snapshot()
+			extendedConfigPath := tspath.Path("/user/username/projects/myproject/tsconfig.base.json")
+			clone := baseSnapshot.Clone(context.Background(), SnapshotChange{
+				reason: UpdateReasonRequestedLanguageServiceProjectNotLoaded,
+				ResourceRequest: ResourceRequest{
+					Documents: []lsproto.DocumentUri{uri},
+				},
+			}, baseSnapshot.fs.overlays, session)
+
+			project := clone.GetDefaultProject(uri)
+			assert.Assert(t, project != nil)
+			assert.Equal(t, project.ProgramLastUpdate, clone.id)
+
+			main := project.Program.GetSourceFile("/user/username/projects/myproject/src/main.ts")
+			mainKey := NewParseCacheKey(main.ParseOptions(), main.Hash, main.ScriptKind)
+			mainEntry, ok := session.parseCache.entries.Load(mainKey)
+			assert.Assert(t, ok)
+			assert.Equal(t, mainEntry.refCount, 1)
+
+			extendedConfigEntry, ok := session.extendedConfigCache.entries.Load(extendedConfigPath)
+			assert.Assert(t, ok)
+			assert.Equal(t, len(extendedConfigEntry.owners), 1)
+
+			clone.Dispose(session)
+
+			_, ok = session.parseCache.entries.Load(mainKey)
+			assert.Assert(t, !ok)
+
+			_, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
+			assert.Assert(t, !ok)
 		})
 	})
 }
