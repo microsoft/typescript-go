@@ -478,7 +478,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	for _, config := range newSnapshot.ConfigFileRegistry.configs {
 		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
 			for _, file := range config.commandLine.ConfigFile.ExtendedSourceFiles {
-				session.extendedConfigCache.Acquire(newSnapshot.toPath(file), newSnapshot.id, nil)
+				session.extendedConfigCache.TryAcquire(newSnapshot.toPath(file), newSnapshot.id)
 			}
 		}
 	}
