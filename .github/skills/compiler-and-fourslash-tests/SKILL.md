@@ -104,16 +104,18 @@ Use `// @symlink:` to create symlinks in the virtual filesystem:
 Always use `hereby test` for running tests. It ensures a clean state by clearing stale baselines before running, so results are always trustworthy. Trust the results — if `hereby test` passes, the tests pass.
 
 ```bash
-npx hereby test                          # Run all tests (compiler + fourslash + others)
-npx hereby test --tests "myNewTest"      # Run tests matching a pattern (passed as -run flag)
+npx hereby test                                        # Run all tests (compiler + fourslash + others)
+npx hereby test --tests "TestLocal/myNewTest"           # Run a specific compiler test by name
 ```
+
+**Important**: The `--tests` flag passes a Go `-run` regex. Compiler tests are subtests of `TestLocal`, so the pattern **must** include the parent test name. Using `--tests "myNewTest"` alone will silently match nothing because the regex is matched at each `/`-separated level — `myNewTest` does not match the top-level name `TestLocal`.
 
 #### Via Go directly (for print-debugging a single test)
 
 Use `go test` directly only when you need verbose output for a specific test to debug with print statements:
 
 ```bash
-go test ./internal/testrunner/ -run 'TestLocal/compiler/myNewTest.ts' -v
+go test ./internal/testrunner/ -run 'TestLocal/myNewTest' -v
 ```
 
 The test entry points are:
@@ -415,6 +417,8 @@ npx hereby test --tests "TestBasicQuickInfo"
 go test ./internal/fourslash/tests -run TestBasicQuickInfo -v
 ```
 
+Fourslash tests are top-level Go test functions (e.g., `TestBasicQuickInfo`), so unlike compiler tests, the `--tests` pattern does **not** need a parent prefix — the test function name itself is the top-level match.
+
 ### 2.5 Fourslash Baselines
 
 Fourslash tests that use `VerifyBaseline*` methods generate baselines under:
@@ -459,16 +463,18 @@ Hand-written tests (directly in `internal/fourslash/tests/`):
 | Command | Description |
 |---------|-------------|
 | `npx hereby test` | Run all tests with baseline tracking (clears stale state) |
-| `npx hereby test --tests "Pattern"` | Run tests matching `-run=Pattern` |
+| `npx hereby test --tests "Pattern"` | Run tests matching Go's `-run=Pattern` regex (see below) |
 | `npx hereby baseline-accept` | Accept local baselines as new reference |
 | `npx hereby format` | Format code (uses dprint) |
 | `npx hereby lint` | Run linters (uses golangci-lint) |
+
+**Understanding `--tests` patterns**: The `--tests` flag passes a Go `-run` regex. Go matches the regex at each `/`-separated level of the test name hierarchy. For compiler tests, which are subtests of `TestLocal` (e.g., `TestLocal/myTest.ts`), the pattern must start with `TestLocal/`. For fourslash tests, which are top-level functions (e.g., `TestArgumentCompletions`), the pattern matches directly.
 
 ### 3.2 Typical Workflow
 
 #### Adding a new compiler test
 1. Create `testdata/tests/cases/compiler/myTest.ts` with test code and directives
-2. Run: `npx hereby test --tests "myTest"`
+2. Run: `npx hereby test --tests "TestLocal/myTest"`
 3. Review generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 4. Accept: `npx hereby baseline-accept`
 
@@ -479,7 +485,7 @@ Hand-written tests (directly in `internal/fourslash/tests/`):
 4. Accept: `npx hereby baseline-accept`
 
 #### Investigating a test failure
-1. Run the specific test with verbose output: `go test ./internal/testrunner/ -run 'TestLocal/compiler/failingTest.ts' -v`
+1. Run the specific test with verbose output: `go test ./internal/testrunner/ -run 'TestLocal/failingTest' -v`
 2. Check baseline diffs: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 3. If the new output is correct, accept: `npx hereby baseline-accept`
 4. If not, fix the code and re-run
