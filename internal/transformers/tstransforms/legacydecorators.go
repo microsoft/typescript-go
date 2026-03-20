@@ -82,7 +82,7 @@ func (tx *LegacyDecoratorsTransformer) visitIdentifier(node *ast.Identifier) *as
 
 func (tx *LegacyDecoratorsTransformer) visitPropertyAccessExpression(node *ast.PropertyAccessExpression) *ast.Node {
 	// Visit the expression but not the name, since property access names should not be substituted.
-	// In TypeScript, onSubstituteNode only fires for EmitHint.Expression, which excludes the
+	// Strada's onSubstituteNode only fires for EmitHint.Expression, which excludes the
 	// .name of PropertyAccessExpression.
 	expression := tx.Visitor().VisitNode(node.Expression)
 	if expression != node.Expression {

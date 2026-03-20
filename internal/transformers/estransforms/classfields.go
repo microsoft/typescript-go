@@ -246,8 +246,8 @@ func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 // visitForSubstitution visits nodes solely for class alias substitution in subtrees
 // that don't contain class field or lexical this/super transforms. It substitutes
 // identifiers that reference class declarations with their aliases, while skipping
-// the .Name() of PropertyAccessExpressions to match TypeScript's emit-time behavior
-// where onSubstituteNode only fires for EmitHint.Expression.
+// the .Name() of PropertyAccessExpressions since Strada's onSubstituteNode only
+// fires for EmitHint.Expression, which excludes property access names.
 func (tx *classFieldsTransformer) visitForSubstitution(node *ast.Node) *ast.Node {
 	if node.Kind == ast.KindIdentifier {
 		return tx.visitIdentifier(node.AsIdentifier())
@@ -1075,7 +1075,7 @@ func (tx *classFieldsTransformer) visitPropertyAccessExpression(node *ast.Proper
 		}
 	}
 	// Visit only the expression, not the name (when it's a regular identifier), to prevent
-	// substitution of property names. In TypeScript, onSubstituteNode only fires for
+	// substitution of property names. Strada's onSubstituteNode only fires for
 	// EmitHint.Expression, which excludes the .name of PropertyAccessExpression.
 	// Private identifier names are still visited through VisitEachChild so they can be
 	// transformed by visitPrivateIdentifier.
