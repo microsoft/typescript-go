@@ -2,8 +2,10 @@ package project
 
 import (
 	"context"
+	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -209,6 +211,37 @@ func TestRefCountingCaches(t *testing.T) {
 
 			_, ok = session.parseCache.entries.Load(mainKey)
 			assert.Assert(t, !ok)
+		})
+
+		t.Run("case-only duplicate loads do not over-acquire same path", func(t *testing.T) {
+			t.Parallel()
+
+			testFiles := map[string]any{
+				"/user/username/projects/myproject/src/main.ts":  "import { util as a } from \"./utils\";\nimport { util as b } from \"./UTILS\";\nconst x = a + b;",
+				"/user/username/projects/myproject/src/utils.ts": "export const util = 1;",
+			}
+			session := setup(testFiles)
+			mainURI := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
+			session.DidOpenFile(context.Background(), mainURI, 1, testFiles["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			ls, err := session.GetLanguageService(context.Background(), mainURI)
+			assert.NilError(t, err)
+
+			var projectEntries int
+			session.parseCache.entries.Range(func(key ParseCacheKey, _ *refCountCacheEntry[*ast.SourceFile]) bool {
+				if strings.HasPrefix(key.FileName, "/user/username/projects/myproject/src/") {
+					projectEntries++
+				}
+				return true
+			})
+			assert.Equal(t, projectEntries, 2)
+
+			utils := ls.GetProgram().GetSourceFile("/user/username/projects/myproject/src/utils.ts")
+			assert.Assert(t, utils != nil)
+			utilsKey := NewParseCacheKey(utils.ParseOptions(), utils.Hash, utils.ScriptKind)
+			utilsEntry, ok := session.parseCache.entries.Load(utilsKey)
+			assert.Assert(t, ok)
+			assert.Equal(t, utilsEntry.refCount, 1)
 		})
 
 		t.Run("cloning disposed snapshot does not deref reused files", func(t *testing.T) {
