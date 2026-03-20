@@ -67,7 +67,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Foo_1, Bar_1, Baz_1, Qux_1, SelfRef_1;
+var SelfRef_1;
 export var MyEnum;
 (function (MyEnum) {
     MyEnum["Foo"] = "FooValue";
@@ -77,30 +77,30 @@ function myDecorator(target) {
     return target;
 }
 // Enum member access should not be renamed
-let Foo = Foo_1 = class Foo {
+let Foo = class Foo {
     type = MyEnum.Foo;
     getType() {
         return this.type || MyEnum.Foo;
     }
 };
-Foo = Foo_1 = __decorate([
+Foo = __decorate([
     myDecorator
 ], Foo);
 export { Foo };
-let Bar = Bar_1 = class Bar {
+let Bar = class Bar {
     prop = obj.Bar;
     method() {
         return obj.Bar;
     }
 };
-Bar = Bar_1 = __decorate([
+Bar = __decorate([
     myDecorator
 ], Bar);
 export { Bar };
-let Baz = Baz_1 = class Baz {
+let Baz = class Baz {
     prop = nested.a.Baz;
 };
-Baz = Baz_1 = __decorate([
+Baz = __decorate([
     myDecorator
 ], Baz);
 export { Baz };
@@ -108,10 +108,10 @@ export { Baz };
 class Other {
     static Qux = 42;
 }
-let Qux = Qux_1 = class Qux {
+let Qux = class Qux {
     prop = Other.Qux;
 };
-Qux = Qux_1 = __decorate([
+Qux = __decorate([
     myDecorator
 ], Qux);
 export { Qux };

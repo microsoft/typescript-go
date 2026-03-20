@@ -1674,6 +1674,11 @@ func (tx *classFieldsTransformer) memberContainsConstructorReference(member *ast
 				return true
 			}
 		}
+		// For PropertyAccessExpression, only check the expression, not the name.
+		// The .Name() is a property access name, not a value reference to the class.
+		if ast.IsPropertyAccessExpression(n) {
+			return check(n.Expression())
+		}
 		return n.ForEachChild(check)
 	}
 	// Check only the body/initializer of the member, not the name (which may be

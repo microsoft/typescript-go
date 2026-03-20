@@ -516,6 +516,11 @@ func (tx *LegacyDecoratorsTransformer) hasInternalStaticReference(node *ast.Clas
 		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == classNode {
 			return true
 		}
+		// For PropertyAccessExpression, only check the expression, not the name.
+		// The .Name() is a property access name, not a value reference to the class.
+		if ast.IsPropertyAccessExpression(n) {
+			return isOrContainsStaticSelfReference(n.Expression())
+		}
 		return n.ForEachChild(isOrContainsStaticSelfReference)
 	}
 	for _, member := range node.Members.Nodes {
