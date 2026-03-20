@@ -167,6 +167,50 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Assert(t, !ok, "entry should be deleted after program is disposed")
 		})
 
+		t.Run("fallback rebuild does not double-ref changed file", func(t *testing.T) {
+			t.Parallel()
+
+			testFiles := map[string]any{
+				"/user/username/projects/myproject/src/main.ts":  "const x = 1;",
+				"/user/username/projects/myproject/src/utils.ts": "export const util = 1;",
+			}
+			session := setup(testFiles)
+			mainURI := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
+			session.DidOpenFile(context.Background(), mainURI, 1, testFiles["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), mainURI)
+			assert.NilError(t, err)
+
+			session.DidChangeFile(context.Background(), mainURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+						Text: "import { util } from \"./utils\";\nconst x = util;",
+					},
+				},
+			})
+
+			lsAfter, err := session.GetLanguageService(context.Background(), mainURI)
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			project := session.Snapshot().ProjectCollection.InferredProject()
+			assert.Assert(t, project != nil)
+			assert.Equal(t, project.ProgramUpdateKind, ProgramUpdateKindNewFiles)
+
+			main := lsAfter.GetProgram().GetSourceFile("/user/username/projects/myproject/src/main.ts")
+			mainKey := NewParseCacheKey(main.ParseOptions(), main.Hash, main.ScriptKind)
+			mainEntry, ok := session.parseCache.entries.Load(mainKey)
+			assert.Assert(t, ok)
+			assert.Equal(t, mainEntry.refCount, 1)
+
+			session.DidCloseFile(context.Background(), mainURI)
+			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
+			session.WaitForBackgroundTasks()
+
+			_, ok = session.parseCache.entries.Load(mainKey)
+			assert.Assert(t, !ok)
+		})
+
 		t.Run("cloning disposed snapshot does not deref reused files", func(t *testing.T) {
 			t.Parallel()
 

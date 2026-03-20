@@ -268,6 +268,9 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	newOpts := p.opts
 	newOpts.Host = newHost
 
+	oldFile := p.filesByPath[changedFilePath]
+	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets
 	// might need recalculation.
@@ -275,8 +278,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		return NewProgram(newOpts), false
 	}
 
-	oldFile := p.filesByPath[changedFilePath]
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
 	}
