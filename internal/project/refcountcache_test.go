@@ -170,13 +170,13 @@ func TestRefCountingCaches(t *testing.T) {
 		t.Run("cloning disposed snapshot does not deref reused files", func(t *testing.T) {
 			t.Parallel()
 
-			files := map[string]any{
+			testFiles := map[string]any{
 				"/user/username/projects/myproject/src/main.ts":  `import { util } from "./utils"; const x = util();`,
 				"/user/username/projects/myproject/src/utils.ts": "export function util() { return 1; }",
 			}
-			session := setup(files)
+			session := setup(testFiles)
 			mainURI := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
-			session.DidOpenFile(context.Background(), mainURI, 1, files["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), mainURI, 1, testFiles["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			lsBefore, err := session.GetLanguageService(context.Background(), mainURI)
 			assert.NilError(t, err)
