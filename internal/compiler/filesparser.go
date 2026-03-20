@@ -361,6 +361,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			if packageIdToSourceFile != nil && data.packageId.Name != "" {
 				if packageIdFile, exists := packageIdToSourceFile[data.packageId]; exists {
 					if file != nil {
+						// Package deduplication keeps the first package instance in the
+						// program, but we still parsed this file and acquired it through
+						// the host, so snapshot disposal must release that extra owner.
 						duplicateSourceFiles = append(duplicateSourceFiles, file)
 					}
 					redirectTargetsMap[packageIdFile.Path()] = append(redirectTargetsMap[packageIdFile.Path()], task.normalizedFilePath)
