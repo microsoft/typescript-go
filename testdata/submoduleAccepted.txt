@@ -58,7 +58,63 @@ fourslash/inlayHints/inlayHintsInteractiveVariableTypes2.baseline.diff
 fourslash/inlayHints/inlayHintsVariableTypes3.baseline.diff
 fourslash/inlayHints/inlayHintsInteractiveFunctionParameterTypes1.baseline.diff
 
-## regex checking ##
+## Skipped error elaboration ##
+compiler/arrayCast.errors.txt.diff
+compiler/assignmentCompatWithOverloads.errors.txt.diff
+compiler/assignmentCompatability44.errors.txt.diff
+compiler/assignmentCompatability45.errors.txt.diff
+compiler/assignmentCompatability_checking-apply-member-off-of-function-interface.errors.txt.diff
+compiler/assignmentCompatability_checking-call-member-off-of-function-interface.errors.txt.diff
+compiler/bigintWithLib.errors.txt.diff
+compiler/classSideInheritance3.errors.txt.diff
+compiler/computedPropertyBindingElementDeclarationNoCrash1.errors.txt.diff
+compiler/constraints0.errors.txt.diff
+compiler/differentTypesWithSameName.errors.txt.diff
+compiler/excessPropertyCheckWithUnions.errors.txt.diff
+compiler/genericConstraint2.errors.txt.diff
+compiler/genericTypeConstraints.errors.txt.diff
+compiler/generics1.errors.txt.diff
+compiler/generics2.errors.txt.diff
+compiler/generics5.errors.txt.diff
+compiler/inferenceFromIncompleteSource.errors.txt.diff
+compiler/mappedTypeAsStringTemplate.errors.txt.diff
+compiler/noParameterReassignmentJSIIFE.errors.txt.diff
+compiler/objectLiteralFunctionArgContextualTyping2.errors.txt.diff
+compiler/objectLiteralThisWidenedOnUse.errors.txt.diff
+compiler/recursiveClassReferenceTest.errors.txt.diff
+compiler/templateStringsArrayTypeDefinedInES5Mode(target=es2015).errors.txt.diff
+compiler/templateStringsArrayTypeNotDefinedES5Mode(target=es2015).errors.txt.diff
+compiler/templateStringsArrayTypeRedefinedInES6Mode.errors.txt.diff
+compiler/typeArgumentInferenceWithConstraintAsCommonRoot.errors.txt.diff
+conformance/decoratorOnClassMethod10(target=es2015).errors.txt.diff
+conformance/destructuringParameterDeclaration2.errors.txt.diff
+conformance/destructuringParameterDeclaration5.errors.txt.diff
+conformance/es2020IntlAPIs.errors.txt.diff
+conformance/genericCallWithObjectTypeArgsAndConstraints4.errors.txt.diff
+conformance/genericCallWithObjectTypeArgsAndConstraints5.errors.txt.diff
+conformance/instanceofOperatorWithInvalidOperands.es2015.errors.txt.diff
+conformance/iterableArrayPattern17.errors.txt.diff
+conformance/iterableArrayPattern18.errors.txt.diff
+conformance/iterableArrayPattern19.errors.txt.diff
+conformance/mappedTypeConstraints2.errors.txt.diff
+conformance/narrowingGenericTypeFromInstanceof01.errors.txt.diff
+conformance/noInfer.errors.txt.diff
+conformance/objectLiteralShorthandPropertiesFunctionArgument2.errors.txt.diff
+conformance/subtypingWithNumericIndexer2.errors.txt.diff
+conformance/subtypingWithNumericIndexer3.errors.txt.diff
+conformance/subtypingWithNumericIndexer4.errors.txt.diff
+conformance/subtypingWithNumericIndexer5.errors.txt.diff
+conformance/subtypingWithStringIndexer2.errors.txt.diff
+conformance/subtypingWithStringIndexer3.errors.txt.diff
+conformance/subtypingWithStringIndexer4.errors.txt.diff
+conformance/thisTypeInFunctionsNegative.errors.txt.diff
+conformance/typeSatisfaction.errors.txt.diff
+conformance/typeSatisfactionWithDefaultExport.errors.txt.diff
+conformance/typeSatisfaction_errorLocations1.errors.txt.diff
+conformance/typedefMultipleTypeParameters.errors.txt.diff
+conformance/unionTypeCallSignatures6.errors.txt.diff
+conformance/usingDeclarations.14.errors.txt.diff
+conformance/usingDeclarationsWithIteratorObject.errors.txt.diff
 
 ## find all references ##
 fourslash/findAllReferences/isDefinitionAcrossGlobalProjects.baseline.jsonc.diff
