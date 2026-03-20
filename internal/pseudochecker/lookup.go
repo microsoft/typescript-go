@@ -113,6 +113,10 @@ func (ch *PseudoChecker) typeFromProperty(node *ast.Node) *PseudoType {
 	if ast.IsPropertyDeclaration(node) {
 		init := node.Initializer()
 		if init != nil && !isContextuallyTyped(node) {
+			// explicit fail on readonly template literals to allow for literal freshness in the future
+			if ast.HasModifier(node, ast.ModifierFlagsReadonly) && ast.IsTemplateExpression(init) {
+				return NewPseudoTypeNoResult(node)
+			}
 			expr := ch.typeFromExpression(init)
 			if expr != nil && expr.Kind != PseudoTypeKindInferred {
 				if expr.Kind != PseudoTypeKindDirect && node.AsPropertyDeclaration().PostfixToken != nil && node.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken {
@@ -135,6 +139,10 @@ func (ch *PseudoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 	init := declaration.Initializer
 	if init != nil && (len(declaration.Symbol.Declarations) == 1 || core.CountWhere(declaration.Symbol.Declarations, ast.IsVariableDeclaration) == 1) {
 		if !isContextuallyTyped(declaration.AsNode()) { // TODO: also should bail on expando declarations; reuse syntactic expando check used in declaration emit
+			// TODO: Strada forces an inference fallback on `const` variables with template expression initializers, to leave space for template literal freshness in the future
+			if ast.IsVarConst(declaration.AsNode()) && ast.IsTemplateExpression(init) {
+				return NewPseudoTypeNoResult(declaration.AsNode())
+			}
 			expr := ch.typeFromExpression(init)
 			if expr != nil && expr.Kind != PseudoTypeKindInferred {
 				return expr
@@ -293,6 +301,9 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 		return NewPseudoTypeInferred(node) // No possible annotation/directly mappable syntax
 	case ast.KindTemplateExpression:
 		// templateLitWithHoles as const, not supported
+		if IsInConstContext(node) {
+			return NewPseudoTypeInferred(node)
+		}
 		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeInferred(node), PseudoTypeString)
 	case ast.KindNumericLiteral:
 		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeNumericLiteral(node), PseudoTypeNumber)
@@ -469,7 +480,7 @@ func isConstContextPropagatingKind(kind ast.Kind) bool {
 func IsInConstContext(node *ast.Node) bool {
 	// An expression is in a const context if an ancestor is a const type maybeAssertion expression
 	maybeAssertion := ast.FindAncestor(
-		node,
+		node.Parent,
 		func(n *ast.Node) bool {
 			// stop traversing at assertions or anything not an array/object literal, since only those create or transfer const-ness
 			return ast.IsAssertionExpression(n) || !isConstContextPropagatingKind(n.Kind)
