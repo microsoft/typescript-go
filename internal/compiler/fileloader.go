@@ -69,8 +69,14 @@ func (r *redirectsFile) Path() tspath.Path {
 }
 
 type processedFiles struct {
-	resolver                      *module.Resolver
-	files                         []*ast.SourceFile
+	resolver *module.Resolver
+	files    []*ast.SourceFile
+	// duplicateSourceFiles tracks parsed files loaded during program construction
+	// that were later dropped from the final program, such as losing filename
+	// casing variants for the same path or files hidden behind package redirect
+	// deduplication. Their parse-cache acquires still need to be balanced when
+	// the program is disposed.
+	duplicateSourceFiles          []*ast.SourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
 	projectReferenceFileMapper    *projectReferenceFileMapper
 	missingFiles                  []string

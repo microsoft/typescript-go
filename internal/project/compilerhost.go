@@ -1,10 +1,7 @@
 package project
 
 import (
-	"sync"
-
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -22,16 +19,10 @@ type compilerHost struct {
 
 	sourceFS           *sourceFS
 	configFileRegistry *ConfigFileRegistry
-	sourceFilesByPath  *collections.SyncMap[tspath.Path, *loadedSourceFile]
 
 	project *Project
 	builder *ProjectCollectionBuilder
 	logger  *logging.LogTree
-}
-
-type loadedSourceFile struct {
-	once sync.Once
-	file *ast.SourceFile
 }
 
 func newCompilerHost(
@@ -45,8 +36,7 @@ func newCompilerHost(
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
-		sourceFS:          newSourceFS(true, builder.fs, builder.toPath),
-		sourceFilesByPath: &collections.SyncMap[tspath.Path, *loadedSourceFile]{},
+		sourceFS: newSourceFS(true, builder.fs, builder.toPath),
 
 		project: project,
 		builder: builder,
@@ -63,7 +53,6 @@ func (c *compilerHost) freeze(snapshotFS *SnapshotFS, configFileRegistry *Config
 	c.sourceFS.source = snapshotFS
 	c.sourceFS.DisableTracking()
 	c.configFileRegistry = configFileRegistry
-	c.sourceFilesByPath = nil
 	c.builder = nil
 	c.project = nil
 	c.logger = nil
@@ -103,22 +92,13 @@ func (c *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 
 // GetSourceFile implements compiler.CompilerHost. Files are cached in parseCache
 // and acquired immediately for the in-progress program.
-//
-// The compiler can ask for the same tspath.Path multiple times while building a
-// single program (for example, via different filename casings on a case-insensitive
-// filesystem, or when UpdateProgram probes a dirty file before falling back to a
-// full rebuild). We only want to acquire parse-cache ownership once per path,
-// because snapshot disposal releases source files once per final program file.
 func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	c.ensureAlive()
-	entry, _ := c.sourceFilesByPath.LoadOrStore(opts.Path, &loadedSourceFile{})
-	entry.once.Do(func() {
-		if fh := c.sourceFS.GetFileByPath(opts.FileName, opts.Path); fh != nil {
-			key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
-			entry.file = c.builder.parseCache.Acquire(key, fh)
-		}
-	})
-	return entry.file
+	if fh := c.sourceFS.GetFileByPath(opts.FileName, opts.Path); fh != nil {
+		key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
+		return c.builder.parseCache.Acquire(key, fh)
+	}
+	return nil
 }
 
 // Trace implements compiler.CompilerHost.

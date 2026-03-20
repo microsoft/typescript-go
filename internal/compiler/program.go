@@ -345,6 +345,7 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile            { return p.files }
+func (p *Program) DuplicateSourceFiles() []*ast.SourceFile   { return p.duplicateSourceFiles }
 func (p *Program) Options() *core.CompilerOptions            { return p.opts.Config.CompilerOptions() }
 func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
 func (p *Program) Host() CompilerHost                        { return p.opts.Host }

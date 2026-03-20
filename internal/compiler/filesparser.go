@@ -271,6 +271,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 
 	var missingFiles []string
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
+	duplicateSourceFiles := make([]*ast.SourceFile, 0)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
@@ -324,6 +325,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 
 			// ensure we only walk each task once
 			if checkedName, ok := seen[data]; ok {
+				if task.file != nil && checkedName != task.normalizedFilePath {
+					duplicateSourceFiles = append(duplicateSourceFiles, task.file)
+				}
 				if !loader.opts.Config.CompilerOptions().ForceConsistentCasingInFileNames.IsFalse() {
 					// Check if it differs only in drive letters its ok to ignore that error:
 					checkedAbsolutePath := tspath.GetNormalizedAbsolutePathWithoutRoot(checkedName, loader.comparePathsOptions.CurrentDirectory)
@@ -356,6 +360,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			file := task.file
 			if packageIdToSourceFile != nil && data.packageId.Name != "" {
 				if packageIdFile, exists := packageIdToSourceFile[data.packageId]; exists {
+					if file != nil {
+						duplicateSourceFiles = append(duplicateSourceFiles, file)
+					}
 					redirectTargetsMap[packageIdFile.Path()] = append(redirectTargetsMap[packageIdFile.Path()], task.normalizedFilePath)
 					if redirectFilesByPath == nil {
 						redirectFilesByPath = make(map[tspath.Path]*redirectsFile, totalFileCount)
@@ -460,6 +467,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		finishedProcessing:                   true,
 		resolver:                             loader.resolver,
 		files:                                allFiles,
+		duplicateSourceFiles:                 duplicateSourceFiles,
 		filesByPath:                          filesByPath,
 		projectReferenceFileMapper:           loader.projectReferenceFileMapper,
 		resolvedModules:                      resolvedModules,

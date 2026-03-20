@@ -213,7 +213,7 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Assert(t, !ok)
 		})
 
-		t.Run("case-only duplicate loads do not over-acquire same path", func(t *testing.T) {
+		t.Run("case-only duplicate loads are released on dispose", func(t *testing.T) {
 			t.Parallel()
 
 			testFiles := map[string]any{
@@ -234,14 +234,23 @@ func TestRefCountingCaches(t *testing.T) {
 				}
 				return true
 			})
-			assert.Equal(t, projectEntries, 2)
+			assert.Equal(t, projectEntries, 3)
 
 			utils := ls.GetProgram().GetSourceFile("/user/username/projects/myproject/src/utils.ts")
 			assert.Assert(t, utils != nil)
-			utilsKey := NewParseCacheKey(utils.ParseOptions(), utils.Hash, utils.ScriptKind)
-			utilsEntry, ok := session.parseCache.entries.Load(utilsKey)
-			assert.Assert(t, ok)
-			assert.Equal(t, utilsEntry.refCount, 1)
+
+			session.DidCloseFile(context.Background(), mainURI)
+			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
+			session.WaitForBackgroundTasks()
+
+			projectEntries = 0
+			session.parseCache.entries.Range(func(key ParseCacheKey, _ *refCountCacheEntry[*ast.SourceFile]) bool {
+				if strings.HasPrefix(key.FileName, "/user/username/projects/myproject/src/") {
+					projectEntries++
+				}
+				return true
+			})
+			assert.Equal(t, projectEntries, 0)
 		})
 
 		t.Run("cloning disposed snapshot does not deref reused files", func(t *testing.T) {

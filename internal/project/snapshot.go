@@ -502,6 +502,9 @@ func (s *Snapshot) dispose(session *Session) {
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}
+			for _, file := range project.Program.DuplicateSourceFiles() {
+				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+			}
 		}
 	}
 	for _, config := range s.ConfigFileRegistry.configs {
