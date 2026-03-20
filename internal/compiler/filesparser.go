@@ -106,14 +106,10 @@ func (t *parseTask) load(loader *fileLoader) {
 	if file == nil {
 		// Only report file-not-found for files with extensions (extensionless paths need extension
 		// probing which isn't done at this level). Also skip reporting for project reference output
-		// files (the checker reports TS6305 for those), and skip when noResolve is set for reference
-		// file and type reference directive reasons (matching TypeScript's behavior of not processing
-		// these references when noResolve is true).
+		// files (the checker reports TS6305 for those).
 		hasExtension := tspath.HasExtension(t.normalizedFilePath)
 		isProjectRefOutput := loader.projectReferenceFileMapper.getProjectReferenceFromOutputDts(t.path) != nil
-		shouldSkipForNoResolve := loader.opts.Config.CompilerOptions().NoResolve.IsTrue() &&
-			(t.includeReason.kind == fileIncludeKindReferenceFile || t.includeReason.kind == fileIncludeKindTypeReferenceDirective)
-		if hasExtension && !isProjectRefOutput && !shouldSkipForNoResolve {
+		if hasExtension && !isProjectRefOutput {
 			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 				kind: processingDiagnosticKindExplainingFileInclude,
 				data: &includeExplainingDiagnostic{
@@ -129,13 +125,19 @@ func (t *parseTask) load(loader *fileLoader) {
 	t.file = file
 	t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
 
-	for index, ref := range file.ReferencedFiles {
-		resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
-		t.addSubTask(resolvedPath, nil)
-	}
-
 	compilerOptions := loader.opts.Config.CompilerOptions()
-	loader.resolveTypeReferenceDirectives(t)
+
+	// When noResolve is set, don't process reference files or type reference directives at all.
+	// This matches TypeScript's behavior where noResolve skips processReferencedFiles and
+	// processTypeReferenceDirectives entirely.
+	if !compilerOptions.NoResolve.IsTrue() {
+		for index, ref := range file.ReferencedFiles {
+			resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
+			t.addSubTask(resolvedPath, nil)
+		}
+
+		loader.resolveTypeReferenceDirectives(t)
+	}
 
 	if compilerOptions.NoLib != core.TSTrue {
 		for index, lib := range file.LibReferenceDirectives {
