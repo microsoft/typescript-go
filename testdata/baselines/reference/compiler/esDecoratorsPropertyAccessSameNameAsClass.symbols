@@ -97,3 +97,34 @@ export class Baz {
 >Baz : Symbol(Other.Baz, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 32, 13))
 }
 
+// ES decorators with static fields trigger class fields transformer aliases at target < ES2022.
+// Property access names must not be substituted through the class fields transformer path.
+declare const obj2: { Quux: number };
+>obj2 : Symbol(obj2, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 13))
+>Quux : Symbol(Quux, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 21))
+
+@myDecorator
+>myDecorator : Symbol(myDecorator, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 3, 1))
+
+export class Quux {
+>Quux : Symbol(Quux, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 37))
+
+    static count = 1;
+>count : Symbol(Quux.count, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 46, 19))
+
+    prop = obj2.Quux;
+>prop : Symbol(Quux.prop, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 47, 21))
+>obj2.Quux : Symbol(Quux, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 21))
+>obj2 : Symbol(obj2, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 13))
+>Quux : Symbol(Quux, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 21))
+
+    method() {
+>method : Symbol(Quux.method, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 48, 21))
+
+        return obj2.Quux;
+>obj2.Quux : Symbol(Quux, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 21))
+>obj2 : Symbol(obj2, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 13))
+>Quux : Symbol(Quux, Decl(esDecoratorsPropertyAccessSameNameAsClass.ts, 43, 21))
+    }
+}
+

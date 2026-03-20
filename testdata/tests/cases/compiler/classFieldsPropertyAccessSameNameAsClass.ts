@@ -1,5 +1,6 @@
 // @target: es2020
 // @useDefineForClassFields: false
+// @strict: true
 
 export enum MyEnum {
     Foo = "FooValue",

@@ -1,4 +1,5 @@
 // @target: es2020
+// @strict: true
 
 export enum MyEnum {
     Foo = "FooValue",

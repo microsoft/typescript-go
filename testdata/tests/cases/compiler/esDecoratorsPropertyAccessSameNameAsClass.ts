@@ -1,4 +1,5 @@
 // @target: es2020
+// @strict: true
 
 export enum MyEnum {
     Foo = "FooValue",
@@ -39,4 +40,17 @@ class Other {
 @myDecorator
 export class Baz {
     prop = Other.Baz;
+}
+
+// ES decorators with static fields trigger class fields transformer aliases at target < ES2022.
+// Property access names must not be substituted through the class fields transformer path.
+declare const obj2: { Quux: number };
+
+@myDecorator
+export class Quux {
+    static count = 1;
+    prop = obj2.Quux;
+    method() {
+        return obj2.Quux;
+    }
 }

@@ -42,6 +42,19 @@ export class Baz {
     prop = Other.Baz;
 }
 
+// ES decorators with static fields trigger class fields transformer aliases at target < ES2022.
+// Property access names must not be substituted through the class fields transformer path.
+declare const obj2: { Quux: number };
+
+@myDecorator
+export class Quux {
+    static count = 1;
+    prop = obj2.Quux;
+    method() {
+        return obj2.Quux;
+    }
+}
+
 
 //// [esDecoratorsPropertyAccessSameNameAsClass.js]
 var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
@@ -164,3 +177,30 @@ let Baz = (() => {
     return Baz = _classThis;
 })();
 export { Baz };
+let Quux = (() => {
+    let _classDecorators = [myDecorator];
+    let _classDescriptor;
+    let _classExtraInitializers = [];
+    let _classThis;
+    var Quux = _classThis = class {
+        constructor() {
+            this.prop = obj2.Quux;
+        }
+        method() {
+            return obj2.Quux;
+        }
+    };
+    __setFunctionName(_classThis, "Quux");
+    (() => {
+        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
+        Quux = _classThis = _classDescriptor.value;
+        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+    })();
+    _classThis.count = 1;
+    (() => {
+        __runInitializers(_classThis, _classExtraInitializers);
+    })();
+    return Quux = _classThis;
+})();
+export { Quux };

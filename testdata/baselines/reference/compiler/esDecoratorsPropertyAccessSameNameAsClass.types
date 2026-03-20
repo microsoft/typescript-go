@@ -98,3 +98,35 @@ export class Baz {
 >Baz : number
 }
 
+// ES decorators with static fields trigger class fields transformer aliases at target < ES2022.
+// Property access names must not be substituted through the class fields transformer path.
+declare const obj2: { Quux: number };
+>obj2 : { Quux: number; }
+>Quux : number
+
+@myDecorator
+>myDecorator : (target: any, context: ClassDecoratorContext<abstract new (...args: any) => any>) => any
+
+export class Quux {
+>Quux : Quux
+
+    static count = 1;
+>count : number
+>1 : 1
+
+    prop = obj2.Quux;
+>prop : number
+>obj2.Quux : number
+>obj2 : { Quux: number; }
+>Quux : number
+
+    method() {
+>method : () => number
+
+        return obj2.Quux;
+>obj2.Quux : number
+>obj2 : { Quux: number; }
+>Quux : number
+    }
+}
+

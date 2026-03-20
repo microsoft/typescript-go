@@ -1,5 +1,6 @@
 // @target: esnext
 // @experimentalDecorators: true
+// @strict: true
 
 export enum MyEnum {
     Foo = "FooValue",
