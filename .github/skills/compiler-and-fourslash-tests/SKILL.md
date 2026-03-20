@@ -101,18 +101,19 @@ Use `// @symlink:` to create symlinks in the virtual filesystem:
 
 #### Via hereby (recommended)
 
-Always use `hereby test` for running tests. It ensures a clean state by clearing stale baselines before running, so results are always trustworthy. Trust the results — if `hereby test` passes, the tests pass.
+Always use `npx hereby test` to run tests. It ensures a clean state by clearing stale baselines before running, so results are always trustworthy. Trust the results — if `hereby test` passes, the tests pass.
+
+**It's generally best to run all tests** — the full suite is very quick and will find issues you didn't realize you were introducing:
 
 ```bash
-npx hereby test                                        # Run all tests (compiler + fourslash + others)
-npx hereby test --tests "TestLocal/myNewTest"           # Run a specific compiler test by name
+npx hereby test    # Run ALL tests — recommended, fast, and catches unexpected breakage
 ```
 
-**Important**: The `--tests` flag passes a Go `-run` regex. Compiler tests are subtests of `TestLocal`, so the pattern **must** include the parent test name. Using `--tests "myNewTest"` alone will silently match nothing because the regex is matched at each `/`-separated level — `myNewTest` does not match the top-level name `TestLocal`.
+If a test fails, the output will include the full test name and package, which you can use to re-run it directly with `go test` for debugging (see below).
 
 #### Via Go directly (for print-debugging a single test)
 
-Use `go test` directly only when you need verbose output for a specific test to debug with print statements:
+Use `go test` directly only when you need verbose output for a specific test to debug with print statements. The test output from `hereby test` will tell you the exact package and test name to use:
 
 ```bash
 go test ./internal/testrunner/ -run 'TestLocal/myNewTest' -v
@@ -410,14 +411,12 @@ f.VerifyOrganizeImports(t, expectedContent, actionKind, prefs)
 ### 2.4 Running Fourslash Tests
 
 ```bash
-# Via hereby (recommended — ensures clean state)
-npx hereby test --tests "TestBasicQuickInfo"
+# Run ALL tests (recommended — fast, ensures clean state, catches unexpected breakage)
+npx hereby test
 
 # For print-debugging a specific test with verbose output
 go test ./internal/fourslash/tests -run TestBasicQuickInfo -v
 ```
-
-Fourslash tests are top-level Go test functions (e.g., `TestBasicQuickInfo`), so unlike compiler tests, the `--tests` pattern does **not** need a parent prefix — the test function name itself is the top-level match.
 
 ### 2.5 Fourslash Baselines
 
@@ -462,33 +461,31 @@ Hand-written tests (directly in `internal/fourslash/tests/`):
 
 | Command | Description |
 |---------|-------------|
-| `npx hereby test` | Run all tests with baseline tracking (clears stale state) |
-| `npx hereby test --tests "Pattern"` | Run tests matching Go's `-run=Pattern` regex (see below) |
+| `npx hereby test` | Run all tests (recommended — fast, clears stale state) |
 | `npx hereby baseline-accept` | Accept local baselines as new reference |
 | `npx hereby format` | Format code (uses dprint) |
 | `npx hereby lint` | Run linters (uses golangci-lint) |
-
-**Understanding `--tests` patterns**: The `--tests` flag passes a Go `-run` regex. Go matches the regex at each `/`-separated level of the test name hierarchy. For compiler tests, which are subtests of `TestLocal` (e.g., `TestLocal/myTest.ts`), the pattern must start with `TestLocal/`. For fourslash tests, which are top-level functions (e.g., `TestArgumentCompletions`), the pattern matches directly.
 
 ### 3.2 Typical Workflow
 
 #### Adding a new compiler test
 1. Create `testdata/tests/cases/compiler/myTest.ts` with test code and directives
-2. Run: `npx hereby test --tests "TestLocal/myTest"`
+2. Run all tests: `npx hereby test`
 3. Review generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 4. Accept: `npx hereby baseline-accept`
 
 #### Adding a new fourslash test
 1. Create `internal/fourslash/tests/myTest_test.go` with the test function
-2. Run: `npx hereby test --tests "TestMyTest"`
+2. Run all tests: `npx hereby test`
 3. Review any generated baselines: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
 4. Accept: `npx hereby baseline-accept`
 
 #### Investigating a test failure
-1. Run the specific test with verbose output: `go test ./internal/testrunner/ -run 'TestLocal/failingTest' -v`
-2. Check baseline diffs: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
-3. If the new output is correct, accept: `npx hereby baseline-accept`
-4. If not, fix the code and re-run
+1. Run all tests: `npx hereby test`
+2. If a test fails, use the package and test name from the output to re-run with verbose output: `go test ./internal/testrunner/ -run 'TestLocal/failingTest' -v`
+3. Check baseline diffs: `git diff --diff-filter=AM --no-index ./testdata/baselines/reference ./testdata/baselines/local`
+4. If the new output is correct, accept: `npx hereby baseline-accept`
+5. If not, fix the code and re-run
 
 #### Debugging an unrecovered panic
 If a test panics without a clear stack trace, run all tests in the package sequentially with verbose mode to identify which test caused the panic:
