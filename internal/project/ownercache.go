@@ -12,12 +12,7 @@ type ownerCacheEntry[V any] struct {
 	owners map[uint64]struct{}
 }
 
-type OwnerCacheOptions struct {
-	DisableDeletion bool
-}
-
 type OwnerCache[K comparable, V any, LoadArgs any] struct {
-	Options OwnerCacheOptions
 	entries collections.SyncMap[K, *ownerCacheEntry[V]]
 
 	isExpired func(K, V, LoadArgs) bool
@@ -25,12 +20,10 @@ type OwnerCache[K comparable, V any, LoadArgs any] struct {
 }
 
 func NewOwnerCache[K comparable, V any, LoadArgs any](
-	options OwnerCacheOptions,
 	parse func(K, LoadArgs) V,
 	isExpired func(K, V, LoadArgs) bool,
 ) *OwnerCache[K, V, LoadArgs] {
 	return &OwnerCache[K, V, LoadArgs]{
-		Options:   options,
 		isExpired: isExpired,
 		parse:     parse,
 	}
@@ -65,7 +58,7 @@ func (c *OwnerCache[K, V, LoadArgs]) TryAcquire(identity K, owner uint64) bool {
 	}
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
-	if len(entry.owners) == 0 && !c.Options.DisableDeletion {
+	if len(entry.owners) == 0 {
 		return false
 	}
 	entry.owners[owner] = struct{}{}
@@ -85,7 +78,7 @@ func (c *OwnerCache[K, V, LoadArgs]) Release(identity K, owner uint64) {
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
 	delete(entry.owners, owner)
-	if len(entry.owners) == 0 && !c.Options.DisableDeletion {
+	if len(entry.owners) == 0 {
 		c.entries.Delete(identity)
 	}
 }
@@ -99,7 +92,7 @@ func (c *OwnerCache[K, V, LoadArgs]) loadOrStoreLockedEntry(key K) (*ownerCacheE
 	if loaded {
 		entry.mu.Unlock()
 		existing.mu.Lock()
-		if len(existing.owners) == 0 && !c.Options.DisableDeletion {
+		if len(existing.owners) == 0 {
 			existing.mu.Unlock()
 			return c.loadOrStoreLockedEntry(key)
 		}

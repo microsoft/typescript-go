@@ -24,7 +24,6 @@ type ExtendedConfigCache = OwnerCache[tspath.Path, *ExtendedConfigCacheEntry, Ex
 
 func NewExtendedConfigCache() *ExtendedConfigCache {
 	return NewOwnerCache[tspath.Path, *ExtendedConfigCacheEntry, ExtendedConfigParseArgs](
-		OwnerCacheOptions{},
 		func(path tspath.Path, args ExtendedConfigParseArgs) *ExtendedConfigCacheEntry {
 			result := &ExtendedConfigCacheEntry{
 				ExtendedConfigCacheEntry: tsoptions.ParseExtendedConfig(args.FileName, path, args.ResolutionStack, args.Host, args.Cache),
