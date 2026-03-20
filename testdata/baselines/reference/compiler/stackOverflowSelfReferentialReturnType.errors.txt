@@ -1,0 +1,16 @@
+stackOverflowSelfReferentialReturnType.ts(3,10): error TS2391: Function implementation is missing or not immediately following the declaration.
+stackOverflowSelfReferentialReturnType.ts(3,75): error TS2339: Property '0' does not exist on type '...'.
+stackOverflowSelfReferentialReturnType.ts(3,75): error TS2339: Property '0' does not exist on type '<T>(obj: T) => T extends any ? any : 0'.
+
+
+==== stackOverflowSelfReferentialReturnType.ts (3 errors) ====
+    // Regression test for https://github.com/microsoft/TypeScript/issues/63273
+    // Self-referential type involving ReturnType and typeof should not cause stack overflow.
+    function clone(): <T>(obj: T) => T extends any ? ReturnType<typeof clone>[0] : 0;
+             ~~~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+                                                                              ~
+!!! error TS2339: Property '0' does not exist on type '...'.
+                                                                              ~
+!!! error TS2339: Property '0' does not exist on type '<T>(obj: T) => T extends any ? any : 0'.
+    

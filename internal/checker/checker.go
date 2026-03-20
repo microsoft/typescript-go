@@ -586,6 +586,7 @@ type Checker struct {
 	instantiationCount                          uint32
 	instantiationDepth                          uint32
 	inlineLevel                                 int
+	nodeBuilderDepth                            int
 	currentNode                                 *ast.Node
 	varianceTypeParameter                       *Type
 	languageVersion                             core.ScriptTarget

@@ -182,6 +182,15 @@ func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 }
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
+	// Guard against infinite recursion when type serialization triggers error reporting
+	// which calls typeToString again (e.g., self-referential types involving ReturnType<typeof fn>).
+	const maxNodeBuilderDepth = 10
+	if c.nodeBuilderDepth >= maxNodeBuilderDepth {
+		return "..."
+	}
+	c.nodeBuilderDepth++
+	defer func() { c.nodeBuilderDepth-- }()
+
 	writer := printer.NewTextWriter("", 0)
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors

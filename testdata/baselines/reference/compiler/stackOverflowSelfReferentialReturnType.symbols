@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/stackOverflowSelfReferentialReturnType.ts] ////
+
+=== stackOverflowSelfReferentialReturnType.ts ===
+// Regression test for https://github.com/microsoft/TypeScript/issues/63273
+// Self-referential type involving ReturnType and typeof should not cause stack overflow.
+function clone(): <T>(obj: T) => T extends any ? ReturnType<typeof clone>[0] : 0;
+>clone : Symbol(clone, Decl(stackOverflowSelfReferentialReturnType.ts, 0, 0))
+>T : Symbol(T, Decl(stackOverflowSelfReferentialReturnType.ts, 2, 19))
+>obj : Symbol(obj, Decl(stackOverflowSelfReferentialReturnType.ts, 2, 22))
+>T : Symbol(T, Decl(stackOverflowSelfReferentialReturnType.ts, 2, 19))
+>T : Symbol(T, Decl(stackOverflowSelfReferentialReturnType.ts, 2, 19))
+>ReturnType : Symbol(ReturnType, Decl(lib.es5.d.ts, --, --))
+>clone : Symbol(clone, Decl(stackOverflowSelfReferentialReturnType.ts, 0, 0))
+
