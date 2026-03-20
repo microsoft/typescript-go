@@ -127,9 +127,6 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	compilerOptions := loader.opts.Config.CompilerOptions()
 
-	// When noResolve is set, don't process reference files or type reference directives at all.
-	// This matches TypeScript's behavior where noResolve skips processReferencedFiles and
-	// processTypeReferenceDirectives entirely.
 	if !compilerOptions.NoResolve.IsTrue() {
 		for index, ref := range file.ReferencedFiles {
 			resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
