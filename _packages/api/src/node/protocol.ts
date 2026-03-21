@@ -50,6 +50,7 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly strin
     [SyntaxKind.LabeledStatement]: ["label", "statement"],
     [SyntaxKind.VariableStatement]: ["modifiers", "declarationList"],
     [SyntaxKind.VariableDeclarationList]: ["declarations"],
+    [SyntaxKind.ObjectLiteralExpression]: ["properties"],
     [SyntaxKind.VariableDeclaration]: ["name", "exclamationToken", "type", "initializer"],
     [SyntaxKind.Parameter]: ["modifiers", "dotDotDotToken", "name", "questionToken", "type", "initializer"],
     [SyntaxKind.BindingElement]: ["dotDotDotToken", "propertyName", "name", "initializer"],

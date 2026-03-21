@@ -789,6 +789,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get postfixToken(): RemoteNode | undefined {
         return this.getNamedChild("postfixToken") as RemoteNode;
     }
+    get properties(): RemoteNodeList | undefined {
+        return this.getNamedChild("properties") as RemoteNodeList;
+    }
     get propertyName(): RemoteNode | undefined {
         return this.getNamedChild("propertyName") as RemoteNode;
     }
