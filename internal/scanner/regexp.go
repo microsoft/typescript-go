@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -955,7 +956,7 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyName(name string) 
 	for k := range nonBinaryUnicodeProperties {
 		candidates = append(candidates, k)
 	}
-	return core.GetSpellingSuggestion(name, candidates, func(s string) string { return s })
+	return core.GetSpellingSuggestion(name, slices.Values(candidates), core.Identity, strings.Compare)
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName string, value string) string {
@@ -967,7 +968,7 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName
 	for k := range values.Keys() {
 		candidates = append(candidates, k)
 	}
-	return core.GetSpellingSuggestion(value, candidates, func(s string) string { return s })
+	return core.GetSpellingSuggestion(value, slices.Values(candidates), core.Identity, strings.Compare)
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyNameOrValue(name string) string {
@@ -981,7 +982,7 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyNameOrValue(name s
 	for k := range binaryUnicodePropertiesOfStrings.Keys() {
 		candidates = append(candidates, k)
 	}
-	return core.GetSpellingSuggestion(name, candidates, func(s string) string { return s })
+	return core.GetSpellingSuggestion(name, slices.Values(candidates), core.Identity, strings.Compare)
 }
 
 func (p *regExpParser) scanWordCharacters() string {
@@ -1066,7 +1067,7 @@ func (p *regExpParser) run() {
 				for k := range p.groupSpecifiers {
 					specifiers = append(specifiers, k)
 				}
-				suggestion := core.GetSpellingSuggestion(reference.name, specifiers, func(s string) string { return s })
+				suggestion := core.GetSpellingSuggestion(reference.name, slices.Values(specifiers), core.Identity, strings.Compare)
 				if suggestion != "" {
 					p.error(diagnostics.Did_you_mean_0, reference.pos, reference.end-reference.pos, suggestion)
 				}

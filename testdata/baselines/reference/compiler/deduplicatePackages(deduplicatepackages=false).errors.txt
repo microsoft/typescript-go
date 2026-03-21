@@ -1,7 +1,7 @@
 /node_modules/b/index.d.ts(1,15): error TS2306: File '/node_modules/b/node_modules/x/index.d.ts' is not a module.
 /node_modules/b/node_modules/x/index.d.ts(1,1): error TS1434: Unexpected keyword or identifier.
 /node_modules/b/node_modules/x/index.d.ts(1,1): error TS2304: Cannot find name 'content'.
-/node_modules/b/node_modules/x/index.d.ts(1,9): error TS1434: Unexpected keyword or identifier.
+/node_modules/b/node_modules/x/index.d.ts(1,9): error TS1435: Unknown keyword or identifier. Did you mean 'out'?
 /node_modules/b/node_modules/x/index.d.ts(1,9): error TS2304: Cannot find name 'not'.
 /node_modules/b/node_modules/x/index.d.ts(1,13): error TS2304: Cannot find name 'parsed'.
 /src/a.ts(5,3): error TS2345: Argument of type 'import("/node_modules/c/node_modules/x/index").default' is not assignable to parameter of type 'import("/node_modules/a/node_modules/x/index").default'.
@@ -43,7 +43,7 @@
     ~~~~~~~
 !!! error TS2304: Cannot find name 'content'.
             ~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TS1435: Unknown keyword or identifier. Did you mean 'out'?
             ~~~
 !!! error TS2304: Cannot find name 'not'.
                 ~~~~~~
