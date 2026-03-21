@@ -952,7 +952,7 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyName(name string) string {
-	return core.GetSpellingSuggestion(name, maps.Keys(nonBinaryUnicodeProperties), core.Identity, strings.Compare)
+	return core.GetSpellingSuggestionForStrings(name, maps.Keys(nonBinaryUnicodeProperties))
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName string, value string) string {
@@ -960,15 +960,15 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName
 	if values == nil {
 		return ""
 	}
-	return core.GetSpellingSuggestion(value, maps.Keys(values.Keys()), core.Identity, strings.Compare)
+	return core.GetSpellingSuggestionForStrings(value, maps.Keys(values.Keys()))
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyNameOrValue(name string) string {
-	return core.GetSpellingSuggestion(name, core.ConcatenateSeq(
+	return core.GetSpellingSuggestionForStrings(name, core.ConcatenateSeq(
 		maps.Keys(valuesOfNonBinaryUnicodeProperties["General_Category"].Keys()),
 		maps.Keys(binaryUnicodeProperties.Keys()),
 		maps.Keys(binaryUnicodePropertiesOfStrings.Keys()),
-	), core.Identity, strings.Compare)
+	))
 }
 
 func (p *regExpParser) scanWordCharacters() string {
@@ -1049,7 +1049,7 @@ func (p *regExpParser) run() {
 		if !p.groupSpecifiers[reference.name] {
 			p.error(diagnostics.There_is_no_capturing_group_named_0_in_this_regular_expression, reference.pos, reference.end-reference.pos, reference.name)
 			if len(p.groupSpecifiers) > 0 {
-				suggestion := core.GetSpellingSuggestion(reference.name, maps.Keys(p.groupSpecifiers), core.Identity, strings.Compare)
+				suggestion := core.GetSpellingSuggestionForStrings(reference.name, maps.Keys(p.groupSpecifiers))
 				if suggestion != "" {
 					p.error(diagnostics.Did_you_mean_0, reference.pos, reference.end-reference.pos, suggestion)
 				}

@@ -577,6 +577,10 @@ func GetSpellingSuggestion[T comparable](name string, candidates iter.Seq[T], ge
 	return bestCandidate
 }
 
+func GetSpellingSuggestionForStrings(name string, candidates iter.Seq[string]) string {
+	return GetSpellingSuggestion(name, candidates, Identity, strings.Compare)
+}
+
 type levenshteinBuffers struct {
 	previous []float64
 	current  []float64

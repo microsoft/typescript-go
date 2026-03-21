@@ -50,7 +50,7 @@ func (d *processingDiagnostic) toDiagnostic(program *Program) *ast.Diagnostic {
 		case fileIncludeKindLibReferenceDirective:
 			libName := tspath.ToFileNameLowerCase(loc.ref.FileName)
 			unqualifiedLibName := strings.TrimSuffix(strings.TrimPrefix(libName, "lib."), ".d.ts")
-			suggestion := core.GetSpellingSuggestion(unqualifiedLibName, slices.Values(tsoptions.Libs), core.Identity, strings.Compare)
+			suggestion := core.GetSpellingSuggestionForStrings(unqualifiedLibName, slices.Values(tsoptions.Libs))
 			return loc.diagnosticAt(core.IfElse(
 				suggestion != "",
 				diagnostics.Cannot_find_lib_definition_for_0_Did_you_mean_1,
