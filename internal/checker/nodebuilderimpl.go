@@ -1985,7 +1985,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 				returnTypeNode = b.pseudoTypeToNode(pt)
 			}
 			restore()
-		} else if typePredicate != nil && !b.ctx.suppressReportInferenceFallback {
+		} else if typePredicate != nil && signature.declaration != nil && signature.declaration.Type() == nil && !b.ctx.suppressReportInferenceFallback {
 			b.ctx.tracker.ReportInferenceFallback(signature.declaration)
 		}
 		if returnTypeNode == nil {
