@@ -34,6 +34,18 @@ func Filter[T any](slice []T, f func(T) bool) []T {
 	return slice
 }
 
+func FilterSeq[T any](slice []T, f func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, value := range slice {
+			if f(value) {
+				if !yield(value) {
+					return
+				}
+			}
+		}
+	}
+}
+
 func FilterIndex[T any](slice []T, f func(T, int, []T) bool) []T {
 	for i, value := range slice {
 		if !f(value, i, slice) {
