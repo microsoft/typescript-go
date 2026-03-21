@@ -1689,15 +1689,38 @@ func (c *Checker) getSuggestedLibForNonExistentName(name string) string {
 	return ""
 }
 
-func (c *Checker) getPrimitiveAliasSymbols() {
-	var symbols []*ast.Symbol
-	for _, name := range []string{"string", "number", "boolean", "object", "bigint", "symbol"} {
-		symbols = append(symbols, c.newSymbol(ast.SymbolFlagsTypeAlias, name))
-	}
-}
-
 func (c *Checker) getSuggestedSymbolForNonexistentSymbol(location *ast.Node, outerName string, meaning ast.SymbolFlags) *ast.Symbol {
 	return c.resolveNameForSymbolSuggestion(location, outerName, meaning, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+}
+
+var primitiveTypeAliasSuggestions = sync.OnceValue(func() map[string]*ast.Symbol {
+	result := make(map[string]*ast.Symbol, 6)
+	for _, e := range []struct{ primitive, builtin string }{
+		{"string", "String"},
+		{"number", "Number"},
+		{"boolean", "Boolean"},
+		{"object", "Object"},
+		{"bigint", "BigInt"},
+		{"symbol", "Symbol"},
+	} {
+		sym := &ast.Symbol{}
+		sym.Flags = ast.SymbolFlagsTypeAlias | ast.SymbolFlagsTransient
+		sym.Name = e.primitive
+		result[e.builtin] = sym
+	}
+	return result
+})
+
+func getPrimitiveTypeAliasSuggestions(symbols ast.SymbolTable) iter.Seq[*ast.Symbol] {
+	return func(yield func(*ast.Symbol) bool) {
+		for builtinName, suggestion := range primitiveTypeAliasSuggestions() {
+			if _, ok := symbols[builtinName]; ok {
+				if !yield(suggestion) {
+					return
+				}
+			}
+		}
+	}
 }
 
 func (c *Checker) getSuggestionForSymbolNameLookup(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol {
@@ -1705,15 +1728,11 @@ func (c *Checker) getSuggestionForSymbolNameLookup(symbols ast.SymbolTable, name
 	if symbol != nil {
 		return symbol
 	}
-	var extras []*ast.Symbol
+	var extras iter.Seq[*ast.Symbol]
 	if meaning&ast.SymbolFlagsGlobalLookup != 0 {
-		for _, s := range []string{"stringString", "numberNumber", "booleanBoolean", "objectObject", "bigintBigInt", "symbolSymbol"} {
-			if _, ok := symbols[s[len(s)/2:]]; ok {
-				extras = append(extras, c.newSymbol(ast.SymbolFlagsTypeAlias, s[:len(s)/2]))
-			}
-		}
+		extras = getPrimitiveTypeAliasSuggestions(symbols)
 	}
-	return c.getSpellingSuggestionForName(name, core.ConcatenateSeq(maps.Values(symbols), slices.Values(extras)), meaning)
+	return c.getSpellingSuggestionForName(name, core.ConcatenateSeq(maps.Values(symbols), extras), meaning)
 }
 
 // Given a name and a list of symbols whose names are *not* equal to the name, return a spelling suggestion if there is
