@@ -541,13 +541,14 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 //	     and 1 insertion/deletion at 3 characters)
 //
 // @internal
-func GetSpellingSuggestion[T comparable](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
+func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
 	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
 	bestDistance := math.Floor(float64(len(name))*0.4) + 0.9 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
 	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
 	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
+	hasBest := false
 	for candidate := range candidates {
 		candidateName := getName(candidate)
 		maxLen := max(len(candidateName), len(name))
@@ -569,8 +570,10 @@ func GetSpellingSuggestion[T comparable](name string, candidates iter.Seq[T], ge
 			if distance < bestDistance {
 				bestDistance = distance
 				bestCandidate = candidate
-			} else if bestCandidate == *new(T) || compare(candidate, bestCandidate) < 0 {
+				hasBest = true
+			} else if !hasBest || compare(candidate, bestCandidate) < 0 {
 				bestCandidate = candidate
+				hasBest = true
 			}
 		}
 	}
