@@ -543,7 +543,7 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 // @internal
 func GetSpellingSuggestion[T comparable](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
 	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
-	bestDistance := math.Floor(float64(len(name))*0.4) + 1 // If the best result is worse than this, don't bother.
+	bestDistance := math.Floor(float64(len(name))*0.4) + 0.9 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
 	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
 	defer levenshteinBuffersPool.Put(buffers)
