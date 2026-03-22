@@ -1,0 +1,40 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParamWithRequire.ts] ////
+
+=== /main.ts ===
+import dep = require("./dep.js");
+>dep : typeof dep
+
+export const g = dep.greeting;
+>g : "hello"
+>dep.greeting : "hello"
+>dep : typeof dep
+>greeting : "hello"
+
+=== /dep.js ===
+exports.greeting = "hello";
+>exports.greeting = "hello" : "hello"
+>exports.greeting : "hello"
+>exports : typeof import("./dep")
+>greeting : "hello"
+>"hello" : "hello"
+
+function setup(module) {
+>setup : (module: any) => void
+>module : any
+
+    module.exports = { configured: true };
+>module.exports = { configured: true } : { configured: boolean; }
+>module.exports : any
+>module : any
+>exports : any
+>{ configured: true } : { configured: boolean; }
+>configured : boolean
+>true : true
+}
+
+const fs = require("fs");
+>fs : any
+>require("fs") : any
+>require : any
+>"fs" : "fs"
+
