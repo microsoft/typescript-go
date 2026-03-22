@@ -677,6 +677,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get elements(): RemoteNodeList | undefined {
         return this.getNamedChild("elements") as RemoteNodeList;
     }
+    get elementType(): RemoteNode | undefined {
+        return this.getNamedChild("elementType") as RemoteNode;
+    }
     get elseStatement(): RemoteNode | undefined {
         return this.getNamedChild("elseStatement") as RemoteNode;
     }
