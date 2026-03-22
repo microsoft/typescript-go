@@ -96,6 +96,7 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly strin
     [SyntaxKind.ShorthandPropertyAssignment]: ["modifiers", "name", "postfixToken", "equalsToken", "objectAssignmentInitializer"],
     [SyntaxKind.SpreadAssignment]: ["expression"],
     [SyntaxKind.TypeAssertionExpression]: ["type", "expression"],
+    [SyntaxKind.IntersectionType]: ["types"],
     [SyntaxKind.ConditionalType]: ["checkType", "extendsType", "trueType", "falseType"],
     [SyntaxKind.IndexedAccessType]: ["objectType", "indexType"],
     [SyntaxKind.TypeReference]: ["typeName", "typeArguments"],

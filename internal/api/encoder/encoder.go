@@ -732,6 +732,9 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindTypeAssertionExpression:
 		n := node.AsTypeAssertion()
 		return (boolToByte(n.Type != nil) << 0) | (boolToByte(n.Expression != nil) << 1)
+	case ast.KindIntersectionType:
+		n := node.AsIntersectionTypeNode()
+		return (boolToByte(hasNodes(n.Types)) << 0)
 	case ast.KindConditionalType:
 		n := node.AsConditionalTypeNode()
 		return (boolToByte(n.CheckType != nil) << 0) | (boolToByte(n.ExtendsType != nil) << 1) | (boolToByte(n.TrueType != nil) << 2) | (boolToByte(n.FalseType != nil) << 3)
