@@ -8,6 +8,28 @@ import (
 	"github.com/microsoft/typescript-go/internal/pseudochecker"
 )
 
+// pseudoTypeToNodeWithCheckerFallback is like pseudoTypeToNode but when the top-level pseudo type
+// is PseudoTypeInferred, it reports any fallback errors and then uses the checker's type directly
+// for serialization. This avoids incorrect type output when PseudoTypeInferred is used in an
+// instantiated generic context, where pseudoTypeToNode would derive the uninstantiated type from
+// the original declaration.
+func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.PseudoType, checkerType *Type) *ast.Node {
+	if t.Kind == pseudochecker.PseudoTypeKindInferred {
+		inferred := t.AsPseudoTypeInferred()
+		if !b.ctx.suppressReportInferenceFallback {
+			if len(inferred.FallbackNodes) > 0 {
+				for _, fallback := range inferred.FallbackNodes {
+					b.ctx.tracker.ReportInferenceFallback(fallback)
+				}
+			} else {
+				b.ctx.tracker.ReportInferenceFallback(inferred.Expression)
+			}
+		}
+		return b.typeToTypeNode(checkerType)
+	}
+	return b.pseudoTypeToNode(t)
+}
+
 // Maps a pseudochecker's pseudotypes into ast nodes and reports any inference fallback errors the pseudotype structure implies
 func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Node {
 	debug.Assert(t != nil, "Attempted to serialize nil pseudotype")
@@ -15,8 +37,15 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindDirect:
 		return b.reuseTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
-		node := t.AsPseudoTypeInferred().Expression
-		b.ctx.tracker.ReportInferenceFallback(node)
+		inferred := t.AsPseudoTypeInferred()
+		node := inferred.Expression
+		if len(inferred.FallbackNodes) > 0 {
+			for _, fallback := range inferred.FallbackNodes {
+				b.ctx.tracker.ReportInferenceFallback(fallback)
+			}
+		} else {
+			b.ctx.tracker.ReportInferenceFallback(node)
+		}
 		// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
 		if ast.IsReturnStatement(node.Parent) {
 			enclosing := ast.GetContainingFunction(node)
@@ -308,6 +337,14 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	}
 	// otherwise, fallback to actual pseudo/type cross-comparisons
 	switch t.Kind {
+	case pseudochecker.PseudoTypeKindInferred:
+		// PseudoTypeInferred with per-child fallbacks is always considered equivalent —
+		// the fallback nodes identify specific problematic children, and pseudoTypeToNode
+		// will report errors on them and fall back to the checker's real type.
+		if len(t.AsPseudoTypeInferred().FallbackNodes) > 0 {
+			return true
+		}
+		return false
 	case pseudochecker.PseudoTypeKindObjectLiteral:
 		pt := t.AsPseudoTypeObjectLiteral()
 		if type_ == nil {
@@ -491,11 +528,6 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	case pseudochecker.PseudoTypeKindNoResult:
 		if reportErrors {
 			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeNoResult().Declaration)
-		}
-		return false
-	case pseudochecker.PseudoTypeKindInferred:
-		if reportErrors {
-			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
 		}
 		return false
 	default:

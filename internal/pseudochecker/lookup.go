@@ -144,10 +144,10 @@ func (ch *PseudoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 				return NewPseudoTypeNoResult(declaration.AsNode())
 			}
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.AsPseudoTypeInferred().FallbackNodes) > 0) {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred without per-child fallbacks
 		}
 	}
 	return NewPseudoTypeNoResult(declaration.AsNode())
@@ -322,12 +322,15 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 }
 
 func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression) *PseudoType {
-	if !ch.canGetTypeFromObjectLiteral(node) {
-		return NewPseudoTypeInferred(node.AsNode())
-	}
-	// we are in a const context producing an object literal type, there are no shorthand or spread assignments
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
 		return NewPseudoTypeObjectLiteral(nil)
+	}
+	// Check for properties the pseudochecker cannot handle. For these, report
+	// inference fallback on the specific problematic child (matching TS, which
+	// reports on each shorthand/spread/computed individually) rather than on the
+	// whole object literal.
+	if !ch.canGetTypeFromObjectLiteral(node) {
+		return ch.typeFromObjectLiteralWithFallbacks(node)
 	}
 	results := make([]*PseudoObjectElement, 0, len(node.Properties.Nodes))
 	for _, e := range node.Properties.Nodes {
@@ -365,6 +368,44 @@ func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 		}
 	}
 	return NewPseudoTypeObjectLiteral(results)
+}
+
+// typeFromObjectLiteralWithFallbacks processes an object literal that contains
+// properties the pseudochecker can't handle (shorthand, spread, computed, etc).
+// Rather than returning a single PseudoTypeInferred for the whole object, it
+// reports fallback on each individual problematic property, matching the error
+// positions that TS's nodebuilder produces.
+func (ch *PseudoChecker) typeFromObjectLiteralWithFallbacks(node *ast.ObjectLiteralExpression) *PseudoType {
+	var fallbackNodes []*ast.Node
+	for _, e := range node.Properties.Nodes {
+		if e.Flags&ast.NodeFlagsThisNodeHasError != 0 {
+			fallbackNodes = append(fallbackNodes, e)
+			continue
+		}
+		switch e.Kind {
+		case ast.KindShorthandPropertyAssignment, ast.KindSpreadAssignment:
+			fallbackNodes = append(fallbackNodes, e)
+		default:
+			if e.Name() != nil {
+				if e.Name().Flags&ast.NodeFlagsThisNodeHasError != 0 {
+					fallbackNodes = append(fallbackNodes, e.Name())
+					continue
+				}
+				if e.Name().Kind == ast.KindPrivateIdentifier {
+					fallbackNodes = append(fallbackNodes, e.Name())
+					continue
+				}
+				if e.Name().Kind == ast.KindComputedPropertyName {
+					expression := e.Name().Expression()
+					if !ast.IsPrimitiveLiteralValue(expression, false) {
+						fallbackNodes = append(fallbackNodes, e.Name())
+						continue
+					}
+				}
+			}
+		}
+	}
+	return NewPseudoTypeInferredWithFallbacks(node.AsNode(), fallbackNodes)
 }
 
 // roughly analogous to typeFromObjectLiteralAccessor in strada
@@ -412,11 +453,6 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
 		return true // empty object
 	}
-	// !!! TODO: strada reports errors on multiple non-inferrable props
-	// via calling reportInferenceFallback multiple times here before returning.
-	// Does that logic need to be included in this checker? Or can it
-	// be kept to the `PseudoType` -> `Node` mapping logic, so this
-	// checker can avoid needing any error reporting logic?
 	for _, e := range node.Properties.Nodes {
 		if e.Flags&ast.NodeFlagsThisNodeHasError != 0 {
 			return false

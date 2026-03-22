@@ -94,13 +94,21 @@ func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*Ps
 // PseudoTypeInferred directly encodes the type referred to by a given Expression
 // These represent cases where the expression was too complex for the pseudochecker.
 // Most of the time, these locations will produce an error under ID.
+// FallbackNodes, when non-nil, contains the specific child nodes that should receive
+// individual isolatedDeclarations errors instead of reporting the fallback on the
+// whole Expression (e.g., individual shorthand properties, spreads, computed names).
 type PseudoTypeInferred struct {
 	PseudoTypeBase
-	Expression *ast.Node
+	Expression    *ast.Node
+	FallbackNodes []*ast.Node
 }
 
 func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
 	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
+}
+
+func NewPseudoTypeInferredWithFallbacks(expr *ast.Node, fallbackNodes []*ast.Node) *PseudoType {
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, FallbackNodes: fallbackNodes})
 }
 
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }
