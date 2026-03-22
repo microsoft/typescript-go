@@ -401,7 +401,7 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 		- But if the parent has `export as namespace`, the symbol is globally visible through that namespace.
 	*/
 	exposedByParent := symbol.Parent != nil && symbol.Flags&ast.SymbolFlagsTypeParameter == 0
-	if exposedByParent && !(symbol.Parent.ValueDeclaration != nil && ast.IsSourceFile(symbol.Parent.ValueDeclaration) && symbol.Parent.ValueDeclaration.AsSourceFile().GlobalExports == nil) {
+	if exposedByParent && !(checker.IsExternalModuleSymbol(symbol.Parent) && !isSourceFileWithGlobalExports(symbol.Parent.ValueDeclaration)) {
 		return nil
 	}
 
