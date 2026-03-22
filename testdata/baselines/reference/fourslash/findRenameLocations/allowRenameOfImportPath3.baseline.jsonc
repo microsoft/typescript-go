@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /src/example.ts ===
+// import stuff from '[|.//*RENAME*/stuff.ctsRENAME|]';
+
+// === /src/stuff.cts ===
+// [|exportRENAME|] = { name: "stuff" };
+// 

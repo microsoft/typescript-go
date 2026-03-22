@@ -1,0 +1,3 @@
+// === findRenameLocations ===
+// === /src/example.ts ===
+// import brushPackageJson from '[|./visx-brush//*RENAME*/package.jsonRENAME|]';

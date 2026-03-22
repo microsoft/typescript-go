@@ -1,0 +1,3 @@
+// === findRenameLocations ===
+// === /src/example.ts ===
+// import styles from './/*RENAME*/styles.css';
