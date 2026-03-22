@@ -1038,6 +1038,11 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                     return SyntaxKind.AssertKeyword;
                 }
                 return SyntaxKind.WithKeyword;
+            case SyntaxKind.HeritageClause:
+                if ((this.data & 1 << 24) !== 0) {
+                    return SyntaxKind.ExtendsKeyword;
+                }
+                return SyntaxKind.ImplementsKeyword;
         }
     }
 

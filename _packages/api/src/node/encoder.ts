@@ -5,6 +5,7 @@ import type {
     ExportDeclaration,
     ExportSpecifier,
     FileReference,
+    HeritageClause,
     ImportAttributes,
     ImportClause,
     ImportEqualsDeclaration,
@@ -165,6 +166,10 @@ function getNodeDefinedData(node: Node): number {
             const attrs = node as ImportAttributes;
             return ((attrs.multiLine ? 1 : 0) << 24) |
                 ((attrs.token === SyntaxKind.AssertKeyword ? 1 : 0) << 25);
+        }
+        case SyntaxKind.HeritageClause: {
+            const attrs = node as HeritageClause;
+            return (attrs.token === SyntaxKind.ExtendsKeyword ? 1 : 0) << 24;
         }
     }
     return 0;

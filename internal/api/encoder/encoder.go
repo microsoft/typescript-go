@@ -928,6 +928,9 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindImportAttributes:
 		n := node.AsImportAttributes()
 		return uint32(boolToByte(n.MultiLine))<<24 | uint32(boolToByte(n.Token == ast.KindAssertKeyword))<<25
+	case ast.KindHeritageClause:
+		n := node.AsImportAttributes()
+		return uint32(boolToByte(n.Token == ast.KindExtendsKeyword)) << 24
 	}
 	return 0
 }

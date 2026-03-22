@@ -1287,8 +1287,12 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewBindingPattern(kind, d.singleNodeListChild(childIndices)), nil
 
 	case ast.KindHeritageClause:
-		// Token (KindExtendsKeyword or KindImplementsKeyword) is not encoded; default to 0.
-		return d.factory.NewHeritageClause(0, d.singleNodeListChild(childIndices)), nil
+		isExtends := definedBits&1 != 0
+		token := ast.KindImplementsKeyword
+		if isExtends {
+			token = ast.KindExtendsKeyword
+		}
+		return d.factory.NewHeritageClause(token, d.singleNodeListChild(childIndices)), nil
 
 	case ast.KindJSDocTypeLiteral:
 		isArrayType := definedBits&1 != 0
