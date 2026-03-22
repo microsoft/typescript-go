@@ -602,7 +602,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.Name() != nil) << 0) | (boolToByte(n.ExclamationToken != nil) << 1) | (boolToByte(n.Type != nil) << 2) | (boolToByte(n.Initializer != nil) << 3)
 	case ast.KindObjectLiteralExpression:
 		n := node.AsObjectLiteralExpression()
-		return (boolToByte(hasNodes(n.Properties)) << 0)
+		return boolToByte(hasNodes(n.Properties)) << 0
 	case ast.KindParameter:
 		n := node.AsParameterDeclaration()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.DotDotDotToken != nil) << 1) | (boolToByte(n.Name() != nil) << 2) | (boolToByte(n.QuestionToken != nil) << 3) | (boolToByte(n.Type != nil) << 4) | (boolToByte(n.Initializer != nil) << 5)
