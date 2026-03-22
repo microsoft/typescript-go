@@ -1,0 +1,32 @@
+//// [tests/cases/compiler/declarationEmitReadonlyTupleFromConstSatisfies.ts] ////
+
+=== declarationEmitReadonlyTupleFromConstSatisfies.ts ===
+// Regression test for #3192
+// `as const satisfies` with a mutable array contextual type should not
+// emit a readonly tuple in declaration output.
+
+export const obj = { 
+>obj : { readonly array: [{ readonly n: 1; }, { readonly n: 2; }]; }
+>{   array: [    { n: 1 },     { n: 2 },  ],} as const satisfies { array?: Readonly<{ n: unknown; }>[] } : { readonly array: [{ readonly n: 1; }, { readonly n: 2; }]; }
+>{   array: [    { n: 1 },     { n: 2 },  ],} as const : { readonly array: [{ readonly n: 1; }, { readonly n: 2; }]; }
+>{   array: [    { n: 1 },     { n: 2 },  ],} : { readonly array: [{ readonly n: 1; }, { readonly n: 2; }]; }
+
+  array: [
+>array : [{ readonly n: 1; }, { readonly n: 2; }]
+>[    { n: 1 },     { n: 2 },  ] : [{ readonly n: 1; }, { readonly n: 2; }]
+
+    { n: 1 }, 
+>{ n: 1 } : { readonly n: 1; }
+>n : 1
+>1 : 1
+
+    { n: 2 },
+>{ n: 2 } : { readonly n: 2; }
+>n : 2
+>2 : 2
+
+  ],
+} as const satisfies { array?: Readonly<{ n: unknown; }>[] }
+>array : Readonly<{ n: unknown; }>[] | undefined
+>n : unknown
+
