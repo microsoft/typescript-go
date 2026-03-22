@@ -674,11 +674,11 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get dotDotDotToken(): RemoteNode | undefined {
         return this.getNamedChild("dotDotDotToken") as RemoteNode;
     }
-    get elements(): RemoteNodeList | undefined {
-        return this.getNamedChild("elements") as RemoteNodeList;
-    }
     get elementType(): RemoteNode | undefined {
         return this.getNamedChild("elementType") as RemoteNode;
+    }
+    get elements(): RemoteNodeList | undefined {
+        return this.getNamedChild("elements") as RemoteNodeList;
     }
     get elseStatement(): RemoteNode | undefined {
         return this.getNamedChild("elseStatement") as RemoteNode;
@@ -846,9 +846,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get type(): RemoteNode | undefined {
         return this.getNamedChild("type") as RemoteNode;
     }
-    get types(): RemoteNodeList | undefined {
-        return this.getNamedChild("types") as RemoteNodeList;
-    }
     get typeArguments(): RemoteNode | undefined {
         return this.getNamedChild("typeArguments") as RemoteNode;
     }
@@ -863,6 +860,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get typeParameters(): RemoteNodeList | undefined {
         return this.getNamedChild("typeParameters") as RemoteNodeList;
+    }
+    get types(): RemoteNodeList | undefined {
+        return this.getNamedChild("types") as RemoteNodeList;
     }
     get value(): RemoteNode | undefined {
         return this.getNamedChild("value") as RemoteNode;
