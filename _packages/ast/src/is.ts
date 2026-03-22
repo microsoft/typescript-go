@@ -1174,7 +1174,26 @@ export function isPropertyNameLiteral(node: Node): boolean {
 }
 
 export function isTypeNode(node: Node): node is TypeNode {
-    return node.kind >= SyntaxKind.FirstTypeNode && node.kind <= SyntaxKind.LastTypeNode;
+    if (node.kind >= SyntaxKind.FirstTypeNode && node.kind <= SyntaxKind.LastTypeNode) {
+        return true;
+    }
+    switch (node.kind) {
+        case SyntaxKind.AnyKeyword:
+        case SyntaxKind.BigIntKeyword:
+        case SyntaxKind.BooleanKeyword:
+        case SyntaxKind.IntrinsicKeyword:
+        case SyntaxKind.NeverKeyword:
+        case SyntaxKind.NumberKeyword:
+        case SyntaxKind.ObjectKeyword:
+        case SyntaxKind.StringKeyword:
+        case SyntaxKind.SymbolKeyword:
+        case SyntaxKind.UndefinedKeyword:
+        case SyntaxKind.UnknownKeyword:
+        case SyntaxKind.VoidKeyword:
+            return true;
+        default:
+            return false;
+    }
 }
 
 export function isStatement(node: Node): node is Statement {
