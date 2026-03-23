@@ -23111,9 +23111,6 @@ func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) [
 		})
 	}
 	debug.AssertIsDefined(declaration, "Class was missing valueDeclaration -OR- non-class had no interface declarations")
-	if declaration == nil {
-		return nil
-	}
 	return c.getOuterTypeParameters(declaration, false /*includeThisTypes*/)
 }
 

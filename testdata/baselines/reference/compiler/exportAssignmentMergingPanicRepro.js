@@ -1,70 +1,30 @@
 //// [tests/cases/compiler/exportAssignmentMergingPanicRepro.ts] ////
 
-//// [a.ts]
-type Constructor<T = {}> = new (...args: any[]) => T;
-interface Printable {
-    print(): void;
+//// [a.d.ts]
+declare class Lib {
+    value: number;
 }
-function Mixin<TBase extends Constructor>(Base: TBase) {
-    return class extends Base implements Printable {
-        print() {}
-    };
-}
-class CoreBase {
-    id: number = 0;
-    static Printable: Printable = { print() {} };
-}
-const Mixed = Mixin(CoreBase);
-export = Mixed;
-export { Printable };
-//// [b.ts]
-import Mixed = require("./a");
-import { Printable } from "./a";
-class App extends Mixed {
-    doPrint(p: Printable) {
-        p.print();
+declare namespace Lib {
+    class Component {
+        render(): void;
     }
 }
+export = Lib;
+//// [b.ts]
+import { Component } from "./a";
+class App extends Component {
+    render() { }
+}
 
 
-//// [a.js]
-"use strict";
-function Mixin(Base) {
-    return class extends Base {
-        print() { }
-    };
-}
-class CoreBase {
-    id = 0;
-    static Printable = { print() { } };
-}
-const Mixed = Mixin(CoreBase);
-module.exports = Mixed;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Mixed = require("./a");
-class App extends Mixed {
-    doPrint(p) {
-        p.print();
-    }
+const a_1 = require("./a");
+class App extends a_1.Component {
+    render() { }
 }
 
 
-//// [a.d.ts]
-interface Printable {
-    print(): void;
-}
-declare class CoreBase {
-    id: number;
-    static Printable: Printable;
-}
-declare const Mixed: {
-    new (...args: any[]): {
-        print(): void;
-    };
-} & typeof CoreBase;
-export = Mixed;
-export { Printable };
 //// [b.d.ts]
 export {};
