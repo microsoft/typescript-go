@@ -14,7 +14,7 @@ export enum MyEnum {
 }
 
 function myDecorator(target: any, context: ClassDecoratorContext) {
->myDecorator : (target: any, context: ClassDecoratorContext<abstract new (...args: any) => any>) => any
+>myDecorator : (target: any, context: ClassDecoratorContext) => any
 >target : any
 >context : ClassDecoratorContext<abstract new (...args: any) => any>
 
@@ -24,7 +24,7 @@ function myDecorator(target: any, context: ClassDecoratorContext) {
 
 // ES decorators with enum member access sharing a class name
 @myDecorator
->myDecorator : (target: any, context: ClassDecoratorContext<abstract new (...args: any) => any>) => any
+>myDecorator : (target: any, context: ClassDecoratorContext) => any
 
 export class Foo {
 >Foo : Foo
@@ -55,7 +55,7 @@ declare const obj: { Bar: string };
 >Bar : string
 
 @myDecorator
->myDecorator : (target: any, context: ClassDecoratorContext<abstract new (...args: any) => any>) => any
+>myDecorator : (target: any, context: ClassDecoratorContext) => any
 
 export class Bar {
 >Bar : Bar
@@ -86,7 +86,7 @@ class Other {
 }
 
 @myDecorator
->myDecorator : (target: any, context: ClassDecoratorContext<abstract new (...args: any) => any>) => any
+>myDecorator : (target: any, context: ClassDecoratorContext) => any
 
 export class Baz {
 >Baz : Baz
@@ -105,7 +105,7 @@ declare const obj2: { Quux: number };
 >Quux : number
 
 @myDecorator
->myDecorator : (target: any, context: ClassDecoratorContext<abstract new (...args: any) => any>) => any
+>myDecorator : (target: any, context: ClassDecoratorContext) => any
 
 export class Quux {
 >Quux : Quux
