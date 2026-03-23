@@ -321,7 +321,8 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		KindOmittedExpression,
 		KindJsxElement,
 		KindJsxSelfClosingElement,
-		KindJsxFragment:
+		KindJsxFragment,
+		KindMissingDeclaration:
 		return OperatorPrecedencePrimary
 
 	// !!! By necessity, this differs from the old compiler to support emit. consider backporting
@@ -677,9 +678,10 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 	case KindIndexedAccessType, KindArrayType, KindOptionalType:
 		return TypePrecedencePostfix
 	case KindTypeQuery:
-		// TypeQuery is actually a NonArrayType, but we treat it as the same
-		// precedence as PostfixType
-		return TypePrecedencePostfix
+		// TypeQuery is actually a NonArrayType, but we treat it as TypeOperator
+		// precedence so that it is parenthesized when used in a PostfixType
+		// context (e.g., `(typeof C)[]` instead of `typeof C[]`)
+		return TypePrecedenceTypeOperator
 	case KindAnyKeyword,
 		KindUnknownKeyword,
 		KindStringKeyword,

@@ -130,7 +130,7 @@ type fileRange struct {
 }
 
 func (l *LanguageService) createDefinitionLocations(
-	originSelectionRange *lsproto.Range,
+	originSelectionRange lsproto.Range,
 	clientSupportsLink bool,
 	declarations []*ast.Node,
 	reference *refInfo,
@@ -150,7 +150,7 @@ func (l *LanguageService) createDefinitionLocations(
 			},
 		}
 		locations = append(locations, &lsproto.LocationLink{
-			OriginSelectionRange: originSelectionRange,
+			OriginSelectionRange: &originSelectionRange,
 			TargetUri:            lsconv.FileNameToDocumentURI(reference.fileName),
 			TargetRange:          targetRange,
 			TargetSelectionRange: targetRange,
@@ -168,7 +168,7 @@ func (l *LanguageService) createDefinitionLocations(
 			targetSelectionLoc := l.getMappedLocation(fileName, nameRange)
 			targetLoc := l.getMappedLocation(fileName, *contextRange)
 			locations = append(locations, &lsproto.LocationLink{
-				OriginSelectionRange: originSelectionRange,
+				OriginSelectionRange: &originSelectionRange,
 				TargetSelectionRange: targetSelectionLoc.Range,
 				TargetUri:            targetLoc.Uri,
 				TargetRange:          targetLoc.Range,
@@ -215,6 +215,36 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		contextualDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
 		return core.Concatenate(declarations, contextualDeclarations)
 	}
+
+	if ast.IsPropertyName(node) && ast.IsBindingElement(node.Parent) && ast.IsObjectBindingPattern(node.Parent.Parent) {
+		// If the node is the name of a BindingElement within an ObjectBindingPattern instead of just returning the
+		// declaration of the symbol (which is itself), we should try to get to the original type of the
+		// ObjectBindingPattern and return the property declaration for the referenced property.
+		// For example:
+		//      import('./foo').then(({ bar }) => undefined); => should navigate to the declaration in file "./foo"
+		//
+		//      function bar<T>(onfulfilled: (value: T) => void) { }
+		//      interface Test { prop1: number }
+		//      bar<Test>(({ prop1 }) => {});  => should navigate to prop1 in Test
+		bindingEl := node.Parent.AsBindingElement()
+		if bindingEl.DotDotDotToken == nil && node == core.OrElse(bindingEl.PropertyName, node.Parent.Name()) {
+			if name, ok := ast.TryGetTextOfPropertyName(node); ok {
+				t := c.GetTypeAtLocation(node.Parent.Parent)
+				types := []*checker.Type{t}
+				if t.IsUnion() {
+					types = t.Types()
+				}
+				var result []*ast.Node
+				for _, unionType := range types {
+					if prop := c.GetPropertyOfType(unionType, name); prop != nil {
+						result = append(result, prop.Declarations...)
+					}
+				}
+				return result
+			}
+		}
+	}
+
 	node = getDeclarationNameForKeyword(node)
 	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
 		if symbol.Flags&ast.SymbolFlagsClass != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable) == 0 && node.Kind == ast.KindConstructorKeyword {
@@ -231,7 +261,9 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		if len(objectLiteralElementDeclarations) > 0 {
 			return objectLiteralElementDeclarations
 		}
-		return symbol.Declarations
+		if len(symbol.Declarations) > 0 {
+			return symbol.Declarations
+		}
 	}
 	if indexInfos := c.GetIndexSignaturesAtLocation(node); len(indexInfos) != 0 {
 		return indexInfos

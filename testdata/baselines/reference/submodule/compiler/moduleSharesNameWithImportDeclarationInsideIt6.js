@@ -16,7 +16,7 @@ namespace A.M {
 "use strict";
 var Z;
 (function (Z) {
-    let M;
+    var M;
     (function (M) {
         function bar() {
             return "";
@@ -26,9 +26,8 @@ var Z;
 })(Z || (Z = {}));
 var A;
 (function (A) {
-    let M;
+    var M;
     (function (M_1) {
-        var M = Z.M;
         function bar() {
         }
         M_1.bar = bar;

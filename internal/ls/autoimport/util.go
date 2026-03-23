@@ -144,8 +144,18 @@ func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
 }
 
 func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *collections.Set[string] {
-	resolvedPackageNames := program.ResolvedPackageNames().Clone()
+	rawNames := program.ResolvedPackageNames()
 	unresolvedPackageNames := program.UnresolvedPackageNames()
+
+	// Normalize @types/ package names to their actual package names
+	// (e.g., "@types/react" → "react"). ResolvedPackageNames can contain
+	// @types names when the program resolves an import like "react" to
+	// "@types/react/index.d.ts" via the PackageId.Name field.
+	resolvedPackageNames := collections.NewSetWithSizeHint[string](rawNames.Len())
+	for name := range rawNames.Keys() {
+		resolvedPackageNames.Add(module.GetPackageNameFromTypesPackageName(name))
+	}
+
 	if unresolvedPackageNames.Len() > 0 {
 		checker, done := program.GetTypeChecker(ctx)
 		defer done()
@@ -153,7 +163,7 @@ func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *co
 			if symbol := checker.TryFindAmbientModule(name); symbol != nil {
 				declaringFile := ast.GetSourceFileOfModule(symbol)
 				if packageName := modulespecifiers.GetPackageNameFromDirectory(declaringFile.FileName()); packageName != "" {
-					resolvedPackageNames.Add(packageName)
+					resolvedPackageNames.Add(module.GetPackageNameFromTypesPackageName(packageName))
 				}
 			}
 		}
@@ -218,6 +228,10 @@ func createCheckerPool(program checker.Program) (getChecker func() (*checker.Che
 // to the given set, canonicalizing @types package names to their base names.
 func addPackageJsonDependencies(contents *packagejson.PackageJson, deps *collections.Set[string]) {
 	contents.RangeDependencies(func(name, _, field string) bool {
+		if name == "" || name == "@types/" || name[0] == '.' {
+			// Edge cases that could make us blow up probably
+			return true
+		}
 		if field == "dependencies" || field == "peerDependencies" {
 			deps.Add(module.GetPackageNameFromTypesPackageName(name))
 		}
@@ -270,11 +284,11 @@ func (rh *resolutionHost) PnpApi() *pnp.PnpApi {
 	return rh.pnpApi
 }
 
-func getModuleResolver(host RegistryCloneHost, realpath func(string) string) *module.Resolver {
+func getModuleResolver(host RegistryCloneHost, realpath func(string) string, opts module.ResolverOptions) *module.Resolver {
 	rh := &resolutionHost{
 		fs:               wrapvfs.Wrap(host.FS(), wrapvfs.Replacements{Realpath: realpath}),
 		currentDirectory: host.GetCurrentDirectory(),
 		pnpApi:           host.PnpApi(),
 	}
-	return module.NewResolver(rh, core.EmptyCompilerOptions, "", "")
+	return module.NewResolverWithOptions(rh, core.EmptyCompilerOptions, "", "", opts)
 }

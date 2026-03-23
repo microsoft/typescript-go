@@ -153,23 +153,35 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindGetAccessor:
 		n := node.AsGetAccessorDeclaration()
-		if n.Body == nil {
-			// TypeScript overloads are elided
+		if n.Body == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
+			// Abstract accessors are elided
 			return nil
 		}
-		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
+		body := tx.Visitor().VisitNode(n.Body)
+		if body == nil {
+			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false)
+		}
+		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, body)
 
 	case ast.KindSetAccessor:
 		n := node.AsSetAccessorDeclaration()
-		if n.Body == nil {
-			// TypeScript overloads are elided
+		if n.Body == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
+			// Abstract accessors are elided
 			return nil
 		}
-		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
+		body := tx.Visitor().VisitNode(n.Body)
+		if body == nil {
+			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false)
+		}
+		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, body)
 
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
-		return tx.Factory().UpdateVariableDeclaration(n, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		updated := tx.Factory().UpdateVariableDeclaration(n, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		if n.Type != nil {
+			tx.EmitContext().SetTypeNode(updated.AsVariableDeclaration().Name(), n.Type)
+		}
+		return updated
 
 	case ast.KindHeritageClause:
 		n := node.AsHeritageClause()
@@ -245,13 +257,15 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		return partial
 
 	case ast.KindParenthesizedExpression:
-		n := node.AsParenthesizedExpression()
-		expression := ast.SkipOuterExpressions(n.Expression, ^(ast.OEKAssertions | ast.OEKExpressionsWithTypeArguments))
-		if ast.IsAssertionExpression(expression) || ast.IsSatisfiesExpression(expression) {
-			partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(n.Expression))
-			tx.EmitContext().SetOriginal(partial, node)
-			partial.Loc = node.Loc
-			return partial
+		if !ast.IsJSDocTypeAssertion(node) {
+			n := node.AsParenthesizedExpression()
+			expression := ast.SkipOuterExpressions(n.Expression, ^(ast.OEKAssertions | ast.OEKExpressionsWithTypeArguments))
+			if ast.IsAssertionExpression(expression) || ast.IsSatisfiesExpression(expression) {
+				partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(n.Expression))
+				tx.EmitContext().SetOriginal(partial, node)
+				partial.Loc = node.Loc
+				return partial
+			}
 		}
 		return tx.Visitor().VisitEachChild(node)
 

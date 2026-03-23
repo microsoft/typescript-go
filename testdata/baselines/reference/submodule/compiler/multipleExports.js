@@ -23,6 +23,5 @@ var M;
 })(M || (exports.M = M = {}));
 const x = 0;
 (function (M) {
-    v;
-    export { x };
+    M.v;
 })(M || (exports.M = M = {}));

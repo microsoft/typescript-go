@@ -143,8 +143,7 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 
 		session := setup(files)
 		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///project/src/main.ts"), 1, files["/project/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 
 		config := snapshot.ConfigFileRegistry.GetConfig("/project/tsconfig.json")
 		assert.Assert(t, config != nil)
@@ -160,7 +159,6 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 		// And the cache refcounts should match the registry's deduped list.
 		assertExtendedRefCountsMatchRegistry(t, session, snapshot)
 
-		release()
 		flushCloseProject(session, lsproto.DocumentUri("file:///project/src/main.ts"))
 		assertNoEntry(t, session, "/project/tsconfig.base1.json")
 		assertNoEntry(t, session, "/project/tsconfig.base2.json")
@@ -219,8 +217,7 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 
 		session := setup(files)
 		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///project/src/main.ts"), 1, files["/project/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 
 		config := snapshot.ConfigFileRegistry.GetConfig("/project/tsconfig.json")
 		assert.Assert(t, config != nil)

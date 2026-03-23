@@ -74,7 +74,7 @@ func TestPnpVfs_BasicFileOperations(t *testing.T) {
 	assert.NilError(t, err)
 	assert.DeepEqual(t, files, []string{"/project/package.json", "/project/src/index.ts"})
 
-	err = fs.WriteFile("/project/src/index.ts", "export const hello = 'world2';", false)
+	err = fs.WriteFile("/project/src/index.ts", "export const hello = 'world2';")
 	assert.NilError(t, err)
 
 	content, ok = fs.ReadFile("/project/src/index.ts")
@@ -138,7 +138,7 @@ func TestPnpVfs_ErrorHandling(t *testing.T) {
 		zipPath, zipFS := createTestZip(t, zipFiles)
 
 		testutil.AssertPanics(t, func() {
-			_ = zipFS.WriteFile(zipPath+"/src/index.ts", "hello, world", false)
+			_ = zipFS.WriteFile(zipPath+"/src/index.ts", "hello, world")
 		}, "cannot write to zip file")
 	})
 }

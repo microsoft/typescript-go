@@ -20,14 +20,15 @@ const (
 	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.HoverResponse, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
 
 	program, file := l.getProgramAndFile(documentURI)
-	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
-	if node.Kind == ast.KindSourceFile {
-		// Avoid giving quickInfo for the sourceFile as a whole.
+	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
+	node := astnav.GetTouchingPropertyName(file, position)
+	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
+		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
 		return lsproto.HoverOrNull{}, nil
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -55,7 +56,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 					Value: content,
 				},
 			},
-			Range: hoverRange,
+			Range: &hoverRange,
 		},
 	}, nil
 }
@@ -65,16 +66,44 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	if quickInfo == "" {
 		return "", ""
 	}
-	return quickInfo, l.getDocumentationFromDeclaration(c, declaration, contentFormat, false /*commentOnly*/)
+	return quickInfo, l.getDocumentationFromDeclaration(c, symbol, declaration, node, contentFormat, false /*commentOnly*/)
 }
 
-func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, declaration *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if declaration == nil {
 		return ""
 	}
+
 	isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
 	var b strings.Builder
-	if jsdoc := getJSDocOrTag(c, declaration); jsdoc != nil && !(declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc)) {
+	jsdoc := getJSDocOrTag(c, declaration)
+
+	// Handle binding elements specially (variables created from destructuring) - we need to get the documentation from the property type
+	// If the binding element doesn't have its own JSDoc, fall back to the property's JSDoc
+	if jsdoc == nil && symbol != nil && symbol.ValueDeclaration != nil && ast.IsBindingElement(symbol.ValueDeclaration) && ast.IsIdentifier(location) {
+		bindingElement := symbol.ValueDeclaration
+		parent := bindingElement.Parent
+		name := bindingElement.PropertyName()
+		if name == nil {
+			name = bindingElement.Name()
+		}
+		if ast.IsIdentifier(name) && ast.IsObjectBindingPattern(parent) {
+			propertyName := name.Text()
+			objectType := c.GetTypeAtLocation(parent)
+			if objectType != nil {
+				propertySymbol := findPropertyInType(c, objectType, propertyName)
+				if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
+					jsdoc = getJSDocOrTag(c, propertySymbol.ValueDeclaration)
+					if jsdoc != nil {
+						// Use property declaration for typedef check
+						declaration = propertySymbol.ValueDeclaration
+					}
+				}
+			}
+		}
+	}
+
+	if jsdoc != nil && !(declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc)) {
 		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
 		if jsdoc.Kind == ast.KindJSDoc && !commentOnly {
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
@@ -137,6 +166,13 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 							b.WriteString(" ")
 							l.writeComments(&b, c, comments, isMarkdown)
 						}
+					} else if tag.Kind == ast.KindJSDocThrowsTag && tag.AsJSDocThrowsTag().TypeExpression != nil {
+						b.WriteString(" — ")
+						b.WriteString(scanner.GetTextOfNode(tag.AsJSDocThrowsTag().TypeExpression))
+						if len(comments) != 0 {
+							b.WriteString(" ")
+							l.writeComments(&b, c, comments, isMarkdown)
+						}
 					} else if len(comments) != 0 {
 						b.WriteString(" ")
 						if comments[0].Kind != ast.KindJSDocText || !strings.HasPrefix(comments[0].Text(), "-") {
@@ -171,12 +207,30 @@ func formatQuickInfo(quickInfo string) string {
 	return b.String()
 }
 
+func shouldGetType(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindIdentifier:
+		// If we're in a JSDoc node with no associated symbol, no binding has taken place for the node and
+		// we can't answer questions about types of declaration nodes (such as property declarations).
+		return !(node.Flags&ast.NodeFlagsJSDoc != 0 && ast.IsDeclarationName(node)) && !ast.IsLabelName(node) && !ast.IsTagName(node) && !ast.IsConstTypeReference(node.Parent)
+	case ast.KindThisKeyword, ast.KindThisType, ast.KindSuperKeyword, ast.KindNamedTupleMember:
+		return true
+	case ast.KindMetaProperty:
+		return ast.IsImportMeta(node)
+	default:
+		return false
+	}
+}
+
 func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
 	container := getContainerNode(node)
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
 		return "this: " + c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
 	}
 	if symbol == nil {
+		if shouldGetType(node) {
+			return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
+		}
 		return "", nil
 	}
 	var b strings.Builder
@@ -260,36 +314,38 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0 {
 			writeNewLine()
-			switch {
-			case flags&ast.SymbolFlagsProperty != 0:
-				b.WriteString("(property) ")
-			case flags&ast.SymbolFlagsAccessor != 0:
-				b.WriteString("(accessor) ")
-			default:
-				decl := symbol.ValueDeclaration
-				if decl != nil {
-					switch {
-					case ast.IsParameter(decl):
-						b.WriteString("(parameter) ")
-					case ast.IsVarLet(decl):
-						b.WriteString("let ")
-					case ast.IsVarConst(decl):
-						b.WriteString("const ")
-					case ast.IsVarUsing(decl):
-						b.WriteString("using ")
-					case ast.IsVarAwaitUsing(decl):
-						b.WriteString("await using ")
-					default:
-						b.WriteString("var ")
+			if symbol.CheckFlags&ast.CheckFlagsIndexSymbol == 0 {
+				switch {
+				case flags&ast.SymbolFlagsProperty != 0:
+					b.WriteString("(property) ")
+				case flags&ast.SymbolFlagsAccessor != 0:
+					b.WriteString("(accessor) ")
+				default:
+					decl := symbol.ValueDeclaration
+					if decl != nil {
+						switch {
+						case ast.IsParameter(decl):
+							b.WriteString("(parameter) ")
+						case ast.IsVarLet(decl):
+							b.WriteString("let ")
+						case ast.IsVarConst(decl):
+							b.WriteString("const ")
+						case ast.IsVarUsing(decl):
+							b.WriteString("using ")
+						case ast.IsVarAwaitUsing(decl):
+							b.WriteString("await using ")
+						default:
+							b.WriteString("var ")
+						}
 					}
 				}
+				if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
+					b.WriteString("exports")
+				} else {
+					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+				}
+				b.WriteString(": ")
 			}
-			if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
-				b.WriteString("exports")
-			} else {
-				b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-			}
-			b.WriteString(": ")
 			if callNode := getCallOrNewExpression(node); callNode != nil {
 				b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
 			} else {
@@ -710,6 +766,20 @@ func writeQuotedString(b *strings.Builder, str string, quote bool) {
 	} else {
 		b.WriteString(str)
 	}
+}
+
+// findPropertyInType finds a property in a type, handling union types by searching constituent types
+func findPropertyInType(c *checker.Checker, objectType *checker.Type, propertyName string) *ast.Symbol {
+	// For union types, try to find the property in any of the constituent types
+	if objectType.IsUnion() {
+		for _, t := range objectType.Types() {
+			if prop := c.GetPropertyOfType(t, propertyName); prop != nil {
+				return prop
+			}
+		}
+		return nil
+	}
+	return c.GetPropertyOfType(objectType, propertyName)
 }
 
 func getEntityNameString(name *ast.Node) string {

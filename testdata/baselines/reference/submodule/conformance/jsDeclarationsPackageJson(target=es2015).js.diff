@@ -1,35 +1,42 @@
 --- old.jsDeclarationsPackageJson(target=es2015).js
 +++ new.jsDeclarationsPackageJson(target=es2015).js
-@@= skipped -76, +76 lines =@@
+@@= skipped -75, +75 lines =@@
+
 
  //// [index.d.ts]
- export = j;
--declare const j: {
--    name: string;
--    version: string;
--    description: string;
--    main: string;
--    bin: {
+-export = j;
+ declare const j: {
+     name: string;
+     version: string;
+     description: string;
+     main: string;
+     bin: {
 -        cli: string;
--    };
--    engines: {
++        "cli": string;
+     };
+     engines: {
 -        node: string;
--    };
--    scripts: {
++        "node": string;
+     };
+     scripts: {
 -        scriptname: string;
--    };
--    devDependencies: {
--        "@ns/dep": string;
--    };
--    dependencies: {
++        "scriptname": string;
+     };
+     devDependencies: {
+         "@ns/dep": string;
+     };
+     dependencies: {
 -        dep: string;
--    };
--    repository: string;
--    keywords: string[];
--    author: string;
--    license: string;
--    homepage: string;
--    config: {
++        "dep": string;
+     };
+     repository: string;
+     keywords: string[];
+@@= skipped -27, +26 lines =@@
+     license: string;
+     homepage: string;
+     config: {
 -        o: string[];
--    };
--};
++        "o": string[];
+     };
+ };
++export = j;

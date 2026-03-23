@@ -1,4 +1,4 @@
-file.js(4,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
+file.js(2,8): error TS2882: Cannot find module or type declarations for side-effect import of 'fs'.
 index.js(3,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 index.js(3,1): error TS8003: 'export =' can only be used in TypeScript files.
 subfolder/index.js(3,1): error TS8003: 'export =' can only be used in TypeScript files.
@@ -25,10 +25,10 @@ subfolder/index.js(3,1): error TS8003: 'export =' can only be used in TypeScript
 ==== file.js (1 errors) ====
     // esm format file
     import "fs";
+           ~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'fs'.
     const a = {};
     module.exports = a;
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 ==== package.json (0 errors) ====
     {
         "name": "package",

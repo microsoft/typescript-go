@@ -148,20 +148,17 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 					b.apiOpenedProjects = make(map[tspath.Path]struct{})
 				}
 				b.apiOpenedProjects[configPath] = struct{}{}
-				b.updateProgram(entry, logger)
 			} else {
 				return fmt.Errorf("project not found for open: %s", configFileName)
 			}
 		}
 	}
 
-	if apiRequest.UpdateProjects != nil {
-		for configPath := range apiRequest.UpdateProjects.Keys() {
-			if entry, ok := b.configuredProjects.Load(configPath); ok {
-				b.updateProgram(entry, logger)
-			} else {
-				return fmt.Errorf("project not found for update: %s", configPath)
-			}
+	for configPath := range b.apiOpenedProjects {
+		if entry, ok := b.configuredProjects.Load(configPath); ok {
+			b.updateProgram(entry, logger)
+		} else {
+			return fmt.Errorf("project not found for update: %s", configPath)
 		}
 	}
 
@@ -329,7 +326,6 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 				b.deleteConfiguredProject(p, logger)
 			}
 		}
-		slices.Sort(inferredProjectFiles)
 		b.updateInferredProjectRoots(inferredProjectFiles, logger)
 		b.configFileRegistryBuilder.Cleanup()
 	}
@@ -354,7 +350,26 @@ func (b *ProjectCollectionBuilder) cleanupInferredProject(logger *logging.LogTre
 	b.updateInferredProjectRoots(inferredProjectFiles, logger)
 }
 
-func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logger *logging.LogTree) {
+func (b *ProjectCollectionBuilder) ensureInferredProjectIncludesClosedFile(fileName string, logger *logging.LogTree) {
+	// Collect existing inferred project roots (open files not in configured projects)
+	// plus this closed file.
+	var inferredProjectFiles []string
+	for path, overlay := range b.fs.overlays {
+		if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
+			inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+		}
+	}
+	inferredProjectFiles = append(inferredProjectFiles, fileName)
+	b.updateInferredProjectRoots(inferredProjectFiles, logger)
+	if b.inferredProject.Value() != nil {
+		b.updateProgram(b.inferredProject, logger)
+	}
+}
+
+// DidRequestFile ensures projects are loaded for the given URI.
+// If configuredProjectsOnly is true, only configured projects are loaded; no inferred project is created
+// and it is not guaranteed that there will be any project containing the file in the resulting snapshot.
+func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, configuredProjectsOnly bool, logger *logging.LogTree) {
 	startTime := time.Now()
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
@@ -398,7 +413,12 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		// really even have an error condition until it tries to ask us language questions about
 		// a non-TS-handleable file.
 	} else {
-		b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		result := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		if result.project == nil && !configuredProjectsOnly {
+			// No configured project found for this closed file.
+			// Add it to the inferred project so language service requests can be served.
+			b.ensureInferredProjectIncludesClosedFile(fileName, logger)
+		}
 	}
 
 	if logger != nil {
@@ -917,6 +937,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 		return false
 	}
 
+	slices.Sort(rootFileNames)
 	if b.inferredProject.Value() == nil {
 		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, b.compilerOptionsForInferredProjects, rootFileNames, b, logger))
 	} else {
@@ -995,10 +1016,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				}
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
-					programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
-					project.programFilesWatch = programFilesWatch
-					project.failedLookupsWatch = failedLookupsWatch
-					project.affectingLocationsWatch = affectingLocationsWatch
+					project.programFilesWatch = project.CloneWatchers()
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""
@@ -1023,18 +1041,7 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 
 			dirtyFilePath = p.dirtyFilePath
 			for _, path := range paths {
-				if changeType == lsproto.FileChangeTypeCreated {
-					if _, ok := p.affectingLocationsWatch.input[path]; ok {
-						dirty = true
-						dirtyFilePath = ""
-						break
-					}
-					if _, ok := p.failedLookupsWatch.input[path]; ok {
-						dirty = true
-						dirtyFilePath = ""
-						break
-					}
-				} else if p.containsFile(path) {
+				if p.containsFile(path) {
 					dirty = true
 					if changeType == lsproto.FileChangeTypeDeleted {
 						dirtyFilePath = ""
@@ -1046,6 +1053,12 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 						dirtyFilePath = ""
 						break
 					}
+				} else if p.host != nil &&
+					(changeType == lsproto.FileChangeTypeCreated && p.host.sourceFS.SeenFileOrMissingParentDirectory(path) ||
+						changeType != lsproto.FileChangeTypeCreated && p.host.sourceFS.SeenFile(path)) {
+					dirty = true
+					dirtyFilePath = ""
+					break
 				}
 			}
 			return dirty || p.dirtyFilePath != dirtyFilePath

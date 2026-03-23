@@ -123,7 +123,7 @@ func (pnpFS *pnpFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	}))
 }
 
-func (pnpFS *pnpFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (pnpFS *pnpFS) WriteFile(path string, data string) error {
 	path, _, _ = resolveVirtual(path)
 
 	fs, formattedPath, zipPath := getMatchingFS(pnpFS, path)
@@ -131,7 +131,7 @@ func (pnpFS *pnpFS) WriteFile(path string, data string, writeByteOrderMark bool)
 		panic("cannot write to zip file")
 	}
 
-	return fs.WriteFile(formattedPath, data, writeByteOrderMark)
+	return fs.WriteFile(formattedPath, data)
 }
 
 func splitZipPath(path string) (string, string) {

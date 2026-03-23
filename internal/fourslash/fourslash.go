@@ -2,7 +2,6 @@ package fourslash
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -10,7 +9,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"testing"
 	"unicode/utf8"
 
@@ -34,20 +32,17 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/lsptestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/tsbaseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
-	"golang.org/x/sync/errgroup"
 	"gotest.tools/v3/assert"
 )
 
 type FourslashTest struct {
-	server *lsp.Server
-	in     *lspWriter
-	out    *lspReader
-	id     int32
+	client *lsptestutil.LSPClient
 	vfs    vfs.FS
 
 	testData      *TestData // !!! consolidate test files from test data and script info
@@ -68,10 +63,6 @@ type FourslashTest struct {
 	selectionEnd            *lsproto.Position
 
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
-
-	// Async message handling
-	pendingRequests   map[jsonrpc.ID]chan *lsproto.ResponseMessage
-	pendingRequestsMu sync.Mutex
 }
 
 type scriptInfo struct {
@@ -117,47 +108,7 @@ func (s *scriptInfo) GetLineContent(line int) string {
 		end = core.TextPos(len(s.content))
 	}
 
-	// delete trailing newline
-	content := s.content[start:end]
-	if len(content) > 0 && content[len(content)-1] == '\n' {
-		content = content[:len(content)-1]
-	}
-	return content
-}
-
-type lspReader struct {
-	c <-chan *lsproto.Message
-}
-
-func (r *lspReader) Read() (*lsproto.Message, error) {
-	msg, ok := <-r.c
-	if !ok {
-		return nil, io.EOF
-	}
-	return msg, nil
-}
-
-type lspWriter struct {
-	c chan<- *lsproto.Message
-}
-
-func (w *lspWriter) Write(msg *lsproto.Message) error {
-	w.c <- msg
-	return nil
-}
-
-func (w *lspWriter) Close() {
-	close(w.c)
-}
-
-var (
-	_ lsp.Reader = (*lspReader)(nil)
-	_ lsp.Writer = (*lspWriter)(nil)
-)
-
-func newLSPPipe() (*lspReader, *lspWriter) {
-	c := make(chan *lsproto.Message, 100)
-	return &lspReader{c: c}, &lspWriter{c: c}
+	return strings.TrimRight(s.content[start:end], "\r\n")
 }
 
 const rootDir = "/"
@@ -208,15 +159,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	harnessutil.SkipUnsupportedCompilerOptions(t, compilerOptions)
 
-	inputReader, inputWriter := newLSPPipe()
-	outputReader, outputWriter := newLSPPipe()
-
 	fsFromMap := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
 	fs := bundled.WrapFS(fsFromMap)
 
-	server := lsp.NewServer(&lsp.ServerOptions{
-		In:  inputReader,
-		Out: outputWriter,
+	serverOpts := lsp.ServerOptions{
 		Err: io.Discard,
 
 		Cwd:                "/",
@@ -224,7 +170,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		DefaultLibraryPath: bundled.LibPath(),
 
 		ParseCache: parseCache,
-	})
+	}
 
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
@@ -235,9 +181,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		server:                  server,
-		in:                      inputWriter,
-		out:                     outputReader,
 		testData:                &testData,
 		stateEnableFormatting:   true,
 		reportFormatOnTypeCrash: true,
@@ -247,26 +190,13 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:              converters,
 		baselines:               make(map[baselineCommand]*strings.Builder),
 		openFiles:               make(map[string]struct{}),
-		pendingRequests:         make(map[jsonrpc.ID]chan *lsproto.ResponseMessage),
 	}
-
-	ctx, cancel := context.WithCancel(t.Context())
-	g, ctx := errgroup.WithContext(ctx)
-
-	// Start server goroutine
-	g.Go(func() error {
-		defer outputWriter.Close()
-		return server.Run(ctx)
-	})
-
-	// Start async message router
-	g.Go(func() error {
-		return f.messageRouter(ctx)
-	})
+	client, closeClient := lsptestutil.NewLSPClient(t, serverOpts, f.handleServerRequest)
+	f.client = client
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
-	f.server.SetCompilerOptionsForInferredProjects(ctx, compilerOptions)
+	client.SetCompilerOptionsForInferredProjects(compilerOptions)
 	f.initialize(t, capabilities)
 
 	if testData.isStateBaseliningEnabled() {
@@ -282,85 +212,20 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	_, testPath, _, _ := runtime.Caller(1)
 	return f, func() {
 		t.Helper()
-		cancel()
-		inputWriter.Close()
-		if err := g.Wait(); err != nil && !errors.Is(err, context.Canceled) {
+		err := closeClient()
+		if err != nil {
 			t.Errorf("goroutine error: %v", err)
 		}
 		f.verifyBaselines(t, testPath)
 	}
 }
 
-// messageRouter runs in a goroutine and routes incoming messages from the server.
-// It handles responses to client requests and server-initiated requests.
-func (f *FourslashTest) messageRouter(ctx context.Context) error {
-	for {
-		if ctx.Err() != nil {
-			return nil
-		}
-
-		msg, err := f.out.Read()
-		if err != nil {
-			if errors.Is(err, io.EOF) || ctx.Err() != nil {
-				return nil
-			}
-			return fmt.Errorf("failed to read message: %w", err)
-		}
-
-		// Validate message can be marshaled
-		if err := json.MarshalWrite(io.Discard, msg); err != nil {
-			if ctx.Err() != nil {
-				return nil
-			}
-
-			return fmt.Errorf("failed to encode message as JSON: %w", err)
-		}
-
-		switch msg.Kind {
-		case jsonrpc.MessageKindResponse:
-			f.handleResponse(ctx, msg.AsResponse())
-		case jsonrpc.MessageKindRequest:
-			if err := f.handleServerRequest(ctx, msg.AsRequest()); err != nil {
-				return err
-			}
-		case jsonrpc.MessageKindNotification:
-			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
-			// in fourslash tests
-		}
-	}
-}
-
-// handleResponse routes a response message to the waiting request goroutine.
-func (f *FourslashTest) handleResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
-	if resp.ID == nil {
-		return
-	}
-
-	f.pendingRequestsMu.Lock()
-	respChan, ok := f.pendingRequests[*resp.ID]
-	if ok {
-		delete(f.pendingRequests, *resp.ID)
-	}
-	f.pendingRequestsMu.Unlock()
-
-	if ok {
-		select {
-		case respChan <- resp:
-			// sent response
-		case <-ctx.Done():
-			// context cancelled
-		}
-	}
-}
-
 // handleServerRequest handles requests initiated by the server (e.g., workspace/configuration).
-func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.RequestMessage) error {
-	var response *lsproto.ResponseMessage
-
+func (f *FourslashTest) handleServerRequest(_ context.Context, req *lsproto.RequestMessage) *lsproto.ResponseMessage {
 	switch req.Method {
 	case lsproto.MethodWorkspaceConfiguration:
 		// Return current user preferences
-		response = &lsproto.ResponseMessage{
+		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
 			Result:  []any{f.userPreferences},
@@ -368,7 +233,7 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 
 	case lsproto.MethodClientRegisterCapability:
 		// Accept all capability registrations
-		response = &lsproto.ResponseMessage{
+		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
 			Result:  lsproto.Null{},
@@ -376,7 +241,7 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 
 	case lsproto.MethodClientUnregisterCapability:
 		// Accept all capability unregistrations
-		response = &lsproto.ResponseMessage{
+		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
 			Result:  lsproto.Null{},
@@ -384,7 +249,7 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 
 	default:
 		// Unknown server request
-		response = &lsproto.ResponseMessage{
+		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
 			Error: &jsonrpc.ResponseError{
@@ -393,19 +258,6 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 			},
 		}
 	}
-
-	// Send response back to server
-	if ctx.Err() != nil {
-		return nil
-	}
-
-	if err := f.in.Write(response.Message()); err != nil {
-		if ctx.Err() != nil {
-			return nil
-		}
-		return fmt.Errorf("failed to write server request response: %w", err)
-	}
-	return nil
 }
 
 func getBaseFileNameFromTest(t *testing.T) string {
@@ -431,12 +283,6 @@ func getBaseFileNameFromTest(t *testing.T) string {
 	return name
 }
 
-func (f *FourslashTest) nextID() int32 {
-	id := f.id
-	f.id++
-	return id
-}
-
 const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
@@ -447,18 +293,18 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
-	resp, _, ok := sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	resp, _, ok := lsptestutil.SendRequest(t, f.client, lsproto.InitializeInfo, params)
 	if !ok {
 		t.Fatalf("Initialize request failed")
 	}
 	if resp.AsResponse().Error != nil {
 		t.Fatalf("Initialize request returned error: %s", resp.AsResponse().Error.String())
 	}
-	sendNotificationWorker(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
+	lsptestutil.SendNotification(t, f.client, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 
 	// Wait for the initial configuration exchange to complete
 	// The server will send workspace/configuration as part of handleInitialized
-	<-f.server.InitComplete()
+	<-f.client.Server.InitComplete()
 }
 
 // If modifying the defaults, update GetDefaultCapabilities too.
@@ -668,54 +514,6 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
-	id := f.nextID()
-	reqID := lsproto.NewID(lsproto.IntegerOrString{Integer: &id})
-	req := info.NewRequestMessage(reqID, params)
-
-	// Create response channel and register it
-	responseChan := make(chan *lsproto.ResponseMessage, 1)
-	f.pendingRequestsMu.Lock()
-	f.pendingRequests[*reqID] = responseChan
-	f.pendingRequestsMu.Unlock()
-
-	// Send the request
-	f.writeMsg(t, req.Message())
-
-	// Wait for response with context
-	ctx := t.Context()
-	var resp *lsproto.ResponseMessage
-	select {
-	case <-ctx.Done():
-		f.pendingRequestsMu.Lock()
-		delete(f.pendingRequests, *reqID)
-		f.pendingRequestsMu.Unlock()
-		t.Fatalf("Request cancelled: %v", ctx.Err())
-		return nil, *new(Resp), false
-	case resp = <-responseChan:
-		if resp == nil {
-			return nil, *new(Resp), false
-		}
-	}
-
-	result, ok := resp.Result.(Resp)
-	return resp.Message(), result, ok
-}
-
-func sendNotificationWorker[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	notification := info.NewNotificationMessage(
-		params,
-	)
-	f.writeMsg(t, notification.Message())
-}
-
-func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
-	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
-	if err := f.in.Write(msg); err != nil {
-		t.Fatalf("failed to write message: %v", err)
-	}
-}
-
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
 	t.Helper()
 	return sendRequestAndBaselineWorker(t, f, info, params, true)
@@ -728,7 +526,7 @@ func sendRequestAndBaselineWorker[Params, Resp any](t *testing.T, f *FourslashTe
 		f.baselineState(t)
 	}
 	f.baselineRequestOrNotification(t, info.Method, params)
-	resMsg, result, resultOk := sendRequestWorker(t, f, info, params)
+	resMsg, result, resultOk := lsptestutil.SendRequest(t, f.client, info, params)
 	if baselineProjects {
 		f.baselineState(t)
 	}
@@ -764,7 +562,7 @@ func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.N
 		f.updateState(info.Method, params)
 	}
 	f.baselineRequestOrNotification(t, info.Method, params)
-	sendNotificationWorker(t, f, info, params)
+	lsptestutil.SendNotification(t, f.client, info, params)
 }
 
 func (f *FourslashTest) updateState(method lsproto.Method, params any) {
@@ -782,14 +580,13 @@ func (f *FourslashTest) GetOptions() *lsutil.UserPreferences {
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
 	// !!!
-	// Callers to this function may need to consider
-	// sending a more specific configuration for 'javascript'
-	// or 'js/ts' as well. For now, we only send 'typescript',
-	// and most tests probably just want this.
+	// We send 'js/ts' by default because that is what we expect the primary config to be in vscode and VS (one
+	// set of preferences for both languages). This should be fine in fourslash since tests that need
+	// multiple options usually send reconfiguration commands for each `verify` anyways
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
 		Settings: map[string]any{
-			"typescript": config,
+			"js/ts": config,
 		},
 	})
 }
@@ -1009,6 +806,36 @@ func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
 	f.applyTextEdits(t, *result.TextEdits)
 }
 
+func (f *FourslashTest) FormatSelection(t *testing.T, startMarkerName string, endMarkerName string) {
+	t.Helper()
+	startMarker, ok := f.testData.MarkerPositions[startMarkerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", startMarkerName)
+	}
+	endMarker, ok := f.testData.MarkerPositions[endMarkerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", endMarkerName)
+	}
+	if startMarker.FileName() != endMarker.FileName() {
+		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
+	}
+	filename := startMarker.FileName()
+	result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(filename),
+		},
+		Range: lsproto.Range{
+			Start: startMarker.LSPosition,
+			End:   endMarker.LSPosition,
+		},
+		Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
+	})
+	if result.TextEdits == nil {
+		return
+	}
+	f.applyTextEdits(t, *result.TextEdits)
+}
+
 func (f *FourslashTest) VerifyCurrentFileContent(t *testing.T, expectedContent string) {
 	t.Helper()
 	actualContent := f.getScriptInfo(f.activeFilename).content
@@ -1164,6 +991,11 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	list := f.getCompletions(t, userPreferences)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
+}
+
+func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
+	t.Helper()
+	return f.getCompletions(t, userPreferences)
 }
 
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
@@ -1484,6 +1316,11 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 	return ""
 }
 
+func (f *FourslashTest) ResolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
+	t.Helper()
+	return f.resolveCompletionItem(t, item)
+}
+
 func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
 	result := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
 	return result
@@ -1760,7 +1597,9 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 		var actualJoined strings.Builder
 		for i, actual := range actualTextArray {
 			if i > 0 {
-				actualJoined.WriteString("\n\n" + strings.Repeat("-", 20) + "\n\n")
+				actualJoined.WriteString("\n\n")
+				actualJoined.WriteString(strings.Repeat("-", 20))
+				actualJoined.WriteString("\n\n")
 			}
 			actualJoined.WriteString(actual)
 		}
@@ -2358,7 +2197,12 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 
 	for i, marker := range markers {
 		if i > 0 {
-			result.WriteString(newLine + strings.Repeat("=", 80) + newLine + newLine)
+			result.WriteString(newLine)
+			for range 80 {
+				result.WriteByte('=')
+			}
+			result.WriteString(newLine)
+			result.WriteString(newLine)
 		}
 
 		script := f.getScriptInfo(marker.FileName())
@@ -2598,33 +2442,42 @@ func formatCallHierarchyItem(
 		result.WriteString(fmt.Sprintf("%s├ containerName: %s\n", prefix, *callHierarchyItem.Detail))
 	}
 	result.WriteString(fmt.Sprintf("%s├ file: %s\n", prefix, callHierarchyItem.Uri.FileName()))
-	result.WriteString(prefix + "├ span:\n")
+	result.WriteString(prefix)
+	result.WriteString("├ span:\n")
 	formatCallHierarchyItemSpan(f, file, result, callHierarchyItem.Range, prefix+"│ ", prefix+"│ ")
-	result.WriteString(prefix + "├ selectionSpan:\n")
+	result.WriteString(prefix)
+	result.WriteString("├ selectionSpan:\n")
 	formatCallHierarchyItemSpan(f, file, result, callHierarchyItem.SelectionRange, prefix+"│ ", prefix+"│ ")
 
 	// Handle incoming calls
 	if incomingCalls.seen {
 		if outgoingCalls.skip {
-			result.WriteString(trailingPrefix + "╰ incoming: ...\n")
+			result.WriteString(trailingPrefix)
+			result.WriteString("╰ incoming: ...\n")
 		} else {
-			result.WriteString(prefix + "├ incoming: ...\n")
+			result.WriteString(prefix)
+			result.WriteString("├ incoming: ...\n")
 		}
 	} else if !incomingCalls.skip {
 		if len(incomingCalls.values) == 0 {
 			if outgoingCalls.skip {
-				result.WriteString(trailingPrefix + "╰ incoming: none\n")
+				result.WriteString(trailingPrefix)
+				result.WriteString("╰ incoming: none\n")
 			} else {
-				result.WriteString(prefix + "├ incoming: none\n")
+				result.WriteString(prefix)
+				result.WriteString("├ incoming: none\n")
 			}
 		} else {
-			result.WriteString(prefix + "├ incoming:\n")
+			result.WriteString(prefix)
+			result.WriteString("├ incoming:\n")
 			for i, incomingCall := range incomingCalls.values {
 				fromFileName := incomingCall.From.Uri.FileName()
 				fromFile := f.getScriptInfo(fromFileName)
-				result.WriteString(prefix + "│ ╭ from:\n")
+				result.WriteString(prefix)
+				result.WriteString("│ ╭ from:\n")
 				formatCallHierarchyItem(t, f, fromFile, result, *incomingCall.From, callHierarchyItemDirectionIncoming, seen, prefix+"│ │ ")
-				result.WriteString(prefix + "│ ├ fromSpans:\n")
+				result.WriteString(prefix)
+				result.WriteString("│ ├ fromSpans:\n")
 
 				fromSpansTrailingPrefix := trailingPrefix + "╰ ╰ "
 				if i < len(incomingCalls.values)-1 {
@@ -2639,18 +2492,23 @@ func formatCallHierarchyItem(
 
 	// Handle outgoing calls
 	if outgoingCalls.seen {
-		result.WriteString(trailingPrefix + "╰ outgoing: ...\n")
+		result.WriteString(trailingPrefix)
+		result.WriteString("╰ outgoing: ...\n")
 	} else if !outgoingCalls.skip {
 		if len(outgoingCalls.values) == 0 {
-			result.WriteString(trailingPrefix + "╰ outgoing: none\n")
+			result.WriteString(trailingPrefix)
+			result.WriteString("╰ outgoing: none\n")
 		} else {
-			result.WriteString(prefix + "├ outgoing:\n")
+			result.WriteString(prefix)
+			result.WriteString("├ outgoing:\n")
 			for i, outgoingCall := range outgoingCalls.values {
 				toFileName := outgoingCall.To.Uri.FileName()
 				toFile := f.getScriptInfo(toFileName)
-				result.WriteString(prefix + "│ ╭ to:\n")
+				result.WriteString(prefix)
+				result.WriteString("│ ╭ to:\n")
 				formatCallHierarchyItem(t, f, toFile, result, *outgoingCall.To, callHierarchyItemDirectionOutgoing, seen, prefix+"│ │ ")
-				result.WriteString(prefix + "│ ├ fromSpans:\n")
+				result.WriteString(prefix)
+				result.WriteString("│ ├ fromSpans:\n")
 
 				fromSpansTrailingPrefix := trailingPrefix + "╰ ╰ "
 				if i < len(outgoingCalls.values)-1 {
@@ -2758,7 +2616,8 @@ func formatCallHierarchyItemSpan(
 		}
 	}
 
-	result.WriteString(closingPrefix + "╰\n")
+	result.WriteString(closingPrefix)
+	result.WriteString("╰\n")
 }
 
 func computeLineStarts(content string) []int {
@@ -3728,10 +3587,13 @@ func (f *FourslashTest) verifyBaselineRename(
 	preferences *lsutil.UserPreferences,
 	markerOrRanges []MarkerOrRange,
 ) {
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+
 	for _, markerOrRange := range markerOrRanges {
 		f.GoToMarkerOrRange(t, markerOrRange)
 
-		// !!! set preferences
 		params := &lsproto.RenameParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -3803,36 +3665,69 @@ func (f *FourslashTest) verifyBaselineRename(
 }
 
 func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.UserPreferences) {
-	// !!! set preferences
-	params := &lsproto.RenameParams{
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit == nil || result.WorkspaceEdit.Changes == nil || len(*result.WorkspaceEdit.Changes) == 0 {
-		t.Fatal(prefix + "Expected rename to succeed, but got no changes")
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.Range == nil && result.PrepareRenamePlaceholder == nil && result.PrepareRenameDefaultBehavior == nil {
+		t.Fatal(prefix + "Expected rename to succeed, but prepareRename returned null")
+	}
+
+	// Also verify that textDocument/rename produces edits, since prepareRename is optional.
+	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "RENAME_SUCCEEDED_TEST",
+	})
+	if renameResult.WorkspaceEdit == nil || renameResult.WorkspaceEdit.Changes == nil || len(*renameResult.WorkspaceEdit.Changes) == 0 {
+		t.Fatal(prefix + "prepareRename succeeded but textDocument/rename returned no changes")
 	}
 }
 
 func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
-	// !!! set preferences
-	params := &lsproto.RenameParams{
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
-		NewName:  "?",
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if result.WorkspaceEdit != nil {
-		t.Fatalf(prefix+"Expected rename to fail, but got changes: %s", cmp.Diff(result.WorkspaceEdit, nil))
+	f.baselineState(t)
+	f.baselineRequestOrNotification(t, lsproto.TextDocumentPrepareRenameInfo.Method, params)
+	resMsg, result, _ := lsptestutil.SendRequest(t, f.client, lsproto.TextDocumentPrepareRenameInfo, params)
+	f.baselineState(t)
+
+	// prepareRename can reject via an error response (with a localized message) or a null result.
+	if resMsg != nil && resMsg.AsResponse().Error != nil {
+		// Error response — rename was rejected with a message. This is expected.
+	} else if result.Range != nil || result.PrepareRenamePlaceholder != nil || result.PrepareRenameDefaultBehavior != nil {
+		t.Fatalf("%sExpected rename to fail, but prepareRename returned a result", prefix)
+	}
+
+	// Also verify that textDocument/rename produces no edits, since prepareRename is optional.
+	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "RENAME_FAILED_TEST",
+	})
+	if renameResult.WorkspaceEdit != nil && renameResult.WorkspaceEdit.Changes != nil && len(*renameResult.WorkspaceEdit.Changes) > 0 {
+		t.Fatalf("%sprepareRename returned null but textDocument/rename returned changes", prefix)
 	}
 }
 
@@ -3936,6 +3831,112 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	f.addResultToBaseline(t, inlayHintsCmd, strings.Join(annotations, "\n\n"))
+}
+
+func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
+	baselineBuilder := &strings.Builder{}
+	offset := 0
+
+	// write to baseline in order of file appearance in test data
+	for _, file := range f.testData.Files {
+		fmt.Fprint(baselineBuilder, "// === Linked Editing ===\n")
+		fmt.Fprintf(baselineBuilder, "=== %s ===\n", file.FileName())
+		results := []*lsproto.LinkedEditingRanges{}
+		found := map[lsproto.Range]bool{}
+
+		// request linkedEditing at every position in the file
+		for i := range file.Content {
+			params := &lsproto.LinkedEditingRangeParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(file.FileName()),
+				},
+				Position: f.converters.PositionToLineAndCharacter(f.getScriptInfo(file.FileName()), core.TextPos(i)),
+			}
+			result := sendRequest(t, f, lsproto.TextDocumentLinkedEditingRangeInfo, params)
+			if result.LinkedEditingRanges != nil && len(result.LinkedEditingRanges.Ranges) > 0 && !found[result.LinkedEditingRanges.Ranges[0]] {
+				results = append(results, result.LinkedEditingRanges)
+				found[result.LinkedEditingRanges.Ranges[0]] = true
+			}
+		}
+
+		if len(results) == 0 {
+			fmt.Fprintf(baselineBuilder, "%s\n\n--No linked edits found--\n\n\n", file.Content)
+			continue
+		}
+
+		// sort entries in each file
+		slices.SortFunc(results, func(a, b *lsproto.LinkedEditingRanges) int {
+			return lsproto.ComparePositions(a.Ranges[0].Start, b.Ranges[0].Start)
+		})
+		baselineDetails := []baselineDetail{}
+		foundEditInfoBuilder := &strings.Builder{}
+		for _, edit := range results {
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[0].Start,
+				positionMarker: fmt.Sprintf("[|/*%d*/", offset),
+			})
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[0].End,
+				positionMarker: "|]",
+			})
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[1].Start,
+				positionMarker: fmt.Sprintf("[|/*%d*/", offset),
+			})
+			baselineDetails = append(baselineDetails, baselineDetail{
+				pos:            edit.Ranges[1].End,
+				positionMarker: "|]",
+			})
+
+			fmt.Fprintf(foundEditInfoBuilder, "\n\n=== %d ===\n%s", offset, core.Must(core.StringifyJson(edit, "", "  ")))
+			offset++
+		}
+
+		// sort baselineDetails by position
+		slices.SortStableFunc(baselineDetails, func(a, b baselineDetail) int {
+			return lsproto.ComparePositions(a.pos, b.pos)
+		})
+
+		// write file content with inline annotations for linked edits
+		lastPosition := 0
+		for _, detail := range baselineDetails {
+			currentPosition := f.converters.LineAndCharacterToPosition(f.getScriptInfo(file.FileName()), detail.pos)
+			fmt.Fprint(baselineBuilder, file.Content[lastPosition:currentPosition])
+			fmt.Fprint(baselineBuilder, detail.positionMarker)
+			lastPosition = int(currentPosition)
+		}
+		fmt.Fprint(baselineBuilder, file.Content[lastPosition:])
+		baselineBuilder.WriteString(foundEditInfoBuilder.String() + "\n\n\n")
+	}
+
+	f.writeToBaseline(linkedEditingCmd, baselineBuilder.String())
+}
+
+func (f *FourslashTest) VerifyLinkedEditing(t *testing.T, markerNamesToExpected map[string][]lsproto.Range) {
+	for markerName, expectedRanges := range markerNamesToExpected {
+		f.GoToMarker(t, markerName)
+		params := &lsproto.LinkedEditingRangeParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+		result := sendRequest(t, f, lsproto.TextDocumentLinkedEditingRangeInfo, params)
+		actualRanges := result.LinkedEditingRanges
+		if len(expectedRanges) == 0 {
+			if actualRanges != nil && len(actualRanges.Ranges) != 0 {
+				t.Fatalf("Expected no linked editing ranges for marker '%s', but found %v", markerName, actualRanges)
+			}
+			continue
+		} else {
+			if actualRanges == nil || len(actualRanges.Ranges) == 0 {
+				t.Fatalf("Expected linked editing ranges for marker '%s', but found none", markerName)
+			}
+
+			assertDeepEqual(t, actualRanges.Ranges[0], expectedRanges[0], fmt.Sprintf("Linked editing ranges for opening element do not match expected for marker '%s'", markerName))
+			assertDeepEqual(t, actualRanges.Ranges[1], expectedRanges[1], fmt.Sprintf("Linked editing ranges for closing element do not match expected for marker '%s'", markerName))
+		}
+	}
 }
 
 func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
@@ -4390,30 +4391,6 @@ func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *Rang
 		}
 	}
 	t.Fatalf("Expected error with code %d at range %v but it was not found", code, rangeMarker.LSRange)
-}
-
-// VerifyCurrentLineContentIs verifies that the current line content matches the expected text.
-func (f *FourslashTest) VerifyCurrentLineContentIs(t *testing.T, expectedText string) {
-	script := f.getScriptInfo(f.activeFilename)
-	lines := strings.Split(script.content, "\n")
-	lineNum := int(f.currentCaretPosition.Line)
-	if lineNum >= len(lines) {
-		t.Fatalf("Current line %d is out of range (file has %d lines)", lineNum, len(lines))
-	}
-	actualLine := lines[lineNum]
-	// Handle \r if present
-	actualLine = strings.TrimSuffix(actualLine, "\r")
-	if actualLine != expectedText {
-		t.Fatalf("Current line content mismatch.\nExpected: %q\nActual: %q", expectedText, actualLine)
-	}
-}
-
-// VerifyCurrentFileContentIs verifies that the current file content matches the expected text.
-func (f *FourslashTest) VerifyCurrentFileContentIs(t *testing.T, expectedText string) {
-	script := f.getScriptInfo(f.activeFilename)
-	if script.content != expectedText {
-		t.Fatalf("Current file content mismatch.\nExpected: %q\nActual: %q", expectedText, script.content)
-	}
 }
 
 // VerifyErrorExistsBetweenMarkers verifies that an error exists between the two markers.
