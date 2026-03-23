@@ -207,7 +207,7 @@ describe("Encoder", () => {
         const declList = varStmt.declarationList!;
         const declarationsNode = declList.declarations!;
         assert.ok(declarationsNode instanceof RemoteNodeList);
-        const varDecl = (declarationsNode as RemoteNodeList).at(0)!;
+        const varDecl = declarationsNode.at(0)!;
         const jsxElem = varDecl.initializer!;
         assert.strictEqual(jsxElem.kind, SyntaxKind.JsxElement);
         const openingElem = jsxElem.openingElement!;
