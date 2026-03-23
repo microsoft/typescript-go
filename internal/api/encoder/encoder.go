@@ -600,9 +600,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
 		return (boolToByte(n.Name() != nil) << 0) | (boolToByte(n.ExclamationToken != nil) << 1) | (boolToByte(n.Type != nil) << 2) | (boolToByte(n.Initializer != nil) << 3)
-	case ast.KindObjectLiteralExpression:
-		n := node.AsObjectLiteralExpression()
-		return boolToByte(hasNodes(n.Properties)) << 0
 	case ast.KindParameter:
 		n := node.AsParameterDeclaration()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.DotDotDotToken != nil) << 1) | (boolToByte(n.Name() != nil) << 2) | (boolToByte(n.QuestionToken != nil) << 3) | (boolToByte(n.Type != nil) << 4) | (boolToByte(n.Initializer != nil) << 5)
@@ -732,9 +729,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindTypeAssertionExpression:
 		n := node.AsTypeAssertion()
 		return (boolToByte(n.Type != nil) << 0) | (boolToByte(n.Expression != nil) << 1)
-	case ast.KindIntersectionType:
-		n := node.AsIntersectionTypeNode()
-		return (boolToByte(hasNodes(n.Types)) << 0)
 	case ast.KindConditionalType:
 		n := node.AsConditionalTypeNode()
 		return (boolToByte(n.CheckType != nil) << 0) | (boolToByte(n.ExtendsType != nil) << 1) | (boolToByte(n.TrueType != nil) << 2) | (boolToByte(n.FalseType != nil) << 3)
