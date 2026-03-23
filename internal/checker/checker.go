@@ -14212,12 +14212,11 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 					}
 				}
 			}
-			symbol := symbolFromVariable
-			if symbolFromModule != nil {
-				symbol = symbolFromModule
-				if symbolFromVariable != nil {
-					symbol = c.combineValueAndTypeSymbols(symbolFromVariable, symbolFromModule)
-				}
+			var symbol *ast.Symbol
+			if symbolFromModule != nil && symbolFromVariable != nil && symbolFromModule != symbolFromVariable {
+				symbol = c.combineValueAndTypeSymbols(symbolFromVariable, symbolFromModule)
+			} else {
+				symbol = core.Coalesce(symbolFromModule, symbolFromVariable)
 			}
 			if ast.IsImportOrExportSpecifier(specifier) && c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) && nameText != ast.InternalSymbolNameDefault {
 				c.error(name, diagnostics.Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_when_module_is_set_to_0, c.moduleKind.String())
@@ -23112,6 +23111,9 @@ func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) [
 		})
 	}
 	debug.AssertIsDefined(declaration, "Class was missing valueDeclaration -OR- non-class had no interface declarations")
+	if declaration == nil {
+		return nil
+	}
 	return c.getOuterTypeParameters(declaration, false /*includeThisTypes*/)
 }
 
