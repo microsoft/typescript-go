@@ -270,8 +270,8 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	libFileCount := int(loader.libFileCount.Load())
 
 	var missingFiles []string
+	var duplicateSourceFiles []*ast.SourceFile
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
-	duplicateSourceFiles := make([]*ast.SourceFile, 0)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
