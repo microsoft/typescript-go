@@ -1,0 +1,76 @@
+//// [tests/cases/compiler/exportAssignmentMergingPanicRepro.ts] ////
+
+=== b.ts ===
+import Mixed = require("./a");
+>Mixed : Symbol(Mixed, Decl(b.ts, 0, 0))
+
+import { Printable } from "./a";
+>Printable : Symbol(Printable, Decl(b.ts, 1, 8))
+
+class App extends Mixed {
+>App : Symbol(App, Decl(b.ts, 1, 32))
+>Mixed : Symbol(Mixed, Decl(b.ts, 0, 0))
+
+    doPrint(p: Printable) {
+>doPrint : Symbol(App.doPrint, Decl(b.ts, 2, 25))
+>p : Symbol(p, Decl(b.ts, 3, 12))
+>Printable : Symbol(Printable, Decl(b.ts, 1, 8))
+
+        p.print();
+>p.print : Symbol(Printable.print, Decl(a.ts, 1, 21))
+>p : Symbol(p, Decl(b.ts, 3, 12))
+>print : Symbol(Printable.print, Decl(a.ts, 1, 21))
+    }
+}
+
+=== a.ts ===
+type Constructor<T = {}> = new (...args: any[]) => T;
+>Constructor : Symbol(Constructor, Decl(a.ts, 0, 0))
+>T : Symbol(T, Decl(a.ts, 0, 17))
+>args : Symbol(args, Decl(a.ts, 0, 32))
+>T : Symbol(T, Decl(a.ts, 0, 17))
+
+interface Printable {
+>Printable : Symbol(Printable, Decl(a.ts, 0, 53))
+
+    print(): void;
+>print : Symbol(Printable.print, Decl(a.ts, 1, 21))
+}
+function Mixin<TBase extends Constructor>(Base: TBase) {
+>Mixin : Symbol(Mixin, Decl(a.ts, 3, 1))
+>TBase : Symbol(TBase, Decl(a.ts, 4, 15))
+>Constructor : Symbol(Constructor, Decl(a.ts, 0, 0))
+>Base : Symbol(Base, Decl(a.ts, 4, 42))
+>TBase : Symbol(TBase, Decl(a.ts, 4, 15))
+
+    return class extends Base implements Printable {
+>Base : Symbol(Base, Decl(a.ts, 4, 42))
+>Printable : Symbol(Printable, Decl(a.ts, 0, 53))
+
+        print() {}
+>print : Symbol((Anonymous class).print, Decl(a.ts, 5, 52))
+
+    };
+}
+class CoreBase {
+>CoreBase : Symbol(CoreBase, Decl(a.ts, 8, 1))
+
+    id: number = 0;
+>id : Symbol(CoreBase.id, Decl(a.ts, 9, 16))
+
+    static Printable: Printable = { print() {} };
+>Printable : Symbol(CoreBase.Printable, Decl(a.ts, 10, 19))
+>Printable : Symbol(Printable, Decl(a.ts, 0, 53))
+>print : Symbol(print, Decl(a.ts, 11, 35))
+}
+const Mixed = Mixin(CoreBase);
+>Mixed : Symbol(Mixed, Decl(a.ts, 13, 5))
+>Mixin : Symbol(Mixin, Decl(a.ts, 3, 1))
+>CoreBase : Symbol(CoreBase, Decl(a.ts, 8, 1))
+
+export = Mixed;
+>Mixed : Symbol(Mixed, Decl(a.ts, 13, 5))
+
+export { Printable };
+>Printable : Symbol(Printable, Decl(a.ts, 15, 8))
+

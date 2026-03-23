@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/exportAssignmentMergingPanicRepro.ts] ////
+
+=== b.ts ===
+import Mixed = require("./a");
+>Mixed : { new (...args: any[]): Mixin.(Anonymous class); prototype: Mixin.(Anonymous class); } & typeof CoreBase
+
+import { Printable } from "./a";
+>Printable : import("./a").Printable
+
+class App extends Mixed {
+>App : App
+>Mixed : Mixin.(Anonymous class) & CoreBase
+
+    doPrint(p: Printable) {
+>doPrint : (p: Printable) => void
+>p : import("./a").Printable
+
+        p.print();
+>p.print() : void
+>p.print : () => void
+>p : import("./a").Printable
+>print : () => void
+    }
+}
+
+=== a.ts ===
+type Constructor<T = {}> = new (...args: any[]) => T;
+>Constructor : Constructor<T>
+>args : any[]
+
+interface Printable {
+    print(): void;
+>print : () => void
+}
+function Mixin<TBase extends Constructor>(Base: TBase) {
+>Mixin : <TBase extends Constructor>(Base: TBase) => { new (...args: any[]): (Anonymous class); prototype: Mixin.(Anonymous class); } & TBase
+>Base : TBase
+
+    return class extends Base implements Printable {
+>class extends Base implements Printable {        print() {}    } : { new (...args: any[]): (Anonymous class); prototype: Mixin.(Anonymous class); } & TBase
+>Base : {}
+
+        print() {}
+>print : () => void
+
+    };
+}
+class CoreBase {
+>CoreBase : CoreBase
+
+    id: number = 0;
+>id : number
+>0 : 0
+
+    static Printable: Printable = { print() {} };
+>Printable : Printable
+>{ print() {} } : { print(): void; }
+>print : () => void
+}
+const Mixed = Mixin(CoreBase);
+>Mixed : { new (...args: any[]): Mixin.(Anonymous class); prototype: Mixin.(Anonymous class); } & typeof CoreBase
+>Mixin(CoreBase) : { new (...args: any[]): Mixin.(Anonymous class); prototype: Mixin.(Anonymous class); } & typeof CoreBase
+>Mixin : <TBase extends Constructor>(Base: TBase) => { new (...args: any[]): (Anonymous class); prototype: Mixin.(Anonymous class); } & TBase
+>CoreBase : typeof CoreBase
+
+export = Mixed;
+>Mixed : { new (...args: any[]): Mixin.(Anonymous class); prototype: Mixin.(Anonymous class); } & typeof CoreBase
+
+export { Printable };
+>Printable : any
+
