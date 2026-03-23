@@ -71,7 +71,7 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 func (tx *LegacyDecoratorsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
 	// takes the place of `substituteIdentifier` in the strada transform
 	for _, d := range tx.enclosingClasses {
-		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode())) == d.AsNode() {
+		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode())) == tx.EmitContext().MostOriginal(d.AsNode()) {
 			return tx.classAliases[d.AsNode()]
 		}
 	}
@@ -102,43 +102,12 @@ func elideModifiers(f *printer.NodeFactory, nodes *ast.ModifierList) *ast.Modifi
 	return replacement
 }
 
-func moveRangePastModifiers(node *ast.Node) core.TextRange {
-	if ast.IsPropertyDeclaration(node) || ast.IsMethodDeclaration(node) {
-		return core.NewTextRange(node.Name().Pos(), node.End())
-	}
-
-	var lastModifier *ast.Node
-	if ast.CanHaveModifiers(node) {
-		lastModifier = core.LastOrNil(node.ModifierNodes())
-	}
-
-	if lastModifier != nil && !ast.PositionIsSynthesized(lastModifier.End()) {
-		return core.NewTextRange(lastModifier.End(), node.End())
-	}
-	return moveRangePastDecorators(node)
-}
-
-func moveRangePastDecorators(node *ast.Node) core.TextRange {
-	var lastDecorator *ast.Node
-	if ast.CanHaveModifiers(node) {
-		nodes := node.ModifierNodes()
-		if nodes != nil {
-			lastDecorator = core.FindLast(nodes, ast.IsDecorator)
-		}
-	}
-
-	if lastDecorator != nil && !ast.PositionIsSynthesized(lastDecorator.End()) {
-		return core.NewTextRange(lastDecorator.End(), node.End())
-	}
-	return node.Loc
-}
-
 func (tx *LegacyDecoratorsTransformer) finishClassElement(updated *ast.Node, original *ast.Node) *ast.Node {
 	if updated != original {
 		// While we emit the source map for the node after skipping decorators and modifiers,
 		// we need to emit the comments for the original range.
 		tx.EmitContext().SetCommentRange(updated, original.Loc)
-		tx.EmitContext().SetSourceMapRange(updated, moveRangePastModifiers(original))
+		tx.EmitContext().SetSourceMapRange(updated, transformers.MoveRangePastModifiers(original))
 	}
 	return updated
 }
@@ -157,12 +126,29 @@ func (tx *LegacyDecoratorsTransformer) visitParamerDeclaration(node *ast.Paramet
 		// While we emit the source map for the node after skipping decorators and modifiers,
 		// we need to emit the comments for the original range.
 		tx.EmitContext().SetCommentRange(updated, node.Loc)
-		newLoc := moveRangePastModifiers(node.AsNode())
+		newLoc := transformers.MoveRangePastModifiers(node.AsNode())
 		updated.Loc = newLoc
 		tx.EmitContext().SetSourceMapRange(updated, newLoc)
 		tx.EmitContext().SetEmitFlags(updated.Name(), printer.EFNoTrailingSourceMap)
 	}
 	return updated
+}
+
+// visitPropertyNameOfClassElement visits the property name of a class element,
+// for use when emitting property initializers. For a computed property on a node
+// with decorators, a temporary value is stored for later use.
+func (tx *LegacyDecoratorsTransformer) visitPropertyNameOfClassElement(member *ast.Node) *ast.Node {
+	name := member.Name()
+	if ast.IsComputedPropertyName(name) && ast.HasDecorators(member) {
+		expression := tx.Visitor().VisitNode(name.AsComputedPropertyName().Expression)
+		innerExpression := ast.SkipPartiallyEmittedExpressions(expression)
+		if !transformers.IsSimpleInlineableExpression(innerExpression) {
+			generatedName := tx.Factory().NewGeneratedNameForNode(name)
+			tx.EmitContext().AddVariableDeclaration(generatedName)
+			return tx.Factory().UpdateComputedPropertyName(name.AsComputedPropertyName(), tx.Factory().NewAssignmentExpression(generatedName.AsNode(), expression))
+		}
+	}
+	return tx.Visitor().VisitNode(name)
 }
 
 func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.PropertyDeclaration) *ast.Node {
@@ -177,7 +163,7 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.Proper
 		tx.Factory().UpdatePropertyDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			nil,
 			tx.Visitor().VisitNode(node.Initializer),
@@ -191,7 +177,7 @@ func (tx *LegacyDecoratorsTransformer) visitGetAccessorDeclaration(node *ast.Get
 		tx.Factory().UpdateGetAccessorDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil,
@@ -207,7 +193,7 @@ func (tx *LegacyDecoratorsTransformer) visitSetAccessorDeclaration(node *ast.Set
 		tx.Factory().UpdateSetAccessorDeclaration(
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil,
@@ -224,7 +210,7 @@ func (tx *LegacyDecoratorsTransformer) visitMethodDeclaration(node *ast.MethodDe
 			node,
 			tx.Visitor().VisitModifiers(node.Modifiers()),
 			node.AsteriskToken,
-			tx.Visitor().VisitNode(node.Name()),
+			tx.visitPropertyNameOfClassElement(node.AsNode()),
 			nil,
 			nil,
 			tx.Visitor().VisitNodes(node.Parameters),
@@ -418,7 +404,7 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 		}
 	}
 
-	location := moveRangePastModifiers(node.AsNode())
+	location := transformers.MoveRangePastModifiers(node.AsNode())
 	classAlias := tx.getClassAliasIfNeeded(node)
 	if classAlias != nil {
 		tx.pushEnclosingClass(node)
@@ -497,21 +483,9 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 	if isExport {
 		var exportStatement *ast.Node
 		if isDefault {
-			exportStatement = tx.Factory().NewExportAssignment(nil, false, nil, declName)
+			exportStatement = tx.Factory().NewExportDefault(declName)
 		} else {
-			exportStatement = tx.Factory().NewExportDeclaration(
-				nil,
-				false,
-				tx.Factory().NewNamedExports(
-					tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(
-						false,
-						nil,
-						tx.Factory().GetDeclarationName(node.AsNode()),
-					)}),
-				),
-				nil,
-				nil,
-			)
+			exportStatement = tx.Factory().NewExternalModuleExport(tx.Factory().GetDeclarationName(node.AsNode()))
 		}
 		statements = append(statements, exportStatement)
 	}
@@ -523,15 +497,16 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 }
 
 func (tx *LegacyDecoratorsTransformer) hasInternalStaticReference(node *ast.ClassDeclaration) bool {
+	classNode := tx.EmitContext().MostOriginal(node.AsNode())
 	var isOrContainsStaticSelfReference func(n *ast.Node) bool
 	isOrContainsStaticSelfReference = func(n *ast.Node) bool {
-		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == node.AsNode() {
+		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == classNode {
 			return true
 		}
 		return n.ForEachChild(isOrContainsStaticSelfReference)
 	}
-	for _, node := range node.Members.Nodes {
-		if node.ForEachChild(isOrContainsStaticSelfReference) {
+	for _, member := range node.Members.Nodes {
+		if member.ForEachChild(isOrContainsStaticSelfReference) {
 			return true
 		}
 	}
@@ -581,14 +556,26 @@ func (tx *LegacyDecoratorsTransformer) getConstructorDecorationStatement(node *a
  */
 func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(node *ast.ClassDeclaration) *ast.Node {
 	allDecorators := getAllDecoratorsOfClass(node, true)
+	// Decorator expressions are evaluated outside the class body, so references to the
+	// class name should use the original binding, not the class alias. In Strada, this is
+	// handled by NodeCheckFlags.ConstructorReference which is only set for identifiers
+	// inside the class body. Since Corsa lacks per-node flags, we temporarily pop the
+	// enclosing class to prevent alias substitution during decorator expression visiting.
+	hasAlias := len(tx.enclosingClasses) > 0 && tx.enclosingClasses[len(tx.enclosingClasses)-1] == node
+	if hasAlias {
+		tx.popEnclosingClass()
+	}
 	decoratorExpressions := tx.transformAllDecoratorsOfDeclaration(allDecorators)
+	if hasAlias {
+		tx.pushEnclosingClass(node)
+	}
 	if len(decoratorExpressions) == 0 {
 		return nil
 	}
 
 	var classAlias *ast.Node
 	if tx.classAliases != nil {
-		classAlias, _ = tx.classAliases[tx.EmitContext().MostOriginal(node.AsNode())]
+		classAlias, _ = tx.classAliases[node.AsNode()]
 	}
 
 	// When we used to transform to ES5/3 this would be moved inside an IIFE and should reference the name
@@ -602,7 +589,7 @@ func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(n
 	}
 	expression := tx.Factory().NewAssignmentExpression(localName, assignmentTarget)
 	tx.EmitContext().SetEmitFlags(expression, printer.EFNoComments)
-	tx.EmitContext().SetSourceMapRange(expression, moveRangePastModifiers(node.AsNode()))
+	tx.EmitContext().SetSourceMapRange(expression, transformers.MoveRangePastModifiers(node.AsNode()))
 	return expression
 }
 
@@ -919,7 +906,7 @@ func (tx *LegacyDecoratorsTransformer) generateClassElementDecorationExpression(
 	//
 
 	prefix := tx.getClassMemberPrefix(node, member)
-	memberName := tx.getExpressionForPropertyName(member, !ast.HasAmbientModifier(member))
+	memberName := tx.getExpressionForPropertyName(member, member.Flags&ast.NodeFlagsAmbient == 0)
 	var descriptor *ast.Node
 	if ast.IsPropertyDeclaration(member) && !ast.HasAccessorModifier(member) {
 		// We emit `void 0` here to indicate to `__decorate` that it can invoke `Object.defineProperty` directly, but that it
@@ -939,7 +926,7 @@ func (tx *LegacyDecoratorsTransformer) generateClassElementDecorationExpression(
 	)
 
 	tx.EmitContext().SetEmitFlags(helper, printer.EFNoComments)
-	tx.EmitContext().SetSourceMapRange(helper, moveRangePastModifiers(member))
+	tx.EmitContext().SetSourceMapRange(helper, transformers.MoveRangePastModifiers(member))
 	return helper
 }
 

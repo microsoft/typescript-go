@@ -34,7 +34,7 @@ type parseTask struct {
 	typeResolutionsTrace         []module.DiagAndArgs
 	resolutionDiagnostics        []*ast.Diagnostic
 	processingDiagnostics        []*processingDiagnostic
-	importHelpersImportSpecifier *ast.Node
+	importHelpersImportSpecifier *ast.StringLiteralNode
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
 
 	increaseDepth bool
@@ -95,9 +95,13 @@ func (t *parseTask) load(loader *fileLoader) {
 	loader.totalFileCount.Add(1)
 	if t.libFile != nil {
 		loader.libFileCount.Add(1)
+		// Default lib files are all scripts; we can safely skip looking up their package.json
+		// to avoid adding spurious lookups to file watcher tracking.
+		t.metadata = ast.SourceFileMetaData{ImpliedNodeFormat: core.ResolutionModeCommonJS}
+	} else {
+		t.metadata = loader.loadSourceFileMetaData(t.normalizedFilePath)
 	}
 
-	t.metadata = loader.loadSourceFileMetaData(t.normalizedFilePath)
 	file := loader.parseSourceFile(t)
 	if file == nil {
 		return
@@ -288,7 +292,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
 	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
-	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
+	var importHelpersImportSpecifiers map[tspath.Path]*ast.StringLiteralNode
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
@@ -422,7 +426,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			}
 			if task.importHelpersImportSpecifier != nil {
 				if importHelpersImportSpecifiers == nil {
-					importHelpersImportSpecifiers = make(map[tspath.Path]*ast.Node, totalFileCount)
+					importHelpersImportSpecifiers = make(map[tspath.Path]*ast.StringLiteralNode, totalFileCount)
 				}
 				importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
 			}

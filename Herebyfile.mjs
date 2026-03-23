@@ -60,6 +60,7 @@ const { values: rawOptions } = parseArgs({
         debug: { type: "boolean" },
         dirty: { type: "boolean" },
         release: { type: "boolean" },
+        assert: { type: "boolean" },
 
         setPrerelease: { type: "string" },
         forRelease: { type: "boolean" },
@@ -209,7 +210,7 @@ function buildTsgo(opts) {
     opts ||= {};
     const out = opts.out ?? "./built/local/";
     const env = { ...goBuildEnv, ...opts.env };
-    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "noassert")} -o ${out} ./cmd/tsgo`;
+    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug || options.assert ? goBuildTags("noembed") : goBuildTags("noembed", "noassert")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
@@ -313,9 +314,11 @@ const enumDefs = [
     { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
+    { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     // @typescript/ast enums
     { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind.go", outDir: "_packages/ast/src/enums" },
     { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/ast/src/enums" },
+    { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/ast/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/ast/src/enums", constEnum: true },
 ];
 
@@ -527,7 +530,17 @@ function goTestFlags(taskName) {
     ];
 }
 
+function getGODEBUG() {
+    const key = "tracebackancestors";
+    const setting = `${key}=10`;
+    const existing = process.env.GODEBUG ?? "";
+    if (!existing) return setting;
+    if (existing.includes(`${key}=`)) return existing;
+    return `${existing},${setting}`;
+}
+
 const goTestEnv = {
+    GODEBUG: getGODEBUG(),
     ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
     // Go test caching takes a long time on Windows.
     // https://github.com/golang/go/issues/72992
@@ -544,7 +557,8 @@ const baselineTrackingEnabled = isTypeScriptSubmoduleCloned() && ![
 
 const goTestSumFlags = [
     "--format-hide-empty-pkg",
-    ...(!isCI ? ["--hide-summary", "skipped"] : []),
+    "--hide-summary",
+    "skipped",
 ];
 
 /**
@@ -794,23 +808,25 @@ const buildCustomLinter = memoize(async () => {
 export const lint = task({
     name: "lint",
     description: "Runs golangci-lint.",
-    run: async () => {
-        await buildCustomLinter();
-
-        const lintArgs = ["run"];
-        if (defaultGoBuildTags.length) {
-            lintArgs.push("--build-tags", defaultGoBuildTags.join(","));
-        }
-        if (options.fix) {
-            lintArgs.push("--fix");
-        }
-
-        const resolvedCustomLinterPath = path.resolve(customLinterPath);
-        await $`${resolvedCustomLinterPath} ${lintArgs}`;
-        console.log("Linting _tools");
-        await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} ${lintArgs}`;
-    },
+    run: runLint,
 });
+
+async function runLint() {
+    await buildCustomLinter();
+
+    const lintArgs = ["run"];
+    if (defaultGoBuildTags.length) {
+        lintArgs.push("--build-tags", defaultGoBuildTags.join(","));
+    }
+    if (options.fix) {
+        lintArgs.push("--fix");
+    }
+
+    const resolvedCustomLinterPath = path.resolve(customLinterPath);
+    await $`${resolvedCustomLinterPath} ${lintArgs}`;
+    console.log("Linting _tools");
+    await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} ${lintArgs}`;
+}
 
 export const installTools = task({
     name: "install-tools",
@@ -826,10 +842,12 @@ export const installTools = task({
 export const format = task({
     name: "format",
     description: "Formats the repo.",
-    run: async () => {
-        await $`dprint fmt`;
-    },
+    run: runFormat,
 });
+
+async function runFormat() {
+    await $`dprint fmt`;
+}
 
 export const checkFormat = task({
     name: "check:format",
@@ -875,6 +893,21 @@ export const baselineAccept = task({
     name: "baseline-accept",
     description: "Makes the most recent test results the new baseline, overwriting the old baseline.",
     run: baselineAcceptTask(localBaseline, refBaseline),
+});
+
+function getDiffTool() {
+    const program = process.env.DIFF;
+    if (!program) {
+        console.warn("Add the 'DIFF' environment variable to the path of the program you want to use.");
+        process.exit(1);
+    }
+    return program;
+}
+
+export const diff = task({
+    name: "diff",
+    description: "Diffs baselines using the diff tool specified by the 'DIFF' environment variable",
+    run: () => $`${getDiffTool()} ${refBaseline} ${localBaseline}`,
 });
 
 /**
@@ -1762,4 +1795,17 @@ export const nativePreview = task({
     run: options.forRelease ? async () => {
         throw new Error("This task should not be run in release builds.");
     } : undefined,
+});
+
+export const allChecks = task({
+    name: "all-checks",
+    description: "Runs all checks for the Go code (fourslash, lint, tests, etc.)",
+    run: async () => {
+        await $`npm run convertfourslash`;
+        await runTests();
+        await $`npm run updatefailing`;
+        await runFormat();
+        await runLint();
+        await runTests();
+    },
 });
