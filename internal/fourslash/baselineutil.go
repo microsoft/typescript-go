@@ -56,7 +56,10 @@ func (f *FourslashTest) addResultToBaseline(t *testing.T, command baselineComman
 	if b.Len() != 0 {
 		b.WriteString("\n\n\n\n")
 	}
-	b.WriteString(`// === ` + string(command) + " ===\n" + actual)
+	b.WriteString("// === ")
+	b.WriteString(string(command))
+	b.WriteString(" ===\n")
+	b.WriteString(actual)
 }
 
 func (f *FourslashTest) writeToBaseline(command baselineCommand, content string) {
@@ -854,7 +857,9 @@ func (f *FourslashTest) getBaselineContentForFile(
 					}
 				}
 				if text != "" {
-					textWithContext.newContent.WriteString(`{ ` + text + ` |}`)
+					textWithContext.newContent.WriteString("{ ")
+					textWithContext.newContent.WriteString(text)
+					textWithContext.newContent.WriteString(" |}")
 				}
 			case detailKindContextStart:
 				if canDetermineContextIdInline {
@@ -921,12 +926,14 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 	t.converters = lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return t.lineStarts
 	})
-	t.readableContents.WriteString("// === " + fileName + " ===")
+	t.readableContents.WriteString("// === ")
+	t.readableContents.WriteString(fileName)
+	t.readableContents.WriteString(" ===")
 	return t
 }
 
 func (t *textWithContext) add(detail *baselineDetail) {
-	if t.content == "" && detail == nil {
+	if t.newContent.Len() == 0 && detail == nil {
 		panic("Unsupported")
 	}
 	if detail == nil || (detail.kind != detailKindTextEnd && detail.kind != detailKindContextEnd) {
@@ -997,7 +1004,8 @@ func (t *textWithContext) readableJsoncBaseline(text string) {
 		if i > 0 {
 			t.readableContents.WriteString("\n")
 		}
-		t.readableContents.WriteString(`// ` + line)
+		t.readableContents.WriteString("// ")
+		t.readableContents.WriteString(line)
 	}
 }
 
