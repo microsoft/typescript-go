@@ -196,6 +196,9 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		}
 		return true
 	}
+	if w.configHasErrors {
+		w.configModified = true
+	}
 	w.configHasErrors = false
 	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
