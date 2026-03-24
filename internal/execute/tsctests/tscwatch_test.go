@@ -238,7 +238,7 @@ func TestWatch(t *testing.T) {
 		{
 			subScenario: "watch handles tsconfig with extends base modified",
 			files: FileMap{
-				"/home/src/workspaces/project/index.ts": `const x: number = 1;`,
+				"/home/src/workspaces/project/index.ts": `const x = null; const y: string = x;`,
 				"/home/src/workspaces/project/base.json": `{
 	"compilerOptions": { "strict": false }
 }`,

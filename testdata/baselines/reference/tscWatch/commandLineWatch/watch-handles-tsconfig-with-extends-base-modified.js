@@ -6,7 +6,7 @@ Input::
 	"compilerOptions": { "strict": false }
 }
 //// [/home/src/workspaces/project/index.ts] *new* 
-const x: number = 1;
+const x = null; const y: string = x;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
 	"extends": "./base.json"
@@ -42,7 +42,8 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/index.js] *new* 
 "use strict";
-const x = 1;
+const x = null;
+const y = x;
 
 
 tsconfig.json::
@@ -61,6 +62,14 @@ Edit [0]:: modify base config to enable strict
 
 Output::
 build starting at HH:MM:SS AM
+[96mindex.ts[0m:[93m1[0m:[93m23[0m - [91merror[0m[90m TS2322: [0mType 'null' is not assignable to type 'string'.
+
+[7m1[0m const x = null; const y: string = x;
+[7m [0m [91m                      ~[0m
+
+
+Found 1 error in index.ts[90m:1[0m
+
 build finished in d.ddds
 
 tsconfig.json::

@@ -186,22 +186,6 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		return false
 	}
 
-	// Skip re-parsing if the config file hasn't changed since last check.
-	if w.watchState != nil {
-		if entry, ok := w.watchState[w.configFileName]; ok {
-			s := w.sys.FS().Stat(w.configFileName)
-			unchanged := false
-			if !entry.exists {
-				unchanged = s == nil
-			} else {
-				unchanged = s != nil && s.ModTime().Equal(entry.modTime)
-			}
-			if unchanged {
-				return w.configHasErrors
-			}
-		}
-	}
-
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
 	if len(errors) > 0 {
