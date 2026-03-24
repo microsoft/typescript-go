@@ -1975,7 +1975,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 	}
 	if !(suppressAny && IsTypeAny(returnType)) {
 		typePredicate := b.ch.getTypePredicateOfSignature(signature)
-		if tryReuse && typePredicate == nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
+		if tryReuse && b.ctx.enclosingDeclaration != nil && typePredicate == nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
 			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
 			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
 			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
