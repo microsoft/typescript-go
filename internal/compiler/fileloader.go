@@ -28,9 +28,10 @@ type LibFile struct {
 	Replaced bool
 }
 
-type tripleslashReferenceResolution struct {
-	ref        *resolvedRef
-	diagnostic *processingDiagnostic
+type sourceFileFromReferenceResult struct {
+	resolvedFileName string
+	message          *diagnostics.Message
+	args             []any
 }
 
 type fileLoader struct {
@@ -307,16 +308,24 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	return sourceFile
 }
 
-func (p *fileLoader) getSourceFileFromReferenceWorker(
+func (p *fileLoader) sourceFileExists(fileName string) bool {
+	return p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
+		FileName: fileName,
+		Path:     p.toPath(fileName),
+	}) != nil
+}
+
+func (p *fileLoader) getSourceFileFromReference(
 	fileName string,
 	referenceText string,
 	containingFile string,
-	getSourceFile func(string) bool,
-	fail func(*diagnostics.Message, ...any),
-) string {
+) sourceFileFromReferenceResult {
 	options := p.opts.Config.CompilerOptions()
 	allowNonTsExtensions := options.AllowNonTsExtensions.IsTrue()
 	diagnosticFileName := tspath.NormalizeSlashes(referenceText)
+	fail := func(message *diagnostics.Message, args ...any) sourceFileFromReferenceResult {
+		return sourceFileFromReferenceResult{message: message, args: args}
+	}
 
 	if tspath.HasExtension(fileName) {
 		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
@@ -329,56 +338,43 @@ func (p *fileLoader) getSourceFileFromReferenceWorker(
 				}
 			}
 			if !supported {
-				if fail != nil {
-					if tspath.HasJSFileExtension(canonicalFileName) {
-						fail(diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, diagnosticFileName)
-					} else {
-						fail(diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, diagnosticFileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
-					}
+				if tspath.HasJSFileExtension(canonicalFileName) {
+					return fail(diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, diagnosticFileName)
+				} else {
+					return fail(diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, diagnosticFileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
 				}
-				return ""
 			}
 		}
 
-		if !getSourceFile(fileName) {
-			if fail != nil {
-				fail(diagnostics.File_0_not_found, diagnosticFileName)
-			}
-			return ""
+		if !p.sourceFileExists(fileName) {
+			return fail(diagnostics.File_0_not_found, diagnosticFileName)
 		}
 
 		if tspath.GetCanonicalFileName(containingFile, p.opts.Host.FS().UseCaseSensitiveFileNames()) == canonicalFileName {
-			if fail != nil {
-				fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
-			}
-			return ""
+			return fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
 		}
-		return fileName
+		return sourceFileFromReferenceResult{resolvedFileName: fileName}
 	}
 
-	if allowNonTsExtensions && getSourceFile(fileName) {
-		return fileName
+	if allowNonTsExtensions && p.sourceFileExists(fileName) {
+		return sourceFileFromReferenceResult{resolvedFileName: fileName}
 	}
 
-	if fail != nil && allowNonTsExtensions {
-		fail(diagnostics.File_0_not_found, diagnosticFileName)
-		return ""
+	if allowNonTsExtensions {
+		return fail(diagnostics.File_0_not_found, diagnosticFileName)
 	}
 
 	for _, ext := range p.supportedExtensions[0] {
 		candidate := fileName + ext
-		if getSourceFile(candidate) {
-			return candidate
+		if p.sourceFileExists(candidate) {
+			return sourceFileFromReferenceResult{resolvedFileName: candidate}
 		}
 	}
 
-	if fail != nil {
-		fail(diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, fileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
-	}
-	return ""
+	return fail(diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, fileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
 }
 
-func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string, index int) tripleslashReferenceResolution {
+func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string, index int) (*resolvedRef, *processingDiagnostic) {
 	basePath := tspath.GetDirectoryPath(containingFile)
 	referencedFileName := moduleName
 
@@ -394,38 +390,26 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 		},
 	}
 
-	var diagnostic *processingDiagnostic
-	resolvedFileName := p.getSourceFileFromReferenceWorker(
+	result := p.getSourceFileFromReference(
 		normalizedFileName,
 		moduleName,
 		containingFile,
-		func(fileName string) bool {
-			return p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
-				FileName: fileName,
-				Path:     p.toPath(fileName),
-			}) != nil
-		},
-		func(message *diagnostics.Message, args ...any) {
-			diagnostic = &processingDiagnostic{
-				kind: processingDiagnosticKindExplainingFileInclude,
-				data: &includeExplainingDiagnostic{
-					diagnosticReason: includeReason,
-					message:          message,
-					args:             args,
-				},
-			}
-		},
 	)
-	if resolvedFileName == "" {
-		return tripleslashReferenceResolution{diagnostic: diagnostic}
+	if result.message != nil {
+		return nil, &processingDiagnostic{
+			kind: processingDiagnosticKindExplainingFileInclude,
+			data: &includeExplainingDiagnostic{
+				diagnosticReason: includeReason,
+				message:          result.message,
+				args:             result.args,
+			},
+		}
 	}
 
-	return tripleslashReferenceResolution{
-		ref: &resolvedRef{
-			fileName:      resolvedFileName,
-			includeReason: includeReason,
-		},
-	}
+	return &resolvedRef{
+		fileName:      result.resolvedFileName,
+		includeReason: includeReason,
+	}, nil
 }
 
 func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {

@@ -113,12 +113,12 @@ func (t *parseTask) load(loader *fileLoader) {
 	compilerOptions := loader.opts.Config.CompilerOptions()
 	if !compilerOptions.NoResolve.IsTrue() {
 		for index, ref := range file.ReferencedFiles {
-			resolution := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
-			if resolution.ref != nil {
-				t.addSubTask(*resolution.ref, nil)
+			resolvedRef, processingDiagnostic := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
+			if resolvedRef != nil {
+				t.addSubTask(*resolvedRef, nil)
 			}
-			if resolution.diagnostic != nil {
-				t.processingDiagnostics = append(t.processingDiagnostics, resolution.diagnostic)
+			if processingDiagnostic != nil {
+				t.processingDiagnostics = append(t.processingDiagnostics, processingDiagnostic)
 			}
 		}
 
@@ -172,12 +172,11 @@ func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 }
 
 type resolvedRef struct {
-	fileName             string
-	increaseDepth        bool
-	elideOnDepth         bool
-	includeReason        *FileIncludeReason
-	packageId            module.PackageId
-	processingDiagnostic *processingDiagnostic
+	fileName      string
+	increaseDepth bool
+	elideOnDepth  bool
+	includeReason *FileIncludeReason
+	packageId     module.PackageId
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
@@ -189,9 +188,6 @@ func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 		elideOnDepth:       ref.elideOnDepth,
 		includeReason:      ref.includeReason,
 		packageId:          ref.packageId,
-	}
-	if ref.processingDiagnostic != nil {
-		subTask.processingDiagnostics = append(subTask.processingDiagnostics, ref.processingDiagnostic)
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }
