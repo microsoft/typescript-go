@@ -1981,8 +1981,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 			if b.pseudoTypeEquivalentToType(pt, returnType, false, !b.ctx.suppressReportInferenceFallback) {
 				// Also verify the pseudo type captures any inferred type predicate, not just the boolean return type.
 				// The pseudochecker is unaware of inferred type predicates, so it produces boolean where
-				// the checker infers e.g. `x is string`. We also reject reuse for explicit predicates in
-				// generic instantiation contexts where the node would need instantiation.
+				// the checker infers e.g. `x is string`.
 				typePredicate := b.ch.getTypePredicateOfSignature(signature)
 				if typePredicate != nil && !b.pseudoReturnTypeMatchesPredicate(pt, typePredicate) {
 					if !b.ctx.suppressReportInferenceFallback {
