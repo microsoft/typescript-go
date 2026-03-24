@@ -28,10 +28,9 @@ type LibFile struct {
 	Replaced bool
 }
 
-type sourceFileFromReferenceResult struct {
-	resolvedFileName string
-	message          *diagnostics.Message
-	args             []any
+type sourceFileFromReferenceDiagnostic struct {
+	message *diagnostics.Message
+	args    []any
 }
 
 type fileLoader struct {
@@ -319,13 +318,10 @@ func (p *fileLoader) getSourceFileFromReference(
 	fileName string,
 	referenceText string,
 	containingFile string,
-) sourceFileFromReferenceResult {
+) (string, *sourceFileFromReferenceDiagnostic) {
 	options := p.opts.Config.CompilerOptions()
 	allowNonTsExtensions := options.AllowNonTsExtensions.IsTrue()
 	diagnosticFileName := tspath.NormalizeSlashes(referenceText)
-	fail := func(message *diagnostics.Message, args ...any) sourceFileFromReferenceResult {
-		return sourceFileFromReferenceResult{message: message, args: args}
-	}
 
 	if tspath.HasExtension(fileName) {
 		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
@@ -339,39 +335,39 @@ func (p *fileLoader) getSourceFileFromReference(
 			}
 			if !supported {
 				if tspath.HasJSFileExtension(canonicalFileName) {
-					return fail(diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, diagnosticFileName)
+					return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, args: []any{diagnosticFileName}}
 				} else {
-					return fail(diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, diagnosticFileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
+					return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, args: []any{diagnosticFileName, "'" + strings.Join(core.Flatten(p.supportedExtensions), "', '") + "'"}}
 				}
 			}
 		}
 
 		if !p.sourceFileExists(fileName) {
-			return fail(diagnostics.File_0_not_found, diagnosticFileName)
+			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_not_found, args: []any{diagnosticFileName}}
 		}
 
 		if tspath.GetCanonicalFileName(containingFile, p.opts.Host.FS().UseCaseSensitiveFileNames()) == canonicalFileName {
-			return fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
+			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.A_file_cannot_have_a_reference_to_itself}
 		}
-		return sourceFileFromReferenceResult{resolvedFileName: fileName}
+		return fileName, nil
 	}
 
 	if allowNonTsExtensions && p.sourceFileExists(fileName) {
-		return sourceFileFromReferenceResult{resolvedFileName: fileName}
+		return fileName, nil
 	}
 
 	if allowNonTsExtensions {
-		return fail(diagnostics.File_0_not_found, diagnosticFileName)
+		return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_not_found, args: []any{diagnosticFileName}}
 	}
 
 	for _, ext := range p.supportedExtensions[0] {
 		candidate := fileName + ext
 		if p.sourceFileExists(candidate) {
-			return sourceFileFromReferenceResult{resolvedFileName: candidate}
+			return candidate, nil
 		}
 	}
 
-	return fail(diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, fileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
+	return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, args: []any{fileName, "'" + strings.Join(core.Flatten(p.supportedExtensions), "', '") + "'"}}
 }
 
 func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string, index int) (*resolvedRef, *processingDiagnostic) {
@@ -390,24 +386,24 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 		},
 	}
 
-	result := p.getSourceFileFromReference(
+	resolvedFileName, diagnostic := p.getSourceFileFromReference(
 		normalizedFileName,
 		moduleName,
 		containingFile,
 	)
-	if result.message != nil {
+	if diagnostic != nil {
 		return nil, &processingDiagnostic{
 			kind: processingDiagnosticKindExplainingFileInclude,
 			data: &includeExplainingDiagnostic{
 				diagnosticReason: includeReason,
-				message:          result.message,
-				args:             result.args,
+				message:          diagnostic.message,
+				args:             diagnostic.args,
 			},
 		}
 	}
 
 	return &resolvedRef{
-		fileName:      result.resolvedFileName,
+		fileName:      resolvedFileName,
 		includeReason: includeReason,
 	}, nil
 }
