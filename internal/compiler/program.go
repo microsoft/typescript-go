@@ -132,8 +132,9 @@ func (p *Program) GetNearestAncestorDirectoryWithPackageJson(dirname string) str
 
 // GetPackageJsonInfo implements checker.Program.
 func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
-	scoped := p.resolver.GetPackageScopeForPath(pkgJsonPath)
-	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
+	directory := tspath.GetDirectoryPath(pkgJsonPath)
+	scoped := p.resolver.GetPackageScopeForPath(directory)
+	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == directory {
 		return scoped
 	}
 	return nil
@@ -474,8 +475,46 @@ func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles [
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-		return core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
+		diags := core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
+		// For JS files that won't be checked by the checker (no checkJs/ts-check), we need
+		// program-level syntactic checks that require compiler options. This mirrors Strada's
+		// getJSSyntacticDiagnosticsForFile in program.ts.
+		if ast.IsSourceFileJS(file) && !ast.IsCheckJSEnabledForFile(file, p.Options()) {
+			diags = append(diags, getAdditionalJSSyntacticDiagnostics(file, p.Options())...)
+		}
+		return diags
 	})
+}
+
+// getAdditionalJSSyntacticDiagnostics produces option-dependent syntactic diagnostics for JS files
+// that aren't covered by the parser or the checker. In Strada, the equivalent logic lives in
+// getJSSyntacticDiagnosticsForFile in program.ts. In Corsa, most of that function's checks were
+// moved into the parser (checkJSSyntax/checkJSDecoratorSyntax), but checks that depend on compiler
+// options can't live in the parser and must remain here. The checker handles these for checked files,
+// but doesn't run on unchecked JS files (no checkJs/ts-check).
+func getAdditionalJSSyntacticDiagnostics(file *ast.SourceFile, options *core.CompilerOptions) []*ast.Diagnostic {
+	if options.ExperimentalDecorators.IsTrue() {
+		return nil
+	}
+	var diags []*ast.Diagnostic
+	// Parameter decorators are only valid with experimentalDecorators. Without it,
+	// the checker would report this, but the checker doesn't run on unchecked JS files.
+	var walk ast.Visitor
+	walk = func(node *ast.Node) bool {
+		if node.SubtreeFacts()&ast.SubtreeContainsDecorators == 0 {
+			return false
+		}
+		if node.Kind == ast.KindParameter && ast.HasDecorators(node) {
+			decorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
+			if decorator != nil {
+				diags = append(diags, ast.NewDiagnostic(file, decorator.Loc, diagnostics.Decorators_are_not_valid_here))
+			}
+		}
+		node.ForEachChild(walk)
+		return false
+	}
+	file.AsNode().ForEachChild(walk)
+	return diags
 }
 
 func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -692,6 +731,14 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
 
+	if options.ESModuleInterop.IsFalse() {
+		createRemovedOptionDiagnostic("esModuleInterop", "false", "")
+	}
+
+	if options.AllowSyntheticDefaultImports.IsFalse() {
+		createRemovedOptionDiagnostic("allowSyntheticDefaultImports", "false", "")
+	}
+
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "strictPropertyInitialization", "strictNullChecks")
 	}
@@ -857,6 +904,48 @@ func (p *Program) verifyCompilerOptions() {
 		dir := p.CommonSourceDirectory()
 		if options.OutDir != "" && dir == "" && core.Some(p.files, func(f *ast.SourceFile) bool { return tspath.GetRootLength(f.FileName()) > 1 }) {
 			createDiagnosticForOptionName(diagnostics.Cannot_find_the_common_subdirectory_path_for_the_input_files, "outDir", "")
+		}
+	}
+
+	if !options.NoEmit.IsTrue() &&
+		!options.Composite.IsTrue() &&
+		options.RootDir == "" &&
+		options.ConfigFilePath != "" &&
+		(options.OutDir != "" ||
+			(options.GetEmitDeclarations() && options.DeclarationDir != "") ||
+			options.OutFile != "") {
+		// Check if rootDir inferred changed and issue diagnostic
+		dir := p.CommonSourceDirectory()
+		var emittedFiles []string
+		for _, file := range p.files {
+			if !file.IsDeclarationFile && sourceFileMayBeEmitted(file, p, false) {
+				emittedFiles = append(emittedFiles, file.FileName())
+			}
+		}
+		dir59 := outputpaths.GetComputedCommonSourceDirectory(emittedFiles, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		if dir59 != "" && tspath.GetCanonicalFileName(dir, p.UseCaseSensitiveFileNames()) != tspath.GetCanonicalFileName(dir59, p.UseCaseSensitiveFileNames()) {
+			// change in layout
+			var option1 string
+			if options.OutFile != "" {
+				option1 = "outFile"
+			} else if options.OutDir != "" {
+				option1 = "outDir"
+			} else {
+				option1 = "declarationDir"
+			}
+			var option2 string
+			if options.OutFile == "" && options.OutDir != "" {
+				option2 = "declarationDir"
+			}
+			diag := createDiagnosticForOption(
+				true, /*onKey*/
+				option1,
+				option2,
+				diagnostics.The_common_source_directory_of_0_is_1_The_rootDir_setting_must_be_explicitly_set_to_this_or_another_path_to_adjust_your_output_s_file_layout,
+				tspath.GetBaseFileName(options.ConfigFilePath),
+				tspath.GetRelativePathFromFile(options.ConfigFilePath, dir59, p.comparePathsOptions),
+			)
+			diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information))
 		}
 	}
 
@@ -1392,7 +1481,7 @@ type WriteFileData struct {
 	SkippedDtsWrite bool
 }
 
-type WriteFile func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+type WriteFile func(fileName string, text string, data *WriteFileData) error
 
 type EmitOptions struct {
 	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
@@ -1586,6 +1675,10 @@ func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFil
 		}
 	}
 	return file
+}
+
+func (p *Program) FilesByPath() map[tspath.Path]*ast.SourceFile {
+	return p.filesByPath
 }
 
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {

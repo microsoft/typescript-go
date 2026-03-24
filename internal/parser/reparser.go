@@ -237,7 +237,9 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 
 func (p *Parser) reparseJSDocComment(node *ast.Node, tag *ast.Node) {
 	if comment := tag.CommentList(); comment != nil {
-		propJSDoc := p.factory.NewJSDoc(comment, nil)
+		newComment := p.factory.NewNodeList(core.Map(comment.Nodes, p.factory.DeepCloneReparse))
+		newComment.Loc = comment.Loc
+		propJSDoc := p.factory.NewJSDoc(newComment, nil)
 		p.finishReparsedNode(propJSDoc, tag)
 		propJSDoc.Parent = node
 		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: node, jsDocs: []*ast.Node{propJSDoc}})
@@ -468,7 +470,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					newParams[i+1] = param
 				}
 
-				fun.FunctionLikeData().Parameters = p.newNodeList(thisParam.Loc, newParams)
+				fun.FunctionLikeData().Parameters = p.newNodeList(fun.ParameterList().Loc, newParams)
 				p.finishMutatedNode(fun)
 			}
 		}

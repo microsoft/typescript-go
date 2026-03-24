@@ -1,5 +1,13 @@
-import { SyntaxKind } from "#syntaxKind";
-import { TokenFlags } from "#tokenFlags";
+import type { LanguageVariant } from "#enums/languageVariant";
+import type { ModifierFlags } from "#enums/modifierFlags";
+import type { NodeFlags } from "#enums/nodeFlags";
+import type { ScriptKind } from "#enums/scriptKind";
+import { SyntaxKind } from "#enums/syntaxKind";
+import { TokenFlags } from "#enums/tokenFlags";
+
+// branded string type used to store absolute, normalized and canonicalized paths
+// arbitrary file name can be converted to Path via toPath function
+export type Path = string & { __pathBrand: any; };
 
 export interface TextRange {
     pos: number;
@@ -8,7 +16,17 @@ export interface TextRange {
 
 export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
+    readonly flags: NodeFlags;
     readonly parent: Node;
+    readonly jsDoc?: readonly Node[];
+    forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
+    getSourceFile(): SourceFile;
+}
+
+export interface FileReference extends TextRange {
+    readonly fileName: string;
+    readonly resolutionMode: number; // TODO with CompilerOptions: enum type
+    readonly preserve: boolean;
 }
 
 export interface SourceFile extends Node {
@@ -17,6 +35,19 @@ export interface SourceFile extends Node {
     readonly endOfFileToken: EndOfFile;
     readonly text: string;
     readonly fileName: string;
+    readonly path: Path;
+    readonly languageVariant: LanguageVariant;
+    readonly scriptKind: ScriptKind;
+    readonly isDeclarationFile: boolean;
+    readonly referencedFiles: readonly FileReference[];
+    readonly typeReferenceDirectives: readonly FileReference[];
+    readonly libReferenceDirectives: readonly FileReference[];
+    readonly imports: readonly Node[];
+    readonly moduleAugmentations: readonly Node[];
+    readonly ambientModuleNames: readonly string[];
+    readonly externalModuleIndicator: Node | true | undefined;
+    /** @internal */
+    tokenCache?: Map<string, Node>;
 }
 
 export type TriviaSyntaxKind =
@@ -124,6 +155,7 @@ export type KeywordSyntaxKind =
     | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DeclareKeyword
     | SyntaxKind.DefaultKeyword
+    | SyntaxKind.DeferKeyword
     | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
@@ -270,6 +302,7 @@ export interface NodeArray<T> extends ReadonlyTextRange, ReadonlyArray<T> {
     readonly length: number;
     readonly pos: number;
     readonly end: number;
+    at(index: number): T | undefined;
 }
 
 // TODO(rbuckton): Constraint 'TKind' to 'TokenSyntaxKind'
@@ -433,6 +466,7 @@ export interface TypeParameterDeclaration extends NamedDeclaration {
     readonly kind: SyntaxKind.TypeParameter;
     readonly parent: DeclarationWithTypeParameterChildren | InferTypeNode;
     readonly modifiers?: NodeArray<Modifier>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: Identifier;
     /** Note: Consider calling `getEffectiveConstraintOfTypeParameter` */
     readonly constraint?: TypeNode;
@@ -495,6 +529,7 @@ export interface ParameterDeclaration extends NamedDeclaration {
     readonly kind: SyntaxKind.Parameter;
     readonly parent: SignatureDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly dotDotDotToken?: DotDotDotToken;    // Present on rest parameter
     readonly name: BindingName;                  // Declared parameter name.
     readonly questionToken?: QuestionToken;      // Present on optional parameter
@@ -517,8 +552,9 @@ export interface PropertySignature extends TypeElement {
     readonly kind: SyntaxKind.PropertySignature;
     readonly parent: TypeLiteralNode | InterfaceDeclaration;
     readonly modifiers?: NodeArray<Modifier>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: PropertyName;                 // Declared property name
-    readonly questionToken?: QuestionToken;      // Present on optional property
+    readonly postfixToken?: QuestionToken;       // Present on optional property
     readonly type?: TypeNode;                    // Optional type annotation
 }
 
@@ -527,9 +563,9 @@ export interface PropertyDeclaration extends ClassElement {
     readonly kind: SyntaxKind.PropertyDeclaration;
     readonly parent: ClassLikeDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: PropertyName;
-    readonly questionToken?: QuestionToken;      // Present for use with reporting a grammar error for auto-accessors (see `isGrammarError` in utilities.ts)
-    readonly exclamationToken?: ExclamationToken;
+    readonly postfixToken?: QuestionToken | ExclamationToken;
     readonly type?: TypeNode;
     readonly initializer?: Expression;           // Optional initializer
 }
@@ -555,6 +591,7 @@ export interface PropertyAssignment extends ObjectLiteralElement {
     readonly kind: SyntaxKind.PropertyAssignment;
     readonly parent: ObjectLiteralExpression;
     readonly name: PropertyName;
+    readonly postfixToken?: QuestionToken;
     readonly initializer: Expression;
 }
 
@@ -562,6 +599,7 @@ export interface ShorthandPropertyAssignment extends ObjectLiteralElement {
     readonly kind: SyntaxKind.ShorthandPropertyAssignment;
     readonly parent: ObjectLiteralExpression;
     readonly name: Identifier;
+    readonly postfixToken?: QuestionToken;
     // used when ObjectLiteralExpression is used in ObjectAssignmentPattern
     // it is a grammar error to appear in actual object initializer (see `isGrammarError` in utilities.ts):
     readonly equalsToken?: EqualsToken;
@@ -634,6 +672,7 @@ export type FunctionLike = SignatureDeclaration;
 export interface FunctionDeclaration extends FunctionLikeDeclarationBase, DeclarationStatement {
     readonly kind: SyntaxKind.FunctionDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name?: Identifier;
     readonly body?: FunctionBody;
 }
@@ -642,7 +681,9 @@ export interface MethodSignature extends SignatureDeclarationBase, TypeElement {
     readonly kind: SyntaxKind.MethodSignature;
     readonly parent: TypeLiteralNode | InterfaceDeclaration;
     readonly modifiers?: NodeArray<Modifier>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: PropertyName;
+    readonly postfixToken?: QuestionToken;
 }
 
 // Note that a MethodDeclaration is considered both a ClassElement and an ObjectLiteralElement.
@@ -658,7 +699,9 @@ export interface MethodDeclaration extends FunctionLikeDeclarationBase, ClassEle
     readonly kind: SyntaxKind.MethodDeclaration;
     readonly parent: ClassLikeDeclaration | ObjectLiteralExpression;
     readonly modifiers?: NodeArray<ModifierLike> | undefined;
+    readonly modifierFlags: ModifierFlags;
     readonly name: PropertyName;
+    readonly postfixToken?: QuestionToken;
     readonly body?: FunctionBody | undefined;
 }
 
@@ -666,6 +709,7 @@ export interface ConstructorDeclaration extends FunctionLikeDeclarationBase, Cla
     readonly kind: SyntaxKind.Constructor;
     readonly parent: ClassLikeDeclaration;
     readonly modifiers?: NodeArray<ModifierLike> | undefined;
+    readonly modifierFlags: ModifierFlags;
     readonly body?: FunctionBody | undefined;
 }
 
@@ -681,6 +725,7 @@ export interface GetAccessorDeclaration extends FunctionLikeDeclarationBase, Cla
     readonly kind: SyntaxKind.GetAccessor;
     readonly parent: ClassLikeDeclaration | ObjectLiteralExpression | TypeLiteralNode | InterfaceDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: PropertyName;
     readonly body?: FunctionBody;
 }
@@ -691,6 +736,7 @@ export interface SetAccessorDeclaration extends FunctionLikeDeclarationBase, Cla
     readonly kind: SyntaxKind.SetAccessor;
     readonly parent: ClassLikeDeclaration | ObjectLiteralExpression | TypeLiteralNode | InterfaceDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: PropertyName;
     readonly body?: FunctionBody;
 }
@@ -701,6 +747,7 @@ export interface IndexSignatureDeclaration extends SignatureDeclarationBase, Cla
     readonly kind: SyntaxKind.IndexSignature;
     readonly parent: ObjectTypeDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly type: TypeNode;
 }
 
@@ -744,6 +791,7 @@ export interface FunctionTypeNode extends FunctionOrConstructorTypeNodeBase {
 export interface ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase {
     readonly kind: SyntaxKind.ConstructorType;
     readonly modifiers?: NodeArray<Modifier>;
+    readonly modifierFlags: ModifierFlags;
 }
 
 export interface NodeWithTypeArguments extends TypeNode {
@@ -1227,6 +1275,7 @@ export type ConciseBody = FunctionBody | Expression;
 export interface FunctionExpression extends PrimaryExpression, FunctionLikeDeclarationBase {
     readonly kind: SyntaxKind.FunctionExpression;
     readonly modifiers?: NodeArray<Modifier>;
+    readonly modifierFlags: ModifierFlags;
     readonly name?: Identifier;
     readonly body: FunctionBody; // Required, whereas the member inherited from FunctionDeclaration is optional
 }
@@ -1234,6 +1283,7 @@ export interface FunctionExpression extends PrimaryExpression, FunctionLikeDecla
 export interface ArrowFunction extends Expression, FunctionLikeDeclarationBase {
     readonly kind: SyntaxKind.ArrowFunction;
     readonly modifiers?: NodeArray<Modifier>;
+    readonly modifierFlags: ModifierFlags;
     readonly equalsGreaterThanToken: EqualsGreaterThanToken;
     readonly body: ConciseBody;
     readonly name: never;
@@ -1244,8 +1294,6 @@ export interface ArrowFunction extends Expression, FunctionLikeDeclarationBase {
 // For a NumericLiteral, the stored value is the toString() representation of the number. For example 1, 1.00, and 1e0 are all stored as just "1".
 export interface LiteralLikeNode extends Node {
     text: string;
-    isUnterminated?: boolean;
-    hasExtendedUnicodeEscape?: boolean;
 }
 
 export interface TemplateLiteralLikeNode extends LiteralLikeNode {
@@ -1663,6 +1711,7 @@ export interface Block extends Statement {
 export interface VariableStatement extends Statement {
     readonly kind: SyntaxKind.VariableStatement;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly declarationList: VariableDeclarationList;
 }
 
@@ -1829,6 +1878,7 @@ export interface ClassLikeDeclarationBase extends NamedDeclaration {
 export interface ClassDeclaration extends ClassLikeDeclarationBase, DeclarationStatement {
     readonly kind: SyntaxKind.ClassDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     /** May be undefined in `export default class { ... }`. */
     readonly name?: Identifier;
 }
@@ -1836,6 +1886,7 @@ export interface ClassDeclaration extends ClassLikeDeclarationBase, DeclarationS
 export interface ClassExpression extends ClassLikeDeclarationBase, PrimaryExpression {
     readonly kind: SyntaxKind.ClassExpression;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
 }
 
 export type ClassLikeDeclaration =
@@ -1856,6 +1907,7 @@ export interface TypeElement extends NamedDeclaration {
 export interface InterfaceDeclaration extends DeclarationStatement {
     readonly kind: SyntaxKind.InterfaceDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: Identifier;
     readonly typeParameters?: NodeArray<TypeParameterDeclaration>;
     readonly heritageClauses?: NodeArray<HeritageClause>;
@@ -1872,6 +1924,7 @@ export interface HeritageClause extends Node {
 export interface TypeAliasDeclaration extends DeclarationStatement {
     readonly kind: SyntaxKind.TypeAliasDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: Identifier;
     readonly typeParameters?: NodeArray<TypeParameterDeclaration>;
     readonly type: TypeNode;
@@ -1889,6 +1942,7 @@ export interface EnumMember extends NamedDeclaration {
 export interface EnumDeclaration extends DeclarationStatement {
     readonly kind: SyntaxKind.EnumDeclaration;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: Identifier;
     readonly members: NodeArray<EnumMember>;
 }
@@ -1905,6 +1959,7 @@ export interface ModuleDeclaration extends DeclarationStatement {
     readonly kind: SyntaxKind.ModuleDeclaration;
     readonly parent: ModuleBody | SourceFile;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: ModuleName;
     readonly body?: ModuleBody | JSDocNamespaceDeclaration;
 }
@@ -1946,6 +2001,7 @@ export interface ImportEqualsDeclaration extends DeclarationStatement {
     readonly kind: SyntaxKind.ImportEqualsDeclaration;
     readonly parent: SourceFile | ModuleBlock;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly name: Identifier;
     readonly isTypeOnly: boolean;
 
@@ -1968,6 +2024,7 @@ export interface ImportDeclaration extends Statement {
     readonly kind: SyntaxKind.ImportDeclaration;
     readonly parent: SourceFile | ModuleBlock;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly importClause?: ImportClause;
     /** If this is not a StringLiteral it will be a grammar error. */
     readonly moduleSpecifier: Expression;
@@ -2049,6 +2106,7 @@ export interface ExportDeclaration extends DeclarationStatement {
     readonly kind: SyntaxKind.ExportDeclaration;
     readonly parent: SourceFile | ModuleBlock;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly isTypeOnly: boolean;
     /** Will not be assigned in the case of `export * from "foo";` */
     readonly exportClause?: NamedExportBindings;
@@ -2124,6 +2182,7 @@ export interface ExportAssignment extends DeclarationStatement {
     readonly kind: SyntaxKind.ExportAssignment;
     readonly parent: SourceFile;
     readonly modifiers?: NodeArray<ModifierLike>;
+    readonly modifierFlags: ModifierFlags;
     readonly isExportEquals?: boolean;
     readonly expression: Expression;
 }

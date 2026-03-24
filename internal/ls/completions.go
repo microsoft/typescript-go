@@ -344,7 +344,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	}
 
 	preferences := l.UserPreferences()
-	data, err := l.getCompletionData(ctx, checker, file, position, preferences)
+	data, err := l.getCompletionData(ctx, checker, file, position, preferences, false /*forItemResolve*/)
 	if err != nil {
 		return nil, err
 	}
@@ -417,6 +417,7 @@ func (l *LanguageService) getCompletionData(
 	file *ast.SourceFile,
 	position int,
 	preferences *lsutil.UserPreferences,
+	forItemResolve bool,
 ) (completionData, error) {
 	inCheckedFile := isCheckedFile(file, l.GetProgram().Options())
 
@@ -429,7 +430,7 @@ func (l *LanguageService) getCompletionData(
 	isInSnippetScope := false
 	if insideComment != nil {
 		if hasDocComment(file, position) {
-			if file.Text()[position] == '@' {
+			if position > 0 && file.Text()[position-1] == '@' {
 				// The current position is next to the '@' sign, when no tag name being provided yet.
 				// Provide a full list of tag names
 				return &completionDataJSDocTagName{}, nil
@@ -1078,7 +1079,7 @@ func (l *LanguageService) getCompletionData(
 			return true
 		}
 		// If not already a module, must have modules enabled.
-		if !preferences.IncludeCompletionsForModuleExports.IsTrue() {
+		if preferences.IncludeCompletionsForModuleExports.IsFalse() {
 			return false
 		}
 		// Always using ES modules in 6.0+
@@ -1087,6 +1088,11 @@ func (l *LanguageService) getCompletionData(
 
 	// Mutates `symbols`, `symbolToOriginInfoMap`, and `symbolToSortTextMap`
 	collectAutoImports := func() error {
+		// `completionItem/resolve` for auto-import completions should be resolved via the completion item data,
+		// so we don't need to collect auto-import entries again.
+		if forItemResolve {
+			return nil
+		}
 		if !shouldOfferImportCompletions() {
 			return nil
 		}
@@ -1104,6 +1110,9 @@ func (l *LanguageService) getCompletionData(
 		view, err := l.getPreparedAutoImportView(file)
 		if err != nil {
 			return err
+		}
+		if view == nil {
+			return nil
 		}
 
 		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
@@ -2033,7 +2042,7 @@ func (l *LanguageService) createCompletionItem(
 		} else {
 			end = dot.End()
 		}
-		replacementSpan = l.createLspRangeFromBounds(astnav.GetStartOfNode(dot, file, false /*includeJSDoc*/), end, file)
+		replacementSpan = new(l.createLspRangeFromBounds(astnav.GetStartOfNode(dot, file, false /*includeJSDoc*/), end, file))
 	}
 
 	if data.jsxInitializer.isInitializer {
@@ -2042,7 +2051,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 		insertText = fmt.Sprintf("{%s}", insertText)
 		if data.jsxInitializer.initializer != nil {
-			replacementSpan = l.createLspRangeFromNode(data.jsxInitializer.initializer, file)
+			replacementSpan = new(l.createLspRangeFromNode(data.jsxInitializer.initializer, file))
 		}
 	}
 
@@ -2069,10 +2078,10 @@ func (l *LanguageService) createCompletionItem(
 			data.propertyAccessToConvert.Parent,
 			data.propertyAccessToConvert.Expression(),
 		)
-		replacementSpan = l.createLspRangeFromBounds(
+		replacementSpan = new(l.createLspRangeFromBounds(
 			astnav.GetStartOfNode(wrapNode, file, false /*includeJSDoc*/),
 			data.propertyAccessToConvert.End(),
-			file)
+			file))
 	}
 
 	if originIsTypeOnlyAlias(origin) {
@@ -2893,24 +2902,6 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 	}
 }
 
-func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Checker, contextFlags checker.ContextFlags) *checker.Type {
-	parent := ast.WalkUpParenthesizedExpressions(node.Parent)
-	switch parent.Kind {
-	case ast.KindNewExpression:
-		return typeChecker.GetContextualType(parent, contextFlags)
-	case ast.KindBinaryExpression:
-		if isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
-			return typeChecker.GetTypeAtLocation(
-				core.IfElse(node == parent.AsBinaryExpression().Right, parent.AsBinaryExpression().Left, parent.AsBinaryExpression().Right))
-		}
-		return typeChecker.GetContextualType(node, contextFlags)
-	case ast.KindCaseClause:
-		return getSwitchedType(parent, typeChecker)
-	default:
-		return typeChecker.GetContextualType(node, contextFlags)
-	}
-}
-
 func getSwitchedType(caseClause *ast.CaseClauseNode, typeChecker *checker.Checker) *checker.Type {
 	return typeChecker.GetTypeAtLocation(caseClause.Parent.Parent.Expression())
 }
@@ -3038,7 +3029,7 @@ func (l *LanguageService) getReplacementRangeForContextToken(file *ast.SourceFil
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
 		return l.createRangeFromStringLiteralLikeContent(file, contextToken, position)
 	default:
-		return l.createLspRangeFromNode(contextToken, file)
+		return new(l.createLspRangeFromNode(contextToken, file))
 	}
 }
 
@@ -3052,7 +3043,7 @@ func (l *LanguageService) createRangeFromStringLiteralLikeContent(file *ast.Sour
 		}
 		replacementEnd = min(position, node.End())
 	}
-	return l.createLspRangeFromBounds(nodeStart+1, replacementEnd, file)
+	return new(l.createLspRangeFromBounds(nodeStart+1, replacementEnd, file))
 }
 
 func quotePropertyName(file *ast.SourceFile, preferences *lsutil.UserPreferences, name string) string {
@@ -3401,7 +3392,7 @@ func (l *LanguageService) getOptionalReplacementSpan(location *ast.Node, file *a
 	// StringLiteralLike locations are handled separately in stringCompletions.ts
 	if location != nil && (location.Kind == ast.KindIdentifier || location.Kind == ast.KindPrivateIdentifier) {
 		start := astnav.GetStartOfNode(location, file, false /*includeJSDoc*/)
-		return l.createLspRangeFromBounds(start, location.End(), file)
+		return new(l.createLspRangeFromBounds(start, location.End(), file))
 	}
 	return nil
 }
@@ -3646,7 +3637,20 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 
 	switch node.Kind {
 	case ast.KindPropertySignature:
-		return typeChecker.GetTypeOfPropertyOfContextualType(t, node.Symbol().Name)
+		// Try to get the reparsed node first - we may be in JSDoc.
+		reparsed := ast.GetReparsedNodeForNode(node)
+		if symbol := reparsed.Symbol(); symbol != nil {
+			return typeChecker.GetTypeOfPropertyOfContextualType(t, symbol.Name)
+		}
+
+		// In some cases, we won't have a corresponding symbol
+		// (e.g. JSDoc types that never get re-attached) so we'll use
+		// the name as declared by the property as a best-effort.
+		if name, ok := ast.TryGetTextOfPropertyName(reparsed.Name()); ok {
+			return typeChecker.GetTypeOfPropertyOfContextualType(t, name)
+		}
+
+		return nil
 	case ast.KindColonToken:
 		if node.Parent.Kind == ast.KindPropertySignature {
 			// The cursor is at a property value location like `Foo<{ x: | }`.
@@ -4292,7 +4296,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
 	closingTag := scanner.GetTextOfNode(tagName)
 	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
-	optionalReplacementSpan := l.createLspRangeFromNode(jsxClosingElement.TagName(), file)
+	optionalReplacementSpan := new(l.createLspRangeFromNode(jsxClosingElement.TagName(), file))
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
 
 	item := l.createLSPCompletionItem(
@@ -4302,10 +4306,10 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		lsutil.ScriptElementKindClassElement,
-		collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
-		nil, /*replacementSpan*/
-		nil, /*commitCharacters*/
-		nil, /*labelDetails*/
+		lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
+		nil,                                  /*replacementSpan*/
+		nil,                                  /*commitCharacters*/
+		nil,                                  /*labelDetails*/
 		file,
 		position,
 		true,  /*isMemberCompletion*/
@@ -4340,7 +4344,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	filterText string,
 	sortText SortText,
 	elementKind lsutil.ScriptElementKind,
-	kindModifiers collections.Set[lsutil.ScriptElementKindModifier],
+	kindModifiers lsutil.ScriptElementKindModifier,
 	replacementSpan *lsproto.Range,
 	commitCharacters *[]string,
 	labelDetails *lsproto.CompletionItemLabelDetails,
@@ -4386,7 +4390,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
-	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
+	if kindModifiers&lsutil.ScriptElementKindModifierOptional != 0 {
 		if insertText == "" {
 			insertText = name
 		}
@@ -4395,7 +4399,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		}
 		name = name + "?"
 	}
-	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
+	if kindModifiers&lsutil.ScriptElementKindModifierDeprecated != 0 {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
 	}
 
@@ -4477,10 +4481,10 @@ func (l *LanguageService) getLabelStatementCompletions(
 					"", /*filterText*/
 					SortTextLocationPriority,
 					lsutil.ScriptElementKindLabel,
-					collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
-					nil, /*replacementSpan*/
-					nil, /*commitCharacters*/
-					nil, /*labelDetails*/
+					lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
+					nil,                                  /*replacementSpan*/
+					nil,                                  /*commitCharacters*/
+					nil,                                  /*labelDetails*/
 					file,
 					position,
 					false, /*isMemberCompletion*/
@@ -4883,7 +4887,7 @@ func (l *LanguageService) getCompletionItemDetails(
 			symbolDetails.symbol,
 			checker,
 			symbolDetails.location,
-			nil,
+			position,
 			docFormat,
 		)
 	case symbolCompletion.literal != nil:
@@ -4932,7 +4936,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 		}
 	}
 
-	completionData, err := l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
+	completionData, err := l.getCompletionData(ctx, ch, file, position, l.UserPreferences(), true /*forItemResolve*/)
 	if err != nil {
 		panic(err)
 	}
@@ -5032,21 +5036,11 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	symbol *ast.Symbol,
 	checker *checker.Checker,
 	location *ast.Node,
-	actions []codeAction,
+	position int,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	details := make([]string, 0, len(actions)+1)
-	edits := make([]*lsproto.TextEdit, 0, len(actions))
-	for _, action := range actions {
-		details = append(details, action.description)
-		edits = append(edits, action.changes...)
-	}
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat)
-	details = append(details, quickInfo)
-	if len(edits) != 0 {
-		item.AdditionalTextEdits = &edits
-	}
-	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
+	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 
 func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Node, sourceFile *ast.SourceFile) importStatementCompletionInfo {
@@ -5133,7 +5127,7 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 	// Use token position (excluding JSDoc/trivia) instead of node.Pos() to avoid including JSDoc comments
 	tokenPos := scanner.GetTokenPosOfNode(node, sourceFile, false /*includeJSDoc*/)
 	if printer.GetLinesBetweenPositions(sourceFile, tokenPos, node.End()) == 0 {
-		return l.createLspRangeFromNode(node, sourceFile)
+		return new(l.createLspRangeFromNode(node, sourceFile))
 	}
 
 	if node.Kind == ast.KindImportKeyword || node.Kind == ast.KindImportSpecifier {
@@ -5168,7 +5162,7 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 	// assume that the "module specifier" is actually just another statement, and return
 	// the single-line range of the import excluding that probable statement.
 	if printer.GetLinesBetweenPositions(sourceFile, withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End()) == 0 {
-		return l.createLspRangeFromBounds(withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End(), sourceFile)
+		return new(l.createLspRangeFromBounds(withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End(), sourceFile))
 	}
 	return nil
 }
@@ -5268,7 +5262,7 @@ func tryGetTypeExpressionFromTag(tag *ast.JSDocTag) *ast.Node {
 func isTagWithTypeExpression(tag *ast.JSDocTag) bool {
 	switch tag.Kind {
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocReturnTag, ast.KindJSDocTypeTag,
-		ast.KindJSDocTypedefTag, ast.KindJSDocSatisfiesTag:
+		ast.KindJSDocTypedefTag, ast.KindJSDocThrowsTag, ast.KindJSDocSatisfiesTag:
 		return true
 	case ast.KindJSDocTemplateTag:
 		return tag.AsJSDocTemplateTag().Constraint != nil
@@ -5572,7 +5566,7 @@ func getJSDocParamAnnotation(
 	tabstopCounter *int,
 ) string {
 	if isSnippet {
-		debug.AssertIsDefined(tabstopCounter)
+		debug.Assert(tabstopCounter != nil)
 	}
 	if initializer != nil {
 		paramName = getJSDocParamNameWithInitializer(paramName, initializer)
@@ -5583,7 +5577,7 @@ func getJSDocParamAnnotation(
 	if isJS {
 		t := "*"
 		if isObject {
-			debug.AssertNil(dotDotDotToken, `Cannot annotate a rest parameter with type 'object'.`)
+			debug.Assert(dotDotDotToken == nil, `Cannot annotate a rest parameter with type 'object'.`)
 			t = "object"
 		} else {
 			if initializer != nil {
@@ -5879,16 +5873,18 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			if err != nil {
 				return nil, err
 			}
-			importAdder = autoimport.NewImportAdder(
-				ctx,
-				program,
-				c,
-				file,
-				view,
-				l.FormatOptions(),
-				l.converters,
-				l.UserPreferences(),
-			)
+			if view != nil {
+				importAdder = autoimport.NewImportAdder(
+					ctx,
+					program,
+					c,
+					file,
+					view,
+					l.FormatOptions(),
+					l.converters,
+					l.UserPreferences(),
+				)
+			}
 		}
 
 		var elements []*ast.Expression

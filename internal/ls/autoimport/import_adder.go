@@ -362,8 +362,10 @@ func (adder *importAdder) getNewImportEntry(moduleSpecifier string, importKind l
 func (adder *importAdder) getAllExportsForSymbol(
 	symbol *ast.Symbol,
 ) []*Export {
-	exportId := SymbolToExport(symbol, adder.checker).ExportID
-	return adder.view.SearchByExportID(exportId)
+	if export := SymbolToExport(symbol, adder.checker); export != nil {
+		return adder.view.SearchByExportID(export.ExportID)
+	}
+	return nil
 }
 
 func TypeToAutoImportableTypeNode(
@@ -454,7 +456,7 @@ func getNameForExportedSymbol(symbol *ast.Symbol, preferCapitalized bool) string
 		if name != "" {
 			return name
 		}
-		debug.AssertIsDefined(symbol.Parent, "Expected exported symbol to have module symbol as parent")
+		debug.Assert(symbol.Parent != nil, "Expected exported symbol to have module symbol as parent")
 		return lsutil.ModuleSymbolToValidIdentifier(symbol.Parent, preferCapitalized)
 	}
 	return symbol.Name

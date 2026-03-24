@@ -702,14 +702,14 @@ func TestSourceFS(t *testing.T) {
 		sourceFS := newSourceFS(true /* tracking */, snapshot, toPath)
 
 		// File should not be seen yet
-		assert.Assert(t, !sourceFS.Seen(tspath.Path("/src/foo.ts")))
+		assert.Assert(t, !sourceFS.SeenFile(tspath.Path("/src/foo.ts")))
 
 		// Read the file
 		fh := sourceFS.GetFile("/src/foo.ts")
 		assert.Assert(t, fh != nil)
 
 		// Now it should be seen
-		assert.Assert(t, sourceFS.Seen(tspath.Path("/src/foo.ts")))
+		assert.Assert(t, sourceFS.SeenFile(tspath.Path("/src/foo.ts")))
 	})
 
 	t.Run("does not track files when tracking disabled", func(t *testing.T) {
@@ -734,7 +734,7 @@ func TestSourceFS(t *testing.T) {
 		assert.Assert(t, fh != nil)
 
 		// Should not be seen since tracking is disabled
-		assert.Assert(t, !sourceFS.Seen(tspath.Path("/src/foo.ts")))
+		assert.Assert(t, !sourceFS.SeenFile(tspath.Path("/src/foo.ts")))
 	})
 
 	t.Run("DisableTracking stops tracking", func(t *testing.T) {
@@ -757,14 +757,14 @@ func TestSourceFS(t *testing.T) {
 
 		// Read foo while tracking
 		sourceFS.GetFile("/src/foo.ts")
-		assert.Assert(t, sourceFS.Seen(tspath.Path("/src/foo.ts")))
+		assert.Assert(t, sourceFS.SeenFile(tspath.Path("/src/foo.ts")))
 
 		// Disable tracking
 		sourceFS.DisableTracking()
 
 		// Read bar after tracking disabled
 		sourceFS.GetFile("/src/bar.ts")
-		assert.Assert(t, !sourceFS.Seen(tspath.Path("/src/bar.ts")))
+		assert.Assert(t, !sourceFS.SeenFile(tspath.Path("/src/bar.ts")))
 	})
 
 	t.Run("FileExists returns true for files in source", func(t *testing.T) {
@@ -811,5 +811,70 @@ func TestSourceFS(t *testing.T) {
 
 		_, ok = sourceFS.ReadFile("/src/nonexistent.ts")
 		assert.Assert(t, !ok)
+	})
+}
+
+func TestAutoImportBuilderFS(t *testing.T) {
+	t.Parallel()
+
+	toPath := func(fileName string) tspath.Path {
+		return tspath.Path(fileName)
+	}
+
+	// This test demonstrates that autoImportBuilderFS stores files in untrackedFiles keyed
+	// by the path derived from the filename. When module resolution reads a file via its
+	// symlink path, the file is cached at the symlink path key. If the file is subsequently
+	// requested by its realpath (which is the typical case after module resolution resolves
+	// the symlink), the cache is bypassed. If the file was deleted from disk between those
+	// two operations, the realpath read fails and returns nil. This is the mechanism behind
+	// the nil source file crash in aliasResolver.GetSourceFile.
+	t.Run("symlink cache mismatch: file cached at symlink path, missed at realpath after deletion", func(t *testing.T) {
+		t.Parallel()
+
+		// Create a VFS with a real file and a symlinked directory pointing to it.
+		// /real/pkg/index.d.ts is the real file.
+		// /project/node_modules/pkg is a symlink to /real/pkg.
+		testFS := vfstest.FromMap(map[string]any{
+			"/real/pkg/index.d.ts":      "export declare const x: number;",
+			"/project/node_modules/pkg": vfstest.Symlink("/real/pkg"),
+		}, true /* useCaseSensitiveFileNames */)
+
+		// Verify symlink works as expected
+		symlinkPath := "/project/node_modules/pkg/index.d.ts"
+		realpathPath := testFS.Realpath(symlinkPath)
+		assert.Equal(t, realpathPath, "/real/pkg/index.d.ts", "Realpath should resolve the symlink to the real path")
+
+		builder := newSnapshotFSBuilder(
+			testFS,
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*diskFile),
+			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
+			lsproto.PositionEncodingKindUTF16,
+			toPath,
+		)
+
+		autoImportFS := &autoImportBuilderFS{
+			snapshotFSBuilder: builder,
+		}
+
+		// Step 1: Read the file via its symlink path (simulating what module resolution does
+		// during FileExists). This caches the file in untrackedFiles at the symlink path key.
+		fh := autoImportFS.GetFile(symlinkPath)
+		assert.Assert(t, fh != nil, "File should be readable via symlink path")
+		assert.Equal(t, fh.Content(), "export declare const x: number;")
+
+		// Step 2: Simulate a file deletion from disk (e.g., npm install running concurrently).
+		// This deletes both the real file and effectively breaks the symlink.
+		err := testFS.Remove("/real/pkg/index.d.ts")
+		assert.NilError(t, err)
+
+		// Step 3: Request the file by its realpath (simulating what GetSourceFile does after
+		// the checker resolves the module). This bypasses the symlink-path cache entry in
+		// untrackedFiles because the realpath has a different key.
+		fh2 := autoImportFS.GetFile(realpathPath)
+		// The file was cached at the symlink path, but the realpath lookup misses the cache
+		// and goes to disk where the file is now deleted. This returns nil.
+		assert.Assert(t, fh2 == nil, "File should be nil when accessed by realpath after deletion from disk")
 	})
 }

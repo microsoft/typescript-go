@@ -15,6 +15,7 @@ type plugin struct{}
 
 func (f *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 	return []*analysis.Analyzer{
+		bitclearAnalyzer,
 		emptyCaseAnalyzer,
 		shadowAnalyzer,
 		unexportedAPIAnalyzer,
@@ -22,5 +23,5 @@ func (f *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 }
 
 func (f *plugin) GetLoadMode() string {
-	return register.LoadModeSyntax
+	return register.LoadModeTypesInfo
 }
