@@ -48,21 +48,25 @@ func (b *bitclearPass) run() (any, error) {
 
 		// Build text edits:
 		// 1. Replace `&=` with `&^=`
-		// 2. Remove `^` (and parens if present)
+		// 2. Remove `^` (and parens if present), preserving interior whitespace/comments
 		edits := []analysis.TextEdit{
 			{Pos: stmt.TokPos, End: stmt.TokPos + token.Pos(len("&=")), NewText: []byte("&^=")},
 		}
 
 		if paren, ok := unary.X.(*ast.ParenExpr); ok {
-			// Remove `^(` and trailing `)`
+			// Remove just the `^` and the surrounding parentheses, but keep anything inside.
 			edits = append(edits,
-				analysis.TextEdit{Pos: unary.Pos(), End: paren.X.Pos(), NewText: nil},
-				analysis.TextEdit{Pos: paren.X.End(), End: paren.End(), NewText: nil},
+				// Delete `^`
+				analysis.TextEdit{Pos: unary.OpPos, End: unary.OpPos + 1, NewText: nil},
+				// Delete `(`
+				analysis.TextEdit{Pos: paren.Lparen, End: paren.Lparen + 1, NewText: nil},
+				// Delete `)`
+				analysis.TextEdit{Pos: paren.Rparen, End: paren.Rparen + 1, NewText: nil},
 			)
 		} else {
-			// Remove `^`
+			// Remove just the `^` operator.
 			edits = append(edits,
-				analysis.TextEdit{Pos: unary.Pos(), End: unary.X.Pos(), NewText: nil},
+				analysis.TextEdit{Pos: unary.OpPos, End: unary.OpPos + 1, NewText: nil},
 			)
 		}
 

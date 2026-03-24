@@ -11,6 +11,8 @@ const (
 func bad(f Flags) {
 	f &= ^FlagA
 	f &= ^(FlagA | FlagB)
+	f &= ^ /*comment*/ FlagA
+	f &= ^ /*comment*/ (FlagA | FlagB)
 	_ = f
 }
 

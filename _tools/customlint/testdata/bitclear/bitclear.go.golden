@@ -15,6 +15,12 @@
 		f &= ^(FlagA | FlagB)
 		  ~~~~~~~~~~~~~~~~~~~
 !!! bitclear: use `&^=` instead of `&= ^`
+		f &= ^ /*comment*/ FlagA
+		  ~~~~~~~~~~~~~~~~~~~~~~
+!!! bitclear: use `&^=` instead of `&= ^`
+		f &= ^ /*comment*/ (FlagA | FlagB)
+		  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! bitclear: use `&^=` instead of `&= ^`
 		_ = f
 	}
 	
