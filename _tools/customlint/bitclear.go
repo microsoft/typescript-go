@@ -55,18 +55,19 @@ func (b *bitclearPass) run() (any, error) {
 
 		if paren, ok := unary.X.(*ast.ParenExpr); ok {
 			// Remove just the `^` and the surrounding parentheses, but keep anything inside.
+			// Use min(OpPos+2, Lparen) to also consume one trailing space after `^` if present.
 			edits = append(edits,
-				// Delete `^`
-				analysis.TextEdit{Pos: unary.OpPos, End: unary.OpPos + 1, NewText: nil},
+				// Delete `^` (and trailing space if present)
+				analysis.TextEdit{Pos: unary.OpPos, End: min(unary.OpPos+2, paren.Lparen), NewText: nil},
 				// Delete `(`
 				analysis.TextEdit{Pos: paren.Lparen, End: paren.Lparen + 1, NewText: nil},
 				// Delete `)`
 				analysis.TextEdit{Pos: paren.Rparen, End: paren.Rparen + 1, NewText: nil},
 			)
 		} else {
-			// Remove just the `^` operator.
+			// Remove just the `^` operator (and trailing space if present).
 			edits = append(edits,
-				analysis.TextEdit{Pos: unary.OpPos, End: unary.OpPos + 1, NewText: nil},
+				analysis.TextEdit{Pos: unary.OpPos, End: min(unary.OpPos+2, unary.X.Pos()), NewText: nil},
 			)
 		}
 
