@@ -3,7 +3,6 @@ package execute
 import (
 	"fmt"
 	"reflect"
-	"slices"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -198,8 +197,7 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		return true
 	}
 	w.configHasErrors = false
-	if !reflect.DeepEqual(w.config.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) ||
-		!slices.Equal(w.config.FileNames(), configParseResult.FileNames()) {
+	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
 	}
 	w.config = configParseResult

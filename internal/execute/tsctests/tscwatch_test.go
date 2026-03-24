@@ -323,7 +323,7 @@ func TestWatch(t *testing.T) {
 			},
 		},
 		{
-			subScenario: "watch detects package json main field edited",
+			subScenario: "watch detects package json types field edited",
 			files: FileMap{
 				"/home/src/workspaces/project/index.ts":                        `import { lib } from "mylib";`,
 				"/home/src/workspaces/project/tsconfig.json":                   `{}`,
