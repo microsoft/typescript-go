@@ -1,0 +1,41 @@
+	package rangesymboltable
+	
+	import "testdata/fakeast"
+	
+	func RangeOverSymbolTable(table fakeast.SymbolTable) {
+		for range table {
+		~~~~~~~~~~~~~~~
+!!! rangesymboltable: range over ast.SymbolTable has nondeterministic iteration order
+		}
+	}
+	
+	func RangeOverSymbolTableKeyValue(table fakeast.SymbolTable) {
+		for k, v := range table {
+		~~~~~~~~~~~~~~~~~~~~~~~
+!!! rangesymboltable: range over ast.SymbolTable has nondeterministic iteration order
+			_ = k
+			_ = v
+		}
+	}
+	
+	func RangeOverSymbolTableKey(table fakeast.SymbolTable) {
+		for k := range table {
+		~~~~~~~~~~~~~~~~~~~~
+!!! rangesymboltable: range over ast.SymbolTable has nondeterministic iteration order
+			_ = k
+		}
+	}
+	
+	func RangeOverRegularMap(m map[string]int) {
+		for range m {
+		}
+	}
+	
+	func RangeOverSymbolTablePointer(table *fakeast.SymbolTable) {
+		// Dereferencing and ranging over a SymbolTable should also be caught.
+		for range *table {
+		~~~~~~~~~~~~~~~~
+!!! rangesymboltable: range over ast.SymbolTable has nondeterministic iteration order
+		}
+	}
+	
