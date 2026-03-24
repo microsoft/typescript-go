@@ -6101,6 +6101,11 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		}
 		iterationTypes = c.getIterationTypesOfIterableSlow(t, c.asyncIterationTypesResolver, errorNode, &diags)
 		if iterationTypes.hasTypes() {
+			if len(diags) != 0 {
+				for _, d := range diags {
+					c.diagnostics.Add(d)
+				}
+			}
 			return iterationTypes
 		}
 	}
@@ -6114,6 +6119,11 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		}
 		iterationTypes = c.getIterationTypesOfIterableSlow(t, c.syncIterationTypesResolver, errorNode, &diags)
 		if iterationTypes.hasTypes() {
+			if len(diags) != 0 {
+				for _, d := range diags {
+					c.diagnostics.Add(d)
+				}
+			}
 			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
 				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
 			}
