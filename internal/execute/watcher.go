@@ -39,8 +39,14 @@ func (fs *trackingFS) Remove(path string) error { return fs.inner.Remove(path) }
 func (fs *trackingFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
 	return fs.inner.Chtimes(path, aTime, mTime)
 }
-func (fs *trackingFS) DirectoryExists(path string) bool { return fs.inner.DirectoryExists(path) }
+
+func (fs *trackingFS) DirectoryExists(path string) bool {
+	fs.seenFiles.Add(path)
+	return fs.inner.DirectoryExists(path)
+}
+
 func (fs *trackingFS) GetAccessibleEntries(path string) vfs.Entries {
+	fs.seenFiles.Add(path)
 	return fs.inner.GetAccessibleEntries(path)
 }
 func (fs *trackingFS) Stat(path string) vfs.FileInfo { return fs.inner.Stat(path) }
@@ -48,6 +54,11 @@ func (fs *trackingFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	return fs.inner.WalkDir(root, walkFn)
 }
 func (fs *trackingFS) Realpath(path string) string { return fs.inner.Realpath(path) }
+
+type watchEntry struct {
+	modTime time.Time
+	exists  bool
+}
 
 type Watcher struct {
 	sys                            tsc.System
@@ -61,8 +72,9 @@ type Watcher struct {
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
 	configModified      bool
+	configHasErrors     bool
 
-	watchState map[string]time.Time
+	watchState map[string]watchEntry
 }
 
 var (
@@ -138,13 +150,14 @@ func (w *Watcher) doBuild() {
 	tfs := &trackingFS{inner: w.sys.FS()}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 
+	fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
+	timeStart := w.sys.Now()
+
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
 		Config: w.config,
 		Host:   host,
 	}), w.program, nil, w.testing != nil)
 
-	fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
-	timeStart := w.sys.Now()
 	w.compileAndEmit()
 	w.buildWatchState(tfs)
 	w.configModified = false
@@ -169,34 +182,56 @@ func (w *Watcher) compileAndEmit() {
 }
 
 func (w *Watcher) hasErrorsInTsConfig() bool {
+	if w.configFileName == "" {
+		return false
+	}
+
+	// Skip re-parsing if the config file hasn't changed since last check.
+	if w.watchState != nil {
+		if entry, ok := w.watchState[w.configFileName]; ok {
+			s := w.sys.FS().Stat(w.configFileName)
+			unchanged := false
+			if !entry.exists {
+				unchanged = s == nil
+			} else {
+				unchanged = s != nil && s.ModTime().Equal(entry.modTime)
+			}
+			if unchanged {
+				return w.configHasErrors
+			}
+		}
+	}
+
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
-	if w.configFileName != "" {
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
-		if len(errors) > 0 {
+	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
+	if len(errors) > 0 {
+		if !w.configHasErrors {
 			for _, e := range errors {
 				w.reportDiagnostic(e)
 			}
-			return true
+			w.configHasErrors = true
 		}
-		if !reflect.DeepEqual(w.config.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) ||
-			!slices.Equal(w.config.FileNames(), configParseResult.FileNames()) {
-			w.configModified = true
-		}
-		w.config = configParseResult
+		return true
 	}
+	w.configHasErrors = false
+	if !reflect.DeepEqual(w.config.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) ||
+		!slices.Equal(w.config.FileNames(), configParseResult.FileNames()) {
+		w.configModified = true
+	}
+	w.config = configParseResult
 	w.extendedConfigCache = extendedConfigCache
 	return false
 }
 
 func (w *Watcher) hasWatchedFilesChanged() bool {
-	for path, oldMt := range w.watchState {
+	for path, old := range w.watchState {
 		s := w.sys.FS().Stat(path)
-		if oldMt.IsZero() {
+		if !old.exists {
 			if s != nil {
 				return true
 			}
 		} else {
-			if s == nil || s.ModTime() != oldMt {
+			if s == nil || !s.ModTime().Equal(old.modTime) {
 				return true
 			}
 		}
@@ -205,12 +240,12 @@ func (w *Watcher) hasWatchedFilesChanged() bool {
 }
 
 func (w *Watcher) buildWatchState(tfs *trackingFS) {
-	w.watchState = make(map[string]time.Time)
+	w.watchState = make(map[string]watchEntry)
 	tfs.seenFiles.Range(func(fn string) bool {
 		if s := w.sys.FS().Stat(fn); s != nil {
-			w.watchState[fn] = s.ModTime()
+			w.watchState[fn] = watchEntry{modTime: s.ModTime(), exists: true}
 		} else {
-			w.watchState[fn] = time.Time{}
+			w.watchState[fn] = watchEntry{exists: false}
 		}
 		return true
 	})
@@ -219,9 +254,9 @@ func (w *Watcher) buildWatchState(tfs *trackingFS) {
 func (w *Watcher) refreshWatchState() {
 	for path := range w.watchState {
 		if s := w.sys.FS().Stat(path); s != nil {
-			w.watchState[path] = s.ModTime()
+			w.watchState[path] = watchEntry{modTime: s.ModTime(), exists: true}
 		} else {
-			w.watchState[path] = time.Time{}
+			w.watchState[path] = watchEntry{exists: false}
 		}
 	}
 }
@@ -247,4 +282,10 @@ func (w *Watcher) WatchStateLen() int {
 func (w *Watcher) WatchStateHas(path string) bool {
 	_, ok := w.watchState[path]
 	return ok
+}
+
+func (w *Watcher) DebugWatchState(fn func(path string, modTime time.Time, exists bool)) {
+	for path, entry := range w.watchState {
+		fn(path, entry.modTime, entry.exists)
+	}
 }
