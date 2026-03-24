@@ -605,6 +605,7 @@ type Checker struct {
 	exactOptionalPropertyTypes                  bool
 	canCollectSymbolAliasAccessibilityData      bool
 	wasCanceled                                 bool
+	saveDeferredDiagnostics                     bool
 	arrayVariances                              []VarianceFlags
 	globals                                     ast.SymbolTable
 	evaluate                                    evaluator.Evaluator
@@ -879,6 +880,7 @@ type Checker struct {
 	withinUnreachableCode                       bool
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
+	deferredDiagnosticCallbacks                 []func()
 
 	mu sync.Mutex
 }
@@ -1280,13 +1282,19 @@ func (c *Checker) initializeChecker() {
 	augmentations := make([][]*ast.Node, 0, len(c.files))
 	for _, file := range c.files {
 		if !ast.IsExternalOrCommonJSModule(file) {
+			// It is an error for a non-external-module (i.e. script) to declare its own `globalThis`.
+			if fileGlobalThisSymbol := file.Locals["globalThis"]; fileGlobalThisSymbol != nil {
+				for _, d := range fileGlobalThisSymbol.Declarations {
+					c.diagnostics.Add(NewDiagnosticForNode(d, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, "globalThis"))
+				}
+			}
 			c.mergeSymbolTable(c.globals, file.Locals, false, nil)
 		}
 		c.patternAmbientModules = append(c.patternAmbientModules, file.PatternAmbientModules...)
 		augmentations = append(augmentations, file.ModuleAugmentations)
 		if file.Symbol != nil {
 			// Merge in UMD exports with first-in-wins semantics (see #9771)
-			for name, symbol := range file.Symbol.GlobalExports {
+			for name, symbol := range file.GlobalExports {
 				if _, ok := c.globals[name]; !ok {
 					c.globals[name] = symbol
 				}
@@ -1697,7 +1705,7 @@ func (c *Checker) getSuggestionForSymbolNameLookup(symbols ast.SymbolTable, name
 	if symbol != nil {
 		return symbol
 	}
-	allSymbols := slices.Collect(maps.Values(symbols))
+	allSymbols := slices.AppendSeq(make([]*ast.Symbol, 0, len(symbols)), maps.Values(symbols))
 	if meaning&ast.SymbolFlagsGlobalLookup != 0 {
 		for _, s := range []string{"stringString", "numberNumber", "booleanBoolean", "objectObject", "bigintBigInt", "symbolSymbol"} {
 			if _, ok := symbols[s[len(s)/2:]]; ok {
@@ -1766,7 +1774,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *
 	if isInExternalModule && (meaning&ast.SymbolFlagsValue) == ast.SymbolFlagsValue && errorLocation.Flags&ast.NodeFlagsJSDoc == 0 {
 		merged := c.getMergedSymbol(result)
 		if len(merged.Declarations) != 0 && core.Every(merged.Declarations, func(d *ast.Node) bool {
-			return ast.IsNamespaceExportDeclaration(d) || ast.IsSourceFile(d) && d.Symbol().GlobalExports != nil
+			return ast.IsNamespaceExportDeclaration(d) || ast.IsSourceFile(d) && d.AsSourceFile().GlobalExports != nil
 		}) {
 			c.errorOrSuggestion(c.compilerOptions.AllowUmdGlobalAccess != core.TSTrue, errorLocation, diagnostics.X_0_refers_to_a_UMD_global_but_the_current_file_is_a_module_Consider_adding_an_import_instead, name)
 		}
@@ -2118,11 +2126,11 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
-	c.checkNotCanceled()
+func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool) {
+	c.ctx = ctx
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
-		c.ctx = ctx
+		c.saveDeferredDiagnostics = true
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
@@ -2132,21 +2140,25 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			c.checkExternalModuleExports(sourceFile.AsNode())
 			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
 		}
-		if ctx.Err() == nil {
-			// This relies on the results of other lazy diagnostics, so must be computed after them
-			if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
-				c.checkUnusedIdentifiers(links.identifierCheckNodes)
-			}
-			if !sourceFile.IsDeclarationFile {
-				c.checkUnusedRenamedBindingElements()
-			}
-		} else {
-			c.wasCanceled = true
+		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
+			c.checkUnusedRenamedBindingElements()
 		}
-		c.ctx = nil
+		c.saveDeferredDiagnostics = false
+		c.produceDeferredDiagnostics()
 		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
 	}
+	if checkUnused && !links.unusedChecked {
+		// The unused identifiers check relies on a full type check having first been performed
+		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
+			c.checkUnusedIdentifiers(links.identifierCheckNodes)
+		}
+		links.unusedChecked = true
+	}
+	if c.isCanceled() {
+		c.wasCanceled = true
+	}
+	c.ctx = nil
 }
 
 func (c *Checker) checkSourceElements(nodes []*ast.Node) {
@@ -5551,7 +5563,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 
 func (c *Checker) hasExportedMembersOfKind(moduleSymbol *ast.Symbol, kind ast.SymbolFlags) bool {
 	for _, symbol := range moduleSymbol.Exports {
-		if symbol.Name != ast.InternalSymbolNameExportEquals && symbol.Flags&kind != 0 {
+		if symbol.Name != ast.InternalSymbolNameExportEquals && c.getSymbolFlags(symbol)&kind != 0 {
 			return true
 		}
 	}
@@ -6109,10 +6121,14 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		}
 	}
 	if errorNode != nil {
-		diagnostic := c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
-		for _, d := range diags {
-			diagnostic.AddRelatedInfo(d)
-		}
+		// We defer the diagnostic because TypeToString may attempt to resolve symbols that are already being
+		// resolved, possibly causing circularities.
+		c.addDeferredDiagnostic(func() {
+			diagnostic := c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
+			for _, d := range diags {
+				diagnostic.AddRelatedInfo(d)
+			}
+		})
 	}
 	return IterationTypes{}
 }
@@ -9546,10 +9562,14 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 			return diagnostic
 		}
 		sourceFile := ast.GetSourceFileOfNode(node)
-		pos := scanner.SkipTrivia(sourceFile.Text(), args[maxCount].Pos())
+		pos := args[maxCount].Pos()
 		end := args[len(args)-1].End()
 		if end == pos {
 			end++
+		}
+		pos = scanner.SkipTrivia(sourceFile.Text(), pos)
+		if end < pos {
+			end = pos
 		}
 		diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(pos, end), message, parameterRange, len(args))
 		if headMessage != nil {
@@ -11074,6 +11094,11 @@ func (c *Checker) reportNonexistentProperty(propNode *ast.Node, containingType *
 		return
 	}
 	c.nonExistentProperties.Add(key)
+	links := c.nodeLinks.Get(propNode)
+	if links.flags&NodeCheckFlagsTypeChecked != 0 {
+		return // error already made/in progress
+	}
+	links.flags |= NodeCheckFlagsTypeChecked
 	if ast.IsJSDocNameReferenceContext(propNode) {
 		return
 	}
@@ -13447,27 +13472,30 @@ func (c *Checker) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 
 func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection) []*ast.Diagnostic {
 	c.checkNotCanceled()
-	isSuggestionDiagnostics := collection == &c.suggestionDiagnostics
-
-	c.checkSourceFile(ctx, sourceFile)
+	checkUnused := c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue() || collection == &c.suggestionDiagnostics
+	c.checkSourceFile(ctx, sourceFile, checkUnused)
 	if c.wasCanceled {
 		return nil
 	}
-
-	// Check unused identifiers as suggestions if we're collecting suggestion diagnostics
-	// and they are not configured as errors
-	if isSuggestionDiagnostics && !sourceFile.IsDeclarationFile &&
-		!(c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
-		links := c.sourceFileLinks.Get(sourceFile)
-		c.checkUnusedIdentifiers(links.identifierCheckNodes)
-	}
-
 	return collection.GetDiagnosticsForFile(sourceFile.FileName())
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
 	c.checkNotCanceled()
 	return c.diagnostics.GetGlobalDiagnostics()
+}
+
+func (c *Checker) addDeferredDiagnostic(callback func()) {
+	if c.saveDeferredDiagnostics {
+		c.deferredDiagnosticCallbacks = append(c.deferredDiagnosticCallbacks, callback)
+	}
+}
+
+func (c *Checker) produceDeferredDiagnostics() {
+	for _, cb := range c.deferredDiagnosticCallbacks {
+		cb()
+	}
+	c.deferredDiagnosticCallbacks = nil
 }
 
 func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -14169,7 +14197,12 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 			}
 			// if symbolFromVariable is export - get its final target
 			symbolFromVariable = c.resolveSymbolEx(symbolFromVariable, dontResolveAlias)
-			symbolFromModule := c.getExportOfModule(targetSymbol, nameText, specifier, dontResolveAlias)
+			exportContainer := targetSymbol
+			if moduleSymbol != nil && moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil {
+				// For `export =` modules, supplemental type/namespace exports live on the original module symbol.
+				exportContainer = moduleSymbol
+			}
+			symbolFromModule := c.getExportOfModule(exportContainer, nameText, specifier, dontResolveAlias)
 			if symbolFromModule == nil && nameText == ast.InternalSymbolNameDefault {
 				file := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
 				if c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) || c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, moduleSpecifier) {
@@ -14573,6 +14606,26 @@ func (c *Checker) resolveExternalModuleNameWorker(location *ast.Node, moduleRefe
 		return c.resolveExternalModule(location, moduleReferenceExpression.Text(), moduleNotFoundError, core.IfElse(!ignoreErrors, moduleReferenceExpression, nil), isForAugmentation)
 	}
 	return nil
+}
+
+func (c *Checker) getExternalModuleFileFromDeclaration(declaration *ast.Node) *ast.SourceFile {
+	var specifier *ast.Node
+	if declaration.Kind == ast.KindModuleDeclaration {
+		if ast.IsStringLiteral(declaration.Name()) {
+			specifier = declaration.Name()
+		}
+	} else {
+		specifier = ast.GetExternalModuleName(declaration)
+	}
+	moduleSymbol := c.resolveExternalModuleNameWorker(specifier, specifier /*moduleNotFoundError*/, nil, false, false) // TODO: GH#18217
+	if moduleSymbol == nil {
+		return nil
+	}
+	decl := ast.GetDeclarationOfKind(moduleSymbol, ast.KindSourceFile)
+	if decl == nil {
+		return nil
+	}
+	return decl.AsSourceFile()
 }
 
 func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference string, moduleNotFoundError *diagnostics.Message, errorNode *ast.Node, isForAugmentation bool) *ast.Symbol {
@@ -15397,12 +15450,14 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 			}
 		}
 		if isStatic {
-			for member := range symbol.AssignmentDeclarationMembers.Keys() {
-				if c.hasLateBindableName(member) {
-					if lateSymbols == nil {
-						lateSymbols = make(ast.SymbolTable)
+			if assignmentSymbol := symbol.Exports[ast.InternalSymbolNameAssignmentDeclaration]; assignmentSymbol != nil {
+				for _, member := range assignmentSymbol.Declarations {
+					if c.hasLateBindableName(member) {
+						if lateSymbols == nil {
+							lateSymbols = make(ast.SymbolTable)
+						}
+						c.lateBindMember(symbol, earlySymbols, lateSymbols, member)
 					}
-					c.lateBindMember(symbol, earlySymbols, lateSymbols, member)
 				}
 			}
 		}
@@ -15631,7 +15686,13 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 	// A CommonJS module defined by an 'export=' might also export typedefs, stored on the original module
 	if originalModule != nil && len(originalModule.Exports) > 1 {
 		for _, symbol := range originalModule.Exports {
-			if symbol.Flags&ast.SymbolFlagsType != 0 && symbol.Name != ast.InternalSymbolNameExportEquals && exports[symbol.Name] == nil {
+			if symbol.Name == ast.InternalSymbolNameExportEquals || symbol.Name == ast.InternalSymbolNameExportStar {
+				continue
+			}
+			flags := c.getSymbolFlags(symbol)
+			if flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 &&
+				flags&ast.SymbolFlagsValue == 0 &&
+				exports[symbol.Name] == nil {
 				exports[symbol.Name] = symbol
 			}
 		}

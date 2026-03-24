@@ -85,7 +85,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 			continue
 		}
 		textEdit := &lsproto.TextEdit{
-			Range:   *l.getRangeOfEntry(entry),
+			Range:   l.getRangeOfEntry(entry),
 			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, ch, quotePreference),
 		}
 		changes[uri] = append(changes[uri], textEdit)
@@ -106,7 +106,7 @@ func (l *LanguageService) getRenameInfoForNode(ctx context.Context, node *ast.No
 	if symbol == nil {
 		if ast.IsStringLiteralLike(node) {
 			// Allow renaming of string literal types with contextual string literal types
-			typ := getContextualTypeFromParent(node, ch, checker.ContextFlagsNone)
+			typ := getContextualTypeFromParentOrAncestorTypeNode(node, ch)
 			if typ != nil && (typ.IsStringLiteral() ||
 				(typ.IsUnion() && core.Every(typ.Types(), func(t *checker.Type) bool {
 					return t.IsStringLiteral()
