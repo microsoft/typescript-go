@@ -25,7 +25,16 @@ func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.P
 				b.ctx.tracker.ReportInferenceFallback(inferred.Expression)
 			}
 		}
-		return b.typeToTypeNode(checkerType)
+		// Suppress further inference fallback reporting during type serialization.
+		// The error has already been reported at the correct level above; without this,
+		// typeToTypeNode may re-enter pseudotype reuse for nested properties and
+		// produce spurious additional errors (e.g., on individual properties inside an
+		// array element type when the whole array was already reported).
+		oldSuppress := b.ctx.suppressReportInferenceFallback
+		b.ctx.suppressReportInferenceFallback = true
+		result := b.typeToTypeNode(checkerType)
+		b.ctx.suppressReportInferenceFallback = oldSuppress
+		return result
 	}
 	return b.pseudoTypeToNode(t)
 }
@@ -43,6 +52,14 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			for _, fallback := range inferred.FallbackNodes {
 				b.ctx.tracker.ReportInferenceFallback(fallback)
 			}
+		} else if ast.IsDeclaration(node.Parent) {
+			// Report on the parent declaration rather than the expression itself.
+			// This matches TS's behavior where inferTypeOfDeclaration reports on the
+			// declaration node, which getIsolatedDeclarationError then handles by kind
+			// (e.g., PropertyAssignment → createExpressionError(initializer) → TS9013).
+			// Reporting on the expression directly would incorrectly produce TS9039 for
+			// entity name expressions like identifiers.
+			b.ctx.tracker.ReportInferenceFallback(node.Parent)
 		} else {
 			b.ctx.tracker.ReportInferenceFallback(node)
 		}
@@ -344,6 +361,9 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		if len(t.AsPseudoTypeInferred().FallbackNodes) > 0 {
 			return true
 		}
+		if reportErrors {
+			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
+		}
 		return false
 	case pseudochecker.PseudoTypeKindObjectLiteral:
 		pt := t.AsPseudoTypeObjectLiteral()
@@ -391,14 +411,12 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			}
 			propType := b.ch.getTypeOfSymbol(targetProp)
 			propType = b.ch.removeMissingType(propType, targetIsOptional)
+			propMatched := true
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
 				d := e.AsPseudoPropertyAssignment()
 				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
-					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-					}
-					return false
+					propMatched = false
 				}
 			case pseudochecker.PseudoObjectElementKindMethod:
 				d := e.AsPseudoObjectMethod()
@@ -408,47 +426,66 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 					continue
 				}
 				if len(targetSig.parameters) != len(d.Parameters) {
-					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-					}
-					return false
+					propMatched = false
 				}
-				for i, p := range d.Parameters {
-					targetParam := targetSig.parameters[i]
-					paramType := b.ch.getTypeOfParameter(targetParam)
-					if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
-						if reportErrors {
-							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+				if propMatched {
+					for i, p := range d.Parameters {
+						targetParam := targetSig.parameters[i]
+						paramType := b.ch.getTypeOfParameter(targetParam)
+						if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
+							propMatched = false
+							break
 						}
-						return false
 					}
 				}
-				targetPredicate := b.ch.getTypePredicateOfSignature(targetSig)
-				if targetPredicate != nil {
-					if !b.pseudoReturnTypeMatchesPredicate(d.ReturnType, targetPredicate) {
-						if reportErrors {
-							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+				if propMatched {
+					targetPredicate := b.ch.getTypePredicateOfSignature(targetSig)
+					if targetPredicate != nil {
+						if !b.pseudoReturnTypeMatchesPredicate(d.ReturnType, targetPredicate) {
+							propMatched = false
 						}
-						return false
+					} else if !b.pseudoTypeEquivalentToType(d.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, false) {
+						propMatched = false
 					}
-				} else if !b.pseudoTypeEquivalentToType(d.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, false) {
-					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-					}
-					return false
 				}
 			case pseudochecker.PseudoObjectElementKindGetAccessor:
 				d := e.AsPseudoGetAccessor()
 				if !b.pseudoTypeEquivalentToType(d.Type, propType, false, false) {
-					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-					}
-					return false
+					propMatched = false
 				}
 			case pseudochecker.PseudoObjectElementKindSetAccessor:
 				d := e.AsPseudoSetAccessor()
 				writeType := b.ch.getWriteTypeOfSymbol(targetProp)
 				if !b.pseudoTypeEquivalentToType(d.Parameter.Type, writeType, false, false) {
+					propMatched = false
+				}
+			}
+			if !propMatched {
+				// Only tolerate failures from Inferred/NoResult property types where
+				// pseudoTypeToNode can safely fall back to the checker's type. We check
+				// that the pseudo type either can't be resolved (nil) or is a literal
+				// whose base type matches the expected property type (e.g. const literal
+				// 1 widens to number).
+				pseudoTypeIsFallback := false
+				switch e.Kind {
+				case pseudochecker.PseudoObjectElementKindPropertyAssignment:
+					d := e.AsPseudoPropertyAssignment()
+					if d.Type.Kind == pseudochecker.PseudoTypeKindInferred || d.Type.Kind == pseudochecker.PseudoTypeKindNoResult {
+						resolved := b.pseudoTypeToType(d.Type)
+						pseudoTypeIsFallback = resolved == nil || b.ch.getBaseTypeOfLiteralType(resolved) == propType
+					}
+				case pseudochecker.PseudoObjectElementKindMethod:
+					d := e.AsPseudoObjectMethod()
+					if d.ReturnType.Kind == pseudochecker.PseudoTypeKindNoResult || d.ReturnType.Kind == pseudochecker.PseudoTypeKindInferred {
+						resolved := b.pseudoTypeToType(d.ReturnType)
+						pseudoTypeIsFallback = resolved == nil
+						if !pseudoTypeIsFallback && resolved != nil {
+							targetReturnType := b.ch.getReturnTypeOfSignature(b.ch.getSingleCallSignature(propType))
+							pseudoTypeIsFallback = targetReturnType != nil && b.ch.getBaseTypeOfLiteralType(resolved) == targetReturnType
+						}
+					}
+				}
+				if !pseudoTypeIsFallback {
 					if reportErrors {
 						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 					}
@@ -582,18 +619,35 @@ func (b *NodeBuilderImpl) pseudoReturnTypeMatchesPredicate(rt *pseudochecker.Pse
 }
 
 func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
-	// !!! TODO: only literal types currently mapped because this is only used to determine if literal contextual typing need apply to the pseudotype
-	// If this is used more broadly, the implementation needs to be filled out more to handle the structural pseudotypes - signatures, objects, tuples, etc
+	// Maps a pseudo type to a checker type for equivalence comparison in pseudoTypeEquivalentToType.
+	// Handles primitives, literals, unions, and inferred expression types. Structural pseudo types
+	// (objects, signatures, tuples) return nil since they are compared structurally by the caller.
 	debug.Assert(t != nil, "Attempted to realize nil pseudotype")
 	switch t.Kind {
 	case pseudochecker.PseudoTypeKindDirect:
 		return b.ch.getTypeFromTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
 		node := t.AsPseudoTypeInferred().Expression
+		// When the inferred expression is inside a non-function declaration, look up
+		// the type that serializeTypeForDeclaration stored in enclosingSymbolTypes.
+		// Ideally we would compute the type via getWidenedLiteralType(getTypeOfSymbol()),
+		// matching serializeTypeForDeclaration, but getTypeOfSymbol returns the correct
+		// type for ALL nested properties, which causes the ObjectLiteral comparison to
+		// succeed even when the source structure differs from the checker's (e.g., JSON
+		// quoted property names). Using the enclosingSymbolTypes map limits the fix to
+		// declarations that serializeTypeForDeclaration is actively processing.
+		if ast.IsDeclaration(node.Parent) && !ast.IsFunctionLike(node.Parent) {
+			symbol := b.ch.getSymbolOfDeclaration(node.Parent)
+			if symbol != nil {
+				if cached, ok := b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]; ok && cached != nil {
+					return cached
+				}
+			}
+		}
 		ty := b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(node))
 		return ty
 	case pseudochecker.PseudoTypeKindNoResult:
-		return nil // TODO: extract type selection logic from `serializeTypeForDeclaration`, not needed for current usecases but needed if completeness becomes required
+		return nil // NoResult means the pseudochecker couldn't determine the type; the caller handles this by falling back to the checker's type
 	case pseudochecker.PseudoTypeKindMaybeConstLocation:
 		d := t.AsPseudoTypeMaybeConstLocation()
 		if b.ch.isConstContext(d.Node) {
