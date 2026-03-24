@@ -485,10 +485,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	return newSnapshot
 }
 
-// Ref increments the snapshot's reference count, preventing it from being
+// ref increments the snapshot's reference count, preventing it from being
 // disposed until a corresponding Deref is called. The snapshot must still
-// be alive (refCount > 0) when Ref is called.
-func (s *Snapshot) Ref() {
+// be alive (refCount > 0) when ref is called. Only the project Session
+// should call ref(), and it should be done while holding session.snapshotMu.
+func (s *Snapshot) ref() {
 	if s.refCount.Add(1) <= 1 {
 		panic(fmt.Sprintf("snapshot %d: ref on disposed snapshot, parentId=%d", s.id, s.parentId))
 	}

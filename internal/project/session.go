@@ -506,7 +506,7 @@ func (s *Session) getSnapshot(
 	}
 	if updateReason == UpdateReasonUnknown {
 		if callerRef {
-			snapshot.Ref()
+			snapshot.ref()
 		}
 		s.snapshotMu.RUnlock()
 		return snapshot
@@ -715,7 +715,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
 	s.snapshot = newSnapshot
 	if callerRef {
-		newSnapshot.Ref()
+		newSnapshot.ref()
 	}
 	s.snapshotMu.Unlock()
 
