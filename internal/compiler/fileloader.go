@@ -308,13 +308,6 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	return sourceFile
 }
 
-func (p *fileLoader) sourceFileExists(fileName string) bool {
-	return p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
-		FileName: fileName,
-		Path:     p.toPath(fileName),
-	}) != nil
-}
-
 func (p *fileLoader) getSourceFileFromReference(
 	fileName string,
 	referenceText string,
@@ -343,7 +336,7 @@ func (p *fileLoader) getSourceFileFromReference(
 			}
 		}
 
-		if !p.sourceFileExists(fileName) {
+		if !p.opts.Host.FS().FileExists(fileName) {
 			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_not_found, args: []any{diagnosticFileName}}
 		}
 
@@ -353,7 +346,7 @@ func (p *fileLoader) getSourceFileFromReference(
 		return fileName, nil
 	}
 
-	if allowNonTsExtensions && p.sourceFileExists(fileName) {
+	if allowNonTsExtensions && p.opts.Host.FS().FileExists(fileName) {
 		return fileName, nil
 	}
 
@@ -363,7 +356,7 @@ func (p *fileLoader) getSourceFileFromReference(
 
 	for _, ext := range p.supportedExtensions[0] {
 		candidate := fileName + ext
-		if p.sourceFileExists(candidate) {
+		if p.opts.Host.FS().FileExists(candidate) {
 			return candidate, nil
 		}
 	}
