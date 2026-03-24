@@ -114,12 +114,11 @@ func (t *parseTask) load(loader *fileLoader) {
 	if !compilerOptions.NoResolve.IsTrue() {
 		for index, ref := range file.ReferencedFiles {
 			resolvedRef, processingDiagnostic := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
-			if resolvedRef != nil {
-				t.addSubTask(*resolvedRef, nil)
-			}
 			if processingDiagnostic != nil {
 				t.processingDiagnostics = append(t.processingDiagnostics, processingDiagnostic)
+				continue
 			}
+			t.addSubTask(*resolvedRef, nil)
 		}
 
 		loader.resolveTypeReferenceDirectives(t)
