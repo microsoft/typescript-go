@@ -252,57 +252,6 @@ func TestRefCountingCaches(t *testing.T) {
 			})
 			assert.Equal(t, projectEntries, 0)
 		})
-
-		t.Run("cloning disposed snapshot does not deref reused files", func(t *testing.T) {
-			t.Parallel()
-
-			testFiles := map[string]any{
-				"/user/username/projects/myproject/src/main.ts":  `import { util } from "./utils"; const x = util();`,
-				"/user/username/projects/myproject/src/utils.ts": "export function util() { return 1; }",
-			}
-			session := setup(testFiles)
-			mainURI := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
-			session.DidOpenFile(context.Background(), mainURI, 1, testFiles["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
-
-			lsBefore, err := session.GetLanguageService(context.Background(), mainURI)
-			assert.NilError(t, err)
-			snapshot1 := session.Snapshot()
-			program1 := lsBefore.GetProgram()
-			utils1 := program1.GetSourceFile("/user/username/projects/myproject/src/utils.ts")
-			utilsKey := NewParseCacheKey(utils1.ParseOptions(), utils1.Hash, utils1.ScriptKind)
-			utilsEntry, ok := session.parseCache.entries.Load(utilsKey)
-			assert.Assert(t, ok)
-			assert.Equal(t, utilsEntry.refCount, 1)
-
-			session.DidChangeFile(context.Background(), mainURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
-				{
-					Partial: &lsproto.TextDocumentContentChangePartial{
-						Range: lsproto.Range{
-							Start: lsproto.Position{Line: 0, Character: 10},
-							End:   lsproto.Position{Line: 0, Character: 11},
-						},
-						Text: "2",
-					},
-				},
-			})
-
-			lsAfter, err := session.GetLanguageService(context.Background(), mainURI)
-			assert.NilError(t, err)
-			program2 := lsAfter.GetProgram()
-			assert.Equal(t, program2.GetSourceFile("/user/username/projects/myproject/src/utils.ts"), utils1)
-
-			staleClone := snapshot1.Clone(context.Background(), SnapshotChange{
-				reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
-				ResourceRequest: ResourceRequest{
-					Documents: []lsproto.DocumentUri{mainURI},
-				},
-			}, snapshot1.fs.overlays, session)
-			staleClone.Dispose(session)
-
-			utilsEntry, ok = session.parseCache.entries.Load(utilsKey)
-			assert.Assert(t, ok)
-			assert.Equal(t, utilsEntry.refCount, 1)
-		})
 	})
 
 	t.Run("extendedConfigCache", func(t *testing.T) {
@@ -362,51 +311,13 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Assert(t, ok)
 			assert.Equal(t, len(extendedConfigEntry.owners), 1)
 
-			clone.Dispose(session)
+			clone.Deref(session)
 
 			_, ok = session.parseCache.entries.Load(mainKey)
 			assert.Assert(t, !ok)
 
 			_, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
 			assert.Assert(t, !ok)
-		})
-
-		t.Run("stale clone does not create nil-valued extended config entry", func(t *testing.T) {
-			t.Parallel()
-
-			session := setup(files)
-			uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
-			session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/myproject/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
-			_, err := session.GetLanguageService(context.Background(), uri)
-			assert.NilError(t, err)
-			staleSnapshot := session.Snapshot()
-
-			extendedConfigPath := tspath.Path("/user/username/projects/myproject/tsconfig.base.json")
-			entry, ok := session.extendedConfigCache.entries.Load(extendedConfigPath)
-			assert.Assert(t, ok)
-			assert.Assert(t, entry.value != nil)
-
-			session.DidCloseFile(context.Background(), uri)
-			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-			session.WaitForBackgroundTasks()
-
-			_, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
-			assert.Assert(t, !ok)
-
-			clone := staleSnapshot.Clone(context.Background(), SnapshotChange{
-				reason: UpdateReasonRequestedLanguageServiceProjectNotLoaded,
-				ResourceRequest: ResourceRequest{
-					Documents: []lsproto.DocumentUri{uri},
-				},
-			}, staleSnapshot.fs.overlays, session)
-
-			project := clone.GetDefaultProject(uri)
-			assert.Assert(t, project != nil)
-
-			entry, ok = session.extendedConfigCache.entries.Load(extendedConfigPath)
-			if ok {
-				assert.Assert(t, entry.value != nil)
-			}
 		})
 	})
 }

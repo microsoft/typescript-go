@@ -54,21 +54,20 @@ func (c *OwnerCache[K, V, LoadArgs]) Acquire(identity K, owner uint64, value V) 
 	entry.owners[owner] = struct{}{}
 }
 
-// TryAcquire adds an owner to an existing live entry.
-// It returns false instead of creating a new entry when the value has already
-// been fully released.
-func (c *OwnerCache[K, V, LoadArgs]) TryAcquire(identity K, owner uint64) bool {
+// AddOwner adds an owner to an existing live entry. The entry must exist
+// and have at least one current owner; callers must ensure the entry is
+// kept alive (e.g. via snapshot ref counting).
+func (c *OwnerCache[K, V, LoadArgs]) AddOwner(identity K, owner uint64) {
 	entry, ok := c.entries.Load(identity)
 	if !ok {
-		return false
+		panic("OwnerCache.AddOwner: entry not found")
 	}
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
 	if len(entry.owners) == 0 {
-		return false
+		panic("OwnerCache.AddOwner: entry has no owners")
 	}
 	entry.owners[owner] = struct{}{}
-	return true
 }
 
 func (c *OwnerCache[K, V, LoadArgs]) Has(identity K) bool {
