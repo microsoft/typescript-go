@@ -720,17 +720,33 @@ export class Checker {
     }
 }
 
+export interface PrintNodeOptions {
+    preserveSourceNewlines?: boolean;
+    neverAsciiEscape?: boolean;
+    terminateUnterminatedLiterals?: boolean;
+}
+
 export class Emitter {
     private client: Client;
+    private options: PrintNodeOptions;
 
-    constructor(client: Client) {
+    constructor(client: Client, options: PrintNodeOptions = {}) {
         this.client = client;
+        this.options = options;
+    }
+
+    /** Return a new Emitter that uses the given options, sharing the same client. */
+    withOptions(options: PrintNodeOptions): Emitter {
+        return new Emitter(this.client, { ...this.options, ...options });
     }
 
     printNode(node: Node): string {
         const encoded = encodeNode(node);
         const base64 = uint8ArrayToBase64(encoded);
-        return this.client.apiRequest<string>("printNode", { data: base64 });
+        return this.client.apiRequest<string>("printNode", {
+            data: base64,
+            ...this.options,
+        });
     }
 }
 

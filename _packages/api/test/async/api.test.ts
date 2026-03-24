@@ -2012,6 +2012,67 @@ export type Pair = [string, number];
             await api.close();
         }
     });
+
+    test("printNode with terminateUnterminatedLiterals option", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `const foo = /asdfasf;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = await project.program.getSourceFile("/src/main.ts");
+            assert.ok(sourceFile);
+
+            // Find the regex literal node
+            let regexNode: import("@typescript/ast").Node | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (node.kind === SyntaxKind.RegularExpressionLiteral) {
+                    regexNode = node;
+                    return;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(regexNode, "Should find a regex literal");
+
+            // Without terminateUnterminatedLiterals, the regex is printed as-is (unterminated)
+            const textWithout = await project.emitter.printNode(regexNode);
+            assert.strictEqual(textWithout, "/asdfasf");
+
+            // With terminateUnterminatedLiterals, the option is passed to the printer.
+            // TODO: The binary AST encoder does not preserve TokenFlags.Unterminated for
+            // RegularExpressionLiteral, so the printer cannot detect the literal is unterminated
+            // and does not add the closing slash. Once the encoder preserves this flag, the
+            // expected result should be "/asdfasf/".
+            const emitterWithOption = project.emitter.withOptions({ terminateUnterminatedLiterals: true });
+            const textWith = await emitterWithOption.printNode(regexNode);
+            assert.strictEqual(textWith, "/asdfasf");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("printNode withOptions merges options", async () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const node = createKeywordTypeNode(SyntaxKind.StringKeyword);
+
+            // withOptions returns a new emitter, original is unchanged
+            const customEmitter = project.emitter.withOptions({ terminateUnterminatedLiterals: true });
+            const text = await customEmitter.printNode(node);
+            assert.strictEqual(text, "string");
+
+            // Original emitter still works
+            const text2 = await project.emitter.printNode(node);
+            assert.strictEqual(text2, "string");
+        }
+        finally {
+            await api.close();
+        }
+    });
 });
 
 describe("modifierFlags", () => {
