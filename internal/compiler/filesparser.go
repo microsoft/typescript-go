@@ -270,7 +270,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	libFileCount := int(loader.libFileCount.Load())
 
 	var missingFiles []string
-	var duplicateSourceFiles []*ast.SourceFile
+	var duplicateSourceFiles []*DuplicateSourceFile
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
@@ -326,7 +326,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			// ensure we only walk each task once
 			if checkedName, ok := seen[data]; ok {
 				if task.file != nil && checkedName != task.normalizedFilePath {
-					duplicateSourceFiles = append(duplicateSourceFiles, task.file)
+					duplicateSourceFiles = append(duplicateSourceFiles, &DuplicateSourceFile{
+						ParseOptions: task.file.ParseOptions(),
+						Hash:         task.file.Hash,
+						ScriptKind:   task.file.ScriptKind,
+					})
 				}
 				if !loader.opts.Config.CompilerOptions().ForceConsistentCasingInFileNames.IsFalse() {
 					// Check if it differs only in drive letters its ok to ignore that error:
@@ -364,7 +368,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 						// Package deduplication keeps the first package instance in the
 						// program, but we still parsed this file and acquired it through
 						// the host, so snapshot disposal must release that extra owner.
-						duplicateSourceFiles = append(duplicateSourceFiles, file)
+						duplicateSourceFiles = append(duplicateSourceFiles, &DuplicateSourceFile{
+							ParseOptions: file.ParseOptions(),
+							Hash:         file.Hash,
+							ScriptKind:   file.ScriptKind,
+						})
 					}
 					redirectTargetsMap[packageIdFile.Path()] = append(redirectTargetsMap[packageIdFile.Path()], task.normalizedFilePath)
 					if redirectFilesByPath == nil {

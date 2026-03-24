@@ -320,7 +320,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
-				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
 			}
 		} else if newFile := newProgram.GetSourceFileByPath(p.dirtyFilePath); newFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
