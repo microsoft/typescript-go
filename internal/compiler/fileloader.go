@@ -61,8 +61,8 @@ type redirectsFile struct {
 
 type DuplicateSourceFile struct {
 	ParseOptions ast.SourceFileParseOptions
-	Hash 			xxh3.Uint128
-	ScriptKind 	core.ScriptKind
+	Hash         xxh3.Uint128
+	ScriptKind   core.ScriptKind
 }
 
 var _ ast.HasFileName = (*redirectsFile)(nil)
