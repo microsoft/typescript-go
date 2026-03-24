@@ -70,8 +70,8 @@ func (t *parseTask) load(loader *fileLoader) {
 		if !allowNonTsExtensions {
 			canonicalFileName := tspath.GetCanonicalFileName(t.normalizedFilePath, loader.opts.Host.FS().UseCaseSensitiveFileNames())
 			supported := false
-			for _, ext := range core.Flatten(loader.supportedExtensionsWithJsonIfResolveJsonModule) {
-				if tspath.FileExtensionIs(canonicalFileName, ext) {
+			for _, group := range loader.supportedExtensionsWithJsonIfResolveJsonModule {
+				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
 					supported = true
 					break
 				}

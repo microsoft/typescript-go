@@ -321,8 +321,8 @@ func (p *fileLoader) getSourceFileFromReference(
 		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
 		if !allowNonTsExtensions {
 			supported := false
-			for _, ext := range core.Flatten(p.supportedExtensionsWithJsonIfResolveJsonModule) {
-				if tspath.FileExtensionIs(canonicalFileName, ext) {
+			for _, group := range p.supportedExtensionsWithJsonIfResolveJsonModule {
+				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
 					supported = true
 					break
 				}
