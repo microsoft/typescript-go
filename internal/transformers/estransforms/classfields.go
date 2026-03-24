@@ -129,6 +129,7 @@ type classFieldsTransformer struct {
 	accessorFieldResultVisitor     *ast.NodeVisitor
 	arrayAssignmentElementVisitor  *ast.NodeVisitor
 	objectAssignmentElementVisitor *ast.NodeVisitor
+	substitutionVisitor            *ast.NodeVisitor
 
 	// Pre-bound callbacks to avoid repeated closure allocation.
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
@@ -183,6 +184,7 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	tx.accessorFieldResultVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAccessorFieldResult)
 	tx.arrayAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArrayAssignmentElement)
 	tx.objectAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitObjectAssignmentElement)
+	tx.substitutionVisitor = tx.EmitContext().NewNodeVisitor(tx.visitForSubstitution)
 	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result
@@ -241,19 +243,27 @@ func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 	return nil
 }
 
-// visit is the main visitor.
-func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
-	// Strada's onSubstituteNode runs on ALL emitted nodes regardless of transform flags.
-	// Since we substitute eagerly, we must check for identifiers needing alias substitution
-	// even in subtrees with no class field transforms.
-	if node.Kind == ast.KindIdentifier && len(tx.classAliases) > 0 {
+// visitForSubstitution visits nodes solely for class alias substitution in subtrees
+// that don't contain class field or lexical this/super transforms. It substitutes
+// identifiers that reference class declarations with their aliases, while skipping
+// the .Name() of PropertyAccessExpressions since Strada's onSubstituteNode only
+// fires for EmitHint.Expression, which excludes property access names.
+func (tx *classFieldsTransformer) visitForSubstitution(node *ast.Node) *ast.Node {
+	if node.Kind == ast.KindIdentifier {
 		return tx.visitIdentifier(node.AsIdentifier())
 	}
+	if node.Kind == ast.KindPropertyAccessExpression && ast.IsIdentifier(node.AsPropertyAccessExpression().Name()) {
+		return tx.visitPropertyAccessExpressionForSubstitution(node.AsPropertyAccessExpression())
+	}
+	return tx.substitutionVisitor.VisitEachChild(node)
+}
 
+// visit is the main visitor.
+func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 	if node.SubtreeFacts()&(ast.SubtreeContainsClassFields|ast.SubtreeContainsLexicalThisOrSuper) == 0 {
 		if tx.currentClassContainer != nil && len(tx.classAliases) > 0 {
 			// Continue visiting for alias substitution even in non-class-field subtrees.
-			return tx.Visitor().VisitEachChild(node)
+			return tx.visitForSubstitution(node)
 		}
 		return node
 	}
@@ -424,7 +434,7 @@ func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.
 	case ast.KindGetAccessor, ast.KindSetAccessor:
 		return tx.visitClassElement(node)
 	default:
-		debug.AssertMissingNode(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
+		debug.FailBadSyntaxKind(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
 		return nil
 	}
 }
@@ -446,14 +456,11 @@ func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Nod
 }
 
 // visitPrivateIdentifier handles an undeclared private name. Replace it with an empty
-// identifier to indicate a problem with the code, unless we are in a statement position -
-// otherwise this will not trigger a SyntaxError.
+// identifier to indicate a problem with the code.
+// Note: private identifiers in statement position (e.g., `#;`) are intercepted earlier
+// by visitExpressionStatement, which preserves them so the runtime throws a SyntaxError.
 func (tx *classFieldsTransformer) visitPrivateIdentifier(node *ast.Node) *ast.Node {
 	if !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
-		return node
-	}
-	// !!! Strada used .parent too; this is suspicious in a transform.
-	if node.Parent != nil && ast.IsStatement(node.Parent) {
 		return node
 	}
 	result := tx.Factory().NewIdentifier("")
@@ -756,7 +763,7 @@ func (tx *classFieldsTransformer) setClassElementAndVisitEachChild(node *ast.Nod
 }
 
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
-	debug.AssertNode(node.Name(), ast.IsPrivateIdentifier)
+	debug.Assert(node.Name() != nil && ast.IsPrivateIdentifier(node.Name()))
 	info := tx.accessPrivateIdentifier(node.Name())
 	debug.Assert(info != nil, "Undeclared private name for property declaration.")
 	if info.kind == printer.PrivateIdentifierKindMethod {
@@ -1064,7 +1071,26 @@ func (tx *classFieldsTransformer) visitPropertyAccessExpression(node *ast.Proper
 			return superProperty
 		}
 	}
+	// Visit only the expression, not the name (when it's a regular identifier), to prevent
+	// substitution of property names. Strada's onSubstituteNode only fires for
+	// EmitHint.Expression, which excludes the .name of PropertyAccessExpression.
+	// Private identifier names are still visited through VisitEachChild so they can be
+	// transformed by visitPrivateIdentifier.
+	if ast.IsIdentifier(node.Name()) {
+		return tx.visitPropertyAccessExpressionForSubstitution(node)
+	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
+}
+
+// visitPropertyAccessExpressionForSubstitution visits only the expression of a PropertyAccessExpression,
+// leaving the name unchanged. This prevents the name from being treated as a standalone identifier
+// reference and incorrectly substituted with a class alias.
+func (tx *classFieldsTransformer) visitPropertyAccessExpressionForSubstitution(node *ast.PropertyAccessExpression) *ast.Node {
+	expression := tx.Visitor().VisitNode(node.Expression)
+	if expression != node.Expression {
+		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name())
+	}
+	return node.AsNode()
 }
 
 func (tx *classFieldsTransformer) visitElementAccessExpression(node *ast.ElementAccessExpression) *ast.Node {
@@ -1207,6 +1233,13 @@ func (tx *classFieldsTransformer) visitForStatement(node *ast.ForStatement) *ast
 }
 
 func (tx *classFieldsTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
+	// Preserve private identifiers that appear directly as the expression of an
+	// ExpressionStatement (e.g., `#;`). This is error-recovery output from the parser
+	// for invalid syntax. Keeping it ensures the runtime throws a SyntaxError rather
+	// than silently succeeding with an empty statement.
+	if ast.IsPrivateIdentifier(node.Expression) && tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+		return node.AsNode()
+	}
 	return tx.Factory().UpdateExpressionStatement(
 		node,
 		tx.discardedValueVisitor.VisitNode(node.Expression),
@@ -1446,7 +1479,7 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 
 		if isNamedEvaluationAnd(tx.EmitContext(), node.AsNode(), tx.isAnonymousClassNeedingAssignedName) {
 			node = transformNamedEvaluation(tx.EmitContext(), node.AsNode(), false, "").AsBinaryExpression()
-			debug.AssertNode(node.AsNode(), func(node *ast.Node) bool { return ast.IsAssignmentExpression(node, false) })
+			debug.Assert(node.AsNode() != nil && ast.IsAssignmentExpression(node.AsNode(), false))
 		}
 
 		left := ast.SkipOuterExpressions(node.Left, ast.OEKPartiallyEmittedExpressions|ast.OEKParentheses)
@@ -1644,6 +1677,11 @@ func (tx *classFieldsTransformer) memberContainsConstructorReference(member *ast
 			if decl == classOriginal {
 				return true
 			}
+		}
+		// For PropertyAccessExpression, only check the expression, not the name.
+		// The .Name() is a property access name, not a value reference to the class.
+		if ast.IsPropertyAccessExpression(n) {
+			return check(n.Expression())
 		}
 		return n.ForEachChild(check)
 	}
@@ -3248,7 +3286,7 @@ func (tx *classFieldsTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 }
 
 func (tx *classFieldsTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
-	debug.AssertNode(node, ast.IsObjectBindingOrAssignmentElement)
+	debug.Assert(node != nil && ast.IsObjectBindingOrAssignmentElement(node))
 	if ast.IsSpreadAssignment(node) {
 		return tx.visitAssignmentRestProperty(node)
 	}
