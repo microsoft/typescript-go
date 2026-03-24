@@ -22,6 +22,9 @@ func findEnclosingNode(r core.TextRange, sourceFile *ast.SourceFile) *ast.Node {
 	find = func(n *ast.Node) *ast.Node {
 		var candidate *ast.Node
 		n.ForEachChild(func(c *ast.Node) bool {
+			if c.Flags&ast.NodeFlagsReparsed != 0 {
+				return false
+			}
 			if r.ContainedBy(withTokenStart(c, sourceFile)) {
 				candidate = c
 				return true
@@ -447,7 +450,7 @@ func (w *formatSpanWorker) processChildNodes(
 
 	// node range is outside the target range - do not dive inside
 	if !w.originalRange.Overlaps(nodes.Loc) {
-		if nodes.End() < w.originalRange.Pos() {
+		if nodes.End() < w.originalRange.Pos() && (len(nodes.Nodes) == 0 || nodes.Nodes[0].Flags&ast.NodeFlagsReparsed == 0) {
 			w.formattingScanner.skipToEndOf(&nodes.Loc)
 		}
 		return
@@ -1052,6 +1055,10 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 				if savePreviousRange != NewTextRangeWithKind(0, 0, 0) {
 					prevEndLine := scanner.GetECMALineOfPosition(w.sourceFile, savePreviousRange.Loc.End())
 					indentToken = lastTriviaWasNewLine && tokenStartLine != prevEndLine
+				} else {
+					// When there's no previous range (first token), TS sets prevEndLine to undefined.
+					// tokenStart.line !== undefined is always true in JS, so indentToken = lastTriviaWasNewLine.
+					indentToken = lastTriviaWasNewLine
 				}
 			} else {
 				indentToken = lineAction == LineActionLineAdded

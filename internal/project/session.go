@@ -13,7 +13,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -440,18 +439,10 @@ func (s *Session) cancelIdleCacheClean() {
 	}
 }
 
-func (s *Session) Snapshot() (*Snapshot, func()) {
+func (s *Session) Snapshot() *Snapshot {
 	s.snapshotMu.RLock()
 	defer s.snapshotMu.RUnlock()
-	snapshot := s.snapshot
-	snapshot.Ref()
-	return snapshot, s.createSnapshotRelease(snapshot)
-}
-
-func (s *Session) createSnapshotRelease(snapshot *Snapshot) func() {
-	return func() {
-		snapshot.Deref(s)
-	}
+	return s.snapshot
 }
 
 func (s *Session) getSnapshot(
@@ -489,21 +480,25 @@ func (s *Session) getSnapshot(
 		updateReason = UpdateReasonRequestedLanguageServiceWithAutoImports
 	} else {
 		for _, document := range request.Documents {
-			if snapshot.fs.isOpenFile(document.FileName()) {
-				// The current snapshot does not have an up to date project for the URI,
-				// so we need to update the snapshot to ensure the project is loaded.
-				// !!! Allow multiple projects to update in parallel
-				project := snapshot.GetDefaultProject(document)
-				if project == nil {
-					updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
-					break
-				} else if project.dirty {
-					updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
-					break
+			project := snapshot.GetDefaultProject(document)
+			if project == nil {
+				updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
+			} else if project.dirty {
+				updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
+			}
+		}
+		if updateReason == UpdateReasonUnknown {
+			for _, document := range request.ConfiguredProjectDocuments {
+				if snapshot.fs.isOpenFile(document.FileName()) {
+					project := snapshot.GetDefaultProject(document)
+					if project == nil {
+						updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
+					} else if project.dirty {
+						updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
+					}
+				} else {
+					updateReason = UpdateReasonRequestedLanguageServiceForFileNotOpen
 				}
-			} else {
-				updateReason = UpdateReasonRequestedLanguageServiceForFileNotOpen
-				break
 			}
 		}
 	}
@@ -537,15 +532,13 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return languageService, nil
 }
 
-// GetLanguageServiceAndSnapshot returns a LanguageService and a ref'd snapshot.
-// The caller must call the returned release function when done.
-func (s *Session) GetLanguageServiceAndSnapshot(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, *Snapshot, func(), error) {
+// GetLanguageServiceAndSnapshot returns a LanguageService and the current snapshot.
+func (s *Session) GetLanguageServiceAndSnapshot(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, *Snapshot, error) {
 	snapshot, _, languageService, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-	snapshot.Ref()
-	return languageService, snapshot, s.createSnapshotRelease(snapshot), nil
+	return languageService, snapshot, nil
 }
 
 func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []ls.Project, error) {
@@ -561,7 +554,7 @@ func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri 
 func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]ls.Project, error) {
 	snapshot := s.getSnapshot(
 		ctx,
-		ResourceRequest{Documents: []lsproto.DocumentUri{uri}},
+		ResourceRequest{ConfiguredProjectDocuments: []lsproto.DocumentUri{uri}},
 	)
 
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
@@ -617,9 +610,8 @@ func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, 
 
 // GetLanguageServiceWithAutoImports clones the given snapshot with auto-import
 // preparation for the given URI, without flushing pending file changes. This
-// keeps the request bound to its original snapshot. The caller must call the
-// returned release function when done.
-func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, func(), error) {
+// keeps the request bound to its original snapshot.
+func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	change := SnapshotChange{
 		reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
 		ResourceRequest: ResourceRequest{
@@ -631,18 +623,15 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 
 	project := newSnapshot.GetDefaultProject(uri)
 	if project == nil {
-		newSnapshot.Deref(s)
-		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
+		newSnapshot.Dispose(s)
+		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 
-	// Extra ref for the background adoption task.
-	newSnapshot.Ref()
 	s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
 		s.adoptSnapshotChange(baseSnapshot, newSnapshot)
 	})
 
-	release := s.createSnapshotRelease(newSnapshot)
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), release, nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), nil
 }
 
 // adoptSnapshotChange promotes a cloned snapshot as the session's current
@@ -655,10 +644,10 @@ func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
 	if oldSnapshot == baseSnapshot {
 		s.snapshot = newSnapshot
 		s.snapshotMu.Unlock()
-		oldSnapshot.Deref(s)
+		oldSnapshot.Dispose(s)
 	} else {
 		s.snapshotMu.Unlock()
-		newSnapshot.Deref(s)
+		newSnapshot.Dispose(s)
 	}
 }
 
@@ -670,7 +659,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	s.snapshotMu.Unlock()
 
 	if newSnapshot != oldSnapshot {
-		oldSnapshot.Deref(s)
+		oldSnapshot.Dispose(s)
 	}
 
 	// Enqueue ATA updates if needed
@@ -938,15 +927,10 @@ func (s *Session) logRuntimeMetrics() {
 
 func (s *Session) logCacheStats(snapshot *Snapshot) {
 	var parseCacheSize int
-	var programCount int
 	var extendedConfigCount int
 	if s.logger.IsVerbose() {
 		s.parseCache.entries.Range(func(_ ParseCacheKey, _ *refCountCacheEntry[*ast.SourceFile]) bool {
 			parseCacheSize++
-			return true
-		})
-		s.programCounter.refs.Range(func(_ *compiler.Program, _ *atomic.Int32) bool {
-			programCount++
 			return true
 		})
 		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *refCountCacheEntry[*ExtendedConfigCacheEntry]) bool {
@@ -961,7 +945,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	s.logger.Logf("Config count:      %6d", len(snapshot.ConfigFileRegistry.configs))
 	if s.logger.IsVerbose() {
 		s.logger.Logf("Parse cache size:           %6d", parseCacheSize)
-		s.logger.Logf("Program count:              %6d", programCount)
+		s.logger.Logf("Program count:              %6d", s.programCounter.Len())
 		s.logger.Logf("Extended config cache size: %6d", extendedConfigCount)
 
 		s.logger.Log("Auto Imports:")

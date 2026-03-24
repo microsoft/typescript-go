@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
+//go:generate npx dprint fmt stringer_generated.go
 
 // ParseFlags
 
@@ -342,6 +342,7 @@ type AssertionLinks struct {
 
 type SourceFileLinks struct {
 	typeChecked               bool
+	unusedChecked             bool
 	deferredNodes             collections.OrderedSet[*ast.Node]
 	identifierCheckNodes      []*ast.Node
 	localJsxNamespace         string
