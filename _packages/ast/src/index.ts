@@ -1,7 +1,7 @@
 export { CharacterCodes } from "#enums/characterCodes";
 export { CommentDirectiveType } from "#enums/commentDirectiveType";
-export { JSDocParsingMode } from "#enums/jsDocParsingMode";
 export { LanguageVariant } from "#enums/languageVariant";
+export { ModifierFlags } from "#enums/modifierFlags";
 export { NodeFlags } from "#enums/nodeFlags";
 export { RegularExpressionFlags } from "#enums/regularExpressionFlags";
 export { ScriptKind } from "#enums/scriptKind";
@@ -9,7 +9,9 @@ export { ScriptTarget } from "#enums/scriptTarget";
 export { SyntaxKind } from "#enums/syntaxKind";
 export { TokenFlags } from "#enums/tokenFlags";
 export * from "./astnav.ts";
+export * from "./clone.ts";
 export * from "./is.ts";
 export * from "./nodes.ts";
 export * from "./scanner.ts";
 export * from "./utils.ts";
+export * from "./visitor.ts";

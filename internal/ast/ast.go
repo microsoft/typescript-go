@@ -2818,9 +2818,11 @@ func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierList, name 
 	return f.newNode(KindTypeParameter, data)
 }
 
-func (f *NodeFactory) UpdateTypeParameterDeclaration(node *TypeParameterDeclaration, modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, defaultType *TypeNode) *Node {
-	if modifiers != node.modifiers || name != node.name || constraint != node.Constraint || defaultType != node.DefaultType {
-		return updateNode(f.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateTypeParameterDeclaration(node *TypeParameterDeclaration, modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, expression *Expression, defaultType *TypeNode) *Node {
+	if modifiers != node.modifiers || name != node.name || constraint != node.Constraint || expression != node.Expression || defaultType != node.DefaultType {
+		updated := updateNode(f.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType), node.AsNode(), f.hooks)
+		updated.AsTypeParameter().Expression = expression
+		return updated
 	}
 	return node.AsNode()
 }
@@ -2830,11 +2832,13 @@ func (node *TypeParameterDeclaration) ForEachChild(v Visitor) bool {
 }
 
 func (node *TypeParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateTypeParameterDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Constraint), v.visitNode(node.DefaultType))
+	return v.Factory.UpdateTypeParameterDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Constraint), v.visitNode(node.Expression), v.visitNode(node.DefaultType))
 }
 
 func (node *TypeParameterDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTypeParameterDeclaration(node.Modifiers(), node.Name(), node.Constraint, node.DefaultType), node.AsNode(), f.AsNodeFactory().hooks)
+	clone := cloneNode(f.AsNodeFactory().NewTypeParameterDeclaration(node.Modifiers(), node.Name(), node.Constraint, node.DefaultType), node.AsNode(), f.AsNodeFactory().hooks)
+	clone.AsTypeParameter().Expression = node.Expression
+	return clone
 }
 
 func (node *TypeParameterDeclaration) Name() *DeclarationName {
@@ -6337,6 +6341,13 @@ func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string, templateFlag
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
+func (node *NoSubstitutionTemplateLiteral) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
+}
+
 func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
@@ -7251,7 +7262,8 @@ func (node *TemplateSpan) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *TemplateSpan) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	return propagateSubtreeFacts(node.Expression) |
+		propagateSubtreeFacts(node.Literal)
 }
 
 func IsTemplateSpan(node *Node) bool {
@@ -8868,6 +8880,13 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	return f.newNode(KindTemplateHead, data)
 }
 
+func (node *TemplateHead) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
+}
+
 func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
@@ -8892,6 +8911,13 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	return f.newNode(KindTemplateMiddle, data)
 }
 
+func (node *TemplateMiddle) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
+}
+
 func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
@@ -8914,6 +8940,13 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateTail, data)
+}
+
+func (node *TemplateTail) computeSubtreeFacts() SubtreeFacts {
+	if node.TemplateFlags&TokenFlagsContainsInvalidEscape != 0 {
+		return SubtreeContainsInvalidTemplateEscape
+	}
+	return SubtreeFactsNone
 }
 
 func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
@@ -11063,6 +11096,8 @@ type SourceFile struct {
 	SymbolCount               int
 	ClassifiableNames         collections.Set[string]
 	PatternAmbientModules     []*PatternAmbientModule
+	NestedCJSExports          []*Node
+	GlobalExports             SymbolTable
 
 	// Fields set by ECMALineMap
 

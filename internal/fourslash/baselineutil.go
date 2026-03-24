@@ -32,6 +32,7 @@ const (
 	inlayHintsCmd               baselineCommand = "Inlay Hints"
 	nonSuggestionDiagnosticsCmd baselineCommand = "Syntax and Semantic Diagnostics"
 	quickInfoCmd                baselineCommand = "QuickInfo"
+	linkedEditingCmd            baselineCommand = "linkedEditing"
 	renameCmd                   baselineCommand = "findRenameLocations"
 	signatureHelpCmd            baselineCommand = "SignatureHelp"
 	smartSelectionCmd           baselineCommand = "Smart Selection"
@@ -55,7 +56,10 @@ func (f *FourslashTest) addResultToBaseline(t *testing.T, command baselineComman
 	if b.Len() != 0 {
 		b.WriteString("\n\n\n\n")
 	}
-	b.WriteString(`// === ` + string(command) + " ===\n" + actual)
+	b.WriteString("// === ")
+	b.WriteString(string(command))
+	b.WriteString(" ===\n")
+	b.WriteString(actual)
 }
 
 func (f *FourslashTest) writeToBaseline(command baselineCommand, content string) {
@@ -79,6 +83,8 @@ func getBaselineExtension(command baselineCommand) string {
 		return "callHierarchy.txt"
 	case autoImportsCmd:
 		return "baseline.md"
+	case linkedEditingCmd:
+		return "linkedEditing.txt"
 	default:
 		return "baseline.jsonc"
 	}
@@ -441,6 +447,35 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 
 				return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
 			},
+		}
+	case linkedEditingCmd:
+		deleteInfo := func(s string) string {
+			commandLines := []string{}
+			lines := strings.Split(s, "\n")
+			linkedEditingInfoHeader := regexp.MustCompile(`=== [0-9]+ ===`)
+			fileNameHeader := regexp.MustCompile(`=== [\w,\s-]+\.[A-Za-z]+ ===`)
+			inLinkedEditingInfo := false
+			for i, line := range lines {
+				if linkedEditingInfoHeader.MatchString(line) {
+					inLinkedEditingInfo = true
+					continue
+				}
+				if fileNameHeader.MatchString(line) {
+					inLinkedEditingInfo = false
+					continue
+				}
+				// drop the info since it's different--linked editing positions should be verified by file content/markers
+				if !inLinkedEditingInfo {
+					lines[i] = ""
+				}
+			}
+			return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
+		}
+		return baseline.Options{
+			Subfolder:    subfolder,
+			IsSubmodule:  true,
+			DiffFixupOld: deleteInfo,
+			DiffFixupNew: deleteInfo,
 		}
 	default:
 		return baseline.Options{
@@ -822,7 +857,9 @@ func (f *FourslashTest) getBaselineContentForFile(
 					}
 				}
 				if text != "" {
-					textWithContext.newContent.WriteString(`{ ` + text + ` |}`)
+					textWithContext.newContent.WriteString("{ ")
+					textWithContext.newContent.WriteString(text)
+					textWithContext.newContent.WriteString(" |}")
 				}
 			case detailKindContextStart:
 				if canDetermineContextIdInline {
@@ -889,12 +926,14 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 	t.converters = lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return t.lineStarts
 	})
-	t.readableContents.WriteString("// === " + fileName + " ===")
+	t.readableContents.WriteString("// === ")
+	t.readableContents.WriteString(fileName)
+	t.readableContents.WriteString(" ===")
 	return t
 }
 
 func (t *textWithContext) add(detail *baselineDetail) {
-	if t.content == "" && detail == nil {
+	if t.newContent.Len() == 0 && detail == nil {
 		panic("Unsupported")
 	}
 	if detail == nil || (detail.kind != detailKindTextEnd && detail.kind != detailKindContextEnd) {
@@ -965,7 +1004,8 @@ func (t *textWithContext) readableJsoncBaseline(text string) {
 		if i > 0 {
 			t.readableContents.WriteString("\n")
 		}
-		t.readableContents.WriteString(`// ` + line)
+		t.readableContents.WriteString("// ")
+		t.readableContents.WriteString(line)
 	}
 }
 

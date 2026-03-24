@@ -49,6 +49,19 @@ type localsRecord struct {
 	oldSymbol *ast.Symbol
 }
 
+func (b *NodeBuilderImpl) addSymbolTypeToContext(symbol *ast.Symbol, t *Type) func() {
+	id := ast.GetSymbolId(symbol)
+	oldType, oldTypeExists := b.ctx.enclosingSymbolTypes[id]
+	b.ctx.enclosingSymbolTypes[id] = t
+	return func() {
+		if oldTypeExists {
+			b.ctx.enclosingSymbolTypes[id] = oldType
+		} else {
+			delete(b.ctx.enclosingSymbolTypes, id)
+		}
+	}
+}
+
 func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
 	cleanupContext := cloneNodeBuilderContext(b.ctx)
 	// For regular function/method declarations, the enclosing declaration will already be signature.declaration,
@@ -89,7 +102,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 		// traverse all ancestors.
 		pushFakeScope := func(kind string, addAll func(addSymbol func(name string, symbol *ast.Symbol))) func() {
 			// We only ever need to look two declarations upward.
-			debug.AssertIsDefined(b.ctx.enclosingDeclaration)
+			debug.Assert(b.ctx.enclosingDeclaration != nil)
 			var existingFakeScope *ast.Node
 			if b.links.Has(b.ctx.enclosingDeclaration) {
 				links := b.links.Get(b.ctx.enclosingDeclaration)
@@ -105,7 +118,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 					}
 				}
 			}
-			debug.AssertOptionalNode(existingFakeScope, ast.IsBlock)
+			debug.Assert(existingFakeScope == nil || ast.IsBlock(existingFakeScope))
 
 			var locals ast.SymbolTable
 			if existingFakeScope != nil {

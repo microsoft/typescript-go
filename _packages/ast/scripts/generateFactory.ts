@@ -129,6 +129,9 @@ for (const stmt of sourceFile.statements) {
             fail(`${name}: unexpected property name kind ${ts.SyntaxKind[member.name.kind]} at pos ${member.name.pos}`);
         }
 
+        // Skip computed properties that are derived from other properties
+        if (propName === "modifierFlags") continue;
+
         if (!member.type) {
             fail(`${name}.${propName}: property has no type annotation`);
         }
@@ -181,14 +184,19 @@ for (const [name] of interfaces) {
 }
 
 // Also collect type aliases that resolve to node types (unions of node types, Token<X>, etc.)
+// Uses a fixpoint loop because aliases can reference other aliases (e.g. BindingName -> BindingPattern).
 const nodeTypeAliases = new Set<string>();
-for (const stmt of sourceFile.statements) {
-    if (!ts.isTypeAliasDeclaration(stmt)) continue;
-    const aliasName = stmt.name.text;
-    if (nodeTypeInterfaces.has(aliasName)) continue;
-    // Check if it resolves to a node type
-    if (isNodeType(stmt.type)) {
-        nodeTypeAliases.add(aliasName);
+let changed = true;
+while (changed) {
+    changed = false;
+    for (const stmt of sourceFile.statements) {
+        if (!ts.isTypeAliasDeclaration(stmt)) continue;
+        const aliasName = stmt.name.text;
+        if (nodeTypeInterfaces.has(aliasName) || nodeTypeAliases.has(aliasName)) continue;
+        if (isNodeType(stmt.type)) {
+            nodeTypeAliases.add(aliasName);
+            changed = true;
+        }
     }
 }
 
@@ -422,12 +430,15 @@ for (const def of factoryDefs) {
 referencedTypes.delete("SyntaxKind");
 const needsTokenFlags = referencedTypes.has("TokenFlags");
 referencedTypes.delete("TokenFlags");
+const needsModifierFlags = referencedTypes.has("ModifierFlags");
+referencedTypes.delete("ModifierFlags");
 
 // Validate all referenced types are accounted for
 const KNOWN_EXTERNAL_TYPES = new Set([
     "SyntaxKind",
     "TokenFlags",
     "NodeFlags",
+    "ModifierFlags",
 ]);
 for (const t of referencedTypes) {
     if (!exportedTypeNames.has(t) && !KNOWN_EXTERNAL_TYPES.has(t)) {
@@ -458,6 +469,10 @@ emit("//");
 emit("");
 emit(`import { NodeFlags } from "#enums/nodeFlags";`);
 emit(`import { SyntaxKind } from "#enums/syntaxKind";`);
+
+if (needsModifierFlags) {
+    emit(`import { ModifierFlags } from "#enums/modifierFlags";`);
+}
 
 if (needsTokenFlags) {
     emit(`import { TokenFlags } from "#enums/tokenFlags";`);
@@ -542,6 +557,40 @@ emit("    const arr = elements as unknown as NodeArray<T> & { pos: number; end: 
 emit("    arr.pos = pos;");
 emit("    arr.end = end;");
 emit("    return arr;");
+emit("}");
+emit("");
+
+// cloneNode — dispatch table that reads properties via getters, so it works
+// with any Node implementation (NodeObject, RemoteNode, etc.).
+emit("/**");
+emit(" * Shallow-clone a node, producing a NodeObject copy.");
+emit(" * Reads all properties via the getter interface so it works with any");
+emit(" * Node implementation (NodeObject, RemoteNode, etc.).");
+emit(" */");
+emit("export function cloneNode<T extends Node>(node: T): T {");
+emit("    const data = cloneNodeData(node);");
+emit("    const clone = new NodeObject(node.kind, data);");
+emit("    (clone as any).flags = node.flags;");
+emit("    (clone as any).pos = node.pos;");
+emit("    (clone as any).end = node.end;");
+emit("    return clone as unknown as T;");
+emit("}");
+emit("");
+
+// Build clone data table: a switch on SyntaxKind that reads each property via
+// the getter interface.
+emit("function cloneNodeData(node: any): any {");
+emit("    switch (node.kind) {");
+for (const def of factoryDefs) {
+    if (def.params.length === 0) continue;
+    emit(`        case ${def.syntaxKind}: return {`);
+    for (const p of def.params) {
+        emit(`            ${p.name}: node.${p.name},`);
+    }
+    emit("        };");
+}
+emit("    }");
+emit("    return undefined;");
 emit("}");
 emit("");
 
@@ -754,6 +803,65 @@ for (const def of factoryDefs) {
         }
         emit(`    }) as unknown as ${interfaceName};`);
     }
+    emit("}");
+    emit("");
+}
+
+// Update functions: take original node + child params, return original if nothing changed
+for (const def of factoryDefs) {
+    const { interfaceName, factoryName, params } = def;
+    const updateName = `update${interfaceName}`;
+
+    // Only child params are taken as arguments to update
+    const childParams = params.filter(p => classifyProperty(p) !== "data");
+    if (childParams.length === 0) continue;
+
+    // Build param list for the update function: node + child params
+    const updateParamList: string[] = [`node: ${interfaceName}`];
+    for (const p of childParams) {
+        const safe = safeParamName(p.name);
+        const elemTypeNode = getNodeArrayElementType(p.typeNode);
+        if (elemTypeNode) {
+            const elemText = printElementType(elemTypeNode, p.substitutions);
+            if (p.optional) {
+                updateParamList.push(`${safe}: readonly ${elemText}[] | undefined`);
+            }
+            else {
+                updateParamList.push(`${safe}: readonly ${elemText}[]`);
+            }
+        }
+        else {
+            let typeText = printType(p);
+            if (p.optional && !typeText.includes("undefined")) {
+                typeText += " | undefined";
+            }
+            updateParamList.push(`${safe}: ${typeText}`);
+        }
+    }
+
+    emit(`export function ${updateName}(${updateParamList.join(", ")}): ${interfaceName} {`);
+
+    // Build identity check
+    const checks: string[] = [];
+    for (const p of childParams) {
+        const safe = safeParamName(p.name);
+        checks.push(`node.${p.name} === ${safe}`);
+    }
+    emit(`    if (${checks.join(" && ")}) return node;`);
+
+    // Call createXxx with all params (child from args, data from node)
+    const createArgs: string[] = [];
+    for (const p of params) {
+        const safe = safeParamName(p.name);
+        const isChild = classifyProperty(p) !== "data";
+        if (isChild) {
+            createArgs.push(safe);
+        }
+        else {
+            createArgs.push(`node.${p.name}`);
+        }
+    }
+    emit(`    return ${factoryName}(${createArgs.join(", ")});`);
     emit("}");
     emit("");
 }

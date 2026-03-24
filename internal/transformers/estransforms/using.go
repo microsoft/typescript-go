@@ -148,7 +148,7 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 			)
 		}
 
-		topLevelStatements = tx.EmitContext().EndAndMergeVariableEnvironment(topLevelStatements)
+		topLevelStatements = append(topLevelStatements, tx.EmitContext().EndVariableEnvironment()...)
 		if len(tx.exportVars) > 0 {
 			topLevelStatements = append(topLevelStatements, tx.Factory().NewVariableStatement(
 				tx.Factory().NewModifierList([]*ast.Node{
@@ -580,7 +580,7 @@ func (tx *usingDeclarationTransformer) hoistInitializedVariable(node *ast.Variab
 	var target *ast.Expression
 	if ast.IsIdentifier(node.Name()) {
 		target = node.Name().Clone(tx.Factory())
-		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName|printer.EFInternalName))
+		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName))
 	} else {
 		target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), node.Name().AsBindingPattern())
 	}

@@ -18,7 +18,7 @@ declare class Component<P> {
 
 class C<T> extends Component<{ x?: boolean; } & T> {}
 >C : C<T>
->Component : Component<{ x?: boolean | undefined; } & T>
+>Component : Component<{ x?: boolean; } & T>
 >x : boolean | undefined
 
 const y = new C({foobar: "example"});
@@ -30,8 +30,8 @@ const y = new C({foobar: "example"});
 >"example" : "example"
 
 const x = <C foobar="example" />
->x : any
-><C foobar="example" /> : any
+>x : error
+><C foobar="example" /> : error
 >C : typeof C
 >foobar : string
 

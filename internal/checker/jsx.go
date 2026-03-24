@@ -492,7 +492,7 @@ func (c *Checker) getSuggestedSymbolForNonexistentJSXAttribute(name string, cont
 	if jsxSpecific != nil {
 		return jsxSpecific
 	}
-	return c.getSpellingSuggestionForName(name, properties, ast.SymbolFlagsValue)
+	return c.getSpellingSuggestionForName(name, slices.Values(properties), ast.SymbolFlagsValue)
 }
 
 func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
@@ -760,7 +760,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				}
 				if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(attributeDecl) {
 					inferenceContext := c.getInferenceContext(attributes)
-					debug.AssertIsDefined(inferenceContext)
+					debug.Assert(inferenceContext != nil)
 					// In CheckMode.Inferential we should always have an inference context
 					inferenceNode := attributeDecl.Initializer().Expression()
 					c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, exprType)
