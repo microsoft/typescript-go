@@ -2535,6 +2535,20 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		pos := SkipTrivia(sourceFile.Text(), node.Pos())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindSatisfiesExpression:
+		if node.AsSatisfiesExpression().Type.Flags&ast.NodeFlagsReparsed != 0 {
+			for current := node.Parent; current != nil; current = current.Parent {
+				for _, jsDoc := range current.JSDoc(nil) {
+					if tags := jsDoc.AsJSDoc().Tags; tags != nil {
+						for _, tag := range tags.Nodes {
+							if ast.IsJSDocSatisfiesTag(tag) {
+								pos := SkipTrivia(sourceFile.Text(), tag.TagName().Pos())
+								return GetRangeOfTokenAtPosition(sourceFile, pos)
+							}
+						}
+					}
+				}
+			}
+		}
 		pos := SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
@@ -2548,10 +2562,6 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 			scanner.Scan()
 		}
 		return core.NewTextRange(start, scanner.TokenEnd())
-		// !!!
-		// case KindJSDocSatisfiesTag:
-		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
-		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	}
 	if errorNode == nil {
 		// If we don't have a better node, then just set the error on the first token of
