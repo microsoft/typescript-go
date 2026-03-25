@@ -2196,8 +2196,8 @@ describe("Program - diagnostics", () => {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             const diags = await project.program.getSemanticDiagnostics("/src/index.ts");
-            const declRange = rangeOf(source, "callback", 1);
-            const assignRange = rangeOf(source, "callback", 2);
+            const declRange = rangeOf(source, "callback", 0);
+            const assignRange = rangeOf(source, "callback", 1);
             assert.deepEqual(diags, [{
                 fileName: "/src/index.ts",
                 ...assignRange,
@@ -2350,10 +2350,10 @@ function spawnAPIWithFS(files: Record<string, string> = { ...defaultFiles }): { 
     return { api, fs };
 }
 
-/** Returns `{ pos, end }` for the nth (1-based, default 1) occurrence of `searchString` in `source`. */
-function rangeOf(source: string, searchString: string, occurrence: number = 1): { pos: number; end: number; } {
+/** Returns `{ pos, end }` for the nth (0-based, default 0) occurrence of `searchString` in `source`. */
+function rangeOf(source: string, searchString: string, occurrence: number = 0): { pos: number; end: number; } {
     let index = -1;
-    for (let i = 0; i < occurrence; i++) {
+    for (let i = 0; i <= occurrence; i++) {
         index = source.indexOf(searchString, index + 1);
         if (index === -1) {
             throw new Error(`Occurrence ${occurrence} of "${searchString}" not found in source`);
