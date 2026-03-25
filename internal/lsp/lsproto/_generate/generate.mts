@@ -264,6 +264,28 @@ const customStructures: Structure[] = [
         ],
         documentation: "Result for the initializeAPISession request.",
     },
+    {
+        name: "ProjectInfoParams",
+        properties: [
+            {
+                name: "textDocument",
+                type: { kind: "reference", name: "TextDocumentIdentifier" },
+                documentation: "The text document to get project info for.",
+            },
+        ],
+        documentation: "Parameters for the custom/projectInfo request.",
+    },
+    {
+        name: "ProjectInfoResult",
+        properties: [
+            {
+                name: "configFileName",
+                type: { kind: "base", name: "string" },
+                documentation: "The config file name (e.g. tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.",
+            },
+        ],
+        documentation: "Result for the custom/projectInfo request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -377,6 +399,14 @@ const customRequests: Request[] = [
         result: { kind: "reference", name: "InitializeAPISessionResult" },
         messageDirection: "clientToServer",
         documentation: "Custom request to initialize an API session.",
+    },
+    {
+        method: "custom/projectInfo",
+        typeName: "CustomProjectInfoRequest",
+        params: { kind: "reference", name: "ProjectInfoParams" },
+        result: { kind: "reference", name: "ProjectInfoResult" },
+        messageDirection: "clientToServer",
+        documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
     },
 ];
 

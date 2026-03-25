@@ -291,6 +291,15 @@ export class Client implements vscode.Disposable {
         const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
         return result.file;
     }
+
+    async getProjectInfo(uri: string): Promise<{ configFileName: string; }> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        return this.client.sendRequest<{ configFileName: string; }>("custom/projectInfo", {
+            textDocument: { uri },
+        });
+    }
 }
 
 // Adapted from the default error handler in vscode-languageclient.

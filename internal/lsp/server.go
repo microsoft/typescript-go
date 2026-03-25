@@ -698,6 +698,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CustomStopCPUProfileInfo, (*Server).handleStopCPUProfile)
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
+	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
 	return handlers
 })
 
@@ -1513,4 +1514,19 @@ func (s *Server) handleStopCPUProfile(_ context.Context, _ any, _ *lsproto.Reque
 	}
 	s.logger.Info("CPU profile saved to: ", filePath)
 	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectInfoParams, _ *lsproto.RequestMessage) (lsproto.CustomProjectInfoResponse, error) {
+	uri := params.TextDocument.Uri
+	project, _, _, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+	configFileName := ""
+	if project != nil {
+		configFileName = project.Name()
+	}
+	return &lsproto.ProjectInfoResult{
+		ConfigFileName: configFileName,
+	}, nil
 }

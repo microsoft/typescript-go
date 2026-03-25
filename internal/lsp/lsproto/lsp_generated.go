@@ -22208,6 +22208,116 @@ func (s *InitializeAPISessionResult) UnmarshalJSONFrom(dec *json.Decoder) error 
 	return nil
 }
 
+// Parameters for the custom/projectInfo request.
+type ProjectInfoParams struct {
+	// The text document to get project info for.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *ProjectInfoParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
+var _ json.UnmarshalerFrom = (*ProjectInfoParams)(nil)
+
+func (s *ProjectInfoParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"textDocument"`:
+			missing &^= missingTextDocument
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingTextDocument != 0 {
+			missingProps = append(missingProps, "textDocument")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
+// Result for the custom/projectInfo request.
+type ProjectInfoResult struct {
+	// The config file name (e.g. tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.
+	ConfigFileName string `json:"configFileName"`
+}
+
+var _ json.UnmarshalerFrom = (*ProjectInfoResult)(nil)
+
+func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingConfigFileName uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"configFileName"`:
+			missing &^= missingConfigFileName
+			if err := json.UnmarshalDecode(dec, &s.ConfigFileName); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingConfigFileName != 0 {
+			missingProps = append(missingProps, "configFileName")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
 type CallHierarchyItemData struct{}
 
@@ -23614,6 +23724,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalEmpty(data)
 	case MethodCustomInitializeAPISession:
 		return unmarshalPtrTo[InitializeAPISessionParams](data)
+	case MethodCustomProjectInfo:
+		return unmarshalPtrTo[ProjectInfoParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
 	case MethodWindowWorkDoneProgressCancel:
@@ -23825,6 +23937,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[StopCPUProfileResponse](data)
 	case MethodCustomInitializeAPISession:
 		return unmarshalValue[CustomInitializeAPISessionResponse](data)
+	case MethodCustomProjectInfo:
+		return unmarshalValue[CustomProjectInfoResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -24143,6 +24257,8 @@ const (
 	MethodCustomStopCPUProfile Method = "custom/stopCPUProfile"
 	// Custom request to initialize an API session.
 	MethodCustomInitializeAPISession Method = "custom/initializeAPISession"
+	// Returns project information (e.g. the tsconfig.json path) for a given text document.
+	MethodCustomProjectInfo Method = "custom/projectInfo"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -24692,6 +24808,12 @@ type CustomInitializeAPISessionResponse = *InitializeAPISessionResult
 
 // Type mapping info for `custom/initializeAPISession`
 var CustomInitializeAPISessionInfo = RequestInfo[*InitializeAPISessionParams, CustomInitializeAPISessionResponse]{Method: MethodCustomInitializeAPISession}
+
+// Response type for `custom/projectInfo`
+type CustomProjectInfoResponse = *ProjectInfoResult
+
+// Type mapping info for `custom/projectInfo`
+var CustomProjectInfoInfo = RequestInfo[*ProjectInfoParams, CustomProjectInfoResponse]{Method: MethodCustomProjectInfo}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}

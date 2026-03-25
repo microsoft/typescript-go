@@ -12,6 +12,15 @@ export const jsTsLanguageModes = [
 
 export const builtinTSExtensionId = "vscode.typescript-language-features";
 
+export function isSupportedLanguageMode(doc: vscode.TextDocument): boolean {
+    return jsTsLanguageModes.includes(doc.languageId);
+}
+
+export function isJsConfigOrTsConfigFileName(fileName: string): boolean {
+    const base = path.basename(fileName);
+    return /^[jt]sconfig\b/.test(base) && base.endsWith(".json");
+}
+
 export interface ExeInfo {
     path: string;
     version: string;
