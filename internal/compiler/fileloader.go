@@ -308,6 +308,15 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	return sourceFile
 }
 
+func (p *fileLoader) isSupportedExtension(canonicalFileName string) bool {
+	for _, group := range p.supportedExtensionsWithJsonIfResolveJsonModule {
+		if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
+			return true
+		}
+	}
+	return false
+}
+
 func (p *fileLoader) getSourceFileFromReference(
 	fileName string,
 	referenceText string,
@@ -319,21 +328,11 @@ func (p *fileLoader) getSourceFileFromReference(
 
 	if tspath.HasExtension(fileName) {
 		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
-		if !allowNonTsExtensions {
-			supported := false
-			for _, group := range p.supportedExtensionsWithJsonIfResolveJsonModule {
-				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
-					supported = true
-					break
-				}
+		if !allowNonTsExtensions && !p.isSupportedExtension(canonicalFileName) {
+			if tspath.HasJSFileExtension(canonicalFileName) {
+				return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, args: []any{diagnosticFileName}}
 			}
-			if !supported {
-				if tspath.HasJSFileExtension(canonicalFileName) {
-					return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, args: []any{diagnosticFileName}}
-				} else {
-					return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, args: []any{diagnosticFileName, "'" + strings.Join(core.Flatten(p.supportedExtensionsWithJsonIfResolveJsonModule), "', '") + "'"}}
-				}
-			}
+			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, args: []any{diagnosticFileName, "'" + strings.Join(core.Flatten(p.supportedExtensions), "', '") + "'"}}
 		}
 
 		if !p.opts.Host.FS().FileExists(fileName) {

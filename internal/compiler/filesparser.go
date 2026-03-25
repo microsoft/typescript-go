@@ -3,6 +3,7 @@ package compiler
 import (
 	"math"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -69,14 +70,7 @@ func (t *parseTask) load(loader *fileLoader) {
 		allowNonTsExtensions := compilerOptions.AllowNonTsExtensions.IsTrue()
 		if !allowNonTsExtensions {
 			canonicalFileName := tspath.GetCanonicalFileName(t.normalizedFilePath, loader.opts.Host.FS().UseCaseSensitiveFileNames())
-			supported := false
-			for _, group := range loader.supportedExtensionsWithJsonIfResolveJsonModule {
-				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
-					supported = true
-					break
-				}
-			}
-			if !supported {
+			if !loader.isSupportedExtension(canonicalFileName) {
 				if tspath.HasJSFileExtension(canonicalFileName) {
 					t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 						kind: processingDiagnosticKindExplainingFileInclude,
@@ -84,6 +78,15 @@ func (t *parseTask) load(loader *fileLoader) {
 							diagnosticReason: t.includeReason,
 							message:          diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option,
 							args:             []any{t.normalizedFilePath},
+						},
+					})
+				} else {
+					t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
+						kind: processingDiagnosticKindExplainingFileInclude,
+						data: &includeExplainingDiagnostic{
+							diagnosticReason: t.includeReason,
+							message:          diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1,
+							args:             []any{t.normalizedFilePath, "'" + strings.Join(core.Flatten(loader.supportedExtensions), "', '") + "'"},
 						},
 					})
 				}
