@@ -215,7 +215,7 @@ describe("Encoder", () => {
         const attrs = openingElem.attributes!;
         assert.strictEqual(attrs.kind, SyntaxKind.JsxAttributes);
         // Empty properties should return undefined, not throw
-        assert.strictEqual(attrs.properties, undefined);
+        assert.strictEqual(jsxElem.typeArguments, undefined);
     });
 });
 
