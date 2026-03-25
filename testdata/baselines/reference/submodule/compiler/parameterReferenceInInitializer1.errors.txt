@@ -1,5 +1,4 @@
 parameterReferenceInInitializer1.ts(2,5): error TS2322: Type 'undefined' is not assignable to type 'a'.
-  'a' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 
 
 ==== parameterReferenceInInitializer1.ts (1 errors) ====
@@ -7,7 +6,6 @@ parameterReferenceInInitializer1.ts(2,5): error TS2322: Type 'undefined' is not 
         return undefined;
         ~~~~~~
 !!! error TS2322: Type 'undefined' is not assignable to type 'a'.
-!!! error TS2322:   'a' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
     }
     interface Y { x: number }
     

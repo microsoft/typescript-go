@@ -4,7 +4,6 @@ typeParameterDiamond3.ts(9,13): error TS2322: Type 'Bottom' is not assignable to
   Type 'T | Top | U' is not assignable to type 'T | U'.
     Type 'Top' is not assignable to type 'T | U'.
 typeParameterDiamond3.ts(10,13): error TS2322: Type 'Bottom' is not assignable to type 'Top'.
-  'Top' could be instantiated with an arbitrary type which could be unrelated to 'Bottom'.
 
 
 ==== typeParameterDiamond3.ts (3 errors) ====
@@ -29,7 +28,6 @@ typeParameterDiamond3.ts(10,13): error TS2322: Type 'Bottom' is not assignable t
                 top = bottom;
                 ~~~
 !!! error TS2322: Type 'Bottom' is not assignable to type 'Top'.
-!!! error TS2322:   'Top' could be instantiated with an arbitrary type which could be unrelated to 'Bottom'.
             }
         }
     }

@@ -1,0 +1,30 @@
+--- old.subtypingWithNumericIndexer.errors.txt
++++ new.subtypingWithNumericIndexer.errors.txt
+@@= skipped -0, +0 lines =@@
+ subtypingWithNumericIndexer.ts(32,11): error TS2415: Class 'B3<T>' incorrectly extends base class 'A<T>'.
+   'number' index signatures are incompatible.
+     Type 'Derived' is not assignable to type 'T'.
+-      'Derived' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
+ subtypingWithNumericIndexer.ts(36,11): error TS2415: Class 'B4<T>' incorrectly extends base class 'A<T>'.
+   'number' index signatures are incompatible.
+     Type 'Derived2' is not assignable to type 'T'.
+-      'Derived2' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
+
+
+ ==== subtypingWithNumericIndexer.ts (2 errors) ====
+@@= skipped -44, +42 lines =@@
+ !!! error TS2415: Class 'B3<T>' incorrectly extends base class 'A<T>'.
+ !!! error TS2415:   'number' index signatures are incompatible.
+ !!! error TS2415:     Type 'Derived' is not assignable to type 'T'.
+-!!! error TS2415:       'Derived' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
+             [x: number]: Derived; // error, BUG?
+         }
+     
+@@= skipped -9, +8 lines =@@
+ !!! error TS2415: Class 'B4<T>' incorrectly extends base class 'A<T>'.
+ !!! error TS2415:   'number' index signatures are incompatible.
+ !!! error TS2415:     Type 'Derived2' is not assignable to type 'T'.
+-!!! error TS2415:       'Derived2' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
+             [x: number]: Derived2; // error, BUG?
+         }
+     }

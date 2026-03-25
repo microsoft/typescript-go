@@ -19,7 +19,6 @@ typeArgumentInferenceWithConstraints.ts(66,31): error TS2345: Argument of type '
 typeArgumentInferenceWithConstraints.ts(67,1): error TS2349: This expression is not callable.
   Type 'String' has no call signatures.
 typeArgumentInferenceWithConstraints.ts(71,5): error TS2322: Type 'null' is not assignable to type 'T'.
-  'null' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'unknown'.
 typeArgumentInferenceWithConstraints.ts(73,29): error TS2345: Argument of type '0' is not assignable to parameter of type '""'.
 typeArgumentInferenceWithConstraints.ts(74,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'a9a' must be of type 'string', but here has type '{}'.
 typeArgumentInferenceWithConstraints.ts(75,75): error TS2345: Argument of type 'null' is not assignable to parameter of type '{ a?: number | undefined; b?: string | undefined; }'.
@@ -137,7 +136,6 @@ typeArgumentInferenceWithConstraints.ts(103,5): error TS2403: Subsequent variabl
         return null;
         ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'null' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'unknown'.
     }
     var a9a = someGenerics9('', 0, []);
                                 ~

@@ -1,0 +1,16 @@
+--- old.primitiveConstraints2.errors.txt
++++ new.primitiveConstraints2.errors.txt
+@@= skipped -0, +0 lines =@@
+ primitiveConstraints2.ts(3,7): error TS2322: Type 'null' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ primitiveConstraints2.ts(8,11): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+ primitiveConstraints2.ts(9,8): error TS2344: Type 'string' does not satisfy the constraint 'number'.
+
+@@= skipped -9, +8 lines =@@
+           return null;
+           ~~~~~~
+ !!! error TS2322: Type 'null' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+          }
+     }
+      

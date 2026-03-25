@@ -1,0 +1,16 @@
+--- old.validUndefinedAssignments.errors.txt
++++ new.validUndefinedAssignments.errors.txt
+@@= skipped -5, +5 lines =@@
+ validUndefinedAssignments.ts(17,1): error TS2322: Type 'undefined' is not assignable to type 'I'.
+ validUndefinedAssignments.ts(19,5): error TS2322: Type 'undefined' is not assignable to type '{ f(): void; }'.
+ validUndefinedAssignments.ts(22,5): error TS2322: Type 'undefined' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+
+
+ ==== validUndefinedAssignments.ts (8 errors) ====
+@@= skipped -42, +41 lines =@@
+         a = x;
+         ~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+     }

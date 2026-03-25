@@ -11,12 +11,9 @@ variadicTuples1.ts(151,5): error TS2322: Type '[string, ...unknown[]]' is not as
 variadicTuples1.ts(152,5): error TS2322: Type '[string, ...T]' is not assignable to type '[string, ...U]'.
   Type at position 1 in source is not compatible with type at position 1 in target.
     Type 'T' is not assignable to type 'U'.
-      'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'string[]'.
 variadicTuples1.ts(160,5): error TS2322: Type 'readonly [...T]' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'readonly [...T]'.
 variadicTuples1.ts(162,5): error TS4104: The type 'readonly [...T]' is 'readonly' and cannot be assigned to the mutable type '[...T]'.
 variadicTuples1.ts(169,5): error TS2322: Type 'readonly [...T]' is not assignable to type 'T'.
-  'readonly [...T]' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'readonly unknown[]'.
 variadicTuples1.ts(170,5): error TS2322: Type 'T' is not assignable to type '[...T]'.
   The type 'readonly unknown[]' is 'readonly' and cannot be assigned to the mutable type '[...T]'.
 variadicTuples1.ts(171,5): error TS4104: The type 'readonly [...T]' is 'readonly' and cannot be assigned to the mutable type '[...T]'.
@@ -25,14 +22,12 @@ variadicTuples1.ts(181,5): error TS2322: Type 'T' is not assignable to type '[..
     Source provides no match for variadic element at position 0 in target.
 variadicTuples1.ts(182,5): error TS2322: Type '[...T]' is not assignable to type '[...U]'.
   Type 'T' is not assignable to type 'U'.
-    'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'string[]'.
 variadicTuples1.ts(188,5): error TS2322: Type 'T' is not assignable to type '[...T]'.
   The type 'readonly string[]' is 'readonly' and cannot be assigned to the mutable type '[...T]'.
 variadicTuples1.ts(190,5): error TS2322: Type 'T' is not assignable to type '[...U]'.
   The type 'readonly string[]' is 'readonly' and cannot be assigned to the mutable type '[...U]'.
 variadicTuples1.ts(191,5): error TS2322: Type '[...T]' is not assignable to type '[...U]'.
   Type 'T' is not assignable to type 'U'.
-    'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'readonly string[]'.
 variadicTuples1.ts(203,5): error TS2322: Type 'string' is not assignable to type 'keyof [1, 2, ...T]'.
   Type '"2"' is not assignable to type '"0" | "1" | keyof T[]'.
 variadicTuples1.ts(213,5): error TS2322: Type '[...T, ...T]' is not assignable to type '[unknown, unknown]'.
@@ -222,7 +217,6 @@ variadicTuples1.ts(411,7): error TS2322: Type '[boolean, false]' is not assignab
 !!! error TS2322: Type '[string, ...T]' is not assignable to type '[string, ...U]'.
 !!! error TS2322:   Type at position 1 in source is not compatible with type at position 1 in target.
 !!! error TS2322:     Type 'T' is not assignable to type 'U'.
-!!! error TS2322:       'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'string[]'.
     }
     
     // For a generic type T, [...T] is assignable to T, T is assignable to readonly [...T], and T is assignable
@@ -233,7 +227,6 @@ variadicTuples1.ts(411,7): error TS2322: Type '[boolean, false]' is not assignab
         t = r;  // Error
         ~
 !!! error TS2322: Type 'readonly [...T]' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'readonly [...T]'.
         m = t;
         m = r;  // Error
         ~
@@ -247,7 +240,6 @@ variadicTuples1.ts(411,7): error TS2322: Type '[boolean, false]' is not assignab
         t = r;  // Error
         ~
 !!! error TS2322: Type 'readonly [...T]' is not assignable to type 'T'.
-!!! error TS2322:   'readonly [...T]' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'readonly unknown[]'.
         m = t;  // Error
         ~
 !!! error TS2322: Type 'T' is not assignable to type '[...T]'.
@@ -273,7 +265,6 @@ variadicTuples1.ts(411,7): error TS2322: Type '[boolean, false]' is not assignab
         ~~
 !!! error TS2322: Type '[...T]' is not assignable to type '[...U]'.
 !!! error TS2322:   Type 'T' is not assignable to type 'U'.
-!!! error TS2322:     'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'string[]'.
     }
     
     function f14<T extends readonly string[], U extends T>(t0: T, t1: [...T], t2: [...U]) {
@@ -292,7 +283,6 @@ variadicTuples1.ts(411,7): error TS2322: Type '[boolean, false]' is not assignab
         ~~
 !!! error TS2322: Type '[...T]' is not assignable to type '[...U]'.
 !!! error TS2322:   Type 'T' is not assignable to type 'U'.
-!!! error TS2322:     'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'readonly string[]'.
     }
     
     function f15<T extends string[], U extends T>(k0: keyof T, k1: keyof [...T], k2: keyof [...U], k3: keyof [1, 2, ...T]) {

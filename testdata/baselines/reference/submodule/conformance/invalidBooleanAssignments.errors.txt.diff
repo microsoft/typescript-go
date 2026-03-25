@@ -1,0 +1,18 @@
+--- old.invalidBooleanAssignments.errors.txt
++++ new.invalidBooleanAssignments.errors.txt
+@@= skipped -8, +8 lines =@@
+ invalidBooleanAssignments.ts(17,5): error TS2322: Type 'boolean' is not assignable to type '() => string'.
+ invalidBooleanAssignments.ts(21,1): error TS2631: Cannot assign to 'M' because it is a namespace.
+ invalidBooleanAssignments.ts(24,5): error TS2322: Type 'boolean' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'boolean'.
+ invalidBooleanAssignments.ts(26,1): error TS2630: Cannot assign to 'i' because it is a function.
+
+
+@@= skipped -51, +50 lines =@@
+         a = x;
+         ~
+ !!! error TS2322: Type 'boolean' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'boolean'.
+     }
+     i = x;
+     ~

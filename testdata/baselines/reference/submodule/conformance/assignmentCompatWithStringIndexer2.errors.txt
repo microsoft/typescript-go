@@ -13,7 +13,6 @@ assignmentCompatWithStringIndexer2.ts(41,5): error TS2322: Type 'A<Base>' is not
 assignmentCompatWithStringIndexer2.ts(46,9): error TS2322: Type '{ [x: string]: Derived; }' is not assignable to type 'A<T>'.
   'string' index signatures are incompatible.
     Type 'Derived' is not assignable to type 'T'.
-      'Derived' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
 assignmentCompatWithStringIndexer2.ts(47,9): error TS2322: Type 'A<T>' is not assignable to type '{ [x: string]: Derived; }'.
   'string' index signatures are incompatible.
     Type 'T' is not assignable to type 'Derived'.
@@ -21,7 +20,6 @@ assignmentCompatWithStringIndexer2.ts(47,9): error TS2322: Type 'A<T>' is not as
 assignmentCompatWithStringIndexer2.ts(50,9): error TS2322: Type '{ [x: string]: Derived2; }' is not assignable to type 'A<T>'.
   'string' index signatures are incompatible.
     Type 'Derived2' is not assignable to type 'T'.
-      'Derived2' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
 assignmentCompatWithStringIndexer2.ts(51,9): error TS2322: Type 'A<T>' is not assignable to type '{ [x: string]: Derived2; }'.
   'string' index signatures are incompatible.
     Type 'T' is not assignable to type 'Derived2'.
@@ -97,7 +95,6 @@ assignmentCompatWithStringIndexer2.ts(51,9): error TS2322: Type 'A<T>' is not as
 !!! error TS2322: Type '{ [x: string]: Derived; }' is not assignable to type 'A<T>'.
 !!! error TS2322:   'string' index signatures are incompatible.
 !!! error TS2322:     Type 'Derived' is not assignable to type 'T'.
-!!! error TS2322:       'Derived' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
             b3 = a3; // error
             ~~
 !!! error TS2322: Type 'A<T>' is not assignable to type '{ [x: string]: Derived; }'.
@@ -112,7 +109,6 @@ assignmentCompatWithStringIndexer2.ts(51,9): error TS2322: Type 'A<T>' is not as
 !!! error TS2322: Type '{ [x: string]: Derived2; }' is not assignable to type 'A<T>'.
 !!! error TS2322:   'string' index signatures are incompatible.
 !!! error TS2322:     Type 'Derived2' is not assignable to type 'T'.
-!!! error TS2322:       'Derived2' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Base'.
             b4 = a3; // error
             ~~
 !!! error TS2322: Type 'A<T>' is not assignable to type '{ [x: string]: Derived2; }'.

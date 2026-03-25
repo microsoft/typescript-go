@@ -1,0 +1,136 @@
+--- old.subtypingWithGenericConstructSignaturesWithOptionalParameters.errors.txt
++++ new.subtypingWithGenericConstructSignaturesWithOptionalParameters.errors.txt
+@@= skipped -32, +32 lines =@@
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(100,15): error TS2430: Interface 'I1<T>' incorrectly extends interface 'Base2'.
+   The types returned by 'new a()' are incompatible between these types.
+     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(104,15): error TS2430: Interface 'I2<T>' incorrectly extends interface 'Base2'.
+   The types returned by 'new a(...)' are incompatible between these types.
+     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(108,15): error TS2430: Interface 'I3<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a' are incompatible.
+     Type 'new (x: T) => T' is not assignable to type 'new <T>() => T'.
+@@= skipped -12, +10 lines =@@
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(113,15): error TS2430: Interface 'I4<T>' incorrectly extends interface 'Base2'.
+   The types returned by 'new a2(...)' are incompatible between these types.
+     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(117,15): error TS2430: Interface 'I5<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a2' are incompatible.
+     Type 'new (x?: T | undefined) => T' is not assignable to type 'new <T>(x?: T | undefined) => T'.
+@@= skipped -16, +15 lines =@@
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(126,15): error TS2430: Interface 'I7<T>' incorrectly extends interface 'Base2'.
+   The types returned by 'new a3(...)' are incompatible between these types.
+     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(130,15): error TS2430: Interface 'I8<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a3' are incompatible.
+     Type 'new (x?: T | undefined) => T' is not assignable to type 'new <T>(x: T) => T'.
+@@= skipped -11, +10 lines =@@
+     Type 'new (x: T) => T' is not assignable to type 'new <T>(x: T) => T'.
+       Types of parameters 'x' and 'x' are incompatible.
+         Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-          'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(138,15): error TS2430: Interface 'I10<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a3' are incompatible.
+     Type 'new (x: T, y: T) => T' is not assignable to type 'new <T>(x: T) => T'.
+@@= skipped -8, +7 lines =@@
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(143,15): error TS2430: Interface 'I11<T>' incorrectly extends interface 'Base2'.
+   The types returned by 'new a4(...)' are incompatible between these types.
+     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(147,15): error TS2430: Interface 'I12<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a4' are incompatible.
+     Type 'new (x?: T | undefined, y?: T | undefined) => T' is not assignable to type 'new <T>(x: T, y?: T | undefined) => T'.
+@@= skipped -11, +10 lines =@@
+     Type 'new (x: T) => T' is not assignable to type 'new <T>(x: T, y?: T | undefined) => T'.
+       Types of parameters 'x' and 'x' are incompatible.
+         Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-          'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(155,15): error TS2430: Interface 'I14<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a4' are incompatible.
+     Type 'new (x: T, y: T) => T' is not assignable to type 'new <T>(x: T, y?: T | undefined) => T'.
+       Types of parameters 'x' and 'x' are incompatible.
+         Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-          'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(160,15): error TS2430: Interface 'I15<T>' incorrectly extends interface 'Base2'.
+   The types returned by 'new a5(...)' are incompatible between these types.
+     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ subtypingWithGenericConstructSignaturesWithOptionalParameters.ts(164,15): error TS2430: Interface 'I16<T>' incorrectly extends interface 'Base2'.
+   Types of property 'a5' are incompatible.
+     Type 'new (x?: T | undefined, y?: T | undefined) => T' is not assignable to type 'new <T>(x?: T | undefined, y?: T | undefined) => T'.
+@@= skipped -198, +195 lines =@@
+ !!! error TS2430: Interface 'I1<T>' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a()' are incompatible between these types.
+ !!! error TS2430:     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:100:18: This type parameter might need an `extends T` constraint.
+             a: new () => T; 
+         }
+@@= skipped -10, +9 lines =@@
+ !!! error TS2430: Interface 'I2<T>' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a(...)' are incompatible between these types.
+ !!! error TS2430:     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:104:18: This type parameter might need an `extends T` constraint.
+             a: new (x?: T) => T;
+         }
+@@= skipped -20, +19 lines =@@
+ !!! error TS2430: Interface 'I4<T>' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a2(...)' are incompatible between these types.
+ !!! error TS2430:     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:113:18: This type parameter might need an `extends T` constraint.
+             a2: new () => T; 
+         }
+@@= skipped -34, +33 lines =@@
+ !!! error TS2430: Interface 'I7<T>' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a3(...)' are incompatible between these types.
+ !!! error TS2430:     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:126:18: This type parameter might need an `extends T` constraint.
+             a3: new () => T;
+         }
+@@= skipped -23, +22 lines =@@
+ !!! error TS2430:     Type 'new (x: T) => T' is not assignable to type 'new <T>(x: T) => T'.
+ !!! error TS2430:       Types of parameters 'x' and 'x' are incompatible.
+ !!! error TS2430:         Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:           'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:95:18: This type parameter might need an `extends T` constraint.
+             a3: new (x: T) => T; 
+         }
+@@= skipped -20, +19 lines =@@
+ !!! error TS2430: Interface 'I11<T>' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a4(...)' are incompatible between these types.
+ !!! error TS2430:     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:143:19: This type parameter might need an `extends T` constraint.
+             a4: new () => T; 
+         }
+@@= skipped -23, +22 lines =@@
+ !!! error TS2430:     Type 'new (x: T) => T' is not assignable to type 'new <T>(x: T, y?: T | undefined) => T'.
+ !!! error TS2430:       Types of parameters 'x' and 'x' are incompatible.
+ !!! error TS2430:         Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:           'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:96:18: This type parameter might need an `extends T` constraint.
+             a4: new (x: T) => T; 
+         }
+@@= skipped -12, +11 lines =@@
+ !!! error TS2430:     Type 'new (x: T, y: T) => T' is not assignable to type 'new <T>(x: T, y?: T | undefined) => T'.
+ !!! error TS2430:       Types of parameters 'x' and 'x' are incompatible.
+ !!! error TS2430:         Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:           'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:96:18: This type parameter might need an `extends T` constraint.
+             a4: new (x: T, y: T) => T; 
+         }
+@@= skipped -11, +10 lines =@@
+ !!! error TS2430: Interface 'I15<T>' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a5(...)' are incompatible between these types.
+ !!! error TS2430:     Type 'T' is not assignable to type 'T'. Two different types with this name exist, but they are unrelated.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 subtypingWithGenericConstructSignaturesWithOptionalParameters.ts:160:19: This type parameter might need an `extends T` constraint.
+             a5: new () => T; 
+         }

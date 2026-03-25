@@ -1,13 +1,8 @@
 genericClassWithFunctionTypedMemberArguments.ts(7,22): error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 genericClassWithFunctionTypedMemberArguments.ts(18,22): error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 genericClassWithFunctionTypedMemberArguments.ts(57,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
 genericClassWithFunctionTypedMemberArguments.ts(60,27): error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
 genericClassWithFunctionTypedMemberArguments.ts(61,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
 genericClassWithFunctionTypedMemberArguments.ts(62,30): error TS2345: Argument of type '(a: number) => string' is not assignable to parameter of type '(a: number) => 1'.
   Type 'string' is not assignable to type '1'.
 
@@ -22,7 +17,6 @@ genericClassWithFunctionTypedMemberArguments.ts(62,30): error TS2345: Argument o
                 return x(null);
                          ~~~~
 !!! error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
             }
         }
     
@@ -36,7 +30,6 @@ genericClassWithFunctionTypedMemberArguments.ts(62,30): error TS2345: Argument o
                 return x(null);
                          ~~~~
 !!! error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
             }
         }
     
@@ -78,17 +71,14 @@ genericClassWithFunctionTypedMemberArguments.ts(62,30): error TS2345: Argument o
             var r10 = c.foo2(1, (x: T) => ''); // error
                              ~
 !!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
             var r10 = c.foo2(1, (x) => ''); // string
     
             var r11 = c3.foo3(1, (x: T) => '', ''); // error
                               ~
 !!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
             var r11b = c3.foo3(1, (x: T) => '', 1); // error
                                ~
 !!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
             var r12 = c3.foo3(1, function (a) { return '' }, 1); // error
                                  ~~~~~~~~
 !!! error TS2345: Argument of type '(a: number) => string' is not assignable to parameter of type '(a: number) => 1'.

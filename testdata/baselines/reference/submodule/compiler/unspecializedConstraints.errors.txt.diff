@@ -1,0 +1,18 @@
+--- old.unspecializedConstraints.errors.txt
++++ new.unspecializedConstraints.errors.txt
+@@= skipped -2, +2 lines =@@
+ unspecializedConstraints.ts(46,13): error TS2322: Type 'undefined' is not assignable to type 'Signature'.
+ unspecializedConstraints.ts(84,44): error TS2552: Cannot find name 'TypeParameter'. Did you mean 'Parameter'?
+ unspecializedConstraints.ts(119,45): error TS2322: Type 'undefined' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+
+
+ ==== unspecializedConstraints.ts (5 errors) ====
+@@= skipped -134, +133 lines =@@
+             if (!hasOwnProperty.call(map, key)) return undefined;
+                                                 ~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+             return map[key];
+         }
+     

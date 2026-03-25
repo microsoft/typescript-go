@@ -1,0 +1,18 @@
+--- old.subtypingWithConstructSignaturesWithSpecializedSignatures.errors.txt
++++ new.subtypingWithConstructSignaturesWithSpecializedSignatures.errors.txt
+@@= skipped -3, +3 lines =@@
+ subtypingWithConstructSignaturesWithSpecializedSignatures.ts(76,15): error TS2430: Interface 'I3' incorrectly extends interface 'Base2'.
+   The types returned by 'new a2(...)' are incompatible between these types.
+     Type 'string' is not assignable to type 'T'.
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
+
+
+ ==== subtypingWithConstructSignaturesWithSpecializedSignatures.ts (2 errors) ====
+@@= skipped -88, +87 lines =@@
+ !!! error TS2430: Interface 'I3' incorrectly extends interface 'Base2'.
+ !!! error TS2430:   The types returned by 'new a2(...)' are incompatible between these types.
+ !!! error TS2430:     Type 'string' is not assignable to type 'T'.
+-!!! error TS2430:       'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
+             // N's
+             a2: new <T>(x: T) => string; // error because base returns non-void;
+         }

@@ -9,11 +9,8 @@ objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts(22,1): error TS2322: T
   Types of property 'data' are incompatible.
     Type 'number' is not assignable to type 'string'.
 objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts(30,5): error TS2322: Type 'U' is not assignable to type 'T'.
-  'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'List<number>'.
 objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts(31,5): error TS2322: Type 'T' is not assignable to type 'U'.
-  'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'MyList<number>'.
 objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts(42,5): error TS2322: Type 'U' is not assignable to type 'T'.
-  'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'MyList<number>'.
 
 
 ==== objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts (9 errors) ====
@@ -65,11 +62,9 @@ objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts(42,5): error TS2322: T
         t = u; // error
         ~
 !!! error TS2322: Type 'U' is not assignable to type 'T'.
-!!! error TS2322:   'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'List<number>'.
         u = t; // error
         ~
 !!! error TS2322: Type 'T' is not assignable to type 'U'.
-!!! error TS2322:   'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'MyList<number>'.
     
         var a: List<number>;
         var b: MyList<number>;
@@ -83,7 +78,6 @@ objectTypeWithRecursiveWrappedPropertyCheckedNominally.ts(42,5): error TS2322: T
         t = u; // error
         ~
 !!! error TS2322: Type 'U' is not assignable to type 'T'.
-!!! error TS2322:   'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'MyList<number>'.
         u = t; // was error, ok after constraint made illegal, doesn't matter
     
         var a: List<number>;

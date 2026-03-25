@@ -1,6 +1,5 @@
 typeInferenceReturnTypeCallback.ts(7,9): error TS2322: Type 'null' is not assignable to type 'IList<D>'.
 typeInferenceReturnTypeCallback.ts(19,9): error TS2322: Type 'null' is not assignable to type 'E'.
-  'E' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 
 
 ==== typeInferenceReturnTypeCallback.ts (2 errors) ====
@@ -27,6 +26,5 @@ typeInferenceReturnTypeCallback.ts(19,9): error TS2322: Type 'null' is not assig
             return null;
             ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'E'.
-!!! error TS2322:   'E' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         }
     }
