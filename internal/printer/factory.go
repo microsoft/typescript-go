@@ -573,6 +573,18 @@ func (f *NodeFactory) GetNamespaceMemberName(ns *ast.IdentifierNode, name *ast.I
 	return qualifiedName
 }
 
+// Gets the export name of a declaration for use in expressions.
+//
+// An export name will *always* be prefixed with a module or namespace export modifier like
+// `"exports."` when emitted as an expression if the name points to an exported symbol.
+func (f *NodeFactory) GetExternalModuleOrNamespaceExportName(ns *ast.IdentifierNode, node *ast.Declaration, allowComments bool, allowSourceMaps bool) *ast.Node {
+	if ns != nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) {
+		nameOpts := NameOptions{AllowComments: allowComments, AllowSourceMaps: allowSourceMaps}
+		return f.GetNamespaceMemberName(ns, f.GetDeclarationNameEx(node, nameOpts), nameOpts)
+	}
+	return f.GetExportNameEx(node, AssignedNameOptions{AllowComments: allowComments, AllowSourceMaps: allowSourceMaps})
+}
+
 //
 // Emit Helpers
 //
@@ -823,7 +835,7 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 		propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
 		if propertyName != nil {
 			if ast.IsComputedPropertyName(propertyName) {
-				debug.AssertIsDefined(computedTempVariables, "Encountered computed property name but 'computedTempVariables' argument was not provided.")
+				debug.Assert(computedTempVariables != nil, "Encountered computed property name but 'computedTempVariables' argument was not provided.")
 				temp := computedTempVariables[computedTempVariableOffset]
 				computedTempVariableOffset++
 				// typeof _tmp === "symbol" ? _tmp : _tmp + ""

@@ -314,6 +314,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
+	// Compute effective customConfigFileName from user preferences
+	customConfigFileName := s.ConfigFileRegistry.customConfigFileName
+	if change.newConfig != nil {
+		customConfigFileName = change.newConfig.TS().CustomConfigFileName
+	}
+
 	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
@@ -324,6 +330,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
+		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
 	)
@@ -331,6 +338,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	if len(change.ataChanges) != 0 {
 		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
 	}
+
+	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
 
 	if !change.fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))

@@ -439,7 +439,7 @@ func (w *formatSpanWorker) processChildNodes(
 	parentStartLine int,
 	parentDynamicIndentation *dynamicIndenter,
 ) {
-	debug.AssertIsDefined(nodes)
+	debug.Assert(nodes != nil)
 	debug.Assert(!ast.PositionIsSynthesized(nodes.Pos()))
 	debug.Assert(!ast.PositionIsSynthesized(nodes.End()))
 
@@ -1055,6 +1055,10 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 				if savePreviousRange != NewTextRangeWithKind(0, 0, 0) {
 					prevEndLine := scanner.GetECMALineOfPosition(w.sourceFile, savePreviousRange.Loc.End())
 					indentToken = lastTriviaWasNewLine && tokenStartLine != prevEndLine
+				} else {
+					// When there's no previous range (first token), TS sets prevEndLine to undefined.
+					// tokenStart.line !== undefined is always true in JS, so indentToken = lastTriviaWasNewLine.
+					indentToken = lastTriviaWasNewLine
 				}
 			} else {
 				indentToken = lineAction == LineActionLineAdded
