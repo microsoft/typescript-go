@@ -28,8 +28,7 @@ export function isSupportedLanguageMode(doc: vscode.TextDocument): boolean {
 }
 
 export function isJsConfigOrTsConfigFileName(fileName: string): boolean {
-    const base = path.basename(fileName);
-    return /^[jt]sconfig\b/.test(base) && base.endsWith(".json");
+    return /^[jt]sconfig\.(.+\.)?json$/i.test(path.basename(fileName));
 }
 
 export interface ExeInfo {
