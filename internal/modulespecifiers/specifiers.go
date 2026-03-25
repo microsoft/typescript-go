@@ -846,7 +846,7 @@ func tryDirectoryWithPackageJson(
 	}
 
 	packageJsonContent := packageJson.GetContents()
-	if options.GetResolvePackageJsonImports() {
+	if options.GetResolvePackageJsonExports() {
 		// The package name that we found in node_modules could be different from the package
 		// name in the package.json content via url/filepath dependency specifiers. We need to
 		// use the actual directory name, so don't look at `packageJsonContent.name` here.
@@ -1031,8 +1031,11 @@ func tryGetModuleNameFromPackageJsonImports(
 		top := imports.AsObject()
 		entries := top.Entries()
 		for k, value := range entries {
-			if !strings.HasPrefix(k, "#") || k == "#" || strings.HasPrefix(k, "#/") {
+			if k == "#" || k == "#/" || !strings.HasPrefix(k, "#") {
 				continue // invalid imports entry
+			}
+			if strings.HasPrefix(k, "#/") && options.GetModuleResolutionKind() != core.ModuleResolutionKindNodeNext && options.GetModuleResolutionKind() != core.ModuleResolutionKindBundler {
+				continue // "#/" imports keys are only valid in nodenext/bundler
 			}
 			mode := MatchingModeExact
 			if strings.HasSuffix(k, "/") {

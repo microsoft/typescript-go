@@ -200,7 +200,7 @@ func (l *LanguageService) convertPathCompletions(
 	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *lsproto.CompletionItem {
 		var replacementSpan *lsproto.Range
 		if pathCompletion.textRange != nil {
-			replacementSpan = l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
+			replacementSpan = new(l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file))
 		}
 		detail := pathCompletion.name
 		if !strings.HasSuffix(pathCompletion.name, pathCompletion.extension) {
@@ -2031,13 +2031,14 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 	if completions == nil {
 		return item
 	}
-	return l.stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker, docFormat)
+	return l.stringLiteralCompletionDetails(item, name, contextToken, position, completions, file, checker, docFormat)
 }
 
 func (l *LanguageService) stringLiteralCompletionDetails(
 	item *lsproto.CompletionItem,
 	name string,
 	location *ast.Node,
+	position int,
 	completion *stringLiteralCompletions,
 	file *ast.SourceFile,
 	checker *checker.Checker,
@@ -2052,7 +2053,7 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
 			if symbol.Name == name {
-				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, docFormat)
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, position, docFormat)
 			}
 		}
 	case completion.fromTypes != nil:

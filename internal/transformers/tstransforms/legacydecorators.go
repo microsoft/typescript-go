@@ -36,6 +36,8 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindIdentifier:
 		return tx.visitIdentifier(node.AsIdentifier())
+	case ast.KindPropertyAccessExpression:
+		return tx.visitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindDecorator:
 		// Decorators are elided. They will be emitted as part of `visitClassDeclaration`.
 		return nil
@@ -71,9 +73,20 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 func (tx *LegacyDecoratorsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
 	// takes the place of `substituteIdentifier` in the strada transform
 	for _, d := range tx.enclosingClasses {
-		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode())) == d.AsNode() {
+		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode())) == tx.EmitContext().MostOriginal(d.AsNode()) {
 			return tx.classAliases[d.AsNode()]
 		}
+	}
+	return node.AsNode()
+}
+
+func (tx *LegacyDecoratorsTransformer) visitPropertyAccessExpression(node *ast.PropertyAccessExpression) *ast.Node {
+	// Visit the expression but not the name, since property access names should not be substituted.
+	// Strada's onSubstituteNode only fires for EmitHint.Expression, which excludes the
+	// .name of PropertyAccessExpression.
+	expression := tx.Visitor().VisitNode(node.Expression)
+	if expression != node.Expression {
+		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name())
 	}
 	return node.AsNode()
 }
@@ -483,21 +496,9 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 	if isExport {
 		var exportStatement *ast.Node
 		if isDefault {
-			exportStatement = tx.Factory().NewExportAssignment(nil, false, nil, declName)
+			exportStatement = tx.Factory().NewExportDefault(declName)
 		} else {
-			exportStatement = tx.Factory().NewExportDeclaration(
-				nil,
-				false,
-				tx.Factory().NewNamedExports(
-					tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(
-						false,
-						nil,
-						tx.Factory().GetDeclarationName(node.AsNode()),
-					)}),
-				),
-				nil,
-				nil,
-			)
+			exportStatement = tx.Factory().NewExternalModuleExport(tx.Factory().GetDeclarationName(node.AsNode()))
 		}
 		statements = append(statements, exportStatement)
 	}
@@ -509,15 +510,21 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 }
 
 func (tx *LegacyDecoratorsTransformer) hasInternalStaticReference(node *ast.ClassDeclaration) bool {
+	classNode := tx.EmitContext().MostOriginal(node.AsNode())
 	var isOrContainsStaticSelfReference func(n *ast.Node) bool
 	isOrContainsStaticSelfReference = func(n *ast.Node) bool {
-		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == node.AsNode() {
+		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == classNode {
 			return true
+		}
+		// For PropertyAccessExpression, only check the expression, not the name.
+		// The .Name() is a property access name, not a value reference to the class.
+		if ast.IsPropertyAccessExpression(n) {
+			return isOrContainsStaticSelfReference(n.Expression())
 		}
 		return n.ForEachChild(isOrContainsStaticSelfReference)
 	}
-	for _, node := range node.Members.Nodes {
-		if node.ForEachChild(isOrContainsStaticSelfReference) {
+	for _, member := range node.Members.Nodes {
+		if member.ForEachChild(isOrContainsStaticSelfReference) {
 			return true
 		}
 	}
@@ -567,14 +574,26 @@ func (tx *LegacyDecoratorsTransformer) getConstructorDecorationStatement(node *a
  */
 func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(node *ast.ClassDeclaration) *ast.Node {
 	allDecorators := getAllDecoratorsOfClass(node, true)
+	// Decorator expressions are evaluated outside the class body, so references to the
+	// class name should use the original binding, not the class alias. In Strada, this is
+	// handled by NodeCheckFlags.ConstructorReference which is only set for identifiers
+	// inside the class body. Since Corsa lacks per-node flags, we temporarily pop the
+	// enclosing class to prevent alias substitution during decorator expression visiting.
+	hasAlias := len(tx.enclosingClasses) > 0 && tx.enclosingClasses[len(tx.enclosingClasses)-1] == node
+	if hasAlias {
+		tx.popEnclosingClass()
+	}
 	decoratorExpressions := tx.transformAllDecoratorsOfDeclaration(allDecorators)
+	if hasAlias {
+		tx.pushEnclosingClass(node)
+	}
 	if len(decoratorExpressions) == 0 {
 		return nil
 	}
 
 	var classAlias *ast.Node
 	if tx.classAliases != nil {
-		classAlias = tx.classAliases[tx.EmitContext().MostOriginal(node.AsNode())]
+		classAlias = tx.classAliases[node.AsNode()]
 	}
 
 	// When we used to transform to ES5/3 this would be moved inside an IIFE and should reference the name
@@ -905,7 +924,7 @@ func (tx *LegacyDecoratorsTransformer) generateClassElementDecorationExpression(
 	//
 
 	prefix := tx.getClassMemberPrefix(node, member)
-	memberName := tx.getExpressionForPropertyName(member, !ast.HasAmbientModifier(member))
+	memberName := tx.getExpressionForPropertyName(member, member.Flags&ast.NodeFlagsAmbient == 0)
 	var descriptor *ast.Node
 	if ast.IsPropertyDeclaration(member) && !ast.HasAccessorModifier(member) {
 		// We emit `void 0` here to indicate to `__decorate` that it can invoke `Object.defineProperty` directly, but that it

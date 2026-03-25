@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -2409,8 +2410,9 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			}
 			addMatch(s, p)
 			pos += len(delim)
-		} else if pos < len(getSourceText(seg)) {
-			addMatch(seg, pos+1)
+		} else if sourceText := getSourceText(seg); pos < len(sourceText) {
+			_, size := utf8.DecodeRuneInString(sourceText[pos:])
+			addMatch(seg, pos+size)
 		} else if seg < lastSourceIndex {
 			addMatch(seg+1, 0)
 		} else {
@@ -4867,7 +4869,10 @@ func getPropertyNameArg(arg any) string {
 func isConversionOrInterfaceImplementationMessage(message *diagnostics.Message) bool {
 	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
 		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass ||
-		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first
+		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first ||
+		message == diagnostics.Its_instance_type_0_is_not_a_valid_JSX_element ||
+		message == diagnostics.Its_return_type_0_is_not_a_valid_JSX_element ||
+		message == diagnostics.Its_element_type_0_is_not_a_valid_JSX_element
 }
 
 func chainDepth(chain *ErrorChain) int {
