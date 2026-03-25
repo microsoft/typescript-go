@@ -4,10 +4,7 @@ Input::
 //// [/home/src/workspaces/project/index.ts] *new* 
 const x = 1;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
-{
-	"compilerOptions": {},
-	"include": ["index.ts", "src/**/*.ts"]
-}
+{}
 
 tsgo --watch
 ExitStatus:: Success
@@ -49,9 +46,8 @@ SemanticDiagnostics::
 Signatures::
 
 
-Edit [0]:: create src dir with ts file matching include
-//// [/home/src/workspaces/project/src/helper.ts] *new* 
-export const helper = "added";
+Edit [0]:: touch tsconfig without changing content
+//// [/home/src/workspaces/project/tsconfig.json] *mTime changed*
 
 
 Output::
@@ -61,10 +57,3 @@ build finished in d.ddds
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
-
-
-Diff:: incremental skips emit for new unreferenced file
---- nonIncremental /home/src/workspaces/project/src/helper.js
-+++ incremental /home/src/workspaces/project/src/helper.js
-@@ -1,1 +0,0 @@
--export const helper = "added";

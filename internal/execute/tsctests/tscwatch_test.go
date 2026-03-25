@@ -174,9 +174,33 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch"},
 			edits: []*tscEdit{
-				newTscEdit("create src dir with ts file matching include", func(sys *TestSys) {
-					sys.writeFileNoError("/home/src/workspaces/project/src/helper.ts", `export const helper = "added";`)
-				}),
+				{
+					caption: "create src dir with ts file matching include",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/src/helper.ts", `export const helper = "added";`)
+					},
+					expectedDiff: "incremental skips emit for new unreferenced file",
+				},
+			},
+		},
+		{
+			subScenario: "watch detects new file in existing include directory",
+			files: FileMap{
+				"/home/src/workspaces/project/src/a.ts": `export const a = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{
+	"compilerOptions": {},
+	"include": ["src/**/*.ts"]
+}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				{
+					caption: "add new file to existing src directory",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/src/b.ts", `export const b = 2;`)
+					},
+					expectedDiff: "incremental skips emit for new unreferenced file",
+				},
 			},
 		},
 		// Path resolution: import from non-existent node_modules package
@@ -256,7 +280,7 @@ func TestWatch(t *testing.T) {
 			},
 		},
 		{
-			subScenario: "watch skips rebuild when tsconfig is touched but content unchanged",
+			subScenario: "watch rebuilds when tsconfig is touched but content unchanged",
 			files: FileMap{
 				"/home/src/workspaces/project/index.ts":      `const x = 1;`,
 				"/home/src/workspaces/project/tsconfig.json": `{}`,

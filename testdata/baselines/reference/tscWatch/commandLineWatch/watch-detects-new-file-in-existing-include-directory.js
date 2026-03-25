@@ -1,10 +1,13 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
-//// [/home/src/workspaces/project/index.ts] *new* 
-const x = 1;
+//// [/home/src/workspaces/project/src/a.ts] *new* 
+export const a = 1;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
-{}
+{
+	"compilerOptions": {},
+	"include": ["src/**/*.ts"]
+}
 
 tsgo --watch
 ExitStatus:: Success
@@ -34,20 +37,20 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/project/index.js] *new* 
-"use strict";
-const x = 1;
+//// [/home/src/workspaces/project/src/a.js] *new* 
+export const a = 1;
 
 
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*refresh*    /home/src/workspaces/project/index.ts
+*refresh*    /home/src/workspaces/project/src/a.ts
 Signatures::
 
 
-Edit [0]:: touch tsconfig without changing content
-//// [/home/src/workspaces/project/tsconfig.json] *mTime changed*
+Edit [0]:: add new file to existing src directory
+//// [/home/src/workspaces/project/src/b.ts] *new* 
+export const b = 2;
 
 
 Output::
@@ -55,5 +58,12 @@ Output::
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*refresh*    /home/src/workspaces/project/index.ts
+*refresh*    /home/src/workspaces/project/src/a.ts
 Signatures::
+
+
+Diff:: incremental skips emit for new unreferenced file
+--- nonIncremental /home/src/workspaces/project/src/b.js
++++ incremental /home/src/workspaces/project/src/b.js
+@@ -1,1 +0,0 @@
+-export const b = 2;

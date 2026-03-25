@@ -68,21 +68,20 @@ build starting at HH:MM:SS AM
 Found 1 error in index.ts[90m:1[0m
 
 build finished in d.ddds
-//// [/home/src/workspaces/project/helper2.js] *new* 
-export const helper = 1;
-
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/workspaces/project/helper2.ts
 *refresh*    /home/src/workspaces/project/index.ts
 Signatures::
-(computed .d.ts) /home/src/workspaces/project/helper2.ts
 (computed .d.ts) /home/src/workspaces/project/index.ts
 
 
 Diff:: incremental resolves to .js output from prior build while clean build cannot find module
+--- nonIncremental /home/src/workspaces/project/helper2.js
++++ incremental /home/src/workspaces/project/helper2.js
+@@ -1,1 +0,0 @@
+-export const helper = 1;
 --- nonIncremental.output.txt
 +++ incremental.output.txt
 @@ -1,4 +1,4 @@

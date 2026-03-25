@@ -54,9 +54,91 @@ func (fs *trackingFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 func (fs *trackingFS) Realpath(path string) string { return fs.inner.Realpath(path) }
 
-type watchEntry struct {
+type WatchEntry struct {
 	modTime time.Time
 	exists  bool
+}
+
+type FileWatcher struct {
+	fs           vfs.FS
+	pollInterval time.Duration
+	testing      bool
+	callback     func()
+	watchState   map[string]WatchEntry
+}
+
+func newFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func()) *FileWatcher {
+	return &FileWatcher{
+		fs:           fs,
+		pollInterval: pollInterval,
+		testing:      testing,
+		callback:     callback,
+	}
+}
+
+func (fw *FileWatcher) updateWatchedFiles(tfs *trackingFS) {
+	fw.watchState = make(map[string]WatchEntry)
+	tfs.seenFiles.Range(func(fn string) bool {
+		if s := fw.fs.Stat(fn); s != nil {
+			fw.watchState[fn] = WatchEntry{modTime: s.ModTime(), exists: true}
+		} else {
+			fw.watchState[fn] = WatchEntry{exists: false}
+		}
+		return true
+	})
+}
+
+func (fw *FileWatcher) WaitForSettled(now func() time.Time) {
+	if fw.testing {
+		return
+	}
+	current := fw.currentState()
+	settledAt := now()
+	for now().Sub(settledAt) < watchDebounceWait {
+		time.Sleep(fw.pollInterval)
+		if fw.HasChanges(current) {
+			current = fw.currentState()
+			settledAt = now()
+		}
+	}
+}
+
+func (fw *FileWatcher) currentState() map[string]WatchEntry {
+	state := make(map[string]WatchEntry, len(fw.watchState))
+	for path := range fw.watchState {
+		if s := fw.fs.Stat(path); s != nil {
+			state[path] = WatchEntry{modTime: s.ModTime(), exists: true}
+		} else {
+			state[path] = WatchEntry{exists: false}
+		}
+	}
+	return state
+}
+
+func (fw *FileWatcher) HasChanges(baseline map[string]WatchEntry) bool {
+	for path, old := range baseline {
+		s := fw.fs.Stat(path)
+		if !old.exists {
+			if s != nil {
+				return true
+			}
+		} else {
+			if s == nil || !s.ModTime().Equal(old.modTime) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (fw *FileWatcher) Run(now func() time.Time) {
+	for {
+		time.Sleep(fw.pollInterval)
+		if fw.watchState == nil || fw.HasChanges(fw.watchState) {
+			fw.WaitForSettled(now)
+			fw.callback()
+		}
+	}
 }
 
 type Watcher struct {
@@ -72,9 +154,9 @@ type Watcher struct {
 	extendedConfigCache *tsc.ExtendedConfigCache
 	configModified      bool
 	configHasErrors     bool
-	lastConfigMtime     time.Time
+	configFilePaths     []string
 
-	watchState map[string]watchEntry
+	fileWatcher *FileWatcher
 }
 
 var (
@@ -101,6 +183,12 @@ func createWatcher(
 	if configParseResult.ConfigFile != nil {
 		w.configFileName = configParseResult.ConfigFile.SourceFile.FileName()
 	}
+	w.fileWatcher = newFileWatcher(
+		sys.FS(),
+		w.config.ParsedConfig.WatchOptions.WatchInterval(),
+		testing != nil,
+		w.DoCycle,
+	)
 	return w
 }
 
@@ -109,38 +197,26 @@ func (w *Watcher) start() {
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
 
+	if w.configFileName != "" {
+		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
+	}
+
 	w.doBuild()
 
 	if w.testing == nil {
-		for {
-			time.Sleep(w.pollInterval())
-			w.DoCycle()
-		}
+		w.fileWatcher.Run(w.sys.Now)
 	}
 }
 
 func (w *Watcher) DoCycle() {
 	if w.hasErrorsInTsConfig() {
-		// these are unrecoverable errors--report them and do not build
 		return
 	}
-	if w.watchState != nil && !w.configModified && !w.hasWatchedFilesChanged() {
+	if w.fileWatcher.watchState != nil && !w.configModified && !w.fileWatcher.HasChanges(w.fileWatcher.watchState) {
 		if w.testing != nil {
 			w.testing.OnProgram(w.program)
 		}
 		return
-	}
-
-	if w.testing == nil {
-		w.refreshWatchState()
-		settledAt := w.sys.Now()
-		for w.sys.Now().Sub(settledAt) < watchDebounceWait {
-			time.Sleep(w.pollInterval())
-			if w.hasWatchedFilesChanged() {
-				w.refreshWatchState()
-				settledAt = w.sys.Now()
-			}
-		}
 	}
 
 	w.doBuild()
@@ -159,7 +235,16 @@ func (w *Watcher) doBuild() {
 	}), w.program, nil, w.testing != nil)
 
 	w.compileAndEmit()
-	w.buildWatchState(tfs)
+	if w.config.ConfigFile != nil {
+		for dir := range w.config.WildcardDirectories() {
+			tfs.seenFiles.Add(dir)
+		}
+	}
+	for _, path := range w.configFilePaths {
+		tfs.seenFiles.Add(path)
+	}
+	w.fileWatcher.updateWatchedFiles(tfs)
+	w.fileWatcher.pollInterval = w.config.ParsedConfig.WatchOptions.WatchInterval()
 	w.configModified = false
 	fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
 
@@ -186,8 +271,25 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		return false
 	}
 
-	if !w.configHasErrors {
-		if s := w.sys.FS().Stat(w.configFileName); s != nil && s.ModTime().Equal(w.lastConfigMtime) {
+	if !w.configHasErrors && len(w.configFilePaths) > 0 {
+		changed := false
+		for _, path := range w.configFilePaths {
+			if old, ok := w.fileWatcher.watchState[path]; ok {
+				s := w.sys.FS().Stat(path)
+				if !old.exists {
+					if s != nil {
+						changed = true
+						break
+					}
+				} else {
+					if s == nil || !s.ModTime().Equal(old.modTime) {
+						changed = true
+						break
+					}
+				}
+			}
+		}
+		if !changed {
 			return false
 		}
 	}
@@ -207,9 +309,7 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		w.configModified = true
 	}
 	w.configHasErrors = false
-	if s := w.sys.FS().Stat(w.configFileName); s != nil {
-		w.lastConfigMtime = s.ModTime()
-	}
+	w.configFilePaths = append([]string{w.configFileName}, configParseResult.ExtendedSourceFiles()...)
 	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
 	}
@@ -218,69 +318,23 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 	return false
 }
 
-func (w *Watcher) hasWatchedFilesChanged() bool {
-	for path, old := range w.watchState {
-		s := w.sys.FS().Stat(path)
-		if !old.exists {
-			if s != nil {
-				return true
-			}
-		} else {
-			if s == nil || !s.ModTime().Equal(old.modTime) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func (w *Watcher) buildWatchState(tfs *trackingFS) {
-	w.watchState = make(map[string]watchEntry)
-	tfs.seenFiles.Range(func(fn string) bool {
-		if s := w.sys.FS().Stat(fn); s != nil {
-			w.watchState[fn] = watchEntry{modTime: s.ModTime(), exists: true}
-		} else {
-			w.watchState[fn] = watchEntry{exists: false}
-		}
-		return true
-	})
-}
-
-func (w *Watcher) refreshWatchState() {
-	for path := range w.watchState {
-		if s := w.sys.FS().Stat(path); s != nil {
-			w.watchState[path] = watchEntry{modTime: s.ModTime(), exists: true}
-		} else {
-			w.watchState[path] = watchEntry{exists: false}
-		}
-	}
-}
-
-func (w *Watcher) pollInterval() time.Duration {
-	return w.config.ParsedConfig.WatchOptions.WatchInterval()
-}
-
-// Testing helpers — exported for use by test packages.
+// Testing helpers — exported for use by test packages
 
 func (w *Watcher) HasWatchedFilesChanged() bool {
-	return w.hasWatchedFilesChanged()
-}
-
-func (w *Watcher) RefreshWatchState() {
-	w.refreshWatchState()
+	return w.fileWatcher.HasChanges(w.fileWatcher.watchState)
 }
 
 func (w *Watcher) WatchStateLen() int {
-	return len(w.watchState)
+	return len(w.fileWatcher.watchState)
 }
 
 func (w *Watcher) WatchStateHas(path string) bool {
-	_, ok := w.watchState[path]
+	_, ok := w.fileWatcher.watchState[path]
 	return ok
 }
 
 func (w *Watcher) DebugWatchState(fn func(path string, modTime time.Time, exists bool)) {
-	for path, entry := range w.watchState {
+	for path, entry := range w.fileWatcher.watchState {
 		fn(path, entry.modTime, entry.exists)
 	}
 }
