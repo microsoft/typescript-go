@@ -3173,7 +3173,7 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 
 	switch node.Kind {
 	// Keywords
-	case ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNullKeyword, ast.KindUndefinedKeyword:
+	case ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNullKeyword:
 		p.emitTokenNode(node)
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindImportKeyword:
 		p.emitKeywordExpression(node.AsKeywordExpression())
