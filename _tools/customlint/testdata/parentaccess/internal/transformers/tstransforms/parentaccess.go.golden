@@ -13,12 +13,12 @@
 	func badCall(n *Node) {
 		_ = n.Parent()
 		      ~~~~~~
-!!! forbidparentaccess: avoid .Parent access in internal/transformers (except internal/transformers/declarations)
+!!! forbidparentaccess: Transformers are run on nodes with potentially unset .Parent pointers, do not use them in transformers. Track context in the transform itself, instead.
 	}
 	
 	func badFieldAccess(w *WithField) {
 		_ = w.Parent
 		      ~~~~~~
-!!! forbidparentaccess: avoid .Parent access in internal/transformers (except internal/transformers/declarations)
+!!! forbidparentaccess: Transformers are run on nodes with potentially unset .Parent pointers, do not use them in transformers. Track context in the transform itself, instead.
 	}
 	
