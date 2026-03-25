@@ -179,3 +179,26 @@ export interface IndexInfoResponse {
     valueType: TypeResponse;
     isReadonly?: boolean;
 }
+
+export interface DiagnosticResponse {
+    /** File name of the source file this diagnostic belongs to, if any */
+    fileName?: string;
+    /** Start position of the diagnostic */
+    pos: number;
+    /** End position of the diagnostic */
+    end: number;
+    /** Diagnostic error code */
+    code: number;
+    /** Diagnostic category (error, warning, suggestion, message) */
+    category: number;
+    /** Localized diagnostic message text */
+    text: string;
+    /** Whether this diagnostic highlights unnecessary code */
+    reportsUnnecessary?: boolean;
+    /** Whether this diagnostic highlights deprecated code */
+    reportsDeprecated?: boolean;
+    /** Chained diagnostic messages */
+    messageChain?: DiagnosticResponse[];
+    /** Related diagnostic information */
+    relatedInformation?: DiagnosticResponse[];
+}

@@ -7,6 +7,7 @@
 // Regenerate: npm run generate (from _packages/api)
 //
 /// <reference path="../node/node.ts" preserve="true" />
+import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
 import { ObjectFlags } from "#enums/objectFlags";
 import { SignatureFlags } from "#enums/signatureFlags";
@@ -48,6 +49,7 @@ import {
 } from "../path.ts";
 import type {
     ConfigResponse,
+    DiagnosticResponse,
     DocumentIdentifier,
     DocumentPosition,
     IndexInfoResponse,
@@ -72,6 +74,7 @@ import type {
     AssertsIdentifierTypePredicate,
     AssertsThisTypePredicate,
     ConditionalType,
+    Diagnostic,
     IdentifierTypePredicate,
     IndexedAccessType,
     IndexInfo,
@@ -94,9 +97,9 @@ import type {
     UnionType,
 } from "./types.ts";
 
-export { ElementFlags, ModifierFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export { DiagnosticCategory, ElementFlags, ModifierFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -361,6 +364,91 @@ export class Program {
         // Create a new RemoteSourceFile and cache it (set returns existing if hash matches)
         const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
         return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.projectId);
+    }
+
+    /**
+     * Get syntactic (parse) diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    getSyntacticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getSyntacticDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data?.map(toDiagnostic) ?? [];
+    }
+
+    /**
+     * Get semantic (type-check) diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    getSemanticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getSemanticDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data?.map(toDiagnostic) ?? [];
+    }
+
+    /**
+     * Get suggestion diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    getSuggestionDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getSuggestionDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data?.map(toDiagnostic) ?? [];
+    }
+
+    /**
+     * Get declaration emit diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    getDeclarationDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getDeclarationDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data?.map(toDiagnostic) ?? [];
+    }
+
+    /**
+     * Get config file parsing diagnostics for the project.
+     */
+    getConfigFileParsingDiagnostics(): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getConfigFileParsingDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return data?.map(toDiagnostic) ?? [];
+    }
+
+    /**
+     * Get global diagnostics (not associated with a specific file).
+     */
+    getGlobalDiagnostics(): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getGlobalDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return data?.map(toDiagnostic) ?? [];
+    }
+
+    /**
+     * Get compiler options diagnostics.
+     */
+    getOptionsDiagnostics(): readonly Diagnostic[] {
+        const data = this.client.apiRequest<DiagnosticResponse[]>("getOptionsDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return data?.map(toDiagnostic) ?? [];
     }
 }
 
@@ -962,4 +1050,20 @@ export class Signature {
     get isAbstract(): boolean {
         return (this.flags & SignatureFlags.Abstract) !== 0;
     }
+}
+
+/** Convert a DiagnosticResponse to a Diagnostic */
+function toDiagnostic(resp: DiagnosticResponse): Diagnostic {
+    return {
+        fileName: resp.fileName,
+        pos: resp.pos,
+        end: resp.end,
+        code: resp.code,
+        category: resp.category as DiagnosticCategory,
+        text: resp.text,
+        reportsUnnecessary: resp.reportsUnnecessary,
+        reportsDeprecated: resp.reportsDeprecated,
+        messageChain: resp.messageChain?.map(toDiagnostic),
+        relatedInformation: resp.relatedInformation?.map(toDiagnostic),
+    };
 }
