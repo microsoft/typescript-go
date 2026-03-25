@@ -62,6 +62,7 @@ export type LSErrorResponse = {
     errorCode: string;
     requestMethod: string;
     stack: string;
+    fileExtension?: string;
 };
 
 export type EnableNativePreview = {};

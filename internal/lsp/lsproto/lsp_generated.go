@@ -21964,6 +21964,9 @@ type RequestFailureTelemetryProperties struct {
 
 	// The stack trace associated with the event.
 	Stack string `json:"stack"`
+
+	// The file extension of the document that caused the event, if available.
+	FileExtension *string `json:"fileExtension,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*RequestFailureTelemetryProperties)(nil)
@@ -22003,6 +22006,10 @@ func (s *RequestFailureTelemetryProperties) UnmarshalJSONFrom(dec *json.Decoder)
 		case `"stack"`:
 			missing &^= missingStack
 			if err := json.UnmarshalDecode(dec, &s.Stack); err != nil {
+				return err
+			}
+		case `"fileExtension"`:
+			if err := json.UnmarshalDecode(dec, &s.FileExtension); err != nil {
 				return err
 			}
 		default:
