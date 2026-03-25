@@ -1196,7 +1196,10 @@ function isTypeNodeKind(kind: SyntaxKind): boolean {
         || kind === SyntaxKind.JSDocNullableType
         || kind === SyntaxKind.JSDocNonNullableType
         || kind === SyntaxKind.JSDocOptionalType
-        || kind === SyntaxKind.JSDocVariadicType;
+        || kind === SyntaxKind.JSDocVariadicType
+        || kind === SyntaxKind.JSDocTypeExpression
+        || kind === SyntaxKind.JSDocTypeLiteral
+        || kind === SyntaxKind.JSDocSignature;
 }
 
 export function isStatement(node: Node): node is Statement {

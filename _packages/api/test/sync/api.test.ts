@@ -38,6 +38,7 @@ import {
     isTemplateMiddle,
     isTemplateTail,
     isVariableDeclarationList,
+    type Node,
     NodeFlags,
 } from "@typescript/ast";
 import {
@@ -2020,12 +2021,12 @@ export const obj = { m: 1, s: "hi", b: true };
             const typeNode = checker.typeToTypeNode(type);
             assert.ok(typeNode, "typeToTypeNode should return a type node");
 
-            // Verify keyword type children (NumberKeyword, StringKeyword, BooleanKeyword)
-            // pass isTypeNode — this used to crash with "Visited node failed test assertion"
-            const visited = visitEachChild(typeNode, node => node);
+            // Recursively visit to reach PropertySignature.type where isTypeNode is checked.
+            const visited = (function visit(node: Node): Node {
+                return visitEachChild(node, visit);
+            })(typeNode);
             assert.ok(visited, "visitEachChild should not throw");
 
-            // Verify isTypeNode recognizes keyword type nodes
             const kinds = [
                 SyntaxKind.NumberKeyword,
                 SyntaxKind.StringKeyword,
@@ -2034,6 +2035,20 @@ export const obj = { m: 1, s: "hi", b: true };
                 SyntaxKind.VoidKeyword,
                 SyntaxKind.UndefinedKeyword,
                 SyntaxKind.NeverKeyword,
+                SyntaxKind.UnknownKeyword,
+                SyntaxKind.BigIntKeyword,
+                SyntaxKind.ObjectKeyword,
+                SyntaxKind.SymbolKeyword,
+                SyntaxKind.IntrinsicKeyword,
+                SyntaxKind.ExpressionWithTypeArguments,
+                SyntaxKind.JSDocAllType,
+                SyntaxKind.JSDocNullableType,
+                SyntaxKind.JSDocNonNullableType,
+                SyntaxKind.JSDocOptionalType,
+                SyntaxKind.JSDocVariadicType,
+                SyntaxKind.JSDocTypeExpression,
+                SyntaxKind.JSDocTypeLiteral,
+                SyntaxKind.JSDocSignature,
             ];
             for (const kind of kinds) {
                 assert.ok(isTypeNode({ kind } as any), `isTypeNode should accept ${SyntaxKind[kind]}`);
