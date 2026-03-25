@@ -252,7 +252,7 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 	// Replicate modifierVisitor: strip decorators, TypeScript modifiers, and export when in namespace.
 	modifierMask := ^(ast.ModifierFlagsTypeScriptModifier | ast.ModifierFlagsDecorator)
 	if tx.currentNamespace != nil {
-		modifierMask &= ^ast.ModifierFlagsExport
+		modifierMask &^= ast.ModifierFlagsExport
 	}
 	modifiers := transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), modifierMask)
 	varStatement := tx.Factory().NewVariableStatement(modifiers, varDecls)
@@ -784,9 +784,11 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	for _, parameter := range parameterProperties {
 		if ast.IsIdentifier(parameter.Name()) {
 			propertyName := parameter.Name().Clone(tx.Factory())
+			propertyName.Parent = parameter.AsNode() //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
 			tx.EmitContext().AddEmitFlags(propertyName, printer.EFNoComments|printer.EFNoSourceMap)
 
 			localName := parameter.Name().Clone(tx.Factory())
+			localName.Parent = parameter.AsNode() //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
 			tx.EmitContext().AddEmitFlags(localName, printer.EFNoComments)
 
 			parameterProperty := tx.Factory().NewExpressionStatement(

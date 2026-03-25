@@ -177,7 +177,7 @@ func getImportersForExport(
 	var indirectUserDeclarations []*ast.Node
 	markSeenDirectImport := nodeSeenTracker()
 	markSeenIndirectUser := nodeSeenTracker()
-	isAvailableThroughGlobal := exportInfo.exportingModuleSymbol.GlobalExports != nil
+	isAvailableThroughGlobal := isSourceFileWithGlobalExports(exportInfo.exportingModuleSymbol.ValueDeclaration)
 
 	getDirectImports := func(moduleSymbol *ast.Symbol) []*ast.Node {
 		return allDirectImports[moduleSymbol]
@@ -676,7 +676,8 @@ func getExportEqualsLocalSymbol(importedSymbol *ast.Symbol, checker *checker.Che
 	if importedSymbol.Flags&ast.SymbolFlagsAlias != 0 {
 		return checker.GetImmediateAliasedSymbol(importedSymbol)
 	}
-	decl := debug.CheckDefined(importedSymbol.ValueDeclaration)
+	decl := importedSymbol.ValueDeclaration
+	debug.Assert(decl != nil)
 	switch {
 	case ast.IsExportAssignment(decl):
 		return decl.Expression().Symbol()

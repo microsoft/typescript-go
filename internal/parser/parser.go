@@ -2031,7 +2031,7 @@ func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
 		return
 	}
 	// The user alternatively might have misspelled or forgotten to add a space after a common keyword.
-	suggestion := core.GetSpellingSuggestion(expressionText, viableKeywordSuggestions, func(s string) string { return s })
+	suggestion := core.GetSpellingSuggestionForStrings(expressionText, slices.Values(viableKeywordSuggestions))
 	if suggestion == "" {
 		suggestion = getSpaceSuggestion(expressionText)
 	}
@@ -4043,7 +4043,7 @@ func (p *Parser) parseExpression() *ast.Expression {
 
 	// clear the decorator context when parsing Expression, as it should be unambiguous when parsing a decorator
 	saveContextFlags := p.contextFlags
-	p.contextFlags &= ^ast.NodeFlagsDecoratorContext
+	p.contextFlags &^= ast.NodeFlagsDecoratorContext
 	pos := p.nodePos()
 	expr := p.parseAssignmentExpressionOrHigher()
 	for {
@@ -6339,7 +6339,7 @@ func (p *Parser) setContextFlags(flags ast.NodeFlags, value bool) {
 	if value {
 		p.contextFlags |= flags
 	} else {
-		p.contextFlags &= ^flags
+		p.contextFlags &^= flags
 	}
 }
 
