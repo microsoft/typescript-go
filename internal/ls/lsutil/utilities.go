@@ -64,7 +64,9 @@ func ProbablyUsesSemicolons(file *ast.SourceFile) bool {
 		return true
 	}
 
-	// If even 2/5 places have a semicolon, the user probably wants semicolons
+	// When both kinds of observation exist, treat the file as using semicolons when the
+	// ratio withSemicolon/withoutSemicolon exceeds 1/nStatementsToObserve (real arithmetic),
+	// implemented as an integer inequality to avoid truncation.
 	if withoutSemicolon == 0 {
 		return true
 	}
