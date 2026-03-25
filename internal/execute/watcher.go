@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 )
 
 const watchDebounceWait = 250 * time.Millisecond
@@ -223,8 +224,18 @@ func (w *Watcher) DoCycle() {
 }
 
 func (w *Watcher) doBuild() {
-	tfs := &trackingFS{inner: w.sys.FS()}
+	cached := cachedvfs.From(w.sys.FS())
+	tfs := &trackingFS{inner: cached}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+
+	if w.config.ConfigFile != nil {
+		for dir := range w.config.WildcardDirectories() {
+			tfs.seenFiles.Add(dir)
+		}
+	}
+	for _, path := range w.configFilePaths {
+		tfs.seenFiles.Add(path)
+	}
 
 	fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
 	timeStart := w.sys.Now()
@@ -235,14 +246,7 @@ func (w *Watcher) doBuild() {
 	}), w.program, nil, w.testing != nil)
 
 	w.compileAndEmit()
-	if w.config.ConfigFile != nil {
-		for dir := range w.config.WildcardDirectories() {
-			tfs.seenFiles.Add(dir)
-		}
-	}
-	for _, path := range w.configFilePaths {
-		tfs.seenFiles.Add(path)
-	}
+	cached.DisableAndClearCache()
 	w.fileWatcher.updateWatchedFiles(tfs)
 	w.fileWatcher.pollInterval = w.config.ParsedConfig.WatchOptions.WatchInterval()
 	w.configModified = false
