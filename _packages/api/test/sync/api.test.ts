@@ -40,7 +40,10 @@ import {
     isVariableDeclarationList,
     NodeFlags,
 } from "@typescript/ast";
-import { SyntaxKind } from "@typescript/ast";
+import {
+    isTypeNode,
+    SyntaxKind,
+} from "@typescript/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
@@ -50,6 +53,7 @@ import {
     createTypeReferenceNode,
     createUnionTypeNode,
 } from "@typescript/ast/factory";
+import { visitEachChild } from "@typescript/ast/visitor";
 import assert from "node:assert";
 import {
     describe,
@@ -1888,6 +1892,7 @@ describe("Emitter - printNode", () => {
 export const x = 42;
 export function greet(name: string): string { return name; }
 export type Pair = [string, number];
+export const obj = { m: 1, s: "hi", b: true };
 `,
     };
 
@@ -1995,6 +2000,44 @@ export type Pair = [string, number];
             const text = emitter.printNode(typeNode);
             assert.ok(text);
             assert.strictEqual(text, "(name: string) => string");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("visitEachChild on typeToTypeNode result with keyword types", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const { checker } = snapshot.getProject("/tsconfig.json")!;
+            const src = emitterFiles["/src/main.ts"];
+            const objPos = src.indexOf("obj");
+            const symbol = checker.getSymbolAtPosition("/src/main.ts", objPos);
+            assert.ok(symbol, "should find symbol for obj");
+            const type = checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const typeNode = checker.typeToTypeNode(type);
+            assert.ok(typeNode, "typeToTypeNode should return a type node");
+
+            // Verify keyword type children (NumberKeyword, StringKeyword, BooleanKeyword)
+            // pass isTypeNode — this used to crash with "Visited node failed test assertion"
+            const visited = visitEachChild(typeNode, node => node);
+            assert.ok(visited, "visitEachChild should not throw");
+
+            // Verify isTypeNode recognizes keyword type nodes
+            const kinds = [
+                SyntaxKind.NumberKeyword,
+                SyntaxKind.StringKeyword,
+                SyntaxKind.BooleanKeyword,
+                SyntaxKind.AnyKeyword,
+                SyntaxKind.VoidKeyword,
+                SyntaxKind.UndefinedKeyword,
+                SyntaxKind.NeverKeyword,
+            ];
+            for (const kind of kinds) {
+                assert.ok(isTypeNode({ kind } as any), `isTypeNode should accept ${SyntaxKind[kind]}`);
+            }
         }
         finally {
             api.close();
