@@ -922,6 +922,12 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindImportAttributes:
 		n := node.AsImportAttributes()
 		return uint32(boolToByte(n.MultiLine))<<24 | uint32(boolToByte(n.Token == ast.KindAssertKeyword))<<25
+	case ast.KindPrefixUnaryExpression:
+		n := node.AsPrefixUnaryExpression()
+		return uint32(n.Operator&0x3f) << 24
+	case ast.KindPostfixUnaryExpression:
+		n := node.AsPostfixUnaryExpression()
+		return uint32(n.Operator&0x3f) << 24
 	}
 	return 0
 }
