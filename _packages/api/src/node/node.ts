@@ -619,7 +619,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("argumentExpression") as RemoteNode;
     }
     get arguments(): RemoteNodeList | undefined {
-        return this.getNamedChild("arguments", true) as RemoteNodeList;
+        return this.getNamedChild("arguments", this.kind != SyntaxKind.NewExpression) as RemoteNodeList;
     }
     get assertsModifier(): RemoteNode | undefined {
         return this.getNamedChild("assertsModifier") as RemoteNode;
@@ -760,7 +760,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("literal") as RemoteNode;
     }
     get members(): RemoteNodeList | undefined {
-        return this.getNamedChild("members", true) as RemoteNodeList;
+        return this.getNamedChild("members", this.kind != SyntaxKind.MappedType) as RemoteNodeList;
     }
     get modifiers(): RemoteNodeList | undefined {
         return this.getNamedChild("modifiers") as RemoteNodeList;
@@ -878,7 +878,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("typeParameter") as RemoteNode;
     }
     get typeParameters(): RemoteNodeList | undefined {
-        return this.getNamedChild("typeParameters", true) as RemoteNodeList;
+        return this.getNamedChild("typeParameters", this.kind == SyntaxKind.JSDocTemplateTag) as RemoteNodeList;
     }
     get types(): RemoteNodeList | undefined {
         return this.getNamedChild("types", true) as RemoteNodeList;
