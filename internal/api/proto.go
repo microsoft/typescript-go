@@ -148,13 +148,13 @@ const (
 	MethodGetTypeArguments                  Method = "getTypeArguments"
 
 	// Diagnostic methods
-	MethodGetSyntacticDiagnostics  Method = "getSyntacticDiagnostics"
-	MethodGetSemanticDiagnostics   Method = "getSemanticDiagnostics"
-	MethodGetSuggestionDiagnostics Method = "getSuggestionDiagnostics"
-	MethodGetDeclarationDiagnostics Method = "getDeclarationDiagnostics"
+	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
+	MethodGetSemanticDiagnostics          Method = "getSemanticDiagnostics"
+	MethodGetSuggestionDiagnostics        Method = "getSuggestionDiagnostics"
+	MethodGetDeclarationDiagnostics       Method = "getDeclarationDiagnostics"
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
-	MethodGetGlobalDiagnostics     Method = "getGlobalDiagnostics"
-	MethodGetOptionsDiagnostics    Method = "getOptionsDiagnostics"
+	MethodGetGlobalDiagnostics            Method = "getGlobalDiagnostics"
+	MethodGetOptionsDiagnostics           Method = "getOptionsDiagnostics"
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
