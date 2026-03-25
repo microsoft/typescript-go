@@ -187,6 +187,8 @@ type Server struct {
 	npmInstall func(cwd string, args []string) ([]byte, error)
 
 	cpuProfiler pprof.CPUProfiler
+
+	projectProgress *projectLoadingProgress
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -279,6 +281,20 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 		return fmt.Errorf("failed to refresh code lens: %w", err)
 	}
 	return nil
+}
+
+// ProjectLoadingStart implements project.Client.
+func (s *Server) ProjectLoadingStart(ctx context.Context, projectName string) {
+	if s.projectProgress != nil {
+		s.projectProgress.start(ctx, projectName)
+	}
+}
+
+// ProjectLoadingFinish implements project.Client.
+func (s *Server) ProjectLoadingFinish(ctx context.Context, projectName string) {
+	if s.projectProgress != nil {
+		s.projectProgress.finish(ctx, projectName)
+	}
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
@@ -917,6 +933,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
+	if s.clientCapabilities.Window.WorkDoneProgress {
+		s.projectProgress = newProjectLoadingProgress(s)
+	}
 
 	capabilitiesJSON, err := json.MarshalIndent(&s.clientCapabilities, "", "\t")
 	if err != nil {

@@ -21,6 +21,12 @@ var _ project.Client = &ClientMock{}
 //
 //		// make and configure a mocked project.Client
 //		mockedClient := &ClientMock{
+//			ProjectLoadingFinishFunc: func(ctx context.Context, projectName string)  {
+//				panic("mock out the ProjectLoadingFinish method")
+//			},
+//			ProjectLoadingStartFunc: func(ctx context.Context, projectName string)  {
+//				panic("mock out the ProjectLoadingStart method")
+//			},
 //			PublishDiagnosticsFunc: func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
 //				panic("mock out the PublishDiagnostics method")
 //			},
@@ -46,6 +52,12 @@ var _ project.Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
+	// ProjectLoadingFinishFunc mocks the ProjectLoadingFinish method.
+	ProjectLoadingFinishFunc func(ctx context.Context, projectName string)
+
+	// ProjectLoadingStartFunc mocks the ProjectLoadingStart method.
+	ProjectLoadingStartFunc func(ctx context.Context, projectName string)
+
 	// PublishDiagnosticsFunc mocks the PublishDiagnostics method.
 	PublishDiagnosticsFunc func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
 
@@ -66,6 +78,20 @@ type ClientMock struct {
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// ProjectLoadingFinish holds details about calls to the ProjectLoadingFinish method.
+		ProjectLoadingFinish []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// ProjectName is the projectName argument value.
+			ProjectName string
+		}
+		// ProjectLoadingStart holds details about calls to the ProjectLoadingStart method.
+		ProjectLoadingStart []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// ProjectName is the projectName argument value.
+			ProjectName string
+		}
 		// PublishDiagnostics holds details about calls to the PublishDiagnostics method.
 		PublishDiagnostics []struct {
 			// Ctx is the ctx argument value.
@@ -105,12 +131,86 @@ type ClientMock struct {
 			Watchers []*lsproto.FileSystemWatcher
 		}
 	}
-	lockPublishDiagnostics sync.RWMutex
-	lockRefreshCodeLens    sync.RWMutex
-	lockRefreshDiagnostics sync.RWMutex
-	lockRefreshInlayHints  sync.RWMutex
-	lockUnwatchFiles       sync.RWMutex
-	lockWatchFiles         sync.RWMutex
+	lockProjectLoadingFinish sync.RWMutex
+	lockProjectLoadingStart  sync.RWMutex
+	lockPublishDiagnostics   sync.RWMutex
+	lockRefreshCodeLens      sync.RWMutex
+	lockRefreshDiagnostics   sync.RWMutex
+	lockRefreshInlayHints    sync.RWMutex
+	lockUnwatchFiles         sync.RWMutex
+	lockWatchFiles           sync.RWMutex
+}
+
+// ProjectLoadingFinish calls ProjectLoadingFinishFunc.
+func (mock *ClientMock) ProjectLoadingFinish(ctx context.Context, projectName string) {
+	callInfo := struct {
+		Ctx         context.Context
+		ProjectName string
+	}{
+		Ctx:         ctx,
+		ProjectName: projectName,
+	}
+	mock.lockProjectLoadingFinish.Lock()
+	mock.calls.ProjectLoadingFinish = append(mock.calls.ProjectLoadingFinish, callInfo)
+	mock.lockProjectLoadingFinish.Unlock()
+	if mock.ProjectLoadingFinishFunc == nil {
+		return
+	}
+	mock.ProjectLoadingFinishFunc(ctx, projectName)
+}
+
+// ProjectLoadingFinishCalls gets all the calls that were made to ProjectLoadingFinish.
+// Check the length with:
+//
+//	len(mockedClient.ProjectLoadingFinishCalls())
+func (mock *ClientMock) ProjectLoadingFinishCalls() []struct {
+	Ctx         context.Context
+	ProjectName string
+} {
+	var calls []struct {
+		Ctx         context.Context
+		ProjectName string
+	}
+	mock.lockProjectLoadingFinish.RLock()
+	calls = mock.calls.ProjectLoadingFinish
+	mock.lockProjectLoadingFinish.RUnlock()
+	return calls
+}
+
+// ProjectLoadingStart calls ProjectLoadingStartFunc.
+func (mock *ClientMock) ProjectLoadingStart(ctx context.Context, projectName string) {
+	callInfo := struct {
+		Ctx         context.Context
+		ProjectName string
+	}{
+		Ctx:         ctx,
+		ProjectName: projectName,
+	}
+	mock.lockProjectLoadingStart.Lock()
+	mock.calls.ProjectLoadingStart = append(mock.calls.ProjectLoadingStart, callInfo)
+	mock.lockProjectLoadingStart.Unlock()
+	if mock.ProjectLoadingStartFunc == nil {
+		return
+	}
+	mock.ProjectLoadingStartFunc(ctx, projectName)
+}
+
+// ProjectLoadingStartCalls gets all the calls that were made to ProjectLoadingStart.
+// Check the length with:
+//
+//	len(mockedClient.ProjectLoadingStartCalls())
+func (mock *ClientMock) ProjectLoadingStartCalls() []struct {
+	Ctx         context.Context
+	ProjectName string
+} {
+	var calls []struct {
+		Ctx         context.Context
+		ProjectName string
+	}
+	mock.lockProjectLoadingStart.RLock()
+	calls = mock.calls.ProjectLoadingStart
+	mock.lockProjectLoadingStart.RUnlock()
+	return calls
 }
 
 // PublishDiagnostics calls PublishDiagnosticsFunc.

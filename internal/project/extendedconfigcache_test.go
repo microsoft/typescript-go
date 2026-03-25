@@ -33,6 +33,10 @@ func (noopClient) RefreshInlayHints(ctx context.Context) error { return nil }
 
 func (noopClient) RefreshCodeLens(ctx context.Context) error { return nil }
 
+func (noopClient) ProjectLoadingStart(ctx context.Context, projectName string) {}
+
+func (noopClient) ProjectLoadingFinish(ctx context.Context, projectName string) {}
+
 // TestExtendedConfigCacheRefCounting tests the invariant that each ExtendedSourceFile
 // of a config in the ConfigFileRegistry is ref'd exactly once per config that extends it,
 // and deref'd exactly once when that config is removed.

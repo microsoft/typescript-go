@@ -13,4 +13,6 @@ type Client interface {
 	PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
 	RefreshInlayHints(ctx context.Context) error
 	RefreshCodeLens(ctx context.Context) error
+	ProjectLoadingStart(ctx context.Context, projectName string)
+	ProjectLoadingFinish(ctx context.Context, projectName string)
 }

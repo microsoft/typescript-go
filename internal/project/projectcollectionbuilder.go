@@ -37,6 +37,8 @@ type ProjectCollectionBuilder struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	configFileRegistryBuilder          *configFileRegistryBuilder
 
+	client Client // optional; used for project loading notifications
+
 	newSnapshotID              uint64
 	programStructureChanged    bool
 	defaultProjectsInvalidated bool
@@ -60,6 +62,7 @@ func newProjectCollectionBuilder(
 	customConfigFileName string,
 	parseCache *ParseCache,
 	extendedConfigCache *ExtendedConfigCache,
+	client Client,
 ) *ProjectCollectionBuilder {
 	return &ProjectCollectionBuilder{
 		ctx:                                ctx,
@@ -75,6 +78,7 @@ func newProjectCollectionBuilder(
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
 		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
+		client:                             client,
 	}
 }
 
@@ -998,6 +1002,8 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	var filesChanged bool
 	configFileName := entry.Value().configFileName
 	startTime := time.Now()
+	var notifiedLoading bool
+	var displayName string
 	entry.Locked(func(entry dirty.Value[*Project]) {
 		if entry.Value().Kind == KindConfigured {
 			commandLine := b.configFileRegistryBuilder.acquireConfigForProject(
@@ -1024,6 +1030,14 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 			updateProgram = entry.Value().dirty
 		}
 		if updateProgram {
+			if b.client != nil {
+				displayName = configFileName
+				if entry.Value().Kind == KindInferred {
+					displayName = entry.Value().currentDirectory
+				}
+				b.client.ProjectLoadingStart(b.ctx, displayName)
+				notifiedLoading = true
+			}
 			entry.Change(func(project *Project) {
 				oldHost := project.host
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
@@ -1044,6 +1058,9 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 			})
 		}
 	})
+	if notifiedLoading && b.client != nil {
+		b.client.ProjectLoadingFinish(b.ctx, displayName)
+	}
 	if updateProgram && logger != nil {
 		elapsed := time.Since(startTime)
 		logger.Log(fmt.Sprintf("Program update for %s completed in %v", configFileName, elapsed))
