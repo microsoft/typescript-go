@@ -1,5 +1,10 @@
 import * as vscode from "vscode";
 import { ActiveJsTsEditorTracker } from "./activeJsTsEditorTracker";
+import {
+    disabledSchemes,
+    isJsConfigOrTsConfigFileName,
+    isSupportedLanguageMode,
+} from "./util";
 
 /**
  * When-clause context set when the current file is managed by tsgo.
@@ -20,7 +25,17 @@ export class ManagedFileContextManager implements vscode.Disposable {
     }
 
     private onDidChangeActiveTextEditor(editor?: vscode.TextEditor): void {
-        this.updateContext(!!editor);
+        if (editor) {
+            this.updateContext(this.isManagedFile(editor));
+        }
+        else {
+            this.updateContext(false);
+        }
+    }
+
+    private isManagedFile(editor: vscode.TextEditor): boolean {
+        return (isSupportedLanguageMode(editor.document) && !disabledSchemes.has(editor.document.uri.scheme))
+            || isJsConfigOrTsConfigFileName(editor.document.fileName);
     }
 
     private updateContext(newValue: boolean): void {

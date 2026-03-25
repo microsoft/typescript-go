@@ -12,6 +12,17 @@ export const jsTsLanguageModes = [
 
 export const builtinTSExtensionId = "vscode.typescript-language-features";
 
+/**
+ * URI schemes for which JS/TS language features should be disabled.
+ */
+export const disabledSchemes = new Set([
+    "git",
+    "vsls",
+    "github",
+    "azurerepos",
+    "chat-editing-text-model",
+]);
+
 export function isSupportedLanguageMode(doc: vscode.TextDocument): boolean {
     return jsTsLanguageModes.includes(doc.languageId);
 }

@@ -117,13 +117,29 @@ export class ProjectStatus implements vscode.Disposable {
                 break;
             }
             case ProjectInfoState.Type.Resolved: {
+                const isTypeScript = this.activeEditorTracker.activeJsTsEditor?.document.languageId === "typescript"
+                    || this.activeEditorTracker.activeJsTsEditor?.document.languageId === "typescriptreact";
+                const noConfigFileText = isTypeScript ? "No tsconfig" : "No jsconfig";
+
+                const rootPath = this.getWorkspaceRootForResource(this.state.resource);
+                if (!rootPath) {
+                    if (this.statusItem) {
+                        this.statusItem.text = noConfigFileText;
+                        this.statusItem.detail = !vscode.workspace.workspaceFolders
+                            ? "No opened folders"
+                            : "File is not part of opened folders";
+                        this.statusItem.busy = false;
+                    }
+                    return;
+                }
+
                 const statusItem = this.ensureStatusItem();
                 statusItem.busy = false;
+                statusItem.detail = undefined;
                 statusItem.severity = vscode.LanguageStatusSeverity.Information;
 
                 if (this.state.configFile && !isInferredProjectName(this.state.configFile)) {
                     statusItem.text = vscode.workspace.asRelativePath(this.state.configFile);
-                    statusItem.detail = undefined;
                     statusItem.command = {
                         command: "vscode.open",
                         title: "Open Config File",
@@ -131,10 +147,7 @@ export class ProjectStatus implements vscode.Disposable {
                     };
                 }
                 else {
-                    const isTypeScript = this.activeEditorTracker.activeJsTsEditor?.document.languageId === "typescript"
-                        || this.activeEditorTracker.activeJsTsEditor?.document.languageId === "typescriptreact";
-                    statusItem.text = isTypeScript ? "No tsconfig" : "No jsconfig";
-                    statusItem.detail = undefined;
+                    statusItem.text = noConfigFileText;
                     statusItem.command = undefined;
                 }
                 break;
@@ -148,6 +161,11 @@ export class ProjectStatus implements vscode.Disposable {
             this.statusItem.name = "TypeScript Native Preview Project Status";
         }
         return this.statusItem;
+    }
+
+    private getWorkspaceRootForResource(resource: vscode.Uri): vscode.Uri | undefined {
+        const folder = vscode.workspace.getWorkspaceFolder(resource);
+        return folder?.uri;
     }
 
     dispose(): void {
