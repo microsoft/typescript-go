@@ -1,5 +1,6 @@
 import {
     type FileReference,
+    ModifierFlags,
     type Node,
     type NodeArray,
     NodeFlags,
@@ -66,6 +67,45 @@ const NODE_OFFSET_NEXT = 12;
 const NODE_OFFSET_PARENT = 16;
 const NODE_OFFSET_DATA = 20;
 const NODE_OFFSET_FLAGS = 24;
+
+function modifierToFlag(kind: SyntaxKind): ModifierFlags {
+    switch (kind) {
+        case SyntaxKind.StaticKeyword:
+            return ModifierFlags.Static;
+        case SyntaxKind.PublicKeyword:
+            return ModifierFlags.Public;
+        case SyntaxKind.ProtectedKeyword:
+            return ModifierFlags.Protected;
+        case SyntaxKind.PrivateKeyword:
+            return ModifierFlags.Private;
+        case SyntaxKind.AbstractKeyword:
+            return ModifierFlags.Abstract;
+        case SyntaxKind.AccessorKeyword:
+            return ModifierFlags.Accessor;
+        case SyntaxKind.ExportKeyword:
+            return ModifierFlags.Export;
+        case SyntaxKind.DeclareKeyword:
+            return ModifierFlags.Ambient;
+        case SyntaxKind.ConstKeyword:
+            return ModifierFlags.Const;
+        case SyntaxKind.DefaultKeyword:
+            return ModifierFlags.Default;
+        case SyntaxKind.AsyncKeyword:
+            return ModifierFlags.Async;
+        case SyntaxKind.ReadonlyKeyword:
+            return ModifierFlags.Readonly;
+        case SyntaxKind.OverrideKeyword:
+            return ModifierFlags.Override;
+        case SyntaxKind.InKeyword:
+            return ModifierFlags.In;
+        case SyntaxKind.OutKeyword:
+            return ModifierFlags.Out;
+        case SyntaxKind.Decorator:
+            return ModifierFlags.Decorator;
+        default:
+            return ModifierFlags.None;
+    }
+}
 
 export class RemoteNodeBase {
     parent: RemoteNode;
@@ -377,6 +417,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         if (!propertyNames) {
             // `childProperties` is only defined for nodes with more than one child property.
             // Get the only child if it exists.
+            if (!this.hasChildren()) {
+                return undefined;
+            }
             const child = this.getOrCreateChildAtNodeIndex(this.index + 1);
             if (child.next !== 0) {
                 throw new Error("Expected only one child");
@@ -604,6 +647,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get class(): RemoteNode | undefined {
         return this.getNamedChild("class") as RemoteNode;
     }
+    get clauses(): RemoteNodeList | undefined {
+        return this.getNamedChild("clauses") as RemoteNodeList;
+    }
     get closingElement(): RemoteNode | undefined {
         return this.getNamedChild("closingElement") as RemoteNode;
     }
@@ -625,11 +671,17 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get declarationList(): RemoteNode | undefined {
         return this.getNamedChild("declarationList") as RemoteNode;
     }
+    get declarations(): RemoteNodeList | undefined {
+        return this.getNamedChild("declarations") as RemoteNodeList;
+    }
     get default(): RemoteNode | undefined {
         return this.getNamedChild("default") as RemoteNode;
     }
     get dotDotDotToken(): RemoteNode | undefined {
         return this.getNamedChild("dotDotDotToken") as RemoteNode;
+    }
+    get elementType(): RemoteNode | undefined {
+        return this.getNamedChild("elementType") as RemoteNode;
     }
     get elements(): RemoteNodeList | undefined {
         return this.getNamedChild("elements") as RemoteNodeList;
@@ -688,6 +740,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get initializer(): RemoteNode | undefined {
         return this.getNamedChild("initializer") as RemoteNode;
     }
+    get jsDocPropertyTags(): RemoteNodeList | undefined {
+        return this.getNamedChild("jsDocPropertyTags") as RemoteNodeList;
+    }
     get label(): RemoteNode | undefined {
         return this.getNamedChild("label") as RemoteNode;
     }
@@ -734,6 +789,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get openingFragment(): RemoteNode | undefined {
         return this.getNamedChild("openingFragment") as RemoteNode;
     }
+    get operand(): RemoteNode | undefined {
+        return this.getNamedChild("operand") as RemoteNode;
+    }
     get operatorToken(): RemoteNode | undefined {
         return this.getNamedChild("operatorToken") as RemoteNode;
     }
@@ -745,6 +803,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get postfixToken(): RemoteNode | undefined {
         return this.getNamedChild("postfixToken") as RemoteNode;
+    }
+    get properties(): RemoteNodeList | undefined {
+        return this.getNamedChild("properties") as RemoteNodeList;
     }
     get propertyName(): RemoteNode | undefined {
         return this.getNamedChild("propertyName") as RemoteNode;
@@ -811,6 +872,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get typeParameters(): RemoteNodeList | undefined {
         return this.getNamedChild("typeParameters") as RemoteNodeList;
+    }
+    get types(): RemoteNodeList | undefined {
+        return this.getNamedChild("types") as RemoteNodeList;
     }
     get value(): RemoteNode | undefined {
         return this.getNamedChild("value") as RemoteNode;
@@ -958,6 +1022,16 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     // Other properties
     get flags(): number {
         return this.view.getUint32(this._byteIndex + NODE_OFFSET_FLAGS, true);
+    }
+
+    get modifierFlags(): ModifierFlags {
+        const mods = this.modifiers;
+        if (!mods) return ModifierFlags.None;
+        let flags: ModifierFlags = ModifierFlags.None;
+        for (const mod of mods) {
+            flags |= modifierToFlag(mod.kind);
+        }
+        return flags;
     }
 
     get phaseModifier(): SyntaxKind {

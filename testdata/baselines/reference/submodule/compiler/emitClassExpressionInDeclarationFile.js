@@ -42,14 +42,14 @@ var simpleExample = class {
     tags() { }
 };
 exports.simpleExample = simpleExample;
-exports.circularReference = class C {
+var circularReference = class C {
     static getTags(c) { return c; }
     tags(c) { return c; }
 };
+exports.circularReference = circularReference;
 // repro from #15066
 class FooItem {
     foo() { }
-    name;
 }
 exports.FooItem = FooItem;
 function WithTags(Base) {
@@ -92,7 +92,7 @@ export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
-        name?: string | undefined;
+        name?: string;
     };
     getTags(): void;
 } & T;
@@ -100,7 +100,7 @@ declare const Test_base: {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
-        name?: string | undefined;
+        name?: string;
     };
     getTags(): void;
 } & typeof FooItem;
