@@ -431,17 +431,6 @@ export class Program {
         });
         return data?.map(toDiagnostic) ?? [];
     }
-
-    /**
-     * Get compiler options diagnostics.
-     */
-    async getOptionsDiagnostics(): Promise<readonly Diagnostic[]> {
-        const data = await this.client.apiRequest<DiagnosticResponse[]>("getOptionsDiagnostics", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-        });
-        return data?.map(toDiagnostic) ?? [];
-    }
 }
 
 export class Checker {

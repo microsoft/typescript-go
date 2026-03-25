@@ -439,17 +439,6 @@ export class Program {
         });
         return data?.map(toDiagnostic) ?? [];
     }
-
-    /**
-     * Get compiler options diagnostics.
-     */
-    getOptionsDiagnostics(): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getOptionsDiagnostics", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-        });
-        return data?.map(toDiagnostic) ?? [];
-    }
 }
 
 export class Checker {

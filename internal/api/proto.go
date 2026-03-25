@@ -154,7 +154,6 @@ const (
 	MethodGetDeclarationDiagnostics       Method = "getDeclarationDiagnostics"
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 	MethodGetGlobalDiagnostics            Method = "getGlobalDiagnostics"
-	MethodGetOptionsDiagnostics           Method = "getOptionsDiagnostics"
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
@@ -381,7 +380,6 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
 	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
 	MethodGetGlobalDiagnostics:              unmarshallerFor[GetProjectDiagnosticsParams],
-	MethodGetOptionsDiagnostics:             unmarshallerFor[GetProjectDiagnosticsParams],
 }
 
 type ParseConfigFileParams struct {
