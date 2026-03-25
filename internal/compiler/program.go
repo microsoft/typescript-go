@@ -723,6 +723,10 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
 
+	if options.ModuleResolution == core.ModuleResolutionKindClassic {
+		createRemovedOptionDiagnostic("moduleResolution", "Classic", "")
+	}
+
 	if options.AlwaysStrict.IsFalse() {
 		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
@@ -733,6 +737,10 @@ func (p *Program) verifyCompilerOptions() {
 
 	if options.AllowSyntheticDefaultImports.IsFalse() {
 		createRemovedOptionDiagnostic("allowSyntheticDefaultImports", "false", "")
+	}
+
+	if options.ModuleResolution == core.ModuleResolutionKindNode10 {
+		createRemovedOptionDiagnostic("moduleResolution", "node10", "")
 	}
 
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
