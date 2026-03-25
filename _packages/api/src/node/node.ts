@@ -417,6 +417,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         if (!propertyNames) {
             // `childProperties` is only defined for nodes with more than one child property.
             // Get the only child if it exists.
+            if (!this.hasChildren()) {
+                return undefined;
+            }
             const child = this.getOrCreateChildAtNodeIndex(this.index + 1);
             if (child.next !== 0) {
                 throw new Error("Expected only one child");
@@ -644,6 +647,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get class(): RemoteNode | undefined {
         return this.getNamedChild("class") as RemoteNode;
     }
+    get clauses(): RemoteNodeList | undefined {
+        return this.getNamedChild("clauses") as RemoteNodeList;
+    }
     get closingElement(): RemoteNode | undefined {
         return this.getNamedChild("closingElement") as RemoteNode;
     }
@@ -734,6 +740,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get initializer(): RemoteNode | undefined {
         return this.getNamedChild("initializer") as RemoteNode;
     }
+    get jsDocPropertyTags(): RemoteNodeList | undefined {
+        return this.getNamedChild("jsDocPropertyTags") as RemoteNodeList;
+    }
     get label(): RemoteNode | undefined {
         return this.getNamedChild("label") as RemoteNode;
     }
@@ -779,6 +788,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get openingFragment(): RemoteNode | undefined {
         return this.getNamedChild("openingFragment") as RemoteNode;
+    }
+    get operand(): RemoteNode | undefined {
+        return this.getNamedChild("operand") as RemoteNode;
     }
     get operatorToken(): RemoteNode | undefined {
         return this.getNamedChild("operatorToken") as RemoteNode;

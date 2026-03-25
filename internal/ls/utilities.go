@@ -377,7 +377,7 @@ func isObjectBindingElementWithoutPropertyName(bindingElement *ast.Node) bool {
 }
 
 func isRightSideOfPropertyAccess(node *ast.Node) bool {
-	return node.Parent.Kind == ast.KindPropertyAccessExpression && node.Parent.Name() == node
+	return node.Parent != nil && node.Parent.Kind == ast.KindPropertyAccessExpression && node.Parent.Name() == node
 }
 
 func isStaticSymbol(symbol *ast.Symbol) bool {
@@ -1396,4 +1396,8 @@ func getAncestorTypeNode(node *ast.Node) *ast.Node {
 		return !ast.IsQualifiedName(n.Parent) && !ast.IsTypeNode(n.Parent) && !ast.IsTypeElement(n.Parent)
 	})
 	return lastTypeNode
+}
+
+func isSourceFileWithGlobalExports(node *ast.Node) bool {
+	return node != nil && ast.IsSourceFile(node) && node.AsSourceFile().GlobalExports != nil
 }
