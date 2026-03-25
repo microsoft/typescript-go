@@ -32,7 +32,10 @@ import {
     isVariableDeclarationList,
     NodeFlags,
 } from "@typescript/ast";
-import { SyntaxKind, isTypeNode } from "@typescript/ast";
+import {
+    isTypeNode,
+    SyntaxKind,
+} from "@typescript/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
