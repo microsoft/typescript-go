@@ -718,8 +718,6 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	if callerRef {
 		newSnapshot.ref()
 	}
-	s.snapshotMu.Unlock()
-
 	if newSnapshot != oldSnapshot {
 		// Release the session's reference to the old snapshot. The new snapshot's
 		// clone ref (1) is transferred to become the session's ref for its current
@@ -727,6 +725,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 		// via their own refs until they complete.
 		oldSnapshot.Deref(s)
 	}
+	s.snapshotMu.Unlock()
 
 	// Enqueue ATA updates if needed
 	if s.typingsInstaller != nil {
