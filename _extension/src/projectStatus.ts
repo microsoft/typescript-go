@@ -179,6 +179,5 @@ export class ProjectStatus implements vscode.Disposable {
 }
 
 function isInferredProjectName(configFileName: string): boolean {
-    // Inferred projects use a synthetic name like "/dev/null/inferredProject1*"
-    return configFileName.includes("inferredProject") || configFileName === "";
+    return configFileName.startsWith("/dev/null/");
 }
