@@ -72,6 +72,7 @@ type Watcher struct {
 	extendedConfigCache *tsc.ExtendedConfigCache
 	configModified      bool
 	configHasErrors     bool
+	lastConfigMtime     time.Time
 
 	watchState map[string]watchEntry
 }
@@ -185,6 +186,12 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		return false
 	}
 
+	if !w.configHasErrors {
+		if s := w.sys.FS().Stat(w.configFileName); s != nil && s.ModTime().Equal(w.lastConfigMtime) {
+			return false
+		}
+	}
+
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
 	if len(errors) > 0 {
@@ -200,6 +207,9 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		w.configModified = true
 	}
 	w.configHasErrors = false
+	if s := w.sys.FS().Stat(w.configFileName); s != nil {
+		w.lastConfigMtime = s.ModTime()
+	}
 	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
 	}
