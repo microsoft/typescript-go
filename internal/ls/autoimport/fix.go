@@ -1027,10 +1027,10 @@ func promoteFromTypeOnly(
 					if spec.PropertyName != nil {
 						propertyName = changes.NodeFactory.NewIdentifier(spec.PropertyName.Text()).AsIdentifier().AsNode()
 					}
-					newSpecifier := changes.NodeFactory.NewImportSpecifier(
+					newSpecifier := changes.NewImportSpecifier(
 						false, // isTypeOnly = false
 						propertyName,
-						changes.NodeFactory.NewIdentifier(spec.Name().Text()),
+						changes.NewIdentifier(spec.Name().Text()),
 					)
 					specifierComparer, _ := lsutil.GetNamedImportSpecifierComparerWithDetection(
 						spec.Parent.Parent.Parent, // ImportDeclaration
