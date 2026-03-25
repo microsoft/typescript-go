@@ -68,7 +68,7 @@ func ProbablyUsesSemicolons(file *ast.SourceFile) bool {
 	if withoutSemicolon == 0 {
 		return true
 	}
-	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
+	return withSemicolon*nStatementsToObserve > withoutSemicolon
 }
 
 func ShouldUseUriStyleNodeCoreModules(file *ast.SourceFile, program *compiler.Program) core.Tristate {
