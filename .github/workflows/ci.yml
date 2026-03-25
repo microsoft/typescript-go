@@ -22,6 +22,7 @@ defaults:
 
 jobs:
   build:
+    name: Build / tsgo
     runs-on: ubuntu-latest
     steps:
       - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
@@ -47,6 +48,7 @@ jobs:
       - run: npx hereby build
 
   release-build:
+    name: Build / Release
     if: ${{ github.repository == 'microsoft/typescript-go' && github.event_name != 'merge_group' }}
     runs-on: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
     steps:
@@ -70,6 +72,7 @@ jobs:
       - run: npx hereby native-preview:release --forRelease --setPrerelease dev.0.0
 
   extension:
+    name: Build / Extension
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -112,7 +115,7 @@ jobs:
           - config:
               skip: true
 
-    name: test (${{ matrix.config.name || matrix.config.os }})
+    name: Test / ${{ matrix.config.name || matrix.config.os }}
 
     runs-on: ${{ matrix.config.os }}
 
@@ -217,7 +220,7 @@ jobs:
           - config:
               skip: true
 
-    name: lint (${{ matrix.config.name || matrix.config.os }})
+    name: Lint / ${{ matrix.config.name || matrix.config.os }}
 
     runs-on: ${{ matrix.config.os }}
 
@@ -251,6 +254,7 @@ jobs:
       - run: npx hereby lint
 
   format:
+    name: Checks / Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -262,6 +266,7 @@ jobs:
       - run: npx hereby check:format
 
   generate:
+    name: Checks / Generate
     runs-on: ubuntu-latest
     steps:
       - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
@@ -304,6 +309,7 @@ jobs:
       - run: git diff --staged --exit-code --stat
 
   tidy:
+    name: Checks / Tidy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -313,6 +319,7 @@ jobs:
       - run: go -C ./_tools mod tidy -diff
 
   smoke:
+    name: Test / Smoke
     runs-on: ubuntu-latest
     steps:
       - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
@@ -346,6 +353,7 @@ jobs:
       - run: ./built/local/tsgo -p ./_submodules/TypeScript/src/compiler
 
   misc:
+    name: Checks / Misc
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
