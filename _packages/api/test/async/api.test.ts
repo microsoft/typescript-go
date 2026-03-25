@@ -17,7 +17,7 @@ import {
 import { createVirtualFileSystem } from "@typescript/api/fs";
 import type { FileSystem } from "@typescript/api/fs";
 import {
-    cast,
+    cast, getSynthesizedDeepClone,
     isCallExpression,
     isFunctionDeclaration,
     isIdentifier,
@@ -49,6 +49,8 @@ import {
 } from "node:test";
 import { fileURLToPath } from "node:url";
 import { runBenchmarks } from "./api.bench.ts";
+import { resolve } from 'node:path';
+import { globSync } from 'node:fs';
 
 const defaultFiles = {
     "/tsconfig.json": "{}",
@@ -2157,14 +2159,81 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
     });
 });
 
+test("Parse-emit roundtrip", async () => {
+    const tsSource = fileURLToPath(new URL('../../../../_submodules/TypeScript/src', import.meta.url).toString());
+    const api = new API({
+        cwd: tsSource,
+        tsserverPath: getTsserverPath(),
+    });
+    let errors = 0;
+    try {
+        for (const tsconfig of globSync('**/tsconfig.json', { cwd: tsSource })) {
+            const snapshot = await api.updateSnapshot({openProject: resolve(tsSource, tsconfig)});
+            const project = snapshot.getProject(tsconfig);
+            assert(project);
+            for (const file of project.rootFiles) {
+                const source = await project.program.getSourceFile(file);
+                assert(source);
+                try {
+                    await project.emitter.printNode(source);
+                }
+                catch (e) {
+                    console.error('In', file, String(e).split('\n').slice(0, 10).join('\n'));
+                    errors++;
+                }
+            }
+        }
+    }
+    finally {
+        await api.close();
+    }
+    assert.equal(errors, 0);
+});
+
+test("Parse-clone-emit roundtrip", async () => {
+    const tsSource = fileURLToPath(new URL('../../../../_submodules/TypeScript/src', import.meta.url).toString());
+    const api = new API({
+        cwd: tsSource,
+        tsserverPath: getTsserverPath(),
+    });
+    let errors = 0
+    try {
+        for (const tsconfig of globSync('**/tsconfig.json', { cwd: tsSource })) {
+            const snapshot = await api.updateSnapshot({openProject: resolve(tsSource, tsconfig)});
+            const project = snapshot.getProject(tsconfig);
+            assert(project);
+            for (const file of project.rootFiles) {
+                const source = await project.program.getSourceFile(file);
+                assert(source);
+                try {
+                    const clone = getSynthesizedDeepClone(source);
+                    await project.emitter.printNode(clone);
+                }
+                catch (e) {
+                    console.error('In', file, String(e).split('\n').slice(0, 10).join('\n'));
+                    errors++;
+                }
+            }
+        }
+    }
+    finally {
+        await api.close();
+    }
+    assert.equal(errors, 0);
+});
+
 test("Benchmarks", async () => {
     await runBenchmarks({ singleIteration: true });
 });
 
+function getTsserverPath() {
+    return fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString());
+}
+
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
     return new API({
         cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-        tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+        tsserverPath: getTsserverPath(),
         fs: createVirtualFileSystem(files),
     });
 }
@@ -2173,7 +2242,7 @@ function spawnAPIWithFS(files: Record<string, string> = { ...defaultFiles }): { 
     const fs = createVirtualFileSystem(files);
     const api = new API({
         cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-        tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+        tsserverPath: getTsserverPath(),
         fs,
     });
     return { api, fs };
