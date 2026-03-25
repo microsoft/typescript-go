@@ -419,7 +419,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		it := newChildIter(childIndices)
 		expr := d.nodeAt(it.nextIf(mask, 0))
 		stmts := d.nodeListAt(it.nextIf(mask, 1))
-		return d.factory.NewCaseOrDefaultClause(ast.KindCaseClause, expr, stmts), nil
+		return d.factory.NewCaseOrDefaultClause(ast.KindCaseClause, expr, d.emptyIfNil(stmts)), nil
 
 	case ast.KindDefaultClause:
 		it := newChildIter(childIndices)
