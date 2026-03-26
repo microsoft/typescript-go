@@ -49,7 +49,6 @@ import {
 } from "../path.ts";
 import type {
     ConfigResponse,
-    DiagnosticResponse,
     DocumentIdentifier,
     DocumentPosition,
     IndexInfoResponse,
@@ -371,12 +370,12 @@ export class Program {
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
      */
     getSyntacticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getSyntacticDiagnostics", {
+        const data = this.client.apiRequest<Diagnostic[]>("getSyntacticDiagnostics", {
             snapshot: this.snapshotId,
             project: this.projectId,
             ...(file !== undefined ? { file } : {}),
         });
-        return data?.map(toDiagnostic) ?? [];
+        return data ?? [];
     }
 
     /**
@@ -384,12 +383,12 @@ export class Program {
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
      */
     getSemanticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getSemanticDiagnostics", {
+        const data = this.client.apiRequest<Diagnostic[]>("getSemanticDiagnostics", {
             snapshot: this.snapshotId,
             project: this.projectId,
             ...(file !== undefined ? { file } : {}),
         });
-        return data?.map(toDiagnostic) ?? [];
+        return data ?? [];
     }
 
     /**
@@ -397,12 +396,12 @@ export class Program {
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
      */
     getSuggestionDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getSuggestionDiagnostics", {
+        const data = this.client.apiRequest<Diagnostic[]>("getSuggestionDiagnostics", {
             snapshot: this.snapshotId,
             project: this.projectId,
             ...(file !== undefined ? { file } : {}),
         });
-        return data?.map(toDiagnostic) ?? [];
+        return data ?? [];
     }
 
     /**
@@ -410,34 +409,34 @@ export class Program {
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
      */
     getDeclarationDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getDeclarationDiagnostics", {
+        const data = this.client.apiRequest<Diagnostic[]>("getDeclarationDiagnostics", {
             snapshot: this.snapshotId,
             project: this.projectId,
             ...(file !== undefined ? { file } : {}),
         });
-        return data?.map(toDiagnostic) ?? [];
+        return data ?? [];
     }
 
     /**
      * Get config file parsing diagnostics for the project.
      */
     getConfigFileParsingDiagnostics(): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getConfigFileParsingDiagnostics", {
+        const data = this.client.apiRequest<Diagnostic[]>("getConfigFileParsingDiagnostics", {
             snapshot: this.snapshotId,
             project: this.projectId,
         });
-        return data?.map(toDiagnostic) ?? [];
+        return data ?? [];
     }
 
     /**
      * Get global diagnostics (not associated with a specific file).
      */
     getGlobalDiagnostics(): readonly Diagnostic[] {
-        const data = this.client.apiRequest<DiagnosticResponse[]>("getGlobalDiagnostics", {
+        const data = this.client.apiRequest<Diagnostic[]>("getGlobalDiagnostics", {
             snapshot: this.snapshotId,
             project: this.projectId,
         });
-        return data?.map(toDiagnostic) ?? [];
+        return data ?? [];
     }
 }
 
@@ -1039,20 +1038,4 @@ export class Signature {
     get isAbstract(): boolean {
         return (this.flags & SignatureFlags.Abstract) !== 0;
     }
-}
-
-/** Convert a DiagnosticResponse to a Diagnostic */
-function toDiagnostic(resp: DiagnosticResponse): Diagnostic {
-    return {
-        fileName: resp.fileName,
-        pos: resp.pos,
-        end: resp.end,
-        code: resp.code,
-        category: resp.category as DiagnosticCategory,
-        text: resp.text,
-        reportsUnnecessary: resp.reportsUnnecessary,
-        reportsDeprecated: resp.reportsDeprecated,
-        messageChain: resp.messageChain?.map(toDiagnostic),
-        relatedInformation: resp.relatedInformation?.map(toDiagnostic),
-    };
 }

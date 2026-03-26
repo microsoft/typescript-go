@@ -2177,8 +2177,6 @@ describe("Program - diagnostics", () => {
                 text: "Type expected.",
                 reportsUnnecessary: false,
                 reportsDeprecated: false,
-                messageChain: undefined,
-                relatedInformation: undefined,
             }]);
         }
         finally {
@@ -2222,10 +2220,7 @@ describe("Program - diagnostics", () => {
                         text: "Type 'string' is not assignable to type 'number'.",
                         reportsUnnecessary: false,
                         reportsDeprecated: false,
-                        messageChain: undefined,
-                        relatedInformation: undefined,
                     }],
-                    relatedInformation: undefined,
                 }],
                 relatedInformation: [{
                     fileName: "/src/index.ts",
@@ -2235,8 +2230,6 @@ describe("Program - diagnostics", () => {
                     text: "The expected type comes from property 'callback' which is declared here on type 'Props'",
                     reportsUnnecessary: false,
                     reportsDeprecated: false,
-                    messageChain: undefined,
-                    relatedInformation: undefined,
                 }],
             }]);
         }
@@ -2263,8 +2256,6 @@ describe("Program - diagnostics", () => {
                 text: "'_unused' is declared but its value is never read.",
                 reportsUnnecessary: true,
                 reportsDeprecated: false,
-                messageChain: undefined,
-                relatedInformation: undefined,
             }]);
         }
         finally {
@@ -2290,8 +2281,6 @@ describe("Program - diagnostics", () => {
                 text: "Argument for '--target' option must be: 'es6', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022', 'es2023', 'es2024', 'es2025', 'esnext'.",
                 reportsUnnecessary: false,
                 reportsDeprecated: false,
-                messageChain: undefined,
-                relatedInformation: undefined,
             }]);
         }
         finally {
