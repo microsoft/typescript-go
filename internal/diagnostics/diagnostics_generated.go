@@ -4296,7 +4296,7 @@ var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_10
 
 var Installing_typings_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_typings_for_0_100013", text: "Installing typings for '{0}'"}
 
-var Loading_project_0 = &Message{code: 100014, category: CategoryMessage, key: "Loading_project_0_100014", text: "Loading project '{0}'"}
+var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8594,8 +8594,8 @@ func keyToMessage(key Key) *Message {
 		return Loading
 	case "Installing_typings_for_0_100013":
 		return Installing_typings_for_0
-	case "Loading_project_0_100014":
-		return Loading_project_0
+	case "Project_0_100014":
+		return Project_0
 	default:
 		return nil
 	}

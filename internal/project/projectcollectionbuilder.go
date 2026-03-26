@@ -1033,7 +1033,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		if updateProgram {
 			if b.client != nil {
 				displayName = entry.Value().DisplayName()
-				b.client.ProgressStart(b.ctx, diagnostics.Loading_project_0, displayName)
+				b.client.ProgressStart(b.ctx, diagnostics.Project_0, displayName)
 				notifiedLoading = true
 			}
 			entry.Change(func(project *Project) {
@@ -1057,7 +1057,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		}
 	})
 	if notifiedLoading && b.client != nil {
-		b.client.ProgressFinish(b.ctx, diagnostics.Loading_project_0, displayName)
+		b.client.ProgressFinish(b.ctx, diagnostics.Project_0, displayName)
 	}
 	if updateProgram && logger != nil {
 		elapsed := time.Since(startTime)
