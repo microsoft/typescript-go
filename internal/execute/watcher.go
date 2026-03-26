@@ -157,12 +157,13 @@ type watchCompilerHost struct {
 
 var _ compiler.CompilerHost = (*watchCompilerHost)(nil)
 
-func (h *watchCompilerHost) FS() vfs.FS                    { return h.inner.FS() }
-func (h *watchCompilerHost) DefaultLibraryPath() string     { return h.inner.DefaultLibraryPath() }
-func (h *watchCompilerHost) GetCurrentDirectory() string    { return h.inner.GetCurrentDirectory() }
+func (h *watchCompilerHost) FS() vfs.FS                  { return h.inner.FS() }
+func (h *watchCompilerHost) DefaultLibraryPath() string  { return h.inner.DefaultLibraryPath() }
+func (h *watchCompilerHost) GetCurrentDirectory() string { return h.inner.GetCurrentDirectory() }
 func (h *watchCompilerHost) Trace(msg *diagnostics.Message, args ...any) {
 	h.inner.Trace(msg, args...)
 }
+
 func (h *watchCompilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
 	return h.inner.GetResolvedProjectReference(fileName, path)
 }
@@ -317,6 +318,7 @@ func (w *Watcher) compileAndEmit() {
 		Sys:                w.sys,
 		ProgramLike:        w.program,
 		Program:            w.program.GetProgram(),
+		Config:             w.config,
 		ReportDiagnostic:   w.reportDiagnostic,
 		ReportErrorSummary: w.reportErrorSummary,
 		Writer:             w.sys.Writer(),
