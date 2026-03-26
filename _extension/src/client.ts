@@ -292,11 +292,11 @@ export class Client implements vscode.Disposable {
         return result.file;
     }
 
-    async getProjectInfo(uri: string, token?: vscode.CancellationToken): Promise<{ configFileName: string; }> {
+    async getProjectInfo(uri: string, token?: vscode.CancellationToken): Promise<{ configFilePath: string; }> {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        return this.client.sendRequest<{ configFileName: string; }>("custom/projectInfo", {
+        return this.client.sendRequest<{ configFilePath: string; }>("custom/projectInfo", {
             textDocument: { uri },
         }, token);
     }

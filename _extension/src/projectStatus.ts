@@ -83,7 +83,7 @@ export class ProjectStatus implements vscode.Disposable {
         try {
             const result = await this.client.getProjectInfo(doc.uri.toString(), pendingState.cancellation.token);
             if (this.state === pendingState) {
-                this.updateState(new ProjectInfoState.Resolved(doc.uri, result.configFileName));
+                this.updateState(new ProjectInfoState.Resolved(doc.uri, result.configFilePath));
             }
         }
         catch {
@@ -122,8 +122,9 @@ export class ProjectStatus implements vscode.Disposable {
                 break;
             }
             case ProjectInfoState.Type.Resolved: {
-                const isTypeScript = this.activeEditorTracker.activeJsTsEditor?.document.languageId === "typescript"
-                    || this.activeEditorTracker.activeJsTsEditor?.document.languageId === "typescriptreact";
+                const currentLanguageId = this.activeEditorTracker.activeJsTsEditor?.document.languageId;
+                const isTypeScript = currentLanguageId === "typescript"
+                    || currentLanguageId === "typescriptreact";
                 const noConfigFileText = isTypeScript ? "No tsconfig" : "No jsconfig";
 
                 const rootPath = this.getWorkspaceRootForResource(this.state.resource);

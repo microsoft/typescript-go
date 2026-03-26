@@ -103,7 +103,7 @@
         "category": "Message",
         "code": 100014
     },
-    "Installing typings for '{0}'": {
+    "Installing types for '{0}'": {
         "category": "Message",
         "code": 100013
     }

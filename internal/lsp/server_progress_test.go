@@ -93,7 +93,7 @@ func TestProgressNotificationsEndToEnd(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Equal(t, resp.ConfigFileName, "/home/projects/tsconfig.json")
+	assert.Equal(t, resp.ConfigFilePath, "/home/projects/tsconfig.json")
 
 	// Wait for the "end" progress notification before reading.
 	select {

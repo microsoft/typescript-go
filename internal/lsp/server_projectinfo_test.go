@@ -71,7 +71,7 @@ func TestProjectInfoConfiguredProject(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Equal(t, resp.ConfigFileName, "/home/projects/tsconfig.json")
+	assert.Equal(t, resp.ConfigFilePath, "/home/projects/tsconfig.json")
 }
 
 func TestProjectInfoInferredProject(t *testing.T) {
@@ -95,5 +95,5 @@ func TestProjectInfoInferredProject(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Equal(t, resp.ConfigFileName, "")
+	assert.Equal(t, resp.ConfigFilePath, "")
 }

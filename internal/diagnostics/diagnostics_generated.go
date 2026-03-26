@@ -4294,7 +4294,7 @@ var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011,
 
 var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_100012", text: "Loading"}
 
-var Installing_typings_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_typings_for_0_100013", text: "Installing typings for '{0}'"}
+var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_types_for_0_100013", text: "Installing types for '{0}'"}
 
 var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
 
@@ -8592,8 +8592,8 @@ func keyToMessage(key Key) *Message {
 		return Deduplicate_packages_with_the_same_name_and_version
 	case "Loading_100012":
 		return Loading
-	case "Installing_typings_for_0_100013":
-		return Installing_typings_for_0
+	case "Installing_types_for_0_100013":
+		return Installing_types_for_0
 	case "Project_0_100014":
 		return Project_0
 	default:

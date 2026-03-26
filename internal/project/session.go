@@ -1082,11 +1082,11 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 
 				projectDisplayName := project.DisplayName(s.options.CurrentDirectory)
 				if s.client != nil {
-					s.client.ProgressStart(diagnostics.Installing_typings_for_0, projectDisplayName)
+					s.client.ProgressStart(diagnostics.Installing_types_for_0, projectDisplayName)
 				}
 				result, err := s.typingsInstaller.InstallTypings(request)
 				if s.client != nil {
-					s.client.ProgressFinish(diagnostics.Installing_typings_for_0, projectDisplayName)
+					s.client.ProgressFinish(diagnostics.Installing_types_for_0, projectDisplayName)
 				}
 				if err != nil {
 					if logTree != nil {

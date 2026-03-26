@@ -22268,14 +22268,14 @@ func (s *ProjectInfoParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 // Result for the custom/projectInfo request.
 type ProjectInfoResult struct {
 	// The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.
-	ConfigFileName string `json:"configFileName"`
+	ConfigFilePath string `json:"configFilePath"`
 }
 
 var _ json.UnmarshalerFrom = (*ProjectInfoResult)(nil)
 
 func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	const (
-		missingConfigFileName uint = 1 << iota
+		missingConfigFilePath uint = 1 << iota
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -22293,9 +22293,9 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 			return err
 		}
 		switch string(name) {
-		case `"configFileName"`:
-			missing &^= missingConfigFileName
-			if err := json.UnmarshalDecode(dec, &s.ConfigFileName); err != nil {
+		case `"configFilePath"`:
+			missing &^= missingConfigFilePath
+			if err := json.UnmarshalDecode(dec, &s.ConfigFilePath); err != nil {
 				return err
 			}
 		default:
@@ -22309,8 +22309,8 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	if missing != 0 {
 		var missingProps []string
-		if missing&missingConfigFileName != 0 {
-			missingProps = append(missingProps, "configFileName")
+		if missing&missingConfigFilePath != 0 {
+			missingProps = append(missingProps, "configFilePath")
 		}
 		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}

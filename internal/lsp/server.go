@@ -1542,11 +1542,11 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	if err != nil {
 		return nil, err
 	}
-	configFileName := ""
+	configFilePath := ""
 	if defaultProject != nil && defaultProject.Kind == project.KindConfigured {
-		configFileName = defaultProject.Name()
+		configFilePath = defaultProject.Name()
 	}
 	return &lsproto.ProjectInfoResult{
-		ConfigFileName: configFileName,
+		ConfigFilePath: configFilePath,
 	}, nil
 }
