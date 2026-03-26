@@ -2303,18 +2303,6 @@ describe("Program - diagnostics", () => {
             await api.close();
         }
     });
-
-    test("getGlobalDiagnostics", async () => {
-        const api = spawnAPI();
-        try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
-            assert.equal(typeof project.program.getGlobalDiagnostics, "function");
-        }
-        finally {
-            await api.close();
-        }
-    });
 });
 
 test("Benchmarks", async () => {

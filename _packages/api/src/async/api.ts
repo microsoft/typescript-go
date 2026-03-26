@@ -419,17 +419,6 @@ export class Program {
         });
         return data ?? [];
     }
-
-    /**
-     * Get global diagnostics (not associated with a specific file).
-     */
-    async getGlobalDiagnostics(): Promise<readonly Diagnostic[]> {
-        const data = await this.client.apiRequest<Diagnostic[]>("getGlobalDiagnostics", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-        });
-        return data ?? [];
-    }
 }
 
 export class Checker {

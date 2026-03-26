@@ -2311,18 +2311,6 @@ describe("Program - diagnostics", () => {
             api.close();
         }
     });
-
-    test("getGlobalDiagnostics", () => {
-        const api = spawnAPI();
-        try {
-            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
-            assert.equal(typeof project.program.getGlobalDiagnostics, "function");
-        }
-        finally {
-            api.close();
-        }
-    });
 });
 
 test("Benchmarks", () => {

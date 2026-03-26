@@ -451,8 +451,6 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetDeclarationDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetConfigFileParsingDiagnostics):
 		return s.handleGetConfigFileParsingDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
-	case string(MethodGetGlobalDiagnostics):
-		return s.handleGetGlobalDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -1869,22 +1867,6 @@ func (s *Session) handleGetConfigFileParsingDiagnostics(ctx context.Context, par
 	}
 
 	diags := program.GetConfigFileParsingDiagnostics()
-	return NewDiagnosticResponses(diags), nil
-}
-
-// handleGetGlobalDiagnostics returns global diagnostics.
-func (s *Session) handleGetGlobalDiagnostics(ctx context.Context, params *GetProjectDiagnosticsParams) ([]*DiagnosticResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	diags := program.GetGlobalDiagnostics(ctx)
 	return NewDiagnosticResponses(diags), nil
 }
 
