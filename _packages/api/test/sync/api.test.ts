@@ -40,8 +40,8 @@ import {
     isTemplateTail,
     isVariableDeclarationList,
     NodeFlags,
+    SyntaxKind,
 } from "@typescript/ast";
-import { SyntaxKind } from "@typescript/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
@@ -2168,36 +2168,31 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
     });
 });
 
-test("Parse-emit roundtrip", () => {
-    const tsSource = fileURLToPath(new URL("../../../../_submodules/TypeScript/src", import.meta.url).toString());
-    const api = new API({
-        cwd: tsSource,
-        tsserverPath: getTsserverPath(),
-    });
-    let errors = 0;
-    try {
-        for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
-            const snapshot = api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
-            const project = snapshot.getProject(tsconfig);
-            assert(project);
-            for (const file of project.rootFiles) {
-                const source = project.program.getSourceFile(file);
-                assert(source);
-                try {
-                    project.emitter.printNode(source);
-                }
-                catch (e) {
-                    console.error("In", file, e);
-                    errors++;
-                }
-            }
-        }
+function extractSourceWords(source: string) {
+    return Array.from(
+        source
+            .replace(/\/\/.*/g, " ")
+            .replace(/\/\*.*?\*\//sg, " ")
+            .replace(/\\[rnt]/g, " ")
+            .matchAll(/\w+/g),
+    ).map(match => ({
+        index: match.index,
+        word: match[0],
+    }));
+}
+function compareWords(file: string, source: string, output: string, cloned = false) {
+    const srcWords = extractSourceWords(source);
+    const outWords = extractSourceWords(output);
+    const diffAt = srcWords.findIndex((match, i) => !outWords[i] || outWords[i].word != match.word);
+    if (diffAt < 0) return true;
+    const table: any[][] = [];
+    for (let i = Math.max(0, diffAt - 3), i1 = diffAt + 3; i < i1; i++) {
+        table.push([i, srcWords[i]?.index, srcWords[i]?.word, outWords[i]?.index, outWords[i]?.word]);
     }
-    finally {
-        api.close();
-    }
-    assert.equal(errors, 0);
-});
+    console.log("In", file, cloned ? "(cloned)" : "");
+    console.table(table);
+    return false;
+}
 
 test("Parse-clone-emit roundtrip", () => {
     const tsSource = fileURLToPath(new URL("../../../../_submodules/TypeScript/src", import.meta.url).toString());
@@ -2205,7 +2200,14 @@ test("Parse-clone-emit roundtrip", () => {
         cwd: tsSource,
         tsserverPath: getTsserverPath(),
     });
-    let errors = 0;
+    const target = {
+        cloneCrashed: 0,
+        printCrashed: 0,
+        clonePrintCrashed: 0,
+        printWrong: 0,
+        clonePrintWrong: 0,
+    };
+    const errors = { ...target };
     try {
         for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
             const snapshot = api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
@@ -2214,13 +2216,42 @@ test("Parse-clone-emit roundtrip", () => {
             for (const file of project.rootFiles) {
                 const source = project.program.getSourceFile(file);
                 assert(source);
+                let clone: typeof source;
+                let printed: string;
+
                 try {
-                    const clone = getSynthesizedDeepClone(source);
-                    project.emitter.printNode(clone);
+                    printed = project.emitter.printNode(source);
                 }
                 catch (e) {
-                    console.error("In", file, e);
-                    errors++;
+                    console.log("In", file, e);
+                    errors.printCrashed++;
+                    continue;
+                }
+
+                if (!compareWords(file, source.text, printed)) {
+                    errors.printWrong++;
+                }
+
+                try {
+                    clone = getSynthesizedDeepClone(source);
+                }
+                catch (e) {
+                    console.log("In", file, e);
+                    errors.cloneCrashed++;
+                    continue;
+                }
+
+                try {
+                    printed = project.emitter.printNode(clone);
+                }
+                catch (e) {
+                    console.log("In", file, e);
+                    errors.clonePrintCrashed++;
+                    continue;
+                }
+
+                if (!compareWords(file, source.text, printed, true)) {
+                    errors.clonePrintWrong++;
                 }
             }
         }
@@ -2228,7 +2259,7 @@ test("Parse-clone-emit roundtrip", () => {
     finally {
         api.close();
     }
-    assert.equal(errors, 0);
+    assert.deepEqual(errors, target);
 });
 
 test("Benchmarks", () => {
