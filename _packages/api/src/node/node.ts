@@ -7,6 +7,7 @@ import {
     type Path,
     type SourceFile,
     SyntaxKind,
+    TokenFlags,
 } from "@typescript/ast";
 import { MsgpackReader } from "./msgpack.ts";
 import {
@@ -593,11 +594,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
-    get tokenFlags(): number {
+    get tokenFlags(): TokenFlags {
         switch (this.kind) {
             case SyntaxKind.RegularExpressionLiteral:
-                // Bit 24 = Unterminated (TokenFlags 1 << 2 = 4)
-                return (this.data & 1 << 24) !== 0 ? 4 : 0;
+                return (this.data & 1 << 24) !== 0 ? TokenFlags.Unterminated : 0;
             default:
                 return 0;
         }
