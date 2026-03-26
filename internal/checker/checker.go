@@ -6718,6 +6718,12 @@ func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.M
 	}
 }
 
+func (c *Checker) checkClassNameCollisionWithObject(name *ast.Node) {
+	if name.Text() == "Object" && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(name)) < core.ModuleKindES2015 {
+		c.error(name, diagnostics.Class_name_cannot_be_Object_when_targeting_ES5_and_above_with_module_0, c.moduleKind.String())
+	}
+}
+
 func (c *Checker) checkExportsOnMergedDeclarations(node *ast.Node) {
 	// If localSymbol is defined on node then node itself is exported - check is required.
 	symbol := node.LocalSymbol()
@@ -10175,7 +10181,12 @@ func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.No
 	case name == nil:
 		return
 	case ast.IsClassLike(node):
-		c.checkTypeNameIsReserved(name, diagnostics.Class_name_cannot_be_0)
+		{
+			c.checkTypeNameIsReserved(name, diagnostics.Class_name_cannot_be_0)
+			if node.Flags&ast.NodeFlagsAmbient != 0 {
+				c.checkClassNameCollisionWithObject(name)
+			}
+		}
 	case ast.IsEnumDeclaration(node):
 		c.checkTypeNameIsReserved(name, diagnostics.Enum_name_cannot_be_0)
 	}
