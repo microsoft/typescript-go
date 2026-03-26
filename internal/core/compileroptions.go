@@ -2,6 +2,7 @@ package core
 
 import (
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -10,7 +11,7 @@ import (
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind -trimprefix=ModuleKind -output=modulekind_stringer_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
+//go:generate npx dprint fmt modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
 type CompilerOptions struct {
 	_ noCopy
@@ -316,6 +317,11 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 		return nil, false
 	})
 	return typeRoots, false
+}
+
+// UsesWildcardTypes returns true if this option's types array includes "*"
+func (options *CompilerOptions) UsesWildcardTypes() bool {
+	return slices.Contains(options.Types, "*")
 }
 
 func (options *CompilerOptions) GetIsolatedModules() bool {

@@ -128,13 +128,6 @@ export const y = 10;
 tsgo -p project1 --explainFiles
 ExitStatus:: Success
 Output::
-======== Resolving type reference directive 'sometype', containing file '/home/src/workspace/projects/project1/__inferred type names__.ts', root directory '/home/src/workspace/projects/project1/typeroot1'. ========
-Resolving with primary search path '/home/src/workspace/projects/project1/typeroot1'.
-File '/home/src/workspace/projects/project1/typeroot1/sometype.d.ts' does not exist.
-File '/home/src/workspace/projects/project1/typeroot1/sometype/package.json' does not exist.
-File '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts' exists - use it as a name resolution result.
-Resolving real path for '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts', result '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts'.
-======== Type reference directive 'sometype' was successfully resolved to '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts', primary: true. ========
 ======== Resolving module '@typescript/lib-dom' from '/home/src/workspace/projects/project1/__lib_node_modules_lookup_lib.dom.d.ts__.ts'. ========
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
@@ -147,8 +140,6 @@ File '/package.json' does not exist.
 Loading module '@typescript/lib-dom' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/workspace/projects/project1/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspace/projects/project1/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'typescript__lib-dom'
 File '/home/src/workspace/projects/node_modules/@typescript/lib-dom/package.json' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-dom.ts' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-dom.tsx' does not exist.
@@ -170,8 +161,6 @@ File '/package.json' does not exist according to earlier cached lookups.
 Loading module '@typescript/lib-es5' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/workspace/projects/project1/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspace/projects/project1/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'typescript__lib-es5'
 File '/home/src/workspace/projects/node_modules/@typescript/lib-es5/package.json' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-es5.ts' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-es5.tsx' does not exist.
@@ -193,8 +182,6 @@ File '/package.json' does not exist according to earlier cached lookups.
 Loading module '@typescript/lib-scripthost' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/workspace/projects/project1/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspace/projects/project1/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'typescript__lib-scripthost'
 File '/home/src/workspace/projects/node_modules/@typescript/lib-scripthost/package.json' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-scripthost.ts' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-scripthost.tsx' does not exist.
@@ -216,8 +203,6 @@ File '/package.json' does not exist according to earlier cached lookups.
 Loading module '@typescript/lib-webworker' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/home/src/workspace/projects/project1/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspace/projects/project1/node_modules/@types' does not exist, skipping all lookups in it.
-Scoped package detected, looking in 'typescript__lib-webworker'
 File '/home/src/workspace/projects/node_modules/@typescript/lib-webworker/package.json' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-webworker.ts' does not exist.
 File '/home/src/workspace/projects/node_modules/@typescript/lib-webworker.tsx' does not exist.
@@ -248,7 +233,6 @@ project1/utils.d.ts
    Matched by default include pattern '**/*'
 project1/typeroot1/sometype/index.d.ts
    Matched by default include pattern '**/*'
-   Entry point for implicit type library 'sometype'
 //// [/home/src/workspace/projects/project1/file.d.ts] *new* 
 export declare const file = 10;
 

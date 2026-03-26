@@ -222,7 +222,7 @@ func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspat
 	}
 	projectBucket, ok := r.projects[projectPath]
 	if !ok {
-		panic("project bucket missing")
+		return false
 	}
 	path := r.toPath(fileName)
 	if projectBucket.state.possiblyNeedsRebuildForFile(path, preferences) {
@@ -444,8 +444,15 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 	}
 
+	if change.RequestedFile != "" {
+		neededProjects[core.FirstResult(b.host.GetDefaultProject(change.RequestedFile))] = struct{}{}
+		if !b.specifierCache.Has(change.RequestedFile) {
+			b.specifierCache.Set(change.RequestedFile, &collections.SyncMap[tspath.Path, string]{})
+		}
+	}
+
 	for path := range b.base.specifierCache {
-		if _, ok := change.OpenFiles[path]; !ok {
+		if _, ok := change.OpenFiles[path]; !ok && path != change.RequestedFile {
 			b.specifierCache.Delete(path)
 		}
 	}
@@ -745,41 +752,79 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 	wg.Wait()
 
-	// --- Deduplicate by realpath ---
-	// Collect unique realpaths across all buckets so each physical package is extracted only once.
-	uniquePackages := make(map[string]*discoveredPackage)
+	// --- Phase 2: Extraction (parallel per unique realpath) ---
+	// Extract from main packages first. If a main package has no TypeScript entrypoints,
+	// we fall back to extracting from @types in a second pass. Packages with no main
+	// package extract directly from @types in the primary pass.
+	seen := make(map[string]bool)
+	extractionCache := make(map[string]*perPackageExtractionResult)
+	var extractionMu sync.Mutex
+	// Collect all packages that have an @types fallback. After the primary pass, we
+	// filter to only those whose main extraction failed, then deduplicate by typesRealpath.
+	var typesFallbackCandidates []*discoveredPackage
 	for _, task := range nodeModulesTasks {
 		if task.discoverErr != nil {
 			continue
 		}
 		for _, pkg := range task.discovered {
 			if pkg.realpath != "" {
-				if _, exists := uniquePackages[pkg.realpath]; !exists {
-					uniquePackages[pkg.realpath] = pkg
+				if !seen[pkg.realpath] {
+					seen[pkg.realpath] = true
+					wg.Go(func() {
+						if ctx.Err() != nil {
+							return
+						}
+						result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+						if result != nil {
+							extractionMu.Lock()
+							extractionCache[pkg.realpath] = result
+							extractionMu.Unlock()
+						}
+					})
+				}
+				if pkg.typesRealpath != "" {
+					typesFallbackCandidates = append(typesFallbackCandidates, pkg)
+				}
+			} else if pkg.typesRealpath != "" {
+				if !seen[pkg.typesRealpath] {
+					seen[pkg.typesRealpath] = true
+					wg.Go(func() {
+						if ctx.Err() != nil {
+							return
+						}
+						result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+						if result != nil {
+							extractionMu.Lock()
+							extractionCache[pkg.typesRealpath] = result
+							extractionMu.Unlock()
+						}
+					})
 				}
 			}
 		}
 	}
-	b.uniquePackageCount = len(uniquePackages)
+	wg.Wait()
 
-	// --- Phase 2: Extraction (parallel per unique realpath) ---
-	// Each physical package is extracted exactly once, regardless of how many buckets reference it.
-	extractionCache := make(map[string]*perPackageExtractionResult, len(uniquePackages))
-	var extractionMu sync.Mutex
-	for _, pkg := range uniquePackages {
+	// For packages whose main extraction yielded nothing, fall back to @types.
+	for _, pkg := range typesFallbackCandidates {
+		if extractionCache[pkg.realpath] != nil || seen[pkg.typesRealpath] {
+			continue
+		}
+		seen[pkg.typesRealpath] = true
 		wg.Go(func() {
 			if ctx.Err() != nil {
 				return
 			}
-			result := b.extractPackage(ctx, pkg, projectReferenceOutputs, fileExcludePatterns)
+			result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
 			if result != nil {
 				extractionMu.Lock()
-				extractionCache[pkg.realpath] = result
+				extractionCache[pkg.typesRealpath] = result
 				extractionMu.Unlock()
 			}
 		})
 	}
 	wg.Wait()
+	b.uniquePackageCount = len(seen)
 
 	// --- Phase 3: Bucket building (parallel per bucket) ---
 	// Each bucket installs the shared extraction results and builds its index.
@@ -1117,11 +1162,16 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 
 // discoveredPackage represents a package found during the discovery phase.
 // It holds the resolved package.json and realpath for deduplication.
+// When both a real package and a corresponding @types package exist (e.g., react + @types/react),
+// both are stored so extraction can fall back to the @types package if the real package has no
+// TypeScript entrypoints.
 type discoveredPackage struct {
-	packageName string
-	packageJson *packagejson.InfoCacheEntry
-	realpath    string
-	dirPath     tspath.Path // bucket directory path (used as extraction context)
+	packageName      string
+	packageJson      *packagejson.InfoCacheEntry
+	realpath         string
+	typesPackageJson *packagejson.InfoCacheEntry
+	typesRealpath    string
+	dirPath          tspath.Path // bucket directory path (used as extraction context)
 }
 
 // perPackageExtractionResult holds the extraction output for one physical package.
@@ -1129,7 +1179,7 @@ type discoveredPackage struct {
 // into every bucket that needs it during the bucket-building phase.
 type perPackageExtractionResult struct {
 	packageFiles                     map[tspath.Path]string
-	entrypoints                      *module.ResolvedEntrypoints
+	entrypoints                      []*module.ResolvedEntrypoint
 	exports                          map[tspath.Path][]*Export
 	ambientModules                   map[string][]string
 	statsExports                     int
@@ -1145,7 +1195,7 @@ type packageExtractionResult struct {
 	exports                                  map[tspath.Path][]*Export
 	packageFiles                             map[string]map[tspath.Path]string
 	ambientModuleNames                       map[string][]string
-	entrypoints                              []*module.ResolvedEntrypoints
+	entrypoints                              [][]*module.ResolvedEntrypoint
 	projectReferencePackages                 *collections.Set[string]
 	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
@@ -1164,35 +1214,46 @@ func (b *registryBuilder) discoverBucketPackages(
 	for packageName := range packageNames.Keys() {
 		typesPackageName := module.GetTypesPackageName(packageName)
 		packageJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", packageName, "package.json"))
-		if !packageJson.DirectoryExists {
-			packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
+		var typesPackageJson *packagejson.InfoCacheEntry
+		if packageName != typesPackageName {
+			typesJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
+			if typesJson.DirectoryExists {
+				typesPackageJson = typesJson
+			}
 		}
 		var realpath string
 		if packageJson.DirectoryExists {
 			realpath = b.host.FS().Realpath(packageJson.PackageDirectory)
 		}
+		var typesRealpath string
+		if typesPackageJson != nil {
+			typesRealpath = b.host.FS().Realpath(typesPackageJson.PackageDirectory)
+		}
 		result = append(result, &discoveredPackage{
-			packageName: packageName,
-			packageJson: packageJson,
-			realpath:    realpath,
-			dirPath:     dirPath,
+			packageName:      packageName,
+			packageJson:      packageJson,
+			realpath:         realpath,
+			typesPackageJson: typesPackageJson,
+			typesRealpath:    typesRealpath,
+			dirPath:          dirPath,
 		})
 	}
 	return result
 }
 
-// extractPackage extracts exports from a single discovered package.
+// extractPackage extracts exports from a single package.json.
 // This runs once per unique realpath during the extraction phase.
 // Returns nil if the package has no extractable entrypoints.
 func (b *registryBuilder) extractPackage(
 	ctx context.Context,
-	pkg *discoveredPackage,
+	packageJson *packagejson.InfoCacheEntry,
+	packageName string,
 	projectReferenceOutputs map[tspath.Path]string,
 	fileExcludePatterns vfsmatch.SpecMatcher,
 ) *perPackageExtractionResult {
-	packageJson := pkg.packageJson
-	packageName := pkg.packageName
-
+	if packageJson == nil || !packageJson.DirectoryExists {
+		return nil
+	}
 	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
 	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
@@ -1202,13 +1263,13 @@ func (b *registryBuilder) extractPackage(
 
 	var skippedEntrypoints int
 	if fileExcludePatterns != nil {
-		count := len(packageEntrypoints.Entrypoints)
-		packageEntrypoints.Entrypoints = slices.DeleteFunc(packageEntrypoints.Entrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
+		count := len(packageEntrypoints)
+		packageEntrypoints = slices.DeleteFunc(packageEntrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
 			return fileExcludePatterns.MatchString(entrypoint.ResolvedFileName)
 		})
-		skippedEntrypoints = count - len(packageEntrypoints.Entrypoints)
+		skippedEntrypoints = count - len(packageEntrypoints)
 	}
-	if len(packageEntrypoints.Entrypoints) == 0 {
+	if len(packageEntrypoints) == 0 {
 		return nil
 	}
 
@@ -1223,11 +1284,11 @@ func (b *registryBuilder) extractPackage(
 	}
 
 	// Resolve entrypoint source files and build the alias resolver.
-	seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints.Entrypoints))
-	rootFiles := make([]*ast.SourceFile, len(packageEntrypoints.Entrypoints))
+	seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints))
+	rootFiles := make([]*ast.SourceFile, len(packageEntrypoints))
 	symlinks := make(map[tspath.Path]pathAndFileName)
 	var wg sync.WaitGroup
-	for i, entrypoint := range packageEntrypoints.Entrypoints {
+	for i, entrypoint := range packageEntrypoints {
 		fileName := entrypoint.SymlinkOrRealpath()
 		realpathFileName := entrypoint.ResolvedFileName
 		realpathPath := b.base.toPath(realpathFileName)
@@ -1311,6 +1372,9 @@ func installExtractions(
 
 	for _, pkg := range discovered {
 		extraction := extractionCache[pkg.realpath]
+		if extraction == nil {
+			extraction = extractionCache[pkg.typesRealpath]
+		}
 		if extraction == nil {
 			continue
 		}
@@ -1398,7 +1462,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		}
 	}
 	for _, entrypointSet := range extraction.entrypoints {
-		for _, entrypoint := range entrypointSet.Entrypoints {
+		for _, entrypoint := range entrypointSet {
 			path := b.base.toPath(entrypoint.ResolvedFileName)
 			result.entrypoints[path] = append(result.entrypoints[path], entrypoint)
 		}
@@ -1512,7 +1576,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	// Build new entrypoints from extraction
 	newEntrypoints := make(map[tspath.Path][]*module.ResolvedEntrypoint)
 	for _, entrypointSet := range extraction.entrypoints {
-		for _, entrypoint := range entrypointSet.Entrypoints {
+		for _, entrypoint := range entrypointSet {
 			path := b.base.toPath(entrypoint.ResolvedFileName)
 			newEntrypoints[path] = append(newEntrypoints[path], entrypoint)
 		}
