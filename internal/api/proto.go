@@ -814,9 +814,9 @@ type DiagnosticResponse struct {
 	// Text is the localized diagnostic message text.
 	Text string `json:"text"`
 	// ReportsUnnecessary indicates this diagnostic highlights unnecessary code.
-	ReportsUnnecessary bool `json:"reportsUnnecessary"`
+	ReportsUnnecessary bool `json:"reportsUnnecessary,omitzero"`
 	// ReportsDeprecated indicates this diagnostic highlights deprecated code.
-	ReportsDeprecated bool `json:"reportsDeprecated"`
+	ReportsDeprecated bool `json:"reportsDeprecated,omitzero"`
 	// MessageChain contains chained diagnostic messages, if any.
 	MessageChain []*DiagnosticResponse `json:"messageChain,omitempty"`
 	// RelatedInformation contains related diagnostic information, if any.

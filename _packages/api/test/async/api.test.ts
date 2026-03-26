@@ -2175,8 +2175,6 @@ describe("Program - diagnostics", () => {
                 code: 1110,
                 category: DiagnosticCategory.Error,
                 text: "Type expected.",
-                reportsUnnecessary: false,
-                reportsDeprecated: false,
             }]);
         }
         finally {
@@ -2202,24 +2200,18 @@ describe("Program - diagnostics", () => {
                 code: 2322,
                 category: DiagnosticCategory.Error,
                 text: "Type '(x: number) => void' is not assignable to type '(x: string) => void'.",
-                reportsUnnecessary: false,
-                reportsDeprecated: false,
                 messageChain: [{
                     fileName: "/src/index.ts",
                     ...assignRange,
                     code: 2328,
                     category: DiagnosticCategory.Error,
                     text: "Types of parameters 'x' and 'x' are incompatible.",
-                    reportsUnnecessary: false,
-                    reportsDeprecated: false,
                     messageChain: [{
                         fileName: "/src/index.ts",
                         ...assignRange,
                         code: 2322,
                         category: DiagnosticCategory.Error,
                         text: "Type 'string' is not assignable to type 'number'.",
-                        reportsUnnecessary: false,
-                        reportsDeprecated: false,
                     }],
                 }],
                 relatedInformation: [{
@@ -2228,8 +2220,6 @@ describe("Program - diagnostics", () => {
                     code: 6500,
                     category: DiagnosticCategory.Message,
                     text: "The expected type comes from property 'callback' which is declared here on type 'Props'",
-                    reportsUnnecessary: false,
-                    reportsDeprecated: false,
                 }],
             }]);
         }
@@ -2255,7 +2245,6 @@ describe("Program - diagnostics", () => {
                 category: DiagnosticCategory.Suggestion,
                 text: "'_unused' is declared but its value is never read.",
                 reportsUnnecessary: true,
-                reportsDeprecated: false,
             }]);
         }
         finally {
@@ -2279,8 +2268,6 @@ describe("Program - diagnostics", () => {
                 code: 6046,
                 category: DiagnosticCategory.Error,
                 text: "Argument for '--target' option must be: 'es6', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022', 'es2023', 'es2024', 'es2025', 'esnext'.",
-                reportsUnnecessary: false,
-                reportsDeprecated: false,
             }]);
         }
         finally {
