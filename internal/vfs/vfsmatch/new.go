@@ -10,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+// This file implements the glob matching algorithm specified in MATCHING_ALGORITHM.md.
+
 // globPattern is a compiled glob pattern for matching file paths without regex.
 type globPattern struct {
 	components    []component // path segments to match (e.g., ["src", "**", "*.ts"])
