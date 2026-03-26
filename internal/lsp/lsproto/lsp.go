@@ -209,6 +209,8 @@ func (Null) MarshalJSONTo(enc *json.Encoder) error {
 
 type NoParams struct{}
 
+func (NoParams) IsZero() bool { return true }
+
 type clientCapabilitiesKey struct{}
 
 func WithClientCapabilities(ctx context.Context, caps *ResolvedClientCapabilities) context.Context {

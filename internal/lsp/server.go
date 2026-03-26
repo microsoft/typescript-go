@@ -1122,12 +1122,12 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	return nil
 }
 
-func (s *Server) handleShutdown(ctx context.Context, params lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
+func (s *Server) handleShutdown(ctx context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
 	s.session.Close()
 	return lsproto.ShutdownResponse{}, nil
 }
 
-func (s *Server) handleExit(ctx context.Context, params lsproto.NoParams) error {
+func (s *Server) handleExit(ctx context.Context, _ lsproto.NoParams) error {
 	return io.EOF
 }
 
