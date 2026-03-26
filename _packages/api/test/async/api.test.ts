@@ -2178,7 +2178,7 @@ test("Parse-emit roundtrip", async () => {
                     await project.emitter.printNode(source);
                 }
                 catch (e) {
-                    console.error('In', file, String(e).split('\n').slice(0, 10).join('\n'));
+                    console.error('In', file, e);
                     errors++;
                 }
             }
@@ -2210,7 +2210,7 @@ test("Parse-clone-emit roundtrip", async () => {
                     await project.emitter.printNode(clone);
                 }
                 catch (e) {
-                    console.error('In', file, String(e).split('\n').slice(0, 10).join('\n'));
+                    console.error('In', file, e);
                     errors++;
                 }
             }
