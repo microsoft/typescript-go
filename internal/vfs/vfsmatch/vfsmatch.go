@@ -145,7 +145,7 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 		// subpath of an existing base path
 		for _, includeBasePath := range includeBasePaths {
 			if core.Every(basePaths, func(basepath string) bool {
-				return !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: !useCaseSensitiveFileNames})
+				return !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
 			}) {
 				basePaths = append(basePaths, includeBasePath)
 			}

@@ -2086,3 +2086,37 @@ func TestGlobPatternLiteralWithPackageFolders(t *testing.T) {
 		assert.Assert(t, slices.Contains(got, "/dev/node_modules/b.ts"), "should include explicit node_modules path")
 	})
 }
+
+// TestGetBasePathsCaseSensitivity verifies that getBasePaths uses the correct
+// case-sensitivity when deduplicating base paths. On a case-sensitive file system,
+// paths that differ only by case (e.g., "/Dev/src" and "/dev/src") are distinct
+// and should not be deduplicated.
+func TestGetBasePathsCaseSensitivity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("case-sensitive does not dedup differently-cased paths", func(t *testing.T) {
+		t.Parallel()
+		// On a case-sensitive file system, /root/src/Dev and /root/src/dev are distinct directories.
+		// When they're both included as base paths, they should not be deduplicated.
+		// Use include patterns that point to directories outside the root path so the root
+		// path doesn't subsume them via containsPath.
+		basePaths := getBasePaths("/root", []string{"../Other/**/*.ts", "../other/**/*.ts"}, true /*caseSensitive*/)
+		// Both /Other and /other should appear because they differ by case on a case-sensitive FS.
+		assert.Assert(t, slices.Contains(basePaths, "/Other"), "expected /Other in base paths: %v", basePaths)
+		assert.Assert(t, slices.Contains(basePaths, "/other"), "expected /other in base paths: %v", basePaths)
+	})
+
+	t.Run("case-insensitive dedups differently-cased paths", func(t *testing.T) {
+		t.Parallel()
+		// On a case-insensitive file system, /Other and /other refer to the same directory;
+		// only one should appear.
+		basePaths := getBasePaths("/root", []string{"../Other/**/*.ts", "../other/**/*.ts"}, false /*caseSensitive*/)
+		count := 0
+		for _, bp := range basePaths {
+			if bp == "/Other" || bp == "/other" {
+				count++
+			}
+		}
+		assert.Assert(t, count <= 1, "expected at most one of /Other or /other in base paths: %v", basePaths)
+	})
+}
