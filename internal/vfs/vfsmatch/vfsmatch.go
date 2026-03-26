@@ -12,7 +12,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Usage -trimprefix=Usage -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
+//go:generate npx dprint fmt stringer_generated.go
 
 type Usage int8
 
