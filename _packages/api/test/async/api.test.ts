@@ -2157,6 +2157,30 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
     });
 });
 
+test("TypeOperator operator kind", async () => {
+    const api = spawnAPI({
+        "/tsconfig.json": "{}",
+        "/src/index.ts": `function test(arg: readonly number[]) { }\n`,
+    });
+    try {
+        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = await project.program.getSourceFile("/src/index.ts");
+        assert(sourceFile);
+        const param = (sourceFile.statements[0] as import("@typescript/ast").FunctionDeclaration).parameters[0];
+        assert(param);
+        const type = param.type as import("@typescript/ast").TypeOperatorNode;
+        assert(type);
+        assert.equal(type.kind, SyntaxKind.TypeOperator);
+        assert.equal(type.operator, SyntaxKind.ReadonlyKeyword);
+        const printed = await project.emitter.printNode(sourceFile);
+        assert.equal(sourceFile.text, printed);
+    }
+    finally {
+        await api.close();
+    }
+});
+
 function extractSourceWords(source: string) {
     return Array.from(
         source

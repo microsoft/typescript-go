@@ -1313,7 +1313,16 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindMetaProperty:
 		return d.factory.NewMetaProperty(0, d.singleChild(childIndices)), nil
 	case ast.KindTypeOperator:
-		return d.factory.NewTypeOperatorNode(0, d.singleChild(childIndices)), nil
+		var operator = ast.KindUnknown
+		switch definedBits & 3 {
+		case 1:
+			operator = ast.KindKeyOfKeyword
+		case 2:
+			operator = ast.KindInstanceOfKeyword
+		case 3:
+			operator = ast.KindReadonlyKeyword
+		}
+		return d.factory.NewTypeOperatorNode(operator, d.singleChild(childIndices)), nil
 
 	// Nodes that only have a ModifierList child
 	case ast.KindMissingDeclaration:

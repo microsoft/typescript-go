@@ -150,3 +150,5 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly strin
     [SyntaxKind.JSDocPropertyTag]: [undefined!, undefined!],
     [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],
 };
+
+export const typeOperatorKinds: SyntaxKind[] = [SyntaxKind.Unknown, SyntaxKind.KeyOfKeyword, SyntaxKind.UniqueKeyword, SyntaxKind.ReadonlyKeyword];
