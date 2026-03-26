@@ -1128,6 +1128,9 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		) {
 			return
 		}
+		displayName := project.DisplayName(s.options.CurrentDirectory)
+		s.client.ProgressStart(ctx, diagnostics.Preparing_auto_imports_for_0, displayName)
 		_, _ = s.GetCurrentLanguageServiceWithAutoImports(ctx, changedFile)
+		s.client.ProgressFinish(ctx, diagnostics.Preparing_auto_imports_for_0, displayName)
 	}
 }

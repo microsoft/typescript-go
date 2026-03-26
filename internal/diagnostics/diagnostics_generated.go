@@ -4298,6 +4298,8 @@ var Installing_typings_for_0 = &Message{code: 100013, category: CategoryMessage,
 
 var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
 
+var Preparing_auto_imports_for_0 = &Message{code: 100015, category: CategoryMessage, key: "Preparing_auto_imports_for_0_100015", text: "Preparing auto-imports for '{0}'"}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8596,6 +8598,8 @@ func keyToMessage(key Key) *Message {
 		return Installing_typings_for_0
 	case "Project_0_100014":
 		return Project_0
+	case "Preparing_auto_imports_for_0_100015":
+		return Preparing_auto_imports_for_0
 	default:
 		return nil
 	}

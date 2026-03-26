@@ -106,5 +106,9 @@
     "Installing typings for '{0}'": {
         "category": "Message",
         "code": 100013
+    },
+    "Preparing auto-imports for '{0}'": {
+        "category": "Message",
+        "code": 100015
     }
 }
