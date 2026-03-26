@@ -2,11 +2,10 @@ package vfsmatch
 
 import (
 	"math"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -120,6 +119,9 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 	basePaths := []string{path}
 
 	if len(includes) > 0 {
+		comparePathsOptions := tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: useCaseSensitiveFileNames}
+		stringComparer := comparePathsOptions.GetComparer()
+
 		// Storage for literal base paths amongst the include patterns.
 		includeBasePaths := []string{}
 		for _, include := range includes {
@@ -136,16 +138,13 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 		}
 
 		// Sort the offsets array using either the literal or canonical path representations.
-		stringComparer := stringutil.GetStringComparer(!useCaseSensitiveFileNames)
-		sort.SliceStable(includeBasePaths, func(i, j int) bool {
-			return stringComparer(includeBasePaths[i], includeBasePaths[j]) < 0
-		})
+		slices.SortStableFunc(includeBasePaths, stringComparer)
 
 		// Iterate over each include base path and include unique base paths that are not a
 		// subpath of an existing base path
 		for _, includeBasePath := range includeBasePaths {
 			if core.Every(basePaths, func(basepath string) bool {
-				return !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
+				return !tspath.ContainsPath(basepath, includeBasePath, comparePathsOptions)
 			}) {
 				basePaths = append(basePaths, includeBasePath)
 			}
