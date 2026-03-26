@@ -593,6 +593,16 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get tokenFlags(): number {
+        switch (this.kind) {
+            case SyntaxKind.RegularExpressionLiteral:
+                // Bit 24 = Unterminated (TokenFlags 1 << 2 = 4)
+                return (this.data & 1 << 24) !== 0 ? 4 : 0;
+            default:
+                return 0;
+        }
+    }
+
     get isNameFirst(): boolean | undefined {
         switch (this.kind) {
             case SyntaxKind.JSDocPropertyTag:

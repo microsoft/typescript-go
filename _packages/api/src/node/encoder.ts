@@ -157,6 +157,8 @@ function getNodeDefinedData(node: Node): number {
         }
         case SyntaxKind.JsxText:
             return ((node as JsxText).containsOnlyTriviaWhiteSpaces ? 1 : 0) << 24;
+        case SyntaxKind.RegularExpressionLiteral:
+            return (((node as any).tokenFlags & 4) !== 0 ? 1 : 0) << 24;
         case SyntaxKind.VariableDeclarationList: {
             const flags = node.flags;
             return (flags & NodeFlags.BlockScoped) << 24;

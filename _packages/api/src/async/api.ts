@@ -273,7 +273,7 @@ export class Project {
 
     readonly program: Program;
     readonly checker: Checker;
-    readonly emitter: Emitter;
+    private client: Client;
 
     constructor(
         data: ProjectResponse,
@@ -287,6 +287,7 @@ export class Project {
         this.configFileName = data.configFileName;
         this.compilerOptions = data.compilerOptions;
         this.rootFiles = data.rootFiles;
+        this.client = client;
         this.program = new Program(
             snapshotId,
             this.id,
@@ -300,7 +301,15 @@ export class Project {
             client,
             objectRegistry,
         );
-        this.emitter = new Emitter(client);
+    }
+
+    async printNode(node: Node, options: PrintNodeOptions = {}): Promise<string> {
+        const encoded = encodeNode(node);
+        const base64 = uint8ArrayToBase64(encoded);
+        return this.client.apiRequest<string>("printNode", {
+            data: base64,
+            ...options,
+        });
     }
 }
 
@@ -716,30 +725,6 @@ export interface PrintNodeOptions {
     preserveSourceNewlines?: boolean;
     neverAsciiEscape?: boolean;
     terminateUnterminatedLiterals?: boolean;
-}
-
-export class Emitter {
-    private client: Client;
-    private options: PrintNodeOptions;
-
-    constructor(client: Client, options: PrintNodeOptions = {}) {
-        this.client = client;
-        this.options = options;
-    }
-
-    /** Return a new Emitter that uses the given options, sharing the same client. */
-    withOptions(options: PrintNodeOptions): Emitter {
-        return new Emitter(this.client, { ...this.options, ...options });
-    }
-
-    async printNode(node: Node): Promise<string> {
-        const encoded = encodeNode(node);
-        const base64 = uint8ArrayToBase64(encoded);
-        return this.client.apiRequest<string>("printNode", {
-            data: base64,
-            ...this.options,
-        });
-    }
 }
 
 export class NodeHandle {
