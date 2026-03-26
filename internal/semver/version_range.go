@@ -1,44 +1,174 @@
 package semver
 
 import (
-	"regexp"
 	"strings"
 )
 
-// https://github.com/npm/node-semver#range-grammar
-//
-// range-set    ::= range ( logical-or range ) *
-// range        ::= hyphen | simple ( ' ' simple ) * | ”
-// logical-or   ::= ( ' ' ) * '||' ( ' ' ) *
-var (
-	logicalOrRegExp  = regexp.MustCompile(`\|\|`)
-	whitespaceRegExp = regexp.MustCompile(`\s+`)
-)
+// isVersionRangeChar returns true for characters valid in version range partials: [a-zA-Z0-9-+.*]
+func isVersionRangeChar(c byte) bool {
+	return isPreOrBuildChar(c) || c == '+' || c == '*'
+}
 
-// https://github.com/npm/node-semver#range-grammar
-//
-// partial      ::= xr ( '.' xr ( '.' xr qualifier ? )? )?
-// xr           ::= 'x' | 'X' | '*' | nr
-// nr           ::= '0' | ['1'-'9'] ( ['0'-'9'] ) *
-// qualifier    ::= ( '-' pre )? ( '+' build )?
-// pre          ::= parts
-// build        ::= parts
-// parts        ::= part ( '.' part ) *
-// part         ::= nr | [-0-9A-Za-z]+
-var partialRegExp = regexp.MustCompile(`(?i)^([x*0]|[1-9]\d*)(?:\.([x*0]|[1-9]\d*)(?:\.([x*0]|[1-9]\d*)(?:-([a-z0-9-.]+))?(?:\+([a-z0-9-.]+))?)?)?$`)
+// parseNrOrWildcard parses "0", "[1-9][0-9]*", "x", "X", or "*" from s starting at pos.
+func parseNrOrWildcard(s string, pos int) (string, int, bool) {
+	if pos >= len(s) {
+		return "", pos, false
+	}
+	c := s[pos]
+	if c == 'x' || c == 'X' || c == '*' {
+		return string(c), pos + 1, true
+	}
+	return parseNr(s, pos)
+}
 
-// https://github.com/npm/node-semver#range-grammar
+// matchPartial parses a partial version string:
 //
-// hyphen       ::= partial ' - ' partial
-var hyphenRegExp = regexp.MustCompile(`(?i)^\s*([a-z0-9-+.*]+)\s+-\s+([a-z0-9-+.*]+)\s*$`)
+//	partial ::= xr ('.' xr ('.' xr qualifier?)?)?
+func matchPartial(text string) (majorStr, minorStr, patchStr, prereleaseStr, buildStr string, ok bool) {
+	pos := 0
 
-// https://github.com/npm/node-semver#range-grammar
-//
-// simple       ::= primitive | partial | tilde | caret
-// primitive    ::= ( '<' | '>' | '>=' | '<=' | '=' ) partial
-// tilde        ::= '~' partial
-// caret        ::= '^' partial
-var rangeRegExp = regexp.MustCompile(`(?i)^([~^<>=]|<=|>=)?\s*([a-z0-9-+.*]+)$`)
+	majorStr, pos, ok = parseNrOrWildcard(text, pos)
+	if !ok {
+		return majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok
+	}
+
+	if pos < len(text) && text[pos] == '.' {
+		pos++
+		minorStr, pos, ok = parseNrOrWildcard(text, pos)
+		if !ok {
+			return majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok
+		}
+
+		if pos < len(text) && text[pos] == '.' {
+			pos++
+			patchStr, pos, ok = parseNrOrWildcard(text, pos)
+			if !ok {
+				return majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok
+			}
+
+			if pos < len(text) && text[pos] == '-' {
+				pos++
+				start := pos
+				for pos < len(text) && isPreOrBuildChar(text[pos]) {
+					pos++
+				}
+				if pos == start {
+					ok = false
+					return majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok
+				}
+				prereleaseStr = text[start:pos]
+			}
+
+			if pos < len(text) && text[pos] == '+' {
+				pos++
+				start := pos
+				for pos < len(text) && isPreOrBuildChar(text[pos]) {
+					pos++
+				}
+				if pos == start {
+					ok = false
+					return majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok
+				}
+				buildStr = text[start:pos]
+			}
+		}
+	}
+
+	ok = pos == len(text)
+	return majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok
+}
+
+// matchHyphen tries to match "partial - partial" (hyphen range) in the string.
+func matchHyphen(s string) (left, right string, ok bool) {
+	s = strings.TrimSpace(s)
+
+	// Parse left: [a-zA-Z0-9-+.*]+
+	pos := 0
+	for pos < len(s) && isVersionRangeChar(s[pos]) {
+		pos++
+	}
+	if pos == 0 {
+		return "", "", false
+	}
+	left = s[:pos]
+
+	// Require at least one whitespace before '-'
+	wsStart := pos
+	for pos < len(s) && (s[pos] == ' ' || s[pos] == '\t' || s[pos] == '\n' || s[pos] == '\f' || s[pos] == '\r') {
+		pos++
+	}
+	if pos == wsStart {
+		return "", "", false
+	}
+
+	// Require '-'
+	if pos >= len(s) || s[pos] != '-' {
+		return "", "", false
+	}
+	pos++
+
+	// Require at least one whitespace after '-'
+	wsStart = pos
+	for pos < len(s) && (s[pos] == ' ' || s[pos] == '\t' || s[pos] == '\n' || s[pos] == '\f' || s[pos] == '\r') {
+		pos++
+	}
+	if pos == wsStart {
+		return "", "", false
+	}
+
+	// Parse right: [a-zA-Z0-9-+.*]+
+	rightStart := pos
+	for pos < len(s) && isVersionRangeChar(s[pos]) {
+		pos++
+	}
+	if pos == rightStart {
+		return "", "", false
+	}
+	right = s[rightStart:pos]
+
+	ok = pos == len(s)
+	return left, right, ok
+}
+
+// matchRange parses an optional operator followed by a version partial.
+func matchRange(s string) (operator, version string, ok bool) {
+	pos := 0
+
+	// Parse optional operator: ~, ^, <, >, <=, >=, =
+	if pos < len(s) {
+		switch s[pos] {
+		case '~', '^', '=':
+			operator = string(s[pos])
+			pos++
+		case '<', '>':
+			if pos+1 < len(s) && s[pos+1] == '=' {
+				operator = s[pos : pos+2]
+				pos += 2
+			} else {
+				operator = string(s[pos])
+				pos++
+			}
+		}
+	}
+
+	// Skip optional whitespace
+	for pos < len(s) && (s[pos] == ' ' || s[pos] == '\t' || s[pos] == '\n' || s[pos] == '\f' || s[pos] == '\r') {
+		pos++
+	}
+
+	// Parse version: [a-zA-Z0-9-+.*]+
+	versionStart := pos
+	for pos < len(s) && isVersionRangeChar(s[pos]) {
+		pos++
+	}
+	if pos == versionStart {
+		return "", "", false
+	}
+	version = s[versionStart:pos]
+
+	ok = pos == len(s)
+	return operator, version, ok
+}
 
 type VersionRange struct {
 	alternatives [][]versionComparator
@@ -149,8 +279,7 @@ func parseAlternatives(text string) ([][]versionComparator, bool) {
 	var alternatives [][]versionComparator
 
 	text = strings.TrimSpace(text)
-	ranges := logicalOrRegExp.Split(text, -1)
-	for _, r := range ranges {
+	for r := range strings.SplitSeq(text, "||") {
 		r = strings.TrimSpace(r)
 		if r == "" {
 			continue
@@ -158,20 +287,20 @@ func parseAlternatives(text string) ([][]versionComparator, bool) {
 
 		var comparators []versionComparator
 
-		if hyphenMatch := hyphenRegExp.FindStringSubmatch(r); hyphenMatch != nil {
-			if parsedComparators, ok := parseHyphen(hyphenMatch[1], hyphenMatch[2]); ok {
+		if left, right, matched := matchHyphen(r); matched {
+			if parsedComparators, ok := parseHyphen(left, right); ok {
 				comparators = append(comparators, parsedComparators...)
 			} else {
 				return nil, false
 			}
 		} else {
-			for _, simple := range whitespaceRegExp.Split(r, -1) {
-				match := rangeRegExp.FindStringSubmatch(strings.TrimSpace(simple))
-				if match == nil {
+			for simple := range strings.FieldsSeq(r) {
+				op, ver, matched := matchRange(strings.TrimSpace(simple))
+				if !matched {
 					return nil, false
 				}
 
-				if parsedComparators, ok := parseComparator(match[1], match[2]); ok {
+				if parsedComparators, ok := parseComparator(op, ver); ok {
 					comparators = append(comparators, parsedComparators...)
 				} else {
 					return nil, false
@@ -241,16 +370,10 @@ type partialVersion struct {
 
 // Produces a "partial" version
 func parsePartial(text string) (partialVersion, bool) {
-	match := partialRegExp.FindStringSubmatch(text)
-	if match == nil {
+	majorStr, minorStr, patchStr, prereleaseStr, buildStr, ok := matchPartial(text)
+	if !ok {
 		return partialVersion{}, false
 	}
-
-	majorStr := match[1]
-	minorStr := match[2]
-	patchStr := match[3]
-	prereleaseStr := match[4]
-	buildStr := match[5]
 
 	if minorStr == "" {
 		minorStr = "*"

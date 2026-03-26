@@ -927,6 +927,70 @@ type testForRangeOnVersion struct {
 	expected    bool
 }
 
+func TestTryParseVersionRangeInvalid(t *testing.T) {
+	t.Parallel()
+	invalids := []string{
+		"abc",
+		">=not.a.version",
+		">>1.0.0",
+		"<>1.0.0",
+		"~!1.0.0",
+		"1.2.3 - ",     // incomplete hyphen
+		" - 1.2.3",     // incomplete hyphen
+		"1.0.0 -2.0.0", // missing space after hyphen
+		"1.0.0- 2.0.0", // missing space before hyphen
+		">=01.0.0",     // leading zero
+		"1.2.3 - abc",  // invalid right side of hyphen
+		"abc - 1.2.3",  // invalid left side of hyphen
+		"!1.0.0",       // invalid operator
+	}
+
+	for _, s := range invalids {
+		t.Run(s, func(t *testing.T) {
+			t.Parallel()
+			_, ok := TryParseVersionRange(s)
+			assert.Assert(t, !ok, "expected failure for %q", s)
+		})
+	}
+}
+
+func TestVersionRangeString(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		in  string
+		out string
+	}{
+		{"1.2.3", "=1.2.3"},
+		{">=1.0.0 <2.0.0", ">=1.0.0 <2.0.0"},
+		{">=1.0.0 <2.0.0 || >=3.0.0", ">=1.0.0 <2.0.0 || >=3.0.0"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.in, func(t *testing.T) {
+			t.Parallel()
+			vr, ok := TryParseVersionRange(test.in)
+			assert.Assert(t, ok)
+			assert.Equal(t, vr.String(), test.out)
+		})
+	}
+}
+
+func TestCaretWithZeroPatch(t *testing.T) {
+	t.Parallel()
+	// ^0.0.X should lock to the exact patch version
+	caretTests := []testForRangeOnVersion{
+		{"^0.0.1", "0.0.1", true},
+		{"^0.0.1", "0.0.2", false},
+		{"^0.0.1", "0.0.0", false},
+		{"^0.0.1", "0.1.0", false},
+		{"^0.0.0", "0.0.0", true},
+		{"^0.0.0", "0.0.1", false},
+	}
+	for _, test := range caretTests {
+		assertRangeTest(t, "caret-zero-patch", test.rangeText, test.versionText, test.expected)
+	}
+}
+
 func assertRangesGoodBad(t *testing.T, versionRangeString string, tests testGoodBad) {
 	t.Run(versionRangeString, func(t *testing.T) {
 		t.Parallel()

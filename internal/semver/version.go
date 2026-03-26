@@ -3,43 +3,110 @@ package semver
 import (
 	"cmp"
 	"fmt"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
 )
 
-// https://semver.org/#spec-item-2
-// > A normal version number MUST take the form X.Y.Z where X, Y, and Z are non-negative
-// > integers, and MUST NOT contain leading zeroes. X is the major version, Y is the minor
-// > version, and Z is the patch version. Each element MUST increase numerically.
-//
-// NOTE: We differ here in that we allow X and X.Y, with missing parts having the default
-// value of `0`.
-var versionRegexp = regexp.MustCompile(`(?i)^(0|[1-9]\d*)(?:\.(0|[1-9]\d*)(?:\.(0|[1-9]\d*)(?:-([a-z0-9-.]+))?(?:\+([a-z0-9-.]+))?)?)?$`)
+func isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
+}
 
+func isLetter(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+}
+
+func isAlphanumericOrHyphen(c byte) bool {
+	return isDigit(c) || isLetter(c) || c == '-'
+}
+
+// isPreOrBuildChar returns true for characters valid in prerelease/build segments: [a-zA-Z0-9-.]
+func isPreOrBuildChar(c byte) bool {
+	return isAlphanumericOrHyphen(c) || c == '.'
+}
+
+// parseNr parses "0" or "[1-9][0-9]*" from s starting at pos.
+func parseNr(s string, pos int) (string, int, bool) {
+	if pos >= len(s) || !isDigit(s[pos]) {
+		return "", pos, false
+	}
+	start := pos
+	for pos < len(s) && isDigit(s[pos]) {
+		pos++
+	}
+	nr := s[start:pos]
+	if len(nr) > 1 && nr[0] == '0' {
+		return "", start, false
+	}
+	return nr, pos, true
+}
+
+// https://semver.org/#spec-item-9
+// > Numeric identifiers MUST NOT include leading zeroes.
+func isNumericIdentifier(s string) bool {
+	if s == "" {
+		panic("isNumericIdentifier called with empty string")
+	}
+	_, end, ok := parseNr(s, 0)
+	return ok && end == len(s)
+}
+
+// isValidPrereleasePart validates a single prerelease identifier.
 // https://semver.org/#spec-item-9
 // > A pre-release version MAY be denoted by appending a hyphen and a series of dot separated
 // > identifiers immediately following the patch version. Identifiers MUST comprise only ASCII
 // > alphanumerics and hyphen [0-9A-Za-z-]. Identifiers MUST NOT be empty. Numeric identifiers
 // > MUST NOT include leading zeroes.
-var (
-	prereleaseRegexp     = regexp.MustCompile(`(?i)^(?:0|[1-9]\d*|[a-z-][a-z0-9-]*)(?:\.(?:0|[1-9]\d*|[a-zA-Z-][a-zA-Z0-9-]*))*$`)
-	prereleasePartRegexp = regexp.MustCompile(`(?i)^(?:0|[1-9]\d*|[a-z-][a-z0-9-]*)$`)
-)
+func isValidPrereleasePart(s string) bool {
+	if s == "" {
+		return false
+	}
+	if isNumericIdentifier(s) {
+		return true
+	}
+	if !isLetter(s[0]) && s[0] != '-' {
+		return false
+	}
+	for i := 1; i < len(s); i++ {
+		if !isAlphanumericOrHyphen(s[i]) {
+			panic("isValidPrereleasePart called with non-alphanumeric character: " + s)
+		}
+	}
+	return true
+}
+
+func isValidPrerelease(s string) bool {
+	if s == "" {
+		panic("isValidPrerelease called with empty string")
+	}
+	for part := range strings.SplitSeq(s, ".") {
+		if !isValidPrereleasePart(part) {
+			return false
+		}
+	}
+	return true
+}
 
 // https://semver.org/#spec-item-10
 // > Build metadata MAY be denoted by appending a plus sign and a series of dot separated
 // > identifiers immediately following the patch or pre-release version. Identifiers MUST
 // > comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Identifiers MUST NOT be empty.
-var (
-	buildRegExp     = regexp.MustCompile(`(?i)^[a-z0-9-]+(?:\.[a-z0-9-]+)*$`)
-	buildPartRegExp = regexp.MustCompile(`(?i)^[a-z0-9-]+$`)
-)
-
-// https://semver.org/#spec-item-9
-// > Numeric identifiers MUST NOT include leading zeroes.
-var numericIdentifierRegExp = regexp.MustCompile(`^(?:0|[1-9]\d*)$`)
+func isValidBuild(s string) bool {
+	if s == "" {
+		panic("isValidBuild called with empty string")
+	}
+	for part := range strings.SplitSeq(s, ".") {
+		if part == "" {
+			return false
+		}
+		for i := range len(part) {
+			if !isAlphanumericOrHyphen(part[i]) {
+				panic("isValidBuild called with non-alphanumeric character: " + s)
+			}
+		}
+	}
+	return true
+}
 
 type Version struct {
 	major      uint32
@@ -150,8 +217,8 @@ func comparePreReleaseIdentifier(left, right string) int {
 		return compareResult
 	}
 
-	leftIsNumeric := numericIdentifierRegExp.MatchString(left)
-	rightIsNumeric := numericIdentifierRegExp.MatchString(right)
+	leftIsNumeric := isNumericIdentifier(left)
+	rightIsNumeric := isNumericIdentifier(right)
 
 	if leftIsNumeric || rightIsNumeric {
 		// https://semver.org/#spec-item-11
@@ -209,17 +276,66 @@ func (e *SemverParseError) Error() string {
 
 func TryParseVersion(text string) (Version, error) {
 	var result Version
+	pos := 0
 
-	match := versionRegexp.FindStringSubmatch(text)
-	if match == nil {
+	// Parse major: 0 | [1-9][0-9]*
+	majorStr, newPos, ok := parseNr(text, pos)
+	if !ok {
 		return result, &SemverParseError{origInput: text}
 	}
+	pos = newPos
 
-	majorStr := match[1]
-	minorStr := match[2]
-	patchStr := match[3]
-	prereleaseStr := match[4]
-	buildStr := match[5]
+	var minorStr, patchStr, prereleaseStr, buildStr string
+
+	// Optional .minor
+	if pos < len(text) && text[pos] == '.' {
+		pos++
+		minorStr, newPos, ok = parseNr(text, pos)
+		if !ok {
+			return result, &SemverParseError{origInput: text}
+		}
+		pos = newPos
+
+		// Optional .patch
+		if pos < len(text) && text[pos] == '.' {
+			pos++
+			patchStr, newPos, ok = parseNr(text, pos)
+			if !ok {
+				return result, &SemverParseError{origInput: text}
+			}
+			pos = newPos
+
+			// Optional -prerelease
+			if pos < len(text) && text[pos] == '-' {
+				pos++
+				start := pos
+				for pos < len(text) && isPreOrBuildChar(text[pos]) {
+					pos++
+				}
+				if pos == start {
+					return result, &SemverParseError{origInput: text}
+				}
+				prereleaseStr = text[start:pos]
+			}
+
+			// Optional +build
+			if pos < len(text) && text[pos] == '+' {
+				pos++
+				start := pos
+				for pos < len(text) && isPreOrBuildChar(text[pos]) {
+					pos++
+				}
+				if pos == start {
+					return result, &SemverParseError{origInput: text}
+				}
+				buildStr = text[start:pos]
+			}
+		}
+	}
+
+	if pos != len(text) {
+		return result, &SemverParseError{origInput: text}
+	}
 
 	var err error
 
@@ -243,17 +359,16 @@ func TryParseVersion(text string) (Version, error) {
 	}
 
 	if prereleaseStr != "" {
-		if !prereleaseRegexp.MatchString(prereleaseStr) {
+		if !isValidPrerelease(prereleaseStr) {
 			return result, &SemverParseError{origInput: text}
 		}
-
 		result.prerelease = strings.Split(prereleaseStr, ".")
 	}
+
 	if buildStr != "" {
-		if !buildRegExp.MatchString(buildStr) {
+		if !isValidBuild(buildStr) {
 			return result, &SemverParseError{origInput: text}
 		}
-
 		result.build = strings.Split(buildStr, ".")
 	}
 

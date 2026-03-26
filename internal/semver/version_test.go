@@ -16,6 +16,21 @@ func TestTryParseSemver(t *testing.T) {
 		{"1.2.3-pre.4", Version{major: 1, minor: 2, patch: 3, prerelease: []string{"pre", "4"}}},
 		{"1.2.3+build.4", Version{major: 1, minor: 2, patch: 3, build: []string{"build", "4"}}},
 		{"1.2.3", Version{major: 1, minor: 2, patch: 3}},
+		// X and X.Y forms (missing parts default to 0)
+		{"1", Version{major: 1}},
+		{"1.2", Version{major: 1, minor: 2}},
+		{"0", Version{}},
+		{"0.0", Version{}},
+		{"0.0.0", Version{}},
+		// Large version numbers
+		{"999.999.999", Version{major: 999, minor: 999, patch: 999}},
+		// Prerelease with hyphens and mixed case
+		{"1.0.0-alpha-beta", Version{major: 1, prerelease: []string{"alpha-beta"}}},
+		{"1.0.0-0.3.7", Version{major: 1, prerelease: []string{"0", "3", "7"}}},
+		{"1.0.0-x.7.z.92", Version{major: 1, prerelease: []string{"x", "7", "z", "92"}}},
+		// Build metadata
+		{"1.0.0+20130313144700", Version{major: 1, build: []string{"20130313144700"}}},
+		{"1.0.0-beta+exp.sha.5114f85", Version{major: 1, prerelease: []string{"beta"}, build: []string{"exp", "sha", "5114f85"}}},
 	}
 
 	for _, test := range tests {
@@ -26,6 +41,79 @@ func TestTryParseSemver(t *testing.T) {
 			assertVersion(t, v, test.out)
 		})
 	}
+}
+
+func TestTryParseVersionInvalid(t *testing.T) {
+	t.Parallel()
+	invalids := []string{
+		"",
+		"a",
+		"1.2.3.4",
+		"01.2.3",
+		"1.02.3",
+		"1.2.03",
+		"1.2.3-",
+		"1.2.3+",
+		"1.2.3-+build",
+		"1.2.3-pre+",
+		"1.2.3-01",       // leading zero in numeric prerelease identifier
+		"1.2.3-.pre",     // empty prerelease identifier
+		"1.2.3-pre..rel", // empty prerelease identifier between dots
+		"1.2.3+.build",   // empty build identifier
+		"1.2.3+build..5", // empty build identifier between dots
+		"1.2.3-pre!",     // invalid character in prerelease
+		"1.2.3+build!",   // invalid character in build
+		"v1.2.3",         // leading 'v'
+		" 1.2.3",         // leading space
+		"1.2.3 ",         // trailing space
+		"-1.2.3",         // negative
+		"1.2.3-pre 1",    // space in prerelease
+	}
+
+	for _, s := range invalids {
+		t.Run(s, func(t *testing.T) {
+			t.Parallel()
+			_, err := TryParseVersion(s)
+			assert.Assert(t, err != nil, "expected error for %q", s)
+		})
+	}
+}
+
+func TestSemverParseError(t *testing.T) {
+	t.Parallel()
+	_, err := TryParseVersion("invalid")
+	assert.Assert(t, err != nil)
+	assert.Assert(t, err.Error() != "")
+}
+
+func TestMustParse(t *testing.T) {
+	t.Parallel()
+	v := MustParse("1.2.3")
+	assert.Equal(t, v.String(), "1.2.3")
+}
+
+func TestMustParsePanics(t *testing.T) {
+	t.Parallel()
+	assert.Assert(t, func() (panicked bool) {
+		defer func() {
+			if r := recover(); r != nil {
+				panicked = true
+			}
+		}()
+		MustParse("not a version")
+		return false
+	}())
+}
+
+func TestVersionCompareNil(t *testing.T) {
+	t.Parallel()
+	v := MustParse("1.0.0")
+	assert.Equal(t, v.Compare(&v), comparisonEqualTo)
+	assert.Equal(t, v.Compare(nil), comparisonGreaterThan)
+
+	var vp *Version
+	assert.Equal(t, vp.Compare(&v), comparisonLessThan)
+	assert.Equal(t, vp.Compare(nil), comparisonEqualTo)
 }
 
 func TestVersionString(t *testing.T) {
