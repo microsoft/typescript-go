@@ -1249,7 +1249,7 @@ func (b *registryBuilder) extractPackage(
 	packageJson *packagejson.InfoCacheEntry,
 	packageName string,
 	projectReferenceOutputs map[tspath.Path]string,
-	fileExcludePatterns vfsmatch.SpecMatcher,
+	fileExcludePatterns *vfsmatch.SpecMatcher,
 ) *perPackageExtractionResult {
 	if packageJson == nil || !packageJson.DirectoryExists {
 		return nil

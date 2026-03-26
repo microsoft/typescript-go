@@ -1313,7 +1313,7 @@ func TestSpecMatcher_MatchString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			m := newGlobSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			m := newSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			assert.Assert(t, m != nil)
 			for i, path := range tc.paths {
 				assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
@@ -1358,7 +1358,7 @@ func TestSingleSpecMatcher_MatchString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			m := newGlobSingleSpecMatcher(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			m := newSingleSpecMatcher(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			assert.Assert(t, m != nil)
 			for i, path := range tc.paths {
 				assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
@@ -1403,7 +1403,7 @@ func TestSpecMatchers_MatchIndex(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			m := newGlobSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			m := newSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			assert.Assert(t, m != nil)
 			for i, path := range tc.paths {
 				assert.Equal(t, m.MatchIndex(path), tc.expected[i], "path: %s", path)

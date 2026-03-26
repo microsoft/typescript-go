@@ -571,13 +571,13 @@ func matchFiles(path string, extensions, excludes, includes []string, useCaseSen
 	return core.Flatten(v.results)
 }
 
-// globSpecMatcher wraps multiple glob patterns for matching paths.
-type globSpecMatcher struct {
+// SpecMatcher wraps multiple glob patterns for matching paths.
+type SpecMatcher struct {
 	patterns []globPattern
 }
 
 // MatchString returns true if any pattern matches the path.
-func (m *globSpecMatcher) MatchString(path string) bool {
+func (m *SpecMatcher) MatchString(path string) bool {
 	for i := range m.patterns {
 		if m.patterns[i].matches(path) {
 			return true
@@ -587,7 +587,7 @@ func (m *globSpecMatcher) MatchString(path string) bool {
 }
 
 // MatchIndex returns the index of the first matching pattern, or -1.
-func (m *globSpecMatcher) MatchIndex(path string) int {
+func (m *SpecMatcher) MatchIndex(path string) int {
 	for i := range m.patterns {
 		if m.patterns[i].matches(path) {
 			return i
@@ -596,8 +596,8 @@ func (m *globSpecMatcher) MatchIndex(path string) int {
 	return -1
 }
 
-// newGlobSpecMatcher creates a matcher for multiple glob specs.
-func newGlobSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatcher {
+// newSpecMatcher creates a matcher for multiple glob specs.
+func newSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
 	if len(specs) == 0 {
 		return nil
 	}
@@ -610,10 +610,10 @@ func newGlobSpecMatcher(specs []string, basePath string, usage Usage, useCaseSen
 	if len(patterns) == 0 {
 		return nil
 	}
-	return &globSpecMatcher{patterns: patterns}
+	return &SpecMatcher{patterns: patterns}
 }
 
-// newGlobSingleSpecMatcher creates a matcher for a single glob spec.
-func newGlobSingleSpecMatcher(spec, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatcher {
-	return newGlobSpecMatcher([]string{spec}, basePath, usage, useCaseSensitiveFileNames)
+// newSingleSpecMatcher creates a matcher for a single glob spec.
+func newSingleSpecMatcher(spec, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
+	return newSpecMatcher([]string{spec}, basePath, usage, useCaseSensitiveFileNames)
 }

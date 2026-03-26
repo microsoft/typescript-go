@@ -35,44 +35,22 @@ func IsImplicitGlob(lastPathComponent string) bool {
 	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
 
-// SpecMatcher is an interface for matching file paths against compiled glob patterns.
-type SpecMatcher interface {
-	// MatchString returns true if the given path matches the pattern.
-	MatchString(path string) bool
-}
-
-// SpecMatchers is an interface for matching file paths against multiple compiled glob patterns.
-// It can return the index of the matching pattern.
-type SpecMatchers interface {
-	// MatchIndex returns the index of the first matching pattern, or -1 if none match.
-	MatchIndex(path string) int
-}
-
 // NewSpecMatcher creates a matcher for one or more glob specs.
 // It returns a matcher that can test if paths match any of the patterns.
-func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-	if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
-		return m
-	}
-	return nil
+func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
+	return newSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
 }
 
 // NewSingleSpecMatcher creates a matcher for a single glob spec.
 // Returns nil if the spec compiles to an empty pattern (e.g., trailing ** for non-exclude).
-func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-	if m := newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
-		return m
-	}
-	return nil
+func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
+	return newSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames)
 }
 
 // NewSpecMatchers creates individual matchers for each spec, allowing lookup of which spec matched.
 // Returns nil if no valid patterns could be compiled from the specs.
-func NewSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
-	if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
-		return m
-	}
-	return nil
+func NewSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
+	return newSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
 }
 
 var wildcardCharCodes = []rune{'*', '?'}
