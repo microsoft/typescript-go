@@ -311,11 +311,10 @@ compiler/constructorOverloads1.errors.txt.diff
 compiler/arrayIterationLibES5TargetDifferent(nolib=true,target=es2015).errors.txt.diff
 compiler/arrayIterationLibES5TargetDifferent(nolib=true,target=esnext).errors.txt.diff
 
-## emit differences ##
+## emit differences of no consequence ##
 compiler/assignmentToInstantiationExpression.js.diff
 compiler/asyncArrowInClassES5(target=es2015).js.diff
 compiler/augmentedTypesVar.js.diff
-compiler/commentsFunction(target=es2015).js.diff
 compiler/constructorWithIncompleteTypeAnnotation.js.diff
 
 ## better error spans/suggestions ##
