@@ -19,6 +19,8 @@ import type {
     Node,
     NodeArray,
     ObjectLiteralExpression,
+    PostfixUnaryExpression,
+    PrefixUnaryExpression,
     SourceFile,
     TemplateLiteralLikeNode,
 } from "@typescript/ast";
@@ -171,6 +173,9 @@ function getNodeDefinedData(node: Node): number {
             const attrs = node as HeritageClause;
             return (attrs.token === SyntaxKind.ExtendsKeyword ? 1 : 0) << 24;
         }
+        case SyntaxKind.PrefixUnaryExpression:
+        case SyntaxKind.PostfixUnaryExpression:
+            return ((node as PrefixUnaryExpression | PostfixUnaryExpression).operator & 0x3f) << 24;
     }
     return 0;
 }
