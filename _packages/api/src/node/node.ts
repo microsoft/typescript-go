@@ -454,8 +454,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                 switch (propertyName) {
                     case "name":
                         order = this.isNameFirst ? 1 : 2;
+                        break;
                     case "typeExpression":
                         order = this.isNameFirst ? 2 : 1;
+                        break;
                 }
             }
             // Node kind does not have this property
