@@ -33,9 +33,8 @@ export class ActiveJsTsEditorTracker implements vscode.Disposable {
 
     private update(): void {
         const editorCandidates = this.getEditorCandidatesForActiveTab();
-        const managedEditors = editorCandidates.filter(editor => this.isManagedFile(editor));
-        const newActiveJsTsEditor = managedEditors.at(0);
-        if (this._activeJsTsEditor !== newActiveJsTsEditor) {
+        const newActiveJsTsEditor = editorCandidates.find(editor => this.isManagedFile(editor));
+        if (newActiveJsTsEditor !== undefined && this._activeJsTsEditor !== newActiveJsTsEditor) {
             this._activeJsTsEditor = newActiveJsTsEditor;
             this._onDidChangeActiveJsTsEditor.fire(this._activeJsTsEditor);
         }
@@ -49,9 +48,9 @@ export class ActiveJsTsEditorTracker implements vscode.Disposable {
 
         // Basic text editor tab
         if (tab.input instanceof vscode.TabInputText) {
-            const inputUri = tab.input.uri;
+            const inputUriString = tab.input.uri.toString();
             const editor = vscode.window.visibleTextEditors.find(editor => {
-                return editor.document.uri.toString() === inputUri.toString()
+                return editor.document.uri.toString() === inputUriString
                     && editor.viewColumn === tab.group.viewColumn;
             });
             return editor ? [editor] : [];

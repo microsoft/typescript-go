@@ -143,7 +143,7 @@ export class ProjectStatus implements vscode.Disposable {
                 statusItem.detail = undefined;
                 statusItem.severity = vscode.LanguageStatusSeverity.Information;
 
-                if (this.state.configFile && !isInferredProjectName(this.state.configFile)) {
+                if (this.state.configFile) {
                     statusItem.text = vscode.workspace.asRelativePath(this.state.configFile);
                     statusItem.command = {
                         command: "vscode.open",
@@ -181,8 +181,4 @@ export class ProjectStatus implements vscode.Disposable {
         }
         this.disposables.forEach(d => d.dispose());
     }
-}
-
-function isInferredProjectName(configFileName: string): boolean {
-    return configFileName.startsWith("/dev/null/");
 }
