@@ -418,6 +418,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         if (!propertyNames) {
             // `childProperties` is only defined for nodes with more than one child property.
             // Get the only child if it exists.
+            if (!this.hasChildren()) {
+                return undefined;
+            }
             const child = this.getOrCreateChildAtNodeIndex(this.index + 1);
             if (child.next !== 0) {
                 throw new Error("Expected only one child");
@@ -611,6 +614,14 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get operator(): SyntaxKind | undefined {
+        switch (this.kind) {
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+                return ((this.data >> 24) & 0x3f) as SyntaxKind;
+        }
+    }
+
     // Children properties
     get argument(): RemoteNode | undefined {
         return this.getNamedChild("argument") as RemoteNode;
@@ -654,6 +665,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get class(): RemoteNode | undefined {
         return this.getNamedChild("class") as RemoteNode;
     }
+    get clauses(): RemoteNodeList | undefined {
+        return this.getNamedChild("clauses") as RemoteNodeList;
+    }
     get closingElement(): RemoteNode | undefined {
         return this.getNamedChild("closingElement") as RemoteNode;
     }
@@ -675,14 +689,17 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get declarationList(): RemoteNode | undefined {
         return this.getNamedChild("declarationList") as RemoteNode;
     }
-    get declarations(): RemoteNode | undefined {
-        return this.getNamedChild("declarations") as RemoteNode;
+    get declarations(): RemoteNodeList | undefined {
+        return this.getNamedChild("declarations") as RemoteNodeList;
     }
     get default(): RemoteNode | undefined {
         return this.getNamedChild("default") as RemoteNode;
     }
     get dotDotDotToken(): RemoteNode | undefined {
         return this.getNamedChild("dotDotDotToken") as RemoteNode;
+    }
+    get elementType(): RemoteNode | undefined {
+        return this.getNamedChild("elementType") as RemoteNode;
     }
     get elements(): RemoteNodeList | undefined {
         return this.getNamedChild("elements") as RemoteNodeList;
@@ -741,6 +758,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get initializer(): RemoteNode | undefined {
         return this.getNamedChild("initializer") as RemoteNode;
     }
+    get jsDocPropertyTags(): RemoteNodeList | undefined {
+        return this.getNamedChild("jsDocPropertyTags") as RemoteNodeList;
+    }
     get label(): RemoteNode | undefined {
         return this.getNamedChild("label") as RemoteNode;
     }
@@ -787,6 +807,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get openingFragment(): RemoteNode | undefined {
         return this.getNamedChild("openingFragment") as RemoteNode;
     }
+    get operand(): RemoteNode | undefined {
+        return this.getNamedChild("operand") as RemoteNode;
+    }
     get operatorToken(): RemoteNode | undefined {
         return this.getNamedChild("operatorToken") as RemoteNode;
     }
@@ -798,6 +821,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get postfixToken(): RemoteNode | undefined {
         return this.getNamedChild("postfixToken") as RemoteNode;
+    }
+    get properties(): RemoteNodeList | undefined {
+        return this.getNamedChild("properties") as RemoteNodeList;
     }
     get propertyName(): RemoteNode | undefined {
         return this.getNamedChild("propertyName") as RemoteNode;
@@ -864,6 +890,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get typeParameters(): RemoteNodeList | undefined {
         return this.getNamedChild("typeParameters") as RemoteNodeList;
+    }
+    get types(): RemoteNodeList | undefined {
+        return this.getNamedChild("types") as RemoteNodeList;
     }
     get value(): RemoteNode | undefined {
         return this.getNamedChild("value") as RemoteNode;

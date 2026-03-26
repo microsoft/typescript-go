@@ -119,6 +119,8 @@ type classFieldsTransformer struct {
 	// switches to the outer lexical environment. Used by visitThisExpression() to apply
 	// the outer environment's substitution without requiring currentClassElement to be static.
 	insideComputedPropertyName bool
+	parentNode                 *ast.Node
+	currentNode                *ast.Node
 
 	// Visitors
 	modifierVisitor                *ast.NodeVisitor
@@ -243,6 +245,18 @@ func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 	return nil
 }
 
+func (tx *classFieldsTransformer) pushNode(node *ast.Node) (grandparentNode *ast.Node) {
+	grandparentNode = tx.parentNode
+	tx.parentNode = tx.currentNode
+	tx.currentNode = node
+	return grandparentNode
+}
+
+func (tx *classFieldsTransformer) popNode(grandparentNode *ast.Node) {
+	tx.currentNode = tx.parentNode
+	tx.parentNode = grandparentNode
+}
+
 // visitForSubstitution visits nodes solely for class alias substitution in subtrees
 // that don't contain class field or lexical this/super transforms. It substitutes
 // identifiers that reference class declarations with their aliases, while skipping
@@ -260,6 +274,9 @@ func (tx *classFieldsTransformer) visitForSubstitution(node *ast.Node) *ast.Node
 
 // visit is the main visitor.
 func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
+	grandparentNode := tx.pushNode(node)
+	defer tx.popNode(grandparentNode)
+
 	if node.SubtreeFacts()&(ast.SubtreeContainsClassFields|ast.SubtreeContainsLexicalThisOrSuper) == 0 {
 		if tx.currentClassContainer != nil && len(tx.classAliases) > 0 {
 			// Continue visiting for alias substitution even in non-class-field subtrees.
@@ -434,7 +451,7 @@ func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.
 	case ast.KindGetAccessor, ast.KindSetAccessor:
 		return tx.visitClassElement(node)
 	default:
-		debug.AssertMissingNode(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
+		debug.FailBadSyntaxKind(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
 		return nil
 	}
 }
@@ -456,14 +473,14 @@ func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Nod
 }
 
 // visitPrivateIdentifier handles an undeclared private name. Replace it with an empty
-// identifier to indicate a problem with the code, unless we are in a statement position -
-// otherwise this will not trigger a SyntaxError.
+// identifier to indicate a problem with the code.
+// Note: private identifiers in statement position (e.g., `#;`) are intercepted earlier
+// by visitExpressionStatement, which preserves them so the runtime throws a SyntaxError.
 func (tx *classFieldsTransformer) visitPrivateIdentifier(node *ast.Node) *ast.Node {
 	if !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		return node
 	}
-	// !!! Strada used .parent too; this is suspicious in a transform.
-	if node.Parent != nil && ast.IsStatement(node.Parent) {
+	if tx.parentNode != nil && ast.IsStatement(tx.parentNode) {
 		return node
 	}
 	result := tx.Factory().NewIdentifier("")
@@ -766,7 +783,7 @@ func (tx *classFieldsTransformer) setClassElementAndVisitEachChild(node *ast.Nod
 }
 
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
-	debug.AssertNode(node.Name(), ast.IsPrivateIdentifier)
+	debug.Assert(node.Name() != nil && ast.IsPrivateIdentifier(node.Name()))
 	info := tx.accessPrivateIdentifier(node.Name())
 	debug.Assert(info != nil, "Undeclared private name for property declaration.")
 	if info.kind == printer.PrivateIdentifierKindMethod {
@@ -1236,6 +1253,13 @@ func (tx *classFieldsTransformer) visitForStatement(node *ast.ForStatement) *ast
 }
 
 func (tx *classFieldsTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
+	// Preserve private identifiers that appear directly as the expression of an
+	// ExpressionStatement (e.g., `#;`). This is error-recovery output from the parser
+	// for invalid syntax. Keeping it ensures the runtime throws a SyntaxError rather
+	// than silently succeeding with an empty statement.
+	if ast.IsPrivateIdentifier(node.Expression) && tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+		return node.AsNode()
+	}
 	return tx.Factory().UpdateExpressionStatement(
 		node,
 		tx.discardedValueVisitor.VisitNode(node.Expression),
@@ -1475,7 +1499,7 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 
 		if isNamedEvaluationAnd(tx.EmitContext(), node.AsNode(), tx.isAnonymousClassNeedingAssignedName) {
 			node = transformNamedEvaluation(tx.EmitContext(), node.AsNode(), false, "").AsBinaryExpression()
-			debug.AssertNode(node.AsNode(), func(node *ast.Node) bool { return ast.IsAssignmentExpression(node, false) })
+			debug.Assert(node.AsNode() != nil && ast.IsAssignmentExpression(node.AsNode(), false))
 		}
 
 		left := ast.SkipOuterExpressions(node.Left, ast.OEKPartiallyEmittedExpressions|ast.OEKParentheses)
@@ -2751,7 +2775,7 @@ func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.Property
 
 	initializer := tx.Visitor().VisitNode(property.Initializer)
 	propertyOriginalNode := tx.EmitContext().MostOriginal(property.AsNode())
-	if ast.IsParameterPropertyDeclaration(propertyOriginalNode, propertyOriginalNode.Parent) && ast.IsIdentifier(propertyName) {
+	if ast.IsParameterPropertyDeclaration(propertyOriginalNode, propertyOriginalNode.Parent) && ast.IsIdentifier(propertyName) { //nolint:customlint // MostOriginal returns parse-tree nodes, and this parent relationship is intentional.
 		// A parameter-property declaration always overrides the initializer. The only time a parameter-property
 		// declaration *should* have an initializer is when decorators have added initializers that need to run before
 		// any other initializer
@@ -3282,7 +3306,7 @@ func (tx *classFieldsTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 }
 
 func (tx *classFieldsTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
-	debug.AssertNode(node, ast.IsObjectBindingOrAssignmentElement)
+	debug.Assert(node != nil && ast.IsObjectBindingOrAssignmentElement(node))
 	if ast.IsSpreadAssignment(node) {
 		return tx.visitAssignmentRestProperty(node)
 	}
