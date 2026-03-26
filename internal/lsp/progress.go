@@ -15,12 +15,13 @@ type progressEvent struct {
 	finish  bool
 }
 
-// projectLoadingProgress manages LSP WorkDoneProgress indicators for project
-// loading. A single persistent goroutine processes start/finish events,
-// maintains the set of loading projects, and sends progress messages in order.
+// projectLoadingProgress manages LSP WorkDoneProgress indicators for
+// long-running operations. A single persistent goroutine processes
+// start/finish events, maintains a ref-counted map of active operations,
+// and sends progress messages in order.
 //
-// Callers never block: events are sent to a buffered channel with a select
-// on the caller's context.
+// start/finish may block if the internal buffer (64 events) is full,
+// but will bail out if the server's background context is cancelled.
 type projectLoadingProgress struct {
 	server *Server
 	ch     chan progressEvent
@@ -57,7 +58,7 @@ func (p *projectLoadingProgress) finish(message *diagnostics.Message, args ...an
 // It owns all mutable state: no external synchronization needed.
 func (p *projectLoadingProgress) run() {
 	var (
-		loading collections.OrderedSet[string]
+		loading collections.OrderedMap[string, int]
 		token   string // current token; empty if no progress active
 		tokenID int
 		begun   bool // whether "begin" has been sent for the current token
@@ -69,7 +70,8 @@ func (p *projectLoadingProgress) run() {
 		case ev := <-p.ch:
 			text := ev.message.Localize(p.server.locale, ev.args...)
 			if !ev.finish {
-				loading.Add(text)
+				count := loading.GetOrZero(text)
+				loading.Set(text, count+1)
 				if token == "" {
 					tokenID++
 					token = fmt.Sprintf("tsgo-loading-%d", tokenID)
@@ -94,7 +96,12 @@ func (p *projectLoadingProgress) run() {
 					})
 				}
 			} else {
-				loading.Delete(text)
+				count := loading.GetOrZero(text)
+				if count <= 1 {
+					loading.Delete(text)
+				} else {
+					loading.Set(text, count-1)
+				}
 				if token == "" {
 					continue
 				}
@@ -104,7 +111,7 @@ func (p *projectLoadingProgress) run() {
 					})
 					token = ""
 				} else {
-					first := core.FirstOrNilSeq(loading.Values())
+					first := core.FirstOrNilSeq(loading.Keys())
 					p.sendProgress(token, lsproto.WorkDoneProgressBeginOrReportOrEnd{
 						Report: &lsproto.WorkDoneProgressReport{
 							Message: &first,

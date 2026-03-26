@@ -34,7 +34,10 @@ export class ManagedFileContextManager implements vscode.Disposable {
     }
 
     private isManagedFile(editor: vscode.TextEditor): boolean {
-        return (isSupportedLanguageMode(editor.document) && !disabledSchemes.has(editor.document.uri.scheme))
+        if (disabledSchemes.has(editor.document.uri.scheme)) {
+            return false;
+        }
+        return isSupportedLanguageMode(editor.document)
             || isJsConfigOrTsConfigFileName(editor.document.fileName);
     }
 

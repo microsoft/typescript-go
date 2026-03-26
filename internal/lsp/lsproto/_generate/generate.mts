@@ -281,7 +281,7 @@ const customStructures: Structure[] = [
             {
                 name: "configFileName",
                 type: { kind: "base", name: "string" },
-                documentation: "The config file name (e.g. tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.",
+                documentation: "The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.",
             },
         ],
         documentation: "Result for the custom/projectInfo request.",

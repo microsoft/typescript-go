@@ -22267,7 +22267,7 @@ func (s *ProjectInfoParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // Result for the custom/projectInfo request.
 type ProjectInfoResult struct {
-	// The config file name (e.g. tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.
+	// The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.
 	ConfigFileName string `json:"configFileName"`
 }
 

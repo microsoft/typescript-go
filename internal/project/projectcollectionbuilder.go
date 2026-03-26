@@ -1033,9 +1033,15 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		if updateProgram {
 			if b.client != nil {
 				displayName = entry.Value().DisplayName(b.sessionOptions.CurrentDirectory)
-				b.client.ProgressStart(diagnostics.Project_0, displayName)
 				notifiedLoading = true
 			}
+		}
+	})
+	if notifiedLoading && b.client != nil {
+		b.client.ProgressStart(diagnostics.Project_0, displayName)
+	}
+	if updateProgram {
+		entry.Locked(func(entry dirty.Value[*Project]) {
 			entry.Change(func(project *Project) {
 				oldHost := project.host
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
@@ -1054,8 +1060,8 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				project.dirty = false
 				project.dirtyFilePath = ""
 			})
-		}
-	})
+		})
+	}
 	if notifiedLoading && b.client != nil {
 		b.client.ProgressFinish(diagnostics.Project_0, displayName)
 	}

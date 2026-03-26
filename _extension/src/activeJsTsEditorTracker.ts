@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import {
+    disabledSchemes,
     isJsConfigOrTsConfigFileName,
     isSupportedLanguageMode,
 } from "./util";
@@ -72,6 +73,9 @@ export class ActiveJsTsEditorTracker implements vscode.Disposable {
     }
 
     private isManagedFile(editor: vscode.TextEditor): boolean {
+        if (disabledSchemes.has(editor.document.uri.scheme)) {
+            return false;
+        }
         return isSupportedLanguageMode(editor.document) || isJsConfigOrTsConfigFileName(editor.document.fileName);
     }
 
