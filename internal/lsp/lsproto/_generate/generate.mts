@@ -508,6 +508,18 @@ function patchAndPreprocessModel() {
                     prop.type = registerOptionsUnionType;
                 }
             }
+
+            // Replace ProgressParams.value with a proper union type
+            if (structure.name === "ProgressParams" && prop.name === "value" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                prop.type = {
+                    kind: "or",
+                    items: [
+                        { kind: "reference", name: "WorkDoneProgressBegin" },
+                        { kind: "reference", name: "WorkDoneProgressReport" },
+                        { kind: "reference", name: "WorkDoneProgressEnd" },
+                    ],
+                };
+            }
         }
     }
 

@@ -11770,7 +11770,7 @@ type ProgressParams struct {
 	Token IntegerOrString `json:"token"`
 
 	// The progress data.
-	Value any `json:"value"`
+	Value WorkDoneProgressBeginOrReportOrEnd `json:"value"`
 }
 
 var _ json.UnmarshalerFrom = (*ProgressParams)(nil)
@@ -25764,6 +25764,56 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return nil
 	}
 	return fmt.Errorf("invalid LocationOrLocationUriOnly: %s", data)
+}
+
+type WorkDoneProgressBeginOrReportOrEnd struct {
+	Begin  *WorkDoneProgressBegin
+	Report *WorkDoneProgressReport
+	End    *WorkDoneProgressEnd
+}
+
+var _ json.MarshalerTo = (*WorkDoneProgressBeginOrReportOrEnd)(nil)
+
+func (o *WorkDoneProgressBeginOrReportOrEnd) MarshalJSONTo(enc *json.Encoder) error {
+	assertOnlyOne("exactly one element of WorkDoneProgressBeginOrReportOrEnd should be set", o.Begin != nil, o.Report != nil, o.End != nil)
+
+	if o.Begin != nil {
+		return json.MarshalEncode(enc, o.Begin)
+	}
+	if o.Report != nil {
+		return json.MarshalEncode(enc, o.Report)
+	}
+	if o.End != nil {
+		return json.MarshalEncode(enc, o.End)
+	}
+	panic("unreachable")
+}
+
+var _ json.UnmarshalerFrom = (*WorkDoneProgressBeginOrReportOrEnd)(nil)
+
+func (o *WorkDoneProgressBeginOrReportOrEnd) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = WorkDoneProgressBeginOrReportOrEnd{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	var vBegin WorkDoneProgressBegin
+	if err := json.Unmarshal(data, &vBegin); err == nil {
+		o.Begin = &vBegin
+		return nil
+	}
+	var vReport WorkDoneProgressReport
+	if err := json.Unmarshal(data, &vReport); err == nil {
+		o.Report = &vReport
+		return nil
+	}
+	var vEnd WorkDoneProgressEnd
+	if err := json.Unmarshal(data, &vEnd); err == nil {
+		o.End = &vEnd
+		return nil
+	}
+	return fmt.Errorf("invalid WorkDoneProgressBeginOrReportOrEnd: %s", data)
 }
 
 type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {

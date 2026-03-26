@@ -80,13 +80,17 @@ func (p *projectLoadingProgress) run() {
 				}
 				if !begun {
 					begun = true
-					p.sendProgress(token, &lsproto.WorkDoneProgressBegin{
-						Title:   title,
-						Message: &text,
+					p.sendProgress(token, lsproto.WorkDoneProgressBeginOrReportOrEnd{
+						Begin: &lsproto.WorkDoneProgressBegin{
+							Title:   title,
+							Message: &text,
+						},
 					})
 				} else {
-					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
-						Message: &text,
+					p.sendProgress(token, lsproto.WorkDoneProgressBeginOrReportOrEnd{
+						Report: &lsproto.WorkDoneProgressReport{
+							Message: &text,
+						},
 					})
 				}
 			} else {
@@ -95,12 +99,16 @@ func (p *projectLoadingProgress) run() {
 					continue
 				}
 				if loading.Size() == 0 {
-					p.sendProgress(token, &lsproto.WorkDoneProgressEnd{})
+					p.sendProgress(token, lsproto.WorkDoneProgressBeginOrReportOrEnd{
+						End: &lsproto.WorkDoneProgressEnd{},
+					})
 					token = ""
 				} else {
 					first := core.FirstOrNilSeq(loading.Values())
-					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
-						Message: &first,
+					p.sendProgress(token, lsproto.WorkDoneProgressBeginOrReportOrEnd{
+						Report: &lsproto.WorkDoneProgressReport{
+							Message: &first,
+						},
 					})
 				}
 			}
@@ -113,7 +121,7 @@ func (p *projectLoadingProgress) run() {
 
 // sendProgress sends a $/progress notification with a snapshot of the token
 // string, so deferred serialization in the write loop won't see a mutated value.
-func (p *projectLoadingProgress) sendProgress(token string, value any) {
+func (p *projectLoadingProgress) sendProgress(token string, value lsproto.WorkDoneProgressBeginOrReportOrEnd) {
 	_ = sendNotification(p.server, lsproto.ProgressInfo, &lsproto.ProgressParams{
 		Token: lsproto.IntegerOrString{String: &token},
 		Value: value,
