@@ -1032,7 +1032,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		}
 		if updateProgram {
 			if b.client != nil {
-				displayName = entry.Value().DisplayName()
+				displayName = entry.Value().DisplayName(b.sessionOptions.CurrentDirectory)
 				b.client.ProgressStart(b.ctx, diagnostics.Project_0, displayName)
 				notifiedLoading = true
 			}

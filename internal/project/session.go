@@ -1080,7 +1080,7 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 					Logger:           logTree,
 				}
 
-				projectDisplayName := project.DisplayName()
+				projectDisplayName := project.DisplayName(s.options.CurrentDirectory)
 				s.client.ProgressStart(ctx, diagnostics.Installing_typings_for_0, projectDisplayName)
 				if result, err := s.typingsInstaller.InstallTypings(request); err != nil && logTree != nil {
 					s.client.ProgressFinish(ctx, diagnostics.Installing_typings_for_0, projectDisplayName)
