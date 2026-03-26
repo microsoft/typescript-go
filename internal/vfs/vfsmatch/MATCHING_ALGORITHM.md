@@ -27,6 +27,8 @@ calling routine unless stated otherwise.
 - **Wildcard** — Contains at least one `*` or `?` character.
 - **DoubleAsterisk** — The exact string `**`.
 
+**Character** — A single Unicode scalar value (codepoint). Implementations must advance by full codepoints, not by encoding units (e.g., not by individual bytes in UTF-8, nor by individual code units in UTF-16). The original TypeScript implementation uses ECMAScript regexes without the `u` flag, which operate on UTF-16 code units; a conforming implementation may match on codepoints instead, as the difference is only observable for supplementary-plane characters (U+10000 and above) in filenames.
+
 **Segment kind** — One of:
 - **SegLiteral** — An exact literal substring.
 - **SegStar** — Matches zero or more characters excluding `/`.
@@ -188,6 +190,12 @@ calling routine unless stated otherwise.
 ---
 
 ## 9. Segment Matching
+
+In this section, all string positions refer to **character** (codepoint) boundaries.
+"Increment _sIdx_" means advance _sIdx_ past the next character (e.g., by one
+codepoint, which may be multiple bytes in UTF-8 or multiple code units in UTF-16).
+Likewise, "length of _s_" is the number of characters, and _s_\[_sIdx_\] is the
+character at position _sIdx_.
 
 **MATCH_SEGMENTS**(_segments_, _s_, _caseSensitive_)
 

@@ -2,6 +2,7 @@ package vfsmatch
 
 import (
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -310,7 +311,8 @@ func (p *globPattern) matchSegments(segs []segment, s string) bool {
 				}
 			case segQuestion:
 				if s[sIdx] != '/' {
-					sIdx++
+					_, size := utf8.DecodeRuneInString(s[sIdx:])
+					sIdx += size
 					segIdx++
 					continue
 				}
@@ -325,8 +327,9 @@ func (p *globPattern) matchSegments(segs []segment, s string) bool {
 
 		// Current segment didn't match. Backtrack to last star if possible.
 		if starSegIdx >= 0 && starSIdx < len(s) && s[starSIdx] != '/' {
-			// Star consumes one more character, retry from segment after star.
-			starSIdx++
+			// Star consumes one more character (rune), retry from segment after star.
+			_, size := utf8.DecodeRuneInString(s[starSIdx:])
+			starSIdx += size
 			sIdx = starSIdx
 			segIdx = starSegIdx + 1
 			continue

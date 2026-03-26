@@ -1994,6 +1994,53 @@ func TestMatchSegmentsEdgeCases(t *testing.T) {
 		assert.Assert(t, !p.matches("/abc.ts"))     // different literal
 		assert.Assert(t, p.matches("/abcdefgh.ts")) // exact match
 	})
+
+	t.Run("question mark matches multi-byte unicode rune", func(t *testing.T) {
+		t.Parallel()
+		// ? should match one full Unicode codepoint, not one byte.
+		// 'é' is 2 bytes in UTF-8, '🎉' is 4 bytes, '中' is 3 bytes.
+
+		p1, ok := compileGlobPattern("?.ts", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+
+		assert.Assert(t, p1.matches("/a.ts"))   // single ASCII char
+		assert.Assert(t, p1.matches("/é.ts"))   // 2-byte rune
+		assert.Assert(t, p1.matches("/中.ts"))   // 3-byte rune
+		assert.Assert(t, p1.matches("/🎉.ts"))   // 4-byte rune (surrogate pair in UTF-16)
+		assert.Assert(t, !p1.matches("/.ts"))   // empty - no char for ? to match
+		assert.Assert(t, !p1.matches("/ab.ts")) // two chars
+
+		// Two question marks should match exactly two runes
+		p2, ok := compileGlobPattern("??.ts", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+
+		assert.Assert(t, p2.matches("/ab.ts"))   // two ASCII chars
+		assert.Assert(t, p2.matches("/é中.ts"))   // two multi-byte runes
+		assert.Assert(t, p2.matches("/🎉é.ts"))   // 4-byte + 2-byte runes
+		assert.Assert(t, !p2.matches("/a.ts"))   // only one char
+		assert.Assert(t, !p2.matches("/abc.ts")) // three chars
+	})
+
+	t.Run("star matches multi-byte unicode runes correctly", func(t *testing.T) {
+		t.Parallel()
+		// * should advance by full runes during backtracking.
+
+		// Pattern: *é.ts - anything ending in é.ts
+		p, ok := compileGlobPattern("*é.ts", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+
+		assert.Assert(t, p.matches("/é.ts"))
+		assert.Assert(t, p.matches("/café.ts"))
+		assert.Assert(t, !p.matches("/cafe.ts")) // 'e' != 'é'
+
+		// Pattern: *🎉* - contains 🎉 somewhere
+		p2, ok := compileGlobPattern("*🎉*", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+
+		assert.Assert(t, p2.matches("/🎉"))
+		assert.Assert(t, p2.matches("/a🎉b"))
+		assert.Assert(t, !p2.matches("/abc"))
+	})
 }
 
 // TestReadDirectoryConsecutiveSlashes tests handling of paths with consecutive slashes
