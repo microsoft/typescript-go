@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -1079,10 +1080,14 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 					Logger:           logTree,
 				}
 
+				projectDisplayName := project.DisplayName()
+				s.client.ProgressStart(ctx, diagnostics.Installing_typings_for_0, projectDisplayName)
 				if result, err := s.typingsInstaller.InstallTypings(request); err != nil && logTree != nil {
+					s.client.ProgressFinish(ctx, diagnostics.Installing_typings_for_0, projectDisplayName)
 					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
 					s.logger.Log(logTree.String())
 				} else {
+					s.client.ProgressFinish(ctx, diagnostics.Installing_typings_for_0, projectDisplayName)
 					if !slices.Equal(result.TypingsFiles, project.typingsFiles) {
 						s.pendingATAChangesMu.Lock()
 						defer s.pendingATAChangesMu.Unlock()

@@ -166,6 +166,16 @@ func (p *Project) Name() string {
 	return p.configFileName
 }
 
+// DisplayName returns a human-readable name for the project.
+// For configured projects, this is the config file path.
+// For inferred projects, this is the current directory.
+func (p *Project) DisplayName() string {
+	if p.Kind == KindInferred {
+		return p.currentDirectory
+	}
+	return p.configFileName
+}
+
 func (p *Project) ID() tspath.Path {
 	return p.configFilePath
 }

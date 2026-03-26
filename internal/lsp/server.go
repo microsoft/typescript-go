@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -283,17 +284,17 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 	return nil
 }
 
-// ProjectLoadingStart implements project.Client.
-func (s *Server) ProjectLoadingStart(ctx context.Context, projectName string) {
+// ProgressStart implements project.Client.
+func (s *Server) ProgressStart(ctx context.Context, message *diagnostics.Message, args ...any) {
 	if s.projectProgress != nil {
-		s.projectProgress.start(ctx, projectName)
+		s.projectProgress.start(ctx, message, args...)
 	}
 }
 
-// ProjectLoadingFinish implements project.Client.
-func (s *Server) ProjectLoadingFinish(ctx context.Context, projectName string) {
+// ProgressFinish implements project.Client.
+func (s *Server) ProgressFinish(ctx context.Context, message *diagnostics.Message, args ...any) {
 	if s.projectProgress != nil {
-		s.projectProgress.finish(ctx, projectName)
+		s.projectProgress.finish(ctx, message, args...)
 	}
 }
 

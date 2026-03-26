@@ -5,14 +5,15 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type progressEvent struct {
-	name   string // project name
-	finish bool   // true if the project finished loading
+	message *diagnostics.Message
+	args    []any
+	finish  bool
 }
 
 // projectLoadingProgress manages LSP WorkDoneProgress indicators for project
@@ -20,7 +21,7 @@ type progressEvent struct {
 // maintains the set of loading projects, and sends progress messages in order.
 //
 // Callers never block: events are sent to a buffered channel with a select
-// on the server's background context.
+// on the caller's context.
 type projectLoadingProgress struct {
 	server *Server
 	ch     chan progressEvent
@@ -35,16 +36,16 @@ func newProjectLoadingProgress(server *Server) *projectLoadingProgress {
 	return p
 }
 
-func (p *projectLoadingProgress) start(ctx context.Context, projectName string) {
+func (p *projectLoadingProgress) start(ctx context.Context, message *diagnostics.Message, args ...any) {
 	select {
-	case p.ch <- progressEvent{name: projectName}:
+	case p.ch <- progressEvent{message: message, args: args}:
 	case <-ctx.Done():
 	}
 }
 
-func (p *projectLoadingProgress) finish(ctx context.Context, projectName string) {
+func (p *projectLoadingProgress) finish(ctx context.Context, message *diagnostics.Message, args ...any) {
 	select {
-	case p.ch <- progressEvent{name: projectName, finish: true}:
+	case p.ch <- progressEvent{message: message, args: args, finish: true}:
 	case <-ctx.Done():
 	}
 }
@@ -57,47 +58,48 @@ func (p *projectLoadingProgress) run() {
 		token   string // current token; empty if no progress active
 		tokenID int
 		begun   bool // whether "begin" has been sent for the current token
+		title   = diagnostics.Loading.Localize(p.server.locale)
 	)
+
+	localize := func(ev progressEvent) string {
+		return ev.message.Localize(p.server.locale, ev.args...)
+	}
 
 	for {
 		select {
 		case ev := <-p.ch:
+			text := localize(ev)
 			if !ev.finish {
-				loading.Add(ev.name)
+				loading.Add(text)
 				if token == "" {
-					// First load — create a new progress token.
 					tokenID++
 					token = fmt.Sprintf("tsgo-loading-%d", tokenID)
 					begun = false
 					p.sendProgressCreate(token)
 				}
-				msg := p.displayName(ev.name)
 				if !begun {
 					begun = true
 					p.sendProgress(token, &lsproto.WorkDoneProgressBegin{
-						Title:   "Loading",
-						Message: &msg,
+						Title:   title,
+						Message: &text,
 					})
 				} else {
 					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
-						Message: &msg,
+						Message: &text,
 					})
 				}
 			} else {
-				loading.Delete(ev.name)
+				loading.Delete(text)
 				if token == "" {
 					continue
 				}
 				if loading.Size() == 0 {
-					// Last project finished — end the progress.
 					p.sendProgress(token, &lsproto.WorkDoneProgressEnd{})
 					token = ""
 				} else {
-					// Show the oldest still-loading project.
 					first := firstValue(loading.Values())
-					msg := p.displayName(first)
 					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
-						Message: &msg,
+						Message: &first,
 					})
 				}
 			}
@@ -126,19 +128,6 @@ func (p *projectLoadingProgress) sendProgressCreate(token string) {
 		Token: lsproto.IntegerOrString{String: &token},
 	})
 	_ = p.server.send(req.Message())
-}
-
-// displayName returns a short display string for a project name,
-// making it relative to the workspace root and truncating if needed.
-func (p *projectLoadingProgress) displayName(projectName string) string {
-	projectName = tspath.ConvertToRelativePath(projectName, tspath.ComparePathsOptions{
-		CurrentDirectory: p.server.cwd,
-	})
-	const maxLen = 60
-	if len(projectName) > maxLen {
-		projectName = "..." + projectName[len(projectName)-maxLen:]
-	}
-	return projectName
 }
 
 func firstValue[T any](seq func(yield func(T) bool)) T {

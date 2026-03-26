@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -1031,11 +1032,8 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		}
 		if updateProgram {
 			if b.client != nil {
-				displayName = configFileName
-				if entry.Value().Kind == KindInferred {
-					displayName = entry.Value().currentDirectory
-				}
-				b.client.ProjectLoadingStart(b.ctx, displayName)
+				displayName = entry.Value().DisplayName()
+				b.client.ProgressStart(b.ctx, diagnostics.Loading_project_0, displayName)
 				notifiedLoading = true
 			}
 			entry.Change(func(project *Project) {
@@ -1059,7 +1057,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		}
 	})
 	if notifiedLoading && b.client != nil {
-		b.client.ProjectLoadingFinish(b.ctx, displayName)
+		b.client.ProgressFinish(b.ctx, diagnostics.Loading_project_0, displayName)
 	}
 	if updateProgram && logger != nil {
 		elapsed := time.Since(startTime)

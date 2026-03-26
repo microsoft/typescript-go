@@ -7,6 +7,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 )
@@ -21,11 +22,11 @@ var _ project.Client = &ClientMock{}
 //
 //		// make and configure a mocked project.Client
 //		mockedClient := &ClientMock{
-//			ProjectLoadingFinishFunc: func(ctx context.Context, projectName string)  {
-//				panic("mock out the ProjectLoadingFinish method")
+//			ProgressFinishFunc: func(ctx context.Context, message *diagnostics.Message, args ...any)  {
+//				panic("mock out the ProgressFinish method")
 //			},
-//			ProjectLoadingStartFunc: func(ctx context.Context, projectName string)  {
-//				panic("mock out the ProjectLoadingStart method")
+//			ProgressStartFunc: func(ctx context.Context, message *diagnostics.Message, args ...any)  {
+//				panic("mock out the ProgressStart method")
 //			},
 //			PublishDiagnosticsFunc: func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
 //				panic("mock out the PublishDiagnostics method")
@@ -52,11 +53,11 @@ var _ project.Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
-	// ProjectLoadingFinishFunc mocks the ProjectLoadingFinish method.
-	ProjectLoadingFinishFunc func(ctx context.Context, projectName string)
+	// ProgressFinishFunc mocks the ProgressFinish method.
+	ProgressFinishFunc func(ctx context.Context, message *diagnostics.Message, args ...any)
 
-	// ProjectLoadingStartFunc mocks the ProjectLoadingStart method.
-	ProjectLoadingStartFunc func(ctx context.Context, projectName string)
+	// ProgressStartFunc mocks the ProgressStart method.
+	ProgressStartFunc func(ctx context.Context, message *diagnostics.Message, args ...any)
 
 	// PublishDiagnosticsFunc mocks the PublishDiagnostics method.
 	PublishDiagnosticsFunc func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
@@ -78,19 +79,23 @@ type ClientMock struct {
 
 	// calls tracks calls to the methods.
 	calls struct {
-		// ProjectLoadingFinish holds details about calls to the ProjectLoadingFinish method.
-		ProjectLoadingFinish []struct {
+		// ProgressFinish holds details about calls to the ProgressFinish method.
+		ProgressFinish []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
-			// ProjectName is the projectName argument value.
-			ProjectName string
+			// Message is the message argument value.
+			Message *diagnostics.Message
+			// Args is the args argument value.
+			Args []any
 		}
-		// ProjectLoadingStart holds details about calls to the ProjectLoadingStart method.
-		ProjectLoadingStart []struct {
+		// ProgressStart holds details about calls to the ProgressStart method.
+		ProgressStart []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
-			// ProjectName is the projectName argument value.
-			ProjectName string
+			// Message is the message argument value.
+			Message *diagnostics.Message
+			// Args is the args argument value.
+			Args []any
 		}
 		// PublishDiagnostics holds details about calls to the PublishDiagnostics method.
 		PublishDiagnostics []struct {
@@ -131,85 +136,93 @@ type ClientMock struct {
 			Watchers []*lsproto.FileSystemWatcher
 		}
 	}
-	lockProjectLoadingFinish sync.RWMutex
-	lockProjectLoadingStart  sync.RWMutex
-	lockPublishDiagnostics   sync.RWMutex
-	lockRefreshCodeLens      sync.RWMutex
-	lockRefreshDiagnostics   sync.RWMutex
-	lockRefreshInlayHints    sync.RWMutex
-	lockUnwatchFiles         sync.RWMutex
-	lockWatchFiles           sync.RWMutex
+	lockProgressFinish     sync.RWMutex
+	lockProgressStart      sync.RWMutex
+	lockPublishDiagnostics sync.RWMutex
+	lockRefreshCodeLens    sync.RWMutex
+	lockRefreshDiagnostics sync.RWMutex
+	lockRefreshInlayHints  sync.RWMutex
+	lockUnwatchFiles       sync.RWMutex
+	lockWatchFiles         sync.RWMutex
 }
 
-// ProjectLoadingFinish calls ProjectLoadingFinishFunc.
-func (mock *ClientMock) ProjectLoadingFinish(ctx context.Context, projectName string) {
+// ProgressFinish calls ProgressFinishFunc.
+func (mock *ClientMock) ProgressFinish(ctx context.Context, message *diagnostics.Message, args ...any) {
 	callInfo := struct {
-		Ctx         context.Context
-		ProjectName string
+		Ctx     context.Context
+		Message *diagnostics.Message
+		Args    []any
 	}{
-		Ctx:         ctx,
-		ProjectName: projectName,
+		Ctx:     ctx,
+		Message: message,
+		Args:    args,
 	}
-	mock.lockProjectLoadingFinish.Lock()
-	mock.calls.ProjectLoadingFinish = append(mock.calls.ProjectLoadingFinish, callInfo)
-	mock.lockProjectLoadingFinish.Unlock()
-	if mock.ProjectLoadingFinishFunc == nil {
+	mock.lockProgressFinish.Lock()
+	mock.calls.ProgressFinish = append(mock.calls.ProgressFinish, callInfo)
+	mock.lockProgressFinish.Unlock()
+	if mock.ProgressFinishFunc == nil {
 		return
 	}
-	mock.ProjectLoadingFinishFunc(ctx, projectName)
+	mock.ProgressFinishFunc(ctx, message, args...)
 }
 
-// ProjectLoadingFinishCalls gets all the calls that were made to ProjectLoadingFinish.
+// ProgressFinishCalls gets all the calls that were made to ProgressFinish.
 // Check the length with:
 //
-//	len(mockedClient.ProjectLoadingFinishCalls())
-func (mock *ClientMock) ProjectLoadingFinishCalls() []struct {
-	Ctx         context.Context
-	ProjectName string
+//	len(mockedClient.ProgressFinishCalls())
+func (mock *ClientMock) ProgressFinishCalls() []struct {
+	Ctx     context.Context
+	Message *diagnostics.Message
+	Args    []any
 } {
 	var calls []struct {
-		Ctx         context.Context
-		ProjectName string
+		Ctx     context.Context
+		Message *diagnostics.Message
+		Args    []any
 	}
-	mock.lockProjectLoadingFinish.RLock()
-	calls = mock.calls.ProjectLoadingFinish
-	mock.lockProjectLoadingFinish.RUnlock()
+	mock.lockProgressFinish.RLock()
+	calls = mock.calls.ProgressFinish
+	mock.lockProgressFinish.RUnlock()
 	return calls
 }
 
-// ProjectLoadingStart calls ProjectLoadingStartFunc.
-func (mock *ClientMock) ProjectLoadingStart(ctx context.Context, projectName string) {
+// ProgressStart calls ProgressStartFunc.
+func (mock *ClientMock) ProgressStart(ctx context.Context, message *diagnostics.Message, args ...any) {
 	callInfo := struct {
-		Ctx         context.Context
-		ProjectName string
+		Ctx     context.Context
+		Message *diagnostics.Message
+		Args    []any
 	}{
-		Ctx:         ctx,
-		ProjectName: projectName,
+		Ctx:     ctx,
+		Message: message,
+		Args:    args,
 	}
-	mock.lockProjectLoadingStart.Lock()
-	mock.calls.ProjectLoadingStart = append(mock.calls.ProjectLoadingStart, callInfo)
-	mock.lockProjectLoadingStart.Unlock()
-	if mock.ProjectLoadingStartFunc == nil {
+	mock.lockProgressStart.Lock()
+	mock.calls.ProgressStart = append(mock.calls.ProgressStart, callInfo)
+	mock.lockProgressStart.Unlock()
+	if mock.ProgressStartFunc == nil {
 		return
 	}
-	mock.ProjectLoadingStartFunc(ctx, projectName)
+	mock.ProgressStartFunc(ctx, message, args...)
 }
 
-// ProjectLoadingStartCalls gets all the calls that were made to ProjectLoadingStart.
+// ProgressStartCalls gets all the calls that were made to ProgressStart.
 // Check the length with:
 //
-//	len(mockedClient.ProjectLoadingStartCalls())
-func (mock *ClientMock) ProjectLoadingStartCalls() []struct {
-	Ctx         context.Context
-	ProjectName string
+//	len(mockedClient.ProgressStartCalls())
+func (mock *ClientMock) ProgressStartCalls() []struct {
+	Ctx     context.Context
+	Message *diagnostics.Message
+	Args    []any
 } {
 	var calls []struct {
-		Ctx         context.Context
-		ProjectName string
+		Ctx     context.Context
+		Message *diagnostics.Message
+		Args    []any
 	}
-	mock.lockProjectLoadingStart.RLock()
-	calls = mock.calls.ProjectLoadingStart
-	mock.lockProjectLoadingStart.RUnlock()
+	mock.lockProgressStart.RLock()
+	calls = mock.calls.ProgressStart
+	mock.lockProgressStart.RUnlock()
 	return calls
 }
 
