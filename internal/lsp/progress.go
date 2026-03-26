@@ -39,14 +39,18 @@ func newProjectLoadingProgress(server *Server) *projectLoadingProgress {
 func (p *projectLoadingProgress) start(ctx context.Context, message *diagnostics.Message, args ...any) {
 	select {
 	case p.ch <- progressEvent{message: message, args: args}:
+		// Sent successfully.
 	case <-ctx.Done():
+		// Context cancelled; drop the event.
 	}
 }
 
 func (p *projectLoadingProgress) finish(ctx context.Context, message *diagnostics.Message, args ...any) {
 	select {
 	case p.ch <- progressEvent{message: message, args: args, finish: true}:
+		// Sent successfully.
 	case <-ctx.Done():
+		// Context cancelled; drop the event.
 	}
 }
 
