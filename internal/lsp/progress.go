@@ -64,14 +64,10 @@ func (p *projectLoadingProgress) run() {
 		title   = diagnostics.Loading.Localize(p.server.locale)
 	)
 
-	localize := func(ev progressEvent) string {
-		return ev.message.Localize(p.server.locale, ev.args...)
-	}
-
 	for {
 		select {
 		case ev := <-p.ch:
-			text := localize(ev)
+			text := ev.message.Localize(p.server.locale, ev.args...)
 			if !ev.finish {
 				loading.Add(text)
 				if token == "" {
