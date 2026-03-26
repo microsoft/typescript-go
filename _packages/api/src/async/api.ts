@@ -1031,4 +1031,3 @@ export class Signature {
         return (this.flags & SignatureFlags.Abstract) !== 0;
     }
 }
-
