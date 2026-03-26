@@ -3,100 +3,129 @@ package lsp
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// projectLoadingProgress manages a single LSP WorkDoneProgress token that
-// stays active while any project is loading. Multiple concurrent loads are
-// tracked; the message shows the most recently started project, and the
-// indicator disappears only when all loads finish.
+type progressEvent struct {
+	name   string // project name
+	finish bool   // true if the project finished loading
+}
+
+// projectLoadingProgress manages LSP WorkDoneProgress indicators for project
+// loading. A single persistent goroutine processes start/finish events,
+// maintains the set of loading projects, and sends progress messages in order.
+//
+// Callers never block: events are sent to a buffered channel with a select
+// on the server's background context.
 type projectLoadingProgress struct {
-	server  *Server
-	mu      sync.Mutex
-	loading collections.OrderedSet[string]
-	token   string // empty if no progress is active
-	tokenID int
+	server *Server
+	ch     chan progressEvent
 }
 
 func newProjectLoadingProgress(server *Server) *projectLoadingProgress {
-	return &projectLoadingProgress{
+	p := &projectLoadingProgress{
 		server: server,
+		ch:     make(chan progressEvent, 64),
 	}
+	go p.run()
+	return p
 }
 
 func (p *projectLoadingProgress) start(ctx context.Context, projectName string) {
-	var newToken string
-
-	p.mu.Lock()
-	p.loading.Add(projectName)
-	isFirst := p.token == ""
-	if isFirst {
-		p.tokenID++
-		p.token = fmt.Sprintf("tsgo-loading-%d", p.tokenID)
-	}
-	newToken = p.token
-	p.mu.Unlock()
-
-	msg := p.displayName(projectName)
-	if isFirst {
-		_, _ = sendClientRequest(ctx, p.server, lsproto.WindowWorkDoneProgressCreateInfo, &lsproto.WorkDoneProgressCreateParams{
-			Token: lsproto.IntegerOrString{String: &newToken},
-		})
-
-		_ = sendNotification(p.server, lsproto.ProgressInfo, &lsproto.ProgressParams{
-			Token: lsproto.IntegerOrString{String: &newToken},
-			Value: &lsproto.WorkDoneProgressBegin{
-				Title:   "Loading",
-				Message: &msg,
-			},
-		})
-	} else {
-		_ = sendNotification(p.server, lsproto.ProgressInfo, &lsproto.ProgressParams{
-			Token: lsproto.IntegerOrString{String: &newToken},
-			Value: &lsproto.WorkDoneProgressReport{
-				Message: &msg,
-			},
-		})
+	select {
+	case p.ch <- progressEvent{name: projectName}:
+	case <-ctx.Done():
 	}
 }
 
 func (p *projectLoadingProgress) finish(ctx context.Context, projectName string) {
-	p.mu.Lock()
-	p.loading.Delete(projectName)
-
-	tokenStr := p.token
-	if tokenStr == "" {
-		p.mu.Unlock()
-		return
+	select {
+	case p.ch <- progressEvent{name: projectName, finish: true}:
+	case <-ctx.Done():
 	}
+}
 
-	done := p.loading.Size() == 0
-	var first string
-	if done {
-		p.token = ""
-	} else {
-		first = p.firstLoading()
-	}
-	p.mu.Unlock()
+// run is the persistent goroutine that processes all progress events.
+// It owns all mutable state: no external synchronization needed.
+func (p *projectLoadingProgress) run() {
+	var (
+		loading collections.OrderedSet[string]
+		token   string // current token; empty if no progress active
+		tokenID int
+		begun   bool // whether "begin" has been sent for the current token
+	)
 
-	if done {
-		_ = sendNotification(p.server, lsproto.ProgressInfo, &lsproto.ProgressParams{
-			Token: lsproto.IntegerOrString{String: &tokenStr},
-			Value: &lsproto.WorkDoneProgressEnd{},
-		})
-	} else {
-		msg := p.displayName(first)
-		_ = sendNotification(p.server, lsproto.ProgressInfo, &lsproto.ProgressParams{
-			Token: lsproto.IntegerOrString{String: &tokenStr},
-			Value: &lsproto.WorkDoneProgressReport{
-				Message: &msg,
-			},
-		})
+	for {
+		select {
+		case ev := <-p.ch:
+			if !ev.finish {
+				loading.Add(ev.name)
+				if token == "" {
+					// First load — create a new progress token.
+					tokenID++
+					token = fmt.Sprintf("tsgo-loading-%d", tokenID)
+					begun = false
+					p.sendProgressCreate(token)
+				}
+				msg := p.displayName(ev.name)
+				if !begun {
+					begun = true
+					p.sendProgress(token, &lsproto.WorkDoneProgressBegin{
+						Title:   "Loading",
+						Message: &msg,
+					})
+				} else {
+					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
+						Message: &msg,
+					})
+				}
+			} else {
+				loading.Delete(ev.name)
+				if token == "" {
+					continue
+				}
+				if loading.Size() == 0 {
+					// Last project finished — end the progress.
+					p.sendProgress(token, &lsproto.WorkDoneProgressEnd{})
+					token = ""
+				} else {
+					// Show the oldest still-loading project.
+					first := firstValue(loading.Values())
+					msg := p.displayName(first)
+					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
+						Message: &msg,
+					})
+				}
+			}
+
+		case <-p.server.backgroundCtx.Done():
+			return
+		}
 	}
+}
+
+// sendProgress sends a $/progress notification with a snapshot of the token
+// string, so deferred serialization in the write loop won't see a mutated value.
+func (p *projectLoadingProgress) sendProgress(token string, value any) {
+	_ = sendNotification(p.server, lsproto.ProgressInfo, &lsproto.ProgressParams{
+		Token: lsproto.IntegerOrString{String: &token},
+		Value: value,
+	})
+}
+
+// sendProgressCreate sends a window/workDoneProgress/create request without
+// waiting for the response. The client processes messages in order, so
+// subsequent $/progress notifications will arrive after the create.
+func (p *projectLoadingProgress) sendProgressCreate(token string) {
+	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", p.server.clientSeq.Add(1)))
+	req := lsproto.WindowWorkDoneProgressCreateInfo.NewRequestMessage(id, &lsproto.WorkDoneProgressCreateParams{
+		Token: lsproto.IntegerOrString{String: &token},
+	})
+	_ = p.server.send(req.Message())
 }
 
 // displayName returns a short display string for a project name,
@@ -112,11 +141,9 @@ func (p *projectLoadingProgress) displayName(projectName string) string {
 	return projectName
 }
 
-// firstLoading returns the oldest project still in the loading set.
-// Must be called with p.mu held and p.loading.Size() > 0.
-func (p *projectLoadingProgress) firstLoading() string {
-	for name := range p.loading.Values() {
-		return name
+func firstValue[T any](seq func(yield func(T) bool)) T {
+	for v := range seq {
+		return v
 	}
-	panic("unreachable")
+	panic("empty sequence")
 }
