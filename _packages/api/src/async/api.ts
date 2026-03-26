@@ -273,6 +273,7 @@ export class Project {
 
     readonly program: Program;
     readonly checker: Checker;
+    readonly emitter: Emitter;
     private client: Client;
 
     constructor(
@@ -301,6 +302,7 @@ export class Project {
             client,
             objectRegistry,
         );
+        this.emitter = new Emitter(client);
     }
 
     async printNode(node: Node, options: PrintNodeOptions = {}): Promise<string> {
@@ -725,6 +727,23 @@ export interface PrintNodeOptions {
     preserveSourceNewlines?: boolean;
     neverAsciiEscape?: boolean;
     terminateUnterminatedLiterals?: boolean;
+}
+
+export class Emitter {
+    private client: Client;
+
+    constructor(client: Client) {
+        this.client = client;
+    }
+
+    async printNode(node: Node, options: PrintNodeOptions = {}): Promise<string> {
+        const encoded = encodeNode(node);
+        const base64 = uint8ArrayToBase64(encoded);
+        return this.client.apiRequest<string>("printNode", {
+            data: base64,
+            ...options,
+        });
+    }
 }
 
 export class NodeHandle {

@@ -1881,7 +1881,7 @@ describe("Checker - isContextSensitive", () => {
     });
 });
 
-describe("printNode", () => {
+describe("Emitter - printNode", () => {
     const emitterFiles = {
         "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.ts": `
@@ -1897,7 +1897,7 @@ export type Pair = [string, number];
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             const node = createKeywordTypeNode(SyntaxKind.StringKeyword);
-            const text = project.printNode(node);
+            const text = project.emitter.printNode(node);
             assert.strictEqual(text, "string");
         }
         finally {
@@ -1914,7 +1914,7 @@ export type Pair = [string, number];
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
             ]);
-            const text = project.printNode(node);
+            const text = project.emitter.printNode(node);
             assert.strictEqual(text, "string | number");
         }
         finally {
@@ -1940,7 +1940,7 @@ export type Pair = [string, number];
                 [param],
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
             );
-            const text = project.printNode(node);
+            const text = project.emitter.printNode(node);
             assert.strictEqual(text, "(x: string) => number");
         }
         finally {
@@ -1956,7 +1956,7 @@ export type Pair = [string, number];
             const node = createTypeReferenceNode(createIdentifier("Array"), [
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
             ]);
-            const text = project.printNode(node);
+            const text = project.emitter.printNode(node);
             assert.strictEqual(text, "Array<string>");
         }
         finally {
@@ -1970,7 +1970,7 @@ export type Pair = [string, number];
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             const node = createArrayTypeNode(createKeywordTypeNode(SyntaxKind.NumberKeyword));
-            const text = project.printNode(node);
+            const text = project.emitter.printNode(node);
             assert.strictEqual(text, "number[]");
         }
         finally {
@@ -1982,17 +1982,17 @@ export type Pair = [string, number];
         const api = spawnAPI(emitterFiles);
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const { checker, emitter } = snapshot.getProject("/tsconfig.json")!;
             const src = emitterFiles["/src/main.ts"];
 
             const greetPos = src.indexOf("greet(");
-            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", greetPos);
+            const symbol = checker.getSymbolAtPosition("/src/main.ts", greetPos);
             assert.ok(symbol);
-            const type = project.checker.getTypeOfSymbol(symbol);
+            const type = checker.getTypeOfSymbol(symbol);
             assert.ok(type);
-            const typeNode = project.checker.typeToTypeNode(type);
+            const typeNode = checker.typeToTypeNode(type);
             assert.ok(typeNode);
-            const text = project.printNode(typeNode);
+            const text = emitter.printNode(typeNode);
             assert.ok(text);
             assert.strictEqual(text, "(name: string) => string");
         }
@@ -2043,9 +2043,11 @@ export type Pair = [string, number];
             });
             assert.ok(regexNode, "Should find a regex literal");
 
-            // Without terminateUnterminatedLiterals, the regex is printed as-is (unterminated)
+            // Without the option, regex is printed as-is
             const textWithout = project.printNode(regexNode);
             assert.strictEqual(textWithout, "/asdfasf");
+
+            // With the option, the closing slash is added
             const textWith = project.printNode(regexNode, { terminateUnterminatedLiterals: true });
             assert.strictEqual(textWith, "/asdfasf/");
         }
