@@ -27,7 +27,7 @@ calling routine unless stated otherwise.
 - **Wildcard** — Contains at least one `*` or `?` character.
 - **DoubleAsterisk** — The exact string `**`.
 
-**Character** — A single Unicode scalar value (codepoint). Implementations must advance by full codepoints, not by encoding units (e.g., not by individual bytes in UTF-8, nor by individual code units in UTF-16). The original TypeScript implementation uses ECMAScript regexes without the `u` flag, which operate on UTF-16 code units; a conforming implementation may match on codepoints instead, as the difference is only observable for supplementary-plane characters (U+10000 and above) in filenames.
+**Character** — A single Unicode scalar value (codepoint). See Section 9 for the precise character-boundary requirements that apply during segment matching.
 
 **Segment kind** — One of:
 - **SegLiteral** — An exact literal substring.
@@ -52,6 +52,12 @@ calling routine unless stated otherwise.
 > 2. If _component_ equals `"bower_components"` (case-insensitive), return **true**.
 > 3. If _component_ equals `"jspm_packages"` (case-insensitive), return **true**.
 > 4. Return **false**.
+
+**ENSURE_TRAILING_SLASH**(_s_)
+
+> 1. If the length of _s_ is 0, return _s_.
+> 2. If the last character of _s_ is `"/"`, return _s_.
+> 3. Return _s_ concatenated with `"/"`.
 
 **STRINGS_EQUAL**(_a_, _b_, _caseSensitive_)
 
@@ -98,7 +104,7 @@ calling routine unless stated otherwise.
 
 > 1. Let _components_ be the result of NORMALIZE_SPEC(_spec_, _basePath_).
 > 2. If the last element of _components_ is `"**"` and _usage_ is not **Exclude**, return **failure**. (The pattern compiles to nothing.)
-> 3. If IS_IMPLICIT_GLOB(last element of _components_) is **true**, then:
+> 3. If IS_IMPLICIT_GLOB(last element of _components_) is **true** (note: this check is applied to the _normalized_ component, not the raw spec string), then:
 >    1. Append `"**"` to _components_.
 >    2. Append `"*"` to _components_.
 > 4. Let _compiledComponents_ be an empty list.
@@ -192,10 +198,16 @@ calling routine unless stated otherwise.
 ## 9. Segment Matching
 
 In this section, all string positions refer to **character** (codepoint) boundaries.
-"Increment _sIdx_" means advance _sIdx_ past the next character (e.g., by one
-codepoint, which may be multiple bytes in UTF-8 or multiple code units in UTF-16).
-Likewise, "length of _s_" is the number of characters, and _s_\[_sIdx_\] is the
-character at position _sIdx_.
+Implementations must advance by full codepoints, not by encoding units (e.g., not
+by individual bytes in UTF-8, nor by individual code units in UTF-16). "Increment
+_sIdx_" means advance _sIdx_ past the next character (one codepoint). Likewise,
+"length of _s_" is the number of characters, and _s_\[_sIdx_\] is the character
+at position _sIdx_.
+
+The original TypeScript implementation uses ECMAScript regexes without the `u` flag,
+which operate on UTF-16 code units; a conforming implementation may match on
+codepoints instead, as the difference is only observable for supplementary-plane
+characters (U+10000 and above) in filenames.
 
 **MATCH_SEGMENTS**(_segments_, _s_, _caseSensitive_)
 
@@ -381,14 +393,14 @@ The _host_ must provide the following operations:
 > 3. If _visited_ contains _canonicalPath_, return.
 > 4. Add _canonicalPath_ to _visited_.
 > 5. Let _entries_ be the result of _host_.GetAccessibleEntries(_absolutePath_).
-> 6. Let _absPrefix_ be _absolutePath_ concatenated with `"/"`.
-> 7. Let _pathPrefix_ be _path_ concatenated with `"/"`.
+> 6. Let _absPrefix_ be ENSURE_TRAILING_SLASH(_absolutePath_).
+> 7. Let _pathPrefix_ be ENSURE_TRAILING_SLASH(_path_).
 > 8. For each _file_ in _entries_.files:
 >    1. If _extensions_ is non-empty and the file extension of _file_ is not in _extensions_, continue.
 >    2. Let _absFile_ be _absPrefix_ concatenated with _file_.
 >    3. Let (_index_, _matched_) be the result of MATCH_FILE(_absFile_, _fileIncludes_, _fileExcludes_, _fileHadIncludes_).
 >    4. If _matched_ is **true**, append _pathPrefix_ concatenated with _file_ to _resultBuckets_\[_index_\].
-> 9. If _depth_ is not unlimited, then:
+> 9. If _depth_ is finite (i.e., not the sentinel value representing unlimited depth), then:
 >    1. Decrement _depth_.
 >    2. If _depth_ is 0, return.
 > 10. For each _dir_ in _entries_.directories:
