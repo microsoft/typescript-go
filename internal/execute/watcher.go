@@ -5,12 +5,15 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 )
@@ -142,6 +145,51 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 	}
 }
 
+type cachedSourceFile struct {
+	file    *ast.SourceFile
+	modTime time.Time
+}
+
+type watchCompilerHost struct {
+	inner compiler.CompilerHost
+	cache *collections.SyncMap[tspath.Path, *cachedSourceFile]
+}
+
+var _ compiler.CompilerHost = (*watchCompilerHost)(nil)
+
+func (h *watchCompilerHost) FS() vfs.FS                    { return h.inner.FS() }
+func (h *watchCompilerHost) DefaultLibraryPath() string     { return h.inner.DefaultLibraryPath() }
+func (h *watchCompilerHost) GetCurrentDirectory() string    { return h.inner.GetCurrentDirectory() }
+func (h *watchCompilerHost) Trace(msg *diagnostics.Message, args ...any) {
+	h.inner.Trace(msg, args...)
+}
+func (h *watchCompilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	return h.inner.GetResolvedProjectReference(fileName, path)
+}
+
+func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	if cached, ok := h.cache.Load(opts.Path); ok {
+		info := h.inner.FS().Stat(opts.FileName)
+		if info != nil && info.ModTime().Equal(cached.modTime) {
+			return cached.file
+		}
+	}
+
+	file := h.inner.GetSourceFile(opts)
+	if file != nil {
+		info := h.inner.FS().Stat(opts.FileName)
+		if info != nil {
+			h.cache.Store(opts.Path, &cachedSourceFile{
+				file:    file,
+				modTime: info.ModTime(),
+			})
+		}
+	} else {
+		h.cache.Delete(opts.Path)
+	}
+	return file
+}
+
 type Watcher struct {
 	sys                            tsc.System
 	configFileName                 string
@@ -157,7 +205,8 @@ type Watcher struct {
 	configHasErrors     bool
 	configFilePaths     []string
 
-	fileWatcher *FileWatcher
+	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
+	fileWatcher     *FileWatcher
 }
 
 var (
@@ -180,6 +229,7 @@ func createWatcher(
 		reportDiagnostic:               reportDiagnostic,
 		reportErrorSummary:             reportErrorSummary,
 		testing:                        testing,
+		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
 	}
 	if configParseResult.ConfigFile != nil {
 		w.configFileName = configParseResult.ConfigFile.SourceFile.FileName()
@@ -224,9 +274,14 @@ func (w *Watcher) DoCycle() {
 }
 
 func (w *Watcher) doBuild() {
+	if w.configModified {
+		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
+	}
+
 	cached := cachedvfs.From(w.sys.FS())
 	tfs := &trackingFS{inner: cached}
-	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	host := &watchCompilerHost{inner: innerHost, cache: w.sourceFileCache}
 
 	if w.config.ConfigFile != nil {
 		for dir := range w.config.WildcardDirectories() {
