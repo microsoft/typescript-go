@@ -12,28 +12,6 @@ import (
 // Test cases modeled after TypeScript's matchFiles tests in
 // _submodules/TypeScript/src/testRunner/unittests/config/matchFiles.ts
 
-// readDirectoryFunc is a function type for ReadDirectory implementations
-type readDirectoryFunc func(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string
-
-// readDirectoryOld wraps matchFiles with the expected test signature
-func readDirectoryOld(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
-	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
-}
-
-// readDirectoryNew wraps matchFilesNoRegex with the expected test signature
-func readDirectoryNew(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
-	return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
-}
-
-// readDirectoryImplementations contains all implementations to test
-var readDirectoryImplementations = []struct {
-	name string
-	fn   readDirectoryFunc
-}{
-	{"Old", readDirectoryOld},
-	{"New", readDirectoryNew},
-}
-
 // caseInsensitiveHost simulates a Windows-like file system
 func caseInsensitiveHost() vfs.FS {
 	return vfstest.FromMap(map[string]string{
@@ -166,7 +144,7 @@ type readDirTestCase struct {
 	expect     func(t *testing.T, got []string)
 }
 
-func runReadDirectoryCase(t *testing.T, tc readDirTestCase, readDir readDirectoryFunc) {
+func runReadDirectoryCase(t *testing.T, tc readDirTestCase) {
 	currentDir := tc.currentDir
 	if currentDir == "" {
 		currentDir = "/"
@@ -179,7 +157,8 @@ func runReadDirectoryCase(t *testing.T, tc readDirTestCase, readDir readDirector
 	if depth == 0 {
 		depth = UnlimitedDepth
 	}
-	got := readDir(tc.host(), currentDir, path, tc.extensions, tc.excludes, tc.includes, depth)
+	host := tc.host()
+	got := matchFiles(path, tc.extensions, tc.excludes, tc.includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 	tc.expect(t, got)
 }
 
@@ -730,12 +709,10 @@ func TestReadDirectory(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		for _, impl := range readDirectoryImplementations {
-			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
-				t.Parallel()
-				runReadDirectoryCase(t, tc, impl.fn)
-			})
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			runReadDirectoryCase(t, tc)
+		})
 	}
 }
 
@@ -786,89 +763,6 @@ func TestIsImplicitGlob(t *testing.T) {
 			t.Parallel()
 			result := IsImplicitGlob(tc.input)
 			assert.Equal(t, result, tc.expected)
-		})
-	}
-}
-
-func TestGetRegularExpressionForWildcard(t *testing.T) {
-	t.Parallel()
-
-	cases := []struct {
-		name     string
-		specs    []string
-		usage    Usage
-		expected string
-		assertFn func(t *testing.T, got string)
-	}{
-		{name: "nil specs", specs: nil, usage: UsageFiles, expected: "", assertFn: func(t *testing.T, got string) { assert.Equal(t, got, "") }},
-		{name: "empty specs", specs: []string{}, usage: UsageFiles, expected: "", assertFn: func(t *testing.T, got string) { assert.Equal(t, got, "") }},
-		{name: "single spec", specs: []string{"*.ts"}, usage: UsageFiles, assertFn: func(t *testing.T, got string) { assert.Assert(t, got != "") }},
-		{name: "multiple specs", specs: []string{"*.ts", "*.tsx"}, usage: UsageFiles, assertFn: func(t *testing.T, got string) { assert.Assert(t, got != "") }},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			result := getRegularExpressionForWildcard(tc.specs, "/", tc.usage)
-			if tc.assertFn != nil {
-				tc.assertFn(t, result)
-			} else {
-				assert.Equal(t, result, tc.expected)
-			}
-		})
-	}
-}
-
-func TestGetRegularExpressionsForWildcards(t *testing.T) {
-	t.Parallel()
-
-	cases := []struct {
-		name     string
-		specs    []string
-		usage    Usage
-		assertFn func(t *testing.T, got []string)
-	}{
-		{name: "nil specs", specs: nil, usage: UsageFiles, assertFn: func(t *testing.T, got []string) { assert.Assert(t, got == nil) }},
-		{name: "empty specs", specs: []string{}, usage: UsageFiles, assertFn: func(t *testing.T, got []string) { assert.Assert(t, got == nil) }},
-		{name: "two specs", specs: []string{"*.ts", "*.tsx"}, usage: UsageFiles, assertFn: func(t *testing.T, got []string) { assert.Equal(t, len(got), 2) }},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			result := getRegularExpressionsForWildcards(tc.specs, "/", tc.usage)
-			tc.assertFn(t, result)
-		})
-	}
-}
-
-func TestGetPatternFromSpec(t *testing.T) {
-	t.Parallel()
-
-	cases := []struct {
-		name     string
-		spec     string
-		usage    Usage
-		assertFn func(t *testing.T, got string)
-	}{
-		{name: "files usage", spec: "*.ts", usage: UsageFiles, assertFn: func(t *testing.T, got string) {
-			assert.Assert(t, got != "")
-			assert.Assert(t, hasSuffix(got, "$"))
-		}},
-		{name: "directories usage", spec: "src", usage: UsageDirectories, assertFn: func(t *testing.T, got string) { assert.Assert(t, got != "") }},
-		{name: "exclude usage", spec: "node_modules", usage: UsageExclude, assertFn: func(t *testing.T, got string) {
-			assert.Assert(t, got != "")
-			assert.Assert(t, contains(got, "($|/)"))
-		}},
-		{name: "trailing starstar non exclude", spec: "**", usage: UsageFiles, assertFn: func(t *testing.T, got string) { assert.Equal(t, got, "") }},
-		{name: "trailing starstar exclude allowed", spec: "**", usage: UsageExclude, assertFn: func(t *testing.T, got string) { assert.Assert(t, got != "") }},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			result := getPatternFromSpec(tc.spec, "/", tc.usage)
-			tc.assertFn(t, result)
 		})
 	}
 }
@@ -955,12 +849,10 @@ func TestReadDirectoryEdgeCases(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		for _, impl := range readDirectoryImplementations {
-			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
-				t.Parallel()
-				runReadDirectoryCase(t, tc, impl.fn)
-			})
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			runReadDirectoryCase(t, tc)
+		})
 	}
 }
 
@@ -988,12 +880,10 @@ func TestReadDirectoryEmptyIncludes(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		for _, impl := range readDirectoryImplementations {
-			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
-				t.Parallel()
-				runReadDirectoryCase(t, tc, impl.fn)
-			})
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			runReadDirectoryCase(t, tc)
+		})
 	}
 }
 
@@ -1024,12 +914,10 @@ func TestReadDirectorySymlinkCycle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		for _, impl := range readDirectoryImplementations {
-			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
-				t.Parallel()
-				runReadDirectoryCase(t, tc, impl.fn)
-			})
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			runReadDirectoryCase(t, tc)
+		})
 	}
 }
 
@@ -1296,12 +1184,10 @@ func TestReadDirectoryMatchesTypeScriptBaselines(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		for _, impl := range readDirectoryImplementations {
-			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
-				t.Parallel()
-				runReadDirectoryCase(t, tc, impl.fn)
-			})
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			runReadDirectoryCase(t, tc)
+		})
 	}
 }
 
@@ -1385,24 +1271,6 @@ func TestSpecMatcher(t *testing.T) {
 func TestSpecMatcher_MatchString(t *testing.T) {
 	t.Parallel()
 
-	implementations := []struct {
-		name string
-		new  func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher
-	}{
-		{
-			name: "Old",
-			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-				return newRegexSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
-			},
-		},
-		{
-			name: "New",
-			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-				return newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
-			},
-		},
-	}
-
 	cases := []struct {
 		name                      string
 		specs                     []string
@@ -1445,16 +1313,10 @@ func TestSpecMatcher_MatchString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-
-			for _, impl := range implementations {
-				t.Run(impl.name, func(t *testing.T) {
-					t.Parallel()
-					m := impl.new(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
-					assert.Assert(t, m != nil)
-					for i, path := range tc.paths {
-						assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
-					}
-				})
+			m := newGlobSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			assert.Assert(t, m != nil)
+			for i, path := range tc.paths {
+				assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
 			}
 		})
 	}
@@ -1462,24 +1324,6 @@ func TestSpecMatcher_MatchString(t *testing.T) {
 
 func TestSingleSpecMatcher_MatchString(t *testing.T) {
 	t.Parallel()
-
-	implementations := []struct {
-		name string
-		new  func(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher
-	}{
-		{
-			name: "Old",
-			new: func(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-				return newRegexSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames)
-			},
-		},
-		{
-			name: "New",
-			new: func(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-				return newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames)
-			},
-		},
-	}
 
 	cases := []struct {
 		name                      string
@@ -1514,15 +1358,10 @@ func TestSingleSpecMatcher_MatchString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			for _, impl := range implementations {
-				t.Run(impl.name, func(t *testing.T) {
-					t.Parallel()
-					m := impl.new(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
-					assert.Assert(t, m != nil)
-					for i, path := range tc.paths {
-						assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
-					}
-				})
+			m := newGlobSingleSpecMatcher(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			assert.Assert(t, m != nil)
+			for i, path := range tc.paths {
+				assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
 			}
 		})
 	}
@@ -1530,24 +1369,6 @@ func TestSingleSpecMatcher_MatchString(t *testing.T) {
 
 func TestSpecMatchers_MatchIndex(t *testing.T) {
 	t.Parallel()
-
-	implementations := []struct {
-		name string
-		new  func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers
-	}{
-		{
-			name: "Old",
-			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
-				return newRegexSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames)
-			},
-		},
-		{
-			name: "New",
-			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
-				return newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
-			},
-		},
-	}
 
 	cases := []struct {
 		name                      string
@@ -1582,15 +1403,10 @@ func TestSpecMatchers_MatchIndex(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			for _, impl := range implementations {
-				t.Run(impl.name, func(t *testing.T) {
-					t.Parallel()
-					m := impl.new(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
-					assert.Assert(t, m != nil)
-					for i, path := range tc.paths {
-						assert.Equal(t, m.MatchIndex(path), tc.expected[i], "path: %s", path)
-					}
-				})
+			m := newGlobSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			assert.Assert(t, m != nil)
+			for i, path := range tc.paths {
+				assert.Equal(t, m.MatchIndex(path), tc.expected[i], "path: %s", path)
 			}
 		})
 	}
@@ -1869,7 +1685,7 @@ func TestGlobPatternInternals(t *testing.T) {
 		}, false)
 
 		// Explicit literal path should work
-		got := matchFilesNoRegex("/dev", []string{".ts"}, nil,
+		got := matchFiles("/dev", []string{".ts"}, nil,
 			[]string{"node_modules/pkg/index.ts"}, false, "/", UnlimitedDepth, host)
 		assert.Assert(t, slices.Contains(got, "/dev/node_modules/pkg/index.ts"))
 	})
@@ -2053,7 +1869,7 @@ func TestReadDirectoryConsecutiveSlashes(t *testing.T) {
 	}, false)
 
 	// The matchFilesNoRegex function normalizes paths, but we can test internal handling
-	got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"**/*.ts"}, false, "/", UnlimitedDepth, host)
+	got := matchFiles("/dev", []string{".ts"}, nil, []string{"**/*.ts"}, false, "/", UnlimitedDepth, host)
 	assert.Assert(t, len(got) >= 2, "should find files")
 	assert.Assert(t, slices.Contains(got, "/dev/a.ts"))
 	assert.Assert(t, slices.Contains(got, "/dev/x/b.ts"))
@@ -2071,7 +1887,7 @@ func TestGlobPatternLiteralWithPackageFolders(t *testing.T) {
 			"/dev/node_modules/b.ts": "",
 		}, false)
 
-		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"*/*.ts"}, false, "/", UnlimitedDepth, host)
+		got := matchFiles("/dev", []string{".ts"}, nil, []string{"*/*.ts"}, false, "/", UnlimitedDepth, host)
 		assert.Assert(t, !slices.Contains(got, "/dev/node_modules/b.ts"), "should skip node_modules with wildcard")
 	})
 
@@ -2082,7 +1898,7 @@ func TestGlobPatternLiteralWithPackageFolders(t *testing.T) {
 			"/dev/node_modules/b.ts": "",
 		}, false)
 
-		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"node_modules/b.ts"}, false, "/", UnlimitedDepth, host)
+		got := matchFiles("/dev", []string{".ts"}, nil, []string{"node_modules/b.ts"}, false, "/", UnlimitedDepth, host)
 		assert.Assert(t, slices.Contains(got, "/dev/node_modules/b.ts"), "should include explicit node_modules path")
 	})
 }

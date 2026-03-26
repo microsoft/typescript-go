@@ -543,8 +543,7 @@ func (v *globVisitor) visit(path, absolutePath string, depth int) {
 	}
 }
 
-// matchFilesNoRegex matches files using compiled glob patterns (no regex).
-func matchFilesNoRegex(path string, extensions, excludes, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS) []string {
+func matchFiles(path string, extensions, excludes, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 	absolutePath := tspath.CombinePaths(currentDirectory, path)

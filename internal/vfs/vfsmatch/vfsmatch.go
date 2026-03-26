@@ -24,12 +24,7 @@ const (
 // UnlimitedDepth can be passed as the depth argument to indicate there is no depth limit.
 const UnlimitedDepth = math.MaxInt
 
-const newMatch = true
-
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
-	if newMatch {
-		return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
-	}
 	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
 
@@ -56,13 +51,7 @@ type SpecMatchers interface {
 // NewSpecMatcher creates a matcher for one or more glob specs.
 // It returns a matcher that can test if paths match any of the patterns.
 func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-	if newMatch {
-		if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
-			return m
-		}
-		return nil
-	}
-	if m := newRegexSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
+	if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
 		return m
 	}
 	return nil
@@ -71,13 +60,7 @@ func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensiti
 // NewSingleSpecMatcher creates a matcher for a single glob spec.
 // Returns nil if the spec compiles to an empty pattern (e.g., trailing ** for non-exclude).
 func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
-	if newMatch {
-		if m := newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
-			return m
-		}
-		return nil
-	}
-	if m := newRegexSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
+	if m := newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
 		return m
 	}
 	return nil
@@ -86,13 +69,7 @@ func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSens
 // NewSpecMatchers creates individual matchers for each spec, allowing lookup of which spec matched.
 // Returns nil if no valid patterns could be compiled from the specs.
 func NewSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
-	if newMatch {
-		if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
-			return m
-		}
-		return nil
-	}
-	if m := newRegexSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
+	if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
 		return m
 	}
 	return nil
