@@ -179,7 +179,7 @@ function getNodeDefinedData(node: Node): number {
             return Math.max(typeOperatorKinds.indexOf((node as TypeOperatorNode).operator), 0) << 24;
         case SyntaxKind.PrefixUnaryExpression:
         case SyntaxKind.PostfixUnaryExpression:
-            return ((node as PrefixUnaryExpression | PostfixUnaryExpression | TypeOperatorNode).operator & 0xff) << 24;
+            return ((node as PrefixUnaryExpression | PostfixUnaryExpression).operator & 0x3f) << 24;
     }
     return 0;
 }
