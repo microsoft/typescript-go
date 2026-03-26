@@ -696,15 +696,3 @@ func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensiti
 	}
 	return &SpecMatcher{patterns: patterns}
 }
-
-// NewSpecMatchers creates individual matchers for each spec, allowing lookup of which spec matched.
-// Returns nil if no valid patterns could be compiled from the specs.
-func NewSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
-	return NewSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
-}
-
-// NewSingleSpecMatcher creates a matcher for a single glob spec.
-// Returns nil if the spec compiles to an empty pattern (e.g., trailing ** for non-exclude).
-func NewSingleSpecMatcher(spec, basePath string, usage Usage, useCaseSensitiveFileNames bool) *SpecMatcher {
-	return NewSpecMatcher([]string{spec}, basePath, usage, useCaseSensitiveFileNames)
-}

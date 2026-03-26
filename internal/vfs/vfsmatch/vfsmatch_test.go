@@ -1313,7 +1313,7 @@ func TestSpecMatcher_MatchString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			m := newSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			m := NewSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			assert.Assert(t, m != nil)
 			for i, path := range tc.paths {
 				assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
@@ -1358,7 +1358,7 @@ func TestSingleSpecMatcher_MatchString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			m := newSingleSpecMatcher(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			m := NewSpecMatcher([]string{tc.spec}, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			assert.Assert(t, m != nil)
 			for i, path := range tc.paths {
 				assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
@@ -1403,7 +1403,7 @@ func TestSpecMatchers_MatchIndex(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, len(tc.paths), len(tc.expected))
-			m := newSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			m := NewSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			assert.Assert(t, m != nil)
 			for i, path := range tc.paths {
 				assert.Equal(t, m.MatchIndex(path), tc.expected[i], "path: %s", path)
@@ -1455,7 +1455,7 @@ func TestSingleSpecMatcher(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			matcher := NewSingleSpecMatcher(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			matcher := NewSpecMatcher([]string{tc.spec}, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			if tc.expectNil {
 				assert.Assert(t, matcher == nil, "should be nil")
 				return
@@ -1511,7 +1511,7 @@ func TestSpecMatchers(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			matchers := NewSpecMatchers(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			matchers := NewSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
 			if tc.expectNil {
 				assert.Assert(t, matchers == nil, "should be nil")
 				return
