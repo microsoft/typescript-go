@@ -14,6 +14,6 @@ type Client interface {
 	PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
 	RefreshInlayHints(ctx context.Context) error
 	RefreshCodeLens(ctx context.Context) error
-	ProgressStart(ctx context.Context, message *diagnostics.Message, args ...any)
-	ProgressFinish(ctx context.Context, message *diagnostics.Message, args ...any)
+	ProgressStart(message *diagnostics.Message, args ...any)
+	ProgressFinish(message *diagnostics.Message, args ...any)
 }

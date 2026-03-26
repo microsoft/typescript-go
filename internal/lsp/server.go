@@ -285,16 +285,16 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 }
 
 // ProgressStart implements project.Client.
-func (s *Server) ProgressStart(ctx context.Context, message *diagnostics.Message, args ...any) {
+func (s *Server) ProgressStart(message *diagnostics.Message, args ...any) {
 	if s.projectProgress != nil {
-		s.projectProgress.start(ctx, message, args...)
+		s.projectProgress.start(message, args...)
 	}
 }
 
 // ProgressFinish implements project.Client.
-func (s *Server) ProgressFinish(ctx context.Context, message *diagnostics.Message, args ...any) {
+func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 	if s.projectProgress != nil {
-		s.projectProgress.finish(ctx, message, args...)
+		s.projectProgress.finish(message, args...)
 	}
 }
 

@@ -34,9 +34,9 @@ func (noopClient) RefreshInlayHints(ctx context.Context) error { return nil }
 
 func (noopClient) RefreshCodeLens(ctx context.Context) error { return nil }
 
-func (noopClient) ProgressStart(ctx context.Context, message *diagnostics.Message, args ...any) {}
+func (noopClient) ProgressStart(message *diagnostics.Message, args ...any) {}
 
-func (noopClient) ProgressFinish(ctx context.Context, message *diagnostics.Message, args ...any) {}
+func (noopClient) ProgressFinish(message *diagnostics.Message, args ...any) {}
 
 // TestExtendedConfigCacheRefCounting tests the invariant that each ExtendedSourceFile
 // of a config in the ConfigFileRegistry is ref'd exactly once per config that extends it,

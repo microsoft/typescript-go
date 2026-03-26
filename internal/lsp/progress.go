@@ -1,7 +1,6 @@
 package lsp
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -36,21 +35,21 @@ func newProjectLoadingProgress(server *Server) *projectLoadingProgress {
 	return p
 }
 
-func (p *projectLoadingProgress) start(ctx context.Context, message *diagnostics.Message, args ...any) {
+func (p *projectLoadingProgress) start(message *diagnostics.Message, args ...any) {
 	select {
 	case p.ch <- progressEvent{message: message, args: args}:
 		// Sent successfully.
-	case <-ctx.Done():
-		// Context cancelled; drop the event.
+	case <-p.server.backgroundCtx.Done():
+		// Server shutting down; drop the event.
 	}
 }
 
-func (p *projectLoadingProgress) finish(ctx context.Context, message *diagnostics.Message, args ...any) {
+func (p *projectLoadingProgress) finish(message *diagnostics.Message, args ...any) {
 	select {
 	case p.ch <- progressEvent{message: message, args: args, finish: true}:
 		// Sent successfully.
-	case <-ctx.Done():
-		// Context cancelled; drop the event.
+	case <-p.server.backgroundCtx.Done():
+		// Server shutting down; drop the event.
 	}
 }
 

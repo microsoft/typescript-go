@@ -22,10 +22,10 @@ var _ project.Client = &ClientMock{}
 //
 //		// make and configure a mocked project.Client
 //		mockedClient := &ClientMock{
-//			ProgressFinishFunc: func(ctx context.Context, message *diagnostics.Message, args ...any)  {
+//			ProgressFinishFunc: func(message *diagnostics.Message, args ...any)  {
 //				panic("mock out the ProgressFinish method")
 //			},
-//			ProgressStartFunc: func(ctx context.Context, message *diagnostics.Message, args ...any)  {
+//			ProgressStartFunc: func(message *diagnostics.Message, args ...any)  {
 //				panic("mock out the ProgressStart method")
 //			},
 //			PublishDiagnosticsFunc: func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
@@ -54,10 +54,10 @@ var _ project.Client = &ClientMock{}
 //	}
 type ClientMock struct {
 	// ProgressFinishFunc mocks the ProgressFinish method.
-	ProgressFinishFunc func(ctx context.Context, message *diagnostics.Message, args ...any)
+	ProgressFinishFunc func(message *diagnostics.Message, args ...any)
 
 	// ProgressStartFunc mocks the ProgressStart method.
-	ProgressStartFunc func(ctx context.Context, message *diagnostics.Message, args ...any)
+	ProgressStartFunc func(message *diagnostics.Message, args ...any)
 
 	// PublishDiagnosticsFunc mocks the PublishDiagnostics method.
 	PublishDiagnosticsFunc func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
@@ -81,8 +81,6 @@ type ClientMock struct {
 	calls struct {
 		// ProgressFinish holds details about calls to the ProgressFinish method.
 		ProgressFinish []struct {
-			// Ctx is the ctx argument value.
-			Ctx context.Context
 			// Message is the message argument value.
 			Message *diagnostics.Message
 			// Args is the args argument value.
@@ -90,8 +88,6 @@ type ClientMock struct {
 		}
 		// ProgressStart holds details about calls to the ProgressStart method.
 		ProgressStart []struct {
-			// Ctx is the ctx argument value.
-			Ctx context.Context
 			// Message is the message argument value.
 			Message *diagnostics.Message
 			// Args is the args argument value.
@@ -147,13 +143,11 @@ type ClientMock struct {
 }
 
 // ProgressFinish calls ProgressFinishFunc.
-func (mock *ClientMock) ProgressFinish(ctx context.Context, message *diagnostics.Message, args ...any) {
+func (mock *ClientMock) ProgressFinish(message *diagnostics.Message, args ...any) {
 	callInfo := struct {
-		Ctx     context.Context
 		Message *diagnostics.Message
 		Args    []any
 	}{
-		Ctx:     ctx,
 		Message: message,
 		Args:    args,
 	}
@@ -163,7 +157,7 @@ func (mock *ClientMock) ProgressFinish(ctx context.Context, message *diagnostics
 	if mock.ProgressFinishFunc == nil {
 		return
 	}
-	mock.ProgressFinishFunc(ctx, message, args...)
+	mock.ProgressFinishFunc(message, args...)
 }
 
 // ProgressFinishCalls gets all the calls that were made to ProgressFinish.
@@ -171,12 +165,10 @@ func (mock *ClientMock) ProgressFinish(ctx context.Context, message *diagnostics
 //
 //	len(mockedClient.ProgressFinishCalls())
 func (mock *ClientMock) ProgressFinishCalls() []struct {
-	Ctx     context.Context
 	Message *diagnostics.Message
 	Args    []any
 } {
 	var calls []struct {
-		Ctx     context.Context
 		Message *diagnostics.Message
 		Args    []any
 	}
@@ -187,13 +179,11 @@ func (mock *ClientMock) ProgressFinishCalls() []struct {
 }
 
 // ProgressStart calls ProgressStartFunc.
-func (mock *ClientMock) ProgressStart(ctx context.Context, message *diagnostics.Message, args ...any) {
+func (mock *ClientMock) ProgressStart(message *diagnostics.Message, args ...any) {
 	callInfo := struct {
-		Ctx     context.Context
 		Message *diagnostics.Message
 		Args    []any
 	}{
-		Ctx:     ctx,
 		Message: message,
 		Args:    args,
 	}
@@ -203,7 +193,7 @@ func (mock *ClientMock) ProgressStart(ctx context.Context, message *diagnostics.
 	if mock.ProgressStartFunc == nil {
 		return
 	}
-	mock.ProgressStartFunc(ctx, message, args...)
+	mock.ProgressStartFunc(message, args...)
 }
 
 // ProgressStartCalls gets all the calls that were made to ProgressStart.
@@ -211,12 +201,10 @@ func (mock *ClientMock) ProgressStart(ctx context.Context, message *diagnostics.
 //
 //	len(mockedClient.ProgressStartCalls())
 func (mock *ClientMock) ProgressStartCalls() []struct {
-	Ctx     context.Context
 	Message *diagnostics.Message
 	Args    []any
 } {
 	var calls []struct {
-		Ctx     context.Context
 		Message *diagnostics.Message
 		Args    []any
 	}
