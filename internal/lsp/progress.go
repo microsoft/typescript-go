@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -78,7 +78,9 @@ func (p *projectLoadingProgress) run() {
 					tokenID++
 					token = fmt.Sprintf("tsgo-loading-%d", tokenID)
 					begun = false
-					p.sendProgressCreate(token)
+					_, _ = sendClientRequest(p.server.backgroundCtx, p.server, lsproto.WindowWorkDoneProgressCreateInfo, &lsproto.WorkDoneProgressCreateParams{
+						Token: lsproto.IntegerOrString{String: &token},
+					})
 				}
 				if !begun {
 					begun = true
@@ -100,7 +102,7 @@ func (p *projectLoadingProgress) run() {
 					p.sendProgress(token, &lsproto.WorkDoneProgressEnd{})
 					token = ""
 				} else {
-					first := firstValue(loading.Values())
+					first := core.FirstOrNilSeq(loading.Values())
 					p.sendProgress(token, &lsproto.WorkDoneProgressReport{
 						Message: &first,
 					})
@@ -120,22 +122,4 @@ func (p *projectLoadingProgress) sendProgress(token string, value any) {
 		Token: lsproto.IntegerOrString{String: &token},
 		Value: value,
 	})
-}
-
-// sendProgressCreate sends a window/workDoneProgress/create request without
-// waiting for the response. The client processes messages in order, so
-// subsequent $/progress notifications will arrive after the create.
-func (p *projectLoadingProgress) sendProgressCreate(token string) {
-	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", p.server.clientSeq.Add(1)))
-	req := lsproto.WindowWorkDoneProgressCreateInfo.NewRequestMessage(id, &lsproto.WorkDoneProgressCreateParams{
-		Token: lsproto.IntegerOrString{String: &token},
-	})
-	_ = p.server.send(req.Message())
-}
-
-func firstValue[T any](seq func(yield func(T) bool)) T {
-	for v := range seq {
-		return v
-	}
-	panic("empty sequence")
 }
