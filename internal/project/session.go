@@ -1082,12 +1082,14 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 
 				projectDisplayName := project.DisplayName(s.options.CurrentDirectory)
 				s.client.ProgressStart(diagnostics.Installing_typings_for_0, projectDisplayName)
-				if result, err := s.typingsInstaller.InstallTypings(request); err != nil && logTree != nil {
-					s.client.ProgressFinish(diagnostics.Installing_typings_for_0, projectDisplayName)
-					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
-					s.logger.Log(logTree.String())
+				result, err := s.typingsInstaller.InstallTypings(request)
+				s.client.ProgressFinish(diagnostics.Installing_typings_for_0, projectDisplayName)
+				if err != nil {
+					if logTree != nil {
+						s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
+						s.logger.Log(logTree.String())
+					}
 				} else {
-					s.client.ProgressFinish(diagnostics.Installing_typings_for_0, projectDisplayName)
 					if !slices.Equal(result.TypingsFiles, project.typingsFiles) {
 						s.pendingATAChangesMu.Lock()
 						defer s.pendingATAChangesMu.Unlock()

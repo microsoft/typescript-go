@@ -68,6 +68,11 @@ export class ProjectStatus implements vscode.Disposable {
             return;
         }
 
+        if (doc.uri.scheme !== "file" && doc.uri.scheme !== "untitled") {
+            this.updateState(ProjectInfoState.None);
+            return;
+        }
+
         if (!this.ready) {
             return;
         }
@@ -76,7 +81,7 @@ export class ProjectStatus implements vscode.Disposable {
         this.updateState(pendingState);
 
         try {
-            const result = await this.client.getProjectInfo(doc.uri.toString());
+            const result = await this.client.getProjectInfo(doc.uri.toString(), pendingState.cancellation.token);
             if (this.state === pendingState) {
                 this.updateState(new ProjectInfoState.Resolved(doc.uri, result.configFileName));
             }

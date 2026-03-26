@@ -1538,13 +1538,13 @@ func (s *Server) handleStopCPUProfile(_ context.Context, _ any, _ *lsproto.Reque
 
 func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectInfoParams, _ *lsproto.RequestMessage) (lsproto.CustomProjectInfoResponse, error) {
 	uri := params.TextDocument.Uri
-	project, _, _, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	defaultProject, _, _, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
 	if err != nil {
 		return nil, err
 	}
 	configFileName := ""
-	if project != nil {
-		configFileName = project.Name()
+	if defaultProject != nil && defaultProject.Kind == project.KindConfigured {
+		configFileName = defaultProject.Name()
 	}
 	return &lsproto.ProjectInfoResult{
 		ConfigFileName: configFileName,
