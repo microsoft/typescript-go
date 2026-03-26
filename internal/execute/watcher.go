@@ -306,6 +306,15 @@ func (w *Watcher) doBuild() {
 	w.fileWatcher.updateWatchedFiles(tfs)
 	w.fileWatcher.pollInterval = w.config.ParsedConfig.WatchOptions.WatchInterval()
 	w.configModified = false
+
+	programFiles := w.program.GetProgram().FilesByPath()
+	w.sourceFileCache.Range(func(path tspath.Path, _ *cachedSourceFile) bool {
+		if _, ok := programFiles[path]; !ok {
+			w.sourceFileCache.Delete(path)
+		}
+		return true
+	})
+
 	fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
 
 	if w.testing != nil {
