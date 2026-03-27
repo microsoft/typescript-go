@@ -264,6 +264,12 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		if len(symbol.Declarations) > 0 {
 			return symbol.Declarations
 		}
+		// For mapped type properties with no declarations, fall back to syntheticOrigin declarations
+		if symbol.CheckFlags&ast.CheckFlagsMapped != 0 {
+			if syntheticOrigin := c.GetMappedSyntheticOrigin(symbol); syntheticOrigin != nil && len(syntheticOrigin.Declarations) > 0 {
+				return syntheticOrigin.Declarations
+			}
+		}
 	}
 	if indexInfos := c.GetIndexSignaturesAtLocation(node); len(indexInfos) != 0 {
 		return indexInfos

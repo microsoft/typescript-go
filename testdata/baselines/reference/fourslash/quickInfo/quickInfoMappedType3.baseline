@@ -1,0 +1,190 @@
+// === QuickInfo ===
+=== /quickInfoMappedType3.ts ===
+// type Getters<Type> =  /** @inheritDoc desc on Getters */  {
+//   [Property in keyof Type as `get${Capitalize<
+//     string & Property
+//   >}`]: () => Type[Property];
+// };
+// 
+// interface Person {
+//   // ✅ When hovering here, the documentation is displayed, as it should.
+//   /**
+//    * Person's name.
+//    * @example "John Doe"
+//    */
+//   name: string;
+// 
+//   // ✅ When hovering here, the documentation is displayed, as it should.
+//   /**
+//    * Person's Age.
+//    * @example 30
+//    */
+//   age: number;
+// 
+//   // ✅ When hovering here, the documentation is displayed, as it should.
+//   /**
+//    * Person's Location.
+//    * @example "Brazil"
+//    */
+//   location: string;
+// }
+// 
+// type LazyPerson = Getters<Person>;
+// 
+// const me: LazyPerson = {
+//   // ❌ When hovering here, the documentation is NOT displayed.
+//   getName: () => "Jake Carter",
+//   ^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) getName: () => string
+// | ```
+// | 
+// | 
+// | *@inheritDoc* — desc on Getters 
+// | ----------------------------------------------------------------------
+//   // ❌ When hovering here, the documentation is NOT displayed.
+//   getAge: () => 35,
+//   ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) getAge: () => number
+// | ```
+// | 
+// | 
+// | *@inheritDoc* — desc on Getters 
+// | ----------------------------------------------------------------------
+//   // ❌ When hovering here, the documentation is NOT displayed.
+//   getLocation: () => "United States",
+//   ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) getLocation: () => string
+// | ```
+// | 
+// | 
+// | *@inheritDoc* — desc on Getters 
+// | ----------------------------------------------------------------------
+// };
+// 
+// // ❌ When hovering here, the documentation is NOT displayed.
+// me.getName();
+//    ^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) getName: () => string
+// | ```
+// | 
+// | 
+// | *@inheritDoc* — desc on Getters 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 755,
+      "LSPosition": {
+        "line": 33,
+        "character": 2
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) getName: () => string\n```\n\n\n*@inheritDoc* — desc on Getters "
+      },
+      "range": {
+        "start": {
+          "line": 33,
+          "character": 2
+        },
+        "end": {
+          "line": 33,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 852,
+      "LSPosition": {
+        "line": 35,
+        "character": 2
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) getAge: () => number\n```\n\n\n*@inheritDoc* — desc on Getters "
+      },
+      "range": {
+        "start": {
+          "line": 35,
+          "character": 2
+        },
+        "end": {
+          "line": 35,
+          "character": 8
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 937,
+      "LSPosition": {
+        "line": 37,
+        "character": 2
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) getLocation: () => string\n```\n\n\n*@inheritDoc* — desc on Getters "
+      },
+      "range": {
+        "start": {
+          "line": 37,
+          "character": 2
+        },
+        "end": {
+          "line": 37,
+          "character": 13
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1043,
+      "LSPosition": {
+        "line": 41,
+        "character": 3
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) getName: () => string\n```\n\n\n*@inheritDoc* — desc on Getters "
+      },
+      "range": {
+        "start": {
+          "line": 41,
+          "character": 3
+        },
+        "end": {
+          "line": 41,
+          "character": 10
+        }
+      }
+    }
+  }
+]
