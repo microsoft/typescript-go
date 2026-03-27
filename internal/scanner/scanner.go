@@ -2270,11 +2270,15 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 	if ast.PositionIsSynthesized(pos) {
 		return pos
 	}
+
+	textLen := len(text)
+	if pos >= textLen {
+		return pos
+	}
+
 	if options == nil {
 		options = &SkipTriviaOptions{}
 	}
-
-	textLen := len(text)
 	canConsumeStar := false
 	// Keep in sync with couldStartTrivia
 	for {

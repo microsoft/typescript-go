@@ -5762,6 +5762,14 @@ func (p *Printer) emitPos(pos int) {
 		return
 	}
 
+	// During declaration emit, nodes reused from other files may have positions
+	// beyond the current source file's text length. Skip source map emission
+	// for such positions, matching TypeScript's implicit behavior where
+	// out-of-bounds string access returns NaN/undefined without crashing.
+	if pos > len(p.sourceMapSource.Text()) {
+		return
+	}
+
 	sourceLine, sourceCharacter := p.sourceMapLineCharCache.getLineAndCharacter(pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),
