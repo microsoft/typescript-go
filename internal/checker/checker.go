@@ -10252,10 +10252,9 @@ func (c *Checker) needCollisionCheckForIdentifier(node *ast.Node, identifier *as
 
 func (c *Checker) setNodeLinksForPrivateIdentifierScope(node *ast.Node) {
 	if name := node.Name(); ast.IsPrivateIdentifier(name) {
-		// Check if we need to mark containers with the ContainsClassWithPrivateIdentifiers flag
-		// This happens for older language versions or when useDefineForClassFields is false
-		// PrivateNamesAndClassStaticBlocks is ES2022, ClassAndClassElementDecorators is ESNext
-		if c.languageVersion < core.ScriptTargetES2022 || c.languageVersion < core.ScriptTargetESNext || !c.emitStandardClassFields {
+		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks ||
+			c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators ||
+			!c.compilerOptions.GetUseDefineForClassFields() {
 			for lexicalScope := ast.GetEnclosingBlockScopeContainer(node); lexicalScope != nil; lexicalScope = ast.GetEnclosingBlockScopeContainer(lexicalScope) {
 				c.nodeLinks.Get(lexicalScope).flags |= NodeCheckFlagsContainsClassWithPrivateIdentifiers
 			}
@@ -10292,10 +10291,7 @@ func (c *Checker) checkCollisionWithGlobalPromiseInGeneratedCode(node *ast.Node,
 	}
 	// In case of variable declaration, node.parent is variable statement so look at the variable statement's parent
 	parent := ast.GetDeclarationContainer(node)
-	// Note: TypeScript checks for HasAsyncFunctions flag, but since that flag is not yet ported to Go,
-	// we conservatively check all external/CommonJS modules. This may produce false positives
-	// but is safer than missing real issues.
-	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
+	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) && parent.Flags&ast.NodeFlagsHasAsyncFunctions != 0 {
 		// If the declaration happens to be in external module, report error that Promise is a reserved identifier.
 		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module_containing_async_functions, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
 	}
