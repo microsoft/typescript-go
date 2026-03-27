@@ -393,7 +393,7 @@ type ProjectResponse struct {
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
-	var rootFiles []string
+	rootFiles := []string{}
 	var opts *core.CompilerOptions
 	if p.CommandLine != nil {
 		rootFiles = p.CommandLine.FileNames()
