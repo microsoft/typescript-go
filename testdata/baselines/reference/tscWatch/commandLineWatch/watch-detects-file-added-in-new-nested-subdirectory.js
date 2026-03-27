@@ -1,12 +1,12 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
-//// [/home/src/workspaces/project/index.ts] *new* 
-const x = 1;
+//// [/home/src/workspaces/project/src/a.ts] *new* 
+export const a = 1;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
 	"compilerOptions": {},
-	"include": ["index.ts", "src/**/*.ts"]
+	"include": ["src/**/*.ts"]
 }
 
 tsgo --watch
@@ -37,32 +37,31 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/project/index.js] *new* 
-"use strict";
-const x = 1;
+//// [/home/src/workspaces/project/src/a.js] *new* 
+export const a = 1;
 
 
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*refresh*    /home/src/workspaces/project/index.ts
+*refresh*    /home/src/workspaces/project/src/a.ts
 Signatures::
 
 
-Edit [0]:: create src dir with ts file matching include
-//// [/home/src/workspaces/project/src/helper.ts] *new* 
-export const helper = "added";
+Edit [0]:: create nested dir with ts file
+//// [/home/src/workspaces/project/src/deep/nested/util.ts] *new* 
+export const util = "nested";
 
 
 Output::
 build starting at HH:MM:SS AM
 build finished in d.ddds
-//// [/home/src/workspaces/project/src/helper.js] *new* 
-export const helper = "added";
+//// [/home/src/workspaces/project/src/deep/nested/util.js] *new* 
+export const util = "nested";
 
 
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/workspaces/project/src/helper.ts
+*refresh*    /home/src/workspaces/project/src/deep/nested/util.ts
 Signatures::
-(computed .d.ts) /home/src/workspaces/project/src/helper.ts
+(computed .d.ts) /home/src/workspaces/project/src/deep/nested/util.ts

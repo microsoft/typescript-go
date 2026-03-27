@@ -48,20 +48,35 @@ SemanticDiagnostics::
 Signatures::
 
 
-Edit [0]:: add new file to existing src directory
-//// [/home/src/workspaces/project/src/b.ts] *new* 
-export const b = 2;
+Edit [0]:: create multiple new subdirs with files
+//// [/home/src/workspaces/project/src/models/user.ts] *new* 
+export interface User { name: string; }
+//// [/home/src/workspaces/project/src/utils/format.ts] *new* 
+export function format(s: string): string { return s.trim(); }
 
 
 Output::
 build starting at HH:MM:SS AM
+[96msrc/utils/format.ts[0m:[93m1[0m:[93m54[0m - [91merror[0m[90m TS2339: [0mProperty 'trim' does not exist on type 'string'.
+
+[7m1[0m export function format(s: string): string { return s.trim(); }
+[7m [0m [91m                                                     ~~~~[0m
+
+
+Found 1 error in src/utils/format.ts[90m:1[0m
+
 build finished in d.ddds
-//// [/home/src/workspaces/project/src/b.js] *new* 
-export const b = 2;
+//// [/home/src/workspaces/project/src/models/user.js] *new* 
+export {};
+
+//// [/home/src/workspaces/project/src/utils/format.js] *new* 
+export function format(s) { return s.trim(); }
 
 
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/workspaces/project/src/b.ts
+*refresh*    /home/src/workspaces/project/src/models/user.ts
+*refresh*    /home/src/workspaces/project/src/utils/format.ts
 Signatures::
-(computed .d.ts) /home/src/workspaces/project/src/b.ts
+(computed .d.ts) /home/src/workspaces/project/src/models/user.ts
+(computed .d.ts) /home/src/workspaces/project/src/utils/format.ts

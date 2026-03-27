@@ -174,13 +174,9 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch"},
 			edits: []*tscEdit{
-				{
-					caption: "create src dir with ts file matching include",
-					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/src/helper.ts", `export const helper = "added";`)
-					},
-					expectedDiff: "incremental skips emit for new unreferenced file",
-				},
+				newTscEdit("create src dir with ts file matching include", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/src/helper.ts", `export const helper = "added";`)
+				}),
 			},
 		},
 		{
@@ -194,13 +190,66 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch"},
 			edits: []*tscEdit{
+				newTscEdit("add new file to existing src directory", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/src/b.ts", `export const b = 2;`)
+				}),
+			},
+		},
+		// Wildcard include: nested subdirectory detection
+		{
+			subScenario: "watch detects file added in new nested subdirectory",
+			files: FileMap{
+				"/home/src/workspaces/project/src/a.ts": `export const a = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{
+	"compilerOptions": {},
+	"include": ["src/**/*.ts"]
+}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("create nested dir with ts file", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/src/deep/nested/util.ts", `export const util = "nested";`)
+				}),
+			},
+		},
+		{
+			subScenario: "watch detects file added in multiple new subdirectories simultaneously",
+			files: FileMap{
+				"/home/src/workspaces/project/src/a.ts": `export const a = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{
+	"compilerOptions": {},
+	"include": ["src/**/*.ts"]
+}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("create multiple new subdirs with files", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/src/models/user.ts", `export interface User { name: string; }`)
+					sys.writeFileNoError("/home/src/workspaces/project/src/utils/format.ts", `export function format(s: string): string { return s.trim(); }`)
+				}),
+			},
+		},
+		{
+			subScenario: "watch detects nested subdirectory removed and recreated",
+			files: FileMap{
+				"/home/src/workspaces/project/src/lib/helper.ts": `export const helper = "v1";`,
+				"/home/src/workspaces/project/tsconfig.json": `{
+	"compilerOptions": {},
+	"include": ["src/**/*.ts"]
+}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
 				{
-					caption: "add new file to existing src directory",
+					caption:      "remove nested dir",
+					expectedDiff: "incremental has prior state and does not report no-inputs error",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/src/b.ts", `export const b = 2;`)
+						sys.removeNoError("/home/src/workspaces/project/src/lib/helper.ts")
 					},
-					expectedDiff: "incremental skips emit for new unreferenced file",
 				},
+				newTscEdit("recreate nested dir with new content", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/src/lib/helper.ts", `export const helper = "v2";`)
+				}),
 			},
 		},
 		// Path resolution: import from non-existent node_modules package
