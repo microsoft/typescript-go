@@ -716,6 +716,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
+	registerRequestHandler(handlers, lsproto.CustomFindFileReferencesInfo, (*Server).handleFindFileReferences)
 	return handlers
 })
 
@@ -1552,4 +1553,33 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	return &lsproto.ProjectInfoResult{
 		ConfigFilePath: configFilePath,
 	}, nil
+}
+
+func (s *Server) handleFindFileReferences(ctx context.Context, params *lsproto.FindFileReferencesParams, _ *lsproto.RequestMessage) (lsproto.CustomFindFileReferencesResponse, error) {
+	uri := params.TextDocument.Uri
+	_, _, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	if err != nil {
+		return lsproto.LocationsOrNull{}, err
+	}
+
+	var combined []lsproto.Location
+	var seenLocations collections.Set[lsproto.Location]
+	for _, p := range allProjects {
+		languageService := s.session.GetLanguageServiceForProjectWithFile(ctx, p.(*project.Project), uri)
+		if languageService == nil {
+			continue
+		}
+		resp, lsErr := languageService.GetFileReferences(ctx, uri)
+		if lsErr != nil {
+			return lsproto.LocationsOrNull{}, lsErr
+		}
+		if resp.Locations != nil {
+			for _, loc := range *resp.Locations {
+				if seenLocations.AddIfAbsent(loc) {
+					combined = append(combined, loc)
+				}
+			}
+		}
+	}
+	return lsproto.LocationsOrNull{Locations: &combined}, nil
 }

@@ -22318,6 +22318,63 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+// Parameters for the custom/findFileReferences request.
+type FindFileReferencesParams struct {
+	// The text document (file) to find references to.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *FindFileReferencesParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
+var _ json.UnmarshalerFrom = (*FindFileReferencesParams)(nil)
+
+func (s *FindFileReferencesParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"textDocument"`:
+			missing &^= missingTextDocument
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingTextDocument != 0 {
+			missingProps = append(missingProps, "textDocument")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
 type CallHierarchyItemData struct{}
 
@@ -23726,6 +23783,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[InitializeAPISessionParams](data)
 	case MethodCustomProjectInfo:
 		return unmarshalPtrTo[ProjectInfoParams](data)
+	case MethodCustomFindFileReferences:
+		return unmarshalPtrTo[FindFileReferencesParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
 	case MethodWindowWorkDoneProgressCancel:
@@ -23939,6 +23998,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[CustomInitializeAPISessionResponse](data)
 	case MethodCustomProjectInfo:
 		return unmarshalValue[CustomProjectInfoResponse](data)
+	case MethodCustomFindFileReferences:
+		return unmarshalValue[CustomFindFileReferencesResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -24259,6 +24320,8 @@ const (
 	MethodCustomInitializeAPISession Method = "custom/initializeAPISession"
 	// Returns project information (e.g. the tsconfig.json path) for a given text document.
 	MethodCustomProjectInfo Method = "custom/projectInfo"
+	// Returns all references to the given file.
+	MethodCustomFindFileReferences Method = "custom/findFileReferences"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -24814,6 +24877,12 @@ type CustomProjectInfoResponse = *ProjectInfoResult
 
 // Type mapping info for `custom/projectInfo`
 var CustomProjectInfoInfo = RequestInfo[*ProjectInfoParams, CustomProjectInfoResponse]{Method: MethodCustomProjectInfo}
+
+// Response type for `custom/findFileReferences`
+type CustomFindFileReferencesResponse = LocationsOrNull
+
+// Type mapping info for `custom/findFileReferences`
+var CustomFindFileReferencesInfo = RequestInfo[*FindFileReferencesParams, CustomFindFileReferencesResponse]{Method: MethodCustomFindFileReferences}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}

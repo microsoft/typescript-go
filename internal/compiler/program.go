@@ -1706,6 +1706,43 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 	return p.includeProcessor.fileIncludeReasons
 }
 
+// NonModuleFileReference represents a span-based reference to a file
+// that is included without a module symbol (e.g. via triple-slash directives).
+type NonModuleFileReference struct {
+	FileName  string
+	TextRange core.TextRange
+}
+
+// GetNonModuleFileReferences returns all span-based references to the given file
+// that are recorded in the program's file-include-reasons map. These are references
+// via triple-slash directives (/// <reference path="...">, /// <reference types="...">,
+// /// <reference lib="...">), as opposed to module-symbol-based import references.
+func (p *Program) GetNonModuleFileReferences(referencedFile *ast.SourceFile) []NonModuleFileReference {
+	var result []NonModuleFileReference
+	for _, ref := range p.includeProcessor.fileIncludeReasons[referencedFile.Path()] {
+		if !ref.isReferencedFile() {
+			continue
+		}
+		loc := p.includeProcessor.getReferenceLocation(ref, p)
+		if loc.isSynthetic {
+			continue
+		}
+		var textRange core.TextRange
+		if loc.node != nil {
+			textRange = core.NewTextRange(loc.node.Pos(), loc.node.End())
+		} else if loc.ref != nil {
+			textRange = loc.ref.TextRange
+		} else {
+			continue
+		}
+		result = append(result, NonModuleFileReference{
+			FileName:  loc.file.FileName(),
+			TextRange: textRange,
+		})
+	}
+	return result
+}
+
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
 	return slices.ContainsFunc(p.missingFiles, func(missingPath string) bool {
