@@ -2044,11 +2044,11 @@ export type Pair = [string, number];
             assert.ok(regexNode, "Should find a regex literal");
 
             // Without the option, regex is printed as-is
-            const textWithout = project.printNode(regexNode);
+            const textWithout = project.emitter.printNode(regexNode);
             assert.strictEqual(textWithout, "/asdfasf");
 
             // With the option, the closing slash is added
-            const textWith = project.printNode(regexNode, { terminateUnterminatedLiterals: true });
+            const textWith = project.emitter.printNode(regexNode, { terminateUnterminatedLiterals: true });
             assert.strictEqual(textWith, "/asdfasf/");
         }
         finally {

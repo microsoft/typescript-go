@@ -304,15 +304,6 @@ export class Project {
         );
         this.emitter = new Emitter(client);
     }
-
-    async printNode(node: Node, options: PrintNodeOptions = {}): Promise<string> {
-        const encoded = encodeNode(node);
-        const base64 = uint8ArrayToBase64(encoded);
-        return this.client.apiRequest<string>("printNode", {
-            data: base64,
-            ...options,
-        });
-    }
 }
 
 export class Program {
