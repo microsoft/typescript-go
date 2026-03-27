@@ -556,6 +556,7 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 		if v < uint64(math.MaxInt64) {
 			measurements.GoMemLimit = float64(v)
 		}
+		// else: default (MaxInt64) exceeds MAX_SAFE_INTEGER; leave as 0 to indicate unconfigured
 	}
 	measurements.GoGCPercent = readUint64(samples[sGoGCPercent])
 	measurements.HeapGoalBytes = readUint64(samples[sHeapGoalBytes])
@@ -625,16 +626,20 @@ func (s *Session) sendProjectInfoTelemetry(ctx context.Context, project *Project
 	if s.seenProjects.Has(project.configFilePath) {
 		return
 	}
-	s.seenProjects.Add(project.configFilePath)
 
 	if project.Program == nil || project.CommandLine == nil {
 		return
 	}
 
 	info := s.collectProjectInfoTelemetry(project)
-	if err := s.client.SendTelemetry(ctx, info); err != nil && s.options.LoggingEnabled {
-		s.logger.Logf("Error sending project info telemetry: %v", err)
+	if err := s.client.SendTelemetry(ctx, info); err != nil {
+		if s.options.LoggingEnabled {
+			s.logger.Logf("Error sending project info telemetry: %v", err)
+		}
+		return
 	}
+
+	s.seenProjects.Add(project.configFilePath)
 }
 
 func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.TelemetryEvent {
