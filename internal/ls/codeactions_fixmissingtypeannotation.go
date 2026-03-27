@@ -424,18 +424,25 @@ func (f *isolatedDeclarationsFixer) extractAsVariable(span core.TextRange) strin
 }
 
 // findExpandoFunction finds the function declaration that has expando properties assigned to it.
+// isExpandoPropertyDeclarationForFix matches TS's isExpandoPropertyDeclaration which includes
+// PropertyAccessExpression, ElementAccessExpression, and BinaryExpression. The shared
+// ast.IsExpandoPropertyDeclaration was narrowed to BinaryExpression only for checker purposes.
+func isExpandoPropertyDeclarationForFix(node *ast.Node) bool {
+	return node != nil && (ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node) || ast.IsBinaryExpression(node))
+}
+
 func findExpandoFunction(ch *checker.Checker, node *ast.Node) *ast.Node {
 	expandoDeclaration := ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
 		if ast.IsStatement(n) {
 			return ast.FindAncestorQuit
 		}
-		if ast.IsExpandoPropertyDeclaration(n) {
+		if isExpandoPropertyDeclarationForFix(n) {
 			return ast.FindAncestorTrue
 		}
 		return ast.FindAncestorFalse
 	})
 
-	if expandoDeclaration == nil || !ast.IsExpandoPropertyDeclaration(expandoDeclaration) {
+	if expandoDeclaration == nil || !isExpandoPropertyDeclarationForFix(expandoDeclaration) {
 		return nil
 	}
 
@@ -443,7 +450,7 @@ func findExpandoFunction(ch *checker.Checker, node *ast.Node) *ast.Node {
 	// Some late bound expando members use the whole expression as the declaration.
 	if ast.IsBinaryExpression(assignmentTarget) {
 		assignmentTarget = assignmentTarget.AsBinaryExpression().Left
-		if !ast.IsExpandoPropertyDeclaration(assignmentTarget) {
+		if !isExpandoPropertyDeclarationForFix(assignmentTarget) {
 			return nil
 		}
 	}
