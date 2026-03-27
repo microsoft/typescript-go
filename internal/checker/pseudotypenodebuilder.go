@@ -410,7 +410,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
 				d := e.AsPseudoPropertyAssignment()
 				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
-					if reportErrors {
+					if reportErrors && !isStructuralPseudoType(d.Type) {
 						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 					}
 					return false
@@ -548,6 +548,17 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	default:
 		return false
 	}
+}
+
+func isStructuralPseudoType(t *pseudochecker.PseudoType) bool {
+	switch t.Kind {
+	case pseudochecker.PseudoTypeKindObjectLiteral, pseudochecker.PseudoTypeKindTuple, pseudochecker.PseudoTypeKindSingleCallSignature:
+		return true
+	case pseudochecker.PseudoTypeKindMaybeConstLocation:
+		d := t.AsPseudoTypeMaybeConstLocation()
+		return isStructuralPseudoType(d.ConstType) || isStructuralPseudoType(d.RegularType)
+	}
+	return false
 }
 
 // pseudoReturnTypeMatchesPredicate checks if a pseudo return type (which should be a Direct type
