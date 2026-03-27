@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 
-import { registerEnablementCommands } from "./commands";
+import {
+    registerEnablementCommands,
+    updateUseTsgoSetting,
+} from "./commands";
 import {
     aiConnectionString,
     getUseTsgo,
@@ -94,7 +97,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         if (!context.globalState.get<boolean>(hasActivatedKey)) {
             // First run after install: enable by default.
             await context.globalState.update(hasActivatedKey, true);
-            vscode.commands.executeCommand("typescript.native-preview.enable");
+            updateUseTsgoSetting(true);
             return;
         }
         output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
