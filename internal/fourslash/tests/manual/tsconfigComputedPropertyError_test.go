@@ -22,7 +22,6 @@ func TestTsconfigComputedPropertyError(t *testing.T) {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.GoToFile(t, "/tsconfig.json")
 	f.MarkTestAsStradaServer()
 	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
