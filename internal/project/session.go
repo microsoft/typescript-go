@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"math"
 	"runtime"
 	gometrics "runtime/metrics"
 	"slices"
@@ -11,10 +12,12 @@ import (
 	"sync/atomic"
 	"time"
 
+	osmemory "github.com/mackerelio/go-osstat/memory"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -51,6 +54,7 @@ type SessionOptions struct {
 	PositionEncoding       lsproto.PositionEncodingKind
 	WatchEnabled           bool
 	LoggingEnabled         bool
+	TelemetryEnabled       bool
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
@@ -135,6 +139,12 @@ type Session struct {
 	// change, save, watch) and fires after 30 seconds of inactivity.
 	idleCacheCleanTimer *time.Timer
 	idleCacheCleanMu    sync.Mutex
+
+	// performanceTelemetryCancel cancels the periodic performance telemetry ticker.
+	performanceTelemetryCancel context.CancelFunc
+
+	// seenProjects tracks projects that have already had telemetry sent.
+	seenProjects collections.SyncSet[tspath.Path]
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
@@ -441,6 +451,284 @@ func (s *Session) cancelIdleCacheClean() {
 	}
 }
 
+const performanceTelemetryInterval = 5 * time.Minute
+
+// StartPerformanceTelemetry begins periodic collection and sending of performance
+// telemetry. It should be called once after the session is initialized.
+func (s *Session) StartPerformanceTelemetry() {
+	if !s.options.TelemetryEnabled {
+		return
+	}
+	ctx, cancel := context.WithCancel(s.backgroundCtx)
+	s.performanceTelemetryCancel = cancel
+	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
+		ticker := time.NewTicker(performanceTelemetryInterval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				s.sendPerformanceTelemetry(ctx)
+			}
+		}
+	})
+}
+
+func (s *Session) stopPerformanceTelemetry() {
+	if s.performanceTelemetryCancel != nil {
+		s.performanceTelemetryCancel()
+		s.performanceTelemetryCancel = nil
+	}
+}
+
+func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
+	if s.client == nil || !s.options.TelemetryEnabled {
+		return
+	}
+	s.snapshotMu.RLock()
+	snapshot := s.snapshot
+	s.snapshotMu.RUnlock()
+
+	// Read Go runtime metrics in a single call
+	const (
+		sMemoryUsedBytes = iota
+		sGoMemLimit
+		sHeapGoalBytes
+		sHeapLiveBytes
+		sGoroutineCount
+		sGcCyclesTotal
+		sGcCPUSeconds
+		sUserCPUSeconds
+		sMetricCount
+	)
+	samples := make([]gometrics.Sample, sMetricCount)
+	samples[sMemoryUsedBytes].Name = "/memory/classes/total:bytes"
+	samples[sGoMemLimit].Name = "/gc/gomemlimit:bytes"
+	samples[sHeapGoalBytes].Name = "/gc/heap/goal:bytes"
+	samples[sHeapLiveBytes].Name = "/gc/heap/live:bytes"
+	samples[sGoroutineCount].Name = "/sched/goroutines:goroutines"
+	samples[sGcCyclesTotal].Name = "/gc/cycles/total:gc-cycles"
+	samples[sGcCPUSeconds].Name = "/cpu/classes/gc/total:cpu-seconds"
+	samples[sUserCPUSeconds].Name = "/cpu/classes/user:cpu-seconds"
+	gometrics.Read(samples)
+
+	measurements := &lsproto.PerformanceStatsTelemetryMeasurements{
+		OpenFileCount:       float64(len(snapshot.fs.overlays)),
+		ProjectCount:        float64(len(snapshot.ProjectCollection.Projects())),
+		ConfigCount:         float64(len(snapshot.ConfigFileRegistry.configs)),
+		CachedDiskFileCount: float64(len(snapshot.fs.diskFiles)),
+	}
+
+	readUint64 := func(s gometrics.Sample) float64 {
+		if s.Value.Kind() == gometrics.KindUint64 {
+			return float64(s.Value.Uint64())
+		}
+		return 0
+	}
+	readFloat64 := func(s gometrics.Sample) float64 {
+		if s.Value.Kind() == gometrics.KindFloat64 {
+			return s.Value.Float64()
+		}
+		return 0
+	}
+
+	measurements.MemoryUsedBytes = readUint64(samples[sMemoryUsedBytes])
+	if samples[sGoMemLimit].Value.Kind() == gometrics.KindUint64 {
+		v := samples[sGoMemLimit].Value.Uint64()
+		if v < uint64(math.MaxInt64) {
+			measurements.GoMemLimit = float64(v)
+		}
+	}
+	measurements.HeapGoalBytes = readUint64(samples[sHeapGoalBytes])
+	measurements.HeapLiveBytes = readUint64(samples[sHeapLiveBytes])
+	measurements.GoroutineCount = readUint64(samples[sGoroutineCount])
+	measurements.GcCyclesTotal = readUint64(samples[sGcCyclesTotal])
+	measurements.GcCPUSeconds = readFloat64(samples[sGcCPUSeconds])
+	measurements.UserCPUSeconds = readFloat64(samples[sUserCPUSeconds])
+
+	// Read system memory stats
+	if sysMem, err := osmemory.Get(); err == nil {
+		measurements.SystemMemTotal = float64(sysMem.Total)
+		measurements.SystemMemUsed = float64(sysMem.Used)
+	}
+
+	if err := s.client.SendTelemetry(ctx, lsproto.TelemetryEvent{
+		PerformanceStatsTelemetryEvent: &lsproto.PerformanceStatsTelemetryEvent{
+			Measurements: measurements,
+		},
+	}); err != nil && s.options.LoggingEnabled {
+		s.logger.Logf("Error sending performance telemetry: %v", err)
+	}
+}
+
+func (s *Session) sendProjectInfoTelemetryForNewProjects(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	if !s.options.TelemetryEnabled {
+		return
+	}
+	ctx := s.backgroundCtx
+	collections.DiffOrderedMaps(
+		oldSnapshot.ProjectCollection.ProjectsByPath(),
+		newSnapshot.ProjectCollection.ProjectsByPath(),
+		func(_ tspath.Path, addedProject *Project) {
+			s.sendProjectInfoTelemetry(ctx, addedProject)
+		},
+		func(_ tspath.Path, _ *Project) {},
+		func(_ tspath.Path, _, _ *Project) {},
+	)
+}
+
+func (s *Session) sendProjectInfoTelemetry(ctx context.Context, project *Project) {
+	if s.client == nil || !s.options.TelemetryEnabled {
+		return
+	}
+	if s.seenProjects.Has(project.configFilePath) {
+		return
+	}
+	s.seenProjects.Add(project.configFilePath)
+
+	if project.Program == nil || project.CommandLine == nil {
+		return
+	}
+
+	info := s.collectProjectInfoTelemetry(project)
+	if err := s.client.SendTelemetry(ctx, info); err != nil && s.options.LoggingEnabled {
+		s.logger.Logf("Error sending project info telemetry: %v", err)
+	}
+}
+
+func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.TelemetryEvent {
+	opts := project.CommandLine.CompilerOptions()
+	if opts == nil {
+		opts = &core.CompilerOptions{}
+	}
+
+	configFileName := "other"
+	if project.Kind == KindConfigured {
+		baseName := tspath.GetBaseFileName(project.configFileName)
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			configFileName = baseName
+		}
+	}
+
+	projectType := "inferred"
+	if project.Kind == KindConfigured {
+		projectType = "configured"
+	}
+
+	props := map[string]string{
+		"configFileName": configFileName,
+		"projectType":    projectType,
+		"version":        core.Version(),
+	}
+
+	// Compiler options — same approach as Strada's convertCompilerOptionsForTelemetry:
+	// booleans and enum string names, no paths.
+	compilerOptions := map[string]any{}
+	setTristate(compilerOptions, "strict", opts.Strict)
+	setTristate(compilerOptions, "allowJs", opts.AllowJs)
+	setTristate(compilerOptions, "checkJs", opts.CheckJs)
+	setTristate(compilerOptions, "noEmit", opts.NoEmit)
+	setTristate(compilerOptions, "declaration", opts.Declaration)
+	setTristate(compilerOptions, "composite", opts.Composite)
+	setTristate(compilerOptions, "isolatedModules", opts.IsolatedModules)
+	setTristate(compilerOptions, "esModuleInterop", opts.ESModuleInterop)
+	setTristate(compilerOptions, "skipLibCheck", opts.SkipLibCheck)
+	setTristate(compilerOptions, "incremental", opts.Incremental)
+	if opts.Target != core.ScriptTargetNone {
+		compilerOptions["target"] = opts.Target.String()
+	}
+	if opts.Module != core.ModuleKindNone {
+		compilerOptions["module"] = opts.Module.String()
+	}
+	if name := moduleResolutionKindName(opts.ModuleResolution); name != "" {
+		compilerOptions["moduleResolution"] = name
+	}
+	if opts.Jsx != core.JsxEmitNone {
+		compilerOptions["jsx"] = fmt.Sprintf("%d", opts.Jsx)
+	}
+	if b, err := json.Marshal(compilerOptions); err == nil {
+		props["compilerOptions"] = string(b)
+	}
+
+	// Config file shape
+	if raw, ok := project.CommandLine.Raw.(*collections.OrderedMap[string, any]); ok {
+		props["extends"] = boolTelemetry(raw.Has("extends"))
+		props["files"] = boolTelemetry(raw.Has("files"))
+		props["include"] = boolTelemetry(raw.Has("include"))
+		props["exclude"] = boolTelemetry(raw.Has("exclude"))
+	}
+
+	return lsproto.TelemetryEvent{
+		ProjectInfoTelemetryEvent: &lsproto.ProjectInfoTelemetryEvent{
+			Properties:   props,
+			Measurements: countFileStats(project.Program.GetSourceFiles()),
+		},
+	}
+}
+
+func setTristate(m map[string]any, key string, v core.Tristate) {
+	if v == core.TSTrue {
+		m[key] = true
+	} else if v == core.TSFalse {
+		m[key] = false
+	}
+}
+
+func boolTelemetry(v bool) string {
+	if v {
+		return "true"
+	}
+	return "false"
+}
+
+func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetryMeasurements {
+	var stats lsproto.ProjectInfoTelemetryMeasurements
+	for _, sf := range sourceFiles {
+		fileName := sf.FileName()
+		size := float64(sf.End())
+		switch core.GetScriptKindFromFileName(fileName) {
+		case core.ScriptKindJS:
+			stats.JsFileCount++
+			stats.JsFileSize += size
+		case core.ScriptKindJSX:
+			stats.JsxFileCount++
+			stats.JsxFileSize += size
+		case core.ScriptKindTS:
+			if tspath.IsDeclarationFileName(fileName) {
+				stats.DtsFileCount++
+				stats.DtsFileSize += size
+			} else {
+				stats.TsFileCount++
+				stats.TsFileSize += size
+			}
+		case core.ScriptKindTSX:
+			stats.TsxFileCount++
+			stats.TsxFileSize += size
+		}
+	}
+	return &stats
+}
+
+func moduleResolutionKindName(kind core.ModuleResolutionKind) string {
+	switch kind {
+	case core.ModuleResolutionKindUnknown:
+		return ""
+	case core.ModuleResolutionKindClassic:
+		return "Classic"
+	case core.ModuleResolutionKindNode10:
+		return "Node10"
+	case core.ModuleResolutionKindNode16:
+		return "Node16"
+	case core.ModuleResolutionKindNodeNext:
+		return "NodeNext"
+	case core.ModuleResolutionKindBundler:
+		return "Bundler"
+	default:
+		return ""
+	}
+}
+
 func (s *Session) Snapshot() *Snapshot {
 	s.snapshotMu.RLock()
 	defer s.snapshotMu.RUnlock()
@@ -684,6 +972,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			}
 		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
+		s.sendProjectInfoTelemetryForNewProjects(oldSnapshot, newSnapshot)
 		s.warmAutoImportCache(ctx, change, oldSnapshot, newSnapshot)
 	})
 
@@ -827,6 +1116,8 @@ func (s *Session) Close() {
 	s.cancelDiagnosticsRefresh()
 	// Cancel any pending idle cache clean
 	s.cancelIdleCacheClean()
+	// Cancel periodic performance telemetry
+	s.stopPerformanceTelemetry()
 	s.backgroundQueue.Close()
 }
 

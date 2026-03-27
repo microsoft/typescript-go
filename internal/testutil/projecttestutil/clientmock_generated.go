@@ -40,6 +40,9 @@ var _ project.Client = &ClientMock{}
 //			RefreshInlayHintsFunc: func(ctx context.Context) error {
 //				panic("mock out the RefreshInlayHints method")
 //			},
+//			SendTelemetryFunc: func(ctx context.Context, telemetry lsproto.TelemetryEvent) error {
+//				panic("mock out the SendTelemetry method")
+//			},
 //			UnwatchFilesFunc: func(ctx context.Context, id project.WatcherID) error {
 //				panic("mock out the UnwatchFiles method")
 //			},
@@ -70,6 +73,9 @@ type ClientMock struct {
 
 	// RefreshInlayHintsFunc mocks the RefreshInlayHints method.
 	RefreshInlayHintsFunc func(ctx context.Context) error
+
+	// SendTelemetryFunc mocks the SendTelemetry method.
+	SendTelemetryFunc func(ctx context.Context, telemetry lsproto.TelemetryEvent) error
 
 	// UnwatchFilesFunc mocks the UnwatchFiles method.
 	UnwatchFilesFunc func(ctx context.Context, id project.WatcherID) error
@@ -115,6 +121,13 @@ type ClientMock struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 		}
+		// SendTelemetry holds details about calls to the SendTelemetry method.
+		SendTelemetry []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Telemetry is the telemetry argument value.
+			Telemetry lsproto.TelemetryEvent
+		}
 		// UnwatchFiles holds details about calls to the UnwatchFiles method.
 		UnwatchFiles []struct {
 			// Ctx is the ctx argument value.
@@ -138,6 +151,7 @@ type ClientMock struct {
 	lockRefreshCodeLens    sync.RWMutex
 	lockRefreshDiagnostics sync.RWMutex
 	lockRefreshInlayHints  sync.RWMutex
+	lockSendTelemetry      sync.RWMutex
 	lockUnwatchFiles       sync.RWMutex
 	lockWatchFiles         sync.RWMutex
 }
@@ -347,6 +361,43 @@ func (mock *ClientMock) RefreshInlayHintsCalls() []struct {
 	mock.lockRefreshInlayHints.RLock()
 	calls = mock.calls.RefreshInlayHints
 	mock.lockRefreshInlayHints.RUnlock()
+	return calls
+}
+
+// SendTelemetry calls SendTelemetryFunc.
+func (mock *ClientMock) SendTelemetry(ctx context.Context, telemetry lsproto.TelemetryEvent) error {
+	callInfo := struct {
+		Ctx       context.Context
+		Telemetry lsproto.TelemetryEvent
+	}{
+		Ctx:       ctx,
+		Telemetry: telemetry,
+	}
+	mock.lockSendTelemetry.Lock()
+	mock.calls.SendTelemetry = append(mock.calls.SendTelemetry, callInfo)
+	mock.lockSendTelemetry.Unlock()
+	if mock.SendTelemetryFunc == nil {
+		var errOut error
+		return errOut
+	}
+	return mock.SendTelemetryFunc(ctx, telemetry)
+}
+
+// SendTelemetryCalls gets all the calls that were made to SendTelemetry.
+// Check the length with:
+//
+//	len(mockedClient.SendTelemetryCalls())
+func (mock *ClientMock) SendTelemetryCalls() []struct {
+	Ctx       context.Context
+	Telemetry lsproto.TelemetryEvent
+} {
+	var calls []struct {
+		Ctx       context.Context
+		Telemetry lsproto.TelemetryEvent
+	}
+	mock.lockSendTelemetry.RLock()
+	calls = mock.calls.SendTelemetry
+	mock.lockSendTelemetry.RUnlock()
 	return calls
 }
 

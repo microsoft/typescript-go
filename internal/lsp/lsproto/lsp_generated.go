@@ -21628,6 +21628,9 @@ type InitializationOptions struct {
 
 	// userPreferences and/or formatting options if provided at initialization.
 	UserPreferences *any `json:"userPreferences,omitzero"`
+
+	// EnableTelemetry enables sending telemetry events from the server to the client.
+	EnableTelemetry *bool `json:"enableTelemetry,omitzero"`
 }
 
 // AutoImportFix contains information about an auto-import suggestion.
@@ -22316,6 +22319,240 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 
 	return nil
+}
+
+// A PerformanceStatsTelemetryEvent is sent periodically with performance and resource usage statistics.
+type PerformanceStatsTelemetryEvent struct {
+	// The name of the telemetry event.
+	EventName StringLiteralLanguageServerPerformanceStats `json:"eventName"`
+
+	// Indicates this is a usage telemetry event.
+	TelemetryPurpose StringLiteralUsage `json:"telemetryPurpose"`
+
+	// Numeric measurements for this telemetry event.
+	Measurements *PerformanceStatsTelemetryMeasurements `json:"measurements"`
+}
+
+var _ json.UnmarshalerFrom = (*PerformanceStatsTelemetryEvent)(nil)
+
+func (s *PerformanceStatsTelemetryEvent) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingEventName uint = 1 << iota
+		missingTelemetryPurpose
+		missingMeasurements
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"eventName"`:
+			missing &^= missingEventName
+			if err := json.UnmarshalDecode(dec, &s.EventName); err != nil {
+				return err
+			}
+		case `"telemetryPurpose"`:
+			missing &^= missingTelemetryPurpose
+			if err := json.UnmarshalDecode(dec, &s.TelemetryPurpose); err != nil {
+				return err
+			}
+		case `"measurements"`:
+			missing &^= missingMeasurements
+			if err := json.UnmarshalDecode(dec, &s.Measurements); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingEventName != 0 {
+			missingProps = append(missingProps, "eventName")
+		}
+		if missing&missingTelemetryPurpose != 0 {
+			missingProps = append(missingProps, "telemetryPurpose")
+		}
+		if missing&missingMeasurements != 0 {
+			missingProps = append(missingProps, "measurements")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
+// Numeric measurements for PerformanceStatsTelemetryEvent.
+type PerformanceStatsTelemetryMeasurements struct {
+	// Number of files currently open in the editor.
+	OpenFileCount float64 `json:"openFileCount,omitzero"`
+
+	// Number of loaded projects.
+	ProjectCount float64 `json:"projectCount,omitzero"`
+
+	// Number of loaded config files.
+	ConfigCount float64 `json:"configCount,omitzero"`
+
+	// Number of files cached from disk.
+	CachedDiskFileCount float64 `json:"cachedDiskFileCount,omitzero"`
+
+	// Total memory mapped by the Go runtime in bytes.
+	MemoryUsedBytes float64 `json:"memoryUsedBytes,omitzero"`
+
+	// GOMEMLIMIT value in bytes, or 0 if not set.
+	GoMemLimit float64 `json:"goMemLimit,omitzero"`
+
+	// Heap size target the GC is working toward in bytes.
+	HeapGoalBytes float64 `json:"heapGoalBytes,omitzero"`
+
+	// Bytes of live (reachable) heap objects.
+	HeapLiveBytes float64 `json:"heapLiveBytes,omitzero"`
+
+	// Current number of goroutines.
+	GoroutineCount float64 `json:"goroutineCount,omitzero"`
+
+	// Total completed GC cycles.
+	GcCyclesTotal float64 `json:"gcCyclesTotal,omitzero"`
+
+	// Cumulative CPU time spent in GC in seconds.
+	GcCPUSeconds float64 `json:"gcCPUSeconds,omitzero"`
+
+	// Cumulative CPU time spent in user Go code in seconds.
+	UserCPUSeconds float64 `json:"userCPUSeconds,omitzero"`
+
+	// Total physical memory on the system in bytes.
+	SystemMemTotal float64 `json:"systemMemTotal,omitzero"`
+
+	// Used physical memory on the system in bytes.
+	SystemMemUsed float64 `json:"systemMemUsed,omitzero"`
+}
+
+// A ProjectInfoTelemetryEvent is sent once per project when it is first loaded.
+type ProjectInfoTelemetryEvent struct {
+	// The name of the telemetry event.
+	EventName StringLiteralLanguageServerProjectInfo `json:"eventName"`
+
+	// Indicates this is a usage telemetry event.
+	TelemetryPurpose StringLiteralUsage `json:"telemetryPurpose"`
+
+	// String properties for this telemetry event. Complex values (compilerOptions, fileStats) are JSON-stringified.
+	Properties map[string]string `json:"properties"`
+
+	// Numeric measurements for this telemetry event.
+	Measurements *ProjectInfoTelemetryMeasurements `json:"measurements"`
+}
+
+var _ json.UnmarshalerFrom = (*ProjectInfoTelemetryEvent)(nil)
+
+func (s *ProjectInfoTelemetryEvent) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingEventName uint = 1 << iota
+		missingTelemetryPurpose
+		missingProperties
+		missingMeasurements
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"eventName"`:
+			missing &^= missingEventName
+			if err := json.UnmarshalDecode(dec, &s.EventName); err != nil {
+				return err
+			}
+		case `"telemetryPurpose"`:
+			missing &^= missingTelemetryPurpose
+			if err := json.UnmarshalDecode(dec, &s.TelemetryPurpose); err != nil {
+				return err
+			}
+		case `"properties"`:
+			missing &^= missingProperties
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		case `"measurements"`:
+			missing &^= missingMeasurements
+			if err := json.UnmarshalDecode(dec, &s.Measurements); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingEventName != 0 {
+			missingProps = append(missingProps, "eventName")
+		}
+		if missing&missingTelemetryPurpose != 0 {
+			missingProps = append(missingProps, "telemetryPurpose")
+		}
+		if missing&missingProperties != 0 {
+			missingProps = append(missingProps, "properties")
+		}
+		if missing&missingMeasurements != 0 {
+			missingProps = append(missingProps, "measurements")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
+// Numeric measurements for ProjectInfoTelemetryEvent.
+type ProjectInfoTelemetryMeasurements struct {
+	JsFileCount float64 `json:"jsFileCount,omitzero"`
+
+	JsFileSize float64 `json:"jsFileSize,omitzero"`
+
+	JsxFileCount float64 `json:"jsxFileCount,omitzero"`
+
+	JsxFileSize float64 `json:"jsxFileSize,omitzero"`
+
+	TsFileCount float64 `json:"tsFileCount,omitzero"`
+
+	TsFileSize float64 `json:"tsFileSize,omitzero"`
+
+	TsxFileCount float64 `json:"tsxFileCount,omitzero"`
+
+	TsxFileSize float64 `json:"tsxFileSize,omitzero"`
+
+	DtsFileCount float64 `json:"dtsFileCount,omitzero"`
+
+	DtsFileSize float64 `json:"dtsFileSize,omitzero"`
 }
 
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
@@ -24895,7 +25132,7 @@ var ProgressInfo = NotificationInfo[*ProgressParams]{Method: MethodProgress}
 
 // Type aliases
 
-type TelemetryEvent = RequestFailureTelemetryEventOrNull
+type TelemetryEvent = RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull
 
 // Union types
 
@@ -29160,25 +29397,33 @@ func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *json.Decoder) 
 	return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: %s", data)
 }
 
-type RequestFailureTelemetryEventOrNull struct {
-	RequestFailureTelemetryEvent *RequestFailureTelemetryEvent
+type RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull struct {
+	RequestFailureTelemetryEvent   *RequestFailureTelemetryEvent
+	PerformanceStatsTelemetryEvent *PerformanceStatsTelemetryEvent
+	ProjectInfoTelemetryEvent      *ProjectInfoTelemetryEvent
 }
 
-var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrNull)(nil)
+var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull)(nil)
 
-func (o *RequestFailureTelemetryEventOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil)
+func (o *RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil, o.PerformanceStatsTelemetryEvent != nil, o.ProjectInfoTelemetryEvent != nil)
 
 	if o.RequestFailureTelemetryEvent != nil {
 		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
 	}
+	if o.PerformanceStatsTelemetryEvent != nil {
+		return json.MarshalEncode(enc, o.PerformanceStatsTelemetryEvent)
+	}
+	if o.ProjectInfoTelemetryEvent != nil {
+		return json.MarshalEncode(enc, o.ProjectInfoTelemetryEvent)
+	}
 	return enc.WriteToken(json.Null)
 }
 
-var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrNull)(nil)
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull)(nil)
 
-func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = RequestFailureTelemetryEventOrNull{}
+func (o *RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull{}
 
 	data, err := dec.ReadValue()
 	if err != nil {
@@ -29193,7 +29438,17 @@ func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *json.Decoder
 		o.RequestFailureTelemetryEvent = &vRequestFailureTelemetryEvent
 		return nil
 	}
-	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
+	var vPerformanceStatsTelemetryEvent PerformanceStatsTelemetryEvent
+	if err := json.Unmarshal(data, &vPerformanceStatsTelemetryEvent); err == nil {
+		o.PerformanceStatsTelemetryEvent = &vPerformanceStatsTelemetryEvent
+		return nil
+	}
+	var vProjectInfoTelemetryEvent ProjectInfoTelemetryEvent
+	if err := json.Unmarshal(data, &vProjectInfoTelemetryEvent); err == nil {
+		o.ProjectInfoTelemetryEvent = &vProjectInfoTelemetryEvent
+		return nil
+	}
+	return fmt.Errorf("invalid RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull: %s", data)
 }
 
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
@@ -29586,6 +29841,72 @@ func (o *StringLiteralError) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 	if string(v) != `"error"` {
 		return fmt.Errorf("expected StringLiteralError value %s, got %s", `"error"`, v)
+	}
+	return nil
+}
+
+// StringLiteralLanguageServerPerformanceStats is a literal type for "languageServer.performanceStats"
+type StringLiteralLanguageServerPerformanceStats struct{}
+
+var _ json.MarshalerTo = StringLiteralLanguageServerPerformanceStats{}
+
+func (o StringLiteralLanguageServerPerformanceStats) MarshalJSONTo(enc *json.Encoder) error {
+	return enc.WriteValue(json.Value(`"languageServer.performanceStats"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralLanguageServerPerformanceStats{}
+
+func (o *StringLiteralLanguageServerPerformanceStats) UnmarshalJSONFrom(dec *json.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"languageServer.performanceStats"` {
+		return fmt.Errorf("expected StringLiteralLanguageServerPerformanceStats value %s, got %s", `"languageServer.performanceStats"`, v)
+	}
+	return nil
+}
+
+// StringLiteralUsage is a literal type for "usage"
+type StringLiteralUsage struct{}
+
+var _ json.MarshalerTo = StringLiteralUsage{}
+
+func (o StringLiteralUsage) MarshalJSONTo(enc *json.Encoder) error {
+	return enc.WriteValue(json.Value(`"usage"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralUsage{}
+
+func (o *StringLiteralUsage) UnmarshalJSONFrom(dec *json.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"usage"` {
+		return fmt.Errorf("expected StringLiteralUsage value %s, got %s", `"usage"`, v)
+	}
+	return nil
+}
+
+// StringLiteralLanguageServerProjectInfo is a literal type for "languageServer.projectInfo"
+type StringLiteralLanguageServerProjectInfo struct{}
+
+var _ json.MarshalerTo = StringLiteralLanguageServerProjectInfo{}
+
+func (o StringLiteralLanguageServerProjectInfo) MarshalJSONTo(enc *json.Encoder) error {
+	return enc.WriteValue(json.Value(`"languageServer.projectInfo"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralLanguageServerProjectInfo{}
+
+func (o *StringLiteralLanguageServerProjectInfo) UnmarshalJSONFrom(dec *json.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"languageServer.projectInfo"` {
+		return fmt.Errorf("expected StringLiteralLanguageServerProjectInfo value %s, got %s", `"languageServer.projectInfo"`, v)
 	}
 	return nil
 }

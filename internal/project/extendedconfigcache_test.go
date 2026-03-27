@@ -38,6 +38,10 @@ func (noopClient) ProgressStart(message *diagnostics.Message, args ...any) {}
 
 func (noopClient) ProgressFinish(message *diagnostics.Message, args ...any) {}
 
+func (noopClient) SendTelemetry(ctx context.Context, telemetry lsproto.TelemetryEvent) error {
+	return nil
+}
+
 // TestExtendedConfigCacheRefCounting tests the invariant that each ExtendedSourceFile
 // of a config in the ConfigFileRegistry is ref'd exactly once per config that extends it,
 // and deref'd exactly once when that config is removed.
