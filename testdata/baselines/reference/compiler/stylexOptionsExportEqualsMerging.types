@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/stylexOptionsExportEqualsMerging.ts] ////
+
+=== /node_modules/@stylexjs/babel-plugin/lib/shared.d.ts ===
+export interface SharedOptions {
+    answer: number;
+>answer : number
+}
+
+=== /node_modules/@stylexjs/babel-plugin/lib/index.d.ts ===
+import type { SharedOptions } from "./shared";
+>SharedOptions : SharedOptions
+
+export type Options = SharedOptions;
+>Options : SharedOptions
+
+declare function stylexPlugin(): void;
+>stylexPlugin : () => void
+
+declare const exported: {
+>exported : { (): void; withOptions(options: Partial<SharedOptions>): [typeof stylexPlugin, Partial<SharedOptions>]; }
+
+    (): void;
+    withOptions(options: Partial<SharedOptions>): [typeof stylexPlugin, Partial<SharedOptions>];
+>withOptions : (options: Partial<SharedOptions>) => [typeof stylexPlugin, Partial<SharedOptions>]
+>options : Partial<SharedOptions>
+>stylexPlugin : () => void
+
+};
+
+export = exported;
+>exported : { (): void; withOptions(options: Partial<SharedOptions>): [typeof stylexPlugin, Partial<SharedOptions>]; }
+
+=== /stylex.ts ===
+import { Options } from "@stylexjs/babel-plugin";
+>Options : any
+
+const example: Options = { answer: 42 };
+>example : import("@stylexjs/babel-plugin/lib/shared").SharedOptions
+>{ answer: 42 } : { answer: number; }
+>answer : number
+>42 : 42
+
+void example;
+>void example : undefined
+>example : import("@stylexjs/babel-plugin/lib/shared").SharedOptions
+

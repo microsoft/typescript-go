@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/stylexOptionsExportEqualsMerging.ts] ////
+
+=== /node_modules/@stylexjs/babel-plugin/lib/shared.d.ts ===
+export interface SharedOptions {
+>SharedOptions : Symbol(SharedOptions, Decl(shared.d.ts, 0, 0))
+
+    answer: number;
+>answer : Symbol(SharedOptions.answer, Decl(shared.d.ts, 0, 32))
+}
+
+=== /node_modules/@stylexjs/babel-plugin/lib/index.d.ts ===
+import type { SharedOptions } from "./shared";
+>SharedOptions : Symbol(SharedOptions, Decl(index.d.ts, 0, 13))
+
+export type Options = SharedOptions;
+>Options : Symbol(Options, Decl(index.d.ts, 0, 46))
+>SharedOptions : Symbol(SharedOptions, Decl(index.d.ts, 0, 13))
+
+declare function stylexPlugin(): void;
+>stylexPlugin : Symbol(stylexPlugin, Decl(index.d.ts, 2, 36))
+
+declare const exported: {
+>exported : Symbol(exported, Decl(index.d.ts, 6, 13))
+
+    (): void;
+    withOptions(options: Partial<SharedOptions>): [typeof stylexPlugin, Partial<SharedOptions>];
+>withOptions : Symbol(withOptions, Decl(index.d.ts, 7, 13))
+>options : Symbol(options, Decl(index.d.ts, 8, 16))
+>Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
+>SharedOptions : Symbol(SharedOptions, Decl(index.d.ts, 0, 13))
+>stylexPlugin : Symbol(stylexPlugin, Decl(index.d.ts, 2, 36))
+>Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
+>SharedOptions : Symbol(SharedOptions, Decl(index.d.ts, 0, 13))
+
+};
+
+export = exported;
+>exported : Symbol(exported, Decl(index.d.ts, 6, 13))
+
+=== /stylex.ts ===
+import { Options } from "@stylexjs/babel-plugin";
+>Options : Symbol(Options, Decl(stylex.ts, 0, 8))
+
+const example: Options = { answer: 42 };
+>example : Symbol(example, Decl(stylex.ts, 2, 5))
+>Options : Symbol(Options, Decl(stylex.ts, 0, 8))
+>answer : Symbol(answer, Decl(stylex.ts, 2, 26))
+
+void example;
+>example : Symbol(example, Decl(stylex.ts, 2, 5))
+
