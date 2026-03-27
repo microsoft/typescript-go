@@ -6,8 +6,8 @@ declare function memo<T>(f: T): T;
 >f : T
 
 declare const HoverCardText: (p: { label: any; text: any; className?: string }) => null;
->HoverCardText : (p: { label: any; text: any; className?: string | undefined; }) => null
->p : { label: any; text: any; className?: string | undefined; }
+>HoverCardText : (p: { label: any; text: any; className?: string; }) => null
+>p : { label: any; text: any; className?: string; }
 >label : any
 >text : any
 >className : string | undefined
@@ -16,7 +16,7 @@ declare const DEFAULT_NULL_VALUE: string;
 >DEFAULT_NULL_VALUE : string
 
 declare function t(key: string, params?: Record<string, any>): string;
->t : (key: string, params?: Record<string, any> | undefined) => string
+>t : (key: string, params?: Record<string, any>) => string
 >key : string
 >params : Record<string, any> | undefined
 
@@ -49,7 +49,7 @@ export const Example = memo(function Example() {
 ><div>{t('label')}</div> : any
 >div : any
 >t('label') : string
->t : (key: string, params?: Record<string, any> | undefined) => string
+>t : (key: string, params?: Record<string, any>) => string
 >'label' : "label"
 >div : any
 
@@ -67,7 +67,7 @@ export const Example = memo(function Example() {
 
         <HoverCardText
 ><HoverCardText          className="test"          label={            <div>              {t('some.key', {                s1: nf(1, { precision: 2, rounding: 'down' }),                s2: nf(2, { precision: 2, rounding: 'down' }),              })}            </div>          }          text={            <div>              {nf(0, { precision: 2, rounding: 'down' })} USDT            </div>          }        ></HoverCardText> : any
->HoverCardText : (p: { label: any; text: any; className?: string | undefined; }) => null
+>HoverCardText : (p: { label: any; text: any; className?: string; }) => null
 
           className="test"
 >className : string
@@ -81,7 +81,7 @@ export const Example = memo(function Example() {
 
               {t('some.key', {
 >t('some.key', {                s1: nf(1, { precision: 2, rounding: 'down' }),                s2: nf(2, { precision: 2, rounding: 'down' }),              }) : string
->t : (key: string, params?: Record<string, any> | undefined) => string
+>t : (key: string, params?: Record<string, any>) => string
 >'some.key' : "some.key"
 >{                s1: nf(1, { precision: 2, rounding: 'down' }),                s2: nf(2, { precision: 2, rounding: 'down' }),              } : { s1: string; s2: string; }
 
@@ -132,7 +132,7 @@ export const Example = memo(function Example() {
 >div : any
           }
         ></HoverCardText>
->HoverCardText : (p: { label: any; text: any; className?: string | undefined; }) => null
+>HoverCardText : (p: { label: any; text: any; className?: string; }) => null
 
       )}
     </div>
