@@ -574,6 +574,22 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 		measurements.SystemMemUsed = float64(sysMem.Used)
 	}
 
+	// Read auto-import registry stats
+	if registry := snapshot.AutoImportRegistry(); registry != nil {
+		autoImportStats := registry.GetCacheStats()
+		measurements.AutoImportProjectBucketCount = float64(len(autoImportStats.ProjectBuckets))
+		measurements.AutoImportNodeModulesBucketCount = float64(len(autoImportStats.NodeModulesBuckets))
+		measurements.AutoImportUniquePackageCount = float64(autoImportStats.UniquePackageCount)
+		for _, b := range autoImportStats.ProjectBuckets {
+			measurements.AutoImportProjectExportCount += float64(b.ExportCount)
+			measurements.AutoImportProjectFileCount += float64(b.FileCount)
+		}
+		for _, b := range autoImportStats.NodeModulesBuckets {
+			measurements.AutoImportNodeModulesExportCount += float64(b.ExportCount)
+			measurements.AutoImportNodeModulesFileCount += float64(b.FileCount)
+		}
+	}
+
 	if err := s.client.SendTelemetry(ctx, lsproto.TelemetryEvent{
 		PerformanceStatsTelemetryEvent: &lsproto.PerformanceStatsTelemetryEvent{
 			Measurements: measurements,

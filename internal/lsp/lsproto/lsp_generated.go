@@ -22462,6 +22462,27 @@ type PerformanceStatsTelemetryMeasurements struct {
 
 	// Used physical memory on the system in bytes.
 	SystemMemUsed float64 `json:"systemMemUsed,omitzero"`
+
+	// Number of auto-import project buckets.
+	AutoImportProjectBucketCount float64 `json:"autoImportProjectBucketCount,omitzero"`
+
+	// Number of auto-import node_modules buckets.
+	AutoImportNodeModulesBucketCount float64 `json:"autoImportNodeModulesBucketCount,omitzero"`
+
+	// Unique packages across all node_modules buckets.
+	AutoImportUniquePackageCount float64 `json:"autoImportUniquePackageCount,omitzero"`
+
+	// Total indexed exports from project files.
+	AutoImportProjectExportCount float64 `json:"autoImportProjectExportCount,omitzero"`
+
+	// Total indexed exports from node_modules.
+	AutoImportNodeModulesExportCount float64 `json:"autoImportNodeModulesExportCount,omitzero"`
+
+	// Total files tracked across project buckets.
+	AutoImportProjectFileCount float64 `json:"autoImportProjectFileCount,omitzero"`
+
+	// Total files tracked across node_modules buckets.
+	AutoImportNodeModulesFileCount float64 `json:"autoImportNodeModulesFileCount,omitzero"`
 }
 
 // A ProjectInfoTelemetryEvent is sent once per project when it is first loaded.
