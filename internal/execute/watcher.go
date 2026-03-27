@@ -53,7 +53,12 @@ func (fs *trackingFS) GetAccessibleEntries(path string) vfs.Entries {
 	fs.seenFiles.Add(path)
 	return fs.inner.GetAccessibleEntries(path)
 }
-func (fs *trackingFS) Stat(path string) vfs.FileInfo { return fs.inner.Stat(path) }
+
+func (fs *trackingFS) Stat(path string) vfs.FileInfo {
+	fs.seenFiles.Add(path)
+	return fs.inner.Stat(path)
+}
+
 func (fs *trackingFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	return fs.inner.WalkDir(root, walkFn)
 }
@@ -96,7 +101,7 @@ func (fw *FileWatcher) updateWatchedFiles(tfs *trackingFS) {
 		if !recursive {
 			continue
 		}
-		fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
+		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
@@ -138,7 +143,7 @@ func (fw *FileWatcher) currentState() map[string]WatchEntry {
 		if !recursive {
 			continue
 		}
-		fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
+		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
@@ -171,7 +176,7 @@ func (fw *FileWatcher) HasChanges(baseline map[string]WatchEntry) bool {
 			continue
 		}
 		found := false
-		fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
+		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
@@ -229,9 +234,9 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 		}
 	}
 
+	info := h.inner.FS().Stat(opts.FileName)
 	file := h.inner.GetSourceFile(opts)
 	if file != nil {
-		info := h.inner.FS().Stat(opts.FileName)
 		if info != nil {
 			h.cache.Store(opts.Path, &cachedSourceFile{
 				file:    file,
@@ -306,7 +311,7 @@ func (w *Watcher) start() {
 		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
 	}
 
-	w.doBuild()
+	w.doBuild(false)
 
 	if w.testing == nil {
 		w.fileWatcher.Run(w.sys.Now)
@@ -322,7 +327,7 @@ func (w *Watcher) DoCycle() {
 			updated := w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 			if !slices.Equal(w.config.FileNames(), updated.FileNames()) {
 				w.config = updated
-				w.doBuild()
+				w.doBuild(true)
 				return
 			}
 		}
@@ -332,10 +337,10 @@ func (w *Watcher) DoCycle() {
 		return
 	}
 
-	w.doBuild()
+	w.doBuild(false)
 }
 
-func (w *Watcher) doBuild() {
+func (w *Watcher) doBuild(fileNamesReloaded bool) {
 	if w.configModified {
 		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
 	}
@@ -351,7 +356,7 @@ func (w *Watcher) doBuild() {
 			tfs.seenFiles.Add(dir)
 		}
 		w.fileWatcher.wildcardDirectories = wildcardDirs
-		if len(wildcardDirs) > 0 {
+		if len(wildcardDirs) > 0 && !fileNamesReloaded {
 			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 		}
 	}
@@ -433,12 +438,10 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
 	if len(errors) > 0 {
-		if !w.configHasErrors {
-			for _, e := range errors {
-				w.reportDiagnostic(e)
-			}
-			w.configHasErrors = true
+		for _, e := range errors {
+			w.reportDiagnostic(e)
 		}
+		w.configHasErrors = true
 		return true
 	}
 	if w.configHasErrors {

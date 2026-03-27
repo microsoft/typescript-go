@@ -565,7 +565,7 @@ func noEmitWatchTestInput(
 }
 
 func newTscEdit(name string, edit func(sys *TestSys)) *tscEdit {
-	return &tscEdit{name, []string{}, edit, ""}
+	return &tscEdit{caption: name, edit: edit}
 }
 
 func TestTscNoEmitWatch(t *testing.T) {
