@@ -262,14 +262,12 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		nil,
 		dotDotDot,
 		// matches strada behavior of always reserializing param names from scratch
-		b.parameterToParameterDeclarationName(p.Name.Parent.Symbol(), p.Name.Parent),
+		b.parameterToParameterDeclarationName(p.Declaration.Symbol, p.Declaration.AsNode()),
 		questionMark,
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
-	if original := p.Name.Parent; ast.IsParameter(original) {
-		b.setCommentRange(parameter, original)
-	}
+	b.setCommentRange(parameter, p.Declaration.AsNode())
 	return parameter
 }
 
