@@ -1787,8 +1787,13 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		return ""
 	}
 	nodeModules := packageDirectory[:nodeModulesIndex+len("/node_modules")] + "/"
-	builder := strings.Builder{}
+	names := make([]string, 0, len(peerDependencies.Value))
 	for name := range peerDependencies.Value {
+		names = append(names, name)
+	}
+	slices.Sort(names)
+	builder := strings.Builder{}
+	for _, name := range names {
 		peerPackageJson := r.getPackageJsonInfo(nodeModules + name)
 		if peerPackageJson != nil {
 			version := peerPackageJson.Contents.Version.Value
