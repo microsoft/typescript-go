@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -187,6 +188,8 @@ type Server struct {
 	npmInstall func(cwd string, args []string) ([]byte, error)
 
 	cpuProfiler pprof.CPUProfiler
+
+	projectProgress *projectLoadingProgress
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -279,6 +282,20 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 		return fmt.Errorf("failed to refresh code lens: %w", err)
 	}
 	return nil
+}
+
+// ProgressStart implements project.Client.
+func (s *Server) ProgressStart(message *diagnostics.Message, args ...any) {
+	if s.projectProgress != nil {
+		s.projectProgress.start(message, args...)
+	}
+}
+
+// ProgressFinish implements project.Client.
+func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
+	if s.projectProgress != nil {
+		s.projectProgress.finish(message, args...)
+	}
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
@@ -698,6 +715,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CustomStopCPUProfileInfo, (*Server).handleStopCPUProfile)
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
+	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
 	return handlers
 })
 
@@ -777,34 +795,32 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		languageService, snapshot, err := s.session.GetLanguageServiceAndSnapshot(ctx, params.TextDocumentURI())
-		if err != nil {
-			return nil, err
-		}
-		return func() error {
-			defer s.recover(req)
-			resp, lsErr := fn(s, ctx, languageService, params)
-			if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
-				languageService, lsErr = s.session.GetLanguageServiceWithAutoImports(ctx, snapshot, params.TextDocumentURI())
+		return s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
+			return func() error {
+				defer s.recover(req)
+				resp, lsErr := fn(s, ctx, languageService, params)
+				if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
+					languageService, lsErr = s.session.GetLanguageServiceWithAutoImports(ctx, snapshot, params.TextDocumentURI())
+					if lsErr != nil {
+						return lsErr
+					}
+					if ctx.Err() != nil {
+						return ctx.Err()
+					}
+					resp, lsErr = fn(s, ctx, languageService, params)
+					if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
+						panic(info.Method + " returned ErrNeedsAutoImports even after enabling auto imports")
+					}
+				}
 				if lsErr != nil {
 					return lsErr
 				}
 				if ctx.Err() != nil {
 					return ctx.Err()
 				}
-				resp, lsErr = fn(s, ctx, languageService, params)
-				if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
-					panic(info.Method + " returned ErrNeedsAutoImports even after enabling auto imports")
-				}
-			}
-			if lsErr != nil {
-				return lsErr
-			}
-			if ctx.Err() != nil {
-				return ctx.Err()
-			}
-			return s.sendResult(req.ID, resp)
-		}, nil
+				return s.sendResult(req.ID, resp)
+			}, nil
+		})
 	}
 }
 
@@ -865,11 +881,13 @@ func (c *crossProjectOrchestrator) GetProjectsForFile(ctx context.Context, uri l
 
 func (c *crossProjectOrchestrator) GetProjectsLoadingProjectTree(ctx context.Context, requestedProjectTrees *collections.Set[tspath.Path]) iter.Seq[ls.Project] {
 	return func(yield func(ls.Project) bool) {
-		for _, p := range c.server.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
-			if !yield(p) {
-				return
+		c.server.session.WithSnapshotLoadingProjectTree(ctx, requestedProjectTrees, func(snapshot *project.Snapshot) {
+			for _, p := range snapshot.ProjectCollection.Projects() {
+				if !yield(p) {
+					return
+				}
 			}
-		}
+		})
 	}
 }
 
@@ -916,6 +934,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
+	if s.clientCapabilities.Window.WorkDoneProgress {
+		s.projectProgress = newProjectLoadingProgress(s)
+	}
 
 	capabilitiesJSON, err := json.MarshalIndent(&s.clientCapabilities, "", "\t")
 	if err != nil {
@@ -1281,16 +1302,19 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 }
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
-	snapshot := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
-	defer s.recover(reqMsg)
-
-	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
-	return ls.ProvideWorkspaceSymbols(
-		ctx,
-		programs,
-		snapshot.Converters(),
-		snapshot.UserPreferences(),
-		params.Query)
+	var resp lsproto.WorkspaceSymbolResponse
+	var lsErr error
+	s.session.WithSnapshotLoadingProjectTree(ctx, nil, func(snapshot *project.Snapshot) {
+		defer s.recover(reqMsg)
+		programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
+		resp, lsErr = ls.ProvideWorkspaceSymbols(
+			ctx,
+			programs,
+			snapshot.Converters(),
+			snapshot.UserPreferences(),
+			params.Query)
+	})
+	return resp, lsErr
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
@@ -1513,4 +1537,19 @@ func (s *Server) handleStopCPUProfile(_ context.Context, _ lsproto.NoParams, _ *
 	}
 	s.logger.Info("CPU profile saved to: ", filePath)
 	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectInfoParams, _ *lsproto.RequestMessage) (lsproto.CustomProjectInfoResponse, error) {
+	uri := params.TextDocument.Uri
+	defaultProject, _, _, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+	configFilePath := ""
+	if defaultProject != nil && defaultProject.Kind == project.KindConfigured {
+		configFilePath = defaultProject.Name()
+	}
+	return &lsproto.ProjectInfoResult{
+		ConfigFilePath: configFilePath,
+	}, nil
 }
