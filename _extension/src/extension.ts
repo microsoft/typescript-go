@@ -86,10 +86,23 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             });
         }
     }
-    else if (!useTsgo) {
+    else if (useTsgo === false) {
         output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
         return;
     }
+    else if (useTsgo === undefined) {
+        if (!context.globalState.get<boolean>(hasActivatedKey)) {
+            // First run after install: enable by default.
+            await context.globalState.update(hasActivatedKey, true);
+            vscode.commands.executeCommand("typescript.native-preview.enable");
+            return;
+        }
+        output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
+        return;
+    }
+
+    // Mark as activated so future runs with an unset setting won't re-auto-enable.
+    await context.globalState.update(hasActivatedKey, true);
 
     await sessionManager.start(context);
 
@@ -107,3 +120,5 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         },
     };
 }
+
+const hasActivatedKey = "hasActivated";
