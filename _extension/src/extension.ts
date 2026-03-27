@@ -23,6 +23,7 @@ export interface ExtensionAPI {
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
 
+    const hasActivatedKey = "hasActivated";
     const isFirstRun = !context.globalState.get<boolean>(hasActivatedKey);
     if (isFirstRun) {
         await context.globalState.update(hasActivatedKey, true);
@@ -124,5 +125,3 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         },
     };
 }
-
-const hasActivatedKey = "hasActivated";
