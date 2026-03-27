@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -1787,10 +1788,7 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		return ""
 	}
 	nodeModules := packageDirectory[:nodeModulesIndex+len("/node_modules")] + "/"
-	names := make([]string, 0, len(peerDependencies.Value))
-	for name := range peerDependencies.Value {
-		names = append(names, name)
-	}
+	names := slices.AppendSeq(make([]string, 0, len(peerDependencies.Value)), maps.Keys(peerDependencies.Value))
 	slices.Sort(names)
 	builder := strings.Builder{}
 	for _, name := range names {
