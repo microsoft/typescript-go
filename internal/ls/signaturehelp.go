@@ -775,12 +775,9 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 
 func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, checker *checker.Checker, isManuallyInvoked bool, position int) *argumentListInfo {
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
-		// If the node is not a subspan of its parent, bail out.
-		// This can happen due to reparsed nodes (e.g. JSDoc-derived nodes in JS files)
-		// whose positions may not align with their parents.
-		if !RangeContainsRange(n.Parent.Loc, n.Loc) {
-			return nil
-		}
+		// If the node is not a subspan of its parent, this is a big problem.
+		// There have been crashes that might be caused by this violation.
+		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), "Not a subspan. Child: ", n.KindString(), ", parent: ", n.Parent.KindString())
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo

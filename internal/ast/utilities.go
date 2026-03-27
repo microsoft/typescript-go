@@ -931,6 +931,25 @@ func SetParentInChildren(node *Node) {
 	fn(node)
 }
 
+// setParentAndReparsedInChildren is like SetParentInChildren but also marks
+// all nodes with NodeFlagsReparsed. Used by DeepCloneReparse to ensure all
+// cloned descendants from JSDoc are properly flagged as reparsed, so
+// traversal code (e.g. FindPrecedingToken) correctly skips them.
+func setParentAndReparsedInChildren(node *Node) {
+	node.Flags |= NodeFlagsReparsed
+	var visit func(*Node) bool
+	visit = func(child *Node) bool {
+		child.Parent = node
+		child.Flags |= NodeFlagsReparsed
+		saveParent := node
+		node = child
+		child.ForEachChild(visit)
+		node = saveParent
+		return false
+	}
+	node.ForEachChild(visit)
+}
+
 // This should never be called outside the parser
 func SetImportsOfSourceFile(node *SourceFile, imports []*LiteralLikeNode) {
 	node.imports = imports

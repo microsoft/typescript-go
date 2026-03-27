@@ -75,8 +75,7 @@ func (f *NodeFactory) DeepCloneNode(node *Node) *Node {
 func (f *NodeFactory) DeepCloneReparse(node *Node) *Node {
 	if node != nil {
 		node = getDeepCloneVisitor(f, false /*syntheticLocation*/).VisitNode(node)
-		SetParentInChildren(node)
-		node.Flags |= NodeFlagsReparsed
+		setParentAndReparsedInChildren(node)
 	}
 	return node
 }
