@@ -258,7 +258,7 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 	if p.Optional {
 		questionMark = b.f.NewToken(ast.KindQuestionToken)
 	}
-	return b.f.NewParameterDeclaration(
+	parameter := b.f.NewParameterDeclaration(
 		nil,
 		dotDotDot,
 		// matches strada behavior of always reserializing param names from scratch
@@ -267,6 +267,10 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
+	if original := p.Name.Parent; ast.IsParameter(original) {
+		b.setCommentRange(parameter, original)
+	}
+	return parameter
 }
 
 // see `typeNodeIsEquivalentToType` in strada, but applied more broadly here, so is setup to handle more equivalences - strada only used it via
