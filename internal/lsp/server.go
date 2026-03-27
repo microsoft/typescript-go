@@ -1033,6 +1033,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
+			Workspace: &lsproto.WorkspaceOptions{
+				FileOperations: &lsproto.FileOperationOptions{
+					WillRename: &lsproto.FileOperationRegistrationOptions{},
+				},
+			},
 		},
 	}
 
@@ -1199,6 +1204,11 @@ func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.La
 			Placeholder: info.DisplayName,
 		},
 	}, nil
+}
+
+func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams) (lsproto.WorkspaceEditOrNull, error) {
+	// !!! HERE: implement this, register it
+	
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {

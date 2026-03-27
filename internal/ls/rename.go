@@ -23,6 +23,7 @@ import (
 // It is used by the `textDocument/prepareRename` LSP handler.
 type RenameInfo struct {
 	CanRename             bool
+	FileToRename          lsproto.DocumentUri
 	LocalizedErrorMessage string
 	DisplayName           string
 	TriggerSpan           lsproto.Range
@@ -68,8 +69,27 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 	// Use getRenameInfoForNode directly with the already-resolved node to avoid
 	// re-resolving the position and polluting state baselines.
 	sourceFile := ast.GetSourceFileOfNode(data.OriginalNode)
-	if info, ok := l.getRenameInfoForNode(ctx, data.OriginalNode, sourceFile, program); !ok || !info.CanRename {
+	info, ok := l.getRenameInfoForNode(ctx, data.OriginalNode, sourceFile, program)
+	if !ok || !info.CanRename {
 		return lsproto.WorkspaceEditOrNull{}, nil
+	}
+	if info.FileToRename != "" {
+		// !!! HERE: only do this if client supports `willRenameFiles`; otherwise compute rename edits here as well.
+		return lsproto.WorkspaceEditOrNull{
+			WorkspaceEdit: &lsproto.WorkspaceEdit{
+				DocumentChanges: &[]lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+					{
+						RenameFile: &lsproto.RenameFile{
+							OldUri: info.FileToRename,                   // !!! HERE: make sure this file exists? what's with the removing `index` stuff?
+							NewUri: lsproto.DocumentUri(params.NewName), // !!! HERE: is this ok?
+							Options: &lsproto.RenameFileOptions{
+								IgnoreIfExists: "TODO",
+							},
+						},
+					},
+				},
+			},
+		}, nil
 	}
 
 	entries := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
@@ -218,7 +238,7 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 }
 
 // getRenameInfoForModule handles rename validation for module specifiers.
-func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
+func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.StringLiteralLike, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
 	if !tspath.IsExternalModuleNameRelative(node.Text()) {
 		return getRenameInfoError(ctx, diagnostics.You_cannot_rename_a_module_via_a_global_import), true
 	}
@@ -248,9 +268,10 @@ func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.
 	length := len(node.Text()) - indexAfterLastSlash
 
 	return RenameInfo{
-		CanRename:   true,
-		DisplayName: displayName,
-		TriggerSpan: l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length)),
+		CanRename:    true,
+		FileToRename: lsconv.FileNameToDocumentURI(moduleSourceFile.AsSourceFile().FileName()),
+		DisplayName:  displayName,
+		TriggerSpan:  l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length)),
 	}, true
 }
 
@@ -336,4 +357,18 @@ func getRenameInfoSuccess(node *ast.Node, sourceFile *ast.SourceFile, displayNam
 		DisplayName: displayName,
 		TriggerSpan: converters.ToLSPRange(sourceFile, core.NewTextRange(start, end)),
 	}
+}
+
+func provideWillRenameFiles(ctx context.Context, l *LanguageService, params *lsproto.RenameFilesParams) (lsproto.WorkspaceEditOrNull, error) {
+
+}
+
+func getEditsForFileRename(ctx context.Context, program *compiler.Program, oldUri, newUri lsproto.DocumentUri) ([]lsproto.TextEdit, error) {
+	oldUriToNew := getPathUpdater()
+	newToOld := getPathUpdater()
+	changeTracker.With()
+}
+
+func updateImports(program *compiler.Program, oldToNew any, newToOld any) any {
+	
 }
