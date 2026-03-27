@@ -134,15 +134,6 @@ func NewPseudoTypeNoResult(decl *ast.Node) *PseudoType {
 	return newPseudoType(PseudoTypeKindNoResult, &PseudoTypeNoResult{Declaration: decl})
 }
 
-// NewPseudoTypeNoResultFromInferred collapses a PseudoTypeInferred into a PseudoTypeNoResult
-// for the given declaration, preserving any ErrorNodes from the inferred type.
-func NewPseudoTypeNoResultFromInferred(decl *ast.Node, inferred *PseudoType) *PseudoType {
-	if inferred != nil && len(inferred.ErrorNodes()) > 0 {
-		return newPseudoTypeWithErrors(PseudoTypeKindNoResult, &PseudoTypeNoResult{Declaration: decl}, inferred.ErrorNodes())
-	}
-	return NewPseudoTypeNoResult(decl)
-}
-
 func (t *PseudoType) AsPseudoTypeNoResult() *PseudoTypeNoResult { return t.data.(*PseudoTypeNoResult) }
 
 // PseudoTypeMaybeConstLocation encodes the const/regular types of a location so the builder

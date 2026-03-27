@@ -134,17 +134,6 @@ func (b *NodeBuilderImpl) saveRestoreFlags() func() {
 	}
 }
 
-// inferenceFallbackReporter returns a reporter func for use with pseudoTypeEquivalentToType.
-// Returns nil when inference fallback reporting is suppressed, otherwise returns the tracker's
-// ReportInferenceFallback. Error nodes for object/array literal children are already stored in
-// PseudoTypeInferred.ErrorNodes during pseudochecker construction and reported inline.
-func (b *NodeBuilderImpl) inferenceFallbackReporter() func(*ast.Node) {
-	if b.ctx.suppressReportInferenceFallback {
-		return nil
-	}
-	return b.ctx.tracker.ReportInferenceFallback
-}
-
 func (b *NodeBuilderImpl) checkTruncationLength() bool {
 	if b.ctx.truncating {
 		return b.ctx.truncating
@@ -1988,7 +1977,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
 			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
 			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
-			if b.pseudoTypeEquivalentToType(pt, returnType, false, b.inferenceFallbackReporter()) {
+			if b.pseudoTypeEquivalentToType(pt, returnType, false, !b.ctx.suppressReportInferenceFallback) {
 				// Also verify the pseudo type captures any inferred type predicate, not just the boolean return type.
 				// The pseudochecker is unaware of inferred type predicates, so it produces boolean where
 				// the checker infers e.g. `x is string`.
@@ -2002,7 +1991,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 				if pt != nil {
 					// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 					// see: canReuseTypeNodeAnnotation in strada for context
-					returnTypeNode = b.pseudoTypeToNode(pt)
+					returnTypeNode = b.pseudoTypeToNodeWithCheckerFallback(pt, returnType)
 				}
 			}
 			restore()
@@ -2099,18 +2088,18 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		} else {
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
-		if b.pseudoTypeEquivalentToType(pt, t, !requiresAddingUndefined && (ast.IsParameter(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), b.inferenceFallbackReporter()) {
+		if b.pseudoTypeEquivalentToType(pt, t, !requiresAddingUndefined && (ast.IsParameter(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), !b.ctx.suppressReportInferenceFallback) {
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 			// see: canReuseTypeNodeAnnotation in strada for context
 			ptt := b.pseudoTypeToType(pt)
 			if ptt != nil && requiresAddingUndefined && containsNonMissingUndefinedType(b.ch, t) && !containsNonMissingUndefinedType(b.ch, ptt) {
 				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 			}
-			result = b.pseudoTypeToNode(pt)
+			result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
 		} else if requiresAddingUndefined {
 			pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
-			if b.pseudoTypeEquivalentToType(pt, t, false, b.inferenceFallbackReporter()) {
-				result = b.pseudoTypeToNode(pt)
+			if b.pseudoTypeEquivalentToType(pt, t, false, !b.ctx.suppressReportInferenceFallback) {
+				result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
 			}
 		}
 		remove()

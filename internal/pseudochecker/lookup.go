@@ -85,11 +85,10 @@ func (ch *PseudoChecker) typeFromPropertyAssignment(node *ast.Node) *PseudoType 
 		init := node.Initializer()
 		if init != nil {
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.ErrorNodes()) > 0) {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred, preserving any error nodes
-			return NewPseudoTypeNoResultFromInferred(node, expr)
+			// fallback to NoResult if PseudoTypeKindInferred without error nodes
 		}
 	}
 	return NewPseudoTypeNoResult(node)
@@ -119,15 +118,14 @@ func (ch *PseudoChecker) typeFromProperty(node *ast.Node) *PseudoType {
 				return NewPseudoTypeNoResult(node)
 			}
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.ErrorNodes()) > 0) {
 				if expr.Kind != PseudoTypeKindDirect && node.AsPropertyDeclaration().PostfixToken != nil && node.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken {
 					// type comes from the initializer expression on a property with a `?` - add `| undefined` to the type
 					return addUndefinedIfDefinitelyRequired(expr)
 				}
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred, preserving any error nodes
-			return NewPseudoTypeNoResultFromInferred(node, expr)
+			// fallback to NoResult if PseudoTypeKindInferred without error nodes
 		}
 	}
 	return NewPseudoTypeNoResult(node)
@@ -146,11 +144,10 @@ func (ch *PseudoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 				return NewPseudoTypeNoResult(declaration.AsNode())
 			}
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.ErrorNodes()) > 0) {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred, preserving any error nodes
-			return NewPseudoTypeNoResultFromInferred(declaration.AsNode(), expr)
+			// fallback to NoResult if PseudoTypeKindInferred without error nodes
 		}
 	}
 	return NewPseudoTypeNoResult(declaration.AsNode())
