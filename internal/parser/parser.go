@@ -111,7 +111,6 @@ var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
 // missingListNodes is a sentinel backing array used to distinguish "missing" node lists
 // (where the expected opening token was not found) from ordinary empty node lists.
-// This ports TypeScript's MissingList / isMissingList concept.
 var missingListNodes = make([]*ast.Node, 0, 1)
 
 func isMissingNodeList(list *ast.NodeList) bool {
