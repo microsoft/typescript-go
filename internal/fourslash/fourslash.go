@@ -204,9 +204,24 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		f.stateBaseline = newStateBaseline(fsFromMap.(iovfs.FsWithSys))
 	} else {
 		for _, file := range testData.Files {
+			if tspath.FileExtensionIs(file.fileName, tspath.ExtensionJson) {
+				// JSON files (tsconfig.json, package.json, etc.) should not be
+				// opened as documents. The client's document selector only
+				// includes TS/JS language modes, not JSON. Config files are
+				// discovered by the project system, and package.json files are
+				// read during module resolution. Use WriteFileOnDisk to modify
+				// JSON files at runtime.
+				continue
+			}
 			f.openFile(t, file.fileName)
 		}
-		f.activeFilename = f.testData.Files[0].fileName
+		// Set active file to the first non-JSON file.
+		for _, file := range testData.Files {
+			if !tspath.FileExtensionIs(file.fileName, tspath.ExtensionJson) {
+				f.activeFilename = file.fileName
+				break
+			}
+		}
 	}
 
 	_, testPath, _, _ := runtime.Caller(1)
@@ -788,6 +803,25 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		},
 	})
 	f.baselineProjectsAfterNotification(t, filename)
+}
+
+// WriteFileOnDisk writes content to a file in the VFS (not as an open document)
+// and sends a workspace/didChangeWatchedFiles notification to the server.
+func (f *FourslashTest) WriteFileOnDisk(t *testing.T, filename string, content string) {
+	t.Helper()
+	filename = tspath.GetNormalizedAbsolutePath(filename, rootDir)
+	err := f.vfs.WriteFile(filename, content)
+	if err != nil {
+		t.Fatalf("Failed to write file %s: %v", filename, err)
+	}
+	sendNotification(t, f, lsproto.WorkspaceDidChangeWatchedFilesInfo, &lsproto.DidChangeWatchedFilesParams{
+		Changes: []*lsproto.FileEvent{
+			{
+				Uri:  lsconv.FileNameToDocumentURI(filename),
+				Type: lsproto.FileChangeTypeChanged,
+			},
+		},
+	})
 }
 
 func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
