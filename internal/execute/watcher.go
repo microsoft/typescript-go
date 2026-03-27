@@ -227,14 +227,14 @@ func (h *watchCompilerHost) GetResolvedProjectReference(fileName string, path ts
 }
 
 func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	info := h.inner.FS().Stat(opts.FileName)
+
 	if cached, ok := h.cache.Load(opts.Path); ok {
-		info := h.inner.FS().Stat(opts.FileName)
 		if info != nil && info.ModTime().Equal(cached.modTime) {
 			return cached.file
 		}
 	}
 
-	info := h.inner.FS().Stat(opts.FileName)
 	file := h.inner.GetSourceFile(opts)
 	if file != nil {
 		if info != nil {
