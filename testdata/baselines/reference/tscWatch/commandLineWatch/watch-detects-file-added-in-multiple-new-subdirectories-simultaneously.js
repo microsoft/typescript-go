@@ -12,8 +12,10 @@ export const a = 1;
 tsgo --watch
 ExitStatus:: Success
 Output::
-build starting at HH:MM:SS AM
-build finished in d.ddds
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -56,7 +58,8 @@ export function format(s: string): string { return s.trim(); }
 
 
 Output::
-build starting at HH:MM:SS AM
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96msrc/utils/format.ts[0m:[93m1[0m:[93m54[0m - [91merror[0m[90m TS2339: [0mProperty 'trim' does not exist on type 'string'.
 
 [7m1[0m export function format(s: string): string { return s.trim(); }
@@ -65,7 +68,8 @@ build starting at HH:MM:SS AM
 
 Found 1 error in src/utils/format.ts[90m:1[0m
 
-build finished in d.ddds
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
 //// [/home/src/workspaces/project/src/models/user.js] *new* 
 export {};
 

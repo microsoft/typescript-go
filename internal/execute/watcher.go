@@ -1,7 +1,6 @@
 package execute
 
 import (
-	"fmt"
 	"reflect"
 	"time"
 
@@ -278,6 +277,7 @@ type Watcher struct {
 	compilerOptionsFromCommandLine *core.CompilerOptions
 	reportDiagnostic               tsc.DiagnosticReporter
 	reportErrorSummary             tsc.DiagnosticsReporter
+	reportWatchStatus              tsc.DiagnosticReporter
 	testing                        tsc.CommandLineTesting
 
 	program             *incremental.Program
@@ -309,6 +309,7 @@ func createWatcher(
 		compilerOptionsFromCommandLine: compilerOptionsFromCommandLine,
 		reportDiagnostic:               reportDiagnostic,
 		reportErrorSummary:             reportErrorSummary,
+		reportWatchStatus:              tsc.CreateWatchStatusReporter(sys, configParseResult.Locale(), configParseResult.CompilerOptions(), testing),
 		testing:                        testing,
 		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
 	}
@@ -333,6 +334,7 @@ func (w *Watcher) start() {
 		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
 	}
 
+	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	w.doBuild()
 
 	if w.testing == nil {
@@ -351,6 +353,7 @@ func (w *Watcher) DoCycle() {
 		return
 	}
 
+	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
 	w.doBuild()
 }
 
@@ -378,15 +381,12 @@ func (w *Watcher) doBuild() {
 		tfs.seenFiles.Add(path)
 	}
 
-	fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
-	timeStart := w.sys.Now()
-
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
 		Config: w.config,
 		Host:   host,
 	}), w.program, nil, w.testing != nil)
 
-	w.compileAndEmit()
+	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
 	w.fileWatcher.updateWatchedFiles(tfs)
 	w.fileWatcher.pollInterval = w.config.ParsedConfig.WatchOptions.WatchInterval()
@@ -400,15 +400,20 @@ func (w *Watcher) doBuild() {
 		return true
 	})
 
-	fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
+	errorCount := len(result.Diagnostics)
+	if errorCount == 1 {
+		w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_1_error_Watching_for_file_changes))
+	} else {
+		w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_0_errors_Watching_for_file_changes, errorCount))
+	}
 
 	if w.testing != nil {
 		w.testing.OnProgram(w.program)
 	}
 }
 
-func (w *Watcher) compileAndEmit() {
-	tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
+	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
 		Sys:                w.sys,
 		ProgramLike:        w.program,
 		Program:            w.program.GetProgram(),

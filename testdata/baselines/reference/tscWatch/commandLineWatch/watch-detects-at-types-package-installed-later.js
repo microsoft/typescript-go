@@ -11,7 +11,8 @@ module.exports = {};
 tsgo --watch
 ExitStatus:: Success
 Output::
-build starting at HH:MM:SS AM
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [96mindex.ts[0m:[93m1[0m:[93m22[0m - [91merror[0m[90m TS7016: [0mCould not find a declaration file for module 'untyped-lib'. '/home/src/workspaces/project/node_modules/untyped-lib/index.js' implicitly has an 'any' type.
 
 [7m1[0m import * as lib from "untyped-lib";
@@ -20,7 +21,8 @@ build starting at HH:MM:SS AM
 
 Found 1 error in index.ts[90m:1[0m
 
-build finished in d.ddds
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -63,8 +65,10 @@ declare module "untyped-lib" { export const value: string; }
 
 
 Output::
-build starting at HH:MM:SS AM
-build finished in d.ddds
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 
 tsconfig.json::
