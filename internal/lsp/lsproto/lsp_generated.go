@@ -22427,6 +22427,24 @@ type PerformanceStatsTelemetryMeasurements struct {
 	// Bytes of live (reachable) heap objects.
 	HeapLiveBytes float64 `json:"heapLiveBytes,omitzero"`
 
+	// Number of live or unswept objects occupying heap memory.
+	HeapObjectCount float64 `json:"heapObjectCount,omitzero"`
+
+	// Heap memory reserved for goroutine stacks.
+	HeapStackBytes float64 `json:"heapStackBytes,omitzero"`
+
+	// Heap memory returned to the OS.
+	HeapReleasedBytes float64 `json:"heapReleasedBytes,omitzero"`
+
+	// Heap memory that is free and eligible to be returned to the OS.
+	HeapFreeBytes float64 `json:"heapFreeBytes,omitzero"`
+
+	// Total scannable heap bytes — how much the GC must traverse.
+	GcScanHeapBytes float64 `json:"gcScanHeapBytes,omitzero"`
+
+	// The current GOMAXPROCS value.
+	GoMaxProcs float64 `json:"goMaxProcs,omitzero"`
+
 	// Current number of goroutines.
 	GoroutineCount float64 `json:"goroutineCount,omitzero"`
 

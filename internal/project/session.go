@@ -497,6 +497,12 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 		sGoGCPercent
 		sHeapGoalBytes
 		sHeapLiveBytes
+		sHeapObjectCount
+		sHeapStackBytes
+		sHeapReleasedBytes
+		sHeapFreeBytes
+		sGcScanHeapBytes
+		sGoMaxProcs
 		sGoroutineCount
 		sGcCyclesTotal
 		sGcCPUSeconds
@@ -509,6 +515,12 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 	samples[sGoGCPercent].Name = "/gc/gogc:percent"
 	samples[sHeapGoalBytes].Name = "/gc/heap/goal:bytes"
 	samples[sHeapLiveBytes].Name = "/gc/heap/live:bytes"
+	samples[sHeapObjectCount].Name = "/gc/heap/objects:objects"
+	samples[sHeapStackBytes].Name = "/memory/classes/heap/stacks:bytes"
+	samples[sHeapReleasedBytes].Name = "/memory/classes/heap/released:bytes"
+	samples[sHeapFreeBytes].Name = "/memory/classes/heap/free:bytes"
+	samples[sGcScanHeapBytes].Name = "/gc/scan/heap:bytes"
+	samples[sGoMaxProcs].Name = "/sched/gomaxprocs:threads"
 	samples[sGoroutineCount].Name = "/sched/goroutines:goroutines"
 	samples[sGcCyclesTotal].Name = "/gc/cycles/total:gc-cycles"
 	samples[sGcCPUSeconds].Name = "/cpu/classes/gc/total:cpu-seconds"
@@ -545,6 +557,12 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 	measurements.GoGCPercent = readUint64(samples[sGoGCPercent])
 	measurements.HeapGoalBytes = readUint64(samples[sHeapGoalBytes])
 	measurements.HeapLiveBytes = readUint64(samples[sHeapLiveBytes])
+	measurements.HeapObjectCount = readUint64(samples[sHeapObjectCount])
+	measurements.HeapStackBytes = readUint64(samples[sHeapStackBytes])
+	measurements.HeapReleasedBytes = readUint64(samples[sHeapReleasedBytes])
+	measurements.HeapFreeBytes = readUint64(samples[sHeapFreeBytes])
+	measurements.GcScanHeapBytes = readUint64(samples[sGcScanHeapBytes])
+	measurements.GoMaxProcs = readUint64(samples[sGoMaxProcs])
 	measurements.GoroutineCount = readUint64(samples[sGoroutineCount])
 	measurements.GcCyclesTotal = readUint64(samples[sGcCyclesTotal])
 	measurements.GcCPUSeconds = readFloat64(samples[sGcCPUSeconds])
