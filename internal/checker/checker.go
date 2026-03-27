@@ -793,8 +793,6 @@ type Checker struct {
 	lastFlowNodeReachable                       bool
 	flowNodeReachable                           map[*ast.FlowNode]bool
 	flowNodePostSuper                           map[*ast.FlowNode]bool
-	potentialWeakMapSetCollisions               []*ast.Node
-	potentialReflectCollisions                  []*ast.Node
 	renamedBindingElementsInTypes               []*ast.Node
 	contextualInfos                             []ContextualInfo
 	inferenceContextInfos                       []InferenceContextInfo
@@ -2154,8 +2152,6 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
-		c.potentialWeakMapSetCollisions = nil
-		c.potentialReflectCollisions = nil
 		c.checkSourceElements(sourceFile.Statements.Nodes)
 		c.checkDeferredNodes(sourceFile)
 		if ast.IsExternalOrCommonJSModule(sourceFile) {
@@ -2164,18 +2160,6 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		}
 		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
 			c.checkUnusedRenamedBindingElements()
-		}
-		if len(c.potentialWeakMapSetCollisions) > 0 {
-			for _, node := range c.potentialWeakMapSetCollisions {
-				c.checkWeakMapSetCollision(node)
-			}
-			c.potentialWeakMapSetCollisions = nil
-		}
-		if len(c.potentialReflectCollisions) > 0 {
-			for _, node := range c.potentialReflectCollisions {
-				c.checkReflectCollision(node)
-			}
-			c.potentialReflectCollisions = nil
 		}
 		c.saveDeferredDiagnostics = false
 		c.produceDeferredDiagnostics()
@@ -10270,7 +10254,9 @@ func (c *Checker) setNodeLinksForPrivateIdentifierScope(node *ast.Node) {
 func (c *Checker) recordPotentialCollisionWithWeakMapSetInGeneratedCode(node *ast.Node, name *ast.Node) {
 	if c.languageVersion <= core.ScriptTargetES2021 &&
 		(c.needCollisionCheckForIdentifier(node, name, "WeakMap") || c.needCollisionCheckForIdentifier(node, name, "WeakSet")) {
-		c.potentialWeakMapSetCollisions = append(c.potentialWeakMapSetCollisions, node)
+		c.addDeferredDiagnostic(func() {
+			c.checkWeakMapSetCollision(node)
+		})
 	}
 }
 
@@ -10305,7 +10291,9 @@ func (c *Checker) checkCollisionWithGlobalPromiseInGeneratedCode(node *ast.Node,
 
 func (c *Checker) recordPotentialCollisionWithReflectInGeneratedCode(node *ast.Node, name *ast.Node) {
 	if name != nil && c.languageVersion <= core.ScriptTargetES2021 && c.needCollisionCheckForIdentifier(node, name, "Reflect") {
-		c.potentialReflectCollisions = append(c.potentialReflectCollisions, node)
+		c.addDeferredDiagnostic(func() {
+			c.checkReflectCollision(node)
+		})
 	}
 }
 
