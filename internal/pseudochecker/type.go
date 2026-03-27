@@ -42,14 +42,25 @@ const (
 )
 
 type PseudoType struct {
-	Kind PseudoTypeKind
-	data pseudoTypeData
+	Kind       PseudoTypeKind
+	errorNodes []*ast.Node
+	data       pseudoTypeData
 }
+
+// ErrorNodes returns the specific child nodes that caused an inference failure,
+// collected during pseudochecker construction. Nil/empty means no specific children.
+func (t *PseudoType) ErrorNodes() []*ast.Node { return t.errorNodes }
 
 func newPseudoType(kind PseudoTypeKind, data pseudoTypeData) *PseudoType {
 	n := data.AsPseudoType()
 	n.Kind = kind
 	n.data = data
+	return n
+}
+
+func newPseudoTypeWithErrors(kind PseudoTypeKind, data pseudoTypeData, errorNodes []*ast.Node) *PseudoType {
+	n := newPseudoType(kind, data)
+	n.errorNodes = errorNodes
 	return n
 }
 
@@ -94,6 +105,8 @@ func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*Ps
 // PseudoTypeInferred directly encodes the type referred to by a given Expression
 // These represent cases where the expression was too complex for the pseudochecker.
 // Most of the time, these locations will produce an error under ID.
+// Specific error nodes (shorthand properties, spread assignments, etc.) are stored on the
+// PseudoType.errorNodes field, collected during pseudochecker construction.
 type PseudoTypeInferred struct {
 	PseudoTypeBase
 	Expression *ast.Node
@@ -103,9 +116,13 @@ func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
 	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
 }
 
+func NewPseudoTypeInferredWithErrors(expr *ast.Node, errorNodes []*ast.Node) *PseudoType {
+	return newPseudoTypeWithErrors(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr}, errorNodes)
+}
+
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }
 
-// PseudoTypeNoResult is anlogous to PseudoTypeInferred in that it references a case
+// PseudoTypeNoResult is analogous to PseudoTypeInferred in that it references a case
 // where the type was too complex for the pseudochecker. Rather than an expression, however,
 // it is referring to the return type of a signature or declaration.
 type PseudoTypeNoResult struct {
@@ -115,6 +132,15 @@ type PseudoTypeNoResult struct {
 
 func NewPseudoTypeNoResult(decl *ast.Node) *PseudoType {
 	return newPseudoType(PseudoTypeKindNoResult, &PseudoTypeNoResult{Declaration: decl})
+}
+
+// NewPseudoTypeNoResultFromInferred collapses a PseudoTypeInferred into a PseudoTypeNoResult
+// for the given declaration, preserving any ErrorNodes from the inferred type.
+func NewPseudoTypeNoResultFromInferred(decl *ast.Node, inferred *PseudoType) *PseudoType {
+	if inferred != nil && len(inferred.ErrorNodes()) > 0 {
+		return newPseudoTypeWithErrors(PseudoTypeKindNoResult, &PseudoTypeNoResult{Declaration: decl}, inferred.ErrorNodes())
+	}
+	return NewPseudoTypeNoResult(decl)
 }
 
 func (t *PseudoType) AsPseudoTypeNoResult() *PseudoTypeNoResult { return t.data.(*PseudoTypeNoResult) }

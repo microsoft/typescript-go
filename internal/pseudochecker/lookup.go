@@ -88,7 +88,8 @@ func (ch *PseudoChecker) typeFromPropertyAssignment(node *ast.Node) *PseudoType 
 			if expr != nil && expr.Kind != PseudoTypeKindInferred {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred, preserving any error nodes
+			return NewPseudoTypeNoResultFromInferred(node, expr)
 		}
 	}
 	return NewPseudoTypeNoResult(node)
@@ -125,7 +126,8 @@ func (ch *PseudoChecker) typeFromProperty(node *ast.Node) *PseudoType {
 				}
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred, preserving any error nodes
+			return NewPseudoTypeNoResultFromInferred(node, expr)
 		}
 	}
 	return NewPseudoTypeNoResult(node)
@@ -147,7 +149,8 @@ func (ch *PseudoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 			if expr != nil && expr.Kind != PseudoTypeKindInferred {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred, preserving any error nodes
+			return NewPseudoTypeNoResultFromInferred(declaration.AsNode(), expr)
 		}
 	}
 	return NewPseudoTypeNoResult(declaration.AsNode())
@@ -322,8 +325,8 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 }
 
 func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression) *PseudoType {
-	if !ch.canGetTypeFromObjectLiteral(node) {
-		return NewPseudoTypeInferred(node.AsNode())
+	if errorNodes := ch.canGetTypeFromObjectLiteral(node); errorNodes != nil {
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
 	}
 	// we are in a const context producing an object literal type, there are no shorthand or spread assignments
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
@@ -409,41 +412,45 @@ func (ch *PseudoChecker) getAccessorMember(accessor *ast.Node, name *ast.Node) *
 	return nil
 }
 
-func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpression) bool {
+// canGetTypeFromObjectLiteral checks whether an object literal can be typed by the pseudochecker.
+// Returns nil if the object can be typed, or a slice of error nodes (shorthand/spread properties,
+// non-literal computed names) that prevent typing.
+func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpression) []*ast.Node {
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
-		return true // empty object
+		return nil // empty object, ok
 	}
-	// !!! TODO: strada reports errors on multiple non-inferrable props
-	// via calling reportInferenceFallback multiple times here before returning.
-	// Does that logic need to be included in this checker? Or can it
-	// be kept to the `PseudoType` -> `Node` mapping logic, so this
-	// checker can avoid needing any error reporting logic?
+	var errorNodes []*ast.Node
 	for _, e := range node.Properties.Nodes {
 		if e.Flags&ast.NodeFlagsThisNodeHasError != 0 {
-			return false
+			// Return empty (non-nil) slice to signal failure without specific error nodes
+			return []*ast.Node{}
 		}
 		if e.Kind == ast.KindShorthandPropertyAssignment || e.Kind == ast.KindSpreadAssignment {
-			return false
+			errorNodes = append(errorNodes, e)
+			continue
 		}
 		if e.Name().Flags&ast.NodeFlagsThisNodeHasError != 0 {
-			return false
+			return []*ast.Node{}
 		}
 		if e.Name().Kind == ast.KindPrivateIdentifier {
-			return false
+			if errorNodes == nil {
+				errorNodes = []*ast.Node{} // signal failure
+			}
+			continue
 		}
 		if e.Name().Kind == ast.KindComputedPropertyName {
 			expression := e.Name().Expression()
 			if !ast.IsPrimitiveLiteralValue(expression, false) {
-				return false
+				errorNodes = append(errorNodes, e.Name())
 			}
 		}
 	}
-	return true
+	return errorNodes
 }
 
 func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) *PseudoType {
-	if !ch.canGetTypeFromArrayLiteral(node) {
-		return NewPseudoTypeInferred(node.AsNode())
+	if errorNodes := ch.canGetTypeFromArrayLiteral(node); errorNodes != nil {
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
 	}
 	if IsInConstContext(node.AsNode()) && isContextuallyTyped(node.AsNode()) {
 		return NewPseudoTypeInferred(node.AsNode()) // expr in an as const cast with a contextual type has variable readonly state, bail
@@ -456,16 +463,20 @@ func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) 
 	return NewPseudoTypeTuple(results)
 }
 
-func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpression) bool {
+// canGetTypeFromArrayLiteral checks whether an array literal can be typed by the pseudochecker.
+// Returns nil if the array can be typed, or a slice of error nodes that prevent typing.
+// For non-const arrays, the error node is the array expression itself.
+// For const arrays with spreads, the error node is the spread element.
+func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpression) []*ast.Node {
 	if !IsInConstContext(node.AsNode()) {
-		return false
+		return []*ast.Node{node.AsNode()}
 	}
 	for _, e := range node.Elements.Nodes {
 		if e.Kind == ast.KindSpreadElement {
-			return false
+			return []*ast.Node{e}
 		}
 	}
-	return true
+	return nil
 }
 
 // See `isConstContext` in `checker.go` - this is basically any node kind mentioned in that
