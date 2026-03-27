@@ -1,0 +1,27 @@
+//// [tests/cases/compiler/declarationEmitComputedPropertyGlobalSymbol2.ts] ////
+
+=== declarationEmitComputedPropertyGlobalSymbol2.ts ===
+export const symbolNamed = {
+>symbolNamed : Symbol(symbolNamed, Decl(declarationEmitComputedPropertyGlobalSymbol2.ts, 0, 12))
+
+    [Symbol.toStringTag]: "demo",
+>[Symbol.toStringTag] : Symbol([Symbol.toStringTag], Decl(declarationEmitComputedPropertyGlobalSymbol2.ts, 0, 28))
+>Symbol.toStringTag : Symbol(SymbolConstructor.toStringTag, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>toStringTag : Symbol(SymbolConstructor.toStringTag, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+
+    [Symbol.iterator]() {
+>[Symbol.iterator] : Symbol([Symbol.iterator], Decl(declarationEmitComputedPropertyGlobalSymbol2.ts, 1, 33))
+>Symbol.iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+
+        return [1, 2, 3][Symbol.iterator]();
+>Symbol.iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+
+    },
+} as const;
+>const : Symbol(const)
+
