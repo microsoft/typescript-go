@@ -3,7 +3,6 @@ package execute
 import (
 	"fmt"
 	"reflect"
-	"slices"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -60,13 +59,18 @@ func (fs *trackingFS) Stat(path string) vfs.FileInfo {
 }
 
 func (fs *trackingFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
-	return fs.inner.WalkDir(root, walkFn)
+	fs.seenFiles.Add(root)
+	return fs.inner.WalkDir(root, func(path string, d vfs.DirEntry, err error) error {
+		fs.seenFiles.Add(path)
+		return walkFn(path, d, err)
+	})
 }
 func (fs *trackingFS) Realpath(path string) string { return fs.inner.Realpath(path) }
 
 type WatchEntry struct {
-	modTime time.Time
-	exists  bool
+	modTime    time.Time
+	exists     bool
+	childCount int // -1 if not tracked
 }
 
 type FileWatcher struct {
@@ -75,7 +79,7 @@ type FileWatcher struct {
 	testing             bool
 	callback            func()
 	watchState          map[string]WatchEntry
-	wildcardDirectories map[string]bool // dir path -> recursive flag
+	wildcardDirectories map[string]bool
 }
 
 func newFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func()) *FileWatcher {
@@ -91,9 +95,9 @@ func (fw *FileWatcher) updateWatchedFiles(tfs *trackingFS) {
 	fw.watchState = make(map[string]WatchEntry)
 	tfs.seenFiles.Range(func(fn string) bool {
 		if s := fw.fs.Stat(fn); s != nil {
-			fw.watchState[fn] = WatchEntry{modTime: s.ModTime(), exists: true}
+			fw.watchState[fn] = WatchEntry{modTime: s.ModTime(), exists: true, childCount: -1}
 		} else {
-			fw.watchState[fn] = WatchEntry{exists: false}
+			fw.watchState[fn] = WatchEntry{exists: false, childCount: -1}
 		}
 		return true
 	})
@@ -105,9 +109,14 @@ func (fw *FileWatcher) updateWatchedFiles(tfs *trackingFS) {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
-			if _, ok := fw.watchState[path]; !ok {
+			entries := fw.fs.GetAccessibleEntries(path)
+			count := len(entries.Files) + len(entries.Directories)
+			if existing, ok := fw.watchState[path]; ok {
+				existing.childCount = count
+				fw.watchState[path] = existing
+			} else {
 				if s := fw.fs.Stat(path); s != nil {
-					fw.watchState[path] = WatchEntry{modTime: s.ModTime(), exists: true}
+					fw.watchState[path] = WatchEntry{modTime: s.ModTime(), exists: true, childCount: count}
 				}
 			}
 			return nil
@@ -134,9 +143,9 @@ func (fw *FileWatcher) currentState() map[string]WatchEntry {
 	state := make(map[string]WatchEntry, len(fw.watchState))
 	for path := range fw.watchState {
 		if s := fw.fs.Stat(path); s != nil {
-			state[path] = WatchEntry{modTime: s.ModTime(), exists: true}
+			state[path] = WatchEntry{modTime: s.ModTime(), exists: true, childCount: -1}
 		} else {
-			state[path] = WatchEntry{exists: false}
+			state[path] = WatchEntry{exists: false, childCount: -1}
 		}
 	}
 	for dir, recursive := range fw.wildcardDirectories {
@@ -147,9 +156,14 @@ func (fw *FileWatcher) currentState() map[string]WatchEntry {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
-			if _, ok := state[path]; !ok {
+			entries := fw.fs.GetAccessibleEntries(path)
+			count := len(entries.Files) + len(entries.Directories)
+			if existing, ok := state[path]; ok {
+				existing.childCount = count
+				state[path] = existing
+			} else {
 				if s := fw.fs.Stat(path); s != nil {
-					state[path] = WatchEntry{modTime: s.ModTime(), exists: true}
+					state[path] = WatchEntry{modTime: s.ModTime(), exists: true, childCount: count}
 				}
 			}
 			return nil
@@ -180,9 +194,17 @@ func (fw *FileWatcher) HasChanges(baseline map[string]WatchEntry) bool {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
-			if _, ok := baseline[path]; !ok {
+			entry, ok := baseline[path]
+			if !ok {
 				found = true
 				return vfs.SkipAll
+			}
+			if entry.childCount >= 0 {
+				entries := fw.fs.GetAccessibleEntries(path)
+				if len(entries.Files)+len(entries.Directories) != entry.childCount {
+					found = true
+					return vfs.SkipAll
+				}
 			}
 			return nil
 		})
@@ -311,7 +333,7 @@ func (w *Watcher) start() {
 		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
 	}
 
-	w.doBuild(false)
+	w.doBuild()
 
 	if w.testing == nil {
 		w.fileWatcher.Run(w.sys.Now)
@@ -323,24 +345,16 @@ func (w *Watcher) DoCycle() {
 		return
 	}
 	if w.fileWatcher.watchState != nil && !w.configModified && !w.fileWatcher.HasChanges(w.fileWatcher.watchState) {
-		if w.config.ConfigFile != nil && len(w.config.WildcardDirectories()) > 0 {
-			updated := w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
-			if !slices.Equal(w.config.FileNames(), updated.FileNames()) {
-				w.config = updated
-				w.doBuild(true)
-				return
-			}
-		}
 		if w.testing != nil {
 			w.testing.OnProgram(w.program)
 		}
 		return
 	}
 
-	w.doBuild(false)
+	w.doBuild()
 }
 
-func (w *Watcher) doBuild(fileNamesReloaded bool) {
+func (w *Watcher) doBuild() {
 	if w.configModified {
 		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
 	}
@@ -356,7 +370,7 @@ func (w *Watcher) doBuild(fileNamesReloaded bool) {
 			tfs.seenFiles.Add(dir)
 		}
 		w.fileWatcher.wildcardDirectories = wildcardDirs
-		if len(wildcardDirs) > 0 && !fileNamesReloaded {
+		if len(wildcardDirs) > 0 {
 			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 		}
 	}
