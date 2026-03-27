@@ -23,12 +23,6 @@ export interface ExtensionAPI {
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
 
-    const hasActivatedKey = "hasActivated";
-    const isFirstRun = !context.globalState.get<boolean>(hasActivatedKey);
-    if (isFirstRun) {
-        await context.globalState.update(hasActivatedKey, true);
-    }
-
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
 
@@ -70,6 +64,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }));
     context.subscriptions.push({ dispose: () => clearTimeout(configChangeTimeout) });
 
+    const hasOnboardedTsgoStateKey = "hasOnboardedTsgo";
+    const shouldOnboardTsgo = !context.globalState.get<boolean>(hasOnboardedTsgoStateKey);
+    if (shouldOnboardTsgo) {
+        await context.globalState.update(hasOnboardedTsgoStateKey, true);
+    }
+
     const useTsgo = getUseTsgo();
 
     if (context.extensionMode === vscode.ExtensionMode.Development) {
@@ -100,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         return;
     }
     else if (useTsgo === undefined) {
-        if (isFirstRun) {
+        if (shouldOnboardTsgo) {
             // First run after install: enable by default.
             updateUseTsgoSetting(true);
             return;
