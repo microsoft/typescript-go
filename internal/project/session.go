@@ -494,6 +494,7 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 	const (
 		sMemoryUsedBytes = iota
 		sGoMemLimit
+		sGoGCPercent
 		sHeapGoalBytes
 		sHeapLiveBytes
 		sGoroutineCount
@@ -505,6 +506,7 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 	samples := make([]gometrics.Sample, sMetricCount)
 	samples[sMemoryUsedBytes].Name = "/memory/classes/total:bytes"
 	samples[sGoMemLimit].Name = "/gc/gomemlimit:bytes"
+	samples[sGoGCPercent].Name = "/gc/gogc:percent"
 	samples[sHeapGoalBytes].Name = "/gc/heap/goal:bytes"
 	samples[sHeapLiveBytes].Name = "/gc/heap/live:bytes"
 	samples[sGoroutineCount].Name = "/sched/goroutines:goroutines"
@@ -540,6 +542,7 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 			measurements.GoMemLimit = float64(v)
 		}
 	}
+	measurements.GoGCPercent = readUint64(samples[sGoGCPercent])
 	measurements.HeapGoalBytes = readUint64(samples[sHeapGoalBytes])
 	measurements.HeapLiveBytes = readUint64(samples[sHeapLiveBytes])
 	measurements.GoroutineCount = readUint64(samples[sGoroutineCount])

@@ -22418,6 +22418,9 @@ type PerformanceStatsTelemetryMeasurements struct {
 	// GOMEMLIMIT value in bytes, or 0 if not set.
 	GoMemLimit float64 `json:"goMemLimit,omitzero"`
 
+	// GOGC percentage value configured for the GC.
+	GoGCPercent float64 `json:"goGCPercent,omitzero"`
+
 	// Heap size target the GC is working toward in bytes.
 	HeapGoalBytes float64 `json:"heapGoalBytes,omitzero"`
 
