@@ -79,6 +79,7 @@ type SessionInit struct {
 type Session struct {
 	backgroundCtx context.Context
 	options       *SessionOptions
+	startTime     time.Time
 	toPath        func(string) tspath.Path
 	client        Client
 	logger        logging.Logger
@@ -177,6 +178,7 @@ func NewSession(init *SessionInit) *Session {
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
 		backgroundQueue:     background.NewQueue(),
+		startTime:           time.Now(),
 		snapshot: NewSnapshot(
 			uint64(0),
 			&SnapshotFS{
@@ -529,6 +531,7 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 
 	measurements := &lsproto.PerformanceStatsTelemetryMeasurements{
 		OpenFileCount:       float64(len(snapshot.fs.overlays)),
+		UptimeSeconds:       time.Since(s.startTime).Seconds(),
 		ProjectCount:        float64(len(snapshot.ProjectCollection.Projects())),
 		ConfigCount:         float64(len(snapshot.ConfigFileRegistry.configs)),
 		CachedDiskFileCount: float64(len(snapshot.fs.diskFiles)),

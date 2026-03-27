@@ -22403,6 +22403,9 @@ type PerformanceStatsTelemetryMeasurements struct {
 	// Number of files currently open in the editor.
 	OpenFileCount float64 `json:"openFileCount,omitzero"`
 
+	// Seconds since the session was initialized.
+	UptimeSeconds float64 `json:"uptimeSeconds,omitzero"`
+
 	// Number of loaded projects.
 	ProjectCount float64 `json:"projectCount,omitzero"`
 
