@@ -43,6 +43,13 @@ func TestGetTokenAtPosition(t *testing.T) {
 		)
 	})
 
+	t.Run("go baseline json", func(t *testing.T) {
+		t.Parallel()
+		baselineGoTokensJSON(t, "GetTokenAtPosition", func(file *ast.SourceFile, pos int) *tokenInfo {
+			return toTokenInfo(astnav.GetTokenAtPosition(file, pos))
+		})
+	})
+
 	t.Run("JSDoc type assertion", func(t *testing.T) {
 		t.Parallel()
 		fileText := `function foo(x) {
@@ -120,6 +127,13 @@ func TestGetTouchingPropertyName(t *testing.T) {
 			return toTokenInfo(astnav.GetTouchingPropertyName(file, pos))
 		},
 	)
+
+	t.Run("go baseline json", func(t *testing.T) {
+		t.Parallel()
+		baselineGoTokensJSON(t, "GetTouchingPropertyName", func(file *ast.SourceFile, pos int) *tokenInfo {
+			return toTokenInfo(astnav.GetTouchingPropertyName(file, pos))
+		})
+	})
 }
 
 func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens func(fileText string, positions []int) []*tokenInfo, getGoToken func(file *ast.SourceFile, pos int) *tokenInfo) {
@@ -165,6 +179,69 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				t,
 				fmt.Sprintf("%s.%s.baseline.txt", testName, filepath.Base(fileName)),
 				core.IfElse(output.Len() > 0, output.String(), baseline.NoContent),
+				baseline.Options{
+					Subfolder: "astnav",
+				},
+			)
+		})
+	}
+}
+
+type tokenRun struct {
+	StartPos int    `json:"startPos"`
+	EndPos   int    `json:"endPos"`
+	Kind     string `json:"kind"`
+	NodePos  int    `json:"nodePos"`
+	NodeEnd  int    `json:"nodeEnd"`
+}
+
+func baselineGoTokensJSON(t *testing.T, testName string, getGoToken func(file *ast.SourceFile, pos int) *tokenInfo) {
+	for _, fileName := range testFiles {
+		t.Run(filepath.Base(fileName), func(t *testing.T) {
+			t.Parallel()
+			fileText, err := os.ReadFile(fileName)
+			assert.NilError(t, err)
+
+			file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: "/file.ts",
+				Path:     "/file.ts",
+			}, string(fileText), core.ScriptKindTS)
+
+			maxPos := len(fileText)
+			var runs []tokenRun
+			var current *tokenRun
+
+			for pos := range maxPos {
+				token := getGoToken(file, pos)
+				if current != nil && token != nil && current.Kind == token.Kind && current.NodePos == token.Pos && current.NodeEnd == token.End {
+					current.EndPos = pos
+				} else {
+					if current != nil {
+						runs = append(runs, *current)
+					}
+					if token != nil {
+						current = &tokenRun{
+							StartPos: pos,
+							EndPos:   pos,
+							Kind:     token.Kind,
+							NodePos:  token.Pos,
+							NodeEnd:  token.End,
+						}
+					} else {
+						current = nil
+					}
+				}
+			}
+			if current != nil {
+				runs = append(runs, *current)
+			}
+
+			output := core.Must(core.StringifyJson(runs, "", "  "))
+
+			baseline.Run(
+				t,
+				fmt.Sprintf("%s.%s.baseline.json", testName, filepath.Base(fileName)),
+				output,
 				baseline.Options{
 					Subfolder: "astnav",
 				},
@@ -398,6 +475,35 @@ func TestFindPrecedingToken(t *testing.T) {
 				return toTokenInfo(astnav.FindPrecedingToken(file, pos))
 			},
 		)
+	})
+
+	t.Run("go baseline json", func(t *testing.T) {
+		t.Parallel()
+		baselineGoTokensJSON(t, "FindPrecedingToken", func(file *ast.SourceFile, pos int) *tokenInfo {
+			return toTokenInfo(astnav.FindPrecedingToken(file, pos))
+		})
+	})
+}
+
+func TestFindNextToken(t *testing.T) {
+	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
+
+	t.Run("go baseline json", func(t *testing.T) {
+		t.Parallel()
+		baselineGoTokensJSON(t, "FindNextToken", func(file *ast.SourceFile, pos int) (result *tokenInfo) {
+			// FindNextToken panics (like Go's assert) when the scanner finds trivia between
+			// previousToken.End() and the next syntactic token. Catch those to avoid crashing
+			// the baseline generator; those positions will be absent from the baseline.
+			defer func() {
+				if r := recover(); r != nil {
+					result = nil
+				}
+			}()
+			token := astnav.GetTokenAtPosition(file, pos)
+			next := astnav.FindNextToken(token, file.AsNode(), file)
+			return toTokenInfo(next)
+		})
 	})
 }
 

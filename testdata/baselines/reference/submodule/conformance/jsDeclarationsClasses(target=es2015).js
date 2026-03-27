@@ -204,14 +204,14 @@ class A {
 }
 exports.A = A;
 class B {
-    static cat = "cat";
 }
 exports.B = B;
+B.cat = "cat";
 class C {
-    static Cls = class {
-    };
 }
 exports.C = C;
+C.Cls = class {
+};
 class D {
     /**
      * @param {number} a
@@ -225,20 +225,9 @@ exports.D = D;
  */
 class E {
     /**
-     * @type {T & U}
-     */
-    field;
-    // @readonly is currently unsupported, it seems - included here just in case that changes
-    /**
-     * @type {T & U}
-     * @readonly
-     */
-    readonlyField;
-    initializedField = 12;
-    /**
      * @return {U}
      */
-    get f1() { return /** @type {*} */ null; }
+    get f1() { return /** @type {*} */ (null); }
     /**
      * @param {U} _p
      */
@@ -246,7 +235,7 @@ class E {
     /**
      * @return {U}
      */
-    get f2() { return /** @type {*} */ null; }
+    get f2() { return /** @type {*} */ (null); }
     /**
      * @param {U} _p
      */
@@ -255,18 +244,9 @@ class E {
      * @param {T} a
      * @param {U} b
      */
-    constructor(a, b) { }
-    /**
-     * @type {string}
-     */
-    static staticField;
-    // @readonly is currently unsupported, it seems - included here just in case that changes
-    /**
-     * @type {string}
-     * @readonly
-     */
-    static staticReadonlyField;
-    static staticInitializedField = 12;
+    constructor(a, b) {
+        this.initializedField = 12;
+    }
     /**
      * @return {string}
      */
@@ -285,14 +265,11 @@ class E {
     static set s3(_p) { }
 }
 exports.E = E;
+E.staticInitializedField = 12;
 /**
  * @template T,U
  */
 class F {
-    /**
-     * @type {T & U}
-     */
-    field;
     /**
      * @param {T} a
      * @param {U} b
@@ -366,7 +343,7 @@ class O extends N {
     }
 }
 exports.O = O;
-var x = /** @type {*} */ null;
+var x = /** @type {*} */ (null);
 class VariableBase extends x {
 }
 exports.VariableBase = VariableBase;

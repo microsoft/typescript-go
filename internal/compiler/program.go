@@ -132,8 +132,9 @@ func (p *Program) GetNearestAncestorDirectoryWithPackageJson(dirname string) str
 
 // GetPackageJsonInfo implements checker.Program.
 func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
-	scoped := p.resolver.GetPackageScopeForPath(pkgJsonPath)
-	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
+	directory := tspath.GetDirectoryPath(pkgJsonPath)
+	scoped := p.resolver.GetPackageScopeForPath(directory)
+	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == directory {
 		return scoped
 	}
 	return nil
@@ -267,6 +268,9 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	newOpts := p.opts
 	newOpts.Host = newHost
 
+	oldFile := p.filesByPath[changedFilePath]
+	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets
 	// might need recalculation.
@@ -274,8 +278,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		return NewProgram(newOpts), false
 	}
 
-	oldFile := p.filesByPath[changedFilePath]
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
 	}
@@ -342,10 +344,11 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 	return d1 == nil && d2 == nil || d1 != nil && d2 != nil && d1.Enabled == d2.Enabled
 }
 
-func (p *Program) SourceFiles() []*ast.SourceFile            { return p.files }
-func (p *Program) Options() *core.CompilerOptions            { return p.opts.Config.CompilerOptions() }
-func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
-func (p *Program) Host() CompilerHost                        { return p.opts.Host }
+func (p *Program) SourceFiles() []*ast.SourceFile               { return p.files }
+func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.duplicateSourceFiles }
+func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
+func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
+func (p *Program) Host() CompilerHost                           { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -474,8 +477,46 @@ func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles [
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-		return core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
+		diags := core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
+		// For JS files that won't be checked by the checker (no checkJs/ts-check), we need
+		// program-level syntactic checks that require compiler options. This mirrors Strada's
+		// getJSSyntacticDiagnosticsForFile in program.ts.
+		if ast.IsSourceFileJS(file) && !ast.IsCheckJSEnabledForFile(file, p.Options()) {
+			diags = append(diags, getAdditionalJSSyntacticDiagnostics(file, p.Options())...)
+		}
+		return diags
 	})
+}
+
+// getAdditionalJSSyntacticDiagnostics produces option-dependent syntactic diagnostics for JS files
+// that aren't covered by the parser or the checker. In Strada, the equivalent logic lives in
+// getJSSyntacticDiagnosticsForFile in program.ts. In Corsa, most of that function's checks were
+// moved into the parser (checkJSSyntax/checkJSDecoratorSyntax), but checks that depend on compiler
+// options can't live in the parser and must remain here. The checker handles these for checked files,
+// but doesn't run on unchecked JS files (no checkJs/ts-check).
+func getAdditionalJSSyntacticDiagnostics(file *ast.SourceFile, options *core.CompilerOptions) []*ast.Diagnostic {
+	if options.ExperimentalDecorators.IsTrue() {
+		return nil
+	}
+	var diags []*ast.Diagnostic
+	// Parameter decorators are only valid with experimentalDecorators. Without it,
+	// the checker would report this, but the checker doesn't run on unchecked JS files.
+	var walk ast.Visitor
+	walk = func(node *ast.Node) bool {
+		if node.SubtreeFacts()&ast.SubtreeContainsDecorators == 0 {
+			return false
+		}
+		if node.Kind == ast.KindParameter && ast.HasDecorators(node) {
+			decorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
+			if decorator != nil {
+				diags = append(diags, ast.NewDiagnostic(file, decorator.Loc, diagnostics.Decorators_are_not_valid_here))
+			}
+		}
+		node.ForEachChild(walk)
+		return false
+	}
+	file.AsNode().ForEachChild(walk)
+	return diags
 }
 
 func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -684,8 +725,24 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
 
+	if options.ModuleResolution == core.ModuleResolutionKindClassic {
+		createRemovedOptionDiagnostic("moduleResolution", "Classic", "")
+	}
+
 	if options.AlwaysStrict.IsFalse() {
 		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
+	}
+
+	if options.ESModuleInterop.IsFalse() {
+		createRemovedOptionDiagnostic("esModuleInterop", "false", "")
+	}
+
+	if options.AllowSyntheticDefaultImports.IsFalse() {
+		createRemovedOptionDiagnostic("allowSyntheticDefaultImports", "false", "")
+	}
+
+	if options.ModuleResolution == core.ModuleResolutionKindNode10 {
+		createRemovedOptionDiagnostic("moduleResolution", "node10", "")
 	}
 
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
@@ -856,6 +913,48 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
+	if !options.NoEmit.IsTrue() &&
+		!options.Composite.IsTrue() &&
+		options.RootDir == "" &&
+		options.ConfigFilePath != "" &&
+		(options.OutDir != "" ||
+			(options.GetEmitDeclarations() && options.DeclarationDir != "") ||
+			options.OutFile != "") {
+		// Check if rootDir inferred changed and issue diagnostic
+		dir := p.CommonSourceDirectory()
+		var emittedFiles []string
+		for _, file := range p.files {
+			if !file.IsDeclarationFile && sourceFileMayBeEmitted(file, p, false) {
+				emittedFiles = append(emittedFiles, file.FileName())
+			}
+		}
+		dir59 := outputpaths.GetComputedCommonSourceDirectory(emittedFiles, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		if dir59 != "" && tspath.GetCanonicalFileName(dir, p.UseCaseSensitiveFileNames()) != tspath.GetCanonicalFileName(dir59, p.UseCaseSensitiveFileNames()) {
+			// change in layout
+			var option1 string
+			if options.OutFile != "" {
+				option1 = "outFile"
+			} else if options.OutDir != "" {
+				option1 = "outDir"
+			} else {
+				option1 = "declarationDir"
+			}
+			var option2 string
+			if options.OutFile == "" && options.OutDir != "" {
+				option2 = "declarationDir"
+			}
+			diag := createDiagnosticForOption(
+				true, /*onKey*/
+				option1,
+				option2,
+				diagnostics.The_common_source_directory_of_0_is_1_The_rootDir_setting_must_be_explicitly_set_to_this_or_another_path_to_adjust_your_output_s_file_layout,
+				tspath.GetBaseFileName(options.ConfigFilePath),
+				tspath.GetRelativePathFromFile(options.ConfigFilePath, dir59, p.comparePathsOptions),
+			)
+			diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information))
+		}
+	}
+
 	if options.CheckJs.IsTrue() && !options.GetAllowJS() {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "checkJs", "allowJs")
 	}
@@ -925,10 +1024,9 @@ func (p *Program) verifyCompilerOptions() {
 		createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler, "customConditions", "")
 	}
 
-	// !!! Reenable once we don't map old moduleResolution kinds to bundler.
-	// if moduleResolution == core.ModuleResolutionKindBundler && !emitModuleKindIsNonNodeESM(moduleKind) && moduleKind != core.ModuleKindPreserve {
-	// 	createOptionValueDiagnostic("moduleResolution", diagnostics.Option_0_can_only_be_used_when_module_is_set_to_preserve_or_to_es2015_or_later, "bundler")
-	// }
+	if moduleResolution == core.ModuleResolutionKindBundler && !emitModuleKindIsNonNodeESM(moduleKind) && moduleKind != core.ModuleKindPreserve && moduleKind != core.ModuleKindCommonJS {
+		createOptionValueDiagnostic("moduleResolution", diagnostics.Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later, "bundler")
+	}
 
 	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext &&
 		!(core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext) {
@@ -1386,7 +1484,7 @@ type WriteFileData struct {
 	SkippedDtsWrite bool
 }
 
-type WriteFile func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+type WriteFile func(fileName string, text string, data *WriteFileData) error
 
 type EmitOptions struct {
 	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files

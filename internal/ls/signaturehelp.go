@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -536,7 +535,10 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 	var displayParts strings.Builder
 	if len(signatureHelpTypeParameters) != 0 {
 		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
-		for _, typeParameter := range signatureHelpTypeParameters {
+		for i, typeParameter := range signatureHelpTypeParameters {
+			if i > 0 {
+				displayParts.WriteString(", ")
+			}
 			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
 		}
 		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
@@ -775,7 +777,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
-		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), fmt.Sprintf("Not a subspan. Child: %s, parent: %s", n.KindString(), n.Parent.KindString()))
+		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), "Not a subspan. Child: ", n.KindString(), ", parent: ", n.Parent.KindString())
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo
@@ -868,7 +870,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		}
 
 		spanIndex := ast.IndexOfNode(templateSpan.Parent.AsTemplateExpression().TemplateSpans.Nodes, templateSpan)
-		argumentIndex := getArgumentIndexForTemplatePiece(spanIndex, templateSpan, position, sourceFile)
+		argumentIndex := getArgumentIndexForTemplatePiece(spanIndex, node, position, sourceFile)
 
 		return getArgumentListInfoForTemplate(tagExpression.AsTaggedTemplateExpression(), argumentIndex, sourceFile)
 	} else if ast.IsJsxOpeningLikeElement(parent) {
@@ -1267,7 +1269,7 @@ func getArgumentListInfoForTemplate(tagExpression *ast.TaggedTemplateExpression,
 		argumentCount = len(tagExpression.Template.AsTemplateExpression().TemplateSpans.Nodes) + 1
 	}
 	if argumentIndex != 0 {
-		debug.AssertLessThan(argumentIndex, argumentCount)
+		debug.Assert(argumentIndex < argumentCount)
 	}
 	return &argumentListInfo{
 		isTypeParameterList: false,

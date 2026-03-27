@@ -41,16 +41,6 @@ export class Baz {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Baz = exports.Bar = exports.Foo = void 0;
 class Foo {
-    isInternal1;
-    isInternal2;
-    isInternal3;
-    isInternal4;
-    isInternal5;
-    isInternal6;
-    isInternal7;
-    notInternal1;
-    notInternal2;
-    notInternal3;
     constructor(
     /** @internal */
     isInternal1, 
@@ -85,14 +75,12 @@ class Foo {
 }
 exports.Foo = Foo;
 class Bar {
-    isInternal1;
     constructor(/* @internal */ isInternal1) {
         this.isInternal1 = isInternal1;
     }
 }
 exports.Bar = Bar;
 class Baz {
-    isInternal;
     constructor(/* @internal */ isInternal) {
         this.isInternal = isInternal;
     }
@@ -113,8 +101,8 @@ export declare class Foo {
     isInternal5: string, isInternal6: string, isInternal7: string, /** @internal */ notInternal1: string, notInternal2: string, notInternal3: string);
 }
 export declare class Bar {
-    constructor(isInternal1: string);
+    constructor(/* @internal */ isInternal1: string);
 }
 export declare class Baz {
-    constructor(isInternal: string);
+    constructor(/* @internal */ isInternal: string);
 }

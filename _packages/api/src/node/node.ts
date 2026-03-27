@@ -1,10 +1,15 @@
 import {
+    type FileReference,
+    ModifierFlags,
     type Node,
     type NodeArray,
+    NodeFlags,
     type Path,
     type SourceFile,
     SyntaxKind,
+    TokenFlags,
 } from "@typescript/ast";
+import { MsgpackReader } from "./msgpack.ts";
 import {
     childProperties,
     HEADER_OFFSET_EXTENDED_DATA,
@@ -16,6 +21,7 @@ import {
     HEADER_OFFSET_PARSE_OPTIONS,
     HEADER_OFFSET_STRING_TABLE,
     HEADER_OFFSET_STRING_TABLE_OFFSETS,
+    HEADER_OFFSET_STRUCTURED_DATA,
     KIND_NODE_LIST,
     NODE_DATA_TYPE_CHILDREN,
     NODE_DATA_TYPE_EXTENDED,
@@ -61,6 +67,46 @@ const NODE_OFFSET_END = 8;
 const NODE_OFFSET_NEXT = 12;
 const NODE_OFFSET_PARENT = 16;
 const NODE_OFFSET_DATA = 20;
+const NODE_OFFSET_FLAGS = 24;
+
+function modifierToFlag(kind: SyntaxKind): ModifierFlags {
+    switch (kind) {
+        case SyntaxKind.StaticKeyword:
+            return ModifierFlags.Static;
+        case SyntaxKind.PublicKeyword:
+            return ModifierFlags.Public;
+        case SyntaxKind.ProtectedKeyword:
+            return ModifierFlags.Protected;
+        case SyntaxKind.PrivateKeyword:
+            return ModifierFlags.Private;
+        case SyntaxKind.AbstractKeyword:
+            return ModifierFlags.Abstract;
+        case SyntaxKind.AccessorKeyword:
+            return ModifierFlags.Accessor;
+        case SyntaxKind.ExportKeyword:
+            return ModifierFlags.Export;
+        case SyntaxKind.DeclareKeyword:
+            return ModifierFlags.Ambient;
+        case SyntaxKind.ConstKeyword:
+            return ModifierFlags.Const;
+        case SyntaxKind.DefaultKeyword:
+            return ModifierFlags.Default;
+        case SyntaxKind.AsyncKeyword:
+            return ModifierFlags.Async;
+        case SyntaxKind.ReadonlyKeyword:
+            return ModifierFlags.Readonly;
+        case SyntaxKind.OverrideKeyword:
+            return ModifierFlags.Override;
+        case SyntaxKind.InKeyword:
+            return ModifierFlags.In;
+        case SyntaxKind.OutKeyword:
+            return ModifierFlags.Out;
+        case SyntaxKind.Decorator:
+            return ModifierFlags.Decorator;
+        default:
+            return ModifierFlags.None;
+    }
+}
 
 export class RemoteNodeBase {
     parent: RemoteNode;
@@ -303,7 +349,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                         return result;
                     }
                 }
-                else {
+                else if (child.kind !== SyntaxKind.JSDoc) {
                     const result = visitNode(child);
                     if (result) {
                         return result;
@@ -313,6 +359,23 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             }
             while (next);
         }
+    }
+
+    get jsDoc(): readonly Node[] | undefined {
+        if (!this.hasChildren()) {
+            return undefined;
+        }
+        let result: Node[] | undefined;
+        let next = this.index + 1;
+        do {
+            const child = this.getOrCreateChildAtNodeIndex(next);
+            if (!(child instanceof RemoteNodeList) && child.kind === SyntaxKind.JSDoc) {
+                (result ??= []).push(child);
+            }
+            next = child.next;
+        }
+        while (next);
+        return result;
     }
 
     getSourceFile(): SourceFile {
@@ -355,6 +418,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         if (!propertyNames) {
             // `childProperties` is only defined for nodes with more than one child property.
             // Get the only child if it exists.
+            if (!this.hasChildren()) {
+                return undefined;
+            }
             const child = this.getOrCreateChildAtNodeIndex(this.index + 1);
             if (child.next !== 0) {
                 throw new Error("Expected only one child");
@@ -531,11 +597,28 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get tokenFlags(): TokenFlags {
+        switch (this.kind) {
+            case SyntaxKind.RegularExpressionLiteral:
+                return (this.data & 1 << 24) !== 0 ? TokenFlags.Unterminated : 0;
+            default:
+                return 0;
+        }
+    }
+
     get isNameFirst(): boolean | undefined {
         switch (this.kind) {
             case SyntaxKind.JSDocPropertyTag:
             case SyntaxKind.JSDocParameterTag:
                 return (this.data & 1 << 25) !== 0;
+        }
+    }
+
+    get operator(): SyntaxKind | undefined {
+        switch (this.kind) {
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+                return ((this.data >> 24) & 0x3f) as SyntaxKind;
         }
     }
 
@@ -582,6 +665,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get class(): RemoteNode | undefined {
         return this.getNamedChild("class") as RemoteNode;
     }
+    get clauses(): RemoteNodeList | undefined {
+        return this.getNamedChild("clauses") as RemoteNodeList;
+    }
     get closingElement(): RemoteNode | undefined {
         return this.getNamedChild("closingElement") as RemoteNode;
     }
@@ -603,11 +689,17 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get declarationList(): RemoteNode | undefined {
         return this.getNamedChild("declarationList") as RemoteNode;
     }
+    get declarations(): RemoteNodeList | undefined {
+        return this.getNamedChild("declarations") as RemoteNodeList;
+    }
     get default(): RemoteNode | undefined {
         return this.getNamedChild("default") as RemoteNode;
     }
     get dotDotDotToken(): RemoteNode | undefined {
         return this.getNamedChild("dotDotDotToken") as RemoteNode;
+    }
+    get elementType(): RemoteNode | undefined {
+        return this.getNamedChild("elementType") as RemoteNode;
     }
     get elements(): RemoteNodeList | undefined {
         return this.getNamedChild("elements") as RemoteNodeList;
@@ -666,6 +758,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get initializer(): RemoteNode | undefined {
         return this.getNamedChild("initializer") as RemoteNode;
     }
+    get jsDocPropertyTags(): RemoteNodeList | undefined {
+        return this.getNamedChild("jsDocPropertyTags") as RemoteNodeList;
+    }
     get label(): RemoteNode | undefined {
         return this.getNamedChild("label") as RemoteNode;
     }
@@ -712,6 +807,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get openingFragment(): RemoteNode | undefined {
         return this.getNamedChild("openingFragment") as RemoteNode;
     }
+    get operand(): RemoteNode | undefined {
+        return this.getNamedChild("operand") as RemoteNode;
+    }
     get operatorToken(): RemoteNode | undefined {
         return this.getNamedChild("operatorToken") as RemoteNode;
     }
@@ -723,6 +821,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get postfixToken(): RemoteNode | undefined {
         return this.getNamedChild("postfixToken") as RemoteNode;
+    }
+    get properties(): RemoteNodeList | undefined {
+        return this.getNamedChild("properties") as RemoteNodeList;
     }
     get propertyName(): RemoteNode | undefined {
         return this.getNamedChild("propertyName") as RemoteNode;
@@ -790,6 +891,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get typeParameters(): RemoteNodeList | undefined {
         return this.getNamedChild("typeParameters") as RemoteNodeList;
     }
+    get types(): RemoteNodeList | undefined {
+        return this.getNamedChild("types") as RemoteNodeList;
+    }
     get value(): RemoteNode | undefined {
         return this.getNamedChild("value") as RemoteNode;
     }
@@ -814,7 +918,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.NoSubstitutionTemplateLiteral:
-            case SyntaxKind.JSDocText: {
+            case SyntaxKind.JSDocText:
+            case SyntaxKind.JSDocLink:
+            case SyntaxKind.JSDocLinkCode:
+            case SyntaxKind.JSDocLinkPlain: {
                 const stringIndex = this.data & NODE_STRING_INDEX_MASK;
                 return this.getString(stringIndex);
             }
@@ -858,14 +965,91 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get languageVariant(): number | undefined {
+        switch (this.kind) {
+            case SyntaxKind.SourceFile:
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                return this.view.getUint32(extendedDataOffset + 12, true);
+        }
+    }
+
+    get scriptKind(): number | undefined {
+        switch (this.kind) {
+            case SyntaxKind.SourceFile: {
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                return this.view.getUint32(extendedDataOffset + 16, true);
+            }
+        }
+    }
+
+    get referencedFiles(): readonly FileReference[] {
+        if (this.kind !== SyntaxKind.SourceFile) return [];
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const offset = this.view.getUint32(extendedDataOffset + 20, true);
+        return (this.sourceFile as RemoteSourceFile).readFileReferences(offset);
+    }
+
+    get typeReferenceDirectives(): readonly FileReference[] {
+        if (this.kind !== SyntaxKind.SourceFile) return [];
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const offset = this.view.getUint32(extendedDataOffset + 24, true);
+        return (this.sourceFile as RemoteSourceFile).readFileReferences(offset);
+    }
+
+    get libReferenceDirectives(): readonly FileReference[] {
+        if (this.kind !== SyntaxKind.SourceFile) return [];
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const offset = this.view.getUint32(extendedDataOffset + 28, true);
+        return (this.sourceFile as RemoteSourceFile).readFileReferences(offset);
+    }
+
+    get imports(): readonly Node[] {
+        if (this.kind !== SyntaxKind.SourceFile) return [];
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const offset = this.view.getUint32(extendedDataOffset + 32, true);
+        return (this.sourceFile as RemoteSourceFile).readNodeIndexArray(offset);
+    }
+
+    get moduleAugmentations(): readonly Node[] {
+        if (this.kind !== SyntaxKind.SourceFile) return [];
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const offset = this.view.getUint32(extendedDataOffset + 36, true);
+        return (this.sourceFile as RemoteSourceFile).readNodeIndexArray(offset);
+    }
+
+    get ambientModuleNames(): readonly string[] {
+        if (this.kind !== SyntaxKind.SourceFile) return [];
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const offset = this.view.getUint32(extendedDataOffset + 40, true);
+        return (this.sourceFile as RemoteSourceFile).readStringArray(offset);
+    }
+
+    get externalModuleIndicator(): Node | true | undefined {
+        if (this.kind !== SyntaxKind.SourceFile) return undefined;
+        const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const nodeIndex = this.view.getUint32(extendedDataOffset + 44, true);
+        if (nodeIndex === 0) return undefined;
+        if (nodeIndex === this.index) return true;
+        return (this.sourceFile as RemoteSourceFile).getOrCreateNodeAtIndex(nodeIndex) as Node;
+    }
+
+    get isDeclarationFile(): boolean {
+        return (this.flags & NodeFlags.Ambient) !== 0;
+    }
+
     // Other properties
     get flags(): number {
-        switch (this.kind) {
-            case SyntaxKind.VariableDeclarationList:
-                return this.data & (1 << 24 | 1 << 25) >> 24;
-            default:
-                return 0;
+        return this.view.getUint32(this._byteIndex + NODE_OFFSET_FLAGS, true);
+    }
+
+    get modifierFlags(): ModifierFlags {
+        const mods = this.modifiers;
+        if (!mods) return ModifierFlags.None;
+        let flags: ModifierFlags = ModifierFlags.None;
+        for (const mod of mods) {
+            flags |= modifierToFlag(mod.kind);
         }
+        return flags;
     }
 
     get phaseModifier(): SyntaxKind {
@@ -901,12 +1085,15 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 }
 
+const NO_STRUCTURED_DATA = 0xFFFFFFFF;
+
 export class RemoteSourceFile extends RemoteNode {
     readonly nodes: (RemoteNode | RemoteNodeList)[];
     readonly _offsetNodes: number;
     readonly _offsetStringTableOffsets: number;
     readonly _offsetStringTable: number;
     readonly _offsetExtendedData: number;
+    readonly _offsetStructuredData: number;
     readonly _decoder: TextDecoder;
 
     constructor(data: Uint8Array, decoder: TextDecoder) {
@@ -918,9 +1105,69 @@ export class RemoteSourceFile extends RemoteNode {
         this._offsetStringTableOffsets = view.getUint32(HEADER_OFFSET_STRING_TABLE_OFFSETS, true);
         this._offsetStringTable = view.getUint32(HEADER_OFFSET_STRING_TABLE, true);
         this._offsetExtendedData = view.getUint32(HEADER_OFFSET_EXTENDED_DATA, true);
+        this._offsetStructuredData = view.getUint32(HEADER_OFFSET_STRUCTURED_DATA, true);
         this._decoder = decoder;
         this.nodes = Array((view.byteLength - offsetNodes) / NODE_LEN);
         this.nodes[1] = this;
+    }
+
+    readFileReferences(structuredDataOffset: number): readonly FileReference[] {
+        if (structuredDataOffset === NO_STRUCTURED_DATA) {
+            return [];
+        }
+        const buf = new Uint8Array(this.view.buffer, this.view.byteOffset, this.view.byteLength);
+        const reader = new MsgpackReader(buf, this._offsetStructuredData + structuredDataOffset);
+        const count = reader.readArrayHeader();
+        const result: FileReference[] = [];
+        for (let i = 0; i < count; i++) {
+            reader.readArrayHeader(); // 5-element tuple
+            const pos = reader.readUint();
+            const end = reader.readUint();
+            const fileName = reader.readString();
+            const resolutionMode = reader.readUint();
+            const preserve = reader.readBool();
+            result.push({ pos, end, fileName, resolutionMode, preserve });
+        }
+        return result;
+    }
+
+    readNodeIndexArray(structuredDataOffset: number): readonly Node[] {
+        if (structuredDataOffset === NO_STRUCTURED_DATA) {
+            return [];
+        }
+        const buf = new Uint8Array(this.view.buffer, this.view.byteOffset, this.view.byteLength);
+        const reader = new MsgpackReader(buf, this._offsetStructuredData + structuredDataOffset);
+        const count = reader.readArrayHeader();
+        const result: Node[] = [];
+        for (let i = 0; i < count; i++) {
+            const nodeIndex = reader.readUint();
+            result.push(this.getOrCreateNodeAtIndex(nodeIndex));
+        }
+        return result;
+    }
+
+    readStringArray(structuredDataOffset: number): readonly string[] {
+        if (structuredDataOffset === NO_STRUCTURED_DATA) {
+            return [];
+        }
+        const buf = new Uint8Array(this.view.buffer, this.view.byteOffset, this.view.byteLength);
+        const reader = new MsgpackReader(buf, this._offsetStructuredData + structuredDataOffset);
+        const count = reader.readArrayHeader();
+        const result: string[] = [];
+        for (let i = 0; i < count; i++) {
+            result.push(reader.readString());
+        }
+        return result;
+    }
+
+    /** @internal */
+    getOrCreateNodeAtIndex(index: number): Node {
+        let node = this.nodes[index];
+        if (!node) {
+            node = new RemoteNode(this.view, index, this, this, this._offsetNodes);
+            this.nodes[index] = node;
+        }
+        return node as Node;
     }
 }
 

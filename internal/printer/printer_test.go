@@ -94,7 +94,7 @@ func TestEmit(t *testing.T) {
 		{title: "ArrowFunction#2", input: `()=>{}`, output: `() => { };`},
 		{title: "ArrowFunction#3", input: `(a)=>{}`, output: `(a) => { };`},
 		{title: "ArrowFunction#4", input: `<T>(a)=>{}`, output: `<T>(a) => { };`},
-		{title: "ArrowFunction#5", input: `async a=>{}`, output: `async a => { };`},
+		{title: "ArrowFunction#5", input: `async a=>{}`, output: `async (a) => { };`},
 		{title: "ArrowFunction#6", input: `async()=>{}`, output: `async () => { };`},
 		{title: "ArrowFunction#7", input: `async<T>()=>{}`, output: `async <T>() => { };`},
 		{title: "ArrowFunction#8", input: `():T=>{}`, output: `(): T => { };`},
@@ -162,6 +162,7 @@ func TestEmit(t *testing.T) {
 		{title: "ArrayLiteralExpression#3", input: `[a,]`, output: `[a,];`},
 		{title: "ArrayLiteralExpression#4", input: `[,a]`, output: `[, a];`},
 		{title: "ArrayLiteralExpression#5", input: `[...a]`, output: `[...a];`},
+		{title: "ArrayLiteralExpression#6", input: `const array = [/* comment */];`, output: `const array = [ /* comment */];`},
 		{title: "ObjectLiteralExpression#1", input: `({})`, output: `({});`},
 		{title: "ObjectLiteralExpression#2", input: `({a,})`, output: `({ a, });`},
 		{title: "ShorthandPropertyAssignment", input: `({a})`, output: `({ a });`},
@@ -255,6 +256,8 @@ func TestEmit(t *testing.T) {
 		{title: "EnumDeclaration#1", input: `enum a{}`, output: "enum a {\n}"},
 		{title: "EnumDeclaration#2", input: `enum a{b}`, output: "enum a {\n    b\n}"},
 		{title: "EnumDeclaration#3", input: `enum a{b=c}`, output: "enum a {\n    b = c\n}"},
+		{title: "ModuleDeclaration#1", input: `module a{}`, output: "module a { }"},
+		{title: "ModuleDeclaration#2", input: `module a.b{}`, output: "module a.b { }"},
 		{title: "ModuleDeclaration#3", input: `module "a";`, output: "module \"a\";"},
 		{title: "ModuleDeclaration#4", input: `module "a"{}`, output: "module \"a\" { }"},
 		{title: "ModuleDeclaration#5", input: `namespace a{}`, output: "namespace a { }"},
@@ -552,6 +555,7 @@ func TestEmit(t *testing.T) {
 		{title: "JsxElement9", input: "<a><b></b></a>", output: "<a><b></b></a>;", jsx: true},
 		{title: "JsxElement10", input: "<a><b /></a>", output: "<a><b /></a>;", jsx: true},
 		{title: "JsxElement11", input: "<a><></></a>", output: "<a><></></a>;", jsx: true},
+		{title: "JsxElement12", input: "<a>\n    {/* missing */}\n    {\n        // foo\n    }\n</a>", output: "<a>\n    {/* missing */}\n    {\n    // foo\n    }\n</a>;", jsx: true},
 		{title: "JsxSelfClosingElement1", input: "<a />", output: "<a />;", jsx: true},
 		{title: "JsxSelfClosingElement2", input: "<this />", output: "<this />;", jsx: true},
 		{title: "JsxSelfClosingElement3", input: "<a:b />", output: "<a:b />;", jsx: true},
@@ -1907,7 +1911,7 @@ func TestParenthesizeExpressionStatement3(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(class {\n});")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "class {\n};")
 }
 
 func TestParenthesizeExpressionDefault1(t *testing.T) {
