@@ -23,6 +23,11 @@ export interface ExtensionAPI {
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
 
+    const isFirstRun = !context.globalState.get<boolean>(hasActivatedKey);
+    if (isFirstRun) {
+        await context.globalState.update(hasActivatedKey, true);
+    }
+
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
 
@@ -94,18 +99,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         return;
     }
     else if (useTsgo === undefined) {
-        if (!context.globalState.get<boolean>(hasActivatedKey)) {
+        if (isFirstRun) {
             // First run after install: enable by default.
-            await context.globalState.update(hasActivatedKey, true);
             updateUseTsgoSetting(true);
             return;
         }
         output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
         return;
     }
-
-    // Mark as activated so future runs with an unset setting won't re-auto-enable.
-    await context.globalState.update(hasActivatedKey, true);
 
     await sessionManager.start(context);
 
