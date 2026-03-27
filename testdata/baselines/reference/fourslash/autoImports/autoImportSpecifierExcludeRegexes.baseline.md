@@ -4,7 +4,7 @@
 mySym/*1*/
 ignoredSym
 ``````ts
-import { mySymbol } from "./foo";
+import { mySymbol } from "./foo"
 
 mySym
 ignoredSym
