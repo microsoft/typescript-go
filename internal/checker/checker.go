@@ -10176,8 +10176,20 @@ func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.No
 		return
 	case ast.IsClassLike(node):
 		c.checkTypeNameIsReserved(name, diagnostics.Class_name_cannot_be_0)
+		if node.Flags&ast.NodeFlagsAmbient == 0 {
+			c.checkClassNameCollisionWithObject(name)
+		}
 	case ast.IsEnumDeclaration(node):
 		c.checkTypeNameIsReserved(name, diagnostics.Enum_name_cannot_be_0)
+	}
+}
+
+// checkClassNameCollisionWithObject reports an error if a class is named 'Object'
+// in a file that uses a non-ES2015 module format (e.g. CommonJS, AMD, UMD, System).
+// See https://github.com/Microsoft/TypeScript/issues/17494
+func (c *Checker) checkClassNameCollisionWithObject(name *ast.Node) {
+	if name.Text() == "Object" && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(name)) < core.ModuleKindES2015 {
+		c.error(name, diagnostics.Class_name_cannot_be_Object_when_targeting_ES5_and_above_with_module_0, c.moduleKind.String())
 	}
 }
 
