@@ -274,6 +274,9 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	if _, exists := p.redirectFilesByPath[changedFilePath]; exists {
 		return NewProgram(newOpts), false
 	}
+	if _, exists := p.redirectTargetsMap[changedFilePath]; exists {
+		return NewProgram(newOpts), false
+	}
 
 	oldFile := p.filesByPath[changedFilePath]
 	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
