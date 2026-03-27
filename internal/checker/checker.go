@@ -17196,7 +17196,11 @@ func (c *Checker) getTypeForBindingElementParent(node *ast.Node, checkMode Check
 	symbol := c.getSymbolOfDeclaration(node)
 	if symbol != nil {
 		resolvedType := c.valueSymbolLinks.Get(symbol).resolvedType
-		if resolvedType != nil {
+		// When the parameter is optional and strictNullChecks is enabled, the cached resolvedType
+		// may include optionality (| undefined) added by getTypeOfSymbol. Since binding element
+		// destructuring needs the type without optionality, skip the cache in this case and
+		// recompute via getTypeForVariableLikeDeclaration with includeOptionality=false.
+		if resolvedType != nil && !(c.strictNullChecks && isOptionalDeclaration(node)) {
 			return resolvedType
 		}
 	}

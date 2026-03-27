@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/bindingPatternOptionalParameterCached.ts] ////
+
+=== bindingPatternOptionalParameterCached.ts ===
+// Usage before declaration triggers getTypeOfSymbol on the parameter,
+// caching resolvedType with optionality before the binding pattern check.
+const mock: I = {
+>mock : I
+>{    m: (_) => {},} : { m: (_: { x?: boolean; } | undefined) => void; }
+
+    m: (_) => {},
+>m : (_: { x?: boolean; } | undefined) => void
+>(_) => {} : (_: { x?: boolean; } | undefined) => void
+>_ : { x?: boolean; } | undefined
+
+};
+
+interface I {
+    m({ x }?: { x?: boolean }): void
+>m : ({ x }?: { x?: boolean; }) => void
+>x : boolean | undefined
+>x : boolean | undefined
+}
+
