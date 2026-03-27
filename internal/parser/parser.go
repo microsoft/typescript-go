@@ -109,12 +109,8 @@ func newParser() *Parser {
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
-// missingListNodes is a sentinel backing array used to distinguish "missing" node lists
-// (where the expected opening token was not found) from ordinary empty node lists.
-var missingListNodes = make([]*ast.Node, 0, 1)
-
 func isMissingNodeList(list *ast.NodeList) bool {
-	return list != nil && cap(list.Nodes) == 1 && &list.Nodes[:1][0] == &missingListNodes[:1][0]
+	return list != nil && list.Nodes != nil && len(list.Nodes) == 0
 }
 
 var parserPool = sync.Pool{
@@ -717,9 +713,11 @@ func (p *Parser) parseEmptyNodeList() *ast.NodeList {
 	return p.newNodeList(core.NewTextRange(p.nodePos(), p.nodePos()), nil)
 }
 
+var missingNodeSlice = []*ast.Node{}[:0:0]
+
 func (p *Parser) createMissingList() *ast.NodeList {
 	result := p.parseEmptyNodeList()
-	result.Nodes = missingListNodes
+	result.Nodes = missingNodeSlice
 	return result
 }
 
