@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -26,14 +25,13 @@ type RuntimeSyntaxTransformer struct {
 	currentEnum                         *ast.EnumDeclarationNode
 	currentNamespace                    *ast.ModuleDeclarationNode
 	resolver                            binder.ReferenceResolver
-	evaluator                           evaluator.Evaluator
-	enumMemberCache                     map[*ast.EnumDeclarationNode]map[string]evaluator.Result
+	emitResolver                        printer.EmitResolver
 }
 
 func NewRuntimeSyntaxTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
-	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: opt.Resolver}
+	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: opt.Resolver, emitResolver: opt.EmitResolver}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 
@@ -111,8 +109,23 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitFunctionDeclaration(node.AsFunctionDeclaration())
 	case ast.KindVariableStatement:
 		node = tx.visitVariableStatement(node.AsVariableStatement())
+	case ast.KindExportDeclaration, ast.KindImportDeclaration, ast.KindImportClause:
+		if tx.currentNamespace != nil && tx.currentScope != nil && tx.currentScope.Kind != ast.KindBlock {
+			// do not emit ES6 imports and exports since they are illegal inside a namespace
+			node = nil
+		} else {
+			node = tx.Visitor().VisitEachChild(node)
+		}
 	case ast.KindImportEqualsDeclaration:
-		node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
+		if tx.currentNamespace != nil && tx.currentScope != nil && tx.currentScope.Kind != ast.KindBlock && node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
+			// do not emit ES6 imports and exports since they are illegal inside a namespace
+			node = nil
+		} else if tx.currentNamespace != nil && tx.currentScope != nil && tx.currentScope.Kind == ast.KindBlock && node.AsImportEqualsDeclaration().ModuleReference.Kind != ast.KindExternalModuleReference {
+			// inside a block within a namespace, elide internal import aliases
+			node = nil
+		} else {
+			node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
+		}
 	case ast.KindIdentifier:
 		node = tx.visitIdentifier(node)
 	case ast.KindShorthandPropertyAssignment:
@@ -169,11 +182,7 @@ func (tx *RuntimeSyntaxTransformer) isFirstDeclarationInScope(node *ast.Node) bo
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfNamespace(node *ast.Node) bool {
-	return tx.currentNamespace != nil && node.ModifierFlags()&ast.ModifierFlagsExport != 0
-}
-
-func (tx *RuntimeSyntaxTransformer) isExportOfExternalModule(node *ast.Node) bool {
-	return tx.currentNamespace == nil && node.ModifierFlags()&ast.ModifierFlagsExport != 0
+	return tx.currentNamespace != nil && (tx.currentScope == nil || tx.currentScope.Kind != ast.KindBlock) && node.ModifierFlags()&ast.ModifierFlagsExport != 0
 }
 
 // Gets an expression that represents a property name, such as `"foo"` for the identifier `foo`.
@@ -195,22 +204,6 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 	default:
 		return name
 	}
-}
-
-// Gets an expression like `E.A` or `E["A"]` that references an enum member.
-func (tx *RuntimeSyntaxTransformer) getEnumQualifiedReference(enum *ast.EnumDeclaration, member *ast.EnumMember) *ast.Expression {
-	if ast.IsIdentifier(member.Name()) {
-		return tx.getEnumQualifiedProperty(enum, member)
-	} else {
-		return tx.getEnumQualifiedElement(enum, member)
-	}
-}
-
-// Gets an expression like `E.A` that references an enum member.
-func (tx *RuntimeSyntaxTransformer) getEnumQualifiedProperty(enum *ast.EnumDeclaration, member *ast.EnumMember) *ast.Expression {
-	prop := tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(enum.AsNode()), member.Name().Clone(tx.Factory()))
-	tx.EmitContext().AddEmitFlags(prop, printer.EFNoComments|printer.EFNoNestedComments|printer.EFNoSourceMap|printer.EFNoNestedSourceMaps)
-	return prop
 }
 
 // Gets an expression like `E["A"]` that references an enum member.
@@ -239,11 +232,10 @@ func (tx *RuntimeSyntaxTransformer) getNamespaceQualifiedElement(ns *ast.Identif
 
 // Gets an expression used within the provided node's container for any exported references.
 func (tx *RuntimeSyntaxTransformer) getExportQualifiedReferenceToDeclaration(node *ast.Declaration) *ast.Expression {
-	exportName := tx.Factory().GetDeclarationNameEx(node.AsNode(), printer.NameOptions{AllowSourceMaps: true})
 	if tx.isExportOfNamespace(node.AsNode()) {
-		return tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(tx.currentNamespace), exportName)
+		return tx.Factory().GetExternalModuleOrNamespaceExportName(tx.getNamespaceContainerName(tx.currentNamespace), node, false /*allowComments*/, true /*allowSourceMaps*/)
 	}
-	return exportName
+	return tx.Factory().GetDeclarationNameEx(node.AsNode(), printer.NameOptions{AllowSourceMaps: true})
 }
 
 func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.Statement, node *ast.Declaration) ([]*ast.Statement, bool) {
@@ -252,29 +244,18 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 		return statements, false
 	}
 
-	if tx.isExportOfExternalModule(node) {
-		// export { name };
-		statements = append(statements, tx.Factory().NewExportDeclaration(
-			nil,   /*modifiers*/
-			false, /*isTypeOnly*/
-			tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{
-				tx.Factory().NewExportSpecifier(
-					false, /*isTypeOnly*/
-					nil,   /*propertyName*/
-					node.Name().Clone(tx.Factory()),
-				),
-			})),
-			nil, /*moduleSpecifier*/
-			nil, /*attributes*/
-		))
-	}
-
 	// var name;
 	name := tx.Factory().GetLocalNameEx(node, printer.AssignedNameOptions{AllowSourceMaps: true})
 	varDecl := tx.Factory().NewVariableDeclaration(name, nil, nil, nil)
 	varFlags := core.IfElse(tx.currentScope == tx.currentSourceFile, ast.NodeFlagsNone, ast.NodeFlagsLet)
 	varDecls := tx.Factory().NewVariableDeclarationList(varFlags, tx.Factory().NewNodeList([]*ast.Node{varDecl}))
-	varStatement := tx.Factory().NewVariableStatement(nil /*modifiers*/, varDecls)
+	// Replicate modifierVisitor: strip decorators, TypeScript modifiers, and export when in namespace.
+	modifierMask := ^(ast.ModifierFlagsTypeScriptModifier | ast.ModifierFlagsDecorator)
+	if tx.currentNamespace != nil {
+		modifierMask &^= ast.ModifierFlagsExport
+	}
+	modifiers := transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), modifierMask)
+	varStatement := tx.Factory().NewVariableStatement(modifiers, varDecls)
 
 	tx.EmitContext().SetOriginal(varDecl, node)
 	// !!! synthetic comments
@@ -370,26 +351,13 @@ func (tx *RuntimeSyntaxTransformer) transformEnumBody(node *ast.EnumDeclaration)
 	node = tx.Visitor().VisitEachChild(node.AsNode()).AsEnumDeclaration()
 
 	statements := []*ast.Statement{}
-	if len(node.Members.Nodes) > 0 {
-		tx.EmitContext().StartVariableEnvironment()
-
-		var autoValue jsnum.Number
-		var autoVar *ast.IdentifierNode
-		var useAutoVar bool
-		for i := range len(node.Members.Nodes) {
-			//  E[E["A"] = 0] = "A";
-			statements = tx.transformEnumMember(
-				statements,
-				node,
-				i,
-				&autoValue,
-				&autoVar,
-				&useAutoVar,
-			)
-			autoValue++
-		}
-
-		statements = tx.EmitContext().EndAndMergeVariableEnvironment(statements)
+	for i := range len(node.Members.Nodes) {
+		//  E[E["A"] = 0] = "A";
+		statements = tx.transformEnumMember(
+			statements,
+			node,
+			i,
+		)
 	}
 
 	statementList := tx.Factory().NewNodeList(statements)
@@ -404,17 +372,9 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	statements []*ast.Statement,
 	enum *ast.EnumDeclaration,
 	index int,
-	autoValue *jsnum.Number,
-	autoVar **ast.IdentifierNode,
-	useAutoVar *bool,
 ) []*ast.Statement {
 	memberNode := enum.Members.Nodes[index]
 	member := memberNode.AsEnumMember()
-
-	var memberName string
-	if ast.IsIdentifier(member.Name()) || ast.IsStringLiteralLike(member.Name()) {
-		memberName = member.Name().Text()
-	}
 
 	savedParent := tx.parentNode
 	tx.parentNode = tx.currentNode
@@ -424,88 +384,34 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	//             ^
 	expression := member.Initializer // NOTE: already visited
 
-	var useConditionalReverseMapping bool
 	var useExplicitReverseMapping bool
-	if expression == nil {
-		// Enum members without an initializer are auto-numbered. We will use constant values if there was no preceding
-		// initialized member, or if the preceding initialized member was a numeric literal.
-		if *useAutoVar {
-			// If you are using an auto-numbered member following a non-numeric literal, we assume the previous member
-			// produced a valid numeric value. This assumption is intended to be validated by the type checker prior to
-			// emit.
-			//  E[E["A"] = ++auto] = "A";
-			//             ^^^^^^
-			expression = tx.Factory().NewPrefixUnaryExpression(ast.KindPlusPlusToken, *autoVar)
-			useExplicitReverseMapping = true
-		} else {
-			// If the preceding auto value is a finite number, we can emit a numeric literal for the member initializer:
-			//  E[E["A"] = 0] = "A";
-			//             ^
-			// If not, we cannot emit a valid numeric literal for the member initializer and emit `void 0` instead:
-			//  E["A"] = void 0;
-			//           ^^^^^^
-			expression = constantExpression(*autoValue, tx.Factory())
-			if expression != nil {
-				useExplicitReverseMapping = true
-				if len(memberName) > 0 {
-					tx.cacheEnumMemberValue(enum.AsNode(), memberName, evaluator.NewResult(*autoValue, false, false, false))
-				}
-			} else {
-				expression = tx.Factory().NewVoidZeroExpression()
-			}
-		}
-	} else {
-		// Enum members with an initializer may restore auto-numbering if the initializer is a numeric literal. If we
-		// cannot syntactically determine the initializer value and the following enum member is auto-numbered, we will
-		// use an `auto` variable to perform the remaining auto-numbering at runtime.
-		if tx.evaluator == nil {
-			tx.evaluator = evaluator.NewEvaluator(tx.evaluateEntity, ast.OEKAll)
-		}
 
-		var hasNumericInitializer, hasStringInitializer bool
-		result := tx.evaluator(expression, enum.AsNode())
-		switch value := result.Value.(type) {
-		case jsnum.Number:
-			hasNumericInitializer = true
-			*autoValue = value
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression) // TODO: preserve original expression after Strada migration
-			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
-		case string:
-			hasStringInitializer = true
-			*autoValue = jsnum.NaN()
-			expression = core.Coalesce(constantExpression(value, tx.Factory()), expression) // TODO: preserve original expression after Strada migration
-			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
-		default:
-			*autoValue = jsnum.NaN()
+	parseNode := tx.EmitContext().ParseNode(memberNode)
+	result := tx.emitResolver.GetEnumMemberValue(parseNode)
+	switch value := result.Value.(type) {
+	case jsnum.Number:
+		expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+		useExplicitReverseMapping = true
+	case string:
+		expression = core.Coalesce(constantExpression(value, tx.Factory()), expression)
+	default:
+		if expression == nil {
+			expression = tx.Factory().NewVoidZeroExpression()
 		}
-
-		nextIsAuto := index+1 < len(enum.Members.Nodes) && enum.Members.Nodes[index+1].AsEnumMember().Initializer == nil
-		useExplicitReverseMapping = hasNumericInitializer || !hasStringInitializer && nextIsAuto
-		useConditionalReverseMapping = !hasNumericInitializer && !hasStringInitializer && !nextIsAuto
-		if *useAutoVar = nextIsAuto && !hasNumericInitializer && !hasStringInitializer; *useAutoVar {
-			//  E[E["A"] = auto = x] = "A";
-			//             ^^^^^^^^
-			if *autoVar == nil {
-				*autoVar = tx.Factory().NewUniqueNameEx("auto", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				tx.EmitContext().AddVariableDeclaration(*autoVar)
-			}
-			expression = tx.Factory().NewAssignmentExpression(*autoVar, expression)
-		}
+		useExplicitReverseMapping = !result.IsSyntacticallyString
 	}
 
 	// Define the enum member property:
-	//  E[E["A"] = ++auto] = "A";
+	//  E[E["A"] = 0] = "A";
 	//    ^^^^^^^^--_____
 	expression = tx.Factory().NewAssignmentExpression(
 		tx.getEnumQualifiedElement(enum, member),
 		expression,
 	)
 
-	// If this is syntactically a numeric literal initializer, or is auto numbered, then we unconditionally define the
-	// reverse mapping for the enum member.
 	if useExplicitReverseMapping {
-		//  E[E["A"] = A = ++auto] = "A";
-		//  ^^-------------------^^^^^^^
+		//  E[E["A"] = 0] = "A";
+		//  ^^--------------^^^^^
 		expression = tx.Factory().NewAssignmentExpression(
 			tx.Factory().NewElementAccessExpression(
 				tx.getNamespaceContainerName(enum.AsNode()),
@@ -521,37 +427,6 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	tx.EmitContext().AssignCommentAndSourceMapRanges(expression, member.AsNode())
 	tx.EmitContext().AssignCommentAndSourceMapRanges(memberStatement, member.AsNode())
 	statements = append(statements, memberStatement)
-
-	// If this is not auto numbered and is not syntactically a string or numeric literal initializer, then we
-	// conditionally define the reverse mapping for the enum member.
-	if useConditionalReverseMapping {
-		//  E["A"] = x;
-		//  if (typeof E.A !== "string") E.A = "A";
-		//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-		ifStatement := tx.Factory().NewIfStatement(
-			tx.Factory().NewStrictInequalityExpression(
-				tx.Factory().NewTypeOfExpression(tx.getEnumQualifiedReference(enum, member)),
-				tx.Factory().NewStringLiteral("string", ast.TokenFlagsNone),
-			),
-			tx.Factory().NewExpressionStatement(
-				tx.Factory().NewAssignmentExpression(
-					tx.Factory().NewElementAccessExpression(
-						tx.getNamespaceContainerName(enum.AsNode()),
-						nil, /*questionDotToken*/
-						tx.getEnumQualifiedReference(enum, member),
-						ast.NodeFlagsNone,
-					),
-					tx.getExpressionForPropertyName(member),
-				),
-			),
-			nil,
-		)
-
-		tx.EmitContext().AddEmitFlags(ifStatement, printer.EFSingleLine)
-		tx.EmitContext().AssignSourceMapRange(ifStatement, member.Initializer)
-		statements = append(statements, ifStatement)
-	}
 
 	tx.currentNode = tx.parentNode
 	tx.parentNode = savedParent
@@ -631,7 +506,8 @@ func (tx *RuntimeSyntaxTransformer) transformModuleBody(node *ast.ModuleDeclarat
 			statementsLocation = body.Statements.Loc
 			blockLocation = body.Loc
 		} else { // node.Body.Kind == ast.KindModuleDeclaration
-			tx.currentScope = node.AsNode()
+			// !!! Strada didn't do this; why?
+			// tx.currentScope = node.AsNode()
 			statements, _ = tx.Visitor().VisitSlice([]*ast.Node{node.Body})
 			moduleBlock := getInnermostModuleDeclarationFromDottedModule(node).Body.AsModuleBlock()
 			statementsLocation = moduleBlock.Statements.Loc.WithPos(-1)
@@ -695,7 +571,9 @@ func (tx *RuntimeSyntaxTransformer) visitImportEqualsDeclaration(node *ast.Impor
 		return varStatement
 	} else {
 		// exports.${name} = ${moduleReference};
-		return tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement := tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement.Loc = node.Loc
+		return statement
 	}
 }
 
@@ -703,9 +581,26 @@ func (tx *RuntimeSyntaxTransformer) visitVariableStatement(node *ast.VariableSta
 	if tx.isExportOfNamespace(node.AsNode()) {
 		expressions := []*ast.Expression{}
 		for _, declaration := range node.DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-			expression := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), declaration.AsVariableDeclaration())
-			if expression != nil {
-				expressions = append(expressions, expression)
+			v := declaration.AsVariableDeclaration()
+			if v.Initializer == nil {
+				continue
+			}
+			if ast.IsBindingPattern(v.Name()) {
+				expression := transformers.FlattenDestructuringAssignment(
+					&tx.Transformer,
+					tx.Visitor().VisitNode(declaration),
+					false, /*needsValue*/
+					transformers.FlattenLevelAll,
+					tx.createNamespaceExportExpression,
+				)
+				if expression != nil {
+					expressions = append(expressions, expression)
+				}
+			} else {
+				expression := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), v)
+				if expression != nil {
+					expressions = append(expressions, expression)
+				}
 			}
 		}
 		if len(expressions) == 0 {
@@ -726,11 +621,22 @@ func (tx *RuntimeSyntaxTransformer) visitVariableStatement(node *ast.VariableSta
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
 
+// createNamespaceExportExpression creates an assignment to a namespace member for use as a
+// callback during destructuring flattening.
+func (tx *RuntimeSyntaxTransformer) createNamespaceExportExpression(exportName *ast.IdentifierNode, exportValue *ast.Expression, location *core.TextRange) *ast.Expression {
+	memberName := tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(tx.currentNamespace), exportName)
+	expression := tx.Factory().NewAssignmentExpression(memberName, exportValue)
+	if location != nil {
+		expression.Loc = *location
+	}
+	return expression
+}
+
 func (tx *RuntimeSyntaxTransformer) visitFunctionDeclaration(node *ast.FunctionDeclaration) *ast.Node {
 	if tx.isExportOfNamespace(node.AsNode()) {
 		updated := tx.Factory().UpdateFunctionDeclaration(
 			node,
-			tx.Visitor().VisitModifiers(transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), ^ast.ModifierFlagsExportDefault)),
+			tx.Visitor().VisitModifiers(transformers.ExtractModifiers(tx.EmitContext(), node.Modifiers(), ^ast.ModifierFlagsExport)),
 			node.AsteriskToken,
 			tx.Visitor().VisitNode(node.Name()),
 			nil, /*typeParameters*/
@@ -770,6 +676,9 @@ func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclara
 	}
 
 	name := tx.Visitor().VisitNode(node.Name())
+	if exported && name == nil {
+		name = tx.Factory().NewGeneratedNameForNode(node.AsNode())
+	}
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
 	members := tx.Visitor().VisitNodes(node.Members)
 	parameterProperties := tx.getParameterProperties(core.Find(node.Members.Nodes, ast.IsConstructorDeclaration))
@@ -875,9 +784,11 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	for _, parameter := range parameterProperties {
 		if ast.IsIdentifier(parameter.Name()) {
 			propertyName := parameter.Name().Clone(tx.Factory())
+			propertyName.Parent = parameter.AsNode() //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
 			tx.EmitContext().AddEmitFlags(propertyName, printer.EFNoComments|printer.EFNoSourceMap)
 
 			localName := parameter.Name().Clone(tx.Factory())
+			localName.Parent = parameter.AsNode() //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
 			tx.EmitContext().AddEmitFlags(localName, printer.EFNoComments)
 
 			parameterProperty := tx.Factory().NewExpressionStatement(
@@ -897,10 +808,7 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 		}
 	}
 
-	var superPath []int
-	if ast.IsClassLike(grandparentOfBody) && ast.GetExtendsHeritageClauseElement(grandparentOfBody) != nil {
-		superPath = findSuperStatementIndexPath(rest, 0)
-	}
+	superPath := transformers.FindSuperStatementIndexPath(rest, 0)
 
 	if len(superPath) > 0 {
 		statements = append(statements, tx.transformConstructorBodyWorker(rest, superPath, parameterPropertyAssignments)...)
@@ -919,33 +827,6 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	tx.EmitContext().SetOriginal(updated, body.AsNode())
 	updated.Loc = body.Loc
 	return updated
-}
-
-// finds a path to a statement containing a `super` call, descending through `try` blocks
-func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
-	for i := start; i < len(statements); i++ {
-		statement := statements[i]
-		if getSuperCallFromStatement(statement) != nil {
-			indices := make([]int, 1, 2)
-			indices[0] = i
-			return indices
-		} else if ast.IsTryStatement(statement) {
-			return slices.Insert(findSuperStatementIndexPath(statement.AsTryStatement().TryBlock.Statements(), 0), 0, i)
-		}
-	}
-	return nil
-}
-
-func getSuperCallFromStatement(statement *ast.Statement) *ast.Node {
-	if !ast.IsExpressionStatement(statement) {
-		return nil
-	}
-
-	expression := ast.SkipParentheses(statement.Expression())
-	if ast.IsSuperCall(expression) {
-		return expression
-	}
-	return nil
 }
 
 func (tx *RuntimeSyntaxTransformer) transformConstructorBodyWorker(statementsIn []*ast.Statement, superPath []int, initializerStatements []*ast.Statement) []*ast.Statement {
@@ -1046,9 +927,6 @@ func (tx *RuntimeSyntaxTransformer) visitIdentifier(node *ast.IdentifierNode) *a
 func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.IdentifierNode) *ast.Node {
 	if (tx.currentEnum != nil || tx.currentNamespace != nil) && !transformers.IsGeneratedIdentifier(tx.EmitContext(), node) && !transformers.IsLocalName(tx.EmitContext(), node) {
 		location := tx.EmitContext().MostOriginal(node.AsNode())
-		if tx.resolver == nil {
-			tx.resolver = binder.NewReferenceResolver(tx.compilerOptions, binder.ReferenceResolverHooks{})
-		}
 		container := tx.resolver.GetReferencedExportContainer(location, false /*prefixLocals*/)
 		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) {
 			containerName := tx.getNamespaceContainerName(container)
@@ -1065,18 +943,19 @@ func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.Identifi
 }
 
 func (tx *RuntimeSyntaxTransformer) createExportStatementForDeclaration(node *ast.Declaration) *ast.Statement {
-	name := node.Name()
-	if name == nil {
-		return nil
-	}
-
+	exportName := tx.Factory().GetExternalModuleOrNamespaceExportName(tx.getNamespaceContainerName(tx.currentNamespace), node, false /*allowComments*/, true /*allowSourceMaps*/)
 	localName := tx.Factory().GetLocalName(node)
+	expression := tx.Factory().NewAssignmentExpression(exportName, localName)
 	exportAssignmentSourceMapRange := node.Loc
 	if node.Name() != nil {
-		exportAssignmentSourceMapRange = exportAssignmentSourceMapRange.WithPos(name.Pos())
+		exportAssignmentSourceMapRange = exportAssignmentSourceMapRange.WithPos(node.Name().Pos())
 	}
+	tx.EmitContext().SetSourceMapRange(expression, exportAssignmentSourceMapRange)
+
+	statement := tx.Factory().NewExpressionStatement(expression)
 	exportStatementSourceMapRange := node.Loc.WithPos(-1)
-	return tx.createExportStatement(name, localName, exportAssignmentSourceMapRange, exportStatementSourceMapRange, node)
+	tx.EmitContext().SetSourceMapRange(statement, exportStatementSourceMapRange)
+	return statement
 }
 
 func (tx *RuntimeSyntaxTransformer) createExportAssignment(name *ast.IdentifierNode, expression *ast.Expression, exportAssignmentSourceMapRange core.TextRange, original *ast.Node) *ast.Expression {
@@ -1094,52 +973,6 @@ func (tx *RuntimeSyntaxTransformer) createExportStatement(name *ast.IdentifierNo
 	return exportStatement
 }
 
-func (tx *RuntimeSyntaxTransformer) cacheEnumMemberValue(enum *ast.EnumDeclarationNode, memberName string, result evaluator.Result) {
-	if tx.enumMemberCache == nil {
-		tx.enumMemberCache = make(map[*ast.EnumDeclarationNode]map[string]evaluator.Result)
-	}
-	memberCache := tx.enumMemberCache[enum]
-	if memberCache == nil {
-		memberCache = make(map[string]evaluator.Result)
-		tx.enumMemberCache[enum] = memberCache
-	}
-	memberCache[memberName] = result
-}
-
-func (tx *RuntimeSyntaxTransformer) isReferenceToEnum(reference *ast.IdentifierNode, enum *ast.EnumDeclarationNode) bool {
-	if transformers.IsGeneratedIdentifier(tx.EmitContext(), reference) {
-		originalEnum := tx.EmitContext().MostOriginal(enum)
-		return tx.EmitContext().GetNodeForGeneratedName(reference) == originalEnum
-	}
-	return reference.Text() == enum.Name().Text()
-}
-
-func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast.Node) evaluator.Result {
-	var result evaluator.Result
-	if ast.IsEnumDeclaration(location) {
-		memberCache := tx.enumMemberCache[location]
-		if memberCache != nil {
-			switch {
-			case ast.IsIdentifier(node):
-				result = memberCache[node.Text()]
-			case ast.IsPropertyAccessExpression(node):
-				access := node.AsPropertyAccessExpression()
-				expression := access.Expression
-				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) {
-					result = memberCache[access.Name().Text()]
-				}
-			case ast.IsElementAccessExpression(node):
-				access := node.AsElementAccessExpression()
-				expression := access.Expression
-				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) && ast.IsStringLiteralLike(access.ArgumentExpression) {
-					result = memberCache[access.ArgumentExpression.Text()]
-				}
-			}
-		}
-	}
-	return result
-}
-
 func (tx *RuntimeSyntaxTransformer) shouldEmitEnumDeclaration(node *ast.EnumDeclaration) bool {
 	return !ast.IsEnumConst(node.AsNode()) || tx.compilerOptions.ShouldPreserveConstEnums()
 }
@@ -1150,7 +983,7 @@ func (tx *RuntimeSyntaxTransformer) shouldEmitModuleDeclaration(node *ast.Module
 		// If we can't find a parse tree node, assume the node is instantiated.
 		return true
 	}
-	return ast.IsInstantiatedModule(node.AsNode(), tx.compilerOptions.ShouldPreserveConstEnums())
+	return ast.IsInstantiatedModule(pn, tx.compilerOptions.ShouldPreserveConstEnums())
 }
 
 func getInnermostModuleDeclarationFromDottedModule(moduleDeclaration *ast.ModuleDeclaration) *ast.ModuleDeclaration {

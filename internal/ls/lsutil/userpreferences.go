@@ -4,11 +4,10 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 func NewDefaultUserPreferences() *UserPreferences {
@@ -155,6 +154,11 @@ type UserPreferences struct {
 	DisableLineTextInReferences bool // !!!
 	DisplayPartsForJSDoc        bool // !!!
 	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
+
+	// ------- Project Configuration -------
+
+	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
+	CustomConfigFileName string
 }
 
 type InlayHintsPreferences struct {
@@ -404,6 +408,8 @@ func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 			p.parsePreferences(values)
 		case "workspaceSymbols":
 			p.parseWorkspaceSymbols(values)
+		case "native-preview":
+			p.parseNativePreview(values)
 		case "format":
 			p.FormatCodeSettings.Parse(values)
 		case "tsserver":
@@ -590,6 +596,16 @@ func (p *UserPreferences) parseWorkspaceSymbols(prefs any) {
 	}
 }
 
+func (p *UserPreferences) parseNativePreview(prefs any) {
+	nativePreviewPrefs, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range nativePreviewPrefs {
+		p.Set(name, value)
+	}
+}
+
 func parseEnabledBool(v map[string]any) bool {
 	// vscode nested option
 	if enabled, ok := v["enabled"]; ok {
@@ -717,6 +733,14 @@ func (p *UserPreferences) Set(name string, value any) bool {
 		p.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
 		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
+	case "customconfigfilename":
+		name := strings.TrimSpace(tsoptions.ParseString(value))
+		// Validate that the custom config file name is a plain base file name
+		// (no path separators or ".." segments) to prevent path traversal.
+		if name != "" && (strings.ContainsAny(name, "/\\") || name == ".." || name == ".") {
+			name = ""
+		}
+		p.CustomConfigFileName = name
 	default:
 		if p.FormatCodeSettings == nil {
 			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
@@ -726,20 +750,8 @@ func (p *UserPreferences) Set(name string, value any) bool {
 	return true
 }
 
-func (p *UserPreferences) ParsedAutoImportFileExcludePatterns(useCaseSensitiveFileNames bool) []*regexp2.Regexp {
-	if len(p.AutoImportFileExcludePatterns) == 0 {
-		return nil
-	}
-	var patterns []*regexp2.Regexp
-	for _, spec := range p.AutoImportFileExcludePatterns {
-		pattern := vfs.GetSubPatternFromSpec(spec, "", vfs.UsageExclude, vfs.WildcardMatcher{})
-		if pattern != "" {
-			if re := vfs.GetRegexFromPattern(pattern, useCaseSensitiveFileNames); re != nil {
-				patterns = append(patterns, re)
-			}
-		}
-	}
-	return patterns
+func (p *UserPreferences) ParsedAutoImportFileExcludePatterns(useCaseSensitiveFileNames bool) *vfsmatch.SpecMatcher {
+	return vfsmatch.NewSpecMatcher(p.AutoImportFileExcludePatterns, "", vfsmatch.UsageExclude, useCaseSensitiveFileNames)
 }
 
 func (p *UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool {

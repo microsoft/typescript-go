@@ -3028,6 +3028,10 @@ var Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their
 
 var Project_0_is_out_of_date_because_it_has_errors = &Message{code: 6423, category: CategoryMessage, key: "Project_0_is_out_of_date_because_it_has_errors_6423", text: "Project '{0}' is out of date because it has errors."}
 
+var Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit = &Message{code: 6424, category: CategoryError, key: "Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit_6424", text: "Multiple 'module.exports' assignments cannot be serialized for declaration emit."}
+
+var Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit = &Message{code: 6425, category: CategoryError, key: "Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit_6425", text: "Nested CommonJS export constructs cannot be serialized for declaration emit."}
+
 var The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1 = &Message{code: 6500, category: CategoryMessage, key: "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500", text: "The expected type comes from property '{0}' which is declared here on type '{1}'"}
 
 var The_expected_type_comes_from_this_index_signature = &Message{code: 6501, category: CategoryMessage, key: "The_expected_type_comes_from_this_index_signature_6501", text: "The expected type comes from this index signature."}
@@ -4287,6 +4291,12 @@ var X_1_implementation = &Message{code: 100008, category: CategoryMessage, key: 
 var Set_the_number_of_projects_to_build_concurrently = &Message{code: 100009, category: CategoryMessage, key: "Set_the_number_of_projects_to_build_concurrently_100009", text: "Set the number of projects to build concurrently."}
 
 var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Deduplicate_packages_with_the_same_name_and_version_100011", text: "Deduplicate packages with the same name and version."}
+
+var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_100012", text: "Loading"}
+
+var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_types_for_0_100013", text: "Installing types for '{0}'"}
+
+var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -7316,6 +7326,10 @@ func keyToMessage(key Key) *Message {
 		return Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their_JavaScript_equivalent_in_output_files
 	case "Project_0_is_out_of_date_because_it_has_errors_6423":
 		return Project_0_is_out_of_date_because_it_has_errors
+	case "Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit_6424":
+		return Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit
+	case "Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit_6425":
+		return Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit
 	case "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500":
 		return The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1
 	case "The_expected_type_comes_from_this_index_signature_6501":
@@ -8576,6 +8590,12 @@ func keyToMessage(key Key) *Message {
 		return Set_the_number_of_projects_to_build_concurrently
 	case "Deduplicate_packages_with_the_same_name_and_version_100011":
 		return Deduplicate_packages_with_the_same_name_and_version
+	case "Loading_100012":
+		return Loading
+	case "Installing_types_for_0_100013":
+		return Installing_types_for_0
+	case "Project_0_100014":
+		return Project_0
 	default:
 		return nil
 	}

@@ -24,10 +24,12 @@ export class Bar2 {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bar = void 0;
 class Bar {
-    c = [2];
-    c3 = 1;
-    r = 1;
-    f = 2;
+    constructor() {
+        this.c = [2];
+        this.c3 = 1;
+        this.r = 1;
+        this.f = 2;
+    }
 }
 exports.Bar = Bar;
 //// [file2.js]
@@ -40,23 +42,29 @@ function foo(p = (ip = 10, v) => { }) {
 }
 function foo2(p = (ip = 10, v) => { }) { }
 class Bar2 {
-    r = 1;
-    f = 2;
+    constructor() {
+        this.r = 1;
+        this.f = 2;
+    }
 }
 exports.Bar2 = Bar2;
 
 
 //// [file1.d.ts]
+type N = 1;
 export declare class Bar {
     c?: readonly [1] | undefined;
-    c3?: 1 | undefined;
+    c3?: N;
     readonly r = 1;
     f: number;
 }
+export {};
 //// [file2.d.ts]
 export declare function foo(p?: (ip: number | undefined, v: number) => void): void;
-export declare function foo2(p?: (ip: number | undefined, v: number) => void): void;
+type T = number;
+export declare function foo2(p?: (ip: T | undefined, v: number) => void): void;
 export declare class Bar2 {
     readonly r = 1;
     f: number;
 }
+export {};

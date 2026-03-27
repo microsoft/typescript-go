@@ -20,13 +20,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type Snapshot struct {
 	id       uint64
 	parentId uint64
-	refCount atomic.Int32
+	disposed atomic.Bool
 
 	// Session options are immutable for the server lifetime,
 	// so can be a pointer.
@@ -77,7 +77,6 @@ func NewSnapshot(
 		autoImportsWatch:                   autoImportsWatch,
 	}
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
-	s.refCount.Store(1)
 	return s
 }
 
@@ -154,8 +153,8 @@ func (s *Snapshot) GetDirectories(path string) []string {
 	return s.fs.fs.GetAccessibleEntries(path).Directories
 }
 
-func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
-	return vfs.ReadDirectory(s.fs.fs, currentDir, path, extensions, excludes, includes, depth)
+func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
+	return vfsmatch.ReadDirectory(s.fs.fs, currentDir, path, extensions, excludes, includes, depth)
 }
 
 type APISnapshotRequest struct {
@@ -186,8 +185,12 @@ func (p *ProjectTreeRequest) Projects() []tspath.Path {
 type ResourceRequest struct {
 	// Documents are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
-	// If the requested Documents are not open, ensure that their default project is created
 	Documents []lsproto.DocumentUri
+	// ConfiguredProjectDocuments are URIs for which configured projects should be loaded
+	// (if disableSolutionSearching/disableReferencedProjectLoad settings allow),
+	// but no inferred project should be created if no configured project is found.
+	// This is used by cross-project operations like find-all-references.
+	ConfiguredProjectDocuments []lsproto.DocumentUri
 	// Update requested Projects.
 	// this is used when we want to get LS and from all the Projects the file can be part of
 	Projects []tspath.Path
@@ -248,6 +251,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			if len(change.Documents) != 0 {
 				details += fmt.Sprintf(" Documents: %v", change.Documents)
 			}
+			if len(change.ConfiguredProjectDocuments) != 0 {
+				details += fmt.Sprintf(" ConfiguredProjectDocuments: %v", change.ConfiguredProjectDocuments)
+			}
 			if len(change.Projects) != 0 {
 				details += fmt.Sprintf(" Projects: %v", change.Projects)
 			}
@@ -295,6 +301,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
 		}
 	} else {
+		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
@@ -303,6 +310,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	if change.compilerOptionsForInferredProjects != nil {
 		// !!! mark inferred projects as dirty?
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
+	}
+
+	// Compute effective customConfigFileName from user preferences
+	customConfigFileName := s.ConfigFileRegistry.customConfigFileName
+	if change.newConfig != nil {
+		customConfigFileName = change.newConfig.TS().CustomConfigFileName
 	}
 
 	newSnapshotID := session.snapshotID.Add(1)
@@ -315,13 +328,17 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
+		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
+		session.client,
 	)
 
 	if len(change.ataChanges) != 0 {
 		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
 	}
+
+	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
 
 	if !change.fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))
@@ -333,7 +350,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	for _, uri := range change.Documents {
-		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
+		projectCollectionBuilder.DidRequestFile(uri, false /*configuredProjectsOnly*/, logger.Fork("DidRequestFile"))
+	}
+
+	for _, uri := range change.ConfiguredProjectDocuments {
+		projectCollectionBuilder.DidRequestFile(uri, true /*configuredProjectsOnly*/, logger.Fork("DidRequestFile (optional)"))
 	}
 
 	for _, projectId := range change.Projects {
@@ -368,7 +389,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
 				for _, project := range projectCollection.Projects() {
-					if project.host != nil && project.host.sourceFS.Seen(entry.Key()) {
+					if project.host != nil && project.host.sourceFS.SeenFile(entry.Key()) {
 						return true
 					}
 				}
@@ -439,7 +460,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		session.programCounter.Ref(project.Program)
+		if project.Program != nil {
+			session.programCounter.Ref(project.Program)
+		}
 		if project.ProgramLastUpdate == newSnapshotID {
 			// Only ref source files when the program was created/updated in this snapshot.
 			// This matches dispose, which only derefs when programCounter reaches zero.
@@ -477,12 +500,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	return newSnapshot
 }
 
-func (s *Snapshot) Ref() {
-	s.refCount.Add(1)
-}
-
-func (s *Snapshot) Deref() bool {
-	return s.refCount.Add(-1) == 0
+func (s *Snapshot) Dispose(session *Session) {
+	if !s.disposed.CompareAndSwap(false, true) {
+		panic(fmt.Sprintf("snapshot %d: double dispose, parentId=%d", s.id, s.parentId))
+	}
+	s.dispose(session)
 }
 
 func (s *Snapshot) dispose(session *Session) {

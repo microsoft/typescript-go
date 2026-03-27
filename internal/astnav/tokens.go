@@ -56,7 +56,12 @@ func getTokenAtPosition(
 			prevSubtree = node
 		}
 
-		if node.End() < position || node.Kind != ast.KindEndOfFile && node.End() == position {
+		// A node "contains" the position if position < end, except nodes at the file end
+		// treat end as inclusive (there's nowhere else to look). This applies to the EOF
+		// token itself, and to JSDoc nodes reaching EOF (e.g. unterminated JSDoc comments).
+		if node.End() < position || node.End() == position &&
+			node.Kind != ast.KindEndOfFile &&
+			(!ast.IsJSDocKind(node.Kind) || node.End() != sourceFile.EndOfFileToken.End()) {
 			return -1
 		}
 		nodePos := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
@@ -638,13 +643,15 @@ func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFi
 			scanner := scanner.GetScannerForSourceFile(file, startPos)
 			token := scanner.Token()
 			tokenFullStart := scanner.TokenFullStart()
-			tokenStart := scanner.TokenStart()
 			tokenEnd := scanner.TokenEnd()
 			flags := scanner.TokenFlags()
-			if tokenStart == previousToken.End() {
+			// Use tokenFullStart (which includes leading trivia) to match TS's
+			// findNextToken behavior where `n.pos === previousToken.end` is checked
+			// (TS's pos includes trivia, same as Go's Pos()/tokenFullStart).
+			if tokenFullStart == previousToken.End() {
 				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags)
 			}
-			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenStart))
+			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenFullStart))
 		}
 		// Case 3: no answer.
 		return nil

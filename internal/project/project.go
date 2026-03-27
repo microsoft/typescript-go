@@ -22,7 +22,7 @@ const (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -trimprefix=Kind -output=project_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w project_stringer_generated.go
+//go:generate npx dprint fmt project_stringer_generated.go
 
 type Kind int
 
@@ -72,10 +72,8 @@ type Project struct {
 	// Only set before actually loading config file to get actual project references
 	potentialProjectReferences *collections.Set[tspath.Path]
 
-	programFilesWatch       *WatchedFiles[PatternsAndIgnored]
-	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
-	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
-	typingsWatch            *WatchedFiles[PatternsAndIgnored]
+	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
+	typingsWatch      *WatchedFiles[PatternsAndIgnored]
 
 	checkerPool *CheckerPool
 
@@ -150,17 +148,7 @@ func NewProject(
 
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	project.programFilesWatch = NewWatchedFiles(
-		"non-root program files for "+configFileName,
-		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-		core.Identity,
-	)
-	project.failedLookupsWatch = NewWatchedFiles(
-		"failed lookups for "+configFileName,
-		lsproto.WatchKindCreate,
-		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-	)
-	project.affectingLocationsWatch = NewWatchedFiles(
-		"affecting locations for "+configFileName,
+		"program files for "+configFileName,
 		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 	)
@@ -176,6 +164,19 @@ func NewProject(
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+// DisplayName returns a short, human-readable name for the project,
+// relative to the given workspace root directory.
+// For configured projects, this is the config file path made relative.
+// For inferred projects, this is the last component of the current directory.
+func (p *Project) DisplayName(cwd string) string {
+	if p.Kind == KindInferred {
+		return tspath.GetBaseFileName(p.currentDirectory)
+	}
+	return tspath.ConvertToRelativePath(p.configFileName, tspath.ComparePathsOptions{
+		CurrentDirectory: cwd,
+	})
 }
 
 func (p *Project) ID() tspath.Path {
@@ -236,10 +237,8 @@ func (p *Project) Clone() *Project {
 		ProgramLastUpdate:           p.ProgramLastUpdate,
 		potentialProjectReferences:  p.potentialProjectReferences,
 
-		programFilesWatch:       p.programFilesWatch,
-		failedLookupsWatch:      p.failedLookupsWatch,
-		affectingLocationsWatch: p.affectingLocationsWatch,
-		typingsWatch:            p.typingsWatch,
+		programFilesWatch: p.programFilesWatch,
+		typingsWatch:      p.typingsWatch,
 
 		checkerPool: p.checkerPool,
 
@@ -360,19 +359,8 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	}
 }
 
-func (p *Project) CloneWatchers(workspaceDir string, libDir string) (programFilesWatch *WatchedFiles[PatternsAndIgnored], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
-	failedLookups := make(map[tspath.Path]string)
-	affectingLocations := make(map[tspath.Path]string)
-	programFiles := getNonRootFileGlobs(workspaceDir, libDir, p.Program.GetSourceFiles(), p.CommandLine.FileNamesByPath(), tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
-		CurrentDirectory:          p.currentDirectory,
-	})
-	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedModules())
-	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedTypeReferenceDirectives())
-	programFilesWatch = p.programFilesWatch.Clone(programFiles)
-	failedLookupsWatch = p.failedLookupsWatch.Clone(failedLookups)
-	affectingLocationsWatch = p.affectingLocationsWatch.Clone(affectingLocations)
-	return programFilesWatch, failedLookupsWatch, affectingLocationsWatch
+func (p *Project) CloneWatchers() *WatchedFiles[*collections.SyncSet[tspath.Path]] {
+	return p.programFilesWatch.Clone(p.host.sourceFS.seenFiles)
 }
 
 func (p *Project) log(msg string) {
@@ -392,7 +380,9 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder 
 		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
-				builder.WriteString("\t\t" + sourceFile.FileName() + "\n")
+				builder.WriteString("\t\t")
+				builder.WriteString(sourceFile.FileName())
+				builder.WriteString("\n")
 			}
 			// !!!
 			// if writeFileExplanation {}

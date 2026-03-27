@@ -31,6 +31,12 @@
             {
                 "title": "TypeScript Native Preview",
                 "properties": {
+                    "typescript.native-preview.customConfigFileName": {
+                        "type": "string",
+                        "default": "",
+                        "description": "Custom config file name to use e.g. 'tsconfig.all.json', before defaulting to tsconfig.json/jsconfig.json.",
+                        "tags": ["experimental"]
+                    },
                     "typescript.native-preview.trace.server": {
                         "type": "string",
                         "enum": [
@@ -167,11 +173,11 @@
     },
     "dependencies": {
         "@vscode/extension-telemetry": "^1.5.1",
-        "vscode-languageclient": "^10.0.0-next.20"
+        "vscode-languageclient": "^10.0.0-next.21"
     },
     "devDependencies": {
         "@types/vscode": "~1.106.1",
         "@vscode/vsce": "^3.7.1",
-        "esbuild": "^0.27.3"
+        "esbuild": "^0.27.4"
     }
 }

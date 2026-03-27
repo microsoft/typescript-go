@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -187,6 +188,8 @@ type Server struct {
 	npmInstall func(cwd string, args []string) ([]byte, error)
 
 	cpuProfiler pprof.CPUProfiler
+
+	projectProgress *projectLoadingProgress
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -247,7 +250,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceDiagnosticRefreshInfo, nil); err != nil {
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceDiagnosticRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh diagnostics: %w", err)
 	}
 
@@ -264,7 +267,7 @@ func (s *Server) RefreshInlayHints(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceInlayHintRefreshInfo, nil); err != nil {
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceInlayHintRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh inlay hints: %w", err)
 	}
 	return nil
@@ -275,10 +278,24 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceCodeLensRefreshInfo, nil); err != nil {
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceCodeLensRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh code lens: %w", err)
 	}
 	return nil
+}
+
+// ProgressStart implements project.Client.
+func (s *Server) ProgressStart(message *diagnostics.Message, args ...any) {
+	if s.projectProgress != nil {
+		s.projectProgress.start(message, args...)
+	}
+}
+
+// ProgressFinish implements project.Client.
+func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
+	if s.projectProgress != nil {
+		s.projectProgress.finish(message, args...)
+	}
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
@@ -550,6 +567,11 @@ func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 	})
 }
 
+type userFacingRequestFailedError string
+
+func (e userFacingRequestFailedError) Error() string { return string(e) }
+func (e userFacingRequestFailedError) Unwrap() error { return lsproto.ErrorCodeRequestFailed }
+
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	// Do not send error response for notifications,
 	// except for parse errors which may occur before determining if the message is a request or notification.
@@ -602,16 +624,20 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			idStr = " (" + req.ID.String() + ")"
 		}
 		if err != nil {
-			s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
+			if _, ok := errors.AsType[userFacingRequestFailedError](err); !ok {
+				s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
+			} else {
+				s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+			}
 			return nil, err
 		}
 		if doAsyncWork != nil {
 			return func() error {
-				if ctx.Err() != nil {
-					return ctx.Err()
-				}
+				// note: ctx.Err() has to be checked in the async work to allow async handlers to cleanup resources correctly
 				asyncWorkErr := doAsyncWork()
-				s.logger.Info(core.IfElse(asyncWorkErr != nil, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
+				_, isUserFacing := errors.AsType[userFacingRequestFailedError](asyncWorkErr)
+				isRealError := asyncWorkErr != nil && !isUserFacing
+				s.logger.Info(core.IfElse(isRealError, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
 				return asyncWorkErr
 			}, nil
 		}
@@ -662,6 +688,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareRenameInfo, (*Server).handlePrepareRename)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentLinkedEditingRangeInfo, (*Server).handleLinkedEditingRange)
 
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
@@ -687,6 +715,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CustomStopCPUProfileInfo, (*Server).handleStopCPUProfile)
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
+	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
 	return handlers
 })
 
@@ -766,7 +795,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		languageService, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		languageService, snapshot, err := s.session.GetLanguageServiceAndSnapshot(ctx, params.TextDocumentURI())
 		if err != nil {
 			return nil, err
 		}
@@ -774,7 +803,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 			defer s.recover(req)
 			resp, lsErr := fn(s, ctx, languageService, params)
 			if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
-				languageService, lsErr = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocumentURI())
+				languageService, lsErr = s.session.GetLanguageServiceWithAutoImports(ctx, snapshot, params.TextDocumentURI())
 				if lsErr != nil {
 					return lsErr
 				}
@@ -818,6 +847,9 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			resp, lsErr := fn(defaultLs, ctx, params, orchestrator)
 			if lsErr != nil {
 				return lsErr
+			}
+			if ctx.Err() != nil {
+				return ctx.Err()
 			}
 			return s.sendResult(req.ID, resp)
 		}, nil
@@ -902,6 +934,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
+	if s.clientCapabilities.Window.WorkDoneProgress {
+		s.projectProgress = newProjectLoadingProgress(s)
+	}
 
 	capabilitiesJSON, err := json.MarshalIndent(&s.clientCapabilities, "", "\t")
 	if err != nil {
@@ -964,7 +999,8 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				// !!! other options
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
-				TriggerCharacters: &[]string{"(", ","},
+				TriggerCharacters:   &[]string{"(", ",", "<"},
+				RetriggerCharacters: &[]string{")"},
 			},
 			DocumentFormattingProvider: &lsproto.BooleanOrDocumentFormattingOptions{
 				Boolean: new(true),
@@ -986,12 +1022,17 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				Boolean: new(true),
 			},
 			RenameProvider: &lsproto.BooleanOrRenameOptions{
-				Boolean: new(true),
+				RenameOptions: &lsproto.RenameOptions{
+					PrepareProvider: new(true),
+				},
 			},
 			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
 				Boolean: new(true),
 			},
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
+				Boolean: new(true),
+			},
+			LinkedEditingRangeProvider: &lsproto.BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{
 				Boolean: new(true),
 			},
 			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
@@ -1102,12 +1143,12 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	return nil
 }
 
-func (s *Server) handleShutdown(ctx context.Context, params any, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
+func (s *Server) handleShutdown(ctx context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
 	s.session.Close()
 	return lsproto.ShutdownResponse{}, nil
 }
 
-func (s *Server) handleExit(ctx context.Context, params any) error {
+func (s *Server) handleExit(ctx context.Context, _ lsproto.NoParams) error {
 	return io.EOF
 }
 
@@ -1168,6 +1209,19 @@ func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params
 	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
 }
 
+func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.LanguageService, params *lsproto.PrepareRenameParams) (lsproto.PrepareRenameResponse, error) {
+	info := languageService.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
+	if !info.CanRename {
+		return lsproto.PrepareRenameResponse{}, userFacingRequestFailedError(info.LocalizedErrorMessage)
+	}
+	return lsproto.PrepareRenameResponse{
+		PrepareRenamePlaceholder: &lsproto.PrepareRenamePlaceholder{
+			Range:       info.TriggerSpan,
+			Placeholder: info.DisplayName,
+		},
+	}, nil
+}
+
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
 	return languageService.ProvideSignatureHelp(
 		ctx,
@@ -1183,6 +1237,10 @@ func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService,
 
 func (s *Server) handleClosingTagCompletion(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.CustomClosingTagCompletionResponse, error) {
 	return ls.ProvideClosingTagCompletion(ctx, params)
+}
+
+func (s *Server) handleLinkedEditingRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
+	return ls.ProvideLinkedEditingRange(ctx, params)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
@@ -1436,7 +1494,7 @@ func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 
 // Developer/debugging command handlers
 
-func (s *Server) handleRunGC(_ context.Context, _ any, _ *lsproto.RequestMessage) (lsproto.RunGCResponse, error) {
+func (s *Server) handleRunGC(_ context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.RunGCResponse, error) {
 	pprof.RunGC()
 	s.logger.Info("GC triggered")
 	return lsproto.Null{}, nil
@@ -1469,11 +1527,26 @@ func (s *Server) handleStartCPUProfile(_ context.Context, params *lsproto.Profil
 	return lsproto.Null{}, nil
 }
 
-func (s *Server) handleStopCPUProfile(_ context.Context, _ any, _ *lsproto.RequestMessage) (*lsproto.ProfileResult, error) {
+func (s *Server) handleStopCPUProfile(_ context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (*lsproto.ProfileResult, error) {
 	filePath, err := s.cpuProfiler.StopCPUProfile()
 	if err != nil {
 		return nil, err
 	}
 	s.logger.Info("CPU profile saved to: ", filePath)
 	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectInfoParams, _ *lsproto.RequestMessage) (lsproto.CustomProjectInfoResponse, error) {
+	uri := params.TextDocument.Uri
+	defaultProject, _, _, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+	configFilePath := ""
+	if defaultProject != nil && defaultProject.Kind == project.KindConfigured {
+		configFilePath = defaultProject.Name()
+	}
+	return &lsproto.ProjectInfoResult{
+		ConfigFilePath: configFilePath,
+	}, nil
 }
