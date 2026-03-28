@@ -1,0 +1,10 @@
+--- old.parserErrorRecovery_ParameterList4.errors.txt
++++ new.parserErrorRecovery_ParameterList4.errors.txt
+@@= skipped -5, +5 lines =@@
+     function f(a,¬) {
+                ~
+ !!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+-                 ~
++                 
+ !!! error TS1127: Invalid character.
+     }

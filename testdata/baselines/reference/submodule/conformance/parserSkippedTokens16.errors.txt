@@ -24,7 +24,7 @@ parserSkippedTokens16.ts(8,14): error TS1109: Expression expected.
     function Foo      () ¬   { }
              ~~~
 !!! error TS7010: 'Foo', which lacks return-type annotation, implicitly has an 'any' return type.
-                         ~
+                         
 !!! error TS1127: Invalid character.
     4+:5
       ~

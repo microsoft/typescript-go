@@ -33,16 +33,7 @@
  ==== constructorWithIncompleteTypeAnnotation.ts (93 errors) ====
      declare module "fs" {
          export class File {
-@@= skipped -138, +135 lines =@@
-                 var undef = undefined;
-     
-                 var  _\uD4A5\u7204\uC316\uE59F  = local;
--                                        
-+                                        ~
- !!! error TS1127: Invalid character.
-                 var мир = local;
-     
-@@= skipped -138, +138 lines =@@
+@@= skipped -276, +273 lines =@@
                  var i = a[1];/*[]*/
                  i = i + i - i * i / i % i & i | i ^ i;/*+ - * / % & | ^*/
                  var b  =  true && false || true ^ false;/*& | ^*/

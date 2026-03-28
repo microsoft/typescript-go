@@ -6,6 +6,6 @@ parserErrorRecovery_ParameterList4.ts(1,14): error TS1127: Invalid character.
     function f(a,¬) {
                ~
 !!! error TS7006: Parameter 'a' implicitly has an 'any' type.
-                 ~
+                 
 !!! error TS1127: Invalid character.
     }

@@ -2132,7 +2132,7 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 
 func (s *Scanner) scanInvalidCharacter() {
 	_, size := s.charAndSize()
-	s.errorAt(diagnostics.Invalid_character, s.pos, size)
+	s.errorAt(diagnostics.Invalid_character, s.pos, 0)
 	s.pos += size
 	s.token = ast.KindUnknown
 }
