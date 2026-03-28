@@ -2132,7 +2132,7 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 
 func (s *Scanner) scanInvalidCharacter() {
 	_, size := s.charAndSize()
-	s.errorAt(diagnostics.Invalid_character, s.pos, 0)
+	s.errorAt(diagnostics.Invalid_character, s.pos, 0) // length=0 matches Strada, which calls error(Diagnostics.Invalid_character) without a length
 	s.pos += size
 	s.token = ast.KindUnknown
 }
