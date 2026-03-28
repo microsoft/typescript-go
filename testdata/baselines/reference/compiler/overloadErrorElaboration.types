@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/overloadErrorElaboration.ts] ////
+
+=== overloadErrorElaboration.ts ===
+// Two overloads
+function foo(bar: string): string;
+>foo : { (bar: string): string; (bar: number): number; }
+>bar : string
+
+function foo(bar: number): number;
+>foo : { (bar: string): string; (bar: number): number; }
+>bar : number
+
+function foo(bar: any): any {
+>foo : { (bar: string): string; (bar: number): number; }
+>bar : any
+
+    return bar;
+>bar : any
+}
+
+var x = foo(true);
+>x : never
+>foo(true) : never
+>foo : { (bar: string): string; (bar: number): number; }
+>true : true
+
