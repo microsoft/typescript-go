@@ -11,12 +11,13 @@ import (
 )
 
 // CheckerPool is implemented by the project system to provide checkers with
-// request-scoped lifetime and reclamation. Both methods return a checker and a
-// release function that must be called when the caller is done with the checker.
+// request-scoped lifetime and reclamation. It returns a checker and a release
+// function that must be called when the caller is done with the checker.
 // The returned checker must not be accessed concurrently; each acquisition is exclusive.
+// If file is non-nil, the pool may use it as an affinity hint to return the same
+// checker for the same file across calls.
 type CheckerPool interface {
-	GetChecker(ctx context.Context) (*checker.Checker, func())
-	GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
+	GetChecker(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
 }
 
 type checkerPool struct {
@@ -49,16 +50,24 @@ func newCheckerPool(program *Program) *checkerPool {
 	return pool
 }
 
-// GetCheckerForFile returns the checker for the given file with exclusive access.
-// The returned release function must be called when the caller is done.
-func (p *checkerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	return p.getCheckerForFileExclusive(ctx, file)
+// GetChecker implements CheckerPool. When file is non-nil, returns the checker
+// associated with that file; otherwise returns the first checker.
+func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	if file != nil {
+		return p.getCheckerForFileExclusive(ctx, file)
+	}
+	p.createCheckers()
+	c := p.checkers[0]
+	p.locks[0].Lock()
+	return c, sync.OnceFunc(func() {
+		p.locks[0].Unlock()
+	})
 }
 
 // getCheckerForFileNonExclusive returns the checker for the given file without locking.
 // This is only safe when the caller guarantees no concurrent access to the same checker,
 // e.g. for read-only operations like obtaining an emit resolver.
-func (p *checkerPool) getCheckerForFileNonExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+func (p *checkerPool) getCheckerForFileNonExclusive(file *ast.SourceFile) (*checker.Checker, func()) {
 	p.createCheckers()
 	return p.fileAssociations[file], noop
 }
@@ -73,17 +82,8 @@ func (p *checkerPool) getCheckerForFileExclusive(ctx context.Context, file *ast.
 	})
 }
 
-func (p *checkerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
-	p.createCheckers()
-	c := p.checkers[0]
-	p.locks[0].Lock()
-	return c, sync.OnceFunc(func() {
-		p.locks[0].Unlock()
-	})
-}
-
 // getCheckerNonExclusive returns the first checker without locking.
-func (p *checkerPool) getCheckerNonExclusive(ctx context.Context) (*checker.Checker, func()) {
+func (p *checkerPool) getCheckerNonExclusive() (*checker.Checker, func()) {
 	p.createCheckers()
 	return p.checkers[0], noop
 }

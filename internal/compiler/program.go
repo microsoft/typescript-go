@@ -415,9 +415,9 @@ func (p *Program) BindSourceFiles() {
 // Return the type checker associated with the program.
 func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func()) {
 	if p.compilerCheckerPool != nil {
-		return p.compilerCheckerPool.getCheckerNonExclusive(ctx)
+		return p.compilerCheckerPool.getCheckerNonExclusive()
 	}
-	return p.checkerPool.GetChecker(ctx)
+	return p.checkerPool.GetChecker(ctx, nil)
 }
 
 func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
@@ -432,9 +432,9 @@ func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
 // representations of types) should be obtained from checkers returned by this method.
 func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	if p.compilerCheckerPool != nil {
-		return p.compilerCheckerPool.getCheckerForFileNonExclusive(ctx, file)
+		return p.compilerCheckerPool.getCheckerForFileNonExclusive(file)
 	}
-	return p.checkerPool.GetCheckerForFile(ctx, file)
+	return p.checkerPool.GetChecker(ctx, file)
 }
 
 // Return a checker for the given file, locked to the current thread to prevent data races from multiple threads
@@ -443,7 +443,7 @@ func (p *Program) GetTypeCheckerForFileExclusive(ctx context.Context, file *ast.
 	if p.compilerCheckerPool != nil {
 		return p.compilerCheckerPool.getCheckerForFileExclusive(ctx, file)
 	}
-	return p.checkerPool.GetCheckerForFile(ctx, file)
+	return p.checkerPool.GetChecker(ctx, file)
 }
 
 func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
@@ -525,7 +525,7 @@ func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, source
 				continue
 			}
 			wg.Queue(func() {
-				c, done := p.checkerPool.GetCheckerForFile(ctx, file)
+				c, done := p.checkerPool.GetChecker(ctx, file)
 				diagnostics[i] = collect(ctx, c, file)
 				done()
 			})

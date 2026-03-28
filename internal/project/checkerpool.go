@@ -20,7 +20,6 @@ type CheckerPool struct {
 	cond                   *sync.Cond
 	createCheckersOnce     sync.Once
 	checkers               []*checker.Checker
-	locks                  []sync.Mutex
 	inUse                  map[*checker.Checker]bool
 	fileAssociations       map[*ast.SourceFile]int
 	requestAssociations    map[string]int
@@ -37,7 +36,6 @@ func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg str
 		program:                program,
 		maxCheckers:            maxCheckers,
 		checkers:               make([]*checker.Checker, maxCheckers),
-		locks:                  make([]sync.Mutex, maxCheckers),
 		inUse:                  make(map[*checker.Checker]bool),
 		requestAssociations:    make(map[string]int),
 		log:                    log,
@@ -48,7 +46,7 @@ func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg str
 	return pool
 }
 
-func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+func (p *CheckerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -59,33 +57,33 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 		}
 	}
 
-	if p.fileAssociations == nil {
-		p.fileAssociations = make(map[*ast.SourceFile]int)
-	}
+	if file != nil {
+		if p.fileAssociations == nil {
+			p.fileAssociations = make(map[*ast.SourceFile]int)
+		}
 
-	if index, ok := p.fileAssociations[file]; ok {
-		checker := p.checkers[index]
-		if checker != nil {
-			if inUse := p.inUse[checker]; !inUse {
-				p.inUse[checker] = true
-				if requestID != "" {
-					p.requestAssociations[requestID] = index
+		if index, ok := p.fileAssociations[file]; ok {
+			checker := p.checkers[index]
+			if checker != nil {
+				if inUse := p.inUse[checker]; !inUse {
+					p.inUse[checker] = true
+					if requestID != "" {
+						p.requestAssociations[requestID] = index
+					}
+					return checker, p.createRelease(requestID, index, checker)
 				}
-				return checker, p.createRelease(requestID, index, checker)
 			}
 		}
 	}
 
 	checker, index := p.getCheckerLocked(requestID)
-	p.fileAssociations[file] = index
+	if file != nil {
+		if p.fileAssociations == nil {
+			p.fileAssociations = make(map[*ast.SourceFile]int)
+		}
+		p.fileAssociations[file] = index
+	}
 	return checker, p.createRelease(requestID, index, checker)
-}
-
-func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	checker, index := p.getCheckerLocked(core.GetRequestID(ctx))
-	return checker, p.createRelease(core.GetRequestID(ctx), index, checker)
 }
 
 func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
@@ -226,31 +224,6 @@ func (p *CheckerPool) createCheckerLocked() (*checker.Checker, int) {
 		}
 	}
 	panic("called createCheckerLocked when pool is full")
-}
-
-func (p *CheckerPool) isRequestCheckerInUse(requestID string) bool {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	if index, ok := p.requestAssociations[requestID]; ok {
-		checker := p.checkers[index]
-		if checker != nil {
-			return p.inUse[checker]
-		}
-	}
-	return false
-}
-
-func (p *CheckerPool) size() int {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	size := 0
-	for _, checker := range p.checkers {
-		if checker != nil {
-			size++
-		}
-	}
-	return size
 }
 
 func noop() {}
