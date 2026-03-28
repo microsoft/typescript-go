@@ -1171,7 +1171,9 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 
 	pool, ok := p.checkerPool.(*checkerPool)
 	if !ok {
-		return nil // !!! Global diagnostics in the editor?
+		// In the editor, global diagnostics are accumulated by the project's CheckerPool
+		// and published to the tsconfig URI via push diagnostics.
+		return nil
 	}
 
 	globalDiagnostics := make([][]*ast.Diagnostic, len(pool.checkers))

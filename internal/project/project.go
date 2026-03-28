@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -205,6 +206,21 @@ func (p *Project) Id() tspath.Path {
 
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
+}
+
+// GetProjectDiagnostics returns program diagnostics combined with any accumulated
+// global diagnostics from the checker pool. These are the diagnostics reported on
+// the tsconfig.json file.
+func (p *Project) GetProjectDiagnostics() []*ast.Diagnostic {
+	programDiags := p.Program.GetProgramDiagnostics()
+	if p.checkerPool == nil {
+		return programDiags
+	}
+	globalDiags := p.checkerPool.GetGlobalDiagnostics()
+	if len(globalDiags) == 0 {
+		return programDiags
+	}
+	return compiler.SortAndDeduplicateDiagnostics(append(programDiags, globalDiags...))
 }
 
 func (p *Project) HasFile(fileName string) bool {

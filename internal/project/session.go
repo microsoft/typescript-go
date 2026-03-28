@@ -1084,7 +1084,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(), newSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, removedProject *Project) {
 			if removedProject.Kind != KindConfigured {
@@ -1096,7 +1096,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(), newSnapshot.converters)
 		},
 	)
 }
@@ -1119,6 +1119,32 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 		Diagnostics: lspDiagnostics,
 	}); err != nil && s.options.LoggingEnabled {
 		s.logger.Logf("Error publishing diagnostics: %v", err)
+	}
+}
+
+// EnqueuePublishGlobalDiagnostics schedules a background check for new accumulated
+// global diagnostics from checker pools, re-publishing tsconfig diagnostics if changed.
+func (s *Session) EnqueuePublishGlobalDiagnostics() {
+	if !s.options.PushDiagnosticsEnabled {
+		return
+	}
+	s.backgroundQueue.Enqueue(s.backgroundCtx, s.publishGlobalDiagnostics)
+}
+
+func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
+	s.snapshotMu.RLock()
+	snapshot := s.snapshot
+	snapshot.ref()
+	s.snapshotMu.RUnlock()
+	defer snapshot.Deref(s)
+
+	for _, project := range snapshot.ProjectCollection.Projects() {
+		if project.Kind != KindConfigured || project.Program == nil || project.checkerPool == nil {
+			continue
+		}
+		if project.checkerPool.GlobalDiagnosticsChanged() {
+			s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(), snapshot.converters)
+		}
 	}
 }
 

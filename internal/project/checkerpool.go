@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -15,28 +16,32 @@ type CheckerPool struct {
 	maxCheckers int
 	program     *compiler.Program
 
-	mu                  sync.Mutex
-	cond                *sync.Cond
-	createCheckersOnce  sync.Once
-	checkers            []*checker.Checker
-	locks               []sync.Mutex
-	inUse               map[*checker.Checker]bool
-	fileAssociations    map[*ast.SourceFile]int
-	requestAssociations map[string]int
-	log                 func(msg string)
+	mu                     sync.Mutex
+	cond                   *sync.Cond
+	createCheckersOnce     sync.Once
+	checkers               []*checker.Checker
+	locks                  []sync.Mutex
+	inUse                  map[*checker.Checker]bool
+	fileAssociations       map[*ast.SourceFile]int
+	requestAssociations    map[string]int
+	log                    func(msg string)
+	globalDiagAccumulated  []*ast.Diagnostic
+	globalDiagChanged      bool
+	globalDiagCheckerCount []int // per-checker count of globals last seen
 }
 
 var _ compiler.CheckerPool = (*CheckerPool)(nil)
 
 func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg string)) *CheckerPool {
 	pool := &CheckerPool{
-		program:             program,
-		maxCheckers:         maxCheckers,
-		checkers:            make([]*checker.Checker, maxCheckers),
-		locks:               make([]sync.Mutex, maxCheckers),
-		inUse:               make(map[*checker.Checker]bool),
-		requestAssociations: make(map[string]int),
-		log:                 log,
+		program:                program,
+		maxCheckers:            maxCheckers,
+		checkers:               make([]*checker.Checker, maxCheckers),
+		locks:                  make([]sync.Mutex, maxCheckers),
+		inUse:                  make(map[*checker.Checker]bool),
+		requestAssociations:    make(map[string]int),
+		log:                    log,
+		globalDiagCheckerCount: make([]int, maxCheckers),
 	}
 
 	pool.cond = sync.NewCond(&pool.mu)
@@ -160,17 +165,55 @@ func (p *CheckerPool) createRelease(requestId string, index int, checker *checke
 		p.mu.Lock()
 		defer p.mu.Unlock()
 
+		// Collect new global diagnostics while we still exclusively hold the checker.
+		p.mergeGlobalDiagnosticsFromCheckerLocked(index, checker)
+
 		delete(p.requestAssociations, requestId)
 		if checker.WasCanceled() {
 			// Canceled checkers must be disposed
 			p.log(fmt.Sprintf("checkerpool: Checker for request %s was canceled, disposing it", requestId))
 			p.checkers[index] = nil
 			delete(p.inUse, checker)
+			p.globalDiagCheckerCount[index] = 0
 		} else {
 			p.inUse[checker] = false
 		}
 		p.cond.Signal()
 	}
+}
+
+// mergeGlobalDiagnosticsFromCheckerLocked checks if the given checker has produced new global
+// diagnostics since the last time we looked, and if so merges them into the accumulated set.
+// Must be called with p.mu held.
+func (p *CheckerPool) mergeGlobalDiagnosticsFromCheckerLocked(index int, c *checker.Checker) {
+	globals := c.GetGlobalDiagnostics()
+	if len(globals) == p.globalDiagCheckerCount[index] {
+		return
+	}
+	p.globalDiagCheckerCount[index] = len(globals)
+	before := len(p.globalDiagAccumulated)
+	p.globalDiagAccumulated = compiler.SortAndDeduplicateDiagnostics(append(p.globalDiagAccumulated, globals...))
+	if len(p.globalDiagAccumulated) != before {
+		p.globalDiagChanged = true
+	}
+}
+
+// GetGlobalDiagnostics returns the accumulated global diagnostics collected from
+// all checkers that have been used so far in this pool's lifetime.
+func (p *CheckerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return slices.Clone(p.globalDiagAccumulated)
+}
+
+// GlobalDiagnosticsChanged reports whether global diagnostics have changed since
+// the last call, and resets the flag.
+func (p *CheckerPool) GlobalDiagnosticsChanged() bool {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	changed := p.globalDiagChanged
+	p.globalDiagChanged = false
+	return changed
 }
 
 func (p *CheckerPool) isFullLocked() bool {
