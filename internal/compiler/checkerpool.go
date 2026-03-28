@@ -144,8 +144,8 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			p.locks[checkerIdx].Lock()
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
-				if p.fileAssociations[file] == p.checkers[checkerIdx] {
-					cb(p.checkers[checkerIdx], i, file)
+				if c := p.checkers[checkerIdx]; c == p.fileAssociations[file] {
+					cb(c, i, file)
 				}
 			}
 		})
