@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/overloadErrorElaborationMultiDiag.ts] ////
+
+=== overloadErrorElaborationMultiDiag.ts ===
+// Two overloads with multiple diagnostics per candidate (maxDiagCount > 1)
+// This should select only the candidate with fewest diagnostics
+function baz(x: string, y: string): string;
+>baz : { (x: string, y: string): string; (x: number, y: number): number; }
+>x : string
+>y : string
+
+function baz(x: number, y: number): number;
+>baz : { (x: string, y: string): string; (x: number, y: number): number; }
+>x : number
+>y : number
+
+function baz(x: any, y: any): any {
+>baz : { (x: string, y: string): string; (x: number, y: number): number; }
+>x : any
+>y : any
+
+    return x;
+>x : any
+}
+
+var z = baz(true, true);
+>z : never
+>baz(true, true) : never
+>baz : { (x: string, y: string): string; (x: number, y: number): number; }
+>true : true
+>true : true
+

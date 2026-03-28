@@ -1,0 +1,32 @@
+//// [tests/cases/compiler/overloadErrorElaboration3.ts] ////
+
+=== overloadErrorElaboration3.ts ===
+// Three overloads — should show per-overload errors
+function bar(x: string): string;
+>bar : { (x: string): string; (x: number): number; (x: boolean): boolean; }
+>x : string
+
+function bar(x: number): number;
+>bar : { (x: string): string; (x: number): number; (x: boolean): boolean; }
+>x : number
+
+function bar(x: boolean): boolean;
+>bar : { (x: string): string; (x: number): number; (x: boolean): boolean; }
+>x : boolean
+
+function bar(x: any): any {
+>bar : { (x: string): string; (x: number): number; (x: boolean): boolean; }
+>x : any
+
+    return x;
+>x : any
+}
+
+var y = bar({ a: 1 });
+>y : never
+>bar({ a: 1 }) : never
+>bar : { (x: string): string; (x: number): number; (x: boolean): boolean; }
+>{ a: 1 } : { a: number; }
+>a : number
+>1 : 1
+
