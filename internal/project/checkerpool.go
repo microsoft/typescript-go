@@ -165,9 +165,6 @@ func (p *CheckerPool) createRelease(requestId string, index int, checker *checke
 		p.mu.Lock()
 		defer p.mu.Unlock()
 
-		// Collect new global diagnostics while we still exclusively hold the checker.
-		p.mergeGlobalDiagnosticsFromCheckerLocked(index, checker)
-
 		delete(p.requestAssociations, requestId)
 		if checker.WasCanceled() {
 			// Canceled checkers must be disposed
@@ -176,6 +173,7 @@ func (p *CheckerPool) createRelease(requestId string, index int, checker *checke
 			delete(p.inUse, checker)
 			p.globalDiagCheckerCount[index] = 0
 		} else {
+			p.mergeGlobalDiagnosticsFromCheckerLocked(index, checker)
 			p.inUse[checker] = false
 		}
 		p.cond.Signal()
@@ -206,9 +204,9 @@ func (p *CheckerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
 	return slices.Clone(p.globalDiagAccumulated)
 }
 
-// GlobalDiagnosticsChanged reports whether global diagnostics have changed since
-// the last call, and resets the flag.
-func (p *CheckerPool) GlobalDiagnosticsChanged() bool {
+// TakeNewGlobalDiagnostics reports whether new global diagnostics have been
+// accumulated since the last call, and resets the flag.
+func (p *CheckerPool) TakeNewGlobalDiagnostics() bool {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	changed := p.globalDiagChanged

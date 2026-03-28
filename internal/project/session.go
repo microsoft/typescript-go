@@ -140,6 +140,11 @@ type Session struct {
 	// are using each glob.
 	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
 	watchesMu sync.Mutex
+
+	// globalDiagPublishPending is set to true when a global diagnostics publish
+	// task should be enqueued. It is reset when the task runs, coalescing multiple
+	// requests into a single background task.
+	globalDiagPublishPending atomic.Bool
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -1124,14 +1129,19 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 
 // EnqueuePublishGlobalDiagnostics schedules a background check for new accumulated
 // global diagnostics from checker pools, re-publishing tsconfig diagnostics if changed.
+// Multiple calls are coalesced into a single background task.
 func (s *Session) EnqueuePublishGlobalDiagnostics() {
 	if !s.options.PushDiagnosticsEnabled {
 		return
 	}
-	s.backgroundQueue.Enqueue(s.backgroundCtx, s.publishGlobalDiagnostics)
+	if s.globalDiagPublishPending.CompareAndSwap(false, true) {
+		s.backgroundQueue.Enqueue(s.backgroundCtx, s.publishGlobalDiagnostics)
+	}
 }
 
 func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
+	s.globalDiagPublishPending.Store(false)
+
 	s.snapshotMu.RLock()
 	snapshot := s.snapshot
 	snapshot.ref()
@@ -1142,7 +1152,7 @@ func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
 		if project.Kind != KindConfigured || project.checkerPool == nil {
 			continue
 		}
-		if project.checkerPool.GlobalDiagnosticsChanged() {
+		if project.checkerPool.TakeNewGlobalDiagnostics() {
 			s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(ctx), snapshot.converters)
 		}
 	}
