@@ -14,6 +14,7 @@ type CheckerPool interface {
 	GetChecker(ctx context.Context) (*checker.Checker, func())
 	GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
 	GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
+	GetGlobalDiagnostics() []*ast.Diagnostic
 }
 
 type checkerPool struct {
@@ -99,6 +100,15 @@ func (p *checkerPool) forEachCheckerParallel(cb func(idx int, c *checker.Checker
 		})
 	}
 	wg.RunAndWait()
+}
+
+func (p *checkerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
+	p.createCheckers()
+	globalDiagnostics := make([][]*ast.Diagnostic, len(p.checkers))
+	p.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
+		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
+	})
+	return SortAndDeduplicateDiagnostics(slices.Concat(globalDiagnostics...))
 }
 
 func noop() {}

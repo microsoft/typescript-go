@@ -1,6 +1,7 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -208,19 +209,14 @@ func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
 }
 
-// GetProjectDiagnostics returns program diagnostics combined with any accumulated
-// global diagnostics from the checker pool. These are the diagnostics reported on
+// GetProjectDiagnostics returns program diagnostics combined with any global
+// diagnostics discovered during checking. These are the diagnostics reported on
 // the tsconfig.json file.
-func (p *Project) GetProjectDiagnostics() []*ast.Diagnostic {
-	programDiags := p.Program.GetProgramDiagnostics()
-	if p.checkerPool == nil {
-		return programDiags
-	}
-	globalDiags := p.checkerPool.GetGlobalDiagnostics()
-	if len(globalDiags) == 0 {
-		return programDiags
-	}
-	return compiler.SortAndDeduplicateDiagnostics(append(programDiags, globalDiags...))
+func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	return compiler.SortAndDeduplicateDiagnostics(core.Concatenate(
+		p.Program.GetProgramDiagnostics(),
+		p.Program.GetGlobalDiagnostics(ctx),
+	))
 }
 
 func (p *Project) HasFile(fileName string) bool {

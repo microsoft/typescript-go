@@ -1168,20 +1168,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	if len(p.files) == 0 {
 		return nil
 	}
-
-	pool, ok := p.checkerPool.(*checkerPool)
-	if !ok {
-		// In the editor, global diagnostics are accumulated by the project's CheckerPool
-		// and published to the tsconfig URI via push diagnostics.
-		return nil
-	}
-
-	globalDiagnostics := make([][]*ast.Diagnostic, len(pool.checkers))
-	pool.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
-		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
-	})
-
-	return SortAndDeduplicateDiagnostics(slices.Concat(globalDiagnostics...))
+	return p.checkerPool.GetGlobalDiagnostics()
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {

@@ -1084,7 +1084,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, removedProject *Project) {
 			if removedProject.Kind != KindConfigured {
@@ -1096,7 +1096,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
 		},
 	)
 }
@@ -1139,11 +1139,11 @@ func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
 	defer snapshot.Deref(s)
 
 	for _, project := range snapshot.ProjectCollection.Projects() {
-		if project.Kind != KindConfigured || project.Program == nil || project.checkerPool == nil {
+		if project.Kind != KindConfigured || project.checkerPool == nil {
 			continue
 		}
 		if project.checkerPool.GlobalDiagnosticsChanged() {
-			s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(), snapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(ctx), snapshot.converters)
 		}
 	}
 }
