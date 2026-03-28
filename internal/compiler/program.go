@@ -484,6 +484,9 @@ func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles [
 // cache locality. Otherwise, falls back to per-file concurrent collection.
 func (p *Program) collectCheckerDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collect func(context.Context, *checker.Checker, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
+		if p.SkipTypeChecking(sourceFile, false) {
+			return nil
+		}
 		c, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
 		result := collect(ctx, c, sourceFile)
 		done()
@@ -502,6 +505,9 @@ func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, source
 	} else {
 		wg := core.NewWorkGroup(p.SingleThreaded())
 		for i, file := range sourceFiles {
+			if p.SkipTypeChecking(file, false) {
+				continue
+			}
 			wg.Queue(func() {
 				c, done := p.checkerPool.GetCheckerForFileExclusive(ctx, file)
 				diagnostics[i] = collect(ctx, c, file)
