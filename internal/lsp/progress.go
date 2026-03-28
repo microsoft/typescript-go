@@ -142,8 +142,13 @@ func (p *projectLoadingProgress) run() {
 					tokenID++
 					token = fmt.Sprintf("tsgo-loading-%d", tokenID)
 					begun = false
-					delayFired = false
-					delay = time.NewTimer(p.delay)
+					if p.delay <= 0 {
+						delayFired = true
+						p.reporter.createWorkDoneProgress(token)
+					} else {
+						delayFired = false
+						delay = time.NewTimer(p.delay)
+					}
 				}
 				if delayFired {
 					begun = p.beginOrReport(token, title, text, begun)

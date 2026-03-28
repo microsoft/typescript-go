@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -28,8 +29,8 @@ func (f *fakeProgressReporter) done() <-chan struct{} {
 	return f.ctx.Done()
 }
 
-func (f *fakeProgressReporter) localize(msg *diagnostics.Message, _ ...any) string {
-	return msg.String()
+func (f *fakeProgressReporter) localize(msg *diagnostics.Message, args ...any) string {
+	return msg.Localize(locale.Default, args...)
 }
 
 func (f *fakeProgressReporter) createWorkDoneProgress(token string) {
@@ -385,6 +386,46 @@ func TestProgress(t *testing.T) {
 			// Shutdown while the delay timer is still pending.
 			cancel()
 			synctest.Wait()
+		})
+	})
+
+	t.Run("ZeroDelay", func(t *testing.T) {
+		t.Parallel()
+		synctest.Test(t, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			reporter := &fakeProgressReporter{ctx: ctx}
+			p := newProjectLoadingProgressFromReporter(reporter, 0)
+
+			// With zero delay, progress should begin immediately.
+			p.start(diagnostics.Project_0, "proj")
+			synctest.Wait()
+
+			calls := reporter.getCalls()
+			if len(calls) != 2 {
+				t.Fatalf("expected 2 calls (create + begin), got %d: %v", len(calls), calls)
+			}
+			if calls[0].method != "create" {
+				t.Fatalf("expected create, got %v", calls[0])
+			}
+			if calls[1].method != "begin" {
+				t.Fatalf("expected begin, got %v", calls[1])
+			}
+			if calls[1].msg != "Project 'proj'" {
+				t.Fatalf("expected message %q, got %q", "Project 'proj'", calls[1].msg)
+			}
+
+			// Start+finish should still produce begin and end.
+			p.finish(diagnostics.Project_0, "proj")
+			synctest.Wait()
+
+			calls = reporter.getCalls()
+			last := calls[len(calls)-1]
+			if last.method != "end" {
+				t.Fatalf("expected end, got %v", last)
+			}
+
+			cancel()
 		})
 	})
 
