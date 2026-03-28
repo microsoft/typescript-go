@@ -131,39 +131,22 @@ func (p *checkerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
 	return SortAndDeduplicateDiagnostics(slices.Concat(globalDiagnostics...))
 }
 
-// forEachCheckerGroupDo groups the provided files by their associated checker and
-// processes each group in parallel, one task per checker. Within each group, files
-// are processed sequentially in their original order relative to the input slice.
-// The callback receives the checker (held exclusively) along with the file index and file.
+// forEachCheckerGroupDo runs one task per checker in parallel. Each task iterates
+// the provided files, processing only those assigned to its checker. Within each
+// checker's set, files are visited in their original order.
 func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.SourceFile, singleThreaded bool, cb func(c *checker.Checker, fileIndex int, file *ast.SourceFile)) {
 	p.createCheckers()
 
 	checkerCount := len(p.checkers)
-	// Build reverse map from checker pointer to index for efficient grouping.
-	checkerIndices := make(map[*checker.Checker]int, checkerCount)
-	for i, c := range p.checkers {
-		checkerIndices[c] = i
-	}
-
-	// Group file indices by their associated checker, preserving relative order.
-	groups := make([][]int, checkerCount)
-	for i, file := range files {
-		c := p.fileAssociations[file]
-		idx := checkerIndices[c]
-		groups[idx] = append(groups[idx], i)
-	}
-
-	// Process each checker's files in parallel, one task per checker.
 	wg := core.NewWorkGroup(singleThreaded)
 	for checkerIdx := range checkerCount {
-		if len(groups[checkerIdx]) == 0 {
-			continue
-		}
 		wg.Queue(func() {
 			p.locks[checkerIdx].Lock()
 			defer p.locks[checkerIdx].Unlock()
-			for _, fileIdx := range groups[checkerIdx] {
-				cb(p.checkers[checkerIdx], fileIdx, files[fileIdx])
+			for i, file := range files {
+				if p.fileAssociations[file] == p.checkers[checkerIdx] {
+					cb(p.checkers[checkerIdx], i, file)
+				}
 			}
 		})
 	}
