@@ -113,7 +113,6 @@ func (p *projectLoadingProgress) run() {
 		token   string // current token; empty if no progress active
 		tokenID int
 		begun   bool // whether "begin" has been sent for the current token
-		title   = p.reporter.localize(diagnostics.Loading)
 	)
 
 	var delay *time.Timer
@@ -151,7 +150,7 @@ func (p *projectLoadingProgress) run() {
 					}
 				}
 				if delayFired {
-					begun = p.beginOrReport(token, title, text, begun)
+					begun = p.beginOrReport(token, text, begun)
 				}
 			} else {
 				count := loading.GetOrZero(text)
@@ -186,7 +185,7 @@ func (p *projectLoadingProgress) run() {
 			if token != "" && loading.Size() > 0 {
 				p.reporter.createWorkDoneProgress(token)
 				first := core.FirstOrNilSeq(loading.Keys())
-				begun = p.beginOrReport(token, title, first, begun)
+				begun = p.beginOrReport(token, first, begun)
 			}
 
 		case <-p.reporter.done():
@@ -198,8 +197,9 @@ func (p *projectLoadingProgress) run() {
 
 // beginOrReport sends WorkDoneProgressBegin if not yet begun, otherwise
 // sends WorkDoneProgressReport. Returns true to indicate begun state.
-func (p *projectLoadingProgress) beginOrReport(token, title, text string, begun bool) bool {
+func (p *projectLoadingProgress) beginOrReport(token, text string, begun bool) bool {
 	if !begun {
+		title := p.reporter.localize(diagnostics.Loading)
 		p.reporter.sendProgress(token, lsproto.WorkDoneProgressBeginOrReportOrEnd{
 			Begin: &lsproto.WorkDoneProgressBegin{
 				Title:   title,

@@ -361,7 +361,7 @@ func TestProgress(t *testing.T) {
 			synctest.Wait()
 
 			// Fill the channel buffer so start/finish block on send.
-			for range 64 {
+			for range cap(p.ch) {
 				p.ch <- progressEvent{message: diagnostics.Project_0, args: []any{"fill"}}
 			}
 
