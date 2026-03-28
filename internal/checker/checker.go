@@ -9439,22 +9439,26 @@ func (c *Checker) tryGetRestTypeOfSignature(signature *Signature) *Type {
 func (c *Checker) reportCallResolutionErrors(node *ast.Node, s *CallState, signatures []*Signature, headMessage *diagnostics.Message) {
 	switch {
 	case len(s.candidatesForArgumentError) != 0:
-		last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
-		var diags []*ast.Diagnostic
-		c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, &diags)
-		for _, diagnostic := range diags {
-			if len(s.candidatesForArgumentError) > 1 {
-				diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
-				diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
+		if len(s.candidatesForArgumentError) >= 2 && len(s.candidatesForArgumentError) <= 3 {
+			c.reportOverloadErrorsPerCandidate(node, s, signatures, headMessage)
+		} else {
+			last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
+			var diags []*ast.Diagnostic
+			c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, &diags)
+			for _, diagnostic := range diags {
+				if len(s.candidatesForArgumentError) > 3 {
+					diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
+					diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
+				}
+				if headMessage != nil {
+					diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
+				}
+				if last.declaration != nil && len(s.candidatesForArgumentError) > 3 {
+					diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
+				}
+				c.addImplementationSuccessElaboration(s, last, diagnostic)
+				c.diagnostics.Add(diagnostic)
 			}
-			if headMessage != nil {
-				diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
-			}
-			if last.declaration != nil && len(s.candidatesForArgumentError) > 1 {
-				diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
-			}
-			c.addImplementationSuccessElaboration(s, last, diagnostic)
-			c.diagnostics.Add(diagnostic)
 		}
 	case s.candidateForArgumentArityError != nil:
 		c.diagnostics.Add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
@@ -9470,6 +9474,97 @@ func (c *Checker) reportCallResolutionErrors(node *ast.Node, s *CallState, signa
 			c.diagnostics.Add(c.getArgumentArityError(s.node, signaturesWithCorrectTypeArgumentArity, s.args, headMessage))
 		}
 	}
+}
+
+func (c *Checker) reportOverloadErrorsPerCandidate(node *ast.Node, s *CallState, signatures []*Signature, headMessage *diagnostics.Message) {
+	// For 2-3 overload candidates, show each overload's error individually.
+	// Collect diagnostics per candidate.
+	type candidateDiags struct {
+		diags     []*ast.Diagnostic
+		signature *Signature
+	}
+	allCandidateDiags := make([]candidateDiags, 0, len(s.candidatesForArgumentError))
+	maxDiagCount := 0
+	for _, candidate := range s.candidatesForArgumentError {
+		var diags []*ast.Diagnostic
+		c.isSignatureApplicable(s.node, s.args, candidate, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, &diags)
+		allCandidateDiags = append(allCandidateDiags, candidateDiags{diags: diags, signature: candidate})
+		if len(diags) > maxDiagCount {
+			maxDiagCount = len(diags)
+		}
+	}
+
+	// Wrap each candidate's diagnostics with "Overload X of Y, 'sig', gave the following error."
+	type wrappedCandidate struct {
+		wrapped []*ast.Diagnostic
+		related []*ast.Diagnostic
+	}
+	wrappedCandidates := make([]wrappedCandidate, 0, len(allCandidateDiags))
+	for i, cd := range allCandidateDiags {
+		sigStr := c.signatureToString(cd.signature)
+		var wrapped []*ast.Diagnostic
+		var related []*ast.Diagnostic
+		for _, diag := range cd.diags {
+			chain := ast.NewDiagnosticChain(diag, diagnostics.Overload_0_of_1_2_gave_the_following_error, i+1, len(signatures), sigStr)
+			// Collect related info from the chain (NewDiagnosticChain copies it up)
+			related = append(related, chain.RelatedInformation()...)
+			// Clear related info on the chain since we'll merge it onto the root
+			chain.SetRelatedInfo(nil)
+			wrapped = append(wrapped, chain)
+		}
+		wrappedCandidates = append(wrappedCandidates, wrappedCandidate{wrapped: wrapped, related: related})
+	}
+
+	// Select diagnostics: if max diagnostic count > 1, use only the candidate with fewest diagnostics;
+	// otherwise flatten all diagnostics together.
+	var selectedWrapped []*ast.Diagnostic
+	var selectedRelated []*ast.Diagnostic
+	var elaborationCandidate *Signature
+	if maxDiagCount > 1 {
+		// Pick the candidate with fewest diagnostics
+		minIdx := 0
+		minCount := len(allCandidateDiags[0].diags)
+		for i := 1; i < len(allCandidateDiags); i++ {
+			if len(allCandidateDiags[i].diags) < minCount {
+				minCount = len(allCandidateDiags[i].diags)
+				minIdx = i
+			}
+		}
+		selectedWrapped = wrappedCandidates[minIdx].wrapped
+		selectedRelated = wrappedCandidates[minIdx].related
+		elaborationCandidate = allCandidateDiags[minIdx].signature
+	} else {
+		for _, wc := range wrappedCandidates {
+			selectedWrapped = append(selectedWrapped, wc.wrapped...)
+			selectedRelated = append(selectedRelated, wc.related...)
+		}
+		elaborationCandidate = s.candidatesForArgumentError[0]
+	}
+
+	if len(selectedWrapped) == 0 {
+		return
+	}
+
+	// Build the root diagnostic: "No overload matches this call" with the selected per-overload
+	// diagnostics as message chain children.
+	// Use the file/loc from the first wrapped diagnostic for the root.
+	first := selectedWrapped[0]
+	rootDiag := ast.NewDiagnostic(first.File(), first.Loc(), diagnostics.No_overload_matches_this_call)
+	for _, child := range selectedWrapped {
+		rootDiag.AddMessageChain(child)
+	}
+	if headMessage != nil {
+		rootDiag = ast.NewDiagnosticChain(rootDiag, headMessage)
+	}
+
+	// Merge related info from all selected diagnostics.
+	for _, rel := range selectedRelated {
+		rootDiag.AddRelatedInfo(rel)
+	}
+
+	// Add implementation success elaboration for the FIRST candidate (not last).
+	c.addImplementationSuccessElaboration(s, elaborationCandidate, rootDiag)
+	c.diagnostics.Add(rootDiag)
 }
 
 func (c *Checker) addImplementationSuccessElaboration(s *CallState, failed *Signature, diagnostic *ast.Diagnostic) {
