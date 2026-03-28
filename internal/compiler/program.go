@@ -477,6 +477,42 @@ func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles [
 	return diagnostics
 }
 
+// collectCheckerDiagnostics collects diagnostics from a single file or all files,
+// using a callback that receives the checker for each file. When the checker pool
+// supports grouped iteration (compiler pool), files are grouped by checker and
+// processed in parallel with one task per checker, reducing contention and improving
+// cache locality. Otherwise, falls back to per-file concurrent collection.
+func (p *Program) collectCheckerDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collect func(context.Context, *checker.Checker, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+	if sourceFile != nil {
+		c, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
+		result := collect(ctx, c, sourceFile)
+		done()
+		return SortAndDeduplicateDiagnostics(result)
+	}
+	return SortAndDeduplicateDiagnostics(slices.Concat(p.collectCheckerDiagnosticsFromFiles(ctx, p.files, collect)...))
+}
+
+// collectCheckerDiagnosticsFromFiles collects checker diagnostics for a list of files.
+func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, collect func(context.Context, *checker.Checker, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
+	diagnostics := make([][]*ast.Diagnostic, len(sourceFiles))
+	if pool, ok := p.checkerPool.(*checkerPool); ok {
+		pool.forEachCheckerGroupDo(ctx, sourceFiles, p.SingleThreaded(), func(c *checker.Checker, fileIndex int, file *ast.SourceFile) {
+			diagnostics[fileIndex] = collect(ctx, c, file)
+		})
+	} else {
+		wg := core.NewWorkGroup(p.SingleThreaded())
+		for i, file := range sourceFiles {
+			wg.Queue(func() {
+				c, done := p.checkerPool.GetCheckerForFileExclusive(ctx, file)
+				diagnostics[i] = collect(ctx, c, file)
+				done()
+			})
+		}
+		wg.RunAndWait()
+	}
+	return diagnostics
+}
+
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		diags := core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
@@ -533,20 +569,20 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSemanticDiagnosticsForFile)
+	return p.collectCheckerDiagnostics(ctx, sourceFile, p.getSemanticDiagnosticsWithChecker)
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
-	diagnostics := p.collectDiagnosticsFromFiles(ctx, sourceFiles, true /*concurrent*/, p.getBindAndCheckDiagnosticsForFile)
+	allDiags := p.collectCheckerDiagnosticsFromFiles(ctx, sourceFiles, p.getBindAndCheckDiagnosticsWithChecker)
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
-	for i, diags := range diagnostics {
+	for i, diags := range allDiags {
 		result[sourceFiles[i]] = SortAndDeduplicateDiagnostics(diags)
 	}
 	return result
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSuggestionDiagnosticsForFile)
+	return p.collectCheckerDiagnostics(ctx, sourceFile, p.getSuggestionDiagnosticsWithChecker)
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
@@ -1184,31 +1220,25 @@ func FilterNoEmitSemanticDiagnostics(diagnostics []*ast.Diagnostic, options *cor
 	})
 }
 
-func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getSemanticDiagnosticsWithChecker(ctx context.Context, c *checker.Checker, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return core.Concatenate(
-		FilterNoEmitSemanticDiagnostics(p.getBindAndCheckDiagnosticsForFile(ctx, sourceFile), p.Options()),
+		FilterNoEmitSemanticDiagnostics(p.getBindAndCheckDiagnosticsWithChecker(ctx, c, sourceFile), p.Options()),
 		p.GetIncludeProcessorDiagnostics(sourceFile),
 	)
 }
 
-// getBindAndCheckDiagnosticsForFile gets semantic diagnostics for a single file,
-// including bind diagnostics, checker diagnostics, and handling of @ts-ignore/@ts-expect-error directives.
-func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+// getBindAndCheckDiagnosticsWithChecker gets semantic diagnostics for a single file using a
+// caller-provided checker, including bind diagnostics, checker diagnostics, and handling
+// of @ts-ignore/@ts-expect-error directives.
+func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fileChecker *checker.Checker, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	compilerOptions := p.Options()
 	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
 
-	// IIFE to release checker as soon as possible.
-	diags := func() []*ast.Diagnostic {
-		fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
-		defer done()
-
-		// Getting a checker will force a bind, so this will be populated.
-		diags := slices.Clip(sourceFile.BindDiagnostics())
-		diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
-		return diags
-	}()
+	// Checker creation forces binding, so bind diagnostics will be populated.
+	diags := slices.Clip(sourceFile.BindDiagnostics())
+	diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
 
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
@@ -1285,15 +1315,12 @@ func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFi
 	return diagnostics
 }
 
-func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getSuggestionDiagnosticsWithChecker(ctx context.Context, fileChecker *checker.Checker, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
 
-	fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
-	defer done()
-
-	// Getting a checker will force a bind, so this will be populated.
+	// Checker creation forces binding, so bind suggestion diagnostics will be populated.
 	diags := slices.Clip(sourceFile.BindSuggestionDiagnostics)
 	diags = append(diags, fileChecker.GetSuggestionDiagnostics(ctx, sourceFile)...)
 
