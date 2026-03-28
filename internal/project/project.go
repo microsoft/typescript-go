@@ -213,9 +213,13 @@ func (p *Project) GetProgram() *compiler.Program {
 // diagnostics discovered during checking. These are the diagnostics reported on
 // the tsconfig.json file.
 func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	var globalDiags []*ast.Diagnostic
+	if p.checkerPool != nil {
+		globalDiags = p.checkerPool.GetGlobalDiagnostics()
+	}
 	return compiler.SortAndDeduplicateDiagnostics(core.Concatenate(
 		p.Program.GetProgramDiagnostics(),
-		p.Program.GetGlobalDiagnostics(ctx),
+		globalDiags,
 	))
 }
 

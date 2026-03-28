@@ -75,7 +75,12 @@ type packageNamesInfo struct {
 
 type Program struct {
 	opts        ProgramOptions
-	checkerPool CheckerPool
+	checkerPool CheckerPool // always set; used as fallback for project system pools
+
+	// compilerCheckerPool is set only when the built-in compiler checker pool is in use
+	// (i.e. CreateCheckerPool was not provided). It enables grouped parallel iteration,
+	// non-exclusive access for emit, and direct global diagnostics collection.
+	compilerCheckerPool *checkerPool
 
 	comparePathsOptions tspath.ComparePathsOptions
 
@@ -313,7 +318,9 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(p)
+		pool := newCheckerPool(p)
+		p.checkerPool = pool
+		p.compilerCheckerPool = pool
 	}
 }
 
@@ -407,12 +414,15 @@ func (p *Program) BindSourceFiles() {
 
 // Return the type checker associated with the program.
 func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func()) {
+	if p.compilerCheckerPool != nil {
+		return p.compilerCheckerPool.getCheckerNonExclusive(ctx)
+	}
 	return p.checkerPool.GetChecker(ctx)
 }
 
 func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
-	if pool, ok := p.checkerPool.(*checkerPool); ok {
-		pool.forEachCheckerParallel(cb)
+	if p.compilerCheckerPool != nil {
+		p.compilerCheckerPool.forEachCheckerParallel(cb)
 	}
 }
 
@@ -421,13 +431,19 @@ func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
 // types obtained from different checkers, so only non-type data (such as diagnostics or string
 // representations of types) should be obtained from checkers returned by this method.
 func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	if p.compilerCheckerPool != nil {
+		return p.compilerCheckerPool.getCheckerForFileNonExclusive(ctx, file)
+	}
 	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
 // Return a checker for the given file, locked to the current thread to prevent data races from multiple threads
 // accessing the same checker. The lock will be released when the `done` function is called.
 func (p *Program) GetTypeCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	return p.checkerPool.GetCheckerForFileExclusive(ctx, file)
+	if p.compilerCheckerPool != nil {
+		return p.compilerCheckerPool.getCheckerForFileExclusive(ctx, file)
+	}
+	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
 func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
@@ -487,7 +503,7 @@ func (p *Program) collectCheckerDiagnostics(ctx context.Context, sourceFile *ast
 		if p.SkipTypeChecking(sourceFile, false) {
 			return nil
 		}
-		c, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
+		c, done := p.GetTypeCheckerForFileExclusive(ctx, sourceFile)
 		result := collect(ctx, c, sourceFile)
 		done()
 		return SortAndDeduplicateDiagnostics(result)
@@ -498,8 +514,8 @@ func (p *Program) collectCheckerDiagnostics(ctx context.Context, sourceFile *ast
 // collectCheckerDiagnosticsFromFiles collects checker diagnostics for a list of files.
 func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, collect func(context.Context, *checker.Checker, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
 	diagnostics := make([][]*ast.Diagnostic, len(sourceFiles))
-	if pool, ok := p.checkerPool.(*checkerPool); ok {
-		pool.forEachCheckerGroupDo(ctx, sourceFiles, p.SingleThreaded(), func(c *checker.Checker, fileIndex int, file *ast.SourceFile) {
+	if p.compilerCheckerPool != nil {
+		p.compilerCheckerPool.forEachCheckerGroupDo(ctx, sourceFiles, p.SingleThreaded(), func(c *checker.Checker, fileIndex int, file *ast.SourceFile) {
 			diagnostics[fileIndex] = collect(ctx, c, file)
 		})
 	} else {
@@ -509,7 +525,7 @@ func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, source
 				continue
 			}
 			wg.Queue(func() {
-				c, done := p.checkerPool.GetCheckerForFileExclusive(ctx, file)
+				c, done := p.checkerPool.GetCheckerForFile(ctx, file)
 				diagnostics[i] = collect(ctx, c, file)
 				done()
 			})
@@ -1210,7 +1226,12 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	if len(p.files) == 0 {
 		return nil
 	}
-	return p.checkerPool.GetGlobalDiagnostics()
+	if p.compilerCheckerPool != nil {
+		return p.compilerCheckerPool.GetGlobalDiagnostics()
+	}
+	// For external pools (project system), global diagnostics are collected
+	// incrementally as checkers are used, not via a bulk query.
+	return nil
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {

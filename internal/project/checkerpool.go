@@ -81,12 +81,6 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return checker, p.createRelease(requestID, index, checker)
 }
 
-// GetCheckerForFileExclusive is the same as GetCheckerForFile but also locks a mutex associated with the checker.
-// Call `done` to free the lock.
-func (p *CheckerPool) GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	return p.GetCheckerForFile(ctx, file)
-}
-
 func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
