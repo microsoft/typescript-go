@@ -808,8 +808,14 @@ func canUsePropertyAccess(name string) bool {
 	}
 	// Internal symbol names (prefixed with \xFE) should use property access notation,
 	// matching Strada's behavior where __-prefixed names are valid identifiers.
+	// However, \xFE is also used for late-bound known symbols (\xFE@...) and private
+	// identifier symbol keys (\xFE#...), which are not valid property-access identifiers.
 	if strings.HasPrefix(name, ast.InternalSymbolNamePrefix) {
-		return true
+		if len(name) <= len(ast.InternalSymbolNamePrefix) {
+			return true
+		}
+		next := name[len(ast.InternalSymbolNamePrefix)]
+		return next != '@' && next != '#'
 	}
 	// TODO: in strada, this only used `isIdentifierStart` on the first character, while this checks the whole string for validity
 	// - possible strada bug?
