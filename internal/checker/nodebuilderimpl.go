@@ -1245,7 +1245,7 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 
 func (b *NodeBuilderImpl) typeParameterToDeclarationWithConstraint(typeParameter *Type, constraintNode *ast.TypeNode) *ast.TypeParameterDeclarationNode {
 	restoreFlags := b.saveRestoreFlags()
-	b.ctx.flags &= ^nodebuilder.FlagsWriteTypeParametersInQualifiedName // Avoids potential infinite loop when building for a claimspace with a generic
+	b.ctx.flags &^= nodebuilder.FlagsWriteTypeParametersInQualifiedName // Avoids potential infinite loop when building for a claimspace with a generic
 	modifiers := ast.CreateModifiersFromModifierFlags(b.ch.getTypeParameterModifiers(typeParameter), b.f.NewModifier)
 	var modifiersList *ast.ModifierList
 	if len(modifiers) > 0 {
@@ -1598,8 +1598,7 @@ func (b *NodeBuilderImpl) symbolToParameterDeclaration(parameterSymbol *ast.Symb
 		dotDotDotToken = b.f.NewToken(ast.KindDotDotDotToken)
 	}
 	name := b.parameterToParameterDeclarationName(parameterSymbol, parameterDeclaration)
-	// TODO: isOptionalParameter on emit resolver here is silly - hoist to checker and reexpose on emit resolver?
-	isOptional := parameterDeclaration != nil && b.ch.GetEmitResolver().isOptionalParameter(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsOptionalParameter != 0
+	isOptional := parameterDeclaration != nil && b.ch.isOptionalParameter(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsOptionalParameter != 0
 	var questionToken *ast.Node
 	if isOptional {
 		questionToken = b.f.NewToken(ast.KindQuestionToken)
@@ -1958,7 +1957,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 	suppressAny := b.ctx.flags&nodebuilder.FlagsSuppressAnyReturnType != 0
 	restoreFlags := b.saveRestoreFlags()
 	if suppressAny {
-		b.ctx.flags &= ^nodebuilder.FlagsSuppressAnyReturnType // suppress only toplevel `any`s
+		b.ctx.flags &^= nodebuilder.FlagsSuppressAnyReturnType // suppress only toplevel `any`s
 	}
 	var returnTypeNode *ast.Node
 
@@ -1974,7 +1973,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 		returnType = b.ch.getReturnTypeOfSignature(signature)
 	}
 	if !(suppressAny && IsTypeAny(returnType)) {
-		if tryReuse && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
+		if tryReuse && b.ctx.enclosingDeclaration != nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
 			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
 			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
 			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
@@ -2320,8 +2319,12 @@ func (b *NodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 		if !b.ch.isErrorType(propertyType) && !b.ch.isErrorType(writeType) {
 			propDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindPropertyDeclaration)
 			if propertyType != writeType || propertySymbol.Parent.Flags&ast.SymbolFlagsClass != 0 && propDeclaration == nil {
+				symbolMapper := b.ch.valueSymbolLinks.Get(propertySymbol).mapper
 				if getterDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindGetAccessor); getterDeclaration != nil {
 					getterSignature := b.ch.getSignatureFromDeclaration(getterDeclaration)
+					if symbolMapper != nil {
+						getterSignature = b.ch.instantiateSignature(getterSignature, symbolMapper)
+					}
 					getter := b.signatureToSignatureDeclarationHelper(getterSignature, ast.KindGetAccessor, &SignatureToSignatureDeclarationOptions{
 						name: propertyName,
 					})
@@ -2330,6 +2333,9 @@ func (b *NodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 				}
 				if setterDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindSetAccessor); setterDeclaration != nil {
 					setterSignature := b.ch.getSignatureFromDeclaration(setterDeclaration)
+					if symbolMapper != nil {
+						setterSignature = b.ch.instantiateSignature(setterSignature, symbolMapper)
+					}
 					setter := b.signatureToSignatureDeclarationHelper(setterSignature, ast.KindSetAccessor, &SignatureToSignatureDeclarationOptions{
 						name: propertyName,
 					})

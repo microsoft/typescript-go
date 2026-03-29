@@ -38,9 +38,13 @@ import {
     isTemplateMiddle,
     isTemplateTail,
     isVariableDeclarationList,
+    type Node,
     NodeFlags,
 } from "@typescript/ast";
-import { SyntaxKind } from "@typescript/ast";
+import {
+    isTypeNode,
+    SyntaxKind,
+} from "@typescript/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
@@ -50,6 +54,7 @@ import {
     createTypeReferenceNode,
     createUnionTypeNode,
 } from "@typescript/ast/factory";
+import { visitEachChild } from "@typescript/ast/visitor";
 import assert from "node:assert";
 import {
     describe,
@@ -1888,6 +1893,7 @@ describe("Emitter - printNode", () => {
 export const x = 42;
 export function greet(name: string): string { return name; }
 export type Pair = [string, number];
+export const obj = { m: 1, s: "hi", b: true };
 `,
     };
 
@@ -2001,6 +2007,58 @@ export type Pair = [string, number];
         }
     });
 
+    test("visitEachChild on typeToTypeNode result with keyword types", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const { checker } = snapshot.getProject("/tsconfig.json")!;
+            const src = emitterFiles["/src/main.ts"];
+            const objPos = src.indexOf("obj");
+            const symbol = checker.getSymbolAtPosition("/src/main.ts", objPos);
+            assert.ok(symbol, "should find symbol for obj");
+            const type = checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const typeNode = checker.typeToTypeNode(type);
+            assert.ok(typeNode, "typeToTypeNode should return a type node");
+
+            // Recursively visit to reach PropertySignature.type where isTypeNode is checked.
+            const visited = (function visit(node: Node): Node {
+                return visitEachChild(node, visit);
+            })(typeNode);
+            assert.ok(visited, "visitEachChild should not throw");
+
+            const kinds = [
+                SyntaxKind.NumberKeyword,
+                SyntaxKind.StringKeyword,
+                SyntaxKind.BooleanKeyword,
+                SyntaxKind.AnyKeyword,
+                SyntaxKind.VoidKeyword,
+                SyntaxKind.UndefinedKeyword,
+                SyntaxKind.NeverKeyword,
+                SyntaxKind.UnknownKeyword,
+                SyntaxKind.BigIntKeyword,
+                SyntaxKind.ObjectKeyword,
+                SyntaxKind.SymbolKeyword,
+                SyntaxKind.IntrinsicKeyword,
+                SyntaxKind.ExpressionWithTypeArguments,
+                SyntaxKind.JSDocAllType,
+                SyntaxKind.JSDocNullableType,
+                SyntaxKind.JSDocNonNullableType,
+                SyntaxKind.JSDocOptionalType,
+                SyntaxKind.JSDocVariadicType,
+                SyntaxKind.JSDocTypeExpression,
+                SyntaxKind.JSDocTypeLiteral,
+                SyntaxKind.JSDocSignature,
+            ];
+            for (const kind of kinds) {
+                assert.ok(isTypeNode({ kind } as any), `isTypeNode should accept ${SyntaxKind[kind]}`);
+            }
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("typeToString", () => {
         const api = spawnAPI(emitterFiles);
         try {
@@ -2015,6 +2073,41 @@ export type Pair = [string, number];
             assert.ok(type);
             const text = checker.typeToString(type);
             assert.strictEqual(text, "(name: string) => string");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("printNode with terminateUnterminatedLiterals option", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `const foo = /asdfasf;`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/main.ts");
+            assert.ok(sourceFile);
+
+            // Find the regex literal node
+            let regexNode: import("@typescript/ast").Node | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (node.kind === SyntaxKind.RegularExpressionLiteral) {
+                    regexNode = node;
+                    return;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(regexNode, "Should find a regex literal");
+
+            // Without the option, regex is printed as-is
+            const textWithout = project.emitter.printNode(regexNode);
+            assert.strictEqual(textWithout, "/asdfasf");
+
+            // With the option, the closing slash is added
+            const textWith = project.emitter.printNode(regexNode, { terminateUnterminatedLiterals: true });
+            assert.strictEqual(textWith, "/asdfasf/");
         }
         finally {
             api.close();

@@ -992,6 +992,9 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 	if p.Options.NeverAsciiEscape {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
 	}
+	if p.Options.TerminateUnterminatedLiterals {
+		flags |= getLiteralTextFlagsTerminateUnterminatedLiterals
+	}
 
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
@@ -4401,7 +4404,7 @@ func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClaus
 		// to avoid duplicating trailing comments that will be picked up by the statement list.
 		p.writeTokenText(ast.KindColonToken, WriteKindPunctuation, colonPos)
 		p.writeSpace()
-		format &= ^(LFMultiLine | LFIndented)
+		format &^= LFMultiLine | LFIndented
 	} else {
 		p.emitToken(ast.KindColonToken, colonPos, WriteKindPunctuation, node.AsNode())
 	}
