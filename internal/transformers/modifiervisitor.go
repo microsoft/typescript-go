@@ -2,27 +2,25 @@ package transformers
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
-
-type modifierVisitor struct {
-	Transformer
-	AllowedModifiers ast.ModifierFlags
-}
-
-func (v *modifierVisitor) visit(node *ast.Node) *ast.Node {
-	flags := ast.ModifierToFlag(node.Kind)
-	if flags != ast.ModifierFlagsNone && flags&v.AllowedModifiers == 0 {
-		return nil
-	}
-	return node
-}
 
 func ExtractModifiers(emitContext *printer.EmitContext, modifiers *ast.ModifierList, allowed ast.ModifierFlags) *ast.ModifierList {
 	if modifiers == nil {
 		return nil
 	}
-	tx := modifierVisitor{AllowedModifiers: allowed}
-	tx.NewTransformer(tx.visit, emitContext)
-	return tx.visitor.VisitModifiers(modifiers)
+
+	filtered := core.Filter(modifiers.Nodes, func(node *ast.Node) bool {
+		flags := ast.ModifierToFlag(node.Kind)
+		return flags == ast.ModifierFlagsNone || flags&allowed != 0
+	})
+
+	if core.Same(filtered, modifiers.Nodes) {
+		return modifiers
+	}
+
+	list := emitContext.Factory.NewModifierList(filtered)
+	list.Loc = modifiers.Loc
+	return list
 }
