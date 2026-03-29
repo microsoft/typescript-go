@@ -123,15 +123,15 @@ type classFieldsTransformer struct {
 	currentNode                *ast.Node
 
 	// Visitors
-	modifierVisitor                *ast.NodeVisitor
-	discardedValueVisitor          *ast.NodeVisitor
-	heritageClauseVisitor          *ast.NodeVisitor
-	assignmentTargetVisitor        *ast.NodeVisitor
-	classElementVisitor            *ast.NodeVisitor
-	accessorFieldResultVisitor     *ast.NodeVisitor
-	arrayAssignmentElementVisitor  *ast.NodeVisitor
-	objectAssignmentElementVisitor *ast.NodeVisitor
-	substitutionVisitor            *ast.NodeVisitor
+	modifierVisitor                ast.NodeVisitor
+	discardedValueVisitor          ast.NodeVisitor
+	heritageClauseVisitor          ast.NodeVisitor
+	assignmentTargetVisitor        ast.NodeVisitor
+	classElementVisitor            ast.NodeVisitor
+	accessorFieldResultVisitor     ast.NodeVisitor
+	arrayAssignmentElementVisitor  ast.NodeVisitor
+	objectAssignmentElementVisitor ast.NodeVisitor
+	substitutionVisitor            ast.NodeVisitor
 
 	// Pre-bound callbacks to avoid repeated closure allocation.
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
@@ -178,15 +178,16 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	tx.shouldTransformSuperInStaticInitializers = tx.shouldTransformThisInStaticInitializers
 
 	result := tx.NewTransformer(tx.visit, opts.Context)
-	tx.modifierVisitor = tx.EmitContext().NewNodeVisitor(tx.visitModifier)
-	tx.discardedValueVisitor = tx.EmitContext().NewNodeVisitor(tx.visitDiscardedValue)
-	tx.heritageClauseVisitor = tx.EmitContext().NewNodeVisitor(tx.visitHeritageClause)
-	tx.assignmentTargetVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAssignmentTarget)
-	tx.classElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitClassElement)
-	tx.accessorFieldResultVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAccessorFieldResult)
-	tx.arrayAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArrayAssignmentElement)
-	tx.objectAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitObjectAssignmentElement)
-	tx.substitutionVisitor = tx.EmitContext().NewNodeVisitor(tx.visitForSubstitution)
+	ec := tx.EmitContext()
+	ec.InitNodeVisitor(&tx.modifierVisitor, tx.visitModifier)
+	ec.InitNodeVisitor(&tx.discardedValueVisitor, tx.visitDiscardedValue)
+	ec.InitNodeVisitor(&tx.heritageClauseVisitor, tx.visitHeritageClause)
+	ec.InitNodeVisitor(&tx.assignmentTargetVisitor, tx.visitAssignmentTarget)
+	ec.InitNodeVisitor(&tx.classElementVisitor, tx.visitClassElement)
+	ec.InitNodeVisitor(&tx.accessorFieldResultVisitor, tx.visitAccessorFieldResult)
+	ec.InitNodeVisitor(&tx.arrayAssignmentElementVisitor, tx.visitArrayAssignmentElement)
+	ec.InitNodeVisitor(&tx.objectAssignmentElementVisitor, tx.visitObjectAssignmentElement)
+	ec.InitNodeVisitor(&tx.substitutionVisitor, tx.visitForSubstitution)
 	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result

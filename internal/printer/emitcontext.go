@@ -96,6 +96,19 @@ func (c *EmitContext) NewNodeVisitor(visit func(node *ast.Node) *ast.Node) *ast.
 	})
 }
 
+// Initializes a NodeVisitor in-place, attached to this EmitContext.
+func (c *EmitContext) InitNodeVisitor(v *ast.NodeVisitor, visit func(node *ast.Node) *ast.Node) {
+	v.Visit = visit
+	v.Factory = c.Factory.AsNodeFactory()
+	v.Hooks = ast.NodeVisitorHooks{
+		VisitParameters:         c.VisitParameters,
+		VisitFunctionBody:       c.VisitFunctionBody,
+		VisitIterationBody:      c.VisitIterationBody,
+		VisitTopLevelStatements: c.VisitVariableEnvironment,
+		VisitEmbeddedStatement:  c.VisitEmbeddedStatement,
+	}
+}
+
 //
 // Environment tracking
 //

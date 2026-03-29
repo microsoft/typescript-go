@@ -8,7 +8,7 @@ import (
 type Transformer struct {
 	emitContext *printer.EmitContext
 	factory     *printer.NodeFactory
-	visitor     *ast.NodeVisitor
+	visitor     ast.NodeVisitor
 }
 
 func (tx *Transformer) NewTransformer(visit func(node *ast.Node) *ast.Node, emitContext *printer.EmitContext) *Transformer {
@@ -20,7 +20,7 @@ func (tx *Transformer) NewTransformer(visit func(node *ast.Node) *ast.Node, emit
 	}
 	tx.emitContext = emitContext
 	tx.factory = emitContext.Factory
-	tx.visitor = emitContext.NewNodeVisitor(visit)
+	emitContext.InitNodeVisitor(&tx.visitor, visit)
 	return tx
 }
 
@@ -29,7 +29,7 @@ func (tx *Transformer) EmitContext() *printer.EmitContext {
 }
 
 func (tx *Transformer) Visitor() *ast.NodeVisitor {
-	return tx.visitor
+	return &tx.visitor
 }
 
 func (tx *Transformer) Factory() *printer.NodeFactory {

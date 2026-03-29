@@ -107,18 +107,18 @@ type esDecoratorTransformer struct {
 	pendingExpressions                         []*ast.Expression
 	outerThis                                  *ast.IdentifierNode
 	shouldTransformPrivateStaticElementsInFile bool
-	outerThisVisitor                           *ast.NodeVisitor
-	discardedVisitor                           *ast.NodeVisitor
-	modifierVisitor                            *ast.NodeVisitor
-	exportStrippingModifierVisitor             *ast.NodeVisitor
-	classElementVisitor                        *ast.NodeVisitor
-	nonConstructorClassElementVisitor          *ast.NodeVisitor
-	constructorClassElementVisitor             *ast.NodeVisitor
-	arrayAssignmentVisitor                     *ast.NodeVisitor
-	objectAssignmentVisitor                    *ast.NodeVisitor
-	staticOnlyModifierVisitor                  *ast.NodeVisitor
-	asyncOnlyModifierVisitor                   *ast.NodeVisitor
-	accessorStrippingModifierVisitor           *ast.NodeVisitor
+	outerThisVisitor                           ast.NodeVisitor
+	discardedVisitor                           ast.NodeVisitor
+	modifierVisitor                            ast.NodeVisitor
+	exportStrippingModifierVisitor             ast.NodeVisitor
+	classElementVisitor                        ast.NodeVisitor
+	nonConstructorClassElementVisitor          ast.NodeVisitor
+	constructorClassElementVisitor             ast.NodeVisitor
+	arrayAssignmentVisitor                     ast.NodeVisitor
+	objectAssignmentVisitor                    ast.NodeVisitor
+	staticOnlyModifierVisitor                  ast.NodeVisitor
+	asyncOnlyModifierVisitor                   ast.NodeVisitor
+	accessorStrippingModifierVisitor           ast.NodeVisitor
 }
 
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -132,28 +132,28 @@ func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformer
 	tx := &esDecoratorTransformer{compilerOptions: opts.CompilerOptions}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	ec := tx.EmitContext()
-	tx.outerThisVisitor = ec.NewNodeVisitor(tx.outerThisVisit)
-	tx.discardedVisitor = ec.NewNodeVisitor(tx.discardedValueVisit)
-	tx.modifierVisitor = ec.NewNodeVisitor(tx.modifierVisitorVisit)
-	tx.exportStrippingModifierVisitor = ec.NewNodeVisitor(tx.exportStrippingModifierVisit)
-	tx.classElementVisitor = ec.NewNodeVisitor(tx.classElementVisitorVisit)
-	tx.nonConstructorClassElementVisitor = ec.NewNodeVisitor(tx.nonConstructorClassElementVisit)
-	tx.constructorClassElementVisitor = ec.NewNodeVisitor(tx.constructorClassElementVisit)
-	tx.arrayAssignmentVisitor = ec.NewNodeVisitor(tx.visitArrayAssignmentElement)
-	tx.objectAssignmentVisitor = ec.NewNodeVisitor(tx.visitObjectAssignmentElement)
-	tx.staticOnlyModifierVisitor = ec.NewNodeVisitor(func(node *ast.Node) *ast.Node {
+	ec.InitNodeVisitor(&tx.outerThisVisitor, tx.outerThisVisit)
+	ec.InitNodeVisitor(&tx.discardedVisitor, tx.discardedValueVisit)
+	ec.InitNodeVisitor(&tx.modifierVisitor, tx.modifierVisitorVisit)
+	ec.InitNodeVisitor(&tx.exportStrippingModifierVisitor, tx.exportStrippingModifierVisit)
+	ec.InitNodeVisitor(&tx.classElementVisitor, tx.classElementVisitorVisit)
+	ec.InitNodeVisitor(&tx.nonConstructorClassElementVisitor, tx.nonConstructorClassElementVisit)
+	ec.InitNodeVisitor(&tx.constructorClassElementVisitor, tx.constructorClassElementVisit)
+	ec.InitNodeVisitor(&tx.arrayAssignmentVisitor, tx.visitArrayAssignmentElement)
+	ec.InitNodeVisitor(&tx.objectAssignmentVisitor, tx.visitObjectAssignmentElement)
+	ec.InitNodeVisitor(&tx.staticOnlyModifierVisitor, func(node *ast.Node) *ast.Node {
 		if node.Kind == ast.KindStaticKeyword {
 			return node
 		}
 		return nil
 	})
-	tx.asyncOnlyModifierVisitor = ec.NewNodeVisitor(func(node *ast.Node) *ast.Node {
+	ec.InitNodeVisitor(&tx.asyncOnlyModifierVisitor, func(node *ast.Node) *ast.Node {
 		if node.Kind == ast.KindAsyncKeyword {
 			return node
 		}
 		return nil
 	})
-	tx.accessorStrippingModifierVisitor = ec.NewNodeVisitor(func(node *ast.Node) *ast.Node {
+	ec.InitNodeVisitor(&tx.accessorStrippingModifierVisitor, func(node *ast.Node) *ast.Node {
 		if node.Kind == ast.KindAccessorKeyword {
 			return nil
 		}

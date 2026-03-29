@@ -49,8 +49,8 @@ type forawaitTransformer struct {
 	forAwaitHierarchyFacts    forAwaitHierarchyFacts
 	exportedVariableStatement bool
 
-	fallbackNodeVisitor    *ast.NodeVisitor
-	noAsyncModifierVisitor *ast.NodeVisitor
+	fallbackNodeVisitor    ast.NodeVisitor
+	noAsyncModifierVisitor ast.NodeVisitor
 }
 
 func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -59,8 +59,9 @@ func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.T
 	}
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.initSuperAccessVisitor(tx.EmitContext(), tx.Factory())
-	tx.fallbackNodeVisitor = tx.EmitContext().NewNodeVisitor(tx.visitFallback)
-	tx.noAsyncModifierVisitor = tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
+	ec := tx.EmitContext()
+	ec.InitNodeVisitor(&tx.fallbackNodeVisitor, tx.visitFallback)
+	ec.InitNodeVisitor(&tx.noAsyncModifierVisitor, func(node *ast.Node) *ast.Node {
 		if node.Kind == ast.KindAsyncKeyword {
 			return nil
 		}

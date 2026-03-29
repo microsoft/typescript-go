@@ -63,12 +63,12 @@ type superAccessState struct {
 
 	superBinding       *ast.IdentifierNode
 	superIndexBinding  *ast.IdentifierNode
-	superAccessVisitor *ast.NodeVisitor
+	superAccessVisitor ast.NodeVisitor
 }
 
 func (s *superAccessState) initSuperAccessVisitor(emitContext *printer.EmitContext, factory *printer.NodeFactory) {
 	s.factory = factory
-	s.superAccessVisitor = emitContext.NewNodeVisitor(s.visitSuperAccessNode)
+	emitContext.InitNodeVisitor(&s.superAccessVisitor, s.visitSuperAccessNode)
 }
 
 // visitSuperAccessNode walks the async/generator body and replaces super property/element
@@ -79,7 +79,7 @@ func (s *superAccessState) visitSuperAccessNode(node *ast.Node) *ast.Node {
 	case ast.KindCallExpression:
 		call := node.AsCallExpression()
 		if ast.IsSuperProperty(call.Expression) {
-			return s.substituteCallExpressionWithSuperAccess(call, s.superAccessVisitor)
+			return s.substituteCallExpressionWithSuperAccess(call, &s.superAccessVisitor)
 		}
 		return s.superAccessVisitor.VisitEachChild(node)
 	case ast.KindPropertyAccessExpression:

@@ -100,7 +100,7 @@ type NodeBuilderImpl struct {
 	ctx *NodeBuilderContext
 
 	// reusable visitor
-	cloneBindingNameVisitor *ast.NodeVisitor
+	cloneBindingNameVisitor ast.NodeVisitor
 
 	// symbols for synthesized identifiers, needed for e.g. inlay hints
 	idToSymbol map[*ast.IdentifierNode]*ast.Symbol
@@ -118,7 +118,7 @@ func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast
 		idToSymbol = make(map[*ast.IdentifierNode]*ast.Symbol)
 	}
 	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol, pc: pseudochecker.NewPseudoChecker(ch.strictNullChecks, ch.exactOptionalPropertyTypes)}
-	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
+	b.cloneBindingNameVisitor = ast.NodeVisitor{Visit: b.cloneBindingName, Factory: b.f}
 	return b
 }
 
