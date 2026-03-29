@@ -139,6 +139,7 @@ type Printer struct {
 	makeFileLevelOptimisticUniqueName func(string) string
 	commentStatePool                  core.Pool[commentState]
 	sourceMapStatePool                core.Pool[sourceMapState]
+	commentScratch                    []ast.CommentRange // reusable scratch slice for collecting comments
 }
 
 type detachedCommentsInfo struct {
@@ -5328,7 +5329,9 @@ func (p *Printer) emitDetachedCommentsBeforeStatementList(node *ast.Node, detach
 		p.commentsDisabled = true
 	}
 
-	return &commentState{emitFlags, detachedRange, containerPos, containerEnd, declarationListContainerEnd}
+	c := p.commentStatePool.New()
+	*c = commentState{emitFlags, detachedRange, containerPos, containerEnd, declarationListContainerEnd}
+	return c
 }
 
 func (p *Printer) emitDetachedCommentsAfterStatementList(node *ast.Node, detachedRange core.TextRange, state *commentState) {
@@ -5491,11 +5494,13 @@ func (p *Printer) emitLeadingComments(pos int, elided bool) bool {
 	}
 
 	var comments []ast.CommentRange
+	p.commentScratch = p.commentScratch[:0]
 	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pos) {
 		if p.shouldWriteComment(comment) && p.shouldEmitCommentIfTripleSlash(comment, tripleSlash) {
-			comments = append(comments, comment)
+			p.commentScratch = append(p.commentScratch, comment)
 		}
 	}
+	comments = p.commentScratch
 
 	if len(comments) > 0 && p.shouldEmitNewLineBeforeLeadingCommentOfPosition(pos, comments[0].Pos()) {
 		p.writeLine()
@@ -5613,7 +5618,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 	text := p.currentSourceFile.Text()
 	lineMap := p.currentSourceFile.ECMALineMap()
 
-	var leadingComments []ast.CommentRange
+	p.commentScratch = p.commentScratch[:0]
 	if p.commentsDisabled {
 		// removeComments is true, only reserve pinned comment at the top of file
 		// For example:
@@ -5623,14 +5628,17 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 		if textRange.Pos() == 0 {
 			for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()) {
 				if IsPinnedComment(text, comment) {
-					leadingComments = append(leadingComments, comment)
+					p.commentScratch = append(p.commentScratch, comment)
 				}
 			}
 		}
 	} else {
 		// removeComments is false, just get detached as normal and bypass the process to filter comment
-		leadingComments = slices.Collect(scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()))
+		for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()) {
+			p.commentScratch = append(p.commentScratch, comment)
+		}
 	}
+	leadingComments := p.commentScratch
 
 	if len(leadingComments) > 0 {
 		var detachedComments []ast.CommentRange
