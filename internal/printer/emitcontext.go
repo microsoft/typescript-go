@@ -22,8 +22,8 @@ type EmitContext struct {
 	emitNodes     core.LinkStore[*ast.Node, emitNode]
 	assignedName  map[*ast.Node]*ast.Expression
 	classThis     map[*ast.Node]*ast.IdentifierNode
-	varScopeStack core.Stack[*varScope]
-	letScopeStack core.Stack[*varScope]
+	varScopeStack core.Stack[varScope]
+	letScopeStack core.Stack[varScope]
 	emitHelpers   collections.OrderedSet[*EmitHelper]
 }
 
@@ -106,7 +106,7 @@ func (c *EmitContext) NewNodeVisitor(visit func(node *ast.Node) *ast.Node) *ast.
 //
 // NOTE: This is the equivalent of `transformContext.startLexicalEnvironment` in Strada.
 func (c *EmitContext) StartVariableEnvironment() {
-	c.varScopeStack.Push(&varScope{})
+	c.varScopeStack.PushZero()
 	c.StartLexicalEnvironment()
 }
 
@@ -163,7 +163,7 @@ func (c *EmitContext) endAndMergeVariableEnvironment(statements []*ast.Statement
 func (c *EmitContext) AddVariableDeclaration(name *ast.IdentifierNode) {
 	varDecl := c.Factory.NewVariableDeclaration(name, nil /*exclamationToken*/, nil /*typeNode*/, nil /*initializer*/)
 	c.SetEmitFlags(varDecl, EFNoNestedSourceMaps)
-	scope := c.varScopeStack.Peek()
+	scope := c.varScopeStack.PeekRef()
 	scope.variables = append(scope.variables, varDecl)
 	if scope.flags&environmentFlagsInParameters != 0 {
 		scope.flags |= environmentFlagsVariablesHoistedInParameters
@@ -175,7 +175,7 @@ func (c *EmitContext) AddVariableDeclaration(name *ast.IdentifierNode) {
 // NOTE: This is the equivalent of `transformContext.hoistFunctionDeclaration` in Strada.
 func (c *EmitContext) AddHoistedFunctionDeclaration(node *ast.FunctionDeclarationNode) {
 	c.SetEmitFlags(node, EFCustomPrologue)
-	scope := c.varScopeStack.Peek()
+	scope := c.varScopeStack.PeekRef()
 	scope.functions = append(scope.functions, node)
 }
 
@@ -186,7 +186,7 @@ func (c *EmitContext) AddHoistedFunctionDeclaration(node *ast.FunctionDeclaratio
 // NOTE: This is the equivalent of `transformContext.startBlockScope` in Strada.
 // NOTE: This is *not* the same as `startLexicalEnvironment` in Strada as that method is incorrectly named.
 func (c *EmitContext) StartLexicalEnvironment() {
-	c.letScopeStack.Push(&varScope{})
+	c.letScopeStack.PushZero()
 }
 
 // Ends the current EndLexicalEnvironment, returning a list of statements that should be emitted at the start of the current scope.
@@ -236,7 +236,7 @@ func (c *EmitContext) endAndMergeLexicalEnvironment(statements []*ast.Statement)
 func (c *EmitContext) AddLexicalDeclaration(name *ast.IdentifierNode) {
 	varDecl := c.Factory.NewVariableDeclaration(name, nil /*exclamationToken*/, nil /*typeNode*/, nil /*initializer*/)
 	c.SetEmitFlags(varDecl, EFNoNestedSourceMaps)
-	scope := c.letScopeStack.Peek()
+	scope := c.letScopeStack.PeekRef()
 	scope.variables = append(scope.variables, varDecl)
 }
 
@@ -762,7 +762,7 @@ func (c *EmitContext) VisitVariableEnvironment(nodes *ast.StatementList, visitor
 
 func (c *EmitContext) VisitParameters(nodes *ast.ParameterList, visitor *ast.NodeVisitor) *ast.ParameterList {
 	c.StartVariableEnvironment()
-	scope := c.varScopeStack.Peek()
+	scope := c.varScopeStack.PeekRef()
 	oldFlags := scope.flags
 	scope.flags |= environmentFlagsInParameters
 	nodes = visitor.VisitNodes(nodes)
@@ -883,10 +883,10 @@ func (c *EmitContext) addDefaultValueAssignmentForInitializer(parameter *ast.Par
 }
 
 func (c *EmitContext) AddInitializationStatement(node *ast.Node) {
-	scope := c.varScopeStack.Peek()
-	if scope == nil {
+	if c.varScopeStack.Len() == 0 {
 		panic("Tried to add an initialization statement without a surrounding variable scope")
 	}
+	scope := c.varScopeStack.PeekRef()
 	c.AddEmitFlags(node, EFCustomPrologue)
 	scope.initializationStatements = append(scope.initializationStatements, node)
 }

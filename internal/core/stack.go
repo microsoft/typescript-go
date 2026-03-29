@@ -8,6 +8,11 @@ func (s *Stack[T]) Push(item T) {
 	s.data = append(s.data, item)
 }
 
+func (s *Stack[T]) PushZero() {
+	var zero T
+	s.data = append(s.data, zero)
+}
+
 func (s *Stack[T]) Pop() T {
 	l := len(s.data)
 	if l == 0 {
@@ -28,6 +33,18 @@ func (s *Stack[T]) Peek() T {
 	return s.data[l-1]
 }
 
+func (s *Stack[T]) PeekRef() *T {
+	l := len(s.data)
+	if l == 0 {
+		panic("stack is empty")
+	}
+	return &s.data[l-1]
+}
+
 func (s *Stack[T]) Len() int {
 	return len(s.data)
+}
+
+func (s *Stack[T]) At(i int) *T {
+	return &s.data[i]
 }
