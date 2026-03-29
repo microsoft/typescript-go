@@ -25,6 +25,7 @@ type EmitContext struct {
 	varScopeStack core.Stack[varScope]
 	letScopeStack core.Stack[varScope]
 	emitHelpers   collections.OrderedSet[*EmitHelper]
+	visitorHooks  ast.NodeVisitorHooks
 }
 
 type environmentFlags int
@@ -85,28 +86,29 @@ func (c *EmitContext) onClone(updated *ast.Node, original *ast.Node) {
 	}
 }
 
+func (c *EmitContext) getVisitorHooks() ast.NodeVisitorHooks {
+	if c.visitorHooks.VisitParameters == nil {
+		c.visitorHooks = ast.NodeVisitorHooks{
+			VisitParameters:         c.VisitParameters,
+			VisitFunctionBody:       c.VisitFunctionBody,
+			VisitIterationBody:      c.VisitIterationBody,
+			VisitTopLevelStatements: c.VisitVariableEnvironment,
+			VisitEmbeddedStatement:  c.VisitEmbeddedStatement,
+		}
+	}
+	return c.visitorHooks
+}
+
 // Creates a new NodeVisitor attached to this EmitContext
 func (c *EmitContext) NewNodeVisitor(visit func(node *ast.Node) *ast.Node) *ast.NodeVisitor {
-	return ast.NewNodeVisitor(visit, c.Factory.AsNodeFactory(), ast.NodeVisitorHooks{
-		VisitParameters:         c.VisitParameters,
-		VisitFunctionBody:       c.VisitFunctionBody,
-		VisitIterationBody:      c.VisitIterationBody,
-		VisitTopLevelStatements: c.VisitVariableEnvironment,
-		VisitEmbeddedStatement:  c.VisitEmbeddedStatement,
-	})
+	return ast.NewNodeVisitor(visit, c.Factory.AsNodeFactory(), c.getVisitorHooks())
 }
 
 // Initializes a NodeVisitor in-place, attached to this EmitContext.
 func (c *EmitContext) InitNodeVisitor(v *ast.NodeVisitor, visit func(node *ast.Node) *ast.Node) {
 	v.Visit = visit
 	v.Factory = c.Factory.AsNodeFactory()
-	v.Hooks = ast.NodeVisitorHooks{
-		VisitParameters:         c.VisitParameters,
-		VisitFunctionBody:       c.VisitFunctionBody,
-		VisitIterationBody:      c.VisitIterationBody,
-		VisitTopLevelStatements: c.VisitVariableEnvironment,
-		VisitEmbeddedStatement:  c.VisitEmbeddedStatement,
-	}
+	v.Hooks = c.getVisitorHooks()
 }
 
 //
