@@ -160,8 +160,12 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
 
-	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
+	scriptTransformers := getScriptTransformers(emitContext, e.host, sourceFile)
+	for _, transformer := range scriptTransformers {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
+	}
+	for _, transformer := range scriptTransformers {
+		transformer.Dispose()
 	}
 
 	printerOptions := printer.PrinterOptions{
@@ -198,9 +202,13 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	var diags []*ast.Diagnostic
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
-	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
+	declTransformers := e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath)
+	for _, transformer := range declTransformers {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 		diags = append(diags, transformer.GetDiagnostics()...)
+	}
+	for _, transformer := range declTransformers {
+		transformer.Dispose()
 	}
 
 	// !!! strada skipped emit if there were diagnostics

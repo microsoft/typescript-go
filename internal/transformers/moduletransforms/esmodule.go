@@ -2,6 +2,7 @@ package moduletransforms
 
 import (
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -25,9 +26,28 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
+var esModulePool = sync.Pool{New: func() any { return &ESModuleTransformer{} }}
+
+func getESModuleTransformer() *ESModuleTransformer {
+	return esModulePool.Get().(*ESModuleTransformer)
+}
+
+func putESModuleTransformer(tx *ESModuleTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = ESModuleTransformer{}
+	tx.RestoreState(dispose, visit)
+	esModulePool.Put(tx)
+}
+
 func NewESModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opts.CompilerOptions
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: opts.Resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	tx := getESModuleTransformer()
+	tx.compilerOptions = compilerOptions
+	tx.resolver = opts.Resolver
+	tx.getEmitModuleFormatOfFile = opts.GetEmitModuleFormatOfFile
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putESModuleTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }
 

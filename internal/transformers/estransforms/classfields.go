@@ -3,6 +3,7 @@ package estransforms
 import (
 	"iter"
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -137,6 +138,43 @@ type classFieldsTransformer struct {
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
 }
 
+var classFieldsTransformerPool = sync.Pool{
+	New: func() any {
+		return &classFieldsTransformer{}
+	},
+}
+
+func getClassFieldsTransformer() *classFieldsTransformer {
+	return classFieldsTransformerPool.Get().(*classFieldsTransformer)
+}
+
+func putClassFieldsTransformer(tx *classFieldsTransformer) {
+	dispose := tx.GetDispose()
+	modifierVisitor := tx.modifierVisitor
+	discardedValueVisitor := tx.discardedValueVisitor
+	heritageClauseVisitor := tx.heritageClauseVisitor
+	assignmentTargetVisitor := tx.assignmentTargetVisitor
+	classElementVisitor := tx.classElementVisitor
+	accessorFieldResultVisitor := tx.accessorFieldResultVisitor
+	arrayAssignmentElementVisitor := tx.arrayAssignmentElementVisitor
+	objectAssignmentElementVisitor := tx.objectAssignmentElementVisitor
+	substitutionVisitor := tx.substitutionVisitor
+	isAnonymousClassNeedingAssignedName := tx.isAnonymousClassNeedingAssignedName
+	*tx = classFieldsTransformer{}
+	tx.SetDispose(dispose)
+	tx.modifierVisitor = modifierVisitor
+	tx.discardedValueVisitor = discardedValueVisitor
+	tx.heritageClauseVisitor = heritageClauseVisitor
+	tx.assignmentTargetVisitor = assignmentTargetVisitor
+	tx.classElementVisitor = classElementVisitor
+	tx.accessorFieldResultVisitor = accessorFieldResultVisitor
+	tx.arrayAssignmentElementVisitor = arrayAssignmentElementVisitor
+	tx.objectAssignmentElementVisitor = objectAssignmentElementVisitor
+	tx.substitutionVisitor = substitutionVisitor
+	tx.isAnonymousClassNeedingAssignedName = isAnonymousClassNeedingAssignedName
+	classFieldsTransformerPool.Put(tx)
+}
+
 func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	languageVersion := opts.CompilerOptions.GetEmitScriptTarget()
 	useDefineForClassFields := opts.CompilerOptions.GetUseDefineForClassFields()
@@ -148,11 +186,10 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 		return nil
 	}
 
-	tx := &classFieldsTransformer{
-		compilerOptions:  opts.CompilerOptions,
-		resolver:         opts.Resolver,
-		legacyDecorators: opts.CompilerOptions.ExperimentalDecorators.IsTrue(),
-	}
+	tx := getClassFieldsTransformer()
+	tx.compilerOptions = opts.CompilerOptions
+	tx.resolver = opts.Resolver
+	tx.legacyDecorators = opts.CompilerOptions.ExperimentalDecorators.IsTrue()
 
 	// Always transform field initializers using Set semantics when `useDefineForClassFields: false`.
 	tx.shouldTransformInitializersUsingSet = !useDefineForClassFields
@@ -179,16 +216,31 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	ec := tx.EmitContext()
-	ec.InitNodeVisitor(&tx.modifierVisitor, tx.visitModifier)
-	ec.InitNodeVisitor(&tx.discardedValueVisitor, tx.visitDiscardedValue)
-	ec.InitNodeVisitor(&tx.heritageClauseVisitor, tx.visitHeritageClause)
-	ec.InitNodeVisitor(&tx.assignmentTargetVisitor, tx.visitAssignmentTarget)
-	ec.InitNodeVisitor(&tx.classElementVisitor, tx.visitClassElement)
-	ec.InitNodeVisitor(&tx.accessorFieldResultVisitor, tx.visitAccessorFieldResult)
-	ec.InitNodeVisitor(&tx.arrayAssignmentElementVisitor, tx.visitArrayAssignmentElement)
-	ec.InitNodeVisitor(&tx.objectAssignmentElementVisitor, tx.visitObjectAssignmentElement)
-	ec.InitNodeVisitor(&tx.substitutionVisitor, tx.visitForSubstitution)
-	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
+	if tx.modifierVisitor.Visit == nil {
+		ec.InitNodeVisitor(&tx.modifierVisitor, tx.visitModifier)
+		ec.InitNodeVisitor(&tx.discardedValueVisitor, tx.visitDiscardedValue)
+		ec.InitNodeVisitor(&tx.heritageClauseVisitor, tx.visitHeritageClause)
+		ec.InitNodeVisitor(&tx.assignmentTargetVisitor, tx.visitAssignmentTarget)
+		ec.InitNodeVisitor(&tx.classElementVisitor, tx.visitClassElement)
+		ec.InitNodeVisitor(&tx.accessorFieldResultVisitor, tx.visitAccessorFieldResult)
+		ec.InitNodeVisitor(&tx.arrayAssignmentElementVisitor, tx.visitArrayAssignmentElement)
+		ec.InitNodeVisitor(&tx.objectAssignmentElementVisitor, tx.visitObjectAssignmentElement)
+		ec.InitNodeVisitor(&tx.substitutionVisitor, tx.visitForSubstitution)
+		tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
+	} else {
+		ec.InitNodeVisitor(&tx.modifierVisitor, nil)
+		ec.InitNodeVisitor(&tx.discardedValueVisitor, nil)
+		ec.InitNodeVisitor(&tx.heritageClauseVisitor, nil)
+		ec.InitNodeVisitor(&tx.assignmentTargetVisitor, nil)
+		ec.InitNodeVisitor(&tx.classElementVisitor, nil)
+		ec.InitNodeVisitor(&tx.accessorFieldResultVisitor, nil)
+		ec.InitNodeVisitor(&tx.arrayAssignmentElementVisitor, nil)
+		ec.InitNodeVisitor(&tx.objectAssignmentElementVisitor, nil)
+		ec.InitNodeVisitor(&tx.substitutionVisitor, nil)
+	}
+	if tx.Transformer.GetDispose() == nil {
+		tx.SetDispose(func() { putClassFieldsTransformer(tx) })
+	}
 
 	return result
 }

@@ -4,6 +4,7 @@ package tstransforms
 
 import (
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -28,10 +29,29 @@ type RuntimeSyntaxTransformer struct {
 	emitResolver                        printer.EmitResolver
 }
 
+var runtimeSyntaxPool = sync.Pool{New: func() any { return &RuntimeSyntaxTransformer{} }}
+
+func getRuntimeSyntaxTransformer() *RuntimeSyntaxTransformer {
+	return runtimeSyntaxPool.Get().(*RuntimeSyntaxTransformer)
+}
+
+func putRuntimeSyntaxTransformer(tx *RuntimeSyntaxTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = RuntimeSyntaxTransformer{}
+	tx.RestoreState(dispose, visit)
+	runtimeSyntaxPool.Put(tx)
+}
+
 func NewRuntimeSyntaxTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
-	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: opt.Resolver, emitResolver: opt.EmitResolver}
+	tx := getRuntimeSyntaxTransformer()
+	tx.compilerOptions = compilerOptions
+	tx.resolver = opt.Resolver
+	tx.emitResolver = opt.EmitResolver
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putRuntimeSyntaxTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 

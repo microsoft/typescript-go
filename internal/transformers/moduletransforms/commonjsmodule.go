@@ -2,6 +2,7 @@ package moduletransforms
 
 import (
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -29,16 +30,50 @@ type CommonJSModuleTransformer struct {
 	currentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
+var commonJSPool = sync.Pool{New: func() any { return &CommonJSModuleTransformer{} }}
+
+func getCommonJSModuleTransformer() *CommonJSModuleTransformer {
+	return commonJSPool.Get().(*CommonJSModuleTransformer)
+}
+
+func putCommonJSModuleTransformer(tx *CommonJSModuleTransformer) {
+	dispose, visit := tx.SaveState()
+	topLevel := tx.topLevelVisitor.Visit
+	topLevelNested := tx.topLevelNestedVisitor.Visit
+	discardedValue := tx.discardedValueVisitor.Visit
+	assignmentPattern := tx.assignmentPatternVisitor.Visit
+	*tx = CommonJSModuleTransformer{}
+	tx.RestoreState(dispose, visit)
+	tx.topLevelVisitor.Visit = topLevel
+	tx.topLevelNestedVisitor.Visit = topLevelNested
+	tx.discardedValueVisitor.Visit = discardedValue
+	tx.assignmentPatternVisitor.Visit = assignmentPattern
+	commonJSPool.Put(tx)
+}
+
 func NewCommonJSModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opts.CompilerOptions
 	emitContext := opts.Context
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: opts.Resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
-	emitContext.InitNodeVisitor(&tx.topLevelVisitor, tx.visitTopLevel)
-	emitContext.InitNodeVisitor(&tx.topLevelNestedVisitor, tx.visitTopLevelNested)
-	emitContext.InitNodeVisitor(&tx.discardedValueVisitor, tx.visitDiscardedValue)
-	emitContext.InitNodeVisitor(&tx.assignmentPatternVisitor, tx.visitAssignmentPattern)
+	tx := getCommonJSModuleTransformer()
+	tx.compilerOptions = compilerOptions
+	tx.resolver = opts.Resolver
+	tx.getEmitModuleFormatOfFile = opts.GetEmitModuleFormatOfFile
+	if tx.topLevelVisitor.Visit == nil {
+		emitContext.InitNodeVisitor(&tx.topLevelVisitor, tx.visitTopLevel)
+		emitContext.InitNodeVisitor(&tx.topLevelNestedVisitor, tx.visitTopLevelNested)
+		emitContext.InitNodeVisitor(&tx.discardedValueVisitor, tx.visitDiscardedValue)
+		emitContext.InitNodeVisitor(&tx.assignmentPatternVisitor, tx.visitAssignmentPattern)
+	} else {
+		emitContext.InitNodeVisitor(&tx.topLevelVisitor, nil)
+		emitContext.InitNodeVisitor(&tx.topLevelNestedVisitor, nil)
+		emitContext.InitNodeVisitor(&tx.discardedValueVisitor, nil)
+		emitContext.InitNodeVisitor(&tx.assignmentPatternVisitor, nil)
+	}
 	tx.languageVersion = compilerOptions.GetEmitScriptTarget()
 	tx.moduleKind = compilerOptions.GetEmitModuleKind()
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putCommonJSModuleTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 

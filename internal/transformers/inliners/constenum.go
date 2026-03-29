@@ -2,6 +2,7 @@ package inliners
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -19,13 +20,31 @@ type ConstEnumInliningTransformer struct {
 	emitResolver      printer.EmitResolver
 }
 
+var constEnumPool = sync.Pool{New: func() any { return &ConstEnumInliningTransformer{} }}
+
+func getConstEnumInliningTransformer() *ConstEnumInliningTransformer {
+	return constEnumPool.Get().(*ConstEnumInliningTransformer)
+}
+
+func putConstEnumInliningTransformer(tx *ConstEnumInliningTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = ConstEnumInliningTransformer{}
+	tx.RestoreState(dispose, visit)
+	constEnumPool.Put(tx)
+}
+
 func NewConstEnumInliningTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
 	if compilerOptions.GetIsolatedModules() {
 		debug.Fail("const enums are not inlined under isolated modules")
 	}
-	tx := &ConstEnumInliningTransformer{compilerOptions: compilerOptions, emitResolver: opt.EmitResolver}
+	tx := getConstEnumInliningTransformer()
+	tx.compilerOptions = compilerOptions
+	tx.emitResolver = opt.EmitResolver
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putConstEnumInliningTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 

@@ -2,6 +2,7 @@ package tstransforms
 
 import (
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -15,10 +16,27 @@ type TypeEraserTransformer struct {
 	currentNode     *ast.Node
 }
 
+var typeEraserPool = sync.Pool{New: func() any { return &TypeEraserTransformer{} }}
+
+func getTypeEraserTransformer() *TypeEraserTransformer {
+	return typeEraserPool.Get().(*TypeEraserTransformer)
+}
+
+func putTypeEraserTransformer(tx *TypeEraserTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = TypeEraserTransformer{}
+	tx.RestoreState(dispose, visit)
+	typeEraserPool.Put(tx)
+}
+
 func NewTypeEraserTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
-	tx := &TypeEraserTransformer{compilerOptions: compilerOptions}
+	tx := getTypeEraserTransformer()
+	tx.compilerOptions = compilerOptions
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putTypeEraserTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 

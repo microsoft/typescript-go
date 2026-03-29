@@ -1,6 +1,8 @@
 package tstransforms
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -14,13 +16,31 @@ type ImportElisionTransformer struct {
 	emitResolver      printer.EmitResolver
 }
 
+var importElisionPool = sync.Pool{New: func() any { return &ImportElisionTransformer{} }}
+
+func getImportElisionTransformer() *ImportElisionTransformer {
+	return importElisionPool.Get().(*ImportElisionTransformer)
+}
+
+func putImportElisionTransformer(tx *ImportElisionTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = ImportElisionTransformer{}
+	tx.RestoreState(dispose, visit)
+	importElisionPool.Put(tx)
+}
+
 func NewImportElisionTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
 	if compilerOptions.VerbatimModuleSyntax.IsTrue() {
 		panic("ImportElisionTransformer should not be used with VerbatimModuleSyntax")
 	}
-	tx := &ImportElisionTransformer{compilerOptions: compilerOptions, emitResolver: opt.EmitResolver}
+	tx := getImportElisionTransformer()
+	tx.compilerOptions = compilerOptions
+	tx.emitResolver = opt.EmitResolver
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putImportElisionTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 

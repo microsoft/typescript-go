@@ -1,6 +1,8 @@
 package estransforms
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -121,6 +123,43 @@ type esDecoratorTransformer struct {
 	accessorStrippingModifierVisitor           ast.NodeVisitor
 }
 
+var esDecoratorPool = sync.Pool{New: func() any { return &esDecoratorTransformer{} }}
+
+func getESDecoratorTransformer() *esDecoratorTransformer {
+	return esDecoratorPool.Get().(*esDecoratorTransformer)
+}
+
+func putESDecoratorTransformer(tx *esDecoratorTransformer) {
+	dispose, visit := tx.SaveState()
+	outerThisVisit := tx.outerThisVisitor.Visit
+	discardedVisit := tx.discardedVisitor.Visit
+	modifierVisit := tx.modifierVisitor.Visit
+	exportStrippingVisit := tx.exportStrippingModifierVisitor.Visit
+	classElementVisit := tx.classElementVisitor.Visit
+	nonConstructorVisit := tx.nonConstructorClassElementVisitor.Visit
+	constructorVisit := tx.constructorClassElementVisitor.Visit
+	arrayAssignmentVisit := tx.arrayAssignmentVisitor.Visit
+	objectAssignmentVisit := tx.objectAssignmentVisitor.Visit
+	staticOnlyVisit := tx.staticOnlyModifierVisitor.Visit
+	asyncOnlyVisit := tx.asyncOnlyModifierVisitor.Visit
+	accessorStrippingVisit := tx.accessorStrippingModifierVisitor.Visit
+	*tx = esDecoratorTransformer{}
+	tx.RestoreState(dispose, visit)
+	tx.outerThisVisitor.Visit = outerThisVisit
+	tx.discardedVisitor.Visit = discardedVisit
+	tx.modifierVisitor.Visit = modifierVisit
+	tx.exportStrippingModifierVisitor.Visit = exportStrippingVisit
+	tx.classElementVisitor.Visit = classElementVisit
+	tx.nonConstructorClassElementVisitor.Visit = nonConstructorVisit
+	tx.constructorClassElementVisitor.Visit = constructorVisit
+	tx.arrayAssignmentVisitor.Visit = arrayAssignmentVisit
+	tx.objectAssignmentVisitor.Visit = objectAssignmentVisit
+	tx.staticOnlyModifierVisitor.Visit = staticOnlyVisit
+	tx.asyncOnlyModifierVisitor.Visit = asyncOnlyVisit
+	tx.accessorStrippingModifierVisitor.Visit = accessorStrippingVisit
+	esDecoratorPool.Put(tx)
+}
+
 func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	// When experimentalDecorators is set, the legacy decorator transformer handles all
 	// decorators. When targeting ESNext with useDefineForClassFields, there's nothing to
@@ -129,36 +168,55 @@ func newESDecoratorTransformer(opts *transformers.TransformOptions) *transformer
 		(opts.CompilerOptions.GetEmitScriptTarget() >= core.ScriptTargetESNext && opts.CompilerOptions.GetUseDefineForClassFields()) {
 		return nil
 	}
-	tx := &esDecoratorTransformer{compilerOptions: opts.CompilerOptions}
+	tx := getESDecoratorTransformer()
+	tx.compilerOptions = opts.CompilerOptions
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	ec := tx.EmitContext()
-	ec.InitNodeVisitor(&tx.outerThisVisitor, tx.outerThisVisit)
-	ec.InitNodeVisitor(&tx.discardedVisitor, tx.discardedValueVisit)
-	ec.InitNodeVisitor(&tx.modifierVisitor, tx.modifierVisitorVisit)
-	ec.InitNodeVisitor(&tx.exportStrippingModifierVisitor, tx.exportStrippingModifierVisit)
-	ec.InitNodeVisitor(&tx.classElementVisitor, tx.classElementVisitorVisit)
-	ec.InitNodeVisitor(&tx.nonConstructorClassElementVisitor, tx.nonConstructorClassElementVisit)
-	ec.InitNodeVisitor(&tx.constructorClassElementVisitor, tx.constructorClassElementVisit)
-	ec.InitNodeVisitor(&tx.arrayAssignmentVisitor, tx.visitArrayAssignmentElement)
-	ec.InitNodeVisitor(&tx.objectAssignmentVisitor, tx.visitObjectAssignmentElement)
-	ec.InitNodeVisitor(&tx.staticOnlyModifierVisitor, func(node *ast.Node) *ast.Node {
-		if node.Kind == ast.KindStaticKeyword {
-			return node
-		}
-		return nil
-	})
-	ec.InitNodeVisitor(&tx.asyncOnlyModifierVisitor, func(node *ast.Node) *ast.Node {
-		if node.Kind == ast.KindAsyncKeyword {
-			return node
-		}
-		return nil
-	})
-	ec.InitNodeVisitor(&tx.accessorStrippingModifierVisitor, func(node *ast.Node) *ast.Node {
-		if node.Kind == ast.KindAccessorKeyword {
+	if tx.outerThisVisitor.Visit == nil {
+		ec.InitNodeVisitor(&tx.outerThisVisitor, tx.outerThisVisit)
+		ec.InitNodeVisitor(&tx.discardedVisitor, tx.discardedValueVisit)
+		ec.InitNodeVisitor(&tx.modifierVisitor, tx.modifierVisitorVisit)
+		ec.InitNodeVisitor(&tx.exportStrippingModifierVisitor, tx.exportStrippingModifierVisit)
+		ec.InitNodeVisitor(&tx.classElementVisitor, tx.classElementVisitorVisit)
+		ec.InitNodeVisitor(&tx.nonConstructorClassElementVisitor, tx.nonConstructorClassElementVisit)
+		ec.InitNodeVisitor(&tx.constructorClassElementVisitor, tx.constructorClassElementVisit)
+		ec.InitNodeVisitor(&tx.arrayAssignmentVisitor, tx.visitArrayAssignmentElement)
+		ec.InitNodeVisitor(&tx.objectAssignmentVisitor, tx.visitObjectAssignmentElement)
+		ec.InitNodeVisitor(&tx.staticOnlyModifierVisitor, func(node *ast.Node) *ast.Node {
+			if node.Kind == ast.KindStaticKeyword {
+				return node
+			}
 			return nil
-		}
-		return node
-	})
+		})
+		ec.InitNodeVisitor(&tx.asyncOnlyModifierVisitor, func(node *ast.Node) *ast.Node {
+			if node.Kind == ast.KindAsyncKeyword {
+				return node
+			}
+			return nil
+		})
+		ec.InitNodeVisitor(&tx.accessorStrippingModifierVisitor, func(node *ast.Node) *ast.Node {
+			if node.Kind == ast.KindAccessorKeyword {
+				return nil
+			}
+			return node
+		})
+	} else {
+		ec.InitNodeVisitor(&tx.outerThisVisitor, nil)
+		ec.InitNodeVisitor(&tx.discardedVisitor, nil)
+		ec.InitNodeVisitor(&tx.modifierVisitor, nil)
+		ec.InitNodeVisitor(&tx.exportStrippingModifierVisitor, nil)
+		ec.InitNodeVisitor(&tx.classElementVisitor, nil)
+		ec.InitNodeVisitor(&tx.nonConstructorClassElementVisitor, nil)
+		ec.InitNodeVisitor(&tx.constructorClassElementVisitor, nil)
+		ec.InitNodeVisitor(&tx.arrayAssignmentVisitor, nil)
+		ec.InitNodeVisitor(&tx.objectAssignmentVisitor, nil)
+		ec.InitNodeVisitor(&tx.staticOnlyModifierVisitor, nil)
+		ec.InitNodeVisitor(&tx.asyncOnlyModifierVisitor, nil)
+		ec.InitNodeVisitor(&tx.accessorStrippingModifierVisitor, nil)
+	}
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putESDecoratorTransformer(tx) })
+	}
 	return result
 }
 

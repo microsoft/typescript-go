@@ -1,6 +1,7 @@
 package estransforms
 
 import (
+	"sync"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -234,7 +235,23 @@ func (ch *optionalChainTransformer) visitOptionalExpression(node *ast.Node, capt
 	return target
 }
 
+var optionalChainTransformerPool = sync.Pool{New: func() any { return &optionalChainTransformer{} }}
+
+func getOptionalChainTransformer() *optionalChainTransformer {
+return optionalChainTransformerPool.Get().(*optionalChainTransformer)
+}
+
+func putOptionalChainTransformer(tx *optionalChainTransformer) {
+dispose, visit := tx.SaveState()
+*tx = optionalChainTransformer{}
+tx.RestoreState(dispose, visit)
+optionalChainTransformerPool.Put(tx)
+}
+
 func newOptionalChainTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &optionalChainTransformer{}
+	tx := getOptionalChainTransformer()
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putOptionalChainTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }

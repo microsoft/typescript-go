@@ -105,8 +105,11 @@ func (c *EmitContext) NewNodeVisitor(visit func(node *ast.Node) *ast.Node) *ast.
 }
 
 // Initializes a NodeVisitor in-place, attached to this EmitContext.
+// If visit is nil and the visitor already has a Visit function, only Factory and Hooks are updated.
 func (c *EmitContext) InitNodeVisitor(v *ast.NodeVisitor, visit func(node *ast.Node) *ast.Node) {
-	v.Visit = visit
+	if visit != nil {
+		v.Visit = visit
+	}
 	v.Factory = c.Factory.AsNodeFactory()
 	v.Hooks = c.getVisitorHooks()
 }

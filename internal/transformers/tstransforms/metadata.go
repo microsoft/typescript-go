@@ -1,6 +1,8 @@
 package tstransforms
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -20,11 +22,26 @@ type MetadataTransformer struct {
 	currentLexicalScope *ast.Node
 }
 
+var metadataPool = sync.Pool{New: func() any { return &MetadataTransformer{} }}
+
+func getMetadataTransformer() *MetadataTransformer {
+	return metadataPool.Get().(*MetadataTransformer)
+}
+
+func putMetadataTransformer(tx *MetadataTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = MetadataTransformer{}
+	tx.RestoreState(dispose, visit)
+	metadataPool.Put(tx)
+}
+
 func NewMetadataTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
-	tx := &MetadataTransformer{
-		legacyDecorators: opt.CompilerOptions.ExperimentalDecorators.IsTrue(),
-		resolver:         opt.EmitResolver,
-		strictNullChecks: opt.CompilerOptions.GetStrictOptionValue(opt.CompilerOptions.StrictNullChecks),
+	tx := getMetadataTransformer()
+	tx.legacyDecorators = opt.CompilerOptions.ExperimentalDecorators.IsTrue()
+	tx.resolver = opt.EmitResolver
+	tx.strictNullChecks = opt.CompilerOptions.GetStrictOptionValue(opt.CompilerOptions.StrictNullChecks)
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putMetadataTransformer(tx) })
 	}
 	return tx.NewTransformer(tx.visit, opt.Context)
 }

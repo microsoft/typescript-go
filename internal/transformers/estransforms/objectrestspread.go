@@ -1,6 +1,8 @@
 package estransforms
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -587,7 +589,24 @@ func (ch *objectRestSpreadTransformer) chunkObjectLiteralElements(list *ast.Node
 	return objects
 }
 
+var objectRestSpreadPool = sync.Pool{New: func() any { return &objectRestSpreadTransformer{} }}
+
+func getObjectRestSpreadTransformer() *objectRestSpreadTransformer {
+	return objectRestSpreadPool.Get().(*objectRestSpreadTransformer)
+}
+
+func putObjectRestSpreadTransformer(tx *objectRestSpreadTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = objectRestSpreadTransformer{}
+	tx.RestoreState(dispose, visit)
+	objectRestSpreadPool.Put(tx)
+}
+
 func newObjectRestSpreadTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &objectRestSpreadTransformer{compilerOptions: opts.CompilerOptions}
+	tx := getObjectRestSpreadTransformer()
+	tx.compilerOptions = opts.CompilerOptions
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putObjectRestSpreadTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }

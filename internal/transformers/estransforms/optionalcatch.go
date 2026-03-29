@@ -1,6 +1,7 @@
 package estransforms
 
 import (
+	"sync"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -31,7 +32,23 @@ func (ch *optionalCatchTransformer) visitCatchClause(node *ast.CatchClause) *ast
 	return ch.Visitor().VisitEachChild(node.AsNode())
 }
 
+var optionalCatchTransformerPool = sync.Pool{New: func() any { return &optionalCatchTransformer{} }}
+
+func getOptionalCatchTransformer() *optionalCatchTransformer {
+return optionalCatchTransformerPool.Get().(*optionalCatchTransformer)
+}
+
+func putOptionalCatchTransformer(tx *optionalCatchTransformer) {
+dispose, visit := tx.SaveState()
+*tx = optionalCatchTransformer{}
+tx.RestoreState(dispose, visit)
+optionalCatchTransformerPool.Put(tx)
+}
+
 func newOptionalCatchTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &optionalCatchTransformer{}
+	tx := getOptionalCatchTransformer()
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putOptionalCatchTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }

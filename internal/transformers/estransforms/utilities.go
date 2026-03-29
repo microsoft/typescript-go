@@ -68,7 +68,11 @@ type superAccessState struct {
 
 func (s *superAccessState) initSuperAccessVisitor(emitContext *printer.EmitContext, factory *printer.NodeFactory) {
 	s.factory = factory
-	emitContext.InitNodeVisitor(&s.superAccessVisitor, s.visitSuperAccessNode)
+	if s.superAccessVisitor.Visit == nil {
+		emitContext.InitNodeVisitor(&s.superAccessVisitor, s.visitSuperAccessNode)
+	} else {
+		emitContext.InitNodeVisitor(&s.superAccessVisitor, nil)
+	}
 }
 
 // visitSuperAccessNode walks the async/generator body and replaces super property/element

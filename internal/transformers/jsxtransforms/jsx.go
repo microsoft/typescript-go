@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -29,12 +30,27 @@ type JSXTransformer struct {
 	currentSourceFile *ast.SourceFile
 }
 
+var jsxPool = sync.Pool{New: func() any { return &JSXTransformer{} }}
+
+func getJSXTransformer() *JSXTransformer {
+	return jsxPool.Get().(*JSXTransformer)
+}
+
+func putJSXTransformer(tx *JSXTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = JSXTransformer{}
+	tx.RestoreState(dispose, visit)
+	jsxPool.Put(tx)
+}
+
 func NewJSXTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opts.CompilerOptions
 	emitContext := opts.Context
-	tx := &JSXTransformer{
-		compilerOptions: compilerOptions,
-		emitResolver:    opts.EmitResolver,
+	tx := getJSXTransformer()
+	tx.compilerOptions = compilerOptions
+	tx.emitResolver = opts.EmitResolver
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putJSXTransformer(tx) })
 	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }

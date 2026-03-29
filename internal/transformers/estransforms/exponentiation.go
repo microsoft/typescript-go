@@ -1,6 +1,7 @@
 package estransforms
 
 import (
+	"sync"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -84,7 +85,23 @@ func (ch *exponentiationTransformer) visitExponentiationExpression(node *ast.Bin
 	return result
 }
 
+var exponentiationTransformerPool = sync.Pool{New: func() any { return &exponentiationTransformer{} }}
+
+func getExponentiationTransformer() *exponentiationTransformer {
+return exponentiationTransformerPool.Get().(*exponentiationTransformer)
+}
+
+func putExponentiationTransformer(tx *exponentiationTransformer) {
+dispose, visit := tx.SaveState()
+*tx = exponentiationTransformer{}
+tx.RestoreState(dispose, visit)
+exponentiationTransformerPool.Put(tx)
+}
+
 func newExponentiationTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &exponentiationTransformer{}
+	tx := getExponentiationTransformer()
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putExponentiationTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }

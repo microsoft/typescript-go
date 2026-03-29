@@ -57,6 +57,12 @@ func Chain(transforms ...TransformerFactory) TransformerFactory {
 			return constructed[0]
 		}
 		ch := &chainedTransformer{components: constructed}
-		return ch.NewTransformer(ch.visit, opt.Context)
+		result := ch.NewTransformer(ch.visit, opt.Context)
+		result.SetDispose(func() {
+			for _, t := range ch.components {
+				t.Dispose()
+			}
+		})
+		return result
 	}
 }

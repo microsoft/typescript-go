@@ -1,6 +1,8 @@
 package tstransforms
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -22,8 +24,26 @@ type LegacyDecoratorsTransformer struct {
 	enclosingClasses []*ast.ClassDeclaration
 }
 
+var legacyDecoratorsPool = sync.Pool{New: func() any { return &LegacyDecoratorsTransformer{} }}
+
+func getLegacyDecoratorsTransformer() *LegacyDecoratorsTransformer {
+	return legacyDecoratorsPool.Get().(*LegacyDecoratorsTransformer)
+}
+
+func putLegacyDecoratorsTransformer(tx *LegacyDecoratorsTransformer) {
+	dispose, visit := tx.SaveState()
+	*tx = LegacyDecoratorsTransformer{}
+	tx.RestoreState(dispose, visit)
+	legacyDecoratorsPool.Put(tx)
+}
+
 func NewLegacyDecoratorsTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
-	tx := &LegacyDecoratorsTransformer{languageVersion: opt.CompilerOptions.GetEmitScriptTarget(), referenceResolver: opt.Resolver}
+	tx := getLegacyDecoratorsTransformer()
+	tx.languageVersion = opt.CompilerOptions.GetEmitScriptTarget()
+	tx.referenceResolver = opt.Resolver
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putLegacyDecoratorsTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opt.Context)
 }
 

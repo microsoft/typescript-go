@@ -1,6 +1,8 @@
 package estransforms
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -53,20 +55,46 @@ type forawaitTransformer struct {
 	noAsyncModifierVisitor ast.NodeVisitor
 }
 
+var forawaitPool = sync.Pool{New: func() any { return &forawaitTransformer{} }}
+
+func getForawaitTransformer() *forawaitTransformer {
+	return forawaitPool.Get().(*forawaitTransformer)
+}
+
+func putForawaitTransformer(tx *forawaitTransformer) {
+	dispose, visit := tx.SaveState()
+	fallback := tx.fallbackNodeVisitor.Visit
+	noAsync := tx.noAsyncModifierVisitor.Visit
+	superAccess := tx.superAccessVisitor.Visit
+	*tx = forawaitTransformer{}
+	tx.RestoreState(dispose, visit)
+	tx.fallbackNodeVisitor.Visit = fallback
+	tx.noAsyncModifierVisitor.Visit = noAsync
+	tx.superAccessVisitor.Visit = superAccess
+	forawaitPool.Put(tx)
+}
+
 func newforawaitTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &forawaitTransformer{
-		compilerOptions: opts.CompilerOptions,
-	}
+	tx := getForawaitTransformer()
+	tx.compilerOptions = opts.CompilerOptions
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.initSuperAccessVisitor(tx.EmitContext(), tx.Factory())
 	ec := tx.EmitContext()
-	ec.InitNodeVisitor(&tx.fallbackNodeVisitor, tx.visitFallback)
-	ec.InitNodeVisitor(&tx.noAsyncModifierVisitor, func(node *ast.Node) *ast.Node {
-		if node.Kind == ast.KindAsyncKeyword {
-			return nil
-		}
-		return node
-	})
+	if tx.fallbackNodeVisitor.Visit == nil {
+		ec.InitNodeVisitor(&tx.fallbackNodeVisitor, tx.visitFallback)
+		ec.InitNodeVisitor(&tx.noAsyncModifierVisitor, func(node *ast.Node) *ast.Node {
+			if node.Kind == ast.KindAsyncKeyword {
+				return nil
+			}
+			return node
+		})
+	} else {
+		ec.InitNodeVisitor(&tx.fallbackNodeVisitor, nil)
+		ec.InitNodeVisitor(&tx.noAsyncModifierVisitor, nil)
+	}
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putForawaitTransformer(tx) })
+	}
 	return result
 }
 

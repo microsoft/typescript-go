@@ -2,6 +2,7 @@ package estransforms
 
 import (
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -37,13 +38,40 @@ type asyncTransformer struct {
 	fallbackNodeVisitor ast.NodeVisitor
 }
 
+var asyncPool = sync.Pool{New: func() any { return &asyncTransformer{} }}
+
+func getAsyncTransformer() *asyncTransformer {
+	return asyncPool.Get().(*asyncTransformer)
+}
+
+func putAsyncTransformer(tx *asyncTransformer) {
+	dispose, visit := tx.SaveState()
+	asyncBody := tx.asyncBodyVisitor.Visit
+	fallback := tx.fallbackNodeVisitor.Visit
+	superAccess := tx.superAccessVisitor.Visit
+	*tx = asyncTransformer{}
+	tx.RestoreState(dispose, visit)
+	tx.asyncBodyVisitor.Visit = asyncBody
+	tx.fallbackNodeVisitor.Visit = fallback
+	tx.superAccessVisitor.Visit = superAccess
+	asyncPool.Put(tx)
+}
+
 func newAsyncTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &asyncTransformer{}
+	tx := getAsyncTransformer()
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.initSuperAccessVisitor(tx.EmitContext(), tx.Factory())
 	ec := tx.EmitContext()
-	ec.InitNodeVisitor(&tx.asyncBodyVisitor, tx.visitAsyncBodyNode)
-	ec.InitNodeVisitor(&tx.fallbackNodeVisitor, tx.visitFallback)
+	if tx.asyncBodyVisitor.Visit == nil {
+		ec.InitNodeVisitor(&tx.asyncBodyVisitor, tx.visitAsyncBodyNode)
+		ec.InitNodeVisitor(&tx.fallbackNodeVisitor, tx.visitFallback)
+	} else {
+		ec.InitNodeVisitor(&tx.asyncBodyVisitor, nil)
+		ec.InitNodeVisitor(&tx.fallbackNodeVisitor, nil)
+	}
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putAsyncTransformer(tx) })
+	}
 	return result
 }
 

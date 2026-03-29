@@ -1,6 +1,7 @@
 package estransforms
 
 import (
+	"sync"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -18,8 +19,24 @@ type taggedTemplateTransformer struct {
 	taggedTemplateStringDeclarations []*ast.Node
 }
 
+var taggedTemplateTransformerPool = sync.Pool{New: func() any { return &taggedTemplateTransformer{} }}
+
+func getTaggedTemplateTransformer() *taggedTemplateTransformer {
+return taggedTemplateTransformerPool.Get().(*taggedTemplateTransformer)
+}
+
+func putTaggedTemplateTransformer(tx *taggedTemplateTransformer) {
+dispose, visit := tx.SaveState()
+*tx = taggedTemplateTransformer{}
+tx.RestoreState(dispose, visit)
+taggedTemplateTransformerPool.Put(tx)
+}
+
 func newTaggedTemplateLiftRestrictionTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &taggedTemplateTransformer{}
+	tx := getTaggedTemplateTransformer()
+	if tx.GetDispose() == nil {
+		tx.SetDispose(func() { putTaggedTemplateTransformer(tx) })
+	}
 	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
