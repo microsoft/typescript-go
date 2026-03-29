@@ -109,6 +109,7 @@ type NodeFactory struct {
 	variableDeclarationListPool       core.Pool[VariableDeclarationList]
 	variableDeclarationPool           core.Pool[VariableDeclaration]
 	variableStatementPool             core.Pool[VariableStatement]
+	nodeSlicePool                     core.Pool[*Node]
 
 	nodeCount int
 	textCount int
@@ -154,6 +155,18 @@ func (f *NodeFactory) TextCount() int {
 
 func (f *NodeFactory) AsNodeFactory() *NodeFactory {
 	return f
+}
+
+func (f *NodeFactory) NewNodeSlice(size int) []*Node {
+	return f.nodeSlicePool.NewSlice(size)
+}
+
+func (f *NodeFactory) NewNodeSlice1(node *Node) []*Node {
+	return f.nodeSlicePool.NewSlice1(node)
+}
+
+func (f *NodeFactory) CloneNodeSlice(nodes []*Node) []*Node {
+	return f.nodeSlicePool.Clone(nodes)
 }
 
 func updateNode(updated *Node, original *Node, hooks NodeFactoryHooks) *Node {

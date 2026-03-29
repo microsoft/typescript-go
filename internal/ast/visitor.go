@@ -1,9 +1,5 @@
 package ast
 
-import (
-	"slices"
-)
-
 // NodeVisitor
 
 type NodeVisitor struct {
@@ -147,7 +143,8 @@ func (v *NodeVisitor) VisitSlice(nodes []*Node) (result []*Node, changed bool) {
 
 		visited := v.Visit(node)
 		if visited == nil || visited != node {
-			updated := slices.Clone(nodes[:i])
+			updated := v.Factory.NewNodeSlice(len(nodes))[:i]
+			copy(updated, nodes[:i])
 
 			for {
 				// finish prior loop
@@ -263,7 +260,7 @@ func (v *NodeVisitor) liftToBlock(node *Statement) *Statement {
 		if node.Kind == KindSyntaxList {
 			nodes = node.AsSyntaxList().Children
 		} else {
-			nodes = []*Node{node}
+			nodes = v.Factory.NewNodeSlice1(node)
 		}
 	}
 	if len(nodes) == 1 {
