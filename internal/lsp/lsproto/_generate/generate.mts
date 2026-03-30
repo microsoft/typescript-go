@@ -1379,11 +1379,9 @@ function generateCode() {
         disc: NonNullable<ReturnType<typeof findDiscriminatorField>>,
         indent: string,
     ): boolean {
-        writeLine(`${indent}var disc struct { ${titleCase(disc.fieldName)} string \`json:"${disc.fieldName}"\` }`);
-        writeLine(`${indent}_ = json.Unmarshal(data, &disc)`);
-        writeLine(`${indent}switch disc.${titleCase(disc.fieldName)} {`);
+        writeLine(`${indent}switch string(jsonObjectRawField(data, ${JSON.stringify(disc.fieldName)})) {`);
         for (const [value, entry] of disc.mapping) {
-            writeLine(`${indent}case ${JSON.stringify(value)}:`);
+            writeLine(`${indent}case \`"${value}"\`:`);
             writeLine(`${indent}\tvar v ${entry.typeName}`);
             writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
             writeLine(`${indent}\t\treturn err`);

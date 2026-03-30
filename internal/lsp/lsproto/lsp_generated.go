@@ -24567,26 +24567,22 @@ func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSONFrom
 	if err != nil {
 		return err
 	}
-	var disc struct {
-		Kind string `json:"kind"`
-	}
-	_ = json.Unmarshal(data, &disc)
-	switch disc.Kind {
-	case "rename":
+	switch string(jsonObjectRawField(data, "kind")) {
+	case `"rename"`:
 		var v RenameFile
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.RenameFile = &v
 		return nil
-	case "create":
+	case `"create"`:
 		var v CreateFile
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.CreateFile = &v
 		return nil
-	case "delete":
+	case `"delete"`:
 		var v DeleteFile
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
@@ -24719,19 +24715,15 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 	if err != nil {
 		return err
 	}
-	var disc struct {
-		Kind string `json:"kind"`
-	}
-	_ = json.Unmarshal(data, &disc)
-	switch disc.Kind {
-	case "full":
+	switch string(jsonObjectRawField(data, "kind")) {
+	case `"full"`:
 		var v FullDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.FullDocumentDiagnosticReport = &v
 		return nil
-	case "unchanged":
+	case `"unchanged"`:
 		var v UnchangedDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
@@ -24770,19 +24762,15 @@ func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticRepor
 	if err != nil {
 		return err
 	}
-	var disc struct {
-		Kind string `json:"kind"`
-	}
-	_ = json.Unmarshal(data, &disc)
-	switch disc.Kind {
-	case "full":
+	switch string(jsonObjectRawField(data, "kind")) {
+	case `"full"`:
 		var v WorkspaceFullDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.FullDocumentDiagnosticReport = &v
 		return nil
-	case "unchanged":
+	case `"unchanged"`:
 		var v WorkspaceUnchangedDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
@@ -25299,26 +25287,22 @@ func (o *WorkDoneProgressBeginOrReportOrEnd) UnmarshalJSONFrom(dec *json.Decoder
 	if err != nil {
 		return err
 	}
-	var disc struct {
-		Kind string `json:"kind"`
-	}
-	_ = json.Unmarshal(data, &disc)
-	switch disc.Kind {
-	case "begin":
+	switch string(jsonObjectRawField(data, "kind")) {
+	case `"begin"`:
 		var v WorkDoneProgressBegin
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.Begin = &v
 		return nil
-	case "report":
+	case `"report"`:
 		var v WorkDoneProgressReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.Report = &v
 		return nil
-	case "end":
+	case `"end"`:
 		var v WorkDoneProgressEnd
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
@@ -27721,19 +27705,15 @@ func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)
 	if err != nil {
 		return err
 	}
-	var disc struct {
-		Kind string `json:"kind"`
-	}
-	_ = json.Unmarshal(data, &disc)
-	switch disc.Kind {
-	case "full":
+	switch string(jsonObjectRawField(data, "kind")) {
+	case `"full"`:
 		var v RelatedFullDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
 		}
 		o.FullDocumentDiagnosticReport = &v
 		return nil
-	case "unchanged":
+	case `"unchanged"`:
 		var v RelatedUnchangedDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err != nil {
 			return err
