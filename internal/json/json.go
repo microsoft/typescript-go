@@ -88,4 +88,5 @@ var (
 	Null        = jsontext.Null
 	BeginArray  = jsontext.BeginArray
 	EndArray    = jsontext.EndArray
+	NewDecoder  = jsontext.NewDecoder
 )

@@ -1,6 +1,7 @@
 package lsproto
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/url"
@@ -131,6 +132,39 @@ func assertAtMostOne(message string, count int) {
 	if count > 1 {
 		panic(message)
 	}
+}
+
+// jsonKeyCheck compares a raw JSON key token (including quotes) against a Go string.
+func jsonKeyCheck(name []byte, key string) bool {
+	return len(name) == len(key)+2 && name[0] == '"' && string(name[1:len(name)-1]) == key
+}
+
+// jsonObjectHasKey scans the top-level keys of a JSON object looking for any of the
+// given keys. Returns 1+index of the first key found, or 0 if none match.
+// Bails early on first match without decoding any values.
+func jsonObjectHasKey(data []byte, keys ...string) int {
+	dec := json.NewDecoder(bytes.NewBuffer(data))
+	if dec.PeekKind() != '{' {
+		return 0
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return 0
+	}
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return 0
+		}
+		for i, key := range keys {
+			if jsonKeyCheck(name, key) {
+				return i + 1
+			}
+		}
+		if err := dec.SkipValue(); err != nil {
+			return 0
+		}
+	}
+	return 0
 }
 
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk

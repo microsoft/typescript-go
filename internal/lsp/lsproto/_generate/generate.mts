@@ -1248,6 +1248,115 @@ function goKindCasesForJsonKind(kind: string): string {
 }
 
 /**
+ * For a group of union entries that share the same JSON kind (e.g., all objects),
+ * find a discriminator field — a JSON property whose string literal type differs
+ * across variants — enabling efficient O(1) dispatch instead of try-each.
+ */
+function findDiscriminatorField(entries: { fieldName: string; typeName: string; originalType: Type; }[]): {
+    fieldName: string;
+    mapping: Map<string, { fieldName: string; typeName: string; originalType: Type; }>;
+    unmapped: { fieldName: string; typeName: string; originalType: Type; }[];
+} | null {
+    // For each entry, find string literal fields and build candidate discriminators.
+    // A valid discriminator is a field name that appears on multiple variants with
+    // different string literal values.
+    const fieldCandidates = new Map<string, Map<string, typeof entries[0] | undefined>>();
+
+    for (const entry of entries) {
+        if (entry.originalType.kind !== "reference") continue;
+        const structure = model.structures.find(s => s.name === (entry.originalType as ReferenceType).name);
+        if (!structure) continue;
+
+        for (const prop of structure.properties) {
+            if (prop.type.kind === "stringLiteral") {
+                if (!fieldCandidates.has(prop.name)) {
+                    fieldCandidates.set(prop.name, new Map());
+                }
+                const mapping = fieldCandidates.get(prop.name)!;
+                if (!mapping.has(prop.type.value)) {
+                    mapping.set(prop.type.value, entry);
+                }
+                else {
+                    // Two entries share the same literal value; invalidate this candidate.
+                    mapping.set(prop.type.value, undefined);
+                }
+            }
+        }
+    }
+
+    // Pick the discriminator field that covers the most entries.
+    let bestField: string | null = null;
+    let bestMapping: Map<string, typeof entries[0]> | null = null;
+
+    for (const [fieldName, mapping] of fieldCandidates) {
+        const validMapping = new Map<string, typeof entries[0]>();
+        for (const [value, entry] of mapping) {
+            if (entry !== undefined) validMapping.set(value, entry);
+        }
+        if (validMapping.size >= 2 && (!bestMapping || validMapping.size > bestMapping.size)) {
+            bestField = fieldName;
+            bestMapping = validMapping;
+        }
+    }
+
+    if (!bestField || !bestMapping) return null;
+
+    const mappedEntries = new Set(bestMapping.values());
+    const unmapped = entries.filter(e => !mappedEntries.has(e));
+
+    return { fieldName: bestField, mapping: bestMapping, unmapped };
+}
+
+/**
+ * For a group of union entries that share the same JSON kind, find fields whose
+ * presence/absence in the JSON uniquely identifies a variant. A "presence discriminator"
+ * for variant X is a required field on X that does not appear in any other variant's
+ * property set at all.
+ */
+function findPresenceDiscriminator(entries: { fieldName: string; typeName: string; originalType: Type; }[]): {
+    checks: { jsonFieldName: string; entry: { fieldName: string; typeName: string; originalType: Type; }; }[];
+    unmapped: { fieldName: string; typeName: string; originalType: Type; }[];
+} | null {
+    // Collect all property names for each variant
+    const variantProps = new Map<typeof entries[0], { required: Property[]; allNames: Set<string>; }>();
+    for (const entry of entries) {
+        if (entry.originalType.kind !== "reference") continue;
+        const structure = model.structures.find(s => s.name === (entry.originalType as ReferenceType).name);
+        if (!structure) continue;
+        const required = structure.properties.filter(p => !p.optional && !p.omitzeroValue);
+        const allNames = new Set(structure.properties.map(p => p.name));
+        variantProps.set(entry, { required, allNames });
+    }
+
+    const checks: { jsonFieldName: string; entry: typeof entries[0]; }[] = [];
+    const handled = new Set<typeof entries[0]>();
+
+    for (const entry of entries) {
+        const info = variantProps.get(entry);
+        if (!info) continue;
+
+        const otherEntries = entries.filter(e => e !== entry);
+        for (const field of info.required) {
+            const absentFromAllOthers = otherEntries.every(other => {
+                const otherInfo = variantProps.get(other);
+                if (!otherInfo) return false;
+                return !otherInfo.allNames.has(field.name);
+            });
+            if (absentFromAllOthers) {
+                checks.push({ jsonFieldName: field.name, entry });
+                handled.add(entry);
+                break;
+            }
+        }
+    }
+
+    if (checks.length === 0) return null;
+
+    const unmapped = entries.filter(e => !handled.has(e));
+    return { checks, unmapped };
+}
+
+/**
  * Generate the Go code
  */
 function generateCode() {
@@ -1259,6 +1368,73 @@ function generateCode() {
 
     function writeLine(s = "") {
         parts.push(s + "\n");
+    }
+
+    /**
+     * Generate Go code for discriminator-based union dispatch.
+     * Assumes a variable named `data` of type `json.Value` is in scope.
+     */
+    function generateDiscriminatorDispatch(
+        disc: NonNullable<ReturnType<typeof findDiscriminatorField>>,
+        indent: string,
+    ) {
+        writeLine(`${indent}var disc struct { ${titleCase(disc.fieldName)} string \`json:"${disc.fieldName}"\` }`);
+        writeLine(`${indent}_ = json.Unmarshal(data, &disc)`);
+        writeLine(`${indent}switch disc.${titleCase(disc.fieldName)} {`);
+        for (const [value, entry] of disc.mapping) {
+            writeLine(`${indent}case ${JSON.stringify(value)}:`);
+            writeLine(`${indent}\tvar v ${entry.typeName}`);
+            writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
+            writeLine(`${indent}\t\treturn err`);
+            writeLine(`${indent}\t}`);
+            writeLine(`${indent}\to.${entry.fieldName} = &v`);
+            writeLine(`${indent}\treturn nil`);
+        }
+        if (disc.unmapped.length > 0) {
+            writeLine(`${indent}default:`);
+            for (const entry of disc.unmapped) {
+                writeLine(`${indent}\tvar v${entry.fieldName} ${entry.typeName}`);
+                writeLine(`${indent}\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                writeLine(`${indent}\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                writeLine(`${indent}\t\treturn nil`);
+                writeLine(`${indent}\t}`);
+            }
+        }
+        writeLine(`${indent}}`);
+    }
+
+    /**
+     * Generate Go code for presence-based union dispatch.
+     * Assumes a variable named `data` of type `json.Value` is in scope.
+     * Uses jsonObjectHasKey to scan for a distinguishing key in a single pass.
+     */
+    function generatePresenceDispatch(
+        pres: NonNullable<ReturnType<typeof findPresenceDiscriminator>>,
+        indent: string,
+    ) {
+        const checks = pres.checks;
+        const args = checks.map(c => JSON.stringify(c.jsonFieldName)).join(", ");
+        writeLine(`${indent}switch jsonObjectHasKey(data, ${args}) {`);
+        for (let i = 0; i < checks.length; i++) {
+            writeLine(`${indent}case ${i + 1}: // ${checks[i].jsonFieldName}`);
+            writeLine(`${indent}\tvar v ${checks[i].entry.typeName}`);
+            writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
+            writeLine(`${indent}\t\treturn err`);
+            writeLine(`${indent}\t}`);
+            writeLine(`${indent}\to.${checks[i].entry.fieldName} = &v`);
+            writeLine(`${indent}\treturn nil`);
+        }
+        if (pres.unmapped.length > 0) {
+            writeLine(`${indent}default:`);
+            for (const entry of pres.unmapped) {
+                writeLine(`${indent}\tvar v${entry.fieldName} ${entry.typeName}`);
+                writeLine(`${indent}\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                writeLine(`${indent}\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                writeLine(`${indent}\t\treturn nil`);
+                writeLine(`${indent}\t}`);
+            }
+        }
+        writeLine(`${indent}}`);
     }
 
     function generateResolvedStruct(structure: Structure, indent: string = "\t"): string[] {
@@ -2403,17 +2579,29 @@ function generateCode() {
                     writeLine(`\t\treturn nil`);
                 }
                 else {
-                    // Ambiguous: buffer and try each
+                    // Ambiguous: buffer and dispatch
                     writeLine(`\t\tdata, err := dec.ReadValue()`);
                     writeLine(`\t\tif err != nil {`);
                     writeLine(`\t\t\treturn err`);
                     writeLine(`\t\t}`);
-                    for (const entry of entries) {
-                        writeLine(`\t\tvar v${entry.fieldName} ${entry.typeName}`);
-                        writeLine(`\t\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
-                        writeLine(`\t\t\to.${entry.fieldName} = &v${entry.fieldName}`);
-                        writeLine(`\t\t\treturn nil`);
-                        writeLine(`\t\t}`);
+                    const disc = findDiscriminatorField(entries);
+                    if (disc) {
+                        generateDiscriminatorDispatch(disc, "\t\t");
+                    }
+                    else {
+                        const pres = findPresenceDiscriminator(entries);
+                        if (pres) {
+                            generatePresenceDispatch(pres, "\t\t");
+                        }
+                        else {
+                            for (const entry of entries) {
+                                writeLine(`\t\tvar v${entry.fieldName} ${entry.typeName}`);
+                                writeLine(`\t\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                                writeLine(`\t\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                                writeLine(`\t\t\treturn nil`);
+                                writeLine(`\t\t}`);
+                            }
+                        }
                     }
                     writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
                 }
@@ -2437,12 +2625,24 @@ function generateCode() {
                 writeLine("");
             }
 
-            for (const entry of fieldEntries) {
-                writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
-                writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
-                writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
-                writeLine(`\t\treturn nil`);
-                writeLine(`\t}`);
+            const disc = findDiscriminatorField(fieldEntries);
+            if (disc) {
+                generateDiscriminatorDispatch(disc, "\t");
+            }
+            else {
+                const pres = findPresenceDiscriminator(fieldEntries);
+                if (pres) {
+                    generatePresenceDispatch(pres, "\t");
+                }
+                else {
+                    for (const entry of fieldEntries) {
+                        writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
+                        writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                        writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                        writeLine(`\t\treturn nil`);
+                        writeLine(`\t}`);
+                    }
+                }
             }
         }
 
