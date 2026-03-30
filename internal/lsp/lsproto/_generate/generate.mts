@@ -2173,22 +2173,22 @@ function generateCode() {
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
-        if (unionContainedNull) {
-            write(`\tassertAtMostOne("more than one element of ${name} is set", `);
-        }
-        else {
-            write(`\tassertOnlyOne("exactly one element of ${name} should be set", `);
-        }
+        // Only emit assertion if there are multiple fields to check
+        if (fieldEntries.length > 1) {
+            if (unionContainedNull) {
+                write(`\tassertAtMostOne("more than one element of ${name} is set", `);
+            }
+            else {
+                write(`\tassertOnlyOne("exactly one element of ${name} should be set", `);
+            }
 
-        // Create assertion to ensure at most one field is set at a time
-
-        // Write the assertion conditions
-        for (let i = 0; i < fieldEntries.length; i++) {
-            if (i > 0) write(", ");
-            write(`o.${fieldEntries[i].fieldName} != nil`);
+            for (let i = 0; i < fieldEntries.length; i++) {
+                if (i > 0) write(", ");
+                write(`o.${fieldEntries[i].fieldName} != nil`);
+            }
+            writeLine(`)`);
+            writeLine("");
         }
-        writeLine(`)`);
-        writeLine("");
 
         for (const entry of fieldEntries) {
             writeLine(`\tif o.${entry.fieldName} != nil {`);

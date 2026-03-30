@@ -24795,8 +24795,6 @@ type DocumentSelectorOrNull struct {
 var _ json.MarshalerTo = (*DocumentSelectorOrNull)(nil)
 
 func (o *DocumentSelectorOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of DocumentSelectorOrNull is set", o.DocumentSelector != nil)
-
 	if o.DocumentSelector != nil {
 		return json.MarshalEncode(enc, o.DocumentSelector)
 	}
@@ -25192,8 +25190,6 @@ type IntegerOrNull struct {
 var _ json.MarshalerTo = (*IntegerOrNull)(nil)
 
 func (o *IntegerOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of IntegerOrNull is set", o.Integer != nil)
-
 	if o.Integer != nil {
 		return json.MarshalEncode(enc, o.Integer)
 	}
@@ -25228,8 +25224,6 @@ type StringOrNull struct {
 var _ json.MarshalerTo = (*StringOrNull)(nil)
 
 func (o *StringOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of StringOrNull is set", o.String != nil)
-
 	if o.String != nil {
 		return json.MarshalEncode(enc, o.String)
 	}
@@ -25264,8 +25258,6 @@ type DocumentUriOrNull struct {
 var _ json.MarshalerTo = (*DocumentUriOrNull)(nil)
 
 func (o *DocumentUriOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of DocumentUriOrNull is set", o.DocumentUri != nil)
-
 	if o.DocumentUri != nil {
 		return json.MarshalEncode(enc, o.DocumentUri)
 	}
@@ -25300,8 +25292,6 @@ type WorkspaceFoldersOrNull struct {
 var _ json.MarshalerTo = (*WorkspaceFoldersOrNull)(nil)
 
 func (o *WorkspaceFoldersOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of WorkspaceFoldersOrNull is set", o.WorkspaceFolders != nil)
-
 	if o.WorkspaceFolders != nil {
 		return json.MarshalEncode(enc, o.WorkspaceFolders)
 	}
@@ -25530,8 +25520,6 @@ type UintegerOrNull struct {
 var _ json.MarshalerTo = (*UintegerOrNull)(nil)
 
 func (o *UintegerOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of UintegerOrNull is set", o.Uinteger != nil)
-
 	if o.Uinteger != nil {
 		return json.MarshalEncode(enc, o.Uinteger)
 	}
@@ -27411,8 +27399,6 @@ type FoldingRangesOrNull struct {
 var _ json.MarshalerTo = (*FoldingRangesOrNull)(nil)
 
 func (o *FoldingRangesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of FoldingRangesOrNull is set", o.FoldingRanges != nil)
-
 	if o.FoldingRanges != nil {
 		return json.MarshalEncode(enc, o.FoldingRanges)
 	}
@@ -27511,8 +27497,6 @@ type SelectionRangesOrNull struct {
 var _ json.MarshalerTo = (*SelectionRangesOrNull)(nil)
 
 func (o *SelectionRangesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of SelectionRangesOrNull is set", o.SelectionRanges != nil)
-
 	if o.SelectionRanges != nil {
 		return json.MarshalEncode(enc, o.SelectionRanges)
 	}
@@ -27547,8 +27531,6 @@ type CallHierarchyItemsOrNull struct {
 var _ json.MarshalerTo = (*CallHierarchyItemsOrNull)(nil)
 
 func (o *CallHierarchyItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CallHierarchyItemsOrNull is set", o.CallHierarchyItems != nil)
-
 	if o.CallHierarchyItems != nil {
 		return json.MarshalEncode(enc, o.CallHierarchyItems)
 	}
@@ -27583,8 +27565,6 @@ type CallHierarchyIncomingCallsOrNull struct {
 var _ json.MarshalerTo = (*CallHierarchyIncomingCallsOrNull)(nil)
 
 func (o *CallHierarchyIncomingCallsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CallHierarchyIncomingCallsOrNull is set", o.CallHierarchyIncomingCalls != nil)
-
 	if o.CallHierarchyIncomingCalls != nil {
 		return json.MarshalEncode(enc, o.CallHierarchyIncomingCalls)
 	}
@@ -27619,8 +27599,6 @@ type CallHierarchyOutgoingCallsOrNull struct {
 var _ json.MarshalerTo = (*CallHierarchyOutgoingCallsOrNull)(nil)
 
 func (o *CallHierarchyOutgoingCallsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CallHierarchyOutgoingCallsOrNull is set", o.CallHierarchyOutgoingCalls != nil)
-
 	if o.CallHierarchyOutgoingCalls != nil {
 		return json.MarshalEncode(enc, o.CallHierarchyOutgoingCalls)
 	}
@@ -27655,8 +27633,6 @@ type SemanticTokensOrNull struct {
 var _ json.MarshalerTo = (*SemanticTokensOrNull)(nil)
 
 func (o *SemanticTokensOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of SemanticTokensOrNull is set", o.SemanticTokens != nil)
-
 	if o.SemanticTokens != nil {
 		return json.MarshalEncode(enc, o.SemanticTokens)
 	}
@@ -27740,8 +27716,6 @@ type LinkedEditingRangesOrNull struct {
 var _ json.MarshalerTo = (*LinkedEditingRangesOrNull)(nil)
 
 func (o *LinkedEditingRangesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of LinkedEditingRangesOrNull is set", o.LinkedEditingRanges != nil)
-
 	if o.LinkedEditingRanges != nil {
 		return json.MarshalEncode(enc, o.LinkedEditingRanges)
 	}
@@ -27776,8 +27750,6 @@ type WorkspaceEditOrNull struct {
 var _ json.MarshalerTo = (*WorkspaceEditOrNull)(nil)
 
 func (o *WorkspaceEditOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of WorkspaceEditOrNull is set", o.WorkspaceEdit != nil)
-
 	if o.WorkspaceEdit != nil {
 		return json.MarshalEncode(enc, o.WorkspaceEdit)
 	}
@@ -27812,8 +27784,6 @@ type MonikersOrNull struct {
 var _ json.MarshalerTo = (*MonikersOrNull)(nil)
 
 func (o *MonikersOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of MonikersOrNull is set", o.Monikers != nil)
-
 	if o.Monikers != nil {
 		return json.MarshalEncode(enc, o.Monikers)
 	}
@@ -27848,8 +27818,6 @@ type TypeHierarchyItemsOrNull struct {
 var _ json.MarshalerTo = (*TypeHierarchyItemsOrNull)(nil)
 
 func (o *TypeHierarchyItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of TypeHierarchyItemsOrNull is set", o.TypeHierarchyItems != nil)
-
 	if o.TypeHierarchyItems != nil {
 		return json.MarshalEncode(enc, o.TypeHierarchyItems)
 	}
@@ -27884,8 +27852,6 @@ type InlineValuesOrNull struct {
 var _ json.MarshalerTo = (*InlineValuesOrNull)(nil)
 
 func (o *InlineValuesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of InlineValuesOrNull is set", o.InlineValues != nil)
-
 	if o.InlineValues != nil {
 		return json.MarshalEncode(enc, o.InlineValues)
 	}
@@ -27920,8 +27886,6 @@ type InlayHintsOrNull struct {
 var _ json.MarshalerTo = (*InlayHintsOrNull)(nil)
 
 func (o *InlayHintsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of InlayHintsOrNull is set", o.InlayHints != nil)
-
 	if o.InlayHints != nil {
 		return json.MarshalEncode(enc, o.InlayHints)
 	}
@@ -28044,8 +28008,6 @@ type MessageActionItemOrNull struct {
 var _ json.MarshalerTo = (*MessageActionItemOrNull)(nil)
 
 func (o *MessageActionItemOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of MessageActionItemOrNull is set", o.MessageActionItem != nil)
-
 	if o.MessageActionItem != nil {
 		return json.MarshalEncode(enc, o.MessageActionItem)
 	}
@@ -28080,8 +28042,6 @@ type TextEditsOrNull struct {
 var _ json.MarshalerTo = (*TextEditsOrNull)(nil)
 
 func (o *TextEditsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of TextEditsOrNull is set", o.TextEdits != nil)
-
 	if o.TextEdits != nil {
 		return json.MarshalEncode(enc, o.TextEdits)
 	}
@@ -28163,8 +28123,6 @@ type HoverOrNull struct {
 var _ json.MarshalerTo = (*HoverOrNull)(nil)
 
 func (o *HoverOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of HoverOrNull is set", o.Hover != nil)
-
 	if o.Hover != nil {
 		return json.MarshalEncode(enc, o.Hover)
 	}
@@ -28199,8 +28157,6 @@ type SignatureHelpOrNull struct {
 var _ json.MarshalerTo = (*SignatureHelpOrNull)(nil)
 
 func (o *SignatureHelpOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of SignatureHelpOrNull is set", o.SignatureHelp != nil)
-
 	if o.SignatureHelp != nil {
 		return json.MarshalEncode(enc, o.SignatureHelp)
 	}
@@ -28235,8 +28191,6 @@ type LocationsOrNull struct {
 var _ json.MarshalerTo = (*LocationsOrNull)(nil)
 
 func (o *LocationsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of LocationsOrNull is set", o.Locations != nil)
-
 	if o.Locations != nil {
 		return json.MarshalEncode(enc, o.Locations)
 	}
@@ -28275,8 +28229,6 @@ type DocumentHighlightsOrNull struct {
 var _ json.MarshalerTo = (*DocumentHighlightsOrNull)(nil)
 
 func (o *DocumentHighlightsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of DocumentHighlightsOrNull is set", o.DocumentHighlights != nil)
-
 	if o.DocumentHighlights != nil {
 		return json.MarshalEncode(enc, o.DocumentHighlights)
 	}
@@ -28401,8 +28353,6 @@ type CommandOrCodeActionArrayOrNull struct {
 var _ json.MarshalerTo = (*CommandOrCodeActionArrayOrNull)(nil)
 
 func (o *CommandOrCodeActionArrayOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CommandOrCodeActionArrayOrNull is set", o.CommandOrCodeActionArray != nil)
-
 	if o.CommandOrCodeActionArray != nil {
 		return json.MarshalEncode(enc, o.CommandOrCodeActionArray)
 	}
@@ -28486,8 +28436,6 @@ type CodeLensesOrNull struct {
 var _ json.MarshalerTo = (*CodeLensesOrNull)(nil)
 
 func (o *CodeLensesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CodeLensesOrNull is set", o.CodeLenses != nil)
-
 	if o.CodeLenses != nil {
 		return json.MarshalEncode(enc, o.CodeLenses)
 	}
@@ -28522,8 +28470,6 @@ type DocumentLinksOrNull struct {
 var _ json.MarshalerTo = (*DocumentLinksOrNull)(nil)
 
 func (o *DocumentLinksOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of DocumentLinksOrNull is set", o.DocumentLinks != nil)
-
 	if o.DocumentLinks != nil {
 		return json.MarshalEncode(enc, o.DocumentLinks)
 	}
@@ -28616,8 +28562,6 @@ type LSPAnyOrNull struct {
 var _ json.MarshalerTo = (*LSPAnyOrNull)(nil)
 
 func (o *LSPAnyOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of LSPAnyOrNull is set", o.LSPAny != nil)
-
 	if o.LSPAny != nil {
 		return json.MarshalEncode(enc, o.LSPAny)
 	}
@@ -28652,8 +28596,6 @@ type CustomClosingTagCompletionOrNull struct {
 var _ json.MarshalerTo = (*CustomClosingTagCompletionOrNull)(nil)
 
 func (o *CustomClosingTagCompletionOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CustomClosingTagCompletionOrNull is set", o.CustomClosingTagCompletion != nil)
-
 	if o.CustomClosingTagCompletion != nil {
 		return json.MarshalEncode(enc, o.CustomClosingTagCompletion)
 	}
@@ -28688,8 +28630,6 @@ type RequestFailureTelemetryEventOrNull struct {
 var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrNull)(nil)
 
 func (o *RequestFailureTelemetryEventOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil)
-
 	if o.RequestFailureTelemetryEvent != nil {
 		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
 	}
