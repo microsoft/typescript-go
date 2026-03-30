@@ -103,9 +103,6 @@ func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 
 // Trace implements compiler.CompilerHost.
 func (c *compilerHost) Trace(msg *diagnostics.Message, args ...any) {
-	if c == nil || msg == nil {
-		return
-	}
 	if logger := c.logger.Verbose(); logger != nil {
 		logger.Log(msg.Localize(locale.Default, args...))
 	}
