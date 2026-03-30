@@ -1521,7 +1521,7 @@ function generateCode() {
             writeLine("");
 
             writeLine(`\tfor dec.PeekKind() != '}' {`);
-            writeLine("name, err := dec.ReadValue()");
+            writeLine(`\t\tname, err := dec.ReadValue()`);
             writeLine(`\t\tif err != nil {`);
             writeLine(`\t\t\treturn err`);
             writeLine(`\t\t}`);
@@ -1538,7 +1538,9 @@ function generateCode() {
             }
 
             writeLine(`\t\tdefault:`);
-            writeLine(`\t\t// Ignore unknown properties.`);
+            writeLine(`\t\t\tif err := dec.SkipValue(); err != nil {`);
+            writeLine(`\t\t\t\treturn err`);
+            writeLine(`\t\t\t}`);
             writeLine(`\t\t}`);
             writeLine(`\t}`);
             writeLine("");
@@ -1683,7 +1685,9 @@ function generateCode() {
             writeLine(`\t\t\t}`);
             writeLine(`\t\t\trawRegisterOptions = v`);
             writeLine(`\t\tdefault:`);
-            writeLine(`\t\t\t// Ignore unknown properties.`);
+            writeLine(`\t\t\tif err := dec.SkipValue(); err != nil {`);
+            writeLine(`\t\t\t\treturn err`);
+            writeLine(`\t\t\t}`);
             writeLine(`\t\t}`);
             writeLine(`\t}`);
             writeLine("");

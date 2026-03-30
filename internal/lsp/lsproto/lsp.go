@@ -138,13 +138,6 @@ func assertAtMostOne(message string, values ...bool) {
 	}
 }
 
-type requiredProp bool
-
-func (v *requiredProp) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*v = true
-	return dec.SkipValue()
-}
-
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk
 
 type RequestInfo[Params, Resp any] struct {

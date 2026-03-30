@@ -78,7 +78,9 @@ func (s *ImplementationParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -146,7 +148,9 @@ func (s *Location) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -216,7 +220,9 @@ func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -300,7 +306,9 @@ func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -370,7 +378,9 @@ func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -433,7 +443,9 @@ func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -489,7 +501,9 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *json.Decoder) e
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -541,7 +555,9 @@ func (s *ConfigurationParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -613,7 +629,9 @@ func (s *DocumentColorParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -675,7 +693,9 @@ func (s *ColorInformation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -745,7 +765,9 @@ func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -835,7 +857,9 @@ func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -912,7 +936,9 @@ func (s *ColorPresentation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -970,7 +996,9 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) e
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1042,7 +1070,9 @@ func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1141,7 +1171,9 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1211,7 +1243,9 @@ func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) e
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1295,7 +1329,9 @@ func (s *DeclarationParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1365,7 +1401,9 @@ func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1446,7 +1484,9 @@ func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1510,7 +1550,9 @@ func (s *SelectionRange) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1577,7 +1619,9 @@ func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1629,7 +1673,9 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1681,7 +1727,9 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1760,7 +1808,9 @@ func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1885,7 +1935,9 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -1967,7 +2019,9 @@ func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2036,7 +2090,9 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2101,7 +2157,9 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2173,7 +2231,9 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2239,7 +2299,9 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2314,7 +2376,9 @@ func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2377,7 +2441,9 @@ func (s *SemanticTokens) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2429,7 +2495,9 @@ func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2521,7 +2589,9 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2606,7 +2676,9 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2668,7 +2740,9 @@ func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2720,7 +2794,9 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2801,7 +2877,9 @@ func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2888,7 +2966,9 @@ func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -2943,7 +3023,9 @@ func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3019,7 +3101,9 @@ func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3087,7 +3171,9 @@ func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3154,7 +3240,9 @@ func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Deco
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3210,7 +3298,9 @@ func (s *CreateFilesParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3302,7 +3392,9 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3359,7 +3451,9 @@ func (s *RenameFilesParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3415,7 +3509,9 @@ func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3499,7 +3595,9 @@ func (s *MonikerParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3583,7 +3681,9 @@ func (s *Moniker) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3648,7 +3748,9 @@ func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3727,7 +3829,9 @@ func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3853,7 +3957,9 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -3935,7 +4041,9 @@ func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4004,7 +4112,9 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4073,7 +4183,9 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4158,7 +4270,9 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4234,7 +4348,9 @@ func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4309,7 +4425,9 @@ func (s *InlayHintParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4438,7 +4556,9 @@ func (s *InlayHint) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4519,7 +4639,9 @@ func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4607,7 +4729,9 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4661,7 +4785,9 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *json.Deco
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4715,7 +4841,9 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4814,7 +4942,9 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4898,7 +5028,9 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -4952,7 +5084,9 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5006,7 +5140,9 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *json.Dec
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5097,7 +5233,9 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5160,7 +5298,9 @@ func (s *InlineCompletionList) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5238,7 +5378,9 @@ func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5310,7 +5452,9 @@ func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decode
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5367,7 +5511,9 @@ func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5427,7 +5573,9 @@ func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5492,7 +5640,9 @@ func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *json.Dec
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5549,7 +5699,9 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5600,7 +5752,9 @@ func (s *RegistrationParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5651,7 +5805,9 @@ func (s *UnregistrationParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5796,7 +5952,9 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5864,7 +6022,9 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5921,7 +6081,9 @@ func (s *InitializeError) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -5976,7 +6138,9 @@ func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6042,7 +6206,9 @@ func (s *ShowMessageParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6113,7 +6279,9 @@ func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6168,7 +6336,9 @@ func (s *MessageActionItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6230,7 +6400,9 @@ func (s *LogMessageParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6286,7 +6458,9 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6360,7 +6534,9 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6426,7 +6602,9 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Deco
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6486,7 +6664,9 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6551,7 +6731,9 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6612,7 +6794,9 @@ func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *json.Decode
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6678,7 +6862,9 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6745,7 +6931,9 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6801,7 +6989,9 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6854,7 +7044,9 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *json.D
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -6925,7 +7117,9 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7021,7 +7215,9 @@ func (s *CompletionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7284,7 +7480,9 @@ func (s *CompletionItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7394,7 +7592,9 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7503,7 +7703,9 @@ func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7580,7 +7782,9 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7644,7 +7848,9 @@ func (s *Hover) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7704,7 +7910,9 @@ func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7791,7 +7999,9 @@ func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7886,7 +8096,9 @@ func (s *SignatureHelp) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -7965,7 +8177,9 @@ func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8050,7 +8264,9 @@ func (s *DefinitionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8113,7 +8329,9 @@ func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8206,7 +8424,9 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8272,7 +8492,9 @@ func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8357,7 +8579,9 @@ func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8422,7 +8646,9 @@ func (s *DocumentHighlight) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8482,7 +8708,9 @@ func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *json.Decod
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8554,7 +8782,9 @@ func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8662,7 +8892,9 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8787,7 +9019,9 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8866,7 +9100,9 @@ func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -8956,7 +9192,9 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9046,7 +9284,9 @@ func (s *Command) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9190,7 +9430,9 @@ func (s *CodeAction) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9292,7 +9534,9 @@ func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9367,7 +9611,9 @@ func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9473,7 +9719,9 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9562,7 +9810,9 @@ func (s *CodeLensParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9634,7 +9884,9 @@ func (s *CodeLens) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9701,7 +9953,9 @@ func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9773,7 +10027,9 @@ func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9855,7 +10111,9 @@ func (s *DocumentLink) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9922,7 +10180,9 @@ func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) e
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -9995,7 +10255,9 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10058,7 +10320,9 @@ func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json.Deco
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10140,7 +10404,9 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10217,7 +10483,9 @@ func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10303,7 +10571,9 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10402,7 +10672,9 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10481,7 +10753,9 @@ func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jso
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10572,7 +10846,9 @@ func (s *RenameParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10647,7 +10923,9 @@ func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10723,7 +11001,9 @@ func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10793,7 +11073,9 @@ func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10852,7 +11134,9 @@ func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10925,7 +11209,9 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -10998,7 +11284,9 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11093,7 +11381,9 @@ func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11180,7 +11470,9 @@ func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11239,7 +11531,9 @@ func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11290,7 +11584,9 @@ func (s *SetTraceParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11347,7 +11643,9 @@ func (s *LogTraceParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11399,7 +11697,9 @@ func (s *CancelParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11460,7 +11760,9 @@ func (s *ProgressParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11534,7 +11836,9 @@ func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11640,7 +11944,9 @@ func (s *LocationLink) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11720,7 +12026,9 @@ func (s *Range) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11801,7 +12109,9 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11865,7 +12175,9 @@ func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -11945,7 +12257,9 @@ func (s *Color) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12057,7 +12371,9 @@ func (s *Position) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12145,7 +12461,9 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12214,7 +12532,9 @@ func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12276,7 +12596,9 @@ func (s *FileCreate) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12347,7 +12669,9 @@ func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12428,7 +12752,9 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12518,7 +12844,9 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12602,7 +12930,9 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12677,7 +13007,9 @@ func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12740,7 +13072,9 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12804,7 +13138,9 @@ func (s *FileRename) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12862,7 +13198,9 @@ func (s *FileDelete) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -12936,7 +13274,9 @@ func (s *InlineValueContext) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13003,7 +13343,9 @@ func (s *InlineValueText) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13080,7 +13422,9 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13148,7 +13492,9 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13247,7 +13593,9 @@ func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13332,7 +13680,9 @@ func (s *MarkupContent) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13432,7 +13782,9 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decode
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13516,7 +13868,9 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.D
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13592,7 +13946,9 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13664,7 +14020,9 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13748,7 +14106,9 @@ func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13816,7 +14176,9 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13901,7 +14263,9 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -13974,7 +14338,9 @@ func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -14046,7 +14412,9 @@ func (s *StringValue) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -14115,7 +14483,9 @@ func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -14850,7 +15220,9 @@ func (s *Registration) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 			rawRegisterOptions = v
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15210,7 +15582,9 @@ func (s *Unregistration) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15428,7 +15802,9 @@ func (s *ServerInfo) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15490,7 +15866,9 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) e
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15561,7 +15939,9 @@ func (s *FileEvent) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15627,7 +16007,9 @@ func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15752,7 +16134,9 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15816,7 +16200,9 @@ func (s *CompletionContext) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -15902,7 +16288,9 @@ func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16136,7 +16524,9 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16227,7 +16617,9 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16302,7 +16694,9 @@ func (s *ReferenceContext) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16393,7 +16787,9 @@ func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16484,7 +16880,9 @@ func (s *CodeActionContext) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16541,7 +16939,9 @@ func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16630,7 +17030,9 @@ func (s *LocationUriOnly) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16746,7 +17148,9 @@ func (s *FormattingOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16826,7 +17230,9 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *json.Decoder) e
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16896,7 +17302,9 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -16951,7 +17359,9 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17010,7 +17420,9 @@ func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17082,7 +17494,9 @@ func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17159,7 +17573,9 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *json.De
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17237,7 +17653,9 @@ func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17316,7 +17734,9 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17381,7 +17801,9 @@ func (s *ResourceOperation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17486,7 +17908,9 @@ func (s *FileOperationPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17578,7 +18002,9 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Deco
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17674,7 +18100,9 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17749,7 +18177,9 @@ func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17816,7 +18246,9 @@ func (s *ClientInfo) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -17948,7 +18380,9 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18004,7 +18438,9 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *json.Dec
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18059,7 +18495,9 @@ func (s *CodeDescription) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18123,7 +18561,9 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18188,7 +18628,9 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18263,7 +18705,9 @@ func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18339,7 +18783,9 @@ func (s *ParameterInformation) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18411,7 +18857,9 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18808,7 +19256,9 @@ func (s *RelativePattern) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18884,7 +19334,9 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -18957,7 +19409,9 @@ func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -19030,7 +19484,9 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -19765,7 +20221,9 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -19928,7 +20386,9 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -19992,7 +20452,9 @@ func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20057,7 +20519,9 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *json.Decod
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20129,7 +20593,9 @@ func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20203,7 +20669,9 @@ func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20257,7 +20725,9 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20436,7 +20906,9 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20489,7 +20961,9 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *json.Decoder) er
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20542,7 +21016,9 @@ func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20595,7 +21071,9 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20701,7 +21179,9 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *json.Decoder) err
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20762,7 +21242,9 @@ func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20815,7 +21297,9 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *json.Decoder
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20867,7 +21351,9 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *json.
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20932,7 +21418,9 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -20985,7 +21473,9 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *json.Decoder) error
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21110,7 +21600,9 @@ func (s *AutoImportFix) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21195,7 +21687,9 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21251,7 +21745,9 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21322,7 +21818,9 @@ func (s *RequestFailureTelemetryEvent) UnmarshalJSONFrom(dec *json.Decoder) erro
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21399,7 +21897,9 @@ func (s *RequestFailureTelemetryProperties) UnmarshalJSONFrom(dec *json.Decoder)
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21458,7 +21958,9 @@ func (s *ProfileParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21511,7 +22013,9 @@ func (s *ProfileResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21579,7 +22083,9 @@ func (s *InitializeAPISessionResult) UnmarshalJSONFrom(dec *json.Decoder) error 
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21639,7 +22145,9 @@ func (s *ProjectInfoParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21692,7 +22200,9 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -21776,7 +22286,9 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decod
 				return err
 			}
 		default:
-			// Ignore unknown properties.
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
 		}
 	}
 
