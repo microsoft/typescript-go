@@ -218,8 +218,8 @@ func TestPnpVfs_VirtualPathHandling(t *testing.T) {
 
 	entries := fs.GetAccessibleEntries("/project/packages/__virtual__/packageB-virtual-123456/0/packageB")
 	assert.DeepEqual(t, entries.Files, []string{
-		"/project/packages/__virtual__/packageB-virtual-123456/0/packageB/indexB.ts",
-		"/project/packages/__virtual__/packageB-virtual-123456/0/packageB/package.json",
+		"indexB.ts",
+		"package.json",
 	})
 	assert.DeepEqual(t, entries.Directories, []string(nil))
 
@@ -266,12 +266,12 @@ func TestPnpVfs_RealZipIntegration(t *testing.T) {
 	assert.Equal(t, content, zipFiles["package.json"])
 
 	entries := fs.GetAccessibleEntries(zipPath)
-	assert.DeepEqual(t, entries.Files, []string{zipPath + "/package.json", zipPath + "/tsconfig.json"})
-	assert.DeepEqual(t, entries.Directories, []string{zipPath + "/src"})
+	assert.DeepEqual(t, entries.Files, []string{"package.json", "tsconfig.json"})
+	assert.DeepEqual(t, entries.Directories, []string{"src"})
 
 	entries = fs.GetAccessibleEntries(zipPath + "/src")
-	assert.DeepEqual(t, entries.Files, []string{zipPath + "/src/index.ts"})
-	assert.DeepEqual(t, entries.Directories, []string{zipPath + "/src/utils"})
+	assert.DeepEqual(t, entries.Files, []string{"index.ts"})
+	assert.DeepEqual(t, entries.Directories, []string{"utils"})
 
 	assert.Equal(t, fs.Realpath(indexPath), indexPath)
 

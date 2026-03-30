@@ -54,22 +54,10 @@ func (pnpFS *pnpFS) FileExists(path string) bool {
 }
 
 func (pnpFS *pnpFS) GetAccessibleEntries(path string) vfs.Entries {
-	path, hash, basePath := resolveVirtual(path)
+	path, _, _ = resolveVirtual(path)
 
-	fs, formattedPath, zipPath := getMatchingFS(pnpFS, path)
-	entries := fs.GetAccessibleEntries(formattedPath)
-
-	for i, dir := range entries.Directories {
-		fullPath := tspath.CombinePaths(zipPath+formattedPath, dir)
-		entries.Directories[i] = makeVirtualPath(basePath, hash, fullPath)
-	}
-
-	for i, file := range entries.Files {
-		fullPath := tspath.CombinePaths(zipPath+formattedPath, file)
-		entries.Files[i] = makeVirtualPath(basePath, hash, fullPath)
-	}
-
-	return entries
+	fs, formattedPath, _ := getMatchingFS(pnpFS, path)
+	return fs.GetAccessibleEntries(formattedPath)
 }
 
 func (pnpFS *pnpFS) ReadFile(path string) (contents string, ok bool) {
