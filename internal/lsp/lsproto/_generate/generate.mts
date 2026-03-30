@@ -1382,12 +1382,8 @@ function generateCode() {
         writeLine(`${indent}switch string(jsonObjectRawField(data, ${JSON.stringify(disc.fieldName)})) {`);
         for (const [value, entry] of disc.mapping) {
             writeLine(`${indent}case \`"${value}"\`:`);
-            writeLine(`${indent}\tvar v ${entry.typeName}`);
-            writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
-            writeLine(`${indent}\t\treturn err`);
-            writeLine(`${indent}\t}`);
-            writeLine(`${indent}\to.${entry.fieldName} = &v`);
-            writeLine(`${indent}\treturn nil`);
+            writeLine(`${indent}\to.${entry.fieldName} = new(${entry.typeName})`);
+            writeLine(`${indent}\treturn json.Unmarshal(data, o.${entry.fieldName})`);
         }
         let exhaustive = false;
         if (disc.unmapped.length > 0) {
@@ -1412,12 +1408,8 @@ function generateCode() {
             // Exactly 1 entry: it's the only remaining variant after dispatch,
             // so use a hard error return instead of speculative err == nil.
             for (const entry of unmapped) {
-                writeLine(`${indent}var v${entry.fieldName} ${entry.typeName}`);
-                writeLine(`${indent}if err := json.Unmarshal(data, &v${entry.fieldName}); err != nil {`);
-                writeLine(`${indent}\treturn err`);
-                writeLine(`${indent}}`);
-                writeLine(`${indent}o.${entry.fieldName} = &v${entry.fieldName}`);
-                writeLine(`${indent}return nil`);
+                writeLine(`${indent}o.${entry.fieldName} = new(${entry.typeName})`);
+                writeLine(`${indent}return json.Unmarshal(data, o.${entry.fieldName})`);
             }
             return unmapped.length === 1;
         }
@@ -1475,24 +1467,16 @@ function generateCode() {
         writeLine(`${indent}switch jsonObjectHasKey(data, ${args}) {`);
         for (let i = 0; i < allChecks.length; i++) {
             writeLine(`${indent}case ${i + 1}: // ${allChecks[i].jsonFieldName}`);
-            writeLine(`${indent}\tvar v ${allChecks[i].entry.typeName}`);
-            writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
-            writeLine(`${indent}\t\treturn err`);
-            writeLine(`${indent}\t}`);
-            writeLine(`${indent}\to.${allChecks[i].entry.fieldName} = &v`);
-            writeLine(`${indent}\treturn nil`);
+            writeLine(`${indent}\to.${allChecks[i].entry.fieldName} = new(${allChecks[i].entry.typeName})`);
+            writeLine(`${indent}\treturn json.Unmarshal(data, o.${allChecks[i].entry.fieldName})`);
         }
         if (finalUnmapped.length > 0) {
             writeLine(`${indent}default:`);
             if (finalUnmapped.length === 1) {
                 // Only one variant left after dispatch — use hard error return.
                 const entry = finalUnmapped[0];
-                writeLine(`${indent}\tvar v ${entry.typeName}`);
-                writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
-                writeLine(`${indent}\t\treturn err`);
-                writeLine(`${indent}\t}`);
-                writeLine(`${indent}\to.${entry.fieldName} = &v`);
-                writeLine(`${indent}\treturn nil`);
+                writeLine(`${indent}\to.${entry.fieldName} = new(${entry.typeName})`);
+                writeLine(`${indent}\treturn json.Unmarshal(data, o.${entry.fieldName})`);
             }
             else {
                 for (const entry of finalUnmapped) {
@@ -2624,19 +2608,14 @@ function generateCode() {
                 writeLine(`\t${goKindCasesForJsonKind(kind)}`);
                 const entry = entries[0];
                 if (kind === "boolean") {
-                    writeLine(`\t\tv := kind == 't'`);
-                    writeLine(`\t\tif _, err := dec.ReadToken(); err != nil {`);
-                    writeLine(`\t\t\treturn err`);
-                    writeLine(`\t\t}`);
+                    writeLine(`\t\to.${entry.fieldName} = new(kind == 't')`);
+                    writeLine(`\t\t_, err := dec.ReadToken()`);
+                    writeLine(`\t\treturn err`);
                 }
                 else {
-                    writeLine(`\t\tvar v ${entry.typeName}`);
-                    writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
-                    writeLine(`\t\t\treturn err`);
-                    writeLine(`\t\t}`);
+                    writeLine(`\t\to.${entry.fieldName} = new(${entry.typeName})`);
+                    writeLine(`\t\treturn json.UnmarshalDecode(dec, o.${entry.fieldName})`);
                 }
-                writeLine(`\t\to.${entry.fieldName} = &v`);
-                writeLine(`\t\treturn nil`);
             }
 
             writeLine(`\tdefault:`);
@@ -2666,19 +2645,14 @@ function generateCode() {
                     // Unambiguous: decode directly
                     const entry = entries[0];
                     if (kind === "boolean") {
-                        writeLine(`\t\tv := kind == 't'`);
-                        writeLine(`\t\tif _, err := dec.ReadToken(); err != nil {`);
-                        writeLine(`\t\t\treturn err`);
-                        writeLine(`\t\t}`);
+                        writeLine(`\t\to.${entry.fieldName} = new(kind == 't')`);
+                        writeLine(`\t\t_, err := dec.ReadToken()`);
+                        writeLine(`\t\treturn err`);
                     }
                     else {
-                        writeLine(`\t\tvar v ${entry.typeName}`);
-                        writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
-                        writeLine(`\t\t\treturn err`);
-                        writeLine(`\t\t}`);
+                        writeLine(`\t\to.${entry.fieldName} = new(${entry.typeName})`);
+                        writeLine(`\t\treturn json.UnmarshalDecode(dec, o.${entry.fieldName})`);
                     }
-                    writeLine(`\t\to.${entry.fieldName} = &v`);
-                    writeLine(`\t\treturn nil`);
                 }
                 else {
                     // Ambiguous: buffer and dispatch

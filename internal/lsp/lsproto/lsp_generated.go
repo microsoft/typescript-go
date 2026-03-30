@@ -24388,19 +24388,11 @@ func (o *IntegerOrString) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '0':
-		var v int32
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Integer = &v
-		return nil
+		o.Integer = new(int32)
+		return json.UnmarshalDecode(dec, o.Integer)
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	default:
 		return fmt.Errorf("invalid IntegerOrString: expected number, string, got %v", dec.PeekKind())
 	}
@@ -24429,12 +24421,8 @@ func (o *DocumentSelectorOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []TextDocumentFilterLanguageOrSchemeOrPattern
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentSelector = &v
-		return nil
+		o.DocumentSelector = new([]TextDocumentFilterLanguageOrSchemeOrPattern)
+		return json.UnmarshalDecode(dec, o.DocumentSelector)
 	default:
 		return fmt.Errorf("invalid DocumentSelectorOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -24466,19 +24454,12 @@ func (o *BooleanOrEmptyObject) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v struct{}
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.EmptyObject = &v
-		return nil
+		o.EmptyObject = new(struct{})
+		return json.UnmarshalDecode(dec, o.EmptyObject)
 	default:
 		return fmt.Errorf("invalid BooleanOrEmptyObject: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -24510,19 +24491,12 @@ func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSONFrom(dec *json.Decoder) 
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v SemanticTokensFullDelta
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.SemanticTokensFullDelta = &v
-		return nil
+		o.SemanticTokensFullDelta = new(SemanticTokensFullDelta)
+		return json.UnmarshalDecode(dec, o.SemanticTokensFullDelta)
 	default:
 		return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -24569,33 +24543,17 @@ func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSONFrom
 	}
 	switch string(jsonObjectRawField(data, "kind")) {
 	case `"rename"`:
-		var v RenameFile
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.RenameFile = &v
-		return nil
+		o.RenameFile = new(RenameFile)
+		return json.Unmarshal(data, o.RenameFile)
 	case `"create"`:
-		var v CreateFile
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.CreateFile = &v
-		return nil
+		o.CreateFile = new(CreateFile)
+		return json.Unmarshal(data, o.CreateFile)
 	case `"delete"`:
-		var v DeleteFile
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.DeleteFile = &v
-		return nil
+		o.DeleteFile = new(DeleteFile)
+		return json.Unmarshal(data, o.DeleteFile)
 	default:
-		var vTextDocumentEdit TextDocumentEdit
-		if err := json.Unmarshal(data, &vTextDocumentEdit); err != nil {
-			return err
-		}
-		o.TextDocumentEdit = &vTextDocumentEdit
-		return nil
+		o.TextDocumentEdit = new(TextDocumentEdit)
+		return json.Unmarshal(data, o.TextDocumentEdit)
 	}
 }
 
@@ -24625,19 +24583,11 @@ func (o *StringOrInlayHintLabelParts) UnmarshalJSONFrom(dec *json.Decoder) error
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '[':
-		var v []*InlayHintLabelPart
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.InlayHintLabelParts = &v
-		return nil
+		o.InlayHintLabelParts = new([]*InlayHintLabelPart)
+		return json.UnmarshalDecode(dec, o.InlayHintLabelParts)
 	default:
 		return fmt.Errorf("invalid StringOrInlayHintLabelParts: expected string, array, got %v", dec.PeekKind())
 	}
@@ -24669,19 +24619,11 @@ func (o *StringOrMarkupContent) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '{':
-		var v MarkupContent
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.MarkupContent = &v
-		return nil
+		o.MarkupContent = new(MarkupContent)
+		return json.UnmarshalDecode(dec, o.MarkupContent)
 	default:
 		return fmt.Errorf("invalid StringOrMarkupContent: expected string, object, got %v", dec.PeekKind())
 	}
@@ -24717,19 +24659,11 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 	}
 	switch string(jsonObjectRawField(data, "kind")) {
 	case `"full"`:
-		var v FullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.FullDocumentDiagnosticReport = &v
-		return nil
+		o.FullDocumentDiagnosticReport = new(FullDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.FullDocumentDiagnosticReport)
 	case `"unchanged"`:
-		var v UnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.UnchangedDocumentDiagnosticReport = &v
-		return nil
+		o.UnchangedDocumentDiagnosticReport = new(UnchangedDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.UnchangedDocumentDiagnosticReport)
 	}
 	return fmt.Errorf("invalid FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
@@ -24764,19 +24698,11 @@ func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticRepor
 	}
 	switch string(jsonObjectRawField(data, "kind")) {
 	case `"full"`:
-		var v WorkspaceFullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.FullDocumentDiagnosticReport = &v
-		return nil
+		o.FullDocumentDiagnosticReport = new(WorkspaceFullDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.FullDocumentDiagnosticReport)
 	case `"unchanged"`:
-		var v WorkspaceUnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.UnchangedDocumentDiagnosticReport = &v
-		return nil
+		o.UnchangedDocumentDiagnosticReport = new(WorkspaceUnchangedDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.UnchangedDocumentDiagnosticReport)
 	}
 	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
@@ -24807,19 +24733,11 @@ func (o *StringOrStringValue) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '{':
-		var v StringValue
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.StringValue = &v
-		return nil
+		o.StringValue = new(StringValue)
+		return json.UnmarshalDecode(dec, o.StringValue)
 	default:
 		return fmt.Errorf("invalid StringOrStringValue: expected string, object, got %v", dec.PeekKind())
 	}
@@ -24848,12 +24766,8 @@ func (o *IntegerOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '0':
-		var v int32
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Integer = &v
-		return nil
+		o.Integer = new(int32)
+		return json.UnmarshalDecode(dec, o.Integer)
 	default:
 		return fmt.Errorf("invalid IntegerOrNull: expected null, number, got %v", dec.PeekKind())
 	}
@@ -24882,12 +24796,8 @@ func (o *StringOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	default:
 		return fmt.Errorf("invalid StringOrNull: expected null, string, got %v", dec.PeekKind())
 	}
@@ -24916,12 +24826,8 @@ func (o *DocumentUriOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '"':
-		var v DocumentUri
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentUri = &v
-		return nil
+		o.DocumentUri = new(DocumentUri)
+		return json.UnmarshalDecode(dec, o.DocumentUri)
 	default:
 		return fmt.Errorf("invalid DocumentUriOrNull: expected null, string, got %v", dec.PeekKind())
 	}
@@ -24950,12 +24856,8 @@ func (o *WorkspaceFoldersOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*WorkspaceFolder
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.WorkspaceFolders = &v
-		return nil
+		o.WorkspaceFolders = new([]*WorkspaceFolder)
+		return json.UnmarshalDecode(dec, o.WorkspaceFolders)
 	default:
 		return fmt.Errorf("invalid WorkspaceFoldersOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -24987,19 +24889,11 @@ func (o *StringOrStrings) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '[':
-		var v []string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Strings = &v
-		return nil
+		o.Strings = new([]string)
+		return json.UnmarshalDecode(dec, o.Strings)
 	default:
 		return fmt.Errorf("invalid StringOrStrings: expected string, array, got %v", dec.PeekKind())
 	}
@@ -25035,19 +24929,11 @@ func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSONFrom(dec 
 	}
 	switch jsonObjectHasKey(data, "range") {
 	case 1: // range
-		var v TextDocumentContentChangePartial
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Partial = &v
-		return nil
+		o.Partial = new(TextDocumentContentChangePartial)
+		return json.Unmarshal(data, o.Partial)
 	default:
-		var v TextDocumentContentChangeWholeDocument
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.WholeDocument = &v
-		return nil
+		o.WholeDocument = new(TextDocumentContentChangeWholeDocument)
+		return json.Unmarshal(data, o.WholeDocument)
 	}
 }
 
@@ -25081,19 +24967,11 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSONFrom(dec *json.Decoder) error
 	}
 	switch jsonObjectHasKey(data, "insert", "range") {
 	case 1: // insert
-		var v InsertReplaceEdit
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.InsertReplaceEdit = &v
-		return nil
+		o.InsertReplaceEdit = new(InsertReplaceEdit)
+		return json.Unmarshal(data, o.InsertReplaceEdit)
 	case 2: // range
-		var v TextEdit
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.TextEdit = &v
-		return nil
+		o.TextEdit = new(TextEdit)
+		return json.Unmarshal(data, o.TextEdit)
 	}
 	return fmt.Errorf("invalid TextEditOrInsertReplaceEdit: %s", data)
 }
@@ -25141,35 +25019,19 @@ func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) Unmarsh
 		}
 		switch jsonObjectHasKey(data, "kind", "language") {
 		case 1: // kind
-			var v MarkupContent
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.MarkupContent = &v
-			return nil
+			o.MarkupContent = new(MarkupContent)
+			return json.Unmarshal(data, o.MarkupContent)
 		case 2: // language
-			var v MarkedStringWithLanguage
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.MarkedStringWithLanguage = &v
-			return nil
+			o.MarkedStringWithLanguage = new(MarkedStringWithLanguage)
+			return json.Unmarshal(data, o.MarkedStringWithLanguage)
 		}
 		return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: %s", data)
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '[':
-		var v []StringOrMarkedStringWithLanguage
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.MarkedStrings = &v
-		return nil
+		o.MarkedStrings = new([]StringOrMarkedStringWithLanguage)
+		return json.UnmarshalDecode(dec, o.MarkedStrings)
 	default:
 		return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: expected object, string, array, got %v", dec.PeekKind())
 	}
@@ -25198,12 +25060,8 @@ func (o *UintegerOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '0':
-		var v uint32
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Uinteger = &v
-		return nil
+		o.Uinteger = new(uint32)
+		return json.UnmarshalDecode(dec, o.Uinteger)
 	default:
 		return fmt.Errorf("invalid UintegerOrNull: expected null, number, got %v", dec.PeekKind())
 	}
@@ -25239,19 +25097,11 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 	switch jsonObjectHasKey(data, "range") {
 	case 1: // range
-		var v Location
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Location = &v
-		return nil
+		o.Location = new(Location)
+		return json.Unmarshal(data, o.Location)
 	default:
-		var v LocationUriOnly
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.LocationUriOnly = &v
-		return nil
+		o.LocationUriOnly = new(LocationUriOnly)
+		return json.Unmarshal(data, o.LocationUriOnly)
 	}
 }
 
@@ -25289,26 +25139,14 @@ func (o *WorkDoneProgressBeginOrReportOrEnd) UnmarshalJSONFrom(dec *json.Decoder
 	}
 	switch string(jsonObjectRawField(data, "kind")) {
 	case `"begin"`:
-		var v WorkDoneProgressBegin
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Begin = &v
-		return nil
+		o.Begin = new(WorkDoneProgressBegin)
+		return json.Unmarshal(data, o.Begin)
 	case `"report"`:
-		var v WorkDoneProgressReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Report = &v
-		return nil
+		o.Report = new(WorkDoneProgressReport)
+		return json.Unmarshal(data, o.Report)
 	case `"end"`:
-		var v WorkDoneProgressEnd
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.End = &v
-		return nil
+		o.End = new(WorkDoneProgressEnd)
+		return json.Unmarshal(data, o.End)
 	}
 	return fmt.Errorf("invalid WorkDoneProgressBeginOrReportOrEnd: %s", data)
 }
@@ -25347,26 +25185,14 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 	}
 	switch jsonObjectHasKey(data, "snippet", "annotationId") {
 	case 1: // snippet
-		var v SnippetTextEdit
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.SnippetTextEdit = &v
-		return nil
+		o.SnippetTextEdit = new(SnippetTextEdit)
+		return json.Unmarshal(data, o.SnippetTextEdit)
 	case 2: // annotationId
-		var v AnnotatedTextEdit
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.AnnotatedTextEdit = &v
-		return nil
+		o.AnnotatedTextEdit = new(AnnotatedTextEdit)
+		return json.Unmarshal(data, o.AnnotatedTextEdit)
 	default:
-		var v TextEdit
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.TextEdit = &v
-		return nil
+		o.TextEdit = new(TextEdit)
+		return json.Unmarshal(data, o.TextEdit)
 	}
 }
 
@@ -25396,19 +25222,11 @@ func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSONFrom(dec *json.Decoder) err
 
 	switch dec.PeekKind() {
 	case '{':
-		var v TextDocumentSyncOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Options = &v
-		return nil
+		o.Options = new(TextDocumentSyncOptions)
+		return json.UnmarshalDecode(dec, o.Options)
 	case '0':
-		var v TextDocumentSyncKind
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Kind = &v
-		return nil
+		o.Kind = new(TextDocumentSyncKind)
+		return json.UnmarshalDecode(dec, o.Kind)
 	default:
 		return fmt.Errorf("invalid TextDocumentSyncOptionsOrKind: expected object, number, got %v", dec.PeekKind())
 	}
@@ -25440,19 +25258,12 @@ func (o *BooleanOrHoverOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v HoverOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.HoverOptions = &v
-		return nil
+		o.HoverOptions = new(HoverOptions)
+		return json.UnmarshalDecode(dec, o.HoverOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrHoverOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25488,12 +25299,9 @@ func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJ
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -25501,19 +25309,11 @@ func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJ
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v DeclarationRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.DeclarationRegistrationOptions = &v
-			return nil
+			o.DeclarationRegistrationOptions = new(DeclarationRegistrationOptions)
+			return json.Unmarshal(data, o.DeclarationRegistrationOptions)
 		default:
-			var v DeclarationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.DeclarationOptions = &v
-			return nil
+			o.DeclarationOptions = new(DeclarationOptions)
+			return json.Unmarshal(data, o.DeclarationOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -25546,19 +25346,12 @@ func (o *BooleanOrDefinitionOptions) UnmarshalJSONFrom(dec *json.Decoder) error 
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v DefinitionOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DefinitionOptions = &v
-		return nil
+		o.DefinitionOptions = new(DefinitionOptions)
+		return json.UnmarshalDecode(dec, o.DefinitionOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrDefinitionOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25594,12 +25387,9 @@ func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Unma
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -25607,19 +25397,11 @@ func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Unma
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v TypeDefinitionRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.TypeDefinitionRegistrationOptions = &v
-			return nil
+			o.TypeDefinitionRegistrationOptions = new(TypeDefinitionRegistrationOptions)
+			return json.Unmarshal(data, o.TypeDefinitionRegistrationOptions)
 		default:
-			var v TypeDefinitionOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.TypeDefinitionOptions = &v
-			return nil
+			o.TypeDefinitionOptions = new(TypeDefinitionOptions)
+			return json.Unmarshal(data, o.TypeDefinitionOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -25656,12 +25438,9 @@ func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Unma
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -25669,19 +25448,11 @@ func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Unma
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v ImplementationRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.ImplementationRegistrationOptions = &v
-			return nil
+			o.ImplementationRegistrationOptions = new(ImplementationRegistrationOptions)
+			return json.Unmarshal(data, o.ImplementationRegistrationOptions)
 		default:
-			var v ImplementationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.ImplementationOptions = &v
-			return nil
+			o.ImplementationOptions = new(ImplementationOptions)
+			return json.Unmarshal(data, o.ImplementationOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -25714,19 +25485,12 @@ func (o *BooleanOrReferenceOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v ReferenceOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.ReferenceOptions = &v
-		return nil
+		o.ReferenceOptions = new(ReferenceOptions)
+		return json.UnmarshalDecode(dec, o.ReferenceOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrReferenceOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25758,19 +25522,12 @@ func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSONFrom(dec *json.Decoder)
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v DocumentHighlightOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentHighlightOptions = &v
-		return nil
+		o.DocumentHighlightOptions = new(DocumentHighlightOptions)
+		return json.UnmarshalDecode(dec, o.DocumentHighlightOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrDocumentHighlightOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25802,19 +25559,12 @@ func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSONFrom(dec *json.Decoder) er
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v DocumentSymbolOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentSymbolOptions = &v
-		return nil
+		o.DocumentSymbolOptions = new(DocumentSymbolOptions)
+		return json.UnmarshalDecode(dec, o.DocumentSymbolOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrDocumentSymbolOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25846,19 +25596,12 @@ func (o *BooleanOrCodeActionOptions) UnmarshalJSONFrom(dec *json.Decoder) error 
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v CodeActionOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CodeActionOptions = &v
-		return nil
+		o.CodeActionOptions = new(CodeActionOptions)
+		return json.UnmarshalDecode(dec, o.CodeActionOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrCodeActionOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25894,12 +25637,9 @@ func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Unmars
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -25907,19 +25647,11 @@ func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Unmars
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v DocumentColorRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.DocumentColorRegistrationOptions = &v
-			return nil
+			o.DocumentColorRegistrationOptions = new(DocumentColorRegistrationOptions)
+			return json.Unmarshal(data, o.DocumentColorRegistrationOptions)
 		default:
-			var v DocumentColorOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.DocumentColorOptions = &v
-			return nil
+			o.DocumentColorOptions = new(DocumentColorOptions)
+			return json.Unmarshal(data, o.DocumentColorOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -25952,19 +25684,12 @@ func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSONFrom(dec *json.Decoder) e
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v WorkspaceSymbolOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.WorkspaceSymbolOptions = &v
-		return nil
+		o.WorkspaceSymbolOptions = new(WorkspaceSymbolOptions)
+		return json.UnmarshalDecode(dec, o.WorkspaceSymbolOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrWorkspaceSymbolOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25996,19 +25721,12 @@ func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSONFrom(dec *json.Decoder
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v DocumentFormattingOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentFormattingOptions = &v
-		return nil
+		o.DocumentFormattingOptions = new(DocumentFormattingOptions)
+		return json.UnmarshalDecode(dec, o.DocumentFormattingOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrDocumentFormattingOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26040,19 +25758,12 @@ func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSONFrom(dec *json.De
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v DocumentRangeFormattingOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentRangeFormattingOptions = &v
-		return nil
+		o.DocumentRangeFormattingOptions = new(DocumentRangeFormattingOptions)
+		return json.UnmarshalDecode(dec, o.DocumentRangeFormattingOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrDocumentRangeFormattingOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26084,19 +25795,12 @@ func (o *BooleanOrRenameOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v RenameOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.RenameOptions = &v
-		return nil
+		o.RenameOptions = new(RenameOptions)
+		return json.UnmarshalDecode(dec, o.RenameOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrRenameOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26132,12 +25836,9 @@ func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) Unmarsha
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26145,19 +25846,11 @@ func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) Unmarsha
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v FoldingRangeRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.FoldingRangeRegistrationOptions = &v
-			return nil
+			o.FoldingRangeRegistrationOptions = new(FoldingRangeRegistrationOptions)
+			return json.Unmarshal(data, o.FoldingRangeRegistrationOptions)
 		default:
-			var v FoldingRangeOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.FoldingRangeOptions = &v
-			return nil
+			o.FoldingRangeOptions = new(FoldingRangeOptions)
+			return json.Unmarshal(data, o.FoldingRangeOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26194,12 +25887,9 @@ func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Unma
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26207,19 +25897,11 @@ func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Unma
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v SelectionRangeRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.SelectionRangeRegistrationOptions = &v
-			return nil
+			o.SelectionRangeRegistrationOptions = new(SelectionRangeRegistrationOptions)
+			return json.Unmarshal(data, o.SelectionRangeRegistrationOptions)
 		default:
-			var v SelectionRangeOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.SelectionRangeOptions = &v
-			return nil
+			o.SelectionRangeOptions = new(SelectionRangeOptions)
+			return json.Unmarshal(data, o.SelectionRangeOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26256,12 +25938,9 @@ func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Unmars
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26269,19 +25948,11 @@ func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Unmars
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v CallHierarchyRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.CallHierarchyRegistrationOptions = &v
-			return nil
+			o.CallHierarchyRegistrationOptions = new(CallHierarchyRegistrationOptions)
+			return json.Unmarshal(data, o.CallHierarchyRegistrationOptions)
 		default:
-			var v CallHierarchyOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.CallHierarchyOptions = &v
-			return nil
+			o.CallHierarchyOptions = new(CallHierarchyOptions)
+			return json.Unmarshal(data, o.CallHierarchyOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26318,12 +25989,9 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26331,19 +25999,11 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v LinkedEditingRangeRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.LinkedEditingRangeRegistrationOptions = &v
-			return nil
+			o.LinkedEditingRangeRegistrationOptions = new(LinkedEditingRangeRegistrationOptions)
+			return json.Unmarshal(data, o.LinkedEditingRangeRegistrationOptions)
 		default:
-			var v LinkedEditingRangeOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.LinkedEditingRangeOptions = &v
-			return nil
+			o.LinkedEditingRangeOptions = new(LinkedEditingRangeOptions)
+			return json.Unmarshal(data, o.LinkedEditingRangeOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26380,19 +26040,11 @@ func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json
 	}
 	switch jsonObjectHasKey(data, "documentSelector") {
 	case 1: // documentSelector
-		var v SemanticTokensRegistrationOptions
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.RegistrationOptions = &v
-		return nil
+		o.RegistrationOptions = new(SemanticTokensRegistrationOptions)
+		return json.Unmarshal(data, o.RegistrationOptions)
 	default:
-		var v SemanticTokensOptions
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Options = &v
-		return nil
+		o.Options = new(SemanticTokensOptions)
+		return json.Unmarshal(data, o.Options)
 	}
 }
 
@@ -26426,12 +26078,9 @@ func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26439,19 +26088,11 @@ func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v MonikerRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.MonikerRegistrationOptions = &v
-			return nil
+			o.MonikerRegistrationOptions = new(MonikerRegistrationOptions)
+			return json.Unmarshal(data, o.MonikerRegistrationOptions)
 		default:
-			var v MonikerOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.MonikerOptions = &v
-			return nil
+			o.MonikerOptions = new(MonikerOptions)
+			return json.Unmarshal(data, o.MonikerOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26488,12 +26129,9 @@ func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Unmars
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26501,19 +26139,11 @@ func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Unmars
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v TypeHierarchyRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.TypeHierarchyRegistrationOptions = &v
-			return nil
+			o.TypeHierarchyRegistrationOptions = new(TypeHierarchyRegistrationOptions)
+			return json.Unmarshal(data, o.TypeHierarchyRegistrationOptions)
 		default:
-			var v TypeHierarchyOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.TypeHierarchyOptions = &v
-			return nil
+			o.TypeHierarchyOptions = new(TypeHierarchyOptions)
+			return json.Unmarshal(data, o.TypeHierarchyOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26550,12 +26180,9 @@ func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJ
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26563,19 +26190,11 @@ func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJ
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v InlineValueRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.InlineValueRegistrationOptions = &v
-			return nil
+			o.InlineValueRegistrationOptions = new(InlineValueRegistrationOptions)
+			return json.Unmarshal(data, o.InlineValueRegistrationOptions)
 		default:
-			var v InlineValueOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.InlineValueOptions = &v
-			return nil
+			o.InlineValueOptions = new(InlineValueOptions)
+			return json.Unmarshal(data, o.InlineValueOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26612,12 +26231,9 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONF
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -26625,19 +26241,11 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONF
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
 		case 1: // documentSelector
-			var v InlayHintRegistrationOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.InlayHintRegistrationOptions = &v
-			return nil
+			o.InlayHintRegistrationOptions = new(InlayHintRegistrationOptions)
+			return json.Unmarshal(data, o.InlayHintRegistrationOptions)
 		default:
-			var v InlayHintOptions
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.InlayHintOptions = &v
-			return nil
+			o.InlayHintOptions = new(InlayHintOptions)
+			return json.Unmarshal(data, o.InlayHintOptions)
 		}
 	default:
 		return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
@@ -26674,19 +26282,11 @@ func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json.Dec
 	}
 	switch jsonObjectHasKey(data, "documentSelector") {
 	case 1: // documentSelector
-		var v DiagnosticRegistrationOptions
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.RegistrationOptions = &v
-		return nil
+		o.RegistrationOptions = new(DiagnosticRegistrationOptions)
+		return json.Unmarshal(data, o.RegistrationOptions)
 	default:
-		var v DiagnosticOptions
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Options = &v
-		return nil
+		o.Options = new(DiagnosticOptions)
+		return json.Unmarshal(data, o.Options)
 	}
 }
 
@@ -26716,19 +26316,12 @@ func (o *BooleanOrInlineCompletionOptions) UnmarshalJSONFrom(dec *json.Decoder) 
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v InlineCompletionOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.InlineCompletionOptions = &v
-		return nil
+		o.InlineCompletionOptions = new(InlineCompletionOptions)
+		return json.UnmarshalDecode(dec, o.InlineCompletionOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26760,19 +26353,11 @@ func (o *PatternOrRelativePattern) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Pattern = &v
-		return nil
+		o.Pattern = new(string)
+		return json.UnmarshalDecode(dec, o.Pattern)
 	case '{':
-		var v RelativePattern
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.RelativePattern = &v
-		return nil
+		o.RelativePattern = new(RelativePattern)
+		return json.UnmarshalDecode(dec, o.RelativePattern)
 	default:
 		return fmt.Errorf("invalid PatternOrRelativePattern: expected string, object, got %v", dec.PeekKind())
 	}
@@ -26808,19 +26393,11 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSONFrom(dec *json.Decoder)
 	}
 	switch jsonObjectHasKey(data, "start", "insert") {
 	case 1: // start
-		var v Range
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Range = &v
-		return nil
+		o.Range = new(Range)
+		return json.Unmarshal(data, o.Range)
 	case 2: // insert
-		var v EditRangeWithInsertReplace
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.EditRangeWithInsertReplace = &v
-		return nil
+		o.EditRangeWithInsertReplace = new(EditRangeWithInsertReplace)
+		return json.Unmarshal(data, o.EditRangeWithInsertReplace)
 	}
 	return fmt.Errorf("invalid RangeOrEditRangeWithInsertReplace: %s", data)
 }
@@ -26851,19 +26428,12 @@ func (o *BooleanOrSaveOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v SaveOptions
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.SaveOptions = &v
-		return nil
+		o.SaveOptions = new(SaveOptions)
+		return json.UnmarshalDecode(dec, o.SaveOptions)
 	default:
 		return fmt.Errorf("invalid BooleanOrSaveOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26936,19 +26506,11 @@ func (o *StringOrTuple) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '[':
-		var v [2]uint32
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Tuple = &v
-		return nil
+		o.Tuple = new([2]uint32)
+		return json.UnmarshalDecode(dec, o.Tuple)
 	default:
 		return fmt.Errorf("invalid StringOrTuple: expected string, array, got %v", dec.PeekKind())
 	}
@@ -26980,19 +26542,12 @@ func (o *StringOrBoolean) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch kind := dec.PeekKind(); kind {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	default:
 		return fmt.Errorf("invalid StringOrBoolean: expected string, boolean, got %v", dec.PeekKind())
 	}
@@ -27024,19 +26579,11 @@ func (o *WorkspaceFolderOrURI) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 	switch dec.PeekKind() {
 	case '{':
-		var v WorkspaceFolder
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.WorkspaceFolder = &v
-		return nil
+		o.WorkspaceFolder = new(WorkspaceFolder)
+		return json.UnmarshalDecode(dec, o.WorkspaceFolder)
 	case '"':
-		var v URI
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.URI = &v
-		return nil
+		o.URI = new(URI)
+		return json.UnmarshalDecode(dec, o.URI)
 	default:
 		return fmt.Errorf("invalid WorkspaceFolderOrURI: expected object, string, got %v", dec.PeekKind())
 	}
@@ -27068,19 +26615,12 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *j
 
 	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		v := kind == 't'
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		o.Boolean = &v
-		return nil
+		o.Boolean = new(kind == 't')
+		_, err := dec.ReadToken()
+		return err
 	case '{':
-		var v ClientSemanticTokensRequestFullDelta
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.ClientSemanticTokensRequestFullDelta = &v
-		return nil
+		o.ClientSemanticTokensRequestFullDelta = new(ClientSemanticTokensRequestFullDelta)
+		return json.UnmarshalDecode(dec, o.ClientSemanticTokensRequestFullDelta)
 	default:
 		return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -27119,12 +26659,8 @@ func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSONFrom(dec *json
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v Location
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Location = &v
-		return nil
+		o.Location = new(Location)
+		return json.UnmarshalDecode(dec, o.Location)
 	case '[':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -27173,12 +26709,8 @@ func (o *FoldingRangesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*FoldingRange
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.FoldingRanges = &v
-		return nil
+		o.FoldingRanges = new([]*FoldingRange)
+		return json.UnmarshalDecode(dec, o.FoldingRanges)
 	default:
 		return fmt.Errorf("invalid FoldingRangesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27217,12 +26749,8 @@ func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSONFrom(dec *jso
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v Location
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Location = &v
-		return nil
+		o.Location = new(Location)
+		return json.UnmarshalDecode(dec, o.Location)
 	case '[':
 		data, err := dec.ReadValue()
 		if err != nil {
@@ -27271,12 +26799,8 @@ func (o *SelectionRangesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*SelectionRange
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.SelectionRanges = &v
-		return nil
+		o.SelectionRanges = new([]*SelectionRange)
+		return json.UnmarshalDecode(dec, o.SelectionRanges)
 	default:
 		return fmt.Errorf("invalid SelectionRangesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27305,12 +26829,8 @@ func (o *CallHierarchyItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*CallHierarchyItem
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CallHierarchyItems = &v
-		return nil
+		o.CallHierarchyItems = new([]*CallHierarchyItem)
+		return json.UnmarshalDecode(dec, o.CallHierarchyItems)
 	default:
 		return fmt.Errorf("invalid CallHierarchyItemsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27339,12 +26859,8 @@ func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSONFrom(dec *json.Decoder) 
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*CallHierarchyIncomingCall
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CallHierarchyIncomingCalls = &v
-		return nil
+		o.CallHierarchyIncomingCalls = new([]*CallHierarchyIncomingCall)
+		return json.UnmarshalDecode(dec, o.CallHierarchyIncomingCalls)
 	default:
 		return fmt.Errorf("invalid CallHierarchyIncomingCallsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27373,12 +26889,8 @@ func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSONFrom(dec *json.Decoder) 
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*CallHierarchyOutgoingCall
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CallHierarchyOutgoingCalls = &v
-		return nil
+		o.CallHierarchyOutgoingCalls = new([]*CallHierarchyOutgoingCall)
+		return json.UnmarshalDecode(dec, o.CallHierarchyOutgoingCalls)
 	default:
 		return fmt.Errorf("invalid CallHierarchyOutgoingCallsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27407,12 +26919,8 @@ func (o *SemanticTokensOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v SemanticTokens
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.SemanticTokens = &v
-		return nil
+		o.SemanticTokens = new(SemanticTokens)
+		return json.UnmarshalDecode(dec, o.SemanticTokens)
 	default:
 		return fmt.Errorf("invalid SemanticTokensOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -27453,19 +26961,11 @@ func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSONFrom(dec *json.
 		}
 		switch jsonObjectHasKey(data, "data", "edits") {
 		case 1: // data
-			var v SemanticTokens
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.SemanticTokens = &v
-			return nil
+			o.SemanticTokens = new(SemanticTokens)
+			return json.Unmarshal(data, o.SemanticTokens)
 		case 2: // edits
-			var v SemanticTokensDelta
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.SemanticTokensDelta = &v
-			return nil
+			o.SemanticTokensDelta = new(SemanticTokensDelta)
+			return json.Unmarshal(data, o.SemanticTokensDelta)
 		}
 		return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: %s", data)
 	default:
@@ -27496,12 +26996,8 @@ func (o *LinkedEditingRangesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v LinkedEditingRanges
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.LinkedEditingRanges = &v
-		return nil
+		o.LinkedEditingRanges = new(LinkedEditingRanges)
+		return json.UnmarshalDecode(dec, o.LinkedEditingRanges)
 	default:
 		return fmt.Errorf("invalid LinkedEditingRangesOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -27530,12 +27026,8 @@ func (o *WorkspaceEditOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v WorkspaceEdit
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.WorkspaceEdit = &v
-		return nil
+		o.WorkspaceEdit = new(WorkspaceEdit)
+		return json.UnmarshalDecode(dec, o.WorkspaceEdit)
 	default:
 		return fmt.Errorf("invalid WorkspaceEditOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -27564,12 +27056,8 @@ func (o *MonikersOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*Moniker
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Monikers = &v
-		return nil
+		o.Monikers = new([]*Moniker)
+		return json.UnmarshalDecode(dec, o.Monikers)
 	default:
 		return fmt.Errorf("invalid MonikersOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27598,12 +27086,8 @@ func (o *TypeHierarchyItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*TypeHierarchyItem
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.TypeHierarchyItems = &v
-		return nil
+		o.TypeHierarchyItems = new([]*TypeHierarchyItem)
+		return json.UnmarshalDecode(dec, o.TypeHierarchyItems)
 	default:
 		return fmt.Errorf("invalid TypeHierarchyItemsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27632,12 +27116,8 @@ func (o *InlineValuesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []InlineValueTextOrVariableLookupOrEvaluatableExpression
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.InlineValues = &v
-		return nil
+		o.InlineValues = new([]InlineValueTextOrVariableLookupOrEvaluatableExpression)
+		return json.UnmarshalDecode(dec, o.InlineValues)
 	default:
 		return fmt.Errorf("invalid InlineValuesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27666,12 +27146,8 @@ func (o *InlayHintsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*InlayHint
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.InlayHints = &v
-		return nil
+		o.InlayHints = new([]*InlayHint)
+		return json.UnmarshalDecode(dec, o.InlayHints)
 	default:
 		return fmt.Errorf("invalid InlayHintsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27707,19 +27183,11 @@ func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)
 	}
 	switch string(jsonObjectRawField(data, "kind")) {
 	case `"full"`:
-		var v RelatedFullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.FullDocumentDiagnosticReport = &v
-		return nil
+		o.FullDocumentDiagnosticReport = new(RelatedFullDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.FullDocumentDiagnosticReport)
 	case `"unchanged"`:
-		var v RelatedUnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.UnchangedDocumentDiagnosticReport = &v
-		return nil
+		o.UnchangedDocumentDiagnosticReport = new(RelatedUnchangedDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.UnchangedDocumentDiagnosticReport)
 	}
 	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
@@ -27753,19 +27221,11 @@ func (o *InlineCompletionListOrItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder)
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v InlineCompletionList
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.List = &v
-		return nil
+		o.List = new(InlineCompletionList)
+		return json.UnmarshalDecode(dec, o.List)
 	case '[':
-		var v []*InlineCompletionItem
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Items = &v
-		return nil
+		o.Items = new([]*InlineCompletionItem)
+		return json.UnmarshalDecode(dec, o.Items)
 	default:
 		return fmt.Errorf("invalid InlineCompletionListOrItemsOrNull: expected null, object, array, got %v", dec.PeekKind())
 	}
@@ -27794,12 +27254,8 @@ func (o *MessageActionItemOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v MessageActionItem
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.MessageActionItem = &v
-		return nil
+		o.MessageActionItem = new(MessageActionItem)
+		return json.UnmarshalDecode(dec, o.MessageActionItem)
 	default:
 		return fmt.Errorf("invalid MessageActionItemOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -27828,12 +27284,8 @@ func (o *TextEditsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*TextEdit
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.TextEdits = &v
-		return nil
+		o.TextEdits = new([]*TextEdit)
+		return json.UnmarshalDecode(dec, o.TextEdits)
 	default:
 		return fmt.Errorf("invalid TextEditsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -27868,19 +27320,11 @@ func (o *CompletionItemsOrListOrNull) UnmarshalJSONFrom(dec *json.Decoder) error
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*CompletionItem
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Items = &v
-		return nil
+		o.Items = new([]*CompletionItem)
+		return json.UnmarshalDecode(dec, o.Items)
 	case '{':
-		var v CompletionList
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.List = &v
-		return nil
+		o.List = new(CompletionList)
+		return json.UnmarshalDecode(dec, o.List)
 	default:
 		return fmt.Errorf("invalid CompletionItemsOrListOrNull: expected null, array, object, got %v", dec.PeekKind())
 	}
@@ -27909,12 +27353,8 @@ func (o *HoverOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v Hover
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Hover = &v
-		return nil
+		o.Hover = new(Hover)
+		return json.UnmarshalDecode(dec, o.Hover)
 	default:
 		return fmt.Errorf("invalid HoverOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -27943,12 +27383,8 @@ func (o *SignatureHelpOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v SignatureHelp
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.SignatureHelp = &v
-		return nil
+		o.SignatureHelp = new(SignatureHelp)
+		return json.UnmarshalDecode(dec, o.SignatureHelp)
 	default:
 		return fmt.Errorf("invalid SignatureHelpOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -27977,12 +27413,8 @@ func (o *LocationsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []Location
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.Locations = &v
-		return nil
+		o.Locations = new([]Location)
+		return json.UnmarshalDecode(dec, o.Locations)
 	default:
 		return fmt.Errorf("invalid LocationsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -28015,12 +27447,8 @@ func (o *DocumentHighlightsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*DocumentHighlight
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentHighlights = &v
-		return nil
+		o.DocumentHighlights = new([]*DocumentHighlight)
+		return json.UnmarshalDecode(dec, o.DocumentHighlights)
 	default:
 		return fmt.Errorf("invalid DocumentHighlightsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -28139,12 +27567,8 @@ func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSONFrom(dec *json.Decoder) er
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []CommandOrCodeAction
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CommandOrCodeActionArray = &v
-		return nil
+		o.CommandOrCodeActionArray = new([]CommandOrCodeAction)
+		return json.UnmarshalDecode(dec, o.CommandOrCodeActionArray)
 	default:
 		return fmt.Errorf("invalid CommandOrCodeActionArrayOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -28222,12 +27646,8 @@ func (o *CodeLensesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*CodeLens
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CodeLenses = &v
-		return nil
+		o.CodeLenses = new([]*CodeLens)
+		return json.UnmarshalDecode(dec, o.CodeLenses)
 	default:
 		return fmt.Errorf("invalid CodeLensesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -28256,12 +27676,8 @@ func (o *DocumentLinksOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		_, err := dec.ReadToken()
 		return err
 	case '[':
-		var v []*DocumentLink
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.DocumentLinks = &v
-		return nil
+		o.DocumentLinks = new([]*DocumentLink)
+		return json.UnmarshalDecode(dec, o.DocumentLinks)
 	default:
 		return fmt.Errorf("invalid DocumentLinksOrNull: expected null, array, got %v", dec.PeekKind())
 	}
@@ -28306,26 +27722,14 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Un
 		}
 		switch jsonObjectHasKey(data, "start", "range", "defaultBehavior") {
 		case 1: // start
-			var v Range
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.Range = &v
-			return nil
+			o.Range = new(Range)
+			return json.Unmarshal(data, o.Range)
 		case 2: // range
-			var v PrepareRenamePlaceholder
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.PrepareRenamePlaceholder = &v
-			return nil
+			o.PrepareRenamePlaceholder = new(PrepareRenamePlaceholder)
+			return json.Unmarshal(data, o.PrepareRenamePlaceholder)
 		case 3: // defaultBehavior
-			var v PrepareRenameDefaultBehavior
-			if err := json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-			o.PrepareRenameDefaultBehavior = &v
-			return nil
+			o.PrepareRenameDefaultBehavior = new(PrepareRenameDefaultBehavior)
+			return json.Unmarshal(data, o.PrepareRenameDefaultBehavior)
 		}
 		return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: %s", data)
 	default:
@@ -28390,12 +27794,8 @@ func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *json.Decoder) 
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v CustomClosingTagCompletion
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.CustomClosingTagCompletion = &v
-		return nil
+		o.CustomClosingTagCompletion = new(CustomClosingTagCompletion)
+		return json.UnmarshalDecode(dec, o.CustomClosingTagCompletion)
 	default:
 		return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -28424,12 +27824,8 @@ func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *json.Decoder
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		var v RequestFailureTelemetryEvent
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.RequestFailureTelemetryEvent = &v
-		return nil
+		o.RequestFailureTelemetryEvent = new(RequestFailureTelemetryEvent)
+		return json.UnmarshalDecode(dec, o.RequestFailureTelemetryEvent)
 	default:
 		return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: expected null, object, got %v", dec.PeekKind())
 	}
@@ -28511,19 +27907,11 @@ func (o *StringOrMarkedStringWithLanguage) UnmarshalJSONFrom(dec *json.Decoder) 
 
 	switch dec.PeekKind() {
 	case '"':
-		var v string
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.String = &v
-		return nil
+		o.String = new(string)
+		return json.UnmarshalDecode(dec, o.String)
 	case '{':
-		var v MarkedStringWithLanguage
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return err
-		}
-		o.MarkedStringWithLanguage = &v
-		return nil
+		o.MarkedStringWithLanguage = new(MarkedStringWithLanguage)
+		return json.UnmarshalDecode(dec, o.MarkedStringWithLanguage)
 	default:
 		return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: expected string, object, got %v", dec.PeekKind())
 	}
@@ -28563,26 +27951,14 @@ func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSONFr
 	}
 	switch jsonObjectHasKey(data, "text", "caseSensitiveLookup") {
 	case 1: // text
-		var v InlineValueText
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.Text = &v
-		return nil
+		o.Text = new(InlineValueText)
+		return json.Unmarshal(data, o.Text)
 	case 2: // caseSensitiveLookup
-		var v InlineValueVariableLookup
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.VariableLookup = &v
-		return nil
+		o.VariableLookup = new(InlineValueVariableLookup)
+		return json.Unmarshal(data, o.VariableLookup)
 	default:
-		var v InlineValueEvaluatableExpression
-		if err := json.Unmarshal(data, &v); err != nil {
-			return err
-		}
-		o.EvaluatableExpression = &v
-		return nil
+		o.EvaluatableExpression = new(InlineValueEvaluatableExpression)
+		return json.Unmarshal(data, o.EvaluatableExpression)
 	}
 }
 
