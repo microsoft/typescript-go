@@ -14587,487 +14587,162 @@ func (s *Registration) MarshalJSONTo(enc *json.Encoder) error {
 	if err := enc.WriteValue(json.Value(`"method"`)); err != nil {
 		return err
 	}
+	var method json.Value
+	var opts any
 	switch {
 	case s.RegisterOptions.TextDocumentImplementation != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/implementation"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentImplementation); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/implementation"`)
+		opts = s.RegisterOptions.TextDocumentImplementation
 	case s.RegisterOptions.TextDocumentTypeDefinition != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/typeDefinition"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentTypeDefinition); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/typeDefinition"`)
+		opts = s.RegisterOptions.TextDocumentTypeDefinition
 	case s.RegisterOptions.TextDocumentDocumentColor != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/documentColor"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDocumentColor); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/documentColor"`)
+		opts = s.RegisterOptions.TextDocumentDocumentColor
 	case s.RegisterOptions.TextDocumentColorPresentation != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/colorPresentation"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentColorPresentation); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/colorPresentation"`)
+		opts = s.RegisterOptions.TextDocumentColorPresentation
 	case s.RegisterOptions.TextDocumentFoldingRange != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/foldingRange"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentFoldingRange); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/foldingRange"`)
+		opts = s.RegisterOptions.TextDocumentFoldingRange
 	case s.RegisterOptions.TextDocumentDeclaration != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/declaration"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDeclaration); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/declaration"`)
+		opts = s.RegisterOptions.TextDocumentDeclaration
 	case s.RegisterOptions.TextDocumentSelectionRange != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/selectionRange"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentSelectionRange); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/selectionRange"`)
+		opts = s.RegisterOptions.TextDocumentSelectionRange
 	case s.RegisterOptions.TextDocumentPrepareCallHierarchy != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/prepareCallHierarchy"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentPrepareCallHierarchy); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/prepareCallHierarchy"`)
+		opts = s.RegisterOptions.TextDocumentPrepareCallHierarchy
 	case s.RegisterOptions.TextDocumentSemanticTokens != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/semanticTokens"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentSemanticTokens); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/semanticTokens"`)
+		opts = s.RegisterOptions.TextDocumentSemanticTokens
 	case s.RegisterOptions.TextDocumentLinkedEditingRange != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/linkedEditingRange"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentLinkedEditingRange); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/linkedEditingRange"`)
+		opts = s.RegisterOptions.TextDocumentLinkedEditingRange
 	case s.RegisterOptions.WorkspaceWillCreateFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/willCreateFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceWillCreateFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/willCreateFiles"`)
+		opts = s.RegisterOptions.WorkspaceWillCreateFiles
 	case s.RegisterOptions.WorkspaceWillRenameFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/willRenameFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceWillRenameFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/willRenameFiles"`)
+		opts = s.RegisterOptions.WorkspaceWillRenameFiles
 	case s.RegisterOptions.WorkspaceWillDeleteFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/willDeleteFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceWillDeleteFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/willDeleteFiles"`)
+		opts = s.RegisterOptions.WorkspaceWillDeleteFiles
 	case s.RegisterOptions.TextDocumentMoniker != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/moniker"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentMoniker); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/moniker"`)
+		opts = s.RegisterOptions.TextDocumentMoniker
 	case s.RegisterOptions.TextDocumentPrepareTypeHierarchy != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/prepareTypeHierarchy"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentPrepareTypeHierarchy); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/prepareTypeHierarchy"`)
+		opts = s.RegisterOptions.TextDocumentPrepareTypeHierarchy
 	case s.RegisterOptions.TextDocumentInlineValue != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/inlineValue"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentInlineValue); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/inlineValue"`)
+		opts = s.RegisterOptions.TextDocumentInlineValue
 	case s.RegisterOptions.TextDocumentInlayHint != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/inlayHint"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentInlayHint); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/inlayHint"`)
+		opts = s.RegisterOptions.TextDocumentInlayHint
 	case s.RegisterOptions.TextDocumentDiagnostic != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/diagnostic"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDiagnostic); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/diagnostic"`)
+		opts = s.RegisterOptions.TextDocumentDiagnostic
 	case s.RegisterOptions.TextDocumentInlineCompletion != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/inlineCompletion"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentInlineCompletion); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/inlineCompletion"`)
+		opts = s.RegisterOptions.TextDocumentInlineCompletion
 	case s.RegisterOptions.WorkspaceTextDocumentContent != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/textDocumentContent"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceTextDocumentContent); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/textDocumentContent"`)
+		opts = s.RegisterOptions.WorkspaceTextDocumentContent
 	case s.RegisterOptions.TextDocumentWillSaveWaitUntil != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/willSaveWaitUntil"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentWillSaveWaitUntil); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/willSaveWaitUntil"`)
+		opts = s.RegisterOptions.TextDocumentWillSaveWaitUntil
 	case s.RegisterOptions.TextDocumentCompletion != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/completion"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentCompletion); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/completion"`)
+		opts = s.RegisterOptions.TextDocumentCompletion
 	case s.RegisterOptions.TextDocumentHover != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/hover"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentHover); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/hover"`)
+		opts = s.RegisterOptions.TextDocumentHover
 	case s.RegisterOptions.TextDocumentSignatureHelp != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/signatureHelp"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentSignatureHelp); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/signatureHelp"`)
+		opts = s.RegisterOptions.TextDocumentSignatureHelp
 	case s.RegisterOptions.TextDocumentDefinition != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/definition"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDefinition); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/definition"`)
+		opts = s.RegisterOptions.TextDocumentDefinition
 	case s.RegisterOptions.TextDocumentReferences != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/references"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentReferences); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/references"`)
+		opts = s.RegisterOptions.TextDocumentReferences
 	case s.RegisterOptions.TextDocumentDocumentHighlight != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/documentHighlight"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDocumentHighlight); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/documentHighlight"`)
+		opts = s.RegisterOptions.TextDocumentDocumentHighlight
 	case s.RegisterOptions.TextDocumentDocumentSymbol != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/documentSymbol"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDocumentSymbol); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/documentSymbol"`)
+		opts = s.RegisterOptions.TextDocumentDocumentSymbol
 	case s.RegisterOptions.TextDocumentCodeAction != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/codeAction"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentCodeAction); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/codeAction"`)
+		opts = s.RegisterOptions.TextDocumentCodeAction
 	case s.RegisterOptions.WorkspaceSymbol != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/symbol"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceSymbol); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/symbol"`)
+		opts = s.RegisterOptions.WorkspaceSymbol
 	case s.RegisterOptions.TextDocumentCodeLens != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/codeLens"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentCodeLens); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/codeLens"`)
+		opts = s.RegisterOptions.TextDocumentCodeLens
 	case s.RegisterOptions.TextDocumentDocumentLink != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/documentLink"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDocumentLink); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/documentLink"`)
+		opts = s.RegisterOptions.TextDocumentDocumentLink
 	case s.RegisterOptions.TextDocumentFormatting != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/formatting"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentFormatting); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/formatting"`)
+		opts = s.RegisterOptions.TextDocumentFormatting
 	case s.RegisterOptions.TextDocumentRangeFormatting != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/rangeFormatting"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentRangeFormatting); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/rangeFormatting"`)
+		opts = s.RegisterOptions.TextDocumentRangeFormatting
 	case s.RegisterOptions.TextDocumentRangesFormatting != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/rangesFormatting"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentRangesFormatting); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/rangesFormatting"`)
+		opts = s.RegisterOptions.TextDocumentRangesFormatting
 	case s.RegisterOptions.TextDocumentOnTypeFormatting != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/onTypeFormatting"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentOnTypeFormatting); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/onTypeFormatting"`)
+		opts = s.RegisterOptions.TextDocumentOnTypeFormatting
 	case s.RegisterOptions.TextDocumentRename != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/rename"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentRename); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/rename"`)
+		opts = s.RegisterOptions.TextDocumentRename
 	case s.RegisterOptions.WorkspaceExecuteCommand != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/executeCommand"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceExecuteCommand); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/executeCommand"`)
+		opts = s.RegisterOptions.WorkspaceExecuteCommand
 	case s.RegisterOptions.WorkspaceDidCreateFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/didCreateFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceDidCreateFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/didCreateFiles"`)
+		opts = s.RegisterOptions.WorkspaceDidCreateFiles
 	case s.RegisterOptions.WorkspaceDidRenameFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/didRenameFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceDidRenameFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/didRenameFiles"`)
+		opts = s.RegisterOptions.WorkspaceDidRenameFiles
 	case s.RegisterOptions.WorkspaceDidDeleteFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/didDeleteFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceDidDeleteFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/didDeleteFiles"`)
+		opts = s.RegisterOptions.WorkspaceDidDeleteFiles
 	case s.RegisterOptions.WorkspaceDidChangeConfiguration != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/didChangeConfiguration"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceDidChangeConfiguration); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/didChangeConfiguration"`)
+		opts = s.RegisterOptions.WorkspaceDidChangeConfiguration
 	case s.RegisterOptions.TextDocumentDidOpen != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/didOpen"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDidOpen); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/didOpen"`)
+		opts = s.RegisterOptions.TextDocumentDidOpen
 	case s.RegisterOptions.TextDocumentDidChange != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/didChange"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDidChange); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/didChange"`)
+		opts = s.RegisterOptions.TextDocumentDidChange
 	case s.RegisterOptions.TextDocumentDidClose != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/didClose"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDidClose); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/didClose"`)
+		opts = s.RegisterOptions.TextDocumentDidClose
 	case s.RegisterOptions.TextDocumentDidSave != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/didSave"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentDidSave); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/didSave"`)
+		opts = s.RegisterOptions.TextDocumentDidSave
 	case s.RegisterOptions.TextDocumentWillSave != nil:
-		if err := enc.WriteValue(json.Value(`"textDocument/willSave"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.TextDocumentWillSave); err != nil {
-			return err
-		}
+		method = json.Value(`"textDocument/willSave"`)
+		opts = s.RegisterOptions.TextDocumentWillSave
 	case s.RegisterOptions.WorkspaceDidChangeWatchedFiles != nil:
-		if err := enc.WriteValue(json.Value(`"workspace/didChangeWatchedFiles"`)); err != nil {
-			return err
-		}
-		if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
-			return err
-		}
-		if err := json.MarshalEncode(enc, s.RegisterOptions.WorkspaceDidChangeWatchedFiles); err != nil {
-			return err
-		}
+		method = json.Value(`"workspace/didChangeWatchedFiles"`)
+		opts = s.RegisterOptions.WorkspaceDidChangeWatchedFiles
+	}
+	if err := enc.WriteValue(method); err != nil {
+		return err
+	}
+	if err := enc.WriteValue(json.Value(`"registerOptions"`)); err != nil {
+		return err
+	}
+	if err := json.MarshalEncode(enc, opts); err != nil {
+		return err
 	}
 	return enc.WriteToken(json.EndObject)
 }

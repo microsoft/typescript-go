@@ -1604,19 +1604,23 @@ function generateCode() {
             writeLine(`\tif err := enc.WriteValue(json.Value(\`"method"\`)); err != nil {`);
             writeLine(`\t\treturn err`);
             writeLine(`\t}`);
+            writeLine(`\tvar method json.Value`);
+            writeLine(`\tvar opts any`);
             writeLine(`\tswitch {`);
             for (const reg of registrationMethods) {
                 writeLine(`\tcase s.RegisterOptions.${reg.fieldName} != nil:`);
-                writeLine(`\t\tif err := enc.WriteValue(json.Value(\`"${reg.registrationMethod}"\`)); err != nil {`);
-                writeLine(`\t\t\treturn err`);
-                writeLine(`\t\t}`);
-                writeLine(`\t\tif err := enc.WriteValue(json.Value(\`"registerOptions"\`)); err != nil {`);
-                writeLine(`\t\t\treturn err`);
-                writeLine(`\t\t}`);
-                writeLine(`\t\tif err := json.MarshalEncode(enc, s.RegisterOptions.${reg.fieldName}); err != nil {`);
-                writeLine(`\t\t\treturn err`);
-                writeLine(`\t\t}`);
+                writeLine(`\t\tmethod = json.Value(\`"${reg.registrationMethod}"\`)`);
+                writeLine(`\t\topts = s.RegisterOptions.${reg.fieldName}`);
             }
+            writeLine(`\t}`);
+            writeLine(`\tif err := enc.WriteValue(method); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(`\tif err := enc.WriteValue(json.Value(\`"registerOptions"\`)); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(`\tif err := json.MarshalEncode(enc, opts); err != nil {`);
+            writeLine(`\t\treturn err`);
             writeLine(`\t}`);
             writeLine(`\treturn enc.WriteToken(json.EndObject)`);
             writeLine(`}`);
