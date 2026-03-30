@@ -109,10 +109,7 @@ type Location struct {
 }
 
 func (s Location) GetLocation() Location {
-	return Location{
-		Uri:   s.Uri,
-		Range: s.Range,
-	}
+	return s
 }
 
 var _ json.UnmarshalerFrom = (*Location)(nil)

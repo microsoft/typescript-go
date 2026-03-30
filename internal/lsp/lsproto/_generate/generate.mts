@@ -1444,10 +1444,15 @@ function generateCode() {
         if (locationUriProperty) {
             // Generate Location method
             writeLine(`func (s ${structure.name}) GetLocation() Location {`);
-            writeLine(`\treturn Location{`);
-            writeLine(`\t\tUri:   s.${locationUriProperty},`);
-            writeLine(`\t\tRange: s.${locationUriProperty.replace(/Uri$/, "Range")},`);
-            writeLine(`\t}`);
+            if (locationUriProperty === "Uri" && structure.name === "Location") {
+                writeLine(`\treturn s`);
+            }
+            else {
+                writeLine(`\treturn Location{`);
+                writeLine(`\t\tUri:   s.${locationUriProperty},`);
+                writeLine(`\t\tRange: s.${locationUriProperty.replace(/Uri$/, "Range")},`);
+                writeLine(`\t}`);
+            }
             writeLine(`}`);
             writeLine("");
         }
