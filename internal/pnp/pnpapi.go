@@ -190,9 +190,9 @@ func (p *PnpApi) FindLocator(parentPath string) (*Locator, *PnpError) {
 		tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true})
 
 	if p.manifest.ignorePatternData != nil {
-		match, err := p.manifest.ignorePatternData.MatchString(relativePath)
+		match := p.manifest.ignorePatternData.MatchString(relativePath)
 
-		if err == nil && match {
+		if match {
 			return nil, nil
 		}
 	}

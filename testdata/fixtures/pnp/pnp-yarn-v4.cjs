@@ -15,7 +15,7 @@ const RAW_RUNTIME_STATE =
     }\
   ],\
   "enableTopLevelFallback": true,\
-  "ignorePatternData": "(^(?:\\\\.yarn\\\\/sdks(?:\\\\/(?!\\\\.{1,2}(?:\\\\/|$))(?:(?:(?!(?:^|\\\\/)\\\\.{1,2}(?:\\\\/|$)).)*?)|$))$)",\
+  "ignorePatternData": "^.yarn/sdks(/.*)?$",\
   "fallbackExclusionList": [\
     ["tmp.trDEa5gPrG", ["workspace:."]]\
   ],\

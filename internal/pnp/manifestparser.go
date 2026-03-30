@@ -3,14 +3,16 @@ package pnp
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/json"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+var manifestRegex = regexp.MustCompile(`(const[ \r\n]+RAW_RUNTIME_STATE[ \r\n]*=[ \r\n]*|hydrateRuntimeState\(JSON\.parse\()'`)
 
 type LinkType string
 
@@ -62,7 +64,7 @@ type PackageRegistryTrie struct {
 type PnpManifestData struct {
 	dirPath string
 
-	ignorePatternData      *regexp2.Regexp
+	ignorePatternData      *regexp.Regexp
 	enableTopLevelFallback bool
 
 	fallbackPool         [][2]string
@@ -97,13 +99,12 @@ func extractPnpDataStringFromPath(fs vfs.FS, path string) (string, error) {
 	if !ok {
 		return "", errors.New("failed to read file: " + path)
 	}
-	manifestRegex := regexp2.MustCompile(`(const[ \r\n]+RAW_RUNTIME_STATE[ \r\n]*=[ \r\n]*|hydrateRuntimeState\(JSON\.parse\()'`, regexp2.None)
-	matches, err := manifestRegex.FindStringMatch(pnpScriptString)
-	if err != nil || matches == nil {
+	loc := manifestRegex.FindStringIndex(pnpScriptString)
+	if loc == nil {
 		return "", errors.New("we failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?")
 	}
 
-	start := matches.Index + matches.Length
+	start := loc[1]
 	var b strings.Builder
 	b.Grow(len(pnpScriptString))
 	for i := start; i < len(pnpScriptString); i++ {
@@ -149,12 +150,11 @@ func parsePnpManifest(rawData map[string]any, manifestDir string) (*PnpManifestD
 
 	ignorePatternData := getField(rawData, "ignorePatternData", parseString)
 	if ignorePatternData != "" {
-		ignorePatternDataRegexp, err := regexp2.Compile(ignorePatternData, regexp2.None)
-		if err != nil {
-			return nil, fmt.Errorf("failed to compile ignore pattern data: %w", err)
+		ignorePatternDataRegexp, err := regexp.Compile(ignorePatternData)
+		// Skipping ignorePatternData if the regex is invalid, which can happen if the regex is not go-compatible
+		if err == nil {
+			data.ignorePatternData = ignorePatternDataRegexp
 		}
-
-		data.ignorePatternData = ignorePatternDataRegexp
 	}
 
 	data.enableTopLevelFallback = getField(rawData, "enableTopLevelFallback", parseBool)
