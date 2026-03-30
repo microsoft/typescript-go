@@ -426,8 +426,15 @@ const customTypeAliases: TypeAlias[] = [
 // Track which custom Data structures were declared explicitly
 const explicitDataStructures = new Set(customStructures.map(s => s.name));
 
-// Global variable to track the RegisterOptions union type for special naming
-let registerOptionsUnionType: OrType | undefined;
+// Map from registration method → { fieldName, optionsTypeName }
+// Built during patchAndPreprocessModel, used during code generation.
+interface RegistrationMethodInfo {
+    registrationMethod: string;
+    fieldName: string;
+    optionsTypeName: string;
+    isRegistrationOnly?: boolean;
+}
+let registrationMethods: RegistrationMethodInfo[] = [];
 
 // Patch and preprocess the model
 function patchAndPreprocessModel() {
@@ -479,6 +486,8 @@ function patchAndPreprocessModel() {
 
             // Replace the "and" type with a reference to the synthetic structure
             registrationOptionTypes[i] = { kind: "reference", name: structureName };
+            // Also update the model so the request/notification has the resolved type
+            owner.registrationOptions = registrationOptionTypes[i];
         }
     }
 
@@ -500,13 +509,11 @@ function patchAndPreprocessModel() {
                 }
             }
 
-            // Replace registerOptions type with a custom RegisterOptions type
-            if (prop.name === "registerOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
-                // Create a union type and save it for special naming
-                if (registrationOptionTypes.length > 0) {
-                    registerOptionsUnionType = { kind: "or", items: registrationOptionTypes };
-                    prop.type = registerOptionsUnionType;
-                }
+            // Registration.registerOptions and Registration.method are handled specially:
+            // registerOptions becomes a custom struct, and method is derived from it.
+            // Remove both from the structure so the normal generator skips them.
+            if (structure.name === "Registration" && (prop.name === "registerOptions" || prop.name === "method")) {
+                // Will be filtered out below
             }
 
             // Replace ProgressParams.value with a proper union type
@@ -595,6 +602,11 @@ function patchAndPreprocessModel() {
         if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
             structure.properties = structure.properties.filter(p => p.name !== "experimental");
         }
+
+        // Remove method and registerOptions from Registration (handled by custom codegen)
+        if (structure.name === "Registration") {
+            structure.properties = structure.properties.filter(p => p.name !== "method" && p.name !== "registerOptions");
+        }
     }
 
     // Remove _InitializeParams structure after flattening (it was only needed for inheritance)
@@ -647,14 +659,6 @@ function patchAndPreprocessModel() {
     const notebookOnlyStructures = new Set(["ExecutionSummary"]);
     model.structures = model.structures.filter(s => !isNotebookRelatedName(s.name) && !notebookOnlyStructures.has(s.name));
 
-    // Clean up registration option types that reference notebook types (mutate in-place
-    // so the registerOptionsUnionType reference identity is preserved)
-    for (let i = registrationOptionTypes.length - 1; i >= 0; i--) {
-        if (typeReferencesNotebook(registrationOptionTypes[i])) {
-            registrationOptionTypes.splice(i, 1);
-        }
-    }
-
     // Remove notebook properties from remaining structures
     for (const structure of model.structures) {
         structure.properties = structure.properties.filter(p => {
@@ -693,6 +697,40 @@ function patchAndPreprocessModel() {
                 ta.type = ta.type.items[0];
             }
         }
+    }
+
+    // Build the registration method map (after notebook filtering).
+    // Each unique registration method gets a field in the generated RegisterOptions struct.
+    const regMethodSeen = new Set<string>();
+    for (const request of [...model.requests, ...model.notifications]) {
+        if (!request.registrationOptions) continue;
+        const regMethod = (request as any).registrationMethod || request.method;
+
+        if (regMethodSeen.has(regMethod)) continue;
+        regMethodSeen.add(regMethod);
+
+        // Resolve the options type name
+        const ro = request.registrationOptions;
+        let optionsTypeName: string;
+        if (ro.kind === "reference") {
+            optionsTypeName = ro.name;
+        }
+        else {
+            throw new Error(`Unexpected registrationOptions kind '${ro.kind}' for ${request.method}; expected all to be resolved to references`);
+        }
+
+        registrationMethods.push({
+            registrationMethod: regMethod,
+            fieldName: methodNameIdentifier(regMethod),
+            optionsTypeName,
+        });
+    }
+
+    // Identify registration-only methods (not also a request/notification method).
+    // These need their own Method constant emitted.
+    const allRequestMethods = new Set([...model.requests, ...model.notifications].map(r => r.method));
+    for (const reg of registrationMethods) {
+        (reg as any).isRegistrationOnly = !allRequestMethods.has(reg.registrationMethod);
     }
 
     // Merge LSPErrorCodes into ErrorCodes and remove LSPErrorCodes
@@ -1015,20 +1053,6 @@ function handleOrType(orType: OrType): GoType {
     }
     else {
         unionTypeName = memberNames.join("Or");
-    }
-
-    // Special case: if this is the RegisterOptions union, use a custom name
-    // and slice off the common suffix "RegistrationOptions" from member names
-    if (orType === registerOptionsUnionType) {
-        unionTypeName = "RegisterOptions";
-
-        // Remove the common suffix "RegistrationOptions" from all member names
-        memberNames = memberNames.map(name => {
-            if (name.endsWith("RegistrationOptions")) {
-                return name.slice(0, -"RegistrationOptions".length);
-            }
-            return name;
-        });
     }
 
     if (containedNull) {
@@ -1417,6 +1441,13 @@ function generateCode() {
                 }
             }
 
+            // Special: add RegisterOptions field to Registration
+            if (structure.name === "Registration") {
+                writeLine("");
+                writeLine(`\t// Options necessary for the registration. Determines the method.`);
+                writeLine(`\tRegisterOptions *RegisterOptions \`json:"-"\``);
+            }
+
             writeLine("}");
             writeLine("");
         }
@@ -1458,13 +1489,14 @@ function generateCode() {
         }
 
         // Generate UnmarshalJSONFrom method for structure validation
+        // Skip Registration (has custom marshal/unmarshal generated separately)
         // Skip properties marked with omitzeroValue since they're optional by nature
         const requiredProps = structure.properties?.filter(p => {
             if (p.optional) return false;
             if (p.omitzeroValue) return false;
             return true;
         }) || [];
-        if (requiredProps.length > 0) {
+        if (requiredProps.length > 0 && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
 
@@ -1526,6 +1558,163 @@ function generateCode() {
             writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
             writeLine(`\t}`);
 
+            writeLine("");
+            writeLine(`\treturn nil`);
+            writeLine(`}`);
+            writeLine("");
+        }
+
+        // Generate RegisterOptions struct and custom Registration marshal/unmarshal
+        // right after the Registration struct definition.
+        if (structure.name === "Registration") {
+            // RegisterOptions struct
+            writeLine(`// RegisterOptions is an externally-tagged union representing the options for a capability registration.`);
+            writeLine(`// Exactly one field should be set. The set field determines the method for the registration.`);
+            writeLine(`type RegisterOptions struct {`);
+            for (const reg of registrationMethods) {
+                writeLine(`\t${reg.fieldName} *${reg.optionsTypeName}`);
+            }
+            writeLine(`}`);
+            writeLine("");
+
+            // Method() on RegisterOptions
+            writeLine(`// Method returns the LSP method string for the set registration option.`);
+            writeLine(`func (o *RegisterOptions) Method() Method {`);
+            writeLine(`\tswitch {`);
+            for (const reg of registrationMethods) {
+                writeLine(`\tcase o.${reg.fieldName} != nil:`);
+                writeLine(`\t\treturn Method${reg.fieldName}`);
+            }
+            writeLine(`\tdefault:`);
+            writeLine(`\t\tpanic("no RegisterOptions field is set")`);
+            writeLine(`\t}`);
+            writeLine(`}`);
+            writeLine("");
+
+            // MarshalJSONTo for Registration
+            writeLine(`var _ json.MarshalerTo = (*Registration)(nil)`);
+            writeLine("");
+            writeLine(`func (s *Registration) MarshalJSONTo(enc *json.Encoder) error {`);
+
+            // Assert RegisterOptions is set and exactly one field is set
+            writeLine(`\tif s.RegisterOptions == nil {`);
+            writeLine(`\t\tpanic("RegisterOptions must be set")`);
+            writeLine(`\t}`);
+            write(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", `);
+            for (let i = 0; i < registrationMethods.length; i++) {
+                if (i > 0) write(", ");
+                write(`s.RegisterOptions.${registrationMethods[i].fieldName} != nil`);
+            }
+            writeLine(`)`);
+            writeLine("");
+
+            writeLine(`\tif err := enc.WriteToken(json.BeginObject); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(`\tif err := enc.WriteValue(json.Value(\`"id"\`)); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(`\tif err := json.MarshalEncode(enc, s.Id); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(`\tif err := enc.WriteValue(json.Value(\`"method"\`)); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(`\tswitch {`);
+            for (const reg of registrationMethods) {
+                writeLine(`\tcase s.RegisterOptions.${reg.fieldName} != nil:`);
+                writeLine(`\t\tif err := enc.WriteValue(json.Value(\`"${reg.registrationMethod}"\`)); err != nil {`);
+                writeLine(`\t\t\treturn err`);
+                writeLine(`\t\t}`);
+                writeLine(`\t\tif err := enc.WriteValue(json.Value(\`"registerOptions"\`)); err != nil {`);
+                writeLine(`\t\t\treturn err`);
+                writeLine(`\t\t}`);
+                writeLine(`\t\tif err := json.MarshalEncode(enc, s.RegisterOptions.${reg.fieldName}); err != nil {`);
+                writeLine(`\t\t\treturn err`);
+                writeLine(`\t\t}`);
+            }
+            writeLine(`\t}`);
+            writeLine(`\treturn enc.WriteToken(json.EndObject)`);
+            writeLine(`}`);
+            writeLine("");
+
+            // UnmarshalJSONFrom for Registration
+            writeLine(`var _ json.UnmarshalerFrom = (*Registration)(nil)`);
+            writeLine("");
+            writeLine(`func (s *Registration) UnmarshalJSONFrom(dec *json.Decoder) error {`);
+            writeLine(`\t*s = Registration{}`);
+            writeLine(`\tconst (`);
+            writeLine(`\t\tmissingId uint = 1 << iota`);
+            writeLine(`\t\tmissingMethod`);
+            writeLine(`\t\t_missingLast`);
+            writeLine(`\t)`);
+            writeLine(`\tmissing := _missingLast - 1`);
+            writeLine("");
+            writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
+            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t}`);
+            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine("");
+            writeLine(`\tvar method string`);
+            writeLine(`\tvar rawRegisterOptions json.Value`);
+            writeLine("");
+            writeLine(`\tfor dec.PeekKind() != '}' {`);
+            writeLine(`\t\tname, err := dec.ReadValue()`);
+            writeLine(`\t\tif err != nil {`);
+            writeLine(`\t\t\treturn err`);
+            writeLine(`\t\t}`);
+            writeLine(`\t\tswitch string(name) {`);
+            writeLine(`\t\tcase \`"id"\`:`);
+            writeLine(`\t\t\tmissing &^= missingId`);
+            writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.Id); err != nil {`);
+            writeLine(`\t\t\t\treturn err`);
+            writeLine(`\t\t\t}`);
+            writeLine(`\t\tcase \`"method"\`:`);
+            writeLine(`\t\t\tmissing &^= missingMethod`);
+            writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &method); err != nil {`);
+            writeLine(`\t\t\t\treturn err`);
+            writeLine(`\t\t\t}`);
+            writeLine(`\t\tcase \`"registerOptions"\`:`);
+            writeLine(`\t\t\tv, err := dec.ReadValue()`);
+            writeLine(`\t\t\tif err != nil {`);
+            writeLine(`\t\t\t\treturn err`);
+            writeLine(`\t\t\t}`);
+            writeLine(`\t\t\trawRegisterOptions = v`);
+            writeLine(`\t\tdefault:`);
+            writeLine(`\t\t\t// Ignore unknown properties.`);
+            writeLine(`\t\t}`);
+            writeLine(`\t}`);
+            writeLine("");
+            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine("");
+            writeLine(`\tif missing != 0 {`);
+            writeLine(`\t\tvar missingProps []string`);
+            writeLine(`\t\tif missing&missingId != 0 {`);
+            writeLine(`\t\t\tmissingProps = append(missingProps, "id")`);
+            writeLine(`\t\t}`);
+            writeLine(`\t\tif missing&missingMethod != 0 {`);
+            writeLine(`\t\t\tmissingProps = append(missingProps, "method")`);
+            writeLine(`\t\t}`);
+            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
+            writeLine(`\t}`);
+            writeLine("");
+            writeLine(`\tif len(rawRegisterOptions) > 0 {`);
+            writeLine(`\t\ts.RegisterOptions = &RegisterOptions{}`);
+            writeLine(`\t\tswitch Method(method) {`);
+            for (const reg of registrationMethods) {
+                writeLine(`\t\tcase Method${reg.fieldName}:`);
+                writeLine(`\t\t\tvar v ${reg.optionsTypeName}`);
+                writeLine(`\t\t\tif err := json.Unmarshal(rawRegisterOptions, &v); err != nil {`);
+                writeLine(`\t\t\t\treturn err`);
+                writeLine(`\t\t\t}`);
+                writeLine(`\t\t\ts.RegisterOptions.${reg.fieldName} = &v`);
+            }
+            writeLine(`\t\t}`);
+            writeLine(`\t}`);
             writeLine("");
             writeLine(`\treturn nil`);
             writeLine(`}`);
@@ -1868,6 +2057,13 @@ function generateCode() {
         const methodName = methodNameIdentifier(request.method);
 
         writeLine(`\tMethod${methodName} Method = "${request.method}"`);
+    }
+    // Emit constants for registration-only methods (not also a request/notification)
+    for (const reg of registrationMethods) {
+        if (reg.isRegistrationOnly) {
+            writeLine(`\t// Registration-only method for ${reg.registrationMethod}.`);
+            writeLine(`\tMethod${reg.fieldName} Method = "${reg.registrationMethod}"`);
+        }
     }
     writeLine(")");
     writeLine("");
