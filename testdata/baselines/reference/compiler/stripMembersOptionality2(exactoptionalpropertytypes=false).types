@@ -21,3 +21,28 @@ const tup1: WithArray1 = [undefined];
 >[undefined] : [undefined]
 >undefined : undefined
 
+type ToStringOrUnd<T> = { [P in keyof T]-?: string | undefined };
+>ToStringOrUnd : ToStringOrUnd<T>
+
+type WithObject2 = ToStringOrUnd<{ a: 1; b?: 2 }>;
+>WithObject2 : ToStringOrUnd<{ a: 1; b?: 2; }>
+>a : 1
+>b : 2 | undefined
+
+const obj2: WithObject2 = { a: "1", b: undefined };
+>obj2 : ToStringOrUnd<{ a: 1; b?: 2; }>
+>{ a: "1", b: undefined } : { a: string; b: undefined; }
+>a : string
+>"1" : "1"
+>b : undefined
+>undefined : undefined
+
+type WithArray2 = ToStringOrUnd<[1, 2?]>;
+>WithArray2 : [string | undefined, string]
+
+const tup2: WithArray2 = ["1", undefined];
+>tup2 : [string | undefined, string]
+>["1", undefined] : [string, undefined]
+>"1" : "1"
+>undefined : undefined
+

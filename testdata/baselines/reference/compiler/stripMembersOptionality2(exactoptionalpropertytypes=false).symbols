@@ -23,3 +23,31 @@ const tup1: WithArray1 = [undefined];
 >WithArray1 : Symbol(WithArray1, Decl(stripMembersOptionality2.ts, 3, 43))
 >undefined : Symbol(undefined)
 
+type ToStringOrUnd<T> = { [P in keyof T]-?: string | undefined };
+>ToStringOrUnd : Symbol(ToStringOrUnd, Decl(stripMembersOptionality2.ts, 5, 37))
+>T : Symbol(T, Decl(stripMembersOptionality2.ts, 7, 19))
+>P : Symbol(P, Decl(stripMembersOptionality2.ts, 7, 27))
+>T : Symbol(T, Decl(stripMembersOptionality2.ts, 7, 19))
+
+type WithObject2 = ToStringOrUnd<{ a: 1; b?: 2 }>;
+>WithObject2 : Symbol(WithObject2, Decl(stripMembersOptionality2.ts, 7, 65))
+>ToStringOrUnd : Symbol(ToStringOrUnd, Decl(stripMembersOptionality2.ts, 5, 37))
+>a : Symbol(a, Decl(stripMembersOptionality2.ts, 9, 34))
+>b : Symbol(b, Decl(stripMembersOptionality2.ts, 9, 40))
+
+const obj2: WithObject2 = { a: "1", b: undefined };
+>obj2 : Symbol(obj2, Decl(stripMembersOptionality2.ts, 10, 5))
+>WithObject2 : Symbol(WithObject2, Decl(stripMembersOptionality2.ts, 7, 65))
+>a : Symbol(a, Decl(stripMembersOptionality2.ts, 10, 27))
+>b : Symbol(b, Decl(stripMembersOptionality2.ts, 10, 35))
+>undefined : Symbol(undefined)
+
+type WithArray2 = ToStringOrUnd<[1, 2?]>;
+>WithArray2 : Symbol(WithArray2, Decl(stripMembersOptionality2.ts, 10, 51))
+>ToStringOrUnd : Symbol(ToStringOrUnd, Decl(stripMembersOptionality2.ts, 5, 37))
+
+const tup2: WithArray2 = ["1", undefined];
+>tup2 : Symbol(tup2, Decl(stripMembersOptionality2.ts, 12, 5))
+>WithArray2 : Symbol(WithArray2, Decl(stripMembersOptionality2.ts, 10, 51))
+>undefined : Symbol(undefined)
+
