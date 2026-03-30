@@ -1838,7 +1838,8 @@ function generateCode() {
             writeLine(`\tif s.RegisterOptions == nil {`);
             writeLine(`\t\tpanic("RegisterOptions must be set")`);
             writeLine(`\t}`);
-            const regSum = registrationMethods.map(r => `boolToInt(s.RegisterOptions.${r.fieldName} != nil)`).join(" + ");
+            const regParts = registrationMethods.map(r => `boolToInt(s.RegisterOptions.${r.fieldName} != nil)`);
+            const regSum = regParts.join(" +\n\t\t");
             writeLine(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", ${regSum})`);
             writeLine("");
 
@@ -2411,7 +2412,8 @@ function generateCode() {
         const unionContainedNull = members.some(member => member.containedNull);
         // Only emit assertion if there are multiple fields to check
         if (fieldEntries.length > 1) {
-            const sum = fieldEntries.map(e => `boolToInt(o.${e.fieldName} != nil)`).join(" + ");
+            const parts = fieldEntries.map(e => `boolToInt(o.${e.fieldName} != nil)`);
+            const sum = parts.length > 3 ? parts.join(" +\n\t\t") : parts.join(" + ");
             if (unionContainedNull) {
                 writeLine(`\tassertAtMostOne("more than one element of ${name} is set", ${sum})`);
             }

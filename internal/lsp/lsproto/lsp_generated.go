@@ -14573,7 +14573,54 @@ func (s *Registration) MarshalJSONTo(enc *json.Encoder) error {
 	if s.RegisterOptions == nil {
 		panic("RegisterOptions must be set")
 	}
-	assertOnlyOne("exactly one element of RegisterOptions should be set", boolToInt(s.RegisterOptions.TextDocumentImplementation != nil)+boolToInt(s.RegisterOptions.TextDocumentTypeDefinition != nil)+boolToInt(s.RegisterOptions.TextDocumentDocumentColor != nil)+boolToInt(s.RegisterOptions.TextDocumentColorPresentation != nil)+boolToInt(s.RegisterOptions.TextDocumentFoldingRange != nil)+boolToInt(s.RegisterOptions.TextDocumentDeclaration != nil)+boolToInt(s.RegisterOptions.TextDocumentSelectionRange != nil)+boolToInt(s.RegisterOptions.TextDocumentPrepareCallHierarchy != nil)+boolToInt(s.RegisterOptions.TextDocumentSemanticTokens != nil)+boolToInt(s.RegisterOptions.TextDocumentLinkedEditingRange != nil)+boolToInt(s.RegisterOptions.WorkspaceWillCreateFiles != nil)+boolToInt(s.RegisterOptions.WorkspaceWillRenameFiles != nil)+boolToInt(s.RegisterOptions.WorkspaceWillDeleteFiles != nil)+boolToInt(s.RegisterOptions.TextDocumentMoniker != nil)+boolToInt(s.RegisterOptions.TextDocumentPrepareTypeHierarchy != nil)+boolToInt(s.RegisterOptions.TextDocumentInlineValue != nil)+boolToInt(s.RegisterOptions.TextDocumentInlayHint != nil)+boolToInt(s.RegisterOptions.TextDocumentDiagnostic != nil)+boolToInt(s.RegisterOptions.TextDocumentInlineCompletion != nil)+boolToInt(s.RegisterOptions.WorkspaceTextDocumentContent != nil)+boolToInt(s.RegisterOptions.TextDocumentWillSaveWaitUntil != nil)+boolToInt(s.RegisterOptions.TextDocumentCompletion != nil)+boolToInt(s.RegisterOptions.TextDocumentHover != nil)+boolToInt(s.RegisterOptions.TextDocumentSignatureHelp != nil)+boolToInt(s.RegisterOptions.TextDocumentDefinition != nil)+boolToInt(s.RegisterOptions.TextDocumentReferences != nil)+boolToInt(s.RegisterOptions.TextDocumentDocumentHighlight != nil)+boolToInt(s.RegisterOptions.TextDocumentDocumentSymbol != nil)+boolToInt(s.RegisterOptions.TextDocumentCodeAction != nil)+boolToInt(s.RegisterOptions.WorkspaceSymbol != nil)+boolToInt(s.RegisterOptions.TextDocumentCodeLens != nil)+boolToInt(s.RegisterOptions.TextDocumentDocumentLink != nil)+boolToInt(s.RegisterOptions.TextDocumentFormatting != nil)+boolToInt(s.RegisterOptions.TextDocumentRangeFormatting != nil)+boolToInt(s.RegisterOptions.TextDocumentRangesFormatting != nil)+boolToInt(s.RegisterOptions.TextDocumentOnTypeFormatting != nil)+boolToInt(s.RegisterOptions.TextDocumentRename != nil)+boolToInt(s.RegisterOptions.WorkspaceExecuteCommand != nil)+boolToInt(s.RegisterOptions.WorkspaceDidCreateFiles != nil)+boolToInt(s.RegisterOptions.WorkspaceDidRenameFiles != nil)+boolToInt(s.RegisterOptions.WorkspaceDidDeleteFiles != nil)+boolToInt(s.RegisterOptions.WorkspaceDidChangeConfiguration != nil)+boolToInt(s.RegisterOptions.TextDocumentDidOpen != nil)+boolToInt(s.RegisterOptions.TextDocumentDidChange != nil)+boolToInt(s.RegisterOptions.TextDocumentDidClose != nil)+boolToInt(s.RegisterOptions.TextDocumentDidSave != nil)+boolToInt(s.RegisterOptions.TextDocumentWillSave != nil)+boolToInt(s.RegisterOptions.WorkspaceDidChangeWatchedFiles != nil))
+	assertOnlyOne("exactly one element of RegisterOptions should be set", boolToInt(s.RegisterOptions.TextDocumentImplementation != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentTypeDefinition != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDocumentColor != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentColorPresentation != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentFoldingRange != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDeclaration != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentSelectionRange != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentPrepareCallHierarchy != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentSemanticTokens != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentLinkedEditingRange != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceWillCreateFiles != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceWillRenameFiles != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceWillDeleteFiles != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentMoniker != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentPrepareTypeHierarchy != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentInlineValue != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentInlayHint != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDiagnostic != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentInlineCompletion != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceTextDocumentContent != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentWillSaveWaitUntil != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentCompletion != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentHover != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentSignatureHelp != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDefinition != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentReferences != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDocumentHighlight != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDocumentSymbol != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentCodeAction != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceSymbol != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentCodeLens != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDocumentLink != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentFormatting != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentRangeFormatting != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentRangesFormatting != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentOnTypeFormatting != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentRename != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceExecuteCommand != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceDidCreateFiles != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceDidRenameFiles != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceDidDeleteFiles != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceDidChangeConfiguration != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDidOpen != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDidChange != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDidClose != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentDidSave != nil)+
+		boolToInt(s.RegisterOptions.TextDocumentWillSave != nil)+
+		boolToInt(s.RegisterOptions.WorkspaceDidChangeWatchedFiles != nil))
 
 	if err := enc.WriteToken(json.BeginObject); err != nil {
 		return err
@@ -24491,7 +24538,10 @@ type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
 var _ json.MarshalerTo = (*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile)(nil)
 
 func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile should be set", boolToInt(o.TextDocumentEdit != nil)+boolToInt(o.CreateFile != nil)+boolToInt(o.RenameFile != nil)+boolToInt(o.DeleteFile != nil))
+	assertOnlyOne("exactly one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile should be set", boolToInt(o.TextDocumentEdit != nil)+
+		boolToInt(o.CreateFile != nil)+
+		boolToInt(o.RenameFile != nil)+
+		boolToInt(o.DeleteFile != nil))
 
 	if o.TextDocumentEdit != nil {
 		return json.MarshalEncode(enc, o.TextDocumentEdit)
@@ -25070,7 +25120,10 @@ type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
 var _ json.MarshalerTo = (*MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings)(nil)
 
 func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings should be set", boolToInt(o.MarkupContent != nil)+boolToInt(o.String != nil)+boolToInt(o.MarkedStringWithLanguage != nil)+boolToInt(o.MarkedStrings != nil))
+	assertOnlyOne("exactly one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings should be set", boolToInt(o.MarkupContent != nil)+
+		boolToInt(o.String != nil)+
+		boolToInt(o.MarkedStringWithLanguage != nil)+
+		boolToInt(o.MarkedStrings != nil))
 
 	if o.MarkupContent != nil {
 		return json.MarshalEncode(enc, o.MarkupContent)
