@@ -5028,350 +5028,6 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *json.Dec
 	return nil
 }
 
-// The params sent in an open notebook document notification.
-//
-// Since: 3.17.0
-type DidOpenNotebookDocumentParams struct {
-	// The notebook document that got opened.
-	NotebookDocument *NotebookDocument `json:"notebookDocument"`
-
-	// The text documents that represent the content
-	// of a notebook cell.
-	CellTextDocuments []*TextDocumentItem `json:"cellTextDocuments"`
-}
-
-var _ json.UnmarshalerFrom = (*DidOpenNotebookDocumentParams)(nil)
-
-func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookDocument uint = 1 << iota
-		missingCellTextDocuments
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookDocument"`:
-			missing &^= missingNotebookDocument
-			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
-				return err
-			}
-		case `"cellTextDocuments"`:
-			missing &^= missingCellTextDocuments
-			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookDocument != 0 {
-			missingProps = append(missingProps, "notebookDocument")
-		}
-		if missing&missingCellTextDocuments != 0 {
-			missingProps = append(missingProps, "cellTextDocuments")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Registration options specific to a notebook.
-//
-// Since: 3.17.0
-type NotebookDocumentSyncRegistrationOptions struct {
-	// The notebooks to be synced
-	NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
-
-	// Whether save notification should be forwarded to
-	// the server. Will only be honored if mode === `notebook`.
-	Save *bool `json:"save,omitzero"`
-
-	// The id used to register the request. The id can be used to deregister
-	// the request again. See also Registration#id.
-	Id *string `json:"id,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentSyncRegistrationOptions)(nil)
-
-func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookSelector uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookSelector"`:
-			missing &^= missingNotebookSelector
-			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
-				return err
-			}
-		case `"save"`:
-			if err := json.UnmarshalDecode(dec, &s.Save); err != nil {
-				return err
-			}
-		case `"id"`:
-			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookSelector != 0 {
-			missingProps = append(missingProps, "notebookSelector")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// The params sent in a change notebook document notification.
-//
-// Since: 3.17.0
-type DidChangeNotebookDocumentParams struct {
-	// The notebook document that did change. The version number points
-	// to the version after all provided changes have been applied. If
-	// only the text document content of a cell changes the notebook version
-	// doesn't necessarily have to change.
-	NotebookDocument VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
-
-	// The actual changes to the notebook document.
-	//
-	// The changes describe single state changes to the notebook document.
-	// So if there are two changes c1 (at array index 0) and c2 (at array
-	// index 1) for a notebook in state S then c1 moves the notebook from
-	// S to S' and c2 from S' to S''. So c1 is computed on the state S and
-	// c2 is computed on the state S'.
-	//
-	// To mirror the content of a notebook using change events use the following approach:
-	// - start with the same initial content
-	// - apply the 'notebookDocument/didChange' notifications in the order you receive them.
-	// - apply the `NotebookChangeEvent`s in a single notification in the order
-	//   you receive them.
-	Change *NotebookDocumentChangeEvent `json:"change"`
-}
-
-var _ json.UnmarshalerFrom = (*DidChangeNotebookDocumentParams)(nil)
-
-func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookDocument uint = 1 << iota
-		missingChange
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookDocument"`:
-			missing &^= missingNotebookDocument
-			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
-				return err
-			}
-		case `"change"`:
-			missing &^= missingChange
-			if err := json.UnmarshalDecode(dec, &s.Change); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookDocument != 0 {
-			missingProps = append(missingProps, "notebookDocument")
-		}
-		if missing&missingChange != 0 {
-			missingProps = append(missingProps, "change")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// The params sent in a save notebook document notification.
-//
-// Since: 3.17.0
-type DidSaveNotebookDocumentParams struct {
-	// The notebook document that got saved.
-	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
-}
-
-var _ json.UnmarshalerFrom = (*DidSaveNotebookDocumentParams)(nil)
-
-func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookDocument uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookDocument"`:
-			missing &^= missingNotebookDocument
-			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookDocument != 0 {
-			missingProps = append(missingProps, "notebookDocument")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// The params sent in a close notebook document notification.
-//
-// Since: 3.17.0
-type DidCloseNotebookDocumentParams struct {
-	// The notebook document that got closed.
-	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
-
-	// The text documents that represent the content
-	// of a notebook cell that got closed.
-	CellTextDocuments []TextDocumentIdentifier `json:"cellTextDocuments"`
-}
-
-var _ json.UnmarshalerFrom = (*DidCloseNotebookDocumentParams)(nil)
-
-func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookDocument uint = 1 << iota
-		missingCellTextDocuments
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookDocument"`:
-			missing &^= missingNotebookDocument
-			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
-				return err
-			}
-		case `"cellTextDocuments"`:
-			missing &^= missingCellTextDocuments
-			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookDocument != 0 {
-			missingProps = append(missingProps, "notebookDocument")
-		}
-		if missing&missingCellTextDocuments != 0 {
-			missingProps = append(missingProps, "cellTextDocuments")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
 // A parameter literal used in inline completion requests.
 //
 // Since: 3.18.0
@@ -14185,108 +13841,6 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
-// A notebook document.
-//
-// Since: 3.17.0
-type NotebookDocument struct {
-	// The notebook document's uri.
-	Uri URI `json:"uri"`
-
-	// The type of the notebook.
-	NotebookType string `json:"notebookType"`
-
-	// The version number of this document (it will increase after each
-	// change, including undo/redo).
-	Version int32 `json:"version"`
-
-	// Additional metadata stored with the notebook
-	// document.
-	//
-	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]any `json:"metadata,omitzero"`
-
-	// The cells of a notebook.
-	Cells []*NotebookCell `json:"cells"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocument)(nil)
-
-func (s *NotebookDocument) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingUri uint = 1 << iota
-		missingNotebookType
-		missingVersion
-		missingCells
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"uri"`:
-			missing &^= missingUri
-			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
-				return err
-			}
-		case `"notebookType"`:
-			missing &^= missingNotebookType
-			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
-				return err
-			}
-		case `"version"`:
-			missing &^= missingVersion
-			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
-				return err
-			}
-		case `"metadata"`:
-			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
-				return err
-			}
-		case `"cells"`:
-			missing &^= missingCells
-			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingUri != 0 {
-			missingProps = append(missingProps, "uri")
-		}
-		if missing&missingNotebookType != 0 {
-			missingProps = append(missingProps, "notebookType")
-		}
-		if missing&missingVersion != 0 {
-			missingProps = append(missingProps, "version")
-		}
-		if missing&missingCells != 0 {
-			missingProps = append(missingProps, "cells")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
 // An item to transfer a text document from the client to the
 // server.
 type TextDocumentItem struct {
@@ -14371,214 +13925,6 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 		}
 		if missing&missingText != 0 {
 			missingProps = append(missingProps, "text")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Options specific to a notebook plus its cells
-// to be synced to the server.
-//
-// If a selector provides a notebook document
-// filter but no cell selector all cells of a
-// matching notebook document will be synced.
-//
-// If a selector provides no notebook document
-// filter but only a cell selector all notebook
-// document that contain at least one matching
-// cell will be synced.
-//
-// Since: 3.17.0
-type NotebookDocumentSyncOptions struct {
-	// The notebooks to be synced
-	NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
-
-	// Whether save notification should be forwarded to
-	// the server. Will only be honored if mode === `notebook`.
-	Save *bool `json:"save,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentSyncOptions)(nil)
-
-func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookSelector uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookSelector"`:
-			missing &^= missingNotebookSelector
-			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
-				return err
-			}
-		case `"save"`:
-			if err := json.UnmarshalDecode(dec, &s.Save); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookSelector != 0 {
-			missingProps = append(missingProps, "notebookSelector")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// A versioned notebook document identifier.
-//
-// Since: 3.17.0
-type VersionedNotebookDocumentIdentifier struct {
-	// The version number of this notebook document.
-	Version int32 `json:"version"`
-
-	// The notebook document's uri.
-	Uri URI `json:"uri"`
-}
-
-var _ json.UnmarshalerFrom = (*VersionedNotebookDocumentIdentifier)(nil)
-
-func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingVersion uint = 1 << iota
-		missingUri
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"version"`:
-			missing &^= missingVersion
-			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
-				return err
-			}
-		case `"uri"`:
-			missing &^= missingUri
-			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingVersion != 0 {
-			missingProps = append(missingProps, "version")
-		}
-		if missing&missingUri != 0 {
-			missingProps = append(missingProps, "uri")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// A change event for a notebook document.
-//
-// Since: 3.17.0
-type NotebookDocumentChangeEvent struct {
-	// The changed meta data if any.
-	//
-	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]any `json:"metadata,omitzero"`
-
-	// Changes to cells
-	Cells *NotebookDocumentCellChanges `json:"cells,omitzero"`
-}
-
-// A literal to identify a notebook document in the client.
-//
-// Since: 3.17.0
-type NotebookDocumentIdentifier struct {
-	// The notebook document's uri.
-	Uri URI `json:"uri"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentIdentifier)(nil)
-
-func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingUri uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"uri"`:
-			missing &^= missingUri
-			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingUri != 0 {
-			missingProps = append(missingProps, "uri")
 		}
 		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
@@ -14959,11 +14305,6 @@ type ServerCapabilities struct {
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
 	TextDocumentSync *TextDocumentSyncOptionsOrKind `json:"textDocumentSync,omitzero"`
-
-	// Defines how notebook documents are synced.
-	//
-	// Since: 3.17.0
-	NotebookDocumentSync *NotebookDocumentSyncOptionsOrRegistrationOptions `json:"notebookDocumentSync,omitzero"`
 
 	// The server provides completion support.
 	CompletionProvider *CompletionOptions `json:"completionProvider,omitzero"`
@@ -17405,235 +16746,6 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 	return nil
 }
 
-// A notebook cell.
-//
-// A cell's document URI must be unique across ALL notebook
-// cells and can therefore be used to uniquely identify a
-// notebook cell or the cell's text document.
-//
-// Since: 3.17.0
-type NotebookCell struct {
-	// The cell's kind
-	Kind NotebookCellKind `json:"kind"`
-
-	// The URI of the cell's text document
-	// content.
-	Document DocumentUri `json:"document"`
-
-	// Additional metadata stored with the cell.
-	//
-	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]any `json:"metadata,omitzero"`
-
-	// Additional execution summary information
-	// if supported by the client.
-	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookCell)(nil)
-
-func (s *NotebookCell) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingKind uint = 1 << iota
-		missingDocument
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"kind"`:
-			missing &^= missingKind
-			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
-				return err
-			}
-		case `"document"`:
-			missing &^= missingDocument
-			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
-				return err
-			}
-		case `"metadata"`:
-			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
-				return err
-			}
-		case `"executionSummary"`:
-			if err := json.UnmarshalDecode(dec, &s.ExecutionSummary); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingKind != 0 {
-			missingProps = append(missingProps, "kind")
-		}
-		if missing&missingDocument != 0 {
-			missingProps = append(missingProps, "document")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Since: 3.18.0
-type NotebookDocumentFilterWithNotebook struct {
-	// The notebook to be synced If a string
-	// value is provided it matches against the
-	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
-
-	// The cells of the matching notebook to be synced.
-	Cells *[]*NotebookCellLanguage `json:"cells,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentFilterWithNotebook)(nil)
-
-func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebook uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebook"`:
-			missing &^= missingNotebook
-			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
-				return err
-			}
-		case `"cells"`:
-			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebook != 0 {
-			missingProps = append(missingProps, "notebook")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Since: 3.18.0
-type NotebookDocumentFilterWithCells struct {
-	// The notebook to be synced If a string
-	// value is provided it matches against the
-	// notebook type. '*' matches every notebook.
-	Notebook *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook,omitzero"`
-
-	// The cells of the matching notebook to be synced.
-	Cells []*NotebookCellLanguage `json:"cells"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentFilterWithCells)(nil)
-
-func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingCells uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebook"`:
-			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
-				return err
-			}
-		case `"cells"`:
-			missing &^= missingCells
-			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingCells != 0 {
-			missingProps = append(missingProps, "cells")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Cell changes to a notebook document.
-//
-// Since: 3.18.0
-type NotebookDocumentCellChanges struct {
-	// Changes to the cell structure to add or
-	// remove cells.
-	Structure *NotebookDocumentCellChangeStructure `json:"structure,omitzero"`
-
-	// Changes to notebook cells properties like its
-	// kind, execution summary or metadata.
-	Data *[]*NotebookCell `json:"data,omitzero"`
-
-	// Changes to the text content of notebook cells.
-	TextContent *[]*NotebookDocumentCellContentChanges `json:"textContent,omitzero"`
-}
-
 // Describes the currently selected completion item.
 //
 // Since: 3.18.0
@@ -17774,11 +16886,6 @@ type ClientCapabilities struct {
 
 	// Text document specific client capabilities.
 	TextDocument *TextDocumentClientCapabilities `json:"textDocument,omitzero"`
-
-	// Capabilities specific to the notebook document support.
-	//
-	// Since: 3.17.0
-	NotebookDocument *NotebookDocumentClientCapabilities `json:"notebookDocument,omitzero"`
 
 	// Window specific client capabilities.
 	Window *WindowClientCapabilities `json:"window,omitzero"`
@@ -18370,329 +17477,12 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *json.Decoder) error
 	return nil
 }
 
-// A notebook cell text document filter denotes a cell text
-// document by different properties.
-//
-// Since: 3.17.0
-type NotebookCellTextDocumentFilter struct {
-	// A filter that matches against the notebook
-	// containing the notebook cell. If a string
-	// value is provided it matches against the
-	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
-
-	// A language id like `python`.
-	//
-	// Will be matched against the language id of the
-	// notebook cell document. '*' matches every language.
-	Language *string `json:"language,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookCellTextDocumentFilter)(nil)
-
-func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebook uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebook"`:
-			missing &^= missingNotebook
-			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
-				return err
-			}
-		case `"language"`:
-			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebook != 0 {
-			missingProps = append(missingProps, "notebook")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
 // Matching options for the file operation pattern.
 //
 // Since: 3.16.0
 type FileOperationPatternOptions struct {
 	// The pattern should be matched ignoring casing.
 	IgnoreCase *bool `json:"ignoreCase,omitzero"`
-}
-
-type ExecutionSummary struct {
-	// A strict monotonically increasing value
-	// indicating the execution order of a cell
-	// inside a notebook.
-	ExecutionOrder uint32 `json:"executionOrder"`
-
-	// Whether the execution was successful or
-	// not if known by the client.
-	Success *bool `json:"success,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*ExecutionSummary)(nil)
-
-func (s *ExecutionSummary) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingExecutionOrder uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"executionOrder"`:
-			missing &^= missingExecutionOrder
-			if err := json.UnmarshalDecode(dec, &s.ExecutionOrder); err != nil {
-				return err
-			}
-		case `"success"`:
-			if err := json.UnmarshalDecode(dec, &s.Success); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingExecutionOrder != 0 {
-			missingProps = append(missingProps, "executionOrder")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Since: 3.18.0
-type NotebookCellLanguage struct {
-	Language string `json:"language"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookCellLanguage)(nil)
-
-func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingLanguage uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"language"`:
-			missing &^= missingLanguage
-			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingLanguage != 0 {
-			missingProps = append(missingProps, "language")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Structural changes to cells in a notebook document.
-//
-// Since: 3.18.0
-type NotebookDocumentCellChangeStructure struct {
-	// The change to the cell array.
-	Array *NotebookCellArrayChange `json:"array"`
-
-	// Additional opened cell text documents.
-	DidOpen *[]*TextDocumentItem `json:"didOpen,omitzero"`
-
-	// Additional closed cell text documents.
-	DidClose *[]TextDocumentIdentifier `json:"didClose,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentCellChangeStructure)(nil)
-
-func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingArray uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"array"`:
-			missing &^= missingArray
-			if err := json.UnmarshalDecode(dec, &s.Array); err != nil {
-				return err
-			}
-		case `"didOpen"`:
-			if err := json.UnmarshalDecode(dec, &s.DidOpen); err != nil {
-				return err
-			}
-		case `"didClose"`:
-			if err := json.UnmarshalDecode(dec, &s.DidClose); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingArray != 0 {
-			missingProps = append(missingProps, "array")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// Content changes to a cell in a notebook document.
-//
-// Since: 3.18.0
-type NotebookDocumentCellContentChanges struct {
-	Document VersionedTextDocumentIdentifier `json:"document"`
-
-	Changes []TextDocumentContentChangePartialOrWholeDocument `json:"changes"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentCellContentChanges)(nil)
-
-func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingDocument uint = 1 << iota
-		missingChanges
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"document"`:
-			missing &^= missingDocument
-			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
-				return err
-			}
-		case `"changes"`:
-			missing &^= missingChanges
-			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingDocument != 0 {
-			missingProps = append(missingProps, "document")
-		}
-		if missing&missingChanges != 0 {
-			missingProps = append(missingProps, "changes")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
 }
 
 // Workspace specific client capabilities.
@@ -18909,63 +17699,6 @@ type TextDocumentClientCapabilities struct {
 	//
 	// Proposed.
 	InlineCompletion *InlineCompletionClientCapabilities `json:"inlineCompletion,omitzero"`
-}
-
-// Capabilities specific to the notebook document support.
-//
-// Since: 3.17.0
-type NotebookDocumentClientCapabilities struct {
-	// Capabilities specific to notebook document synchronization
-	//
-	// Since: 3.17.0
-	Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentClientCapabilities)(nil)
-
-func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingSynchronization uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"synchronization"`:
-			missing &^= missingSynchronization
-			if err := json.UnmarshalDecode(dec, &s.Synchronization); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingSynchronization != 0 {
-			missingProps = append(missingProps, "synchronization")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
 }
 
 type WindowClientCapabilities struct {
@@ -19353,288 +18086,6 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
 		var missingProps []string
 		if missing&missingPattern != 0 {
 			missingProps = append(missingProps, "pattern")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// A notebook document filter where `notebookType` is required field.
-//
-// Since: 3.18.0
-type NotebookDocumentFilterNotebookType struct {
-	// The type of the enclosing notebook.
-	NotebookType string `json:"notebookType"`
-
-	// A Uri scheme, like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitzero"`
-
-	// A glob pattern.
-	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentFilterNotebookType)(nil)
-
-func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingNotebookType uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookType"`:
-			missing &^= missingNotebookType
-			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
-				return err
-			}
-		case `"scheme"`:
-			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
-				return err
-			}
-		case `"pattern"`:
-			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingNotebookType != 0 {
-			missingProps = append(missingProps, "notebookType")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// A notebook document filter where `scheme` is required field.
-//
-// Since: 3.18.0
-type NotebookDocumentFilterScheme struct {
-	// The type of the enclosing notebook.
-	NotebookType *string `json:"notebookType,omitzero"`
-
-	// A Uri scheme, like `file` or `untitled`.
-	Scheme string `json:"scheme"`
-
-	// A glob pattern.
-	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentFilterScheme)(nil)
-
-func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingScheme uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookType"`:
-			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
-				return err
-			}
-		case `"scheme"`:
-			missing &^= missingScheme
-			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
-				return err
-			}
-		case `"pattern"`:
-			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingScheme != 0 {
-			missingProps = append(missingProps, "scheme")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// A notebook document filter where `pattern` is required field.
-//
-// Since: 3.18.0
-type NotebookDocumentFilterPattern struct {
-	// The type of the enclosing notebook.
-	NotebookType *string `json:"notebookType,omitzero"`
-
-	// A Uri scheme, like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitzero"`
-
-	// A glob pattern.
-	Pattern PatternOrRelativePattern `json:"pattern"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentFilterPattern)(nil)
-
-func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingPattern uint = 1 << iota
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"notebookType"`:
-			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
-				return err
-			}
-		case `"scheme"`:
-			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
-				return err
-			}
-		case `"pattern"`:
-			missing &^= missingPattern
-			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingPattern != 0 {
-			missingProps = append(missingProps, "pattern")
-		}
-		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
-	}
-
-	return nil
-}
-
-// A change describing how to move a `NotebookCell`
-// array from state S to S'.
-//
-// Since: 3.17.0
-type NotebookCellArrayChange struct {
-	// The start oftest of the cell that changed.
-	Start uint32 `json:"start"`
-
-	// The deleted cells
-	DeleteCount uint32 `json:"deleteCount"`
-
-	// The new cells, if any
-	Cells *[]*NotebookCell `json:"cells,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*NotebookCellArrayChange)(nil)
-
-func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *json.Decoder) error {
-	const (
-		missingStart uint = 1 << iota
-		missingDeleteCount
-		_missingLast
-	)
-	missing := _missingLast - 1
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"start"`:
-			missing &^= missingStart
-			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
-				return err
-			}
-		case `"deleteCount"`:
-			missing &^= missingDeleteCount
-			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
-				return err
-			}
-		case `"cells"`:
-			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if missing != 0 {
-		var missingProps []string
-		if missing&missingStart != 0 {
-			missingProps = append(missingProps, "start")
-		}
-		if missing&missingDeleteCount != 0 {
-			missingProps = append(missingProps, "deleteCount")
 		}
 		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
@@ -20476,20 +18927,6 @@ type DiagnosticClientCapabilities struct {
 type InlineCompletionClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline completion providers.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
-}
-
-// Notebook specific client capabilities.
-//
-// Since: 3.17.0
-type NotebookDocumentSyncClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is
-	// set to `true` the client supports the new
-	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
-
-	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport *bool `json:"executionSummarySupport,omitzero"`
 }
 
 // Show message request client capabilities
@@ -22988,11 +21425,6 @@ const (
 	//
 	// Since: 3.15.0
 	CodeActionKindSourceFixAll CodeActionKind = "source.fixAll"
-	// Base kind for all code actions applying to the entire notebook's scope. CodeActionKinds using
-	// this should always begin with `notebook.`
-	//
-	// Since: 3.18.0
-	CodeActionKindNotebook CodeActionKind = "notebook"
 )
 
 // Code action tags are extra annotations that tweak the behavior of a code action.
@@ -23402,30 +21834,6 @@ const (
 	FileOperationPatternKindFolder FileOperationPatternKind = "folder"
 )
 
-// A notebook cell kind.
-//
-// Since: 3.17.0
-type NotebookCellKind uint32
-
-const (
-	// A markup-cell is formatted source that is used for display.
-	NotebookCellKindMarkup NotebookCellKind = 1
-	// A code-cell is source code.
-	NotebookCellKindCode NotebookCellKind = 2
-)
-
-const _NotebookCellKind_name = "MarkupCode"
-
-var _NotebookCellKind_index = [...]uint16{0, 6, 10}
-
-func (e NotebookCellKind) String() string {
-	i := int(e) - 1
-	if i < 0 || i >= len(_NotebookCellKind_index)-1 {
-		return fmt.Sprintf("NotebookCellKind(%d)", e)
-	}
-	return _NotebookCellKind_name[_NotebookCellKind_index[i]:_NotebookCellKind_index[i+1]]
-}
-
 type ResourceOperationKind string
 
 const (
@@ -23736,14 +22144,6 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[RenameFilesParams](data)
 	case MethodWorkspaceDidDeleteFiles:
 		return unmarshalPtrTo[DeleteFilesParams](data)
-	case MethodNotebookDocumentDidOpen:
-		return unmarshalPtrTo[DidOpenNotebookDocumentParams](data)
-	case MethodNotebookDocumentDidChange:
-		return unmarshalPtrTo[DidChangeNotebookDocumentParams](data)
-	case MethodNotebookDocumentDidSave:
-		return unmarshalPtrTo[DidSaveNotebookDocumentParams](data)
-	case MethodNotebookDocumentDidClose:
-		return unmarshalPtrTo[DidCloseNotebookDocumentParams](data)
 	case MethodInitialized:
 		return unmarshalPtrTo[InitializedParams](data)
 	case MethodExit:
@@ -24280,19 +22680,6 @@ const (
 	//
 	// Since: 3.16.0
 	MethodWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
-	// A notification sent when a notebook opens.
-	//
-	// Since: 3.17.0
-	MethodNotebookDocumentDidOpen   Method = "notebookDocument/didOpen"
-	MethodNotebookDocumentDidChange Method = "notebookDocument/didChange"
-	// A notification sent when a notebook document is saved.
-	//
-	// Since: 3.17.0
-	MethodNotebookDocumentDidSave Method = "notebookDocument/didSave"
-	// A notification sent when a notebook closes.
-	//
-	// Since: 3.17.0
-	MethodNotebookDocumentDidClose Method = "notebookDocument/didClose"
 	// The initialized notification is sent from the client to the
 	// server after the client is fully initialized and the server
 	// is allowed to send requests from the server to the client.
@@ -24830,18 +23217,6 @@ var WorkspaceDidRenameFilesInfo = NotificationInfo[*RenameFilesParams]{Method: M
 // Type mapping info for `workspace/didDeleteFiles`
 var WorkspaceDidDeleteFilesInfo = NotificationInfo[*DeleteFilesParams]{Method: MethodWorkspaceDidDeleteFiles}
 
-// Type mapping info for `notebookDocument/didOpen`
-var NotebookDocumentDidOpenInfo = NotificationInfo[*DidOpenNotebookDocumentParams]{Method: MethodNotebookDocumentDidOpen}
-
-// Type mapping info for `notebookDocument/didChange`
-var NotebookDocumentDidChangeInfo = NotificationInfo[*DidChangeNotebookDocumentParams]{Method: MethodNotebookDocumentDidChange}
-
-// Type mapping info for `notebookDocument/didSave`
-var NotebookDocumentDidSaveInfo = NotificationInfo[*DidSaveNotebookDocumentParams]{Method: MethodNotebookDocumentDidSave}
-
-// Type mapping info for `notebookDocument/didClose`
-var NotebookDocumentDidCloseInfo = NotificationInfo[*DidCloseNotebookDocumentParams]{Method: MethodNotebookDocumentDidClose}
-
 // Type mapping info for `initialized`
 var InitializedInfo = NotificationInfo[*InitializedParams]{Method: MethodInitialized}
 
@@ -24941,7 +23316,7 @@ func (o *IntegerOrString) UnmarshalJSONFrom(dec *json.Decoder) error {
 }
 
 type DocumentSelectorOrNull struct {
-	DocumentSelector *[]TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
+	DocumentSelector *[]TextDocumentFilterLanguageOrSchemeOrPattern
 }
 
 var _ json.MarshalerTo = (*DocumentSelectorOrNull)(nil)
@@ -24968,7 +23343,7 @@ func (o *DocumentSelectorOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return nil
 	}
 
-	var vDocumentSelector []TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
+	var vDocumentSelector []TextDocumentFilterLanguageOrSchemeOrPattern
 	if err := json.Unmarshal(data, &vDocumentSelector); err == nil {
 		o.DocumentSelector = &vDocumentSelector
 		return nil
@@ -25279,47 +23654,6 @@ func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticRepor
 		return nil
 	}
 	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
-}
-
-type NotebookDocumentFilterWithNotebookOrCells struct {
-	Notebook *NotebookDocumentFilterWithNotebook
-	Cells    *NotebookDocumentFilterWithCells
-}
-
-var _ json.MarshalerTo = (*NotebookDocumentFilterWithNotebookOrCells)(nil)
-
-func (o *NotebookDocumentFilterWithNotebookOrCells) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of NotebookDocumentFilterWithNotebookOrCells should be set", o.Notebook != nil, o.Cells != nil)
-
-	if o.Notebook != nil {
-		return json.MarshalEncode(enc, o.Notebook)
-	}
-	if o.Cells != nil {
-		return json.MarshalEncode(enc, o.Cells)
-	}
-	panic("unreachable")
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentFilterWithNotebookOrCells)(nil)
-
-func (o *NotebookDocumentFilterWithNotebookOrCells) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = NotebookDocumentFilterWithNotebookOrCells{}
-
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vNotebook NotebookDocumentFilterWithNotebook
-	if err := json.Unmarshal(data, &vNotebook); err == nil {
-		o.Notebook = &vNotebook
-		return nil
-	}
-	var vCells NotebookDocumentFilterWithCells
-	if err := json.Unmarshal(data, &vCells); err == nil {
-		o.Cells = &vCells
-		return nil
-	}
-	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrCells: %s", data)
 }
 
 type StringOrStringValue struct {
@@ -25902,7 +24236,6 @@ type RegisterOptions struct {
 	DocumentOnTypeFormatting *DocumentOnTypeFormattingRegistrationOptions
 	Rename                   *RenameRegistrationOptions
 	ExecuteCommand           *ExecuteCommandRegistrationOptions
-	NotebookDocumentSync     *NotebookDocumentSyncRegistrationOptions
 	DidChangeConfiguration   *DidChangeConfigurationRegistrationOptions
 	TextDocumentChange       *TextDocumentChangeRegistrationOptions
 	TextDocumentSave         *TextDocumentSaveRegistrationOptions
@@ -25912,7 +24245,7 @@ type RegisterOptions struct {
 var _ json.MarshalerTo = (*RegisterOptions)(nil)
 
 func (o *RegisterOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of RegisterOptions should be set", o.Implementation != nil, o.TypeDefinition != nil, o.DocumentColor != nil, o.ColorPresentation != nil, o.FoldingRange != nil, o.Declaration != nil, o.SelectionRange != nil, o.CallHierarchy != nil, o.SemanticTokens != nil, o.LinkedEditingRange != nil, o.FileOperation != nil, o.Moniker != nil, o.TypeHierarchy != nil, o.InlineValue != nil, o.InlayHint != nil, o.Diagnostic != nil, o.InlineCompletion != nil, o.TextDocumentContent != nil, o.TextDocument != nil, o.Completion != nil, o.Hover != nil, o.SignatureHelp != nil, o.Definition != nil, o.Reference != nil, o.DocumentHighlight != nil, o.DocumentSymbol != nil, o.CodeAction != nil, o.WorkspaceSymbol != nil, o.CodeLens != nil, o.DocumentLink != nil, o.DocumentFormatting != nil, o.DocumentRangeFormatting != nil, o.DocumentOnTypeFormatting != nil, o.Rename != nil, o.ExecuteCommand != nil, o.NotebookDocumentSync != nil, o.DidChangeConfiguration != nil, o.TextDocumentChange != nil, o.TextDocumentSave != nil, o.DidChangeWatchedFiles != nil)
+	assertOnlyOne("exactly one element of RegisterOptions should be set", o.Implementation != nil, o.TypeDefinition != nil, o.DocumentColor != nil, o.ColorPresentation != nil, o.FoldingRange != nil, o.Declaration != nil, o.SelectionRange != nil, o.CallHierarchy != nil, o.SemanticTokens != nil, o.LinkedEditingRange != nil, o.FileOperation != nil, o.Moniker != nil, o.TypeHierarchy != nil, o.InlineValue != nil, o.InlayHint != nil, o.Diagnostic != nil, o.InlineCompletion != nil, o.TextDocumentContent != nil, o.TextDocument != nil, o.Completion != nil, o.Hover != nil, o.SignatureHelp != nil, o.Definition != nil, o.Reference != nil, o.DocumentHighlight != nil, o.DocumentSymbol != nil, o.CodeAction != nil, o.WorkspaceSymbol != nil, o.CodeLens != nil, o.DocumentLink != nil, o.DocumentFormatting != nil, o.DocumentRangeFormatting != nil, o.DocumentOnTypeFormatting != nil, o.Rename != nil, o.ExecuteCommand != nil, o.DidChangeConfiguration != nil, o.TextDocumentChange != nil, o.TextDocumentSave != nil, o.DidChangeWatchedFiles != nil)
 
 	if o.Implementation != nil {
 		return json.MarshalEncode(enc, o.Implementation)
@@ -26018,9 +24351,6 @@ func (o *RegisterOptions) MarshalJSONTo(enc *json.Encoder) error {
 	}
 	if o.ExecuteCommand != nil {
 		return json.MarshalEncode(enc, o.ExecuteCommand)
-	}
-	if o.NotebookDocumentSync != nil {
-		return json.MarshalEncode(enc, o.NotebookDocumentSync)
 	}
 	if o.DidChangeConfiguration != nil {
 		return json.MarshalEncode(enc, o.DidChangeConfiguration)
@@ -26221,11 +24551,6 @@ func (o *RegisterOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 		o.ExecuteCommand = &vExecuteCommand
 		return nil
 	}
-	var vNotebookDocumentSync NotebookDocumentSyncRegistrationOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSync); err == nil {
-		o.NotebookDocumentSync = &vNotebookDocumentSync
-		return nil
-	}
 	var vDidChangeConfiguration DidChangeConfigurationRegistrationOptions
 	if err := json.Unmarshal(data, &vDidChangeConfiguration); err == nil {
 		o.DidChangeConfiguration = &vDidChangeConfiguration
@@ -26288,47 +24613,6 @@ func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSONFrom(dec *json.Decoder) err
 		return nil
 	}
 	return fmt.Errorf("invalid TextDocumentSyncOptionsOrKind: %s", data)
-}
-
-type NotebookDocumentSyncOptionsOrRegistrationOptions struct {
-	Options             *NotebookDocumentSyncOptions
-	RegistrationOptions *NotebookDocumentSyncRegistrationOptions
-}
-
-var _ json.MarshalerTo = (*NotebookDocumentSyncOptionsOrRegistrationOptions)(nil)
-
-func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of NotebookDocumentSyncOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
-
-	if o.Options != nil {
-		return json.MarshalEncode(enc, o.Options)
-	}
-	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.RegistrationOptions)
-	}
-	panic("unreachable")
-}
-
-var _ json.UnmarshalerFrom = (*NotebookDocumentSyncOptionsOrRegistrationOptions)(nil)
-
-func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = NotebookDocumentSyncOptionsOrRegistrationOptions{}
-
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vOptions NotebookDocumentSyncOptions
-	if err := json.Unmarshal(data, &vOptions); err == nil {
-		o.Options = &vOptions
-		return nil
-	}
-	var vRegistrationOptions NotebookDocumentSyncRegistrationOptions
-	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
-		o.RegistrationOptions = &vRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid NotebookDocumentSyncOptionsOrRegistrationOptions: %s", data)
 }
 
 type BooleanOrHoverOptions struct {
@@ -27544,65 +25828,6 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSONFrom(dec *json.Decoder)
 		return nil
 	}
 	return fmt.Errorf("invalid RangeOrEditRangeWithInsertReplace: %s", data)
-}
-
-type StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
-	String                             *string
-	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
-	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
-	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
-}
-
-var _ json.MarshalerTo = (*StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern)(nil)
-
-func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern should be set", o.String != nil, o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.NotebookDocumentFilterNotebookType != nil {
-		return json.MarshalEncode(enc, o.NotebookDocumentFilterNotebookType)
-	}
-	if o.NotebookDocumentFilterScheme != nil {
-		return json.MarshalEncode(enc, o.NotebookDocumentFilterScheme)
-	}
-	if o.NotebookDocumentFilterPattern != nil {
-		return json.MarshalEncode(enc, o.NotebookDocumentFilterPattern)
-	}
-	panic("unreachable")
-}
-
-var _ json.UnmarshalerFrom = (*StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern)(nil)
-
-func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
-
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
-		return nil
-	}
-	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
-		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
-		return nil
-	}
-	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
-		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
-		return nil
-	}
-	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
-		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
-		return nil
-	}
-	return fmt.Errorf("invalid StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
 }
 
 type BooleanOrSaveOptions struct {
@@ -29196,63 +27421,54 @@ func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *json.Decoder
 	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
 }
 
-type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
-	TextDocumentFilterLanguage     *TextDocumentFilterLanguage
-	TextDocumentFilterScheme       *TextDocumentFilterScheme
-	TextDocumentFilterPattern      *TextDocumentFilterPattern
-	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
+type TextDocumentFilterLanguageOrSchemeOrPattern struct {
+	Language *TextDocumentFilterLanguage
+	Scheme   *TextDocumentFilterScheme
+	Pattern  *TextDocumentFilterPattern
 }
 
-var _ json.MarshalerTo = (*TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter)(nil)
+var _ json.MarshalerTo = (*TextDocumentFilterLanguageOrSchemeOrPattern)(nil)
 
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter should be set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
+func (o *TextDocumentFilterLanguageOrSchemeOrPattern) MarshalJSONTo(enc *json.Encoder) error {
+	assertOnlyOne("exactly one element of TextDocumentFilterLanguageOrSchemeOrPattern should be set", o.Language != nil, o.Scheme != nil, o.Pattern != nil)
 
-	if o.TextDocumentFilterLanguage != nil {
-		return json.MarshalEncode(enc, o.TextDocumentFilterLanguage)
+	if o.Language != nil {
+		return json.MarshalEncode(enc, o.Language)
 	}
-	if o.TextDocumentFilterScheme != nil {
-		return json.MarshalEncode(enc, o.TextDocumentFilterScheme)
+	if o.Scheme != nil {
+		return json.MarshalEncode(enc, o.Scheme)
 	}
-	if o.TextDocumentFilterPattern != nil {
-		return json.MarshalEncode(enc, o.TextDocumentFilterPattern)
-	}
-	if o.NotebookCellTextDocumentFilter != nil {
-		return json.MarshalEncode(enc, o.NotebookCellTextDocumentFilter)
+	if o.Pattern != nil {
+		return json.MarshalEncode(enc, o.Pattern)
 	}
 	panic("unreachable")
 }
 
-var _ json.UnmarshalerFrom = (*TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter)(nil)
+var _ json.UnmarshalerFrom = (*TextDocumentFilterLanguageOrSchemeOrPattern)(nil)
 
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
+func (o *TextDocumentFilterLanguageOrSchemeOrPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = TextDocumentFilterLanguageOrSchemeOrPattern{}
 
 	data, err := dec.ReadValue()
 	if err != nil {
 		return err
 	}
-	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
-	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
-		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
+	var vLanguage TextDocumentFilterLanguage
+	if err := json.Unmarshal(data, &vLanguage); err == nil {
+		o.Language = &vLanguage
 		return nil
 	}
-	var vTextDocumentFilterScheme TextDocumentFilterScheme
-	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
-		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
+	var vScheme TextDocumentFilterScheme
+	if err := json.Unmarshal(data, &vScheme); err == nil {
+		o.Scheme = &vScheme
 		return nil
 	}
-	var vTextDocumentFilterPattern TextDocumentFilterPattern
-	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
-		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
+	var vPattern TextDocumentFilterPattern
+	if err := json.Unmarshal(data, &vPattern); err == nil {
+		o.Pattern = &vPattern
 		return nil
 	}
-	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
-		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
-		return nil
-	}
-	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter: %s", data)
+	return fmt.Errorf("invalid TextDocumentFilterLanguageOrSchemeOrPattern: %s", data)
 }
 
 type StringOrMarkedStringWithLanguage struct {
@@ -31635,54 +29851,6 @@ func resolveTextDocumentClientCapabilities(v *TextDocumentClientCapabilities) Re
 	}
 }
 
-// ResolvedNotebookDocumentSyncClientCapabilities is a resolved version of NotebookDocumentSyncClientCapabilities with all optional fields
-// converted to non-pointer values for easier access.
-//
-// Notebook specific client capabilities.
-//
-// Since: 3.17.0
-type ResolvedNotebookDocumentSyncClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is
-	// set to `true` the client supports the new
-	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
-	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport bool `json:"executionSummarySupport,omitzero"`
-}
-
-func resolveNotebookDocumentSyncClientCapabilities(v *NotebookDocumentSyncClientCapabilities) ResolvedNotebookDocumentSyncClientCapabilities {
-	if v == nil {
-		return ResolvedNotebookDocumentSyncClientCapabilities{}
-	}
-	return ResolvedNotebookDocumentSyncClientCapabilities{
-		DynamicRegistration:     derefOr(v.DynamicRegistration),
-		ExecutionSummarySupport: derefOr(v.ExecutionSummarySupport),
-	}
-}
-
-// ResolvedNotebookDocumentClientCapabilities is a resolved version of NotebookDocumentClientCapabilities with all optional fields
-// converted to non-pointer values for easier access.
-//
-// Capabilities specific to the notebook document support.
-//
-// Since: 3.17.0
-type ResolvedNotebookDocumentClientCapabilities struct {
-	// Capabilities specific to notebook document synchronization
-	//
-	// Since: 3.17.0
-	Synchronization ResolvedNotebookDocumentSyncClientCapabilities `json:"synchronization,omitzero"`
-}
-
-func resolveNotebookDocumentClientCapabilities(v *NotebookDocumentClientCapabilities) ResolvedNotebookDocumentClientCapabilities {
-	if v == nil {
-		return ResolvedNotebookDocumentClientCapabilities{}
-	}
-	return ResolvedNotebookDocumentClientCapabilities{
-		Synchronization: resolveNotebookDocumentSyncClientCapabilities(v.Synchronization),
-	}
-}
-
 // ResolvedClientShowMessageActionItemOptions is a resolved version of ClientShowMessageActionItemOptions with all optional fields
 // converted to non-pointer values for easier access.
 //
@@ -31916,10 +30084,6 @@ type ResolvedClientCapabilities struct {
 	Workspace ResolvedWorkspaceClientCapabilities `json:"workspace,omitzero"`
 	// Text document specific client capabilities.
 	TextDocument ResolvedTextDocumentClientCapabilities `json:"textDocument,omitzero"`
-	// Capabilities specific to the notebook document support.
-	//
-	// Since: 3.17.0
-	NotebookDocument ResolvedNotebookDocumentClientCapabilities `json:"notebookDocument,omitzero"`
 	// Window specific client capabilities.
 	Window ResolvedWindowClientCapabilities `json:"window,omitzero"`
 	// General client capabilities.
@@ -31933,10 +30097,9 @@ func ResolveClientCapabilities(v *ClientCapabilities) ResolvedClientCapabilities
 		return ResolvedClientCapabilities{}
 	}
 	return ResolvedClientCapabilities{
-		Workspace:        resolveWorkspaceClientCapabilities(v.Workspace),
-		TextDocument:     resolveTextDocumentClientCapabilities(v.TextDocument),
-		NotebookDocument: resolveNotebookDocumentClientCapabilities(v.NotebookDocument),
-		Window:           resolveWindowClientCapabilities(v.Window),
-		General:          resolveGeneralClientCapabilities(v.General),
+		Workspace:    resolveWorkspaceClientCapabilities(v.Workspace),
+		TextDocument: resolveTextDocumentClientCapabilities(v.TextDocument),
+		Window:       resolveWindowClientCapabilities(v.Window),
+		General:      resolveGeneralClientCapabilities(v.General),
 	}
 }

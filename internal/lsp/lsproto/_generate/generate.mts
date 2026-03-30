@@ -600,6 +600,101 @@ function patchAndPreprocessModel() {
     // Remove _InitializeParams structure after flattening (it was only needed for inheritance)
     model.structures = model.structures.filter(s => s.name !== "_InitializeParams");
 
+    // Remove all notebook-related features from the model
+    function isNotebookRelatedName(name: string): boolean {
+        const lower = name.toLowerCase();
+        return lower.includes("notebook");
+    }
+
+    function isNotebookRelatedMethod(method: string): boolean {
+        return method.toLowerCase().startsWith("notebookdocument/");
+    }
+
+    function typeReferencesNotebook(type: Type): boolean {
+        if (type.kind === "reference") return isNotebookRelatedName(type.name);
+        if (type.kind === "array") return typeReferencesNotebook(type.element);
+        if (type.kind === "or" || type.kind === "and") return type.items.some(typeReferencesNotebook);
+        if (type.kind === "map") return typeReferencesNotebook(type.key) || typeReferencesNotebook(type.value);
+        return false;
+    }
+
+    function isEntirelyNotebookType(type: Type): boolean {
+        if (type.kind === "reference") return isNotebookRelatedName(type.name);
+        if (type.kind === "array") return isEntirelyNotebookType(type.element);
+        if (type.kind === "or" || type.kind === "and") return type.items.every(isEntirelyNotebookType);
+        return false;
+    }
+
+    function removeNotebookFromType(type: Type): Type {
+        if (type.kind === "or") {
+            const filtered = type.items.filter(item => !typeReferencesNotebook(item)).map(removeNotebookFromType);
+            if (filtered.length === 1) return filtered[0];
+            if (filtered.length < type.items.length) {
+                return { ...type, items: filtered };
+            }
+        }
+        if (type.kind === "and") {
+            const filtered = type.items.filter(item => !typeReferencesNotebook(item)).map(removeNotebookFromType);
+            if (filtered.length === 1) return filtered[0];
+            if (filtered.length < type.items.length) {
+                return { ...type, items: filtered };
+            }
+        }
+        return type;
+    }
+
+    // Filter out notebook structures (and notebook-only structures like ExecutionSummary)
+    const notebookOnlyStructures = new Set(["ExecutionSummary"]);
+    model.structures = model.structures.filter(s => !isNotebookRelatedName(s.name) && !notebookOnlyStructures.has(s.name));
+
+    // Clean up registration option types that reference notebook types (mutate in-place
+    // so the registerOptionsUnionType reference identity is preserved)
+    for (let i = registrationOptionTypes.length - 1; i >= 0; i--) {
+        if (typeReferencesNotebook(registrationOptionTypes[i])) {
+            registrationOptionTypes.splice(i, 1);
+        }
+    }
+
+    // Remove notebook properties from remaining structures
+    for (const structure of model.structures) {
+        structure.properties = structure.properties.filter(p => {
+            if (isNotebookRelatedName(p.name)) return false;
+            // Only remove properties whose type is entirely notebook-related
+            if (isEntirelyNotebookType(p.type)) return false;
+            return true;
+        });
+        // Clean up union types in remaining properties to remove notebook members
+        for (const prop of structure.properties) {
+            prop.type = removeNotebookFromType(prop.type);
+        }
+    }
+
+    // Filter out notebook notifications and requests
+    model.notifications = model.notifications.filter(n => !isNotebookRelatedMethod(n.method));
+    model.requests = model.requests.filter(r => !isNotebookRelatedMethod(r.method));
+
+    // Filter out notebook enumerations
+    model.enumerations = model.enumerations.filter(e => !isNotebookRelatedName(e.name));
+
+    // Remove notebook-related values from remaining enumerations
+    for (const enumeration of model.enumerations) {
+        enumeration.values = enumeration.values.filter(v => !isNotebookRelatedName(v.name));
+    }
+
+    // Filter out notebook type aliases
+    model.typeAliases = model.typeAliases.filter(ta => !isNotebookRelatedName(ta.name));
+
+    // Clean up type aliases that reference notebook types (e.g., DocumentFilter)
+    for (const ta of model.typeAliases) {
+        if (ta.type.kind === "or") {
+            ta.type.items = ta.type.items.filter(item => !typeReferencesNotebook(item));
+            // If only one item remains, unwrap the union
+            if (ta.type.items.length === 1) {
+                ta.type = ta.type.items[0];
+            }
+        }
+    }
+
     // Merge LSPErrorCodes into ErrorCodes and remove LSPErrorCodes
     const errorCodesEnum = model.enumerations.find(e => e.name === "ErrorCodes");
     const lspErrorCodesEnum = model.enumerations.find(e => e.name === "LSPErrorCodes");
@@ -984,9 +1079,7 @@ function collectTypeDefinitions() {
         "Location",
         "Color",
         "TextDocumentIdentifier",
-        "NotebookDocumentIdentifier",
         "PreviousResultId",
-        "VersionedNotebookDocumentIdentifier",
         "VersionedTextDocumentIdentifier",
         "OptionalVersionedTextDocumentIdentifier",
         "ExportInfoMapKey",
