@@ -186,45 +186,17 @@ TestFindAllRefs_importType_js2
 TestFindAllRefs_importType_js3
 TestFormatDocumentPreserveTrailingWhitespace
 TestFormatDotAfterNumber
-<<<<<<< HEAD
-TestFormatImplicitModule
-TestFormatMultipleFunctionArguments
-TestFormatNoSpaceAfterTemplateHeadAndMiddle
-TestFormatOnSemiColonAfterBreak
-TestFormatSelectionJsxWithBinaryExpression
-TestFormatSelectionPreserveTrailingWhitespace
-TestFormatSimulatingScriptBlocks
-TestFormatSpaceAfterTemplateHeadAndMiddle
-TestFormatSpaceBetweenFunctionAndArrayIndex
-TestFormattingChainingMethods
-TestFormattingDecorators
-TestFormattingInExpressionsInTsx
-TestFormattingNestedScopes
-TestFormattingNonNullAssertionOperator
-=======
 TestFormatMultipleFunctionArguments
 TestFormatNoSpaceAfterTemplateHeadAndMiddle
 TestFormatSelectionPreserveTrailingWhitespace
 TestFormatSpaceAfterTemplateHeadAndMiddle
 TestFormatSpaceBetweenFunctionAndArrayIndex
->>>>>>> d4d0ba8cd350722f0ab08808b87c9eecb9e249b0
 TestFormattingObjectLiteralOpenCurlyNewline
 TestFormattingObjectLiteralOpenCurlyNewlineAssignment
 TestFormattingObjectLiteralOpenCurlyNewlineTyping
 TestFormattingObjectLiteralOpenCurlySingleLine
-<<<<<<< HEAD
-TestFormattingOnClasses
-TestFormattingOnDoWhileNoSemicolon
-TestFormattingOnEmptyInterfaceLiteral
-=======
->>>>>>> d4d0ba8cd350722f0ab08808b87c9eecb9e249b0
 TestFormattingOnInvalidCodes
 TestFormattingOnObjectLiteral
-<<<<<<< HEAD
-TestFormattingVoid
-TestFormatTrimRemainingRange
-=======
->>>>>>> d4d0ba8cd350722f0ab08808b87c9eecb9e249b0
 TestFormatTsxClosingAfterJsxText
 TestFormatV8Directive
 TestFunduleWithRecursiveReference
