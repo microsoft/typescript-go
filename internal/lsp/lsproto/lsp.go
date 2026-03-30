@@ -114,25 +114,20 @@ func unmarshalEmpty(data []byte) (any, error) {
 	return nil, nil
 }
 
-func assertOnlyOne(message string, values ...bool) {
-	count := 0
-	for _, v := range values {
-		if v {
-			count++
-		}
+func boolToInt(b bool) int {
+	if b {
+		return 1
 	}
+	return 0
+}
+
+func assertOnlyOne(message string, count int) {
 	if count != 1 {
 		panic(message)
 	}
 }
 
-func assertAtMostOne(message string, values ...bool) {
-	count := 0
-	for _, v := range values {
-		if v {
-			count++
-		}
-	}
+func assertAtMostOne(message string, count int) {
 	if count > 1 {
 		panic(message)
 	}

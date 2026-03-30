@@ -1602,12 +1602,8 @@ function generateCode() {
             writeLine(`\tif s.RegisterOptions == nil {`);
             writeLine(`\t\tpanic("RegisterOptions must be set")`);
             writeLine(`\t}`);
-            write(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", `);
-            for (let i = 0; i < registrationMethods.length; i++) {
-                if (i > 0) write(", ");
-                write(`s.RegisterOptions.${registrationMethods[i].fieldName} != nil`);
-            }
-            writeLine(`)`);
+            const regSum = registrationMethods.map(r => `boolToInt(s.RegisterOptions.${r.fieldName} != nil)`).join(" + ");
+            writeLine(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", ${regSum})`);
             writeLine("");
 
             writeLine(`\tif err := enc.WriteToken(json.BeginObject); err != nil {`);
@@ -2175,18 +2171,13 @@ function generateCode() {
         const unionContainedNull = members.some(member => member.containedNull);
         // Only emit assertion if there are multiple fields to check
         if (fieldEntries.length > 1) {
+            const sum = fieldEntries.map(e => `boolToInt(o.${e.fieldName} != nil)`).join(" + ");
             if (unionContainedNull) {
-                write(`\tassertAtMostOne("more than one element of ${name} is set", `);
+                writeLine(`\tassertAtMostOne("more than one element of ${name} is set", ${sum})`);
             }
             else {
-                write(`\tassertOnlyOne("exactly one element of ${name} should be set", `);
+                writeLine(`\tassertOnlyOne("exactly one element of ${name} should be set", ${sum})`);
             }
-
-            for (let i = 0; i < fieldEntries.length; i++) {
-                if (i > 0) write(", ");
-                write(`o.${fieldEntries[i].fieldName} != nil`);
-            }
-            writeLine(`)`);
             writeLine("");
         }
 
