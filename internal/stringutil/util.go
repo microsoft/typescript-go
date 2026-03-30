@@ -219,6 +219,9 @@ func AddUTF8ByteOrderMark(text string) string {
 }
 
 func StripQuotes(name string) string {
+	if len(name) < 2 {
+		return name
+	}
 	firstChar, _ := utf8.DecodeRuneInString(name)
 	lastChar, _ := utf8.DecodeLastRuneInString(name)
 	if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
@@ -259,7 +262,7 @@ func TruncateByRunes(str string, maxLength int) string {
 	var runeCount int
 	for i := range str {
 		runeCount++
-		if runeCount >= maxLength {
+		if runeCount > maxLength {
 			return str[:i]
 		}
 	}

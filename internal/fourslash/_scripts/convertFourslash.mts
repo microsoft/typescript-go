@@ -59,6 +59,7 @@ func TestMain(m *testing.M) {
 
     parseTypeScriptFiles(getManualTests(), stradaFourslashPath);
 
+    unparsedFiles.sort((a, b) => a.file.localeCompare(b.file, "en-US"));
     fs.writeFileSync(unparsedReportPath, unparsedFiles.map(({ file, error }) => `${file} parse error: ${JSON.stringify(error)}`).join("\n"), "utf-8");
     console.log(`Failed to parse ${unparsedFiles.length} files. See ${unparsedReportPath} for details.`);
     await $`dprint fmt ${outputDir}/**/*.go`;
@@ -1680,6 +1681,24 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                     break;
                 case "preferTypeOnlyAutoImports":
                     preferences.push(`PreferTypeOnlyAutoImports: ${prop.initializer.getText()}`);
+                    break;
+                case "organizeImportsTypeOrder":
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    switch (prop.initializer.text) {
+                        case "last":
+                            preferences.push(`OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast`);
+                            break;
+                        case "inline":
+                            preferences.push(`OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline`);
+                            break;
+                        case "first":
+                            preferences.push(`OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst`);
+                            break;
+                        default:
+                            return undefined;
+                    }
                     break;
                 case "autoImportFileExcludePatterns":
                     const arrayArg = getArrayLiteralExpression(prop.initializer);
