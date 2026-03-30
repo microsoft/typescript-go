@@ -107,6 +107,7 @@ const (
 	MethodGetParentOfSymbol        Method = "getParentOfSymbol"
 	MethodGetMembersOfSymbol       Method = "getMembersOfSymbol"
 	MethodGetExportsOfSymbol       Method = "getExportsOfSymbol"
+	MethodGetExportSymbolOfSymbol  Method = "getExportSymbolOfSymbol"
 	MethodGetSymbolOfType          Method = "getSymbolOfType"
 	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
 	MethodGetTypeAtLocation        Method = "getTypeAtLocation"
@@ -317,6 +318,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetParentOfSymbol:        unmarshallerFor[GetParentOfSymbolParams],
 	MethodGetMembersOfSymbol:       unmarshallerFor[GetMembersOfSymbolParams],
 	MethodGetExportsOfSymbol:       unmarshallerFor[GetExportsOfSymbolParams],
+	MethodGetExportSymbolOfSymbol:  unmarshallerFor[GetExportSymbolOfSymbolParams],
 	MethodGetSymbolOfType:          unmarshallerFor[GetSymbolOfTypeParams],
 	MethodGetSignaturesOfType:      unmarshallerFor[GetSignaturesOfTypeParams],
 	MethodGetTypeAtLocation:        unmarshallerFor[GetTypeAtLocationParams],
@@ -644,6 +646,11 @@ type GetExportsOfSymbolParams struct {
 	Symbol   Handle[ast.Symbol]       `json:"symbol"`
 }
 
+type GetExportSymbolOfSymbolParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+}
+
 type GetSymbolOfTypeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Type     Handle[checker.Type]     `json:"type"`
@@ -727,7 +734,10 @@ type TypeToTypeNodeParams struct {
 
 // PrintNodeParams are the parameters for the printNode method.
 type PrintNodeParams struct {
-	Data string `json:"data"` // base64-encoded binary AST data
+	Data                          string `json:"data"` // base64-encoded binary AST data
+	PreserveSourceNewlines        bool   `json:"preserveSourceNewlines,omitempty"`
+	NeverAsciiEscape              bool   `json:"neverAsciiEscape,omitempty"`
+	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
 }
 
 // CheckerTypeParams are parameters for checker methods that operate on a type.

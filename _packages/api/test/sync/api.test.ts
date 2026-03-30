@@ -13,6 +13,7 @@ import {
     type ConditionalType,
     type IndexedAccessType,
     type IndexType,
+    ModifierFlags,
     ObjectFlags,
     SignatureKind,
     type StringMappingType,
@@ -26,6 +27,8 @@ import {
 import {
     cast,
     isCallExpression,
+    isFunctionDeclaration,
+    isIdentifier,
     isImportDeclaration,
     isNamedImports,
     isReturnStatement,
@@ -34,8 +37,14 @@ import {
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
+    isVariableDeclarationList,
+    type Node,
+    NodeFlags,
 } from "@typescript/ast";
-import { SyntaxKind } from "@typescript/ast";
+import {
+    isTypeNode,
+    SyntaxKind,
+} from "@typescript/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
@@ -45,6 +54,7 @@ import {
     createTypeReferenceNode,
     createUnionTypeNode,
 } from "@typescript/ast/factory";
+import { visitEachChild } from "@typescript/ast/visitor";
 import assert from "node:assert";
 import {
     describe,
@@ -1883,6 +1893,7 @@ describe("Emitter - printNode", () => {
 export const x = 42;
 export function greet(name: string): string { return name; }
 export type Pair = [string, number];
+export const obj = { m: 1, s: "hi", b: true };
 `,
     };
 
@@ -1996,6 +2007,58 @@ export type Pair = [string, number];
         }
     });
 
+    test("visitEachChild on typeToTypeNode result with keyword types", () => {
+        const api = spawnAPI(emitterFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const { checker } = snapshot.getProject("/tsconfig.json")!;
+            const src = emitterFiles["/src/main.ts"];
+            const objPos = src.indexOf("obj");
+            const symbol = checker.getSymbolAtPosition("/src/main.ts", objPos);
+            assert.ok(symbol, "should find symbol for obj");
+            const type = checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const typeNode = checker.typeToTypeNode(type);
+            assert.ok(typeNode, "typeToTypeNode should return a type node");
+
+            // Recursively visit to reach PropertySignature.type where isTypeNode is checked.
+            const visited = (function visit(node: Node): Node {
+                return visitEachChild(node, visit);
+            })(typeNode);
+            assert.ok(visited, "visitEachChild should not throw");
+
+            const kinds = [
+                SyntaxKind.NumberKeyword,
+                SyntaxKind.StringKeyword,
+                SyntaxKind.BooleanKeyword,
+                SyntaxKind.AnyKeyword,
+                SyntaxKind.VoidKeyword,
+                SyntaxKind.UndefinedKeyword,
+                SyntaxKind.NeverKeyword,
+                SyntaxKind.UnknownKeyword,
+                SyntaxKind.BigIntKeyword,
+                SyntaxKind.ObjectKeyword,
+                SyntaxKind.SymbolKeyword,
+                SyntaxKind.IntrinsicKeyword,
+                SyntaxKind.ExpressionWithTypeArguments,
+                SyntaxKind.JSDocAllType,
+                SyntaxKind.JSDocNullableType,
+                SyntaxKind.JSDocNonNullableType,
+                SyntaxKind.JSDocOptionalType,
+                SyntaxKind.JSDocVariadicType,
+                SyntaxKind.JSDocTypeExpression,
+                SyntaxKind.JSDocTypeLiteral,
+                SyntaxKind.JSDocSignature,
+            ];
+            for (const kind of kinds) {
+                assert.ok(isTypeNode({ kind } as any), `isTypeNode should accept ${SyntaxKind[kind]}`);
+            }
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("typeToString", () => {
         const api = spawnAPI(emitterFiles);
         try {
@@ -2010,6 +2073,184 @@ export type Pair = [string, number];
             assert.ok(type);
             const text = checker.typeToString(type);
             assert.strictEqual(text, "(name: string) => string");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("printNode with terminateUnterminatedLiterals option", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `const foo = /asdfasf;`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/main.ts");
+            assert.ok(sourceFile);
+
+            // Find the regex literal node
+            let regexNode: import("@typescript/ast").Node | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (node.kind === SyntaxKind.RegularExpressionLiteral) {
+                    regexNode = node;
+                    return;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(regexNode, "Should find a regex literal");
+
+            // Without the option, regex is printed as-is
+            const textWithout = project.emitter.printNode(regexNode);
+            assert.strictEqual(textWithout, "/asdfasf");
+
+            // With the option, the closing slash is added
+            const textWith = project.emitter.printNode(regexNode, { terminateUnterminatedLiterals: true });
+            assert.strictEqual(textWith, "/asdfasf/");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("modifierFlags", () => {
+    test("export async function has Export | Async flags", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": `export async function foo() {}`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            let fnNode: import("@typescript/ast").FunctionDeclaration | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (isFunctionDeclaration(node)) {
+                    fnNode = node;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(fnNode, "Should find a function declaration");
+            assert.ok(fnNode.modifierFlags & ModifierFlags.Export, "Should have Export flag");
+            assert.ok(fnNode.modifierFlags & ModifierFlags.Async, "Should have Async flag");
+            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.Export | ModifierFlags.Async);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("node without modifiers has ModifierFlags.None", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": `function bar() {}`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            let fnNode: import("@typescript/ast").FunctionDeclaration | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (isFunctionDeclaration(node)) {
+                    fnNode = node;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(fnNode, "Should find a function declaration");
+            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.None);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Checker - getResolvedSymbol", () => {
+    test("resolves variable reference to its declaration symbol", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": `const x = 1;\nconst y = x;`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            // Find the 'x' identifier in `const y = x`
+            let refNode: import("@typescript/ast").Identifier | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (isIdentifier(node) && node.text === "x") {
+                    // We want the reference, not the declaration - take the last one
+                    refNode = node;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(refNode, "Should find identifier 'x'");
+
+            const symbol = project.checker.getResolvedSymbol(refNode);
+            assert.ok(symbol, "Should resolve symbol for 'x'");
+            assert.equal(symbol.name, "x");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("VariableDeclarationList - BlockScoped flags", () => {
+    test("let declaration has Let flag", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": `let x = 1;`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            let declList: import("@typescript/ast").Node | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (isVariableDeclarationList(node)) {
+                    declList = node;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(declList, "Should find VariableDeclarationList");
+            assert.ok(declList.flags & NodeFlags.Let, "Should have Let flag");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("const declaration has Const flag", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": `const x = 1;`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            let declList: import("@typescript/ast").Node | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (isVariableDeclarationList(node)) {
+                    declList = node;
+                }
+                node.forEachChild(visit);
+            });
+            assert.ok(declList, "Should find VariableDeclarationList");
+            assert.ok(declList.flags & NodeFlags.Const, "Should have Const flag");
         }
         finally {
             api.close();
