@@ -1,0 +1,17 @@
+stripMembersOptionality2.ts(4,29): error TS2322: Type 'undefined' is not assignable to type 'string'.
+stripMembersOptionality2.ts(6,27): error TS2322: Type 'undefined' is not assignable to type 'string'.
+
+
+==== stripMembersOptionality2.ts (2 errors) ====
+    // https://github.com/microsoft/TypeScript/issues/63291
+    
+    type WithObject1 = Required<{ a?: string | undefined }>;
+    const obj1: WithObject1 = { a: undefined };
+                                ~
+!!! error TS2322: Type 'undefined' is not assignable to type 'string'.
+!!! related TS6500 stripMembersOptionality2.ts:3:31: The expected type comes from property 'a' which is declared here on type 'Required<{ a?: string | undefined; }>'
+    type WithArray1 = Required<[(string | undefined)?]>;
+    const tup1: WithArray1 = [undefined];
+                              ~~~~~~~~~
+!!! error TS2322: Type 'undefined' is not assignable to type 'string'.
+    

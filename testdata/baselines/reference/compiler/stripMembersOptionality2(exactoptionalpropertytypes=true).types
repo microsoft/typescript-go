@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/stripMembersOptionality2.ts] ////
+
+=== stripMembersOptionality2.ts ===
+// https://github.com/microsoft/TypeScript/issues/63291
+
+type WithObject1 = Required<{ a?: string | undefined }>;
+>WithObject1 : Required<{ a?: string | undefined; }>
+>a : string | undefined
+
+const obj1: WithObject1 = { a: undefined };
+>obj1 : Required<{ a?: string | undefined; }>
+>{ a: undefined } : { a: undefined; }
+>a : undefined
+>undefined : undefined
+
+type WithArray1 = Required<[(string | undefined)?]>;
+>WithArray1 : [string | undefined]
+
+const tup1: WithArray1 = [undefined];
+>tup1 : [string | undefined]
+>[undefined] : [undefined]
+>undefined : undefined
+
