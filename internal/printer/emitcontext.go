@@ -64,6 +64,7 @@ func GetEmitContext() (*EmitContext, func()) {
 }
 
 func (c *EmitContext) Reset() {
+	c.Factory.Reset()
 	*c = EmitContext{
 		Factory: c.Factory,
 	}
