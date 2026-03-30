@@ -1140,7 +1140,7 @@ func (s *Session) EnqueuePublishGlobalDiagnostics() {
 }
 
 func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
-	s.globalDiagPublishPending.Store(false)
+	defer s.globalDiagPublishPending.Store(false)
 
 	s.snapshotMu.RLock()
 	snapshot := s.snapshot
