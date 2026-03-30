@@ -25308,7 +25308,7 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 	if err != nil {
 		return err
 	}
-	switch jsonObjectHasKey(data, "snippet") {
+	switch jsonObjectHasKey(data, "snippet", "annotationId") {
 	case 1: // snippet
 		var v SnippetTextEdit
 		if err := json.Unmarshal(data, &v); err != nil {
@@ -25316,12 +25316,14 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 		}
 		o.SnippetTextEdit = &v
 		return nil
-	default:
-		var vAnnotatedTextEdit AnnotatedTextEdit
-		if err := json.Unmarshal(data, &vAnnotatedTextEdit); err == nil {
-			o.AnnotatedTextEdit = &vAnnotatedTextEdit
-			return nil
+	case 2: // annotationId
+		var v AnnotatedTextEdit
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.AnnotatedTextEdit = &v
+		return nil
+	default:
 		var vTextEdit TextEdit
 		if err := json.Unmarshal(data, &vTextEdit); err == nil {
 			o.TextEdit = &vTextEdit

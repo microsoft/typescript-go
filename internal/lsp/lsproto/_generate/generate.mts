@@ -1392,41 +1392,94 @@ function generateCode() {
         }
         if (disc.unmapped.length > 0) {
             writeLine(`${indent}default:`);
-            for (const entry of disc.unmapped) {
-                writeLine(`${indent}\tvar v${entry.fieldName} ${entry.typeName}`);
-                writeLine(`${indent}\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
-                writeLine(`${indent}\t\to.${entry.fieldName} = &v${entry.fieldName}`);
-                writeLine(`${indent}\t\treturn nil`);
-                writeLine(`${indent}\t}`);
-            }
+            generateUnmappedFallback(disc.unmapped, indent + "\t");
         }
         writeLine(`${indent}}`);
     }
 
     /**
+     * Generate try-each fallback code for unmapped entries, chaining into
+     * presence dispatch if possible before falling back to raw try-each.
+     * Assumes a variable named `data` of type `json.Value` is in scope.
+     */
+    function generateUnmappedFallback(
+        unmapped: { fieldName: string; typeName: string; originalType: Type; }[],
+        indent: string,
+    ) {
+        if (unmapped.length <= 1) {
+            // 0 or 1 entry: no further dispatch needed, just try-each
+            for (const entry of unmapped) {
+                writeLine(`${indent}var v${entry.fieldName} ${entry.typeName}`);
+                writeLine(`${indent}if err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                writeLine(`${indent}\to.${entry.fieldName} = &v${entry.fieldName}`);
+                writeLine(`${indent}\treturn nil`);
+                writeLine(`${indent}}`);
+            }
+            return;
+        }
+        // Try chaining presence dispatch on the remaining subset
+        const pres = findPresenceDiscriminator(unmapped);
+        if (pres) {
+            generatePresenceDispatch(pres, indent);
+        }
+        else {
+            for (const entry of unmapped) {
+                writeLine(`${indent}var v${entry.fieldName} ${entry.typeName}`);
+                writeLine(`${indent}if err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                writeLine(`${indent}\to.${entry.fieldName} = &v${entry.fieldName}`);
+                writeLine(`${indent}\treturn nil`);
+                writeLine(`${indent}}`);
+            }
+        }
+    }
+
+    /**
+     * Iteratively collect all presence discriminator checks across multiple
+     * passes, so they can be emitted as a single flat switch with one scan.
+     */
+    function collectAllPresenceChecks(
+        pres: NonNullable<ReturnType<typeof findPresenceDiscriminator>>,
+    ): {
+        allChecks: { jsonFieldName: string; entry: { fieldName: string; typeName: string; originalType: Type; }; }[];
+        finalUnmapped: { fieldName: string; typeName: string; originalType: Type; }[];
+    } {
+        const allChecks = [...pres.checks];
+        let remaining = pres.unmapped;
+        while (remaining.length > 1) {
+            const next = findPresenceDiscriminator(remaining);
+            if (!next) break;
+            allChecks.push(...next.checks);
+            remaining = next.unmapped;
+        }
+        return { allChecks, finalUnmapped: remaining };
+    }
+
+    /**
      * Generate Go code for presence-based union dispatch.
      * Assumes a variable named `data` of type `json.Value` is in scope.
-     * Uses jsonObjectHasKey to scan for a distinguishing key in a single pass.
+     * Collects all presence checks iteratively, then emits a single flat
+     * switch jsonObjectHasKey(data, key1, key2, ...) so data is scanned once.
      */
     function generatePresenceDispatch(
         pres: NonNullable<ReturnType<typeof findPresenceDiscriminator>>,
         indent: string,
     ) {
-        const checks = pres.checks;
-        const args = checks.map(c => JSON.stringify(c.jsonFieldName)).join(", ");
+        const { allChecks, finalUnmapped } = collectAllPresenceChecks(pres);
+        const args = allChecks.map(c => JSON.stringify(c.jsonFieldName)).join(", ");
         writeLine(`${indent}switch jsonObjectHasKey(data, ${args}) {`);
-        for (let i = 0; i < checks.length; i++) {
-            writeLine(`${indent}case ${i + 1}: // ${checks[i].jsonFieldName}`);
-            writeLine(`${indent}\tvar v ${checks[i].entry.typeName}`);
+        for (let i = 0; i < allChecks.length; i++) {
+            writeLine(`${indent}case ${i + 1}: // ${allChecks[i].jsonFieldName}`);
+            writeLine(`${indent}\tvar v ${allChecks[i].entry.typeName}`);
             writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
             writeLine(`${indent}\t\treturn err`);
             writeLine(`${indent}\t}`);
-            writeLine(`${indent}\to.${checks[i].entry.fieldName} = &v`);
+            writeLine(`${indent}\to.${allChecks[i].entry.fieldName} = &v`);
             writeLine(`${indent}\treturn nil`);
         }
-        if (pres.unmapped.length > 0) {
+        if (finalUnmapped.length > 0) {
             writeLine(`${indent}default:`);
-            for (const entry of pres.unmapped) {
+            // finalUnmapped is at most 1 entry (or raw try-each if no more checks found)
+            for (const entry of finalUnmapped) {
                 writeLine(`${indent}\tvar v${entry.fieldName} ${entry.typeName}`);
                 writeLine(`${indent}\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
                 writeLine(`${indent}\t\to.${entry.fieldName} = &v${entry.fieldName}`);
