@@ -177,7 +177,7 @@ func getImportersForExport(
 	var indirectUserDeclarations []*ast.Node
 	markSeenDirectImport := nodeSeenTracker()
 	markSeenIndirectUser := nodeSeenTracker()
-	isAvailableThroughGlobal := exportInfo.exportingModuleSymbol.GlobalExports != nil
+	isAvailableThroughGlobal := isSourceFileWithGlobalExports(exportInfo.exportingModuleSymbol.ValueDeclaration)
 
 	getDirectImports := func(moduleSymbol *ast.Symbol) []*ast.Node {
 		return allDirectImports[moduleSymbol]
@@ -565,8 +565,14 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		if !isNodeImport(node) {
 			return nil
 		}
-		// A symbol being imported is always an alias. So get what that aliases to find the local symbol.
-		importedSymbol := checker.GetImmediateAliasedSymbol(symbol)
+		// JS destructuring from `require(...)` is import-like for references, but the binding element
+		// itself is still a local variable symbol rather than an alias.
+		var importedSymbol *ast.Symbol
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			importedSymbol = checker.GetImmediateAliasedSymbol(symbol)
+		} else {
+			importedSymbol = getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol, checker)
+		}
 		if importedSymbol == nil {
 			return nil
 		}
@@ -676,7 +682,8 @@ func getExportEqualsLocalSymbol(importedSymbol *ast.Symbol, checker *checker.Che
 	if importedSymbol.Flags&ast.SymbolFlagsAlias != 0 {
 		return checker.GetImmediateAliasedSymbol(importedSymbol)
 	}
-	decl := debug.CheckDefined(importedSymbol.ValueDeclaration)
+	decl := importedSymbol.ValueDeclaration
+	debug.Assert(decl != nil)
 	switch {
 	case ast.IsExportAssignment(decl):
 		return decl.Expression().Symbol()

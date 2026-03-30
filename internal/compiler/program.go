@@ -274,15 +274,18 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	newOpts := p.opts
 	newOpts.Host = newHost
 
+	oldFile := p.filesByPath[changedFilePath]
+	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets
 	// might need recalculation.
-	if _, exists := p.redirectFilesByPath[changedFilePath]; exists {
+	_, inRedirectFiles := p.redirectFilesByPath[changedFilePath]
+	_, isRedirectTarget := p.redirectTargetsMap[changedFilePath]
+	if inRedirectFiles || isRedirectTarget {
 		return NewProgram(newOpts), false
 	}
 
-	oldFile := p.filesByPath[changedFilePath]
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
 	}
@@ -349,10 +352,11 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 	return d1 == nil && d2 == nil || d1 != nil && d2 != nil && d1.Enabled == d2.Enabled
 }
 
-func (p *Program) SourceFiles() []*ast.SourceFile            { return p.files }
-func (p *Program) Options() *core.CompilerOptions            { return p.opts.Config.CompilerOptions() }
-func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
-func (p *Program) Host() CompilerHost                        { return p.opts.Host }
+func (p *Program) SourceFiles() []*ast.SourceFile               { return p.files }
+func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.duplicateSourceFiles }
+func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
+func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
+func (p *Program) Host() CompilerHost                           { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -729,6 +733,10 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
 
+	if options.ModuleResolution == core.ModuleResolutionKindClassic {
+		createRemovedOptionDiagnostic("moduleResolution", "Classic", "")
+	}
+
 	if options.AlwaysStrict.IsFalse() {
 		createRemovedOptionDiagnostic("alwaysStrict", "false", "")
 	}
@@ -739,6 +747,10 @@ func (p *Program) verifyCompilerOptions() {
 
 	if options.AllowSyntheticDefaultImports.IsFalse() {
 		createRemovedOptionDiagnostic("allowSyntheticDefaultImports", "false", "")
+	}
+
+	if options.ModuleResolution == core.ModuleResolutionKindNode10 {
+		createRemovedOptionDiagnostic("moduleResolution", "node10", "")
 	}
 
 	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
@@ -1020,10 +1032,9 @@ func (p *Program) verifyCompilerOptions() {
 		createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler, "customConditions", "")
 	}
 
-	// !!! Reenable once we don't map old moduleResolution kinds to bundler.
-	// if moduleResolution == core.ModuleResolutionKindBundler && !emitModuleKindIsNonNodeESM(moduleKind) && moduleKind != core.ModuleKindPreserve {
-	// 	createOptionValueDiagnostic("moduleResolution", diagnostics.Option_0_can_only_be_used_when_module_is_set_to_preserve_or_to_es2015_or_later, "bundler")
-	// }
+	if moduleResolution == core.ModuleResolutionKindBundler && !emitModuleKindIsNonNodeESM(moduleKind) && moduleKind != core.ModuleKindPreserve && moduleKind != core.ModuleKindCommonJS {
+		createOptionValueDiagnostic("moduleResolution", diagnostics.Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later, "bundler")
+	}
 
 	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext &&
 		!(core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext) {

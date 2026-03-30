@@ -4292,6 +4292,12 @@ var Set_the_number_of_projects_to_build_concurrently = &Message{code: 100009, ca
 
 var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Deduplicate_packages_with_the_same_name_and_version_100011", text: "Deduplicate packages with the same name and version."}
 
+var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_100012", text: "Loading"}
+
+var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_types_for_0_100013", text: "Installing types for '{0}'"}
+
+var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
+
 var Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2 = &Message{code: 110001, category: CategoryError, key: "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_110001", text: "Your application tried to access '{0}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{0}' isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}"}
 
 var X_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_1_isn_t_otherwise_declared_in_0_s_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_3 = &Message{code: 110002, category: CategoryError, key: "_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_run_110002", text: "{0} tried to access '{1}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{1}' isn't otherwise declared in {0}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {3}"}
@@ -8600,6 +8606,12 @@ func keyToMessage(key Key) *Message {
 		return Set_the_number_of_projects_to_build_concurrently
 	case "Deduplicate_packages_with_the_same_name_and_version_100011":
 		return Deduplicate_packages_with_the_same_name_and_version
+	case "Loading_100012":
+		return Loading
+	case "Installing_types_for_0_100013":
+		return Installing_types_for_0
+	case "Project_0_100014":
+		return Project_0
 	case "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_110001":
 		return Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2
 	case "_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_run_110002":

@@ -535,7 +535,10 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 	var displayParts strings.Builder
 	if len(signatureHelpTypeParameters) != 0 {
 		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
-		for _, typeParameter := range signatureHelpTypeParameters {
+		for i, typeParameter := range signatureHelpTypeParameters {
+			if i > 0 {
+				displayParts.WriteString(", ")
+			}
 			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
 		}
 		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
@@ -1266,7 +1269,7 @@ func getArgumentListInfoForTemplate(tagExpression *ast.TaggedTemplateExpression,
 		argumentCount = len(tagExpression.Template.AsTemplateExpression().TemplateSpans.Nodes) + 1
 	}
 	if argumentIndex != 0 {
-		debug.AssertLessThan(argumentIndex, argumentCount)
+		debug.Assert(argumentIndex < argumentCount)
 	}
 	return &argumentListInfo{
 		isTypeParameterList: false,
