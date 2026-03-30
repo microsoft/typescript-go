@@ -2224,6 +2224,139 @@ function generateCode() {
             }
         }
 
+        // Sort ambiguous variants (same JSON kind) by number of required fields
+        // descending, so more specific variants are tried first. This prevents
+        // a less specific variant from greedily matching inputs intended for
+        // a more specific one.
+        function countRequiredFields(entry: typeof fieldEntries[0]): number {
+            if (entry.originalType.kind !== "reference") return 0;
+            const structure = model.structures.find(s => s.name === (entry.originalType as ReferenceType).name);
+            if (!structure) return 0;
+            return structure.properties.filter(p => !p.optional && !p.omitzeroValue).length;
+        }
+
+        for (const [, entries] of kindMap) {
+            if (entries.length > 1) {
+                entries.sort((a, b) => countRequiredFields(b) - countRequiredFields(a));
+            }
+        }
+
+        // Also sort the flat fieldEntries to match (for the fallback path)
+        // We need to sort only within groups of the same kind.
+        {
+            const sorted: typeof fieldEntries = [];
+            const seen = new Set<string>();
+            for (const [, entries] of kindMap) {
+                for (const entry of entries) {
+                    sorted.push(entry);
+                    seen.add(entry.fieldName);
+                }
+            }
+            for (const entry of unknownKindEntries) {
+                if (!seen.has(entry.fieldName)) {
+                    sorted.push(entry);
+                }
+            }
+            // Replace fieldEntries contents with sorted order
+            fieldEntries.length = 0;
+            fieldEntries.push(...sorted);
+        }
+
+        // Validate that ambiguous union variants (same JSON kind) don't have
+        // order-dependent overlap. Two struct variants overlap if one's required
+        // fields are a subset of the other's, meaning any valid input for the
+        // superset also successfully parses as the subset (since unknown properties
+        // are ignored). This would make the unmarshal result depend on try order.
+        //
+        // Exception: variants discriminated by literal field values (e.g., a "kind"
+        // field with different string literal types) are safe because the literal
+        // unmarshaler rejects mismatched values.
+        for (const [kind, entries] of kindMap) {
+            if (entries.length <= 1) continue;
+
+            // Get required fields with their types for each variant
+            const variantInfo = entries.map(entry => {
+                if (entry.originalType.kind !== "reference") return null;
+                const structure = model.structures.find(s => s.name === (entry.originalType as ReferenceType).name);
+                if (!structure) return null;
+                const requiredFields = new Map<string, Type>();
+                for (const p of structure.properties) {
+                    if (!p.optional && !p.omitzeroValue) {
+                        requiredFields.set(p.name, p.type);
+                    }
+                }
+                return { entry, requiredFields };
+            }).filter((v): v is NonNullable<typeof v> => v !== null);
+
+            // Check if two variants are discriminated by literal field values.
+            // Returns true if they share a field where both sides have different
+            // literal types (stringLiteral, integerLiteral, booleanLiteral).
+            function isDiscriminatedByLiteral(
+                a: Map<string, Type>,
+                b: Map<string, Type>,
+            ): boolean {
+                for (const [fieldName, aType] of a) {
+                    const bType = b.get(fieldName);
+                    if (!bType) continue;
+                    const aLiteral = aType.kind === "stringLiteral" || aType.kind === "integerLiteral" || aType.kind === "booleanLiteral";
+                    const bLiteral = bType.kind === "stringLiteral" || bType.kind === "integerLiteral" || bType.kind === "booleanLiteral";
+                    if (aLiteral && bLiteral) {
+                        // Both are literals for the same field — check if values differ
+                        if (aType.kind === bType.kind && (aType as any).value !== (bType as any).value) {
+                            return true;
+                        }
+                        // Different literal kinds on same field also discriminates
+                        if (aType.kind !== bType.kind) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            // Check each pair for subset relationships
+            for (let i = 0; i < variantInfo.length; i++) {
+                for (let j = 0; j < variantInfo.length; j++) {
+                    if (i === j) continue;
+                    const a = variantInfo[i];
+                    const b = variantInfo[j];
+                    const aNames = new Set(a.requiredFields.keys());
+                    const bNames = new Set(b.requiredFields.keys());
+
+                    const aSubsetOfB = [...aNames].every(f => bNames.has(f));
+                    if (!aSubsetOfB) continue;
+
+                    // Skip if discriminated by literal values
+                    if (isDiscriminatedByLiteral(a.requiredFields, b.requiredFields)) continue;
+
+                    if (aNames.size < bNames.size) {
+                        // a is a strict subset of b
+                        const aIdx = entries.indexOf(a.entry);
+                        const bIdx = entries.indexOf(b.entry);
+                        if (aIdx < bIdx) {
+                            console.warn(
+                                `Warning: In union ${name} (${kind} variants), ` +
+                                    `${a.entry.fieldName} (required: [${[...aNames]}]) is tried before ` +
+                                    `${b.entry.fieldName} (required: [${[...bNames]}]), but ` +
+                                    `${a.entry.fieldName}'s required fields are a strict subset — ` +
+                                    `it will greedily match inputs intended for ${b.entry.fieldName}. ` +
+                                    `Reorder so the more specific variant is tried first.`,
+                            );
+                        }
+                    }
+                    else if (aNames.size === bNames.size && i < j) {
+                        // Identical required fields — truly ambiguous
+                        console.warn(
+                            `Warning: In union ${name} (${kind} variants), ` +
+                                `${a.entry.fieldName} and ${b.entry.fieldName} have identical ` +
+                                `required fields [${[...aNames]}] — they are structurally ` +
+                                `indistinguishable and the unmarshal result is order-dependent.`,
+                        );
+                    }
+                }
+            }
+        }
+
         // Determine if we can use PeekKind-based dispatch:
         // - Every entry must have a known kind (no `any` etc.)
         // - There must be at least 2 distinct cases (kind groups + null) for a switch to be worthwhile
