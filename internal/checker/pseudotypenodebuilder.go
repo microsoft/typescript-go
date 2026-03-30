@@ -252,10 +252,10 @@ func (b *NodeBuilderImpl) pseudoParametersToNodeList(params []*pseudochecker.Pse
 func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter) *ast.Node {
 	var dotDotDot *ast.Node
 	var questionMark *ast.Node
-	if p.Rest {
+	if p.Declaration.DotDotDotToken != nil {
 		dotDotDot = b.f.NewToken(ast.KindDotDotDotToken)
 	}
-	if p.Optional {
+	if p.Declaration.QuestionToken != nil || p.Declaration.Initializer != nil {
 		questionMark = b.f.NewToken(ast.KindQuestionToken)
 	}
 	parameter := b.f.NewParameterDeclaration(
@@ -381,7 +381,8 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 				for i, p := range d.Parameters {
 					targetParam := targetSig.parameters[i]
 					paramType := b.ch.getTypeOfParameter(targetParam)
-					if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
+					isOptional := p.Declaration.QuestionToken != nil || p.Declaration.Initializer != nil
+					if !b.pseudoTypeEquivalentToType(p.Type, paramType, isOptional, false) {
 						if reportErrors {
 							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 						}
@@ -463,16 +464,17 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		}
 		for i, p := range pt.Parameters {
 			targetParam := targetSig.parameters[i]
-			if p.Optional != b.ch.isOptionalParameter(targetParam.ValueDeclaration) {
+			isOptional := p.Declaration.QuestionToken != nil || p.Declaration.Initializer != nil
+			if isOptional != b.ch.isOptionalParameter(targetParam.ValueDeclaration) {
 				if reportErrors {
-					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
+					b.ctx.tracker.ReportInferenceFallback(p.Declaration.AsNode())
 				}
 				return false
 			}
 			paramType := b.ch.getTypeOfParameter(targetParam)
-			if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
+			if !b.pseudoTypeEquivalentToType(p.Type, paramType, isOptional, false) {
 				if reportErrors {
-					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
+					b.ctx.tracker.ReportInferenceFallback(p.Declaration.AsNode())
 				}
 				return false
 			}

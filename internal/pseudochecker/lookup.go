@@ -660,13 +660,7 @@ func (ch *PseudoChecker) cloneParameters(nodes *ast.NodeList) []*PseudoParameter
 	result := make([]*PseudoParameter, 0, len(nodes.Nodes))
 	for _, e := range nodes.Nodes {
 		parameter := e.AsParameterDeclaration()
-		result = append(result, NewPseudoParameter(
-			parameter,
-			parameter.DotDotDotToken != nil,
-			e.Name(),
-			parameter.QuestionToken != nil || parameter.Initializer != nil,
-			ch.typeFromParameter(parameter),
-		))
+		result = append(result, NewPseudoParameter(parameter, ch.typeFromParameter(parameter)))
 	}
 	return result
 }
