@@ -1373,11 +1373,12 @@ function generateCode() {
     /**
      * Generate Go code for discriminator-based union dispatch.
      * Assumes a variable named `data` of type `json.Value` is in scope.
+     * Returns true if all switch branches return (exhaustive).
      */
     function generateDiscriminatorDispatch(
         disc: NonNullable<ReturnType<typeof findDiscriminatorField>>,
         indent: string,
-    ) {
+    ): boolean {
         writeLine(`${indent}var disc struct { ${titleCase(disc.fieldName)} string \`json:"${disc.fieldName}"\` }`);
         writeLine(`${indent}_ = json.Unmarshal(data, &disc)`);
         writeLine(`${indent}switch disc.${titleCase(disc.fieldName)} {`);
@@ -1390,37 +1391,42 @@ function generateCode() {
             writeLine(`${indent}\to.${entry.fieldName} = &v`);
             writeLine(`${indent}\treturn nil`);
         }
+        let exhaustive = false;
         if (disc.unmapped.length > 0) {
             writeLine(`${indent}default:`);
-            generateUnmappedFallback(disc.unmapped, indent + "\t");
+            exhaustive = generateUnmappedFallback(disc.unmapped, indent + "\t");
         }
         writeLine(`${indent}}`);
+        return exhaustive;
     }
 
     /**
      * Generate try-each fallback code for unmapped entries, chaining into
      * presence dispatch if possible before falling back to raw try-each.
      * Assumes a variable named `data` of type `json.Value` is in scope.
+     * Returns true if all generated paths return (exhaustive).
      */
     function generateUnmappedFallback(
         unmapped: { fieldName: string; typeName: string; originalType: Type; }[],
         indent: string,
-    ) {
+    ): boolean {
         if (unmapped.length <= 1) {
-            // 0 or 1 entry: no further dispatch needed, just try-each
+            // Exactly 1 entry: it's the only remaining variant after dispatch,
+            // so use a hard error return instead of speculative err == nil.
             for (const entry of unmapped) {
                 writeLine(`${indent}var v${entry.fieldName} ${entry.typeName}`);
-                writeLine(`${indent}if err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
-                writeLine(`${indent}\to.${entry.fieldName} = &v${entry.fieldName}`);
-                writeLine(`${indent}\treturn nil`);
+                writeLine(`${indent}if err := json.Unmarshal(data, &v${entry.fieldName}); err != nil {`);
+                writeLine(`${indent}\treturn err`);
                 writeLine(`${indent}}`);
+                writeLine(`${indent}o.${entry.fieldName} = &v${entry.fieldName}`);
+                writeLine(`${indent}return nil`);
             }
-            return;
+            return unmapped.length === 1;
         }
         // Try chaining presence dispatch on the remaining subset
         const pres = findPresenceDiscriminator(unmapped);
         if (pres) {
-            generatePresenceDispatch(pres, indent);
+            return generatePresenceDispatch(pres, indent);
         }
         else {
             for (const entry of unmapped) {
@@ -1430,6 +1436,7 @@ function generateCode() {
                 writeLine(`${indent}\treturn nil`);
                 writeLine(`${indent}}`);
             }
+            return false;
         }
     }
 
@@ -1459,11 +1466,12 @@ function generateCode() {
      * Assumes a variable named `data` of type `json.Value` is in scope.
      * Collects all presence checks iteratively, then emits a single flat
      * switch jsonObjectHasKey(data, key1, key2, ...) so data is scanned once.
+     * Returns true if all switch branches return (exhaustive).
      */
     function generatePresenceDispatch(
         pres: NonNullable<ReturnType<typeof findPresenceDiscriminator>>,
         indent: string,
-    ) {
+    ): boolean {
         const { allChecks, finalUnmapped } = collectAllPresenceChecks(pres);
         const args = allChecks.map(c => JSON.stringify(c.jsonFieldName)).join(", ");
         writeLine(`${indent}switch jsonObjectHasKey(data, ${args}) {`);
@@ -1478,16 +1486,29 @@ function generateCode() {
         }
         if (finalUnmapped.length > 0) {
             writeLine(`${indent}default:`);
-            // finalUnmapped is at most 1 entry (or raw try-each if no more checks found)
-            for (const entry of finalUnmapped) {
-                writeLine(`${indent}\tvar v${entry.fieldName} ${entry.typeName}`);
-                writeLine(`${indent}\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
-                writeLine(`${indent}\t\to.${entry.fieldName} = &v${entry.fieldName}`);
-                writeLine(`${indent}\t\treturn nil`);
+            if (finalUnmapped.length === 1) {
+                // Only one variant left after dispatch — use hard error return.
+                const entry = finalUnmapped[0];
+                writeLine(`${indent}\tvar v ${entry.typeName}`);
+                writeLine(`${indent}\tif err := json.Unmarshal(data, &v); err != nil {`);
+                writeLine(`${indent}\t\treturn err`);
                 writeLine(`${indent}\t}`);
+                writeLine(`${indent}\to.${entry.fieldName} = &v`);
+                writeLine(`${indent}\treturn nil`);
+            }
+            else {
+                for (const entry of finalUnmapped) {
+                    writeLine(`${indent}\tvar v${entry.fieldName} ${entry.typeName}`);
+                    writeLine(`${indent}\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                    writeLine(`${indent}\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                    writeLine(`${indent}\t\treturn nil`);
+                    writeLine(`${indent}\t}`);
+                }
             }
         }
         writeLine(`${indent}}`);
+        // Exhaustive if the default case has a single hard-returning entry
+        return finalUnmapped.length === 1;
     }
 
     function generateResolvedStruct(structure: Structure, indent: string = "\t"): string[] {
@@ -2582,6 +2603,7 @@ function generateCode() {
         // When unambiguous, we can UnmarshalDecode directly without buffering.
         const allUnambiguous = canDispatch && Array.from(kindMap.values()).every(entries => entries.length === 1);
 
+        let fallbackExhaustive = false;
         if (canDispatch && allUnambiguous) {
             // Best case: PeekKind + UnmarshalDecode directly, no ReadValue buffer needed.
             writeLine(`\tswitch dec.PeekKind() {`);
@@ -2637,14 +2659,15 @@ function generateCode() {
                     writeLine(`\t\tif err != nil {`);
                     writeLine(`\t\t\treturn err`);
                     writeLine(`\t\t}`);
+                    let exhaustive = false;
                     const disc = findDiscriminatorField(entries);
                     if (disc) {
-                        generateDiscriminatorDispatch(disc, "\t\t");
+                        exhaustive = generateDiscriminatorDispatch(disc, "\t\t");
                     }
                     else {
                         const pres = findPresenceDiscriminator(entries);
                         if (pres) {
-                            generatePresenceDispatch(pres, "\t\t");
+                            exhaustive = generatePresenceDispatch(pres, "\t\t");
                         }
                         else {
                             for (const entry of entries) {
@@ -2656,7 +2679,9 @@ function generateCode() {
                             }
                         }
                     }
-                    writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+                    if (!exhaustive) {
+                        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+                    }
                 }
             }
 
@@ -2678,14 +2703,15 @@ function generateCode() {
                 writeLine("");
             }
 
+            let exhaustive = false;
             const disc = findDiscriminatorField(fieldEntries);
             if (disc) {
-                generateDiscriminatorDispatch(disc, "\t");
+                exhaustive = generateDiscriminatorDispatch(disc, "\t");
             }
             else {
                 const pres = findPresenceDiscriminator(fieldEntries);
                 if (pres) {
-                    generatePresenceDispatch(pres, "\t");
+                    exhaustive = generatePresenceDispatch(pres, "\t");
                 }
                 else {
                     for (const entry of fieldEntries) {
@@ -2697,12 +2723,13 @@ function generateCode() {
                     }
                 }
             }
+            fallbackExhaustive = exhaustive;
         }
 
         if (canDispatch) {
             // Dispatch paths have an exhaustive switch with default, nothing after the switch.
         }
-        else {
+        else if (!fallbackExhaustive) {
             // Fallback paths: the final error references `data` which is in scope.
             writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
         }

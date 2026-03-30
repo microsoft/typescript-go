@@ -24545,12 +24545,12 @@ func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSONFrom
 		return nil
 	default:
 		var vTextDocumentEdit TextDocumentEdit
-		if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
-			o.TextDocumentEdit = &vTextDocumentEdit
-			return nil
+		if err := json.Unmarshal(data, &vTextDocumentEdit); err != nil {
+			return err
 		}
+		o.TextDocumentEdit = &vTextDocumentEdit
+		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile: %s", data)
 }
 
 type StringOrInlayHintLabelParts struct {
@@ -25004,13 +25004,13 @@ func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSONFrom(dec 
 		o.Partial = &v
 		return nil
 	default:
-		var vWholeDocument TextDocumentContentChangeWholeDocument
-		if err := json.Unmarshal(data, &vWholeDocument); err == nil {
-			o.WholeDocument = &vWholeDocument
-			return nil
+		var v TextDocumentContentChangeWholeDocument
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.WholeDocument = &v
+		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentContentChangePartialOrWholeDocument: %s", data)
 }
 
 type TextEditOrInsertReplaceEdit struct {
@@ -25205,13 +25205,13 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSONFrom(dec *json.Decoder) error {
 		o.Location = &v
 		return nil
 	default:
-		var vLocationUriOnly LocationUriOnly
-		if err := json.Unmarshal(data, &vLocationUriOnly); err == nil {
-			o.LocationUriOnly = &vLocationUriOnly
-			return nil
+		var v LocationUriOnly
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.LocationUriOnly = &v
+		return nil
 	}
-	return fmt.Errorf("invalid LocationOrLocationUriOnly: %s", data)
 }
 
 type WorkDoneProgressBeginOrReportOrEnd struct {
@@ -25324,13 +25324,13 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 		o.AnnotatedTextEdit = &v
 		return nil
 	default:
-		var vTextEdit TextEdit
-		if err := json.Unmarshal(data, &vTextEdit); err == nil {
-			o.TextEdit = &vTextEdit
-			return nil
+		var v TextEdit
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.TextEdit = &v
+		return nil
 	}
-	return fmt.Errorf("invalid TextEditOrAnnotatedTextEditOrSnippetTextEdit: %s", data)
 }
 
 type TextDocumentSyncOptionsOrKind struct {
@@ -25471,13 +25471,13 @@ func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJ
 			o.DeclarationRegistrationOptions = &v
 			return nil
 		default:
-			var vDeclarationOptions DeclarationOptions
-			if err := json.Unmarshal(data, &vDeclarationOptions); err == nil {
-				o.DeclarationOptions = &vDeclarationOptions
-				return nil
+			var v DeclarationOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.DeclarationOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25577,13 +25577,13 @@ func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Unma
 			o.TypeDefinitionRegistrationOptions = &v
 			return nil
 		default:
-			var vTypeDefinitionOptions TypeDefinitionOptions
-			if err := json.Unmarshal(data, &vTypeDefinitionOptions); err == nil {
-				o.TypeDefinitionOptions = &vTypeDefinitionOptions
-				return nil
+			var v TypeDefinitionOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.TypeDefinitionOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25639,13 +25639,13 @@ func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Unma
 			o.ImplementationRegistrationOptions = &v
 			return nil
 		default:
-			var vImplementationOptions ImplementationOptions
-			if err := json.Unmarshal(data, &vImplementationOptions); err == nil {
-				o.ImplementationOptions = &vImplementationOptions
-				return nil
+			var v ImplementationOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.ImplementationOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -25877,13 +25877,13 @@ func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Unmars
 			o.DocumentColorRegistrationOptions = &v
 			return nil
 		default:
-			var vDocumentColorOptions DocumentColorOptions
-			if err := json.Unmarshal(data, &vDocumentColorOptions); err == nil {
-				o.DocumentColorOptions = &vDocumentColorOptions
-				return nil
+			var v DocumentColorOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.DocumentColorOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26115,13 +26115,13 @@ func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) Unmarsha
 			o.FoldingRangeRegistrationOptions = &v
 			return nil
 		default:
-			var vFoldingRangeOptions FoldingRangeOptions
-			if err := json.Unmarshal(data, &vFoldingRangeOptions); err == nil {
-				o.FoldingRangeOptions = &vFoldingRangeOptions
-				return nil
+			var v FoldingRangeOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.FoldingRangeOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26177,13 +26177,13 @@ func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Unma
 			o.SelectionRangeRegistrationOptions = &v
 			return nil
 		default:
-			var vSelectionRangeOptions SelectionRangeOptions
-			if err := json.Unmarshal(data, &vSelectionRangeOptions); err == nil {
-				o.SelectionRangeOptions = &vSelectionRangeOptions
-				return nil
+			var v SelectionRangeOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.SelectionRangeOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26239,13 +26239,13 @@ func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Unmars
 			o.CallHierarchyRegistrationOptions = &v
 			return nil
 		default:
-			var vCallHierarchyOptions CallHierarchyOptions
-			if err := json.Unmarshal(data, &vCallHierarchyOptions); err == nil {
-				o.CallHierarchyOptions = &vCallHierarchyOptions
-				return nil
+			var v CallHierarchyOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.CallHierarchyOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26301,13 +26301,13 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 			o.LinkedEditingRangeRegistrationOptions = &v
 			return nil
 		default:
-			var vLinkedEditingRangeOptions LinkedEditingRangeOptions
-			if err := json.Unmarshal(data, &vLinkedEditingRangeOptions); err == nil {
-				o.LinkedEditingRangeOptions = &vLinkedEditingRangeOptions
-				return nil
+			var v LinkedEditingRangeOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.LinkedEditingRangeOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26350,13 +26350,13 @@ func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json
 		o.RegistrationOptions = &v
 		return nil
 	default:
-		var vOptions SemanticTokensOptions
-		if err := json.Unmarshal(data, &vOptions); err == nil {
-			o.Options = &vOptions
-			return nil
+		var v SemanticTokensOptions
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.Options = &v
+		return nil
 	}
-	return fmt.Errorf("invalid SemanticTokensOptionsOrRegistrationOptions: %s", data)
 }
 
 type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
@@ -26409,13 +26409,13 @@ func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(
 			o.MonikerRegistrationOptions = &v
 			return nil
 		default:
-			var vMonikerOptions MonikerOptions
-			if err := json.Unmarshal(data, &vMonikerOptions); err == nil {
-				o.MonikerOptions = &vMonikerOptions
-				return nil
+			var v MonikerOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.MonikerOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26471,13 +26471,13 @@ func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Unmars
 			o.TypeHierarchyRegistrationOptions = &v
 			return nil
 		default:
-			var vTypeHierarchyOptions TypeHierarchyOptions
-			if err := json.Unmarshal(data, &vTypeHierarchyOptions); err == nil {
-				o.TypeHierarchyOptions = &vTypeHierarchyOptions
-				return nil
+			var v TypeHierarchyOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.TypeHierarchyOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26533,13 +26533,13 @@ func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJ
 			o.InlineValueRegistrationOptions = &v
 			return nil
 		default:
-			var vInlineValueOptions InlineValueOptions
-			if err := json.Unmarshal(data, &vInlineValueOptions); err == nil {
-				o.InlineValueOptions = &vInlineValueOptions
-				return nil
+			var v InlineValueOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.InlineValueOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26595,13 +26595,13 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONF
 			o.InlayHintRegistrationOptions = &v
 			return nil
 		default:
-			var vInlayHintOptions InlayHintOptions
-			if err := json.Unmarshal(data, &vInlayHintOptions); err == nil {
-				o.InlayHintOptions = &vInlayHintOptions
-				return nil
+			var v InlayHintOptions
+			if err := json.Unmarshal(data, &v); err != nil {
+				return err
 			}
+			o.InlayHintOptions = &v
+			return nil
 		}
-		return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: %s", data)
 	default:
 		return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
@@ -26644,13 +26644,13 @@ func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json.Dec
 		o.RegistrationOptions = &v
 		return nil
 	default:
-		var vOptions DiagnosticOptions
-		if err := json.Unmarshal(data, &vOptions); err == nil {
-			o.Options = &vOptions
-			return nil
+		var v DiagnosticOptions
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.Options = &v
+		return nil
 	}
-	return fmt.Errorf("invalid DiagnosticOptionsOrRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlineCompletionOptions struct {
@@ -28544,13 +28544,13 @@ func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSONFr
 		o.VariableLookup = &v
 		return nil
 	default:
-		var vEvaluatableExpression InlineValueEvaluatableExpression
-		if err := json.Unmarshal(data, &vEvaluatableExpression); err == nil {
-			o.EvaluatableExpression = &vEvaluatableExpression
-			return nil
+		var v InlineValueEvaluatableExpression
+		if err := json.Unmarshal(data, &v); err != nil {
+			return err
 		}
+		o.EvaluatableExpression = &v
+		return nil
 	}
-	return fmt.Errorf("invalid InlineValueTextOrVariableLookupOrEvaluatableExpression: %s", data)
 }
 
 // Literal types
