@@ -24464,10 +24464,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrEmptyObject)(nil)
 func (o *BooleanOrEmptyObject) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrEmptyObject{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -24508,10 +24508,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrSemanticTokensFullDelta)(nil)
 func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrSemanticTokensFullDelta{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25438,10 +25438,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrHoverOptions)(nil)
 func (o *BooleanOrHoverOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrHoverOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25486,10 +25486,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDeclarationOptionsOrDeclarationRegistrat
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25544,10 +25544,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDefinitionOptions)(nil)
 func (o *BooleanOrDefinitionOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDefinitionOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25592,10 +25592,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionReg
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25654,10 +25654,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrImplementationOptionsOrImplementationReg
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25712,10 +25712,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrReferenceOptions)(nil)
 func (o *BooleanOrReferenceOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrReferenceOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25756,10 +25756,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentHighlightOptions)(nil)
 func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentHighlightOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25800,10 +25800,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentSymbolOptions)(nil)
 func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentSymbolOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25844,10 +25844,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrCodeActionOptions)(nil)
 func (o *BooleanOrCodeActionOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrCodeActionOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25892,10 +25892,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentColorOptionsOrDocumentColorRegis
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25950,10 +25950,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrWorkspaceSymbolOptions)(nil)
 func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -25994,10 +25994,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentFormattingOptions)(nil)
 func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentFormattingOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26038,10 +26038,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentRangeFormattingOptions)(nil)
 func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26082,10 +26082,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrRenameOptions)(nil)
 func (o *BooleanOrRenameOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrRenameOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26130,10 +26130,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistr
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26192,10 +26192,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrSelectionRangeOptionsOrSelectionRangeReg
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26254,10 +26254,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegis
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26316,10 +26316,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditing
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26424,10 +26424,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptio
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26486,10 +26486,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegis
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26548,10 +26548,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrInlineValueOptionsOrInlineValueRegistrat
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26610,10 +26610,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationO
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26714,10 +26714,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrInlineCompletionOptions)(nil)
 func (o *BooleanOrInlineCompletionOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrInlineCompletionOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26849,10 +26849,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrSaveOptions)(nil)
 func (o *BooleanOrSaveOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrSaveOptions{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -26978,7 +26978,7 @@ var _ json.UnmarshalerFrom = (*StringOrBoolean)(nil)
 func (o *StringOrBoolean) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrBoolean{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case '"':
 		var v string
 		if err := json.UnmarshalDecode(dec, &v); err != nil {
@@ -26987,8 +26987,8 @@ func (o *StringOrBoolean) UnmarshalJSONFrom(dec *json.Decoder) error {
 		o.String = &v
 		return nil
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v
@@ -27066,10 +27066,10 @@ var _ json.UnmarshalerFrom = (*BooleanOrClientSemanticTokensRequestFullDelta)(ni
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
 
-	switch dec.PeekKind() {
+	switch kind := dec.PeekKind(); kind {
 	case 't', 'f':
-		var v bool
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
+		v := kind == 't'
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
 		o.Boolean = &v

@@ -2604,9 +2604,15 @@ function generateCode() {
         const allUnambiguous = canDispatch && Array.from(kindMap.values()).every(entries => entries.length === 1);
 
         let fallbackExhaustive = false;
+        const hasBooleanKind = kindMap.has("boolean");
         if (canDispatch && allUnambiguous) {
             // Best case: PeekKind + UnmarshalDecode directly, no ReadValue buffer needed.
-            writeLine(`\tswitch dec.PeekKind() {`);
+            if (hasBooleanKind) {
+                writeLine(`\tswitch kind := dec.PeekKind(); kind {`);
+            }
+            else {
+                writeLine(`\tswitch dec.PeekKind() {`);
+            }
 
             if (unionContainedNull) {
                 writeLine(`\tcase 'n':`);
@@ -2617,10 +2623,18 @@ function generateCode() {
             for (const [kind, entries] of kindMap) {
                 writeLine(`\t${goKindCasesForJsonKind(kind)}`);
                 const entry = entries[0];
-                writeLine(`\t\tvar v ${entry.typeName}`);
-                writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
-                writeLine(`\t\t\treturn err`);
-                writeLine(`\t\t}`);
+                if (kind === "boolean") {
+                    writeLine(`\t\tv := kind == 't'`);
+                    writeLine(`\t\tif _, err := dec.ReadToken(); err != nil {`);
+                    writeLine(`\t\t\treturn err`);
+                    writeLine(`\t\t}`);
+                }
+                else {
+                    writeLine(`\t\tvar v ${entry.typeName}`);
+                    writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
+                    writeLine(`\t\t\treturn err`);
+                    writeLine(`\t\t}`);
+                }
                 writeLine(`\t\to.${entry.fieldName} = &v`);
                 writeLine(`\t\treturn nil`);
             }
@@ -2633,7 +2647,12 @@ function generateCode() {
             // Mixed case: some kind groups have multiple entries.
             // Use PeekKind to dispatch, then ReadValue + try-each within ambiguous groups,
             // or UnmarshalDecode directly for unambiguous groups.
-            writeLine(`\tswitch dec.PeekKind() {`);
+            if (hasBooleanKind) {
+                writeLine(`\tswitch kind := dec.PeekKind(); kind {`);
+            }
+            else {
+                writeLine(`\tswitch dec.PeekKind() {`);
+            }
 
             if (unionContainedNull) {
                 writeLine(`\tcase 'n':`);
@@ -2646,10 +2665,18 @@ function generateCode() {
                 if (entries.length === 1) {
                     // Unambiguous: decode directly
                     const entry = entries[0];
-                    writeLine(`\t\tvar v ${entry.typeName}`);
-                    writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
-                    writeLine(`\t\t\treturn err`);
-                    writeLine(`\t\t}`);
+                    if (kind === "boolean") {
+                        writeLine(`\t\tv := kind == 't'`);
+                        writeLine(`\t\tif _, err := dec.ReadToken(); err != nil {`);
+                        writeLine(`\t\t\treturn err`);
+                        writeLine(`\t\t}`);
+                    }
+                    else {
+                        writeLine(`\t\tvar v ${entry.typeName}`);
+                        writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
+                        writeLine(`\t\t\treturn err`);
+                        writeLine(`\t\t}`);
+                    }
                     writeLine(`\t\to.${entry.fieldName} = &v`);
                     writeLine(`\t\treturn nil`);
                 }
