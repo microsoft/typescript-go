@@ -74,6 +74,10 @@ func WithIndent(indent string) json.Options {
 	return jsontext.WithIndent(indent)
 }
 
+func NewDecoder(r io.Reader) *jsontext.Decoder {
+	return jsontext.NewDecoder(r)
+}
+
 type (
 	Value           = jsontext.Value
 	UnmarshalerFrom = json.UnmarshalerFrom
@@ -88,5 +92,4 @@ var (
 	Null        = jsontext.Null
 	BeginArray  = jsontext.BeginArray
 	EndArray    = jsontext.EndArray
-	NewDecoder  = jsontext.NewDecoder
 )
