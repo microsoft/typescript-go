@@ -433,7 +433,7 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 		if e.Name().Kind == ast.KindComputedPropertyName {
 			expression := e.Name().Expression()
 			if !ast.IsPrimitiveLiteralValue(expression, false) &&
-				(ch.isDefinitelyReferenceToGlobalSymbolObject == nil || !ch.isDefinitelyReferenceToGlobalSymbolObject(expression)) {
+				!ch.isDefinitelyReferenceToGlobalSymbolObject(expression) {
 				return false
 			}
 		}

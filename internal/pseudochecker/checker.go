@@ -14,15 +14,15 @@ import "github.com/microsoft/typescript-go/internal/ast"
 // extracting the `mergeSymbol` core checker logic into a reusable component.
 
 type PseudoChecker struct {
-	strictNullChecks           bool
-	exactOptionalPropertyTypes bool
+	strictNullChecks                          bool
+	exactOptionalPropertyTypes                bool
 	isDefinitelyReferenceToGlobalSymbolObject func(node *ast.Node) bool
 }
 
 func NewPseudoChecker(strictNullChecks bool, exactOptionalPropertyTypes bool, isDefinitelyReferenceToGlobalSymbolObject func(node *ast.Node) bool) *PseudoChecker {
 	return &PseudoChecker{
-		strictNullChecks:           strictNullChecks,
-		exactOptionalPropertyTypes: exactOptionalPropertyTypes,
+		strictNullChecks:                          strictNullChecks,
+		exactOptionalPropertyTypes:                exactOptionalPropertyTypes,
 		isDefinitelyReferenceToGlobalSymbolObject: isDefinitelyReferenceToGlobalSymbolObject,
 	}
 }
