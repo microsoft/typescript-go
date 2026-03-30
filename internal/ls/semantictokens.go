@@ -102,8 +102,8 @@ const (
 )
 
 // SemanticTokensLegend returns the legend describing the token types and modifiers.
-// If clientCapabilities is provided, it filters the legend to only include types and modifiers
-// that the client supports.
+// It filters the legend to only include types and modifiers that the client supports,
+// as indicated by clientCapabilities.
 func SemanticTokensLegend(clientCapabilities lsproto.ResolvedSemanticTokensClientCapabilities) *lsproto.SemanticTokensLegend {
 	types := make([]string, 0, len(tokenTypes))
 	for _, t := range tokenTypes {
@@ -145,14 +145,14 @@ func (l *LanguageService) ProvideSemanticTokens(ctx context.Context, documentURI
 	}, nil
 }
 
-func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, documentURI lsproto.DocumentUri, rang lsproto.Range) (lsproto.SemanticTokensRangeResponse, error) {
+func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, documentURI lsproto.DocumentUri, rng lsproto.Range) (lsproto.SemanticTokensRangeResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
-	start := int(l.converters.LineAndCharacterToPosition(file, rang.Start))
-	end := int(l.converters.LineAndCharacterToPosition(file, rang.End))
+	start := int(l.converters.LineAndCharacterToPosition(file, rng.Start))
+	end := int(l.converters.LineAndCharacterToPosition(file, rng.End))
 
 	tokens := l.collectSemanticTokensInRange(ctx, c, file, program, start, end)
 
@@ -193,6 +193,9 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 		}
 
 		if node == nil {
+			return false
+		}
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
 			return false
 		}
 		nodeEnd := node.End()
