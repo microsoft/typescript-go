@@ -60,12 +60,18 @@ func visitModifiers(v Visitor, modifiers *ModifierList) bool {
 
 type NodeFactory struct {
 	hooks                             NodeFactoryHooks
+	arrayLiteralExpressionPool        core.Pool[ArrayLiteralExpression]
 	arrayTypeNodePool                 core.Pool[ArrayTypeNode]
+	arrowFunctionPool                 core.Pool[ArrowFunction]
+	awaitExpressionPool               core.Pool[AwaitExpression]
 	binaryExpressionPool              core.Pool[BinaryExpression]
+	bindingPatternPool                core.Pool[BindingPattern]
 	blockPool                         core.Pool[Block]
 	callExpressionPool                core.Pool[CallExpression]
+	classDeclarationPool              core.Pool[ClassDeclaration]
 	conditionalExpressionPool         core.Pool[ConditionalExpression]
 	constructSignatureDeclarationPool core.Pool[ConstructSignatureDeclaration]
+	constructorDeclarationPool        core.Pool[ConstructorDeclaration]
 	elementAccessExpressionPool       core.Pool[ElementAccessExpression]
 	expressionStatementPool           core.Pool[ExpressionStatement]
 	expressionWithTypeArgumentsPool   core.Pool[ExpressionWithTypeArguments]
@@ -74,6 +80,7 @@ type NodeFactory struct {
 	heritageClausePool                core.Pool[HeritageClause]
 	identifierPool                    core.Pool[Identifier]
 	ifStatementPool                   core.Pool[IfStatement]
+	importClausePool                  core.Pool[ImportClause]
 	importSpecifierPool               core.Pool[ImportSpecifier]
 	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
 	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
@@ -86,19 +93,29 @@ type NodeFactory struct {
 	keywordExpressionPool             core.Pool[KeywordExpression]
 	keywordTypeNodePool               core.Pool[KeywordTypeNode]
 	literalTypeNodePool               core.Pool[LiteralTypeNode]
+	methodDeclarationPool             core.Pool[MethodDeclaration]
 	methodSignatureDeclarationPool    core.Pool[MethodSignatureDeclaration]
 	modifierListPool                  core.Pool[ModifierList]
+	namedImportsPool                  core.Pool[NamedImports]
+	newExpressionPool                 core.Pool[NewExpression]
 	nodeListPool                      core.Pool[NodeList]
 	numericLiteralPool                core.Pool[NumericLiteral]
+	objectLiteralExpressionPool       core.Pool[ObjectLiteralExpression]
 	parameterDeclarationPool          core.Pool[ParameterDeclaration]
 	parenthesizedExpressionPool       core.Pool[ParenthesizedExpression]
 	parenthesizedTypeNodePool         core.Pool[ParenthesizedTypeNode]
+	partiallyEmittedExpressionPool    core.Pool[PartiallyEmittedExpression]
 	prefixUnaryExpressionPool         core.Pool[PrefixUnaryExpression]
 	propertyAccessExpressionPool      core.Pool[PropertyAccessExpression]
 	propertyAssignmentPool            core.Pool[PropertyAssignment]
+	propertyDeclarationPool           core.Pool[PropertyDeclaration]
 	propertySignatureDeclarationPool  core.Pool[PropertySignatureDeclaration]
+	qualifiedNamePool                 core.Pool[QualifiedName]
 	returnStatementPool               core.Pool[ReturnStatement]
+	shorthandPropertyAssignmentPool   core.Pool[ShorthandPropertyAssignment]
 	stringLiteralPool                 core.Pool[StringLiteral]
+	syntheticExpressionPool           core.Pool[SyntheticExpression]
+	thisTypeNodePool                  core.Pool[ThisTypeNode]
 	tokenPool                         core.Pool[Token]
 	typeAliasDeclarationPool          core.Pool[TypeAliasDeclaration]
 	typeLiteralNodePool               core.Pool[TypeLiteralNode]
@@ -2775,7 +2792,7 @@ type QualifiedName struct {
 }
 
 func (f *NodeFactory) NewQualifiedName(left *EntityName, right *IdentifierNode) *Node {
-	data := &QualifiedName{}
+	data := f.qualifiedNamePool.New()
 	data.Left = left
 	data.Right = right
 	return f.newNode(KindQualifiedName, data)
@@ -3958,7 +3975,7 @@ type BindingPattern struct {
 }
 
 func (f *NodeFactory) NewBindingPattern(kind Kind, elements *NodeList) *Node {
-	data := &BindingPattern{}
+	data := f.bindingPatternPool.New()
 	data.Elements = elements
 	return f.newNode(kind, data)
 }
@@ -4291,7 +4308,7 @@ type ClassDeclaration struct {
 }
 
 func (f *NodeFactory) NewClassDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, heritageClauses *NodeList, members *NodeList) *Node {
-	data := &ClassDeclaration{}
+	data := f.classDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -5083,7 +5100,7 @@ type ImportClause struct {
 }
 
 func (f *NodeFactory) NewImportClause(phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
-	data := &ImportClause{}
+	data := f.importClausePool.New()
 	data.PhaseModifier = phaseModifier
 	data.name = name
 	data.NamedBindings = namedBindings
@@ -5181,7 +5198,7 @@ type NamedImports struct {
 }
 
 func (f *NodeFactory) NewNamedImports(elements *ImportSpecifierList) *Node {
-	data := &NamedImports{}
+	data := f.namedImportsPool.New()
 	data.Elements = elements
 	return f.newNode(KindNamedImports, data)
 }
@@ -5685,7 +5702,7 @@ type ConstructorDeclaration struct {
 }
 
 func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
-	data := &ConstructorDeclaration{}
+	data := f.constructorDeclarationPool.New()
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
@@ -5949,7 +5966,7 @@ type MethodDeclaration struct {
 }
 
 func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
-	data := &MethodDeclaration{}
+	data := f.methodDeclarationPool.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
 	data.name = name
@@ -6067,7 +6084,7 @@ type PropertyDeclaration struct {
 }
 
 func (f *NodeFactory) NewPropertyDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := &PropertyDeclaration{}
+	data := f.propertyDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -6574,7 +6591,7 @@ type ArrowFunction struct {
 }
 
 func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
-	data := &ArrowFunction{}
+	data := f.arrowFunctionPool.New()
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
@@ -7027,7 +7044,7 @@ type NewExpression struct {
 }
 
 func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *NodeList, arguments *NodeList) *Node {
-	data := &NewExpression{}
+	data := f.newExpressionPool.New()
 	data.Expression = expression
 	data.TypeArguments = typeArguments
 	data.Arguments = arguments
@@ -7389,7 +7406,7 @@ type ArrayLiteralExpression struct {
 }
 
 func (f *NodeFactory) NewArrayLiteralExpression(elements *NodeList, multiLine bool) *Node {
-	data := &ArrayLiteralExpression{}
+	data := f.arrayLiteralExpressionPool.New()
 	data.Elements = elements
 	data.MultiLine = multiLine
 	return f.newNode(KindArrayLiteralExpression, data)
@@ -7437,7 +7454,7 @@ type ObjectLiteralExpression struct {
 }
 
 func (f *NodeFactory) NewObjectLiteralExpression(properties *NodeList, multiLine bool) *Node {
-	data := &ObjectLiteralExpression{}
+	data := f.objectLiteralExpressionPool.New()
 	data.Properties = properties
 	data.MultiLine = multiLine
 	return f.newNode(KindObjectLiteralExpression, data)
@@ -7583,7 +7600,7 @@ type ShorthandPropertyAssignment struct {
 }
 
 func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, equalsToken *TokenNode, objectAssignmentInitializer *Expression) *Node {
-	data := &ShorthandPropertyAssignment{}
+	data := f.shorthandPropertyAssignmentPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -7747,7 +7764,7 @@ type AwaitExpression struct {
 }
 
 func (f *NodeFactory) NewAwaitExpression(expression *Expression) *Node {
-	data := &AwaitExpression{}
+	data := f.awaitExpressionPool.New()
 	data.Expression = expression
 	return f.newNode(KindAwaitExpression, data)
 }
@@ -8236,7 +8253,7 @@ type ThisTypeNode struct {
 }
 
 func (f *NodeFactory) NewThisTypeNode() *Node {
-	return f.newNode(KindThisType, &ThisTypeNode{})
+	return f.newNode(KindThisType, f.thisTypeNodePool.New())
 }
 
 func (node *ThisTypeNode) Clone(f NodeFactoryCoercible) *Node {
@@ -9057,7 +9074,7 @@ type SyntheticExpression struct {
 }
 
 func (f *NodeFactory) NewSyntheticExpression(t any, isSpread bool, tupleNameSource *Node) *Node {
-	data := &SyntheticExpression{}
+	data := f.syntheticExpressionPool.New()
 	data.Type = t
 	data.IsSpread = isSpread
 	data.TupleNameSource = tupleNameSource
@@ -9080,7 +9097,7 @@ type PartiallyEmittedExpression struct {
 }
 
 func (f *NodeFactory) NewPartiallyEmittedExpression(expression *Expression) *Node {
-	data := &PartiallyEmittedExpression{}
+	data := f.partiallyEmittedExpressionPool.New()
 	data.Expression = expression
 	return newNode(KindPartiallyEmittedExpression, data, f.hooks)
 }
