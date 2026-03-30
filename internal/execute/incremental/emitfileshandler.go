@@ -97,7 +97,7 @@ func (h *emitFilesHandler) emitFilesIncremental(options compiler.EmitOptions) []
 		return nil
 	}
 
-	wg := core.NewWorkGroup(h.program.program.SingleThreaded())
+	wg := core.NewBoundedWorkGroup(h.program.program.SingleThreaded())
 	h.program.snapshot.affectedFilesPendingEmit.Range(func(path tspath.Path, emitKind FileEmitKind) bool {
 		affectedFile := h.program.program.GetSourceFileByPath(path)
 		if affectedFile == nil || !h.program.program.SourceFileMayBeEmitted(affectedFile, false) {

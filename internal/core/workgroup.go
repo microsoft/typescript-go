@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"runtime"
 	"sync"
 	"sync/atomic"
 
@@ -22,6 +23,17 @@ func NewWorkGroup(singleThreaded bool) WorkGroup {
 		return &singleThreadedWorkGroup{}
 	}
 	return &parallelWorkGroup{}
+}
+
+// NewBoundedWorkGroup creates a WorkGroup that limits concurrent goroutines to GOMAXPROCS.
+// If singleThreaded is true, all work runs sequentially in RunAndWait.
+func NewBoundedWorkGroup(singleThreaded bool) WorkGroup {
+	if singleThreaded {
+		return &singleThreadedWorkGroup{}
+	}
+	return &boundedWorkGroup{
+		sem: make(chan struct{}, runtime.GOMAXPROCS(0)),
+	}
 }
 
 type parallelWorkGroup struct {
@@ -86,6 +98,31 @@ func (w *singleThreadedWorkGroup) pop() func() {
 	w.fns[end] = nil // Allow GC
 	w.fns = w.fns[:end]
 	return fn
+}
+
+type boundedWorkGroup struct {
+	done atomic.Bool
+	wg   sync.WaitGroup
+	sem  chan struct{}
+}
+
+var _ WorkGroup = (*boundedWorkGroup)(nil)
+
+func (w *boundedWorkGroup) Queue(fn func()) {
+	if w.done.Load() {
+		panic("Queue called after RunAndWait returned")
+	}
+
+	w.wg.Go(func() {
+		w.sem <- struct{}{}
+		defer func() { <-w.sem }()
+		fn()
+	})
+}
+
+func (w *boundedWorkGroup) RunAndWait() {
+	defer w.done.Store(true)
+	w.wg.Wait()
 }
 
 // ThrottleGroup is like errgroup.Group but with global concurrency limiting via a semaphore.
