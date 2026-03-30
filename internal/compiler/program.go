@@ -467,7 +467,7 @@ func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.Source
 
 func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
 	diagnostics := make([][]*ast.Diagnostic, len(sourceFiles))
-	wg := core.NewBoundedWorkGroup(!concurrent || p.SingleThreaded())
+	wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
 	for i, file := range sourceFiles {
 		wg.Queue(func() {
 			diagnostics[i] = collect(ctx, file)
