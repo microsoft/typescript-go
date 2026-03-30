@@ -1140,6 +1140,90 @@ function methodNameIdentifier(name: string) {
 }
 
 /**
+ * Returns the JSON token kind ("string", "number", "object", "array", "boolean")
+ * for a given meta model Type, or undefined if the kind cannot be statically determined.
+ */
+function jsonKindForType(type: Type): string | undefined {
+    switch (type.kind) {
+        case "base":
+            switch (type.name) {
+                case "integer":
+                case "uinteger":
+                case "decimal":
+                    return "number";
+                case "string":
+                case "URI":
+                case "DocumentUri":
+                    return "string";
+                case "boolean":
+                    return "boolean";
+                default:
+                    return undefined;
+            }
+        case "reference": {
+            if (typeAliasOverrides.has(type.name)) {
+                return undefined;
+            }
+            if (model.structures.some(s => s.name === type.name)) {
+                return "object";
+            }
+            const enumeration = model.enumerations.find(e => e.name === type.name);
+            if (enumeration) {
+                switch (enumeration.type.name) {
+                    case "string":
+                        return "string";
+                    case "integer":
+                    case "uinteger":
+                        return "number";
+                    default:
+                        return undefined;
+                }
+            }
+            const aliasType = typeInfo.typeAliasMap.get(type.name);
+            if (aliasType) return jsonKindForType(aliasType);
+            return undefined;
+        }
+        case "array":
+            return "array";
+        case "map":
+            return "object";
+        case "tuple":
+            return "array";
+        case "stringLiteral":
+            return "string";
+        case "integerLiteral":
+            return "number";
+        case "booleanLiteral":
+            return "boolean";
+        case "literal":
+            return "object";
+        case "or": {
+            const kinds = new Set(type.items.map(item => jsonKindForType(item)).filter(Boolean));
+            return kinds.size === 1 ? kinds.values().next().value : undefined;
+        }
+        default:
+            return undefined;
+    }
+}
+
+function goKindCasesForJsonKind(kind: string): string {
+    switch (kind) {
+        case "string":
+            return `case '"':`;
+        case "number":
+            return `case '0':`;
+        case "object":
+            return `case '{':`;
+        case "array":
+            return `case '[':`;
+        case "boolean":
+            return `case 't', 'f':`;
+        default:
+            return "";
+    }
+}
+
+/**
  * Generate the Go code
  */
 function generateCode() {
@@ -1847,6 +1931,7 @@ function generateCode() {
     for (const [name, members] of typeInfo.unionTypes.entries()) {
         writeLine(`type ${name} struct {`);
         const uniqueTypeFields = new Map(); // Maps type name -> field name
+        const uniqueTypeToOriginal = new Map<string, Type>(); // Maps type name -> original meta model Type
 
         let hasLocations = false;
         for (const member of members) {
@@ -1857,6 +1942,7 @@ function generateCode() {
             if (!uniqueTypeFields.has(memberType)) {
                 const fieldName = titleCase(member.name);
                 uniqueTypeFields.set(memberType, fieldName);
+                uniqueTypeToOriginal.set(memberType, member.type);
                 writeLine(`\t${fieldName} *${memberType}`);
                 if (fieldName === "Locations" && memberType === "[]Location") {
                     hasLocations = true;
@@ -1868,7 +1954,11 @@ function generateCode() {
         writeLine("");
 
         // Get the field names and types for marshal/unmarshal methods
-        const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
+        const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({
+            fieldName,
+            typeName,
+            originalType: uniqueTypeToOriginal.get(typeName)!,
+        }));
 
         // Marshal method
         writeLine(`var _ json.MarshalerTo = (*${name})(nil)`);
@@ -1919,28 +2009,131 @@ function generateCode() {
         writeLine(`\t*o = ${name}{}`);
         writeLine("");
 
-        writeLine("\tdata, err := dec.ReadValue()");
-        writeLine("\tif err != nil {");
-        writeLine("\t\treturn err");
-        writeLine("\t}");
-
-        if (unionContainedNull) {
-            writeLine(`\tif string(data) == "null" {`);
-            writeLine(`\t\treturn nil`);
-            writeLine(`\t}`);
-            writeLine("");
-        }
-
+        // Group field entries by their expected JSON token kind for optimized dispatch.
+        const kindMap = new Map<string, typeof fieldEntries>();
+        const unknownKindEntries: typeof fieldEntries = [];
         for (const entry of fieldEntries) {
-            writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
-            writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
-            writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
-            writeLine(`\t\treturn nil`);
-            writeLine(`\t}`);
+            const kind = jsonKindForType(entry.originalType);
+            if (!kind) {
+                unknownKindEntries.push(entry);
+            }
+            else {
+                if (!kindMap.has(kind)) kindMap.set(kind, []);
+                kindMap.get(kind)!.push(entry);
+            }
         }
 
-        // Match the error format from the original script
-        writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        // Determine if we can use PeekKind-based dispatch:
+        // - Every entry must have a known kind (no `any` etc.)
+        // - There must be at least 2 distinct cases (kind groups + null) for a switch to be worthwhile
+        const hasUnknownKinds = unknownKindEntries.length > 0;
+        const distinctKinds = kindMap.size + (unionContainedNull ? 1 : 0);
+        const canDispatch = !hasUnknownKinds && distinctKinds >= 2;
+
+        // Check if all kind groups are unambiguous (exactly 1 entry each).
+        // When unambiguous, we can UnmarshalDecode directly without buffering.
+        const allUnambiguous = canDispatch && Array.from(kindMap.values()).every(entries => entries.length === 1);
+
+        if (canDispatch && allUnambiguous) {
+            // Best case: PeekKind + UnmarshalDecode directly, no ReadValue buffer needed.
+            writeLine(`\tswitch dec.PeekKind() {`);
+
+            if (unionContainedNull) {
+                writeLine(`\tcase 'n':`);
+                writeLine(`\t\t_, err := dec.ReadToken()`);
+                writeLine(`\t\treturn err`);
+            }
+
+            for (const [kind, entries] of kindMap) {
+                writeLine(`\t${goKindCasesForJsonKind(kind)}`);
+                const entry = entries[0];
+                writeLine(`\t\tvar v ${entry.typeName}`);
+                writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
+                writeLine(`\t\t\treturn err`);
+                writeLine(`\t\t}`);
+                writeLine(`\t\to.${entry.fieldName} = &v`);
+                writeLine(`\t\treturn nil`);
+            }
+
+            writeLine(`\tdefault:`);
+            writeLine(`\t\treturn fmt.Errorf("invalid ${name}: expected ${[...(unionContainedNull ? ["null"] : []), ...kindMap.keys()].join(", ")}, got %v", dec.PeekKind())`);
+            writeLine(`\t}`);
+        }
+        else if (canDispatch) {
+            // Mixed case: some kind groups have multiple entries.
+            // Use PeekKind to dispatch, then ReadValue + try-each within ambiguous groups,
+            // or UnmarshalDecode directly for unambiguous groups.
+            writeLine(`\tswitch dec.PeekKind() {`);
+
+            if (unionContainedNull) {
+                writeLine(`\tcase 'n':`);
+                writeLine(`\t\t_, err := dec.ReadToken()`);
+                writeLine(`\t\treturn err`);
+            }
+
+            for (const [kind, entries] of kindMap) {
+                writeLine(`\t${goKindCasesForJsonKind(kind)}`);
+                if (entries.length === 1) {
+                    // Unambiguous: decode directly
+                    const entry = entries[0];
+                    writeLine(`\t\tvar v ${entry.typeName}`);
+                    writeLine(`\t\tif err := json.UnmarshalDecode(dec, &v); err != nil {`);
+                    writeLine(`\t\t\treturn err`);
+                    writeLine(`\t\t}`);
+                    writeLine(`\t\to.${entry.fieldName} = &v`);
+                    writeLine(`\t\treturn nil`);
+                }
+                else {
+                    // Ambiguous: buffer and try each
+                    writeLine(`\t\tdata, err := dec.ReadValue()`);
+                    writeLine(`\t\tif err != nil {`);
+                    writeLine(`\t\t\treturn err`);
+                    writeLine(`\t\t}`);
+                    for (const entry of entries) {
+                        writeLine(`\t\tvar v${entry.fieldName} ${entry.typeName}`);
+                        writeLine(`\t\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                        writeLine(`\t\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                        writeLine(`\t\t\treturn nil`);
+                        writeLine(`\t\t}`);
+                    }
+                    writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+                }
+            }
+
+            writeLine(`\tdefault:`);
+            writeLine(`\t\treturn fmt.Errorf("invalid ${name}: expected ${[...(unionContainedNull ? ["null"] : []), ...kindMap.keys()].join(", ")}, got %v", dec.PeekKind())`);
+            writeLine(`\t}`);
+        }
+        else {
+            // Fallback: unknown kinds present (e.g. `any`), use ReadValue + try-each.
+            writeLine("\tdata, err := dec.ReadValue()");
+            writeLine("\tif err != nil {");
+            writeLine("\t\treturn err");
+            writeLine("\t}");
+
+            if (unionContainedNull) {
+                writeLine(`\tif string(data) == "null" {`);
+                writeLine(`\t\treturn nil`);
+                writeLine(`\t}`);
+                writeLine("");
+            }
+
+            for (const entry of fieldEntries) {
+                writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
+                writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+                writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+                writeLine(`\t\treturn nil`);
+                writeLine(`\t}`);
+            }
+        }
+
+        if (canDispatch) {
+            // Dispatch paths have an exhaustive switch with default, nothing after the switch.
+        }
+        else {
+            // Fallback paths: the final error references `data` which is in scope.
+            writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        }
         writeLine(`}`);
         writeLine("");
 

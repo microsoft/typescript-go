@@ -23298,21 +23298,24 @@ var _ json.UnmarshalerFrom = (*IntegerOrString)(nil)
 func (o *IntegerOrString) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = IntegerOrString{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vInteger int32
-	if err := json.Unmarshal(data, &vInteger); err == nil {
-		o.Integer = &vInteger
+	switch dec.PeekKind() {
+	case '0':
+		var v int32
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Integer = &v
 		return nil
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid IntegerOrString: expected number, string, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid IntegerOrString: %s", data)
 }
 
 type DocumentSelectorOrNull struct {
@@ -23335,20 +23338,20 @@ var _ json.UnmarshalerFrom = (*DocumentSelectorOrNull)(nil)
 func (o *DocumentSelectorOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = DocumentSelectorOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []TextDocumentFilterLanguageOrSchemeOrPattern
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentSelector = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid DocumentSelectorOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vDocumentSelector []TextDocumentFilterLanguageOrSchemeOrPattern
-	if err := json.Unmarshal(data, &vDocumentSelector); err == nil {
-		o.DocumentSelector = &vDocumentSelector
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentSelectorOrNull: %s", data)
 }
 
 type BooleanOrEmptyObject struct {
@@ -23375,21 +23378,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrEmptyObject)(nil)
 func (o *BooleanOrEmptyObject) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrEmptyObject{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vEmptyObject struct{}
-	if err := json.Unmarshal(data, &vEmptyObject); err == nil {
-		o.EmptyObject = &vEmptyObject
+	case '{':
+		var v struct{}
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.EmptyObject = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrEmptyObject: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrEmptyObject: %s", data)
 }
 
 type BooleanOrSemanticTokensFullDelta struct {
@@ -23416,21 +23422,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrSemanticTokensFullDelta)(nil)
 func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrSemanticTokensFullDelta{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vSemanticTokensFullDelta SemanticTokensFullDelta
-	if err := json.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
-		o.SemanticTokensFullDelta = &vSemanticTokensFullDelta
+	case '{':
+		var v SemanticTokensFullDelta
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.SemanticTokensFullDelta = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: %s", data)
 }
 
 type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
@@ -23516,21 +23525,24 @@ var _ json.UnmarshalerFrom = (*StringOrInlayHintLabelParts)(nil)
 func (o *StringOrInlayHintLabelParts) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrInlayHintLabelParts{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vInlayHintLabelParts []*InlayHintLabelPart
-	if err := json.Unmarshal(data, &vInlayHintLabelParts); err == nil {
-		o.InlayHintLabelParts = &vInlayHintLabelParts
+	case '[':
+		var v []*InlayHintLabelPart
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.InlayHintLabelParts = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrInlayHintLabelParts: expected string, array, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrInlayHintLabelParts: %s", data)
 }
 
 type StringOrMarkupContent struct {
@@ -23557,21 +23569,24 @@ var _ json.UnmarshalerFrom = (*StringOrMarkupContent)(nil)
 func (o *StringOrMarkupContent) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrMarkupContent{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vMarkupContent MarkupContent
-	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
-		o.MarkupContent = &vMarkupContent
+	case '{':
+		var v MarkupContent
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.MarkupContent = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrMarkupContent: expected string, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrMarkupContent: %s", data)
 }
 
 type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
@@ -23680,21 +23695,24 @@ var _ json.UnmarshalerFrom = (*StringOrStringValue)(nil)
 func (o *StringOrStringValue) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrStringValue{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vStringValue StringValue
-	if err := json.Unmarshal(data, &vStringValue); err == nil {
-		o.StringValue = &vStringValue
+	case '{':
+		var v StringValue
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.StringValue = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrStringValue: expected string, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrStringValue: %s", data)
 }
 
 type IntegerOrNull struct {
@@ -23717,20 +23735,20 @@ var _ json.UnmarshalerFrom = (*IntegerOrNull)(nil)
 func (o *IntegerOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = IntegerOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '0':
+		var v int32
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Integer = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid IntegerOrNull: expected null, number, got %v", dec.PeekKind())
 	}
-
-	var vInteger int32
-	if err := json.Unmarshal(data, &vInteger); err == nil {
-		o.Integer = &vInteger
-		return nil
-	}
-	return fmt.Errorf("invalid IntegerOrNull: %s", data)
 }
 
 type StringOrNull struct {
@@ -23753,20 +23771,20 @@ var _ json.UnmarshalerFrom = (*StringOrNull)(nil)
 func (o *StringOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrNull: expected null, string, got %v", dec.PeekKind())
 	}
-
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
-		return nil
-	}
-	return fmt.Errorf("invalid StringOrNull: %s", data)
 }
 
 type DocumentUriOrNull struct {
@@ -23789,20 +23807,20 @@ var _ json.UnmarshalerFrom = (*DocumentUriOrNull)(nil)
 func (o *DocumentUriOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = DocumentUriOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '"':
+		var v DocumentUri
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentUri = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid DocumentUriOrNull: expected null, string, got %v", dec.PeekKind())
 	}
-
-	var vDocumentUri DocumentUri
-	if err := json.Unmarshal(data, &vDocumentUri); err == nil {
-		o.DocumentUri = &vDocumentUri
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentUriOrNull: %s", data)
 }
 
 type WorkspaceFoldersOrNull struct {
@@ -23825,20 +23843,20 @@ var _ json.UnmarshalerFrom = (*WorkspaceFoldersOrNull)(nil)
 func (o *WorkspaceFoldersOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = WorkspaceFoldersOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*WorkspaceFolder
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.WorkspaceFolders = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid WorkspaceFoldersOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vWorkspaceFolders []*WorkspaceFolder
-	if err := json.Unmarshal(data, &vWorkspaceFolders); err == nil {
-		o.WorkspaceFolders = &vWorkspaceFolders
-		return nil
-	}
-	return fmt.Errorf("invalid WorkspaceFoldersOrNull: %s", data)
 }
 
 type StringOrStrings struct {
@@ -23865,21 +23883,24 @@ var _ json.UnmarshalerFrom = (*StringOrStrings)(nil)
 func (o *StringOrStrings) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrStrings{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vStrings []string
-	if err := json.Unmarshal(data, &vStrings); err == nil {
-		o.Strings = &vStrings
+	case '[':
+		var v []string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Strings = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrStrings: expected string, array, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrStrings: %s", data)
 }
 
 type TextDocumentContentChangePartialOrWholeDocument struct {
@@ -23996,31 +24017,40 @@ var _ json.UnmarshalerFrom = (*MarkupContentOrStringOrMarkedStringWithLanguageOr
 func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vMarkupContent MarkupContent
-	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
-		o.MarkupContent = &vMarkupContent
+	switch dec.PeekKind() {
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vMarkupContent MarkupContent
+		if err := json.Unmarshal(data, &vMarkupContent); err == nil {
+			o.MarkupContent = &vMarkupContent
+			return nil
+		}
+		var vMarkedStringWithLanguage MarkedStringWithLanguage
+		if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+			o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
+			return nil
+		}
+		return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: %s", data)
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	case '[':
+		var v []StringOrMarkedStringWithLanguage
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.MarkedStrings = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: expected object, string, array, got %v", dec.PeekKind())
 	}
-	var vMarkedStringWithLanguage MarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
-		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
-		return nil
-	}
-	var vMarkedStrings []StringOrMarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStrings); err == nil {
-		o.MarkedStrings = &vMarkedStrings
-		return nil
-	}
-	return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: %s", data)
 }
 
 type UintegerOrNull struct {
@@ -24043,20 +24073,20 @@ var _ json.UnmarshalerFrom = (*UintegerOrNull)(nil)
 func (o *UintegerOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = UintegerOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '0':
+		var v uint32
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Uinteger = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid UintegerOrNull: expected null, number, got %v", dec.PeekKind())
 	}
-
-	var vUinteger uint32
-	if err := json.Unmarshal(data, &vUinteger); err == nil {
-		o.Uinteger = &vUinteger
-		return nil
-	}
-	return fmt.Errorf("invalid UintegerOrNull: %s", data)
 }
 
 type LocationOrLocationUriOnly struct {
@@ -24598,21 +24628,24 @@ var _ json.UnmarshalerFrom = (*TextDocumentSyncOptionsOrKind)(nil)
 func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = TextDocumentSyncOptionsOrKind{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vOptions TextDocumentSyncOptions
-	if err := json.Unmarshal(data, &vOptions); err == nil {
-		o.Options = &vOptions
+	switch dec.PeekKind() {
+	case '{':
+		var v TextDocumentSyncOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Options = &v
 		return nil
-	}
-	var vKind TextDocumentSyncKind
-	if err := json.Unmarshal(data, &vKind); err == nil {
-		o.Kind = &vKind
+	case '0':
+		var v TextDocumentSyncKind
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Kind = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid TextDocumentSyncOptionsOrKind: expected object, number, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid TextDocumentSyncOptionsOrKind: %s", data)
 }
 
 type BooleanOrHoverOptions struct {
@@ -24639,21 +24672,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrHoverOptions)(nil)
 func (o *BooleanOrHoverOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrHoverOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vHoverOptions HoverOptions
-	if err := json.Unmarshal(data, &vHoverOptions); err == nil {
-		o.HoverOptions = &vHoverOptions
+	case '{':
+		var v HoverOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.HoverOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrHoverOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrHoverOptions: %s", data)
 }
 
 type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
@@ -24684,26 +24720,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrDeclarationOptionsOrDeclarationRegistrat
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vDeclarationOptions DeclarationOptions
+		if err := json.Unmarshal(data, &vDeclarationOptions); err == nil {
+			o.DeclarationOptions = &vDeclarationOptions
+			return nil
+		}
+		var vDeclarationRegistrationOptions DeclarationRegistrationOptions
+		if err := json.Unmarshal(data, &vDeclarationRegistrationOptions); err == nil {
+			o.DeclarationRegistrationOptions = &vDeclarationRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vDeclarationOptions DeclarationOptions
-	if err := json.Unmarshal(data, &vDeclarationOptions); err == nil {
-		o.DeclarationOptions = &vDeclarationOptions
-		return nil
-	}
-	var vDeclarationRegistrationOptions DeclarationRegistrationOptions
-	if err := json.Unmarshal(data, &vDeclarationRegistrationOptions); err == nil {
-		o.DeclarationRegistrationOptions = &vDeclarationRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: %s", data)
 }
 
 type BooleanOrDefinitionOptions struct {
@@ -24730,21 +24773,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrDefinitionOptions)(nil)
 func (o *BooleanOrDefinitionOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDefinitionOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vDefinitionOptions DefinitionOptions
-	if err := json.Unmarshal(data, &vDefinitionOptions); err == nil {
-		o.DefinitionOptions = &vDefinitionOptions
+	case '{':
+		var v DefinitionOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DefinitionOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrDefinitionOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrDefinitionOptions: %s", data)
 }
 
 type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
@@ -24775,26 +24821,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionReg
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vTypeDefinitionOptions TypeDefinitionOptions
+		if err := json.Unmarshal(data, &vTypeDefinitionOptions); err == nil {
+			o.TypeDefinitionOptions = &vTypeDefinitionOptions
+			return nil
+		}
+		var vTypeDefinitionRegistrationOptions TypeDefinitionRegistrationOptions
+		if err := json.Unmarshal(data, &vTypeDefinitionRegistrationOptions); err == nil {
+			o.TypeDefinitionRegistrationOptions = &vTypeDefinitionRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vTypeDefinitionOptions TypeDefinitionOptions
-	if err := json.Unmarshal(data, &vTypeDefinitionOptions); err == nil {
-		o.TypeDefinitionOptions = &vTypeDefinitionOptions
-		return nil
-	}
-	var vTypeDefinitionRegistrationOptions TypeDefinitionRegistrationOptions
-	if err := json.Unmarshal(data, &vTypeDefinitionRegistrationOptions); err == nil {
-		o.TypeDefinitionRegistrationOptions = &vTypeDefinitionRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: %s", data)
 }
 
 type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
@@ -24825,26 +24878,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrImplementationOptionsOrImplementationReg
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vImplementationOptions ImplementationOptions
+		if err := json.Unmarshal(data, &vImplementationOptions); err == nil {
+			o.ImplementationOptions = &vImplementationOptions
+			return nil
+		}
+		var vImplementationRegistrationOptions ImplementationRegistrationOptions
+		if err := json.Unmarshal(data, &vImplementationRegistrationOptions); err == nil {
+			o.ImplementationRegistrationOptions = &vImplementationRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vImplementationOptions ImplementationOptions
-	if err := json.Unmarshal(data, &vImplementationOptions); err == nil {
-		o.ImplementationOptions = &vImplementationOptions
-		return nil
-	}
-	var vImplementationRegistrationOptions ImplementationRegistrationOptions
-	if err := json.Unmarshal(data, &vImplementationRegistrationOptions); err == nil {
-		o.ImplementationRegistrationOptions = &vImplementationRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: %s", data)
 }
 
 type BooleanOrReferenceOptions struct {
@@ -24871,21 +24931,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrReferenceOptions)(nil)
 func (o *BooleanOrReferenceOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrReferenceOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vReferenceOptions ReferenceOptions
-	if err := json.Unmarshal(data, &vReferenceOptions); err == nil {
-		o.ReferenceOptions = &vReferenceOptions
+	case '{':
+		var v ReferenceOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.ReferenceOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrReferenceOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrReferenceOptions: %s", data)
 }
 
 type BooleanOrDocumentHighlightOptions struct {
@@ -24912,21 +24975,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentHighlightOptions)(nil)
 func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentHighlightOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vDocumentHighlightOptions DocumentHighlightOptions
-	if err := json.Unmarshal(data, &vDocumentHighlightOptions); err == nil {
-		o.DocumentHighlightOptions = &vDocumentHighlightOptions
+	case '{':
+		var v DocumentHighlightOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentHighlightOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrDocumentHighlightOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrDocumentHighlightOptions: %s", data)
 }
 
 type BooleanOrDocumentSymbolOptions struct {
@@ -24953,21 +25019,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentSymbolOptions)(nil)
 func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentSymbolOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vDocumentSymbolOptions DocumentSymbolOptions
-	if err := json.Unmarshal(data, &vDocumentSymbolOptions); err == nil {
-		o.DocumentSymbolOptions = &vDocumentSymbolOptions
+	case '{':
+		var v DocumentSymbolOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentSymbolOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrDocumentSymbolOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrDocumentSymbolOptions: %s", data)
 }
 
 type BooleanOrCodeActionOptions struct {
@@ -24994,21 +25063,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrCodeActionOptions)(nil)
 func (o *BooleanOrCodeActionOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrCodeActionOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vCodeActionOptions CodeActionOptions
-	if err := json.Unmarshal(data, &vCodeActionOptions); err == nil {
-		o.CodeActionOptions = &vCodeActionOptions
+	case '{':
+		var v CodeActionOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CodeActionOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrCodeActionOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrCodeActionOptions: %s", data)
 }
 
 type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
@@ -25039,26 +25111,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentColorOptionsOrDocumentColorRegis
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vDocumentColorOptions DocumentColorOptions
+		if err := json.Unmarshal(data, &vDocumentColorOptions); err == nil {
+			o.DocumentColorOptions = &vDocumentColorOptions
+			return nil
+		}
+		var vDocumentColorRegistrationOptions DocumentColorRegistrationOptions
+		if err := json.Unmarshal(data, &vDocumentColorRegistrationOptions); err == nil {
+			o.DocumentColorRegistrationOptions = &vDocumentColorRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vDocumentColorOptions DocumentColorOptions
-	if err := json.Unmarshal(data, &vDocumentColorOptions); err == nil {
-		o.DocumentColorOptions = &vDocumentColorOptions
-		return nil
-	}
-	var vDocumentColorRegistrationOptions DocumentColorRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentColorRegistrationOptions); err == nil {
-		o.DocumentColorRegistrationOptions = &vDocumentColorRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: %s", data)
 }
 
 type BooleanOrWorkspaceSymbolOptions struct {
@@ -25085,21 +25164,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrWorkspaceSymbolOptions)(nil)
 func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vWorkspaceSymbolOptions WorkspaceSymbolOptions
-	if err := json.Unmarshal(data, &vWorkspaceSymbolOptions); err == nil {
-		o.WorkspaceSymbolOptions = &vWorkspaceSymbolOptions
+	case '{':
+		var v WorkspaceSymbolOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.WorkspaceSymbolOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrWorkspaceSymbolOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrWorkspaceSymbolOptions: %s", data)
 }
 
 type BooleanOrDocumentFormattingOptions struct {
@@ -25126,21 +25208,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentFormattingOptions)(nil)
 func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentFormattingOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vDocumentFormattingOptions DocumentFormattingOptions
-	if err := json.Unmarshal(data, &vDocumentFormattingOptions); err == nil {
-		o.DocumentFormattingOptions = &vDocumentFormattingOptions
+	case '{':
+		var v DocumentFormattingOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentFormattingOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrDocumentFormattingOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrDocumentFormattingOptions: %s", data)
 }
 
 type BooleanOrDocumentRangeFormattingOptions struct {
@@ -25167,21 +25252,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrDocumentRangeFormattingOptions)(nil)
 func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vDocumentRangeFormattingOptions DocumentRangeFormattingOptions
-	if err := json.Unmarshal(data, &vDocumentRangeFormattingOptions); err == nil {
-		o.DocumentRangeFormattingOptions = &vDocumentRangeFormattingOptions
+	case '{':
+		var v DocumentRangeFormattingOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentRangeFormattingOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrDocumentRangeFormattingOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrDocumentRangeFormattingOptions: %s", data)
 }
 
 type BooleanOrRenameOptions struct {
@@ -25208,21 +25296,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrRenameOptions)(nil)
 func (o *BooleanOrRenameOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrRenameOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vRenameOptions RenameOptions
-	if err := json.Unmarshal(data, &vRenameOptions); err == nil {
-		o.RenameOptions = &vRenameOptions
+	case '{':
+		var v RenameOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.RenameOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrRenameOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrRenameOptions: %s", data)
 }
 
 type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
@@ -25253,26 +25344,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistr
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vFoldingRangeOptions FoldingRangeOptions
+		if err := json.Unmarshal(data, &vFoldingRangeOptions); err == nil {
+			o.FoldingRangeOptions = &vFoldingRangeOptions
+			return nil
+		}
+		var vFoldingRangeRegistrationOptions FoldingRangeRegistrationOptions
+		if err := json.Unmarshal(data, &vFoldingRangeRegistrationOptions); err == nil {
+			o.FoldingRangeRegistrationOptions = &vFoldingRangeRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vFoldingRangeOptions FoldingRangeOptions
-	if err := json.Unmarshal(data, &vFoldingRangeOptions); err == nil {
-		o.FoldingRangeOptions = &vFoldingRangeOptions
-		return nil
-	}
-	var vFoldingRangeRegistrationOptions FoldingRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vFoldingRangeRegistrationOptions); err == nil {
-		o.FoldingRangeRegistrationOptions = &vFoldingRangeRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: %s", data)
 }
 
 type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
@@ -25303,26 +25401,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrSelectionRangeOptionsOrSelectionRangeReg
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vSelectionRangeOptions SelectionRangeOptions
+		if err := json.Unmarshal(data, &vSelectionRangeOptions); err == nil {
+			o.SelectionRangeOptions = &vSelectionRangeOptions
+			return nil
+		}
+		var vSelectionRangeRegistrationOptions SelectionRangeRegistrationOptions
+		if err := json.Unmarshal(data, &vSelectionRangeRegistrationOptions); err == nil {
+			o.SelectionRangeRegistrationOptions = &vSelectionRangeRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vSelectionRangeOptions SelectionRangeOptions
-	if err := json.Unmarshal(data, &vSelectionRangeOptions); err == nil {
-		o.SelectionRangeOptions = &vSelectionRangeOptions
-		return nil
-	}
-	var vSelectionRangeRegistrationOptions SelectionRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vSelectionRangeRegistrationOptions); err == nil {
-		o.SelectionRangeRegistrationOptions = &vSelectionRangeRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: %s", data)
 }
 
 type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
@@ -25353,26 +25458,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegis
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vCallHierarchyOptions CallHierarchyOptions
+		if err := json.Unmarshal(data, &vCallHierarchyOptions); err == nil {
+			o.CallHierarchyOptions = &vCallHierarchyOptions
+			return nil
+		}
+		var vCallHierarchyRegistrationOptions CallHierarchyRegistrationOptions
+		if err := json.Unmarshal(data, &vCallHierarchyRegistrationOptions); err == nil {
+			o.CallHierarchyRegistrationOptions = &vCallHierarchyRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vCallHierarchyOptions CallHierarchyOptions
-	if err := json.Unmarshal(data, &vCallHierarchyOptions); err == nil {
-		o.CallHierarchyOptions = &vCallHierarchyOptions
-		return nil
-	}
-	var vCallHierarchyRegistrationOptions CallHierarchyRegistrationOptions
-	if err := json.Unmarshal(data, &vCallHierarchyRegistrationOptions); err == nil {
-		o.CallHierarchyRegistrationOptions = &vCallHierarchyRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: %s", data)
 }
 
 type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions struct {
@@ -25403,26 +25515,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditing
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vLinkedEditingRangeOptions LinkedEditingRangeOptions
+		if err := json.Unmarshal(data, &vLinkedEditingRangeOptions); err == nil {
+			o.LinkedEditingRangeOptions = &vLinkedEditingRangeOptions
+			return nil
+		}
+		var vLinkedEditingRangeRegistrationOptions LinkedEditingRangeRegistrationOptions
+		if err := json.Unmarshal(data, &vLinkedEditingRangeRegistrationOptions); err == nil {
+			o.LinkedEditingRangeRegistrationOptions = &vLinkedEditingRangeRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vLinkedEditingRangeOptions LinkedEditingRangeOptions
-	if err := json.Unmarshal(data, &vLinkedEditingRangeOptions); err == nil {
-		o.LinkedEditingRangeOptions = &vLinkedEditingRangeOptions
-		return nil
-	}
-	var vLinkedEditingRangeRegistrationOptions LinkedEditingRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vLinkedEditingRangeRegistrationOptions); err == nil {
-		o.LinkedEditingRangeRegistrationOptions = &vLinkedEditingRangeRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: %s", data)
 }
 
 type SemanticTokensOptionsOrRegistrationOptions struct {
@@ -25494,26 +25613,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptio
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vMonikerOptions MonikerOptions
+		if err := json.Unmarshal(data, &vMonikerOptions); err == nil {
+			o.MonikerOptions = &vMonikerOptions
+			return nil
+		}
+		var vMonikerRegistrationOptions MonikerRegistrationOptions
+		if err := json.Unmarshal(data, &vMonikerRegistrationOptions); err == nil {
+			o.MonikerRegistrationOptions = &vMonikerRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vMonikerOptions MonikerOptions
-	if err := json.Unmarshal(data, &vMonikerOptions); err == nil {
-		o.MonikerOptions = &vMonikerOptions
-		return nil
-	}
-	var vMonikerRegistrationOptions MonikerRegistrationOptions
-	if err := json.Unmarshal(data, &vMonikerRegistrationOptions); err == nil {
-		o.MonikerRegistrationOptions = &vMonikerRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: %s", data)
 }
 
 type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
@@ -25544,26 +25670,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegis
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vTypeHierarchyOptions TypeHierarchyOptions
+		if err := json.Unmarshal(data, &vTypeHierarchyOptions); err == nil {
+			o.TypeHierarchyOptions = &vTypeHierarchyOptions
+			return nil
+		}
+		var vTypeHierarchyRegistrationOptions TypeHierarchyRegistrationOptions
+		if err := json.Unmarshal(data, &vTypeHierarchyRegistrationOptions); err == nil {
+			o.TypeHierarchyRegistrationOptions = &vTypeHierarchyRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vTypeHierarchyOptions TypeHierarchyOptions
-	if err := json.Unmarshal(data, &vTypeHierarchyOptions); err == nil {
-		o.TypeHierarchyOptions = &vTypeHierarchyOptions
-		return nil
-	}
-	var vTypeHierarchyRegistrationOptions TypeHierarchyRegistrationOptions
-	if err := json.Unmarshal(data, &vTypeHierarchyRegistrationOptions); err == nil {
-		o.TypeHierarchyRegistrationOptions = &vTypeHierarchyRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
@@ -25594,26 +25727,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrInlineValueOptionsOrInlineValueRegistrat
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vInlineValueOptions InlineValueOptions
+		if err := json.Unmarshal(data, &vInlineValueOptions); err == nil {
+			o.InlineValueOptions = &vInlineValueOptions
+			return nil
+		}
+		var vInlineValueRegistrationOptions InlineValueRegistrationOptions
+		if err := json.Unmarshal(data, &vInlineValueRegistrationOptions); err == nil {
+			o.InlineValueRegistrationOptions = &vInlineValueRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vInlineValueOptions InlineValueOptions
-	if err := json.Unmarshal(data, &vInlineValueOptions); err == nil {
-		o.InlineValueOptions = &vInlineValueOptions
-		return nil
-	}
-	var vInlineValueRegistrationOptions InlineValueRegistrationOptions
-	if err := json.Unmarshal(data, &vInlineValueRegistrationOptions); err == nil {
-		o.InlineValueRegistrationOptions = &vInlineValueRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
@@ -25644,26 +25784,33 @@ var _ json.UnmarshalerFrom = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationO
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vInlayHintOptions InlayHintOptions
+		if err := json.Unmarshal(data, &vInlayHintOptions); err == nil {
+			o.InlayHintOptions = &vInlayHintOptions
+			return nil
+		}
+		var vInlayHintRegistrationOptions InlayHintRegistrationOptions
+		if err := json.Unmarshal(data, &vInlayHintRegistrationOptions); err == nil {
+			o.InlayHintRegistrationOptions = &vInlayHintRegistrationOptions
+			return nil
+		}
+		return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: %s", data)
+	default:
+		return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	var vInlayHintOptions InlayHintOptions
-	if err := json.Unmarshal(data, &vInlayHintOptions); err == nil {
-		o.InlayHintOptions = &vInlayHintOptions
-		return nil
-	}
-	var vInlayHintRegistrationOptions InlayHintRegistrationOptions
-	if err := json.Unmarshal(data, &vInlayHintRegistrationOptions); err == nil {
-		o.InlayHintRegistrationOptions = &vInlayHintRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: %s", data)
 }
 
 type DiagnosticOptionsOrRegistrationOptions struct {
@@ -25731,21 +25878,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrInlineCompletionOptions)(nil)
 func (o *BooleanOrInlineCompletionOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrInlineCompletionOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vInlineCompletionOptions InlineCompletionOptions
-	if err := json.Unmarshal(data, &vInlineCompletionOptions); err == nil {
-		o.InlineCompletionOptions = &vInlineCompletionOptions
+	case '{':
+		var v InlineCompletionOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.InlineCompletionOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: %s", data)
 }
 
 type PatternOrRelativePattern struct {
@@ -25772,21 +25922,24 @@ var _ json.UnmarshalerFrom = (*PatternOrRelativePattern)(nil)
 func (o *PatternOrRelativePattern) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = PatternOrRelativePattern{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vPattern string
-	if err := json.Unmarshal(data, &vPattern); err == nil {
-		o.Pattern = &vPattern
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Pattern = &v
 		return nil
-	}
-	var vRelativePattern RelativePattern
-	if err := json.Unmarshal(data, &vRelativePattern); err == nil {
-		o.RelativePattern = &vRelativePattern
+	case '{':
+		var v RelativePattern
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.RelativePattern = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid PatternOrRelativePattern: expected string, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
 }
 
 type RangeOrEditRangeWithInsertReplace struct {
@@ -25854,21 +26007,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrSaveOptions)(nil)
 func (o *BooleanOrSaveOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrSaveOptions{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vSaveOptions SaveOptions
-	if err := json.Unmarshal(data, &vSaveOptions); err == nil {
-		o.SaveOptions = &vSaveOptions
+	case '{':
+		var v SaveOptions
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.SaveOptions = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrSaveOptions: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrSaveOptions: %s", data)
 }
 
 type TextDocumentContentOptionsOrRegistrationOptions struct {
@@ -25936,21 +26092,24 @@ var _ json.UnmarshalerFrom = (*StringOrTuple)(nil)
 func (o *StringOrTuple) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrTuple{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vTuple [2]uint32
-	if err := json.Unmarshal(data, &vTuple); err == nil {
-		o.Tuple = &vTuple
+	case '[':
+		var v [2]uint32
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Tuple = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrTuple: expected string, array, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrTuple: %s", data)
 }
 
 type StringOrBoolean struct {
@@ -25977,21 +26136,24 @@ var _ json.UnmarshalerFrom = (*StringOrBoolean)(nil)
 func (o *StringOrBoolean) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrBoolean{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrBoolean: expected string, boolean, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrBoolean: %s", data)
 }
 
 type WorkspaceFolderOrURI struct {
@@ -26018,21 +26180,24 @@ var _ json.UnmarshalerFrom = (*WorkspaceFolderOrURI)(nil)
 func (o *WorkspaceFolderOrURI) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = WorkspaceFolderOrURI{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vWorkspaceFolder WorkspaceFolder
-	if err := json.Unmarshal(data, &vWorkspaceFolder); err == nil {
-		o.WorkspaceFolder = &vWorkspaceFolder
+	switch dec.PeekKind() {
+	case '{':
+		var v WorkspaceFolder
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.WorkspaceFolder = &v
 		return nil
-	}
-	var vURI URI
-	if err := json.Unmarshal(data, &vURI); err == nil {
-		o.URI = &vURI
+	case '"':
+		var v URI
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.URI = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid WorkspaceFolderOrURI: expected object, string, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid WorkspaceFolderOrURI: %s", data)
 }
 
 type BooleanOrClientSemanticTokensRequestFullDelta struct {
@@ -26059,21 +26224,24 @@ var _ json.UnmarshalerFrom = (*BooleanOrClientSemanticTokensRequestFullDelta)(ni
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	switch dec.PeekKind() {
+	case 't', 'f':
+		var v bool
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Boolean = &v
 		return nil
-	}
-	var vClientSemanticTokensRequestFullDelta ClientSemanticTokensRequestFullDelta
-	if err := json.Unmarshal(data, &vClientSemanticTokensRequestFullDelta); err == nil {
-		o.ClientSemanticTokensRequestFullDelta = &vClientSemanticTokensRequestFullDelta
+	case '{':
+		var v ClientSemanticTokensRequestFullDelta
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.ClientSemanticTokensRequestFullDelta = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: expected boolean, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
 type LocationOrLocationsOrDefinitionLinksOrNull struct {
@@ -26104,30 +26272,36 @@ var _ json.UnmarshalerFrom = (*LocationOrLocationsOrDefinitionLinksOrNull)(nil)
 func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = LocationOrLocationsOrDefinitionLinksOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v Location
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Location = &v
 		return nil
+	case '[':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vLocations []Location
+		if err := json.Unmarshal(data, &vLocations); err == nil {
+			o.Locations = &vLocations
+			return nil
+		}
+		var vDefinitionLinks []*LocationLink
+		if err := json.Unmarshal(data, &vDefinitionLinks); err == nil {
+			o.DefinitionLinks = &vDefinitionLinks
+			return nil
+		}
+		return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: %s", data)
+	default:
+		return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: expected null, object, array, got %v", dec.PeekKind())
 	}
-
-	var vLocation Location
-	if err := json.Unmarshal(data, &vLocation); err == nil {
-		o.Location = &vLocation
-		return nil
-	}
-	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
-		o.Locations = &vLocations
-		return nil
-	}
-	var vDefinitionLinks []*LocationLink
-	if err := json.Unmarshal(data, &vDefinitionLinks); err == nil {
-		o.DefinitionLinks = &vDefinitionLinks
-		return nil
-	}
-	return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: %s", data)
 }
 
 func (o LocationOrLocationsOrDefinitionLinksOrNull) GetLocations() *[]Location {
@@ -26154,20 +26328,20 @@ var _ json.UnmarshalerFrom = (*FoldingRangesOrNull)(nil)
 func (o *FoldingRangesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = FoldingRangesOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*FoldingRange
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.FoldingRanges = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid FoldingRangesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vFoldingRanges []*FoldingRange
-	if err := json.Unmarshal(data, &vFoldingRanges); err == nil {
-		o.FoldingRanges = &vFoldingRanges
-		return nil
-	}
-	return fmt.Errorf("invalid FoldingRangesOrNull: %s", data)
 }
 
 type LocationOrLocationsOrDeclarationLinksOrNull struct {
@@ -26198,30 +26372,36 @@ var _ json.UnmarshalerFrom = (*LocationOrLocationsOrDeclarationLinksOrNull)(nil)
 func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = LocationOrLocationsOrDeclarationLinksOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v Location
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Location = &v
 		return nil
+	case '[':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vLocations []Location
+		if err := json.Unmarshal(data, &vLocations); err == nil {
+			o.Locations = &vLocations
+			return nil
+		}
+		var vDeclarationLinks []*LocationLink
+		if err := json.Unmarshal(data, &vDeclarationLinks); err == nil {
+			o.DeclarationLinks = &vDeclarationLinks
+			return nil
+		}
+		return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: %s", data)
+	default:
+		return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: expected null, object, array, got %v", dec.PeekKind())
 	}
-
-	var vLocation Location
-	if err := json.Unmarshal(data, &vLocation); err == nil {
-		o.Location = &vLocation
-		return nil
-	}
-	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
-		o.Locations = &vLocations
-		return nil
-	}
-	var vDeclarationLinks []*LocationLink
-	if err := json.Unmarshal(data, &vDeclarationLinks); err == nil {
-		o.DeclarationLinks = &vDeclarationLinks
-		return nil
-	}
-	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: %s", data)
 }
 
 func (o LocationOrLocationsOrDeclarationLinksOrNull) GetLocations() *[]Location {
@@ -26248,20 +26428,20 @@ var _ json.UnmarshalerFrom = (*SelectionRangesOrNull)(nil)
 func (o *SelectionRangesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = SelectionRangesOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*SelectionRange
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.SelectionRanges = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid SelectionRangesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vSelectionRanges []*SelectionRange
-	if err := json.Unmarshal(data, &vSelectionRanges); err == nil {
-		o.SelectionRanges = &vSelectionRanges
-		return nil
-	}
-	return fmt.Errorf("invalid SelectionRangesOrNull: %s", data)
 }
 
 type CallHierarchyItemsOrNull struct {
@@ -26284,20 +26464,20 @@ var _ json.UnmarshalerFrom = (*CallHierarchyItemsOrNull)(nil)
 func (o *CallHierarchyItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CallHierarchyItemsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*CallHierarchyItem
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CallHierarchyItems = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CallHierarchyItemsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vCallHierarchyItems []*CallHierarchyItem
-	if err := json.Unmarshal(data, &vCallHierarchyItems); err == nil {
-		o.CallHierarchyItems = &vCallHierarchyItems
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyItemsOrNull: %s", data)
 }
 
 type CallHierarchyIncomingCallsOrNull struct {
@@ -26320,20 +26500,20 @@ var _ json.UnmarshalerFrom = (*CallHierarchyIncomingCallsOrNull)(nil)
 func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CallHierarchyIncomingCallsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*CallHierarchyIncomingCall
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CallHierarchyIncomingCalls = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CallHierarchyIncomingCallsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vCallHierarchyIncomingCalls []*CallHierarchyIncomingCall
-	if err := json.Unmarshal(data, &vCallHierarchyIncomingCalls); err == nil {
-		o.CallHierarchyIncomingCalls = &vCallHierarchyIncomingCalls
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyIncomingCallsOrNull: %s", data)
 }
 
 type CallHierarchyOutgoingCallsOrNull struct {
@@ -26356,20 +26536,20 @@ var _ json.UnmarshalerFrom = (*CallHierarchyOutgoingCallsOrNull)(nil)
 func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CallHierarchyOutgoingCallsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*CallHierarchyOutgoingCall
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CallHierarchyOutgoingCalls = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CallHierarchyOutgoingCallsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vCallHierarchyOutgoingCalls []*CallHierarchyOutgoingCall
-	if err := json.Unmarshal(data, &vCallHierarchyOutgoingCalls); err == nil {
-		o.CallHierarchyOutgoingCalls = &vCallHierarchyOutgoingCalls
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyOutgoingCallsOrNull: %s", data)
 }
 
 type SemanticTokensOrNull struct {
@@ -26392,20 +26572,20 @@ var _ json.UnmarshalerFrom = (*SemanticTokensOrNull)(nil)
 func (o *SemanticTokensOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = SemanticTokensOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v SemanticTokens
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.SemanticTokens = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid SemanticTokensOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vSemanticTokens SemanticTokens
-	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
-		o.SemanticTokens = &vSemanticTokens
-		return nil
-	}
-	return fmt.Errorf("invalid SemanticTokensOrNull: %s", data)
 }
 
 type SemanticTokensOrSemanticTokensDeltaOrNull struct {
@@ -26432,25 +26612,29 @@ var _ json.UnmarshalerFrom = (*SemanticTokensOrSemanticTokensDeltaOrNull)(nil)
 func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = SemanticTokensOrSemanticTokensDeltaOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vSemanticTokens SemanticTokens
+		if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
+			o.SemanticTokens = &vSemanticTokens
+			return nil
+		}
+		var vSemanticTokensDelta SemanticTokensDelta
+		if err := json.Unmarshal(data, &vSemanticTokensDelta); err == nil {
+			o.SemanticTokensDelta = &vSemanticTokensDelta
+			return nil
+		}
+		return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: %s", data)
+	default:
+		return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vSemanticTokens SemanticTokens
-	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
-		o.SemanticTokens = &vSemanticTokens
-		return nil
-	}
-	var vSemanticTokensDelta SemanticTokensDelta
-	if err := json.Unmarshal(data, &vSemanticTokensDelta); err == nil {
-		o.SemanticTokensDelta = &vSemanticTokensDelta
-		return nil
-	}
-	return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: %s", data)
 }
 
 type LinkedEditingRangesOrNull struct {
@@ -26473,20 +26657,20 @@ var _ json.UnmarshalerFrom = (*LinkedEditingRangesOrNull)(nil)
 func (o *LinkedEditingRangesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = LinkedEditingRangesOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v LinkedEditingRanges
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.LinkedEditingRanges = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid LinkedEditingRangesOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vLinkedEditingRanges LinkedEditingRanges
-	if err := json.Unmarshal(data, &vLinkedEditingRanges); err == nil {
-		o.LinkedEditingRanges = &vLinkedEditingRanges
-		return nil
-	}
-	return fmt.Errorf("invalid LinkedEditingRangesOrNull: %s", data)
 }
 
 type WorkspaceEditOrNull struct {
@@ -26509,20 +26693,20 @@ var _ json.UnmarshalerFrom = (*WorkspaceEditOrNull)(nil)
 func (o *WorkspaceEditOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = WorkspaceEditOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v WorkspaceEdit
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.WorkspaceEdit = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid WorkspaceEditOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vWorkspaceEdit WorkspaceEdit
-	if err := json.Unmarshal(data, &vWorkspaceEdit); err == nil {
-		o.WorkspaceEdit = &vWorkspaceEdit
-		return nil
-	}
-	return fmt.Errorf("invalid WorkspaceEditOrNull: %s", data)
 }
 
 type MonikersOrNull struct {
@@ -26545,20 +26729,20 @@ var _ json.UnmarshalerFrom = (*MonikersOrNull)(nil)
 func (o *MonikersOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = MonikersOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*Moniker
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Monikers = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid MonikersOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vMonikers []*Moniker
-	if err := json.Unmarshal(data, &vMonikers); err == nil {
-		o.Monikers = &vMonikers
-		return nil
-	}
-	return fmt.Errorf("invalid MonikersOrNull: %s", data)
 }
 
 type TypeHierarchyItemsOrNull struct {
@@ -26581,20 +26765,20 @@ var _ json.UnmarshalerFrom = (*TypeHierarchyItemsOrNull)(nil)
 func (o *TypeHierarchyItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = TypeHierarchyItemsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*TypeHierarchyItem
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.TypeHierarchyItems = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid TypeHierarchyItemsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vTypeHierarchyItems []*TypeHierarchyItem
-	if err := json.Unmarshal(data, &vTypeHierarchyItems); err == nil {
-		o.TypeHierarchyItems = &vTypeHierarchyItems
-		return nil
-	}
-	return fmt.Errorf("invalid TypeHierarchyItemsOrNull: %s", data)
 }
 
 type InlineValuesOrNull struct {
@@ -26617,20 +26801,20 @@ var _ json.UnmarshalerFrom = (*InlineValuesOrNull)(nil)
 func (o *InlineValuesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = InlineValuesOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []InlineValueTextOrVariableLookupOrEvaluatableExpression
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.InlineValues = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid InlineValuesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vInlineValues []InlineValueTextOrVariableLookupOrEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValues); err == nil {
-		o.InlineValues = &vInlineValues
-		return nil
-	}
-	return fmt.Errorf("invalid InlineValuesOrNull: %s", data)
 }
 
 type InlayHintsOrNull struct {
@@ -26653,20 +26837,20 @@ var _ json.UnmarshalerFrom = (*InlayHintsOrNull)(nil)
 func (o *InlayHintsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = InlayHintsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*InlayHint
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.InlayHints = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid InlayHintsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vInlayHints []*InlayHint
-	if err := json.Unmarshal(data, &vInlayHints); err == nil {
-		o.InlayHints = &vInlayHints
-		return nil
-	}
-	return fmt.Errorf("invalid InlayHintsOrNull: %s", data)
 }
 
 type RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
@@ -26734,25 +26918,27 @@ var _ json.UnmarshalerFrom = (*InlineCompletionListOrItemsOrNull)(nil)
 func (o *InlineCompletionListOrItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = InlineCompletionListOrItemsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v InlineCompletionList
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.List = &v
 		return nil
-	}
-
-	var vList InlineCompletionList
-	if err := json.Unmarshal(data, &vList); err == nil {
-		o.List = &vList
+	case '[':
+		var v []*InlineCompletionItem
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Items = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid InlineCompletionListOrItemsOrNull: expected null, object, array, got %v", dec.PeekKind())
 	}
-	var vItems []*InlineCompletionItem
-	if err := json.Unmarshal(data, &vItems); err == nil {
-		o.Items = &vItems
-		return nil
-	}
-	return fmt.Errorf("invalid InlineCompletionListOrItemsOrNull: %s", data)
 }
 
 type MessageActionItemOrNull struct {
@@ -26775,20 +26961,20 @@ var _ json.UnmarshalerFrom = (*MessageActionItemOrNull)(nil)
 func (o *MessageActionItemOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = MessageActionItemOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v MessageActionItem
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.MessageActionItem = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid MessageActionItemOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vMessageActionItem MessageActionItem
-	if err := json.Unmarshal(data, &vMessageActionItem); err == nil {
-		o.MessageActionItem = &vMessageActionItem
-		return nil
-	}
-	return fmt.Errorf("invalid MessageActionItemOrNull: %s", data)
 }
 
 type TextEditsOrNull struct {
@@ -26811,20 +26997,20 @@ var _ json.UnmarshalerFrom = (*TextEditsOrNull)(nil)
 func (o *TextEditsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = TextEditsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*TextEdit
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.TextEdits = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid TextEditsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vTextEdits []*TextEdit
-	if err := json.Unmarshal(data, &vTextEdits); err == nil {
-		o.TextEdits = &vTextEdits
-		return nil
-	}
-	return fmt.Errorf("invalid TextEditsOrNull: %s", data)
 }
 
 type CompletionItemsOrListOrNull struct {
@@ -26851,25 +27037,27 @@ var _ json.UnmarshalerFrom = (*CompletionItemsOrListOrNull)(nil)
 func (o *CompletionItemsOrListOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CompletionItemsOrListOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*CompletionItem
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Items = &v
 		return nil
-	}
-
-	var vItems []*CompletionItem
-	if err := json.Unmarshal(data, &vItems); err == nil {
-		o.Items = &vItems
+	case '{':
+		var v CompletionList
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.List = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CompletionItemsOrListOrNull: expected null, array, object, got %v", dec.PeekKind())
 	}
-	var vList CompletionList
-	if err := json.Unmarshal(data, &vList); err == nil {
-		o.List = &vList
-		return nil
-	}
-	return fmt.Errorf("invalid CompletionItemsOrListOrNull: %s", data)
 }
 
 type HoverOrNull struct {
@@ -26892,20 +27080,20 @@ var _ json.UnmarshalerFrom = (*HoverOrNull)(nil)
 func (o *HoverOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = HoverOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v Hover
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Hover = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid HoverOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vHover Hover
-	if err := json.Unmarshal(data, &vHover); err == nil {
-		o.Hover = &vHover
-		return nil
-	}
-	return fmt.Errorf("invalid HoverOrNull: %s", data)
 }
 
 type SignatureHelpOrNull struct {
@@ -26928,20 +27116,20 @@ var _ json.UnmarshalerFrom = (*SignatureHelpOrNull)(nil)
 func (o *SignatureHelpOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = SignatureHelpOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v SignatureHelp
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.SignatureHelp = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid SignatureHelpOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vSignatureHelp SignatureHelp
-	if err := json.Unmarshal(data, &vSignatureHelp); err == nil {
-		o.SignatureHelp = &vSignatureHelp
-		return nil
-	}
-	return fmt.Errorf("invalid SignatureHelpOrNull: %s", data)
 }
 
 type LocationsOrNull struct {
@@ -26964,20 +27152,20 @@ var _ json.UnmarshalerFrom = (*LocationsOrNull)(nil)
 func (o *LocationsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = LocationsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []Location
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.Locations = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid LocationsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
-		o.Locations = &vLocations
-		return nil
-	}
-	return fmt.Errorf("invalid LocationsOrNull: %s", data)
 }
 
 func (o LocationsOrNull) GetLocations() *[]Location {
@@ -27004,20 +27192,20 @@ var _ json.UnmarshalerFrom = (*DocumentHighlightsOrNull)(nil)
 func (o *DocumentHighlightsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = DocumentHighlightsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*DocumentHighlight
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentHighlights = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid DocumentHighlightsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vDocumentHighlights []*DocumentHighlight
-	if err := json.Unmarshal(data, &vDocumentHighlights); err == nil {
-		o.DocumentHighlights = &vDocumentHighlights
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentHighlightsOrNull: %s", data)
 }
 
 type SymbolInformationsOrDocumentSymbolsOrNull struct {
@@ -27044,25 +27232,29 @@ var _ json.UnmarshalerFrom = (*SymbolInformationsOrDocumentSymbolsOrNull)(nil)
 func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = SymbolInformationsOrDocumentSymbolsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
+	case '[':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vSymbolInformations []*SymbolInformation
+		if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
+			o.SymbolInformations = &vSymbolInformations
+			return nil
+		}
+		var vDocumentSymbols []*DocumentSymbol
+		if err := json.Unmarshal(data, &vDocumentSymbols); err == nil {
+			o.DocumentSymbols = &vDocumentSymbols
+			return nil
+		}
+		return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbolsOrNull: %s", data)
+	default:
+		return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbolsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vSymbolInformations []*SymbolInformation
-	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
-		o.SymbolInformations = &vSymbolInformations
-		return nil
-	}
-	var vDocumentSymbols []*DocumentSymbol
-	if err := json.Unmarshal(data, &vDocumentSymbols); err == nil {
-		o.DocumentSymbols = &vDocumentSymbols
-		return nil
-	}
-	return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbolsOrNull: %s", data)
 }
 
 type CommandOrCodeAction struct {
@@ -27126,20 +27318,20 @@ var _ json.UnmarshalerFrom = (*CommandOrCodeActionArrayOrNull)(nil)
 func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CommandOrCodeActionArrayOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []CommandOrCodeAction
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CommandOrCodeActionArray = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CommandOrCodeActionArrayOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vCommandOrCodeActionArray []CommandOrCodeAction
-	if err := json.Unmarshal(data, &vCommandOrCodeActionArray); err == nil {
-		o.CommandOrCodeActionArray = &vCommandOrCodeActionArray
-		return nil
-	}
-	return fmt.Errorf("invalid CommandOrCodeActionArrayOrNull: %s", data)
 }
 
 type SymbolInformationsOrWorkspaceSymbolsOrNull struct {
@@ -27166,25 +27358,29 @@ var _ json.UnmarshalerFrom = (*SymbolInformationsOrWorkspaceSymbolsOrNull)(nil)
 func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = SymbolInformationsOrWorkspaceSymbolsOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
+	case '[':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vSymbolInformations []*SymbolInformation
+		if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
+			o.SymbolInformations = &vSymbolInformations
+			return nil
+		}
+		var vWorkspaceSymbols []*WorkspaceSymbol
+		if err := json.Unmarshal(data, &vWorkspaceSymbols); err == nil {
+			o.WorkspaceSymbols = &vWorkspaceSymbols
+			return nil
+		}
+		return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: %s", data)
+	default:
+		return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vSymbolInformations []*SymbolInformation
-	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
-		o.SymbolInformations = &vSymbolInformations
-		return nil
-	}
-	var vWorkspaceSymbols []*WorkspaceSymbol
-	if err := json.Unmarshal(data, &vWorkspaceSymbols); err == nil {
-		o.WorkspaceSymbols = &vWorkspaceSymbols
-		return nil
-	}
-	return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: %s", data)
 }
 
 type CodeLensesOrNull struct {
@@ -27207,20 +27403,20 @@ var _ json.UnmarshalerFrom = (*CodeLensesOrNull)(nil)
 func (o *CodeLensesOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CodeLensesOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*CodeLens
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CodeLenses = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CodeLensesOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vCodeLenses []*CodeLens
-	if err := json.Unmarshal(data, &vCodeLenses); err == nil {
-		o.CodeLenses = &vCodeLenses
-		return nil
-	}
-	return fmt.Errorf("invalid CodeLensesOrNull: %s", data)
 }
 
 type DocumentLinksOrNull struct {
@@ -27243,20 +27439,20 @@ var _ json.UnmarshalerFrom = (*DocumentLinksOrNull)(nil)
 func (o *DocumentLinksOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = DocumentLinksOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '[':
+		var v []*DocumentLink
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.DocumentLinks = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid DocumentLinksOrNull: expected null, array, got %v", dec.PeekKind())
 	}
-
-	var vDocumentLinks []*DocumentLink
-	if err := json.Unmarshal(data, &vDocumentLinks); err == nil {
-		o.DocumentLinks = &vDocumentLinks
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentLinksOrNull: %s", data)
 }
 
 type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull struct {
@@ -27287,30 +27483,34 @@ var _ json.UnmarshalerFrom = (*RangeOrPrepareRenamePlaceholderOrPrepareRenameDef
 func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
+	case '{':
+		data, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		var vRange Range
+		if err := json.Unmarshal(data, &vRange); err == nil {
+			o.Range = &vRange
+			return nil
+		}
+		var vPrepareRenamePlaceholder PrepareRenamePlaceholder
+		if err := json.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
+			o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
+			return nil
+		}
+		var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
+		if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
+			o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
+			return nil
+		}
+		return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: %s", data)
+	default:
+		return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vRange Range
-	if err := json.Unmarshal(data, &vRange); err == nil {
-		o.Range = &vRange
-		return nil
-	}
-	var vPrepareRenamePlaceholder PrepareRenamePlaceholder
-	if err := json.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
-		o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
-		return nil
-	}
-	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
-	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
-		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
-		return nil
-	}
-	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: %s", data)
 }
 
 type LSPAnyOrNull struct {
@@ -27369,20 +27569,20 @@ var _ json.UnmarshalerFrom = (*CustomClosingTagCompletionOrNull)(nil)
 func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = CustomClosingTagCompletionOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v CustomClosingTagCompletion
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.CustomClosingTagCompletion = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vCustomClosingTagCompletion CustomClosingTagCompletion
-	if err := json.Unmarshal(data, &vCustomClosingTagCompletion); err == nil {
-		o.CustomClosingTagCompletion = &vCustomClosingTagCompletion
-		return nil
-	}
-	return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: %s", data)
 }
 
 type RequestFailureTelemetryEventOrNull struct {
@@ -27405,20 +27605,20 @@ var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrNull)(nil)
 func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = RequestFailureTelemetryEventOrNull{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
 		return err
-	}
-	if string(data) == "null" {
+	case '{':
+		var v RequestFailureTelemetryEvent
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.RequestFailureTelemetryEvent = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: expected null, object, got %v", dec.PeekKind())
 	}
-
-	var vRequestFailureTelemetryEvent RequestFailureTelemetryEvent
-	if err := json.Unmarshal(data, &vRequestFailureTelemetryEvent); err == nil {
-		o.RequestFailureTelemetryEvent = &vRequestFailureTelemetryEvent
-		return nil
-	}
-	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
 }
 
 type TextDocumentFilterLanguageOrSchemeOrPattern struct {
@@ -27495,21 +27695,24 @@ var _ json.UnmarshalerFrom = (*StringOrMarkedStringWithLanguage)(nil)
 func (o *StringOrMarkedStringWithLanguage) UnmarshalJSONFrom(dec *json.Decoder) error {
 	*o = StringOrMarkedStringWithLanguage{}
 
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
+	switch dec.PeekKind() {
+	case '"':
+		var v string
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.String = &v
 		return nil
-	}
-	var vMarkedStringWithLanguage MarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
-		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
+	case '{':
+		var v MarkedStringWithLanguage
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return err
+		}
+		o.MarkedStringWithLanguage = &v
 		return nil
+	default:
+		return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: expected string, object, got %v", dec.PeekKind())
 	}
-	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
 }
 
 type InlineValueTextOrVariableLookupOrEvaluatableExpression struct {
