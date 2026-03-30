@@ -332,7 +332,6 @@ compiler/fixingTypeParametersRepeatedly3.types.diff
 compiler/functionOverloadsOnGenericArity2.types.diff
 compiler/functionOverloadsRecursiveGenericReturnType.types.diff
 compiler/genericCallOnMemberReturningClosedOverObject.types.diff
-compiler/genericClassWithStaticFactory.types.diff
 compiler/genericCombinators2.types.diff
 compiler/genericFunctionInference1.types.diff
 compiler/genericFunctions3.types.diff
@@ -474,9 +473,6 @@ compiler/es6ImportEqualsExportModuleEs2015Error.errors.txt.diff
 compiler/importNonExportedMember5.errors.txt.diff
 compiler/importNonExportedMember7.errors.txt.diff
 compiler/importNonExportedMember11.errors.txt.diff
-
-## widening of exports ##
-compiler/dynamicImportsDeclaration.js.diff
 
 ## merging of exports and export assignments ##
 compiler/importDeclWithExportModifierAndExportAssignmentInAmbientContext.errors.txt.diff
