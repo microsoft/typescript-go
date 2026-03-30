@@ -280,6 +280,21 @@ func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration
 	}
 }
 
+func SetHarnessOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, harnessOptions *HarnessOptions, currentDirectory string) {
+	for name, value := range testConfig {
+		if name == "typescriptversion" {
+			continue
+		}
+
+		harnessOption := getHarnessOption(name)
+		if harnessOption == nil {
+			continue
+		}
+		parsedValue := getOptionValue(t, harnessOption, value, currentDirectory)
+		parseHarnessOption(t, harnessOption.Name, parsedValue, harnessOptions)
+	}
+}
+
 func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions, currentDirectory string) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {

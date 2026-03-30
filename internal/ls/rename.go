@@ -26,9 +26,29 @@ type RenameInfo struct {
 	LocalizedErrorMessage string
 	DisplayName           string
 	TriggerSpan           lsproto.Range
+	FileToRename          string
 }
 
 func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, orchestrator CrossProjectOrchestrator) (lsproto.WorkspaceEditOrNull, error) {
+	info := l.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
+	if info.CanRename && info.FileToRename != "" {
+		newPath := tspath.CombinePaths(tspath.GetDirectoryPath(info.FileToRename), params.NewName)
+		documentChanges := []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+			{
+				RenameFile: &lsproto.RenameFile{
+					Kind:   lsproto.StringLiteralRename{},
+					OldUri: lsconv.FileNameToDocumentURI(info.FileToRename),
+					NewUri: lsconv.FileNameToDocumentURI(newPath),
+				},
+			},
+		}
+		return lsproto.WorkspaceEditOrNull{
+			WorkspaceEdit: &lsproto.WorkspaceEdit{
+				DocumentChanges: &documentChanges,
+			},
+		}, nil
+	}
+
 	return handleCrossProject(
 		l,
 		ctx,
@@ -248,9 +268,10 @@ func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.
 	length := len(node.Text()) - indexAfterLastSlash
 
 	return RenameInfo{
-		CanRename:   true,
-		DisplayName: displayName,
-		TriggerSpan: l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length)),
+		CanRename:    true,
+		DisplayName:  node.Text()[indexAfterLastSlash:],
+		TriggerSpan:  l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length)),
+		FileToRename: displayName,
 	}, true
 }
 

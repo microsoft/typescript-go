@@ -150,7 +150,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		Target:              core.ScriptTargetLatestStandard,
 		Jsx:                 core.JsxEmitPreserve,
 	}
+	harnessOptions := harnessutil.HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: rootDir}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
+	harnessutil.SetHarnessOptionsFromTestConfig(t, testData.GlobalOptions, &harnessOptions, rootDir)
 	if commandLines := testData.GlobalOptions["tsc"]; commandLines != "" {
 		for commandLine := range strings.SplitSeq(commandLines, ",") {
 			tsctests.GetFileMapWithBuild(testfs, strings.Split(commandLine, " "))
@@ -159,7 +161,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	harnessutil.SkipUnsupportedCompilerOptions(t, compilerOptions)
 
-	fsFromMap := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
+	fsFromMap := vfstest.FromMap(testfs, harnessOptions.UseCaseSensitiveFileNames)
 	fs := bundled.WrapFS(fsFromMap)
 
 	serverOpts := lsp.ServerOptions{
@@ -2888,6 +2890,31 @@ func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) 
 	return totalOffset
 }
 
+func applyTextEditsToContent(content string, edits []*lsproto.TextEdit, _ *lsconv.Converters) string {
+	script := newScriptInfo("__expected__.ts", content)
+	contentConverters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
+		return script.lineMap
+	})
+	sorted := slices.Clone(edits)
+	slices.SortFunc(sorted, func(a, b *lsproto.TextEdit) int {
+		aStart := contentConverters.LineAndCharacterToPosition(script, a.Range.Start)
+		bStart := contentConverters.LineAndCharacterToPosition(script, b.Range.Start)
+		return int(aStart) - int(bStart)
+	})
+
+	var b strings.Builder
+	lastPos := 0
+	for _, edit := range sorted {
+		start := int(contentConverters.LineAndCharacterToPosition(script, edit.Range.Start))
+		end := int(contentConverters.LineAndCharacterToPosition(script, edit.Range.End))
+		b.WriteString(content[lastPos:start])
+		b.WriteString(edit.NewText)
+		lastPos = end
+	}
+	b.WriteString(content[lastPos:])
+	return b.String()
+}
+
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
 	f.baselineState(t)
 	f.replaceWorker(t, start, length, text)
@@ -3703,6 +3730,183 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 	})
 	if renameResult.WorkspaceEdit == nil || renameResult.WorkspaceEdit.Changes == nil || len(*renameResult.WorkspaceEdit.Changes) == 0 {
 		t.Fatal(prefix + "prepareRename succeeded but textDocument/rename returned no changes")
+	}
+}
+
+func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.RenameResponse {
+	t.Helper()
+	return sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  newName,
+	})
+}
+
+func (f *FourslashTest) WillRenameFiles(t *testing.T, files ...*lsproto.FileRename) lsproto.WillRenameFilesResponse {
+	t.Helper()
+	return sendRequest(t, f, lsproto.WorkspaceWillRenameFilesInfo, &lsproto.RenameFilesParams{
+		Files: files,
+	})
+}
+
+func (f *FourslashTest) VerifyWillRenameFilesEdits(t *testing.T, oldPath string, newPath string, expectedFileContents map[string]string, preferences *lsutil.UserPreferences) {
+	t.Helper()
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, preferences)()
+	}
+
+	result := f.WillRenameFiles(t, &lsproto.FileRename{
+		OldUri: string(lsconv.FileNameToDocumentURI(oldPath)),
+		NewUri: string(lsconv.FileNameToDocumentURI(newPath)),
+	})
+	if result.WorkspaceEdit == nil {
+		if len(expectedFileContents) == 0 {
+			f.renameFileOrDirectory(t, oldPath, newPath)
+			return
+		}
+		t.Fatalf("workspace/willRenameFiles returned nil workspace edit")
+	}
+
+	actualContents := map[string]string{}
+	for fileName, expectedContent := range expectedFileContents {
+		actualContents[fileName] = expectedContent
+		if script := f.getOrLoadScriptInfo(fileName); script != nil {
+			actualContents[fileName] = script.content
+		}
+	}
+	if result.WorkspaceEdit.Changes != nil {
+		for uri, edits := range *result.WorkspaceEdit.Changes {
+			fileName := uri.FileName()
+			currentContent, ok := actualContents[fileName]
+			if !ok {
+				script := f.getOrLoadScriptInfo(fileName)
+				if script == nil {
+					t.Fatalf("workspace/willRenameFiles returned edits for unknown file %s", fileName)
+				}
+				currentContent = script.content
+			}
+			actualContents[fileName] = applyTextEditsToContent(currentContent, edits, f.converters)
+		}
+	}
+
+	for fileName, expectedContent := range expectedFileContents {
+		actualContent, ok := actualContents[fileName]
+		if !ok {
+			t.Fatalf("expected content for %s, but no actual content was available", fileName)
+		}
+		assert.Equal(t, actualContent, expectedContent, fmt.Sprintf("File content after workspace/willRenameFiles edits did not match expected content for %s.", fileName))
+	}
+
+	f.renameFileOrDirectory(t, oldPath, newPath)
+}
+
+func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newPath string) {
+	t.Helper()
+
+	pathUpdater := func(path string) (string, bool) {
+		compareOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: f.vfs.UseCaseSensitiveFileNames()}
+		if tspath.ComparePaths(path, oldPath, compareOptions) == 0 {
+			return newPath, true
+		}
+		if tspath.StartsWithDirectory(path, oldPath, f.vfs.UseCaseSensitiveFileNames()) {
+			return newPath + path[len(oldPath):], true
+		}
+		return "", false
+	}
+	renamedContents := map[string]string{}
+
+	if content, ok := f.vfs.ReadFile(oldPath); ok {
+		renamedContents[oldPath] = content
+	} else {
+		walkErr := f.vfs.WalkDir(oldPath, func(path string, d vfs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() {
+				return nil
+			}
+			content, ok := f.vfs.ReadFile(path)
+			if !ok {
+				return fmt.Errorf("file %s disappeared during rename walk", path)
+			}
+			renamedContents[path] = content
+			return nil
+		})
+		if walkErr != nil {
+			t.Fatalf("failed to collect files for rename %s -> %s: %v", oldPath, newPath, walkErr)
+		}
+	}
+
+	if len(renamedContents) == 0 {
+		t.Fatalf("rename source %s did not exist in test environment", oldPath)
+	}
+
+	wasOpen := map[string]bool{}
+	for oldFileName := range renamedContents {
+		if _, ok := f.openFiles[oldFileName]; ok {
+			wasOpen[oldFileName] = true
+			sendNotification(t, f, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(oldFileName),
+				},
+			})
+			delete(f.openFiles, oldFileName)
+		}
+		delete(f.scriptInfos, oldFileName)
+	}
+
+	changes := make([]*lsproto.FileEvent, 0, len(renamedContents)*2)
+	for oldFileName, content := range renamedContents {
+		newFileName, ok := pathUpdater(oldFileName)
+		if !ok {
+			t.Fatalf("failed to compute renamed path for %s", oldFileName)
+		}
+		if err := f.vfs.WriteFile(newFileName, content); err != nil {
+			t.Fatalf("failed to write renamed file %s: %v", newFileName, err)
+		}
+		f.scriptInfos[newFileName] = newScriptInfo(newFileName, content)
+		changes = append(changes, &lsproto.FileEvent{
+			Uri:  lsconv.FileNameToDocumentURI(oldFileName),
+			Type: lsproto.FileChangeTypeDeleted,
+		})
+		changes = append(changes, &lsproto.FileEvent{
+			Uri:  lsconv.FileNameToDocumentURI(newFileName),
+			Type: lsproto.FileChangeTypeCreated,
+		})
+	}
+
+	if err := f.vfs.Remove(oldPath); err != nil {
+		t.Fatalf("failed to remove old path %s: %v", oldPath, err)
+	}
+
+	sendNotification(t, f, lsproto.WorkspaceDidChangeWatchedFilesInfo, &lsproto.DidChangeWatchedFilesParams{
+		Changes: changes,
+	})
+
+	for oldFileName := range wasOpen {
+		newFileName, ok := pathUpdater(oldFileName)
+		if !ok {
+			t.Fatalf("failed to compute reopened path for %s", oldFileName)
+		}
+		script := f.getScriptInfo(newFileName)
+		if script == nil {
+			t.Fatalf("missing script info for reopened file %s", newFileName)
+		}
+		f.activeFilename = newFileName
+		sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{
+				Uri:        lsconv.FileNameToDocumentURI(newFileName),
+				LanguageId: getLanguageKind(newFileName),
+				Text:       script.content,
+			},
+		})
+		f.openFiles[newFileName] = struct{}{}
+	}
+
+	if updatedActive, ok := pathUpdater(f.activeFilename); ok {
+		f.activeFilename = updatedActive
 	}
 }
 

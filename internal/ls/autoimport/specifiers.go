@@ -19,7 +19,17 @@ func (v *View) GetModuleSpecifier(
 		return string(export.ModuleID), modulespecifiers.ResultKindAmbient
 	}
 
-	if export.PackageName != "" {
+	moduleFileName := export.ModuleFileName
+	isSymlinkedPackageExport := false
+	if export.PackageName != "" && moduleFileName != "" {
+		realModuleFileName := v.program.Host().FS().Realpath(moduleFileName)
+		isSymlinkedPackageExport = realModuleFileName != "" && realModuleFileName != moduleFileName
+		if isSymlinkedPackageExport {
+			moduleFileName = realModuleFileName
+		}
+	}
+
+	if export.PackageName != "" && !isSymlinkedPackageExport {
 		if entrypoints, ok := v.registry.entrypoints[export.Path]; ok {
 			for _, entrypoint := range entrypoints {
 				if entrypoint.IncludeConditions.IsSubsetOf(v.conditions) && !v.conditions.Intersects(entrypoint.ExcludeConditions) {
@@ -53,7 +63,7 @@ func (v *View) GetModuleSpecifier(
 
 	specifiers, kind := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
 		v.importingFile,
-		export.ModuleFileName,
+		moduleFileName,
 		v.program.Options(),
 		v.program,
 		userPreferences,

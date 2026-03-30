@@ -105,19 +105,85 @@ function parseFileContent(filename: string, content: string): GoTest {
     console.error(`Parsing file: ${filename}`);
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
-    const goTest: GoTest = {
-        name: filename.replace(".tsx", "").replace(".ts", "").replace(".", ""),
-        content: getTestInput(content),
-        commands: [],
-    };
+    const commands: Cmd[] = [];
     for (const statement of statements) {
         const result = parseFourslashStatement(statement);
-        goTest.commands.push(...result);
+        commands.push(...result);
     }
+
+    // File-rename tests from old TS sometimes rely on legacy `baseUrl`-driven
+    // non-relative specifiers. The current compiler intentionally removes
+    // `baseUrl` resolution, so for this narrow converted test family we rewrite
+    // those fixtures to equivalent `paths`-based configs instead of preserving
+    // the legacy option in generated tests.
+    const rewrittenContent = commands.some(command => command.kind === "verifyGetEditsForFileRename")
+        ? rewriteLegacyBaseUrlInRenameTestContent(content)
+        : content;
+    const finalContent = filename === "getEditsForFileRename_caseInsensitive.ts"
+        ? `// @useCaseSensitiveFileNames: false\n${rewrittenContent}`
+        : rewrittenContent;
+
+    const goTest: GoTest = {
+        name: filename.replace(".tsx", "").replace(".ts", "").replace(".", ""),
+        content: getTestInput(finalContent),
+        commands,
+    };
     if (goTest.commands.length === 0) {
         throw new Error(`No commands parsed in file: ${filename}`);
     }
     return goTest;
+}
+
+function rewriteLegacyBaseUrlInRenameTestContent(content: string): string {
+    const lines = content.split("\n");
+    const rewritten: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        rewritten.push(line);
+
+        const match = line.match(/^\/\/\s*@Filename:\s*(.+)$/);
+        if (!match || !match[1].trim().endsWith("tsconfig.json")) {
+            continue;
+        }
+
+        const jsonLines: string[] = [];
+        let j = i + 1;
+        while (j < lines.length && lines[j].startsWith("////")) {
+            jsonLines.push(lines[j].slice(4));
+            j++;
+        }
+        if (jsonLines.length === 0) {
+            continue;
+        }
+
+        const rewrittenJson = rewriteLegacyBaseUrlJson(jsonLines.join("\n"));
+        rewritten.push(...rewrittenJson.split("\n").map(part => `////${part}`));
+        i = j - 1;
+    }
+
+    return rewritten.join("\n");
+}
+
+function rewriteLegacyBaseUrlJson(jsonText: string): string {
+    let parsed: any;
+    try {
+        parsed = JSON.parse(jsonText);
+    }
+    catch {
+        return jsonText;
+    }
+
+    const compilerOptions = parsed?.compilerOptions;
+    if (!compilerOptions || typeof compilerOptions !== "object" || typeof compilerOptions.baseUrl !== "string" || compilerOptions.paths !== undefined) {
+        return jsonText;
+    }
+
+    const baseUrl = compilerOptions.baseUrl;
+    const wildcardTarget = baseUrl === "." ? "*" : `${baseUrl.replace(/\/$/, "")}/*`;
+    delete compilerOptions.baseUrl;
+    compilerOptions.paths = { "*": [wildcardTarget] };
+    return JSON.stringify(parsed);
 }
 
 function getTestInput(content: string): string {
@@ -272,6 +338,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] {
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
+                case "getEditsForFileRename":
+                    return parseGetEditsForFileRename(callExpression.arguments);
                 case "getSemanticDiagnostics":
                 case "getSuggestionDiagnostics":
                 case "getSyntacticDiagnostics":
@@ -1361,6 +1429,86 @@ function parseRenameInfo(funcName: "renameInfoSucceeded" | "renameInfoFailed", a
         preferences = parsedPreferences;
     }
     return [{ kind: funcName, preferences }];
+}
+
+function parseGetEditsForFileRename(args: readonly ts.Expression[]): [VerifyGetEditsForFileRenameCmd] {
+    if (args.length !== 1 || !ts.isObjectLiteralExpression(args[0])) {
+        throw new Error(`Expected a single object literal argument in verify.getEditsForFileRename, got ${args.map(arg => arg.getText()).join(", ")}`);
+    }
+
+    let oldPath: string | undefined;
+    let newPath: string | undefined;
+    let newFileContents = "map[string]string{}";
+    let preferences = "nil /*preferences*/";
+
+    for (const prop of args[0].properties) {
+        if (!ts.isPropertyAssignment(prop)) {
+            continue;
+        }
+        const name = prop.name.getText();
+        switch (name) {
+            case "oldPath": {
+                const value = getStringLiteralLike(prop.initializer);
+                if (!value) {
+                    throw new Error(`Expected string literal for oldPath, got ${prop.initializer.getText()}`);
+                }
+                oldPath = getGoStringLiteral(value.text);
+                break;
+            }
+            case "newPath": {
+                const value = getStringLiteralLike(prop.initializer);
+                if (!value) {
+                    throw new Error(`Expected string literal for newPath, got ${prop.initializer.getText()}`);
+                }
+                newPath = getGoStringLiteral(value.text);
+                break;
+            }
+            case "newFileContents": {
+                const obj = getObjectLiteralExpression(prop.initializer);
+                if (!obj) {
+                    throw new Error(`Expected object literal for newFileContents, got ${prop.initializer.getText()}`);
+                }
+                const entries: string[] = [];
+                for (const entry of obj.properties) {
+                    if (!ts.isPropertyAssignment(entry)) {
+                        continue;
+                    }
+                    const key = getStringLiteralLike(entry.name);
+                    const value = getStringLiteralLike(entry.initializer);
+                    if (!key || !value) {
+                        throw new Error(`Expected string literal key/value in newFileContents, got ${entry.getText()}`);
+                    }
+                    const rewrittenValue = key.text.endsWith("tsconfig.json")
+                        ? rewriteLegacyBaseUrlJson(value.text)
+                        : value.text;
+                    entries.push(`${getGoStringLiteral(key.text)}: ${getGoMultiLineStringLiteral(rewrittenValue)}`);
+                }
+                newFileContents = entries.length === 0
+                    ? "map[string]string{}"
+                    : `map[string]string{\n${entries.join(",\n")},\n}`;
+                break;
+            }
+            case "preferences": {
+                if (!ts.isObjectLiteralExpression(prop.initializer)) {
+                    throw new Error(`Expected object literal for preferences, got ${prop.initializer.getText()}`);
+                }
+                preferences = parseUserPreferences(prop.initializer);
+                break;
+            }
+        }
+    }
+
+    if (!oldPath || !newPath) {
+        throw new Error(`Expected oldPath and newPath in verify.getEditsForFileRename`);
+    }
+
+    return [{
+        kind: "verifyGetEditsForFileRename",
+        oldPath,
+        newPath,
+        newFileContents,
+        preferences,
+    }];
 }
 
 function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[]): [VerifyBaselineRenameCmd] {
@@ -3080,6 +3228,14 @@ interface VerifyRenameInfoCmd {
     preferences: string;
 }
 
+interface VerifyGetEditsForFileRenameCmd {
+    kind: "verifyGetEditsForFileRename";
+    oldPath: string;
+    newPath: string;
+    newFileContents: string;
+    preferences: string;
+}
+
 interface VerifyBaselineLinkedEditingCmd {
     kind: "verifyBaselineLinkedEditing";
 }
@@ -3213,6 +3369,7 @@ type Cmd =
     | VerifyOrganizeImportsCmd
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
+    | VerifyGetEditsForFileRenameCmd
     | VerifyBaselineLinkedEditingCmd
     | VerifyLinkedEditingCmd
     | VerifyNavToCmd
@@ -3534,6 +3691,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
         case "renameInfoFailed":
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
+        case "verifyGetEditsForFileRename":
+            return `f.VerifyWillRenameFilesEdits(t, ${cmd.oldPath}, ${cmd.newPath}, ${cmd.newFileContents}, ${cmd.preferences})`;
         case "verifyBaselineInlayHints":
             return generateBaselineInlayHints(cmd);
         case "verifyBaselineLinkedEditing":

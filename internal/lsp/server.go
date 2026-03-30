@@ -73,6 +73,14 @@ func NewServer(opts *ServerOptions) *Server {
 }
 
 var (
+	fileRenameFilters = []*lsproto.FileOperationFilter{
+		{
+			Scheme: new("file"),
+			Pattern: &lsproto.FileOperationPattern{
+				Glob: "**/*",
+			},
+		},
+	}
 	_ ata.NpmExecutor = (*Server)(nil)
 	_ project.Client  = (*Server)(nil)
 )
@@ -671,6 +679,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
 	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
 	registerNotificationHandler(handlers, lsproto.SetTraceInfo, (*Server).handleSetTrace)
+	registerRequestHandler(handlers, lsproto.WorkspaceWillRenameFilesInfo, (*Server).handleWillRenameFiles)
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
@@ -1054,6 +1063,13 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
+			Workspace: &lsproto.WorkspaceOptions{
+				FileOperations: &lsproto.FileOperationOptions{
+					WillRename: &lsproto.FileOperationRegistrationOptions{
+						Filters: fileRenameFilters,
+					},
+				},
+			},
 		},
 	}
 
@@ -1218,6 +1234,50 @@ func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.La
 		PrepareRenamePlaceholder: &lsproto.PrepareRenamePlaceholder{
 			Range:       info.TriggerSpan,
 			Placeholder: info.DisplayName,
+		},
+	}, nil
+}
+
+func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams, _ *lsproto.RequestMessage) (lsproto.WillRenameFilesResponse, error) {
+	if params == nil || len(params.Files) == 0 {
+		return lsproto.WillRenameFilesResponse{}, nil
+	}
+
+	uris := make([]lsproto.DocumentUri, 0, len(params.Files)*2)
+	for _, file := range params.Files {
+		uris = append(uris, lsproto.DocumentUri(file.OldUri), lsproto.DocumentUri(file.NewUri))
+	}
+
+	services := s.session.GetLanguageServicesForDocuments(ctx, uris)
+	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	seen := make(map[lsproto.DocumentUri]map[lsproto.Range]string)
+
+	for _, languageService := range services {
+		for _, file := range params.Files {
+			for uri, edits := range languageService.GetEditsForFileRename(ctx, lsproto.DocumentUri(file.OldUri), lsproto.DocumentUri(file.NewUri)) {
+				seenForURI, ok := seen[uri]
+				if !ok {
+					seenForURI = map[lsproto.Range]string{}
+					seen[uri] = seenForURI
+				}
+				for _, edit := range edits {
+					if newText, ok := seenForURI[edit.Range]; ok && newText == edit.NewText {
+						continue
+					}
+					seenForURI[edit.Range] = edit.NewText
+					combined[uri] = append(combined[uri], edit)
+				}
+			}
+		}
+	}
+
+	if len(combined) == 0 {
+		return lsproto.WillRenameFilesResponse{}, nil
+	}
+
+	return lsproto.WillRenameFilesResponse{
+		WorkspaceEdit: &lsproto.WorkspaceEdit{
+			Changes: &combined,
 		},
 	}, nil
 }
