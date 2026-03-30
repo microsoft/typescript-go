@@ -1579,20 +1579,6 @@ function generateCode() {
             writeLine(`}`);
             writeLine("");
 
-            // Method() on RegisterOptions
-            writeLine(`// Method returns the LSP method string for the set registration option.`);
-            writeLine(`func (o *RegisterOptions) Method() Method {`);
-            writeLine(`\tswitch {`);
-            for (const reg of registrationMethods) {
-                writeLine(`\tcase o.${reg.fieldName} != nil:`);
-                writeLine(`\t\treturn Method${reg.fieldName}`);
-            }
-            writeLine(`\tdefault:`);
-            writeLine(`\t\tpanic("no RegisterOptions field is set")`);
-            writeLine(`\t}`);
-            writeLine(`}`);
-            writeLine("");
-
             // MarshalJSONTo for Registration
             writeLine(`var _ json.MarshalerTo = (*Registration)(nil)`);
             writeLine("");
