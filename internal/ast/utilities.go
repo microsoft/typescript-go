@@ -1164,20 +1164,40 @@ func IsFunctionExpressionOrArrowFunction(node *Node) bool {
 
 // Warning: This has the same semantics as the forEach family of functions in that traversal terminates
 // in the event that 'visitor' returns true.
-func ForEachReturnStatement(body *Node, visitor func(stmt *Node) bool) bool {
-	var traverse func(*Node) bool
-	traverse = func(node *Node) bool {
+var forEachReturnStatementPool = sync.Pool{
+	New: func() any {
+		return newForEachReturnStatementTraverser()
+	},
+}
+
+func newForEachReturnStatementTraverser() *forEachReturnStatementState {
+	state := &forEachReturnStatementState{}
+	state.traverse = func(node *Node) bool {
 		switch node.Kind {
 		case KindReturnStatement:
-			return visitor(node)
+			return state.visitor(node)
 		case KindCaseBlock, KindBlock, KindIfStatement, KindDoStatement, KindWhileStatement, KindForStatement, KindForInStatement,
 			KindForOfStatement, KindWithStatement, KindSwitchStatement, KindCaseClause, KindDefaultClause, KindLabeledStatement,
 			KindTryStatement, KindCatchClause:
-			return node.ForEachChild(traverse)
+			return node.ForEachChild(state.traverse)
 		}
 		return false
 	}
-	return traverse(body)
+	return state
+}
+
+type forEachReturnStatementState struct {
+	visitor  func(stmt *Node) bool
+	traverse func(*Node) bool
+}
+
+func ForEachReturnStatement(body *Node, visitor func(stmt *Node) bool) bool {
+	state := forEachReturnStatementPool.Get().(*forEachReturnStatementState)
+	state.visitor = visitor
+	result := state.traverse(body)
+	state.visitor = nil
+	forEachReturnStatementPool.Put(state)
+	return result
 }
 
 func GetRootDeclaration(node *Node) *Node {
