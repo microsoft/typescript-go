@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"runtime/pprof"
+	runtimepprof "runtime/pprof"
 	"sync"
 	"time"
 )
@@ -18,6 +18,9 @@ type ProfileSession struct {
 	cpuFile     *os.File
 	logWriter   io.Writer
 }
+
+// startCPUProfile is a test seam for simulating runtime/pprof startup failures.
+var startCPUProfile = runtimepprof.StartCPUProfile
 
 // BeginProfiling starts CPU and memory profiling, writing the profiles to the specified directory.
 func BeginProfiling(profileDir string, logWriter io.Writer) *ProfileSession {
@@ -34,7 +37,9 @@ func BeginProfiling(profileDir string, logWriter io.Writer) *ProfileSession {
 		panic(err)
 	}
 
-	if err := pprof.StartCPUProfile(cpuFile); err != nil {
+	if err := startCPUProfile(cpuFile); err != nil {
+		cpuFile.Close()
+		os.Remove(cpuProfilePath)
 		panic(err)
 	}
 
@@ -47,7 +52,7 @@ func BeginProfiling(profileDir string, logWriter io.Writer) *ProfileSession {
 }
 
 func (p *ProfileSession) Stop() {
-	pprof.StopCPUProfile()
+	runtimepprof.StopCPUProfile()
 	p.cpuFile.Close()
 
 	if p.memFilePath != "" {
@@ -55,7 +60,7 @@ func (p *ProfileSession) Stop() {
 		if err != nil {
 			panic(err)
 		}
-		if err := pprof.Lookup("allocs").WriteTo(memFile, 0); err != nil {
+		if err := runtimepprof.Lookup("allocs").WriteTo(memFile, 0); err != nil {
 			panic(err)
 		}
 		memFile.Close()
@@ -90,7 +95,7 @@ func (c *CPUProfiler) StartCPUProfile(profileDir string) error {
 		return fmt.Errorf("failed to create CPU profile file: %w", err)
 	}
 
-	if err := pprof.StartCPUProfile(cpuFile); err != nil {
+	if err := startCPUProfile(cpuFile); err != nil {
 		cpuFile.Close()
 		os.Remove(cpuProfilePath)
 		return fmt.Errorf("failed to start CPU profile: %w", err)
@@ -134,7 +139,7 @@ func SaveHeapProfile(profileDir string) (string, error) {
 	defer heapFile.Close()
 
 	runtime.GC()
-	if err := pprof.Lookup("heap").WriteTo(heapFile, 0); err != nil {
+	if err := runtimepprof.Lookup("heap").WriteTo(heapFile, 0); err != nil {
 		os.Remove(heapProfilePath)
 		return "", fmt.Errorf("failed to write heap profile: %w", err)
 	}
@@ -155,7 +160,7 @@ func SaveAllocProfile(profileDir string) (string, error) {
 	}
 	defer allocFile.Close()
 
-	if err := pprof.Lookup("allocs").WriteTo(allocFile, 0); err != nil {
+	if err := runtimepprof.Lookup("allocs").WriteTo(allocFile, 0); err != nil {
 		os.Remove(allocProfilePath)
 		return "", fmt.Errorf("failed to write alloc profile: %w", err)
 	}
