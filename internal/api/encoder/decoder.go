@@ -1355,6 +1355,14 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindImportKeyword:
 		return d.factory.NewKeywordExpression(kind), nil
 
+	// Specific empty nodes
+	case ast.KindThisType:
+		return d.factory.NewThisTypeNode(), nil
+	case ast.KindEmptyStatement:
+		return d.factory.NewEmptyStatement(), nil
+	case ast.KindDebuggerStatement:
+		return d.factory.NewDebuggerStatement(), nil
+
 	// JSX fragment tokens (must be their own types, not Token, for the printer)
 	case ast.KindJsxOpeningFragment:
 		return d.factory.NewJsxOpeningFragment(), nil
