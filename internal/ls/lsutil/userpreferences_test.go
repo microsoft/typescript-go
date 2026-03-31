@@ -62,27 +62,26 @@ func getValidStringValue(t reflect.Type) string {
 func TestUserPreferencesRoundtrip(t *testing.T) {
 	t.Parallel()
 
-	original := &UserPreferences{}
-	fillNonZeroValues(reflect.ValueOf(original).Elem())
+	var original UserPreferences
+	fillNonZeroValues(reflect.ValueOf(&original).Elem())
 
-	jsonBytes, err := json.Marshal(original)
+	jsonBytes, err := json.Marshal(&original)
 	assert.NilError(t, err)
 
 	t.Run("UnmarshalJSONFrom", func(t *testing.T) {
 		t.Parallel()
-		parsed := &UserPreferences{}
-		err2 := json.Unmarshal(jsonBytes, parsed)
+		var parsed UserPreferences
+		err2 := json.Unmarshal(jsonBytes, &parsed)
 		assert.NilError(t, err2)
 		assert.DeepEqual(t, original, parsed)
 	})
 
-	t.Run("parseWorker", func(t *testing.T) {
+	t.Run("withConfig", func(t *testing.T) {
 		t.Parallel()
 		var config map[string]any
 		err2 := json.Unmarshal(jsonBytes, &config)
 		assert.NilError(t, err2)
-		parsed := &UserPreferences{}
-		parsed.parseWorker(config)
+		parsed := UserPreferences{}.withConfig(config)
 		assert.DeepEqual(t, original, parsed)
 	})
 }
@@ -172,7 +171,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 	tests := []struct {
 		name     string
 		json     string
-		expected *UserPreferences
+		expected UserPreferences
 	}{
 		{
 			name: "unstable fields with correct casing",
@@ -183,7 +182,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"allowRenameOfImportPath": true
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				DisableSuggestions:      core.TSTrue,
 				MaximumHoverLength:      100,
 				AllowRenameOfImportPath: core.TSTrue,
@@ -197,7 +196,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"useAliasesForRenames": true
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				QuotePreference:     QuotePreferenceSingle,
 				UseAliasesForRename: core.TSTrue,
 			},
@@ -210,7 +209,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"includeCompletionsForImportStatements": true
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				IncludeCompletionsForModuleExports:    core.TSFalse,
 				IncludeCompletionsForImportStatements: core.TSTrue,
 			},
@@ -225,7 +224,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					}
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				InlayHints: InlayHintsPreferences{
 					IncludeInlayParameterNameHints:                        IncludeInlayParameterNameHintsAll,
 					IncludeInlayParameterNameHintsWhenArgumentMatchesName: core.TSFalse, // inverted
@@ -245,7 +244,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"excludeLibrarySymbols": true
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				DisplayPartsForJSDoc:            core.TSTrue,
 				ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
 				ExcludeLibrarySymbolsInNavTo:    core.TSTrue,
@@ -261,7 +260,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"quoteStyle": "single"
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				QuotePreference: QuotePreferenceSingle, // stable wins
 			},
 		},
@@ -272,7 +271,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"includeAutomaticOptionalChainCompletions": false
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				IncludeAutomaticOptionalChainCompletions: core.TSFalse,
 			},
 		},
@@ -285,7 +284,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"excludeLibrarySymbolsInNavTo": true
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				QuotePreference:                    QuotePreferenceDouble,
 				IncludeCompletionsForModuleExports: core.TSTrue,
 				ExcludeLibrarySymbolsInNavTo:       core.TSTrue,
@@ -302,7 +301,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"organizeImportsLocale": "en"
 				}
 			}`,
-			expected: &UserPreferences{
+			expected: UserPreferences{
 				IncludeCompletionsForModuleExports: core.TSTrue,
 				QuotePreference:                    QuotePreferenceSingle,
 				UseAliasesForRename:                core.TSTrue,
@@ -321,8 +320,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			err := json.Unmarshal([]byte(tt.json), &config)
 			assert.NilError(t, err)
 
-			parsed := &UserPreferences{}
-			parsed.parseWorker(config)
+			parsed := UserPreferences{}.withConfig(config)
 
 			assert.DeepEqual(t, tt.expected, parsed)
 		})

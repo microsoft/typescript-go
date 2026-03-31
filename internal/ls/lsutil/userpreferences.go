@@ -523,8 +523,8 @@ func setNestedValue(config map[string]any, path string, value any) {
 	current[parts[len(parts)-1]] = value
 }
 
-func (p *UserPreferences) parseWorker(config map[string]any) *UserPreferences {
-	v := reflect.ValueOf(p).Elem()
+func (p UserPreferences) withConfig(config map[string]any) UserPreferences {
+	v := reflect.ValueOf(&p).Elem()
 	infos := fieldInfoCache()
 
 	// Process "unstable" section first - allows any field to be set by raw name.
@@ -692,8 +692,7 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return err
 	}
 	// Start with defaults, then overlay parsed values
-	*p = DefaultUserPreferences
-	p.parseWorker(config)
+	*p = DefaultUserPreferences.withConfig(config)
 	return nil
 }
 
@@ -743,13 +742,13 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	// then overlay js/ts settings which take precedence.
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
-			prefs.parseWorker(map[string]any{"unstable": editorSettings})
+			prefs = prefs.withConfig(map[string]any{"unstable": editorSettings})
 		}
 	}
 	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
 		switch jsTsSettings := jsTsItem.(type) {
 		case map[string]any:
-			prefs.parseWorker(jsTsSettings)
+			prefs = prefs.withConfig(jsTsSettings)
 		case UserPreferences:
 			prefs = prefs.WithOverrides(jsTsSettings)
 		}
