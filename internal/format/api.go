@@ -30,15 +30,15 @@ const (
 )
 
 func WithFormatCodeSettings(ctx context.Context, options lsutil.FormatCodeSettings, newLine string) context.Context {
-	ctx = context.WithValue(ctx, formatOptionsKey, &options)
+	ctx = context.WithValue(ctx, formatOptionsKey, options)
 	ctx = context.WithValue(ctx, formatNewlineKey, newLine)
 	// In strada, the rules map was both globally cached *and* cached into the context, for some reason. We skip that here and just use the global one.
 	return ctx
 }
 
 func GetFormatCodeSettingsFromContext(ctx context.Context) lsutil.FormatCodeSettings {
-	if opt, ok := ctx.Value(formatOptionsKey).(*lsutil.FormatCodeSettings); ok && opt != nil {
-		return *opt
+	if opt := ctx.Value(formatOptionsKey); opt != nil {
+		return opt.(lsutil.FormatCodeSettings)
 	}
 	return lsutil.GetDefaultFormatCodeSettings()
 }
