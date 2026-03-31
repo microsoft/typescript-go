@@ -165,12 +165,6 @@
                 "title": "Remove Unused Imports",
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "TypeScript Native Preview"
-            },
-            {
-                "command": "typescript.native-preview.organizeImports",
-                "title": "Organize Imports",
-                "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
             }
         ]
     },

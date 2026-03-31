@@ -253,9 +253,6 @@ class Session implements vscode.Disposable {
             });
         }));
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.organizeImports", async () => {
-            await vscode.commands.executeCommand("editor.action.organizeImports");
-        }));
     }
 
     async dispose(): Promise<void> {
