@@ -93,6 +93,7 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly strin
     [SyntaxKind.TaggedTemplateExpression]: ["tag", "questionDotToken", "typeArguments", "template"],
     [SyntaxKind.PropertyAssignment]: ["modifiers", "name", "postfixToken", "initializer"],
     [SyntaxKind.ShorthandPropertyAssignment]: ["modifiers", "name", "postfixToken", "equalsToken", "objectAssignmentInitializer"],
+    // SpreadAssignment has a bogus `name` inherited from `ObjectLiteralElement` which breaks generateFactory unless treated as multi-child
     [SyntaxKind.SpreadAssignment]: ["expression"],
     [SyntaxKind.TypeAssertionExpression]: ["type", "expression"],
     [SyntaxKind.ConditionalType]: ["checkType", "extendsType", "trueType", "falseType"],

@@ -736,6 +736,9 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindShorthandPropertyAssignment:
 		n := node.AsShorthandPropertyAssignment()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.PostfixToken != nil) << 2) | (boolToByte(n.EqualsToken != nil) << 3) | (boolToByte(n.ObjectAssignmentInitializer != nil) << 4)
+	case ast.KindSpreadAssignment:
+		n := node.AsSpreadAssignment()
+		return boolToByte(n.Expression != nil)
 	case ast.KindTypeAssertionExpression:
 		n := node.AsTypeAssertion()
 		return (boolToByte(n.Type != nil) << 0) | (boolToByte(n.Expression != nil) << 1)

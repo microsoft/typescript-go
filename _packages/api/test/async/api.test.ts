@@ -2273,6 +2273,32 @@ test("TypeOperator operator kind", async () => {
     }
 });
 
+test("SpreadAssignment roundtrip", async () => {
+    const api = spawnAPI({
+        "/tsconfig.json": "{}",
+        "/src/index.ts": `var thing = { ...other };\n`,
+    });
+    try {
+        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = await project.program.getSourceFile("/src/index.ts");
+        assert(sourceFile);
+        const stmt = sourceFile.statements[0] as import("@typescript/ast").VariableStatement;
+        const object = stmt.declarationList.declarations[0].initializer as import("@typescript/ast").ObjectLiteralExpression;
+        const assignment = object.properties[0] as import("@typescript/ast").SpreadAssignment;
+        assert(assignment);
+        assert.equal(assignment.kind, SyntaxKind.SpreadAssignment);
+        const expr = assignment.expression;
+        assert(expr);
+        assert.equal(expr.kind, SyntaxKind.Identifier);
+        const printed = await project.emitter.printNode(sourceFile);
+        assert.equal(sourceFile.text, printed);
+    }
+    finally {
+        await api.close();
+    }
+});
+
 function extractSourceWords(source: string) {
     return Array.from(
         source
