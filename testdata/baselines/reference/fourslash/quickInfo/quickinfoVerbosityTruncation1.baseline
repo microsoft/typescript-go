@@ -28,7 +28,16 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj1: { someLongPropertyName1: Str; someLongPropertyName2: FooType; someLongPropertyName3: Sym; someLongPropertyName4: BarType; someLongPropertyName5: Str; someLongPropertyName6: FooType; ... 11 more ...; someLongMethodName2(a: FooType, b: BarType): Sym; }
+// | const obj1: {
+// |     someLongPropertyName1: Str;
+// |     someLongPropertyName2: FooType;
+// |     someLongPropertyName3: Sym;
+// |     someLongPropertyName4: BarType;
+// |     someLongPropertyName5: Str;
+// |     someLongPropertyName6: FooType;
+// |     ... 11 more ...;
+// |     someLongMethodName2(a: FooType, b: BarType): Sym;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -87,7 +96,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj1: { someLongPropertyName1: Str; someLongPropertyName2: FooType; someLongPropertyName3: Sym; someLongPropertyName4: BarType; someLongPropertyName5: Str; someLongPropertyName6: FooType; ... 11 more ...; someLongMethodName2(a: FooType, b: BarType): Sym; }\n```\n"
+          "value": "```tsx\nconst obj1: {\n    someLongPropertyName1: Str;\n    someLongPropertyName2: FooType;\n    someLongPropertyName3: Sym;\n    someLongPropertyName4: BarType;\n    someLongPropertyName5: Str;\n    someLongPropertyName6: FooType;\n    ... 11 more ...;\n    someLongMethodName2(a: FooType, b: BarType): Sym;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -99,6 +108,7 @@
             "character": 10
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1

@@ -9,7 +9,9 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const a: { prop1: string; }
+// | const a: {
+// |     prop1: string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -29,7 +31,12 @@
 //                      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type SomeType2 = { prop2: number; prop3: SomeType; }
+// | type SomeType2 = {
+// |     prop2: number;
+// |     prop3: {
+// |         prop1: string;
+// |     };
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -37,7 +44,10 @@
 //                      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type SomeType2 = { prop2: number; prop3: SomeType; }
+// | type SomeType2 = {
+// |     prop2: number;
+// |     prop3: SomeType;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -51,7 +61,9 @@
 //                   ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) s: { prop1: string; }
+// | (parameter) s: {
+// |     prop1: string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -71,7 +83,7 @@
 //          ^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function someFun(a: SomeType): SomeType
+// | function someFun(a: { prop1: string; }): { prop1: string; }
 // | ```
 // | 
 // | 
@@ -99,7 +111,12 @@
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class SomeClass {    b: SomeType2;}
+// | class SomeClass {
+// |     b: {
+// |         prop2: number;
+// |         prop3: SomeType;
+// |     };
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -107,7 +124,9 @@
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class SomeClass {    b: SomeType2;}
+// | class SomeClass {
+// |     b: SomeType2;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -169,7 +188,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst a: { prop1: string; }\n```\n"
+          "value": "```tsx\nconst a: {\n    prop1: string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -200,7 +219,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype SomeType2 = { prop2: number; prop3: SomeType; }\n```\n"
+          "value": "```tsx\ntype SomeType2 = {\n    prop2: number;\n    prop3: SomeType;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -211,7 +230,8 @@
             "line": 9,
             "character": 30
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -230,7 +250,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype SomeType2 = { prop2: number; prop3: SomeType; }\n```\n"
+          "value": "```tsx\ntype SomeType2 = {\n    prop2: number;\n    prop3: {\n        prop1: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -292,7 +312,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) s: { prop1: string; }\n```\n"
+          "value": "```tsx\n(parameter) s: {\n    prop1: string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -334,7 +354,8 @@
             "line": 19,
             "character": 16
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -353,7 +374,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction someFun(a: SomeType): SomeType\n```\n\n\n*@param* `a`\n\n*@returns*"
+          "value": "```tsx\nfunction someFun(a: { prop1: string; }): { prop1: string; }\n```\n\n\n*@param* `a`\n\n*@returns*"
         },
         "range": {
           "start": {
@@ -415,7 +436,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass SomeClass {    b: SomeType2;}\n```\n"
+          "value": "```tsx\nclass SomeClass {\n    b: SomeType2;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -427,6 +448,7 @@
             "character": 15
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -446,7 +468,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass SomeClass {    b: SomeType2;}\n```\n"
+          "value": "```tsx\nclass SomeClass {\n    b: {\n        prop2: number;\n        prop3: SomeType;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -458,6 +480,7 @@
             "character": 15
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 2

@@ -11,7 +11,9 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends { color: string; } ? "one apple" : string | bigint
+// | (parameter) x: T extends {
+// |     color: string;
+// | } ? "one apple" : string | bigint
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -19,7 +21,9 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends { color: string; } ? "one apple" : StrInt
+// | (parameter) x: T extends {
+// |     color: string;
+// | } ? "one apple" : StrInt
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -79,7 +83,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends { color: string; } ? \"one apple\" : StrInt\n```\n"
+          "value": "```tsx\n(parameter) x: T extends {\n    color: string;\n} ? \"one apple\" : StrInt\n```\n"
         },
         "range": {
           "start": {
@@ -111,7 +115,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends { color: string; } ? \"one apple\" : string | bigint\n```\n"
+          "value": "```tsx\n(parameter) x: T extends {\n    color: string;\n} ? \"one apple\" : string | bigint\n```\n"
         },
         "range": {
           "start": {

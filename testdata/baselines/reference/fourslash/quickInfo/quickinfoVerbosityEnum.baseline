@@ -5,7 +5,11 @@
 //      ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | enum Color {    Red,    Green,    Blue}
+// | enum Color {
+// |     Red = 0,
+// |     Green = 1,
+// |     Blue = 2
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -26,7 +30,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const x: Color
+// | const x: Color.Red | Color.Green | Color.Blue
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -43,7 +47,10 @@
 //            ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const enum Direction {    Up,    Down}
+// | const enum Direction {
+// |     Up = 0,
+// |     Down = 1
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -63,7 +70,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const y: Direction
+// | const y: Direction.Up | Direction.Down
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -80,7 +87,12 @@
 //      ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | enum Flags {    None = 0,    IsDirectory = 1 << 0,    IsFile = 1 << 1,    IsSymlink = 1 << 2}
+// | enum Flags {
+// |     None = 0,
+// |     IsDirectory = 1 << 0,
+// |     IsFile = 1 << 1,
+// |     IsSymlink = 1 << 2
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -104,7 +116,9 @@
 //          ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (alias) enum Color {    Red = "red"}
+// | (alias) enum Color {
+// |     Red = "red"
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -165,7 +179,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nenum Color {    Red,    Green,    Blue}\n```\n"
+          "value": "```tsx\nenum Color {\n    Red = 0,\n    Green = 1,\n    Blue = 2\n}\n```\n"
         },
         "range": {
           "start": {
@@ -207,7 +221,8 @@
             "line": 6,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -226,7 +241,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst x: Color\n```\n"
+          "value": "```tsx\nconst x: Color.Red | Color.Green | Color.Blue\n```\n"
         },
         "range": {
           "start": {
@@ -288,7 +303,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst enum Direction {    Up,    Down}\n```\n"
+          "value": "```tsx\nconst enum Direction {\n    Up = 0,\n    Down = 1\n}\n```\n"
         },
         "range": {
           "start": {
@@ -330,7 +345,8 @@
             "line": 11,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -349,7 +365,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst y: Direction\n```\n"
+          "value": "```tsx\nconst y: Direction.Up | Direction.Down\n```\n"
         },
         "range": {
           "start": {
@@ -411,7 +427,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nenum Flags {    None = 0,    IsDirectory = 1 << 0,    IsFile = 1 << 1,    IsSymlink = 1 << 2}\n```\n"
+          "value": "```tsx\nenum Flags {\n    None = 0,\n    IsDirectory = 1 << 0,\n    IsFile = 1 << 1,\n    IsSymlink = 1 << 2\n}\n```\n"
         },
         "range": {
           "start": {
@@ -473,7 +489,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(alias) enum Color {    Red = \"red\"}\n```\n"
+          "value": "```tsx\n(alias) enum Color {\n    Red = \"red\"\n}\n```\n"
         },
         "range": {
           "start": {

@@ -13,7 +13,20 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const o: { takeOneApple(a: Apple): void; getApple(): Apple; getApple(size: number): Apple[]; }
+// | const o: {
+// |     takeOneApple(a: {
+// |         color: string;
+// |         size: number;
+// |     }): void;
+// |     getApple(): {
+// |         color: string;
+// |         size: number;
+// |     };
+// |     getApple(size: number): {
+// |         color: string;
+// |         size: number;
+// |     }[];
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -21,7 +34,11 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const o: { takeOneApple(a: Apple): void; getApple(): Apple; getApple(size: number): Apple[]; }
+// | const o: {
+// |     takeOneApple(a: Apple): void;
+// |     getApple(): Apple;
+// |     getApple(size: number): Apple[];
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -38,7 +55,7 @@
 //                  ^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function isApple(x: unknown): x is Apple
+// | function isApple(x: unknown): x is { color: string; size: number; }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -61,7 +78,7 @@
 // ^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function someFun(a: SomeType): SomeType
+// | function someFun(a: { prop1: string; }): { prop1: string; }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -120,7 +137,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst o: { takeOneApple(a: Apple): void; getApple(): Apple; getApple(size: number): Apple[]; }\n```\n"
+          "value": "```tsx\nconst o: {\n    takeOneApple(a: Apple): void;\n    getApple(): Apple;\n    getApple(size: number): Apple[];\n}\n```\n"
         },
         "range": {
           "start": {
@@ -132,6 +149,7 @@
             "character": 7
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -151,7 +169,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst o: { takeOneApple(a: Apple): void; getApple(): Apple; getApple(size: number): Apple[]; }\n```\n"
+          "value": "```tsx\nconst o: {\n    takeOneApple(a: {\n        color: string;\n        size: number;\n    }): void;\n    getApple(): {\n        color: string;\n        size: number;\n    };\n    getApple(size: number): {\n        color: string;\n        size: number;\n    }[];\n}\n```\n"
         },
         "range": {
           "start": {
@@ -193,7 +211,8 @@
             "line": 10,
             "character": 24
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -212,7 +231,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction isApple(x: unknown): x is Apple\n```\n"
+          "value": "```tsx\nfunction isApple(x: unknown): x is { color: string; size: number; }\n```\n"
         },
         "range": {
           "start": {
@@ -254,7 +273,8 @@
             "line": 17,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -273,7 +293,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction someFun(a: SomeType): SomeType\n```\n"
+          "value": "```tsx\nfunction someFun(a: { prop1: string; }): { prop1: string; }\n```\n"
         },
         "range": {
           "start": {

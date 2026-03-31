@@ -4,7 +4,11 @@
 //      ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type Node<T> = { value: T; left: Node<T> | undefined; right: Node<T> | undefined; }
+// | type Node<T> = {
+// |     value: T;
+// |     left: Node<T> | undefined;
+// |     right: Node<T> | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -17,7 +21,11 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const n: { value: number; left: Node<number> | undefined; right: Node<number> | undefined; }
+// | const n: {
+// |     value: number;
+// |     left: Node<number> | undefined;
+// |     right: Node<number> | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -41,7 +49,14 @@
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type TreeNode<T> = { value: T; left: TreeNode<T> | undefined; right: TreeNode<T> | undefined; orange?: Orange; }
+// | type TreeNode<T> = {
+// |     value: T;
+// |     left: TreeNode<T> | undefined;
+// |     right: TreeNode<T> | undefined;
+// |     orange?: {
+// |         name: string;
+// |     } | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -49,7 +64,12 @@
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type TreeNode<T> = { value: T; left: TreeNode<T> | undefined; right: TreeNode<T> | undefined; orange?: Orange; }
+// | type TreeNode<T> = {
+// |     value: T;
+// |     left: TreeNode<T> | undefined;
+// |     right: TreeNode<T> | undefined;
+// |     orange?: Orange | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -63,7 +83,14 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const m: { value: number; left: TreeNode<number> | undefined; right: TreeNode<number> | undefined; orange?: Orange; }
+// | const m: {
+// |     value: number;
+// |     left: TreeNode<number> | undefined;
+// |     right: TreeNode<number> | undefined;
+// |     orange?: {
+// |         name: string;
+// |     } | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -71,7 +98,12 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const m: { value: number; left: TreeNode<number> | undefined; right: TreeNode<number> | undefined; orange?: Orange; }
+// | const m: {
+// |     value: number;
+// |     left: TreeNode<number> | undefined;
+// |     right: TreeNode<number> | undefined;
+// |     orange?: Orange | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -104,7 +136,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype Node<T> = { value: T; left: Node<T> | undefined; right: Node<T> | undefined; }\n```\n"
+          "value": "```tsx\ntype Node<T> = {\n    value: T;\n    left: Node<T> | undefined;\n    right: Node<T> | undefined;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -165,7 +197,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst n: { value: number; left: Node<number> | undefined; right: Node<number> | undefined; }\n```\n"
+          "value": "```tsx\nconst n: {\n    value: number;\n    left: Node<number> | undefined;\n    right: Node<number> | undefined;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -196,7 +228,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype TreeNode<T> = { value: T; left: TreeNode<T> | undefined; right: TreeNode<T> | undefined; orange?: Orange; }\n```\n"
+          "value": "```tsx\ntype TreeNode<T> = {\n    value: T;\n    left: TreeNode<T> | undefined;\n    right: TreeNode<T> | undefined;\n    orange?: Orange | undefined;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -207,7 +239,8 @@
             "line": 13,
             "character": 13
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -226,7 +259,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype TreeNode<T> = { value: T; left: TreeNode<T> | undefined; right: TreeNode<T> | undefined; orange?: Orange; }\n```\n"
+          "value": "```tsx\ntype TreeNode<T> = {\n    value: T;\n    left: TreeNode<T> | undefined;\n    right: TreeNode<T> | undefined;\n    orange?: {\n        name: string;\n    } | undefined;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -288,7 +321,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst m: { value: number; left: TreeNode<number> | undefined; right: TreeNode<number> | undefined; orange?: Orange; }\n```\n"
+          "value": "```tsx\nconst m: {\n    value: number;\n    left: TreeNode<number> | undefined;\n    right: TreeNode<number> | undefined;\n    orange?: Orange | undefined;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -300,6 +333,7 @@
             "character": 7
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -319,7 +353,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst m: { value: number; left: TreeNode<number> | undefined; right: TreeNode<number> | undefined; orange?: Orange; }\n```\n"
+          "value": "```tsx\nconst m: {\n    value: number;\n    left: TreeNode<number> | undefined;\n    right: TreeNode<number> | undefined;\n    orange?: {\n        name: string;\n    } | undefined;\n}\n```\n"
         },
         "range": {
           "start": {

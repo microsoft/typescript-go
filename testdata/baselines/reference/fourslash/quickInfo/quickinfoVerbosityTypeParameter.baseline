@@ -7,7 +7,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends FooType
+// | (parameter) x: T extends number | (string | {})
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -15,7 +15,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends FooType
+// | (parameter) x: T extends number | Str
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -33,7 +33,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const y: <T extends FooType>(x: T) => void
+// | const y: <T extends number | (string | {})>(x: T) => void
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -41,7 +41,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const y: <T extends FooType>(x: T) => void
+// | const y: <T extends number | Str>(x: T) => void
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -89,7 +89,8 @@
             "line": 3,
             "character": 5
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -108,7 +109,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends FooType\n```\n"
+          "value": "```tsx\n(parameter) x: T extends number | Str\n```\n"
         },
         "range": {
           "start": {
@@ -120,6 +121,7 @@
             "character": 5
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -139,7 +141,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends FooType\n```\n"
+          "value": "```tsx\n(parameter) x: T extends number | (string | {})\n```\n"
         },
         "range": {
           "start": {
@@ -181,7 +183,8 @@
             "line": 5,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -200,7 +203,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst y: <T extends FooType>(x: T) => void\n```\n"
+          "value": "```tsx\nconst y: <T extends number | Str>(x: T) => void\n```\n"
         },
         "range": {
           "start": {
@@ -212,6 +215,7 @@
             "character": 7
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -231,7 +235,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst y: <T extends FooType>(x: T) => void\n```\n"
+          "value": "```tsx\nconst y: <T extends number | (string | {})>(x: T) => void\n```\n"
         },
         "range": {
           "start": {

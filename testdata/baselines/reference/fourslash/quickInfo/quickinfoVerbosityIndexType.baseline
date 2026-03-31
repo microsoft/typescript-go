@@ -9,7 +9,11 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const x1: keyof { banana: string; grape: number; apple: boolean; }
+// | const x1: keyof {
+// |     banana: string;
+// |     grape: number;
+// |     apple: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -36,7 +40,11 @@
 //              ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) k2: keyof { banana: string; grape: number; apple: boolean; }
+// | (parameter) k2: keyof {
+// |     banana: string;
+// |     grape: number;
+// |     apple: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -107,7 +115,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst x1: keyof { banana: string; grape: number; apple: boolean; }\n```\n"
+          "value": "```tsx\nconst x1: keyof {\n    banana: string;\n    grape: number;\n    apple: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -199,7 +207,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) k2: keyof { banana: string; grape: number; apple: boolean; }\n```\n"
+          "value": "```tsx\n(parameter) k2: keyof {\n    banana: string;\n    grape: number;\n    apple: boolean;\n}\n```\n"
         },
         "range": {
           "start": {

@@ -7,7 +7,11 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj: { a: "a" | "c"; } & { a: "a" | "b"; }
+// | const obj: {
+// |     a: "a" | "c";
+// | } & {
+// |     a: "a" | "b";
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -94,7 +98,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj: { a: \"a\" | \"c\"; } & { a: \"a\" | \"b\"; }\n```\n"
+          "value": "```tsx\nconst obj: {\n    a: \"a\" | \"c\";\n} & {\n    a: \"a\" | \"b\";\n}\n```\n"
         },
         "range": {
           "start": {

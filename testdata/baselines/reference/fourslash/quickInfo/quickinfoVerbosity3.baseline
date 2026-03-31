@@ -4,18 +4,20 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo<T extends Date>
+// | interface Foo<T extends Date> {
+// |     prop: T;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo<T extends Date> {    prop: T;}
+// | interface Foo<T extends Date>
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //     prop: T
 // }
@@ -23,18 +25,22 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Bar<T extends Date> implements Foo<T> {    prop: T;}
+// | class Bar<T extends Date> implements Foo<T> {
+// |     prop: T;
+// | }
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Bar<T extends Date> implements Foo<T> {    prop: T;}
+// | class Bar<T extends Date> implements Foo<T> {
+// |     prop: T;
+// | }
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
@@ -65,7 +71,9 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace c5b {    const y: number;}
+// | namespace c5b {
+// |     const y: number;
+// | }
 // | 
 // | ```
 // | 
@@ -74,7 +82,9 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace c5b {    const y: number;}
+// | namespace c5b {
+// |     const y: number;
+// | }
 // | 
 // | ```
 // | 
@@ -107,15 +117,19 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Opt
+// | class Opt {
+// |     render(): any;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Opt {    render(): any;}
+// | class Opt {
+// |     render(): any;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -123,10 +137,10 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Opt {    render(): any;}
+// | class Opt
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 
 
@@ -206,7 +220,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Opt {    render(): any;}\n```\n"
+          "value": "```tsx\nclass Opt {\n    render(): any;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -237,7 +251,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Opt {    render(): any;}\n```\n"
+          "value": "```tsx\nclass Opt {\n    render(): any;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -298,7 +312,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo<T extends Date> {    prop: T;}\n```\n"
+          "value": "```tsx\ninterface Foo<T extends Date> {\n    prop: T;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -359,7 +373,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Bar<T extends Date> implements Foo<T> {    prop: T;}\n```\n"
+          "value": "```tsx\nclass Bar<T extends Date> implements Foo<T> {\n    prop: T;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -390,7 +404,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Bar<T extends Date> implements Foo<T> {    prop: T;}\n```\n"
+          "value": "```tsx\nclass Bar<T extends Date> implements Foo<T> {\n    prop: T;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -452,7 +466,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace c5b {    const y: number;}\n\n```\n"
+          "value": "```tsx\nnamespace c5b {\n    const y: number;\n}\n\n```\n"
         },
         "range": {
           "start": {
@@ -483,7 +497,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace c5b {    const y: number;}\n\n```\n"
+          "value": "```tsx\nnamespace c5b {\n    const y: number;\n}\n\n```\n"
         },
         "range": {
           "start": {

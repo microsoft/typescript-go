@@ -27,7 +27,14 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { [a: string]: { banana: number; }; [a: number]: { banana: number; }; }
+// | const f: {
+// |     [a: string]: {
+// |         banana: number;
+// |     };
+// |     [a: number]: {
+// |         banana: number;
+// |     };
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -35,7 +42,10 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { [a: string]: Apple; [a: number]: Apple; }
+// | const f: {
+// |     [a: string]: Apple;
+// |     [a: number]: Apple;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -156,7 +166,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { [a: string]: Apple; [a: number]: Apple; }\n```\n"
+          "value": "```tsx\nconst f: {\n    [a: string]: Apple;\n    [a: number]: Apple;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -188,7 +198,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { [a: string]: { banana: number; }; [a: number]: { banana: number; }; }\n```\n"
+          "value": "```tsx\nconst f: {\n    [a: string]: {\n        banana: number;\n    };\n    [a: number]: {\n        banana: number;\n    };\n}\n```\n"
         },
         "range": {
           "start": {

@@ -13,7 +13,9 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const x: { banana: string; }
+// | const x: {
+// |     banana: string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -46,7 +48,10 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const y: { banana?: string | undefined; apple?: boolean | undefined; }
+// | const y: {
+// |     banana?: string | undefined;
+// |     apple?: boolean | undefined;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -117,7 +122,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst x: { banana: string; }\n```\n"
+          "value": "```tsx\nconst x: {\n    banana: string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -210,7 +215,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst y: { banana?: string | undefined; apple?: boolean | undefined; }\n```\n"
+          "value": "```tsx\nconst y: {\n    banana?: string | undefined;\n    apple?: boolean | undefined;\n}\n```\n"
         },
         "range": {
           "start": {

@@ -7,18 +7,34 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Foo<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}
+// | class Foo<T> {
+// |     static whatever(): void;
+// |     constructor(public x: T);
+// |     public x: T;
+// |     public y: T;
+// |     private foo(): {
+// |         color: string;
+// |     };
+// |     protected z: boolean;
+// | }
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Foo<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}
+// | class Foo<T> {
+// |     static whatever(): void;
+// |     constructor(public x: T);
+// |     public x: T;
+// |     public y: T;
+// |     private foo(): Apple;
+// |     protected z: boolean;
+// | }
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
@@ -41,28 +57,52 @@
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
+// | type Whatever = {
+// |     x: string;
+// |     y: string;
+// |     foo(): {
+// |         color: string;
+// |     };
+// |     z: boolean;
+// | }
+// | ```
+// | 
+// | (verbosity level: 2)
+// | ----------------------------------------------------------------------
+//      ^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | type Whatever = {
+// |     x: string;
+// |     y: string;
+// |     foo(): Apple;
+// |     z: boolean;
+// | }
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//      ^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
 // | type Whatever = Foo<string>
 // | ```
 // | 
 // | (verbosity level: 0)
 // | ----------------------------------------------------------------------
-//      ^^^^^^^^
+// const a = Foo;
+//       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type Whatever = typeof Foo
+// | const a: {
+// |     new <T>(x: T): Foo<T>;
+// |     whatever(): void;
+// |     prototype: Foo<any>;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
 // | ----------------------------------------------------------------------
-//      ^^^^^^^^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | type Whatever = typeof Foo
-// | ```
-// | 
-// | (verbosity level: 2)
-// | ----------------------------------------------------------------------
-// const a = Foo;
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
@@ -71,19 +111,15 @@
 // | 
 // | (verbosity level: 0)
 // | ----------------------------------------------------------------------
-//       ^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | const a: typeof Foo
-// | ```
-// | 
-// | (verbosity level: 1)
-// | ----------------------------------------------------------------------
 // const c = Foo<string>;
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const c: { new (x: string): Foo<string>; whatever(): void; prototype: Foo<any>; }
+// | const c: {
+// |     new (x: string): Foo<string>;
+// |     whatever(): void;
+// |     prototype: Foo<any>;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -92,15 +128,16 @@
 //             ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (local class) (Anonymous class)<T>
-// | ```
-// | 
-// | (verbosity level: 0)
-// | ----------------------------------------------------------------------
-//             ^^^^^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | (local class) class<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}
+// | (local class) class<T> {
+// |     static whatever(): void;
+// |     constructor(public x: T);
+// |     public x: T;
+// |     public y: T;
+// |     private foo(): {
+// |         color: string;
+// |     };
+// |     protected z: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -108,10 +145,25 @@
 //             ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (local class) class<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}
+// | (local class) class<T> {
+// |     static whatever(): void;
+// |     constructor(public x: T);
+// |     public x: T;
+// |     public y: T;
+// |     private foo(): Apple;
+// |     protected z: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//             ^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (local class) (Anonymous class)<T>
+// | ```
+// | 
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //     constructor(public x: T) { }
 //     public y!: T;
@@ -136,18 +188,21 @@
 //                ^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | abstract class Animal
+// | abstract class Animal {
+// |     name: string;
+// |     abstract makeSound(): void;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //                ^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | abstract class Animal {    name: string;    abstract makeSound(): void;}
+// | abstract class Animal
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //     name!: string;
 //     abstract makeSound(): void;
@@ -156,18 +211,21 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Dog
+// | class Dog {
+// |     what(this: this, that: Dog): void;
+// |     "__#private@#bones": string[];
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Dog {    what(this: this, that: Dog): void;    "__#private@#bones": string[];}
+// | class Dog
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //     what(this: this, that: Dog) { }
 //     #bones: string[];
@@ -176,10 +234,13 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const d: Dog
+// | const d: {
+// |     what(this: Dog, that: Dog): void;
+// |     "__#private@#bones": string[];
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
@@ -187,7 +248,7 @@
 // | const d: Dog
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 [
   {
@@ -235,7 +296,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}\n```\n"
+          "value": "```tsx\nclass Foo<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): Apple;\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -247,6 +308,7 @@
             "character": 9
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -266,7 +328,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}\n```\n"
+          "value": "```tsx\nclass Foo<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): {\n        color: string;\n    };\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -328,7 +390,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype Whatever = typeof Foo\n```\n"
+          "value": "```tsx\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): Apple;\n    z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -340,6 +402,7 @@
             "character": 13
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -359,7 +422,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype Whatever = typeof Foo\n```\n"
+          "value": "```tsx\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): {\n        color: string;\n    };\n    z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -401,7 +464,8 @@
             "line": 14,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -420,7 +484,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst a: typeof Foo\n```\n"
+          "value": "```tsx\nconst a: {\n    new <T>(x: T): Foo<T>;\n    whatever(): void;\n    prototype: Foo<any>;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -432,6 +496,7 @@
             "character": 7
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -451,7 +516,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst c: { new (x: string): Foo<string>; whatever(): void; prototype: Foo<any>; }\n```\n"
+          "value": "```tsx\nconst c: {\n    new (x: string): Foo<string>;\n    whatever(): void;\n    prototype: Foo<any>;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -513,7 +578,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(local class) class<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}\n```\n"
+          "value": "```tsx\n(local class) class<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): Apple;\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -525,6 +590,7 @@
             "character": 17
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -544,7 +610,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(local class) class<T> {    static whatever(): void;    constructor(public x: T);    public x: T;    public y: T;    private foo(): Apple;    protected z: boolean;}\n```\n"
+          "value": "```tsx\n(local class) class<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): {\n        color: string;\n    };\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -636,7 +702,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nabstract class Animal {    name: string;    abstract makeSound(): void;}\n```\n"
+          "value": "```tsx\nabstract class Animal {\n    name: string;\n    abstract makeSound(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -698,7 +764,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Dog {    what(this: this, that: Dog): void;    \"__#private@#bones\": string[];}\n```\n"
+          "value": "```tsx\nclass Dog {\n    what(this: this, that: Dog): void;\n    \"__#private@#bones\": string[];\n}\n```\n"
         },
         "range": {
           "start": {
@@ -760,7 +826,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst d: Dog\n```\n"
+          "value": "```tsx\nconst d: {\n    what(this: Dog, that: Dog): void;\n    \"__#private@#bones\": string[];\n}\n```\n"
         },
         "range": {
           "start": {

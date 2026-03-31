@@ -4,7 +4,33 @@
 //           ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface LargeInterface {    prop1: any;    prop2: any;    prop3: any;    prop4: any;    prop5: any;    prop6: any;    prop7: any;    prop8: any;    prop9: any;    prop10: any;    prop11: any;    prop12: any;    prop13: any;    prop14: any;    prop15: any;    prop16: any;    prop17: any;    prop18: any;    prop19: any;    "... (truncated) ...";    prop298: any;}
+// | interface LargeInterface {
+// |     prop1: any;
+// |     prop2: any;
+// |     prop3: any;
+// |     prop4: any;
+// |     prop5: any;
+// |     prop6: any;
+// |     prop7: any;
+// |     prop8: any;
+// |     prop9: any;
+// |     prop10: any;
+// |     prop11: any;
+// |     prop12: any;
+// |     prop13: any;
+// |     prop14: any;
+// |     prop15: any;
+// |     prop16: any;
+// |     prop17: any;
+// |     prop18: any;
+// |     prop19: any;
+// |     prop20: any;
+// |     prop21: any;
+// |     prop22: any;
+// |     prop23: any;
+// |     "... (truncated) ...";
+// |     prop298: any;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -362,7 +388,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface LargeInterface {    prop1: any;    prop2: any;    prop3: any;    prop4: any;    prop5: any;    prop6: any;    prop7: any;    prop8: any;    prop9: any;    prop10: any;    prop11: any;    prop12: any;    prop13: any;    prop14: any;    prop15: any;    prop16: any;    prop17: any;    prop18: any;    prop19: any;    \"... (truncated) ...\";    prop298: any;}\n```\n"
+          "value": "```tsx\ninterface LargeInterface {\n    prop1: any;\n    prop2: any;\n    prop3: any;\n    prop4: any;\n    prop5: any;\n    prop6: any;\n    prop7: any;\n    prop8: any;\n    prop9: any;\n    prop10: any;\n    prop11: any;\n    prop12: any;\n    prop13: any;\n    prop14: any;\n    prop15: any;\n    prop16: any;\n    prop17: any;\n    prop18: any;\n    prop19: any;\n    prop20: any;\n    prop21: any;\n    prop22: any;\n    prop23: any;\n    \"... (truncated) ...\";\n    prop298: any;\n}\n```\n"
         },
         "range": {
           "start": {

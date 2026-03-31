@@ -8,7 +8,9 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     a: "a" | "c";
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -34,15 +36,21 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     x: string;
+// |     foo(p: "a" | "b"): void;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     x: string;
+// |     foo(p: FooParam): void;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -53,7 +61,7 @@
 // | const f: Foo
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 // {
@@ -61,18 +69,22 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Bar
+// | class Bar {
+// |     a: string;
+// |     bar(): void;
+// |     baz(param: string): void;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | class Bar {    a: string;    bar(): void;    baz(param: string): void;}
+// | class Bar
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //         a!: string;
 //         bar(): void {}
@@ -86,10 +98,15 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     b: boolean;
+// |     baz(param: string | number): void;
+// |     a: string;
+// |     bar(): void;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
@@ -97,7 +114,7 @@
 // | const f: Foo
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 // {
@@ -112,7 +129,10 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const b: typeof Bar
+// | const b: {
+// |     bar(param: string): void;
+// |     baz(): Bar<string>;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -129,10 +149,14 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     foo(): Foo;
+// |     bar(param: "foo"): void;
+// |     baz(): Foo;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
@@ -140,7 +164,7 @@
 // | const f: Foo
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 // {
@@ -152,10 +176,14 @@
 //           ^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const noname: (Anonymous class)
+// | const noname: {
+// |     foo(): (Anonymous class);
+// |     bar(param: "foo"): void;
+// |     baz(): (Anonymous class);
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^^^^^^
 // | ----------------------------------------------------------------------
@@ -163,7 +191,7 @@
 // | const noname: (Anonymous class)
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //         foo(): this { return this; }
 //     })();
@@ -174,10 +202,14 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const k: klass
+// | const k: {
+// |     foo(): klass;
+// |     bar(param: "foo"): void;
+// |     baz(): klass;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
@@ -185,7 +217,7 @@
 // | const k: klass
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 [
@@ -234,7 +266,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: Foo\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -296,7 +328,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: Foo\n```\n"
+          "value": "```tsx\nconst f: {\n    x: string;\n    foo(p: FooParam): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -308,6 +340,7 @@
             "character": 11
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -327,7 +360,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: Foo\n```\n"
+          "value": "```tsx\nconst f: {\n    x: string;\n    foo(p: \"a\" | \"b\"): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -389,7 +422,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Bar {    a: string;    bar(): void;    baz(param: string): void;}\n```\n"
+          "value": "```tsx\nclass Bar {\n    a: string;\n    bar(): void;\n    baz(param: string): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -451,7 +484,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: Foo\n```\n"
+          "value": "```tsx\nconst f: {\n    b: boolean;\n    baz(param: string | number): void;\n    a: string;\n    bar(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -513,7 +546,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst b: typeof Bar\n```\n"
+          "value": "```tsx\nconst b: {\n    bar(param: string): void;\n    baz(): Bar<string>;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -575,7 +608,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: Foo\n```\n"
+          "value": "```tsx\nconst f: {\n    foo(): Foo;\n    bar(param: \"foo\"): void;\n    baz(): Foo;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -637,7 +670,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst noname: (Anonymous class)\n```\n"
+          "value": "```tsx\nconst noname: {\n    foo(): (Anonymous class);\n    bar(param: \"foo\"): void;\n    baz(): (Anonymous class);\n}\n```\n"
         },
         "range": {
           "start": {
@@ -699,7 +732,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst k: klass\n```\n"
+          "value": "```tsx\nconst k: {\n    foo(): klass;\n    bar(param: \"foo\"): void;\n    baz(): klass;\n}\n```\n"
         },
         "range": {
           "start": {

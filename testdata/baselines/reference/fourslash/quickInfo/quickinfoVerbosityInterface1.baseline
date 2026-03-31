@@ -8,7 +8,9 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: "a" | "c"; }
+// | const f: {
+// |     a: "a" | "c";
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -33,18 +35,21 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     a: "a" | "c";
+// |     b: "b" | "d";
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: "a" | "c"; b: "b" | "d"; }
+// | const f: Foo
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 // {
@@ -64,23 +69,27 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     a: "a" | "c";
+// |     foo: (a: {
+// |         param: "a" | "c";
+// |     }) => number;
+// |     bar(b: "b" | "d"): string;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 3)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: FooType; foo: (a: FooParam) => number; bar(b: BarParam): string; }
-// | ```
-// | 
-// | (verbosity level: 1)
-// | ----------------------------------------------------------------------
-//           ^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | const f: { a: "a" | "c"; foo: (a: { param: FooType; }) => number; bar(b: "b" | "d"): string; }
+// | const f: {
+// |     a: "a" | "c";
+// |     foo: (a: {
+// |         param: FooType;
+// |     }) => number;
+// |     bar(b: "b" | "d"): string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -88,10 +97,22 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: "a" | "c"; foo: (a: { param: "a" | "c"; }) => number; bar(b: "b" | "d"): string; }
+// | const f: {
+// |     a: FooType;
+// |     foo: (a: FooParam) => number;
+// |     bar(b: BarParam): string;
+// | }
 // | ```
 // | 
-// | (verbosity level: 3)
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | const f: Foo
+// | ```
+// | 
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 // {
@@ -109,7 +130,15 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: "a" | "c"; foo: (a: { param: "a" | "c"; }) => number; bar(b: { param: "a" | "c"; }): string; }
+// | const f: {
+// |     a: "a" | "c";
+// |     foo: (a: {
+// |         param: "a" | "c";
+// |     }) => number;
+// |     bar(b: {
+// |         param: "a" | "c";
+// |     }): string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -117,7 +146,11 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: "a" | "c"; foo: (a: FooParam) => number; bar(b: FooParam): string; }
+// | const f: {
+// |     a: "a" | "c";
+// |     foo: (a: FooParam) => number;
+// |     bar(b: FooParam): string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -134,7 +167,9 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const b: { bar(b: number): string; }
+// | const b: {
+// |     bar(b: number): string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -157,10 +192,12 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const a: Alias
+// | const a: {
+// |     a: string;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
@@ -173,10 +210,10 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const a: { a: string; }
+// | const a: Alias
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 // {
@@ -190,18 +227,21 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: Foo
+// | const f: {
+// |     a: "a";
+// |     b: "b";
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const f: { a: "a"; b: "b"; }
+// | const f: Foo
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 // }
 [
@@ -250,7 +290,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\" | \"c\"; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -312,7 +352,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\" | \"c\"; b: \"b\" | \"d\"; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n    b: \"b\" | \"d\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -374,7 +414,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: FooType; foo: (a: FooParam) => number; bar(b: BarParam): string; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: FooType;\n    foo: (a: FooParam) => number;\n    bar(b: BarParam): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -406,7 +446,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\" | \"c\"; foo: (a: { param: FooType; }) => number; bar(b: \"b\" | \"d\"): string; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: FooType;\n    }) => number;\n    bar(b: \"b\" | \"d\"): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -438,7 +478,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\" | \"c\"; foo: (a: { param: \"a\" | \"c\"; }) => number; bar(b: \"b\" | \"d\"): string; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n    bar(b: \"b\" | \"d\"): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -500,7 +540,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\" | \"c\"; foo: (a: FooParam) => number; bar(b: FooParam): string; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: FooParam) => number;\n    bar(b: FooParam): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -532,7 +572,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\" | \"c\"; foo: (a: { param: \"a\" | \"c\"; }) => number; bar(b: { param: \"a\" | \"c\"; }): string; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n    bar(b: {\n        param: \"a\" | \"c\";\n    }): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -594,7 +634,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst b: { bar(b: number): string; }\n```\n"
+          "value": "```tsx\nconst b: {\n    bar(b: number): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -688,7 +728,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst a: { a: string; }\n```\n"
+          "value": "```tsx\nconst a: {\n    a: string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -750,7 +790,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst f: { a: \"a\"; b: \"b\"; }\n```\n"
+          "value": "```tsx\nconst f: {\n    a: \"a\";\n    b: \"b\";\n}\n```\n"
         },
         "range": {
           "start": {

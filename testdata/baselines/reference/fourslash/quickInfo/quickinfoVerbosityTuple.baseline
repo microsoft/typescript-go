@@ -11,18 +11,30 @@
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type TwoFruits = [{ color: string; }, { color: string; other: Orange; }]
+// | type TwoFruits = [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type TwoFruits = [{ color: string; }, { color: string; other: Orange; }]
+// | type TwoFruits = [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -36,10 +48,30 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const tf: TwoFruits
+// | const tf: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 3)
+// | ----------------------------------------------------------------------
+//       ^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | const tf: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
+// | ```
+// | 
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
@@ -52,18 +84,10 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const tf: [{ color: string; }, { color: string; other: Orange; }]
+// | const tf: TwoFruits
 // | ```
 // | 
-// | (verbosity level: 2)
-// | ----------------------------------------------------------------------
-//       ^^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | const tf: [{ color: string; }, { color: string; other: Orange; }]
-// | ```
-// | 
-// | (verbosity level: 3)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //     { color: "orange" },
 //     { color: "red", other: { color: "orange" } }
@@ -72,15 +96,14 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const tf2: [Orange, Apple]
-// | ```
-// | 
-// | (verbosity level: 0)
-// | ----------------------------------------------------------------------
-//       ^^^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | const tf2: [{ color: string; }, { color: string; other: Orange; }]
+// | const tf2: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -88,10 +111,23 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const tf2: [{ color: string; }, { color: string; other: Orange; }]
+// | const tf2: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
 // | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//       ^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | const tf2: [Orange, Apple]
+// | ```
+// | 
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //     { color: "orange" },
 //     { color: "red", other: { color: "orange" } }
@@ -100,18 +136,30 @@
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type ManyFruits = ({ color: string; other: Orange; } | { color: string; })[]
+// | type ManyFruits = ({
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | type ManyFruits = ({ color: string; other: Orange; } | { color: string; })[]
+// | type ManyFruits = ({
+// |     color: string;
+// |     other: Orange;
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -125,10 +173,30 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const mf: ManyFruits
+// | const mf: ({
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 3)
+// | ----------------------------------------------------------------------
+//       ^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | const mf: ({
+// |     color: string;
+// |     other: Orange;
+// | } | {
+// |     color: string;
+// | })[]
+// | ```
+// | 
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
@@ -141,18 +209,10 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const mf: ({ color: string; other: Orange; } | { color: string; })[]
+// | const mf: ManyFruits
 // | ```
 // | 
-// | (verbosity level: 2)
-// | ----------------------------------------------------------------------
-//       ^^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | const mf: ({ color: string; other: Orange; } | { color: string; })[]
-// | ```
-// | 
-// | (verbosity level: 3)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 [
   {
@@ -200,7 +260,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype TwoFruits = [{ color: string; }, { color: string; other: Orange; }]\n```\n"
+          "value": "```tsx\ntype TwoFruits = [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -212,6 +272,7 @@
             "character": 14
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -231,7 +292,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype TwoFruits = [{ color: string; }, { color: string; other: Orange; }]\n```\n"
+          "value": "```tsx\ntype TwoFruits = [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -325,7 +386,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst tf: [{ color: string; }, { color: string; other: Orange; }]\n```\n"
+          "value": "```tsx\nconst tf: [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -337,6 +398,7 @@
             "character": 8
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 2
@@ -356,7 +418,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst tf: [{ color: string; }, { color: string; other: Orange; }]\n```\n"
+          "value": "```tsx\nconst tf: [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -418,7 +480,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst tf2: [{ color: string; }, { color: string; other: Orange; }]\n```\n"
+          "value": "```tsx\nconst tf2: [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -430,6 +492,7 @@
             "character": 9
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -449,7 +512,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst tf2: [{ color: string; }, { color: string; other: Orange; }]\n```\n"
+          "value": "```tsx\nconst tf2: [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -511,7 +574,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype ManyFruits = ({ color: string; other: Orange; } | { color: string; })[]\n```\n"
+          "value": "```tsx\ntype ManyFruits = ({\n    color: string;\n    other: Orange;\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {
@@ -523,6 +586,7 @@
             "character": 15
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -542,7 +606,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype ManyFruits = ({ color: string; other: Orange; } | { color: string; })[]\n```\n"
+          "value": "```tsx\ntype ManyFruits = ({\n    color: string;\n    other: {\n        color: string;\n    };\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {
@@ -636,7 +700,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst mf: ({ color: string; other: Orange; } | { color: string; })[]\n```\n"
+          "value": "```tsx\nconst mf: ({\n    color: string;\n    other: Orange;\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {
@@ -648,6 +712,7 @@
             "character": 8
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 2
@@ -667,7 +732,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst mf: ({ color: string; other: Orange; } | { color: string; })[]\n```\n"
+          "value": "```tsx\nconst mf: ({\n    color: string;\n    other: {\n        color: string;\n    };\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {

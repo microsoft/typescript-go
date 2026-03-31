@@ -1,13 +1,13 @@
 package checker
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -469,8 +469,8 @@ func (s *symbolTableSerializationState) getEnumMemberInitializer(p *ast.Symbol) 
 	switch v := initializedValue.(type) {
 	case string:
 		return s.b.f.NewStringLiteral(v, 0)
-	case float64:
-		return s.b.f.NewNumericLiteral(fmt.Sprintf("%v", v), 0)
+	case jsnum.Number:
+		return s.b.f.NewNumericLiteral(v.String(), 0)
 	}
 	return nil
 }

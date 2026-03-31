@@ -9,7 +9,10 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const b: { color: string; weight: number; }
+// | const b: {
+// |     color: string;
+// |     weight: number;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -32,7 +35,10 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const c: typeof Banana
+// | const c: {
+// |     new (length: number): Banana;
+// |     prototype: Banana;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -91,7 +97,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst b: { color: string; weight: number; }\n```\n"
+          "value": "```tsx\nconst b: {\n    color: string;\n    weight: number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -133,7 +139,8 @@
             "line": 12,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -152,7 +159,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst c: typeof Banana\n```\n"
+          "value": "```tsx\nconst c: {\n    new (length: number): Banana;\n    prototype: Banana;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -164,6 +171,7 @@
             "character": 7
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1

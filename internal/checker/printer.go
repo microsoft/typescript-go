@@ -341,14 +341,14 @@ func (c *Checker) valueToString(value any) string {
 	return ValueToString(value)
 }
 
-func (c *Checker) formatUnionTypes(types []*Type) []*Type {
+func (c *Checker) formatUnionTypes(types []*Type, expandingEnum bool) []*Type {
 	var result []*Type
 	var flags TypeFlags
 	for i := 0; i < len(types); i++ {
 		t := types[i]
 		flags |= t.flags
 		if t.flags&TypeFlagsNullable == 0 {
-			if t.flags&(TypeFlagsBooleanLiteral|TypeFlagsEnumLike) != 0 {
+			if t.flags&TypeFlagsBooleanLiteral != 0 || (!expandingEnum && t.flags&TypeFlagsEnumLike != 0) {
 				var baseType *Type
 				if t.flags&TypeFlagsBooleanLiteral != 0 {
 					baseType = c.booleanType
@@ -383,7 +383,7 @@ func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags 
 
 // TypeToStringWithVerbosity converts a type to string with verbosity level support for expandable hover.
 func (c *Checker) TypeToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut) string {
-	writer := printer.NewTextWriter("", 0)
+	writer := printer.NewTextWriter("\n", 0)
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {
@@ -454,7 +454,7 @@ func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosing
 
 // SymbolToDeclarationsWithVerbosity produces declaration strings for a symbol with verbosity level support for expandable hover.
 func (c *Checker) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut) string {
-	writer := printer.NewTextWriter("", 0)
+	writer := printer.NewTextWriter("\n", 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	if noTruncation {

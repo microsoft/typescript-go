@@ -8,7 +8,11 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace Foo {    const y: number;    const x: string;    const w: string;}
+// | namespace Foo {
+// |     const y: number;
+// |     const x: string;
+// |     const w: string;
+// | }
 // | 
 // | ```
 // | 
@@ -34,7 +38,15 @@
 //                          ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace ns {    export { Foo };    export const c: number;    export const d: number;    export const f: Apple;    export { unknown as Foo };}
+// | namespace ns {
+// |     export { Foo };
+// |     export const c: number;
+// |     export const d: number;
+// |     export const f: {
+// |         a: string;
+// |     };
+// |     export { unknown as Foo };
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -42,7 +54,13 @@
 //                          ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace ns {    export { Foo };    export const c: number;    export const d: number;    export const f: Apple;    export { unknown as Foo };}
+// | namespace ns {
+// |     export { Foo };
+// |     export const c: number;
+// |     export const d: number;
+// |     export const f: Apple;
+// |     export { unknown as Foo };
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -75,7 +93,14 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace Two {    const f: typeof Foo;    const g: typeof Foo;}
+// | namespace Two {
+// |     const f: {
+// |         y: number;
+// |     };
+// |     const g: {
+// |         y: string;
+// |     };
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -83,7 +108,10 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace Two {    const f: Foo<number>;    const g: Foo<string>;}
+// | namespace Two {
+// |     const f: Foo<number>;
+// |     const g: Foo<string>;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -128,7 +156,9 @@
 //         ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace "./foo" {    function foo(): string;}
+// | namespace "./foo" {
+// |     function foo(): string;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -190,7 +220,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Foo {    const y: number;    const x: string;    const w: string;}\n\n```\n"
+          "value": "```tsx\nnamespace Foo {\n    const y: number;\n    const x: string;\n    const w: string;\n}\n\n```\n"
         },
         "range": {
           "start": {
@@ -252,7 +282,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {    export { Foo };    export const c: number;    export const d: number;    export const f: Apple;    export { unknown as Foo };}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: Apple;\n    export { unknown as Foo };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -264,6 +294,7 @@
             "character": 27
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -283,7 +314,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {    export { Foo };    export const c: number;    export const d: number;    export const f: Apple;    export { unknown as Foo };}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: {\n        a: string;\n    };\n    export { unknown as Foo };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -345,7 +376,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Two {    const f: Foo<number>;    const g: Foo<string>;}\n```\n"
+          "value": "```tsx\nnamespace Two {\n    const f: Foo<number>;\n    const g: Foo<string>;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -377,7 +408,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Two {    const f: typeof Foo;    const g: typeof Foo;}\n```\n"
+          "value": "```tsx\nnamespace Two {\n    const f: {\n        y: number;\n    };\n    const g: {\n        y: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -501,7 +532,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace \"./foo\" {    function foo(): string;}\n```\n"
+          "value": "```tsx\nnamespace \"./foo\" {\n    function foo(): string;\n}\n```\n"
         },
         "range": {
           "start": {

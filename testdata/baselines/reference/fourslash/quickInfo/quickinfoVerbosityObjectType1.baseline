@@ -9,7 +9,11 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj1: { foo: FooType; bar: BarType; str: Str; }
+// | const obj1: {
+// |     foo: number | (string | {});
+// |     bar: boolean | (symbol | (() => void));
+// |     str: string | {};
+// | }
 // | ```
 // | 
 // | (verbosity level: 3)
@@ -17,7 +21,11 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj1: { foo: FooType; bar: BarType; str: Str; }
+// | const obj1: {
+// |     foo: number | Str;
+// |     bar: boolean | Sym;
+// |     str: string | {};
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -25,7 +33,11 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj1: { foo: FooType; bar: BarType; str: Str; }
+// | const obj1: {
+// |     foo: FooType;
+// |     bar: BarType;
+// |     str: Str;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -42,7 +54,11 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj2: { foo: FooType; bar: BarType; str: Str; }
+// | const obj2: {
+// |     foo: number | (string | {});
+// |     bar: boolean | (symbol | (() => void));
+// |     str: string | {};
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -50,7 +66,11 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj2: { foo: FooType; bar: BarType; str: Str; }
+// | const obj2: {
+// |     foo: number | Str;
+// |     bar: boolean | Sym;
+// |     str: string | {};
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -58,7 +78,11 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj2: { foo: FooType; bar: BarType; str: Str; }
+// | const obj2: {
+// |     foo: FooType;
+// |     bar: BarType;
+// |     str: Str;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -109,7 +133,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj1: { foo: FooType; bar: BarType; str: Str; }\n```\n"
+          "value": "```tsx\nconst obj1: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -121,6 +145,7 @@
             "character": 10
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -140,7 +165,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj1: { foo: FooType; bar: BarType; str: Str; }\n```\n"
+          "value": "```tsx\nconst obj1: {\n    foo: number | Str;\n    bar: boolean | Sym;\n    str: string | {};\n}\n```\n"
         },
         "range": {
           "start": {
@@ -152,6 +177,7 @@
             "character": 10
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 2
@@ -171,7 +197,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj1: { foo: FooType; bar: BarType; str: Str; }\n```\n"
+          "value": "```tsx\nconst obj1: {\n    foo: number | (string | {});\n    bar: boolean | (symbol | (() => void));\n    str: string | {};\n}\n```\n"
         },
         "range": {
           "start": {
@@ -202,7 +228,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj2: { foo: FooType; bar: BarType; str: Str; }\n```\n"
+          "value": "```tsx\nconst obj2: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -213,7 +239,8 @@
             "line": 6,
             "character": 10
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -232,7 +259,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj2: { foo: FooType; bar: BarType; str: Str; }\n```\n"
+          "value": "```tsx\nconst obj2: {\n    foo: number | Str;\n    bar: boolean | Sym;\n    str: string | {};\n}\n```\n"
         },
         "range": {
           "start": {
@@ -244,6 +271,7 @@
             "character": 10
           }
         },
+        "canIncreaseVerbosity": true,
         "canDecreaseVerbosity": true
       },
       "verbosityLevel": 1
@@ -263,7 +291,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj2: { foo: FooType; bar: BarType; str: Str; }\n```\n"
+          "value": "```tsx\nconst obj2: {\n    foo: number | (string | {});\n    bar: boolean | (symbol | (() => void));\n    str: string | {};\n}\n```\n"
         },
         "range": {
           "start": {

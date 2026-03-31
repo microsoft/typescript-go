@@ -30,7 +30,11 @@
 //           ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const value: { "string key": string; "number key": number; "any key": string | number | symbol; }[K]
+// | const value: {
+// |     "string key": string;
+// |     "number key": number;
+// |     "any key": string | number | symbol;
+// | }[K]
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -152,7 +156,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst value: { \"string key\": string; \"number key\": number; \"any key\": string | number | symbol; }[K]\n```\n"
+          "value": "```tsx\nconst value: {\n    \"string key\": string;\n    \"number key\": number;\n    \"any key\": string | number | symbol;\n}[K]\n```\n"
         },
         "range": {
           "start": {

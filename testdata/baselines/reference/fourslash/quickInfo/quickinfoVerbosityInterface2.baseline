@@ -5,7 +5,9 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a" | "c";}
+// | interface Foo {
+// |     a: "a" | "c";
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -29,18 +31,20 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo
+// | interface Foo {
+// |     a: "a" | "c";
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a" | "c";}
+// | interface Foo
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //         a: "a" | "c";
 //     }
@@ -58,15 +62,23 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo
+// | interface Foo {
+// |     a: "a" | "c";
+// |     foo: (a: {
+// |         param: FooType;
+// |     }) => number;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: FooType;    foo: (a: FooParam) => number;}
+// | interface Foo {
+// |     a: FooType;
+// |     foo: (a: FooParam) => number;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -74,10 +86,10 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a" | "c";    foo: (a: {        param: FooType;    }) => number;}
+// | interface Foo
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //         a: FooType;
 //         foo: (a: FooParam) => number;
@@ -88,18 +100,20 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Bar<B>
+// | interface Bar<B> {
+// |     bar(b: B): string;
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Bar<B> {    bar(b: B): string;}
+// | interface Bar<B>
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //         bar(b: B): string;
 //     }
@@ -110,18 +124,26 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a" | "c";    foo: (a: FooParam) => number;}
+// | interface Foo {
+// |     a: "a" | "c";
+// |     foo: (a: {
+// |         param: "a" | "c";
+// |     }) => number;
+// | }
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 2)
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a" | "c";    foo: (a: {        param: "a" | "c";    }) => number;}
+// | interface Foo {
+// |     a: "a" | "c";
+// |     foo: (a: FooParam) => number;
+// | }
 // | ```
 // | 
-// | (verbosity level: 2)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
@@ -143,18 +165,21 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo
+// | interface Foo {
+// |     a: "a";
+// |     b: "b";
+// | }
 // | ```
 // | 
-// | (verbosity level: 0)
+// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a";    b: "b";}
+// | interface Foo
 // | ```
 // | 
-// | (verbosity level: 1)
+// | (verbosity level: 0)
 // | ----------------------------------------------------------------------
 //         b: "b";
 //     }
@@ -163,22 +188,35 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
+// | interface Foo {
+// |     a: "a";
+// | }
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
 // | interface Foo
 // | ```
 // | 
 // | (verbosity level: 0)
 // | ----------------------------------------------------------------------
+//     a: "a";
+// }
+// namespace Foo {
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {    a: "a";}
+// | interface Foo {
+// |     a: "a";
+// | }
+// | 
 // | ```
 // | 
 // | (verbosity level: 1)
 // | ----------------------------------------------------------------------
-//     a: "a";
-// }
-// namespace Foo {
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
@@ -187,15 +225,6 @@
 // | ```
 // | 
 // | (verbosity level: 0)
-// | ----------------------------------------------------------------------
-//           ^^^
-// | ----------------------------------------------------------------------
-// | ```tsx
-// | interface Foo {    a: "a";}
-// | 
-// | ```
-// | 
-// | (verbosity level: 1)
 // | ----------------------------------------------------------------------
 //     export const bar: string;
 // }
@@ -245,7 +274,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\" | \"c\";}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -307,7 +336,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\" | \"c\";}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -369,7 +398,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: FooType;    foo: (a: FooParam) => number;}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: FooType;\n    foo: (a: FooParam) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -401,7 +430,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\" | \"c\";    foo: (a: {        param: FooType;    }) => number;}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: FooType;\n    }) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -464,7 +493,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Bar<B> {    bar(b: B): string;}\n```\n"
+          "value": "```tsx\ninterface Bar<B> {\n    bar(b: B): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -526,7 +555,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\" | \"c\";    foo: (a: FooParam) => number;}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n    foo: (a: FooParam) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -558,7 +587,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\" | \"c\";    foo: (a: {        param: \"a\" | \"c\";    }) => number;}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -620,7 +649,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\";    b: \"b\";}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\";\n    b: \"b\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -682,7 +711,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\";}\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -744,7 +773,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {    a: \"a\";}\n\n```\n"
+          "value": "```tsx\ninterface Foo {\n    a: \"a\";\n}\n\n```\n"
         },
         "range": {
           "start": {

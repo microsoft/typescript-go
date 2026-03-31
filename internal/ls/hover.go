@@ -286,14 +286,14 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	// Helper closures to conditionally use verbosity-aware APIs
 	typeToString := func(t *checker.Type, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
 		if verbosityLevel >= 0 && out != nil {
-			s := c.TypeToStringWithVerbosity(t, enclosing, flags, verbosityLevel, out)
+			s := c.TypeToStringWithVerbosity(t, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, verbosityLevel, out)
 			return s
 		}
 		return c.TypeToStringEx(t, enclosing, flags)
 	}
 	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
 		if verbosityLevel >= 0 && out != nil {
-			s := c.SignatureToStringWithVerbosity(sig, enclosing, flags, verbosityLevel, out)
+			s := c.SignatureToStringWithVerbosity(sig, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, verbosityLevel, out)
 			return s
 		}
 		return c.SignatureToStringEx(sig, enclosing, flags)
@@ -303,7 +303,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	}
 	if symbol == nil {
 		if shouldGetType(node) {
-			return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
+			return typeToString(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
 		}
 		return "", nil
 	}
@@ -632,7 +632,13 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			writeTypeParams(c.GetTypeAliasTypeParameters(symbol))
 			if len(symbol.Declarations) != 0 {
 				b.WriteString(" = ")
-				b.WriteString(typeToString(c.GetDeclaredTypeOfSymbol(symbol), container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
+				var typeAliasType *checker.Type
+				if node.Parent != nil && ast.IsConstTypeReference(node.Parent) {
+					typeAliasType = c.GetTypeAtLocation(node.Parent)
+				} else {
+					typeAliasType = c.GetDeclaredTypeOfSymbol(symbol)
+				}
+				b.WriteString(typeToString(typeAliasType, container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
 			}
 			setDeclaration(core.Find(symbol.Declarations, ast.IsTypeOrJSTypeAliasDeclaration))
 		}
