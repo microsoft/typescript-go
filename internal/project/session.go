@@ -671,13 +671,21 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	// booleans and enum string names, no paths.
 	compilerOptions := map[string]any{}
 	setTristate(compilerOptions, "strict", opts.Strict)
+	setTristate(compilerOptions, "noImplicitAny", opts.NoImplicitAny)
+	setTristate(compilerOptions, "noImplicitThis", opts.NoImplicitThis)
+	setTristate(compilerOptions, "strictNullChecks", opts.StrictNullChecks)
+	setTristate(compilerOptions, "strictFunctionTypes", opts.StrictFunctionTypes)
+	setTristate(compilerOptions, "strictBindCallApply", opts.StrictBindCallApply)
+	setTristate(compilerOptions, "strictPropertyInitialization", opts.StrictPropertyInitialization)
+	setTristate(compilerOptions, "strictBuiltinIteratorReturn", opts.StrictBuiltinIteratorReturn)
+	setTristate(compilerOptions, "useUnknownInCatchVariables", opts.UseUnknownInCatchVariables)
+	setTristate(compilerOptions, "exactOptionalPropertyTypes", opts.ExactOptionalPropertyTypes)
 	setTristate(compilerOptions, "allowJs", opts.AllowJs)
 	setTristate(compilerOptions, "checkJs", opts.CheckJs)
 	setTristate(compilerOptions, "noEmit", opts.NoEmit)
 	setTristate(compilerOptions, "declaration", opts.Declaration)
 	setTristate(compilerOptions, "composite", opts.Composite)
 	setTristate(compilerOptions, "isolatedModules", opts.IsolatedModules)
-	setTristate(compilerOptions, "esModuleInterop", opts.ESModuleInterop)
 	setTristate(compilerOptions, "skipLibCheck", opts.SkipLibCheck)
 	setTristate(compilerOptions, "incremental", opts.Incremental)
 	if opts.Target != core.ScriptTargetNone {
