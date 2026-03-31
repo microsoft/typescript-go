@@ -240,9 +240,9 @@ func (s *Session) Configure(config lsutil.UserPreferences) {
 	s.workspaceUserPreferences = config
 
 	// Tell the client to re-request certain commands depending on user preference changes.
-	s.refreshInlayHintsIfNeeded(&oldConfig, &config)
-	s.refreshCodeLensIfNeeded(&oldConfig, &config)
-	s.refreshDiagnosticsIfNeeded(&oldConfig, &config)
+	s.refreshInlayHintsIfNeeded(oldConfig, config)
+	s.refreshCodeLensIfNeeded(oldConfig, config)
+	s.refreshDiagnosticsIfNeeded(oldConfig, config)
 }
 
 func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
@@ -1047,7 +1047,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
 }
 
-func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+func (s *Session) refreshInlayHintsIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
 	if oldPrefs.InlayHints != newPrefs.InlayHints {
 		if err := s.client.RefreshInlayHints(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
@@ -1055,7 +1055,7 @@ func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, ne
 	}
 }
 
-func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+func (s *Session) refreshCodeLensIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
 	if oldPrefs.CodeLens != newPrefs.CodeLens {
 		if err := s.client.RefreshCodeLens(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
@@ -1063,7 +1063,7 @@ func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newP
 	}
 }
 
-func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
 	if oldPrefs.CustomConfigFileName != newPrefs.CustomConfigFileName {
 		s.ScheduleDiagnosticsRefresh()
 	}

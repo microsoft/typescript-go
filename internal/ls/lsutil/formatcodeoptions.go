@@ -91,8 +91,8 @@ type FormatCodeSettings struct {
 	IndentSwitchCase                                            core.Tristate       `raw:"indentSwitchCase" config:"format.indentSwitchCase"`
 }
 
-func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) FormatCodeSettings {
-	updatedSettings := *f
+func FromLSFormatOptions(f FormatCodeSettings, opt *lsproto.FormattingOptions) FormatCodeSettings {
+	updatedSettings := f
 	updatedSettings.TabSize = int(opt.TabSize)
 	updatedSettings.IndentSize = int(opt.TabSize)
 	updatedSettings.ConvertTabsToSpaces = core.BoolToTristate(opt.InsertSpaces)
@@ -102,7 +102,7 @@ func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) 
 	return updatedSettings
 }
 
-func (settings *FormatCodeSettings) ToLSFormatOptions() *lsproto.FormattingOptions {
+func (settings FormatCodeSettings) ToLSFormatOptions() *lsproto.FormattingOptions {
 	trimTrailingWhitespace := settings.TrimTrailingWhitespace.IsTrue()
 	return &lsproto.FormattingOptions{
 		TabSize:                uint32(settings.TabSize),

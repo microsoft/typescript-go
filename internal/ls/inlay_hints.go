@@ -26,7 +26,7 @@ func (l *LanguageService) ProvideInlayHint(
 	params *lsproto.InlayHintParams,
 ) (lsproto.InlayHintResponse, error) {
 	userPreferences := l.UserPreferences()
-	inlayHintPreferences := &userPreferences.InlayHints
+	inlayHintPreferences := userPreferences.InlayHints
 	if !isAnyInlayHintEnabled(inlayHintPreferences) {
 		return lsproto.InlayHintsOrNull{InlayHints: nil}, nil
 	}
@@ -52,7 +52,7 @@ func (l *LanguageService) ProvideInlayHint(
 type inlayHintState struct {
 	ctx             context.Context
 	span            core.TextRange
-	preferences     *lsutil.InlayHintsPreferences
+	preferences     lsutil.InlayHintsPreferences
 	quotePreference lsutil.QuotePreference
 	file            *ast.SourceFile
 	checker         *checker.Checker
@@ -374,12 +374,12 @@ func (s *inlayHintState) addParameterHints(text string, parameter *ast.Identifie
 	})
 }
 
-func shouldShowParameterNameHints(preferences *lsutil.InlayHintsPreferences) bool {
+func shouldShowParameterNameHints(preferences lsutil.InlayHintsPreferences) bool {
 	return (preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals ||
 		preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsAll)
 }
 
-func shouldShowLiteralParameterNameHintsOnly(preferences *lsutil.InlayHintsPreferences) bool {
+func shouldShowLiteralParameterNameHintsOnly(preferences lsutil.InlayHintsPreferences) bool {
 	return preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals
 }
 
@@ -914,6 +914,6 @@ func (s *inlayHintState) getTypeAnnotationPosition(decl *ast.FunctionLikeDeclara
 	return decl.ParameterList().End()
 }
 
-func isAnyInlayHintEnabled(preferences *lsutil.InlayHintsPreferences) bool {
-	return *preferences != lsutil.InlayHintsPreferences{}
+func isAnyInlayHintEnabled(preferences lsutil.InlayHintsPreferences) bool {
+	return preferences != lsutil.InlayHintsPreferences{}
 }
