@@ -191,11 +191,11 @@ type Server struct {
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
 
-	cpuProfiler   pprof.CPUProfiler
+	cpuProfiler pprof.CPUProfiler
 
 	progressDelay   time.Duration
 	projectProgress *projectLoadingProgress
-	
+
 	startWatchdog func(parentPID int)
 }
 
