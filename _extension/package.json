@@ -155,16 +155,28 @@
                 "category": "Developer: TypeScript Native Preview"
             },
             {
-                "command": "typescript.native-preview.sortImports",
+                "command": "typescript.sortImports",
                 "title": "Sort Imports",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript"
             },
             {
-                "command": "typescript.native-preview.removeUnusedImports",
+                "command": "javascript.sortImports",
+                "title": "Sort Imports",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "JavaScript"
+            },
+            {
+                "command": "typescript.removeUnusedImports",
                 "title": "Remove Unused Imports",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript"
+            },
+            {
+                "command": "javascript.removeUnusedImports",
+                "title": "Remove Unused Imports",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "JavaScript"
             }
         ]
     },

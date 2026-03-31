@@ -239,20 +239,23 @@ class Session implements vscode.Disposable {
             }
         }));
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.sortImports", async () => {
-            await vscode.commands.executeCommand("editor.action.sourceAction", {
-                kind: "source.sortImports",
-                apply: "ifSingle",
-            });
-        }));
+        for (const command of ["typescript.sortImports", "javascript.sortImports"]) {
+            this.disposables.push(vscode.commands.registerCommand(command, async () => {
+                await vscode.commands.executeCommand("editor.action.sourceAction", {
+                    kind: "source.sortImports",
+                    apply: "first",
+                });
+            }));
+        }
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.removeUnusedImports", async () => {
-            await vscode.commands.executeCommand("editor.action.sourceAction", {
-                kind: "source.removeUnusedImports",
-                apply: "ifSingle",
-            });
-        }));
-
+        for (const command of ["typescript.removeUnusedImports", "javascript.removeUnusedImports"]) {
+            this.disposables.push(vscode.commands.registerCommand(command, async () => {
+                await vscode.commands.executeCommand("editor.action.sourceAction", {
+                    kind: "source.removeUnusedImports",
+                    apply: "first",
+                });
+            }));
+        }
     }
 
     async dispose(): Promise<void> {
