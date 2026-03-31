@@ -61,6 +61,7 @@ func runLSP(args []string) int {
 			cmd.Dir = cwd
 			return cmd.Output()
 		},
+		ProgressDelay: 250 * time.Millisecond,
 		SetParentProcessId: func(parentPID int) {
 			startParentProcessWatchdog(ctx, parentPID)
 		},

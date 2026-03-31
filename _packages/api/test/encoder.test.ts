@@ -6,9 +6,16 @@ import type {
 import { SyntaxKind } from "@typescript/ast";
 import {
     createBlock,
+    createExpressionStatement,
     createFunctionDeclaration,
     createIdentifier,
     createIfStatement,
+    createJsxAttributes,
+    createJsxClosingElement,
+    createJsxElement,
+    createJsxOpeningElement,
+    createPostfixUnaryExpression,
+    createPrefixUnaryExpression,
     createSourceFile,
     createToken,
     createVariableDeclaration,
@@ -24,7 +31,10 @@ import {
     encodeNode,
     encodeSourceFile,
 } from "../src/node/encoder.ts";
-import { RemoteSourceFile } from "../src/node/node.ts";
+import {
+    RemoteNodeList,
+    RemoteSourceFile,
+} from "../src/node/node.ts";
 import {
     HEADER_OFFSET_NODES,
     NODE_LEN,
@@ -174,6 +184,88 @@ describe("Encoder", () => {
         const data = view.getUint32(offsetNodes + NODE_LEN + NODE_OFFSET_DATA, true);
         // Bit 24 should be 1 (multiLine)
         assert.strictEqual((data >>> 24) & 1, 1);
+    });
+
+    test("postfix unary operator is preserved through encode/decode", () => {
+        const operand = createIdentifier("i");
+        const postfix = createPostfixUnaryExpression(operand, SyntaxKind.PlusPlusToken);
+        const stmt = createExpressionStatement(postfix);
+        const sf = makeSF("i++;", "/test.ts", [stmt]);
+
+        const encoded = encodeSourceFile(sf);
+        const decoded = decode(encoded);
+        const stmts = decoded.statements;
+        assert.ok(stmts);
+        const decodedStmt = stmts.at(0)!;
+        assert.strictEqual(decodedStmt.kind, SyntaxKind.ExpressionStatement);
+        const expr = decodedStmt.expression!;
+        assert.strictEqual(expr.kind, SyntaxKind.PostfixUnaryExpression);
+        assert.strictEqual(expr.operator, SyntaxKind.PlusPlusToken);
+        assert.ok(expr.operand);
+        assert.strictEqual(expr.operand.kind, SyntaxKind.Identifier);
+    });
+
+    test("prefix unary operator is preserved through encode/decode", () => {
+        const operand = createIdentifier("x");
+        const prefix = createPrefixUnaryExpression(SyntaxKind.ExclamationToken, operand);
+        const stmt = createExpressionStatement(prefix);
+        const sf = makeSF("!x;", "/test.ts", [stmt]);
+
+        const encoded = encodeSourceFile(sf);
+        const decoded = decode(encoded);
+        const stmts = decoded.statements;
+        assert.ok(stmts);
+        const expr = stmts.at(0)!.expression!;
+        assert.strictEqual(expr.kind, SyntaxKind.PrefixUnaryExpression);
+        assert.strictEqual(expr.operator, SyntaxKind.ExclamationToken);
+    });
+
+    test("postfix decrement operator is preserved", () => {
+        const operand = createIdentifier("n");
+        const postfix = createPostfixUnaryExpression(operand, SyntaxKind.MinusMinusToken);
+        const stmt = createExpressionStatement(postfix);
+        const sf = makeSF("n--;", "/test.ts", [stmt]);
+
+        const encoded = encodeSourceFile(sf);
+        const decoded = decode(encoded);
+        const expr = decoded.statements!.at(0)!.expression!;
+        assert.strictEqual(expr.kind, SyntaxKind.PostfixUnaryExpression);
+        assert.strictEqual(expr.operator, SyntaxKind.MinusMinusToken);
+    });
+
+    test("single-child node with no children returns undefined", () => {
+        // JsxAttributes is a single-child node (property: "properties").
+        // When the properties NodeList is empty, the encoder skips it,
+        // so JsxAttributes has zero encoded children. Accessing .properties
+        // must return undefined, not throw "Expected only one child".
+        const tagName = createIdentifier("div");
+        const emptyAttrs = createJsxAttributes([]);
+        const opening = createJsxOpeningElement(tagName, undefined, emptyAttrs);
+        const closing = createJsxClosingElement(createIdentifier("div"));
+        const jsx = createJsxElement(opening, [], closing);
+        const stmt = createVariableStatement(
+            undefined,
+            createVariableDeclarationList([createVariableDeclaration(createIdentifier("x"), undefined, undefined, jsx)]),
+        );
+        const sf = makeSF("const x = <div></div>;", "/test.tsx", [stmt]);
+
+        const encoded = encodeSourceFile(sf);
+        const decoded = decode(encoded);
+
+        // Walk to JsxOpeningElement → attributes (JsxAttributes)
+        const varStmt = decoded.statements!.at(0)!;
+        const declList = varStmt.declarationList!;
+        const declarationsNode = declList.declarations!;
+        assert.ok(declarationsNode instanceof RemoteNodeList);
+        const varDecl = declarationsNode.at(0)!;
+        const jsxElem = varDecl.initializer!;
+        assert.strictEqual(jsxElem.kind, SyntaxKind.JsxElement);
+        const openingElem = jsxElem.openingElement!;
+        assert.strictEqual(openingElem.kind, SyntaxKind.JsxOpeningElement);
+        const attrs = openingElem.attributes!;
+        assert.strictEqual(attrs.kind, SyntaxKind.JsxAttributes);
+        // Empty properties should return undefined, not throw
+        assert.strictEqual(attrs.properties, undefined);
     });
 });
 
