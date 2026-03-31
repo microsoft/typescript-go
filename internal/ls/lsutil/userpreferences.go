@@ -12,23 +12,21 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
-var DefaultUserPreferences = UserPreferences{
-	FormatCodeSettings: GetDefaultFormatCodeSettings(),
-
-	IncludeCompletionsForModuleExports:    core.TSTrue,
-	IncludeCompletionsForImportStatements: core.TSTrue,
-
-	AllowRenameOfImportPath:            core.TSTrue,
-	ProvideRefactorNotApplicableReason: core.TSTrue,
-	DisplayPartsForJSDoc:               core.TSTrue,
-	DisableLineTextInReferences:        core.TSTrue,
-	ReportStyleChecksAsWarnings:        core.TSTrue,
-
-	ExcludeLibrarySymbolsInNavTo: core.TSTrue,
-}
-
 func NewDefaultUserPreferences() UserPreferences {
-	return DefaultUserPreferences
+	return UserPreferences{
+		FormatCodeSettings: GetDefaultFormatCodeSettings(),
+
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
+
+		AllowRenameOfImportPath:            core.TSTrue,
+		ProvideRefactorNotApplicableReason: core.TSTrue,
+		DisplayPartsForJSDoc:               core.TSTrue,
+		DisableLineTextInReferences:        core.TSTrue,
+		ReportStyleChecksAsWarnings:        core.TSTrue,
+
+		ExcludeLibrarySymbolsInNavTo: core.TSTrue,
+	}
 }
 
 // UserPreferences represents TypeScript language service preferences.
@@ -692,7 +690,7 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return err
 	}
 	// Start with defaults, then overlay parsed values
-	*p = DefaultUserPreferences.withConfig(config)
+	*p = NewDefaultUserPreferences().withConfig(config)
 	return nil
 }
 
