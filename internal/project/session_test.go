@@ -1197,11 +1197,11 @@ func TestSession(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 
-		session.Configure(lsutil.NewUserConfig(nil))
+		session.Configure(lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences()))
 		// Change user preferences for code lens and inlay hints.
-		newPrefs := session.Config().TS()
-		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
-		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
+		newPrefs := *session.Config().TS()
+		newPrefs.CodeLens.ReferencesCodeLensEnabled = core.TSTrue
+		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = core.TSTrue
 
 		session.Configure(lsutil.NewUserConfig(newPrefs))
 
@@ -1240,8 +1240,8 @@ func TestSession(t *testing.T) {
 		expectedPrefs1.OrganizeImportsIgnoreCase = core.TSTrue
 
 		// both TS and JS options should be the same from js/ts scope
-		assert.DeepEqual(t, *actualConfig1.TS(), *expectedPrefs1)
-		assert.DeepEqual(t, *actualConfig1.JS(), *expectedPrefs1)
+		assert.DeepEqual(t, *actualConfig1.TS(), expectedPrefs1)
+		assert.DeepEqual(t, *actualConfig1.JS(), expectedPrefs1)
 
 		configMap2 := map[string]any{
 			"preferences": map[string]any{
@@ -1260,8 +1260,8 @@ func TestSession(t *testing.T) {
 		expectedPrefs2.QuotePreference = lsutil.QuotePreferenceDouble
 		expectedPrefs2.OrganizeImportsIgnoreCase = core.TSFalse
 		// both TS and JS should be updated
-		assert.DeepEqual(t, *actualConfig2.TS(), *expectedPrefs2)
-		assert.DeepEqual(t, *actualConfig2.JS(), *expectedPrefs2)
+		assert.DeepEqual(t, *actualConfig2.TS(), expectedPrefs2)
+		assert.DeepEqual(t, *actualConfig2.JS(), expectedPrefs2)
 	})
 
 	t.Run("language service for closed files", func(t *testing.T) {

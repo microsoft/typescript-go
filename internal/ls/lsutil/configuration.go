@@ -5,97 +5,62 @@ import (
 )
 
 type UserConfig struct {
-	js *UserPreferences
-	ts *UserPreferences
+	js UserPreferences
+	ts UserPreferences
 }
 
-// if `userPreferences` is nil, this function will return a config with default userPreferences
-func NewUserConfig(userPreferences *UserPreferences) *UserConfig {
+func NewUserConfig(userPreferences UserPreferences) *UserConfig {
 	return &UserConfig{
-		js: userPreferences.Copy(),
-		ts: userPreferences.Copy(),
+		js: userPreferences,
+		ts: userPreferences,
 	}
 }
 
 func (c *UserConfig) Copy() *UserConfig {
 	return &UserConfig{
-		ts: c.ts.Copy(),
-		js: c.js.Copy(),
+		ts: c.ts,
+		js: c.js,
 	}
 }
 
-// any non-nil field in b is copied into a
 func (a *UserConfig) Merge(b *UserConfig) *UserConfig {
-	newUserConfig := &UserConfig{}
-
-	if b.ts != nil {
-		newUserConfig.ts = b.ts
-	} else {
-		newUserConfig.ts = a.ts
+	return &UserConfig{
+		ts: b.ts,
+		js: b.js,
 	}
-
-	if b.js != nil {
-		newUserConfig.js = b.js
-	} else {
-		newUserConfig.js = a.js
-	}
-
-	return newUserConfig
 }
 
 func (c *UserConfig) TS() *UserPreferences {
-	if c.ts != nil {
-		return c.ts
-	} else if c.js != nil {
-		return c.js
-	}
-	return NewDefaultUserPreferences()
+	return &c.ts
 }
 
 func (c *UserConfig) JS() *UserPreferences {
-	if c.js != nil {
-		return c.js
-	} else if c.ts != nil {
-		return c.ts
-	}
-	return NewDefaultUserPreferences()
+	return &c.js
 }
 
 func (c *UserConfig) GetPreferences(activeFile string) *UserPreferences {
 	if activeFile == "" || tspath.ExtensionIsTs(tspath.GetAnyExtensionFromPath(activeFile, nil, true)) {
-		if c.ts != nil {
-			return c.ts
-		} else if c.js != nil {
-			return c.js
-		}
-	} else {
-		if c.js != nil {
-			return c.js
-		} else if c.ts != nil {
-			return c.ts
-		}
+		return &c.ts
 	}
-	return NewDefaultUserPreferences()
+	return &c.js
 }
 
 func ParseNewUserConfig(items map[string]any) *UserConfig {
-	defaultPref := NewDefaultUserPreferences()
+	prefs := NewDefaultUserPreferences()
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
-			defaultPref.FormatCodeSettings = *defaultPref.FormatCodeSettings.ParseEditorSettings(editorSettings)
+			prefs.FormatCodeSettings.ParseEditorSettings(editorSettings)
 		}
 	}
 	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
 		switch jsTsSettings := jsTsItem.(type) {
 		case map[string]any:
-			return NewUserConfig(defaultPref.ParseWorker(jsTsSettings))
+			prefs.ParseWorker(jsTsSettings)
+		case UserPreferences:
+			prefs.MergeNonDefaults(&jsTsSettings)
 		case *UserPreferences:
-			// case for fourslash -- fourslash sends the entire userPreferences over in "js/ts"
-			if jsTsSettings.FormatCodeSettings == (FormatCodeSettings{}) {
-				jsTsSettings.FormatCodeSettings = *GetDefaultFormatCodeSettings()
-			}
-			return NewUserConfig(jsTsSettings)
+			prefs.MergeNonDefaults(jsTsSettings)
 		}
 	}
-	return NewUserConfig(defaultPref)
+	return NewUserConfig(prefs)
 }

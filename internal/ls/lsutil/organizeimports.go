@@ -71,8 +71,8 @@ func getOrganizeImportsUnicodeStringComparer(ignoreCase bool, preferences *UserP
 
 	if preferences != nil {
 		caseFirst = preferences.OrganizeImportsCaseFirst
-		numeric = preferences.OrganizeImportsNumericCollation
-		accents = preferences.OrganizeImportsAccentCollation
+		numeric = preferences.OrganizeImportsNumericCollation.IsTrue()
+		accents = !preferences.OrganizeImportsAccentCollation.IsFalse()
 	}
 
 	tag, _ := language.Parse(resolvedLocale)

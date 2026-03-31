@@ -61,7 +61,7 @@ func NewSnapshot(
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	if allUserPreferences == nil {
-		allUserPreferences = lsutil.NewUserConfig(nil) // disallow nil config
+		allUserPreferences = lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences()) // disallow nil config
 	}
 	s := &Snapshot{
 		id: id,
@@ -116,11 +116,7 @@ func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
 }
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	// returns `ts`
-	if s.allUserPreferences.TS() != nil {
-		return s.allUserPreferences.TS()
-	}
-	return lsutil.NewDefaultUserPreferences()
+	return s.allUserPreferences.TS()
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {

@@ -194,8 +194,8 @@ func NewSession(init *SessionInit) *Session {
 			),
 			toPath,
 		),
-		initialUserConfig:   lsutil.NewUserConfig(nil),
-		workspaceUserConfig: lsutil.NewUserConfig(nil), // initialize so all `config`s are non-nil
+		initialUserConfig:   lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences()),
+		workspaceUserConfig: lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences()), // initialize so all `config`s are non-nil
 		pendingATAChanges:   make(map[tspath.Path]*ATAStateChange),
 		watches:             make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
 	}

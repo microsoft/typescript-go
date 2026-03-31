@@ -164,13 +164,11 @@ Config File Names::
       "js/ts": {
         "format": {
           "baseIndentSize": 0,
-          "convertTabsToSpaces": false,
           "indentSize": 0,
           "indentStyle": 0,
           "newLineCharacter": "",
           "semicolons": "",
-          "tabSize": 0,
-          "trimTrailingWhitespace": false
+          "tabSize": 0
         },
         "implementationsCodeLens": {
           "enabled": true,
@@ -178,25 +176,8 @@ Config File Names::
           "showOnInterfaceMethods": true
         },
         "inlayHints": {
-          "enumMemberValues": {
-            "enabled": false
-          },
-          "functionLikeReturnTypes": {
-            "enabled": false
-          },
           "parameterNames": {
-            "enabled": "",
-            "suppressWhenArgumentMatchesName": true
-          },
-          "parameterTypes": {
-            "enabled": false
-          },
-          "propertyDeclarationTypes": {
-            "enabled": false
-          },
-          "variableTypes": {
-            "enabled": false,
-            "suppressWhenTypeMatchesName": true
+            "enabled": ""
           }
         },
         "native-preview": {
@@ -208,10 +189,8 @@ Config File Names::
           "includePackageJsonAutoImports": "",
           "jsxAttributeCompletionStyle": "",
           "organizeImports": {
-            "accentCollation": false,
             "caseFirst": "default",
             "locale": "",
-            "numericCollation": false,
             "typeOrder": "auto",
             "unicodeCollation": "ordinal"
           },
@@ -222,17 +201,7 @@ Config File Names::
           "showOnAllFunctions": true
         },
         "unstable": {
-          "allowTextChangesInNewFiles": false,
-          "disableLineTextInReferences": false,
-          "disableSuggestions": false,
-          "displayPartsForJSDoc": false,
-          "lazyConfiguredProjectsFromExternalProject": false,
-          "maximumHoverLength": 0,
-          "provideRefactorNotApplicableReason": false,
-          "reportStyleChecksAsWarnings": false
-        },
-        "workspaceSymbols": {
-          "excludeLibrarySymbols": false
+          "maximumHoverLength": 0
         }
       }
     }
@@ -658,31 +627,9 @@ Config::
           "tabSize": 4,
           "trimTrailingWhitespace": true
         },
-        "implementationsCodeLens": {
-          "enabled": false,
-          "showOnAllClassMethods": false,
-          "showOnInterfaceMethods": false
-        },
         "inlayHints": {
-          "enumMemberValues": {
-            "enabled": false
-          },
-          "functionLikeReturnTypes": {
-            "enabled": false
-          },
           "parameterNames": {
-            "enabled": "",
-            "suppressWhenArgumentMatchesName": true
-          },
-          "parameterTypes": {
-            "enabled": false
-          },
-          "propertyDeclarationTypes": {
-            "enabled": false
-          },
-          "variableTypes": {
-            "enabled": false,
-            "suppressWhenTypeMatchesName": true
+            "enabled": ""
           }
         },
         "native-preview": {
@@ -694,18 +641,12 @@ Config::
           "includePackageJsonAutoImports": "",
           "jsxAttributeCompletionStyle": "",
           "organizeImports": {
-            "accentCollation": false,
             "caseFirst": "default",
             "locale": "",
-            "numericCollation": false,
             "typeOrder": "auto",
             "unicodeCollation": "ordinal"
           },
           "quoteStyle": ""
-        },
-        "referencesCodeLens": {
-          "enabled": false,
-          "showOnAllFunctions": false
         },
         "suggest": {
           "autoImports": true,
@@ -713,11 +654,8 @@ Config::
         },
         "unstable": {
           "allowRenameOfImportPath": true,
-          "allowTextChangesInNewFiles": false,
           "disableLineTextInReferences": true,
-          "disableSuggestions": false,
           "displayPartsForJSDoc": true,
-          "lazyConfiguredProjectsFromExternalProject": false,
           "maximumHoverLength": 0,
           "provideRefactorNotApplicableReason": true,
           "reportStyleChecksAsWarnings": true

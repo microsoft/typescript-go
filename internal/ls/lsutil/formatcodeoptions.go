@@ -59,13 +59,13 @@ func parseSemicolonPreference(v any) SemicolonPreference {
 }
 
 type EditorSettings struct {
-	BaseIndentSize         int         `raw:"baseIndentSize" config:"format.baseIndentSize"`
-	IndentSize             int         `raw:"indentSize" config:"format.indentSize"`
-	TabSize                int         `raw:"tabSize" config:"format.tabSize"`
-	NewLineCharacter       string      `raw:"newLineCharacter" config:"format.newLineCharacter"`
-	ConvertTabsToSpaces    bool        `raw:"convertTabsToSpaces" config:"format.convertTabsToSpaces"`
-	IndentStyle            IndentStyle `raw:"indentStyle" config:"format.indentStyle"`
-	TrimTrailingWhitespace bool        `raw:"trimTrailingWhitespace" config:"format.trimTrailingWhitespace"`
+	BaseIndentSize         int           `raw:"baseIndentSize" config:"format.baseIndentSize"`
+	IndentSize             int           `raw:"indentSize" config:"format.indentSize"`
+	TabSize                int           `raw:"tabSize" config:"format.tabSize"`
+	NewLineCharacter       string        `raw:"newLineCharacter" config:"format.newLineCharacter"`
+	ConvertTabsToSpaces    core.Tristate `raw:"convertTabsToSpaces" config:"format.convertTabsToSpaces"`
+	IndentStyle            IndentStyle   `raw:"indentStyle" config:"format.indentStyle"`
+	TrimTrailingWhitespace core.Tristate `raw:"trimTrailingWhitespace" config:"format.trimTrailingWhitespace"`
 }
 
 type FormatCodeSettings struct {
@@ -92,22 +92,23 @@ type FormatCodeSettings struct {
 	IndentSwitchCase                                            core.Tristate       `raw:"indentSwitchCase" config:"format.indentSwitchCase"`
 }
 
-func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) *FormatCodeSettings {
-	updatedSettings := f.Copy()
+func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) FormatCodeSettings {
+	updatedSettings := *f
 	updatedSettings.TabSize = int(opt.TabSize)
 	updatedSettings.IndentSize = int(opt.TabSize)
-	updatedSettings.ConvertTabsToSpaces = opt.InsertSpaces
+	updatedSettings.ConvertTabsToSpaces = core.BoolToTristate(opt.InsertSpaces)
 	if opt.TrimTrailingWhitespace != nil {
-		updatedSettings.TrimTrailingWhitespace = *opt.TrimTrailingWhitespace
+		updatedSettings.TrimTrailingWhitespace = core.BoolToTristate(*opt.TrimTrailingWhitespace)
 	}
 	return updatedSettings
 }
 
 func (settings *FormatCodeSettings) ToLSFormatOptions() *lsproto.FormattingOptions {
+	trimTrailingWhitespace := settings.TrimTrailingWhitespace.IsTrue()
 	return &lsproto.FormattingOptions{
 		TabSize:                uint32(settings.TabSize),
-		InsertSpaces:           settings.ConvertTabsToSpaces,
-		TrimTrailingWhitespace: &settings.TrimTrailingWhitespace,
+		InsertSpaces:           settings.ConvertTabsToSpaces.IsTrue(),
+		TrimTrailingWhitespace: &trimTrailingWhitespace,
 	}
 }
 
@@ -147,11 +148,11 @@ func (settings *FormatCodeSettings) Set(name string, value any) bool {
 	case "newlinecharacter":
 		settings.NewLineCharacter = core.GetNewLineKind(tsoptions.ParseString(value)).GetNewLineCharacter()
 	case "converttabstospaces":
-		settings.ConvertTabsToSpaces = parseBoolWithDefault(value, true)
+		settings.ConvertTabsToSpaces = tsoptions.ParseTristate(value)
 	case "indentstyle":
 		settings.IndentStyle = parseIndentStyle(value)
 	case "trimtrailingwhitespace":
-		settings.TrimTrailingWhitespace = parseBoolWithDefault(value, true)
+		settings.TrimTrailingWhitespace = tsoptions.ParseTristate(value)
 	case "insertspaceaftercommadelimiter":
 		settings.InsertSpaceAfterCommaDelimiter = tsoptions.ParseTristate(value)
 	case "insertspaceaftersemicoloninformstatements":
@@ -198,23 +199,15 @@ func (settings *FormatCodeSettings) Set(name string, value any) bool {
 	return true
 }
 
-func (settings *FormatCodeSettings) Copy() *FormatCodeSettings {
-	if settings == nil {
-		return nil
-	}
-	copied := *settings
-	return &copied
-}
-
-func GetDefaultFormatCodeSettings() *FormatCodeSettings {
-	return &FormatCodeSettings{
+func GetDefaultFormatCodeSettings() FormatCodeSettings {
+	return FormatCodeSettings{
 		EditorSettings: EditorSettings{
 			IndentSize:             printer.GetDefaultIndentSize(),
 			TabSize:                printer.GetDefaultIndentSize(),
 			NewLineCharacter:       "\n",
-			ConvertTabsToSpaces:    true,
+			ConvertTabsToSpaces:    core.TSTrue,
 			IndentStyle:            IndentStyleSmart,
-			TrimTrailingWhitespace: true,
+			TrimTrailingWhitespace: core.TSTrue,
 		},
 		InsertSpaceAfterConstructor:                                 core.TSFalse,
 		InsertSpaceAfterCommaDelimiter:                              core.TSTrue,

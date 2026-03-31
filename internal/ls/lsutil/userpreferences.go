@@ -12,23 +12,23 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
-var DefaultUserPreferences = &UserPreferences{
-	FormatCodeSettings: *GetDefaultFormatCodeSettings(),
+var DefaultUserPreferences = UserPreferences{
+	FormatCodeSettings: GetDefaultFormatCodeSettings(),
 
 	IncludeCompletionsForModuleExports:    core.TSTrue,
 	IncludeCompletionsForImportStatements: core.TSTrue,
 
 	AllowRenameOfImportPath:            core.TSTrue,
-	ProvideRefactorNotApplicableReason: true,
-	DisplayPartsForJSDoc:               true,
-	DisableLineTextInReferences:        true,
-	ReportStyleChecksAsWarnings:        true,
+	ProvideRefactorNotApplicableReason: core.TSTrue,
+	DisplayPartsForJSDoc:               core.TSTrue,
+	DisableLineTextInReferences:        core.TSTrue,
+	ReportStyleChecksAsWarnings:        core.TSTrue,
 
-	ExcludeLibrarySymbolsInNavTo: true,
+	ExcludeLibrarySymbolsInNavTo: core.TSTrue,
 }
 
-func NewDefaultUserPreferences() *UserPreferences {
-	return DefaultUserPreferences.Copy()
+func NewDefaultUserPreferences() UserPreferences {
+	return DefaultUserPreferences
 }
 
 // UserPreferences represents TypeScript language service preferences.
@@ -43,7 +43,7 @@ type UserPreferences struct {
 	FormatCodeSettings FormatCodeSettings
 
 	QuotePreference                           QuotePreference `raw:"quotePreference" config:"preferences.quoteStyle"`
-	LazyConfiguredProjectsFromExternalProject bool            `raw:"lazyConfiguredProjectsFromExternalProject"` // !!!
+	LazyConfiguredProjectsFromExternalProject core.Tristate   `raw:"lazyConfiguredProjectsFromExternalProject"` // !!!
 
 	// A positive integer indicating the maximum length of a hover text before it is truncated.
 	//
@@ -110,7 +110,7 @@ type UserPreferences struct {
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `false`
-	OrganizeImportsNumericCollation bool `raw:"organizeImportsNumericCollation" config:"preferences.organizeImports.numericCollation"` // !!!
+	OrganizeImportsNumericCollation core.Tristate `raw:"organizeImportsNumericCollation" config:"preferences.organizeImports.numericCollation"` // !!!
 	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of collation. When
 	// `true`, characters with accents and other diacritics will be collated in the order defined by the locale specified
 	// in organizeImportsCollationLocale.
@@ -118,7 +118,7 @@ type UserPreferences struct {
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `true`
-	OrganizeImportsAccentCollation bool `raw:"organizeImportsAccentCollation" config:"preferences.organizeImports.accentCollation"` // !!!
+	OrganizeImportsAccentCollation core.Tristate `raw:"organizeImportsAccentCollation" config:"preferences.organizeImports.accentCollation"` // !!!
 	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
 	// specified in organizeImportsCollationLocale is used.
 	//
@@ -136,7 +136,7 @@ type UserPreferences struct {
 
 	// ------- MoveToFile -------
 
-	AllowTextChangesInNewFiles bool `raw:"allowTextChangesInNewFiles"` // !!!
+	AllowTextChangesInNewFiles core.Tristate `raw:"allowTextChangesInNewFiles"` // !!!
 
 	// ------- Rename -------
 
@@ -145,7 +145,7 @@ type UserPreferences struct {
 
 	// ------- CodeFixes/Refactors -------
 
-	ProvideRefactorNotApplicableReason bool `raw:"provideRefactorNotApplicableReason"` // !!!
+	ProvideRefactorNotApplicableReason core.Tristate `raw:"provideRefactorNotApplicableReason"` // !!!
 
 	// ------- InlayHints -------
 
@@ -157,14 +157,14 @@ type UserPreferences struct {
 
 	// ------- Symbols -------
 
-	ExcludeLibrarySymbolsInNavTo bool `raw:"excludeLibrarySymbolsInNavTo" config:"workspaceSymbols.excludeLibrarySymbols"`
+	ExcludeLibrarySymbolsInNavTo core.Tristate `raw:"excludeLibrarySymbolsInNavTo" config:"workspaceSymbols.excludeLibrarySymbols"`
 
 	// ------- Misc -------
 
-	DisableSuggestions          bool `raw:"disableSuggestions"`          // !!!
-	DisableLineTextInReferences bool `raw:"disableLineTextInReferences"` // !!!
-	DisplayPartsForJSDoc        bool `raw:"displayPartsForJSDoc"`        // !!!
-	ReportStyleChecksAsWarnings bool `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
+	DisableSuggestions          core.Tristate `raw:"disableSuggestions"`          // !!!
+	DisableLineTextInReferences core.Tristate `raw:"disableLineTextInReferences"` // !!!
+	DisplayPartsForJSDoc        core.Tristate `raw:"displayPartsForJSDoc"`        // !!!
+	ReportStyleChecksAsWarnings core.Tristate `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
 
 	// ------- Project Configuration -------
 
@@ -174,21 +174,21 @@ type UserPreferences struct {
 
 type InlayHintsPreferences struct {
 	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints `raw:"includeInlayParameterNameHints" config:"inlayHints.parameterNames.enabled"`
-	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool                           `raw:"includeInlayParameterNameHintsWhenArgumentMatchesName" config:"inlayHints.parameterNames.suppressWhenArgumentMatchesName,invert"`
-	IncludeInlayFunctionParameterTypeHints                bool                           `raw:"includeInlayFunctionParameterTypeHints" config:"inlayHints.parameterTypes.enabled"`
-	IncludeInlayVariableTypeHints                         bool                           `raw:"includeInlayVariableTypeHints" config:"inlayHints.variableTypes.enabled"`
-	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool                           `raw:"includeInlayVariableTypeHintsWhenTypeMatchesName" config:"inlayHints.variableTypes.suppressWhenTypeMatchesName,invert"`
-	IncludeInlayPropertyDeclarationTypeHints              bool                           `raw:"includeInlayPropertyDeclarationTypeHints" config:"inlayHints.propertyDeclarationTypes.enabled"`
-	IncludeInlayFunctionLikeReturnTypeHints               bool                           `raw:"includeInlayFunctionLikeReturnTypeHints" config:"inlayHints.functionLikeReturnTypes.enabled"`
-	IncludeInlayEnumMemberValueHints                      bool                           `raw:"includeInlayEnumMemberValueHints" config:"inlayHints.enumMemberValues.enabled"`
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName core.Tristate                  `raw:"includeInlayParameterNameHintsWhenArgumentMatchesName" config:"inlayHints.parameterNames.suppressWhenArgumentMatchesName,invert"`
+	IncludeInlayFunctionParameterTypeHints                core.Tristate                  `raw:"includeInlayFunctionParameterTypeHints" config:"inlayHints.parameterTypes.enabled"`
+	IncludeInlayVariableTypeHints                         core.Tristate                  `raw:"includeInlayVariableTypeHints" config:"inlayHints.variableTypes.enabled"`
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      core.Tristate                  `raw:"includeInlayVariableTypeHintsWhenTypeMatchesName" config:"inlayHints.variableTypes.suppressWhenTypeMatchesName,invert"`
+	IncludeInlayPropertyDeclarationTypeHints              core.Tristate                  `raw:"includeInlayPropertyDeclarationTypeHints" config:"inlayHints.propertyDeclarationTypes.enabled"`
+	IncludeInlayFunctionLikeReturnTypeHints               core.Tristate                  `raw:"includeInlayFunctionLikeReturnTypeHints" config:"inlayHints.functionLikeReturnTypes.enabled"`
+	IncludeInlayEnumMemberValueHints                      core.Tristate                  `raw:"includeInlayEnumMemberValueHints" config:"inlayHints.enumMemberValues.enabled"`
 }
 
 type CodeLensUserPreferences struct {
-	ReferencesCodeLensEnabled                     bool `raw:"referencesCodeLensEnabled" config:"referencesCodeLens.enabled"`
-	ImplementationsCodeLensEnabled                bool `raw:"implementationsCodeLensEnabled" config:"implementationsCodeLens.enabled"`
-	ReferencesCodeLensShowOnAllFunctions          bool `raw:"referencesCodeLensShowOnAllFunctions" config:"referencesCodeLens.showOnAllFunctions"`
-	ImplementationsCodeLensShowOnInterfaceMethods bool `raw:"implementationsCodeLensShowOnInterfaceMethods" config:"implementationsCodeLens.showOnInterfaceMethods"`
-	ImplementationsCodeLensShowOnAllClassMethods  bool `raw:"implementationsCodeLensShowOnAllClassMethods" config:"implementationsCodeLens.showOnAllClassMethods"`
+	ReferencesCodeLensEnabled                     core.Tristate `raw:"referencesCodeLensEnabled" config:"referencesCodeLens.enabled"`
+	ImplementationsCodeLensEnabled                core.Tristate `raw:"implementationsCodeLensEnabled" config:"implementationsCodeLens.enabled"`
+	ReferencesCodeLensShowOnAllFunctions          core.Tristate `raw:"referencesCodeLensShowOnAllFunctions" config:"referencesCodeLens.showOnAllFunctions"`
+	ImplementationsCodeLensShowOnInterfaceMethods core.Tristate `raw:"implementationsCodeLensShowOnInterfaceMethods" config:"implementationsCodeLens.showOnInterfaceMethods"`
+	ImplementationsCodeLensShowOnAllClassMethods  core.Tristate `raw:"implementationsCodeLensShowOnAllClassMethods" config:"implementationsCodeLens.showOnAllClassMethods"`
 }
 
 // --- Enum Types ---
@@ -692,7 +692,7 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return err
 	}
 	// Start with defaults, then overlay parsed values
-	*p = *DefaultUserPreferences.Copy()
+	*p = DefaultUserPreferences
 	p.ParseWorker(config)
 	return nil
 }
@@ -716,58 +716,31 @@ func parseIntWithDefault(val any, defaultV int) int {
 	return defaultV
 }
 
-func deepCopy[T any](src T) T {
-	var dst T
-	deepCopyValue(reflect.ValueOf(&dst).Elem(), reflect.ValueOf(src))
-	return dst
+// MergeNonDefaults overlays non-zero-value fields from src onto p.
+// This is safe because all preference fields use types where zero = "not set":
+// Tristate (TSUnknown=0), int (0), string (""), slice (nil).
+func (p *UserPreferences) MergeNonDefaults(src *UserPreferences) {
+	mergeNonZeroFields(reflect.ValueOf(p).Elem(), reflect.ValueOf(src).Elem())
 }
 
-func deepCopyValue(dst, src reflect.Value) {
-	switch src.Kind() {
-	case reflect.Pointer:
-		if src.IsNil() {
-			dst.SetZero()
-			return
+func mergeNonZeroFields(dst, src reflect.Value) {
+	for i := range dst.NumField() {
+		srcField := src.Field(i)
+		dstField := dst.Field(i)
+		if srcField.Kind() == reflect.Struct {
+			mergeNonZeroFields(dstField, srcField)
+			continue
 		}
-		dst.Set(reflect.New(src.Type().Elem()))
-		deepCopyValue(dst.Elem(), src.Elem())
-	case reflect.Struct:
-		for i := range src.NumField() {
-			deepCopyValue(dst.Field(i), src.Field(i))
+		if !srcField.IsZero() {
+			dstField.Set(srcField)
 		}
-	case reflect.Slice:
-		if src.IsNil() {
-			dst.SetZero()
-			return
-		}
-		dst.Set(reflect.MakeSlice(src.Type(), src.Len(), src.Len()))
-		for i := range src.Len() {
-			deepCopyValue(dst.Index(i), src.Index(i))
-		}
-	case reflect.Map:
-		if src.IsNil() {
-			dst.SetZero()
-			return
-		}
-		dst.Set(reflect.MakeMapWithSize(src.Type(), src.Len()))
-		for _, key := range src.MapKeys() {
-			val := src.MapIndex(key)
-			copiedVal := reflect.New(val.Type()).Elem()
-			deepCopyValue(copiedVal, val)
-			dst.SetMapIndex(key, copiedVal)
-		}
-	default:
-		dst.Set(src)
 	}
-}
-
-func (p *UserPreferences) Copy() *UserPreferences {
-	return deepCopy(p)
 }
 
 func (p *UserPreferences) OrDefault() *UserPreferences {
 	if p == nil {
-		return NewDefaultUserPreferences()
+		defaults := NewDefaultUserPreferences()
+		return &defaults
 	}
 	return p
 }
@@ -797,9 +770,9 @@ func ParseUserPreferences(item any) *UserPreferences {
 		return nil
 	}
 	if config, ok := item.(map[string]any); ok {
-		p := DefaultUserPreferences.Copy()
+		p := NewDefaultUserPreferences()
 		p.ParseWorker(config)
-		return p
+		return &p
 	}
 	if prefs, ok := item.(*UserPreferences); ok {
 		return prefs

@@ -82,21 +82,21 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 		return false
 	}
 
-	if s.preferences.IncludeInlayVariableTypeHints && ast.IsVariableDeclaration(node) {
+	if s.preferences.IncludeInlayVariableTypeHints.IsTrue() && ast.IsVariableDeclaration(node) {
 		s.visitVariableLikeDeclaration(node)
-	} else if s.preferences.IncludeInlayPropertyDeclarationTypeHints && ast.IsPropertyDeclaration(node) {
+	} else if s.preferences.IncludeInlayPropertyDeclarationTypeHints.IsTrue() && ast.IsPropertyDeclaration(node) {
 		s.visitVariableLikeDeclaration(node)
-	} else if s.preferences.IncludeInlayEnumMemberValueHints && ast.IsEnumMember(node) {
+	} else if s.preferences.IncludeInlayEnumMemberValueHints.IsTrue() && ast.IsEnumMember(node) {
 		s.visitEnumMember(node)
 	} else if shouldShowParameterNameHints(s.preferences) && (ast.IsCallExpression(node) || ast.IsNewExpression(node)) {
 		s.visitCallOrNewExpression(node)
 	} else {
-		if s.preferences.IncludeInlayFunctionParameterTypeHints &&
+		if s.preferences.IncludeInlayFunctionParameterTypeHints.IsTrue() &&
 			ast.IsFunctionLikeDeclaration(node) &&
 			ast.HasContextSensitiveParameters(node) {
 			s.visitFunctionLikeForParameterType(node)
 		}
-		if s.preferences.IncludeInlayFunctionLikeReturnTypeHints &&
+		if s.preferences.IncludeInlayFunctionLikeReturnTypeHints.IsTrue() &&
 			isSignatureSupportingReturnAnnotation(node) {
 			s.visitFunctionDeclarationLikeForReturnType(node)
 		}
@@ -186,7 +186,7 @@ func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression)
 		parameter := identifierInfo.parameter
 		parameterName := identifierInfo.name
 		isFirstVariadicArgument := identifierInfo.isRestParameter
-		parameterNameNotSameAsArgument := s.preferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName ||
+		parameterNameNotSameAsArgument := s.preferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName.IsTrue() ||
 			!identifierOrAccessExpressionPostfixMatchesParameterName(arg, parameterName)
 		if !parameterNameNotSameAsArgument && !isFirstVariadicArgument {
 			continue
@@ -244,7 +244,7 @@ func (s *inlayHintState) visitVariableLikeDeclaration(decl *ast.VariableOrProper
 		}
 		hintText = b.String()
 	}
-	if !s.preferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName &&
+	if !s.preferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName.IsTrue() &&
 		!ast.IsComputedPropertyName(decl.Name()) &&
 		stringutil.EquateStringCaseInsensitive(decl.Name().Text(), hintText) {
 		return

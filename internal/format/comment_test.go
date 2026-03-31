@@ -23,9 +23,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -74,9 +74,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -111,9 +111,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -144,9 +144,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -178,9 +178,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -211,9 +211,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false,
+				ConvertTabsToSpaces:    core.TSFalse,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 		}, "\n")
 
@@ -240,9 +240,9 @@ func TestCommentFormatting(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false,
+				ConvertTabsToSpaces:    core.TSFalse,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 		}, "\n")
 
@@ -273,9 +273,9 @@ func TestSliceBoundsPanic(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")

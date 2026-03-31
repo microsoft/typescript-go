@@ -109,7 +109,7 @@ func TestUserPreferencesSerialize(t *testing.T) {
 	t.Run("raw-only field serializes to unstable section", func(t *testing.T) {
 		t.Parallel()
 		prefs := &UserPreferences{
-			DisableSuggestions: true,
+			DisableSuggestions: core.TSTrue,
 		}
 		jsonBytes, err := json.Marshal(prefs)
 		assert.NilError(t, err)
@@ -127,7 +127,7 @@ func TestUserPreferencesSerialize(t *testing.T) {
 		prefs := &UserPreferences{
 			InlayHints: InlayHintsPreferences{
 				IncludeInlayParameterNameHints:                        IncludeInlayParameterNameHintsAll,
-				IncludeInlayParameterNameHintsWhenArgumentMatchesName: true,
+				IncludeInlayParameterNameHintsWhenArgumentMatchesName: core.TSTrue,
 			},
 		}
 		jsonBytes, err := json.Marshal(prefs)
@@ -147,8 +147,8 @@ func TestUserPreferencesSerialize(t *testing.T) {
 		t.Parallel()
 		prefs := &UserPreferences{
 			QuotePreference:      QuotePreferenceSingle,
-			DisableSuggestions:   true,
-			DisplayPartsForJSDoc: true,
+			DisableSuggestions:   core.TSTrue,
+			DisplayPartsForJSDoc: core.TSTrue,
 		}
 		jsonBytes, err := json.Marshal(prefs)
 		assert.NilError(t, err)
@@ -184,7 +184,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 				}
 			}`,
 			expected: &UserPreferences{
-				DisableSuggestions:      true,
+				DisableSuggestions:      core.TSTrue,
 				MaximumHoverLength:      100,
 				AllowRenameOfImportPath: core.TSTrue,
 			},
@@ -228,7 +228,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			expected: &UserPreferences{
 				InlayHints: InlayHintsPreferences{
 					IncludeInlayParameterNameHints:                        IncludeInlayParameterNameHintsAll,
-					IncludeInlayParameterNameHintsWhenArgumentMatchesName: false, // inverted
+					IncludeInlayParameterNameHintsWhenArgumentMatchesName: core.TSFalse, // inverted
 				},
 			},
 		},
@@ -246,9 +246,9 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 				}
 			}`,
 			expected: &UserPreferences{
-				DisplayPartsForJSDoc:            true,
+				DisplayPartsForJSDoc:            core.TSTrue,
 				ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
-				ExcludeLibrarySymbolsInNavTo:    true,
+				ExcludeLibrarySymbolsInNavTo:    core.TSTrue,
 			},
 		},
 		{
@@ -288,7 +288,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			expected: &UserPreferences{
 				QuotePreference:                    QuotePreferenceDouble,
 				IncludeCompletionsForModuleExports: core.TSTrue,
-				ExcludeLibrarySymbolsInNavTo:       true,
+				ExcludeLibrarySymbolsInNavTo:       core.TSTrue,
 			},
 		},
 		{

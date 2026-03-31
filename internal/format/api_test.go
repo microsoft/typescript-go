@@ -45,9 +45,9 @@ func TestFormat(t *testing.T) {
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -74,9 +74,9 @@ func BenchmarkFormat(b *testing.B) {
 			IndentSize:             4,
 			BaseIndentSize:         4,
 			NewLineCharacter:       "\n",
-			ConvertTabsToSpaces:    true,
+			ConvertTabsToSpaces:    core.TSTrue,
 			IndentStyle:            lsutil.IndentStyleSmart,
-			TrimTrailingWhitespace: true,
+			TrimTrailingWhitespace: core.TSTrue,
 		},
 		InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 	}, "\n")

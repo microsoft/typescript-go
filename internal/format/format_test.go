@@ -37,9 +37,9 @@ func TestFormatNoTrailingSpace(t *testing.T) {
 					TabSize:                4,
 					IndentSize:             4,
 					NewLineCharacter:       "\n",
-					ConvertTabsToSpaces:    true,
+					ConvertTabsToSpaces:    core.TSTrue,
 					IndentStyle:            lsutil.IndentStyleSmart,
-					TrimTrailingWhitespace: true,
+					TrimTrailingWhitespace: core.TSTrue,
 				},
 			}, "\n")
 			sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{

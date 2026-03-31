@@ -2,24 +2,24 @@ package lsutil
 
 import (
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func TestUserConfig_GetPreferences(t *testing.T) {
 	t.Parallel()
-	defaultPref := NewDefaultUserPreferences()
 
 	type expectedPreference int
 
 	const (
 		expectedPreferenceTS expectedPreference = iota
 		expectedPreferenceJS
-		expectedPreferenceDefault
 	)
 
-	doubleQuotePrefs := &UserPreferences{
+	doubleQuotePrefs := UserPreferences{
 		QuotePreference: "double",
 	}
-	singleQuotePrefs := &UserPreferences{
+	singleQuotePrefs := UserPreferences{
 		QuotePreference: "single",
 	}
 
@@ -99,54 +99,6 @@ func TestUserConfig_GetPreferences(t *testing.T) {
 			activeFile:   "file.py",
 			expectedPref: expectedPreferenceJS,
 		},
-		{
-			name: ".ts file with nil TS preferences falls back to JS",
-			config: &UserConfig{
-				ts: nil,
-				js: singleQuotePrefs,
-			},
-			activeFile:   "file.ts",
-			expectedPref: expectedPreferenceJS,
-		},
-		{
-			name: ".js file with nil JS preferences falls back to TS",
-			config: &UserConfig{
-				ts: doubleQuotePrefs,
-				js: nil,
-			},
-			activeFile:   "file.js",
-			expectedPref: expectedPreferenceTS,
-		},
-		{
-			name: ".ts file with both nil preferences returns default",
-			config: &UserConfig{
-				ts: nil,
-				js: nil,
-			},
-			activeFile:   "file.ts",
-			expectedPref: expectedPreferenceDefault,
-		},
-		{
-			name: ".js file with both nil preferences returns default",
-			config: &UserConfig{
-				ts: nil,
-				js: nil,
-			},
-			activeFile:   "file.js",
-			expectedPref: expectedPreferenceDefault,
-		},
-		{
-			name:         ".ts file with deeper path returns TS preferences",
-			config:       tsDoubleQuoteJsSingleQuoteConfig,
-			activeFile:   "path/to/file.ts",
-			expectedPref: expectedPreferenceTS,
-		},
-		{
-			name:         ".js file with deeper path returns JS preferences",
-			config:       tsDoubleQuoteJsSingleQuoteConfig,
-			activeFile:   "path/to/file.js",
-			expectedPref: expectedPreferenceJS,
-		},
 	}
 
 	for _, tt := range tests {
@@ -155,18 +107,13 @@ func TestUserConfig_GetPreferences(t *testing.T) {
 			got := tt.config.GetPreferences(tt.activeFile)
 
 			switch tt.expectedPref {
-			case expectedPreferenceDefault:
-				// Compare with default preferences
-				if got.QuotePreference != defaultPref.QuotePreference {
-					t.Errorf("GetPreferences().QuotePreference was '%v', expected default %v", got.QuotePreference, defaultPref.QuotePreference)
-				}
 			case expectedPreferenceTS:
-				if got.QuotePreference != tt.config.ts.QuotePreference {
-					t.Errorf("GetPreferences().QuotePreference was '%v', expected TS preference %v", got.QuotePreference, tt.config.ts.QuotePreference)
+				if got.QuotePreference != doubleQuotePrefs.QuotePreference {
+					t.Errorf("GetPreferences(%q) = %v, expected TS preferences (%v)", tt.activeFile, got.QuotePreference, doubleQuotePrefs.QuotePreference)
 				}
 			case expectedPreferenceJS:
-				if got.QuotePreference != tt.config.js.QuotePreference {
-					t.Errorf("GetPreferences().QuotePreference was '%v', expected JS preference %v", got.QuotePreference, tt.config.js.QuotePreference)
+				if got.QuotePreference != singleQuotePrefs.QuotePreference {
+					t.Errorf("GetPreferences(%q) = %v, expected JS preferences (%v)", tt.activeFile, got.QuotePreference, singleQuotePrefs.QuotePreference)
 				}
 			}
 		})
@@ -175,21 +122,21 @@ func TestUserConfig_GetPreferences(t *testing.T) {
 
 func TestUserConfig_GetPreferences_CodeLensAndInlayHints(t *testing.T) {
 	t.Parallel()
-	codeLensAndInlayHintsOn := &UserPreferences{
+
+	codeLensAndInlayHintsOn := UserPreferences{
 		CodeLens: CodeLensUserPreferences{
-			ReferencesCodeLensEnabled: true,
+			ReferencesCodeLensEnabled: core.TSTrue,
 		},
 		InlayHints: InlayHintsPreferences{
-			IncludeInlayVariableTypeHints: true,
+			IncludeInlayVariableTypeHints: core.TSTrue,
 		},
 	}
-
-	codeLensAndInlayHintsOff := &UserPreferences{
+	codeLensAndInlayHintsOff := UserPreferences{
 		CodeLens: CodeLensUserPreferences{
-			ReferencesCodeLensEnabled: false,
+			ReferencesCodeLensEnabled: core.TSFalse,
 		},
 		InlayHints: InlayHintsPreferences{
-			IncludeInlayVariableTypeHints: false,
+			IncludeInlayVariableTypeHints: core.TSFalse,
 		},
 	}
 
@@ -197,7 +144,7 @@ func TestUserConfig_GetPreferences_CodeLensAndInlayHints(t *testing.T) {
 		name                   string
 		config                 *UserConfig
 		activeFile             string
-		expectedLensesAndHints bool
+		expectedLensesAndHints core.Tristate
 	}{
 		{
 			name: ".ts file with CodeLens and InlayHints enabled",
@@ -206,25 +153,7 @@ func TestUserConfig_GetPreferences_CodeLensAndInlayHints(t *testing.T) {
 				js: codeLensAndInlayHintsOff,
 			},
 			activeFile:             "file.ts",
-			expectedLensesAndHints: true,
-		},
-		{
-			name: ".ts file with CodeLens and InlayHints disabled",
-			config: &UserConfig{
-				ts: codeLensAndInlayHintsOn,
-				js: codeLensAndInlayHintsOff,
-			},
-			activeFile:             "file.js",
-			expectedLensesAndHints: false,
-		},
-		{
-			name: ".ts file with CodeLens and InlayHints disabled",
-			config: &UserConfig{
-				ts: codeLensAndInlayHintsOff,
-				js: codeLensAndInlayHintsOn,
-			},
-			activeFile:             "file.ts",
-			expectedLensesAndHints: false,
+			expectedLensesAndHints: core.TSTrue,
 		},
 		{
 			name: ".js file with CodeLens and InlayHints disabled",
@@ -233,7 +162,25 @@ func TestUserConfig_GetPreferences_CodeLensAndInlayHints(t *testing.T) {
 				js: codeLensAndInlayHintsOff,
 			},
 			activeFile:             "file.js",
-			expectedLensesAndHints: false,
+			expectedLensesAndHints: core.TSFalse,
+		},
+		{
+			name: ".ts file with CodeLens and InlayHints disabled",
+			config: &UserConfig{
+				ts: codeLensAndInlayHintsOff,
+				js: codeLensAndInlayHintsOn,
+			},
+			activeFile:             "file.ts",
+			expectedLensesAndHints: core.TSFalse,
+		},
+		{
+			name: ".js file with CodeLens and InlayHints enabled",
+			config: &UserConfig{
+				ts: codeLensAndInlayHintsOff,
+				js: codeLensAndInlayHintsOn,
+			},
+			activeFile:             "file.js",
+			expectedLensesAndHints: core.TSTrue,
 		},
 	}
 

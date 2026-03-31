@@ -309,11 +309,13 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 			)
 			// Any options received via initializationOptions will be used for both `js` and `ts` options
 			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
-				return lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences().ParseWorker(config)), nil
+				prefs := lsutil.NewDefaultUserPreferences()
+				prefs.ParseWorker(config)
+				return lsutil.NewUserConfig(prefs), nil
 			}
 		}
 		// if no configuration request capability, return default config
-		return lsutil.NewUserConfig(nil), nil
+		return lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences()), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
