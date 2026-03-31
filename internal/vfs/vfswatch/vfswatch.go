@@ -1,4 +1,4 @@
-// This package implements a polling-based file watcher designed 
+// This package implements a polling-based file watcher designed
 // for use by both the CLI watcher and the language server.
 package vfswatch
 
@@ -12,10 +12,10 @@ import (
 const DebounceWait = 250 * time.Millisecond
 
 type FileWatcher struct {
-	fs           vfs.FS
-	PollInterval time.Duration
-	testing      bool
-	callback     func()
+	fs                  vfs.FS
+	PollInterval        time.Duration
+	testing             bool
+	callback            func()
 	WatchState          map[string]trackingvfs.WatchEntry
 	WildcardDirectories map[string]bool
 }
