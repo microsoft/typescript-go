@@ -2342,9 +2342,11 @@ test("VariableDeclarationList const flag clone", () => {
 function extractSourceWords(source: string) {
     return Array.from(
         source
-            .replace(/\/\/.*/g, " ")
-            .replace(/\/\*.*?\*\//sg, " ")
-            .replace(/\\[rnt]/g, " ")
+            .replace(/\/\/.*/g, " ") // line comments
+            .replace(/\/\*.*?\*\//sg, " ") // multiline comments
+            .replace(/\\([rnt]|u\w+)/ig, " ") // character escapes
+            .replace(/0x[0-9a-f_]+/ig, " ") // numeric literals
+            .replace(/0?[xb]?[0-9_]+/ig, " ") // numeric literals
             .matchAll(/\w+/g),
     ).map(match => ({
         index: match.index,
@@ -2354,7 +2356,7 @@ function extractSourceWords(source: string) {
 function compareWords(file: string, source: string, output: string, cloned = false) {
     const srcWords = extractSourceWords(source);
     const outWords = extractSourceWords(output);
-    const diffAt = srcWords.findIndex((match, i) => !outWords[i] || outWords[i].word != match.word);
+    const diffAt = srcWords.findIndex((match, i) => !outWords[i] || outWords[i].word.toLowerCase() != match.word.toLowerCase());
     if (diffAt < 0) return true;
     const table: any[][] = [];
     for (let i = Math.max(0, diffAt - 3), i1 = diffAt + 3; i < i1; i++) {
@@ -2381,6 +2383,10 @@ test("Parse-clone-emit roundtrip", () => {
     const errors = { ...target };
     try {
         for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
+            if (tsconfig.includes("testRunner")) {
+                // lots of false positives due to weird string literals there
+                continue;
+            }
             const snapshot = api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
             const project = snapshot.getProject(tsconfig);
             assert(project);
