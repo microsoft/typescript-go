@@ -762,21 +762,20 @@ func (p *UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool
 	return modulespecifiers.IsExcludedByRegex(moduleSpecifier, p.AutoImportSpecifierExcludeRegexes)
 }
 
-// ParseUserPreferences parses user preferences from a config map or returns existing preferences.
-// For config maps: returns a fresh *UserPreferences with defaults applied, then overlaid with parsed values.
-// For *UserPreferences: returns the same pointer (caller should not mutate).
-// Returns nil if item is nil or unrecognized type.
-func ParseUserPreferences(item any) *UserPreferences {
-	if item == nil {
-		return nil
+func ParseUserPreferences(items map[string]any) UserPreferences {
+	prefs := NewDefaultUserPreferences()
+	if editorItem, ok := items["editor"]; ok && editorItem != nil {
+		if editorSettings, ok := editorItem.(map[string]any); ok {
+			prefs.FormatCodeSettings = prefs.FormatCodeSettings.WithEditorSettings(editorSettings)
+		}
 	}
-	if config, ok := item.(map[string]any); ok {
-		p := NewDefaultUserPreferences()
-		p.ParseWorker(config)
-		return &p
+	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
+		switch jsTsSettings := jsTsItem.(type) {
+		case map[string]any:
+			prefs.ParseWorker(jsTsSettings)
+		case UserPreferences:
+			prefs = prefs.WithOverrides(jsTsSettings)
+		}
 	}
-	if prefs, ok := item.(*UserPreferences); ok {
-		return prefs
-	}
-	return nil
+	return prefs
 }

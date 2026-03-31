@@ -342,7 +342,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferenc
 		configMap["js/ts"],
 		configMap["editor"],
 	)
-	return lsutil.ParseUserConfig(configMap), nil
+	return lsutil.ParseUserPreferences(configMap), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -1144,7 +1144,7 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	if params.Settings == nil {
 		return nil
 	} else if settings, ok := params.Settings.(map[string]any); ok {
-		s.session.Configure(lsutil.ParseUserConfig(settings))
+		s.session.Configure(lsutil.ParseUserPreferences(settings))
 	}
 	return nil
 }

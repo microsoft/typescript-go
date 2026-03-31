@@ -1231,7 +1231,7 @@ func TestSession(t *testing.T) {
 				"organizeImportsIgnoreCase": true,
 			},
 		}
-		session.Configure(lsutil.ParseUserConfig(map[string]any{"js/ts": configMap1}))
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{"js/ts": configMap1}))
 		actualConfig1 := session.Config()
 		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs1.UseAliasesForRename = core.TSTrue
@@ -1249,7 +1249,7 @@ func TestSession(t *testing.T) {
 				"organizeImportsIgnoreCase": false,
 			},
 		}
-		session.Configure(lsutil.ParseUserConfig(map[string]any{"js/ts": configMap2}))
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{"js/ts": configMap2}))
 		actualConfig2 := session.Config()
 		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs2.UseAliasesForRename = core.TSFalse
