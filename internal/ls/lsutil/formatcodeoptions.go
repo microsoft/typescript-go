@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
 type IndentStyle int
@@ -110,93 +109,6 @@ func (settings *FormatCodeSettings) ToLSFormatOptions() *lsproto.FormattingOptio
 		InsertSpaces:           settings.ConvertTabsToSpaces.IsTrue(),
 		TrimTrailingWhitespace: &trimTrailingWhitespace,
 	}
-}
-
-func (settings FormatCodeSettings) WithEditorSettings(editorSettings map[string]any) FormatCodeSettings {
-	if editorSettings == nil {
-		return settings
-	}
-	for name, value := range editorSettings {
-		switch strings.ToLower(name) {
-		case "baseindentsize", "indentsize", "tabsize", "newlinecharacter", "converttabstospaces", "indentstyle", "trimtrailingwhitespace":
-			settings.Set(name, value)
-		}
-	}
-	return settings
-}
-
-func (settings *FormatCodeSettings) Parse(prefs any) bool {
-	formatSettingsMap, ok := prefs.(map[string]any)
-	formatSettingsParsed := false
-	if !ok {
-		return false
-	}
-	for name, value := range formatSettingsMap {
-		formatSettingsParsed = settings.Set(name, value) || formatSettingsParsed
-	}
-	return formatSettingsParsed
-}
-
-func (settings *FormatCodeSettings) Set(name string, value any) bool {
-	switch strings.ToLower(name) {
-	case "baseindentsize":
-		settings.BaseIndentSize = parseIntWithDefault(value, 0)
-	case "indentsize":
-		settings.IndentSize = parseIntWithDefault(value, printer.GetDefaultIndentSize())
-	case "tabsize":
-		settings.TabSize = parseIntWithDefault(value, printer.GetDefaultIndentSize())
-	case "newlinecharacter":
-		settings.NewLineCharacter = core.GetNewLineKind(tsoptions.ParseString(value)).GetNewLineCharacter()
-	case "converttabstospaces":
-		settings.ConvertTabsToSpaces = tsoptions.ParseTristate(value)
-	case "indentstyle":
-		settings.IndentStyle = parseIndentStyle(value)
-	case "trimtrailingwhitespace":
-		settings.TrimTrailingWhitespace = tsoptions.ParseTristate(value)
-	case "insertspaceaftercommadelimiter":
-		settings.InsertSpaceAfterCommaDelimiter = tsoptions.ParseTristate(value)
-	case "insertspaceaftersemicoloninformstatements":
-		settings.InsertSpaceAfterSemicolonInForStatements = tsoptions.ParseTristate(value)
-	case "insertspacebeforeandafterbinaryoperators":
-		settings.InsertSpaceBeforeAndAfterBinaryOperators = tsoptions.ParseTristate(value)
-	case "insertspaceafterconstructor":
-		settings.InsertSpaceAfterConstructor = tsoptions.ParseTristate(value)
-	case "insertspaceafterkeywordsincontrolflowstatements":
-		settings.InsertSpaceAfterKeywordsInControlFlowStatements = tsoptions.ParseTristate(value)
-	case "insertspaceafterfunctionkeywordforanonymousfunctions":
-		settings.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = tsoptions.ParseTristate(value)
-	case "insertspaceafteropeningandbeforeclosingnonemptyparenthesis":
-		settings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = tsoptions.ParseTristate(value)
-	case "insertspaceafteropeningandbeforeclosingnonemptybrackets":
-		settings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = tsoptions.ParseTristate(value)
-	case "insertspaceafteropeningandbeforeclosingnonemptybraces":
-		settings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = tsoptions.ParseTristate(value)
-	case "insertspaceafteropeningandbeforeclosingemptybraces":
-		settings.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces = tsoptions.ParseTristate(value)
-	case "insertspaceafteropeningandbeforeclosingtemplatesttringbraces":
-		settings.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = tsoptions.ParseTristate(value)
-	case "insertspaceafteropeningandbeforeclosingjsxexpressionbraces":
-		settings.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = tsoptions.ParseTristate(value)
-	case "insertspaceaftertypeassertion":
-		settings.InsertSpaceAfterTypeAssertion = tsoptions.ParseTristate(value)
-	case "insertspacebeforefunctionparenthesis":
-		settings.InsertSpaceBeforeFunctionParenthesis = tsoptions.ParseTristate(value)
-	case "placeopenbraceonnewlineforfunctions":
-		settings.PlaceOpenBraceOnNewLineForFunctions = tsoptions.ParseTristate(value)
-	case "placeopenbraceonnewlineforcontrolblocks":
-		settings.PlaceOpenBraceOnNewLineForControlBlocks = tsoptions.ParseTristate(value)
-	case "insertspacebeforetypeannotation":
-		settings.InsertSpaceBeforeTypeAnnotation = tsoptions.ParseTristate(value)
-	case "indentmultilineobjectliteralbeginningonblankline":
-		settings.IndentMultiLineObjectLiteralBeginningOnBlankLine = tsoptions.ParseTristate(value)
-	case "semicolons":
-		settings.Semicolons = parseSemicolonPreference(value)
-	case "indentswitchcase":
-		settings.IndentSwitchCase = tsoptions.ParseTristate(value)
-	default:
-		return false
-	}
-	return true
 }
 
 func GetDefaultFormatCodeSettings() FormatCodeSettings {

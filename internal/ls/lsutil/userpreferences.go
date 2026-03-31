@@ -699,16 +699,6 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // --- Helper methods ---
 
-func parseIntWithDefault(val any, defaultV int) int {
-	switch v := val.(type) {
-	case int:
-		return v
-	case float64:
-		return int(v)
-	}
-	return defaultV
-}
-
 // WithOverrides returns a copy of p with non-zero fields from overrides applied on top.
 // This is safe because all preference fields use types where zero = "not set":
 // Tristate (TSUnknown=0), int (0), string (""), slice (nil).
@@ -749,9 +739,11 @@ func (p UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool 
 
 func ParseUserPreferences(items map[string]any) UserPreferences {
 	prefs := NewDefaultUserPreferences()
+	// Apply editor settings first (tabSize, indentSize, etc.) as raw-name defaults,
+	// then overlay js/ts settings which take precedence.
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
-			prefs.FormatCodeSettings = prefs.FormatCodeSettings.WithEditorSettings(editorSettings)
+			prefs.parseWorker(map[string]any{"unstable": editorSettings})
 		}
 	}
 	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
