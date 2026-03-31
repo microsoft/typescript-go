@@ -2310,6 +2310,35 @@ test("SpreadAssignment roundtrip", () => {
     }
 });
 
+test("VariableDeclarationList const flag clone", () => {
+    const api = spawnAPI({
+        "/tsconfig.json": "{}",
+        "/src/index.ts": `const thing = 123;\n`,
+    });
+    try {
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
+        assert(sourceFile);
+        {
+            const stmt = sourceFile.statements[0] as import("@typescript/ast").VariableStatement;
+            const list = stmt.declarationList;
+            assert(list.flags & NodeFlags.Const);
+        }
+        const cloned = getSynthesizedDeepClone(sourceFile);
+        {
+            const stmt = cloned.statements[0] as import("@typescript/ast").VariableStatement;
+            const list = stmt.declarationList;
+            assert(list.flags & NodeFlags.Const);
+        }
+        const printed = project.emitter.printNode(cloned);
+        assert.equal(sourceFile.text, printed);
+    }
+    finally {
+        api.close();
+    }
+});
+
 function extractSourceWords(source: string) {
     return Array.from(
         source
