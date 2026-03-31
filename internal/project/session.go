@@ -176,7 +176,7 @@ func NewSession(init *SessionInit) *Session {
 			init.Options,
 			&ConfigFileRegistry{},
 			nil,
-			nil,
+			lsutil.NewDefaultUserPreferences(),
 			nil,
 			NewWatchedFiles(
 				"auto-import",
@@ -1182,7 +1182,8 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if !newSnapshot.fs.isOpenFile(changedFile.FileName()) {
 			return
 		}
-		if newSnapshot.UserPreferences().IncludeCompletionsForModuleExports.IsFalse() {
+		prefs := newSnapshot.UserPreferences()
+		if prefs.IncludeCompletionsForModuleExports.IsFalse() {
 			return
 		}
 		project := newSnapshot.GetDefaultProject(changedFile)
@@ -1192,7 +1193,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if newSnapshot.AutoImports.IsPreparedForImportingFile(
 			changedFile.FileName(),
 			project.configFilePath,
-			newSnapshot.UserPreferences(),
+			prefs,
 		) {
 			return
 		}

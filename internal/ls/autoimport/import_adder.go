@@ -56,7 +56,7 @@ type importAdder struct {
 	view          *View
 	formatOptions *lsutil.FormatCodeSettings
 	converters    *lsconv.Converters
-	preferences   *lsutil.UserPreferences
+	preferences   lsutil.UserPreferences
 
 	// State
 	addToNamespace []*Fix                                                    // Namespace fixes don't conflict, so just build a list
@@ -74,7 +74,7 @@ func NewImportAdder(
 	view *View,
 	formatOptions *lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 ) ImportAdder {
 	return &importAdder{
 		ctx:            ctx,

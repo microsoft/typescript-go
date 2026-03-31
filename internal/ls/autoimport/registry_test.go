@@ -529,7 +529,7 @@ export declare const otherValue: string;`,
 		preferences := lsutil.NewDefaultUserPreferences()
 		preferences.IncludeCompletionsForModuleExports = core.TSTrue
 		preferences.IncludeCompletionsForImportStatements = core.TSTrue
-		isPrepared := snapshot.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, &preferences)
+		isPrepared := snapshot.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, preferences)
 		assert.Assert(t, isPrepared)
 
 		// Change the file exclude patterns preference
@@ -541,7 +541,7 @@ export declare const otherValue: string;`,
 
 		// IsPreparedForImportingFile should return false since exclude patterns changed
 		snapshot2 := session.Snapshot()
-		isPrepared2 := snapshot2.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, &newPreferences)
+		isPrepared2 := snapshot2.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, newPreferences)
 		assert.Assert(t, !isPrepared2)
 
 		// After GetCurrentLanguageServiceWithAutoImports, buckets should be rebuilt
@@ -550,7 +550,7 @@ export declare const otherValue: string;`,
 
 		// IsPreparedForImportingFile should return true now that buckets are rebuilt
 		snapshot3 := session.Snapshot()
-		isPrepared3 := snapshot3.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, &newPreferences)
+		isPrepared3 := snapshot3.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, newPreferences)
 		assert.Assert(t, isPrepared3, "IsPreparedForImportingFile should return true after bucket rebuild with new fileExcludePatterns")
 	})
 

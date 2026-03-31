@@ -41,7 +41,7 @@ type Snapshot struct {
 	AutoImports                        *autoimport.Registry
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	allUserPreferences                 *lsutil.UserPreferences
+	userPreferences                    lsutil.UserPreferences
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -55,15 +55,11 @@ func NewSnapshot(
 	sessionOptions *SessionOptions,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	allUserPreferences *lsutil.UserPreferences,
+	userPreferences lsutil.UserPreferences,
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
-	if allUserPreferences == nil {
-		defaults := lsutil.NewDefaultUserPreferences()
-		allUserPreferences = &defaults
-	}
 	s := &Snapshot{
 		id: id,
 
@@ -74,7 +70,7 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		allUserPreferences:                 allUserPreferences,
+		userPreferences:                    userPreferences,
 		AutoImports:                        autoImports,
 		autoImportsWatch:                   autoImportsWatch,
 	}
@@ -112,12 +108,12 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
-func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
-	return s.allUserPreferences
+func (s *Snapshot) GetPreferences(activeFile string) lsutil.UserPreferences {
+	return s.userPreferences
 }
 
-func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	return s.allUserPreferences
+func (s *Snapshot) UserPreferences() lsutil.UserPreferences {
+	return s.userPreferences
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {
@@ -402,9 +398,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	config := s.allUserPreferences
+	config := s.userPreferences
 	if change.newConfig != nil {
-		config = change.newConfig
+		config = *change.newConfig
 	}
 
 	autoImportHost := newAutoImportRegistryCloneHost(
@@ -424,7 +420,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences)
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.userPreferences)
 	}
 	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
@@ -434,7 +430,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
-		UserPreferences: config,
+		UserPreferences: change.newConfig,
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 	if err == nil {
 		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())

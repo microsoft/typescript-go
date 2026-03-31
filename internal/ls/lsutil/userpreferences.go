@@ -699,13 +699,6 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // --- Helper methods ---
 
-func parseBoolWithDefault(val any, defaultV bool) bool {
-	if v, ok := val.(bool); ok {
-		return v
-	}
-	return defaultV
-}
-
 func parseIntWithDefault(val any, defaultV int) int {
 	switch v := val.(type) {
 	case int:
@@ -738,15 +731,7 @@ func mergeNonZeroFields(dst, src reflect.Value) {
 	}
 }
 
-func (p *UserPreferences) OrDefault() *UserPreferences {
-	if p == nil {
-		defaults := NewDefaultUserPreferences()
-		return &defaults
-	}
-	return p
-}
-
-func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
+func (p UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
 	return modulespecifiers.UserPreferences{
 		ImportModuleSpecifierPreference:   p.ImportModuleSpecifierPreference,
 		ImportModuleSpecifierEnding:       p.ImportModuleSpecifierEnding,
@@ -754,11 +739,11 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 	}
 }
 
-func (p *UserPreferences) ParsedAutoImportFileExcludePatterns(useCaseSensitiveFileNames bool) *vfsmatch.SpecMatcher {
+func (p UserPreferences) ParsedAutoImportFileExcludePatterns(useCaseSensitiveFileNames bool) *vfsmatch.SpecMatcher {
 	return vfsmatch.NewSpecMatcher(p.AutoImportFileExcludePatterns, "", vfsmatch.UsageExclude, useCaseSensitiveFileNames)
 }
 
-func (p *UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool {
+func (p UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool {
 	return modulespecifiers.IsExcludedByRegex(moduleSpecifier, p.AutoImportSpecifierExcludeRegexes)
 }
 
