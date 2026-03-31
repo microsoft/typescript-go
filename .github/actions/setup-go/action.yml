@@ -48,9 +48,3 @@ runs:
           GOBIN="$(go env GOPATH)/bin"
         fi
         echo "$GOBIN" >> $GITHUB_PATH
-
-    - name: Set mtimes
-      shell: bash
-      run: |
-        find . -type f ! -path ./.git/\*\* | go run github.com/slsyy/mtimehash/cmd/mtimehash@v1.0.0 || true
-        find . -type d ! -path ./.git/\*\* -exec touch -d '1970-01-01T00:00:01Z' {} + || true
