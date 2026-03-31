@@ -18,12 +18,15 @@ import type {
     Node,
     NodeArray,
     ObjectLiteralExpression,
+    PostfixUnaryExpression,
+    PrefixUnaryExpression,
     SourceFile,
     TemplateLiteralLikeNode,
 } from "@typescript/ast";
 import {
     NodeFlags,
     SyntaxKind,
+    TokenFlags,
 } from "@typescript/ast";
 import { MsgpackWriter } from "./msgpack.ts";
 import {
@@ -157,6 +160,8 @@ function getNodeDefinedData(node: Node): number {
         }
         case SyntaxKind.JsxText:
             return ((node as JsxText).containsOnlyTriviaWhiteSpaces ? 1 : 0) << 24;
+        case SyntaxKind.RegularExpressionLiteral:
+            return (((node as any).tokenFlags & TokenFlags.Unterminated) !== 0 ? 1 : 0) << 24;
         case SyntaxKind.VariableDeclarationList: {
             const flags = node.flags;
             return (flags & NodeFlags.BlockScoped) << 24;
@@ -166,6 +171,9 @@ function getNodeDefinedData(node: Node): number {
             return ((attrs.multiLine ? 1 : 0) << 24) |
                 ((attrs.token === SyntaxKind.AssertKeyword ? 1 : 0) << 25);
         }
+        case SyntaxKind.PrefixUnaryExpression:
+        case SyntaxKind.PostfixUnaryExpression:
+            return ((node as PrefixUnaryExpression | PostfixUnaryExpression).operator & 0x3f) << 24;
     }
     return 0;
 }

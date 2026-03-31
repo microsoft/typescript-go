@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -610,34 +609,7 @@ func (r *EmitResolver) isRequiredInitializedParameter(parameter *ast.Node, enclo
 }
 
 func (r *EmitResolver) isOptionalParameter(node *ast.Node) bool {
-	// !!! TODO: JSDoc support
-	// if (hasEffectiveQuestionToken(node)) {
-	// 	return true;
-	// }
-	if ast.IsParameter(node) && node.QuestionToken() != nil {
-		return true
-	}
-	if !ast.IsParameter(node) {
-		return false
-	}
-	if node.Initializer() != nil {
-		signature := r.checker.getSignatureFromDeclaration(node.Parent)
-		parameterIndex := core.FindIndex(node.Parent.Parameters(), func(p *ast.ParameterDeclarationNode) bool { return p == node })
-		debug.Assert(parameterIndex >= 0)
-		// Only consider syntactic or instantiated parameters as optional, not `void` parameters as this function is used
-		// in grammar checks and checking for `void` too early results in parameter types widening too early
-		// and causes some noImplicitAny errors to be lost.
-		return parameterIndex >= r.checker.getMinArgumentCountEx(signature, MinArgumentCountFlagsStrongArityForUntypedJS|MinArgumentCountFlagsVoidIsNonOptional)
-	}
-	iife := ast.GetImmediatelyInvokedFunctionExpression(node.Parent)
-	if iife != nil {
-		parameterIndex := core.FindIndex(node.Parent.Parameters(), func(p *ast.ParameterDeclarationNode) bool { return p == node })
-		return node.Type() == nil &&
-			node.AsParameterDeclaration().DotDotDotToken == nil &&
-			parameterIndex >= len(r.checker.getEffectiveCallArguments(iife))
-	}
-
-	return false
+	return r.checker.isOptionalParameter(node)
 }
 
 func (r *EmitResolver) IsLiteralConstDeclaration(node *ast.Node) bool {
@@ -835,7 +807,7 @@ func (r *EmitResolver) getReferenceResolver() binder.ReferenceResolver {
 	if r.referenceResolver == nil {
 		r.referenceResolver = binder.NewReferenceResolver(r.checker.compilerOptions, binder.ReferenceResolverHooks{
 			ResolveName:                            r.checker.resolveName,
-			GetResolvedSymbol:                      r.checker.getResolvedSymbolNoDiagnostics,
+			GetResolvedSymbol:                      r.checker.getResolvedSymbolOrNil,
 			GetMergedSymbol:                        r.checker.getMergedSymbol,
 			GetParentOfSymbol:                      r.checker.getParentOfSymbol,
 			GetSymbolOfDeclaration:                 r.checker.getSymbolOfDeclaration,
@@ -871,7 +843,11 @@ func (r *EmitResolver) GetReferencedImportDeclaration(node *ast.IdentifierNode) 
 		return r.jsxLinks.Get(node).importRef
 	}
 
-	return r.getReferenceResolver().GetReferencedImportDeclaration(node)
+	symbol := r.checker.getReferencedValueOrAliasSymbol(node)
+	if ast.IsNonLocalAlias(symbol, ast.SymbolFlagsValue) && r.checker.getTypeOnlyAliasDeclarationEx(symbol, ast.SymbolFlagsValue) == nil {
+		return r.checker.getDeclarationOfAliasSymbol(symbol)
+	}
+	return nil
 }
 
 func (r *EmitResolver) GetReferencedValueDeclaration(node *ast.IdentifierNode) *ast.Declaration {

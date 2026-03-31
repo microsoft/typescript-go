@@ -7,6 +7,7 @@ import {
     type Path,
     type SourceFile,
     SyntaxKind,
+    TokenFlags,
 } from "@typescript/ast";
 import { MsgpackReader } from "./msgpack.ts";
 import {
@@ -596,11 +597,28 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get tokenFlags(): TokenFlags {
+        switch (this.kind) {
+            case SyntaxKind.RegularExpressionLiteral:
+                return (this.data & 1 << 24) !== 0 ? TokenFlags.Unterminated : 0;
+            default:
+                return 0;
+        }
+    }
+
     get isNameFirst(): boolean | undefined {
         switch (this.kind) {
             case SyntaxKind.JSDocPropertyTag:
             case SyntaxKind.JSDocParameterTag:
                 return (this.data & 1 << 25) !== 0;
+        }
+    }
+
+    get operator(): SyntaxKind | undefined {
+        switch (this.kind) {
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+                return ((this.data >> 24) & 0x3f) as SyntaxKind;
         }
     }
 

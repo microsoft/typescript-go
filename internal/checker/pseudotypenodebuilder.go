@@ -168,13 +168,21 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindMethod:
 				d := e.AsPseudoObjectMethod()
+				var typeParams *ast.NodeList
+				if len(d.TypeParameters) > 0 {
+					res := make([]*ast.Node, 0, len(d.TypeParameters))
+					for _, tp := range d.TypeParameters {
+						res = append(res, b.reuseNode(tp.AsNode()))
+					}
+					typeParams = b.f.NewNodeList(res)
+				}
 				if isConst {
 					newProp = b.f.NewPropertySignatureDeclaration(
 						modifiers,
 						b.reuseName(e.Name),
 						nil,
 						b.f.NewFunctionTypeNode(
-							nil,
+							typeParams,
 							b.pseudoParametersToNodeList(d.Parameters),
 							b.pseudoTypeToNode(d.ReturnType),
 						),
@@ -186,7 +194,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					modifiers,
 					b.reuseName(e.Name),
 					nil,
-					nil,
+					typeParams,
 					b.pseudoParametersToNodeList(d.Parameters),
 					b.pseudoTypeToNode(d.ReturnType),
 				)
@@ -295,9 +303,12 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 				}
 			}
 		}
+		// handles freshness mismatches (e.g., fresh true vs regular true in as const)
+		if b.ch.getRegularTypeOfLiteralType(typeFromPseudo) == b.ch.getRegularTypeOfLiteralType(type_) {
+			return true
+		}
 		if typeFromPseudo.flags&TypeFlagsUnion != 0 && type_.flags&TypeFlagsUnion != 0 {
-			// handles freshness and `undefined` variant mismatches among union members, plus union comparison in general, since the unions may not be `==`
-			// identical due to aliasing and the like
+			// handles union comparison in general, since unions may not be `==` identical due to aliasing
 			if b.ch.compareTypesIdentical(typeFromPseudo, type_) == TernaryTrue {
 				return true
 			}
@@ -458,7 +469,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		}
 		for i, p := range pt.Parameters {
 			targetParam := targetSig.parameters[i]
-			if p.Optional != isOptionalDeclaration(targetParam.ValueDeclaration) {
+			if p.Optional != b.ch.isOptionalParameter(targetParam.ValueDeclaration) {
 				if reportErrors {
 					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
 				}

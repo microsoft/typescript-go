@@ -13438,20 +13438,12 @@ func (c *Checker) getResolvedSymbolOrNil(node *ast.Node) *ast.Symbol {
 	return c.symbolNodeLinks.Get(node).resolvedSymbol
 }
 
-func (c *Checker) getResolvedSymbolNoDiagnostics(node *ast.Node) *ast.Symbol {
-	links := c.symbolNodeLinks.Get(node)
-	if links.resolvedSymbol != nil {
-		return links.resolvedSymbol
+func (c *Checker) getReferencedValueOrAliasSymbol(reference *ast.Node) *ast.Symbol {
+	resolvedSymbol := c.symbolNodeLinks.Get(reference).resolvedSymbol
+	if resolvedSymbol != nil && resolvedSymbol != c.unknownSymbol {
+		return resolvedSymbol
 	}
-	if links.resolvedSymbolNoDiagnostics == nil {
-		var symbol *ast.Symbol
-		if !ast.NodeIsMissing(node) {
-			symbol = c.resolveName(node, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
-				nil, !ast.IsWriteOnlyAccess(node), false /*excludeGlobals*/)
-		}
-		links.resolvedSymbolNoDiagnostics = core.OrElse(symbol, c.unknownSymbol)
-	}
-	return links.resolvedSymbolNoDiagnostics
+	return c.resolveName(reference, reference.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/)
 }
 
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
@@ -14290,6 +14282,9 @@ func (c *Checker) combineValueAndTypeSymbols(valueSymbol *ast.Symbol, typeSymbol
 	if valueSymbol == c.unknownSymbol && typeSymbol == c.unknownSymbol {
 		return c.unknownSymbol
 	}
+	if typeSymbol.Flags&ast.SymbolFlagsValue != 0 {
+		return typeSymbol
+	}
 	if valueSymbol.Flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
 		return valueSymbol
 	}
@@ -14421,12 +14416,12 @@ func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *ast.Symbol, targetSymb
 		if moduleSymbol.Exports[ast.InternalSymbolNameDefault] != nil {
 			c.error(name, diagnostics.Module_0_has_no_exported_member_1_Did_you_mean_to_use_import_1_from_0_instead, moduleName, declarationName)
 		} else {
-			c.reportNonExportedMember(node, name, declarationName, moduleSymbol, moduleName)
+			c.reportNonExportedMember(name, declarationName, moduleSymbol, moduleName)
 		}
 	}
 }
 
-func (c *Checker) reportNonExportedMember(node *ast.Node, name *ast.Node, declarationName string, moduleSymbol *ast.Symbol, moduleName string) {
+func (c *Checker) reportNonExportedMember(name *ast.Node, declarationName string, moduleSymbol *ast.Symbol, moduleName string) {
 	var localSymbol *ast.Symbol
 	if locals := moduleSymbol.ValueDeclaration.Locals(); locals != nil {
 		localSymbol = locals[name.Text()]
@@ -14435,7 +14430,7 @@ func (c *Checker) reportNonExportedMember(node *ast.Node, name *ast.Node, declar
 	if localSymbol != nil {
 		if exportedEqualsSymbol := exports[ast.InternalSymbolNameExportEquals]; exportedEqualsSymbol != nil {
 			if c.getSymbolIfSameReference(exportedEqualsSymbol, localSymbol) != nil {
-				c.reportInvalidImportEqualsExportMember(node, name, declarationName, moduleName)
+				c.reportInvalidImportEqualsExportMember(name, declarationName, moduleName)
 			} else {
 				c.error(name, diagnostics.Module_0_has_no_exported_member_1, moduleName, declarationName)
 			}
@@ -14458,9 +14453,11 @@ func (c *Checker) reportNonExportedMember(node *ast.Node, name *ast.Node, declar
 	}
 }
 
-func (c *Checker) reportInvalidImportEqualsExportMember(node *ast.Node, name *ast.Node, declarationName string, moduleName string) {
+func (c *Checker) reportInvalidImportEqualsExportMember(name *ast.Node, declarationName string, moduleName string) {
 	if c.moduleKind >= core.ModuleKindES2015 {
 		c.error(name, diagnostics.X_0_can_only_be_imported_by_using_a_default_import, declarationName)
+	} else if ast.IsInJSFile(name) {
+		c.error(name, diagnostics.X_0_can_only_be_imported_by_using_a_require_call_or_by_using_a_default_import, declarationName)
 	} else {
 		c.error(name, diagnostics.X_0_can_only_be_imported_by_using_import_1_require_2_or_a_default_import, declarationName, declarationName, moduleName)
 	}
@@ -14678,8 +14675,8 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		contextSpecifier = location.AsModuleDeclaration().Name()
 	} else if ast.IsLiteralImportTypeNode(location) {
 		contextSpecifier = location.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal
-	} else if ast.IsVariableDeclaration(location) && location.Initializer() != nil && ast.IsRequireCall(location.Initializer(), true /*requireStringLiteralLikeArgument*/) {
-		contextSpecifier = location.Initializer().Arguments()[0]
+	} else if ast.IsVariableDeclarationInitializedToBareOrAccessedRequire(location) {
+		contextSpecifier = ast.GetModuleSpecifierOfBareOrAccessedRequire(location)
 	} else {
 		ancestor := ast.FindAncestor(location, ast.IsImportCall)
 		if ancestor != nil {
@@ -17185,14 +17182,12 @@ func (c *Checker) getTypeForBindingElement(declaration *ast.Node) *Type {
 // Return the type of a binding element parent. We check SymbolLinks first to see if a type has been
 // assigned by contextual typing.
 func (c *Checker) getTypeForBindingElementParent(node *ast.Node, checkMode CheckMode) *Type {
-	if checkMode != CheckModeNormal {
-		return c.getTypeForVariableLikeDeclaration(node, false /*includeOptionality*/, checkMode)
-	}
-	symbol := c.getSymbolOfDeclaration(node)
-	if symbol != nil {
-		resolvedType := c.valueSymbolLinks.Get(symbol).resolvedType
-		if resolvedType != nil {
-			return resolvedType
+	if checkMode == CheckModeNormal {
+		// We can use a cached resolved type if no optionality was included in that type.
+		if symbol := c.getSymbolOfDeclaration(node); symbol != nil {
+			if resolvedType := c.valueSymbolLinks.Get(symbol).resolvedType; resolvedType != nil && !(c.strictNullChecks && isOptionalDeclaration(node)) {
+				return resolvedType
+			}
 		}
 	}
 	return c.getTypeForVariableLikeDeclaration(node, false /*includeOptionality*/, checkMode)
@@ -21943,7 +21938,7 @@ func (c *Checker) getConditionalTypeInstantiation(t *Type, mapper *TypeMapper, f
 		// We are instantiating a conditional type that has one or more type parameters in scope. Apply the
 		// mapper to the type parameters to produce the effective list of type arguments, and compute the
 		// instantiation cache key from the type IDs of the type arguments.
-		typeArguments := core.Map(root.outerTypeParameters, func(t *Type) *Type { return mapper.Map(t) })
+		typeArguments := core.Map(root.outerTypeParameters, mapper.Map)
 		key := getConditionalTypeKey(typeArguments, alias, forConstraint)
 		result := root.instantiations[key]
 		if result == nil {
@@ -28428,6 +28423,9 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 	case ast.KindArrayLiteralExpression:
 		t := c.getApparentTypeOfContextualType(parent, contextFlags)
 		elementIndex := ast.IndexOfNode(parent.Elements(), node)
+		if elementIndex < 0 {
+			return nil
+		}
 		firstSpreadIndex, lastSpreadIndex := c.getSpreadIndices(parent)
 		return c.getContextualTypeForElementExpression(t, elementIndex, len(parent.Elements()), firstSpreadIndex, lastSpreadIndex)
 	case ast.KindConditionalExpression:
