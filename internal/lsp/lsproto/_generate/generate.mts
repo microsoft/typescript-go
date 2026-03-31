@@ -1466,7 +1466,7 @@ function generateCode() {
         const args = allChecks.map(c => JSON.stringify(c.jsonFieldName)).join(", ");
         writeLine(`${indent}switch jsonObjectHasKey(data, ${args}) {`);
         for (let i = 0; i < allChecks.length; i++) {
-            writeLine(`${indent}case ${i + 1}: // ${allChecks[i].jsonFieldName}`);
+            writeLine(`${indent}case ${i}: // ${allChecks[i].jsonFieldName}`);
             writeLine(`${indent}\to.${allChecks[i].entry.fieldName} = new(${allChecks[i].entry.typeName})`);
             writeLine(`${indent}\treturn json.Unmarshal(data, o.${allChecks[i].entry.fieldName})`);
         }

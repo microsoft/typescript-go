@@ -170,31 +170,31 @@ func jsonObjectRawField(data []byte, field string) json.Value {
 }
 
 // jsonObjectHasKey scans the top-level keys of a JSON object looking for any of the
-// given keys. Returns 1+index of the first key found, or 0 if none match.
+// given keys. Returns the index of the first key found, or -1 if none match.
 // Bails early on first match without decoding any values.
 func jsonObjectHasKey(data []byte, keys ...string) int {
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	if dec.PeekKind() != '{' {
-		return 0
+		return -1
 	}
 	if _, err := dec.ReadToken(); err != nil {
-		return 0
+		return -1
 	}
 	for dec.PeekKind() != '}' {
 		name, err := dec.ReadValue()
 		if err != nil {
-			return 0
+			return -1
 		}
 		for i, key := range keys {
 			if jsonKeyCheck(name, key) {
-				return i + 1
+				return i
 			}
 		}
 		if err := dec.SkipValue(); err != nil {
-			return 0
+			return -1
 		}
 	}
-	return 0
+	return -1
 }
 
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk

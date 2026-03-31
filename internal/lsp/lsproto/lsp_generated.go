@@ -24928,7 +24928,7 @@ func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSONFrom(dec 
 		return err
 	}
 	switch jsonObjectHasKey(data, "range") {
-	case 1: // range
+	case 0: // range
 		o.Partial = new(TextDocumentContentChangePartial)
 		return json.Unmarshal(data, o.Partial)
 	default:
@@ -24966,10 +24966,10 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSONFrom(dec *json.Decoder) error
 		return err
 	}
 	switch jsonObjectHasKey(data, "insert", "range") {
-	case 1: // insert
+	case 0: // insert
 		o.InsertReplaceEdit = new(InsertReplaceEdit)
 		return json.Unmarshal(data, o.InsertReplaceEdit)
-	case 2: // range
+	case 1: // range
 		o.TextEdit = new(TextEdit)
 		return json.Unmarshal(data, o.TextEdit)
 	}
@@ -25018,10 +25018,10 @@ func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) Unmarsh
 			return err
 		}
 		switch jsonObjectHasKey(data, "kind", "language") {
-		case 1: // kind
+		case 0: // kind
 			o.MarkupContent = new(MarkupContent)
 			return json.Unmarshal(data, o.MarkupContent)
-		case 2: // language
+		case 1: // language
 			o.MarkedStringWithLanguage = new(MarkedStringWithLanguage)
 			return json.Unmarshal(data, o.MarkedStringWithLanguage)
 		}
@@ -25096,7 +25096,7 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return err
 	}
 	switch jsonObjectHasKey(data, "range") {
-	case 1: // range
+	case 0: // range
 		o.Location = new(Location)
 		return json.Unmarshal(data, o.Location)
 	default:
@@ -25184,10 +25184,10 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 		return err
 	}
 	switch jsonObjectHasKey(data, "snippet", "annotationId") {
-	case 1: // snippet
+	case 0: // snippet
 		o.SnippetTextEdit = new(SnippetTextEdit)
 		return json.Unmarshal(data, o.SnippetTextEdit)
-	case 2: // annotationId
+	case 1: // annotationId
 		o.AnnotatedTextEdit = new(AnnotatedTextEdit)
 		return json.Unmarshal(data, o.AnnotatedTextEdit)
 	default:
@@ -25308,7 +25308,7 @@ func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJ
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.DeclarationRegistrationOptions = new(DeclarationRegistrationOptions)
 			return json.Unmarshal(data, o.DeclarationRegistrationOptions)
 		default:
@@ -25396,7 +25396,7 @@ func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Unma
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.TypeDefinitionRegistrationOptions = new(TypeDefinitionRegistrationOptions)
 			return json.Unmarshal(data, o.TypeDefinitionRegistrationOptions)
 		default:
@@ -25447,7 +25447,7 @@ func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Unma
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.ImplementationRegistrationOptions = new(ImplementationRegistrationOptions)
 			return json.Unmarshal(data, o.ImplementationRegistrationOptions)
 		default:
@@ -25646,7 +25646,7 @@ func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Unmars
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.DocumentColorRegistrationOptions = new(DocumentColorRegistrationOptions)
 			return json.Unmarshal(data, o.DocumentColorRegistrationOptions)
 		default:
@@ -25845,7 +25845,7 @@ func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) Unmarsha
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.FoldingRangeRegistrationOptions = new(FoldingRangeRegistrationOptions)
 			return json.Unmarshal(data, o.FoldingRangeRegistrationOptions)
 		default:
@@ -25896,7 +25896,7 @@ func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Unma
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.SelectionRangeRegistrationOptions = new(SelectionRangeRegistrationOptions)
 			return json.Unmarshal(data, o.SelectionRangeRegistrationOptions)
 		default:
@@ -25947,7 +25947,7 @@ func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Unmars
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.CallHierarchyRegistrationOptions = new(CallHierarchyRegistrationOptions)
 			return json.Unmarshal(data, o.CallHierarchyRegistrationOptions)
 		default:
@@ -25998,7 +25998,7 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.LinkedEditingRangeRegistrationOptions = new(LinkedEditingRangeRegistrationOptions)
 			return json.Unmarshal(data, o.LinkedEditingRangeRegistrationOptions)
 		default:
@@ -26039,7 +26039,7 @@ func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json
 		return err
 	}
 	switch jsonObjectHasKey(data, "documentSelector") {
-	case 1: // documentSelector
+	case 0: // documentSelector
 		o.RegistrationOptions = new(SemanticTokensRegistrationOptions)
 		return json.Unmarshal(data, o.RegistrationOptions)
 	default:
@@ -26087,7 +26087,7 @@ func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.MonikerRegistrationOptions = new(MonikerRegistrationOptions)
 			return json.Unmarshal(data, o.MonikerRegistrationOptions)
 		default:
@@ -26138,7 +26138,7 @@ func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Unmars
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.TypeHierarchyRegistrationOptions = new(TypeHierarchyRegistrationOptions)
 			return json.Unmarshal(data, o.TypeHierarchyRegistrationOptions)
 		default:
@@ -26189,7 +26189,7 @@ func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJ
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.InlineValueRegistrationOptions = new(InlineValueRegistrationOptions)
 			return json.Unmarshal(data, o.InlineValueRegistrationOptions)
 		default:
@@ -26240,7 +26240,7 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONF
 			return err
 		}
 		switch jsonObjectHasKey(data, "documentSelector") {
-		case 1: // documentSelector
+		case 0: // documentSelector
 			o.InlayHintRegistrationOptions = new(InlayHintRegistrationOptions)
 			return json.Unmarshal(data, o.InlayHintRegistrationOptions)
 		default:
@@ -26281,7 +26281,7 @@ func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *json.Dec
 		return err
 	}
 	switch jsonObjectHasKey(data, "documentSelector") {
-	case 1: // documentSelector
+	case 0: // documentSelector
 		o.RegistrationOptions = new(DiagnosticRegistrationOptions)
 		return json.Unmarshal(data, o.RegistrationOptions)
 	default:
@@ -26392,10 +26392,10 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSONFrom(dec *json.Decoder)
 		return err
 	}
 	switch jsonObjectHasKey(data, "start", "insert") {
-	case 1: // start
+	case 0: // start
 		o.Range = new(Range)
 		return json.Unmarshal(data, o.Range)
-	case 2: // insert
+	case 1: // insert
 		o.EditRangeWithInsertReplace = new(EditRangeWithInsertReplace)
 		return json.Unmarshal(data, o.EditRangeWithInsertReplace)
 	}
@@ -26960,10 +26960,10 @@ func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSONFrom(dec *json.
 			return err
 		}
 		switch jsonObjectHasKey(data, "data", "edits") {
-		case 1: // data
+		case 0: // data
 			o.SemanticTokens = new(SemanticTokens)
 			return json.Unmarshal(data, o.SemanticTokens)
-		case 2: // edits
+		case 1: // edits
 			o.SemanticTokensDelta = new(SemanticTokensDelta)
 			return json.Unmarshal(data, o.SemanticTokensDelta)
 		}
@@ -27721,13 +27721,13 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Un
 			return err
 		}
 		switch jsonObjectHasKey(data, "start", "range", "defaultBehavior") {
-		case 1: // start
+		case 0: // start
 			o.Range = new(Range)
 			return json.Unmarshal(data, o.Range)
-		case 2: // range
+		case 1: // range
 			o.PrepareRenamePlaceholder = new(PrepareRenamePlaceholder)
 			return json.Unmarshal(data, o.PrepareRenamePlaceholder)
-		case 3: // defaultBehavior
+		case 2: // defaultBehavior
 			o.PrepareRenameDefaultBehavior = new(PrepareRenameDefaultBehavior)
 			return json.Unmarshal(data, o.PrepareRenameDefaultBehavior)
 		}
@@ -27950,10 +27950,10 @@ func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSONFr
 		return err
 	}
 	switch jsonObjectHasKey(data, "text", "caseSensitiveLookup") {
-	case 1: // text
+	case 0: // text
 		o.Text = new(InlineValueText)
 		return json.Unmarshal(data, o.Text)
-	case 2: // caseSensitiveLookup
+	case 1: // caseSensitiveLookup
 		o.VariableLookup = new(InlineValueVariableLookup)
 		return json.Unmarshal(data, o.VariableLookup)
 	default:
