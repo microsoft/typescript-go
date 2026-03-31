@@ -1197,13 +1197,13 @@ func TestSession(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 
-		session.Configure(lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences()))
+		session.Configure(lsutil.NewDefaultUserPreferences())
 		// Change user preferences for code lens and inlay hints.
-		newPrefs := *session.Config().TS()
+		newPrefs := session.Config()
 		newPrefs.CodeLens.ReferencesCodeLensEnabled = core.TSTrue
 		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = core.TSTrue
 
-		session.Configure(lsutil.NewUserConfig(newPrefs))
+		session.Configure(newPrefs)
 
 		codeLensRefreshCalls := utils.Client().RefreshCodeLensCalls()
 		inlayHintsRefreshCalls := utils.Client().RefreshInlayHintsCalls()
@@ -1231,17 +1231,14 @@ func TestSession(t *testing.T) {
 				"organizeImportsIgnoreCase": true,
 			},
 		}
-		// set "js/ts" options
-		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"js/ts": configMap1}))
+		session.Configure(lsutil.ParseUserConfig(map[string]any{"js/ts": configMap1}))
 		actualConfig1 := session.Config()
 		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs1.UseAliasesForRename = core.TSTrue
 		expectedPrefs1.QuotePreference = lsutil.QuotePreferenceSingle
 		expectedPrefs1.OrganizeImportsIgnoreCase = core.TSTrue
 
-		// both TS and JS options should be the same from js/ts scope
-		assert.DeepEqual(t, *actualConfig1.TS(), expectedPrefs1)
-		assert.DeepEqual(t, *actualConfig1.JS(), expectedPrefs1)
+		assert.DeepEqual(t, actualConfig1, expectedPrefs1)
 
 		configMap2 := map[string]any{
 			"preferences": map[string]any{
@@ -1252,16 +1249,14 @@ func TestSession(t *testing.T) {
 				"organizeImportsIgnoreCase": false,
 			},
 		}
-		// update "js/ts" options
-		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"js/ts": configMap2}))
+		session.Configure(lsutil.ParseUserConfig(map[string]any{"js/ts": configMap2}))
 		actualConfig2 := session.Config()
 		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs2.UseAliasesForRename = core.TSFalse
 		expectedPrefs2.QuotePreference = lsutil.QuotePreferenceDouble
 		expectedPrefs2.OrganizeImportsIgnoreCase = core.TSFalse
-		// both TS and JS should be updated
-		assert.DeepEqual(t, *actualConfig2.TS(), expectedPrefs2)
-		assert.DeepEqual(t, *actualConfig2.JS(), expectedPrefs2)
+
+		assert.DeepEqual(t, actualConfig2, expectedPrefs2)
 	})
 
 	t.Run("language service for closed files", func(t *testing.T) {
