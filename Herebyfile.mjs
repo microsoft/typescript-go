@@ -60,7 +60,6 @@ const { values: rawOptions } = parseArgs({
         debug: { type: "boolean" },
         dirty: { type: "boolean" },
         release: { type: "boolean" },
-        assert: { type: "boolean" },
 
         setPrerelease: { type: "string" },
         forRelease: { type: "boolean" },
@@ -210,7 +209,7 @@ function buildTsgo(opts) {
     opts ||= {};
     const out = opts.out ?? "./built/local/";
     const env = { ...goBuildEnv, ...opts.env };
-    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug || options.assert ? goBuildTags("noembed") : goBuildTags("noembed", "noassert")} -o ${out} ./cmd/tsgo`;
+    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${goBuildTags("noembed")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
@@ -315,6 +314,7 @@ const enumDefs = [
     { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
     { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
+    { name: "DiagnosticCategory", goPrefix: "Category", goFile: "internal/diagnostics/diagnostics.go", outDir: "_packages/api/src/enums" },
     // @typescript/ast enums
     { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind.go", outDir: "_packages/ast/src/enums" },
     { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/ast/src/enums" },
@@ -808,23 +808,25 @@ const buildCustomLinter = memoize(async () => {
 export const lint = task({
     name: "lint",
     description: "Runs golangci-lint.",
-    run: async () => {
-        await buildCustomLinter();
-
-        const lintArgs = ["run"];
-        if (defaultGoBuildTags.length) {
-            lintArgs.push("--build-tags", defaultGoBuildTags.join(","));
-        }
-        if (options.fix) {
-            lintArgs.push("--fix");
-        }
-
-        const resolvedCustomLinterPath = path.resolve(customLinterPath);
-        await $`${resolvedCustomLinterPath} ${lintArgs}`;
-        console.log("Linting _tools");
-        await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} ${lintArgs}`;
-    },
+    run: runLint,
 });
+
+async function runLint() {
+    await buildCustomLinter();
+
+    const lintArgs = ["run"];
+    if (defaultGoBuildTags.length) {
+        lintArgs.push("--build-tags", defaultGoBuildTags.join(","));
+    }
+    if (options.fix) {
+        lintArgs.push("--fix");
+    }
+
+    const resolvedCustomLinterPath = path.resolve(customLinterPath);
+    await $`${resolvedCustomLinterPath} ${lintArgs}`;
+    console.log("Linting _tools");
+    await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} ${lintArgs}`;
+}
 
 export const installTools = task({
     name: "install-tools",
@@ -840,10 +842,12 @@ export const installTools = task({
 export const format = task({
     name: "format",
     description: "Formats the repo.",
-    run: async () => {
-        await $`dprint fmt`;
-    },
+    run: runFormat,
 });
+
+async function runFormat() {
+    await $`dprint fmt`;
+}
 
 export const checkFormat = task({
     name: "check:format",
@@ -1791,4 +1795,17 @@ export const nativePreview = task({
     run: options.forRelease ? async () => {
         throw new Error("This task should not be run in release builds.");
     } : undefined,
+});
+
+export const allChecks = task({
+    name: "all-checks",
+    description: "Runs all checks for the Go code (fourslash, lint, tests, etc.)",
+    run: async () => {
+        await $`npm run convertfourslash`;
+        await runTests();
+        await $`npm run updatefailing`;
+        await runFormat();
+        await runLint();
+        await runTests();
+    },
 });
