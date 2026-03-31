@@ -1660,7 +1660,7 @@ func getFileNamesFromConfigSpecs(
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
 					jsonOnlyIncludeMatchers = vfsmatch.NewSpecMatcher(includes, basePath, vfsmatch.UsageFiles, host.UseCaseSensitiveFileNames())
 				}
-				var includeIndex int = -1
+				includeIndex := -1
 				if jsonOnlyIncludeMatchers != nil {
 					includeIndex = jsonOnlyIncludeMatchers.MatchIndex(file)
 				}
