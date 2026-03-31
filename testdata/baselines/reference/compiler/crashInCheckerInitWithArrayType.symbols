@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/crashInCheckerInitWithArrayType.ts] ////
+
+=== /a.d.ts ===
+declare module "dep" {
+>"dep" : Symbol("dep", Decl(a.d.ts, 0, 0))
+
+    type Arr = string[];
+>Arr : Symbol(Arr, Decl(a.d.ts, 0, 22))
+
+    interface DepModule {
+>DepModule : Symbol(DepModule, Decl(a.d.ts, 1, 24))
+
+        (): void;
+        readonly data: Arr;
+>data : Symbol(DepModule.data, Decl(a.d.ts, 3, 17))
+>Arr : Symbol(Arr, Decl(a.d.ts, 0, 22))
+    }
+    const dep: DepModule;
+>dep : Symbol(dep, Decl(a.d.ts, 6, 9))
+>DepModule : Symbol(DepModule, Decl(a.d.ts, 1, 24))
+
+    export = dep;
+>dep : Symbol(dep, Decl(a.d.ts, 6, 9))
+}
+
+declare module "wrapper" {
+>"wrapper" : Symbol("wrapper", Decl(a.d.ts, 8, 1), Decl(b.d.ts, 0, 0))
+
+    import * as dep from "dep";
+>dep : Symbol(dep, Decl(a.d.ts, 11, 10))
+
+    export { dep as ns };
+>dep : Symbol(dep, Decl(a.d.ts, 11, 10))
+>ns : Symbol(ns, Decl(a.d.ts, 12, 12))
+}
+
+=== /b.d.ts ===
+declare module "wrapper" {
+>"wrapper" : Symbol("wrapper", Decl(a.d.ts, 8, 1), Decl(b.d.ts, 0, 0))
+
+    export const ns: number;
+>ns : Symbol(ns, Decl(b.d.ts, 1, 16))
+}
+
+=== /main.ts ===
+import * as w from "wrapper";
+>w : Symbol(w, Decl(main.ts, 0, 6))
+

@@ -1,0 +1,34 @@
+/a.d.ts(13,21): error TS2451: Cannot redeclare block-scoped variable 'ns'.
+/b.d.ts(2,18): error TS2451: Cannot redeclare block-scoped variable 'ns'.
+
+
+==== /a.d.ts (1 errors) ====
+    declare module "dep" {
+        type Arr = string[];
+        interface DepModule {
+            (): void;
+            readonly data: Arr;
+        }
+        const dep: DepModule;
+        export = dep;
+    }
+    
+    declare module "wrapper" {
+        import * as dep from "dep";
+        export { dep as ns };
+                        ~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'ns'.
+!!! related TS6203 /b.d.ts:2:18: 'ns' was also declared here.
+    }
+    
+==== /b.d.ts (1 errors) ====
+    declare module "wrapper" {
+        export const ns: number;
+                     ~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'ns'.
+!!! related TS6203 /a.d.ts:13:21: 'ns' was also declared here.
+    }
+    
+==== /main.ts (0 errors) ====
+    import * as w from "wrapper";
+    

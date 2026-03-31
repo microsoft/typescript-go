@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/crashInCheckerInitWithArrayType.ts] ////
+
+=== /a.d.ts ===
+declare module "dep" {
+>"dep" : typeof import("dep")
+
+    type Arr = string[];
+>Arr : {}
+
+    interface DepModule {
+        (): void;
+        readonly data: Arr;
+>data : {}
+    }
+    const dep: DepModule;
+>dep : DepModule
+
+    export = dep;
+>dep : DepModule
+}
+
+declare module "wrapper" {
+>"wrapper" : typeof import("wrapper")
+
+    import * as dep from "dep";
+>dep : { data: {}; default: DepModule; }
+
+    export { dep as ns };
+>dep : { data: {}; default: DepModule; }
+>ns : { data: {}; default: DepModule; }
+}
+
+=== /b.d.ts ===
+declare module "wrapper" {
+>"wrapper" : typeof import("wrapper")
+
+    export const ns: number;
+>ns : number
+}
+
+=== /main.ts ===
+import * as w from "wrapper";
+>w : typeof w
+
