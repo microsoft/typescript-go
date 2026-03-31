@@ -15,7 +15,6 @@ File '/packages/a/node_modules/react/index.tsx' does not exist.
 File '/packages/a/node_modules/react/index.d.ts' does not exist.
 Directory '/packages/a/node_modules/@types' does not exist, skipping all lookups in it.
 Directory '/packages/node_modules' does not exist, skipping all lookups in it.
-Directory '/packages/node_modules/@types' does not exist, skipping all lookups in it.
 File '/node_modules/react.ts' does not exist.
 File '/node_modules/react.tsx' does not exist.
 File '/node_modules/react.d.ts' does not exist.
@@ -41,17 +40,3 @@ File '/packages/a/node_modules/redux/index.tsx' does not exist.
 File '/packages/a/node_modules/redux/index.d.ts' exists - use it as a name resolution result.
 Resolving real path for '/packages/a/node_modules/redux/index.d.ts', result '/packages/a/node_modules/redux/index.d.ts'.
 ======== Module name 'redux' was successfully resolved to '/packages/a/node_modules/redux/index.d.ts'. ========
-======== Resolving type reference directive 'react', containing file '/.src/__inferred type names__.ts', root directory '/.src/node_modules/@types,/node_modules/@types'. ========
-Resolving with primary search path '/.src/node_modules/@types, /node_modules/@types'.
-Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
-File '/node_modules/@types/react/package.json' does not exist according to earlier cached lookups.
-File '/node_modules/@types/react/index.d.ts' exists - use it as a name resolution result.
-Resolving real path for '/node_modules/@types/react/index.d.ts', result '/node_modules/@types/react/index.d.ts'.
-======== Type reference directive 'react' was successfully resolved to '/node_modules/@types/react/index.d.ts', primary: true. ========
-======== Resolving type reference directive 'redux', containing file '/.src/__inferred type names__.ts', root directory '/.src/node_modules/@types,/node_modules/@types'. ========
-Resolving with primary search path '/.src/node_modules/@types, /node_modules/@types'.
-Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
-File '/node_modules/@types/redux/package.json' does not exist.
-File '/node_modules/@types/redux/index.d.ts' exists - use it as a name resolution result.
-Resolving real path for '/node_modules/@types/redux/index.d.ts', result '/node_modules/@types/redux/index.d.ts'.
-======== Type reference directive 'redux' was successfully resolved to '/node_modules/@types/redux/index.d.ts', primary: true. ========
