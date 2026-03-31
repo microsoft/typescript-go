@@ -419,20 +419,19 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 	var errorNodes []*ast.Node
 	for _, e := range node.Properties.Nodes {
 		if e.Flags&ast.NodeFlagsThisNodeHasError != 0 {
-			// Return empty (non-nil) slice to signal failure without specific error nodes
-			return []*ast.Node{}
+			errorNodes = append(errorNodes, e)
+			continue
 		}
 		if e.Kind == ast.KindShorthandPropertyAssignment || e.Kind == ast.KindSpreadAssignment {
 			errorNodes = append(errorNodes, e)
 			continue
 		}
 		if e.Name().Flags&ast.NodeFlagsThisNodeHasError != 0 {
-			return []*ast.Node{}
+			errorNodes = append(errorNodes, e.Name())
+			continue
 		}
 		if e.Name().Kind == ast.KindPrivateIdentifier {
-			if errorNodes == nil {
-				errorNodes = []*ast.Node{} // signal failure
-			}
+			errorNodes = append(errorNodes, e)
 			continue
 		}
 		if e.Name().Kind == ast.KindComputedPropertyName {
