@@ -523,7 +523,7 @@ func setNestedValue(config map[string]any, path string, value any) {
 	current[parts[len(parts)-1]] = value
 }
 
-func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
+func (p *UserPreferences) parseWorker(config map[string]any) *UserPreferences {
 	v := reflect.ValueOf(p).Elem()
 	infos := fieldInfoCache()
 
@@ -693,7 +693,7 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 	// Start with defaults, then overlay parsed values
 	*p = DefaultUserPreferences
-	p.ParseWorker(config)
+	p.parseWorker(config)
 	return nil
 }
 
@@ -757,7 +757,7 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
 		switch jsTsSettings := jsTsItem.(type) {
 		case map[string]any:
-			prefs.ParseWorker(jsTsSettings)
+			prefs.parseWorker(jsTsSettings)
 		case UserPreferences:
 			prefs = prefs.WithOverrides(jsTsSettings)
 		}

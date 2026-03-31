@@ -164,10 +164,11 @@ func TestCustomConfigFileName(t *testing.T) {
 			"..",
 			".",
 		} {
-			prefs := lsutil.NewDefaultUserPreferences()
-			prefs.ParseWorker(map[string]any{
-				"native-preview": map[string]any{
-					"customConfigFileName": invalidName,
+			prefs := lsutil.ParseUserPreferences(map[string]any{
+				"js/ts": map[string]any{
+					"native-preview": map[string]any{
+						"customConfigFileName": invalidName,
+					},
 				},
 			})
 			assert.Equal(t, prefs.CustomConfigFileName, "",
@@ -182,10 +183,11 @@ func TestCustomConfigFileName(t *testing.T) {
 			"tsconfig.editor.json",
 			"jsconfig.custom.json",
 		} {
-			prefs := lsutil.NewDefaultUserPreferences()
-			prefs.ParseWorker(map[string]any{
-				"native-preview": map[string]any{
-					"customConfigFileName": validName,
+			prefs := lsutil.ParseUserPreferences(map[string]any{
+				"js/ts": map[string]any{
+					"native-preview": map[string]any{
+						"customConfigFileName": validName,
+					},
 				},
 			})
 			assert.Equal(t, prefs.CustomConfigFileName, validName,

@@ -308,9 +308,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferenc
 				*s.initializeParams.InitializationOptions.UserPreferences,
 			)
 			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
-				prefs := lsutil.NewDefaultUserPreferences()
-				prefs.ParseWorker(config)
-				return prefs, nil
+				return lsutil.ParseUserPreferences(map[string]any{"js/ts": config}), nil
 			}
 		}
 		return lsutil.NewDefaultUserPreferences(), nil

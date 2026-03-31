@@ -82,7 +82,7 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 		err2 := json.Unmarshal(jsonBytes, &config)
 		assert.NilError(t, err2)
 		parsed := &UserPreferences{}
-		parsed.ParseWorker(config)
+		parsed.parseWorker(config)
 		assert.DeepEqual(t, original, parsed)
 	})
 }
@@ -322,7 +322,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			assert.NilError(t, err)
 
 			parsed := &UserPreferences{}
-			parsed.ParseWorker(config)
+			parsed.parseWorker(config)
 
 			assert.DeepEqual(t, tt.expected, parsed)
 		})
