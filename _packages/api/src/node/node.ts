@@ -431,7 +431,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             }
             const child = this.getOrCreateChildAtNodeIndex(this.index + 1);
             if (child.next !== 0) {
-                throw new Error("Expected only one child");
+                const next = this.getOrCreateChildAtNodeIndex(child.next);
+                if (!(next instanceof RemoteNode) || next.kind != SyntaxKind.JSDoc) {
+                    throw new Error("Expected only one child");
+                }
             }
             return child;
         }
