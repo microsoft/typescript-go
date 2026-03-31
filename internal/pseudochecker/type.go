@@ -42,25 +42,14 @@ const (
 )
 
 type PseudoType struct {
-	Kind       PseudoTypeKind
-	errorNodes []*ast.Node
-	data       pseudoTypeData
+	Kind PseudoTypeKind
+	data pseudoTypeData
 }
-
-// ErrorNodes returns the specific child nodes that caused an inference failure,
-// collected during pseudochecker construction. Nil/empty means no specific children.
-func (t *PseudoType) ErrorNodes() []*ast.Node { return t.errorNodes }
 
 func newPseudoType(kind PseudoTypeKind, data pseudoTypeData) *PseudoType {
 	n := data.AsPseudoType()
 	n.Kind = kind
 	n.data = data
-	return n
-}
-
-func newPseudoTypeWithErrors(kind PseudoTypeKind, data pseudoTypeData, errorNodes []*ast.Node) *PseudoType {
-	n := newPseudoType(kind, data)
-	n.errorNodes = errorNodes
 	return n
 }
 
@@ -106,10 +95,11 @@ func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*Ps
 // These represent cases where the expression was too complex for the pseudochecker.
 // Most of the time, these locations will produce an error under ID.
 // Specific error nodes (shorthand properties, spread assignments, etc.) are stored on the
-// PseudoType.errorNodes field, collected during pseudochecker construction.
+// ErrorNodes field, collected during pseudochecker construction.
 type PseudoTypeInferred struct {
 	PseudoTypeBase
 	Expression *ast.Node
+	ErrorNodes []*ast.Node
 }
 
 func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
@@ -117,7 +107,7 @@ func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
 }
 
 func NewPseudoTypeInferredWithErrors(expr *ast.Node, errorNodes []*ast.Node) *PseudoType {
-	return newPseudoTypeWithErrors(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr}, errorNodes)
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, ErrorNodes: errorNodes})
 }
 
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }

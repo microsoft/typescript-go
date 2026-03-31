@@ -15,7 +15,7 @@ import (
 func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.PseudoType, checkerType *Type) *ast.Node {
 	if t.Kind == pseudochecker.PseudoTypeKindInferred {
 		if !b.ctx.suppressReportInferenceFallback {
-			if errorNodes := t.ErrorNodes(); len(errorNodes) > 0 {
+			if errorNodes := t.AsPseudoTypeInferred().ErrorNodes; len(errorNodes) > 0 {
 				for _, n := range errorNodes {
 					b.ctx.tracker.ReportInferenceFallback(n)
 				}
@@ -41,7 +41,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindInferred:
 		inferred := t.AsPseudoTypeInferred()
 		node := inferred.Expression
-		if errorNodes := t.ErrorNodes(); len(errorNodes) > 0 {
+		if errorNodes := inferred.ErrorNodes; len(errorNodes) > 0 {
 			for _, n := range errorNodes {
 				b.ctx.tracker.ReportInferenceFallback(n)
 			}
@@ -353,7 +353,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		// PseudoTypeInferred with error nodes is always considered equivalent —
 		// the error nodes identify specific problematic children, and pseudoTypeToNodeWithCheckerFallback
 		// will report errors on them and fall back to the checker's real type.
-		if len(t.ErrorNodes()) > 0 {
+		if len(t.AsPseudoTypeInferred().ErrorNodes) > 0 {
 			return true
 		}
 		if reportErrors {
