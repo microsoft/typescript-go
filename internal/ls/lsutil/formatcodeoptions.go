@@ -28,6 +28,10 @@ func parseIndentStyle(v any) IndentStyle {
 		case "smart":
 			return IndentStyleSmart
 		}
+	case float64:
+		return IndentStyle(int(s))
+	case int:
+		return IndentStyle(s)
 	}
 	return IndentStyleSmart
 }
@@ -55,37 +59,37 @@ func parseSemicolonPreference(v any) SemicolonPreference {
 }
 
 type EditorSettings struct {
-	BaseIndentSize         int
-	IndentSize             int
-	TabSize                int
-	NewLineCharacter       string
-	ConvertTabsToSpaces    bool
-	IndentStyle            IndentStyle
-	TrimTrailingWhitespace bool
+	BaseIndentSize         int         `raw:"baseIndentSize" config:"format.baseIndentSize"`
+	IndentSize             int         `raw:"indentSize" config:"format.indentSize"`
+	TabSize                int         `raw:"tabSize" config:"format.tabSize"`
+	NewLineCharacter       string      `raw:"newLineCharacter" config:"format.newLineCharacter"`
+	ConvertTabsToSpaces    bool        `raw:"convertTabsToSpaces" config:"format.convertTabsToSpaces"`
+	IndentStyle            IndentStyle `raw:"indentStyle" config:"format.indentStyle"`
+	TrimTrailingWhitespace bool        `raw:"trimTrailingWhitespace" config:"format.trimTrailingWhitespace"`
 }
 
 type FormatCodeSettings struct {
 	EditorSettings
-	InsertSpaceAfterCommaDelimiter                              core.Tristate
-	InsertSpaceAfterSemicolonInForStatements                    core.Tristate
-	InsertSpaceBeforeAndAfterBinaryOperators                    core.Tristate
-	InsertSpaceAfterConstructor                                 core.Tristate
-	InsertSpaceAfterKeywordsInControlFlowStatements             core.Tristate
-	InsertSpaceAfterFunctionKeywordForAnonymousFunctions        core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis  core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets     core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  core.Tristate
-	InsertSpaceAfterTypeAssertion                               core.Tristate
-	InsertSpaceBeforeFunctionParenthesis                        core.Tristate
-	PlaceOpenBraceOnNewLineForFunctions                         core.Tristate
-	PlaceOpenBraceOnNewLineForControlBlocks                     core.Tristate
-	InsertSpaceBeforeTypeAnnotation                             core.Tristate
-	IndentMultiLineObjectLiteralBeginningOnBlankLine            core.Tristate
-	Semicolons                                                  SemicolonPreference
-	IndentSwitchCase                                            core.Tristate
+	InsertSpaceAfterCommaDelimiter                              core.Tristate       `raw:"insertSpaceAfterCommaDelimiter" config:"format.insertSpaceAfterCommaDelimiter"`
+	InsertSpaceAfterSemicolonInForStatements                    core.Tristate       `raw:"insertSpaceAfterSemicolonInForStatements" config:"format.insertSpaceAfterSemicolonInForStatements"`
+	InsertSpaceBeforeAndAfterBinaryOperators                    core.Tristate       `raw:"insertSpaceBeforeAndAfterBinaryOperators" config:"format.insertSpaceBeforeAndAfterBinaryOperators"`
+	InsertSpaceAfterConstructor                                 core.Tristate       `raw:"insertSpaceAfterConstructor" config:"format.insertSpaceAfterConstructor"`
+	InsertSpaceAfterKeywordsInControlFlowStatements             core.Tristate       `raw:"insertSpaceAfterKeywordsInControlFlowStatements" config:"format.insertSpaceAfterKeywordsInControlFlowStatements"`
+	InsertSpaceAfterFunctionKeywordForAnonymousFunctions        core.Tristate       `raw:"insertSpaceAfterFunctionKeywordForAnonymousFunctions" config:"format.insertSpaceAfterFunctionKeywordForAnonymousFunctions"`
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis  core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis" config:"format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis"`
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets     core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets" config:"format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets"`
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces"`
+	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingEmptyBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces"`
+	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces"`
+	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces"`
+	InsertSpaceAfterTypeAssertion                               core.Tristate       `raw:"insertSpaceAfterTypeAssertion" config:"format.insertSpaceAfterTypeAssertion"`
+	InsertSpaceBeforeFunctionParenthesis                        core.Tristate       `raw:"insertSpaceBeforeFunctionParenthesis" config:"format.insertSpaceBeforeFunctionParenthesis"`
+	PlaceOpenBraceOnNewLineForFunctions                         core.Tristate       `raw:"placeOpenBraceOnNewLineForFunctions" config:"format.placeOpenBraceOnNewLineForFunctions"`
+	PlaceOpenBraceOnNewLineForControlBlocks                     core.Tristate       `raw:"placeOpenBraceOnNewLineForControlBlocks" config:"format.placeOpenBraceOnNewLineForControlBlocks"`
+	InsertSpaceBeforeTypeAnnotation                             core.Tristate       `raw:"insertSpaceBeforeTypeAnnotation" config:"format.insertSpaceBeforeTypeAnnotation"`
+	IndentMultiLineObjectLiteralBeginningOnBlankLine            core.Tristate       `raw:"indentMultiLineObjectLiteralBeginningOnBlankLine" config:"format.indentMultiLineObjectLiteralBeginningOnBlankLine"`
+	Semicolons                                                  SemicolonPreference `raw:"semicolons" config:"format.semicolons"`
+	IndentSwitchCase                                            core.Tristate       `raw:"indentSwitchCase" config:"format.indentSwitchCase"`
 }
 
 func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) *FormatCodeSettings {

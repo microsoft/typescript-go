@@ -33,9 +33,6 @@ func fillNonZeroValues(v reflect.Value) {
 			}
 		case reflect.Struct:
 			fillNonZeroValues(field)
-		case reflect.Pointer:
-			// Skip pointer fields (like FormatCodeSettings) - they are not
-			// handled by the struct tag reflection system and don't roundtrip.
 		}
 	}
 }
@@ -51,6 +48,8 @@ func getValidStringValue(t reflect.Type) string {
 		return string(IncludePackageJsonAutoImportsOn)
 	case "lsutil.IncludeInlayParameterNameHints":
 		return string(IncludeInlayParameterNameHintsAll)
+	case "lsutil.SemicolonPreference":
+		return string(SemicolonPreferenceInsert)
 	case "modulespecifiers.ImportModuleSpecifierPreference":
 		return string(modulespecifiers.ImportModuleSpecifierPreferenceRelative)
 	case "modulespecifiers.ImportModuleSpecifierEndingPreference":
@@ -74,12 +73,7 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 		parsed := &UserPreferences{}
 		err2 := json.Unmarshal(jsonBytes, parsed)
 		assert.NilError(t, err2)
-		// UnmarshalJSONFrom starts from defaults, which includes FormatCodeSettings.
-		// The original has nil FormatCodeSettings since it's not handled by struct tags.
-		// Compare with the expectation that FormatCodeSettings defaults are populated.
-		expected := original.Copy()
-		expected.FormatCodeSettings = GetDefaultFormatCodeSettings()
-		assert.DeepEqual(t, expected, parsed)
+		assert.DeepEqual(t, original, parsed)
 	})
 
 	t.Run("parseWorker", func(t *testing.T) {

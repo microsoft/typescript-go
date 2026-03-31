@@ -13,7 +13,7 @@ import (
 )
 
 var DefaultUserPreferences = &UserPreferences{
-	FormatCodeSettings: GetDefaultFormatCodeSettings(),
+	FormatCodeSettings: *GetDefaultFormatCodeSettings(),
 
 	IncludeCompletionsForModuleExports:    core.TSTrue,
 	IncludeCompletionsForImportStatements: core.TSTrue,
@@ -40,7 +40,7 @@ func NewDefaultUserPreferences() *UserPreferences {
 // At least one tag must be present on each preference field.
 // The `,invert` modifier inverts boolean values (e.g., VS Code's "suppress" -> our "include").
 type UserPreferences struct {
-	FormatCodeSettings *FormatCodeSettings
+	FormatCodeSettings FormatCodeSettings
 
 	QuotePreference                           QuotePreference `raw:"quotePreference" config:"preferences.quoteStyle"`
 	LazyConfiguredProjectsFromExternalProject bool            `raw:"lazyConfiguredProjectsFromExternalProject"` // !!!
@@ -265,6 +265,12 @@ var typeParsers = map[reflect.Type]func(any) any{
 		}
 		return core.TSUnknown
 	},
+	reflect.TypeFor[IndentStyle](): func(val any) any {
+		return parseIndentStyle(val)
+	},
+	reflect.TypeFor[SemicolonPreference](): func(val any) any {
+		return parseSemicolonPreference(val)
+	},
 	reflect.TypeFor[QuotePreference](): func(val any) any {
 		if s, ok := val.(string); ok {
 			switch strings.ToLower(s) {
@@ -453,10 +459,6 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 				infos = append(infos, collectFieldInfos(field.Type, currentPath)...)
 				continue
 			}
-			// Skip non-tagged pointer fields (like FormatCodeSettings)
-			if field.Type.Kind() == reflect.Pointer {
-				continue
-			}
 			panic("raw or config tag required for field " + field.Name)
 		}
 
@@ -542,14 +544,6 @@ func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 				setFieldFromValue(field, value)
 			}
 		}
-	}
-
-	// Handle format code settings from the "format" section
-	if formatSection, ok := config["format"]; ok {
-		if p.FormatCodeSettings == nil {
-			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
-		}
-		p.FormatCodeSettings.Parse(formatSection)
 	}
 
 	// Process path-based config (VS Code style nested paths).

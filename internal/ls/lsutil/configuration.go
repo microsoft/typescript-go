@@ -82,7 +82,7 @@ func ParseNewUserConfig(items map[string]any) *UserConfig {
 	defaultPref := NewDefaultUserPreferences()
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
-			defaultPref.FormatCodeSettings = defaultPref.FormatCodeSettings.ParseEditorSettings(editorSettings)
+			defaultPref.FormatCodeSettings = *defaultPref.FormatCodeSettings.ParseEditorSettings(editorSettings)
 		}
 	}
 	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
@@ -91,6 +91,9 @@ func ParseNewUserConfig(items map[string]any) *UserConfig {
 			return NewUserConfig(defaultPref.ParseWorker(jsTsSettings))
 		case *UserPreferences:
 			// case for fourslash -- fourslash sends the entire userPreferences over in "js/ts"
+			if jsTsSettings.FormatCodeSettings == (FormatCodeSettings{}) {
+				jsTsSettings.FormatCodeSettings = *GetDefaultFormatCodeSettings()
+			}
 			return NewUserConfig(jsTsSettings)
 		}
 	}

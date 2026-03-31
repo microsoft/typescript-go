@@ -50,10 +50,7 @@ func (l *LanguageService) UserPreferences() *lsutil.UserPreferences {
 }
 
 func (l *LanguageService) FormatOptions() *lsutil.FormatCodeSettings {
-	if l.activeConfig.FormatCodeSettings == nil {
-		return lsutil.GetDefaultFormatCodeSettings()
-	}
-	return l.activeConfig.FormatCodeSettings
+	return &l.activeConfig.FormatCodeSettings
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {

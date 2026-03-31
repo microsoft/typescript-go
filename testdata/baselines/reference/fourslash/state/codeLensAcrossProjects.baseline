@@ -162,6 +162,16 @@ Config File Names::
   "params": {
     "settings": {
       "js/ts": {
+        "format": {
+          "baseIndentSize": 0,
+          "convertTabsToSpaces": false,
+          "indentSize": 0,
+          "indentStyle": 0,
+          "newLineCharacter": "",
+          "semicolons": "",
+          "tabSize": 0,
+          "trimTrailingWhitespace": false
+        },
         "implementationsCodeLens": {
           "enabled": true,
           "showOnAllClassMethods": true,
@@ -623,6 +633,31 @@ Config::
   "params": {
     "settings": {
       "js/ts": {
+        "format": {
+          "baseIndentSize": 0,
+          "convertTabsToSpaces": true,
+          "indentSize": 4,
+          "indentStyle": 2,
+          "indentSwitchCase": true,
+          "insertSpaceAfterCommaDelimiter": true,
+          "insertSpaceAfterConstructor": false,
+          "insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+          "insertSpaceAfterKeywordsInControlFlowStatements": true,
+          "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+          "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+          "insertSpaceAfterSemicolonInForStatements": true,
+          "insertSpaceBeforeAndAfterBinaryOperators": true,
+          "insertSpaceBeforeFunctionParenthesis": false,
+          "newLineCharacter": "\n",
+          "placeOpenBraceOnNewLineForControlBlocks": false,
+          "placeOpenBraceOnNewLineForFunctions": false,
+          "semicolons": "ignore",
+          "tabSize": 4,
+          "trimTrailingWhitespace": true
+        },
         "implementationsCodeLens": {
           "enabled": false,
           "showOnAllClassMethods": false,
