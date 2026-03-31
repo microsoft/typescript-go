@@ -32,7 +32,7 @@ func TestFormatNoTrailingSpace(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 				EditorSettings: lsutil.EditorSettings{
 					TabSize:                4,
 					IndentSize:             4,

@@ -54,7 +54,7 @@ type importAdder struct {
 	ctx           context.Context
 	checker       *checker.Checker
 	view          *View
-	formatOptions *lsutil.FormatCodeSettings
+	formatOptions lsutil.FormatCodeSettings
 	converters    *lsconv.Converters
 	preferences   lsutil.UserPreferences
 
@@ -72,7 +72,7 @@ func NewImportAdder(
 	checker *checker.Checker,
 	file *ast.SourceFile,
 	view *View,
-	formatOptions *lsutil.FormatCodeSettings,
+	formatOptions lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
 	preferences lsutil.UserPreferences,
 ) ImportAdder {

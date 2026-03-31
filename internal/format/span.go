@@ -85,7 +85,7 @@ func getScanStartPosition(enclosingNode *ast.Node, originalRange core.TextRange,
  * if parent is on the different line - its delta was already contributed
  * to the initial indentation.
  */
-func getOwnOrInheritedDelta(n *ast.Node, options *lsutil.FormatCodeSettings, sourceFile *ast.SourceFile) int {
+func getOwnOrInheritedDelta(n *ast.Node, options lsutil.FormatCodeSettings, sourceFile *ast.SourceFile) int {
 	previousLine := -1
 	var child *ast.Node
 	for n != nil {
@@ -985,7 +985,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	}
 }
 
-func getIndentationString(indentation int, options *lsutil.FormatCodeSettings) string {
+func getIndentationString(indentation int, options lsutil.FormatCodeSettings) string {
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
 	if !options.ConvertTabsToSpaces.IsTrue() {
 		if options.TabSize == 0 {
@@ -1104,7 +1104,7 @@ type dynamicIndenter struct {
 	indentation   int
 	delta         int
 
-	options    *lsutil.FormatCodeSettings
+	options    lsutil.FormatCodeSettings
 	sourceFile *ast.SourceFile
 }
 

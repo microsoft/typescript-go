@@ -29,7 +29,7 @@ func TestGetIndentationForNamedImportsPosition(t *testing.T) {
 	// Let's test at position 9 (start of line containing the specifier)
 	lineStart := format.GetLineStartPositionForPosition(14, sourceFile) // 14 is somewhere in "    type"
 
-	indent := format.GetIndentation(lineStart, sourceFile, &options, true)
+	indent := format.GetIndentation(lineStart, sourceFile, options, true)
 	t.Logf("lineStart=%d, text[lineStart:]=%q", lineStart, text[lineStart:lineStart+10])
 	t.Logf("GetIndentation at lineStart %d = %d", lineStart, indent)
 

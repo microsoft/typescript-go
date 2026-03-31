@@ -54,7 +54,7 @@ func (f *Fix) Edits(
 	ctx context.Context,
 	file *ast.SourceFile,
 	compilerOptions *core.CompilerOptions,
-	formatOptions *lsutil.FormatCodeSettings,
+	formatOptions lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
 	preferences lsutil.UserPreferences,
 ) ([]*lsproto.TextEdit, string) {

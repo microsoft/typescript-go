@@ -37,8 +37,7 @@ func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLi
 }
 
 func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
-	defaults := lsutil.GetDefaultFormatCodeSettings()
-	ctx := format.WithFormatCodeSettings(context.Background(), &defaults, "\n")
+	ctx := format.WithFormatCodeSettings(context.Background(), lsutil.GetDefaultFormatCodeSettings(), "\n")
 	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	fileContent, ok := sys.FS().ReadFile(input)

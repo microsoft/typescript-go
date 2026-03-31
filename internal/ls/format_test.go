@@ -32,7 +32,7 @@ func TestGetFormattingEditsAfterKeystroke_EmptyFile(t *testing.T) {
 	edits := langService.getFormattingEditsAfterKeystroke(
 		ctx,
 		sourceFile,
-		&options,
+		options,
 		0, // position
 		"\n",
 	)
@@ -62,7 +62,7 @@ func TestGetFormattingEditsAfterKeystroke_SimpleStatement(t *testing.T) {
 	edits := langService.getFormattingEditsAfterKeystroke(
 		ctx,
 		sourceFile,
-		&options,
+		options,
 		len(text), // position at end of file
 		"\n",
 	)
@@ -124,7 +124,7 @@ func TestGetFormattingEditsForRange_FunctionBody(t *testing.T) {
 			edits := langService.getFormattingEditsForRange(
 				ctx,
 				sourceFile,
-				&options,
+				options,
 				core.NewTextRange(tc.startPos, tc.endPos),
 			)
 

@@ -49,8 +49,8 @@ func (l *LanguageService) UserPreferences() lsutil.UserPreferences {
 	return l.activeConfig
 }
 
-func (l *LanguageService) FormatOptions() *lsutil.FormatCodeSettings {
-	return &l.activeConfig.FormatCodeSettings
+func (l *LanguageService) FormatOptions() lsutil.FormatCodeSettings {
+	return l.activeConfig.FormatCodeSettings
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
