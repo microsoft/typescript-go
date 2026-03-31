@@ -39,7 +39,7 @@ type emitter struct {
 	paths              *outputpaths.OutputPaths
 	sourceFile         *ast.SourceFile
 	emitResult         EmitResult
-	writeFile          func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+	writeFile          func(fileName string, text string, data *WriteFileData) error
 }
 
 func (e *emitter) emit() {
@@ -83,10 +83,10 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	// JS files don't use reference calculations as they don't do import elision, no need to calculate it
 	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
 
-	var emitResolver printer.EmitResolver
+	emitResolver := host.GetEmitResolver()
+
 	var referenceResolver binder.ReferenceResolver
-	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.GetIsolatedModules() { // full emit resolver is needed for import ellision and const enum inlining
-		emitResolver = host.GetEmitResolver()
+	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.GetIsolatedModules() || options.EmitDecoratorMetadata.IsTrue() {
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
 	} else {
@@ -103,6 +103,11 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	// transform TypeScript syntax
 	{
+		// use type nodes to add metadata decorators
+		if options.EmitDecoratorMetadata.IsTrue() {
+			tx = append(tx, tstransforms.NewMetadataTransformer(&opts))
+		}
+
 		// erase types
 		tx = append(tx, tstransforms.NewTypeEraserTransformer(&opts))
 
@@ -113,9 +118,12 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 		// transform `enum`, `namespace`, and parameter properties
 		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(&opts))
+
+		if options.ExperimentalDecorators.IsTrue() {
+			tx = append(tx, tstransforms.NewLegacyDecoratorsTransformer(&opts))
+		}
 	}
 
-	// !!! transform legacy decorator syntax
 	if options.GetJSXTransformEnabled() {
 		tx = append(tx, jsxtransforms.NewJSXTransformer(&opts))
 	}
@@ -163,6 +171,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		SourceMap:       options.SourceMap.IsTrue(),
 		InlineSourceMap: options.InlineSourceMap.IsTrue(),
 		InlineSources:   options.InlineSources.IsTrue(),
+		Target:          options.Target,
 		// !!!
 	}
 
@@ -266,7 +275,7 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 		// Write the source map
 		if len(sourceMapFilePath) > 0 {
 			sourceMap := sourceMapGenerator.String()
-			err := e.writeText(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/, nil)
+			err := e.writeText(sourceMapFilePath, sourceMap, nil)
 			if err != nil {
 				e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
 			} else {
@@ -279,11 +288,14 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 
 	// Write the output file
 	text := e.writer.String()
+	if options.EmitBOM.IsTrue() {
+		text = stringutil.AddUTF8ByteOrderMark(text)
+	}
 	data := &WriteFileData{
 		SourceMapUrlPos: sourceMapUrlPos,
 		Diagnostics:     e.emitterDiagnostics.GetDiagnostics(),
 	}
-	err := e.writeText(jsFilePath, text, options.EmitBOM.IsTrue(), data)
+	err := e.writeText(jsFilePath, text, data)
 	skippedDtsWrite := data.SkippedDtsWrite
 	if err != nil {
 		e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
@@ -295,11 +307,11 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	e.writer.Clear()
 }
 
-func (e *emitter) writeText(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error {
+func (e *emitter) writeText(fileName string, text string, data *WriteFileData) error {
 	if e.writeFile != nil {
-		return e.writeFile(fileName, text, writeByteOrderMark, data)
+		return e.writeFile(fileName, text, data)
 	}
-	return e.host.WriteFile(fileName, text, writeByteOrderMark)
+	return e.host.WriteFile(fileName, text)
 }
 
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
@@ -440,8 +452,8 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 		return false
 	}
 
-	// Otherwise if rootDir or composite config file, we know common sourceDir and can check if file would be emitted in same location
-	if options.RootDir != "" || (options.Composite.IsTrue() && options.ConfigFilePath != "") {
+	// Otherwise, if rootDir is specified or a config file exists, we know the common source directory and can check if the file would be emitted in the same location
+	if options.RootDir != "" || options.ConfigFilePath != "" {
 		commonDir := tspath.GetNormalizedAbsolutePath(outputpaths.GetCommonSourceDirectory(options, func() []string { return nil }, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames()), host.GetCurrentDirectory())
 		outputPath := outputpaths.GetSourceFilePathInNewDirWorker(sourceFile.FileName(), options.OutDir, host.GetCurrentDirectory(), commonDir, host.UseCaseSensitiveFileNames())
 		if tspath.ComparePaths(sourceFile.FileName(), outputPath, tspath.ComparePathsOptions{

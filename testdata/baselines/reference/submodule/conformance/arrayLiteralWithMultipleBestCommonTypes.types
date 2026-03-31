@@ -6,17 +6,17 @@
 var a: { x: number; y?: number };
 >a : { x: number; y?: number; }
 >x : number
->y : number
+>y : number | undefined
 
 var b: { x: number; z?: number };
 >b : { x: number; z?: number; }
 >x : number
->z : number
+>z : number | undefined
 
 var c: { x: number; a?: number };
 >c : { x: number; a?: number; }
 >x : number
->a : number
+>a : number | undefined
 
 var as = [a, b]; // { x: number; y?: number };[]
 >as : ({ x: number; y?: number; } | { x: number; z?: number; })[]
@@ -38,8 +38,8 @@ var cs = [a, b, c]; // { x: number; y?: number };[]
 >c : { x: number; a?: number; }
 
 var ds = [(x: Object) => 1, (x: string) => 2]; // { (x:Object) => number }[]
->ds : ((x: Object) => number)[]
->[(x: Object) => 1, (x: string) => 2] : ((x: Object) => number)[]
+>ds : ((x: string) => number)[]
+>[(x: Object) => 1, (x: string) => 2] : ((x: string) => number)[]
 >(x: Object) => 1 : (x: Object) => number
 >x : Object
 >1 : 1
@@ -63,12 +63,12 @@ var fs = [(a: { x: number; y?: number }) => 1, (b: { x: number; z?: number }) =>
 >(a: { x: number; y?: number }) => 1 : (a: { x: number; y?: number; }) => number
 >a : { x: number; y?: number; }
 >x : number
->y : number
+>y : number | undefined
 >1 : 1
 >(b: { x: number; z?: number }) => 2 : (b: { x: number; z?: number; }) => number
 >b : { x: number; z?: number; }
 >x : number
->z : number
+>z : number | undefined
 >2 : 2
 
 var gs = [(b: { x: number; z?: number }) => 2, (a: { x: number; y?: number }) => 1]; // (b: { x: number; z?: number }) => number[]
@@ -77,11 +77,11 @@ var gs = [(b: { x: number; z?: number }) => 2, (a: { x: number; y?: number }) =>
 >(b: { x: number; z?: number }) => 2 : (b: { x: number; z?: number; }) => number
 >b : { x: number; z?: number; }
 >x : number
->z : number
+>z : number | undefined
 >2 : 2
 >(a: { x: number; y?: number }) => 1 : (a: { x: number; y?: number; }) => number
 >a : { x: number; y?: number; }
 >x : number
->y : number
+>y : number | undefined
 >1 : 1
 

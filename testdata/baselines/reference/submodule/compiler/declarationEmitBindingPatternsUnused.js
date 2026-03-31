@@ -124,6 +124,7 @@ interface ReferencedInSignartureInterface {
 }
 
 //// [declarationEmitBindingPatternsUnused.js]
+"use strict";
 // Resons we can't remove aliases that are not used in the function signature: 
 // 1.Causes duplicate identifier if we remove alias
 function duplicateIndetifiers({ name: alias, name: alias2 }) { }
@@ -227,9 +228,9 @@ declare function referencedInSignartureKeyword({ function: alias }: {
     function: string;
 }): typeof alias;
 declare function referencedInInferredType({ name: alias }: Named): {
-    name: string;
+    name: typeof alias;
 };
-declare function referencedInNestedFunction({ name: alias }: Named): (p: string) => void;
+declare function referencedInNestedFunction({ name: alias }: Named): (p: typeof alias) => void;
 declare function referencedNestedAlias({ p: { name: alias } }: {
     p: Named;
 }): typeof alias;

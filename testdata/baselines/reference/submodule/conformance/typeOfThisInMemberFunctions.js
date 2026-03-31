@@ -34,6 +34,7 @@ class E<T extends Date> {
 }
 
 //// [typeOfThisInMemberFunctions.js]
+"use strict";
 class C {
     foo() {
         var r = this;
@@ -43,7 +44,6 @@ class C {
     }
 }
 class D {
-    x;
     foo() {
         var r = this;
     }
@@ -52,7 +52,6 @@ class D {
     }
 }
 class E {
-    x;
     foo() {
         var r = this;
     }

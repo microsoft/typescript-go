@@ -44,12 +44,12 @@ class MyClass {
 >props : { pt?: { x: number; y: number; }; name?: string; reqd: boolean; }
 
     pt?: { x: number; y: number; };
->pt : { x: number; y: number; }
+>pt : { x: number; y: number; } | undefined
 >x : number
 >y : number
 
 	name?: string;
->name : string
+>name : string | undefined
 
 	reqd: boolean;
 >reqd : boolean

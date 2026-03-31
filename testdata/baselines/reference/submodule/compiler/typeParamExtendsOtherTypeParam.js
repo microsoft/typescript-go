@@ -33,10 +33,10 @@ var x8: B<I2, I1>;
 
 
 //// [typeParamExtendsOtherTypeParam.js]
+"use strict";
 class A {
 }
 class B {
-    data;
 }
 // Below 2 should compile without error 
 var x;

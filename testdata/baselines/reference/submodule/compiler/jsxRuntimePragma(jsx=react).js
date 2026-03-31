@@ -71,7 +71,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
-/// <reference path="react16.d.ts" />
+/// <reference path="/.lib/react16.d.ts" />
 /* @jsxRuntime classic */
 const React = __importStar(require("react"));
 const HelloWorld = () => React.createElement("h1", null, "Hello world");
@@ -84,24 +84,24 @@ exports.selfClosing = React.createElement("img", { src: "./image.png" });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
-/// <reference path="react16.d.ts" />
+/// <reference path="/.lib/react16.d.ts" />
 /* @jsxRuntime automatic */
-const HelloWorld = () => jsx_runtime_1.jsx("h1", { children: "Hello world" });
+const HelloWorld = () => (0, jsx_runtime_1.jsx)("h1", { children: "Hello world" });
 exports.HelloWorld = HelloWorld;
-exports.frag = jsx_runtime_1.jsx(jsx_runtime_1.Fragment, { children: jsx_runtime_1.jsx("div", {}) });
-exports.selfClosing = jsx_runtime_1.jsx("img", { src: "./image.png" });
+exports.frag = (0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)("div", {}) });
+exports.selfClosing = (0, jsx_runtime_1.jsx)("img", { src: "./image.png" });
 //// [three.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
-/// <reference path="react16.d.ts" />
+/// <reference path="/.lib/react16.d.ts" />
 /* @jsxRuntime classic */
 /* @jsxRuntime automatic */
-const HelloWorld = () => jsx_runtime_1.jsx("h1", { children: "Hello world" });
+const HelloWorld = () => (0, jsx_runtime_1.jsx)("h1", { children: "Hello world" });
 exports.HelloWorld = HelloWorld;
-exports.frag = jsx_runtime_1.jsx(jsx_runtime_1.Fragment, { children: jsx_runtime_1.jsx("div", {}) });
-exports.selfClosing = jsx_runtime_1.jsx("img", { src: "./image.png" });
+exports.frag = (0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)("div", {}) });
+exports.selfClosing = (0, jsx_runtime_1.jsx)("img", { src: "./image.png" });
 //// [four.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -139,7 +139,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
-/// <reference path="react16.d.ts" />
+/// <reference path="/.lib/react16.d.ts" />
 /* @jsxRuntime automatic */
 /* @jsxRuntime classic */
 const React = __importStar(require("react"));

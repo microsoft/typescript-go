@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/zeebo/xxh3"
 )
 
 type FlowType struct {
@@ -40,7 +41,7 @@ type FlowState struct {
 	declaredType    *Type
 	initialType     *Type
 	flowContainer   *ast.Node
-	refKey          string
+	refKey          CacheHashKey
 	depth           int
 	sharedFlowStart int
 	reduceLabels    []*ast.FlowReduceLabelData
@@ -1111,7 +1112,9 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitch
 		if t.flags&TypeFlagsUndefined == 0 {
 			u = c.getRegularTypeOfLiteralType(c.extractUnitType(t))
 		}
-		return !slices.Contains(switchTypes, u)
+		return !slices.ContainsFunc(switchTypes, func(st *Type) bool {
+			return isUnitType(st) && c.areTypesComparable(st, u)
+		})
 	})
 	if caseType.flags&TypeFlagsNever != 0 {
 		return defaultType
@@ -1288,10 +1291,10 @@ func (c *Checker) getUnionOrEvolvingArrayType(f *FlowState, types []*Type, subty
 }
 
 func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowType {
-	if f.refKey == "" {
+	if f.refKey.IsZero() {
 		f.refKey = c.getFlowReferenceKey(f)
 	}
-	if f.refKey == "?" {
+	if f.refKey == nonDottedNameCacheKey {
 		// No cache key is generated when binding patterns are in unnarrowable situations
 		return FlowType{t: f.declaredType}
 	}
@@ -1441,21 +1444,27 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		symbol := c.getResolvedSymbol(expr)
 		if c.isConstantVariable(symbol) {
 			declaration := symbol.ValueDeclaration
+			initializer := getCandidateVariableDeclarationInitializer(declaration)
 			// Given 'const x = obj.kind', allow 'x' as an alias for 'obj.kind'
-			if ast.IsVariableDeclaration(declaration) && declaration.Type() == nil {
-				if initializer := declaration.Initializer(); initializer != nil && ast.IsAccessExpression(initializer) && c.isMatchingReference(f.reference, initializer.Expression()) {
-					return initializer
-				}
+			if initializer != nil && ast.IsAccessExpression(initializer) && c.isMatchingReference(f.reference, initializer.Expression()) {
+				return initializer
 			}
 			// Given 'const { kind: x } = obj', allow 'x' as an alias for 'obj.kind'
 			if ast.IsBindingElement(declaration) && declaration.Initializer() == nil {
-				parent := declaration.Parent.Parent
-				if ast.IsVariableDeclaration(parent) && parent.Type() == nil {
-					if initializer := parent.Initializer(); initializer != nil && (ast.IsIdentifier(initializer) || ast.IsAccessExpression(initializer)) && c.isMatchingReference(f.reference, initializer) {
-						return declaration
-					}
+				initializer = getCandidateVariableDeclarationInitializer(declaration.Parent.Parent)
+				if initializer != nil && (ast.IsIdentifier(initializer) || ast.IsAccessExpression(initializer)) && c.isMatchingReference(f.reference, initializer) {
+					return declaration
 				}
 			}
+		}
+	}
+	return nil
+}
+
+func getCandidateVariableDeclarationInitializer(node *ast.Node) *ast.Node {
+	if ast.IsVariableDeclaration(node) && node.Type() == nil {
+		if initializer := node.Initializer(); initializer != nil {
+			return ast.SkipParentheses(initializer)
 		}
 	}
 	return nil
@@ -1607,19 +1616,21 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	return false
 }
 
+var nonDottedNameCacheKey = CacheHashKey(xxh3.HashString128("?"))
+
 // Return the flow cache key for a "dotted name" (i.e. a sequence of identifiers
 // separated by dots). The key consists of the id of the symbol referenced by the
 // leftmost identifier followed by zero or more property names separated by dots.
-// The result is an empty string if the reference isn't a dotted name.
-func (c *Checker) getFlowReferenceKey(f *FlowState) string {
-	var b KeyBuilder
+// The result is nonDottedNameCacheKey if the reference isn't a dotted name.
+func (c *Checker) getFlowReferenceKey(f *FlowState) CacheHashKey {
+	var b keyBuilder
 	if c.writeFlowCacheKey(&b, f.reference, f.declaredType, f.initialType, f.flowContainer) {
-		return b.String()
+		return b.hash()
 	}
-	return "?" // Reference isn't a dotted name
+	return nonDottedNameCacheKey // Reference isn't a dotted name
 }
 
-func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
+func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier:
 		if !ast.IsThisInTypeQuery(node) {
@@ -1627,19 +1638,19 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 			if symbol == c.unknownSymbol {
 				return false
 			}
-			b.WriteSymbol(symbol)
+			b.writeSymbol(symbol)
 		}
 		fallthrough
 	case ast.KindThisKeyword:
-		b.WriteByte(':')
-		b.WriteType(declaredType)
+		b.writeByte(':')
+		b.writeType(declaredType)
 		if initialType != declaredType {
-			b.WriteByte('=')
-			b.WriteType(initialType)
+			b.writeByte('=')
+			b.writeType(initialType)
 		}
 		if flowContainer != nil {
-			b.WriteByte('@')
-			b.WriteNode(flowContainer)
+			b.writeByte('@')
+			b.writeNode(flowContainer)
 		}
 		return true
 	case ast.KindNonNullExpression, ast.KindParenthesizedExpression:
@@ -1648,16 +1659,16 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 		if !c.writeFlowCacheKey(b, node.AsQualifiedName().Left, declaredType, initialType, flowContainer) {
 			return false
 		}
-		b.WriteByte('.')
-		b.WriteString(node.AsQualifiedName().Right.Text())
+		b.writeByte('.')
+		b.writeString(node.AsQualifiedName().Right.Text())
 		return true
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		if propName, ok := c.getAccessedPropertyName(node); ok {
 			if !c.writeFlowCacheKey(b, node.Expression(), declaredType, initialType, flowContainer) {
 				return false
 			}
-			b.WriteByte('.')
-			b.WriteString(propName)
+			b.writeByte('.')
+			b.writeString(propName)
 			return true
 		}
 		if ast.IsElementAccessExpression(node) && ast.IsIdentifier(node.AsElementAccessExpression().ArgumentExpression) {
@@ -1666,16 +1677,16 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 				if !c.writeFlowCacheKey(b, node.Expression(), declaredType, initialType, flowContainer) {
 					return false
 				}
-				b.WriteString(".@")
-				b.WriteSymbol(symbol)
+				b.writeString(".@")
+				b.writeSymbol(symbol)
 				return true
 			}
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
-		b.WriteNode(node)
-		b.WriteByte('#')
-		b.WriteType(declaredType)
+		b.writeNode(node)
+		b.writeByte('#')
+		b.writeType(declaredType)
 		return true
 	}
 	return false

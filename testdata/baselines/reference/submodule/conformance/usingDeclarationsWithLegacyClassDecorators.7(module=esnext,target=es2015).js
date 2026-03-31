@@ -13,10 +13,12 @@ using after = null;
 
 
 //// [usingDeclarationsWithLegacyClassDecorators.7.js]
+let C = class C {
+};
+C = __decorate([
+    dec
+], C);
 var after;
-@dec
-class C {
-}
 const env_1 = { stack: [], error: void 0, hasError: false };
 try {
     after = __addDisposableResource(env_1, null, false);

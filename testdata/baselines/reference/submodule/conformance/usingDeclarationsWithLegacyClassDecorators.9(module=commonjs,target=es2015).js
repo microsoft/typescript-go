@@ -14,12 +14,14 @@ using after = null;
 
 //// [usingDeclarationsWithLegacyClassDecorators.9.js]
 "use strict";
-var after;
 Object.defineProperty(exports, "__esModule", { value: true });
-@dec
-class C {
-}
+let C = class C {
+};
+C = __decorate([
+    dec
+], C);
 exports.default = C;
+var after;
 const env_1 = { stack: [], error: void 0, hasError: false };
 try {
     after = __addDisposableResource(env_1, null, false);

@@ -16,6 +16,7 @@ class C3 {
 }
 
 //// [classBodyWithStatements.js]
+"use strict";
 class C {
 }
 var x = 1;
@@ -25,5 +26,7 @@ function foo() { }
 var x = 1;
 var y = 2;
 class C3 {
-    x = y + 1; // ok, need a var in the statement production
+    constructor() {
+        this.x = y + 1; // ok, need a var in the statement production
+    }
 }

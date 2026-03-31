@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -304,11 +304,11 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		panic(fmt.Sprintf("Failed to marshal build info: %v", err))
 	}
 	if options.WriteFile != nil {
-		err = options.WriteFile(buildInfoFileName, string(text), false, &compiler.WriteFileData{
+		err = options.WriteFile(buildInfoFileName, string(text), &compiler.WriteFileData{
 			BuildInfo: buildInfo,
 		})
 	} else {
-		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text), false)
+		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text))
 	}
 	if err != nil {
 		return &compiler.EmitResult{

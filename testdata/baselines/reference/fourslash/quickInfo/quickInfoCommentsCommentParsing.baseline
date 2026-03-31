@@ -254,7 +254,7 @@
 //                                         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) c: number
+// | (parameter) c: number | undefined
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -315,6 +315,7 @@
 // | ```tsx
 // | (parameter) b: string
 // | ```
+// | about b
 // | 
 // | ----------------------------------------------------------------------
 // /**@param opt optional parameter*/
@@ -338,6 +339,9 @@
 // | ```tsx
 // | function f1(b: string): any
 // | ```
+// | fn f1 with number
+// | 
+// | *@param* `b` — about b
 // | 
 // | ----------------------------------------------------------------------
 // 
@@ -368,7 +372,7 @@
 //                                         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) c: () => string
+// | (parameter) c: (() => string) | undefined
 // | ```
 // | this is optional param c
 // | 
@@ -376,7 +380,7 @@
 //                                                           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) d: () => string
+// | (parameter) d: (() => string) | undefined
 // | ```
 // | this is optional param d
 // | 
@@ -384,7 +388,7 @@
 //                                                                             ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) e: () => string
+// | (parameter) e: (() => string) | undefined
 // | ```
 // | this is optional param e
 // | 
@@ -392,7 +396,7 @@
 //                                                                                               ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) f: () => string
+// | (parameter) f: (() => string) | undefined
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -1223,7 +1227,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) c: number\n```\n"
+        "value": "```tsx\n(parameter) c: number | undefined\n```\n"
       },
       "range": {
         "start": {
@@ -1358,7 +1362,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) b: string\n```\n"
+        "value": "```tsx\n(parameter) b: string\n```\nabout b\n"
       },
       "range": {
         "start": {
@@ -1412,7 +1416,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f1(b: string): any\n```\n"
+        "value": "```tsx\nfunction f1(b: string): any\n```\nfn f1 with number\n\n*@param* `b` — about b\n"
       },
       "range": {
         "start": {
@@ -1493,7 +1497,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) c: () => string\n```\nthis is optional param c\n"
+        "value": "```tsx\n(parameter) c: (() => string) | undefined\n```\nthis is optional param c\n"
       },
       "range": {
         "start": {
@@ -1520,7 +1524,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) d: () => string\n```\nthis is optional param d\n"
+        "value": "```tsx\n(parameter) d: (() => string) | undefined\n```\nthis is optional param d\n"
       },
       "range": {
         "start": {
@@ -1547,7 +1551,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) e: () => string\n```\nthis is optional param e\n"
+        "value": "```tsx\n(parameter) e: (() => string) | undefined\n```\nthis is optional param e\n"
       },
       "range": {
         "start": {
@@ -1574,7 +1578,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) f: () => string\n```\n"
+        "value": "```tsx\n(parameter) f: (() => string) | undefined\n```\n"
       },
       "range": {
         "start": {

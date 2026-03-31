@@ -28,10 +28,10 @@ export class Wrapper {
     private proxy<T, U>(fn: (options?: T) => U, noArgs: true): (options?: T) => U;
 >proxy : { <T, U>(fn: (options: T) => U): (options: T) => U; <T, U>(fn: (options?: T) => U, noArgs: true): (options?: T) => U; }
 >fn : (options?: T) => U
->options : T
+>options : T | undefined
 >noArgs : true
 >true : true
->options : T
+>options : T | undefined
 
     private proxy<T, U>(fn: (options: T) => U) {
 >proxy : { <T, U>(fn: (options: T) => U): (options: T) => U; <T, U>(fn: (options?: T) => U, noArgs: true): (options?: T) => U; }

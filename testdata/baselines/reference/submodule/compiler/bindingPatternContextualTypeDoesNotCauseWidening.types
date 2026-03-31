@@ -4,7 +4,7 @@
 declare function pick<O, T extends keyof O>(keys: T[], obj?: O): Pick<O, T>;
 >pick : <O, T extends keyof O>(keys: T[], obj?: O) => Pick<O, T>
 >keys : T[]
->obj : O
+>obj : O | undefined
 
 const _    = pick(['b'], { a: 'a', b: 'b' }); // T: "b"
 >_ : Pick<{ a: string; b: string; }, "b">

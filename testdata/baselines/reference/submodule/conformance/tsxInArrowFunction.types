@@ -8,7 +8,7 @@ declare namespace JSX {
 >div : { text?: string; }
 
             text?: string;
->text : string
+>text : string | undefined
         }
     }
 }

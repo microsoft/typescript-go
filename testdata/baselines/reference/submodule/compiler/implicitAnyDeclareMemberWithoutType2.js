@@ -12,10 +12,11 @@ class C {
 
 
 //// [implicitAnyDeclareMemberWithoutType2.js]
+"use strict";
 // this should be an error
 class C {
-    x = null; // error at "x"
-    x1; // no error
-    constructor(c1, c2, c3) { } // error at "c1, c2"
+    constructor(c1, c2, c3) {
+        this.x = null; // error at "x"
+    } // error at "c1, c2"
     funcOfC(f1, f2, f3) { } // error at "f1,f2"
 }

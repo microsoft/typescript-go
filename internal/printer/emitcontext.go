@@ -446,6 +446,10 @@ func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
 	c.SetOriginalEx(node, original, false)
 }
 
+func (c *EmitContext) UnsetOriginal(node *ast.Node) {
+	delete(c.original, node)
+}
+
 func (c *EmitContext) SetOriginalEx(node *ast.Node, original *ast.Node, allowOverwrite bool) {
 	if original == nil {
 		panic("Original cannot be nil.")
@@ -530,6 +534,7 @@ type emitNode struct {
 	externalHelpersModuleName *ast.IdentifierNode
 	leadingComments           []SynthesizedComment
 	trailingComments          []SynthesizedComment
+	typeNode                  *ast.TypeNode
 }
 
 // NOTE: This method is not guaranteed to be thread-safe
@@ -631,6 +636,10 @@ func (c *EmitContext) AssignedName(node *ast.Node) *ast.Expression {
 	return c.assignedName[node]
 }
 
+func (c *EmitContext) TextSource(node *ast.StringLiteralNode) *ast.Node {
+	return c.textSource[node]
+}
+
 func (c *EmitContext) SetAssignedName(node *ast.Node, name *ast.Expression) {
 	if c.assignedName == nil {
 		c.assignedName = make(map[*ast.Node]*ast.Expression)
@@ -667,7 +676,9 @@ func (c *EmitContext) ReadEmitHelpers() []*EmitHelper {
 
 func (c *EmitContext) AddEmitHelper(node *ast.Node, helper ...*EmitHelper) {
 	emitNode := c.emitNodes.Get(node)
-	emitNode.helpers = append(emitNode.helpers, helper...)
+	for _, h := range helper {
+		emitNode.helpers = core.AppendIfUnique(emitNode.helpers, h)
+	}
 }
 
 func (c *EmitContext) MoveEmitHelpers(source *ast.Node, target *ast.Node, predicate func(helper *EmitHelper) bool) {
@@ -894,7 +905,7 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 
 	if !ast.IsBlock(updated) {
 		statements := c.MergeEnvironment([]*ast.Statement{c.Factory.NewReturnStatement(updated)}, declarations)
-		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), true /*multiLine*/)
+		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), false /*multiLine*/)
 	}
 
 	return c.Factory.UpdateBlock(
@@ -974,6 +985,20 @@ func (c *EmitContext) AddSyntheticTrailingComment(node *ast.Node, kind ast.Kind,
 func (c *EmitContext) GetSyntheticTrailingComments(node *ast.Node) []SynthesizedComment {
 	if c.emitNodes.Has(node) {
 		return c.emitNodes.Get(node).trailingComments
+	}
+	return nil
+}
+
+// SetTypeNode stores the original type node on a name node when the type is erased,
+// so the emitter can use the type's position for comment preservation.
+func (c *EmitContext) SetTypeNode(node *ast.Node, typeNode *ast.TypeNode) {
+	c.emitNodes.Get(node).typeNode = typeNode
+}
+
+// GetTypeNode gets the type node stored on a name node by the type eraser.
+func (c *EmitContext) GetTypeNode(node *ast.Node) *ast.TypeNode {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		return emitNode.typeNode
 	}
 	return nil
 }

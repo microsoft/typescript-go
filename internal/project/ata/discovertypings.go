@@ -6,14 +6,15 @@ import (
 	"slices"
 	"unicode/utf8"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 func isTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[string]string) bool {
@@ -222,7 +223,7 @@ func addTypingNamesAndGetFilesToWatch(
 	} else {
 		// And #2. Depth = 3 because scoped packages look like `node_modules/@foo/bar/package.json`
 		depth := 3
-		for _, manifestPath := range vfs.ReadDirectory(fs, projectRootPath, packagesFolderPath, []string{tspath.ExtensionJson}, nil, nil, &depth) {
+		for _, manifestPath := range vfsmatch.ReadDirectory(fs, projectRootPath, packagesFolderPath, []string{tspath.ExtensionJson}, nil, nil, depth) {
 			if tspath.GetBaseFileName(manifestPath) != manifestName {
 				continue
 			}

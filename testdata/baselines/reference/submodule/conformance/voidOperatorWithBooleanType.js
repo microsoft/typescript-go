@@ -10,7 +10,7 @@ class A {
     public a: boolean;
     static foo() { return false; }
 }
-module M {
+namespace M {
     export var n: boolean;
 }
 
@@ -41,11 +41,11 @@ void objA.a;
 void M.n;
 
 //// [voidOperatorWithBooleanType.js]
+"use strict";
 // void  operator on boolean type
 var BOOLEAN;
 function foo() { return true; }
 class A {
-    a;
     static foo() { return false; }
 }
 var M;

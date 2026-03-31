@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"gotest.tools/v3/assert"
 )
@@ -33,6 +33,9 @@ func fillNonZeroValues(v reflect.Value) {
 			}
 		case reflect.Struct:
 			fillNonZeroValues(field)
+		case reflect.Pointer:
+			// Skip pointer fields (like FormatCodeSettings) - they are not
+			// handled by the struct tag reflection system and don't roundtrip.
 		}
 	}
 }
@@ -71,7 +74,12 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 		parsed := &UserPreferences{}
 		err2 := json.Unmarshal(jsonBytes, parsed)
 		assert.NilError(t, err2)
-		assert.DeepEqual(t, original, parsed)
+		// UnmarshalJSONFrom starts from defaults, which includes FormatCodeSettings.
+		// The original has nil FormatCodeSettings since it's not handled by struct tags.
+		// Compare with the expectation that FormatCodeSettings defaults are populated.
+		expected := original.Copy()
+		expected.FormatCodeSettings = GetDefaultFormatCodeSettings()
+		assert.DeepEqual(t, expected, parsed)
 	})
 
 	t.Run("parseWorker", func(t *testing.T) {
@@ -80,7 +88,7 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 		err2 := json.Unmarshal(jsonBytes, &config)
 		assert.NilError(t, err2)
 		parsed := &UserPreferences{}
-		parsed.parseWorker(config)
+		parsed.ParseWorker(config)
 		assert.DeepEqual(t, original, parsed)
 	})
 }
@@ -244,11 +252,9 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 				}
 			}`,
 			expected: &UserPreferences{
-				DisplayPartsForJSDoc: true,
-				ModuleSpecifier: ModuleSpecifierUserPreferences{
-					ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
-				},
-				ExcludeLibrarySymbolsInNavTo: true,
+				DisplayPartsForJSDoc:            true,
+				ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
+				ExcludeLibrarySymbolsInNavTo:    true,
 			},
 		},
 		{
@@ -269,11 +275,11 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			name: "unstable sets value when no stable config",
 			json: `{
 				"unstable": {
-					"includeCompletionsWithSnippetText": false
+					"includeAutomaticOptionalChainCompletions": false
 				}
 			}`,
 			expected: &UserPreferences{
-				IncludeCompletionsWithSnippetText: core.TSFalse,
+				IncludeAutomaticOptionalChainCompletions: core.TSFalse,
 			},
 		},
 		{
@@ -322,7 +328,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			assert.NilError(t, err)
 
 			parsed := &UserPreferences{}
-			parsed.parseWorker(config)
+			parsed.ParseWorker(config)
 
 			assert.DeepEqual(t, tt.expected, parsed)
 		})

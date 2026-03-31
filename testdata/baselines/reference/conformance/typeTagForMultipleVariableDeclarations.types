@@ -11,8 +11,8 @@ x
 >x : number
 
 y
->y : any
+>y : undefined
 
 z
->z : any
+>z : undefined
 

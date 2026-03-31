@@ -161,7 +161,7 @@ Config File Names::
   "method": "workspace/didChangeConfiguration",
   "params": {
     "settings": {
-      "typescript": {
+      "js/ts": {
         "implementationsCodeLens": {
           "enabled": true,
           "showOnAllClassMethods": true,
@@ -188,6 +188,9 @@ Config File Names::
             "enabled": false,
             "suppressWhenTypeMatchesName": true
           }
+        },
+        "native-preview": {
+          "customConfigFileName": ""
         },
         "preferences": {
           "importModuleSpecifier": "",
@@ -619,7 +622,7 @@ Config::
   "method": "workspace/didChangeConfiguration",
   "params": {
     "settings": {
-      "typescript": {
+      "js/ts": {
         "implementationsCodeLens": {
           "enabled": false,
           "showOnAllClassMethods": false,
@@ -646,6 +649,9 @@ Config::
             "enabled": false,
             "suppressWhenTypeMatchesName": true
           }
+        },
+        "native-preview": {
+          "customConfigFileName": ""
         },
         "preferences": {
           "importModuleSpecifier": "",
@@ -676,7 +682,6 @@ Config::
           "disableLineTextInReferences": true,
           "disableSuggestions": false,
           "displayPartsForJSDoc": true,
-          "includeCompletionsWithSnippetText": true,
           "lazyConfiguredProjectsFromExternalProject": false,
           "maximumHoverLength": 0,
           "provideRefactorNotApplicableReason": true,

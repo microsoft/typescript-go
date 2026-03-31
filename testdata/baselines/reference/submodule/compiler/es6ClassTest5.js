@@ -7,7 +7,7 @@ class C1T5 {
 	        return i;
 	    }
 }
-module C2T5 {}
+namespace C2T5 {}
 
 class  bigClass {
      public break = 1;
@@ -15,11 +15,16 @@ class  bigClass {
 
 
 //// [es6ClassTest5.js]
+"use strict";
 class C1T5 {
-    foo = (i) => {
-        return i;
-    };
+    constructor() {
+        this.foo = (i) => {
+            return i;
+        };
+    }
 }
 class bigClass {
-    break = 1;
+    constructor() {
+        this.break = 1;
+    }
 }

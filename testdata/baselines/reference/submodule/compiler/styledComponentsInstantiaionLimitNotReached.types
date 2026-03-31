@@ -258,10 +258,10 @@ export type IntrinsicElementsKeys = keyof JSX.IntrinsicElements;
 
 type WithOptionalTheme<P extends { theme?: T }, T> = Omit<P, 'theme'> & {
 >WithOptionalTheme : WithOptionalTheme<P, T>
->theme : T
+>theme : T | undefined
 
     theme?: T;
->theme : T
+>theme : T | undefined
 
 };
 
@@ -283,8 +283,8 @@ type StyledComponentPropsWithAs<
 >React : any
 
     > = StyledComponentProps<C, T, O, A> & { as?: C; forwardedAs?: F };
->as : C
->forwardedAs : F
+>as : C | undefined
+>forwardedAs : F | undefined
 
 export type StyledComponentInnerOtherProps<C extends AnyStyledComponent> = C extends StyledComponent<
 >StyledComponentInnerOtherProps : StyledComponentInnerOtherProps<C>
@@ -315,8 +315,8 @@ export interface StyledComponentBase<
     // add our own fake call signature to implement the polymorphic 'as' prop
     (props: StyledComponentProps<C, T, O, A> & { as?: never; forwardedAs?: never }): React.ReactElement<
 >props : StyledComponentProps<C, T, O, A> & { as?: never; forwardedAs?: never; }
->as : never
->forwardedAs : never
+>as : undefined
+>forwardedAs : undefined
 >React : any
 
         StyledComponentProps<C, T, O, A>
@@ -332,7 +332,7 @@ export interface StyledComponentBase<
 >React : any
 
     withComponent<WithC extends AnyStyledComponent>(
->withComponent : { <WithC extends AnyStyledComponent>(component: WithC): StyledComponent<StyledComponentInnerComponent<WithC>, T, O & StyledComponentInnerOtherProps<WithC>, A | StyledComponentInnerAttrs<WithC>>; <WithC extends React.ComponentType<any> | keyof JSX.IntrinsicElements>(component: WithC): StyledComponent<WithC, T, O, A>; }
+>withComponent : { <WithC extends AnyStyledComponent>(component: WithC): StyledComponent<StyledComponentInnerComponent<WithC>, T, O & StyledComponentInnerOtherProps<WithC>, A | StyledComponentInnerAttrs<WithC>>; <WithC extends keyof JSX.IntrinsicElements | React.ComponentType<any>>(component: WithC): StyledComponent<WithC, T, O, A>; }
 
         component: WithC,
 >component : WithC
@@ -344,7 +344,7 @@ export interface StyledComponentBase<
         A | StyledComponentInnerAttrs<WithC>
     >;
     withComponent<WithC extends keyof JSX.IntrinsicElements | React.ComponentType<any>>(
->withComponent : { <WithC extends AnyStyledComponent>(component: WithC): StyledComponent<StyledComponentInnerComponent<WithC>, T, O & StyledComponentInnerOtherProps<WithC>, A | StyledComponentInnerAttrs<WithC>>; <WithC extends React.ComponentType<any> | keyof JSX.IntrinsicElements>(component: WithC): StyledComponent<WithC, T, O, A>; }
+>withComponent : { <WithC extends AnyStyledComponent>(component: WithC): StyledComponent<StyledComponentInnerComponent<WithC>, T, O & StyledComponentInnerOtherProps<WithC>, A | StyledComponentInnerAttrs<WithC>>; <WithC extends keyof JSX.IntrinsicElements | React.ComponentType<any>>(component: WithC): StyledComponent<WithC, T, O, A>; }
 >JSX : any
 >React : any
 

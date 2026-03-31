@@ -46,8 +46,6 @@ func (tx *usingDeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitForStatement(node.AsForStatement())
 	case ast.KindForOfStatement:
 		node = tx.visitForOfStatement(node.AsForInOrOfStatement())
-	case ast.KindSwitchStatement:
-		node = tx.visitSwitchStatement(node.AsSwitchStatement())
 	default:
 		node = tx.Visitor().VisitEachChild(node)
 	}
@@ -150,7 +148,7 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 			)
 		}
 
-		topLevelStatements = tx.EmitContext().EndAndMergeVariableEnvironment(topLevelStatements)
+		topLevelStatements = append(topLevelStatements, tx.EmitContext().EndVariableEnvironment()...)
 		if len(tx.exportVars) > 0 {
 			topLevelStatements = append(topLevelStatements, tx.Factory().NewVariableStatement(
 				tx.Factory().NewModifierList([]*ast.Node{
@@ -295,68 +293,6 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 			),
 		)
 	}
-	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *usingDeclarationTransformer) visitCaseOrDefaultClause(node *ast.CaseOrDefaultClause, envBinding *ast.IdentifierNode) *ast.Node {
-	if getUsingKindOfStatements(node.Statements.Nodes) != usingKindNone {
-		return tx.Factory().UpdateCaseOrDefaultClause(
-			node,
-			tx.Visitor().VisitNode(node.Expression),
-			tx.Factory().NewNodeList(tx.transformUsingDeclarations(node.Statements.Nodes, envBinding, nil /*topLevelStatements*/)),
-		)
-	}
-	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *usingDeclarationTransformer) visitSwitchStatement(node *ast.SwitchStatement) *ast.Node {
-	// given:
-	//
-	//  switch (expr) {
-	//    case expr:
-	//      using res = expr;
-	//  }
-	//
-	// produces:
-	//
-	//  const env_1 = { stack: [], error: void 0, hasError: false };
-	//  try {
-	//    switch(expr) {
-	//      case expr:
-	//        const res = __addDisposableResource(env_1, expr, false);
-	//    }
-	//  }
-	//  catch (e_1) {
-	//    env_1.error = e_1;
-	//    env_1.hasError = true;
-	//  }
-	//  finally {
-	//     __disposeResources(env_1);
-	//  }
-	//
-	usingKind := getUsingKindOfCaseOrDefaultClauses(node.CaseBlock.AsCaseBlock().Clauses.Nodes)
-	if usingKind != usingKindNone {
-		envBinding := tx.createEnvBinding()
-		return transformers.SingleOrMany(tx.createDownlevelUsingStatements(
-			[]*ast.Statement{
-				tx.Factory().UpdateSwitchStatement(
-					node,
-					tx.Visitor().VisitNode(node.Expression),
-					tx.Factory().UpdateCaseBlock(
-						node.CaseBlock.AsCaseBlock(),
-						tx.Factory().NewNodeList(
-							core.Map(node.CaseBlock.AsCaseBlock().Clauses.Nodes, func(clause *ast.CaseOrDefaultClauseNode) *ast.CaseOrDefaultClauseNode {
-								return tx.visitCaseOrDefaultClause(clause.AsCaseOrDefaultClause(), envBinding)
-							}),
-						),
-					),
-				),
-			},
-			envBinding,
-			usingKind == usingKindAsync,
-		), tx.Factory())
-	}
-
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
 
@@ -644,7 +580,7 @@ func (tx *usingDeclarationTransformer) hoistInitializedVariable(node *ast.Variab
 	var target *ast.Expression
 	if ast.IsIdentifier(node.Name()) {
 		target = node.Name().Clone(tx.Factory())
-		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName|printer.EFInternalName))
+		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName))
 	} else {
 		target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), node.Name().AsBindingPattern())
 	}
@@ -842,20 +778,6 @@ func getUsingKindOfStatements(statements []*ast.Node) usingKind {
 	result := usingKindNone
 	for _, statement := range statements {
 		usingKind := getUsingKind(statement)
-		if usingKind == usingKindAsync {
-			return usingKindAsync
-		}
-		if usingKind > result {
-			result = usingKind
-		}
-	}
-	return result
-}
-
-func getUsingKindOfCaseOrDefaultClauses(clauses []*ast.CaseOrDefaultClauseNode) usingKind {
-	result := usingKindNone
-	for _, clause := range clauses {
-		usingKind := getUsingKindOfStatements(clause.Statements())
 		if usingKind == usingKindAsync {
 			return usingKindAsync
 		}

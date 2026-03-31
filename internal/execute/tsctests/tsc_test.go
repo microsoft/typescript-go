@@ -33,6 +33,21 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: nil,
 		},
 		{
+			subScenario: "adds color when FORCE_COLOR is set",
+			env: map[string]string{
+				"FORCE_COLOR": "true",
+			},
+			commandLineArgs: nil,
+		},
+		{
+			subScenario: "does not add color when NO_COLOR is set even if FORCE_COLOR is set",
+			env: map[string]string{
+				"NO_COLOR":    "true",
+				"FORCE_COLOR": "true",
+			},
+			commandLineArgs: nil,
+		},
+		{
 			subScenario:     "when build not first argument",
 			commandLineArgs: []string{"--verbose", "--build"},
 		},
@@ -242,7 +257,6 @@ func TestTscComposite(t *testing.T) {
 			commandLineArgs: []string{"--composite", "false"},
 		},
 		{
-			// !!! sheetal null is not reflected in final options
 			subScenario: "when setting composite null on command line",
 			files: FileMap{
 				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
@@ -710,7 +724,6 @@ func TestTscDeclarationEmit(t *testing.T) {
 			commandLineArgs:  []string{"-p", "D:\\Work\\pkg1", "--explainFiles"},
 		},
 		{
-			// !!! sheetal redirected files not yet implemented
 			subScenario: "when same version is referenced through source and another symlinked package",
 			files: FileMap{
 				`/user/username/projects/myproject/plugin-two/index.d.ts`:                               pluginTwoDts(),
@@ -727,7 +740,6 @@ func TestTscDeclarationEmit(t *testing.T) {
 			commandLineArgs: []string{"-p", "plugin-one", "--explainFiles"},
 		},
 		{
-			// !!! sheetal redirected files not yet implemented
 			subScenario: "when same version is referenced through source and another symlinked package with indirect link",
 			files: FileMap{
 				`/user/username/projects/myproject/plugin-two/package.json`: stringtestutil.Dedent(`
@@ -969,7 +981,6 @@ func TestTscExtends(t *testing.T) {
 								"types": [],
 							},
 						}`),
-						false,
 					)
 				},
 			},
@@ -1431,7 +1442,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Add new file and update main file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.ts`, "function foo() { return 20; }", false)
+						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.ts`, "function foo() { return 20; }")
 						sys.prependFile(
 							`/home/src/workspaces/project/src/main.ts`,
 							`/// <reference path="./newFile.ts"/>
@@ -1443,7 +1454,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Write file that could not be resolved",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.ts`, "function something2() { return 20; }", false)
+						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.ts`, "function something2() { return 20; }")
 					},
 				},
 				{
@@ -1530,7 +1541,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Modify imports used in global file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
+						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
 					},
 					expectedDiff: "Currently there is issue with d.ts emit for export default = 1 to widen in dts which is why we are not re-computing errors and results in incorrect error reporting",
 				},
@@ -1556,7 +1567,7 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Modify imports used in global file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
+						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
 					},
 					expectedDiff: "Currently there is issue with d.ts emit for export default = 1 to widen in dts which is why we are not re-computing errors and results in incorrect error reporting",
 				},
@@ -1879,6 +1890,172 @@ func TestTscIncremental(t *testing.T) {
 			},
 			cwd:        "/home/project",
 			ignoreCase: true,
+		},
+		{
+			subScenario: "const enums with refCycle",
+			files: FileMap{
+				"/home/src/workspaces/project/file.ts": stringtestutil.Dedent(`
+					import {A} from "./c"
+					let a = A.ONE
+				`),
+				"/home/src/workspaces/project/b.ts": stringtestutil.Dedent(`
+					import { AWorker } from "./aworker"
+					import { A as ACycle } from "./c"
+					export const enum A {
+						ONE = 1
+					}
+				`),
+				"/home/src/workspaces/project/c.ts": stringtestutil.Dedent(`
+					import {A} from "./b"
+					let b = A.ONE
+					export {A}
+				`),
+				"/home/src/workspaces/project/aworker.ts": stringtestutil.Dedent(`
+					export const AWorker  = 10
+				`),
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+					}
+				}`),
+			},
+			commandLineArgs: []string{},
+			edits: []*tscEdit{
+				{
+					caption: "change aworker",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/aworker.ts", "10", "20")
+					},
+				},
+				{
+					caption: "change aworker and enum value",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/aworker.ts", "20", "30")
+						sys.replaceFileText("/home/src/workspaces/project/b.ts", "1", "2")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "internal symbolname in tsbuildInfo",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es2017",
+						"strict": true,
+						"esModuleInterop": true
+					}
+				}`),
+				"/home/src/workspaces/project/a.ts": stringtestutil.Dedent(`
+					const createFileListFromFiles = (files: File[]): FileList => {
+					const fileList: FileList = {
+						length: files.length,
+						item: (index: number): File | null => files[index] || null,
+						[Symbol.iterator]: function* (): IterableIterator<File> {
+						for (const file of files) yield file;
+						},
+						...files,
+					} as unknown as FileList;
+
+					return fileList;
+					};
+				`),
+				getTestLibPathFor("es2015.iterable"): stringtestutil.Dedent(`
+					interface SymbolConstructor {
+						readonly iterator: unique symbol;
+					}
+					interface IteratorYieldResult<TYield> {
+						done?: false;
+						value: TYield;
+					}
+					interface IteratorReturnResult<TReturn> {
+						done: true;
+						value: TReturn;
+					}
+					type IteratorResult<T, TReturn = any> = IteratorYieldResult<T> | IteratorReturnResult<TReturn>;
+					interface Iterator<T, TReturn = any, TNext = any> {
+						// NOTE: 'next' is defined using a tuple to ensure we report the correct assignability errors in all places.
+						next(...[value]: [] | [TNext]): IteratorResult<T, TReturn>;
+						return?(value?: TReturn): IteratorResult<T, TReturn>;
+						throw?(e?: any): IteratorResult<T, TReturn>;
+					}
+					interface Iterable<T, TReturn = any, TNext = any> {
+						[Symbol.iterator](): Iterator<T, TReturn, TNext>;
+					}
+					interface IterableIterator<T, TReturn = any, TNext = any> extends Iterator<T, TReturn, TNext> {
+						[Symbol.iterator](): IterableIterator<T, TReturn, TNext>;
+					}
+					interface IteratorObject<T, TReturn = unknown, TNext = unknown> extends Iterator<T, TReturn, TNext> {
+						[Symbol.iterator](): IteratorObject<T, TReturn, TNext>;
+					}
+					type BuiltinIteratorReturn = intrinsic;
+					interface ArrayIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknown> {
+						[Symbol.iterator](): ArrayIterator<T>;
+					}
+					interface Array<T> {
+						[Symbol.iterator](): ArrayIterator<T>;
+						entries(): ArrayIterator<[number, T]>;
+						keys(): ArrayIterator<number>;
+						values(): ArrayIterator<T>;
+					}
+				`),
+				getTestLibPathFor("es2017.full"): stringtestutil.Dedent(`
+					/// <reference lib="es2015.iterable"/>
+					interface File {
+					}
+					interface FileList {
+						readonly length: number;
+						item(index: number): File | null;
+						[index: number]: File;
+						[Symbol.iterator](): ArrayIterator<File>;
+					}
+				`) + tscDefaultLibContent,
+			},
+			commandLineArgs: []string{""},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption:         "no change with incremental",
+					commandLineArgs: []string{"--incremental"},
+				},
+				{
+					caption:         "no change with incremental that reads buildInfo",
+					commandLineArgs: []string{"--incremental"},
+				},
+			},
+		},
+		{
+			subScenario: "js file with import in jsdoc in composite project",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `{"compilerOptions": {"allowJs": true, "composite": true}}`,
+				"/home/src/workspaces/project/index.js": stringtestutil.Dedent(`
+					test("", async function () {
+					  ;(/** @type {typeof import("a")} */ ({}))
+					})
+
+					test("", async function () {
+					  ;(/** @type {typeof import("a")} */ a)
+					})
+
+					test("", async function () {
+					  (/** @type {typeof import("a")} */ ({}))
+					  ;(/** @type {typeof import("a")} */ ({}))
+					})
+
+					test("", async function () {
+					  (/** @type {typeof import("a")} */ a)
+					  ;(/** @type {typeof import("a")} */ a)
+					})
+
+					test("", async function () {
+					  (/** @type {typeof import("a")} */ ({}))
+					  ;(/** @type {typeof import("a")} */ ({}))
+					})
+				`),
+			},
+			commandLineArgs: []string{"--noEmit"},
 		},
 	}
 
@@ -2437,7 +2614,6 @@ func TestTscModuleResolution(t *testing.T) {
 							"target": "es5",
 							"module": "esnext",
 							"lib": ["ES5"],
-							"moduleResolution": "node",
 							"outDir": "dist",
 						},
 						"include": ["src"],
@@ -2558,7 +2734,7 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the alternateResult in @types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/index.d.ts", getTscModuleResolutionAlternateResultDts("bar"), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/index.d.ts", getTscModuleResolutionAlternateResultDts("bar"))
 					},
 					// !!! repopulateInfo on diagnostics not yet implemented
 					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
@@ -2566,31 +2742,31 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the alternateResult in package/types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/index.d.ts", getTscModuleResolutionAlternateResultDts("foo"), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/index.d.ts", getTscModuleResolutionAlternateResultDts("foo"))
 					},
 				},
 				{
 					caption: "update package.json from @types so error is fixed",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar" /*addTypesCondition*/, true), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar" /*addTypesCondition*/, true))
 					},
 				},
 				{
 					caption: "update package.json so error is fixed",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/package.json", getTscModuleResolutionAlternateResultPackageJson("foo" /*addTypes*/, true /*addTypesCondition*/, true), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo/package.json", getTscModuleResolutionAlternateResultPackageJson("foo" /*addTypes*/, true /*addTypesCondition*/, true))
 					},
 				},
 				{
 					caption: "update package.json from @types so error is introduced",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar2" /*addTypesCondition*/, false), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/package.json", getTscModuleResolutionAlternateResultAtTypesPackageJson("bar2" /*addTypesCondition*/, false))
 					},
 				},
 				{
 					caption: "update package.json so error is introduced",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/package.json", getTscModuleResolutionAlternateResultPackageJson("foo2" /*addTypes*/, true /*addTypesCondition*/, false), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/package.json", getTscModuleResolutionAlternateResultPackageJson("foo2" /*addTypes*/, true /*addTypesCondition*/, false))
 					},
 				},
 				{
@@ -2612,7 +2788,7 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the alternateResult in @types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/index.d.ts", getTscModuleResolutionAlternateResultDts("bar2"), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/index.d.ts", getTscModuleResolutionAlternateResultDts("bar2"))
 					},
 					// !!! repopulateInfo on diagnostics not yet implemented
 					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
@@ -2620,7 +2796,7 @@ func TestTscModuleResolution(t *testing.T) {
 				{
 					caption: "add the ndoe10Result in package/types",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/index.d.ts", getTscModuleResolutionAlternateResultDts("foo2"), false)
+						sys.writeFileNoError("/home/src/projects/project/node_modules/foo2/index.d.ts", getTscModuleResolutionAlternateResultDts("foo2"))
 					},
 				},
 			},
@@ -2877,13 +3053,13 @@ func TestTscNoCheck(t *testing.T) {
 		fixErrorNoCheck := &tscEdit{
 			caption: "Fix `a` error with noCheck",
 			edit: func(sys *TestSys) {
-				sys.writeFileNoError("/home/src/workspaces/project/a.ts", `export const a = "hello";`, false)
+				sys.writeFileNoError("/home/src/workspaces/project/a.ts", `export const a = "hello";`)
 			},
 		}
 		addErrorNoCheck := &tscEdit{
 			caption: "Introduce error with noCheck",
 			edit: func(sys *TestSys) {
-				sys.writeFileNoError("/home/src/workspaces/project/a.ts", scenario.aText, false)
+				sys.writeFileNoError("/home/src/workspaces/project/a.ts", scenario.aText)
 			},
 		}
 		return &tscInput{
@@ -2915,7 +3091,7 @@ func TestTscNoCheck(t *testing.T) {
 				{
 					caption: "Add file with error",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/c.ts", `export const c: number = "hello";`, false)
+						sys.writeFileNoError("/home/src/workspaces/project/c.ts", `export const c: number = "hello";`)
 					},
 					commandLineArgs: commandLineArgs,
 				},
@@ -3038,7 +3214,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Fix error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent, false)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent)
 						},
 					},
 					noChange,
@@ -3050,7 +3226,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Introduce error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText, false)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText)
 						},
 					},
 					{
@@ -3075,7 +3251,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Fix error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent, false)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", fixedATsContent)
 						},
 					},
 					{
@@ -3093,7 +3269,7 @@ func TestTscNoEmit(t *testing.T) {
 					{
 						caption: "Introduce error",
 						edit: func(sys *TestSys) {
-							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText, false)
+							sys.writeFileNoError("/home/src/projects/project/a.ts", scenario.aText)
 						},
 					},
 					{
@@ -3369,13 +3545,13 @@ func TestTscNoEmit(t *testing.T) {
 				{
 					caption: "No change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, sys.readFileNoError(`/user/username/projects/myproject/a.js`), false)
+						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, sys.readFileNoError(`/user/username/projects/myproject/a.js`))
 					},
 				},
 				{
 					caption: "change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, "const x = 10;", false)
+						sys.writeFileNoError(`/user/username/projects/myproject/a.js`, "const x = 10;")
 					},
 				},
 			},
@@ -3454,7 +3630,7 @@ func TestTscNoEmitOnError(t *testing.T) {
 				{
 					caption: "Fix error",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent, false)
+						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent)
 					},
 				},
 				noChange,
@@ -3500,7 +3676,7 @@ func TestTscNoEmitOnError(t *testing.T) {
 				edits = append(edits, &tscEdit{
 					caption: scenario.subScenario,
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, scenario.mainErrorContent, false)
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, scenario.mainErrorContent)
 					},
 				})
 			}
@@ -3508,19 +3684,19 @@ func TestTscNoEmitOnError(t *testing.T) {
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`), false)
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`))
 					},
 				},
 				&tscEdit{
 					caption: "Fix " + scenario.subScenario,
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent, false)
+						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent)
 					},
 				},
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`), false)
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`))
 					},
 				},
 			)
@@ -3789,6 +3965,41 @@ func TestTscProjectReferences(t *testing.T) {
 					import referencedSource from "../../lib/src/a"; // Error
 					import referencedDeclaration from "../../lib/dist/a"; // Error
 					import ambiguous from "ambiguous-package"; // Ok`),
+			},
+			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
+		},
+		{
+			subScenario: "referenced project with esnext module disallows synthetic default imports",
+			files: FileMap{
+				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"module": "esnext",
+						"moduleResolution": "bundler",
+						"rootDir": "src",
+						"outDir": "dist"
+					},
+					"include": ["src"]
+				}`),
+				"/home/src/workspaces/project/lib/src/utils.ts":    "export const test = () => 'test';",
+				"/home/src/workspaces/project/lib/dist/utils.d.ts": "export declare const test: () => string;",
+				"/home/src/workspaces/project/app/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"module": "esnext",
+						"moduleResolution": "bundler"
+					},
+					"references": [
+						{ "path": "../lib" }
+					]
+				}`),
+				"/home/src/workspaces/project/app/index.ts": stringtestutil.Dedent(`
+					import TestSrc from '../lib/src/utils'; // Error
+					import TestDecl from '../lib/dist/utils'; // Error
+					console.log(TestSrc.test());
+					console.log(TestDecl.test());`),
 			},
 			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
 		},

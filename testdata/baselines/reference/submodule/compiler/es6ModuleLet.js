@@ -5,13 +5,13 @@ export let a = "hello";
 export let x: string = a, y = x;
 let b = y;
 let c: string = b, d = c;
-export module m1 {
+export namespace m1 {
     export let k = a;
     export let l: string = b, m = k;
     let n = m1.k;
     let o: string = n, p = k;
 }
-module m2 {
+namespace m2 {
     export let k = a;
     export let l: string = b, m = k;
     let n = m1.k;
@@ -23,8 +23,7 @@ export let a = "hello";
 export let x = a, y = x;
 let b = y;
 let c = b, d = c;
-export { m1 };
-var m1;
+export var m1;
 (function (m1) {
     m1.k = a;
     m1.l = b, m1.m = m1.k;

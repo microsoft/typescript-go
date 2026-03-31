@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/collisionCodeGenModuleWithUnicodeNames.ts] ////
 
 //// [collisionCodeGenModuleWithUnicodeNames.ts]
-module 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 {
+namespace 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 {
     export class 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 {
     }
 }
@@ -12,6 +12,7 @@ var x = new 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكو
 
 
 //// [collisionCodeGenModuleWithUnicodeNames.js]
+"use strict";
 var 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123;
 (function (才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123_1) {
     class 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 {

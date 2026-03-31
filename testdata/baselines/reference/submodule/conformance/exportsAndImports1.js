@@ -13,10 +13,10 @@ enum E {
 const enum D {
     A, B, C
 }
-module M {
+namespace M {
     export var x;
 }
-module N {
+namespace N {
     export interface I {
     }
 }
@@ -53,11 +53,13 @@ var E;
 var M;
 (function (M) {
 })(M || (exports.M = M = {}));
+var a = M.x;
+exports.a = a;
 //// [t2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.a = exports.M = exports.E = exports.C = exports.f = exports.v = void 0;
-const t1_1 = require("./t1");
+var t1_1 = require("./t1");
 Object.defineProperty(exports, "v", { enumerable: true, get: function () { return t1_1.v; } });
 Object.defineProperty(exports, "f", { enumerable: true, get: function () { return t1_1.f; } });
 Object.defineProperty(exports, "C", { enumerable: true, get: function () { return t1_1.C; } });

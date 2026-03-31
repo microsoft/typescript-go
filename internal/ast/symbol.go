@@ -2,25 +2,21 @@ package ast
 
 import (
 	"sync/atomic"
-
-	"github.com/microsoft/typescript-go/internal/collections"
 )
 
 // Symbol
 
 type Symbol struct {
-	Flags                        SymbolFlags
-	CheckFlags                   CheckFlags // Non-zero only in transient symbols created by Checker
-	Name                         string
-	Declarations                 []*Node
-	ValueDeclaration             *Node
-	Members                      SymbolTable
-	Exports                      SymbolTable
-	id                           atomic.Uint64
-	Parent                       *Symbol
-	ExportSymbol                 *Symbol
-	AssignmentDeclarationMembers collections.Set[*Node] // Set of detected assignment declarations
-	GlobalExports                SymbolTable            // Conditional global UMD exports
+	Flags            SymbolFlags
+	CheckFlags       CheckFlags // Non-zero only in transient symbols created by Checker
+	Name             string
+	Declarations     []*Node
+	ValueDeclaration *Node
+	Members          SymbolTable
+	Exports          SymbolTable
+	id               atomic.Uint64
+	Parent           *Symbol
+	ExportSymbol     *Symbol
 }
 
 func (s *Symbol) IsExternalModule() bool {
@@ -33,6 +29,14 @@ func (s *Symbol) IsStatic() bool {
 	}
 	modifierFlags := s.ValueDeclaration.ModifierFlags()
 	return modifierFlags&ModifierFlagsStatic != 0
+}
+
+// See comment on `declareModuleMember` in `binder.go`.
+func (s *Symbol) CombinedLocalAndExportSymbolFlags() SymbolFlags {
+	if s.ExportSymbol != nil {
+		return s.Flags | s.ExportSymbol.Flags
+	}
+	return s.Flags
 }
 
 // SymbolTable
@@ -55,6 +59,7 @@ const (
 	InternalSymbolNameClass                   = InternalSymbolNamePrefix + "class"                   // Unnamed class expression
 	InternalSymbolNameFunction                = InternalSymbolNamePrefix + "function"                // Unnamed function expression
 	InternalSymbolNameComputed                = InternalSymbolNamePrefix + "computed"                // Computed property name declaration with dynamic name
+	InternalSymbolNameAssignmentDeclaration   = InternalSymbolNamePrefix + "assignment"              // Assignment declarations
 	InternalSymbolNameInstantiationExpression = InternalSymbolNamePrefix + "instantiationExpression" // Instantiation expressions
 	InternalSymbolNameImportAttributes        = InternalSymbolNamePrefix + "importAttributes"
 	InternalSymbolNameExportEquals            = "export=" // Export assignment symbol

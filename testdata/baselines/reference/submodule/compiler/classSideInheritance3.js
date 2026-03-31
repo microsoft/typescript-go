@@ -21,14 +21,13 @@ var r2: new (x: string) => A = B; // error
 var r3: typeof A = C; // ok
 
 //// [classSideInheritance3.js]
+"use strict";
 class A {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class B extends A {
-    data;
     constructor(x, data) {
         super(x);
         this.data = data;

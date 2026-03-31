@@ -6,7 +6,7 @@
 
 ///<reference path='typescript.ts' />
 
-module TypeScript {
+namespace TypeScript {
     export class TypeCollectionContext {
         public script: Script = null;
 
@@ -224,58 +224,47 @@ module TypeScript {
 }
 
 //// [parserRealSource6.js]
+"use strict";
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 // See LICENSE.txt in the project root for complete license information.
 ///<reference path='typescript.ts' />
 var TypeScript;
 (function (TypeScript) {
     class TypeCollectionContext {
-        scopeChain;
-        checker;
-        script = null;
         constructor(scopeChain, checker) {
             this.scopeChain = scopeChain;
             this.checker = checker;
+            this.script = null;
         }
     }
     TypeScript.TypeCollectionContext = TypeCollectionContext;
     class MemberScopeContext {
-        flow;
-        pos;
-        matchFlag;
-        type = null;
-        ast = null;
-        scope;
-        options = new AstWalkOptions();
         constructor(flow, pos, matchFlag) {
             this.flow = flow;
             this.pos = pos;
             this.matchFlag = matchFlag;
+            this.type = null;
+            this.ast = null;
+            this.options = new AstWalkOptions();
         }
     }
     TypeScript.MemberScopeContext = MemberScopeContext;
     class EnclosingScopeContext {
-        logger;
-        script;
-        text;
-        pos;
-        isMemberCompletion;
-        scopeGetter = null;
-        objectLiteralScopeGetter = null;
-        scopeStartAST = null;
-        skipNextFuncDeclForClass = false;
-        deepestModuleDecl = null;
-        enclosingClassDecl = null;
-        enclosingObjectLit = null;
-        publicsOnly = true;
-        useFullAst = false;
-        scriptFragment;
         constructor(logger, script, text, pos, isMemberCompletion) {
             this.logger = logger;
             this.script = script;
             this.text = text;
             this.pos = pos;
             this.isMemberCompletion = isMemberCompletion;
+            this.scopeGetter = null;
+            this.objectLiteralScopeGetter = null;
+            this.scopeStartAST = null;
+            this.skipNextFuncDeclForClass = false;
+            this.deepestModuleDecl = null;
+            this.enclosingClassDecl = null;
+            this.enclosingObjectLit = null;
+            this.publicsOnly = true;
+            this.useFullAst = false;
         }
         getScope() {
             return this.scopeGetter();

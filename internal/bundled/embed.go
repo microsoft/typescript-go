@@ -22,6 +22,11 @@ func libPath() string {
 	return scheme + "libs"
 }
 
+func IsBundled(path string) bool {
+	_, ok := splitPath(path)
+	return ok
+}
+
 // wrappedFS is implemented directly rather than going through [io/fs.FS].
 // Our vfs.FS works with file contents in terms of strings, and that's
 // what go:embed does under the hood, but going through fs.FS will cause
@@ -147,11 +152,11 @@ func (vfs *wrappedFS) Realpath(path string) string {
 	return vfs.fs.Realpath(path)
 }
 
-func (vfs *wrappedFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (vfs *wrappedFS) WriteFile(path string, data string) error {
 	if _, ok := splitPath(path); ok {
 		panic("cannot write to embedded file system")
 	}
-	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
+	return vfs.fs.WriteFile(path, data)
 }
 
 func (vfs *wrappedFS) Remove(path string) error {

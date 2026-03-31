@@ -22,10 +22,10 @@ b ++;
 \u0062 ++;
 
 // modules
-module moduleType1 { 
+namespace moduleType1 { 
     export var baz1: number;
 }
-module moduleType\u0032 { 
+declare module moduleType\u0032 { 
     export var baz2: number;
 }
 
@@ -122,6 +122,7 @@ l\u0061bel4:
     } 
 
 //// [escapedIdentifiers.js]
+"use strict";
 /*
     0 .. \u0030
     9 .. \u0039
@@ -143,19 +144,14 @@ b++;
 var moduleType1;
 (function (moduleType1) {
 })(moduleType1 || (moduleType1 = {}));
-var moduleType2;
-(function (moduleType\u0032) {
-})(moduleType2 || (moduleType2 = {}));
 moduleType1.baz1 = 3;
 moduleType\u0031.baz1 = 3;
 moduleType2.baz2 = 3;
 moduleType\u0032.baz2 = 3;
 // classes
 class classType1 {
-    foo1;
 }
 class classType\u0032 {
-    foo2;
 }
 var classType1Object1 = new classType1();
 classType1Object1.foo1 = 2;
@@ -184,14 +180,10 @@ class testClass {
 }
 // constructors
 class constructorTestClass {
-    arg1;
-    arg2;
-    arg3;
-    arg4;
     constructor(arg1, arg\u0032, arg\u0033, arg4) {
         this.arg1 = arg1;
-        this.arg2 = arg2;
-        this.arg3 = arg3;
+        this.arg\u0032 = arg\u0032;
+        this.arg\u0033 = arg\u0033;
         this.arg4 = arg4;
     }
 }

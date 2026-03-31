@@ -2,88 +2,11 @@ package format
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
-
-type IndentStyle int
-
-const (
-	IndentStyleNone IndentStyle = iota
-	IndentStyleBlock
-	IndentStyleSmart
-)
-
-type SemicolonPreference string
-
-const (
-	SemicolonPreferenceIgnore SemicolonPreference = "ignore"
-	SemicolonPreferenceInsert SemicolonPreference = "insert"
-	SemicolonPreferenceRemove SemicolonPreference = "remove"
-)
-
-type EditorSettings struct {
-	BaseIndentSize         int
-	IndentSize             int
-	TabSize                int
-	NewLineCharacter       string
-	ConvertTabsToSpaces    bool
-	IndentStyle            IndentStyle
-	TrimTrailingWhitespace bool
-}
-
-type FormatCodeSettings struct {
-	EditorSettings
-	InsertSpaceAfterCommaDelimiter                              core.Tristate
-	InsertSpaceAfterSemicolonInForStatements                    core.Tristate
-	InsertSpaceBeforeAndAfterBinaryOperators                    core.Tristate
-	InsertSpaceAfterConstructor                                 core.Tristate
-	InsertSpaceAfterKeywordsInControlFlowStatements             core.Tristate
-	InsertSpaceAfterFunctionKeywordForAnonymousFunctions        core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis  core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets     core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces core.Tristate
-	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  core.Tristate
-	InsertSpaceAfterTypeAssertion                               core.Tristate
-	InsertSpaceBeforeFunctionParenthesis                        core.Tristate
-	PlaceOpenBraceOnNewLineForFunctions                         core.Tristate
-	PlaceOpenBraceOnNewLineForControlBlocks                     core.Tristate
-	InsertSpaceBeforeTypeAnnotation                             core.Tristate
-	IndentMultiLineObjectLiteralBeginningOnBlankLine            core.Tristate
-	Semicolons                                                  SemicolonPreference
-	IndentSwitchCase                                            core.Tristate
-}
-
-func GetDefaultFormatCodeSettings(newLineCharacter string) *FormatCodeSettings {
-	return &FormatCodeSettings{
-		EditorSettings: EditorSettings{
-			IndentSize:             4,
-			TabSize:                4,
-			NewLineCharacter:       newLineCharacter,
-			ConvertTabsToSpaces:    true,
-			IndentStyle:            IndentStyleSmart,
-			TrimTrailingWhitespace: true,
-		},
-		InsertSpaceAfterConstructor:                                 core.TSFalse,
-		InsertSpaceAfterCommaDelimiter:                              core.TSTrue,
-		InsertSpaceAfterSemicolonInForStatements:                    core.TSTrue,
-		InsertSpaceBeforeAndAfterBinaryOperators:                    core.TSTrue,
-		InsertSpaceAfterKeywordsInControlFlowStatements:             core.TSTrue,
-		InsertSpaceAfterFunctionKeywordForAnonymousFunctions:        core.TSFalse,
-		InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis:  core.TSFalse,
-		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets:     core.TSFalse,
-		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces:       core.TSTrue,
-		InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: core.TSFalse,
-		InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces:  core.TSFalse,
-		InsertSpaceBeforeFunctionParenthesis:                        core.TSFalse,
-		PlaceOpenBraceOnNewLineForFunctions:                         core.TSFalse,
-		PlaceOpenBraceOnNewLineForControlBlocks:                     core.TSFalse,
-		Semicolons:                                                  SemicolonPreferenceIgnore,
-		IndentSwitchCase:                                            core.TSTrue,
-	}
-}
 
 type FormattingContext struct {
 	currentTokenSpan   TextRangeWithKind
@@ -100,20 +23,15 @@ type FormattingContext struct {
 
 	SourceFile            *ast.SourceFile
 	FormattingRequestKind FormatRequestKind
-	Options               *FormatCodeSettings
-
-	scanner *scanner.Scanner
+	Options               *lsutil.FormatCodeSettings
 }
 
-func NewFormattingContext(file *ast.SourceFile, kind FormatRequestKind, options *FormatCodeSettings) *FormattingContext {
+func NewFormattingContext(file *ast.SourceFile, kind FormatRequestKind, options *lsutil.FormatCodeSettings) *FormattingContext {
 	res := &FormattingContext{
 		SourceFile:            file,
 		FormattingRequestKind: kind,
 		Options:               options,
-		scanner:               scanner.NewScanner(),
 	}
-	res.scanner.SetText(file.Text())
-	res.scanner.SetSkipTrivia(true)
 	return res
 }
 
@@ -158,23 +76,11 @@ func withTokenStart(loc *ast.Node, file *ast.SourceFile) core.TextRange {
 }
 
 func (this *FormattingContext) blockIsOnOneLine(node *ast.Node) core.Tristate {
-	// In strada, this relies on token child manifesting - we just use the scanner here,
-	// so this will have a differing performance profile. Is this OK? Needs profiling to know.
-	this.scanner.ResetPos(node.Pos())
-	end := node.End()
-	firstOpenBrace := -1
-	lastCloseBrace := -1
-	for this.scanner.TokenEnd() < end {
-		// tokenStart instead of tokenfullstart to skip trivia
-		if firstOpenBrace == -1 && this.scanner.Token() == ast.KindOpenBraceToken {
-			firstOpenBrace = this.scanner.TokenStart()
-		} else if this.scanner.Token() == ast.KindCloseBraceToken {
-			lastCloseBrace = this.scanner.TokenStart()
-		}
-		this.scanner.Scan()
-	}
-	if firstOpenBrace != -1 && lastCloseBrace != -1 {
-		return this.rangeIsOnOneLine(core.NewTextRange(firstOpenBrace, lastCloseBrace))
+	openBrace := astnav.FindChildOfKind(node, ast.KindOpenBraceToken, this.SourceFile)
+	closeBrace := astnav.FindChildOfKind(node, ast.KindCloseBraceToken, this.SourceFile)
+	if openBrace != nil && closeBrace != nil {
+		closeBraceStart := scanner.GetTokenPosOfNode(closeBrace, this.SourceFile, false)
+		return this.rangeIsOnOneLine(core.NewTextRange(openBrace.End(), closeBraceStart))
 	}
 	return core.TSFalse
 }

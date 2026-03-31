@@ -21,7 +21,7 @@
  * @returns {string}
  */
  function getTypeName(x) {
->getTypeName : { (x: number): "number"; (x: string): "string"; (x: boolean): "boolean"; }
+>getTypeName : { (x: number): 'number'; (x: string): 'string'; (x: boolean): 'boolean'; }
 >x : unknown
 
   return typeof x;
@@ -68,7 +68,7 @@ function flatMap(array, iterable = identity) {
   /** @type {unknown[]} */
   const result = [];
 >result : unknown[]
->[] : undefined[]
+>[] : never[]
 
   for (let i = 0; i < array.length; i += 1) {
 >i : number

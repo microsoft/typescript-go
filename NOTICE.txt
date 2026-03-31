@@ -201,7 +201,7 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
 ---------------------------------------------------------
 
-github.com/zeebo/xxh3 v1.0.2 - BSD-2-Clause
+github.com/zeebo/xxh3 v1.1.0 - BSD-2-Clause
 
 
 Copyright (c) 2019, Jeff Wendling
@@ -221,7 +221,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ---------------------------------------------------------
 
-github.com/go-json-experiment/json v0.0.0-20251027170946-4849db3c2f7e - BSD-3-Clause
+github.com/go-json-experiment/json v0.0.0-20260214004413-d219187c3433 - BSD-3-Clause
 
 
 Copyright 2010 The Go Authors
@@ -251,7 +251,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ---------------------------------------------------------
 
-golang.org/x/sync v0.19.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+golang.org/x/sync v0.20.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
 Copyright 2009 The Go Authors
@@ -266,7 +266,7 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
-golang.org/x/sys v0.39.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+golang.org/x/sys v0.42.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
 Copyright 2009 The Go Authors
@@ -294,7 +294,7 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
-golang.org/x/term v0.38.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+golang.org/x/term v0.41.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
 Copyright 2009 The Go Authors
@@ -309,10 +309,9 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
-golang.org/x/text v0.32.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+golang.org/x/text v0.35.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
-(c) (c) A
 (c) AeHa (c)
 (c) EeAoq (c)
 (c) EAiE (c) A
@@ -320,7 +319,6 @@ golang.org/x/text v0.32.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-l
 (c) (c) AAEE (c)
 (c) oav!A (c) AY
 (c) aA"AE (c) 1AE (c)
-(c) 1/4, ?i'U CY A$?A CO
 Copyright 2009 The Go Authors
 Copyright 2011 The Go Authors
 Copyright 2012 The Go Authors
@@ -332,6 +330,7 @@ Copyright 2017 The Go Authors
 Copyright 2018 The Go Authors
 Copyright 2019 The Go Authors
 Copyright 2021 The Go Authors
+Copyright 2025 The Go Authors
 
 BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
@@ -339,17 +338,14 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
-github.com/dlclark/regexp2 v1.11.5 - MIT
+github.com/klauspost/cpuid/v2 v2.2.10 - MIT
 
 
-(c) 0, ca Pass. Group
-(c) 0, abc Pass. Group
-(c) 0, abac Pass. Group
-Copyright (c) Doug Clark
-(c) IgnoreCase, ABC Pass. Group
-(c) RightToLeft, abc Pass. Group
-Copyright (c) 2012 The Go Authors
-Copyright (c) Microsoft Corporation
+Copyright (c) 2015 Klaus Post
+Copyright (c) 2020 Klaus Post
+Copyright (c) 2021 Klaus Post
+Copyright 2018 The Go Authors
+Copyright (c) 2015- Klaus Post & Contributors
 
 MIT License
 
@@ -365,14 +361,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-github.com/klauspost/cpuid/v2 v2.0.9 - MIT
+github.com/Microsoft/go-winio v0.6.2 - MIT
 
 
-Copyright (c) 2015 Klaus Post
-Copyright (c) 2020 Klaus Post
-Copyright (c) 2021 Klaus Post
-Copyright 2018 The Go Authors
-Copyright (c) 2015- Klaus Post & Contributors
+Copyright (c) 2015 Microsoft
+Copyright 2013 The Go Authors
 
 MIT License
 

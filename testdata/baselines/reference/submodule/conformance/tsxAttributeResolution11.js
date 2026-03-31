@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/jsx/tsxAttributeResolution11.tsx] ////
 
 //// [react.d.ts]
-declare module JSX {
+declare namespace JSX {
 	interface Element { }
 	interface IntrinsicElements {
 	}
@@ -29,10 +29,10 @@ var x = <MyComponent bar='world' />;
 
 
 //// [file.jsx]
+"use strict";
 class MyComponent {
     render() {
     }
-    props;
 }
 // Should be an OK
 var x = <MyComponent bar='world'/>;

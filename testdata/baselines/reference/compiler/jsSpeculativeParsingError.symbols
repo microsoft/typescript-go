@@ -4,7 +4,7 @@
 const is_morning = new Date().getHours() < 12;
 >is_morning : Symbol(is_morning, Decl(t.js, 0, 5))
 >new Date().getHours : Symbol(Date.getHours, Decl(lib.es5.d.ts, --, --))
->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)
 >getHours : Symbol(Date.getHours, Decl(lib.es5.d.ts, --, --))
 
 // prettier-ignore

@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/exportDeclarations/ExportFunctionWithInaccessibleTypesInParameterTypeAnnotation.ts] ////
 
 //// [ExportFunctionWithInaccessibleTypesInParameterTypeAnnotation.ts]
-module A {
+namespace A {
 
     class Point {
         x: number;
@@ -18,15 +18,12 @@ module A {
 }
 
 //// [ExportFunctionWithInaccessibleTypesInParameterTypeAnnotation.js]
+"use strict";
 var A;
 (function (A) {
     class Point {
-        x;
-        y;
     }
     class Line {
-        start;
-        end;
         constructor(start, end) {
             this.start = start;
             this.end = end;

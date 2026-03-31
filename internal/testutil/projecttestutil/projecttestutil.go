@@ -3,6 +3,7 @@ package projecttestutil
 import (
 	"context"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 	"sync"
@@ -14,16 +15,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out clientmock_generated.go ../../project Client
-//go:generate go tool mvdan.cc/gofumpt -w clientmock_generated.go
+//go:generate npx dprint fmt clientmock_generated.go
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out npmexecutormock_generated.go ../../project/ata NpmExecutor
-//go:generate go tool mvdan.cc/gofumpt -w npmexecutormock_generated.go
+//go:generate npx dprint fmt npmexecutormock_generated.go
 
 const (
 	TestTypingsLocation = "/home/src/Library/Caches/typescript"
@@ -35,12 +38,13 @@ type TypingsInstallerOptions struct {
 }
 
 type SessionUtils struct {
-	fsFromFileMap iovfs.FsWithSys
-	fs            vfs.FS
-	client        *ClientMock
-	npmExecutor   *NpmExecutorMock
-	tiOptions     *TypingsInstallerOptions
-	logger        logging.LogCollector
+	currentDirectory string
+	fsFromFileMap    iovfs.FsWithSys
+	fs               vfs.FS
+	client           *ClientMock
+	npmExecutor      *NpmExecutorMock
+	tiOptions        *TypingsInstallerOptions
+	logger           logging.LogCollector
 }
 
 func (h *SessionUtils) FsFromFileMap() iovfs.FsWithSys {
@@ -70,7 +74,7 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 
 		if lenNpmInstallArgs == 3 && npmInstallArgs[2] == "types-registry@latest" {
 			// Write typings file
-			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent(), false)
+			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent())
 			return nil, err
 		}
 
@@ -96,13 +100,17 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 			if !ok {
 				return nil, fmt.Errorf("content not provided for %s", packageBaseName)
 			}
-			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content, false)
+			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content)
 			if err != nil {
 				return nil, err
 			}
 		}
 		return nil, nil
 	}
+}
+
+func (h *SessionUtils) ToPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, h.currentDirectory, h.fs.UseCaseSensitiveFileNames())
 }
 
 func (h *SessionUtils) FS() vfs.FS {
@@ -189,6 +197,40 @@ func Setup(files map[string]any) (*project.Session, *SessionUtils) {
 	return SetupWithTypingsInstaller(files, &TypingsInstallerOptions{})
 }
 
+func SetupWithRealFS() (*project.Session, *SessionUtils) {
+	fs := bundled.WrapFS(osvfs.FS())
+	clientMock := &ClientMock{}
+	npmExecutorMock := &NpmExecutorMock{}
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	sessionUtils := &SessionUtils{
+		currentDirectory: wd,
+		fs:               fs,
+		client:           clientMock,
+		npmExecutor:      npmExecutorMock,
+		logger:           logging.NewTestLogger(),
+	}
+
+	return project.NewSession(&project.SessionInit{
+		BackgroundCtx: context.Background(),
+		FS:            fs,
+		Client:        clientMock,
+		NpmExecutor:   npmExecutorMock,
+		Logger:        sessionUtils.logger,
+		Options: &project.SessionOptions{
+			CurrentDirectory:       wd,
+			DefaultLibraryPath:     bundled.LibPath(),
+			PositionEncoding:       lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:           true,
+			LoggingEnabled:         true,
+			PushDiagnosticsEnabled: true,
+		},
+	}), sessionUtils
+}
+
 func SetupWithOptions(files map[string]any, options *project.SessionOptions) (*project.Session, *SessionUtils) {
 	return SetupWithOptionsAndTypingsInstaller(files, options, &TypingsInstallerOptions{})
 }
@@ -214,12 +256,13 @@ func GetSessionInitOptions(files map[string]any, options *project.SessionOptions
 	clientMock := &ClientMock{}
 	npmExecutorMock := &NpmExecutorMock{}
 	sessionUtils := &SessionUtils{
-		fsFromFileMap: fsFromFileMap.(iovfs.FsWithSys),
-		fs:            fs,
-		client:        clientMock,
-		npmExecutor:   npmExecutorMock,
-		tiOptions:     tiOptions,
-		logger:        logging.NewTestLogger(),
+		currentDirectory: "/",
+		fsFromFileMap:    fsFromFileMap.(iovfs.FsWithSys),
+		fs:               fs,
+		client:           clientMock,
+		npmExecutor:      npmExecutorMock,
+		tiOptions:        tiOptions,
+		logger:           logging.NewTestLogger(),
 	}
 
 	// Configure the npm executor mock to handle typings installation
@@ -239,10 +282,11 @@ func GetSessionInitOptions(files map[string]any, options *project.SessionOptions
 	}
 
 	return &project.SessionInit{
-		Options:     options,
-		FS:          fs,
-		Client:      clientMock,
-		NpmExecutor: npmExecutorMock,
-		Logger:      sessionUtils.logger,
+		BackgroundCtx: context.Background(),
+		Options:       options,
+		FS:            fs,
+		Client:        clientMock,
+		NpmExecutor:   npmExecutorMock,
+		Logger:        sessionUtils.logger,
 	}, sessionUtils
 }

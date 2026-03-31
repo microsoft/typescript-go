@@ -16,10 +16,10 @@ interface Robot {
 >skills : { primary?: string; secondary?: string; }
 
         primary?: string;
->primary : string
+>primary : string | undefined
 
         secondary?: string;
->secondary : string
+>secondary : string | undefined
 
     };
 }

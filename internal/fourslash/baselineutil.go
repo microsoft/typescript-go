@@ -23,6 +23,7 @@ import (
 const (
 	autoImportsCmd              baselineCommand = "Auto Imports"
 	callHierarchyCmd            baselineCommand = "Call Hierarchy"
+	closingTagCmd               baselineCommand = "Closing Tag"
 	documentHighlightsCmd       baselineCommand = "documentHighlights"
 	findAllReferencesCmd        baselineCommand = "findAllReferences"
 	goToDefinitionCmd           baselineCommand = "goToDefinition"
@@ -31,6 +32,7 @@ const (
 	inlayHintsCmd               baselineCommand = "Inlay Hints"
 	nonSuggestionDiagnosticsCmd baselineCommand = "Syntax and Semantic Diagnostics"
 	quickInfoCmd                baselineCommand = "QuickInfo"
+	linkedEditingCmd            baselineCommand = "linkedEditing"
 	renameCmd                   baselineCommand = "findRenameLocations"
 	signatureHelpCmd            baselineCommand = "SignatureHelp"
 	smartSelectionCmd           baselineCommand = "Smart Selection"
@@ -54,7 +56,10 @@ func (f *FourslashTest) addResultToBaseline(t *testing.T, command baselineComman
 	if b.Len() != 0 {
 		b.WriteString("\n\n\n\n")
 	}
-	b.WriteString(`// === ` + string(command) + " ===\n" + actual)
+	b.WriteString("// === ")
+	b.WriteString(string(command))
+	b.WriteString(" ===\n")
+	b.WriteString(actual)
 }
 
 func (f *FourslashTest) writeToBaseline(command baselineCommand, content string) {
@@ -72,12 +77,14 @@ func getBaselineFileName(t *testing.T, command baselineCommand) string {
 
 func getBaselineExtension(command baselineCommand) string {
 	switch command {
-	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd:
+	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, closingTagCmd:
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
 	case autoImportsCmd:
 		return "baseline.md"
+	case linkedEditingCmd:
+		return "linkedEditing.txt"
 	default:
 		return "baseline.jsonc"
 	}
@@ -322,6 +329,153 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 			DiffFixupNew: func(s string) string {
 				return strings.ReplaceAll(s, "bundled:///libs/", "")
 			},
+		}
+	case findAllReferencesCmd:
+		return baseline.Options{
+			Subfolder:   subfolder,
+			IsSubmodule: true,
+			DiffFixupOld: func(s string) string {
+				var commandLines []string
+				commandPrefix := regexp.MustCompile(`^// === ([a-z\sA-Z]*) ===`)
+				filePrefix := regexp.MustCompile(`^// === ([^ ]*) ===`)
+				testFilePrefix := "/tests/cases/fourslash"
+				serverTestFilePrefix := "/server"
+				contextSpanOpening := "<|"
+				contextSpanClosing := "|>"
+				replacer := strings.NewReplacer(
+					testFilePrefix, "",
+					serverTestFilePrefix, "",
+					contextSpanOpening, "",
+					contextSpanClosing, "",
+				)
+				// Match location data like {| isWriteAccess: true, isDefinition: true |}
+				objectRangeRegex := regexp.MustCompile(`{\| [^|]* \|}`)
+				definitionsStr := "// === Definitions ==="
+				detailsStr := "// === Details ==="
+				lines := strings.Split(s, "\n")
+				var isInCommand bool
+				var isInDetails bool
+				var isInDefinitions bool
+
+				// Track file sections for sorting
+				type fileSection struct {
+					fileName string
+					lines    []string
+				}
+				var fileSections []fileSection
+				var currentFileName string
+				var currentFileLines []string
+
+				for _, line := range lines {
+					matches := commandPrefix.FindStringSubmatch(line)
+					if len(matches) > 0 {
+						isInDetails = false
+						isInDefinitions = false
+						commandName := matches[1]
+						if commandName == string(findAllReferencesCmd) {
+							isInCommand = true
+							// Starting a new findAllReferences command block
+							if currentFileName != "" {
+								fileSections = append(fileSections, fileSection{fileName: currentFileName, lines: currentFileLines})
+							}
+							currentFileName = ""
+							currentFileLines = nil
+							slices.SortFunc(fileSections, func(a, b fileSection) int {
+								return strings.Compare(a.fileName, b.fileName)
+							})
+							for _, section := range fileSections {
+								section.lines = dropTrailingEmptyLines(section.lines)
+								commandLines = append(commandLines, section.lines...)
+								commandLines = append(commandLines, "")
+							}
+							fileSections = nil
+							if len(commandLines) > 0 {
+								commandLines = append(commandLines, "", "")
+							}
+							commandLines = append(commandLines, replacer.Replace(line))
+							continue
+						} else {
+							isInCommand = false
+						}
+					}
+					if isInCommand {
+						if strings.Contains(line, definitionsStr) || strings.Contains(line, detailsStr) {
+							isInDefinitions = strings.Contains(line, definitionsStr)
+							isInDetails = strings.Contains(line, detailsStr)
+							// Drop blank line before definitions/details
+							if len(currentFileLines) > 0 && currentFileLines[len(currentFileLines)-1] == "" {
+								currentFileLines = currentFileLines[:len(currentFileLines)-1]
+							}
+						}
+						// We don't diff the definitions or details sections
+						if !(isInDefinitions || isInDetails) {
+							fixedLine := replacer.Replace(line)
+							fixedLine = objectRangeRegex.ReplaceAllString(fixedLine, "")
+
+							fileMatches := filePrefix.FindStringSubmatch(fixedLine)
+							if len(fileMatches) > 0 {
+								if currentFileName != "" {
+									fileSections = append(fileSections, fileSection{fileName: currentFileName, lines: currentFileLines})
+								}
+								currentFileName = fileMatches[1]
+								currentFileLines = []string{fixedLine}
+							} else {
+								currentFileLines = append(currentFileLines, fixedLine)
+							}
+						} else if isInDetails && line == "  ]" {
+							isInDetails = false
+						}
+					}
+				}
+
+				// Save any remaining file section
+				if currentFileName != "" {
+					fileSections = append(fileSections, fileSection{fileName: currentFileName, lines: currentFileLines})
+				}
+
+				// Sort and add remaining file sections
+				if len(fileSections) > 0 {
+					slices.SortFunc(fileSections, func(a, b fileSection) int {
+						return strings.Compare(a.fileName, b.fileName)
+					})
+					for _, section := range fileSections {
+						section.lines = dropTrailingEmptyLines(section.lines)
+						commandLines = append(commandLines, section.lines...)
+						commandLines = append(commandLines, "")
+					}
+				}
+
+				return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
+			},
+		}
+	case linkedEditingCmd:
+		deleteInfo := func(s string) string {
+			commandLines := []string{}
+			lines := strings.Split(s, "\n")
+			linkedEditingInfoHeader := regexp.MustCompile(`=== [0-9]+ ===`)
+			fileNameHeader := regexp.MustCompile(`=== [\w,\s-]+\.[A-Za-z]+ ===`)
+			inLinkedEditingInfo := false
+			for i, line := range lines {
+				if linkedEditingInfoHeader.MatchString(line) {
+					inLinkedEditingInfo = true
+					continue
+				}
+				if fileNameHeader.MatchString(line) {
+					inLinkedEditingInfo = false
+					continue
+				}
+				// drop the info since it's different--linked editing positions should be verified by file content/markers
+				if !inLinkedEditingInfo {
+					lines[i] = ""
+				}
+			}
+			return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
+		}
+		return baseline.Options{
+			Subfolder:    subfolder,
+			IsSubmodule:  true,
+			DiffFixupOld: deleteInfo,
+			DiffFixupNew: deleteInfo,
 		}
 	default:
 		return baseline.Options{
@@ -703,7 +857,9 @@ func (f *FourslashTest) getBaselineContentForFile(
 					}
 				}
 				if text != "" {
-					textWithContext.newContent.WriteString(`{ ` + text + ` |}`)
+					textWithContext.newContent.WriteString("{ ")
+					textWithContext.newContent.WriteString(text)
+					textWithContext.newContent.WriteString(" |}")
 				}
 			case detailKindContextStart:
 				if canDetermineContextIdInline {
@@ -770,12 +926,14 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 	t.converters = lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return t.lineStarts
 	})
-	t.readableContents.WriteString("// === " + fileName + " ===")
+	t.readableContents.WriteString("// === ")
+	t.readableContents.WriteString(fileName)
+	t.readableContents.WriteString(" ===")
 	return t
 }
 
 func (t *textWithContext) add(detail *baselineDetail) {
-	if t.content == "" && detail == nil {
+	if t.newContent.Len() == 0 && detail == nil {
 		panic("Unsupported")
 	}
 	if detail == nil || (detail.kind != detailKindTextEnd && detail.kind != detailKindContextEnd) {
@@ -846,7 +1004,8 @@ func (t *textWithContext) readableJsoncBaseline(text string) {
 		if i > 0 {
 			t.readableContents.WriteString("\n")
 		}
-		t.readableContents.WriteString(`// ` + line)
+		t.readableContents.WriteString("// ")
+		t.readableContents.WriteString(line)
 	}
 }
 
@@ -950,11 +1109,11 @@ func annotateContentWithTooltips[T comparable](
 
 func (t *textWithContext) sliceOfContent(start *int, end *int) string {
 	if start == nil || *start < 0 {
-		start = ptrTo(0)
+		start = new(0)
 	}
 
 	if end == nil || *end > len(t.content) {
-		end = ptrTo(len(t.content))
+		end = new(len(t.content))
 	}
 
 	if *start > *end {
@@ -969,11 +1128,11 @@ func (t *textWithContext) getIndex(i any) *int {
 	case *int:
 		return i
 	case int:
-		return ptrTo(i)
+		return new(i)
 	case core.TextPos:
-		return ptrTo(int(i))
+		return new(int(i))
 	case *core.TextPos:
-		return ptrTo(int(*i))
+		return new(int(*i))
 	case lsproto.Position:
 		return t.getIndex(t.converters.LineAndCharacterToPosition(t, i))
 	case *lsproto.Position:

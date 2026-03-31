@@ -8,11 +8,11 @@ class C {
 
     /** @type {{ foo?: string } | undefined } */
     #a;
->#a : { foo?: string; }
+>#a : { foo?: string; } | undefined
 
     /** @type {{ foo?: string } | undefined } */
     #b;
->#b : { foo?: string; }
+>#b : { foo?: string; } | undefined
 
     m() {
 >m : () => void
@@ -20,16 +20,16 @@ class C {
         const a = this.#a || {};
 >a : { foo?: string; }
 >this.#a || {} : { foo?: string; }
->this.#a : { foo?: string; }
+>this.#a : { foo?: string; } | undefined
 >this : this
 >{} : {}
 
         this.#b = this.#b || {};
 >this.#b = this.#b || {} : { foo?: string; }
->this.#b : { foo?: string; }
+>this.#b : { foo?: string; } | undefined
 >this : this
 >this.#b || {} : { foo?: string; }
->this.#b : { foo?: string; }
+>this.#b : { foo?: string; } | undefined
 >this : this
 >{} : {}
     }

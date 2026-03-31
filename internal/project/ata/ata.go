@@ -8,9 +8,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/semver"
@@ -469,7 +469,7 @@ func (ti *TypingsInstaller) ensureTypingsLocationExists(fs vfs.FS, logger loggin
 
 	if !fs.FileExists(npmConfigPath) {
 		logger.Log(fmt.Sprintf("ATA:: Npm config file: '%s' is missing, creating new one...", npmConfigPath))
-		err := fs.WriteFile(npmConfigPath, "{ \"private\": true }", false)
+		err := fs.WriteFile(npmConfigPath, "{ \"private\": true }")
 		if err != nil {
 			logger.Log(fmt.Sprintf("ATA:: Npm config file write failed: %v", err))
 		}

@@ -15,12 +15,12 @@ export = items;
 /** @type {typeof import("/some-mod")} */
 const items = [];
 >items : Item[]
->[] : undefined[]
+>[] : never[]
 
 module.exports = items;
 >module.exports = items : Item[]
 >module.exports : Item[]
->module : { readonly items: Item[]; }
+>module : { readonly items: typeof import("/some-mod"); }
 >exports : Item[]
 >items : Item[]
 

@@ -81,11 +81,6 @@ export const argumentsOfG = f(...getArgsForInjection(g)); // captured arguments 
 
 
 //// [namedTupleMembers.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.argumentsOfG = exports.argumentsOfGAsFirstArgument = exports.val = exports.func = void 0;
-exports.useState = useState;
-exports.readSegment = readSegment;
 a = b;
 a = c;
 a = d;
@@ -98,19 +93,19 @@ c = d;
 d = a;
 d = b;
 d = c;
-exports.func = null;
-function useState(initial) {
+export const func = null;
+export function useState(initial) {
     return null;
 }
-function readSegment([length, count]) { }
+export function readSegment([length, count]) { }
 // documenting binding pattern behavior (currently does _not_ generate tuple names)
-exports.val = null;
+export const val = null;
 q = r;
 r = q;
 x = y;
 y = x;
-exports.argumentsOfGAsFirstArgument = f(getArgsForInjection(g)); // one tuple with captures arguments as first member
-exports.argumentsOfG = f(...getArgsForInjection(g)); // captured arguments list re-spread
+export const argumentsOfGAsFirstArgument = f(getArgsForInjection(g)); // one tuple with captures arguments as first member
+export const argumentsOfG = f(...getArgsForInjection(g)); // captured arguments list re-spread
 
 
 //// [namedTupleMembers.d.ts]
@@ -131,7 +126,7 @@ export declare const func: Func<SegmentAnnotated>;
 export declare function useState<T>(initial: T): [value: T, setter: (T: any) => void];
 export type Iter = Func<[step: number, iterations: number]>;
 export declare function readSegment([length, count]: [number, number]): void;
-export declare const val: [number, number];
+export declare const val: Parameters<typeof readSegment>[0];
 export type RecursiveTupleA = [initial: string, next: RecursiveTupleA];
 export type RecursiveTupleB = [first: string, ptr: RecursiveTupleB];
 export type RecusiveRest = [first: string, ...rest: RecusiveRest[]];

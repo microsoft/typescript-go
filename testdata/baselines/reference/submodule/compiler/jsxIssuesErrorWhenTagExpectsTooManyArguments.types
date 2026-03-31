@@ -70,7 +70,7 @@ declare function MyTagWithOptionalNonJSXBits(props: MyProps, context: any, nonRe
 >MyTagWithOptionalNonJSXBits : (props: MyProps, context: any, nonReactArg?: string) => JSX.Element
 >props : MyProps
 >context : any
->nonReactArg : string
+>nonReactArg : string | undefined
 >JSX : any
 
 const d = <MyTagWithOptionalNonJSXBits x={2} />; // Technically OK, but probably questionable

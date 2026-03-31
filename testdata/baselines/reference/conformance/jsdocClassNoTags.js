@@ -10,6 +10,7 @@ class C extends B {
 
 
 //// [jsdocClassNoTags.js]
+"use strict";
 class B {
 }
 /** this is a test */

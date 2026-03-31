@@ -3,7 +3,7 @@
 === functionCall14.ts ===
 function foo(a?:string, ...b:number[]){} 
 >foo : (a?: string, ...b: number[]) => void
->a : string
+>a : string | undefined
 >b : number[]
 
 foo('foo', 1); 

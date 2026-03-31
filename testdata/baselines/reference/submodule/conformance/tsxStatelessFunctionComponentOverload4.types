@@ -1,6 +1,8 @@
 //// [tests/cases/conformance/jsx/tsxStatelessFunctionComponentOverload4.tsx] ////
 
 === file.tsx ===
+/// <reference path="react.d.ts" />
+
 import React = require('react')
 >React : typeof React
 
@@ -103,7 +105,7 @@ declare function TestingOneThing(n: {yy: string, direction?: number}): JSX.Eleme
 >TestingOneThing : { (j: { "extra-data": string; }): JSX.Element; (n: { yy: string; direction?: number; }): JSX.Element; }
 >n : { yy: string; direction?: number; }
 >yy : string
->direction : number
+>direction : number | undefined
 >JSX : any
 
 // Error
@@ -123,15 +125,15 @@ const d2 = <TestingOneThing yy="hello" direction="left" />
 declare function TestingOptional(a: {y1?: string, y2?: number}): JSX.Element;
 >TestingOptional : { (a: { y1?: string; y2?: number; }): JSX.Element; (a: { y1?: string; y2?: number; children: JSX.Element; }): JSX.Element; (a: { y1: boolean; y2?: number; y3: boolean; }): JSX.Element; }
 >a : { y1?: string; y2?: number; }
->y1 : string
->y2 : number
+>y1 : string | undefined
+>y2 : number | undefined
 >JSX : any
 
 declare function TestingOptional(a: {y1?: string, y2?: number, children: JSX.Element}): JSX.Element;
 >TestingOptional : { (a: { y1?: string; y2?: number; }): JSX.Element; (a: { y1?: string; y2?: number; children: JSX.Element; }): JSX.Element; (a: { y1: boolean; y2?: number; y3: boolean; }): JSX.Element; }
 >a : { y1?: string; y2?: number; children: JSX.Element; }
->y1 : string
->y2 : number
+>y1 : string | undefined
+>y2 : number | undefined
 >children : JSX.Element
 >JSX : any
 >JSX : any
@@ -140,7 +142,7 @@ declare function TestingOptional(a: {y1: boolean, y2?: number, y3: boolean}): JS
 >TestingOptional : { (a: { y1?: string; y2?: number; }): JSX.Element; (a: { y1?: string; y2?: number; children: JSX.Element; }): JSX.Element; (a: { y1: boolean; y2?: number; y3: boolean; }): JSX.Element; }
 >a : { y1: boolean; y2?: number; y3: boolean; }
 >y1 : boolean
->y2 : number
+>y2 : number | undefined
 >y3 : boolean
 >JSX : any
 

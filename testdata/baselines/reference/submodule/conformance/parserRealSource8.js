@@ -6,7 +6,7 @@
 
 ///<reference path='typescript.ts' />
 
-module TypeScript {
+namespace TypeScript {
 
     export class AssignScopeContext {
         constructor (public scopeChain: ScopeChain,
@@ -469,15 +469,13 @@ module TypeScript {
 }
 
 //// [parserRealSource8.js]
+"use strict";
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 // See LICENSE.txt in the project root for complete license information.
 ///<reference path='typescript.ts' />
 var TypeScript;
 (function (TypeScript) {
     class AssignScopeContext {
-        scopeChain;
-        typeFlow;
-        modDeclChain;
         constructor(scopeChain, typeFlow, modDeclChain) {
             this.scopeChain = scopeChain;
             this.typeFlow = typeFlow;
@@ -511,13 +509,11 @@ var TypeScript;
     }
     TypeScript.instanceFilterStop = instanceFilterStop;
     class ScopeSearchFilter {
-        select;
-        stop;
         constructor(select, stop) {
             this.select = select;
             this.stop = stop;
+            this.result = null;
         }
-        result = null;
         reset() {
             this.result = null;
         }

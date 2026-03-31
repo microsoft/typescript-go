@@ -4,7 +4,7 @@
 function foo(a:string, b?:string, ...c:number[]){}
 >foo : (a: string, b?: string, ...c: number[]) => void
 >a : string
->b : string
+>b : string | undefined
 >c : number[]
 
 foo('foo', 1); 

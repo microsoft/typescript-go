@@ -7,7 +7,7 @@ class C {
     }
 }
 
-module M1.M2 {
+namespace M1.M2 {
     class C {
         private foo() {
             super.foo();
@@ -16,6 +16,7 @@ module M1.M2 {
 }
 
 //// [parserSuperExpression1.js]
+"use strict";
 class C {
     foo() {
         super.foo();
@@ -23,7 +24,7 @@ class C {
 }
 var M1;
 (function (M1) {
-    let M2;
+    var M2;
     (function (M2) {
         class C {
             foo() {

@@ -13,10 +13,9 @@ var c:Constructor<B<boolean>> = B; // shouldn't error here
 
 
 //// [genericInheritedDefaultConstructors.js]
+"use strict";
 class A {
-    a;
 }
 class B extends A {
-    b;
 }
 var c = B; // shouldn't error here

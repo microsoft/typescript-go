@@ -82,7 +82,7 @@ class D11 extends Base {
 }
 
 function f() { }
-module f {
+namespace f {
     export var bar = 1;
 }
 class D12 extends Base {
@@ -91,7 +91,7 @@ class D12 extends Base {
 
 
 class c { baz: string }
-module c {
+namespace c {
     export var bar = 1;
 }
 class D13 extends Base {
@@ -124,90 +124,67 @@ class D17 extends Base {
 
 
 //// [undefinedIsSubtypeOfEverything.js]
+"use strict";
 // undefined is a subtype of every other types, no errors expected below
 class Base {
-    foo;
 }
 class D0 extends Base {
-    foo;
 }
 class DA extends Base {
-    foo;
 }
 class D1 extends Base {
-    foo;
 }
 class D1A extends Base {
-    foo;
 }
 class D2 extends Base {
-    foo;
 }
 class D2A extends Base {
-    foo;
 }
 class D3 extends Base {
-    foo;
 }
 class D3A extends Base {
-    foo;
 }
 class D4 extends Base {
-    foo;
 }
 class D5 extends Base {
-    foo;
 }
 class D6 extends Base {
-    foo;
 }
 class D7 extends Base {
-    foo;
 }
 class D8 extends Base {
-    foo;
 }
 class D9 extends Base {
-    foo;
 }
 class D10 extends Base {
-    foo;
 }
 var E;
 (function (E) {
     E[E["A"] = 0] = "A";
 })(E || (E = {}));
 class D11 extends Base {
-    foo;
 }
 function f() { }
 (function (f) {
     f.bar = 1;
 })(f || (f = {}));
 class D12 extends Base {
-    foo;
 }
 class c {
-    baz;
 }
 (function (c) {
     c.bar = 1;
 })(c || (c = {}));
 class D13 extends Base {
-    foo;
 }
 class D14 extends Base {
-    foo;
 }
 class D15 extends Base {
-    foo;
 }
 //class D15<T, U extends T> extends Base {
 //    foo: U;
 //}
 class D16 extends Base {
-    foo;
 }
 class D17 extends Base {
-    foo;
 }

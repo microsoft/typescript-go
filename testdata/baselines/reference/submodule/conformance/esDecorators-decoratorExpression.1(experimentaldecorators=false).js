@@ -49,13 +49,14 @@ declare let x: any;
 
 
 //// [esDecorators-decoratorExpression.1.js]
+"use strict";
 {
     @x().y
     class C {
     }
 }
 {
-    @(new x)
+    @new x
     class C {
     }
 }
@@ -65,22 +66,22 @@ declare let x: any;
     }
 }
 {
-    @(x?.y)
+    @x?.y
     class C {
     }
 }
 {
-    @(x?.y())
+    @x?.y()
     class C {
     }
 }
 {
-    @(x?.["y"])
+    @x?.["y"]
     class C {
     }
 }
 {
-    @(x?.())
+    @x?.()
     class C {
     }
 }
@@ -112,7 +113,7 @@ declare let x: any;
 }
 {
     class C {
-        @(new x)
+        @new x
         m() { }
     }
 }
@@ -124,25 +125,25 @@ declare let x: any;
 }
 {
     class C {
-        @(x?.y)
+        @x?.y
         m() { }
     }
 }
 {
     class C {
-        @(x?.y())
+        @x?.y()
         m() { }
     }
 }
 {
     class C {
-        @(x?.["y"])
+        @x?.["y"]
         m() { }
     }
 }
 {
     class C {
-        @(x?.())
+        @x?.()
         m() { }
     }
 }

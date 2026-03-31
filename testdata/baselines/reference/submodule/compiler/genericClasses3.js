@@ -20,12 +20,10 @@ var z = v2.b;
 
 
 //// [genericClasses3.js]
+"use strict";
 class B {
-    a;
-    b;
 }
 class C extends B {
-    x;
 }
 var v2;
 var y = v2.x; // should be 'string'

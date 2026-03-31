@@ -24,15 +24,14 @@ new cls3(); // should work
 [AbstractA, AbstractB].map(cls => new cls()); // should error
 
 //// [abstractClassUnionInstantiation.js]
+"use strict";
 class ConcreteA {
 }
 class ConcreteB {
 }
 class AbstractA {
-    a;
 }
 class AbstractB {
-    b;
 }
 new cls1(); // should error
 new cls2(); // should error

@@ -14,14 +14,12 @@ function* g3() {
 }
 
 //// [generatorTypeCheck24.js]
+"use strict";
 class Foo {
-    x;
 }
 class Bar extends Foo {
-    y;
 }
 class Baz {
-    z;
 }
 function* g3() {
     yield;

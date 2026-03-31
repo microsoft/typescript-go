@@ -8,7 +8,7 @@
 ->exports.E : typeof E
 +>exports.E = function() {    this.e = 'exported'} : () => void
 +>exports.E : () => void
- >exports : typeof import("b")
+ >exports : typeof import("./b")
 ->E : typeof E
 ->function() {    this.e = 'exported'} : typeof E
 +>E : () => void
@@ -29,7 +29,7 @@
 +>e : any
 +>new exports.E() : any
 +>exports.E : () => void
- >exports : typeof import("b")
+ >exports : typeof import("./b")
 ->E : typeof E
 +>E : () => void
 
@@ -49,7 +49,7 @@
  >this.c = 'nested object' : "nested object"
  >this.c : any
 ->this : { C: typeof C; }
-+>this : any
++>this : { C: () => void; }
  >c : any
  >'nested object' : "nested object"
      }

@@ -36,13 +36,13 @@ declare enum T6 {
 
 
 //// [enumConstantMemberWithString.js]
+"use strict";
 var T1;
 (function (T1) {
     T1["a"] = "1";
     T1["b"] = "12";
     T1["c"] = "123";
-    T1["d"] = "a" - "a";
-    if (typeof T1.d !== "string") T1[T1.d] = "d";
+    T1[T1["d"] = "a" - "a"] = "d";
     T1["e"] = "a1";
 })(T1 || (T1 = {}));
 var T2;

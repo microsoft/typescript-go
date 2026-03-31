@@ -99,11 +99,14 @@ class D2 extends D {
 
 
 //// [protectedMembersThisParameter.js]
+"use strict";
 class Message {
     secret() { }
 }
 class MessageWrapper {
-    message = new Message();
+    constructor() {
+        this.message = new Message();
+    }
     wrap() {
         let m = this.message;
         let f = function () {

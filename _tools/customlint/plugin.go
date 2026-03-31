@@ -15,12 +15,14 @@ type plugin struct{}
 
 func (f *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 	return []*analysis.Analyzer{
+		bitclearAnalyzer,
 		emptyCaseAnalyzer,
+		forbidParentAccessAnalyzer,
 		shadowAnalyzer,
 		unexportedAPIAnalyzer,
 	}, nil
 }
 
 func (f *plugin) GetLoadMode() string {
-	return register.LoadModeSyntax
+	return register.LoadModeTypesInfo
 }

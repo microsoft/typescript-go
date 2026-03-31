@@ -4,7 +4,7 @@
 class C { foo: string; }
 interface C { foo: string; }
 
-module M {
+namespace M {
     class D {
         bar: string;
     }
@@ -15,12 +15,11 @@ module M {
 }
 
 //// [classAndInterfaceWithSameName.js]
+"use strict";
 class C {
-    foo;
 }
 var M;
 (function (M) {
     class D {
-        bar;
     }
 })(M || (M = {}));

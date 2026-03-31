@@ -12,9 +12,9 @@ export {};
 //// [jsxJsxsCjsTransformKeyProp.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
-/// <reference path="react16.d.ts" />
+const jsx_runtime_1 = require("react/jsx-runtime");
+/// <reference path="/.lib/react16.d.ts" />
 const props = { answer: 42 };
-const a = jsx_runtime_1.jsx("div", Object.assign({}, props, { children: "text" }), "foo");
-const b = react_1.createElement("div", Object.assign({}, props, { key: "bar" }), "text");
+const a = (0, jsx_runtime_1.jsx)("div", Object.assign({}, props, { children: "text" }), "foo");
+const b = (0, react_1.createElement)("div", Object.assign({}, props, { key: "bar" }), "text");

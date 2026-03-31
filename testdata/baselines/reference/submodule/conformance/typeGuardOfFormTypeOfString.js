@@ -88,8 +88,8 @@ else {
 
 
 //// [typeGuardOfFormTypeOfString.js]
+"use strict";
 class C {
-    p;
 }
 ;
 var str;

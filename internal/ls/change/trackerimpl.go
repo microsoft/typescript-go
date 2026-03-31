@@ -23,7 +23,7 @@ func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 	for sourceFile, changesInFile := range t.changes.M {
 		// order changes by start position
 		// If the start position is the same, put the shorter range first, since an empty range (x, x) may precede (x, y) but not vice-versa.
-		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(ptrTo(a.Range), ptrTo(b.Range)) })
+		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(a.Range, b.Range) })
 		// verify that change intervals do not overlap, except possibly at end points.
 		for i := range len(changesInFile) - 1 {
 			if lsproto.ComparePositions(changesInFile[i].Range.End, changesInFile[i+1].Range.Start) > 0 {
@@ -82,7 +82,7 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 	}
 	// strip initial indentation (spaces or tabs) if text will be inserted in the middle of the line
 	noIndent := text
-	if !(change.options.indentation != nil && *change.options.indentation != 0 || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
+	if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
 		noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
 	}
 	return change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
@@ -96,8 +96,7 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 
 	var initialIndentation, delta int
 	if options.indentation == nil {
-		// !!! indentation for position
-		// initialIndentation = format.GetIndentationForPos(pos, sourceFile, formatOptions, options.prefix == ct.newLine || scanner.GetLineStartPositionForPosition(pos, targetFileLineMap) == pos);
+		initialIndentation = format.GetIndentation(pos, sourceFile, formatOptions, options.Prefix == t.newLine || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos)
 	} else {
 		initialIndentation = *options.indentation
 	}
@@ -112,11 +111,11 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 	return core.ApplyBulkEdits(text, changes)
 }
 
-func getFormatCodeSettingsForWriting(options *format.FormatCodeSettings, sourceFile *ast.SourceFile) *format.FormatCodeSettings {
-	shouldAutoDetectSemicolonPreference := options.Semicolons == format.SemicolonPreferenceIgnore
-	shouldRemoveSemicolons := options.Semicolons == format.SemicolonPreferenceRemove || shouldAutoDetectSemicolonPreference && !lsutil.ProbablyUsesSemicolons(sourceFile)
+func getFormatCodeSettingsForWriting(options *lsutil.FormatCodeSettings, sourceFile *ast.SourceFile) *lsutil.FormatCodeSettings {
+	shouldAutoDetectSemicolonPreference := options.Semicolons == lsutil.SemicolonPreferenceIgnore
+	shouldRemoveSemicolons := options.Semicolons == lsutil.SemicolonPreferenceRemove || shouldAutoDetectSemicolonPreference && !lsutil.ProbablyUsesSemicolons(sourceFile)
 	if shouldRemoveSemicolons {
-		options.Semicolons = format.SemicolonPreferenceRemove
+		options.Semicolons = lsutil.SemicolonPreferenceRemove
 	}
 
 	return options
@@ -126,14 +125,21 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 	nodeIn := node
 	eofToken := t.Factory.NewToken(ast.KindEndOfFile)
 	if ast.IsStatement(node) {
+		text := ""
+		// OrganizeImports uses nodes from the old tree for preserving comments when emitting,
+		// which causes text to be indexed with the positions of the old nodes.
+		// For more details, check PR #2331
+		if !ast.NodeIsSynthesized(node) {
+			text = sourceFile.Text()
+		}
 		nodeIn = t.Factory.NewSourceFile(
 			ast.SourceFileParseOptions{FileName: sourceFile.FileName(), Path: sourceFile.Path()},
-			"",
+			text,
 			t.Factory.NewNodeList([]*ast.Node{node}),
 			t.Factory.NewToken(ast.KindEndOfFile),
 		)
 	}
-	writer := printer.NewChangeTrackerWriter(t.newLine)
+	writer := printer.NewChangeTrackerWriter(t.newLine, t.formatSettings.IndentSize)
 	printer.NewPrinter(
 		printer.PrinterOptions{
 			NewLine:                       core.GetNewLineKind(t.newLine),

@@ -19,13 +19,12 @@ class PersonModel extends AutoModel<PersonModel> {
 
 
 //// [keyofGenericExtendingClassDoubleLayer.js]
+"use strict";
 class Model {
-    createdAt;
 }
 class AutoModel extends Model {
 }
 class PersonModel extends AutoModel {
-    age;
     toJson() {
         let x = 'createdAt';
     }

@@ -56,6 +56,7 @@ function flatMap(array, iterable = identity) {
 
 
 //// [jsFileFunctionOverloads2.js]
+"use strict";
 // Also works if all @overload tags are combined in one comment.
 /**
  * @overload
@@ -102,7 +103,7 @@ function flatMap(array, iterable = identity) {
     /** @type {unknown[]} */
     const result = [];
     for (let i = 0; i < array.length; i += 1) {
-        result.push(... /** @type {unknown[]} */iterable(array[i]));
+        result.push(... /** @type {unknown[]} */(iterable(array[i])));
     }
     return result;
 }

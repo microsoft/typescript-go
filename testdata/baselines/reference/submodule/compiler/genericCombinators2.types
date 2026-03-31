@@ -32,10 +32,10 @@ interface Combinators {
 >y : U
 }
 
-var _: Combinators;
+declare var _: Combinators;
 >_ : Combinators
 
-var c2: Collection<number, string>;
+declare var c2: Collection<number, string>;
 >c2 : Collection<number, string>
 
 var rf1 = (x: number, y: string) => { return x.toFixed() };

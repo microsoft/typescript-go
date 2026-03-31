@@ -81,6 +81,18 @@ func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitCo
 		declarationFilePath: declarationFilePath,
 		declarationMapPath:  declarationMapPath,
 	}
+	tx.state.reportExpandoFunctionErrors = func(node *ast.Node) {
+		props := resolver.GetPropertiesOfContainerFunction(node)
+		for _, p := range props {
+			if ast.IsExpandoPropertyDeclaration(p.ValueDeclaration) {
+				errorTarget := p.ValueDeclaration
+				if ast.IsBinaryExpression(errorTarget) {
+					errorTarget = errorTarget.AsBinaryExpression().Left
+				}
+				tx.state.addDiagnostic(createDiagnosticForNode(errorTarget, diagnostics.Assigning_properties_to_functions_without_declaring_them_is_not_supported_with_isolatedDeclarations_Add_an_explicit_declaration_for_the_properties_assigned_to_this_function))
+			}
+		}
+	}
 	tx.NewTransformer(tx.visit, context)
 	return tx
 }
@@ -263,12 +275,24 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements.Loc = statements.Loc // setTextRange
-	if ast.IsExternalOrCommonJSModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
-		marker := createEmptyExports(tx.Factory().AsNodeFactory())
-		newList := append(combinedStatements.Nodes, marker)
-		withMarker := tx.Factory().NewNodeList(newList)
-		withMarker.Loc = combinedStatements.Loc
-		combinedStatements = withMarker
+	if ast.IsExternalOrCommonJSModule(node) {
+		if ast.IsInJSFile(node.AsNode()) {
+			if exportEquals := node.Symbol.Exports[ast.InternalSymbolNameExportEquals]; exportEquals != nil && len(exportEquals.Declarations) > 1 {
+				for _, node := range exportEquals.Declarations {
+					tx.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit))
+				}
+			}
+			for _, node := range node.NestedCJSExports {
+				tx.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit))
+			}
+		}
+		if !tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker) {
+			marker := createEmptyExports(tx.Factory().AsNodeFactory())
+			newList := append(combinedStatements.Nodes, marker)
+			withMarker := tx.Factory().NewNodeList(newList)
+			withMarker.Loc = combinedStatements.Loc
+			combinedStatements = withMarker
+		}
 	}
 	outputFilePath := tspath.GetDirectoryPath(tspath.NormalizeSlashes(tx.declarationFilePath))
 	result := tx.Factory().UpdateSourceFile(node, combinedStatements, node.EndOfFileToken)
@@ -462,13 +486,11 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 				// In isolated declarations TSC needs to error on these as we don't know the type in a DTE.
 				if !tx.resolver.IsDefinitelyReferenceToGlobalSymbolObject(input.Name().Expression()) {
 					if ast.IsClassDeclaration(input.Parent) || ast.IsObjectLiteralExpression(input.Parent) {
-						// !!! TODO: isolatedDeclarations diagnostics
-						// context.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations))
+						tx.state.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations))
 						return nil
 					} else if (ast.IsInterfaceDeclaration(input.Parent) || ast.IsTypeLiteralNode(input.Parent)) && !ast.IsEntityNameExpression(input.Name().Expression()) {
 						// Type declarations just need to double-check that the input computed name is an entity name expression
-						// !!! TODO: isolatedDeclarations diagnostics
-						// context.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_properties_must_be_number_or_string_literals_variables_or_dotted_expressions_with_isolatedDeclarations))
+						tx.state.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_properties_must_be_number_or_string_literals_variables_or_dotted_expressions_with_isolatedDeclarations))
 						return nil
 					}
 				}
@@ -714,6 +736,7 @@ func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.T
 			input.Modifiers(),
 			input.Name(),
 			nil,
+			input.Expression,
 			nil,
 		)
 	}
@@ -996,78 +1019,9 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		)
 	case ast.KindCommonJSExport:
 		if ast.IsSourceFile(input.Parent) {
-			tx.resultHasExternalModuleIndicator = true
+			return tx.transformCommonJSExport(input, input.Name())
 		}
-		tx.resultHasScopeMarker = true
-		name := input.AsCommonJSExport().Name()
-		if ast.IsIdentifier(name) {
-			if name.Text() == "default" {
-				// const _default: Type; export default _default;
-				newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
-					return &SymbolAccessibilityDiagnostic{
-						diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
-						errorNode:         input,
-					}
-				}
-				tx.tracker.PushErrorFallbackNode(input)
-				type_ := tx.ensureType(input, false)
-				varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
-				tx.tracker.PopErrorFallbackNode()
-				var modList *ast.ModifierList
-				if tx.needsDeclare {
-					modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-				} else {
-					modList = tx.Factory().NewModifierList([]*ast.Node{})
-				}
-				statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
-
-				assignment := tx.Factory().NewExportAssignment(input.Modifiers(), false, nil, newId)
-				// Remove comments from the export declaration and copy them onto the synthetic _default declaration
-				tx.preserveJsDoc(statement, input)
-				tx.removeAllComments(assignment)
-				return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
-			} else {
-				// export var name: Type
-				tx.tracker.PushErrorFallbackNode(input)
-				type_ := tx.ensureType(input, false)
-				varDecl := tx.Factory().NewVariableDeclaration(name, nil, type_, nil)
-				tx.tracker.PopErrorFallbackNode()
-				var modList *ast.ModifierList
-				if tx.needsDeclare {
-					modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword), tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-				} else {
-					modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)})
-				}
-				return tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
-			}
-		} else {
-			// const _exported: Type; export {_exported as "name"};
-			newId := tx.Factory().NewUniqueNameEx("_exported", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-			tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
-				return &SymbolAccessibilityDiagnostic{
-					diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
-					errorNode:         input,
-				}
-			}
-			tx.tracker.PushErrorFallbackNode(input)
-			type_ := tx.ensureType(input, false)
-			varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
-			tx.tracker.PopErrorFallbackNode()
-			var modList *ast.ModifierList
-			if tx.needsDeclare {
-				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-			} else {
-				modList = tx.Factory().NewModifierList([]*ast.Node{})
-			}
-			statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
-
-			assignment := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, newId, name)})), nil, nil)
-			// Remove comments from the export declaration and copy them onto the synthetic _default declaration
-			tx.preserveJsDoc(statement, input)
-			tx.removeAllComments(assignment)
-			return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
-		}
+		return nil
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if ast.IsSourceFile(input.Parent) {
 			tx.resultHasExternalModuleIndicator = true
@@ -1108,6 +1062,79 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			tx.lateStatementReplacementMap[id] = tx.transformTopLevelDeclaration(input)
 		}
 		return input
+	}
+}
+
+func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name *ast.Node) *ast.Node {
+	tx.resultHasExternalModuleIndicator = true
+	tx.resultHasScopeMarker = true
+	if ast.IsIdentifier(name) {
+		if name.Text() == "default" {
+			// const _default: Type; export default _default;
+			newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+			tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+				return &SymbolAccessibilityDiagnostic{
+					diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+					errorNode:         input,
+				}
+			}
+			tx.tracker.PushErrorFallbackNode(input)
+			type_ := tx.ensureType(input, false)
+			varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+			tx.tracker.PopErrorFallbackNode()
+			var modList *ast.ModifierList
+			if tx.needsDeclare {
+				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+			} else {
+				modList = tx.Factory().NewModifierList([]*ast.Node{})
+			}
+			statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+
+			assignment := tx.Factory().NewExportAssignment(input.Modifiers(), false, nil, newId)
+			// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+			tx.preserveJsDoc(statement, input)
+			tx.removeAllComments(assignment)
+			return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
+		} else {
+			// export var name: Type
+			tx.tracker.PushErrorFallbackNode(input)
+			type_ := tx.ensureType(input, false)
+			varDecl := tx.Factory().NewVariableDeclaration(name, nil, type_, nil)
+			tx.tracker.PopErrorFallbackNode()
+			var modList *ast.ModifierList
+			if tx.needsDeclare {
+				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword), tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+			} else {
+				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)})
+			}
+			return tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+		}
+	} else {
+		// const _exported: Type; export {_exported as "name"};
+		newId := tx.Factory().NewUniqueNameEx("_exported", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+			return &SymbolAccessibilityDiagnostic{
+				diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+				errorNode:         input,
+			}
+		}
+		tx.tracker.PushErrorFallbackNode(input)
+		type_ := tx.ensureType(input, false)
+		varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+		tx.tracker.PopErrorFallbackNode()
+		var modList *ast.ModifierList
+		if tx.needsDeclare {
+			modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+		} else {
+			modList = tx.Factory().NewModifierList([]*ast.Node{})
+		}
+		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+
+		assignment := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, newId, name)})), nil, nil)
+		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+		tx.preserveJsDoc(statement, input)
+		tx.removeAllComments(assignment)
+		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
 	}
 }
 
@@ -1170,7 +1197,7 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 	}
 	var typeNode *ast.Node
 
-	if hasInferredType(node) {
+	if ast.HasInferredType(node) {
 		typeNode = tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else if ast.IsFunctionLike(node) {
 		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
@@ -1293,6 +1320,9 @@ func (tx *DeclarationTransformer) transformInterfaceDeclaration(input *ast.Inter
 }
 
 func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.FunctionDeclaration) *ast.Node {
+	if tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) && tx.state.isolatedDeclarations {
+		tx.state.reportExpandoFunctionErrors(input.AsNode())
+	}
 	return tx.Factory().UpdateFunctionDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
@@ -1426,7 +1456,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 				parameterProperties = append(parameterProperties, updated)
 			} else {
 				// Pattern - this is currently an error, but we emit declarations for it somewhat correctly
-				// !!! is this worth reimplementing? We never made it not-an-error
+				parameterProperties = append(parameterProperties, tx.walkBindingPattern(param.Name().AsBindingPattern(), param)...)
 			}
 		}
 		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
@@ -1538,6 +1568,27 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	)
 }
 
+func (tx *DeclarationTransformer) walkBindingPattern(pattern *ast.BindingPattern, param *ast.Node) []*ast.Node {
+	var elems []*ast.Node
+	for _, elem := range pattern.Elements.Nodes {
+		if ast.IsOmittedExpression(elem) {
+			continue
+		}
+		if ast.IsBindingPattern(elem.Name()) {
+			elems = append(elems, tx.walkBindingPattern(elem.Name().AsBindingPattern(), param)...)
+			continue
+		}
+		elems = append(elems, tx.Factory().NewPropertyDeclaration(
+			tx.ensureModifiers(param),
+			elem.Name(),
+			nil, /*questionOrExclamationToken*/
+			tx.ensureType(elem, false),
+			nil, /*initializer*/
+		))
+	}
+	return elems
+}
+
 func (tx *DeclarationTransformer) transformVariableStatement(input *ast.VariableStatement) *ast.Node {
 	visible := false
 	for _, decl := range input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
@@ -1579,17 +1630,15 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 				return nil
 			}
 
-			// !!! TODO: isolatedDeclarations support
-			// if (
-			// 	isolatedDeclarations && m.initializer && enumValue?.hasExternalReferences &&
-			// 	// This will be its own compiler error instead, so don't report.
-			// 	!isComputedPropertyName(m.name)
-			// ) {
-			// 	context.addDiagnostic(createDiagnosticForNode(m, Diagnostics.Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations));
-			// }
-
 			// Rewrite enum values to their constants, if available
 			enumValue := tx.resolver.GetEnumMemberValue(m)
+
+			if tx.state.isolatedDeclarations && m.Initializer() != nil && enumValue.HasExternalReferences &&
+				// This will be its own compiler error instead, so don't report.
+				!ast.IsComputedPropertyName(m.Name()) {
+				tx.state.addDiagnostic(createDiagnosticForNode(m, diagnostics.Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations))
+			}
+
 			var newInitializer *ast.Node
 			switch value := enumValue.Value.(type) {
 			case jsnum.Number:
@@ -1723,7 +1772,7 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node {
 	if tx.shouldPrintWithInitializer(node) {
 		unwrappedInitializer := unwrapParenthesizedExpression(node.Initializer())
-		if !isPrimitiveLiteralValue(unwrappedInitializer, true) {
+		if !ast.IsPrimitiveLiteralValue(unwrappedInitializer, true) {
 			tx.tracker.ReportInferenceFallback(node)
 		}
 		return tx.resolver.CreateLiteralConstValue(tx.EmitContext(), tx.EmitContext().ParseNode(node), tx.tracker)
@@ -1876,10 +1925,9 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 	}
 	// Augmentation of export depends on import
 	if tx.resolver.IsImportRequiredByAugmentation(decl) {
-		// IsolatedDeclarations support
-		// if (isolatedDeclarations) {
-		// 	context.addDiagnostic(createDiagnosticForNode(decl, Diagnostics.Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_supported_with_isolatedDeclarations));
-		// }
+		if tx.state.isolatedDeclarations {
+			tx.state.addDiagnostic(createDiagnosticForNode(decl.AsNode(), diagnostics.Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_supported_with_isolatedDeclarations))
+		}
 		return tx.Factory().UpdateImportDeclaration(
 			decl,
 			decl.Modifiers(),
@@ -1954,12 +2002,14 @@ func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.ExpressionS
 	if expression == nil {
 		return nil
 	}
-
-	if expression.Kind == ast.KindBinaryExpression &&
-		ast.GetAssignmentDeclarationKind(expression.AsBinaryExpression()) == ast.JSDeclarationKindProperty {
+	switch ast.GetAssignmentDeclarationKind(expression) {
+	case ast.JSDeclarationKindProperty:
 		return tx.transformExpandoAssignment(expression.AsBinaryExpression())
+	case ast.JSDeclarationKindObjectDefinePropertyExports:
+		if ast.IsSourceFile(node.Parent) {
+			return tx.transformCommonJSExport(expression, expression.Arguments()[1])
+		}
 	}
-
 	return nil
 }
 
@@ -1978,6 +2028,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 
 	declaration := tx.resolver.GetReferencedValueDeclaration(ns)
 	if declaration == nil {
+		return nil
+	}
+
+	if ast.IsVariableDeclaration(declaration) && declaration.Type() != nil {
 		return nil
 	}
 

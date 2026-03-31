@@ -62,14 +62,8 @@ func (p *PackageId) PackageName() string {
 	return p.Name
 }
 
-type LookupLocations struct {
-	FailedLookupLocations []string
-	AffectingLocations    []string
-	ResolutionDiagnostics []*ast.Diagnostic
-}
-
 type ResolvedModule struct {
-	LookupLocations
+	ResolutionDiagnostics    []*ast.Diagnostic
 	ResolvedFileName         string
 	OriginalPath             string
 	Extension                string
@@ -83,12 +77,8 @@ func (r *ResolvedModule) IsResolved() bool {
 	return r != nil && r.ResolvedFileName != ""
 }
 
-func (r *ResolvedModule) GetLookupLocations() *LookupLocations {
-	return &r.LookupLocations
-}
-
 type ResolvedTypeReferenceDirective struct {
-	LookupLocations
+	ResolutionDiagnostics   []*ast.Diagnostic
 	Primary                 bool
 	ResolvedFileName        string
 	OriginalPath            string
@@ -98,10 +88,6 @@ type ResolvedTypeReferenceDirective struct {
 
 func (r *ResolvedTypeReferenceDirective) IsResolved() bool {
 	return r.ResolvedFileName != ""
-}
-
-func (r *ResolvedTypeReferenceDirective) GetLookupLocations() *LookupLocations {
-	return &r.LookupLocations
 }
 
 type extensions int32
@@ -135,13 +121,13 @@ func (e extensions) String() string {
 func (e extensions) Array() []string {
 	result := []string{}
 	if e&extensionsTypeScript != 0 {
-		result = append(result, tspath.ExtensionTs, tspath.ExtensionTsx)
+		result = append(result, tspath.SupportedTSImplementationExtensions...)
 	}
 	if e&extensionsJavaScript != 0 {
-		result = append(result, tspath.ExtensionJs, tspath.ExtensionJsx)
+		result = append(result, tspath.SupportedJSExtensionsFlat...)
 	}
 	if e&extensionsDeclaration != 0 {
-		result = append(result, tspath.ExtensionDts)
+		result = append(result, tspath.SupportedDeclarationExtensions...)
 	}
 	if e&extensionsJson != 0 {
 		result = append(result, tspath.ExtensionJson)

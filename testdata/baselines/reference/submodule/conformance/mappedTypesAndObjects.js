@@ -46,6 +46,7 @@ class Form<T> {
 
 
 //// [mappedTypesAndObjects.js]
+"use strict";
 function f1(x, y) {
     let obj;
     obj = x;
@@ -62,7 +63,9 @@ function f3(x) {
 ;
 // Repro from #13747
 class Form {
-    values = {};
+    constructor() {
+        this.values = {};
+    }
 }
 
 

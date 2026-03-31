@@ -3,10 +3,11 @@ package tsctests
 import (
 	"fmt"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
+	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -49,13 +50,13 @@ func (f *testFs) readFileHandlingBuildInfo(path string) (contents string, ok boo
 	return contents, ok
 }
 
-func (f *testFs) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (f *testFs) WriteFile(path string, data string) error {
 	f.removeIgnoreLibPath(path)
 	f.writtenFiles.Add(path)
-	return f.writeFileHandlingBuildInfo(path, data, writeByteOrderMark)
+	return f.writeFileHandlingBuildInfo(path, data)
 }
 
-func (f *testFs) writeFileHandlingBuildInfo(path string, data string, writeByteOrderMark bool) error {
+func (f *testFs) writeFileHandlingBuildInfo(path string, data string) error {
 	if tspath.FileExtensionIs(path, tspath.ExtensionTsBuildInfo) {
 		var buildInfo incremental.BuildInfo
 		if err := json.Unmarshal([]byte(data), &buildInfo); err == nil {
@@ -69,14 +70,17 @@ func (f *testFs) writeFileHandlingBuildInfo(path string, data string, writeByteO
 				data = string(newData)
 			}
 			// Write readable build info version
-			if err := f.WriteFile(path+".readable.baseline.txt", toReadableBuildInfo(&buildInfo, data), false); err != nil {
+			if err := f.WriteFile(
+				path+".readable.baseline.txt",
+				toReadableBuildInfo(&buildInfo, fsbaselineutil.SanitizeInternalSymbolName(data)),
+			); err != nil {
 				return fmt.Errorf("testFs.WriteFile: failed to write readable build info: %w", err)
 			}
 		} else {
 			panic("testFs.WriteFile: failed to unmarshal build info: - use underlying FS's write method if this is intended use for testcase" + err.Error())
 		}
 	}
-	return f.FS.WriteFile(path, data, writeByteOrderMark)
+	return f.FS.WriteFile(path, data)
 }
 
 // Removes `path` and all its contents. Will return the first error it encounters.

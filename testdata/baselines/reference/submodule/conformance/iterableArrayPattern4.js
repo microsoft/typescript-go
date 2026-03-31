@@ -20,11 +20,10 @@ var a: Bar, b: Bar[];
 [a, ...b] = new FooIterator
 
 //// [iterableArrayPattern4.js]
+"use strict";
 class Bar {
-    x;
 }
 class Foo extends Bar {
-    y;
 }
 class FooIterator {
     next() {

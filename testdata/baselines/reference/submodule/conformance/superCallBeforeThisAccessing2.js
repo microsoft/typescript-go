@@ -13,11 +13,11 @@ class D extends Base {
 
 
 //// [superCallBeforeThisAccessing2.js]
+"use strict";
 class Base {
     constructor(c) { }
 }
 class D extends Base {
-    _t;
     constructor() {
         super(() => { this._t; }); // no error. only check when this is directly accessing in constructor
     }

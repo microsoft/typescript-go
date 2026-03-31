@@ -11,8 +11,8 @@ class MyStringIterator {
 for (var v of new MyStringIterator) { }
 
 //// [for-of28.js]
+"use strict";
 class MyStringIterator {
-    next;
     [Symbol.iterator]() {
         return this;
     }

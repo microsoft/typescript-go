@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"context"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -24,6 +25,16 @@ type ImportExportSymbol struct {
 	symbol     *ast.Symbol
 	exportInfo *ExportInfo
 }
+
+type ExportKind int
+
+const (
+	ExportKindNamed        ExportKind = 0
+	ExportKindDefault      ExportKind = 1
+	ExportKindExportEquals ExportKind = 2
+	ExportKindUMD          ExportKind = 3
+	ExportKindModule       ExportKind = 4
+)
 
 type ExportInfo struct {
 	exportingModuleSymbol *ast.Symbol
@@ -60,8 +71,8 @@ type ModuleReference struct {
 }
 
 // Creates the imports map and returns an ImportTracker that uses it. Call this lazily to avoid calling `getDirectImportsMap` unnecessarily.
-func createImportTracker(sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string], checker *checker.Checker) ImportTracker {
-	allDirectImports := getDirectImportsMap(sourceFiles, checker)
+func createImportTracker(ctx context.Context, program *compiler.Program, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string], checker *checker.Checker) ImportTracker {
+	allDirectImports := getDirectImportsMap(ctx, program, sourceFiles, checker)
 	return func(exportSymbol *ast.Symbol, exportInfo *ExportInfo, isForRename bool) *ImportsResult {
 		directImports, indirectUsers := getImportersForExport(sourceFiles, sourceFilesSet, allDirectImports, exportInfo, checker)
 		importSearches, singleReferences := getSearchesFromDirectImports(directImports, exportSymbol, exportInfo.exportKind, checker, isForRename)
@@ -70,11 +81,13 @@ func createImportTracker(sourceFiles []*ast.SourceFile, sourceFilesSet *collecti
 }
 
 // Returns a map from a module symbol to all import statements that directly reference the module
-func getDirectImportsMap(sourceFiles []*ast.SourceFile, checker *checker.Checker) map[*ast.Symbol][]*ast.Node {
+func getDirectImportsMap(ctx context.Context, program *compiler.Program, sourceFiles []*ast.SourceFile, checker *checker.Checker) map[*ast.Symbol][]*ast.Node {
 	result := make(map[*ast.Symbol][]*ast.Node)
 	for _, sourceFile := range sourceFiles {
-		// !!! cancellation
-		forEachImport(sourceFile, func(importDecl *ast.Node, moduleSpecifier *ast.Node) {
+		if ctx.Err() != nil {
+			return result
+		}
+		forEachImport(program, sourceFile, func(importDecl *ast.Node, moduleSpecifier *ast.Node) {
 			if moduleSymbol := checker.GetSymbolAtLocation(moduleSpecifier); moduleSymbol != nil {
 				result[moduleSymbol] = append(result[moduleSymbol], importDecl)
 			}
@@ -84,10 +97,22 @@ func getDirectImportsMap(sourceFiles []*ast.SourceFile, checker *checker.Checker
 }
 
 // Calls `action` for each import, re-export, or require() in a file
-func forEachImport(sourceFile *ast.SourceFile, action func(importStatement *ast.Node, imported *ast.Node)) {
-	if sourceFile.ExternalModuleIndicator != nil || len(sourceFile.Imports()) != 0 {
+func forEachImport(program *compiler.Program, sourceFile *ast.SourceFile, action func(importStatement *ast.Node, imported *ast.Node)) {
+	var implicitImports []*ast.LiteralLikeNode
+	_, jsxSpecifier := program.GetJSXRuntimeImportSpecifier(sourceFile.Path())
+	if jsxSpecifier != nil {
+		implicitImports = append(implicitImports, jsxSpecifier)
+	}
+	importHelpersSpecifier := program.GetImportHelpersImportSpecifier(sourceFile.Path())
+	if importHelpersSpecifier != nil {
+		implicitImports = append(implicitImports, importHelpersSpecifier)
+	}
+	if sourceFile.ExternalModuleIndicator != nil || len(sourceFile.Imports())+len(implicitImports) != 0 {
 		for _, i := range sourceFile.Imports() {
-			action(importFromModuleSpecifier(i), i)
+			action(ast.ImportFromModuleSpecifier(i), i)
+		}
+		for _, i := range implicitImports {
+			action(ast.ImportFromModuleSpecifier(i), i)
 		}
 	} else {
 		forEachPossibleImportOrExportStatement(sourceFile.AsNode(), func(node *ast.Node) bool {
@@ -152,7 +177,7 @@ func getImportersForExport(
 	var indirectUserDeclarations []*ast.Node
 	markSeenDirectImport := nodeSeenTracker()
 	markSeenIndirectUser := nodeSeenTracker()
-	isAvailableThroughGlobal := exportInfo.exportingModuleSymbol.GlobalExports != nil
+	isAvailableThroughGlobal := isSourceFileWithGlobalExports(exportInfo.exportingModuleSymbol.ValueDeclaration)
 
 	getDirectImports := func(moduleSymbol *ast.Symbol) []*ast.Node {
 		return allDirectImports[moduleSymbol]
@@ -161,7 +186,11 @@ func getImportersForExport(
 	// Adds a module and all of its transitive dependencies as possible indirect users
 	var addIndirectUser func(*ast.Node, bool)
 	addIndirectUser = func(sourceFileLike *ast.Node, addTransitiveDependencies bool) {
-		debug.Assert(!isAvailableThroughGlobal)
+		// When isAvailableThroughGlobal, getIndirectUsers already returns all source files,
+		// so indirectUserDeclarations is never consulted. Nothing to do here.
+		if isAvailableThroughGlobal {
+			return
+		}
 		if !markSeenIndirectUser(sourceFileLike) {
 			return
 		}
@@ -469,7 +498,7 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 
 		getSpecialPropertyExport := func(node *ast.Node, useLhsSymbol bool) *ImportExportSymbol {
 			var kind ExportKind
-			switch ast.GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			switch ast.GetAssignmentDeclarationKind(node) {
 			case ast.JSDeclarationKindExportsProperty:
 				kind = ExportKindNamed
 			case ast.JSDeclarationKindModuleExports:
@@ -536,8 +565,14 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		if !isNodeImport(node) {
 			return nil
 		}
-		// A symbol being imported is always an alias. So get what that aliases to find the local symbol.
-		importedSymbol := checker.GetImmediateAliasedSymbol(symbol)
+		// JS destructuring from `require(...)` is import-like for references, but the binding element
+		// itself is still a local variable symbol rather than an alias.
+		var importedSymbol *ast.Symbol
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			importedSymbol = checker.GetImmediateAliasedSymbol(symbol)
+		} else {
+			importedSymbol = getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol, checker)
+		}
 		if importedSymbol == nil {
 			return nil
 		}
@@ -616,7 +651,7 @@ func isNodeImport(node *ast.Node) bool {
 		debug.Assert(parent.Name() == node)
 		return true
 	case ast.KindBindingElement:
-		return ast.IsInJSFile(node) && ast.IsVariableDeclarationInitializedToRequire(parent.Parent.Parent)
+		return ast.IsInJSFile(node) && ast.IsVariableDeclarationInitializedToBareOrAccessedRequire(parent.Parent.Parent)
 	}
 	return false
 }
@@ -636,7 +671,7 @@ func skipExportSpecifierSymbol(symbol *ast.Symbol, checker *checker.Checker) *as
 		case ast.IsPropertyAccessExpression(declaration) && ast.IsModuleExportsAccessExpression(declaration.Expression()) && !ast.IsPrivateIdentifier(declaration.Name()):
 			// Export of form 'module.exports.propName = expr';
 			return checker.GetSymbolAtLocation(declaration)
-		case ast.IsShorthandPropertyAssignment(declaration) && ast.IsBinaryExpression(declaration.Parent.Parent) && ast.GetAssignmentDeclarationKind(declaration.Parent.Parent.AsBinaryExpression()) == ast.JSDeclarationKindModuleExports:
+		case ast.IsShorthandPropertyAssignment(declaration) && ast.IsBinaryExpression(declaration.Parent.Parent) && ast.GetAssignmentDeclarationKind(declaration.Parent.Parent) == ast.JSDeclarationKindModuleExports:
 			return checker.GetExportSpecifierLocalTargetSymbol(declaration.Name())
 		}
 	}
@@ -647,7 +682,8 @@ func getExportEqualsLocalSymbol(importedSymbol *ast.Symbol, checker *checker.Che
 	if importedSymbol.Flags&ast.SymbolFlagsAlias != 0 {
 		return checker.GetImmediateAliasedSymbol(importedSymbol)
 	}
-	decl := debug.CheckDefined(importedSymbol.ValueDeclaration)
+	decl := importedSymbol.ValueDeclaration
+	debug.Assert(decl != nil)
 	switch {
 	case ast.IsExportAssignment(decl):
 		return decl.Expression().Symbol()
@@ -705,7 +741,7 @@ func findModuleReferences(program *compiler.Program, sourceFiles []*ast.SourceFi
 		}
 
 		// Check all imports (including require() calls)
-		forEachImport(referencingFile, func(importDecl *ast.Node, moduleSpecifier *ast.Node) {
+		forEachImport(program, referencingFile, func(importDecl *ast.Node, moduleSpecifier *ast.Node) {
 			moduleSymbol := checker.GetSymbolAtLocation(moduleSpecifier)
 			if moduleSymbol == searchModuleSymbol {
 				if ast.NodeIsSynthesized(importDecl) {

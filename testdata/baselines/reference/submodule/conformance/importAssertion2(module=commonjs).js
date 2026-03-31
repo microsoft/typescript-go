@@ -5,14 +5,14 @@ export const a = 1;
 export const b = 2;
 
 //// [1.ts]
-export {} from './0' assert { type: "json" }
-export { a, b } from './0' assert { type: "json" }
-export * from './0' assert { type: "json" }
-export * as ns from './0' assert { type: "json" }
+export {} from './0' with { type: "json" }
+export { a, b } from './0' with { type: "json" }
+export * from './0' with { type: "json" }
+export * as ns from './0' with { type: "json" }
 
 //// [2.ts]
-export { a, b } from './0' assert {}
-export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" }
+export { a, b } from './0' with {}
+export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" }
 
 
 //// [0.js]
@@ -61,7 +61,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ns = exports.b = exports.a = void 0;
-const _0_1 = require("./0");
+var _0_1 = require("./0");
 Object.defineProperty(exports, "a", { enumerable: true, get: function () { return _0_1.a; } });
 Object.defineProperty(exports, "b", { enumerable: true, get: function () { return _0_1.b; } });
 __exportStar(require("./0"), exports);
@@ -70,10 +70,10 @@ exports.ns = __importStar(require("./0"));
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.d = exports.c = exports.b = exports.a = void 0;
-const _0_1 = require("./0");
+var _0_1 = require("./0");
 Object.defineProperty(exports, "a", { enumerable: true, get: function () { return _0_1.a; } });
 Object.defineProperty(exports, "b", { enumerable: true, get: function () { return _0_1.b; } });
-const _0_2 = require("./0");
+var _0_2 = require("./0");
 Object.defineProperty(exports, "c", { enumerable: true, get: function () { return _0_2.a; } });
 Object.defineProperty(exports, "d", { enumerable: true, get: function () { return _0_2.b; } });
 

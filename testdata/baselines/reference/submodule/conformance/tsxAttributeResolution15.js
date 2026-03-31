@@ -1,6 +1,8 @@
 //// [tests/cases/conformance/jsx/tsxAttributeResolution15.tsx] ////
 
 //// [file.tsx]
+/// <reference path="/.lib/react.d.ts" />
+
 import React = require('react');
 
 class BigGreeter extends React.Component<{ }, {}> {
@@ -19,13 +21,13 @@ let c = <BigGreeter data-extra="hi" />
 
 //// [file.jsx]
 "use strict";
+/// <reference path="/.lib/react.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 class BigGreeter extends React.Component {
     render() {
         return <div>Default hi</div>;
     }
-    greeting;
 }
 // Error
 let a = <BigGreeter prop1="hello"/>;

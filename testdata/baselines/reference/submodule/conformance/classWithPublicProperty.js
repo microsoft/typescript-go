@@ -24,16 +24,17 @@ var r7: string = C.f();
 var r8: string = C.g();
 
 //// [classWithPublicProperty.js]
+"use strict";
 class C {
-    x;
-    a = '';
-    b = '';
+    constructor() {
+        this.a = '';
+        this.b = '';
+        this.d = () => '';
+    }
     c() { return ''; }
-    d = () => '';
-    static e;
     static f() { return ''; }
-    static g = () => '';
 }
+C.g = () => '';
 // all of these are valid
 var c = new C();
 var r1 = c.x;

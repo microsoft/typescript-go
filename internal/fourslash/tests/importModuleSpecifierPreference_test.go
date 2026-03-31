@@ -24,9 +24,7 @@ helper/**/`
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{
-			ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceShortest,
-		},
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceShortest,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -53,9 +51,7 @@ helper/**/`
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{
-			ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative,
-		},
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -82,9 +78,7 @@ helper/**/`
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{
-			ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
-		},
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceRelative,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -120,9 +114,7 @@ helper/**/`
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{
-			ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceNonRelative,
-		},
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceNonRelative,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

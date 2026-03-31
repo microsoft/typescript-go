@@ -6,24 +6,29 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 var DefaultUserPreferences = &UserPreferences{
+	FormatCodeSettings: GetDefaultFormatCodeSettings(),
+
 	IncludeCompletionsForModuleExports:    core.TSTrue,
 	IncludeCompletionsForImportStatements: core.TSTrue,
 
 	AllowRenameOfImportPath:            core.TSTrue,
 	ProvideRefactorNotApplicableReason: true,
-	IncludeCompletionsWithSnippetText:  core.TSTrue,
 	DisplayPartsForJSDoc:               true,
 	DisableLineTextInReferences:        true,
 	ReportStyleChecksAsWarnings:        true,
 
 	ExcludeLibrarySymbolsInNavTo: true,
+}
+
+func NewDefaultUserPreferences() *UserPreferences {
+	return DefaultUserPreferences.Copy()
 }
 
 // UserPreferences represents TypeScript language service preferences.
@@ -35,6 +40,8 @@ var DefaultUserPreferences = &UserPreferences{
 // At least one tag must be present on each preference field.
 // The `,invert` modifier inverts boolean values (e.g., VS Code's "suppress" -> our "include").
 type UserPreferences struct {
+	FormatCodeSettings *FormatCodeSettings
+
 	QuotePreference                           QuotePreference `raw:"quotePreference" config:"preferences.quoteStyle"`
 	LazyConfiguredProjectsFromExternalProject bool            `raw:"lazyConfiguredProjectsFromExternalProject"` // !!!
 
@@ -55,8 +62,6 @@ type UserPreferences struct {
 	// on potentially-null and potentially-undefined values, with insertion text to replace
 	// preceding `.` tokens with `?.`.
 	IncludeAutomaticOptionalChainCompletions core.Tristate `raw:"includeAutomaticOptionalChainCompletions" config:"suggest.includeAutomaticOptionalChainCompletions"`
-	// Allows completions to be formatted with snippet text, indicated by `CompletionItem["isSnippet"]`.
-	IncludeCompletionsWithSnippetText core.Tristate `raw:"includeCompletionsWithSnippetText"` // !!!
 	// If enabled, completions for class members (e.g. methods and properties) will include
 	// a whole declaration for the member.
 	// E.g., `class A { f| }` could be completed to `class A { foo(): number {} }`, instead of
@@ -71,11 +76,13 @@ type UserPreferences struct {
 
 	// ------- AutoImports --------
 
-	ModuleSpecifier ModuleSpecifierUserPreferences
-
-	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `raw:"includePackageJsonAutoImports" config:"preferences.includePackageJsonAutoImports"`
-	AutoImportFileExcludePatterns []string                      `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
-	PreferTypeOnlyAutoImports     core.Tristate                 `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
+	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `raw:"importModuleSpecifierPreference" config:"preferences.importModuleSpecifier"` // !!!
+	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
+	AutoImportSpecifierExcludeRegexes []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
+	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          `raw:"includePackageJsonAutoImports" config:"preferences.includePackageJsonAutoImports"`
+	AutoImportFileExcludePatterns     []string                                               `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
+	PreferTypeOnlyAutoImports         core.Tristate                                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
 
 	// ------- OrganizeImports -------
 
@@ -115,7 +122,7 @@ type UserPreferences struct {
 	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
 	// specified in organizeImportsCollationLocale is used.
 	//
-	// This preference is ignored if:
+	// This permission is ignored if:
 	//	- organizeImportsCollation is not `unicode`
 	//	- organizeImportsIgnoreCase is `true`
 	//	- organizeImportsIgnoreCase is `auto` and the auto-detected case sensitivity is case-insensitive.
@@ -158,6 +165,11 @@ type UserPreferences struct {
 	DisableLineTextInReferences bool `raw:"disableLineTextInReferences"` // !!!
 	DisplayPartsForJSDoc        bool `raw:"displayPartsForJSDoc"`        // !!!
 	ReportStyleChecksAsWarnings bool `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
+
+	// ------- Project Configuration -------
+
+	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
+	CustomConfigFileName string `raw:"customConfigFileName" config:"native-preview.customConfigFileName"`
 }
 
 type InlayHintsPreferences struct {
@@ -177,13 +189,6 @@ type CodeLensUserPreferences struct {
 	ReferencesCodeLensShowOnAllFunctions          bool `raw:"referencesCodeLensShowOnAllFunctions" config:"referencesCodeLens.showOnAllFunctions"`
 	ImplementationsCodeLensShowOnInterfaceMethods bool `raw:"implementationsCodeLensShowOnInterfaceMethods" config:"implementationsCodeLens.showOnInterfaceMethods"`
 	ImplementationsCodeLensShowOnAllClassMethods  bool `raw:"implementationsCodeLensShowOnAllClassMethods" config:"implementationsCodeLens.showOnAllClassMethods"`
-}
-
-type ModuleSpecifierUserPreferences struct {
-	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `raw:"importModuleSpecifierPreference" config:"preferences.importModuleSpecifier"` // !!!
-	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
-	AutoImportSpecifierExcludeRegexes []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
 }
 
 // --- Enum Types ---
@@ -448,7 +453,11 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 				infos = append(infos, collectFieldInfos(field.Type, currentPath)...)
 				continue
 			}
-			panic("raw or vscode tag required for field " + field.Name)
+			// Skip non-tagged pointer fields (like FormatCodeSettings)
+			if field.Type.Kind() == reflect.Pointer {
+				continue
+			}
+			panic("raw or config tag required for field " + field.Name)
 		}
 
 		info := fieldInfo{
@@ -512,7 +521,7 @@ func setNestedValue(config map[string]any, path string, value any) {
 	current[parts[len(parts)-1]] = value
 }
 
-func (p *UserPreferences) parseWorker(config map[string]any) {
+func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 	v := reflect.ValueOf(p).Elem()
 	infos := fieldInfoCache()
 
@@ -535,6 +544,14 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 		}
 	}
 
+	// Handle format code settings from the "format" section
+	if formatSection, ok := config["format"]; ok {
+		if p.FormatCodeSettings == nil {
+			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
+		}
+		p.FormatCodeSettings.Parse(formatSection)
+	}
+
 	// Process path-based config (VS Code style nested paths).
 	// These run after unstable, so stable config values take precedence.
 	for _, info := range infos {
@@ -554,6 +571,18 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 		}
 		setFieldFromValue(field, val)
 	}
+
+	// Validate CustomConfigFileName for path traversal
+	if p.CustomConfigFileName != "" {
+		name := strings.TrimSpace(p.CustomConfigFileName)
+		if strings.ContainsAny(name, "/\\") || name == ".." || name == "." {
+			p.CustomConfigFileName = ""
+		} else {
+			p.CustomConfigFileName = name
+		}
+	}
+
+	return p
 }
 
 func getFieldByPath(v reflect.Value, path []int) reflect.Value {
@@ -603,7 +632,7 @@ func setFieldFromValue(field reflect.Value, val any) {
 	}
 }
 
-func (p *UserPreferences) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (p *UserPreferences) MarshalJSONTo(enc *json.Encoder) error {
 	config := make(map[string]any)
 	v := reflect.ValueOf(p).Elem()
 
@@ -663,18 +692,35 @@ func serializeField(field reflect.Value) any {
 	}
 }
 
-func (p *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 	var config map[string]any
 	if err := json.UnmarshalDecode(dec, &config); err != nil {
 		return err
 	}
 	// Start with defaults, then overlay parsed values
 	*p = *DefaultUserPreferences.Copy()
-	p.parseWorker(config)
+	p.ParseWorker(config)
 	return nil
 }
 
 // --- Helper methods ---
+
+func parseBoolWithDefault(val any, defaultV bool) bool {
+	if v, ok := val.(bool); ok {
+		return v
+	}
+	return defaultV
+}
+
+func parseIntWithDefault(val any, defaultV int) int {
+	switch v := val.(type) {
+	case int:
+		return v
+	case float64:
+		return int(v)
+	}
+	return defaultV
+}
 
 func deepCopy[T any](src T) T {
 	var dst T
@@ -725,8 +771,27 @@ func (p *UserPreferences) Copy() *UserPreferences {
 	return deepCopy(p)
 }
 
+func (p *UserPreferences) OrDefault() *UserPreferences {
+	if p == nil {
+		return NewDefaultUserPreferences()
+	}
+	return p
+}
+
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
-	return modulespecifiers.UserPreferences(p.ModuleSpecifier)
+	return modulespecifiers.UserPreferences{
+		ImportModuleSpecifierPreference:   p.ImportModuleSpecifierPreference,
+		ImportModuleSpecifierEnding:       p.ImportModuleSpecifierEnding,
+		AutoImportSpecifierExcludeRegexes: p.AutoImportSpecifierExcludeRegexes,
+	}
+}
+
+func (p *UserPreferences) ParsedAutoImportFileExcludePatterns(useCaseSensitiveFileNames bool) *vfsmatch.SpecMatcher {
+	return vfsmatch.NewSpecMatcher(p.AutoImportFileExcludePatterns, "", vfsmatch.UsageExclude, useCaseSensitiveFileNames)
+}
+
+func (p *UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool {
+	return modulespecifiers.IsExcludedByRegex(moduleSpecifier, p.AutoImportSpecifierExcludeRegexes)
 }
 
 // ParseUserPreferences parses user preferences from a config map or returns existing preferences.
@@ -739,7 +804,7 @@ func ParseUserPreferences(item any) *UserPreferences {
 	}
 	if config, ok := item.(map[string]any); ok {
 		p := DefaultUserPreferences.Copy()
-		p.parseWorker(config)
+		p.ParseWorker(config)
 		return p
 	}
 	if prefs, ok := item.(*UserPreferences); ok {

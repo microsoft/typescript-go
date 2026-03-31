@@ -7,9 +7,9 @@ import (
 )
 
 type NodeBuilder struct {
-	ctxStack  []*NodeBuilderContext
-	basicHost Host
-	impl      *NodeBuilderImpl
+	ctxStack []*NodeBuilderContext
+	host     Host
+	impl     *NodeBuilderImpl
 }
 
 // EmitContext implements NodeBuilderInterface.
@@ -20,6 +20,7 @@ func (b *NodeBuilder) EmitContext() *printer.EmitContext {
 func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) {
 	b.ctxStack = append(b.ctxStack, b.impl.ctx)
 	b.impl.ctx = &NodeBuilderContext{
+		host:                     b.host,
 		tracker:                  tracker,
 		flags:                    flags,
 		internalFlags:            internalFlags,
@@ -32,14 +33,7 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 		enclosingSymbolTypes:     make(map[ast.SymbolId]*Type),
 		remappedSymbolReferences: make(map[ast.SymbolId]*ast.Symbol),
 	}
-	// TODO: always provide this; see https://github.com/microsoft/typescript-go/pull/1588#pullrequestreview-3125218673
-	var moduleResolverHost Host
-	if tracker != nil {
-		moduleResolverHost = tracker.GetModuleSpecifierGenerationHost()
-	} else if internalFlags&nodebuilder.InternalFlagsDoNotIncludeSymbolChain != 0 {
-		moduleResolverHost = b.basicHost
-	}
-	tracker = NewSymbolTrackerImpl(b.impl.ctx, tracker, moduleResolverHost)
+	tracker = NewSymbolTrackerImpl(b.impl.ctx, tracker)
 	b.impl.ctx.tracker = tracker
 }
 
@@ -87,12 +81,7 @@ func (b *NodeBuilder) IndexInfoToIndexSignatureDeclaration(info *IndexInfo, encl
 func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	signature := b.impl.ch.getSignatureFromDeclaration(signatureDeclaration)
-	symbol := b.impl.ch.getSymbolOfDeclaration(signatureDeclaration)
-	returnType, ok := b.impl.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
-	if !ok || returnType == nil {
-		returnType = b.impl.ch.instantiateType(b.impl.ch.getReturnTypeOfSignature(signature), b.impl.ctx.mapper)
-	}
-	return b.exitContext(b.impl.serializeInferredReturnTypeForSignature(signature, returnType))
+	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature, true))
 }
 
 func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
@@ -105,7 +94,7 @@ func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *
 // SerializeTypeForDeclaration implements NodeBuilderInterface.
 func (b *NodeBuilder) SerializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
-	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol))
+	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol, true))
 }
 
 // SerializeTypeForExpression implements NodeBuilderInterface.
@@ -177,10 +166,19 @@ func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, 
 // var _ NodeBuilderInterface = NewNodeBuilderAPI(nil, nil)
 
 func NewNodeBuilder(ch *Checker, e *printer.EmitContext) *NodeBuilder {
-	impl := newNodeBuilderImpl(ch, e)
-	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), basicHost: ch.program}
+	return NewNodeBuilderEx(ch, e, nil /*idToSymbol*/)
+}
+
+func NewNodeBuilderEx(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *NodeBuilder {
+	impl := newNodeBuilderImpl(ch, e, idToSymbol)
+	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
 }
 
 func (c *Checker) getNodeBuilder() *NodeBuilder {
-	return NewNodeBuilder(c, printer.NewEmitContext())
+	return c.getNodeBuilderEx(nil /*idToSymbol*/)
+}
+
+func (c *Checker) getNodeBuilderEx(idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *NodeBuilder {
+	b := NewNodeBuilderEx(c, printer.NewEmitContext(), idToSymbol)
+	return b
 }

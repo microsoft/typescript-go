@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 const (
@@ -100,7 +101,7 @@ func (p *ParsedCommandLine) ParseInputOutputNames() {
 		sourceToOutput := map[tspath.Path]*SourceOutputAndProjectReference{}
 		outputDtsToSource := map[tspath.Path]*SourceOutputAndProjectReference{}
 
-		for outputDts, source := range p.GetOutputDeclarationAndSourceFileNames() {
+		for outputDts, source := range p.getOutputDeclarationAndSourceFileNames() {
 			path := tspath.ToPath(source, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 			projectReference := &SourceOutputAndProjectReference{
 				Source:    source,
@@ -144,7 +145,7 @@ func (p *ParsedCommandLine) UseCaseSensitiveFileNames() bool {
 	return p.comparePathsOptions.UseCaseSensitiveFileNames
 }
 
-func (p *ParsedCommandLine) GetOutputDeclarationAndSourceFileNames() iter.Seq2[string, string] {
+func (p *ParsedCommandLine) getOutputDeclarationAndSourceFileNames() iter.Seq2[string, string] {
 	return func(yield func(dtsName string, inputName string) bool) {
 		for _, fileName := range p.ParsedConfig.FileNames {
 			var outputDts string
@@ -326,7 +327,7 @@ func (p *ParsedCommandLine) PossiblyMatchesFileName(fileName string) bool {
 	}
 
 	for _, include := range p.ConfigFile.configFileSpecs.validatedIncludeSpecs {
-		if !strings.ContainsAny(include, "*?") && !vfs.IsImplicitGlob(include) {
+		if !strings.ContainsAny(include, "*?") && !vfsmatch.IsImplicitGlob(include) {
 			includePath := tspath.ToPath(include, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 			if includePath == path {
 				return true
@@ -336,6 +337,22 @@ func (p *ParsedCommandLine) PossiblyMatchesFileName(fileName string) bool {
 	if wildcardDirectoryGlobs := p.WildcardDirectoryGlobs(); len(wildcardDirectoryGlobs) > 0 {
 		for _, glob := range wildcardDirectoryGlobs {
 			if glob.Match(fileName) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (p *ParsedCommandLine) PossiblyMatchesDirectoryName(directoryPath tspath.Path) bool {
+	for wildcardDir, recursive := range p.WildcardDirectories() {
+		wildcardDirPath := tspath.ToPath(wildcardDir, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		if recursive {
+			if wildcardDirPath.ContainsPath(directoryPath) {
+				return true
+			}
+		} else {
+			if wildcardDirPath == directoryPath {
 				return true
 			}
 		}

@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/thisBinding.ts] ////
 
 //// [thisBinding.ts]
-module M {
+namespace M {
     export interface I {
 	z;
     }
@@ -24,15 +24,16 @@ class C {
 }
 
 //// [thisBinding.js]
+"use strict";
 var M;
 (function (M) {
     class C {
-        x = 0;
         f(x) {
             x.e; // e not found
             x.z; // ok 
         }
         constructor() {
+            this.x = 0;
             ({ z: 10, f: this.f }).f(({}));
         }
     }

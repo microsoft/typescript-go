@@ -10,12 +10,15 @@ class Foo {
 
 
 //// [declarationEmitPrivateReadonlyLiterals.js]
+"use strict";
 class Foo {
-    static A = "a";
-    B = "b";
-    static C = 42;
-    D = 42;
+    constructor() {
+        this.B = "b";
+        this.D = 42;
+    }
 }
+Foo.A = "a";
+Foo.C = 42;
 
 
 //// [declarationEmitPrivateReadonlyLiterals.d.ts]

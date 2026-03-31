@@ -4,22 +4,17 @@
     "version": "1.0.0",
     "description": "TypeScript AST definitions",
     "type": "module",
+    "engines": {
+        "node": ">=20.19"
+    },
     "imports": {
-        "#syntaxKind": {
+        "#enums/*": {
             "@typescript/source": {
-                "types": "./src/syntaxKind.enum.ts",
-                "default": "./src/syntaxKind.ts"
+                "types": "./src/enums/*.enum.ts",
+                "default": "./src/enums/*.ts"
             },
-            "types": "./dist/syntaxKind.enum.d.ts",
-            "default": "./dist/syntaxKind.js"
-        },
-        "#tokenFlags": {
-            "@typescript/source": {
-                "types": "./src/tokenFlags.enum.ts",
-                "default": "./src/tokenFlags.ts"
-            },
-            "types": "./dist/tokenFlags.enum.d.ts",
-            "default": "./dist/tokenFlags.js"
+            "types": "./dist/enums/*.enum.d.ts",
+            "default": "./dist/enums/*.js"
         }
     },
     "exports": {
@@ -31,9 +26,32 @@
             "@typescript/source": "./src/is.ts",
             "default": "./dist/is.js"
         },
+        "./factory": {
+            "@typescript/source": "./src/factory.ts",
+            "default": "./dist/factory.js"
+        },
         "./utils": {
             "@typescript/source": "./src/utils.ts",
             "default": "./dist/utils.js"
+        },
+        "./scanner": {
+            "@typescript/source": "./src/scanner.ts",
+            "default": "./dist/scanner.js"
+        },
+        "./visitor": {
+            "@typescript/source": "./src/visitor.ts",
+            "default": "./dist/visitor.js"
+        },
+        "./clone": {
+            "@typescript/source": "./src/clone.ts",
+            "default": "./dist/clone.js"
         }
+    },
+    "scripts": {
+        "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
+        "generate:factory": "node --conditions=@typescript/source --experimental-strip-types --no-warnings scripts/generateFactory.ts",
+        "generate:visitor": "node --conditions=@typescript/source --experimental-strip-types --no-warnings scripts/generateVisitor.ts",
+        "prebuild": "npm run generate:enums && npm run generate:factory && npm run generate:visitor",
+        "build": "tsc -b"
     }
 }

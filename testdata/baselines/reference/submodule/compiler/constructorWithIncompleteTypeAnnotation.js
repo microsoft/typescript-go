@@ -14,7 +14,7 @@ declare module "fs" {
 import fs = module("fs");
 
 
-module TypeScriptAllInOne {
+namespace TypeScriptAllInOne {
     export class Program {
         static Main(...args: string[]) {
             try {
@@ -282,10 +282,15 @@ TypeScriptAllInOne.Program.Main();
 
 
 //// [constructorWithIncompleteTypeAnnotation.js]
+"use strict";
+var fs = module;
 ("fs");
 var TypeScriptAllInOne;
 (function (TypeScriptAllInOne) {
     class Program {
+        constructor() {
+            this.case = bfs.STATEMENTS(4);
+        }
         static Main(...args) {
             try {
                 var bfs = new BasicFeatures();
@@ -299,7 +304,6 @@ var TypeScriptAllInOne;
             finally {
             }
         }
-        case = bfs.STATEMENTS(4);
         if(retValue) { }
     }
     TypeScriptAllInOne.Program = Program;
@@ -472,7 +476,9 @@ class BasicFeatures {
     }
 }
 class CLASS {
-    d = () => { yield 0; };
+    constructor() {
+        this.d = () => { yield 0; };
+    }
     get Property() { return 0; }
     Member() {
         return 0;
@@ -504,7 +510,9 @@ class B extends A {
     }
 }
 class Overloading {
-    otherValue = 42;
+    constructor() {
+        this.otherValue = 42;
+    }
 }
 Overloads(value, string);
 Overloads();

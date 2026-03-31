@@ -6,6 +6,6 @@ class C {
 
   F(A?= 0) { }
 >F : (A?: number) => void
->A : number
+>A : number | undefined
 >0 : 0
 }

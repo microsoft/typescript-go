@@ -44,6 +44,12 @@ func IsDiskPathRoot(path string) bool {
 	return rootLength > 0 && rootLength == len(path)
 }
 
+// IsDynamicFileName returns true if the file name represents a dynamic/virtual file
+// that doesn't exist on disk (e.g., untitled files with paths like "^/untitled/...").
+func IsDynamicFileName(fileName string) bool {
+	return strings.HasPrefix(fileName, "^/")
+}
+
 // Determines whether a path starts with an absolute path component (i.e. `/`, `c:/`, `file://`, etc.).
 //
 //	```
@@ -332,7 +338,50 @@ func ResolveTripleslashReference(moduleName string, containingFile string) strin
 }
 
 func GetNormalizedPathComponents(path string, currentDirectory string) []string {
-	return reducePathComponents(GetPathComponents(path, currentDirectory))
+	combined := CombinePaths(currentDirectory, path)
+	return getNormalizedPathComponentsFromCombined(combined)
+}
+
+func getNormalizedPathComponentsFromCombined(path string) []string {
+	rootLength := GetRootLength(path)
+	// Always include the root component (empty string for relative paths).
+	components := make([]string, 1, 8)
+	components[0] = path[:rootLength]
+
+	for i := rootLength; i < len(path); {
+		// Skip directory separators (handles consecutive separators and trailing '/').
+		for i < len(path) && path[i] == '/' {
+			i++
+		}
+		if i >= len(path) {
+			break
+		}
+
+		start := i
+		for i < len(path) && path[i] != '/' {
+			i++
+		}
+		component := path[start:i]
+
+		if component == "" || component == "." {
+			continue
+		}
+		if component == ".." {
+			if len(components) > 1 {
+				if components[len(components)-1] != ".." {
+					components = components[:len(components)-1]
+					continue
+				}
+			} else if components[0] != "" {
+				// If this is an absolute path, we can't go above the root.
+				continue
+			}
+		}
+
+		components = append(components, component)
+	}
+
+	return components
 }
 
 func GetNormalizedAbsolutePathWithoutRoot(fileName string, currentDirectory string) string {
@@ -983,8 +1032,14 @@ func ContainsPath(parent string, child string, options ComparePathsOptions) bool
 	return true
 }
 
+// ContainsPath checks whether child is contained within or equal to p.
+// Since Path values are already rooted, reduced, and case-canonicalized,
+// this is a simple string prefix check.
 func (p Path) ContainsPath(child Path) bool {
-	return ContainsPath(string(p), string(child), ComparePathsOptions{UseCaseSensitiveFileNames: true})
+	if len(p) == 0 {
+		return false
+	}
+	return p == child || len(child) > len(p) && strings.HasPrefix(string(child), string(p)) && (p[len(p)-1] == '/' || child[len(p)] == '/')
 }
 
 func FileExtensionIs(path string, extension string) bool {

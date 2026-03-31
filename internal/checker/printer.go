@@ -16,9 +16,12 @@ func createPrinterWithRemoveComments(emitContext *printer.EmitContext) *printer.
 	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
 }
 
-func createPrinterWithRemoveCommentsOmitTrailingSemicolon(emitContext *printer.EmitContext) *printer.Printer {
+func createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(emitContext *printer.EmitContext) *printer.Printer {
 	// TODO: OmitTrailingSemicolon support
-	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
+	return printer.NewPrinter(printer.PrinterOptions{
+		RemoveComments:   true,
+		NeverAsciiEscape: true,
+	}, printer.PrintHandlers{}, emitContext)
 }
 
 func createPrinterWithRemoveCommentsNeverAsciiEscape(emitContext *printer.EmitContext) *printer.Printer {
@@ -49,7 +52,7 @@ func (s *semicolonRemoverWriter) DecreaseIndent() {
 	s.inner.DecreaseIndent()
 }
 
-func (s *semicolonRemoverWriter) GetColumn() int {
+func (s *semicolonRemoverWriter) GetColumn() core.UTF16Offset {
 	return s.inner.GetColumn()
 }
 
@@ -182,7 +185,7 @@ func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 }
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	writer := printer.NewTextWriter("")
+	writer := printer.NewTextWriter("", 0)
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {
@@ -306,7 +309,7 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 	nodeBuilder := c.getNodeBuilder()
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	sig := nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
-	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolon(nodeBuilder.EmitContext())
+	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
@@ -373,12 +376,12 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 	return result
 }
 
-func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags) *ast.TypeNode {
-	nodeBuilder := c.getNodeBuilder()
+func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
 	return nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }
 
-func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags) *ast.TypePredicateNodeNode {
-	nodeBuilder := c.getNodeBuilder()
+func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypePredicateNodeNode {
+	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
 	return nodeBuilder.TypePredicateToTypePredicateNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }

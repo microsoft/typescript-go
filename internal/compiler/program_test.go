@@ -41,6 +41,7 @@ var esnextLibs = []string{
 	"lib.es2022.d.ts",
 	"lib.es2023.d.ts",
 	"lib.es2024.d.ts",
+	"lib.es2025.d.ts",
 	"lib.esnext.d.ts",
 	"lib.dom.d.ts",
 	"lib.dom.iterable.d.ts",
@@ -103,16 +104,22 @@ var esnextLibs = []string{
 	"lib.es2024.regexp.d.ts",
 	"lib.es2024.sharedmemory.d.ts",
 	"lib.es2024.string.d.ts",
+	"lib.es2025.collection.d.ts",
+	"lib.es2025.float16.d.ts",
+	"lib.es2025.intl.d.ts",
+	"lib.es2025.iterator.d.ts",
+	"lib.es2025.promise.d.ts",
+	"lib.es2025.regexp.d.ts",
 	"lib.esnext.array.d.ts",
 	"lib.esnext.collection.d.ts",
-	"lib.esnext.intl.d.ts",
-	"lib.esnext.disposable.d.ts",
-	"lib.esnext.promise.d.ts",
+	"lib.esnext.date.d.ts",
 	"lib.esnext.decorators.d.ts",
-	"lib.esnext.iterator.d.ts",
-	"lib.esnext.float16.d.ts",
+	"lib.esnext.disposable.d.ts",
 	"lib.esnext.error.d.ts",
+	"lib.esnext.intl.d.ts",
 	"lib.esnext.sharedmemory.d.ts",
+	"lib.esnext.temporal.d.ts",
+	"lib.esnext.typedarrays.d.ts",
 	"lib.decorators.d.ts",
 	"lib.decorators.legacy.d.ts",
 	"lib.esnext.full.d.ts",
@@ -231,7 +238,7 @@ func TestProgram(t *testing.T) {
 			fs = bundled.WrapFS(fs)
 
 			for _, testFile := range testCase.files {
-				_ = fs.WriteFile(testFile.fileName, testFile.contents, false)
+				_ = fs.WriteFile(testFile.fileName, testFile.contents)
 			}
 
 			opts := core.CompilerOptions{Target: testCase.target}
@@ -269,7 +276,7 @@ func BenchmarkNewProgram(b *testing.B) {
 			fs = bundled.WrapFS(fs)
 
 			for _, testFile := range testCase.files {
-				_ = fs.WriteFile(testFile.fileName, testFile.contents, false)
+				_ = fs.WriteFile(testFile.fileName, testFile.contents)
 			}
 
 			opts := core.CompilerOptions{Target: testCase.target}
@@ -292,7 +299,7 @@ func BenchmarkNewProgram(b *testing.B) {
 	b.Run("compiler", func(b *testing.B) {
 		repo.SkipIfNoTypeScriptSubmodule(b)
 
-		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 
 		fs := osvfs.FS()
 		fs = bundled.WrapFS(fs)

@@ -36,6 +36,7 @@ function f<T>(x: T): A {
 }
 
 //// [genericsWithoutTypeParameters1.js]
+"use strict";
 class C {
     foo() { return null; }
 }
@@ -48,8 +49,6 @@ function foo2(x, y) { }
 var x = { a: new C() };
 var x2 = { a: { bar() { return 1; } } };
 class D {
-    x;
-    y;
 }
 class A {
 }
