@@ -231,6 +231,7 @@ const INTERFACE_EXCLUDED_PROPS: Record<string, Set<string>> = {
     GetAccessorDeclaration: new Set(["typeParameters"]),
     SetAccessorDeclaration: new Set(["typeParameters", "type"]),
     SemicolonClassElement: new Set(["name"]),
+    SpreadAssignment: new Set(["name"]),
     SourceFile: new Set(["languageVariant", "scriptKind", "tokenCache", "isDeclarationFile", "referencedFiles", "typeReferenceDirectives", "libReferenceDirectives", "imports", "moduleAugmentations", "ambientModuleNames", "externalModuleIndicator"]),
 };
 
