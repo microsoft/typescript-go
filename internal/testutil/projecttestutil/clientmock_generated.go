@@ -22,6 +22,9 @@ var _ project.Client = &ClientMock{}
 //
 //		// make and configure a mocked project.Client
 //		mockedClient := &ClientMock{
+//			IsActiveFunc: func() bool {
+//				panic("mock out the IsActive method")
+//			},
 //			ProgressFinishFunc: func(message *diagnostics.Message, args ...any)  {
 //				panic("mock out the ProgressFinish method")
 //			},
@@ -56,6 +59,9 @@ var _ project.Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
+	// IsActiveFunc mocks the IsActive method.
+	IsActiveFunc func() bool
+
 	// ProgressFinishFunc mocks the ProgressFinish method.
 	ProgressFinishFunc func(message *diagnostics.Message, args ...any)
 
@@ -85,6 +91,8 @@ type ClientMock struct {
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// IsActive holds details about calls to the IsActive method.
+		IsActive []struct{}
 		// ProgressFinish holds details about calls to the ProgressFinish method.
 		ProgressFinish []struct {
 			// Message is the message argument value.
@@ -145,6 +153,7 @@ type ClientMock struct {
 			Watchers []*lsproto.FileSystemWatcher
 		}
 	}
+	lockIsActive           sync.RWMutex
 	lockProgressFinish     sync.RWMutex
 	lockProgressStart      sync.RWMutex
 	lockPublishDiagnostics sync.RWMutex
@@ -154,6 +163,31 @@ type ClientMock struct {
 	lockSendTelemetry      sync.RWMutex
 	lockUnwatchFiles       sync.RWMutex
 	lockWatchFiles         sync.RWMutex
+}
+
+// IsActive calls IsActiveFunc.
+func (mock *ClientMock) IsActive() bool {
+	callInfo := struct{}{}
+	mock.lockIsActive.Lock()
+	mock.calls.IsActive = append(mock.calls.IsActive, callInfo)
+	mock.lockIsActive.Unlock()
+	if mock.IsActiveFunc == nil {
+		var bOut bool
+		return bOut
+	}
+	return mock.IsActiveFunc()
+}
+
+// IsActiveCalls gets all the calls that were made to IsActive.
+// Check the length with:
+//
+//	len(mockedClient.IsActiveCalls())
+func (mock *ClientMock) IsActiveCalls() []struct{} {
+	var calls []struct{}
+	mock.lockIsActive.RLock()
+	calls = mock.calls.IsActive
+	mock.lockIsActive.RUnlock()
+	return calls
 }
 
 // ProgressFinish calls ProgressFinishFunc.

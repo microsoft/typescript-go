@@ -471,6 +471,9 @@ func (s *Session) StartPerformanceTelemetry() {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
+				if s.client == nil || !s.client.IsActive() {
+					continue
+				}
 				s.sendPerformanceTelemetry(ctx)
 			}
 		}

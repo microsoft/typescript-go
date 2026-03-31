@@ -168,6 +168,8 @@ type Server struct {
 	watcherID        atomic.Uint32
 	watchers         collections.SyncSet[project.WatcherID]
 
+	lastRequestTimeMs atomic.Int64
+
 	session *project.Session
 
 	// apiSessions holds active API sessions keyed by their ID
@@ -269,6 +271,12 @@ func (s *Server) SendTelemetry(ctx context.Context, telemetry lsproto.TelemetryE
 		panic("SendTelemetry called with telemetry disabled")
 	}
 	return sendNotification(s, lsproto.TelemetryEventInfo, telemetry)
+}
+
+// IsActive implements project.Client.
+func (s *Server) IsActive() bool {
+	last := s.lastRequestTimeMs.Load()
+	return last == 0 || time.Since(time.UnixMilli(last)) <= time.Minute
 }
 
 func (s *Server) RefreshInlayHints(ctx context.Context) error {
@@ -472,6 +480,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case req := <-s.requestQueue:
+			s.lastRequestTimeMs.Store(time.Now().UnixMilli())
 			requestCtx := locale.WithLocale(ctx, s.locale)
 			if req.ID != nil {
 				var cancel context.CancelFunc
