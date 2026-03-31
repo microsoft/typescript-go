@@ -2392,8 +2392,8 @@ function generateCode() {
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
-        // Only emit assertion if there are multiple fields to check
-        if (fieldEntries.length > 1) {
+        // Always assert for non-nullable unions; for nullable unions, only when there are multiple fields.
+        if (!unionContainedNull || fieldEntries.length > 1) {
             const parts = fieldEntries.map(e => `boolToInt(o.${e.fieldName} != nil)`);
             const sum = parts.length > 3 ? parts.join(" +\n\t\t") : parts.join(" + ");
             if (unionContainedNull) {
