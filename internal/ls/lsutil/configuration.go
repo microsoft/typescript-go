@@ -13,8 +13,6 @@ func ParseUserConfig(items map[string]any) UserPreferences {
 			prefs.ParseWorker(jsTsSettings)
 		case UserPreferences:
 			prefs = prefs.WithOverrides(jsTsSettings)
-		case *UserPreferences:
-			prefs = prefs.WithOverrides(*jsTsSettings)
 		}
 	}
 	return prefs

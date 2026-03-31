@@ -228,7 +228,7 @@ func (f *FourslashTest) handleServerRequest(_ context.Context, req *lsproto.Requ
 		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
-			Result:  []any{&f.userPreferences},
+			Result:  []any{f.userPreferences},
 		}
 
 	case lsproto.MethodClientRegisterCapability:
@@ -585,7 +585,7 @@ func (f *FourslashTest) Configure(t *testing.T, config lsutil.UserPreferences) {
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
 		Settings: map[string]any{
-			"js/ts": &config,
+			"js/ts": config,
 		},
 	})
 }
