@@ -347,7 +347,7 @@ func tokenFromDeclarationMapping(kind ast.Kind) tokenType {
 		return tokenTypeEnum
 	case ast.KindEnumMember:
 		return tokenTypeEnumMember
-	case ast.KindClassDeclaration:
+	case ast.KindClassDeclaration, ast.KindClassExpression:
 		return tokenTypeClass
 	case ast.KindMethodDeclaration:
 		return tokenTypeMethod
