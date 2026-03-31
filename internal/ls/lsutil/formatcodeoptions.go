@@ -112,7 +112,7 @@ func (settings *FormatCodeSettings) ToLSFormatOptions() *lsproto.FormattingOptio
 	}
 }
 
-func (settings *FormatCodeSettings) ParseEditorSettings(editorSettings map[string]any) *FormatCodeSettings {
+func (settings FormatCodeSettings) WithEditorSettings(editorSettings map[string]any) FormatCodeSettings {
 	if editorSettings == nil {
 		return settings
 	}
