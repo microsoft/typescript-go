@@ -2260,6 +2260,124 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
     });
 });
 
+test("TypeOperator operator kind", () => {
+    const api = spawnAPI({
+        "/tsconfig.json": "{}",
+        "/src/index.ts": `function test(arg: readonly number[]) { }\n`,
+    });
+    try {
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
+        assert(sourceFile);
+        const param = (sourceFile.statements[0] as import("@typescript/ast").FunctionDeclaration).parameters[0];
+        assert(param);
+        const type = param.type as import("@typescript/ast").TypeOperatorNode;
+        assert(type);
+        assert.equal(type.kind, SyntaxKind.TypeOperator);
+        assert.equal(type.operator, SyntaxKind.ReadonlyKeyword);
+        const printed = project.emitter.printNode(sourceFile);
+        assert.equal(sourceFile.text, printed);
+    }
+    finally {
+        api.close();
+    }
+});
+
+function extractSourceWords(source: string) {
+    return Array.from(
+        source
+            .replace(/\/\/.*/g, " ")
+            .replace(/\/\*.*?\*\//sg, " ")
+            .replace(/\\[rnt]/g, " ")
+            .matchAll(/\w+/g),
+    ).map(match => ({
+        index: match.index,
+        word: match[0],
+    }));
+}
+function compareWords(file: string, source: string, output: string, cloned = false) {
+    const srcWords = extractSourceWords(source);
+    const outWords = extractSourceWords(output);
+    const diffAt = srcWords.findIndex((match, i) => !outWords[i] || outWords[i].word != match.word);
+    if (diffAt < 0) return true;
+    const table: any[][] = [];
+    for (let i = Math.max(0, diffAt - 3), i1 = diffAt + 3; i < i1; i++) {
+        table.push([i, srcWords[i]?.index, srcWords[i]?.word, outWords[i]?.index, outWords[i]?.word]);
+    }
+    console.log("In", file, cloned ? "(cloned)" : "");
+    console.table(table);
+    return false;
+}
+
+test("Parse-clone-emit roundtrip", () => {
+    const tsSource = fileURLToPath(new URL("../../../../_submodules/TypeScript/src", import.meta.url).toString());
+    const api = new API({
+        cwd: tsSource,
+        tsserverPath: getTsserverPath(),
+    });
+    const target = {
+        cloneCrashed: 0,
+        printCrashed: 0,
+        clonePrintCrashed: 0,
+        printWrong: 0,
+        clonePrintWrong: 0,
+    };
+    const errors = { ...target };
+    try {
+        for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
+            const snapshot = api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
+            const project = snapshot.getProject(tsconfig);
+            assert(project);
+            for (const file of project.rootFiles) {
+                const source = project.program.getSourceFile(file);
+                assert(source);
+                let clone: typeof source;
+                let printed: string;
+
+                try {
+                    printed = project.emitter.printNode(source);
+                }
+                catch (e) {
+                    console.log("In", file, e);
+                    errors.printCrashed++;
+                    continue;
+                }
+
+                if (!compareWords(file, source.text, printed)) {
+                    errors.printWrong++;
+                }
+
+                try {
+                    clone = getSynthesizedDeepClone(source);
+                }
+                catch (e) {
+                    console.log("In", file, e);
+                    errors.cloneCrashed++;
+                    continue;
+                }
+
+                try {
+                    printed = project.emitter.printNode(clone);
+                }
+                catch (e) {
+                    console.log("In", file, e);
+                    errors.clonePrintCrashed++;
+                    continue;
+                }
+
+                if (!compareWords(file, source.text, printed, true)) {
+                    errors.clonePrintWrong++;
+                }
+            }
+        }
+    }
+    finally {
+        api.close();
+    }
+    assert.deepEqual(errors, target);
+});
+
 describe("Program - diagnostics", () => {
     test("getSyntacticDiagnostics", () => {
         const source = `const x: = 1;`;
@@ -2392,124 +2510,6 @@ describe("Program - diagnostics", () => {
             api.close();
         }
     });
-});
-
-test("TypeOperator operator kind", () => {
-    const api = spawnAPI({
-        "/tsconfig.json": "{}",
-        "/src/index.ts": `function test(arg: readonly number[]) { }\n`,
-    });
-    try {
-        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
-        const sourceFile = project.program.getSourceFile("/src/index.ts");
-        assert(sourceFile);
-        const param = (sourceFile.statements[0] as import("@typescript/ast").FunctionDeclaration).parameters[0];
-        assert(param);
-        const type = param.type as import("@typescript/ast").TypeOperatorNode;
-        assert(type);
-        assert.equal(type.kind, SyntaxKind.TypeOperator);
-        assert.equal(type.operator, SyntaxKind.ReadonlyKeyword);
-        const printed = project.emitter.printNode(sourceFile);
-        assert.equal(sourceFile.text, printed);
-    }
-    finally {
-        api.close();
-    }
-});
-
-function extractSourceWords(source: string) {
-    return Array.from(
-        source
-            .replace(/\/\/.*/g, " ")
-            .replace(/\/\*.*?\*\//sg, " ")
-            .replace(/\\[rnt]/g, " ")
-            .matchAll(/\w+/g),
-    ).map(match => ({
-        index: match.index,
-        word: match[0],
-    }));
-}
-function compareWords(file: string, source: string, output: string, cloned = false) {
-    const srcWords = extractSourceWords(source);
-    const outWords = extractSourceWords(output);
-    const diffAt = srcWords.findIndex((match, i) => !outWords[i] || outWords[i].word != match.word);
-    if (diffAt < 0) return true;
-    const table: any[][] = [];
-    for (let i = Math.max(0, diffAt - 3), i1 = diffAt + 3; i < i1; i++) {
-        table.push([i, srcWords[i]?.index, srcWords[i]?.word, outWords[i]?.index, outWords[i]?.word]);
-    }
-    console.log("In", file, cloned ? "(cloned)" : "");
-    console.table(table);
-    return false;
-}
-
-test("Parse-clone-emit roundtrip", () => {
-    const tsSource = fileURLToPath(new URL("../../../../_submodules/TypeScript/src", import.meta.url).toString());
-    const api = new API({
-        cwd: tsSource,
-        tsserverPath: getTsserverPath(),
-    });
-    const target = {
-        cloneCrashed: 0,
-        printCrashed: 0,
-        clonePrintCrashed: 0,
-        printWrong: 0,
-        clonePrintWrong: 0,
-    };
-    const errors = { ...target };
-    try {
-        for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
-            const snapshot = api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
-            const project = snapshot.getProject(tsconfig);
-            assert(project);
-            for (const file of project.rootFiles) {
-                const source = project.program.getSourceFile(file);
-                assert(source);
-                let clone: typeof source;
-                let printed: string;
-
-                try {
-                    printed = project.emitter.printNode(source);
-                }
-                catch (e) {
-                    console.log("In", file, e);
-                    errors.printCrashed++;
-                    continue;
-                }
-
-                if (!compareWords(file, source.text, printed)) {
-                    errors.printWrong++;
-                }
-
-                try {
-                    clone = getSynthesizedDeepClone(source);
-                }
-                catch (e) {
-                    console.log("In", file, e);
-                    errors.cloneCrashed++;
-                    continue;
-                }
-
-                try {
-                    printed = project.emitter.printNode(clone);
-                }
-                catch (e) {
-                    console.log("In", file, e);
-                    errors.clonePrintCrashed++;
-                    continue;
-                }
-
-                if (!compareWords(file, source.text, printed, true)) {
-                    errors.clonePrintWrong++;
-                }
-            }
-        }
-    }
-    finally {
-        api.close();
-    }
-    assert.deepEqual(errors, target);
 });
 
 test("Benchmarks", () => {
