@@ -716,11 +716,12 @@ func parseIntWithDefault(val any, defaultV int) int {
 	return defaultV
 }
 
-// MergeNonDefaults overlays non-zero-value fields from src onto p.
+// WithOverrides returns a copy of p with non-zero fields from overrides applied on top.
 // This is safe because all preference fields use types where zero = "not set":
 // Tristate (TSUnknown=0), int (0), string (""), slice (nil).
-func (p *UserPreferences) MergeNonDefaults(src *UserPreferences) {
-	mergeNonZeroFields(reflect.ValueOf(p).Elem(), reflect.ValueOf(src).Elem())
+func (p UserPreferences) WithOverrides(overrides UserPreferences) UserPreferences {
+	mergeNonZeroFields(reflect.ValueOf(&p).Elem(), reflect.ValueOf(&overrides).Elem())
+	return p
 }
 
 func mergeNonZeroFields(dst, src reflect.Value) {
