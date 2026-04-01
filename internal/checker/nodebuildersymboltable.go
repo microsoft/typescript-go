@@ -66,16 +66,22 @@ func (s *symbolTableSerializationState) visitSymbolTable(symbolTable *ast.Symbol
 		s.serializeSymbol(symbol, false, propertyAsAlias)
 	}
 	if !suppressNewPrivateContext {
-		// deferredPrivates will be filled up by visiting the symbol table
-		// And will continue to iterate as elements are added while visited `deferredPrivates`
+		// deferredPrivates will be filled up by visiting the symbol table.
+		// New symbols may be added while we iterate, so we loop until stable.
 		last := s.deferredPrivatesStack[len(s.deferredPrivatesStack)-1]
-		deferredSymbols := make([]*ast.Symbol, 0, len(last))
-		for _, symbol := range last {
-			deferredSymbols = append(deferredSymbols, symbol)
-		}
-		s.b.ch.sortSymbols(deferredSymbols)
-		for _, symbol := range deferredSymbols {
-			s.serializeSymbol(symbol, true, propertyAsAlias)
+		var visited collections.Set[*ast.Symbol]
+		for len(last) > visited.Len() {
+			deferredSymbols := make([]*ast.Symbol, 0, len(last)-visited.Len())
+			for _, symbol := range last {
+				if !visited.Has(symbol) {
+					deferredSymbols = append(deferredSymbols, symbol)
+				}
+			}
+			s.b.ch.sortSymbols(deferredSymbols)
+			for _, symbol := range deferredSymbols {
+				visited.Add(symbol)
+				s.serializeSymbol(symbol, true, propertyAsAlias)
+			}
 		}
 		s.deferredPrivatesStack = s.deferredPrivatesStack[:len(s.deferredPrivatesStack)-1]
 	}
@@ -706,14 +712,13 @@ func (s *symbolTableSerializationState) makeSerializePropertySymbol(p *ast.Symbo
 		}
 		if p.Flags&ast.SymbolFlagsGetAccessor != 0 {
 			getterDecl := core.Find(p.Declarations, ast.IsGetAccessorDeclaration)
-			_ = getterDecl
 			s.b.ctx.approximateLength += 8
 			result = append(result, s.b.f.NewGetAccessorDeclaration(
 				s.b.f.NewModifierList(ast.CreateModifiersFromModifierFlags(flag, s.b.f.NewModifier)),
 				name,
 				nil,
 				s.b.f.NewNodeList(nil),
-				core.IfElse(omitType, nil, s.b.serializeTypeForDeclaration(nil, nil, p, true)),
+				core.IfElse(omitType, nil, s.b.serializeTypeForDeclaration(getterDecl, nil, p, true)),
 				nil, nil,
 			))
 		}

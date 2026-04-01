@@ -83,8 +83,10 @@ func (l *LanguageService) ProvideVerboseHover(ctx context.Context, documentURI l
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
 
 	program, file := l.getProgramAndFile(documentURI)
-	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
-	if node.Kind == ast.KindSourceFile {
+	pos := int(l.converters.LineAndCharacterToPosition(file, position))
+	node := astnav.GetTouchingPropertyName(file, pos)
+	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, pos, node) == nil {
+		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
 		return lsproto.HoverOrNull{}, nil
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)

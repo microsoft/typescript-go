@@ -5039,18 +5039,21 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	actions []codeAction,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	details := make([]string, 0, len(actions)+1)
-	edits := make([]*lsproto.TextEdit, 0, len(actions))
-	for _, action := range actions {
-		details = append(details, action.description)
-		edits = append(edits, action.changes...)
-	}
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, -1, nil)
-	details = append(details, quickInfo)
-	if len(edits) != 0 {
-		item.AdditionalTextEdits = &edits
+	if len(actions) > 0 {
+		details := make([]string, 0, len(actions)+1)
+		edits := make([]*lsproto.TextEdit, 0, len(actions))
+		for _, action := range actions {
+			details = append(details, action.description)
+			edits = append(edits, action.changes...)
+		}
+		details = append(details, quickInfo)
+		if len(edits) != 0 {
+			item.AdditionalTextEdits = &edits
+		}
+		return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
 	}
-	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
+	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 
 func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Node, sourceFile *ast.SourceFile) importStatementCompletionInfo {

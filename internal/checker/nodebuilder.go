@@ -126,7 +126,10 @@ func (b *NodeBuilder) SymbolTableToDeclarationStatements(symbolTable *ast.Symbol
 func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) []*ast.Node {
 	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, maxTruncationLength)
 
-	// Push the declared type onto the type stack to prevent re-expansion
+	// Push the declared type onto the type stack to prevent re-expansion.
+	// We push a sentinel 0 after the real id so that the cycle-detection loops
+	// in shouldExpandType/canPossiblyExpandType (which skip the last element
+	// via `range len(typeStack)-1`) still check declaredType.id.
 	declaredType := b.impl.ch.getDeclaredTypeOfSymbol(symbol)
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, declaredType.id)
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, 0)
