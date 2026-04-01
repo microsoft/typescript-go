@@ -157,7 +157,7 @@
 //         ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace "/foo" {
+// | module "/foo" {
 // |     function foo(): string;
 // | }
 // | ```
@@ -533,7 +533,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace \"/foo\" {\n    function foo(): string;\n}\n```\n"
+          "value": "```tsx\nmodule \"/foo\" {\n    function foo(): string;\n}\n```\n"
         },
         "range": {
           "start": {

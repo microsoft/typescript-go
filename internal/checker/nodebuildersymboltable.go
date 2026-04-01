@@ -515,6 +515,11 @@ func (s *symbolTableSerializationState) serializeModule(symbol *ast.Symbol, symb
 
 func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []*ast.Symbol, localName *ast.Node, modifierFlags ast.ModifierFlags, suppressNewPrivateContext bool) {
 	expanding := isExpanding(s.b.ctx)
+	// Use "namespace" for identifier names, "module" for string literal names (ambient modules)
+	keyword := ast.KindNamespaceKeyword
+	if !ast.IsIdentifier(localName) {
+		keyword = ast.KindModuleKeyword
+	}
 	if len(props) > 0 {
 		s.b.ctx.approximateLength += 14
 		// Separate local vs remote props
@@ -527,7 +532,7 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 			}
 		}
 
-		fakespace := s.b.f.NewModuleDeclaration(nil, ast.KindNamespaceKeyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil)))
+		fakespace := s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil)))
 		fakespace.Flags &^= ast.NodeFlagsSynthesized // make non-synthetic so it's usable as enclosingDeclaration
 		fakespace.Parent = s.b.ctx.enclosingDeclaration
 		// Set locals and symbol
@@ -568,13 +573,13 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 			})
 		}
 
-		fakespace = s.b.f.UpdateModuleDeclaration(fakespace.AsModuleDeclaration(), fakespace.Modifiers(), ast.KindNamespaceKeyword, fakespace.Name(), s.b.f.NewModuleBlock(s.b.f.NewNodeList(declarations)))
+		fakespace = s.b.f.UpdateModuleDeclaration(fakespace.AsModuleDeclaration(), fakespace.Modifiers(), keyword, fakespace.Name(), s.b.f.NewModuleBlock(s.b.f.NewNodeList(declarations)))
 		fakespace.Parent = s.b.ctx.enclosingDeclaration
 		s.addResult(fakespace, modifierFlags)
 	} else if expanding {
 		s.b.ctx.approximateLength += 14
 		s.addResult(
-			s.b.f.NewModuleDeclaration(nil, ast.KindNamespaceKeyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil))),
+			s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil))),
 			modifierFlags,
 		)
 	}
