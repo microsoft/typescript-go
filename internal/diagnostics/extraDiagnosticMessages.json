@@ -1,4 +1,8 @@
 {
+    "This overload of '{0}' lacks a return-type annotation and implicitly has an '{1}' return type.": {
+        "category": "Error",
+        "code": 7012
+    },
     "Do not print diagnostics.": {
         "category": "Message",
         "code": 100000
