@@ -89,6 +89,18 @@ func TestUnmarshalRejectsNullForOptionalNonNullableFields(t *testing.T) {
 			target:  new(InitializeResult),
 			errText: `null value is not allowed for field "capabilities"`,
 		},
+		{
+			name:    "SemanticTokens data null (required slice)",
+			input:   `{"data": null}`,
+			target:  new(SemanticTokens),
+			errText: `null value is not allowed for field "data"`,
+		},
+		{
+			name:    "TextDocumentEdit edits null (required slice)",
+			input:   `{"textDocument": {"uri": "file:///a.ts", "version": 1}, "edits": null}`,
+			target:  new(TextDocumentEdit),
+			errText: `null value is not allowed for field "edits"`,
+		},
 	}
 
 	for _, tt := range tests {

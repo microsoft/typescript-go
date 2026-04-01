@@ -1249,7 +1249,8 @@ function goKindCasesForJsonKind(kind: string): string {
 
 /**
  * Checks if a meta model Type can represent a JSON null value.
- * Used to determine if null should be rejected for optional pointer fields.
+ * Used to determine whether to reject explicit JSON `null` for any field
+ * that can otherwise decode `null` without a type error.
  */
 function typeCanBeNull(type: Type): boolean {
     switch (type.kind) {
@@ -1761,12 +1762,12 @@ function generateCode() {
             if (p.omitzeroValue) return false;
             return true;
         }) || [];
-        // Check if any pointer fields need null rejection
+        // Check if any fields need null rejection
         const hasNullRejectableFields = structure.properties?.some(p => {
             if (p.omitzeroValue) return false;
             if (typeCanBeNull(p.type)) return false;
             const resolved = resolveType(p.type);
-            return p.optional || resolved.needsPointer;
+            return p.optional || resolved.needsPointer || resolved.name.startsWith("[]") || resolved.name.startsWith("map[");
         }) || false;
         if ((requiredProps.length > 0 || hasNullRejectableFields) && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
@@ -1806,11 +1807,11 @@ function generateCode() {
                 if (!prop.optional && !prop.omitzeroValue) {
                     writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
                 }
-                // Reject null for pointer fields whose types cannot represent null.
-                // A field is a pointer when it's optional or when the type has needsPointer (struct references).
+                // Reject null for fields whose types cannot represent null but whose Go types
+                // silently accept it (pointers, slices, maps).
                 const resolvedType = resolveType(prop.type);
-                const isPointerField = (prop.optional || resolvedType.needsPointer) && !prop.omitzeroValue;
-                if (isPointerField && !typeCanBeNull(prop.type)) {
+                const goTypeAcceptsNull = (prop.optional || resolvedType.needsPointer || resolvedType.name.startsWith("[]") || resolvedType.name.startsWith("map[")) && !prop.omitzeroValue;
+                if (goTypeAcceptsNull && !typeCanBeNull(prop.type)) {
                     writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
                     writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
                     writeLine(`\t\t\t}`);
