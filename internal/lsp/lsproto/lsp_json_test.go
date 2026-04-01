@@ -620,7 +620,7 @@ func TestUnmarshalDiscriminatorUnion(t *testing.T) {
 	})
 }
 
-func TestUnmarshalPresencDiscriminatorUnion(t *testing.T) {
+func TestUnmarshalPresenceDiscriminatorUnion(t *testing.T) {
 	t.Parallel()
 
 	t.Run("TextEdit via range field", func(t *testing.T) {
