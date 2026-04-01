@@ -1023,7 +1023,13 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 	varName := s.getUnusedName(name, symbol)
 	typeToSerialize := s.b.ch.getWidenedType(s.b.ch.getTypeOfSymbol(s.b.ch.getMergedSymbol(symbol)))
 
+	// Inside a module/namespace declaration, use `let` for non-getter-only accessors (matching TS behavior).
+	// Otherwise use `const`.
 	flags := ast.NodeFlagsConst
+	if s.b.ctx.enclosingDeclaration != nil && s.b.ctx.enclosingDeclaration.Kind == ast.KindModuleDeclaration &&
+		(symbol.Flags&ast.SymbolFlagsAccessor == 0 || symbol.Flags&ast.SymbolFlagsSetAccessor != 0) {
+		flags = ast.NodeFlagsLet
+	}
 	s.b.ctx.approximateLength += len(varName) + 5
 	stmt := s.b.f.NewVariableStatement(
 		nil,

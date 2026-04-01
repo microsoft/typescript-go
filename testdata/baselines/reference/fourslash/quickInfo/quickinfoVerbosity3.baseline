@@ -75,7 +75,7 @@
 // |     public foo(): void;
 // | }
 // | namespace c5b {
-// |     const y: number;
+// |     let y: number;
 // | }
 // | 
 // | ```
@@ -89,7 +89,7 @@
 // |     public foo(): void;
 // | }
 // | namespace c5b {
-// |     const y: number;
+// |     let y: number;
 // | }
 // | 
 // | ```
@@ -472,7 +472,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass c5b {\n    public foo(): void;\n}\nnamespace c5b {\n    const y: number;\n}\n\n```\n"
+          "value": "```tsx\nclass c5b {\n    public foo(): void;\n}\nnamespace c5b {\n    let y: number;\n}\n\n```\n"
         },
         "range": {
           "start": {
@@ -503,7 +503,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass c5b {\n    public foo(): void;\n}\nnamespace c5b {\n    const y: number;\n}\n\n```\n"
+          "value": "```tsx\nclass c5b {\n    public foo(): void;\n}\nnamespace c5b {\n    let y: number;\n}\n\n```\n"
         },
         "range": {
           "start": {

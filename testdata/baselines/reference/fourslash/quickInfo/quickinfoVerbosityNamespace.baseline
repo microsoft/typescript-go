@@ -12,9 +12,9 @@
 // |     y: string;
 // | }
 // | namespace Foo {
-// |     const y: number;
-// |     const x: string;
-// |     const w: string;
+// |     let y: number;
+// |     let x: string;
+// |     let w: string;
 // | }
 // | 
 // | ```
@@ -43,9 +43,9 @@
 // | ```tsx
 // | namespace ns {
 // |     export { Foo };
-// |     export const c: number;
-// |     export const d: number;
-// |     export const f: {
+// |     export let c: number;
+// |     export let d: number;
+// |     export let f: {
 // |         a: string;
 // |     };
 // | }
@@ -58,9 +58,9 @@
 // | ```tsx
 // | namespace ns {
 // |     export { Foo };
-// |     export const c: number;
-// |     export const d: number;
-// |     export const f: Apple;
+// |     export let c: number;
+// |     export let d: number;
+// |     export let f: Apple;
 // | }
 // | ```
 // | 
@@ -95,10 +95,10 @@
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | namespace Two {
-// |     const f: {
+// |     let f: {
 // |         y: number;
 // |     };
-// |     const g: {
+// |     let g: {
 // |         y: string;
 // |     };
 // | }
@@ -110,8 +110,8 @@
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | namespace Two {
-// |     const f: Foo<number>;
-// |     const g: Foo<string>;
+// |     let f: Foo<number>;
+// |     let g: Foo<string>;
 // | }
 // | ```
 // | 
@@ -221,7 +221,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo<T> {\n    y: string;\n}\nnamespace Foo {\n    const y: number;\n    const x: string;\n    const w: string;\n}\n\n```\n"
+          "value": "```tsx\nclass Foo<T> {\n    y: string;\n}\nnamespace Foo {\n    let y: number;\n    let x: string;\n    let w: string;\n}\n\n```\n"
         },
         "range": {
           "start": {
@@ -283,7 +283,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: Apple;\n}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export let c: number;\n    export let d: number;\n    export let f: Apple;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -315,7 +315,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: {\n        a: string;\n    };\n}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export let c: number;\n    export let d: number;\n    export let f: {\n        a: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -377,7 +377,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Two {\n    const f: Foo<number>;\n    const g: Foo<string>;\n}\n```\n"
+          "value": "```tsx\nnamespace Two {\n    let f: Foo<number>;\n    let g: Foo<string>;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -409,7 +409,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Two {\n    const f: {\n        y: number;\n    };\n    const g: {\n        y: string;\n    };\n}\n```\n"
+          "value": "```tsx\nnamespace Two {\n    let f: {\n        y: number;\n    };\n    let g: {\n        y: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
