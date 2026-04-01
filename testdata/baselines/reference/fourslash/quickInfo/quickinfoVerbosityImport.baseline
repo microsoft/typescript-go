@@ -116,7 +116,9 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (alias) constructor default(): { a: boolean; }
+// | (alias) constructor default(): {
+// |     a: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -488,7 +490,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(alias) constructor default(): { a: boolean; }\n```\n"
+          "value": "```tsx\n(alias) constructor default(): {\n    a: boolean;\n}\n```\n"
         },
         "range": {
           "start": {

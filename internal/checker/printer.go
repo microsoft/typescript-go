@@ -439,8 +439,7 @@ func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosing
 			sigOutput = ast.KindCallSignature
 		}
 	}
-	writer, putWriter := printer.GetSingleLineStringWriter()
-	defer putWriter()
+	writer := printer.NewTextWriter("\n", 0)
 
 	nodeBuilder := c.getNodeBuilder()
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName

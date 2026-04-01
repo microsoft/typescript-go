@@ -83,7 +83,11 @@
 //          ^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function someFun(a: { prop1: string; }): { prop1: string; }
+// | function someFun(a: {
+// |     prop1: string;
+// | }): {
+// |     prop1: string;
+// | }
 // | ```
 // | 
 // | 
@@ -374,7 +378,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction someFun(a: { prop1: string; }): { prop1: string; }\n```\n\n\n*@param* `a`\n\n*@returns*"
+          "value": "```tsx\nfunction someFun(a: {\n    prop1: string;\n}): {\n    prop1: string;\n}\n```\n\n\n*@param* `a`\n\n*@returns*"
         },
         "range": {
           "start": {
