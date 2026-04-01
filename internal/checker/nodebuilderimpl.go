@@ -329,7 +329,13 @@ func (b *NodeBuilderImpl) serializeTypeName(node *ast.Node, isTypeOf bool, typeA
 		resolvedSymbol = b.ch.resolveAlias(symbol)
 	}
 
-	if b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
+	// Declaration emit may need to reuse a referenced alias via a portable import type even
+	// when the original name is no longer directly accessible from the current declaration.
+	// In looser display/baseline contexts, preserve the old bailout to avoid introducing verbose
+	// or non-local names in places that intentionally prefer fallback formatting.
+	if (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 ||
+		b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths != 0) &&
+		b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
 		return nil
 	}
 	return b.symbolToTypeNode(resolvedSymbol, meaning, typeArguments)
