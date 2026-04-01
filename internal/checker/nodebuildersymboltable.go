@@ -659,8 +659,21 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 		declarations := s.results
 		s.results = oldResults
 
-		// !!! TODO: rewrite `export default expr` assignments inside namespaces to
-		// `export { expr as default }` specifiers (defaultReplaced map from Strada).
+		// Rewrite `export default expr` assignments inside namespaces to
+		// `export { expr as default }` specifiers.
+		for i, d := range declarations {
+			if ast.IsExportAssignment(d) && !d.AsExportAssignment().IsExportEquals && ast.IsIdentifier(d.AsExportAssignment().Expression) {
+				declarations[i] = s.b.f.NewExportDeclaration(
+					nil,
+					false,
+					s.b.f.NewNamedExports(s.b.f.NewNodeList([]*ast.Node{
+						s.b.f.NewExportSpecifier(false, d.AsExportAssignment().Expression, s.b.f.NewIdentifier(ast.InternalSymbolNameDefault)),
+					})),
+					nil,
+					nil,
+				)
+			}
+		}
 
 		// Strip export modifiers if all declarations are exported
 		allExported := len(declarations) > 0 && core.Every(declarations, func(d *ast.Node) bool {
