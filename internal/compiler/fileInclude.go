@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -89,6 +90,32 @@ func (r *FileIncludeReason) asLibFileIndex() (int, bool) {
 
 func (r *FileIncludeReason) isReferencedFile() bool {
 	return r != nil && r.kind <= fileIncludeKindLibReferenceDirective
+}
+
+// GetSpanInReferrer returns the file name and text range of this file-include reason
+// within the referring file. Returns ok=false if the reason is not a referenced-file
+// include (e.g. it is a root file, lib file, or automatic type directive), or if the
+// location is synthetic (not present in the source text).
+func (r *FileIncludeReason) GetSpanInReferrer(program *Program) (fileName string, textRange core.TextRange, ok bool) {
+	if !r.isReferencedFile() {
+		return "", core.TextRange{}, false
+	}
+	loc := program.includeProcessor.getReferenceLocation(r, program)
+	if loc.isSynthetic {
+		return "", core.TextRange{}, false
+	}
+	var tr core.TextRange
+	if loc.node != nil {
+		// Skip leading trivia so the span starts at the actual token text,
+		// matching TypeScript's skipTrivia(file.text, importLiteral.pos).
+		pos := scanner.SkipTrivia(loc.file.Text(), loc.node.Pos())
+		tr = core.NewTextRange(pos, loc.node.End())
+	} else if loc.ref != nil {
+		tr = loc.ref.TextRange
+	} else {
+		return "", core.TextRange{}, false
+	}
+	return loc.file.FileName(), tr, true
 }
 
 func (r *FileIncludeReason) asReferencedFileData() *referencedFileData {

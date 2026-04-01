@@ -1327,18 +1327,18 @@ func findFirstJsxNode(root *ast.Node) *ast.Node {
 }
 
 func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*ReferenceEntry {
-	refs := program.GetNonModuleFileReferences(referencedFile)
-	if len(refs) == 0 {
-		return nil
-	}
-	entries := make([]*ReferenceEntry, len(refs))
-	for i, ref := range refs {
-		textRange := ref.TextRange
-		entries[i] = &ReferenceEntry{
-			kind:      entryKindRange,
-			fileName:  ref.FileName,
-			textRange: &textRange,
+	var entries []*ReferenceEntry
+	for _, ref := range program.GetIncludeReasons()[referencedFile.Path()] {
+		fileName, textRange, ok := ref.GetSpanInReferrer(program)
+		if !ok {
+			continue
 		}
+		tr := textRange
+		entries = append(entries, &ReferenceEntry{
+			kind:      entryKindRange,
+			fileName:  fileName,
+			textRange: &tr,
+		})
 	}
 	return entries
 }
