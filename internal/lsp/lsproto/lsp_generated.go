@@ -521,6 +521,9 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *json.Decoder) e
 		switch string(name) {
 		case `"event"`:
 			missing &^= missingEvent
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"event\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Event); err != nil {
 				return err
 			}
@@ -2246,6 +2249,9 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *json.Decoder) 
 			}
 		case `"item"`:
 			missing &^= missingItem
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"item\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -2308,6 +2314,9 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *json.Decoder) error {
 		switch string(name) {
 		case `"from"`:
 			missing &^= missingFrom
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"from\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.From); err != nil {
 				return err
 			}
@@ -2393,6 +2402,9 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *json.Decoder) 
 			}
 		case `"item"`:
 			missing &^= missingItem
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"item\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -2456,6 +2468,9 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *json.Decoder) error {
 		switch string(name) {
 		case `"to"`:
 			missing &^= missingTo
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"to\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.To); err != nil {
 				return err
 			}
@@ -2751,6 +2766,9 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *json.Decoder)
 			}
 		case `"legend"`:
 			missing &^= missingLegend
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"legend\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
 				return err
 			}
@@ -4418,6 +4436,9 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *json.Decoder) err
 			}
 		case `"item"`:
 			missing &^= missingItem
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"item\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -4495,6 +4516,9 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *json.Decoder) error
 			}
 		case `"item"`:
 			missing &^= missingItem
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"item\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -4585,6 +4609,9 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"context"`:
 			missing &^= missingContext
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"context\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -5617,6 +5644,9 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"context"`:
 			missing &^= missingContext
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"context\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -6351,6 +6381,9 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"capabilities"`:
 			missing &^= missingCapabilities
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"capabilities\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
@@ -6435,6 +6468,9 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 		switch string(name) {
 		case `"capabilities"`:
 			missing &^= missingCapabilities
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"capabilities\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
@@ -6918,6 +6954,9 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 		switch string(name) {
 		case `"textDocument"`:
 			missing &^= missingTextDocument
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"textDocument\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -9019,6 +9058,9 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"context"`:
 			missing &^= missingContext
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"context\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -9841,6 +9883,9 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"context"`:
 			missing &^= missingContext
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"context\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -11047,6 +11092,9 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"options"`:
 			missing &^= missingOptions
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"options\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -11202,6 +11250,9 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) err
 			}
 		case `"options"`:
 			missing &^= missingOptions
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"options\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -11378,6 +11429,9 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) er
 			}
 		case `"options"`:
 			missing &^= missingOptions
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"options\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -11479,6 +11533,9 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *json.Decoder) er
 			}
 		case `"options"`:
 			missing &^= missingOptions
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"options\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -12039,6 +12096,9 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"edit"`:
 			missing &^= missingEdit
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"edit\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Edit); err != nil {
 				return err
 			}
@@ -13740,6 +13800,9 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"legend"`:
 			missing &^= missingLegend
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"legend\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
 				return err
 			}
@@ -14432,6 +14495,9 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"pattern"`:
 			missing &^= missingPattern
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"pattern\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -20160,6 +20226,9 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"snippet"`:
 			missing &^= missingSnippet
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"snippet\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Snippet); err != nil {
 				return err
 			}
@@ -21654,6 +21723,9 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *json.Decoder) error
 			}
 		case `"command"`:
 			missing &^= missingCommand
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"command\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
@@ -25434,6 +25506,9 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) 
 			}
 		case `"requests"`:
 			missing &^= missingRequests
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"requests\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Requests); err != nil {
 				return err
 			}
@@ -26822,6 +26897,9 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *json.Decoder) er
 		switch string(name) {
 		case `"codeActionKind"`:
 			missing &^= missingCodeActionKind
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"codeActionKind\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.CodeActionKind); err != nil {
 				return err
 			}
@@ -28128,6 +28206,9 @@ func (s *RequestFailureTelemetryEvent) UnmarshalJSONFrom(dec *json.Decoder) erro
 			}
 		case `"properties"`:
 			missing &^= missingProperties
+			if dec.PeekKind() == 'n' {
+				return fmt.Errorf("null value is not allowed for field \"properties\"")
+			}
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}

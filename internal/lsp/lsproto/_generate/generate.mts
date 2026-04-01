@@ -1757,8 +1757,13 @@ function generateCode() {
             if (p.omitzeroValue) return false;
             return true;
         }) || [];
-        // Check if any optional pointer fields need null rejection
-        const hasNullRejectableFields = structure.properties?.some(p => p.optional && !p.omitzeroValue && !typeCanBeNull(p.type)) || false;
+        // Check if any pointer fields need null rejection
+        const hasNullRejectableFields = structure.properties?.some(p => {
+            if (p.omitzeroValue) return false;
+            if (typeCanBeNull(p.type)) return false;
+            const resolved = resolveType(p.type);
+            return p.optional || resolved.needsPointer;
+        }) || false;
         if ((requiredProps.length > 0 || hasNullRejectableFields) && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
@@ -1797,8 +1802,11 @@ function generateCode() {
                 if (!prop.optional && !prop.omitzeroValue) {
                     writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
                 }
-                // Reject null for optional pointer fields whose types cannot represent null
-                if (prop.optional && !prop.omitzeroValue && !typeCanBeNull(prop.type)) {
+                // Reject null for pointer fields whose types cannot represent null.
+                // A field is a pointer when it's optional or when the type has needsPointer (struct references).
+                const resolvedType = resolveType(prop.type);
+                const isPointerField = (prop.optional || resolvedType.needsPointer) && !prop.omitzeroValue;
+                if (isPointerField && !typeCanBeNull(prop.type)) {
                     writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
                     writeLine(`\t\t\t\treturn fmt.Errorf("null value is not allowed for field \\"${prop.name}\\"")`);
                     writeLine(`\t\t\t}`);

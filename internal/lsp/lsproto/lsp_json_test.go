@@ -64,6 +64,30 @@ func TestUnmarshalRejectsNullForOptionalNonNullableFields(t *testing.T) {
 			target:  new(WorkDoneProgressOptions),
 			errText: `null value is not allowed for field "workDoneProgress"`,
 		},
+		{
+			name:    "CallHierarchyIncomingCallsParams item null",
+			input:   `{"item": null}`,
+			target:  new(CallHierarchyIncomingCallsParams),
+			errText: `null value is not allowed for field "item"`,
+		},
+		{
+			name:    "CallHierarchyIncomingCall from null",
+			input:   `{"from": null, "fromRanges": []}`,
+			target:  new(CallHierarchyIncomingCall),
+			errText: `null value is not allowed for field "from"`,
+		},
+		{
+			name:    "InitializeParams capabilities null",
+			input:   `{"processId": null, "rootUri": null, "capabilities": null}`,
+			target:  new(InitializeParams),
+			errText: `null value is not allowed for field "capabilities"`,
+		},
+		{
+			name:    "InitializeResult capabilities null",
+			input:   `{"capabilities": null}`,
+			target:  new(InitializeResult),
+			errText: `null value is not allowed for field "capabilities"`,
+		},
 	}
 
 	for _, tt := range tests {
