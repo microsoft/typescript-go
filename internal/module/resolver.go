@@ -456,6 +456,7 @@ func (r *resolutionState) mangleScopedPackageName(name string) string {
 
 // resolveFromTypeRoot tries to resolve a module name from the configured typeRoots.
 // This is used as a fallback after node_modules resolution fails, for declaration file lookups.
+// Returns nil if typeRoots is not configured or if no matching module is found in any typeRoot directory.
 func (r *resolutionState) resolveFromTypeRoot() *resolved {
 	if r.compilerOptions.TypeRoots == nil {
 		return nil
