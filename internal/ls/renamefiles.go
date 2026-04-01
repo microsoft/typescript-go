@@ -181,7 +181,7 @@ func (l *LanguageService) getImportEditsForRenamedFiles(sourceFile *ast.SourceFi
 		}
 
 		edits = append(edits, &lsproto.TextEdit{
-			Range:   *l.createLspRangeFromNode(moduleSpecifier, sourceFile),
+			Range:   l.createLspRangeFromNode(moduleSpecifier, sourceFile),
 			NewText: quoteModuleSpecifier(sourceFile, moduleSpecifier, newModuleSpecifiers[0]),
 		})
 	}

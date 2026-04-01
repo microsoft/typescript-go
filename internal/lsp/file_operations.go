@@ -154,6 +154,7 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 	}
 
 	snapshot := s.session.GetSnapshotLoadingDocumentsAndProjectTree(ctx, documents, nil)
+	defer snapshot.Deref(s.session)
 	var results []lsproto.WorkspaceEditOrNull
 	for _, project := range snapshot.ProjectCollection.Projects() {
 		if ctx.Err() != nil {

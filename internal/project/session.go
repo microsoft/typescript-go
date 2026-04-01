@@ -616,6 +616,7 @@ func (s *Session) GetSnapshotLoadingDocumentsAndProjectTree(
 			Documents:   documents,
 			ProjectTree: &ProjectTreeRequest{requestedProjectTrees},
 		},
+		true, /*callerRef*/
 	)
 	return snapshot
 }
