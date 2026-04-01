@@ -1248,6 +1248,35 @@ function goKindCasesForJsonKind(kind: string): string {
 }
 
 /**
+ * Checks if a meta model Type can represent a JSON null value.
+ * Used to determine if null should be rejected for optional pointer fields.
+ */
+function typeCanBeNull(type: Type): boolean {
+    switch (type.kind) {
+        case "base":
+            return type.name === "null";
+        case "reference": {
+            const override = typeAliasOverrides.get(type.name);
+            if (override) {
+                return override.name === "any";
+            }
+            if (nonResolvedAliases.has(type.name)) {
+                const customAlias = customTypeAliases.find(t => t.name === type.name);
+                if (customAlias) return typeCanBeNull(customAlias.type);
+                return false;
+            }
+            const aliased = typeInfo.typeAliasMap.get(type.name);
+            if (aliased) return typeCanBeNull(aliased);
+            return false;
+        }
+        case "or":
+            return type.items.some(item => typeCanBeNull(item));
+        default:
+            return false;
+    }
+}
+
+/**
  * For a group of union entries that share the same JSON kind (e.g., all objects),
  * find a discriminator field — a JSON property whose string literal type differs
  * across variants — enabling efficient O(1) dispatch instead of try-each.
@@ -1728,21 +1757,25 @@ function generateCode() {
             if (p.omitzeroValue) return false;
             return true;
         }) || [];
-        if (requiredProps.length > 0 && structure.name !== "Registration") {
+        // Check if any optional pointer fields need null rejection
+        const hasNullRejectableFields = structure.properties?.some(p => p.optional && !p.omitzeroValue && !typeCanBeNull(p.type)) || false;
+        if ((requiredProps.length > 0 || hasNullRejectableFields) && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
 
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
-            writeLine(`\tconst (`);
-            for (let i = 0; i < requiredProps.length; i++) {
-                const prop = requiredProps[i];
-                const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
-                writeLine(`\t\tmissing${titleCase(prop.name)}${iotaPrefix}`);
+            if (requiredProps.length > 0) {
+                writeLine(`\tconst (`);
+                for (let i = 0; i < requiredProps.length; i++) {
+                    const prop = requiredProps[i];
+                    const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
+                    writeLine(`\t\tmissing${titleCase(prop.name)}${iotaPrefix}`);
+                }
+                writeLine(`\t\t_missingLast`);
+                writeLine(`\t)`);
+                writeLine(`\tmissing := _missingLast - 1`);
+                writeLine("");
             }
-            writeLine(`\t\t_missingLast`);
-            writeLine(`\t)`);
-            writeLine(`\tmissing := _missingLast - 1`);
-            writeLine("");
 
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
             writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
@@ -1764,6 +1797,12 @@ function generateCode() {
                 if (!prop.optional && !prop.omitzeroValue) {
                     writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
                 }
+                // Reject null for optional pointer fields whose types cannot represent null
+                if (prop.optional && !prop.omitzeroValue && !typeCanBeNull(prop.type)) {
+                    writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
+                    writeLine(`\t\t\t\treturn fmt.Errorf("null value is not allowed for field \\"${prop.name}\\"")`);
+                    writeLine(`\t\t\t}`);
+                }
                 writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
                 writeLine(`\t\t\t\treturn err`);
                 writeLine(`\t\t\t}`);
@@ -1782,17 +1821,19 @@ function generateCode() {
             writeLine(`\t}`);
             writeLine("");
 
-            writeLine(`\tif missing != 0 {`);
-            writeLine(`\t\tvar missingProps []string`);
-            for (const prop of requiredProps) {
-                writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
-                writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
-                writeLine(`\t\t}`);
+            if (requiredProps.length > 0) {
+                writeLine(`\tif missing != 0 {`);
+                writeLine(`\t\tvar missingProps []string`);
+                for (const prop of requiredProps) {
+                    writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
+                    writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
+                    writeLine(`\t\t}`);
+                }
+                writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
+                writeLine(`\t}`);
+                writeLine("");
             }
-            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
-            writeLine(`\t}`);
 
-            writeLine("");
             writeLine(`\treturn nil`);
             writeLine(`}`);
             writeLine("");
