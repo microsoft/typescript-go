@@ -3,7 +3,6 @@ import {
     Hover,
     HoverRequest,
     LanguageClient,
-    MarkupContent,
     TextDocumentPositionParams,
 } from "vscode-languageclient/node";
 
@@ -45,25 +44,16 @@ class VerboseHoverProvider implements vscode.HoverProvider {
             return undefined;
         }
 
-        const markupContent = response.contents as MarkupContent;
-        const contents = new vscode.MarkdownString(markupContent.value);
-        contents.isTrusted = true;
-        contents.supportHtml = true;
-
-        let range: vscode.Range | undefined;
-        if (response.range) {
-            range = this.client.protocol2CodeConverter.asRange(response.range);
-        }
-
-        const hover = new vscode.VerboseHover(
-            [contents],
-            range,
+        const hover = this.client.protocol2CodeConverter.asHover(response);
+        const verboseHover = new vscode.VerboseHover(
+            hover.contents,
+            hover.range,
             response.canIncreaseVerbosity,
             verbosityLevel > 0,
         );
 
-        this.lastHoverAndLevel = [hover, verbosityLevel];
-        return hover;
+        this.lastHoverAndLevel = [verboseHover, verbosityLevel];
+        return verboseHover;
     }
 
     private getPreviousLevel(previousHover: vscode.Hover | undefined): number {
