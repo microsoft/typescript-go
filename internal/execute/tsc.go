@@ -3,7 +3,10 @@ package execute
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -107,7 +110,18 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	if pprofDir := commandLine.CompilerOptions().PprofDir; pprofDir != "" {
 		// !!! stderr?
 		profileSession := pprof.BeginProfiling(pprofDir, sys.Writer())
-		defer profileSession.Stop()
+
+		if commandLine.CompilerOptions().Watch.IsTrue() {
+			go func() {
+				ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+				defer stop()
+				<-ctx.Done()
+				profileSession.Stop()
+				os.Exit(int(tsc.ExitStatusSuccess))
+			}()
+		} else {
+			defer profileSession.Stop()
+		}
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
