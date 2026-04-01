@@ -259,7 +259,7 @@ func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.
 }
 
 func (s *symbolTableSerializationState) includePrivateSymbol(symbol *ast.Symbol) {
-	if core.Some(symbol.Declarations, isPartOfParameterDeclaration) {
+	if core.Some(symbol.Declarations, ast.IsPartOfParameterDeclaration) {
 		return
 	}
 	s.getUnusedName(symbol.Name, symbol)
@@ -273,10 +273,6 @@ func (s *symbolTableSerializationState) includePrivateSymbol(symbol *ast.Symbol)
 		idx = 0
 	}
 	s.deferredPrivatesStack[idx][ast.GetSymbolId(symbol)] = symbol
-}
-
-func isPartOfParameterDeclaration(d *ast.Node) bool {
-	return ast.FindAncestor(d, ast.IsParameter) != nil
 }
 
 func (s *symbolTableSerializationState) isExportingScope(enclosingDeclaration *ast.Node) bool {
