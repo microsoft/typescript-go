@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/jsxStylePropStyledJsx.tsx] ////
+
+=== jsxStylePropStyledJsx.tsx ===
+// https://github.com/microsoft/typescript-go/issues/TODO
+// Validates that the styled-jsx `jsx` and `global` boolean props are accepted on
+// <style> elements when the types are properly declared via module augmentation.
+
+/// <reference path="react16.d.ts" />
+
+import * as React from 'react';
+>React : Symbol(React, Decl(jsxStylePropStyledJsx.tsx, 6, 6))
+
+// Module augmentation as provided by styled-jsx (global.d.ts)
+declare module 'react' {
+>'react' : Symbol(React, Decl(react16.d.ts, 110, 19), Decl(jsxStylePropStyledJsx.tsx, 6, 31))
+
+    interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
+>StyleHTMLAttributes : Symbol(StyleHTMLAttributes, Decl(react16.d.ts, 1729, 9), Decl(jsxStylePropStyledJsx.tsx, 9, 24))
+>T : Symbol(T, Decl(react16.d.ts, 1731, 38), Decl(jsxStylePropStyledJsx.tsx, 10, 34))
+>HTMLAttributes : Symbol(HTMLAttributes, Decl(react16.d.ts, 1048, 9), Decl(react16.d.ts, 1105, 9))
+>T : Symbol(T, Decl(react16.d.ts, 1731, 38), Decl(jsxStylePropStyledJsx.tsx, 10, 34))
+
+        jsx?: boolean;
+>jsx : Symbol(StyleHTMLAttributes.jsx, Decl(jsxStylePropStyledJsx.tsx, 10, 64))
+
+        global?: boolean;
+>global : Symbol(StyleHTMLAttributes.global, Decl(jsxStylePropStyledJsx.tsx, 11, 22))
+    }
+}
+
+// Should compile without errors - jsx is in the augmented StyleHTMLAttributes
+const a = <style jsx>{`h1 { color: red; }`}</style>;
+>a : Symbol(a, Decl(jsxStylePropStyledJsx.tsx, 17, 5))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+>jsx : Symbol(jsx, Decl(jsxStylePropStyledJsx.tsx, 17, 16))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+
+// Should compile without errors - global is in the augmented StyleHTMLAttributes
+const b = <style global>{`h1 { color: red; }`}</style>;
+>b : Symbol(b, Decl(jsxStylePropStyledJsx.tsx, 20, 5))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+>global : Symbol(global, Decl(jsxStylePropStyledJsx.tsx, 20, 16))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+
+// Should compile without errors - both jsx and global
+const c = <style jsx global>{`h1 { color: red; }`}</style>;
+>c : Symbol(c, Decl(jsxStylePropStyledJsx.tsx, 23, 5))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+>jsx : Symbol(jsx, Decl(jsxStylePropStyledJsx.tsx, 23, 16))
+>global : Symbol(global, Decl(jsxStylePropStyledJsx.tsx, 23, 20))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+
+// Should still error - unknown is not in the type
+// @ts-expect-error
+const d = <style unknown>{`h1 { color: red; }`}</style>;
+>d : Symbol(d, Decl(jsxStylePropStyledJsx.tsx, 27, 5))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+>unknown : Symbol(unknown, Decl(jsxStylePropStyledJsx.tsx, 27, 16))
+>style : Symbol(JSX.IntrinsicElements.style, Decl(react16.d.ts, 2613, 96))
+
