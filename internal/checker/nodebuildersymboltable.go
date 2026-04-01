@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -58,7 +59,7 @@ func (s *symbolTableSerializationState) visitSymbolTable(symbolTable *ast.Symbol
 		i++
 		if s.b.checkTruncationLengthIfExpanding() && (i+2 < size-1) {
 			s.b.ctx.out.Truncated = true
-			s.results = append(s.results, s.createTruncationStatement("... (truncated) ..."))
+			s.results = append(s.results, s.createTruncationStatement(fmt.Sprintf("... (%d more ...)", size-i)))
 			s.serializeSymbol(symbols[len(symbols)-1], false, propertyAsAlias)
 			break
 		}
@@ -420,7 +421,7 @@ func (s *symbolTableSerializationState) serializeEnum(symbol *ast.Symbol, symbol
 	for i, p := range memberProps {
 		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(memberProps)-1) {
 			s.b.ctx.out.Truncated = true
-			members = append(members, s.b.f.NewEnumMember(s.b.f.NewStringLiteral("... (truncated) ...", 0), nil))
+			members = append(members, s.b.f.NewEnumMember(s.b.f.NewStringLiteral(fmt.Sprintf(" ... %d more ... ", len(memberProps)-i), 0), nil))
 			last := memberProps[len(memberProps)-1]
 			initializedValue := s.getEnumMemberInitializer(last)
 			memberName := last.Name
@@ -599,7 +600,7 @@ func (s *symbolTableSerializationState) serializePropertySymbolsForInterface(pro
 	for i, prop := range props {
 		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(props)-1) {
 			s.b.ctx.out.Truncated = true
-			elements = append(elements, s.createTruncationProperty("... (truncated) ...", false))
+			elements = append(elements, s.createTruncationProperty(fmt.Sprintf("... %d more ... ", len(props)-i), false))
 			result := s.serializePropertySymbolForInterface(props[len(props)-1], baseType)
 			elements = append(elements, result...)
 			break
@@ -616,7 +617,7 @@ func (s *symbolTableSerializationState) serializePropertySymbolsForClass(props [
 	for i, prop := range props {
 		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(props)-1) {
 			s.b.ctx.out.Truncated = true
-			elements = append(elements, s.createTruncationProperty("... (truncated) ...", true))
+			elements = append(elements, s.createTruncationProperty(fmt.Sprintf("... %d more ... ", len(props)-i), true))
 			result := s.serializePropertySymbolForClass(props[len(props)-1], isStatic, baseType)
 			elements = append(elements, result...)
 			break
