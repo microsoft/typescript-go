@@ -14,7 +14,7 @@ import (
 )
 
 // symbolTableSerializationState holds the mutable state for symbolTableToDeclarationStatements.
-// In the TypeScript implementation this is captured as closure state.
+// In Strada this is captured as closure state.
 type symbolTableSerializationState struct {
 	b                     *NodeBuilderImpl
 	results               []*ast.Node
@@ -66,6 +66,8 @@ func (s *symbolTableSerializationState) visitSymbolTable(symbolTable *ast.Symbol
 		s.serializeSymbol(symbol, false, propertyAsAlias)
 	}
 	if !suppressNewPrivateContext {
+		// deferredPrivates will be filled up by visiting the symbol table
+		// And will continue to iterate as elements are added while visited `deferredPrivates`
 		last := s.deferredPrivatesStack[len(s.deferredPrivatesStack)-1]
 		deferredSymbols := make([]*ast.Symbol, 0, len(last))
 		for _, symbol := range last {
@@ -480,7 +482,7 @@ func (s *symbolTableSerializationState) serializeModule(symbol *ast.Symbol, symb
 	members := s.getNamespaceMembersForSerialization(symbol)
 	expanding := isExpanding(s.b.ctx)
 
-	// Split NS members: real (parent is symbol) vs merged
+	// Split NS members up by declaration - members whose parent symbol is the ns symbol vs those whose is not (but were added in later via merging)
 	var realMembers, mergedMembers []*ast.Symbol
 	for _, m := range members {
 		if (m.Parent != nil && m.Parent == symbol) || expanding {
@@ -490,9 +492,13 @@ func (s *symbolTableSerializationState) serializeModule(symbol *ast.Symbol, symb
 		}
 	}
 
+	// TODO: `suppressNewPrivateContext` is questionable - we need to simply be emitting privates in whatever scope they were declared in, rather
+	// than whatever scope we traverse to them in. That's a bit of a complex rewrite, since we're not _actually_ tracking privates at all in advance,
+	// so we don't even have placeholders to fill in.
 	if len(realMembers) > 0 || expanding {
 		var localName *ast.Node
 		if expanding {
+			// Use the same name as symbol display.
 			oldFlags := s.b.ctx.flags
 			s.b.ctx.flags |= nodebuilder.FlagsWriteTypeParametersInQualifiedName | nodebuilder.Flags(SymbolFormatFlagsUseOnlyExternalAliasing)
 			localName = s.b.symbolToNode(symbol, ast.SymbolFlagsAll)
@@ -524,6 +530,9 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 	if len(props) > 0 {
 		s.b.ctx.approximateLength += 14
 		// Separate local vs remote props
+		// handle remote props first - we need to make an `import` declaration that points at the module containing each remote
+		// prop in the outermost scope
+		// TODO: implement handling for remote props - should be difficult to trigger, as only interesting cross-file js merges should make this possible
 		var localProps []*ast.Symbol
 		for _, p := range props {
 			if len(p.Declarations) == 0 || core.Some(p.Declarations, func(d *ast.Node) bool {
@@ -533,8 +542,10 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 			}
 		}
 
+		// Add a namespace
+		// Create namespace as non-synthetic so it is usable as an enclosing declaration
 		fakespace := s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil)))
-		fakespace.Flags &^= ast.NodeFlagsSynthesized // make non-synthetic so it's usable as enclosingDeclaration
+		fakespace.Flags &^= ast.NodeFlagsSynthesized
 		fakespace.Parent = s.b.ctx.enclosingDeclaration
 		// Set locals and symbol
 		localTable := make(ast.SymbolTable)
@@ -574,9 +585,10 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 			})
 		}
 
+		// replace namespace with synthetic version
 		fakespace = s.b.f.UpdateModuleDeclaration(fakespace.AsModuleDeclaration(), fakespace.Modifiers(), keyword, fakespace.Name(), s.b.f.NewModuleBlock(s.b.f.NewNodeList(declarations)))
 		fakespace.Parent = s.b.ctx.enclosingDeclaration
-		s.addResult(fakespace, modifierFlags)
+		s.addResult(fakespace, modifierFlags) // namespaces can never be default exported
 	} else if expanding {
 		s.b.ctx.approximateLength += 14
 		s.addResult(
@@ -954,13 +966,14 @@ func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.
 func (s *symbolTableSerializationState) serializeAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
 	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
 	for _, sig := range signatures {
-		s.b.ctx.approximateLength += 1
+		s.b.ctx.approximateLength += 1 // ;
+		// Each overload becomes a separate function declaration, in order
 		decl := s.b.signatureToSignatureDeclarationHelper(sig, ast.KindFunctionDeclaration, &SignatureToSignatureDeclarationOptions{
 			name: s.b.f.NewIdentifier(localName),
 		})
 		s.addResult(decl, modifierFlags)
 	}
-	// If there are properties on the function type, serialize as namespace
+	// Module symbol emit will take care of module-y members, provided it has exports
 	if symbol.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) != 0 && symbol.Exports != nil && len(symbol.Exports) != 0 {
 		return // module emit will handle it
 	}
@@ -1024,10 +1037,13 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 	isDefault := name == ast.InternalSymbolNameDefault
 	isExportAssignmentCompatibleSymbolName := isExportEquals || isDefault
 
+	// serialize as an anonymous property declaration
 	varName := s.getUnusedName(name, symbol)
+	// We have to use `getWidenedType` here since the object within a json file is unwidened within the file
+	// (Unwidened types can only exist in expression contexts and should never be serialized)
 	typeToSerialize := s.b.ch.getWidenedType(s.b.ch.getTypeOfSymbol(s.b.ch.getMergedSymbol(symbol)))
 
-	// Inside a module/namespace declaration, use `let` for non-getter-only accessors (matching TS behavior).
+	// Inside a module/namespace declaration, use `let` for non-getter-only accessors (matching Strada behavior).
 	// Otherwise use `const`.
 	flags := ast.NodeFlagsConst
 	if s.b.ctx.enclosingDeclaration != nil && s.b.ctx.enclosingDeclaration.Kind == ast.KindModuleDeclaration &&

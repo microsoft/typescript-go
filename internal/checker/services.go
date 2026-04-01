@@ -1063,3 +1063,24 @@ func (c *Checker) getTypeOfAssignmentPattern(expr *ast.Node) *Type {
 func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
 	return c.getSignatureFromDeclaration(node)
 }
+
+// IsLibType returns true if a type is declared in a lib file.
+// Don't expand types like Array or Promise, instead treating them as opaque.
+func (c *Checker) IsLibType(t *Type) bool {
+	var symbol *ast.Symbol
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		symbol = t.Target().Symbol()
+	} else {
+		symbol = t.Symbol()
+	}
+	if symbol == nil {
+		return isTupleType(t)
+	}
+	for _, decl := range symbol.Declarations {
+		sf := ast.GetSourceFileOfNode(decl)
+		if sf != nil && c.program.IsSourceFileDefaultLibrary(sf.Path()) {
+			return true
+		}
+	}
+	return isTupleType(t)
+}

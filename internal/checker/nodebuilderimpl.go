@@ -171,8 +171,8 @@ func (b *NodeBuilderImpl) checkTruncationLengthIfExpanding() bool {
 	return false
 }
 
-// shouldExpandType returns true if the given type should be expanded inline at the current depth.
-// For non-alias types, lib types are never expanded.
+// shouldExpandType determines if the input type should be expanded, based on how many layers of names
+// we're allowed to expand. For non-alias types, lib types are never expanded.
 // Sets canIncreaseExpansionDepth on the context out when declining to expand at the boundary.
 func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 	if b.ctx.maxExpansionDepth < 0 {
@@ -196,7 +196,6 @@ func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 }
 
 // canPossiblyExpandType returns true if it's possible the type or one of its components can be expanded.
-// Unlike shouldExpandType, this doesn't set canIncreaseExpansionDepth on the out context.
 func (b *NodeBuilderImpl) canPossiblyExpandType(t *Type) bool {
 	if b.ctx.maxExpansionDepth < 0 {
 		return false

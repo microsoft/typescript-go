@@ -22876,27 +22876,6 @@ func isTupleType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsReference != 0 && t.Target().objectFlags&ObjectFlagsTuple != 0
 }
 
-// IsLibType returns true if a type is declared in a lib file.
-// Don't expand types like `Array` or `Promise`, instead treating them as opaque.
-func (c *Checker) IsLibType(t *Type) bool {
-	var symbol *ast.Symbol
-	if t.objectFlags&ObjectFlagsReference != 0 {
-		symbol = t.Target().Symbol()
-	} else {
-		symbol = t.Symbol()
-	}
-	if symbol == nil {
-		return isTupleType(t)
-	}
-	for _, decl := range symbol.Declarations {
-		sf := ast.GetSourceFileOfNode(decl)
-		if sf != nil && c.program.IsSourceFileDefaultLibrary(sf.Path()) {
-			return true
-		}
-	}
-	return isTupleType(t)
-}
-
 func isMutableTupleType(t *Type) bool {
 	return isTupleType(t) && !t.TargetTupleType().readonly
 }
