@@ -27829,9 +27829,6 @@ func (s *InitializationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		case `"userPreferences"`:
-			if dec.PeekKind() == 'n' {
-				return fmt.Errorf("null value is not allowed for field \"userPreferences\"")
-			}
 			if err := json.UnmarshalDecode(dec, &s.UserPreferences); err != nil {
 				return err
 			}

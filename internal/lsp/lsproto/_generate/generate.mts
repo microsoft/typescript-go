@@ -1260,6 +1260,10 @@ function typeCanBeNull(type: Type): boolean {
             if (override) {
                 return override.name === "any";
             }
+            // A bare "any" reference resolves to Go's `any` (interface), which can hold null.
+            if (type.name === "any") {
+                return true;
+            }
             if (nonResolvedAliases.has(type.name)) {
                 const customAlias = customTypeAliases.find(t => t.name === type.name);
                 if (customAlias) return typeCanBeNull(customAlias.type);
