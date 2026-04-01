@@ -108,8 +108,7 @@
             "character": 10
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }

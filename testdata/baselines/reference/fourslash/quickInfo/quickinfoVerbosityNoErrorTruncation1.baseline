@@ -92,8 +92,7 @@
             "line": 0,
             "character": 6
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }

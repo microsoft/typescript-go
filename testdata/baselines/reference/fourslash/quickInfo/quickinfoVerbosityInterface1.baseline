@@ -301,8 +301,7 @@
             "line": 4,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -363,8 +362,7 @@
             "line": 13,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -426,8 +424,7 @@
             "character": 11
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -458,8 +455,7 @@
             "character": 11
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 2
     }
@@ -489,8 +485,7 @@
             "line": 28,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 3
     }
@@ -552,8 +547,7 @@
             "character": 11
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -583,8 +577,7 @@
             "line": 41,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 2
     }
@@ -645,8 +638,7 @@
             "line": 42,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -708,8 +700,7 @@
             "character": 11
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -739,8 +730,7 @@
             "line": 49,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 2
     }
@@ -801,8 +791,7 @@
             "line": 58,
             "character": 11
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }

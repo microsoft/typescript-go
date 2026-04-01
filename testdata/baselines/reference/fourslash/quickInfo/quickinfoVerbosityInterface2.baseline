@@ -293,8 +293,7 @@
             "line": 1,
             "character": 17
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -355,8 +354,7 @@
             "line": 9,
             "character": 17
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -418,8 +416,7 @@
             "character": 17
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -450,8 +447,7 @@
             "character": 17
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 2
     }
@@ -512,8 +508,7 @@
             "line": 28,
             "character": 17
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -575,8 +570,7 @@
             "character": 17
           }
         },
-        "canIncreaseVerbosity": true,
-        "canDecreaseVerbosity": true
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -606,8 +600,7 @@
             "line": 34,
             "character": 17
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 2
     }
@@ -668,8 +661,7 @@
             "line": 43,
             "character": 17
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -730,8 +722,7 @@
             "line": 47,
             "character": 13
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -792,8 +783,7 @@
             "line": 50,
             "character": 13
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }

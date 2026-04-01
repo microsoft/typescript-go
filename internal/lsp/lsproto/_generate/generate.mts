@@ -502,7 +502,7 @@ function patchAndPreprocessModel() {
             });
         }
 
-        // Patch Hover to add canIncreaseVerbosity and canDecreaseVerbosity
+        // Patch Hover to add canIncreaseVerbosity
         if (structure.name === "Hover") {
             structure.properties.push(
                 {
@@ -510,12 +510,6 @@ function patchAndPreprocessModel() {
                     type: { kind: "base", name: "boolean" },
                     omitzeroValue: true,
                     documentation: "Whether the verbosity level can be increased for this hover.",
-                },
-                {
-                    name: "canDecreaseVerbosity",
-                    type: { kind: "base", name: "boolean" },
-                    omitzeroValue: true,
-                    documentation: "Whether the verbosity level can be decreased for this hover.",
                 },
             );
         }
@@ -526,7 +520,7 @@ function patchAndPreprocessModel() {
                 name: "verbosityLevel",
                 type: { kind: "base", name: "boolean" },
                 optional: true,
-                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity`/`canDecreaseVerbosity` on `Hover`.",
+                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
             });
         }
 

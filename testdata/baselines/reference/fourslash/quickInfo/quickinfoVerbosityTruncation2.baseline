@@ -455,8 +455,7 @@
             "line": 0,
             "character": 24
           }
-        },
-        "canDecreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }

@@ -72,7 +72,6 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 
 	if supportsVerbosity && out != nil {
 		hover.CanIncreaseVerbosity = out.CanIncreaseExpansionDepth && !out.Truncated
-		hover.CanDecreaseVerbosity = verbosityLevel > 0
 	}
 
 	return lsproto.HoverOrNull{Hover: hover}, nil
@@ -118,7 +117,6 @@ func (l *LanguageService) ProvideVerboseHover(ctx context.Context, documentURI l
 			},
 			Range:                &hoverRange,
 			CanIncreaseVerbosity: out.CanIncreaseExpansionDepth && !out.Truncated,
-			CanDecreaseVerbosity: verbosityLevel > 0,
 		},
 	}, nil
 }

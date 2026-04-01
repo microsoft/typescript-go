@@ -7824,9 +7824,6 @@ type Hover struct {
 
 	// Whether the verbosity level can be increased for this hover.
 	CanIncreaseVerbosity bool `json:"canIncreaseVerbosity,omitzero"`
-
-	// Whether the verbosity level can be decreased for this hover.
-	CanDecreaseVerbosity bool `json:"canDecreaseVerbosity,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*Hover)(nil)
@@ -7862,10 +7859,6 @@ func (s *Hover) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"canIncreaseVerbosity"`:
 			if err := json.UnmarshalDecode(dec, &s.CanIncreaseVerbosity); err != nil {
-				return err
-			}
-		case `"canDecreaseVerbosity"`:
-			if err := json.UnmarshalDecode(dec, &s.CanDecreaseVerbosity); err != nil {
 				return err
 			}
 		default:
@@ -19421,7 +19414,7 @@ type HoverClientCapabilities struct {
 	// property. The order describes the preferred format of the client.
 	ContentFormat *[]MarkupKind `json:"contentFormat,omitzero"`
 
-	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity`/`canDecreaseVerbosity` on `Hover`.
+	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.
 	VerbosityLevel *bool `json:"verbosityLevel,omitzero"`
 }
 
@@ -29068,7 +29061,7 @@ type ResolvedHoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat []MarkupKind `json:"contentFormat,omitzero"`
-	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity`/`canDecreaseVerbosity` on `Hover`.
+	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.
 	VerbosityLevel bool `json:"verbosityLevel,omitzero"`
 }
 

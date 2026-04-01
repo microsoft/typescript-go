@@ -9,7 +9,6 @@ import {
 
 interface HoverResult extends Hover {
     canIncreaseVerbosity?: boolean;
-    canDecreaseVerbosity?: boolean;
 }
 
 interface HoverParamsWithVerbosity extends TextDocumentPositionParams {
