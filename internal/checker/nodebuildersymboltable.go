@@ -26,17 +26,16 @@ type symbolTableSerializationState struct {
 	remappedSymbolNames   map[ast.SymbolId]string
 }
 
-func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable) []*ast.Node {
+func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable ast.SymbolTable) []*ast.Node {
 	s := &symbolTableSerializationState{
 		b:                    b,
 		enclosingDeclaration: b.ctx.enclosingDeclaration,
 		addingDeclare:        true,
-		usedSymbolNames:      collections.Set[string]{},
 		remappedSymbolNames:  make(map[ast.SymbolId]string),
 	}
 
 	// Cache symbol names
-	for name, sym := range *symbolTable {
+	for name, sym := range symbolTable {
 		s.getInternalSymbolName(sym, name)
 	}
 
@@ -53,14 +52,14 @@ func (s *symbolTableSerializationState) removeExportModifier(node *ast.Node) *as
 	return ast.ReplaceModifiers(s.b.f, node, s.b.f.NewModifierList(modifiers))
 }
 
-func (s *symbolTableSerializationState) visitSymbolTable(symbolTable *ast.SymbolTable, suppressNewPrivateContext bool, propertyAsAlias bool) {
+func (s *symbolTableSerializationState) visitSymbolTable(symbolTable ast.SymbolTable, suppressNewPrivateContext bool, propertyAsAlias bool) {
 	if !suppressNewPrivateContext {
 		s.deferredPrivatesStack = append(s.deferredPrivatesStack, make(map[ast.SymbolId]*ast.Symbol))
 	}
 	i := 0
-	size := len(*symbolTable)
+	size := len(symbolTable)
 	symbols := make([]*ast.Symbol, 0, size)
-	for _, symbol := range *symbolTable {
+	for _, symbol := range symbolTable {
 		symbols = append(symbols, symbol)
 	}
 	s.b.ch.sortSymbols(symbols)
@@ -629,7 +628,7 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 		for _, p := range localProps {
 			localSymbolTable[p.Name] = p
 		}
-		s.visitSymbolTable(&localSymbolTable, suppressNewPrivateContext, true)
+		s.visitSymbolTable(localSymbolTable, suppressNewPrivateContext, true)
 
 		s.b.ctx.enclosingDeclaration = oldEnclosingDeclaration
 		s.addingDeclare = oldAddingDeclare

@@ -117,7 +117,7 @@ func (b *NodeBuilder) SignatureToSignatureDeclaration(signature *Signature, kind
 }
 
 // SymbolTableToDeclarationStatements implements NodeBuilderInterface.
-func (b *NodeBuilder) SymbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
+func (b *NodeBuilder) SymbolTableToDeclarationStatements(symbolTable ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContextSlice(b.impl.symbolTableToDeclarationStatements(symbolTable))
 }
@@ -135,7 +135,7 @@ func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, mean
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, 0)
 
 	table := createSymbolTable([]*ast.Symbol{symbol})
-	nodes := b.impl.symbolTableToDeclarationStatements(&table)
+	nodes := b.impl.symbolTableToDeclarationStatements(table)
 
 	b.impl.ctx.typeStack = b.impl.ctx.typeStack[:len(b.impl.ctx.typeStack)-2]
 
