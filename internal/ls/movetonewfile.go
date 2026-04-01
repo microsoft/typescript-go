@@ -54,25 +54,20 @@ func (l *LanguageService) GetMoveToNewFileEdits(
 
 // doMoveToNewFile performs the actual work of moving statements to a new file.
 //
-// !!! TODO: Implement full logic.
+// !!! TODO: Implement full logic:
+// 1. Get type checker
+// 2. Compute usage info (movedSymbols, imports needed, etc.)
+// 3. Determine new filename
+// 4. Delete moved statements from old file
+// 5. Add/update imports in old file
+// 6. Add exports for things needed by the new file
+// 7. Create new file content with moved statements and their imports
 func doMoveToNewFile(
-	ctx context.Context,
-	oldFile *ast.SourceFile,
-	program *compiler.Program,
-	toMove *ToMove,
-	changes *change.Tracker,
+	_ context.Context,
+	_ *ast.SourceFile,
+	_ *compiler.Program,
+	_ *ToMove,
+	_ *change.Tracker,
 ) {
-	// !!! TODO: Implement
-	// 1. Get type checker
-	// 2. Compute usage info (movedSymbols, imports needed, etc.)
-	// 3. Determine new filename
-	// 4. Delete moved statements from old file
-	// 5. Add/update imports in old file
-	// 6. Add exports for things needed by the new file
-	// 7. Create new file content with moved statements and their imports
-	_ = ctx
-	_ = oldFile
-	_ = program
-	_ = toMove
-	_ = changes
+	// Not yet implemented.
 }
