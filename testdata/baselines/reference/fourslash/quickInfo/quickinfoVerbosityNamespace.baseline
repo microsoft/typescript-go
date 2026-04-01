@@ -158,7 +158,7 @@
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | module "/foo" {
-// |     export function foo(): string;
+// |     function foo(): string;
 // |     namespace foo { }
 // | }
 // | ```
@@ -528,7 +528,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nmodule \"/foo\" {\n    export function foo(): string;\n    namespace foo { }\n}\n```\n"
+          "value": "```tsx\nmodule \"/foo\" {\n    function foo(): string;\n    namespace foo { }\n}\n```\n"
         },
         "range": {
           "start": {
