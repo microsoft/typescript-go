@@ -220,7 +220,7 @@ func (s *symbolTableSerializationState) addResult(node *ast.Node, additionalModi
 		}
 
 		canExport := ast.IsEnumDeclaration(node) || ast.IsVariableStatement(node) || ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node) ||
-			ast.IsInterfaceDeclaration(node) || ast.IsTypeAliasDeclaration(node) || (ast.IsModuleDeclaration(node) && !ast.IsExternalModuleAugmentation(node) && !ast.IsGlobalScopeAugmentation(node))
+			ast.IsInterfaceDeclaration(node) || ast.IsTypeAliasDeclaration(node) || (ast.IsModuleDeclaration(node) && node.Parent != nil && !ast.IsExternalModuleAugmentation(node) && !ast.IsGlobalScopeAugmentation(node))
 		if additionalModifierFlags&ast.ModifierFlagsExport != 0 &&
 			enclosingDeclaration != nil &&
 			(s.isExportingScope(enclosingDeclaration) || ast.IsModuleDeclaration(enclosingDeclaration)) &&

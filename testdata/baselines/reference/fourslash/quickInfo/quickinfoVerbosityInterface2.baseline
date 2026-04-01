@@ -31,7 +31,7 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {
+// | interface Foo extends Bar {
 // |     a: "a" | "c";
 // | }
 // | ```
@@ -62,7 +62,7 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {
+// | interface Foo extends Bar {
 // |     a: "a" | "c";
 // |     foo: (a: {
 // |         param: FooType;
@@ -75,7 +75,7 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {
+// | interface Foo extends Bar {
 // |     a: FooType;
 // |     foo: (a: FooParam) => number;
 // | }
@@ -124,7 +124,9 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {
+// | interface Foo extends Bar<{
+// |     param: "a" | "c";
+// | }> {
 // |     a: "a" | "c";
 // |     foo: (a: {
 // |         param: "a" | "c";
@@ -137,7 +139,7 @@
 //               ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | interface Foo {
+// | interface Foo extends Bar<FooParam> {
 // |     a: "a" | "c";
 // |     foo: (a: FooParam) => number;
 // | }
@@ -342,7 +344,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n}\n```\n"
+          "value": "```tsx\ninterface Foo extends Bar {\n    a: \"a\" | \"c\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -404,7 +406,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: FooType;\n    foo: (a: FooParam) => number;\n}\n```\n"
+          "value": "```tsx\ninterface Foo extends Bar {\n    a: FooType;\n    foo: (a: FooParam) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -436,7 +438,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: FooType;\n    }) => number;\n}\n```\n"
+          "value": "```tsx\ninterface Foo extends Bar {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: FooType;\n    }) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -561,7 +563,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n    foo: (a: FooParam) => number;\n}\n```\n"
+          "value": "```tsx\ninterface Foo extends Bar<FooParam> {\n    a: \"a\" | \"c\";\n    foo: (a: FooParam) => number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -593,7 +595,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n}\n```\n"
+          "value": "```tsx\ninterface Foo extends Bar<{\n    param: \"a\" | \"c\";\n}> {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n}\n```\n"
         },
         "range": {
           "start": {

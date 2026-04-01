@@ -385,7 +385,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if canExpandSymbol(symbol) {
 			expandedFlags := checker.TypeFormatFlagsMultilineObjectLiterals | checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
-			expanded := c.SymbolToDeclarationsWithVerbosity(symbol, meaning, container, expandedFlags, verbosityLevel-1, out, defaultHoverMaximumTruncationLength)
+			expanded := c.SymbolToDeclarationsWithVerbosity(symbol, meaning, nil, expandedFlags, verbosityLevel-1, out, defaultHoverMaximumTruncationLength)
 			if expanded != "" {
 				b.WriteString(expanded)
 				symbolWasExpanded = true

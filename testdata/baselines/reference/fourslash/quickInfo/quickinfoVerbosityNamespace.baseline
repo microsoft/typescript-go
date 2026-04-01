@@ -48,7 +48,6 @@
 // |     export const f: {
 // |         a: string;
 // |     };
-// |     export { unknown as Foo };
 // | }
 // | ```
 // | 
@@ -62,7 +61,6 @@
 // |     export const c: number;
 // |     export const d: number;
 // |     export const f: Apple;
-// |     export { unknown as Foo };
 // | }
 // | ```
 // | 
@@ -159,7 +157,7 @@
 //         ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | namespace "./foo" {
+// | namespace "/foo" {
 // |     function foo(): string;
 // | }
 // | ```
@@ -285,7 +283,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: Apple;\n    export { unknown as Foo };\n}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: Apple;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -317,7 +315,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: {\n        a: string;\n    };\n    export { unknown as Foo };\n}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export const c: number;\n    export const d: number;\n    export const f: {\n        a: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -535,7 +533,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace \"./foo\" {\n    function foo(): string;\n}\n```\n"
+          "value": "```tsx\nnamespace \"/foo\" {\n    function foo(): string;\n}\n```\n"
         },
         "range": {
           "start": {
