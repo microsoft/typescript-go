@@ -1787,7 +1787,7 @@ function generateCode() {
             }
 
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
-            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t\treturn errNotObject(k)`);
             writeLine(`\t}`);
             writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
             writeLine(`\t\treturn err`);
@@ -1812,7 +1812,7 @@ function generateCode() {
                 const isPointerField = (prop.optional || resolvedType.needsPointer) && !prop.omitzeroValue;
                 if (isPointerField && !typeCanBeNull(prop.type)) {
                     writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
-                    writeLine(`\t\t\t\treturn fmt.Errorf("null value is not allowed for field \\"${prop.name}\\"")`);
+                    writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
                     writeLine(`\t\t\t}`);
                 }
                 writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
@@ -1841,7 +1841,7 @@ function generateCode() {
                     writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
                     writeLine(`\t\t}`);
                 }
-                writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
+                writeLine(`\t\treturn errMissing(missingProps)`);
                 writeLine(`\t}`);
                 writeLine("");
             }
@@ -1925,7 +1925,7 @@ function generateCode() {
             writeLine(`\tmissing := _missingLast - 1`);
             writeLine("");
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
-            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t\treturn errNotObject(k)`);
             writeLine(`\t}`);
             writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
             writeLine(`\t\treturn err`);
@@ -1975,7 +1975,7 @@ function generateCode() {
             writeLine(`\t\tif missing&missingMethod != 0 {`);
             writeLine(`\t\t\tmissingProps = append(missingProps, "method")`);
             writeLine(`\t\t}`);
-            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
+            writeLine(`\t\treturn errMissing(missingProps)`);
             writeLine(`\t}`);
             writeLine("");
             writeLine(`\tif len(rawRegisterOptions) > 0 {`);
@@ -2672,7 +2672,7 @@ function generateCode() {
             }
 
             writeLine(`\tdefault:`);
-            writeLine(`\t\treturn fmt.Errorf("invalid ${name}: expected ${[...(unionContainedNull ? ["null"] : []), ...kindMap.keys()].join(", ")}, got %v", dec.PeekKind())`);
+            writeLine(`\t\treturn errInvalidKind("${name}", dec.PeekKind())`);
             writeLine(`\t}`);
         }
         else if (canDispatch) {
@@ -2734,13 +2734,13 @@ function generateCode() {
                         }
                     }
                     if (!exhaustive) {
-                        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+                        writeLine(`\t\treturn errInvalidValue("${name}", data)`);
                     }
                 }
             }
 
             writeLine(`\tdefault:`);
-            writeLine(`\t\treturn fmt.Errorf("invalid ${name}: expected ${[...(unionContainedNull ? ["null"] : []), ...kindMap.keys()].join(", ")}, got %v", dec.PeekKind())`);
+            writeLine(`\t\treturn errInvalidKind("${name}", dec.PeekKind())`);
             writeLine(`\t}`);
         }
         else {
@@ -2785,7 +2785,7 @@ function generateCode() {
         }
         else if (!fallbackExhaustive) {
             // Fallback paths: the final error references `data` which is in scope.
-            writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+            writeLine(`\treturn errInvalidValue("${name}", data)`);
         }
         writeLine(`}`);
         writeLine("");
@@ -2826,7 +2826,7 @@ function generateCode() {
         writeLine(`\t\treturn err`);
         writeLine(`\t}`);
         writeLine(`\tif string(v) != \`${jsonValue}\` {`);
-        writeLine(`\t\treturn fmt.Errorf("expected ${name} value %s, got %s", \`${jsonValue}\`, v)`);
+        writeLine(`\t\treturn errLiteralMismatch("${name}", \`${jsonValue}\`, v)`);
         writeLine(`\t}`);
         writeLine(`\treturn nil`);
         writeLine(`}`);
