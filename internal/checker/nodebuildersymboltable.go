@@ -216,7 +216,7 @@ func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.
 		if symbol.Parent != nil && symbol.Parent.ValueDeclaration != nil && ast.IsSourceFile(symbol.Parent.ValueDeclaration) {
 			flags = ast.NodeFlagsConst
 		}
-	} else if isConstantVariable(symbol) {
+	} else if s.b.ch.isConstantVariable(symbol) {
 		flags = ast.NodeFlagsConst
 	} else {
 		flags = ast.NodeFlagsLet
@@ -1213,12 +1213,6 @@ func (s *symbolTableSerializationState) getImplementsTypes(classType *Type) []*T
 		}
 	}
 	return result
-}
-
-func isConstantVariable(symbol *ast.Symbol) bool {
-	return symbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 &&
-		symbol.ValueDeclaration != nil &&
-		ast.IsVarConst(symbol.ValueDeclaration)
 }
 
 func (s *symbolTableSerializationState) getNonInheritedProperties(t *Type, baseTypes []*Type, properties []*ast.Symbol) []*ast.Symbol {
