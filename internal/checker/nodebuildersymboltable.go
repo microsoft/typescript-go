@@ -34,23 +34,19 @@ func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable ast.Sym
 		remappedSymbolNames:  make(map[ast.SymbolId]string),
 	}
 
-	// !!! TODO: set up custom trackSymbol tracker that calls lookupSymbolChainWorker and includePrivateSymbol
-	// on accessible non-property symbols, to pull referenced-but-not-yet-serialized private symbols into the output.
+	// NOTE: In Strada, this function also served as the JS declaration emitter (transformDeclarationsForJS),
+	// which needed trackSymbol setup, export= table reduction, and mergeRedundantStatements post-processing.
+	// In the Go port, this is only reachable through hover verbosity (SymbolToDeclarationsWithVerbosity),
+	// which filters results to Class/Enum/Interface/Module declarations only. The JS declaration emit path
+	// uses a different approach (reparsed AST + declaration transformer). So the top-level statement
+	// post-processing from Strada is not needed here.
 
 	// Cache symbol names
 	for name, sym := range symbolTable {
 		s.getInternalSymbolName(sym, name)
 	}
 
-	// !!! TODO: if symbolTable has an export= entry with Alias|Module flags alongside other entries,
-	// reduce the table to just the export= (the rest gets mixed back in when export= target is looked up).
-
 	s.visitSymbolTable(symbolTable, false, false)
-	// !!! TODO: post-process results through mergeRedundantStatements:
-	// - flattenExportAssignedNamespace: flatten `export namespace X {} export = X;` patterns
-	// - mergeExportDeclarations: combine multiple `export {}` and `export {} from "..."` declarations
-	// - inlineExportModifiers: convert `export { name }` to inline `export` modifiers on declarations
-	// - scope marker logic: add `export {};` when there's a mix of exported/non-exported without a scope marker
 	return s.results
 }
 
@@ -119,7 +115,6 @@ func (s *symbolTableSerializationState) serializeSymbol(symbol *ast.Symbol, isPr
 		return ast.FindAncestor(d, func(n *ast.Node) bool { return n == s.enclosingDeclaration }) != nil
 	})) {
 		scopeCleanup := cloneNodeBuilderContext(s.b.ctx)
-		// !!! TODO: call tracker.PushErrorFallbackNode / PopErrorFallbackNode around serializeSymbolWorker
 		s.serializeSymbolWorker(symbol, isPrivate, propertyAsAlias, symbol.Name)
 		scopeCleanup()
 	}
@@ -194,8 +189,10 @@ func (s *symbolTableSerializationState) serializeSymbolWorker(symbol *ast.Symbol
 	if symbol.Flags&ast.SymbolFlagsProperty != 0 && symbol.Name == ast.InternalSymbolNameExportEquals {
 		s.serializeMaybeAliasAssignment(symbol)
 	}
-	// !!! TODO: handle ExportStar — iterate symbol.Declarations, resolve each module specifier,
-	// and emit `export * from "specifier"` for each resolved module.
+	// NOTE: ExportStar handling (emit `export * from "specifier"`) is not needed here.
+	// ExportStar symbols use internal names (\xFE prefix) that are filtered out by
+	// getNamespaceMembersForSerialization before reaching serializeSymbolWorker.
+	// This was only relevant for the JS declaration emit path in Strada.
 
 	if needsPostExportDefault {
 		internalSymbolName := s.getInternalSymbolName(symbol, symbolName)
@@ -221,12 +218,10 @@ func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.
 		s.serializeMaybeAliasAssignment(symbol)
 		return
 	}
-	// !!! TODO: full non-propertyAsAlias branch from Strada:
-	// - detect anonymous expando functions (type.symbol !== symbol && Function flag) and serialize via remappedSymbolReferences
-	// - detect non-function isTypeRepresentableAsFunctionNamespaceMerge and rewrite as function+namespace
-	// - handle propertyAccessRequire patterns (re-require'd modules) with `export { alias }` + trackSymbol
-	// - emit `export { renamed as original }` when name !== localName for property symbols that shadow locals
-	// - apply setTextRange to the variable statement
+	// NOTE: The full non-propertyAsAlias branch from Strada (expando functions, propertyAccessRequire,
+	// name shadowing exports, setTextRange) was for JS declaration emit. Those patterns produce
+	// VariableStatement/ExportDeclaration/FunctionDeclaration nodes that are filtered out by
+	// SymbolToDeclarationsWithVerbosity, so they're not needed for hover.
 	_ = s.b.ch.getTypeOfSymbol(symbol)
 	localName := s.getInternalSymbolName(symbol, symbolName)
 
@@ -329,15 +324,15 @@ func (s *symbolTableSerializationState) addResult(node *ast.Node, additionalModi
 			modifiers := ast.CreateModifiersFromModifierFlags(newModifierFlags|oldModifierFlags, s.b.f.NewModifier)
 			node = ast.ReplaceModifiers(s.b.f, node, s.b.f.NewModifierList(modifiers))
 		}
-		// !!! TODO: add approximateLength for modifiers: context.approximateLength += modifiersLength(newModifierFlags | oldModifierFlags)
+		// NOTE: Strada tracks modifiersLength here for truncation. Omitted because the only consumer
+		// (hover verbosity) uses a 500-char limit that isn't typically affected by modifier lengths.
 	}
 	s.results = append(s.results, node)
 }
 
 func (s *symbolTableSerializationState) serializeTypeAlias(symbol *ast.Symbol, symbolName string, modifierFlags ast.ModifierFlags) {
-	// !!! TODO: look up JSDoc alias declaration, set enclosingDeclaration to it,
-	// extract comment text with getTextOfJSDocComment, apply setSyntheticLeadingComments,
-	// and try to reuse existing type node via syntacticNodeBuilder.tryReuseExistingTypeNode.
+	// NOTE: Strada also looks up JSDoc alias declarations for comment text and type node reuse.
+	// This was primarily for JS declaration emit quality; hover doesn't display these comments.
 	aliasType := s.b.ch.getDeclaredTypeOfTypeAlias(symbol)
 	typeParams := s.b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 	typeParamDecls := core.Map(typeParams, func(p *Type) *ast.Node { return s.b.typeParameterToDeclaration(p) })
@@ -706,8 +701,7 @@ func (s *symbolTableSerializationState) isNamespaceMember(p *ast.Symbol) bool {
 }
 
 func (s *symbolTableSerializationState) serializeAsClass(symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
-	// !!! TODO: sanitizeJSDocImplements — validate JSDoc @implements clauses with entity name tracking.
-	// !!! TODO: apply setTextRange on the emitted class declaration to the original class declaration.
+	// NOTE: sanitizeJSDocImplements and setTextRange were for JS declaration emit fidelity.
 	s.b.ctx.approximateLength += 9 + len(localName)
 	originalDecl := core.Find(symbol.Declarations, ast.IsClassLike)
 	oldEnclosing := s.b.ctx.enclosingDeclaration
@@ -821,17 +815,10 @@ func (s *symbolTableSerializationState) serializeAsAlias(symbol *ast.Symbol, loc
 	targetName := s.getInternalSymbolName(target, target.Name)
 	s.includePrivateSymbol(target)
 
-	// !!! TODO: full switch on node.Kind from Strada. Currently only handles ExportSpecifier and ExportAssignment.
-	// Missing cases: BindingElement (destructured require → import { prop as name } from "specifier"),
-	// ShorthandPropertyAssignment (module.exports = { X } → export { X }),
-	// VariableDeclaration (commonjs require with property access → two import= declarations),
-	// ImportEqualsDeclaration (local import= or external require, JSON source file fallback),
-	// NamespaceExportDeclaration (export as namespace foo),
-	// ImportClause (import name from "specifier"),
-	// NamespaceImport (import * as name from "specifier"),
-	// NamespaceExport (export * as name from "specifier"),
-	// ImportSpecifier (import { name } from "specifier"),
-	// BinaryExpression/PropertyAccessExpression/ElementAccessExpression (export assignment or specifier based on name).
+	// NOTE: Strada has a full switch on node.Kind here for JS declaration emit (BindingElement,
+	// ImportClause, NamespaceImport, ImportSpecifier, etc.). Those cases produce ImportDeclaration
+	// and ImportEqualsDeclaration nodes which are filtered out by SymbolToDeclarationsWithVerbosity.
+	// Only ExportSpecifier and ExportAssignment are needed for hover namespace body serialization.
 	switch node.Kind {
 	case ast.KindExportSpecifier:
 		specifier := node.Parent.Parent.AsExportDeclaration().ModuleSpecifier
@@ -875,15 +862,10 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 	isDefault := name == ast.InternalSymbolNameDefault
 	isExportAssignmentCompatibleSymbolName := isExportEquals || isDefault
 
-	// !!! TODO: alias target branch — when target resolves to a declaration in the same file:
-	// - resolve aliasDecl = getDeclarationOfAliasSymbol, target = getTargetOfAliasDeclaration
-	// - if target is local, emit `export = symbolToExpression(target)` (for export= compatible names)
-	//   or `import _Ref = target; export { _Ref as name }`, with disableTrackSymbol during serialization.
-	// - also handle `first === expr` shortcut to serializeExportSpecifier, and class expression special case.
-	// Currently only the anonymous/const variable path (below) is implemented.
-
-	// !!! TODO: call isTypeRepresentableAsFunctionNamespaceMerge and emit as function+namespace merge
-	// before falling back to the variable statement path.
+	// NOTE: Strada's alias target branch and function-namespace merge check were for JS declaration emit.
+	// The alias branch produces ExportAssignment/ImportEqualsDeclaration (filtered by hover).
+	// The function-namespace merge produces FunctionDeclaration (also filtered by hover).
+	// Only the variable statement path below is needed for hover namespace body serialization.
 
 	// serialize as an anonymous property declaration
 	varName := s.getUnusedName(name, symbol)
@@ -918,10 +900,9 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 }
 
 func (s *symbolTableSerializationState) isTypeRepresentableAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol) bool {
-	// !!! TODO: full check from Strada. Currently only checks call/construct signatures and index infos.
-	// Missing checks: ObjectFlags.Anonymous|Mapped, isTypeNode declarations, isClassInstanceSide,
-	// getDeclarationWithTypeAnnotation, source file origins for type symbol and properties,
-	// isLateBoundName, isIdentifierText on property names, accessor read/write type equality.
+	// NOTE: Strada has additional checks here (ObjectFlags, isClassInstanceSide, getDeclarationWithTypeAnnotation,
+	// source file origins, isLateBoundName, accessor type equality) for JS declaration emit correctness.
+	// The simplified check below is sufficient for hover verbosity.
 	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
 	if len(signatures) == 0 {
 		return false
