@@ -34,12 +34,23 @@ func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable ast.Sym
 		remappedSymbolNames:  make(map[ast.SymbolId]string),
 	}
 
+	// !!! TODO: set up custom trackSymbol tracker that calls lookupSymbolChainWorker and includePrivateSymbol
+	// on accessible non-property symbols, to pull referenced-but-not-yet-serialized private symbols into the output.
+
 	// Cache symbol names
 	for name, sym := range symbolTable {
 		s.getInternalSymbolName(sym, name)
 	}
 
+	// !!! TODO: if symbolTable has an export= entry with Alias|Module flags alongside other entries,
+	// reduce the table to just the export= (the rest gets mixed back in when export= target is looked up).
+
 	s.visitSymbolTable(symbolTable, false, false)
+	// !!! TODO: post-process results through mergeRedundantStatements:
+	// - flattenExportAssignedNamespace: flatten `export namespace X {} export = X;` patterns
+	// - mergeExportDeclarations: combine multiple `export {}` and `export {} from "..."` declarations
+	// - inlineExportModifiers: convert `export { name }` to inline `export` modifiers on declarations
+	// - scope marker logic: add `export {};` when there's a mix of exported/non-exported without a scope marker
 	return s.results
 }
 
@@ -108,6 +119,7 @@ func (s *symbolTableSerializationState) serializeSymbol(symbol *ast.Symbol, isPr
 		return ast.FindAncestor(d, func(n *ast.Node) bool { return n == s.enclosingDeclaration }) != nil
 	})) {
 		scopeCleanup := cloneNodeBuilderContext(s.b.ctx)
+		// !!! TODO: call tracker.PushErrorFallbackNode / PopErrorFallbackNode around serializeSymbolWorker
 		s.serializeSymbolWorker(symbol, isPrivate, propertyAsAlias, symbol.Name)
 		scopeCleanup()
 	}
@@ -182,6 +194,8 @@ func (s *symbolTableSerializationState) serializeSymbolWorker(symbol *ast.Symbol
 	if symbol.Flags&ast.SymbolFlagsProperty != 0 && symbol.Name == ast.InternalSymbolNameExportEquals {
 		s.serializeMaybeAliasAssignment(symbol)
 	}
+	// !!! TODO: handle ExportStar — iterate symbol.Declarations, resolve each module specifier,
+	// and emit `export * from "specifier"` for each resolved module.
 
 	if needsPostExportDefault {
 		internalSymbolName := s.getInternalSymbolName(symbol, symbolName)
@@ -207,6 +221,12 @@ func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.
 		s.serializeMaybeAliasAssignment(symbol)
 		return
 	}
+	// !!! TODO: full non-propertyAsAlias branch from Strada:
+	// - detect anonymous expando functions (type.symbol !== symbol && Function flag) and serialize via remappedSymbolReferences
+	// - detect non-function isTypeRepresentableAsFunctionNamespaceMerge and rewrite as function+namespace
+	// - handle propertyAccessRequire patterns (re-require'd modules) with `export { alias }` + trackSymbol
+	// - emit `export { renamed as original }` when name !== localName for property symbols that shadow locals
+	// - apply setTextRange to the variable statement
 	_ = s.b.ch.getTypeOfSymbol(symbol)
 	localName := s.getInternalSymbolName(symbol, symbolName)
 
@@ -309,11 +329,15 @@ func (s *symbolTableSerializationState) addResult(node *ast.Node, additionalModi
 			modifiers := ast.CreateModifiersFromModifierFlags(newModifierFlags|oldModifierFlags, s.b.f.NewModifier)
 			node = ast.ReplaceModifiers(s.b.f, node, s.b.f.NewModifierList(modifiers))
 		}
+		// !!! TODO: add approximateLength for modifiers: context.approximateLength += modifiersLength(newModifierFlags | oldModifierFlags)
 	}
 	s.results = append(s.results, node)
 }
 
 func (s *symbolTableSerializationState) serializeTypeAlias(symbol *ast.Symbol, symbolName string, modifierFlags ast.ModifierFlags) {
+	// !!! TODO: look up JSDoc alias declaration, set enclosingDeclaration to it,
+	// extract comment text with getTextOfJSDocComment, apply setSyntheticLeadingComments,
+	// and try to reuse existing type node via syntacticNodeBuilder.tryReuseExistingTypeNode.
 	aliasType := s.b.ch.getDeclaredTypeOfTypeAlias(symbol)
 	typeParams := s.b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 	typeParamDecls := core.Map(typeParams, func(p *Type) *ast.Node { return s.b.typeParameterToDeclaration(p) })
@@ -635,6 +659,9 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 		declarations := s.results
 		s.results = oldResults
 
+		// !!! TODO: rewrite `export default expr` assignments inside namespaces to
+		// `export { expr as default }` specifiers (defaultReplaced map from Strada).
+
 		// Strip export modifiers if all declarations are exported
 		allExported := len(declarations) > 0 && core.Every(declarations, func(d *ast.Node) bool {
 			return ast.HasSyntacticModifier(d, ast.ModifierFlagsExport)
@@ -664,6 +691,8 @@ func (s *symbolTableSerializationState) isNamespaceMember(p *ast.Symbol) bool {
 }
 
 func (s *symbolTableSerializationState) serializeAsClass(symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
+	// !!! TODO: sanitizeJSDocImplements — validate JSDoc @implements clauses with entity name tracking.
+	// !!! TODO: apply setTextRange on the emitted class declaration to the original class declaration.
 	s.b.ctx.approximateLength += 9 + len(localName)
 	originalDecl := core.Find(symbol.Declarations, ast.IsClassLike)
 	oldEnclosing := s.b.ctx.enclosingDeclaration
@@ -777,6 +806,17 @@ func (s *symbolTableSerializationState) serializeAsAlias(symbol *ast.Symbol, loc
 	targetName := s.getInternalSymbolName(target, target.Name)
 	s.includePrivateSymbol(target)
 
+	// !!! TODO: full switch on node.Kind from Strada. Currently only handles ExportSpecifier and ExportAssignment.
+	// Missing cases: BindingElement (destructured require → import { prop as name } from "specifier"),
+	// ShorthandPropertyAssignment (module.exports = { X } → export { X }),
+	// VariableDeclaration (commonjs require with property access → two import= declarations),
+	// ImportEqualsDeclaration (local import= or external require, JSON source file fallback),
+	// NamespaceExportDeclaration (export as namespace foo),
+	// ImportClause (import name from "specifier"),
+	// NamespaceImport (import * as name from "specifier"),
+	// NamespaceExport (export * as name from "specifier"),
+	// ImportSpecifier (import { name } from "specifier"),
+	// BinaryExpression/PropertyAccessExpression/ElementAccessExpression (export assignment or specifier based on name).
 	switch node.Kind {
 	case ast.KindExportSpecifier:
 		specifier := node.Parent.Parent.AsExportDeclaration().ModuleSpecifier
@@ -820,6 +860,16 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 	isDefault := name == ast.InternalSymbolNameDefault
 	isExportAssignmentCompatibleSymbolName := isExportEquals || isDefault
 
+	// !!! TODO: alias target branch — when target resolves to a declaration in the same file:
+	// - resolve aliasDecl = getDeclarationOfAliasSymbol, target = getTargetOfAliasDeclaration
+	// - if target is local, emit `export = symbolToExpression(target)` (for export= compatible names)
+	//   or `import _Ref = target; export { _Ref as name }`, with disableTrackSymbol during serialization.
+	// - also handle `first === expr` shortcut to serializeExportSpecifier, and class expression special case.
+	// Currently only the anonymous/const variable path (below) is implemented.
+
+	// !!! TODO: call isTypeRepresentableAsFunctionNamespaceMerge and emit as function+namespace merge
+	// before falling back to the variable statement path.
+
 	// serialize as an anonymous property declaration
 	varName := s.getUnusedName(name, symbol)
 	// We have to use `getWidenedType` here since the object within a json file is unwidened within the file
@@ -853,7 +903,10 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 }
 
 func (s *symbolTableSerializationState) isTypeRepresentableAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol) bool {
-	// Simplified check: can this type be represented as a function + namespace merge?
+	// !!! TODO: full check from Strada. Currently only checks call/construct signatures and index infos.
+	// Missing checks: ObjectFlags.Anonymous|Mapped, isTypeNode declarations, isClassInstanceSide,
+	// getDeclarationWithTypeAnnotation, source file origins for type symbol and properties,
+	// isLateBoundName, isIdentifierText on property names, accessor read/write type equality.
 	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
 	if len(signatures) == 0 {
 		return false
