@@ -964,10 +964,8 @@ func (s *symbolTableSerializationState) serializeAsFunctionNamespaceMerge(t *Typ
 		return // module emit will handle it
 	}
 	props := core.Filter(s.b.ch.getPropertiesOfType(t), func(p *ast.Symbol) bool { return s.isNamespaceMember(p) })
-	if len(props) > 0 {
-		s.b.ctx.approximateLength += len(localName)
-		s.serializeAsNamespaceDeclaration(props, s.b.f.NewIdentifier(localName), modifierFlags, true)
-	}
+	s.b.ctx.approximateLength += len(localName)
+	s.serializeAsNamespaceDeclaration(props, s.b.f.NewIdentifier(localName), modifierFlags, true)
 }
 
 func (s *symbolTableSerializationState) serializeAsAlias(symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
