@@ -44,6 +44,15 @@ func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.Sy
 	return s.results
 }
 
+func (s *symbolTableSerializationState) removeExportModifier(node *ast.Node) *ast.Node {
+	if !ast.CanHaveModifiers(node) {
+		return node
+	}
+	flags := node.ModifierFlags() &^ ast.ModifierFlagsExport
+	modifiers := ast.CreateModifiersFromModifierFlags(flags, s.b.f.NewModifier)
+	return ast.ReplaceModifiers(s.b.f, node, s.b.f.NewModifierList(modifiers))
+}
+
 func (s *symbolTableSerializationState) visitSymbolTable(symbolTable *ast.SymbolTable, suppressNewPrivateContext bool, propertyAsAlias bool) {
 	if !suppressNewPrivateContext {
 		s.deferredPrivatesStack = append(s.deferredPrivatesStack, make(map[ast.SymbolId]*ast.Symbol))
@@ -194,6 +203,61 @@ func (s *symbolTableSerializationState) serializeSymbolWorker(symbol *ast.Symbol
 	}
 }
 
+func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.Symbol, symbolName string, isPrivate bool, needsPostExportDefault bool, modifierFlags ast.ModifierFlags, propertyAsAlias bool) {
+	if propertyAsAlias {
+		s.serializeMaybeAliasAssignment(symbol)
+		return
+	}
+	_ = s.b.ch.getTypeOfSymbol(symbol)
+	localName := s.getInternalSymbolName(symbol, symbolName)
+
+	var flags ast.NodeFlags
+	if symbol.Flags&ast.SymbolFlagsBlockScopedVariable == 0 {
+		if symbol.Parent != nil && symbol.Parent.ValueDeclaration != nil && ast.IsSourceFile(symbol.Parent.ValueDeclaration) {
+			flags = ast.NodeFlagsConst
+		}
+	} else if isConstantVariable(symbol) {
+		flags = ast.NodeFlagsConst
+	} else {
+		flags = ast.NodeFlagsLet
+	}
+
+	var name string
+	if !needsPostExportDefault && symbol.Flags&ast.SymbolFlagsProperty == 0 {
+		name = localName
+	} else {
+		name = s.getUnusedName(localName, symbol)
+	}
+
+	s.b.ctx.approximateLength += 7 + len(name)
+	stmt := s.b.f.NewVariableStatement(
+		nil,
+		s.b.f.NewVariableDeclarationList(
+			flags,
+			s.b.f.NewNodeList([]*ast.Node{
+				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(name), nil, s.b.serializeTypeForDeclaration(nil, nil, symbol, true), nil),
+			}),
+		),
+	)
+	if name != localName {
+		s.addResult(stmt, modifierFlags&^ast.ModifierFlagsExport)
+		if !isPrivate {
+			s.b.ctx.approximateLength += 16 + len(name) + len(localName)
+			s.results = append(s.results, s.b.f.NewExportDeclaration(
+				nil,
+				false,
+				s.b.f.NewNamedExports(s.b.f.NewNodeList([]*ast.Node{
+					s.b.f.NewExportSpecifier(false, s.b.f.NewIdentifier(name), s.b.f.NewIdentifier(localName)),
+				})),
+				nil,
+				nil,
+			))
+		}
+	} else {
+		s.addResult(stmt, modifierFlags)
+	}
+}
+
 func (s *symbolTableSerializationState) includePrivateSymbol(symbol *ast.Symbol) {
 	if core.Some(symbol.Declarations, isPartOfParameterDeclaration) {
 		return
@@ -317,6 +381,293 @@ func (s *symbolTableSerializationState) serializeInterface(symbol *ast.Symbol, s
 	)
 }
 
+func (s *symbolTableSerializationState) serializePropertySymbolsForInterface(props []*ast.Symbol, baseType *Type) []*ast.Node {
+	var elements []*ast.Node
+	for i, prop := range props {
+		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(props)-1) {
+			s.b.ctx.out.Truncated = true
+			elements = append(elements, s.createTruncationProperty(fmt.Sprintf("... %d more ... ", len(props)-i), false))
+			result := s.serializePropertySymbolForInterface(props[len(props)-1], baseType)
+			elements = append(elements, result...)
+			break
+		}
+		s.b.ctx.approximateLength += 1
+		result := s.serializePropertySymbolForInterface(prop, baseType)
+		elements = append(elements, result...)
+	}
+	return elements
+}
+
+func (s *symbolTableSerializationState) serializePropertySymbolsForClass(props []*ast.Symbol, isStatic bool, baseType *Type) []*ast.Node {
+	var elements []*ast.Node
+	for i, prop := range props {
+		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(props)-1) {
+			s.b.ctx.out.Truncated = true
+			elements = append(elements, s.createTruncationProperty(fmt.Sprintf("... %d more ... ", len(props)-i), true))
+			result := s.serializePropertySymbolForClass(props[len(props)-1], isStatic, baseType)
+			elements = append(elements, result...)
+			break
+		}
+		s.b.ctx.approximateLength += 1
+		result := s.serializePropertySymbolForClass(prop, isStatic, baseType)
+		elements = append(elements, result...)
+	}
+	return elements
+}
+
+func (s *symbolTableSerializationState) createTruncationProperty(text string, isClass bool) *ast.Node {
+	if isClass {
+		return s.b.f.NewPropertyDeclaration(nil, s.b.f.NewStringLiteral(text, 0), nil, nil, nil)
+	}
+	return s.b.f.NewPropertySignatureDeclaration(nil, s.b.f.NewStringLiteral(text, 0), nil, nil, nil)
+}
+
+func (s *symbolTableSerializationState) getNamespaceMembersForSerialization(symbol *ast.Symbol) []*ast.Symbol {
+	var exports []*ast.Symbol
+	for _, sym := range s.b.ch.getExportsOfSymbol(symbol) {
+		exports = append(exports, sym)
+	}
+	merged := s.b.ch.getMergedSymbol(symbol)
+	if merged != symbol {
+		membersSet := make(map[ast.SymbolId]*ast.Symbol)
+		for _, e := range exports {
+			membersSet[ast.GetSymbolId(e)] = e
+		}
+		for _, exported := range s.b.ch.getExportsOfSymbol(merged) {
+			resolved := s.b.ch.resolveSymbol(exported)
+			if s.b.ch.getSymbolFlags(resolved)&ast.SymbolFlagsValue == 0 {
+				if _, ok := membersSet[ast.GetSymbolId(exported)]; !ok {
+					membersSet[ast.GetSymbolId(exported)] = exported
+					exports = append(exports, exported)
+				}
+			}
+		}
+	}
+	return core.Filter(exports, func(m *ast.Symbol) bool {
+		return s.isNamespaceMember(m) && scanner.IsIdentifierText(m.Name, core.LanguageVariantStandard)
+	})
+}
+
+func (s *symbolTableSerializationState) isTypeOnlyNamespace(symbol *ast.Symbol) bool {
+	return core.Every(s.getNamespaceMembersForSerialization(symbol), func(m *ast.Symbol) bool {
+		resolved := s.b.ch.resolveSymbol(m)
+		return s.b.ch.getSymbolFlags(resolved)&ast.SymbolFlagsValue == 0
+	})
+}
+
+func (s *symbolTableSerializationState) serializeModule(symbol *ast.Symbol, symbolName string, modifierFlags ast.ModifierFlags) {
+	members := s.getNamespaceMembersForSerialization(symbol)
+	expanding := isExpanding(s.b.ctx)
+
+	// Split NS members up by declaration - members whose parent symbol is the ns symbol vs those whose is not (but were added in later via merging)
+	var realMembers, mergedMembers []*ast.Symbol
+	for _, m := range members {
+		if (m.Parent != nil && m.Parent == symbol) || expanding {
+			realMembers = append(realMembers, m)
+		} else {
+			mergedMembers = append(mergedMembers, m)
+		}
+	}
+
+	// TODO: `suppressNewPrivateContext` is questionable - we need to simply be emitting privates in whatever scope they were declared in, rather
+	// than whatever scope we traverse to them in. That's a bit of a complex rewrite, since we're not _actually_ tracking privates at all in advance,
+	// so we don't even have placeholders to fill in.
+	if len(realMembers) > 0 || expanding {
+		var localName *ast.Node
+		if expanding {
+			// Use the same name as symbol display.
+			oldFlags := s.b.ctx.flags
+			s.b.ctx.flags |= nodebuilder.FlagsWriteTypeParametersInQualifiedName | nodebuilder.Flags(SymbolFormatFlagsUseOnlyExternalAliasing)
+			localName = s.b.symbolToNode(symbol, ast.SymbolFlagsAll)
+			s.b.ctx.flags = oldFlags
+		} else {
+			localName = s.b.f.NewIdentifier(s.getInternalSymbolName(symbol, symbolName))
+		}
+		s.serializeAsNamespaceDeclaration(realMembers, localName, modifierFlags, false)
+	}
+	// Handle merged members as variable/namespace if needed
+	if len(mergedMembers) > 0 && !expanding {
+		if symbol.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) == 0 || (symbol.Exports != nil && len(symbol.Exports) != 0) {
+			return
+		}
+		props := core.Filter(s.b.ch.getPropertiesOfType(s.b.ch.getTypeOfSymbol(symbol)), func(p *ast.Symbol) bool { return s.isNamespaceMember(p) })
+		localName := s.getInternalSymbolName(symbol, symbolName)
+		s.b.ctx.approximateLength += len(localName)
+		s.serializeAsNamespaceDeclaration(props, s.b.f.NewIdentifier(localName), modifierFlags, true)
+	}
+}
+
+func (s *symbolTableSerializationState) serializeEnum(symbol *ast.Symbol, symbolName string, modifierFlags ast.ModifierFlags) {
+	internalSymbolName := s.getInternalSymbolName(symbol, symbolName)
+	s.b.ctx.approximateLength += 9 + len(internalSymbolName)
+	var members []*ast.Node
+	memberProps := core.Filter(s.b.ch.getPropertiesOfType(s.b.ch.getTypeOfSymbol(symbol)), func(p *ast.Symbol) bool {
+		return p.Flags&ast.SymbolFlagsEnumMember != 0
+	})
+	for i, p := range memberProps {
+		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(memberProps)-1) {
+			s.b.ctx.out.Truncated = true
+			members = append(members, s.b.f.NewEnumMember(s.b.f.NewStringLiteral(fmt.Sprintf(" ... %d more ... ", len(memberProps)-i), 0), nil))
+			last := memberProps[len(memberProps)-1]
+			initializedValue := s.getEnumMemberInitializer(last)
+			memberName := last.Name
+			members = append(members, s.b.f.NewEnumMember(s.b.f.NewIdentifier(memberName), initializedValue))
+			break
+		}
+		memberDecl := core.Find(p.Declarations, ast.IsEnumMember)
+		var initializer *ast.Node
+		if isExpanding(s.b.ctx) && memberDecl != nil && memberDecl.AsEnumMember().Initializer != nil {
+			initializer = s.b.f.DeepCloneNode(memberDecl.AsEnumMember().Initializer)
+		} else {
+			initializer = s.getEnumMemberInitializer(p)
+		}
+		memberName := p.Name
+		s.b.ctx.approximateLength += 4 + len(memberName)
+		members = append(members, s.b.f.NewEnumMember(s.b.f.NewIdentifier(memberName), initializer))
+	}
+
+	constModifier := ast.ModifierFlagsNone
+	if isConstEnumSymbol(symbol) {
+		constModifier = ast.ModifierFlagsConst
+	}
+	var mods *ast.ModifierList
+	if constModifier != 0 {
+		mods = s.b.f.NewModifierList(ast.CreateModifiersFromModifierFlags(constModifier, s.b.f.NewModifier))
+	}
+	s.addResult(
+		s.b.f.NewEnumDeclaration(
+			mods,
+			s.b.f.NewIdentifier(internalSymbolName),
+			s.b.f.NewNodeList(members),
+		),
+		modifierFlags,
+	)
+}
+
+func (s *symbolTableSerializationState) getEnumMemberInitializer(p *ast.Symbol) *ast.Node {
+	memberDecl := core.Find(p.Declarations, ast.IsEnumMember)
+	if memberDecl == nil {
+		return nil
+	}
+	initializedValue := s.b.ch.GetConstantValue(memberDecl)
+	if initializedValue == nil {
+		return nil
+	}
+	switch v := initializedValue.(type) {
+	case string:
+		return s.b.f.NewStringLiteral(v, 0)
+	case jsnum.Number:
+		return s.b.f.NewNumericLiteral(v.String(), 0)
+	}
+	return nil
+}
+
+func (s *symbolTableSerializationState) serializeAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
+	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
+	for _, sig := range signatures {
+		s.b.ctx.approximateLength += 1 // ;
+		// Each overload becomes a separate function declaration, in order
+		decl := s.b.signatureToSignatureDeclarationHelper(sig, ast.KindFunctionDeclaration, &SignatureToSignatureDeclarationOptions{
+			name: s.b.f.NewIdentifier(localName),
+		})
+		s.addResult(decl, modifierFlags)
+	}
+	// Module symbol emit will take care of module-y members, provided it has exports
+	if symbol.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) != 0 && symbol.Exports != nil && len(symbol.Exports) != 0 {
+		return // module emit will handle it
+	}
+	props := core.Filter(s.b.ch.getPropertiesOfType(t), func(p *ast.Symbol) bool { return s.isNamespaceMember(p) })
+	s.b.ctx.approximateLength += len(localName)
+	s.serializeAsNamespaceDeclaration(props, s.b.f.NewIdentifier(localName), modifierFlags, true)
+}
+
+func (s *symbolTableSerializationState) createTruncationStatement(text string) *ast.Node {
+	return s.b.f.NewExpressionStatement(s.b.f.NewIdentifier(text))
+}
+
+func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []*ast.Symbol, localName *ast.Node, modifierFlags ast.ModifierFlags, suppressNewPrivateContext bool) {
+	expanding := isExpanding(s.b.ctx)
+	// Use "namespace" for identifier names, "module" for string literal names (ambient modules)
+	keyword := ast.KindNamespaceKeyword
+	if !ast.IsIdentifier(localName) {
+		keyword = ast.KindModuleKeyword
+	}
+	if len(props) > 0 {
+		s.b.ctx.approximateLength += 14
+		// Separate local vs remote props
+		// handle remote props first - we need to make an `import` declaration that points at the module containing each remote
+		// prop in the outermost scope
+		// TODO: implement handling for remote props - should be difficult to trigger, as only interesting cross-file js merges should make this possible
+		var localProps []*ast.Symbol
+		for _, p := range props {
+			if len(p.Declarations) == 0 || core.Some(p.Declarations, func(d *ast.Node) bool {
+				return ast.GetSourceFileOfNode(d) == ast.GetSourceFileOfNode(s.b.ctx.enclosingDeclaration)
+			}) || expanding {
+				localProps = append(localProps, p)
+			}
+		}
+
+		// Add a namespace
+		// Create namespace as non-synthetic so it is usable as an enclosing declaration
+		fakespace := s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil)))
+		fakespace.Flags &^= ast.NodeFlagsSynthesized
+		fakespace.Parent = s.b.ctx.enclosingDeclaration
+		// Set locals and symbol
+		localTable := make(ast.SymbolTable)
+		for _, p := range props {
+			localTable[p.Name] = p
+		}
+		fakespace.LocalsContainerData().Locals = localTable
+		if len(props) > 0 && props[0].Parent != nil {
+			fakespace.DeclarationData().Symbol = props[0].Parent
+		}
+
+		oldResults := s.results
+		s.results = nil
+		oldAddingDeclare := s.addingDeclare
+		s.addingDeclare = false
+		oldEnclosingDeclaration := s.b.ctx.enclosingDeclaration
+		s.b.ctx.enclosingDeclaration = fakespace
+
+		localSymbolTable := make(ast.SymbolTable)
+		for _, p := range localProps {
+			localSymbolTable[p.Name] = p
+		}
+		s.visitSymbolTable(&localSymbolTable, suppressNewPrivateContext, true)
+
+		s.b.ctx.enclosingDeclaration = oldEnclosingDeclaration
+		s.addingDeclare = oldAddingDeclare
+		declarations := s.results
+		s.results = oldResults
+
+		// Strip export modifiers if all declarations are exported
+		allExported := len(declarations) > 0 && core.Every(declarations, func(d *ast.Node) bool {
+			return ast.HasSyntacticModifier(d, ast.ModifierFlagsExport)
+		})
+		if allExported {
+			declarations = core.Map(declarations, func(d *ast.Node) *ast.Node {
+				return s.removeExportModifier(d)
+			})
+		}
+
+		// replace namespace with synthetic version
+		fakespace = s.b.f.UpdateModuleDeclaration(fakespace.AsModuleDeclaration(), fakespace.Modifiers(), keyword, fakespace.Name(), s.b.f.NewModuleBlock(s.b.f.NewNodeList(declarations)))
+		fakespace.Parent = s.b.ctx.enclosingDeclaration
+		s.addResult(fakespace, modifierFlags) // namespaces can never be default exported
+	} else if expanding {
+		s.b.ctx.approximateLength += 14
+		s.addResult(
+			s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil))),
+			modifierFlags,
+		)
+	}
+}
+
+func (s *symbolTableSerializationState) isNamespaceMember(p *ast.Symbol) bool {
+	return p.Flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias) != 0 ||
+		!(p.Flags&ast.SymbolFlagsPrototype != 0 || p.Name == "prototype" || (p.ValueDeclaration != nil && ast.HasStaticModifier(p.ValueDeclaration) && ast.IsClassLike(p.ValueDeclaration.Parent)))
+}
+
 func (s *symbolTableSerializationState) serializeAsClass(symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
 	s.b.ctx.approximateLength += 9 + len(localName)
 	originalDecl := core.Find(symbol.Declarations, ast.IsClassLike)
@@ -419,251 +770,109 @@ func (s *symbolTableSerializationState) serializeAsClass(symbol *ast.Symbol, loc
 	)
 }
 
-func (s *symbolTableSerializationState) serializeEnum(symbol *ast.Symbol, symbolName string, modifierFlags ast.ModifierFlags) {
-	internalSymbolName := s.getInternalSymbolName(symbol, symbolName)
-	s.b.ctx.approximateLength += 9 + len(internalSymbolName)
-	var members []*ast.Node
-	memberProps := core.Filter(s.b.ch.getPropertiesOfType(s.b.ch.getTypeOfSymbol(symbol)), func(p *ast.Symbol) bool {
-		return p.Flags&ast.SymbolFlagsEnumMember != 0
-	})
-	for i, p := range memberProps {
-		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(memberProps)-1) {
-			s.b.ctx.out.Truncated = true
-			members = append(members, s.b.f.NewEnumMember(s.b.f.NewStringLiteral(fmt.Sprintf(" ... %d more ... ", len(memberProps)-i), 0), nil))
-			last := memberProps[len(memberProps)-1]
-			initializedValue := s.getEnumMemberInitializer(last)
-			memberName := last.Name
-			members = append(members, s.b.f.NewEnumMember(s.b.f.NewIdentifier(memberName), initializedValue))
-			break
-		}
-		memberDecl := core.Find(p.Declarations, ast.IsEnumMember)
-		var initializer *ast.Node
-		if isExpanding(s.b.ctx) && memberDecl != nil && memberDecl.AsEnumMember().Initializer != nil {
-			initializer = s.b.f.DeepCloneNode(memberDecl.AsEnumMember().Initializer)
-		} else {
-			initializer = s.getEnumMemberInitializer(p)
-		}
-		memberName := p.Name
-		s.b.ctx.approximateLength += 4 + len(memberName)
-		members = append(members, s.b.f.NewEnumMember(s.b.f.NewIdentifier(memberName), initializer))
+func (s *symbolTableSerializationState) serializeAsAlias(symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
+	node := s.b.ch.getDeclarationOfAliasSymbol(symbol)
+	if node == nil {
+		return
 	}
+	target := s.b.ch.getMergedSymbol(s.b.ch.getTargetOfAliasDeclaration(node))
+	if target == nil {
+		return
+	}
+	targetName := s.getInternalSymbolName(target, target.Name)
+	s.includePrivateSymbol(target)
 
-	constModifier := ast.ModifierFlagsNone
-	if isConstEnumSymbol(symbol) {
-		constModifier = ast.ModifierFlagsConst
+	switch node.Kind {
+	case ast.KindExportSpecifier:
+		specifier := node.Parent.Parent.AsExportDeclaration().ModuleSpecifier
+		var specifierExpr *ast.Node
+		if specifier != nil && ast.IsStringLiteralLike(specifier) {
+			specifierExpr = s.b.f.NewStringLiteral(specifier.Text(), 0)
+		}
+		s.serializeExportSpecifier(symbol.Name, core.IfElse(specifier != nil, target.Name, targetName), specifierExpr)
+	case ast.KindExportAssignment:
+		s.serializeMaybeAliasAssignment(symbol)
+	default:
+		// For other alias kinds, emit an import = or export specifier
+		s.serializeExportSpecifier(localName, targetName, nil)
 	}
-	var mods *ast.ModifierList
-	if constModifier != 0 {
-		mods = s.b.f.NewModifierList(ast.CreateModifiersFromModifierFlags(constModifier, s.b.f.NewModifier))
+}
+
+func (s *symbolTableSerializationState) serializeExportSpecifier(localName string, targetName string, specifier *ast.Node) {
+	s.b.ctx.approximateLength += 16 + len(localName)
+	var propertyName *ast.Node
+	if localName != targetName {
+		propertyName = s.b.f.NewIdentifier(targetName)
+		s.b.ctx.approximateLength += len(targetName)
 	}
-	s.addResult(
-		s.b.f.NewEnumDeclaration(
-			mods,
-			s.b.f.NewIdentifier(internalSymbolName),
-			s.b.f.NewNodeList(members),
+	s.results = append(s.results, s.b.f.NewExportDeclaration(
+		nil,
+		false,
+		s.b.f.NewNamedExports(s.b.f.NewNodeList([]*ast.Node{
+			s.b.f.NewExportSpecifier(false, propertyName, s.b.f.NewIdentifier(localName)),
+		})),
+		specifier,
+		nil,
+	))
+}
+
+func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *ast.Symbol) bool {
+	if symbol.Flags&ast.SymbolFlagsPrototype != 0 {
+		return false
+	}
+	name := symbol.Name
+	isExportEquals := name == ast.InternalSymbolNameExportEquals
+	isDefault := name == ast.InternalSymbolNameDefault
+	isExportAssignmentCompatibleSymbolName := isExportEquals || isDefault
+
+	// serialize as an anonymous property declaration
+	varName := s.getUnusedName(name, symbol)
+	// We have to use `getWidenedType` here since the object within a json file is unwidened within the file
+	// (Unwidened types can only exist in expression contexts and should never be serialized)
+	typeToSerialize := s.b.ch.getWidenedType(s.b.ch.getTypeOfSymbol(s.b.ch.getMergedSymbol(symbol)))
+
+	// Inside a module/namespace declaration, use `let` for non-getter-only accessors (matching Strada behavior).
+	// Otherwise use `const`.
+	flags := ast.NodeFlagsConst
+	if s.b.ctx.enclosingDeclaration != nil && s.b.ctx.enclosingDeclaration.Kind == ast.KindModuleDeclaration &&
+		(symbol.Flags&ast.SymbolFlagsAccessor == 0 || symbol.Flags&ast.SymbolFlagsSetAccessor != 0) {
+		flags = ast.NodeFlagsLet
+	}
+	s.b.ctx.approximateLength += len(varName) + 5
+	stmt := s.b.f.NewVariableStatement(
+		nil,
+		s.b.f.NewVariableDeclarationList(
+			flags,
+			s.b.f.NewNodeList([]*ast.Node{
+				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(varName), nil, s.b.serializeTypeForDeclaration(nil, typeToSerialize, symbol, true), nil),
+			}),
 		),
-		modifierFlags,
 	)
+	s.addResult(stmt, core.IfElse(name == varName, ast.ModifierFlagsExport, ast.ModifierFlagsNone))
+
+	if isExportAssignmentCompatibleSymbolName {
+		s.b.ctx.approximateLength += len(varName) + 10
+		s.results = append(s.results, s.b.f.NewExportAssignment(nil, isExportEquals, nil, s.b.f.NewIdentifier(varName)))
+	}
+	return true
 }
 
-func (s *symbolTableSerializationState) getEnumMemberInitializer(p *ast.Symbol) *ast.Node {
-	memberDecl := core.Find(p.Declarations, ast.IsEnumMember)
-	if memberDecl == nil {
-		return nil
+func (s *symbolTableSerializationState) isTypeRepresentableAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol) bool {
+	// Simplified check: can this type be represented as a function + namespace merge?
+	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
+	if len(signatures) == 0 {
+		return false
 	}
-	initializedValue := s.b.ch.GetConstantValue(memberDecl)
-	if initializedValue == nil {
-		return nil
+	// Check if the type has only call signatures and properties (no construct signatures, no string/number index)
+	constructSignatures := s.b.ch.getSignaturesOfType(t, SignatureKindConstruct)
+	if len(constructSignatures) > 0 {
+		return false
 	}
-	switch v := initializedValue.(type) {
-	case string:
-		return s.b.f.NewStringLiteral(v, 0)
-	case jsnum.Number:
-		return s.b.f.NewNumericLiteral(v.String(), 0)
+	indexInfos := s.b.ch.getIndexInfosOfType(t)
+	if len(indexInfos) > 0 {
+		return false
 	}
-	return nil
-}
-
-func (s *symbolTableSerializationState) serializeModule(symbol *ast.Symbol, symbolName string, modifierFlags ast.ModifierFlags) {
-	members := s.getNamespaceMembersForSerialization(symbol)
-	expanding := isExpanding(s.b.ctx)
-
-	// Split NS members up by declaration - members whose parent symbol is the ns symbol vs those whose is not (but were added in later via merging)
-	var realMembers, mergedMembers []*ast.Symbol
-	for _, m := range members {
-		if (m.Parent != nil && m.Parent == symbol) || expanding {
-			realMembers = append(realMembers, m)
-		} else {
-			mergedMembers = append(mergedMembers, m)
-		}
-	}
-
-	// TODO: `suppressNewPrivateContext` is questionable - we need to simply be emitting privates in whatever scope they were declared in, rather
-	// than whatever scope we traverse to them in. That's a bit of a complex rewrite, since we're not _actually_ tracking privates at all in advance,
-	// so we don't even have placeholders to fill in.
-	if len(realMembers) > 0 || expanding {
-		var localName *ast.Node
-		if expanding {
-			// Use the same name as symbol display.
-			oldFlags := s.b.ctx.flags
-			s.b.ctx.flags |= nodebuilder.FlagsWriteTypeParametersInQualifiedName | nodebuilder.Flags(SymbolFormatFlagsUseOnlyExternalAliasing)
-			localName = s.b.symbolToNode(symbol, ast.SymbolFlagsAll)
-			s.b.ctx.flags = oldFlags
-		} else {
-			localName = s.b.f.NewIdentifier(s.getInternalSymbolName(symbol, symbolName))
-		}
-		s.serializeAsNamespaceDeclaration(realMembers, localName, modifierFlags, false)
-	}
-	// Handle merged members as variable/namespace if needed
-	if len(mergedMembers) > 0 && !expanding {
-		if symbol.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) == 0 || (symbol.Exports != nil && len(symbol.Exports) != 0) {
-			return
-		}
-		props := core.Filter(s.b.ch.getPropertiesOfType(s.b.ch.getTypeOfSymbol(symbol)), func(p *ast.Symbol) bool { return s.isNamespaceMember(p) })
-		localName := s.getInternalSymbolName(symbol, symbolName)
-		s.b.ctx.approximateLength += len(localName)
-		s.serializeAsNamespaceDeclaration(props, s.b.f.NewIdentifier(localName), modifierFlags, true)
-	}
-}
-
-func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []*ast.Symbol, localName *ast.Node, modifierFlags ast.ModifierFlags, suppressNewPrivateContext bool) {
-	expanding := isExpanding(s.b.ctx)
-	// Use "namespace" for identifier names, "module" for string literal names (ambient modules)
-	keyword := ast.KindNamespaceKeyword
-	if !ast.IsIdentifier(localName) {
-		keyword = ast.KindModuleKeyword
-	}
-	if len(props) > 0 {
-		s.b.ctx.approximateLength += 14
-		// Separate local vs remote props
-		// handle remote props first - we need to make an `import` declaration that points at the module containing each remote
-		// prop in the outermost scope
-		// TODO: implement handling for remote props - should be difficult to trigger, as only interesting cross-file js merges should make this possible
-		var localProps []*ast.Symbol
-		for _, p := range props {
-			if len(p.Declarations) == 0 || core.Some(p.Declarations, func(d *ast.Node) bool {
-				return ast.GetSourceFileOfNode(d) == ast.GetSourceFileOfNode(s.b.ctx.enclosingDeclaration)
-			}) || expanding {
-				localProps = append(localProps, p)
-			}
-		}
-
-		// Add a namespace
-		// Create namespace as non-synthetic so it is usable as an enclosing declaration
-		fakespace := s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil)))
-		fakespace.Flags &^= ast.NodeFlagsSynthesized
-		fakespace.Parent = s.b.ctx.enclosingDeclaration
-		// Set locals and symbol
-		localTable := make(ast.SymbolTable)
-		for _, p := range props {
-			localTable[p.Name] = p
-		}
-		fakespace.LocalsContainerData().Locals = localTable
-		if len(props) > 0 && props[0].Parent != nil {
-			fakespace.DeclarationData().Symbol = props[0].Parent
-		}
-
-		oldResults := s.results
-		s.results = nil
-		oldAddingDeclare := s.addingDeclare
-		s.addingDeclare = false
-		oldEnclosingDeclaration := s.b.ctx.enclosingDeclaration
-		s.b.ctx.enclosingDeclaration = fakespace
-
-		localSymbolTable := make(ast.SymbolTable)
-		for _, p := range localProps {
-			localSymbolTable[p.Name] = p
-		}
-		s.visitSymbolTable(&localSymbolTable, suppressNewPrivateContext, true)
-
-		s.b.ctx.enclosingDeclaration = oldEnclosingDeclaration
-		s.addingDeclare = oldAddingDeclare
-		declarations := s.results
-		s.results = oldResults
-
-		// Strip export modifiers if all declarations are exported
-		allExported := len(declarations) > 0 && core.Every(declarations, func(d *ast.Node) bool {
-			return ast.HasSyntacticModifier(d, ast.ModifierFlagsExport)
-		})
-		if allExported {
-			declarations = core.Map(declarations, func(d *ast.Node) *ast.Node {
-				return s.removeExportModifier(d)
-			})
-		}
-
-		// replace namespace with synthetic version
-		fakespace = s.b.f.UpdateModuleDeclaration(fakespace.AsModuleDeclaration(), fakespace.Modifiers(), keyword, fakespace.Name(), s.b.f.NewModuleBlock(s.b.f.NewNodeList(declarations)))
-		fakespace.Parent = s.b.ctx.enclosingDeclaration
-		s.addResult(fakespace, modifierFlags) // namespaces can never be default exported
-	} else if expanding {
-		s.b.ctx.approximateLength += 14
-		s.addResult(
-			s.b.f.NewModuleDeclaration(nil, keyword, localName, s.b.f.NewModuleBlock(s.b.f.NewNodeList(nil))),
-			modifierFlags,
-		)
-	}
-}
-
-func (s *symbolTableSerializationState) removeExportModifier(node *ast.Node) *ast.Node {
-	if !ast.CanHaveModifiers(node) {
-		return node
-	}
-	flags := node.ModifierFlags() &^ ast.ModifierFlagsExport
-	modifiers := ast.CreateModifiersFromModifierFlags(flags, s.b.f.NewModifier)
-	return ast.ReplaceModifiers(s.b.f, node, s.b.f.NewModifierList(modifiers))
-}
-
-func (s *symbolTableSerializationState) serializePropertySymbolsForInterface(props []*ast.Symbol, baseType *Type) []*ast.Node {
-	var elements []*ast.Node
-	for i, prop := range props {
-		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(props)-1) {
-			s.b.ctx.out.Truncated = true
-			elements = append(elements, s.createTruncationProperty(fmt.Sprintf("... %d more ... ", len(props)-i), false))
-			result := s.serializePropertySymbolForInterface(props[len(props)-1], baseType)
-			elements = append(elements, result...)
-			break
-		}
-		s.b.ctx.approximateLength += 1
-		result := s.serializePropertySymbolForInterface(prop, baseType)
-		elements = append(elements, result...)
-	}
-	return elements
-}
-
-func (s *symbolTableSerializationState) serializePropertySymbolsForClass(props []*ast.Symbol, isStatic bool, baseType *Type) []*ast.Node {
-	var elements []*ast.Node
-	for i, prop := range props {
-		if s.b.checkTruncationLengthIfExpanding() && (i+2 < len(props)-1) {
-			s.b.ctx.out.Truncated = true
-			elements = append(elements, s.createTruncationProperty(fmt.Sprintf("... %d more ... ", len(props)-i), true))
-			result := s.serializePropertySymbolForClass(props[len(props)-1], isStatic, baseType)
-			elements = append(elements, result...)
-			break
-		}
-		s.b.ctx.approximateLength += 1
-		result := s.serializePropertySymbolForClass(prop, isStatic, baseType)
-		elements = append(elements, result...)
-	}
-	return elements
-}
-
-func (s *symbolTableSerializationState) createTruncationProperty(text string, isClass bool) *ast.Node {
-	if isClass {
-		return s.b.f.NewPropertyDeclaration(nil, s.b.f.NewStringLiteral(text, 0), nil, nil, nil)
-	}
-	return s.b.f.NewPropertySignatureDeclaration(nil, s.b.f.NewStringLiteral(text, 0), nil, nil, nil)
-}
-
-func (s *symbolTableSerializationState) createTruncationStatement(text string) *ast.Node {
-	return s.b.f.NewExpressionStatement(s.b.f.NewIdentifier(text))
-}
-
-func (s *symbolTableSerializationState) serializePropertySymbolForInterface(p *ast.Symbol, baseType *Type) []*ast.Node {
-	return s.makeSerializePropertySymbol(p, false, baseType, false)
-}
-
-func (s *symbolTableSerializationState) serializePropertySymbolForClass(p *ast.Symbol, isStatic bool, baseType *Type) []*ast.Node {
-	return s.makeSerializePropertySymbol(p, isStatic, baseType, true)
+	return true
 }
 
 func (s *symbolTableSerializationState) makeSerializePropertySymbol(p *ast.Symbol, isStatic bool, baseType *Type, isClass bool) []*ast.Node {
@@ -805,6 +1014,14 @@ func (s *symbolTableSerializationState) makeSerializePropertySymbol(p *ast.Symbo
 	return nil
 }
 
+func (s *symbolTableSerializationState) serializePropertySymbolForInterface(p *ast.Symbol, baseType *Type) []*ast.Node {
+	return s.makeSerializePropertySymbol(p, false, baseType, false)
+}
+
+func (s *symbolTableSerializationState) serializePropertySymbolForClass(p *ast.Symbol, isStatic bool, baseType *Type) []*ast.Node {
+	return s.makeSerializePropertySymbol(p, isStatic, baseType, true)
+}
+
 func (s *symbolTableSerializationState) serializeSignatures(kind SignatureKind, input *Type, baseType *Type, outputKind ast.Kind) []*ast.Node {
 	signatures := s.b.ch.getSignaturesOfType(input, kind)
 	if kind == SignatureKindConstruct {
@@ -913,276 +1130,6 @@ func (s *symbolTableSerializationState) serializeImplementedType(t *Type) *ast.N
 	return nil
 }
 
-func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.Symbol, symbolName string, isPrivate bool, needsPostExportDefault bool, modifierFlags ast.ModifierFlags, propertyAsAlias bool) {
-	if propertyAsAlias {
-		s.serializeMaybeAliasAssignment(symbol)
-		return
-	}
-	_ = s.b.ch.getTypeOfSymbol(symbol)
-	localName := s.getInternalSymbolName(symbol, symbolName)
-
-	var flags ast.NodeFlags
-	if symbol.Flags&ast.SymbolFlagsBlockScopedVariable == 0 {
-		if symbol.Parent != nil && symbol.Parent.ValueDeclaration != nil && ast.IsSourceFile(symbol.Parent.ValueDeclaration) {
-			flags = ast.NodeFlagsConst
-		}
-	} else if isConstantVariable(symbol) {
-		flags = ast.NodeFlagsConst
-	} else {
-		flags = ast.NodeFlagsLet
-	}
-
-	var name string
-	if !needsPostExportDefault && symbol.Flags&ast.SymbolFlagsProperty == 0 {
-		name = localName
-	} else {
-		name = s.getUnusedName(localName, symbol)
-	}
-
-	s.b.ctx.approximateLength += 7 + len(name)
-	stmt := s.b.f.NewVariableStatement(
-		nil,
-		s.b.f.NewVariableDeclarationList(
-			flags,
-			s.b.f.NewNodeList([]*ast.Node{
-				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(name), nil, s.b.serializeTypeForDeclaration(nil, nil, symbol, true), nil),
-			}),
-		),
-	)
-	if name != localName {
-		s.addResult(stmt, modifierFlags&^ast.ModifierFlagsExport)
-		if !isPrivate {
-			s.b.ctx.approximateLength += 16 + len(name) + len(localName)
-			s.results = append(s.results, s.b.f.NewExportDeclaration(
-				nil,
-				false,
-				s.b.f.NewNamedExports(s.b.f.NewNodeList([]*ast.Node{
-					s.b.f.NewExportSpecifier(false, s.b.f.NewIdentifier(name), s.b.f.NewIdentifier(localName)),
-				})),
-				nil,
-				nil,
-			))
-		}
-	} else {
-		s.addResult(stmt, modifierFlags)
-	}
-}
-
-func (s *symbolTableSerializationState) serializeAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
-	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
-	for _, sig := range signatures {
-		s.b.ctx.approximateLength += 1 // ;
-		// Each overload becomes a separate function declaration, in order
-		decl := s.b.signatureToSignatureDeclarationHelper(sig, ast.KindFunctionDeclaration, &SignatureToSignatureDeclarationOptions{
-			name: s.b.f.NewIdentifier(localName),
-		})
-		s.addResult(decl, modifierFlags)
-	}
-	// Module symbol emit will take care of module-y members, provided it has exports
-	if symbol.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) != 0 && symbol.Exports != nil && len(symbol.Exports) != 0 {
-		return // module emit will handle it
-	}
-	props := core.Filter(s.b.ch.getPropertiesOfType(t), func(p *ast.Symbol) bool { return s.isNamespaceMember(p) })
-	s.b.ctx.approximateLength += len(localName)
-	s.serializeAsNamespaceDeclaration(props, s.b.f.NewIdentifier(localName), modifierFlags, true)
-}
-
-func (s *symbolTableSerializationState) serializeAsAlias(symbol *ast.Symbol, localName string, modifierFlags ast.ModifierFlags) {
-	node := s.b.ch.getDeclarationOfAliasSymbol(symbol)
-	if node == nil {
-		return
-	}
-	target := s.b.ch.getMergedSymbol(s.b.ch.getTargetOfAliasDeclaration(node))
-	if target == nil {
-		return
-	}
-	targetName := s.getInternalSymbolName(target, target.Name)
-	s.includePrivateSymbol(target)
-
-	switch node.Kind {
-	case ast.KindExportSpecifier:
-		specifier := node.Parent.Parent.AsExportDeclaration().ModuleSpecifier
-		var specifierExpr *ast.Node
-		if specifier != nil && ast.IsStringLiteralLike(specifier) {
-			specifierExpr = s.b.f.NewStringLiteral(specifier.Text(), 0)
-		}
-		s.serializeExportSpecifier(symbol.Name, core.IfElse(specifier != nil, target.Name, targetName), specifierExpr)
-	case ast.KindExportAssignment:
-		s.serializeMaybeAliasAssignment(symbol)
-	default:
-		// For other alias kinds, emit an import = or export specifier
-		s.serializeExportSpecifier(localName, targetName, nil)
-	}
-}
-
-func (s *symbolTableSerializationState) serializeExportSpecifier(localName string, targetName string, specifier *ast.Node) {
-	s.b.ctx.approximateLength += 16 + len(localName)
-	var propertyName *ast.Node
-	if localName != targetName {
-		propertyName = s.b.f.NewIdentifier(targetName)
-		s.b.ctx.approximateLength += len(targetName)
-	}
-	s.results = append(s.results, s.b.f.NewExportDeclaration(
-		nil,
-		false,
-		s.b.f.NewNamedExports(s.b.f.NewNodeList([]*ast.Node{
-			s.b.f.NewExportSpecifier(false, propertyName, s.b.f.NewIdentifier(localName)),
-		})),
-		specifier,
-		nil,
-	))
-}
-
-func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *ast.Symbol) bool {
-	if symbol.Flags&ast.SymbolFlagsPrototype != 0 {
-		return false
-	}
-	name := symbol.Name
-	isExportEquals := name == ast.InternalSymbolNameExportEquals
-	isDefault := name == ast.InternalSymbolNameDefault
-	isExportAssignmentCompatibleSymbolName := isExportEquals || isDefault
-
-	// serialize as an anonymous property declaration
-	varName := s.getUnusedName(name, symbol)
-	// We have to use `getWidenedType` here since the object within a json file is unwidened within the file
-	// (Unwidened types can only exist in expression contexts and should never be serialized)
-	typeToSerialize := s.b.ch.getWidenedType(s.b.ch.getTypeOfSymbol(s.b.ch.getMergedSymbol(symbol)))
-
-	// Inside a module/namespace declaration, use `let` for non-getter-only accessors (matching Strada behavior).
-	// Otherwise use `const`.
-	flags := ast.NodeFlagsConst
-	if s.b.ctx.enclosingDeclaration != nil && s.b.ctx.enclosingDeclaration.Kind == ast.KindModuleDeclaration &&
-		(symbol.Flags&ast.SymbolFlagsAccessor == 0 || symbol.Flags&ast.SymbolFlagsSetAccessor != 0) {
-		flags = ast.NodeFlagsLet
-	}
-	s.b.ctx.approximateLength += len(varName) + 5
-	stmt := s.b.f.NewVariableStatement(
-		nil,
-		s.b.f.NewVariableDeclarationList(
-			flags,
-			s.b.f.NewNodeList([]*ast.Node{
-				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(varName), nil, s.b.serializeTypeForDeclaration(nil, typeToSerialize, symbol, true), nil),
-			}),
-		),
-	)
-	s.addResult(stmt, core.IfElse(name == varName, ast.ModifierFlagsExport, ast.ModifierFlagsNone))
-
-	if isExportAssignmentCompatibleSymbolName {
-		s.b.ctx.approximateLength += len(varName) + 10
-		s.results = append(s.results, s.b.f.NewExportAssignment(nil, isExportEquals, nil, s.b.f.NewIdentifier(varName)))
-	}
-	return true
-}
-
-// --- Helper functions ---
-
-func isExpanding(ctx *NodeBuilderContext) bool {
-	return ctx.maxExpansionDepth != -1
-}
-
-func isHashPrivate(s *ast.Symbol) bool {
-	return s.ValueDeclaration != nil && s.ValueDeclaration.Name() != nil && ast.IsPrivateIdentifier(s.ValueDeclaration.Name())
-}
-
-func (s *symbolTableSerializationState) getNamespaceMembersForSerialization(symbol *ast.Symbol) []*ast.Symbol {
-	var exports []*ast.Symbol
-	for _, sym := range s.b.ch.getExportsOfSymbol(symbol) {
-		exports = append(exports, sym)
-	}
-	merged := s.b.ch.getMergedSymbol(symbol)
-	if merged != symbol {
-		membersSet := make(map[ast.SymbolId]*ast.Symbol)
-		for _, e := range exports {
-			membersSet[ast.GetSymbolId(e)] = e
-		}
-		for _, exported := range s.b.ch.getExportsOfSymbol(merged) {
-			resolved := s.b.ch.resolveSymbol(exported)
-			if s.b.ch.getSymbolFlags(resolved)&ast.SymbolFlagsValue == 0 {
-				if _, ok := membersSet[ast.GetSymbolId(exported)]; !ok {
-					membersSet[ast.GetSymbolId(exported)] = exported
-					exports = append(exports, exported)
-				}
-			}
-		}
-	}
-	return core.Filter(exports, func(m *ast.Symbol) bool {
-		return s.isNamespaceMember(m) && scanner.IsIdentifierText(m.Name, core.LanguageVariantStandard)
-	})
-}
-
-func (s *symbolTableSerializationState) isTypeOnlyNamespace(symbol *ast.Symbol) bool {
-	return core.Every(s.getNamespaceMembersForSerialization(symbol), func(m *ast.Symbol) bool {
-		resolved := s.b.ch.resolveSymbol(m)
-		return s.b.ch.getSymbolFlags(resolved)&ast.SymbolFlagsValue == 0
-	})
-}
-
-func (s *symbolTableSerializationState) isNamespaceMember(p *ast.Symbol) bool {
-	return p.Flags&(ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias) != 0 ||
-		!(p.Flags&ast.SymbolFlagsPrototype != 0 || p.Name == "prototype" || (p.ValueDeclaration != nil && ast.HasStaticModifier(p.ValueDeclaration) && ast.IsClassLike(p.ValueDeclaration.Parent)))
-}
-
-func (s *symbolTableSerializationState) isTypeRepresentableAsFunctionNamespaceMerge(t *Type, symbol *ast.Symbol) bool {
-	// Simplified check: can this type be represented as a function + namespace merge?
-	signatures := s.b.ch.getSignaturesOfType(t, SignatureKindCall)
-	if len(signatures) == 0 {
-		return false
-	}
-	// Check if the type has only call signatures and properties (no construct signatures, no string/number index)
-	constructSignatures := s.b.ch.getSignaturesOfType(t, SignatureKindConstruct)
-	if len(constructSignatures) > 0 {
-		return false
-	}
-	indexInfos := s.b.ch.getIndexInfosOfType(t)
-	if len(indexInfos) > 0 {
-		return false
-	}
-	return true
-}
-
-func (s *symbolTableSerializationState) getNonInheritedProperties(t *Type, baseTypes []*Type, properties []*ast.Symbol) []*ast.Symbol {
-	if len(baseTypes) == 0 {
-		return properties
-	}
-	seen := make(map[string]*ast.Symbol)
-	for _, p := range properties {
-		seen[p.Name] = p
-	}
-	for _, base := range baseTypes {
-		baseWithThis := s.b.ch.getTypeWithThisArgument(base, s.b.ch.getTargetType(t).AsInterfaceType().thisType, false)
-		baseProps := s.b.ch.getPropertiesOfType(baseWithThis)
-		for _, prop := range baseProps {
-			if existing, ok := seen[prop.Name]; ok && prop.Parent == existing.Parent {
-				delete(seen, prop.Name)
-			}
-		}
-	}
-	return core.Filter(properties, func(p *ast.Symbol) bool {
-		_, ok := seen[p.Name]
-		return ok
-	})
-}
-
-func (s *symbolTableSerializationState) getImplementsTypes(classType *Type) []*Type {
-	var result []*Type
-	if classType.symbol == nil {
-		return result
-	}
-	for _, declaration := range classType.symbol.Declarations {
-		implementsTypeNodes := ast.GetImplementsTypeNodes(declaration)
-		if implementsTypeNodes == nil {
-			continue
-		}
-		for _, node := range implementsTypeNodes {
-			implementsType := s.b.ch.getTypeFromTypeNode(node)
-			if !s.b.ch.isErrorType(implementsType) {
-				result = append(result, implementsType)
-			}
-		}
-	}
-	return result
-}
-
 func (s *symbolTableSerializationState) getUnusedName(input string, symbol *ast.Symbol) string {
 	if symbol != nil {
 		id := ast.GetSymbolId(symbol)
@@ -1244,8 +1191,59 @@ func (s *symbolTableSerializationState) getInternalSymbolName(symbol *ast.Symbol
 	return localName
 }
 
+func isExpanding(ctx *NodeBuilderContext) bool {
+	return ctx.maxExpansionDepth != -1
+}
+
+func isHashPrivate(s *ast.Symbol) bool {
+	return s.ValueDeclaration != nil && s.ValueDeclaration.Name() != nil && ast.IsPrivateIdentifier(s.ValueDeclaration.Name())
+}
+
+func (s *symbolTableSerializationState) getImplementsTypes(classType *Type) []*Type {
+	var result []*Type
+	if classType.symbol == nil {
+		return result
+	}
+	for _, declaration := range classType.symbol.Declarations {
+		implementsTypeNodes := ast.GetImplementsTypeNodes(declaration)
+		if implementsTypeNodes == nil {
+			continue
+		}
+		for _, node := range implementsTypeNodes {
+			implementsType := s.b.ch.getTypeFromTypeNode(node)
+			if !s.b.ch.isErrorType(implementsType) {
+				result = append(result, implementsType)
+			}
+		}
+	}
+	return result
+}
+
 func isConstantVariable(symbol *ast.Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 &&
 		symbol.ValueDeclaration != nil &&
 		ast.IsVarConst(symbol.ValueDeclaration)
+}
+
+func (s *symbolTableSerializationState) getNonInheritedProperties(t *Type, baseTypes []*Type, properties []*ast.Symbol) []*ast.Symbol {
+	if len(baseTypes) == 0 {
+		return properties
+	}
+	seen := make(map[string]*ast.Symbol)
+	for _, p := range properties {
+		seen[p.Name] = p
+	}
+	for _, base := range baseTypes {
+		baseWithThis := s.b.ch.getTypeWithThisArgument(base, s.b.ch.getTargetType(t).AsInterfaceType().thisType, false)
+		baseProps := s.b.ch.getPropertiesOfType(baseWithThis)
+		for _, prop := range baseProps {
+			if existing, ok := seen[prop.Name]; ok && prop.Parent == existing.Parent {
+				delete(seen, prop.Name)
+			}
+		}
+	}
+	return core.Filter(properties, func(p *ast.Symbol) bool {
+		_, ok := seen[p.Name]
+		return ok
+	})
 }
