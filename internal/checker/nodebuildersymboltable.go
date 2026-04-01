@@ -1036,11 +1036,10 @@ func (s *symbolTableSerializationState) serializeMaybeAliasAssignment(symbol *as
 		s.b.f.NewVariableDeclarationList(
 			flags,
 			s.b.f.NewNodeList([]*ast.Node{
-				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(varName), nil, s.b.serializeTypeForDeclaration(nil, nil, symbol, true), nil),
+				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(varName), nil, s.b.serializeTypeForDeclaration(nil, typeToSerialize, symbol, true), nil),
 			}),
 		),
 	)
-	_ = typeToSerialize
 	s.addResult(stmt, core.IfElse(name == varName, ast.ModifierFlagsExport, ast.ModifierFlagsNone))
 
 	if isExportAssignmentCompatibleSymbolName {

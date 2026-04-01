@@ -44,7 +44,7 @@
 // | namespace ns {
 // |     export { Foo };
 // |     export let c: number;
-// |     export let d: number;
+// |     export let d: 1;
 // |     export let f: {
 // |         a: string;
 // |     };
@@ -59,7 +59,7 @@
 // | namespace ns {
 // |     export { Foo };
 // |     export let c: number;
-// |     export let d: number;
+// |     export let d: 1;
 // |     export let f: Apple;
 // | }
 // | ```
@@ -283,7 +283,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export let c: number;\n    export let d: number;\n    export let f: Apple;\n}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export let c: number;\n    export let d: 1;\n    export let f: Apple;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -315,7 +315,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export let c: number;\n    export let d: number;\n    export let f: {\n        a: string;\n    };\n}\n```\n"
+          "value": "```tsx\nnamespace ns {\n    export { Foo };\n    export let c: number;\n    export let d: 1;\n    export let f: {\n        a: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
