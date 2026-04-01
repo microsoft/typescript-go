@@ -599,6 +599,9 @@ func (s *Session) sendPerformanceTelemetry(ctx context.Context) {
 		for _, b := range autoImportStats.NodeModulesBuckets {
 			measurements.AutoImportNodeModulesExportCount += float64(b.ExportCount)
 			measurements.AutoImportNodeModulesFileCount += float64(b.FileCount)
+			if b.DependencyNames == nil {
+				measurements.AutoImportNodeModulesUnfilteredBucketCount++
+			}
 		}
 	}
 

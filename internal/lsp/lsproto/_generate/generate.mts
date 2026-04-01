@@ -345,6 +345,7 @@ const customStructures: Structure[] = [
             { name: "autoImportNodeModulesExportCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total indexed exports from node_modules." },
             { name: "autoImportProjectFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total files tracked across project buckets." },
             { name: "autoImportNodeModulesFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total files tracked across node_modules buckets." },
+            { name: "autoImportNodeModulesUnfilteredBucketCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of node_modules buckets with no package.json filter." },
         ],
         documentation: "Numeric measurements for PerformanceStatsTelemetryEvent.",
     },

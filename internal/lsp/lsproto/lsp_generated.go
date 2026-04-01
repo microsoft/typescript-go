@@ -22009,6 +22009,9 @@ type PerformanceStatsTelemetryMeasurements struct {
 
 	// Total files tracked across node_modules buckets.
 	AutoImportNodeModulesFileCount float64 `json:"autoImportNodeModulesFileCount,omitzero"`
+
+	// Number of node_modules buckets with no package.json filter.
+	AutoImportNodeModulesUnfilteredBucketCount float64 `json:"autoImportNodeModulesUnfilteredBucketCount,omitzero"`
 }
 
 // A ProjectInfoTelemetryEvent is sent once per project when it is first loaded.
