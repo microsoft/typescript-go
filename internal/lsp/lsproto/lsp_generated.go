@@ -8462,6 +8462,9 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		case `"verbosityLevel"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("verbosityLevel")
+			}
 			if err := json.UnmarshalDecode(dec, &s.VerbosityLevel); err != nil {
 				return err
 			}
@@ -24257,6 +24260,13 @@ func (s *HoverClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("contentFormat")
 			}
 			if err := json.UnmarshalDecode(dec, &s.ContentFormat); err != nil {
+				return err
+			}
+		case `"verbosityLevel"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("verbosityLevel")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VerbosityLevel); err != nil {
 				return err
 			}
 		default:
