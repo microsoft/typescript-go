@@ -1,10 +1,12 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -22,7 +24,7 @@ const (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -trimprefix=Kind -output=project_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w project_stringer_generated.go
+//go:generate npx dprint fmt project_stringer_generated.go
 
 type Kind int
 
@@ -166,6 +168,19 @@ func (p *Project) Name() string {
 	return p.configFileName
 }
 
+// DisplayName returns a short, human-readable name for the project,
+// relative to the given workspace root directory.
+// For configured projects, this is the config file path made relative.
+// For inferred projects, this is the last component of the current directory.
+func (p *Project) DisplayName(cwd string) string {
+	if p.Kind == KindInferred {
+		return tspath.GetBaseFileName(p.currentDirectory)
+	}
+	return tspath.ConvertToRelativePath(p.configFileName, tspath.ComparePathsOptions{
+		CurrentDirectory: cwd,
+	})
+}
+
 func (p *Project) ID() tspath.Path {
 	return p.configFilePath
 }
@@ -192,6 +207,20 @@ func (p *Project) Id() tspath.Path {
 
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
+}
+
+// GetProjectDiagnostics returns program diagnostics combined with any global
+// diagnostics discovered during checking. These are the diagnostics reported on
+// the tsconfig.json file.
+func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	var globalDiags []*ast.Diagnostic
+	if p.checkerPool != nil {
+		globalDiags = p.checkerPool.GetGlobalDiagnostics()
+	}
+	return compiler.SortAndDeduplicateDiagnostics(core.Concatenate(
+		p.Program.GetProgramDiagnostics(),
+		globalDiags,
+	))
 }
 
 func (p *Project) HasFile(fileName string) bool {
@@ -313,6 +342,20 @@ func (p *Project) CreateProgram() CreateProgramResult {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
+			for _, file := range newProgram.SourceFiles() {
+				if file.Path() != p.dirtyFilePath {
+					// UpdateProgram acquired the changed file only, so we need to ref everything else
+					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
+			for _, file := range newProgram.DuplicateSourceFiles() {
+				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+			}
+		} else if newFile := newProgram.GetSourceFileByPath(p.dirtyFilePath); newFile != nil {
+			// UpdateProgram always acquires the dirty file before deciding whether it can
+			// reuse the old program. If it falls back to a full rebuild, release that
+			// speculative acquire so the rebuilt program is the only remaining owner.
+			p.host.builder.parseCache.Deref(NewParseCacheKey(newFile.ParseOptions(), newFile.Hash, newFile.ScriptKind))
 		}
 	} else {
 		var typingsLocation string

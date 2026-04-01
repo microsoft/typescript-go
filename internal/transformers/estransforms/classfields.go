@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
@@ -87,17 +88,16 @@ type classLexicalEnv struct {
 type classFieldsTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
-	resolver        printer.EmitResolver
+	resolver        binder.ReferenceResolver
 
 	// Computed configuration flags
 	shouldTransformInitializersUsingSet               bool
 	shouldTransformInitializersUsingDefine            bool
 	shouldTransformInitializers                       bool
 	shouldTransformPrivateElementsOrClassStaticBlocks bool
-	shouldTransformAutoAccessors                      core.Tristate
+	shouldTransformAutoAccessors                      bool
 	shouldTransformThisInStaticInitializers           bool
 	shouldTransformSuperInStaticInitializers          bool
-	shouldTransformAnything                           bool
 	shouldTransformPrivateStaticElementsInFile        bool
 	legacyDecorators                                  bool
 
@@ -119,6 +119,8 @@ type classFieldsTransformer struct {
 	// switches to the outer lexical environment. Used by visitThisExpression() to apply
 	// the outer environment's substitution without requiring currentClassElement to be static.
 	insideComputedPropertyName bool
+	parentNode                 *ast.Node
+	currentNode                *ast.Node
 
 	// Visitors
 	modifierVisitor                *ast.NodeVisitor
@@ -129,20 +131,28 @@ type classFieldsTransformer struct {
 	accessorFieldResultVisitor     *ast.NodeVisitor
 	arrayAssignmentElementVisitor  *ast.NodeVisitor
 	objectAssignmentElementVisitor *ast.NodeVisitor
+	substitutionVisitor            *ast.NodeVisitor
 
 	// Pre-bound callbacks to avoid repeated closure allocation.
 	isAnonymousClassNeedingAssignedName func(*anonymousFunctionDefinition) bool
 }
 
 func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
-	tx := &classFieldsTransformer{
-		compilerOptions:  opts.CompilerOptions,
-		resolver:         opts.EmitResolver,
-		legacyDecorators: opts.CompilerOptions.ExperimentalDecorators.IsTrue(),
-	}
-
 	languageVersion := opts.CompilerOptions.GetEmitScriptTarget()
 	useDefineForClassFields := opts.CompilerOptions.GetUseDefineForClassFields()
+
+	// When targeting ESNext+ with useDefineForClassFields (the default), there are no class
+	// field transformations to perform and no prior transform sets EFTransformPrivateStaticElements,
+	// so every node would be returned unchanged. Skip entirely.
+	if languageVersion >= core.ScriptTargetESNext && useDefineForClassFields {
+		return nil
+	}
+
+	tx := &classFieldsTransformer{
+		compilerOptions:  opts.CompilerOptions,
+		resolver:         opts.Resolver,
+		legacyDecorators: opts.CompilerOptions.ExperimentalDecorators.IsTrue(),
+	}
 
 	// Always transform field initializers using Set semantics when `useDefineForClassFields: false`.
 	tx.shouldTransformInitializersUsingSet = !useDefineForClassFields
@@ -157,13 +167,7 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 
 	// We need to transform `accessor` fields when target < ESNext.
 	// We may need to transform `accessor` fields when `useDefineForClassFields: false`
-	if languageVersion < core.ScriptTargetESNext {
-		tx.shouldTransformAutoAccessors = core.TSTrue
-	} else if !useDefineForClassFields {
-		tx.shouldTransformAutoAccessors = core.TSUnknown // Ternary.Maybe
-	} else {
-		tx.shouldTransformAutoAccessors = core.TSFalse
-	}
+	tx.shouldTransformAutoAccessors = languageVersion < core.ScriptTargetESNext
 
 	// We need to transform `this` in a static initializer into a reference to the class
 	// when target < ES2022 since the assignment will be moved outside of the class body.
@@ -172,10 +176,6 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	// Since target is always >= ES2015, this is always the same as
 	// shouldTransformThisInStaticInitializers.
 	tx.shouldTransformSuperInStaticInitializers = tx.shouldTransformThisInStaticInitializers
-
-	tx.shouldTransformAnything = tx.shouldTransformInitializers ||
-		tx.shouldTransformPrivateElementsOrClassStaticBlocks ||
-		tx.shouldTransformAutoAccessors == core.TSTrue
 
 	result := tx.NewTransformer(tx.visit, opts.Context)
 	tx.modifierVisitor = tx.EmitContext().NewNodeVisitor(tx.visitModifier)
@@ -186,6 +186,7 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	tx.accessorFieldResultVisitor = tx.EmitContext().NewNodeVisitor(tx.visitAccessorFieldResult)
 	tx.arrayAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitArrayAssignmentElement)
 	tx.objectAssignmentElementVisitor = tx.EmitContext().NewNodeVisitor(tx.visitObjectAssignmentElement)
+	tx.substitutionVisitor = tx.EmitContext().NewNodeVisitor(tx.visitForSubstitution)
 	tx.isAnonymousClassNeedingAssignedName = tx.isAnonymousClassNeedingAssignedNameWorker
 
 	return result
@@ -222,9 +223,6 @@ func (tx *classFieldsTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	}
 	tx.lexicalEnvironment = nil
 	tx.shouldTransformPrivateStaticElementsInFile = tx.EmitContext().EmitFlags(node.AsNode())&printer.EFTransformPrivateStaticElements != 0
-	if !tx.shouldTransformAnything && !tx.shouldTransformPrivateStaticElementsInFile {
-		return node.AsNode()
-	}
 	tx.classAliases = make(map[*ast.Node]*ast.IdentifierNode)
 	tx.enclosingClassDeclarations.Clear()
 	visited := tx.Visitor().VisitEachChild(node.AsNode())
@@ -247,23 +245,42 @@ func (tx *classFieldsTransformer) visitModifier(node *ast.Node) *ast.Node {
 	return nil
 }
 
-// visit is the main visitor.
-func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
-	if !tx.shouldTransformAnything && !tx.shouldTransformPrivateStaticElementsInFile {
-		return node
-	}
+func (tx *classFieldsTransformer) pushNode(node *ast.Node) (grandparentNode *ast.Node) {
+	grandparentNode = tx.parentNode
+	tx.parentNode = tx.currentNode
+	tx.currentNode = node
+	return grandparentNode
+}
 
-	// Strada's onSubstituteNode runs on ALL emitted nodes regardless of transform flags.
-	// Since we substitute eagerly, we must check for identifiers needing alias substitution
-	// even in subtrees with no class field transforms.
-	if node.Kind == ast.KindIdentifier && len(tx.classAliases) > 0 {
+func (tx *classFieldsTransformer) popNode(grandparentNode *ast.Node) {
+	tx.currentNode = tx.parentNode
+	tx.parentNode = grandparentNode
+}
+
+// visitForSubstitution visits nodes solely for class alias substitution in subtrees
+// that don't contain class field or lexical this/super transforms. It substitutes
+// identifiers that reference class declarations with their aliases, while skipping
+// the .Name() of PropertyAccessExpressions since Strada's onSubstituteNode only
+// fires for EmitHint.Expression, which excludes property access names.
+func (tx *classFieldsTransformer) visitForSubstitution(node *ast.Node) *ast.Node {
+	if node.Kind == ast.KindIdentifier {
 		return tx.visitIdentifier(node.AsIdentifier())
 	}
+	if node.Kind == ast.KindPropertyAccessExpression && ast.IsIdentifier(node.AsPropertyAccessExpression().Name()) {
+		return tx.visitPropertyAccessExpressionForSubstitution(node.AsPropertyAccessExpression())
+	}
+	return tx.substitutionVisitor.VisitEachChild(node)
+}
+
+// visit is the main visitor.
+func (tx *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
+	grandparentNode := tx.pushNode(node)
+	defer tx.popNode(grandparentNode)
 
 	if node.SubtreeFacts()&(ast.SubtreeContainsClassFields|ast.SubtreeContainsLexicalThisOrSuper) == 0 {
 		if tx.currentClassContainer != nil && len(tx.classAliases) > 0 {
 			// Continue visiting for alias substitution even in non-class-field subtrees.
-			return tx.Visitor().VisitEachChild(node)
+			return tx.visitForSubstitution(node)
 		}
 		return node
 	}
@@ -434,7 +451,7 @@ func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.
 	case ast.KindGetAccessor, ast.KindSetAccessor:
 		return tx.visitClassElement(node)
 	default:
-		debug.AssertMissingNode(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
+		debug.FailBadSyntaxKind(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
 		return nil
 	}
 }
@@ -443,9 +460,6 @@ func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.
 // substituting at emit time using NodeCheckFlags.ConstructorReference, we resolve the
 // identifier to its declaration and check if that declaration has a registered alias.
 func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
-	if tx.resolver == nil {
-		return node.AsNode()
-	}
 	declaration := tx.resolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode()))
 	if declaration != nil {
 		if alias, ok := tx.classAliases[declaration]; ok && tx.enclosingClassDeclarations.Has(declaration) {
@@ -459,14 +473,14 @@ func (tx *classFieldsTransformer) visitIdentifier(node *ast.Identifier) *ast.Nod
 }
 
 // visitPrivateIdentifier handles an undeclared private name. Replace it with an empty
-// identifier to indicate a problem with the code, unless we are in a statement position -
-// otherwise this will not trigger a SyntaxError.
+// identifier to indicate a problem with the code.
+// Note: private identifiers in statement position (e.g., `#;`) are intercepted earlier
+// by visitExpressionStatement, which preserves them so the runtime throws a SyntaxError.
 func (tx *classFieldsTransformer) visitPrivateIdentifier(node *ast.Node) *ast.Node {
 	if !tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		return node
 	}
-	// !!! Strada used .parent too; this is suspicious in a transform.
-	if node.Parent != nil && ast.IsStatement(node.Parent) {
+	if tx.parentNode != nil && ast.IsStatement(tx.parentNode) {
 		return node
 	}
 	result := tx.Factory().NewIdentifier("")
@@ -769,7 +783,7 @@ func (tx *classFieldsTransformer) setClassElementAndVisitEachChild(node *ast.Nod
 }
 
 func (tx *classFieldsTransformer) getHoistedFunctionName(node *ast.Node) *ast.IdentifierNode {
-	debug.AssertNode(node.Name(), ast.IsPrivateIdentifier)
+	debug.Assert(node.Name() != nil && ast.IsPrivateIdentifier(node.Name()))
 	info := tx.accessPrivateIdentifier(node.Name())
 	debug.Assert(info != nil, "Undeclared private name for property declaration.")
 	if info.kind == printer.PrivateIdentifierKindMethod {
@@ -985,14 +999,13 @@ func (tx *classFieldsTransformer) transformFieldInitializer(node *ast.PropertyDe
 }
 
 func (tx *classFieldsTransformer) shouldTransformAutoAccessorsInCurrentClass() bool {
-	if tx.shouldTransformAutoAccessors == core.TSTrue {
+	if tx.shouldTransformAutoAccessors {
 		return true
 	}
-	if tx.shouldTransformAutoAccessors == core.TSUnknown {
-		return tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil &&
-			tx.lexicalEnvironment.data.facts&classFactsWillHoistInitializersToConstructor != 0
-	}
-	return false
+	// When targeting ESNext with useDefineForClassFields: false, auto-accessors are only
+	// transformed if the current class will hoist initializers to the constructor.
+	return tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil &&
+		tx.lexicalEnvironment.data.facts&classFactsWillHoistInitializersToConstructor != 0
 }
 
 func (tx *classFieldsTransformer) visitPropertyDeclaration(node *ast.Node) *ast.Node {
@@ -1078,7 +1091,26 @@ func (tx *classFieldsTransformer) visitPropertyAccessExpression(node *ast.Proper
 			return superProperty
 		}
 	}
+	// Visit only the expression, not the name (when it's a regular identifier), to prevent
+	// substitution of property names. Strada's onSubstituteNode only fires for
+	// EmitHint.Expression, which excludes the .name of PropertyAccessExpression.
+	// Private identifier names are still visited through VisitEachChild so they can be
+	// transformed by visitPrivateIdentifier.
+	if ast.IsIdentifier(node.Name()) {
+		return tx.visitPropertyAccessExpressionForSubstitution(node)
+	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
+}
+
+// visitPropertyAccessExpressionForSubstitution visits only the expression of a PropertyAccessExpression,
+// leaving the name unchanged. This prevents the name from being treated as a standalone identifier
+// reference and incorrectly substituted with a class alias.
+func (tx *classFieldsTransformer) visitPropertyAccessExpressionForSubstitution(node *ast.PropertyAccessExpression) *ast.Node {
+	expression := tx.Visitor().VisitNode(node.Expression)
+	if expression != node.Expression {
+		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name())
+	}
+	return node.AsNode()
 }
 
 func (tx *classFieldsTransformer) visitElementAccessExpression(node *ast.ElementAccessExpression) *ast.Node {
@@ -1221,6 +1253,13 @@ func (tx *classFieldsTransformer) visitForStatement(node *ast.ForStatement) *ast
 }
 
 func (tx *classFieldsTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
+	// Preserve private identifiers that appear directly as the expression of an
+	// ExpressionStatement (e.g., `#;`). This is error-recovery output from the parser
+	// for invalid syntax. Keeping it ensures the runtime throws a SyntaxError rather
+	// than silently succeeding with an empty statement.
+	if ast.IsPrivateIdentifier(node.Expression) && tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+		return node.AsNode()
+	}
 	return tx.Factory().UpdateExpressionStatement(
 		node,
 		tx.discardedValueVisitor.VisitNode(node.Expression),
@@ -1460,7 +1499,7 @@ func (tx *classFieldsTransformer) visitBinaryExpression(node *ast.BinaryExpressi
 
 		if isNamedEvaluationAnd(tx.EmitContext(), node.AsNode(), tx.isAnonymousClassNeedingAssignedName) {
 			node = transformNamedEvaluation(tx.EmitContext(), node.AsNode(), false, "").AsBinaryExpression()
-			debug.AssertNode(node.AsNode(), func(node *ast.Node) bool { return ast.IsAssignmentExpression(node, false) })
+			debug.Assert(node.AsNode() != nil && ast.IsAssignmentExpression(node.AsNode(), false))
 		}
 
 		left := ast.SkipOuterExpressions(node.Left, ast.OEKPartiallyEmittedExpressions|ast.OEKParentheses)
@@ -1649,9 +1688,6 @@ func (tx *classFieldsTransformer) getPrivateInstanceMethodsAndAccessors(node *as
 // Only checks member bodies (not computed property names), since computed property names
 // are evaluated during class definition when the binding is still correct.
 func (tx *classFieldsTransformer) memberContainsConstructorReference(member *ast.Node, classDecl *ast.Node) bool {
-	if tx.resolver == nil {
-		return false
-	}
 	classOriginal := tx.EmitContext().MostOriginal(classDecl)
 	className := ast.GetNameOfDeclaration(classDecl)
 	var check func(n *ast.Node) bool
@@ -1661,6 +1697,11 @@ func (tx *classFieldsTransformer) memberContainsConstructorReference(member *ast
 			if decl == classOriginal {
 				return true
 			}
+		}
+		// For PropertyAccessExpression, only check the expression, not the name.
+		// The .Name() is a property access name, not a value reference to the class.
+		if ast.IsPropertyAccessExpression(n) {
+			return check(n.Expression())
 		}
 		return n.ForEachChild(check)
 	}
@@ -1721,7 +1762,7 @@ func (tx *classFieldsTransformer) getClassFacts(node *ast.Node) classFacts {
 			if member.Name() != nil && (ast.IsPrivateIdentifier(member.Name()) || ast.IsAutoAccessorPropertyDeclaration(member)) &&
 				tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 				facts |= classFactsNeedsClassConstructorReference
-			} else if ast.IsAutoAccessorPropertyDeclaration(member) && tx.shouldTransformAutoAccessors == core.TSTrue &&
+			} else if ast.IsAutoAccessorPropertyDeclaration(member) && tx.shouldTransformAutoAccessors &&
 				node.Name() == nil && tx.EmitContext().ClassThis(node) == nil {
 				facts |= classFactsNeedsClassConstructorReference
 			}
@@ -1757,7 +1798,7 @@ func (tx *classFieldsTransformer) getClassFacts(node *ast.Node) classFacts {
 	willHoistInitializersToConstructor := (tx.shouldTransformInitializersUsingDefine && containsPublicInstanceFields) ||
 		(tx.shouldTransformInitializersUsingSet && containsInitializedPublicInstanceFields) ||
 		(tx.shouldTransformPrivateElementsOrClassStaticBlocks && containsInstancePrivateElements) ||
-		(tx.shouldTransformPrivateElementsOrClassStaticBlocks && containsInstanceAutoAccessors && tx.shouldTransformAutoAccessors == core.TSTrue)
+		(tx.shouldTransformPrivateElementsOrClassStaticBlocks && containsInstanceAutoAccessors && tx.shouldTransformAutoAccessors)
 
 	if willHoistInitializersToConstructor {
 		facts |= classFactsWillHoistInitializersToConstructor
@@ -2734,7 +2775,7 @@ func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.Property
 
 	initializer := tx.Visitor().VisitNode(property.Initializer)
 	propertyOriginalNode := tx.EmitContext().MostOriginal(property.AsNode())
-	if ast.IsParameterPropertyDeclaration(propertyOriginalNode, propertyOriginalNode.Parent) && ast.IsIdentifier(propertyName) {
+	if ast.IsParameterPropertyDeclaration(propertyOriginalNode, propertyOriginalNode.Parent) && ast.IsIdentifier(propertyName) { //nolint:customlint // MostOriginal returns parse-tree nodes, and this parent relationship is intentional.
 		// A parameter-property declaration always overrides the initializer. The only time a parameter-property
 		// declaration *should* have an initializer is when decorators have added initializers that need to run before
 		// any other initializer
@@ -3265,7 +3306,7 @@ func (tx *classFieldsTransformer) visitAssignmentRestProperty(node *ast.Node) *a
 }
 
 func (tx *classFieldsTransformer) visitObjectAssignmentElement(node *ast.Node) *ast.Node {
-	debug.AssertNode(node, ast.IsObjectBindingOrAssignmentElement)
+	debug.Assert(node != nil && ast.IsObjectBindingOrAssignmentElement(node))
 	if ast.IsSpreadAssignment(node) {
 		return tx.visitAssignmentRestProperty(node)
 	}

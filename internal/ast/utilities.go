@@ -1384,7 +1384,7 @@ func IsThisParameter(node *Node) bool {
 
 func IsBindableStaticAccessExpression(node *Node, excludeThisKeyword bool) bool {
 	return IsPropertyAccessExpression(node) &&
-		(!excludeThisKeyword && node.Expression().Kind == KindThisKeyword || IsIdentifier(node.Name()) && IsBindableStaticNameExpression(node.Expression() /*excludeThisKeyword*/, true)) ||
+		(!excludeThisKeyword && node.Expression().Kind == KindThisKeyword || IsIdentifier(node.Name()) && IsBindableStaticNameExpression(node.Expression(), true /*excludeThisKeyword*/)) ||
 		IsBindableStaticElementAccessExpression(node, excludeThisKeyword)
 }
 
@@ -1393,6 +1393,15 @@ func IsBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool
 		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
 			IsEntityNameExpression(node.Expression()) ||
 			IsBindableStaticAccessExpression(node.Expression(), true /*excludeThisKeyword*/))
+}
+
+func IsPrototypeAccess(node *Node) bool {
+	if IsBindableStaticAccessExpression(node, false /*excludeThisKeyword*/) {
+		if name := GetElementOrPropertyAccessName(node); name != nil {
+			return name.Text() == "prototype"
+		}
+	}
+	return false
 }
 
 func IsLiteralLikeElementAccess(node *Node) bool {
@@ -1629,7 +1638,7 @@ func IsEntityNameExpressionEx(node *Node, allowJS bool) bool {
 }
 
 func IsPropertyAccessEntityNameExpression(node *Node, allowJS bool) bool {
-	return IsPropertyAccessExpression(node) && node.Name().Kind == KindIdentifier && IsEntityNameExpressionEx(node.Expression(), allowJS)
+	return IsPropertyAccessExpression(node) && IsIdentifier(node.Name()) && IsEntityNameExpressionEx(node.Expression(), allowJS)
 }
 
 func isElementAccessEntityNameExpression(node *Node, allowJS bool) bool {
@@ -2851,6 +2860,19 @@ func isVariableDeclarationInitializedWithRequireHelper(node *Node, allowAccessed
 		IsRequireCall(initializer, true /*requireStringLiteralLikeArgument*/)
 }
 
+func GetModuleSpecifierOfBareOrAccessedRequire(node *Node) *Node {
+	if isVariableDeclarationInitializedWithRequireHelper(node, false /*allowAccessedRequire*/) {
+		return node.Initializer().Arguments()[0]
+	}
+	if isVariableDeclarationInitializedWithRequireHelper(node, true /*allowAccessedRequire*/) {
+		leftmost := GetLeftmostAccessExpression(node.Initializer())
+		if IsRequireCall(leftmost, true /*requireStringLiteralLikeArgument*/) {
+			return leftmost.Arguments()[0]
+		}
+	}
+	return nil
+}
+
 func IsModuleExportsAccessExpression(node *Node) bool {
 	if IsAccessExpression(node) && IsModuleIdentifier(node.Expression()) {
 		if name := GetElementOrPropertyAccessName(node); name != nil {
@@ -3025,6 +3047,15 @@ func HasInitializer(node *Node) bool {
 		KindPropertyAssignment, KindEnumMember, KindForStatement, KindForInStatement, KindForOfStatement,
 		KindJsxAttribute:
 		return node.Initializer() != nil
+	default:
+		return false
+	}
+}
+
+func IsVariableParameterOrProperty(node *Node) bool {
+	switch node.Kind {
+	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindPropertyDeclaration:
+		return true
 	default:
 		return false
 	}
@@ -3289,6 +3320,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			modifierArray,
 			node.Name(),
 			node.AsTypeParameter().Constraint,
+			node.AsTypeParameter().Expression,
 			node.AsTypeParameter().DefaultType,
 		)
 	case KindParameter:
@@ -3994,6 +4026,55 @@ func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
 
+func IsPrimitiveLiteralValue(node *Node, includeBigInt bool) bool {
+	switch node.Kind {
+	case KindTrueKeyword,
+		KindFalseKeyword,
+		KindNumericLiteral,
+		KindStringLiteral,
+		KindNoSubstitutionTemplateLiteral:
+		return true
+	case KindBigIntLiteral:
+		return includeBigInt
+	case KindPrefixUnaryExpression:
+		if node.AsPrefixUnaryExpression().Operator == KindMinusToken {
+			return IsNumericLiteral(node.AsPrefixUnaryExpression().Operand) || (includeBigInt && IsBigIntLiteral(node.AsPrefixUnaryExpression().Operand))
+		}
+		if node.AsPrefixUnaryExpression().Operator == KindPlusToken {
+			return IsNumericLiteral(node.AsPrefixUnaryExpression().Operand)
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+func HasInferredType(node *Node) bool {
+	// Debug.type<HasInferredType>(node); // !!!
+	switch node.Kind {
+	case KindParameter,
+		KindPropertySignature,
+		KindPropertyDeclaration,
+		KindBindingElement,
+		KindPropertyAccessExpression,
+		KindElementAccessExpression,
+		KindBinaryExpression,
+		KindCallExpression,
+		KindVariableDeclaration,
+		KindExportAssignment,
+		KindJSExportAssignment,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindJSDocParameterTag,
+		KindJSDocPropertyTag,
+		KindCommonJSExport:
+		return true
+	default:
+		// assertType<never>(node); // !!!
+		return false
+	}
+}
+
 func IsKeyword(token Kind) bool {
 	return KindFirstKeyword <= token && token <= KindLastKeyword
 }
@@ -4402,6 +4483,10 @@ func findCloneInNode(node *Node, original *Node) *Node {
 			return nil
 		}
 	}
+}
+
+func IsExpandoPropertyDeclaration(node *Node) bool {
+	return node != nil && IsBinaryExpression(node)
 }
 
 // IsSuperProperty checks if a node is super.x or super[x].

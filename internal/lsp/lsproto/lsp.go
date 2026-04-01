@@ -1,6 +1,7 @@
 package lsproto
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/url"
@@ -114,35 +115,110 @@ func unmarshalEmpty(data []byte) (any, error) {
 	return nil, nil
 }
 
-func assertOnlyOne(message string, values ...bool) {
-	count := 0
-	for _, v := range values {
-		if v {
-			count++
-		}
+func boolToInt(b bool) int {
+	if b {
+		return 1
 	}
+	return 0
+}
+
+func errNotObject(k json.Kind) error {
+	return fmt.Errorf("expected object start, but encountered %v", k)
+}
+
+func errNull(field string) error {
+	return fmt.Errorf("null value is not allowed for field %q", field)
+}
+
+func errMissing(props []string) error {
+	return fmt.Errorf("missing required properties: %s", strings.Join(props, ", "))
+}
+
+func errInvalidKind(typeName string, got json.Kind) error {
+	return fmt.Errorf("invalid %s: got %v", typeName, got)
+}
+
+func errInvalidValue(typeName string, data []byte) error {
+	return fmt.Errorf("invalid %s: %s", typeName, data)
+}
+
+func errLiteralMismatch(typeName string, expected string, got []byte) error {
+	return fmt.Errorf("expected %s value %s, got %s", typeName, expected, got)
+}
+
+func assertOnlyOne(message string, count int) {
 	if count != 1 {
 		panic(message)
 	}
 }
 
-func assertAtMostOne(message string, values ...bool) {
-	count := 0
-	for _, v := range values {
-		if v {
-			count++
-		}
-	}
+func assertAtMostOne(message string, count int) {
 	if count > 1 {
 		panic(message)
 	}
 }
 
-type requiredProp bool
+// jsonKeyCheck compares a raw JSON key token (including quotes) against a Go string.
+func jsonKeyCheck(name []byte, key string) bool {
+	return len(name) == len(key)+2 && name[0] == '"' && string(name[1:len(name)-1]) == key
+}
 
-func (v *requiredProp) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*v = true
-	return dec.SkipValue()
+// jsonObjectRawField scans the top-level keys of a JSON object looking for the
+// given field name, and returns its raw JSON value (e.g. `"full"` with quotes).
+// Returns nil if the field is not found.
+func jsonObjectRawField(data []byte, field string) json.Value {
+	dec := json.NewDecoder(bytes.NewBuffer(data))
+	if dec.PeekKind() != '{' {
+		return nil
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return nil
+	}
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return nil
+		}
+		if jsonKeyCheck(name, field) {
+			val, err := dec.ReadValue()
+			if err != nil {
+				return nil
+			}
+			return val
+		}
+		if err := dec.SkipValue(); err != nil {
+			return nil
+		}
+	}
+	return nil
+}
+
+// jsonObjectHasKey scans the top-level keys of a JSON object looking for any of the
+// given keys. Returns the index of the first key found, or -1 if none match.
+// Bails early on first match without decoding any values.
+func jsonObjectHasKey(data []byte, keys ...string) int {
+	dec := json.NewDecoder(bytes.NewBuffer(data))
+	if dec.PeekKind() != '{' {
+		return -1
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return -1
+	}
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return -1
+		}
+		for i, key := range keys {
+			if jsonKeyCheck(name, key) {
+				return i
+			}
+		}
+		if err := dec.SkipValue(); err != nil {
+			return -1
+		}
+	}
+	return -1
 }
 
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk
@@ -206,6 +282,10 @@ func (Null) UnmarshalJSONFrom(dec *json.Decoder) error {
 func (Null) MarshalJSONTo(enc *json.Encoder) error {
 	return enc.WriteToken(json.Null)
 }
+
+type NoParams struct{}
+
+func (NoParams) IsZero() bool { return true }
 
 type clientCapabilitiesKey struct{}
 
