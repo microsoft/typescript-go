@@ -37,7 +37,6 @@
 // | ```tsx
 // | const c: {
 // |     new (length: number): Banana;
-// |     prototype: Banana;
 // | }
 // | ```
 // | 
@@ -159,7 +158,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst c: {\n    new (length: number): Banana;\n    prototype: Banana;\n}\n```\n"
+          "value": "```tsx\nconst c: {\n    new (length: number): Banana;\n}\n```\n"
         },
         "range": {
           "start": {

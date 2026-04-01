@@ -19,10 +19,10 @@ func (b *NodeBuilder) EmitContext() *printer.EmitContext {
 }
 
 func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, -1, nil)
+	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, -1, nil, 0)
 }
 
-func (b *NodeBuilder) enterContextEx(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) {
+func (b *NodeBuilder) enterContextEx(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) {
 	b.ctxStack = append(b.ctxStack, b.impl.ctx)
 	b.impl.ctx = &NodeBuilderContext{
 		host:                     b.host,
@@ -30,6 +30,7 @@ func (b *NodeBuilder) enterContextEx(enclosingDeclaration *ast.Node, flags nodeb
 		flags:                    flags,
 		internalFlags:            internalFlags,
 		maxExpansionDepth:        verbosityLevel,
+		maxTruncationLength:      maxTruncationLength,
 		enclosingDeclaration:     enclosingDeclaration,
 		enclosingFile:            ast.GetSourceFileOfNode(enclosingDeclaration),
 		inferTypeParameters:      make([]*Type, 0),
@@ -122,8 +123,8 @@ func (b *NodeBuilder) SymbolTableToDeclarationStatements(symbolTable *ast.Symbol
 }
 
 // SymbolToDeclarationsWithVerbosity produces declaration nodes for a symbol with verbosity level support.
-func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) []*ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out)
+func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) []*ast.Node {
+	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, maxTruncationLength)
 
 	// Push the declared type onto the type stack to prevent re-expansion
 	declaredType := b.impl.ch.getDeclaredTypeOfSymbol(symbol)
@@ -234,7 +235,7 @@ func (b *NodeBuilder) TypeParameterToDeclaration(parameter *Type, enclosingDecla
 
 // TypeParameterToDeclarationWithVerbosity is like TypeParameterToDeclaration but with verbosity level support.
 func (b *NodeBuilder) TypeParameterToDeclarationWithVerbosity(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) *ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out)
+	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, 0)
 	result := b.impl.typeParameterToDeclaration(parameter)
 	if out != nil {
 		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth
@@ -257,7 +258,7 @@ func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, 
 
 // TypeToTypeNodeWithVerbosity is like TypeToTypeNode but with verbosity level support for expandable hover.
 func (b *NodeBuilder) TypeToTypeNodeWithVerbosity(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) *ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out)
+	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, 0)
 	result := b.impl.typeToTypeNode(typ)
 	if out != nil {
 		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth
@@ -268,7 +269,7 @@ func (b *NodeBuilder) TypeToTypeNodeWithVerbosity(typ *Type, enclosingDeclaratio
 
 // SignatureToSignatureDeclarationWithVerbosity is like SignatureToSignatureDeclaration but with verbosity level support.
 func (b *NodeBuilder) SignatureToSignatureDeclarationWithVerbosity(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) *ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out)
+	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, 0)
 	result := b.impl.signatureToSignatureDeclarationHelper(signature, kind, nil)
 	if out != nil {
 		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth

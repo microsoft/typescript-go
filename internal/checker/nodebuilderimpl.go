@@ -58,6 +58,7 @@ type NodeBuilderContext struct {
 	host                            Host
 	tracker                         nodebuilder.SymbolTracker
 	approximateLength               int
+	maxTruncationLength             int
 	encounteredError                bool
 	truncating                      bool
 	reportedDiagnostic              bool
@@ -152,7 +153,11 @@ func (b *NodeBuilderImpl) checkTruncationLength() bool {
 	if b.ctx.truncating {
 		return b.ctx.truncating
 	}
-	b.ctx.truncating = b.ctx.approximateLength > (core.IfElse((b.ctx.flags&nodebuilder.FlagsNoTruncation != 0), noTruncationMaximumTruncationLength, defaultMaximumTruncationLength))
+	maxLength := b.ctx.maxTruncationLength
+	if maxLength == 0 {
+		maxLength = core.IfElse(b.ctx.flags&nodebuilder.FlagsNoTruncation != 0, noTruncationMaximumTruncationLength, defaultMaximumTruncationLength)
+	}
+	b.ctx.truncating = b.ctx.approximateLength > maxLength
 	return b.ctx.truncating
 }
 
@@ -2283,6 +2288,13 @@ func (b *NodeBuilderImpl) isSingleQuotedStringNamed(d *ast.Declaration) bool {
 }
 
 func (b *NodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.Node {
+	// For hash-private names, clone the original private identifier from the declaration
+	if symbol.ValueDeclaration != nil {
+		declName := symbol.ValueDeclaration.Name()
+		if declName != nil && ast.IsPrivateIdentifier(declName) {
+			return b.f.DeepCloneNode(declName)
+		}
+	}
 	stringNamed := len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, b.isStringNamed)
 	singleQuote := len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, b.isSingleQuotedStringNamed)
 	isMethod := symbol.Flags&ast.SymbolFlagsMethod != 0
@@ -2505,6 +2517,9 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 
 	i := 0
 	for _, propertySymbol := range properties {
+		if isExpanding(b.ctx) && propertySymbol.Flags&ast.SymbolFlagsPrototype != 0 {
+			continue
+		}
 		i++
 		if b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral != 0 {
 			if propertySymbol.Flags&ast.SymbolFlagsPrototype != 0 {

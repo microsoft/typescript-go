@@ -97,7 +97,6 @@
 // | const a: {
 // |     new <T>(x: T): Foo<T>;
 // |     whatever(): void;
-// |     prototype: Foo<any>;
 // | }
 // | ```
 // | 
@@ -118,7 +117,6 @@
 // | const c: {
 // |     new (x: string): Foo<string>;
 // |     whatever(): void;
-// |     prototype: Foo<any>;
 // | }
 // | ```
 // | 
@@ -213,7 +211,7 @@
 // | ```tsx
 // | class Dog {
 // |     what(this: this, that: Dog): void;
-// |     "__#private@#bones": string[];
+// |     #bones: string[];
 // | }
 // | ```
 // | 
@@ -236,7 +234,7 @@
 // | ```tsx
 // | const d: {
 // |     what(this: Dog, that: Dog): void;
-// |     "__#private@#bones": string[];
+// |     #bones: string[];
 // | }
 // | ```
 // | 
@@ -484,7 +482,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst a: {\n    new <T>(x: T): Foo<T>;\n    whatever(): void;\n    prototype: Foo<any>;\n}\n```\n"
+          "value": "```tsx\nconst a: {\n    new <T>(x: T): Foo<T>;\n    whatever(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -516,7 +514,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst c: {\n    new (x: string): Foo<string>;\n    whatever(): void;\n    prototype: Foo<any>;\n}\n```\n"
+          "value": "```tsx\nconst c: {\n    new (x: string): Foo<string>;\n    whatever(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -764,7 +762,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Dog {\n    what(this: this, that: Dog): void;\n    \"__#private@#bones\": string[];\n}\n```\n"
+          "value": "```tsx\nclass Dog {\n    what(this: this, that: Dog): void;\n    #bones: string[];\n}\n```\n"
         },
         "range": {
           "start": {
@@ -826,7 +824,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst d: {\n    what(this: Dog, that: Dog): void;\n    \"__#private@#bones\": string[];\n}\n```\n"
+          "value": "```tsx\nconst d: {\n    what(this: Dog, that: Dog): void;\n    #bones: string[];\n}\n```\n"
         },
         "range": {
           "start": {

@@ -8,6 +8,9 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
+// | class Foo<T> {
+// |     y: string;
+// | }
 // | namespace Foo {
 // |     const y: number;
 // |     const x: string;
@@ -220,7 +223,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Foo {\n    const y: number;\n    const x: string;\n    const w: string;\n}\n\n```\n"
+          "value": "```tsx\nclass Foo<T> {\n    y: string;\n}\nnamespace Foo {\n    const y: number;\n    const x: string;\n    const w: string;\n}\n\n```\n"
         },
         "range": {
           "start": {

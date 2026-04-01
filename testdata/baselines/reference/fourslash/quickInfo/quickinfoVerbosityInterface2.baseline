@@ -188,6 +188,9 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
+// | namespace Foo {
+// |     const bar: string;
+// | }
 // | interface Foo {
 // |     a: "a";
 // | }
@@ -209,6 +212,9 @@
 //           ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
+// | namespace Foo {
+// |     const bar: string;
+// | }
 // | interface Foo {
 // |     a: "a";
 // | }
@@ -711,7 +717,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: \"a\";\n}\n```\n"
+          "value": "```tsx\nnamespace Foo {\n    const bar: string;\n}\ninterface Foo {\n    a: \"a\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -773,7 +779,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Foo {\n    a: \"a\";\n}\n\n```\n"
+          "value": "```tsx\nnamespace Foo {\n    const bar: string;\n}\ninterface Foo {\n    a: \"a\";\n}\n\n```\n"
         },
         "range": {
           "start": {

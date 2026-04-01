@@ -18,8 +18,9 @@ import (
 )
 
 const (
-	symbolFormatFlags = checker.SymbolFormatFlagsWriteTypeParametersOrArguments | checker.SymbolFormatFlagsUseOnlyExternalAliasing | checker.SymbolFormatFlagsAllowAnyNodeKind | checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope
-	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
+	symbolFormatFlags                   = checker.SymbolFormatFlagsWriteTypeParametersOrArguments | checker.SymbolFormatFlagsUseOnlyExternalAliasing | checker.SymbolFormatFlagsAllowAnyNodeKind | checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope
+	typeFormatFlags                     = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
+	defaultHoverMaximumTruncationLength = 500
 )
 
 func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position) (lsproto.HoverResponse, error) {
@@ -384,7 +385,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if canExpandSymbol(symbol) {
 			expandedFlags := checker.TypeFormatFlagsMultilineObjectLiterals | checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
-			expanded := c.SymbolToDeclarationsWithVerbosity(symbol, meaning, container, expandedFlags, verbosityLevel-1, out)
+			expanded := c.SymbolToDeclarationsWithVerbosity(symbol, meaning, container, expandedFlags, verbosityLevel-1, out, defaultHoverMaximumTruncationLength)
 			if expanded != "" {
 				b.WriteString(expanded)
 				symbolWasExpanded = true

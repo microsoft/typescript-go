@@ -1,6 +1,8 @@
 package checker
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -453,15 +455,14 @@ func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosing
 }
 
 // SymbolToDeclarationsWithVerbosity produces declaration strings for a symbol with verbosity level support for expandable hover.
-func (c *Checker) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut) string {
-	writer := printer.NewTextWriter("\n", 0)
+func (c *Checker) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) string {
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	if noTruncation {
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
 	nodeBuilder := c.getNodeBuilder()
-	nodes := nodeBuilder.SymbolToDeclarationsWithVerbosity(symbol, meaning, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out)
+	nodes := nodeBuilder.SymbolToDeclarationsWithVerbosity(symbol, meaning, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out, maxTruncationLength)
 	if len(nodes) == 0 {
 		return ""
 	}
@@ -472,13 +473,14 @@ func (c *Checker) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning 
 	} else if symbol.ValueDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(symbol.ValueDeclaration)
 	}
+	var b strings.Builder
 	for i, node := range nodes {
 		if i > 0 {
-			writer.WriteLine()
+			b.WriteString("\n")
 		}
-		p.Write(node, sourceFile, writer, nil)
+		b.WriteString(p.Emit(node, sourceFile))
 	}
-	return writer.String()
+	return b.String()
 }
 
 func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypePredicateNodeNode {
