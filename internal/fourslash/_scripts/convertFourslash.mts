@@ -1679,7 +1679,7 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                     break;
                 case "organizeImportsTypeOrder":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
-                        return undefined;
+                        throw new Error(`Expected string literal for organizeImportsTypeOrder, got ${prop.initializer.getText()}`);
                     }
                     switch (prop.initializer.text) {
                         case "last":
@@ -1692,7 +1692,7 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                             preferences.push(`OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst`);
                             break;
                         default:
-                            return undefined;
+                            throw new Error(`Unsupported organizeImportsTypeOrder value: ${prop.initializer.text}`);
                     }
                     break;
                 case "autoImportFileExcludePatterns":
@@ -1996,7 +1996,7 @@ function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaseli
     const verbosityLevels: Record<string, number[]> = {};
     for (const prop of verbosityArg.properties) {
         if (!ts.isPropertyAssignment(prop)) {
-            return undefined;
+            throw new Error(`Expected property assignment in baselineQuickInfo verbosity levels, got ${prop.getText()}`);
         }
         let name: string;
         if (ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name)) {
@@ -2006,13 +2006,13 @@ function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaseli
             name = prop.name.text;
         }
         else {
-            return undefined;
+            throw new Error(`Expected identifier, string, or numeric literal for property name in baselineQuickInfo verbosity levels, got ${prop.name.getText()}`);
         }
         if (ts.isArrayLiteralExpression(prop.initializer)) {
             const levels: number[] = [];
             for (const elem of prop.initializer.elements) {
                 if (!ts.isNumericLiteral(elem)) {
-                    return undefined;
+                    throw new Error(`Expected numeric literal in baselineQuickInfo verbosity levels array, got ${elem.getText()}`);
                 }
                 levels.push(Number(elem.text));
             }
@@ -2022,7 +2022,7 @@ function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaseli
             verbosityLevels[name] = [Number(prop.initializer.text)];
         }
         else {
-            return undefined;
+            throw new Error(`Expected numeric literal or array literal for baselineQuickInfo verbosity level, got ${prop.initializer.getText()}`);
         }
     }
     return [{
