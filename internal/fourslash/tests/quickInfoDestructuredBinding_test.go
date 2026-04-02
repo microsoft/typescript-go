@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestQuickInfoDestructuredParameter(t *testing.T) {
+func TestQuickInfoDestructuredBinding(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
