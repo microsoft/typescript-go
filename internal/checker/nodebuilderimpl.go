@@ -319,7 +319,8 @@ func (b *NodeBuilderImpl) serializeTypeName(node *ast.Node, isTypeOf bool, typeA
 	if isTypeOf {
 		meaning = ast.SymbolFlagsValue
 	}
-	symbol := b.ch.resolveEntityName(node, meaning, true, true, node)
+	referencedSymbol := b.ch.resolveEntityName(node, meaning, true, true, node)
+	symbol := b.ch.resolveEntityName(node, meaning, true, false, node)
 	if symbol == nil {
 		return nil
 	}
@@ -329,13 +330,15 @@ func (b *NodeBuilderImpl) serializeTypeName(node *ast.Node, isTypeOf bool, typeA
 		resolvedSymbol = b.ch.resolveAlias(symbol)
 	}
 
-	// Declaration emit may need to reuse a referenced alias via a portable import type even
-	// when the original name is no longer directly accessible from the current declaration.
-	// In looser display/baseline contexts, preserve the old bailout to avoid introducing verbose
-	// or non-local names in places that intentionally prefer fallback formatting.
-	if (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 ||
-		b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths != 0) &&
-		b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
+	// Type display paths should keep falling back when only the original referenced alias
+	// is out of scope, even if resolving through the export would permit a portable import type.
+	if referencedSymbol != nil &&
+		(b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 ||
+			b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths != 0) &&
+		b.ch.IsSymbolAccessible(referencedSymbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
+		return nil
+	}
+	if b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
 		return nil
 	}
 	return b.symbolToTypeNode(resolvedSymbol, meaning, typeArguments)
