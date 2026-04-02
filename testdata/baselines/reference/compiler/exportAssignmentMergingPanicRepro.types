@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/exportAssignmentMergingPanicRepro.ts] ////
+
+=== a.d.ts ===
+declare class Lib {
+>Lib : Lib
+
+    value: number;
+>value : number
+}
+declare namespace Lib {
+>Lib : typeof Lib
+
+    class Component {
+>Component : Component
+
+        render(): void;
+>render : () => void
+    }
+}
+export = Lib;
+>Lib : Lib
+
+=== b.ts ===
+import { Component } from "./a";
+>Component : typeof Component
+
+class App extends Component {
+>App : App
+>Component : Component
+
+    render() { }
+>render : () => void
+}
+
