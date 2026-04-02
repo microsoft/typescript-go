@@ -94,4 +94,3 @@ import { MyClass, myFunc } from "./mod";
 myFunc<MyClass`),
 	})
 }
-
