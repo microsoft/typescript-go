@@ -211,6 +211,12 @@ const customStructures: Structure[] = [
                 type: { kind: "base", name: "string" },
                 documentation: "The stack trace associated with the event.",
             },
+            {
+                name: "fileExtension",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The file extension of the document that caused the event, if available.",
+            },
         ],
         documentation: "RequestFailureTelemetryProperties contains failure information when an LSP request manages to recover.",
     },

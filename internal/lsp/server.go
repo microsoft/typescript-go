@@ -776,8 +776,9 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if err != nil {
 			return nil, err
 		}
+		fileExtension := tspath.TryGetExtensionFromPath(params.TextDocumentURI().FileName())
 		return func() error {
-			defer s.recover(req)
+			defer s.recover(req, fileExtension)
 			resp, lsErr := fn(s, ctx, ls, params)
 			// After any language service request, check if new global diagnostics were
 			// discovered during checking and push updated tsconfig diagnostics if so.
@@ -800,9 +801,10 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
+		fileExtension := tspath.TryGetExtensionFromPath(params.TextDocumentURI().FileName())
 		return s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
 			return func() error {
-				defer s.recover(req)
+				defer s.recover(req, fileExtension)
 				resp, lsErr := fn(s, ctx, languageService, params)
 				if errors.Is(lsErr, ls.ErrNeedsAutoImports) {
 					languageService, lsErr = s.session.GetLanguageServiceWithAutoImports(ctx, snapshot, params.TextDocumentURI())
@@ -845,8 +847,9 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		if err != nil {
 			return nil, err
 		}
+		fileExtension := tspath.TryGetExtensionFromPath(params.TextDocumentURI().FileName())
 		return func() error {
-			defer s.recover(req)
+			defer s.recover(req, fileExtension)
 			resp, lsErr := fn(defaultLs, ctx, params, orchestrator)
 			if lsErr != nil {
 				return lsErr
@@ -905,7 +908,7 @@ func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Conte
 	return defaultLs, orchestrator, err
 }
 
-func (s *Server) recover(req *lsproto.RequestMessage) {
+func (s *Server) recover(req *lsproto.RequestMessage, fileExtension string) {
 	if r := recover(); r != nil {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
@@ -915,13 +918,17 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 				return
 			}
 
+			props := &lsproto.RequestFailureTelemetryProperties{
+				ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+				RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
+				Stack:         sanitizeStackTrace(string(stack)),
+			}
+			if fileExtension != "" {
+				props.FileExtension = &fileExtension
+			}
 			_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
 				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
-					Properties: &lsproto.RequestFailureTelemetryProperties{
-						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
-						RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
-						Stack:         sanitizeStackTrace(string(stack)),
-					},
+					Properties: props,
 				},
 			})
 		} else {
@@ -1270,7 +1277,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	defer s.recover(reqMsg)
+	defer s.recover(reqMsg, tspath.TryGetExtensionFromPath(data.FileName))
 	return languageService.ResolveCompletionItem(
 		ctx,
 		params,
@@ -1309,7 +1316,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 	var resp lsproto.WorkspaceSymbolResponse
 	var lsErr error
 	s.session.WithSnapshotLoadingProjectTree(ctx, nil, func(snapshot *project.Snapshot) {
-		defer s.recover(reqMsg)
+		defer s.recover(reqMsg, "")
 		programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 		resp, lsErr = ls.ProvideWorkspaceSymbols(
 			ctx,
@@ -1364,7 +1371,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 		// based on non-existent files and line maps from shortened files.
 		return codeLens, lsproto.ErrorCodeContentModified
 	}
-	defer s.recover(reqMsg)
+	defer s.recover(reqMsg, tspath.TryGetExtensionFromPath(codeLens.Data.Uri.FileName()))
 	return defaultLs.ResolveCodeLens(
 		ctx,
 		codeLens,
