@@ -63,9 +63,7 @@ Output::
         "target": "es2017",
         "baseUrl": "./",
         "esModuleInterop": true,
-        "useDefineForClassFields": false,
-        "resolvePackageJsonExports": false,
-        "resolvePackageJsonImports": false
+        "useDefineForClassFields": false
     },
     "include": [
         "./src/**/*"

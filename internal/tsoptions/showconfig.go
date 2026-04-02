@@ -39,7 +39,7 @@ var impliedOptions = []impliedOption{
 		name:         "ModuleResolution",
 		dependencies: []string{"Module", "Target"},
 		compute: func(opts *core.CompilerOptions) any {
-			return computeModuleResolutionForShowConfig(opts)
+			return opts.GetModuleResolutionKind()
 		},
 	},
 	{
@@ -95,51 +95,21 @@ var impliedOptions = []impliedOption{
 		name:         "ResolvePackageJsonExports",
 		dependencies: []string{"ModuleResolution", "Module", "Target"},
 		compute: func(opts *core.CompilerOptions) any {
-			res := computeModuleResolutionForShowConfig(opts)
-			if !moduleResolutionSupportsPackageJsonExports(res) {
-				return false
-			}
-			if opts.ResolvePackageJsonExports != core.TSUnknown {
-				return opts.ResolvePackageJsonExports == core.TSTrue
-			}
-			switch res {
-			case core.ModuleResolutionKindNode16, core.ModuleResolutionKindNodeNext, core.ModuleResolutionKindBundler:
-				return true
-			}
-			return false
+			return opts.GetResolvePackageJsonExports()
 		},
 	},
 	{
 		name:         "ResolvePackageJsonImports",
 		dependencies: []string{"ModuleResolution", "ResolvePackageJsonExports", "Module", "Target"},
 		compute: func(opts *core.CompilerOptions) any {
-			res := computeModuleResolutionForShowConfig(opts)
-			if !moduleResolutionSupportsPackageJsonExports(res) {
-				return false
-			}
-			if opts.ResolvePackageJsonImports != core.TSUnknown {
-				return opts.ResolvePackageJsonImports == core.TSTrue
-			}
-			switch res {
-			case core.ModuleResolutionKindNode16, core.ModuleResolutionKindNodeNext, core.ModuleResolutionKindBundler:
-				return true
-			}
-			return false
+			return opts.GetResolvePackageJsonImports()
 		},
 	},
 	{
 		name:         "ResolveJsonModule",
 		dependencies: []string{"ModuleResolution", "Module", "Target"},
 		compute: func(opts *core.CompilerOptions) any {
-			if opts.ResolveJsonModule != core.TSUnknown {
-				return opts.ResolveJsonModule == core.TSTrue
-			}
-			moduleKind := opts.GetEmitModuleKind()
-			switch moduleKind {
-			case core.ModuleKindNode20, core.ModuleKindNodeNext:
-				return true
-			}
-			return computeModuleResolutionForShowConfig(opts) == core.ModuleResolutionKindBundler
+			return opts.GetResolveJsonModule()
 		},
 	},
 	{
@@ -156,37 +126,6 @@ var impliedOptions = []impliedOption{
 			return opts.GetAllowImportingTsExtensions()
 		},
 	},
-}
-
-// computeModuleResolutionForShowConfig computes the effective module resolution for
-// showConfig purposes, matching TypeScript's computedOptions.moduleResolution.computeValue.
-// Unlike GetModuleResolutionKind, this returns the explicitly-set value directly
-// when moduleResolution is specified (even for Node10/Classic).
-func computeModuleResolutionForShowConfig(opts *core.CompilerOptions) core.ModuleResolutionKind {
-	if opts.ModuleResolution != core.ModuleResolutionKindUnknown {
-		return opts.ModuleResolution
-	}
-	moduleKind := opts.GetEmitModuleKind()
-	switch moduleKind {
-	case core.ModuleKindNone, core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
-		return core.ModuleResolutionKindClassic
-	case core.ModuleKindNodeNext:
-		return core.ModuleResolutionKindNodeNext
-	}
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
-		return core.ModuleResolutionKindNode16
-	}
-	return core.ModuleResolutionKindBundler
-}
-
-// moduleResolutionSupportsPackageJsonExports returns true for module resolution
-// kinds that support package.json exports/imports fields.
-func moduleResolutionSupportsPackageJsonExports(res core.ModuleResolutionKind) bool {
-	switch res {
-	case core.ModuleResolutionKindNode16, core.ModuleResolutionKindNodeNext, core.ModuleResolutionKindBundler:
-		return true
-	}
-	return false
 }
 
 // TSConfig represents the output structure for --showConfig
