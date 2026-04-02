@@ -28209,6 +28209,9 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 	var addSpans func([]string, []*Type) bool
 	addSpans = func(texts []string, types []*Type) bool {
 		for i, t := range types {
+			if sb.Len() > 100_000 || len(newTypes) > 1_000 {
+				return false
+			}
 			switch {
 			case t.flags&(TypeFlagsLiteral|TypeFlagsNull|TypeFlagsUndefined) != 0:
 				sb.WriteString(c.getTemplateStringForType(t))
