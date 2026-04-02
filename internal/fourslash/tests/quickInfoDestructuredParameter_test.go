@@ -15,6 +15,9 @@ func TestQuickInfoDestructuredParameter(t *testing.T) {
 function f({ /*1*/x }: { x: number }) {}
 function g([/*2*/y]: number[]) {}
 function h({ a: { /*3*/b } }: { a: { b: string } }) {}
+const { /*4*/c } = { c: 42 };
+let { /*5*/d } = { d: "hello" };
+var { /*6*/e } = { e: true };
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
@@ -25,4 +28,8 @@ function h({ a: { /*3*/b } }: { a: { b: string } }) {}
 	f.VerifyQuickInfoAt(t, "2", "(parameter) y: number", "")
 	// Nested destructured parameters should also show "(parameter)"
 	f.VerifyQuickInfoAt(t, "3", "(parameter) b: string", "")
+	// Destructured const/let/var bindings should show their proper keyword
+	f.VerifyQuickInfoAt(t, "4", "const c: number", "")
+	f.VerifyQuickInfoAt(t, "5", "let d: string", "")
+	f.VerifyQuickInfoAt(t, "6", "var e: boolean", "")
 }
