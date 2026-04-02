@@ -346,7 +346,7 @@ func addImpliedOptions(
 		defaultVal := entry.compute(defaultOpts)
 
 		// If the implied value equals the default, this option doesn't add useful information.
-		if impliedValuesEqual(implied, defaultVal) {
+		if reflect.DeepEqual(implied, defaultVal) {
 			continue
 		}
 
@@ -369,12 +369,6 @@ func anyDependencyProvided(dependencies []string, provided map[string]bool) bool
 		}
 	}
 	return false
-}
-
-// impliedValuesEqual compares two values computed by the same compute function for equality.
-// Since both values come from the same typed getter, reflect.DeepEqual handles all cases.
-func impliedValuesEqual(a, b any) bool {
-	return reflect.DeepEqual(a, b)
 }
 
 // serializeImpliedOptionValue converts a computed implied option value to its serializable form.
