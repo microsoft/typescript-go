@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/optionalChainingParenthesizedAssertion.ts] ////
+
+=== optionalChainingParenthesizedAssertion.ts ===
+// Tests that parenthesized type assertions around optional chains
+// correctly preserve parentheses after type erasure.
+// This matches tsc behavior - see TypeScript#50148.
+
+declare let a: undefined | { b: string[], c(): void, d: { e: number } };
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>c : Symbol(c, Decl(optionalChainingParenthesizedAssertion.ts, 4, 41))
+>d : Symbol(d, Decl(optionalChainingParenthesizedAssertion.ts, 4, 52))
+>e : Symbol(e, Decl(optionalChainingParenthesizedAssertion.ts, 4, 57))
+
+// Parenthesized assertion breaks the optional chain - parens preserved
+let r1 = (a?.b as any).length;
+>r1 : Symbol(r1, Decl(optionalChainingParenthesizedAssertion.ts, 7, 3))
+>a?.b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+
+let r2 = (a?.b as string[]).length;
+>r2 : Symbol(r2, Decl(optionalChainingParenthesizedAssertion.ts, 8, 3))
+>(a?.b as string[]).length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>a?.b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+
+let r3 = (<any>a?.b).length;
+>r3 : Symbol(r3, Decl(optionalChainingParenthesizedAssertion.ts, 9, 3))
+>a?.b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+
+let r4 = (a?.b!).length;
+>r4 : Symbol(r4, Decl(optionalChainingParenthesizedAssertion.ts, 10, 3))
+>(a?.b!).length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>a?.b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+
+let r5 = (a?.b satisfies any).length;
+>r5 : Symbol(r5, Decl(optionalChainingParenthesizedAssertion.ts, 11, 3))
+>(a?.b satisfies any).length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>a?.b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+
+// Regular optional chain - no parens needed
+let r6 = a?.b.length;
+>r6 : Symbol(r6, Decl(optionalChainingParenthesizedAssertion.ts, 14, 3))
+>a?.b.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>a?.b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>b : Symbol(b, Decl(optionalChainingParenthesizedAssertion.ts, 4, 28))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+
+// Call expression after assertion - parens preserved
+(a?.c as any)();
+>a?.c : Symbol(c, Decl(optionalChainingParenthesizedAssertion.ts, 4, 41))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>c : Symbol(c, Decl(optionalChainingParenthesizedAssertion.ts, 4, 41))
+
+// Optional chain after assertion - parens removed
+(a?.c as any)?.();
+>a?.c : Symbol(c, Decl(optionalChainingParenthesizedAssertion.ts, 4, 41))
+>a : Symbol(a, Decl(optionalChainingParenthesizedAssertion.ts, 4, 11))
+>c : Symbol(c, Decl(optionalChainingParenthesizedAssertion.ts, 4, 41))
+

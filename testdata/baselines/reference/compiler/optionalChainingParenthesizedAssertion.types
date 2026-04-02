@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/optionalChainingParenthesizedAssertion.ts] ////
+
+=== optionalChainingParenthesizedAssertion.ts ===
+// Tests that parenthesized type assertions around optional chains
+// correctly preserve parentheses after type erasure.
+// This matches tsc behavior - see TypeScript#50148.
+
+declare let a: undefined | { b: string[], c(): void, d: { e: number } };
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[]
+>c : () => void
+>d : { e: number; }
+>e : number
+
+// Parenthesized assertion breaks the optional chain - parens preserved
+let r1 = (a?.b as any).length;
+>r1 : any
+>(a?.b as any).length : any
+>(a?.b as any) : any
+>a?.b as any : any
+>a?.b : string[] | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[] | undefined
+>length : any
+
+let r2 = (a?.b as string[]).length;
+>r2 : number
+>(a?.b as string[]).length : number
+>(a?.b as string[]) : string[]
+>a?.b as string[] : string[]
+>a?.b : string[] | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[] | undefined
+>length : number
+
+let r3 = (<any>a?.b).length;
+>r3 : any
+>(<any>a?.b).length : any
+>(<any>a?.b) : any
+><any>a?.b : any
+>a?.b : string[] | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[] | undefined
+>length : any
+
+let r4 = (a?.b!).length;
+>r4 : number
+>(a?.b!).length : number
+>(a?.b!) : string[]
+>a?.b! : string[]
+>a?.b : string[] | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[] | undefined
+>length : number
+
+let r5 = (a?.b satisfies any).length;
+>r5 : number
+>(a?.b satisfies any).length : number
+>(a?.b satisfies any) : string[] | undefined
+>a?.b satisfies any : string[] | undefined
+>a?.b : string[] | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[] | undefined
+>length : number
+
+// Regular optional chain - no parens needed
+let r6 = a?.b.length;
+>r6 : number | undefined
+>a?.b.length : number | undefined
+>a?.b : string[] | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>b : string[] | undefined
+>length : number | undefined
+
+// Call expression after assertion - parens preserved
+(a?.c as any)();
+>(a?.c as any)() : any
+>(a?.c as any) : any
+>a?.c as any : any
+>a?.c : (() => void) | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>c : (() => void) | undefined
+
+// Optional chain after assertion - parens removed
+(a?.c as any)?.();
+>(a?.c as any)?.() : any
+>(a?.c as any) : any
+>a?.c as any : any
+>a?.c : (() => void) | undefined
+>a : { b: string[]; c(): void; d: { e: number; }; } | undefined
+>c : (() => void) | undefined
+
