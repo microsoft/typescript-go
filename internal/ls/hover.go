@@ -324,7 +324,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					decl := symbol.ValueDeclaration
 					if decl != nil {
 						switch {
-						case ast.IsParameter(decl):
+						case ast.IsPartOfParameterDeclaration(decl):
 							b.WriteString("(parameter) ")
 						case ast.IsVarLet(decl):
 							b.WriteString("let ")
