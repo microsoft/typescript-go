@@ -4887,7 +4887,7 @@ func (l *LanguageService) getCompletionItemDetails(
 			symbolDetails.symbol,
 			checker,
 			symbolDetails.location,
-			nil,
+			position,
 			docFormat,
 		)
 	case symbolCompletion.literal != nil:
@@ -5036,23 +5036,10 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	symbol *ast.Symbol,
 	checker *checker.Checker,
 	location *ast.Node,
-	actions []codeAction,
+	position int,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil)
-	if len(actions) > 0 {
-		details := make([]string, 0, len(actions)+1)
-		edits := make([]*lsproto.TextEdit, 0, len(actions))
-		for _, action := range actions {
-			details = append(details, action.description)
-			edits = append(edits, action.changes...)
-		}
-		details = append(details, quickInfo)
-		if len(edits) != 0 {
-			item.AdditionalTextEdits = &edits
-		}
-		return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
-	}
 	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 
