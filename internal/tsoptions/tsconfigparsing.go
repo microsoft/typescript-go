@@ -1328,17 +1328,6 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)
-
-	// Parse compileOnSave from the original raw JSON (not rawConfig, which omits this field).
-	var compileOnSave *bool
-	if rawMap, ok := parsedConfig.raw.(*collections.OrderedMap[string, any]); ok {
-		if v, ok := rawMap.Get("compileOnSave"); ok {
-			if b, ok := v.(bool); ok {
-				compileOnSave = &b
-			}
-		}
-	}
-
 	return &ParsedCommandLine{
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: parsedConfig.options,
@@ -1347,10 +1336,9 @@ func parseJsonConfigFileContentWorker(
 			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
-		ConfigFile:    sourceFile,
-		Raw:           parsedConfig.raw,
-		CompileOnSave: compileOnSave,
-		Errors:        errors,
+		ConfigFile: sourceFile,
+		Raw:        parsedConfig.raw,
+		Errors:     errors,
 
 		extraFileExtensions: extraFileExtensions,
 		comparePathsOptions: tspath.ComparePathsOptions{

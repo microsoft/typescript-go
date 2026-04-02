@@ -45,6 +45,5 @@ Output::
     ],
     "exclude": [
         "dist"
-    ],
-    "compileOnSave": true
+    ]
 }

@@ -25,6 +25,8 @@ type impliedOption struct {
 
 // impliedOptions lists the compiler options that may be implied by other options,
 // mirroring TypeScript's computedOptions used in convertToTSConfig.
+// Where a core.CompilerOptions getter exists with matching semantics, it is used directly
+// to avoid duplicating logic.
 var impliedOptions = []impliedOption{
 	{
 		name:         "Module",
@@ -44,62 +46,49 @@ var impliedOptions = []impliedOption{
 		name:         "ModuleDetection",
 		dependencies: []string{"Module", "Target"},
 		compute: func(opts *core.CompilerOptions) any {
-			if opts.ModuleDetection != core.ModuleDetectionKindNone {
-				return opts.ModuleDetection
-			}
-			moduleKind := opts.GetEmitModuleKind()
-			if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
-				return core.ModuleDetectionKindForce
-			}
-			return core.ModuleDetectionKindAuto
+			return opts.GetEmitModuleDetectionKind()
 		},
 	},
 	{
 		name:         "IsolatedModules",
 		dependencies: []string{"VerbatimModuleSyntax"},
 		compute: func(opts *core.CompilerOptions) any {
-			return opts.IsolatedModules == core.TSTrue || opts.VerbatimModuleSyntax == core.TSTrue
+			return opts.GetIsolatedModules()
 		},
 	},
 	{
 		name:         "PreserveConstEnums",
 		dependencies: []string{"IsolatedModules", "VerbatimModuleSyntax"},
 		compute: func(opts *core.CompilerOptions) any {
-			return opts.PreserveConstEnums == core.TSTrue || opts.IsolatedModules == core.TSTrue || opts.VerbatimModuleSyntax == core.TSTrue
+			return opts.ShouldPreserveConstEnums()
 		},
 	},
 	{
 		name:         "Declaration",
 		dependencies: []string{"Composite"},
 		compute: func(opts *core.CompilerOptions) any {
-			return opts.Declaration == core.TSTrue || opts.Composite == core.TSTrue
+			return opts.GetEmitDeclarations()
 		},
 	},
 	{
 		name:         "DeclarationMap",
 		dependencies: []string{"Declaration", "Composite"},
 		compute: func(opts *core.CompilerOptions) any {
-			if opts.DeclarationMap != core.TSTrue {
-				return false
-			}
-			return opts.Declaration == core.TSTrue || opts.Composite == core.TSTrue
+			return opts.GetAreDeclarationMapsEnabled()
 		},
 	},
 	{
 		name:         "Incremental",
 		dependencies: []string{"Composite"},
 		compute: func(opts *core.CompilerOptions) any {
-			return opts.Incremental == core.TSTrue || opts.Composite == core.TSTrue
+			return opts.IsIncremental()
 		},
 	},
 	{
 		name:         "UseDefineForClassFields",
 		dependencies: []string{"Target", "Module"},
 		compute: func(opts *core.CompilerOptions) any {
-			if opts.UseDefineForClassFields != core.TSUnknown {
-				return opts.UseDefineForClassFields == core.TSTrue
-			}
-			return opts.GetEmitScriptTarget() >= core.ScriptTargetES2022
+			return opts.GetUseDefineForClassFields()
 		},
 	},
 	{
@@ -157,17 +146,14 @@ var impliedOptions = []impliedOption{
 		name:         "AllowJs",
 		dependencies: []string{"CheckJs"},
 		compute: func(opts *core.CompilerOptions) any {
-			if opts.AllowJs != core.TSUnknown {
-				return opts.AllowJs == core.TSTrue
-			}
-			return opts.CheckJs == core.TSTrue
+			return opts.GetAllowJS()
 		},
 	},
 	{
 		name:         "AllowImportingTsExtensions",
 		dependencies: []string{"RewriteRelativeImportExtensions"},
 		compute: func(opts *core.CompilerOptions) any {
-			return opts.AllowImportingTsExtensions == core.TSTrue || opts.RewriteRelativeImportExtensions == core.TSTrue
+			return opts.GetAllowImportingTsExtensions()
 		},
 	},
 }
