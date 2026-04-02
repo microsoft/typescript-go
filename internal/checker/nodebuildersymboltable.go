@@ -20,33 +20,30 @@ type symbolTableSerializationState struct {
 	results               []*ast.Node
 	visitedSymbols        collections.Set[ast.SymbolId]
 	deferredPrivatesStack []map[ast.SymbolId]*ast.Symbol
-	addingDeclare         bool
 	enclosingDeclaration  *ast.Node
 	usedSymbolNames       collections.Set[string]
 	remappedSymbolNames   map[ast.SymbolId]string
 }
 
-func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable ast.SymbolTable) []*ast.Node {
+// serializeSymbolForHover produces declaration nodes for a symbol at a given hover verbosity level.
+// The caller (SymbolToDeclarationsWithVerbosity) filters results to Class/Enum/Interface/Module
+// declarations. Namespace body serialization may produce additional node types (variables, exports)
+// that appear inside ModuleDeclaration bodies.
+func (b *NodeBuilderImpl) serializeSymbolForHover(symbol *ast.Symbol) []*ast.Node {
 	s := &symbolTableSerializationState{
 		b:                    b,
 		enclosingDeclaration: b.ctx.enclosingDeclaration,
-		addingDeclare:        true,
 		remappedSymbolNames:  make(map[ast.SymbolId]string),
 	}
 
-	// NOTE: In Strada, this function also served as the JS declaration emitter (transformDeclarationsForJS),
-	// which needed trackSymbol setup, export= table reduction, and mergeRedundantStatements post-processing.
-	// In the Go port, this is only reachable through hover verbosity (SymbolToDeclarationsWithVerbosity),
-	// which filters results to Class/Enum/Interface/Module declarations only. The JS declaration emit path
-	// uses a different approach (reparsed AST + declaration transformer). So the top-level statement
-	// post-processing from Strada is not needed here.
+	// Initialize deferred privates stack. Namespace body serialization pushes its own entries;
+	// this base entry catches any top-level includePrivateSymbol calls (which produce nodes
+	// filtered out by the hover consumer anyway).
+	s.deferredPrivatesStack = append(s.deferredPrivatesStack, make(map[ast.SymbolId]*ast.Symbol))
 
-	// Cache symbol names
-	for name, sym := range symbolTable {
-		s.getInternalSymbolName(sym, name)
-	}
+	s.getInternalSymbolName(symbol, symbol.Name)
+	s.serializeSymbol(symbol, false, false)
 
-	s.visitSymbolTable(symbolTable, false, false)
 	return s.results
 }
 
@@ -214,62 +211,10 @@ func (s *symbolTableSerializationState) serializeSymbolWorker(symbol *ast.Symbol
 }
 
 func (s *symbolTableSerializationState) serializeVariableOrProperty(symbol *ast.Symbol, symbolName string, isPrivate bool, needsPostExportDefault bool, modifierFlags ast.ModifierFlags, propertyAsAlias bool) {
-	if propertyAsAlias {
-		s.serializeMaybeAliasAssignment(symbol)
-		return
-	}
-	// NOTE: The full non-propertyAsAlias branch from Strada (expando functions, propertyAccessRequire,
-	// name shadowing exports, setTextRange) was for JS declaration emit. Those patterns produce
-	// VariableStatement/ExportDeclaration/FunctionDeclaration nodes that are filtered out by
-	// SymbolToDeclarationsWithVerbosity, so they're not needed for hover.
-	_ = s.b.ch.getTypeOfSymbol(symbol)
-	localName := s.getInternalSymbolName(symbol, symbolName)
-
-	var flags ast.NodeFlags
-	if symbol.Flags&ast.SymbolFlagsBlockScopedVariable == 0 {
-		if symbol.Parent != nil && symbol.Parent.ValueDeclaration != nil && ast.IsSourceFile(symbol.Parent.ValueDeclaration) {
-			flags = ast.NodeFlagsConst
-		}
-	} else if s.b.ch.isConstantVariable(symbol) {
-		flags = ast.NodeFlagsConst
-	} else {
-		flags = ast.NodeFlagsLet
-	}
-
-	var name string
-	if !needsPostExportDefault && symbol.Flags&ast.SymbolFlagsProperty == 0 {
-		name = localName
-	} else {
-		name = s.getUnusedName(localName, symbol)
-	}
-
-	s.b.ctx.approximateLength += 7 + len(name)
-	stmt := s.b.f.NewVariableStatement(
-		nil,
-		s.b.f.NewVariableDeclarationList(
-			flags,
-			s.b.f.NewNodeList([]*ast.Node{
-				s.b.f.NewVariableDeclaration(s.b.f.NewIdentifier(name), nil, s.b.serializeTypeForDeclaration(nil, nil, symbol, true), nil),
-			}),
-		),
-	)
-	if name != localName {
-		s.addResult(stmt, modifierFlags&^ast.ModifierFlagsExport)
-		if !isPrivate {
-			s.b.ctx.approximateLength += 16 + len(name) + len(localName)
-			s.results = append(s.results, s.b.f.NewExportDeclaration(
-				nil,
-				false,
-				s.b.f.NewNamedExports(s.b.f.NewNodeList([]*ast.Node{
-					s.b.f.NewExportSpecifier(false, s.b.f.NewIdentifier(name), s.b.f.NewIdentifier(localName)),
-				})),
-				nil,
-				nil,
-			))
-		}
-	} else {
-		s.addResult(stmt, modifierFlags)
-	}
+	// Inside namespace bodies (propertyAsAlias=true), serialize as an alias assignment.
+	// At top level (propertyAsAlias=false), the result is a VariableStatement which gets
+	// filtered out by SymbolToDeclarationsWithVerbosity anyway, so we just do the same thing.
+	s.serializeMaybeAliasAssignment(symbol)
 }
 
 func (s *symbolTableSerializationState) includePrivateSymbol(symbol *ast.Symbol) {
@@ -309,12 +254,6 @@ func (s *symbolTableSerializationState) addResult(node *ast.Node, additionalModi
 			(s.isExportingScope(enclosingDeclaration) || ast.IsModuleDeclaration(enclosingDeclaration)) &&
 			canExport {
 			newModifierFlags |= ast.ModifierFlagsExport
-		}
-		if s.addingDeclare &&
-			newModifierFlags&ast.ModifierFlagsExport == 0 &&
-			(enclosingDeclaration == nil || enclosingDeclaration.Flags&ast.NodeFlagsAmbient == 0) &&
-			(ast.IsEnumDeclaration(node) || ast.IsVariableStatement(node) || ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node) || ast.IsModuleDeclaration(node)) {
-			newModifierFlags |= ast.ModifierFlagsAmbient
 		}
 		if additionalModifierFlags&ast.ModifierFlagsDefault != 0 && (ast.IsClassDeclaration(node) || ast.IsInterfaceDeclaration(node) || ast.IsFunctionDeclaration(node)) {
 			newModifierFlags |= ast.ModifierFlagsDefault
@@ -638,8 +577,6 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 
 		oldResults := s.results
 		s.results = nil
-		oldAddingDeclare := s.addingDeclare
-		s.addingDeclare = false
 		oldEnclosingDeclaration := s.b.ctx.enclosingDeclaration
 		s.b.ctx.enclosingDeclaration = fakespace
 
@@ -650,7 +587,6 @@ func (s *symbolTableSerializationState) serializeAsNamespaceDeclaration(props []
 		s.visitSymbolTable(localSymbolTable, suppressNewPrivateContext, true)
 
 		s.b.ctx.enclosingDeclaration = oldEnclosingDeclaration
-		s.addingDeclare = oldAddingDeclare
 		declarations := s.results
 		s.results = oldResults
 

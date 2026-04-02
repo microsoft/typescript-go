@@ -116,12 +116,6 @@ func (b *NodeBuilder) SignatureToSignatureDeclaration(signature *Signature, kind
 	return b.exitContext(b.impl.signatureToSignatureDeclarationHelper(signature, kind, nil))
 }
 
-// SymbolTableToDeclarationStatements implements NodeBuilderInterface.
-func (b *NodeBuilder) SymbolTableToDeclarationStatements(symbolTable ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
-	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
-	return b.exitContextSlice(b.impl.symbolTableToDeclarationStatements(symbolTable))
-}
-
 // SymbolToDeclarationsWithVerbosity produces declaration nodes for a symbol with verbosity level support.
 func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) []*ast.Node {
 	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, maxTruncationLength)
@@ -134,8 +128,7 @@ func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, mean
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, declaredType.id)
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, 0)
 
-	table := createSymbolTable([]*ast.Symbol{symbol})
-	nodes := b.impl.symbolTableToDeclarationStatements(table)
+	nodes := b.impl.serializeSymbolForHover(symbol)
 
 	b.impl.ctx.typeStack = b.impl.ctx.typeStack[:len(b.impl.ctx.typeStack)-2]
 
