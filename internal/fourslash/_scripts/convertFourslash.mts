@@ -1991,7 +1991,7 @@ function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaseli
     // First arg is verbosityLevels: { markerName: number | number[] }
     const verbosityArg = args[0];
     if (!ts.isObjectLiteralExpression(verbosityArg)) {
-        throw new Error(`verify.baselineQuickInfo arguments not supported`);
+        throw new Error(`Expected object literal expression for verify.baselineQuickInfo argument, got ${verbosityArg.getText()}`);
     }
     const verbosityLevels: Record<string, number[]> = {};
     for (const prop of verbosityArg.properties) {
