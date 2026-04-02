@@ -11,6 +11,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
+// computeFn wraps a typed getter method so it can be stored in an impliedOption's
+// compute field (which has type func(*core.CompilerOptions) any).
+func computeFn[T any](fn func(*core.CompilerOptions) T) func(*core.CompilerOptions) any {
+	return func(opts *core.CompilerOptions) any {
+		return fn(opts)
+	}
+}
+
 // impliedOption describes a compiler option whose effective value can be derived from
 // other options. This mirrors TypeScript's computedOptions concept used in convertToTSConfig.
 type impliedOption struct {
@@ -19,113 +27,27 @@ type impliedOption struct {
 	// dependencies lists the Go struct field names that this option depends on.
 	dependencies []string
 	// compute returns the effective value of this option given compiler options.
-	// The return value may be a core.ModuleKind, core.ModuleResolutionKind, bool, etc.
 	compute func(opts *core.CompilerOptions) any
 }
 
 // impliedOptions lists the compiler options that may be implied by other options,
 // mirroring TypeScript's computedOptions used in convertToTSConfig.
-// Where a core.CompilerOptions getter exists with matching semantics, it is used directly
-// to avoid duplicating logic.
+// Each compute function delegates directly to an existing core.CompilerOptions getter.
 var impliedOptions = []impliedOption{
-	{
-		name:         "Module",
-		dependencies: []string{"Target"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetEmitModuleKind()
-		},
-	},
-	{
-		name:         "ModuleResolution",
-		dependencies: []string{"Module", "Target"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetModuleResolutionKind()
-		},
-	},
-	{
-		name:         "ModuleDetection",
-		dependencies: []string{"Module", "Target"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetEmitModuleDetectionKind()
-		},
-	},
-	{
-		name:         "IsolatedModules",
-		dependencies: []string{"VerbatimModuleSyntax"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetIsolatedModules()
-		},
-	},
-	{
-		name:         "PreserveConstEnums",
-		dependencies: []string{"IsolatedModules", "VerbatimModuleSyntax"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.ShouldPreserveConstEnums()
-		},
-	},
-	{
-		name:         "Declaration",
-		dependencies: []string{"Composite"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetEmitDeclarations()
-		},
-	},
-	{
-		name:         "DeclarationMap",
-		dependencies: []string{"Declaration", "Composite"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetAreDeclarationMapsEnabled()
-		},
-	},
-	{
-		name:         "Incremental",
-		dependencies: []string{"Composite"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.IsIncremental()
-		},
-	},
-	{
-		name:         "UseDefineForClassFields",
-		dependencies: []string{"Target", "Module"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetUseDefineForClassFields()
-		},
-	},
-	{
-		name:         "ResolvePackageJsonExports",
-		dependencies: []string{"ModuleResolution", "Module", "Target"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetResolvePackageJsonExports()
-		},
-	},
-	{
-		name:         "ResolvePackageJsonImports",
-		dependencies: []string{"ModuleResolution", "ResolvePackageJsonExports", "Module", "Target"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetResolvePackageJsonImports()
-		},
-	},
-	{
-		name:         "ResolveJsonModule",
-		dependencies: []string{"ModuleResolution", "Module", "Target"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetResolveJsonModule()
-		},
-	},
-	{
-		name:         "AllowJs",
-		dependencies: []string{"CheckJs"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetAllowJS()
-		},
-	},
-	{
-		name:         "AllowImportingTsExtensions",
-		dependencies: []string{"RewriteRelativeImportExtensions"},
-		compute: func(opts *core.CompilerOptions) any {
-			return opts.GetAllowImportingTsExtensions()
-		},
-	},
+	{name: "Module", dependencies: []string{"Target"}, compute: computeFn((*core.CompilerOptions).GetEmitModuleKind)},
+	{name: "ModuleResolution", dependencies: []string{"Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetModuleResolutionKind)},
+	{name: "ModuleDetection", dependencies: []string{"Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetEmitModuleDetectionKind)},
+	{name: "IsolatedModules", dependencies: []string{"VerbatimModuleSyntax"}, compute: computeFn((*core.CompilerOptions).GetIsolatedModules)},
+	{name: "PreserveConstEnums", dependencies: []string{"IsolatedModules", "VerbatimModuleSyntax"}, compute: computeFn((*core.CompilerOptions).ShouldPreserveConstEnums)},
+	{name: "Declaration", dependencies: []string{"Composite"}, compute: computeFn((*core.CompilerOptions).GetEmitDeclarations)},
+	{name: "DeclarationMap", dependencies: []string{"Declaration", "Composite"}, compute: computeFn((*core.CompilerOptions).GetAreDeclarationMapsEnabled)},
+	{name: "Incremental", dependencies: []string{"Composite"}, compute: computeFn((*core.CompilerOptions).IsIncremental)},
+	{name: "UseDefineForClassFields", dependencies: []string{"Target", "Module"}, compute: computeFn((*core.CompilerOptions).GetUseDefineForClassFields)},
+	{name: "ResolvePackageJsonExports", dependencies: []string{"ModuleResolution", "Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetResolvePackageJsonExports)},
+	{name: "ResolvePackageJsonImports", dependencies: []string{"ModuleResolution", "ResolvePackageJsonExports", "Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetResolvePackageJsonImports)},
+	{name: "ResolveJsonModule", dependencies: []string{"ModuleResolution", "Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetResolveJsonModule)},
+	{name: "AllowJs", dependencies: []string{"CheckJs"}, compute: computeFn((*core.CompilerOptions).GetAllowJS)},
+	{name: "AllowImportingTsExtensions", dependencies: []string{"RewriteRelativeImportExtensions"}, compute: computeFn((*core.CompilerOptions).GetAllowImportingTsExtensions)},
 }
 
 // TSConfig represents the output structure for --showConfig
@@ -449,19 +371,10 @@ func anyDependencyProvided(dependencies []string, provided map[string]bool) bool
 	return false
 }
 
-// impliedValuesEqual compares two values for equality, handling the fact that
-// enum values may be of different underlying types.
+// impliedValuesEqual compares two values computed by the same compute function for equality.
+// Since both values come from the same typed getter, reflect.DeepEqual handles all cases.
 func impliedValuesEqual(a, b any) bool {
-	if a == b {
-		return true
-	}
-	// Handle numeric types (enum values stored as int32, etc.)
-	ra := reflect.ValueOf(a)
-	rb := reflect.ValueOf(b)
-	if ra.IsValid() && rb.IsValid() && ra.CanInt() && rb.CanInt() {
-		return ra.Int() == rb.Int()
-	}
-	return false
+	return reflect.DeepEqual(a, b)
 }
 
 // serializeImpliedOptionValue converts a computed implied option value to its serializable form.
