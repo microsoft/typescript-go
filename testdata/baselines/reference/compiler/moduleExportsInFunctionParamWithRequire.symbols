@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParamWithRequire.ts] ////
+
+=== /main.ts ===
+import dep = require("./dep.js");
+>dep : Symbol(dep, Decl(main.ts, 0, 0))
+
+export const g = dep.greeting;
+>g : Symbol(g, Decl(main.ts, 2, 12))
+>dep.greeting : Symbol(dep.greeting, Decl(dep.js, 0, 0))
+>dep : Symbol(dep, Decl(main.ts, 0, 0))
+>greeting : Symbol(dep.greeting, Decl(dep.js, 0, 0))
+
+=== /dep.js ===
+exports.greeting = "hello";
+>exports.greeting : Symbol(greeting, Decl(dep.js, 0, 0))
+>exports : Symbol("./dep", Decl(dep.js, 0, 0))
+>greeting : Symbol(greeting, Decl(dep.js, 0, 0))
+
+function setup(module) {
+>setup : Symbol(setup, Decl(dep.js, 0, 27))
+>module : Symbol(module, Decl(dep.js, 2, 15))
+
+    module.exports = { configured: true };
+>module : Symbol(module, Decl(dep.js, 2, 15))
+>configured : Symbol(configured, Decl(dep.js, 3, 22))
+}
+
+const fs = require("fs");
+>fs : Symbol(fs, Decl(dep.js, 6, 5))
+>require : Symbol(require)
+

@@ -81,6 +81,8 @@ type Binder struct {
 	singleDeclarationsPool  core.Pool[*ast.Node]
 	expandoAssignments      []ExpandoAssignmentInfo
 	nestedCJSExports        []*ast.Node
+	staleCJSIndicator       bool
+	firstValidCJSExport     *ast.Node
 }
 
 type ActiveLabel struct {
@@ -126,6 +128,7 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.file = file
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
+		b.fixStaleCJSIndicator()
 		b.bindDeferredExpandoAssignments()
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
@@ -659,6 +662,15 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
+		if !ast.IsSourceFile(b.blockScopeContainer) && b.lookupName("exports", b.blockScopeContainer) != nil {
+			if b.file.CommonJSModuleIndicator == node {
+				b.staleCJSIndicator = true
+			}
+			break
+		}
+		if b.firstValidCJSExport == nil {
+			b.firstValidCJSExport = node
+		}
 		b.trackNestedCJSExport(node)
 		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
@@ -862,6 +874,15 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 func (b *Binder) bindExportAssignment(node *ast.Node) {
 	container := b.container
 	if ast.IsJSExportAssignment(node) {
+		if !ast.IsSourceFile(b.blockScopeContainer) && b.lookupName("module", b.blockScopeContainer) != nil {
+			if b.file.CommonJSModuleIndicator == node {
+				b.staleCJSIndicator = true
+			}
+			return
+		}
+		if b.firstValidCJSExport == nil {
+			b.firstValidCJSExport = node
+		}
 		container = b.file.AsNode()
 		b.trackNestedCJSExport(node)
 	}
@@ -951,7 +972,18 @@ func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
 			b.bindSourceFileAsExternalModule()
 		}
 	}
+	if b.firstValidCJSExport == nil {
+		b.firstValidCJSExport = node
+	}
 	return true
+}
+
+// fixStaleCJSIndicator corrects CommonJSModuleIndicator if it pointed to a skipped (locally-shadowed) CJS export.
+func (b *Binder) fixStaleCJSIndicator() {
+	if !b.staleCJSIndicator {
+		return
+	}
+	b.file.CommonJSModuleIndicator = b.firstValidCJSExport
 }
 
 func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {

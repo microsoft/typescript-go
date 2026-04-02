@@ -1,0 +1,28 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParamWithTopLevel.ts] ////
+
+=== /main.ts ===
+import dep = require("./dep.js");
+>dep : Symbol(dep, Decl(main.ts, 0, 0))
+
+export const r = dep.real;
+>r : Symbol(r, Decl(main.ts, 2, 12))
+>dep.real : Symbol(real, Decl(dep.js, 0, 18))
+>dep : Symbol(dep, Decl(main.ts, 0, 0))
+>real : Symbol(real, Decl(dep.js, 0, 18))
+
+=== /dep.js ===
+module.exports = { real: true };
+>module.exports : Symbol(export=, Decl(dep.js, 0, 0))
+>module : Symbol("./dep", Decl(dep.js, 0, 0))
+>exports : Symbol(export=, Decl(dep.js, 0, 0))
+>real : Symbol(real, Decl(dep.js, 0, 18))
+
+function setup(module) {
+>setup : Symbol(setup, Decl(dep.js, 0, 32))
+>module : Symbol(module, Decl(dep.js, 2, 15))
+
+    module.exports = { configured: true };
+>module : Symbol(module, Decl(dep.js, 2, 15))
+>configured : Symbol(configured, Decl(dep.js, 3, 22))
+}
+

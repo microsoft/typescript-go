@@ -1,0 +1,36 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParamWithTopLevel.ts] ////
+
+=== /main.ts ===
+import dep = require("./dep.js");
+>dep : { real: boolean; }
+
+export const r = dep.real;
+>r : boolean
+>dep.real : boolean
+>dep : { real: boolean; }
+>real : boolean
+
+=== /dep.js ===
+module.exports = { real: true };
+>module.exports = { real: true } : { real: boolean; }
+>module.exports : { real: boolean; }
+>module : { "export=": { real: boolean; }; }
+>exports : { real: boolean; }
+>{ real: true } : { real: boolean; }
+>real : boolean
+>true : true
+
+function setup(module) {
+>setup : (module: any) => void
+>module : any
+
+    module.exports = { configured: true };
+>module.exports = { configured: true } : { configured: boolean; }
+>module.exports : any
+>module : any
+>exports : any
+>{ configured: true } : { configured: boolean; }
+>configured : boolean
+>true : true
+}
+

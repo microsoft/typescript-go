@@ -1,0 +1,17 @@
+/dep.js(1,16): error TS7006: Parameter 'module' implicitly has an 'any' type.
+
+
+==== /dep.js (1 errors) ====
+    function setup(module) {
+                   ~~~~~~
+!!! error TS7006: Parameter 'module' implicitly has an 'any' type.
+        module.exports = { configured: true };
+    }
+    
+    export default 7;
+    
+==== /main.ts (0 errors) ====
+    import DefaultExport from "./dep.js";
+    
+    export default 3 + DefaultExport;
+    

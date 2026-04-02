@@ -33,4 +33,3 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
 
 
 //// [ExtendedClass.d.ts]
-export {};

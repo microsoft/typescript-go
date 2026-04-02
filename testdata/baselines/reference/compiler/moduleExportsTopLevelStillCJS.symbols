@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/moduleExportsTopLevelStillCJS.ts] ////
+
+=== /main.ts ===
+import dep = require("./dep.js");
+>dep : Symbol(dep, Decl(main.ts, 0, 0))
+
+export const result = dep + 1;
+>result : Symbol(result, Decl(main.ts, 2, 12))
+>dep : Symbol(dep, Decl(main.ts, 0, 0))
+
+=== /dep.js ===
+module.exports = 8;
+>module.exports : Symbol(export=, Decl(dep.js, 0, 0))
+>module : Symbol("./dep", Decl(dep.js, 0, 0))
+>exports : Symbol(export=, Decl(dep.js, 0, 0))
+

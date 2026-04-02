@@ -1,0 +1,20 @@
+//// [tests/cases/compiler/moduleExportsInFunctionParam.ts] ////
+
+=== /dep.js ===
+function something(module) {
+>something : Symbol(something, Decl(dep.js, 0, 0))
+>module : Symbol(module, Decl(dep.js, 0, 19))
+
+    module.exports = 8;
+>module : Symbol(module, Decl(dep.js, 0, 19))
+}
+
+export default 7;
+
+=== /main.ts ===
+import DefaultExport from "./dep.js";
+>DefaultExport : Symbol(DefaultExport, Decl(main.ts, 0, 6))
+
+export default 3 + DefaultExport;
+>DefaultExport : Symbol(DefaultExport, Decl(main.ts, 0, 6))
+

@@ -1,0 +1,20 @@
+//// [tests/cases/compiler/moduleExportsTopLevelStillCJS.ts] ////
+
+=== /main.ts ===
+import dep = require("./dep.js");
+>dep : 8
+
+export const result = dep + 1;
+>result : number
+>dep + 1 : number
+>dep : 8
+>1 : 1
+
+=== /dep.js ===
+module.exports = 8;
+>module.exports = 8 : 8
+>module.exports : 8
+>module : { "export=": 8; }
+>exports : 8
+>8 : 8
+
