@@ -262,6 +262,109 @@ func TestCommentFormatting(t *testing.T) {
 	})
 }
 
+func TestFormatSelectionPreservesComments(t *testing.T) {
+	t.Parallel()
+
+	t.Run("format selection should not delete block comment when selection ends inside comment", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+		}, "\n")
+
+		// Reproduce: const test/* comment */=5;
+		// When selecting a range that ends inside the comment (before */), format selection should not delete the comment.
+		originalText := `const test/* comment */=5;`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		// Select a range that starts at the beginning of the line and ends inside the comment
+		// "const test/* comment" - selecting up to but not including the closing "*/"
+		// The comment "/* comment */" starts at position 10 and ends at position 24
+		// We select up to position 22 (inside the comment, before "*/)
+		commentStart := strings.Index(originalText, "/*")
+		selectionEnd := commentStart + len("/* comment") // ends inside the comment
+
+		edits := format.FormatSelection(ctx, sourceFile, 0, selectionEnd)
+		formatted := applyBulkEdits(originalText, edits)
+
+		// The comment should be preserved
+		assert.Check(t, strings.Contains(formatted, "/* comment */"), "format selection should not delete the block comment")
+		assert.Check(t, strings.Contains(formatted, "test"), "should preserve identifier")
+	})
+
+	t.Run("format selection should not delete block comment when selection starts inside comment", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+		}, "\n")
+
+		originalText := `const test/* comment */=5;`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		// Select from inside the comment to the end
+		commentStart := strings.Index(originalText, "/*")
+		selectionStart := commentStart + 3 // inside the comment
+
+		edits := format.FormatSelection(ctx, sourceFile, selectionStart, len(originalText))
+		formatted := applyBulkEdits(originalText, edits)
+
+		// The comment should be preserved
+		assert.Check(t, strings.Contains(formatted, "/* comment */"), "format selection should not delete the block comment")
+	})
+
+	t.Run("full document format should preserve block comment and add spaces", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+		}, "\n")
+
+		originalText := `const test/* comment */=5;`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		edits := format.FormatDocument(ctx, sourceFile)
+		formatted := applyBulkEdits(originalText, edits)
+
+		// Full document format should preserve the comment and add proper spacing
+		assert.Check(t, strings.Contains(formatted, "/* comment */"), "full format should preserve the block comment")
+		assert.Check(t, strings.Contains(formatted, "test"), "should preserve identifier")
+	})
+}
+
 func TestSliceBoundsPanic(t *testing.T) {
 	t.Parallel()
 
