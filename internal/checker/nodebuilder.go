@@ -8,9 +8,20 @@ import (
 )
 
 type NodeBuilder struct {
-	ctxStack []*NodeBuilderContext
-	host     Host
-	impl     *NodeBuilderImpl
+	ctxStack  []*NodeBuilderContext
+	host      Host
+	impl      *NodeBuilderImpl
+	verbosity *VerbosityContext // nil for non-hover callers
+}
+
+// VerbosityContext controls hover-expansion behavior in the node builder.
+// Level 0 (or zero value) means disabled. Level 1+ enables expansion;
+// the internal expansion depth is Level-1.
+type VerbosityContext struct {
+	Level                int  // 0 = disabled, 1+ = expansion levels (internally mapped to Level-1)
+	MaxTruncationLength  int  // 0 = use default
+	CanIncreaseVerbosity bool // output: whether increasing Level would reveal more
+	Truncated            bool // output: whether output was truncated
 }
 
 // EmitContext implements NodeBuilderInterface.
@@ -19,10 +30,14 @@ func (b *NodeBuilder) EmitContext() *printer.EmitContext {
 }
 
 func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, -1, nil, 0)
-}
-
-func (b *NodeBuilder) enterContextEx(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) {
+	verbosityLevel := -1
+	maxTruncationLength := 0
+	if b.verbosity != nil && b.verbosity.Level > 0 {
+		verbosityLevel = b.verbosity.Level - 1
+		maxTruncationLength = b.verbosity.MaxTruncationLength
+	} else if b.verbosity != nil {
+		maxTruncationLength = b.verbosity.MaxTruncationLength
+	}
 	b.ctxStack = append(b.ctxStack, b.impl.ctx)
 	b.impl.ctx = &NodeBuilderContext{
 		host:                     b.host,
@@ -44,6 +59,19 @@ func (b *NodeBuilder) enterContextEx(enclosingDeclaration *ast.Node, flags nodeb
 	b.impl.ctx.tracker = tracker
 }
 
+// propagateVerbosityOut copies expansion signals from the context to the VerbosityContext output.
+func (b *NodeBuilder) propagateVerbosityOut() {
+	if b.verbosity != nil && b.verbosity.Level > 0 {
+		// Only set to true, never clear — multiple calls share the same VerbosityContext
+		if b.impl.ctx.canIncreaseExpansionDepth {
+			b.verbosity.CanIncreaseVerbosity = true
+		}
+		if b.impl.ctx.expansionTruncated {
+			b.verbosity.Truncated = true
+		}
+	}
+}
+
 func (b *NodeBuilder) popContext() {
 	stackSize := len(b.ctxStack)
 	if stackSize == 0 {
@@ -55,6 +83,7 @@ func (b *NodeBuilder) popContext() {
 }
 
 func (b *NodeBuilder) exitContext(result *ast.Node) *ast.Node {
+	b.propagateVerbosityOut()
 	b.exitContextCheck()
 	defer b.popContext()
 	if b.impl.ctx.encounteredError {
@@ -64,6 +93,7 @@ func (b *NodeBuilder) exitContext(result *ast.Node) *ast.Node {
 }
 
 func (b *NodeBuilder) exitContextSlice(result []*ast.Node) []*ast.Node {
+	b.propagateVerbosityOut()
 	b.exitContextCheck()
 	defer b.popContext()
 	if b.impl.ctx.encounteredError {
@@ -116,9 +146,9 @@ func (b *NodeBuilder) SignatureToSignatureDeclaration(signature *Signature, kind
 	return b.exitContext(b.impl.signatureToSignatureDeclarationHelper(signature, kind, nil))
 }
 
-// SymbolToDeclarationsWithVerbosity produces declaration nodes for a symbol with verbosity level support.
-func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut, maxTruncationLength int) []*ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, maxTruncationLength)
+// ExpandSymbolForHover produces declaration nodes for a symbol with verbosity level support.
+func (b *NodeBuilder) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFlags) []*ast.Node {
+	b.enterContext(nil, nodebuilder.FlagsIgnoreErrors|nodebuilder.FlagsMultilineObjectLiterals|nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope, nodebuilder.InternalFlagsNone, nil)
 
 	// Push the declared type onto the type stack to prevent re-expansion.
 	// We push a sentinel 0 after the real id so that the cycle-detection loops
@@ -128,21 +158,18 @@ func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, mean
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, declaredType.id)
 	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, 0)
 
-	nodes := b.impl.serializeSymbolForHover(symbol)
+	nodes := b.impl.expandSymbolForHover(symbol)
 
 	b.impl.ctx.typeStack = b.impl.ctx.typeStack[:len(b.impl.ctx.typeStack)-2]
 
-	if out != nil {
-		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth
-		out.Truncated = b.impl.ctx.out.Truncated
-	}
+	b.propagateVerbosityOut()
 
 	// Simplify declarations by applying original modifiers
 	result := make([]*ast.Node, 0, len(nodes))
 	for _, node := range nodes {
 		switch node.Kind {
 		case ast.KindClassDeclaration:
-			result = append(result, b.simplifyClassDeclaration(node, symbol))
+			result = append(result, simplifyClassDeclaration(b.impl.f, node, symbol))
 		case ast.KindEnumDeclaration:
 			result = append(result, simplifyModifiers(b.impl.f, node, ast.IsEnumDeclaration, symbol))
 		case ast.KindInterfaceDeclaration:
@@ -157,7 +184,7 @@ func (b *NodeBuilder) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, mean
 	return b.exitContextSlice(result)
 }
 
-func (b *NodeBuilder) simplifyClassDeclaration(classDecl *ast.Node, symbol *ast.Symbol) *ast.Node {
+func simplifyClassDeclaration(f *ast.NodeFactory, classDecl *ast.Node, symbol *ast.Symbol) *ast.Node {
 	classDeclarations := core.Filter(symbol.Declarations, ast.IsClassLike)
 	var originalClassDecl *ast.Node
 	if len(classDeclarations) > 0 {
@@ -169,7 +196,7 @@ func (b *NodeBuilder) simplifyClassDeclaration(classDecl *ast.Node, symbol *ast.
 	isAnonymous := ast.IsClassExpression(originalClassDecl)
 	if isAnonymous {
 		cd := classDecl.AsClassDeclaration()
-		classDecl = b.impl.f.UpdateClassDeclaration(
+		classDecl = f.UpdateClassDeclaration(
 			cd,
 			classDecl.Modifiers(),
 			nil,
@@ -178,7 +205,7 @@ func (b *NodeBuilder) simplifyClassDeclaration(classDecl *ast.Node, symbol *ast.
 			cd.Members,
 		)
 	}
-	return ast.ReplaceModifiers(b.impl.f, classDecl, b.impl.f.NewModifierList(ast.CreateModifiersFromModifierFlags(modifiers, b.impl.f.NewModifier)))
+	return ast.ReplaceModifiers(f, classDecl, f.NewModifierList(ast.CreateModifiersFromModifierFlags(modifiers, f.NewModifier)))
 }
 
 func simplifyModifiers(f *ast.NodeFactory, newDecl *ast.Node, isDeclKind func(*ast.Node) bool, symbol *ast.Symbol) *ast.Node {
@@ -229,17 +256,6 @@ func (b *NodeBuilder) TypeParameterToDeclaration(parameter *Type, enclosingDecla
 	return b.exitContext(b.impl.typeParameterToDeclaration(parameter))
 }
 
-// TypeParameterToDeclarationWithVerbosity is like TypeParameterToDeclaration but with verbosity level support.
-func (b *NodeBuilder) TypeParameterToDeclarationWithVerbosity(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) *ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, 0)
-	result := b.impl.typeParameterToDeclaration(parameter)
-	if out != nil {
-		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth
-		out.Truncated = b.impl.ctx.out.Truncated
-	}
-	return b.exitContext(result)
-}
-
 // TypePredicateToTypePredicateNode implements NodeBuilderInterface.
 func (b *NodeBuilder) TypePredicateToTypePredicateNode(predicate *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
@@ -250,28 +266,6 @@ func (b *NodeBuilder) TypePredicateToTypePredicateNode(predicate *TypePredicate,
 func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.typeToTypeNode(typ))
-}
-
-// TypeToTypeNodeWithVerbosity is like TypeToTypeNode but with verbosity level support for expandable hover.
-func (b *NodeBuilder) TypeToTypeNodeWithVerbosity(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) *ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, 0)
-	result := b.impl.typeToTypeNode(typ)
-	if out != nil {
-		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth
-		out.Truncated = b.impl.ctx.out.Truncated
-	}
-	return b.exitContext(result)
-}
-
-// SignatureToSignatureDeclarationWithVerbosity is like SignatureToSignatureDeclaration but with verbosity level support.
-func (b *NodeBuilder) SignatureToSignatureDeclarationWithVerbosity(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker, verbosityLevel int, out *WriterContextOut) *ast.Node {
-	b.enterContextEx(enclosingDeclaration, flags, internalFlags, tracker, verbosityLevel, out, 0)
-	result := b.impl.signatureToSignatureDeclarationHelper(signature, kind, nil)
-	if out != nil {
-		out.CanIncreaseExpansionDepth = b.impl.ctx.out.CanIncreaseExpansionDepth
-		out.Truncated = b.impl.ctx.out.Truncated
-	}
-	return b.exitContext(result)
 }
 
 // var _ NodeBuilderInterface = NewNodeBuilderAPI(nil, nil)

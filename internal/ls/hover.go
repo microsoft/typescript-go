@@ -12,8 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/nodebuilder"
-	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -23,10 +21,9 @@ const (
 	defaultHoverMaximumTruncationLength = 500
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position) (lsproto.HoverResponse, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position, verbosityLevel int) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
-	supportsVerbosity := caps.TextDocument.Hover.VerbosityLevel
 
 	program, file := l.getProgramAndFile(documentURI)
 	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
@@ -40,14 +37,14 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	rangeNode := getNodeForQuickInfo(node)
 	symbol := getSymbolAtLocationForQuickInfo(c, node)
 
-	verbosityLevel := -1
-	var out *checker.WriterContextOut
-	if supportsVerbosity {
-		verbosityLevel = 0
-		out = &checker.WriterContextOut{}
+	// Always use VerbosityContext for hover to get the correct truncation length (500 vs default 160).
+	// Level 0 = disabled (zero value). Level 1+ = enabled; internally maps to expansion depth Level-1.
+	vc := &checker.VerbosityContext{
+		Level:               verbosityLevel + 1, // shift: server -1 → 0 (disabled), 0 → 1 (enabled), etc.
+		MaxTruncationLength: defaultHoverMaximumTruncationLength,
 	}
 
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, verbosityLevel, out)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -70,59 +67,15 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 		Range: &hoverRange,
 	}
 
-	if supportsVerbosity && out != nil {
-		hover.CanIncreaseVerbosity = out.CanIncreaseExpansionDepth && !out.Truncated
+	if vc.Level > 0 {
+		hover.CanIncreaseVerbosity = vc.CanIncreaseVerbosity && !vc.Truncated
 	}
 
 	return lsproto.HoverOrNull{Hover: hover}, nil
 }
 
-func (l *LanguageService) ProvideVerboseHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position, verbosityLevel int) (lsproto.HoverResponse, error) {
-	caps := lsproto.GetClientCapabilities(ctx)
-	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
-
-	program, file := l.getProgramAndFile(documentURI)
-	pos := int(l.converters.LineAndCharacterToPosition(file, position))
-	node := astnav.GetTouchingPropertyName(file, pos)
-	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, pos, node) == nil {
-		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
-		return lsproto.HoverOrNull{}, nil
-	}
-	c, done := program.GetTypeCheckerForFile(ctx, file)
-	defer done()
-	rangeNode := getNodeForQuickInfo(node)
-	symbol := getSymbolAtLocationForQuickInfo(c, node)
-
-	var out checker.WriterContextOut
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, verbosityLevel, &out)
-	if quickInfo == "" {
-		return lsproto.HoverOrNull{}, nil
-	}
-	hoverRange := l.getLspRangeOfNode(rangeNode, nil, nil)
-
-	var content string
-	if contentFormat == lsproto.MarkupKindMarkdown {
-		content = formatQuickInfo(quickInfo) + documentation
-	} else {
-		content = quickInfo + documentation
-	}
-
-	return lsproto.HoverOrNull{
-		Hover: &lsproto.Hover{
-			Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
-				MarkupContent: &lsproto.MarkupContent{
-					Kind:  contentFormat,
-					Value: content,
-				},
-			},
-			Range:                &hoverRange,
-			CanIncreaseVerbosity: out.CanIncreaseExpansionDepth && !out.Truncated,
-		},
-	}, nil
-}
-
-func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, verbosityLevel int, out *checker.WriterContextOut) (string, string) {
-	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node, verbosityLevel, out)
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext) (string, string) {
+	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node, vc)
 	if quickInfo == "" {
 		return "", ""
 	}
@@ -282,20 +235,20 @@ func shouldGetType(node *ast.Node) bool {
 	}
 }
 
-func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, verbosityLevel int, out *checker.WriterContextOut) (string, *ast.Node) {
+func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, vc *checker.VerbosityContext) (string, *ast.Node) {
 	container := getContainerNode(node)
-	// Helper closures to conditionally use verbosity-aware APIs
+	if vc == nil {
+		vc = &checker.VerbosityContext{}
+	}
 	typeToString := func(t *checker.Type, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
-		if verbosityLevel >= 0 && out != nil {
-			s := c.TypeToStringWithVerbosity(t, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, verbosityLevel, out)
-			return s
+		if vc.Level > 0 {
+			return c.TypeToStringWithVerbosity(t, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, vc)
 		}
 		return c.TypeToStringEx(t, enclosing, flags)
 	}
 	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
-		if verbosityLevel >= 0 && out != nil {
-			s := c.SignatureToStringWithVerbosity(sig, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, verbosityLevel, out)
-			return s
+		if vc.Level > 0 {
+			return c.SignatureToStringWithVerbosity(sig, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, vc)
 		}
 		return c.SignatureToStringEx(sig, enclosing, flags)
 	}
@@ -356,7 +309,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	}
 	symbolWasExpanded := false
 	canExpandSymbol := func(symbol *ast.Symbol) bool {
-		if verbosityLevel < 0 {
+		if vc.Level <= 0 {
 			return false
 		}
 		var t *checker.Type
@@ -368,25 +321,27 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		if t == nil || c.IsLibType(t) {
 			return false
 		}
-		if verbosityLevel > 0 {
+		if vc.Level > 1 {
 			return true
 		}
-		// At verbosity 0, signal that expansion is possible
-		if out != nil {
-			out.CanIncreaseExpansionDepth = true
-		}
+		// At verbosity level 1, signal that expansion is possible
+		vc.CanIncreaseVerbosity = true
 		return false
 	}
 	// tryExpandSymbol checks if a symbol can be expanded at the current verbosity level.
-	// When expanded, uses SymbolToDeclarationsWithVerbosity to render the full declaration body.
 	tryExpandSymbol := func(symbol *ast.Symbol, meaning ast.SymbolFlags) bool {
 		if symbolWasExpanded {
 			return true
 		}
 		if canExpandSymbol(symbol) {
-			expandedFlags := checker.TypeFormatFlagsMultilineObjectLiterals | checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
-			expanded := c.SymbolToDeclarationsWithVerbosity(symbol, meaning, nil, expandedFlags, verbosityLevel-1, out, defaultHoverMaximumTruncationLength)
+			expandVC := &checker.VerbosityContext{
+				Level:               vc.Level - 1,
+				MaxTruncationLength: defaultHoverMaximumTruncationLength,
+			}
+			expanded := c.ExpandSymbolForHover(symbol, meaning, expandVC)
 			if expanded != "" {
+				vc.CanIncreaseVerbosity = vc.CanIncreaseVerbosity || expandVC.CanIncreaseVerbosity
+				vc.Truncated = vc.Truncated || expandVC.Truncated
 				b.WriteString(expanded)
 				symbolWasExpanded = true
 				return true
@@ -467,7 +422,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				t := c.GetTypeOfSymbolAtLocation(symbol, node)
 				// If the type is a type parameter, render with constraint (e.g., "T extends FooType")
 				if t.Symbol() != nil && t.Symbol().Flags&ast.SymbolFlagsTypeParameter != 0 {
-					b.WriteString(typeParameterToString(c, t, container, verbosityLevel, out))
+					b.WriteString(typeParameterToString(c, t, container, vc))
 				} else {
 					b.WriteString(typeToString(t, container, typeFormatFlags))
 				}
@@ -654,27 +609,8 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 }
 
 // typeParameterToString renders a type parameter with its constraint, e.g., "T extends FooType".
-// It uses the node builder to create a full AST representation including the constraint,
-// then prints it. Supports verbosity-controlled expansion of the constraint type.
-func typeParameterToString(c *checker.Checker, t *checker.Type, enclosingDeclaration *ast.Node, verbosityLevel int, out *checker.WriterContextOut) string {
-	emitCtx := printer.NewEmitContext()
-	nodeBuilder := checker.NewNodeBuilder(c, emitCtx)
-	flags := nodebuilder.FlagsIgnoreErrors
-	var typeParamNode *ast.Node
-	if verbosityLevel >= 0 && out != nil {
-		typeParamNode = nodeBuilder.TypeParameterToDeclarationWithVerbosity(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out)
-	} else {
-		typeParamNode = nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
-	}
-	if typeParamNode == nil {
-		return c.TypeToString(t)
-	}
-	p := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitCtx)
-	var sourceFile *ast.SourceFile
-	if enclosingDeclaration != nil {
-		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
-	}
-	return p.Emit(typeParamNode, sourceFile)
+func typeParameterToString(c *checker.Checker, t *checker.Type, enclosingDeclaration *ast.Node, vc *checker.VerbosityContext) string {
+	return c.TypeParameterToStringWithVerbosity(t, enclosingDeclaration, vc)
 }
 
 func getNodeForQuickInfo(node *ast.Node) *ast.Node {

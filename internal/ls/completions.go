@@ -5039,7 +5039,7 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	actions []codeAction,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, -1, nil)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil)
 	if len(actions) > 0 {
 		details := make([]string, 0, len(actions)+1)
 		edits := make([]*lsproto.TextEdit, 0, len(actions))

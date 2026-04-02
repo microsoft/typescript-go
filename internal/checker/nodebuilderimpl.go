@@ -67,7 +67,8 @@ type NodeBuilderContext struct {
 	depth                           int
 	maxExpansionDepth               int // -1 means no expansion, 0+ = verbosity levels
 	typeStack                       []TypeId
-	out                             WriterContextOut
+	canIncreaseExpansionDepth       bool
+	expansionTruncated              bool
 	enclosingDeclaration            *ast.Node
 	enclosingFile                   *ast.SourceFile
 	inferTypeParameters             []*Type
@@ -110,17 +111,6 @@ type NodeBuilderImpl struct {
 	idToSymbol map[*ast.IdentifierNode]*ast.Symbol
 }
 
-// WriterContextOut is the output channel from the nodebuilder to tell callers about
-// expansion possibilities. It tracks whether types were truncated and whether
-// increasing the expansion depth would reveal more information.
-type WriterContextOut struct {
-	// CanIncreaseExpansionDepth indicates whether increasing the expansion depth
-	// will cause us to expand more types.
-	CanIncreaseExpansionDepth bool
-	// Truncated indicates whether the output was truncated due to length limits.
-	Truncated bool
-}
-
 const (
 	defaultMaximumTruncationLength      = 160
 	noTruncationMaximumTruncationLength = 1_000_000
@@ -153,9 +143,13 @@ func (b *NodeBuilderImpl) checkTruncationLength() bool {
 	if b.ctx.truncating {
 		return b.ctx.truncating
 	}
-	maxLength := b.ctx.maxTruncationLength
-	if maxLength == 0 {
-		maxLength = core.IfElse(b.ctx.flags&nodebuilder.FlagsNoTruncation != 0, noTruncationMaximumTruncationLength, defaultMaximumTruncationLength)
+	var maxLength int
+	if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
+		maxLength = noTruncationMaximumTruncationLength
+	} else if b.ctx.maxTruncationLength > 0 {
+		maxLength = b.ctx.maxTruncationLength
+	} else {
+		maxLength = defaultMaximumTruncationLength
 	}
 	b.ctx.truncating = b.ctx.approximateLength > maxLength
 	return b.ctx.truncating
@@ -165,7 +159,7 @@ func (b *NodeBuilderImpl) checkTruncationLength() bool {
 // When expanding, we need to mark the output as truncated so we know not to offer further expansion.
 func (b *NodeBuilderImpl) checkTruncationLengthIfExpanding() bool {
 	if b.ctx.maxExpansionDepth >= 0 && b.checkTruncationLength() {
-		b.ctx.out.Truncated = true
+		b.ctx.expansionTruncated = true
 		return true
 	}
 	return false
@@ -173,7 +167,7 @@ func (b *NodeBuilderImpl) checkTruncationLengthIfExpanding() bool {
 
 // shouldExpandType determines if the input type should be expanded, based on how many layers of names
 // we're allowed to expand. For non-alias types, lib types are never expanded.
-// Sets canIncreaseExpansionDepth on the context out when declining to expand at the boundary.
+// Sets canIncreaseExpansionDepth on the context when declining to expand at the boundary.
 func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 	if b.ctx.maxExpansionDepth < 0 {
 		return false
@@ -191,7 +185,7 @@ func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 		return true
 	}
 	// At the boundary: signal that more expansion is possible
-	b.ctx.out.CanIncreaseExpansionDepth = true
+	b.ctx.canIncreaseExpansionDepth = true
 	return false
 }
 
@@ -206,7 +200,7 @@ func (b *NodeBuilderImpl) canPossiblyExpandType(t *Type) bool {
 		}
 	}
 	return b.ctx.depth < b.ctx.maxExpansionDepth ||
-		b.ctx.depth == b.ctx.maxExpansionDepth && !b.ctx.out.CanIncreaseExpansionDepth
+		b.ctx.depth == b.ctx.maxExpansionDepth && !b.ctx.canIncreaseExpansionDepth
 }
 
 func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.TypeNode) *ast.TypeNode {
