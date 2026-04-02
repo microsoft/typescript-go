@@ -62,7 +62,10 @@ Output::
         "sourceMap": true,
         "target": "es2017",
         "baseUrl": "./",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "useDefineForClassFields": false,
+        "resolvePackageJsonExports": false,
+        "resolvePackageJsonImports": false
     },
     "include": [
         "./src/**/*"

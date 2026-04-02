@@ -11,6 +11,198 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
+// impliedOption describes a compiler option whose effective value can be derived from
+// other options. This mirrors TypeScript's computedOptions concept used in convertToTSConfig.
+type impliedOption struct {
+	// name is the Go struct field name of the CompilerOptions field (e.g., "Module").
+	name string
+	// dependencies lists the Go struct field names that this option depends on.
+	dependencies []string
+	// compute returns the effective value of this option given compiler options.
+	// The return value may be a core.ModuleKind, core.ModuleResolutionKind, bool, etc.
+	compute func(opts *core.CompilerOptions) any
+}
+
+// impliedOptions lists the compiler options that may be implied by other options,
+// mirroring TypeScript's computedOptions used in convertToTSConfig.
+var impliedOptions = []impliedOption{
+	{
+		name:         "Module",
+		dependencies: []string{"Target"},
+		compute: func(opts *core.CompilerOptions) any {
+			return opts.GetEmitModuleKind()
+		},
+	},
+	{
+		name:         "ModuleResolution",
+		dependencies: []string{"Module", "Target"},
+		compute: func(opts *core.CompilerOptions) any {
+			return computeModuleResolutionForShowConfig(opts)
+		},
+	},
+	{
+		name:         "ModuleDetection",
+		dependencies: []string{"Module", "Target"},
+		compute: func(opts *core.CompilerOptions) any {
+			if opts.ModuleDetection != core.ModuleDetectionKindNone {
+				return opts.ModuleDetection
+			}
+			moduleKind := opts.GetEmitModuleKind()
+			if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+				return core.ModuleDetectionKindForce
+			}
+			return core.ModuleDetectionKindAuto
+		},
+	},
+	{
+		name:         "IsolatedModules",
+		dependencies: []string{"VerbatimModuleSyntax"},
+		compute: func(opts *core.CompilerOptions) any {
+			return opts.IsolatedModules == core.TSTrue || opts.VerbatimModuleSyntax == core.TSTrue
+		},
+	},
+	{
+		name:         "PreserveConstEnums",
+		dependencies: []string{"IsolatedModules", "VerbatimModuleSyntax"},
+		compute: func(opts *core.CompilerOptions) any {
+			return opts.PreserveConstEnums == core.TSTrue || opts.IsolatedModules == core.TSTrue || opts.VerbatimModuleSyntax == core.TSTrue
+		},
+	},
+	{
+		name:         "Declaration",
+		dependencies: []string{"Composite"},
+		compute: func(opts *core.CompilerOptions) any {
+			return opts.Declaration == core.TSTrue || opts.Composite == core.TSTrue
+		},
+	},
+	{
+		name:         "DeclarationMap",
+		dependencies: []string{"Declaration", "Composite"},
+		compute: func(opts *core.CompilerOptions) any {
+			if opts.DeclarationMap != core.TSTrue {
+				return false
+			}
+			return opts.Declaration == core.TSTrue || opts.Composite == core.TSTrue
+		},
+	},
+	{
+		name:         "Incremental",
+		dependencies: []string{"Composite"},
+		compute: func(opts *core.CompilerOptions) any {
+			return opts.Incremental == core.TSTrue || opts.Composite == core.TSTrue
+		},
+	},
+	{
+		name:         "UseDefineForClassFields",
+		dependencies: []string{"Target", "Module"},
+		compute: func(opts *core.CompilerOptions) any {
+			if opts.UseDefineForClassFields != core.TSUnknown {
+				return opts.UseDefineForClassFields == core.TSTrue
+			}
+			return opts.GetEmitScriptTarget() >= core.ScriptTargetES2022
+		},
+	},
+	{
+		name:         "ResolvePackageJsonExports",
+		dependencies: []string{"ModuleResolution", "Module", "Target"},
+		compute: func(opts *core.CompilerOptions) any {
+			res := computeModuleResolutionForShowConfig(opts)
+			if !moduleResolutionSupportsPackageJsonExports(res) {
+				return false
+			}
+			if opts.ResolvePackageJsonExports != core.TSUnknown {
+				return opts.ResolvePackageJsonExports == core.TSTrue
+			}
+			switch res {
+			case core.ModuleResolutionKindNode16, core.ModuleResolutionKindNodeNext, core.ModuleResolutionKindBundler:
+				return true
+			}
+			return false
+		},
+	},
+	{
+		name:         "ResolvePackageJsonImports",
+		dependencies: []string{"ModuleResolution", "ResolvePackageJsonExports", "Module", "Target"},
+		compute: func(opts *core.CompilerOptions) any {
+			res := computeModuleResolutionForShowConfig(opts)
+			if !moduleResolutionSupportsPackageJsonExports(res) {
+				return false
+			}
+			if opts.ResolvePackageJsonImports != core.TSUnknown {
+				return opts.ResolvePackageJsonImports == core.TSTrue
+			}
+			switch res {
+			case core.ModuleResolutionKindNode16, core.ModuleResolutionKindNodeNext, core.ModuleResolutionKindBundler:
+				return true
+			}
+			return false
+		},
+	},
+	{
+		name:         "ResolveJsonModule",
+		dependencies: []string{"ModuleResolution", "Module", "Target"},
+		compute: func(opts *core.CompilerOptions) any {
+			if opts.ResolveJsonModule != core.TSUnknown {
+				return opts.ResolveJsonModule == core.TSTrue
+			}
+			moduleKind := opts.GetEmitModuleKind()
+			switch moduleKind {
+			case core.ModuleKindNode20, core.ModuleKindNodeNext:
+				return true
+			}
+			return computeModuleResolutionForShowConfig(opts) == core.ModuleResolutionKindBundler
+		},
+	},
+	{
+		name:         "AllowJs",
+		dependencies: []string{"CheckJs"},
+		compute: func(opts *core.CompilerOptions) any {
+			if opts.AllowJs != core.TSUnknown {
+				return opts.AllowJs == core.TSTrue
+			}
+			return opts.CheckJs == core.TSTrue
+		},
+	},
+	{
+		name:         "AllowImportingTsExtensions",
+		dependencies: []string{"RewriteRelativeImportExtensions"},
+		compute: func(opts *core.CompilerOptions) any {
+			return opts.AllowImportingTsExtensions == core.TSTrue || opts.RewriteRelativeImportExtensions == core.TSTrue
+		},
+	},
+}
+
+// computeModuleResolutionForShowConfig computes the effective module resolution for
+// showConfig purposes, matching TypeScript's computedOptions.moduleResolution.computeValue.
+// Unlike GetModuleResolutionKind, this returns the explicitly-set value directly
+// when moduleResolution is specified (even for Node10/Classic).
+func computeModuleResolutionForShowConfig(opts *core.CompilerOptions) core.ModuleResolutionKind {
+	if opts.ModuleResolution != core.ModuleResolutionKindUnknown {
+		return opts.ModuleResolution
+	}
+	moduleKind := opts.GetEmitModuleKind()
+	switch moduleKind {
+	case core.ModuleKindNone, core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
+		return core.ModuleResolutionKindClassic
+	case core.ModuleKindNodeNext:
+		return core.ModuleResolutionKindNodeNext
+	}
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+		return core.ModuleResolutionKindNode16
+	}
+	return core.ModuleResolutionKindBundler
+}
+
+// moduleResolutionSupportsPackageJsonExports returns true for module resolution
+// kinds that support package.json exports/imports fields.
+func moduleResolutionSupportsPackageJsonExports(res core.ModuleResolutionKind) bool {
+	switch res {
+	case core.ModuleResolutionKindNode16, core.ModuleResolutionKindNodeNext, core.ModuleResolutionKindBundler:
+		return true
+	}
+	return false
+}
+
 // TSConfig represents the output structure for --showConfig
 type TSConfig struct {
 	CompilerOptions *collections.OrderedMap[string, any] `json:"compilerOptions"`
@@ -62,6 +254,11 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 	} {
 		optionMap.Delete(name)
 	}
+
+	// Add implied compiler options (options that are derived from explicitly set options,
+	// such as moduleResolution implied by module, or useDefineForClassFields implied by target).
+	// This mirrors TypeScript's convertToTSConfig computedOptions logic.
+	addImpliedOptions(optionMap, configParseResult.CompilerOptions(), normalizedConfigPath, comparePathsOptions)
 
 	config := &TSConfig{
 		CompilerOptions: optionMap,
@@ -262,10 +459,114 @@ func serializeEnumValue(value any, enumMap *collections.OrderedMap[string, any])
 	return getNameOfCompilerOptionValue(value, enumMap)
 }
 
-// matchesSpecs returns a filter function that determines whether a file should appear
-// in the --showConfig "files" list. It returns true for files to keep, false for files
-// to omit. Files that match the include globs (and are not excluded) return false,
-// since they're already covered by the "include" field.
+// addImpliedOptions adds compiler options that are implied by other explicitly-set options,
+// mirroring TypeScript's convertToTSConfig behavior for computedOptions.
+// For example, when module: nodenext is set, moduleResolution: nodenext is implied.
+func addImpliedOptions(
+	optionMap *collections.OrderedMap[string, any],
+	options *core.CompilerOptions,
+	_ string,
+	_ tspath.ComparePathsOptions,
+) {
+	// Build the set of explicitly provided option JSON names (e.g., "module", "target").
+	provided := make(map[string]bool, optionMap.Size())
+	for k := range optionMap.Keys() {
+		provided[k] = true
+	}
+
+	defaultOpts := &core.CompilerOptions{}
+
+	for _, entry := range impliedOptions {
+		// Get the option declaration for this implied option (using case-insensitive lookup).
+		optionDecl := CommandLineCompilerOptionsMap.Get(entry.name)
+		if optionDecl == nil {
+			continue
+		}
+
+		// Skip if this option is already explicitly provided.
+		if provided[optionDecl.Name] {
+			continue
+		}
+
+		// Check if any direct dependency is in the provided set.
+		// This mirrors TypeScript's optionDependsOn check.
+		if !anyDependencyProvided(entry.dependencies, provided) {
+			continue
+		}
+
+		// Compute the effective value with current options and the default value with empty options.
+		implied := entry.compute(options)
+		defaultVal := entry.compute(defaultOpts)
+
+		// If the implied value equals the default, this option doesn't add useful information.
+		if impliedValuesEqual(implied, defaultVal) {
+			continue
+		}
+
+		// Serialize the implied value and add it to the option map.
+		serialized := serializeImpliedOptionValue(optionDecl, implied)
+		if serialized == nil {
+			continue
+		}
+		optionMap.Set(optionDecl.Name, serialized)
+	}
+}
+
+// anyDependencyProvided returns true if any of the given dependency names
+// (using Go field names like "Target") corresponds to an option in the provided set.
+func anyDependencyProvided(dependencies []string, provided map[string]bool) bool {
+	for _, dep := range dependencies {
+		depDecl := CommandLineCompilerOptionsMap.Get(dep)
+		if depDecl != nil && provided[depDecl.Name] {
+			return true
+		}
+	}
+	return false
+}
+
+// impliedValuesEqual compares two values for equality, handling the fact that
+// enum values may be of different underlying types.
+func impliedValuesEqual(a, b any) bool {
+	if a == b {
+		return true
+	}
+	// Handle numeric types (enum values stored as int32, etc.)
+	ra := reflect.ValueOf(a)
+	rb := reflect.ValueOf(b)
+	if ra.IsValid() && rb.IsValid() && ra.CanInt() && rb.CanInt() {
+		return ra.Int() == rb.Int()
+	}
+	return false
+}
+
+// serializeImpliedOptionValue converts a computed implied option value to its serializable form.
+// For enum options, it converts numeric values to their string names.
+// For boolean options, it returns the bool directly.
+func serializeImpliedOptionValue(optionDecl *CommandLineOption, value any) any {
+	if value == nil {
+		return nil
+	}
+	enumMap := optionDecl.EnumMap()
+	if enumMap != nil {
+		s := serializeEnumValue(value, enumMap)
+		if s != "" {
+			return s
+		}
+		return nil
+	}
+	switch v := value.(type) {
+	case bool:
+		return v
+	case core.Tristate:
+		if v.IsTrue() {
+			return true
+		} else if v.IsFalse() {
+			return false
+		}
+		return nil
+	}
+	return value
+}
 func matchesSpecs(configFileName string, includeSpecs []string, excludeSpecs []string, useCaseSensitiveFileNames bool, currentDirectory string) func(string) bool {
 	if len(includeSpecs) == 0 {
 		return nil
