@@ -567,6 +567,11 @@ func serializeImpliedOptionValue(optionDecl *CommandLineOption, value any) any {
 	}
 	return value
 }
+
+// matchesSpecs returns a filter function that determines whether a file should appear
+// in the --showConfig "files" list. It returns true for files to keep, false for files
+// to omit. Files that match the include globs (and are not excluded) return false,
+// since they're already covered by the "include" field.
 func matchesSpecs(configFileName string, includeSpecs []string, excludeSpecs []string, useCaseSensitiveFileNames bool, currentDirectory string) func(string) bool {
 	if len(includeSpecs) == 0 {
 		return nil
