@@ -434,6 +434,13 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			return false
 		}
 		tupleTarget := type_.TargetTupleType()
+		// Pseudo-tuples always emit as readonly (see pseudoTypeToNode), so they can only match
+		// readonly tuples. When contextual typing makes the tuple non-readonly (e.g., via
+		// `as const satisfies T` where T has a mutable array), we must fall back to the
+		// regular type serialization path which correctly handles the readonly flag. (#3192)
+		if !tupleTarget.readonly {
+			return false
+		}
 		// Pseudo-tuples come from `as const` array literals, so they only ever have required elements.
 		// If the target tuple has optional, rest, or variadic elements, the structures can't match.
 		if tupleTarget.combinedFlags&ElementFlagsNonRequired != 0 {
