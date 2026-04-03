@@ -36,7 +36,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 	originSelectionRange := l.createLspRangeFromNode(node, file)
 	declarations := l.getSourceDefinitionDeclarations(ctx, program, file, node, pos)
 	if len(declarations) == 0 {
-		return l.ProvideDefinition(ctx, documentURI, position)
+		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 }

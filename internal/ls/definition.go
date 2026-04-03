@@ -19,6 +19,17 @@ func (l *LanguageService) ProvideDefinition(
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 ) (lsproto.DefinitionResponse, error) {
+	if l.UserPreferences().PreferGoToSourceDefinition {
+		return l.ProvideSourceDefinition(ctx, documentURI, position)
+	}
+	return l.provideDefinitionWorker(ctx, documentURI, position)
+}
+
+func (l *LanguageService) provideDefinitionWorker(
+	ctx context.Context,
+	documentURI lsproto.DocumentUri,
+	position lsproto.Position,
+) (lsproto.DefinitionResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 

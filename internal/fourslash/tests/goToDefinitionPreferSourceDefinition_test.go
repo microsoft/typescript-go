@@ -1,0 +1,33 @@
+package fourslash_test
+
+import (
+	"testing"
+
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/testutil"
+)
+
+func TestGoToDefinitionPreferSourceDefinition(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @Filename: /home/src/workspaces/project/a.js
+export const /*sourceTarget*/a = "a";
+// @Filename: /home/src/workspaces/project/a.d.ts
+export declare const /*dtsTarget*/a: string;
+// @Filename: /home/src/workspaces/project/index.ts
+import { a } from "./a";
+a/*start*/`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+
+	// 1. Regular go-to-definition: goes to the .d.ts file
+	f.VerifyBaselineGoToDefinition(t, false /*includeOriginalSelectionRange*/, "start")
+
+	// 2. Go-to-source-definition: goes to the .js file
+	f.VerifyBaselineGoToSourceDefinition(t, "start")
+
+	// 3. Go-to-definition with preferGoToSourceDefinition: goes to the .js file, same as source definition
+	f.Configure(t, &lsutil.UserPreferences{PreferGoToSourceDefinition: true})
+	f.VerifyBaselineGoToDefinition(t, false /*includeOriginalSelectionRange*/, "start")
+}
