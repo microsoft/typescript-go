@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -49,6 +50,63 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	return lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}, nil
 }
 
+func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.CustomMultiDocumentHighlightResponse, error) {
+	program, sourceFile := l.getProgramAndFile(documentUri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
+	node := astnav.GetTouchingPropertyName(sourceFile, position)
+
+	// Resolve the source files to search
+	var sourceFiles []*ast.SourceFile
+	for _, uri := range filesToSearch {
+		if sf := program.GetSourceFile(uri.FileName()); sf != nil {
+			sourceFiles = append(sourceFiles, sf)
+		}
+	}
+	if len(sourceFiles) == 0 {
+		sourceFiles = []*ast.SourceFile{sourceFile}
+	}
+
+	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
+		var openingElement, closingElement *ast.Node
+		if ast.IsJsxElement(node.Parent.Parent) {
+			openingElement = node.Parent.Parent.AsJsxElement().OpeningElement
+			closingElement = node.Parent.Parent.AsJsxElement().ClosingElement
+		}
+		var highlights []*lsproto.DocumentHighlight
+		kind := lsproto.DocumentHighlightKindRead
+		if openingElement != nil {
+			highlights = append(highlights, &lsproto.DocumentHighlight{
+				Range: l.createLspRangeFromNode(openingElement, sourceFile),
+				Kind:  &kind,
+			})
+		}
+		if closingElement != nil {
+			highlights = append(highlights, &lsproto.DocumentHighlight{
+				Range: l.createLspRangeFromNode(closingElement, sourceFile),
+				Kind:  &kind,
+			})
+		}
+		multiHighlights := []*lsproto.MultiDocumentHighlight{
+			{Uri: documentUri, Highlights: highlights},
+		}
+		return lsproto.MultiDocumentHighlightsOrNull{
+			MultiDocumentHighlights: &multiHighlights,
+		}, nil
+	}
+
+	multiHighlights := l.getMultiFileSemanticDocumentHighlights(ctx, position, node, program, sourceFiles)
+	if len(multiHighlights) == 0 {
+		// Fall back to syntactic highlights for the current file only.
+		syntacticHighlights := l.getSyntacticDocumentHighlights(node, sourceFile)
+		if len(syntacticHighlights) > 0 {
+			multiHighlights = []*lsproto.MultiDocumentHighlight{
+				{Uri: documentUri, Highlights: syntacticHighlights},
+			}
+		}
+	}
+	return lsproto.MultiDocumentHighlightsOrNull{MultiDocumentHighlights: &multiHighlights}, nil
+}
+
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
 	options := refOptions{use: referenceUseNone}
 	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options)
@@ -66,6 +124,42 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 		}
 	}
 	return highlights
+}
+
+func (l *LanguageService) getMultiFileSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile) []*lsproto.MultiDocumentHighlight {
+	options := refOptions{use: referenceUseNone}
+	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, sourceFiles, options)
+	if referenceEntries == nil {
+		return nil
+	}
+
+	// Build a set of allowed file names for quick lookup
+	allowedFiles := make(map[string]bool, len(sourceFiles))
+	for _, sf := range sourceFiles {
+		allowedFiles[sf.FileName()] = true
+	}
+
+	// Group highlights by file
+	fileHighlights := make(map[string][]*lsproto.DocumentHighlight)
+	for _, entry := range referenceEntries {
+		for _, ref := range entry.references {
+			fileName, highlight := l.toDocumentHighlight(ref)
+			if allowedFiles[fileName] {
+				fileHighlights[fileName] = append(fileHighlights[fileName], highlight)
+			}
+		}
+	}
+
+	var result []*lsproto.MultiDocumentHighlight
+	for _, sf := range sourceFiles {
+		if highlights, ok := fileHighlights[sf.FileName()]; ok {
+			result = append(result, &lsproto.MultiDocumentHighlight{
+				Uri:        lsconv.FileNameToDocumentURI(sf.FileName()),
+				Highlights: highlights,
+			})
+		}
+	}
+	return result
 }
 
 func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *lsproto.DocumentHighlight) {

@@ -684,6 +684,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTextDocumentMultiDocumentHighlightInfo, (*Server).handleMultiDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentInlayHintInfo, (*Server).handleInlayHint)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeLensInfo, (*Server).handleCodeLens)
@@ -1059,6 +1060,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
+			CustomMultiDocumentHighlightProvider: new(true),
 		},
 	}
 
@@ -1327,6 +1329,10 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 
 func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentHighlightParams) (lsproto.DocumentHighlightResponse, error) {
 	return ls.ProvideDocumentHighlights(ctx, params.TextDocument.Uri, params.Position)
+}
+
+func (s *Server) handleMultiDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.MultiDocumentHighlightParams) (lsproto.CustomMultiDocumentHighlightResponse, error) {
+	return ls.ProvideMultiDocumentHighlights(ctx, params.TextDocument.Uri, params.Position, params.FilesToSearch)
 }
 
 func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
