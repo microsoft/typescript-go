@@ -931,6 +931,46 @@ func SetParentInChildren(node *Node) {
 	fn(node)
 }
 
+var setParentAndReparsedInChildrenPool = sync.Pool{
+	New: func() any {
+		return newParentAndReparsedInChildrenSetter()
+	},
+}
+
+func newParentAndReparsedInChildrenSetter() func(node *Node) bool {
+	// Consolidate state into one allocation.
+	// Similar to https://go.dev/cl/552375.
+	var state struct {
+		parent *Node
+		visit  func(*Node) bool
+	}
+
+	state.visit = func(node *Node) bool {
+		if state.parent != nil {
+			node.Parent = state.parent
+		}
+		node.Flags |= NodeFlagsReparsed
+		saveParent := state.parent
+		state.parent = node
+		node.ForEachChild(state.visit)
+		state.parent = saveParent
+		return false
+	}
+
+	return state.visit
+}
+
+// setParentAndReparsedInChildren is like SetParentInChildren but also marks
+// all nodes (including the root) with NodeFlagsReparsed. Used by
+// DeepCloneReparse to ensure all cloned nodes from JSDoc are properly
+// flagged as reparsed, so traversal code (e.g. FindPrecedingToken)
+// correctly skips them.
+func setParentAndReparsedInChildren(node *Node) {
+	fn := setParentAndReparsedInChildrenPool.Get().(func(node *Node) bool)
+	defer setParentAndReparsedInChildrenPool.Put(fn)
+	fn(node)
+}
+
 // This should never be called outside the parser
 func SetImportsOfSourceFile(node *SourceFile, imports []*LiteralLikeNode) {
 	node.imports = imports

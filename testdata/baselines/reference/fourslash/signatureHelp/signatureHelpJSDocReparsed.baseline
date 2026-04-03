@@ -1,0 +1,142 @@
+// === SignatureHelp ===
+=== /test.js ===
+// /**
+//  * @param {string} x
+//  */
+// function foo(x) {
+//     foo();
+//         ^
+// | ----------------------------------------------------------------------
+// | foo(**x: string**): void
+// | ----------------------------------------------------------------------
+// }
+// /**
+//  * @this {string}
+//  */
+// function bar() {
+//     bar();
+//         ^
+// | ----------------------------------------------------------------------
+// | bar(): void
+// | ----------------------------------------------------------------------
+// }
+// /**
+//  * @type {function(string): void}
+//  */
+// function qux(x) {
+//     qux();
+//         ^
+// | ----------------------------------------------------------------------
+// | qux(**x: any**): void
+// | ----------------------------------------------------------------------
+// }
+// /**
+//  * @template T
+//  * @param {T} x
+//  * @returns {T}
+//  */
+// function identity(x) {
+//     identity();
+//              ^
+// | ----------------------------------------------------------------------
+// | identity(**x: unknown**): unknown
+// | ----------------------------------------------------------------------
+// }
+// 
+[
+  {
+    "marker": {
+      "Position": 55,
+      "LSPosition": {
+        "line": 4,
+        "character": 8
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "foo(x: string): void",
+          "parameters": [
+            {
+              "label": "x: string"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 111,
+      "LSPosition": {
+        "line": 10,
+        "character": 8
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "bar(): void",
+          "parameters": []
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 184,
+      "LSPosition": {
+        "line": 16,
+        "character": 8
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "qux(x: any): void",
+          "parameters": [
+            {
+              "label": "x: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 280,
+      "LSPosition": {
+        "line": 24,
+        "character": 13
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "identity(x: unknown): unknown",
+          "parameters": [
+            {
+              "label": "x: unknown"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]
