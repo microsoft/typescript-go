@@ -15,11 +15,11 @@ module.exports = 12;
 >12 : 12
 
 Object.defineProperty(module, "exports", { value: "oh no" });
->Object.defineProperty(module, "exports", { value: "oh no" }) : any
+>Object.defineProperty(module, "exports", { value: "oh no" }) : { exports: 12; }
 >Object.defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
 >Object : ObjectConstructor
 >defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
->module : any
+>module : { exports: 12; }
 >"exports" : "exports"
 >{ value: "oh no" } : { value: string; }
 >value : string

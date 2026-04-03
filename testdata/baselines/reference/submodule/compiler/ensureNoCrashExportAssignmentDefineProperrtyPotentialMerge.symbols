@@ -15,6 +15,7 @@ Object.defineProperty(module, "exports", { value: "oh no" });
 >Object.defineProperty : Symbol(ObjectConstructor.defineProperty, Decl(lib.es5.d.ts, --, --))
 >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 >defineProperty : Symbol(ObjectConstructor.defineProperty, Decl(lib.es5.d.ts, --, --))
+>module : Symbol(module, Decl(index.js, 0, 0))
 >value : Symbol(value, Decl(index.js, 2, 42))
 
 === namespacey.js ===
