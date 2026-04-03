@@ -127,7 +127,7 @@ func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
 
 	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
-		return declarations
+		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
 	if len(names) != 0 && !isImportOrExportName(originalNode) {
 		return nil
@@ -638,6 +638,9 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 func getDeclarationSearchDepth(node *ast.Node) int {
 	depth := 0
 	for current := node; current != nil; current = current.Parent {
+		if current == node.Parent && (ast.IsFunctionLike(current) || ast.IsClassLike(current)) && ast.GetNameOfDeclaration(current) == node {
+			continue
+		}
 		switch {
 		case current.Kind == ast.KindSourceFile,
 			current.Kind == ast.KindBlock,
@@ -696,7 +699,7 @@ func isConcreteSourceDeclaration(node *ast.Node) bool {
 	if !ast.IsDeclaration(node) || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindJSExportAssignment {
 		return false
 	}
-	if ast.IsBinaryExpression(node) && ast.GetAssignmentDeclarationKind(node) != ast.JSDeclarationKindNone {
+	if (ast.IsBinaryExpression(node) || ast.IsCallExpression(node)) && ast.GetAssignmentDeclarationKind(node) != ast.JSDeclarationKindNone {
 		return false
 	}
 	switch node.Kind {

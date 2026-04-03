@@ -6,8 +6,8 @@
 // 'use strict';
 // if (process.env.NODE_ENV !== 'production') {
 //   (function() {
-//     function useState(initialState) {}
-//     exports.[|useState|] = useState;
+//     function [|useState|](initialState) {}
+//     exports.useState = useState;
 //     exports.version = '16.8.6';
 //   }());
 // }
