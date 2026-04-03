@@ -319,7 +319,6 @@ func (b *NodeBuilderImpl) serializeTypeName(node *ast.Node, isTypeOf bool, typeA
 	if isTypeOf {
 		meaning = ast.SymbolFlagsValue
 	}
-	referencedSymbol := b.ch.resolveEntityName(node, meaning, true, true, node)
 	symbol := b.ch.resolveEntityName(node, meaning, true, false, node)
 	if symbol == nil {
 		return nil
@@ -330,14 +329,6 @@ func (b *NodeBuilderImpl) serializeTypeName(node *ast.Node, isTypeOf bool, typeA
 		resolvedSymbol = b.ch.resolveAlias(symbol)
 	}
 
-	// Type display paths should keep falling back when only the original referenced alias
-	// is out of scope, even if resolving through the export would permit a portable import type.
-	if referencedSymbol != nil &&
-		(b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 ||
-			b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths != 0) &&
-		b.ch.IsSymbolAccessible(referencedSymbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
-		return nil
-	}
 	if b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
 		return nil
 	}
