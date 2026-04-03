@@ -407,11 +407,17 @@ type ProjectResponse struct {
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
+	rootFiles := []string{}
+	var opts *core.CompilerOptions
+	if p.CommandLine != nil {
+		rootFiles = p.CommandLine.FileNames()
+		opts = p.CommandLine.CompilerOptions()
+	}
 	return &ProjectResponse{
 		Id:              ProjectHandle(p),
 		ConfigFileName:  p.Name(),
-		RootFiles:       p.CommandLine.FileNames(),
-		CompilerOptions: p.CommandLine.CompilerOptions(),
+		RootFiles:       rootFiles,
+		CompilerOptions: opts,
 	}
 }
 
