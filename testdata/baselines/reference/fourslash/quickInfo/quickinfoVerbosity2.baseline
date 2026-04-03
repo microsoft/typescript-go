@@ -64,8 +64,7 @@
             "line": 5,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }

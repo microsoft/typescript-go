@@ -15,10 +15,11 @@ type NodeBuilder struct {
 }
 
 // VerbosityContext controls hover-expansion behavior in the node builder.
-// Level 0 (or zero value) means disabled. Level 1+ enables expansion;
-// the internal expansion depth is Level-1.
+// A nil VerbosityContext means no expansion (default hover or non-hover callers).
+// Level 0 = default hover (no expansion, signals canIncreaseVerbosity via hover.go).
+// Level 1+ = expansion enabled (maxExpansionDepth = Level).
 type VerbosityContext struct {
-	Level                int  // 0 = disabled, 1+ = expansion levels (internally mapped to Level-1)
+	Level                int  // 0 = default (no expansion), 1+ = expansion depth
 	MaxTruncationLength  int  // 0 = use default
 	CanIncreaseVerbosity bool // output: whether increasing Level would reveal more
 	Truncated            bool // output: whether output was truncated
@@ -33,7 +34,7 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 	verbosityLevel := -1
 	maxTruncationLength := 0
 	if b.verbosity != nil && b.verbosity.Level > 0 {
-		verbosityLevel = b.verbosity.Level - 1
+		verbosityLevel = b.verbosity.Level
 		maxTruncationLength = b.verbosity.MaxTruncationLength
 	} else if b.verbosity != nil {
 		maxTruncationLength = b.verbosity.MaxTruncationLength

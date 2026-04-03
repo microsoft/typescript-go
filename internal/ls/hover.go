@@ -21,12 +21,17 @@ const (
 	defaultHoverMaximumTruncationLength = 500
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position, verbosityLevel int) (lsproto.HoverResponse, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
 
-	program, file := l.getProgramAndFile(documentURI)
-	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
+	verbosityLevel := 0
+	if params.VerbosityLevel != nil {
+		verbosityLevel = int(*params.VerbosityLevel)
+	}
+
+	program, file := l.getProgramAndFile(params.TextDocument.Uri)
+	position := int(l.converters.LineAndCharacterToPosition(file, params.Position))
 	node := astnav.GetTouchingPropertyName(file, position)
 	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
 		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
@@ -37,10 +42,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	rangeNode := getNodeForQuickInfo(node)
 	symbol := getSymbolAtLocationForQuickInfo(c, node)
 
-	// Always use VerbosityContext for hover to get the correct truncation length (500 vs default 160).
-	// Level 0 = disabled (zero value). Level 1+ = enabled; internally maps to expansion depth Level-1.
+	// Always create VerbosityContext for hover so that canExpandSymbol can signal
+	// canIncreaseVerbosity even at Level 0. The nodebuilder only activates expansion
+	// when Level > 0 (enterContext maps Level 0 to maxExpansionDepth = -1).
 	vc := &checker.VerbosityContext{
-		Level:               verbosityLevel + 1, // shift: server -1 → 0 (disabled), 0 → 1 (enabled), etc.
+		Level:               verbosityLevel,
 		MaxTruncationLength: defaultHoverMaximumTruncationLength,
 	}
 
@@ -67,7 +73,8 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 		Range: &hoverRange,
 	}
 
-	if vc.Level > 0 {
+	// Only report canIncreaseVerbosity when the client explicitly requested a verbosity level.
+	if params.VerbosityLevel != nil {
 		hover.CanIncreaseVerbosity = vc.CanIncreaseVerbosity && !vc.Truncated
 	}
 
@@ -309,7 +316,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	}
 	symbolWasExpanded := false
 	canExpandSymbol := func(symbol *ast.Symbol) bool {
-		if vc.Level <= 0 {
+		if vc == nil {
 			return false
 		}
 		var t *checker.Type
@@ -321,10 +328,10 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		if t == nil || c.IsLibType(t) {
 			return false
 		}
-		if vc.Level > 1 {
+		if vc.Level > 0 {
 			return true
 		}
-		// At verbosity level 1, signal that expansion is possible
+		// At level 0, signal that expansion is possible but don't expand
 		vc.CanIncreaseVerbosity = true
 		return false
 	}

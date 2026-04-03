@@ -1210,13 +1210,7 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageSe
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
-	verbosityLevel := -1
-	if params.VerbosityLevel != nil {
-		verbosityLevel = int(*params.VerbosityLevel)
-	} else if lsproto.GetClientCapabilities(ctx).TextDocument.Hover.VerbosityLevel {
-		verbosityLevel = 0
-	}
-	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position, verbosityLevel)
+	return ls.ProvideHover(ctx, params)
 }
 
 func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.LanguageService, params *lsproto.PrepareRenameParams) (lsproto.PrepareRenameResponse, error) {

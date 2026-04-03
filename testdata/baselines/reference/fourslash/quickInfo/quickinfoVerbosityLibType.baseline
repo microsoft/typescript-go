@@ -82,8 +82,7 @@
             "line": 7,
             "character": 7
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -143,8 +142,7 @@
             "line": 8,
             "character": 7
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }

@@ -48,10 +48,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const y: {
-// |     banana?: string | undefined;
-// |     apple?: boolean | undefined;
-// | }
+// | const y: { banana?: string | undefined; apple?: boolean | undefined; }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -102,8 +99,7 @@
             "line": 9,
             "character": 7
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -163,8 +159,7 @@
             "line": 9,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -213,7 +208,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst y: {\n    banana?: string | undefined;\n    apple?: boolean | undefined;\n}\n```\n"
+          "value": "```tsx\nconst y: { banana?: string | undefined; apple?: boolean | undefined; }\n```\n"
         },
         "range": {
           "start": {
@@ -254,8 +249,7 @@
             "line": 14,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }

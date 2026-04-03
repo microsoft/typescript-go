@@ -78,11 +78,7 @@
 //       ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const obj2: {
-// |     foo: FooType;
-// |     bar: BarType;
-// |     str: Str;
-// | }
+// | const obj2: { foo: FooType; bar: BarType; str: Str; }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -113,8 +109,7 @@
             "line": 5,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -225,7 +220,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst obj2: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
+          "value": "```tsx\nconst obj2: { foo: FooType; bar: BarType; str: Str; }\n```\n"
         },
         "range": {
           "start": {
@@ -236,8 +231,7 @@
             "line": 6,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }

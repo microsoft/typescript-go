@@ -114,10 +114,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const c: {
-// |     new (x: string): Foo<string>;
-// |     whatever(): void;
-// | }
+// | const c: { new (x: string): Foo<string>; whatever(): void; prototype: Foo<any>; }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -305,8 +302,7 @@
             "line": 3,
             "character": 9
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -366,8 +362,7 @@
             "line": 13,
             "character": 13
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -458,8 +453,7 @@
             "line": 14,
             "character": 7
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -509,7 +503,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst c: {\n    new (x: string): Foo<string>;\n    whatever(): void;\n}\n```\n"
+          "value": "```tsx\nconst c: { new (x: string): Foo<string>; whatever(): void; prototype: Foo<any>; }\n```\n"
         },
         "range": {
           "start": {
@@ -520,8 +514,7 @@
             "line": 15,
             "character": 7
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
@@ -582,8 +575,7 @@
             "line": 16,
             "character": 17
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -795,8 +787,7 @@
             "line": 36,
             "character": 7
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 0
     }
