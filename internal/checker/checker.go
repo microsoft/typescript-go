@@ -13446,6 +13446,26 @@ func (c *Checker) getReferencedValueOrAliasSymbol(reference *ast.Node) *ast.Symb
 	return c.resolveName(reference, reference.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/)
 }
 
+func (c *Checker) isDefinitelyReferenceToGlobalSymbolObject(node *ast.Node) bool {
+	if !ast.IsPropertyAccessExpression(node) ||
+		!ast.IsIdentifier(node.Name()) ||
+		(!ast.IsPropertyAccessExpression(node.Expression()) && !ast.IsIdentifier(node.Expression())) {
+		return false
+	}
+	if node.Expression().Kind == ast.KindIdentifier {
+		if node.Expression().Text() != "Symbol" {
+			return false
+		}
+		// Exactly `Symbol.something` and `Symbol` either does not resolve or definitely resolves to the global Symbol.
+		return c.getResolvedSymbol(node.Expression()) == c.getGlobalSymbol("Symbol", ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*diagnostic*/)
+	}
+	if node.Expression().Expression().Kind != ast.KindIdentifier || node.Expression().Expression().Text() != "globalThis" || node.Expression().Name().Text() != "Symbol" {
+		return false
+	}
+	// Exactly `globalThis.Symbol.something` and `globalThis` resolves to the global `globalThis`.
+	return c.getResolvedSymbol(node.Expression().Expression()) == c.globalThisSymbol
+}
+
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
 	switch node.Text() {
 	case "document", "console":
