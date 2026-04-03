@@ -8,6 +8,30 @@ import (
 	"github.com/microsoft/typescript-go/internal/pseudochecker"
 )
 
+// pseudoTypeToNodeWithCheckerFallback is like pseudoTypeToNode but when the top-level pseudo type
+// is PseudoTypeInferred, it reports any error nodes and then serializes from the checker's type.
+// This avoids incorrect type output when PseudoTypeInferred would derive the type from the
+// original declaration expression in an instantiated context.
+func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.PseudoType, checkerType *Type) *ast.Node {
+	if t.Kind == pseudochecker.PseudoTypeKindInferred {
+		if !b.ctx.suppressReportInferenceFallback {
+			if errorNodes := t.AsPseudoTypeInferred().ErrorNodes; len(errorNodes) > 0 {
+				for _, n := range errorNodes {
+					b.ctx.tracker.ReportInferenceFallback(n)
+				}
+			} else {
+				b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
+			}
+		}
+		oldSuppress := b.ctx.suppressReportInferenceFallback
+		b.ctx.suppressReportInferenceFallback = true
+		result := b.typeToTypeNode(checkerType)
+		b.ctx.suppressReportInferenceFallback = oldSuppress
+		return result
+	}
+	return b.pseudoTypeToNode(t)
+}
+
 // Maps a pseudochecker's pseudotypes into ast nodes and reports any inference fallback errors the pseudotype structure implies
 func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Node {
 	debug.Assert(t != nil, "Attempted to serialize nil pseudotype")
@@ -15,8 +39,17 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindDirect:
 		return b.reuseTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
-		node := t.AsPseudoTypeInferred().Expression
-		b.ctx.tracker.ReportInferenceFallback(node)
+		inferred := t.AsPseudoTypeInferred()
+		node := inferred.Expression
+		if errorNodes := inferred.ErrorNodes; len(errorNodes) > 0 {
+			for _, n := range errorNodes {
+				b.ctx.tracker.ReportInferenceFallback(n)
+			}
+		} else if ast.IsEntityNameExpression(node) && ast.IsDeclaration(node.Parent) {
+			b.ctx.tracker.ReportInferenceFallback(node.Parent)
+		} else {
+			b.ctx.tracker.ReportInferenceFallback(node)
+		}
 		// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
 		if ast.IsReturnStatement(node.Parent) {
 			enclosing := ast.GetContainingFunction(node)
@@ -316,6 +349,17 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	}
 	// otherwise, fallback to actual pseudo/type cross-comparisons
 	switch t.Kind {
+	case pseudochecker.PseudoTypeKindInferred:
+		// PseudoTypeInferred with error nodes is always considered equivalent —
+		// the error nodes identify specific problematic children, and pseudoTypeToNodeWithCheckerFallback
+		// will report errors on them and fall back to the checker's real type.
+		if len(t.AsPseudoTypeInferred().ErrorNodes) > 0 {
+			return true
+		}
+		if reportErrors {
+			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
+		}
+		return false
 	case pseudochecker.PseudoTypeKindObjectLiteral:
 		pt := t.AsPseudoTypeObjectLiteral()
 		if type_ == nil {
@@ -366,7 +410,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
 				d := e.AsPseudoPropertyAssignment()
 				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
-					if reportErrors {
+					if reportErrors && !isStructuralPseudoType(d.Type) {
 						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 					}
 					return false
@@ -501,14 +545,20 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeNoResult().Declaration)
 		}
 		return false
-	case pseudochecker.PseudoTypeKindInferred:
-		if reportErrors {
-			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
-		}
-		return false
 	default:
 		return false
 	}
+}
+
+func isStructuralPseudoType(t *pseudochecker.PseudoType) bool {
+	switch t.Kind {
+	case pseudochecker.PseudoTypeKindObjectLiteral, pseudochecker.PseudoTypeKindTuple, pseudochecker.PseudoTypeKindSingleCallSignature:
+		return true
+	case pseudochecker.PseudoTypeKindMaybeConstLocation:
+		d := t.AsPseudoTypeMaybeConstLocation()
+		return isStructuralPseudoType(d.ConstType) || isStructuralPseudoType(d.RegularType)
+	}
+	return false
 }
 
 // pseudoReturnTypeMatchesPredicate checks if a pseudo return type (which should be a Direct type

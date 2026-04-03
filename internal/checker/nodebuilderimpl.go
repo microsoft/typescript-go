@@ -1991,7 +1991,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 				if pt != nil {
 					// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 					// see: canReuseTypeNodeAnnotation in strada for context
-					returnTypeNode = b.pseudoTypeToNode(pt)
+					returnTypeNode = b.pseudoTypeToNodeWithCheckerFallback(pt, returnType)
 				}
 			}
 			restore()
@@ -2095,11 +2095,11 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			if ptt != nil && requiresAddingUndefined && containsNonMissingUndefinedType(b.ch, t) && !containsNonMissingUndefinedType(b.ch, ptt) {
 				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 			}
-			result = b.pseudoTypeToNode(pt)
+			result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
 		} else if requiresAddingUndefined {
 			pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 			if b.pseudoTypeEquivalentToType(pt, t, false, !b.ctx.suppressReportInferenceFallback) {
-				result = b.pseudoTypeToNode(pt)
+				result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
 			}
 		}
 		remove()
