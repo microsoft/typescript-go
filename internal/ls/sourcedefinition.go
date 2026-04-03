@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -17,14 +18,6 @@ import (
 )
 
 func (l *LanguageService) ProvideSourceDefinition(
-	ctx context.Context,
-	documentURI lsproto.DocumentUri,
-	position lsproto.Position,
-) (lsproto.DefinitionResponse, error) {
-	return l.provideSourceDefinition(ctx, documentURI, position)
-}
-
-func (l *LanguageService) provideSourceDefinition(
 	ctx context.Context,
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
@@ -66,7 +59,7 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 			getSourceDefinitionNamesForNode(node, moduleSpecifier),
 		)
 		declarations = append(declarations, moduleDeclarations...)
-		if len(moduleDeclarations) != 0 && (node == moduleSpecifier || isImportOrExportName(node)) {
+		if shouldPreferModuleSpecifierResult(node, moduleSpecifier, moduleDeclarations) {
 			return uniqueDeclarationNodes(declarations)
 		}
 	}
@@ -94,10 +87,8 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	reference := getReferenceAtPosition(currentFile, position, program)
 	if reference != nil && len(declarations) == 0 {
 		if sourceFile := l.getOrParseSourceFile(program, reference.fileName); sourceFile != nil && !tspath.IsDeclarationFileName(reference.fileName) {
-			if len(sourceFile.Statements.Nodes) != 0 {
-				declarations = append(declarations, sourceFile.Statements.Nodes[0].AsNode())
-			} else {
-				declarations = append(declarations, sourceFile.AsNode())
+			if entry := getSourceDefinitionEntryNode(sourceFile); entry != nil {
+				declarations = append(declarations, entry)
 			}
 		}
 	}
@@ -106,9 +97,7 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	if filtered := filterImportLikeDeclarations(currentFile, declarations); len(filtered) != 0 {
 		declarations = filtered
 	}
-	if moduleSpecifier != nil && isImportOrExportName(node) && (len(declarations) == 0 || core.Every(declarations, func(declaration *ast.Node) bool {
-		return ast.GetSourceFileOfNode(declaration).FileName() == currentFile.FileName() && isImportLikeDeclaration(declaration)
-	})) {
+	if shouldFallbackToModuleSpecifier(currentFile, node, moduleSpecifier, declarations) {
 		if fallback := l.getSourceDefinitionDeclarationsForModuleSpecifier(program, currentFile, moduleSpecifier, node, nil); len(fallback) != 0 {
 			return uniqueDeclarationNodes(fallback)
 		}
@@ -132,44 +121,72 @@ func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
 	if sourceFile == nil {
 		return nil
 	}
-	if originalNode == moduleSpecifier || originalNode != nil && originalNode.Parent != nil && ast.IsImportClause(originalNode.Parent) && originalNode.Parent.Name() == originalNode {
-		if len(sourceFile.Statements.Nodes) != 0 {
-			return []*ast.Node{sourceFile.Statements.Nodes[0].AsNode()}
-		}
-		return []*ast.Node{sourceFile.AsNode()}
+	if originalNode == moduleSpecifier || isDefaultImportName(originalNode) {
+		return getSourceDefinitionEntryDeclarations(sourceFile)
 	}
 
-	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, map[string]struct{}{})
+	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
 		return declarations
 	}
 	if len(names) != 0 && !isImportOrExportName(originalNode) {
 		return nil
 	}
-	if len(sourceFile.Statements.Nodes) != 0 {
-		return []*ast.Node{sourceFile.Statements.Nodes[0].AsNode()}
-	}
-	return []*ast.Node{sourceFile.AsNode()}
+	return getSourceDefinitionEntryDeclarations(sourceFile)
 }
 
 func isImportOrExportName(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	if ast.IsImportOrExportSpecifier(node) {
+	if ast.IsImportOrExportSpecifier(node) || isDefaultImportName(node) {
 		return true
 	}
 	switch node.Kind {
-	case ast.KindImportClause,
-		ast.KindNamespaceImport,
+	case ast.KindNamespaceImport,
 		ast.KindNamedImports,
 		ast.KindNamedExports:
 		return true
 	}
-	if node.Parent == nil {
+	parent := node.Parent
+	return parent != nil && (parent.Kind == ast.KindNamespaceImport || ast.IsImportOrExportSpecifier(parent)) && parent.Name() == node
+}
+
+func isDefaultImportName(node *ast.Node) bool {
+	if node == nil || node.Parent == nil || !ast.IsImportClause(node.Parent) || node.Parent.Name() != node || node.Parent.Parent == nil {
 		return false
 	}
-	return (node.Parent.Kind == ast.KindImportClause || node.Parent.Kind == ast.KindNamespaceImport || ast.IsImportOrExportSpecifier(node.Parent)) && node.Parent.Name() == node
+	return ast.IsDefaultImport(node.Parent.Parent)
+}
+
+func shouldPreferModuleSpecifierResult(node *ast.Node, moduleSpecifier *ast.Node, declarations []*ast.Node) bool {
+	return moduleSpecifier != nil && len(declarations) != 0 && (node == moduleSpecifier || isImportOrExportName(node))
+}
+
+func shouldFallbackToModuleSpecifier(currentFile *ast.SourceFile, node *ast.Node, moduleSpecifier *ast.Node, declarations []*ast.Node) bool {
+	if currentFile == nil || moduleSpecifier == nil || !isImportOrExportName(node) {
+		return false
+	}
+	return len(declarations) == 0 || core.Every(declarations, func(declaration *ast.Node) bool {
+		return ast.GetSourceFileOfNode(declaration).FileName() == currentFile.FileName() && isImportLikeDeclaration(declaration)
+	})
+}
+
+func getSourceDefinitionEntryNode(sourceFile *ast.SourceFile) *ast.Node {
+	if sourceFile == nil {
+		return nil
+	}
+	if len(sourceFile.Statements.Nodes) != 0 {
+		return sourceFile.Statements.Nodes[0].AsNode()
+	}
+	return sourceFile.AsNode()
+}
+
+func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Node {
+	if entry := getSourceDefinitionEntryNode(sourceFile); entry != nil {
+		return []*ast.Node{entry}
+	}
+	return nil
 }
 
 func (l *LanguageService) mapDeclarationToSourceDefinitions(
@@ -202,17 +219,14 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 	}
 
 	names := getCandidateSourceDeclarationNames(originalNode, declaration)
-	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, map[string]struct{}{})
+	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
 		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
 	if len(names) != 0 {
 		return nil
 	}
-	if len(sourceFile.Statements.Nodes) != 0 {
-		return []*ast.Node{sourceFile.Statements.Nodes[0].AsNode()}
-	}
-	return []*ast.Node{sourceFile.AsNode()}
+	return getSourceDefinitionEntryDeclarations(sourceFile)
 }
 
 func (l *LanguageService) resolveImplementationFileForDeclaration(
@@ -364,10 +378,7 @@ func (l *LanguageService) getOrParseSourceFile(program *compiler.Program, fileNa
 func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 	for current := node; current != nil; current = current.Parent {
 		switch {
-		case ast.IsImportDeclaration(current),
-			ast.IsExportDeclaration(current),
-			ast.IsJSImportDeclaration(current),
-			ast.IsImportEqualsDeclaration(current),
+		case ast.IsAnyImportOrReExport(current),
 			ast.IsRequireCall(current, true /*requireStringLiteralLikeArgument*/),
 			ast.IsImportCall(current):
 			if moduleSpecifier := ast.GetExternalModuleName(current); moduleSpecifier != nil && ast.IsStringLiteralLike(moduleSpecifier) {
@@ -413,7 +424,7 @@ func getSourceDefinitionNamesForNode(node *ast.Node, moduleSpecifier *ast.Node) 
 	names := getCandidateSourceDeclarationNames(node, nil)
 	if node == moduleSpecifier {
 		names = append(names, getImportNamesForModuleSpecifier(moduleSpecifier)...)
-	} else if node.Parent != nil && ast.IsImportClause(node.Parent) && node.Parent.Name() == node {
+	} else if isDefaultImportName(node) {
 		names = append(names, "default")
 	}
 	return core.Deduplicate(core.Filter(names, func(name string) bool { return name != "" }))
@@ -423,15 +434,14 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	program *compiler.Program,
 	fileName string,
 	names []string,
-	seen map[string]struct{},
+	seen *collections.Set[string],
 ) []*ast.Node {
 	if fileName == "" || len(names) == 0 {
 		return nil
 	}
-	if _, ok := seen[fileName]; ok {
+	if !seen.AddIfAbsent(fileName) {
 		return nil
 	}
-	seen[fileName] = struct{}{}
 
 	sourceFile := l.getOrParseSourceFile(program, fileName)
 	if sourceFile == nil {
@@ -478,10 +488,7 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 			return false
 		}
 		switch {
-		case ast.IsImportDeclaration(node),
-			ast.IsExportDeclaration(node),
-			ast.IsJSImportDeclaration(node),
-			ast.IsImportEqualsDeclaration(node),
+		case ast.IsAnyImportOrReExport(node),
 			ast.IsRequireCall(node, true /*requireStringLiteralLikeArgument*/),
 			ast.IsImportCall(node):
 			if moduleSpecifier := ast.GetExternalModuleName(node); moduleSpecifier != nil && ast.IsStringLiteralLike(moduleSpecifier) {
@@ -529,9 +536,7 @@ func isImportLikeDeclaration(node *ast.Node) bool {
 		case ast.IsImportSpecifier(current),
 			ast.IsImportClause(current),
 			ast.IsNamespaceImport(current),
-			ast.IsImportEqualsDeclaration(current),
-			ast.IsImportDeclaration(current),
-			ast.IsJSImportDeclaration(current):
+			ast.IsImportNode(current):
 			return true
 		case ast.IsExportSpecifier(current):
 			return current.Parent != nil && current.Parent.Parent != nil && current.Parent.Parent.ModuleSpecifier() != nil
@@ -646,75 +651,81 @@ func filterPreferredSourceDeclarations(originalNode *ast.Node, declarations []*a
 	if len(declarations) <= 1 || originalNode == nil {
 		return declarations
 	}
-	if originalNode.Parent != nil && ast.IsAccessExpression(originalNode.Parent) && originalNode.Parent.Name() == originalNode {
-		preferred := core.Filter(declarations, func(node *ast.Node) bool {
-			switch node.Kind {
-			case ast.KindPropertyAssignment,
-				ast.KindShorthandPropertyAssignment,
-				ast.KindPropertyDeclaration,
-				ast.KindPropertySignature,
-				ast.KindMethodDeclaration,
-				ast.KindMethodSignature,
-				ast.KindGetAccessor,
-				ast.KindSetAccessor,
-				ast.KindEnumMember:
-				return true
-			default:
-				return false
-			}
-		})
-		if len(preferred) != 0 {
-			return preferred
-		}
+	if preferred := getPropertyLikeSourceDeclarations(originalNode, declarations); len(preferred) != 0 {
+		return preferred
 	}
-
-	preferred := core.Filter(declarations, func(node *ast.Node) bool {
-		if !ast.IsDeclaration(node) || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindJSExportAssignment {
-			return false
-		}
-		if ast.IsBinaryExpression(node) && ast.GetAssignmentDeclarationKind(node) != ast.JSDeclarationKindNone {
-			return false
-		}
-		switch node.Kind {
-		case ast.KindParameter,
-			ast.KindTypeParameter,
-			ast.KindBindingElement,
-			ast.KindImportClause,
-			ast.KindImportSpecifier,
-			ast.KindNamespaceImport,
-			ast.KindExportSpecifier,
-			ast.KindPropertyAccessExpression,
-			ast.KindElementAccessExpression,
-			ast.KindCommonJSExport:
-			return false
-		default:
-			return true
-		}
-	})
-	if len(preferred) != 0 {
+	if preferred := getConcreteSourceDeclarations(declarations); len(preferred) != 0 {
 		return preferred
 	}
 	return declarations
 }
 
+func getPropertyLikeSourceDeclarations(originalNode *ast.Node, declarations []*ast.Node) []*ast.Node {
+	if originalNode.Parent == nil || !ast.IsAccessExpression(originalNode.Parent) || originalNode.Parent.Name() != originalNode {
+		return nil
+	}
+	return core.Filter(declarations, func(node *ast.Node) bool {
+		switch node.Kind {
+		case ast.KindPropertyAssignment,
+			ast.KindShorthandPropertyAssignment,
+			ast.KindPropertyDeclaration,
+			ast.KindPropertySignature,
+			ast.KindMethodDeclaration,
+			ast.KindMethodSignature,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindEnumMember:
+			return true
+		default:
+			return false
+		}
+	})
+}
+
+func getConcreteSourceDeclarations(declarations []*ast.Node) []*ast.Node {
+	return core.Filter(declarations, isConcreteSourceDeclaration)
+}
+
+func isConcreteSourceDeclaration(node *ast.Node) bool {
+	if !ast.IsDeclaration(node) || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindJSExportAssignment {
+		return false
+	}
+	if ast.IsBinaryExpression(node) && ast.GetAssignmentDeclarationKind(node) != ast.JSDeclarationKindNone {
+		return false
+	}
+	switch node.Kind {
+	case ast.KindParameter,
+		ast.KindTypeParameter,
+		ast.KindBindingElement,
+		ast.KindImportClause,
+		ast.KindImportSpecifier,
+		ast.KindNamespaceImport,
+		ast.KindExportSpecifier,
+		ast.KindPropertyAccessExpression,
+		ast.KindElementAccessExpression,
+		ast.KindCommonJSExport:
+		return false
+	default:
+		return true
+	}
+}
+
 func uniqueDeclarationNodes(nodes []*ast.Node) []*ast.Node {
 	type declarationKey struct {
 		fileName string
-		pos      int
-		end      int
+		loc      core.TextRange
 	}
-	seen := make(map[declarationKey]struct{}, len(nodes))
+	var seen collections.Set[declarationKey]
 	result := make([]*ast.Node, 0, len(nodes))
 	for _, node := range nodes {
 		if node == nil {
 			continue
 		}
 		fileName := ast.GetSourceFileOfNode(node).FileName()
-		key := declarationKey{fileName: fileName, pos: node.Pos(), end: node.End()}
-		if _, ok := seen[key]; ok {
+		key := declarationKey{fileName: fileName, loc: node.Loc}
+		if !seen.AddIfAbsent(key) {
 			continue
 		}
-		seen[key] = struct{}{}
 		result = append(result, node)
 	}
 	return result
@@ -727,8 +738,5 @@ func findClosestDeclarationNode(sourceFile *ast.SourceFile, pos int) *ast.Node {
 			return current
 		}
 	}
-	if len(sourceFile.Statements.Nodes) != 0 {
-		return sourceFile.Statements.Nodes[0].AsNode()
-	}
-	return sourceFile.AsNode()
+	return getSourceDefinitionEntryNode(sourceFile)
 }
