@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"strings"
@@ -273,8 +274,9 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 	originalNode *ast.Node,
 	declaration *ast.Node,
 ) string {
-	if moduleSpecifier := findContainingModuleSpecifier(originalNode); moduleSpecifier != nil {
-		if implementationFile := l.resolveImplementationFileForModuleSpecifier(program, currentFile, moduleSpecifier); implementationFile != "" {
+	originalModuleSpecifier := findContainingModuleSpecifier(originalNode)
+	if originalModuleSpecifier != nil {
+		if implementationFile := l.resolveImplementationFileForModuleSpecifier(program, currentFile, originalModuleSpecifier); implementationFile != "" {
 			return implementationFile
 		}
 	}
@@ -284,12 +286,11 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 		}
 	}
 
-	_, startPos := getFileAndStartPosFromDeclaration(declaration)
 	preferredMode := core.ModuleKindESNext
-	if moduleSpecifier := findContainingModuleSpecifier(originalNode); moduleSpecifier != nil {
-		preferredMode = program.GetModeForUsageLocation(currentFile, moduleSpecifier)
+	if originalModuleSpecifier != nil {
+		preferredMode = program.GetModeForUsageLocation(currentFile, originalModuleSpecifier)
 	}
-	return l.findImplementationFileFromDtsFileName(program, ast.GetSourceFileOfNode(declaration).FileName(), currentFile.FileName(), preferredMode, startPos)
+	return l.findImplementationFileFromDtsFileName(program, ast.GetSourceFileOfNode(declaration).FileName(), currentFile.FileName(), preferredMode)
 }
 
 func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
@@ -310,7 +311,7 @@ func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
 		if !tspath.IsDeclarationFileName(resolved.ResolvedFileName) {
 			return resolved.ResolvedFileName
 		}
-		if implementationFile := l.findImplementationFileFromDtsFileName(program, resolved.ResolvedFileName, currentFile.FileName(), mode, core.TextPos(moduleSpecifier.Pos())); implementationFile != "" {
+		if implementationFile := l.findImplementationFileFromDtsFileName(program, resolved.ResolvedFileName, currentFile.FileName(), mode); implementationFile != "" {
 			return implementationFile
 		}
 	}
@@ -323,7 +324,6 @@ func (l *LanguageService) findImplementationFileFromDtsFileName(
 	dtsFileName string,
 	resolveFromFile string,
 	preferredMode core.ResolutionMode,
-	_ core.TextPos,
 ) string {
 	options := *program.Options()
 	options.NoDtsResolution = core.TSTrue
@@ -543,14 +543,7 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 	}
 	sourceFile.AsNode().ForEachChild(visit)
 	slices.SortFunc(files, func(a, b forwardedFile) int {
-		switch {
-		case a.pos < b.pos:
-			return -1
-		case a.pos > b.pos:
-			return 1
-		default:
-			return 0
-		}
+		return cmp.Compare(a.pos, b.pos)
 	})
 	return core.Deduplicate(core.Map(files, func(file forwardedFile) string { return file.fileName }))
 }
