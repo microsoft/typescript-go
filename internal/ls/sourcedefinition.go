@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -35,7 +36,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 	originSelectionRange := l.createLspRangeFromNode(node, file)
 	declarations := l.getSourceDefinitionDeclarations(ctx, program, file, node, pos)
 	if len(declarations) == 0 {
-		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
+		return l.ProvideDefinition(ctx, documentURI, position)
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 }
@@ -96,6 +97,9 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	declarations = uniqueDeclarationNodes(declarations)
 	if filtered := filterImportLikeDeclarations(currentFile, declarations); len(filtered) != 0 {
 		declarations = filtered
+	}
+	if shouldFallbackToRegularDefinition(c, node, declarations) {
+		return nil
 	}
 	if shouldFallbackToModuleSpecifier(currentFile, node, moduleSpecifier, declarations) {
 		if fallback := l.getSourceDefinitionDeclarationsForModuleSpecifier(program, currentFile, moduleSpecifier, node, nil); len(fallback) != 0 {
@@ -160,7 +164,19 @@ func isDefaultImportName(node *ast.Node) bool {
 }
 
 func shouldPreferModuleSpecifierResult(node *ast.Node, moduleSpecifier *ast.Node, declarations []*ast.Node) bool {
-	return moduleSpecifier != nil && len(declarations) != 0 && (node == moduleSpecifier || isImportOrExportName(node))
+	if moduleSpecifier == nil || len(declarations) == 0 {
+		return false
+	}
+	if node == moduleSpecifier {
+		return true
+	}
+	if !isImportOrExportName(node) {
+		return false
+	}
+	if ast.IsPartOfTypeNode(node) || ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) {
+		return len(getConcreteSourceDeclarations(declarations)) != 0
+	}
+	return true
 }
 
 func shouldFallbackToModuleSpecifier(currentFile *ast.SourceFile, node *ast.Node, moduleSpecifier *ast.Node, declarations []*ast.Node) bool {
@@ -187,6 +203,28 @@ func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Nod
 		return []*ast.Node{entry}
 	}
 	return nil
+}
+
+func shouldFallbackToRegularDefinition(c *checker.Checker, node *ast.Node, declarations []*ast.Node) bool {
+	if len(declarations) == 0 {
+		return true
+	}
+	if len(getConcreteSourceDeclarations(declarations)) != 0 {
+		return false
+	}
+	if ast.IsPartOfTypeNode(node) || ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) {
+		return true
+	}
+	symbol := c.GetSymbolAtLocation(node)
+	if symbol == nil {
+		return false
+	}
+	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+		if aliased := c.GetAliasedSymbol(symbol); aliased != nil && aliased != c.GetUnknownSymbol() {
+			symbol = aliased
+		}
+	}
+	return symbol.Flags&ast.SymbolFlagsValue == 0 && symbol.Flags&ast.SymbolFlagsType != 0
 }
 
 func (l *LanguageService) mapDeclarationToSourceDefinitions(
