@@ -669,7 +669,27 @@ func filterPreferredSourceDeclarations(originalNode *ast.Node, declarations []*a
 	}
 
 	preferred := core.Filter(declarations, func(node *ast.Node) bool {
-		return ast.IsDeclaration(node) && node.Kind != ast.KindExportAssignment && node.Kind != ast.KindJSExportAssignment
+		if !ast.IsDeclaration(node) || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindJSExportAssignment {
+			return false
+		}
+		if ast.IsBinaryExpression(node) && ast.GetAssignmentDeclarationKind(node) != ast.JSDeclarationKindNone {
+			return false
+		}
+		switch node.Kind {
+		case ast.KindParameter,
+			ast.KindTypeParameter,
+			ast.KindBindingElement,
+			ast.KindImportClause,
+			ast.KindImportSpecifier,
+			ast.KindNamespaceImport,
+			ast.KindExportSpecifier,
+			ast.KindPropertyAccessExpression,
+			ast.KindElementAccessExpression,
+			ast.KindCommonJSExport:
+			return false
+		default:
+			return true
+		}
 	})
 	if len(preferred) != 0 {
 		return preferred
