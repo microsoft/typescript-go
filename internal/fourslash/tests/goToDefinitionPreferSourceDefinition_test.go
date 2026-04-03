@@ -31,3 +31,27 @@ a/*start*/`
 	f.Configure(t, &lsutil.UserPreferences{PreferGoToSourceDefinition: true})
 	f.VerifyBaselineGoToDefinition(t, false /*includeOriginalSelectionRange*/, "start")
 }
+
+func TestGoToDefinitionPreferSourceDefinitionFallback(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @moduleResolution: bundler
+// @Filename: /home/src/workspaces/project/node_modules/pkg/package.json
+{ "name": "pkg", "main": "./index.js", "types": "./index.d.ts" }
+// @Filename: /home/src/workspaces/project/node_modules/pkg/index.d.ts
+export interface Config {
+    enabled: boolean;
+}
+// @Filename: /home/src/workspaces/project/node_modules/pkg/index.js
+exports.makeConfig = () => ({ enabled: true });
+// @Filename: /home/src/workspaces/project/index.ts
+import type { Config } from "pkg";
+let value: /*start*/Config;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+
+	// With preferGoToSourceDefinition, when no source .js definition exists for a type-only symbol,
+	// go-to-definition should fall back to the .d.ts definition.
+	f.Configure(t, &lsutil.UserPreferences{PreferGoToSourceDefinition: true})
+	f.VerifyBaselineGoToDefinition(t, false /*includeOriginalSelectionRange*/, "start")
+}
