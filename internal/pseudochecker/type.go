@@ -159,14 +159,12 @@ func (t *PseudoType) AsPseudoTypeUnion() *PseudoTypeUnion {
 }
 
 type PseudoParameter struct {
-	Rest     bool
-	Name     *ast.Node
-	Optional bool
-	Type     *PseudoType
+	Declaration *ast.ParameterDeclaration
+	Type        *PseudoType
 }
 
-func NewPseudoParameter(isRest bool, name *ast.Node, isOptional bool, t *PseudoType) *PseudoParameter {
-	return &PseudoParameter{Rest: isRest, Name: name, Optional: isOptional, Type: t}
+func NewPseudoParameter(declaration *ast.ParameterDeclaration, t *PseudoType) *PseudoParameter {
+	return &PseudoParameter{Declaration: declaration, Type: t}
 }
 
 // PseudoTypeSingleCallSignature represents an object type with a single call signature, like an arrow or function expression
