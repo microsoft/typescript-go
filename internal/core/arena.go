@@ -22,7 +22,7 @@ func (a *Arena[T]) New() *T {
 }
 
 // Allocate a slice of the given size in the arena. If the requested size is beyond the capacity of the arena
-// and a arena of the next size up still wouldn't fit the slice, make a separate memory allocation for the slice.
+// and an arena of the next size up still wouldn't fit the slice, make a separate memory allocation for the slice.
 // Otherwise, grow the arena if necessary and allocate a slice out of it. The length and capacity of the resulting
 // slice are equal to the given size.
 func (a *Arena[T]) NewSlice(size int) []T {
