@@ -279,10 +279,10 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 
 func (c *Checker) isOptionalParameter(node *ast.Node) bool {
 	// !!! TODO: JSDoc support
-	if ast.IsParameter(node) && node.QuestionToken() != nil {
+	if ast.IsParameterDeclaration(node) && node.QuestionToken() != nil {
 		return true
 	}
-	if !ast.IsParameter(node) {
+	if !ast.IsParameterDeclaration(node) {
 		return false
 	}
 	if node.Initializer() != nil {
@@ -421,18 +421,18 @@ func CompareTypes(t1, t2 *Type) int {
 		}
 		// When object types have the same or no symbol, order by kind. We order type references before other kinds.
 		if t1.objectFlags&ObjectFlagsReference != 0 && t2.objectFlags&ObjectFlagsReference != 0 {
-			r1 := t1.AsTypeReference()
-			r2 := t2.AsTypeReference()
+			r1 := t1.AsTypeReferenceNode()
+			r2 := t2.AsTypeReferenceNode()
 			if r1.target.objectFlags&ObjectFlagsTuple != 0 && r2.target.objectFlags&ObjectFlagsTuple != 0 {
 				// Tuple types have no associated symbol, instead we order by tuple element information.
-				if c := compareTupleTypes(r1.target.AsTupleType(), r2.target.AsTupleType()); c != 0 {
+				if c := compareTupleTypes(r1.target.AsTupleTypeNode(), r2.target.AsTupleTypeNode()); c != 0 {
 					return c
 				}
 			}
 			// Here we know we have references to instantiations of the same type because we have matching targets.
 			if r1.node == nil && r2.node == nil {
 				// Non-deferred type references with the same target are sorted by their type argument lists.
-				if c := compareTypeLists(t1.AsTypeReference().resolvedTypeArguments, t2.AsTypeReference().resolvedTypeArguments); c != 0 {
+				if c := compareTypeLists(t1.AsTypeReferenceNode().resolvedTypeArguments, t2.AsTypeReferenceNode().resolvedTypeArguments); c != 0 {
 					return c
 				}
 			} else {
@@ -490,17 +490,17 @@ func CompareTypes(t1, t2 *Type) int {
 		}
 	case t1.flags&TypeFlagsStringLiteral != 0:
 		// String literal types are ordered by their values.
-		if c := strings.Compare(t1.AsLiteralType().value.(string), t2.AsLiteralType().value.(string)); c != 0 {
+		if c := strings.Compare(t1.AsLiteralTypeNode().value.(string), t2.AsLiteralTypeNode().value.(string)); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsNumberLiteral != 0:
 		// Numeric literal types are ordered by their values.
-		if c := cmp.Compare(t1.AsLiteralType().value.(jsnum.Number), t2.AsLiteralType().value.(jsnum.Number)); c != 0 {
+		if c := cmp.Compare(t1.AsLiteralTypeNode().value.(jsnum.Number), t2.AsLiteralTypeNode().value.(jsnum.Number)); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsBooleanLiteral != 0:
-		b1 := t1.AsLiteralType().value.(bool)
-		b2 := t2.AsLiteralType().value.(bool)
+		b1 := t1.AsLiteralTypeNode().value.(bool)
+		b2 := t2.AsLiteralTypeNode().value.(bool)
 		if b1 != b2 {
 			if b1 {
 				return 1
@@ -519,17 +519,17 @@ func CompareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := CompareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessTypeNode().objectType, t2.AsIndexedAccessTypeNode().objectType); c != 0 {
 			return c
 		}
-		if c := CompareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessTypeNode().indexType, t2.AsIndexedAccessTypeNode().indexType); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
-		if c := t1.checker.compareNodes(t1.AsConditionalType().root.node.AsNode(), t2.AsConditionalType().root.node.AsNode()); c != 0 {
+		if c := t1.checker.compareNodes(t1.AsConditionalTypeNode().root.node.AsNode(), t2.AsConditionalTypeNode().root.node.AsNode()); c != 0 {
 			return c
 		}
-		if c := compareTypeMappers(t1.AsConditionalType().mapper, t2.AsConditionalType().mapper); c != 0 {
+		if c := compareTypeMappers(t1.AsConditionalTypeNode().mapper, t2.AsConditionalTypeNode().mapper); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsSubstitution != 0:
@@ -540,10 +540,10 @@ func CompareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
-		if c := slices.Compare(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
+		if c := slices.Compare(t1.AsTemplateLiteralTypeNode().texts, t2.AsTemplateLiteralTypeNode().texts); c != 0 {
 			return c
 		}
-		if c := compareTypeLists(t1.AsTemplateLiteralType().types, t2.AsTemplateLiteralType().types); c != 0 {
+		if c := compareTypeLists(t1.AsTemplateLiteralTypeNode().types, t2.AsTemplateLiteralTypeNode().types); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
@@ -848,9 +848,9 @@ func isTypeUsableAsPropertyName(t *Type) bool {
 func getPropertyNameFromType(t *Type) string {
 	switch {
 	case t.flags&TypeFlagsStringLiteral != 0:
-		return t.AsLiteralType().value.(string)
+		return t.AsLiteralTypeNode().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:
-		return t.AsLiteralType().value.(jsnum.Number).String()
+		return t.AsLiteralTypeNode().value.(jsnum.Number).String()
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name
 	}
@@ -973,7 +973,7 @@ func getContainingClassExcludingClassDecorators(node *ast.Node) *ast.ClassLikeDe
 }
 
 func isThisTypeParameter(t *Type) bool {
-	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
+	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameterDeclaration().isThisType
 }
 
 func isClassInstanceProperty(node *ast.Node) bool {
@@ -1007,7 +1007,7 @@ func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 	// Return true if symbol is a parameter, a catch clause variable, or a mutable local variable
 	if symbol.ValueDeclaration != nil {
 		declaration := ast.GetRootDeclaration(symbol.ValueDeclaration)
-		return declaration != nil && (ast.IsParameter(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
+		return declaration != nil && (ast.IsParameterDeclaration(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
 	}
 	return false
 }
@@ -1166,7 +1166,7 @@ func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
 			return node
 		case ast.KindDecorator:
 			// Decorators are always applied outside of the body of a class or method.
-			if ast.IsParameter(node.Parent) && ast.IsClassElement(node.Parent.Parent) {
+			if ast.IsParameterDeclaration(node.Parent) && ast.IsClassElement(node.Parent.Parent) {
 				// If the decorator's parent is a Parameter, we resolve the this container from
 				// the grandparent class declaration.
 				node = node.Parent.Parent
@@ -1724,7 +1724,7 @@ func (c *Checker) isJSLiteralType(t *Type) bool {
 		return core.Every(t.AsUnionType().types, c.isJSLiteralType)
 	}
 	if t.flags&TypeFlagsIntersection != 0 {
-		return core.Some(t.AsIntersectionType().types, c.isJSLiteralType)
+		return core.Some(t.AsIntersectionTypeNode().types, c.isJSLiteralType)
 	}
 	if t.flags&TypeFlagsInstantiable != 0 {
 		constraint := c.getResolvedBaseConstraint(t, nil)

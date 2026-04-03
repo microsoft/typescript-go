@@ -14,14 +14,14 @@ import type {
     JSDocTag,
     JSDocTypeLiteral,
     JsxText,
-    LiteralLikeNode,
+    LiteralLike,
     Node,
     NodeArray,
     ObjectLiteralExpression,
     PostfixUnaryExpression,
     PrefixUnaryExpression,
     SourceFile,
-    TemplateLiteralLikeNode,
+    TemplateLiteralLike,
 } from "@typescript/ast";
 import {
     NodeFlags,
@@ -147,7 +147,7 @@ function getNodeDefinedData(node: Node): number {
         case SyntaxKind.ExportAssignment:
             return ((node as ExportAssignment).isExportEquals ? 1 : 0) << 24;
         case SyntaxKind.Block:
-            return ((node as Block).multiLine ? 1 : 0) << 24;
+            return ((node as Block).multiline ? 1 : 0) << 24;
         case SyntaxKind.ArrayLiteralExpression:
             return ((node as ArrayLiteralExpression).multiLine ? 1 : 0) << 24;
         case SyntaxKind.ObjectLiteralExpression:
@@ -216,7 +216,7 @@ function isChildPresent(v: unknown): boolean {
 }
 
 function recordNodeStrings(node: Node, strs: StringTable): number {
-    return strs.add((node as LiteralLikeNode).text ?? "");
+    return strs.add((node as LiteralLike).text ?? "");
 }
 
 function encodeFileReferences(refs: readonly FileReference[] | undefined, writer: MsgpackWriter): number {
@@ -248,7 +248,7 @@ function recordExtendedData(node: Node, strs: StringTable, extendedData: number[
     }
     else {
         // TemplateHead, TemplateMiddle, TemplateTail
-        const tmpl = node as TemplateLiteralLikeNode;
+        const tmpl = node as TemplateLiteralLike;
         const text: string = tmpl.text ?? "";
         const rawText: string = tmpl.rawText ?? "";
         const templateFlags: number = tmpl.templateFlags ?? 0;

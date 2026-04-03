@@ -56,7 +56,7 @@ type pendingDecl struct {
 // declarations, or nil.
 func FlattenDestructuringBinding(
 	tx *Transformer,
-	node *ast.Node, // VariableDeclaration | ParameterDeclaration | BindingElement
+	node *ast.Node, // VariableDeclaration | Parameter | BindingElement
 	rval *ast.Node,
 	level FlattenLevel,
 	hoistTempVariables bool,

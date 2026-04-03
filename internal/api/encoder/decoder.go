@@ -366,7 +366,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		name := d.nodeAt(it.nextIf(mask, 1))
 		constraint := d.nodeAt(it.nextIf(mask, 2))
 		defaultType := d.nodeAt(it.nextIf(mask, 3))
-		return d.factory.NewTypeParameterDeclaration(mods, name, constraint, defaultType), nil
+		return d.factory.NewTypeParameterDeclaration(mods, name, constraint, nil, defaultType), nil
 
 	case ast.KindIfStatement:
 		it := newChildIter(childIndices)
@@ -569,7 +569,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		mods := d.modifierListAt(it.nextIf(mask, 0))
 		expr := d.nodeAt(it.nextIf(mask, 1))
 		if kind == ast.KindJSExportAssignment {
-			return d.factory.NewJSExportAssignment(nil, expr), nil
+			return d.factory.NewJSExportAssignment(nil, true, nil, expr), nil
 		}
 		return d.factory.NewExportAssignment(mods, isExportEquals, nil, expr), nil
 
@@ -970,7 +970,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		comment := d.nodeListAt(it.nextIf(mask, 2))
 		return d.factory.NewJSDocTypeTag(tagName, typeExpr, comment), nil
 
-	case ast.KindJSDocTag:
+	case ast.KindJSDocUnknownTag:
 		it := newChildIter(childIndices)
 		tagName := d.nodeAt(it.nextIf(mask, 0))
 		comment := d.nodeListAt(it.nextIf(mask, 1))
@@ -1237,9 +1237,9 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindJSDocTypeExpression:
 		return d.factory.NewJSDocTypeExpression(d.singleChild(childIndices)), nil
 	case ast.KindJSDocNonNullableType:
-		return d.factory.NewJSDocNonNullableType(d.singleChild(childIndices)), nil
+		return d.factory.NewJSDocNonNullableType(d.singleChild(childIndices), false), nil
 	case ast.KindJSDocNullableType:
-		return d.factory.NewJSDocNullableType(d.singleChild(childIndices)), nil
+		return d.factory.NewJSDocNullableType(d.singleChild(childIndices), false), nil
 	case ast.KindJSDocVariadicType:
 		return d.factory.NewJSDocVariadicType(d.singleChild(childIndices)), nil
 	case ast.KindJSDocOptionalType:

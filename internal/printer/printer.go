@@ -1424,11 +1424,11 @@ func (p *Printer) emitTypeParameter(node *ast.TypeParameterDeclaration) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitTypeParameterNode(node *ast.TypeParameterDeclarationNode) {
+func (p *Printer) emitTypeParameterDeclarationNode(node *ast.TypeParameterDeclarationNode) {
 	// NOTE: QuickInfo uses TypeFormatFlagsWriteTypeArgumentsOfSignature to instruct the NodeBuilder to store type arguments
 	// (i.e. type nodes) instead of type parameter declarations in the type parameter list.
 	if ast.IsTypeParameterDeclaration(node) {
-		p.emitTypeParameter(node.AsTypeParameter())
+		p.emitTypeParameter(node.AsTypeParameterDeclaration())
 	} else {
 		p.emitTypeArgument(node)
 	}
@@ -1456,7 +1456,7 @@ func (p *Printer) emitParameter(node *ast.ParameterDeclaration) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitParameterNode(node *ast.ParameterDeclarationNode) {
+func (p *Printer) emitParameterDeclarationNode(node *ast.ParameterDeclarationNode) {
 	p.emitParameter(node.AsParameterDeclaration())
 }
 
@@ -1482,7 +1482,7 @@ func (p *Printer) emitTypeParameters(parentNode *ast.Node, nodes *ast.TypeParame
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitTypeParameterDeclarationNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeAnnotation(node *ast.TypeNode) {
@@ -1508,7 +1508,7 @@ func (p *Printer) emitInitializer(node *ast.Expression, equalTokenPos int, conte
 
 func (p *Printer) emitParameters(parentNode *ast.Node, parameters *ast.ParameterList) {
 	p.generateAllNames(parameters)
-	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFParameters /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitParameterDeclarationNode, parentNode, parameters, LFParameters /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList) bool {
@@ -1533,10 +1533,10 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 		ast.IsIdentifier(parameter.Name()) // parameter name must be identifier
 }
 
-func (p *Printer) emitParametersForArrow(parentNode *ast.Node /*FunctionTypeNode | ConstructorTypeNode | ArrowFunction*/, parameters *ast.ParameterList) {
+func (p *Printer) emitParametersForArrow(parentNode *ast.Node /*FunctionType | ConstructorType | ArrowFunction*/, parameters *ast.ParameterList) {
 	if canEmitSimpleArrowHead(parentNode, parameters) {
 		p.generateAllNames(parameters)
-		p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFSingleArrowParameter)
+		p.emitList((*Printer).emitParameterDeclarationNode, parentNode, parameters, LFSingleArrowParameter)
 	} else {
 		p.emitParameters(parentNode, parameters)
 	}
@@ -1544,7 +1544,7 @@ func (p *Printer) emitParametersForArrow(parentNode *ast.Node /*FunctionTypeNode
 
 func (p *Printer) emitParametersForIndexSignature(parentNode *ast.Node, parameters *ast.ParameterList) {
 	p.generateAllNames(parameters)
-	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFIndexSignatureParameters)
+	p.emitList((*Printer).emitParameterDeclarationNode, parentNode, parameters, LFIndexSignatureParameters)
 }
 
 func (p *Printer) emitSignature(node *ast.Node) {
@@ -1879,19 +1879,19 @@ func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
 	p.exitNode(node.AsNode(), state)
 }
 
-// Emits the return type of a FunctionTypeNode or ConstructorTypeNode, including the arrow (`=>`)
+// Emits the return type of a FunctionType or ConstructorType, including the arrow (`=>`)
 func (p *Printer) emitReturnType(node *ast.TypeNode) {
 	if node == nil {
 		return
 	}
 	p.writePunctuation("=>")
 	p.writeSpace()
-	if p.inExtends && node.Kind == ast.KindInferType && node.AsInferTypeNode().TypeParameter.AsTypeParameter().Constraint != nil {
-		// if the parent FunctionTypeNode or ConstructorTypeNode is in the `extends` clause of a ConditionalTypeNode,
+	if p.inExtends && node.Kind == ast.KindInferType && node.AsInferTypeNode().TypeParameter.AsTypeParameterDeclaration().Constraint != nil {
+		// if the parent FunctionType or ConstructorType is in the `extends` clause of a ConditionalType,
 		// we must parenthesize `infer ... extends ...` so as not to result in an ambiguous parse.
 		//
-		// `T extends () => infer U extends V ? W : X` would parse the `? W : X` as part of a ConditionalTypeNode in the
-		// return type of the FunctionTypeNode, thus we must emit as `T extends () => (infer U extends V) ? W : X`
+		// `T extends () => infer U extends V ? W : X` would parse the `? W : X` as part of a ConditionalType in the
+		// return type of the FunctionType, thus we must emit as `T extends () => (infer U extends V) ? W : X`
 		p.emitTypeNodePreservingExtends(node, ast.TypePrecedenceHighest)
 	} else {
 		p.emitTypeNodePreservingExtends(node, ast.TypePrecedenceLowest)
@@ -2053,7 +2053,7 @@ func (p *Printer) emitInferType(node *ast.InferTypeNode) {
 	state := p.enterNode(node.AsNode())
 	p.writeKeyword("infer")
 	p.writeSpace()
-	p.emitInferTypeParameter(node.TypeParameter.AsTypeParameter())
+	p.emitInferTypeParameter(node.TypeParameter.AsTypeParameterDeclaration())
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -2116,7 +2116,7 @@ func (p *Printer) emitMappedType(node *ast.MappedTypeNode) {
 		p.writeSpace()
 	}
 	p.writePunctuation("[")
-	p.emitMappedTypeParameter(node.TypeParameter.AsTypeParameter())
+	p.emitMappedTypeParameter(node.TypeParameter.AsTypeParameterDeclaration())
 	if node.NameType != nil {
 		p.writeSpace()
 		p.writeKeyword("as")
@@ -3082,6 +3082,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				p.parenthesizeExpressionForNoAsi(pae.Expression),
 				pae.QuestionDotToken,
 				pae.Name(),
+				pae.Flags,
 			)
 		case ast.KindElementAccessExpression:
 			eae := node.AsElementAccessExpression()
@@ -3090,6 +3091,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				p.parenthesizeExpressionForNoAsi(eae.Expression),
 				eae.QuestionDotToken,
 				eae.ArgumentExpression,
+				eae.Flags,
 			)
 		case ast.KindCallExpression:
 			ce := node.AsCallExpression()
@@ -3099,6 +3101,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				ce.QuestionDotToken,
 				ce.TypeArguments,
 				ce.Arguments,
+				ce.Flags,
 			)
 		case ast.KindTaggedTemplateExpression:
 			tte := node.AsTaggedTemplateExpression()
@@ -3108,12 +3111,14 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				tte.QuestionDotToken,
 				tte.TypeArguments,
 				tte.Template,
+				tte.Flags,
 			)
 		case ast.KindPostfixUnaryExpression:
 			pue := node.AsPostfixUnaryExpression()
 			return p.emitContext.Factory.UpdatePostfixUnaryExpression(
 				pue,
 				p.parenthesizeExpressionForNoAsi(pue.Operand),
+				pue.Operator,
 			)
 		case ast.KindBinaryExpression:
 			be := node.AsBinaryExpression()
@@ -3154,6 +3159,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 			return p.emitContext.Factory.UpdateNonNullExpression(
 				nne,
 				p.parenthesizeExpressionForNoAsi(nne.Expression),
+				nne.Flags,
 			)
 		}
 	}
@@ -3279,10 +3285,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
 	case ast.KindSyntheticReferenceExpression:
 		panic("SyntheticReferenceExpression should not be printed")
-
-	// !!!
-	////case ast.KindCommaListExpression:
-	////	p.emitCommaList(node.AsCommaListExpression())
 
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
@@ -5054,7 +5056,7 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 
 	// Signature elements
 	case ast.KindTypeParameter:
-		p.emitTypeParameter(node.AsTypeParameter())
+		p.emitTypeParameter(node.AsTypeParameterDeclaration())
 	case ast.KindParameter:
 		p.emitParameter(node.AsParameterDeclaration())
 	case ast.KindDecorator:

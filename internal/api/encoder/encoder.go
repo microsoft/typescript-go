@@ -566,7 +566,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		n := node.AsQualifiedName()
 		return (boolToByte(n.Left != nil) << 0) | (boolToByte(n.Right != nil) << 1)
 	case ast.KindTypeParameter:
-		n := node.AsTypeParameter()
+		n := node.AsTypeParameterDeclaration()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.Constraint != nil) << 2) | (boolToByte(n.DefaultType != nil) << 3)
 	case ast.KindIfStatement:
 		n := node.AsIfStatement()
@@ -808,7 +808,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindJSDocTypeTag:
 		n := node.AsJSDocTypeTag()
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Comment != nil) << 2)
-	case ast.KindJSDocTag:
+	case ast.KindJSDocUnknownTag:
 		n := node.AsJSDocUnknownTag()
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.Comment != nil) << 1)
 	case ast.KindJSDocTemplateTag:
@@ -875,7 +875,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		n := node.AsClassDeclaration()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(hasNodes(n.TypeParameters)) << 2) | (boolToByte(hasNodes(n.HeritageClauses)) << 3) | (boolToByte(hasNodes(n.Members)) << 4)
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-		n := node.AsJSDocParameterOrPropertyTag()
+		n := node.AsJSDocPropertyLikeTag()
 		if n.IsNameFirst {
 			return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeExpression != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 		}
@@ -921,7 +921,7 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 		n := node.AsObjectLiteralExpression()
 		return uint32(boolToByte(n.MultiLine)) << 24
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-		n := node.AsJSDocParameterOrPropertyTag()
+		n := node.AsJSDocPropertyLikeTag()
 		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
 	case ast.KindJsxText:
 		n := node.AsJsxText()

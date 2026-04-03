@@ -134,7 +134,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 						}
 					}
 					comments := tag.Comments()
-					if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "example" {
+					if tag.Kind == ast.KindJSDocUnknownTag && tag.TagName().Text() == "example" {
 						commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
 						if strings.HasPrefix(commentText, "<caption>") {
 							if captionEnd := strings.Index(commentText, "</caption>"); captionEnd > 0 {
@@ -324,7 +324,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					decl := symbol.ValueDeclaration
 					if decl != nil {
 						switch {
-						case ast.IsParameter(decl):
+						case ast.IsParameterDeclaration(decl):
 							b.WriteString("(parameter) ")
 						case ast.IsVarLet(decl):
 							b.WriteString("let ")
@@ -360,7 +360,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			b.WriteString(c.TypeToStringEx(t, container, typeFormatFlags))
 			if t.Flags()&checker.TypeFlagsLiteral != 0 {
 				b.WriteString(" = ")
-				b.WriteString(t.AsLiteralType().String())
+				b.WriteString(t.AsLiteralTypeNode().String())
 			}
 			setDeclaration(symbol.ValueDeclaration)
 		}
@@ -537,7 +537,7 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		return jsdoc
 	}
 	switch {
-	case ast.IsParameter(node):
+	case ast.IsParameterDeclaration(node):
 		name := node.Name()
 		if ast.IsBindingPattern(name) {
 			// For binding patterns, match JSDoc @param tags by position rather than by name

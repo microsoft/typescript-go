@@ -2683,7 +2683,7 @@ func (p *Parser) parseTypeParameterOfInferType() *ast.Node {
 	pos := p.nodePos()
 	name := p.parseIdentifier()
 	constraint := p.tryParseConstraintOfInferType()
-	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, constraint, nil /*defaultType*/), pos)
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, constraint, nil /*expression*/, nil /*defaultType*/), pos)
 }
 
 func (p *Parser) tryParseConstraintOfInferType() *ast.Node {
@@ -2705,14 +2705,14 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 		switch p.token {
 		case ast.KindExclamationToken:
 			p.nextToken()
-			typeNode = p.finishNode(p.factory.NewJSDocNonNullableType(typeNode), pos)
+			typeNode = p.finishNode(p.factory.NewJSDocNonNullableType(typeNode, true), pos)
 		case ast.KindQuestionToken:
 			// If next token is start of a type we have a conditional type
 			if p.lookAhead((*Parser).nextIsStartOfType) {
 				return typeNode
 			}
 			p.nextToken()
-			typeNode = p.finishNode(p.factory.NewJSDocNullableType(typeNode), pos)
+			typeNode = p.finishNode(p.factory.NewJSDocNullableType(typeNode, true), pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -2832,14 +2832,14 @@ func (p *Parser) parseJSDocAllType() *ast.Node {
 func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
 	pos := p.nodePos()
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseNonArrayType()), pos)
+	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseNonArrayType(), false), pos)
 }
 
 func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	// skip the ?
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType()), pos)
+	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType(), false), pos)
 }
 
 func (p *Parser) parseJSDocType() *ast.TypeNode {
@@ -3154,7 +3154,7 @@ func (p *Parser) parseMappedTypeParameter() *ast.Node {
 	name := p.parseIdentifierName()
 	p.parseExpected(ast.KindInKeyword)
 	typeNode := p.parseType()
-	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, typeNode, nil /*defaultType*/), pos)
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, typeNode, nil /*expression*/, nil /*defaultType*/), pos)
 }
 
 func (p *Parser) parseTypeMember() *ast.Node {
@@ -3240,8 +3240,7 @@ func (p *Parser) parseTypeParameter() *ast.Node {
 	if p.parseOptional(ast.KindEqualsToken) {
 		defaultType = p.parseType()
 	}
-	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType)
-	result.AsTypeParameter().Expression = expression
+	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, expression, defaultType)
 	return p.finishNode(result, pos)
 }
 
@@ -3356,7 +3355,7 @@ func (p *Parser) parseNameOfParameter(modifiers *ast.ModifierList) *ast.Node {
 		// function foo(static)
 		// isParameter('static') == true, because of isModifier('static')
 		// however 'static' is not a legal identifier in a strict mode.
-		// so result of this function will be ParameterDeclaration (flags = 0, name = missing, type = undefined, initializer = undefined)
+		// so result of this function will be Parameter (flags = 0, name = missing, type = undefined, initializer = undefined)
 		// and current token will not change => parsing of the enclosing parameter list will last till the end of time (or OOM)
 		// to avoid this we'll advance cursor to the next token.
 		p.nextToken()
@@ -4437,7 +4436,7 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	switch node.Kind {
 	case ast.KindTypeReference:
-		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
+		return ast.NodeIsMissing(node.AsTypeReferenceNode().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType, ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.Type())
 	}

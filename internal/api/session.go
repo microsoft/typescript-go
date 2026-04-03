@@ -1158,25 +1158,25 @@ func (s *Session) handleGetLocalTypeParametersOfType(_ context.Context, params *
 
 func (s *Session) handleGetObjectTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
-		return t.AsIndexedAccessType().ObjectType()
+		return t.AsIndexedAccessTypeNode().ObjectType()
 	})
 }
 
 func (s *Session) handleGetIndexTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
-		return t.AsIndexedAccessType().IndexType()
+		return t.AsIndexedAccessTypeNode().IndexType()
 	})
 }
 
 func (s *Session) handleGetCheckTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
-		return t.AsConditionalType().CheckType()
+		return t.AsConditionalTypeNode().CheckType()
 	})
 }
 
 func (s *Session) handleGetExtendsTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
-		return t.AsConditionalType().ExtendsType()
+		return t.AsConditionalTypeNode().ExtendsType()
 	})
 }
 

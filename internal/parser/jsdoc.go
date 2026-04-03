@@ -1034,7 +1034,7 @@ func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 
 func (p *Parser) parseJSDocSignature(start int, indent int) *ast.Node {
 	parameters := p.parseCallbackTagParameters(indent)
-	var returnTag *ast.JSDocTag
+	var returnTag *ast.Node
 	state := p.mark()
 	if p.parseOptionalJsdoc(ast.KindAtToken) {
 		tag := p.parseTag(nil, indent)
@@ -1184,7 +1184,7 @@ func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
 	if ast.NodeIsMissing(name) {
 		return nil
 	}
-	return p.finishNode(p.factory.NewTypeParameterDeclaration(modifiers, name, nil /*constraint*/, defaultType), typeParameterPos)
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(modifiers, name, nil /*constraint*/, nil /*expression*/, defaultType), typeParameterPos)
 }
 
 func (p *Parser) parseTemplateTagTypeParameters() *ast.TypeParameterList {

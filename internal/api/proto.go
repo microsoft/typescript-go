@@ -524,22 +524,22 @@ func newTypeData(t *checker.Type) *TypeResponse {
 
 	switch flags := t.Flags(); {
 	case flags&checker.TypeFlagsLiteral != 0:
-		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
+		resp.Value = literalValueToJSON(t.AsLiteralTypeNode().Value())
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()
 		if objectFlags&checker.ObjectFlagsReference != 0 {
 			var ref *checker.TypeReference
 			if objectFlags&checker.ObjectFlagsTuple != 0 {
-				tuple := t.AsTupleType()
-				ref = tuple.AsTypeReference()
+				tuple := t.AsTupleTypeNode()
+				ref = tuple.AsTypeReferenceNode()
 				resp.ElementFlags = tuple.ElementFlags()
 				fixedLen := tuple.FixedLength()
 				resp.FixedLength = &fixedLen
 				isReadonly := tuple.IsReadonly()
 				resp.TupleReadonly = &isReadonly
 			} else {
-				ref = t.AsTypeReference()
+				ref = t.AsTypeReferenceNode()
 			}
 			if ref.Target() != nil {
 				resp.Target = TypeHandle(ref.Target())
@@ -556,11 +556,11 @@ func newTypeData(t *checker.Type) *TypeResponse {
 	case flags&checker.TypeFlagsIndex != 0:
 		resp.Target = TypeHandle(t.AsIndexType().Target())
 	case flags&checker.TypeFlagsIndexedAccess != 0:
-		data := t.AsIndexedAccessType()
+		data := t.AsIndexedAccessTypeNode()
 		resp.ObjectType = TypeHandle(data.ObjectType())
 		resp.IndexType = TypeHandle(data.IndexType())
 	case flags&checker.TypeFlagsConditional != 0:
-		data := t.AsConditionalType()
+		data := t.AsConditionalTypeNode()
 		resp.CheckType = TypeHandle(data.CheckType())
 		resp.ExtendsType = TypeHandle(data.ExtendsType())
 	case flags&checker.TypeFlagsSubstitution != 0:
@@ -568,7 +568,7 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		resp.BaseType = TypeHandle(data.BaseType())
 		resp.SubstConstraint = TypeHandle(data.SubstConstraint())
 	case flags&checker.TypeFlagsTemplateLiteral != 0:
-		tl := t.AsTemplateLiteralType()
+		tl := t.AsTemplateLiteralTypeNode()
 		resp.Texts = tl.Texts()
 		// types omitted; fetched via separate request
 	case flags&checker.TypeFlagsStringMapping != 0:

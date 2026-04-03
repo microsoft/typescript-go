@@ -939,7 +939,7 @@ func getAdjustedNode(node *ast.Node) *ast.Node {
 		return node
 	default:
 		return ast.FindAncestor(node.Parent, func(n *ast.Node) bool {
-			if ast.IsParameter(n) {
+			if ast.IsParameterDeclaration(n) {
 				return true
 			} else if ast.IsBindingElement(n) || ast.IsObjectBindingPattern(n) || ast.IsArrayBindingPattern(n) {
 				return false
@@ -959,7 +959,7 @@ type contextualSignatureLocationInfo struct {
 func getSpreadElementCount(node *ast.SpreadElement, c *checker.Checker) int {
 	spreadType := c.GetTypeAtLocation(node.Expression)
 	if checker.IsTupleType(spreadType) {
-		tupleType := spreadType.Target().AsTupleType()
+		tupleType := spreadType.Target().AsTupleTypeNode()
 		if tupleType == nil {
 			return 0
 		}

@@ -9,7 +9,7 @@ import type {
     JSDocSyntaxKind,
     JsxTokenSyntaxKind,
     KeywordSyntaxKind,
-} from "./nodes.ts";
+} from "./ast.ts";
 
 export interface CommentDirective {
     range: { pos: number; end: number; };

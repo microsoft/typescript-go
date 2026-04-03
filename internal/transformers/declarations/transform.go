@@ -558,11 +558,11 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindVariableDeclaration:
 		result = tx.transformVariableDeclaration(input.AsVariableDeclaration())
 	case ast.KindTypeParameter:
-		result = tx.transformTypeParameterDeclaration(input.AsTypeParameter())
+		result = tx.transformTypeParameterDeclaration(input.AsTypeParameterDeclaration())
 	case ast.KindExpressionWithTypeArguments:
 		result = tx.transformExpressionWithTypeArguments(input.AsExpressionWithTypeArguments())
 	case ast.KindTypeReference:
-		result = tx.transformTypeReference(input.AsTypeReference())
+		result = tx.transformTypeReference(input.AsTypeReferenceNode())
 	case ast.KindConditionalType:
 		result = tx.transformConditionalTypeNode(input.AsConditionalTypeNode())
 	case ast.KindFunctionType:
@@ -586,7 +586,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindJSDocTypeLiteral:
 		result = tx.transformJSDocTypeLiteral(input.AsJSDocTypeLiteral())
 	case ast.KindJSDocPropertyTag:
-		result = tx.transformJSDocPropertyTag(input.AsJSDocParameterOrPropertyTag())
+		result = tx.transformJSDocPropertyTag(input.AsJSDocPropertyTag())
 	case ast.KindJSDocAllType:
 		result = tx.transformJSDocAllType(input.AsJSDocAllType())
 	case ast.KindJSDocNullableType:
@@ -657,8 +657,10 @@ func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageCl
 	if len(retainedClauses) == len(clause.Types.Nodes) {
 		return tx.Visitor().VisitEachChild(clause.AsNode())
 	}
+	hc := clause.AsHeritageClause()
 	return tx.Factory().UpdateHeritageClause(
-		clause,
+		hc,
+		hc.Token,
 		tx.Visitor().VisitNodes(tx.Factory().NewNodeList(retainedClauses)),
 	)
 }
@@ -1050,7 +1052,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		}
 		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
 
-		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
+		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.AsExportAssignment().IsExportEquals, input.Type(), newId)
 		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
 		tx.removeAllComments(assignment)
@@ -1182,7 +1184,7 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 
 	// Should be removed createTypeOfDeclaration will actually now reuse the existing annotation so there is no real need to duplicate type walking
 	// Left in for now to minimize diff during syntactic type node builder refactor
-	if !ast.IsExportAssignment(node) && !ast.IsBindingElement(node) && node.Type() != nil && (!ast.IsParameter(node) || !tx.resolver.RequiresAddingImplicitUndefined(node, nil, tx.enclosingDeclaration)) {
+	if !ast.IsExportAssignment(node) && !ast.IsBindingElement(node) && node.Type() != nil && (!ast.IsParameterDeclaration(node) || !tx.resolver.RequiresAddingImplicitUndefined(node, nil, tx.enclosingDeclaration)) {
 		return tx.Visitor().Visit(node.Type())
 	}
 
@@ -1526,8 +1528,10 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 			mods,
 			tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})),
 		)
+		hc := extendsClause.Parent.AsHeritageClause()
 		newHeritageClause := tx.Factory().UpdateHeritageClause(
-			extendsClause.Parent.AsHeritageClause(),
+			hc,
+			hc.Token,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().UpdateExpressionWithTypeArguments(
 					extendsClause.AsExpressionWithTypeArguments(),
@@ -1615,7 +1619,8 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		tx.EmitContext().SetCommentRange(declList, input.DeclarationList.Loc)
 		declList.Loc = input.DeclarationList.Loc
 	} else {
-		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodes)
+		vdl := input.DeclarationList.AsVariableDeclarationList()
+		declList = tx.Factory().UpdateVariableDeclarationList(vdl, vdl.Flags, nodes)
 	}
 	return tx.Factory().UpdateVariableStatement(input, modifiers, declList)
 }

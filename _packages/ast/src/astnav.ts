@@ -1,5 +1,11 @@
 import { NodeFlags } from "#enums/nodeFlags";
 import { SyntaxKind } from "#enums/syntaxKind";
+import type { TokenSyntaxKind } from "./ast-generated.ts";
+import type {
+    Node,
+    NodeArray,
+    SourceFile,
+} from "./ast.ts";
 import { createToken } from "./factory.ts";
 import {
     isJSDocKind,
@@ -8,11 +14,6 @@ import {
     isPropertyNameLiteral,
     isTokenKind,
 } from "./is.ts";
-import type {
-    Node,
-    NodeArray,
-    SourceFile,
-} from "./nodes.ts";
 import {
     createScanner,
     skipTrivia,
@@ -589,7 +590,7 @@ function getOrCreateToken(sourceFile: SourceFile, kind: SyntaxKind, pos: number,
         return existing;
     }
 
-    const token: Mutable<Node> = createToken(kind);
+    const token: Mutable<Node> = createToken(kind as TokenSyntaxKind);
     token.pos = pos;
     token.end = end;
     token.parent = parent;

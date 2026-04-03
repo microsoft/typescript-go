@@ -911,6 +911,7 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 	return c.Factory.UpdateBlock(
 		updated.AsBlock(),
 		c.MergeEnvironmentList(updated.StatementList(), declarations),
+		updated.AsBlock().Multiline,
 	)
 }
 
@@ -931,7 +932,7 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 			statements = append(statements, updated.Statements()...)
 			statementsList := c.Factory.NewNodeList(statements)
 			statementsList.Loc = updated.StatementList().Loc
-			return c.Factory.UpdateBlock(updated.AsBlock(), statementsList)
+			return c.Factory.UpdateBlock(updated.AsBlock(), statementsList, updated.AsBlock().Multiline)
 		}
 		statements = append(statements, updated)
 		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), true /*multiLine*/)

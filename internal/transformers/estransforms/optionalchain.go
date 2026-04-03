@@ -48,7 +48,8 @@ func (ch *optionalChainTransformer) visitCallExpression(node *ast.CallExpression
 				ch.EmitContext().SetOriginal(res, node.AsNode())
 				return res
 			}
-			return ch.Factory().UpdateCallExpression(node, expression, nil, nil, args)
+			ce := node.AsCallExpression()
+			return ch.Factory().UpdateCallExpression(ce, expression, ce.QuestionDotToken, ce.TypeArguments, args, ce.Flags)
 		}
 	}
 	return ch.Visitor().VisitEachChild(node.AsNode())
@@ -88,10 +89,11 @@ func (ch *optionalChainTransformer) visitPropertyOrElementAccessExpression(node 
 
 	if node.Kind == ast.KindPropertyAccessExpression {
 		p := node.AsPropertyAccessExpression()
-		expression = ch.Factory().UpdatePropertyAccessExpression(p, expression, nil, ch.Visitor().VisitNode(p.Name()))
+		expression = ch.Factory().UpdatePropertyAccessExpression(p, expression, p.QuestionDotToken, ch.Visitor().VisitNode(p.Name()), p.Flags)
 	} else {
 		p := node.AsElementAccessExpression()
-		expression = ch.Factory().UpdateElementAccessExpression(p, expression, nil, ch.Visitor().VisitNode(p.AsElementAccessExpression().ArgumentExpression))
+		eae := p.AsElementAccessExpression()
+		expression = ch.Factory().UpdateElementAccessExpression(eae, expression, eae.QuestionDotToken, ch.Visitor().VisitNode(eae.ArgumentExpression), eae.Flags)
 	}
 
 	if thisArg != nil {

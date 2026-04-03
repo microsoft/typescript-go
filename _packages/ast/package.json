@@ -49,9 +49,8 @@
     },
     "scripts": {
         "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
-        "generate:factory": "node --conditions=@typescript/source --experimental-strip-types --no-warnings scripts/generateFactory.ts",
-        "generate:visitor": "node --conditions=@typescript/source --experimental-strip-types --no-warnings scripts/generateVisitor.ts",
-        "prebuild": "npm run generate:enums && npm run generate:factory && npm run generate:visitor",
+        "generate:ast": "node --experimental-strip-types ../../_scripts/generate-ts-ast.ts",
+        "prebuild": "npm run generate:enums && npm run generate:ast",
         "build": "tsc -b"
     }
 }

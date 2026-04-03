@@ -669,7 +669,8 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		classDefinitionStatements = append(classDefinitionStatements, tx.createLet(ci.classSuper, safeExtendsExpression))
 
 		updatedExtendsElement := f.UpdateExpressionWithTypeArguments(extendsElement.AsExpressionWithTypeArguments(), ci.classSuper, nil)
-		updatedExtendsClause := f.UpdateHeritageClause(extendsClause.AsHeritageClause(), f.NewNodeList([]*ast.Node{updatedExtendsElement}))
+		hc := extendsClause.AsHeritageClause()
+		updatedExtendsClause := f.UpdateHeritageClause(hc, hc.Token, f.NewNodeList([]*ast.Node{updatedExtendsElement}))
 		heritageClauses = f.NewNodeList([]*ast.Node{updatedExtendsClause})
 	}
 
@@ -1742,7 +1743,7 @@ func (tx *esDecoratorTransformer) visitTaggedTemplateExpression(node *ast.Node) 
 		tx.EmitContext().SetOriginal(boundTag, node)
 		boundTag.Loc = node.Loc
 		template := tx.Visitor().VisitNode(tte.Template)
-		return tx.Factory().UpdateTaggedTemplateExpression(tte, boundTag, nil, nil, template)
+		return tx.Factory().UpdateTaggedTemplateExpression(tte, boundTag, tte.QuestionDotToken, tte.TypeArguments, template, tte.Flags)
 	}
 	return tx.Visitor().VisitEachChild(node)
 }
@@ -2272,11 +2273,11 @@ func (tx *esDecoratorTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 	if ast.IsArrayLiteralExpression(node) {
 		ale := node.AsArrayLiteralExpression()
 		elements := tx.arrayAssignmentVisitor.VisitNodes(ale.Elements)
-		return f.UpdateArrayLiteralExpression(ale, elements)
+		return f.UpdateArrayLiteralExpression(ale, elements, ale.MultiLine)
 	}
 	ole := node.AsObjectLiteralExpression()
 	properties := tx.objectAssignmentVisitor.VisitNodes(ole.Properties)
-	return f.UpdateObjectLiteralExpression(ole, properties)
+	return f.UpdateObjectLiteralExpression(ole, properties, ole.MultiLine)
 }
 
 func (tx *esDecoratorTransformer) visitExportAssignment(node *ast.Node) *ast.Node {
@@ -2510,7 +2511,7 @@ func (tx *esDecoratorTransformer) createMethodDescriptorObject(member *ast.Node,
 	)
 }
 
-// Creates a pseudo-PropertyDescriptor object used when decorating a private GetAccessorDeclaration.
+// Creates a pseudo-PropertyDescriptor object used when decorating a private GetAccessor.
 func (tx *esDecoratorTransformer) createGetAccessorDescriptorObject(member *ast.Node, modifiers *ast.ModifierList) *ast.Expression {
 	f := tx.Factory()
 	body := tx.Visitor().VisitNode(member.Body())
@@ -2522,7 +2523,7 @@ func (tx *esDecoratorTransformer) createGetAccessorDescriptorObject(member *ast.
 	)
 }
 
-// Creates a pseudo-PropertyDescriptor object used when decorating a private SetAccessorDeclaration.
+// Creates a pseudo-PropertyDescriptor object used when decorating a private SetAccessor.
 func (tx *esDecoratorTransformer) createSetAccessorDescriptorObject(member *ast.Node, modifiers *ast.ModifierList) *ast.Expression {
 	f := tx.Factory()
 	parameters := tx.Visitor().VisitNodes(member.ParameterList())
@@ -2593,7 +2594,7 @@ func (tx *esDecoratorTransformer) createMethodDescriptorForwarder(modifiers *ast
 	)
 }
 
-// Creates a GetAccessorDeclaration that forwards its invocation to a PropertyDescriptor object.
+// Creates a GetAccessor that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)
@@ -2616,7 +2617,7 @@ func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers
 	)
 }
 
-// Creates a SetAccessorDeclaration that forwards its invocation to a PropertyDescriptor object.
+// Creates a SetAccessor that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createSetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)

@@ -10,7 +10,7 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 	var jsdocParameters []*ast.Node
 	for _, tag := range getAllJSDocTags(node) {
 		if tag.Kind == ast.KindJSDocParameterTag {
-			name := tag.AsJSDocParameterOrPropertyTag().Name()
+			name := tag.AsJSDocParameterTag().Name()
 			if ast.IsIdentifier(name) && len(name.Text()) == 0 {
 				continue
 			}
@@ -38,7 +38,7 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 	if c.containsArgumentsReference(node) {
 		if isJs {
 			lastJSDocParamIndex := len(jsdocParameters) - 1
-			lastJSDocParam := jsdocParameters[lastJSDocParamIndex].AsJSDocParameterOrPropertyTag()
+			lastJSDocParam := jsdocParameters[lastJSDocParamIndex].AsJSDocParameterTag()
 			if lastJSDocParam == nil || !ast.IsIdentifier(lastJSDocParam.Name()) {
 				return
 			}
@@ -55,8 +55,8 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 		}
 	} else {
 		for index, tag := range jsdocParameters {
-			name := tag.AsJSDocParameterOrPropertyTag().Name()
-			isNameFirst := tag.AsJSDocParameterOrPropertyTag().IsNameFirst
+			name := tag.AsJSDocParameterTag().Name()
+			isNameFirst := tag.AsJSDocParameterTag().IsNameFirst
 
 			if excludedParameters.Has(index) || (ast.IsIdentifier(name) && parameters.Has(name.Text())) {
 				continue

@@ -197,6 +197,14 @@ func IsArrayBindingOrAssignmentElement(node *Node) bool {
 	return IsAssignmentExpression(node, true /*excludeCompoundAssignment*/)
 }
 
+func IsBindingPattern(node *Node) bool {
+	return node.Kind == KindObjectBindingPattern || node.Kind == KindArrayBindingPattern
+}
+
+func IsForInOrOfStatement(node *Node) bool {
+	return node != nil && (node.Kind == KindForInStatement || node.Kind == KindForOfStatement)
+}
+
 // A node is an assignment target if it is on the left hand side of an '=' token, if it is parented by a property
 // assignment in an object literal that is an assignment target, or if it is parented by an array literal that is
 // an assignment target. Examples include 'a = xxx', '{ p: a } = xxx', '[{ a }] = xxx'.
@@ -478,7 +486,6 @@ func isExpressionKind(kind Kind) bool {
 		KindSpreadElement,
 		KindAsExpression,
 		KindOmittedExpression,
-		KindCommaListExpression,
 		KindPartiallyEmittedExpression,
 		KindSatisfiesExpression:
 		return true
@@ -496,9 +503,6 @@ func IsCommaExpression(node *Node) bool {
 }
 
 func IsCommaSequence(node *Node) bool {
-	// !!!
-	// New compiler just has binary expressinons.
-	// Maybe this should consider KindCommaListExpression even though we don't generate them.
 	return IsCommaExpression(node)
 }
 
@@ -648,7 +652,7 @@ func IsAutoAccessorPropertyDeclaration(node *Node) bool {
 }
 
 func IsParameterPropertyDeclaration(node *Node, parent *Node) bool {
-	return IsParameter(node) && HasSyntacticModifier(node, ModifierFlagsParameterPropertyModifier) && parent.Kind == KindConstructor
+	return IsParameterDeclaration(node) && HasSyntacticModifier(node, ModifierFlagsParameterPropertyModifier) && parent.Kind == KindConstructor
 }
 
 func IsJsxChild(node *Node) bool {
@@ -1362,10 +1366,6 @@ func IsVoidZero(node *Node) bool {
 	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
 }
 
-func IsVoidExpression(node *Node) bool {
-	return node.Kind == KindVoidExpression
-}
-
 func IsExportsIdentifier(node *Node) bool {
 	return IsIdentifier(node) && node.Text() == "exports"
 }
@@ -1379,7 +1379,7 @@ func IsThisIdentifier(node *Node) bool {
 }
 
 func IsThisParameter(node *Node) bool {
-	return IsParameter(node) && node.Name() != nil && IsThisIdentifier(node.Name())
+	return IsParameterDeclaration(node) && node.Name() != nil && IsThisIdentifier(node.Name())
 }
 
 func IsBindableStaticAccessExpression(node *Node, excludeThisKeyword bool) bool {
@@ -1813,7 +1813,7 @@ func GetThisContainer(node *Node, includeArrowFunctions bool, includeClassComput
 			node = node.Parent.Parent
 		case KindDecorator:
 			if node.Parent.Kind == KindParameter && IsClassElement(node.Parent.Parent) {
-				// If the decorator's parent is a Parameter, we resolve the this container from
+				// If the decorator's parent is a ParameterDeclaration, we resolve the this container from
 				// the grandparent class declaration.
 				node = node.Parent.Parent
 			} else if IsClassElement(node.Parent) {
@@ -1849,7 +1849,7 @@ func GetSuperContainer(node *Node, stopOnFunctions bool) *Node {
 		case KindDecorator:
 			// Decorators are always applied outside of the body of a class or method.
 			if node.Parent.Kind == KindParameter && IsClassElement(node.Parent.Parent) {
-				// If the decorator's parent is a Parameter, we resolve the this container from
+				// If the decorator's parent is a ParameterDeclaration, we resolve the this container from
 				// the grandparent class declaration.
 				node = node.Parent.Parent
 			} else if IsClassElement(node.Parent) {
@@ -2072,7 +2072,7 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 	case KindExpressionWithTypeArguments:
 		return isPartOfTypeExpressionWithTypeArguments(parent)
 	case KindTypeParameter:
-		return node == parent.AsTypeParameter().Constraint
+		return node == parent.AsTypeParameterDeclaration().Constraint
 	case KindVariableDeclaration, KindParameter, KindPropertyDeclaration, KindPropertySignature, KindFunctionDeclaration,
 		KindFunctionExpression, KindArrowFunction, KindConstructor, KindMethodDeclaration, KindMethodSignature,
 		KindGetAccessor, KindSetAccessor, KindCallSignature, KindConstructSignature, KindIndexSignature,
@@ -3316,12 +3316,12 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 	switch node.Kind {
 	case KindTypeParameter:
 		return factory.UpdateTypeParameterDeclaration(
-			node.AsTypeParameter(),
+			node.AsTypeParameterDeclaration(),
 			modifierArray,
 			node.Name(),
-			node.AsTypeParameter().Constraint,
-			node.AsTypeParameter().Expression,
-			node.AsTypeParameter().DefaultType,
+			node.AsTypeParameterDeclaration().Constraint,
+			node.AsTypeParameterDeclaration().Expression,
+			node.AsTypeParameterDeclaration().DefaultType,
 		)
 	case KindParameter:
 		return factory.UpdateParameterDeclaration(
@@ -3532,6 +3532,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 		return factory.UpdateExportAssignment(
 			node.AsExportAssignment(),
 			modifierArray,
+			node.AsExportAssignment().IsExportEquals,
 			node.Type(),
 			node.Expression(),
 		)
@@ -3808,7 +3809,7 @@ func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
 // Returns true if the node kind has a comment property.
 func hasComment(kind Kind) bool {
 	switch kind {
-	case KindJSDoc, KindJSDocTag, KindJSDocAugmentsTag, KindJSDocImplementsTag,
+	case KindJSDoc, KindJSDocUnknownTag, KindJSDocAugmentsTag, KindJSDocImplementsTag,
 		KindJSDocDeprecatedTag, KindJSDocPublicTag, KindJSDocPrivateTag, KindJSDocProtectedTag,
 		KindJSDocReadonlyTag, KindJSDocOverrideTag, KindJSDocCallbackTag, KindJSDocOverloadTag,
 		KindJSDocParameterTag, KindJSDocPropertyTag, KindJSDocReturnTag, KindJSDocThisTag,
@@ -4218,7 +4219,7 @@ func NodeCanBeDecorated(useLegacyDecorators bool, node *Node, parent *Node, gran
 		return parent != nil && node.Body() != nil && (useLegacyDecorators && IsClassDeclaration(parent) ||
 			!useLegacyDecorators && IsClassLike(parent))
 	case KindParameter:
-		// TODO(rbuckton): Parameter decorator support for ES decorators must wait until it is standardized
+		// TODO(rbuckton): ParameterDeclaration decorator support for ES decorators must wait until it is standardized
 		if !useLegacyDecorators {
 			return false
 		}

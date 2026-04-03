@@ -281,8 +281,9 @@ func (tx *ESModuleTransformer) visitImportOrRequireCall(node *ast.CallExpression
 		node,
 		expression,
 		node.QuestionDotToken,
-		nil, /*typeArguments*/
+		node.TypeArguments,
 		argumentList,
+		node.Flags,
 	)
 }
 

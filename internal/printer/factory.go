@@ -261,7 +261,6 @@ func flattenCommaElements(expressions []*ast.Expression) []*ast.Expression {
 }
 
 // Converts a slice of expressions into a single comma-delimited expression. Returns nil if expressions is nil or empty.
-// NOTE: Unlike Strada, the Corsa implementation does not currently use `ast.KindCommaListExpression`.
 func (f *NodeFactory) InlineExpressions(expressions []*ast.Expression) *ast.Expression {
 	if len(expressions) == 0 {
 		return nil
@@ -329,6 +328,7 @@ func (f *NodeFactory) CreateForOfBindingStatement(node *ast.Node, boundValue *as
 			nil,
 			f.UpdateVariableDeclarationList(
 				node.AsVariableDeclarationList(),
+				node.AsVariableDeclarationList().Flags,
 				f.NewNodeList([]*ast.Node{updatedDeclaration}),
 			),
 		)
@@ -424,7 +424,8 @@ func (f *NodeFactory) updateOuterExpression(outerExpression *ast.Expression /*Ou
 	case ast.KindSatisfiesExpression:
 		return f.UpdateSatisfiesExpression(outerExpression.AsSatisfiesExpression(), expression, outerExpression.Type())
 	case ast.KindNonNullExpression:
-		return f.UpdateNonNullExpression(outerExpression.AsNonNullExpression(), expression)
+		nne := outerExpression.AsNonNullExpression()
+		return f.UpdateNonNullExpression(nne, expression, nne.Flags)
 	case ast.KindExpressionWithTypeArguments:
 		return f.UpdateExpressionWithTypeArguments(outerExpression.AsExpressionWithTypeArguments(), expression, outerExpression.TypeArgumentList())
 	case ast.KindPartiallyEmittedExpression:

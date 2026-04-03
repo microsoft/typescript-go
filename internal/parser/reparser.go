@@ -36,7 +36,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		var export *ast.Node
 		switch ast.GetAssignmentDeclarationKind(expr) {
 		case ast.JSDeclarationKindModuleExports:
-			export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+			export = p.factory.NewJSExportAssignment(nil, true, nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
 		case ast.JSDeclarationKindExportsProperty:
 			// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
 			export = p.factory.NewCommonJSExport(
@@ -165,8 +165,8 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 			if thisTag.TypeExpression != nil {
 				parameter.AsParameterDeclaration().Type = p.addDeepCloneReparse(thisTag.TypeExpression.Type())
 			}
-		} else {
-			jsparam := param.AsJSDocParameterOrPropertyTag()
+		} else if param.Kind == ast.KindJSDocParameterTag || param.Kind == ast.KindJSDocPropertyTag {
+			jsparam := param.AsJSDocPropertyLikeTag()
 			var dotDotDotToken *ast.Node
 			var paramType *ast.TypeNode
 
@@ -211,7 +211,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 		isArrayType := jstypeliteral.IsArrayType
 		properties := p.nodeSlicePool.NewSlice(0)
 		for _, prop := range jstypeliteral.JSDocPropertyTags {
-			jsprop := prop.AsJSDocParameterOrPropertyTag()
+			jsprop := prop.AsJSDocPropertyLikeTag()
 			name := prop.Name()
 			if name.Kind == ast.KindQualifiedName {
 				name = name.AsQualifiedName().Right
@@ -284,7 +284,8 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 					p.factory.DeepCloneReparseModifiers(tp.Modifiers()),
 					p.addDeepCloneReparse(tp.Name()),
 					p.addDeepCloneReparse(constraint.Type()),
-					p.addDeepCloneReparse(tp.AsTypeParameter().DefaultType),
+					nil, // expression
+					p.addDeepCloneReparse(tp.AsTypeParameterDeclaration().DefaultType),
 				)
 				p.finishReparsedNode(reparse, tp)
 			} else {
@@ -434,13 +435,13 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		}
 	case ast.KindJSDocParameterTag:
 		if fun := getFunctionLikeHost(parent); fun != nil && fun.FunctionLikeData().FullSignature == nil {
-			parameterTag := tag.AsJSDocParameterOrPropertyTag()
+			parameterTag := tag.AsJSDocParameterTag()
 			if param, ok := findMatchingParameter(fun, parameterTag, jsDoc); ok {
 				if param.Type == nil && parameterTag.TypeExpression != nil {
 					param.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(parameterTag.TypeExpression.Type())
 				}
 				if param.QuestionToken == nil && param.Initializer == nil {
-					if question := p.makeQuestionIfOptional(parameterTag); question != nil {
+					if question := p.makeQuestionIfOptional(&parameterTag.JSDocPropertyLikeTagBase); question != nil {
 						param.QuestionToken = question
 					}
 				}
@@ -564,7 +565,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 	}
 }
 
-func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.Node {
+func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocPropertyLikeTagBase) *ast.Node {
 	var questionToken *ast.Node
 	if parameter.IsBracketed || parameter.TypeExpression != nil && parameter.TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
 		questionToken = p.factory.NewToken(ast.KindQuestionToken)
@@ -580,7 +581,7 @@ func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterTag, j
 	for _, tag := range jsDoc.AsJSDoc().Tags.Nodes {
 		if tag.Kind == ast.KindJSDocParameterTag {
 			paramCount++
-			if tag.AsJSDocParameterOrPropertyTag() == parameterTag {
+			if tag.AsJSDocParameterTag() == parameterTag {
 				tagIndex = paramCount
 				break
 			}

@@ -557,31 +557,31 @@ func (t *Type) ObjectFlags() ObjectFlags {
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
-func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
+func (t *Type) AsLiteralTypeNode() *LiteralType           { return t.data.(*LiteralType) }
 func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
+func (t *Type) AsTupleTypeNode() *TupleType               { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
-func (t *Type) AsMappedType() *MappedType                   { return t.data.(*MappedType) }
-func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*ReverseMappedType) }
-func (t *Type) AsEvolvingArrayType() *EvolvingArrayType     { return t.data.(*EvolvingArrayType) }
-func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
-func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
-func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
-func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
-func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
-func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
-func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
-func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
-func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
+func (t *Type) AsMappedTypeNode() *MappedType                   { return t.data.(*MappedType) }
+func (t *Type) AsReverseMappedType() *ReverseMappedType         { return t.data.(*ReverseMappedType) }
+func (t *Type) AsEvolvingArrayType() *EvolvingArrayType         { return t.data.(*EvolvingArrayType) }
+func (t *Type) AsTypeParameterDeclaration() *TypeParameter      { return t.data.(*TypeParameter) }
+func (t *Type) AsUnionType() *UnionType                         { return t.data.(*UnionType) }
+func (t *Type) AsIntersectionTypeNode() *IntersectionType       { return t.data.(*IntersectionType) }
+func (t *Type) AsIndexType() *IndexType                         { return t.data.(*IndexType) }
+func (t *Type) AsIndexedAccessTypeNode() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
+func (t *Type) AsTemplateLiteralTypeNode() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
+func (t *Type) AsStringMappingType() *StringMappingType         { return t.data.(*StringMappingType) }
+func (t *Type) AsSubstitutionType() *SubstitutionType           { return t.data.(*SubstitutionType) }
+func (t *Type) AsConditionalTypeNode() *ConditionalType         { return t.data.(*ConditionalType) }
 
 // Casts for embedded struct types
 
 func (t *Type) AsConstrainedType() *ConstrainedType { return t.data.AsConstrainedType() }
 func (t *Type) AsStructuredType() *StructuredType   { return t.data.AsStructuredType() }
 func (t *Type) AsObjectType() *ObjectType           { return t.data.AsObjectType() }
-func (t *Type) AsTypeReference() *TypeReference     { return t.data.AsTypeReference() }
+func (t *Type) AsTypeReferenceNode() *TypeReference { return t.data.AsTypeReferenceNode() }
 func (t *Type) AsInterfaceType() *InterfaceType     { return t.data.AsInterfaceType() }
 func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
 	return t.data.AsUnionOrIntersectionType()
@@ -604,13 +604,13 @@ func (t *Type) Target() *Type {
 	case t.flags&TypeFlagsObject != 0:
 		return t.AsObjectType().target
 	case t.flags&TypeFlagsTypeParameter != 0:
-		return t.AsTypeParameter().target
+		return t.AsTypeParameterDeclaration().target
 	case t.flags&TypeFlagsIndex != 0:
 		return t.AsIndexType().target
 	case t.flags&TypeFlagsStringMapping != 0:
 		return t.AsStringMappingType().target
 	case t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsMapped != 0:
-		return t.AsMappedType().target
+		return t.AsMappedTypeNode().target
 	}
 	panic("Unhandled case in Type.Target")
 }
@@ -620,9 +620,9 @@ func (t *Type) Mapper() *TypeMapper {
 	case t.flags&TypeFlagsObject != 0:
 		return t.AsObjectType().mapper
 	case t.flags&TypeFlagsTypeParameter != 0:
-		return t.AsTypeParameter().mapper
+		return t.AsTypeParameterDeclaration().mapper
 	case t.flags&TypeFlagsConditional != 0:
-		return t.AsConditionalType().mapper
+		return t.AsConditionalTypeNode().mapper
 	}
 	panic("Unhandled case in Type.Mapper")
 }
@@ -632,17 +632,17 @@ func (t *Type) Types() []*Type {
 	case t.flags&TypeFlagsUnionOrIntersection != 0:
 		return t.AsUnionOrIntersectionType().types
 	case t.flags&TypeFlagsTemplateLiteral != 0:
-		return t.AsTemplateLiteralType().types
+		return t.AsTemplateLiteralTypeNode().types
 	}
 	panic("Unhandled case in Type.Types")
 }
 
 func (t *Type) TargetInterfaceType() *InterfaceType {
-	return t.AsTypeReference().target.AsInterfaceType()
+	return t.AsTypeReferenceNode().target.AsInterfaceType()
 }
 
 func (t *Type) TargetTupleType() *TupleType {
-	return t.AsTypeReference().target.AsTupleType()
+	return t.AsTypeReferenceNode().target.AsTupleTypeNode()
 }
 
 func (t *Type) Symbol() *ast.Symbol {
@@ -689,7 +689,7 @@ func (t *Type) IsClass() bool {
 	return t.objectFlags&ObjectFlagsClass != 0
 }
 
-func (t *Type) IsTypeParameter() bool {
+func (t *Type) IsTypeParameterDeclaration() bool {
 	return t.flags&TypeFlagsTypeParameter != 0
 }
 
@@ -697,7 +697,7 @@ func (t *Type) IsIndex() bool {
 	return t.flags&TypeFlagsIndex != 0
 }
 
-func (t *Type) IsTupleType() bool {
+func (t *Type) IsTupleTypeNode() bool {
 	return isTupleType(t)
 }
 
@@ -708,7 +708,7 @@ type TypeData interface {
 	AsConstrainedType() *ConstrainedType
 	AsStructuredType() *StructuredType
 	AsObjectType() *ObjectType
-	AsTypeReference() *TypeReference
+	AsTypeReferenceNode() *TypeReference
 	AsInterfaceType() *InterfaceType
 	AsUnionOrIntersectionType() *UnionOrIntersectionType
 }
@@ -723,7 +723,7 @@ func (t *TypeBase) AsType() *Type                                       { return
 func (t *TypeBase) AsConstrainedType() *ConstrainedType                 { return nil }
 func (t *TypeBase) AsStructuredType() *StructuredType                   { return nil }
 func (t *TypeBase) AsObjectType() *ObjectType                           { return nil }
-func (t *TypeBase) AsTypeReference() *TypeReference                     { return nil }
+func (t *TypeBase) AsTypeReferenceNode() *TypeReference                 { return nil }
 func (t *TypeBase) AsInterfaceType() *InterfaceType                     { return nil }
 func (t *TypeBase) AsUnionOrIntersectionType() *UnionOrIntersectionType { return nil }
 
@@ -842,11 +842,11 @@ func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 type TypeReference struct {
 	ObjectType
-	node                  *ast.Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
+	node                  *ast.Node // TypeReference | ArrayType | TupleType when deferred, else nil
 	resolvedTypeArguments []*Type
 }
 
-func (t *TypeReference) AsTypeReference() *TypeReference { return t }
+func (t *TypeReference) AsTypeReferenceNode() *TypeReference { return t }
 
 // InterfaceType (when generic, serves as reference to instantiation of itself)
 
@@ -906,7 +906,7 @@ const (
 
 type TupleElementInfo struct {
 	flags              ElementFlags
-	labeledDeclaration *ast.Node // NamedTupleMember | ParameterDeclaration | nil
+	labeledDeclaration *ast.Node // NamedTupleMember | Parameter | nil
 }
 
 func (t *TupleElementInfo) TupleElementFlags() ElementFlags { return t.flags }
@@ -1016,7 +1016,7 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
-func (t *TypeParameter) IsThisType() bool { return t.isThisType }
+func (t *TypeParameter) IsThisTypeNode() bool { return t.isThisType }
 
 // IndexFlags
 
@@ -1217,7 +1217,7 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *ast.Node   // IndexSignatureDeclaration
+	declaration *ast.Node   // IndexSignature
 	indexSymbol *ast.Symbol // Synthetic property symbol for this index signature
 	components  []*ast.Node // ElementWithComputedPropertyName
 }

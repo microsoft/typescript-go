@@ -2120,6 +2120,7 @@ func TestParenthesizeUnionType2(t *testing.T) {
 									nil,
 									factory.NewIdentifier("a"),
 									factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
+									nil, /*expression*/
 									nil, /*defaultType*/
 								),
 							),
@@ -2369,6 +2370,7 @@ func TestParenthesizeConditionalType3(t *testing.T) {
 								nil,
 								factory.NewIdentifier("b"),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
+								nil, /*expression*/
 								nil, /*defaultType*/
 							),
 						),
@@ -2409,6 +2411,7 @@ func TestParenthesizeConditionalType4(t *testing.T) {
 										nil,
 										factory.NewIdentifier("b"),
 										factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
+										nil, /*expression*/
 										nil, /*defaultType*/
 									),
 								),

@@ -776,13 +776,17 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	tx.superBinding = f.NewUniqueNameEx("_super", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 	tx.superIndexBinding = f.NewUniqueNameEx("_superIndex", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 
+	blk := node.Body().AsBlock()
 	asyncBody := f.UpdateBlock(
-		node.Body().AsBlock(),
-		tx.Visitor().VisitNodes(node.Body().StatementList()),
+		blk,
+		tx.Visitor().VisitNodes(blk.StatementList()),
+		blk.Multiline,
 	)
+	ablk := asyncBody.AsBlock()
 	asyncBody = f.UpdateBlock(
-		asyncBody.AsBlock(),
-		tx.EmitContext().EndAndMergeVariableEnvironmentList(asyncBody.StatementList()),
+		ablk,
+		tx.EmitContext().EndAndMergeVariableEnvironmentList(ablk.StatementList()),
+		ablk.Multiline,
 	)
 
 	// Substitute super property accesses with _super/_superIndex helpers
@@ -830,9 +834,11 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 
 	outerStatements := []*ast.Node{returnStatement}
 
+	bodyBlock := node.Body().AsBlock()
 	block := f.UpdateBlock(
-		node.Body().AsBlock(),
+		bodyBlock,
 		tx.EmitContext().EndAndMergeVariableEnvironmentList(f.NewNodeList(outerStatements)),
+		bodyBlock.Multiline,
 	)
 
 	if emitSuperHelpers && tx.hasSuperElementAccess {

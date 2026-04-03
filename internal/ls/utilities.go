@@ -608,14 +608,14 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	if node.Kind == ast.KindExtendsKeyword {
 		// ... <T /**/extends [|U|]> ...
 		if parent.Kind == ast.KindTypeParameter {
-			if constraint := parent.AsTypeParameter().Constraint; constraint != nil && constraint.Kind == ast.KindTypeReference {
-				return constraint.AsTypeReference().TypeName
+			if constraint := parent.AsTypeParameterDeclaration().Constraint; constraint != nil && constraint.Kind == ast.KindTypeReference {
+				return constraint.AsTypeReferenceNode().TypeName
 			}
 		}
 		// ... T /**/extends [|U|] ? ...
 		if parent.Kind == ast.KindConditionalType {
 			if extendsType := parent.AsConditionalTypeNode().ExtendsType; extendsType != nil && extendsType.Kind == ast.KindTypeReference {
-				return extendsType.AsTypeReference().TypeName
+				return extendsType.AsTypeReferenceNode().TypeName
 			}
 		}
 	}
@@ -1013,7 +1013,7 @@ func getTargetLabel(referenceNode *ast.Node, labelName string) *ast.Node {
 }
 
 func skipConstraint(t *checker.Type, typeChecker *checker.Checker) *checker.Type {
-	if t.IsTypeParameter() {
+	if t.IsTypeParameterDeclaration() {
 		c := typeChecker.GetBaseConstraintOfType(t)
 		if c != nil {
 			return c

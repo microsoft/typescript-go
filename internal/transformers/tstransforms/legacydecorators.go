@@ -86,7 +86,7 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyAccessExpression(node *ast.P
 	// .name of PropertyAccessExpression.
 	expression := tx.Visitor().VisitNode(node.Expression)
 	if expression != node.Expression {
-		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name())
+		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name(), node.Flags)
 	}
 	return node.AsNode()
 }

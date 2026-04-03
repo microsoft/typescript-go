@@ -20,7 +20,7 @@ const (
 	SymbolFlagsTypeLiteral            SymbolFlags = 1 << 11 // Type Literal or mapped type
 	SymbolFlagsObjectLiteral          SymbolFlags = 1 << 12 // Object Literal
 	SymbolFlagsMethod                 SymbolFlags = 1 << 13 // Method
-	SymbolFlagsConstructor            SymbolFlags = 1 << 14 // Constructor
+	SymbolFlagsConstructor            SymbolFlags = 1 << 14 // ConstructorDeclaration
 	SymbolFlagsGetAccessor            SymbolFlags = 1 << 15 // Get accessor
 	SymbolFlagsSetAccessor            SymbolFlags = 1 << 16 // Set accessor
 	SymbolFlagsSignature              SymbolFlags = 1 << 17 // Call, construct, or index signature

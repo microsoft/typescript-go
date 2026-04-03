@@ -643,7 +643,7 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 		newBlock.Loc = updated.Loc
 		updated = newBlock
 	} else {
-		updated = tx.Factory().UpdateBlock(updated.AsBlock(), mergedStatements)
+		updated = tx.Factory().UpdateBlock(updated.AsBlock(), mergedStatements, updated.AsBlock().Multiline)
 	}
 
 	if emitSuperHelpers && tx.hasSuperElementAccess {
@@ -784,9 +784,11 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	hasLexicalThis := tx.inHasLexicalThisContext()
 
 	asyncBody := tx.transformAsyncFunctionBodyWorker(node.Body())
+	block := asyncBody.AsBlock()
 	asyncBody = tx.Factory().UpdateBlock(
-		asyncBody.AsBlock(),
-		tx.EmitContext().EndAndMergeVariableEnvironmentList(asyncBody.StatementList()),
+		block,
+		tx.EmitContext().EndAndMergeVariableEnvironmentList(block.StatementList()),
+		block.Multiline,
 	)
 
 	// Substitute super property accesses with _super/_superIndex helpers
@@ -846,10 +848,12 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		)
 
 		if captureLexicalArguments && tx.lexicalArguments.used {
-			block := tx.convertToFunctionBlock(result)
+			blk := tx.convertToFunctionBlock(result)
+			blkNode := blk.AsBlock()
 			result = tx.Factory().UpdateBlock(
-				block.AsBlock(),
-				tx.EmitContext().MergeEnvironmentList(block.StatementList(), []*ast.Node{tx.createCaptureArgumentsStatement()}),
+				blkNode,
+				tx.EmitContext().MergeEnvironmentList(blkNode.StatementList(), []*ast.Node{tx.createCaptureArgumentsStatement()}),
+				blkNode.Multiline,
 			)
 		}
 	}
@@ -876,9 +880,11 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *ast.Node {
 	if ast.IsBlock(body) {
+		blk := body.AsBlock()
 		return tx.Factory().UpdateBlock(
-			body.AsBlock(),
-			tx.asyncBodyVisitor.VisitNodes(body.StatementList()),
+			blk,
+			tx.asyncBodyVisitor.VisitNodes(blk.StatementList()),
+			blk.Multiline,
 		)
 	}
 	// Convert expression body to block body with return statement
