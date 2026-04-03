@@ -2,6 +2,9 @@ name: 'Copilot Setup Steps'
 
 on: workflow_dispatch
 
+env:
+  COPILOT_AGENT_TIMEOUT_MIN: 180
+
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
