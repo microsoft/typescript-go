@@ -915,5 +915,10 @@ func (s *inlayHintState) getTypeAnnotationPosition(decl *ast.FunctionLikeDeclara
 }
 
 func isAnyInlayHintEnabled(preferences lsutil.InlayHintsPreferences) bool {
-	return preferences != lsutil.InlayHintsPreferences{}
+	return preferences.IncludeInlayParameterNameHints != lsutil.IncludeInlayParameterNameHintsNone ||
+		preferences.IncludeInlayFunctionParameterTypeHints.IsTrue() ||
+		preferences.IncludeInlayVariableTypeHints.IsTrue() ||
+		preferences.IncludeInlayPropertyDeclarationTypeHints.IsTrue() ||
+		preferences.IncludeInlayFunctionLikeReturnTypeHints.IsTrue() ||
+		preferences.IncludeInlayEnumMemberValueHints.IsTrue()
 }

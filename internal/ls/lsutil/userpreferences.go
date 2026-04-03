@@ -418,6 +418,30 @@ var typeSerializers = map[reflect.Type]func(any) any{
 	},
 }
 
+// configPathParsers provides field-specific config value parsers that override the default
+// type-based parser when the VS Code config value format differs from the Go field type.
+var configPathParsers = map[string]func(any) any{
+	// VS Code sends caseSensitivity as a string ("auto"/"caseSensitive"/"caseInsensitive"),
+	// but OrganizeImportsIgnoreCase is a core.Tristate.
+	"preferences.organizeImports.caseSensitivity": func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "caseinsensitive":
+				return core.TSTrue
+			case "casesensitive":
+				return core.TSFalse
+			}
+		}
+		if b, ok := val.(bool); ok {
+			if b {
+				return core.TSTrue
+			}
+			return core.TSFalse
+		}
+		return core.TSUnknown
+	},
+}
+
 type fieldInfo struct {
 	rawName      string // raw name for unstable section lookup (e.g., "quotePreference")
 	configPath   string // dotted path for config (e.g., "preferences.quoteStyle")
@@ -560,6 +584,10 @@ func (p UserPreferences) withConfig(config map[string]any) UserPreferences {
 			if b, ok := val.(bool); ok {
 				val = !b
 			}
+		}
+		if parser, ok := configPathParsers[info.configPath]; ok {
+			field.Set(reflect.ValueOf(parser(val)))
+			continue
 		}
 		setFieldFromValue(field, val)
 	}
