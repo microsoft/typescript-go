@@ -71,6 +71,19 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 
 func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if declaration == nil {
+		// For mapped type symbols with @inheritDoc on the mapped type, synthesize documentation
+		// from the mapped type's declarations and the syntheticOrigin's declarations.
+		if symbol != nil && symbol.CheckFlags&ast.CheckFlagsMapped != 0 &&
+			symbol.Parent != nil && len(symbol.Parent.Declarations) > 0 &&
+			core.Some(symbol.Parent.Declarations, hasJSDocInheritDocTag) {
+			syntheticOrigin := c.GetMappedSyntheticOrigin(symbol)
+			var decls []*ast.Node
+			decls = append(decls, symbol.Parent.Declarations...)
+			if syntheticOrigin != nil {
+				decls = append(decls, syntheticOrigin.Declarations...)
+			}
+			return l.getDocumentationFromDeclarations(c, decls, location, contentFormat, commentOnly)
+		}
 		return ""
 	}
 
@@ -185,6 +198,35 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 		}
 	}
 	return b.String()
+}
+
+// hasJSDocInheritDocTag reports whether the given node has a @inheritDoc JSDoc tag.
+func hasJSDocInheritDocTag(node *ast.Node) bool {
+	for _, jsdoc := range node.JSDoc(nil) {
+		if jsdoc.Kind != ast.KindJSDoc {
+			continue
+		}
+		tags := jsdoc.AsJSDoc().Tags
+		if tags == nil {
+			continue
+		}
+		for _, tag := range tags.Nodes {
+			if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "inheritDoc" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// getDocumentationFromDeclarations gets documentation from the first declaration in decls that has JSDoc.
+func (l *LanguageService) getDocumentationFromDeclarations(c *checker.Checker, decls []*ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+	for _, decl := range decls {
+		if s := l.getDocumentationFromDeclaration(c, nil, decl, location, contentFormat, commentOnly); s != "" {
+			return s
+		}
+	}
+	return ""
 }
 
 func getCommentText(comments []*ast.Node) string {

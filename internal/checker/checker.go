@@ -20389,6 +20389,7 @@ func (c *Checker) resolveMappedTypeMembers(t *Type) {
 				}
 				prop := c.newSymbol(ast.SymbolFlagsProperty|core.IfElse(isOptional, ast.SymbolFlagsOptional, 0), propName)
 				prop.CheckFlags = lateFlag | ast.CheckFlagsMapped | core.IfElse(isReadonly, ast.CheckFlagsReadonly, 0) | core.IfElse(stripOptional, ast.CheckFlagsStripOptional, 0)
+				prop.Parent = mappedType.symbol
 				valueLinks := c.valueSymbolLinks.Get(prop)
 				valueLinks.containingType = t
 				valueLinks.nameType = propNameType
