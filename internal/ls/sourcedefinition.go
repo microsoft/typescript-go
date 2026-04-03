@@ -449,7 +449,7 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	}
 
 	declarations := findDeclarationNodesByName(sourceFile, names)
-	if len(declarations) != 0 {
+	if len(declarations) != 0 && len(getConcreteSourceDeclarations(declarations)) != 0 {
 		return declarations
 	}
 
@@ -457,7 +457,13 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	for _, forwardedFile := range l.getForwardedImplementationFiles(program, sourceFile) {
 		forwarded = append(forwarded, l.findSourceDefinitionDeclarationsInFile(program, forwardedFile, names, seen)...)
 	}
-	return uniqueDeclarationNodes(forwarded)
+	if len(forwarded) != 0 {
+		if len(getConcreteSourceDeclarations(forwarded)) != 0 {
+			return uniqueDeclarationNodes(forwarded)
+		}
+		return uniqueDeclarationNodes(append(slices.Clip(declarations), forwarded...))
+	}
+	return declarations
 }
 
 func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Program, sourceFile *ast.SourceFile) []string {
