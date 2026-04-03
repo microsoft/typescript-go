@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
+import type { DocumentHighlight } from "vscode-languageserver-protocol";
 
 const multiDocumentHighlightMethod = "custom/textDocument/multiDocumentHighlight";
 
@@ -11,7 +12,7 @@ interface MultiDocumentHighlightParams {
 
 interface MultiDocumentHighlightItem {
     uri: string;
-    highlights: { range: { start: { line: number; character: number; }; end: { line: number; character: number; }; }; kind?: number; }[];
+    highlights: DocumentHighlight[];
 }
 
 class MultiDocumentHighlightProvider implements vscode.MultiDocumentHighlightProvider {
@@ -52,15 +53,7 @@ class MultiDocumentHighlightProvider implements vscode.MultiDocumentHighlightPro
         return response.map(item =>
             new vscode.MultiDocumentHighlight(
                 vscode.Uri.parse(item.uri),
-                item.highlights.map(h =>
-                    new vscode.DocumentHighlight(
-                        new vscode.Range(
-                            new vscode.Position(h.range.start.line, h.range.start.character),
-                            new vscode.Position(h.range.end.line, h.range.end.character),
-                        ),
-                        h.kind === 3 ? vscode.DocumentHighlightKind.Write : vscode.DocumentHighlightKind.Read,
-                    )
-                ),
+                item.highlights.map(h => this.client.protocol2CodeConverter.asDocumentHighlight(h)),
             )
         );
     }

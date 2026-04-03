@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -55,10 +56,15 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
-	// Resolve the source files to search
+	// Resolve the source files to search, deduplicating by file name.
 	var sourceFiles []*ast.SourceFile
+	seenFiles := collections.NewSetWithSizeHint[string](len(filesToSearch))
 	for _, uri := range filesToSearch {
-		if sf := program.GetSourceFile(uri.FileName()); sf != nil {
+		fileName := uri.FileName()
+		if !seenFiles.AddIfAbsent(fileName) {
+			continue
+		}
+		if sf := program.GetSourceFile(fileName); sf != nil {
 			sourceFiles = append(sourceFiles, sf)
 		}
 	}
