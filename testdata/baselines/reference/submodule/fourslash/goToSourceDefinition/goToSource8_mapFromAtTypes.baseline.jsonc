@@ -1,0 +1,19 @@
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
+// --- (line: 13) skipped ---
+//      * _.add(6, 4);
+//      * // => 10
+//      */
+//     var [|add|] = createMathOperation(function(augend, addend) {
+//      return augend + addend;
+//     }, 0);
+// 
+//     function lodash(value) {}
+//     lodash.[|add|] = add;
+// 
+//     /** Detect free variable `global` from Node.js. */
+//     var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+// --- (line: 26) skipped ---
+
+// === /home/src/workspaces/project/index.ts ===
+// import { /*GOTO SOURCE DEF*/add } from 'lodash';
