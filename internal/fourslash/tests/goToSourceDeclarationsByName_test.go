@@ -51,3 +51,25 @@ legacyFn();`
 	defer done()
 	f.VerifyBaselineGoToSourceDefinition(t, "importName")
 }
+
+func TestGoToSourceDefaultImportNotFirstStatement(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	// Verifies that a default import navigates to the actual export default declaration,
+	// not the first statement of the file, when the default export is not the first statement.
+	const content = `// @moduleResolution: bundler
+// @Filename: /home/src/workspaces/project/node_modules/pkg/package.json
+{ "name": "pkg", "main": "./index.js", "types": "./index.d.ts" }
+// @Filename: /home/src/workspaces/project/node_modules/pkg/index.d.ts
+export declare const version: string;
+export default class Widget {}
+// @Filename: /home/src/workspaces/project/node_modules/pkg/index.js
+export const version = "1.0";
+export default class /*targetWidget*/Widget {}
+// @Filename: /home/src/workspaces/project/index.ts
+import /*importDefault*/Widget from "pkg";
+Widget;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToSourceDefinition(t, "importDefault")
+}

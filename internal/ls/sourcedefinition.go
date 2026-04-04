@@ -107,7 +107,16 @@ func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
 	if sourceFile == nil {
 		return nil
 	}
-	if originalNode == moduleSpecifier || isDefaultImportName(originalNode) {
+	if originalNode == moduleSpecifier {
+		return getSourceDefinitionEntryDeclarations(sourceFile)
+	}
+	if isDefaultImportName(originalNode) {
+		// For default imports, only search for "default" declarations to avoid
+		// matching unrelated declarations with the same identifier name.
+		defaultDeclarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, []string{"default"}, &collections.Set[string]{})
+		if len(defaultDeclarations) != 0 {
+			return filterPreferredSourceDeclarations(originalNode, defaultDeclarations)
+		}
 		return getSourceDefinitionEntryDeclarations(sourceFile)
 	}
 
@@ -412,7 +421,7 @@ func getCandidateSourceDeclarationNames(originalNode *ast.Node, declaration *ast
 		if declaration.Kind == ast.KindExportAssignment {
 			names = append(names, "default")
 		}
-		if (ast.IsFunctionDeclaration(declaration) || ast.IsClassDeclaration(declaration)) && ast.HasSyntacticModifier(declaration, ast.ModifierFlagsExportDefault) {
+		if (ast.IsFunctionDeclaration(declaration) || ast.IsClassDeclaration(declaration)) && declaration.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
 			names = append(names, "default")
 		}
 	}
@@ -458,7 +467,7 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 		if wantDefault && node.Kind == ast.KindExportAssignment {
 			declarations = append(declarations, node)
 		}
-		if wantDefault && (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && ast.HasSyntacticModifier(node, ast.ModifierFlagsExportDefault) {
+		if wantDefault && (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && node.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
 			declarations = append(declarations, node)
 		}
 		return node.ForEachChild(visit)
