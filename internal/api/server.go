@@ -7,8 +7,11 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 // StdioServerOptions configures the STDIO-based API server.
@@ -63,7 +66,14 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		transport = t
 	}
 
-	fs := bundled.WrapFS(osvfs.FS())
+	var fs vfs.FS = osvfs.FS()
+
+	pnpApi := pnp.InitPnpApi(fs, s.options.Cwd)
+	if pnpApi != nil {
+		fs = pnpvfs.From(fs)
+	}
+
+	fs = bundled.WrapFS(fs)
 
 	// Wrap the base FS with callbackFS if callbacks are requested
 	var callbackFS *callbackFS

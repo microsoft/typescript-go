@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
@@ -687,6 +688,7 @@ func ParseConfigFileTextToJson(fileName string, path tspath.Path, jsonText strin
 type ParseConfigHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
+	PnpApi() *pnp.PnpApi
 }
 
 type resolverHost struct {

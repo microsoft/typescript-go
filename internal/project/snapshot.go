@@ -15,11 +15,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
@@ -45,6 +47,8 @@ type Snapshot struct {
 
 	builderLogs *logging.LogTree
 	apiError    error
+
+	pnpApi *pnp.PnpApi
 }
 
 // NewSnapshot initializes a snapshot with refCount 1.
@@ -60,6 +64,10 @@ func NewSnapshot(
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
+	pnpApi := pnp.InitPnpApi(fs.fs, sessionOptions.CurrentDirectory)
+	if pnpApi != nil {
+		fs.fs = pnpvfs.From(fs.fs)
+	}
 	if allUserPreferences == nil {
 		allUserPreferences = lsutil.NewUserConfig(nil) // disallow nil config
 	}
@@ -73,9 +81,11 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		allUserPreferences:                 allUserPreferences,
-		AutoImports:                        autoImports,
-		autoImportsWatch:                   autoImportsWatch,
+		pnpApi:                             pnpApi,
+
+		AutoImports:        autoImports,
+		autoImportsWatch:   autoImportsWatch,
+		allUserPreferences: allUserPreferences,
 	}
 	s.refCount.Store(1)
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
@@ -137,6 +147,10 @@ func (s *Snapshot) ID() uint64 {
 
 func (s *Snapshot) UseCaseSensitiveFileNames() bool {
 	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) PnpApi() *pnp.PnpApi {
+	return s.pnpApi
 }
 
 func (s *Snapshot) ReadFile(fileName string) (string, bool) {
@@ -330,6 +344,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
+		s.pnpApi,
 		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,

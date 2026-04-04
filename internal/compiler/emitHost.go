@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
@@ -25,6 +26,7 @@ type EmitHost interface {
 	GetCurrentDirectory() string
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
+	PnpApi() *pnp.PnpApi
 }
 
 var _ EmitHost = (*emitHost)(nil)
@@ -108,6 +110,7 @@ func (host *emitHost) Options() *core.CompilerOptions { return host.program.Opti
 func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
 func (host *emitHost) GetCurrentDirectory() string    { return host.program.GetCurrentDirectory() }
 func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
+func (host *emitHost) PnpApi() *pnp.PnpApi            { return host.program.PnpApi() }
 func (host *emitHost) UseCaseSensitiveFileNames() bool {
 	return host.program.UseCaseSensitiveFileNames()
 }

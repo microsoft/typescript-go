@@ -571,6 +571,8 @@ func (l *LanguageService) getStringLiteralCompletionsFromModuleNames(
 	program *compiler.Program,
 	checker *checker.Checker,
 ) *stringLiteralCompletions {
+	// !!! needs `getModeForUsageLocationWorker`
+	// TODO investigate if we will need to update this for pnp
 	nameAndKinds := l.getStringLiteralCompletionsFromModuleNamesWorker(
 		file,
 		node,

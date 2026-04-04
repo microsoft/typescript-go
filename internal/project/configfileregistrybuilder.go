@@ -8,6 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -31,6 +32,8 @@ type configFileRegistryBuilder struct {
 	sessionOptions       *SessionOptions
 	customConfigFileName string
 
+	pnpApi *pnp.PnpApi
+
 	base                        *ConfigFileRegistry
 	configs                     *dirty.SyncMap[tspath.Path, *configFileEntry]
 	configFileNames             *dirty.Map[tspath.Path, *configFileNames]
@@ -43,6 +46,7 @@ func newConfigFileRegistryBuilder(
 	extendedConfigCache *ExtendedConfigCache,
 	snapshotID uint64,
 	sessionOptions *SessionOptions,
+	pnpApi *pnp.PnpApi,
 	customConfigFileName string,
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
@@ -52,6 +56,7 @@ func newConfigFileRegistryBuilder(
 		base:                        oldConfigFileRegistry,
 		sessionOptions:              sessionOptions,
 		extendedConfigCache:         extendedConfigCache,
+		pnpApi:                      pnpApi,
 		snapshotID:                  snapshotID,
 		customConfigFileName:        customConfigFileName,
 		customConfigFileNameChanged: customConfigFileName != oldConfigFileRegistry.customConfigFileName,
@@ -692,6 +697,11 @@ func (c *configFileRegistryBuilder) FS() vfs.FS {
 // GetCurrentDirectory implements tsoptions.ParseConfigHost.
 func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 	return c.sessionOptions.CurrentDirectory
+}
+
+// PnpApi implements tsoptions.ParseConfigHost.
+func (c *configFileRegistryBuilder) PnpApi() *pnp.PnpApi {
+	return c.pnpApi
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
