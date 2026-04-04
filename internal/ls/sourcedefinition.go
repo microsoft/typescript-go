@@ -332,10 +332,7 @@ func inferImpliedNodeFormat(resolver *module.Resolver, fileName string) core.Res
 
 func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 	for current := node; current != nil; current = current.Parent {
-		switch {
-		case ast.IsAnyImportOrReExport(current),
-			ast.IsRequireCall(current, true /*requireStringLiteralLikeArgument*/),
-			ast.IsImportCall(current):
+		if ast.IsAnyImportOrReExport(current) || ast.IsRequireCall(current, true /*requireStringLiteralLikeArgument*/) || ast.IsImportCall(current) {
 			if moduleSpecifier := ast.GetExternalModuleName(current); moduleSpecifier != nil && ast.IsStringLiteralLike(moduleSpecifier) {
 				return moduleSpecifier
 			}
