@@ -24,7 +24,8 @@
         "onLanguage:javascript",
         "onLanguage:javascriptreact",
         "onLanguage:typescript",
-        "onLanguage:typescriptreact"
+        "onLanguage:typescriptreact",
+        "onCommand:typescript.native-preview.enable"
     ],
     "contributes": {
         "configuration": [
