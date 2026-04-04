@@ -8,7 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
-	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -96,16 +95,8 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	}
 
 	declarations = uniqueDeclarationNodes(declarations)
-	if filtered := filterImportLikeDeclarations(currentFile, declarations); len(filtered) != 0 {
-		declarations = filtered
-	}
-	if shouldFallbackToRegularDefinition(c, node, declarations) {
+	if shouldFallbackToRegularDefinition(declarations) {
 		return nil
-	}
-	if shouldFallbackToModuleSpecifier(currentFile, node, moduleSpecifier, declarations) {
-		if fallback := l.getSourceDefinitionDeclarationsForModuleSpecifier(program, currentFile, moduleSpecifier, node, nil); len(fallback) != 0 {
-			return uniqueDeclarationNodes(fallback)
-		}
 	}
 	return declarations
 }
@@ -180,15 +171,6 @@ func shouldPreferModuleSpecifierResult(node *ast.Node, moduleSpecifier *ast.Node
 	return true
 }
 
-func shouldFallbackToModuleSpecifier(currentFile *ast.SourceFile, node *ast.Node, moduleSpecifier *ast.Node, declarations []*ast.Node) bool {
-	if currentFile == nil || moduleSpecifier == nil || !isImportOrExportName(node) {
-		return false
-	}
-	return len(declarations) == 0 || core.Every(declarations, func(declaration *ast.Node) bool {
-		return ast.GetSourceFileOfNode(declaration).FileName() == currentFile.FileName() && isImportLikeDeclaration(declaration)
-	})
-}
-
 func getSourceDefinitionEntryNode(sourceFile *ast.SourceFile) *ast.Node {
 	if sourceFile == nil {
 		return nil
@@ -206,26 +188,20 @@ func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Nod
 	return nil
 }
 
-func shouldFallbackToRegularDefinition(c *checker.Checker, node *ast.Node, declarations []*ast.Node) bool {
+// shouldFallbackToRegularDefinition returns true when source definition can't
+// produce useful results and regular go-to-definition should be used instead.
+// This happens when declarations are empty (nothing found) or when all found
+// declarations are non-concrete (e.g., type-only nodes like interfaces).
+func shouldFallbackToRegularDefinition(declarations []*ast.Node) bool {
 	if len(declarations) == 0 {
 		return true
 	}
 	if len(getConcreteSourceDeclarations(declarations)) != 0 {
 		return false
 	}
-	if ast.IsPartOfTypeNode(node) || ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) {
-		return true
-	}
-	symbol := c.GetSymbolAtLocation(node)
-	if symbol == nil {
-		return false
-	}
-	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
-		if aliased := c.GetAliasedSymbol(symbol); aliased != nil && aliased != c.GetUnknownSymbol() {
-			symbol = aliased
-		}
-	}
-	return symbol.Flags&ast.SymbolFlagsValue == 0 && symbol.Flags&ast.SymbolFlagsType != 0
+	// All declarations are non-concrete (e.g., type positions in type-only contexts).
+	// Fall back to regular definition which can navigate to the .d.ts declaration.
+	return true
 }
 
 func (l *LanguageService) mapDeclarationToSourceDefinitions(
@@ -574,44 +550,6 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 		return cmp.Compare(a.pos, b.pos)
 	})
 	return core.Deduplicate(core.Map(files, func(file forwardedFile) string { return file.fileName }))
-}
-
-func filterImportLikeDeclarations(currentFile *ast.SourceFile, declarations []*ast.Node) []*ast.Node {
-	if currentFile == nil || len(declarations) <= 1 {
-		return declarations
-	}
-	currentFileName := currentFile.FileName()
-	if !core.Some(declarations, func(node *ast.Node) bool {
-		return ast.GetSourceFileOfNode(node).FileName() != currentFileName
-	}) {
-		return declarations
-	}
-	filtered := core.Filter(declarations, func(node *ast.Node) bool {
-		return ast.GetSourceFileOfNode(node).FileName() != currentFileName || !isImportLikeDeclaration(node)
-	})
-	if len(filtered) == 0 {
-		return declarations
-	}
-	return filtered
-}
-
-func isImportLikeDeclaration(node *ast.Node) bool {
-	for current := node; current != nil; current = current.Parent {
-		switch {
-		case ast.IsImportSpecifier(current),
-			ast.IsImportClause(current),
-			ast.IsNamespaceImport(current),
-			ast.IsImportNode(current):
-			return true
-		case ast.IsExportSpecifier(current):
-			return current.Parent != nil && current.Parent.Parent != nil && current.Parent.Parent.ModuleSpecifier() != nil
-		case ast.IsExportDeclaration(current) && current.ModuleSpecifier() != nil:
-			return true
-		case current.Kind == ast.KindSourceFile:
-			return false
-		}
-	}
-	return false
 }
 
 func getCandidateSourceDeclarationNames(originalNode *ast.Node, declaration *ast.Node) []string {
