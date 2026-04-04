@@ -30,14 +30,12 @@ func (l *LanguageService) ProvideSourceDefinition(
 
 	program, file := l.getProgramAndFile(documentURI)
 	pos := int(l.converters.LineAndCharacterToPosition(file, position))
+	resolver := l.newSourceDefResolver(program)
 	node := astnav.GetTouchingPropertyName(file, pos)
 
 	if node.Kind == ast.KindSourceFile {
 		// Triple-slash directives are comments, not AST nodes, so
 		// GetTouchingPropertyName returns the SourceFile node.
-		// Check if the cursor is on a /// <reference path/types="..."/> directive
-		// and try to resolve through the sourceDefResolver.
-		resolver := l.newSourceDefResolver(ctx, program, file, node)
 		if declarations := resolver.resolveTripleSlashReference(file, pos, program); len(declarations) != 0 {
 			originSelectionRange := l.createLspRangeFromNode(node, file)
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
@@ -46,7 +44,30 @@ func (l *LanguageService) ProvideSourceDefinition(
 	}
 
 	originSelectionRange := l.createLspRangeFromNode(node, file)
-	declarations := l.newSourceDefResolver(ctx, program, file, node).resolve(node)
+	resolveFrom := file.FileName()
+
+	// Determine the containing module specifier for the cursor position.
+	moduleSpecifier := findContainingModuleSpecifier(node)
+	var moduleName string
+	var specifierMode core.ResolutionMode
+	if moduleSpecifier != nil {
+		moduleName = moduleSpecifier.Text()
+		specifierMode = program.GetModeForUsageLocation(file, moduleSpecifier)
+	}
+
+	// If the cursor is directly on a module specifier string, resolve to the
+	// implementation file's entry point.
+	if node == moduleSpecifier {
+		if implementationFile := resolveImplementationFromModuleName(resolver.resolver, moduleName, resolveFrom, specifierMode); implementationFile != "" {
+			if sourceFile := resolver.getOrParseSourceFile(implementationFile); sourceFile != nil {
+				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil), nil
+			}
+		}
+		return l.provideDefinitionWorker(ctx, documentURI, position)
+	}
+
+	definitionDeclarations := getDefinitionDeclarationsFromChecker(ctx, program, file, node)
+	declarations := resolver.resolve(node, moduleName, specifierMode, resolveFrom, definitionDeclarations)
 	if len(declarations) == 0 {
 		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
@@ -54,82 +75,49 @@ func (l *LanguageService) ProvideSourceDefinition(
 }
 
 // sourceDefResolver resolves source definitions by mapping .d.ts declarations
-// to their implementation files (.js/.ts). It holds values derived from the
-// Program upfront so that inner methods never access the Program directly,
-// preventing accidental use of Program methods on externally-parsed source files.
+// to their implementation files (.js/.ts). It holds the NoDts module resolver
+// and file system access, but no cursor-specific state.
 type sourceDefResolver struct {
 	ls            *LanguageService
 	resolver      *module.Resolver
 	options       *core.CompilerOptions
 	fs            vfs.FS
 	getSourceFile func(string) *ast.SourceFile
-
-	// moduleName is the text of the containing module specifier for the
-	// original cursor position (e.g. "pkg" from `import { x } from "pkg"`),
-	// or empty if the cursor is not inside an import/re-export.
-	moduleName string
-	// cursorOnModuleSpecifier is true when the cursor position is directly
-	// on the module specifier string literal itself.
-	cursorOnModuleSpecifier bool
-	// specifierMode is the pre-computed resolution mode for the module specifier,
-	// derived from Program.GetModeForUsageLocation with the current file.
-	specifierMode core.ResolutionMode
-	// resolveFrom is the file name to resolve module names relative to
-	// (always currentFile.FileName()).
-	resolveFrom string
-
-	// definitionDeclarations are the checker-derived declarations for the
-	// node at the cursor position. Computed during construction so the
-	// checker is not held for the duration of the resolution.
-	definitionDeclarations []*ast.Node
 }
 
 func (l *LanguageService) newSourceDefResolver(
-	ctx context.Context,
 	program *compiler.Program,
-	currentFile *ast.SourceFile,
-	node *ast.Node,
 ) *sourceDefResolver {
 	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
-
-	moduleSpecifier := findContainingModuleSpecifier(node)
-
-	r := &sourceDefResolver{
+	return &sourceDefResolver{
 		ls:            l,
 		resolver:      module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), ""),
 		options:       options,
 		fs:            program.Host().FS(),
 		getSourceFile: program.GetSourceFile,
-		resolveFrom:   currentFile.FileName(),
 	}
-	if moduleSpecifier != nil {
-		r.moduleName = moduleSpecifier.Text()
-		r.cursorOnModuleSpecifier = (node == moduleSpecifier)
-		r.specifierMode = program.GetModeForUsageLocation(currentFile, moduleSpecifier)
-	}
-	if node.Kind != ast.KindSourceFile {
-		r.definitionDeclarations = getDefinitionDeclarationsFromChecker(ctx, program, currentFile, node)
-	}
-	return r
 }
 
-func (r *sourceDefResolver) resolve(node *ast.Node) []*ast.Node {
+func (r *sourceDefResolver) resolve(
+	node *ast.Node,
+	moduleName string,
+	specifierMode core.ResolutionMode,
+	resolveFrom string,
+	definitionDeclarations []*ast.Node,
+) []*ast.Node {
 	var declarations []*ast.Node
 
-	if r.moduleName != "" {
-		moduleDeclarations := r.resolveFromModuleName(
-			node,
-			getSourceDefinitionNamesForNode(node),
-		)
+	if moduleName != "" {
+		moduleDeclarations := r.resolveFromModuleName(node, moduleName, specifierMode, resolveFrom)
 		declarations = append(declarations, moduleDeclarations...)
-		if r.shouldPreferModuleResult(node, moduleDeclarations) {
+		if shouldPreferModuleResult(node, moduleDeclarations) {
 			return uniqueDeclarationNodes(declarations)
 		}
 	}
 
-	for _, declaration := range r.definitionDeclarations {
-		declarations = append(declarations, r.mapDeclarationToSource(node, declaration)...)
+	for _, declaration := range definitionDeclarations {
+		declarations = append(declarations, r.mapDeclarationToSource(node, declaration, moduleName, specifierMode, resolveFrom)...)
 	}
 
 	declarations = uniqueDeclarationNodes(declarations)
@@ -138,7 +126,7 @@ func (r *sourceDefResolver) resolve(node *ast.Node) []*ast.Node {
 		// has no checker declarations (e.g. mapped type properties). Trace
 		// the parent expression back to its import to find the implementation file.
 		if node.Parent != nil && ast.IsAccessExpression(node.Parent) && node.Parent.Name() == node {
-			if fallback := r.resolvePropertyViaParentImport(node); len(fallback) != 0 {
+			if fallback := r.resolvePropertyViaParentImport(node, resolveFrom); len(fallback) != 0 {
 				return fallback
 			}
 		}
@@ -170,7 +158,7 @@ func (r *sourceDefResolver) resolveTripleSlashReference(
 	// using the NoDts module resolver via findImplementationFileFromDtsFileName.
 	dtsFileName := ref.file.FileName()
 	preferredMode := inferImpliedNodeFormat(r.resolver, dtsFileName)
-	implementationFile := r.findImplementationFileFromDtsFileName(dtsFileName, preferredMode)
+	implementationFile := r.findImplementationFileFromDtsFileName(dtsFileName, preferredMode, file.FileName())
 	if implementationFile == "" {
 		return nil
 	}
@@ -208,9 +196,11 @@ func getDefinitionDeclarationsFromChecker(
 
 func (r *sourceDefResolver) resolveFromModuleName(
 	originalNode *ast.Node,
-	names []string,
+	moduleName string,
+	specifierMode core.ResolutionMode,
+	resolveFrom string,
 ) []*ast.Node {
-	implementationFile := resolveImplementationFromModuleName(r.resolver, r.moduleName, r.resolveFrom, r.specifierMode)
+	implementationFile := resolveImplementationFromModuleName(r.resolver, moduleName, resolveFrom, specifierMode)
 	if implementationFile == "" {
 		return nil
 	}
@@ -219,9 +209,7 @@ func (r *sourceDefResolver) resolveFromModuleName(
 	if sourceFile == nil {
 		return nil
 	}
-	if r.cursorOnModuleSpecifier {
-		return getSourceDefinitionEntryDeclarations(sourceFile)
-	}
+	names := getSourceDefinitionNamesForNode(originalNode)
 	if isDefaultImportName(originalNode) {
 		// For default imports, only search for "default" declarations to avoid
 		// matching unrelated declarations with the same identifier name.
@@ -246,12 +234,9 @@ func isDefaultImportName(node *ast.Node) bool {
 	return ast.IsDefaultImport(node.Parent.Parent)
 }
 
-func (r *sourceDefResolver) shouldPreferModuleResult(node *ast.Node, declarations []*ast.Node) bool {
-	if r.moduleName == "" || len(declarations) == 0 {
+func shouldPreferModuleResult(node *ast.Node, declarations []*ast.Node) bool {
+	if len(declarations) == 0 {
 		return false
-	}
-	if r.cursorOnModuleSpecifier {
-		return true
 	}
 	if ast.IsPartOfTypeNode(node) || ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) {
 		return len(getConcreteSourceDeclarations(declarations)) != 0
@@ -273,6 +258,9 @@ func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Nod
 func (r *sourceDefResolver) mapDeclarationToSource(
 	originalNode *ast.Node,
 	declaration *ast.Node,
+	moduleName string,
+	specifierMode core.ResolutionMode,
+	resolveFrom string,
 ) []*ast.Node {
 	file, startPos := getFileAndStartPosFromDeclaration(declaration)
 	fileName := file.FileName()
@@ -287,7 +275,7 @@ func (r *sourceDefResolver) mapDeclarationToSource(
 		return []*ast.Node{declaration}
 	}
 
-	implementationFile := r.resolveImplementationFileForDeclaration(declaration)
+	implementationFile := r.resolveImplementationFileForDeclaration(declaration, moduleName, specifierMode, resolveFrom)
 	if implementationFile == "" {
 		return nil
 	}
@@ -310,9 +298,12 @@ func (r *sourceDefResolver) mapDeclarationToSource(
 
 func (r *sourceDefResolver) resolveImplementationFileForDeclaration(
 	declaration *ast.Node,
+	moduleName string,
+	specifierMode core.ResolutionMode,
+	resolveFrom string,
 ) string {
-	if r.moduleName != "" {
-		if implementationFile := resolveImplementationFromModuleName(r.resolver, r.moduleName, r.resolveFrom, r.specifierMode); implementationFile != "" {
+	if moduleName != "" {
+		if implementationFile := resolveImplementationFromModuleName(r.resolver, moduleName, resolveFrom, specifierMode); implementationFile != "" {
 			return implementationFile
 		}
 	}
@@ -320,15 +311,16 @@ func (r *sourceDefResolver) resolveImplementationFileForDeclaration(
 	dtsFileName := ast.GetSourceFileOfNode(declaration).FileName()
 
 	preferredMode := inferImpliedNodeFormat(r.resolver, dtsFileName)
-	if r.moduleName != "" {
-		preferredMode = r.specifierMode
+	if moduleName != "" {
+		preferredMode = specifierMode
 	}
-	return r.findImplementationFileFromDtsFileName(dtsFileName, preferredMode)
+	return r.findImplementationFileFromDtsFileName(dtsFileName, preferredMode, resolveFrom)
 }
 
 func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 	dtsFileName string,
 	preferredMode core.ResolutionMode,
+	resolveFrom string,
 ) string {
 	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, r.options); jsExt != "" {
 		candidate := tspath.ChangeExtension(dtsFileName, jsExt)
@@ -360,7 +352,7 @@ func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 			return ""
 		}
 		specifier := packageName + "/" + tspath.RemoveFileExtension(pathToFileInPackage)
-		return resolveImplementationFromModuleName(r.resolver, specifier, r.resolveFrom, preferredMode)
+		return resolveImplementationFromModuleName(r.resolver, specifier, resolveFrom, preferredMode)
 	}
 
 	tryPackageRootFirst := pathToFileInPackage == "index.d.ts" || strings.HasSuffix(pathToFileInPackage, "/index.d.ts")
@@ -370,7 +362,7 @@ func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 			return implementationFile
 		}
 	}
-	if implementationFile := resolveImplementationFromModuleName(r.resolver, packageName, r.resolveFrom, preferredMode); implementationFile != "" {
+	if implementationFile := resolveImplementationFromModuleName(r.resolver, packageName, resolveFrom, preferredMode); implementationFile != "" {
 		return implementationFile
 	}
 	if !tryPackageRootFirst {
@@ -446,7 +438,7 @@ func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 // values where the property itself has no checker declarations (e.g. mapped type
 // properties). It walks the access chain to find the root identifier, looks up
 // its import declaration, and searches the implementation file for the property name.
-func (r *sourceDefResolver) resolvePropertyViaParentImport(node *ast.Node) []*ast.Node {
+func (r *sourceDefResolver) resolvePropertyViaParentImport(node *ast.Node, resolveFrom string) []*ast.Node {
 	// Walk left in the access chain to find the root identifier.
 	expr := node.Parent.Expression()
 	for expr != nil && ast.IsAccessExpression(expr) {
@@ -464,8 +456,8 @@ func (r *sourceDefResolver) resolvePropertyViaParentImport(node *ast.Node) []*as
 	}
 
 	// Resolve the module to an implementation file.
-	preferredMode := inferImpliedNodeFormat(r.resolver, r.resolveFrom)
-	implementationFile := resolveImplementationFromModuleName(r.resolver, moduleSpecifier.Text(), r.resolveFrom, preferredMode)
+	preferredMode := inferImpliedNodeFormat(r.resolver, resolveFrom)
+	implementationFile := resolveImplementationFromModuleName(r.resolver, moduleSpecifier.Text(), resolveFrom, preferredMode)
 	if implementationFile == "" {
 		return nil
 	}
