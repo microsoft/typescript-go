@@ -115,27 +115,7 @@ func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
 	if len(declarations) != 0 {
 		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
-	if len(names) != 0 && !isImportOrExportName(originalNode) {
-		return nil
-	}
 	return getSourceDefinitionEntryDeclarations(sourceFile)
-}
-
-func isImportOrExportName(node *ast.Node) bool {
-	if node == nil {
-		return false
-	}
-	if ast.IsImportOrExportSpecifier(node) || isDefaultImportName(node) {
-		return true
-	}
-	switch node.Kind {
-	case ast.KindNamespaceImport,
-		ast.KindNamedImports,
-		ast.KindNamedExports:
-		return true
-	}
-	parent := node.Parent
-	return parent != nil && (parent.Kind == ast.KindNamespaceImport || ast.IsImportOrExportSpecifier(parent)) && parent.Name() == node
 }
 
 func isDefaultImportName(node *ast.Node) bool {
@@ -151,9 +131,6 @@ func shouldPreferModuleSpecifierResult(node *ast.Node, moduleSpecifier *ast.Node
 	}
 	if node == moduleSpecifier {
 		return true
-	}
-	if !isImportOrExportName(node) {
-		return false
 	}
 	if ast.IsPartOfTypeNode(node) || ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) {
 		return len(getConcreteSourceDeclarations(declarations)) != 0
@@ -350,10 +327,7 @@ func inferImpliedNodeFormat(resolver *module.Resolver, fileName string) core.Res
 			packageJsonType = value
 		}
 	}
-	if mode := ast.GetImpliedNodeFormatForFile(fileName, packageJsonType); mode != core.ResolutionModeNone {
-		return mode
-	}
-	return core.ModuleKindESNext
+	return ast.GetImpliedNodeFormatForFile(fileName, packageJsonType)
 }
 
 func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
@@ -371,9 +345,6 @@ func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 }
 
 func getSourceDefinitionNamesForNode(node *ast.Node) []string {
-	if node == nil {
-		return nil
-	}
 	names := getCandidateSourceDeclarationNames(node, nil)
 	if isDefaultImportName(node) {
 		names = append(names, "default")
@@ -418,10 +389,6 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 }
 
 func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Program, sourceFile *ast.SourceFile) []string {
-	if sourceFile == nil {
-		return nil
-	}
-
 	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
 	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
@@ -430,9 +397,6 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 	var files []string
 	for _, imp := range sourceFile.Imports() {
 		moduleName := imp.Text()
-		if moduleName == "" {
-			continue
-		}
 		if implementationFile := resolveImplementationFromModuleName(resolver, moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
 			files = append(files, implementationFile)
 		}
@@ -492,9 +456,6 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 	}
 	var visit ast.Visitor
 	visit = func(node *ast.Node) bool {
-		if node == nil {
-			return false
-		}
 		if name := ast.GetNameOfDeclaration(node); name != nil {
 			if text := ast.GetTextOfPropertyName(name); text != "" {
 				if _, ok := wanted[text]; ok {
