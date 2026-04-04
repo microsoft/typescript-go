@@ -34,7 +34,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 	}
 
 	originSelectionRange := l.createLspRangeFromNode(node, file)
-	declarations := l.getSourceDefinitionDeclarations(ctx, program, file, node, pos)
+	declarations := l.getSourceDefinitionDeclarations(ctx, program, file, node)
 	if len(declarations) == 0 {
 		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
@@ -46,7 +46,6 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
 	node *ast.Node,
-	position int,
 ) []*ast.Node {
 	var declarations []*ast.Node
 	moduleSpecifier := findContainingModuleSpecifier(node)
@@ -83,15 +82,6 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 
 	for _, declaration := range definitionDeclarations {
 		declarations = append(declarations, l.mapDeclarationToSourceDefinitions(program, currentFile, node, declaration)...)
-	}
-
-	reference := getReferenceAtPosition(currentFile, position, program)
-	if reference != nil && len(declarations) == 0 {
-		if sourceFile := l.getOrParseSourceFile(program, reference.fileName); sourceFile != nil && !tspath.IsDeclarationFileName(reference.fileName) {
-			if entry := getSourceDefinitionEntryNode(sourceFile); entry != nil {
-				declarations = append(declarations, entry)
-			}
-		}
 	}
 
 	declarations = uniqueDeclarationNodes(declarations)
@@ -256,11 +246,6 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 			return implementationFile
 		}
 	}
-	if moduleSpecifier := findContainingModuleSpecifier(declaration); moduleSpecifier != nil {
-		if implementationFile := l.resolveImplementationFileForModuleSpecifier(program, currentFile, moduleSpecifier); implementationFile != "" {
-			return implementationFile
-		}
-	}
 
 	dtsFileName := ast.GetSourceFileOfNode(declaration).FileName()
 	options := program.Options().Clone()
@@ -283,21 +268,7 @@ func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
 	options.NoDtsResolution = core.TSTrue
 	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
 	mode := program.GetModeForUsageLocation(currentFile, moduleSpecifier)
-
-	if implementationFile := resolveImplementationFromModuleName(resolver, moduleSpecifier.Text(), currentFile.FileName(), mode); implementationFile != "" {
-		return implementationFile
-	}
-
-	if resolved := program.GetResolvedModuleFromModuleSpecifier(currentFile, moduleSpecifier); resolved != nil && resolved.IsResolved() {
-		if !tspath.IsDeclarationFileName(resolved.ResolvedFileName) {
-			return resolved.ResolvedFileName
-		}
-		if implementationFile := l.findImplementationFileFromDtsFileName(resolver, program, resolved.ResolvedFileName, currentFile.FileName(), mode); implementationFile != "" {
-			return implementationFile
-		}
-	}
-
-	return ""
+	return resolveImplementationFromModuleName(resolver, moduleSpecifier.Text(), currentFile.FileName(), mode)
 }
 
 func (l *LanguageService) findImplementationFileFromDtsFileName(
@@ -346,13 +317,10 @@ func (l *LanguageService) findImplementationFileFromDtsFileName(
 	if implementationFile := resolveImplementationFromModuleName(resolver, packageName, resolveFromFile, preferredMode); implementationFile != "" {
 		return implementationFile
 	}
-	if tryPackageRootFirst {
-		if implementationFile := tryResolvePackageSubpath(); implementationFile != "" {
-			return implementationFile
-		}
+	if !tryPackageRootFirst {
+		return ""
 	}
-
-	return ""
+	return tryResolvePackageSubpath()
 }
 
 func resolveImplementationFromModuleName(
