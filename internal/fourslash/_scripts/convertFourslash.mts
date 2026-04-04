@@ -228,6 +228,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] {
                 case "organizeImports":
                     // `verify.organizeImports(...)`
                     return parseOrganizeImportsArgs(callExpression.arguments);
+                case "getEditsForFileRename":
+                    return parseGetEditsForFileRenameArgs(callExpression.arguments);
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return parseBaselineFindAllReferencesArgs(callExpression.arguments);
@@ -2280,6 +2282,92 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
     }];
 }
 
+function parseGetEditsForFileRenameArgs(args: readonly ts.Expression[]): [VerifyGetEditsForFileRenameCmd] | undefined {
+    if (args.length !== 1) {
+        console.error(`Expected 1 argument in verify.getEditsForFileRename, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+
+    const options = getObjectLiteralExpression(args[0]);
+    if (!options) {
+        console.error(`Expected object literal for verify.getEditsForFileRename, got ${args[0].getText()}`);
+        return undefined;
+    }
+
+    let oldPath: ts.StringLiteralLike | undefined;
+    let newPath: ts.StringLiteralLike | undefined;
+    let newFileContents: ts.ObjectLiteralExpression | undefined;
+    for (const prop of options.properties) {
+        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+            console.error(`Expected property assignment with identifier name in verify.getEditsForFileRename options, got ${prop.getText()}`);
+            return undefined;
+        }
+
+        switch (prop.name.text) {
+            case "oldPath":
+                oldPath = getStringLiteralLike(prop.initializer);
+                if (!oldPath) {
+                    console.error(`Expected string literal for oldPath in verify.getEditsForFileRename, got ${prop.initializer.getText()}`);
+                    return undefined;
+                }
+                break;
+            case "newPath":
+                newPath = getStringLiteralLike(prop.initializer);
+                if (!newPath) {
+                    console.error(`Expected string literal for newPath in verify.getEditsForFileRename, got ${prop.initializer.getText()}`);
+                    return undefined;
+                }
+                break;
+            case "newFileContents":
+                newFileContents = getObjectLiteralExpression(prop.initializer);
+                if (!newFileContents) {
+                    console.error(`Expected object literal for newFileContents in verify.getEditsForFileRename, got ${prop.initializer.getText()}`);
+                    return undefined;
+                }
+                break;
+            default:
+                console.error(`Unrecognized property in verify.getEditsForFileRename options: ${prop.getText()}`);
+                return undefined;
+        }
+    }
+
+    if (!oldPath || !newPath || !newFileContents) {
+        console.error(`Expected oldPath, newPath, and newFileContents in verify.getEditsForFileRename`);
+        return undefined;
+    }
+
+    const expectedContentsEntries: string[] = [];
+    for (const prop of newFileContents.properties) {
+        if (!ts.isPropertyAssignment(prop)) {
+            console.error(`Expected property assignment in verify.getEditsForFileRename newFileContents, got ${prop.getText()}`);
+            return undefined;
+        }
+
+        const fileName = getPropertyNameText(prop.name);
+        if (fileName === undefined) {
+            console.error(`Expected identifier or string literal property name in verify.getEditsForFileRename newFileContents, got ${prop.name.getText()}`);
+            return undefined;
+        }
+
+        const fileContent = getStringLiteralLike(prop.initializer);
+        if (!fileContent) {
+            console.error(`Expected string literal file content in verify.getEditsForFileRename newFileContents, got ${prop.initializer.getText()}`);
+            return undefined;
+        }
+
+        expectedContentsEntries.push(`${getGoStringLiteral(fileName)}: ${getGoMultiLineStringLiteral(fileContent.text)},`);
+    }
+
+    return [{
+        kind: "verifyGetEditsForFileRename",
+        oldPath: getGoStringLiteral(oldPath.text),
+        newPath: getGoStringLiteral(newPath.text),
+        newFileContents: expectedContentsEntries.length === 0
+            ? "map[string]string{}"
+            : `map[string]string{\n${expectedContentsEntries.join("\n")}\n}`,
+    }];
+}
+
 function parseBaselineSignatureHelp(args: ts.NodeArray<ts.Expression>): Cmd {
     if (args.length !== 0) {
         // All calls are currently empty!
@@ -3075,6 +3163,13 @@ interface VerifyOrganizeImportsCmd {
     preferences: string;
 }
 
+interface VerifyGetEditsForFileRenameCmd {
+    kind: "verifyGetEditsForFileRename";
+    oldPath: string;
+    newPath: string;
+    newFileContents: string;
+}
+
 interface VerifyRenameInfoCmd {
     kind: "renameInfoSucceeded" | "renameInfoFailed";
     preferences: string;
@@ -3211,6 +3306,7 @@ type Cmd =
     | VerifyContentCmd
     | VerifyQuickInfoCmd
     | VerifyOrganizeImportsCmd
+    | VerifyGetEditsForFileRenameCmd
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
     | VerifyBaselineLinkedEditingCmd
@@ -3337,6 +3433,10 @@ function generateOrganizeImports({ expectedContent, mode, preferences }: VerifyO
         ${mode},
         ${preferences},
     )`;
+}
+
+function generateGetEditsForFileRename({ oldPath, newPath, newFileContents }: VerifyGetEditsForFileRenameCmd): string {
+    return `f.VerifyGetEditsForFileRename(t, ${oldPath}, ${newPath}, ${newFileContents})`;
 }
 
 function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenameCmd): string {
@@ -3527,6 +3627,8 @@ function generateCmd(cmd: Cmd): string {
             return generateQuickInfoCommand(cmd);
         case "verifyOrganizeImports":
             return generateOrganizeImports(cmd);
+        case "verifyGetEditsForFileRename":
+            return generateGetEditsForFileRename(cmd);
         case "verifyBaselineRename":
         case "verifyBaselineRenameAtRangesWithText":
             return generateBaselineRename(cmd);
@@ -3666,6 +3768,13 @@ function getNodeOfKind<T extends ts.Node>(node: ts.Node, hasKind: (n: ts.Node) =
 
 function getObjectLiteralExpression(node: ts.Node): ts.ObjectLiteralExpression | undefined {
     return getNodeOfKind(node, ts.isObjectLiteralExpression);
+}
+
+function getPropertyNameText(name: ts.PropertyName): string | undefined {
+    if (ts.isIdentifier(name) || ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)) {
+        return name.text;
+    }
+    return undefined;
 }
 
 function getStringLiteralLike(node: ts.Node): ts.StringLiteralLike | undefined {
