@@ -390,6 +390,16 @@ func getSourceDefinitionNamesForNode(node *ast.Node) []string {
 	if isDefaultImportName(node) {
 		names = append(names, "default")
 	}
+	// For aliased imports (import { original as alias }) and re-exports
+	// (export { original as alias }), include the original export name
+	// so we search the .js file for the right declaration.
+	if node != nil && node.Parent != nil {
+		if ast.IsImportSpecifier(node.Parent) || ast.IsExportSpecifier(node.Parent) {
+			if propName := node.Parent.PropertyName(); propName != nil {
+				names = append(names, propName.Text())
+			}
+		}
+	}
 	return core.Deduplicate(core.Filter(names, func(name string) bool { return name != "" }))
 }
 
@@ -454,6 +464,13 @@ func getCandidateSourceDeclarationNames(originalNode *ast.Node, declaration *ast
 		}
 		if (ast.IsFunctionDeclaration(declaration) || ast.IsClassDeclaration(declaration)) && declaration.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
 			names = append(names, "default")
+		}
+		// For aliased import/export specifiers (e.g. import { original as alias }),
+		// also include the original name (propertyName) so we search for it in .js.
+		if ast.IsImportSpecifier(declaration) || ast.IsExportSpecifier(declaration) {
+			if propName := declaration.PropertyName(); propName != nil {
+				names = append(names, propName.Text())
+			}
 		}
 	}
 	if originalNode != nil {
