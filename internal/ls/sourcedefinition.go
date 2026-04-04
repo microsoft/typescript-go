@@ -189,6 +189,12 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 	return getSourceDefinitionEntryDeclarations(sourceFile)
 }
 
+func newNoDtsResolver(program *compiler.Program) *module.Resolver {
+	options := program.Options().Clone()
+	options.NoDtsResolution = core.TSTrue
+	return module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
+}
+
 func (l *LanguageService) resolveImplementationFileForDeclaration(
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
@@ -203,9 +209,7 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 	}
 
 	dtsFileName := ast.GetSourceFileOfNode(declaration).FileName()
-	options := program.Options().Clone()
-	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
+	resolver := newNoDtsResolver(program)
 
 	preferredMode := inferImpliedNodeFormat(resolver, dtsFileName)
 	if originalModuleSpecifier != nil {
@@ -219,9 +223,7 @@ func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
 	currentFile *ast.SourceFile,
 	moduleSpecifier *ast.Node,
 ) string {
-	options := program.Options().Clone()
-	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
+	resolver := newNoDtsResolver(program)
 	mode := program.GetModeForUsageLocation(currentFile, moduleSpecifier)
 	return resolveImplementationFromModuleName(resolver, moduleSpecifier.Text(), currentFile.FileName(), mode)
 }
@@ -386,9 +388,7 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 }
 
 func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Program, sourceFile *ast.SourceFile) []string {
-	options := program.Options().Clone()
-	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
+	resolver := newNoDtsResolver(program)
 	preferredMode := inferImpliedNodeFormat(resolver, sourceFile.FileName())
 
 	var files []string
@@ -445,11 +445,6 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 			continue
 		}
 		wanted[name] = struct{}{}
-		for _, candidate := range getPossibleSymbolReferenceNodes(sourceFile, name, nil /*container*/) {
-			if declaration := ast.GetDeclarationFromName(candidate); declaration != nil {
-				declarations = append(declarations, declaration)
-			}
-		}
 	}
 	var visit ast.Visitor
 	visit = func(node *ast.Node) bool {
