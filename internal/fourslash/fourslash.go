@@ -2856,6 +2856,9 @@ func (f *FourslashTest) getSelection() core.TextRange {
 
 // Updates f.currentCaretPosition
 func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) int {
+	if len(edits) == 0 {
+		return 0
+	}
 	script := f.getScriptInfo(f.activeFilename)
 	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
 		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
