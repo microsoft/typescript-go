@@ -104,6 +104,25 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 		}
 	}
 
+	definitionDeclarations := getDefinitionDeclarationsFromChecker(ctx, program, currentFile, node)
+
+	for _, declaration := range definitionDeclarations {
+		declarations = append(declarations, l.mapDeclarationToSourceDefinitions(sdc, node, declaration)...)
+	}
+
+	declarations = uniqueDeclarationNodes(declarations)
+	if len(getConcreteSourceDeclarations(declarations)) == 0 {
+		return nil
+	}
+	return declarations
+}
+
+func getDefinitionDeclarationsFromChecker(
+	ctx context.Context,
+	program *compiler.Program,
+	currentFile *ast.SourceFile,
+	node *ast.Node,
+) []*ast.Node {
 	c, done := program.GetTypeCheckerForFile(ctx, currentFile)
 	defer done()
 
@@ -119,16 +138,7 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 		nonFunctionDeclarations := core.Filter(definitionDeclarations, func(node *ast.Node) bool { return !ast.IsFunctionLike(node) })
 		definitionDeclarations = append(nonFunctionDeclarations, calledDeclaration)
 	}
-
-	for _, declaration := range definitionDeclarations {
-		declarations = append(declarations, l.mapDeclarationToSourceDefinitions(sdc, node, declaration)...)
-	}
-
-	declarations = uniqueDeclarationNodes(declarations)
-	if len(getConcreteSourceDeclarations(declarations)) == 0 {
-		return nil
-	}
-	return declarations
+	return definitionDeclarations
 }
 
 func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
