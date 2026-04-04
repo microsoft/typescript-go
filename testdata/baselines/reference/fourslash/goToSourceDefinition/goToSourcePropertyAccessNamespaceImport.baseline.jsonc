@@ -1,0 +1,13 @@
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+// import { coords } from "pkg";
+// coords./*GOTO SOURCE DEF*/x;
+// coords.y;
+
+
+
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+// import { coords } from "pkg";
+// coords.x;
+// coords./*GOTO SOURCE DEF*/y;

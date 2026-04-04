@@ -1,0 +1,13 @@
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+// import { config } from "pkg";
+// config./*GOTO SOURCE DEF*/alpha;
+// config.beta;
+
+
+
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+// import { config } from "pkg";
+// config.alpha;
+// config./*GOTO SOURCE DEF*/beta;
