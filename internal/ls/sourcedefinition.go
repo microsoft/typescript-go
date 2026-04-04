@@ -469,15 +469,6 @@ func getImportNamesForModuleSpecifier(moduleSpecifier *ast.Node) []string {
 			break
 		}
 		if ast.IsExportDeclaration(current) {
-			if exportClause := current.AsExportDeclaration().ExportClause; exportClause != nil && ast.IsNamedExports(exportClause) {
-				for _, element := range exportClause.AsNamedExports().Elements.Nodes {
-					if propertyName := element.PropertyName(); propertyName != nil {
-						names = append(names, propertyName.Text())
-					} else if name := element.Name(); name != nil {
-						names = append(names, name.Text())
-					}
-				}
-			}
 			break
 		}
 	}
