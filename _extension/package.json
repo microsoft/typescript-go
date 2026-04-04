@@ -153,6 +153,30 @@
                 "title": "Initialize API Connection",
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "Developer: TypeScript Native Preview"
+            },
+            {
+                "command": "typescript.sortImports",
+                "title": "Sort Imports",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "TypeScript"
+            },
+            {
+                "command": "javascript.sortImports",
+                "title": "Sort Imports",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "JavaScript"
+            },
+            {
+                "command": "typescript.removeUnusedImports",
+                "title": "Remove Unused Imports",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "TypeScript"
+            },
+            {
+                "command": "javascript.removeUnusedImports",
+                "title": "Remove Unused Imports",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "JavaScript"
             }
         ]
     },

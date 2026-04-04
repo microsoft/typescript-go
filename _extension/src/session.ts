@@ -238,6 +238,24 @@ class Session implements vscode.Disposable {
                 vscode.window.showErrorMessage(`Failed to initialize API session: ${message}`);
             }
         }));
+
+        for (const command of ["typescript.sortImports", "javascript.sortImports"]) {
+            this.disposables.push(vscode.commands.registerCommand(command, async () => {
+                await vscode.commands.executeCommand("editor.action.sourceAction", {
+                    kind: "source.sortImports",
+                    apply: "first",
+                });
+            }));
+        }
+
+        for (const command of ["typescript.removeUnusedImports", "javascript.removeUnusedImports"]) {
+            this.disposables.push(vscode.commands.registerCommand(command, async () => {
+                await vscode.commands.executeCommand("editor.action.sourceAction", {
+                    kind: "source.removeUnusedImports",
+                    apply: "first",
+                });
+            }));
+        }
     }
 
     async dispose(): Promise<void> {
