@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import {
+    ClientCapabilities,
     CloseAction,
     CloseHandlerResult,
     ErrorAction,
@@ -11,6 +12,7 @@ import {
     Message,
     NotebookDocumentFilter,
     ServerOptions,
+    StaticFeature,
     TextDocumentFilter,
     TransportKind,
 } from "vscode-languageclient/node";
@@ -20,6 +22,7 @@ import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
+import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import * as tr from "./telemetryReporting";
 import {
@@ -72,6 +75,7 @@ export class Client implements vscode.Disposable {
                     ...configurationMiddleware,
                 },
                 sendNotification: sendNotificationMiddleware,
+                provideHover: () => undefined,
             },
             diagnosticPullOptions: {
                 onChange: true,
@@ -170,6 +174,22 @@ export class Client implements vscode.Disposable {
         );
         this.disposables.push(this.client);
 
+        // Register a static feature to advertise verbosityLevel support in hover capabilities.
+        this.client.registerFeature(
+            {
+                fillClientCapabilities(capabilities: ClientCapabilities): void {
+                    capabilities.textDocument = capabilities.textDocument ?? {};
+                    capabilities.textDocument.hover = capabilities.textDocument.hover ?? {};
+                    (capabilities.textDocument.hover as { verbosityLevel?: boolean; }).verbosityLevel = true;
+                },
+                initialize(): void {},
+                getState() {
+                    return { kind: "static" as const };
+                },
+                clear(): void {},
+            } satisfies StaticFeature,
+        );
+
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();
         this.isInitialized = true;
@@ -205,6 +225,7 @@ export class Client implements vscode.Disposable {
 
         this.disposables.push(
             serverTelemetryListener,
+            registerHoverFeature(this.documentSelector, this.client),
             registerTagClosingFeature("typescript", this.documentSelector, this.client),
             registerTagClosingFeature("javascript", this.documentSelector, this.client),
         );

@@ -1,6 +1,8 @@
 package checker
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -341,14 +343,14 @@ func (c *Checker) valueToString(value any) string {
 	return ValueToString(value)
 }
 
-func (c *Checker) formatUnionTypes(types []*Type) []*Type {
+func (c *Checker) formatUnionTypes(types []*Type, expandingEnum bool) []*Type {
 	var result []*Type
 	var flags TypeFlags
 	for i := 0; i < len(types); i++ {
 		t := types[i]
 		flags |= t.flags
 		if t.flags&TypeFlagsNullable == 0 {
-			if t.flags&(TypeFlagsBooleanLiteral|TypeFlagsEnumLike) != 0 {
+			if t.flags&TypeFlagsBooleanLiteral != 0 || (!expandingEnum && t.flags&TypeFlagsEnumLike != 0) {
 				var baseType *Type
 				if t.flags&TypeFlagsBooleanLiteral != 0 {
 					baseType = c.booleanType
@@ -379,6 +381,120 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
 	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
 	return nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
+}
+
+// TypeToStringWithVerbosity converts a type to string with verbosity support for expandable hover.
+func (c *Checker) TypeToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+	writer := printer.NewTextWriter("\n", 0)
+	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
+	if noTruncation {
+		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
+	}
+	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder.verbosity = vc
+	typeNode := nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
+	if typeNode == nil {
+		panic("should always get typenode")
+	}
+	var p *printer.Printer
+	if t == c.unresolvedType {
+		p = createPrinterWithDefaults(nodeBuilder.EmitContext())
+	} else {
+		p = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+	}
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	p.Write(typeNode, sourceFile, writer, nil)
+	result := writer.String()
+
+	maxLength := defaultMaximumTruncationLength * 2
+	if vc != nil && vc.MaxTruncationLength > 0 {
+		maxLength = vc.MaxTruncationLength * 10 // hard cutoff matching Strada's absoluteMaximumLength
+	}
+	if noTruncation {
+		maxLength = noTruncationMaximumTruncationLength * 2
+	}
+	if maxLength > 0 && result != "" && len(result) >= maxLength {
+		if vc != nil {
+			vc.Truncated = true
+		}
+		return result[0:maxLength-len("...")] + "..."
+	}
+	return result
+}
+
+// SignatureToStringWithVerbosity converts a signature to string with verbosity support for expandable hover.
+func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+	isConstructor := signature.flags&SignatureFlagsConstruct != 0 && flags&TypeFormatFlagsWriteCallStyleSignature == 0
+	var sigOutput ast.Kind
+	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
+		if isConstructor {
+			sigOutput = ast.KindConstructorType
+		} else {
+			sigOutput = ast.KindFunctionType
+		}
+	} else {
+		if isConstructor {
+			sigOutput = ast.KindConstructSignature
+		} else {
+			sigOutput = ast.KindCallSignature
+		}
+	}
+	writer := printer.NewTextWriter("\n", 0)
+
+	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder.verbosity = vc
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
+	sig := nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
+	p := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	p.Write(sig, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil)
+	return writer.String()
+}
+
+// ExpandSymbolForHover produces declaration strings for a symbol with verbosity support for expandable hover.
+func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFlags, vc *VerbosityContext) string {
+	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder.verbosity = vc
+	nodes := nodeBuilder.ExpandSymbolForHover(symbol, meaning)
+	if len(nodes) == 0 {
+		return ""
+	}
+	p := createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+	var sourceFile *ast.SourceFile
+	if symbol.ValueDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(symbol.ValueDeclaration)
+	}
+	var b strings.Builder
+	for i, node := range nodes {
+		if i > 0 {
+			b.WriteString("\n")
+		}
+		b.WriteString(p.Emit(node, sourceFile))
+	}
+	return b.String()
+}
+
+// TypeParameterToStringWithVerbosity renders a type parameter declaration (e.g. "T extends Foo") with verbosity support.
+func (c *Checker) TypeParameterToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, vc *VerbosityContext) string {
+	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder.verbosity = vc
+	typeParamNode := nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsNone, nil)
+	if typeParamNode == nil {
+		return c.TypeToString(t)
+	}
+	p := createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	return p.Emit(typeParamNode, sourceFile)
 }
 
 func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypePredicateNodeNode {
