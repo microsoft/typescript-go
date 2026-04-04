@@ -865,7 +865,18 @@ func (v *View) computeShouldUseRequire() bool {
 		return false
 	}
 
-	// 2. If the current source file is unambiguously CJS or ESM, go with that
+	// 2. For Node module kinds (node16/node18/node20/nodenext), the runtime module
+	//    format is determined by file extension and package.json "type" field, not
+	//    by file content. moduleDetection defaults to "force" for these module kinds,
+	//    which sets ExternalModuleIndicator on all files regardless of actual syntax,
+	//    making the file content indicators unreliable. Use GetImpliedNodeFormatForEmit
+	//    which correctly reflects the runtime module format.
+	moduleKind := v.program.Options().GetEmitModuleKind()
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+		return v.program.GetImpliedNodeFormatForEmit(v.importingFile) != core.ModuleKindESNext
+	}
+
+	// 3. If the current source file is unambiguously CJS or ESM, go with that
 	switch {
 	case v.importingFile.CommonJSModuleIndicator != nil && v.importingFile.ExternalModuleIndicator == nil:
 		return true
@@ -873,13 +884,12 @@ func (v *View) computeShouldUseRequire() bool {
 		return false
 	}
 
-	// 3. If there's a tsconfig/jsconfig, use its module setting
+	// 4. If there's a tsconfig/jsconfig, use its module setting
 	if v.program.Options().ConfigFilePath != "" {
-		return v.program.Options().GetEmitModuleKind() < core.ModuleKindES2015
+		return moduleKind < core.ModuleKindES2015
 	}
 
-	// 4. In --module nodenext, assume we're not emitting JS -> JS, so use
-	//    whatever syntax Node expects based on the detected module kind
+	// 5. Use the implied node format to determine CJS vs ESM
 	//    TODO: consider removing `impliedNodeFormatForEmit`
 	switch v.program.GetImpliedNodeFormatForEmit(v.importingFile) {
 	case core.ModuleKindCommonJS:
@@ -888,7 +898,7 @@ func (v *View) computeShouldUseRequire() bool {
 		return false
 	}
 
-	// 5. Match the first other JS file in the program that's unambiguously CJS or ESM
+	// 6. Match the first other JS file in the program that's unambiguously CJS or ESM
 	for _, otherFile := range v.program.GetSourceFiles() {
 		switch {
 		case otherFile == v.importingFile, !ast.IsSourceFileJS(otherFile), v.program.IsSourceFileFromExternalLibrary(otherFile):
