@@ -36,20 +36,21 @@ func (l *LanguageService) ProvideSourceDefinition(
 	}
 
 	originSelectionRange := l.createLspRangeFromNode(node, file)
-	declarations := l.getSourceDefinitionDeclarations(ctx, program, file, node)
+	declarations := l.newSourceDefResolver(ctx, program, file, node).resolve(node)
 	if len(declarations) == 0 {
 		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 }
 
-// sourceDefContext holds values derived from the Program that are needed for
-// source definition resolution. By extracting these upfront, inner functions
-// avoid direct access to the Program, preventing accidental use of Program
-// methods on externally-parsed source files.
-type sourceDefContext struct {
+// sourceDefResolver resolves source definitions by mapping .d.ts declarations
+// to their implementation files (.js/.ts). It holds values derived from the
+// Program upfront so that inner methods never access the Program directly,
+// preventing accidental use of Program methods on externally-parsed source files.
+type sourceDefResolver struct {
+	ls            *LanguageService
 	resolver      *module.Resolver
-	compilerOpts  *core.CompilerOptions
+	options       *core.CompilerOptions
 	fs            vfs.FS
 	getSourceFile func(string) *ast.SourceFile
 
@@ -63,51 +64,57 @@ type sourceDefContext struct {
 	// resolveFrom is the file name to resolve module names relative to
 	// (always currentFile.FileName()).
 	resolveFrom string
+
+	// definitionDeclarations are the checker-derived declarations for the
+	// node at the cursor position. Computed during construction so the
+	// checker is not held for the duration of the resolution.
+	definitionDeclarations []*ast.Node
 }
 
-func (l *LanguageService) getSourceDefinitionDeclarations(
+func (l *LanguageService) newSourceDefResolver(
 	ctx context.Context,
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
 	node *ast.Node,
-) []*ast.Node {
+) *sourceDefResolver {
 	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
 
 	moduleSpecifier := findContainingModuleSpecifier(node)
 
-	sdc := &sourceDefContext{
-		resolver:        resolver,
-		compilerOpts:    program.Options(),
+	r := &sourceDefResolver{
+		ls:              l,
+		resolver:        module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), ""),
+		options:         options,
 		fs:              program.Host().FS(),
 		getSourceFile:   program.GetSourceFile,
 		moduleSpecifier: moduleSpecifier,
 		resolveFrom:     currentFile.FileName(),
 	}
 	if moduleSpecifier != nil {
-		sdc.specifierMode = program.GetModeForUsageLocation(currentFile, moduleSpecifier)
+		r.specifierMode = program.GetModeForUsageLocation(currentFile, moduleSpecifier)
 	}
+	r.definitionDeclarations = getDefinitionDeclarationsFromChecker(ctx, program, currentFile, node)
+	return r
+}
 
+func (r *sourceDefResolver) resolve(node *ast.Node) []*ast.Node {
 	var declarations []*ast.Node
 
-	if moduleSpecifier != nil {
-		moduleDeclarations := l.getSourceDefinitionDeclarationsForModuleSpecifier(
-			sdc,
-			moduleSpecifier,
+	if r.moduleSpecifier != nil {
+		moduleDeclarations := r.resolveFromModuleSpecifier(
+			r.moduleSpecifier,
 			node,
 			getSourceDefinitionNamesForNode(node),
 		)
 		declarations = append(declarations, moduleDeclarations...)
-		if shouldPreferModuleSpecifierResult(node, moduleSpecifier, moduleDeclarations) {
+		if shouldPreferModuleSpecifierResult(node, r.moduleSpecifier, moduleDeclarations) {
 			return uniqueDeclarationNodes(declarations)
 		}
 	}
 
-	definitionDeclarations := getDefinitionDeclarationsFromChecker(ctx, program, currentFile, node)
-
-	for _, declaration := range definitionDeclarations {
-		declarations = append(declarations, l.mapDeclarationToSourceDefinitions(sdc, node, declaration)...)
+	for _, declaration := range r.definitionDeclarations {
+		declarations = append(declarations, r.mapDeclarationToSource(node, declaration)...)
 	}
 
 	declarations = uniqueDeclarationNodes(declarations)
@@ -141,18 +148,17 @@ func getDefinitionDeclarationsFromChecker(
 	return definitionDeclarations
 }
 
-func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
-	sdc *sourceDefContext,
+func (r *sourceDefResolver) resolveFromModuleSpecifier(
 	moduleSpecifier *ast.Node,
 	originalNode *ast.Node,
 	names []string,
 ) []*ast.Node {
-	implementationFile := resolveImplementationFromModuleName(sdc.resolver, moduleSpecifier.Text(), sdc.resolveFrom, sdc.specifierMode)
+	implementationFile := resolveImplementationFromModuleName(r.resolver, moduleSpecifier.Text(), r.resolveFrom, r.specifierMode)
 	if implementationFile == "" {
 		return nil
 	}
 
-	sourceFile := l.getOrParseSourceFile(sdc, implementationFile)
+	sourceFile := r.getOrParseSourceFile(implementationFile)
 	if sourceFile == nil {
 		return nil
 	}
@@ -162,14 +168,14 @@ func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
 	if isDefaultImportName(originalNode) {
 		// For default imports, only search for "default" declarations to avoid
 		// matching unrelated declarations with the same identifier name.
-		defaultDeclarations := l.findSourceDefinitionDeclarationsInFile(sdc, implementationFile, []string{"default"}, &collections.Set[string]{})
+		defaultDeclarations := r.findDeclarationsInFile(implementationFile, []string{"default"}, &collections.Set[string]{})
 		if len(defaultDeclarations) != 0 {
 			return filterPreferredSourceDeclarations(originalNode, defaultDeclarations)
 		}
 		return getSourceDefinitionEntryDeclarations(sourceFile)
 	}
 
-	declarations := l.findSourceDefinitionDeclarationsInFile(sdc, implementationFile, names, &collections.Set[string]{})
+	declarations := r.findDeclarationsInFile(implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
 		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
@@ -207,16 +213,15 @@ func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Nod
 	return []*ast.Node{getSourceDefinitionEntryNode(sourceFile)}
 }
 
-func (l *LanguageService) mapDeclarationToSourceDefinitions(
-	sdc *sourceDefContext,
+func (r *sourceDefResolver) mapDeclarationToSource(
 	originalNode *ast.Node,
 	declaration *ast.Node,
 ) []*ast.Node {
 	file, startPos := getFileAndStartPosFromDeclaration(declaration)
 	fileName := file.FileName()
 
-	if mapped := l.tryGetSourcePosition(fileName, startPos); mapped != nil {
-		if sourceFile := l.getOrParseSourceFile(sdc, mapped.FileName); sourceFile != nil {
+	if mapped := r.ls.tryGetSourcePosition(fileName, startPos); mapped != nil {
+		if sourceFile := r.getOrParseSourceFile(mapped.FileName); sourceFile != nil {
 			return []*ast.Node{findClosestDeclarationNode(sourceFile, mapped.Pos)}
 		}
 	}
@@ -225,18 +230,18 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 		return []*ast.Node{declaration}
 	}
 
-	implementationFile := l.resolveImplementationFileForDeclaration(sdc, declaration)
+	implementationFile := r.resolveImplementationFileForDeclaration(declaration)
 	if implementationFile == "" {
 		return nil
 	}
 
-	sourceFile := l.getOrParseSourceFile(sdc, implementationFile)
+	sourceFile := r.getOrParseSourceFile(implementationFile)
 	if sourceFile == nil {
 		return nil
 	}
 
 	names := getCandidateSourceDeclarationNames(originalNode, declaration)
-	declarations := l.findSourceDefinitionDeclarationsInFile(sdc, implementationFile, names, &collections.Set[string]{})
+	declarations := r.findDeclarationsInFile(implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
 		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
@@ -246,33 +251,31 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 	return getSourceDefinitionEntryDeclarations(sourceFile)
 }
 
-func (l *LanguageService) resolveImplementationFileForDeclaration(
-	sdc *sourceDefContext,
+func (r *sourceDefResolver) resolveImplementationFileForDeclaration(
 	declaration *ast.Node,
 ) string {
-	if sdc.moduleSpecifier != nil {
-		if implementationFile := resolveImplementationFromModuleName(sdc.resolver, sdc.moduleSpecifier.Text(), sdc.resolveFrom, sdc.specifierMode); implementationFile != "" {
+	if r.moduleSpecifier != nil {
+		if implementationFile := resolveImplementationFromModuleName(r.resolver, r.moduleSpecifier.Text(), r.resolveFrom, r.specifierMode); implementationFile != "" {
 			return implementationFile
 		}
 	}
 
 	dtsFileName := ast.GetSourceFileOfNode(declaration).FileName()
 
-	preferredMode := inferImpliedNodeFormat(sdc.resolver, dtsFileName)
-	if sdc.moduleSpecifier != nil {
-		preferredMode = sdc.specifierMode
+	preferredMode := inferImpliedNodeFormat(r.resolver, dtsFileName)
+	if r.moduleSpecifier != nil {
+		preferredMode = r.specifierMode
 	}
-	return l.findImplementationFileFromDtsFileName(sdc, dtsFileName, preferredMode)
+	return r.findImplementationFileFromDtsFileName(dtsFileName, preferredMode)
 }
 
-func (l *LanguageService) findImplementationFileFromDtsFileName(
-	sdc *sourceDefContext,
+func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 	dtsFileName string,
 	preferredMode core.ResolutionMode,
 ) string {
-	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, sdc.compilerOpts); jsExt != "" {
+	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, r.options); jsExt != "" {
 		candidate := tspath.ChangeExtension(dtsFileName, jsExt)
-		if sdc.fs.FileExists(candidate) {
+		if r.fs.FileExists(candidate) {
 			return candidate
 		}
 	}
@@ -300,7 +303,7 @@ func (l *LanguageService) findImplementationFileFromDtsFileName(
 			return ""
 		}
 		specifier := packageName + "/" + tspath.RemoveFileExtension(pathToFileInPackage)
-		return resolveImplementationFromModuleName(sdc.resolver, specifier, sdc.resolveFrom, preferredMode)
+		return resolveImplementationFromModuleName(r.resolver, specifier, r.resolveFrom, preferredMode)
 	}
 
 	tryPackageRootFirst := pathToFileInPackage == "index.d.ts" || strings.HasSuffix(pathToFileInPackage, "/index.d.ts")
@@ -310,7 +313,7 @@ func (l *LanguageService) findImplementationFileFromDtsFileName(
 			return implementationFile
 		}
 	}
-	if implementationFile := resolveImplementationFromModuleName(sdc.resolver, packageName, sdc.resolveFrom, preferredMode); implementationFile != "" {
+	if implementationFile := resolveImplementationFromModuleName(r.resolver, packageName, r.resolveFrom, preferredMode); implementationFile != "" {
 		return implementationFile
 	}
 	if !tryPackageRootFirst {
@@ -342,16 +345,16 @@ func resolveImplementationFromModuleName(
 	return ""
 }
 
-func (l *LanguageService) getOrParseSourceFile(sdc *sourceDefContext, fileName string) *ast.SourceFile {
-	if sourceFile := sdc.getSourceFile(fileName); sourceFile != nil {
+func (r *sourceDefResolver) getOrParseSourceFile(fileName string) *ast.SourceFile {
+	if sourceFile := r.getSourceFile(fileName); sourceFile != nil {
 		return sourceFile
 	}
-	text, ok := l.ReadFile(fileName)
+	text, ok := r.ls.ReadFile(fileName)
 	if !ok {
 		return nil
 	}
 	sourceFile := parser.ParseSourceFile(
-		ast.SourceFileParseOptions{FileName: fileName, Path: l.toPath(fileName)},
+		ast.SourceFileParseOptions{FileName: fileName, Path: r.ls.toPath(fileName)},
 		text,
 		core.GetScriptKindFromFileName(fileName),
 	)
@@ -390,8 +393,7 @@ func getSourceDefinitionNamesForNode(node *ast.Node) []string {
 	return core.Deduplicate(core.Filter(names, func(name string) bool { return name != "" }))
 }
 
-func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
-	sdc *sourceDefContext,
+func (r *sourceDefResolver) findDeclarationsInFile(
 	fileName string,
 	names []string,
 	seen *collections.Set[string],
@@ -403,7 +405,7 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 		return nil
 	}
 
-	sourceFile := l.getOrParseSourceFile(sdc, fileName)
+	sourceFile := r.getOrParseSourceFile(fileName)
 	if sourceFile == nil {
 		return nil
 	}
@@ -414,8 +416,8 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	}
 
 	var forwarded []*ast.Node
-	for _, forwardedFile := range l.getForwardedImplementationFiles(sdc, sourceFile) {
-		forwarded = append(forwarded, l.findSourceDefinitionDeclarationsInFile(sdc, forwardedFile, names, seen)...)
+	for _, forwardedFile := range r.getForwardedImplementationFiles(sourceFile) {
+		forwarded = append(forwarded, r.findDeclarationsInFile(forwardedFile, names, seen)...)
 	}
 	if len(forwarded) != 0 {
 		if len(getConcreteSourceDeclarations(forwarded)) != 0 {
@@ -426,13 +428,13 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	return declarations
 }
 
-func (l *LanguageService) getForwardedImplementationFiles(sdc *sourceDefContext, sourceFile *ast.SourceFile) []string {
-	preferredMode := inferImpliedNodeFormat(sdc.resolver, sourceFile.FileName())
+func (r *sourceDefResolver) getForwardedImplementationFiles(sourceFile *ast.SourceFile) []string {
+	preferredMode := inferImpliedNodeFormat(r.resolver, sourceFile.FileName())
 
 	var files []string
 	for _, imp := range sourceFile.Imports() {
 		moduleName := imp.Text()
-		if implementationFile := resolveImplementationFromModuleName(sdc.resolver, moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
+		if implementationFile := resolveImplementationFromModuleName(r.resolver, moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
 			files = append(files, implementationFile)
 		}
 	}
