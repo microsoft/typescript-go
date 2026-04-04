@@ -134,6 +134,8 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 }
 
 func (w *Watcher) hasBeenModified(program *compiler.Program) bool {
+	isFirstCycle := w.prevModified == nil
+
 	// checks watcher's snapshot against program file modified times
 	currState := map[string]time.Time{}
 	filesModified := w.configModified
@@ -163,5 +165,5 @@ func (w *Watcher) hasBeenModified(program *compiler.Program) bool {
 
 	// reset state for next cycle
 	w.configModified = false
-	return filesModified
+	return filesModified || isFirstCycle
 }

@@ -23,6 +23,13 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch", "--incremental"},
 		},
+		{
+			subScenario: "watch with empty files list in tsconfig",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `{"files": []}`,
+			},
+			commandLineArgs: []string{"--watch"},
+		},
 	}
 
 	for _, test := range testCases {
