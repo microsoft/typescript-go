@@ -1,6 +1,13 @@
 --- old.declarationFiles.errors.txt
 +++ new.declarationFiles.errors.txt
-@@= skipped -11, +11 lines =@@
+@@= skipped -0, +0 lines =@@
+ declarationFiles.ts(2,5): error TS2564: Property 'x' has no initializer and is not definitely assigned in the constructor.
+ declarationFiles.ts(3,24): error TS2322: Type 'undefined' is not assignable to type 'this'.
+-  'this' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+ declarationFiles.ts(4,20): error TS2526: A 'this' type is available only in a non-static member of a class or interface.
+ declarationFiles.ts(17,5): error TS2564: Property 'a' has no initializer and is not definitely assigned in the constructor.
+ declarationFiles.ts(18,5): error TS2564: Property 'b' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -11, +10 lines =@@
  declarationFiles.ts(24,5): error TS2564: Property 'h' has no initializer and is not definitely assigned in the constructor.
  declarationFiles.ts(25,5): error TS2564: Property 'i' has no initializer and is not definitely assigned in the constructor.
  declarationFiles.ts(26,5): error TS2564: Property 'j' has no initializer and is not definitely assigned in the constructor.
@@ -15,7 +22,15 @@
      class C1 {
          x: this;
          ~
-@@= skipped -64, +62 lines =@@
+@@= skipped -14, +12 lines =@@
+         f(x: this): this { return undefined; }
+                            ~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'this'.
+-!!! error TS2322:   'this' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+         constructor(x: this) { }
+                        ~~~~
+ !!! error TS2526: A 'this' type is available only in a non-static member of a class or interface.
+@@= skipped -50, +49 lines =@@
      
      class C4 {
          x1 = { a: this };

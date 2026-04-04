@@ -1,0 +1,16 @@
+--- old.genericConstraint1.errors.txt
++++ new.genericConstraint1.errors.txt
+@@= skipped -0, +0 lines =@@
+ genericConstraint1.ts(3,9): error TS2322: Type 'null' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ genericConstraint1.ts(8,8): error TS2344: Type 'string' does not satisfy the constraint 'number'.
+
+
+@@= skipped -8, +7 lines =@@
+             return null;
+             ~~~~~~
+ !!! error TS2322: Type 'null' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+         }
+     }
+     

@@ -1,0 +1,18 @@
+--- old.validNullAssignments.errors.txt
++++ new.validNullAssignments.errors.txt
+@@= skipped -12, +12 lines =@@
+ validNullAssignments.ts(23,1): error TS2631: Cannot assign to 'M' because it is a namespace.
+ validNullAssignments.ts(25,5): error TS2322: Type 'null' is not assignable to type '{ f(): void; }'.
+ validNullAssignments.ts(28,5): error TS2322: Type 'null' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ validNullAssignments.ts(30,1): error TS2630: Cannot assign to 'i' because it is a function.
+
+
+@@= skipped -63, +62 lines =@@
+         a = null;
+         ~
+ !!! error TS2322: Type 'null' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     }
+     i = null; // error
+     ~

@@ -17,11 +17,8 @@ undefinedAssignableToEveryType.ts(29,5): error TS2322: Type 'undefined' is not a
 undefinedAssignableToEveryType.ts(30,5): error TS2322: Type 'undefined' is not assignable to type 'Number'.
 undefinedAssignableToEveryType.ts(31,5): error TS2322: Type 'undefined' is not assignable to type 'String'.
 undefinedAssignableToEveryType.ts(34,5): error TS2322: Type 'undefined' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 undefinedAssignableToEveryType.ts(35,5): error TS2322: Type 'undefined' is not assignable to type 'U'.
-  'U' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 undefinedAssignableToEveryType.ts(36,5): error TS2322: Type 'undefined' is not assignable to type 'V'.
-  'V' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 
 
 ==== undefinedAssignableToEveryType.ts (21 errors) ====
@@ -97,15 +94,12 @@ undefinedAssignableToEveryType.ts(36,5): error TS2322: Type 'undefined' is not a
         x = undefined;
         ~
 !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
         y = undefined;
         ~
 !!! error TS2322: Type 'undefined' is not assignable to type 'U'.
-!!! error TS2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
         z = undefined;
         ~
 !!! error TS2322: Type 'undefined' is not assignable to type 'V'.
-!!! error TS2322:   'V' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
     }
     //function foo<T, U extends T, V extends Date>(x: T, y: U, z: V) {
     //    x = undefined;

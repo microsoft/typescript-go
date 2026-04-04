@@ -2,7 +2,6 @@ taggedTemplateStringsTypeArgumentInferenceES6.ts(33,28): error TS2345: Argument 
 taggedTemplateStringsTypeArgumentInferenceES6.ts(39,25): error TS2345: Argument of type 'null' is not assignable to parameter of type '(x: unknown) => void'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(56,6): error TS2345: Argument of type 'null' is not assignable to parameter of type '(a: unknown) => unknown'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(60,5): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(62,36): error TS2345: Argument of type '0' is not assignable to parameter of type '""'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(63,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'a9a' must be of type 'string', but here has type '{}'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(76,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'a9e' must be of type '{ x: number; z: Date; y?: undefined; } | { z?: undefined; x: number; y: string; } | undefined', but here has type '{}'.
@@ -78,7 +77,6 @@ taggedTemplateStringsTypeArgumentInferenceES6.ts(89,5): error TS2403: Subsequent
         return null;
         ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     }
     var a9a = someGenerics9 `${ '' }${ 0 }${ [] }`;
                                        ~

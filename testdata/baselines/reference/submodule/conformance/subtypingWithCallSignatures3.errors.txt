@@ -6,20 +6,15 @@ subtypingWithCallSignatures3.ts(56,35): error TS2352: Conversion of type 'null' 
 subtypingWithCallSignatures3.ts(57,53): error TS2352: Conversion of type 'null' to type 'U[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(58,32): error TS2352: Conversion of type 'null' to type 'U[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(60,104): error TS2352: Conversion of type 'null' to type 'V' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-  'V' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 subtypingWithCallSignatures3.ts(61,62): error TS2352: Conversion of type 'null' to type 'Derived2' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(66,118): error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-  'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 subtypingWithCallSignatures3.ts(67,90): error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(72,51): error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 subtypingWithCallSignatures3.ts(73,36): error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(78,52): error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 subtypingWithCallSignatures3.ts(79,75): error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(84,57): error TS2352: Conversion of type 'null' to type 'Derived[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(85,81): error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 subtypingWithCallSignatures3.ts(101,40): error TS2352: Conversion of type 'null' to type 'T[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(104,40): error TS2352: Conversion of type 'null' to type 'any[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 subtypingWithCallSignatures3.ts(116,31): error TS2352: Conversion of type 'null' to type 'T[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
@@ -102,7 +97,6 @@ subtypingWithCallSignatures3.ts(116,31): error TS2352: Conversion of type 'null'
         var r2arg = <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => <V>null;
                                                                                                            ~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'V' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-!!! error TS2352:   'V' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         var r2arg2 = (x: (arg: Base) => Derived) => (r: Base) => <Derived2>null;
                                                                  ~~~~~~~~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'Derived2' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
@@ -113,7 +107,6 @@ subtypingWithCallSignatures3.ts(116,31): error TS2352: Conversion of type 'null'
         var r3arg = <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => <U>null;
                                                                                                                          ~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-!!! error TS2352:   'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         var r3arg2 = (x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => <Derived>null;
                                                                                              ~~~~~~~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
@@ -124,7 +117,6 @@ subtypingWithCallSignatures3.ts(116,31): error TS2352: Conversion of type 'null'
         var r4arg = <T extends Derived>(...x: T[]) => <T>null;
                                                       ~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-!!! error TS2352:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         var r4arg2 = (...x: Base[]) => <Base>null;
                                        ~~~~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
@@ -135,7 +127,6 @@ subtypingWithCallSignatures3.ts(116,31): error TS2352: Conversion of type 'null'
         var r5arg = <T extends Derived>(x: T, y: T) => <T>null;
                                                        ~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-!!! error TS2352:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         var r5arg2 = (x: { foo: string }, y: { foo: string; bar: string }) => <Base>null;
                                                                               ~~~~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
@@ -149,7 +140,6 @@ subtypingWithCallSignatures3.ts(116,31): error TS2352: Conversion of type 'null'
         var r6arg2 = <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => <T>null;
                                                                                     ~~~~~~~
 !!! error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-!!! error TS2352:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         var r6 = foo12(r6arg); // (x: Array<Base>, y: Array<Derived2>) => Array<Derived>
         var r6a = [r6arg2, r6arg];
         var r6b = [r6arg, r6arg2];

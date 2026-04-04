@@ -1,5 +1,4 @@
 taggedTemplateContextualTyping1.ts(6,5): error TS2322: Type 'undefined' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 taggedTemplateContextualTyping1.ts(13,31): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
 taggedTemplateContextualTyping1.ts(14,31): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
 taggedTemplateContextualTyping1.ts(14,94): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
@@ -18,7 +17,6 @@ taggedTemplateContextualTyping1.ts(16,94): error TS2345: Argument of type 'undef
         return undefined;
         ~~~~~~
 !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
     }
     
     // If contextual typing takes place, these functions should work.

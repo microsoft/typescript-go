@@ -1,17 +1,12 @@
 staticAnonymousTypeNotReferencingTypeParameter.ts(34,9): error TS2322: Type 'undefined' is not assignable to type 'U'.
-  'U' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(52,17): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(56,38): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(66,5): error TS2454: Variable 'scanner' is used before being assigned.
 staticAnonymousTypeNotReferencingTypeParameter.ts(67,42): error TS2339: Property 'toString' does not exist on type 'T'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(92,84): error TS2322: Type 'null' is not assignable to type 'number'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(102,70): error TS2322: Type 'null' is not assignable to type 'number'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(118,7): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 staticAnonymousTypeNotReferencingTypeParameter.ts(120,9): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 
 
 ==== staticAnonymousTypeNotReferencingTypeParameter.ts (9 errors) ====
@@ -51,7 +46,6 @@ staticAnonymousTypeNotReferencingTypeParameter.ts(120,9): error TS2322: Type 'nu
             return undefined;
             ~~~~~~
 !!! error TS2322: Type 'undefined' is not assignable to type 'U'.
-!!! error TS2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
         }
     }
     interface Scanner {
@@ -72,14 +66,12 @@ staticAnonymousTypeNotReferencingTypeParameter.ts(120,9): error TS2322: Type 'nu
         if (!array) return null;
                     ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         return array[0];
       }
       static last<T>(dit: typeof ListWrapper, array: T[]): T {
         if (!array || array.length == 0) return null;
                                          ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         return array[array.length - 1];
       }
       static indexOf<T>(dit: typeof ListWrapper, array: T[], value: T, startIndex: number = 0): number {
@@ -152,12 +144,10 @@ staticAnonymousTypeNotReferencingTypeParameter.ts(120,9): error TS2322: Type 'nu
           return null;
           ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         }
         var solution: T = null;
             ~~~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         var maxValue = -Infinity;
         for (var index = 0; index < list.length; index++) {
           var candidate = list[index];

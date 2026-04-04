@@ -11,7 +11,6 @@ conditionalTypes1.ts(17,5): error TS2322: Type 'T' is not assignable to type 'No
 conditionalTypes1.ts(24,5): error TS2322: Type 'T[keyof T] | undefined' is not assignable to type 'NonNullable<Partial<T>[keyof T]>'.
   Type 'undefined' is not assignable to type 'T[keyof T] & {}'.
     Type 'undefined' is not assignable to type 'T[keyof T]'.
-      'T[keyof T]' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 conditionalTypes1.ts(29,5): error TS2322: Type 'T["x"]' is not assignable to type 'NonNullable<T["x"]>'.
   Type 'string | undefined' is not assignable to type 'NonNullable<T["x"]>'.
     Type 'undefined' is not assignable to type 'NonNullable<T["x"]>'.
@@ -20,9 +19,7 @@ conditionalTypes1.ts(29,5): error TS2322: Type 'T["x"]' is not assignable to typ
           Type 'string | undefined' is not assignable to type '{}'.
             Type 'undefined' is not assignable to type '{}'.
 conditionalTypes1.ts(103,5): error TS2322: Type 'FunctionProperties<T>' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'FunctionProperties<T>'.
 conditionalTypes1.ts(104,5): error TS2322: Type 'NonFunctionProperties<T>' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'NonFunctionProperties<T>'.
 conditionalTypes1.ts(106,5): error TS2322: Type 'NonFunctionProperties<T>' is not assignable to type 'FunctionProperties<T>'.
   Type 'FunctionPropertyNames<T>' is not assignable to type 'NonFunctionPropertyNames<T>'.
     Type 'keyof T' is not assignable to type 'T[keyof T] extends Function ? never : keyof T'.
@@ -68,7 +65,6 @@ conditionalTypes1.ts(159,5): error TS2322: Type 'ZeroOf<T>' is not assignable to
     Type 'string | number' is not assignable to type 'T'.
       'string | number' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'string | number'.
         Type 'string' is not assignable to type 'T'.
-          'string' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'string | number'.
 conditionalTypes1.ts(160,5): error TS2322: Type 'T' is not assignable to type 'ZeroOf<T>'.
   Type 'string | number' is not assignable to type 'ZeroOf<T>'.
     Type 'string' is not assignable to type 'ZeroOf<T>'.
@@ -122,7 +118,6 @@ conditionalTypes1.ts(288,43): error TS2322: Type 'T95<U>' is not assignable to t
 !!! error TS2322: Type 'T[keyof T] | undefined' is not assignable to type 'NonNullable<Partial<T>[keyof T]>'.
 !!! error TS2322:   Type 'undefined' is not assignable to type 'T[keyof T] & {}'.
 !!! error TS2322:     Type 'undefined' is not assignable to type 'T[keyof T]'.
-!!! error TS2322:       'T[keyof T]' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
     }
     
     function f4<T extends { x: string | undefined }>(x: T["x"], y: NonNullable<T["x"]>) {
@@ -212,11 +207,9 @@ conditionalTypes1.ts(288,43): error TS2322: Type 'T95<U>' is not assignable to t
         x = y;  // Error
         ~
 !!! error TS2322: Type 'FunctionProperties<T>' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'FunctionProperties<T>'.
         x = z;  // Error
         ~
 !!! error TS2322: Type 'NonFunctionProperties<T>' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'NonFunctionProperties<T>'.
         y = x;
         y = z;  // Error
         ~
@@ -328,7 +321,6 @@ conditionalTypes1.ts(288,43): error TS2322: Type 'T95<U>' is not assignable to t
 !!! error TS2322:     Type 'string | number' is not assignable to type 'T'.
 !!! error TS2322:       'string | number' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'string | number'.
 !!! error TS2322:         Type 'string' is not assignable to type 'T'.
-!!! error TS2322:           'string' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'string | number'.
         y = x;  // Error
         ~
 !!! error TS2322: Type 'T' is not assignable to type 'ZeroOf<T>'.

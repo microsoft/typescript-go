@@ -9,7 +9,21 @@
      Type 'number | undefined' is not assignable to type 'number'.
        Type 'undefined' is not assignable to type 'number'.
  immutable.ts(341,22): error TS2430: Interface 'Keyed<K, V>' incorrectly extends interface 'Collection<K, V>'.
-@@= skipped -376, +376 lines =@@
+   The types returned by 'toSeq()' are incompatible between these types.
+     Type 'Keyed<K, V>' is not assignable to type 'this'.
+-      'this' could be instantiated with an arbitrary type which could be unrelated to 'Keyed<K, V>'.
+ immutable.ts(359,22): error TS2430: Interface 'Indexed<T>' incorrectly extends interface 'Collection<number, T>'.
+   The types returned by 'toSeq()' are incompatible between these types.
+     Type 'Indexed<T>' is not assignable to type 'this'.
+-      'this' could be instantiated with an arbitrary type which could be unrelated to 'Indexed<T>'.
+ immutable.ts(391,22): error TS2430: Interface 'Set<T>' incorrectly extends interface 'Collection<never, T>'.
+   The types returned by 'toSeq()' are incompatible between these types.
+     Type 'Set<T>' is not assignable to type 'this'.
+-      'this' could be instantiated with an arbitrary type which could be unrelated to 'Set<T>'.
+
+
+ ==== complex.ts (0 errors) ====
+@@= skipped -376, +373 lines =@@
        export interface Seq<K, V> extends Collection<K, V> {
                         ~~~
  !!! error TS2430: Interface 'Seq<K, V>' incorrectly extends interface 'Collection<K, V>'.
@@ -18,3 +32,27 @@
  !!! error TS2430:     Type 'number | undefined' is not assignable to type 'number'.
  !!! error TS2430:       Type 'undefined' is not assignable to type 'number'.
          readonly size: number | undefined;
+@@= skipped -25, +25 lines =@@
+ !!! error TS2430: Interface 'Keyed<K, V>' incorrectly extends interface 'Collection<K, V>'.
+ !!! error TS2430:   The types returned by 'toSeq()' are incompatible between these types.
+ !!! error TS2430:     Type 'Keyed<K, V>' is not assignable to type 'this'.
+-!!! error TS2430:       'this' could be instantiated with an arbitrary type which could be unrelated to 'Keyed<K, V>'.
+           toJS(): Object;
+           toJSON(): { [key: string]: V };
+           toSeq(): Seq.Keyed<K, V>;
+@@= skipped -23, +22 lines =@@
+ !!! error TS2430: Interface 'Indexed<T>' incorrectly extends interface 'Collection<number, T>'.
+ !!! error TS2430:   The types returned by 'toSeq()' are incompatible between these types.
+ !!! error TS2430:     Type 'Indexed<T>' is not assignable to type 'this'.
+-!!! error TS2430:       'this' could be instantiated with an arbitrary type which could be unrelated to 'Indexed<T>'.
+           toJS(): Array<any>;
+           toJSON(): Array<T>;
+           // Reading values
+@@= skipped -37, +36 lines =@@
+ !!! error TS2430: Interface 'Set<T>' incorrectly extends interface 'Collection<never, T>'.
+ !!! error TS2430:   The types returned by 'toSeq()' are incompatible between these types.
+ !!! error TS2430:     Type 'Set<T>' is not assignable to type 'this'.
+-!!! error TS2430:       'this' could be instantiated with an arbitrary type which could be unrelated to 'Set<T>'.
+           toJS(): Array<any>;
+           toJSON(): Array<T>;
+           toSeq(): Seq.Set<T>;

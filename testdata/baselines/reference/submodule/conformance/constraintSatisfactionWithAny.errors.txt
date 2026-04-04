@@ -1,9 +1,6 @@
 constraintSatisfactionWithAny.ts(3,43): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 constraintSatisfactionWithAny.ts(4,51): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 constraintSatisfactionWithAny.ts(6,55): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 constraintSatisfactionWithAny.ts(8,5): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'String'.
 constraintSatisfactionWithAny.ts(9,6): error TS2345: Argument of type 'undefined' is not assignable to parameter of type '{ x: number; }'.
 constraintSatisfactionWithAny.ts(11,6): error TS2345: Argument of type 'undefined' is not assignable to parameter of type '<T>(x: T) => void'.
@@ -24,16 +21,13 @@ constraintSatisfactionWithAny.ts(49,22): error TS2454: Variable 'b' is used befo
     function foo<T extends String>(x: T): T { return null; }
                                               ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     function foo2<T extends { x: number }>(x: T): T { return null; }
                                                       ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     //function foo3<T extends T[]>(x: T): T { return null; }
     function foo4<T extends <T>(x: T) => void>(x: T): T { return null; }
                                                           ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     var a;
     foo(a);
         ~

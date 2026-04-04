@@ -1,6 +1,5 @@
 test.ts(3,25): error TS1064: The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<T>'?
 test.ts(3,35): error TS2322: Type 'undefined' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 
 
 ==== task.ts (0 errors) ====
@@ -14,5 +13,4 @@ test.ts(3,35): error TS2322: Type 'undefined' is not assignable to type 'T'.
 !!! error TS1064: The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<T>'?
                                       ~~~~~~
 !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
     }

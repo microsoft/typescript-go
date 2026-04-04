@@ -1,5 +1,4 @@
 genericSpecializations2.ts(3,9): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 genericSpecializations2.ts(8,5): error TS2416: Property 'foo' in type 'IntFooBad' is not assignable to the same property in base type 'IFoo<number>'.
   Type '<string>(x: string) => string' is not assignable to type '<T>(x: T) => T'.
     Types of parameters 'x' and 'x' are incompatible.
@@ -13,7 +12,6 @@ genericSpecializations2.ts(12,5): error TS2416: Property 'foo' in type 'StringFo
 genericSpecializations2.ts(12,9): error TS2368: Type parameter name cannot be 'string'.
 genericSpecializations2.ts(12,38): error TS2322: Type 'null' is not assignable to type 'string'.
 genericSpecializations2.ts(16,23): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 
 
 ==== genericSpecializations2.ts (8 errors) ====
@@ -22,7 +20,6 @@ genericSpecializations2.ts(16,23): error TS2322: Type 'null' is not assignable t
             return null;
             ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         }
     }
     
@@ -58,7 +55,6 @@ genericSpecializations2.ts(16,23): error TS2322: Type 'null' is not assignable t
         foo<T>(x: T): T { return null; }
                           ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     }
     
     

@@ -4702,7 +4702,11 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 	} else {
 		targetFlags = target.flags
 	}
-	if targetFlags&TypeFlagsTypeParameter != 0 && target != r.c.markerSuperTypeForCheck && target != r.c.markerSubTypeForCheck {
+	// Only add the specialized type parameter elaboration when there's already an
+	// error chain from the constraint comparison. When the target is an indexed
+	// access type, preserve the existing chain (e.g., missing property or type
+	// mismatch details); otherwise, replace it with the generic message.
+	if targetFlags&TypeFlagsTypeParameter != 0 && target != r.c.markerSuperTypeForCheck && target != r.c.markerSubTypeForCheck && r.errorChain != nil {
 		constraint := r.c.getBaseConstraintOfType(target)
 		switch {
 		case constraint != nil && r.c.isTypeAssignableTo(generalizedSource, constraint):
@@ -4710,7 +4714,9 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		case constraint != nil && r.c.isTypeAssignableTo(source, constraint):
 			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, sourceType, targetType, r.c.TypeToString(constraint))
 		default:
-			r.errorChain = nil // Only report this error once
+			if target.flags&TypeFlagsIndexedAccess == 0 {
+				r.errorChain = nil
+			}
 			r.reportError(diagnostics.X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1, targetType, generalizedSourceType)
 		}
 	}

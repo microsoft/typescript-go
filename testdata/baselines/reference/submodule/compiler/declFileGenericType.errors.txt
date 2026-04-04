@@ -3,9 +3,7 @@ declFileGenericType.ts(6,45): error TS2322: Type 'null' is not assignable to typ
 declFileGenericType.ts(7,47): error TS2322: Type 'null' is not assignable to type 'A<B>[]'.
 declFileGenericType.ts(8,65): error TS2322: Type 'null' is not assignable to type 'A<B>[]'.
 declFileGenericType.ts(10,34): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 declFileGenericType.ts(12,51): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 
 
 ==== declFileGenericType.ts (6 errors) ====
@@ -29,12 +27,10 @@ declFileGenericType.ts(12,51): error TS2322: Type 'null' is not assignable to ty
         export function F5<T>(): T { return null; }
                                      ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     
         export function F6<T extends A<B>>(x: T): T { return null; }
                                                       ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     
         export class D<T>{
     
