@@ -1,0 +1,4 @@
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+// import { obj } from "pkg";
+// obj./*GOTO SOURCE DEF*/b;
