@@ -409,8 +409,7 @@ function parseFormatStatement(funcName: string, args: readonly ts.Expression[]):
             }
             var optValue = args[1].getText();
             if (
-                (args[1].kind == ts.SyntaxKind.TrueKeyword || args[1].kind == ts.SyntaxKind.FalseKeyword) &&
-                !(optName == "trimTrailingWhitespace" || optName == "convertTabsToSpaces")
+                (args[1].kind == ts.SyntaxKind.TrueKeyword || args[1].kind == ts.SyntaxKind.FalseKeyword)
             ) {
                 optValue = stringToTristate(args[1].getText());
             }
@@ -1624,6 +1623,7 @@ function stringToTristate(s: string): string {
 
 function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
     const inlayHintPreferences: string[] = [];
+    const moduleSpecifierPreferences: string[] = [];
     const preferences: string[] = [];
     for (const prop of arg.properties) {
         if (ts.isPropertyAssignment(prop)) {
@@ -1651,19 +1651,19 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                         }
                         regexes.push(getGoStringLiteral(strElem.text));
                     }
-                    preferences.push(`AutoImportSpecifierExcludeRegexes: []string{${regexes.join(", ")}}`);
+                    moduleSpecifierPreferences.push(`AutoImportSpecifierExcludeRegexes: []string{${regexes.join(", ")}}`);
                     break;
                 case "importModuleSpecifierPreference":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
                         throw new Error(`Expected string literal for importModuleSpecifierPreference, got ${prop.initializer.getText()}`);
                     }
-                    preferences.push(`ImportModuleSpecifierPreference: ${prop.initializer.getText()}`);
+                    moduleSpecifierPreferences.push(`ImportModuleSpecifierPreference: ${prop.initializer.getText()}`);
                     break;
                 case "importModuleSpecifierEnding":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
                         throw new Error(`Expected string literal for importModuleSpecifierEnding, got ${prop.initializer.getText()}`);
                     }
-                    preferences.push(`ImportModuleSpecifierEnding: ${prop.initializer.getText()}`);
+                    moduleSpecifierPreferences.push(`ImportModuleSpecifierEnding: ${prop.initializer.getText()}`);
                     break;
                 case "includePackageJsonAutoImports":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
@@ -1729,25 +1729,25 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                     inlayHintPreferences.push(`IncludeInlayParameterNameHints: ${paramHint}`);
                     break;
                 case "includeInlayParameterNameHintsWhenArgumentMatchesName":
-                    inlayHintPreferences.push(`IncludeInlayParameterNameHintsWhenArgumentMatchesName: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayParameterNameHintsWhenArgumentMatchesName: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeInlayFunctionParameterTypeHints":
-                    inlayHintPreferences.push(`IncludeInlayFunctionParameterTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayFunctionParameterTypeHints: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeInlayVariableTypeHints":
-                    inlayHintPreferences.push(`IncludeInlayVariableTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayVariableTypeHints: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeInlayVariableTypeHintsWhenTypeMatchesName":
-                    inlayHintPreferences.push(`IncludeInlayVariableTypeHintsWhenTypeMatchesName: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayVariableTypeHintsWhenTypeMatchesName: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeInlayPropertyDeclarationTypeHints":
-                    inlayHintPreferences.push(`IncludeInlayPropertyDeclarationTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayPropertyDeclarationTypeHints: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeInlayFunctionLikeReturnTypeHints":
-                    inlayHintPreferences.push(`IncludeInlayFunctionLikeReturnTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayFunctionLikeReturnTypeHints: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeInlayEnumMemberValueHints":
-                    inlayHintPreferences.push(`IncludeInlayEnumMemberValueHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayEnumMemberValueHints: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "interactiveInlayHints":
                     // Ignore, deprecated
@@ -1761,6 +1761,9 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
 
     if (inlayHintPreferences.length > 0) {
         preferences.push(`InlayHints: lsutil.InlayHintsPreferences{${inlayHintPreferences.join(",")}}`);
+    }
+    if (moduleSpecifierPreferences.length > 0) {
+        preferences.push(...moduleSpecifierPreferences);
     }
     if (preferences.length === 0) {
         return "nil /*preferences*/";
@@ -2231,13 +2234,13 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
                     throw new Error(`Expected string literal for organizeImportsTypeOrder, got ${propValue.getText()}`);
                 }
             }
-            // Special handling for boolean fields (not Tristate)
+            // Boolean fields that are now Tristate
             else if (propName === "organizeImportsNumericCollation" || propName === "organizeImportsAccentCollation") {
                 if (propValue.kind === ts.SyntaxKind.TrueKeyword) {
-                    prefsFields.push(`${goFieldName}: true`);
+                    prefsFields.push(`${goFieldName}: core.TSTrue`);
                 }
                 else if (propValue.kind === ts.SyntaxKind.FalseKeyword) {
-                    prefsFields.push(`${goFieldName}: false`);
+                    prefsFields.push(`${goFieldName}: core.TSFalse`);
                 }
                 else {
                     throw new Error(`Expected boolean for ${propName}, got ${propValue.getText()}`);
@@ -2799,7 +2802,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string {
             }
             case "excludeLibFiles": {
                 if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
-                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: false}`;
+                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: core.TSFalse}`;
                 }
             }
         }
