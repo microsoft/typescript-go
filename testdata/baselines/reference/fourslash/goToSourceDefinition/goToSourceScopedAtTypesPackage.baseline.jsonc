@@ -1,0 +1,7 @@
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/node_modules/@types/myns__mylib/index.d.ts ===
+// <|export declare function [|nsHelper|](): number;|>
+
+// === /home/src/workspaces/project/index.ts ===
+// import { nsHelper } from "@myns/mylib";
+// nsHelper/*GOTO SOURCE DEF*/();
