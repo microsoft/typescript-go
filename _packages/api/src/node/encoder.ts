@@ -5,6 +5,7 @@ import type {
     ExportDeclaration,
     ExportSpecifier,
     FileReference,
+    HeritageClause,
     ImportAttributes,
     ImportClause,
     ImportEqualsDeclaration,
@@ -22,6 +23,7 @@ import type {
     PrefixUnaryExpression,
     SourceFile,
     TemplateLiteralLikeNode,
+    TypeOperatorNode,
 } from "@typescript/ast";
 import {
     NodeFlags,
@@ -44,6 +46,7 @@ import {
     NODE_DATA_TYPE_STRING,
     NODE_LEN,
     PROTOCOL_VERSION,
+    typeOperatorKinds,
 } from "./protocol.ts";
 
 const NODE_FIELDS = NODE_LEN / 4;
@@ -171,6 +174,12 @@ function getNodeDefinedData(node: Node): number {
             return ((attrs.multiLine ? 1 : 0) << 24) |
                 ((attrs.token === SyntaxKind.AssertKeyword ? 1 : 0) << 25);
         }
+        case SyntaxKind.HeritageClause: {
+            const attrs = node as HeritageClause;
+            return (attrs.token === SyntaxKind.ExtendsKeyword ? 1 : 0) << 24;
+        }
+        case SyntaxKind.TypeOperator:
+            return Math.max(typeOperatorKinds.indexOf((node as TypeOperatorNode).operator), 0) << 24;
         case SyntaxKind.PrefixUnaryExpression:
         case SyntaxKind.PostfixUnaryExpression:
             return ((node as PrefixUnaryExpression | PostfixUnaryExpression).operator & 0x3f) << 24;

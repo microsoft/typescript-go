@@ -935,6 +935,21 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindImportAttributes:
 		n := node.AsImportAttributes()
 		return uint32(boolToByte(n.MultiLine))<<24 | uint32(boolToByte(n.Token == ast.KindAssertKeyword))<<25
+	case ast.KindHeritageClause:
+		n := node.AsHeritageClause()
+		return uint32(boolToByte(n.Token == ast.KindExtendsKeyword)) << 24
+	case ast.KindTypeOperator:
+		n := node.AsTypeOperatorNode()
+		var op = 0
+		switch n.Operator {
+		case ast.KindKeyOfKeyword:
+			op = 1
+		case ast.KindUniqueKeyword:
+			op = 2
+		case ast.KindReadonlyKeyword:
+			op = 3
+		}
+		return uint32(op) << 24
 	case ast.KindPrefixUnaryExpression:
 		n := node.AsPrefixUnaryExpression()
 		return uint32(n.Operator&0x3f) << 24

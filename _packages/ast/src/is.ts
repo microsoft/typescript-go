@@ -1341,7 +1341,12 @@ export function isConciseBody(node: Node): node is ConciseBody {
 }
 
 function isBinaryOperatorKind(kind: SyntaxKind): boolean {
-    return kind >= SyntaxKind.FirstBinaryOperator && kind <= SyntaxKind.LastBinaryOperator;
+    return (
+        (kind >= SyntaxKind.FirstBinaryOperator && kind <= SyntaxKind.LastBinaryOperator)
+        || kind == SyntaxKind.InKeyword
+        || kind == SyntaxKind.InstanceOfKeyword
+        || kind == SyntaxKind.CommaToken
+    );
 }
 
 export function isBinaryOperatorToken(node: Node): node is BinaryOperatorToken {

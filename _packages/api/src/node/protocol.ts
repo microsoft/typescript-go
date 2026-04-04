@@ -93,7 +93,6 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly strin
     [SyntaxKind.TaggedTemplateExpression]: ["tag", "questionDotToken", "typeArguments", "template"],
     [SyntaxKind.PropertyAssignment]: ["modifiers", "name", "postfixToken", "initializer"],
     [SyntaxKind.ShorthandPropertyAssignment]: ["modifiers", "name", "postfixToken", "equalsToken", "objectAssignmentInitializer"],
-    [SyntaxKind.SpreadAssignment]: ["expression"],
     [SyntaxKind.TypeAssertionExpression]: ["type", "expression"],
     [SyntaxKind.ConditionalType]: ["checkType", "extendsType", "trueType", "falseType"],
     [SyntaxKind.IndexedAccessType]: ["objectType", "indexType"],
@@ -150,3 +149,5 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly strin
     [SyntaxKind.JSDocPropertyTag]: [undefined!, undefined!],
     [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],
 };
+
+export const typeOperatorKinds: SyntaxKind[] = [SyntaxKind.Unknown, SyntaxKind.KeyOfKeyword, SyntaxKind.UniqueKeyword, SyntaxKind.ReadonlyKeyword];

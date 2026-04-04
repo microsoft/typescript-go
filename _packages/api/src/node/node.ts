@@ -27,6 +27,7 @@ import {
     NODE_DATA_TYPE_EXTENDED,
     NODE_DATA_TYPE_STRING,
     NODE_LEN,
+    typeOperatorKinds,
 } from "./protocol.ts";
 
 const popcount8 = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8];
@@ -317,6 +318,13 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 }
 
+// This cannot be an actual RemoteNodeList because we have nowhere to point to in the data
+function createStubNodeList() {
+    const array = [] as unknown as any[] & { pos: number; end: number; };
+    array.pos = array.end = -1;
+    return array as RemoteNodeList;
+}
+
 export class RemoteNode extends RemoteNodeBase implements Node {
     protected static NODE_LEN: number = NODE_LEN;
     protected override get sourceFile(): RemoteSourceFile {
@@ -413,17 +421,20 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return nextNodeParent === this.index;
     }
 
-    private getNamedChild(propertyName: string): RemoteNode | RemoteNodeList | undefined {
+    private getNamedChild(propertyName: string, required = false): RemoteNode | RemoteNodeList | undefined {
         const propertyNames = childProperties[this.kind];
         if (!propertyNames) {
             // `childProperties` is only defined for nodes with more than one child property.
             // Get the only child if it exists.
             if (!this.hasChildren()) {
-                return undefined;
+                return required ? createStubNodeList() : undefined;
             }
             const child = this.getOrCreateChildAtNodeIndex(this.index + 1);
             if (child.next !== 0) {
-                throw new Error("Expected only one child");
+                const next = this.getOrCreateChildAtNodeIndex(child.next);
+                if (!(next instanceof RemoteNode) || next.kind != SyntaxKind.JSDoc) {
+                    throw new Error("Expected only one child");
+                }
             }
             return child;
         }
@@ -447,8 +458,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                 switch (propertyName) {
                     case "name":
                         order = this.isNameFirst ? 1 : 2;
+                        break;
                     case "typeExpression":
                         order = this.isNameFirst ? 2 : 1;
+                        break;
                 }
             }
             // Node kind does not have this property
@@ -457,7 +470,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         const mask = this.childMask;
         if (!(mask & (1 << order))) {
             // Property is not present
-            return undefined;
+            return required ? createStubNodeList() : undefined;
         }
 
         // The property index is `order`, minus the number of zeros in the mask that are in bit positions less
@@ -619,6 +632,8 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.PrefixUnaryExpression:
             case SyntaxKind.PostfixUnaryExpression:
                 return ((this.data >> 24) & 0x3f) as SyntaxKind;
+            case SyntaxKind.TypeOperator:
+                return typeOperatorKinds[(this.data >> 24) & 3];
         }
     }
 
@@ -630,7 +645,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("argumentExpression") as RemoteNode;
     }
     get arguments(): RemoteNodeList | undefined {
-        return this.getNamedChild("arguments") as RemoteNodeList;
+        return this.getNamedChild("arguments", this.kind != SyntaxKind.NewExpression) as RemoteNodeList;
     }
     get assertsModifier(): RemoteNode | undefined {
         return this.getNamedChild("assertsModifier") as RemoteNode;
@@ -660,13 +675,13 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("checkType") as RemoteNode;
     }
     get children(): RemoteNodeList | undefined {
-        return this.getNamedChild("children") as RemoteNodeList;
+        return this.getNamedChild("children", true) as RemoteNodeList;
     }
     get class(): RemoteNode | undefined {
         return this.getNamedChild("class") as RemoteNode;
     }
     get clauses(): RemoteNodeList | undefined {
-        return this.getNamedChild("clauses") as RemoteNodeList;
+        return this.getNamedChild("clauses", true) as RemoteNodeList;
     }
     get closingElement(): RemoteNode | undefined {
         return this.getNamedChild("closingElement") as RemoteNode;
@@ -690,7 +705,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("declarationList") as RemoteNode;
     }
     get declarations(): RemoteNodeList | undefined {
-        return this.getNamedChild("declarations") as RemoteNodeList;
+        return this.getNamedChild("declarations", true) as RemoteNodeList;
     }
     get default(): RemoteNode | undefined {
         return this.getNamedChild("default") as RemoteNode;
@@ -702,7 +717,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("elementType") as RemoteNode;
     }
     get elements(): RemoteNodeList | undefined {
-        return this.getNamedChild("elements") as RemoteNodeList;
+        return this.getNamedChild("elements", true) as RemoteNodeList;
     }
     get elseStatement(): RemoteNode | undefined {
         return this.getNamedChild("elseStatement") as RemoteNode;
@@ -771,7 +786,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("literal") as RemoteNode;
     }
     get members(): RemoteNodeList | undefined {
-        return this.getNamedChild("members") as RemoteNodeList;
+        return this.getNamedChild("members", this.kind != SyntaxKind.MappedType) as RemoteNodeList;
     }
     get modifiers(): RemoteNodeList | undefined {
         return this.getNamedChild("modifiers") as RemoteNodeList;
@@ -817,13 +832,13 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("parameterName") as RemoteNode;
     }
     get parameters(): RemoteNodeList | undefined {
-        return this.getNamedChild("parameters") as RemoteNodeList;
+        return this.getNamedChild("parameters", true) as RemoteNodeList;
     }
     get postfixToken(): RemoteNode | undefined {
         return this.getNamedChild("postfixToken") as RemoteNode;
     }
     get properties(): RemoteNodeList | undefined {
-        return this.getNamedChild("properties") as RemoteNodeList;
+        return this.getNamedChild("properties", true) as RemoteNodeList;
     }
     get propertyName(): RemoteNode | undefined {
         return this.getNamedChild("propertyName") as RemoteNode;
@@ -847,7 +862,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("statement") as RemoteNode;
     }
     get statements(): RemoteNodeList | undefined {
-        return this.getNamedChild("statements") as RemoteNodeList;
+        return this.getNamedChild("statements", true) as RemoteNodeList;
     }
     get tag(): RemoteNode | undefined {
         return this.getNamedChild("tag") as RemoteNode;
@@ -862,7 +877,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("template") as RemoteNode;
     }
     get templateSpans(): RemoteNodeList | undefined {
-        return this.getNamedChild("templateSpans") as RemoteNodeList;
+        return this.getNamedChild("templateSpans", true) as RemoteNodeList;
     }
     get thenStatement(): RemoteNode | undefined {
         return this.getNamedChild("thenStatement") as RemoteNode;
@@ -889,10 +904,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.getNamedChild("typeParameter") as RemoteNode;
     }
     get typeParameters(): RemoteNodeList | undefined {
-        return this.getNamedChild("typeParameters") as RemoteNodeList;
+        return this.getNamedChild("typeParameters", this.kind == SyntaxKind.JSDocTemplateTag) as RemoteNodeList;
     }
     get types(): RemoteNodeList | undefined {
-        return this.getNamedChild("types") as RemoteNodeList;
+        return this.getNamedChild("types", true) as RemoteNodeList;
     }
     get value(): RemoteNode | undefined {
         return this.getNamedChild("value") as RemoteNode;
@@ -1071,6 +1086,11 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                     return SyntaxKind.AssertKeyword;
                 }
                 return SyntaxKind.WithKeyword;
+            case SyntaxKind.HeritageClause:
+                if ((this.data & 1 << 24) !== 0) {
+                    return SyntaxKind.ExtendsKeyword;
+                }
+                return SyntaxKind.ImplementsKeyword;
         }
     }
 

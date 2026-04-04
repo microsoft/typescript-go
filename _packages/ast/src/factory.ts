@@ -287,7 +287,7 @@ export class NodeObject {
 
     constructor(kind: SyntaxKind, data: any) {
         this.kind = kind;
-        this.flags = 0 as NodeFlags;
+        this.flags = (data?.flags || 0) as NodeFlags;
         this.pos = -1;
         this.end = -1;
         this.parent = undefined!;
@@ -1652,6 +1652,7 @@ function cloneNodeData(node: any): any {
         case SyntaxKind.VariableDeclarationList:
             return {
                 declarations: node.declarations,
+                flags: node.flags,
             };
         case SyntaxKind.VariableStatement:
             return {
@@ -3529,9 +3530,10 @@ export function createVariableDeclaration(name: BindingName, exclamationToken: E
     }) as unknown as VariableDeclaration;
 }
 
-export function createVariableDeclarationList(declarations: readonly VariableDeclaration[]): VariableDeclarationList {
+export function createVariableDeclarationList(declarations: readonly VariableDeclaration[], flags: NodeFlags): VariableDeclarationList {
     return new NodeObject(SyntaxKind.VariableDeclarationList, {
         declarations: createNodeArray(declarations),
+        flags,
     }) as unknown as VariableDeclarationList;
 }
 
@@ -4371,7 +4373,7 @@ export function updateVariableDeclaration(node: VariableDeclaration, name: Bindi
 
 export function updateVariableDeclarationList(node: VariableDeclarationList, declarations: readonly VariableDeclaration[]): VariableDeclarationList {
     if (node.declarations === declarations) return node;
-    return createVariableDeclarationList(declarations);
+    return createVariableDeclarationList(declarations, node.flags);
 }
 
 export function updateVariableStatement(node: VariableStatement, modifiers: readonly ModifierLike[] | undefined, declarationList: VariableDeclarationList): VariableStatement {

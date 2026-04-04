@@ -231,6 +231,7 @@ const INTERFACE_EXCLUDED_PROPS: Record<string, Set<string>> = {
     GetAccessorDeclaration: new Set(["typeParameters"]),
     SetAccessorDeclaration: new Set(["typeParameters", "type"]),
     SemicolonClassElement: new Set(["name"]),
+    SpreadAssignment: new Set(["name"]),
     SourceFile: new Set(["languageVariant", "scriptKind", "tokenCache", "isDeclarationFile", "referencedFiles", "typeReferenceDirectives", "libReferenceDirectives", "imports", "moduleAugmentations", "ambientModuleNames", "externalModuleIndicator"]),
 };
 
@@ -376,6 +377,10 @@ for (const [name, iface] of interfaces) {
     for (const prop of params) {
         allPropertyNames.add(prop.name);
     }
+    
+    if (name == "VariableDeclarationList") {
+        params.push(allProps.find(prop => prop.name == "flags")!);
+    }
 
     factoryDefs.push({
         interfaceName: name,
@@ -506,7 +511,7 @@ emit("    _data: any;");
 emit("");
 emit("    constructor(kind: SyntaxKind, data: any) {");
 emit("        this.kind = kind;");
-emit("        this.flags = 0 as NodeFlags;");
+emit("        this.flags = (data?.flags || 0) as NodeFlags;");
 emit("        this.pos = -1;");
 emit("        this.end = -1;");
 emit("        this.parent = undefined!;");

@@ -423,7 +423,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		it := newChildIter(childIndices)
 		expr := d.nodeAt(it.nextIf(mask, 0))
 		stmts := d.nodeListAt(it.nextIf(mask, 1))
-		return d.factory.NewCaseOrDefaultClause(ast.KindCaseClause, expr, stmts), nil
+		return d.factory.NewCaseOrDefaultClause(ast.KindCaseClause, expr, d.emptyIfNil(stmts)), nil
 
 	case ast.KindDefaultClause:
 		it := newChildIter(childIndices)
@@ -1291,8 +1291,12 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewBindingPattern(kind, d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 
 	case ast.KindHeritageClause:
-		// Token (KindExtendsKeyword or KindImplementsKeyword) is not encoded; default to 0.
-		return d.factory.NewHeritageClause(0, d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
+		isExtends := definedBits&1 != 0
+		token := ast.KindImplementsKeyword
+		if isExtends {
+			token = ast.KindExtendsKeyword
+		}
+		return d.factory.NewHeritageClause(token, d.emptyIfNil(d.singleNodeListChild(childIndices))), nil
 
 	case ast.KindJSDocTypeLiteral:
 		isArrayType := definedBits&1 != 0
@@ -1313,7 +1317,16 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindMetaProperty:
 		return d.factory.NewMetaProperty(0, d.singleChild(childIndices)), nil
 	case ast.KindTypeOperator:
-		return d.factory.NewTypeOperatorNode(0, d.singleChild(childIndices)), nil
+		var operator = ast.KindUnknown
+		switch definedBits & 3 {
+		case 1:
+			operator = ast.KindKeyOfKeyword
+		case 2:
+			operator = ast.KindInstanceOfKeyword
+		case 3:
+			operator = ast.KindReadonlyKeyword
+		}
+		return d.factory.NewTypeOperatorNode(operator, d.singleChild(childIndices)), nil
 
 	// Nodes that only have a ModifierList child
 	case ast.KindMissingDeclaration:
@@ -1341,6 +1354,14 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	// Keyword expressions (must be KeywordExpression, not Token, for the printer)
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindImportKeyword:
 		return d.factory.NewKeywordExpression(kind), nil
+
+	// Specific empty nodes
+	case ast.KindThisType:
+		return d.factory.NewThisTypeNode(), nil
+	case ast.KindEmptyStatement:
+		return d.factory.NewEmptyStatement(), nil
+	case ast.KindDebuggerStatement:
+		return d.factory.NewDebuggerStatement(), nil
 
 	// JSX fragment tokens (must be their own types, not Token, for the printer)
 	case ast.KindJsxOpeningFragment:
