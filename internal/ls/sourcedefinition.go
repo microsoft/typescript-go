@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"math"
 	"slices"
 	"strings"
 
@@ -47,11 +48,16 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	currentFile *ast.SourceFile,
 	node *ast.Node,
 ) []*ast.Node {
+	options := program.Options().Clone()
+	options.NoDtsResolution = core.TSTrue
+	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
+
 	var declarations []*ast.Node
 	moduleSpecifier := findContainingModuleSpecifier(node)
 
 	if moduleSpecifier != nil {
 		moduleDeclarations := l.getSourceDefinitionDeclarationsForModuleSpecifier(
+			resolver,
 			program,
 			currentFile,
 			moduleSpecifier,
@@ -81,7 +87,7 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	}
 
 	for _, declaration := range definitionDeclarations {
-		declarations = append(declarations, l.mapDeclarationToSourceDefinitions(program, currentFile, node, declaration)...)
+		declarations = append(declarations, l.mapDeclarationToSourceDefinitions(resolver, program, currentFile, node, declaration)...)
 	}
 
 	declarations = uniqueDeclarationNodes(declarations)
@@ -92,13 +98,14 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 }
 
 func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
+	resolver *module.Resolver,
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
 	moduleSpecifier *ast.Node,
 	originalNode *ast.Node,
 	names []string,
 ) []*ast.Node {
-	implementationFile := l.resolveImplementationFileForModuleSpecifier(program, currentFile, moduleSpecifier)
+	implementationFile := l.resolveImplementationFileForModuleSpecifier(resolver, program, currentFile, moduleSpecifier)
 	if implementationFile == "" {
 		return nil
 	}
@@ -113,14 +120,14 @@ func (l *LanguageService) getSourceDefinitionDeclarationsForModuleSpecifier(
 	if isDefaultImportName(originalNode) {
 		// For default imports, only search for "default" declarations to avoid
 		// matching unrelated declarations with the same identifier name.
-		defaultDeclarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, []string{"default"}, &collections.Set[string]{})
+		defaultDeclarations := l.findSourceDefinitionDeclarationsInFile(resolver, program, implementationFile, []string{"default"}, &collections.Set[string]{})
 		if len(defaultDeclarations) != 0 {
 			return filterPreferredSourceDeclarations(originalNode, defaultDeclarations)
 		}
 		return getSourceDefinitionEntryDeclarations(sourceFile)
 	}
 
-	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, &collections.Set[string]{})
+	declarations := l.findSourceDefinitionDeclarationsInFile(resolver, program, implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
 		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
@@ -159,6 +166,7 @@ func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Nod
 }
 
 func (l *LanguageService) mapDeclarationToSourceDefinitions(
+	resolver *module.Resolver,
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
 	originalNode *ast.Node,
@@ -177,7 +185,7 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 		return []*ast.Node{declaration}
 	}
 
-	implementationFile := l.resolveImplementationFileForDeclaration(program, currentFile, originalNode, declaration)
+	implementationFile := l.resolveImplementationFileForDeclaration(resolver, program, currentFile, originalNode, declaration)
 	if implementationFile == "" {
 		return nil
 	}
@@ -188,7 +196,7 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 	}
 
 	names := getCandidateSourceDeclarationNames(originalNode, declaration)
-	declarations := l.findSourceDefinitionDeclarationsInFile(program, implementationFile, names, &collections.Set[string]{})
+	declarations := l.findSourceDefinitionDeclarationsInFile(resolver, program, implementationFile, names, &collections.Set[string]{})
 	if len(declarations) != 0 {
 		return filterPreferredSourceDeclarations(originalNode, declarations)
 	}
@@ -198,13 +206,8 @@ func (l *LanguageService) mapDeclarationToSourceDefinitions(
 	return getSourceDefinitionEntryDeclarations(sourceFile)
 }
 
-func newNoDtsResolver(program *compiler.Program) *module.Resolver {
-	options := program.Options().Clone()
-	options.NoDtsResolution = core.TSTrue
-	return module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
-}
-
 func (l *LanguageService) resolveImplementationFileForDeclaration(
+	resolver *module.Resolver,
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
 	originalNode *ast.Node,
@@ -212,13 +215,12 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 ) string {
 	originalModuleSpecifier := findContainingModuleSpecifier(originalNode)
 	if originalModuleSpecifier != nil {
-		if implementationFile := l.resolveImplementationFileForModuleSpecifier(program, currentFile, originalModuleSpecifier); implementationFile != "" {
+		if implementationFile := l.resolveImplementationFileForModuleSpecifier(resolver, program, currentFile, originalModuleSpecifier); implementationFile != "" {
 			return implementationFile
 		}
 	}
 
 	dtsFileName := ast.GetSourceFileOfNode(declaration).FileName()
-	resolver := newNoDtsResolver(program)
 
 	preferredMode := inferImpliedNodeFormat(resolver, dtsFileName)
 	if originalModuleSpecifier != nil {
@@ -228,11 +230,11 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 }
 
 func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
+	resolver *module.Resolver,
 	program *compiler.Program,
 	currentFile *ast.SourceFile,
 	moduleSpecifier *ast.Node,
 ) string {
-	resolver := newNoDtsResolver(program)
 	mode := program.GetModeForUsageLocation(currentFile, moduleSpecifier)
 	return resolveImplementationFromModuleName(resolver, moduleSpecifier.Text(), currentFile.FileName(), mode)
 }
@@ -255,6 +257,12 @@ func (l *LanguageService) findImplementationFileFromDtsFileName(
 
 	parts := modulespecifiers.GetNodeModulePathParts(dtsFileName)
 	if parts == nil {
+		return ""
+	}
+
+	// Ensure the file only contains one /node_modules/ segment. If there's more
+	// than one, the package name extraction may be incorrect, so bail out.
+	if strings.LastIndex(dtsFileName, "/node_modules/") != parts.TopLevelNodeModulesIndex {
 		return ""
 	}
 
@@ -361,6 +369,7 @@ func getSourceDefinitionNamesForNode(node *ast.Node) []string {
 }
 
 func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
+	resolver *module.Resolver,
 	program *compiler.Program,
 	fileName string,
 	names []string,
@@ -384,8 +393,8 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	}
 
 	var forwarded []*ast.Node
-	for _, forwardedFile := range l.getForwardedImplementationFiles(program, sourceFile) {
-		forwarded = append(forwarded, l.findSourceDefinitionDeclarationsInFile(program, forwardedFile, names, seen)...)
+	for _, forwardedFile := range l.getForwardedImplementationFiles(resolver, program, sourceFile) {
+		forwarded = append(forwarded, l.findSourceDefinitionDeclarationsInFile(resolver, program, forwardedFile, names, seen)...)
 	}
 	if len(forwarded) != 0 {
 		if len(getConcreteSourceDeclarations(forwarded)) != 0 {
@@ -396,8 +405,7 @@ func (l *LanguageService) findSourceDefinitionDeclarationsInFile(
 	return declarations
 }
 
-func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Program, sourceFile *ast.SourceFile) []string {
-	resolver := newNoDtsResolver(program)
+func (l *LanguageService) getForwardedImplementationFiles(resolver *module.Resolver, program *compiler.Program, sourceFile *ast.SourceFile) []string {
 	preferredMode := inferImpliedNodeFormat(resolver, sourceFile.FileName())
 
 	var files []string
@@ -445,35 +453,70 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 		return nil
 	}
 
-	var declarations []*ast.Node
-	wanted := make(map[string]struct{}, len(names))
+	var wanted collections.Set[string]
 	wantDefault := false
 	for _, name := range names {
 		if name == "default" {
 			wantDefault = true
 			continue
 		}
-		wanted[name] = struct{}{}
+		wanted.Add(name)
 	}
+
+	type candidate struct {
+		node  *ast.Node
+		depth int
+	}
+	var candidates []candidate
+	minDepth := math.MaxInt
+
 	var visit ast.Visitor
 	visit = func(node *ast.Node) bool {
+		matched := false
 		if name := ast.GetNameOfDeclaration(node); name != nil {
 			if text := ast.GetTextOfPropertyName(name); text != "" {
-				if _, ok := wanted[text]; ok {
-					declarations = append(declarations, node)
+				if wanted.Has(text) {
+					matched = true
 				}
 			}
 		}
 		if wantDefault && node.Kind == ast.KindExportAssignment {
-			declarations = append(declarations, node)
+			matched = true
 		}
 		if wantDefault && (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && node.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
-			declarations = append(declarations, node)
+			matched = true
+		}
+		if matched {
+			depth := getContainerDepth(node)
+			candidates = append(candidates, candidate{node: node, depth: depth})
+			if depth < minDepth {
+				minDepth = depth
+			}
 		}
 		return node.ForEachChild(visit)
 	}
 	sourceFile.AsNode().ForEachChild(visit)
+
+	// Only keep declarations at the shallowest depth, like getTopMostDeclarationNamesInFile.
+	var declarations []*ast.Node
+	for _, c := range candidates {
+		if c.depth == minDepth {
+			declarations = append(declarations, c.node)
+		}
+	}
 	return uniqueDeclarationNodes(declarations)
+}
+
+// getContainerDepth counts the number of container nodes above a declaration,
+// matching the behavior of getDepth in getTopMostDeclarationNamesInFile.
+func getContainerDepth(node *ast.Node) int {
+	depth := 0
+	current := node
+	for current != nil {
+		current = getContainerNode(current)
+		depth++
+	}
+	return depth
 }
 
 func filterPreferredSourceDeclarations(originalNode *ast.Node, declarations []*ast.Node) []*ast.Node {
