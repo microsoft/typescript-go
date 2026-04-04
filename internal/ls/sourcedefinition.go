@@ -85,7 +85,7 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 	}
 
 	declarations = uniqueDeclarationNodes(declarations)
-	if shouldFallbackToRegularDefinition(declarations) {
+	if len(getConcreteSourceDeclarations(declarations)) == 0 {
 		return nil
 	}
 	return declarations
@@ -176,22 +176,6 @@ func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Nod
 		return []*ast.Node{entry}
 	}
 	return nil
-}
-
-// shouldFallbackToRegularDefinition returns true when source definition can't
-// produce useful results and regular go-to-definition should be used instead.
-// This happens when declarations are empty (nothing found) or when all found
-// declarations are non-concrete (e.g., type-only nodes like interfaces).
-func shouldFallbackToRegularDefinition(declarations []*ast.Node) bool {
-	if len(declarations) == 0 {
-		return true
-	}
-	if len(getConcreteSourceDeclarations(declarations)) != 0 {
-		return false
-	}
-	// All declarations are non-concrete (e.g., type positions in type-only contexts).
-	// Fall back to regular definition which can navigate to the .d.ts declaration.
-	return true
 }
 
 func (l *LanguageService) mapDeclarationToSourceDefinitions(
