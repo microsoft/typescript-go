@@ -31,6 +31,20 @@ func (l *LanguageService) ProvideSourceDefinition(
 	program, file := l.getProgramAndFile(documentURI)
 	pos := int(l.converters.LineAndCharacterToPosition(file, position))
 	node := astnav.GetTouchingPropertyName(file, pos)
+
+	// Handle /// <reference path="..."/> directives: resolve the referenced file directly.
+	// This must come before the SourceFile check since triple-slash directives are comments,
+	// not AST nodes, so GetTouchingPropertyName returns the SourceFile node.
+	// Only handle path references to non-declaration files (e.g. .js); for .d.ts references
+	// (including /// <reference types="..."/>), fall through to regular definition.
+	if ref := findReferenceInPosition(file.ReferencedFiles, pos); ref != nil {
+		if sourceFile := program.GetSourceFileFromReference(file, ref); sourceFile != nil && !sourceFile.IsDeclarationFile {
+			originSelectionRange := l.createLspRangeFromNode(node, file)
+			declarations := getSourceDefinitionEntryDeclarations(sourceFile)
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
+		}
+	}
+
 	if node.Kind == ast.KindSourceFile {
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
