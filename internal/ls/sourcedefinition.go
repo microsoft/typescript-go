@@ -119,6 +119,14 @@ func (r *sourceDefResolver) resolve(node *ast.Node) []*ast.Node {
 
 	declarations = uniqueDeclarationNodes(declarations)
 	if len(getConcreteSourceDeclarations(declarations)) == 0 {
+		// Fallback for property access on imported values where the property
+		// has no checker declarations (e.g. mapped type properties). Trace
+		// the parent expression back to its import to find the implementation file.
+		if node.Parent != nil && ast.IsAccessExpression(node.Parent) && node.Parent.Name() == node {
+			if fallback := r.resolvePropertyViaParentImport(node); len(fallback) != 0 {
+				return fallback
+			}
+		}
 		return nil
 	}
 	return declarations
@@ -379,6 +387,80 @@ func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 		if ast.IsAnyImportOrReExport(current) || ast.IsRequireCall(current, true /*requireStringLiteralLikeArgument*/) || ast.IsImportCall(current) {
 			if moduleSpecifier := ast.GetExternalModuleName(current); moduleSpecifier != nil && ast.IsStringLiteralLike(moduleSpecifier) {
 				return moduleSpecifier
+			}
+		}
+	}
+	return nil
+}
+
+// resolvePropertyViaParentImport is a fallback for property access on imported
+// values where the property itself has no checker declarations (e.g. mapped type
+// properties). It walks the access chain to find the root identifier, looks up
+// its import declaration, and searches the implementation file for the property name.
+func (r *sourceDefResolver) resolvePropertyViaParentImport(node *ast.Node) []*ast.Node {
+	// Walk left in the access chain to find the root identifier.
+	expr := node.Parent.Expression()
+	for expr != nil && ast.IsAccessExpression(expr) {
+		expr = expr.Expression()
+	}
+	if expr == nil || !ast.IsIdentifier(expr) {
+		return nil
+	}
+
+	// Find the import declaration for this identifier in the current file.
+	currentFile := ast.GetSourceFileOfNode(node)
+	moduleSpecifier := findImportModuleSpecifierForName(currentFile, expr.Text())
+	if moduleSpecifier == nil || !ast.IsStringLiteralLike(moduleSpecifier) {
+		return nil
+	}
+
+	// Resolve the module to an implementation file.
+	preferredMode := inferImpliedNodeFormat(r.resolver, r.resolveFrom)
+	implementationFile := resolveImplementationFromModuleName(r.resolver, moduleSpecifier.Text(), r.resolveFrom, preferredMode)
+	if implementationFile == "" {
+		return nil
+	}
+
+	// Search the implementation file for the property name.
+	propertyName := node.Text()
+	declarations := r.findDeclarationsInFile(implementationFile, []string{propertyName}, &collections.Set[string]{})
+	if len(declarations) != 0 {
+		return filterPreferredSourceDeclarations(node, declarations)
+	}
+	return nil
+}
+
+// findImportModuleSpecifierForName searches the source file for an import
+// declaration that imports the given identifier name and returns its module specifier.
+func findImportModuleSpecifierForName(sourceFile *ast.SourceFile, name string) *ast.Node {
+	for _, stmt := range sourceFile.Statements.Nodes {
+		if !ast.IsImportDeclaration(stmt) {
+			continue
+		}
+		importDecl := stmt.AsImportDeclaration()
+		if importDecl.ImportClause == nil {
+			continue
+		}
+		clause := importDecl.ImportClause.AsImportClause()
+		// Default import: import name from "pkg"
+		if clause.Name() != nil && clause.Name().Text() == name {
+			return importDecl.ModuleSpecifier
+		}
+		if clause.NamedBindings == nil {
+			continue
+		}
+		if ast.IsNamespaceImport(clause.NamedBindings) {
+			// import * as name from "pkg"
+			ns := clause.NamedBindings.AsNamespaceImport()
+			if ns.Name() != nil && ns.Name().Text() == name {
+				return importDecl.ModuleSpecifier
+			}
+		} else if ast.IsNamedImports(clause.NamedBindings) {
+			// import { name } from "pkg" or import { orig as name } from "pkg"
+			for _, spec := range clause.NamedBindings.AsNamedImports().Elements.Nodes {
+				if spec.AsImportSpecifier().Name().Text() == name {
+					return importDecl.ModuleSpecifier
+				}
 			}
 		}
 	}
