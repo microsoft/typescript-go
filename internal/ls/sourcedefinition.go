@@ -56,7 +56,7 @@ func (l *LanguageService) getSourceDefinitionDeclarations(
 			currentFile,
 			moduleSpecifier,
 			node,
-			getSourceDefinitionNamesForNode(node, moduleSpecifier),
+			getSourceDefinitionNamesForNode(node),
 		)
 		declarations = append(declarations, moduleDeclarations...)
 		if shouldPreferModuleSpecifierResult(node, moduleSpecifier, moduleDeclarations) {
@@ -162,9 +162,6 @@ func shouldPreferModuleSpecifierResult(node *ast.Node, moduleSpecifier *ast.Node
 }
 
 func getSourceDefinitionEntryNode(sourceFile *ast.SourceFile) *ast.Node {
-	if sourceFile == nil {
-		return nil
-	}
 	if len(sourceFile.Statements.Nodes) != 0 {
 		return sourceFile.Statements.Nodes[0].AsNode()
 	}
@@ -172,10 +169,7 @@ func getSourceDefinitionEntryNode(sourceFile *ast.SourceFile) *ast.Node {
 }
 
 func getSourceDefinitionEntryDeclarations(sourceFile *ast.SourceFile) []*ast.Node {
-	if entry := getSourceDefinitionEntryNode(sourceFile); entry != nil {
-		return []*ast.Node{entry}
-	}
-	return nil
+	return []*ast.Node{getSourceDefinitionEntryNode(sourceFile)}
 }
 
 func (l *LanguageService) mapDeclarationToSourceDefinitions(
@@ -376,44 +370,12 @@ func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func getImportNamesForModuleSpecifier(moduleSpecifier *ast.Node) []string {
-	var names []string
-	for current := moduleSpecifier.Parent; current != nil; current = current.Parent {
-		if ast.IsImportDeclaration(current) {
-			if importClause := current.ImportClause(); importClause != nil {
-				if importClause.Name() != nil {
-					names = append(names, "default", importClause.Name().Text())
-				}
-				if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil {
-					if ast.IsNamedImports(namedBindings) {
-						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
-							if propertyName := element.PropertyName(); propertyName != nil {
-								names = append(names, propertyName.Text())
-							} else if name := element.Name(); name != nil {
-								names = append(names, name.Text())
-							}
-						}
-					}
-				}
-			}
-			break
-		}
-		if ast.IsExportDeclaration(current) {
-			break
-		}
-	}
-	return names
-}
-
-func getSourceDefinitionNamesForNode(node *ast.Node, moduleSpecifier *ast.Node) []string {
+func getSourceDefinitionNamesForNode(node *ast.Node) []string {
 	if node == nil {
 		return nil
 	}
-
 	names := getCandidateSourceDeclarationNames(node, nil)
-	if node == moduleSpecifier {
-		names = append(names, getImportNamesForModuleSpecifier(moduleSpecifier)...)
-	} else if isDefaultImportName(node) {
+	if isDefaultImportName(node) {
 		names = append(names, "default")
 	}
 	return core.Deduplicate(core.Filter(names, func(name string) bool { return name != "" }))
