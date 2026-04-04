@@ -413,6 +413,21 @@ func (l *LanguageService) getOrParseSourceFile(program *compiler.Program, fileNa
 	)
 }
 
+// inferImpliedNodeFormat determines the module format for a source file that may not be
+// in the program, using the file extension and nearest package.json "type" field.
+func inferImpliedNodeFormat(resolver *module.Resolver, fileName string) core.ResolutionMode {
+	var packageJsonType string
+	if scope := resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName)); scope.Exists() {
+		if value, ok := scope.Contents.Type.GetValue(); ok {
+			packageJsonType = value
+		}
+	}
+	if mode := ast.GetImpliedNodeFormatForFile(fileName, packageJsonType); mode != core.ResolutionModeNone {
+		return mode
+	}
+	return core.ModuleKindESNext
+}
+
 func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 	for current := node; current != nil; current = current.Parent {
 		switch {
@@ -430,26 +445,37 @@ func findContainingModuleSpecifier(node *ast.Node) *ast.Node {
 func getImportNamesForModuleSpecifier(moduleSpecifier *ast.Node) []string {
 	var names []string
 	for current := moduleSpecifier.Parent; current != nil; current = current.Parent {
-		if !ast.IsImportDeclaration(current) {
-			continue
-		}
-		if importClause := current.ImportClause(); importClause != nil {
-			if importClause.Name() != nil {
-				names = append(names, "default", importClause.Name().Text())
-			}
-			if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil {
-				if ast.IsNamedImports(namedBindings) {
-					for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
-						if propertyName := element.PropertyName(); propertyName != nil {
-							names = append(names, propertyName.Text())
-						} else if name := element.Name(); name != nil {
-							names = append(names, name.Text())
+		if ast.IsImportDeclaration(current) {
+			if importClause := current.ImportClause(); importClause != nil {
+				if importClause.Name() != nil {
+					names = append(names, "default", importClause.Name().Text())
+				}
+				if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil {
+					if ast.IsNamedImports(namedBindings) {
+						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+							if propertyName := element.PropertyName(); propertyName != nil {
+								names = append(names, propertyName.Text())
+							} else if name := element.Name(); name != nil {
+								names = append(names, name.Text())
+							}
 						}
 					}
 				}
 			}
+			break
 		}
-		break
+		if ast.IsExportDeclaration(current) {
+			if exportClause := current.AsExportDeclaration().ExportClause; exportClause != nil && ast.IsNamedExports(exportClause) {
+				for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+					if propertyName := element.PropertyName(); propertyName != nil {
+						names = append(names, propertyName.Text())
+					} else if name := element.Name(); name != nil {
+						names = append(names, name.Text())
+					}
+				}
+			}
+			break
+		}
 	}
 	return names
 }
@@ -512,16 +538,23 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 	options := *program.Options()
 	options.NoDtsResolution = core.TSTrue
 	resolver := module.NewResolver(program.Host(), &options, program.GetGlobalTypingsCacheLocation(), "")
+
+	// Compute the preferred resolution mode from the file extension and package.json "type".
+	// These source files are typically not in the program (they're .js files parsed on the fly),
+	// so we can't use program.GetModeForUsageLocation. Instead we infer from the filesystem.
+	preferredMode := inferImpliedNodeFormat(resolver, sourceFile.FileName())
+
 	type forwardedFile struct {
 		fileName string
 		pos      int
 	}
+
 	var files []forwardedFile
 	addForwardedFile := func(moduleName string, pos int) {
 		if moduleName == "" {
 			return
 		}
-		if implementationFile := resolveImplementationFromModuleName(resolver, moduleName, sourceFile.FileName(), core.ModuleKindCommonJS); implementationFile != "" {
+		if implementationFile := resolveImplementationFromModuleName(resolver, moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
 			files = append(files, forwardedFile{fileName: implementationFile, pos: pos})
 		}
 	}
@@ -597,6 +630,9 @@ func getCandidateSourceDeclarationNames(originalNode *ast.Node, declaration *ast
 		if declaration.Kind == ast.KindExportAssignment {
 			names = append(names, "default")
 		}
+		if (ast.IsFunctionDeclaration(declaration) || ast.IsClassDeclaration(declaration)) && ast.HasSyntacticModifier(declaration, ast.ModifierFlagsExportDefault) {
+			names = append(names, "default")
+		}
 	}
 	if originalNode != nil {
 		switch {
@@ -658,6 +694,9 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 			}
 		}
 		if wantDefault && node.Kind == ast.KindExportAssignment {
+			addMatch(node, node)
+		}
+		if wantDefault && (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && ast.HasSyntacticModifier(node, ast.ModifierFlagsExportDefault) {
 			addMatch(node, node)
 		}
 		return node.ForEachChild(visit)
