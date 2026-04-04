@@ -1,16 +1,69 @@
 package execute
 
 import (
-	"fmt"
 	"reflect"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/trackingvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
+
+type cachedSourceFile struct {
+	file    *ast.SourceFile
+	modTime time.Time
+}
+
+type watchCompilerHost struct {
+	inner compiler.CompilerHost
+	cache *collections.SyncMap[tspath.Path, *cachedSourceFile]
+}
+
+var _ compiler.CompilerHost = (*watchCompilerHost)(nil)
+
+func (h *watchCompilerHost) FS() vfs.FS                  { return h.inner.FS() }
+func (h *watchCompilerHost) DefaultLibraryPath() string  { return h.inner.DefaultLibraryPath() }
+func (h *watchCompilerHost) GetCurrentDirectory() string { return h.inner.GetCurrentDirectory() }
+func (h *watchCompilerHost) Trace(msg *diagnostics.Message, args ...any) {
+	h.inner.Trace(msg, args...)
+}
+
+func (h *watchCompilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	return h.inner.GetResolvedProjectReference(fileName, path)
+}
+
+func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	info := h.inner.FS().Stat(opts.FileName)
+
+	if cached, ok := h.cache.Load(opts.Path); ok {
+		if info != nil && info.ModTime().Equal(cached.modTime) {
+			return cached.file
+		}
+	}
+
+	file := h.inner.GetSourceFile(opts)
+	if file != nil {
+		if info != nil {
+			h.cache.Store(opts.Path, &cachedSourceFile{
+				file:    file,
+				modTime: info.ModTime(),
+			})
+		}
+	} else {
+		h.cache.Delete(opts.Path)
+	}
+	return file
+}
 
 type Watcher struct {
 	sys                            tsc.System
@@ -19,12 +72,17 @@ type Watcher struct {
 	compilerOptionsFromCommandLine *core.CompilerOptions
 	reportDiagnostic               tsc.DiagnosticReporter
 	reportErrorSummary             tsc.DiagnosticsReporter
+	reportWatchStatus              tsc.DiagnosticReporter
 	testing                        tsc.CommandLineTesting
 
-	host           compiler.CompilerHost
-	program        *incremental.Program
-	prevModified   map[string]time.Time
-	configModified bool
+	program             *incremental.Program
+	extendedConfigCache *tsc.ExtendedConfigCache
+	configModified      bool
+	configHasErrors     bool
+	configFilePaths     []string
+
+	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
+	fileWatcher     *vfswatch.FileWatcher
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -43,65 +101,115 @@ func createWatcher(
 		compilerOptionsFromCommandLine: compilerOptionsFromCommandLine,
 		reportDiagnostic:               reportDiagnostic,
 		reportErrorSummary:             reportErrorSummary,
+		reportWatchStatus:              tsc.CreateWatchStatusReporter(sys, configParseResult.Locale(), configParseResult.CompilerOptions(), testing),
 		testing:                        testing,
-		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
+		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
 	}
 	if configParseResult.ConfigFile != nil {
 		w.configFileName = configParseResult.ConfigFile.SourceFile.FileName()
 	}
+	w.fileWatcher = vfswatch.NewFileWatcher(
+		sys.FS(),
+		w.config.ParsedConfig.WatchOptions.WatchInterval(),
+		testing != nil,
+		w.DoCycle,
+	)
 	return w
 }
 
 func (w *Watcher) start() {
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
-	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(w.host), w.host)
+	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
+	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
+
+	if w.configFileName != "" {
+		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
+	}
+
+	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
+	w.doBuild()
 
 	if w.testing == nil {
-		watchInterval := w.config.ParsedConfig.WatchOptions.WatchInterval()
-		for {
-			w.DoCycle()
-			time.Sleep(watchInterval)
-		}
-	} else {
-		// Initial compilation in test mode
-		w.DoCycle()
+		w.fileWatcher.Run(w.sys.Now)
 	}
 }
 
 func (w *Watcher) DoCycle() {
-	// if this function is updated, make sure to update `RunWatchCycle` in export_test.go as needed
-
 	if w.hasErrorsInTsConfig() {
-		// these are unrecoverable errors--report them and do not build
 		return
 	}
-	// updateProgram()
+	if w.fileWatcher.WatchState != nil && !w.configModified && !w.fileWatcher.HasChanges(w.fileWatcher.WatchState) {
+		if w.testing != nil {
+			w.testing.OnProgram(w.program)
+		}
+		return
+	}
+
+	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
+	w.doBuild()
+}
+
+func (w *Watcher) doBuild() {
+	if w.configModified {
+		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
+	}
+
+	cached := cachedvfs.From(w.sys.FS())
+	tfs := &trackingvfs.FS{Inner: cached}
+	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	host := &watchCompilerHost{inner: innerHost, cache: w.sourceFileCache}
+
+	if w.config.ConfigFile != nil {
+		wildcardDirs := w.config.WildcardDirectories()
+		for dir := range wildcardDirs {
+			tfs.SeenFiles.Add(dir)
+		}
+		w.fileWatcher.WildcardDirectories = wildcardDirs
+		if len(wildcardDirs) > 0 {
+			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
+		}
+	}
+	for _, path := range w.configFilePaths {
+		tfs.SeenFiles.Add(path)
+	}
+
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
 		Config: w.config,
-		Host:   w.host,
+		Host:   host,
 	}), w.program, nil, w.testing != nil)
 
-	if w.hasBeenModified(w.program.GetProgram()) {
-		fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
-		timeStart := w.sys.Now()
-		w.compileAndEmit()
-		fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
+	result := w.compileAndEmit()
+	cached.DisableAndClearCache()
+	w.fileWatcher.UpdateWatchedFiles(tfs)
+	w.fileWatcher.PollInterval = w.config.ParsedConfig.WatchOptions.WatchInterval()
+	w.configModified = false
+
+	programFiles := w.program.GetProgram().FilesByPath()
+	w.sourceFileCache.Range(func(path tspath.Path, _ *cachedSourceFile) bool {
+		if _, ok := programFiles[path]; !ok {
+			w.sourceFileCache.Delete(path)
+		}
+		return true
+	})
+
+	errorCount := len(result.Diagnostics)
+	if errorCount == 1 {
+		w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_1_error_Watching_for_file_changes))
 	} else {
-		// print something???
-		// fmt.Fprintln(w.sys.Writer(), "no changes detected at ", w.sys.Now())
+		w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_0_errors_Watching_for_file_changes, errorCount))
 	}
+
 	if w.testing != nil {
 		w.testing.OnProgram(w.program)
 	}
 }
 
-func (w *Watcher) compileAndEmit() {
-	// !!! output/error reporting is currently the same as non-watch mode
-	// diagnostics, emitResult, exitStatus :=
-	tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
+	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
 		Sys:                w.sys,
 		ProgramLike:        w.program,
 		Program:            w.program.GetProgram(),
+		Config:             w.config,
 		ReportDiagnostic:   w.reportDiagnostic,
 		ReportErrorSummary: w.reportErrorSummary,
 		Writer:             w.sys.Writer(),
@@ -111,57 +219,72 @@ func (w *Watcher) compileAndEmit() {
 }
 
 func (w *Watcher) hasErrorsInTsConfig() bool {
-	// only need to check and reparse tsconfig options/update host if we are watching a config file
-	extendedConfigCache := &tsc.ExtendedConfigCache{}
-	if w.configFileName != "" {
-		// !!! need to check that this merges compileroptions correctly. This differs from non-watch, since we allow overriding of previous options
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
-		if len(errors) > 0 {
-			for _, e := range errors {
-				w.reportDiagnostic(e)
-			}
-			return true
-		}
-		// CompilerOptions contain fields which should not be compared; clone to get a copy without those set.
-		if !reflect.DeepEqual(w.config.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) {
-			// fmt.Fprintln(w.sys.Writer(), "build triggered due to config change")
-			w.configModified = true
-		}
-		w.config = configParseResult
+	if w.configFileName == "" {
+		return false
 	}
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+
+	if !w.configHasErrors && len(w.configFilePaths) > 0 {
+		changed := false
+		for _, path := range w.configFilePaths {
+			if old, ok := w.fileWatcher.WatchState[path]; ok {
+				s := w.sys.FS().Stat(path)
+				if !old.Exists {
+					if s != nil {
+						changed = true
+						break
+					}
+				} else {
+					if s == nil || !s.ModTime().Equal(old.ModTime) {
+						changed = true
+						break
+					}
+				}
+			}
+		}
+		if !changed {
+			return false
+		}
+	}
+
+	extendedConfigCache := &tsc.ExtendedConfigCache{}
+	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
+	if len(errors) > 0 {
+		for _, e := range errors {
+			w.reportDiagnostic(e)
+		}
+		w.configHasErrors = true
+		return true
+	}
+	if w.configHasErrors {
+		w.configModified = true
+	}
+	w.configHasErrors = false
+	w.configFilePaths = append([]string{w.configFileName}, configParseResult.ExtendedSourceFiles()...)
+	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
+		w.configModified = true
+	}
+	w.config = configParseResult
+	w.extendedConfigCache = extendedConfigCache
 	return false
 }
 
-func (w *Watcher) hasBeenModified(program *compiler.Program) bool {
-	// checks watcher's snapshot against program file modified times
-	currState := map[string]time.Time{}
-	filesModified := w.configModified
-	for _, sourceFile := range program.SourceFiles() {
-		fileName := sourceFile.FileName()
-		s := w.sys.FS().Stat(fileName)
-		if s == nil {
-			// do nothing; if file is in program.SourceFiles() but is not found when calling Stat, file has been very recently deleted.
-			// deleted files are handled outside of this loop
-			continue
-		}
-		currState[fileName] = s.ModTime()
-		if !filesModified {
-			if currState[fileName] != w.prevModified[fileName] {
-				// fmt.Fprint(w.sys.Writer(), "build triggered from ", fileName, ": ", w.prevModified[fileName], " -> ", currState[fileName], "\n")
-				filesModified = true
-			}
-			// catch cases where no files are modified, but some were deleted
-			delete(w.prevModified, fileName)
-		}
-	}
-	if !filesModified && len(w.prevModified) > 0 {
-		// fmt.Fprintln(w.sys.Writer(), "build triggered due to deleted file")
-		filesModified = true
-	}
-	w.prevModified = currState
+// Testing helpers — exported for use by test packages
 
-	// reset state for next cycle
-	w.configModified = false
-	return filesModified
+func (w *Watcher) HasWatchedFilesChanged() bool {
+	return w.fileWatcher.HasChanges(w.fileWatcher.WatchState)
+}
+
+func (w *Watcher) WatchStateLen() int {
+	return len(w.fileWatcher.WatchState)
+}
+
+func (w *Watcher) WatchStateHas(path string) bool {
+	_, ok := w.fileWatcher.WatchState[path]
+	return ok
+}
+
+func (w *Watcher) DebugWatchState(fn func(path string, modTime time.Time, exists bool)) {
+	for path, entry := range w.fileWatcher.WatchState {
+		fn(path, entry.ModTime, entry.Exists)
+	}
 }
