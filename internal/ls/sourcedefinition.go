@@ -286,11 +286,16 @@ func (l *LanguageService) resolveImplementationFileForDeclaration(
 		}
 	}
 
-	preferredMode := core.ModuleKindESNext
+	dtsFileName := ast.GetSourceFileOfNode(declaration).FileName()
+	options := program.Options().Clone()
+	options.NoDtsResolution = core.TSTrue
+	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
+
+	preferredMode := inferImpliedNodeFormat(resolver, dtsFileName)
 	if originalModuleSpecifier != nil {
 		preferredMode = program.GetModeForUsageLocation(currentFile, originalModuleSpecifier)
 	}
-	return l.findImplementationFileFromDtsFileName(program, ast.GetSourceFileOfNode(declaration).FileName(), currentFile.FileName(), preferredMode)
+	return l.findImplementationFileFromDtsFileName(resolver, program, dtsFileName, currentFile.FileName(), preferredMode)
 }
 
 func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
@@ -298,9 +303,9 @@ func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
 	currentFile *ast.SourceFile,
 	moduleSpecifier *ast.Node,
 ) string {
-	options := *program.Options()
+	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), &options, program.GetGlobalTypingsCacheLocation(), "")
+	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
 	mode := program.GetModeForUsageLocation(currentFile, moduleSpecifier)
 
 	if implementationFile := resolveImplementationFromModuleName(resolver, moduleSpecifier.Text(), currentFile.FileName(), mode); implementationFile != "" {
@@ -311,7 +316,7 @@ func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
 		if !tspath.IsDeclarationFileName(resolved.ResolvedFileName) {
 			return resolved.ResolvedFileName
 		}
-		if implementationFile := l.findImplementationFileFromDtsFileName(program, resolved.ResolvedFileName, currentFile.FileName(), mode); implementationFile != "" {
+		if implementationFile := l.findImplementationFileFromDtsFileName(resolver, program, resolved.ResolvedFileName, currentFile.FileName(), mode); implementationFile != "" {
 			return implementationFile
 		}
 	}
@@ -320,16 +325,15 @@ func (l *LanguageService) resolveImplementationFileForModuleSpecifier(
 }
 
 func (l *LanguageService) findImplementationFileFromDtsFileName(
+	resolver *module.Resolver,
 	program *compiler.Program,
 	dtsFileName string,
 	resolveFromFile string,
 	preferredMode core.ResolutionMode,
 ) string {
-	options := *program.Options()
-	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), &options, program.GetGlobalTypingsCacheLocation(), "")
+	options := program.Options()
 
-	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, &options); jsExt != "" {
+	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, options); jsExt != "" {
 		candidate := tspath.ChangeExtension(dtsFileName, jsExt)
 		if program.Host().FS().FileExists(candidate) {
 			return candidate
@@ -535,9 +539,9 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 		return nil
 	}
 
-	options := *program.Options()
+	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
-	resolver := module.NewResolver(program.Host(), &options, program.GetGlobalTypingsCacheLocation(), "")
+	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
 
 	// Compute the preferred resolution mode from the file extension and package.json "type".
 	// These source files are typically not in the program (they're .js files parsed on the fly),
