@@ -1,0 +1,5 @@
+// === goToSourceDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+// /// <reference types="foo/*GOTO SOURCE DEF*/" />
+// import { bar } from "foo";
+// bar();
