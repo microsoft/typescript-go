@@ -1,13 +1,13 @@
 package ls
 
 import (
-	"cmp"
 	"context"
 	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -354,11 +354,13 @@ func (l *LanguageService) getOrParseSourceFile(program *compiler.Program, fileNa
 	if !ok {
 		return nil
 	}
-	return parser.ParseSourceFile(
+	sourceFile := parser.ParseSourceFile(
 		ast.SourceFileParseOptions{FileName: fileName, Path: l.toPath(fileName)},
 		text,
 		core.GetScriptKindFromFileName(fileName),
 	)
+	binder.BindSourceFile(sourceFile)
+	return sourceFile
 }
 
 // inferImpliedNodeFormat determines the module format for a source file that may not be
@@ -477,47 +479,19 @@ func (l *LanguageService) getForwardedImplementationFiles(program *compiler.Prog
 	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
 	resolver := module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), "")
-
-	// Compute the preferred resolution mode from the file extension and package.json "type".
-	// These source files are typically not in the program (they're .js files parsed on the fly),
-	// so we can't use program.GetModeForUsageLocation. Instead we infer from the filesystem.
 	preferredMode := inferImpliedNodeFormat(resolver, sourceFile.FileName())
 
-	type forwardedFile struct {
-		fileName string
-		pos      int
-	}
-
-	var files []forwardedFile
-	addForwardedFile := func(moduleName string, pos int) {
+	var files []string
+	for _, imp := range sourceFile.Imports() {
+		moduleName := imp.Text()
 		if moduleName == "" {
-			return
+			continue
 		}
 		if implementationFile := resolveImplementationFromModuleName(resolver, moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
-			files = append(files, forwardedFile{fileName: implementationFile, pos: pos})
+			files = append(files, implementationFile)
 		}
 	}
-
-	var visit ast.Visitor
-	visit = func(node *ast.Node) bool {
-		if node == nil {
-			return false
-		}
-		switch {
-		case ast.IsAnyImportOrReExport(node),
-			ast.IsRequireCall(node, true /*requireStringLiteralLikeArgument*/),
-			ast.IsImportCall(node):
-			if moduleSpecifier := ast.GetExternalModuleName(node); moduleSpecifier != nil && ast.IsStringLiteralLike(moduleSpecifier) {
-				addForwardedFile(moduleSpecifier.Text(), moduleSpecifier.Pos())
-			}
-		}
-		return node.ForEachChild(visit)
-	}
-	sourceFile.AsNode().ForEachChild(visit)
-	slices.SortFunc(files, func(a, b forwardedFile) int {
-		return cmp.Compare(a.pos, b.pos)
-	})
-	return core.Deduplicate(core.Map(files, func(file forwardedFile) string { return file.fileName }))
+	return core.Deduplicate(files)
 }
 
 func getCandidateSourceDeclarationNames(originalNode *ast.Node, declaration *ast.Node) []string {
@@ -556,18 +530,6 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 	}
 
 	var declarations []*ast.Node
-	bestDepth := -1
-	addMatch := func(nameNode *ast.Node, declaration *ast.Node) {
-		depth := getDeclarationSearchDepth(nameNode)
-		switch {
-		case bestDepth == -1 || depth < bestDepth:
-			declarations = []*ast.Node{declaration}
-			bestDepth = depth
-		case depth == bestDepth:
-			declarations = append(declarations, declaration)
-		}
-	}
-
 	wanted := make(map[string]struct{}, len(names))
 	wantDefault := false
 	for _, name := range names {
@@ -578,7 +540,7 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 		wanted[name] = struct{}{}
 		for _, candidate := range getPossibleSymbolReferenceNodes(sourceFile, name, nil /*container*/) {
 			if declaration := ast.GetDeclarationFromName(candidate); declaration != nil {
-				addMatch(candidate, declaration)
+				declarations = append(declarations, declaration)
 			}
 		}
 	}
@@ -590,41 +552,20 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 		if name := ast.GetNameOfDeclaration(node); name != nil {
 			if text := ast.GetTextOfPropertyName(name); text != "" {
 				if _, ok := wanted[text]; ok {
-					addMatch(name, node)
+					declarations = append(declarations, node)
 				}
 			}
 		}
 		if wantDefault && node.Kind == ast.KindExportAssignment {
-			addMatch(node, node)
+			declarations = append(declarations, node)
 		}
 		if wantDefault && (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && ast.HasSyntacticModifier(node, ast.ModifierFlagsExportDefault) {
-			addMatch(node, node)
+			declarations = append(declarations, node)
 		}
 		return node.ForEachChild(visit)
 	}
 	sourceFile.AsNode().ForEachChild(visit)
 	return uniqueDeclarationNodes(declarations)
-}
-
-func getDeclarationSearchDepth(node *ast.Node) int {
-	depth := 0
-	for current := node; current != nil; current = current.Parent {
-		if current == node.Parent && (ast.IsFunctionLike(current) || ast.IsClassLike(current)) && ast.GetNameOfDeclaration(current) == node {
-			continue
-		}
-		switch {
-		case current.Kind == ast.KindSourceFile,
-			current.Kind == ast.KindBlock,
-			current.Kind == ast.KindModuleBlock,
-			current.Kind == ast.KindCaseBlock,
-			current.Kind == ast.KindExportAssignment,
-			current.Kind == ast.KindJSExportAssignment,
-			ast.IsFunctionLike(current),
-			ast.IsClassLike(current):
-			depth++
-		}
-	}
-	return depth
 }
 
 func filterPreferredSourceDeclarations(originalNode *ast.Node, declarations []*ast.Node) []*ast.Node {
