@@ -3370,7 +3370,7 @@ var X_0_which_lacks_return_type_annotation_implicitly_has_an_1_return_type = &Me
 
 var Function_expression_which_lacks_return_type_annotation_implicitly_has_an_0_return_type = &Message{code: 7011, category: CategoryError, key: "Function_expression_which_lacks_return_type_annotation_implicitly_has_an_0_return_type_7011", text: "Function expression, which lacks return-type annotation, implicitly has an '{0}' return type."}
 
-var This_overload_implicitly_returns_the_type_0_because_it_lacks_a_return_type_annotation = &Message{code: 7012, category: CategoryError, key: "This_overload_implicitly_returns_the_type_0_because_it_lacks_a_return_type_annotation_7012", text: "This overload implicitly returns the type '{0}' because it lacks a return type annotation."}
+var This_overload_of_0_lacks_a_return_type_annotation_and_implicitly_has_an_1_return_type = &Message{code: 7012, category: CategoryError, key: "This_overload_of_0_lacks_a_return_type_annotation_and_implicitly_has_an_1_return_type_7012", text: "This overload of '{0}' lacks a return-type annotation and implicitly has an '{1}' return type."}
 
 var Construct_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type = &Message{code: 7013, category: CategoryError, key: "Construct_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type_7013", text: "Construct signature, which lacks return-type annotation, implicitly has an 'any' return type."}
 
@@ -7668,8 +7668,8 @@ func keyToMessage(key Key) *Message {
 		return X_0_which_lacks_return_type_annotation_implicitly_has_an_1_return_type
 	case "Function_expression_which_lacks_return_type_annotation_implicitly_has_an_0_return_type_7011":
 		return Function_expression_which_lacks_return_type_annotation_implicitly_has_an_0_return_type
-	case "This_overload_implicitly_returns_the_type_0_because_it_lacks_a_return_type_annotation_7012":
-		return This_overload_implicitly_returns_the_type_0_because_it_lacks_a_return_type_annotation
+	case "This_overload_of_0_lacks_a_return_type_annotation_and_implicitly_has_an_1_return_type_7012":
+		return This_overload_of_0_lacks_a_return_type_annotation_and_implicitly_has_an_1_return_type
 	case "Construct_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type_7013":
 		return Construct_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type
 	case "Function_type_which_lacks_return_type_annotation_implicitly_has_an_0_return_type_7014":
