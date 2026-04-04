@@ -1,0 +1,3 @@
+// === findFileReferences ===
+// === /project/b.ts ===
+// import [|"./a"|];

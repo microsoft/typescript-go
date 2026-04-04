@@ -677,6 +677,41 @@ func (l *LanguageService) symbolAndEntriesToReferences(ctx context.Context, para
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
+// GetFileReferences returns all locations that reference the given file.
+// This is equivalent to TypeScript's getReferencesForFileName, finding all imports
+// and triple-slash references to the file.
+func (l *LanguageService) GetFileReferences(ctx context.Context, uri lsproto.DocumentUri) (lsproto.CustomFindFileReferencesResponse, error) {
+	program, sourceFile := l.getProgramAndFile(uri)
+	if sourceFile == nil {
+		return lsproto.LocationsOrNull{}, nil
+	}
+
+	sourceFiles := program.GetSourceFiles()
+	sourceFilesSet := collections.NewSetWithSizeHint[string](len(sourceFiles))
+	for _, sf := range sourceFiles {
+		sourceFilesSet.Add(sf.FileName())
+	}
+
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	var entries []*ReferenceEntry
+
+	// If the file has a module symbol (is a module file), find all import references.
+	if moduleSymbol := checker.GetMergedSymbol(sourceFile.Symbol); moduleSymbol != nil {
+		symbolsAndEntries := l.getReferencedSymbolsForModule(ctx, program, moduleSymbol, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
+		for _, sae := range symbolsAndEntries {
+			entries = append(entries, sae.references...)
+		}
+	} else {
+		// Non-module file: look for triple-slash references and other include reasons.
+		entries = getReferencesForNonModule(sourceFile, program)
+	}
+
+	locations := l.convertEntriesToLocations(entries)
+	return lsproto.LocationsOrNull{Locations: &locations}, nil
+}
+
 func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams, orchestrator CrossProjectOrchestrator) (lsproto.ImplementationResponse, error) {
 	return l.provideImplementationsEx(ctx, params, symbolEntryTransformOptions{}, orchestrator)
 }
@@ -1292,8 +1327,20 @@ func findFirstJsxNode(root *ast.Node) *ast.Node {
 }
 
 func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*ReferenceEntry {
-	// !!! not implemented
-	return []*ReferenceEntry{}
+	var entries []*ReferenceEntry
+	for _, ref := range program.GetIncludeReasons()[referencedFile.Path()] {
+		fileName, textRange, ok := ref.GetSpanInReferrer(program)
+		if !ok {
+			continue
+		}
+		tr := textRange
+		entries = append(entries, &ReferenceEntry{
+			kind:      entryKindRange,
+			fileName:  fileName,
+			textRange: &tr,
+		})
+	}
+	return entries
 }
 
 func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *ast.Symbol, checker *checker.Checker) *ast.Symbol {

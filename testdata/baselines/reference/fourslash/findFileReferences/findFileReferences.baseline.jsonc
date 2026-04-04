@@ -1,0 +1,12 @@
+// === findFileReferences ===
+// === /b.ts ===
+// import "[|./a|]";
+// 
+
+// === /c.ts ===
+// import {} from "[|./a|]";
+// 
+
+// === /d.ts ===
+// import { a } from "[|/a|]";
+// 
