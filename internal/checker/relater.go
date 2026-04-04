@@ -2516,6 +2516,7 @@ type Relater struct {
 	targetDepth    int
 	expandingFlags ExpandingFlags
 	overflow       bool
+	overallDepth   int
 	relationCount  int
 	next           *Relater
 }
@@ -2652,7 +2653,14 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 			target.flags&TypeFlagsUnion != 0 && len(target.Types()) < 4 && source.flags&TypeFlagsStructuredOrInstantiable == 0
 		var result Ternary
 		if skipCaching {
-			result = r.unionOrIntersectionRelatedTo(source, target, reportErrors, intersectionState)
+			r.overallDepth++
+			if r.overallDepth > 100 {
+				r.overflow = true
+				result = TernaryFalse
+			} else {
+				result = r.unionOrIntersectionRelatedTo(source, target, reportErrors, intersectionState)
+			}
+			r.overallDepth--
 		} else {
 			result = r.recursiveTypeRelatedTo(source, target, reportErrors, intersectionState, recursionFlags)
 		}

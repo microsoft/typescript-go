@@ -26,6 +26,7 @@ type InferenceState struct {
 	visited           map[InferenceKey]InferencePriority
 	sourceStack       []*Type
 	targetStack       []*Type
+	depth             int
 	next              *InferenceState
 }
 
@@ -66,6 +67,12 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 	if !c.couldContainTypeVariables(target) || c.isNoInferType(target) {
 		return
 	}
+	if n.depth > 200 {
+		n.inferencePriority = min(n.inferencePriority, InferencePriorityCircularity)
+		return
+	}
+	n.depth++
+	defer func() { n.depth-- }()
 	if source == c.wildcardType || source == c.blockedStringType {
 		// We are inferring from an 'any' type. We want to infer this type for every type parameter
 		// referenced in the target type, so we record it as the propagation type and infer from the
