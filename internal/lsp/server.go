@@ -1413,8 +1413,7 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 		s.apiSessions = make(map[string]*api.Session)
 	}
 
-	var apiSession *api.Session
-	apiSession = api.NewSession(s.session, nil)
+	apiSession := api.NewSession(s.session, nil)
 
 	// Use provided pipe path or generate a unique one
 	var pipePath string

@@ -165,7 +165,7 @@ func deleteVariableDeclaration(t *Tracker, deletedNodesInLists map[*ast.Node]boo
 	gp := parent.Parent
 	switch gp.Kind {
 	case ast.KindForOfStatement, ast.KindForInStatement:
-		t.ReplaceNode(sourceFile, node, t.NodeFactory.NewObjectLiteralExpression(t.NodeFactory.NewNodeList([]*ast.Node{}), false), nil)
+		t.ReplaceNode(sourceFile, node, t.NewObjectLiteralExpression(t.NewNodeList([]*ast.Node{}), false), nil)
 
 	case ast.KindForStatement:
 		deleteNode(t, sourceFile, parent, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude)
