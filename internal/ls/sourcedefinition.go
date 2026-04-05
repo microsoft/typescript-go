@@ -232,8 +232,8 @@ func (r *sourceDefResolver) resolveTripleSlashReference(pos int) []*ast.Node {
 }
 
 // searchImplementationFile searches an implementation file for declarations
-// matching the given names. Returns nil when names were found but no
-// declarations matched; callers handle entry-declaration fallback as needed.
+// matching the given names. Returns nil when no declarations matched; callers
+// fall through to the checker path or to the standard definition provider.
 func (r *sourceDefResolver) searchImplementationFile(
 	originalNode *ast.Node,
 	implementationFile string,
