@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/jsxStylePropStyledJsx.tsx] ////
+
+=== jsxStylePropStyledJsx.tsx ===
+// https://github.com/microsoft/typescript-go/issues/TODO
+// Validates that the styled-jsx `jsx` and `global` boolean props are accepted on
+// <style> elements when the types are properly declared via module augmentation.
+
+/// <reference path="react16.d.ts" />
+
+import * as React from 'react';
+>React : typeof React
+
+// Module augmentation as provided by styled-jsx (global.d.ts)
+declare module 'react' {
+>'react' : typeof React
+
+    interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
+        jsx?: boolean;
+>jsx : boolean | undefined
+
+        global?: boolean;
+>global : boolean | undefined
+    }
+}
+
+// Should compile without errors - jsx is in the augmented StyleHTMLAttributes
+const a = <style jsx>{`h1 { color: red; }`}</style>;
+>a : JSX.Element
+><style jsx>{`h1 { color: red; }`}</style> : JSX.Element
+>style : any
+>jsx : true
+>`h1 { color: red; }` : "h1 { color: red; }"
+>style : any
+
+// Should compile without errors - global is in the augmented StyleHTMLAttributes
+const b = <style global>{`h1 { color: red; }`}</style>;
+>b : JSX.Element
+><style global>{`h1 { color: red; }`}</style> : JSX.Element
+>style : any
+>global : true
+>`h1 { color: red; }` : "h1 { color: red; }"
+>style : any
+
+// Should compile without errors - both jsx and global
+const c = <style jsx global>{`h1 { color: red; }`}</style>;
+>c : JSX.Element
+><style jsx global>{`h1 { color: red; }`}</style> : JSX.Element
+>style : any
+>jsx : true
+>global : true
+>`h1 { color: red; }` : "h1 { color: red; }"
+>style : any
+
+// Should still error - unknown is not in the type
+// @ts-expect-error
+const d = <style unknown>{`h1 { color: red; }`}</style>;
+>d : JSX.Element
+><style unknown>{`h1 { color: red; }`}</style> : JSX.Element
+>style : any
+>unknown : true
+>`h1 { color: red; }` : "h1 { color: red; }"
+>style : any
+
