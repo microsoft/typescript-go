@@ -8,16 +8,23 @@
  //     /**
  //      * Adds two numbers.
  //      *
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
+
 
  // === goToSourceDefinition ===
- // === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
+-// === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
 -// [||];(function() {
-+// [|;|](function() {
- //     /**
- //      * Adds two numbers.
- //      *
-@@= skipped -14, +14 lines =@@
+-//     /**
+-//      * Adds two numbers.
+-//      *
+-// --- (line: 5) skipped ---
+-
+ // === /home/src/workspaces/project/index.ts ===
+-// import _, { /*GOTO SOURCE DEF*/foo } from 'lodash';
++// import _, { /*GOTO SOURCE DEF*/[|foo|] } from 'lodash';
+ // _.add
+
+
 
  // === goToSourceDefinition ===
  // === /home/src/workspaces/project/node_modules/lodash/lodash.js ===

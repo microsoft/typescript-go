@@ -109,11 +109,6 @@ func (r *sourceDefResolver) resolve(
 	if resolvedImplFile != "" {
 		names := getCandidateSourceDeclarationNames(node, nil)
 		moduleResults := r.searchImplementationFile(node, resolvedImplFile, names)
-		if moduleResults == nil {
-			if sf := r.getOrParseSourceFile(resolvedImplFile); sf != nil {
-				moduleResults = getSourceDefinitionEntryDeclarations(sf)
-			}
-		}
 		if len(moduleResults) != 0 {
 			if !ast.IsPartOfTypeNode(node) && !ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) || hasConcreteSourceDeclarations(moduleResults) {
 				return uniqueDeclarationNodes(moduleResults)
