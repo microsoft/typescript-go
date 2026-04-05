@@ -57,6 +57,63 @@ function f4(/** @type {any} */ [module]) {
 >1 : 1
 }
 
+function f5(/** @type {any} */ module) {
+>f5 : (module: any) => void
+>module : any
+
+    module.exports.a = 1
+>module.exports.a = 1 : 1
+>module.exports.a : any
+>module.exports : any
+>module : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f6(/** @type {any} */ { module }) {
+>f6 : ({ module }: any) => void
+>module : any
+
+    module.exports.a = 1
+>module.exports.a = 1 : 1
+>module.exports.a : any
+>module.exports : any
+>module : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f7(/** @type {any} */ { x: module }) {
+>f7 : ({ x: module }: any) => void
+>x : any
+>module : any
+
+    module.exports.a = 1
+>module.exports.a = 1 : 1
+>module.exports.a : any
+>module.exports : any
+>module : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f8(/** @type {any} */ [module]) {
+>f8 : ([module]: any) => void
+>module : any
+
+    module.exports.a = 1
+>module.exports.a = 1 : 1
+>module.exports.a : any
+>module.exports : any
+>module : any
+>exports : any
+>a : any
+>1 : 1
+}
+
 function f10() {
 >f10 : () => void
 
@@ -236,6 +293,41 @@ function f20() {
     try {
     }
     catch (/** @type {any} */ module) {
+>module : any
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+    }
+}
+
+function f21() {
+>f21 : () => void
+
+    /** @param {any} module */
+    const g = module => {
+>g : (module: any) => void
+>module => {        module.exports = 1    } : (module: any) => void
+>module : any
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+    }
+}
+
+function f22() {
+>f22 : () => void
+
+    const g = (/** @type {any} */ module) => {
+>g : (module: any) => void
+>(/** @type {any} */ module) => {        module.exports = 1    } : (module: any) => void
 >module : any
 
         module.exports = 1

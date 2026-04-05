@@ -22,6 +22,22 @@ function f4(/** @type {any} */ [module]) {
     module.exports = 1
 }
 
+function f5(/** @type {any} */ module) {
+    module.exports.a = 1
+}
+
+function f6(/** @type {any} */ { module }) {
+    module.exports.a = 1
+}
+
+function f7(/** @type {any} */ { x: module }) {
+    module.exports.a = 1
+}
+
+function f8(/** @type {any} */ [module]) {
+    module.exports.a = 1
+}
+
 function f10() {
     let module = {}
     module.exports = 1
@@ -87,6 +103,19 @@ function f20() {
     }
 }
 
+function f21() {
+    /** @param {any} module */
+    const g = module => {
+        module.exports = 1
+    }
+}
+
+function f22() {
+    const g = (/** @type {any} */ module) => {
+        module.exports = 1
+    }
+}
+
 
 //// [main.js]
 // Each `module.exports` assignment in this file is supposed to reference a `module` local.
@@ -103,6 +132,18 @@ function f3(/** @type {any} */ { x: module }) {
 }
 function f4(/** @type {any} */ [module]) {
     module.exports = 1;
+}
+function f5(/** @type {any} */ module) {
+    module.exports.a = 1;
+}
+function f6(/** @type {any} */ { module }) {
+    module.exports.a = 1;
+}
+function f7(/** @type {any} */ { x: module }) {
+    module.exports.a = 1;
+}
+function f8(/** @type {any} */ [module]) {
+    module.exports.a = 1;
 }
 function f10() {
     let module = {};
@@ -158,6 +199,17 @@ function f20() {
     catch ( /** @type {any} */module) {
         module.exports = 1;
     }
+}
+function f21() {
+    /** @param {any} module */
+    const g = module => {
+        module.exports = 1;
+    };
+}
+function f22() {
+    const g = (/** @type {any} */ module) => {
+        module.exports = 1;
+    };
 }
 
 
