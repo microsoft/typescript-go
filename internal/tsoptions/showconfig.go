@@ -404,16 +404,22 @@ func serializeImpliedOptionValue(optionDecl *CommandLineOption, value any) any {
 // in the --showConfig "files" list. It returns true for files to keep, false for files
 // to omit. Files that match the include globs (and are not excluded) return false,
 // since they're already covered by the "include" field.
+//
+// Note: Following TypeScript's convertToTSConfig behavior, the config file path
+// (including the filename, e.g. "/project/tsconfig.json") is used as the base path
+// for pattern matching, not the directory. This causes include patterns like "**/*"
+// to resolve relative to the file (e.g. "/project/tsconfig.json/**/*"), which never
+// matches actual source files, so all resolved files appear in the "files" output.
 func matchesSpecs(configFileName string, includeSpecs []string, excludeSpecs []string, useCaseSensitiveFileNames bool, currentDirectory string) func(string) bool {
 	if len(includeSpecs) == 0 {
 		return nil
 	}
-	// Use the directory containing the tsconfig, not the file itself, as the base path
-	// for wildcard pattern matching.
-	configDir := tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(configFileName, currentDirectory))
+	// Use the config file path (including filename) as the base path, matching
+	// TypeScript's matchesSpecs which passes configFileName to getFileMatcherPatterns.
+	configPath := tspath.GetNormalizedAbsolutePath(configFileName, currentDirectory)
 
-	includeMatcher := vfsmatch.NewSpecMatcher(includeSpecs, configDir, vfsmatch.UsageFiles, useCaseSensitiveFileNames)
-	excludeMatcher := vfsmatch.NewSpecMatcher(excludeSpecs, configDir, vfsmatch.UsageExclude, useCaseSensitiveFileNames)
+	includeMatcher := vfsmatch.NewSpecMatcher(includeSpecs, configPath, vfsmatch.UsageFiles, useCaseSensitiveFileNames)
+	excludeMatcher := vfsmatch.NewSpecMatcher(excludeSpecs, configPath, vfsmatch.UsageExclude, useCaseSensitiveFileNames)
 
 	if includeMatcher != nil {
 		if excludeMatcher != nil {
