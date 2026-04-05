@@ -50,7 +50,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 	containingModuleSpecifier := findContainingModuleSpecifier(node)
 	if node == containingModuleSpecifier {
 		specifierMode := program.GetModeForUsageLocation(file, containingModuleSpecifier)
-		if implementationFile := resolver.resolveImplementation(containingModuleSpecifier.Text(), resolver.resolveFrom, specifierMode); implementationFile != "" {
+		if implementationFile := resolver.resolveImplementation(containingModuleSpecifier.Text(), specifierMode); implementationFile != "" {
 			if sourceFile := resolver.getOrParseSourceFile(implementationFile); sourceFile != nil {
 				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil), nil
 			}
@@ -103,7 +103,7 @@ func (r *sourceDefResolver) resolve(
 	var resolvedImplFile string
 	if containingModuleSpecifier != nil {
 		specifierMode := r.program.GetModeForUsageLocation(r.file, containingModuleSpecifier)
-		resolvedImplFile = r.resolveImplementation(containingModuleSpecifier.Text(), r.resolveFrom, specifierMode)
+		resolvedImplFile = r.resolveImplementation(containingModuleSpecifier.Text(), specifierMode)
 	}
 
 	if resolvedImplFile != "" {
@@ -124,7 +124,7 @@ func (r *sourceDefResolver) resolve(
 	// recover a module specifier from the checker (e.g. from the import that
 	// brought the symbol into scope, or from the root of an access expression).
 	if resolvedImplFile == "" && moduleSpecifier != "" {
-		resolvedImplFile = r.resolveImplementation(moduleSpecifier, r.resolveFrom, r.inferImpliedNodeFormat(r.resolveFrom))
+		resolvedImplFile = r.resolveImplementation(moduleSpecifier, r.inferImpliedNodeFormat(r.resolveFrom))
 	}
 
 	// For property access where the checker found no declarations (e.g.
@@ -347,14 +347,21 @@ func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 	// entrypoints.
 	if pathToFileInPackage != "" {
 		specifier := packageName + "/" + tspath.RemoveFileExtension(pathToFileInPackage)
-		if implementationFile := r.resolveImplementation(specifier, r.resolveFrom, preferredMode); implementationFile != "" {
+		if implementationFile := r.resolveImplementation(specifier, preferredMode); implementationFile != "" {
 			return implementationFile
 		}
 	}
-	return r.resolveImplementation(packageName, r.resolveFrom, preferredMode)
+	return r.resolveImplementation(packageName, preferredMode)
 }
 
 func (r *sourceDefResolver) resolveImplementation(
+	moduleName string,
+	preferredMode core.ResolutionMode,
+) string {
+	return r.resolveImplementationFrom(moduleName, r.resolveFrom, preferredMode)
+}
+
+func (r *sourceDefResolver) resolveImplementationFrom(
 	moduleName string,
 	resolveFromFile string,
 	preferredMode core.ResolutionMode,
@@ -457,7 +464,7 @@ func (r *sourceDefResolver) getForwardedImplementationFiles(sourceFile *ast.Sour
 	var files []string
 	for _, imp := range sourceFile.Imports() {
 		moduleName := imp.Text()
-		if implementationFile := r.resolveImplementation(moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
+		if implementationFile := r.resolveImplementationFrom(moduleName, sourceFile.FileName(), preferredMode); implementationFile != "" {
 			files = append(files, implementationFile)
 		}
 	}
