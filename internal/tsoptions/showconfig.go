@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 // computeFn wraps a typed getter method so it can be stored in an impliedOption's
@@ -69,23 +68,9 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 		UseCaseSensitiveFileNames: configParseResult.UseCaseSensitiveFileNames(),
 	}
 
-	// Build file list, filtering out files that match the include/exclude specs
-	var fileFilter func(string) bool
-	if configParseResult.ConfigFile != nil && configParseResult.ConfigFile.configFileSpecs != nil &&
-		len(configParseResult.ConfigFile.configFileSpecs.validatedIncludeSpecs) > 0 {
-		fileFilter = matchesSpecs(
-			configFileName,
-			configParseResult.ConfigFile.configFileSpecs.validatedIncludeSpecs,
-			configParseResult.ConfigFile.configFileSpecs.validatedExcludeSpecs,
-			configParseResult.UseCaseSensitiveFileNames(),
-			configParseResult.GetCurrentDirectory(),
-		)
-	}
+	// Build the list of all resolved files as relative paths from the config file.
 	var files []string
 	for _, f := range configParseResult.FileNames() {
-		if fileFilter != nil && !fileFilter(f) {
-			continue
-		}
 		normalizedFilePath := tspath.GetNormalizedAbsolutePath(f, configParseResult.GetCurrentDirectory())
 		relativePath := tspath.GetRelativePathFromFile(normalizedConfigPath, normalizedFilePath, comparePathsOptions)
 		files = append(files, relativePath)
@@ -398,43 +383,4 @@ func serializeImpliedOptionValue(optionDecl *CommandLineOption, value any) any {
 		return nil
 	}
 	return value
-}
-
-// matchesSpecs returns a filter function that determines whether a file should appear
-// in the --showConfig "files" list. It returns true for files to keep, false for files
-// to omit. Files that match the include globs (and are not excluded) return false,
-// since they're already covered by the "include" field.
-//
-// Note: Following TypeScript's convertToTSConfig behavior, the config file path
-// (including the filename, e.g. "/project/tsconfig.json") is used as the base path
-// for pattern matching, not the directory. This causes include patterns like "**/*"
-// to resolve relative to the file (e.g. "/project/tsconfig.json/**/*"), which never
-// matches actual source files, so all resolved files appear in the "files" output.
-func matchesSpecs(configFileName string, includeSpecs []string, excludeSpecs []string, useCaseSensitiveFileNames bool, currentDirectory string) func(string) bool {
-	if len(includeSpecs) == 0 {
-		return nil
-	}
-	// Use the config file path (including filename) as the base path, matching
-	// TypeScript's matchesSpecs which passes configFileName to getFileMatcherPatterns.
-	configPath := tspath.GetNormalizedAbsolutePath(configFileName, currentDirectory)
-
-	includeMatcher := vfsmatch.NewSpecMatcher(includeSpecs, configPath, vfsmatch.UsageFiles, useCaseSensitiveFileNames)
-	excludeMatcher := vfsmatch.NewSpecMatcher(excludeSpecs, configPath, vfsmatch.UsageExclude, useCaseSensitiveFileNames)
-
-	if includeMatcher != nil {
-		if excludeMatcher != nil {
-			return func(path string) bool {
-				return !(includeMatcher.MatchString(path) && !excludeMatcher.MatchString(path))
-			}
-		}
-		return func(path string) bool {
-			return !includeMatcher.MatchString(path)
-		}
-	}
-	if excludeMatcher != nil {
-		return func(path string) bool {
-			return excludeMatcher.MatchString(path)
-		}
-	}
-	return nil
 }
