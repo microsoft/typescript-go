@@ -42,8 +42,10 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 			}
 		case ast.JSDeclarationKindExportsProperty:
 			// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-			// Reparse a CommonJSExport if `exports` identifier is not shadowed
-			if p.shadowFlags&ShadowFlagsExports == 0 {
+			// Reparse a CommonJSExport if `exports` identifier is not shadowed in `exports.xxx` or
+			// `module` identifier is not shadowed in `module.exports.xxx`
+			shadowFlag := core.IfElse(ast.IsIdentifier(expr.AsBinaryExpression().Left.Expression()), ShadowFlagsExports, ShadowFlagsModule)
+			if p.shadowFlags&shadowFlag == 0 {
 				export = p.factory.NewCommonJSExport(
 					nil,
 					p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
