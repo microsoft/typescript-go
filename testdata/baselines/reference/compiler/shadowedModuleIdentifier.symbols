@@ -1,0 +1,190 @@
+//// [tests/cases/compiler/shadowedModuleIdentifier.ts] ////
+
+=== main.js ===
+// Each `module.exports` assignment in this file is supposed to reference a `module` local.
+// If it doesn't, the `module.exports` assignment will conflict with the ESM export below.
+
+export const foo = 1
+>foo : Symbol(foo, Decl(main.js, 3, 12))
+
+function f1(/** @type {any} */ module) {
+>f1 : Symbol(f1, Decl(main.js, 3, 20))
+>module : Symbol(module, Decl(main.js, 5, 12))
+
+    module.exports = 1
+>module : Symbol(module, Decl(main.js, 5, 12))
+}
+
+function f2(/** @type {any} */ { module }) {
+>f2 : Symbol(f2, Decl(main.js, 7, 1))
+>module : Symbol(module, Decl(main.js, 9, 32))
+
+    module.exports = 1
+>module : Symbol(module, Decl(main.js, 9, 32))
+}
+
+function f3(/** @type {any} */ { x: module }) {
+>f3 : Symbol(f3, Decl(main.js, 11, 1))
+>module : Symbol(module, Decl(main.js, 13, 32))
+
+    module.exports = 1
+>module : Symbol(module, Decl(main.js, 13, 32))
+}
+
+function f4(/** @type {any} */ [module]) {
+>f4 : Symbol(f4, Decl(main.js, 15, 1))
+>module : Symbol(module, Decl(main.js, 17, 32))
+
+    module.exports = 1
+>module : Symbol(module, Decl(main.js, 17, 32))
+}
+
+function f10() {
+>f10 : Symbol(f10, Decl(main.js, 19, 1))
+
+    let module = {}
+>module : Symbol(module, Decl(main.js, 22, 7))
+
+    module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 22, 19))
+>module : Symbol(module, Decl(main.js, 22, 7))
+>exports : Symbol(exports, Decl(main.js, 22, 19))
+}
+
+function f11() {
+>f11 : Symbol(f11, Decl(main.js, 24, 1))
+
+    let { module } = { module: { exports: 0 } }
+>module : Symbol(module, Decl(main.js, 27, 9))
+>module : Symbol(module, Decl(main.js, 27, 22))
+>exports : Symbol(exports, Decl(main.js, 27, 32))
+
+    module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 27, 32))
+>module : Symbol(module, Decl(main.js, 27, 9))
+>exports : Symbol(exports, Decl(main.js, 27, 32))
+}
+
+function f12() {
+>f12 : Symbol(f12, Decl(main.js, 29, 1))
+
+    let  module = {}
+>module : Symbol(module, Decl(main.js, 32, 7))
+
+    while (true) {
+        module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 33, 18))
+>module : Symbol(module, Decl(main.js, 32, 7))
+>exports : Symbol(exports, Decl(main.js, 33, 18))
+    }
+}
+
+function f13() {
+>f13 : Symbol(f13, Decl(main.js, 36, 1))
+
+    let module = { exports: 0 }
+>module : Symbol(module, Decl(main.js, 39, 7))
+>exports : Symbol(exports, Decl(main.js, 39, 18))
+
+    function g() {
+>g : Symbol(g, Decl(main.js, 39, 31))
+
+        module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 39, 18))
+>module : Symbol(module, Decl(main.js, 39, 7))
+>exports : Symbol(exports, Decl(main.js, 39, 18))
+    }
+}
+
+function f14() {
+>f14 : Symbol(f14, Decl(main.js, 43, 1))
+
+    let module = { exports: 0 }
+>module : Symbol(module, Decl(main.js, 46, 7))
+>exports : Symbol(exports, Decl(main.js, 46, 18))
+
+    const g = () => {
+>g : Symbol(g, Decl(main.js, 47, 9))
+
+        module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 46, 18))
+>module : Symbol(module, Decl(main.js, 46, 7))
+>exports : Symbol(exports, Decl(main.js, 46, 18))
+    }
+}
+
+function f15() {
+>f15 : Symbol(f15, Decl(main.js, 50, 1))
+
+    const module = {}
+>module : Symbol(module, Decl(main.js, 53, 9))
+
+    module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 53, 21))
+>module : Symbol(module, Decl(main.js, 53, 9))
+>exports : Symbol(exports, Decl(main.js, 53, 21))
+}
+
+function f16() {
+>f16 : Symbol(f16, Decl(main.js, 55, 1))
+
+    var module = {}
+>module : Symbol(module, Decl(main.js, 58, 7))
+
+    module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 58, 19))
+>module : Symbol(module, Decl(main.js, 58, 7))
+>exports : Symbol(exports, Decl(main.js, 58, 19))
+}
+
+function f17() {
+>f17 : Symbol(f17, Decl(main.js, 60, 1))
+
+    function module() {}
+>module : Symbol(module, Decl(main.js, 62, 16))
+
+    module.exports = 1
+>module.exports : Symbol(module.exports, Decl(main.js, 63, 24))
+>module : Symbol(module, Decl(main.js, 62, 16))
+>exports : Symbol(module.exports, Decl(main.js, 63, 24))
+}
+
+function f18() {
+>f18 : Symbol(f18, Decl(main.js, 65, 1))
+
+    class module {}
+>module : Symbol(module, Decl(main.js, 67, 16))
+
+    module.exports = 1
+>module.exports : Symbol(module.exports, Decl(main.js, 68, 19))
+>module : Symbol(module, Decl(main.js, 67, 16))
+>exports : Symbol(module.exports, Decl(main.js, 68, 19))
+}
+
+function f19() {
+>f19 : Symbol(f19, Decl(main.js, 70, 1))
+
+    for (const module of [{ exports: 0 }]) {
+>module : Symbol(module, Decl(main.js, 73, 14))
+>exports : Symbol(exports, Decl(main.js, 73, 27))
+
+        module.exports = 1
+>module.exports : Symbol(exports, Decl(main.js, 73, 27))
+>module : Symbol(module, Decl(main.js, 73, 14))
+>exports : Symbol(exports, Decl(main.js, 73, 27))
+    }
+}
+
+function f20() {
+>f20 : Symbol(f20, Decl(main.js, 76, 1))
+
+    try {
+    }
+    catch (/** @type {any} */ module) {
+>module : Symbol(module, Decl(main.js, 81, 11))
+
+        module.exports = 1
+>module : Symbol(module, Decl(main.js, 81, 11))
+    }
+}
+

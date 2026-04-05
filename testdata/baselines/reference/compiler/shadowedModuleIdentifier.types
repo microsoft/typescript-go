@@ -1,0 +1,249 @@
+//// [tests/cases/compiler/shadowedModuleIdentifier.ts] ////
+
+=== main.js ===
+// Each `module.exports` assignment in this file is supposed to reference a `module` local.
+// If it doesn't, the `module.exports` assignment will conflict with the ESM export below.
+
+export const foo = 1
+>foo : 1
+>1 : 1
+
+function f1(/** @type {any} */ module) {
+>f1 : (module: any) => void
+>module : any
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+}
+
+function f2(/** @type {any} */ { module }) {
+>f2 : ({ module }: any) => void
+>module : any
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+}
+
+function f3(/** @type {any} */ { x: module }) {
+>f3 : ({ x: module }: any) => void
+>x : any
+>module : any
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+}
+
+function f4(/** @type {any} */ [module]) {
+>f4 : ([module]: any) => void
+>module : any
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+}
+
+function f10() {
+>f10 : () => void
+
+    let module = {}
+>module : { exports: number; }
+>{} : { exports: number; }
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+}
+
+function f11() {
+>f11 : () => void
+
+    let { module } = { module: { exports: 0 } }
+>module : { exports: number; }
+>{ module: { exports: 0 } } : { module: { exports: number; }; }
+>module : { exports: number; }
+>{ exports: 0 } : { exports: number; }
+>exports : number
+>0 : 0
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+}
+
+function f12() {
+>f12 : () => void
+
+    let  module = {}
+>module : { exports: number; }
+>{} : { exports: number; }
+
+    while (true) {
+>true : true
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+    }
+}
+
+function f13() {
+>f13 : () => void
+
+    let module = { exports: 0 }
+>module : { exports: number; }
+>{ exports: 0 } : { exports: number; }
+>exports : number
+>0 : 0
+
+    function g() {
+>g : () => void
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+    }
+}
+
+function f14() {
+>f14 : () => void
+
+    let module = { exports: 0 }
+>module : { exports: number; }
+>{ exports: 0 } : { exports: number; }
+>exports : number
+>0 : 0
+
+    const g = () => {
+>g : () => void
+>() => {        module.exports = 1    } : () => void
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+    }
+}
+
+function f15() {
+>f15 : () => void
+
+    const module = {}
+>module : { exports: number; }
+>{} : { exports: number; }
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+}
+
+function f16() {
+>f16 : () => void
+
+    var module = {}
+>module : { exports: number; }
+>{} : { exports: number; }
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+}
+
+function f17() {
+>f17 : () => void
+
+    function module() {}
+>module : { (): void; exports: number; }
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { (): void; exports: number; }
+>exports : number
+>1 : 1
+}
+
+function f18() {
+>f18 : () => void
+
+    class module {}
+>module : module
+
+    module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : typeof module
+>exports : number
+>1 : 1
+}
+
+function f19() {
+>f19 : () => void
+
+    for (const module of [{ exports: 0 }]) {
+>module : { exports: number; }
+>[{ exports: 0 }] : { exports: number; }[]
+>{ exports: 0 } : { exports: number; }
+>exports : number
+>0 : 0
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : number
+>module : { exports: number; }
+>exports : number
+>1 : 1
+    }
+}
+
+function f20() {
+>f20 : () => void
+
+    try {
+    }
+    catch (/** @type {any} */ module) {
+>module : any
+
+        module.exports = 1
+>module.exports = 1 : 1
+>module.exports : any
+>module : any
+>exports : any
+>1 : 1
+    }
+}
+

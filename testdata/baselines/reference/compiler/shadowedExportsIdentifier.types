@@ -1,0 +1,249 @@
+//// [tests/cases/compiler/shadowedExportsIdentifier.ts] ////
+
+=== main.js ===
+// Each `exports.a` assignment in this file is supposed to reference an `exports` local.
+// If it doesn't, the `exports.a` assignment will conflict with the ESM export below.
+
+export const foo = 1
+>foo : 1
+>1 : 1
+
+function f1(/** @type {any} */ exports) {
+>f1 : (exports: any) => void
+>exports : any
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f2(/** @type {any} */ { exports }) {
+>f2 : ({ exports }: any) => void
+>exports : any
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f3(/** @type {any} */ { x: exports }) {
+>f3 : ({ x: exports }: any) => void
+>x : any
+>exports : any
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f4(/** @type {any} */ [exports]) {
+>f4 : ([exports]: any) => void
+>exports : any
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : any
+>exports : any
+>a : any
+>1 : 1
+}
+
+function f10() {
+>f10 : () => void
+
+    let exports = {}
+>exports : { a: number; }
+>{} : { a: number; }
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+}
+
+function f11() {
+>f11 : () => void
+
+    let { exports } = { exports: { a: 0 } }
+>exports : { a: number; }
+>{ exports: { a: 0 } } : { exports: { a: number; }; }
+>exports : { a: number; }
+>{ a: 0 } : { a: number; }
+>a : number
+>0 : 0
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+}
+
+function f12() {
+>f12 : () => void
+
+    let  exports = {}
+>exports : { a: number; }
+>{} : { a: number; }
+
+    while (true) {
+>true : true
+
+        exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+    }
+}
+
+function f13() {
+>f13 : () => void
+
+    let exports = { a: 0 }
+>exports : { a: number; }
+>{ a: 0 } : { a: number; }
+>a : number
+>0 : 0
+
+    function g() {
+>g : () => void
+
+        exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+    }
+}
+
+function f14() {
+>f14 : () => void
+
+    let exports = { a: 0 }
+>exports : { a: number; }
+>{ a: 0 } : { a: number; }
+>a : number
+>0 : 0
+
+    const g = () => {
+>g : () => void
+>() => {        exports.a = 1    } : () => void
+
+        exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+    }
+}
+
+function f15() {
+>f15 : () => void
+
+    const exports = {}
+>exports : { a: number; }
+>{} : { a: number; }
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+}
+
+function f16() {
+>f16 : () => void
+
+    var exports = {}
+>exports : { a: number; }
+>{} : { a: number; }
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+}
+
+function f17() {
+>f17 : () => void
+
+    function exports() {}
+>exports : { (): void; a: number; }
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { (): void; a: number; }
+>a : number
+>1 : 1
+}
+
+function f18() {
+>f18 : () => void
+
+    class exports {}
+>exports : exports
+
+    exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : typeof exports
+>a : number
+>1 : 1
+}
+
+function f19() {
+>f19 : () => void
+
+    for (const exports of [{ a: 0 }]) {
+>exports : { a: number; }
+>[{ a: 0 }] : { a: number; }[]
+>{ a: 0 } : { a: number; }
+>a : number
+>0 : 0
+
+        exports.a = 1
+>exports.a = 1 : 1
+>exports.a : number
+>exports : { a: number; }
+>a : number
+>1 : 1
+    }
+}
+
+function f20() {
+>f20 : () => void
+
+    try {
+    }
+    catch (/** @type {any} */ exports) {
+>exports : any
+
+        exports.a = 1
+>exports.a = 1 : 1
+>exports.a : any
+>exports : any
+>a : any
+>1 : 1
+    }
+}
+
