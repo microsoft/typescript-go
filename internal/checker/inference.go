@@ -1482,13 +1482,15 @@ func (c *Checker) getCommonSupertype(types []*Type) *Type {
 
 func (c *Checker) getSingleCommonSupertype(types []*Type) *Type {
 	// First, find the leftmost type for which no type to the right is a strict supertype, and if that
-	// type is a strict supertype of all other candidates, return it. Otherwise, return the leftmost type
-	// for which no type to the right is a (regular) supertype.
+	// type is a strict supertype of all other candidates, return it. Otherwise, use asymmetric
+	// assignability as a tiebreaker (i.e. only switch candidates when the assignment is one-way).
 	candidate := c.findLeftmostType(types, (*Checker).isTypeStrictSubtypeOf)
 	if core.Every(types, func(t *Type) bool { return t == candidate || c.isTypeStrictSubtypeOf(t, candidate) }) {
 		return candidate
 	}
-	return c.findLeftmostType(types, (*Checker).isTypeSubtypeOf)
+	return c.findLeftmostType(types, func(c *Checker, s *Type, t *Type) bool {
+		return c.isTypeAssignableTo(s, t) && !c.isTypeAssignableTo(t, s)
+	})
 }
 
 func (c *Checker) findLeftmostType(types []*Type, f func(c *Checker, s *Type, t *Type) bool) *Type {
