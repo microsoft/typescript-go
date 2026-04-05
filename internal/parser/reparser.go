@@ -36,14 +36,20 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		var export *ast.Node
 		switch ast.GetAssignmentDeclarationKind(expr) {
 		case ast.JSDeclarationKindModuleExports:
-			export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+			// Reparse a JSExportAssignment if `module` identifier is not shadowed
+			if p.shadowFlags&ShadowFlagsModule == 0 {
+				export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+			}
 		case ast.JSDeclarationKindExportsProperty:
 			// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-			export = p.factory.NewCommonJSExport(
-				nil,
-				p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
-				nil, /*typeNode*/
-				p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+			// Reparse a CommonJSExport if `exports` identifier is not shadowed
+			if p.shadowFlags&ShadowFlagsExports == 0 {
+				export = p.factory.NewCommonJSExport(
+					nil,
+					p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
+					nil, /*typeNode*/
+					p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+			}
 		}
 		if export == nil {
 			break

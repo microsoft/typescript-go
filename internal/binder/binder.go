@@ -629,7 +629,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		}
 	case ast.KindBinaryExpression:
 		switch ast.GetAssignmentDeclarationKind(node) {
-		case ast.JSDeclarationKindProperty:
+		case ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty, ast.JSDeclarationKindProperty:
 			b.bindExpandoPropertyAssignment(node)
 		case ast.JSDeclarationKindThisProperty:
 			b.bindThisPropertyAssignment(node)

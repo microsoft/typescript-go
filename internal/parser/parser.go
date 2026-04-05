@@ -61,6 +61,13 @@ const (
 	jsdocScannerInfoHasSeeOrLink
 )
 
+type ShadowFlags int32
+
+const (
+	ShadowFlagsModule  = 1 << iota // `module` identifier is shadowed
+	ShadowFlagsExports             // `exports` identifier is shadowed
+)
+
 type Parser struct {
 	scanner *scanner.Scanner
 	factory ast.NodeFactory
@@ -78,6 +85,7 @@ type Parser struct {
 	sourceFlags                 ast.NodeFlags
 	contextFlags                ast.NodeFlags
 	parsingContexts             ParsingContexts
+	shadowFlags                 ShadowFlags
 	statementHasAwaitIdentifier bool
 	hasDeprecatedTag            bool
 	hasParseError               bool
@@ -1209,7 +1217,9 @@ func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diag
 	multiline := false
 	if openBraceParsed || ignoreMissingOpenBrace {
 		multiline = p.hasPrecedingLineBreak()
+		saveShadowFlags := p.shadowFlags
 		statements := p.parseList(PCBlockStatements, (*Parser).parseStatement)
+		p.shadowFlags = saveShadowFlags
 		p.parseExpectedMatchingBrackets(ast.KindOpenBraceToken, ast.KindCloseBraceToken, openBraceParsed, openBracePosition)
 		result := p.finishNode(p.factory.NewBlock(statements, multiline), pos)
 		p.withJSDoc(result, jsdoc)
@@ -1288,6 +1298,7 @@ func (p *Parser) parseWhileStatement() *ast.Node {
 func (p *Parser) parseForOrForInOrForOfStatement() *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
+	saveShadowFlags := p.shadowFlags
 	p.parseExpected(ast.KindForKeyword)
 	awaitToken := p.parseOptionalToken(ast.KindAwaitKeyword)
 	p.parseExpected(ast.KindOpenParenToken)
@@ -1326,6 +1337,7 @@ func (p *Parser) parseForOrForInOrForOfStatement() *ast.Node {
 		p.parseExpected(ast.KindCloseParenToken)
 		result = p.factory.NewForStatement(initializer, condition, incrementor, p.parseStatement())
 	}
+	p.shadowFlags = saveShadowFlags
 	p.finishNode(result, pos)
 	p.withJSDoc(result, jsdoc)
 	return result
@@ -1491,6 +1503,7 @@ func (p *Parser) parseTryStatement() *ast.Node {
 
 func (p *Parser) parseCatchClause() *ast.Node {
 	pos := p.nodePos()
+	saveShadowFlags := p.shadowFlags
 	p.parseExpected(ast.KindCatchKeyword)
 	var variableDeclaration *ast.Node
 	if p.parseOptional(ast.KindOpenParenToken) {
@@ -1498,6 +1511,7 @@ func (p *Parser) parseCatchClause() *ast.Node {
 		p.parseExpected(ast.KindCloseParenToken)
 	}
 	block := p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
+	p.shadowFlags = saveShadowFlags
 	result := p.finishNode(p.factory.NewCatchClause(variableDeclaration, block), pos)
 	return result
 }
@@ -1639,7 +1653,20 @@ func (p *Parser) parseIdentifierOrPatternWithDiagnostic(privateIdentifierDiagnos
 	if p.token == ast.KindOpenBraceToken {
 		return p.parseObjectBindingPattern()
 	}
-	return p.parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage)
+	id := p.parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage)
+	p.updateShadowFlags(id)
+	return id
+}
+
+func (p *Parser) updateShadowFlags(name *ast.Node) {
+	if p.isJavaScript() && name != nil {
+		if ast.IsModuleIdentifier(name) {
+			p.shadowFlags |= ShadowFlagsModule
+		}
+		if ast.IsExportsIdentifier(name) {
+			p.shadowFlags |= ShadowFlagsExports
+		}
+	}
 }
 
 func (p *Parser) parseArrayBindingPattern() *ast.Node {
@@ -1687,6 +1714,7 @@ func (p *Parser) parseObjectBindingElement() *ast.Node {
 	if tokenIsIdentifier && p.token != ast.KindColonToken {
 		name = propertyName
 		propertyName = nil
+		p.updateShadowFlags(name)
 	} else {
 		p.parseExpected(ast.KindColonToken)
 		name = p.parseIdentifierOrPattern()
@@ -1716,16 +1744,19 @@ func (p *Parser) parseFunctionDeclaration(pos int, jsdoc jsdocScannerInfo, modif
 	var name *ast.Node
 	if modifiers == nil || modifiers.ModifierFlags&ast.ModifierFlagsDefault == 0 || p.isBindingIdentifier() {
 		name = p.parseBindingIdentifier()
+		p.updateShadowFlags(name)
 	}
 	signatureFlags := core.IfElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | core.IfElse(modifiers != nil && modifiers.ModifierFlags&ast.ModifierFlagsAsync != 0, ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	saveContextFlags := p.contextFlags
+	saveShadowFlags := p.shadowFlags
 	if modifiers != nil && modifiers.ModifierFlags&ast.ModifierFlagsExport != 0 {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	}
 	parameters := p.parseParameters(signatureFlags)
 	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(signatureFlags, diagnostics.X_or_expected)
+	p.shadowFlags = saveShadowFlags
 	p.contextFlags = saveContextFlags
 	result := p.finishNode(p.factory.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
 	p.withJSDoc(result, jsdoc)
@@ -1747,6 +1778,9 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, jsdoc jsdocScannerIn
 	p.parseExpected(ast.KindClassKeyword)
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
 	name := p.parseNameOfClassDeclarationOrExpression()
+	if kind == ast.KindClassDeclaration && name != nil {
+		p.updateShadowFlags(name)
+	}
 	typeParameters := p.parseTypeParameters()
 	if modifiers != nil && core.Some(modifiers.Nodes, isExportModifier) {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true /*value*/)
@@ -1918,10 +1952,12 @@ func (p *Parser) tryParseConstructorDeclaration(pos int, jsdoc jsdocScannerInfo,
 	state := p.mark()
 	if p.token == ast.KindConstructorKeyword || p.token == ast.KindStringLiteral && p.scanner.TokenValue() == "constructor" && p.lookAhead((*Parser).nextTokenIsOpenParen) {
 		p.nextToken()
+		saveShadowFlags := p.shadowFlags
 		typeParameters := p.parseTypeParameters()
 		parameters := p.parseParameters(ParseFlagsNone)
 		returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 		body := p.parseFunctionBlockOrSemicolon(ParseFlagsNone, diagnostics.X_or_expected)
+		p.shadowFlags = saveShadowFlags
 		result := p.finishNode(p.factory.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
 		p.withJSDoc(result, jsdoc)
 		p.checkJSSyntax(result)
@@ -1949,10 +1985,12 @@ func (p *Parser) parsePropertyOrMethodDeclaration(pos int, jsdoc jsdocScannerInf
 
 func (p *Parser) parseMethodDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList, asteriskToken *ast.Node, name *ast.Node, questionToken *ast.Node, diagnosticMessage *diagnostics.Message) *ast.Node {
 	signatureFlags := core.IfElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | core.IfElse(modifierListHasAsync(modifiers), ParseFlagsAwait, ParseFlagsNone)
+	saveShadowFlags := p.shadowFlags
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
 	typeNode := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(signatureFlags, diagnosticMessage)
+	p.shadowFlags = saveShadowFlags
 	result := p.finishNode(p.factory.NewMethodDeclaration(modifiers, asteriskToken, name, questionToken, typeParameters, parameters, typeNode, nil /*fullSignature*/, body), pos)
 	p.withJSDoc(result, jsdoc)
 	p.checkJSSyntax(result)
@@ -2353,6 +2391,7 @@ func (p *Parser) parseImportClause(identifier *ast.Node, pos int, phaseModifier 
 	// parse namespace or named imports
 	var namedBindings *ast.Node
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
+	p.updateShadowFlags(identifier)
 	if identifier == nil || p.parseOptional(ast.KindCommaToken) {
 		if skipJSDocLeadingAsterisks {
 			p.scanner.SetSkipJSDocLeadingAsterisks(true)
@@ -2378,6 +2417,7 @@ func (p *Parser) parseNamespaceImport() *ast.Node {
 	p.parseExpected(ast.KindAsteriskToken)
 	p.parseExpected(ast.KindAsKeyword)
 	name := p.parseIdentifier()
+	p.updateShadowFlags(name)
 	return p.finishNode(p.factory.NewNamespaceImport(name), pos)
 }
 
@@ -2396,6 +2436,9 @@ func (p *Parser) parseImportSpecifier() *ast.Node {
 	isTypeOnly, propertyName, name := p.parseImportOrExportSpecifier(ast.KindImportSpecifier)
 	var identifierName *ast.Node
 	if name.Kind == ast.KindIdentifier {
+		if !isTypeOnly {
+			p.updateShadowFlags(name)
+		}
 		identifierName = name
 	} else {
 		p.parseErrorAtRange(p.skipRangeTrivia(name.Loc), diagnostics.Identifier_expected)
@@ -3204,10 +3247,12 @@ func (p *Parser) parseSignatureMember(kind ast.Kind) *ast.Node {
 	if kind == ast.KindConstructSignature {
 		p.parseExpected(ast.KindNewKeyword)
 	}
+	saveShadowFlags := p.shadowFlags
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
 	typeNode := p.parseReturnType(ast.KindColonToken /*isType*/, true)
 	p.parseTypeMemberSemicolon()
+	p.shadowFlags = saveShadowFlags
 	var result *ast.Node
 	if kind == ast.KindCallSignature {
 		result = p.factory.NewCallSignatureDeclaration(typeParameters, parameters, typeNode)
@@ -3426,10 +3471,12 @@ func (p *Parser) parseTypeMemberSemicolon() {
 
 func (p *Parser) parseAccessorDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList, kind ast.Kind, flags ParseFlags) *ast.Node {
 	name := p.parsePropertyName()
+	saveShadowFlags := p.shadowFlags
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsNone)
 	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(flags, nil /*diagnosticMessage*/)
+	p.shadowFlags = saveShadowFlags
 	var result *ast.Node
 	// Keep track of `typeParameters` (for both) and `type` (for setters) if they were parsed those indicate grammar errors
 	if kind == ast.KindGetAccessor {
@@ -3576,9 +3623,11 @@ func (p *Parser) parsePropertyOrMethodSignature(pos int, jsdoc jsdocScannerInfo,
 	if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken {
 		// Method signatures don't exist in expression contexts.  So they have neither
 		// [Yield] nor [Await]
+		saveShadowFlags := p.shadowFlags
 		typeParameters := p.parseTypeParameters()
 		parameters := p.parseParameters(ParseFlagsType)
 		returnType := p.parseReturnType(ast.KindColonToken /*isType*/, true)
+		p.shadowFlags = saveShadowFlags
 		result = p.factory.NewMethodSignatureDeclaration(modifiers, name, questionToken, typeParameters, parameters, returnType)
 	} else {
 		typeNode := p.parseTypeAnnotation()
@@ -3780,9 +3829,11 @@ func (p *Parser) parseFunctionOrConstructorType() *ast.TypeNode {
 	modifiers := p.parseModifiersForConstructorType()
 	isConstructorType := p.parseOptional(ast.KindNewKeyword)
 	debug.Assert(modifiers == nil || isConstructorType, "Per isStartOfFunctionOrConstructorType, a function type cannot have modifiers.")
+	saveShadowFlags := p.shadowFlags
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
 	returnType := p.parseReturnType(ast.KindEqualsGreaterThanToken, false /*isType*/)
+	p.shadowFlags = saveShadowFlags
 	var result *ast.TypeNode
 	if isConstructorType {
 		result = p.factory.NewConstructorTypeNode(modifiers, typeParameters, parameters, returnType)
@@ -5692,10 +5743,12 @@ func (p *Parser) parseFunctionExpression() *ast.Expression {
 	default:
 		name = p.parseOptionalBindingIdentifier()
 	}
+	saveShadowFlags := p.shadowFlags
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
 	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlock(signatureFlags, nil /*diagnosticMessage*/)
+	p.shadowFlags = saveShadowFlags
 	p.contextFlags = saveContexFlags
 	result := p.factory.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
 	p.finishNode(result, pos)

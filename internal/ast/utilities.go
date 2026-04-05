@@ -1477,7 +1477,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	switch declaration.Kind {
 	case KindBinaryExpression, KindCallExpression:
 		switch GetAssignmentDeclarationKind(declaration) {
-		case JSDeclarationKindProperty, JSDeclarationKindThisProperty, JSDeclarationKindExportsProperty:
+		case JSDeclarationKindProperty, JSDeclarationKindThisProperty, JSDeclarationKindExportsProperty, JSDeclarationKindModuleExports:
 			left := declaration.AsBinaryExpression().Left
 			if name := GetElementOrPropertyAccessName(left); name != nil {
 				return name
