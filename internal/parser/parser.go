@@ -64,8 +64,8 @@ const (
 type ShadowFlags int32
 
 const (
-	ShadowFlagsModule  = 1 << iota // `module` identifier is shadowed
-	ShadowFlagsExports             // `exports` identifier is shadowed
+	ShadowFlagsModule  ShadowFlags = 1 << iota // `module` identifier is shadowed
+	ShadowFlagsExports                         // `exports` identifier is shadowed
 )
 
 type Parser struct {
@@ -346,6 +346,7 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 type ParserState struct {
 	scannerState                scanner.ScannerState
 	contextFlags                ast.NodeFlags
+	ShadowFlags                 ShadowFlags
 	diagnosticsLen              int
 	jsDiagnosticsLen            int
 	jsdocInfosLen               int
@@ -358,6 +359,7 @@ func (p *Parser) mark() ParserState {
 	return ParserState{
 		scannerState:                p.scanner.Mark(),
 		contextFlags:                p.contextFlags,
+		ShadowFlags:                 p.shadowFlags,
 		diagnosticsLen:              len(p.diagnostics),
 		jsDiagnosticsLen:            len(p.jsDiagnostics),
 		jsdocInfosLen:               len(p.jsdocInfos),
@@ -371,6 +373,7 @@ func (p *Parser) rewind(state ParserState) {
 	p.scanner.Rewind(state.scannerState)
 	p.token = p.scanner.Token()
 	p.contextFlags = state.contextFlags
+	p.shadowFlags = state.ShadowFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
 	p.jsDiagnostics = p.jsDiagnostics[0:state.jsDiagnosticsLen]
 	p.jsdocInfos = p.jsdocInfos[0:state.jsdocInfosLen]
@@ -4391,6 +4394,13 @@ func (p *Parser) tryParseParenthesizedArrowFunctionExpression(allowReturnTypeInA
 }
 
 func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, allowReturnTypeInArrowFunction bool) *ast.Node {
+	saveShadowFlags := p.shadowFlags
+	result := p.parseParenthesizedArrowFunctionExpressionWorker(allowAmbiguity, allowReturnTypeInArrowFunction)
+	p.shadowFlags = saveShadowFlags
+	return result
+}
+
+func (p *Parser) parseParenthesizedArrowFunctionExpressionWorker(allowAmbiguity bool, allowReturnTypeInArrowFunction bool) *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	modifiers := p.parseModifiersForArrowFunction()
@@ -4591,10 +4601,13 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 
 func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Node, allowReturnTypeInArrowFunction bool, jsdoc jsdocScannerInfo, asyncModifier *ast.ModifierList) *ast.Node {
 	debug.Assert(p.token == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>")
+	saveShadowFlags := p.shadowFlags
 	parameter := p.finishNode(p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/), identifier.Pos())
+	p.updateShadowFlags(identifier)
 	parameters := p.newNodeList(parameter.Loc, []*ast.Node{parameter})
 	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
 	body := p.parseArrowFunctionExpressionBody(asyncModifier != nil /*isAsync*/, allowReturnTypeInArrowFunction)
+	p.shadowFlags = saveShadowFlags
 	result := p.finishNode(p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, nil /*fullSignature*/, equalsGreaterThanToken, body), pos)
 	p.withJSDoc(result, jsdoc)
 	return result
