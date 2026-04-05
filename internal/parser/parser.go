@@ -346,7 +346,7 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 type ParserState struct {
 	scannerState                scanner.ScannerState
 	contextFlags                ast.NodeFlags
-	ShadowFlags                 ShadowFlags
+	shadowFlags                 ShadowFlags
 	diagnosticsLen              int
 	jsDiagnosticsLen            int
 	jsdocInfosLen               int
@@ -359,7 +359,7 @@ func (p *Parser) mark() ParserState {
 	return ParserState{
 		scannerState:                p.scanner.Mark(),
 		contextFlags:                p.contextFlags,
-		ShadowFlags:                 p.shadowFlags,
+		shadowFlags:                 p.shadowFlags,
 		diagnosticsLen:              len(p.diagnostics),
 		jsDiagnosticsLen:            len(p.jsDiagnostics),
 		jsdocInfosLen:               len(p.jsdocInfos),
@@ -373,7 +373,7 @@ func (p *Parser) rewind(state ParserState) {
 	p.scanner.Rewind(state.scannerState)
 	p.token = p.scanner.Token()
 	p.contextFlags = state.contextFlags
-	p.shadowFlags = state.ShadowFlags
+	p.shadowFlags = state.shadowFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
 	p.jsDiagnostics = p.jsDiagnostics[0:state.jsDiagnosticsLen]
 	p.jsdocInfos = p.jsdocInfos[0:state.jsdocInfosLen]
