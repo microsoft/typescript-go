@@ -36,7 +36,7 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
  * @returns 
  */
 (BaseClass) => {    
->(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : (BaseClass: typeof import("deps/BaseClass")) => any
+>(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : (BaseClass: typeof import("deps/BaseClass")) => new () => { f: () => "something"; } & import("deps/BaseClass")
 >BaseClass : typeof import("deps/BaseClass")
     
     const ExtendedClass = BaseClass.extends({
@@ -58,19 +58,19 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
 
     // Exports the module in a way tsc recognize class export 
     const module = {};
->module : {}
->{} : {}
+>module : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
+>{} : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
 
     module.exports = ExtendedClass
 >module.exports = ExtendedClass : new () => { f: () => "something"; } & import("deps/BaseClass")
->module.exports : any
->module : {}
->exports : any
+>module.exports : new () => { f: () => "something"; } & import("deps/BaseClass")
+>module : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
+>exports : new () => { f: () => "something"; } & import("deps/BaseClass")
 >ExtendedClass : new () => { f: () => "something"; } & import("deps/BaseClass")
 
     return module.exports;
->module.exports : any
->module : {}
->exports : any
+>module.exports : new () => { f: () => "something"; } & import("deps/BaseClass")
+>module : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
+>exports : new () => { f: () => "something"; } & import("deps/BaseClass")
 
 });

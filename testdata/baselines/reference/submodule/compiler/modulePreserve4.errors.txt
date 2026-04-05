@@ -1,3 +1,4 @@
+/a.js(2,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 /f.cts(1,1): error TS1286: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'.
 /main1.ts(3,12): error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 /main1.ts(19,4): error TS2339: Property 'default' does not exist on type '() => void'.
@@ -16,9 +17,11 @@
 /main3.cjs(17,8): error TS1293: ECMAScript module syntax is not allowed in a CommonJS module when 'module' is set to 'preserve'.
 
 
-==== /a.js (0 errors) ====
+==== /a.js (1 errors) ====
     export const x = 0;
     module.exports.y = 0; // Error
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     
 ==== /b.ts (0 errors) ====
     export default 0;

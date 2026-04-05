@@ -1,11 +1,40 @@
 --- old.amdLikeInputDeclarationEmit.types
 +++ new.amdLikeInputDeclarationEmit.types
-@@= skipped -61, +61 lines =@@
- >{} : {}
+@@= skipped -35, +35 lines =@@
+  * @returns 
+  */
+ (BaseClass) => {    
+->(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : (BaseClass: typeof import("deps/BaseClass")) => any
++>(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : (BaseClass: typeof import("deps/BaseClass")) => new () => { f: () => "something"; } & import("deps/BaseClass")
+ >BaseClass : typeof import("deps/BaseClass")
+     
+     const ExtendedClass = BaseClass.extends({
+@@= skipped -22, +22 lines =@@
+
+     // Exports the module in a way tsc recognize class export 
+     const module = {};
+->module : {}
+->{} : {}
++>module : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
++>{} : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
 
      module.exports = ExtendedClass
 ->module.exports = ExtendedClass : any
+->module.exports : any
+->module : {}
+->exports : any
 +>module.exports = ExtendedClass : new () => { f: () => "something"; } & import("deps/BaseClass")
- >module.exports : any
- >module : {}
- >exports : any
++>module.exports : new () => { f: () => "something"; } & import("deps/BaseClass")
++>module : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
++>exports : new () => { f: () => "something"; } & import("deps/BaseClass")
+ >ExtendedClass : new () => { f: () => "something"; } & import("deps/BaseClass")
+
+     return module.exports;
+->module.exports : any
+->module : {}
+->exports : any
++>module.exports : new () => { f: () => "something"; } & import("deps/BaseClass")
++>module : { exports: new () => { f: () => "something"; } & import("deps/BaseClass"); }
++>exports : new () => { f: () => "something"; } & import("deps/BaseClass")
+
+ });
