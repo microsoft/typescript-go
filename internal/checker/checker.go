@@ -2328,6 +2328,8 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkExportDeclaration(node)
 	case ast.KindExportAssignment:
 		c.checkExportAssignment(node)
+	case ast.KindCommonJSExport:
+		c.checkCommonJSExport(node)
 	case ast.KindEmptyStatement:
 		c.checkGrammarStatementInAmbientContext(node)
 	case ast.KindDebuggerStatement:
@@ -5576,6 +5578,13 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 			}
 		}
 		links.exportsChecked = true
+	}
+}
+
+func (c *Checker) checkCommonJSExport(node *ast.Node) {
+	sourceFile := ast.GetSourceFileOfNode(node)
+	if sourceFile.ExternalModuleIndicator != nil && sourceFile.ExternalModuleIndicator != sourceFile.AsNode() {
+		c.error(node, diagnostics.An_export_assignment_cannot_be_used_in_a_module_with_other_exported_elements)
 	}
 }
 
