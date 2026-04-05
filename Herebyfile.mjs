@@ -191,11 +191,11 @@ export const lib = task({
  * @returns {string[]}
  */
 function getReleaseBuildFlags(versionOverride) {
-    let ldflags = "-ldflags=-s -w";
+    const flags = ["-trimpath"];
     if (versionOverride) {
-        ldflags += ` -X github.com/microsoft/typescript-go/internal/core.version=${versionOverride}`;
+        flags.push(`-ldflags=-X github.com/microsoft/typescript-go/internal/core.version=${versionOverride}`);
     }
-    return ["-trimpath", ldflags];
+    return flags;
 }
 
 /**
