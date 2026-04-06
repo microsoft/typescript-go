@@ -230,7 +230,7 @@ func (r *aliasResolver) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, force
 }
 
 func (r *aliasResolver) GetPackagesMap() map[string]bool {
-	panic("unimplemented")
+	return nil
 }
 
 var _ checker.Program = (*aliasResolver)(nil)
