@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
@@ -144,6 +145,7 @@ type buildInfoDiagnosticWithFileName struct {
 	reportsUnnecessary bool
 	reportsDeprecated  bool
 	skippedOnNoEmit    bool
+	repopulateInfo     *ast.RepopulateDiagnosticInfo
 }
 
 type DiagnosticsOrBuildInfoDiagnosticsWithFileName struct {
@@ -158,6 +160,11 @@ func (b *buildInfoDiagnosticWithFileName) toDiagnostic(p *compiler.Program, file
 	} else if !b.noFile {
 		fileForDiagnostic = file
 	}
+
+	if b.repopulateInfo != nil {
+		return repopulateDiagnosticChain(b, p, fileForDiagnostic)
+	}
+
 	var messageChain []*ast.Diagnostic
 	for _, msg := range b.messageChain {
 		messageChain = append(messageChain, msg.toDiagnostic(p, fileForDiagnostic))
@@ -179,6 +186,187 @@ func (b *buildInfoDiagnosticWithFileName) toDiagnostic(p *compiler.Program, file
 		b.reportsDeprecated,
 		b.skippedOnNoEmit,
 	)
+}
+
+// repopulateDiagnosticChain recomputes a diagnostic chain entry that depends on
+// program state which may have changed between incremental builds.
+func repopulateDiagnosticChain(b *buildInfoDiagnosticWithFileName, p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
+	info := b.repopulateInfo
+	switch info.Kind {
+	case ast.RepopulateModeMismatch:
+		return repopulateModeMismatchChain(b, p, file)
+	case ast.RepopulateModuleNotFound:
+		return repopulateModuleNotFoundChain(b, p, file, info)
+	default:
+		// Fall back to using the stored (possibly stale) data
+		return b.toDiagnosticWithoutRepopulate(p, file)
+	}
+}
+
+func (b *buildInfoDiagnosticWithFileName) toDiagnosticWithoutRepopulate(p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
+	var messageChain []*ast.Diagnostic
+	for _, msg := range b.messageChain {
+		messageChain = append(messageChain, msg.toDiagnostic(p, file))
+	}
+	var relatedInformation []*ast.Diagnostic
+	for _, info := range b.relatedInformation {
+		relatedInformation = append(relatedInformation, info.toDiagnostic(p, file))
+	}
+	return ast.NewDiagnosticFromSerialized(
+		file,
+		core.NewTextRange(b.pos, b.end),
+		b.code,
+		b.category,
+		b.messageKey,
+		b.messageArgs,
+		messageChain,
+		relatedInformation,
+		b.reportsUnnecessary,
+		b.reportsDeprecated,
+		b.skippedOnNoEmit,
+	)
+}
+
+func repopulateModeMismatchChain(b *buildInfoDiagnosticWithFileName, p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
+	if file == nil {
+		return b.toDiagnosticWithoutRepopulate(p, file)
+	}
+	ext := tspath.TryGetExtensionFromPath(file.FileName())
+	targetExt := core.IfElse(ext == tspath.ExtensionTs, tspath.ExtensionMts, core.IfElse(ext == tspath.ExtensionJs, tspath.ExtensionMjs, ""))
+	meta := p.GetSourceFileMetaData(file.Path())
+	packageJsonType := meta.PackageJsonType
+	packageJsonDirectory := meta.PackageJsonDirectory
+
+	var messageKey diagnostics.Key
+	var code int32
+	var category diagnostics.Category
+	var messageArgs []string
+
+	if packageJsonDirectory != "" && packageJsonType == "" {
+		if targetExt != "" {
+			messageKey = diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_add_the_field_type_Colon_module_to_1.Key()
+			code = diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_add_the_field_type_Colon_module_to_1.Code()
+			category = diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_add_the_field_type_Colon_module_to_1.Category()
+			messageArgs = []string{targetExt, tspath.CombinePaths(packageJsonDirectory, "package.json")}
+		} else {
+			messageKey = diagnostics.To_convert_this_file_to_an_ECMAScript_module_add_the_field_type_Colon_module_to_0.Key()
+			code = diagnostics.To_convert_this_file_to_an_ECMAScript_module_add_the_field_type_Colon_module_to_0.Code()
+			category = diagnostics.To_convert_this_file_to_an_ECMAScript_module_add_the_field_type_Colon_module_to_0.Category()
+			messageArgs = []string{tspath.CombinePaths(packageJsonDirectory, "package.json")}
+		}
+	} else if targetExt != "" {
+		messageKey = diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_create_a_local_package_json_file_with_type_Colon_module.Key()
+		code = diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_create_a_local_package_json_file_with_type_Colon_module.Code()
+		category = diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_create_a_local_package_json_file_with_type_Colon_module.Category()
+		messageArgs = []string{targetExt}
+	} else {
+		messageKey = diagnostics.To_convert_this_file_to_an_ECMAScript_module_create_a_local_package_json_file_with_type_Colon_module.Key()
+		code = diagnostics.To_convert_this_file_to_an_ECMAScript_module_create_a_local_package_json_file_with_type_Colon_module.Code()
+		category = diagnostics.To_convert_this_file_to_an_ECMAScript_module_create_a_local_package_json_file_with_type_Colon_module.Category()
+		messageArgs = nil
+	}
+
+	var nextChain []*ast.Diagnostic
+	for _, msg := range b.messageChain {
+		nextChain = append(nextChain, msg.toDiagnostic(p, file))
+	}
+
+	return ast.NewDiagnosticFromSerialized(
+		file,
+		core.NewTextRange(b.pos, b.end),
+		code,
+		category,
+		messageKey,
+		messageArgs,
+		nextChain,
+		nil,
+		false,
+		false,
+		false,
+	)
+}
+
+func repopulateModuleNotFoundChain(b *buildInfoDiagnosticWithFileName, p *compiler.Program, file *ast.SourceFile, info *ast.RepopulateDiagnosticInfo) *ast.Diagnostic {
+	if file == nil {
+		return b.toDiagnosticWithoutRepopulate(p, file)
+	}
+
+	moduleReference := info.ModuleReference
+	mode := info.Mode
+	packageName := info.PackageName
+	if packageName == "" {
+		packageName = moduleReference
+	}
+
+	resolvedModule := p.GetResolvedModule(file, moduleReference, mode)
+
+	var messageKey diagnostics.Key
+	var code int32
+	var category diagnostics.Category
+	var messageArgs []string
+
+	if resolvedModule != nil && resolvedModule.AlternateResult != "" {
+		alternatePackageName := packageName
+		if strings.Contains(resolvedModule.AlternateResult, "/node_modules/@types/") {
+			alternatePackageName = "@types/" + module.MangleScopedPackageName(packageName)
+		}
+		messageKey = diagnostics.There_are_types_at_0_but_this_result_could_not_be_resolved_when_respecting_package_json_exports_The_1_library_may_need_to_update_its_package_json_or_typings.Key()
+		code = diagnostics.There_are_types_at_0_but_this_result_could_not_be_resolved_when_respecting_package_json_exports_The_1_library_may_need_to_update_its_package_json_or_typings.Code()
+		category = diagnostics.There_are_types_at_0_but_this_result_could_not_be_resolved_when_respecting_package_json_exports_The_1_library_may_need_to_update_its_package_json_or_typings.Category()
+		messageArgs = []string{resolvedModule.AlternateResult, alternatePackageName}
+	} else {
+		packagesMap := getPackagesMap(p)
+		if _, ok := packagesMap[module.GetTypesPackageName(packageName)]; ok {
+			messageKey = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Key()
+			code = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Code()
+			category = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Category()
+			messageArgs = []string{packageName, module.MangleScopedPackageName(packageName)}
+		} else if hasTypes, _ := packagesMap[packageName]; hasTypes {
+			messageKey = diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1.Key()
+			code = diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1.Code()
+			category = diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1.Category()
+			messageArgs = []string{packageName, moduleReference}
+		} else {
+			messageKey = diagnostics.Try_npm_i_save_dev_types_Slash_1_if_it_exists_or_add_a_new_declaration_d_ts_file_containing_declare_module_0.Key()
+			code = diagnostics.Try_npm_i_save_dev_types_Slash_1_if_it_exists_or_add_a_new_declaration_d_ts_file_containing_declare_module_0.Code()
+			category = diagnostics.Try_npm_i_save_dev_types_Slash_1_if_it_exists_or_add_a_new_declaration_d_ts_file_containing_declare_module_0.Category()
+			messageArgs = []string{moduleReference, module.MangleScopedPackageName(packageName)}
+		}
+	}
+
+	var nextChain []*ast.Diagnostic
+	for _, msg := range b.messageChain {
+		nextChain = append(nextChain, msg.toDiagnostic(p, file))
+	}
+
+	return ast.NewDiagnosticFromSerialized(
+		file,
+		core.NewTextRange(b.pos, b.end),
+		code,
+		category,
+		messageKey,
+		messageArgs,
+		nextChain,
+		nil,
+		false,
+		false,
+		false,
+	)
+}
+
+// getPackagesMap builds a map of package names to whether they bundle types,
+// similar to the checker's getPackagesMap.
+func getPackagesMap(p *compiler.Program) map[string]bool {
+	packagesMap := make(map[string]bool)
+	resolvedModules := p.GetResolvedModules()
+	for _, resolvedModulesInFile := range resolvedModules {
+		for _, mod := range resolvedModulesInFile {
+			if mod.PackageId.Name != "" {
+				packagesMap[mod.PackageId.Name] = packagesMap[mod.PackageId.Name] || mod.Extension == tspath.ExtensionDts
+			}
+		}
+	}
+	return packagesMap
 }
 
 func (d *DiagnosticsOrBuildInfoDiagnosticsWithFileName) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
