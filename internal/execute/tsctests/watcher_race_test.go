@@ -43,11 +43,11 @@ func TestWatcherConcurrentDoCycle(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 8; i++ {
+	for i := range 8 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 10; j++ {
+			for j := range 10 {
 				_ = sys.fsFromFileMap().WriteFile(
 					"/home/src/workspaces/project/a.ts",
 					fmt.Sprintf("const a: number = %d;", i*10+j),
@@ -70,11 +70,11 @@ func TestWatcherDoCycleWithConcurrentStateReads(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// DoCycle goroutines
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 15; j++ {
+			for j := range 15 {
 				_ = sys.fsFromFileMap().WriteFile(
 					"/home/src/workspaces/project/a.ts",
 					fmt.Sprintf("const a: number = %d;", i*15+j),
@@ -85,17 +85,15 @@ func TestWatcherDoCycleWithConcurrentStateReads(t *testing.T) {
 	}
 
 	// State reader goroutines
-	for i := 0; i < 8; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 50; j++ {
+	for range 8 {
+		wg.Go(func() {
+			for range 50 {
 				w.DoCycle()
 				w.DoCycle()
 				w.DoCycle()
 				w.DoCycle()
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -111,11 +109,11 @@ func TestWatcherConcurrentFileChangesAndDoCycle(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// File creators
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 20; j++ {
+			for j := range 20 {
 				path := fmt.Sprintf("/home/src/workspaces/project/gen_%d_%d.ts", i, j)
 				_ = sys.fsFromFileMap().WriteFile(path, fmt.Sprintf("export const x%d_%d = %d;", i, j, j))
 			}
@@ -123,25 +121,21 @@ func TestWatcherConcurrentFileChangesAndDoCycle(t *testing.T) {
 	}
 
 	// File deleters
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for j := 0; j < 20; j++ {
+	wg.Go(func() {
+		for j := range 20 {
 			_ = sys.fsFromFileMap().Remove(
 				fmt.Sprintf("/home/src/workspaces/project/gen_0_%d.ts", j),
 			)
 		}
-	}()
+	})
 
 	// DoCycle callers
-	for i := 0; i < 4; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 10; j++ {
+	for range 4 {
+		wg.Go(func() {
+			for range 10 {
 				w.DoCycle()
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -165,11 +159,11 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 	}
 
 	// Config modifiers + DoCycle
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 10; j++ {
+			for j := range 10 {
 				_ = sys.fsFromFileMap().WriteFile(
 					"/home/src/workspaces/project/tsconfig.json",
 					configs[(i+j)%len(configs)],
@@ -180,11 +174,11 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 	}
 
 	// Concurrent source file modifications
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 15; j++ {
+			for j := range 15 {
 				_ = sys.fsFromFileMap().WriteFile(
 					"/home/src/workspaces/project/a.ts",
 					fmt.Sprintf("const a: number = %d;", i*15+j),
@@ -195,15 +189,13 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 	}
 
 	// State readers
-	for i := 0; i < 4; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 30; j++ {
+	for range 4 {
+		wg.Go(func() {
+			for range 30 {
 				w.DoCycle()
 				w.DoCycle()
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -219,14 +211,12 @@ func TestWatcherConcurrentDoCycleNoChanges(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 16; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 50; j++ {
+	for range 16 {
+		wg.Go(func() {
+			for range 50 {
 				w.DoCycle()
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -242,37 +232,31 @@ func TestWatcherAlternatingModifyAndDoCycle(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// Writer goroutine: continuously modifies files
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for j := 0; j < 100; j++ {
+	wg.Go(func() {
+		for j := range 100 {
 			_ = sys.fsFromFileMap().WriteFile(
 				"/home/src/workspaces/project/a.ts",
 				fmt.Sprintf("const a: number = %d;", j),
 			)
 		}
-	}()
+	})
 
 	// Multiple DoCycle goroutines
-	for i := 0; i < 4; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 25; j++ {
+	for range 4 {
+		wg.Go(func() {
+			for range 25 {
 				w.DoCycle()
 			}
-		}()
+		})
 	}
 
 	// State reader goroutines
-	for i := 0; i < 4; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 100; j++ {
+	for range 4 {
+		wg.Go(func() {
+			for range 100 {
 				w.DoCycle()
 			}
-		}()
+		})
 	}
 
 	wg.Wait()

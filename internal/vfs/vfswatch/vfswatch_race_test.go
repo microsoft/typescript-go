@@ -45,27 +45,23 @@ func TestRaceHasChangesVsUpdateWatchedFiles(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 10; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 200; j++ {
+	for range 10 {
+		wg.Go(func() {
+			for range 200 {
 				fw.HasChangesFromWatchState()
 			}
-		}()
+		})
 	}
 
-	for i := 0; i < 5; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 100; j++ {
+	for range 5 {
+		wg.Go(func() {
+			for range 100 {
 				tfs := &trackingvfs.FS{Inner: fs}
 				tfs.SeenFiles.Add("/src/a.ts")
 				tfs.SeenFiles.Add("/src/b.ts")
 				fw.UpdateWatchedFiles(tfs)
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -83,24 +79,20 @@ func TestRaceWildcardDirectoriesAccess(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 10; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 200; j++ {
+	for range 10 {
+		wg.Go(func() {
+			for range 200 {
 				fw.HasChangesFromWatchState()
 			}
-		}()
+		})
 	}
 
-	for i := 0; i < 5; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 100; j++ {
+	for range 5 {
+		wg.Go(func() {
+			for range 100 {
 				fw.SetWildcardDirectories(map[string]bool{"/src": true})
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -115,21 +107,19 @@ func TestRacePollIntervalAccess(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 10; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 500; j++ {
+	for range 10 {
+		wg.Go(func() {
+			for range 500 {
 				fw.HasChangesFromWatchState()
 			}
-		}()
+		})
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 200; j++ {
+			for j := range 200 {
 				fw.SetPollInterval(time.Duration(i*200+j) * time.Millisecond)
 			}
 		}(i)
@@ -150,22 +140,20 @@ func TestRaceMixedOperations(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// HasChanges readers
-	for i := 0; i < 8; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 100; j++ {
+	for range 8 {
+		wg.Go(func() {
+			for range 100 {
 				fw.HasChangesFromWatchState()
 			}
-		}()
+		})
 	}
 
 	// UpdateWatchedFiles writers
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 50; j++ {
+			for j := range 50 {
 				tfs := &trackingvfs.FS{Inner: fs}
 				tfs.SeenFiles.Add("/src/a.ts")
 				tfs.SeenFiles.Add(fmt.Sprintf("/src/new_%d_%d.ts", i, j))
@@ -175,11 +163,11 @@ func TestRaceMixedOperations(t *testing.T) {
 	}
 
 	// FS modifiers
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 50; j++ {
+			for j := range 50 {
 				path := fmt.Sprintf("/src/gen_%d_%d.ts", i, j)
 				_ = fs.WriteFile(path, fmt.Sprintf("const x = %d;", j))
 				if j%3 == 0 {
@@ -190,22 +178,20 @@ func TestRaceMixedOperations(t *testing.T) {
 	}
 
 	// WildcardDirectories writers
-	for i := 0; i < 2; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 50; j++ {
+	for range 2 {
+		wg.Go(func() {
+			for range 50 {
 				fw.SetWildcardDirectories(map[string]bool{"/src": true})
 			}
-		}()
+		})
 	}
 
 	// PollInterval writers
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 100; j++ {
+			for j := range 100 {
 				fw.SetPollInterval(time.Duration(50+j) * time.Millisecond)
 			}
 		}(i)
@@ -226,11 +212,11 @@ func TestRaceUpdateWithConcurrentFileModifications(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// Rapid file creation/deletion
-	for i := 0; i < 6; i++ {
+	for i := range 6 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := 0; j < 100; j++ {
+			for j := range 100 {
 				path := fmt.Sprintf("/src/churn_%d_%d.ts", i, j)
 				_ = fs.WriteFile(path, fmt.Sprintf("export const v = %d;", j))
 				_ = fs.Remove(path)
@@ -239,17 +225,15 @@ func TestRaceUpdateWithConcurrentFileModifications(t *testing.T) {
 	}
 
 	// Concurrent UpdateWatchedFiles (walks the FS tree via WildcardDirectories)
-	for i := 0; i < 4; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 50; j++ {
+	for range 4 {
+		wg.Go(func() {
+			for range 50 {
 				tfs := &trackingvfs.FS{Inner: fs}
 				tfs.SeenFiles.Add("/src/a.ts")
 				tfs.SeenFiles.Add("/tsconfig.json")
 				fw.UpdateWatchedFiles(tfs)
 			}
-		}()
+		})
 	}
 
 	wg.Wait()
@@ -330,10 +314,7 @@ func FuzzFileWatcherConcurrent(f *testing.F) {
 		var wg sync.WaitGroup
 
 		for start := 0; start < len(ops); start += chunkSize {
-			end := start + chunkSize
-			if end > len(ops) {
-				end = len(ops)
-			}
+			end := min(start+chunkSize, len(ops))
 			chunk := ops[start:end]
 
 			wg.Add(1)
