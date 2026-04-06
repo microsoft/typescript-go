@@ -254,13 +254,13 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		if vc.Level > 0 {
 			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		}
-		return c.TypeToStringWithVerbosity(t, enclosing, flags, vc)
+		return c.TypeToStringEx(t, enclosing, flags, vc)
 	}
 	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
 		if vc.Level > 0 {
 			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		}
-		return c.SignatureToStringWithVerbosity(sig, enclosing, flags, vc)
+		return c.SignatureToStringEx(sig, enclosing, flags, vc)
 	}
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
 		return "this: " + typeToString(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
@@ -577,7 +577,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 						}
 						sig := c.GetSignatureFromDeclaration(declaration)
 						if sig != nil {
-							b.WriteString(c.SignatureToStringEx(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
+							b.WriteString(c.SignatureToStringEx(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature, nil))
 						}
 					} else if ast.IsTypeAliasDeclaration(declaration) {
 						b.WriteString(" in type ")
@@ -620,7 +620,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 
 // typeParameterToString renders a type parameter with its constraint, e.g., "T extends FooType".
 func typeParameterToString(c *checker.Checker, t *checker.Type, enclosingDeclaration *ast.Node, vc *checker.VerbosityContext) string {
-	return c.TypeParameterToStringWithVerbosity(t, enclosingDeclaration, vc)
+	return c.TypeParameterToStringEx(t, enclosingDeclaration, vc)
 }
 
 func getNodeForQuickInfo(node *ast.Node) *ast.Node {

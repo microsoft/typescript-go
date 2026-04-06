@@ -175,22 +175,18 @@ func (c *Checker) TypeToString(t *Type) string {
 }
 
 func (c *Checker) typeToString(t *Type, enclosingDeclaration *ast.Node) string {
-	return c.typeToStringEx(t, enclosingDeclaration, TypeFormatFlagsAllowUniqueESSymbolType|TypeFormatFlagsUseAliasDefinedOutsideCurrentScope)
+	return c.typeToStringEx(t, enclosingDeclaration, TypeFormatFlagsAllowUniqueESSymbolType|TypeFormatFlagsUseAliasDefinedOutsideCurrentScope, nil)
 }
 
 func toNodeBuilderFlags(flags TypeFormatFlags) nodebuilder.Flags {
 	return nodebuilder.Flags(flags & TypeFormatFlagsNodeBuilderFlagsMask)
 }
 
-func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.typeToStringEx(t, enclosingDeclaration, flags)
+func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+	return c.typeToStringEx(t, enclosingDeclaration, flags, vc)
 }
 
-func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.typeToStringImpl(t, enclosingDeclaration, flags, nil)
-}
-
-func (c *Checker) typeToStringImpl(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
 	newLine := ""
 	if vc != nil && vc.Level > 0 {
 		newLine = "\n"
@@ -299,18 +295,14 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 }
 
 func (c *Checker) signatureToString(signature *Signature) string {
-	return c.signatureToStringEx(signature, nil, TypeFormatFlagsNone)
+	return c.signatureToStringEx(signature, nil, TypeFormatFlagsNone, nil)
 }
 
-func (c *Checker) SignatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.signatureToStringEx(signature, enclosingDeclaration, flags)
+func (c *Checker) SignatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+	return c.signatureToStringEx(signature, enclosingDeclaration, flags, vc)
 }
 
-func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.signatureToStringImpl(signature, enclosingDeclaration, flags, nil)
-}
-
-func (c *Checker) signatureToStringImpl(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
 	isConstructor := signature.flags&SignatureFlagsConstruct != 0 && flags&TypeFormatFlagsWriteCallStyleSignature == 0
 	var sigOutput ast.Kind
 	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
@@ -412,16 +404,6 @@ func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags 
 	return nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }
 
-// TypeToStringWithVerbosity converts a type to string with verbosity support for expandable hover.
-func (c *Checker) TypeToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
-	return c.typeToStringImpl(t, enclosingDeclaration, flags, vc)
-}
-
-// SignatureToStringWithVerbosity converts a signature to string with verbosity support for expandable hover.
-func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
-	return c.signatureToStringImpl(signature, enclosingDeclaration, flags, vc)
-}
-
 // ExpandSymbolForHover produces declaration strings for a symbol with verbosity support for expandable hover.
 func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFlags, vc *VerbosityContext) string {
 	nodeBuilder := c.getNodeBuilder()
@@ -445,8 +427,8 @@ func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFla
 	return b.String()
 }
 
-// TypeParameterToStringWithVerbosity renders a type parameter declaration (e.g. "T extends Foo") with verbosity support.
-func (c *Checker) TypeParameterToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, vc *VerbosityContext) string {
+// TypeParameterToStringEx renders a type parameter declaration (e.g. "T extends Foo") with optional verbosity support.
+func (c *Checker) TypeParameterToStringEx(t *Type, enclosingDeclaration *ast.Node, vc *VerbosityContext) string {
 	nodeBuilder := c.getNodeBuilder()
 	nodeBuilder.verbosity = vc
 	typeParamNode := nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsNone, nil)
