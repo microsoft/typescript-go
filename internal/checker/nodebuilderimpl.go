@@ -2058,7 +2058,15 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			if symbol.Flags&ast.SymbolFlagsAccessor != 0 && declaration.Kind == ast.KindSetAccessor {
 				t = b.ch.instantiateType(b.ch.getWriteTypeOfSymbol(symbol), b.ctx.mapper)
 			} else if symbol != nil && (symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsSignature) == 0) {
-				t = b.ch.instantiateType(b.ch.getWidenedLiteralType(b.ch.getTypeOfSymbol(symbol)), b.ctx.mapper)
+				symType := b.ch.getTypeOfSymbol(symbol)
+				// Don't widen literals for export assignments — the emitted declaration is
+				// `const _default: <type>`, and a const should preserve the literal type.
+				// Strada handles this via preserveLiterals in the syntactic type builder;
+				// we handle it by not widening the checker type in the first place.
+				if !ast.IsExportAssignment(declaration) {
+					symType = b.ch.getWidenedLiteralType(symType)
+				}
+				t = b.ch.instantiateType(symType, b.ctx.mapper)
 			} else {
 				t = b.ch.errorType
 			}

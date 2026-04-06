@@ -3,6 +3,7 @@ package checker
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/pseudochecker"
@@ -621,9 +622,28 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.falseType
 	case pseudochecker.PseudoTypeKindTrue:
 		return b.ch.trueType
-	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
+	case pseudochecker.PseudoTypeKindStringLiteral:
+		return b.ch.getStringLiteralType(t.AsPseudoTypeLiteral().Node.Text())
+	case pseudochecker.PseudoTypeKindNumericLiteral:
 		source := t.AsPseudoTypeLiteral().Node
-		return b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(source)) // big shortcut, uses cached expression types where possible
+		negative := false
+		if source.Kind == ast.KindPrefixUnaryExpression {
+			negative = source.AsPrefixUnaryExpression().Operator == ast.KindMinusToken
+			source = source.AsPrefixUnaryExpression().Operand
+		}
+		value := jsnum.FromString(source.Text())
+		if negative {
+			value = -value
+		}
+		return b.ch.getNumberLiteralType(value)
+	case pseudochecker.PseudoTypeKindBigIntLiteral:
+		source := t.AsPseudoTypeLiteral().Node
+		negative := false
+		if source.Kind == ast.KindPrefixUnaryExpression {
+			negative = source.AsPrefixUnaryExpression().Operator == ast.KindMinusToken
+			source = source.AsPrefixUnaryExpression().Operand
+		}
+		return b.ch.getBigIntLiteralType(jsnum.NewPseudoBigInt(jsnum.ParsePseudoBigInt(source.Text()), negative))
 	case pseudochecker.PseudoTypeKindObjectLiteral, pseudochecker.PseudoTypeKindSingleCallSignature, pseudochecker.PseudoTypeKindTuple:
 		return nil // no simple mapping to a type, since these are structural types
 	default:
