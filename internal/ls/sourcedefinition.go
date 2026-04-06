@@ -30,13 +30,13 @@ func (l *LanguageService) ProvideSourceDefinition(
 
 	program, file := l.getProgramAndFile(documentURI)
 	pos := int(l.converters.LineAndCharacterToPosition(file, position))
-	resolver := l.newSourceDefResolver(program, file)
+	resolver := l.newSourceDefResolver(program, file.FileName())
 	node := astnav.GetTouchingPropertyName(file, pos)
 
 	if node.Kind == ast.KindSourceFile {
 		// Triple-slash directives are comments, not AST nodes, so
 		// GetTouchingPropertyName returns the SourceFile node.
-		if declarations := resolver.resolveTripleSlashReference(pos); len(declarations) != 0 {
+		if declarations := resolver.resolveTripleSlashReference(file, pos); len(declarations) != 0 {
 			originSelectionRange := l.createLspRangeFromNode(node, file)
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 		}
@@ -58,7 +58,34 @@ func (l *LanguageService) ProvideSourceDefinition(
 		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
 
-	declarations := resolver.resolve(ctx, node, containingModuleSpecifier)
+	// Phase 1: Syntactic fast path — when the cursor is inside an
+	// import/require/export, forward-resolve the module specifier to an
+	// implementation file and search it directly. This avoids acquiring
+	// the type checker entirely when the fast path succeeds.
+	var resolvedImplFile string
+	if containingModuleSpecifier != nil {
+		specifierMode := program.GetModeForUsageLocation(file, containingModuleSpecifier)
+		resolvedImplFile = resolver.resolveImplementation(containingModuleSpecifier.Text(), specifierMode)
+	}
+
+	if resolvedImplFile != "" {
+		names := getCandidateSourceDeclarationNames(node, nil)
+		moduleResults := resolver.searchImplementationFile(node, resolvedImplFile, names)
+		if len(moduleResults) != 0 {
+			if !ast.IsPartOfTypeNode(node) && !ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) || hasConcreteSourceDeclarations(moduleResults) {
+				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, uniqueDeclarationNodes(moduleResults), nil), nil
+			}
+		}
+	}
+
+	// Phase 2: Type checker path — acquire the checker for the original file
+	// and use its declarations and module specifier to map to source
+	// implementations. This is the only point where the checker is used;
+	// after this, only the NoDts module resolver and file parsing are needed.
+	checkerDeclarations, moduleSpecifier := getSourceDefCheckerInfo(ctx, program, file, node)
+
+	// Phase 3: Map checker results to source definitions.
+	declarations := resolver.resolveFromCheckerInfo(node, resolvedImplFile, checkerDeclarations, moduleSpecifier)
 	if len(declarations) == 0 {
 		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
@@ -66,60 +93,39 @@ func (l *LanguageService) ProvideSourceDefinition(
 }
 
 // sourceDefResolver resolves source definitions by mapping .d.ts declarations
-// to their implementation files (.js/.ts). It holds the NoDts module resolver
-// and file system access, but no cursor-specific state.
+// to their implementation files (.js/.ts). It uses the NoDts module resolver
+// and file parsing for resolution, but never acquires the type checker;
+// all checker-dependent work is done before results are passed in.
 type sourceDefResolver struct {
 	ls          *LanguageService
 	program     *compiler.Program
-	file        *ast.SourceFile
 	resolveFrom string
 	resolver    *module.Resolver
 }
 
 func (l *LanguageService) newSourceDefResolver(
 	program *compiler.Program,
-	file *ast.SourceFile,
+	resolveFrom string,
 ) *sourceDefResolver {
 	options := program.Options().Clone()
 	options.NoDtsResolution = core.TSTrue
 	return &sourceDefResolver{
 		ls:          l,
 		program:     program,
-		file:        file,
-		resolveFrom: file.FileName(),
+		resolveFrom: resolveFrom,
 		resolver:    module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), ""),
 	}
 }
 
-func (r *sourceDefResolver) resolve(
-	ctx context.Context,
+// resolveFromCheckerInfo maps type-checker declarations to source
+// implementations. It uses only the NoDts module resolver and file parsing;
+// the type checker and original request file are not needed.
+func (r *sourceDefResolver) resolveFromCheckerInfo(
 	node *ast.Node,
-	containingModuleSpecifier *ast.Node,
+	resolvedImplFile string,
+	checkerDeclarations []*ast.Node,
+	moduleSpecifier string,
 ) []*ast.Node {
-	// Phase 1: Syntactic fast path — when the cursor is inside an
-	// import/require/export, forward-resolve the module specifier to an
-	// implementation file and search it directly. This avoids acquiring
-	// the type checker entirely when the fast path succeeds.
-	var resolvedImplFile string
-	if containingModuleSpecifier != nil {
-		specifierMode := r.program.GetModeForUsageLocation(r.file, containingModuleSpecifier)
-		resolvedImplFile = r.resolveImplementation(containingModuleSpecifier.Text(), specifierMode)
-	}
-
-	if resolvedImplFile != "" {
-		names := getCandidateSourceDeclarationNames(node, nil)
-		moduleResults := r.searchImplementationFile(node, resolvedImplFile, names)
-		if len(moduleResults) != 0 {
-			if !ast.IsPartOfTypeNode(node) && !ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) || hasConcreteSourceDeclarations(moduleResults) {
-				return uniqueDeclarationNodes(moduleResults)
-			}
-		}
-	}
-
-	// Phase 2: Type checker path — acquire the checker lazily and use its
-	// declarations and module specifier to map to source implementations.
-	checkerDeclarations, moduleSpecifier := r.getCheckerInfo(ctx, node)
-
 	// If we don't yet have a forward-resolved implementation file, try to
 	// recover a module specifier from the checker (e.g. from the import that
 	// brought the symbol into scope, or from the root of an access expression).
@@ -147,14 +153,16 @@ func (r *sourceDefResolver) resolve(
 	return nil
 }
 
-// getCheckerInfo acquires the type checker and returns the definition
-// declarations for node along with the module specifier of the import that
-// brought the symbol into scope (empty if not applicable).
-func (r *sourceDefResolver) getCheckerInfo(
+// getSourceDefCheckerInfo acquires the type checker for the given file and
+// returns the definition declarations for node along with the module specifier
+// of the import that brought the symbol into scope (empty if not applicable).
+func getSourceDefCheckerInfo(
 	ctx context.Context,
+	program *compiler.Program,
+	file *ast.SourceFile,
 	node *ast.Node,
 ) ([]*ast.Node, string) {
-	c, done := r.program.GetTypeCheckerForFile(ctx, r.file)
+	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
 	declarations := getDeclarationsFromLocation(c, node)
@@ -204,8 +212,8 @@ func (r *sourceDefResolver) getCheckerInfo(
 // For path references to .js files, it returns the entry declarations directly.
 // For path references to .d.ts files or type references, it uses the NoDts
 // resolver to find the corresponding implementation file.
-func (r *sourceDefResolver) resolveTripleSlashReference(pos int) []*ast.Node {
-	ref := getReferenceAtPosition(r.file, pos, r.program)
+func (r *sourceDefResolver) resolveTripleSlashReference(file *ast.SourceFile, pos int) []*ast.Node {
+	ref := getReferenceAtPosition(file, pos, r.program)
 	if ref == nil || ref.file == nil {
 		return nil
 	}
