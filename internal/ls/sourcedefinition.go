@@ -88,6 +88,16 @@ func (l *LanguageService) ProvideSourceDefinition(
 	// Phase 3: Map checker results to source definitions.
 	declarations := resolver.resolveFromCheckerInfo(node, resolvedImplFile, checkerDeclarations, moduleSpecifier)
 	if len(declarations) == 0 {
+		// If we resolved an implementation file from an import/export but
+		// couldn't find specific declarations, fall back to the file entry
+		// point rather than the standard definition provider — unless the
+		// checker found declarations that are all type-only (e.g. interfaces),
+		// in which case the .d.ts definition is more appropriate.
+		if containingModuleSpecifier != nil && resolvedImplFile != "" && !hasConcreteSourceDeclarations(checkerDeclarations) {
+			if sourceFile := resolver.getOrParseSourceFile(resolvedImplFile); sourceFile != nil {
+				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil), nil
+			}
+		}
 		return l.provideDefinitionWorker(ctx, documentURI, position)
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
