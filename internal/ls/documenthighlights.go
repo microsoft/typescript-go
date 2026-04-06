@@ -16,45 +16,24 @@ import (
 )
 
 func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position) (lsproto.DocumentHighlightResponse, error) {
-	program, sourceFile := l.getProgramAndFile(documentUri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
-		var openingElement, closingElement *ast.Node
-		if ast.IsJsxElement(node.Parent.Parent) {
-			openingElement = node.Parent.Parent.AsJsxElement().OpeningElement
-			closingElement = node.Parent.Parent.AsJsxElement().ClosingElement
-		}
-		var documentHighlights []*lsproto.DocumentHighlight
-		kind := lsproto.DocumentHighlightKindRead
-		if openingElement != nil {
-			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(openingElement, sourceFile),
-				Kind:  &kind,
-			})
-		}
-		if closingElement != nil {
-			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(closingElement, sourceFile),
-				Kind:  &kind,
-			})
-		}
-		return lsproto.DocumentHighlightsOrNull{
-			DocumentHighlights: &documentHighlights,
-		}, nil
+	result, err := l.provideDocumentHighlightsWorker(ctx, documentUri, documentPosition, []*ast.SourceFile{})
+	if err != nil {
+		return lsproto.DocumentHighlightsOrNull{}, err
 	}
-	documentHighlights := l.getSemanticDocumentHighlights(ctx, position, node, program, sourceFile)
-	if len(documentHighlights) == 0 {
-		documentHighlights = l.getSyntacticDocumentHighlights(node, sourceFile)
+	// Extract highlights for the current file only.
+	var documentHighlights []*lsproto.DocumentHighlight
+	if result.MultiDocumentHighlights != nil {
+		for _, mh := range *result.MultiDocumentHighlights {
+			if mh.Uri == documentUri {
+				documentHighlights = append(documentHighlights, mh.Highlights...)
+			}
+		}
 	}
-	// if nil is passed here we never generate an error, just pass an empty highlight
 	return lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}, nil
 }
 
 func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.CustomMultiDocumentHighlightResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentUri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
 	// Resolve the source files to search, deduplicating by file name.
 	var sourceFiles []*ast.SourceFile
@@ -68,6 +47,18 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 			sourceFiles = append(sourceFiles, sf)
 		}
 	}
+	if len(sourceFiles) == 0 {
+		sourceFiles = []*ast.SourceFile{sourceFile}
+	}
+
+	return l.provideDocumentHighlightsWorker(ctx, documentUri, documentPosition, sourceFiles)
+}
+
+func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, sourceFiles []*ast.SourceFile) (lsproto.MultiDocumentHighlightsOrNull, error) {
+	program, sourceFile := l.getProgramAndFile(documentUri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
+	node := astnav.GetTouchingPropertyName(sourceFile, position)
+
 	if len(sourceFiles) == 0 {
 		sourceFiles = []*ast.SourceFile{sourceFile}
 	}
@@ -100,7 +91,7 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 		}, nil
 	}
 
-	multiHighlights := l.getMultiFileSemanticDocumentHighlights(ctx, position, node, program, sourceFiles)
+	multiHighlights := l.getSemanticDocumentHighlights(ctx, position, node, program, sourceFiles)
 	if len(multiHighlights) == 0 {
 		// Fall back to syntactic highlights for the current file only.
 		syntacticHighlights := l.getSyntacticDocumentHighlights(node, sourceFile)
@@ -113,26 +104,7 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 	return lsproto.MultiDocumentHighlightsOrNull{MultiDocumentHighlights: &multiHighlights}, nil
 }
 
-func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
-	options := refOptions{use: referenceUseNone}
-	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options)
-	if referenceEntries == nil {
-		return nil
-	}
-
-	var highlights []*lsproto.DocumentHighlight
-	for _, entry := range referenceEntries {
-		for _, ref := range entry.references {
-			fileName, highlight := l.toDocumentHighlight(ref)
-			if fileName == sourceFile.FileName() {
-				highlights = append(highlights, highlight)
-			}
-		}
-	}
-	return highlights
-}
-
-func (l *LanguageService) getMultiFileSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile) []*lsproto.MultiDocumentHighlight {
+func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile) []*lsproto.MultiDocumentHighlight {
 	options := refOptions{use: referenceUseNone}
 	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, sourceFiles, options)
 	if referenceEntries == nil {
