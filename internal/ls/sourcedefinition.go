@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 func (l *LanguageService) ProvideSourceDefinition(
@@ -36,7 +37,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 	if node.Kind == ast.KindSourceFile {
 		// Triple-slash directives are comments, not AST nodes, so
 		// GetTouchingPropertyName returns the SourceFile node.
-		if declarations := resolver.resolveTripleSlashReference(file, pos); len(declarations) != 0 {
+		if declarations := resolver.resolveTripleSlashReference(file, pos, program); len(declarations) != 0 {
 			originSelectionRange := l.createLspRangeFromNode(node, file)
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 		}
@@ -94,26 +95,32 @@ func (l *LanguageService) ProvideSourceDefinition(
 
 // sourceDefResolver resolves source definitions by mapping .d.ts declarations
 // to their implementation files (.js/.ts). It uses the NoDts module resolver
-// and file parsing for resolution, but never acquires the type checker;
-// all checker-dependent work is done before results are passed in.
+// and file parsing for resolution, but never acquires the type checker or
+// the original program; all checker-dependent work is done before results
+// are passed in.
 type sourceDefResolver struct {
-	ls          *LanguageService
-	program     *compiler.Program
-	resolveFrom string
-	resolver    *module.Resolver
+	ls            *LanguageService
+	fs            vfs.FS
+	options       *core.CompilerOptions
+	getSourceFile func(string) *ast.SourceFile
+	resolveFrom   string
+	resolver      *module.Resolver
 }
 
 func (l *LanguageService) newSourceDefResolver(
 	program *compiler.Program,
 	resolveFrom string,
 ) *sourceDefResolver {
-	options := program.Options().Clone()
-	options.NoDtsResolution = core.TSTrue
+	options := program.Options()
+	noDtsOptions := options.Clone()
+	noDtsOptions.NoDtsResolution = core.TSTrue
 	return &sourceDefResolver{
-		ls:          l,
-		program:     program,
-		resolveFrom: resolveFrom,
-		resolver:    module.NewResolver(program.Host(), options, program.GetGlobalTypingsCacheLocation(), ""),
+		ls:            l,
+		fs:            program.Host().FS(),
+		options:       options,
+		getSourceFile: program.GetSourceFile,
+		resolveFrom:   resolveFrom,
+		resolver:      module.NewResolver(program.Host(), noDtsOptions, program.GetGlobalTypingsCacheLocation(), ""),
 	}
 }
 
@@ -212,8 +219,8 @@ func getSourceDefCheckerInfo(
 // For path references to .js files, it returns the entry declarations directly.
 // For path references to .d.ts files or type references, it uses the NoDts
 // resolver to find the corresponding implementation file.
-func (r *sourceDefResolver) resolveTripleSlashReference(file *ast.SourceFile, pos int) []*ast.Node {
-	ref := getReferenceAtPosition(file, pos, r.program)
+func (r *sourceDefResolver) resolveTripleSlashReference(file *ast.SourceFile, pos int, program *compiler.Program) []*ast.Node {
+	ref := getReferenceAtPosition(file, pos, program)
 	if ref == nil || ref.file == nil {
 		return nil
 	}
@@ -323,9 +330,9 @@ func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 	dtsFileName string,
 	preferredMode core.ResolutionMode,
 ) string {
-	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, r.program.Options()); jsExt != "" {
+	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, r.options); jsExt != "" {
 		candidate := tspath.ChangeExtension(dtsFileName, jsExt)
-		if r.program.Host().FS().FileExists(candidate) {
+		if r.fs.FileExists(candidate) {
 			return candidate
 		}
 	}
@@ -392,7 +399,7 @@ func (r *sourceDefResolver) resolveImplementationFrom(
 }
 
 func (r *sourceDefResolver) getOrParseSourceFile(fileName string) *ast.SourceFile {
-	if sourceFile := r.program.GetSourceFile(fileName); sourceFile != nil {
+	if sourceFile := r.getSourceFile(fileName); sourceFile != nil {
 		return sourceFile
 	}
 	text, ok := r.ls.ReadFile(fileName)
