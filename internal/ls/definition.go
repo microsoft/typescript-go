@@ -172,7 +172,12 @@ func (l *LanguageService) createDefinitionLocations(
 		file := ast.GetSourceFileOfNode(decl)
 		fileName := file.FileName()
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		nameRange := createRangeFromNode(name, file)
+		var nameRange core.TextRange
+		if name.Kind == ast.KindEmptyStatement {
+			nameRange = core.NewTextRange(name.Pos(), name.Pos())
+		} else {
+			nameRange = createRangeFromNode(name, file)
+		}
 		if locationRanges.AddIfAbsent(fileRange{fileName, nameRange}) {
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)

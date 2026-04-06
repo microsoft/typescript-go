@@ -1,13 +1,5 @@
 --- old.goToSource9_mapFromAtTypes2.baseline.jsonc
 +++ new.goToSource9_mapFromAtTypes2.baseline.jsonc
-@@= skipped -0, +0 lines =@@
- // === goToSourceDefinition ===
- // === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
--// [||];(function() {
-+// [|;|](function() {
- //     /**
- //      * Adds two numbers.
- //      *
 @@= skipped -12, +12 lines =@@
 
 
@@ -24,12 +16,3 @@
 +// import _, { /*GOTO SOURCE DEF*/[|foo|] } from 'lodash';
  // _.add
 
-
-
- // === goToSourceDefinition ===
- // === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
--// [||];(function() {
-+// [|;|](function() {
- //     /**
- //      * Adds two numbers.
- //      *

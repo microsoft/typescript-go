@@ -1,6 +1,6 @@
 // === goToSourceDefinition ===
 // === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
-// [|;|](function() {
+// [||];(function() {
 //     /**
 //      * Adds two numbers.
 //      *
@@ -21,7 +21,7 @@
 
 // === goToSourceDefinition ===
 // === /home/src/workspaces/project/node_modules/lodash/lodash.js ===
-// [|;|](function() {
+// [||];(function() {
 //     /**
 //      * Adds two numbers.
 //      *
