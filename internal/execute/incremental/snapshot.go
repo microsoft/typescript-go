@@ -315,7 +315,7 @@ func repopulateModuleNotFoundChain(b *buildInfoDiagnosticWithFileName, p *compil
 		category = diagnostics.There_are_types_at_0_but_this_result_could_not_be_resolved_when_respecting_package_json_exports_The_1_library_may_need_to_update_its_package_json_or_typings.Category()
 		messageArgs = []string{resolvedModule.AlternateResult, alternatePackageName}
 	} else {
-		packagesMap := getPackagesMap(p)
+		packagesMap := p.GetPackagesMap()
 		if _, ok := packagesMap[module.GetTypesPackageName(packageName)]; ok {
 			messageKey = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Key()
 			code = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Code()
@@ -352,21 +352,6 @@ func repopulateModuleNotFoundChain(b *buildInfoDiagnosticWithFileName, p *compil
 		false,
 		false,
 	)
-}
-
-// getPackagesMap builds a map of package names to whether they bundle types,
-// similar to the checker's getPackagesMap.
-func getPackagesMap(p *compiler.Program) map[string]bool {
-	packagesMap := make(map[string]bool)
-	resolvedModules := p.GetResolvedModules()
-	for _, resolvedModulesInFile := range resolvedModules {
-		for _, mod := range resolvedModulesInFile {
-			if mod.PackageId.Name != "" {
-				packagesMap[mod.PackageId.Name] = packagesMap[mod.PackageId.Name] || mod.Extension == tspath.ExtensionDts
-			}
-		}
-	}
-	return packagesMap
 }
 
 func (d *DiagnosticsOrBuildInfoDiagnosticsWithFileName) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
