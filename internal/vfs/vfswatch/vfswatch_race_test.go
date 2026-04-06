@@ -50,10 +50,7 @@ func TestRaceHasChangesVsUpdateWatchedFiles(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 200; j++ {
-				ws := fw.WatchState
-				if ws != nil {
-					fw.HasChanges(ws)
-				}
+				fw.HasChangesFromWatchState()
 			}
 		}()
 	}
@@ -82,7 +79,7 @@ func TestRaceWildcardDirectoriesAccess(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
 	fw := newWatcherWithState(fs)
-	fw.WildcardDirectories = map[string]bool{"/src": true}
+	fw.SetWildcardDirectories(map[string]bool{"/src": true})
 
 	var wg sync.WaitGroup
 
@@ -91,10 +88,7 @@ func TestRaceWildcardDirectoriesAccess(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 200; j++ {
-				ws := fw.WatchState
-				if ws != nil {
-					fw.HasChanges(ws)
-				}
+				fw.HasChangesFromWatchState()
 			}
 		}()
 	}
@@ -104,7 +98,7 @@ func TestRaceWildcardDirectoriesAccess(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 100; j++ {
-				fw.WildcardDirectories = map[string]bool{"/src": true}
+				fw.SetWildcardDirectories(map[string]bool{"/src": true})
 			}
 		}()
 	}
@@ -126,7 +120,7 @@ func TestRacePollIntervalAccess(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 500; j++ {
-				_ = fw.PollInterval
+				fw.HasChangesFromWatchState()
 			}
 		}()
 	}
@@ -136,7 +130,7 @@ func TestRacePollIntervalAccess(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 			for j := 0; j < 200; j++ {
-				fw.PollInterval = time.Duration(i*200+j) * time.Millisecond
+				fw.SetPollInterval(time.Duration(i*200+j) * time.Millisecond)
 			}
 		}(i)
 	}
@@ -151,7 +145,7 @@ func TestRaceMixedOperations(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
 	fw := newWatcherWithState(fs)
-	fw.WildcardDirectories = map[string]bool{"/src": true}
+	fw.SetWildcardDirectories(map[string]bool{"/src": true})
 
 	var wg sync.WaitGroup
 
@@ -161,10 +155,7 @@ func TestRaceMixedOperations(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 100; j++ {
-				ws := fw.WatchState
-				if ws != nil {
-					fw.HasChanges(ws)
-				}
+				fw.HasChangesFromWatchState()
 			}
 		}()
 	}
@@ -204,7 +195,7 @@ func TestRaceMixedOperations(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 50; j++ {
-				fw.WildcardDirectories = map[string]bool{"/src": true}
+				fw.SetWildcardDirectories(map[string]bool{"/src": true})
 			}
 		}()
 	}
@@ -215,7 +206,7 @@ func TestRaceMixedOperations(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 			for j := 0; j < 100; j++ {
-				fw.PollInterval = time.Duration(50+j) * time.Millisecond
+				fw.SetPollInterval(time.Duration(50+j) * time.Millisecond)
 			}
 		}(i)
 	}
@@ -230,7 +221,7 @@ func TestRaceUpdateWithConcurrentFileModifications(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
 	fw := newWatcherWithState(fs)
-	fw.WildcardDirectories = map[string]bool{"/src": true}
+	fw.SetWildcardDirectories(map[string]bool{"/src": true})
 
 	var wg sync.WaitGroup
 
@@ -295,10 +286,7 @@ func FuzzFileWatcherOperations(f *testing.F) {
 			case 1: // Remove a file
 				_ = fs.Remove(path)
 			case 2: // Check for changes against current state
-				ws := fw.WatchState
-				if ws != nil {
-					fw.HasChanges(ws)
-				}
+				fw.HasChangesFromWatchState()
 			case 3: // Rebuild watch state
 				tfs := &trackingvfs.FS{Inner: fs}
 				for _, f := range files {
@@ -306,13 +294,10 @@ func FuzzFileWatcherOperations(f *testing.F) {
 				}
 				fw.UpdateWatchedFiles(tfs)
 			case 4: // Set wildcard directories and check for changes
-				fw.WildcardDirectories = map[string]bool{"/src": true}
-				ws := fw.WatchState
-				if ws != nil {
-					fw.HasChanges(ws)
-				}
+				fw.SetWildcardDirectories(map[string]bool{"/src": true})
+				fw.HasChangesFromWatchState()
 			case 5: // Modify PollInterval
-				fw.PollInterval = time.Duration(i*10) * time.Millisecond
+				fw.SetPollInterval(time.Duration(i*10) * time.Millisecond)
 			}
 		}
 	})
@@ -332,7 +317,7 @@ func FuzzFileWatcherConcurrent(f *testing.F) {
 
 		fs := newTestFS()
 		fw := newWatcherWithState(fs)
-		fw.WildcardDirectories = map[string]bool{"/src": true}
+		fw.SetWildcardDirectories(map[string]bool{"/src": true})
 
 		files := []string{"/src/a.ts", "/src/b.ts", "/src/c.ts", "/src/new.ts"}
 
@@ -362,16 +347,13 @@ func FuzzFileWatcherConcurrent(f *testing.F) {
 					case 1:
 						_ = fs.Remove(path)
 					case 2:
-						ws := fw.WatchState
-						if ws != nil {
-							fw.HasChanges(ws)
-						}
+						fw.HasChangesFromWatchState()
 					case 3:
 						tfs := &trackingvfs.FS{Inner: fs}
 						tfs.SeenFiles.Add(path)
 						fw.UpdateWatchedFiles(tfs)
 					case 4:
-						fw.WildcardDirectories = map[string]bool{"/src": true}
+						fw.SetWildcardDirectories(map[string]bool{"/src": true})
 					}
 				}
 			}(chunk, start/chunkSize)

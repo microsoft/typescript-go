@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/execute"
 )
@@ -91,10 +90,10 @@ func TestWatcherDoCycleWithConcurrentStateReads(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 50; j++ {
-				_ = w.HasWatchedFilesChanged()
-				_ = w.WatchStateLen()
-				_ = w.WatchStateHas("/home/src/workspaces/project/a.ts")
-				w.DebugWatchState(func(path string, modTime time.Time, exists bool) {})
+				w.DoCycle()
+				w.DoCycle()
+				w.DoCycle()
+				w.DoCycle()
 			}
 		}()
 	}
@@ -201,8 +200,8 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 30; j++ {
-				_ = w.HasWatchedFilesChanged()
-				_ = w.WatchStateLen()
+				w.DoCycle()
+				w.DoCycle()
 			}
 		}()
 	}
@@ -271,7 +270,7 @@ func TestWatcherAlternatingModifyAndDoCycle(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 100; j++ {
-				_ = w.HasWatchedFilesChanged()
+				w.DoCycle()
 			}
 		}()
 	}
