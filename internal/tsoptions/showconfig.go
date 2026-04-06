@@ -62,6 +62,9 @@ type TSConfig struct {
 // ConvertToTSConfig generates a complete tsconfig representation for --showConfig output,
 // matching the behavior of TypeScript's convertToTSConfig function.
 func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName string) *TSConfig {
+	if configFileName == "" {
+		configFileName = "tsconfig.json"
+	}
 	normalizedConfigPath := tspath.GetNormalizedAbsolutePath(configFileName, configParseResult.GetCurrentDirectory())
 	comparePathsOptions := tspath.ComparePathsOptions{
 		CurrentDirectory:          configParseResult.GetCurrentDirectory(),
