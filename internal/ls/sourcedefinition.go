@@ -105,6 +105,7 @@ type sourceDefResolver struct {
 	getSourceFile func(string) *ast.SourceFile
 	resolveFrom   string
 	resolver      *module.Resolver
+	parsedFiles   map[string]*ast.SourceFile
 }
 
 func (l *LanguageService) newSourceDefResolver(
@@ -402,16 +403,22 @@ func (r *sourceDefResolver) getOrParseSourceFile(fileName string) *ast.SourceFil
 	if sourceFile := r.getSourceFile(fileName); sourceFile != nil {
 		return sourceFile
 	}
-	text, ok := r.ls.ReadFile(fileName)
-	if !ok {
-		return nil
+	if sourceFile, ok := r.parsedFiles[fileName]; ok {
+		return sourceFile
 	}
-	sourceFile := parser.ParseSourceFile(
-		ast.SourceFileParseOptions{FileName: fileName, Path: r.ls.toPath(fileName)},
-		text,
-		core.GetScriptKindFromFileName(fileName),
-	)
-	binder.BindSourceFile(sourceFile)
+	var sourceFile *ast.SourceFile
+	if text, ok := r.ls.ReadFile(fileName); ok {
+		sourceFile = parser.ParseSourceFile(
+			ast.SourceFileParseOptions{FileName: fileName, Path: r.ls.toPath(fileName)},
+			text,
+			core.GetScriptKindFromFileName(fileName),
+		)
+		binder.BindSourceFile(sourceFile)
+	}
+	if r.parsedFiles == nil {
+		r.parsedFiles = map[string]*ast.SourceFile{}
+	}
+	r.parsedFiles[fileName] = sourceFile
 	return sourceFile
 }
 
