@@ -16,7 +16,7 @@ import (
 )
 
 func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position) (lsproto.DocumentHighlightResponse, error) {
-	result, err := l.provideDocumentHighlightsWorker(ctx, documentUri, documentPosition, []*ast.SourceFile{})
+	result, err := l.provideDocumentHighlightsWorker(ctx, documentUri, documentPosition, nil)
 	if err != nil {
 		return lsproto.DocumentHighlightsOrNull{}, err
 	}
@@ -33,36 +33,15 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 }
 
 func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.CustomMultiDocumentHighlightResponse, error) {
-	program, sourceFile := l.getProgramAndFile(documentUri)
-
-	// Resolve the source files to search, deduplicating by file name.
-	var sourceFiles []*ast.SourceFile
-	seenFiles := collections.NewSetWithSizeHint[string](len(filesToSearch))
-	for _, uri := range filesToSearch {
-		fileName := uri.FileName()
-		if !seenFiles.AddIfAbsent(fileName) {
-			continue
-		}
-		if sf := program.GetSourceFile(fileName); sf != nil {
-			sourceFiles = append(sourceFiles, sf)
-		}
-	}
-	if len(sourceFiles) == 0 {
-		sourceFiles = []*ast.SourceFile{sourceFile}
-	}
-
-	return l.provideDocumentHighlightsWorker(ctx, documentUri, documentPosition, sourceFiles)
+	return l.provideDocumentHighlightsWorker(ctx, documentUri, documentPosition, filesToSearch)
 }
 
-func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, sourceFiles []*ast.SourceFile) (lsproto.MultiDocumentHighlightsOrNull, error) {
+func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.MultiDocumentHighlightsOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(documentUri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
-	if len(sourceFiles) == 0 {
-		sourceFiles = []*ast.SourceFile{sourceFile}
-	}
-
+	// Cheap JSX check before resolving files to search.
 	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
 		var openingElement, closingElement *ast.Node
 		if ast.IsJsxElement(node.Parent.Parent) {
@@ -89,6 +68,22 @@ func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, d
 		return lsproto.MultiDocumentHighlightsOrNull{
 			MultiDocumentHighlights: &multiHighlights,
 		}, nil
+	}
+
+	// Resolve the source files to search, deduplicating by file name.
+	var sourceFiles []*ast.SourceFile
+	seenFiles := collections.NewSetWithSizeHint[string](len(filesToSearch))
+	for _, uri := range filesToSearch {
+		fileName := uri.FileName()
+		if !seenFiles.AddIfAbsent(fileName) {
+			continue
+		}
+		if sf := program.GetSourceFile(fileName); sf != nil {
+			sourceFiles = append(sourceFiles, sf)
+		}
+	}
+	if len(sourceFiles) == 0 {
+		sourceFiles = []*ast.SourceFile{sourceFile}
 	}
 
 	multiHighlights := l.getSemanticDocumentHighlights(ctx, position, node, program, sourceFiles)
