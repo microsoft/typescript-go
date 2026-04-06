@@ -106,20 +106,12 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 		return nil
 	}
 
-	// Build a set of allowed file names for quick lookup
-	allowedFiles := collections.NewSetWithSizeHint[string](len(sourceFiles))
-	for _, sf := range sourceFiles {
-		allowedFiles.Add(sf.FileName())
-	}
-
 	// Group highlights by file
 	fileHighlights := make(map[string][]*lsproto.DocumentHighlight)
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
 			fileName, highlight := l.toDocumentHighlight(ref)
-			if allowedFiles.Has(fileName) {
-				fileHighlights[fileName] = append(fileHighlights[fileName], highlight)
-			}
+			fileHighlights[fileName] = append(fileHighlights[fileName], highlight)
 		}
 	}
 
