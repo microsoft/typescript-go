@@ -2,6 +2,7 @@ package execute
 
 import (
 	"reflect"
+	"sync"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -13,7 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/trackingvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
@@ -25,25 +25,12 @@ type cachedSourceFile struct {
 }
 
 type watchCompilerHost struct {
-	inner compiler.CompilerHost
+	compiler.CompilerHost
 	cache *collections.SyncMap[tspath.Path, *cachedSourceFile]
 }
 
-var _ compiler.CompilerHost = (*watchCompilerHost)(nil)
-
-func (h *watchCompilerHost) FS() vfs.FS                  { return h.inner.FS() }
-func (h *watchCompilerHost) DefaultLibraryPath() string  { return h.inner.DefaultLibraryPath() }
-func (h *watchCompilerHost) GetCurrentDirectory() string { return h.inner.GetCurrentDirectory() }
-func (h *watchCompilerHost) Trace(msg *diagnostics.Message, args ...any) {
-	h.inner.Trace(msg, args...)
-}
-
-func (h *watchCompilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	return h.inner.GetResolvedProjectReference(fileName, path)
-}
-
 func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
-	info := h.inner.FS().Stat(opts.FileName)
+	info := h.CompilerHost.FS().Stat(opts.FileName)
 
 	if cached, ok := h.cache.Load(opts.Path); ok {
 		if info != nil && info.ModTime().Equal(cached.modTime) {
@@ -51,7 +38,7 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 		}
 	}
 
-	file := h.inner.GetSourceFile(opts)
+	file := h.CompilerHost.GetSourceFile(opts)
 	if file != nil {
 		if info != nil {
 			h.cache.Store(opts.Path, &cachedSourceFile{
@@ -66,6 +53,7 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 }
 
 type Watcher struct {
+	mu                             sync.Mutex
 	sys                            tsc.System
 	configFileName                 string
 	config                         *tsoptions.ParsedCommandLine
@@ -135,10 +123,12 @@ func (w *Watcher) start() {
 }
 
 func (w *Watcher) DoCycle() {
+	w.mu.Lock()
+	defer w.mu.Unlock()
 	if w.hasErrorsInTsConfig() {
 		return
 	}
-	if w.fileWatcher.WatchState != nil && !w.configModified && !w.fileWatcher.HasChanges(w.fileWatcher.WatchState) {
+	if !w.fileWatcher.WatchStateIsEmpty() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
 		if w.testing != nil {
 			w.testing.OnProgram(w.program)
 		}
@@ -157,14 +147,14 @@ func (w *Watcher) doBuild() {
 	cached := cachedvfs.From(w.sys.FS())
 	tfs := &trackingvfs.FS{Inner: cached}
 	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
-	host := &watchCompilerHost{inner: innerHost, cache: w.sourceFileCache}
+	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 	if w.config.ConfigFile != nil {
 		wildcardDirs := w.config.WildcardDirectories()
 		for dir := range wildcardDirs {
 			tfs.SeenFiles.Add(dir)
 		}
-		w.fileWatcher.WildcardDirectories = wildcardDirs
+		w.fileWatcher.SetWildcardDirectories(wildcardDirs)
 		if len(wildcardDirs) > 0 {
 			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 		}
@@ -181,7 +171,7 @@ func (w *Watcher) doBuild() {
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
 	w.fileWatcher.UpdateWatchedFiles(tfs)
-	w.fileWatcher.PollInterval = w.config.ParsedConfig.WatchOptions.WatchInterval()
+	w.fileWatcher.SetPollInterval(w.config.ParsedConfig.WatchOptions.WatchInterval())
 	w.configModified = false
 
 	programFiles := w.program.GetProgram().FilesByPath()
@@ -226,7 +216,7 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 	if !w.configHasErrors && len(w.configFilePaths) > 0 {
 		changed := false
 		for _, path := range w.configFilePaths {
-			if old, ok := w.fileWatcher.WatchState[path]; ok {
+			if old, ok := w.fileWatcher.WatchStateEntry(path); ok {
 				s := w.sys.FS().Stat(path)
 				if !old.Exists {
 					if s != nil {
@@ -266,25 +256,4 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 	w.config = configParseResult
 	w.extendedConfigCache = extendedConfigCache
 	return false
-}
-
-// Testing helpers — exported for use by test packages
-
-func (w *Watcher) HasWatchedFilesChanged() bool {
-	return w.fileWatcher.HasChanges(w.fileWatcher.WatchState)
-}
-
-func (w *Watcher) WatchStateLen() int {
-	return len(w.fileWatcher.WatchState)
-}
-
-func (w *Watcher) WatchStateHas(path string) bool {
-	_, ok := w.fileWatcher.WatchState[path]
-	return ok
-}
-
-func (w *Watcher) DebugWatchState(fn func(path string, modTime time.Time, exists bool)) {
-	for path, entry := range w.fileWatcher.WatchState {
-		fn(path, entry.ModTime, entry.Exists)
-	}
 }
