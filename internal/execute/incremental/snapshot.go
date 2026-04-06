@@ -321,7 +321,7 @@ func repopulateModuleNotFoundChain(b *buildInfoDiagnosticWithFileName, p *compil
 			code = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Code()
 			category = diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1.Category()
 			messageArgs = []string{packageName, module.MangleScopedPackageName(packageName)}
-		} else if hasTypes, _ := packagesMap[packageName]; hasTypes {
+		} else if packagesMap[packageName] {
 			messageKey = diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1.Key()
 			code = diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1.Code()
 			category = diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1.Category()
