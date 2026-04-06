@@ -37,8 +37,8 @@ func (l *LanguageService) ProvideSourceDefinition(
 	if node.Kind == ast.KindSourceFile {
 		// Triple-slash directives are comments, not AST nodes, so
 		// GetTouchingPropertyName returns the SourceFile node.
-		if declarations := resolver.resolveTripleSlashReference(file, pos, program); len(declarations) != 0 {
-			originSelectionRange := l.createLspRangeFromNode(node, file)
+		if declarations, ref := resolver.resolveTripleSlashReference(file, pos, program); len(declarations) != 0 {
+			originSelectionRange := l.createLspRangeFromBounds(ref.Pos(), ref.End(), file)
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 		}
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
@@ -220,15 +220,15 @@ func getSourceDefCheckerInfo(
 // For path references to .js files, it returns the entry declarations directly.
 // For path references to .d.ts files or type references, it uses the NoDts
 // resolver to find the corresponding implementation file.
-func (r *sourceDefResolver) resolveTripleSlashReference(file *ast.SourceFile, pos int, program *compiler.Program) []*ast.Node {
+func (r *sourceDefResolver) resolveTripleSlashReference(file *ast.SourceFile, pos int, program *compiler.Program) ([]*ast.Node, *ast.FileReference) {
 	ref := getReferenceAtPosition(file, pos, program)
 	if ref == nil || ref.file == nil {
-		return nil
+		return nil, nil
 	}
 
 	// If the referenced file is already an implementation file, return it directly.
 	if !ref.file.IsDeclarationFile {
-		return getSourceDefinitionEntryDeclarations(ref.file)
+		return getSourceDefinitionEntryDeclarations(ref.file), ref.reference
 	}
 
 	// The referenced file is a .d.ts. Try to find the implementation file
@@ -237,14 +237,14 @@ func (r *sourceDefResolver) resolveTripleSlashReference(file *ast.SourceFile, po
 	preferredMode := r.inferImpliedNodeFormat(dtsFileName)
 	implementationFile := r.findImplementationFileFromDtsFileName(dtsFileName, preferredMode)
 	if implementationFile == "" {
-		return nil
+		return nil, nil
 	}
 
 	sourceFile := r.getOrParseSourceFile(implementationFile)
 	if sourceFile == nil {
-		return nil
+		return nil, nil
 	}
-	return getSourceDefinitionEntryDeclarations(sourceFile)
+	return getSourceDefinitionEntryDeclarations(sourceFile), ref.reference
 }
 
 // searchImplementationFile searches an implementation file for declarations
