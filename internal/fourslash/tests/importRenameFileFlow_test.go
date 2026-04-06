@@ -216,3 +216,27 @@ const global = require("/*global*/global");
 	f.GoToMarker(t, "global")
 	f.VerifyRenameFailed(t, prefsTrue)
 }
+
+func TestImportPathRenameFailsWithoutFileRenameClientSupport(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `// @Filename: /src/example.ts
+import stuff from './[|stuff|].cts';
+// @Filename: /src/stuff.cts
+export = { name: "stuff" };
+`
+
+	capabilities := fourslash.GetDefaultCapabilities()
+	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
+		DocumentChanges:    new(true),
+		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
+	}
+	// Intentionally omit workspace.fileOperations.willRename.
+
+	f, done := fourslash.NewFourslash(t, capabilities, content)
+	defer done()
+	f.Configure(t, &lsutil.UserPreferences{AllowRenameOfImportPath: core.TSTrue})
+	f.GoToRangeStart(t, f.Ranges()[0])
+	f.VerifyRenameFailed(t, &lsutil.UserPreferences{AllowRenameOfImportPath: core.TSTrue})
+}

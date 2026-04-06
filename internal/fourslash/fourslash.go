@@ -3934,14 +3934,17 @@ func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.Use
 		t.Fatalf("%sExpected rename to fail, but prepareRename returned a result", prefix)
 	}
 
-	// Also verify that textDocument/rename produces no edits, since prepareRename is optional.
-	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+	// Also verify that textDocument/rename does not produce usable edits, since prepareRename is optional.
+	renameMsg, renameResult, _ := lsptestutil.SendRequest(t, f.client, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		NewName:  "RENAME_FAILED_TEST",
 	})
+	if renameMsg != nil && renameMsg.AsResponse().Error != nil {
+		return
+	}
 	if renameResult.WorkspaceEdit != nil && renameResult.WorkspaceEdit.Changes != nil && len(*renameResult.WorkspaceEdit.Changes) > 0 {
 		t.Fatalf("%sprepareRename returned null but textDocument/rename returned changes", prefix)
 	}
