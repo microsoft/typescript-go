@@ -99,7 +99,8 @@
             "line": 9,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -159,7 +160,8 @@
             "line": 9,
             "character": 10
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -249,7 +251,8 @@
             "line": 14,
             "character": 10
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }

@@ -187,37 +187,54 @@ func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 }
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	writer := printer.NewTextWriter("", 0)
+	return c.typeToStringImpl(t, enclosingDeclaration, flags, nil)
+}
+
+func (c *Checker) typeToStringImpl(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
+	newLine := ""
+	if vc != nil && vc.Level > 0 {
+		newLine = "\n"
+	}
+	writer := printer.NewTextWriter(newLine, 0)
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
 	nodeBuilder := c.getNodeBuilder()
+	if vc != nil {
+		nodeBuilder.verbosity = vc
+	}
 	typeNode := nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	if typeNode == nil {
 		panic("should always get typenode")
 	}
 	// The unresolved type gets a synthesized comment on `any` to hint to users that it's not a plain `any`.
 	// Otherwise, we always strip comments out.
-	var printer *printer.Printer
+	var p *printer.Printer
 	if t == c.unresolvedType {
-		printer = createPrinterWithDefaults(nodeBuilder.EmitContext())
+		p = createPrinterWithDefaults(nodeBuilder.EmitContext())
 	} else {
-		printer = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+		p = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
 	}
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	printer.Write(typeNode /*sourceFile*/, sourceFile, writer, nil)
+	p.Write(typeNode, sourceFile, writer, nil)
 	result := writer.String()
 
 	maxLength := defaultMaximumTruncationLength * 2
+	if vc != nil && vc.MaxTruncationLength > 0 {
+		maxLength = vc.MaxTruncationLength * 10 // hard cutoff matching Strada's absoluteMaximumLength
+	}
 	if noTruncation {
 		maxLength = noTruncationMaximumTruncationLength * 2
 	}
 	if maxLength > 0 && result != "" && len(result) >= maxLength {
+		if vc != nil {
+			vc.Truncated = true
+		}
 		return result[0:maxLength-len("...")] + "..."
 	}
 	return result
@@ -290,6 +307,10 @@ func (c *Checker) SignatureToStringEx(signature *Signature, enclosingDeclaration
 }
 
 func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
+	return c.signatureToStringImpl(signature, enclosingDeclaration, flags, nil)
+}
+
+func (c *Checker) signatureToStringImpl(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
 	isConstructor := signature.flags&SignatureFlagsConstruct != 0 && flags&TypeFormatFlagsWriteCallStyleSignature == 0
 	var sigOutput ast.Kind
 	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
@@ -305,18 +326,26 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 			sigOutput = ast.KindCallSignature
 		}
 	}
-	writer, putWriter := printer.GetSingleLineStringWriter()
-	defer putWriter()
 
 	nodeBuilder := c.getNodeBuilder()
+	if vc != nil {
+		nodeBuilder.verbosity = vc
+	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	sig := nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
-	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
+	p := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	printer_.Write(sig /*sourceFile*/, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil) // TODO: GH#18217
+	if vc != nil && vc.Level > 0 {
+		writer := printer.NewTextWriter("\n", 0)
+		p.Write(sig, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil)
+		return writer.String()
+	}
+	writer, putWriter := printer.GetSingleLineStringWriter()
+	defer putWriter()
+	p.Write(sig, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil)
 	return writer.String()
 }
 
@@ -385,77 +414,12 @@ func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags 
 
 // TypeToStringWithVerbosity converts a type to string with verbosity support for expandable hover.
 func (c *Checker) TypeToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
-	writer := printer.NewTextWriter("\n", 0)
-	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
-	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
-	if noTruncation {
-		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
-	}
-	nodeBuilder := c.getNodeBuilder()
-	nodeBuilder.verbosity = vc
-	typeNode := nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
-	if typeNode == nil {
-		panic("should always get typenode")
-	}
-	var p *printer.Printer
-	if t == c.unresolvedType {
-		p = createPrinterWithDefaults(nodeBuilder.EmitContext())
-	} else {
-		p = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
-	}
-	var sourceFile *ast.SourceFile
-	if enclosingDeclaration != nil {
-		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
-	}
-	p.Write(typeNode, sourceFile, writer, nil)
-	result := writer.String()
-
-	maxLength := defaultMaximumTruncationLength * 2
-	if vc != nil && vc.MaxTruncationLength > 0 {
-		maxLength = vc.MaxTruncationLength * 10 // hard cutoff matching Strada's absoluteMaximumLength
-	}
-	if noTruncation {
-		maxLength = noTruncationMaximumTruncationLength * 2
-	}
-	if maxLength > 0 && result != "" && len(result) >= maxLength {
-		if vc != nil {
-			vc.Truncated = true
-		}
-		return result[0:maxLength-len("...")] + "..."
-	}
-	return result
+	return c.typeToStringImpl(t, enclosingDeclaration, flags, vc)
 }
 
 // SignatureToStringWithVerbosity converts a signature to string with verbosity support for expandable hover.
 func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, vc *VerbosityContext) string {
-	isConstructor := signature.flags&SignatureFlagsConstruct != 0 && flags&TypeFormatFlagsWriteCallStyleSignature == 0
-	var sigOutput ast.Kind
-	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
-		if isConstructor {
-			sigOutput = ast.KindConstructorType
-		} else {
-			sigOutput = ast.KindFunctionType
-		}
-	} else {
-		if isConstructor {
-			sigOutput = ast.KindConstructSignature
-		} else {
-			sigOutput = ast.KindCallSignature
-		}
-	}
-	writer := printer.NewTextWriter("\n", 0)
-
-	nodeBuilder := c.getNodeBuilder()
-	nodeBuilder.verbosity = vc
-	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
-	sig := nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
-	p := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
-	var sourceFile *ast.SourceFile
-	if enclosingDeclaration != nil {
-		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
-	}
-	p.Write(sig, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil)
-	return writer.String()
+	return c.signatureToStringImpl(signature, enclosingDeclaration, flags, vc)
 }
 
 // ExpandSymbolForHover produces declaration strings for a symbol with verbosity support for expandable hover.

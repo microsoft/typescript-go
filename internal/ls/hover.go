@@ -16,9 +16,8 @@ import (
 )
 
 const (
-	symbolFormatFlags                   = checker.SymbolFormatFlagsWriteTypeParametersOrArguments | checker.SymbolFormatFlagsUseOnlyExternalAliasing | checker.SymbolFormatFlagsAllowAnyNodeKind | checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope
-	typeFormatFlags                     = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
-	defaultHoverMaximumTruncationLength = 500
+	symbolFormatFlags = checker.SymbolFormatFlagsWriteTypeParametersOrArguments | checker.SymbolFormatFlagsUseOnlyExternalAliasing | checker.SymbolFormatFlagsAllowAnyNodeKind | checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope
+	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
 )
 
 func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
@@ -43,11 +42,15 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	symbol := getSymbolAtLocationForQuickInfo(c, node)
 
 	// Always create VerbosityContext for hover so that canExpandSymbol can signal
-	// canIncreaseVerbosity even at Level 0. The nodebuilder only activates expansion
-	// when Level > 0 (enterContext maps Level 0 to maxExpansionDepth = -1).
+	// canIncreaseVerbosity even at Level 0. The nodebuilder also detects expandable
+	// types at Level 0 via shouldExpandType (maxExpansionDepth = 0).
+	maxTruncLen := l.UserPreferences().MaximumHoverLength
+	if maxTruncLen <= 0 {
+		maxTruncLen = 500
+	}
 	vc := &checker.VerbosityContext{
 		Level:               verbosityLevel,
-		MaxTruncationLength: defaultHoverMaximumTruncationLength,
+		MaxTruncationLength: maxTruncLen,
 	}
 
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc)
@@ -249,15 +252,15 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	}
 	typeToString := func(t *checker.Type, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
 		if vc.Level > 0 {
-			return c.TypeToStringWithVerbosity(t, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, vc)
+			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		}
-		return c.TypeToStringEx(t, enclosing, flags)
+		return c.TypeToStringWithVerbosity(t, enclosing, flags, vc)
 	}
 	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
 		if vc.Level > 0 {
-			return c.SignatureToStringWithVerbosity(sig, enclosing, flags|checker.TypeFormatFlagsMultilineObjectLiterals, vc)
+			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		}
-		return c.SignatureToStringEx(sig, enclosing, flags)
+		return c.SignatureToStringWithVerbosity(sig, enclosing, flags, vc)
 	}
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
 		return "this: " + typeToString(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
@@ -343,7 +346,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		if canExpandSymbol(symbol) {
 			expandVC := &checker.VerbosityContext{
 				Level:               vc.Level - 1,
-				MaxTruncationLength: defaultHoverMaximumTruncationLength,
+				MaxTruncationLength: vc.MaxTruncationLength,
 			}
 			expanded := c.ExpandSymbolForHover(symbol, meaning, expandVC)
 			if expanded != "" {

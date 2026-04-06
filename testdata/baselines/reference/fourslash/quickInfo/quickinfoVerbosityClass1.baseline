@@ -246,7 +246,8 @@
             "line": 4,
             "character": 11
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -306,7 +307,8 @@
             "line": 14,
             "character": 11
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -458,7 +460,8 @@
             "line": 26,
             "character": 11
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -518,7 +521,8 @@
             "line": 36,
             "character": 11
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -578,7 +582,8 @@
             "line": 37,
             "character": 11
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -638,7 +643,8 @@
             "line": 44,
             "character": 16
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -698,7 +704,8 @@
             "line": 50,
             "character": 11
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }

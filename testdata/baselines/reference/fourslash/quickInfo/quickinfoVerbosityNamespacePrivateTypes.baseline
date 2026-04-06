@@ -90,7 +90,8 @@
             "line": 0,
             "character": 21
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }

@@ -15,8 +15,8 @@ type NodeBuilder struct {
 }
 
 // VerbosityContext controls hover-expansion behavior in the node builder.
-// A nil VerbosityContext means no expansion (default hover or non-hover callers).
-// Level 0 = default hover (no expansion, signals canIncreaseVerbosity via hover.go).
+// A nil VerbosityContext means no expansion (non-hover callers).
+// Level 0 = default hover (maxExpansionDepth = 0; detects expandability without expanding).
 // Level 1+ = expansion enabled (maxExpansionDepth = Level).
 type VerbosityContext struct {
 	Level                int  // 0 = default (no expansion), 1+ = expansion depth
@@ -33,10 +33,8 @@ func (b *NodeBuilder) EmitContext() *printer.EmitContext {
 func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) {
 	verbosityLevel := -1
 	maxTruncationLength := 0
-	if b.verbosity != nil && b.verbosity.Level > 0 {
+	if b.verbosity != nil {
 		verbosityLevel = b.verbosity.Level
-		maxTruncationLength = b.verbosity.MaxTruncationLength
-	} else if b.verbosity != nil {
 		maxTruncationLength = b.verbosity.MaxTruncationLength
 	}
 	b.ctxStack = append(b.ctxStack, b.impl.ctx)
@@ -62,7 +60,7 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 
 // propagateVerbosityOut copies expansion signals from the context to the VerbosityContext output.
 func (b *NodeBuilder) propagateVerbosityOut() {
-	if b.verbosity != nil && b.verbosity.Level > 0 {
+	if b.verbosity != nil {
 		// Only set to true, never clear — multiple calls share the same VerbosityContext
 		if b.impl.ctx.canIncreaseExpansionDepth {
 			b.verbosity.CanIncreaseVerbosity = true

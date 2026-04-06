@@ -71,6 +71,9 @@ func (b *NodeBuilderImpl) expandEnumDecl(symbol *ast.Symbol) *ast.Node {
 			initializer = b.enumMemberInitializer(p)
 		}
 		b.ctx.approximateLength += 4 + len(p.Name)
+		if initializer != nil {
+			b.ctx.approximateLength += 5 // " = " + value estimate
+		}
 		members = append(members, b.f.NewEnumMember(b.f.NewIdentifier(p.Name), initializer))
 	}
 
@@ -295,11 +298,9 @@ func (b *NodeBuilderImpl) expandInterfaceDecl(symbol *ast.Symbol) *ast.Node {
 // serializePropertiesWithTruncation iterates properties using addPropertyToElementList,
 // with truncation checks matching Strada's createTypeNodesFromResolvedType behavior.
 func (b *NodeBuilderImpl) serializePropertiesWithTruncation(properties []*ast.Symbol, elements []*ast.Node) []*ast.Node {
-	if isExpanding(b.ctx) {
-		properties = core.Filter(properties, func(p *ast.Symbol) bool {
-			return p.Flags&ast.SymbolFlagsPrototype == 0
-		})
-	}
+	properties = core.Filter(properties, func(p *ast.Symbol) bool {
+		return p.Flags&ast.SymbolFlagsPrototype == 0
+	})
 	for i, p := range properties {
 		if b.checkTruncationLengthIfExpanding() && (i+3 < len(properties)-1) {
 			b.ctx.expansionTruncated = true

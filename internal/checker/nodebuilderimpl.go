@@ -190,8 +190,9 @@ func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 }
 
 // canPossiblyExpandType returns true if it's possible the type or one of its components can be expanded.
+// At maxExpansionDepth <= 0, no expansion will occur so we return false to allow type-node reuse.
 func (b *NodeBuilderImpl) canPossiblyExpandType(t *Type) bool {
-	if b.ctx.maxExpansionDepth < 0 {
+	if b.ctx.maxExpansionDepth <= 0 {
 		return false
 	}
 	for i := range len(b.ctx.typeStack) - 1 {
@@ -823,7 +824,9 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 	}
 
 	if startsWithSingleOrDoubleQuote(symbolName) && core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
-		return b.newStringLiteral(b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone))
+		specifier := b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone)
+		b.ctx.approximateLength += 2 + len(specifier)
+		return b.newStringLiteral(specifier)
 	}
 
 	if index == 0 || canUsePropertyAccess(symbolName) {
@@ -832,6 +835,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		// !!! TODO: smuggle type arguments out
 		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
 		// identifier.symbol = symbol;
+		b.ctx.approximateLength += 1 + len(symbolName)
 		if index > 0 {
 			result := b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
 			b.e.AddEmitFlags(result, printer.EFNoIndentation)
@@ -846,13 +850,17 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 
 	var expression *ast.Expression
 	if startsWithSingleOrDoubleQuote(symbolName) && symbol.Flags&ast.SymbolFlagsEnumMember == 0 {
-		expression = b.newStringLiteralEx(stringutil.UnquoteString(symbolName), symbolName[0] == '\'')
+		literalText := stringutil.UnquoteString(symbolName)
+		b.ctx.approximateLength += len(literalText) + 2
+		expression = b.newStringLiteralEx(literalText, symbolName[0] == '\'')
 	} else if jsnum.FromString(symbolName).String() == symbolName {
 		// TODO: the follwing in strada would assert if the number is negative, but no such assertion exists here
 		// Moreover, what's even guaranteeing the name *isn't* -1 here anyway? Needs double-checking.
+		b.ctx.approximateLength += len(symbolName)
 		expression = b.f.NewNumericLiteral(symbolName, ast.TokenFlagsNone)
 	}
 	if expression == nil {
+		b.ctx.approximateLength += len(symbolName)
 		expression = b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(expression, printer.EFNoAsciiEscaping)
 		// !!! TODO: smuggle type arguments out
@@ -860,6 +868,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		// identifier.symbol = symbol;
 		// expression = identifier;
 	}
+	b.ctx.approximateLength += 2 // []
 	return b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone)
 }
 
