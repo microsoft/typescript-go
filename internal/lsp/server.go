@@ -44,6 +44,7 @@ type ServerOptions struct {
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
+	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -66,6 +67,7 @@ func NewServer(opts *ServerOptions) *Server {
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
 		initComplete:          make(chan struct{}),
+		progressDelay:         opts.ProgressDelay,
 	}
 	s.logger = newLogger(s)
 
@@ -189,6 +191,7 @@ type Server struct {
 
 	cpuProfiler pprof.CPUProfiler
 
+	progressDelay   time.Duration
 	projectProgress *projectLoadingProgress
 }
 
@@ -204,10 +207,9 @@ func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers 
 	_, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
-				Id:     string(id),
-				Method: string(lsproto.MethodWorkspaceDidChangeWatchedFiles),
+				Id: string(id),
 				RegisterOptions: &lsproto.RegisterOptions{
-					DidChangeWatchedFiles: &lsproto.DidChangeWatchedFilesRegistrationOptions{
+					WorkspaceDidChangeWatchedFiles: &lsproto.DidChangeWatchedFilesRegistrationOptions{
 						Watchers: watchers,
 					},
 				},
@@ -777,6 +779,9 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		return func() error {
 			defer s.recover(req)
 			resp, lsErr := fn(s, ctx, ls, params)
+			// After any language service request, check if new global diagnostics were
+			// discovered during checking and push updated tsconfig diagnostics if so.
+			s.session.EnqueuePublishGlobalDiagnostics()
 			if lsErr != nil {
 				return lsErr
 			}
@@ -935,7 +940,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
 	if s.clientCapabilities.Window.WorkDoneProgress {
-		s.projectProgress = newProjectLoadingProgress(s)
+		s.projectProgress = newProjectLoadingProgress(s, s.progressDelay)
 	}
 
 	capabilitiesJSON, err := json.MarshalIndent(&s.clientCapabilities, "", "\t")
@@ -1116,10 +1121,9 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
-				Id:     "typescript-config-watch-id",
-				Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
+				Id: "typescript-config-watch-id",
 				RegisterOptions: &lsproto.RegisterOptions{
-					DidChangeConfiguration: &lsproto.DidChangeConfigurationRegistrationOptions{
+					WorkspaceDidChangeConfiguration: &lsproto.DidChangeConfigurationRegistrationOptions{
 						Section: &lsproto.StringOrStrings{
 							Strings: &[]string{"js/ts", "typescript", "javascript", "editor"},
 						},
