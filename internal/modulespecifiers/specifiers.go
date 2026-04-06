@@ -663,7 +663,7 @@ func processEnding(
 	}
 	if !tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDts}) && tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionTs}) && strings.Contains(fileName, ".d.") {
 		// `foo.d.json.ts` and the like - remap back to `foo.json`
-		if result := tryGetRealFileNameForNonJsDeclarationFileName(fileName); result != "" {
+		if result := TryGetRealFileNameForNonJSDeclarationFileName(fileName); result != "" {
 			return result
 		}
 	}
