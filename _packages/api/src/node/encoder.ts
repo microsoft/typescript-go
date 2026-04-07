@@ -85,6 +85,7 @@ function cachedEncoder(): TextEncoder {
     return _encoder ??= new TextEncoder();
 }
 
+
 function getChildrenPropertyMask(node: Node): number {
     const kind = node.kind;
 

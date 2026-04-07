@@ -926,6 +926,7 @@ type CompletionsExpectedCodeAction struct {
 
 type VerifyCompletionsResult struct {
 	AndApplyCodeAction func(t *testing.T, expectedAction *CompletionsExpectedCodeAction)
+	AndHasNoCodeAction func(t *testing.T, unexpectedAction *CompletionsExpectedCodeAction)
 }
 
 // string | *Marker | []string | []*Marker
@@ -977,6 +978,21 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 			assert.Check(t, strings.Contains(*item.Detail, expectedAction.Description), "Completion item detail does not contain expected description.")
 			f.applyTextEdits(t, *item.AdditionalTextEdits)
 			assert.Equal(t, f.getScriptInfo(f.activeFilename).content, expectedAction.NewFileContent, fmt.Sprintf("File content after applying code action '%s' did not match expected content.", expectedAction.Name))
+		},
+		AndHasNoCodeAction: func(t *testing.T, unexpectedAction *CompletionsExpectedCodeAction) {
+			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
+				if item.Label != unexpectedAction.Name || item.Data == nil {
+					return false
+				}
+				data := item.Data
+				if data.AutoImport == nil {
+					return false
+				}
+				return data.AutoImport.ModuleSpecifier == unexpectedAction.Source
+			})
+			if item != nil {
+				t.Fatalf("Unexpected code action '%s' from source '%s' found in completions.", unexpectedAction.Name, unexpectedAction.Source)
+			}
 		},
 	}
 }
@@ -2350,7 +2366,7 @@ func (f *FourslashTest) VerifyBaselineCallHierarchy(t *testing.T) {
 	for _, callHierarchyItem := range *prepareResult.CallHierarchyItems {
 		seen := make(map[callHierarchyItemKey]bool)
 		itemFileName := callHierarchyItem.Uri.FileName()
-		script := f.getScriptInfo(itemFileName)
+		script := f.getOrLoadScriptInfo(itemFileName)
 		formatCallHierarchyItem(t, f, script, &result, *callHierarchyItem, callHierarchyItemDirectionRoot, seen, "")
 	}
 
@@ -2472,7 +2488,7 @@ func formatCallHierarchyItem(
 			result.WriteString("├ incoming:\n")
 			for i, incomingCall := range incomingCalls.values {
 				fromFileName := incomingCall.From.Uri.FileName()
-				fromFile := f.getScriptInfo(fromFileName)
+				fromFile := f.getOrLoadScriptInfo(fromFileName)
 				result.WriteString(prefix)
 				result.WriteString("│ ╭ from:\n")
 				formatCallHierarchyItem(t, f, fromFile, result, *incomingCall.From, callHierarchyItemDirectionIncoming, seen, prefix+"│ │ ")
@@ -2503,7 +2519,7 @@ func formatCallHierarchyItem(
 			result.WriteString("├ outgoing:\n")
 			for i, outgoingCall := range outgoingCalls.values {
 				toFileName := outgoingCall.To.Uri.FileName()
-				toFile := f.getScriptInfo(toFileName)
+				toFile := f.getOrLoadScriptInfo(toFileName)
 				result.WriteString(prefix)
 				result.WriteString("│ ╭ to:\n")
 				formatCallHierarchyItem(t, f, toFile, result, *outgoingCall.To, callHierarchyItemDirectionOutgoing, seen, prefix+"│ │ ")
@@ -3000,6 +3016,18 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 
 func (f *FourslashTest) getScriptInfo(fileName string) *scriptInfo {
 	return f.scriptInfos[fileName]
+}
+
+func (f *FourslashTest) getOrLoadScriptInfo(fileName string) *scriptInfo {
+	if script := f.getScriptInfo(fileName); script != nil {
+		return script
+	}
+	if content, ok := f.vfs.ReadFile(fileName); ok {
+		script := newScriptInfo(fileName, content)
+		f.scriptInfos[fileName] = script
+		return script
+	}
+	return nil
 }
 
 // !!! expected tags

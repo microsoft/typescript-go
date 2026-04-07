@@ -4,6 +4,7 @@ import {
     NodeFlags,
     type Path,
     SyntaxKind,
+    TokenFlags,
 } from "@typescript/ast";
 import { MsgpackReader } from "./msgpack.ts";
 import {
