@@ -100,7 +100,7 @@ func (v *View) search(searchFn func(*RegistryBucket) []*Export) []*Export {
 	var results []*Export
 	// Track seen module realpaths to avoid duplicate exports when a project file
 	// is symlinked into node_modules (both buckets may contain the same file).
-	var seen collections.Set[tspath.Path]
+	var seen collections.Set[string]
 	realpath := v.program.Host().FS().Realpath
 
 	if bucket, ok := v.registry.projects[v.projectKey]; ok {
@@ -111,7 +111,7 @@ func (v *View) search(searchFn func(*RegistryBucket) []*Export) []*Export {
 				// Don't auto-import from the importing file itself
 				continue
 			}
-			seen.Add(tspath.Path(realpath(string(e.Path))))
+			seen.Add(realpath(string(e.Path)))
 			results = append(results, e)
 		}
 	}
@@ -151,7 +151,7 @@ func (v *View) search(searchFn func(*RegistryBucket) []*Export) []*Export {
 					continue
 				}
 				// Skip exports already found in the project bucket via their realpath
-				if seen.Has(tspath.Path(realpath(string(e.Path)))) {
+				if seen.Has(realpath(string(e.Path))) {
 					continue
 				}
 				// If allowedPackages is nil, no package.json was found, so include all packages.
