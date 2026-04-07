@@ -211,7 +211,8 @@ func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, 
 
 func (l *LanguageService) getUpdatedImportSpecifier(program *compiler.Program, checker interface {
 	GetSymbolAtLocation(node *ast.Node) *ast.Symbol
-}, sourceFile *ast.SourceFile, importLiteral *ast.StringLiteralLike, oldToNew pathUpdater, newToOld pathUpdater, newImportFromPath string, oldImportFromPath string, importingSourceFileMoved bool, userPreferences modulespecifiers.UserPreferences) string {
+}, sourceFile *ast.SourceFile, importLiteral *ast.StringLiteralLike, oldToNew pathUpdater, newToOld pathUpdater, newImportFromPath string, oldImportFromPath string, importingSourceFileMoved bool, userPreferences modulespecifiers.UserPreferences,
+) string {
 	importedModuleSymbol := checker.GetSymbolAtLocation(importLiteral)
 	if isAmbientModuleSymbol(importedModuleSymbol) {
 		return ""

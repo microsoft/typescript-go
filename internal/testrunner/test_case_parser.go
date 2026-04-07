@@ -41,8 +41,10 @@ type testCaseContent struct {
 var optionRegex = regexp.MustCompile(`(?m)^\/{2}\s*@(\w+)\s*:\s*([^\r\n]*)`)
 
 // Regex for parsing @link option
-var linkRegex = regexp.MustCompile(`(?im)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*([^\r\n]*)`)
-var symlinkRegex = regexp.MustCompile(`(?im)^\/{2}\s*@symlink\s*:\s*([^\r\n]*)`)
+var (
+	linkRegex    = regexp.MustCompile(`(?im)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*([^\r\n]*)`)
+	symlinkRegex = regexp.MustCompile(`(?im)^\/{2}\s*@symlink\s*:\s*([^\r\n]*)`)
+)
 
 // File-specific directives used by fourslash tests
 var fourslashDirectives = []string{"emitthisfile"}
