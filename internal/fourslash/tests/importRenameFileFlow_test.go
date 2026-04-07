@@ -148,6 +148,52 @@ export const x = 1;
 	assert.Equal(t, tsconfigEdits[0].NewText, "src/new.ts")
 }
 
+func TestWillRenameFilesUpdatesProjectReferenceConsumer(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `// @Filename: /solution/b/app.ts
+import { x } from "../a/old";
+// @Filename: /solution/a/old.ts
+export const x = 1;
+// @Filename: /solution/a/tsconfig.json
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": ["old.ts"]
+}
+// @Filename: /solution/b/tsconfig.json
+{
+  "references": [{ "path": "../a" }],
+  "files": ["app.ts"]
+}
+`
+
+	capabilities := fourslash.GetDefaultCapabilities()
+	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
+		DocumentChanges:    new(true),
+		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
+	}
+	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
+		WillRename: new(true),
+	}
+
+	f, done := fourslash.NewFourslash(t, capabilities, content)
+	defer done()
+
+	willRenameResult := f.WillRenameFiles(t, &lsproto.FileRename{
+		OldUri: string(lsconv.FileNameToDocumentURI("/solution/a/old.ts")),
+		NewUri: string(lsconv.FileNameToDocumentURI("/solution/a/new.ts")),
+	})
+	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+
+	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/solution/b/app.ts")]
+	assert.Equal(t, len(appEdits), 1)
+	assert.Equal(t, appEdits[0].NewText, "../a/new")
+}
+
 func TestImportTypePathRenameReturnsRenameFile(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
