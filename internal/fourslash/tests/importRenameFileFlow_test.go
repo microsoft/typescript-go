@@ -13,6 +13,18 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func fileRenameCapabilities() *lsproto.ClientCapabilities {
+	capabilities := fourslash.GetDefaultCapabilities()
+	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
+		DocumentChanges:    new(true),
+		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
+	}
+	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
+		WillRename: new(true),
+	}
+	return capabilities
+}
+
 func TestImportPathRenameReturnsRenameFileAndWillRenameEdits(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
@@ -23,16 +35,7 @@ import stuff from './[|stuff|].cts';
 export = { name: "stuff" };
 `
 
-	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
-		DocumentChanges:    new(true),
-		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
-	}
-	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
-		WillRename: new(true),
-	}
-
-	f, done := fourslash.NewFourslash(t, capabilities, content)
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
 	defer done()
 	f.Configure(t, &lsutil.UserPreferences{AllowRenameOfImportPath: core.TSTrue})
 	f.GoToRangeStart(t, f.Ranges()[0])
@@ -68,16 +71,7 @@ import dir from './[|dir|]';
 export const x = 1;
 `
 
-	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
-		DocumentChanges:    new(true),
-		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
-	}
-	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
-		WillRename: new(true),
-	}
-
-	f, done := fourslash.NewFourslash(t, capabilities, content)
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
 	defer done()
 	f.Configure(t, &lsutil.UserPreferences{AllowRenameOfImportPath: core.TSTrue})
 	f.GoToRangeStart(t, f.Ranges()[0])
@@ -118,16 +112,7 @@ export const x = 1;
 }
 `
 
-	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
-		DocumentChanges:    new(true),
-		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
-	}
-	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
-		WillRename: new(true),
-	}
-
-	f, done := fourslash.NewFourslash(t, capabilities, content)
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
 	defer done()
 
 	willRenameResult := f.WillRenameFiles(t, &lsproto.FileRename{
@@ -152,10 +137,10 @@ func TestWillRenameFilesUpdatesProjectReferenceConsumer(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
-	const content = `// @Filename: /solution/b/app.ts
-import { x } from "../a/old";
-// @Filename: /solution/a/old.ts
+	const content = `// @Filename: /solution/a/old.ts
 export const x = 1;
+// @Filename: /solution/b/app.ts
+import { x } from "../a/old";
 // @Filename: /solution/a/tsconfig.json
 {
   "compilerOptions": {
@@ -170,16 +155,7 @@ export const x = 1;
 }
 `
 
-	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
-		DocumentChanges:    new(true),
-		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
-	}
-	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
-		WillRename: new(true),
-	}
-
-	f, done := fourslash.NewFourslash(t, capabilities, content)
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
 	defer done()
 
 	willRenameResult := f.WillRenameFiles(t, &lsproto.FileRename{
@@ -194,6 +170,153 @@ export const x = 1;
 	assert.Equal(t, appEdits[0].NewText, "../a/new")
 }
 
+func TestWillRenameFilesUpdatesSiblingProjectLoadedViaSolutionRoot(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `// @Filename: /solution/a/old.ts
+export const x = 1;
+// @Filename: /solution/b/app.ts
+import { x } from "../a/old";
+// @Filename: /solution/tsconfig.json
+{
+  "files": [],
+  "references": [
+    { "path": "./a" },
+    { "path": "./b" }
+  ]
+}
+// @Filename: /solution/a/tsconfig.json
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": ["old.ts"]
+}
+// @Filename: /solution/b/tsconfig.json
+{
+  "files": ["app.ts"]
+}
+`
+
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
+	defer done()
+
+	willRenameResult := f.WillRenameFiles(t, &lsproto.FileRename{
+		OldUri: string(lsconv.FileNameToDocumentURI("/solution/a/old.ts")),
+		NewUri: string(lsconv.FileNameToDocumentURI("/solution/a/new.ts")),
+	})
+	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+
+	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/solution/b/app.ts")]
+	assert.Equal(t, len(appEdits), 1)
+	assert.Equal(t, appEdits[0].NewText, "../a/new")
+}
+
+func TestWillRenameFilesUpdatesSiblingProjectWhenUnrelatedFileIsInitiallyActive(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `// @Filename: /solution/c/unrelated.ts
+export const active = 1;
+// @Filename: /solution/a/old.ts
+export const x = 1;
+// @Filename: /solution/b/app.ts
+import { x } from "../a/old";
+// @Filename: /solution/tsconfig.json
+{
+  "files": [],
+  "references": [
+    { "path": "./a" },
+    { "path": "./b" },
+    { "path": "./c" }
+  ]
+}
+// @Filename: /solution/a/tsconfig.json
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": ["old.ts"]
+}
+// @Filename: /solution/b/tsconfig.json
+{
+  "files": ["app.ts"]
+}
+// @Filename: /solution/c/tsconfig.json
+{
+  "files": ["unrelated.ts"]
+}
+`
+
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
+	defer done()
+
+	willRenameResult := f.WillRenameFiles(t, &lsproto.FileRename{
+		OldUri: string(lsconv.FileNameToDocumentURI("/solution/a/old.ts")),
+		NewUri: string(lsconv.FileNameToDocumentURI("/solution/a/new.ts")),
+	})
+	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+
+	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/solution/b/app.ts")]
+	assert.Equal(t, len(appEdits), 1)
+	assert.Equal(t, appEdits[0].NewText, "../a/new")
+}
+
+func TestWillRenameFilesUpdatesSymlinkedPackageConsumer(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `// @Filename: /packages/project-b/old.ts
+export const x = 1;
+// @Filename: /packages/project-b/package.json
+{
+  "name": "project-b",
+  "version": "1.0.0"
+}
+// @Filename: /packages/project-b/tsconfig.json
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "commonjs"
+  },
+  "files": ["old.ts"]
+}
+// @Filename: /packages/project-a/app.ts
+import { x } from "project-b/old";
+// @Filename: /packages/project-a/package.json
+{
+  "name": "project-a",
+  "dependencies": {
+    "project-b": "*"
+  }
+}
+// @Filename: /packages/project-a/tsconfig.json
+{
+  "compilerOptions": {
+    "module": "commonjs"
+  },
+  "files": ["app.ts"]
+}
+// @link: /packages/project-b -> /packages/project-a/node_modules/project-b`
+
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
+	defer done()
+
+	willRenameResult := f.WillRenameFiles(t, &lsproto.FileRename{
+		OldUri: string(lsconv.FileNameToDocumentURI("/packages/project-b/old.ts")),
+		NewUri: string(lsconv.FileNameToDocumentURI("/packages/project-b/new.ts")),
+	})
+	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+
+	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/packages/project-a/app.ts")]
+	assert.Equal(t, len(appEdits), 1)
+	assert.Equal(t, appEdits[0].NewText, "project-b/new")
+}
+
 func TestImportTypePathRenameReturnsRenameFile(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
@@ -205,16 +328,7 @@ export = 0;
 const x: import("[|./a|]") = 0;
 `
 
-	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
-		DocumentChanges:    new(true),
-		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
-	}
-	capabilities.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
-		WillRename: new(true),
-	}
-
-	f, done := fourslash.NewFourslash(t, capabilities, content)
+	f, done := fourslash.NewFourslash(t, fileRenameCapabilities(), content)
 	defer done()
 
 	prefsTrue := &lsutil.UserPreferences{AllowRenameOfImportPath: core.TSTrue}
@@ -273,12 +387,8 @@ import stuff from './[|stuff|].cts';
 export = { name: "stuff" };
 `
 
-	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
-		DocumentChanges:    new(true),
-		ResourceOperations: &[]lsproto.ResourceOperationKind{lsproto.ResourceOperationKindRename},
-	}
-	// Intentionally omit workspace.fileOperations.willRename.
+	capabilities := fileRenameCapabilities()
+	capabilities.Workspace.FileOperations = nil
 
 	f, done := fourslash.NewFourslash(t, capabilities, content)
 	defer done()
