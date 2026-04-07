@@ -30,9 +30,9 @@ import type {
 
 const ROOT = path.resolve(import.meta.dirname!, "..");
 
-// Members that participate in factory/visitor/clone (excludes goOnly)
+// Members that participate in factory/visitor/clone (excludes noFactory)
 function schemaMembers(node: NodeType): MemberInfo[] {
-    return node.members.filter(m => !m.goOnly);
+    return node.members.filter(m => !m.noFactory);
 }
 
 function isTextContentType(type: Type): boolean {
@@ -49,16 +49,6 @@ function isTextContentType(type: Type): boolean {
 function hasTextContent(node: NodeType): boolean {
     if (node.members.length === 0) return false;
     return schemaMembers(node).some(m => isTextContentType(m.type));
-}
-
-// Get factory/visitor parameter name — lowercase version of the field name
-function goParamName(m: MemberInfo): string {
-    const name = api.uncapitalize(m.name);
-    // Avoid Go keywords
-    if (name === "type") return "typeNode";
-    if (name === "default") return "defaultNode";
-    if (name === "case") return "caseNode";
-    return name;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -155,10 +145,10 @@ function generateStructDef(w: CodeWriter, node: NodeType) {
         w.write(ext);
     }
 
-    // Fields from members (skip inherited and Kind params)
+    // Fields from members (skip inherited, Kind params, and noGo)
     if (node.members.length > 0) {
         for (const m of node.members) {
-            if (m.inherited || m.isKindParam()) continue;
+            if (m.inherited || m.isKindParam() || m.noGo) continue;
             const fieldName = m.name;
             const goType = m.goOnly ? m.rawType as string : m.type.formatGoReference();
             const comment = buildFieldComment(m);
@@ -251,6 +241,7 @@ function generateBaseStructDefs(w: CodeWriter) {
         // Schema fields
         if (base.fields.length > 0) {
             for (const field of base.fields) {
+                if (field.noGo) continue;
                 const goType = field.goOnly ? field.rawType as string : field.type.formatGoReference();
                 const comment = field.optional ? " // Optional" : "";
                 w.write(`${field.name} ${goType}${comment}`);
@@ -292,7 +283,7 @@ function emitNewFactory(
     kindMember: MemberInfo | undefined,
     nodeFlagsMembers: MemberInfo[],
 ) {
-    const params = members.map(m => `${goParamName(m)} ${m.type.formatGoReference()}`).join(", ");
+    const params = members.map(m => `${m.goParamName()} ${m.type.formatGoReference()}`).join(", ");
 
     w.write(`func (f *NodeFactory) ${funcName}(${params}) *Node {`);
     w.push();
@@ -307,7 +298,7 @@ function emitNewFactory(
     for (const m of members) {
         if (m.isKindParam()) continue;
         if (isNodeFlagsMember(m)) continue;
-        const value = m.bitmask ? `${goParamName(m)} & ${m.bitmask}` : goParamName(m);
+        const value = m.bitmask ? `${m.goParamName()} & ${m.bitmask}` : m.goParamName();
         w.write(`data.${m.name} = ${value}`);
     }
 
@@ -315,12 +306,12 @@ function emitNewFactory(
         w.write("f.textCount++");
     }
 
-    const kindArg = kindMember ? goParamName(kindMember) : `Kind${kindName}`;
+    const kindArg = kindMember ? kindMember.goParamName() : `Kind${kindName}`;
 
     if (nodeFlagsMembers.length > 0) {
         w.write(`node := f.newNode(${kindArg}, data)`);
         for (const m of nodeFlagsMembers) {
-            const param = goParamName(m);
+            const param = m.goParamName();
             if (m.bitmask) {
                 w.write(`node.Flags |= ${param} & ${m.bitmask}`);
             }
@@ -366,7 +357,7 @@ function generateUpdateFactory(w: CodeWriter, node: NodeType) {
     // Build parameter list
     const params = [
         `node *${structName}`,
-        ...updateMembers.map(m => `${goParamName(m)} ${m.type.formatGoReference()}`),
+        ...updateMembers.map(m => `${m.goParamName()} ${m.type.formatGoReference()}`),
     ].join(", ");
 
     w.write(`func (f *NodeFactory) Update${node.name}(${params}) *Node {`);
@@ -377,9 +368,9 @@ function generateUpdateFactory(w: CodeWriter, node: NodeType) {
         const type = m.type;
         // Slices can't be compared with != in Go
         if (type.kind === "list" && type.listKind === "raw") {
-            return `!core.Same(${goParamName(m)}, node.${m.name})`;
+            return `!core.Same(${m.goParamName()}, node.${m.name})`;
         }
-        return `${goParamName(m)} != node.${m.name}`;
+        return `${m.goParamName()} != node.${m.name}`;
     });
 
     w.write(`if ${comparisons.join(" || ")} {`);
@@ -390,7 +381,7 @@ function generateUpdateFactory(w: CodeWriter, node: NodeType) {
         if (m.isKindParam()) {
             return "node.Kind";
         }
-        return goParamName(m);
+        return m.goParamName();
     }).join(", ");
 
     if (node.kindAliases.length > 0) {
@@ -440,6 +431,15 @@ function generateForEachChild(w: CodeWriter, node: NodeType) {
     w.write(`func (node *${structName}) ForEachChild(v Visitor) bool {`);
     w.push();
 
+    // Nodes with runtime-dependent child ordering delegate to a hand-written function.
+    if (node.handWrittenVisitor) {
+        w.write(`return forEachChild_${structName}(node, v)`);
+        w.pop();
+        w.write("}");
+        w.write("");
+        return;
+    }
+
     // Build visit chain: visit(v, node.Field) || visitNodeList(v, node.Field) || ...
     const parts = childMembers.map(m => {
         const access = `node.${m.name}`;
@@ -486,13 +486,22 @@ function generateVisitEachChild(w: CodeWriter, node: NodeType) {
     w.write(`func (node *${structName}) VisitEachChild(v *NodeVisitor) *Node {`);
     w.push();
 
+    // Nodes with runtime-dependent child ordering delegate to a hand-written function.
+    if (node.handWrittenVisitor) {
+        w.write(`return visitEachChild_${structName}(node, v)`);
+        w.pop();
+        w.write("}");
+        w.write("");
+        return;
+    }
+
     // For raw slice lists, emit local variables with core.SameMap
     const updateMembers = members.filter(m => !m.isKindParam());
     const rawListLocals: Map<string, string> = new Map();
     for (const m of updateMembers) {
         const type = m.type;
         if (m.isChild() && type.kind === "list" && type.listKind === "raw") {
-            const localName = goParamName(m);
+            const localName = m.goParamName();
             rawListLocals.set(m.name, localName);
             w.write(`${localName} := core.SameMap(node.${m.name}, func(n *Node) *Node { return v.visitNode(n) })`);
         }

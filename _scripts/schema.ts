@@ -17,17 +17,20 @@ export interface Member {
     private?: boolean;
     inherited?: boolean;
     goOnly?: boolean;
+    noGo?: boolean;
+    noTS?: boolean;
+    noFactory?: boolean;
     bitmask?: string;
 }
 
 export interface NodeDef {
-    kind?: string;
+    kind?: string | string[];
     extends: string[];
     members?: Member[];
     generateSubtreeFacts?: boolean;
-    kindAliases?: string[];
     pool?: boolean;
     handWritten?: boolean;
+    handWrittenVisitor?: boolean;
     typeParameters?: { name: string; constraint: string; default?: string; }[];
     instantiationAliases?: Record<string, string>;
 }
@@ -40,6 +43,9 @@ export interface BaseField {
     optional?: boolean;
     private?: boolean;
     goOnly?: boolean;
+    noGo?: boolean;
+    noTS?: boolean;
+    noFactory?: boolean;
 }
 
 export interface BaseEntry {
@@ -192,7 +198,9 @@ export class NodeType extends TypeBase {
     }
 
     get syntaxKindName(): string {
-        return this.def?.kind || this.name;
+        const kind = this.def?.kind;
+        if (Array.isArray(kind)) return kind[0];
+        return kind || this.name;
     }
 
     get extendsKeys(): string[] {
@@ -211,7 +219,9 @@ export class NodeType extends TypeBase {
     }
 
     get kindAliases(): string[] {
-        return this.def?.kindAliases || [];
+        const kind = this.def?.kind;
+        if (Array.isArray(kind)) return kind.slice(1);
+        return [];
     }
 
     get brand(): string | undefined {
@@ -231,6 +241,10 @@ export class NodeType extends TypeBase {
 
     get handWritten(): boolean {
         return this.def?.handWritten || false;
+    }
+
+    get handWrittenVisitor(): boolean {
+        return this.def?.handWrittenVisitor || false;
     }
 
     get generateSubtreeFacts(): boolean {
@@ -309,6 +323,18 @@ export class NodeType extends TypeBase {
             return [this.api.kindType(`SyntaxKind.${this.syntaxKindName}`)];
         }
         return [...new Map(kindTypes.map(type => [type.value, type])).values()];
+    }
+
+    /**
+     * All SyntaxKind types for this node, including kindAliases.
+     * For multi-kind nodes, returns all instantiated kind types.
+     * For single-kind nodes, returns the primary kind plus any kindAliases.
+     */
+    allKinds(): KindType[] {
+        return [
+            ...this.kindTypes(),
+            ...this.kindAliases.map(a => this.api.kindType(`SyntaxKind.${a}`)),
+        ];
     }
 
     isGoOnly(): boolean {
@@ -609,17 +635,32 @@ export class MemberInfo {
     }
 
     get inherited(): boolean {
-        return this.member?.inherited || false;
+        return this.member?.inherited ?? false;
     }
 
     get private(): boolean {
         if (this.field?.private) return true;
         if (this.member?.private) return true;
-        return this.inheritedField?.private || false;
+        return this.inheritedField?.private ?? false;
     }
 
     get goOnly(): boolean {
-        return this.field?.goOnly || this.member?.goOnly || false;
+        return this.field?.goOnly ?? this.member?.goOnly ?? false;
+    }
+
+    /** Absent from Go structs, encoding, and factory. noGo implies noFactory. */
+    get noGo(): boolean {
+        return this.field?.noGo ?? this.member?.noGo ?? false;
+    }
+
+    /** Absent from encoding and all TS files. goOnly implies noTS. */
+    get noTS(): boolean {
+        return this.goOnly || (this.field?.noTS ?? this.member?.noTS ?? false);
+    }
+
+    /** Absent from factory functions, visitor, and clone. goOnly implies noFactory. */
+    get noFactory(): boolean {
+        return this.goOnly || this.field?.noFactory || this.member?.noFactory || false;
     }
 
     get visit(): string | undefined {
@@ -656,6 +697,15 @@ export class MemberInfo {
     isChild(): boolean {
         if (!this.member || !this.node) return false;
         return this.type.baseKind() === "list" || this.type.baseKind() === "node";
+    }
+
+    /** Go parameter name: uncapitalized, with Go keyword avoidance. */
+    goParamName(): string {
+        const name = this.api.uncapitalize(this.name);
+        if (name === "type") return "typeNode";
+        if (name === "default") return "defaultNode";
+        if (name === "case") return "caseNode";
+        return name;
     }
 }
 
@@ -829,13 +879,13 @@ export class SchemaAPI {
         return result;
     }
 
-    /** A base is "Go-only" if it has no brand AND all its fields are goOnly. */
+    /** A base is "Go-only" if it has no brand AND all its fields are both noTS and noFactory. */
     isGoOnlyBase(key: string): boolean {
         const base = this.schema.bases[key];
         if (!base) return false;
         if (base.brand) return false;
         if (!base.fields) return true;
-        return Object.values(base.fields).every(f => f.goOnly);
+        return Object.values(base.fields).every(f => f.goOnly || (f.noTS && f.noFactory));
     }
 
     resolveType(typeName: string | string[], node?: NodeDef): Type {

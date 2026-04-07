@@ -133,7 +133,7 @@ type ExportableBase struct {
 }
 
 type ModifiersBase struct {
-	modifiers *ModifierList
+	modifiers *ModifierList // Optional
 }
 
 type LocalsContainerBase struct {
@@ -1794,8 +1794,8 @@ type VariableDeclaration struct {
 	CompositeBase
 	name             *BindingName
 	ExclamationToken *ExclamationToken // Optional
-	Type             *TypeNode
-	Initializer      *Expression // Optional
+	Type             *TypeNode         // Optional
+	Initializer      *Expression       // Optional
 }
 
 func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken *ExclamationToken, typeNode *TypeNode, initializer *Expression) *Node {
@@ -1930,11 +1930,11 @@ type ParameterDeclaration struct {
 	DeclarationBase
 	ModifiersBase
 	CompositeBase
-	DotDotDotToken *DotDotDotToken
+	DotDotDotToken *DotDotDotToken // Optional
 	name           *BindingName
 	QuestionToken  *QuestionToken // Optional
-	Type           *TypeNode
-	Initializer    *Expression // Optional
+	Type           *TypeNode      // Optional
+	Initializer    *Expression    // Optional
 }
 
 func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierList, dotDotDotToken *DotDotDotToken, name *BindingName, questionToken *QuestionToken, typeNode *TypeNode, initializer *Expression) *Node {
@@ -3892,7 +3892,7 @@ type BinaryExpression struct {
 	ModifiersBase
 	CompositeBase
 	Left          *Expression
-	Type          *TypeNode
+	Type          *TypeNode // Optional
 	OperatorToken *BinaryOperatorToken
 	Right         *Expression
 }
@@ -8422,12 +8422,12 @@ type ImportClause struct {
 	DeclarationBase
 	ExportableBase
 	CompositeBase
-	PhaseModifier Kind
-	name          *IdentifierNode      // Optional
-	NamedBindings *NamedImportBindings // Optional
+	PhaseModifier ImportPhaseModifierSyntaxKind // Optional
+	name          *IdentifierNode               // Optional
+	NamedBindings *NamedImportBindings          // Optional
 }
 
-func (f *NodeFactory) NewImportClause(phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+func (f *NodeFactory) NewImportClause(phaseModifier ImportPhaseModifierSyntaxKind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
 	data := &ImportClause{}
 	data.PhaseModifier = phaseModifier
 	data.name = name
@@ -8435,7 +8435,7 @@ func (f *NodeFactory) NewImportClause(phaseModifier Kind, name *IdentifierNode, 
 	return f.newNode(KindImportClause, data)
 }
 
-func (f *NodeFactory) UpdateImportClause(node *ImportClause, phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+func (f *NodeFactory) UpdateImportClause(node *ImportClause, phaseModifier ImportPhaseModifierSyntaxKind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
 	if phaseModifier != node.PhaseModifier || name != node.name || namedBindings != node.NamedBindings {
 		return updateNode(f.NewImportClause(phaseModifier, name, namedBindings), node.AsNode(), f.hooks)
 	}
@@ -8836,14 +8836,11 @@ func (f *NodeFactory) UpdateJSDocParameterTag(node *JSDocParameterTag, tagName *
 }
 
 func (node *JSDocParameterTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) ||
-		visit(v, node.name) ||
-		visit(v, node.TypeExpression) ||
-		visitNodeList(v, node.Comment)
+	return forEachChild_JSDocParameterTag(node, v)
 }
 
 func (node *JSDocParameterTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocParameterTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+	return visitEachChild_JSDocParameterTag(node, v)
 }
 
 func (node *JSDocParameterTag) Clone(f NodeFactoryCoercible) *Node {
@@ -8885,14 +8882,11 @@ func (f *NodeFactory) UpdateJSDocPropertyTag(node *JSDocPropertyTag, tagName *Id
 }
 
 func (node *JSDocPropertyTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) ||
-		visit(v, node.name) ||
-		visit(v, node.TypeExpression) ||
-		visitNodeList(v, node.Comment)
+	return forEachChild_JSDocPropertyTag(node, v)
 }
 
 func (node *JSDocPropertyTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+	return visitEachChild_JSDocPropertyTag(node, v)
 }
 
 func (node *JSDocPropertyTag) Clone(f NodeFactoryCoercible) *Node {

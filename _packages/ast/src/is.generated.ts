@@ -566,7 +566,13 @@ export function isInterfaceDeclaration(node: Node): node is InterfaceDeclaration
 }
 
 export function isTypeAliasDeclaration(node: Node): node is TypeAliasDeclaration {
-    return node.kind === SyntaxKind.TypeAliasDeclaration;
+    switch (node.kind) {
+        case SyntaxKind.TypeAliasDeclaration:
+        case SyntaxKind.JSTypeAliasDeclaration:
+            return true;
+        default:
+            return false;
+    }
 }
 
 export function isEnumMember(node: Node): node is EnumMember {
@@ -590,7 +596,13 @@ export function isNotEmittedTypeElement(node: Node): node is NotEmittedTypeEleme
 }
 
 export function isImportDeclaration(node: Node): node is ImportDeclaration {
-    return node.kind === SyntaxKind.ImportDeclaration;
+    switch (node.kind) {
+        case SyntaxKind.ImportDeclaration:
+        case SyntaxKind.JSImportDeclaration:
+            return true;
+        default:
+            return false;
+    }
 }
 
 export function isExternalModuleReference(node: Node): node is ExternalModuleReference {
@@ -606,7 +618,13 @@ export function isNamedImports(node: Node): node is NamedImports {
 }
 
 export function isExportAssignment(node: Node): node is ExportAssignment {
-    return node.kind === SyntaxKind.ExportAssignment;
+    switch (node.kind) {
+        case SyntaxKind.ExportAssignment:
+        case SyntaxKind.JSExportAssignment:
+            return true;
+        default:
+            return false;
+    }
 }
 
 export function isCommonJSExport(node: Node): node is CommonJSExport {
@@ -1427,7 +1445,7 @@ export function isImportClauseOrBindingPattern(node: Node): node is ImportClause
 }
 
 export function isAnyImportSyntax(node: Node): node is AnyImportSyntax {
-    return node.kind === SyntaxKind.ImportDeclaration || node.kind === SyntaxKind.ImportEqualsDeclaration;
+    return node.kind === SyntaxKind.ImportDeclaration || node.kind === SyntaxKind.JSImportDeclaration || node.kind === SyntaxKind.ImportEqualsDeclaration;
 }
 
 export function isArrayBindingElement(node: Node): node is ArrayBindingElement {

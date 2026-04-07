@@ -1,32 +1,17 @@
 import type {
-    ArrayLiteralExpression,
-    Block,
-    ExportAssignment,
-    ExportDeclaration,
-    ExportSpecifier,
     FileReference,
-    ImportAttributes,
-    ImportClause,
-    ImportEqualsDeclaration,
-    ImportSpecifier,
-    ImportTypeNode,
-    JSDocPropertyLikeTag,
-    JSDocTag,
-    JSDocTypeLiteral,
-    JsxText,
-    LiteralLike,
+    JSDocPropertyLikeTagBase,
+    JSDocTagBase,
     Node,
     NodeArray,
-    ObjectLiteralExpression,
-    PostfixUnaryExpression,
-    PrefixUnaryExpression,
     SourceFile,
-    TemplateLiteralLike,
+    TemplateLiteralLikeNode,
 } from "@typescript/ast";
+import { SyntaxKind } from "@typescript/ast";
 import {
-    NodeFlags,
-    SyntaxKind,
-} from "@typescript/ast";
+    getNodeCommonData,
+    getNodeDataType,
+} from "./encoder.generated.ts";
 import { MsgpackWriter } from "./msgpack.ts";
 import {
     childProperties,
@@ -100,87 +85,12 @@ function cachedEncoder(): TextEncoder {
     return _encoder ??= new TextEncoder();
 }
 
-function getNodeDataType(kind: SyntaxKind): number {
-    switch (kind) {
-        case SyntaxKind.JsxText:
-        case SyntaxKind.Identifier:
-        case SyntaxKind.PrivateIdentifier:
-        case SyntaxKind.StringLiteral:
-        case SyntaxKind.NumericLiteral:
-        case SyntaxKind.BigIntLiteral:
-        case SyntaxKind.RegularExpressionLiteral:
-        case SyntaxKind.NoSubstitutionTemplateLiteral:
-        case SyntaxKind.JSDocText:
-        case SyntaxKind.JSDocLink:
-        case SyntaxKind.JSDocLinkCode:
-        case SyntaxKind.JSDocLinkPlain:
-            return NODE_DATA_TYPE_STRING;
-        case SyntaxKind.TemplateHead:
-        case SyntaxKind.TemplateMiddle:
-        case SyntaxKind.TemplateTail:
-        case SyntaxKind.SourceFile:
-            return NODE_DATA_TYPE_EXTENDED;
-        default:
-            return NODE_DATA_TYPE_CHILDREN;
-    }
-}
-
-function getNodeDefinedData(node: Node): number {
-    switch (node.kind) {
-        case SyntaxKind.JSDocTypeLiteral:
-            return ((node as JSDocTypeLiteral).isArrayType ? 1 : 0) << 24;
-        case SyntaxKind.ImportSpecifier:
-            return ((node as ImportSpecifier).isTypeOnly ? 1 : 0) << 24;
-        case SyntaxKind.ImportEqualsDeclaration:
-            return ((node as ImportEqualsDeclaration).isTypeOnly ? 1 : 0) << 24;
-        case SyntaxKind.ExportDeclaration:
-            return ((node as ExportDeclaration).isTypeOnly ? 1 : 0) << 24;
-        case SyntaxKind.ImportClause: {
-            const phaseModifier = (node as ImportClause).phaseModifier;
-            return ((phaseModifier === SyntaxKind.TypeKeyword ? 1 : 0) << 24) |
-                ((phaseModifier === SyntaxKind.DeferKeyword ? 1 : 0) << 25);
-        }
-        case SyntaxKind.ExportSpecifier:
-            return ((node as ExportSpecifier).isTypeOnly ? 1 : 0) << 24;
-        case SyntaxKind.ImportType:
-            return ((node as ImportTypeNode).isTypeOf ? 1 : 0) << 24;
-        case SyntaxKind.ExportAssignment:
-            return ((node as ExportAssignment).isExportEquals ? 1 : 0) << 24;
-        case SyntaxKind.Block:
-            return ((node as Block).multiline ? 1 : 0) << 24;
-        case SyntaxKind.ArrayLiteralExpression:
-            return ((node as ArrayLiteralExpression).multiLine ? 1 : 0) << 24;
-        case SyntaxKind.ObjectLiteralExpression:
-            return ((node as ObjectLiteralExpression).multiLine ? 1 : 0) << 24;
-        case SyntaxKind.JSDocParameterTag:
-        case SyntaxKind.JSDocPropertyTag: {
-            const tag = node as JSDocPropertyLikeTag;
-            return ((tag.isBracketed ? 1 : 0) << 24) | ((tag.isNameFirst ? 1 : 0) << 25);
-        }
-        case SyntaxKind.JsxText:
-            return ((node as JsxText).containsOnlyTriviaWhiteSpaces ? 1 : 0) << 24;
-        case SyntaxKind.VariableDeclarationList: {
-            const flags = node.flags;
-            return (flags & NodeFlags.BlockScoped) << 24;
-        }
-        case SyntaxKind.ImportAttributes: {
-            const attrs = node as ImportAttributes;
-            return ((attrs.multiLine ? 1 : 0) << 24) |
-                ((attrs.token === SyntaxKind.AssertKeyword ? 1 : 0) << 25);
-        }
-        case SyntaxKind.PrefixUnaryExpression:
-        case SyntaxKind.PostfixUnaryExpression:
-            return ((node as PrefixUnaryExpression | PostfixUnaryExpression).operator & 0x3f) << 24;
-    }
-    return 0;
-}
-
 function getChildrenPropertyMask(node: Node): number {
     const kind = node.kind;
 
     // Special handling for JSDocParameterTag and JSDocPropertyTag
     if (kind === SyntaxKind.JSDocParameterTag || kind === SyntaxKind.JSDocPropertyTag) {
-        const tag = node as JSDocPropertyLikeTag & JSDocTag;
+        const tag = node as JSDocPropertyLikeTagBase & JSDocTagBase;
         if (tag.isNameFirst) {
             return (boolBit(tag.tagName) << 0) | (boolBit(tag.name) << 1) | (boolBit(tag.typeExpression) << 2) | (boolBit(tag.comment) << 3);
         }
@@ -216,7 +126,7 @@ function isChildPresent(v: unknown): boolean {
 }
 
 function recordNodeStrings(node: Node, strs: StringTable): number {
-    return strs.add((node as LiteralLike).text ?? "");
+    return strs.add((node as any).text ?? "");
 }
 
 function encodeFileReferences(refs: readonly FileReference[] | undefined, writer: MsgpackWriter): number {
@@ -246,9 +156,12 @@ function recordExtendedData(node: Node, strs: StringTable, extendedData: number[
         const libRefDirectivesOffset = encodeFileReferences(sf.libReferenceDirectives, structuredWriter);
         extendedData.push(textIndex, fileNameIndex, pathIndex, sf.languageVariant, sf.scriptKind, referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, 0);
     }
-    else {
-        // TemplateHead, TemplateMiddle, TemplateTail
-        const tmpl = node as TemplateLiteralLike;
+    else if (
+        node.kind === SyntaxKind.TemplateHead ||
+        node.kind === SyntaxKind.TemplateMiddle ||
+        node.kind === SyntaxKind.TemplateTail
+    ) {
+        const tmpl = node as TemplateLiteralLikeNode;
         const text: string = tmpl.text ?? "";
         const rawText: string = tmpl.rawText ?? "";
         const templateFlags: number = tmpl.templateFlags ?? 0;
@@ -256,86 +169,37 @@ function recordExtendedData(node: Node, strs: StringTable, extendedData: number[
         const rawTextIndex = strs.add(rawText);
         extendedData.push(textIndex, rawTextIndex, templateFlags);
     }
+    else {
+        // StringLiteral, NumericLiteral, BigIntLiteral, RegularExpressionLiteral,
+        // NoSubstitutionTemplateLiteral — format: [textIndex, tokenFlags]
+        const n = node as any;
+        const text: string = n.text ?? "";
+        const tokenFlags: number = n.tokenFlags ?? 0;
+        const textIndex = strs.add(text);
+        extendedData.push(textIndex, tokenFlags);
+    }
     return offset;
 }
 
 function getNodeData(node: Node, strs: StringTable, extendedData: number[], structuredWriter: MsgpackWriter): number {
     const t = getNodeDataType(node.kind);
-    const defined = getNodeDefinedData(node);
+    const common = getNodeCommonData(node);
     switch (t) {
         case NODE_DATA_TYPE_CHILDREN:
-            return t | defined | getChildrenPropertyMask(node);
+            return t | common | getChildrenPropertyMask(node);
         case NODE_DATA_TYPE_STRING:
-            return t | defined | recordNodeStrings(node, strs);
+            return t | common | recordNodeStrings(node, strs);
         case NODE_DATA_TYPE_EXTENDED:
-            return t | defined | recordExtendedData(node, strs, extendedData, structuredWriter);
+            return t | common | recordExtendedData(node, strs, extendedData, structuredWriter);
         default:
             throw new Error("unreachable");
     }
 }
 
-const singleChildNodePropertyNames: Readonly<Partial<Record<SyntaxKind, string>>> = {
-    // Single-child nodes
-    [SyntaxKind.ReturnStatement]: "expression",
-    [SyntaxKind.ThrowStatement]: "expression",
-    [SyntaxKind.ExpressionStatement]: "expression",
-    [SyntaxKind.BreakStatement]: "label",
-    [SyntaxKind.ContinueStatement]: "label",
-    [SyntaxKind.ParenthesizedExpression]: "expression",
-    [SyntaxKind.ComputedPropertyName]: "expression",
-    [SyntaxKind.Decorator]: "expression",
-    [SyntaxKind.SpreadElement]: "expression",
-    [SyntaxKind.SpreadAssignment]: "expression",
-    [SyntaxKind.DeleteExpression]: "expression",
-    [SyntaxKind.TypeOfExpression]: "expression",
-    [SyntaxKind.VoidExpression]: "expression",
-    [SyntaxKind.AwaitExpression]: "expression",
-    [SyntaxKind.NonNullExpression]: "expression",
-    [SyntaxKind.ExternalModuleReference]: "expression",
-    [SyntaxKind.NamespaceImport]: "name",
-    [SyntaxKind.NamespaceExport]: "name",
-    [SyntaxKind.JsxClosingElement]: "tagName",
-    [SyntaxKind.ArrayType]: "elementType",
-    [SyntaxKind.LiteralType]: "literal",
-    [SyntaxKind.InferType]: "typeParameter",
-    [SyntaxKind.OptionalType]: "type",
-    [SyntaxKind.RestType]: "type",
-    [SyntaxKind.ParenthesizedType]: "type",
-    [SyntaxKind.JSDocTypeExpression]: "type",
-    [SyntaxKind.JSDocNonNullableType]: "type",
-    [SyntaxKind.JSDocNullableType]: "type",
-    [SyntaxKind.JSDocVariadicType]: "type",
-    [SyntaxKind.JSDocOptionalType]: "type",
-    [SyntaxKind.PrefixUnaryExpression]: "operand",
-    [SyntaxKind.PostfixUnaryExpression]: "operand",
-    [SyntaxKind.MetaProperty]: "name",
-    [SyntaxKind.TypeOperator]: "type",
-    [SyntaxKind.MissingDeclaration]: "modifiers",
-    // Single NodeList child nodes
-    [SyntaxKind.Block]: "statements",
-    [SyntaxKind.VariableDeclarationList]: "declarations",
-    [SyntaxKind.ImportAttributes]: "elements",
-    [SyntaxKind.ArrayLiteralExpression]: "elements",
-    [SyntaxKind.ObjectLiteralExpression]: "properties",
-    [SyntaxKind.UnionType]: "types",
-    [SyntaxKind.IntersectionType]: "types",
-    [SyntaxKind.TupleType]: "elements",
-    [SyntaxKind.NamedImports]: "elements",
-    [SyntaxKind.NamedExports]: "elements",
-    [SyntaxKind.ModuleBlock]: "statements",
-    [SyntaxKind.CaseBlock]: "clauses",
-    [SyntaxKind.TypeLiteral]: "members",
-    [SyntaxKind.JsxAttributes]: "properties",
-    [SyntaxKind.ArrayBindingPattern]: "elements",
-    [SyntaxKind.ObjectBindingPattern]: "elements",
-    [SyntaxKind.HeritageClause]: "types",
-    [SyntaxKind.JSDocTypeLiteral]: "jsDocPropertyTags",
-};
-
-function getChildPropertiesForNode(node: Node): readonly string[] | undefined {
+function getChildPropertiesForNode(node: Node): readonly (string | undefined)[] | undefined {
     const kind = node.kind;
     if (kind === SyntaxKind.JSDocParameterTag || kind === SyntaxKind.JSDocPropertyTag) {
-        if ((node as JSDocPropertyLikeTag).isNameFirst) {
+        if ((node as JSDocPropertyLikeTagBase).isNameFirst) {
             return kind === SyntaxKind.JSDocParameterTag
                 ? ["tagName", "name", "typeExpression", "comment"]
                 : ["name", "typeExpression"];
@@ -344,7 +208,7 @@ function getChildPropertiesForNode(node: Node): readonly string[] | undefined {
             ? ["tagName", "typeExpression", "name", "comment"]
             : ["typeExpression", "name"];
     }
-    return childProperties[kind] ?? [singleChildNodePropertyNames[kind]!];
+    return childProperties[kind];
 }
 
 // Returns whether a value is a NodeArray (array-like with pos and end).

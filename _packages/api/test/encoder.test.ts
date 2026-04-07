@@ -32,6 +32,7 @@ import {
     encodeSourceFile,
 } from "../src/node/encoder.ts";
 import {
+    RemoteNode,
     RemoteNodeList,
     RemoteSourceFile,
 } from "../src/node/node.ts";
@@ -262,7 +263,7 @@ describe("Encoder", () => {
         assert.strictEqual(jsxElem.kind, SyntaxKind.JsxElement);
         const openingElem = jsxElem.openingElement!;
         assert.strictEqual(openingElem.kind, SyntaxKind.JsxOpeningElement);
-        const attrs = openingElem.attributes!;
+        const attrs = openingElem.attributes! as RemoteNode;
         assert.strictEqual(attrs.kind, SyntaxKind.JsxAttributes);
         // Empty properties should return undefined, not throw
         assert.strictEqual(attrs.properties, undefined);

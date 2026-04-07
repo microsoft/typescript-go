@@ -840,7 +840,6 @@
                 "KeywordSyntaxKind"
             ],
             "ImportPhaseModifierSyntaxKind": [
-                "Unknown",
                 "TypeKeyword",
                 "DeferKeyword"
             ],
@@ -1073,8 +1072,14 @@
                 "modifiers": {
                     "type": "ModifierLike",
                     "list": "ModifierList",
+                    "optional": true,
                     "private": true,
                     "visit": "modifiers"
+                },
+                "modifierFlags": {
+                    "type": "ModifierFlags",
+                    "noGo": true,
+                    "noFactory": true
                 }
             },
             "extends": []
@@ -1858,7 +1863,8 @@
                     },
                     {
                         "name": "Type",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "Initializer",
@@ -1922,7 +1928,8 @@
                     },
                     {
                         "name": "DotDotDotToken",
-                        "type": "DotDotDotToken"
+                        "type": "DotDotDotToken",
+                        "optional": true
                     },
                     {
                         "name": "name",
@@ -1936,7 +1943,8 @@
                     },
                     {
                         "name": "Type",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "Initializer",
@@ -2028,7 +2036,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "Body",
@@ -2161,6 +2170,7 @@
                 "pool": true
             },
             "TypeAliasDeclaration": {
+                "kind": ["TypeAliasDeclaration", "JSTypeAliasDeclaration"],
                 "extends": [
                     "DeclarationBase",
                     "StatementBase",
@@ -2189,9 +2199,6 @@
                         "name": "Type",
                         "type": "TypeNode"
                     }
-                ],
-                "kindAliases": [
-                    "JSTypeAliasDeclaration"
                 ],
                 "pool": true
             },
@@ -2264,6 +2271,7 @@
                 ]
             },
             "ImportDeclaration": {
+                "kind": ["ImportDeclaration", "JSImportDeclaration"],
                 "generateSubtreeFacts": true,
                 "extends": [
                     "StatementBase",
@@ -2290,9 +2298,6 @@
                         "type": "ImportAttributes",
                         "optional": true
                     }
-                ],
-                "kindAliases": [
-                    "JSImportDeclaration"
                 ]
             },
             "ExternalModuleReference": {
@@ -2337,6 +2342,7 @@
                 ]
             },
             "ExportAssignment": {
+                "kind": ["ExportAssignment", "JSExportAssignment"],
                 "extends": [
                     "DeclarationBase",
                     "StatementBase",
@@ -2360,9 +2366,6 @@
                         "name": "Expression",
                         "type": "Expression"
                     }
-                ],
-                "kindAliases": [
-                    "JSExportAssignment"
                 ]
             },
             "CommonJSExport": {
@@ -2542,7 +2545,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "Body",
@@ -2586,7 +2590,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "Body",
@@ -2625,7 +2630,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "Body",
@@ -2740,7 +2746,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "Body",
@@ -2981,7 +2988,8 @@
                     },
                     {
                         "name": "Type",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "OperatorToken",
@@ -3082,7 +3090,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "EqualsGreaterThanToken",
@@ -3135,7 +3144,8 @@
                     },
                     {
                         "name": "FullSignature",
-                        "inherited": true
+                        "inherited": true,
+                        "noTS": true
                     },
                     {
                         "name": "Body",
@@ -5084,11 +5094,8 @@
                 "members": [
                     {
                         "name": "PhaseModifier",
-                        "type": [
-                            "SyntaxKind.Unknown",
-                            "SyntaxKind.TypeKeyword",
-                            "SyntaxKind.DeferKeyword"
-                        ]
+                        "type": "ImportPhaseModifierSyntaxKind",
+                        "optional": true
                     },
                     {
                         "name": "name",
@@ -5264,6 +5271,7 @@
                 "extends": [
                     "JSDocPropertyLikeTagBase"
                 ],
+                "handWrittenVisitor": true,
                 "members": [
                     {
                         "name": "TagName",
@@ -5295,6 +5303,7 @@
                 "extends": [
                     "JSDocPropertyLikeTagBase"
                 ],
+                "handWrittenVisitor": true,
                 "members": [
                     {
                         "name": "TagName",

@@ -1,5 +1,5 @@
 // is.ts — Hand-written type guard functions
-// Generated guards are in is-generated.ts
+// Generated guards are in is.generated.ts
 
 import { NodeFlags } from "#enums/nodeFlags";
 import { OuterExpressionKinds } from "#enums/outerExpressionKinds";
@@ -59,8 +59,8 @@ import type {
     UnaryExpressionBase,
 } from "./ast.ts";
 
-export * from "./is-generated.ts";
-import { isDecorator } from "./is-generated.ts";
+export * from "./is.generated.ts";
+import { isDecorator } from "./is.generated.ts";
 
 type JSDocNamespaceDeclaration = ModuleDeclaration;
 

@@ -42,13 +42,13 @@ import {
 } from "@typescript/ast";
 import { SyntaxKind } from "@typescript/ast";
 import {
-    createArrayType,
-    createFunctionType,
+    createArrayTypeNode,
+    createFunctionTypeNode,
     createIdentifier,
     createKeywordTypeNode,
-    createParameter,
-    createTypeReference,
-    createUnionType,
+    createParameterDeclaration,
+    createTypeReferenceNode,
+    createUnionTypeNode,
 } from "@typescript/ast/factory";
 import assert from "node:assert";
 import {
@@ -1910,7 +1910,7 @@ export type Pair = [string, number];
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const node = createUnionType([
+            const node = createUnionTypeNode([
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
             ]);
@@ -1927,7 +1927,7 @@ export type Pair = [string, number];
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const param = createParameter(
+            const param = createParameterDeclaration(
                 undefined,
                 undefined,
                 createIdentifier("x"),
@@ -1935,7 +1935,7 @@ export type Pair = [string, number];
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
                 undefined,
             );
-            const node = createFunctionType(
+            const node = createFunctionTypeNode(
                 undefined,
                 [param],
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
@@ -1953,7 +1953,7 @@ export type Pair = [string, number];
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const node = createTypeReference(createIdentifier("Array"), [
+            const node = createTypeReferenceNode(createIdentifier("Array"), [
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
             ]);
             const text = project.emitter.printNode(node);
@@ -1969,7 +1969,7 @@ export type Pair = [string, number];
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const node = createArrayType(createKeywordTypeNode(SyntaxKind.NumberKeyword));
+            const node = createArrayTypeNode(createKeywordTypeNode(SyntaxKind.NumberKeyword));
             const text = project.emitter.printNode(node);
             assert.strictEqual(text, "number[]");
         }

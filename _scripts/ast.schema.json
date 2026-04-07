@@ -5,7 +5,6 @@
     "type": "object",
     "required": [
         "bases",
-        "unions",
         "nodes"
     ],
     "additionalProperties": false,
@@ -176,6 +175,7 @@
                     "description": "How this member stores multiple child nodes.",
                     "enum": [
                         "NodeList",
+                        "ModifierList",
                         "raw"
                     ]
                 },
@@ -195,7 +195,19 @@
                 },
                 "goOnly": {
                     "type": "boolean",
-                    "description": "If true, this field is Go-only"
+                    "description": "If true, this field is Go-only (implies both noTS and noFactory)"
+                },
+                "noGo": {
+                    "type": "boolean",
+                    "description": "If true, this field is absent from Go"
+                },
+                "noTS": {
+                    "type": "boolean",
+                    "description": "If true, this field is excluded from encoding and all TS files"
+                },
+                "noFactory": {
+                    "type": "boolean",
+                    "description": "If true, this field is excluded from factory functions, visitor, and clone"
                 }
             }
         },
@@ -232,8 +244,20 @@
             "additionalProperties": false,
             "properties": {
                 "kind": {
-                    "type": "string",
-                    "description": "SyntaxKind constant base name when it differs from the schema key. The schema key is the Go struct / TS interface name; this is the Kind constant name (e.g., key='TypeParameterDeclaration', kind='TypeParameter' \u2192 KindTypeParameter)."
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "description": "SyntaxKind constant base name when it differs from the schema key."
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Array of SyntaxKind names sharing this node's data shape. The first is the primary kind; the rest are aliases."
+                        }
+                    ],
+                    "description": "SyntaxKind constant name(s). When it differs from the schema key, specify a string. When multiple SyntaxKind values share this node's implementation, specify an array."
                 },
                 "extends": {
                     "type": "array",
@@ -249,16 +273,13 @@
                         "$ref": "#/definitions/member"
                     }
                 },
-                "kindAliases": {
-                    "type": "array",
-                    "description": "Additional SyntaxKind names that share this node's underlying data shape and generated implementation.",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "pool": {
                     "type": "boolean",
                     "description": "Whether this node uses an object pool for allocation."
+                },
+                "handWrittenVisitor": {
+                    "type": "boolean",
+                    "description": "Whether this node's ForEachChild and VisitEachChild functions are hand-written rather than generated."
                 },
                 "generateSubtreeFacts": {
                     "type": "boolean",
@@ -300,6 +321,10 @@
                         "type": "string",
                         "description": "SyntaxKind value to instantiate the type parameter with"
                     }
+                },
+                "handWritten": {
+                    "type": "boolean",
+                    "description": "Whether this node's factory, visitor, and other generated code is hand-written rather than generated."
                 }
             }
         },
@@ -341,6 +366,7 @@
                     "description": "How this member stores multiple child nodes. \"NodeList\" for *NodeList, \"raw\" for []*Node.",
                     "enum": [
                         "NodeList",
+                        "ModifierList",
                         "raw"
                     ]
                 },
@@ -358,7 +384,15 @@
                 },
                 "goOnly": {
                     "type": "boolean",
-                    "description": "If true, this member is Go-only"
+                    "description": "If true, this member is Go-only (implies both noTS and noFactory)"
+                },
+                "noTS": {
+                    "type": "boolean",
+                    "description": "If true, this member is excluded from encoding and all TS files"
+                },
+                "noFactory": {
+                    "type": "boolean",
+                    "description": "If true, this member is excluded from factory functions, visitor, and clone"
                 },
                 "bitmask": {
                     "type": "string",

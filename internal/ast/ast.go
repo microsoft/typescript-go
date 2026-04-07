@@ -3069,3 +3069,32 @@ type PragmaSpecification struct {
 func (spec *PragmaSpecification) IsTripleSlash() bool {
 	return (spec.Kind & PragmaKindTripleSlashXML) > 0
 }
+
+// Hand-written visitor implementations for nodes with runtime-dependent
+// child ordering. Generated code in ast_generated.go delegates to these.
+
+func forEachChild_JSDocParameterTag(node *JSDocParameterTag, v Visitor) bool {
+	return visit(v, node.TagName) ||
+		(node.IsNameFirst &&
+			(visit(v, node.name) || visit(v, node.TypeExpression))) ||
+		(!node.IsNameFirst &&
+			(visit(v, node.TypeExpression) || visit(v, node.name))) ||
+		visitNodeList(v, node.Comment)
+}
+
+func visitEachChild_JSDocParameterTag(node *JSDocParameterTag, v *NodeVisitor) *Node {
+	return v.Factory.UpdateJSDocParameterTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+}
+
+func forEachChild_JSDocPropertyTag(node *JSDocPropertyTag, v Visitor) bool {
+	return visit(v, node.TagName) ||
+		(node.IsNameFirst &&
+			(visit(v, node.name) || visit(v, node.TypeExpression))) ||
+		(!node.IsNameFirst &&
+			(visit(v, node.TypeExpression) || visit(v, node.name))) ||
+		visitNodeList(v, node.Comment)
+}
+
+func visitEachChild_JSDocPropertyTag(node *JSDocPropertyTag, v *NodeVisitor) *Node {
+	return v.Factory.UpdateJSDocPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+}

@@ -1,5 +1,5 @@
 // ast.ts — Hand-written AST type definitions
-// Generated types are in ast-generated.ts
+// Generated types are in ast.generated.ts
 
 import type { LanguageVariant } from "#enums/languageVariant";
 import type { NodeFlags } from "#enums/nodeFlags";
@@ -15,12 +15,12 @@ import type {
     PunctuationSyntaxKind,
     Statement,
     Token,
-} from "./ast-generated.ts";
+} from "./ast.generated.ts";
 
 export { SyntaxKind } from "#enums/syntaxKind";
 export { TokenFlags } from "#enums/tokenFlags";
 
-export * from "./ast-generated.ts";
+export * from "./ast.generated.ts";
 
 // ── Core types ──
 
