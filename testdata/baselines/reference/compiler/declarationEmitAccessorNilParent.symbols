@@ -1,0 +1,50 @@
+//// [tests/cases/compiler/declarationEmitAccessorNilParent.ts] ////
+
+=== declarationEmitAccessorNilParent.ts ===
+// Regression test: when an accessor property symbol has a nil parent
+// (e.g. from a union/intersection of classes with differing value declarations),
+// the node builder should not crash with a nil pointer dereference.
+
+class A {
+>A : Symbol(A, Decl(declarationEmitAccessorNilParent.ts, 0, 0))
+
+    get x(): number { return 1; }
+>x : Symbol(A.x, Decl(declarationEmitAccessorNilParent.ts, 4, 9), Decl(declarationEmitAccessorNilParent.ts, 5, 33))
+
+    set x(v: number) { }
+>x : Symbol(A.x, Decl(declarationEmitAccessorNilParent.ts, 4, 9), Decl(declarationEmitAccessorNilParent.ts, 5, 33))
+>v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 6, 10))
+}
+
+class B {
+>B : Symbol(B, Decl(declarationEmitAccessorNilParent.ts, 7, 1))
+
+    get x(): number { return 2; }
+>x : Symbol(B.x, Decl(declarationEmitAccessorNilParent.ts, 9, 9), Decl(declarationEmitAccessorNilParent.ts, 10, 33))
+
+    set x(v: number) { }
+>x : Symbol(B.x, Decl(declarationEmitAccessorNilParent.ts, 9, 9), Decl(declarationEmitAccessorNilParent.ts, 10, 33))
+>v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 11, 10))
+}
+
+// Force inlined structural type emit by using non-exported local classes
+function make() {
+>make : Symbol(make, Decl(declarationEmitAccessorNilParent.ts, 12, 1))
+
+    class C {
+>C : Symbol(C, Decl(declarationEmitAccessorNilParent.ts, 15, 17))
+
+        get foo(): number { return 1; }
+>foo : Symbol(C.foo, Decl(declarationEmitAccessorNilParent.ts, 16, 13), Decl(declarationEmitAccessorNilParent.ts, 17, 39))
+
+        set foo(v: number) { }
+>foo : Symbol(C.foo, Decl(declarationEmitAccessorNilParent.ts, 16, 13), Decl(declarationEmitAccessorNilParent.ts, 17, 39))
+>v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 18, 16))
+    }
+    return new C();
+>C : Symbol(C, Decl(declarationEmitAccessorNilParent.ts, 15, 17))
+}
+export const val = make();
+>val : Symbol(val, Decl(declarationEmitAccessorNilParent.ts, 22, 12))
+>make : Symbol(make, Decl(declarationEmitAccessorNilParent.ts, 12, 1))
+

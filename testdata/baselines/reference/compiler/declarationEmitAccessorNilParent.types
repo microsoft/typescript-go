@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/declarationEmitAccessorNilParent.ts] ////
+
+=== declarationEmitAccessorNilParent.ts ===
+// Regression test: when an accessor property symbol has a nil parent
+// (e.g. from a union/intersection of classes with differing value declarations),
+// the node builder should not crash with a nil pointer dereference.
+
+class A {
+>A : A
+
+    get x(): number { return 1; }
+>x : number
+>1 : 1
+
+    set x(v: number) { }
+>x : number
+>v : number
+}
+
+class B {
+>B : B
+
+    get x(): number { return 2; }
+>x : number
+>2 : 2
+
+    set x(v: number) { }
+>x : number
+>v : number
+}
+
+// Force inlined structural type emit by using non-exported local classes
+function make() {
+>make : () => C
+
+    class C {
+>C : C
+
+        get foo(): number { return 1; }
+>foo : number
+>1 : 1
+
+        set foo(v: number) { }
+>foo : number
+>v : number
+    }
+    return new C();
+>new C() : C
+>C : typeof C
+}
+export const val = make();
+>val : C
+>make() : C
+>make : () => C
+
