@@ -33,6 +33,25 @@ func (v *View) GetModuleSpecifier(
 					)
 
 					if !modulespecifiers.IsExcludedByRegex(specifier, userPreferences.AutoImportSpecifierExcludeRegexes) {
+						// Before returning a package specifier, check if the realpath-based
+						// module resolution produces a relative specifier (same-package case).
+						// This handles monorepo setups where project files are symlinked into node_modules.
+						realpathSpecifiers, realpathKind := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
+							v.importingFile,
+							v.program.Host().FS().Realpath(export.ModuleFileName),
+							v.program.Options(),
+							v.program,
+							userPreferences,
+							modulespecifiers.ModuleSpecifierOptions{},
+							true,
+						)
+						if realpathKind == modulespecifiers.ResultKindRelative {
+							for _, s := range realpathSpecifiers {
+								if !strings.Contains(s, "/node_modules/") {
+									return s, realpathKind
+								}
+							}
+						}
 						return specifier, modulespecifiers.ResultKindNodeModules
 					}
 				}
@@ -60,9 +79,6 @@ func (v *View) GetModuleSpecifier(
 		modulespecifiers.ModuleSpecifierOptions{},
 		true,
 	)
-	// !!! unsure when this could return multiple specifiers combined with the
-	//     new node_modules code. Possibly with local symlinks, which should be
-	//     very rare.
 	for _, specifier := range specifiers {
 		if strings.Contains(specifier, "/node_modules/") {
 			continue
@@ -70,6 +86,7 @@ func (v *View) GetModuleSpecifier(
 		cache.Store(export.Path, specifier)
 		return specifier, kind
 	}
+
 	cache.Store(export.Path, "")
 	return "", modulespecifiers.ResultKindNone
 }
