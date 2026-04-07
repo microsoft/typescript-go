@@ -1,0 +1,5 @@
+// === findFileReferences ===
+// === /b.ts ===
+// /// <reference path="[|./a.ts|]" />
+// const y = 2;
+// 

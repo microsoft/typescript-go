@@ -286,6 +286,17 @@ const customStructures: Structure[] = [
         ],
         documentation: "Result for the custom/projectInfo request.",
     },
+    {
+        name: "FindFileReferencesParams",
+        properties: [
+            {
+                name: "textDocument",
+                type: { kind: "reference", name: "TextDocumentIdentifier" },
+                documentation: "The text document (file) to find references to.",
+            },
+        ],
+        documentation: "Parameters for the custom/findFileReferences request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -407,6 +418,20 @@ const customRequests: Request[] = [
         result: { kind: "reference", name: "ProjectInfoResult" },
         messageDirection: "clientToServer",
         documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
+    },
+    {
+        method: "custom/findFileReferences",
+        typeName: "CustomFindFileReferencesRequest",
+        params: { kind: "reference", name: "FindFileReferencesParams" },
+        result: {
+            kind: "or",
+            items: [
+                { kind: "array", element: { kind: "reference", name: "Location" } },
+                { kind: "base", name: "null" },
+            ],
+        },
+        messageDirection: "clientToServer",
+        documentation: "Returns all references to the given file.",
     },
 ];
 

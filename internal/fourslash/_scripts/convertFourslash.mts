@@ -76,14 +76,20 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
     files.forEach(file => {
         const filePath = path.join(folder, file);
         const stat = fs.statSync(filePath);
+
+        if (stat.isDirectory()) {
+            // Always recurse into subdirectories regardless of inputFileSet,
+            // so that e.g. "server/getFileReferences_server1.ts" is reachable
+            // when the user specifies only the basename in the filter list.
+            parseTypeScriptFiles(manualTests, filePath);
+            return;
+        }
+
         if (inputFileSet && !inputFileSet.has(file)) {
             return;
         }
 
-        if (stat.isDirectory()) {
-            parseTypeScriptFiles(manualTests, filePath);
-        }
-        else if (hasTSExtension(file) && !manualTests.has(file.slice(0, -3)) && file !== "fourslash.ts") {
+        if (hasTSExtension(file) && !manualTests.has(file.slice(0, -3)) && file !== "fourslash.ts") {
             const content = fs.readFileSync(filePath, "utf-8");
             const isServer = filePath.split(path.sep).includes("server");
             try {
@@ -231,6 +237,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] {
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return parseBaselineFindAllReferencesArgs(callExpression.arguments);
+                case "baselineGetFileReferences":
+                    // `verify.baselineGetFileReferences(...)`
+                    return parseBaselineGetFileReferencesArgs(callExpression.arguments);
                 case "baselineDocumentHighlights":
                     return parseBaselineDocumentHighlightsArgs(callExpression.arguments);
                 case "baselineQuickInfo":
@@ -1255,6 +1264,23 @@ function parseBaselineFindAllReferencesArgs(args: readonly ts.Expression[]): [Ve
     return [{
         kind: "verifyBaselineFindAllReferences",
         markers: newArgs,
+    }];
+}
+
+function parseBaselineGetFileReferencesArgs(args: readonly ts.Expression[]): [VerifyBaselineGetFileReferencesCmd] {
+    const fileNames: string[] = [];
+    for (const arg of args) {
+        const strArg = getStringLiteralLike(arg);
+        if (strArg) {
+            fileNames.push(getGoStringLiteral(strArg.text));
+        }
+        else {
+            throw new Error(`Unrecognized argument in verify.baselineGetFileReferences: ${arg.getText()}`);
+        }
+    }
+    return [{
+        kind: "verifyBaselineGetFileReferences",
+        fileNames,
     }];
 }
 
@@ -2985,6 +3011,11 @@ interface VerifyBaselineFindAllReferencesCmd {
     ranges?: boolean;
 }
 
+interface VerifyBaselineGetFileReferencesCmd {
+    kind: "verifyBaselineGetFileReferences";
+    fileNames: string[];
+}
+
 interface VerifyBaselineGoToDefinitionCmd {
     kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType" | "verifyBaselineGoToImplementation";
     markers: string[];
@@ -3195,6 +3226,7 @@ type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
     | VerifyBaselineFindAllReferencesCmd
+    | VerifyBaselineGetFileReferencesCmd
     | VerifyBaselineDocumentHighlightsCmd
     | VerifyBaselineGoToDefinitionCmd
     | VerifyBaselineQuickInfoCmd
@@ -3286,6 +3318,10 @@ function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFi
         return `f.VerifyBaselineFindAllReferences(t)`;
     }
     return `f.VerifyBaselineFindAllReferences(t, ${markers.join(", ")})`;
+}
+
+function generateBaselineGetFileReferences({ fileNames }: VerifyBaselineGetFileReferencesCmd): string {
+    return `f.VerifyBaselineFindFileReferences(t, ${fileNames.join(", ")})`;
 }
 
 function generateBaselineDocumentHighlights({ args, preferences }: VerifyBaselineDocumentHighlightsCmd): string {
@@ -3497,6 +3533,8 @@ function generateCmd(cmd: Cmd): string {
             return generateVerifyApplyCodeActionFromCompletion(cmd);
         case "verifyBaselineFindAllReferences":
             return generateBaselineFindAllReferences(cmd);
+        case "verifyBaselineGetFileReferences":
+            return generateBaselineGetFileReferences(cmd);
         case "verifyBaselineDocumentHighlights":
             return generateBaselineDocumentHighlights(cmd);
         case "verifyBaselineGoToDefinition":

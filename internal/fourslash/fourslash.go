@@ -1748,6 +1748,25 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	}
 }
 
+// VerifyBaselineFindFileReferences calls the custom/findFileReferences request for the given file
+// and baselines the result.
+func (f *FourslashTest) VerifyBaselineFindFileReferences(t *testing.T, fileName string) {
+	t.Helper()
+	params := &lsproto.FindFileReferencesParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(fileName),
+		},
+	}
+	result := sendRequest(t, f, lsproto.CustomFindFileReferencesInfo, params)
+	var locations []lsproto.Location
+	if result.Locations != nil {
+		locations = *result.Locations
+	}
+	f.addResultToBaseline(t, findFileReferencesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
+		markerName: "/*FIND FILE REFS*/",
+	}))
+}
+
 func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
 		reset := f.ConfigureWithReset(t, preferences)

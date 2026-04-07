@@ -87,3 +87,38 @@ export function registerCodeLensShowLocationsCommand(): vscode.Disposable {
         vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
     }
 }
+
+export function registerFindFileReferencesCommand(getClient: () => Client | undefined): vscode.Disposable {
+    return vscode.commands.registerCommand("_typescript.findAllFileReferences", async (uri?: vscode.Uri) => {
+        const client = getClient();
+        if (!client) {
+            return;
+        }
+
+        const targetUri = uri ?? vscode.window.activeTextEditor?.document.uri;
+        if (!targetUri) {
+            return;
+        }
+
+        const locations = await client.findFileReferences(targetUri.toString());
+        if (!locations || locations.length === 0) {
+            vscode.window.showInformationMessage("No references found.");
+            return;
+        }
+
+        const vscodeLocs = locations.map(loc =>
+            new vscode.Location(
+                vscode.Uri.parse(loc.uri),
+                loc.range,
+            )
+        );
+
+        // Show references in the references view using position 0,0 of the target file
+        await vscode.commands.executeCommand(
+            "editor.action.showReferences",
+            targetUri,
+            new vscode.Position(0, 0),
+            vscodeLocs,
+        );
+    });
+}

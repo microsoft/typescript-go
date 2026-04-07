@@ -718,6 +718,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
+	registerRequestHandler(handlers, lsproto.CustomFindFileReferencesInfo, (*Server).handleFindFileReferences)
 	return handlers
 })
 
@@ -1556,4 +1557,13 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	return &lsproto.ProjectInfoResult{
 		ConfigFilePath: configFilePath,
 	}, nil
+}
+
+func (s *Server) handleFindFileReferences(ctx context.Context, params *lsproto.FindFileReferencesParams, req *lsproto.RequestMessage) (lsproto.CustomFindFileReferencesResponse, error) {
+	uri := params.TextDocument.Uri
+	defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, uri, req)
+	if err != nil {
+		return lsproto.LocationsOrNull{}, err
+	}
+	return defaultLs.GetFileReferences(ctx, uri, orchestrator)
 }

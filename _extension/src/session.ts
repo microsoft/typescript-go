@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { ActiveJsTsEditorTracker } from "./activeJsTsEditorTracker";
 import { Client } from "./client";
-import { registerCodeLensShowLocationsCommand } from "./commands";
+import { registerCodeLensShowLocationsCommand, registerFindFileReferencesCommand } from "./commands";
 import { ManagedFileContextManager } from "./managedFileContext";
 import { ProjectStatus } from "./projectStatus";
 import { setupStatusBar } from "./statusBar";
@@ -140,6 +140,7 @@ class Session implements vscode.Disposable {
 
     registerCommands(): void {
         this.disposables.push(registerCodeLensShowLocationsCommand());
+        this.disposables.push(registerFindFileReferencesCommand(() => this.client));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.output.focus", () => {
             this.outputChannel.show();

@@ -1,0 +1,10 @@
+// === findFileReferences ===
+// === /project/b.ts ===
+// import "[|./a|]";
+
+// === /project/c.ts ===
+// import {} from "[|./a|]";
+
+// === /project/d.ts ===
+// import { a } from "[|/project/a|]";
+// type T = typeof import("[|./a|]").a;

@@ -300,6 +300,26 @@ export class Client implements vscode.Disposable {
             textDocument: { uri },
         }, token);
     }
+
+    async findFileReferences(uri: string, token?: vscode.CancellationToken): Promise<{ uri: string; range: vscode.Range; }[] | null> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        type LspLocation = { uri: string; range: { start: { line: number; character: number; }; end: { line: number; character: number; }; }; };
+        const locations = await this.client.sendRequest<LspLocation[] | null>("custom/findFileReferences", {
+            textDocument: { uri },
+        }, token);
+        if (!locations) {
+            return null;
+        }
+        return locations.map(loc => ({
+            uri: loc.uri,
+            range: new vscode.Range(
+                new vscode.Position(loc.range.start.line, loc.range.start.character),
+                new vscode.Position(loc.range.end.line, loc.range.end.character),
+            ),
+        }));
+    }
 }
 
 // Adapted from the default error handler in vscode-languageclient.

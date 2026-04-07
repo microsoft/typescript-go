@@ -1,0 +1,6 @@
+// === findFileReferences ===
+// === /home/src/workspaces/project/index.ts ===
+// export * from "[|./util|]";
+
+// === /home/src/workspaces/project/test.ts ===
+// import "[|./util|]";

@@ -48,6 +48,7 @@ exhaustiveCaseCompletions6
 exhaustiveCaseCompletions7
 exhaustiveCaseCompletions8
 formatOnEnterInComment
+getFileReferences_deduplicate
 getOutliningSpans
 importNameCodeFix_uriStyleNodeCoreModules1
 importNameCodeFixDefaultExport7

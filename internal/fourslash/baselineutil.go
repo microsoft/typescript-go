@@ -26,6 +26,7 @@ const (
 	closingTagCmd               baselineCommand = "Closing Tag"
 	documentHighlightsCmd       baselineCommand = "documentHighlights"
 	findAllReferencesCmd        baselineCommand = "findAllReferences"
+	findFileReferencesCmd       baselineCommand = "findFileReferences"
 	goToDefinitionCmd           baselineCommand = "goToDefinition"
 	goToImplementationCmd       baselineCommand = "goToImplementation"
 	goToTypeDefinitionCmd       baselineCommand = "goToType"
