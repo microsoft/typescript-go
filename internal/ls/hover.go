@@ -563,30 +563,22 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		}
 		if ast.IsClassOrInterfaceLike(node.Parent) {
 			isStatic := ast.HasStaticModifier(node)
-			foundInBase := false
-			for _, baseType := range c.GetBaseTypes(c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())) {
-				t := baseType
-				if isStatic && baseType.Symbol() != nil {
-					t = c.GetTypeOfSymbol(baseType.Symbol())
-				}
-				if prop := c.GetPropertyOfType(t, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
-					foundInBase = true
+			classType := c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())
+			if isStatic {
+				// For static members, use the checker's base constructor type resolution.
+				// This correctly handles intersection constructor types from mixins
+				// (e.g., typeof MixinClass & T) by preserving the full intersection.
+				staticBaseType := c.GetApparentType(c.GetBaseConstructorTypeOfClass(classType))
+				if prop := c.GetPropertyOfType(staticBaseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
 					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 						return jsDoc
 					}
 				}
-			}
-			// When a class extends an intersection constructor type (e.g., from a mixin
-			// returning typeof MixinClass & T), GetBaseTypes resolves to the return type
-			// of the first construct signature, which may not contain all static members.
-			// Fall back to the extends clause expression to get the full constructor type.
-			if isStatic && !foundInBase {
-				if extendsNode := ast.GetClassExtendsHeritageElement(node.Parent); extendsNode != nil {
-					if expr := extendsNode.Expression(); expr != nil {
-						if prop := c.GetPropertyOfType(c.GetTypeAtLocation(expr), symbol.Name); prop != nil && prop.ValueDeclaration != nil {
-							if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
-								return jsDoc
-							}
+			} else {
+				for _, baseType := range c.GetBaseTypes(classType) {
+					if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+						if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
+							return jsDoc
 						}
 					}
 				}
