@@ -41,10 +41,7 @@ type testCaseContent struct {
 var optionRegex = regexp.MustCompile(`(?m)^\/{2}\s*@(\w+)\s*:\s*([^\r\n]*)`)
 
 // Regex for parsing @link option
-var (
-	linkRegex    = regexp.MustCompile(`(?im)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*([^\r\n]*)`)
-	symlinkRegex = regexp.MustCompile(`(?im)^\/{2}\s*@symlink\s*:\s*([^\r\n]*)`)
-)
+var linkRegex = regexp.MustCompile(`(?m)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*([^\r\n]*)`)
 
 // File-specific directives used by fourslash tests
 var fourslashDirectives = []string{"emitthisfile"}
@@ -156,7 +153,7 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 	globalOptions = make(map[string]string)
 
 	for _, line := range lines {
-		ok := parseSymlinkFromTest(line, currentFileName, symlinks)
+		ok := parseSymlinkFromTest(line, symlinks)
 		if ok {
 			continue
 		}
@@ -263,15 +260,10 @@ func extractCompilerSettings(content string) rawCompilerSettings {
 	return opts
 }
 
-func parseSymlinkFromTest(line string, currentFileName string, symlinks map[string]string) bool {
+func parseSymlinkFromTest(line string, symlinks map[string]string) bool {
 	linkMetaData := linkRegex.FindStringSubmatch(line)
 	if len(linkMetaData) == 0 {
-		symlinkMetadata := symlinkRegex.FindStringSubmatch(line)
-		if len(symlinkMetadata) == 0 || currentFileName == "" {
-			return false
-		}
-		symlinks[strings.TrimSpace(symlinkMetadata[1])] = currentFileName
-		return true
+		return false
 	}
 
 	symlinks[strings.TrimSpace(linkMetaData[2])] = strings.TrimSpace(linkMetaData[1])

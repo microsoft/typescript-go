@@ -1377,7 +1377,7 @@ function parseGetEditsForFileRename(args: readonly ts.Expression[]): [VerifyGetE
 
     for (const prop of args[0].properties) {
         if (!ts.isPropertyAssignment(prop)) {
-            continue;
+            throw new Error(`Expected property assignment in verify.getEditsForFileRename argument, got ${prop.getText()}`);
         }
         const name = prop.name.getText();
         switch (name) {
@@ -1405,7 +1405,7 @@ function parseGetEditsForFileRename(args: readonly ts.Expression[]): [VerifyGetE
                 const entries: string[] = [];
                 for (const entry of obj.properties) {
                     if (!ts.isPropertyAssignment(entry)) {
-                        continue;
+                        throw new Error(`Expected property assignment in verify.getEditsForFileRename argument, got ${prop.getText()}`);
                     }
                     const key = getStringLiteralLike(entry.name);
                     const value = getStringLiteralLike(entry.initializer);

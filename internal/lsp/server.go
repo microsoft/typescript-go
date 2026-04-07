@@ -1266,7 +1266,7 @@ func (s *Server) supportsImportPathFileRename() bool {
 }
 
 func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams, _ *lsproto.RequestMessage) (lsproto.WillRenameFilesResponse, error) {
-	if params == nil || len(params.Files) == 0 {
+	if len(params.Files) == 0 {
 		return lsproto.WillRenameFilesResponse{}, nil
 	}
 
