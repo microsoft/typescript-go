@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -201,7 +202,7 @@ func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, 
 		}
 
 		for _, importStringLiteral := range sourceFile.Imports() {
-			updated := l.getUpdatedImportSpecifier(program, checker, sourceFile, (*ast.StringLiteralLike)(importStringLiteral), oldToNew, newToOld, newImportFromPath, oldImportFromPath, importingSourceFileMoved, moduleSpecifierPreferences)
+			updated := l.getUpdatedImportSpecifier(program, checker, sourceFile, importStringLiteral, oldToNew, newToOld, newImportFromPath, oldImportFromPath, importingSourceFileMoved, moduleSpecifierPreferences)
 			if updated != "" && updated != importStringLiteral.Text() {
 				changeTracker.ReplaceRangeWithText(sourceFile, l.converters.ToLSPRange(sourceFile, createStringTextRange(sourceFile, importStringLiteral)), updated)
 			}
@@ -448,10 +449,5 @@ func isAmbientModuleSymbol(symbol *ast.Symbol) bool {
 	if symbol == nil {
 		return false
 	}
-	for _, decl := range symbol.Declarations {
-		if ast.IsModuleWithStringLiteralName(decl) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(symbol.Declarations, ast.IsModuleWithStringLiteralName)
 }

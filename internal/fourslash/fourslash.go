@@ -3827,11 +3827,11 @@ func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newP
 			if d.IsDir() {
 				return nil
 			}
-			content, ok := f.vfs.ReadFile(path)
-			if !ok {
+			fileContent, exists := f.vfs.ReadFile(path)
+			if !exists {
 				return fmt.Errorf("file %s disappeared during rename walk", path)
 			}
-			renamedContents[path] = content
+			renamedContents[path] = fileContent
 			return nil
 		})
 		if walkErr != nil {
