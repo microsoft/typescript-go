@@ -105,21 +105,15 @@ function parseFileContent(filename: string, content: string): GoTest {
     console.error(`Parsing file: ${filename}`);
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
-    const commands: Cmd[] = [];
-    for (const statement of statements) {
-        const result = parseFourslashStatement(statement);
-        commands.push(...result);
-    }
-
-    const finalContent = filename === "getEditsForFileRename_caseInsensitive.ts"
-        ? `// @useCaseSensitiveFileNames: false\n${content}`
-        : content;
-
     const goTest: GoTest = {
         name: filename.replace(".tsx", "").replace(".ts", "").replace(".", ""),
-        content: getTestInput(finalContent),
-        commands,
+        content: getTestInput(content),
+        commands: [],
     };
+    for (const statement of statements) {
+        const result = parseFourslashStatement(statement);
+        goTest.commands.push(...result);
+    }
     if (goTest.commands.length === 0) {
         throw new Error(`No commands parsed in file: ${filename}`);
     }

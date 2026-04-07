@@ -48,6 +48,7 @@ exhaustiveCaseCompletions6
 exhaustiveCaseCompletions7
 exhaustiveCaseCompletions8
 formatOnEnterInComment
+getEditsForFileRename_caseInsensitive
 getEditsForFileRename_preferences
 getEditsForFileRename_unaffectedNonRelativePath
 getOutliningSpans
