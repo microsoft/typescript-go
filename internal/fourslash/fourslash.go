@@ -81,8 +81,8 @@ func newScriptInfo(fileName string, content string) *scriptInfo {
 	}
 }
 
-func (s *scriptInfo) editContent(start int, end int, newText string) {
-	s.content = s.content[:start] + newText + s.content[end:]
+func (s *scriptInfo) editContent(changes []core.TextChange) {
+	s.content = core.ApplyBulkEdits(s.content, changes)
 	s.lineMap = lsconv.ComputeLSPLineStarts(s.content)
 	s.version++
 }
@@ -151,8 +151,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		Jsx:                 core.JsxEmitPreserve,
 	}
 	harnessOptions := harnessutil.HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: rootDir}
-	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
-	harnessutil.SetHarnessOptionsFromTestConfig(t, testData.GlobalOptions, &harnessOptions, rootDir)
+	harnessutil.SetOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, &harnessOptions, rootDir, true /*allowUnknownOptions*/)
 	if commandLines := testData.GlobalOptions["tsc"]; commandLines != "" {
 		for commandLine := range strings.SplitSeq(commandLines, ",") {
 			tsctests.GetFileMapWithBuild(testfs, strings.Split(commandLine, " "))
@@ -2890,31 +2889,6 @@ func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) 
 	return totalOffset
 }
 
-func applyTextEditsToContent(content string, edits []*lsproto.TextEdit, _ *lsconv.Converters) string {
-	script := newScriptInfo("__expected__.ts", content)
-	contentConverters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
-		return script.lineMap
-	})
-	sorted := slices.Clone(edits)
-	slices.SortFunc(sorted, func(a, b *lsproto.TextEdit) int {
-		aStart := contentConverters.LineAndCharacterToPosition(script, a.Range.Start)
-		bStart := contentConverters.LineAndCharacterToPosition(script, b.Range.Start)
-		return int(aStart) - int(bStart)
-	})
-
-	var b strings.Builder
-	lastPos := 0
-	for _, edit := range sorted {
-		start := int(contentConverters.LineAndCharacterToPosition(script, edit.Range.Start))
-		end := int(contentConverters.LineAndCharacterToPosition(script, edit.Range.End))
-		b.WriteString(content[lastPos:start])
-		b.WriteString(edit.NewText)
-		lastPos = end
-	}
-	b.WriteString(content[lastPos:])
-	return b.String()
-}
-
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
 	f.baselineState(t)
 	f.replaceWorker(t, start, length, text)
@@ -2971,7 +2945,7 @@ func (f *FourslashTest) typeText(t *testing.T, text string) {
 // Edits the script and updates marker and range positions accordingly.
 // This does not update the current caret position.
 func (f *FourslashTest) editScriptAndUpdateMarkers(t *testing.T, fileName string, editStart int, editEnd int, newText string) {
-	script := f.editScript(t, fileName, editStart, editEnd, newText)
+	script := f.editScript(t, fileName, []core.TextChange{{TextRange: core.NewTextRange(editStart, editEnd), NewText: newText}})
 	for _, marker := range f.testData.Markers {
 		if marker.FileName() == fileName {
 			marker.Position = updatePosition(marker.Position, editStart, editEnd, newText)
@@ -3000,28 +2974,43 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 	return pos + len(newText) - (editEnd - editStart)
 }
 
-func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end int, newText string) *scriptInfo {
-	script := f.getScriptInfo(fileName)
-	changeRange := f.converters.ToLSPRange(script, core.NewTextRange(start, end))
+func (f *FourslashTest) editScript(t *testing.T, fileName string, changes []core.TextChange) *scriptInfo {
+	script := f.getOrLoadScriptInfo(fileName)
 	if script == nil {
 		panic(fmt.Sprintf("Script info for file %s not found", fileName))
 	}
 
-	script.editContent(start, end, newText)
-	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
-		TextDocument: lsproto.VersionedTextDocumentIdentifier{
-			Uri:     lsconv.FileNameToDocumentURI(fileName),
-			Version: script.version,
-		},
-		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
-			{
+	var changeRange lsproto.Range
+	if len(changes) == 1 {
+		changeRange = f.converters.ToLSPRange(script, core.NewTextRange(changes[0].Pos(), changes[0].End()))
+	}
+	script.editContent(changes)
+	if len(changes) == 1 {
+		sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+			TextDocument: lsproto.VersionedTextDocumentIdentifier{
+				Uri:     lsconv.FileNameToDocumentURI(fileName),
+				Version: script.version,
+			},
+			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
 				Partial: &lsproto.TextDocumentContentChangePartial{
 					Range: changeRange,
-					Text:  newText,
+					Text:  changes[0].NewText,
 				},
+			}},
+		})
+	} else {
+		sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
+			TextDocument: lsproto.VersionedTextDocumentIdentifier{
+				Uri:     lsconv.FileNameToDocumentURI(fileName),
+				Version: script.version,
 			},
-		},
-	})
+			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
+				WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+					Text: script.content,
+				},
+			}},
+		})
+	}
 	return script
 }
 
@@ -3769,34 +3758,26 @@ func (f *FourslashTest) VerifyWillRenameFilesEdits(t *testing.T, oldPath string,
 		t.Fatalf("workspace/willRenameFiles returned nil workspace edit")
 	}
 
-	actualContents := map[string]string{}
-	for fileName, expectedContent := range expectedFileContents {
-		actualContents[fileName] = expectedContent
-		if script := f.getOrLoadScriptInfo(fileName); script != nil {
-			actualContents[fileName] = script.content
-		}
-	}
 	if result.WorkspaceEdit.Changes != nil {
 		for uri, edits := range *result.WorkspaceEdit.Changes {
 			fileName := uri.FileName()
-			currentContent, ok := actualContents[fileName]
-			if !ok {
-				script := f.getOrLoadScriptInfo(fileName)
-				if script == nil {
-					t.Fatalf("workspace/willRenameFiles returned edits for unknown file %s", fileName)
+			script := f.getOrLoadScriptInfo(fileName)
+			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
+				return core.TextChange{
+					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					NewText:   edit.NewText,
 				}
-				currentContent = script.content
-			}
-			actualContents[fileName] = applyTextEditsToContent(currentContent, edits, f.converters)
+			})
+			f.editScript(t, fileName, changes)
 		}
 	}
 
 	for fileName, expectedContent := range expectedFileContents {
-		actualContent, ok := actualContents[fileName]
-		if !ok {
-			t.Fatalf("expected content for %s, but no actual content was available", fileName)
+		script := f.getOrLoadScriptInfo(fileName)
+		if script == nil {
+			t.Fatalf("Expected script info for %s, but got nil", fileName)
 		}
-		assert.Equal(t, actualContent, expectedContent, fmt.Sprintf("File content after workspace/willRenameFiles edits did not match expected content for %s.", fileName))
+		assert.Equal(t, script.content, expectedContent, fmt.Sprintf("File content after workspace/willRenameFiles edits did not match expected content for %s.", fileName))
 	}
 
 	f.renameFileOrDirectory(t, oldPath, newPath)
