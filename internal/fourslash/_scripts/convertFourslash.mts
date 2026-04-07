@@ -111,17 +111,9 @@ function parseFileContent(filename: string, content: string): GoTest {
         commands.push(...result);
     }
 
-    // File-rename tests from old TS sometimes rely on legacy `baseUrl`-driven
-    // non-relative specifiers. The current compiler intentionally removes
-    // `baseUrl` resolution, so for this narrow converted test family we rewrite
-    // those fixtures to equivalent `paths`-based configs instead of preserving
-    // the legacy option in generated tests.
-    const rewrittenContent = commands.some(command => command.kind === "verifyGetEditsForFileRename")
-        ? rewriteLegacyBaseUrlInRenameTestContent(content)
-        : content;
     const finalContent = filename === "getEditsForFileRename_caseInsensitive.ts"
-        ? `// @useCaseSensitiveFileNames: false\n${rewrittenContent}`
-        : rewrittenContent;
+        ? `// @useCaseSensitiveFileNames: false\n${content}`
+        : content;
 
     const goTest: GoTest = {
         name: filename.replace(".tsx", "").replace(".ts", "").replace(".", ""),
@@ -132,58 +124,6 @@ function parseFileContent(filename: string, content: string): GoTest {
         throw new Error(`No commands parsed in file: ${filename}`);
     }
     return goTest;
-}
-
-function rewriteLegacyBaseUrlInRenameTestContent(content: string): string {
-    const lines = content.split("\n");
-    const rewritten: string[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        rewritten.push(line);
-
-        const match = line.match(/^\/\/\s*@Filename:\s*(.+)$/);
-        if (!match || !match[1].trim().endsWith("tsconfig.json")) {
-            continue;
-        }
-
-        const jsonLines: string[] = [];
-        let j = i + 1;
-        while (j < lines.length && lines[j].startsWith("////")) {
-            jsonLines.push(lines[j].slice(4));
-            j++;
-        }
-        if (jsonLines.length === 0) {
-            continue;
-        }
-
-        const rewrittenJson = rewriteLegacyBaseUrlJson(jsonLines.join("\n"));
-        rewritten.push(...rewrittenJson.split("\n").map(part => `////${part}`));
-        i = j - 1;
-    }
-
-    return rewritten.join("\n");
-}
-
-function rewriteLegacyBaseUrlJson(jsonText: string): string {
-    let parsed: any;
-    try {
-        parsed = JSON.parse(jsonText);
-    }
-    catch {
-        return jsonText;
-    }
-
-    const compilerOptions = parsed?.compilerOptions;
-    if (!compilerOptions || typeof compilerOptions !== "object" || typeof compilerOptions.baseUrl !== "string" || compilerOptions.paths !== undefined) {
-        return jsonText;
-    }
-
-    const baseUrl = compilerOptions.baseUrl;
-    const wildcardTarget = baseUrl === "." ? "*" : `${baseUrl.replace(/\/$/, "")}/*`;
-    delete compilerOptions.baseUrl;
-    compilerOptions.paths = { "*": [wildcardTarget] };
-    return JSON.stringify(parsed);
 }
 
 function getTestInput(content: string): string {
@@ -1478,10 +1418,7 @@ function parseGetEditsForFileRename(args: readonly ts.Expression[]): [VerifyGetE
                     if (!key || !value) {
                         throw new Error(`Expected string literal key/value in newFileContents, got ${entry.getText()}`);
                     }
-                    const rewrittenValue = key.text.endsWith("tsconfig.json")
-                        ? rewriteLegacyBaseUrlJson(value.text)
-                        : value.text;
-                    entries.push(`${getGoStringLiteral(key.text)}: ${getGoMultiLineStringLiteral(rewrittenValue)}`);
+                    entries.push(`${getGoStringLiteral(key.text)}: ${getGoMultiLineStringLiteral(value.text)}`);
                 }
                 newFileContents = entries.length === 0
                     ? "map[string]string{}"
