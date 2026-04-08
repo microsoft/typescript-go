@@ -203,7 +203,7 @@ func (p *checkerPool) getDiagnosticsChecker(ctx context.Context, requestID strin
 
 	c := p.checkers[diagIndex]
 	p.heldBy[diagIndex] = holdTag(requestID)
-	p.log(fmt.Sprintf("checkerpool: Acquired diagnostics checker for request %s", holdTag(requestID)))
+	p.log("checkerpool: Acquired diagnostics checker for request " + holdTag(requestID))
 	if requestID != "" {
 		if _, alreadyRegistered := p.requestAssociations[requestID]; !alreadyRegistered {
 			p.requestAssociations[requestID] = diagIndex
