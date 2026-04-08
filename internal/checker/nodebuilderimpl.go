@@ -2801,8 +2801,8 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 			for i < length {
 				// Find group of type arguments for type parameters with the same declaring container.
 				start := i
-				parent := b.getParentSymbolOfTypeParameter(outerTypeParameters[i].AsTypeParameterDeclaration())
-				for ok := true; ok; ok = i < length && b.getParentSymbolOfTypeParameter(outerTypeParameters[i].AsTypeParameterDeclaration()) == parent { // do-while loop
+				parent := b.getParentSymbolOfTypeParameter(outerTypeParameters[i].AsTypeParameter())
+				for ok := true; ok; ok = i < length && b.getParentSymbolOfTypeParameter(outerTypeParameters[i].AsTypeParameter()) == parent { // do-while loop
 					i++
 				}
 				// When type parameters are their own type arguments for the whole group (i.e. we have

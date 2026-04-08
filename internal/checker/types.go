@@ -565,7 +565,7 @@ func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 func (t *Type) AsMappedType() *MappedType                   { return t.data.(*MappedType) }
 func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*ReverseMappedType) }
 func (t *Type) AsEvolvingArrayType() *EvolvingArrayType     { return t.data.(*EvolvingArrayType) }
-func (t *Type) AsTypeParameterDeclaration() *TypeParameter  { return t.data.(*TypeParameter) }
+func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
 func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
 func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
 func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
@@ -603,7 +603,7 @@ func (t *Type) Target() *Type {
 	case t.flags&TypeFlagsObject != 0:
 		return t.AsObjectType().target
 	case t.flags&TypeFlagsTypeParameter != 0:
-		return t.AsTypeParameterDeclaration().target
+		return t.AsTypeParameter().target
 	case t.flags&TypeFlagsIndex != 0:
 		return t.AsIndexType().target
 	case t.flags&TypeFlagsStringMapping != 0:
@@ -619,7 +619,7 @@ func (t *Type) Mapper() *TypeMapper {
 	case t.flags&TypeFlagsObject != 0:
 		return t.AsObjectType().mapper
 	case t.flags&TypeFlagsTypeParameter != 0:
-		return t.AsTypeParameterDeclaration().mapper
+		return t.AsTypeParameter().mapper
 	case t.flags&TypeFlagsConditional != 0:
 		return t.AsConditionalType().mapper
 	}

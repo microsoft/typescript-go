@@ -973,7 +973,7 @@ func getContainingClassExcludingClassDecorators(node *ast.Node) *ast.ClassLikeDe
 }
 
 func isThisTypeParameter(t *Type) bool {
-	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameterDeclaration().isThisType
+	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
 }
 
 func isClassInstanceProperty(node *ast.Node) bool {

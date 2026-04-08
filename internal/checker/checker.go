@@ -1018,11 +1018,11 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.resolvingDefaultType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.markerSuperType = c.newTypeParameter(nil)
 	c.markerSubType = c.newTypeParameter(nil)
-	c.markerSubType.AsTypeParameterDeclaration().constraint = c.markerSuperType
+	c.markerSubType.AsTypeParameter().constraint = c.markerSuperType
 	c.markerOtherType = c.newTypeParameter(nil)
 	c.markerSuperTypeForCheck = c.newTypeParameter(nil)
 	c.markerSubTypeForCheck = c.newTypeParameter(nil)
-	c.markerSubTypeForCheck.AsTypeParameterDeclaration().constraint = c.markerSuperTypeForCheck
+	c.markerSubTypeForCheck.AsTypeParameter().constraint = c.markerSuperTypeForCheck
 	c.noTypePredicate = &TypePredicate{kind: TypePredicateKindIdentifier, parameterIndex: 0, parameterName: "<<unresolved>>", t: c.anyType}
 	c.anySignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.anyType, nil, 0)
 	c.unknownSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.errorType, nil, 0)
@@ -7510,7 +7510,7 @@ func (c *Checker) getUniqueTypeParameters(context *InferenceContext, typeParamet
 			newName := getUniqueTypeParameterName(core.Concatenate(context.inferredTypeParameters, result), name)
 			symbol := c.newSymbol(ast.SymbolFlagsTypeParameter, newName)
 			newTypeParameter := c.newTypeParameter(symbol)
-			newTypeParameter.AsTypeParameterDeclaration().target = tp
+			newTypeParameter.AsTypeParameter().target = tp
 			oldTypeParameters = append(oldTypeParameters, tp)
 			newTypeParameters = append(newTypeParameters, newTypeParameter)
 			result = append(result, newTypeParameter)
@@ -7521,7 +7521,7 @@ func (c *Checker) getUniqueTypeParameters(context *InferenceContext, typeParamet
 	if len(newTypeParameters) != 0 {
 		mapper := newTypeMapper(oldTypeParameters, newTypeParameters)
 		for _, tp := range newTypeParameters {
-			tp.AsTypeParameterDeclaration().mapper = mapper
+			tp.AsTypeParameter().mapper = mapper
 		}
 	}
 	return result
@@ -11480,7 +11480,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *ast.Node, isSup
 	}
 	if containingType.flags&TypeFlagsTypeParameter != 0 {
 		// get the original type -- represented as the type constraint of the 'this' type
-		if containingType.AsTypeParameterDeclaration().isThisType {
+		if containingType.AsTypeParameter().isThisType {
 			containingType = c.getConstraintOfTypeParameter(containingType)
 		} else {
 			containingType = c.getBaseConstraintOfType(containingType)
@@ -16560,7 +16560,7 @@ func (c *Checker) getConstraintFromTypeParameter(t *Type) *Type {
 		return nil
 	}
 
-	tp := t.AsTypeParameterDeclaration()
+	tp := t.AsTypeParameter()
 	if tp.constraint == nil {
 		var constraint *Type
 		if tp.target != nil {
@@ -16820,8 +16820,8 @@ func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *ast.Symbol) *Type {
 			t.objectFlags |= ObjectFlagsReference
 			d := t.AsInterfaceType()
 			d.thisType = c.newTypeParameter(symbol)
-			d.thisType.AsTypeParameterDeclaration().isThisType = true
-			d.thisType.AsTypeParameterDeclaration().constraint = t
+			d.thisType.AsTypeParameter().isThisType = true
+			d.thisType.AsTypeParameter().constraint = t
 			d.allTypeParameters = append(typeParameters, d.thisType)
 			d.outerTypeParameterCount = len(outerTypeParameters)
 			d.resolvedTypeArguments = d.TypeParameters()
@@ -20072,7 +20072,7 @@ func (c *Checker) instantiateSignatureEx(sig *Signature, m *TypeMapper, eraseTyp
 		freshTypeParameters = core.Map(sig.typeParameters, c.cloneTypeParameter)
 		m = c.combineTypeMappers(newTypeMapper(sig.typeParameters, freshTypeParameters), m)
 		for _, tp := range freshTypeParameters {
-			tp.AsTypeParameterDeclaration().mapper = m
+			tp.AsTypeParameter().mapper = m
 		}
 	}
 	// Don't compute resolvedReturnType and resolvedTypePredicate now,
@@ -21455,7 +21455,7 @@ func (c *Checker) getDefaultFromTypeParameter(t *Type) *Type {
 }
 
 func (c *Checker) getResolvedTypeParameterDefault(t *Type) *Type {
-	d := t.AsTypeParameterDeclaration()
+	d := t.AsTypeParameter()
 	if d.resolvedDefaultType == nil {
 		if d.target != nil {
 			targetDefault := c.getResolvedTypeParameterDefault(d.target)
@@ -21853,10 +21853,10 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 	containsReference = func(node *ast.Node) bool {
 		switch node.Kind {
 		case ast.KindThisType:
-			return tp.AsTypeParameterDeclaration().isThisType
+			return tp.AsTypeParameter().isThisType
 		case ast.KindTypeReference:
 			// use worker because we're looking for === equality
-			if !tp.AsTypeParameterDeclaration().isThisType && len(node.TypeArguments()) == 0 && c.getSymbolFromTypeReference(node) == tp.symbol {
+			if !tp.AsTypeParameter().isThisType && len(node.TypeArguments()) == 0 && c.getSymbolFromTypeReference(node) == tp.symbol {
 				return true
 			}
 		case ast.KindTypeQuery:
@@ -21869,7 +21869,7 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 				switch {
 				case ast.IsTypeParameterDeclaration(tpDeclaration):
 					tpScope = tpDeclaration.Parent // Type parameter is a regular type parameter, e.g. foo<T>
-				case tp.AsTypeParameterDeclaration().isThisType:
+				case tp.AsTypeParameter().isThisType:
 					tpScope = tpDeclaration // Type parameter is the this type, and its declaration is the class declaration.
 				}
 				if tpScope != nil {
@@ -21913,7 +21913,7 @@ func (c *Checker) instantiateAnonymousType(t *Type, m *TypeMapper, alias *TypeAl
 		freshTypeParameter := c.cloneTypeParameter(origTypeParameter)
 		result.AsMappedType().typeParameter = freshTypeParameter
 		m = c.combineTypeMappers(newSimpleTypeMapper(origTypeParameter, freshTypeParameter), m)
-		freshTypeParameter.AsTypeParameterDeclaration().mapper = m
+		freshTypeParameter.AsTypeParameter().mapper = m
 	case t.objectFlags&ObjectFlagsInstantiationExpressionType != 0:
 		result.AsInstantiationExpressionType().node = t.AsInstantiationExpressionType().node
 	}
@@ -21965,7 +21965,7 @@ func (c *Checker) getConditionalTypeInstantiation(t *Type, mapper *TypeMapper, f
 
 func (c *Checker) cloneTypeParameter(tp *Type) *Type {
 	result := c.newTypeParameter(tp.symbol)
-	result.AsTypeParameterDeclaration().target = tp
+	result.AsTypeParameter().target = tp
 	return result
 }
 
@@ -23886,7 +23886,7 @@ func (c *Checker) getRestrictiveInstantiation(t *Type) *Type {
 }
 
 func (c *Checker) getRestrictiveTypeParameter(t *Type) *Type {
-	if t.AsTypeParameterDeclaration().constraint == nil && c.getConstraintDeclaration(t) == nil || t.AsTypeParameterDeclaration().constraint == c.noConstraintType {
+	if t.AsTypeParameter().constraint == nil && c.getConstraintDeclaration(t) == nil || t.AsTypeParameter().constraint == c.noConstraintType {
 		return t
 	}
 	key := CachedTypeKey{kind: CachedTypeKindRestrictiveTypeParameter, typeId: t.id}
@@ -23894,7 +23894,7 @@ func (c *Checker) getRestrictiveTypeParameter(t *Type) *Type {
 		return cached
 	}
 	result := c.newTypeParameter(t.symbol)
-	result.AsTypeParameterDeclaration().constraint = c.noConstraintType
+	result.AsTypeParameter().constraint = c.noConstraintType
 	c.cachedTypes[key] = result
 	return result
 }
@@ -24184,8 +24184,8 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 	t := c.newObjectType(ObjectFlagsTuple|ObjectFlagsReference, nil)
 	d := t.AsTupleType()
 	d.thisType = c.newTypeParameter(nil)
-	d.thisType.AsTypeParameterDeclaration().isThisType = true
-	d.thisType.AsTypeParameterDeclaration().constraint = t
+	d.thisType.AsTypeParameter().isThisType = true
+	d.thisType.AsTypeParameter().constraint = t
 	d.allTypeParameters = append(typeParameters, d.thisType)
 	d.instantiations = make(map[CacheHashKey]*Type)
 	d.instantiations[getTypeListKey(d.TypeParameters())] = t
@@ -26784,7 +26784,7 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 	switch {
 	case t.flags&TypeFlagsTypeParameter != 0:
 		constraint := c.getConstraintFromTypeParameter(t)
-		if t.AsTypeParameterDeclaration().isThisType {
+		if t.AsTypeParameter().isThisType {
 			return constraint
 		}
 		return c.getNextBaseConstraint(constraint, stack)
