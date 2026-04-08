@@ -1081,7 +1081,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
-			CustomSourceDefinitionProvider: new(true),
+			CustomSourceDefinitionProvider:       new(true),
 			CustomMultiDocumentHighlightProvider: new(true),
 		},
 	}
