@@ -120,7 +120,7 @@ func (c *EmitContext) EndVariableEnvironment() []*ast.Statement {
 		statements = slices.Clone(scope.functions)
 	}
 	if len(scope.variables) > 0 {
-		varDeclList := c.Factory.NewVariableDeclarationList(ast.NodeFlagsNone, c.Factory.NewNodeList(scope.variables))
+		varDeclList := c.Factory.NewVariableDeclarationList(c.Factory.NewNodeList(scope.variables), ast.NodeFlagsNone)
 		varStatement := c.Factory.NewVariableStatement(nil /*modifiers*/, varDeclList)
 		c.SetEmitFlags(varStatement, EFCustomPrologue)
 		statements = append(statements, varStatement)
@@ -197,7 +197,7 @@ func (c *EmitContext) EndLexicalEnvironment() []*ast.Statement {
 	scope := c.letScopeStack.Pop()
 	var statements []*ast.Statement
 	if len(scope.variables) > 0 {
-		varDeclList := c.Factory.NewVariableDeclarationList(ast.NodeFlagsLet, c.Factory.NewNodeList(scope.variables))
+		varDeclList := c.Factory.NewVariableDeclarationList(c.Factory.NewNodeList(scope.variables), ast.NodeFlagsLet)
 		varStatement := c.Factory.NewVariableStatement(nil /*modifiers*/, varDeclList)
 		c.SetEmitFlags(varStatement, EFCustomPrologue)
 		statements = append(statements, varStatement)
@@ -835,12 +835,12 @@ func (c *EmitContext) addDefaultValueAssignmentForBindingPattern(parameter *ast.
 	}
 	c.AddInitializationStatement(c.Factory.NewVariableStatement(
 		nil,
-		c.Factory.NewVariableDeclarationList(ast.NodeFlagsNone, c.Factory.NewNodeList([]*ast.Node{c.Factory.NewVariableDeclaration(
+		c.Factory.NewVariableDeclarationList(c.Factory.NewNodeList([]*ast.Node{c.Factory.NewVariableDeclaration(
 			parameter.Name(),
 			nil,
 			parameter.Type,
 			initNode,
-		)})),
+		)}), ast.NodeFlagsNone),
 	))
 	return c.Factory.UpdateParameterDeclaration(
 		parameter,

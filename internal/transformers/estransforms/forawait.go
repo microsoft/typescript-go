@@ -436,11 +436,11 @@ func (tx *forawaitTransformer) transformForAwaitOfStatement(node *ast.ForInOrOfS
 	// Build the for statement
 	iteratorDecl := f.NewVariableDeclaration(iterator, nil, nil, initializer)
 	iteratorDecl.Loc = node.Expression.Loc
-	varDeclList := f.NewVariableDeclarationList(ast.NodeFlagsNone, f.NewNodeList([]*ast.Node{
+	varDeclList := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{
 		f.NewVariableDeclaration(nonUserCode, nil, nil, f.NewKeywordExpression(ast.KindTrueKeyword)),
 		iteratorDecl,
 		f.NewVariableDeclaration(result, nil, nil, nil),
-	}))
+	}), ast.NodeFlagsNone)
 	varDeclList.Loc = node.Expression.Loc
 
 	condition := f.InlineExpressions([]*ast.Node{

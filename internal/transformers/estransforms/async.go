@@ -669,7 +669,7 @@ func (tx *asyncTransformer) createCaptureArgumentsStatement() *ast.Node {
 		nil,
 		tx.Factory().NewIdentifier("arguments"),
 	)
-	declList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{variable}))
+	declList := tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{variable}), ast.NodeFlagsNone)
 	statement := tx.Factory().NewVariableStatement(nil, declList)
 	tx.EmitContext().AddEmitFlags(statement, printer.EFStartOnNewLine|printer.EFCustomPrologue)
 	return statement

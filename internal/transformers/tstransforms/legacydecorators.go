@@ -483,7 +483,7 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 	)
 	tx.EmitContext().SetOriginal(varDecl, node.AsNode())
 
-	varDeclList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsLet, tx.Factory().NewNodeList([]*ast.Node{varDecl}))
+	varDeclList := tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsLet)
 	varStatement := tx.Factory().NewVariableStatement(nil, varDeclList)
 	tx.EmitContext().SetOriginal(varStatement, node.AsNode())
 	varStatement.Loc = location

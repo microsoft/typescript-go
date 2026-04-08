@@ -328,8 +328,8 @@ func (f *NodeFactory) CreateForOfBindingStatement(node *ast.Node, boundValue *as
 			nil,
 			f.UpdateVariableDeclarationList(
 				node.AsVariableDeclarationList(),
-				node.AsVariableDeclarationList().Flags,
 				f.NewNodeList([]*ast.Node{updatedDeclaration}),
+				node.AsVariableDeclarationList().Flags,
 			),
 		)
 		statement.Loc = node.Loc

@@ -2435,10 +2435,10 @@ func TestNameGeneration(t *testing.T) {
 	ec := printer.NewEmitContext()
 	file := ec.Factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.ts", Path: "/file.ts"}, "", ec.Factory.NewNodeList([]*ast.Node{
 		ec.Factory.NewVariableStatement(nil, ec.Factory.NewVariableDeclarationList(
-			ast.NodeFlagsNone,
 			ec.Factory.NewNodeList([]*ast.Node{
 				ec.Factory.NewVariableDeclaration(ec.Factory.NewTempVariable(), nil, nil, nil),
 			}),
+			ast.NodeFlagsNone,
 		)),
 		ec.Factory.NewFunctionDeclaration(
 			nil,
@@ -2450,10 +2450,10 @@ func TestNameGeneration(t *testing.T) {
 			nil,
 			ec.Factory.NewBlock(ec.Factory.NewNodeList([]*ast.Node{
 				ec.Factory.NewVariableStatement(nil, ec.Factory.NewVariableDeclarationList(
-					ast.NodeFlagsNone,
 					ec.Factory.NewNodeList([]*ast.Node{
 						ec.Factory.NewVariableDeclaration(ec.Factory.NewTempVariable(), nil, nil, nil),
 					}),
+					ast.NodeFlagsNone,
 				)),
 			}), true),
 		),

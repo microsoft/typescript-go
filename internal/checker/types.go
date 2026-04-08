@@ -841,7 +841,7 @@ func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 type TypeReference struct {
 	ObjectType
-	node                  *ast.Node // TypeReference | ArrayType | TupleType when deferred, else nil
+	node                  *ast.Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
 	resolvedTypeArguments []*Type
 }
 
@@ -905,7 +905,7 @@ const (
 
 type TupleElementInfo struct {
 	flags              ElementFlags
-	labeledDeclaration *ast.Node // NamedTupleMember | Parameter | nil
+	labeledDeclaration *ast.Node // NamedTupleMember | ParameterDeclaration | nil
 }
 
 func (t *TupleElementInfo) TupleElementFlags() ElementFlags { return t.flags }
@@ -1216,7 +1216,7 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *ast.Node   // IndexSignature
+	declaration *ast.Node   // IndexSignatureDeclaration
 	indexSymbol *ast.Symbol // Synthetic property symbol for this index signature
 	components  []*ast.Node // ElementWithComputedPropertyName
 }

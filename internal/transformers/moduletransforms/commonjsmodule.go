@@ -758,8 +758,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 	varStatement := tx.Factory().NewVariableStatement(
 		nil, /*modifiers*/
 		tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList(variables),
+			ast.NodeFlagsConst,
 		),
 	)
 
@@ -796,7 +796,6 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportEqualsDeclaration(node *
 		statement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsConst,
 				tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						node.Name().Clone(tx.Factory()),
@@ -805,6 +804,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportEqualsDeclaration(node *
 						tx.createRequireCall(node.AsNode()),
 					),
 				}),
+				ast.NodeFlagsConst,
 			),
 		)
 		tx.EmitContext().SetOriginal(statement, node.AsNode())
@@ -830,7 +830,6 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		varStatement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsNone,
 				tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						generatedName,
@@ -839,6 +838,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 						tx.createRequireCall(node.AsNode()),
 					),
 				}),
+				ast.NodeFlagsNone,
 			),
 		)
 		tx.EmitContext().SetOriginal(varStatement, node.AsNode())
@@ -986,8 +986,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 					modifiers,
 					tx.Factory().UpdateVariableDeclarationList(
 						vdl,
-						vdl.Flags,
 						variableList,
+						vdl.Flags,
 					),
 				)
 				if len(statements) > 0 {

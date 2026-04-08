@@ -48,8 +48,8 @@ func (tx *taggedTemplateTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 			tx.Factory().NewVariableStatement(
 				nil, /*modifiers*/
 				tx.Factory().NewVariableDeclarationList(
-					ast.NodeFlagsNone,
 					tx.Factory().NewNodeList(tx.taggedTemplateStringDeclarations),
+					ast.NodeFlagsNone,
 				),
 			),
 		)

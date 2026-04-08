@@ -129,7 +129,6 @@ func (tx *ESModuleTransformer) visitImportEqualsDeclaration(node *ast.ImportEqua
 	varStatement := tx.Factory().NewVariableStatement(
 		nil, /*modifiers*/
 		tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().NewVariableDeclaration(
 					node.Name().Clone(tx.Factory()),
@@ -138,6 +137,7 @@ func (tx *ESModuleTransformer) visitImportEqualsDeclaration(node *ast.ImportEqua
 					tx.createRequireCall(node.AsNode()),
 				),
 			}),
+			ast.NodeFlagsConst,
 		),
 	)
 	tx.EmitContext().SetOriginal(varStatement, node.AsNode())
@@ -331,7 +331,6 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 		requireStatement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsConst,
 				tx.Factory().NewNodeList([]*ast.Node{
 					tx.Factory().NewVariableDeclaration(
 						requireHelperName,
@@ -353,6 +352,7 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 						),
 					),
 				}),
+				ast.NodeFlagsConst,
 			),
 		)
 		tx.EmitContext().AddEmitFlags(requireStatement, printer.EFCustomPrologue)

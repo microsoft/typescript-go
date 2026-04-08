@@ -1851,7 +1851,7 @@ type VariableDeclarationList struct {
 	Declarations *VariableDeclarationNodeList
 }
 
-func (f *NodeFactory) NewVariableDeclarationList(flags NodeFlags, declarations *VariableDeclarationNodeList) *Node {
+func (f *NodeFactory) NewVariableDeclarationList(declarations *VariableDeclarationNodeList, flags NodeFlags) *Node {
 	data := f.variableDeclarationListPool.New()
 	data.Declarations = declarations
 	node := f.newNode(KindVariableDeclarationList, data)
@@ -1859,9 +1859,9 @@ func (f *NodeFactory) NewVariableDeclarationList(flags NodeFlags, declarations *
 	return node
 }
 
-func (f *NodeFactory) UpdateVariableDeclarationList(node *VariableDeclarationList, flags NodeFlags, declarations *VariableDeclarationNodeList) *Node {
-	if flags != node.Flags || declarations != node.Declarations {
-		return updateNode(f.NewVariableDeclarationList(flags, declarations), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateVariableDeclarationList(node *VariableDeclarationList, declarations *VariableDeclarationNodeList, flags NodeFlags) *Node {
+	if declarations != node.Declarations || flags != node.Flags {
+		return updateNode(f.NewVariableDeclarationList(declarations, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -1871,11 +1871,11 @@ func (node *VariableDeclarationList) ForEachChild(v Visitor) bool {
 }
 
 func (node *VariableDeclarationList) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateVariableDeclarationList(node, node.Flags, v.visitNodes(node.Declarations))
+	return v.Factory.UpdateVariableDeclarationList(node, v.visitNodes(node.Declarations), node.Flags)
 }
 
 func (node *VariableDeclarationList) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewVariableDeclarationList(node.Flags, node.Declarations), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewVariableDeclarationList(node.Declarations, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsVariableDeclarationList(node *Node) bool {

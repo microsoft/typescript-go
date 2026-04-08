@@ -302,7 +302,7 @@ func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.No
 						transformers.FlattenLevelAll, false, false,
 					)
 					if declarations != nil {
-						declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
+						declarationList := ch.Factory().NewVariableDeclarationList(ch.Factory().NewNodeList([]*ast.Node{}), ast.NodeFlagsNone)
 						decls := []*ast.Node{declarations}
 						if declarations.Kind == ast.KindSyntaxList {
 							decls = declarations.AsSyntaxList().Children
@@ -360,7 +360,7 @@ func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.No
 				transformers.FlattenLevelObjectRest, false, true,
 			)
 			if declarations != nil {
-				declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
+				declarationList := ch.Factory().NewVariableDeclarationList(ch.Factory().NewNodeList([]*ast.Node{}), ast.NodeFlagsNone)
 				decls := []*ast.Node{declarations}
 				if declarations.Kind == ast.KindSyntaxList {
 					decls = declarations.AsSyntaxList().Children
@@ -393,7 +393,7 @@ func (ch *objectRestSpreadTransformer) visitCatchClause(node *ast.CatchClause) *
 			} else {
 				decls = []*ast.Node{visitedBindings}
 			}
-			newStatement := ch.Factory().NewVariableStatement(nil, ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList(decls)))
+			newStatement := ch.Factory().NewVariableStatement(nil, ch.Factory().NewVariableDeclarationList(ch.Factory().NewNodeList(decls), ast.NodeFlagsNone))
 			statements := []*ast.Node{newStatement}
 			statements = append(statements, block.Statements()...)
 			statementList := ch.Factory().NewNodeList(statements)
@@ -472,8 +472,8 @@ func (ch *objectRestSpreadTransformer) visitForOftatement(node *ast.ForInOrOfSta
 			}
 
 			list := ch.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsLet,
 				ch.Factory().NewNodeList([]*ast.Node{ch.Factory().NewVariableDeclaration(temp, nil, nil, nil)}),
+				ast.NodeFlagsLet,
 			)
 			list.Loc = node.Initializer.Loc
 

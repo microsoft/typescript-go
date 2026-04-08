@@ -472,10 +472,10 @@ func (tx *esDecoratorTransformer) createLet(name *ast.IdentifierNode, initialize
 	return tx.Factory().NewVariableStatement(
 		nil,
 		tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsLet,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().NewVariableDeclaration(name, nil, nil, initializer),
 			}),
+			ast.NodeFlagsLet,
 		),
 	)
 }
@@ -953,7 +953,7 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		//   })();
 
 		classReferenceDeclaration := f.NewVariableDeclaration(classReference, nil, nil, classExpression)
-		classReferenceVarDeclList := f.NewVariableDeclarationList(ast.NodeFlagsNone, f.NewNodeList([]*ast.Node{classReferenceDeclaration}))
+		classReferenceVarDeclList := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{classReferenceDeclaration}), ast.NodeFlagsNone)
 		var returnExpr *ast.Expression
 		if ci.classThis != nil {
 			returnExpr = f.NewAssignmentExpression(classReference, ci.classThis)
@@ -1045,7 +1045,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				//   export default C;
 				varDecl := f.NewVariableDeclaration(f.GetLocalName(classNode), nil, nil, iife)
 				ec.SetOriginal(varDecl, classNode)
-				varDecls := f.NewVariableDeclarationList(ast.NodeFlagsLet, f.NewNodeList([]*ast.Node{varDecl}))
+				varDecls := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsLet)
 				varStatement := f.NewVariableStatement(nil, varDecls)
 				statements = append(statements, varStatement)
 
@@ -1073,7 +1073,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 			declName := f.GetLocalNameEx(classNode, printer.AssignedNameOptions{AllowSourceMaps: true})
 			varDecl := f.NewVariableDeclaration(declName, nil, nil, iife)
 			ec.SetOriginal(varDecl, classNode)
-			varDecls := f.NewVariableDeclarationList(ast.NodeFlagsLet, f.NewNodeList([]*ast.Node{varDecl}))
+			varDecls := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsLet)
 			varStatement := f.NewVariableStatement(modifiers, varDecls)
 			ec.SetOriginal(varStatement, classNode)
 			ec.AssignCommentRange(varStatement, classNode)
@@ -2673,7 +2673,7 @@ func (tx *esDecoratorTransformer) createMetadata(name *ast.IdentifierNode, class
 	)
 
 	varDecl := f.NewVariableDeclaration(name, nil, nil, conditional)
-	varDeclList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{varDecl}))
+	varDeclList := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst)
 	return f.NewVariableStatement(nil, varDeclList)
 }
 

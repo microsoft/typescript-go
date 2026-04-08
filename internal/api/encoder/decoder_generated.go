@@ -318,7 +318,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		initializer := d.nodeAt(it.nextIf(mask, 3))
 		return d.factory.NewVariableDeclaration(name, exclamationToken, typeNode, initializer), nil
 	case ast.KindVariableDeclarationList:
-		return d.factory.NewVariableDeclarationList(0, d.singleNodeListChild(childIndices)), nil
+		return d.factory.NewVariableDeclarationList(d.singleNodeListChild(childIndices), 0), nil
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		return d.factory.NewBindingPattern(kind, d.singleNodeListChild(childIndices)), nil
 	case ast.KindParameter:

@@ -1706,13 +1706,13 @@
                 ],
                 "members": [
                     {
-                        "name": "Flags",
-                        "inherited": true
-                    },
-                    {
                         "name": "Declarations",
                         "type": "VariableDeclaration",
                         "list": "NodeList"
+                    },
+                    {
+                        "name": "Flags",
+                        "inherited": true
                     }
                 ],
                 "pool": true
