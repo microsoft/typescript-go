@@ -26,9 +26,9 @@ class VerboseHoverProvider implements vscode.HoverProvider {
         context?: vscode.HoverContext,
     ): Promise<vscode.VerboseHover | vscode.Hover | undefined> {
         // HoverContext and VerboseHover are proposed API; guard against missing or unexpected properties.
-        const verbosityDelta = typeof context?.verbosityDelta === "number" ? context.verbosityDelta : 0;
+        const verbosityDelta = typeof context?.verbosityDelta === "number" ? context.verbosityDelta : undefined;
         const previousHover = context?.previousHover instanceof vscode.Hover ? context.previousHover : undefined;
-        const verbosityLevel = Math.max(0, this.getPreviousLevel(previousHover) + verbosityDelta);
+        const verbosityLevel = verbosityDelta !== undefined ? Math.max(0, this.getPreviousLevel(previousHover) + verbosityDelta) : undefined;
 
         const params: HoverParamsWithVerbosity = {
             ...this.client.code2ProtocolConverter.asTextDocumentPositionParams(document, position),
@@ -54,10 +54,10 @@ class VerboseHoverProvider implements vscode.HoverProvider {
                 hover.contents,
                 hover.range,
                 response.canIncreaseVerbosity,
-                verbosityLevel > 0,
+                (verbosityLevel ?? 0) > 0,
             );
 
-            this.lastHoverAndLevel = [verboseHover, verbosityLevel];
+            this.lastHoverAndLevel = [verboseHover, verbosityLevel ?? 0];
             return verboseHover;
         }
         catch {
