@@ -150,12 +150,11 @@ func (b *NodeBuilder) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.Symbo
 	b.enterContext(nil, nodebuilder.FlagsIgnoreErrors|nodebuilder.FlagsMultilineObjectLiterals|nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope, nodebuilder.InternalFlagsNone, nil)
 
 	// Push the declared type onto the type stack to prevent re-expansion.
-	// We push a sentinel 0 after the real id so that the cycle-detection loops
-	// in shouldExpandType/canPossiblyExpandType (which skip the last element
-	// via `range len(typeStack)-1`) still check declaredType.id.
+	// We push a nil sentinel after the real type so that isTypeOnStack
+	// (which skips the last element) still checks declaredType.
 	declaredType := b.impl.ch.getDeclaredTypeOfSymbol(symbol)
-	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, declaredType.id)
-	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, 0)
+	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, declaredType)
+	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, nil)
 
 	nodes := b.impl.expandSymbolForHover(symbol)
 

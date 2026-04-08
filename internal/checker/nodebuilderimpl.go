@@ -66,7 +66,7 @@ type NodeBuilderContext struct {
 	internalFlags                   nodebuilder.InternalFlags
 	depth                           int
 	maxExpansionDepth               int // -1 means no expansion, 0+ = verbosity levels
-	typeStack                       []TypeId
+	typeStack                       []*Type
 	canIncreaseExpansionDepth       bool
 	expansionTruncated              bool
 	enclosingDeclaration            *ast.Node
@@ -192,7 +192,7 @@ func (b *NodeBuilderImpl) isExpandableType(t *Type, isAlias bool) bool {
 // excluding the last element (which is the type currently being serialized by typeToTypeNode).
 func (b *NodeBuilderImpl) isTypeOnStack(t *Type) bool {
 	for i := range len(b.ctx.typeStack) - 1 {
-		if b.ctx.typeStack[i] == t.id {
+		if b.ctx.typeStack[i] == t {
 			return true
 		}
 	}
@@ -241,7 +241,7 @@ func (b *NodeBuilderImpl) checkTypeExpandability(t *Type) {
 		return
 	}
 	// Push t onto the type stack so shouldExpandType's cycle detection works correctly.
-	b.ctx.typeStack = append(b.ctx.typeStack, t.id)
+	b.ctx.typeStack = append(b.ctx.typeStack, t)
 	if t.alias != nil {
 		b.shouldExpandType(t, true)
 	}
@@ -3095,7 +3095,7 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	// Push type onto typeStack for expansion depth tracking
 	if b.ctx.maxExpansionDepth >= 0 && t != nil {
-		b.ctx.typeStack = append(b.ctx.typeStack, t.id)
+		b.ctx.typeStack = append(b.ctx.typeStack, t)
 		defer func() {
 			b.ctx.typeStack = b.ctx.typeStack[:len(b.ctx.typeStack)-1]
 		}()
