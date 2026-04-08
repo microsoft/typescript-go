@@ -668,3 +668,279 @@ func TestCheckerPoolDiscardStillFunctional(t *testing.T) {
 		pool.mu.Unlock()
 	})
 }
+
+func TestCheckerPoolFileAffinity(t *testing.T) {
+	t.Parallel()
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+	sourceFile := program.GetSourceFile("/src/index.ts")
+	assert.Assert(t, sourceFile != nil)
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		// First query with a file should create a checker and associate it.
+		ctx1 := core.WithRequestID(context.Background(), "file-aff-1")
+		ctx1 = core.WithCheckerPurpose(ctx1, core.CheckerPurposeQuery)
+		c1, release1 := pool.GetChecker(ctx1, sourceFile)
+		assert.Assert(t, c1 != nil)
+		release1()
+		synctest.Wait()
+
+		// Second query with the same file (different request) should get the same checker via file affinity.
+		ctx2 := core.WithRequestID(context.Background(), "file-aff-2")
+		ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
+		c2, release2 := pool.GetChecker(ctx2, sourceFile)
+		assert.Assert(t, c2 != nil)
+		assert.Assert(t, c2 == c1, "same file should return the same checker via file affinity")
+		release2()
+	})
+}
+
+func TestCheckerPoolMultipleConcurrentQueryCheckers(t *testing.T) {
+	t.Parallel()
+	// maxCheckers=4: 1 diagnostics + 3 query slots.
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		// Acquire 3 query checkers concurrently (all slots).
+		ctx1 := core.WithRequestID(context.Background(), "multi-q-1")
+		ctx1 = core.WithCheckerPurpose(ctx1, core.CheckerPurposeQuery)
+		c1, release1 := pool.GetChecker(ctx1, nil)
+		assert.Assert(t, c1 != nil)
+
+		ctx2 := core.WithRequestID(context.Background(), "multi-q-2")
+		ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
+		c2, release2 := pool.GetChecker(ctx2, nil)
+		assert.Assert(t, c2 != nil)
+
+		ctx3 := core.WithRequestID(context.Background(), "multi-q-3")
+		ctx3 = core.WithCheckerPurpose(ctx3, core.CheckerPurposeQuery)
+		c3, release3 := pool.GetChecker(ctx3, nil)
+		assert.Assert(t, c3 != nil)
+
+		// All three should be distinct checkers.
+		assert.Assert(t, c1 != c2, "concurrent query checkers should be distinct (1 vs 2)")
+		assert.Assert(t, c1 != c3, "concurrent query checkers should be distinct (1 vs 3)")
+		assert.Assert(t, c2 != c3, "concurrent query checkers should be distinct (2 vs 3)")
+
+		// None should be the diagnostics checker at index 0.
+		pool.mu.Lock()
+		assert.Assert(t, pool.checkers[0] != c1 && pool.checkers[0] != c2 && pool.checkers[0] != c3,
+			"query checkers should not occupy the diagnostics slot")
+		pool.mu.Unlock()
+
+		// A 4th query request should block since all 3 slots are full.
+		var c4Got bool
+		go func() {
+			ctx4 := core.WithRequestID(context.Background(), "multi-q-4")
+			ctx4 = core.WithCheckerPurpose(ctx4, core.CheckerPurposeQuery)
+			c4, release4 := pool.GetChecker(ctx4, nil)
+			assert.Assert(t, c4 != nil)
+			c4Got = true
+			release4()
+		}()
+
+		synctest.Wait()
+		assert.Assert(t, !c4Got, "4th query should block when all 3 query slots are held")
+
+		release1()
+		synctest.Wait()
+		assert.Assert(t, c4Got, "4th query should unblock after one slot is released")
+
+		release2()
+		release3()
+	})
+}
+
+func TestCheckerPoolDoubleReleaseSafe(t *testing.T) {
+	t.Parallel()
+	_, pool := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+
+	ctx := core.WithRequestID(context.Background(), "double-release")
+	ctx = core.WithCheckerPurpose(ctx, core.CheckerPurposeQuery)
+	c, release := pool.GetChecker(ctx, nil)
+	assert.Assert(t, c != nil)
+
+	// First release should work normally.
+	release()
+	// Second release should be a no-op (sync.OnceFunc).
+	release()
+
+	// Pool should still be functional after double release.
+	ctx2 := core.WithRequestID(context.Background(), "after-double")
+	ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
+	c2, release2 := pool.GetChecker(ctx2, nil)
+	assert.Assert(t, c2 != nil)
+	release2()
+}
+
+func TestCheckerPoolDefaultMaxCheckers(t *testing.T) {
+	t.Parallel()
+	// Zero MaxCheckers should default to 4.
+	_, pool := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 0, IdleTimeout: 10 * time.Second})
+	assert.Equal(t, pool.opts.MaxCheckers, 4)
+	assert.Equal(t, len(pool.checkers), 4)
+	assert.Equal(t, cap(pool.querySem), 3, "querySem capacity should be MaxCheckers-1")
+}
+
+func TestCheckerPoolStaggeredIdleCleanup(t *testing.T) {
+	t.Parallel()
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+
+		// Acquire checker A and hold it.
+		ctxA := core.WithRequestID(context.Background(), "stagger-A")
+		ctxA = core.WithCheckerPurpose(ctxA, core.CheckerPurposeQuery)
+		cA, releaseA := pool.GetChecker(ctxA, nil)
+		assert.Assert(t, cA != nil)
+
+		// While A is held, acquire a second checker B.
+		ctxB := core.WithRequestID(context.Background(), "stagger-B")
+		ctxB = core.WithCheckerPurpose(ctxB, core.CheckerPurposeQuery)
+		cB, releaseB := pool.GetChecker(ctxB, nil)
+		assert.Assert(t, cB != nil)
+		assert.Assert(t, cB != cA, "B should be a different checker since A is held")
+
+		// Find their indices.
+		pool.mu.Lock()
+		var idxA, idxB int
+		for i := 1; i < len(pool.checkers); i++ {
+			if pool.checkers[i] == cA {
+				idxA = i
+			}
+			if pool.checkers[i] == cB {
+				idxB = i
+			}
+		}
+		pool.mu.Unlock()
+		assert.Assert(t, idxA > 0)
+		assert.Assert(t, idxB > 0)
+
+		// Release A first. Timer is set for t=10.
+		releaseA()
+		synctest.Wait()
+
+		// Release B 6 seconds later. Timer is reset for t=16.
+		time.Sleep(6 * time.Second)
+		releaseB()
+		synctest.Wait()
+
+		// At t < 16, both should still exist (timer hasn't fired).
+		pool.mu.Lock()
+		assert.Assert(t, pool.checkers[idxA] != nil, "checker A should still exist before timer fires")
+		assert.Assert(t, pool.checkers[idxB] != nil, "checker B should still exist before timer fires")
+		pool.mu.Unlock()
+
+		// Advance past t=16 (when the timer fires). Both should be disposed
+		// because A has been idle 16s and B has been idle 10s.
+		time.Sleep(11 * time.Second)
+		synctest.Wait()
+
+		pool.mu.Lock()
+		assert.Assert(t, pool.checkers[idxA] == nil, "checker A should be disposed after timer fires")
+		assert.Assert(t, pool.checkers[idxB] == nil, "checker B should be disposed after timer fires")
+		pool.mu.Unlock()
+	})
+}
+
+func TestCheckerPoolDiscardIdempotent(t *testing.T) {
+	t.Parallel()
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 2, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		// Create a checker so there's something to discard.
+		ctx := core.WithRequestID(context.Background(), "idem-q")
+		ctx = core.WithCheckerPurpose(ctx, core.CheckerPurposeQuery)
+		c, release := pool.GetChecker(ctx, nil)
+		assert.Assert(t, c != nil)
+		release()
+		synctest.Wait()
+
+		// First discard should dispose idle checkers.
+		pool.Discard()
+		pool.mu.Lock()
+		allNil := true
+		for _, c := range pool.checkers {
+			if c != nil {
+				allNil = false
+				break
+			}
+		}
+		pool.mu.Unlock()
+		assert.Assert(t, allNil, "first Discard should dispose all idle checkers")
+
+		// Second discard should be a no-op (no panic, no state corruption).
+		pool.Discard()
+
+		// Pool should still be functional after double Discard.
+		ctx2 := core.WithRequestID(context.Background(), "post-idem")
+		ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
+		c2, release2 := pool.GetChecker(ctx2, nil)
+		assert.Assert(t, c2 != nil, "pool should still work after double Discard")
+		release2()
+	})
+}
+
+func TestCheckerPoolGetGlobalDiagnosticsEmpty(t *testing.T) {
+	t.Parallel()
+	_, pool := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+
+	// Before any checker is used, global diagnostics should be empty.
+	diags := pool.GetGlobalDiagnostics()
+	assert.Equal(t, len(diags), 0, "global diagnostics should be empty initially")
+}
+
+func TestCheckerPoolTakeNewGlobalDiagnostics(t *testing.T) {
+	t.Parallel()
+	_, pool := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+
+	// Initially, no new globals.
+	assert.Assert(t, !pool.TakeNewGlobalDiagnostics(), "should report no new globals initially")
+
+	// Use a checker and trigger diagnostics, then release to run the merge.
+	ctx := core.WithRequestID(context.Background(), "global-diag-req")
+	ctx = core.WithCheckerPurpose(ctx, core.CheckerPurposeQuery)
+	sourceFile := pool.program.GetSourceFile("/src/index.ts")
+	c, release := pool.GetChecker(ctx, sourceFile)
+	assert.Assert(t, c != nil)
+	c.GetDiagnostics(ctx, sourceFile)
+	release()
+
+	// Whether globals were produced depends on the program, but the flag
+	// should reflect the merge result.
+	firstTake := pool.TakeNewGlobalDiagnostics()
+
+	// After taking, a second call should always return false (flag is reset).
+	assert.Assert(t, !pool.TakeNewGlobalDiagnostics(), "TakeNewGlobalDiagnostics should reset after first call")
+
+	// Releasing the same checker again with the same state should not set the flag.
+	ctx2 := core.WithRequestID(context.Background(), "global-diag-req-2")
+	ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
+	c2, release2 := pool.GetChecker(ctx2, sourceFile)
+	assert.Assert(t, c2 != nil)
+	c2.GetDiagnostics(ctx2, sourceFile)
+	release2()
+
+	// If first call produced globals, the count is now stable, so no new change.
+	// If first call produced no globals, still no change.
+	_ = firstTake
+	assert.Assert(t, !pool.TakeNewGlobalDiagnostics(), "should not report new globals when checker state is unchanged")
+}
