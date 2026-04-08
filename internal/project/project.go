@@ -367,7 +367,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					return newCheckerPool(p.host.sessionOptions.MaxCheckers, p.host.sessionOptions.CheckerIdleTimeout, program, p.log)
+					return newCheckerPool(p.host.sessionOptions.CheckerPoolOptions, program, p.log)
 				},
 			},
 		)

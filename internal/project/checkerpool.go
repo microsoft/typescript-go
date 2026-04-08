@@ -32,10 +32,20 @@ const checkerHeldAnonymous = "<anonymous>"
 // Concurrency is managed via two buffered channels used as semaphores:
 // diagSem (capacity 1) and querySem (capacity N-1). A goroutine receives
 // a token before claiming a checker, and sends it back on release.
+// CheckerPoolOptions configures a CheckerPool.
+type CheckerPoolOptions struct {
+	// MaxCheckers controls the total number of checker slots per project
+	// (1 dedicated diagnostics checker + N-1 query checkers). Minimum 2.
+	// Zero uses the default (4).
+	MaxCheckers int
+	// IdleTimeout controls how long an idle checker is kept
+	// before being disposed. Zero uses the default (30s).
+	IdleTimeout time.Duration
+}
+
 type CheckerPool struct {
-	maxCheckers int
-	idleTimeout time.Duration
-	program     *compiler.Program
+	opts    CheckerPoolOptions
+	program *compiler.Program
 
 	mu sync.Mutex
 
@@ -54,7 +64,7 @@ type CheckerPool struct {
 	cleanupTimer *time.Timer
 
 	// diagSem has capacity 1 — one token for the diagnostics checker slot.
-	// querySem has capacity maxCheckers-1 — one token per query checker slot.
+	// querySem has capacity opts.MaxCheckers-1 — one token per query checker slot.
 	diagSem  chan struct{}
 	querySem chan struct{}
 
@@ -66,29 +76,28 @@ type CheckerPool struct {
 
 var _ compiler.CheckerPool = (*CheckerPool)(nil)
 
-func newCheckerPool(maxCheckers int, idleTimeout time.Duration, program *compiler.Program, log func(msg string)) *CheckerPool {
-	if maxCheckers <= 0 {
-		maxCheckers = 4
-	} else if maxCheckers < 2 {
-		maxCheckers = 2 // at least 1 diagnostics + 1 query checker
+func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func(msg string)) *CheckerPool {
+	if opts.MaxCheckers <= 0 {
+		opts.MaxCheckers = 4
+	} else if opts.MaxCheckers < 2 {
+		opts.MaxCheckers = 2 // at least 1 diagnostics + 1 query checker
 	}
-	if idleTimeout <= 0 {
-		idleTimeout = 30 * time.Second
+	if opts.IdleTimeout <= 0 {
+		opts.IdleTimeout = 30 * time.Second
 	}
-	querySlots := maxCheckers - 1
+	querySlots := opts.MaxCheckers - 1
 	pool := &CheckerPool{
 		program:                program,
-		maxCheckers:            maxCheckers,
-		idleTimeout:            idleTimeout,
-		checkers:               make([]*checker.Checker, maxCheckers),
-		heldBy:                 make([]string, maxCheckers),
+		opts:                   opts,
+		checkers:               make([]*checker.Checker, opts.MaxCheckers),
+		heldBy:                 make([]string, opts.MaxCheckers),
 		fileAssociations:       make(map[*ast.SourceFile]int),
 		requestAssociations:    make(map[string]int),
-		lastReleased:           make([]time.Time, maxCheckers),
+		lastReleased:           make([]time.Time, opts.MaxCheckers),
 		diagSem:                make(chan struct{}, 1),
 		querySem:               make(chan struct{}, querySlots),
 		log:                    log,
-		globalDiagCheckerCount: make([]int, maxCheckers),
+		globalDiagCheckerCount: make([]int, opts.MaxCheckers),
 	}
 	// All slots start available.
 	pool.diagSem <- struct{}{}
@@ -279,7 +288,7 @@ func (p *CheckerPool) createRelease(requestID string, index int, c *checker.Chec
 			p.disposeCheckerLocked(index, c)
 		} else {
 			p.mergeGlobalDiagnosticsFromCheckerLocked(index, c)
-			if p.idleTimeout == 0 {
+			if p.opts.IdleTimeout == 0 {
 				// Pool is discarded — dispose immediately instead of caching.
 				p.disposeCheckerLocked(index, c)
 			} else {
@@ -322,9 +331,9 @@ func (p *CheckerPool) registerRequestCleanup(ctx context.Context, requestID stri
 // Must be called with p.mu held.
 func (p *CheckerPool) scheduleCleanupLocked() {
 	if p.cleanupTimer != nil {
-		p.cleanupTimer.Reset(p.idleTimeout)
+		p.cleanupTimer.Reset(p.opts.IdleTimeout)
 	} else {
-		p.cleanupTimer = time.AfterFunc(p.idleTimeout, p.cleanupIdleCheckers)
+		p.cleanupTimer = time.AfterFunc(p.opts.IdleTimeout, p.cleanupIdleCheckers)
 	}
 }
 
@@ -345,7 +354,7 @@ func (p *CheckerPool) cleanupIdleCheckers() {
 			continue
 		}
 		idle := now.Sub(p.lastReleased[i])
-		if idle >= p.idleTimeout {
+		if idle >= p.opts.IdleTimeout {
 			p.disposeCheckerLocked(i, c)
 		} else if earliestRemaining.IsZero() || p.lastReleased[i].Before(earliestRemaining) {
 			earliestRemaining = p.lastReleased[i]
@@ -353,7 +362,7 @@ func (p *CheckerPool) cleanupIdleCheckers() {
 	}
 	// If there are remaining checkers not yet idle enough, reschedule.
 	if !earliestRemaining.IsZero() {
-		remaining := max(p.idleTimeout-now.Sub(earliestRemaining), time.Second)
+		remaining := max(p.opts.IdleTimeout-now.Sub(earliestRemaining), time.Second)
 		p.cleanupTimer = time.AfterFunc(remaining, p.cleanupIdleCheckers)
 	} else {
 		p.cleanupTimer = nil
@@ -422,10 +431,10 @@ func (p *CheckerPool) TakeNewGlobalDiagnostics() bool {
 func (p *CheckerPool) Discard() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if p.idleTimeout == 0 {
+	if p.opts.IdleTimeout == 0 {
 		return // already discarded
 	}
-	p.idleTimeout = 0
+	p.opts.IdleTimeout = 0
 	if p.cleanupTimer != nil {
 		p.cleanupTimer.Stop()
 		p.cleanupTimer = nil
