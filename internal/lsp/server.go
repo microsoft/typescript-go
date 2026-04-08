@@ -843,8 +843,8 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 			}, nil
 		})
 		if err != nil {
-			if asyncWork, noProjectErr, ok := handleNoProjectError(s, req, err); ok {
-				return asyncWork, noProjectErr
+			if nullWork, noProjectErr, ok := handleNoProjectError(s, req, err); ok {
+				return nullWork, noProjectErr
 			}
 			return nil, err
 		}
