@@ -571,7 +571,7 @@ function generateFactory(): string {
     out.push(``);
     out.push(`export function createNodeArray<T extends Node>(elements: readonly T[], pos: number = -1, end: number = -1): NodeArray<T> {`);
     out.push(`    if (isNodeArray(elements)) return elements;`);
-    out.push(`    const arr = (elements.length >= 1 && elements.length <= 4 ? elements.slice() : elements) as unknown as NodeArray<T> & { pos: number; end: number; };`);
+    out.push(`    const arr = elements.slice() as unknown as NodeArray<T> & { pos: number; end: number; };`);
     out.push(`    arr.pos = pos;`);
     out.push(`    arr.end = end;`);
     out.push(`    return arr;`);

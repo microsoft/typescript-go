@@ -681,7 +681,7 @@ function isNodeArray<T extends Node>(array: readonly T[]): array is NodeArray<T>
 
 export function createNodeArray<T extends Node>(elements: readonly T[], pos: number = -1, end: number = -1): NodeArray<T> {
     if (isNodeArray(elements)) return elements;
-    const arr = (elements.length >= 1 && elements.length <= 4 ? elements.slice() : elements) as unknown as NodeArray<T> & { pos: number; end: number; };
+    const arr = elements.slice() as unknown as NodeArray<T> & { pos: number; end: number; };
     arr.pos = pos;
     arr.end = end;
     return arr;
