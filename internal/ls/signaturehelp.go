@@ -959,7 +959,7 @@ type contextualSignatureLocationInfo struct {
 func getSpreadElementCount(node *ast.SpreadElement, c *checker.Checker) int {
 	spreadType := c.GetTypeAtLocation(node.Expression)
 	if checker.IsTupleType(spreadType) {
-		tupleType := spreadType.Target().AsTupleTypeNode()
+		tupleType := spreadType.Target().AsTupleType()
 		if tupleType == nil {
 			return 0
 		}

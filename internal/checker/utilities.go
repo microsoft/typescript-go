@@ -425,7 +425,7 @@ func CompareTypes(t1, t2 *Type) int {
 			r2 := t2.AsTypeReferenceNode()
 			if r1.target.objectFlags&ObjectFlagsTuple != 0 && r2.target.objectFlags&ObjectFlagsTuple != 0 {
 				// Tuple types have no associated symbol, instead we order by tuple element information.
-				if c := compareTupleTypes(r1.target.AsTupleTypeNode(), r2.target.AsTupleTypeNode()); c != 0 {
+				if c := compareTupleTypes(r1.target.AsTupleType(), r2.target.AsTupleType()); c != 0 {
 					return c
 				}
 			}
@@ -490,17 +490,17 @@ func CompareTypes(t1, t2 *Type) int {
 		}
 	case t1.flags&TypeFlagsStringLiteral != 0:
 		// String literal types are ordered by their values.
-		if c := strings.Compare(t1.AsLiteralTypeNode().value.(string), t2.AsLiteralTypeNode().value.(string)); c != 0 {
+		if c := strings.Compare(t1.AsLiteralType().value.(string), t2.AsLiteralType().value.(string)); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsNumberLiteral != 0:
 		// Numeric literal types are ordered by their values.
-		if c := cmp.Compare(t1.AsLiteralTypeNode().value.(jsnum.Number), t2.AsLiteralTypeNode().value.(jsnum.Number)); c != 0 {
+		if c := cmp.Compare(t1.AsLiteralType().value.(jsnum.Number), t2.AsLiteralType().value.(jsnum.Number)); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsBooleanLiteral != 0:
-		b1 := t1.AsLiteralTypeNode().value.(bool)
-		b2 := t2.AsLiteralTypeNode().value.(bool)
+		b1 := t1.AsLiteralType().value.(bool)
+		b2 := t2.AsLiteralType().value.(bool)
 		if b1 != b2 {
 			if b1 {
 				return 1
@@ -519,17 +519,17 @@ func CompareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := CompareTypes(t1.AsIndexedAccessTypeNode().objectType, t2.AsIndexedAccessTypeNode().objectType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
 			return c
 		}
-		if c := CompareTypes(t1.AsIndexedAccessTypeNode().indexType, t2.AsIndexedAccessTypeNode().indexType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
-		if c := t1.checker.compareNodes(t1.AsConditionalTypeNode().root.node.AsNode(), t2.AsConditionalTypeNode().root.node.AsNode()); c != 0 {
+		if c := t1.checker.compareNodes(t1.AsConditionalType().root.node.AsNode(), t2.AsConditionalType().root.node.AsNode()); c != 0 {
 			return c
 		}
-		if c := compareTypeMappers(t1.AsConditionalTypeNode().mapper, t2.AsConditionalTypeNode().mapper); c != 0 {
+		if c := compareTypeMappers(t1.AsConditionalType().mapper, t2.AsConditionalType().mapper); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsSubstitution != 0:
@@ -540,10 +540,10 @@ func CompareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
-		if c := slices.Compare(t1.AsTemplateLiteralTypeNode().texts, t2.AsTemplateLiteralTypeNode().texts); c != 0 {
+		if c := slices.Compare(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
 			return c
 		}
-		if c := compareTypeLists(t1.AsTemplateLiteralTypeNode().types, t2.AsTemplateLiteralTypeNode().types); c != 0 {
+		if c := compareTypeLists(t1.AsTemplateLiteralType().types, t2.AsTemplateLiteralType().types); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
@@ -848,9 +848,9 @@ func isTypeUsableAsPropertyName(t *Type) bool {
 func getPropertyNameFromType(t *Type) string {
 	switch {
 	case t.flags&TypeFlagsStringLiteral != 0:
-		return t.AsLiteralTypeNode().value.(string)
+		return t.AsLiteralType().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:
-		return t.AsLiteralTypeNode().value.(jsnum.Number).String()
+		return t.AsLiteralType().value.(jsnum.Number).String()
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name
 	}
@@ -1724,7 +1724,7 @@ func (c *Checker) isJSLiteralType(t *Type) bool {
 		return core.Every(t.AsUnionType().types, c.isJSLiteralType)
 	}
 	if t.flags&TypeFlagsIntersection != 0 {
-		return core.Some(t.AsIntersectionTypeNode().types, c.isJSLiteralType)
+		return core.Some(t.AsIntersectionType().types, c.isJSLiteralType)
 	}
 	if t.flags&TypeFlagsInstantiable != 0 {
 		constraint := c.getResolvedBaseConstraint(t, nil)

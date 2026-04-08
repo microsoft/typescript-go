@@ -147,7 +147,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			quoteChar = printer.QuoteCharDoubleQuote
 		}
 		items := core.Map(completion.types, func(t *checker.StringLiteralType) *lsproto.CompletionItem {
-			name := printer.EscapeString(t.AsLiteralTypeNode().Value().(string), quoteChar)
+			name := printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar)
 			return l.createLSPCompletionItem(
 				ctx,
 				name,
@@ -350,7 +350,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			return nil
 		}
 		literals := core.Filter(contextualTypes.types, func(t *checker.StringLiteralType) bool {
-			return !tracker.hasValue(t.AsLiteralTypeNode().Value())
+			return !tracker.hasValue(t.AsLiteralType().Value())
 		})
 		return &stringLiteralCompletions{
 			fromTypes: &completionsFromTypes{
@@ -514,7 +514,7 @@ func fromUnionableLiteralType(
 			return &stringLiteralCompletions{
 				fromTypes: &completionsFromTypes{
 					types: core.Filter(result.types, func(t *checker.StringLiteralType) bool {
-						return !slices.Contains(alreadyUsedTypes, t.AsLiteralTypeNode().Value().(string))
+						return !slices.Contains(alreadyUsedTypes, t.AsLiteralType().Value().(string))
 					}),
 					isNewIdentifier: false,
 				},
@@ -1889,7 +1889,7 @@ func getStringLiteralTypes(t *checker.Type, uniques *collections.Set[string], ty
 		}
 		return types
 	}
-	if t.IsStringLiteral() && !t.IsEnumLiteral() && uniques.AddIfAbsent(t.AsLiteralTypeNode().Value().(string)) {
+	if t.IsStringLiteral() && !t.IsEnumLiteral() && uniques.AddIfAbsent(t.AsLiteralType().Value().(string)) {
 		return []*checker.StringLiteralType{t}
 	}
 	return nil
@@ -2049,7 +2049,7 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 	case completion.fromTypes != nil:
 		types := completion.fromTypes
 		for _, t := range types.types {
-			if t.AsLiteralTypeNode().Value().(string) == name {
+			if t.AsLiteralType().Value().(string) == name {
 				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}

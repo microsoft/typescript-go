@@ -1618,7 +1618,7 @@ func (l *LanguageService) getCompletionData(
 		}
 		literals = core.MapNonNil(types, func(t *checker.Type) literalValue {
 			if isLiteral(t) && !t.IsEnumLiteral() {
-				return t.AsLiteralTypeNode().Value()
+				return t.AsLiteralType().Value()
 			}
 			return nil
 		})
@@ -5917,7 +5917,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 					return nil, nil
 				}
 				elements = append(elements, expr)
-			} else if value := t.AsLiteralTypeNode().Value(); !tracker.hasValue(value) { // Literals
+			} else if value := t.AsLiteralType().Value(); !tracker.hasValue(value) { // Literals
 				switch v := value.(type) {
 				case jsnum.PseudoBigInt:
 					var bigInt *ast.Node

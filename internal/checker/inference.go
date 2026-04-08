@@ -211,11 +211,11 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		if simplified != target {
 			c.inferFromTypes(n, source, simplified)
 		} else if target.flags&TypeFlagsIndexedAccess != 0 {
-			indexType := c.getSimplifiedType(target.AsIndexedAccessTypeNode().indexType, false /*writing*/)
+			indexType := c.getSimplifiedType(target.AsIndexedAccessType().indexType, false /*writing*/)
 			// Generally simplifications of instantiable indexes are avoided to keep relationship checking correct, however if our target is an access, we can consider
 			// that key of that access to be "instantiated", since we're looking to find the infernce goal in any way we can.
 			if indexType.flags&TypeFlagsInstantiable != 0 {
-				simplified := c.distributeIndexOverObjectType(c.getSimplifiedType(target.AsIndexedAccessTypeNode().objectType, false /*writing*/), indexType, false /*writing*/)
+				simplified := c.distributeIndexOverObjectType(c.getSimplifiedType(target.AsIndexedAccessType().objectType, false /*writing*/), indexType, false /*writing*/)
 				if simplified != nil && simplified != target {
 					c.inferFromTypes(n, source, simplified)
 				}
@@ -232,8 +232,8 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		empty := c.createEmptyObjectTypeFromStringLiteral(source)
 		c.inferFromContravariantTypesWithPriority(n, empty, target.AsIndexType().target, InferencePriorityLiteralKeyof)
 	case source.flags&TypeFlagsIndexedAccess != 0 && target.flags&TypeFlagsIndexedAccess != 0:
-		c.inferFromTypes(n, source.AsIndexedAccessTypeNode().objectType, target.AsIndexedAccessTypeNode().objectType)
-		c.inferFromTypes(n, source.AsIndexedAccessTypeNode().indexType, target.AsIndexedAccessTypeNode().indexType)
+		c.inferFromTypes(n, source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType)
+		c.inferFromTypes(n, source.AsIndexedAccessType().indexType, target.AsIndexedAccessType().indexType)
 	case source.flags&TypeFlagsStringMapping != 0 && target.flags&TypeFlagsStringMapping != 0:
 		if source.symbol == target.symbol {
 			c.inferFromTypes(n, source.AsStringMappingType().target, target.AsStringMappingType().target)
@@ -252,7 +252,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 			c.inferFromTypes(n, sourceType, target)
 		}
 	case target.flags&TypeFlagsTemplateLiteral != 0:
-		c.inferToTemplateLiteralType(n, source, target.AsTemplateLiteralTypeNode())
+		c.inferToTemplateLiteralType(n, source, target.AsTemplateLiteralType())
 	default:
 		source = c.getReducedType(source)
 		if c.isGenericMappedType(source) && c.isGenericMappedType(target) {
@@ -485,8 +485,8 @@ func (c *Checker) inferToMultipleTypesWithPriority(n *InferenceState, source *Ty
 
 func (c *Checker) inferToConditionalType(n *InferenceState, source *Type, target *Type) {
 	if source.flags&TypeFlagsConditional != 0 {
-		c.inferFromTypes(n, source.AsConditionalTypeNode().checkType, target.AsConditionalTypeNode().checkType)
-		c.inferFromTypes(n, source.AsConditionalTypeNode().extendsType, target.AsConditionalTypeNode().extendsType)
+		c.inferFromTypes(n, source.AsConditionalType().checkType, target.AsConditionalType().checkType)
+		c.inferFromTypes(n, source.AsConditionalType().extendsType, target.AsConditionalType().extendsType)
 		c.inferFromTypes(n, c.getTrueTypeFromConditionalType(source), c.getTrueTypeFromConditionalType(target))
 		c.inferFromTypes(n, c.getFalseTypeFromConditionalType(source), c.getFalseTypeFromConditionalType(target))
 	} else {
@@ -542,7 +542,7 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 									return source
 								case left.flags&TypeFlagsTemplateLiteral != 0:
 									return left
-								case right.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, right.AsTemplateLiteralTypeNode(), c.compareTypesAssignable):
+								case right.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, right.AsTemplateLiteralType(), c.compareTypesAssignable):
 									return source
 								case left.flags&TypeFlagsStringMapping != 0:
 									return left
@@ -637,7 +637,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 	if c.isGenericMappedType(source) && c.isGenericMappedType(target) {
 		c.inferFromGenericMappedTypes(n, source, target)
 	}
-	if target.objectFlags&ObjectFlagsMapped != 0 && target.AsMappedTypeNode().declaration.NameType == nil {
+	if target.objectFlags&ObjectFlagsMapped != 0 && target.AsMappedType().declaration.NameType == nil {
 		constraintType := c.getConstraintTypeFromMappedType(target)
 		if c.inferToMappedType(n, source, target, constraintType) {
 			return
@@ -1051,11 +1051,11 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 		links := c.ReverseMappedSymbolLinks.Get(inferredProp)
 		links.propertyType = c.getTypeOfSymbol(prop)
 		constraintTarget := r.constraintType.AsIndexType().target
-		if constraintTarget.flags&TypeFlagsIndexedAccess != 0 && constraintTarget.AsIndexedAccessTypeNode().objectType.flags&TypeFlagsTypeParameter != 0 && constraintTarget.AsIndexedAccessTypeNode().indexType.flags&TypeFlagsTypeParameter != 0 {
+		if constraintTarget.flags&TypeFlagsIndexedAccess != 0 && constraintTarget.AsIndexedAccessType().objectType.flags&TypeFlagsTypeParameter != 0 && constraintTarget.AsIndexedAccessType().indexType.flags&TypeFlagsTypeParameter != 0 {
 			// A reverse mapping of `{[K in keyof T[K_1]]: T[K_1]}` is the same as that of `{[K in keyof T]: T}`, since all we care about is
 			// inferring to the "type parameter" (or indexed access) shared by the constraint and template. So, to reduce the number of
 			// type identities produced, we simplify such indexed access occurrences
-			newTypeParam := constraintTarget.AsIndexedAccessTypeNode().objectType
+			newTypeParam := constraintTarget.AsIndexedAccessType().objectType
 			newMappedType := c.replaceIndexedAccess(r.mappedType, constraintTarget, newTypeParam)
 			links.mappedType = newMappedType
 			links.constraintType = c.getIndexType(newTypeParam)
@@ -1105,7 +1105,7 @@ func (c *Checker) replaceIndexedAccess(instantiable *Type, t *Type, replacement 
 	// map type.indexType to 0
 	// map type.objectType to `[TReplacement]`
 	// thus making the indexed access `[TReplacement][0]` or `TReplacement`
-	return c.instantiateType(instantiable, newTypeMapper([]*Type{t.AsIndexedAccessTypeNode().indexType, t.AsIndexedAccessTypeNode().objectType}, []*Type{c.getNumberLiteralType(0), c.createTupleType([]*Type{replacement})}))
+	return c.instantiateType(instantiable, newTypeMapper([]*Type{t.AsIndexedAccessType().indexType, t.AsIndexedAccessType().objectType}, []*Type{c.getNumberLiteralType(0), c.createTupleType([]*Type{replacement})}))
 }
 
 func (c *Checker) typesDefinitelyUnrelated(source *Type, target *Type) bool {

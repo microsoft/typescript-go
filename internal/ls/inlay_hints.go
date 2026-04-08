@@ -161,9 +161,9 @@ func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression)
 		spreadArgs := 0
 		if ast.IsSpreadElement(arg) {
 			spreadType := s.checker.GetTypeAtLocation(arg.Expression())
-			if spreadType.IsTupleTypeNode() {
-				elementFlags := spreadType.Target().AsTupleTypeNode().ElementFlags()
-				fixedLength := spreadType.Target().AsTupleTypeNode().FixedLength()
+			if spreadType.IsTupleType() {
+				elementFlags := spreadType.Target().AsTupleType().ElementFlags()
+				fixedLength := spreadType.Target().AsTupleType().FixedLength()
 				if fixedLength == 0 {
 					continue
 				}
@@ -832,9 +832,9 @@ func (s *inlayHintState) getParameterIdentifierInfoAtPosition(signature *checker
 	}
 
 	restType := s.checker.GetTypeOfSymbol(restParameter)
-	if restType.IsTupleTypeNode() {
-		associatedNames := make([]*ast.Node, 0, len(restType.Target().AsTupleTypeNode().ElementInfos()))
-		for _, elementInfo := range restType.Target().AsTupleTypeNode().ElementInfos() {
+	if restType.IsTupleType() {
+		associatedNames := make([]*ast.Node, 0, len(restType.Target().AsTupleType().ElementInfos()))
+		for _, elementInfo := range restType.Target().AsTupleType().ElementInfos() {
 			labeledElement := elementInfo.LabeledDeclaration()
 			associatedNames = append(associatedNames, labeledElement)
 		}

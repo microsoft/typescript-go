@@ -1757,7 +1757,7 @@ func tryGetNameFromType(t *Type) (string, bool) {
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name, true
 	case t.flags&TypeFlagsStringOrNumberLiteral != 0:
-		return evaluator.AnyToString(t.AsLiteralTypeNode().value), true
+		return evaluator.AnyToString(t.AsLiteralType().value), true
 	}
 	return "", false
 }
@@ -1779,7 +1779,7 @@ func (c *Checker) getDestructuringPropertyName(node *ast.Node) (string, bool) {
 func (c *Checker) getLiteralPropertyNameText(name *ast.Node) (string, bool) {
 	t := c.getLiteralTypeFromPropertyName(name)
 	if t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
-		return evaluator.AnyToString(t.AsLiteralTypeNode().value), true
+		return evaluator.AnyToString(t.AsLiteralType().value), true
 	}
 	return "", false
 }

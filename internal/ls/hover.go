@@ -361,7 +361,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			b.WriteString(c.TypeToStringEx(t, container, typeFormatFlags))
 			if t.Flags()&checker.TypeFlagsLiteral != 0 {
 				b.WriteString(" = ")
-				b.WriteString(t.AsLiteralTypeNode().String())
+				b.WriteString(t.AsLiteralType().String())
 			}
 			setDeclaration(symbol.ValueDeclaration)
 		}

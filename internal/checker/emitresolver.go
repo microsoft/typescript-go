@@ -953,7 +953,7 @@ func (r *EmitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	if t.flags&TypeFlagsLiteral == 0 {
 		return nil // non-literal type
 	}
-	switch value := t.AsLiteralTypeNode().value.(type) {
+	switch value := t.AsLiteralType().value.(type) {
 	case string:
 		return emitContext.Factory.NewStringLiteral(value, ast.TokenFlagsNone)
 	case jsnum.Number:

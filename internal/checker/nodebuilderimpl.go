@@ -834,14 +834,14 @@ func (b *NodeBuilderImpl) getNameOfSymbolFromNameType(symbol *ast.Symbol) string
 		}
 		if nameType.flags&TypeFlagsStringOrNumberLiteral != 0 {
 			var name string
-			switch v := nameType.AsLiteralTypeNode().value.(type) {
+			switch v := nameType.AsLiteralType().value.(type) {
 			case string:
 				name = v
 			case jsnum.Number:
 				name = v.String()
 			}
 			if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) && !isNumericLiteralName(name) {
-				return b.ch.valueToString(nameType.AsLiteralTypeNode().value)
+				return b.ch.valueToString(nameType.AsLiteralType().value)
 			}
 			if isNumericLiteralName(name) && strings.HasPrefix(name, "-") {
 				return fmt.Sprintf("[%s]", name)
@@ -1387,7 +1387,7 @@ func (b *NodeBuilderImpl) isHomomorphicMappedTypeWithNonHomomorphicInstantiation
 
 func (b *NodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
 	debug.Assert(t.Flags()&TypeFlagsObject != 0)
-	mapped := t.AsMappedTypeNode()
+	mapped := t.AsMappedType()
 	var readonlyToken *ast.Node
 	if mapped.declaration.ReadonlyToken != nil {
 		readonlyToken = b.f.NewToken(mapped.declaration.ReadonlyToken.Kind)
@@ -1849,7 +1849,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 		restSymbol := sig.parameters[restIndex]
 		restType := c.getTypeOfSymbol(restSymbol)
 		getUniqAssociatedNamesFromTupleType := func(t *Type, restSymbol *ast.Symbol) []string {
-			names := core.MapIndex(t.Target().AsTupleTypeNode().elementInfos, func(info TupleElementInfo, i int) string {
+			names := core.MapIndex(t.Target().AsTupleType().elementInfos, func(info TupleElementInfo, i int) string {
 				return c.getTupleElementLabel(info, restSymbol, i)
 			})
 			if len(names) > 0 {
@@ -1900,7 +1900,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 				// 	name = c.getParameterNameAtPosition(sig, restIndex+i, restType)
 				// }
 				name := associatedNames[i]
-				flags := restType.Target().AsTupleTypeNode().elementInfos[i].flags
+				flags := restType.Target().AsTupleType().elementInfos[i].flags
 				var checkFlags ast.CheckFlags
 				switch {
 				case flags&ElementFlagsVariable != 0:
@@ -2256,11 +2256,11 @@ func (b *NodeBuilderImpl) getPropertyNameNodeForSymbolFromNameType(symbol *ast.S
 	}
 	if nameType.flags&TypeFlagsStringOrNumberLiteral != 0 {
 		var name string
-		switch nameType.AsLiteralTypeNode().value.(type) {
+		switch nameType.AsLiteralType().value.(type) {
 		case jsnum.Number:
-			name = nameType.AsLiteralTypeNode().value.(jsnum.Number).String()
+			name = nameType.AsLiteralType().value.(jsnum.Number).String()
 		case string:
-			name = nameType.AsLiteralTypeNode().value.(string)
+			name = nameType.AsLiteralType().value.(string)
 		}
 		if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) && (stringNamed || !isNumericLiteralName(name)) {
 			node := b.f.NewStringLiteral(name, core.IfElse(singleQuote, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone))
@@ -2479,7 +2479,7 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 }
 
 func (b *NodeBuilderImpl) createTypeNodeFromObjectType(t *Type) *ast.TypeNode {
-	if b.ch.isGenericMappedType(t) || (t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedTypeNode().containsError) {
+	if b.ch.isGenericMappedType(t) || (t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedType().containsError) {
 		return b.createMappedTypeNodeFromType(t)
 	}
 
@@ -2663,7 +2663,7 @@ func (b *NodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
 	if b.checkTruncationLength() {
 		return b.createElidedInformationPlaceholder()
 	}
-	t := _t.AsConditionalTypeNode()
+	t := _t.AsConditionalType()
 	checkTypeNode := b.typeToTypeNode(t.checkType)
 	b.ctx.approximateLength += 15
 	if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && t.root.isDistributive && t.checkType.flags&TypeFlagsTypeParameter == 0 {
@@ -2740,8 +2740,8 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 	} else if t.Target().objectFlags&ObjectFlagsTuple != 0 {
 		typeArguments = core.SameMapIndex(typeArguments, func(arg *Type, i int) *Type {
 			isOptional := false
-			if i < len(t.Target().AsTupleTypeNode().elementInfos) {
-				isOptional = t.Target().AsTupleTypeNode().elementInfos[i].flags&ElementFlagsOptional != 0
+			if i < len(t.Target().AsTupleType().elementInfos) {
+				isOptional = t.Target().AsTupleType().elementInfos[i].flags&ElementFlagsOptional != 0
 			}
 			return b.ch.removeMissingType(arg, isOptional)
 		})
@@ -2750,13 +2750,13 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 			tupleConstituentNodes := b.mapToTypeNodes(typeArguments[0:arity], false /*isBareList*/)
 			if tupleConstituentNodes != nil {
 				for i := 0; i < len(tupleConstituentNodes.Nodes); i++ {
-					flags := t.Target().AsTupleTypeNode().elementInfos[i].flags
-					labeledElementDeclaration := t.Target().AsTupleTypeNode().elementInfos[i].labeledDeclaration
+					flags := t.Target().AsTupleType().elementInfos[i].flags
+					labeledElementDeclaration := t.Target().AsTupleType().elementInfos[i].labeledDeclaration
 
 					if labeledElementDeclaration != nil {
 						tupleConstituentNodes.Nodes[i] = b.f.NewNamedTupleMember(
 							core.IfElse(flags&ElementFlagsVariable != 0, b.f.NewToken(ast.KindDotDotDotToken), nil),
-							b.newIdentifier(b.ch.getTupleElementLabel(t.Target().AsTupleTypeNode().elementInfos[i], nil, i), nil /*symbol*/),
+							b.newIdentifier(b.ch.getTupleElementLabel(t.Target().AsTupleType().elementInfos[i], nil, i), nil /*symbol*/),
 							core.IfElse(flags&ElementFlagsOptional != 0, b.f.NewToken(ast.KindQuestionToken), nil),
 							core.IfElse(flags&ElementFlagsRest != 0, b.f.NewArrayTypeNode(tupleConstituentNodes.Nodes[i]), tupleConstituentNodes.Nodes[i]),
 						)
@@ -2771,7 +2771,7 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				}
 				tupleTypeNode := b.f.NewTupleTypeNode(tupleConstituentNodes)
 				b.e.SetEmitFlags(tupleTypeNode, printer.EFSingleLine)
-				if t.Target().AsTupleTypeNode().readonly {
+				if t.Target().AsTupleType().readonly {
 					return b.f.NewTypeOperatorNode(ast.KindReadonlyKeyword, tupleTypeNode)
 				} else {
 					return tupleTypeNode
@@ -2781,7 +2781,7 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 		if b.ctx.encounteredError || (b.ctx.flags&nodebuilder.FlagsAllowEmptyTuple != 0) {
 			tupleTypeNode := b.f.NewTupleTypeNode(b.f.NewNodeList([]*ast.TypeNode{}))
 			b.e.SetEmitFlags(tupleTypeNode, printer.EFSingleLine)
-			if t.Target().AsTupleTypeNode().readonly {
+			if t.Target().AsTupleType().readonly {
 				return b.f.NewTypeOperatorNode(ast.KindReadonlyKeyword, tupleTypeNode)
 			} else {
 				return tupleTypeNode
@@ -2870,7 +2870,7 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	case t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReferenceNode().node != nil:
 		id = &CompositeSymbolIdentity{false, 0, ast.GetNodeId(t.AsTypeReferenceNode().node)}
 	case t.flags&TypeFlagsConditional != 0:
-		id = &CompositeSymbolIdentity{false, 0, ast.GetNodeId(t.AsConditionalTypeNode().root.node.AsNode())}
+		id = &CompositeSymbolIdentity{false, 0, ast.GetNodeId(t.AsConditionalType().root.node.AsNode())}
 	case t.symbol != nil:
 		id = &CompositeSymbolIdentity{isConstructorObject, ast.GetSymbolId(t.symbol), 0}
 	default:
@@ -3018,13 +3018,13 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		return b.symbolToTypeNode(t.symbol, ast.SymbolFlagsType, nil)
 	}
 	if t.flags&TypeFlagsStringLiteral != 0 {
-		b.ctx.approximateLength += len(t.AsLiteralTypeNode().value.(string)) + 2
-		lit := b.newStringLiteral(t.AsLiteralTypeNode().value.(string))
+		b.ctx.approximateLength += len(t.AsLiteralType().value.(string)) + 2
+		lit := b.newStringLiteral(t.AsLiteralType().value.(string))
 		b.e.AddEmitFlags(lit, printer.EFNoAsciiEscaping)
 		return b.f.NewLiteralTypeNode(lit)
 	}
 	if t.flags&TypeFlagsNumberLiteral != 0 {
-		value := t.AsLiteralTypeNode().value.(jsnum.Number)
+		value := t.AsLiteralType().value.(jsnum.Number)
 		b.ctx.approximateLength += len(value.String())
 		if value < 0 {
 			return b.f.NewLiteralTypeNode(b.f.NewPrefixUnaryExpression(ast.KindMinusToken, b.f.NewNumericLiteral(value.String()[1:], ast.TokenFlagsNone)))
@@ -3037,7 +3037,7 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		return b.f.NewLiteralTypeNode(b.f.NewBigIntLiteral(pseudoBigIntToString(getBigIntLiteralValue(t))+"n", ast.TokenFlagsNone))
 	}
 	if t.flags&TypeFlagsBooleanLiteral != 0 {
-		if t.AsLiteralTypeNode().value.(bool) {
+		if t.AsLiteralType().value.(bool) {
 			b.ctx.approximateLength += 4
 			return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
 		} else {
@@ -3156,7 +3156,7 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		if t.flags&TypeFlagsUnion != 0 {
 			types = b.ch.formatUnionTypes(t.AsUnionType().types)
 		} else {
-			types = t.AsIntersectionTypeNode().types
+			types = t.AsIntersectionType().types
 		}
 		if len(types) == 1 {
 			return b.typeToTypeNode(types[0])
@@ -3188,8 +3188,8 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		return b.f.NewTypeOperatorNode(ast.KindKeyOfKeyword, indexTypeNode)
 	}
 	if t.flags&TypeFlagsTemplateLiteral != 0 {
-		texts := t.AsTemplateLiteralTypeNode().texts
-		types := t.AsTemplateLiteralTypeNode().types
+		texts := t.AsTemplateLiteralType().texts
+		types := t.AsTemplateLiteralType().types
 		templateHead := b.f.NewTemplateHead(texts[0], "", ast.TokenFlagsNone)
 		templateSpans := b.f.NewNodeList(core.MapIndex(types, func(t *Type, i int) *ast.Node {
 			var res *ast.TemplateMiddleOrTail
@@ -3208,8 +3208,8 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		return b.symbolToTypeNode(t.AsStringMappingType().symbol, ast.SymbolFlagsType, b.f.NewNodeList([]*ast.Node{typeNode}))
 	}
 	if t.flags&TypeFlagsIndexedAccess != 0 {
-		objectTypeNode := b.typeToTypeNode(t.AsIndexedAccessTypeNode().objectType)
-		indexTypeNode := b.typeToTypeNode(t.AsIndexedAccessTypeNode().indexType)
+		objectTypeNode := b.typeToTypeNode(t.AsIndexedAccessType().objectType)
+		indexTypeNode := b.typeToTypeNode(t.AsIndexedAccessType().indexType)
 		b.ctx.approximateLength += 2
 		return b.f.NewIndexedAccessTypeNode(objectTypeNode, indexTypeNode)
 	}

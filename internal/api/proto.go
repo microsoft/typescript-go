@@ -538,14 +538,14 @@ func newTypeData(t *checker.Type) *TypeResponse {
 
 	switch flags := t.Flags(); {
 	case flags&checker.TypeFlagsLiteral != 0:
-		resp.Value = literalValueToJSON(t.AsLiteralTypeNode().Value())
+		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()
 		if objectFlags&checker.ObjectFlagsReference != 0 {
 			var ref *checker.TypeReference
 			if objectFlags&checker.ObjectFlagsTuple != 0 {
-				tuple := t.AsTupleTypeNode()
+				tuple := t.AsTupleType()
 				ref = tuple.AsTypeReferenceNode()
 				resp.ElementFlags = tuple.ElementFlags()
 				fixedLen := tuple.FixedLength()
@@ -570,11 +570,11 @@ func newTypeData(t *checker.Type) *TypeResponse {
 	case flags&checker.TypeFlagsIndex != 0:
 		resp.Target = TypeHandle(t.AsIndexType().Target())
 	case flags&checker.TypeFlagsIndexedAccess != 0:
-		data := t.AsIndexedAccessTypeNode()
+		data := t.AsIndexedAccessType()
 		resp.ObjectType = TypeHandle(data.ObjectType())
 		resp.IndexType = TypeHandle(data.IndexType())
 	case flags&checker.TypeFlagsConditional != 0:
-		data := t.AsConditionalTypeNode()
+		data := t.AsConditionalType()
 		resp.CheckType = TypeHandle(data.CheckType())
 		resp.ExtendsType = TypeHandle(data.ExtendsType())
 	case flags&checker.TypeFlagsSubstitution != 0:
@@ -582,7 +582,7 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		resp.BaseType = TypeHandle(data.BaseType())
 		resp.SubstConstraint = TypeHandle(data.SubstConstraint())
 	case flags&checker.TypeFlagsTemplateLiteral != 0:
-		tl := t.AsTemplateLiteralTypeNode()
+		tl := t.AsTemplateLiteralType()
 		resp.Texts = tl.Texts()
 		// types omitted; fetched via separate request
 	case flags&checker.TypeFlagsStringMapping != 0:
