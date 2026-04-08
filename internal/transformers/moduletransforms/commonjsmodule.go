@@ -1204,7 +1204,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedForInOrOfStatement(node 
 				bodyStatements := append(exportStatements, block.Statements.Nodes...)
 				bodyStatementList := tx.Factory().NewNodeList(bodyStatements)
 				bodyStatementList.Loc = block.Statements.Loc
-				body = tx.Factory().UpdateBlock(block, bodyStatementList, block.Multiline)
+				body = tx.Factory().UpdateBlock(block, bodyStatementList, block.MultiLine)
 			} else {
 				bodyStatements := append(exportStatements, body)
 				body = tx.Factory().NewBlock(tx.Factory().NewNodeList(bodyStatements), true /*multiLine*/)

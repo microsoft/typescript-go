@@ -283,7 +283,7 @@ func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *as
 	newStatementList := ch.Factory().NewNodeList(append(append(append(prefix, extras...), newStatements...), suffix...))
 	newStatementList.Loc = body.StatementList().Loc
 	blk := body.AsBlock()
-	return ch.Factory().UpdateBlock(blk, newStatementList, blk.Multiline)
+	return ch.Factory().UpdateBlock(blk, newStatementList, blk.MultiLine)
 }
 
 func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.Node) []*ast.Node {
@@ -400,7 +400,7 @@ func (ch *objectRestSpreadTransformer) visitCatchClause(node *ast.CatchClause) *
 			statementList.Loc = block.StatementList().Loc
 
 			blk := block.AsBlock()
-			block = ch.Factory().UpdateBlock(blk, statementList, blk.Multiline)
+			block = ch.Factory().UpdateBlock(blk, statementList, blk.MultiLine)
 		}
 		return ch.Factory().UpdateCatchClause(
 			node,

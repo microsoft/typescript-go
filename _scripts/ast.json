@@ -1644,7 +1644,7 @@
                         "list": "NodeList"
                     },
                     {
-                        "name": "Multiline",
+                        "name": "MultiLine",
                         "type": "bool"
                     }
                 ],

@@ -1709,19 +1709,19 @@ type Block struct {
 	LocalsContainerBase
 	CompositeBase
 	Statements *StatementList
-	Multiline  bool
+	MultiLine  bool
 }
 
-func (f *NodeFactory) NewBlock(statements *StatementList, multiline bool) *Node {
+func (f *NodeFactory) NewBlock(statements *StatementList, multiLine bool) *Node {
 	data := f.blockPool.New()
 	data.Statements = statements
-	data.Multiline = multiline
+	data.MultiLine = multiLine
 	return f.newNode(KindBlock, data)
 }
 
-func (f *NodeFactory) UpdateBlock(node *Block, statements *StatementList, multiline bool) *Node {
-	if statements != node.Statements || multiline != node.Multiline {
-		return updateNode(f.NewBlock(statements, multiline), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateBlock(node *Block, statements *StatementList, multiLine bool) *Node {
+	if statements != node.Statements || multiLine != node.MultiLine {
+		return updateNode(f.NewBlock(statements, multiLine), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -1731,11 +1731,11 @@ func (node *Block) ForEachChild(v Visitor) bool {
 }
 
 func (node *Block) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateBlock(node, v.visitNodes(node.Statements), node.Multiline)
+	return v.Factory.UpdateBlock(node, v.visitNodes(node.Statements), node.MultiLine)
 }
 
 func (node *Block) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewBlock(node.Statements, node.Multiline), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewBlock(node.Statements, node.MultiLine), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *Block) computeSubtreeFacts() SubtreeFacts {
@@ -9751,6 +9751,10 @@ func IsJsxTokenKind(kind Kind) bool {
 		return true
 	}
 	return false
+}
+
+func IsJSDocNodeKind(kind Kind) bool {
+	return kind >= KindFirstJSDocNode && kind <= KindLastJSDocNode
 }
 
 func IsImportPhaseModifierKind(kind Kind) bool {

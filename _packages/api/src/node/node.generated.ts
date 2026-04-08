@@ -453,10 +453,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return (this.data & (1 << 24)) !== 0;
     }
 
-    get multiline(): boolean {
-        return (this.data & (1 << 24)) !== 0;
-    }
-
     get multiLine(): boolean {
         return (this.data & (1 << 24)) !== 0;
     }

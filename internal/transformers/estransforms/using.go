@@ -197,7 +197,7 @@ func (tx *usingDeclarationTransformer) visitBlock(node *ast.Block) *ast.Node {
 		)...)
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = node.Statements.Loc
-		return tx.Factory().UpdateBlock(node, statementList, node.Multiline)
+		return tx.Factory().UpdateBlock(node, statementList, node.MultiLine)
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
@@ -269,7 +269,7 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 			statement = tx.Factory().UpdateBlock(
 				blk,
 				tx.Factory().NewNodeList(statements),
-				blk.Multiline,
+				blk.MultiLine,
 			)
 		} else {
 			statement = tx.Factory().NewBlock(

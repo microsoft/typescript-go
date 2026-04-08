@@ -599,7 +599,7 @@ export interface ExpressionStatement extends StatementBase {
 export interface Block extends StatementBase {
     readonly kind: SyntaxKind.Block;
     readonly statements: NodeArray<Statement>;
-    readonly multiline: boolean;
+    readonly multiLine: boolean;
 }
 export interface VariableStatement extends StatementBase, ModifiersBase {
     readonly kind: SyntaxKind.VariableStatement;

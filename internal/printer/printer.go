@@ -763,7 +763,7 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 		return true
 	}
 
-	if body.Multiline {
+	if body.MultiLine {
 		return false
 	}
 
@@ -3333,7 +3333,7 @@ func (p *Printer) emitBlock(node *ast.Block) {
 	p.generateNames(node.AsNode())
 	p.emitToken(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
 
-	format := core.IfElse(!node.Multiline && p.isEmptyBlock(node.AsNode(), node.Statements) || p.shouldEmitOnSingleLine(node.AsNode()),
+	format := core.IfElse(!node.MultiLine && p.isEmptyBlock(node.AsNode(), node.Statements) || p.shouldEmitOnSingleLine(node.AsNode()),
 		LFSingleLineBlockStatements,
 		LFMultiLineBlockStatements)
 	p.emitList((*Printer).emitStatement, node.AsNode(), node.Statements, format)

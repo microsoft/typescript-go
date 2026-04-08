@@ -548,7 +548,7 @@ func getNodeCommonData(node *ast.Node) uint32 {
 	switch node.Kind {
 	case ast.KindBlock:
 		n := node.AsBlock()
-		return uint32(boolToByte(n.Multiline)) << 24
+		return uint32(boolToByte(n.MultiLine)) << 24
 	case ast.KindHeritageClause:
 		n := node.AsHeritageClause()
 		var tokenIdx uint32

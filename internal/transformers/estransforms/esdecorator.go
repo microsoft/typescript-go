@@ -1539,7 +1539,7 @@ func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 			newStmts := make([]*ast.Statement, 0, len(varStatements)+len(blockBody.Statements.Nodes))
 			newStmts = append(newStmts, varStatements...)
 			newStmts = append(newStmts, blockBody.Statements.Nodes...)
-			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.Multiline))
+			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.MultiLine))
 		}
 		if tx.classInfoStack != nil {
 			tx.classInfoStack.hasStaticInitializers = true

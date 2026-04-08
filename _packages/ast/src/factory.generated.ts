@@ -491,9 +491,6 @@ export class NodeObject {
     get multiLine(): any {
         return this._data?.multiLine;
     }
-    get multiline(): any {
-        return this._data?.multiline;
-    }
     get name(): any {
         return this._data?.name;
     }
@@ -743,7 +740,7 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.ExpressionStatement:
             return { expression: n.expression };
         case SyntaxKind.Block:
-            return { statements: n.statements, multiline: n.multiline };
+            return { statements: n.statements, multiLine: n.multiLine };
         case SyntaxKind.VariableStatement:
             return { modifiers: n.modifiers, declarationList: n.declarationList };
         case SyntaxKind.VariableDeclaration:
@@ -1788,10 +1785,10 @@ export function createExpressionStatement(expression: Expression): ExpressionSta
     }) as unknown as ExpressionStatement;
 }
 
-export function createBlock(statements: readonly Statement[], multiline?: boolean): Block {
+export function createBlock(statements: readonly Statement[], multiLine?: boolean): Block {
     return new NodeObject(SyntaxKind.Block, {
         statements: createNodeArray(statements),
-        multiline,
+        multiLine,
     }) as unknown as Block;
 }
 
@@ -3174,7 +3171,7 @@ export function updateExpressionStatement(node: ExpressionStatement, expression:
 }
 
 export function updateBlock(node: Block, statements: readonly Statement[]): Block {
-    return node.statements !== statements ? createBlock(statements, node.multiline) : node;
+    return node.statements !== statements ? createBlock(statements, node.multiLine) : node;
 }
 
 export function updateVariableStatement(node: VariableStatement, modifiers: readonly ModifierLike[] | undefined, declarationList: VariableDeclarationList): VariableStatement {

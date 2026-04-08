@@ -780,13 +780,13 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	asyncBody := f.UpdateBlock(
 		blk,
 		tx.Visitor().VisitNodes(blk.StatementList()),
-		blk.Multiline,
+		blk.MultiLine,
 	)
 	ablk := asyncBody.AsBlock()
 	asyncBody = f.UpdateBlock(
 		ablk,
 		tx.EmitContext().EndAndMergeVariableEnvironmentList(ablk.StatementList()),
-		ablk.Multiline,
+		ablk.MultiLine,
 	)
 
 	// Substitute super property accesses with _super/_superIndex helpers
@@ -838,7 +838,7 @@ func (tx *forawaitTransformer) transformAsyncGeneratorFunctionBody(node *ast.Nod
 	block := f.UpdateBlock(
 		bodyBlock,
 		tx.EmitContext().EndAndMergeVariableEnvironmentList(f.NewNodeList(outerStatements)),
-		bodyBlock.Multiline,
+		bodyBlock.MultiLine,
 	)
 
 	if emitSuperHelpers && tx.hasSuperElementAccess {

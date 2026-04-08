@@ -62,7 +62,7 @@ export function getNodeDataType(kind: SyntaxKind): number {
 export function getNodeCommonData(node: Node): number {
     switch (node.kind) {
         case SyntaxKind.Block:
-            return ((node as Block).multiline ? 1 : 0) << 24;
+            return ((node as Block).multiLine ? 1 : 0) << 24;
         case SyntaxKind.HeritageClause:
             return ((node as HeritageClause).token === SyntaxKind.ImplementsKeyword ? 1 : 0) << 24;
         case SyntaxKind.ExportAssignment:

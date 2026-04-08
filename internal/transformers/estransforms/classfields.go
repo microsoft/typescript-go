@@ -2458,7 +2458,7 @@ func (tx *classFieldsTransformer) transformConstructorBodyWorker(
 
 		updated := tx.Factory().UpdateTryStatement(
 			superStatement.AsTryStatement(),
-			tx.Factory().UpdateBlock(tryBlock, tryStatementList, tryBlock.Multiline),
+			tx.Factory().UpdateBlock(tryBlock, tryStatementList, tryBlock.MultiLine),
 			catchClause,
 			finallyBlock,
 		)
@@ -2615,7 +2615,7 @@ func (tx *classFieldsTransformer) transformConstructorBody(container *ast.Node, 
 	var multiLine bool
 	if constructor != nil && constructor.Body != nil &&
 		len(constructor.Body.AsBlock().Statements.Nodes) >= len(statements) {
-		multiLine = constructor.Body.AsBlock().Multiline
+		multiLine = constructor.Body.AsBlock().MultiLine
 	} else {
 		multiLine = len(statements) > 0
 	}

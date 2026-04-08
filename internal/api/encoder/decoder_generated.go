@@ -299,12 +299,12 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindExpressionStatement:
 		return d.factory.NewExpressionStatement(d.singleChild(childIndices)), nil
 	case ast.KindBlock:
-		multiline := commonData&1 != 0
+		multiLine := commonData&1 != 0
 		var list *ast.NodeList
 		if len(childIndices) > 0 {
 			list = d.nodeListAt(childIndices[0])
 		}
-		return d.factory.NewBlock(list, multiline), nil
+		return d.factory.NewBlock(list, multiLine), nil
 	case ast.KindVariableStatement:
 		it := newChildIter(childIndices)
 		modifiers := d.modifierListAt(it.nextIf(mask, 0))

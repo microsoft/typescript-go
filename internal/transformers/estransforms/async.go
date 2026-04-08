@@ -638,12 +638,12 @@ func (tx *asyncTransformer) transformMethodBody(node *ast.Node) *ast.Node {
 	}
 
 	mergedStatements := tx.EmitContext().EndAndMergeVariableEnvironmentList(updated.StatementList())
-	if emitSuperHelpers && tx.hasSuperElementAccess && !updated.AsBlock().Multiline {
+	if emitSuperHelpers && tx.hasSuperElementAccess && !updated.AsBlock().MultiLine {
 		newBlock := tx.Factory().NewBlock(mergedStatements, true)
 		newBlock.Loc = updated.Loc
 		updated = newBlock
 	} else {
-		updated = tx.Factory().UpdateBlock(updated.AsBlock(), mergedStatements, updated.AsBlock().Multiline)
+		updated = tx.Factory().UpdateBlock(updated.AsBlock(), mergedStatements, updated.AsBlock().MultiLine)
 	}
 
 	if emitSuperHelpers && tx.hasSuperElementAccess {
@@ -788,7 +788,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	asyncBody = tx.Factory().UpdateBlock(
 		block,
 		tx.EmitContext().EndAndMergeVariableEnvironmentList(block.StatementList()),
-		block.Multiline,
+		block.MultiLine,
 	)
 
 	// Substitute super property accesses with _super/_superIndex helpers
@@ -853,7 +853,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 			result = tx.Factory().UpdateBlock(
 				blkNode,
 				tx.EmitContext().MergeEnvironmentList(blkNode.StatementList(), []*ast.Node{tx.createCaptureArgumentsStatement()}),
-				blkNode.Multiline,
+				blkNode.MultiLine,
 			)
 		}
 	}
@@ -884,7 +884,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *as
 		return tx.Factory().UpdateBlock(
 			blk,
 			tx.asyncBodyVisitor.VisitNodes(blk.StatementList()),
-			blk.Multiline,
+			blk.MultiLine,
 		)
 	}
 	// Convert expression body to block body with return statement
