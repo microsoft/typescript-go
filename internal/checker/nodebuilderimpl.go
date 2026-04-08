@@ -424,10 +424,10 @@ func (b *NodeBuilderImpl) existingTypeNodeIsNotReferenceOrIsReferenceWithCompati
 		return true
 	}
 	existingTarget := b.ch.getDeclaredTypeOfSymbol(symbol)
-	if existingTarget == nil || existingTarget != t.AsTypeReferenceNode().target {
+	if existingTarget == nil || existingTarget != t.AsTypeReference().target {
 		return true
 	}
-	return len(existing.TypeArguments()) >= b.ch.getMinTypeArgumentCount(t.AsTypeReferenceNode().target.AsInterfaceType().TypeParameters())
+	return len(existing.TypeArguments()) >= b.ch.getMinTypeArgumentCount(t.AsTypeReference().target.AsInterfaceType().TypeParameters())
 }
 
 func (b *NodeBuilderImpl) tryReuseExistingNonParameterTypeNode(existing *ast.TypeNode, t *Type, host *ast.Node, annotationType *Type) *ast.TypeNode {
@@ -2834,7 +2834,7 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				// `AsyncIterable`, and `AsyncIterableIterator` to provide backwards-compatible .d.ts emit due
 				// to each now having three type parameters instead of only one.
 				if b.ch.isReferenceToType(t, b.ch.getGlobalIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalIterableIteratorType()) || b.ch.isReferenceToType(t, b.ch.getGlobalAsyncIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalAsyncIterableIteratorType()) {
-					if t.AsTypeReferenceNode().node == nil || !ast.IsTypeReferenceNode(t.AsTypeReferenceNode().node) || t.AsTypeReferenceNode().node.TypeArguments() == nil || len(t.AsTypeReferenceNode().node.TypeArguments()) < typeParameterCount {
+					if t.AsTypeReference().node == nil || !ast.IsTypeReferenceNode(t.AsTypeReference().node) || t.AsTypeReference().node.TypeArguments() == nil || len(t.AsTypeReference().node.TypeArguments()) < typeParameterCount {
 						for typeParameterCount > 0 {
 							typeArgument := typeArguments[typeParameterCount-1]
 							typeParameter := t.Target().AsInterfaceType().TypeParameters()[typeParameterCount-1]
@@ -2867,8 +2867,8 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	isConstructorObject := t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsClass != 0
 	var id *CompositeSymbolIdentity
 	switch {
-	case t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReferenceNode().node != nil:
-		id = &CompositeSymbolIdentity{false, 0, ast.GetNodeId(t.AsTypeReferenceNode().node)}
+	case t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().node != nil:
+		id = &CompositeSymbolIdentity{false, 0, ast.GetNodeId(t.AsTypeReference().node)}
 	case t.flags&TypeFlagsConditional != 0:
 		id = &CompositeSymbolIdentity{false, 0, ast.GetNodeId(t.AsConditionalType().root.node.AsNode())}
 	case t.symbol != nil:
@@ -3107,7 +3107,7 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 
 	if objectFlags&ObjectFlagsReference != 0 {
 		debug.Assert(t.Flags()&TypeFlagsObject != 0)
-		if t.AsTypeReferenceNode().node != nil {
+		if t.AsTypeReference().node != nil {
 			return b.visitAndTransformType(t, (*NodeBuilderImpl).typeReferenceToTypeNode)
 		} else {
 			return b.typeReferenceToTypeNode(t)

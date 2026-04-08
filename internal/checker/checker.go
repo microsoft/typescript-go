@@ -16941,7 +16941,7 @@ func (b *keyBuilder) writeGenericTypeReferences(source *Type, target *Type, igno
 	var writeTypeReference func(*Type, int)
 	writeTypeReference = func(ref *Type, depth int) {
 		b.writeType(ref.Target())
-		for _, t := range ref.AsTypeReferenceNode().resolvedTypeArguments {
+		for _, t := range ref.AsTypeReference().resolvedTypeArguments {
 			if t.flags&TypeFlagsTypeParameter != 0 {
 				if ignoreConstraints || t.checker.getConstraintOfTypeParameter(t) == nil {
 					index := slices.Index(typeParameters, t)
@@ -17131,7 +17131,7 @@ func isTypeReferenceWithGenericArguments(t *Type) bool {
 }
 
 func isNonDeferredTypeReference(t *Type) bool {
-	return t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReferenceNode().node == nil
+	return t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().node == nil
 }
 
 // Return true if type parameter originates in an unconstrained declaration in a type parameter list
@@ -18240,7 +18240,7 @@ func (c *Checker) typeResolutionHasProperty(r *TypeResolution) bool {
 	case TypeSystemPropertyNameDeclaredType:
 		return c.typeAliasLinks.Get(r.target.(*ast.Symbol)).declaredType != nil
 	case TypeSystemPropertyNameResolvedTypeArguments:
-		return r.target.(*Type).AsTypeReferenceNode().resolvedTypeArguments != nil
+		return r.target.(*Type).AsTypeReference().resolvedTypeArguments != nil
 	case TypeSystemPropertyNameResolvedBaseTypes:
 		return r.target.(*Type).AsInterfaceType().baseTypesResolved
 	case TypeSystemPropertyNameResolvedBaseConstructorType:
@@ -21341,14 +21341,14 @@ func isConflictingPrivateProperty(prop *ast.Symbol) bool {
 }
 
 func (c *Checker) getTypeArguments(t *Type) []*Type {
-	d := t.AsTypeReferenceNode()
+	d := t.AsTypeReference()
 	if d.resolvedTypeArguments == nil {
 		n := d.target.AsInterfaceType()
 		if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedTypeArguments) {
 			return slices.Repeat([]*Type{c.errorType}, len(n.TypeParameters()))
 		}
 		var typeArguments []*Type
-		node := t.AsTypeReferenceNode().node
+		node := t.AsTypeReference().node
 		if node != nil {
 			switch node.Kind {
 			case ast.KindTypeReference:
@@ -21637,7 +21637,7 @@ func (c *Checker) couldContainTypeVariablesWorker(t *Type) bool {
 		return objectFlags&ObjectFlagsCouldContainTypeVariables != 0
 	}
 	result := t.flags&TypeFlagsInstantiable != 0 ||
-		t.flags&TypeFlagsObject != 0 && !c.isNonGenericTopLevelType(t) && (objectFlags&ObjectFlagsReference != 0 && (t.AsTypeReferenceNode().node != nil || core.Some(c.getTypeArguments(t), c.couldContainTypeVariables)) ||
+		t.flags&TypeFlagsObject != 0 && !c.isNonGenericTopLevelType(t) && (objectFlags&ObjectFlagsReference != 0 && (t.AsTypeReference().node != nil || core.Some(c.getTypeArguments(t), c.couldContainTypeVariables)) ||
 			objectFlags&ObjectFlagsAnonymous != 0 && t.symbol != nil && t.symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod|ast.SymbolFlagsClass|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsObjectLiteral) != 0 && t.symbol.Declarations != nil ||
 			objectFlags&(ObjectFlagsMapped|ObjectFlagsReverseMapped|ObjectFlagsObjectRestType|ObjectFlagsInstantiationExpressionType) != 0) ||
 		t.flags&TypeFlagsUnionOrIntersection != 0 && t.flags&TypeFlagsEnumLiteral == 0 && !c.isNonGenericTopLevelType(t) && core.Some(t.Types(), c.couldContainTypeVariables)
@@ -21672,8 +21672,8 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 	case flags&TypeFlagsObject != 0:
 		objectFlags := t.objectFlags
 		if objectFlags&(ObjectFlagsReference|ObjectFlagsAnonymous|ObjectFlagsMapped) != 0 {
-			if objectFlags&ObjectFlagsReference != 0 && t.AsTypeReferenceNode().node == nil {
-				resolvedTypeArguments := t.AsTypeReferenceNode().resolvedTypeArguments
+			if objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().node == nil {
+				resolvedTypeArguments := t.AsTypeReference().resolvedTypeArguments
 				newTypeArguments := c.instantiateTypes(resolvedTypeArguments, m)
 				if core.Same(newTypeArguments, resolvedTypeArguments) {
 					return t
@@ -21754,7 +21754,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 	var typeParameters []*Type
 	switch {
 	case t.objectFlags&ObjectFlagsReference != 0: // Deferred type reference
-		declaration = t.AsTypeReferenceNode().node
+		declaration = t.AsTypeReference().node
 	case t.objectFlags&ObjectFlagsInstantiationExpressionType != 0:
 		declaration = t.AsInstantiationExpressionType().node
 	default:
@@ -21823,7 +21823,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 		}
 		switch {
 		case target.objectFlags&ObjectFlagsReference != 0:
-			result = c.createDeferredTypeReference(t.Target(), t.AsTypeReferenceNode().node, newMapper, newAlias)
+			result = c.createDeferredTypeReference(t.Target(), t.AsTypeReference().node, newMapper, newAlias)
 		case target.objectFlags&ObjectFlagsMapped != 0:
 			result = c.instantiateMappedType(target, newMapper, newAlias)
 		default:
@@ -24479,7 +24479,7 @@ func (c *Checker) createTypeReference(target *Type, typeArguments []*Type) *Type
 	}
 	t := c.newObjectType(ObjectFlagsReference, target.symbol)
 	t.objectFlags |= c.getPropagatingFlagsOfTypes(typeArguments, TypeFlagsNone)
-	d := t.AsTypeReferenceNode()
+	d := t.AsTypeReference()
 	d.target = target
 	d.resolvedTypeArguments = typeArguments
 	intf.instantiations[id] = t
@@ -24495,7 +24495,7 @@ func (c *Checker) createDeferredTypeReference(target *Type, node *ast.Node, mapp
 	}
 	t := c.newObjectType(ObjectFlagsReference, target.symbol)
 	t.alias = alias
-	d := t.AsTypeReferenceNode()
+	d := t.AsTypeReference()
 	d.target = target
 	d.mapper = mapper
 	d.node = node
@@ -24505,8 +24505,8 @@ func (c *Checker) createDeferredTypeReference(target *Type, node *ast.Node, mapp
 func (c *Checker) cloneTypeReference(source *Type) *Type {
 	t := c.newObjectType(ObjectFlagsReference, source.symbol)
 	t.objectFlags = source.objectFlags &^ ObjectFlagsMembersResolved
-	t.AsTypeReferenceNode().target = source.AsTypeReferenceNode().target
-	t.AsTypeReferenceNode().resolvedTypeArguments = source.AsTypeReferenceNode().resolvedTypeArguments
+	t.AsTypeReference().target = source.AsTypeReference().target
+	t.AsTypeReference().resolvedTypeArguments = source.AsTypeReference().resolvedTypeArguments
 	return t
 }
 
@@ -27121,7 +27121,7 @@ func (c *Checker) getNormalizedType(t *Type, writing bool) *Type {
 		case c.isGenericTupleType(t):
 			n = c.getNormalizedTupleType(t, writing)
 		case t.objectFlags&ObjectFlagsReference != 0:
-			if t.AsTypeReferenceNode().node != nil {
+			if t.AsTypeReference().node != nil {
 				n = c.createTypeReference(t.Target(), c.getTypeArguments(t))
 			} else {
 				n = c.getSingleBaseForNonAugmentingSubtype(t)
@@ -30518,7 +30518,7 @@ func (c *Checker) isSomeSymbolAssignedWorker(node *ast.Node) bool {
 
 func (c *Checker) getTargetType(t *Type) *Type {
 	if t.objectFlags&ObjectFlagsReference != 0 {
-		return t.AsTypeReferenceNode().target
+		return t.AsTypeReference().target
 	}
 	return t
 }
@@ -31099,7 +31099,7 @@ func (c *Checker) getThisTypeFromContextualType(t *Type) *Type {
 }
 
 func (c *Checker) getThisTypeArgument(t *Type) *Type {
-	if t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReferenceNode().target == c.globalThisType {
+	if t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().target == c.globalThisType {
 		return c.getTypeArguments(t)[0]
 	}
 	return nil

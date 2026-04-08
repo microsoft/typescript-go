@@ -834,11 +834,11 @@ func (c *Checker) hasMatchingRecursionIdentity(t *Type, identity RecursionId) bo
 func getRecursionIdentity(t *Type) RecursionId {
 	// Object and array literals are known not to contain recursive references and don't need a recursion identity.
 	if t.flags&TypeFlagsObject != 0 && !isObjectOrArrayLiteralType(t) {
-		if t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReferenceNode().node != nil {
+		if t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().node != nil {
 			// Deferred type references are tracked through their associated AST node. This gives us finer
 			// granularity than using their associated target because each manifest type reference has a
 			// unique AST node.
-			return asRecursionId(t.AsTypeReferenceNode().node)
+			return asRecursionId(t.AsTypeReference().node)
 		}
 		if t.symbol != nil && !(t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol.Flags&ast.SymbolFlagsClass != 0) {
 			// We track object types that have a symbol by that symbol (representing the origin of the type), but

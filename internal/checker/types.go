@@ -580,7 +580,7 @@ func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*Co
 func (t *Type) AsConstrainedType() *ConstrainedType { return t.data.AsConstrainedType() }
 func (t *Type) AsStructuredType() *StructuredType   { return t.data.AsStructuredType() }
 func (t *Type) AsObjectType() *ObjectType           { return t.data.AsObjectType() }
-func (t *Type) AsTypeReferenceNode() *TypeReference { return t.data.AsTypeReferenceNode() }
+func (t *Type) AsTypeReference() *TypeReference     { return t.data.AsTypeReference() }
 func (t *Type) AsInterfaceType() *InterfaceType     { return t.data.AsInterfaceType() }
 func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
 	return t.data.AsUnionOrIntersectionType()
@@ -637,11 +637,11 @@ func (t *Type) Types() []*Type {
 }
 
 func (t *Type) TargetInterfaceType() *InterfaceType {
-	return t.AsTypeReferenceNode().target.AsInterfaceType()
+	return t.AsTypeReference().target.AsInterfaceType()
 }
 
 func (t *Type) TargetTupleType() *TupleType {
-	return t.AsTypeReferenceNode().target.AsTupleType()
+	return t.AsTypeReference().target.AsTupleType()
 }
 
 func (t *Type) Symbol() *ast.Symbol {
@@ -707,7 +707,7 @@ type TypeData interface {
 	AsConstrainedType() *ConstrainedType
 	AsStructuredType() *StructuredType
 	AsObjectType() *ObjectType
-	AsTypeReferenceNode() *TypeReference
+	AsTypeReference() *TypeReference
 	AsInterfaceType() *InterfaceType
 	AsUnionOrIntersectionType() *UnionOrIntersectionType
 }
@@ -722,7 +722,7 @@ func (t *TypeBase) AsType() *Type                                       { return
 func (t *TypeBase) AsConstrainedType() *ConstrainedType                 { return nil }
 func (t *TypeBase) AsStructuredType() *StructuredType                   { return nil }
 func (t *TypeBase) AsObjectType() *ObjectType                           { return nil }
-func (t *TypeBase) AsTypeReferenceNode() *TypeReference                 { return nil }
+func (t *TypeBase) AsTypeReference() *TypeReference                     { return nil }
 func (t *TypeBase) AsInterfaceType() *InterfaceType                     { return nil }
 func (t *TypeBase) AsUnionOrIntersectionType() *UnionOrIntersectionType { return nil }
 
@@ -845,7 +845,7 @@ type TypeReference struct {
 	resolvedTypeArguments []*Type
 }
 
-func (t *TypeReference) AsTypeReferenceNode() *TypeReference { return t }
+func (t *TypeReference) AsTypeReference() *TypeReference { return t }
 
 // InterfaceType (when generic, serves as reference to instantiation of itself)
 

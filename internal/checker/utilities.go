@@ -421,8 +421,8 @@ func CompareTypes(t1, t2 *Type) int {
 		}
 		// When object types have the same or no symbol, order by kind. We order type references before other kinds.
 		if t1.objectFlags&ObjectFlagsReference != 0 && t2.objectFlags&ObjectFlagsReference != 0 {
-			r1 := t1.AsTypeReferenceNode()
-			r2 := t2.AsTypeReferenceNode()
+			r1 := t1.AsTypeReference()
+			r2 := t2.AsTypeReference()
 			if r1.target.objectFlags&ObjectFlagsTuple != 0 && r2.target.objectFlags&ObjectFlagsTuple != 0 {
 				// Tuple types have no associated symbol, instead we order by tuple element information.
 				if c := compareTupleTypes(r1.target.AsTupleType(), r2.target.AsTupleType()); c != 0 {
@@ -432,7 +432,7 @@ func CompareTypes(t1, t2 *Type) int {
 			// Here we know we have references to instantiations of the same type because we have matching targets.
 			if r1.node == nil && r2.node == nil {
 				// Non-deferred type references with the same target are sorted by their type argument lists.
-				if c := compareTypeLists(t1.AsTypeReferenceNode().resolvedTypeArguments, t2.AsTypeReferenceNode().resolvedTypeArguments); c != 0 {
+				if c := compareTypeLists(t1.AsTypeReference().resolvedTypeArguments, t2.AsTypeReference().resolvedTypeArguments); c != 0 {
 					return c
 				}
 			} else {

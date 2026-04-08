@@ -546,14 +546,14 @@ func newTypeData(t *checker.Type) *TypeResponse {
 			var ref *checker.TypeReference
 			if objectFlags&checker.ObjectFlagsTuple != 0 {
 				tuple := t.AsTupleType()
-				ref = tuple.AsTypeReferenceNode()
+				ref = tuple.AsTypeReference()
 				resp.ElementFlags = tuple.ElementFlags()
 				fixedLen := tuple.FixedLength()
 				resp.FixedLength = &fixedLen
 				isReadonly := tuple.IsReadonly()
 				resp.TupleReadonly = &isReadonly
 			} else {
-				ref = t.AsTypeReferenceNode()
+				ref = t.AsTypeReference()
 			}
 			if ref.Target() != nil {
 				resp.Target = TypeHandle(ref.Target())

@@ -223,9 +223,9 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		}
 	}
 	switch {
-	case source.objectFlags&ObjectFlagsReference != 0 && target.objectFlags&ObjectFlagsReference != 0 && (source.AsTypeReferenceNode().target == target.AsTypeReferenceNode().target || c.isArrayType(source) && c.isArrayType(target)) && !(source.AsTypeReferenceNode().node != nil && target.AsTypeReferenceNode().node != nil):
+	case source.objectFlags&ObjectFlagsReference != 0 && target.objectFlags&ObjectFlagsReference != 0 && (source.AsTypeReference().target == target.AsTypeReference().target || c.isArrayType(source) && c.isArrayType(target)) && !(source.AsTypeReference().node != nil && target.AsTypeReference().node != nil):
 		// If source and target are references to the same generic type, infer from type arguments
-		c.inferFromTypeArguments(n, c.getTypeArguments(source), c.getTypeArguments(target), c.getVariances(source.AsTypeReferenceNode().target))
+		c.inferFromTypeArguments(n, c.getTypeArguments(source), c.getTypeArguments(target), c.getVariances(source.AsTypeReference().target))
 	case source.flags&TypeFlagsIndex != 0 && target.flags&TypeFlagsIndex != 0:
 		c.inferFromContravariantTypes(n, source.AsIndexType().target, target.AsIndexType().target)
 	case (isLiteralType(source) || source.flags&TypeFlagsString != 0) && target.flags&TypeFlagsIndex != 0:
