@@ -34,11 +34,38 @@ func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	}
 	r := b.reuseNode(node)
 	if r != nil {
+		// On successful reuse at hover level 0, walk the reused AST node to check if
+		// any type reference in it is expandable.
+		if b.ctx.maxExpansionDepth == 0 && !b.ctx.canIncreaseExpansionDepth {
+			b.walkNodeForExpandability(node)
+		}
 		return r
 	}
 	b.ctx.tracker.ReportInferenceFallback(node)
 	t := b.getTypeFromTypeNode(node, false)
 	return b.typeToTypeNode(t)
+}
+
+// walkNodeForHoverVerbosity walks an AST node tree checking each type reference
+// for expandability. Short-circuits once canIncreaseExpansionDepth is set.
+func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
+	if b.ctx.canIncreaseExpansionDepth || node == nil {
+		return
+	}
+	// Only resolve types for nodes that can reference expandable named types.
+	if ast.IsTypeReferenceNode(node) || ast.IsExpressionWithTypeArguments(node) || ast.IsTypePredicateNode(node) || ast.IsImportTypeNode(node) {
+		t := b.getTypeFromTypeNode(node, false)
+		if t != nil {
+			b.checkTypeExpandability(t)
+			if b.ctx.canIncreaseExpansionDepth {
+				return
+			}
+		}
+	}
+	node.ForEachChild(func(child *ast.Node) bool {
+		b.walkNodeForExpandability(child)
+		return b.ctx.canIncreaseExpansionDepth
+	})
 }
 
 type recoveryBoundary struct {

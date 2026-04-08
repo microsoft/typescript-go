@@ -1064,23 +1064,31 @@ func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
 	return c.getSignatureFromDeclaration(node)
 }
 
-// IsLibType returns true if a type is declared in a lib file.
-// Don't expand types like Array or Promise, instead treating them as opaque.
-func (c *Checker) IsLibType(t *Type) bool {
-	var symbol *ast.Symbol
-	if t.objectFlags&ObjectFlagsReference != 0 {
-		symbol = t.Target().Symbol()
-	} else {
-		symbol = t.Symbol()
-	}
+// IsLibSymbolForHoverVerbosity returns true if a symbol is declared in a lib file.
+func (c *Checker) IsLibSymbolForHoverVerbosity(symbol *ast.Symbol) bool {
 	if symbol == nil {
-		return isTupleType(t)
+		return false
 	}
 	for _, decl := range symbol.Declarations {
 		sf := ast.GetSourceFileOfNode(decl)
 		if sf != nil && c.program.IsSourceFileDefaultLibrary(sf.Path()) {
 			return true
 		}
+	}
+	return false
+}
+
+// IsLibTypeForHoverVerbosity returns true if a type is declared in a lib file.
+// Don't expand types like Array or Promise, instead treating them as opaque.
+func (c *Checker) IsLibTypeForHoverVerbosity(t *Type) bool {
+	var symbol *ast.Symbol
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		symbol = t.Target().Symbol()
+	} else {
+		symbol = t.Symbol()
+	}
+	if c.IsLibSymbolForHoverVerbosity(symbol) {
+		return true
 	}
 	return isTupleType(t)
 }

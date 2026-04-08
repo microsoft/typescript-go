@@ -165,14 +165,30 @@ func (b *NodeBuilderImpl) checkTruncationLengthIfExpanding() bool {
 	return false
 }
 
+// isExpandableType returns true if t is a type that can be meaningfully expanded
+// (i.e., it has a named representation that could be inlined as structural form).
+func (b *NodeBuilderImpl) isExpandableType(t *Type, isAlias bool) bool {
+	if isAlias {
+		return !b.ch.IsLibSymbolForHoverVerbosity(t.alias.Symbol())
+	}
+	if b.ch.IsLibTypeForHoverVerbosity(t) {
+		return false
+	}
+	objectFlags := t.objectFlags
+	return t.flags&TypeFlagsEnumLike != 0 ||
+		objectFlags&ObjectFlagsReference != 0 ||
+		objectFlags&ObjectFlagsClassOrInterface != 0
+}
+
 // shouldExpandType determines if the input type should be expanded, based on how many layers of names
-// we're allowed to expand. For non-alias types, lib types are never expanded.
-// Sets canIncreaseExpansionDepth on the context when declining to expand at the boundary.
+// we're allowed to expand. Sets canIncreaseExpansionDepth on the context when declining to expand at the boundary.
+// Callers in typeToTypeNode pre-filter to only call this on appropriate type categories; for arbitrary types,
+// use isExpandableType first.
 func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 	if b.ctx.maxExpansionDepth < 0 {
 		return false
 	}
-	if !isAlias && b.ch.IsLibType(t) {
+	if !isAlias && b.ch.IsLibTypeForHoverVerbosity(t) {
 		return false
 	}
 	// cycle detection via typeStack
@@ -202,6 +218,38 @@ func (b *NodeBuilderImpl) canPossiblyExpandType(t *Type) bool {
 	}
 	return b.ctx.depth < b.ctx.maxExpansionDepth ||
 		b.ctx.depth == b.ctx.maxExpansionDepth && !b.ctx.canIncreaseExpansionDepth
+}
+
+// checkTypeExpandability detects whether a type could be expanded, for use after type-node
+// reuse (where typeToTypeNode and shouldExpandType are never reached). Uses isExpandableType
+// for classification, then recurses into type arguments of reference types (e.g., Apple in
+// Promise<Apple>) since reuse skips their individual traversal.
+// Only runs at maxExpansionDepth == 0 (hover level 0 detection).
+func (b *NodeBuilderImpl) checkTypeExpandability(t *Type) {
+	if b.ctx.maxExpansionDepth != 0 || t == nil || b.ctx.canIncreaseExpansionDepth {
+		return
+	}
+	// Skip types already on the type stack (cyclic references like Node<T> inside Node<T>)
+	if slices.Contains(b.ctx.typeStack, t.id) {
+		return
+	}
+	if t.alias != nil && b.isExpandableType(t, true) {
+		b.ctx.canIncreaseExpansionDepth = true
+		return
+	}
+	if b.isExpandableType(t, false) {
+		b.ctx.canIncreaseExpansionDepth = true
+		return
+	}
+	// For type references (including lib types like Promise<T>), check type arguments
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		for _, arg := range b.ch.getTypeArguments(t) {
+			b.checkTypeExpandability(arg)
+			if b.ctx.canIncreaseExpansionDepth {
+				return
+			}
+		}
+	}
 }
 
 func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.TypeNode) *ast.TypeNode {
@@ -1600,6 +1648,7 @@ func (b *NodeBuilderImpl) typeToTypeNodeHelperWithPossibleReusableTypeNode(t *Ty
 	if !b.canPossiblyExpandType(t) && typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == t {
 		reused := b.tryReuseExistingNodeHelper(typeNode)
 		if reused != nil {
+			b.checkTypeExpandability(t)
 			return reused
 		}
 	}

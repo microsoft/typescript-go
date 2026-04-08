@@ -2085,6 +2085,20 @@ type hoverWithVerbosity struct {
 	VerbosityLevel int            `json:"verbosityLevel"`
 }
 
+// hoverContentString extracts the text content from a hover response for comparison.
+func hoverContentString(hover *lsproto.Hover) string {
+	if hover == nil {
+		return ""
+	}
+	if hover.Contents.MarkupContent != nil {
+		return hover.Contents.MarkupContent.Value
+	}
+	if hover.Contents.String != nil {
+		return *hover.Contents.String
+	}
+	return ""
+}
+
 func (f *FourslashTest) VerifyBaselineHoverWithVerbosity(t *testing.T, verbosityLevels map[string][]int) {
 	var markersAndItems []markerAndItem[*hoverWithVerbosity]
 	for _, marker := range f.Markers() {
@@ -2095,7 +2109,7 @@ func (f *FourslashTest) VerifyBaselineHoverWithVerbosity(t *testing.T, verbosity
 		if !ok {
 			levels = []int{0}
 		}
-		for _, level := range levels {
+		for i, level := range levels {
 			verbLevel := int32(level)
 			params := &lsproto.HoverParams{
 				TextDocument: lsproto.TextDocumentIdentifier{
@@ -2108,6 +2122,19 @@ func (f *FourslashTest) VerifyBaselineHoverWithVerbosity(t *testing.T, verbosity
 			item := &hoverWithVerbosity{
 				Hover:          result.Hover,
 				VerbosityLevel: level,
+			}
+			// If the previous level said it can't expand further, verify the hover
+			// content is identical, meaning the flag was accurate.
+			if i > 0 && level > levels[i-1] {
+				prevItem := markersAndItems[len(markersAndItems)-1].Item
+				if prevItem != nil && prevItem.Hover != nil && !prevItem.Hover.CanIncreaseVerbosity {
+					prevContent := hoverContentString(prevItem.Hover)
+					curContent := hoverContentString(item.Hover)
+					if prevContent != curContent {
+						t.Errorf("At marker %q: verbosity level %d response differs from level %d, but level %d had canIncreaseVerbosity=false.\n  level %d: %s\n  level %d: %s",
+							*marker.Name, level, levels[i-1], levels[i-1], levels[i-1], prevContent, level, curContent)
+					}
+				}
 			}
 			markersAndItems = append(markersAndItems, markerAndItem[*hoverWithVerbosity]{Marker: marker, Item: item})
 		}

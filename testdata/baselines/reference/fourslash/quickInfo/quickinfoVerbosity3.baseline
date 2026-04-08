@@ -328,7 +328,8 @@
             "line": 0,
             "character": 13
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -389,7 +390,8 @@
             "line": 3,
             "character": 9
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }

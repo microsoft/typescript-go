@@ -322,13 +322,19 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		if vc == nil {
 			return false
 		}
+		// Only offer symbol-level expansion for types that tryExpandSymbol handles:
+		// class, interface, enum, namespace/module. For functions/variables/properties,
+		// the node builder's probeTypeExpandability detects expandable type components.
+		if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface|ast.SymbolFlagsNamespace) == 0 {
+			return false
+		}
 		var t *checker.Type
 		if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 {
 			t = c.GetDeclaredTypeOfSymbol(symbol)
 		} else {
 			t = c.GetTypeOfSymbolAtLocation(symbol, node)
 		}
-		if t == nil || c.IsLibType(t) {
+		if t == nil || c.IsLibTypeForHoverVerbosity(t) {
 			return false
 		}
 		if vc.Level > 0 {
