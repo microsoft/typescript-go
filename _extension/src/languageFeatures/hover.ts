@@ -48,19 +48,21 @@ class VerboseHoverProvider implements vscode.HoverProvider {
         }
 
         const hover = this.client.protocol2CodeConverter.asHover(response);
-        if (typeof vscode.VerboseHover !== "function") {
+        // VerboseHover is proposed API; guard against missing or changed constructor.
+        try {
+            const verboseHover = new vscode.VerboseHover(
+                hover.contents,
+                hover.range,
+                response.canIncreaseVerbosity,
+                verbosityLevel > 0,
+            );
+
+            this.lastHoverAndLevel = [verboseHover, verbosityLevel];
+            return verboseHover;
+        }
+        catch {
             return hover;
         }
-
-        const verboseHover = new vscode.VerboseHover(
-            hover.contents,
-            hover.range,
-            response.canIncreaseVerbosity,
-            verbosityLevel > 0,
-        );
-
-        this.lastHoverAndLevel = [verboseHover, verbosityLevel];
-        return verboseHover;
     }
 
     private getPreviousLevel(previousHover: vscode.Hover | undefined): number {
