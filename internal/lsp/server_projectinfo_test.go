@@ -152,3 +152,26 @@ func TestProjectInfoUntitledFileNotOpened(t *testing.T) {
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, resp.Error == nil, "expected no error for untitled file that was never opened, got: %v", resp.Error)
 }
+
+func TestDiagnosticUntitledFileNotOpened(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	// Test that requesting diagnostics for an untitled file that was never opened
+	// does not produce an error (exercises registerLanguageServiceDocumentRequestHandler).
+	client := initProjectInfoClient(t, map[string]string{})
+
+	uri := lsproto.DocumentUri("untitled:Untitled-1")
+
+	id := client.NextID()
+	reqID := lsproto.NewID(lsproto.IntegerOrString{Integer: &id})
+	req := lsproto.TextDocumentDiagnosticInfo.NewRequestMessage(reqID, &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+	})
+	resp, ok := client.SendRequestWorker(t, req, reqID)
+	assert.Assert(t, ok, "expected a response")
+	assert.Assert(t, resp.Error == nil, "expected no error for untitled file diagnostics, got: %v", resp.Error)
+}

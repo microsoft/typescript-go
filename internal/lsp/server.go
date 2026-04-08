@@ -765,6 +765,19 @@ func registerRequestHandler[Req, Resp any](
 	}
 }
 
+// handleNoProjectError checks if err is an ErrNoProject error, and if so, returns
+// an async function that sends a null result for the request. This prevents
+// "no project found" errors from being surfaced to the user (e.g. for untitled files
+// not yet opened via textDocument/didOpen).
+func handleNoProjectError(s *Server, req *lsproto.RequestMessage, err error) (func() error, error, bool) {
+	if errors.Is(err, project.ErrNoProject) {
+		return func() error {
+			return s.sendResult(req.ID, lsproto.Null{})
+		}, nil, true
+	}
+	return nil, err, false
+}
+
 func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
 		var params Req
@@ -774,13 +787,8 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		}
 		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
-			if errors.Is(err, project.ErrNoProject) {
-				// No project found for this URI (e.g. untitled file not yet opened).
-				// Return a null result instead of an error to avoid surfacing
-				// internal errors to the user.
-				return func() error {
-					return s.sendResult(req.ID, *new(Resp))
-				}, nil
+			if asyncWork, noProjectErr, ok := handleNoProjectError(s, req, err); ok {
+				return asyncWork, noProjectErr
 			}
 			return nil, err
 		}
@@ -835,11 +843,8 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 			}, nil
 		})
 		if err != nil {
-			if errors.Is(err, project.ErrNoProject) {
-				// No project found for this URI. Return a null result.
-				return func() error {
-					return s.sendResult(req.ID, *new(Resp))
-				}, nil
+			if asyncWork, noProjectErr, ok := handleNoProjectError(s, req, err); ok {
+				return asyncWork, noProjectErr
 			}
 			return nil, err
 		}
@@ -861,11 +866,8 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		// !!! sheetal: multiple projects that contain the file through symlinks
 		defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
 		if err != nil {
-			if errors.Is(err, project.ErrNoProject) {
-				// No project found for this URI. Return a null result.
-				return func() error {
-					return s.sendResult(req.ID, *new(Resp))
-				}, nil
+			if asyncWork, noProjectErr, ok := handleNoProjectError(s, req, err); ok {
+				return asyncWork, noProjectErr
 			}
 			return nil, err
 		}
