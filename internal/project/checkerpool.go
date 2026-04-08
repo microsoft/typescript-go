@@ -44,7 +44,7 @@ type CheckerPoolOptions struct {
 	IdleTimeout time.Duration
 }
 
-type CheckerPool struct {
+type checkerPool struct {
 	opts    CheckerPoolOptions
 	program *compiler.Program
 
@@ -75,9 +75,9 @@ type CheckerPool struct {
 	globalDiagCheckerCount []int // per-checker count of globals last seen
 }
 
-var _ compiler.CheckerPool = (*CheckerPool)(nil)
+var _ compiler.CheckerPool = (*checkerPool)(nil)
 
-func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func(msg string)) *CheckerPool {
+func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func(msg string)) *checkerPool {
 	if opts.MaxCheckers <= 0 {
 		opts.MaxCheckers = 4
 	} else if opts.MaxCheckers < 2 {
@@ -87,7 +87,7 @@ func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func
 		opts.IdleTimeout = 30 * time.Second
 	}
 	querySlots := opts.MaxCheckers - 1
-	pool := &CheckerPool{
+	pool := &checkerPool{
 		program:                program,
 		opts:                   opts,
 		checkers:               make([]*checker.Checker, opts.MaxCheckers),
@@ -116,7 +116,7 @@ func holdTag(requestID string) string {
 	return requestID
 }
 
-func (p *CheckerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	purpose := core.GetCheckerPurpose(ctx)
 	requestID := core.GetRequestID(ctx)
 
@@ -135,7 +135,7 @@ func (p *CheckerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 // or reclaimed). Returns (nil, nil, false) if the caller must proceed with
 // normal acquisition — in this case, a semaphore token has already been consumed.
 // Must NOT be called with p.mu held.
-func (p *CheckerPool) tryReacquireForRequest(requestID string, sem <-chan struct{}) (*checker.Checker, func(), bool) {
+func (p *checkerPool) tryReacquireForRequest(requestID string, sem <-chan struct{}) (*checker.Checker, func(), bool) {
 	if requestID == "" {
 		<-sem
 		return nil, nil, false
@@ -189,7 +189,7 @@ func (p *CheckerPool) tryReacquireForRequest(requestID string, sem <-chan struct
 
 // getDiagnosticsChecker returns the dedicated diagnostics checker (index 0).
 // Creates it on first use. Blocks on diagSem if it's currently in use.
-func (p *CheckerPool) getDiagnosticsChecker(ctx context.Context, requestID string) (*checker.Checker, func()) {
+func (p *checkerPool) getDiagnosticsChecker(ctx context.Context, requestID string) (*checker.Checker, func()) {
 	const diagIndex = 0
 
 	if c, release, ok := p.tryReacquireForRequest(requestID, p.diagSem); ok {
@@ -221,7 +221,7 @@ func (p *CheckerPool) getDiagnosticsChecker(ctx context.Context, requestID strin
 // getQueryChecker returns an ephemeral query checker from indices 1+.
 // Uses request affinity, then file affinity, then finds/creates.
 // Blocks on querySem if all query slots are in use.
-func (p *CheckerPool) getQueryChecker(ctx context.Context, requestID string, file *ast.SourceFile) (*checker.Checker, func()) {
+func (p *checkerPool) getQueryChecker(ctx context.Context, requestID string, file *ast.SourceFile) (*checker.Checker, func()) {
 	if c, release, ok := p.tryReacquireForRequest(requestID, p.querySem); ok {
 		return c, release
 	}
@@ -265,7 +265,7 @@ func (p *CheckerPool) getQueryChecker(ctx context.Context, requestID string, fil
 // findOrCreateQueryCheckerLocked returns an idle query checker or creates one
 // in the first empty slot. The semaphore guarantees at least one slot is
 // available. Must be called with p.mu held.
-func (p *CheckerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
+func (p *checkerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	// Prefer an existing idle checker.
 	for i := 1; i < len(p.checkers); i++ {
 		if c := p.checkers[i]; c != nil && p.heldBy[i] == "" {
@@ -284,7 +284,7 @@ func (p *CheckerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	panic("checkerpool: no available query slot despite holding semaphore token")
 }
 
-func (p *CheckerPool) createRelease(requestID string, index int, c *checker.Checker) func() {
+func (p *checkerPool) createRelease(requestID string, index int, c *checker.Checker) func() {
 	return sync.OnceFunc(func() {
 		p.mu.Lock()
 
@@ -324,7 +324,7 @@ func (p *CheckerPool) createRelease(requestID string, index int, c *checker.Chec
 // association when the request context is done. This prevents the map
 // from growing unboundedly with completed request IDs.
 // Must be called with p.mu held; the cleanup runs asynchronously.
-func (p *CheckerPool) registerRequestCleanup(ctx context.Context, requestID string) {
+func (p *checkerPool) registerRequestCleanup(ctx context.Context, requestID string) {
 	context.AfterFunc(ctx, func() {
 		p.mu.Lock()
 		defer p.mu.Unlock()
@@ -336,7 +336,7 @@ func (p *CheckerPool) registerRequestCleanup(ctx context.Context, requestID stri
 // idleTimeout after the most recent checker release. When the timer fires,
 // it disposes any checkers that have been idle long enough.
 // Must be called with p.mu held.
-func (p *CheckerPool) scheduleCleanupLocked() {
+func (p *checkerPool) scheduleCleanupLocked() {
 	if p.cleanupTimer != nil {
 		p.cleanupTimer.Reset(p.opts.IdleTimeout)
 	} else {
@@ -347,7 +347,7 @@ func (p *CheckerPool) scheduleCleanupLocked() {
 // cleanupIdleCheckers disposes all checkers (diagnostics and query) that have
 // been idle for longer than the idle timeout. If any checkers are still alive
 // but not yet idle enough, the timer is rescheduled.
-func (p *CheckerPool) cleanupIdleCheckers() {
+func (p *checkerPool) cleanupIdleCheckers() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	now := time.Now()
@@ -379,7 +379,7 @@ func (p *CheckerPool) cleanupIdleCheckers() {
 
 // disposeCheckerLocked removes a checker from the pool and clears all associations
 // (file and request) that reference it. Must be called with p.mu held.
-func (p *CheckerPool) disposeCheckerLocked(index int, c *checker.Checker) {
+func (p *checkerPool) disposeCheckerLocked(index int, c *checker.Checker) {
 	debug.Assert(p.checkers[index] == c)
 	p.checkers[index] = nil
 	p.heldBy[index] = ""
@@ -400,7 +400,7 @@ func (p *CheckerPool) disposeCheckerLocked(index int, c *checker.Checker) {
 // mergeGlobalDiagnosticsFromCheckerLocked checks if the given checker has produced new global
 // diagnostics since the last time we looked, and if so merges them into the accumulated set.
 // Must be called with p.mu held.
-func (p *CheckerPool) mergeGlobalDiagnosticsFromCheckerLocked(index int, c *checker.Checker) {
+func (p *checkerPool) mergeGlobalDiagnosticsFromCheckerLocked(index int, c *checker.Checker) {
 	globals := c.GetGlobalDiagnostics()
 	if len(globals) == p.globalDiagCheckerCount[index] {
 		return
@@ -415,7 +415,7 @@ func (p *CheckerPool) mergeGlobalDiagnosticsFromCheckerLocked(index int, c *chec
 
 // GetGlobalDiagnostics returns the accumulated global diagnostics collected from
 // all checkers that have been used so far in this pool's lifetime.
-func (p *CheckerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
+func (p *checkerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	return slices.Clone(p.globalDiagAccumulated)
@@ -423,7 +423,7 @@ func (p *CheckerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
 
 // TakeNewGlobalDiagnostics reports whether new global diagnostics have been
 // accumulated since the last call, and resets the flag.
-func (p *CheckerPool) TakeNewGlobalDiagnostics() bool {
+func (p *checkerPool) TakeNewGlobalDiagnostics() bool {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	changed := p.globalDiagChanged
@@ -436,7 +436,7 @@ func (p *CheckerPool) TakeNewGlobalDiagnostics() bool {
 // still use it) but stops caching idle checkers, disposing them immediately
 // after each use. This prevents checker accumulation during rapid typing,
 // where each keystroke can produce a new program and pool.
-func (p *CheckerPool) Discard() {
+func (p *checkerPool) Discard() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.opts.IdleTimeout == 0 {

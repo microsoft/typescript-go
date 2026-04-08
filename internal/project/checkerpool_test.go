@@ -16,7 +16,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func setupCheckerPoolSession(t *testing.T, opts CheckerPoolOptions) (*Session, *CheckerPool) {
+func setupCheckerPoolSession(t *testing.T, opts CheckerPoolOptions) (*Session, *checkerPool) {
 	t.Helper()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -51,7 +51,7 @@ func setupCheckerPoolSession(t *testing.T, opts CheckerPoolOptions) (*Session, *
 
 // newTestCheckerPool creates a checker pool inside the current goroutine context
 // (suitable for use inside synctest.Test) using the given program.
-func newTestCheckerPool(program *compiler.Program, opts CheckerPoolOptions) *CheckerPool {
+func newTestCheckerPool(program *compiler.Program, opts CheckerPoolOptions) *checkerPool {
 	return newCheckerPool(opts, program, func(string) {})
 }
 

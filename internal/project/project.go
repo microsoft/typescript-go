@@ -77,7 +77,7 @@ type Project struct {
 	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
 	typingsWatch      *WatchedFiles[PatternsAndIgnored]
 
-	checkerPool *CheckerPool
+	checkerPool *checkerPool
 
 	// installedTypingsInfo is the value of `project.ComputeTypingsInfo()` that was
 	// used during the most recently completed typings installation.
