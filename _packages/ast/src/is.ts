@@ -44,13 +44,6 @@ import type {
 export * from "./is.generated.ts";
 import { isLiteralExpression } from "./is.generated.ts";
 
-// JSDocKind is a range-based guard for JSDoc NODE kinds (FirstJSDocNode..LastJSDocNode),
-// distinct from JSDocSyntaxKind which enumerates JSDoc SCANNER token kinds.
-// The generated isJSDocKind from JSDocSyntaxKind has different semantics, so we override it.
-export function isJSDocKind(kind: SyntaxKind): boolean {
-    return kind >= SyntaxKind.FirstJSDocNode && kind <= SyntaxKind.LastJSDocNode;
-}
-
 type JSDocNamespaceDeclaration = ModuleDeclaration;
 
 type WrappedExpression<T extends Expression> =

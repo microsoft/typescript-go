@@ -148,7 +148,6 @@ import type {
     JSDocSatisfiesTag,
     JSDocSeeTag,
     JSDocSignature,
-    JSDocSyntaxKind,
     JSDocTemplateTag,
     JSDocText,
     JSDocThisTag,
@@ -1230,7 +1229,8 @@ export function isUnionOrIntersectionTypeNode(node: Node): node is UnionOrInters
 }
 
 export function isTemplateLiteralLikeNode(node: Node): node is TemplateLiteralLikeNode {
-    return node.kind === SyntaxKind.TemplateHead || node.kind === SyntaxKind.TemplateMiddle || node.kind === SyntaxKind.TemplateTail;
+    const kind = node.kind;
+    return isPseudoLiteralKind(kind);
 }
 
 export function isTemplateMiddleOrTail(node: Node): node is TemplateMiddleOrTail {
@@ -1341,7 +1341,7 @@ export function isLiteralToken(node: Node): node is LiteralToken {
 
 export function isModifier(node: Node): node is Modifier {
     const kind = node.kind;
-    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.AsyncKeyword || kind === SyntaxKind.ConstKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword;
+    return isModifierKind(kind);
 }
 
 export function isObjectLiteralElementLike(node: Node): node is ObjectLiteralElementLike {
@@ -1354,7 +1354,8 @@ export function isPropertyNameLiteral(node: Node): node is PropertyNameLiteral {
 }
 
 export function isPseudoLiteralToken(node: Node): node is PseudoLiteralToken {
-    return node.kind === SyntaxKind.TemplateHead || node.kind === SyntaxKind.TemplateMiddle || node.kind === SyntaxKind.TemplateTail;
+    const kind = node.kind;
+    return isPseudoLiteralKind(kind);
 }
 
 export function isTemplateLiteralToken(node: Node): node is TemplateLiteralToken {
@@ -1438,30 +1439,6 @@ export function isJsxTokenKind(kind: SyntaxKind): kind is JsxTokenSyntaxKind {
         || kind === SyntaxKind.JsxTextAllWhiteSpaces
         || kind === SyntaxKind.OpenBraceToken
         || kind === SyntaxKind.LessThanToken;
-}
-
-export function isJSDocKind(kind: SyntaxKind): kind is JSDocSyntaxKind {
-    return kind === SyntaxKind.EndOfFile
-        || kind === SyntaxKind.WhitespaceTrivia
-        || kind === SyntaxKind.AtToken
-        || kind === SyntaxKind.NewLineTrivia
-        || kind === SyntaxKind.AsteriskToken
-        || kind === SyntaxKind.OpenBraceToken
-        || kind === SyntaxKind.CloseBraceToken
-        || kind === SyntaxKind.LessThanToken
-        || kind === SyntaxKind.GreaterThanToken
-        || kind === SyntaxKind.OpenBracketToken
-        || kind === SyntaxKind.CloseBracketToken
-        || kind === SyntaxKind.OpenParenToken
-        || kind === SyntaxKind.CloseParenToken
-        || kind === SyntaxKind.EqualsToken
-        || kind === SyntaxKind.CommaToken
-        || kind === SyntaxKind.DotToken
-        || kind === SyntaxKind.Identifier
-        || kind === SyntaxKind.BacktickToken
-        || kind === SyntaxKind.HashToken
-        || kind === SyntaxKind.Unknown
-        || isKeywordKind(kind);
 }
 
 export function isImportPhaseModifierKind(kind: SyntaxKind): kind is ImportPhaseModifierSyntaxKind {
@@ -1620,6 +1597,10 @@ export function isKeywordKind(kind: SyntaxKind): boolean {
 
 export function isTokenKind(kind: SyntaxKind): boolean {
     return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
+}
+
+export function isJSDocNodeKind(kind: SyntaxKind): boolean {
+    return kind >= SyntaxKind.FirstJSDocNode && kind <= SyntaxKind.LastJSDocNode;
 }
 
 export function isEndOfFile(node: Node): node is EndOfFile {

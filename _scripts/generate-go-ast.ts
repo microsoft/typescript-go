@@ -681,7 +681,7 @@ function generateKindAliasGuards(w: CodeWriter) {
             w.push();
             w.write("switch kind {");
             w.push();
-            w.write(`case ${expanded.map(m => `Kind${m}`).join(", ")}:`);
+            w.write(`case ${expanded.map(m => m.formatGoConstant()).join(", ")}:`);
             w.push();
             w.write("return true");
             w.pop();

@@ -652,29 +652,12 @@
                 "OpenBraceToken",
                 "LessThanToken"
             ],
-            "JSDocSyntaxKind": [
-                "EndOfFile",
-                "WhitespaceTrivia",
-                "AtToken",
-                "NewLineTrivia",
-                "AsteriskToken",
-                "OpenBraceToken",
-                "CloseBraceToken",
-                "LessThanToken",
-                "GreaterThanToken",
-                "OpenBracketToken",
-                "CloseBracketToken",
-                "OpenParenToken",
-                "CloseParenToken",
-                "EqualsToken",
-                "CommaToken",
-                "DotToken",
-                "Identifier",
-                "BacktickToken",
-                "HashToken",
-                "Unknown",
-                "KeywordSyntaxKind"
-            ],
+            "JSDocNodeSyntaxKind": {
+                "range": [
+                    "FirstJSDocNode",
+                    "LastJSDocNode"
+                ]
+            },
             "ImportPhaseModifierSyntaxKind": [
                 "TypeKeyword",
                 "DeferKeyword"
@@ -5326,9 +5309,7 @@
                 "IntersectionTypeNode"
             ],
             "TemplateLiteralLikeNode": [
-                "TemplateHead",
-                "TemplateMiddle",
-                "TemplateTail"
+                "PseudoLiteralSyntaxKind"
             ],
             "TemplateMiddleOrTail": [
                 "TemplateMiddle",
@@ -5479,21 +5460,7 @@
                 "NoSubstitutionTemplateLiteral"
             ],
             "Modifier": [
-                "AbstractKeyword",
-                "AccessorKeyword",
-                "AsyncKeyword",
-                "ConstKeyword",
-                "DeclareKeyword",
-                "DefaultKeyword",
-                "ExportKeyword",
-                "InKeyword",
-                "PrivateKeyword",
-                "ProtectedKeyword",
-                "PublicKeyword",
-                "ReadonlyKeyword",
-                "OutKeyword",
-                "OverrideKeyword",
-                "StaticKeyword"
+                "ModifierSyntaxKind"
             ],
             "ObjectLiteralElementLike": [
                 "PropertyAssignment",
@@ -5509,9 +5476,7 @@
                 "NumericLiteral"
             ],
             "PseudoLiteralToken": [
-                "TemplateHead",
-                "TemplateMiddle",
-                "TemplateTail"
+                "PseudoLiteralSyntaxKind"
             ],
             "TemplateLiteralToken": [
                 "NoSubstitutionTemplateLiteral",

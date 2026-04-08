@@ -8,7 +8,7 @@ import type {
 } from "./ast.ts";
 import { createToken } from "./factory.ts";
 import {
-    isJSDocKind,
+    isJSDocNodeKind,
     isKeywordKind,
     isPrivateIdentifier,
     isPropertyNameLiteral,
@@ -168,7 +168,7 @@ function getTokenAtPositionImpl(
                 const result = testNode(node);
                 switch (result) {
                     case -1:
-                        if (!isJSDocKind(node.kind)) {
+                        if (!isJSDocNodeKind(node.kind)) {
                             state.left = node.end;
                         }
                         nodeAfterLeft = undefined;
@@ -265,7 +265,7 @@ function getTokenAtPositionImpl(
                 }
                 if (tokenStart <= position && position < tokenEnd) {
                     if (token === SyntaxKind.Identifier || !isTokenKind(token)) {
-                        if (isJSDocKind(current.kind)) {
+                        if (isJSDocNodeKind(current.kind)) {
                             return current;
                         }
                         throw new Error(`did not expect ${SyntaxKind[current.kind]} to have ${SyntaxKind[token]} in its trivia`);
@@ -304,7 +304,7 @@ export function getTokenPosOfNode(node: Node, sourceFile: SourceFile, includeJSD
     if (nodeIsMissing(node)) {
         return node.pos;
     }
-    if (isJSDocKind(node.kind) || node.kind === SyntaxKind.JsxText) {
+    if (isJSDocNodeKind(node.kind) || node.kind === SyntaxKind.JsxText) {
         return skipTrivia(sourceFile.text, node.pos, /*stopAfterLineBreak*/ false, /*stopAtComments*/ true);
     }
     if (includeJSDoc && node.jsDoc && node.jsDoc.length > 0) {

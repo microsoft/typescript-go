@@ -345,8 +345,13 @@ import type { Node, NodeArray } from "./ast.ts";`);
     parts.push("");
     for (const alias of api.nodeAliases()) {
         if (alias.isUnion) {
-            // Multi-kind nodes are valid references (they get union type aliases)
-            const members = alias.unionMemberTypes.map(type => type.formatTypeScript()).join(" | ");
+            const members = alias.unionMemberTypes.map(type => {
+                if (type.baseKind() === "kind") {
+                    // SyntaxKind -> Node
+                    debugger;
+                }
+                return type.formatTypeScript()
+            }).join(" | ");
             if (!members) continue;
             parts.push(`export type ${alias.name} = ${members};`);
         }
@@ -1074,6 +1079,12 @@ function generateIsGenerated(): string {
                 checks.push(...sub);
                 continue;
             }
+            // Check if it's a kind alias (e.g. ModifierSyntaxKind) — expand to SyntaxKind checks
+            if (api.hasKindAlias(m)) {
+                const kindMembers = api.expandKindAliasMembers(m);
+                checks.push(...kindMembers.map(k => k.formatTypeScript()));
+                continue;
+            }
             // Unresolvable member (e.g. Expression, Statement) — can't enumerate kinds
             return null;
         }
@@ -1100,7 +1111,22 @@ function generateIsGenerated(): string {
         importTypes.add(typeName);
         const kindChecks = [...new Set(kindChecksRaw)];
         let body: string;
-        if (kindChecks.length <= 3) {
+
+        // Build conditions: delegate to kind guard for kind alias members, direct checks for others
+        const kindAliasMembers = members.filter(m => api.hasKindAlias(m));
+        if (kindAliasMembers.length > 0) {
+            // Collect direct SyntaxKind checks for non-kind-alias members
+            const nonKindAliasMembers = members.filter(m => !api.hasKindAlias(m));
+            const directChecks = nonKindAliasMembers.length > 0
+                ? resolveUnionKindChecks(nonKindAliasMembers) ?? []
+                : [];
+            const conditions: string[] = [
+                ...kindAliasMembers.map(m => `${kindGuardName(m)}(kind)`),
+                ...[...new Set(directChecks)].map(k => `kind === ${k}`),
+            ];
+            body = `const kind = node.kind;\n    return ${conditions.join(" || ")};`;
+        }
+        else if (kindChecks.length <= 3) {
             body = `return ${kindChecks.map(k => `node.kind === ${k}`).join(" || ")};`;
         }
         else {

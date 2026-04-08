@@ -384,11 +384,13 @@ export class AliasType extends TypeBase {
     readonly kind = "alias" as const;
     readonly name: string;
     readonly resolved: Type;
+    readonly resolveAs?: "node";
 
-    constructor(api: SchemaAPI, name: string, resolved: Type) {
+    constructor(api: SchemaAPI, name: string, resolved: Type, resolveAs?: "node") {
         super(api);
         this.name = name;
         this.resolved = resolved;
+        this.resolveAs = resolveAs;
     }
 
     formatGoDeclaration(): string {
@@ -427,7 +429,7 @@ export class AliasType extends TypeBase {
     }
 
     get unionMemberTypes(): Type[] {
-        return this.unionMemberNames.map(name => this.api.resolveType(name));
+        return this.unionMemberNames.map(name => this.api.resolveType(name, undefined, this.resolveAs));
     }
 
     get baseKey(): string | undefined {
@@ -770,6 +772,8 @@ export class SchemaAPI {
     readonly schema: Schema;
     private readonly listAliasNameMap = new Map<string, string>();
     private readonly instantiationAliasMap = new Map<string, string>();
+    /** Maps syntax kind names to (aliasName, nodeName) for instantiation aliases, or (undefined, nodeName) for direct nodes. */
+    private readonly syntaxKindToNodeInfo = new Map<string, { aliasName?: string; nodeName: string }>();
     private readonly primitiveTypeMap = new Map<string, PrimitiveType>();
     private readonly kindTypeMap = new Map<string, KindType>();
     private readonly nodeTypeMap = new Map<string, NodeType>();
@@ -797,6 +801,35 @@ export class SchemaAPI {
         for (const [nodeName, nodeDef] of Object.entries(schema.nodes.definitions)) {
             for (const aliasName of Object.keys(nodeDef.instantiationAliases || {})) {
                 this.instantiationAliasMap.set(aliasName, nodeName);
+            }
+            // Map syntax kind names to instantiation aliases
+            for (const [aliasName, typeArg] of Object.entries(nodeDef.instantiationAliases || {})) {
+                // typeArg is a syntax kind name or a kind alias name
+                if (this.hasKindAlias(typeArg)) {
+                    // Multi-kind instantiation alias (e.g. BinaryOperatorToken) — expand the kind alias
+                    for (const kindType of this.expandKindAliasMembers(typeArg)) {
+                        if (!this.syntaxKindToNodeInfo.has(kindType.name)) {
+                            this.syntaxKindToNodeInfo.set(kindType.name, { aliasName, nodeName });
+                        }
+                    }
+                }
+                else {
+                    if (!this.syntaxKindToNodeInfo.has(typeArg)) {
+                        this.syntaxKindToNodeInfo.set(typeArg, { aliasName, nodeName });
+                    }
+                }
+            }
+            // Map the node's own syntax kind(s) to itself
+            const primaryKind = Array.isArray(nodeDef.kind) ? nodeDef.kind[0] : (nodeDef.kind || nodeName);
+            if (!this.syntaxKindToNodeInfo.has(primaryKind)) {
+                this.syntaxKindToNodeInfo.set(primaryKind, { nodeName });
+            }
+            if (Array.isArray(nodeDef.kind)) {
+                for (const k of nodeDef.kind.slice(1)) {
+                    if (!this.syntaxKindToNodeInfo.has(k)) {
+                        this.syntaxKindToNodeInfo.set(k, { nodeName });
+                    }
+                }
             }
         }
     }
@@ -920,16 +953,16 @@ export class SchemaAPI {
         return this.kindElements().some(element => element.name === name);
     }
 
-    expandKindAliasMembers(name: string): string[] {
+    expandKindAliasMembers(name: string): KindType[] {
         const alias = this.getKindAlias(name);
-        if (!alias) return [name];
-        const result: string[] = [];
+        if (!alias) return [this.kindType(`SyntaxKind.${name}`)];
+        const result: KindType[] = [];
         for (const member of alias.members) {
             if (this.hasKindAlias(member)) {
                 result.push(...this.expandKindAliasMembers(member));
             }
             else {
-                result.push(member);
+                result.push(this.kindType(`SyntaxKind.${member}`));
             }
         }
         return result;
@@ -944,9 +977,24 @@ export class SchemaAPI {
         return Object.values(base.fields).every(f => f.goOnly || (f.noTS && f.noFactory));
     }
 
-    resolveType(typeName: string | string[], node?: NodeDef): Type {
+    /**
+     * Given a syntax kind name (e.g. "AbstractKeyword"), returns the node type
+     * that has that syntax kind. For instantiation aliases, returns the alias type
+     * (e.g. `AliasType("AbstractKeyword", NodeType("Token"))`). For direct nodes,
+     * returns the node type itself.
+     */
+    resolveNodeTypeForSyntaxKind(syntaxKindName: string): Type | undefined {
+        const info = this.syntaxKindToNodeInfo.get(syntaxKindName);
+        if (!info) return undefined;
+        if (info.aliasName) {
+            return this.aliasType(info.aliasName, this.nodeType(info.nodeName));
+        }
+        return this.nodeType(info.nodeName);
+    }
+
+    resolveType(typeName: string | string[], node?: NodeDef, resolveAs?: "node"): Type {
         if (Array.isArray(typeName)) {
-            return this.unionType(typeName.map(type => this.resolveType(type, node)));
+            return this.unionType(typeName.map(type => this.resolveType(type, node, resolveAs)));
         }
 
         if (node?.typeParameters) {
@@ -966,9 +1014,20 @@ export class SchemaAPI {
 
         const kindAliases = this.schema.kinds?.aliases || {};
         if (typeName in kindAliases) {
+            if (resolveAs === "node") {
+                // Resolve each kind in the alias to its corresponding node type
+                const kindMembers = this.expandKindAliasMembers(typeName);
+                return this.unionType(kindMembers.map(kindType => {
+                    const resolved = this.resolveNodeTypeForSyntaxKind(kindType.name);
+                    if (!resolved) {
+                        throw new Error(`Kind alias member "${kindType.name}" (from "${typeName}") does not resolve to a node type`);
+                    }
+                    return resolved;
+                }));
+            }
             return this.aliasType(
                 typeName,
-                this.unionType(this.expandKindAliasMembers(typeName).map(kind => this.kindType(`SyntaxKind.${kind}`))),
+                this.unionType(this.expandKindAliasMembers(typeName)),
             );
         }
 
@@ -997,7 +1056,7 @@ export class SchemaAPI {
         if (typeName in this.schema.nodes.aliases) {
             const alias = this.schema.nodes.aliases[typeName];
             if (Array.isArray(alias)) {
-                return this.aliasType(typeName, this.unionType(alias.map(type => this.resolveType(type, node))));
+                return this.aliasType(typeName, this.unionType(alias.map(type => this.resolveType(type, node, "node"))), "node");
             }
             return this.aliasType(typeName, this.nodeType(alias.base));
         }
@@ -1060,7 +1119,7 @@ export class SchemaAPI {
                 throw new Error(`Unknown alias base ${alias.baseKey} from ${alias.name}`);
             }
             for (const [index, memberName] of alias.unionMemberNames.entries()) {
-                if (alias.unionMemberTypes[index] !== this.resolveType(memberName)) {
+                if (alias.unionMemberTypes[index] !== this.resolveType(memberName, undefined, alias.resolveAs)) {
                     // Force member types to be reachable and cached via their names.
                     throw new Error(`Alias union member cache mismatch for ${alias.name}`);
                 }
@@ -1137,11 +1196,11 @@ export class SchemaAPI {
         return type;
     }
 
-    aliasType(name: string, resolved: Type): AliasType {
+    aliasType(name: string, resolved: Type, resolveAs?: "node"): AliasType {
         const key = `${name}:${this.typeCacheKey(resolved)}`;
         const existing = this.aliasTypeMap.get(key);
         if (existing) return existing;
-        const type = new AliasType(this, name, resolved);
+        const type = new AliasType(this, name, resolved, resolveAs);
         this.aliasTypeMap.set(key, type);
         return type;
     }

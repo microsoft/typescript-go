@@ -331,7 +331,43 @@ export type TokenSyntaxKind =
     | SyntaxKind.OfKeyword
     | SyntaxKind.DeferKeyword;
 export type JsxTokenSyntaxKind = SyntaxKind.LessThanSlashToken | SyntaxKind.EndOfFile | SyntaxKind.ConflictMarkerTrivia | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.OpenBraceToken | SyntaxKind.LessThanToken;
-export type JSDocSyntaxKind = SyntaxKind.EndOfFile | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.OpenParenToken | SyntaxKind.CloseParenToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.HashToken | SyntaxKind.Unknown | KeywordSyntaxKind;
+export type JSDocNodeSyntaxKind =
+    | SyntaxKind.JSDocTypeExpression
+    | SyntaxKind.JSDocNameReference
+    | SyntaxKind.JSDocAllType
+    | SyntaxKind.JSDocNullableType
+    | SyntaxKind.JSDocNonNullableType
+    | SyntaxKind.JSDocOptionalType
+    | SyntaxKind.JSDocVariadicType
+    | SyntaxKind.JSDoc
+    | SyntaxKind.JSDocText
+    | SyntaxKind.JSDocTypeLiteral
+    | SyntaxKind.JSDocSignature
+    | SyntaxKind.JSDocLink
+    | SyntaxKind.JSDocLinkCode
+    | SyntaxKind.JSDocLinkPlain
+    | SyntaxKind.JSDocUnknownTag
+    | SyntaxKind.JSDocAugmentsTag
+    | SyntaxKind.JSDocImplementsTag
+    | SyntaxKind.JSDocDeprecatedTag
+    | SyntaxKind.JSDocPublicTag
+    | SyntaxKind.JSDocPrivateTag
+    | SyntaxKind.JSDocProtectedTag
+    | SyntaxKind.JSDocReadonlyTag
+    | SyntaxKind.JSDocOverrideTag
+    | SyntaxKind.JSDocCallbackTag
+    | SyntaxKind.JSDocOverloadTag
+    | SyntaxKind.JSDocParameterTag
+    | SyntaxKind.JSDocReturnTag
+    | SyntaxKind.JSDocThisTag
+    | SyntaxKind.JSDocTypeTag
+    | SyntaxKind.JSDocTemplateTag
+    | SyntaxKind.JSDocTypedefTag
+    | SyntaxKind.JSDocSeeTag
+    | SyntaxKind.JSDocPropertyTag
+    | SyntaxKind.JSDocThrowsTag
+    | SyntaxKind.JSDocSatisfiesTag
+    | SyntaxKind.JSDocImportTag;
 export type ImportPhaseModifierSyntaxKind = SyntaxKind.TypeKeyword | SyntaxKind.DeferKeyword;
 export type PostfixUnaryOperator = SyntaxKind.PlusPlusToken | SyntaxKind.MinusMinusToken;
 export type PrefixUnaryOperator = SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.TildeToken | SyntaxKind.ExclamationToken | SyntaxKind.PlusPlusToken | SyntaxKind.MinusMinusToken;
