@@ -151,9 +151,6 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	textLen := core.TextPos(len(script.Text()))
 
 	// Clamp line to valid range.
-	if line < 0 {
-		return 0
-	}
 	if int(line) >= len(lineMap.LineStarts) {
 		return textLen
 	}
