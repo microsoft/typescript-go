@@ -234,7 +234,7 @@ func (g *NameGenerator) makeName(name *ast.Node) string {
 			case GeneratedIdentifierFlagsAuto:
 				return g.makeTempVariableName(tempFlagsAuto, autoGenerate.Flags.IsReservedInNestedScopes(), ast.IsPrivateIdentifier(name), autoGenerate.Prefix, autoGenerate.Suffix)
 			case GeneratedIdentifierFlagsLoop:
-				debug.AssertNode(name, ast.IsIdentifier)
+				debug.Assert(ast.IsIdentifier(name))
 				return g.makeTempVariableName(tempFlags_i, autoGenerate.Flags.IsReservedInNestedScopes(), false /*privateName*/, autoGenerate.Prefix, autoGenerate.Suffix)
 			case GeneratedIdentifierFlagsUnique:
 				return g.makeUniqueName(
@@ -338,6 +338,10 @@ func (g *NameGenerator) makeUniqueName(baseName string, checkFn func(name string
 		}
 		i++
 	}
+}
+
+func (g *NameGenerator) MakeFileLevelOptimisticUniqueName(name string) string {
+	return g.makeUniqueName(name, g.IsFileLevelUniqueNameInCurrentFile, true /*optimistic*/, false /*scoped*/, false /*privateName*/, "" /*prefix*/, "" /*suffix*/)
 }
 
 func (g *NameGenerator) checkUniqueName(name string, privateName bool, checkFn func(name string, privateName bool) bool) bool {

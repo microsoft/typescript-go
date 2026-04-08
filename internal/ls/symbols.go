@@ -282,7 +282,7 @@ func (l *LanguageService) newDocumentSymbol(node *ast.Node, name *ast.Node, chil
 		nameEndPos = getInteriorModule(node).Name().End()
 	} else if ast.IsAnyExportAssignment(node) && node.AsExportAssignment().IsExportEquals {
 		text = "export="
-		if name != nil {
+		if !ast.NodeIsMissing(name) {
 			nameStartPos = scanner.SkipTrivia(file.Text(), name.Pos())
 			nameEndPos = name.End()
 		} else {
@@ -390,7 +390,7 @@ func mergeChildren(target *lsproto.DocumentSymbol, source *lsproto.DocumentSymbo
 		} else {
 			*target.Children = mergeExpandos(append(*target.Children, *source.Children...))
 			slices.SortFunc(*target.Children, func(a, b *lsproto.DocumentSymbol) int {
-				return lsproto.CompareRanges(&a.Range, &b.Range)
+				return lsproto.CompareRanges(a.Range, b.Range)
 			})
 		}
 	}

@@ -1,7 +1,7 @@
 package ast
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=kind_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w kind_stringer_generated.go
+//go:generate npx dprint fmt kind_stringer_generated.go
 
 type Kind int16
 
@@ -374,6 +374,7 @@ const (
 	KindJSDocTypedefTag
 	KindJSDocSeeTag
 	KindJSDocPropertyTag
+	KindJSDocThrowsTag
 	KindJSDocSatisfiesTag
 	KindJSDocImportTag
 	// Synthesized list
@@ -423,6 +424,7 @@ const (
 	KindLastJSDocTagNode        = KindJSDocImportTag
 	KindFirstContextualKeyword  = KindAbstractKeyword
 	KindLastContextualKeyword   = KindDeferKeyword
+	KindLastUnaryOperator       = KindTildeToken
 	KindComment                 = KindSingleLineCommentTrivia | KindMultiLineCommentTrivia
 	KindFirstTriviaToken        = KindSingleLineCommentTrivia
 	KindLastTriviaToken         = KindConflictMarkerTrivia

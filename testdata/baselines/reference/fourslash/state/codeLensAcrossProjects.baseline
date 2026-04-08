@@ -161,7 +161,7 @@ Config File Names::
   "method": "workspace/didChangeConfiguration",
   "params": {
     "settings": {
-      "typescript": {
+      "js/ts": {
         "FormatCodeSettings": null,
         "QuotePreference": "",
         "LazyConfiguredProjectsFromExternalProject": false,
@@ -206,11 +206,13 @@ Config File Names::
           "ImplementationsCodeLensShowOnInterfaceMethods": true,
           "ImplementationsCodeLensShowOnAllClassMethods": true
         },
+        "PreferGoToSourceDefinition": false,
         "ExcludeLibrarySymbolsInNavTo": false,
         "DisableSuggestions": false,
         "DisableLineTextInReferences": false,
         "DisplayPartsForJSDoc": false,
-        "ReportStyleChecksAsWarnings": false
+        "ReportStyleChecksAsWarnings": false,
+        "CustomConfigFileName": ""
       }
     }
   }
@@ -609,7 +611,7 @@ Config::
   "method": "workspace/didChangeConfiguration",
   "params": {
     "settings": {
-      "typescript": {
+      "js/ts": {
         "FormatCodeSettings": {
           "BaseIndentSize": 0,
           "IndentSize": 4,
@@ -682,11 +684,13 @@ Config::
           "ImplementationsCodeLensShowOnInterfaceMethods": false,
           "ImplementationsCodeLensShowOnAllClassMethods": false
         },
+        "PreferGoToSourceDefinition": false,
         "ExcludeLibrarySymbolsInNavTo": true,
         "DisableSuggestions": false,
         "DisableLineTextInReferences": true,
         "DisplayPartsForJSDoc": true,
-        "ReportStyleChecksAsWarnings": true
+        "ReportStyleChecksAsWarnings": true,
+        "CustomConfigFileName": ""
       }
     }
   }

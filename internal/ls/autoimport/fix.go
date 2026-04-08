@@ -225,7 +225,7 @@ func addToExistingImport(
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
 				return ct.NodeFactory.NewImportSpecifier(
-					shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
+					(!importClause.IsTypeOnly() || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
 					identifier,
 					ct.NodeFactory.NewIdentifier(namedImport.name),
 				)
@@ -261,22 +261,9 @@ func addToExistingImport(
 					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
 					ct.InsertImportSpecifierAtIndex(file, spec, importClause.NamedBindings, insertionIndex)
 				}
-			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
-				// Existing specifiers are sorted, so insert each new specifier at the correct position
-				for _, spec := range newSpecifiers {
-					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
-					if insertionIndex >= len(existingSpecifiers) {
-						// Insert at the end
-						ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
-					} else {
-						// Insert before the element at insertionIndex
-						ct.InsertNodeInListAfter(file, existingSpecifiers[insertionIndex], spec.AsNode(), existingSpecifiers)
-					}
-				}
 			} else if len(existingSpecifiers) > 0 {
-				// Existing specifiers may not be sorted, append to the end
 				for _, spec := range newSpecifiers {
-					ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
+					ct.InsertNodeInListAfter(file, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), nil)
 				}
 			} else {
 				if len(newSpecifiers) > 0 {
@@ -333,7 +320,7 @@ func addElementToBindingPattern(
 ) {
 	element := ct.NodeFactory.NewBindingElement(nil, nil, ct.NodeFactory.NewIdentifier(name), core.IfElse(propertyName == "", nil, ct.NodeFactory.NewIdentifier(propertyName)))
 	if len(bindingPattern.Elements.Nodes) > 0 {
-		ct.InsertNodeInListAfter(file, bindingPattern.Elements.Nodes[len(bindingPattern.Elements.Nodes)-1], element, bindingPattern.Elements.Nodes)
+		ct.InsertNodeInListAfter(file, bindingPattern.Elements.Nodes[len(bindingPattern.Elements.Nodes)-1], element, bindingPattern.Elements)
 	} else {
 		ct.ReplaceNode(file, bindingPattern.AsNode(), ct.NodeFactory.NewBindingPattern(ast.KindObjectBindingPattern, ct.AsNodeFactory().NewNodeList([]*ast.Node{element})), nil)
 	}
@@ -469,7 +456,7 @@ func getNewRequires(
 		statements = append(statements, declaration)
 	}
 
-	debug.AssertIsDefined(statements)
+	debug.Assert(statements != nil)
 	return statements
 }
 
@@ -517,8 +504,12 @@ func insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*as
 				return lsutil.CompareImportsOrRequireStatements(a, b, comparer)
 			})
 			if insertionIndex == 0 {
-				// If the first import is top-of-file, insert after the leading comment which is likely the header
-				ct.InsertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(existingImportStatements[0], sourceFile, false)), newImport.AsNode(), change.NodeOptions{})
+				// If the first import is top-of-file, insert after the leading comment which is likely the header.
+				leadingTriviaOption := change.LeadingTriviaOptionNone
+				if existingImportStatements[0] == sourceFile.Statements.Nodes[0] {
+					leadingTriviaOption = change.LeadingTriviaOptionExclude
+				}
+				ct.InsertNodeBefore(sourceFile, existingImportStatements[0].AsNode(), newImport.AsNode(), false /*blankLineBetween*/, leadingTriviaOption)
 			} else {
 				prevImport := existingImportStatements[insertionIndex-1]
 				ct.InsertNodeAfter(sourceFile, prevImport.AsNode(), newImport.AsNode())
@@ -704,6 +695,7 @@ func (v *View) tryAddToExistingImport(
 
 	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export, v.program.Options())
 
+	var best *Fix
 	for _, existingImport := range matchingDeclarations {
 		if existingImport.node.Kind == ast.KindImportEqualsDeclaration {
 			continue
@@ -711,7 +703,7 @@ func (v *View) tryAddToExistingImport(
 
 		if existingImport.node.Kind == ast.KindVariableDeclaration {
 			if (importKind == lsproto.ImportKindNamed || importKind == lsproto.ImportKindDefault) && existingImport.node.Name().Kind == ast.KindObjectBindingPattern {
-				return &Fix{
+				fix := &Fix{
 					AutoImportFix: &lsproto.AutoImportFix{
 						Kind:            lsproto.AutoImportFixKindAddToExisting,
 						Name:            export.Name(),
@@ -720,6 +712,15 @@ func (v *View) tryAddToExistingImport(
 						ModuleSpecifier: existingImport.moduleSpecifier,
 						AddAsTypeOnly:   addAsTypeOnly,
 					},
+				}
+				// Variable declarations are never type-only.
+				// Give preference to putting types in existing type-only imports and avoiding conversions
+				// of import statements to/from type-only.
+				if addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed {
+					return fix
+				}
+				if best == nil {
+					best = fix
 				}
 			}
 			continue
@@ -739,8 +740,9 @@ func (v *View) tryAddToExistingImport(
 			continue
 		}
 
-		if importKind == lsproto.ImportKindDefault && importClause.Name() != nil {
-			// Cannot add a default import to a declaration that already has one
+		if importKind == lsproto.ImportKindDefault && (importClause.Name() != nil ||
+			// Cannot add a default import as type-only if the import already has named bindings
+			addAsTypeOnly == lsproto.AddAsTypeOnlyRequired && namedBindings != nil) {
 			continue
 		}
 
@@ -749,7 +751,7 @@ func (v *View) tryAddToExistingImport(
 			continue
 		}
 
-		return &Fix{
+		fix := &Fix{
 			AutoImportFix: &lsproto.AutoImportFix{
 				Kind:            lsproto.AutoImportFixKindAddToExisting,
 				Name:            export.Name(),
@@ -759,9 +761,20 @@ func (v *View) tryAddToExistingImport(
 				AddAsTypeOnly:   addAsTypeOnly,
 			},
 		}
+
+		isTypeOnly := importClause.IsTypeOnly()
+		// Give preference to putting types in existing type-only imports and avoiding conversions
+		// of import statements to/from type-only.
+		if (addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && isTypeOnly) ||
+			(addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed && !isTypeOnly) {
+			return fix
+		}
+		if best == nil {
+			best = fix
+		}
 	}
 
-	return nil
+	return best
 }
 
 func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program) lsproto.ImportKind {
@@ -1028,9 +1041,33 @@ func promoteFromTypeOnly(
 		spec := aliasDeclaration.AsImportSpecifier()
 		if spec.IsTypeOnly {
 			if spec.Parent != nil && spec.Parent.Kind == ast.KindNamedImports {
-				// TypeScript creates a new specifier with isTypeOnly=false, computes insertion index,
-				// and if different from current position, deletes and re-inserts at new position.
-				// For now, we just delete the range from the first token (type keyword) to the property name or name.
+				namedImportsNode := spec.Parent.AsNamedImports()
+				elements := namedImportsNode.Elements.Nodes
+				if len(elements) > 1 {
+					// Create a synthetic specifier with isTypeOnly=false to compute sorted position
+					var propertyName *ast.Node
+					if spec.PropertyName != nil {
+						propertyName = changes.NodeFactory.NewIdentifier(spec.PropertyName.Text()).AsIdentifier().AsNode()
+					}
+					newSpecifier := changes.NodeFactory.NewImportSpecifier(
+						false, // isTypeOnly = false
+						propertyName,
+						changes.NodeFactory.NewIdentifier(spec.Name().Text()),
+					)
+					specifierComparer, _ := lsutil.GetNamedImportSpecifierComparerWithDetection(
+						spec.Parent.Parent.Parent, // ImportDeclaration
+						sourceFile,
+						preferences,
+					)
+					insertionIndex := lsutil.GetImportSpecifierInsertionIndex(elements, newSpecifier, specifierComparer)
+					currentIndex := slices.Index(elements, aliasDeclaration)
+					if insertionIndex != currentIndex {
+						changes.Delete(sourceFile, aliasDeclaration)
+						changes.InsertImportSpecifierAtIndex(sourceFile, newSpecifier, spec.Parent, insertionIndex)
+						return aliasDeclaration
+					}
+				}
+				// If no re-sorting needed, just remove the 'type' keyword
 				firstToken := lsutil.GetFirstToken(aliasDeclaration, sourceFile)
 				typeKeywordPos := scanner.GetTokenPosOfNode(firstToken, sourceFile, false)
 				var targetNode *ast.DeclarationName

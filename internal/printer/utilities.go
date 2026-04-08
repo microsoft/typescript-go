@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -405,11 +406,6 @@ func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.Sour
 		}
 	}
 	return -1
-}
-
-func getCommentRange(node *ast.Node) core.TextRange {
-	// TODO(rbuckton)
-	return node.Loc
 }
 
 func siblingNodePositionsAreComparable(previousNode *ast.Node, nextNode *ast.Node) bool {
@@ -886,4 +882,46 @@ func calculateIndent(text string, pos int, end int) int {
 	}
 
 	return currentLineIndent
+}
+
+// lineCharacterCache provides cached line/character lookups for a source file,
+// optimized for monotonically increasing positions (e.g., during source map emit).
+//
+// When positions increase within the same line, only the delta between the last
+// position and the new position needs to be scanned for UTF-16 code unit counts,
+// turning what would be O(n²) into O(n) for long lines.
+//
+// Character offsets are measured in UTF-16 code units per the source map specification.
+type lineCharacterCache struct {
+	lineMap    []core.TextPos
+	text       string
+	cachedLine int
+	cachedPos  int
+	cachedChar core.UTF16Offset
+	hasCached  bool
+}
+
+func newLineCharacterCache(source sourcemap.Source) *lineCharacterCache {
+	return &lineCharacterCache{
+		lineMap: source.ECMALineMap(),
+		text:    source.Text(),
+	}
+}
+
+// getLineAndCharacter returns the 0-based line number and UTF-16 code unit
+// offset from the start of that line for the given byte position.
+func (c *lineCharacterCache) getLineAndCharacter(pos int) (line int, character core.UTF16Offset) {
+	line = scanner.ComputeLineOfPosition(c.lineMap, pos)
+	if c.hasCached && line == c.cachedLine && pos >= c.cachedPos {
+		// Incremental: only count UTF-16 code units from the last cached position.
+		character = c.cachedChar + core.UTF16Len(c.text[c.cachedPos:pos])
+	} else {
+		// Full computation from line start.
+		character = core.UTF16Len(c.text[c.lineMap[line]:pos])
+	}
+	c.cachedLine = line
+	c.cachedPos = pos
+	c.cachedChar = character
+	c.hasCached = true
+	return line, character
 }

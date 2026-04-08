@@ -23,10 +23,10 @@ import (
 )
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out clientmock_generated.go ../../project Client
-//go:generate go tool mvdan.cc/gofumpt -w clientmock_generated.go
+//go:generate npx dprint fmt clientmock_generated.go
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out npmexecutormock_generated.go ../../project/ata NpmExecutor
-//go:generate go tool mvdan.cc/gofumpt -w npmexecutormock_generated.go
+//go:generate npx dprint fmt npmexecutormock_generated.go
 
 const (
 	TestTypingsLocation = "/home/src/Library/Caches/typescript"
@@ -74,7 +74,7 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 
 		if lenNpmInstallArgs == 3 && npmInstallArgs[2] == "types-registry@latest" {
 			// Write typings file
-			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent(), false)
+			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent())
 			return nil, err
 		}
 
@@ -100,7 +100,7 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 			if !ok {
 				return nil, fmt.Errorf("content not provided for %s", packageBaseName)
 			}
-			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content, false)
+			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content)
 			if err != nil {
 				return nil, err
 			}

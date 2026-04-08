@@ -55,8 +55,7 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p3/config.ts":    `let x = 1, y = 2;`,
 		}
 		session, utils := projecttestutil.Setup(files)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		// Open files in two projects
@@ -65,8 +64,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.DidOpenFile(context.Background(), uri2, 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.WaitForBackgroundTasks()
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
@@ -80,8 +78,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri3, 1, files["/home/projects/TS/p3/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.WaitForBackgroundTasks()
 		// Should still have two projects, but p1 replaced by p3
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
@@ -98,8 +95,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.WaitForBackgroundTasks()
 		// Should have one project (p1)
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
@@ -123,8 +119,7 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p3/config.ts":    `let x = 1, y = 2;`,
 		}
 		session, _ := projecttestutil.Setup(files)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		// Open files without workspace roots (empty string) - should create single inferred project
@@ -134,8 +129,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri2, 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one inferred project
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
@@ -145,8 +139,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri3, 1, files["/home/projects/TS/p3/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should still have one inferred project
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
@@ -156,8 +149,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should still have one inferred project
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 	})
@@ -183,8 +175,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), fooUri, 1, files["/home/projects/ts/foo.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one inferred project
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
@@ -194,8 +185,7 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), mainUri, 1, files["/home/projects/ts/p1/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should now have one configured project and no inferred project
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
@@ -205,15 +195,13 @@ func TestProjectLifetime(t *testing.T) {
 
 		// Close main.ts - configured project should remain because foo.ts is still open
 		session.DidCloseFile(context.Background(), mainUri)
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 
 		// Close foo.ts - configured project should be retained until next file open
 		session.DidCloseFile(context.Background(), fooUri)
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 	})
@@ -238,14 +226,13 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), indexUri, 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one inferred project only (file is not included by tsconfig)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
 
 		// Simulate file move: create src/index.ts on disk
-		err := utils.FS().WriteFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/index.ts"].(string), false)
+		err := utils.FS().WriteFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/index.ts"].(string))
 		assert.NilError(t, err)
 		err = utils.FS().Remove("/home/projects/TS/p1/index.ts")
 		assert.NilError(t, err)
@@ -281,8 +268,7 @@ func TestProjectLifetime(t *testing.T) {
 		// Should now have one configured project only (file is now under src/)
 		_, err = session.GetLanguageService(context.Background(), srcIndexUri)
 		assert.NilError(t, err)
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
@@ -308,15 +294,14 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), indexUri, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one inferred project only (file is not included by tsconfig at src/tsconfig.json)
-		snapshot, release := session.Snapshot()
-		defer release()
+		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/src/tsconfig.json")) == nil)
 
 		// Simulate tsconfig.json move: create tsconfig.json at parent level, delete from src/
 		tsconfigContent := files["/home/projects/TS/p1/src/tsconfig.json"].(string)
-		err := utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", tsconfigContent, false)
+		err := utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", tsconfigContent)
 		assert.NilError(t, err)
 		err = utils.FS().Remove("/home/projects/TS/p1/src/tsconfig.json")
 		assert.NilError(t, err)
@@ -338,8 +323,7 @@ func TestProjectLifetime(t *testing.T) {
 		// Should now have one configured project only (tsconfig.json now includes src/index.ts)
 		_, err = session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
-		snapshot, release = session.Snapshot()
-		defer release()
+		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
@@ -385,7 +369,7 @@ func TestProjectLifetime(t *testing.T) {
 		// - Create a new file y.ts on disk
 		err = utils.FS().Remove("/home/projects/TS/p1/src/x.ts")
 		assert.NilError(t, err)
-		err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 2;`, false)
+		err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 2;`)
 		assert.NilError(t, err)
 
 		// Send both events in a single batch

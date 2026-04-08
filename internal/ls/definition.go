@@ -19,6 +19,17 @@ func (l *LanguageService) ProvideDefinition(
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 ) (lsproto.DefinitionResponse, error) {
+	if l.UserPreferences().PreferGoToSourceDefinition {
+		return l.ProvideSourceDefinition(ctx, documentURI, position)
+	}
+	return l.provideDefinitionWorker(ctx, documentURI, position)
+}
+
+func (l *LanguageService) provideDefinitionWorker(
+	ctx context.Context,
+	documentURI lsproto.DocumentUri,
+	position lsproto.Position,
+) (lsproto.DefinitionResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
@@ -130,7 +141,7 @@ type fileRange struct {
 }
 
 func (l *LanguageService) createDefinitionLocations(
-	originSelectionRange *lsproto.Range,
+	originSelectionRange lsproto.Range,
 	clientSupportsLink bool,
 	declarations []*ast.Node,
 	reference *refInfo,
@@ -150,7 +161,7 @@ func (l *LanguageService) createDefinitionLocations(
 			},
 		}
 		locations = append(locations, &lsproto.LocationLink{
-			OriginSelectionRange: originSelectionRange,
+			OriginSelectionRange: &originSelectionRange,
 			TargetUri:            lsconv.FileNameToDocumentURI(reference.fileName),
 			TargetRange:          targetRange,
 			TargetSelectionRange: targetRange,
@@ -161,14 +172,19 @@ func (l *LanguageService) createDefinitionLocations(
 		file := ast.GetSourceFileOfNode(decl)
 		fileName := file.FileName()
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		nameRange := createRangeFromNode(name, file)
+		var nameRange core.TextRange
+		if name.Kind == ast.KindEmptyStatement {
+			nameRange = core.NewTextRange(name.Pos(), name.Pos())
+		} else {
+			nameRange = createRangeFromNode(name, file)
+		}
 		if locationRanges.AddIfAbsent(fileRange{fileName, nameRange}) {
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
 			targetSelectionLoc := l.getMappedLocation(fileName, nameRange)
 			targetLoc := l.getMappedLocation(fileName, *contextRange)
 			locations = append(locations, &lsproto.LocationLink{
-				OriginSelectionRange: originSelectionRange,
+				OriginSelectionRange: &originSelectionRange,
 				TargetSelectionRange: targetSelectionLoc.Range,
 				TargetUri:            targetLoc.Uri,
 				TargetRange:          targetLoc.Range,
@@ -261,7 +277,9 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		if len(objectLiteralElementDeclarations) > 0 {
 			return objectLiteralElementDeclarations
 		}
-		return symbol.Declarations
+		if len(symbol.Declarations) > 0 {
+			return symbol.Declarations
+		}
 	}
 	if indexInfos := c.GetIndexSignaturesAtLocation(node); len(indexInfos) != 0 {
 		return indexInfos

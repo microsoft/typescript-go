@@ -81,7 +81,7 @@
 ->y : DoneStatus
 +>module.exports.y : { status: "done"; m(n: number): void; }
 +>module.exports : typeof import("./test")
-+>module : { "\"test\"": typeof import("./test"); }
++>module : { exports: typeof import("./test"); }
 +>exports : typeof import("./test")
 +>y : { status: "done"; m(n: number): void; }
  >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
@@ -98,7 +98,7 @@
 ->y : DoneStatus
 +>module.exports.y : { status: "done"; m(n: number): void; }
 +>module.exports : typeof import("./test")
-+>module : { "\"test\"": typeof import("./test"); }
++>module : { exports: typeof import("./test"); }
 +>exports : typeof import("./test")
 +>y : { status: "done"; m(n: number): void; }
 
@@ -142,11 +142,16 @@
  >prototype : DoneStatus
  >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
+ /** @type {{ status: 'done', m(n: number): void }} */
  module.exports = {
  >module.exports = {    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
- >module.exports : { status: "done"; m(n: number): void; }
+->module.exports : { status: "done"; m(n: number): void; }
 ->module : { exports: { status: "done"; m(n: number): void; }; }
-+>module : { "export=": { status: "done"; m(n: number): void; }; }
- >exports : { status: "done"; m(n: number): void; }
+->exports : { status: "done"; m(n: number): void; }
++>module.exports : { status: 'done'; m(n: number): void; }
++>module : { exports: { status: 'done'; m(n: number): void; }; }
++>exports : { status: 'done'; m(n: number): void; }
  >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
+
+     status: "done",

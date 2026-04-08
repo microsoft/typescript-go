@@ -8,19 +8,32 @@ import {
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
-import { existsSync } from "node:fs";
+import {
+    existsSync,
+    writeFileSync,
+} from "node:fs";
+import inspector from "node:inspector";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 import { Bench } from "tinybench";
 import ts from "typescript";
-import { RemoteSourceFile } from "../../src/node.ts";
+import { RemoteSourceFile } from "../../src/node/node.ts";
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
-    await runBenchmarks();
+    const { values } = parseArgs({
+        options: {
+            filter: { type: "string" },
+            singleIteration: { type: "boolean", default: false },
+            cpuprofile: { type: "boolean", default: false },
+        },
+    });
+    await runBenchmarks(values);
 }
 
-export async function runBenchmarks(singleIteration?: boolean) {
+export async function runBenchmarks(options?: { filter?: string; singleIteration?: boolean; cpuprofile?: boolean; }) {
+    const { filter, singleIteration, cpuprofile } = options ?? {};
     const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
         console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
@@ -65,64 +78,72 @@ export async function runBenchmarks(singleIteration?: boolean) {
         return count;
     })();
 
+    // Tinybench's `isFnAsyncResource` probes each task function by *calling*
+    // it once during `.add()` to detect whether it returns a Promise.
+    // In sync mode every task function is a plain (non-async) function, so
+    // the probe actually executes the benchmarked code (spawning processes,
+    // creating TS programs, etc.) wasting 30+ seconds.  Passing an explicit
+    // `async` flag on every task skips the probe entirely.
+    const isAsync = true; // @sync: const isAsync = false;
+
     bench
         .add("spawn API", async () => {
             await spawnAPI();
-        })
+        }, { async: isAsync })
         .add("load snapshot", async () => {
             await loadSnapshot();
-        }, { beforeAll: spawnAPI })
+        }, { async: isAsync, beforeAll: spawnAPI })
         .add("TS - load project", () => {
             tsCreateProgram();
-        })
+        }, { async: isAsync })
         .add("transfer debug.ts", async () => {
             await getDebugTS();
-        }, { beforeAll: all(spawnAPI, loadSnapshot) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot), beforeEach: clearSourceFileCache })
         .add("transfer program.ts", async () => {
             await getProgramTS();
-        }, { beforeAll: all(spawnAPI, loadSnapshot) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot), beforeEach: clearSourceFileCache })
         .add("transfer checker.ts", async () => {
             await getCheckerTS();
-        }, { beforeAll: all(spawnAPI, loadSnapshot) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot), beforeEach: clearSourceFileCache })
         .add("materialize program.ts", async () => {
-            const { view, decoder } = file as unknown as RemoteSourceFile;
-            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
+            const { view, _decoder } = file as unknown as RemoteSourceFile;
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), _decoder).forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", async () => {
-            const { view, decoder } = file as unknown as RemoteSourceFile;
-            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), decoder).forEachChild(function visit(node) {
+            const { view, _decoder } = file as unknown as RemoteSourceFile;
+            new RemoteSourceFile(new Uint8Array(view.buffer, view.byteOffset, view.byteLength), _decoder).forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", async () => {
             await project.checker.getSymbolAtPosition("program.ts", 8895);
-        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, createChecker) })
         .add("TS - getSymbolAtPosition - one location", () => {
             tsProgram.getTypeChecker().getSymbolAtLocation(
                 // @ts-ignore internal API
                 ts.getTokenAtPosition(tsFile, 8895),
             );
-        }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) })
+        }, { async: isAsync, beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers`, async () => {
             for (const node of collectIdentifiers(file)) {
                 await project.checker.getSymbolAtPosition("program.ts", node.pos);
             }
-        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers (batched)`, async () => {
             const positions = collectIdentifiers(file).map(node => node.pos);
             await project.checker.getSymbolAtPosition("program.ts", positions);
-        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, async () => {
             for (const node of collectIdentifiers(file)) {
                 await project.checker.getSymbolAtLocation(node);
             }
-        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers (batched)`, async () => {
             const nodes = collectIdentifiers(file);
             await project.checker.getSymbolAtLocation(nodes);
-        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
+        }, { async: isAsync, beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             const checker = tsProgram.getTypeChecker();
             tsFile.forEachChild(function visit(node) {
@@ -131,9 +152,36 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 }
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) });
+        }, { async: isAsync, beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) });
+
+    if (filter) {
+        const pattern = filter.toLowerCase();
+        for (const task of [...bench.tasks]) {
+            if (!task.name.toLowerCase().includes(pattern)) {
+                bench.remove(task.name);
+            }
+        }
+    }
+
+    let session: inspector.Session | undefined;
+    if (cpuprofile) {
+        session = new inspector.Session();
+        session.connect();
+        session.post("Profiler.enable");
+        session.post("Profiler.start");
+    }
 
     await bench.run(); // @sync: bench.runSync();
+
+    if (session) {
+        session.post("Profiler.stop", (err, { profile }) => {
+            if (err) throw err;
+            const outPath = `bench-${Date.now()}.cpuprofile`;
+            writeFileSync(outPath, JSON.stringify(profile));
+            console.log(`CPU profile written to ${outPath}`);
+        });
+        session.disconnect();
+    }
     console.table(bench.table());
 
     function collectIdentifiers(sourceFile: SourceFile): Node[] {
@@ -195,6 +243,10 @@ export async function runBenchmarks(singleIteration?: boolean) {
 
     async function getCheckerTS() {
         file = (await project.program.getSourceFile("checker.ts"))!;
+    }
+
+    function clearSourceFileCache() {
+        api.clearSourceFileCache();
     }
 
     async function teardown() {

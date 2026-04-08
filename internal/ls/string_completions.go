@@ -155,7 +155,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				"", /*filterText*/
 				SortTextLocationPriority,
 				lsutil.ScriptElementKindString,
-				collections.Set[lsutil.ScriptElementKindModifier]{},
+				lsutil.ScriptElementKindModifierNone,
 				l.getReplacementRangeForContextToken(file, contextToken, position),
 				nil, /*commitCharacters*/
 				nil, /*labelDetails*/
@@ -200,7 +200,7 @@ func (l *LanguageService) convertPathCompletions(
 	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *lsproto.CompletionItem {
 		var replacementSpan *lsproto.Range
 		if pathCompletion.textRange != nil {
-			replacementSpan = l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
+			replacementSpan = new(l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file))
 		}
 		detail := pathCompletion.name
 		if !strings.HasSuffix(pathCompletion.name, pathCompletion.extension) {
@@ -213,7 +213,7 @@ func (l *LanguageService) convertPathCompletions(
 			"", /*filterText*/
 			SortTextLocationPriority,
 			pathCompletion.kind,
-			*collections.NewSetFromItems(kindModifiersFromExtension(pathCompletion.extension)),
+			kindModifiersFromExtension(pathCompletion.extension),
 			replacementSpan,
 			nil, /*commitCharacters*/
 			nil, /*labelDetails*/
@@ -1813,7 +1813,7 @@ func getFilenameWithExtensionOption(
 	extensionOptions *extensionOptions,
 	isExportsOrImportsWildcard bool,
 ) (string, string) {
-	nonJSResult := tryGetRealFileNameForNonJSDeclarationFileName(name)
+	nonJSResult := modulespecifiers.TryGetRealFileNameForNonJSDeclarationFileName(name)
 	if nonJSResult != "" {
 		return nonJSResult, tspath.TryGetExtensionFromPath(nonJSResult)
 	}
@@ -1861,22 +1861,6 @@ func getFilenameWithExtensionOption(
 		return tspath.ChangeExtension(name, outputExtension), outputExtension
 	}
 	return name, tspath.TryGetExtensionFromPath(name)
-}
-
-// Remaps files like `foo.d.json.ts` back to `foo.json`.
-func tryGetRealFileNameForNonJSDeclarationFileName(fileName string) string {
-	baseName := tspath.GetBaseFileName(fileName)
-	// Ends with .ts, contains ".d.", and is NOT a standard .d.ts file
-	if !strings.HasSuffix(fileName, tspath.ExtensionTs) ||
-		!strings.Contains(baseName, ".d.") ||
-		strings.HasSuffix(baseName, tspath.ExtensionDts) {
-		return ""
-	}
-	noExtension := tspath.RemoveExtension(fileName, tspath.ExtensionTs)
-	lastDotIndex := strings.LastIndex(noExtension, ".")
-	ext := noExtension[lastDotIndex:]
-	before, _, _ := strings.Cut(noExtension, ".d.")
-	return before + ext
 }
 
 func walkUpParentheses(node *ast.Node) *ast.Node {
@@ -2037,13 +2021,14 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 	if completions == nil {
 		return item
 	}
-	return l.stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker, docFormat)
+	return l.stringLiteralCompletionDetails(item, name, contextToken, position, completions, file, checker, docFormat)
 }
 
 func (l *LanguageService) stringLiteralCompletionDetails(
 	item *lsproto.CompletionItem,
 	name string,
 	location *ast.Node,
+	position int,
 	completion *stringLiteralCompletions,
 	file *ast.SourceFile,
 	checker *checker.Checker,
@@ -2058,7 +2043,7 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
 			if symbol.Name == name {
-				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, docFormat)
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, position, docFormat)
 			}
 		}
 	case completion.fromTypes != nil:

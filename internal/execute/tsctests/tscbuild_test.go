@@ -391,7 +391,7 @@ func TestBuildConfigFileErrors(t *testing.T) {
 									"a.ts",
 									"b.ts"
 								]
-							}`), false)
+							}`))
 					},
 				},
 			},
@@ -449,7 +449,7 @@ func TestBuildConfigFileErrors(t *testing.T) {
 									"a.ts",
 									"b.ts"
 								]
-							}`), false)
+							}`))
 					},
 				},
 			},
@@ -718,7 +718,7 @@ func TestBuildDemoProject(t *testing.T) {
 									"rootDir": "."
 								},
 							}
-						`), false)
+						`))
 					},
 				},
 			},
@@ -1930,7 +1930,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 								tags() { }
 								private p = 12
 							};
-						`), false)
+						`))
 					},
 				},
 				{
@@ -1969,7 +1969,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 								tags() { }
 								private p = 12
 							};
-						`), false)
+						`))
 					},
 				},
 				{
@@ -2006,7 +2006,6 @@ func TestBuildProgramUpdates(t *testing.T) {
 									"noUnusedParameters": false,
 								},
 							}`),
-							false,
 						)
 					},
 				},
@@ -2088,7 +2087,7 @@ func TestBuildProgramUpdates(t *testing.T) {
                             "compilerOptions": {
 								"strict": true
 							}
-                        }`), false)
+                        }`))
 					},
 				},
 				{
@@ -2098,7 +2097,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 						{
                             "extends": "./alpha.tsconfig.json",
                             "compilerOptions": { "strict": false }
-                        }`), false)
+                        }`))
 					},
 				},
 				{
@@ -2108,13 +2107,13 @@ func TestBuildProgramUpdates(t *testing.T) {
 						{
                             "extends": "./alpha.tsconfig.json",
                             "files": ["other.ts"]
-                        }`), false)
+                        }`))
 					},
 				},
 				{
 					caption: "update aplha config",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/project/alpha.tsconfig.json", "{}", false)
+						sys.writeFileNoError("/user/username/projects/project/alpha.tsconfig.json", "{}")
 					},
 				},
 				{
@@ -2123,7 +2122,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 						sys.writeFileNoError("/user/username/projects/project/extendsConfig2.tsconfig.json", stringtestutil.Dedent(`
 						{
                             "compilerOptions": { "strictNullChecks": true }
-                        }`), false)
+                        }`))
 					},
 				},
 				{
@@ -2134,7 +2133,7 @@ func TestBuildProgramUpdates(t *testing.T) {
                             "extends": ["./extendsConfig1.tsconfig.json", "./extendsConfig2.tsconfig.json"],
                             "compilerOptions": { "composite": false },
                             "files": ["other2.ts"],
-                        }`), false)
+                        }`))
 					},
 				},
 				{
@@ -2206,7 +2205,7 @@ func TestBuildProgramUpdates(t *testing.T) {
                                 },
                             ],
                             "files": [],
-                        }`), false)
+                        }`))
 					},
 				},
 			},
@@ -2632,7 +2631,6 @@ func TestBuildResolveJsonModule(t *testing.T) {
 			{
 				"compilerOptions": {
 					"composite": %t,
-					"moduleResolution": "node",
 					"module": "commonjs",
 					"resolveJsonModule": true,
 					"esModuleInterop": true,
@@ -3224,13 +3222,13 @@ class someClass2 { }`,
 			{
 				caption: "Change to new File and build core",
 				edit: func(sys *TestSys) {
-					sys.writeFileNoError("/user/username/projects/sample1/core/newfile.ts", `export const newFileConst = 30;`, false)
+					sys.writeFileNoError("/user/username/projects/sample1/core/newfile.ts", `export const newFileConst = 30;`)
 				},
 			},
 			{
 				caption: "Change to new File and build core",
 				edit: func(sys *TestSys) {
-					sys.writeFileNoError("/user/username/projects/sample1/core/newfile.ts", "\nexport class someClass2 { }", false)
+					sys.writeFileNoError("/user/username/projects/sample1/core/newfile.ts", "\nexport class someClass2 { }")
 				},
 			},
 		}
@@ -3377,7 +3375,7 @@ class someClass2 { }`,
 					// Update a file in the leaf node (tests), only it should rebuild the last one
 					caption: "Only builds the leaf node project",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/sample1/tests/index.ts", "const m = 10;", false)
+						sys.writeFileNoError("/user/username/projects/sample1/tests/index.ts", "const m = 10;")
 					},
 				},
 				{
@@ -3517,7 +3515,7 @@ class someClass2 { }`,
 						sys.writeFileNoError("/user/username/projects/sample1/tests/tsconfig.base.json", stringtestutil.Dedent(`
 						{
 							"compilerOptions": { }
-						}`), false)
+						}`))
 					},
 				},
 			},
@@ -3779,7 +3777,7 @@ class someClass2 { }`,
 				{
 					caption: "Write logic",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/sample1/logic/tsconfig.json", getLogicConfig(), false)
+						sys.writeFileNoError("/user/username/projects/sample1/logic/tsconfig.json", getLogicConfig())
 					},
 				},
 			},
@@ -3817,7 +3815,7 @@ class someClass2 { }`,
 				{
 					caption: "Add new file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/sample1/core/file3.ts", `export const y = 10;`, false)
+						sys.writeFileNoError("/user/username/projects/sample1/core/file3.ts", `export const y = 10;`)
 					},
 				},
 				noChange,
@@ -3841,7 +3839,7 @@ class someClass2 { }`,
 				{
 					caption: "Add new file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/user/username/projects/sample1/core/file3.ts", `export const y = 10;`, false)
+						sys.writeFileNoError("/user/username/projects/sample1/core/file3.ts", `export const y = 10;`)
 					},
 				},
 				noChange,
@@ -4103,5 +4101,99 @@ func TestBuildSolutionProject(t *testing.T) {
 
 	for _, test := range testCases {
 		test.run(t, "solution")
+	}
+}
+
+func TestBuildProjectReferenceRedirectWithMultipleSubProjects(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "uses correct project reference redirect when file belongs to multiple sub-projects",
+			files: FileMap{
+				// Consumer tsconfig - uses customConditions and moduleSuffixes for react-native
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"customConditions": ["react-native"],
+							"moduleSuffixes": [".native", ""],
+							"strict": true,
+							"noEmit": true
+						},
+						"include": ["app.ts"],
+						"references": [
+							{ "path": "./pkg" }
+						]
+					}`),
+				// Consumer app - imports from pkg, expects native platform
+				"/home/src/workspaces/project/app.ts": stringtestutil.Dedent(`
+					import { platform } from "pkg";
+					const check: "native" = platform;`),
+				// Package - web tsconfig (includes all files via **/*)
+				"/home/src/workspaces/project/pkg/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"composite": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"outDir": "./dist",
+							"strict": true
+						},
+						"include": ["**/*"],
+						"exclude": ["dist"],
+						"references": [
+							{ "path": "./tsconfig.native.json" }
+						]
+					}`),
+				// Package - native tsconfig (includes specific files, has customConditions)
+				"/home/src/workspaces/project/pkg/tsconfig.native.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"composite": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"outDir": "./dist",
+							"strict": true,
+							"customConditions": ["react-native"],
+							"moduleSuffixes": [".native", ""]
+						},
+						"include": ["index.native.ts", "src/util.native.ts", "src/util.ts"],
+						"exclude": ["dist"]
+					}`),
+				// Package exports - react-native condition maps to index.native.ts
+				"/home/src/workspaces/project/pkg/package.json": stringtestutil.Dedent(`
+					{
+						"name": "pkg",
+						"exports": {
+							".": {
+								"react-native": "./index.native.ts",
+								"types": "./index.ts",
+								"default": "./index.ts"
+							}
+						}
+					}`),
+				// Web entry point
+				"/home/src/workspaces/project/pkg/index.ts": `export { platform } from "./src/util";`,
+				// Native entry point (same content, but should resolve internal imports using native tsconfig)
+				"/home/src/workspaces/project/pkg/index.native.ts": `export { platform } from "./src/util";`,
+				// Web util
+				"/home/src/workspaces/project/pkg/src/util.ts": `export const platform = "web" as const;`,
+				// Native util
+				"/home/src/workspaces/project/pkg/src/util.native.ts": `export const platform = "native" as const;`,
+				// node_modules symlink
+				"/home/src/workspaces/project/node_modules/pkg": vfstest.Symlink("/home/src/workspaces/project/pkg"),
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "projectReferenceRedirect")
 	}
 }

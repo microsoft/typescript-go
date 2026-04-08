@@ -3,13 +3,12 @@ package autoimport
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ExportSyntax -output=export_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w export_stringer_generated.go
+//go:generate npx dprint fmt export_stringer_generated.go
 
 // ModuleID uniquely identifies a module across multiple declarations.
 // If the export is from an ambient module declaration, this is the module name.
@@ -61,13 +60,12 @@ type Export struct {
 	Target                     ExportID
 	IsTypeOnly                 bool
 	ScriptElementKind          lsutil.ScriptElementKind
-	ScriptElementKindModifiers collections.Set[lsutil.ScriptElementKindModifier]
+	ScriptElementKindModifiers lsutil.ScriptElementKindModifier
 
 	// The file where the export was found.
 	Path tspath.Path
 
-	NodeModulesDirectory tspath.Path
-	PackageName          string
+	PackageName string
 }
 
 func (e *Export) Name() string {
@@ -100,7 +98,7 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 		return nil
 	}
 	moduleID, moduleFileName := getModuleIDAndFileNameOfModuleSymbol(symbol.Parent)
-	extractor := newSymbolExtractor("", "", ch, nil, nil)
+	extractor := newSymbolExtractor("", ch, nil, nil)
 
 	var exports []*Export
 	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)

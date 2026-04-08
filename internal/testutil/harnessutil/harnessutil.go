@@ -124,7 +124,8 @@ func CompileFilesEx(
 	for _, file := range inputFiles {
 		fileName := tspath.GetNormalizedAbsolutePath(file.UnitName, currentDirectory)
 
-		if !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+		if !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) &&
+			!tspath.FileExtensionIs(fileName, tspath.ExtensionTsBuildInfo) {
 			programFileNames = append(programFileNames, fileName)
 		}
 	}
@@ -1227,5 +1228,8 @@ func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions)
 	switch options.Target {
 	case core.ScriptTargetES5:
 		t.Skipf("unsupported target %s", options.Target)
+	}
+	if options.AlwaysStrict.IsFalse() {
+		t.Skipf("alwaysStrict=false is unsupported")
 	}
 }
