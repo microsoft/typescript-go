@@ -254,6 +254,7 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] {
                 case "baselineGetDefinitionAtPosition":
                 case "baselineGoToType":
                 case "baselineGoToImplementation":
+                case "baselineGoToSourceDefinition":
                     // Both `baselineGoToDefinition` and `baselineGetDefinitionAtPosition` take the same
                     // arguments, but differ in that...
                     //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
@@ -1294,14 +1295,14 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
 }
 
 function parseBaselineGoToDefinitionArgs(
-    funcName: "baselineGoToDefinition" | "baselineGoToType" | "baselineGetDefinitionAtPosition" | "baselineGoToImplementation",
+    funcName: "baselineGoToDefinition" | "baselineGoToType" | "baselineGetDefinitionAtPosition" | "baselineGoToImplementation" | "baselineGoToSourceDefinition",
     args: readonly ts.Expression[],
 ): [VerifyBaselineGoToDefinitionCmd] {
     let boundSpan: true | undefined;
     if (funcName === "baselineGoToDefinition") {
         boundSpan = true;
     }
-    let kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType" | "verifyBaselineGoToImplementation";
+    let kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType" | "verifyBaselineGoToImplementation" | "verifyBaselineGoToSourceDefinition";
     switch (funcName) {
         case "baselineGoToDefinition":
         case "baselineGetDefinitionAtPosition":
@@ -1312,6 +1313,9 @@ function parseBaselineGoToDefinitionArgs(
             break;
         case "baselineGoToImplementation":
             kind = "verifyBaselineGoToImplementation";
+            break;
+        case "baselineGoToSourceDefinition":
+            kind = "verifyBaselineGoToSourceDefinition";
             break;
     }
     const newArgs = [];
@@ -3050,7 +3054,7 @@ interface VerifyBaselineFindAllReferencesCmd {
 }
 
 interface VerifyBaselineGoToDefinitionCmd {
-    kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType" | "verifyBaselineGoToImplementation";
+    kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType" | "verifyBaselineGoToImplementation" | "verifyBaselineGoToSourceDefinition";
     markers: string[];
     boundSpan?: true;
     ranges?: boolean;
@@ -3381,6 +3385,11 @@ function generateBaselineGoToDefinition({ markers, ranges, kind, boundSpan }: Ve
                 return `f.VerifyBaselineGoToImplementation(t)`;
             }
             return `f.VerifyBaselineGoToImplementation(t, ${markers.join(", ")})`;
+        case "verifyBaselineGoToSourceDefinition":
+            if (ranges || markers.length === 0) {
+                return `f.VerifyBaselineGoToSourceDefinition(t)`;
+            }
+            return `f.VerifyBaselineGoToSourceDefinition(t, ${markers.join(", ")})`;
     }
 }
 
@@ -3581,6 +3590,7 @@ function generateCmd(cmd: Cmd): string {
         case "verifyBaselineGoToDefinition":
         case "verifyBaselineGoToType":
         case "verifyBaselineGoToImplementation":
+        case "verifyBaselineGoToSourceDefinition":
             return generateBaselineGoToDefinition(cmd);
         case "verifyBaselineQuickInfo":
             // Quick Info -> Hover

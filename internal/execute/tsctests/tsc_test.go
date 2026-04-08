@@ -635,6 +635,47 @@ func TestTscDeclarationEmit(t *testing.T) {
 			commandLineArgs: []string{"--b", "packages/pkg2/tsconfig.json", "--verbose"},
 		},
 		{
+			subScenario: "when inferred export should reuse imported type alias across a module boundary",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"strict": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"target": "es2022",
+							"module": "esnext",
+						},
+						"files": ["./a.ts", "./factory.ts", "./state.ts"],
+					}`),
+				tscLibPath + "/lib.es2022.full.d.ts": tscDefaultLibContent + "\n" + stringtestutil.Dedent(`
+					type Partial<T> = {
+						[K in keyof T]?: T[K];
+					};
+				`),
+				"/home/src/workspaces/project/a.ts": stringtestutil.Dedent(`
+					interface ISettings {
+						age: number;
+					}
+
+					export type Settings = Partial<ISettings>;
+				`),
+				"/home/src/workspaces/project/factory.ts": stringtestutil.Dedent(`
+					import type { Settings } from "./a";
+
+					export const makeObj = () => ({
+						fn: (s?: Settings): Settings | undefined => s,
+					});
+				`),
+				"/home/src/workspaces/project/state.ts": stringtestutil.Dedent(`
+					import { makeObj } from "./factory";
+
+					export const obj = makeObj();
+				`),
+			},
+			commandLineArgs: []string{"--p", "tsconfig.json"},
+		},
+		{
 			subScenario:     "reports dts generation errors",
 			files:           getTscDeclarationEmitDtsErrorsFileMap(false, false),
 			commandLineArgs: []string{"-b", "--explainFiles", "--listEmittedFiles", "--v"},
@@ -2668,8 +2709,6 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.removeNoError("/home/src/workspaces/project/package.json")
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 			},
 		},
@@ -2720,24 +2759,18 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.removeNoError("/home/src/projects/project/node_modules/@types/bar/index.d.ts")
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 				{
 					caption: "delete the node10Result in package/types",
 					edit: func(sys *TestSys) {
 						sys.removeNoError("/home/src/projects/project/node_modules/foo/index.d.ts")
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 				{
 					caption: "add the alternateResult in @types",
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar/index.d.ts", getTscModuleResolutionAlternateResultDts("bar"))
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 				{
 					caption: "add the alternateResult in package/types",
@@ -2774,24 +2807,18 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.removeNoError("/home/src/projects/project/node_modules/@types/bar2/index.d.ts")
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 				{
 					caption: "delete the node10Result in package/types",
 					edit: func(sys *TestSys) {
 						sys.removeNoError("/home/src/projects/project/node_modules/foo2/index.d.ts")
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 				{
 					caption: "add the alternateResult in @types",
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/home/src/projects/project/node_modules/@types/bar2/index.d.ts", getTscModuleResolutionAlternateResultDts("bar2"))
 					},
-					// !!! repopulateInfo on diagnostics not yet implemented
-					expectedDiff: "Currently we arent repopulating error chain so errors will be different",
 				},
 				{
 					caption: "add the ndoe10Result in package/types",
