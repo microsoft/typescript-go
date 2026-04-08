@@ -34,9 +34,10 @@ func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	}
 	r := b.reuseNode(node)
 	if r != nil {
-		// On successful reuse at hover level 0, walk the reused AST node to check if
-		// any type reference in it is expandable.
-		if b.ctx.maxExpansionDepth == 0 && !b.ctx.canIncreaseExpansionDepth {
+		// After successful reuse during hover, probe the reused AST for expandable
+		// type references so canIncreaseExpansionDepth is set even though
+		// typeToTypeNode (and shouldExpandType) were never called.
+		if b.ctx.maxExpansionDepth >= 0 && !b.ctx.canIncreaseExpansionDepth {
 			b.walkNodeForExpandability(node)
 		}
 		return r
@@ -46,13 +47,13 @@ func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	return b.typeToTypeNode(t)
 }
 
-// walkNodeForHoverVerbosity walks an AST node tree checking each type reference
-// for expandability. Short-circuits once canIncreaseExpansionDepth is set.
+// walkNodeForExpandability walks a reused AST node tree, calling checkTypeExpandability
+// on each type reference, type predicate, or import type node.
+// Short-circuits once canIncreaseExpansionDepth is set.
 func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
 	if b.ctx.canIncreaseExpansionDepth || node == nil {
 		return
 	}
-	// Only resolve types for nodes that can reference expandable named types.
 	if ast.IsTypeReferenceNode(node) || ast.IsExpressionWithTypeArguments(node) || ast.IsTypePredicateNode(node) || ast.IsImportTypeNode(node) {
 		t := b.getTypeFromTypeNode(node, false)
 		if t != nil {

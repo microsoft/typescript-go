@@ -93,7 +93,7 @@
 // |     value: number;
 // |     left: TreeNode<number> | undefined;
 // |     right: TreeNode<number> | undefined;
-// |     orange?: Orange | undefined;
+// |     orange?: Orange;
 // | }
 // | ```
 // | 
@@ -310,7 +310,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst m: {\n    value: number;\n    left: TreeNode<number> | undefined;\n    right: TreeNode<number> | undefined;\n    orange?: Orange | undefined;\n}\n```\n"
+          "value": "```tsx\nconst m: {\n    value: number;\n    left: TreeNode<number> | undefined;\n    right: TreeNode<number> | undefined;\n    orange?: Orange;\n}\n```\n"
         },
         "range": {
           "start": {
