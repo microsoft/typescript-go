@@ -328,15 +328,33 @@ func (p *checkerPool) registerRequestCleanup(ctx context.Context, requestID stri
 	})
 }
 
-// scheduleCleanupLocked resets (or starts) the cleanup timer so it fires
-// idleTimeout after the most recent checker release. When the timer fires,
-// it disposes any checkers that have been idle long enough.
+// scheduleCleanupLocked resets (or starts) the cleanup timer so it fires at
+// the earliest pending checker-expiration deadline among all currently idle,
+// unheld checkers. When the timer fires, it disposes any checkers that have
+// been idle long enough.
 // Must be called with p.mu held.
 func (p *checkerPool) scheduleCleanupLocked() {
+	var earliestDeadline time.Time
+	for i := range p.checkers {
+		if p.checkers[i] == nil || p.heldBy[i] != "" || p.lastReleased[i].IsZero() {
+			continue
+		}
+		deadline := p.lastReleased[i].Add(p.opts.IdleTimeout)
+		if earliestDeadline.IsZero() || deadline.Before(earliestDeadline) {
+			earliestDeadline = deadline
+		}
+	}
+	if earliestDeadline.IsZero() {
+		return
+	}
+	delay := time.Until(earliestDeadline)
+	if delay <= 0 {
+		delay = time.Millisecond
+	}
 	if p.cleanupTimer != nil {
-		p.cleanupTimer.Reset(p.opts.IdleTimeout)
+		p.cleanupTimer.Reset(delay)
 	} else {
-		p.cleanupTimer = time.AfterFunc(p.opts.IdleTimeout, p.cleanupIdleCheckers)
+		p.cleanupTimer = time.AfterFunc(delay, p.cleanupIdleCheckers)
 	}
 }
 
@@ -366,7 +384,10 @@ func (p *checkerPool) cleanupIdleCheckers() {
 	}
 	// If there are remaining checkers not yet idle enough, reschedule.
 	if !earliestRemaining.IsZero() {
-		remaining := max(p.opts.IdleTimeout-now.Sub(earliestRemaining), time.Second)
+		remaining := p.opts.IdleTimeout - now.Sub(earliestRemaining)
+		if remaining <= 0 {
+			remaining = time.Millisecond
+		}
 		p.cleanupTimer = time.AfterFunc(remaining, p.cleanupIdleCheckers)
 	} else {
 		p.cleanupTimer = nil

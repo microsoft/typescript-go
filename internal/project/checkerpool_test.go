@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"sync/atomic"
 	"testing"
 	"testing/synctest"
 	"time"
@@ -233,24 +234,24 @@ func TestCheckerPoolQueryContention(t *testing.T) {
 		assert.Assert(t, c1 != nil)
 
 		// A second query request from a different request ID should block.
-		var c2Got bool
+		var c2Got atomic.Bool
 		go func() {
 			ctx2 := core.WithRequestID(context.Background(), "query-wait")
 			ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
 			c2, release2 := pool.GetChecker(ctx2, nil)
 			assert.Assert(t, c2 != nil)
-			c2Got = true
+			c2Got.Store(true)
 			release2()
 		}()
 
-		// Wait for goroutine to reach the cond.Wait.
+		// Wait for goroutine to reach the semaphore send.
 		synctest.Wait()
-		assert.Assert(t, !c2Got, "second query should be blocked while first holds the checker")
+		assert.Assert(t, !c2Got.Load(), "second query should be blocked while first holds the checker")
 
 		// Release the first checker — second should unblock.
 		release1()
 		synctest.Wait()
-		assert.Assert(t, c2Got, "second query should have acquired the checker after release")
+		assert.Assert(t, c2Got.Load(), "second query should have acquired the checker after release")
 	})
 }
 
@@ -271,18 +272,18 @@ func TestCheckerPoolDiagnosticsContention(t *testing.T) {
 		assert.Assert(t, c1 != nil)
 
 		// A second diagnostics request should block since there's only one diag checker.
-		var c2Got bool
+		var c2Got atomic.Bool
 		go func() {
 			ctx2 := core.WithRequestID(context.Background(), "diag-wait")
 			ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeDiagnostics)
 			c2, release2 := pool.GetChecker(ctx2, nil)
 			assert.Assert(t, c2 != nil)
-			c2Got = true
+			c2Got.Store(true)
 			release2()
 		}()
 
 		synctest.Wait()
-		assert.Assert(t, !c2Got, "second diagnostics request should be blocked")
+		assert.Assert(t, !c2Got.Load(), "second diagnostics request should be blocked")
 
 		// A query request should NOT be blocked (separate slot).
 		ctx3 := core.WithRequestID(context.Background(), "query-concurrent")
@@ -295,7 +296,7 @@ func TestCheckerPoolDiagnosticsContention(t *testing.T) {
 		// Release the diagnostics checker — second diag request should unblock.
 		release1()
 		synctest.Wait()
-		assert.Assert(t, c2Got, "second diagnostics request should have acquired the checker after release")
+		assert.Assert(t, c2Got.Load(), "second diagnostics request should have acquired the checker after release")
 	})
 }
 
@@ -473,22 +474,22 @@ func TestCheckerPoolCrossReleaseAffinityWithContention(t *testing.T) {
 		assert.Assert(t, cB != nil)
 
 		// Request A reacquires — should block because B holds the slot.
+		var reacquired atomic.Bool
 		var cA2 *checker.Checker
-		var reacquired bool
 		go func() {
 			c, release := pool.GetChecker(ctxA, nil)
 			cA2 = c
-			reacquired = true
+			reacquired.Store(true)
 			release()
 		}()
 
 		synctest.Wait()
-		assert.Assert(t, !reacquired, "request A should block while B holds the slot")
+		assert.Assert(t, !reacquired.Load(), "request A should block while B holds the slot")
 
 		// Release B — A should unblock and get the same checker.
 		releaseB()
 		synctest.Wait()
-		assert.Assert(t, reacquired, "request A should unblock after B releases")
+		assert.Assert(t, reacquired.Load(), "request A should unblock after B releases")
 		assert.Assert(t, cA2 == cA, "request A should get the same checker on reacquire")
 	})
 }
