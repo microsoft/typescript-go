@@ -19,7 +19,17 @@ import (
 // distinguishes "held without ID" from "not held" (empty string).
 const checkerHeldAnonymous = "<anonymous>"
 
-// CheckerPool manages a set of type checkers for a project. It maintains a
+type CheckerPoolOptions struct {
+	// MaxCheckers controls the total number of checker slots per project
+	// (1 dedicated diagnostics checker + N-1 query checkers). Minimum 2.
+	// Zero uses the default (4).
+	MaxCheckers int
+	// IdleTimeout controls how long an idle checker is kept
+	// before being disposed. Zero uses the default (30s).
+	IdleTimeout time.Duration
+}
+
+// checkerPool manages a set of type checkers for a project. It maintains a
 // dedicated diagnostics checker (index 0) that provides consistent walk-order
 // for diagnostic operations, plus a set of ephemeral query checkers (indices 1+)
 // for language-service operations like hover, completions, go-to-definition, etc.
@@ -31,19 +41,8 @@ const checkerHeldAnonymous = "<anonymous>"
 // influenced by other operations, but it is still ephemeral.
 //
 // Concurrency is managed via two buffered channels used as semaphores:
-// diagSem (capacity 1) and querySem (capacity N-1). A goroutine receives
-// a token before claiming a checker, and sends it back on release.
-// CheckerPoolOptions configures a CheckerPool.
-type CheckerPoolOptions struct {
-	// MaxCheckers controls the total number of checker slots per project
-	// (1 dedicated diagnostics checker + N-1 query checkers). Minimum 2.
-	// Zero uses the default (4).
-	MaxCheckers int
-	// IdleTimeout controls how long an idle checker is kept
-	// before being disposed. Zero uses the default (30s).
-	IdleTimeout time.Duration
-}
-
+// diagSem (capacity 1) and querySem (capacity N-1). A goroutine sends
+// a value to claim a slot, and receives to release it.
 type checkerPool struct {
 	opts    CheckerPoolOptions
 	program *compiler.Program
@@ -64,8 +63,9 @@ type checkerPool struct {
 	// When it fires, idle checkers are disposed.
 	cleanupTimer *time.Timer
 
-	// diagSem has capacity 1 — one token for the diagnostics checker slot.
-	// querySem has capacity opts.MaxCheckers-1 — one token per query checker slot.
+	// diagSem has capacity 1 — the diagnostics checker slot.
+	// querySem has capacity opts.MaxCheckers-1 — one slot per query checker.
+	// Send to acquire a slot, receive to release it.
 	diagSem  chan struct{}
 	querySem chan struct{}
 
@@ -100,11 +100,6 @@ func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func
 		log:                    log,
 		globalDiagCheckerCount: make([]int, opts.MaxCheckers),
 	}
-	// All slots start available.
-	pool.diagSem <- struct{}{}
-	for range querySlots {
-		pool.querySem <- struct{}{}
-	}
 	return pool
 }
 
@@ -128,16 +123,16 @@ func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 
 // tryReacquireForRequest checks whether the given request already has an
 // associated checker. If so, it either returns the checker directly (still held)
-// or reacquires it by consuming a semaphore token. The caller must provide the
+// or reacquires it by claiming a semaphore slot. The caller must provide the
 // appropriate semaphore channel.
 //
 // Returns (checker, release, true) if the request was served (either still held
 // or reclaimed). Returns (nil, nil, false) if the caller must proceed with
-// normal acquisition — in this case, a semaphore token has already been consumed.
+// normal acquisition — in this case, a semaphore slot has already been claimed.
 // Must NOT be called with p.mu held.
-func (p *checkerPool) tryReacquireForRequest(requestID string, sem <-chan struct{}) (*checker.Checker, func(), bool) {
+func (p *checkerPool) tryReacquireForRequest(requestID string, sem chan<- struct{}) (*checker.Checker, func(), bool) {
 	if requestID == "" {
-		<-sem
+		sem <- struct{}{}
 		return nil, nil, false
 	}
 
@@ -145,7 +140,7 @@ func (p *checkerPool) tryReacquireForRequest(requestID string, sem <-chan struct
 	index, ok := p.requestAssociations[requestID]
 	if !ok {
 		p.mu.Unlock()
-		<-sem
+		sem <- struct{}{}
 		return nil, nil, false
 	}
 
@@ -153,37 +148,37 @@ func (p *checkerPool) tryReacquireForRequest(requestID string, sem <-chan struct
 	if c == nil {
 		delete(p.requestAssociations, requestID)
 		p.mu.Unlock()
-		<-sem
+		sem <- struct{}{}
 		return nil, nil, false
 	}
 
 	held := p.heldBy[index]
 	if held == requestID {
-		// Same request, checker still held — return without consuming a token.
+		// Same request, checker still held — return without claiming a slot.
 		p.mu.Unlock()
 		return c, noop, true
 	}
 
 	if held == "" {
-		// Same request reacquiring after release — need the semaphore token.
+		// Same request reacquiring after release — need a semaphore slot.
 		p.mu.Unlock()
-		<-sem
+		sem <- struct{}{}
 		p.mu.Lock()
-		// Re-check: checker may have been disposed while waiting for the token.
+		// Re-check: checker may have been disposed while waiting for the slot.
 		if cc := p.checkers[index]; cc == c && p.heldBy[index] == "" {
 			p.heldBy[index] = requestID
 			p.mu.Unlock()
 			return c, p.createRelease(requestID, index, c), true
 		}
 		p.mu.Unlock()
-		// Checker was replaced/disposed while waiting for the token.
-		// The token is still consumed; the caller will use it for normal acquisition.
+		// Checker was replaced/disposed while waiting for the slot.
+		// The slot is still claimed; the caller will use it for normal acquisition.
 		return nil, nil, false
 	}
 
-	// Checker held by another request — consume a token normally.
+	// Checker held by another request — claim a slot normally.
 	p.mu.Unlock()
-	<-sem
+	sem <- struct{}{}
 	return nil, nil, false
 }
 
@@ -306,16 +301,17 @@ func (p *checkerPool) createRelease(requestID string, index int, c *checker.Chec
 			}
 		}
 
-		// Unlock before returning the semaphore token. If we sent the token
-		// while holding p.mu, a woken goroutine could immediately try to
-		// acquire p.mu, risking priority inversion or unnecessary contention.
+		// Unlock before releasing the semaphore slot. If we received from
+		// the channel while holding p.mu, a woken goroutine could immediately
+		// try to acquire p.mu, risking priority inversion or unnecessary
+		// contention.
 		p.mu.Unlock()
 
-		// Return the semaphore token.
+		// Release the semaphore slot.
 		if index == 0 {
-			p.diagSem <- struct{}{}
+			<-p.diagSem
 		} else {
-			p.querySem <- struct{}{}
+			<-p.querySem
 		}
 	})
 }
