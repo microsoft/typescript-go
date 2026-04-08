@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/declarationEmitForMixinsWithStaticAccessors2.ts] ////
+
+=== /a.ts ===
+function mix<T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(
+>mix : Symbol(mix, Decl(a.ts, 0, 0))
+>T : Symbol(T, Decl(a.ts, 0, 13))
+>args : Symbol(args, Decl(a.ts, 0, 28))
+>U : Symbol(U, Decl(a.ts, 0, 51))
+>args : Symbol(args, Decl(a.ts, 0, 67))
+
+    base1: T, base2: U
+>base1 : Symbol(base1, Decl(a.ts, 0, 91))
+>T : Symbol(T, Decl(a.ts, 0, 13))
+>base2 : Symbol(base2, Decl(a.ts, 1, 13))
+>U : Symbol(U, Decl(a.ts, 0, 51))
+
+): T & U {
+>T : Symbol(T, Decl(a.ts, 0, 13))
+>U : Symbol(U, Decl(a.ts, 0, 51))
+
+    return null as any;
+}
+
+class A {
+>A : Symbol(A, Decl(a.ts, 4, 1))
+
+    static get shared(): number { return 1; }
+>shared : Symbol(A.shared, Decl(a.ts, 6, 9), Decl(a.ts, 7, 45))
+
+    static set shared(v: number) { }
+>shared : Symbol(A.shared, Decl(a.ts, 6, 9), Decl(a.ts, 7, 45))
+>v : Symbol(v, Decl(a.ts, 8, 22))
+
+    x: string = "";
+>x : Symbol(A.x, Decl(a.ts, 8, 36))
+}
+
+class B {
+>B : Symbol(B, Decl(a.ts, 10, 1))
+
+    static get shared(): number { return 2; }
+>shared : Symbol(B.shared, Decl(a.ts, 12, 9), Decl(a.ts, 13, 45))
+
+    static set shared(v: number) { }
+>shared : Symbol(B.shared, Decl(a.ts, 12, 9), Decl(a.ts, 13, 45))
+>v : Symbol(v, Decl(a.ts, 14, 22))
+
+    y: number = 0;
+>y : Symbol(B.y, Decl(a.ts, 14, 36))
+}
+
+function make() {
+>make : Symbol(make, Decl(a.ts, 16, 1))
+
+    class C extends mix(A, B) {
+>C : Symbol(C, Decl(a.ts, 18, 17))
+>mix : Symbol(mix, Decl(a.ts, 0, 0))
+>A : Symbol(A, Decl(a.ts, 4, 1))
+>B : Symbol(B, Decl(a.ts, 10, 1))
+
+        z: boolean = true;
+>z : Symbol(C.z, Decl(a.ts, 19, 31))
+    }
+    return C;
+>C : Symbol(C, Decl(a.ts, 18, 17))
+}
+
+export const MixedClass = make();
+>MixedClass : Symbol(MixedClass, Decl(a.ts, 25, 12))
+>make : Symbol(make, Decl(a.ts, 16, 1))
+

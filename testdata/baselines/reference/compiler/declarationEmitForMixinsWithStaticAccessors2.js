@@ -1,12 +1,6 @@
-//// [tests/cases/compiler/declarationEmitAccessorNilParent.ts] ////
+//// [tests/cases/compiler/declarationEmitForMixinsWithStaticAccessors2.ts] ////
 
-//// [declarationEmitAccessorNilParent.ts]
-// Regression test: when a class extends a mixin that returns an intersection,
-// the class's anonymous constructor type inherits static accessor properties from the
-// intersection. These synthetic properties can have a nil parent symbol when the
-// constituent accessor declarations differ. Declaration emit must not crash when
-// serializing these properties.
-
+//// [a.ts]
 function mix<T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(
     base1: T, base2: U
 ): T & U {
@@ -35,12 +29,7 @@ function make() {
 export const MixedClass = make();
 
 
-//// [declarationEmitAccessorNilParent.js]
-// Regression test: when a class extends a mixin that returns an intersection,
-// the class's anonymous constructor type inherits static accessor properties from the
-// intersection. These synthetic properties can have a nil parent symbol when the
-// constituent accessor declarations differ. Declaration emit must not crash when
-// serializing these properties.
+//// [a.js]
 function mix(base1, base2) {
     return null;
 }
@@ -63,7 +52,7 @@ function make() {
 export const MixedClass = make();
 
 
-//// [declarationEmitAccessorNilParent.d.ts]
+//// [a.d.ts]
 export declare const MixedClass: {
     new (): {
         z: boolean;
