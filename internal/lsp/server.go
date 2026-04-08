@@ -774,6 +774,14 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		}
 		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
+			if errors.Is(err, project.ErrNoProject) {
+				// No project found for this URI (e.g. untitled file not yet opened).
+				// Return a null result instead of an error to avoid surfacing
+				// internal errors to the user.
+				return func() error {
+					return s.sendResult(req.ID, *new(Resp))
+				}, nil
+			}
 			return nil, err
 		}
 		return func() error {
@@ -800,7 +808,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		return s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
+		asyncWork, err := s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
 			return func() error {
 				defer s.recover(req)
 				resp, lsErr := fn(s, ctx, languageService, params)
@@ -826,6 +834,16 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 				return s.sendResult(req.ID, resp)
 			}, nil
 		})
+		if err != nil {
+			if errors.Is(err, project.ErrNoProject) {
+				// No project found for this URI. Return a null result.
+				return func() error {
+					return s.sendResult(req.ID, *new(Resp))
+				}, nil
+			}
+			return nil, err
+		}
+		return asyncWork, nil
 	}
 }
 
@@ -843,6 +861,12 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		// !!! sheetal: multiple projects that contain the file through symlinks
 		defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
 		if err != nil {
+			if errors.Is(err, project.ErrNoProject) {
+				// No project found for this URI. Return a null result.
+				return func() error {
+					return s.sendResult(req.ID, *new(Resp))
+				}, nil
+			}
 			return nil, err
 		}
 		return func() error {
@@ -1547,6 +1571,13 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	uri := params.TextDocument.Uri
 	defaultProject, _, _, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
 	if err != nil {
+		if errors.Is(err, project.ErrNoProject) {
+			// No project found (e.g. for untitled files not yet opened). Return
+			// an empty result; the client handles this gracefully.
+			return &lsproto.ProjectInfoResult{
+				ConfigFilePath: "",
+			}, nil
+		}
 		return nil, err
 	}
 	configFilePath := ""

@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"runtime"
 	gometrics "runtime/metrics"
@@ -26,6 +27,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+// ErrNoProject is returned when no project can be found for a given URI.
+// This can happen when a file has not been opened via textDocument/didOpen,
+// such as untitled files or files outside the workspace.
+var ErrNoProject = errors.New("no project found")
 
 type UpdateReason int
 
@@ -534,7 +540,7 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	)
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {
-		return nil, nil, nil, fmt.Errorf("no project found for URI %s", uri)
+		return nil, nil, nil, fmt.Errorf("%w for URI %s", ErrNoProject, uri)
 	}
 	return snapshot, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
@@ -616,7 +622,7 @@ func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, 
 	}, false /*callerRef*/)
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {
-		return nil, fmt.Errorf("no project found for URI %s", uri)
+		return nil, fmt.Errorf("%w for URI %s", ErrNoProject, uri)
 	}
 	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
@@ -669,7 +675,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 	if project == nil {
 		// Clone's initial ref (1) is released since we won't use this snapshot.
 		newSnapshot.Deref(s)
-		return nil, fmt.Errorf("no project found for URI %s", uri)
+		return nil, fmt.Errorf("%w for URI %s", ErrNoProject, uri)
 	}
 
 	// The clone's initial ref (1) is transferred to adoptSnapshotChange,
