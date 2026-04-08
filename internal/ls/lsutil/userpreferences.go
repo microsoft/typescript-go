@@ -769,18 +769,22 @@ func (p UserPreferences) IsModuleSpecifierExcluded(moduleSpecifier string) bool 
 func ParseUserPreferences(items map[string]any) UserPreferences {
 	prefs := NewDefaultUserPreferences()
 	// Apply editor settings first (tabSize, indentSize, etc.) as raw-name defaults,
-	// then overlay js/ts settings which take precedence.
+	// then overlay language-specific settings with increasing precedence:
+	// editor < javascript < typescript < js/ts
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
 			prefs = prefs.withConfig(map[string]any{"unstable": editorSettings})
 		}
 	}
-	if jsTsItem, ok := items["js/ts"]; ok && jsTsItem != nil {
-		switch jsTsSettings := jsTsItem.(type) {
-		case map[string]any:
-			prefs = prefs.withConfig(jsTsSettings)
-		case UserPreferences:
-			prefs = prefs.WithOverrides(jsTsSettings)
+	// Apply javascript, then typescript, then js/ts (highest precedence).
+	for _, section := range []string{"javascript", "typescript", "js/ts"} {
+		if item, ok := items[section]; ok && item != nil {
+			switch settings := item.(type) {
+			case map[string]any:
+				prefs = prefs.withConfig(settings)
+			case UserPreferences:
+				prefs = prefs.WithOverrides(settings)
+			}
 		}
 	}
 	return prefs

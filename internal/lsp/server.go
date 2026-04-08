@@ -338,6 +338,12 @@ func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferenc
 				Section: new("js/ts"),
 			},
 			{
+				Section: new("typescript"),
+			},
+			{
+				Section: new("javascript"),
+			},
+			{
 				Section: new("editor"),
 			},
 		},
@@ -351,12 +357,18 @@ func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferenc
 		case 0:
 			configMap["js/ts"] = config
 		case 1:
+			configMap["typescript"] = config
+		case 2:
+			configMap["javascript"] = config
+		case 3:
 			configMap["editor"] = config
 		}
 	}
 	s.logger.Logf(
-		"received options from workspace/configuration request:\njs/ts: %+v\n\neditor: %+v\n",
+		"received options from workspace/configuration request:\njs/ts: %+v\n\ntypescript: %+v\n\njavascript: %+v\n\neditor: %+v\n",
 		configMap["js/ts"],
+		configMap["typescript"],
+		configMap["javascript"],
 		configMap["editor"],
 	)
 	return lsutil.ParseUserPreferences(configMap), nil
@@ -1139,7 +1151,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 				RegisterOptions: &lsproto.RegisterOptions{
 					WorkspaceDidChangeConfiguration: &lsproto.DidChangeConfigurationRegistrationOptions{
 						Section: &lsproto.StringOrStrings{
-							Strings: &[]string{"js/ts", "editor"},
+							Strings: &[]string{"js/ts", "typescript", "javascript", "editor"},
 						},
 					},
 				},

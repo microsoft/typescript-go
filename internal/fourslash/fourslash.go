@@ -224,11 +224,27 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 func (f *FourslashTest) handleServerRequest(_ context.Context, req *lsproto.RequestMessage) *lsproto.ResponseMessage {
 	switch req.Method {
 	case lsproto.MethodWorkspaceConfiguration:
-		// Return current user preferences
+		// Return current user preferences for each requested section.
+		// The server requests multiple sections (js/ts, typescript, javascript, editor);
+		// we return user preferences for "js/ts" and nil for others.
+		params, ok := req.Params.(*lsproto.ConfigurationParams)
+		if !ok || params == nil || params.Items == nil {
+			return &lsproto.ResponseMessage{
+				ID:      req.ID,
+				JSONRPC: req.JSONRPC,
+				Result:  []any{f.userPreferences},
+			}
+		}
+		results := make([]any, len(params.Items))
+		for i, item := range params.Items {
+			if item.Section != nil && *item.Section == "js/ts" {
+				results[i] = f.userPreferences
+			}
+		}
 		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
-			Result:  []any{f.userPreferences},
+			Result:  results,
 		}
 
 	case lsproto.MethodClientRegisterCapability:
