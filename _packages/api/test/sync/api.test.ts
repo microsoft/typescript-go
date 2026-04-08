@@ -2368,11 +2368,12 @@ test("Parse-clone-emit roundtrip", () => {
         cwd: tsSource,
         tsserverPath: getTsserverPath(),
     });
-    const errors = {
+    const target = {
         cloneCrashed: 0,
         printCrashed: 0,
         clonePrintCrashed: 0,
     };
+    const errors = { ...target };
     try {
         for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
             const snapshot = api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
@@ -2386,7 +2387,7 @@ test("Parse-clone-emit roundtrip", () => {
                 try {
                     project.emitter.printNode(source);
                 }
-                catch (e: any) {
+                catch {
                     errors.printCrashed++;
                     continue;
                 }
@@ -2394,7 +2395,7 @@ test("Parse-clone-emit roundtrip", () => {
                 try {
                     clone = getSynthesizedDeepClone(source);
                 }
-                catch (e: any) {
+                catch {
                     errors.cloneCrashed++;
                     continue;
                 }
@@ -2402,7 +2403,7 @@ test("Parse-clone-emit roundtrip", () => {
                 try {
                     project.emitter.printNode(clone);
                 }
-                catch (e: any) {
+                catch {
                     errors.clonePrintCrashed++;
                     continue;
                 }
@@ -2412,11 +2413,7 @@ test("Parse-clone-emit roundtrip", () => {
     finally {
         api.close();
     }
-    assert.equal(errors.cloneCrashed, 0, `${errors.cloneCrashed} file(s) crashed during clone`);
-    assert.equal(errors.clonePrintCrashed, 0, `${errors.clonePrintCrashed} file(s) crashed printing cloned tree`);
-    // printCrashed tracks Go-side printer panics on uncloned source files.
-    // These are pre-existing Go printer/decoder issues, not clone regressions.
-    // Tracked but not asserted until the Go printer is fixed.
+    assert.deepEqual(errors, target);
 });
 
 describe("Program - diagnostics", () => {
