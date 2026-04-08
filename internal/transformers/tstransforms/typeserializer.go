@@ -318,7 +318,7 @@ func (s *metadataSerializer) serializeLiteralOfLiteralTypeNode(node *ast.Node) *
 }
 
 /**
-* Serializes a TypeReference to an appropriate JS constructor value for use with decorator type metadata.
+* Serializes a TypeReferenceNode to an appropriate JS constructor value for use with decorator type metadata.
 * @param node The type reference node.
  */
 func (s *metadataSerializer) serializeTypeReferenceNode(node *ast.TypeReferenceNode) *ast.Node {
