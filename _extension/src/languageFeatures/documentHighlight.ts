@@ -50,12 +50,18 @@ class MultiDocumentHighlightProvider implements vscode.MultiDocumentHighlightPro
             return [];
         }
 
-        return response.map(item =>
-            new vscode.MultiDocumentHighlight(
-                vscode.Uri.parse(item.uri),
-                item.highlights.map(h => this.client.protocol2CodeConverter.asDocumentHighlight(h)),
-            )
-        );
+        // MultiDocumentHighlight is proposed API; guard against missing or changed constructor.
+        try {
+            return response.map(item =>
+                new vscode.MultiDocumentHighlight(
+                    vscode.Uri.parse(item.uri),
+                    item.highlights.map(h => this.client.protocol2CodeConverter.asDocumentHighlight(h)),
+                )
+            );
+        }
+        catch {
+            return [];
+        }
     }
 }
 
@@ -64,7 +70,8 @@ export function registerMultiDocumentHighlightFeature(
     client: LanguageClient,
 ): vscode.Disposable {
     const capabilities = client.initializeResult?.capabilities as { customMultiDocumentHighlightProvider?: boolean; } | undefined;
-    if (!capabilities?.customMultiDocumentHighlightProvider) {
+    // registerMultiDocumentHighlightProvider is proposed API; guard against it not being available.
+    if (!capabilities?.customMultiDocumentHighlightProvider || typeof vscode.languages.registerMultiDocumentHighlightProvider !== "function") {
         return { dispose() {} };
     }
     return vscode.languages.registerMultiDocumentHighlightProvider(selector, new MultiDocumentHighlightProvider(client));
