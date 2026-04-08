@@ -201,7 +201,8 @@ Config File Names::
           "showOnAllFunctions": true
         },
         "unstable": {
-          "maximumHoverLength": 0
+          "maximumHoverLength": 0,
+          "preferGoToSourceDefinition": false
         }
       }
     }
@@ -657,6 +658,7 @@ Config::
           "disableLineTextInReferences": true,
           "displayPartsForJSDoc": true,
           "maximumHoverLength": 0,
+          "preferGoToSourceDefinition": false,
           "provideRefactorNotApplicableReason": true,
           "reportStyleChecksAsWarnings": true
         },

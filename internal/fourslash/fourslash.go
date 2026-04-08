@@ -925,6 +925,7 @@ type CompletionsExpectedCodeAction struct {
 
 type VerifyCompletionsResult struct {
 	AndApplyCodeAction func(t *testing.T, expectedAction *CompletionsExpectedCodeAction)
+	AndHasNoCodeAction func(t *testing.T, unexpectedAction *CompletionsExpectedCodeAction)
 }
 
 // string | *Marker | []string | []*Marker
@@ -976,6 +977,21 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 			assert.Check(t, strings.Contains(*item.Detail, expectedAction.Description), "Completion item detail does not contain expected description.")
 			f.applyTextEdits(t, *item.AdditionalTextEdits)
 			assert.Equal(t, f.getScriptInfo(f.activeFilename).content, expectedAction.NewFileContent, fmt.Sprintf("File content after applying code action '%s' did not match expected content.", expectedAction.Name))
+		},
+		AndHasNoCodeAction: func(t *testing.T, unexpectedAction *CompletionsExpectedCodeAction) {
+			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
+				if item.Label != unexpectedAction.Name || item.Data == nil {
+					return false
+				}
+				data := item.Data
+				if data.AutoImport == nil {
+					return false
+				}
+				return data.AutoImport.ModuleSpecifier == unexpectedAction.Source
+			})
+			if item != nil {
+				t.Fatalf("Unexpected code action '%s' from source '%s' found in completions.", unexpectedAction.Name, unexpectedAction.Source)
+			}
 		},
 	}
 }
@@ -1878,9 +1894,10 @@ func (f *FourslashTest) verifyBaselineDefinitions(
 		}
 
 		f.addResultToBaseline(t, definitionCommand, f.getBaselineForSpansWithFileContents(resultAsSpans, baselineFourslashLocationsOptions{
-			marker:         markerOrRange,
-			markerName:     definitionMarker,
-			additionalSpan: additionalSpan,
+			marker:              markerOrRange,
+			markerName:          definitionMarker,
+			additionalSpan:      additionalSpan,
+			preserveResultOrder: definitionCommand == goToSourceDefinitionCmd,
 		}))
 	}
 }
@@ -1902,6 +1919,33 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 			}
 
 			return sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
+		},
+		false, /*includeOriginalSelectionRange*/
+		markers...,
+	)
+}
+
+func (f *FourslashTest) VerifyBaselineGoToSourceDefinition(
+	t *testing.T,
+	markers ...string,
+) {
+	f.verifyBaselineDefinitions(
+		t,
+		goToSourceDefinitionCmd,
+		"/*GOTO SOURCE DEF*/", /*definitionMarker*/
+		func(t *testing.T, f *FourslashTest, fileName string, position lsproto.Position) lsproto.LocationOrLocationsOrDefinitionLinksOrNull {
+			params := &lsproto.TextDocumentPositionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+			}
+
+			result := sendRequest(t, f, lsproto.CustomTextDocumentSourceDefinitionInfo, params)
+			if result == nil {
+				return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}
+			}
+			return *result
 		},
 		false, /*includeOriginalSelectionRange*/
 		markers...,

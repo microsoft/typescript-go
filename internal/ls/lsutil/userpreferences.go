@@ -153,6 +153,10 @@ type UserPreferences struct {
 
 	CodeLens CodeLensUserPreferences
 
+	// ------- Definition -------
+
+	PreferGoToSourceDefinition bool `raw:"preferGoToSourceDefinition"`
+
 	// ------- Symbols -------
 
 	ExcludeLibrarySymbolsInNavTo core.Tristate `raw:"excludeLibrarySymbolsInNavTo" config:"workspaceSymbols.excludeLibrarySymbols"`
