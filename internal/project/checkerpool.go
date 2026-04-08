@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"fmt"
 	"slices"
 	"sync"
 	"time"
@@ -200,12 +201,14 @@ func (p *CheckerPool) getDiagnosticsChecker(ctx context.Context, requestID strin
 	defer p.mu.Unlock()
 
 	if p.checkers[diagIndex] == nil {
+		p.log("checkerpool: Creating diagnostics checker")
 		c, _ := checker.NewChecker(p.program)
 		p.checkers[diagIndex] = c
 	}
 
 	c := p.checkers[diagIndex]
 	p.heldBy[diagIndex] = holdTag(requestID)
+	p.log(fmt.Sprintf("checkerpool: Acquired diagnostics checker for request %s", holdTag(requestID)))
 	if requestID != "" {
 		if _, alreadyRegistered := p.requestAssociations[requestID]; !alreadyRegistered {
 			p.requestAssociations[requestID] = diagIndex
@@ -246,6 +249,7 @@ func (p *CheckerPool) getQueryChecker(ctx context.Context, requestID string, fil
 	// Find any available query checker or create one.
 	c, index := p.findOrCreateQueryCheckerLocked()
 	p.heldBy[index] = holdTag(requestID)
+	p.log(fmt.Sprintf("checkerpool: Acquired query checker %d for request %s", index, holdTag(requestID)))
 	if requestID != "" {
 		if _, alreadyRegistered := p.requestAssociations[requestID]; !alreadyRegistered {
 			p.requestAssociations[requestID] = index
@@ -271,6 +275,7 @@ func (p *CheckerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	// Create in the first empty slot.
 	for i := 1; i < len(p.checkers); i++ {
 		if p.checkers[i] == nil {
+			p.log(fmt.Sprintf("checkerpool: Creating query checker %d", i))
 			c, _ := checker.NewChecker(p.program)
 			p.checkers[i] = c
 			return c, i
@@ -285,11 +290,13 @@ func (p *CheckerPool) createRelease(requestID string, index int, c *checker.Chec
 
 		if c.WasCanceled() {
 			// Canceled checkers must be disposed.
+			p.log(fmt.Sprintf("checkerpool: Checker %d for request %s was canceled, disposing", index, holdTag(requestID)))
 			p.disposeCheckerLocked(index, c)
 		} else {
 			p.mergeGlobalDiagnosticsFromCheckerLocked(index, c)
 			if p.opts.IdleTimeout == 0 {
 				// Pool is discarded — dispose immediately instead of caching.
+				p.log(fmt.Sprintf("checkerpool: Pool discarded, disposing checker %d for request %s on release", index, holdTag(requestID)))
 				p.disposeCheckerLocked(index, c)
 			} else {
 				p.heldBy[index] = ""
@@ -355,6 +362,7 @@ func (p *CheckerPool) cleanupIdleCheckers() {
 		}
 		idle := now.Sub(p.lastReleased[i])
 		if idle >= p.opts.IdleTimeout {
+			p.log(fmt.Sprintf("checkerpool: Disposing idle checker %d (idle %v)", i, idle))
 			p.disposeCheckerLocked(i, c)
 		} else if earliestRemaining.IsZero() || p.lastReleased[i].Before(earliestRemaining) {
 			earliestRemaining = p.lastReleased[i]
@@ -434,6 +442,7 @@ func (p *CheckerPool) Discard() {
 	if p.opts.IdleTimeout == 0 {
 		return // already discarded
 	}
+	p.log("checkerpool: Discarding pool, disposing idle checkers")
 	p.opts.IdleTimeout = 0
 	if p.cleanupTimer != nil {
 		p.cleanupTimer.Stop()
