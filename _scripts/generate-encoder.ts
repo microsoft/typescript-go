@@ -1434,6 +1434,10 @@ function generateTSNodeGenerated(): string {
     emitTemplateFlagsGetter(w);
     w.write("");
 
+    // ── Generated: tokenFlags (extended data for RegularExpressionLiteral) ──
+    emitTokenFlagsGetter(w);
+    w.write("");
+
     // ── Generated: Child property getters ──
     w.write("    // ═══ Generated child property getters ═══");
     w.write("");
@@ -1851,6 +1855,22 @@ function emitTemplateFlagsGetter(w: CodeWriter) {
     w.write(`            case SyntaxKind.TemplateTail:`);
     w.write(`                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);`);
     w.write(`                return this.view.getUint32(extendedDataOffset + 8, true);`);
+    w.write(`        }`);
+    w.write(`    }`);
+}
+
+function emitTokenFlagsGetter(w: CodeWriter) {
+    // tokenFlags — from extended data for literal kinds that store TokenFlags
+    w.write(`    get tokenFlags(): number {`);
+    w.write(`        switch (this.kind) {`);
+    w.write(`            case SyntaxKind.StringLiteral:`);
+    w.write(`            case SyntaxKind.NumericLiteral:`);
+    w.write(`            case SyntaxKind.BigIntLiteral:`);
+    w.write(`            case SyntaxKind.RegularExpressionLiteral:`);
+    w.write(`                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);`);
+    w.write(`                return this.view.getUint32(extendedDataOffset + 4, true);`);
+    w.write(`            default:`);
+    w.write(`                return 0;`);
     w.write(`        }`);
     w.write(`    }`);
 }

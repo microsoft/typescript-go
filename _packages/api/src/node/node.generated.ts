@@ -532,6 +532,19 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get tokenFlags(): number {
+        switch (this.kind) {
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.NumericLiteral:
+            case SyntaxKind.BigIntLiteral:
+            case SyntaxKind.RegularExpressionLiteral:
+                const extendedDataOffset = this.sourceFile._offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                return this.view.getUint32(extendedDataOffset + 4, true);
+            default:
+                return 0;
+        }
+    }
+
     // ═══ Generated child property getters ═══
 
     get argument(): RemoteNode | undefined {
