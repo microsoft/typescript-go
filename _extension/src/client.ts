@@ -23,6 +23,7 @@ import {
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
 import { registerHoverFeature } from "./languageFeatures/hover";
+import { registerSourceDefinitionFeature } from "./languageFeatures/sourceDefinition";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import * as tr from "./telemetryReporting";
 import {
@@ -68,6 +69,7 @@ export class Client implements vscode.Disposable {
             traceOutputChannel: this.traceOutputChannel,
             initializationOptions: {
                 codeLensShowLocationsCommandName,
+                enableTelemetry: true,
             },
             errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5),
             middleware: {
@@ -225,6 +227,7 @@ export class Client implements vscode.Disposable {
 
         this.disposables.push(
             serverTelemetryListener,
+            registerSourceDefinitionFeature(this.client),
             registerHoverFeature(this.documentSelector, this.client),
             registerTagClosingFeature("typescript", this.documentSelector, this.client),
             registerTagClosingFeature("javascript", this.documentSelector, this.client),
