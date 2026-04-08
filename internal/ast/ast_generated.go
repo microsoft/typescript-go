@@ -161,8 +161,8 @@ type FunctionLikeBase struct {
 }
 
 type BodyBase struct {
-	AsteriskToken *AsteriskToken     // Optional
-	Body          *BlockOrExpression // Optional
+	AsteriskToken *AsteriskToken // Optional
+	Body          *NodeBody      // Optional
 	EndFlowNode   *FlowNode
 }
 
@@ -545,6 +545,7 @@ func IsToken(node *Node) bool {
 	case KindNewLineTrivia:
 	case KindWhitespaceTrivia:
 	case KindConflictMarkerTrivia:
+	case KindNonTextFileMarkerTrivia:
 	case KindNumericLiteral:
 	case KindBigIntLiteral:
 	case KindStringLiteral:
@@ -617,25 +618,15 @@ func IsToken(node *Node) bool {
 	case KindQuestionQuestionEqualsToken:
 	case KindCaretEqualsToken:
 	case KindIdentifier:
-	case KindAbstractKeyword:
-	case KindAccessorKeyword:
-	case KindAnyKeyword:
-	case KindAsKeyword:
-	case KindAssertsKeyword:
-	case KindAssertKeyword:
-	case KindAsyncKeyword:
-	case KindAwaitKeyword:
-	case KindBigIntKeyword:
-	case KindBooleanKeyword:
+	case KindPrivateIdentifier:
+	case KindJSDocCommentTextToken:
 	case KindBreakKeyword:
 	case KindCaseKeyword:
 	case KindCatchKeyword:
 	case KindClassKeyword:
 	case KindConstKeyword:
-	case KindConstructorKeyword:
 	case KindContinueKeyword:
 	case KindDebuggerKeyword:
-	case KindDeclareKeyword:
 	case KindDefaultKeyword:
 	case KindDeleteKeyword:
 	case KindDoKeyword:
@@ -646,60 +637,73 @@ func IsToken(node *Node) bool {
 	case KindFalseKeyword:
 	case KindFinallyKeyword:
 	case KindForKeyword:
-	case KindFromKeyword:
 	case KindFunctionKeyword:
-	case KindGetKeyword:
-	case KindGlobalKeyword:
 	case KindIfKeyword:
-	case KindImplementsKeyword:
 	case KindImportKeyword:
-	case KindInferKeyword:
 	case KindInKeyword:
 	case KindInstanceOfKeyword:
-	case KindInterfaceKeyword:
-	case KindIntrinsicKeyword:
-	case KindIsKeyword:
-	case KindKeyOfKeyword:
-	case KindLetKeyword:
-	case KindModuleKeyword:
-	case KindNamespaceKeyword:
-	case KindNeverKeyword:
 	case KindNewKeyword:
 	case KindNullKeyword:
-	case KindNumberKeyword:
-	case KindObjectKeyword:
-	case KindOfKeyword:
-	case KindOutKeyword:
-	case KindOverrideKeyword:
-	case KindPackageKeyword:
-	case KindPrivateKeyword:
-	case KindProtectedKeyword:
-	case KindPublicKeyword:
-	case KindReadonlyKeyword:
-	case KindRequireKeyword:
 	case KindReturnKeyword:
-	case KindSatisfiesKeyword:
-	case KindSetKeyword:
-	case KindStaticKeyword:
-	case KindStringKeyword:
 	case KindSuperKeyword:
 	case KindSwitchKeyword:
-	case KindSymbolKeyword:
 	case KindThisKeyword:
 	case KindThrowKeyword:
 	case KindTrueKeyword:
 	case KindTryKeyword:
-	case KindTypeKeyword:
 	case KindTypeOfKeyword:
-	case KindUndefinedKeyword:
-	case KindUniqueKeyword:
-	case KindUnknownKeyword:
-	case KindUsingKeyword:
 	case KindVarKeyword:
 	case KindVoidKeyword:
 	case KindWhileKeyword:
 	case KindWithKeyword:
+	case KindImplementsKeyword:
+	case KindInterfaceKeyword:
+	case KindLetKeyword:
+	case KindPackageKeyword:
+	case KindPrivateKeyword:
+	case KindProtectedKeyword:
+	case KindPublicKeyword:
+	case KindStaticKeyword:
 	case KindYieldKeyword:
+	case KindAbstractKeyword:
+	case KindAccessorKeyword:
+	case KindAsKeyword:
+	case KindAssertsKeyword:
+	case KindAssertKeyword:
+	case KindAnyKeyword:
+	case KindAsyncKeyword:
+	case KindAwaitKeyword:
+	case KindBooleanKeyword:
+	case KindConstructorKeyword:
+	case KindDeclareKeyword:
+	case KindGetKeyword:
+	case KindImmediateKeyword:
+	case KindInferKeyword:
+	case KindIntrinsicKeyword:
+	case KindIsKeyword:
+	case KindKeyOfKeyword:
+	case KindModuleKeyword:
+	case KindNamespaceKeyword:
+	case KindNeverKeyword:
+	case KindOutKeyword:
+	case KindReadonlyKeyword:
+	case KindRequireKeyword:
+	case KindNumberKeyword:
+	case KindObjectKeyword:
+	case KindSatisfiesKeyword:
+	case KindSetKeyword:
+	case KindStringKeyword:
+	case KindSymbolKeyword:
+	case KindTypeKeyword:
+	case KindUndefinedKeyword:
+	case KindUniqueKeyword:
+	case KindUnknownKeyword:
+	case KindUsingKeyword:
+	case KindFromKeyword:
+	case KindGlobalKeyword:
+	case KindBigIntKeyword:
+	case KindOverrideKeyword:
+	case KindOfKeyword:
 	case KindDeferKeyword:
 		return true
 	}
@@ -2089,7 +2093,7 @@ type FunctionDeclaration struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	data := f.functionDeclarationPool.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -2102,7 +2106,7 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskTo
 	return f.newNode(KindFunctionDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || body != node.Body {
 		return updateNode(f.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, typeNode, fullSignature, body), node.AsNode(), f.hooks)
 	}
@@ -3224,7 +3228,7 @@ type ConstructorDeclaration struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	data := &ConstructorDeclaration{}
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
@@ -3235,7 +3239,7 @@ func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typePar
 	return f.newNode(KindConstructor, data)
 }
 
-func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || body != node.Body {
 		return updateNode(f.NewConstructorDeclaration(modifiers, typeParameters, parameters, typeNode, fullSignature, body), node.AsNode(), f.hooks)
 	}
@@ -3271,7 +3275,7 @@ type GetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
-func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	data := &GetAccessorDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
@@ -3283,7 +3287,7 @@ func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *P
 	return f.newNode(KindGetAccessor, data)
 }
 
-func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || body != node.Body {
 		return updateNode(f.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, typeNode, fullSignature, body), node.AsNode(), f.hooks)
 	}
@@ -3324,7 +3328,7 @@ type SetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
-func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	data := &SetAccessorDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
@@ -3336,7 +3340,7 @@ func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *P
 	return f.newNode(KindSetAccessor, data)
 }
 
-func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || body != node.Body {
 		return updateNode(f.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, typeNode, fullSignature, body), node.AsNode(), f.hooks)
 	}
@@ -3483,7 +3487,7 @@ type MethodDeclaration struct {
 	CompositeBase
 }
 
-func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *AsteriskToken, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *AsteriskToken, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	data := &MethodDeclaration{}
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -3497,7 +3501,7 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToke
 	return f.newNode(KindMethodDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *AsteriskToken, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *AsteriskToken, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || body != node.Body {
 		return updateNode(f.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, typeNode, fullSignature, body), node.AsNode(), f.hooks)
 	}
@@ -4076,7 +4080,7 @@ type ArrowFunction struct {
 	EqualsGreaterThanToken *EqualsGreaterThanToken
 }
 
-func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *EqualsGreaterThanToken, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *EqualsGreaterThanToken, body *ConciseBody) *Node {
 	data := &ArrowFunction{}
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
@@ -4088,7 +4092,7 @@ func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *
 	return f.newNode(KindArrowFunction, data)
 }
 
-func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *EqualsGreaterThanToken, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *EqualsGreaterThanToken, body *ConciseBody) *Node {
 	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
 		return updateNode(f.NewArrowFunction(modifiers, typeParameters, parameters, typeNode, fullSignature, equalsGreaterThanToken, body), node.AsNode(), f.hooks)
 	}
@@ -4132,7 +4136,7 @@ type FunctionExpression struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	data := &FunctionExpression{}
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -4145,7 +4149,7 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskTok
 	return f.newNode(KindFunctionExpression, data)
 }
 
-func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
 	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type || fullSignature != node.FullSignature || body != node.Body {
 		return updateNode(f.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, typeNode, fullSignature, body), node.AsNode(), f.hooks)
 	}
@@ -8227,7 +8231,7 @@ type ModuleDeclaration struct {
 	name    *ModuleName
 }
 
-func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, keyword Kind, name *ModuleName, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, keyword Kind, name *ModuleName, body *ModuleBody) *Node {
 	data := &ModuleDeclaration{}
 	data.modifiers = modifiers
 	data.Keyword = keyword
@@ -8236,7 +8240,7 @@ func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, keyword Kind
 	return f.newNode(KindModuleDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateModuleDeclaration(node *ModuleDeclaration, modifiers *ModifierList, keyword Kind, name *ModuleName, body *BlockOrExpression) *Node {
+func (f *NodeFactory) UpdateModuleDeclaration(node *ModuleDeclaration, modifiers *ModifierList, keyword Kind, name *ModuleName, body *ModuleBody) *Node {
 	if modifiers != node.modifiers || keyword != node.Keyword || name != node.name || body != node.Body {
 		return updateNode(f.NewModuleDeclaration(modifiers, keyword, name, body), node.AsNode(), f.hooks)
 	}
@@ -9679,4 +9683,256 @@ func (n *Node) AsJSDocParameterTag() *JSDocParameterTag {
 
 func (n *Node) AsJSDocPropertyTag() *JSDocPropertyTag {
 	return n.data.(*JSDocPropertyTag)
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Kind alias guards
+// ──────────────────────────────────────────────────────────────────────
+
+func IsTriviaKind(kind Kind) bool {
+	switch kind {
+	case KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia:
+		return true
+	}
+	return false
+}
+
+func IsLiteralKind(kind Kind) bool {
+	return kind >= KindFirstLiteralToken && kind <= KindLastLiteralToken
+}
+
+func IsPseudoLiteralKind(kind Kind) bool {
+	switch kind {
+	case KindTemplateHead, KindTemplateMiddle, KindTemplateTail:
+		return true
+	}
+	return false
+}
+
+func IsPunctuationKind(kind Kind) bool {
+	return kind >= KindFirstPunctuation && kind <= KindLastPunctuation
+}
+
+func IsKeywordKind(kind Kind) bool {
+	return kind >= KindFirstKeyword && kind <= KindLastKeyword
+}
+
+func IsModifierKind(kind Kind) bool {
+	switch kind {
+	case KindAbstractKeyword, KindAccessorKeyword, KindAsyncKeyword, KindConstKeyword, KindDeclareKeyword, KindDefaultKeyword, KindExportKeyword, KindInKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindReadonlyKeyword, KindOutKeyword, KindOverrideKeyword, KindStaticKeyword:
+		return true
+	}
+	return false
+}
+
+func IsKeywordTypeKind(kind Kind) bool {
+	switch kind {
+	case KindAnyKeyword, KindBigIntKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindUndefinedKeyword, KindUnknownKeyword, KindVoidKeyword:
+		return true
+	}
+	return false
+}
+
+func IsKeywordExpressionKind(kind Kind) bool {
+	switch kind {
+	case KindNullKeyword, KindTrueKeyword, KindFalseKeyword, KindThisKeyword, KindSuperKeyword, KindImportKeyword:
+		return true
+	}
+	return false
+}
+
+func IsTokenKind(kind Kind) bool {
+	return kind >= KindFirstToken && kind <= KindLastToken
+}
+
+func IsJsxTokenKind(kind Kind) bool {
+	switch kind {
+	case KindLessThanSlashToken, KindEndOfFile, KindConflictMarkerTrivia, KindJsxText, KindJsxTextAllWhiteSpaces, KindOpenBraceToken, KindLessThanToken:
+		return true
+	}
+	return false
+}
+
+func IsImportPhaseModifierKind(kind Kind) bool {
+	switch kind {
+	case KindTypeKeyword, KindDeferKeyword:
+		return true
+	}
+	return false
+}
+
+func IsPostfixUnaryOperator(kind Kind) bool {
+	switch kind {
+	case KindPlusPlusToken, KindMinusMinusToken:
+		return true
+	}
+	return false
+}
+
+func IsPrefixUnaryOperator(kind Kind) bool {
+	switch kind {
+	case KindPlusToken, KindMinusToken, KindTildeToken, KindExclamationToken, KindPlusPlusToken, KindMinusMinusToken:
+		return true
+	}
+	return false
+}
+
+func IsAssignmentOperator(kind Kind) bool {
+	switch kind {
+	case KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskAsteriskEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindCaretEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken:
+		return true
+	}
+	return false
+}
+
+func IsBinaryOperator(kind Kind) bool {
+	switch kind {
+	case KindQuestionQuestionToken, KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindExclamationEqualsToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskAsteriskEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindCaretEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken, KindCommaToken:
+		return true
+	}
+	return false
+}
+
+func IsExponentiationOperator(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken:
+		return true
+	}
+	return false
+}
+
+func IsMultiplicativeOperator(kind Kind) bool {
+	switch kind {
+	case KindAsteriskToken, KindSlashToken, KindPercentToken:
+		return true
+	}
+	return false
+}
+
+func IsMultiplicativeOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken:
+		return true
+	}
+	return false
+}
+
+func IsAdditiveOperator(kind Kind) bool {
+	switch kind {
+	case KindPlusToken, KindMinusToken:
+		return true
+	}
+	return false
+}
+
+func IsAdditiveOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken:
+		return true
+	}
+	return false
+}
+
+func IsShiftOperator(kind Kind) bool {
+	switch kind {
+	case KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken:
+		return true
+	}
+	return false
+}
+
+func IsShiftOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken:
+		return true
+	}
+	return false
+}
+
+func IsRelationalOperator(kind Kind) bool {
+	switch kind {
+	case KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword:
+		return true
+	}
+	return false
+}
+
+func IsRelationalOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword:
+		return true
+	}
+	return false
+}
+
+func IsEqualityOperator(kind Kind) bool {
+	switch kind {
+	case KindEqualsEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindExclamationEqualsToken:
+		return true
+	}
+	return false
+}
+
+func IsEqualityOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindExclamationEqualsToken:
+		return true
+	}
+	return false
+}
+
+func IsBitwiseOperator(kind Kind) bool {
+	switch kind {
+	case KindAmpersandToken, KindBarToken, KindCaretToken:
+		return true
+	}
+	return false
+}
+
+func IsBitwiseOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindExclamationEqualsToken, KindAmpersandToken, KindBarToken, KindCaretToken:
+		return true
+	}
+	return false
+}
+
+func IsLogicalOperator(kind Kind) bool {
+	switch kind {
+	case KindAmpersandAmpersandToken, KindBarBarToken:
+		return true
+	}
+	return false
+}
+
+func IsLogicalOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindExclamationEqualsToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindAmpersandAmpersandToken, KindBarBarToken:
+		return true
+	}
+	return false
+}
+
+func IsCompoundAssignmentOperator(kind Kind) bool {
+	switch kind {
+	case KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskAsteriskEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindCaretEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken:
+		return true
+	}
+	return false
+}
+
+func IsAssignmentOperatorOrHigher(kind Kind) bool {
+	switch kind {
+	case KindQuestionQuestionToken, KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindExclamationEqualsToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskAsteriskEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindCaretEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken:
+		return true
+	}
+	return false
+}
+
+func IsLogicalOrCoalescingAssignmentOperator(kind Kind) bool {
+	switch kind {
+	case KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken, KindQuestionQuestionEqualsToken:
+		return true
+	}
+	return false
 }

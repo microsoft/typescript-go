@@ -617,6 +617,8 @@ export class MemberInfo {
     get rawType(): string | string[] {
         if (this.field) return this.field.type;
         if (this.member && !this.member.inherited) return this.member.type;
+        // Inherited member with an explicit type override narrows the base type
+        if (this.member?.inherited && this.member.type) return this.member.type;
         if (this.inheritedField) return this.inheritedField.rawType;
         if (this.member) return this.member.type;
         throw new Error(`Member ${this.name} has no raw type source`);
@@ -722,6 +724,23 @@ export interface KindMarkerInfo {
 export interface KindAliasInfo {
     name: string;
     members: string[];
+    range?: [string, string];
+}
+
+/** A kind guard is either range-based (kind >= First && kind <= Last) or enumerated (switch/conditions). */
+export type KindGuardInfo = {
+    /** The alias name from the schema, e.g. "TokenSyntaxKind". */
+    aliasName: string;
+    /** The guard function name, e.g. "isTokenKind". Drops "Syntax" from the alias name. */
+    guardName: string;
+} & (
+    | { type: "range"; first: string; last: string; }
+    | { type: "enumerated"; members: string[]; }
+);
+
+/** Compute a guard function name from a kind alias name. Drops "Syntax" from the name. */
+export function kindGuardName(aliasName: string): string {
+    return `is${aliasName.replace("Syntax", "")}`;
 }
 
 export interface Schema {
@@ -735,7 +754,7 @@ export interface Schema {
     kinds?: {
         elements: (string | KindElement)[];
         markers: { name: string; value: string; }[];
-        aliases?: Record<string, string[]>;
+        aliases?: Record<string, string[] | { range: [string, string] }>;
     };
 }
 
@@ -848,8 +867,30 @@ export class SchemaAPI {
         return this.schema.kinds?.markers || [];
     }
 
+    /** Resolve a marker name to its concrete kind value. If the name is already a kind element, returns itself. */
+    resolveKindMarkerValue(name: string): string {
+        // If it's a marker, resolve to its value (recursively since markers can reference other markers)
+        const marker = this.kindMarkers().find(m => m.name === name);
+        if (marker) return this.resolveKindMarkerValue(marker.value);
+        return name;
+    }
+
     kindAliases(): KindAliasInfo[] {
-        return Object.entries(this.schema.kinds?.aliases || {}).map(([name, members]) => ({ name, members }));
+        return Object.entries(this.schema.kinds?.aliases || {}).map(([name, value]) => {
+            if (Array.isArray(value)) {
+                return { name, members: value };
+            }
+            // Range format: { range: ["FirstX", "LastX"] }
+            const [first, last] = value.range;
+            const elements = this.kindElements().filter(e => e.name).map(e => e.name!);
+            const firstIdx = elements.indexOf(this.resolveKindMarkerValue(first));
+            const lastIdx = elements.indexOf(this.resolveKindMarkerValue(last));
+            if (firstIdx === -1 || lastIdx === -1) {
+                throw new Error(`Range alias ${name}: could not resolve range [${first}, ${last}]`);
+            }
+            const members = elements.slice(firstIdx, lastIdx + 1);
+            return { name, members, range: value.range as [string, string] };
+        });
     }
 
     hasKindAlias(name: string): boolean {
@@ -858,6 +899,21 @@ export class SchemaAPI {
 
     getKindAlias(name: string): KindAliasInfo | undefined {
         return this.kindAliases().find(alias => alias.name === name);
+    }
+
+    /**
+     * Returns kind guard info for each kind alias. Range-based aliases produce range guards;
+     * enumerated aliases produce guards whose members reference either sub-alias guard calls
+     * or concrete kind names.
+     */
+    kindGuards(): KindGuardInfo[] {
+        return this.kindAliases().map(({ name, members, range }): KindGuardInfo => {
+            const guardName = kindGuardName(name);
+            if (range) {
+                return { aliasName: name, guardName, type: "range", first: range[0], last: range[1] };
+            }
+            return { aliasName: name, guardName, type: "enumerated", members };
+        });
     }
 
     hasKindElement(name: string): boolean {

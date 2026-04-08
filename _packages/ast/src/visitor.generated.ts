@@ -357,10 +357,10 @@ import {
     isBinaryOperatorToken,
     isBindingName,
     isBlock,
-    isBlockOrExpression,
     isCaseBlock,
     isCatchClause,
     isColonToken,
+    isConciseBody,
     isDotDotDotToken,
     isEndOfFile,
     isEntityName,
@@ -385,6 +385,7 @@ import {
     isJsxTagNameExpression,
     isLeftHandSideExpression,
     isMemberName,
+    isModuleBody,
     isModuleExportName,
     isModuleName,
     isModuleReference,
@@ -861,7 +862,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _parameters = visitNodes(node.parameters, visitor);
         const _type = visitNode(node.type, visitor, isTypeNode);
         const _equalsGreaterThanToken = visitNode(node.equalsGreaterThanToken, visitor, isEqualsGreaterThanToken);
-        const _body = visitNode(node.body, visitor, isFunctionBody);
+        const _body = visitNode(node.body, visitor, isConciseBody);
         return updateArrowFunction(node, _modifiers, _typeParameters, _parameters, _type, _equalsGreaterThanToken, _body);
     },
     [SyntaxKind.FunctionExpression]: (node: FunctionExpression, visitor: Visitor): FunctionExpression => {
@@ -1349,7 +1350,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.ModuleDeclaration]: (node: ModuleDeclaration, visitor: Visitor): ModuleDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _name = visitNode(node.name, visitor, isModuleName);
-        const _body = visitNode(node.body, visitor, isBlockOrExpression);
+        const _body = visitNode(node.body, visitor, isModuleBody);
         return updateModuleDeclaration(node, _modifiers, _name, _body);
     },
     [SyntaxKind.ImportEqualsDeclaration]: (node: ImportEqualsDeclaration, visitor: Visitor): ImportEqualsDeclaration => {

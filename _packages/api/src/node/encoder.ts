@@ -116,12 +116,11 @@ function boolBit(v: unknown): number {
     return isChildPresent(v) ? 1 : 0;
 }
 
-// A child is "present" if it's non-null and, for arrays, non-empty.
-// This matches the Go encoder's behavior where nil and empty NodeLists
-// are both treated as absent.
+// A child is "present" if it's non-null/non-undefined.
+// This matches the Go encoder's behavior where non-nil NodeLists (even empty)
+// are treated as present, and only nil NodeLists are absent.
 function isChildPresent(v: unknown): boolean {
     if (v === undefined || v === null) return false;
-    if (Array.isArray(v)) return v.length > 0;
     return true;
 }
 
@@ -274,7 +273,7 @@ export function encodeNode(node: Node): Uint8Array {
     }
 
     function visitNodeList(list: NodeArray<Node>): void {
-        if (!list || list.length === 0) {
+        if (!list) {
             return;
         }
 

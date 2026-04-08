@@ -595,169 +595,14 @@
                 "WhitespaceTrivia",
                 "ConflictMarkerTrivia"
             ],
-            "LiteralSyntaxKind": [
-                "NumericLiteral",
-                "BigIntLiteral",
-                "StringLiteral",
-                "JsxText",
-                "JsxTextAllWhiteSpaces",
-                "RegularExpressionLiteral",
-                "NoSubstitutionTemplateLiteral"
-            ],
+            "LiteralSyntaxKind": { "range": ["FirstLiteralToken", "LastLiteralToken"] },
             "PseudoLiteralSyntaxKind": [
                 "TemplateHead",
                 "TemplateMiddle",
                 "TemplateTail"
             ],
-            "PunctuationSyntaxKind": [
-                "OpenBraceToken",
-                "CloseBraceToken",
-                "OpenParenToken",
-                "CloseParenToken",
-                "OpenBracketToken",
-                "CloseBracketToken",
-                "DotToken",
-                "DotDotDotToken",
-                "SemicolonToken",
-                "CommaToken",
-                "QuestionDotToken",
-                "LessThanToken",
-                "LessThanSlashToken",
-                "GreaterThanToken",
-                "LessThanEqualsToken",
-                "GreaterThanEqualsToken",
-                "EqualsEqualsToken",
-                "ExclamationEqualsToken",
-                "EqualsEqualsEqualsToken",
-                "ExclamationEqualsEqualsToken",
-                "EqualsGreaterThanToken",
-                "PlusToken",
-                "MinusToken",
-                "AsteriskToken",
-                "AsteriskAsteriskToken",
-                "SlashToken",
-                "PercentToken",
-                "PlusPlusToken",
-                "MinusMinusToken",
-                "LessThanLessThanToken",
-                "GreaterThanGreaterThanToken",
-                "GreaterThanGreaterThanGreaterThanToken",
-                "AmpersandToken",
-                "BarToken",
-                "CaretToken",
-                "ExclamationToken",
-                "TildeToken",
-                "AmpersandAmpersandToken",
-                "BarBarToken",
-                "QuestionToken",
-                "ColonToken",
-                "AtToken",
-                "QuestionQuestionToken",
-                "BacktickToken",
-                "HashToken",
-                "EqualsToken",
-                "PlusEqualsToken",
-                "MinusEqualsToken",
-                "AsteriskEqualsToken",
-                "AsteriskAsteriskEqualsToken",
-                "SlashEqualsToken",
-                "PercentEqualsToken",
-                "LessThanLessThanEqualsToken",
-                "GreaterThanGreaterThanEqualsToken",
-                "GreaterThanGreaterThanGreaterThanEqualsToken",
-                "AmpersandEqualsToken",
-                "BarEqualsToken",
-                "BarBarEqualsToken",
-                "AmpersandAmpersandEqualsToken",
-                "QuestionQuestionEqualsToken",
-                "CaretEqualsToken"
-            ],
-            "KeywordSyntaxKind": [
-                "AbstractKeyword",
-                "AccessorKeyword",
-                "AnyKeyword",
-                "AsKeyword",
-                "AssertsKeyword",
-                "AssertKeyword",
-                "AsyncKeyword",
-                "AwaitKeyword",
-                "BigIntKeyword",
-                "BooleanKeyword",
-                "BreakKeyword",
-                "CaseKeyword",
-                "CatchKeyword",
-                "ClassKeyword",
-                "ConstKeyword",
-                "ConstructorKeyword",
-                "ContinueKeyword",
-                "DebuggerKeyword",
-                "DeclareKeyword",
-                "DefaultKeyword",
-                "DeleteKeyword",
-                "DoKeyword",
-                "ElseKeyword",
-                "EnumKeyword",
-                "ExportKeyword",
-                "ExtendsKeyword",
-                "FalseKeyword",
-                "FinallyKeyword",
-                "ForKeyword",
-                "FromKeyword",
-                "FunctionKeyword",
-                "GetKeyword",
-                "GlobalKeyword",
-                "IfKeyword",
-                "ImplementsKeyword",
-                "ImportKeyword",
-                "InferKeyword",
-                "InKeyword",
-                "InstanceOfKeyword",
-                "InterfaceKeyword",
-                "IntrinsicKeyword",
-                "IsKeyword",
-                "KeyOfKeyword",
-                "LetKeyword",
-                "ModuleKeyword",
-                "NamespaceKeyword",
-                "NeverKeyword",
-                "NewKeyword",
-                "NullKeyword",
-                "NumberKeyword",
-                "ObjectKeyword",
-                "OfKeyword",
-                "OutKeyword",
-                "OverrideKeyword",
-                "PackageKeyword",
-                "PrivateKeyword",
-                "ProtectedKeyword",
-                "PublicKeyword",
-                "ReadonlyKeyword",
-                "RequireKeyword",
-                "ReturnKeyword",
-                "SatisfiesKeyword",
-                "SetKeyword",
-                "StaticKeyword",
-                "StringKeyword",
-                "SuperKeyword",
-                "SwitchKeyword",
-                "SymbolKeyword",
-                "ThisKeyword",
-                "ThrowKeyword",
-                "TrueKeyword",
-                "TryKeyword",
-                "TypeKeyword",
-                "TypeOfKeyword",
-                "UndefinedKeyword",
-                "UniqueKeyword",
-                "UnknownKeyword",
-                "UsingKeyword",
-                "VarKeyword",
-                "VoidKeyword",
-                "WhileKeyword",
-                "WithKeyword",
-                "YieldKeyword",
-                "DeferKeyword"
-            ],
+            "PunctuationSyntaxKind": { "range": ["FirstPunctuation", "LastPunctuation"] },
+            "KeywordSyntaxKind": { "range": ["FirstKeyword", "LastKeyword"] },
             "ModifierSyntaxKind": [
                 "AbstractKeyword",
                 "AccessorKeyword",
@@ -797,16 +642,7 @@
                 "SuperKeyword",
                 "ImportKeyword"
             ],
-            "TokenSyntaxKind": [
-                "Unknown",
-                "EndOfFile",
-                "TriviaSyntaxKind",
-                "LiteralSyntaxKind",
-                "PseudoLiteralSyntaxKind",
-                "PunctuationSyntaxKind",
-                "Identifier",
-                "KeywordSyntaxKind"
-            ],
+            "TokenSyntaxKind": { "range": ["FirstToken", "LastToken"] },
             "JsxTokenSyntaxKind": [
                 "LessThanSlashToken",
                 "EndOfFile",
@@ -964,8 +800,7 @@
         "NodeBase": {
             "fields": {
                 "Flags": {
-                    "type": "NodeFlags",
-                    "goOnly": true
+                    "type": "NodeFlags"
                 }
             },
             "extends": []
@@ -1150,7 +985,7 @@
                     "optional": true
                 },
                 "Body": {
-                    "type": "BlockOrExpression",
+                    "type": "NodeBody",
                     "optional": true
                 },
                 "EndFlowNode": {
@@ -1165,6 +1000,13 @@
                 "FunctionLikeBase",
                 "BodyBase"
             ],
+            "fields": {
+                "Body": {
+                    "type": "BlockOrExpression",
+                    "optional": true,
+                    "noGo": true
+                }
+            },
             "brand": "_functionLikeDeclarationBrand"
         },
         "ClassLikeBase": {
@@ -2042,7 +1884,8 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "FunctionBody",
+                        "optional": true,
                         "visit": "functionBody"
                     },
                     {
@@ -2551,7 +2394,8 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "FunctionBody",
+                        "optional": true,
                         "visit": "functionBody"
                     },
                     {
@@ -2596,7 +2440,8 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "FunctionBody",
+                        "optional": true,
                         "visit": "functionBody"
                     }
                 ]
@@ -2636,7 +2481,8 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "FunctionBody",
+                        "optional": true,
                         "visit": "functionBody"
                     }
                 ]
@@ -2752,7 +2598,8 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "FunctionBody",
+                        "optional": true,
                         "visit": "functionBody"
                     }
                 ]
@@ -3100,7 +2947,7 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "ConciseBody",
                         "visit": "functionBody"
                     }
                 ]
@@ -3150,7 +2997,7 @@
                     {
                         "name": "Body",
                         "inherited": true,
-                        "typeGuard": "isFunctionBody",
+                        "type": "FunctionBody",
                         "visit": "functionBody"
                     },
                     {
@@ -4986,7 +4833,8 @@
                     },
                     {
                         "name": "Body",
-                        "inherited": true
+                        "inherited": true,
+                        "type": "ModuleBody"
                     }
                 ]
             },
@@ -5345,6 +5193,12 @@
             "BlockOrExpression": [
                 "Block",
                 "Expression"
+            ],
+            "NodeBody": [
+                "Block",
+                "Expression",
+                "ModuleBlock",
+                "ModuleDeclaration"
             ],
             "AccessExpression": [
                 "PropertyAccessExpression",

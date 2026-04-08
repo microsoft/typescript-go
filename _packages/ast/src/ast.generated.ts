@@ -74,25 +74,13 @@ export type PunctuationSyntaxKind =
     | SyntaxKind.QuestionQuestionEqualsToken
     | SyntaxKind.CaretEqualsToken;
 export type KeywordSyntaxKind =
-    | SyntaxKind.AbstractKeyword
-    | SyntaxKind.AccessorKeyword
-    | SyntaxKind.AnyKeyword
-    | SyntaxKind.AsKeyword
-    | SyntaxKind.AssertsKeyword
-    | SyntaxKind.AssertKeyword
-    | SyntaxKind.AsyncKeyword
-    | SyntaxKind.AwaitKeyword
-    | SyntaxKind.BigIntKeyword
-    | SyntaxKind.BooleanKeyword
     | SyntaxKind.BreakKeyword
     | SyntaxKind.CaseKeyword
     | SyntaxKind.CatchKeyword
     | SyntaxKind.ClassKeyword
     | SyntaxKind.ConstKeyword
-    | SyntaxKind.ConstructorKeyword
     | SyntaxKind.ContinueKeyword
     | SyntaxKind.DebuggerKeyword
-    | SyntaxKind.DeclareKeyword
     | SyntaxKind.DefaultKeyword
     | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
@@ -103,65 +91,245 @@ export type KeywordSyntaxKind =
     | SyntaxKind.FalseKeyword
     | SyntaxKind.FinallyKeyword
     | SyntaxKind.ForKeyword
-    | SyntaxKind.FromKeyword
     | SyntaxKind.FunctionKeyword
-    | SyntaxKind.GetKeyword
-    | SyntaxKind.GlobalKeyword
     | SyntaxKind.IfKeyword
-    | SyntaxKind.ImplementsKeyword
     | SyntaxKind.ImportKeyword
-    | SyntaxKind.InferKeyword
     | SyntaxKind.InKeyword
     | SyntaxKind.InstanceOfKeyword
-    | SyntaxKind.InterfaceKeyword
-    | SyntaxKind.IntrinsicKeyword
-    | SyntaxKind.IsKeyword
-    | SyntaxKind.KeyOfKeyword
-    | SyntaxKind.LetKeyword
-    | SyntaxKind.ModuleKeyword
-    | SyntaxKind.NamespaceKeyword
-    | SyntaxKind.NeverKeyword
     | SyntaxKind.NewKeyword
     | SyntaxKind.NullKeyword
-    | SyntaxKind.NumberKeyword
-    | SyntaxKind.ObjectKeyword
-    | SyntaxKind.OfKeyword
-    | SyntaxKind.OutKeyword
-    | SyntaxKind.OverrideKeyword
-    | SyntaxKind.PackageKeyword
-    | SyntaxKind.PrivateKeyword
-    | SyntaxKind.ProtectedKeyword
-    | SyntaxKind.PublicKeyword
-    | SyntaxKind.ReadonlyKeyword
-    | SyntaxKind.RequireKeyword
     | SyntaxKind.ReturnKeyword
-    | SyntaxKind.SatisfiesKeyword
-    | SyntaxKind.SetKeyword
-    | SyntaxKind.StaticKeyword
-    | SyntaxKind.StringKeyword
     | SyntaxKind.SuperKeyword
     | SyntaxKind.SwitchKeyword
-    | SyntaxKind.SymbolKeyword
     | SyntaxKind.ThisKeyword
     | SyntaxKind.ThrowKeyword
     | SyntaxKind.TrueKeyword
     | SyntaxKind.TryKeyword
-    | SyntaxKind.TypeKeyword
     | SyntaxKind.TypeOfKeyword
-    | SyntaxKind.UndefinedKeyword
-    | SyntaxKind.UniqueKeyword
-    | SyntaxKind.UnknownKeyword
-    | SyntaxKind.UsingKeyword
     | SyntaxKind.VarKeyword
     | SyntaxKind.VoidKeyword
     | SyntaxKind.WhileKeyword
     | SyntaxKind.WithKeyword
+    | SyntaxKind.ImplementsKeyword
+    | SyntaxKind.InterfaceKeyword
+    | SyntaxKind.LetKeyword
+    | SyntaxKind.PackageKeyword
+    | SyntaxKind.PrivateKeyword
+    | SyntaxKind.ProtectedKeyword
+    | SyntaxKind.PublicKeyword
+    | SyntaxKind.StaticKeyword
     | SyntaxKind.YieldKeyword
+    | SyntaxKind.AbstractKeyword
+    | SyntaxKind.AccessorKeyword
+    | SyntaxKind.AsKeyword
+    | SyntaxKind.AssertsKeyword
+    | SyntaxKind.AssertKeyword
+    | SyntaxKind.AnyKeyword
+    | SyntaxKind.AsyncKeyword
+    | SyntaxKind.AwaitKeyword
+    | SyntaxKind.BooleanKeyword
+    | SyntaxKind.ConstructorKeyword
+    | SyntaxKind.DeclareKeyword
+    | SyntaxKind.GetKeyword
+    | SyntaxKind.ImmediateKeyword
+    | SyntaxKind.InferKeyword
+    | SyntaxKind.IntrinsicKeyword
+    | SyntaxKind.IsKeyword
+    | SyntaxKind.KeyOfKeyword
+    | SyntaxKind.ModuleKeyword
+    | SyntaxKind.NamespaceKeyword
+    | SyntaxKind.NeverKeyword
+    | SyntaxKind.OutKeyword
+    | SyntaxKind.ReadonlyKeyword
+    | SyntaxKind.RequireKeyword
+    | SyntaxKind.NumberKeyword
+    | SyntaxKind.ObjectKeyword
+    | SyntaxKind.SatisfiesKeyword
+    | SyntaxKind.SetKeyword
+    | SyntaxKind.StringKeyword
+    | SyntaxKind.SymbolKeyword
+    | SyntaxKind.TypeKeyword
+    | SyntaxKind.UndefinedKeyword
+    | SyntaxKind.UniqueKeyword
+    | SyntaxKind.UnknownKeyword
+    | SyntaxKind.UsingKeyword
+    | SyntaxKind.FromKeyword
+    | SyntaxKind.GlobalKeyword
+    | SyntaxKind.BigIntKeyword
+    | SyntaxKind.OverrideKeyword
+    | SyntaxKind.OfKeyword
     | SyntaxKind.DeferKeyword;
 export type ModifierSyntaxKind = SyntaxKind.AbstractKeyword | SyntaxKind.AccessorKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.ConstKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.ExportKeyword | SyntaxKind.InKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.OutKeyword | SyntaxKind.OverrideKeyword | SyntaxKind.StaticKeyword;
 export type KeywordTypeSyntaxKind = SyntaxKind.AnyKeyword | SyntaxKind.BigIntKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.IntrinsicKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.StringKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.UndefinedKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VoidKeyword;
 export type KeywordExpressionSyntaxKind = SyntaxKind.NullKeyword | SyntaxKind.TrueKeyword | SyntaxKind.FalseKeyword | SyntaxKind.ThisKeyword | SyntaxKind.SuperKeyword | SyntaxKind.ImportKeyword;
-export type TokenSyntaxKind = SyntaxKind.Unknown | SyntaxKind.EndOfFile | TriviaSyntaxKind | LiteralSyntaxKind | PseudoLiteralSyntaxKind | PunctuationSyntaxKind | SyntaxKind.Identifier | KeywordSyntaxKind;
+export type TokenSyntaxKind =
+    | SyntaxKind.Unknown
+    | SyntaxKind.EndOfFile
+    | SyntaxKind.SingleLineCommentTrivia
+    | SyntaxKind.MultiLineCommentTrivia
+    | SyntaxKind.NewLineTrivia
+    | SyntaxKind.WhitespaceTrivia
+    | SyntaxKind.ConflictMarkerTrivia
+    | SyntaxKind.NonTextFileMarkerTrivia
+    | SyntaxKind.NumericLiteral
+    | SyntaxKind.BigIntLiteral
+    | SyntaxKind.StringLiteral
+    | SyntaxKind.JsxText
+    | SyntaxKind.JsxTextAllWhiteSpaces
+    | SyntaxKind.RegularExpressionLiteral
+    | SyntaxKind.NoSubstitutionTemplateLiteral
+    | SyntaxKind.TemplateHead
+    | SyntaxKind.TemplateMiddle
+    | SyntaxKind.TemplateTail
+    | SyntaxKind.OpenBraceToken
+    | SyntaxKind.CloseBraceToken
+    | SyntaxKind.OpenParenToken
+    | SyntaxKind.CloseParenToken
+    | SyntaxKind.OpenBracketToken
+    | SyntaxKind.CloseBracketToken
+    | SyntaxKind.DotToken
+    | SyntaxKind.DotDotDotToken
+    | SyntaxKind.SemicolonToken
+    | SyntaxKind.CommaToken
+    | SyntaxKind.QuestionDotToken
+    | SyntaxKind.LessThanToken
+    | SyntaxKind.LessThanSlashToken
+    | SyntaxKind.GreaterThanToken
+    | SyntaxKind.LessThanEqualsToken
+    | SyntaxKind.GreaterThanEqualsToken
+    | SyntaxKind.EqualsEqualsToken
+    | SyntaxKind.ExclamationEqualsToken
+    | SyntaxKind.EqualsEqualsEqualsToken
+    | SyntaxKind.ExclamationEqualsEqualsToken
+    | SyntaxKind.EqualsGreaterThanToken
+    | SyntaxKind.PlusToken
+    | SyntaxKind.MinusToken
+    | SyntaxKind.AsteriskToken
+    | SyntaxKind.AsteriskAsteriskToken
+    | SyntaxKind.SlashToken
+    | SyntaxKind.PercentToken
+    | SyntaxKind.PlusPlusToken
+    | SyntaxKind.MinusMinusToken
+    | SyntaxKind.LessThanLessThanToken
+    | SyntaxKind.GreaterThanGreaterThanToken
+    | SyntaxKind.GreaterThanGreaterThanGreaterThanToken
+    | SyntaxKind.AmpersandToken
+    | SyntaxKind.BarToken
+    | SyntaxKind.CaretToken
+    | SyntaxKind.ExclamationToken
+    | SyntaxKind.TildeToken
+    | SyntaxKind.AmpersandAmpersandToken
+    | SyntaxKind.BarBarToken
+    | SyntaxKind.QuestionToken
+    | SyntaxKind.ColonToken
+    | SyntaxKind.AtToken
+    | SyntaxKind.QuestionQuestionToken
+    | SyntaxKind.BacktickToken
+    | SyntaxKind.HashToken
+    | SyntaxKind.EqualsToken
+    | SyntaxKind.PlusEqualsToken
+    | SyntaxKind.MinusEqualsToken
+    | SyntaxKind.AsteriskEqualsToken
+    | SyntaxKind.AsteriskAsteriskEqualsToken
+    | SyntaxKind.SlashEqualsToken
+    | SyntaxKind.PercentEqualsToken
+    | SyntaxKind.LessThanLessThanEqualsToken
+    | SyntaxKind.GreaterThanGreaterThanEqualsToken
+    | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken
+    | SyntaxKind.AmpersandEqualsToken
+    | SyntaxKind.BarEqualsToken
+    | SyntaxKind.BarBarEqualsToken
+    | SyntaxKind.AmpersandAmpersandEqualsToken
+    | SyntaxKind.QuestionQuestionEqualsToken
+    | SyntaxKind.CaretEqualsToken
+    | SyntaxKind.Identifier
+    | SyntaxKind.PrivateIdentifier
+    | SyntaxKind.JSDocCommentTextToken
+    | SyntaxKind.BreakKeyword
+    | SyntaxKind.CaseKeyword
+    | SyntaxKind.CatchKeyword
+    | SyntaxKind.ClassKeyword
+    | SyntaxKind.ConstKeyword
+    | SyntaxKind.ContinueKeyword
+    | SyntaxKind.DebuggerKeyword
+    | SyntaxKind.DefaultKeyword
+    | SyntaxKind.DeleteKeyword
+    | SyntaxKind.DoKeyword
+    | SyntaxKind.ElseKeyword
+    | SyntaxKind.EnumKeyword
+    | SyntaxKind.ExportKeyword
+    | SyntaxKind.ExtendsKeyword
+    | SyntaxKind.FalseKeyword
+    | SyntaxKind.FinallyKeyword
+    | SyntaxKind.ForKeyword
+    | SyntaxKind.FunctionKeyword
+    | SyntaxKind.IfKeyword
+    | SyntaxKind.ImportKeyword
+    | SyntaxKind.InKeyword
+    | SyntaxKind.InstanceOfKeyword
+    | SyntaxKind.NewKeyword
+    | SyntaxKind.NullKeyword
+    | SyntaxKind.ReturnKeyword
+    | SyntaxKind.SuperKeyword
+    | SyntaxKind.SwitchKeyword
+    | SyntaxKind.ThisKeyword
+    | SyntaxKind.ThrowKeyword
+    | SyntaxKind.TrueKeyword
+    | SyntaxKind.TryKeyword
+    | SyntaxKind.TypeOfKeyword
+    | SyntaxKind.VarKeyword
+    | SyntaxKind.VoidKeyword
+    | SyntaxKind.WhileKeyword
+    | SyntaxKind.WithKeyword
+    | SyntaxKind.ImplementsKeyword
+    | SyntaxKind.InterfaceKeyword
+    | SyntaxKind.LetKeyword
+    | SyntaxKind.PackageKeyword
+    | SyntaxKind.PrivateKeyword
+    | SyntaxKind.ProtectedKeyword
+    | SyntaxKind.PublicKeyword
+    | SyntaxKind.StaticKeyword
+    | SyntaxKind.YieldKeyword
+    | SyntaxKind.AbstractKeyword
+    | SyntaxKind.AccessorKeyword
+    | SyntaxKind.AsKeyword
+    | SyntaxKind.AssertsKeyword
+    | SyntaxKind.AssertKeyword
+    | SyntaxKind.AnyKeyword
+    | SyntaxKind.AsyncKeyword
+    | SyntaxKind.AwaitKeyword
+    | SyntaxKind.BooleanKeyword
+    | SyntaxKind.ConstructorKeyword
+    | SyntaxKind.DeclareKeyword
+    | SyntaxKind.GetKeyword
+    | SyntaxKind.ImmediateKeyword
+    | SyntaxKind.InferKeyword
+    | SyntaxKind.IntrinsicKeyword
+    | SyntaxKind.IsKeyword
+    | SyntaxKind.KeyOfKeyword
+    | SyntaxKind.ModuleKeyword
+    | SyntaxKind.NamespaceKeyword
+    | SyntaxKind.NeverKeyword
+    | SyntaxKind.OutKeyword
+    | SyntaxKind.ReadonlyKeyword
+    | SyntaxKind.RequireKeyword
+    | SyntaxKind.NumberKeyword
+    | SyntaxKind.ObjectKeyword
+    | SyntaxKind.SatisfiesKeyword
+    | SyntaxKind.SetKeyword
+    | SyntaxKind.StringKeyword
+    | SyntaxKind.SymbolKeyword
+    | SyntaxKind.TypeKeyword
+    | SyntaxKind.UndefinedKeyword
+    | SyntaxKind.UniqueKeyword
+    | SyntaxKind.UnknownKeyword
+    | SyntaxKind.UsingKeyword
+    | SyntaxKind.FromKeyword
+    | SyntaxKind.GlobalKeyword
+    | SyntaxKind.BigIntKeyword
+    | SyntaxKind.OverrideKeyword
+    | SyntaxKind.OfKeyword
+    | SyntaxKind.DeferKeyword;
 export type JsxTokenSyntaxKind = SyntaxKind.LessThanSlashToken | SyntaxKind.EndOfFile | SyntaxKind.ConflictMarkerTrivia | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.OpenBraceToken | SyntaxKind.LessThanToken;
 export type JSDocSyntaxKind = SyntaxKind.EndOfFile | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.OpenParenToken | SyntaxKind.CloseParenToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.HashToken | SyntaxKind.Unknown | KeywordSyntaxKind;
 export type ImportPhaseModifierSyntaxKind = SyntaxKind.TypeKeyword | SyntaxKind.DeferKeyword;
@@ -188,13 +356,16 @@ export type CompoundAssignmentOperator = SyntaxKind.PlusEqualsToken | SyntaxKind
 export type AssignmentOperatorOrHigher = SyntaxKind.QuestionQuestionToken | LogicalOperatorOrHigher | AssignmentOperator;
 export type LogicalOrCoalescingAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.QuestionQuestionEqualsToken;
 
-export interface StatementBase extends Node {
+export interface NodeBase extends Node {
+    readonly flags: NodeFlags;
+}
+export interface StatementBase extends NodeBase {
     readonly _statementBrand: any;
 }
 export interface IterationStatementBase extends StatementBase {
     readonly statement: Statement;
 }
-export interface ExpressionBase extends Node {
+export interface ExpressionBase extends NodeBase {
     readonly _expressionBrand: any;
 }
 export interface UnaryExpressionBase extends ExpressionBase {
@@ -212,7 +383,7 @@ export interface MemberExpressionBase extends LeftHandSideExpressionBase {
 export interface PrimaryExpressionBase extends MemberExpressionBase {
     readonly _primaryExpressionBrand: any;
 }
-export interface TypeNodeBase extends Node {
+export interface TypeNodeBase extends NodeBase {
     readonly _typeNodeBrand: any;
 }
 export interface NodeWithTypeArgumentsBase extends TypeNodeBase {
@@ -236,10 +407,11 @@ export interface FunctionLikeBase extends DeclarationBase {
 }
 export interface BodyBase extends Node {
     readonly asteriskToken?: AsteriskToken;
-    readonly body?: BlockOrExpression;
+    readonly body?: NodeBody;
 }
 export interface FunctionLikeWithBodyBase extends FunctionLikeBase, BodyBase {
     readonly _functionLikeDeclarationBrand: any;
+    readonly body?: BlockOrExpression;
 }
 export interface ClassLikeBase extends DeclarationBase, ModifiersBase {
     readonly name?: Identifier;
@@ -274,11 +446,11 @@ export interface ObjectLiteralElementBase extends Node {
 export interface UnionOrIntersectionTypeNodeBase extends TypeNodeBase {
     readonly types: NodeArray<TypeNode>;
 }
-export interface JSDocTagBase extends Node {
+export interface JSDocTagBase extends NodeBase {
     readonly tagName: Identifier;
     readonly comment?: NodeArray<JSDocComment>;
 }
-export interface JSDocCommentBase extends Node {
+export interface JSDocCommentBase extends NodeBase {
     readonly text: readonly string[];
 }
 export interface JSDocPropertyLikeTagBase extends JSDocTagBase {
@@ -288,7 +460,7 @@ export interface JSDocPropertyLikeTagBase extends JSDocTagBase {
     readonly isNameFirst: boolean;
 }
 
-export interface Token<TKind extends TokenSyntaxKind = TokenSyntaxKind> extends Node {
+export interface Token<TKind extends TokenSyntaxKind = TokenSyntaxKind> extends NodeBase {
     readonly kind: TKind;
 }
 export interface Identifier extends PrimaryExpressionBase {
@@ -299,16 +471,16 @@ export interface PrivateIdentifier extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.PrivateIdentifier;
     readonly text: string;
 }
-export interface QualifiedName extends Node {
+export interface QualifiedName extends NodeBase {
     readonly kind: SyntaxKind.QualifiedName;
     readonly left: EntityName;
     readonly right: Identifier;
 }
-export interface ComputedPropertyName extends Node {
+export interface ComputedPropertyName extends NodeBase {
     readonly kind: SyntaxKind.ComputedPropertyName;
     readonly expression: Expression;
 }
-export interface Decorator extends Node {
+export interface Decorator extends NodeBase {
     readonly kind: SyntaxKind.Decorator;
     readonly expression: LeftHandSideExpression;
 }
@@ -357,7 +529,7 @@ export interface SwitchStatement extends StatementBase {
     readonly expression: Expression;
     readonly caseBlock: CaseBlock;
 }
-export interface CaseBlock extends Node {
+export interface CaseBlock extends NodeBase {
     readonly kind: SyntaxKind.CaseBlock;
     readonly clauses: NodeArray<CaseOrDefaultClause>;
 }
@@ -371,7 +543,7 @@ export interface TryStatement extends StatementBase {
     readonly catchClause?: CatchClause;
     readonly finallyBlock?: Block;
 }
-export interface CatchClause extends Node {
+export interface CatchClause extends NodeBase {
     readonly kind: SyntaxKind.CatchClause;
     readonly variableDeclaration?: VariableDeclaration;
     readonly block: Block;
@@ -397,19 +569,18 @@ export interface VariableStatement extends StatementBase, ModifiersBase {
     readonly kind: SyntaxKind.VariableStatement;
     readonly declarationList: VariableDeclarationList;
 }
-export interface VariableDeclaration extends DeclarationBase {
+export interface VariableDeclaration extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.VariableDeclaration;
     readonly name: BindingName;
     readonly exclamationToken?: ExclamationToken;
     readonly type?: TypeNode;
     readonly initializer?: Expression;
 }
-export interface VariableDeclarationList extends Node {
+export interface VariableDeclarationList extends NodeBase {
     readonly kind: SyntaxKind.VariableDeclarationList;
-    readonly flags: NodeFlags;
     readonly declarations: NodeArray<VariableDeclaration>;
 }
-export interface ParameterDeclaration extends DeclarationBase, ModifiersBase {
+export interface ParameterDeclaration extends NodeBase, DeclarationBase, ModifiersBase {
     readonly kind: SyntaxKind.Parameter;
     readonly dotDotDotToken?: DotDotDotToken;
     readonly name: BindingName;
@@ -417,7 +588,7 @@ export interface ParameterDeclaration extends DeclarationBase, ModifiersBase {
     readonly type?: TypeNode;
     readonly initializer?: Expression;
 }
-export interface BindingElement extends DeclarationBase {
+export interface BindingElement extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.BindingElement;
     readonly dotDotDotToken: DotDotDotToken;
     readonly propertyName?: PropertyName;
@@ -437,7 +608,7 @@ export interface ClassDeclaration extends DeclarationBase, StatementBase, ClassL
 export interface ClassExpression extends PrimaryExpressionBase, ClassLikeBase {
     readonly kind: SyntaxKind.ClassExpression;
 }
-export interface HeritageClause extends Node {
+export interface HeritageClause extends NodeBase {
     readonly kind: SyntaxKind.HeritageClause;
     readonly token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword;
     readonly types: NodeArray<ExpressionWithTypeArguments>;
@@ -455,7 +626,7 @@ export interface TypeAliasDeclaration extends DeclarationBase, StatementBase, Mo
     readonly typeParameters?: NodeArray<TypeParameterDeclaration>;
     readonly type: TypeNode;
 }
-export interface EnumMember extends NamedMemberBase {
+export interface EnumMember extends NodeBase, NamedMemberBase {
     readonly kind: SyntaxKind.EnumMember;
     readonly initializer?: Expression;
 }
@@ -471,7 +642,7 @@ export interface ModuleBlock extends StatementBase {
 export interface NotEmittedStatement extends StatementBase {
     readonly kind: SyntaxKind.NotEmittedStatement;
 }
-export interface NotEmittedTypeElement extends TypeElementBase {
+export interface NotEmittedTypeElement extends NodeBase, TypeElementBase {
     readonly kind: SyntaxKind.NotEmittedTypeElement;
 }
 export interface ImportDeclaration extends StatementBase, ModifiersBase, DeclarationBase {
@@ -480,15 +651,15 @@ export interface ImportDeclaration extends StatementBase, ModifiersBase, Declara
     readonly moduleSpecifier: Expression;
     readonly attributes?: ImportAttributes;
 }
-export interface ExternalModuleReference extends Node {
+export interface ExternalModuleReference extends NodeBase {
     readonly kind: SyntaxKind.ExternalModuleReference;
     readonly expression: Expression;
 }
-export interface NamespaceImport extends DeclarationBase {
+export interface NamespaceImport extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.NamespaceImport;
     readonly name: Identifier;
 }
-export interface NamedImports extends Node {
+export interface NamedImports extends NodeBase {
     readonly kind: SyntaxKind.NamedImports;
     readonly elements: NodeArray<ImportSpecifier>;
 }
@@ -508,58 +679,58 @@ export interface NamespaceExportDeclaration extends DeclarationBase, StatementBa
     readonly kind: SyntaxKind.NamespaceExportDeclaration;
     readonly name: Identifier;
 }
-export interface NamespaceExport extends DeclarationBase {
+export interface NamespaceExport extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.NamespaceExport;
     readonly name: ModuleExportName;
 }
-export interface NamedExports extends Node {
+export interface NamedExports extends NodeBase {
     readonly kind: SyntaxKind.NamedExports;
     readonly elements: NodeArray<ExportSpecifier>;
 }
-export interface ExportSpecifier extends DeclarationBase {
+export interface ExportSpecifier extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.ExportSpecifier;
     readonly isTypeOnly: boolean;
     readonly propertyName?: ModuleExportName;
     readonly name: ModuleExportName;
 }
-export interface CallSignatureDeclaration extends DeclarationBase, FunctionLikeBase, TypeElementBase {
+export interface CallSignatureDeclaration extends NodeBase, DeclarationBase, FunctionLikeBase, TypeElementBase {
     readonly kind: SyntaxKind.CallSignature;
 }
-export interface ConstructSignatureDeclaration extends DeclarationBase, FunctionLikeBase, TypeElementBase {
+export interface ConstructSignatureDeclaration extends NodeBase, DeclarationBase, FunctionLikeBase, TypeElementBase {
     readonly kind: SyntaxKind.ConstructSignature;
 }
-export interface ConstructorDeclaration extends DeclarationBase, ModifiersBase, FunctionLikeWithBodyBase, ClassElementBase {
+export interface ConstructorDeclaration extends NodeBase, DeclarationBase, ModifiersBase, FunctionLikeWithBodyBase, ClassElementBase {
     readonly kind: SyntaxKind.Constructor;
 }
-export interface GetAccessorDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, TypeElementBase, ClassElementBase, ObjectLiteralElementBase {
+export interface GetAccessorDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, TypeElementBase, ClassElementBase, ObjectLiteralElementBase, NodeBase {
     readonly kind: SyntaxKind.GetAccessor;
 }
-export interface SetAccessorDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, TypeElementBase, ClassElementBase, ObjectLiteralElementBase {
+export interface SetAccessorDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, TypeElementBase, ClassElementBase, ObjectLiteralElementBase, NodeBase {
     readonly kind: SyntaxKind.SetAccessor;
 }
-export interface IndexSignatureDeclaration extends DeclarationBase, ModifiersBase, FunctionLikeBase, TypeElementBase, ClassElementBase {
+export interface IndexSignatureDeclaration extends NodeBase, DeclarationBase, ModifiersBase, FunctionLikeBase, TypeElementBase, ClassElementBase {
     readonly kind: SyntaxKind.IndexSignature;
 }
-export interface MethodSignatureDeclaration extends NamedMemberBase, FunctionLikeBase, TypeElementBase {
+export interface MethodSignatureDeclaration extends NodeBase, NamedMemberBase, FunctionLikeBase, TypeElementBase {
     readonly kind: SyntaxKind.MethodSignature;
 }
-export interface MethodDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, ClassElementBase, ObjectLiteralElementBase {
+export interface MethodDeclaration extends NodeBase, NamedMemberBase, FunctionLikeWithBodyBase, ClassElementBase, ObjectLiteralElementBase {
     readonly kind: SyntaxKind.MethodDeclaration;
 }
-export interface PropertySignatureDeclaration extends NamedMemberBase, TypeElementBase {
+export interface PropertySignatureDeclaration extends NodeBase, NamedMemberBase, TypeElementBase {
     readonly kind: SyntaxKind.PropertySignature;
     readonly type: TypeNode;
     readonly initializer: Expression;
 }
-export interface PropertyDeclaration extends NamedMemberBase, ClassElementBase {
+export interface PropertyDeclaration extends NodeBase, NamedMemberBase, ClassElementBase {
     readonly kind: SyntaxKind.PropertyDeclaration;
     readonly type: TypeNode;
     readonly initializer?: Expression;
 }
-export interface SemicolonClassElement extends DeclarationBase, ClassElementBase {
+export interface SemicolonClassElement extends NodeBase, DeclarationBase, ClassElementBase {
     readonly kind: SyntaxKind.SemicolonClassElement;
 }
-export interface ClassStaticBlockDeclaration extends DeclarationBase, ModifiersBase, ClassElementBase {
+export interface ClassStaticBlockDeclaration extends NodeBase, DeclarationBase, ModifiersBase, ClassElementBase {
     readonly kind: SyntaxKind.ClassStaticBlockDeclaration;
     readonly body: Block;
 }
@@ -637,14 +808,12 @@ export interface PropertyAccessExpression extends MemberExpressionBase {
     readonly expression: Expression;
     readonly questionDotToken: QuestionDotToken;
     readonly name: MemberName;
-    readonly flags: NodeFlags;
 }
 export interface ElementAccessExpression extends MemberExpressionBase {
     readonly kind: SyntaxKind.ElementAccessExpression;
     readonly expression: Expression;
     readonly questionDotToken: QuestionDotToken;
     readonly argumentExpression: Expression;
-    readonly flags: NodeFlags;
 }
 export interface CallExpression extends LeftHandSideExpressionBase, DeclarationBase {
     readonly kind: SyntaxKind.CallExpression;
@@ -652,7 +821,6 @@ export interface CallExpression extends LeftHandSideExpressionBase, DeclarationB
     readonly questionDotToken: QuestionDotToken;
     readonly typeArguments?: NodeArray<TypeNode>;
     readonly arguments: NodeArray<Expression>;
-    readonly flags: NodeFlags;
 }
 export interface NewExpression extends PrimaryExpressionBase, DeclarationBase {
     readonly kind: SyntaxKind.NewExpression;
@@ -668,7 +836,6 @@ export interface MetaProperty extends PrimaryExpressionBase {
 export interface NonNullExpression extends LeftHandSideExpressionBase {
     readonly kind: SyntaxKind.NonNullExpression;
     readonly expression: Expression;
-    readonly flags: NodeFlags;
 }
 export interface SpreadElement extends ExpressionBase {
     readonly kind: SyntaxKind.SpreadElement;
@@ -679,7 +846,7 @@ export interface TemplateExpression extends PrimaryExpressionBase {
     readonly head: TemplateHead;
     readonly templateSpans: NodeArray<TemplateSpan>;
 }
-export interface TemplateSpan extends Node {
+export interface TemplateSpan extends NodeBase {
     readonly kind: SyntaxKind.TemplateSpan;
     readonly expression: Expression;
     readonly literal: TemplateMiddleOrTail;
@@ -690,7 +857,6 @@ export interface TaggedTemplateExpression extends MemberExpressionBase {
     readonly questionDotToken: QuestionDotToken;
     readonly typeArguments?: NodeArray<TypeNode>;
     readonly template: TemplateLiteral;
-    readonly flags: NodeFlags;
 }
 export interface ParenthesizedExpression extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.ParenthesizedExpression;
@@ -706,16 +872,16 @@ export interface ObjectLiteralExpression extends PrimaryExpressionBase, Declarat
     readonly properties: NodeArray<ObjectLiteralElementLike>;
     readonly multiLine: boolean;
 }
-export interface SpreadAssignment extends DeclarationBase, ObjectLiteralElementBase {
+export interface SpreadAssignment extends NodeBase, DeclarationBase, ObjectLiteralElementBase {
     readonly kind: SyntaxKind.SpreadAssignment;
     readonly expression: Expression;
 }
-export interface PropertyAssignment extends NamedMemberBase, ObjectLiteralElementBase {
+export interface PropertyAssignment extends NodeBase, NamedMemberBase, ObjectLiteralElementBase {
     readonly kind: SyntaxKind.PropertyAssignment;
     readonly type: TypeNode;
     readonly initializer: Expression;
 }
-export interface ShorthandPropertyAssignment extends NamedMemberBase, ObjectLiteralElementBase {
+export interface ShorthandPropertyAssignment extends NodeBase, NamedMemberBase, ObjectLiteralElementBase {
     readonly kind: SyntaxKind.ShorthandPropertyAssignment;
     readonly type: TypeNode;
     readonly equalsToken: EqualsToken;
@@ -798,12 +964,12 @@ export interface TypePredicateNode extends TypeNodeBase {
     readonly parameterName: TypePredicateParameterName;
     readonly type: TypeNode;
 }
-export interface ImportAttribute extends Node {
+export interface ImportAttribute extends NodeBase {
     readonly kind: SyntaxKind.ImportAttribute;
     readonly name: ImportAttributeName;
     readonly value: Expression;
 }
-export interface ImportAttributes extends Node {
+export interface ImportAttributes extends NodeBase {
     readonly kind: SyntaxKind.ImportAttributes;
     readonly token: SyntaxKind.WithKeyword | SyntaxKind.AssertKeyword;
     readonly attributes: NodeArray<ImportAttribute>;
@@ -855,13 +1021,13 @@ export interface FunctionTypeNode extends TypeNodeBase, ModifiersBase, FunctionL
 export interface ConstructorTypeNode extends TypeNodeBase, ModifiersBase, FunctionLikeBase {
     readonly kind: SyntaxKind.ConstructorType;
 }
-export interface TemplateHead extends TemplateLiteralLikeNodeBase {
+export interface TemplateHead extends NodeBase, TemplateLiteralLikeNodeBase {
     readonly kind: SyntaxKind.TemplateHead;
 }
-export interface TemplateMiddle extends TemplateLiteralLikeNodeBase {
+export interface TemplateMiddle extends NodeBase, TemplateLiteralLikeNodeBase {
     readonly kind: SyntaxKind.TemplateMiddle;
 }
-export interface TemplateTail extends TemplateLiteralLikeNodeBase {
+export interface TemplateTail extends NodeBase, TemplateLiteralLikeNodeBase {
     readonly kind: SyntaxKind.TemplateTail;
 }
 export interface TemplateLiteralTypeNode extends TypeNodeBase {
@@ -923,16 +1089,16 @@ export interface JsxOpeningFragment extends ExpressionBase {
 export interface JsxClosingFragment extends ExpressionBase {
     readonly kind: SyntaxKind.JsxClosingFragment;
 }
-export interface JsxAttribute extends DeclarationBase {
+export interface JsxAttribute extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.JsxAttribute;
     readonly name: JsxAttributeName;
     readonly initializer?: JsxAttributeValue;
 }
-export interface JsxSpreadAttribute extends ObjectLiteralElementBase {
+export interface JsxSpreadAttribute extends ObjectLiteralElementBase, NodeBase {
     readonly kind: SyntaxKind.JsxSpreadAttribute;
     readonly expression: Expression;
 }
-export interface JsxClosingElement extends Node {
+export interface JsxClosingElement extends NodeBase {
     readonly kind: SyntaxKind.JsxClosingElement;
     readonly tagName: JsxTagNameExpression;
 }
@@ -945,11 +1111,11 @@ export interface JsxText extends ExpressionBase, LiteralLikeNodeBase {
     readonly kind: SyntaxKind.JsxText;
     readonly containsOnlyTriviaWhiteSpaces: boolean;
 }
-export interface SyntaxList extends Node {
+export interface SyntaxList extends NodeBase {
     readonly kind: SyntaxKind.SyntaxList;
     readonly children: readonly Node[];
 }
-export interface JSDoc extends Node {
+export interface JSDoc extends NodeBase {
     readonly kind: SyntaxKind.JSDoc;
     readonly comment: NodeArray<JSDocComment>;
     readonly tags: NodeArray<JSDocTag>;
@@ -1089,13 +1255,13 @@ export interface ImportTypeNode extends NodeWithTypeArgumentsBase {
     readonly attributes?: ImportAttributes;
     readonly qualifier?: EntityName;
 }
-export interface ImportClause extends DeclarationBase {
+export interface ImportClause extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.ImportClause;
     readonly phaseModifier?: ImportPhaseModifierSyntaxKind;
     readonly name?: Identifier;
     readonly namedBindings?: NamedImportBindings;
 }
-export interface ImportSpecifier extends DeclarationBase {
+export interface ImportSpecifier extends NodeBase, DeclarationBase {
     readonly kind: SyntaxKind.ImportSpecifier;
     readonly isTypeOnly: boolean;
     readonly propertyName?: ModuleExportName;
@@ -1116,7 +1282,7 @@ export interface JSDocLinkCode extends JSDocCommentBase {
     readonly kind: SyntaxKind.JSDocLinkCode;
     readonly name?: EntityName;
 }
-export interface TypeParameterDeclaration extends DeclarationBase, ModifiersBase {
+export interface TypeParameterDeclaration extends NodeBase, DeclarationBase, ModifiersBase {
     readonly kind: SyntaxKind.TypeParameter;
     readonly name: Identifier;
     readonly constraint?: TypeNode;
@@ -1144,6 +1310,7 @@ export type Expression = ExpressionBase;
 export type Statement = StatementBase;
 export type TypeNode = TypeNodeBase;
 export type BlockOrExpression = Block | Expression;
+export type NodeBody = Block | Expression | ModuleBlock | ModuleDeclaration;
 export type AccessExpression = PropertyAccessExpression | ElementAccessExpression;
 export type DeclarationName = Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression;
 export type ModuleName = Identifier | StringLiteral;
@@ -1225,21 +1392,21 @@ export interface ForOfStatement extends StatementBase {
     readonly expression: Expression;
     readonly statement: Statement;
 }
-export interface CaseClause extends Node {
+export interface CaseClause extends NodeBase {
     readonly kind: SyntaxKind.CaseClause;
     readonly expression: Expression;
     readonly statements: NodeArray<Statement>;
 }
-export interface DefaultClause extends Node {
+export interface DefaultClause extends NodeBase {
     readonly kind: SyntaxKind.DefaultClause;
     readonly expression: Expression;
     readonly statements: NodeArray<Statement>;
 }
-export interface ObjectBindingPattern extends Node {
+export interface ObjectBindingPattern extends NodeBase {
     readonly kind: SyntaxKind.ObjectBindingPattern;
     readonly elements: NodeArray<BindingElement>;
 }
-export interface ArrayBindingPattern extends Node {
+export interface ArrayBindingPattern extends NodeBase {
     readonly kind: SyntaxKind.ArrayBindingPattern;
     readonly elements: NodeArray<BindingElement>;
 }

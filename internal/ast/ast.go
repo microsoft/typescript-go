@@ -1280,6 +1280,9 @@ type (
 	NamedMember                    = Node // Node with NamedMemberBase
 	ObjectLiteralElement           = Node // Node with ObjectLiteralElementBase
 	BlockOrExpression              = Node // Block | Expression
+	NodeBody                       = Node // Block | Expression | ModuleBlock | ModuleDeclaration
+	FunctionBody                   = Node // Block
+	ConciseBody                    = Node // Block | Expression
 	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
 	DeclarationName                = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
 	ModuleName                     = Node // Identifier | StringLiteral

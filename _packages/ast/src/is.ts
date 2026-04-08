@@ -7,35 +7,20 @@ import { ScriptKind } from "#enums/scriptKind";
 import { SyntaxKind } from "#enums/syntaxKind";
 import type {
     AsExpression,
-    AssertsKeyword,
-    AsteriskToken,
-    AwaitKeyword,
-    BinaryOperatorToken,
-    BindingName,
     BindingPattern,
+    BlockOrExpression,
     BooleanLiteral,
-    ColonToken,
     ConciseBody,
-    DeclarationName,
-    DotDotDotToken,
-    EndOfFile,
-    EntityName,
-    EqualsGreaterThanToken,
-    EqualsToken,
     ExclamationToken,
     Expression,
     ExpressionWithTypeArguments,
     ForInitializer,
-    FunctionBody,
     Identifier,
     JSDocTypeExpression,
     JSDocTypeLiteral,
     LeftHandSideExpression,
     LiteralExpression,
     MinusToken,
-    Modifier,
-    ModifierLike,
-    ModuleBody,
     ModuleDeclaration,
     Node,
     NonNullExpression,
@@ -44,7 +29,6 @@ import type {
     PartiallyEmittedExpression,
     PlusToken,
     PrefixUnaryExpression,
-    QuestionDotToken,
     QuestionToken,
     ReadonlyKeyword,
     SatisfiesExpression,
@@ -52,15 +36,20 @@ import type {
     TemplateMiddle,
     TemplateTail,
     ThisTypeNode,
-    Token,
-    TokenSyntaxKind,
     TypeAssertion,
     TypeNode,
     UnaryExpressionBase,
 } from "./ast.ts";
 
 export * from "./is.generated.ts";
-import { isDecorator } from "./is.generated.ts";
+import { isLiteralExpression } from "./is.generated.ts";
+
+// JSDocKind is a range-based guard for JSDoc NODE kinds (FirstJSDocNode..LastJSDocNode),
+// distinct from JSDocSyntaxKind which enumerates JSDoc SCANNER token kinds.
+// The generated isJSDocKind from JSDocSyntaxKind has different semantics, so we override it.
+export function isJSDocKind(kind: SyntaxKind): boolean {
+    return kind >= SyntaxKind.FirstJSDocNode && kind <= SyntaxKind.LastJSDocNode;
+}
 
 type JSDocNamespaceDeclaration = ModuleDeclaration;
 
@@ -74,62 +63,6 @@ type WrappedExpression<T extends Expression> =
     | PartiallyEmittedExpression;
 
 type OuterExpression = WrappedExpression<Expression>;
-
-export function isAssertsKeyword(node: Node): node is AssertsKeyword {
-    return node.kind === SyntaxKind.AssertsKeyword;
-}
-
-export function isAsteriskToken(node: Node): node is AsteriskToken {
-    return node.kind === SyntaxKind.AsteriskToken;
-}
-
-export function isAwaitKeyword(node: Node): node is AwaitKeyword {
-    return node.kind === SyntaxKind.AwaitKeyword;
-}
-
-export function isColonToken(node: Node): node is ColonToken {
-    return node.kind === SyntaxKind.ColonToken;
-}
-
-export function isDotDotDotToken(node: Node): node is DotDotDotToken {
-    return node.kind === SyntaxKind.DotDotDotToken;
-}
-
-export function isEqualsGreaterThanToken(node: Node): node is EqualsGreaterThanToken {
-    return node.kind === SyntaxKind.EqualsGreaterThanToken;
-}
-
-export function isExclamationToken(node: Node): node is ExclamationToken {
-    return node.kind === SyntaxKind.ExclamationToken;
-}
-
-export function isQuestionDotToken(node: Node): node is QuestionDotToken {
-    return node.kind === SyntaxKind.QuestionDotToken;
-}
-
-export function isQuestionToken(node: Node): node is QuestionToken {
-    return node.kind === SyntaxKind.QuestionToken;
-}
-
-export function isTokenKind(kind: SyntaxKind): boolean {
-    return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
-}
-
-export function isKeywordKind(kind: SyntaxKind): boolean {
-    return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
-}
-
-export function isJSDocKind(kind: SyntaxKind): boolean {
-    return kind >= SyntaxKind.FirstJSDocNode && kind <= SyntaxKind.LastJSDocNode;
-}
-
-export function isPropertyNameLiteral(node: Node): boolean {
-    const kind = node.kind;
-    return kind === SyntaxKind.Identifier
-        || kind === SyntaxKind.StringLiteral
-        || kind === SyntaxKind.NoSubstitutionTemplateLiteral
-        || kind === SyntaxKind.NumericLiteral;
-}
 
 export function isTypeNode(node: Node): node is TypeNode {
     return isTypeNodeKind(node.kind);
@@ -210,6 +143,10 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.ExpressionWithTypeArguments;
 }
 
+export function isBlockOrExpression(node: Node): node is BlockOrExpression {
+    return node.kind === SyntaxKind.Block || isExpression(node);
+}
+
 export function isLeftHandSideExpression(node: Node): node is LeftHandSideExpression {
     return isLeftHandSideExpressionKind(skipPartiallyEmittedExpressions(node).kind);
 }
@@ -278,21 +215,6 @@ function isUnaryExpressionKind(kind: SyntaxKind): boolean {
     }
 }
 
-export function isModifier(node: Node): node is Modifier {
-    return isModifierKind(node.kind);
-}
-
-function isModifierKind(kind: SyntaxKind): boolean {
-    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword
-        || kind === SyntaxKind.AsyncKeyword || kind === SyntaxKind.ConstKeyword
-        || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword
-        || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword
-        || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword
-        || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword
-        || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword
-        || kind === SyntaxKind.StaticKeyword;
-}
-
 /** @internal */
 export function isOuterExpression(node: Node, kinds: OuterExpressionKinds = OuterExpressionKinds.All): node is OuterExpression {
     switch (node.kind) {
@@ -344,36 +266,12 @@ function isJSDocTypeAssertion(node: ParenthesizedExpression): boolean {
         && (asExpression.type.flags & NodeFlags.Reparsed) !== 0;
 }
 
-export function isModifierLike(node: Node): node is ModifierLike {
-    return isModifier(node) || isDecorator(node);
-}
-
-export function isBindingName(node: Node): node is BindingName {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ObjectBindingPattern || node.kind === SyntaxKind.ArrayBindingPattern;
-}
-
 export function isBindingPattern(node: Node): node is BindingPattern {
     return node.kind === SyntaxKind.ObjectBindingPattern || node.kind === SyntaxKind.ArrayBindingPattern;
 }
 
 export function isConciseBody(node: Node): node is ConciseBody {
     return node.kind === SyntaxKind.Block || isExpression(node);
-}
-
-export function isToken(node: Node): node is Token<TokenSyntaxKind> {
-    return isTokenKind(node.kind);
-}
-
-export function isEndOfFile(node: Node): node is EndOfFile {
-    return node.kind === SyntaxKind.EndOfFile;
-}
-
-export function isEqualsToken(node: Node): node is EqualsToken {
-    return node.kind === SyntaxKind.EqualsToken;
-}
-
-export function isFunctionBody(node: Node): node is FunctionBody {
-    return node.kind === SyntaxKind.Block;
 }
 
 export function isForInitializer(node: Node): node is ForInitializer {
@@ -396,16 +294,8 @@ export function isQuestionOrPlusOrMinusToken(node: Node): node is QuestionToken 
     return node.kind === SyntaxKind.QuestionToken || node.kind === SyntaxKind.PlusToken || node.kind === SyntaxKind.MinusToken;
 }
 
-export function isModuleBody(node: Node): node is ModuleBody {
-    return node.kind === SyntaxKind.ModuleBlock || node.kind === SyntaxKind.ModuleDeclaration;
-}
-
 export function isTemplateMiddleOrTemplateTail(node: Node): node is TemplateMiddle | TemplateTail {
     return node.kind === SyntaxKind.TemplateMiddle || node.kind === SyntaxKind.TemplateTail;
-}
-
-export function isLiteralExpression(node: Node): node is LiteralExpression {
-    return node.kind >= SyntaxKind.FirstLiteralToken && node.kind <= SyntaxKind.LastLiteralToken;
 }
 
 export function isLiteralTypeLiteral(node: Node): node is NullLiteral | BooleanLiteral | LiteralExpression | PrefixUnaryExpression {
@@ -415,32 +305,10 @@ export function isLiteralTypeLiteral(node: Node): node is NullLiteral | BooleanL
         || isLiteralExpression(node);
 }
 
-export function isBinaryOperatorToken(node: Node): node is BinaryOperatorToken {
-    return isBinaryOperatorKind(node.kind);
-}
-
-function isBinaryOperatorKind(kind: SyntaxKind): boolean {
-    return kind >= SyntaxKind.FirstBinaryOperator && kind <= SyntaxKind.LastBinaryOperator;
-}
-
-export function isEntityName(node: Node): node is EntityName {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.QualifiedName;
-}
-
 export function isIdentifierOrJSDocNamespaceDeclaration(node: Node): node is Identifier | JSDocNamespaceDeclaration {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ModuleDeclaration;
 }
 
 export function isJSDocTypeExpressionOrJSDocTypeLiteral(node: Node): node is JSDocTypeExpression | JSDocTypeLiteral {
     return node.kind === SyntaxKind.JSDocTypeExpression || node.kind === SyntaxKind.JSDocTypeLiteral;
-}
-
-export function isDeclarationName(node: Node): node is DeclarationName {
-    const kind = node.kind;
-    return kind === SyntaxKind.Identifier || kind === SyntaxKind.PrivateIdentifier
-        || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral
-        || kind === SyntaxKind.ComputedPropertyName || kind === SyntaxKind.ElementAccessExpression
-        || kind === SyntaxKind.BindingElement || kind === SyntaxKind.NoSubstitutionTemplateLiteral
-        || kind === SyntaxKind.ObjectBindingPattern || kind === SyntaxKind.ArrayBindingPattern
-        || kind === SyntaxKind.JsxNamespacedName;
 }

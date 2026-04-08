@@ -16,7 +16,7 @@ import type {
     NodeType,
     Type,
 } from "./schema.ts";
-import { api } from "./schema.ts";
+import { api, kindGuardName } from "./schema.ts";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Load schema
@@ -31,6 +31,16 @@ function tsMembers(node: NodeType): MemberInfo[] {
 
 function isInheritedFromTsBase(member: MemberInfo): boolean {
     return member.inherited && !!member.inheritedField && !member.inheritedField.noTS;
+}
+
+// NodeBase fields (e.g. Flags) are class-level properties on NodeObject,
+// not data members stored in _data.
+const nodeBaseFieldNames = new Set(
+    api.bases().find(b => b.name === "NodeBase")?.fields.filter(f => !f.noTS).map(f => f.name) ?? [],
+);
+
+function isNodeBaseProperty(member: MemberInfo): boolean {
+    return member.inherited && nodeBaseFieldNames.has(member.name);
 }
 
 function tsInterfaceMembers(node: NodeType): MemberInfo[] {
@@ -550,8 +560,13 @@ function generateFactory(): string {
     out.push(``);
 
     // ── Utility functions ──
+    out.push(`function isNodeArray<T extends Node>(array: readonly T[]): array is NodeArray<T> {`);
+    out.push(`    return "pos" in array && "end" in array;`);
+    out.push(`}`);
+    out.push(``);
     out.push(`export function createNodeArray<T extends Node>(elements: readonly T[], pos: number = -1, end: number = -1): NodeArray<T> {`);
-    out.push(`    const arr = elements as unknown as NodeArray<T> & { pos: number; end: number; };`);
+    out.push(`    if (isNodeArray(elements)) return elements;`);
+    out.push(`    const arr = (elements.length >= 1 && elements.length <= 4 ? elements.slice() : elements) as unknown as NodeArray<T> & { pos: number; end: number; };`);
     out.push(`    arr.pos = pos;`);
     out.push(`    arr.end = end;`);
     out.push(`    return arr;`);
@@ -575,7 +590,7 @@ function generateFactory(): string {
     for (const node of api.nodes()) {
         if (node.handWritten) continue;
         if (isVariantNode(node)) continue;
-        const members = tsMembers(node);
+        const members = tsMembers(node).filter(m => !isNodeBaseProperty(m));
         if (members.length === 0) continue;
         const props = members.map(m => api.uncapitalize(m.name));
         if (props.length === 0) continue;
@@ -739,11 +754,20 @@ function generateFactory(): string {
         // Build data object (includes ALL tsMembers, not just factory params)
         const allMembers = tsMembers(node);
         const dataParts: string[] = [];
+        const nodeProps: { propName: string; paramName: string }[] = [];
         for (const m of allMembers) {
             const propName = api.uncapitalize(m.name);
             const paramName = tsParamName(propName);
             const listKind = m.listKind;
             const isParam = members.includes(m);
+            // Members inherited from NodeBase (e.g. Flags) are class-level
+            // properties on NodeObject, not data members.
+            if (isNodeBaseProperty(m)) {
+                if (isParam) {
+                    nodeProps.push({ propName, paramName });
+                }
+                continue;
+            }
             if (listKind === "NodeList") {
                 if (isParam) {
                     if (m.optional) {
@@ -779,7 +803,16 @@ function generateFactory(): string {
         const kindExpr = kindTypeParam ? "kind" : `SyntaxKind.${node.syntaxKindName}`;
 
         out.push(`export function ${funcName}${genericParamStr}(${paramsStr}): ${returnType} {`);
-        out.push(`    return new NodeObject(${kindExpr}, ${dataStr}) as unknown as ${returnType};`);
+        if (nodeProps.length > 0) {
+            out.push(`    const node = new NodeObject(${kindExpr}, ${dataStr}) as unknown as ${returnType};`);
+            for (const { propName, paramName } of nodeProps) {
+                out.push(`    (node as any).${propName} = ${paramName};`);
+            }
+            out.push(`    return node;`);
+        }
+        else {
+            out.push(`    return new NodeObject(${kindExpr}, ${dataStr}) as unknown as ${returnType};`);
+        }
         out.push(`}`);
         out.push(``);
     }
@@ -943,11 +976,9 @@ function generateFactory(): string {
 
     // ── updateSourceFile (hand-written in schema) ──
     out.push(`export function updateSourceFile(node: SourceFile, statements: readonly Statement[], endOfFileToken: EndOfFile): SourceFile {`);
-    out.push(`    if (node.statements !== statements || node.endOfFileToken !== endOfFileToken) {`);
-    out.push(`        const updated = new NodeObject(SyntaxKind.SourceFile, { ...((node as any)._data || {}), statements: createNodeArray(statements), endOfFileToken }) as unknown as SourceFile;`);
-    out.push(`        return updated;`);
-    out.push(`    }`);
-    out.push(`    return node;`);
+    out.push(`    return node.statements !== statements || node.endOfFileToken !== endOfFileToken`);
+    out.push(`        ? createSourceFile(statements, endOfFileToken, node.text, node.fileName, node.path)`);
+    out.push(`        : node;`);
     out.push(`}`);
     out.push(``);
 
@@ -969,7 +1000,7 @@ function generateIsGenerated(): string {
     const importTypes = new Set<string>();
 
     // ── Simple is* guards from schema nodes ──
-    const guards: { funcName: string; typeName: string; kindChecks: string[]; }[] = [];
+    const guards: { funcName: string; typeName: string; kindChecks: string[]; kindAliasConstraint?: string; }[] = [];
 
     for (const node of api.nodes()) {
         if (node.handWritten) continue;
@@ -977,7 +1008,10 @@ function generateIsGenerated(): string {
 
         const typeName = node.name;
         const funcName = `is${typeName}`;
-        guards.push({ funcName, typeName, kindChecks: syntaxKindChecksForNode(node) });
+        // If the node has a type parameter constrained to a kind alias, use the kind-level guard.
+        const kindParam = node.typeParameters.find(tp => tp.constraint && api.hasKindAlias(tp.constraint));
+        const kindAliasConstraint = kindParam?.constraint;
+        guards.push({ funcName, typeName, kindChecks: syntaxKindChecksForNode(node), kindAliasConstraint });
         importTypes.add(typeName);
     }
 
@@ -999,6 +1033,53 @@ function generateIsGenerated(): string {
     }
     const compositeGuards: CompositeGuard[] = [];
 
+    // Build a map from instantiation alias name → SyntaxKind name.
+    // E.g. "AbstractKeyword" → "AbstractKeyword", "TrueLiteral" → "TrueKeyword"
+    const instantiationAliasToKind = new Map<string, string>();
+    for (const node of api.nodes()) {
+        for (const { name: aliasName, typeArg } of node.instantiationAliases) {
+            // typeArg is either a SyntaxKind name or a kind alias name
+            if (!api.hasKindAlias(typeArg)) {
+                instantiationAliasToKind.set(aliasName, typeArg);
+            }
+        }
+    }
+
+    // Recursively resolve union members to SyntaxKind checks.
+    // Returns null if any member cannot be resolved to concrete kinds.
+    function resolveUnionKindChecks(members: readonly string[]): string[] | null {
+        const checks: string[] = [];
+        for (const m of members) {
+            const node = api.getNode(m);
+            if (node) {
+                checks.push(...syntaxKindChecksForNode(node));
+                continue;
+            }
+            const variant = tsVariants.find(v => v.tsName === m);
+            if (variant) {
+                checks.push(`SyntaxKind.${variant.syntaxKind}`);
+                continue;
+            }
+            // Check if it's a Token instantiation alias (e.g. AbstractKeyword, TrueLiteral)
+            const kindName = instantiationAliasToKind.get(m);
+            if (kindName) {
+                checks.push(`SyntaxKind.${kindName}`);
+                continue;
+            }
+            // Recurse into sub-aliases
+            const subAlias = api.nodeAliases().find(a => a.name === m);
+            if (subAlias?.isUnion) {
+                const sub = resolveUnionKindChecks(subAlias.unionMemberNames);
+                if (sub === null) return null;
+                checks.push(...sub);
+                continue;
+            }
+            // Unresolvable member (e.g. Expression, Statement) — can't enumerate kinds
+            return null;
+        }
+        return checks;
+    }
+
     for (const alias of api.nodeAliases()) {
         if (!alias.isUnion) continue;
         const members = alias.unionMemberNames;
@@ -1008,22 +1089,95 @@ function generateIsGenerated(): string {
         const funcName = `is${typeName}`;
         if (guards.some(g => g.funcName === funcName)) continue;
 
-        const kindChecks = members.map(m => {
-            const node = api.getNode(m);
-            if (node) return syntaxKindChecksForNode(node);
-            const variant = tsVariants.find(v => v.tsName === m);
-            if (variant) return [`SyntaxKind.${variant.syntaxKind}`];
-            return null;
-        }).flat().filter(Boolean);
+        const kindChecksRaw = resolveUnionKindChecks(members);
 
-        if (kindChecks.length === 0) continue;
+        if (kindChecksRaw === null || kindChecksRaw.length === 0) {
+            // Union contains unresolvable members (e.g. Expression) — skip,
+            // must be hand-written in is.ts
+            continue;
+        }
+
         importTypes.add(typeName);
-
-        const body = kindChecks.length <= 3
-            ? `return ${kindChecks.map(k => `node.kind === ${k}`).join(" || ")};`
-            : `const kind = node.kind;\n    return ${kindChecks.map(k => `kind === ${k}`).join(" || ")};`;
+        const kindChecks = [...new Set(kindChecksRaw)];
+        let body: string;
+        if (kindChecks.length <= 3) {
+            body = `return ${kindChecks.map(k => `node.kind === ${k}`).join(" || ")};`;
+        }
+        else {
+            body = `const kind = node.kind;\n    return ${kindChecks.map(k => `kind === ${k}`).join(" || ")};`;
+        }
 
         compositeGuards.push({ funcName, typeName, body });
+    }
+
+    // ── Kind alias guards (SyntaxKind-level) ──
+    // Generate `is<Name>(kind: SyntaxKind): kind is <Name>` for each enumerated kind alias union.
+    // Range-based aliases generate `is<Name>(kind: SyntaxKind): boolean` with range checks.
+    // Function names drop "Syntax" from the kind alias name: isTriviaSyntaxKind → isTriviaKind.
+
+    interface KindAliasGuard {
+        funcName: string;
+        typeName: string;
+        conditions: string[];
+    }
+    const kindAliasGuards: KindAliasGuard[] = [];
+    interface RangeKindAliasGuard {
+        funcName: string;
+        first: string;
+        last: string;
+    }
+    const rangeKindAliasGuards: RangeKindAliasGuard[] = [];
+    for (const guard of api.kindGuards()) {
+        const { guardName: funcName } = guard;
+        // Skip if a node-level guard with the same name already exists
+        if (guards.some(g => g.funcName === funcName)) continue;
+        if (compositeGuards.some(g => g.funcName === funcName)) continue;
+
+        if (guard.type === "range") {
+            rangeKindAliasGuards.push({ funcName, first: guard.first, last: guard.last });
+        }
+        else {
+            importTypes.add(guard.aliasName);
+            const conditions = guard.members.map(m => {
+                if (api.hasKindAlias(m)) return `${kindGuardName(m)}(kind)`;
+                return `kind === SyntaxKind.${m}`;
+            });
+            kindAliasGuards.push({ funcName, typeName: guard.aliasName, conditions });
+        }
+    }
+
+    // ── Token instantiation alias guards ──
+    // For Token instantiation aliases like `BinaryOperatorToken = Token<BinaryOperator>`,
+    // generate `is<AliasName>(node: Node): node is <AliasName>` using the kind-level guard.
+    // Also generate guards for single-kind Token aliases (like EndOfFile, DotToken, etc.)
+    // Token aliases whose underlying kind alias is range-based return boolean (not a type predicate).
+    const rangeKindAliasNames = new Set(rangeKindAliasGuards.map(g => g.funcName));
+    interface TokenAliasGuard {
+        funcName: string;
+        typeName: string;
+        body: string;
+        isRangeBased: boolean;
+    }
+    const tokenAliasGuards: TokenAliasGuard[] = [];
+    for (const node of api.nodes()) {
+        for (const { name: aliasName, typeArg } of node.instantiationAliases) {
+            const funcName = `is${aliasName}`;
+            // Skip if already generated
+            if (guards.some(g => g.funcName === funcName)) continue;
+            if (compositeGuards.some(g => g.funcName === funcName)) continue;
+
+            if (api.hasKindAlias(typeArg)) {
+                const isRangeBased = rangeKindAliasNames.has(kindGuardName(typeArg));
+                if (!isRangeBased) importTypes.add(aliasName);
+                // Multi-kind token alias: use the kind-level guard
+                tokenAliasGuards.push({ funcName, typeName: aliasName, body: `return ${kindGuardName(typeArg)}(node.kind);`, isRangeBased });
+            }
+            else {
+                importTypes.add(aliasName);
+                // Single-kind token alias: direct SyntaxKind check
+                tokenAliasGuards.push({ funcName, typeName: aliasName, body: `return node.kind === SyntaxKind.${typeArg};`, isRangeBased: false });
+            }
+        }
     }
 
     // ── Build output ──
@@ -1041,7 +1195,11 @@ function generateIsGenerated(): string {
     // ── Simple guards ──
     for (const g of guards) {
         out.push(`export function ${g.funcName}(node: Node): node is ${g.typeName} {`);
-        if (g.kindChecks.length === 1) {
+        if (g.kindAliasConstraint) {
+            // Use the kind-level guard for nodes with a kind alias constraint
+            out.push(`    return ${kindGuardName(g.kindAliasConstraint)}(node.kind);`);
+        }
+        else if (g.kindChecks.length === 1) {
             out.push(`    return node.kind === ${g.kindChecks[0]};`);
         }
         else {
@@ -1061,6 +1219,36 @@ function generateIsGenerated(): string {
     // ── Composite guards ──
     for (const g of compositeGuards) {
         out.push(`export function ${g.funcName}(node: Node): node is ${g.typeName} {`);
+        out.push(`    ${g.body}`);
+        out.push(`}`);
+        out.push(``);
+    }
+
+    // ── Kind alias guards ──
+    for (const g of kindAliasGuards) {
+        out.push(`export function ${g.funcName}(kind: SyntaxKind): kind is ${g.typeName} {`);
+        if (g.conditions.length === 1) {
+            out.push(`    return ${g.conditions[0]};`);
+        }
+        else {
+            out.push(`    return ${g.conditions.join("\n        || ")};`);
+        }
+        out.push(`}`);
+        out.push(``);
+    }
+
+    // ── Range-based kind alias guards ──
+    for (const g of rangeKindAliasGuards) {
+        out.push(`export function ${g.funcName}(kind: SyntaxKind): boolean {`);
+        out.push(`    return kind >= SyntaxKind.${g.first} && kind <= SyntaxKind.${g.last};`);
+        out.push(`}`);
+        out.push(``);
+    }
+
+    // ── Token alias guards ──
+    for (const g of tokenAliasGuards) {
+        const returnType = g.isRangeBased ? `boolean` : `node is ${g.typeName}`;
+        out.push(`export function ${g.funcName}(node: Node): ${returnType} {`);
         out.push(`    ${g.body}`);
         out.push(`}`);
         out.push(``);

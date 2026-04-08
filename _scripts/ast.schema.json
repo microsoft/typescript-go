@@ -72,11 +72,28 @@
                     "type": "object",
                     "description": "SyntaxKind union type aliases",
                     "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "description": "Kind name or reference to another union"
-                        }
+                        "oneOf": [
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "description": "Kind name or reference to another union"
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "range": {
+                                        "type": "array",
+                                        "items": { "type": "string" },
+                                        "minItems": 2,
+                                        "maxItems": 2,
+                                        "description": "[FirstMarker, LastMarker] range for concise kind check"
+                                    }
+                                },
+                                "required": ["range"]
+                            }
+                        ]
                     }
                 }
             },

@@ -17,7 +17,7 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { api } from "./schema.ts";
+import { api, kindGuardName } from "./schema.ts";
 import type {
     MemberInfo,
     NodeType,
@@ -648,6 +648,53 @@ function generateIsFunction(w: CodeWriter, node: NodeType) {
     }
 }
 
+// ── Generate kind alias guards ─────────────────────────────────────────────
+
+/** Go guard name: "IsTokenKind", "IsKeywordKind", etc. Capital I, no "Syntax". */
+function goKindGuardName(aliasName: string): string {
+    const tsName = kindGuardName(aliasName); // e.g. "isTokenKind"
+    return tsName.charAt(0).toUpperCase() + tsName.slice(1); // e.g. "IsTokenKind"
+}
+
+function generateKindAliasGuards(w: CodeWriter) {
+    // JSDocSyntaxKind → "IsJSDocKind" conflicts with the hand-written IsJSDocKind in utilities.go
+    // which checks JSDoc NODE kinds (FirstJSDocNode..LastJSDocNode), a completely different semantic.
+    const skipGuards = new Set(["IsJSDocKind"]);
+
+    for (const guard of api.kindGuards()) {
+        const funcName = goKindGuardName(guard.aliasName);
+        if (skipGuards.has(funcName)) continue;
+
+        if (guard.type === "range") {
+            w.write(`func ${funcName}(kind Kind) bool {`);
+            w.push();
+            w.write(`return kind >= Kind${guard.first} && kind <= Kind${guard.last}`);
+            w.pop();
+            w.write("}");
+            w.write("");
+        }
+        else {
+            // Enumerated: generate a switch statement.
+            // Expand sub-aliases to their concrete members.
+            const expanded = api.expandKindAliasMembers(guard.aliasName);
+            w.write(`func ${funcName}(kind Kind) bool {`);
+            w.push();
+            w.write("switch kind {");
+            w.push();
+            w.write(`case ${expanded.map(m => `Kind${m}`).join(", ")}:`);
+            w.push();
+            w.write("return true");
+            w.pop();
+            w.pop();
+            w.write("}");
+            w.write("return false");
+            w.pop();
+            w.write("}");
+            w.write("");
+        }
+    }
+}
+
 // ── Generate Name() accessor ───────────────────────────────────────────────
 
 function generateNameAccessor(w: CodeWriter, node: NodeType) {
@@ -752,6 +799,13 @@ function generate(): string {
     for (const node of api.nodes()) {
         generateAsCast(w, node.name);
     }
+
+    // Kind alias guards
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// Kind alias guards");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateKindAliasGuards(w);
 
     return w.toString();
 }

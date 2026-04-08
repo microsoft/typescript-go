@@ -101,27 +101,6 @@ func NodeKindIs(node *Node, kinds ...Kind) bool {
 	return slices.Contains(kinds, node.Kind)
 }
 
-func IsModifierKind(token Kind) bool {
-	switch token {
-	case KindAbstractKeyword,
-		KindAccessorKeyword,
-		KindAsyncKeyword,
-		KindConstKeyword,
-		KindDeclareKeyword,
-		KindDefaultKeyword,
-		KindExportKeyword,
-		KindInKeyword,
-		KindPublicKeyword,
-		KindPrivateKeyword,
-		KindProtectedKeyword,
-		KindReadonlyKeyword,
-		KindStaticKeyword,
-		KindOutKeyword,
-		KindOverrideKeyword:
-		return true
-	}
-	return false
-}
 
 func IsModifier(node *Node) bool {
 	return IsModifierKind(node.Kind)
@@ -131,17 +110,6 @@ func IsModifierLike(node *Node) bool {
 	return IsModifier(node) || IsDecorator(node)
 }
 
-func IsKeywordKind(token Kind) bool {
-	return KindFirstKeyword <= token && token <= KindLastKeyword
-}
-
-func IsPunctuationKind(token Kind) bool {
-	return KindFirstPunctuation <= token && token <= KindLastPunctuation
-}
-
-func IsAssignmentOperator(token Kind) bool {
-	return token >= KindFirstAssignment && token <= KindLastAssignment
-}
 
 func IsCompoundAssignment(token Kind) bool {
 	return token >= KindFirstCompoundAssignment && token <= KindLastCompoundAssignment
@@ -271,9 +239,6 @@ func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalOrCoalescingBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
-func IsLogicalOrCoalescingAssignmentOperator(token Kind) bool {
-	return token == KindBarBarEqualsToken || token == KindAmpersandAmpersandEqualsToken || token == KindQuestionQuestionEqualsToken
-}
 
 func IsLogicalOrCoalescingAssignmentExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalOrCoalescingAssignmentOperator(expr.AsBinaryExpression().OperatorToken.Kind)
@@ -291,9 +256,6 @@ func IsLogicalExpression(node *Node) bool {
 	}
 }
 
-func IsTokenKind(token Kind) bool {
-	return KindFirstToken <= token && token <= KindLastToken
-}
 
 func IsAccessor(node *Node) bool {
 	return node.Kind == KindGetAccessor || node.Kind == KindSetAccessor
@@ -358,9 +320,6 @@ func IsBooleanLiteral(node *Node) bool {
 	return node.Kind == KindTrueKeyword || node.Kind == KindFalseKeyword
 }
 
-func IsLiteralKind(kind Kind) bool {
-	return KindFirstLiteralToken <= kind && kind <= KindLastLiteralToken
-}
 
 func IsLiteralExpression(node *Node) bool {
 	return IsLiteralKind(node.Kind)
