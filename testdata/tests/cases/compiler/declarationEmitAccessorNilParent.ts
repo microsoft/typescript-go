@@ -1,26 +1,35 @@
 // @declaration: true
 // @target: esnext
 
-// Regression test: when an accessor property symbol has a nil parent
-// (e.g. from a union/intersection of classes with differing value declarations),
-// the node builder should not crash with a nil pointer dereference.
+// Regression test: when a class extends a mixin that returns an intersection,
+// the class's anonymous constructor type inherits static accessor properties from the
+// intersection. These synthetic properties can have a nil parent symbol when the
+// constituent accessor declarations differ. Declaration emit must not crash when
+// serializing these properties.
+
+function mix<T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(
+    base1: T, base2: U
+): T & U {
+    return null as any;
+}
 
 class A {
-    get x(): number { return 1; }
-    set x(v: number) { }
+    static get shared(): number { return 1; }
+    static set shared(v: number) { }
+    x: string = "";
 }
 
 class B {
-    get x(): number { return 2; }
-    set x(v: number) { }
+    static get shared(): number { return 2; }
+    static set shared(v: number) { }
+    y: number = 0;
 }
 
-// Force inlined structural type emit by using non-exported local classes
 function make() {
-    class C {
-        get foo(): number { return 1; }
-        set foo(v: number) { }
+    class C extends mix(A, B) {
+        z: boolean = true;
     }
-    return new C();
+    return C;
 }
-export const val = make();
+
+export const MixedClass = make();

@@ -1,50 +1,77 @@
 //// [tests/cases/compiler/declarationEmitAccessorNilParent.ts] ////
 
 === declarationEmitAccessorNilParent.ts ===
-// Regression test: when an accessor property symbol has a nil parent
-// (e.g. from a union/intersection of classes with differing value declarations),
-// the node builder should not crash with a nil pointer dereference.
+// Regression test: when a class extends a mixin that returns an intersection,
+// the class's anonymous constructor type inherits static accessor properties from the
+// intersection. These synthetic properties can have a nil parent symbol when the
+// constituent accessor declarations differ. Declaration emit must not crash when
+// serializing these properties.
+
+function mix<T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(
+>mix : Symbol(mix, Decl(declarationEmitAccessorNilParent.ts, 0, 0))
+>T : Symbol(T, Decl(declarationEmitAccessorNilParent.ts, 6, 13))
+>args : Symbol(args, Decl(declarationEmitAccessorNilParent.ts, 6, 28))
+>U : Symbol(U, Decl(declarationEmitAccessorNilParent.ts, 6, 51))
+>args : Symbol(args, Decl(declarationEmitAccessorNilParent.ts, 6, 67))
+
+    base1: T, base2: U
+>base1 : Symbol(base1, Decl(declarationEmitAccessorNilParent.ts, 6, 91))
+>T : Symbol(T, Decl(declarationEmitAccessorNilParent.ts, 6, 13))
+>base2 : Symbol(base2, Decl(declarationEmitAccessorNilParent.ts, 7, 13))
+>U : Symbol(U, Decl(declarationEmitAccessorNilParent.ts, 6, 51))
+
+): T & U {
+>T : Symbol(T, Decl(declarationEmitAccessorNilParent.ts, 6, 13))
+>U : Symbol(U, Decl(declarationEmitAccessorNilParent.ts, 6, 51))
+
+    return null as any;
+}
 
 class A {
->A : Symbol(A, Decl(declarationEmitAccessorNilParent.ts, 0, 0))
+>A : Symbol(A, Decl(declarationEmitAccessorNilParent.ts, 10, 1))
 
-    get x(): number { return 1; }
->x : Symbol(A.x, Decl(declarationEmitAccessorNilParent.ts, 4, 9), Decl(declarationEmitAccessorNilParent.ts, 5, 33))
+    static get shared(): number { return 1; }
+>shared : Symbol(A.shared, Decl(declarationEmitAccessorNilParent.ts, 12, 9), Decl(declarationEmitAccessorNilParent.ts, 13, 45))
 
-    set x(v: number) { }
->x : Symbol(A.x, Decl(declarationEmitAccessorNilParent.ts, 4, 9), Decl(declarationEmitAccessorNilParent.ts, 5, 33))
->v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 6, 10))
+    static set shared(v: number) { }
+>shared : Symbol(A.shared, Decl(declarationEmitAccessorNilParent.ts, 12, 9), Decl(declarationEmitAccessorNilParent.ts, 13, 45))
+>v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 14, 22))
+
+    x: string = "";
+>x : Symbol(A.x, Decl(declarationEmitAccessorNilParent.ts, 14, 36))
 }
 
 class B {
->B : Symbol(B, Decl(declarationEmitAccessorNilParent.ts, 7, 1))
+>B : Symbol(B, Decl(declarationEmitAccessorNilParent.ts, 16, 1))
 
-    get x(): number { return 2; }
->x : Symbol(B.x, Decl(declarationEmitAccessorNilParent.ts, 9, 9), Decl(declarationEmitAccessorNilParent.ts, 10, 33))
+    static get shared(): number { return 2; }
+>shared : Symbol(B.shared, Decl(declarationEmitAccessorNilParent.ts, 18, 9), Decl(declarationEmitAccessorNilParent.ts, 19, 45))
 
-    set x(v: number) { }
->x : Symbol(B.x, Decl(declarationEmitAccessorNilParent.ts, 9, 9), Decl(declarationEmitAccessorNilParent.ts, 10, 33))
->v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 11, 10))
+    static set shared(v: number) { }
+>shared : Symbol(B.shared, Decl(declarationEmitAccessorNilParent.ts, 18, 9), Decl(declarationEmitAccessorNilParent.ts, 19, 45))
+>v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 20, 22))
+
+    y: number = 0;
+>y : Symbol(B.y, Decl(declarationEmitAccessorNilParent.ts, 20, 36))
 }
 
-// Force inlined structural type emit by using non-exported local classes
 function make() {
->make : Symbol(make, Decl(declarationEmitAccessorNilParent.ts, 12, 1))
+>make : Symbol(make, Decl(declarationEmitAccessorNilParent.ts, 22, 1))
 
-    class C {
->C : Symbol(C, Decl(declarationEmitAccessorNilParent.ts, 15, 17))
+    class C extends mix(A, B) {
+>C : Symbol(C, Decl(declarationEmitAccessorNilParent.ts, 24, 17))
+>mix : Symbol(mix, Decl(declarationEmitAccessorNilParent.ts, 0, 0))
+>A : Symbol(A, Decl(declarationEmitAccessorNilParent.ts, 10, 1))
+>B : Symbol(B, Decl(declarationEmitAccessorNilParent.ts, 16, 1))
 
-        get foo(): number { return 1; }
->foo : Symbol(C.foo, Decl(declarationEmitAccessorNilParent.ts, 16, 13), Decl(declarationEmitAccessorNilParent.ts, 17, 39))
-
-        set foo(v: number) { }
->foo : Symbol(C.foo, Decl(declarationEmitAccessorNilParent.ts, 16, 13), Decl(declarationEmitAccessorNilParent.ts, 17, 39))
->v : Symbol(v, Decl(declarationEmitAccessorNilParent.ts, 18, 16))
+        z: boolean = true;
+>z : Symbol(C.z, Decl(declarationEmitAccessorNilParent.ts, 25, 31))
     }
-    return new C();
->C : Symbol(C, Decl(declarationEmitAccessorNilParent.ts, 15, 17))
+    return C;
+>C : Symbol(C, Decl(declarationEmitAccessorNilParent.ts, 24, 17))
 }
-export const val = make();
->val : Symbol(val, Decl(declarationEmitAccessorNilParent.ts, 22, 12))
->make : Symbol(make, Decl(declarationEmitAccessorNilParent.ts, 12, 1))
+
+export const MixedClass = make();
+>MixedClass : Symbol(MixedClass, Decl(declarationEmitAccessorNilParent.ts, 31, 12))
+>make : Symbol(make, Decl(declarationEmitAccessorNilParent.ts, 22, 1))
 

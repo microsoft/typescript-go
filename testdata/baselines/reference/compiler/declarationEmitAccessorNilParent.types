@@ -1,55 +1,78 @@
 //// [tests/cases/compiler/declarationEmitAccessorNilParent.ts] ////
 
 === declarationEmitAccessorNilParent.ts ===
-// Regression test: when an accessor property symbol has a nil parent
-// (e.g. from a union/intersection of classes with differing value declarations),
-// the node builder should not crash with a nil pointer dereference.
+// Regression test: when a class extends a mixin that returns an intersection,
+// the class's anonymous constructor type inherits static accessor properties from the
+// intersection. These synthetic properties can have a nil parent symbol when the
+// constituent accessor declarations differ. Declaration emit must not crash when
+// serializing these properties.
+
+function mix<T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(
+>mix : <T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(base1: T, base2: U) => T & U
+>args : any[]
+>args : any[]
+
+    base1: T, base2: U
+>base1 : T
+>base2 : U
+
+): T & U {
+    return null as any;
+>null as any : any
+}
 
 class A {
 >A : A
 
-    get x(): number { return 1; }
->x : number
+    static get shared(): number { return 1; }
+>shared : number
 >1 : 1
 
-    set x(v: number) { }
->x : number
+    static set shared(v: number) { }
+>shared : number
 >v : number
+
+    x: string = "";
+>x : string
+>"" : ""
 }
 
 class B {
 >B : B
 
-    get x(): number { return 2; }
->x : number
+    static get shared(): number { return 2; }
+>shared : number
 >2 : 2
 
-    set x(v: number) { }
->x : number
+    static set shared(v: number) { }
+>shared : number
 >v : number
+
+    y: number = 0;
+>y : number
+>0 : 0
 }
 
-// Force inlined structural type emit by using non-exported local classes
 function make() {
->make : () => C
+>make : () => typeof C
 
-    class C {
+    class C extends mix(A, B) {
 >C : C
+>mix(A, B) : A
+>mix : <T extends new (...args: any[]) => any, U extends new (...args: any[]) => any>(base1: T, base2: U) => T & U
+>A : typeof A
+>B : typeof B
 
-        get foo(): number { return 1; }
->foo : number
->1 : 1
-
-        set foo(v: number) { }
->foo : number
->v : number
+        z: boolean = true;
+>z : boolean
+>true : true
     }
-    return new C();
->new C() : C
+    return C;
 >C : typeof C
 }
-export const val = make();
->val : C
->make() : C
->make : () => C
+
+export const MixedClass = make();
+>MixedClass : typeof C
+>make() : typeof C
+>make : () => typeof C
 
