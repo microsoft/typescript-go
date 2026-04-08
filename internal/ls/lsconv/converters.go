@@ -166,7 +166,7 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	}
 
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
-		return min(start+char, lineEnd)
+		return max(start, min(start+char, lineEnd))
 	}
 
 	var utf8Char core.TextPos
