@@ -7,7 +7,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends number | (string | {})
+// | (parameter) x: T extends number | Str
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -15,7 +15,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends number | Str
+// | (parameter) x: T extends FooType
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -23,7 +23,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) x: T extends FooType
+// | (parameter) x: T
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -78,7 +78,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends FooType\n```\n"
+          "value": "```tsx\n(parameter) x: T\n```\n"
         },
         "range": {
           "start": {
@@ -109,7 +109,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends number | Str\n```\n"
+          "value": "```tsx\n(parameter) x: T extends FooType\n```\n"
         },
         "range": {
           "start": {
@@ -140,7 +140,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(parameter) x: T extends number | (string | {})\n```\n"
+          "value": "```tsx\n(parameter) x: T extends number | Str\n```\n"
         },
         "range": {
           "start": {
@@ -151,7 +151,8 @@
             "line": 3,
             "character": 5
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 2
     }

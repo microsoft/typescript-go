@@ -436,9 +436,22 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				b.WriteString(signatureToString(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
 			} else {
 				t := c.GetTypeOfSymbolAtLocation(symbol, node)
-				// If the type is a type parameter, render with constraint (e.g., "T extends FooType")
-				if t.Symbol() != nil && t.Symbol().Flags&ast.SymbolFlagsTypeParameter != 0 {
-					b.WriteString(typeParameterToString(c, t, container, vc))
+				// If the type is a constrained type parameter, support expansion:
+				// Level 0: show just "T", signal canIncreaseVerbosity
+				// Level 1+: show "T extends Constraint" with the constraint expanded at level-1
+				if vc != nil && t.Symbol() != nil && t.Symbol().Flags&ast.SymbolFlagsTypeParameter != 0 && c.GetConstraintOfTypeParameter(t) != nil {
+					if vc.Level > 0 {
+						expandVC := &checker.VerbosityContext{
+							Level:               vc.Level - 1,
+							MaxTruncationLength: vc.MaxTruncationLength,
+						}
+						b.WriteString(typeParameterToString(c, t, container, expandVC))
+						vc.CanIncreaseVerbosity = vc.CanIncreaseVerbosity || expandVC.CanIncreaseVerbosity
+						vc.Truncated = vc.Truncated || expandVC.Truncated
+					} else {
+						b.WriteString(typeToString(t, container, typeFormatFlags))
+						vc.CanIncreaseVerbosity = true
+					}
 				} else {
 					b.WriteString(typeToString(t, container, typeFormatFlags))
 				}
@@ -624,7 +637,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	return b.String(), firstDeclaration
 }
 
-// typeParameterToString renders a type parameter with its constraint, e.g., "T extends FooType".
+// typeParameterToString renders a type parameter declaration (e.g., "T extends FooType").
 func typeParameterToString(c *checker.Checker, t *checker.Type, enclosingDeclaration *ast.Node, vc *checker.VerbosityContext) string {
 	return c.TypeParameterToStringEx(t, enclosingDeclaration, vc)
 }

@@ -64,7 +64,7 @@
 //                                 ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U extends string
+// | (parameter) a: U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -79,7 +79,7 @@
 //            ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U extends string
+// | (parameter) a: U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -322,7 +322,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U extends string\n```\n"
+        "value": "```tsx\n(parameter) a: U\n```\n"
       },
       "range": {
         "start": {
@@ -376,7 +376,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U extends string\n```\n"
+        "value": "```tsx\n(parameter) a: U\n```\n"
       },
       "range": {
         "start": {

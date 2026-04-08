@@ -169,7 +169,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: T extends c<string>
+// | (parameter) a: T
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -206,7 +206,7 @@
 //                                 ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U extends c<string>
+// | (parameter) a: U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -220,7 +220,7 @@
 //                                       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) b: T extends c<string>
+// | (parameter) b: T
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -235,7 +235,7 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U extends c<string>
+// | (parameter) a: U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -915,7 +915,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: T extends c<string>\n```\n"
+        "value": "```tsx\n(parameter) a: T\n```\n"
       },
       "range": {
         "start": {
@@ -1050,7 +1050,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U extends c<string>\n```\n"
+        "value": "```tsx\n(parameter) a: U\n```\n"
       },
       "range": {
         "start": {
@@ -1104,7 +1104,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) b: T extends c<string>\n```\n"
+        "value": "```tsx\n(parameter) b: T\n```\n"
       },
       "range": {
         "start": {
@@ -1158,7 +1158,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U extends c<string>\n```\n"
+        "value": "```tsx\n(parameter) a: U\n```\n"
       },
       "range": {
         "start": {
