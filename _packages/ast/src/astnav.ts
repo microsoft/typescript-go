@@ -6,7 +6,7 @@ import type {
     NodeArray,
     SourceFile,
 } from "./ast.ts";
-import { createToken } from "./factory.ts";
+import { createToken } from "./factory.generated.ts";
 import {
     isJSDocNodeKind,
     isKeywordKind,

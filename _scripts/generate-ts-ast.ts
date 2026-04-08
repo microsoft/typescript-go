@@ -2,7 +2,7 @@
  * Schema-driven TypeScript AST code generator.
  * Reads _scripts/ast.json and produces:
  *   - _packages/ast/src/ast.generated.ts
- *   - _packages/ast/src/factory.ts
+ *   - _packages/ast/src/factory.generated.ts
  *   - _packages/ast/src/is.generated.ts
  *
  * Usage: node --experimental-strip-types _scripts/generate-ts-ast.ts
@@ -403,7 +403,7 @@ import type { Node, NodeArray } from "./ast.ts";`);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Code generation: factory.ts
+// Code generation: factory.generated.ts
 // ────────────────────────────────────────────────────────────────────────────
 
 function generateFactory(): string {
@@ -1326,7 +1326,7 @@ function generateVisitor(): string {
     for (const name of [...factoryImports].sort((a, b) => a.localeCompare(b))) {
         out.push(`    ${name},`);
     }
-    out.push(`} from "./factory.ts";`);
+    out.push(`} from "./factory.generated.ts";`);
     out.push(`import {`);
     for (const name of [...isImports].sort((a, b) => a.localeCompare(b))) {
         out.push(`    ${name},`);
@@ -1483,7 +1483,7 @@ function writeAndFormat(filePath: string, content: string) {
 function main() {
     console.log("Generating TS AST code...");
 
-    const factoryPath = path.join(ROOT, "_packages/ast/src/factory.ts");
+    const factoryPath = path.join(ROOT, "_packages/ast/src/factory.generated.ts");
     const isGenPath = path.join(ROOT, "_packages/ast/src/is.generated.ts");
     const astGenPath = path.join(ROOT, "_packages/ast/src/ast.generated.ts");
     const visitorPath = path.join(ROOT, "_packages/ast/src/visitor.generated.ts");

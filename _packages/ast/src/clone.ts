@@ -11,7 +11,7 @@ import {
     createNodeArray,
     createNumericLiteral,
     createStringLiteral,
-} from "./factory.ts";
+} from "./factory.generated.ts";
 import { visitEachChild } from "./visitor.ts";
 
 function isArray(value: any): value is readonly unknown[] {

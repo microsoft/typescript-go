@@ -1,6 +1,6 @@
 /**
  * Hand-written visitor implementations for nodes with runtime-dependent
- * child ordering. Generated code in visitor.generated.ts and factory.ts
+ * child ordering. Generated code in visitor.generated.ts and factory.generated.ts
  * delegates to these functions.
  */
 
@@ -14,7 +14,7 @@ import type {
 import {
     updateJSDocParameterTag,
     updateJSDocPropertyTag,
-} from "./factory.ts";
+} from "./factory.generated.ts";
 import {
     isEntityName,
     isIdentifier,

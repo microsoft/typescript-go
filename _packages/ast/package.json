@@ -27,7 +27,7 @@
             "default": "./dist/is.js"
         },
         "./factory": {
-            "@typescript/source": "./src/factory.ts",
+            "@typescript/source": "./src/factory.generated.ts",
             "default": "./dist/factory.js"
         },
         "./utils": {

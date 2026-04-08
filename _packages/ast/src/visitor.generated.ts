@@ -349,7 +349,7 @@ import {
     updateWhileStatement,
     updateWithStatement,
     updateYieldExpression,
-} from "./factory.ts";
+} from "./factory.generated.ts";
 import {
     isAssertsKeyword,
     isAsteriskToken,
