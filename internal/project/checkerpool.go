@@ -67,7 +67,9 @@ type CheckerPool struct {
 var _ compiler.CheckerPool = (*CheckerPool)(nil)
 
 func newCheckerPool(maxCheckers int, idleTimeout time.Duration, program *compiler.Program, log func(msg string)) *CheckerPool {
-	if maxCheckers < 2 {
+	if maxCheckers <= 0 {
+		maxCheckers = 4
+	} else if maxCheckers < 2 {
 		maxCheckers = 2 // at least 1 diagnostics + 1 query checker
 	}
 	if idleTimeout <= 0 {

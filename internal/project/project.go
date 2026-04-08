@@ -367,11 +367,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					maxCheckers := p.host.sessionOptions.MaxCheckers
-					if maxCheckers == 0 {
-						maxCheckers = 4
-					}
-					return newCheckerPool(maxCheckers, p.host.sessionOptions.CheckerIdleTimeout, program, p.log)
+					return newCheckerPool(p.host.sessionOptions.MaxCheckers, p.host.sessionOptions.CheckerIdleTimeout, program, p.log)
 				},
 			},
 		)
