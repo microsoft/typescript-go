@@ -1206,6 +1206,7 @@ func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTracePar
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
+	ctx = core.WithCheckerPurpose(ctx, core.CheckerPurposeDiagnostics)
 	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 }
 

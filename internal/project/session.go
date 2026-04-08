@@ -54,6 +54,13 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	// MaxCheckers controls the total number of checker slots per project
+	// (1 dedicated diagnostics checker + N-1 query checkers). Minimum 2.
+	// Zero uses the default (4).
+	MaxCheckers int
+	// CheckerIdleTimeout controls how long an idle checker is kept
+	// before being disposed. Zero uses the default (30s).
+	CheckerIdleTimeout time.Duration
 }
 
 type SessionInit struct {

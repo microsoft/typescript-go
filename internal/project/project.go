@@ -324,15 +324,13 @@ func (p *Project) hasPotentialProjectReference(projectTreeRequest *ProjectTreeRe
 }
 
 type CreateProgramResult struct {
-	Program     *compiler.Program
-	UpdateKind  ProgramUpdateKind
-	CheckerPool *CheckerPool
+	Program    *compiler.Program
+	UpdateKind ProgramUpdateKind
 }
 
 func (p *Project) CreateProgram() CreateProgramResult {
 	updateKind := ProgramUpdateKindNewFiles
 	var programCloned bool
-	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
 	// Create the command line, potentially augmented with typing files
@@ -369,8 +367,11 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					checkerPool = newCheckerPool(4, program, p.log)
-					return checkerPool
+					maxCheckers := p.host.sessionOptions.MaxCheckers
+					if maxCheckers == 0 {
+						maxCheckers = 4
+					}
+					return newCheckerPool(maxCheckers, p.host.sessionOptions.CheckerIdleTimeout, program, p.log)
 				},
 			},
 		)
@@ -383,9 +384,8 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	newProgram.BindSourceFiles()
 
 	return CreateProgramResult{
-		Program:     newProgram,
-		UpdateKind:  updateKind,
-		CheckerPool: checkerPool,
+		Program:    newProgram,
+		UpdateKind: updateKind,
 	}
 }
 
