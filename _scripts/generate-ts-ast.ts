@@ -16,7 +16,10 @@ import type {
     NodeType,
     Type,
 } from "./schema.ts";
-import { api, kindGuardName } from "./schema.ts";
+import {
+    api,
+    kindGuardName,
+} from "./schema.ts";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Load schema
@@ -350,7 +353,7 @@ import type { Node, NodeArray } from "./ast.ts";`);
                     // SyntaxKind -> Node
                     debugger;
                 }
-                return type.formatTypeScript()
+                return type.formatTypeScript();
             }).join(" | ");
             if (!members) continue;
             parts.push(`export type ${alias.name} = ${members};`);
@@ -759,7 +762,7 @@ function generateFactory(): string {
         // Build data object (includes ALL tsMembers, not just factory params)
         const allMembers = tsMembers(node);
         const dataParts: string[] = [];
-        const nodeProps: { propName: string; paramName: string }[] = [];
+        const nodeProps: { propName: string; paramName: string; }[] = [];
         for (const m of allMembers) {
             const propName = api.uncapitalize(m.name);
             const paramName = tsParamName(propName);

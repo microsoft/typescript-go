@@ -556,23 +556,23 @@ func (t *Type) ObjectFlags() ObjectFlags {
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
-func (t *Type) AsLiteralType() *LiteralType           { return t.data.(*LiteralType) }
+func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
 func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsTupleType() *TupleType               { return t.data.(*TupleType) }
+func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
 func (t *Type) AsMappedType() *MappedType                   { return t.data.(*MappedType) }
-func (t *Type) AsReverseMappedType() *ReverseMappedType         { return t.data.(*ReverseMappedType) }
-func (t *Type) AsEvolvingArrayType() *EvolvingArrayType         { return t.data.(*EvolvingArrayType) }
-func (t *Type) AsTypeParameterDeclaration() *TypeParameter      { return t.data.(*TypeParameter) }
-func (t *Type) AsUnionType() *UnionType                         { return t.data.(*UnionType) }
+func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*ReverseMappedType) }
+func (t *Type) AsEvolvingArrayType() *EvolvingArrayType     { return t.data.(*EvolvingArrayType) }
+func (t *Type) AsTypeParameterDeclaration() *TypeParameter  { return t.data.(*TypeParameter) }
+func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
 func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
-func (t *Type) AsIndexType() *IndexType                         { return t.data.(*IndexType) }
+func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
 func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
 func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
-func (t *Type) AsStringMappingType() *StringMappingType         { return t.data.(*StringMappingType) }
-func (t *Type) AsSubstitutionType() *SubstitutionType           { return t.data.(*SubstitutionType) }
+func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
+func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
 func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
 
 // Casts for embedded struct types

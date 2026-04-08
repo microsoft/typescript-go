@@ -31,10 +31,10 @@ import {
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
+    isTypeNode,
     isVariableDeclarationList,
     type Node,
     NodeFlags,
-    isTypeNode,
     SyntaxKind,
 } from "@typescript/ast";
 import {
@@ -48,11 +48,14 @@ import {
 } from "@typescript/ast/factory";
 import { visitEachChild } from "@typescript/ast/visitor";
 import assert from "node:assert";
-import { describe, test, } from "node:test";
+import { globSync } from "node:fs";
+import { resolve } from "node:path";
+import {
+    describe,
+    test,
+} from "node:test";
 import { fileURLToPath } from "node:url";
 import { runBenchmarks } from "./api.bench.ts";
-import { resolve } from 'node:path';
-import { globSync } from 'node:fs';
 
 const defaultFiles = {
     "/tsconfig.json": "{}",
@@ -2299,7 +2302,6 @@ test("SpreadAssignment roundtrip", async () => {
     }
 });
 
-
 test("VariableDeclarationList const flag clone", async () => {
     const api = spawnAPI({
         "/tsconfig.json": "{}",
@@ -2353,7 +2355,7 @@ doThing();
 });
 
 test("Parse-clone-emit roundtrip", async () => {
-    const tsSource = fileURLToPath(new URL('../../../../_submodules/TypeScript/src', import.meta.url).toString());
+    const tsSource = fileURLToPath(new URL("../../../../_submodules/TypeScript/src", import.meta.url).toString());
     const api = new API({
         cwd: tsSource,
         tsserverPath: getTsserverPath(),
@@ -2365,16 +2367,15 @@ test("Parse-clone-emit roundtrip", async () => {
     };
     const errors = { ...target };
     try {
-        for (const tsconfig of globSync('**/tsconfig.json', { cwd: tsSource })) {
-            const snapshot = await api.updateSnapshot({openProject: resolve(tsSource, tsconfig)});
+        for (const tsconfig of globSync("**/tsconfig.json", { cwd: tsSource })) {
+            const snapshot = await api.updateSnapshot({ openProject: resolve(tsSource, tsconfig) });
             const project = snapshot.getProject(tsconfig);
             assert(project);
             for (const file of project.rootFiles) {
-                
                 const source = await project.program.getSourceFile(file);
                 assert(source);
                 let clone: typeof source;
-                
+
                 try {
                     await project.emitter.printNode(source);
                 }
@@ -2382,7 +2383,7 @@ test("Parse-clone-emit roundtrip", async () => {
                     errors.printCrashed++;
                     continue;
                 }
-                
+
                 try {
                     clone = getSynthesizedDeepClone(source);
                 }
@@ -2390,7 +2391,7 @@ test("Parse-clone-emit roundtrip", async () => {
                     errors.cloneCrashed++;
                     continue;
                 }
-                
+
                 try {
                     await project.emitter.printNode(clone);
                 }
@@ -2398,7 +2399,6 @@ test("Parse-clone-emit roundtrip", async () => {
                     errors.clonePrintCrashed++;
                     continue;
                 }
-                
             }
         }
     }

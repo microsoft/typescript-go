@@ -730,15 +730,17 @@ export interface KindAliasInfo {
 }
 
 /** A kind guard is either range-based (kind >= First && kind <= Last) or enumerated (switch/conditions). */
-export type KindGuardInfo = {
-    /** The alias name from the schema, e.g. "TokenSyntaxKind". */
-    aliasName: string;
-    /** The guard function name, e.g. "isTokenKind". Drops "Syntax" from the alias name. */
-    guardName: string;
-} & (
-    | { type: "range"; first: string; last: string; }
-    | { type: "enumerated"; members: string[]; }
-);
+export type KindGuardInfo =
+    & {
+        /** The alias name from the schema, e.g. "TokenSyntaxKind". */
+        aliasName: string;
+        /** The guard function name, e.g. "isTokenKind". Drops "Syntax" from the alias name. */
+        guardName: string;
+    }
+    & (
+        | { type: "range"; first: string; last: string; }
+        | { type: "enumerated"; members: string[]; }
+    );
 
 /** Compute a guard function name from a kind alias name. Drops "Syntax" from the name. */
 export function kindGuardName(aliasName: string): string {
@@ -756,7 +758,7 @@ export interface Schema {
     kinds?: {
         elements: (string | KindElement)[];
         markers: { name: string; value: string; }[];
-        aliases?: Record<string, string[] | { range: [string, string] }>;
+        aliases?: Record<string, string[] | { range: [string, string]; }>;
     };
 }
 
@@ -773,7 +775,7 @@ export class SchemaAPI {
     private readonly listAliasNameMap = new Map<string, string>();
     private readonly instantiationAliasMap = new Map<string, string>();
     /** Maps syntax kind names to (aliasName, nodeName) for instantiation aliases, or (undefined, nodeName) for direct nodes. */
-    private readonly syntaxKindToNodeInfo = new Map<string, { aliasName?: string; nodeName: string }>();
+    private readonly syntaxKindToNodeInfo = new Map<string, { aliasName?: string; nodeName: string; }>();
     private readonly primitiveTypeMap = new Map<string, PrimitiveType>();
     private readonly kindTypeMap = new Map<string, KindType>();
     private readonly nodeTypeMap = new Map<string, NodeType>();

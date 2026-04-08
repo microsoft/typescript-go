@@ -101,7 +101,6 @@ func NodeKindIs(node *Node, kinds ...Kind) bool {
 	return slices.Contains(kinds, node.Kind)
 }
 
-
 func IsModifier(node *Node) bool {
 	return IsModifierKind(node.Kind)
 }
@@ -109,7 +108,6 @@ func IsModifier(node *Node) bool {
 func IsModifierLike(node *Node) bool {
 	return IsModifier(node) || IsDecorator(node)
 }
-
 
 func IsCompoundAssignment(token Kind) bool {
 	return token >= KindFirstCompoundAssignment && token <= KindLastCompoundAssignment
@@ -239,7 +237,6 @@ func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalOrCoalescingBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
-
 func IsLogicalOrCoalescingAssignmentExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalOrCoalescingAssignmentOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
@@ -255,7 +252,6 @@ func IsLogicalExpression(node *Node) bool {
 		}
 	}
 }
-
 
 func IsAccessor(node *Node) bool {
 	return node.Kind == KindGetAccessor || node.Kind == KindSetAccessor
@@ -319,7 +315,6 @@ func IsPushOrUnshiftIdentifier(node *Node) bool {
 func IsBooleanLiteral(node *Node) bool {
 	return node.Kind == KindTrueKeyword || node.Kind == KindFalseKeyword
 }
-
 
 func IsLiteralExpression(node *Node) bool {
 	return IsLiteralKind(node.Kind)
