@@ -3,15 +3,14 @@ package ls
 import (
 	"context"
 	"slices"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -31,11 +30,10 @@ func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lspr
 	newPath := newURI.FileName()
 
 	oldToNew := l.createPathUpdater(oldPath, newPath)
-	newToOld := l.createPathUpdater(newPath, oldPath)
 
 	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
 	l.updateTsconfigFiles(program, changeTracker, oldToNew, oldPath, newPath)
-	l.updateImportsForFileRename(program, changeTracker, oldToNew, newToOld)
+	l.updateImportsForFileRename(program, changeTracker, oldToNew)
 
 	result := map[lsproto.DocumentUri][]*lsproto.TextEdit{}
 	for fileName, edits := range changeTracker.GetChanges() {
@@ -167,42 +165,41 @@ func tryUpdateConfigString(configFile *ast.SourceFile, configDir string, element
 	return true
 }
 
-func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, changeTracker *change.Tracker, oldToNew pathUpdater, newToOld pathUpdater) {
+func (l *LanguageService) updateRelativePath(oldToNew pathUpdater, oldImportFromPath, newImportFromPath, relativeSpecifier string) string {
+	oldAbsolute := tspath.NormalizePath(tspath.CombinePaths(tspath.GetDirectoryPath(oldImportFromPath), relativeSpecifier))
+	newAbsolute, ok := oldToNew(oldAbsolute)
+	if !ok {
+		newAbsolute = oldAbsolute
+	}
+	return relativeImportPathFromDirectory(tspath.GetDirectoryPath(newImportFromPath), newAbsolute, l.UseCaseSensitiveFileNames())
+}
+
+func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, changeTracker *change.Tracker, oldToNew pathUpdater) {
 	allFiles := program.GetSourceFiles()
 	checker, done := program.GetTypeChecker(context.Background())
 	defer done()
 	moduleSpecifierPreferences := l.UserPreferences().ModuleSpecifierPreferences()
 
 	for _, sourceFile := range allFiles {
-		newFromOld, hasNewFromOld := oldToNew(sourceFile.FileName())
-		oldFromNew, hasOldFromNew := newToOld(sourceFile.FileName())
+		oldFileName := sourceFile.FileName()
+		newFromOld, fileMoved := oldToNew(sourceFile.FileName())
 		newImportFromPath := sourceFile.FileName()
-		if hasNewFromOld {
+		if fileMoved {
 			newImportFromPath = newFromOld
 		}
-		oldImportFromPath := sourceFile.FileName()
-		if hasOldFromNew {
-			oldImportFromPath = oldFromNew
-		}
-		importingSourceFileMoved := hasNewFromOld || hasOldFromNew
 
 		for _, ref := range sourceFile.ReferencedFiles {
 			if !tspath.IsExternalModuleNameRelative(ref.FileName) {
 				continue
 			}
-			oldAbsolute := tspath.NormalizePath(tspath.CombinePaths(tspath.GetDirectoryPath(oldImportFromPath), ref.FileName))
-			newAbsolute, ok := oldToNew(oldAbsolute)
-			if !ok {
-				continue
-			}
-			updated := relativeImportPathFromDirectory(tspath.GetDirectoryPath(newImportFromPath), newAbsolute, l.UseCaseSensitiveFileNames())
+			updated := l.updateRelativePath(oldToNew, oldFileName, newImportFromPath, ref.FileName)
 			if updated != ref.FileName {
 				changeTracker.ReplaceRangeWithText(sourceFile, l.converters.ToLSPRange(sourceFile, ref.TextRange), updated)
 			}
 		}
 
 		for _, importStringLiteral := range sourceFile.Imports() {
-			updated := l.getUpdatedImportSpecifier(program, checker, sourceFile, importStringLiteral, oldToNew, newToOld, newImportFromPath, oldImportFromPath, importingSourceFileMoved, moduleSpecifierPreferences)
+			updated := l.getUpdatedImportSpecifier(program, checker, sourceFile, importStringLiteral, oldToNew, newImportFromPath, fileMoved, moduleSpecifierPreferences)
 			if updated != "" && updated != importStringLiteral.Text() {
 				changeTracker.ReplaceRangeWithText(sourceFile, l.converters.ToLSPRange(sourceFile, createStringTextRange(sourceFile, importStringLiteral)), updated)
 			}
@@ -210,35 +207,37 @@ func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, 
 	}
 }
 
-func (l *LanguageService) getUpdatedImportSpecifier(program *compiler.Program, checker interface {
-	GetSymbolAtLocation(node *ast.Node) *ast.Symbol
-}, sourceFile *ast.SourceFile, importLiteral *ast.StringLiteralLike, oldToNew pathUpdater, newToOld pathUpdater, newImportFromPath string, oldImportFromPath string, importingSourceFileMoved bool, userPreferences modulespecifiers.UserPreferences,
+// We assume the source file did not move to a different program.
+func (l *LanguageService) getUpdatedImportSpecifier(
+	program *compiler.Program,
+	checker *checker.Checker,
+	sourceFile *ast.SourceFile, // old importing source file
+	importLiteral *ast.StringLiteralLike,
+	oldToNew pathUpdater,
+	newImportFromPath string,
+	importingSourceFileMoved bool,
+	userPreferences modulespecifiers.UserPreferences,
 ) string {
 	importedModuleSymbol := checker.GetSymbolAtLocation(importLiteral)
 	if isAmbientModuleSymbol(importedModuleSymbol) {
 		return ""
 	}
 
-	if updated := getUpdatedImportSpecifierFromMovedSourceFiles(program, sourceFile, importLiteral, oldToNew, newImportFromPath, userPreferences); updated != "" && updated != importLiteral.Text() {
-		return updated
-	}
-
-	var target *toImport
-	if _, hasOldFromNew := newToOld(sourceFile.FileName()); hasOldFromNew {
-		resolutionMode := program.GetModeForUsageLocation(sourceFile, importLiteral)
-		target = getSourceFileToImportFromResolved(importLiteral, program.ResolveModuleName(importLiteral.Text(), oldImportFromPath, resolutionMode), oldToNew, program.GetSourceFiles())
-	} else {
-		target = getSourceFileToImport(program, importedModuleSymbol, sourceFile, importLiteral, oldToNew, userPreferences)
-	}
+	target := getSourceFileToImport(program, sourceFile, importLiteral, oldToNew)
 
 	if target == nil {
-		if importingSourceFileMoved && tspath.IsExternalModuleNameRelative(importLiteral.Text()) {
-			absoluteTarget := tspath.NormalizePath(tspath.CombinePaths(tspath.GetDirectoryPath(sourceFile.FileName()), importLiteral.Text()))
-			return relativeImportPathFromDirectory(tspath.GetDirectoryPath(newImportFromPath), absoluteTarget, l.UseCaseSensitiveFileNames())
+		// First fall back: try every file in the program to see if any of them would match the import specifier, and if so, obtain the updated specifier for that file.
+		if updated := getUpdatedImportSpecifierFromMovedSourceFiles(program, sourceFile, importLiteral, oldToNew, newImportFromPath, userPreferences); updated != "" && updated != importLiteral.Text() {
+			return updated
+		}
+		// Fall back to a regular path update for unresolved module.
+		if tspath.IsExternalModuleNameRelative(importLiteral.Text()) {
+			return l.updateRelativePath(oldToNew, sourceFile.FileName(), newImportFromPath, importLiteral.Text())
 		}
 		return ""
 	}
 
+	// Optimization: neither the importing or imported file changed.
 	if !target.updated && !(importingSourceFileMoved && tspath.IsExternalModuleNameRelative(importLiteral.Text())) {
 		return ""
 	}
@@ -258,117 +257,25 @@ func (l *LanguageService) getUpdatedImportSpecifier(program *compiler.Program, c
 	return updated
 }
 
-func getSourceFileToImport(program *compiler.Program, importedModuleSymbol *ast.Symbol, sourceFile *ast.SourceFile, importLiteral *ast.StringLiteralLike, oldToNew pathUpdater, userPreferences modulespecifiers.UserPreferences) *toImport {
-	if importedModuleSymbol != nil {
-		if moduleSourceFile := core.Find(importedModuleSymbol.Declarations, ast.IsSourceFile); moduleSourceFile != nil {
-			oldFileName := moduleSourceFile.AsSourceFile().FileName()
-			if newFileName, ok := oldToNew(oldFileName); ok {
-				return &toImport{newFileName: newFileName, updated: true}
-			}
-			return &toImport{newFileName: oldFileName, updated: false}
-		}
-	}
-
-	if resolved := program.GetResolvedModuleFromModuleSpecifier(sourceFile, importLiteral); resolved != nil {
-		return getSourceFileToImportFromResolved(importLiteral, resolved, oldToNew, program.GetSourceFiles())
-	}
-
-	resolutionMode := program.GetModeForUsageLocation(sourceFile, importLiteral)
-	if resolved := program.ResolveModuleName(importLiteral.Text(), sourceFile.FileName(), resolutionMode); resolved != nil {
-		return getSourceFileToImportFromResolved(importLiteral, resolved, oldToNew, program.GetSourceFiles())
-	}
-
-	return getSourceFileToImportFromMovedSourceFiles(program, sourceFile, importLiteral, oldToNew, resolutionMode, userPreferences)
-}
-
-func getSourceFileToImportFromResolved(importLiteral *ast.StringLiteralLike, resolved *module.ResolvedModule, oldToNew pathUpdater, sourceFiles []*ast.SourceFile) *toImport {
-	if resolved == nil {
-		return nil
-	}
-
-	if resolved.IsResolved() {
-		if result := tryChange(resolved.ResolvedFileName, oldToNew); result != nil {
-			return result
-		}
-	}
-
-	for _, oldFileName := range resolved.FailedLookupLocations {
-		if result := tryChangeWithIgnoringPackageJSONExisting(oldFileName, oldToNew, sourceFiles); result != nil {
-			return result
-		}
-	}
-
-	if tspath.IsExternalModuleNameRelative(importLiteral.Text()) {
-		for _, oldFileName := range resolved.FailedLookupLocations {
-			if result := tryChangeWithIgnoringPackageJSON(oldFileName, oldToNew); result != nil {
-				return result
-			}
-		}
-	}
-
-	if resolved.IsResolved() {
-		return &toImport{newFileName: resolved.ResolvedFileName, updated: false}
-	}
-	return nil
-}
-
-func tryChangeWithIgnoringPackageJSONExisting(oldFileName string, oldToNew pathUpdater, sourceFiles []*ast.SourceFile) *toImport {
-	newFileName, ok := oldToNew(oldFileName)
-	if !ok || !sourceFileExists(sourceFiles, newFileName) {
-		return nil
-	}
-	return tryChangeWithIgnoringPackageJSON(oldFileName, oldToNew)
-}
-
-func tryChangeWithIgnoringPackageJSON(oldFileName string, oldToNew pathUpdater) *toImport {
-	if strings.HasSuffix(oldFileName, "/package.json") {
-		return nil
-	}
-	return tryChange(oldFileName, oldToNew)
-}
-
-func tryChange(oldFileName string, oldToNew pathUpdater) *toImport {
-	if newFileName, ok := oldToNew(oldFileName); ok {
-		return &toImport{newFileName: newFileName, updated: true}
-	}
-	return nil
-}
-
-func sourceFileExists(sourceFiles []*ast.SourceFile, fileName string) bool {
-	for _, sourceFile := range sourceFiles {
-		if sourceFile.FileName() == fileName {
-			return true
-		}
-	}
-	return false
-}
-
-func getSourceFileToImportFromMovedSourceFiles(program *compiler.Program, sourceFile *ast.SourceFile, importLiteral *ast.StringLiteralLike, oldToNew pathUpdater, resolutionMode core.ResolutionMode, userPreferences modulespecifiers.UserPreferences) *toImport {
-	for _, candidate := range program.GetSourceFiles() {
-		newFileName, ok := oldToNew(candidate.FileName())
-		if !ok {
-			continue
-		}
-
-		moduleSpecifier := modulespecifiers.UpdateModuleSpecifier(
-			program.Options(),
-			program,
-			sourceFile,
-			sourceFile.FileName(),
-			importLiteral.Text(),
-			candidate.FileName(),
-			userPreferences,
-			modulespecifiers.ModuleSpecifierOptions{
-				OverrideImportMode: resolutionMode,
-			},
-		)
-		if moduleSpecifier == importLiteral.Text() {
+func getSourceFileToImport(
+	program *compiler.Program,
+	sourceFile *ast.SourceFile,
+	importLiteral *ast.StringLiteralLike,
+	oldToNew pathUpdater,
+) *toImport {
+	if resolved := program.GetResolvedModuleFromModuleSpecifier(sourceFile, importLiteral); resolved != nil && resolved.ResolvedFileName != "" {
+		oldFileName := resolved.ResolvedFileName
+		if newFileName, ok := oldToNew(oldFileName); ok {
 			return &toImport{newFileName: newFileName, updated: true}
 		}
+		return &toImport{newFileName: oldFileName, updated: false}
 	}
+
 	return nil
 }
 
+// As a fall back for unresolved modules, we'll check all files in the program to see if any of them would match
+// the import specifier, and if so, we'll obtain the updated specifier for that file.
 func getUpdatedImportSpecifierFromMovedSourceFiles(program *compiler.Program, sourceFile *ast.SourceFile, importLiteral *ast.StringLiteralLike, oldToNew pathUpdater, importingSourceFileName string, userPreferences modulespecifiers.UserPreferences) string {
 	resolutionMode := program.GetModeForUsageLocation(sourceFile, importLiteral)
 	for _, candidate := range program.GetSourceFiles() {

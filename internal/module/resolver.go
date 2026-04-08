@@ -1121,7 +1121,6 @@ func (r *resolutionState) createResolvedModuleHandlingSymlink(resolved *resolved
 func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLibraryImport bool) *ResolvedModule {
 	var resolvedModule ResolvedModule
 	resolvedModule.ResolutionDiagnostics = r.diagnostics
-	resolvedModule.FailedLookupLocations = r.failedLookupLocations
 
 	if resolved != nil {
 		resolvedModule.ResolvedFileName = resolved.path

@@ -64,7 +64,6 @@ func (p *PackageId) PackageName() string {
 
 type ResolvedModule struct {
 	ResolutionDiagnostics    []*ast.Diagnostic
-	FailedLookupLocations    []string
 	ResolvedFileName         string
 	OriginalPath             string
 	Extension                string

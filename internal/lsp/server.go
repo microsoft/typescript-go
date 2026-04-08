@@ -1270,9 +1270,9 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 		return lsproto.WillRenameFilesResponse{}, nil
 	}
 
-	uris := make([]lsproto.DocumentUri, 0, len(params.Files)*2)
+	uris := make([]lsproto.DocumentUri, 0, len(params.Files))
 	for _, file := range params.Files {
-		uris = append(uris, lsproto.DocumentUri(file.OldUri), lsproto.DocumentUri(file.NewUri))
+		uris = append(uris, lsproto.DocumentUri(file.OldUri))
 	}
 
 	services := s.session.GetLanguageServicesForDocuments(ctx, uris)
@@ -1280,7 +1280,7 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 	seen := make(map[lsproto.DocumentUri]map[lsproto.Range]string)
 
 	for _, languageService := range services {
-		for _, file := range params.Files {
+		for _, file := range params.Files { // !!! TODO: can optimize by batching per language service instead of per file?
 			for uri, edits := range languageService.GetEditsForFileRename(ctx, lsproto.DocumentUri(file.OldUri), lsproto.DocumentUri(file.NewUri)) {
 				seenForURI, ok := seen[uri]
 				if !ok {

@@ -3783,10 +3783,8 @@ func (f *FourslashTest) VerifyWillRenameFilesEdits(t *testing.T, oldPath string,
 	f.renameFileOrDirectory(t, oldPath, newPath)
 }
 
-func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newPath string) {
-	t.Helper()
-
-	pathUpdater := func(path string) (string, bool) {
+func (f *FourslashTest) getPathUpdater(oldPath, newPath string) func(path string) (string, bool) {
+	return func(path string) (string, bool) {
 		compareOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: f.vfs.UseCaseSensitiveFileNames()}
 		if tspath.ComparePaths(path, oldPath, compareOptions) == 0 {
 			return newPath, true
@@ -3796,6 +3794,12 @@ func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newP
 		}
 		return "", false
 	}
+}
+
+func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newPath string) {
+	t.Helper()
+
+	pathUpdater := f.getPathUpdater(oldPath, newPath)
 	renamedContents := map[string]string{}
 
 	if content, ok := f.vfs.ReadFile(oldPath); ok {
