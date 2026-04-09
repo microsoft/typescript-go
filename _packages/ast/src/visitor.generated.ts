@@ -1412,8 +1412,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _jsdocPropertyTags = visitNodesArray(node.jsdocPropertyTags, visitor);
         return updateJSDocTypeLiteral(node, _jsdocPropertyTags);
     },
-    [SyntaxKind.JSDocParameterTag]: visitEachChildOfJSDocParameterTag,
-    [SyntaxKind.JSDocPropertyTag]: visitEachChildOfJSDocPropertyTag,
     [SyntaxKind.ForInStatement]: (node: ForInStatement, visitor: Visitor): ForInStatement => {
         const _awaitModifier = visitNode(node.awaitModifier, visitor, isAwaitKeyword);
         const _initializer = visitNode(node.initializer, visitor, isForInitializer);
@@ -1446,4 +1444,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _elements = visitNodes(node.elements, visitor);
         return updateArrayBindingPattern(node, _elements);
     },
+    [SyntaxKind.JSDocParameterTag]: visitEachChildOfJSDocParameterTag,
+    [SyntaxKind.JSDocPropertyTag]: visitEachChildOfJSDocPropertyTag,
 };

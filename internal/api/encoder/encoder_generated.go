@@ -533,11 +533,8 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindJSDocTypeLiteral:
 		n := node.AsJSDocTypeLiteral()
 		return (boolToByte(len(n.JSDocPropertyTags) > 0) << 0)
-	case ast.KindJSDocParameterTag:
-		n := node.AsJSDocParameterTag()
-		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeExpression != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
-	case ast.KindJSDocPropertyTag:
-		n := node.AsJSDocPropertyTag()
+	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+		n := node.AsJSDocParameterOrPropertyTag()
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeExpression != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 	default:
 		return 0
@@ -657,11 +654,8 @@ func getNodeCommonData(node *ast.Node) uint32 {
 	case ast.KindJSDocTypeLiteral:
 		n := node.AsJSDocTypeLiteral()
 		return uint32(boolToByte(n.IsArrayType)) << 24
-	case ast.KindJSDocParameterTag:
-		n := node.AsJSDocParameterTag()
-		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
-	case ast.KindJSDocPropertyTag:
-		n := node.AsJSDocPropertyTag()
+	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+		n := node.AsJSDocParameterOrPropertyTag()
 		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
 	}
 	return 0

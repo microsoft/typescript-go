@@ -4,8 +4,10 @@
  * delegates to these functions.
  */
 
+import { SyntaxKind } from "#enums/syntaxKind";
 import type {
     JSDocComment,
+    JSDocParameterOrPropertyTag,
     JSDocParameterTag,
     JSDocPropertyTag,
     Node,
@@ -47,7 +49,7 @@ function visitNodesForEachChild<T>(cbNode: (node: Node) => T, cbNodes: ((nodes: 
 
 // ── forEachChild implementations ──
 
-export function forEachChildOfJSDocParameterTag<T>(data: any, cbNode: (node: Node) => T, cbNodes: ((nodes: NodeArray<Node>) => T) | undefined): T | undefined {
+function forEachChildOfJSDocParameterOrPropertyTag<T>(data: any, cbNode: (node: Node) => T, cbNodes: ((nodes: NodeArray<Node>) => T) | undefined): T | undefined {
     return visitNodeForEachChild(cbNode, data.tagName) ||
         (data.isNameFirst
             ? visitNodeForEachChild(cbNode, data.name) || visitNodeForEachChild(cbNode, data.typeExpression)
@@ -55,28 +57,18 @@ export function forEachChildOfJSDocParameterTag<T>(data: any, cbNode: (node: Nod
         visitNodesForEachChild(cbNode, cbNodes, data.comment);
 }
 
-export function forEachChildOfJSDocPropertyTag<T>(data: any, cbNode: (node: Node) => T, cbNodes: ((nodes: NodeArray<Node>) => T) | undefined): T | undefined {
-    return visitNodeForEachChild(cbNode, data.tagName) ||
-        (data.isNameFirst
-            ? visitNodeForEachChild(cbNode, data.name) || visitNodeForEachChild(cbNode, data.typeExpression)
-            : visitNodeForEachChild(cbNode, data.typeExpression) || visitNodeForEachChild(cbNode, data.name)) ||
-        visitNodesForEachChild(cbNode, cbNodes, data.comment);
-}
+export { forEachChildOfJSDocParameterOrPropertyTag as forEachChildOfJSDocParameterTag, forEachChildOfJSDocParameterOrPropertyTag as forEachChildOfJSDocPropertyTag };
 
 // ── visitEachChild implementations ──
 
-export function visitEachChildOfJSDocParameterTag(node: JSDocParameterTag, visitor: Visitor): JSDocParameterTag {
+function visitEachChildOfJSDocParameterOrPropertyTag(node: JSDocParameterOrPropertyTag, visitor: Visitor): JSDocParameterOrPropertyTag {
     const _tagName = visitNode(node.tagName, visitor, isIdentifier);
     const _name = visitNode(node.name, visitor, isEntityName);
     const _typeExpression = visitNode(node.typeExpression, visitor, isTypeNode);
-    const _comment = visitNodes(node.comment as NodeArray<JSDocComment> | undefined, visitor);
-    return updateJSDocParameterTag(node, _tagName, _name, _typeExpression, _comment);
+    const _comment = visitNodes(node.comment, visitor);
+    return node.kind === SyntaxKind.JSDocParameterTag
+        ? updateJSDocParameterTag(node, _tagName, _name, _typeExpression, _comment)
+        : updateJSDocPropertyTag(node, _tagName, _name, _typeExpression, _comment);
 }
 
-export function visitEachChildOfJSDocPropertyTag(node: JSDocPropertyTag, visitor: Visitor): JSDocPropertyTag {
-    const _tagName = visitNode(node.tagName, visitor, isIdentifier);
-    const _name = visitNode(node.name, visitor, isEntityName);
-    const _typeExpression = visitNode(node.typeExpression, visitor, isTypeNode);
-    const _comment = visitNodes(node.comment as NodeArray<JSDocComment> | undefined, visitor);
-    return updateJSDocPropertyTag(node, _tagName, _name, _typeExpression, _comment);
-}
+export { visitEachChildOfJSDocParameterOrPropertyTag as visitEachChildOfJSDocParameterTag, visitEachChildOfJSDocParameterOrPropertyTag as visitEachChildOfJSDocPropertyTag };

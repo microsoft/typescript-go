@@ -1161,27 +1161,6 @@
             "extends": [
                 "NodeBase"
             ]
-        },
-        "JSDocPropertyLikeTagBase": {
-            "extends": [
-                "JSDocTagBase"
-            ],
-            "fields": {
-                "name": {
-                    "type": "EntityName",
-                    "private": true
-                },
-                "IsBracketed": {
-                    "type": "bool"
-                },
-                "TypeExpression": {
-                    "type": "TypeNode",
-                    "optional": true
-                },
-                "IsNameFirst": {
-                    "type": "bool"
-                }
-            }
         }
     },
     "nodes": {
@@ -5135,63 +5114,38 @@
                     }
                 ]
             },
-            "JSDocParameterTag": {
+            "JSDocParameterOrPropertyTag": {
                 "extends": [
-                    "JSDocPropertyLikeTagBase"
+                    "JSDocTagBase"
                 ],
                 "handWrittenVisitor": true,
                 "members": [
+                    {
+                        "name": "Kind",
+                        "type": ["SyntaxKind.JSDocParameterTag", "SyntaxKind.JSDocPropertyTag"],
+                        "inherited": true
+                    },
                     {
                         "name": "TagName",
                         "inherited": true
                     },
                     {
                         "name": "name",
-                        "inherited": true
+                        "type": "EntityName",
+                        "private": true
                     },
                     {
                         "name": "IsBracketed",
-                        "inherited": true
+                        "type": "bool"
                     },
                     {
                         "name": "TypeExpression",
-                        "inherited": true
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "IsNameFirst",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Comment",
-                        "inherited": true
-                    }
-                ]
-            },
-            "JSDocPropertyTag": {
-                "extends": [
-                    "JSDocPropertyLikeTagBase"
-                ],
-                "handWrittenVisitor": true,
-                "members": [
-                    {
-                        "name": "TagName",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "IsBracketed",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeExpression",
-                        "inherited": true
-                    },
-                    {
-                        "name": "IsNameFirst",
-                        "inherited": true
+                        "type": "bool"
                     },
                     {
                         "name": "Comment",

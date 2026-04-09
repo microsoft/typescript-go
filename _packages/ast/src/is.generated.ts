@@ -1096,14 +1096,6 @@ export function isJSDocTypeLiteral(node: Node): node is JSDocTypeLiteral {
     return node.kind === SyntaxKind.JSDocTypeLiteral;
 }
 
-export function isJSDocParameterTag(node: Node): node is JSDocParameterTag {
-    return node.kind === SyntaxKind.JSDocParameterTag;
-}
-
-export function isJSDocPropertyTag(node: Node): node is JSDocPropertyTag {
-    return node.kind === SyntaxKind.JSDocPropertyTag;
-}
-
 export function isForInStatement(node: Node): node is ForInStatement {
     return node.kind === SyntaxKind.ForInStatement;
 }
@@ -1126,6 +1118,14 @@ export function isObjectBindingPattern(node: Node): node is ObjectBindingPattern
 
 export function isArrayBindingPattern(node: Node): node is ArrayBindingPattern {
     return node.kind === SyntaxKind.ArrayBindingPattern;
+}
+
+export function isJSDocParameterTag(node: Node): node is JSDocParameterTag {
+    return node.kind === SyntaxKind.JSDocParameterTag;
+}
+
+export function isJSDocPropertyTag(node: Node): node is JSDocPropertyTag {
+    return node.kind === SyntaxKind.JSDocPropertyTag;
 }
 
 export function isAccessExpression(node: Node): node is AccessExpression {

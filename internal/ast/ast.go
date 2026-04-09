@@ -654,10 +654,8 @@ func (n *Node) Type() *Node {
 		return n.AsTemplateLiteralTypeSpan().Type
 	case KindJSDocTypeExpression:
 		return n.AsJSDocTypeExpression().Type
-	case KindJSDocParameterTag:
-		return n.AsJSDocParameterTag().TypeExpression
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().TypeExpression
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().TypeExpression
 	case KindJSDocNullableType:
 		return n.AsJSDocNullableType().Type
 	case KindJSDocNonNullableType:
@@ -719,10 +717,8 @@ func (m *MutableNode) SetType(t *Node) {
 		n.AsTemplateLiteralTypeSpan().Type = t
 	case KindJSDocTypeExpression:
 		n.AsJSDocTypeExpression().Type = t
-	case KindJSDocParameterTag:
-		n.AsJSDocParameterTag().TypeExpression = t
-	case KindJSDocPropertyTag:
-		n.AsJSDocPropertyTag().TypeExpression = t
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		n.AsJSDocParameterOrPropertyTag().TypeExpression = t
 	case KindJSDocNullableType:
 		n.AsJSDocNullableType().Type = t
 	case KindJSDocNonNullableType:
@@ -832,10 +828,8 @@ func (n *Node) TagName() *Node {
 		return n.AsJSDocCallbackTag().TagName
 	case KindJSDocOverloadTag:
 		return n.AsJSDocOverloadTag().TagName
-	case KindJSDocParameterTag:
-		return n.AsJSDocParameterTag().TagName
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().TagName
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().TagName
 	case KindJSDocReturnTag:
 		return n.AsJSDocReturnTag().TagName
 	case KindJSDocThisTag:
@@ -921,10 +915,8 @@ func (n *Node) CommentList() *NodeList {
 		return n.AsJSDocCallbackTag().Comment
 	case KindJSDocOverloadTag:
 		return n.AsJSDocOverloadTag().Comment
-	case KindJSDocParameterTag:
-		return n.AsJSDocParameterTag().Comment
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().Comment
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().Comment
 	case KindJSDocReturnTag:
 		return n.AsJSDocReturnTag().Comment
 	case KindJSDocThisTag:
@@ -1127,10 +1119,8 @@ func (n *Node) QuestionDotToken() *Node {
 
 func (n *Node) TypeExpression() *Node {
 	switch n.Kind {
-	case KindJSDocParameterTag:
-		return n.AsJSDocParameterTag().TypeExpression
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().TypeExpression
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().TypeExpression
 	case KindJSDocReturnTag:
 		return n.AsJSDocReturnTag().TypeExpression
 	case KindJSDocTypeTag:
@@ -2440,25 +2430,6 @@ func (node *Node) IsJSDoc() bool {
 	return node.Kind == KindJSDoc
 }
 
-// JSDocPropertyLikeTagBase is shared between JSDocParameterTag and JSDocPropertyTag.
-
-func (node *JSDocPropertyLikeTagBase) Name() *DeclarationName { return node.name }
-
-func (node *JSDocPropertyLikeTagBase) JSDocPropertyLikeData() *JSDocPropertyLikeTagBase {
-	return node
-}
-
-// AsJSDocPropertyLikeTag returns the JSDocPropertyLikeTagBase for JSDocParameterTag or JSDocPropertyTag nodes.
-func (n *Node) AsJSDocPropertyLikeTag() *JSDocPropertyLikeTagBase {
-	switch n.Kind {
-	case KindJSDocParameterTag:
-		return &n.AsJSDocParameterTag().JSDocPropertyLikeTagBase
-	case KindJSDocPropertyTag:
-		return &n.AsJSDocPropertyTag().JSDocPropertyLikeTagBase
-	}
-	panic("not a JSDocPropertyLikeTag")
-}
-
 // JSDocText
 
 // PatternAmbientModule
@@ -3076,7 +3047,7 @@ func (spec *PragmaSpecification) IsTripleSlash() bool {
 // Hand-written visitor implementations for nodes with runtime-dependent
 // child ordering. Generated code in ast_generated.go delegates to these.
 
-func forEachChild_JSDocParameterTag(node *JSDocParameterTag, v Visitor) bool {
+func forEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag, v Visitor) bool {
 	return visit(v, node.TagName) ||
 		(node.IsNameFirst &&
 			(visit(v, node.name) || visit(v, node.TypeExpression))) ||
@@ -3085,19 +3056,6 @@ func forEachChild_JSDocParameterTag(node *JSDocParameterTag, v Visitor) bool {
 		visitNodeList(v, node.Comment)
 }
 
-func visitEachChild_JSDocParameterTag(node *JSDocParameterTag, v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocParameterTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
-}
-
-func forEachChild_JSDocPropertyTag(node *JSDocPropertyTag, v Visitor) bool {
-	return visit(v, node.TagName) ||
-		(node.IsNameFirst &&
-			(visit(v, node.name) || visit(v, node.TypeExpression))) ||
-		(!node.IsNameFirst &&
-			(visit(v, node.TypeExpression) || visit(v, node.name))) ||
-		visitNodeList(v, node.Comment)
-}
-
-func visitEachChild_JSDocPropertyTag(node *JSDocPropertyTag, v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+func visitEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag, v *NodeVisitor) *Node {
+	return v.Factory.UpdateJSDocParameterOrPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
 }

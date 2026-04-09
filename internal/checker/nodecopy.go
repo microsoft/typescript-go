@@ -455,7 +455,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 					targetName = n.AsQualifiedName().Right // !!! TODO: without typesystem backup, doing this cast unguarded seems really suspect, even though it is what strada does
 				}
 				name := visitor.VisitNode(targetName)
-				shouldBeOptional := t.AsJSDocPropertyTag().IsBracketed || (t.TypeExpression() != nil && t.TypeExpression().Kind == ast.KindJSDocOptionalType)
+				shouldBeOptional := t.AsJSDocParameterOrPropertyTag().IsBracketed || (t.TypeExpression() != nil && t.TypeExpression().Kind == ast.KindJSDocOptionalType)
 				var question *ast.Node
 				if shouldBeOptional {
 					question = factory.NewToken(ast.KindQuestionToken)

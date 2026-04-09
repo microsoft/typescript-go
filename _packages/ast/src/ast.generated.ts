@@ -489,12 +489,6 @@ export interface JSDocTagBase extends NodeBase {
 export interface JSDocCommentBase extends NodeBase {
     readonly text: readonly string[];
 }
-export interface JSDocPropertyLikeTagBase extends JSDocTagBase {
-    readonly name: EntityName;
-    readonly isBracketed: boolean;
-    readonly typeExpression?: TypeNode;
-    readonly isNameFirst: boolean;
-}
 
 export interface Token<TKind extends TokenSyntaxKind = TokenSyntaxKind> extends NodeBase {
     readonly kind: TKind;
@@ -1342,12 +1336,6 @@ export interface JSDocTypeLiteral extends JSDocTypeBase, DeclarationBase {
     readonly jsdocPropertyTags?: readonly JSDocTag[];
     readonly isArrayType: boolean;
 }
-export interface JSDocParameterTag extends JSDocPropertyLikeTagBase {
-    readonly kind: SyntaxKind.JSDocParameterTag;
-}
-export interface JSDocPropertyTag extends JSDocPropertyLikeTagBase {
-    readonly kind: SyntaxKind.JSDocPropertyTag;
-}
 
 export type Expression = ExpressionBase;
 export type Statement = StatementBase;
@@ -1453,9 +1441,24 @@ export interface ArrayBindingPattern extends NodeBase {
     readonly kind: SyntaxKind.ArrayBindingPattern;
     readonly elements: NodeArray<BindingElement>;
 }
+export interface JSDocParameterTag extends JSDocTagBase {
+    readonly kind: SyntaxKind.JSDocParameterTag;
+    readonly name: EntityName;
+    readonly isBracketed: boolean;
+    readonly typeExpression?: TypeNode;
+    readonly isNameFirst: boolean;
+}
+export interface JSDocPropertyTag extends JSDocTagBase {
+    readonly kind: SyntaxKind.JSDocPropertyTag;
+    readonly name: EntityName;
+    readonly isBracketed: boolean;
+    readonly typeExpression?: TypeNode;
+    readonly isNameFirst: boolean;
+}
 export type ForInOrOfStatement = ForInStatement | ForOfStatement;
 export type CaseOrDefaultClause = CaseClause | DefaultClause;
 export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
+export type JSDocParameterOrPropertyTag = JSDocParameterTag | JSDocPropertyTag;
 export type EndOfFile = Token<SyntaxKind.EndOfFile>;
 export type DotToken = Token<SyntaxKind.DotToken>;
 export type DotDotDotToken = Token<SyntaxKind.DotDotDotToken>;

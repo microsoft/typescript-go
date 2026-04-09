@@ -789,11 +789,8 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 		isNameFirst = true
 	}
 	var result *ast.Node /* JSDocPropertyTag | JSDocParameterTag */
-	if target == propertyLikeParseProperty {
-		result = p.factory.NewJSDocPropertyTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment)
-	} else {
-		result = p.factory.NewJSDocParameterTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment)
-	}
+	kind := core.IfElse(target == propertyLikeParseProperty, ast.KindJSDocPropertyTag, ast.KindJSDocParameterTag)
+	result = p.factory.NewJSDocParameterOrPropertyTag(kind, tagName, name, isBracketed, typeExpression, isNameFirst, comment)
 	return p.finishNode(result, start)
 }
 

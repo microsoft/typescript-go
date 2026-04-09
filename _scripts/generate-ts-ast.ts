@@ -164,6 +164,7 @@ interface TsVariant {
     syntaxKind: string;
     tsExtends: string;
     members?: MemberInfo[];
+    handWrittenVisitor?: boolean;
 }
 
 interface VisitorEntry {
@@ -179,8 +180,9 @@ function computeTsVariants(): TsVariant[] {
     for (const node of api.nodes()) {
         if (!isVariantNode(node)) continue;
 
-        // tsInterfaceMembers already excludes the Kind member.
-        const otherMembers = tsInterfaceMembers(node);
+        // tsMembers excludes the Kind member; use full set so factory/visitor/clone
+        // code sees inherited members too. Interface generation filters further.
+        const otherMembers = tsMembers(node);
         const tsExtends = deriveNodeTsExtends(node);
 
         const kindValues = node.kindTypes().map(kind => kind.name);
@@ -191,6 +193,7 @@ function computeTsVariants(): TsVariant[] {
                 syntaxKind: kindValue,
                 tsExtends,
                 members: otherMembers,
+                handWrittenVisitor: node.handWrittenVisitor,
             });
         }
     }
@@ -253,7 +256,7 @@ function visitorEntries(): VisitorEntry[] {
             syntaxKind: node.syntaxKindName,
             updateName: `update${node.name}`,
             members,
-            handWrittenVisitor: node.handWrittenVisitor || undefined,
+            handWrittenVisitor: node.handWrittenVisitor,
         });
     }
 
@@ -265,6 +268,7 @@ function visitorEntries(): VisitorEntry[] {
             syntaxKind: variant.syntaxKind,
             updateName: `update${variant.tsName}`,
             members,
+            handWrittenVisitor: variant.handWrittenVisitor,
         });
     }
 
@@ -371,6 +375,8 @@ import type { Node, NodeArray } from "./ast.ts";`);
         let memberLines = "";
         if (v.members) {
             for (const m of v.members) {
+                // For interfaces, skip inherited members (they come from the base type)
+                if (isInheritedFromTsBase(m) && !m.hasTypeScriptOverride()) continue;
                 const propName = api.uncapitalize(m.name);
                 const propType = m.type.formatTypeScript();
                 const opt = m.optional ? "?" : "";
@@ -515,10 +521,12 @@ function generateFactory(): string {
     // Import hand-written forEachChild functions
     const handWrittenForEachChildImports: string[] = [];
     for (const node of api.nodes()) {
-        if (node.handWrittenVisitor && !node.handWritten && !isVariantNode(node)) {
+        if (node.handWrittenVisitor && !node.handWritten) {
             const members = tsMembers(node);
             if (members.filter(m => m.isChild()).length > 0) {
-                handWrittenForEachChildImports.push(`forEachChildOf${node.name}`);
+                for (const kind of node.kindTypes()) {
+                    handWrittenForEachChildImports.push(`forEachChildOf${kind.name}`);
+                }
             }
         }
     }
@@ -664,6 +672,10 @@ function generateFactory(): string {
         if (!v.members) continue;
         const childMembers = v.members.filter(m => m.type.baseKind() === "node" || m.type.baseKind() === "list");
         if (childMembers.length === 0) continue;
+        if (v.handWrittenVisitor) {
+            out.push(`    [SyntaxKind.${v.syntaxKind}]: forEachChildOf${v.tsName},`);
+            continue;
+        }
         const visits = childMembers.map(m => {
             const propName = api.uncapitalize(m.name);
             if (m.listKind) return `visitNodes(cbNode, cbNodes, data.${propName})`;

@@ -1049,10 +1049,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression, thisArg: n.thisArg };
         case SyntaxKind.JSDocTypeLiteral:
             return { jsdocPropertyTags: n.jsdocPropertyTags, isArrayType: n.isArrayType };
-        case SyntaxKind.JSDocParameterTag:
-            return { tagName: n.tagName, name: n.name, isBracketed: n.isBracketed, typeExpression: n.typeExpression, isNameFirst: n.isNameFirst, comment: n.comment };
-        case SyntaxKind.JSDocPropertyTag:
-            return { tagName: n.tagName, name: n.name, isBracketed: n.isBracketed, typeExpression: n.typeExpression, isNameFirst: n.isNameFirst, comment: n.comment };
         case SyntaxKind.ForInStatement:
             return { awaitModifier: n.awaitModifier, initializer: n.initializer, expression: n.expression, statement: n.statement };
         case SyntaxKind.ForOfStatement:
@@ -1065,6 +1061,10 @@ function cloneNodeData(node: Node): any {
             return { elements: n.elements };
         case SyntaxKind.ArrayBindingPattern:
             return { elements: n.elements };
+        case SyntaxKind.JSDocParameterTag:
+            return { tagName: n.tagName, name: n.name, isBracketed: n.isBracketed, typeExpression: n.typeExpression, isNameFirst: n.isNameFirst, comment: n.comment };
+        case SyntaxKind.JSDocPropertyTag:
+            return { tagName: n.tagName, name: n.name, isBracketed: n.isBracketed, typeExpression: n.typeExpression, isNameFirst: n.isNameFirst, comment: n.comment };
         case SyntaxKind.SourceFile:
             return { statements: n.statements, endOfFileToken: n.endOfFileToken, text: n.text, fileName: n.fileName, path: n.path };
         default:
@@ -1597,8 +1597,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.thisArg),
     [SyntaxKind.JSDocTypeLiteral]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.jsdocPropertyTags),
-    [SyntaxKind.JSDocParameterTag]: forEachChildOfJSDocParameterTag,
-    [SyntaxKind.JSDocPropertyTag]: forEachChildOfJSDocPropertyTag,
     [SyntaxKind.ForInStatement]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.awaitModifier) ||
         visitNode(cbNode, data.initializer) ||
@@ -1617,6 +1615,8 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.statements),
     [SyntaxKind.ObjectBindingPattern]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
     [SyntaxKind.ArrayBindingPattern]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
+    [SyntaxKind.JSDocParameterTag]: forEachChildOfJSDocParameterTag,
+    [SyntaxKind.JSDocPropertyTag]: forEachChildOfJSDocPropertyTag,
     [SyntaxKind.SourceFile]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.statements) ||
         visitNode(cbNode, data.endOfFileToken),
@@ -3027,28 +3027,6 @@ export function createJSDocTypeLiteral(jsdocPropertyTags?: readonly JSDocTag[], 
     }) as unknown as JSDocTypeLiteral;
 }
 
-export function createJSDocParameterTag(tagName: Identifier, name: EntityName, isBracketed?: boolean, typeExpression?: TypeNode, isNameFirst?: boolean, comment?: readonly JSDocComment[]): JSDocParameterTag {
-    return new NodeObject(SyntaxKind.JSDocParameterTag, {
-        tagName,
-        name,
-        isBracketed,
-        typeExpression,
-        isNameFirst,
-        comment: comment ? createNodeArray(comment) : undefined,
-    }) as unknown as JSDocParameterTag;
-}
-
-export function createJSDocPropertyTag(tagName: Identifier, name: EntityName, isBracketed?: boolean, typeExpression?: TypeNode, isNameFirst?: boolean, comment?: readonly JSDocComment[]): JSDocPropertyTag {
-    return new NodeObject(SyntaxKind.JSDocPropertyTag, {
-        tagName,
-        name,
-        isBracketed,
-        typeExpression,
-        isNameFirst,
-        comment: comment ? createNodeArray(comment) : undefined,
-    }) as unknown as JSDocPropertyTag;
-}
-
 export function createForInStatement(awaitModifier: AwaitKeyword | undefined, initializer: ForInitializer, expression: Expression, statement: Statement): ForInStatement {
     return new NodeObject(SyntaxKind.ForInStatement, {
         awaitModifier,
@@ -3091,6 +3069,28 @@ export function createArrayBindingPattern(elements: readonly BindingElement[]): 
     return new NodeObject(SyntaxKind.ArrayBindingPattern, {
         elements: createNodeArray(elements),
     }) as unknown as ArrayBindingPattern;
+}
+
+export function createJSDocParameterTag(tagName: Identifier, name: EntityName, isBracketed: boolean, typeExpression: TypeNode | undefined, isNameFirst: boolean, comment: readonly JSDocComment[] | undefined): JSDocParameterTag {
+    return new NodeObject(SyntaxKind.JSDocParameterTag, {
+        tagName,
+        name,
+        isBracketed,
+        typeExpression,
+        isNameFirst,
+        comment: comment ? createNodeArray(comment) : undefined,
+    }) as unknown as JSDocParameterTag;
+}
+
+export function createJSDocPropertyTag(tagName: Identifier, name: EntityName, isBracketed: boolean, typeExpression: TypeNode | undefined, isNameFirst: boolean, comment: readonly JSDocComment[] | undefined): JSDocPropertyTag {
+    return new NodeObject(SyntaxKind.JSDocPropertyTag, {
+        tagName,
+        name,
+        isBracketed,
+        typeExpression,
+        isNameFirst,
+        comment: comment ? createNodeArray(comment) : undefined,
+    }) as unknown as JSDocPropertyTag;
 }
 
 export function updateQualifiedName(node: QualifiedName, left: EntityName, right: Identifier): QualifiedName {
@@ -3745,14 +3745,6 @@ export function updateJSDocTypeLiteral(node: JSDocTypeLiteral, jsdocPropertyTags
     return node.jsdocPropertyTags !== jsdocPropertyTags ? createJSDocTypeLiteral(jsdocPropertyTags, node.isArrayType) : node;
 }
 
-export function updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier, name: EntityName, typeExpression?: TypeNode, comment?: readonly JSDocComment[]): JSDocParameterTag {
-    return node.tagName !== tagName || node.name !== name || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocParameterTag(tagName, name, node.isBracketed, typeExpression, node.isNameFirst, comment) : node;
-}
-
-export function updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier, name: EntityName, typeExpression?: TypeNode, comment?: readonly JSDocComment[]): JSDocPropertyTag {
-    return node.tagName !== tagName || node.name !== name || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocPropertyTag(tagName, name, node.isBracketed, typeExpression, node.isNameFirst, comment) : node;
-}
-
 export function updateForInStatement(node: ForInStatement, awaitModifier: AwaitKeyword | undefined, initializer: ForInitializer, expression: Expression, statement: Statement): ForInStatement {
     return node.awaitModifier !== awaitModifier || node.initializer !== initializer || node.expression !== expression || node.statement !== statement ? createForInStatement(awaitModifier, initializer, expression, statement) : node;
 }
@@ -3775,6 +3767,14 @@ export function updateObjectBindingPattern(node: ObjectBindingPattern, elements:
 
 export function updateArrayBindingPattern(node: ArrayBindingPattern, elements: readonly BindingElement[]): ArrayBindingPattern {
     return node.elements !== elements ? createArrayBindingPattern(elements) : node;
+}
+
+export function updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier, name: EntityName, typeExpression: TypeNode | undefined, comment: readonly JSDocComment[] | undefined): JSDocParameterTag {
+    return node.tagName !== tagName || node.name !== name || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocParameterTag(tagName, name, node.isBracketed, typeExpression, node.isNameFirst, comment) : node;
+}
+
+export function updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier, name: EntityName, typeExpression: TypeNode | undefined, comment: readonly JSDocComment[] | undefined): JSDocPropertyTag {
+    return node.tagName !== tagName || node.name !== name || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocPropertyTag(tagName, name, node.isBracketed, typeExpression, node.isNameFirst, comment) : node;
 }
 
 export function createSourceFile(statements: readonly Statement[], endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {

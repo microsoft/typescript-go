@@ -115,7 +115,7 @@ type completionDataJSDocTagName struct{}
 type completionDataJSDocTag struct{}
 
 type completionDataJSDocParameterName struct {
-	tag *ast.JSDocParameterTag
+	tag *ast.JSDocParameterOrPropertyTag
 }
 
 type importStatementCompletionInfo struct {
@@ -489,7 +489,7 @@ func (l *LanguageService) getCompletionData(
 					ast.IsJSDocParameterTag(tag) &&
 					(ast.NodeIsMissing(tag.Name()) || tag.Name().Pos() <= position && position <= tag.Name().End()) {
 					return &completionDataJSDocParameterName{
-						tag: tag.AsJSDocParameterTag(),
+						tag: tag.AsJSDocParameterOrPropertyTag(),
 					}, nil
 				}
 			}
@@ -5814,7 +5814,7 @@ func jsDocParamElementWorker(
 	return nil
 }
 
-func getJSDocParameterNameCompletions(tag *ast.JSDocParameterTag) []*lsproto.CompletionItem {
+func getJSDocParameterNameCompletions(tag *ast.JSDocParameterOrPropertyTag) []*lsproto.CompletionItem {
 	if !ast.IsIdentifier(tag.Name()) {
 		return nil
 	}

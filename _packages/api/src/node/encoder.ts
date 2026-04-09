@@ -1,7 +1,6 @@
 import type {
     FileReference,
-    JSDocPropertyLikeTagBase,
-    JSDocTagBase,
+    JSDocParameterOrPropertyTag,
     Node,
     NodeArray,
     SourceFile,
@@ -90,7 +89,7 @@ function getChildrenPropertyMask(node: Node): number {
 
     // Special handling for JSDocParameterTag and JSDocPropertyTag
     if (kind === SyntaxKind.JSDocParameterTag || kind === SyntaxKind.JSDocPropertyTag) {
-        const tag = node as JSDocPropertyLikeTagBase & JSDocTagBase;
+        const tag = node as JSDocParameterOrPropertyTag;
         if (tag.isNameFirst) {
             return (boolBit(tag.tagName) << 0) | (boolBit(tag.name) << 1) | (boolBit(tag.typeExpression) << 2) | (boolBit(tag.comment) << 3);
         }
@@ -198,7 +197,7 @@ function getNodeData(node: Node, strs: StringTable, extendedData: number[], stru
 function getChildPropertiesForNode(node: Node): readonly (string | undefined)[] | undefined {
     const kind = node.kind;
     if (kind === SyntaxKind.JSDocParameterTag || kind === SyntaxKind.JSDocPropertyTag) {
-        if ((node as JSDocPropertyLikeTagBase).isNameFirst) {
+        if ((node as JSDocParameterOrPropertyTag).isNameFirst) {
             return kind === SyntaxKind.JSDocParameterTag
                 ? ["tagName", "name", "typeExpression", "comment"]
                 : ["name", "typeExpression"];

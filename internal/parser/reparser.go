@@ -166,7 +166,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 				parameter.AsParameterDeclaration().Type = p.addDeepCloneReparse(thisTag.TypeExpression.Type())
 			}
 		} else if param.Kind == ast.KindJSDocParameterTag || param.Kind == ast.KindJSDocPropertyTag {
-			jsparam := param.AsJSDocPropertyLikeTag()
+			jsparam := param.AsJSDocParameterOrPropertyTag()
 			var dotDotDotToken *ast.Node
 			var paramType *ast.TypeNode
 
@@ -211,7 +211,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 		isArrayType := jstypeliteral.IsArrayType
 		properties := p.nodeSlicePool.NewSlice(0)
 		for _, prop := range jstypeliteral.JSDocPropertyTags {
-			jsprop := prop.AsJSDocPropertyLikeTag()
+			jsprop := prop.AsJSDocParameterOrPropertyTag()
 			name := prop.Name()
 			if name.Kind == ast.KindQualifiedName {
 				name = name.AsQualifiedName().Right
@@ -435,13 +435,13 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		}
 	case ast.KindJSDocParameterTag:
 		if fun := getFunctionLikeHost(parent); fun != nil && fun.FunctionLikeData().FullSignature == nil {
-			parameterTag := tag.AsJSDocParameterTag()
+			parameterTag := tag.AsJSDocParameterOrPropertyTag()
 			if param, ok := findMatchingParameter(fun, parameterTag, jsDoc); ok {
 				if param.Type == nil && parameterTag.TypeExpression != nil {
 					param.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(parameterTag.TypeExpression.Type())
 				}
 				if param.QuestionToken == nil && param.Initializer == nil {
-					if question := p.makeQuestionIfOptional(&parameterTag.JSDocPropertyLikeTagBase); question != nil {
+					if question := p.makeQuestionIfOptional(parameterTag); question != nil {
 						param.QuestionToken = question
 					}
 				}
@@ -565,7 +565,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 	}
 }
 
-func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocPropertyLikeTagBase) *ast.Node {
+func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterOrPropertyTag) *ast.Node {
 	var questionToken *ast.Node
 	if parameter.IsBracketed || parameter.TypeExpression != nil && parameter.TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
 		questionToken = p.factory.NewToken(ast.KindQuestionToken)
@@ -575,13 +575,13 @@ func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocPropertyLikeTagBase)
 	return questionToken
 }
 
-func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
+func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterOrPropertyTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
 	tagIndex := -1
 	paramCount := -1
 	for _, tag := range jsDoc.AsJSDoc().Tags.Nodes {
 		if tag.Kind == ast.KindJSDocParameterTag {
 			paramCount++
-			if tag.AsJSDocParameterTag() == parameterTag {
+			if tag.AsJSDocParameterOrPropertyTag() == parameterTag {
 				tagIndex = paramCount
 				break
 			}

@@ -1135,7 +1135,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 			nodes[i] = d.nodes[ci]
 		}
 		return d.factory.NewJSDocTypeLiteral(nodes, isArrayType), nil
-	case ast.KindJSDocParameterTag:
+	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
 		isBracketed := commonData&1 != 0
 		isNameFirst := commonData&2 != 0
 		it := newChildIter(childIndices)
@@ -1143,16 +1143,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		name := d.nodeAt(it.nextIf(mask, 1))
 		typeExpression := d.nodeAt(it.nextIf(mask, 2))
 		comment := d.nodeListAt(it.nextIf(mask, 3))
-		return d.factory.NewJSDocParameterTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment), nil
-	case ast.KindJSDocPropertyTag:
-		isBracketed := commonData&1 != 0
-		isNameFirst := commonData&2 != 0
-		it := newChildIter(childIndices)
-		tagName := d.nodeAt(it.nextIf(mask, 0))
-		name := d.nodeAt(it.nextIf(mask, 1))
-		typeExpression := d.nodeAt(it.nextIf(mask, 2))
-		comment := d.nodeListAt(it.nextIf(mask, 3))
-		return d.factory.NewJSDocPropertyTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment), nil
+		return d.factory.NewJSDocParameterOrPropertyTag(kind, tagName, name, isBracketed, typeExpression, isNameFirst, comment), nil
 	default:
 		return nil, fmt.Errorf("unhandled node kind %v with %d children", kind, len(childIndices))
 	}

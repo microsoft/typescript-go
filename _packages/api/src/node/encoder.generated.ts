@@ -12,8 +12,7 @@ import type {
     ImportEqualsDeclaration,
     ImportSpecifier,
     ImportTypeNode,
-    JSDocParameterTag,
-    JSDocPropertyTag,
+    JSDocParameterOrPropertyTag,
     JSDocTypeLiteral,
     JsxText,
     MetaProperty,
@@ -99,9 +98,8 @@ export function getNodeCommonData(node: Node): number {
         case SyntaxKind.JSDocTypeLiteral:
             return ((node as JSDocTypeLiteral).isArrayType ? 1 : 0) << 24;
         case SyntaxKind.JSDocParameterTag:
-            return ((node as JSDocParameterTag).isBracketed ? 1 : 0) << 24 | ((node as JSDocParameterTag).isNameFirst ? 1 : 0) << 25;
         case SyntaxKind.JSDocPropertyTag:
-            return ((node as JSDocPropertyTag).isBracketed ? 1 : 0) << 24 | ((node as JSDocPropertyTag).isNameFirst ? 1 : 0) << 25;
+            return ((node as JSDocParameterOrPropertyTag).isBracketed ? 1 : 0) << 24 | ((node as JSDocParameterOrPropertyTag).isNameFirst ? 1 : 0) << 25;
     }
     return 0;
 }
