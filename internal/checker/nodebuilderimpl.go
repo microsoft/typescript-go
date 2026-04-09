@@ -222,14 +222,10 @@ func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
 	return false
 }
 
-// canPossiblyExpandType reports whether we are actively expanding types (depth < maxExpansionDepth),
+// isActivelyExpanding reports whether the current depth is below maxExpansionDepth,
 // meaning type-node reuse should be skipped so typeToTypeNode can expand named types.
-// Returns false when expansion is disabled (maxExpansionDepth <= 0) or the type is cyclic.
-func (b *NodeBuilderImpl) canPossiblyExpandType(t *Type) bool {
-	if b.ctx.maxExpansionDepth <= 0 {
-		return false
-	}
-	return !b.isTypeOnStack(t) && b.ctx.depth < b.ctx.maxExpansionDepth
+func (b *NodeBuilderImpl) isActivelyExpanding() bool {
+	return b.ctx.maxExpansionDepth > 0 && b.ctx.depth < b.ctx.maxExpansionDepth
 }
 
 // checkTypeExpandability probes whether a type (or its type arguments) could be expanded,
@@ -1656,7 +1652,7 @@ func (b *NodeBuilderImpl) typeToTypeNodeHelperWithPossibleReusableTypeNode(t *Ty
 	if t == nil {
 		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
-	if !b.canPossiblyExpandType(t) && typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == t {
+	if !b.isActivelyExpanding() && typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == t {
 		reused := b.tryReuseExistingNodeHelper(typeNode)
 		if reused != nil {
 			b.checkTypeExpandability(t)
@@ -2099,7 +2095,7 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature, 
 		returnType = b.ch.getReturnTypeOfSignature(signature)
 	}
 	if !(suppressAny && IsTypeAny(returnType)) {
-		if !b.canPossiblyExpandType(returnType) && tryReuse && b.ctx.enclosingDeclaration != nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
+		if !b.isActivelyExpanding() && tryReuse && b.ctx.enclosingDeclaration != nil && signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
 			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
 			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
 			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
@@ -2206,7 +2202,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	}
 	var result *ast.Node
 	// !!! expandable hover support
-	if !b.canPossiblyExpandType(t) && tryReuse && b.ctx.enclosingDeclaration != nil && declaration != nil && (ast.IsAccessor(declaration) || (ast.HasInferredType(declaration) && !ast.NodeIsSynthesized(declaration) && (t.ObjectFlags()&ObjectFlagsRequiresWidening) == 0)) {
+	if !b.isActivelyExpanding() && tryReuse && b.ctx.enclosingDeclaration != nil && declaration != nil && (ast.IsAccessor(declaration) || (ast.HasInferredType(declaration) && !ast.NodeIsSynthesized(declaration) && (t.ObjectFlags()&ObjectFlagsRequiresWidening) == 0)) {
 		remove := b.addSymbolTypeToContext(symbol, t)
 		var pt *pseudochecker.PseudoType
 		if ast.IsAccessor(declaration) {
