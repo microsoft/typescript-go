@@ -539,9 +539,9 @@ func transformNamedEvaluationOfExportAssignment(emitContext *printer.EmitContext
 	expression := finishTransformNamedEvaluation(emitContext, node.Expression, assignedName, ignoreEmptyStringLiteral)
 	return factory.UpdateExportAssignment(
 		node,
-		nil /*modifiers*/,
+		nil, /*modifiers*/
 		node.IsExportEquals,
-		nil /*typeNode*/,
+		nil, /*typeNode*/
 		expression,
 	)
 }

@@ -1808,7 +1808,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 			node,
 			expression,
 			node.QuestionDotToken,
-			nil /*typeArguments*/,
+			nil, /*typeArguments*/
 			tx.Visitor().VisitNodes(node.Arguments),
 			node.Flags,
 		)
@@ -1968,7 +1968,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 		node,
 		expression,
 		node.QuestionDotToken,
-		nil /*typeArguments*/,
+		nil, /*typeArguments*/
 		argumentsList,
 		node.Flags,
 	)
@@ -1990,8 +1990,8 @@ func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.Tag
 		updated := tx.Factory().UpdateTaggedTemplateExpression(
 			node,
 			expression,
-			nil /*questionDotToken*/,
-			nil /*typeArguments*/,
+			nil, /*questionDotToken*/
+			nil, /*typeArguments*/
 			tx.Visitor().VisitNode(node.Template),
 			node.Flags,
 		)
