@@ -10,7 +10,7 @@
  *   - _packages/api/src/node/protocol.generated.ts
  */
 
-import { execSync } from "node:child_process";
+import { execaSync } from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1942,7 +1942,8 @@ function emitRemoteNodeClassClose(w: CodeWriter) {
 function writeAndFormat(filePath: string, content: string, formatter: string) {
     fs.writeFileSync(filePath, content);
     try {
-        execSync(`${formatter} ${filePath}`, { stdio: "inherit" });
+        const [cmd, ...args] = formatter.split(" ");
+        execaSync(cmd, [...args, filePath], { stdio: "inherit" });
     }
     catch {
         console.warn(`Warning: formatter failed for ${filePath}`);

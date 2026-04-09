@@ -8,7 +8,7 @@
  * Usage: node --experimental-strip-types _scripts/generate-ts-ast.ts
  */
 
-import { execSync } from "node:child_process";
+import { execaSync } from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1480,7 +1480,7 @@ function generateVisitor(): string {
 
 function writeAndFormat(filePath: string, content: string) {
     fs.writeFileSync(filePath, content);
-    execSync(`npx dprint fmt ${filePath}`, { stdio: "inherit" });
+    execaSync("npx", ["dprint", "fmt", filePath], { stdio: "inherit" });
     console.log(`Generated ${filePath}`);
 }
 
