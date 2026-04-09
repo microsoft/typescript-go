@@ -308,8 +308,6 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 func (b *Binder) getDeclarationName(node *ast.Node) string {
 	if ast.IsExportAssignment(node) {
 		return core.IfElse(node.AsExportAssignment().IsExportEquals, ast.InternalSymbolNameExportEquals, ast.InternalSymbolNameDefault)
-	} else if ast.IsJSExportAssignment(node) {
-		return ast.InternalSymbolNameExportEquals
 	}
 	name := ast.GetNameOfDeclaration(node)
 	if name != nil {
@@ -357,7 +355,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 		return ast.InternalSymbolNameIndex
 	case ast.KindExportDeclaration:
 		return ast.InternalSymbolNameExportStar
-	case ast.KindSourceFile:
+	case ast.KindSourceFile, ast.KindBinaryExpression:
 		return ast.InternalSymbolNameExportEquals
 	}
 	return ast.InternalSymbolNameMissing
@@ -629,6 +627,10 @@ func (b *Binder) bind(node *ast.Node) bool {
 		}
 	case ast.KindBinaryExpression:
 		switch ast.GetAssignmentDeclarationKind(node) {
+		case ast.JSDeclarationKindModuleExports:
+			b.bindModuleExportsAssignment(node)
+		case ast.JSDeclarationKindExportsProperty:
+			b.bindExportsOrObjectDefineProperty(node)
 		case ast.JSDeclarationKindProperty:
 			b.bindExpandoPropertyAssignment(node)
 		case ast.JSDeclarationKindThisProperty:
@@ -696,13 +698,17 @@ func (b *Binder) bind(node *ast.Node) bool {
 		case ast.JSDeclarationKindObjectDefinePropertyValue:
 			b.bindExpandoPropertyAssignment(node)
 		case ast.JSDeclarationKindObjectDefinePropertyExports:
-			b.bindObjectDefinePropertyExport(node)
+			b.bindExportsOrObjectDefineProperty(node)
 		}
 		if ast.IsInJSFile(node) {
 			b.bindCallExpression(node)
 		}
-	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
+	case ast.KindJSTypeAliasDeclaration:
+		if !ast.IsSourceFile(b.blockScopeContainer) {
+			b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
+		}
 	case ast.KindEnumDeclaration:
 		b.bindEnumDeclaration(node)
 	case ast.KindModuleDeclaration:
@@ -870,7 +876,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsValue, b.getDeclarationName(node))
 	} else {
 		flags := ast.SymbolFlagsProperty
-		if ast.ExportAssignmentIsAlias(node) {
+		if ast.ExpressionIsAlias(node.Expression()) {
 			flags = ast.SymbolFlagsAlias
 		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
@@ -1022,6 +1028,16 @@ func (b *Binder) addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbo
 	assignmentSymbol.Declarations = append(assignmentSymbol.Declarations, node)
 }
 
+func (b *Binder) bindModuleExportsAssignment(node *ast.Node) {
+	if b.setCommonJSModuleIndicator(node) {
+		b.trackNestedCJSExport(node)
+		container := b.file.AsNode()
+		flags := core.IfElse(ast.ExpressionIsAlias(node.AsBinaryExpression().Right), ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
+		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, 0)
+		SetValueDeclaration(symbol, node)
+	}
+}
+
 func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
 	b.expandoAssignments = append(b.expandoAssignments, ExpandoAssignmentInfo{
 		node:                node,
@@ -1083,10 +1099,11 @@ func getParentOfPropertyAssignment(node *ast.Node) *ast.Node {
 	panic("Unhandled case in getParentOfPropertyAssignment")
 }
 
-func (b *Binder) bindObjectDefinePropertyExport(node *ast.Node) {
+func (b *Binder) bindExportsOrObjectDefineProperty(node *ast.Node) {
 	if b.setCommonJSModuleIndicator(node) {
 		b.trackNestedCJSExport(node)
-		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
+		container := b.file.AsNode()
+		b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	}
 }
 
@@ -1598,6 +1615,15 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
+	}
+	if ast.IsSourceFile(node) && ast.IsInJSFile(node) {
+		// Binding of top-level JSTypeAliasDeclaration nodes is deferred to ensure CommonJS module
+		// indicators, if any, are processed first.
+		for _, statement := range node.Statements() {
+			if ast.IsJSTypeAliasDeclaration(statement) {
+				b.bindBlockScopedDeclaration(statement, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
+			}
+		}
 	}
 	if ast.IsSourceFile(node) && ast.IsExternalOrCommonJSModule(node.AsSourceFile()) || ast.IsAmbientModule(node) {
 		b.bindCommonJSTypeExports(node.Symbol())

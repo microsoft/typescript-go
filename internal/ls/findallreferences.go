@@ -178,15 +178,16 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 		return nil
 	}
 
-	if !ast.IsDeclaration(node.Parent) && node.Parent.Kind != ast.KindExportAssignment && node.Parent.Kind != ast.KindJSExportAssignment {
+	if !ast.IsDeclaration(node.Parent) && !ast.IsExportAssignment(node.Parent) && node.Parent.Kind != ast.KindJSExportAssignment {
 		// Special property assignment in javascript
 		if ast.IsInJSFile(node) {
 			// !!! jsdoc: check if branch still needed
-			binaryExpression := core.IfElse(node.Parent.Kind == ast.KindBinaryExpression,
-				node.Parent,
-				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
-					node.Parent.Parent,
-					nil))
+			var binaryExpression *ast.Node
+			if ast.IsBinaryExpression(node.Parent) {
+				binaryExpression = node.Parent
+			} else if ast.IsAccessExpression(node.Parent) && ast.IsBinaryExpression(node.Parent.Parent) && node.Parent.Parent.AsBinaryExpression().Left == node.Parent {
+				binaryExpression = node.Parent.Parent
+			}
 			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression) != ast.JSDeclarationKindNone {
 				return getContextNode(binaryExpression)
 			}

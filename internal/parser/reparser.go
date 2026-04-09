@@ -26,36 +26,6 @@ func (p *Parser) addDeepCloneReparse(node *ast.Node) *ast.Node {
 	return clone
 }
 
-func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
-	if !p.isJavaScript() || node.Kind != ast.KindExpressionStatement {
-		return
-	}
-	// Loop here to support chained assignments, e.g. exports.a = exports.b = exports.c = 42
-	expr := node.Expression()
-	for {
-		var export *ast.Node
-		switch ast.GetAssignmentDeclarationKind(expr) {
-		case ast.JSDeclarationKindModuleExports:
-			export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
-		case ast.JSDeclarationKindExportsProperty:
-			// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-			export = p.factory.NewCommonJSExport(
-				nil,
-				p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
-				nil, /*typeNode*/
-				p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
-		}
-		if export == nil {
-			break
-		}
-		p.reparseList = append(p.reparseList, export)
-		p.commonJSModuleIndicator = export
-		p.reparseTags(export, jsdoc)
-		p.finishReparsedNode(export, expr)
-		expr = expr.AsBinaryExpression().Right
-	}
-}
-
 // Hosted tags find a host and add their children to the correct location under the host.
 // Unhosted tags add synthetic nodes to the reparse list.
 func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {

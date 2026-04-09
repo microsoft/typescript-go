@@ -5576,7 +5576,9 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 				// so count should be either 1 (just type alias) or 2 (type alias + merged value)
 				continue
 			}
-			if exportedDeclarationsCount > 1 && !core.Every(symbol.Declarations, ast.IsCommonJSExport) {
+			if exportedDeclarationsCount > 1 && !core.Every(symbol.Declarations, func(node *ast.Node) bool {
+				return ast.GetAssignmentDeclarationKind(node) == ast.JSDeclarationKindExportsProperty
+			}) {
 				for _, declaration := range symbol.Declarations {
 					if isNotOverload(declaration) {
 						c.error(declaration, diagnostics.Cannot_redeclare_exported_variable_0, id)
@@ -12344,7 +12346,9 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 	if ast.IsAssignmentOperator(operator) {
 		// We ignore assignments of undefined to CommonJS exports when there are multiple assignment declarations
 		if ast.IsAccessExpression(left) {
-			if symbol := c.symbolNodeLinks.Get(left).resolvedSymbol; symbol != nil && symbol.ValueDeclaration != nil && ast.IsCommonJSExport(symbol.ValueDeclaration) && len(symbol.Declarations) > 1 && rightType.flags&TypeFlagsUndefined != 0 {
+			if symbol := c.symbolNodeLinks.Get(left).resolvedSymbol; symbol != nil && symbol.ValueDeclaration != nil &&
+				ast.GetAssignmentDeclarationKind(symbol.ValueDeclaration) == ast.JSDeclarationKindExportsProperty &&
+				len(symbol.Declarations) > 1 && rightType.flags&TypeFlagsUndefined != 0 {
 				return
 			}
 		}
@@ -17597,16 +17601,14 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 
 func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type {
 	if ast.IsBinaryExpression(node) {
+		switch ast.GetAssignmentDeclarationKind(node) {
+		case ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty:
+			return c.getRegularTypeOfLiteralType(c.checkExpressionCached(node.AsBinaryExpression().Right))
+		}
 		return c.checkExpressionForMutableLocation(node.AsBinaryExpression().Right, CheckModeNormal)
 	}
 	if ast.IsCallExpression(node) {
 		return c.getTypeFromPropertyDescriptor(node.Arguments()[2])
-	}
-	if ast.IsJSExportAssignment(node) {
-		return c.getRegularTypeOfLiteralType(c.checkExpressionCached(node.Expression()))
-	}
-	if ast.IsCommonJSExport(node) {
-		return c.getRegularTypeOfLiteralType(c.checkExpressionCached(node.Initializer()))
 	}
 	return c.neverType
 }
@@ -23988,8 +23990,11 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 					symbolFromModule = c.getSymbol(c.getExportsOfSymbol(mergedResolvedSymbol), current.Text(), meaning)
 					if symbolFromModule == nil {
 						// a CommonJS module might have typedefs exported alongside an export=
+						// !!!
 						immediateModuleSymbol := c.resolveExternalModuleSymbol(innerModuleSymbol, true /*dontResolveAlias*/)
-						if immediateModuleSymbol != nil && core.Some(immediateModuleSymbol.Declarations, func(d *ast.Node) bool { return d.Kind == ast.KindJSExportAssignment }) {
+						if immediateModuleSymbol != nil && core.Some(immediateModuleSymbol.Declarations, func(d *ast.Node) bool {
+							return ast.GetAssignmentDeclarationKind(d) == ast.JSDeclarationKindModuleExports
+						}) {
 							symbolFromModule = c.getSymbol(c.getExportsOfSymbol(immediateModuleSymbol.Parent), current.Text(), meaning)
 						}
 					}
@@ -30812,11 +30817,32 @@ func (c *Checker) getIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 	return signatures
 }
 
+func (c *Checker) getSpecialPropertyAssignmentSymbolFromEntityName(entityName *ast.Node) *ast.Symbol {
+	specialPropertyAssignmentKind := ast.GetAssignmentDeclarationKind(entityName.Parent.Parent)
+	switch specialPropertyAssignmentKind {
+	case ast.JSDeclarationKindProperty:
+		if ast.IsPropertyAccessExpression(entityName.Parent) && ast.GetLeftmostAccessExpression(entityName.Parent) == entityName {
+			return nil
+		}
+		fallthrough
+	case ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty, ast.JSDeclarationKindThisProperty:
+		return c.getSymbolOfNode(entityName.Parent.Parent)
+	}
+	return nil
+}
+
 func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast.Symbol {
 	if ast.IsDeclarationName(name) {
 		return c.getSymbolOfNode(name.Parent)
 	}
-
+	if ast.IsInJSFile(name) && ast.IsPropertyAccessExpression(name.Parent) && ast.IsBinaryExpression(name.Parent.Parent) && name.Parent == name.Parent.Parent.AsBinaryExpression().Left {
+		// Check if this is a special property assignment
+		if !ast.IsPrivateIdentifier(name) && !c.isThisPropertyAndThisTyped(name.Parent) {
+			if specialPropertyAssignmentSymbol := c.getSpecialPropertyAssignmentSymbolFromEntityName(name); specialPropertyAssignmentSymbol != nil {
+				return specialPropertyAssignmentSymbol
+			}
+		}
+	}
 	if (name.Parent.Kind == ast.KindExportAssignment || name.Parent.Kind == ast.KindJSExportAssignment) && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
 		success := c.resolveEntityName(

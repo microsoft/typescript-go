@@ -1881,9 +1881,8 @@ func IsEnumConst(node *Node) bool {
 	return GetCombinedModifierFlags(node)&ModifierFlagsConst != 0
 }
 
-func ExportAssignmentIsAlias(node *Node) bool {
-	e := node.Expression()
-	return IsEntityNameExpression(e) || IsClassExpression(e)
+func ExpressionIsAlias(node *Node) bool {
+	return IsEntityNameExpression(node) || IsClassExpression(node)
 }
 
 func IsInstanceOfExpression(node *Node) bool {
@@ -2648,9 +2647,11 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 	case KindImportClause:
 		return node.AsImportClause().Name() != nil
 	case KindExportAssignment, KindJSExportAssignment:
-		return ExportAssignmentIsAlias(node)
+		return ExpressionIsAlias(node.Expression())
 	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)
+	case KindBinaryExpression:
+		return GetAssignmentDeclarationKind(node) == JSDeclarationKindModuleExports && ExpressionIsAlias(node.AsBinaryExpression().Right)
 	}
 	return false
 }
