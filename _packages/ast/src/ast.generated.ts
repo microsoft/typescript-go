@@ -637,6 +637,7 @@ export interface MissingDeclaration extends StatementBase, DeclarationBase, Modi
 export interface FunctionDeclaration extends DeclarationBase, StatementBase, ModifiersBase, FunctionLikeWithBodyBase {
     readonly kind: SyntaxKind.FunctionDeclaration;
     readonly name?: Identifier;
+    readonly body?: FunctionBody;
 }
 export interface ClassDeclaration extends DeclarationBase, StatementBase, ClassLikeBase {
     readonly kind: SyntaxKind.ClassDeclaration;
@@ -737,21 +738,26 @@ export interface ConstructSignatureDeclaration extends NodeBase, DeclarationBase
 }
 export interface ConstructorDeclaration extends NodeBase, DeclarationBase, ModifiersBase, FunctionLikeWithBodyBase, ClassElementBase {
     readonly kind: SyntaxKind.Constructor;
+    readonly body?: FunctionBody;
 }
 export interface GetAccessorDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, TypeElementBase, ClassElementBase, ObjectLiteralElementBase, NodeBase {
     readonly kind: SyntaxKind.GetAccessor;
+    readonly body?: FunctionBody;
 }
 export interface SetAccessorDeclaration extends NamedMemberBase, FunctionLikeWithBodyBase, TypeElementBase, ClassElementBase, ObjectLiteralElementBase, NodeBase {
     readonly kind: SyntaxKind.SetAccessor;
+    readonly body?: FunctionBody;
 }
 export interface IndexSignatureDeclaration extends NodeBase, DeclarationBase, ModifiersBase, FunctionLikeBase, TypeElementBase, ClassElementBase {
     readonly kind: SyntaxKind.IndexSignature;
+    readonly type: TypeNode;
 }
 export interface MethodSignatureDeclaration extends NodeBase, NamedMemberBase, FunctionLikeBase, TypeElementBase {
     readonly kind: SyntaxKind.MethodSignature;
 }
 export interface MethodDeclaration extends NodeBase, NamedMemberBase, FunctionLikeWithBodyBase, ClassElementBase, ObjectLiteralElementBase {
     readonly kind: SyntaxKind.MethodDeclaration;
+    readonly body?: FunctionBody;
 }
 export interface PropertySignatureDeclaration extends NodeBase, NamedMemberBase, TypeElementBase {
     readonly kind: SyntaxKind.PropertySignature;
@@ -816,10 +822,12 @@ export interface YieldExpression extends ExpressionBase {
 export interface ArrowFunction extends ExpressionBase, DeclarationBase, ModifiersBase, FunctionLikeWithBodyBase {
     readonly kind: SyntaxKind.ArrowFunction;
     readonly equalsGreaterThanToken: EqualsGreaterThanToken;
+    readonly body: ConciseBody;
 }
 export interface FunctionExpression extends PrimaryExpressionBase, DeclarationBase, ModifiersBase, FunctionLikeWithBodyBase {
     readonly kind: SyntaxKind.FunctionExpression;
     readonly name?: Identifier;
+    readonly body: FunctionBody;
 }
 export interface AsExpression extends ExpressionBase {
     readonly kind: SyntaxKind.AsExpression;
@@ -1022,7 +1030,7 @@ export interface MappedTypeNode extends TypeNodeBase, DeclarationBase {
     readonly nameType?: TypeNode;
     readonly questionToken?: QuestionToken | PlusToken | MinusToken;
     readonly type?: TypeNode;
-    readonly members: NodeArray<TypeElement>;
+    readonly members?: NodeArray<TypeElement>;
 }
 export interface TypeLiteralNode extends TypeNodeBase, DeclarationBase {
     readonly kind: SyntaxKind.TypeLiteral;
@@ -1268,6 +1276,7 @@ export interface ModuleDeclaration extends DeclarationBase, StatementBase, Modif
     readonly kind: SyntaxKind.ModuleDeclaration;
     readonly keyword: SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword;
     readonly name: ModuleName;
+    readonly body?: ModuleBody;
 }
 export interface ImportEqualsDeclaration extends DeclarationBase, StatementBase, ModifiersBase {
     readonly kind: SyntaxKind.ImportEqualsDeclaration;

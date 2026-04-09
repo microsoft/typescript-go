@@ -2523,7 +2523,8 @@
                     },
                     {
                         "name": "Type",
-                        "inherited": true
+                        "inherited": true,
+                        "optional": false
                     }
                 ]
             },
@@ -2963,6 +2964,7 @@
                     {
                         "name": "Body",
                         "inherited": true,
+                        "optional": false,
                         "type": "ConciseBody",
                         "visit": "functionBody"
                     }
@@ -3013,6 +3015,7 @@
                     {
                         "name": "Body",
                         "inherited": true,
+                        "optional": false,
                         "type": "FunctionBody",
                         "visit": "functionBody"
                     },
@@ -3823,7 +3826,8 @@
                     {
                         "name": "Members",
                         "type": "TypeElement",
-                        "list": "NodeList"
+                        "list": "NodeList",
+                        "optional": true
                     }
                 ]
             },

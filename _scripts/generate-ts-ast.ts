@@ -48,7 +48,7 @@ function isNodeBaseProperty(member: MemberInfo): boolean {
 }
 
 function tsInterfaceMembers(node: NodeType): MemberInfo[] {
-    return tsMembers(node).filter(member => !isInheritedFromTsBase(member));
+    return tsMembers(node).filter(member => !isInheritedFromTsBase(member) || member.hasTypeScriptOverride());
 }
 
 // ────────────────────────────────────────────────────────────────────────────

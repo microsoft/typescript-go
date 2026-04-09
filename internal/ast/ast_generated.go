@@ -5914,10 +5914,10 @@ type MappedTypeNode struct {
 	LocalsContainerBase
 	ReadonlyToken *TokenNode // Optional
 	TypeParameter *TypeParameterDeclarationNode
-	NameType      *TypeNode  // Optional
-	QuestionToken *TokenNode // Optional
-	Type          *TypeNode  // Optional
-	Members       *TypeElementList
+	NameType      *TypeNode        // Optional
+	QuestionToken *TokenNode       // Optional
+	Type          *TypeNode        // Optional
+	Members       *TypeElementList // Optional
 }
 
 func (f *NodeFactory) NewMappedTypeNode(readonlyToken *TokenNode, typeParameter *TypeParameterDeclarationNode, nameType *TypeNode, questionToken *TokenNode, typeNode *TypeNode, members *TypeElementList) *Node {

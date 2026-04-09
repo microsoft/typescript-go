@@ -633,9 +633,7 @@ export class MemberInfo {
     }
 
     get optional(): boolean {
-        if (this.field?.optional) return true;
-        if (this.member?.optional) return true;
-        return this.inheritedField?.optional || false;
+        return this.field?.optional ?? this.member?.optional ?? this.inheritedField?.optional ?? false;
     }
 
     get inherited(): boolean {
@@ -701,6 +699,20 @@ export class MemberInfo {
     isChild(): boolean {
         if (!this.member || !this.node) return false;
         return this.type.baseKind() === "list" || this.type.baseKind() === "node";
+    }
+
+    /**
+     * True when this inherited member carries an explicit type or optionality
+     * override relative to its base field.  Such members need their own
+     * property declaration in a TS interface even though they are inherited.
+     */
+    hasTypeScriptOverride(): boolean {
+        if (!this.member?.inherited || !this.inheritedField) return false;
+        // Explicit type override on the member narrows the base type.
+        if (this.member.type && this.type.formatTypeScript() !== this.inheritedField.type.formatTypeScript()) return true;
+        // Explicit optionality override (e.g. base is required but this member is optional, or vice-versa).
+        if (this.member.optional !== undefined && this.optional !== this.inheritedField.optional) return true;
+        return false;
     }
 
     /** Go parameter name: uncapitalized, with Go keyword avoidance. */
