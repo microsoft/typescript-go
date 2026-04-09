@@ -54,6 +54,7 @@ func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
 	if b.ctx.canIncreaseExpansionDepth || node == nil {
 		return
 	}
+	// Check these explicitly so we look into type arguments wehther or not they are in the tree or not.
 	if ast.IsTypeReferenceNode(node) || ast.IsExpressionWithTypeArguments(node) || ast.IsTypePredicateNode(node) || ast.IsImportTypeNode(node) {
 		t := b.getTypeFromTypeNode(node, false)
 		if t != nil {
