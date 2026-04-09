@@ -149,12 +149,12 @@ func (w *Watcher) doBuild() {
 	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
+	var wildcardDirs map[string]bool
 	if w.config.ConfigFile != nil {
-		wildcardDirs := w.config.WildcardDirectories()
+		wildcardDirs = w.config.WildcardDirectories()
 		for dir := range wildcardDirs {
 			tfs.SeenFiles.Add(dir)
 		}
-		w.fileWatcher.SetWildcardDirectories(wildcardDirs)
 		if len(wildcardDirs) > 0 {
 			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 		}
@@ -170,7 +170,13 @@ func (w *Watcher) doBuild() {
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
-	w.fileWatcher.UpdateWatchedFiles(tfs)
+
+	var watchPaths []string
+	tfs.SeenFiles.Range(func(fn string) bool {
+		watchPaths = append(watchPaths, fn)
+		return true
+	})
+	w.fileWatcher.UpdateWatchState(watchPaths, wildcardDirs)
 	w.fileWatcher.SetPollInterval(w.config.ParsedConfig.WatchOptions.WatchInterval())
 	w.configModified = false
 

@@ -67,10 +67,3 @@ func (fs *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 func (fs *FS) Realpath(path string) string { return fs.Inner.Realpath(path) }
-
-// WatchEntry stores the observed state of a single path at snapshot time.
-type WatchEntry struct {
-	ModTime    time.Time
-	Exists     bool
-	ChildCount int // -1 if not tracked
-}

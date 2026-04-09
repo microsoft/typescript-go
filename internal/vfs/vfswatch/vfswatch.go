@@ -7,17 +7,22 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/trackingvfs"
 )
 
 const DebounceWait = 250 * time.Millisecond
+
+type WatchEntry struct {
+	ModTime    time.Time
+	Exists     bool
+	ChildCount int // -1 if not tracked
+}
 
 type FileWatcher struct {
 	fs                  vfs.FS
 	pollInterval        time.Duration
 	testing             bool
 	callback            func()
-	watchState          map[string]trackingvfs.WatchEntry
+	watchState          map[string]WatchEntry
 	wildcardDirectories map[string]bool
 	mu                  sync.Mutex
 }
@@ -31,19 +36,13 @@ func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callbac
 	}
 }
 
-func (fw *FileWatcher) SetWildcardDirectories(dirs map[string]bool) {
-	fw.mu.Lock()
-	defer fw.mu.Unlock()
-	fw.wildcardDirectories = dirs
-}
-
 func (fw *FileWatcher) SetPollInterval(d time.Duration) {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
 	fw.pollInterval = d
 }
 
-func (fw *FileWatcher) WatchStateEntry(path string) (trackingvfs.WatchEntry, bool) {
+func (fw *FileWatcher) WatchStateEntry(path string) (WatchEntry, bool) {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
 	e, ok := fw.watchState[path]
@@ -56,19 +55,19 @@ func (fw *FileWatcher) WatchStateIsEmpty() bool {
 	return fw.watchState == nil
 }
 
-func (fw *FileWatcher) UpdateWatchedFiles(tfs *trackingvfs.FS) {
+func (fw *FileWatcher) UpdateWatchState(paths []string, wildcardDirs map[string]bool) {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
-	fw.watchState = make(map[string]trackingvfs.WatchEntry)
-	tfs.SeenFiles.Range(func(fn string) bool {
+	fw.watchState = make(map[string]WatchEntry, len(paths))
+	for _, fn := range paths {
 		if s := fw.fs.Stat(fn); s != nil {
-			fw.watchState[fn] = trackingvfs.WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
+			fw.watchState[fn] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
 		} else {
-			fw.watchState[fn] = trackingvfs.WatchEntry{Exists: false, ChildCount: -1}
+			fw.watchState[fn] = WatchEntry{Exists: false, ChildCount: -1}
 		}
-		return true
-	})
-	for dir, recursive := range fw.wildcardDirectories {
+	}
+	fw.wildcardDirectories = wildcardDirs
+	for dir, recursive := range wildcardDirs {
 		if !recursive {
 			continue
 		}
@@ -83,7 +82,7 @@ func (fw *FileWatcher) UpdateWatchedFiles(tfs *trackingvfs.FS) {
 				fw.watchState[path] = existing
 			} else {
 				if s := fw.fs.Stat(path); s != nil {
-					fw.watchState[path] = trackingvfs.WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
+					fw.watchState[path] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
 				}
 			}
 			return nil
@@ -95,29 +94,33 @@ func (fw *FileWatcher) WaitForSettled(now func() time.Time) {
 	if fw.testing {
 		return
 	}
+	fw.mu.Lock()
+	wildcardDirs := fw.wildcardDirectories
+	pollInterval := fw.pollInterval
+	fw.mu.Unlock()
 	current := fw.currentState()
 	settledAt := now()
-	tick := min(fw.pollInterval, DebounceWait)
+	tick := min(pollInterval, DebounceWait)
 	for now().Sub(settledAt) < DebounceWait {
 		time.Sleep(tick)
-		if fw.HasChanges(current) {
+		if fw.hasChanges(current, wildcardDirs) {
 			current = fw.currentState()
 			settledAt = now()
 		}
 	}
 }
 
-func (fw *FileWatcher) currentState() map[string]trackingvfs.WatchEntry {
+func (fw *FileWatcher) currentState() map[string]WatchEntry {
 	fw.mu.Lock()
 	watchState := fw.watchState
 	wildcardDirs := fw.wildcardDirectories
 	fw.mu.Unlock()
-	state := make(map[string]trackingvfs.WatchEntry, len(watchState))
+	state := make(map[string]WatchEntry, len(watchState))
 	for path := range watchState {
 		if s := fw.fs.Stat(path); s != nil {
-			state[path] = trackingvfs.WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
+			state[path] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
 		} else {
-			state[path] = trackingvfs.WatchEntry{Exists: false, ChildCount: -1}
+			state[path] = WatchEntry{Exists: false, ChildCount: -1}
 		}
 	}
 	for dir, recursive := range wildcardDirs {
@@ -135,7 +138,7 @@ func (fw *FileWatcher) currentState() map[string]trackingvfs.WatchEntry {
 				state[path] = existing
 			} else {
 				if s := fw.fs.Stat(path); s != nil {
-					state[path] = trackingvfs.WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
+					state[path] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
 				}
 			}
 			return nil
@@ -144,10 +147,7 @@ func (fw *FileWatcher) currentState() map[string]trackingvfs.WatchEntry {
 	return state
 }
 
-func (fw *FileWatcher) HasChanges(baseline map[string]trackingvfs.WatchEntry) bool {
-	fw.mu.Lock()
-	wildcardDirs := fw.wildcardDirectories
-	fw.mu.Unlock()
+func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs map[string]bool) bool {
 	for path, old := range baseline {
 		s := fw.fs.Stat(path)
 		if !old.Exists {
@@ -193,8 +193,9 @@ func (fw *FileWatcher) HasChanges(baseline map[string]trackingvfs.WatchEntry) bo
 func (fw *FileWatcher) HasChangesFromWatchState() bool {
 	fw.mu.Lock()
 	ws := fw.watchState
+	wildcardDirs := fw.wildcardDirectories
 	fw.mu.Unlock()
-	return fw.HasChanges(ws)
+	return fw.hasChanges(ws, wildcardDirs)
 }
 
 func (fw *FileWatcher) Run(now func() time.Time) {
@@ -202,9 +203,10 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 		fw.mu.Lock()
 		interval := fw.pollInterval
 		ws := fw.watchState
+		wildcardDirs := fw.wildcardDirectories
 		fw.mu.Unlock()
 		time.Sleep(interval)
-		if ws == nil || fw.HasChanges(ws) {
+		if ws == nil || fw.hasChanges(ws, wildcardDirs) {
 			fw.WaitForSettled(now)
 			fw.callback()
 		}
