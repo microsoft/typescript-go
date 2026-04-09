@@ -265,11 +265,10 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 			statements := make([]*ast.Statement, 0, len(node.Statement.Statements())+1)
 			statements = append(statements, usingVarStatement)
 			statements = append(statements, node.Statement.Statements()...)
-			blk := node.Statement.AsBlock()
 			statement = tx.Factory().UpdateBlock(
-				blk,
+				node.Statement.AsBlock(),
 				tx.Factory().NewNodeList(statements),
-				blk.MultiLine,
+				node.Statement.AsBlock().MultiLine,
 			)
 		} else {
 			statement = tx.Factory().NewBlock(

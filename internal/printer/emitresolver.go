@@ -26,51 +26,51 @@ type SymbolAccessibilityResult struct {
 }
 
 /**
- * Indicates how to serialize the name for a TypeReference when emitting decorator metadata
+ * Indicates how to serialize the name for a TypeReferenceNode when emitting decorator metadata
  *
  * @internal
  */
 type TypeReferenceSerializationKind int32
 
 const (
-	// The TypeReference could not be resolved.
+	// The TypeReferenceNode could not be resolved.
 	// The type name should be emitted using a safe fallback.
 	TypeReferenceSerializationKindUnknown = iota
 
-	// The TypeReference resolves to a type with a constructor
+	// The TypeReferenceNode resolves to a type with a constructor
 	// function that can be reached at runtime (e.g. a `class`
 	// declaration or a `var` declaration for the static side
 	// of a type, such as the global `Promise` type in lib.d.ts).
 	TypeReferenceSerializationKindTypeWithConstructSignatureAndValue
 
-	// The TypeReference resolves to a Void-like, Nullable, or Never type.
+	// The TypeReferenceNode resolves to a Void-like, Nullable, or Never type.
 	TypeReferenceSerializationKindVoidNullableOrNeverType
 
-	// The TypeReference resolves to a Number-like type.
+	// The TypeReferenceNode resolves to a Number-like type.
 	TypeReferenceSerializationKindNumberLikeType
 
-	// The TypeReference resolves to a BigInt-like type.
+	// The TypeReferenceNode resolves to a BigInt-like type.
 	TypeReferenceSerializationKindBigIntLikeType
 
-	// The TypeReference resolves to a String-like type.
+	// The TypeReferenceNode resolves to a String-like type.
 	TypeReferenceSerializationKindStringLikeType
 
-	// The TypeReference resolves to a Boolean-like type.
+	// The TypeReferenceNode resolves to a Boolean-like type.
 	TypeReferenceSerializationKindBooleanType
 
-	// The TypeReference resolves to an Array-like type.
+	// The TypeReferenceNode resolves to an Array-like type.
 	TypeReferenceSerializationKindArrayLikeType
 
-	// The TypeReference resolves to the ESSymbol type.
+	// The TypeReferenceNode resolves to the ESSymbol type.
 	TypeReferenceSerializationKindESSymbolType
 
-	// The TypeReference resolved to the global Promise constructor symbol.
+	// The TypeReferenceNode resolved to the global Promise constructor symbol.
 	TypeReferenceSerializationKindPromise
 
-	// The TypeReference resolves to a Function type or a type with call signatures.
+	// The TypeReferenceNode resolves to a Function type or a type with call signatures.
 	TypeReferenceSerializationKindTypeWithCallSignature
 
-	// The TypeReference resolves to any other type.
+	// The TypeReferenceNode resolves to any other type.
 	TypeReferenceSerializationKindObjectType
 )
 

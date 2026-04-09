@@ -134,7 +134,7 @@ type Printer struct {
 	declarationListContainerEnd       int
 	detachedCommentsInfo              core.Stack[detachedCommentsInfo]
 	commentsDisabled                  bool
-	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
+	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalTypeNode or InferTypeNode
 	nameGenerator                     NameGenerator
 	makeFileLevelOptimisticUniqueName func(string) string
 	commentStatePool                  core.Pool[commentState]
@@ -1882,7 +1882,7 @@ func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
 	p.exitNode(node.AsNode(), state)
 }
 
-// Emits the return type of a FunctionType or ConstructorType, including the arrow (`=>`)
+// Emits the return type of a FunctionTypeNode or ConstructorTypeNode, including the arrow (`=>`)
 func (p *Printer) emitReturnType(node *ast.TypeNode) {
 	if node == nil {
 		return
@@ -1890,11 +1890,11 @@ func (p *Printer) emitReturnType(node *ast.TypeNode) {
 	p.writePunctuation("=>")
 	p.writeSpace()
 	if p.inExtends && node.Kind == ast.KindInferType && node.AsInferTypeNode().TypeParameter.AsTypeParameterDeclaration().Constraint != nil {
-		// if the parent FunctionType or ConstructorType is in the `extends` clause of a ConditionalType,
+		// if the parent FunctionTypeNode or ConstructorTypeNode is in the `extends` clause of a ConditionalTypeNode,
 		// we must parenthesize `infer ... extends ...` so as not to result in an ambiguous parse.
 		//
-		// `T extends () => infer U extends V ? W : X` would parse the `? W : X` as part of a ConditionalType in the
-		// return type of the FunctionType, thus we must emit as `T extends () => (infer U extends V) ? W : X`
+		// `T extends () => infer U extends V ? W : X` would parse the `? W : X` as part of a ConditionalTypeNode in the
+		// return type of the FunctionTypeNode, thus we must emit as `T extends () => (infer U extends V) ? W : X`
 		p.emitTypeNodePreservingExtends(node, ast.TypePrecedenceHighest)
 	} else {
 		p.emitTypeNodePreservingExtends(node, ast.TypePrecedenceLowest)

@@ -47,8 +47,8 @@ const InternalSymbolNamePrefix = "\xFE" // Invalid UTF8 sequence, will never occ
 
 const (
 	InternalSymbolNameCall                    = InternalSymbolNamePrefix + "call"                    // Call signatures
-	InternalSymbolNameConstructor             = InternalSymbolNamePrefix + "constructor"             // ConstructorDeclaration implementations
-	InternalSymbolNameNew                     = InternalSymbolNamePrefix + "new"                     // ConstructorDeclaration signatures
+	InternalSymbolNameConstructor             = InternalSymbolNamePrefix + "constructor"             // Constructor implementations
+	InternalSymbolNameNew                     = InternalSymbolNamePrefix + "new"                     // Constructor signatures
 	InternalSymbolNameIndex                   = InternalSymbolNamePrefix + "index"                   // Index signatures
 	InternalSymbolNameExportStar              = InternalSymbolNamePrefix + "export"                  // Module export * declarations
 	InternalSymbolNameGlobal                  = InternalSymbolNamePrefix + "global"                  // Global self-reference

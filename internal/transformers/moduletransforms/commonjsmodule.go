@@ -980,14 +980,13 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 		commitPendingVariables := func() {
 			if len(variables) > 0 {
 				variableList := tx.Factory().NewNodeList(variables)
-				vdl := node.DeclarationList.AsVariableDeclarationList()
 				statement := tx.Factory().UpdateVariableStatement(
 					node,
 					modifiers,
 					tx.Factory().UpdateVariableDeclarationList(
-						vdl,
+						node.DeclarationList.AsVariableDeclarationList(),
 						variableList,
-						vdl.Flags,
+						node.DeclarationList.Flags,
 					),
 				)
 				if len(statements) > 0 {
@@ -1809,7 +1808,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 			node,
 			expression,
 			node.QuestionDotToken,
-			node.TypeArguments,
+			nil /*typeArguments*/,
 			tx.Visitor().VisitNodes(node.Arguments),
 			node.Flags,
 		)
@@ -1969,7 +1968,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 		node,
 		expression,
 		node.QuestionDotToken,
-		node.TypeArguments,
+		nil /*typeArguments*/,
 		argumentsList,
 		node.Flags,
 	)
@@ -1991,8 +1990,8 @@ func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.Tag
 		updated := tx.Factory().UpdateTaggedTemplateExpression(
 			node,
 			expression,
-			node.QuestionDotToken,
-			node.TypeArguments,
+			nil /*questionDotToken*/,
+			nil /*typeArguments*/,
 			tx.Visitor().VisitNode(node.Template),
 			node.Flags,
 		)

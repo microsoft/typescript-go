@@ -381,7 +381,7 @@ func transformNamedEvaluationOfVariableDeclaration(emitContext *printer.EmitCont
 	)
 }
 
-func transformNamedEvaluationOfParameterDeclaration(emitContext *printer.EmitContext, node *ast.ParameterDeclaration /*NamedEvaluation & Parameter*/, ignoreEmptyStringLiteral bool, assignedNameText string) *ast.Expression {
+func transformNamedEvaluationOfParameterDeclaration(emitContext *printer.EmitContext, node *ast.ParameterDeclaration /*NamedEvaluation & ParameterDeclaration*/, ignoreEmptyStringLiteral bool, assignedNameText string) *ast.Expression {
 	// 8.6.3 RS: IteratorBindingInitialization
 	//   SingleNameBinding : BindingIdentifier Initializer?
 	//     ...
@@ -537,12 +537,11 @@ func transformNamedEvaluationOfExportAssignment(emitContext *printer.EmitContext
 		assignedName = factory.NewStringLiteral("default", ast.TokenFlagsNone)
 	}
 	expression := finishTransformNamedEvaluation(emitContext, node.Expression, assignedName, ignoreEmptyStringLiteral)
-	ea := node
 	return factory.UpdateExportAssignment(
-		ea,
-		ea.Modifiers(),
-		ea.IsExportEquals,
-		ea.Type,
+		node,
+		nil /*modifiers*/,
+		node.IsExportEquals,
+		nil /*typeNode*/,
 		expression,
 	)
 }

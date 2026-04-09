@@ -657,10 +657,9 @@ func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageCl
 	if len(retainedClauses) == len(clause.Types.Nodes) {
 		return tx.Visitor().VisitEachChild(clause.AsNode())
 	}
-	hc := clause.AsHeritageClause()
 	return tx.Factory().UpdateHeritageClause(
-		hc,
-		hc.Token,
+		clause,
+		clause.Token,
 		tx.Visitor().VisitNodes(tx.Factory().NewNodeList(retainedClauses)),
 	)
 }
@@ -1528,10 +1527,9 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 			mods,
 			tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst),
 		)
-		hc := extendsClause.Parent.AsHeritageClause()
 		newHeritageClause := tx.Factory().UpdateHeritageClause(
-			hc,
-			hc.Token,
+			extendsClause.Parent.AsHeritageClause(),
+			extendsClause.Parent.AsHeritageClause().Token,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().UpdateExpressionWithTypeArguments(
 					extendsClause.AsExpressionWithTypeArguments(),
@@ -1619,8 +1617,7 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		tx.EmitContext().SetCommentRange(declList, input.DeclarationList.Loc)
 		declList.Loc = input.DeclarationList.Loc
 	} else {
-		vdl := input.DeclarationList.AsVariableDeclarationList()
-		declList = tx.Factory().UpdateVariableDeclarationList(vdl, nodes, vdl.Flags)
+		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodes, input.DeclarationList.Flags)
 	}
 	return tx.Factory().UpdateVariableStatement(input, modifiers, declList)
 }

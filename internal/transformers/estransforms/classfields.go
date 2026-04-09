@@ -451,7 +451,7 @@ func (tx *classFieldsTransformer) visitAccessorFieldResult(node *ast.Node) *ast.
 	case ast.KindGetAccessor, ast.KindSetAccessor:
 		return tx.visitClassElement(node)
 	default:
-		debug.FailBadSyntaxKind(node, "Expected node to either be a PropertyDeclaration, GetAccessor, or SetAccessor")
+		debug.FailBadSyntaxKind(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration")
 		return nil
 	}
 }
@@ -1194,11 +1194,9 @@ func (tx *classFieldsTransformer) visitPreOrPostfixUnaryExpression(node *ast.Nod
 			if data.facts&classFactsClassWasDecorated != 0 {
 				visitedExpr := tx.visitInvalidSuperProperty(operandSkipped)
 				if ast.IsPrefixUnaryExpression(node) {
-					pue := node.AsPrefixUnaryExpression()
-					return tx.Factory().UpdatePrefixUnaryExpression(pue, pue.Operator, visitedExpr)
+					return tx.Factory().UpdatePrefixUnaryExpression(node.AsPrefixUnaryExpression(), node.AsPrefixUnaryExpression().Operator, visitedExpr)
 				}
-				poue := node.AsPostfixUnaryExpression()
-				return tx.Factory().UpdatePostfixUnaryExpression(poue, visitedExpr, poue.Operator)
+				return tx.Factory().UpdatePostfixUnaryExpression(node.AsPostfixUnaryExpression(), visitedExpr, node.AsPostfixUnaryExpression().Operator)
 			}
 			if data.classConstructor != nil && data.superClassReference != nil {
 				var setterName *ast.Expression
@@ -1352,8 +1350,8 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 		return tx.Factory().UpdateTaggedTemplateExpression(
 			node,
 			bindExpr,
-			node.QuestionDotToken,
-			node.TypeArguments,
+			nil, /*questionDotToken*/
+			nil, /*typeArguments*/
 			tx.Visitor().VisitNode(node.Template),
 			node.Flags,
 		)
@@ -1375,8 +1373,8 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 		return tx.Factory().UpdateTaggedTemplateExpression(
 			node,
 			invocation,
-			node.QuestionDotToken,
-			node.TypeArguments,
+			nil, /*questionDotToken*/
+			nil, /*typeArguments*/
 			tx.Visitor().VisitNode(node.Template),
 			node.Flags,
 		)
@@ -2849,22 +2847,20 @@ func (tx *classFieldsTransformer) addInstanceMethodStatements(statements []*ast.
 
 func (tx *classFieldsTransformer) visitInvalidSuperProperty(node *ast.Node) *ast.Node {
 	if ast.IsPropertyAccessExpression(node) {
-		pae := node.AsPropertyAccessExpression()
 		return tx.Factory().UpdatePropertyAccessExpression(
-			pae,
+			node.AsPropertyAccessExpression(),
 			tx.Factory().NewVoidZeroExpression(),
-			pae.QuestionDotToken,
-			pae.Name(),
-			pae.Flags,
+			nil,
+			node.Name(),
+			node.Flags,
 		)
 	}
-	eae := node.AsElementAccessExpression()
 	return tx.Factory().UpdateElementAccessExpression(
-		eae,
+		node.AsElementAccessExpression(),
 		tx.Factory().NewVoidZeroExpression(),
-		eae.QuestionDotToken,
-		tx.Visitor().VisitNode(eae.ArgumentExpression),
-		eae.Flags,
+		nil,
+		tx.Visitor().VisitNode(node.AsElementAccessExpression().ArgumentExpression),
+		node.Flags,
 	)
 }
 
@@ -3339,11 +3335,10 @@ func (tx *classFieldsTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 		//
 		// Transformation:
 		// [ { set value(x) { this.#myProp = x; } }.value ] = [ "hello" ];
-		ale := node.AsArrayLiteralExpression()
 		return tx.Factory().UpdateArrayLiteralExpression(
-			ale,
-			tx.arrayAssignmentElementVisitor.VisitNodes(ale.Elements),
-			ale.MultiLine,
+			node.AsArrayLiteralExpression(),
+			tx.arrayAssignmentElementVisitor.VisitNodes(node.AsArrayLiteralExpression().Elements),
+			node.AsArrayLiteralExpression().MultiLine,
 		)
 	}
 	// Transforms private names in destructuring assignment object bindings.
@@ -3354,11 +3349,10 @@ func (tx *classFieldsTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 	//
 	// Transformation:
 	// ({ stringProperty: { set value(x) { this.#myProp = x; } }.value }) = { stringProperty: "hello" };
-	ole := node.AsObjectLiteralExpression()
 	return tx.Factory().UpdateObjectLiteralExpression(
-		ole,
-		tx.objectAssignmentElementVisitor.VisitNodes(ole.Properties),
-		ole.MultiLine,
+		node.AsObjectLiteralExpression(),
+		tx.objectAssignmentElementVisitor.VisitNodes(node.AsObjectLiteralExpression().Properties),
+		node.AsObjectLiteralExpression().MultiLine,
 	)
 }
 

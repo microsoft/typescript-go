@@ -784,11 +784,10 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	hasLexicalThis := tx.inHasLexicalThisContext()
 
 	asyncBody := tx.transformAsyncFunctionBodyWorker(node.Body())
-	block := asyncBody.AsBlock()
 	asyncBody = tx.Factory().UpdateBlock(
-		block,
-		tx.EmitContext().EndAndMergeVariableEnvironmentList(block.StatementList()),
-		block.MultiLine,
+		asyncBody.AsBlock(),
+		tx.EmitContext().EndAndMergeVariableEnvironmentList(asyncBody.StatementList()),
+		asyncBody.AsBlock().MultiLine,
 	)
 
 	// Substitute super property accesses with _super/_superIndex helpers
@@ -848,12 +847,11 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		)
 
 		if captureLexicalArguments && tx.lexicalArguments.used {
-			blk := tx.convertToFunctionBlock(result)
-			blkNode := blk.AsBlock()
+			block := tx.convertToFunctionBlock(result)
 			result = tx.Factory().UpdateBlock(
-				blkNode,
-				tx.EmitContext().MergeEnvironmentList(blkNode.StatementList(), []*ast.Node{tx.createCaptureArgumentsStatement()}),
-				blkNode.MultiLine,
+				block.AsBlock(),
+				tx.EmitContext().MergeEnvironmentList(block.StatementList(), []*ast.Node{tx.createCaptureArgumentsStatement()}),
+				block.AsBlock().MultiLine,
 			)
 		}
 	}
@@ -880,11 +878,10 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *ast.Node {
 	if ast.IsBlock(body) {
-		blk := body.AsBlock()
 		return tx.Factory().UpdateBlock(
-			blk,
-			tx.asyncBodyVisitor.VisitNodes(blk.StatementList()),
-			blk.MultiLine,
+			body.AsBlock(),
+			tx.asyncBodyVisitor.VisitNodes(body.StatementList()),
+			body.AsBlock().MultiLine,
 		)
 	}
 	// Convert expression body to block body with return statement

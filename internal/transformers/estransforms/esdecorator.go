@@ -1743,7 +1743,7 @@ func (tx *esDecoratorTransformer) visitTaggedTemplateExpression(node *ast.Node) 
 		tx.EmitContext().SetOriginal(boundTag, node)
 		boundTag.Loc = node.Loc
 		template := tx.Visitor().VisitNode(tte.Template)
-		return tx.Factory().UpdateTaggedTemplateExpression(tte, boundTag, tte.QuestionDotToken, tte.TypeArguments, template, tte.Flags)
+		return tx.Factory().UpdateTaggedTemplateExpression(tte, boundTag, nil, nil, template, tte.Flags)
 	}
 	return tx.Visitor().VisitEachChild(node)
 }

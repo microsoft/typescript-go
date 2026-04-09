@@ -12,7 +12,7 @@ const (
 	ModifierFlagsOverride  ModifierFlags = 1 << 4 // Override method
 	// Syntactic-only modifiers
 	ModifierFlagsExport    ModifierFlags = 1 << 5  // Declarations
-	ModifierFlagsAbstract  ModifierFlags = 1 << 6  // Class/Method/ConstructSignatureDeclaration
+	ModifierFlagsAbstract  ModifierFlags = 1 << 6  // Class/Method/ConstructSignature
 	ModifierFlagsAmbient   ModifierFlags = 1 << 7  // Declarations (declare keyword)
 	ModifierFlagsStatic    ModifierFlags = 1 << 8  // Property/Method
 	ModifierFlagsAccessor  ModifierFlags = 1 << 9  // Property

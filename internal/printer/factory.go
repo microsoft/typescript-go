@@ -424,8 +424,7 @@ func (f *NodeFactory) updateOuterExpression(outerExpression *ast.Expression /*Ou
 	case ast.KindSatisfiesExpression:
 		return f.UpdateSatisfiesExpression(outerExpression.AsSatisfiesExpression(), expression, outerExpression.Type())
 	case ast.KindNonNullExpression:
-		nne := outerExpression.AsNonNullExpression()
-		return f.UpdateNonNullExpression(nne, expression, nne.Flags)
+		return f.UpdateNonNullExpression(outerExpression.AsNonNullExpression(), expression, outerExpression.Flags)
 	case ast.KindExpressionWithTypeArguments:
 		return f.UpdateExpressionWithTypeArguments(outerExpression.AsExpressionWithTypeArguments(), expression, outerExpression.TypeArgumentList())
 	case ast.KindPartiallyEmittedExpression:

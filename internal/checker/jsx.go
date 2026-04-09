@@ -1177,7 +1177,7 @@ func (c *Checker) createSignatureForJSXIntrinsic(node *ast.Node, result *Type) *
 		}
 	}
 	// returnNode := typeSymbol && c.nodeBuilder.symbolToEntityName(typeSymbol, ast.SymbolFlagsType, node)
-	// declaration := factory.createFunctionTypeNode(nil, []Parameter{factory.createParameterDeclaration(nil, nil /*dotDotDotToken*/, "props", nil /*questionToken*/, c.nodeBuilder.typeToTypeNode(result, node))}, ifElse(returnNode != nil, factory.createTypeReferenceNode(returnNode, nil /*typeArguments*/), factory.createKeywordTypeNode(ast.KindAnyKeyword)))
+	// declaration := factory.createFunctionTypeNode(nil, []ParameterDeclaration{factory.createParameterDeclaration(nil, nil /*dotDotDotToken*/, "props", nil /*questionToken*/, c.nodeBuilder.typeToTypeNode(result, node))}, ifElse(returnNode != nil, factory.createTypeReferenceNode(returnNode, nil /*typeArguments*/), factory.createKeywordTypeNode(ast.KindAnyKeyword)))
 	parameterSymbol := c.newSymbol(ast.SymbolFlagsFunctionScopedVariable, "props")
 	c.valueSymbolLinks.Get(parameterSymbol).resolvedType = result
 	return c.newSignature(SignatureFlagsNone, nil, nil, nil, []*ast.Symbol{parameterSymbol}, elementType, nil, 1)

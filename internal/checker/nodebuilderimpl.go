@@ -511,7 +511,7 @@ func (b *NodeBuilderImpl) createEntityNameFromSymbolChain(chain []*ast.Symbol, i
 	identifier := b.newIdentifier(symbolName, symbol)
 	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
 	// !!! TODO: smuggle type arguments out
-	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameter>(typeParameterNodes));
+	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
 	// identifier.symbol = symbol;
 	// expression = identifier;
 	if index > 0 {
@@ -730,7 +730,7 @@ func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 	identifier := b.newIdentifier(symbolName, symbol)
 	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
 	// !!! TODO: smuggle type arguments out
-	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameter>(typeParameterNodes));
+	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
 	// identifier.symbol = symbol;
 
 	if index > stopper {
@@ -769,7 +769,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		identifier := b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
 		// !!! TODO: smuggle type arguments out
-		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameter>(typeParameterNodes));
+		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
 		// identifier.symbol = symbol;
 		if index > 0 {
 			result := b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
@@ -795,7 +795,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		expression = b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(expression, printer.EFNoAsciiEscaping)
 		// !!! TODO: smuggle type arguments out
-		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameter>(typeParameterNodes));
+		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
 		// identifier.symbol = symbol;
 		// expression = identifier;
 	}
