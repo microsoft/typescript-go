@@ -1943,7 +1943,7 @@ function writeAndFormat(filePath: string, content: string, formatter: string) {
     fs.writeFileSync(filePath, content);
     try {
         const [cmd, ...args] = formatter.split(" ");
-        execaSync(cmd, [...args, filePath], { stdio: "inherit" });
+        execaSync(cmd, [...args, filePath], { stdio: "inherit", cwd: ROOT });
     }
     catch {
         console.warn(`Warning: formatter failed for ${filePath}`);
@@ -1958,35 +1958,35 @@ export default function main() {
     writeAndFormat(
         path.join(ROOT, "internal/api/encoder/encoder_generated.go"),
         goEncoder + "\n",
-        "npx dprint fmt",
+        "dprint fmt",
     );
 
     const goDecoder = generateGoDecoder();
     writeAndFormat(
         path.join(ROOT, "internal/api/encoder/decoder_generated.go"),
         goDecoder + "\n",
-        "npx dprint fmt",
+        "dprint fmt",
     );
 
     const tsProtocol = generateTSProtocol();
     writeAndFormat(
         path.join(ROOT, "_packages/api/src/node/protocol.generated.ts"),
         tsProtocol + "\n",
-        "npx dprint fmt",
+        "dprint fmt",
     );
 
     const tsEncoder = generateTSEncoder();
     writeAndFormat(
         path.join(ROOT, "_packages/api/src/node/encoder.generated.ts"),
         tsEncoder + "\n",
-        "npx dprint fmt",
+        "dprint fmt",
     );
 
     const tsNode = generateTSNodeGenerated();
     writeAndFormat(
         path.join(ROOT, "_packages/api/src/node/node.generated.ts"),
         tsNode + "\n",
-        "npx dprint fmt",
+        "dprint fmt",
     );
 
     console.log("Done!");

@@ -207,7 +207,7 @@ function generateSubtreeFacts(w: CodeWriter, node: NodeType) {
             }
             else {
                 const suffix = index < childMembers.length - 1 ? " |" : "";
-                w.write(`\t${term}${suffix}`);
+                w.write(`${term}${suffix}`);
             }
         }
     }
@@ -928,7 +928,7 @@ function generateKind(): string {
 
 function writeAndFormat(filePath: string, content: string) {
     fs.writeFileSync(filePath, content);
-    execaSync("npx", ["dprint", "fmt", filePath], { stdio: "inherit" });
+    execaSync("dprint", ["fmt", filePath], { stdio: "inherit", cwd: ROOT });
     console.log(`Wrote ${filePath}`);
 }
 
