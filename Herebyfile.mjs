@@ -16,7 +16,6 @@ import pLimit from "p-limit";
 import pc from "picocolors";
 import tmp from "tmp";
 import which from "which";
-import generateASTFiles from "./_scripts/generate.ts";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
@@ -504,7 +503,7 @@ export const generateEnums = task({
 export const generateAST = task({
     name: "generate:ast",
     description: "Generates AST and encoder files from ast.json.",
-    run: generateASTFiles,
+    run: () => $`node --experimental-strip-types --no-warnings ./_scripts/generate.ts`,
 });
 
 const coverageDir = path.join(__dirname, "coverage");
