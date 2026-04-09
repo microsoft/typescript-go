@@ -75,7 +75,7 @@ describe("Encoder", () => {
     test("encodes source file with identifier", () => {
         const id = createIdentifier("hello");
         const decl = createVariableDeclaration(id, undefined, undefined, undefined);
-        const declList = createVariableDeclarationList(0, [decl]);
+        const declList = createVariableDeclarationList([decl], 0);
         const stmt = createVariableStatement(undefined, declList);
         const sf = makeSF("var hello = 42;", "/test.ts", [stmt]);
 
@@ -246,7 +246,7 @@ describe("Encoder", () => {
         const jsx = createJsxElement(opening, [], closing);
         const stmt = createVariableStatement(
             undefined,
-            createVariableDeclarationList(0, [createVariableDeclaration(createIdentifier("x"), undefined, undefined, jsx)]),
+            createVariableDeclarationList([createVariableDeclaration(createIdentifier("x"), undefined, undefined, jsx)], 0),
         );
         const sf = makeSF("const x = <div></div>;", "/test.tsx", [stmt]);
 

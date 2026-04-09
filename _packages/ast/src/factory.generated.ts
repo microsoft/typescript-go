@@ -1808,7 +1808,7 @@ export function createVariableDeclaration(name: BindingName, exclamationToken?: 
     }) as unknown as VariableDeclaration;
 }
 
-export function createVariableDeclarationList(flags: NodeFlags, declarations: readonly VariableDeclaration[]): VariableDeclarationList {
+export function createVariableDeclarationList(declarations: readonly VariableDeclaration[], flags: NodeFlags): VariableDeclarationList {
     const node = new NodeObject(SyntaxKind.VariableDeclarationList, {
         declarations: createNodeArray(declarations),
     }) as unknown as VariableDeclarationList;
@@ -3183,7 +3183,7 @@ export function updateVariableDeclaration(node: VariableDeclaration, name: Bindi
 }
 
 export function updateVariableDeclarationList(node: VariableDeclarationList, declarations: readonly VariableDeclaration[]): VariableDeclarationList {
-    return node.declarations !== declarations ? createVariableDeclarationList(node.flags, declarations) : node;
+    return node.declarations !== declarations ? createVariableDeclarationList(declarations, node.flags) : node;
 }
 
 export function updateParameterDeclaration(node: ParameterDeclaration, modifiers: readonly ModifierLike[] | undefined, dotDotDotToken: DotDotDotToken | undefined, name: BindingName, questionToken?: QuestionToken, type?: TypeNode, initializer?: Expression): ParameterDeclaration {
