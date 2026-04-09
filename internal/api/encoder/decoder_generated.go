@@ -371,7 +371,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewClassExpression(modifiers, name, typeParameters, heritageClauses, members), nil
 	case ast.KindHeritageClause:
 		token := ast.KindExtendsKeyword
-		if commonData&1 != 0 {
+		if commonData & 1 != 0 {
 			token = ast.KindImplementsKeyword
 		}
 		return d.factory.NewHeritageClause(token, d.singleNodeListChild(childIndices)), nil
@@ -565,23 +565,17 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindPrefixUnaryExpression:
 		var operator ast.Kind
 		switch commonData & 7 {
-		case 0:
-			operator = ast.KindPlusToken
-		case 1:
-			operator = ast.KindMinusToken
-		case 2:
-			operator = ast.KindTildeToken
-		case 3:
-			operator = ast.KindExclamationToken
-		case 4:
-			operator = ast.KindPlusPlusToken
-		case 5:
-			operator = ast.KindMinusMinusToken
+		case 0: operator = ast.KindPlusToken
+		case 1: operator = ast.KindMinusToken
+		case 2: operator = ast.KindTildeToken
+		case 3: operator = ast.KindExclamationToken
+		case 4: operator = ast.KindPlusPlusToken
+		case 5: operator = ast.KindMinusMinusToken
 		}
 		return d.factory.NewPrefixUnaryExpression(operator, d.singleChild(childIndices)), nil
 	case ast.KindPostfixUnaryExpression:
 		operator := ast.KindPlusPlusToken
-		if commonData&1 != 0 {
+		if commonData & 1 != 0 {
 			operator = ast.KindMinusMinusToken
 		}
 		return d.factory.NewPostfixUnaryExpression(d.singleChild(childIndices), operator), nil
@@ -654,7 +648,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewNewExpression(expression, typeArguments, arguments), nil
 	case ast.KindMetaProperty:
 		keywordToken := ast.KindImportKeyword
-		if commonData&1 != 0 {
+		if commonData & 1 != 0 {
 			keywordToken = ast.KindNewKeyword
 		}
 		return d.factory.NewMetaProperty(keywordToken, d.singleChild(childIndices)), nil
@@ -754,12 +748,9 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindTypeOperator:
 		var operator ast.Kind
 		switch commonData & 3 {
-		case 0:
-			operator = ast.KindKeyOfKeyword
-		case 1:
-			operator = ast.KindReadonlyKeyword
-		case 2:
-			operator = ast.KindUniqueKeyword
+		case 0: operator = ast.KindKeyOfKeyword
+		case 1: operator = ast.KindReadonlyKeyword
+		case 2: operator = ast.KindUniqueKeyword
 		}
 		return d.factory.NewTypeOperatorNode(operator, d.singleChild(childIndices)), nil
 	case ast.KindInferType:
@@ -799,7 +790,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindImportAttributes:
 		multiLine := commonData&1 != 0
 		token := ast.KindWithKeyword
-		if (commonData>>1)&1 != 0 {
+		if (commonData >> 1) & 1 != 0 {
 			token = ast.KindAssertKeyword
 		}
 		var list *ast.NodeList
@@ -1068,7 +1059,7 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewJSDocNameReference(d.singleChild(childIndices)), nil
 	case ast.KindModuleDeclaration:
 		keyword := ast.KindModuleKeyword
-		if commonData&1 != 0 {
+		if commonData & 1 != 0 {
 			keyword = ast.KindNamespaceKeyword
 		}
 		it := newChildIter(childIndices)
@@ -1102,10 +1093,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindImportClause:
 		var phaseModifier ast.Kind
 		switch commonData & 3 {
-		case 1:
-			phaseModifier = ast.KindTypeKeyword
-		case 2:
-			phaseModifier = ast.KindDeferKeyword
+		case 1: phaseModifier = ast.KindTypeKeyword
+		case 2: phaseModifier = ast.KindDeferKeyword
 		}
 		it := newChildIter(childIndices)
 		name := d.nodeAt(it.nextIf(mask, 0))
@@ -1159,3 +1148,4 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return nil, fmt.Errorf("unhandled node kind %v with %d children", kind, len(childIndices))
 	}
 }
+

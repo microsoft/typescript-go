@@ -49,7 +49,7 @@
     },
     "scripts": {
         "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
-        "generate:ast": "node --experimental-strip-types ../../_scripts/generate-ts-ast.ts",
+        "generate:ast": "node --experimental-strip-types --no-warnings ../../_scripts/generate-ts-ast.ts",
         "prebuild": "npm run generate:enums && npm run generate:ast",
         "build": "tsc -b"
     }

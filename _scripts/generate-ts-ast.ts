@@ -11,6 +11,7 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import type {
     MemberInfo,
     NodeType,
@@ -1483,7 +1484,7 @@ function writeAndFormat(filePath: string, content: string) {
     console.log(`Generated ${filePath}`);
 }
 
-function main() {
+export default function main() {
     console.log("Generating TS AST code...");
 
     const factoryPath = path.join(ROOT, "_packages/ast/src/factory.generated.ts");
@@ -1497,4 +1498,7 @@ function main() {
     writeAndFormat(visitorPath, generateVisitor());
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    main();
+}
+    

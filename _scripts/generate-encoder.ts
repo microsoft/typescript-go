@@ -13,12 +13,13 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { api } from "./schema.ts";
+import { fileURLToPath } from "node:url";
 import type {
     KindType,
     MemberInfo,
     NodeType,
 } from "./schema.ts";
+import { api } from "./schema.ts";
 
 const ROOT = path.resolve(import.meta.dirname!, "..");
 
@@ -1949,7 +1950,7 @@ function writeAndFormat(filePath: string, content: string, formatter: string) {
     console.log(`Wrote ${filePath}`);
 }
 
-function main() {
+export default function main() {
     console.log("Generating encoder/decoder code...");
 
     const goEncoder = generateGoEncoder();
@@ -1990,4 +1991,6 @@ function main() {
     console.log("Done!");
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    main();
+}

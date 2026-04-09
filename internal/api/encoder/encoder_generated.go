@@ -553,8 +553,7 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		n := node.AsHeritageClause()
 		var tokenIdx uint32
 		switch n.Token {
-		case ast.KindImplementsKeyword:
-			tokenIdx = 1
+		case ast.KindImplementsKeyword: tokenIdx = 1
 		}
 		return tokenIdx << 24
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
@@ -567,32 +566,25 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		n := node.AsPrefixUnaryExpression()
 		var operatorIdx uint32
 		switch n.Operator {
-		case ast.KindMinusToken:
-			operatorIdx = 1
-		case ast.KindTildeToken:
-			operatorIdx = 2
-		case ast.KindExclamationToken:
-			operatorIdx = 3
-		case ast.KindPlusPlusToken:
-			operatorIdx = 4
-		case ast.KindMinusMinusToken:
-			operatorIdx = 5
+		case ast.KindMinusToken: operatorIdx = 1
+		case ast.KindTildeToken: operatorIdx = 2
+		case ast.KindExclamationToken: operatorIdx = 3
+		case ast.KindPlusPlusToken: operatorIdx = 4
+		case ast.KindMinusMinusToken: operatorIdx = 5
 		}
 		return operatorIdx << 24
 	case ast.KindPostfixUnaryExpression:
 		n := node.AsPostfixUnaryExpression()
 		var operatorIdx uint32
 		switch n.Operator {
-		case ast.KindMinusMinusToken:
-			operatorIdx = 1
+		case ast.KindMinusMinusToken: operatorIdx = 1
 		}
 		return operatorIdx << 24
 	case ast.KindMetaProperty:
 		n := node.AsMetaProperty()
 		var keywordTokenIdx uint32
 		switch n.KeywordToken {
-		case ast.KindNewKeyword:
-			keywordTokenIdx = 1
+		case ast.KindNewKeyword: keywordTokenIdx = 1
 		}
 		return keywordTokenIdx << 24
 	case ast.KindArrayLiteralExpression:
@@ -605,20 +597,17 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		n := node.AsTypeOperatorNode()
 		var operatorIdx uint32
 		switch n.Operator {
-		case ast.KindReadonlyKeyword:
-			operatorIdx = 1
-		case ast.KindUniqueKeyword:
-			operatorIdx = 2
+		case ast.KindReadonlyKeyword: operatorIdx = 1
+		case ast.KindUniqueKeyword: operatorIdx = 2
 		}
 		return operatorIdx << 24
 	case ast.KindImportAttributes:
 		n := node.AsImportAttributes()
 		var tokenIdx uint32
 		switch n.Token {
-		case ast.KindAssertKeyword:
-			tokenIdx = 1
+		case ast.KindAssertKeyword: tokenIdx = 1
 		}
-		return uint32(boolToByte(n.MultiLine))<<24 | tokenIdx<<25
+		return uint32(boolToByte(n.MultiLine)) << 24 | tokenIdx << 25
 	case ast.KindSyntheticExpression:
 		return getNodeCommonData_SyntheticExpression(node)
 	case ast.KindJsxText:
@@ -634,8 +623,7 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		n := node.AsModuleDeclaration()
 		var keywordIdx uint32
 		switch n.Keyword {
-		case ast.KindNamespaceKeyword:
-			keywordIdx = 1
+		case ast.KindNamespaceKeyword: keywordIdx = 1
 		}
 		return keywordIdx << 24
 	case ast.KindImportEqualsDeclaration:
@@ -651,10 +639,8 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		n := node.AsImportClause()
 		var phaseModifierIdx uint32
 		switch n.PhaseModifier {
-		case ast.KindTypeKeyword:
-			phaseModifierIdx = 1
-		case ast.KindDeferKeyword:
-			phaseModifierIdx = 2
+		case ast.KindTypeKeyword: phaseModifierIdx = 1
+		case ast.KindDeferKeyword: phaseModifierIdx = 2
 		}
 		return phaseModifierIdx << 24
 	case ast.KindImportSpecifier:
@@ -665,10 +651,10 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		return uint32(boolToByte(n.IsArrayType)) << 24
 	case ast.KindJSDocParameterTag:
 		n := node.AsJSDocParameterTag()
-		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
+		return uint32(boolToByte(n.IsBracketed)) << 24 | uint32(boolToByte(n.IsNameFirst)) << 25
 	case ast.KindJSDocPropertyTag:
 		n := node.AsJSDocPropertyTag()
-		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
+		return uint32(boolToByte(n.IsBracketed)) << 24 | uint32(boolToByte(n.IsNameFirst)) << 25
 	}
 	return 0
 }
@@ -720,3 +706,4 @@ func recordExtendedData(node *ast.Node, strs *stringTable, positionMap *ast.Posi
 	}
 	return offset
 }
+

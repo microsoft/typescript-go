@@ -17,14 +17,15 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import {
-    api,
-    kindGuardName,
-} from "./schema.ts";
+import { fileURLToPath } from "node:url";
 import type {
     MemberInfo,
     NodeType,
     Type,
+} from "./schema.ts";
+import {
+    api,
+    kindGuardName,
 } from "./schema.ts";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -931,7 +932,7 @@ function writeAndFormat(filePath: string, content: string) {
     console.log(`Wrote ${filePath}`);
 }
 
-function main() {
+export default function main() {
     console.log("Generating Go AST code...");
 
     const code = generate();
@@ -943,4 +944,6 @@ function main() {
     writeAndFormat(kindOutPath, kindCode + "\n");
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    main();
+}
