@@ -55,14 +55,25 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 
 	var actions []lsproto.CommandOrCodeAction
 
-	// Handle source actions (like organize imports)
+	// Handle source actions (like organize imports and fix all)
 	if params.Context != nil && params.Context.Only != nil {
 		for _, kind := range *params.Context.Only {
-			// Get all matching organize imports actions for the requested kind
+			// Handle organize imports
 			matchingKinds := getOrganizeImportsActionsForKind(kind)
 			for _, matchingKind := range matchingKinds {
 				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind)
 				actions = append(actions, *organizeAction)
+			}
+
+			// Handle fix all
+			if isFixAllKind(kind) {
+				fixAllAction, err := l.createFixAllAction(ctx, program, file, params.TextDocument.Uri)
+				if err != nil {
+					return lsproto.CodeActionResponse{}, err
+				}
+				if fixAllAction != nil {
+					actions = append(actions, *fixAllAction)
+				}
 			}
 		}
 	}
@@ -110,6 +121,64 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil
 }
 
+// codeActionKindContains returns true if the requested kind equals or is a
+// hierarchical parent of actionKind, using '.' as the separator. This matches
+// the semantics of VS Code's HierarchicalKind.contains.
+func codeActionKindContains(requestedKind, actionKind lsproto.CodeActionKind) bool {
+	return requestedKind == actionKind ||
+		requestedKind == "" ||
+		strings.HasPrefix(string(actionKind), string(requestedKind)+".")
+}
+
+// isFixAllKind returns true if the requested kind matches source.fixAll
+func isFixAllKind(kind lsproto.CodeActionKind) bool {
+	return codeActionKindContains(kind, lsproto.CodeActionKindSourceFixAll)
+}
+
+// createFixAllAction creates a source.fixAll code action that applies all auto-fixable
+// code fixes across the file.
+func (l *LanguageService) createFixAllAction(
+	ctx context.Context,
+	program *compiler.Program,
+	file *ast.SourceFile,
+	uri lsproto.DocumentUri,
+) (*lsproto.CommandOrCodeAction, error) {
+	kind := lsproto.CodeActionKindSourceFixAll
+	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+
+	for _, provider := range codeFixProviders {
+		if provider.GetAllCodeActions == nil {
+			continue
+		}
+
+		fixContext := &CodeFixContext{
+			SourceFile: file,
+			Program:    program,
+			LS:         l,
+		}
+
+		combined, err := provider.GetAllCodeActions(ctx, fixContext)
+		if err != nil {
+			return nil, err
+		}
+		if combined != nil && len(combined.Changes) > 0 {
+			lspChanges[uri] = append(lspChanges[uri], combined.Changes...)
+		}
+	}
+
+	if len(lspChanges) == 0 {
+		return nil, nil
+	}
+
+	return &lsproto.CommandOrCodeAction{
+		CodeAction: &lsproto.CodeAction{
+			Title: "Fix All",
+			Kind:  &kind,
+			Edit:  &lsproto.WorkspaceEdit{Changes: &lspChanges},
+		},
+	}, nil
+}
+
 // getOrganizeImportsActionTitle returns the appropriate title for the given organize imports kind
 func getOrganizeImportsActionTitle(kind lsproto.CodeActionKind) string {
 	switch kind {
@@ -133,7 +202,7 @@ func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind) []ls
 
 	var result []lsproto.CodeActionKind
 	for _, organizeKind := range organizeImportsKinds {
-		if strings.HasPrefix(string(organizeKind), string(requestedKind)) {
+		if codeActionKindContains(requestedKind, organizeKind) {
 			result = append(result, organizeKind)
 		}
 	}

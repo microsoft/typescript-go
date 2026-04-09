@@ -24,6 +24,7 @@ import (
 type ImportAdder interface {
 	HasFixes() bool
 	AddImportFromExportedSymbol(symbol *ast.Symbol, isValidTypeOnlyUseSite bool)
+	AddImportFix(fix *Fix)
 	Edits() []*lsproto.TextEdit
 }
 
@@ -110,7 +111,7 @@ func (adder *importAdder) AddImportFromExportedSymbol(exportedSymbol *ast.Symbol
 	fix := adder.getImportFixForSymbol(adder.view, adder.view.importingFile, exportInfos, isValidTypeOnlyUseSite)
 	if fix != nil {
 		// !!! referenceImport -> propertyName
-		adder.addImport(fix)
+		adder.AddImportFix(fix)
 	}
 }
 
@@ -171,9 +172,9 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 	return tracker.GetChanges()[adder.view.importingFile.FileName()]
 }
 
-// addImport adds an import fix to the appropriate category based on its kind.
-// This batches imports so that multiple imports from the same module can be combined.
-func (adder *importAdder) addImport(fix *Fix) {
+// AddImportFix adds a fix to the import adder, accumulating it with other fixes
+// so that multiple imports from the same module are coalesced into a single import statement.
+func (adder *importAdder) AddImportFix(fix *Fix) {
 	symbolName := fix.Name
 	compilerOptions := adder.view.program.Options()
 
