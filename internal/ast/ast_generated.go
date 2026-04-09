@@ -1994,10 +1994,10 @@ type BindingElement struct {
 	ExportableBase
 	FlowNodeBase
 	CompositeBase
-	DotDotDotToken *DotDotDotToken
-	PropertyName   *PropertyName // Optional
-	name           *BindingName  // Optional
-	Initializer    *Expression   // Optional
+	DotDotDotToken *DotDotDotToken // Optional
+	PropertyName   *PropertyName   // Optional
+	name           *BindingName    // Optional
+	Initializer    *Expression     // Optional
 }
 
 func (f *NodeFactory) NewBindingElement(dotDotDotToken *DotDotDotToken, propertyName *PropertyName, name *BindingName, initializer *Expression) *Node {
@@ -2089,7 +2089,7 @@ type FunctionDeclaration struct {
 	ModifiersBase
 	FunctionLikeWithBodyBase
 	CompositeBase
-	name           *IdentifierNode
+	name           *IdentifierNode // Optional
 	ReturnFlowNode *FlowNode
 }
 
@@ -3599,7 +3599,7 @@ type PropertyDeclaration struct {
 	NamedMemberBase
 	ClassElementBase
 	CompositeBase
-	Type        *TypeNode
+	Type        *TypeNode   // Optional
 	Initializer *Expression // Optional
 }
 
@@ -4032,8 +4032,8 @@ func IsPostfixUnaryExpression(node *Node) bool {
 
 type YieldExpression struct {
 	ExpressionBase
-	AsteriskToken *AsteriskToken
-	Expression    *Expression // Optional
+	AsteriskToken *AsteriskToken // Optional
+	Expression    *Expression    // Optional
 }
 
 func (f *NodeFactory) NewYieldExpression(asteriskToken *AsteriskToken, expression *Expression) *Node {
@@ -4331,7 +4331,7 @@ type PropertyAccessExpression struct {
 	FlowNodeBase
 	CompositeBase
 	Expression       *Expression
-	QuestionDotToken *QuestionDotToken
+	QuestionDotToken *QuestionDotToken // Optional
 	name             *MemberName
 }
 
@@ -4381,7 +4381,7 @@ type ElementAccessExpression struct {
 	FlowNodeBase
 	CompositeBase
 	Expression         *Expression
-	QuestionDotToken   *QuestionDotToken
+	QuestionDotToken   *QuestionDotToken // Optional
 	ArgumentExpression *Expression
 }
 
@@ -4433,8 +4433,8 @@ type CallExpression struct {
 	DeclarationBase
 	CompositeBase
 	Expression       *Expression
-	QuestionDotToken *QuestionDotToken
-	TypeArguments    *TypeList // Optional
+	QuestionDotToken *QuestionDotToken // Optional
+	TypeArguments    *TypeList         // Optional
 	Arguments        *ElementList
 }
 
@@ -4482,7 +4482,6 @@ func IsCallExpression(node *Node) bool {
 type NewExpression struct {
 	PrimaryExpressionBase
 	CompositeBase
-	DeclarationBase
 	Expression    *Expression
 	TypeArguments *TypeList    // Optional
 	Arguments     *ElementList // Optional
@@ -5021,8 +5020,8 @@ type ShorthandPropertyAssignment struct {
 	ObjectLiteralElementBase
 	CompositeBase
 	Type                        *TypeNode
-	EqualsToken                 *EqualsToken
-	ObjectAssignmentInitializer *Expression // Optional
+	EqualsToken                 *EqualsToken // Optional
+	ObjectAssignmentInitializer *Expression  // Optional
 }
 
 func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, equalsToken *EqualsToken, objectAssignmentInitializer *Expression) *Node {
@@ -5735,7 +5734,7 @@ type TypePredicateNode struct {
 	TypeNodeBase
 	AssertsModifier *AssertsKeyword // Optional
 	ParameterName   *TypePredicateParameterName
-	Type            *TypeNode
+	Type            *TypeNode // Optional
 }
 
 func (f *NodeFactory) NewTypePredicateNode(assertsModifier *AssertsKeyword, parameterName *TypePredicateParameterName, typeNode *TypeNode) *Node {
@@ -5917,7 +5916,7 @@ type MappedTypeNode struct {
 	TypeParameter *TypeParameterDeclarationNode
 	NameType      *TypeNode  // Optional
 	QuestionToken *TokenNode // Optional
-	Type          *TypeNode
+	Type          *TypeNode  // Optional
 	Members       *TypeElementList
 }
 
@@ -6044,9 +6043,9 @@ func IsTupleTypeNode(node *Node) bool {
 type NamedTupleMember struct {
 	TypeNodeBase
 	DeclarationBase
-	DotDotDotToken *DotDotDotToken
+	DotDotDotToken *DotDotDotToken // Optional
 	name           *IdentifierNode
-	QuestionToken  *QuestionToken
+	QuestionToken  *QuestionToken // Optional
 	Type           *TypeNode
 }
 
@@ -6958,7 +6957,7 @@ func IsJsxClosingElement(node *Node) bool {
 type JsxExpression struct {
 	ExpressionBase
 	DotDotDotToken *DotDotDotToken // Optional
-	Expression     *Expression
+	Expression     *Expression     // Optional
 }
 
 func (f *NodeFactory) NewJsxExpression(dotDotDotToken *DotDotDotToken, expression *Expression) *Node {
@@ -7063,7 +7062,7 @@ func IsSyntaxList(node *Node) bool {
 type JSDoc struct {
 	NodeBase
 	Comment *NodeList
-	Tags    *NodeList
+	Tags    *NodeList // Optional
 }
 
 func (f *NodeFactory) NewJSDoc(comment *NodeList, tags *NodeList) *Node {
@@ -7140,20 +7139,18 @@ func IsJSDocTypeExpression(node *Node) bool {
 
 type JSDocNonNullableType struct {
 	JSDocTypeBase
-	Type    *TypeNode
-	Postfix bool
+	Type *TypeNode
 }
 
-func (f *NodeFactory) NewJSDocNonNullableType(typeNode *TypeNode, postfix bool) *Node {
+func (f *NodeFactory) NewJSDocNonNullableType(typeNode *TypeNode) *Node {
 	data := &JSDocNonNullableType{}
 	data.Type = typeNode
-	data.Postfix = postfix
 	return f.newNode(KindJSDocNonNullableType, data)
 }
 
-func (f *NodeFactory) UpdateJSDocNonNullableType(node *JSDocNonNullableType, typeNode *TypeNode, postfix bool) *Node {
-	if typeNode != node.Type || postfix != node.Postfix {
-		return updateNode(f.NewJSDocNonNullableType(typeNode, postfix), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateJSDocNonNullableType(node *JSDocNonNullableType, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewJSDocNonNullableType(typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -7163,11 +7160,11 @@ func (node *JSDocNonNullableType) ForEachChild(v Visitor) bool {
 }
 
 func (node *JSDocNonNullableType) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocNonNullableType(node, v.visitNode(node.Type), node.Postfix)
+	return v.Factory.UpdateJSDocNonNullableType(node, v.visitNode(node.Type))
 }
 
 func (node *JSDocNonNullableType) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocNonNullableType(node.Type, node.Postfix), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocNonNullableType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocNonNullableType(node *Node) bool {
@@ -7180,20 +7177,18 @@ func IsJSDocNonNullableType(node *Node) bool {
 
 type JSDocNullableType struct {
 	JSDocTypeBase
-	Type    *TypeNode
-	Postfix bool
+	Type *TypeNode
 }
 
-func (f *NodeFactory) NewJSDocNullableType(typeNode *TypeNode, postfix bool) *Node {
+func (f *NodeFactory) NewJSDocNullableType(typeNode *TypeNode) *Node {
 	data := &JSDocNullableType{}
 	data.Type = typeNode
-	data.Postfix = postfix
 	return f.newNode(KindJSDocNullableType, data)
 }
 
-func (f *NodeFactory) UpdateJSDocNullableType(node *JSDocNullableType, typeNode *TypeNode, postfix bool) *Node {
-	if typeNode != node.Type || postfix != node.Postfix {
-		return updateNode(f.NewJSDocNullableType(typeNode, postfix), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateJSDocNullableType(node *JSDocNullableType, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewJSDocNullableType(typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -7203,11 +7198,11 @@ func (node *JSDocNullableType) ForEachChild(v Visitor) bool {
 }
 
 func (node *JSDocNullableType) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocNullableType(node, v.visitNode(node.Type), node.Postfix)
+	return v.Factory.UpdateJSDocNullableType(node, v.visitNode(node.Type))
 }
 
 func (node *JSDocNullableType) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocNullableType(node.Type, node.Postfix), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocNullableType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocNullableType(node *Node) bool {
@@ -7440,7 +7435,7 @@ func IsJSDocTemplateTag(node *Node) bool {
 
 type JSDocReturnTag struct {
 	JSDocTagBase
-	TypeExpression *TypeNode
+	TypeExpression *TypeNode // Optional
 }
 
 func (f *NodeFactory) NewJSDocReturnTag(tagName *IdentifierNode, typeExpression *TypeNode, comment *NodeList) *Node {
@@ -7868,7 +7863,7 @@ func IsJSDocSatisfiesTag(node *Node) bool {
 
 type JSDocThrowsTag struct {
 	JSDocTagBase
-	TypeExpression *TypeNode
+	TypeExpression *TypeNode // Optional
 }
 
 func (f *NodeFactory) NewJSDocThrowsTag(tagName *IdentifierNode, typeExpression *TypeNode, comment *NodeList) *Node {
@@ -7948,9 +7943,9 @@ func IsJSDocThisTag(node *Node) bool {
 
 type JSDocImportTag struct {
 	JSDocTagBase
-	ImportClause    *ImportClauseNode
+	ImportClause    *ImportClauseNode // Optional
 	ModuleSpecifier *Expression
-	Attributes      *ImportAttributesNode
+	Attributes      *ImportAttributesNode // Optional
 }
 
 func (f *NodeFactory) NewJSDocImportTag(tagName *IdentifierNode, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode, comment *NodeList) *Node {
@@ -7997,7 +7992,7 @@ func IsJSDocImportTag(node *Node) bool {
 type JSDocCallbackTag struct {
 	JSDocTagBase
 	TypeExpression *TypeNode
-	FullName       *Node
+	FullName       *Node // Optional
 }
 
 func (f *NodeFactory) NewJSDocCallbackTag(tagName *IdentifierNode, typeExpression *TypeNode, fullName *Node, comment *NodeList) *Node {
@@ -8081,8 +8076,8 @@ func IsJSDocOverloadTag(node *Node) bool {
 
 type JSDocTypedefTag struct {
 	JSDocTagBase
-	TypeExpression *Node
-	name           *IdentifierNode
+	TypeExpression *Node           // Optional
+	name           *IdentifierNode // Optional
 }
 
 func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression *Node, name *IdentifierNode, comment *NodeList) *Node {
@@ -8778,7 +8773,7 @@ func IsSyntheticReferenceExpression(node *Node) bool {
 type JSDocTypeLiteral struct {
 	JSDocTypeBase
 	DeclarationBase
-	JSDocPropertyTags []*Node
+	JSDocPropertyTags []*Node // Optional
 	IsArrayType       bool
 }
 

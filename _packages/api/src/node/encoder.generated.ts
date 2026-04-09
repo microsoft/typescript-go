@@ -12,8 +12,6 @@ import type {
     ImportEqualsDeclaration,
     ImportSpecifier,
     ImportTypeNode,
-    JSDocNonNullableType,
-    JSDocNullableType,
     JSDocParameterTag,
     JSDocPropertyTag,
     JSDocTypeLiteral,
@@ -86,10 +84,6 @@ export function getNodeCommonData(node: Node): number {
             return ((node as ImportAttributes).multiLine ? 1 : 0) << 24 | ((node as ImportAttributes).token === SyntaxKind.AssertKeyword ? 1 : 0) << 25;
         case SyntaxKind.JsxText:
             return ((node as JsxText).containsOnlyTriviaWhiteSpaces ? 1 : 0) << 24;
-        case SyntaxKind.JSDocNonNullableType:
-            return ((node as JSDocNonNullableType).postfix ? 1 : 0) << 24;
-        case SyntaxKind.JSDocNullableType:
-            return ((node as JSDocNullableType).postfix ? 1 : 0) << 24;
         case SyntaxKind.ModuleDeclaration:
             return ((node as ModuleDeclaration).keyword === SyntaxKind.NamespaceKeyword ? 1 : 0) << 24;
         case SyntaxKind.ImportEqualsDeclaration:

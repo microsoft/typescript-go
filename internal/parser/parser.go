@@ -2719,14 +2719,14 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 		switch p.token {
 		case ast.KindExclamationToken:
 			p.nextToken()
-			typeNode = p.finishNode(p.factory.NewJSDocNonNullableType(typeNode, true), pos)
+			typeNode = p.finishNode(p.factory.NewJSDocNonNullableType(typeNode), pos)
 		case ast.KindQuestionToken:
 			// If next token is start of a type we have a conditional type
 			if p.lookAhead((*Parser).nextIsStartOfType) {
 				return typeNode
 			}
 			p.nextToken()
-			typeNode = p.finishNode(p.factory.NewJSDocNullableType(typeNode, true), pos)
+			typeNode = p.finishNode(p.factory.NewJSDocNullableType(typeNode), pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -2846,14 +2846,14 @@ func (p *Parser) parseJSDocAllType() *ast.Node {
 func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
 	pos := p.nodePos()
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseNonArrayType(), false), pos)
+	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseNonArrayType()), pos)
 }
 
 func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	// skip the ?
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType(), false), pos)
+	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType()), pos)
 }
 
 func (p *Parser) parseJSDocType() *ast.TypeNode {

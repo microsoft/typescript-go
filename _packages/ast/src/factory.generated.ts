@@ -539,9 +539,6 @@ export class NodeObject {
     get phaseModifier(): any {
         return this._data?.phaseModifier;
     }
-    get postfix(): any {
-        return this._data?.postfix;
-    }
     get postfixToken(): any {
         return this._data?.postfixToken;
     }
@@ -975,9 +972,9 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.JSDocTypeExpression:
             return { type: n.type };
         case SyntaxKind.JSDocNonNullableType:
-            return { type: n.type, postfix: n.postfix };
+            return { type: n.type };
         case SyntaxKind.JSDocNullableType:
-            return { type: n.type, postfix: n.postfix };
+            return { type: n.type };
         case SyntaxKind.JSDocVariadicType:
             return { type: n.type };
         case SyntaxKind.JSDocOptionalType:
@@ -1827,7 +1824,7 @@ export function createParameterDeclaration(modifiers: readonly ModifierLike[] | 
     }) as unknown as ParameterDeclaration;
 }
 
-export function createBindingElement(dotDotDotToken: DotDotDotToken, propertyName?: PropertyName, name?: BindingName, initializer?: Expression): BindingElement {
+export function createBindingElement(dotDotDotToken?: DotDotDotToken, propertyName?: PropertyName, name?: BindingName, initializer?: Expression): BindingElement {
     return new NodeObject(SyntaxKind.BindingElement, {
         dotDotDotToken,
         propertyName,
@@ -1842,7 +1839,7 @@ export function createMissingDeclaration(modifiers?: readonly ModifierLike[]): M
     }) as unknown as MissingDeclaration;
 }
 
-export function createFunctionDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): FunctionDeclaration {
+export function createFunctionDeclaration(modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): FunctionDeclaration {
     return new NodeObject(SyntaxKind.FunctionDeclaration, {
         modifiers,
         asteriskToken,
@@ -2091,7 +2088,7 @@ export function createPropertySignatureDeclaration(modifiers: readonly ModifierL
     }) as unknown as PropertySignatureDeclaration;
 }
 
-export function createPropertyDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer?: Expression): PropertyDeclaration {
+export function createPropertyDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken?: QuestionToken | ExclamationToken, type?: TypeNode, initializer?: Expression): PropertyDeclaration {
     return new NodeObject(SyntaxKind.PropertyDeclaration, {
         modifiers,
         name,
@@ -2179,7 +2176,7 @@ export function createPostfixUnaryExpression(operand: Expression, operator: Synt
     }) as unknown as PostfixUnaryExpression;
 }
 
-export function createYieldExpression(asteriskToken: AsteriskToken, expression?: Expression): YieldExpression {
+export function createYieldExpression(asteriskToken?: AsteriskToken, expression?: Expression): YieldExpression {
     return new NodeObject(SyntaxKind.YieldExpression, {
         asteriskToken,
         expression,
@@ -2233,7 +2230,7 @@ export function createConditionalExpression(condition: Expression, questionToken
     }) as unknown as ConditionalExpression;
 }
 
-export function createPropertyAccessExpression(expression: Expression, questionDotToken: QuestionDotToken, name: MemberName, flags: NodeFlags): PropertyAccessExpression {
+export function createPropertyAccessExpression(expression: Expression, questionDotToken: QuestionDotToken | undefined, name: MemberName, flags: NodeFlags): PropertyAccessExpression {
     const node = new NodeObject(SyntaxKind.PropertyAccessExpression, {
         expression,
         questionDotToken,
@@ -2243,7 +2240,7 @@ export function createPropertyAccessExpression(expression: Expression, questionD
     return node;
 }
 
-export function createElementAccessExpression(expression: Expression, questionDotToken: QuestionDotToken, argumentExpression: Expression, flags: NodeFlags): ElementAccessExpression {
+export function createElementAccessExpression(expression: Expression, questionDotToken: QuestionDotToken | undefined, argumentExpression: Expression, flags: NodeFlags): ElementAccessExpression {
     const node = new NodeObject(SyntaxKind.ElementAccessExpression, {
         expression,
         questionDotToken,
@@ -2253,7 +2250,7 @@ export function createElementAccessExpression(expression: Expression, questionDo
     return node;
 }
 
-export function createCallExpression(expression: Expression, questionDotToken: QuestionDotToken, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[], flags: NodeFlags): CallExpression {
+export function createCallExpression(expression: Expression, questionDotToken: QuestionDotToken | undefined, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[], flags: NodeFlags): CallExpression {
     const node = new NodeObject(SyntaxKind.CallExpression, {
         expression,
         questionDotToken,
@@ -2354,7 +2351,7 @@ export function createPropertyAssignment(modifiers: readonly ModifierLike[] | un
     }) as unknown as PropertyAssignment;
 }
 
-export function createShorthandPropertyAssignment(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, equalsToken: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
+export function createShorthandPropertyAssignment(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, equalsToken?: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
     return new NodeObject(SyntaxKind.ShorthandPropertyAssignment, {
         modifiers,
         name,
@@ -2471,7 +2468,7 @@ export function createThisTypeNode(): ThisTypeNode {
     return new NodeObject(SyntaxKind.ThisType, undefined) as unknown as ThisTypeNode;
 }
 
-export function createTypePredicateNode(assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type: TypeNode): TypePredicateNode {
+export function createTypePredicateNode(assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
     return new NodeObject(SyntaxKind.TypePredicate, {
         assertsModifier,
         parameterName,
@@ -2501,7 +2498,7 @@ export function createTypeQueryNode(exprName: EntityName, typeArguments?: readon
     }) as unknown as TypeQueryNode;
 }
 
-export function createMappedTypeNode(readonlyToken: ReadonlyKeyword | PlusToken | MinusToken | undefined, typeParameter: TypeParameterDeclaration, nameType: TypeNode | undefined, questionToken: QuestionToken | PlusToken | MinusToken | undefined, type: TypeNode, members: readonly TypeElement[]): MappedTypeNode {
+export function createMappedTypeNode(readonlyToken: ReadonlyKeyword | PlusToken | MinusToken | undefined, typeParameter: TypeParameterDeclaration, nameType: TypeNode | undefined, questionToken: QuestionToken | PlusToken | MinusToken | undefined, type: TypeNode | undefined, members: readonly TypeElement[]): MappedTypeNode {
     return new NodeObject(SyntaxKind.MappedType, {
         readonlyToken,
         typeParameter,
@@ -2524,7 +2521,7 @@ export function createTupleTypeNode(elements: readonly TypeNode[]): TupleTypeNod
     }) as unknown as TupleTypeNode;
 }
 
-export function createNamedTupleMember(dotDotDotToken: DotDotDotToken, name: Identifier, questionToken: QuestionToken, type: TypeNode): NamedTupleMember {
+export function createNamedTupleMember(dotDotDotToken: DotDotDotToken | undefined, name: Identifier, questionToken: QuestionToken | undefined, type: TypeNode): NamedTupleMember {
     return new NodeObject(SyntaxKind.NamedTupleMember, {
         dotDotDotToken,
         name,
@@ -2692,7 +2689,7 @@ export function createJsxClosingElement(tagName: JsxTagNameExpression): JsxClosi
     }) as unknown as JsxClosingElement;
 }
 
-export function createJsxExpression(dotDotDotToken: DotDotDotToken | undefined, expression: Expression): JsxExpression {
+export function createJsxExpression(dotDotDotToken?: DotDotDotToken, expression?: Expression): JsxExpression {
     return new NodeObject(SyntaxKind.JsxExpression, {
         dotDotDotToken,
         expression,
@@ -2712,10 +2709,10 @@ export function createSyntaxList(children: readonly Node[]): SyntaxList {
     }) as unknown as SyntaxList;
 }
 
-export function createJSDoc(comment: readonly JSDocComment[], tags: readonly JSDocTag[]): JSDoc {
+export function createJSDoc(comment: readonly JSDocComment[], tags?: readonly JSDocTag[]): JSDoc {
     return new NodeObject(SyntaxKind.JSDoc, {
         comment: createNodeArray(comment),
-        tags: createNodeArray(tags),
+        tags: tags ? createNodeArray(tags) : undefined,
     }) as unknown as JSDoc;
 }
 
@@ -2725,17 +2722,15 @@ export function createJSDocTypeExpression(type: TypeNode): JSDocTypeExpression {
     }) as unknown as JSDocTypeExpression;
 }
 
-export function createJSDocNonNullableType(type: TypeNode, postfix?: boolean): JSDocNonNullableType {
+export function createJSDocNonNullableType(type: TypeNode): JSDocNonNullableType {
     return new NodeObject(SyntaxKind.JSDocNonNullableType, {
         type,
-        postfix,
     }) as unknown as JSDocNonNullableType;
 }
 
-export function createJSDocNullableType(type: TypeNode, postfix?: boolean): JSDocNullableType {
+export function createJSDocNullableType(type: TypeNode): JSDocNullableType {
     return new NodeObject(SyntaxKind.JSDocNullableType, {
         type,
-        postfix,
     }) as unknown as JSDocNullableType;
 }
 
@@ -2779,7 +2774,7 @@ export function createJSDocTemplateTag(tagName: Identifier, constraint: Node, ty
     }) as unknown as JSDocTemplateTag;
 }
 
-export function createJSDocReturnTag(tagName: Identifier, typeExpression: TypeNode, comment?: readonly JSDocComment[]): JSDocReturnTag {
+export function createJSDocReturnTag(tagName: Identifier, typeExpression?: TypeNode, comment?: readonly JSDocComment[]): JSDocReturnTag {
     return new NodeObject(SyntaxKind.JSDocReturnTag, {
         tagName,
         typeExpression,
@@ -2861,7 +2856,7 @@ export function createJSDocSatisfiesTag(tagName: Identifier, typeExpression: Typ
     }) as unknown as JSDocSatisfiesTag;
 }
 
-export function createJSDocThrowsTag(tagName: Identifier, typeExpression: TypeNode, comment?: readonly JSDocComment[]): JSDocThrowsTag {
+export function createJSDocThrowsTag(tagName: Identifier, typeExpression?: TypeNode, comment?: readonly JSDocComment[]): JSDocThrowsTag {
     return new NodeObject(SyntaxKind.JSDocThrowsTag, {
         tagName,
         typeExpression,
@@ -2877,7 +2872,7 @@ export function createJSDocThisTag(tagName: Identifier, typeExpression: TypeNode
     }) as unknown as JSDocThisTag;
 }
 
-export function createJSDocImportTag(tagName: Identifier, importClause: ImportClause, moduleSpecifier: Expression, attributes: ImportAttributes, comment?: readonly JSDocComment[]): JSDocImportTag {
+export function createJSDocImportTag(tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes?: ImportAttributes, comment?: readonly JSDocComment[]): JSDocImportTag {
     return new NodeObject(SyntaxKind.JSDocImportTag, {
         tagName,
         importClause,
@@ -2887,7 +2882,7 @@ export function createJSDocImportTag(tagName: Identifier, importClause: ImportCl
     }) as unknown as JSDocImportTag;
 }
 
-export function createJSDocCallbackTag(tagName: Identifier, typeExpression: TypeNode, fullName: Node, comment?: readonly JSDocComment[]): JSDocCallbackTag {
+export function createJSDocCallbackTag(tagName: Identifier, typeExpression: TypeNode, fullName?: Node, comment?: readonly JSDocComment[]): JSDocCallbackTag {
     return new NodeObject(SyntaxKind.JSDocCallbackTag, {
         tagName,
         typeExpression,
@@ -2904,7 +2899,7 @@ export function createJSDocOverloadTag(tagName: Identifier, typeExpression: Type
     }) as unknown as JSDocOverloadTag;
 }
 
-export function createJSDocTypedefTag(tagName: Identifier, typeExpression: Node, name: Identifier, comment?: readonly JSDocComment[]): JSDocTypedefTag {
+export function createJSDocTypedefTag(tagName: Identifier, typeExpression?: Node, name?: Identifier, comment?: readonly JSDocComment[]): JSDocTypedefTag {
     return new NodeObject(SyntaxKind.JSDocTypedefTag, {
         tagName,
         typeExpression,
@@ -3025,7 +3020,7 @@ export function createSyntheticReferenceExpression(expression: Expression, thisA
     }) as unknown as SyntheticReferenceExpression;
 }
 
-export function createJSDocTypeLiteral(jsdocPropertyTags: readonly JSDocTag[], isArrayType?: boolean): JSDocTypeLiteral {
+export function createJSDocTypeLiteral(jsdocPropertyTags?: readonly JSDocTag[], isArrayType?: boolean): JSDocTypeLiteral {
     return new NodeObject(SyntaxKind.JSDocTypeLiteral, {
         jsdocPropertyTags,
         isArrayType,
@@ -3190,7 +3185,7 @@ export function updateParameterDeclaration(node: ParameterDeclaration, modifiers
     return node.modifiers !== modifiers || node.dotDotDotToken !== dotDotDotToken || node.name !== name || node.questionToken !== questionToken || node.type !== type || node.initializer !== initializer ? createParameterDeclaration(modifiers, dotDotDotToken, name, questionToken, type, initializer) : node;
 }
 
-export function updateBindingElement(node: BindingElement, dotDotDotToken: DotDotDotToken, propertyName?: PropertyName, name?: BindingName, initializer?: Expression): BindingElement {
+export function updateBindingElement(node: BindingElement, dotDotDotToken?: DotDotDotToken, propertyName?: PropertyName, name?: BindingName, initializer?: Expression): BindingElement {
     return node.dotDotDotToken !== dotDotDotToken || node.propertyName !== propertyName || node.name !== name || node.initializer !== initializer ? createBindingElement(dotDotDotToken, propertyName, name, initializer) : node;
 }
 
@@ -3198,7 +3193,7 @@ export function updateMissingDeclaration(node: MissingDeclaration, modifiers?: r
     return node.modifiers !== modifiers ? createMissingDeclaration(modifiers) : node;
 }
 
-export function updateFunctionDeclaration(node: FunctionDeclaration, modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): FunctionDeclaration {
+export function updateFunctionDeclaration(node: FunctionDeclaration, modifiers: readonly ModifierLike[] | undefined, asteriskToken: AsteriskToken | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): FunctionDeclaration {
     return node.modifiers !== modifiers || node.asteriskToken !== asteriskToken || node.name !== name || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type || node.body !== body ? createFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, type, body) : node;
 }
 
@@ -3310,7 +3305,7 @@ export function updatePropertySignatureDeclaration(node: PropertySignatureDeclar
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertySignatureDeclaration(modifiers, name, postfixToken, type, initializer) : node;
 }
 
-export function updatePropertyDeclaration(node: PropertyDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer?: Expression): PropertyDeclaration {
+export function updatePropertyDeclaration(node: PropertyDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken?: QuestionToken | ExclamationToken, type?: TypeNode, initializer?: Expression): PropertyDeclaration {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyDeclaration(modifiers, name, postfixToken, type, initializer) : node;
 }
 
@@ -3330,7 +3325,7 @@ export function updatePostfixUnaryExpression(node: PostfixUnaryExpression, opera
     return node.operand !== operand ? createPostfixUnaryExpression(operand, node.operator) : node;
 }
 
-export function updateYieldExpression(node: YieldExpression, asteriskToken: AsteriskToken, expression?: Expression): YieldExpression {
+export function updateYieldExpression(node: YieldExpression, asteriskToken?: AsteriskToken, expression?: Expression): YieldExpression {
     return node.asteriskToken !== asteriskToken || node.expression !== expression ? createYieldExpression(asteriskToken, expression) : node;
 }
 
@@ -3354,15 +3349,15 @@ export function updateConditionalExpression(node: ConditionalExpression, conditi
     return node.condition !== condition || node.questionToken !== questionToken || node.whenTrue !== whenTrue || node.colonToken !== colonToken || node.whenFalse !== whenFalse ? createConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse) : node;
 }
 
-export function updatePropertyAccessExpression(node: PropertyAccessExpression, expression: Expression, questionDotToken: QuestionDotToken, name: MemberName): PropertyAccessExpression {
+export function updatePropertyAccessExpression(node: PropertyAccessExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, name: MemberName): PropertyAccessExpression {
     return node.expression !== expression || node.questionDotToken !== questionDotToken || node.name !== name ? createPropertyAccessExpression(expression, questionDotToken, name, node.flags) : node;
 }
 
-export function updateElementAccessExpression(node: ElementAccessExpression, expression: Expression, questionDotToken: QuestionDotToken, argumentExpression: Expression): ElementAccessExpression {
+export function updateElementAccessExpression(node: ElementAccessExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, argumentExpression: Expression): ElementAccessExpression {
     return node.expression !== expression || node.questionDotToken !== questionDotToken || node.argumentExpression !== argumentExpression ? createElementAccessExpression(expression, questionDotToken, argumentExpression, node.flags) : node;
 }
 
-export function updateCallExpression(node: CallExpression, expression: Expression, questionDotToken: QuestionDotToken, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[]): CallExpression {
+export function updateCallExpression(node: CallExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[]): CallExpression {
     return node.expression !== expression || node.questionDotToken !== questionDotToken || node.typeArguments !== typeArguments || node.arguments !== arguments_ ? createCallExpression(expression, questionDotToken, typeArguments, arguments_, node.flags) : node;
 }
 
@@ -3414,7 +3409,7 @@ export function updatePropertyAssignment(node: PropertyAssignment, modifiers: re
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyAssignment(modifiers, name, postfixToken, type, initializer) : node;
 }
 
-export function updateShorthandPropertyAssignment(node: ShorthandPropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, equalsToken: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
+export function updateShorthandPropertyAssignment(node: ShorthandPropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, equalsToken?: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.equalsToken !== equalsToken || node.objectAssignmentInitializer !== objectAssignmentInitializer ? createShorthandPropertyAssignment(modifiers, name, postfixToken, type, equalsToken, objectAssignmentInitializer) : node;
 }
 
@@ -3478,7 +3473,7 @@ export function updateLiteralTypeNode(node: LiteralTypeNode, literal: Node): Lit
     return node.literal !== literal ? createLiteralTypeNode(literal) : node;
 }
 
-export function updateTypePredicateNode(node: TypePredicateNode, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type: TypeNode): TypePredicateNode {
+export function updateTypePredicateNode(node: TypePredicateNode, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
     return node.assertsModifier !== assertsModifier || node.parameterName !== parameterName || node.type !== type ? createTypePredicateNode(assertsModifier, parameterName, type) : node;
 }
 
@@ -3494,7 +3489,7 @@ export function updateTypeQueryNode(node: TypeQueryNode, exprName: EntityName, t
     return node.exprName !== exprName || node.typeArguments !== typeArguments ? createTypeQueryNode(exprName, typeArguments) : node;
 }
 
-export function updateMappedTypeNode(node: MappedTypeNode, readonlyToken: ReadonlyKeyword | PlusToken | MinusToken | undefined, typeParameter: TypeParameterDeclaration, nameType: TypeNode | undefined, questionToken: QuestionToken | PlusToken | MinusToken | undefined, type: TypeNode, members: readonly TypeElement[]): MappedTypeNode {
+export function updateMappedTypeNode(node: MappedTypeNode, readonlyToken: ReadonlyKeyword | PlusToken | MinusToken | undefined, typeParameter: TypeParameterDeclaration, nameType: TypeNode | undefined, questionToken: QuestionToken | PlusToken | MinusToken | undefined, type: TypeNode | undefined, members: readonly TypeElement[]): MappedTypeNode {
     return node.readonlyToken !== readonlyToken || node.typeParameter !== typeParameter || node.nameType !== nameType || node.questionToken !== questionToken || node.type !== type || node.members !== members ? createMappedTypeNode(readonlyToken, typeParameter, nameType, questionToken, type, members) : node;
 }
 
@@ -3506,7 +3501,7 @@ export function updateTupleTypeNode(node: TupleTypeNode, elements: readonly Type
     return node.elements !== elements ? createTupleTypeNode(elements) : node;
 }
 
-export function updateNamedTupleMember(node: NamedTupleMember, dotDotDotToken: DotDotDotToken, name: Identifier, questionToken: QuestionToken, type: TypeNode): NamedTupleMember {
+export function updateNamedTupleMember(node: NamedTupleMember, dotDotDotToken: DotDotDotToken | undefined, name: Identifier, questionToken: QuestionToken | undefined, type: TypeNode): NamedTupleMember {
     return node.dotDotDotToken !== dotDotDotToken || node.name !== name || node.questionToken !== questionToken || node.type !== type ? createNamedTupleMember(dotDotDotToken, name, questionToken, type) : node;
 }
 
@@ -3582,7 +3577,7 @@ export function updateJsxClosingElement(node: JsxClosingElement, tagName: JsxTag
     return node.tagName !== tagName ? createJsxClosingElement(tagName) : node;
 }
 
-export function updateJsxExpression(node: JsxExpression, dotDotDotToken: DotDotDotToken | undefined, expression: Expression): JsxExpression {
+export function updateJsxExpression(node: JsxExpression, dotDotDotToken?: DotDotDotToken, expression?: Expression): JsxExpression {
     return node.dotDotDotToken !== dotDotDotToken || node.expression !== expression ? createJsxExpression(dotDotDotToken, expression) : node;
 }
 
@@ -3590,7 +3585,7 @@ export function updateSyntaxList(node: SyntaxList, children: readonly Node[]): S
     return node.children !== children ? createSyntaxList(children) : node;
 }
 
-export function updateJSDoc(node: JSDoc, comment: readonly JSDocComment[], tags: readonly JSDocTag[]): JSDoc {
+export function updateJSDoc(node: JSDoc, comment: readonly JSDocComment[], tags?: readonly JSDocTag[]): JSDoc {
     return node.comment !== comment || node.tags !== tags ? createJSDoc(comment, tags) : node;
 }
 
@@ -3599,11 +3594,11 @@ export function updateJSDocTypeExpression(node: JSDocTypeExpression, type: TypeN
 }
 
 export function updateJSDocNonNullableType(node: JSDocNonNullableType, type: TypeNode): JSDocNonNullableType {
-    return node.type !== type ? createJSDocNonNullableType(type, node.postfix) : node;
+    return node.type !== type ? createJSDocNonNullableType(type) : node;
 }
 
 export function updateJSDocNullableType(node: JSDocNullableType, type: TypeNode): JSDocNullableType {
-    return node.type !== type ? createJSDocNullableType(type, node.postfix) : node;
+    return node.type !== type ? createJSDocNullableType(type) : node;
 }
 
 export function updateJSDocVariadicType(node: JSDocVariadicType, type: TypeNode): JSDocVariadicType {
@@ -3626,7 +3621,7 @@ export function updateJSDocTemplateTag(node: JSDocTemplateTag, tagName: Identifi
     return node.tagName !== tagName || node.constraint !== constraint || node.typeParameters !== typeParameters || node.comment !== comment ? createJSDocTemplateTag(tagName, constraint, typeParameters, comment) : node;
 }
 
-export function updateJSDocReturnTag(node: JSDocReturnTag, tagName: Identifier, typeExpression: TypeNode, comment?: readonly JSDocComment[]): JSDocReturnTag {
+export function updateJSDocReturnTag(node: JSDocReturnTag, tagName: Identifier, typeExpression?: TypeNode, comment?: readonly JSDocComment[]): JSDocReturnTag {
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocReturnTag(tagName, typeExpression, comment) : node;
 }
 
@@ -3670,7 +3665,7 @@ export function updateJSDocSatisfiesTag(node: JSDocSatisfiesTag, tagName: Identi
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocSatisfiesTag(tagName, typeExpression, comment) : node;
 }
 
-export function updateJSDocThrowsTag(node: JSDocThrowsTag, tagName: Identifier, typeExpression: TypeNode, comment?: readonly JSDocComment[]): JSDocThrowsTag {
+export function updateJSDocThrowsTag(node: JSDocThrowsTag, tagName: Identifier, typeExpression?: TypeNode, comment?: readonly JSDocComment[]): JSDocThrowsTag {
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocThrowsTag(tagName, typeExpression, comment) : node;
 }
 
@@ -3678,11 +3673,11 @@ export function updateJSDocThisTag(node: JSDocThisTag, tagName: Identifier, type
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocThisTag(tagName, typeExpression, comment) : node;
 }
 
-export function updateJSDocImportTag(node: JSDocImportTag, tagName: Identifier, importClause: ImportClause, moduleSpecifier: Expression, attributes: ImportAttributes, comment?: readonly JSDocComment[]): JSDocImportTag {
+export function updateJSDocImportTag(node: JSDocImportTag, tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes?: ImportAttributes, comment?: readonly JSDocComment[]): JSDocImportTag {
     return node.tagName !== tagName || node.importClause !== importClause || node.moduleSpecifier !== moduleSpecifier || node.attributes !== attributes || node.comment !== comment ? createJSDocImportTag(tagName, importClause, moduleSpecifier, attributes, comment) : node;
 }
 
-export function updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier, typeExpression: TypeNode, fullName: Node, comment?: readonly JSDocComment[]): JSDocCallbackTag {
+export function updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier, typeExpression: TypeNode, fullName?: Node, comment?: readonly JSDocComment[]): JSDocCallbackTag {
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.fullName !== fullName || node.comment !== comment ? createJSDocCallbackTag(tagName, typeExpression, fullName, comment) : node;
 }
 
@@ -3690,7 +3685,7 @@ export function updateJSDocOverloadTag(node: JSDocOverloadTag, tagName: Identifi
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocOverloadTag(tagName, typeExpression, comment) : node;
 }
 
-export function updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier, typeExpression: Node, name: Identifier, comment?: readonly JSDocComment[]): JSDocTypedefTag {
+export function updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier, typeExpression?: Node, name?: Identifier, comment?: readonly JSDocComment[]): JSDocTypedefTag {
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.name !== name || node.comment !== comment ? createJSDocTypedefTag(tagName, typeExpression, name, comment) : node;
 }
 
@@ -3746,7 +3741,7 @@ export function updateSyntheticReferenceExpression(node: SyntheticReferenceExpre
     return node.expression !== expression || node.thisArg !== thisArg ? createSyntheticReferenceExpression(expression, thisArg) : node;
 }
 
-export function updateJSDocTypeLiteral(node: JSDocTypeLiteral, jsdocPropertyTags: readonly JSDocTag[]): JSDocTypeLiteral {
+export function updateJSDocTypeLiteral(node: JSDocTypeLiteral, jsdocPropertyTags?: readonly JSDocTag[]): JSDocTypeLiteral {
     return node.jsdocPropertyTags !== jsdocPropertyTags ? createJSDocTypeLiteral(jsdocPropertyTags, node.isArrayType) : node;
 }
 

@@ -457,10 +457,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return (this.data & (1 << 24)) !== 0;
     }
 
-    get postfix(): boolean {
-        return (this.data & (1 << 24)) !== 0;
-    }
-
     // ═══ Generated SyntaxKind union property getters ═══
 
     get keyword(): SyntaxKind | undefined {

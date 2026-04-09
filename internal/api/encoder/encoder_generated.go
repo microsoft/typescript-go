@@ -624,12 +624,6 @@ func getNodeCommonData(node *ast.Node) uint32 {
 	case ast.KindJsxText:
 		n := node.AsJsxText()
 		return uint32(boolToByte(n.ContainsOnlyTriviaWhiteSpaces)) << 24
-	case ast.KindJSDocNonNullableType:
-		n := node.AsJSDocNonNullableType()
-		return uint32(boolToByte(n.Postfix)) << 24
-	case ast.KindJSDocNullableType:
-		n := node.AsJSDocNullableType()
-		return uint32(boolToByte(n.Postfix)) << 24
 	case ast.KindModuleDeclaration:
 		n := node.AsModuleDeclaration()
 		var keywordIdx uint32

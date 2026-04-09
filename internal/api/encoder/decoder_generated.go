@@ -929,11 +929,9 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 	case ast.KindJSDocTypeExpression:
 		return d.factory.NewJSDocTypeExpression(d.singleChild(childIndices)), nil
 	case ast.KindJSDocNonNullableType:
-		postfix := commonData&1 != 0
-		return d.factory.NewJSDocNonNullableType(d.singleChild(childIndices), postfix), nil
+		return d.factory.NewJSDocNonNullableType(d.singleChild(childIndices)), nil
 	case ast.KindJSDocNullableType:
-		postfix := commonData&1 != 0
-		return d.factory.NewJSDocNullableType(d.singleChild(childIndices), postfix), nil
+		return d.factory.NewJSDocNullableType(d.singleChild(childIndices)), nil
 	case ast.KindJSDocAllType:
 		return d.factory.NewJSDocAllType(), nil
 	case ast.KindJSDocVariadicType:

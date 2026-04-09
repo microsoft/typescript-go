@@ -595,14 +595,29 @@
                 "WhitespaceTrivia",
                 "ConflictMarkerTrivia"
             ],
-            "LiteralSyntaxKind": { "range": ["FirstLiteralToken", "LastLiteralToken"] },
+            "LiteralSyntaxKind": {
+                "range": [
+                    "FirstLiteralToken",
+                    "LastLiteralToken"
+                ]
+            },
             "PseudoLiteralSyntaxKind": [
                 "TemplateHead",
                 "TemplateMiddle",
                 "TemplateTail"
             ],
-            "PunctuationSyntaxKind": { "range": ["FirstPunctuation", "LastPunctuation"] },
-            "KeywordSyntaxKind": { "range": ["FirstKeyword", "LastKeyword"] },
+            "PunctuationSyntaxKind": {
+                "range": [
+                    "FirstPunctuation",
+                    "LastPunctuation"
+                ]
+            },
+            "KeywordSyntaxKind": {
+                "range": [
+                    "FirstKeyword",
+                    "LastKeyword"
+                ]
+            },
             "ModifierSyntaxKind": [
                 "AbstractKeyword",
                 "AccessorKeyword",
@@ -642,7 +657,12 @@
                 "SuperKeyword",
                 "ImportKeyword"
             ],
-            "TokenSyntaxKind": { "range": ["FirstToken", "LastToken"] },
+            "TokenSyntaxKind": {
+                "range": [
+                    "FirstToken",
+                    "LastToken"
+                ]
+            },
             "JsxTokenSyntaxKind": [
                 "LessThanSlashToken",
                 "EndOfFile",
@@ -1790,7 +1810,8 @@
                 "members": [
                     {
                         "name": "DotDotDotToken",
-                        "type": "DotDotDotToken"
+                        "type": "DotDotDotToken",
+                        "optional": true
                     },
                     {
                         "name": "PropertyName",
@@ -1844,7 +1865,8 @@
                     {
                         "name": "name",
                         "type": "Identifier",
-                        "private": true
+                        "private": true,
+                        "optional": true
                     },
                     {
                         "name": "TypeParameters",
@@ -1996,7 +2018,10 @@
                 "pool": true
             },
             "TypeAliasDeclaration": {
-                "kind": ["TypeAliasDeclaration", "JSTypeAliasDeclaration"],
+                "kind": [
+                    "TypeAliasDeclaration",
+                    "JSTypeAliasDeclaration"
+                ],
                 "extends": [
                     "DeclarationBase",
                     "StatementBase",
@@ -2097,7 +2122,10 @@
                 ]
             },
             "ImportDeclaration": {
-                "kind": ["ImportDeclaration", "JSImportDeclaration"],
+                "kind": [
+                    "ImportDeclaration",
+                    "JSImportDeclaration"
+                ],
                 "generateSubtreeFacts": true,
                 "extends": [
                     "StatementBase",
@@ -2168,7 +2196,10 @@
                 ]
             },
             "ExportAssignment": {
-                "kind": ["ExportAssignment", "JSExportAssignment"],
+                "kind": [
+                    "ExportAssignment",
+                    "JSExportAssignment"
+                ],
                 "extends": [
                     "DeclarationBase",
                     "StatementBase",
@@ -2641,7 +2672,8 @@
                     },
                     {
                         "name": "Type",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "Initializer",
@@ -2882,7 +2914,8 @@
                 "members": [
                     {
                         "name": "AsteriskToken",
-                        "type": "AsteriskToken"
+                        "type": "AsteriskToken",
+                        "optional": true
                     },
                     {
                         "name": "Expression",
@@ -3063,7 +3096,8 @@
                     },
                     {
                         "name": "QuestionDotToken",
-                        "type": "QuestionDotToken"
+                        "type": "QuestionDotToken",
+                        "optional": true
                     },
                     {
                         "name": "name",
@@ -3092,7 +3126,8 @@
                     },
                     {
                         "name": "QuestionDotToken",
-                        "type": "QuestionDotToken"
+                        "type": "QuestionDotToken",
+                        "optional": true
                     },
                     {
                         "name": "ArgumentExpression",
@@ -3119,7 +3154,8 @@
                     },
                     {
                         "name": "QuestionDotToken",
-                        "type": "QuestionDotToken"
+                        "type": "QuestionDotToken",
+                        "optional": true
                     },
                     {
                         "name": "TypeArguments",
@@ -3143,8 +3179,7 @@
             "NewExpression": {
                 "extends": [
                     "PrimaryExpressionBase",
-                    "CompositeBase",
-                    "DeclarationBase"
+                    "CompositeBase"
                 ],
                 "members": [
                     {
@@ -3398,7 +3433,8 @@
                     },
                     {
                         "name": "EqualsToken",
-                        "type": "EqualsToken"
+                        "type": "EqualsToken",
+                        "optional": true
                     },
                     {
                         "name": "ObjectAssignmentInitializer",
@@ -3618,9 +3654,6 @@
                     },
                     {
                         "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList",
                         "inherited": true
                     }
                 ],
@@ -3681,7 +3714,8 @@
                     },
                     {
                         "name": "Type",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     }
                 ]
             },
@@ -3740,9 +3774,6 @@
                     },
                     {
                         "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList",
                         "inherited": true
                     }
                 ]
@@ -3786,7 +3817,8 @@
                     },
                     {
                         "name": "Type",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "Members",
@@ -3831,7 +3863,8 @@
                 "members": [
                     {
                         "name": "DotDotDotToken",
-                        "type": "DotDotDotToken"
+                        "type": "DotDotDotToken",
+                        "optional": true
                     },
                     {
                         "name": "name",
@@ -3840,7 +3873,8 @@
                     },
                     {
                         "name": "QuestionToken",
-                        "type": "QuestionToken"
+                        "type": "QuestionToken",
+                        "optional": true
                     },
                     {
                         "name": "Type",
@@ -4240,7 +4274,8 @@
                     },
                     {
                         "name": "Expression",
-                        "type": "Expression"
+                        "type": "Expression",
+                        "optional": true
                     }
                 ]
             },
@@ -4285,7 +4320,8 @@
                     {
                         "name": "Tags",
                         "type": "JSDocTag",
-                        "list": "NodeList"
+                        "list": "NodeList",
+                        "optional": true
                     }
                 ],
                 "pool": true
@@ -4309,10 +4345,6 @@
                     {
                         "name": "Type",
                         "type": "TypeNode"
-                    },
-                    {
-                        "name": "Postfix",
-                        "type": "bool"
                     }
                 ]
             },
@@ -4324,10 +4356,6 @@
                     {
                         "name": "Type",
                         "type": "TypeNode"
-                    },
-                    {
-                        "name": "Postfix",
-                        "type": "bool"
                     }
                 ]
             },
@@ -4428,7 +4456,8 @@
                     },
                     {
                         "name": "TypeExpression",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "Comment",
@@ -4614,7 +4643,8 @@
                     },
                     {
                         "name": "TypeExpression",
-                        "type": "TypeNode"
+                        "type": "TypeNode",
+                        "optional": true
                     },
                     {
                         "name": "Comment",
@@ -4652,7 +4682,8 @@
                     },
                     {
                         "name": "ImportClause",
-                        "type": "ImportClause"
+                        "type": "ImportClause",
+                        "optional": true
                     },
                     {
                         "name": "ModuleSpecifier",
@@ -4660,7 +4691,8 @@
                     },
                     {
                         "name": "Attributes",
-                        "type": "ImportAttributes"
+                        "type": "ImportAttributes",
+                        "optional": true
                     },
                     {
                         "name": "Comment",
@@ -4683,7 +4715,8 @@
                     },
                     {
                         "name": "FullName",
-                        "type": "Node"
+                        "type": "Node",
+                        "optional": true
                     },
                     {
                         "name": "Comment",
@@ -4721,12 +4754,14 @@
                     },
                     {
                         "name": "TypeExpression",
-                        "type": "Node"
+                        "type": "Node",
+                        "optional": true
                     },
                     {
                         "name": "name",
                         "type": "Identifier",
-                        "private": true
+                        "private": true,
+                        "optional": true
                     },
                     {
                         "name": "Comment",
@@ -4908,9 +4943,6 @@
                     },
                     {
                         "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "list": "NodeList",
-                        "optional": true,
                         "inherited": true
                     }
                 ]
@@ -5090,7 +5122,8 @@
                     {
                         "name": "JSDocPropertyTags",
                         "type": "JSDocTag",
-                        "list": "raw"
+                        "list": "raw",
+                        "optional": true
                     },
                     {
                         "name": "IsArrayType",
