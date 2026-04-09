@@ -78,8 +78,9 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 		}
 	}
 
-	// Process diagnostics in the context to generate quick fixes
-	if params.Context != nil && params.Context.Diagnostics != nil {
+	// Process diagnostics in the context to generate quick fixes.
+	// Skip when Only is set and doesn't include quickfix kinds, per LSP spec.
+	if params.Context != nil && params.Context.Diagnostics != nil && wantsQuickFixes(params.Context.Only) {
 		for _, diag := range params.Context.Diagnostics {
 			if diag.Code == nil || diag.Code.Integer == nil {
 				continue
@@ -133,6 +134,20 @@ func codeActionKindContains(requestedKind, actionKind lsproto.CodeActionKind) bo
 // isFixAllKind returns true if the requested kind matches source.fixAll
 func isFixAllKind(kind lsproto.CodeActionKind) bool {
 	return codeActionKindContains(kind, lsproto.CodeActionKindSourceFixAll)
+}
+
+// wantsQuickFixes returns true if the Only filter is nil/empty (meaning all kinds are wanted)
+// or explicitly includes the quickfix kind.
+func wantsQuickFixes(only *[]lsproto.CodeActionKind) bool {
+	if only == nil || len(*only) == 0 {
+		return true
+	}
+	for _, kind := range *only {
+		if codeActionKindContains(kind, lsproto.CodeActionKindQuickFix) {
+			return true
+		}
+	}
+	return false
 }
 
 // createFixAllAction creates a source.fixAll code action that applies all auto-fixable

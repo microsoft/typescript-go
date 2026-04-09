@@ -92,6 +92,10 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]Co
 // multiple imports from the same module are coalesced into a single import statement,
 // matching the behavior of the TypeScript reference implementation.
 func getAllImportCodeActions(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {
+	if tspath.IsDynamicFileName(fixContext.SourceFile.FileName()) {
+		return nil, nil
+	}
+
 	allDiagnostics := fixContext.Program.GetSemanticDiagnostics(ctx, fixContext.SourceFile)
 
 	var importDiags []*ast.Diagnostic

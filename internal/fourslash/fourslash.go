@@ -1486,68 +1486,59 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 }
 
 // VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
+// It requests a source.fixAll code action from the server and applies the resulting workspace edit.
 func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllOptions) {
 	t.Helper()
 
-	applied := false
-	for {
-		diagParams := &lsproto.DocumentDiagnosticParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-			},
-		}
-		diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+	contentBefore := f.getScriptInfo(f.activeFilename).content
 
-		var diagnostics []*lsproto.Diagnostic
-		if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
-			diagnostics = diagResult.FullDocumentDiagnosticReport.Items
-		}
+	only := []lsproto.CodeActionKind{lsproto.CodeActionKindSourceFixAll}
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+			Only:        &only,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
-		appliedThisRound := false
-		for _, diag := range diagnostics {
-			params := &lsproto.CodeActionParams{
-				TextDocument: lsproto.TextDocumentIdentifier{
-					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-				},
-				Range: lsproto.Range{
-					Start: diag.Range.Start,
-					End:   diag.Range.End,
-				},
-				Context: &lsproto.CodeActionContext{
-					Diagnostics: []*lsproto.Diagnostic{diag},
-				},
-			}
-			result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
-
-			if result.CommandOrCodeActionArray == nil {
-				continue
-			}
-			for _, item := range *result.CommandOrCodeActionArray {
-				if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
-					if item.CodeAction.Edit != nil && item.CodeAction.Edit.Changes != nil {
-						for _, edits := range *item.CodeAction.Edit.Changes {
-							f.applyTextEdits(t, edits)
-						}
-						applied = true
-						appliedThisRound = true
-					}
-					break
-				}
-			}
-			if appliedThisRound {
-				break
-			}
-		}
-		if !appliedThisRound {
-			break
-		}
+	if result.CommandOrCodeActionArray == nil {
+		t.Fatalf("No code fixes returned for fixId %q", options.FixID)
 	}
 
-	if !applied {
-		t.Fatalf("No code fixes applied for fixId %q", options.FixID)
+	var selected *lsproto.CodeAction
+	var availableTitles []string
+	for _, item := range *result.CommandOrCodeActionArray {
+		if item.CodeAction == nil || item.CodeAction.Kind == nil || *item.CodeAction.Kind != lsproto.CodeActionKindSourceFixAll {
+			continue
+		}
+		availableTitles = append(availableTitles, item.CodeAction.Title)
+		selected = item.CodeAction
+		break
+	}
+
+	if selected == nil {
+		t.Fatalf("No source.fixAll code action found for fixId %q. Available fixes: %v", options.FixID, availableTitles)
+	}
+	if selected.Edit == nil || selected.Edit.Changes == nil {
+		t.Fatalf("source.fixAll code action %q did not provide any edits", selected.Title)
+	}
+
+	for _, edits := range *selected.Edit.Changes {
+		f.applyTextEdits(t, edits)
 	}
 
 	actual := f.getScriptInfo(f.activeFilename).content
+	if actual == contentBefore {
+		t.Fatalf("Applying source.fixAll code action %q for fixId %q did not change the file content", selected.Title, options.FixID)
+	}
+
 	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
 }
 
