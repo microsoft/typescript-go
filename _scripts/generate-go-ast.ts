@@ -770,6 +770,35 @@ function generate(): string {
         w.write("");
     }
 
+    // Node union aliases (e.g. Statement = Node, BlockOrExpression = Node)
+    const nodeAliases = api.nodeAliases();
+    if (nodeAliases.length > 0) {
+        w.write("// ──────────────────────────────────────────────────────────────────────");
+        w.write("// Node union aliases");
+        w.write("// ──────────────────────────────────────────────────────────────────────");
+        w.write("");
+        w.write("type (");
+        w.push();
+        const maxAliasLen = Math.max(...nodeAliases.map(alias => alias.name.length));
+        for (const alias of nodeAliases) {
+            const padding = " ".repeat(maxAliasLen - alias.name.length);
+            let comment: string;
+            if (alias.isBaseAlias && alias.baseKey) {
+                comment = `Node with ${alias.baseKey}`;
+            }
+            else if (alias.isUnion) {
+                comment = alias.unionMemberNames.join(" | ");
+            }
+            else {
+                comment = "";
+            }
+            w.write(`${alias.name}${padding} = Node${comment ? ` // ${comment}` : ""}`);
+        }
+        w.pop();
+        w.write(")");
+        w.write("");
+    }
+
     // Generate for each node
     for (const node of api.nodes()) {
         // Section comment

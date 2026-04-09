@@ -511,6 +511,84 @@ type (
 )
 
 // ──────────────────────────────────────────────────────────────────────
+// Node union aliases
+// ──────────────────────────────────────────────────────────────────────
+
+type (
+	Expression                     = Node // Node with ExpressionBase
+	Statement                      = Node // Node with StatementBase
+	TypeNode                       = Node // Node with TypeNodeBase
+	BlockOrExpression              = Node // Block | Expression
+	NodeBody                       = Node // Block | Expression | ModuleBlock | ModuleDeclaration
+	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
+	DeclarationName                = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
+	ModuleName                     = Node // Identifier | StringLiteral
+	ModuleExportName               = Node // Identifier | StringLiteral
+	PropertyName                   = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
+	ModuleBody                     = Node // ModuleBlock | ModuleDeclaration
+	ForInitializer                 = Node // Expression | MissingDeclaration | VariableDeclarationList
+	ModuleReference                = Node // Identifier | QualifiedName | ExternalModuleReference
+	NamedImportBindings            = Node // NamespaceImport | NamedImports
+	NamedExportBindings            = Node // NamespaceExport | NamedExports
+	MemberName                     = Node // Identifier | PrivateIdentifier
+	EntityName                     = Node // Identifier | QualifiedName
+	BindingName                    = Node // Identifier | BindingPattern
+	ModifierLike                   = Node // Modifier | Decorator
+	JsxChild                       = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
+	JsxAttributeName               = Node // Identifier | JsxNamespacedName
+	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxTagNameExpression           = Node // Identifier | KeywordExpression | PropertyAccessExpression | JsxNamespacedName
+	ClassLikeDeclaration           = Node // ClassDeclaration | ClassExpression
+	AccessorDeclaration            = Node // GetAccessorDeclaration | SetAccessorDeclaration
+	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
+	LiteralExpression              = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	UnionOrIntersectionTypeNode    = Node // UnionTypeNode | IntersectionTypeNode
+	TemplateLiteralLikeNode        = Node // PseudoLiteralSyntaxKind
+	TemplateMiddleOrTail           = Node // TemplateMiddle | TemplateTail
+	TemplateLiteral                = Node // TemplateExpression | NoSubstitutionTemplateLiteral
+	TypePredicateParameterName     = Node // Identifier | ThisTypeNode
+	ImportAttributeName            = Node // Identifier | StringLiteral
+	LeftHandSideExpression         = Node // Node with LeftHandSideExpressionBase
+	JSDocComment                   = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain
+	SignatureDeclaration           = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction
+	StringLiteralLikeNode          = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	NumericOrStringLikeLiteral     = Node // StringLiteralLikeNode | NumericLiteral
+	ObjectLiteralLikeNode          = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration          = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports          = Node // NamedImports | NamedExports
+	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
+	CallLikeExpression             = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement | BinaryExpression
+	FunctionLikeDeclaration        = Node // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | FunctionExpression | ArrowFunction
+	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
+	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
+	CallOrNewExpression            = Node // CallExpression | NewExpression
+	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
+	AnyImportSyntax                = Node // ImportDeclaration | ImportEqualsDeclaration
+	Declaration                    = Node // Node with DeclarationBase
+	ClassElement                   = Node // Node with ClassElementBase
+	TypeElement                    = Node // Node with TypeElementBase
+	ObjectLiteralElement           = Node // Node with ObjectLiteralElementBase
+	JSDocTag                       = Node // Node with JSDocTagBase
+	ArrayBindingElement            = Node // BindingElement | OmittedExpression
+	AssertionExpression            = Node // TypeAssertion | AsExpression
+	BooleanLiteral                 = Node // TrueLiteral | FalseLiteral
+	ConciseBody                    = Node // Block | Expression
+	DestructuringAssignment        = Node // ObjectDestructuringAssignment | ArrayDestructuringAssignment
+	LiteralToken                   = Node // NumericLiteral | BigIntLiteral | StringLiteral | JsxText | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	Modifier                       = Node // ModifierSyntaxKind
+	ObjectLiteralElementLike       = Node // PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration
+	PropertyNameLiteral            = Node // Identifier | StringLiteral | NumericLiteral
+	PseudoLiteralToken             = Node // PseudoLiteralSyntaxKind
+	TemplateLiteralToken           = Node // NoSubstitutionTemplateLiteral | PseudoLiteralToken
+	ArrayDestructuringAssignment   = Node // BinaryExpression
+	ObjectDestructuringAssignment  = Node // BinaryExpression
+	FunctionBody                   = Node // Block
+	IncrementExpression            = Node // UpdateExpressionBase
+)
+
+// ──────────────────────────────────────────────────────────────────────
 // Token
 // ──────────────────────────────────────────────────────────────────────
 
