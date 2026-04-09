@@ -1,6 +1,7 @@
 package tracing
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"slices"
@@ -14,6 +15,25 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+// Context key for tracing
+type contextKey int
+
+const tracingContextKey contextKey = 0
+
+// WithTracing returns a new context with the given Tracing instance.
+func WithTracing(ctx context.Context, tr *Tracing) context.Context {
+	return context.WithValue(ctx, tracingContextKey, tr)
+}
+
+// FromContext returns the Tracing instance from the context, or nil if none.
+func FromContext(ctx context.Context) *Tracing {
+	if ctx == nil {
+		return nil
+	}
+	tr, _ := ctx.Value(tracingContextKey).(*Tracing)
+	return tr
+}
 
 // Tracer is an interface for recording types during type checking.
 // Each checker should have its own Tracer instance to avoid sharing types between checkers.
@@ -93,7 +113,6 @@ type Tracing struct {
 	configFilePath   string
 	legend           []TraceRecord
 	tracers          []*typeTracer
-	checkerTracings  []*CheckerTracing
 	traceContent     strings.Builder
 	traceStarted     bool
 	deterministic    bool   // when true, use monotonic counter instead of real time
@@ -204,23 +223,55 @@ func (tr *Tracing) writeEventRaw(ph string, cat string, ts float64, name string,
 	writeEventTo(&tr.traceContent, ph, cat, ts, name, argsJSON, extras...)
 }
 
-// writeArgsJSON constructs a deterministic JSON object from key-value pairs.
-// Keys and values are written in the order provided. Values are JSON-escaped strings.
-func writeArgsJSON(pairs ...string) string {
-	if len(pairs) == 0 || len(pairs)%2 != 0 {
+// writeArgsJSON constructs a deterministic JSON object from a map of key-value pairs.
+func writeArgsJSON(args map[string]any) string {
+	if len(args) == 0 {
 		return ""
 	}
+	// Sort keys for deterministic output
+	keys := make([]string, 0, len(args))
+	for k := range args {
+		keys = append(keys, k)
+	}
+	slices.Sort(keys)
 	var b strings.Builder
 	b.WriteString("{")
-	for i := 0; i < len(pairs); i += 2 {
-		if i > 0 {
+	first := true
+	for _, k := range keys {
+		if !first {
 			b.WriteString(",")
 		}
+		first = false
 		b.WriteString("\"")
-		b.WriteString(pairs[i])
-		b.WriteString("\":\"")
-		b.WriteString(pairs[i+1])
-		b.WriteString("\"")
+		b.WriteString(k)
+		b.WriteString("\":")
+		v := args[k]
+		switch val := v.(type) {
+		case string:
+			b.WriteString("\"")
+			b.WriteString(val)
+			b.WriteString("\"")
+		case bool:
+			if val {
+				b.WriteString("true")
+			} else {
+				b.WriteString("false")
+			}
+		case int:
+			fmt.Fprintf(&b, "%d", val)
+		case int32:
+			fmt.Fprintf(&b, "%d", val)
+		case uint32:
+			fmt.Fprintf(&b, "%d", val)
+		case int64:
+			fmt.Fprintf(&b, "%d", val)
+		case uint64:
+			fmt.Fprintf(&b, "%d", val)
+		case ast.Kind:
+			fmt.Fprintf(&b, "%d", int(val))
+		default:
+			fmt.Fprintf(&b, "\"%v\"", val)
+		}
 	}
 	b.WriteString("}")
 	return b.String()
@@ -228,7 +279,7 @@ func writeArgsJSON(pairs ...string) string {
 
 // Instant records an instant event in the trace.
 // Safe to call on nil receiver.
-func (tr *Tracing) Instant(phase Phase, name string, args ...string) {
+func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 	if tr == nil || !tr.traceStarted {
 		return
 	}
@@ -238,12 +289,12 @@ func (tr *Tracing) Instant(phase Phase, name string, args ...string) {
 
 	ts := tr.timestamp()
 	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("I", string(phase), ts, name, writeArgsJSON(args...))
+	tr.writeEventRaw("I", string(phase), ts, name, writeArgsJSON(args))
 }
 
 // pushTo implements the Push logic, writing to the given buffer and event stack.
-func pushTo(buf *strings.Builder, stack *[]traceStackEntry, ts float64, phase Phase, name string, separateBeginAndEnd bool, args ...string) {
-	argsJSON := writeArgsJSON(args...)
+func pushTo(buf *strings.Builder, stack *[]traceStackEntry, ts float64, phase Phase, name string, separateBeginAndEnd bool, args map[string]any) {
+	argsJSON := writeArgsJSON(args)
 	*stack = append(*stack, traceStackEntry{
 		phase:               phase,
 		name:                name,
@@ -295,10 +346,10 @@ func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTi
 // recorded if its duration crosses a 10ms sampling boundary, matching TypeScript's
 // behavior of sampling short-lived events to avoid trace bloat.
 //
-// args are key-value pairs: "key1", "value1", "key2", "value2", ...
-func (tr *Tracing) Push(phase Phase, name string, separateBeginAndEnd bool, args ...string) {
+// Returns a function that should be called (typically deferred) to end the event.
+func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
 	if tr == nil || !tr.traceStarted {
-		return
+		return func() {}
 	}
 
 	tr.mu.Lock()
@@ -308,7 +359,8 @@ func (tr *Tracing) Push(phase Phase, name string, separateBeginAndEnd bool, args
 	if separateBeginAndEnd {
 		ts = tr.timestamp()
 	}
-	pushTo(&tr.traceContent, &tr.eventStack, ts, phase, name, separateBeginAndEnd, args...)
+	pushTo(&tr.traceContent, &tr.eventStack, ts, phase, name, separateBeginAndEnd, args)
+	return func() { tr.Pop() }
 }
 
 // Pop ends the most recent trace event block on the shared trace buffer.
@@ -347,110 +399,13 @@ func (tr *Tracing) PopAll() {
 	}
 }
 
-// CheckerTracing manages per-checker trace events. Each checker gets its own
-// CheckerTracing whose events are combined with the shared global events to
-// produce checker-specific trace_N.json files.
-type CheckerTracing struct {
-	tr         *Tracing
-	content    strings.Builder
-	eventStack []traceStackEntry
-	mu         sync.Mutex
-}
-
-// Push starts a trace event block on the per-checker trace buffer.
-// Safe to call on nil receiver.
-func (ct *CheckerTracing) Push(phase Phase, name string, separateBeginAndEnd bool, args ...string) {
-	if ct == nil {
-		return
-	}
-
-	ct.mu.Lock()
-	defer ct.mu.Unlock()
-
-	var ts float64
-	if separateBeginAndEnd {
-		ts = ct.tr.timestamp()
-	}
-	pushTo(&ct.content, &ct.eventStack, ts, phase, name, separateBeginAndEnd, args...)
-}
-
-// Pop ends the most recent trace event block on the per-checker trace buffer.
-// Safe to call on nil receiver.
-func (ct *CheckerTracing) Pop() {
-	if ct == nil {
-		return
-	}
-
-	ct.mu.Lock()
-	defer ct.mu.Unlock()
-
-	if len(ct.eventStack) == 0 {
-		return
-	}
-	var ts float64
-	if ct.eventStack[len(ct.eventStack)-1].separateBeginAndEnd {
-		ts = ct.tr.timestamp()
-	}
-	popFrom(&ct.content, &ct.eventStack, ts, ct.tr.startTime)
-}
-
-// PopAll closes all open trace events on the per-checker trace buffer.
-// Safe to call on nil receiver.
-func (ct *CheckerTracing) PopAll() {
-	if ct == nil {
-		return
-	}
-
-	ct.mu.Lock()
-	defer ct.mu.Unlock()
-
-	ts := ct.tr.timestamp()
-	for i := len(ct.eventStack) - 1; i >= 0; i-- {
-		popFrom(&ct.content, &ct.eventStack, ts, ct.tr.startTime)
-	}
-}
-
-// Instant records an instant event on the per-checker trace buffer.
-// Safe to call on nil receiver.
-func (ct *CheckerTracing) Instant(phase Phase, name string, args ...string) {
-	if ct == nil {
-		return
-	}
-
-	ct.mu.Lock()
-	defer ct.mu.Unlock()
-
-	ts := ct.tr.timestamp()
-	ct.content.WriteString(",\n")
-	writeEventTo(&ct.content, "I", string(phase), ts, name, writeArgsJSON(args...))
-}
-
-// NewCheckerTracing creates a per-checker tracing handle.
-// Each checker should have its own CheckerTracing so that checker-specific events
-// are written to separate trace files.
-func (tr *Tracing) NewCheckerTracing(checkerIndex int) *CheckerTracing {
-	if tr == nil {
-		return nil
-	}
-
-	tr.mu.Lock()
-	defer tr.mu.Unlock()
-
-	ct := &CheckerTracing{tr: tr}
-	for len(tr.checkerTracings) <= checkerIndex {
-		tr.checkerTracings = append(tr.checkerTracings, nil)
-	}
-	tr.checkerTracings[checkerIndex] = ct
-	return ct
-}
-
 // NewTypeTracer creates a new tracer for a specific checker.
 // The checkerIndex is used to create unique filenames for each checker's output.
 func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	tracePath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("trace_%d.json", checkerIndex))
+	tracePath := tspath.CombinePaths(tr.traceDir, "trace_0.json")
 	typesPath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("types_%d.json", checkerIndex))
 	tracer := &typeTracer{
 		fs:           tr.fs,
@@ -485,26 +440,10 @@ func (tr *Tracing) StopTracing() error {
 	if tr.traceStarted {
 		sharedContent := tr.traceContent.String()
 
-		if len(tr.checkerTracings) > 0 {
-			// Write per-checker trace files: shared global events + checker-specific events
-			for i, ct := range tr.checkerTracings {
-				tracePath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("trace_%d.json", i))
-				var full strings.Builder
-				full.WriteString(sharedContent)
-				if ct != nil {
-					full.WriteString(ct.content.String())
-				}
-				full.WriteString("\n]\n")
-				if err := tr.fs.WriteFile(tracePath, full.String()); err != nil {
-					return fmt.Errorf("failed to write trace file: %w", err)
-				}
-			}
-		} else {
-			// No per-checker tracings: write shared content to trace_0.json
-			tracePath := tspath.CombinePaths(tr.traceDir, "trace_0.json")
-			if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n"); err != nil {
-				return fmt.Errorf("failed to write trace file: %w", err)
-			}
+		// Write shared content to trace_0.json
+		tracePath := tspath.CombinePaths(tr.traceDir, "trace_0.json")
+		if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n"); err != nil {
+			return fmt.Errorf("failed to write trace file: %w", err)
 		}
 		tr.traceStarted = false
 	}

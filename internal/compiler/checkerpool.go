@@ -105,7 +105,7 @@ func (p *checkerPool) createCheckers() {
 			wg.Queue(func() {
 				var tracer checker.TypeTracer
 				if p.tracing != nil {
-					tracer = checker.NewTracingTypeTracer(p.tracing.NewTypeTracer(i), p.tracing.NewCheckerTracing(i))
+					tracer = checker.NewTracingTypeTracer(p.tracing.NewTypeTracer(i))
 				}
 				p.checkers[i], p.locks[i] = checker.NewCheckerWithTracer(p.program, tracer)
 			})

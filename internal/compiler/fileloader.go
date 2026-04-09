@@ -3,7 +3,6 @@ package compiler
 import (
 	"cmp"
 	"slices"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -149,7 +148,7 @@ func processAllProgramFiles(
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
-	opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", false, "count", strconv.Itoa(len(rootFiles)))
+	opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", map[string]any{"count": len(rootFiles)}, false)
 	for index, rootFile := range rootFiles {
 		loader.addRootTask(rootFile, nil, &FileIncludeReason{kind: fileIncludeKindRootFile, data: index})
 	}
@@ -229,11 +228,7 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 			// Under bundler module resolution, this also triggers the "import" condition to be used.
 			resolutionMode := core.ResolutionModeNone
 			resolved, trace := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
-			hasResolved := "false"
-			if resolved.IsResolved() {
-				hasResolved = "true"
-			}
-			p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", false, "directive", name, "hasResolved", hasResolved, "refKind", strconv.Itoa(int(fileIncludeKindAutomaticTypeDirectiveFile)))
+			p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": name, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindAutomaticTypeDirectiveFile)}, false)
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: name, Mode: resolutionMode}] = resolved
 			typeResolutionsTrace = append(typeResolutionsTrace, trace...)
 			if resolved.IsResolved() {
@@ -334,7 +329,7 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaD
 }
 
 func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
-	p.opts.Tracing.Push(tracing.PhaseParse, "createSourceFile", true, "path", t.normalizedFilePath)
+	defer p.opts.Tracing.Push(tracing.PhaseParse, "createSourceFile", map[string]any{"path": t.normalizedFilePath}, true)()
 	path := p.toPath(t.normalizedFilePath)
 	options := p.projectReferenceFileMapper.getCompilerOptionsForFile(t)
 	sourceFile := p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
@@ -342,7 +337,6 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 		Path:                           path,
 		ExternalModuleIndicatorOptions: ast.GetExternalModuleIndicatorOptions(t.normalizedFilePath, options, t.metadata),
 	})
-	p.opts.Tracing.Pop()
 	return sourceFile
 }
 
@@ -444,7 +438,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 	if len(file.TypeReferenceDirectives) == 0 {
 		return
 	}
-	p.opts.Tracing.Push(tracing.PhaseProgram, "resolveTypeReferenceDirectiveNamesWorker", false, "containingFileName", file.FileName())
+	p.opts.Tracing.Push(tracing.PhaseProgram, "resolveTypeReferenceDirectiveNamesWorker", map[string]any{"containingFileName": file.FileName()}, false)
 	defer p.opts.Tracing.Pop()
 	meta := t.metadata
 
@@ -454,11 +448,8 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(file)
 		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
 		resolved, trace := p.resolver.ResolveTypeReferenceDirective(ref.FileName, fileName, resolutionMode, redirect)
-		hasResolved := "false"
-		if resolved.IsResolved() {
-			hasResolved = "true"
-		}
-		p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", false, "directive", ref.FileName, "hasResolved", hasResolved, "refKind", strconv.Itoa(int(fileIncludeKindTypeReferenceDirective)), "refPath", string(t.path))
+
+		p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": ref.FileName, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindTypeReferenceDirective), "refPath": string(t.path)}, false)
 		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
 		includeReason := &FileIncludeReason{
 			kind: fileIncludeKindTypeReferenceDirective,
@@ -493,7 +484,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
 func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
-	p.opts.Tracing.Push(tracing.PhaseProgram, "resolveModuleNamesWorker", false, "containingFileName", t.file.FileName())
+	p.opts.Tracing.Push(tracing.PhaseProgram, "resolveModuleNamesWorker", map[string]any{"containingFileName": t.file.FileName()}, false)
 	defer p.opts.Tracing.Pop()
 	file := t.file
 	meta := t.metadata

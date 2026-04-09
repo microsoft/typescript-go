@@ -274,8 +274,9 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 }
 
 func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
-	p.program.Tracing().Push(tracing.PhaseEmit, "emitBuildInfo", true)
-	defer p.program.Tracing().Pop()
+	if tr := tracing.FromContext(ctx); tr != nil {
+		defer tr.Push(tracing.PhaseEmit, "emitBuildInfo", nil, true)()
+	}
 	buildInfoFileName := outputpaths.GetBuildInfoFileName(p.snapshot.options, tspath.ComparePathsOptions{
 		CurrentDirectory:          p.program.GetCurrentDirectory(),
 		UseCaseSensitiveFileNames: p.program.UseCaseSensitiveFileNames(),

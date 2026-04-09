@@ -375,8 +375,8 @@ func (c *Checker) checkTypeRelatedToEx(
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
 		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
 		relation.set(id, RelationComparisonResultFailed|core.IfElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
-		if c.tracing != nil {
-			c.tracing.Instant(tracing.PhaseCheckTypes, "checkTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
+		if tr := tracing.FromContext(c.ctx); tr != nil {
+			tr.Instant(tracing.PhaseCheckTypes, "checkTypeRelatedTo_DepthLimit", map[string]any{"sourceId": source.id, "targetId": target.id, "depth": len(r.sourceStack), "targetDepth": len(r.targetStack)})
 		}
 		message := core.IfElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 		if errorNode == nil {
@@ -1338,8 +1338,8 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
 	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
-		if c.tracing != nil {
-			c.tracing.Push(tracing.PhaseCheckTypes, "getVariancesWorker", false, "arity", strconv.Itoa(len(typeParameters)), "id", strconv.FormatUint(uint64(c.getDeclaredTypeOfSymbol(symbol).id), 10))
+		if tr := tracing.FromContext(c.ctx); tr != nil {
+			defer tr.Push(tracing.PhaseCheckTypes, "getVariancesWorker", map[string]any{"arity": len(typeParameters), "id": c.getDeclaredTypeOfSymbol(symbol).id}, false)()
 		}
 		oldVarianceComputation := c.inVarianceComputation
 		saveResolutionStart := c.resolutionStart
@@ -1391,9 +1391,6 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 		if !oldVarianceComputation {
 			c.inVarianceComputation = false
 			c.resolutionStart = saveResolutionStart
-		}
-		if c.tracing != nil {
-			c.tracing.Pop()
 		}
 		links.variances = variances
 	}
@@ -3089,18 +3086,15 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	r.c.reliabilityFlags = 0
 	var result Ternary
 	if r.expandingFlags == ExpandingFlagsBoth {
-		if r.c.tracing != nil {
-			r.c.tracing.Instant(tracing.PhaseCheckTypes, "recursiveTypeRelatedTo_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "depth", strconv.Itoa(len(r.sourceStack)), "targetDepth", strconv.Itoa(len(r.targetStack)))
+		if tr := tracing.FromContext(r.c.ctx); tr != nil {
+			tr.Instant(tracing.PhaseCheckTypes, "recursiveTypeRelatedTo_DepthLimit", map[string]any{"sourceId": source.id, "targetId": target.id, "depth": len(r.sourceStack), "targetDepth": len(r.targetStack)})
 		}
 		result = TernaryMaybe
 	} else {
-		if r.c.tracing != nil {
-			r.c.tracing.Push(tracing.PhaseCheckTypes, "structuredTypeRelatedTo", false, "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10))
+		if tr := tracing.FromContext(r.c.ctx); tr != nil {
+			defer tr.Push(tracing.PhaseCheckTypes, "structuredTypeRelatedTo", map[string]any{"sourceId": source.id, "targetId": target.id}, false)()
 		}
 		result = r.structuredTypeRelatedTo(source, target, reportErrors, intersectionState)
-		if r.c.tracing != nil {
-			r.c.tracing.Pop()
-		}
 	}
 	propagatingVarianceFlags := r.c.reliabilityFlags
 	r.c.reliabilityFlags |= saveReliabilityFlags
@@ -3978,8 +3972,8 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	for _, sourceProperty := range sourcePropertiesFiltered {
 		numCombinations *= countTypes(r.c.getNonMissingTypeOfSymbol(sourceProperty))
 		if numCombinations > 25 {
-			if r.c.tracing != nil {
-				r.c.tracing.Instant(tracing.PhaseCheckTypes, "typeRelatedToDiscriminatedType_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "targetId", strconv.FormatUint(uint64(target.id), 10), "numCombinations", strconv.Itoa(numCombinations))
+			if tr := tracing.FromContext(r.c.ctx); tr != nil {
+				tr.Instant(tracing.PhaseCheckTypes, "typeRelatedToDiscriminatedType_DepthLimit", map[string]any{"sourceId": source.id, "targetId": target.id, "numCombinations": numCombinations})
 			}
 			return TernaryFalse
 		}
@@ -4955,7 +4949,8 @@ func (c *Checker) isDistributionDependent(root *ConditionalRoot) bool {
 }
 
 func (r *Relater) traceUnionsOrIntersectionsTooLarge(source *Type, target *Type) {
-	if r.c.tracing == nil {
+	tr := tracing.FromContext(r.c.ctx)
+	if tr == nil {
 		return
 	}
 	if source.flags&TypeFlagsUnionOrIntersection != 0 && target.flags&TypeFlagsUnionOrIntersection != 0 {
@@ -4966,7 +4961,7 @@ func (r *Relater) traceUnionsOrIntersectionsTooLarge(source *Type, target *Type)
 		sourceSize := len(source.Types())
 		targetSize := len(target.Types())
 		if sourceSize*targetSize > 1_000_000 {
-			r.c.tracing.Instant(tracing.PhaseCheckTypes, "traceUnionsOrIntersectionsTooLarge_DepthLimit", "sourceId", strconv.FormatUint(uint64(source.id), 10), "sourceSize", strconv.Itoa(sourceSize), "targetId", strconv.FormatUint(uint64(target.id), 10), "targetSize", strconv.Itoa(targetSize))
+			tr.Instant(tracing.PhaseCheckTypes, "traceUnionsOrIntersectionsTooLarge_DepthLimit", map[string]any{"sourceId": source.id, "sourceSize": sourceSize, "targetId": target.id, "targetSize": targetSize})
 		}
 	}
 }
