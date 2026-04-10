@@ -106,6 +106,7 @@ func createWatcher(
 }
 
 func (w *Watcher) start() {
+	w.mu.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
@@ -116,6 +117,7 @@ func (w *Watcher) start() {
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	w.doBuild()
+	w.mu.Unlock()
 
 	if w.testing == nil {
 		w.fileWatcher.Run(w.sys.Now)
@@ -125,10 +127,10 @@ func (w *Watcher) start() {
 func (w *Watcher) DoCycle() {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	if w.hasErrorsInTsConfig() {
+	if w.recheckTsConfig() {
 		return
 	}
-	if !w.fileWatcher.WatchStateIsEmpty() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
+	if !w.fileWatcher.WatchStateUninitialized() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
 		if w.testing != nil {
 			w.testing.OnProgram(w.program)
 		}
@@ -208,7 +210,7 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 	})
 }
 
-func (w *Watcher) hasErrorsInTsConfig() bool {
+func (w *Watcher) recheckTsConfig() bool {
 	if w.configFileName == "" {
 		return false
 	}
@@ -246,6 +248,12 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 			w.reportDiagnostic(e)
 		}
 		w.configHasErrors = true
+		errorCount := len(errors)
+		if errorCount == 1 {
+			w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_1_error_Watching_for_file_changes))
+		} else {
+			w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_0_errors_Watching_for_file_changes, errorCount))
+		}
 		return true
 	}
 	if w.configHasErrors {

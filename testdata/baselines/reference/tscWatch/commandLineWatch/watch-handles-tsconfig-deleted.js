@@ -54,6 +54,8 @@ Edit [0]:: delete tsconfig
 
 Output::
 [91merror[0m[90m TS5083: [0mCannot read file '/home/src/workspaces/project/tsconfig.json'.
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
 
 
 

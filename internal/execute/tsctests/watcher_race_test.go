@@ -60,9 +60,9 @@ func TestWatcherConcurrentDoCycle(t *testing.T) {
 	wg.Wait()
 }
 
-// TestWatcherDoCycleWithConcurrentStateReads calls DoCycle while
-// other goroutines read watcher state through the exported test
-// helper methods (HasWatchedFilesChanged, WatchStateLen, etc.).
+// TestWatcherDoCycleWithConcurrentStateReads calls DoCycle from
+// multiple goroutines, some modifying files and some not, to test
+// concurrent access to all Watcher and FileWatcher state.
 func TestWatcherDoCycleWithConcurrentStateReads(t *testing.T) {
 	t.Parallel()
 	w, sys := createTestWatcher(t)
@@ -203,8 +203,7 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 
 // TestWatcherConcurrentDoCycleNoChanges calls DoCycle from many
 // goroutines when no files have changed, testing the early-return
-// path where WatchState is read and HasChanges is called. This path
-// reads WatchState and WildcardDirectories without synchronization.
+// path where WatchState is read and HasChanges is called.
 func TestWatcherConcurrentDoCycleNoChanges(t *testing.T) {
 	t.Parallel()
 	w, _ := createTestWatcher(t)
