@@ -28865,7 +28865,7 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand
 		// unless it's an assignment declaration.
 		kind := ast.GetAssignmentDeclarationKind(binary.AsNode())
-		if node == binary.Right && kind != ast.JSDeclarationKindModuleExports && kind != ast.JSDeclarationKindExportsProperty {
+		if node == binary.Right && !((kind == ast.JSDeclarationKindModuleExports || kind == ast.JSDeclarationKindExportsProperty) && binary.Symbol != nil) {
 			return c.getContextualTypeForAssignmentExpression(binary)
 		}
 	case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
