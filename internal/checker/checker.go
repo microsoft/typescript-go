@@ -17577,7 +17577,7 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 			}
 			assignedType := c.getAssignmentDeclarationInitializerType(declaration)
 			// We ignore initial assignments of undefined to CommonJS exports when there are multiple assignment declarations
-			if !ast.IsCommonJSExport(declaration) || i != 0 || len(symbol.Declarations) == 1 || assignedType.flags&TypeFlagsUndefined == 0 {
+			if ast.GetAssignmentDeclarationKind(declaration) != ast.JSDeclarationKindExportsProperty || i != 0 || len(symbol.Declarations) == 1 || assignedType.flags&TypeFlagsUndefined == 0 {
 				types = core.AppendIfUnique(types, assignedType)
 			}
 		}
@@ -30817,30 +30817,16 @@ func (c *Checker) getIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 	return signatures
 }
 
-func (c *Checker) getSpecialPropertyAssignmentSymbolFromEntityName(entityName *ast.Node) *ast.Symbol {
-	specialPropertyAssignmentKind := ast.GetAssignmentDeclarationKind(entityName.Parent.Parent)
-	switch specialPropertyAssignmentKind {
-	case ast.JSDeclarationKindProperty:
-		if ast.IsPropertyAccessExpression(entityName.Parent) && ast.GetLeftmostAccessExpression(entityName.Parent) == entityName {
-			return nil
-		}
-		fallthrough
-	case ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty, ast.JSDeclarationKindThisProperty:
-		return c.getSymbolOfNode(entityName.Parent.Parent)
-	}
-	return nil
-}
-
 func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast.Symbol {
 	if ast.IsDeclarationName(name) {
 		return c.getSymbolOfNode(name.Parent)
 	}
-	if ast.IsInJSFile(name) && ast.IsPropertyAccessExpression(name.Parent) && ast.IsBinaryExpression(name.Parent.Parent) && name.Parent == name.Parent.Parent.AsBinaryExpression().Left {
-		// Check if this is a special property assignment
-		if !ast.IsPrivateIdentifier(name) && !c.isThisPropertyAndThisTyped(name.Parent) {
-			if specialPropertyAssignmentSymbol := c.getSpecialPropertyAssignmentSymbolFromEntityName(name); specialPropertyAssignmentSymbol != nil {
-				return specialPropertyAssignmentSymbol
-			}
+	if ast.IsInJSFile(name) && ast.IsPropertyAccessExpression(name.Parent) && ast.IsBinaryExpression(name.Parent.Parent) &&
+		name == name.Parent.Name() && name.Parent == name.Parent.Parent.AsBinaryExpression().Left &&
+		ast.GetAssignmentDeclarationKind(name.Parent.Parent) == ast.JSDeclarationKindModuleExports {
+		// For a reference to `exports` in `module.exports = ...` we obtain the `export=` symbol
+		if symbol := c.getSymbolOfNode(name.Parent.Parent); symbol != nil {
+			return symbol
 		}
 	}
 	if (name.Parent.Kind == ast.KindExportAssignment || name.Parent.Kind == ast.KindJSExportAssignment) && ast.IsEntityNameExpression(name) {
