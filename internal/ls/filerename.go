@@ -80,7 +80,7 @@ func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lspr
 
 func (l *LanguageService) createPathUpdater(oldPath string, newPath string) pathUpdater {
 	compareOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: l.UseCaseSensitiveFileNames()}
-	getUpdatedPath := func(path string) (string, bool) {
+	return func(path string) (string, bool) {
 		if tspath.ComparePaths(path, oldPath, compareOptions) == 0 {
 			return newPath, true
 		}
@@ -89,20 +89,6 @@ func (l *LanguageService) createPathUpdater(oldPath string, newPath string) path
 		}
 		return "", false
 	}
-
-	return func(path string) (string, bool) {
-		if original := l.tryGetSourcePosition(path, 0); original != nil {
-			if updated, ok := getUpdatedPath(original.FileName); ok {
-				return makeCorrespondingRelativeChange(original.FileName, updated, path, compareOptions), true
-			}
-		}
-		return getUpdatedPath(path)
-	}
-}
-
-func makeCorrespondingRelativeChange(a0 string, b0 string, a1 string, compareOptions tspath.ComparePathsOptions) string {
-	rel := tspath.GetRelativePathFromFile(a0, b0, compareOptions)
-	return tspath.CombinePaths(tspath.GetDirectoryPath(a1), rel)
 }
 
 func (l *LanguageService) updateTsconfigFiles(program *compiler.Program, changeTracker *change.Tracker, oldToNew pathUpdater, oldPath string, newPath string) {

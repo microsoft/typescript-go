@@ -84,7 +84,6 @@ type resolutionState struct {
 	candidateIsFromPackageJsonField bool
 	resolvedPackageDirectory        bool
 	diagnostics                     []*ast.Diagnostic
-	failedLookupLocations           []string
 
 	// Similar to whats on resolver but only done if compilerOptions are for project reference redirect
 	// Cached representation for `core.CompilerOptions.paths`.
@@ -1544,7 +1543,6 @@ func (r *resolutionState) tryFileLookup(fileName string) bool {
 	} else if r.tracer != nil {
 		r.tracer.write(diagnostics.File_0_does_not_exist, fileName)
 	}
-	r.failedLookupLocations = append(r.failedLookupLocations, fileName)
 	return false
 }
 

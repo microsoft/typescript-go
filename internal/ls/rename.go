@@ -219,10 +219,25 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 	return nil
 }
 
+func ClientSupportsWillRenameFiles(ctx context.Context) bool {
+	return lsproto.GetClientCapabilities(ctx).Workspace.FileOperations.WillRename
+}
+
+func ClientSupportsDocumentChanges(ctx context.Context) bool {
+	return lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.DocumentChanges
+}
+
+func ClientSupportsRenameResourceOperations(ctx context.Context) bool {
+	return slices.Contains(lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.ResourceOperations, lsproto.ResourceOperationKindRename)
+}
+
 // getRenameInfoForModule handles rename validation for module specifiers.
 func (l *LanguageService) getRenameInfoForModule(ctx context.Context, newName string, specifier *ast.StringLiteralLike, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
 	if !tspath.IsExternalModuleNameRelative(specifier.Text()) {
 		return getRenameInfoError(ctx, diagnostics.You_cannot_rename_a_module_via_a_global_import), true
+	}
+	if !ClientSupportsDocumentChanges(ctx) || !ClientSupportsRenameResourceOperations(ctx) {
+		return getRenameInfoError(ctx, diagnostics.File_rename_is_not_supported_by_the_editor), true
 	}
 
 	moduleSourceFile := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
@@ -259,6 +274,8 @@ func (l *LanguageService) getRenameInfoForModule(ctx context.Context, newName st
 	}, true
 }
 
+// Adjust the new name based on the old path that an import specifier resolves to.
+// For example, if specifier "a.js" resolves to file a.ts, renaming "a.js" -> "b.js" should mean file rename a.ts -> b.ts.
 func (l *LanguageService) getNewFileNameForModuleRename(oldPath, specifierText, newName string) string {
 	newPath := tspath.CombinePaths(tspath.GetDirectoryPath(oldPath), newName)
 	ignoreCase := !l.host.UseCaseSensitiveFileNames()

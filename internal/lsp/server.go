@@ -1249,7 +1249,9 @@ func (s *Server) handleRename(ctx context.Context, params *lsproto.RenameParams,
 	}
 	info := defaultLs.GetRenameInfo(ctx, params.NewName, params.TextDocument.Uri, params.Position)
 	if info.CanRename && info.FileToRename != "" {
-		if clientSupportsWillRenameFiles(ctx) && clientSupportsDocumentChanges(ctx) && clientSupportsRenameResourceOperations(ctx) {
+		// We send a `willRenameFiles` request if the client allows;
+		// otherwise we directly compute the edits for renaming the file.
+		if ls.ClientSupportsWillRenameFiles(ctx) {
 			documentChanges := []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
 				{
 					RenameFile: &lsproto.RenameFile{
@@ -1271,17 +1273,20 @@ func (s *Server) handleRename(ctx context.Context, params *lsproto.RenameParams,
 				NewUri: string(lsconv.FileNameToDocumentURI(info.NewFileName)),
 			}},
 		}
-		return s.handleWillRenameFiles(ctx, renameFilesParams, req)
+		return s.handleWillRenameFilesWorker(ctx, renameFilesParams, req, true /*sendRenameFile*/)
 	}
 
 	return defaultLs.ProvideRename(ctx, params, orchestrator)
 }
 
-func clientSupportsWillRenameFiles(ctx context.Context) bool {
-	return lsproto.GetClientCapabilities(ctx).Workspace.FileOperations.WillRename
+func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams, msg *lsproto.RequestMessage) (lsproto.WillRenameFilesResponse, error) {
+	return s.handleWillRenameFilesWorker(ctx, params, msg, false /*sendRenameFile*/)
 }
 
-func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams, _ *lsproto.RequestMessage) (lsproto.WillRenameFilesResponse, error) {
+// If `sendRenameFile` is true, the original `willRenameFiles` request is being handled as part of a rename operation
+// where the client doesn't support `willRenameFiles`,
+// so we should include the file rename in the edits we return
+func (s *Server) handleWillRenameFilesWorker(ctx context.Context, params *lsproto.RenameFilesParams, _ *lsproto.RequestMessage, sendRenameFile bool) (lsproto.WillRenameFilesResponse, error) {
 	if len(params.Files) == 0 {
 		return lsproto.WillRenameFilesResponse{}, nil
 	}
@@ -1340,11 +1345,23 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 		}
 	}
 
+	if sendRenameFile {
+		for _, file := range params.Files {
+			documentChanges = append(documentChanges, lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+				RenameFile: &lsproto.RenameFile{
+					Kind:   lsproto.StringLiteralRename{},
+					OldUri: lsproto.DocumentUri(file.OldUri),
+					NewUri: lsproto.DocumentUri(file.NewUri),
+				},
+			})
+		}
+	}
+
 	if len(documentChanges) == 0 {
 		return lsproto.WillRenameFilesResponse{}, nil
 	}
 
-	if clientSupportsDocumentChanges(ctx) {
+	if ls.ClientSupportsDocumentChanges(ctx) {
 		return lsproto.WillRenameFilesResponse{
 			WorkspaceEdit: &lsproto.WorkspaceEdit{
 				DocumentChanges: &documentChanges,
@@ -1369,14 +1386,6 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 			Changes: new(changes),
 		},
 	}, nil
-}
-
-func clientSupportsDocumentChanges(ctx context.Context) bool {
-	return lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.DocumentChanges
-}
-
-func clientSupportsRenameResourceOperations(ctx context.Context) bool {
-	return slices.Contains(lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.ResourceOperations, lsproto.ResourceOperationKindRename)
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
