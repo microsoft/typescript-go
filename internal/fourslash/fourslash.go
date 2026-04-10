@@ -1486,18 +1486,50 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 }
 
 // VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
-// It first checks that a quickfix with the expected fixId is available (precheck), then requests a
-// source.fixAll code action and applies the resulting workspace edit.
+// It gets all quickfix code actions for the file (which includes per-fixId "Fix all" entries when
+// multiple diagnostics match the same provider), finds the fix-all entry, and applies its edits.
 func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllOptions) {
 	t.Helper()
 
-	// Precheck: verify that at least one quickfix code action is available for the file's diagnostics.
-	// This mirrors the reference implementation which asserts that a fix with the given fixId exists
-	// before calling getCombinedCodeFix.
-	actions := f.getCodeFixActions(t)
+	actions := f.getAllQuickFixActions(t)
 	if len(actions) == 0 {
-		t.Fatalf("No available code fix found. Fix All is not available if there is only one potentially fixable diagnostic present. Expected fixId %q.", options.FixID)
+		t.Fatalf("No code fixes available for fixId %q", options.FixID)
 	}
+
+	// Find a fix-all action. The server returns these as quickfix entries with titles like
+	// "Add all missing imports" when multiple diagnostics match the same provider.
+	// We look for an action that is NOT a single-diagnostic fix (i.e., has no Diagnostics attached
+	// or is the combined fix-all entry).
+	var fixAllAction *lsproto.CodeAction
+	for _, action := range actions {
+		if action.Diagnostics == nil || len(*action.Diagnostics) == 0 {
+			fixAllAction = action
+			break
+		}
+	}
+
+	if fixAllAction == nil {
+		var titles []string
+		for _, a := range actions {
+			titles = append(titles, a.Title)
+		}
+		t.Fatalf("No fix-all code action found for fixId %q. Available fixes: %v", options.FixID, titles)
+	}
+
+	if fixAllAction.Edit != nil && fixAllAction.Edit.Changes != nil {
+		for _, edits := range *fixAllAction.Edit.Changes {
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actual := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
+}
+
+// VerifySourceFixAll verifies that requesting a source.fixAll code action produces the expected file content.
+// This tests the on-save code path where VS Code requests source.fixAll.
+func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string) {
+	t.Helper()
 
 	only := []lsproto.CodeActionKind{lsproto.CodeActionKindSourceFixAll}
 	params := &lsproto.CodeActionParams{
@@ -1516,7 +1548,7 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
 	if result.CommandOrCodeActionArray == nil {
-		t.Fatalf("No source.fixAll code actions returned for fixId %q", options.FixID)
+		t.Fatalf("No source.fixAll code actions returned")
 	}
 
 	var selected *lsproto.CodeAction
@@ -1529,22 +1561,34 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 	}
 
 	if selected == nil {
-		t.Fatalf("No source.fixAll code action found for fixId %q", options.FixID)
+		t.Fatalf("No source.fixAll code action found")
 	}
-	if selected.Edit == nil || selected.Edit.Changes == nil {
-		t.Fatalf("source.fixAll code action %q did not provide any edits", selected.Title)
-	}
-
-	for _, edits := range *selected.Edit.Changes {
-		f.applyTextEdits(t, edits)
+	if selected.Edit != nil && selected.Edit.Changes != nil {
+		for _, edits := range *selected.Edit.Changes {
+			f.applyTextEdits(t, edits)
+		}
 	}
 
 	actual := f.getScriptInfo(f.activeFilename).content
-	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
+	assert.Equal(t, expectedContent, actual, "File content after source.fixAll did not match expected content.")
 }
 
-// getCodeFixActions gets all quick fix code actions for the current file by gathering diagnostics.
+// getCodeFixActions gets per-diagnostic quick fix code actions, excluding fix-all entries.
 func (f *FourslashTest) getCodeFixActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+	all := f.getAllQuickFixActions(t)
+	// Filter to only per-diagnostic fixes (those with diagnostics attached)
+	var actions []*lsproto.CodeAction
+	for _, action := range all {
+		if action.Diagnostics != nil && len(*action.Diagnostics) > 0 {
+			actions = append(actions, action)
+		}
+	}
+	return actions
+}
+
+// getAllQuickFixActions gets all quick fix code actions including fix-all entries.
+func (f *FourslashTest) getAllQuickFixActions(t *testing.T) []*lsproto.CodeAction {
 	t.Helper()
 
 	diagParams := &lsproto.DocumentDiagnosticParams{
@@ -1794,11 +1838,14 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
 	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
+	// Skip fix-all entries (those without diagnostics attached)
 	var importActions []*lsproto.CodeAction
 	if result.CommandOrCodeActionArray != nil {
 		for _, item := range *result.CommandOrCodeActionArray {
 			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
-				importActions = append(importActions, item.CodeAction)
+				if item.CodeAction.Diagnostics != nil && len(*item.CodeAction.Diagnostics) > 0 {
+					importActions = append(importActions, item.CodeAction)
+				}
 			}
 		}
 	}

@@ -33,8 +33,10 @@ type CodeFixContext struct {
 
 // CodeAction represents a single code action fix
 type CodeAction struct {
-	Description string
-	Changes     []*lsproto.TextEdit
+	Description       string
+	Changes           []*lsproto.TextEdit
+	FixID             string // identifies this fix category for fix-all grouping
+	FixAllDescription string // e.g. "Add all missing imports"
 }
 
 // CombinedCodeActions represents combined code actions for fix-all scenarios
@@ -81,6 +83,9 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	// Process diagnostics in the context to generate quick fixes.
 	// Skip when Only is set and doesn't include quickfix kinds, per LSP spec.
 	if params.Context != nil && params.Context.Diagnostics != nil && wantsQuickFixes(params.Context.Only) {
+		// Track which fixIds produced at least one action from the client-sent diagnostics
+		fixIdSeen := make(map[string]*CodeFixProvider)
+
 		for _, diag := range params.Context.Diagnostics {
 			if diag.Code == nil || diag.Code.Integer == nil {
 				continue
@@ -114,7 +119,57 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 				}
 				for _, action := range providerActions {
 					actions = append(actions, convertToLSPCodeAction(&action, diag, params.TextDocument.Uri))
+					if action.FixID != "" {
+						fixIdSeen[action.FixID] = provider
+					}
 				}
+			}
+		}
+
+		// Add per-fixId "Fix all" quickfix entries. Check the full file's diagnostics
+		// (not just the ones the client sent) to determine if there are multiple fixable
+		// diagnostics, matching the VS Code extension's behavior.
+		for _, provider := range fixIdSeen {
+			if provider.GetAllCodeActions == nil {
+				continue
+			}
+
+			// Count how many diagnostics in the full file match this provider's error codes
+			allDiags := program.GetSemanticDiagnostics(ctx, file)
+			matchCount := 0
+			for _, d := range allDiags {
+				if containsErrorCode(provider.ErrorCodes, d.Code()) {
+					matchCount++
+					if matchCount >= 2 {
+						break
+					}
+				}
+			}
+			if matchCount < 2 {
+				continue
+			}
+
+			fixContext := &CodeFixContext{
+				SourceFile: file,
+				Program:    program,
+				LS:         l,
+			}
+			combined, err := provider.GetAllCodeActions(ctx, fixContext)
+			if err != nil {
+				return lsproto.CodeActionResponse{}, err
+			}
+			if combined != nil && len(combined.Changes) > 0 {
+				kind := lsproto.CodeActionKindQuickFix
+				changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
+					params.TextDocument.Uri: combined.Changes,
+				}
+				actions = append(actions, lsproto.CommandOrCodeAction{
+					CodeAction: &lsproto.CodeAction{
+						Title: combined.Description,
+						Kind:  &kind,
+						Edit:  &lsproto.WorkspaceEdit{Changes: &changes},
+					},
+				})
 			}
 		}
 	}

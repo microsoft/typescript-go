@@ -80,8 +80,10 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]Co
 		)
 
 		actions = append(actions, CodeAction{
-			Description: description,
-			Changes:     edits,
+			Description:       description,
+			Changes:           edits,
+			FixID:             importFixID,
+			FixAllDescription: "Add all missing imports",
 		})
 	}
 	return actions, nil
