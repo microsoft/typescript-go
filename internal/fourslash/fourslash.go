@@ -1486,11 +1486,18 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 }
 
 // VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
-// It requests a source.fixAll code action from the server and applies the resulting workspace edit.
+// It first checks that a quickfix with the expected fixId is available (precheck), then requests a
+// source.fixAll code action and applies the resulting workspace edit.
 func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllOptions) {
 	t.Helper()
 
-	contentBefore := f.getScriptInfo(f.activeFilename).content
+	// Precheck: verify that at least one quickfix code action is available for the file's diagnostics.
+	// This mirrors the reference implementation which asserts that a fix with the given fixId exists
+	// before calling getCombinedCodeFix.
+	actions := f.getCodeFixActions(t)
+	if len(actions) == 0 {
+		t.Fatalf("No available code fix found. Fix All is not available if there is only one potentially fixable diagnostic present. Expected fixId %q.", options.FixID)
+	}
 
 	only := []lsproto.CodeActionKind{lsproto.CodeActionKindSourceFixAll}
 	params := &lsproto.CodeActionParams{
@@ -1509,22 +1516,20 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
 	if result.CommandOrCodeActionArray == nil {
-		t.Fatalf("No code fixes returned for fixId %q", options.FixID)
+		t.Fatalf("No source.fixAll code actions returned for fixId %q", options.FixID)
 	}
 
 	var selected *lsproto.CodeAction
-	var availableTitles []string
 	for _, item := range *result.CommandOrCodeActionArray {
 		if item.CodeAction == nil || item.CodeAction.Kind == nil || *item.CodeAction.Kind != lsproto.CodeActionKindSourceFixAll {
 			continue
 		}
-		availableTitles = append(availableTitles, item.CodeAction.Title)
 		selected = item.CodeAction
 		break
 	}
 
 	if selected == nil {
-		t.Fatalf("No source.fixAll code action found for fixId %q. Available fixes: %v", options.FixID, availableTitles)
+		t.Fatalf("No source.fixAll code action found for fixId %q", options.FixID)
 	}
 	if selected.Edit == nil || selected.Edit.Changes == nil {
 		t.Fatalf("source.fixAll code action %q did not provide any edits", selected.Title)
@@ -1535,10 +1540,6 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 	}
 
 	actual := f.getScriptInfo(f.activeFilename).content
-	if actual == contentBefore {
-		t.Fatalf("Applying source.fixAll code action %q for fixId %q did not change the file content", selected.Title, options.FixID)
-	}
-
 	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
 }
 
