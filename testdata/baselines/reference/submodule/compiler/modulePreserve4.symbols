@@ -5,11 +5,6 @@ export const x = 0;
 >x : Symbol(x, Decl(a.js, 0, 12))
 
 module.exports.y = 0; // Error
->module.exports.y : Symbol(y, Decl(a.js, 0, 19))
->module.exports : Symbol(exports, Decl(a.js, 0, 0))
->module : Symbol(module, Decl(a.js, 0, 0))
->exports : Symbol(exports, Decl(a.js, 0, 0))
->y : Symbol(y, Decl(a.js, 0, 19))
 
 === /b.ts ===
 
