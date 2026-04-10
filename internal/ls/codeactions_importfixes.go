@@ -90,10 +90,6 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]Co
 	return actions, nil
 }
 
-// getAllImportCodeActions returns combined code actions for all import-related
-// diagnostics in the file. It uses an ImportAdder to accumulate all fixes so that
-// multiple imports from the same module are coalesced into a single import statement,
-// matching the behavior of the TypeScript reference implementation.
 func getAllImportCodeActions(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {
 	if tspath.IsDynamicFileName(fixContext.SourceFile.FileName()) {
 		return nil, nil

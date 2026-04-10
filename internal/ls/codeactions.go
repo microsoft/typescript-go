@@ -119,52 +119,77 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 			}
 		}
 
-		// Add per-fixId fix-all quickfix entries when the full file has multiple matching diagnostics.
-		for _, provider := range fixIdSeen {
-			if provider.GetAllCodeActions == nil {
-				continue
-			}
-
-			allDiags := program.GetSemanticDiagnostics(ctx, file)
-			matchCount := 0
-			for _, d := range allDiags {
-				if containsErrorCode(provider.ErrorCodes, d.Code()) {
-					matchCount++
-					if matchCount >= 2 {
-						break
-					}
-				}
-			}
-			if matchCount < 2 {
-				continue
-			}
-
-			fixContext := &CodeFixContext{
-				SourceFile: file,
-				Program:    program,
-				LS:         l,
-			}
-			combined, err := provider.GetAllCodeActions(ctx, fixContext)
-			if err != nil {
-				return lsproto.CodeActionResponse{}, err
-			}
-			if combined != nil && len(combined.Changes) > 0 {
-				kind := lsproto.CodeActionKindQuickFix
-				changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
-					params.TextDocument.Uri: combined.Changes,
-				}
-				actions = append(actions, lsproto.CommandOrCodeAction{
-					CodeAction: &lsproto.CodeAction{
-						Title: combined.Description,
-						Kind:  &kind,
-						Edit:  &lsproto.WorkspaceEdit{Changes: &changes},
-					},
-				})
-			}
+		fixAllActions, err := l.getFixAllQuickFixes(ctx, program, file, params.TextDocument.Uri, fixIdSeen)
+		if err != nil {
+			return lsproto.CodeActionResponse{}, err
 		}
+		actions = append(actions, fixAllActions...)
 	}
 
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil
+}
+
+// getFixAllQuickFixes returns per-fixId "Fix all in file" quickfix entries for providers
+// that matched at least 2 diagnostics in the full file.
+func (l *LanguageService) getFixAllQuickFixes(
+	ctx context.Context,
+	program *compiler.Program,
+	file *ast.SourceFile,
+	uri lsproto.DocumentUri,
+	fixIdSeen map[string]*CodeFixProvider,
+) ([]lsproto.CommandOrCodeAction, error) {
+	var actions []lsproto.CommandOrCodeAction
+
+	for _, provider := range fixIdSeen {
+		if provider.GetAllCodeActions == nil {
+			continue
+		}
+
+		if !hasMultipleFixableDiagnostics(ctx, program, file, provider.ErrorCodes) {
+			continue
+		}
+
+		fixContext := &CodeFixContext{
+			SourceFile: file,
+			Program:    program,
+			LS:         l,
+		}
+		combined, err := provider.GetAllCodeActions(ctx, fixContext)
+		if err != nil {
+			return nil, err
+		}
+		if combined != nil && len(combined.Changes) > 0 {
+			kind := lsproto.CodeActionKindQuickFix
+			changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
+				uri: combined.Changes,
+			}
+			actions = append(actions, lsproto.CommandOrCodeAction{
+				CodeAction: &lsproto.CodeAction{
+					Title: combined.Description,
+					Kind:  &kind,
+					Edit:  &lsproto.WorkspaceEdit{Changes: &changes},
+				},
+			})
+		}
+	}
+
+	return actions, nil
+}
+
+// hasMultipleFixableDiagnostics returns true if the file has at least 2 diagnostics
+// matching the given error codes.
+func hasMultipleFixableDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile, errorCodes []int32) bool {
+	allDiags := program.GetSemanticDiagnostics(ctx, file)
+	count := 0
+	for _, d := range allDiags {
+		if containsErrorCode(errorCodes, d.Code()) {
+			count++
+			if count >= 2 {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // codeActionKindContains returns true if the requested kind equals or is a
