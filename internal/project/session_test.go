@@ -630,9 +630,19 @@ func TestSession(t *testing.T) {
 					for _, call := range utils.Client().WatchFilesCalls() {
 						for _, watcher := range call.Watchers {
 							// On case-insensitive FS, glob patterns use lowercased paths.
-							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/ts/x.ts") {
-								xWatched = true
-								break outer
+							if watcher.GlobPattern.Pattern != nil {
+								if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/ts/x.ts") {
+									xWatched = true
+									break outer
+								}
+							} else if watcher.GlobPattern.RelativePattern != nil {
+								baseUri := string(*watcher.GlobPattern.RelativePattern.BaseUri.URI)
+								// The base URI should be a parent of the file's URI.
+								// On case-insensitive FS, paths are lowercased.
+								if strings.HasPrefix("file:///home/projects/ts/x.ts", baseUri) {
+									xWatched = true
+									break outer
+								}
 							}
 						}
 					}
