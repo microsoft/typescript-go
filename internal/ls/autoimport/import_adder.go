@@ -131,7 +131,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 			adder.view.importingFile,
 			clauseOrPattern,
 			entry.defaultImport,
-			slices.Collect(maps.Values(entry.namedImports)),
+			sortedNamedImports(entry.namedImports),
 			adder.preferences,
 		)
 	}
@@ -146,7 +146,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 				moduleSpecifier,
 				quotePreference,
 				newImport.defaultImport,
-				slices.Collect(maps.Values(newImport.namedImports)),
+				sortedNamedImports(newImport.namedImports),
 				newImport.namespaceLikeImport,
 				adder.view.program.Options(),
 			)
@@ -156,7 +156,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 				moduleSpecifier,
 				quotePreference,
 				newImport.defaultImport,
-				slices.Collect(maps.Values(newImport.namedImports)),
+				sortedNamedImports(newImport.namedImports),
 				newImport.namespaceLikeImport,
 				adder.view.program.Options(),
 				adder.preferences,
@@ -170,6 +170,15 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 	}
 
 	return tracker.GetChanges()[adder.view.importingFile.FileName()]
+}
+
+func sortedNamedImports(m map[string]*newImportBinding) []*newImportBinding {
+	keys := slices.Sorted(maps.Keys(m))
+	result := make([]*newImportBinding, 0, len(keys))
+	for _, k := range keys {
+		result = append(result, m[k])
+	}
+	return result
 }
 
 // AddImportFix adds a fix to the import adder, accumulating it with other fixes
