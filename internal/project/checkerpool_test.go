@@ -239,8 +239,8 @@ func TestCheckerPoolQueryContention(t *testing.T) {
 			ctx2 := core.WithRequestID(context.Background(), "query-wait")
 			ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeQuery)
 			c2, release2 := pool.GetChecker(ctx2, nil)
-			assert.Assert(t, c2 != nil)
-			c2Got.Store(true)
+			_ = c2 // verified via c2Got flag
+			c2Got.Store(c2 != nil)
 			release2()
 		}()
 
@@ -277,8 +277,8 @@ func TestCheckerPoolDiagnosticsContention(t *testing.T) {
 			ctx2 := core.WithRequestID(context.Background(), "diag-wait")
 			ctx2 = core.WithCheckerPurpose(ctx2, core.CheckerPurposeDiagnostics)
 			c2, release2 := pool.GetChecker(ctx2, nil)
-			assert.Assert(t, c2 != nil)
-			c2Got.Store(true)
+			_ = c2 // verified via c2Got flag
+			c2Got.Store(c2 != nil)
 			release2()
 		}()
 
@@ -475,10 +475,10 @@ func TestCheckerPoolCrossReleaseAffinityWithContention(t *testing.T) {
 
 		// Request A reacquires — should block because B holds the slot.
 		var reacquired atomic.Bool
-		var cA2 *checker.Checker
+		cA2Ch := make(chan *checker.Checker, 1)
 		go func() {
 			c, release := pool.GetChecker(ctxA, nil)
-			cA2 = c
+			cA2Ch <- c
 			reacquired.Store(true)
 			release()
 		}()
@@ -490,7 +490,53 @@ func TestCheckerPoolCrossReleaseAffinityWithContention(t *testing.T) {
 		releaseB()
 		synctest.Wait()
 		assert.Assert(t, reacquired.Load(), "request A should unblock after B releases")
-		assert.Assert(t, cA2 == cA, "request A should get the same checker on reacquire")
+		select {
+		case cA2 := <-cA2Ch:
+			assert.Assert(t, cA2 == cA, "request A should get the same checker on reacquire")
+		case <-t.Context().Done():
+			t.Fatal("timed out waiting for reacquired checker")
+		}
+	})
+}
+
+func TestCheckerPoolPurposeMismatchIgnoresAssociation(t *testing.T) {
+	t.Parallel()
+	// Verify that if a request first uses a diagnostics checker, then switches
+	// to a query purpose (or vice versa), the stale association is ignored
+	// rather than returning a checker from the wrong category.
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		reqCtx, reqCancel := context.WithCancel(context.Background())
+		defer reqCancel()
+
+		// Acquire a diagnostics checker with request ID "mixed".
+		ctxDiag := core.WithRequestID(reqCtx, "mixed")
+		ctxDiag = core.WithCheckerPurpose(ctxDiag, core.CheckerPurposeDiagnostics)
+		cDiag, releaseDiag := pool.GetChecker(ctxDiag, nil)
+		assert.Assert(t, cDiag != nil)
+		assert.Assert(t, pool.checkers[0] == cDiag, "diagnostics checker should be at index 0")
+		releaseDiag()
+		synctest.Wait()
+
+		// Now use the same request ID but with query purpose.
+		// The old association points to index 0 (diagnostics), which should
+		// be rejected — the returned checker must be a query checker (index > 0).
+		ctxQuery := core.WithRequestID(reqCtx, "mixed")
+		ctxQuery = core.WithCheckerPurpose(ctxQuery, core.CheckerPurposeQuery)
+		cQuery, releaseQuery := pool.GetChecker(ctxQuery, nil)
+		assert.Assert(t, cQuery != nil)
+		assert.Assert(t, cQuery != cDiag, "query should not reuse the diagnostics checker")
+
+		pool.mu.Lock()
+		assert.Assert(t, pool.checkers[0] != cQuery, "query checker should not be at diagnostics index 0")
+		pool.mu.Unlock()
+		releaseQuery()
 	})
 }
 
@@ -739,22 +785,22 @@ func TestCheckerPoolMultipleConcurrentQueryCheckers(t *testing.T) {
 		pool.mu.Unlock()
 
 		// A 4th query request should block since all 3 slots are full.
-		var c4Got bool
+		var c4Got atomic.Bool
 		go func() {
 			ctx4 := core.WithRequestID(context.Background(), "multi-q-4")
 			ctx4 = core.WithCheckerPurpose(ctx4, core.CheckerPurposeQuery)
 			c4, release4 := pool.GetChecker(ctx4, nil)
-			assert.Assert(t, c4 != nil)
-			c4Got = true
+			_ = c4 // verified via c4Got flag
+			c4Got.Store(c4 != nil)
 			release4()
 		}()
 
 		synctest.Wait()
-		assert.Assert(t, !c4Got, "4th query should block when all 3 query slots are held")
+		assert.Assert(t, !c4Got.Load(), "4th query should block when all 3 query slots are held")
 
 		release1()
 		synctest.Wait()
-		assert.Assert(t, c4Got, "4th query should unblock after one slot is released")
+		assert.Assert(t, c4Got.Load(), "4th query should unblock after one slot is released")
 
 		release2()
 		release3()

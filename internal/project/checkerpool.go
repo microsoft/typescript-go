@@ -124,13 +124,16 @@ func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 // tryReacquireForRequest checks whether the given request already has an
 // associated checker. If so, it either returns the checker directly (still held)
 // or reacquires it by claiming a semaphore slot. The caller must provide the
-// appropriate semaphore channel.
+// appropriate semaphore channel and indicate whether this is a diagnostics
+// request (isDiag). If the associated checker is in the wrong category
+// (e.g. a diagnostics index for a query request), the association is deleted
+// and normal acquisition proceeds.
 //
 // Returns (checker, release, true) if the request was served (either still held
 // or reclaimed). Returns (nil, nil, false) if the caller must proceed with
 // normal acquisition — in this case, a semaphore slot has already been claimed.
 // Must NOT be called with p.mu held.
-func (p *checkerPool) tryReacquireForRequest(requestID string, sem chan<- struct{}) (*checker.Checker, func(), bool) {
+func (p *checkerPool) tryReacquireForRequest(requestID string, sem chan<- struct{}, isDiag bool) (*checker.Checker, func(), bool) {
 	if requestID == "" {
 		sem <- struct{}{}
 		return nil, nil, false
@@ -139,6 +142,15 @@ func (p *checkerPool) tryReacquireForRequest(requestID string, sem chan<- struct
 	p.mu.Lock()
 	index, ok := p.requestAssociations[requestID]
 	if !ok {
+		p.mu.Unlock()
+		sem <- struct{}{}
+		return nil, nil, false
+	}
+
+	// Validate that the associated index matches the expected category.
+	// Index 0 is for diagnostics; indices 1+ are for queries.
+	if (isDiag && index != 0) || (!isDiag && index == 0) {
+		delete(p.requestAssociations, requestID)
 		p.mu.Unlock()
 		sem <- struct{}{}
 		return nil, nil, false
@@ -187,7 +199,7 @@ func (p *checkerPool) tryReacquireForRequest(requestID string, sem chan<- struct
 func (p *checkerPool) getDiagnosticsChecker(ctx context.Context, requestID string) (*checker.Checker, func()) {
 	const diagIndex = 0
 
-	if c, release, ok := p.tryReacquireForRequest(requestID, p.diagSem); ok {
+	if c, release, ok := p.tryReacquireForRequest(requestID, p.diagSem, true); ok {
 		return c, release
 	}
 
@@ -217,7 +229,7 @@ func (p *checkerPool) getDiagnosticsChecker(ctx context.Context, requestID strin
 // Uses request affinity, then file affinity, then finds/creates.
 // Blocks on querySem if all query slots are in use.
 func (p *checkerPool) getQueryChecker(ctx context.Context, requestID string, file *ast.SourceFile) (*checker.Checker, func()) {
-	if c, release, ok := p.tryReacquireForRequest(requestID, p.querySem); ok {
+	if c, release, ok := p.tryReacquireForRequest(requestID, p.querySem, false); ok {
 		return c, release
 	}
 
@@ -345,6 +357,11 @@ func (p *checkerPool) scheduleCleanupLocked() {
 		}
 	}
 	if earliestDeadline.IsZero() {
+		// No idle checkers remain — stop the timer if it exists.
+		if p.cleanupTimer != nil {
+			p.cleanupTimer.Stop()
+			p.cleanupTimer = nil
+		}
 		return
 	}
 	delay := time.Until(earliestDeadline)
@@ -360,12 +377,11 @@ func (p *checkerPool) scheduleCleanupLocked() {
 
 // cleanupIdleCheckers disposes all checkers (diagnostics and query) that have
 // been idle for longer than the idle timeout. If any checkers are still alive
-// but not yet idle enough, the timer is rescheduled.
+// but not yet idle enough, the timer is rescheduled via scheduleCleanupLocked.
 func (p *checkerPool) cleanupIdleCheckers() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	now := time.Now()
-	var earliestRemaining time.Time
 	for i := range len(p.checkers) {
 		c := p.checkers[i]
 		if c == nil || p.heldBy[i] != "" {
@@ -378,20 +394,12 @@ func (p *checkerPool) cleanupIdleCheckers() {
 		if idle >= p.opts.IdleTimeout {
 			p.log(fmt.Sprintf("checkerpool: Disposing idle checker %d (idle %v)", i, idle))
 			p.disposeCheckerLocked(i, c)
-		} else if earliestRemaining.IsZero() || p.lastReleased[i].Before(earliestRemaining) {
-			earliestRemaining = p.lastReleased[i]
 		}
 	}
-	// If there are remaining checkers not yet idle enough, reschedule.
-	if !earliestRemaining.IsZero() {
-		remaining := p.opts.IdleTimeout - now.Sub(earliestRemaining)
-		if remaining <= 0 {
-			remaining = time.Millisecond
-		}
-		p.cleanupTimer = time.AfterFunc(remaining, p.cleanupIdleCheckers)
-	} else {
-		p.cleanupTimer = nil
-	}
+	// Reschedule for any remaining idle-but-not-yet-expired checkers.
+	// scheduleCleanupLocked will Reset the existing timer rather than
+	// creating a new one, avoiding goroutine leaks.
+	p.scheduleCleanupLocked()
 }
 
 // disposeCheckerLocked removes a checker from the pool and clears all associations
