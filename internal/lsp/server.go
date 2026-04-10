@@ -1234,9 +1234,6 @@ func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.La
 	if !info.CanRename {
 		return lsproto.PrepareRenameResponse{}, userFacingRequestFailedError(info.LocalizedErrorMessage)
 	}
-	if info.FileToRename != "" && !s.supportsImportPathFileRename() {
-		return lsproto.PrepareRenameResponse{}, userFacingRequestFailedError("The client doesn't support file rename edits required for import path renames.")
-	}
 	return lsproto.PrepareRenameResponse{
 		PrepareRenamePlaceholder: &lsproto.PrepareRenamePlaceholder{
 			Range:       info.TriggerSpan,
@@ -1251,18 +1248,7 @@ func (s *Server) handleRename(ctx context.Context, params *lsproto.RenameParams,
 		return lsproto.RenameResponse{}, err
 	}
 
-	info := defaultLs.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
-	if info.CanRename && info.FileToRename != "" && !s.supportsImportPathFileRename() { // !!! HERE: move this inside getRenameInfo
-		return lsproto.RenameResponse{}, userFacingRequestFailedError("The client doesn't support file rename edits required for import path renames.")
-	}
 	return defaultLs.ProvideRename(ctx, params, orchestrator)
-}
-
-func (s *Server) supportsImportPathFileRename() bool {
-	workspaceCaps := s.clientCapabilities.Workspace
-	return workspaceCaps.WorkspaceEdit.DocumentChanges &&
-		slices.Contains(workspaceCaps.WorkspaceEdit.ResourceOperations, lsproto.ResourceOperationKindRename) &&
-		workspaceCaps.FileOperations.WillRename
 }
 
 func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams, _ *lsproto.RequestMessage) (lsproto.WillRenameFilesResponse, error) {

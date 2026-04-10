@@ -37,18 +37,25 @@ func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lspr
 
 	var documentChanges []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile
 
-	// When renaming e.g. `foo.css`, also rename `foo.d.css.ts` if it exists.
-	if !tspath.IsDeclarationFileName(oldPath) {
-		dtsExt := tspath.GetDeclarationEmitExtensionForPath(oldPath)
-		oldDeclarationPath := tspath.ChangeAnyExtension(oldPath, dtsExt, nil /*extensions*/, false /*ignoreCase*/)
-		if l.host.FileExists(oldDeclarationPath) {
-			newDeclarationPath := tspath.ChangeAnyExtension(newPath, dtsExt, nil /*extensions*/, false /*ignoreCase*/)
-			documentChanges = append(documentChanges, lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
-				RenameFile: &lsproto.RenameFile{
-					OldUri: lsconv.FileNameToDocumentURI(oldDeclarationPath),
-					NewUri: lsconv.FileNameToDocumentURI(newDeclarationPath),
-				},
-			})
+	// When renaming e.g. `foo.d.css.ts` -> `bar.d.css.ts`, also rename `foo.css` -> `bar.css` if it exists.
+	if tspath.IsDeclarationFileName(oldPath) && tspath.IsDeclarationFileName(newPath) {
+		dtsExt := tspath.GetDeclarationFileExtension(oldPath)
+		originalExtensions := tspath.GetPossibleOriginalInputExtensionForExtension(dtsExt)
+		for _, ext := range originalExtensions {
+			oldOriginalPath := tspath.ChangeFullExtension(oldPath, ext)
+			if l.host.FileExists(oldOriginalPath) {
+				newDtsExt := tspath.GetDeclarationFileExtension(oldPath)
+				newOriginalExtensions := tspath.GetPossibleOriginalInputExtensionForExtension(newDtsExt)
+				if slices.Contains(newOriginalExtensions, ext) {
+					newOriginalPath := tspath.ChangeFullExtension(newPath, ext)
+					documentChanges = append(documentChanges, lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+						RenameFile: &lsproto.RenameFile{
+							OldUri: lsconv.FileNameToDocumentURI(oldOriginalPath),
+							NewUri: lsconv.FileNameToDocumentURI(newOriginalPath),
+						},
+					})
+				}
+			}
 		}
 	}
 

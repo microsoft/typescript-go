@@ -33,6 +33,18 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	info := l.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
 	if info.CanRename && info.FileToRename != "" {
 		newPath := tspath.CombinePaths(tspath.GetDirectoryPath(info.FileToRename), params.NewName)
+		if tspath.IsDeclarationFileName(info.FileToRename) {
+			dtsExt := tspath.GetDeclarationFileExtension(info.FileToRename)
+			originalExtensions := tspath.GetPossibleOriginalInputExtensionForExtension(dtsExt)
+			ignoreCase := !l.host.UseCaseSensitiveFileNames()
+			if !tspath.HasExtension(newPath) {
+				newPath = newPath + "." + dtsExt
+			} else if tspath.FileExtensionIsOneOf(newPath, originalExtensions) {
+				newPath = tspath.ChangeAnyExtension(newPath, dtsExt, nil /*extensions*/, ignoreCase)
+			}
+		}
+
+		// !!! HERE: Check if the client supports willRenameFiles. If not, compute the edits for the file rename here and include them in the response.
 		documentChanges := []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
 			{
 				RenameFile: &lsproto.RenameFile{
@@ -238,8 +250,8 @@ func wouldRenameInOtherNodeModules(originalFile *ast.SourceFile, symbol *ast.Sym
 }
 
 // getRenameInfoForModule handles rename validation for module specifiers.
-func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
-	if !tspath.IsExternalModuleNameRelative(node.Text()) {
+func (l *LanguageService) getRenameInfoForModule(ctx context.Context, specifier *ast.StringLiteralLike, sourceFile *ast.SourceFile, moduleSymbol *ast.Symbol) (RenameInfo, bool) {
+	if !tspath.IsExternalModuleNameRelative(specifier.Text()) {
 		return getRenameInfoError(ctx, diagnostics.You_cannot_rename_a_module_via_a_global_import), true
 	}
 
@@ -250,7 +262,7 @@ func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.
 
 	fileName := moduleSourceFile.AsSourceFile().FileName()
 	withoutIndex := ""
-	if !strings.HasSuffix(node.Text(), "/index") && !strings.HasSuffix(node.Text(), "/index.js") {
+	if !strings.HasSuffix(specifier.Text(), "/index") && !strings.HasSuffix(specifier.Text(), "/index.js") {
 		candidate := tspath.RemoveFileExtension(fileName)
 		if trimmed, ok := strings.CutSuffix(candidate, "/index"); ok {
 			withoutIndex = trimmed
@@ -263,13 +275,13 @@ func (l *LanguageService) getRenameInfoForModule(ctx context.Context, node *ast.
 	}
 
 	// Span should only be the last component of the path. + 1 to account for the quote character.
-	indexAfterLastSlash := strings.LastIndex(node.Text(), "/") + 1
-	start := node.Pos() + 1 + indexAfterLastSlash
-	length := len(node.Text()) - indexAfterLastSlash
+	indexAfterLastSlash := strings.LastIndex(specifier.Text(), "/") + 1
+	start := specifier.Pos() + 1 + indexAfterLastSlash
+	length := len(specifier.Text()) - indexAfterLastSlash
 
 	return RenameInfo{
 		CanRename:    true,
-		DisplayName:  node.Text()[indexAfterLastSlash:],
+		DisplayName:  specifier.Text()[indexAfterLastSlash:],
 		TriggerSpan:  l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length)),
 		FileToRename: displayName,
 	}, true

@@ -33,10 +33,10 @@ import styles from ".//*rename*/app.css";`
 	f.GoToFile(t, "/app2.d.css.ts")
 	f.VerifyCurrentFileContent(t, `declare const css: {
   cookieBanner: string;
-};`)
-	f.GoToFile(t, "/app2.css")
-	f.VerifyCurrentFileContent(t, `declare const css: {
-  cookieBanner: string;
 };
 export default css;`)
+	f.GoToFile(t, "/app2.css")
+	f.VerifyCurrentFileContent(t, `.cookie-banner {
+  display: none;
+}`)
 }

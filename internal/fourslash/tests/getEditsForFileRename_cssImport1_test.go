@@ -26,12 +26,14 @@ export default css;
 import styles from "./app.css";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
+	// We cannot request rename of the .d.css file because that would lead to a circularity of `willRenameFiles`.
+	// So this case does not fully work.
 	f.VerifyWillRenameFilesEdits(t, "/app.css", "/app2.css", map[string]string{
-		"/a.ts": `import styles from "./app2.css";`,
+		"/a.ts": `import styles from "./app.css";`,
 		"/app2.css": `.cookie-banner {
   display: none;
 }`,
-		"/app2.d.css.ts": `declare const css: {
+		"/app.d.css.ts": `declare const css: {
   cookieBanner: string;
 };
 export default css;`,

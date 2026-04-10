@@ -27,9 +27,7 @@ import styles from "./app.css";`
 	defer done()
 	f.VerifyWillRenameFilesEdits(t, "/app.d.css.ts", "/app2.d.css.ts", map[string]string{
 		"/a.ts": `import styles from "./app2.css";`,
-		// We cannot rename the .css file because that would lead to a circularity of `willRenameFiles`.
-		// So this case does not fully work.
-		"/app.css": `.cookie-banner {
+		"/app2.css": `.cookie-banner {
   display: none;
 }`,
 		"/app2.d.css.ts": `declare const css: {

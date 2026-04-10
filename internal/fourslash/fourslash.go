@@ -381,6 +381,12 @@ var (
 			},
 		},
 	}
+	defaultWorkspaceEditCapabilities = &lsproto.WorkspaceEditClientCapabilities{
+		DocumentChanges: ptrTrue,
+		ResourceOperations: &[]lsproto.ResourceOperationKind{
+			lsproto.ResourceOperationKindRename,
+		},
+	}
 )
 
 func GetDefaultCapabilities() *lsproto.ClientCapabilities {
@@ -493,6 +499,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	}
+	if capabilitiesWithDefaults.Workspace.WorkspaceEdit == nil {
+		capabilitiesWithDefaults.Workspace.WorkspaceEdit = defaultWorkspaceEditCapabilities
 	}
 	if capabilitiesWithDefaults.Workspace.Configuration == nil {
 		capabilitiesWithDefaults.Workspace.Configuration = ptrTrue
@@ -3732,13 +3741,68 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 
 func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.RenameResponse {
 	t.Helper()
-	return sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		NewName:  newName,
 	})
+
+	if result.WorkspaceEdit == nil {
+		return result
+	}
+
+	if result.WorkspaceEdit.Changes != nil {
+		for uri, edits := range *result.WorkspaceEdit.Changes {
+			fileName := uri.FileName()
+			script := f.getOrLoadScriptInfo(fileName)
+			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
+				return core.TextChange{
+					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					NewText:   edit.NewText,
+				}
+			})
+			f.editScriptAndUpdateMarkersWorker(t, fileName, changes)
+		}
+	}
+
+	var renameFiles []*lsproto.RenameFile
+	if result.WorkspaceEdit.DocumentChanges != nil {
+		for _, docChange := range *result.WorkspaceEdit.DocumentChanges {
+			if docChange.TextDocumentEdit != nil {
+				fileName := docChange.TextDocumentEdit.TextDocument.Uri.FileName()
+				script := f.getOrLoadScriptInfo(fileName)
+				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
+					textEdit := edit.TextEdit
+					return core.TextChange{
+						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						NewText:   textEdit.NewText,
+					}
+				})
+				f.editScriptAndUpdateMarkersWorker(t, fileName, changes)
+			} else if docChange.RenameFile != nil {
+				renameFiles = append(renameFiles, docChange.RenameFile)
+			}
+		}
+	}
+
+	if len(renameFiles) > 0 {
+		var fileRenames []*lsproto.FileRename
+		for _, renameFile := range renameFiles {
+			oldFileName := lsproto.DocumentUri(renameFile.OldUri).FileName()
+			if !f.vfs.FileExists(oldFileName) && f.getScriptInfo(oldFileName) == nil {
+				continue
+			}
+			fileRenames = append(fileRenames, &lsproto.FileRename{
+				OldUri: string(renameFile.OldUri),
+				NewUri: string(renameFile.NewUri),
+			})
+		}
+		f.willRenameFilesWorker(t, fileRenames...)
+	}
+
+	return result
 }
 
 func (f *FourslashTest) WillRenameFiles(t *testing.T, files ...*lsproto.FileRename) lsproto.WillRenameFilesResponse {
