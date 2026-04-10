@@ -60,8 +60,10 @@ func (t *parseTask) load(loader *fileLoader) {
 		t.loadAutomaticTypeDirectives(loader)
 		return
 	}
-	loader.opts.Tracing.Push(tracing.PhaseProgram, "findSourceFile", map[string]any{"fileName": t.normalizedFilePath}, false)
-	defer loader.opts.Tracing.Pop()
+	if loader.opts.Tracing != nil {
+		loader.opts.Tracing.Push(tracing.PhaseProgram, "findSourceFile", map[string]any{"fileName": t.normalizedFilePath}, false)
+		defer loader.opts.Tracing.Pop()
+	}
 	redirect := loader.projectReferenceFileMapper.getParseFileRedirect(t)
 	if redirect != "" {
 		t.redirect(loader, redirect)
@@ -168,8 +170,10 @@ func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 }
 
 func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
-	loader.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferences", nil, false)
-	defer loader.opts.Tracing.Pop()
+	if loader.opts.Tracing != nil {
+		loader.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferences", nil, false)
+		defer loader.opts.Tracing.Pop()
+	}
 	toParseTypeRefs, typeResolutionsInFile, typeResolutionsTrace, pDiagnostics := loader.resolveAutomaticTypeDirectives(t.normalizedFilePath)
 	t.typeResolutionsInFile = typeResolutionsInFile
 	t.typeResolutionsTrace = typeResolutionsTrace
