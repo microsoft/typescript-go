@@ -239,6 +239,10 @@ func (r *EmitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFil
 
 func (r *EmitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 	switch node.Kind {
+	case ast.KindBinaryExpression:
+		if ast.GetAssignmentDeclarationKind(node) == ast.JSDeclarationKindModuleExports && ast.IsIdentifier(node.AsBinaryExpression().Right) {
+			r.markLinkedAliases(node.AsBinaryExpression().Right)
+		}
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if node.Expression().Kind == ast.KindIdentifier {
 			r.markLinkedAliases(node.Expression())
@@ -253,7 +257,7 @@ func (r *EmitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 // Follows chains of import d = a.b.c
 func (r *EmitResolver) markLinkedAliases(node *ast.Node) {
 	var exportSymbol *ast.Symbol
-	if node.Kind != ast.KindStringLiteral && node.Parent != nil && (ast.IsExportAssignment(node.Parent) || ast.IsJSExportAssignment(node.Parent)) {
+	if node.Kind != ast.KindStringLiteral && node.Parent != nil && (ast.IsExportAssignment(node.Parent) || ast.IsJSExportAssignment(node.Parent) || ast.IsBinaryExpression(node.Parent)) {
 		exportSymbol = r.checker.resolveName(node, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
 	} else if node.Parent.Kind == ast.KindExportSpecifier {
 		exportSymbol = r.checker.getTargetOfExportSpecifier(node.Parent, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, false)
@@ -721,6 +725,10 @@ func (r *EmitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
 		}
 		return true
+	case ast.KindBinaryExpression:
+		if ast.GetAssignmentDeclarationKind(node) == ast.JSDeclarationKindModuleExports && ast.IsIdentifier(node.AsBinaryExpression().Right) {
+			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
+		}
 	}
 	return false
 }

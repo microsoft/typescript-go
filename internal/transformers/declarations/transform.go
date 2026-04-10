@@ -227,7 +227,7 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindMissingDeclaration:
 		return nil
 	case ast.KindExpressionStatement:
-		return tx.visitExpressionStatement(node.AsExpressionStatement())
+		return tx.visitExpressionStatement(node)
 	// parts of things, things we just visit children of
 	default:
 		return tx.visitDeclarationSubtree(node)
@@ -1023,38 +1023,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		}
 		return nil
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
-		if ast.IsSourceFile(input.Parent) {
-			tx.resultHasExternalModuleIndicator = true
-		}
-		tx.resultHasScopeMarker = true
-		if input.Expression().Kind == ast.KindIdentifier {
-			return input
-		}
-		// expression is non-identifier, create _default typed variable to reference
-		newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
-			return &SymbolAccessibilityDiagnostic{
-				diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
-				errorNode:         input,
-			}
-		}
-		tx.tracker.PushErrorFallbackNode(input)
-		type_ := tx.ensureType(input, false)
-		varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
-		tx.tracker.PopErrorFallbackNode()
-		var modList *ast.ModifierList
-		if tx.needsDeclare {
-			modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-		} else {
-			modList = tx.Factory().NewModifierList([]*ast.Node{})
-		}
-		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
-
-		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
-		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
-		tx.preserveJsDoc(statement, input)
-		tx.removeAllComments(assignment)
-		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
+		return tx.transformExportAssignment(input, input, input.Expression(), input.AsExportAssignment().IsExportEquals)
 	default:
 		id := ast.GetNodeId(tx.EmitContext().MostOriginal(input))
 		if tx.lateStatementReplacementMap[id] == nil {
@@ -1063,6 +1032,41 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		}
 		return input
 	}
+}
+
+func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, assignment *ast.Node, expression *ast.Node, isExportEquals bool) *ast.Node {
+	if ast.IsSourceFile(input.Parent) {
+		tx.resultHasExternalModuleIndicator = true
+	}
+	tx.resultHasScopeMarker = true
+	if ast.IsIdentifier(expression) {
+		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, expression)
+		tx.preserveJsDoc(exportAssignment, input)
+		return exportAssignment
+	}
+	// expression is non-identifier, create _default typed variable to reference
+	newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+	tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+		return &SymbolAccessibilityDiagnostic{
+			diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+			errorNode:         input,
+		}
+	}
+	tx.tracker.PushErrorFallbackNode(assignment)
+	type_ := tx.ensureType(assignment, false)
+	varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+	tx.tracker.PopErrorFallbackNode()
+	var modList *ast.ModifierList
+	if tx.needsDeclare {
+		modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+	} else {
+		modList = tx.Factory().NewModifierList([]*ast.Node{})
+	}
+	statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+	exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, newId)
+	// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+	tx.preserveJsDoc(statement, input)
+	return tx.Factory().NewSyntaxList([]*ast.Node{statement, exportAssignment})
 }
 
 func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name *ast.Node) *ast.Node {
@@ -1997,12 +2001,18 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 	return replacement
 }
 
-func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
-	expression := node.Expression
+func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.Node) *ast.Node {
+	expression := node.Expression()
 	if expression == nil {
 		return nil
 	}
 	switch ast.GetAssignmentDeclarationKind(expression) {
+	case ast.JSDeclarationKindModuleExports:
+		return tx.transformExportAssignment(node, expression, expression.AsBinaryExpression().Right, true /*isExportEquals*/)
+	case ast.JSDeclarationKindExportsProperty:
+		if ast.IsSourceFile(node.Parent) {
+			return tx.transformCommonJSExport(expression, ast.GetElementOrPropertyAccessName(expression.AsBinaryExpression().Left))
+		}
 	case ast.JSDeclarationKindProperty:
 		return tx.transformExpandoAssignment(expression.AsBinaryExpression())
 	case ast.JSDeclarationKindObjectDefinePropertyExports:
