@@ -3,12 +3,12 @@
 package vfswatch
 
 import (
-	"hash/fnv"
 	"slices"
 	"sync"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/zeebo/xxh3"
 )
 
 const debounceWait = 250 * time.Millisecond
@@ -157,16 +157,20 @@ func snapshotDirEntry(fs vfs.FS, state map[string]WatchEntry, dir string) {
 	}
 }
 
-// hashEntries returns a hash of the sorted file and directory names
-// within a directory. This detects adds, deletes, and renames.
 func hashEntries(entries vfs.Entries) uint64 {
-	names := make([]string, 0, len(entries.Files)+len(entries.Directories))
-	names = append(names, entries.Files...)
-	names = append(names, entries.Directories...)
-	slices.Sort(names)
-	h := fnv.New64a()
-	for _, name := range names {
-		h.Write([]byte(name))
+	dirs := slices.Clone(entries.Directories)
+	files := slices.Clone(entries.Files)
+	slices.Sort(dirs)
+	slices.Sort(files)
+	var h xxh3.Hasher
+	for _, name := range dirs {
+		h.WriteString("d:")
+		h.WriteString(name)
+		h.Write([]byte{0})
+	}
+	for _, name := range files {
+		h.WriteString("f:")
+		h.WriteString(name)
 		h.Write([]byte{0})
 	}
 	return h.Sum64()
