@@ -24,7 +24,7 @@ util.existy // no error
 const util = exports = module.exports = {}
 >util : {}
 >exports = module.exports = {} : {}
->exports : any
+>exports : {}
 >module.exports = {} : {}
 >module.exports : {}
 >module : { exports: {}; }

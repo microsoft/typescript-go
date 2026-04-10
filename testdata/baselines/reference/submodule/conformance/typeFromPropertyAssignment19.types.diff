@@ -32,7 +32,7 @@
 ->exports : typeof C
 ->C : typeof C
 +>exports = module.exports = C : { (): void; f: (n: any) => any; }
-+>exports : any
++>exports : { (): void; f: (n: any) => any; }
 +>module.exports = C : { (): void; f: (n: any) => any; }
 +>module.exports : { (): void; f: (n: any) => any; }
 +>module : { exports: { (): void; f: (n: any) => any; }; }

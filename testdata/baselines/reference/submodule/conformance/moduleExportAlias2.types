@@ -37,7 +37,7 @@ declare var module: { exports: any };
 /// <reference path='node.d.ts' />
 exports = module.exports = C
 >exports = module.exports = C : () => void
->exports : any
+>exports : () => void
 >module.exports = C : () => void
 >module.exports : () => void
 >module : { exports: () => void; }
@@ -47,7 +47,7 @@ exports = module.exports = C
 exports.f = n => n + 1
 >exports.f = n => n + 1 : (n: any) => any
 >exports.f : any
->exports : typeof import("./semver")
+>exports : () => void
 >f : any
 >n => n + 1 : (n: any) => any
 >n : any

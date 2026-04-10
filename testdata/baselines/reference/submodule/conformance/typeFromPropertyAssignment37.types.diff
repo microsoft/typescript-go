@@ -41,7 +41,7 @@
 ->exports : typeof module.exports
 +>util : {}
 +>exports = module.exports = {} : {}
-+>exports : any
++>exports : {}
 +>module.exports = {} : {}
 +>module.exports : {}
 +>module : { exports: {}; }
