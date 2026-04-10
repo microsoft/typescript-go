@@ -2064,7 +2064,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 				// `const _default: <type>`, and a const should preserve the literal type.
 				// Strada handles this via preserveLiterals in the syntactic type builder;
 				// we handle it by not widening the checker type in the first place.
-				if !ast.IsExportAssignment(declaration) {
+				if !ast.IsAnyExportAssignment(declaration) {
 					symType = b.ch.getWidenedLiteralType(symType)
 				}
 				t = b.ch.instantiateType(symType, b.ctx.mapper)
