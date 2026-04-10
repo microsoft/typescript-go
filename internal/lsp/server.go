@@ -1252,7 +1252,7 @@ func (s *Server) handleRename(ctx context.Context, params *lsproto.RenameParams,
 	}
 
 	info := defaultLs.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
-	if info.CanRename && info.FileToRename != "" && !s.supportsImportPathFileRename() {
+	if info.CanRename && info.FileToRename != "" && !s.supportsImportPathFileRename() { // !!! HERE: move this inside getRenameInfo
 		return lsproto.RenameResponse{}, userFacingRequestFailedError("The client doesn't support file rename edits required for import path renames.")
 	}
 	return defaultLs.ProvideRename(ctx, params, orchestrator)
@@ -1272,39 +1272,95 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 
 	uris := make([]lsproto.DocumentUri, 0, len(params.Files))
 	for _, file := range params.Files {
+		// Handle rename of a file with arbitrary extension which may have a corresponding declaration file.
+		oldPath := lsproto.DocumentUri(file.OldUri).FileName()
+		if tspath.HasExtension(oldPath) && core.GetScriptKindFromFileName(oldPath) == core.ScriptKindUnknown {
+			dtsExt := tspath.GetDeclarationEmitExtensionForPath(oldPath)
+			oldDeclarationPath := tspath.ChangeAnyExtension(oldPath, dtsExt, nil /*extensions*/, false /*ignoreCase*/)
+			if s.fs.FileExists(oldDeclarationPath) {
+				uris = append(uris, lsconv.FileNameToDocumentURI((oldDeclarationPath)))
+			}
+			continue
+		}
 		uris = append(uris, lsproto.DocumentUri(file.OldUri))
 	}
 
+	if len(uris) == 0 {
+		return lsproto.WillRenameFilesResponse{}, nil
+	}
+
 	services := s.session.GetLanguageServicesForDocuments(ctx, uris)
-	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
-	seen := make(map[lsproto.DocumentUri]map[lsproto.Range]string)
+
+	type editKey struct {
+		uri    lsproto.DocumentUri
+		range_ lsproto.Range
+	}
+	seenEdits := make(map[editKey]string)
+	seenRenames := make(map[lsproto.DocumentUri]bool)
+	var documentChanges []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile
 
 	for _, languageService := range services {
-		for _, file := range params.Files { // !!! TODO: can optimize by batching per language service instead of per file?
-			for uri, edits := range languageService.GetEditsForFileRename(ctx, lsproto.DocumentUri(file.OldUri), lsproto.DocumentUri(file.NewUri)) {
-				seenForURI, ok := seen[uri]
-				if !ok {
-					seenForURI = map[lsproto.Range]string{}
-					seen[uri] = seenForURI
-				}
-				for _, edit := range edits {
-					if newText, ok := seenForURI[edit.Range]; ok && newText == edit.NewText {
-						continue
+		for _, file := range params.Files {
+			changes := languageService.GetEditsForFileRename(ctx, lsproto.DocumentUri(file.OldUri), lsproto.DocumentUri(file.NewUri))
+			for _, change := range changes {
+				if change.RenameFile != nil {
+					if !seenRenames[change.RenameFile.OldUri] {
+						seenRenames[change.RenameFile.OldUri] = true
+						documentChanges = append(documentChanges, change)
 					}
-					seenForURI[edit.Range] = edit.NewText
-					combined[uri] = append(combined[uri], edit)
+				} else if change.TextDocumentEdit != nil {
+					uri := change.TextDocumentEdit.TextDocument.Uri
+					var deduped []lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit
+					for _, edit := range change.TextDocumentEdit.Edits {
+						if edit.TextEdit != nil {
+							key := editKey{uri: uri, range_: edit.TextEdit.Range}
+							if prev, ok := seenEdits[key]; ok && prev == edit.TextEdit.NewText {
+								continue
+							}
+							seenEdits[key] = edit.TextEdit.NewText
+						}
+						deduped = append(deduped, edit)
+					}
+					if len(deduped) > 0 {
+						documentChanges = append(documentChanges, lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+							TextDocumentEdit: &lsproto.TextDocumentEdit{
+								TextDocument: change.TextDocumentEdit.TextDocument,
+								Edits:        deduped,
+							},
+						})
+					}
 				}
 			}
 		}
 	}
 
-	if len(combined) == 0 {
+	if len(documentChanges) == 0 {
 		return lsproto.WillRenameFilesResponse{}, nil
+	}
+
+	if lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.DocumentChanges {
+		return lsproto.WillRenameFilesResponse{
+			WorkspaceEdit: &lsproto.WorkspaceEdit{
+				DocumentChanges: &documentChanges,
+			},
+		}, nil
+	}
+
+	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	for _, change := range documentChanges {
+		if change.TextDocumentEdit != nil {
+			uri := change.TextDocumentEdit.TextDocument.Uri
+			for _, edit := range change.TextDocumentEdit.Edits {
+				if edit.TextEdit != nil {
+					changes[uri] = append(changes[uri], edit.TextEdit)
+				}
+			}
+		}
 	}
 
 	return lsproto.WillRenameFilesResponse{
 		WorkspaceEdit: &lsproto.WorkspaceEdit{
-			Changes: &combined,
+			Changes: new(changes),
 		},
 	}, nil
 }

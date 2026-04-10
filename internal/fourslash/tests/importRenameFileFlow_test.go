@@ -13,6 +13,21 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func getDocumentChangeEdits(t *testing.T, documentChanges *[]lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile, uri lsproto.DocumentUri) []*lsproto.TextEdit {
+	t.Helper()
+	var edits []*lsproto.TextEdit
+	for _, change := range *documentChanges {
+		if change.TextDocumentEdit != nil && change.TextDocumentEdit.TextDocument.Uri == uri {
+			for _, e := range change.TextDocumentEdit.Edits {
+				if e.TextEdit != nil {
+					edits = append(edits, e.TextEdit)
+				}
+			}
+		}
+	}
+	return edits
+}
+
 func fileRenameCapabilities() *lsproto.ClientCapabilities {
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.Workspace.WorkspaceEdit = &lsproto.WorkspaceEditClientCapabilities{
@@ -54,9 +69,9 @@ export = { name: "stuff" };
 		NewUri: string(lsconv.FileNameToDocumentURI("/src/renamed.cts")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	edits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/src/example.ts")]
+	edits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/src/example.ts"))
 	assert.Equal(t, len(edits), 1)
 	assert.Equal(t, edits[0].NewText, "./renamed.cjs")
 }
@@ -90,9 +105,9 @@ export const x = 1;
 		NewUri: string(lsconv.FileNameToDocumentURI("/src/renamed")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	edits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/src/example.ts")]
+	edits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/src/example.ts"))
 	assert.Equal(t, len(edits), 1)
 	assert.Equal(t, edits[0].NewText, "./renamed")
 }
@@ -120,15 +135,15 @@ export const x = 1;
 		NewUri: string(lsconv.FileNameToDocumentURI("/src/new.ts")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/src/app.ts")]
+	appEdits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/src/app.ts"))
 	assert.Equal(t, len(appEdits), 2)
 	newTexts := []string{appEdits[0].NewText, appEdits[1].NewText}
 	slices.Sort(newTexts)
 	assert.DeepEqual(t, newTexts, []string{"./new", "./new.ts"})
 
-	tsconfigEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/tsconfig.json")]
+	tsconfigEdits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/tsconfig.json"))
 	assert.Equal(t, len(tsconfigEdits), 1)
 	assert.Equal(t, tsconfigEdits[0].NewText, "src/new.ts")
 }
@@ -163,9 +178,9 @@ import { x } from "../a/old";
 		NewUri: string(lsconv.FileNameToDocumentURI("/solution/a/new.ts")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/solution/b/app.ts")]
+	appEdits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/solution/b/app.ts"))
 	assert.Equal(t, len(appEdits), 1)
 	assert.Equal(t, appEdits[0].NewText, "../a/new")
 }
@@ -207,9 +222,9 @@ import { x } from "../a/old";
 		NewUri: string(lsconv.FileNameToDocumentURI("/solution/a/new.ts")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/solution/b/app.ts")]
+	appEdits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/solution/b/app.ts"))
 	assert.Equal(t, len(appEdits), 1)
 	assert.Equal(t, appEdits[0].NewText, "../a/new")
 }
@@ -258,9 +273,9 @@ import { x } from "../a/old";
 		NewUri: string(lsconv.FileNameToDocumentURI("/solution/a/new.ts")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/solution/b/app.ts")]
+	appEdits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/solution/b/app.ts"))
 	assert.Equal(t, len(appEdits), 1)
 	assert.Equal(t, appEdits[0].NewText, "../a/new")
 }
@@ -310,9 +325,9 @@ import { x } from "project-b/old";
 		NewUri: string(lsconv.FileNameToDocumentURI("/packages/project-b/new.ts")),
 	})
 	assert.Assert(t, willRenameResult.WorkspaceEdit != nil)
-	assert.Assert(t, willRenameResult.WorkspaceEdit.Changes != nil)
+	assert.Assert(t, willRenameResult.WorkspaceEdit.DocumentChanges != nil)
 
-	appEdits := (*willRenameResult.WorkspaceEdit.Changes)[lsconv.FileNameToDocumentURI("/packages/project-a/app.ts")]
+	appEdits := getDocumentChangeEdits(t, willRenameResult.WorkspaceEdit.DocumentChanges, lsconv.FileNameToDocumentURI("/packages/project-a/app.ts"))
 	assert.Equal(t, len(appEdits), 1)
 	assert.Equal(t, appEdits[0].NewText, "project-b/new")
 }

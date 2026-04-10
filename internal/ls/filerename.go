@@ -24,7 +24,7 @@ type toImport struct {
 	updated     bool
 }
 
-func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lsproto.DocumentUri, newURI lsproto.DocumentUri) map[lsproto.DocumentUri][]*lsproto.TextEdit {
+func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lsproto.DocumentUri, newURI lsproto.DocumentUri) []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile {
 	program := l.GetProgram()
 	oldPath := oldURI.FileName()
 	newPath := newURI.FileName()
@@ -35,11 +35,40 @@ func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lspr
 	l.updateTsconfigFiles(program, changeTracker, oldToNew, oldPath, newPath)
 	l.updateImportsForFileRename(program, changeTracker, oldToNew)
 
-	result := map[lsproto.DocumentUri][]*lsproto.TextEdit{}
-	for fileName, edits := range changeTracker.GetChanges() {
-		result[lsconv.FileNameToDocumentURI(fileName)] = edits
+	var documentChanges []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile
+
+	// When renaming e.g. `foo.css`, also rename `foo.d.css.ts` if it exists.
+	if !tspath.IsDeclarationFileName(oldPath) {
+		dtsExt := tspath.GetDeclarationEmitExtensionForPath(oldPath)
+		oldDeclarationPath := tspath.ChangeAnyExtension(oldPath, dtsExt, nil /*extensions*/, false /*ignoreCase*/)
+		if l.host.FileExists(oldDeclarationPath) {
+			newDeclarationPath := tspath.ChangeAnyExtension(newPath, dtsExt, nil /*extensions*/, false /*ignoreCase*/)
+			documentChanges = append(documentChanges, lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+				RenameFile: &lsproto.RenameFile{
+					OldUri: lsconv.FileNameToDocumentURI(oldDeclarationPath),
+					NewUri: lsconv.FileNameToDocumentURI(newDeclarationPath),
+				},
+			})
+		}
 	}
-	return result
+
+	for fileName, edits := range changeTracker.GetChanges() {
+		uri := lsconv.FileNameToDocumentURI(fileName)
+		lspEdits := make([]lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit, 0, len(edits))
+		for _, edit := range edits {
+			lspEdits = append(lspEdits, lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit{
+				TextEdit: edit,
+			})
+		}
+		documentChanges = append(documentChanges, lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+			TextDocumentEdit: &lsproto.TextDocumentEdit{
+				TextDocument: lsproto.OptionalVersionedTextDocumentIdentifier{Uri: uri},
+				Edits:        lspEdits,
+			},
+		})
+	}
+
+	return documentChanges
 }
 
 func (l *LanguageService) createPathUpdater(oldPath string, newPath string) pathUpdater {
