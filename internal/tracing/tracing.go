@@ -310,7 +310,8 @@ func pushTo(buf *strings.Builder, stack *[]traceStackEntry, ts float64, phase Ph
 }
 
 // popFrom implements the Pop logic, writing to the given buffer and event stack.
-func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTime time.Time) {
+// When deterministic is true, sampled events are skipped to ensure stable output.
+func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTime time.Time, deterministic bool) {
 	if len(*stack) == 0 {
 		return
 	}
@@ -321,7 +322,9 @@ func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTi
 	if entry.separateBeginAndEnd {
 		buf.WriteString(",\n")
 		writeEventTo(buf, "E", string(entry.phase), ts, entry.name, entry.argsJSON)
-	} else {
+	} else if !deterministic {
+		// Sampled events use wall-clock time for duration and sampling boundary
+		// checks. In deterministic mode, skip them entirely to avoid flaky baselines.
 		now := time.Now()
 		startMicros := float64(entry.startTime.Sub(startTime).Nanoseconds()) / 1000.0
 		endMicros := float64(now.Sub(startTime).Nanoseconds()) / 1000.0
@@ -380,7 +383,7 @@ func (tr *Tracing) Pop() {
 	if tr.eventStack[len(tr.eventStack)-1].separateBeginAndEnd {
 		ts = tr.timestamp()
 	}
-	popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime)
+	popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime, tr.deterministic)
 }
 
 // PopAll closes all open trace events on the shared trace buffer.
@@ -395,7 +398,7 @@ func (tr *Tracing) PopAll() {
 
 	ts := tr.timestamp()
 	for i := len(tr.eventStack) - 1; i >= 0; i-- {
-		popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime)
+		popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime, tr.deterministic)
 	}
 }
 
