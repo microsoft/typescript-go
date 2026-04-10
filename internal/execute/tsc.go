@@ -24,7 +24,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine) *tracing.Tracing {
+func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) *tracing.Tracing {
 	traceDir := config.CompilerOptions().GenerateTrace
 	if traceDir == "" {
 		return nil
@@ -33,7 +33,7 @@ func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine) *
 	if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
 		configFilePath = config.ConfigFile.SourceFile.FileName()
 	}
-	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath, config.CompilerOptions().SingleThreaded.IsTrue())
+	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath, testing != nil)
 	if err != nil {
 		fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
 	}
@@ -294,7 +294,7 @@ func performIncrementalCompilation(
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
 
-	tr := startTracingIfNeeded(sys, config)
+	tr := startTracingIfNeeded(sys, config, testing)
 
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
@@ -339,7 +339,7 @@ func performCompilation(
 ) tsc.CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 
-	tr := startTracingIfNeeded(sys, config)
+	tr := startTracingIfNeeded(sys, config, testing)
 
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
