@@ -26,17 +26,14 @@ export default css;
 import styles from ".//*rename*/app.css";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.GoToMarker(t, "rename")
-	f.RenameAtCaret(t, "/app2.css")
-	f.GoToFile(t, "/a.ts")
-	f.VerifyCurrentFileContent(t, `import styles from "./app2.css";`)
-	f.GoToFile(t, "/app2.d.css.ts")
-	f.VerifyCurrentFileContent(t, `declare const css: {
+	f.VerifyRename(t, "rename", "app2.css", map[string]string{
+		"/a.ts": `import styles from "./app2.css";`,
+		"/app2.d.css.ts": `declare const css: {
   cookieBanner: string;
 };
-export default css;`)
-	f.GoToFile(t, "/app2.css")
-	f.VerifyCurrentFileContent(t, `.cookie-banner {
+export default css;`,
+		"/app2.css": `.cookie-banner {
   display: none;
-}`)
+}`,
+	})
 }

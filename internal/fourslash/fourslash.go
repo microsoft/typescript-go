@@ -467,6 +467,9 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 		},
 		Workspace: &lsproto.WorkspaceClientCapabilities{
 			Configuration: ptrTrue,
+			FileOperations: &lsproto.FileOperationClientCapabilities{
+				WillRename: ptrTrue,
+			},
 			WorkspaceEdit: &lsproto.WorkspaceEditClientCapabilities{
 				DocumentChanges: ptrTrue,
 				ResourceOperations: &[]lsproto.ResourceOperationKind{
@@ -499,6 +502,11 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	}
+	if capabilitiesWithDefaults.Workspace.FileOperations == nil {
+		capabilitiesWithDefaults.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
+			WillRename: ptrTrue,
+		}
 	}
 	if capabilitiesWithDefaults.Workspace.WorkspaceEdit == nil {
 		capabilitiesWithDefaults.Workspace.WorkspaceEdit = defaultWorkspaceEditCapabilities
@@ -3790,10 +3798,6 @@ func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.Rena
 	if len(renameFiles) > 0 {
 		var fileRenames []*lsproto.FileRename
 		for _, renameFile := range renameFiles {
-			oldFileName := lsproto.DocumentUri(renameFile.OldUri).FileName()
-			if !f.vfs.FileExists(oldFileName) && f.getScriptInfo(oldFileName) == nil {
-				continue
-			}
 			fileRenames = append(fileRenames, &lsproto.FileRename{
 				OldUri: string(renameFile.OldUri),
 				NewUri: string(renameFile.NewUri),
@@ -3862,10 +3866,6 @@ func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.Fi
 
 	var fileRenames []*lsproto.FileRename
 	for _, renameFile := range renameFiles {
-		oldFileName := lsproto.DocumentUri(renameFile.OldUri).FileName()
-		if !f.vfs.FileExists(oldFileName) && f.getScriptInfo(oldFileName) == nil {
-			continue
-		}
 		fileRenames = append(fileRenames, &lsproto.FileRename{
 			OldUri: string(renameFile.OldUri),
 			NewUri: string(renameFile.NewUri),
@@ -3877,6 +3877,19 @@ func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.Fi
 		oldPath := lsproto.DocumentUri(file.OldUri).FileName()
 		newPath := lsproto.DocumentUri(file.NewUri).FileName()
 		f.renameFileOrDirectory(t, oldPath, newPath)
+	}
+}
+
+func (f *FourslashTest) VerifyRename(t *testing.T, markerName string, newName string, expectedFileContents map[string]string) {
+	t.Helper()
+	f.GoToMarker(t, markerName)
+	f.RenameAtCaret(t, newName)
+	for fileName, expectedContent := range expectedFileContents {
+		script := f.getScriptInfo(fileName)
+		if script == nil {
+			t.Fatalf("Expected script info for %s, but got nil", fileName)
+		}
+		assert.Equal(t, script.content, expectedContent, fmt.Sprintf("File content after rename did not match expected content for %s.", fileName))
 	}
 }
 
@@ -3945,13 +3958,13 @@ func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newP
 	fileEvents := make([]*lsproto.FileEvent, 0, len(oldFileNames)*2)
 	reopenAtNewPath := map[string]string{} // newFileName -> content, for files that were open
 	for oldFileName := range oldFileNames {
-		newFileName, ok := pathUpdater(oldFileName)
-		if !ok {
+		newFileName, updated := pathUpdater(oldFileName)
+		if !updated {
 			t.Fatalf("failed to compute renamed path for %s", oldFileName)
 		}
 
 		// Send didClose for open files; get content from the old script info.
-		if _, ok := f.openFiles[oldFileName]; ok {
+		if _, isOpen := f.openFiles[oldFileName]; isOpen {
 			script := f.scriptInfos[oldFileName]
 			reopenAtNewPath[newFileName] = script.content
 			sendNotification(t, f, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
@@ -3966,8 +3979,8 @@ func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newP
 		delete(f.scriptInfos, oldFileName)
 
 		// Write renamed file to VFS.
-		content, ok := f.vfs.ReadFile(oldFileName)
-		if !ok {
+		content, updated := f.vfs.ReadFile(oldFileName)
+		if !updated {
 			t.Fatalf("failed to read content for %s during rename to %s", oldFileName, newFileName)
 		}
 		if err := f.vfs.WriteFile(newFileName, content); err != nil {

@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestGetEditsForFileRename_cssImport1(t *testing.T) {
+func TestGetEditsForFileRename_cssImport4(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
@@ -23,19 +23,19 @@ declare const css: {
 };
 export default css;
 // @Filename: /a.ts
-import styles from "./app.css";`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+import styles from ".//*rename*/app.css";`
+	capabilities := fourslash.GetDefaultCapabilities()
+	capabilities.Workspace.FileOperations = nil
+	f, done := fourslash.NewFourslash(t, capabilities, content)
 	defer done()
-	// We cannot request rename of the .d.css file because that would lead to a circularity of `willRenameFiles`.
-	// So this case does not fully work.
-	f.VerifyWillRenameFilesEdits(t, "/app.css", "/app2.css", map[string]string{
-		"/a.ts": `import styles from "./app.css";`,
-		"/app2.css": `.cookie-banner {
-  display: none;
-}`,
-		"/app.d.css.ts": `declare const css: {
+	f.VerifyRename(t, "rename", "app2.css", map[string]string{
+		"/a.ts": `import styles from "./app2.css";`,
+		"/app2.d.css.ts": `declare const css: {
   cookieBanner: string;
 };
 export default css;`,
-	}, nil /*preferences*/)
+		"/app2.css": `.cookie-banner {
+  display: none;
+}`,
+	})
 }

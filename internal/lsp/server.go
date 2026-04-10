@@ -79,7 +79,7 @@ var (
 		{
 			Scheme: new("file"),
 			Pattern: &lsproto.FileOperationPattern{
-				Glob: "**/*",
+				Glob: "**/*.{ts,tsx,js,jsx,cts,cjs,mts,mjs,json}",
 			},
 		},
 	}
@@ -1230,7 +1230,7 @@ func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params
 }
 
 func (s *Server) handlePrepareRename(ctx context.Context, languageService *ls.LanguageService, params *lsproto.PrepareRenameParams) (lsproto.PrepareRenameResponse, error) {
-	info := languageService.GetRenameInfo(ctx, params.TextDocument.Uri, params.Position)
+	info := languageService.GetRenameInfo(ctx, "" /*newName*/, params.TextDocument.Uri, params.Position)
 	if !info.CanRename {
 		return lsproto.PrepareRenameResponse{}, userFacingRequestFailedError(info.LocalizedErrorMessage)
 	}
@@ -1247,8 +1247,38 @@ func (s *Server) handleRename(ctx context.Context, params *lsproto.RenameParams,
 	if err != nil {
 		return lsproto.RenameResponse{}, err
 	}
+	info := defaultLs.GetRenameInfo(ctx, params.NewName, params.TextDocument.Uri, params.Position)
+	if info.CanRename && info.FileToRename != "" {
+		if clientSupportsWillRenameFiles(ctx) && clientSupportsDocumentChanges(ctx) && clientSupportsRenameResourceOperations(ctx) {
+			documentChanges := []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{
+				{
+					RenameFile: &lsproto.RenameFile{
+						Kind:   lsproto.StringLiteralRename{},
+						OldUri: lsconv.FileNameToDocumentURI(info.FileToRename),
+						NewUri: lsconv.FileNameToDocumentURI(info.NewFileName),
+					},
+				},
+			}
+			return lsproto.WorkspaceEditOrNull{
+				WorkspaceEdit: &lsproto.WorkspaceEdit{
+					DocumentChanges: &documentChanges,
+				},
+			}, nil
+		}
+		renameFilesParams := &lsproto.RenameFilesParams{
+			Files: []*lsproto.FileRename{{
+				OldUri: string(lsconv.FileNameToDocumentURI(info.FileToRename)),
+				NewUri: string(lsconv.FileNameToDocumentURI(info.NewFileName)),
+			}},
+		}
+		return s.handleWillRenameFiles(ctx, renameFilesParams, req)
+	}
 
 	return defaultLs.ProvideRename(ctx, params, orchestrator)
+}
+
+func clientSupportsWillRenameFiles(ctx context.Context) bool {
+	return lsproto.GetClientCapabilities(ctx).Workspace.FileOperations.WillRename
 }
 
 func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.RenameFilesParams, _ *lsproto.RequestMessage) (lsproto.WillRenameFilesResponse, error) {
@@ -1258,16 +1288,6 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 
 	uris := make([]lsproto.DocumentUri, 0, len(params.Files))
 	for _, file := range params.Files {
-		// Handle rename of a file with arbitrary extension which may have a corresponding declaration file.
-		oldPath := lsproto.DocumentUri(file.OldUri).FileName()
-		if tspath.HasExtension(oldPath) && core.GetScriptKindFromFileName(oldPath) == core.ScriptKindUnknown {
-			dtsExt := tspath.GetDeclarationEmitExtensionForPath(oldPath)
-			oldDeclarationPath := tspath.ChangeAnyExtension(oldPath, dtsExt, nil /*extensions*/, false /*ignoreCase*/)
-			if s.fs.FileExists(oldDeclarationPath) {
-				uris = append(uris, lsconv.FileNameToDocumentURI((oldDeclarationPath)))
-			}
-			continue
-		}
 		uris = append(uris, lsproto.DocumentUri(file.OldUri))
 	}
 
@@ -1324,7 +1344,7 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 		return lsproto.WillRenameFilesResponse{}, nil
 	}
 
-	if lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.DocumentChanges {
+	if clientSupportsDocumentChanges(ctx) {
 		return lsproto.WillRenameFilesResponse{
 			WorkspaceEdit: &lsproto.WorkspaceEdit{
 				DocumentChanges: &documentChanges,
@@ -1349,6 +1369,14 @@ func (s *Server) handleWillRenameFiles(ctx context.Context, params *lsproto.Rena
 			Changes: new(changes),
 		},
 	}, nil
+}
+
+func clientSupportsDocumentChanges(ctx context.Context) bool {
+	return lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.DocumentChanges
+}
+
+func clientSupportsRenameResourceOperations(ctx context.Context) bool {
+	return slices.Contains(lsproto.GetClientCapabilities(ctx).Workspace.WorkspaceEdit.ResourceOperations, lsproto.ResourceOperationKindRename)
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
