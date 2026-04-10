@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -115,6 +116,29 @@ func (h *SessionUtils) ToPath(fileName string) tspath.Path {
 
 func (h *SessionUtils) FS() vfs.FS {
 	return h.fs
+}
+
+// WatchesFile reports whether any registered file watcher would match the given
+// file path. It handles both absolute glob patterns and relative patterns with
+// a base URI. On case-insensitive file systems the paths in glob patterns are
+// lowercased, so callers should pass the lowercased path.
+func (h *SessionUtils) WatchesFile(filePath string) bool {
+	fileUri := "file://" + filePath
+	for _, call := range h.client.WatchFilesCalls() {
+		for _, watcher := range call.Watchers {
+			if watcher.GlobPattern.Pattern != nil {
+				if g, err := glob.Parse(*watcher.GlobPattern.Pattern); err == nil && g.Match(filePath) {
+					return true
+				}
+			} else if watcher.GlobPattern.RelativePattern != nil {
+				baseUri := string(*watcher.GlobPattern.RelativePattern.BaseUri.URI)
+				if strings.HasPrefix(fileUri, baseUri) {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func (h *SessionUtils) Logs() string {
