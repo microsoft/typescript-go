@@ -9,7 +9,7 @@ const j = require("./package.json");
 module.exports = j;
 >module.exports : Symbol(exports, Decl(index.js, 0, 0))
 >module : Symbol(module, Decl(index.js, 0, 0))
->exports : Symbol(exports, Decl(index.js, 0, 0))
+>exports : Symbol(export=, Decl(index.js, 0, 36))
 >j : Symbol(j, Decl(index.js, 0, 5))
 
 === package.json ===

@@ -15,10 +15,9 @@
  module.exports = require("./y.js");
 ->module.exports : Symbol(module.exports, Decl(x.js, 0, 0))
 ->module : Symbol(export=, Decl(x.js, 0, 21))
-->exports : Symbol(export=, Decl(x.js, 0, 21))
 +>module.exports : Symbol(exports, Decl(x.js, 0, 0))
 +>module : Symbol(module, Decl(x.js, 0, 0))
-+>exports : Symbol(exports, Decl(x.js, 0, 0))
+ >exports : Symbol(export=, Decl(x.js, 0, 21))
  >require : Symbol(require)
 ->"./y.js" : Symbol("./y.js", Decl(y.d.ts, 0, 0))
 

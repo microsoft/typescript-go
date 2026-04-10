@@ -48,8 +48,7 @@
  module.exports = A;
 ->module.exports : Symbol(module.exports, Decl(other.js, 0, 0))
 ->module : Symbol(export=, Decl(other.js, 0, 29))
-->exports : Symbol(export=, Decl(other.js, 0, 29))
 +>module.exports : Symbol(exports, Decl(other.js, 0, 0))
 +>module : Symbol(module, Decl(other.js, 0, 0))
-+>exports : Symbol(exports, Decl(other.js, 0, 0))
+ >exports : Symbol(export=, Decl(other.js, 0, 29))
  >A : Symbol(A, Decl(other.js, 0, 0))

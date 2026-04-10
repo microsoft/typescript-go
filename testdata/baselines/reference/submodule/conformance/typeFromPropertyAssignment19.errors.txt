@@ -1,12 +1,9 @@
-index.js(2,19): error TS2306: File 'semver.js' is not a module.
-semver.js(2,1): error TS2304: Cannot find name 'exports'.
+semver.js(2,1): error TS2631: Cannot assign to '"semver"' because it is a namespace.
 
 
-==== index.js (1 errors) ====
+==== index.js (0 errors) ====
     /// <reference path='./types.d.ts'/>
     const C = require("./semver")
-                      ~~~~~~~~~~
-!!! error TS2306: File 'semver.js' is not a module.
     var two = C.f(1)
     
 ==== types.d.ts (0 errors) ====
@@ -16,7 +13,7 @@ semver.js(2,1): error TS2304: Cannot find name 'exports'.
     /// <reference path='./types.d.ts'/>
     exports = module.exports = C
     ~~~~~~~
-!!! error TS2304: Cannot find name 'exports'.
+!!! error TS2631: Cannot assign to '"semver"' because it is a namespace.
     C.f = n => n + 1
     function C() {
         this.p = 1

@@ -6,8 +6,8 @@
  const util = require('./mod')
 ->util : typeof util
 ->require('./mod') : typeof util
-+>util : any
-+>require('./mod') : any
++>util : {}
++>require('./mod') : {}
  >require : any
  >'./mod' : "./mod"
 
@@ -19,7 +19,7 @@
 ->util : typeof util
 ->existy : () => void
 +>util.existy : any
-+>util : any
++>util : {}
 +>existy : any
  }
  util.existy // no error
@@ -27,7 +27,7 @@
 ->util : typeof util
 ->existy : () => void
 +>util.existy : any
-+>util : any
++>util : {}
 +>existy : any
 
  === mod.js ===
@@ -43,9 +43,9 @@
 +>exports = module.exports = {} : {}
 +>exports : any
 +>module.exports = {} : {}
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : {}
++>module : { exports: {}; }
++>exports : {}
  >{} : {}
 
  if (!!false) {

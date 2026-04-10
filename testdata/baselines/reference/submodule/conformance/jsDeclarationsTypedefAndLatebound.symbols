@@ -43,6 +43,6 @@ class LazySet {
 module.exports = LazySet;
 >module.exports : Symbol(exports, Decl(LazySet.js, 0, 0))
 >module : Symbol(module, Decl(LazySet.js, 0, 0))
->exports : Symbol(exports, Decl(LazySet.js, 0, 0))
+>exports : Symbol(export=, Decl(LazySet.js, 10, 1))
 >LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
 

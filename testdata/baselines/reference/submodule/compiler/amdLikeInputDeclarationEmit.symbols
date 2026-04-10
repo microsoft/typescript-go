@@ -59,6 +59,7 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
 
     module.exports = ExtendedClass
 >module : Symbol(module, Decl(ExtendedClass.js, 15, 9))
+>exports : Symbol(export=, Decl(ExtendedClass.js, 15, 22))
 >ExtendedClass : Symbol(ExtendedClass, Decl(ExtendedClass.js, 8, 9))
 
     return module.exports;

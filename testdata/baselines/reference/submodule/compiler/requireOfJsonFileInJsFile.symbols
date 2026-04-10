@@ -45,6 +45,6 @@ js1.b;
 module.exports = { a: 0 };
 >module.exports : Symbol(exports, Decl(js.js, 0, 0))
 >module : Symbol(module, Decl(js.js, 0, 0))
->exports : Symbol(exports, Decl(js.js, 0, 0))
+>exports : Symbol(export=, Decl(js.js, 0, 0))
 >a : Symbol(a, Decl(js.js, 0, 18))
 

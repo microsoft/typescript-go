@@ -16,7 +16,7 @@ exports.everywhere = 2
 module.exports = exports
 >module.exports : Symbol(exports, Decl(Eloquent.js, 0, 0))
 >module : Symbol(module, Decl(Eloquent.js, 0, 0))
->exports : Symbol(exports, Decl(Eloquent.js, 0, 0))
+>exports : Symbol(export=, Decl(Eloquent.js, 3, 22))
 >exports : Symbol("./Eloquent", Decl(Eloquent.js, 0, 0))
 
 })()

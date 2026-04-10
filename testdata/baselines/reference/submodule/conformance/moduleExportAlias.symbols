@@ -104,7 +104,7 @@ var multipleDeclarationAlias2 = module.exports = exports;
 >multipleDeclarationAlias2 : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 3))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 
 multipleDeclarationAlias2.func6 = function () { };
@@ -135,7 +135,7 @@ var multipleDeclarationAlias5 = module.exports = exports = {};
 >multipleDeclarationAlias5 : Symbol(multipleDeclarationAlias5, Decl(b.js, 21, 3))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 
 multipleDeclarationAlias5.func9 = function () { };
@@ -146,7 +146,7 @@ var multipleDeclarationAlias6 = exports = module.exports = {};
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 
 multipleDeclarationAlias6.func10 = function () { };
 >multipleDeclarationAlias6 : Symbol(multipleDeclarationAlias6, Decl(b.js, 24, 3))
@@ -155,7 +155,7 @@ exports = module.exports = someOtherVariable = {};
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 >someOtherVariable : Symbol(someOtherVariable, Decl(b.js, 14, 3))
 
 exports.func11 = function () { };
@@ -170,7 +170,7 @@ exports = module.exports = someOtherVariable = {};
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 >someOtherVariable : Symbol(someOtherVariable, Decl(b.js, 14, 3))
 
 exports.func11 = function () { };
@@ -185,7 +185,7 @@ exports = module.exports = {};
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 
 exports.func13 = function () { };
 >exports : Symbol("./b", Decl(b.js, 0, 0))
@@ -199,7 +199,7 @@ exports = module.exports = {};
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 
 exports.func15 = function () { };
 >exports : Symbol("./b", Decl(b.js, 0, 0))
@@ -212,7 +212,7 @@ module.exports.func16 = function () { };
 module.exports = exports = {};
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 >exports : Symbol("./b", Decl(b.js, 0, 0))
 
 exports.func17 = function () { };
@@ -226,7 +226,7 @@ module.exports.func18 = function () { };
 module.exports = {};
 >module.exports : Symbol(exports, Decl(b.js, 0, 0))
 >module : Symbol(module, Decl(b.js, 0, 0))
->exports : Symbol(exports, Decl(b.js, 0, 0))
+>exports : Symbol(multipleDeclarationAlias2, Decl(b.js, 11, 31), Decl(b.js, 21, 31), Decl(b.js, 24, 41), Decl(b.js, 27, 9), Decl(b.js, 31, 9) ... and 4 more)
 
 exports.func19 = function () { };
 >exports : Symbol("./b", Decl(b.js, 0, 0))

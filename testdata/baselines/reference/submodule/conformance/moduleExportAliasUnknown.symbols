@@ -4,7 +4,7 @@
 module.exports = window.nonprop;
 >module.exports : Symbol(exports, Decl(bug27025.js, 0, 0))
 >module : Symbol(module, Decl(bug27025.js, 0, 0))
->exports : Symbol(exports, Decl(bug27025.js, 0, 0))
+>exports : Symbol(export=, Decl(bug27025.js, 0, 0))
 >window : Symbol(window, Decl(lib.dom.d.ts, --, --))
 
 exports.foo = bar;

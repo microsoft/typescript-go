@@ -26,5 +26,5 @@ export = Foo;
 module.exports = /** @type {FooFun} */(void 0);
 >module.exports : Symbol(exports, Decl(something.js, 0, 0))
 >module : Symbol(module, Decl(something.js, 0, 0))
->exports : Symbol(exports, Decl(something.js, 0, 0))
+>exports : Symbol(export=, Decl(something.js, 0, 0))
 

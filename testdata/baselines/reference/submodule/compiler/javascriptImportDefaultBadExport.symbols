@@ -7,7 +7,7 @@ const alias = {};
 module.exports = alias;
 >module.exports : Symbol(exports, Decl(a.js, 0, 0))
 >module : Symbol(module, Decl(a.js, 0, 0))
->exports : Symbol(exports, Decl(a.js, 0, 0))
+>exports : Symbol(export=, Decl(a.js, 0, 17))
 >alias : Symbol(alias, Decl(a.js, 0, 5))
 
 === /b.js ===

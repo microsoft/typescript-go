@@ -1,23 +1,17 @@
-mod.js(1,14): error TS2304: Cannot find name 'exports'.
-mod.js(1,24): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
-use.js(1,22): error TS2306: File 'mod.js' is not a module.
+mod.js(1,14): error TS2631: Cannot assign to '"mod"' because it is a namespace.
 
 
-==== use.js (1 errors) ====
+==== use.js (0 errors) ====
     const util = require('./mod')
-                         ~~~~~~~
-!!! error TS2306: File 'mod.js' is not a module.
     function n() {
         util.existy // no error
     }
     util.existy // no error
     
-==== mod.js (2 errors) ====
+==== mod.js (1 errors) ====
     const util = exports = module.exports = {}
                  ~~~~~~~
-!!! error TS2304: Cannot find name 'exports'.
-                           ~~~~~~
-!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+!!! error TS2631: Cannot assign to '"mod"' because it is a namespace.
     if (!!false) {
         util.existy = function () { }
     }
