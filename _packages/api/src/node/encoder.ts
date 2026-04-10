@@ -1,6 +1,7 @@
 import type {
     FileReference,
     JSDocParameterOrPropertyTag,
+    LiteralLikeNode,
     Node,
     NodeArray,
     SourceFile,
@@ -124,7 +125,7 @@ function isChildPresent(v: unknown): boolean {
 }
 
 function recordNodeStrings(node: Node, strs: StringTable): number {
-    return strs.add((node as any).text ?? "");
+    return strs.add((node as LiteralLikeNode).text ?? "");
 }
 
 function encodeFileReferences(refs: readonly FileReference[] | undefined, writer: MsgpackWriter): number {
@@ -197,14 +198,9 @@ function getNodeData(node: Node, strs: StringTable, extendedData: number[], stru
 function getChildPropertiesForNode(node: Node): readonly (string | undefined)[] | undefined {
     const kind = node.kind;
     if (kind === SyntaxKind.JSDocParameterTag || kind === SyntaxKind.JSDocPropertyTag) {
-        if ((node as JSDocParameterOrPropertyTag).isNameFirst) {
-            return kind === SyntaxKind.JSDocParameterTag
-                ? ["tagName", "name", "typeExpression", "comment"]
-                : ["name", "typeExpression"];
-        }
-        return kind === SyntaxKind.JSDocParameterTag
-            ? ["tagName", "typeExpression", "name", "comment"]
-            : ["typeExpression", "name"];
+        return (node as JSDocParameterOrPropertyTag).isNameFirst
+            ? ["tagName", "name", "typeExpression", "comment"]
+            : ["tagName", "typeExpression", "name", "comment"];
     }
     return childProperties[kind];
 }
