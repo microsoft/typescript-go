@@ -170,13 +170,7 @@ func (w *Watcher) doBuild() {
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
-
-	var watchPaths []string
-	tfs.SeenFiles.Range(func(fn string) bool {
-		watchPaths = append(watchPaths, fn)
-		return true
-	})
-	w.fileWatcher.UpdateWatchState(watchPaths, wildcardDirs)
+	w.fileWatcher.UpdateWatchState(tfs.SeenFiles.ToSlice(), wildcardDirs)
 	w.fileWatcher.SetPollInterval(w.config.ParsedConfig.WatchOptions.WatchInterval())
 	w.configModified = false
 
@@ -222,18 +216,21 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 	if !w.configHasErrors && len(w.configFilePaths) > 0 {
 		changed := false
 		for _, path := range w.configFilePaths {
-			if old, ok := w.fileWatcher.WatchStateEntry(path); ok {
-				s := w.sys.FS().Stat(path)
-				if !old.Exists {
-					if s != nil {
-						changed = true
-						break
-					}
-				} else {
-					if s == nil || !s.ModTime().Equal(old.ModTime) {
-						changed = true
-						break
-					}
+			old, ok := w.fileWatcher.WatchStateEntry(path)
+			if !ok {
+				changed = true
+				break
+			}
+			s := w.sys.FS().Stat(path)
+			if !old.Exists {
+				if s != nil {
+					changed = true
+					break
+				}
+			} else {
+				if s == nil || !s.ModTime().Equal(old.ModTime) {
+					changed = true
+					break
 				}
 			}
 		}

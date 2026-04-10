@@ -56,38 +56,11 @@ func (fw *FileWatcher) WatchStateIsEmpty() bool {
 }
 
 func (fw *FileWatcher) UpdateWatchState(paths []string, wildcardDirs map[string]bool) {
+	state := snapshotPaths(fw.fs, paths, wildcardDirs)
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
-	fw.watchState = make(map[string]WatchEntry, len(paths))
-	for _, fn := range paths {
-		if s := fw.fs.Stat(fn); s != nil {
-			fw.watchState[fn] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
-		} else {
-			fw.watchState[fn] = WatchEntry{Exists: false, ChildCount: -1}
-		}
-	}
+	fw.watchState = state
 	fw.wildcardDirectories = wildcardDirs
-	for dir, recursive := range wildcardDirs {
-		if !recursive {
-			continue
-		}
-		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
-			if err != nil || !d.IsDir() {
-				return nil
-			}
-			entries := fw.fs.GetAccessibleEntries(path)
-			count := len(entries.Files) + len(entries.Directories)
-			if existing, ok := fw.watchState[path]; ok {
-				existing.ChildCount = count
-				fw.watchState[path] = existing
-			} else {
-				if s := fw.fs.Stat(path); s != nil {
-					fw.watchState[path] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
-				}
-			}
-			return nil
-		})
-	}
 }
 
 func (fw *FileWatcher) WaitForSettled(now func() time.Time) {
@@ -115,36 +88,63 @@ func (fw *FileWatcher) currentState() map[string]WatchEntry {
 	watchState := fw.watchState
 	wildcardDirs := fw.wildcardDirectories
 	fw.mu.Unlock()
-	state := make(map[string]WatchEntry, len(watchState))
+	paths := make([]string, 0, len(watchState))
 	for path := range watchState {
-		if s := fw.fs.Stat(path); s != nil {
-			state[path] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
+		paths = append(paths, path)
+	}
+	return snapshotPaths(fw.fs, paths, wildcardDirs)
+}
+
+func snapshotPaths(fs vfs.FS, paths []string, wildcardDirs map[string]bool) map[string]WatchEntry {
+	state := make(map[string]WatchEntry, len(paths))
+	for _, fn := range paths {
+		if s := fs.Stat(fn); s != nil {
+			state[fn] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
 		} else {
-			state[path] = WatchEntry{Exists: false, ChildCount: -1}
+			state[fn] = WatchEntry{Exists: false, ChildCount: -1}
 		}
 	}
 	for dir, recursive := range wildcardDirs {
 		if !recursive {
+			snapshotDirEntry(fs, state, dir)
 			continue
 		}
-		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
+		_ = fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
 			if err != nil || !d.IsDir() {
 				return nil
 			}
-			entries := fw.fs.GetAccessibleEntries(path)
-			count := len(entries.Files) + len(entries.Directories)
-			if existing, ok := state[path]; ok {
-				existing.ChildCount = count
-				state[path] = existing
-			} else {
-				if s := fw.fs.Stat(path); s != nil {
-					state[path] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
-				}
-			}
+			snapshotDirEntry(fs, state, path)
 			return nil
 		})
 	}
 	return state
+}
+
+func snapshotDirEntry(fs vfs.FS, state map[string]WatchEntry, dir string) {
+	entries := fs.GetAccessibleEntries(dir)
+	count := len(entries.Files) + len(entries.Directories)
+	if existing, ok := state[dir]; ok {
+		existing.ChildCount = count
+		state[dir] = existing
+	} else {
+		if s := fs.Stat(dir); s != nil {
+			state[dir] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
+		}
+	}
+}
+
+func dirChanged(fs vfs.FS, baseline map[string]WatchEntry, dir string) bool {
+	entry, ok := baseline[dir]
+	if !ok {
+		return true
+	}
+	if entry.ChildCount >= 0 {
+		entries := fs.GetAccessibleEntries(dir)
+		if len(entries.Files)+len(entries.Directories) != entry.ChildCount {
+			return true
+		}
+	}
+	return false
 }
 
 func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs map[string]bool) bool {
@@ -162,6 +162,9 @@ func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs m
 	}
 	for dir, recursive := range wildcardDirs {
 		if !recursive {
+			if dirChanged(fw.fs, baseline, dir) {
+				return true
+			}
 			continue
 		}
 		found := false
@@ -169,17 +172,9 @@ func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs m
 			if err != nil || !d.IsDir() {
 				return nil
 			}
-			entry, ok := baseline[path]
-			if !ok {
+			if dirChanged(fw.fs, baseline, path) {
 				found = true
 				return vfs.SkipAll
-			}
-			if entry.ChildCount >= 0 {
-				entries := fw.fs.GetAccessibleEntries(path)
-				if len(entries.Files)+len(entries.Directories) != entry.ChildCount {
-					found = true
-					return vfs.SkipAll
-				}
 			}
 			return nil
 		})
