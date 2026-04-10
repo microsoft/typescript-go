@@ -4298,7 +4298,7 @@ var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, k
 
 var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
 
-var Fix_all = &Message{code: 100015, category: CategoryMessage, key: "Fix_all_100015", text: "Fix all"}
+var Fix_All = &Message{code: 100015, category: CategoryMessage, key: "Fix_All_100015", text: "Fix All"}
 
 var Organize_Imports = &Message{code: 100016, category: CategoryMessage, key: "Organize_Imports_100016", text: "Organize Imports"}
 
@@ -8604,8 +8604,8 @@ func keyToMessage(key Key) *Message {
 		return Installing_types_for_0
 	case "Project_0_100014":
 		return Project_0
-	case "Fix_all_100015":
-		return Fix_all
+	case "Fix_All_100015":
+		return Fix_All
 	case "Organize_Imports_100016":
 		return Organize_Imports
 	case "Remove_Unused_Imports_100017":

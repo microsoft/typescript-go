@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -129,7 +130,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil
 }
 
-// getFixAllQuickFixes returns per-fixId "Fix all in file" quickfix entries for providers
+// getFixAllQuickFixes returns per-provider "Fix all in file" quickfix entries for providers
 // that matched at least 2 diagnostics in the full file.
 func (l *LanguageService) getFixAllQuickFixes(
 	ctx context.Context,
@@ -140,7 +141,14 @@ func (l *LanguageService) getFixAllQuickFixes(
 ) ([]lsproto.CommandOrCodeAction, error) {
 	var actions []lsproto.CommandOrCodeAction
 
+	// Deduplicate providers; multiple fixIds may map to the same provider.
+	var seen collections.Set[*CodeFixProvider]
 	for _, provider := range fixIdSeen {
+		if seen.Has(provider) {
+			continue
+		}
+		seen.Add(provider)
+
 		if provider.GetAllCodeActions == nil {
 			continue
 		}
@@ -257,7 +265,7 @@ func (l *LanguageService) createFixAllAction(
 
 	return &lsproto.CommandOrCodeAction{
 		CodeAction: &lsproto.CodeAction{
-			Title: diagnostics.Fix_all.Localize(locale.FromContext(ctx)),
+			Title: diagnostics.Fix_All.Localize(locale.FromContext(ctx)),
 			Kind:  &kind,
 			Edit:  &lsproto.WorkspaceEdit{Changes: &lspChanges},
 		},

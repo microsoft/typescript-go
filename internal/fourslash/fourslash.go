@@ -1426,7 +1426,11 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 
 	if options.ApplyChanges {
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
-			for _, edits := range *matchingAction.Edit.Changes {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Code fix returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
 				f.applyTextEdits(t, edits)
 			}
 		}
@@ -1435,7 +1439,11 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 	} else {
 		actual := f.getScriptInfo(f.activeFilename).content
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
-			for _, edits := range *matchingAction.Edit.Changes {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Code fix returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
 				actual = f.applyEditsToContent(actual, edits)
 			}
 		}
@@ -1496,15 +1504,26 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 		t.Fatalf("No code fixes available for fixId %q", options.FixID)
 	}
 
-	// Find a fix-all action. The server returns these as quickfix entries with titles like
+	// Find fix-all actions. The server returns these as quickfix entries with titles like
 	// "Add all missing imports" when multiple diagnostics match the same provider.
-	// We look for an action that is NOT a single-diagnostic fix (i.e., has no Diagnostics attached
-	// or is the combined fix-all entry).
-	var fixAllAction *lsproto.CodeAction
+	// We look for actions that are NOT single-diagnostic fixes (i.e., have no Diagnostics attached).
+	var fixAllCandidates []*lsproto.CodeAction
 	for _, action := range actions {
 		if action.Diagnostics == nil || len(*action.Diagnostics) == 0 {
-			fixAllAction = action
-			break
+			fixAllCandidates = append(fixAllCandidates, action)
+		}
+	}
+
+	var fixAllAction *lsproto.CodeAction
+	if len(fixAllCandidates) == 1 {
+		fixAllAction = fixAllCandidates[0]
+	} else {
+		// If there are multiple fix-all candidates, match by FixID in the title.
+		for _, action := range fixAllCandidates {
+			if strings.Contains(strings.ToLower(action.Title), strings.ToLower(options.FixID)) {
+				fixAllAction = action
+				break
+			}
 		}
 	}
 
@@ -1517,7 +1536,11 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 	}
 
 	if fixAllAction.Edit != nil && fixAllAction.Edit.Changes != nil {
-		for _, edits := range *fixAllAction.Edit.Changes {
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		for uri, edits := range *fixAllAction.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("Fix-all code action returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+			}
 			f.applyTextEdits(t, edits)
 		}
 	}
@@ -1564,7 +1587,11 @@ func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string)
 		t.Fatalf("No source.fixAll code action found")
 	}
 	if selected.Edit != nil && selected.Edit.Changes != nil {
-		for _, edits := range *selected.Edit.Changes {
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		for uri, edits := range *selected.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("source.fixAll returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+			}
 			f.applyTextEdits(t, edits)
 		}
 	}
