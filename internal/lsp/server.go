@@ -173,9 +173,12 @@ type Server struct {
 	positionEncoding   lsproto.PositionEncodingKind
 	locale             locale.Locale
 
-	watchEnabled bool
-	watcherID    atomic.Uint32
-	watchers     collections.SyncSet[project.WatcherID]
+	watchEnabled     bool
+	telemetryEnabled bool
+	watcherID        atomic.Uint32
+	watchers         collections.SyncSet[project.WatcherID]
+
+	lastRequestTimeMs atomic.Int64
 
 	session *project.Session
 
@@ -272,6 +275,20 @@ func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.Publish
 	return sendNotification(s, lsproto.TextDocumentPublishDiagnosticsInfo, params)
 }
 
+// SendTelemetry implements project.Client.
+func (s *Server) SendTelemetry(ctx context.Context, telemetry lsproto.TelemetryEvent) error {
+	if !s.telemetryEnabled {
+		panic("SendTelemetry called with telemetry disabled")
+	}
+	return sendNotification(s, lsproto.TelemetryEventInfo, telemetry)
+}
+
+// IsActive implements project.Client.
+func (s *Server) IsActive() bool {
+	last := s.lastRequestTimeMs.Load()
+	return last == 0 || time.Since(time.UnixMilli(last)) <= time.Minute
+}
+
 func (s *Server) RefreshInlayHints(ctx context.Context) error {
 	if !s.clientCapabilities.Workspace.InlayHint.RefreshSupport {
 		return nil
@@ -308,7 +325,7 @@ func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 	}
 }
 
-func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
+func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
 		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.UserPreferences != nil {
@@ -317,13 +334,11 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 				*s.initializeParams.InitializationOptions.UserPreferences,
 				*s.initializeParams.InitializationOptions.UserPreferences,
 			)
-			// Any options received via initializationOptions will be used for both `js` and `ts` options
 			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
-				return lsutil.NewUserConfig(lsutil.NewDefaultUserPreferences().ParseWorker(config)), nil
+				return lsutil.ParseUserPreferences(map[string]any{"js/ts": config}), nil
 			}
 		}
-		// if no configuration request capability, return default config
-		return lsutil.NewUserConfig(nil), nil
+		return lsutil.NewDefaultUserPreferences(), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
@@ -342,7 +357,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 		},
 	})
 	if err != nil {
-		return &lsutil.UserConfig{}, fmt.Errorf("configure request failed: %w", err)
+		return lsutil.UserPreferences{}, fmt.Errorf("configure request failed: %w", err)
 	}
 	configMap := map[string]any{}
 	for i, config := range configs {
@@ -364,7 +379,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 		configMap["javascript"],
 		configMap["editor"],
 	)
-	return lsutil.ParseNewUserConfig(configMap), nil
+	return lsutil.ParseUserPreferences(configMap), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -473,6 +488,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case req := <-s.requestQueue:
+			s.lastRequestTimeMs.Store(time.Now().UnixMilli())
 			requestCtx := locale.WithLocale(ctx, s.locale)
 			if req.ID != nil {
 				var cancel context.CancelFunc
@@ -686,6 +702,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTextDocumentSourceDefinitionInfo, (*Server).handleSourceDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
@@ -924,15 +941,17 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 				return
 			}
 
-			_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
-				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
-					Properties: &lsproto.RequestFailureTelemetryProperties{
-						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
-						RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
-						Stack:         sanitizeStackTrace(string(stack)),
+			if s.telemetryEnabled {
+				_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+					RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+						Properties: &lsproto.RequestFailureTelemetryProperties{
+							ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+							RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
+							Stack:         sanitizeStackTrace(string(stack)),
+						},
 					},
-				},
-			})
+				})
+			}
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
 		}
@@ -1062,12 +1081,14 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 						lsproto.CodeActionKindSourceOrganizeImports,
 						lsproto.CodeActionKindSourceRemoveUnusedImports,
 						lsproto.CodeActionKindSourceSortImports,
+						lsproto.CodeActionKindSourceFixAll,
 					},
 				},
 			},
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
+			CustomSourceDefinitionProvider: new(true),
 			Workspace: &lsproto.WorkspaceOptions{
 				FileOperations: &lsproto.FileOperationOptions{
 					WillRename: &lsproto.FileOperationRegistrationOptions{
@@ -1102,11 +1123,16 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 
 	var disablePushDiagnostics bool
+	var enableTelemetry bool
 	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil {
 		if s.initializeParams.InitializationOptions.DisablePushDiagnostics != nil {
 			disablePushDiagnostics = *s.initializeParams.InitializationOptions.DisablePushDiagnostics
 		}
+		if s.initializeParams.InitializationOptions.EnableTelemetry != nil {
+			enableTelemetry = *s.initializeParams.InitializationOptions.EnableTelemetry
+		}
 	}
+	s.telemetryEnabled = enableTelemetry
 
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: s.backgroundCtx,
@@ -1117,6 +1143,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			PositionEncoding:       s.positionEncoding,
 			WatchEnabled:           s.watchEnabled,
 			LoggingEnabled:         true,
+			TelemetryEnabled:       enableTelemetry,
 			DebounceDelay:          500 * time.Millisecond,
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
 			Locale:                 s.locale,
@@ -1159,6 +1186,8 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
 	}
 
+	s.session.StartPerformanceTelemetry()
+
 	close(s.initComplete)
 	return nil
 }
@@ -1176,7 +1205,7 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	if params.Settings == nil {
 		return nil
 	} else if settings, ok := params.Settings.(map[string]any); ok {
-		s.session.Configure(lsutil.ParseNewUserConfig(settings))
+		s.session.Configure(lsutil.ParseUserPreferences(settings))
 	}
 	return nil
 }
@@ -1411,6 +1440,14 @@ func (s *Server) handleLinkedEditingRange(ctx context.Context, ls *ls.LanguageSe
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
 	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+}
+
+func (s *Server) handleSourceDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.CustomTextDocumentSourceDefinitionResponse, error) {
+	resp, err := ls.ProvideSourceDefinition(ctx, params.TextDocument.Uri, params.Position)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
