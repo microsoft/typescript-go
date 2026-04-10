@@ -3,6 +3,8 @@
 package vfswatch
 
 import (
+	"hash/fnv"
+	"slices"
 	"sync"
 	"time"
 
@@ -12,9 +14,9 @@ import (
 const DebounceWait = 250 * time.Millisecond
 
 type WatchEntry struct {
-	ModTime    time.Time
-	Exists     bool
-	ChildCount int // -1 if not tracked
+	ModTime      time.Time
+	Exists       bool
+	ChildrenHash uint64 // 0 if not tracked
 }
 
 type FileWatcher struct {
@@ -99,9 +101,9 @@ func snapshotPaths(fs vfs.FS, paths []string, wildcardDirs map[string]bool) map[
 	state := make(map[string]WatchEntry, len(paths))
 	for _, fn := range paths {
 		if s := fs.Stat(fn); s != nil {
-			state[fn] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: -1}
+			state[fn] = WatchEntry{ModTime: s.ModTime(), Exists: true}
 		} else {
-			state[fn] = WatchEntry{Exists: false, ChildCount: -1}
+			state[fn] = WatchEntry{Exists: false}
 		}
 	}
 	for dir, recursive := range wildcardDirs {
@@ -122,15 +124,30 @@ func snapshotPaths(fs vfs.FS, paths []string, wildcardDirs map[string]bool) map[
 
 func snapshotDirEntry(fs vfs.FS, state map[string]WatchEntry, dir string) {
 	entries := fs.GetAccessibleEntries(dir)
-	count := len(entries.Files) + len(entries.Directories)
+	h := hashEntries(entries)
 	if existing, ok := state[dir]; ok {
-		existing.ChildCount = count
+		existing.ChildrenHash = h
 		state[dir] = existing
 	} else {
 		if s := fs.Stat(dir); s != nil {
-			state[dir] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildCount: count}
+			state[dir] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildrenHash: h}
 		}
 	}
+}
+
+// hashEntries returns a hash of the sorted file and directory names
+// within a directory. This detects adds, deletes, and renames.
+func hashEntries(entries vfs.Entries) uint64 {
+	names := make([]string, 0, len(entries.Files)+len(entries.Directories))
+	names = append(names, entries.Files...)
+	names = append(names, entries.Directories...)
+	slices.Sort(names)
+	h := fnv.New64a()
+	for _, name := range names {
+		h.Write([]byte(name))
+		h.Write([]byte{0})
+	}
+	return h.Sum64()
 }
 
 func dirChanged(fs vfs.FS, baseline map[string]WatchEntry, dir string) bool {
@@ -138,9 +155,9 @@ func dirChanged(fs vfs.FS, baseline map[string]WatchEntry, dir string) bool {
 	if !ok {
 		return true
 	}
-	if entry.ChildCount >= 0 {
+	if entry.ChildrenHash != 0 {
 		entries := fs.GetAccessibleEntries(dir)
-		if len(entries.Files)+len(entries.Directories) != entry.ChildCount {
+		if hashEntries(entries) != entry.ChildrenHash {
 			return true
 		}
 	}
