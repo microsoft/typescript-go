@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -83,7 +84,7 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]Co
 			Description:       description,
 			Changes:           edits,
 			FixID:             importFixID,
-			FixAllDescription: "Add all missing imports",
+			FixAllDescription: diagnostics.Add_all_missing_imports.Localize(locale.FromContext(ctx)),
 		})
 	}
 	return actions, nil
@@ -144,7 +145,7 @@ func getAllImportCodeActions(ctx context.Context, fixContext *CodeFixContext) (*
 	}
 
 	return &CombinedCodeActions{
-		Description: "Fix all import errors",
+		Description: diagnostics.Add_all_missing_imports.Localize(locale.FromContext(ctx)),
 		Changes:     importAdder.Edits(),
 	}, nil
 }
