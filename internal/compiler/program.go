@@ -409,11 +409,6 @@ func (p *Program) SingleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
-// Tracing returns the tracing session associated with this program, or nil if tracing is not enabled.
-func (p *Program) Tracing() *tracing.Tracing {
-	return p.opts.Tracing
-}
-
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	for _, file := range p.files {

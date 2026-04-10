@@ -39,6 +39,7 @@ type EmitInput struct {
 	CompileTimes       *CompileTimes
 	Testing            CommandLineTesting
 	TestingMTimesCache *collections.SyncMap[tspath.Path, time.Time]
+	Tracing            *tracing.Tracing
 }
 
 func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
@@ -73,11 +74,9 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
 	ctx := context.Background()
 
-	// Get the tracing session from the Program if available and inject into context
-	if input.Program != nil {
-		if tr := input.Program.Tracing(); tr != nil {
-			ctx = tracing.WithTracing(ctx, tr)
-		}
+	// Inject tracing into context if available
+	if input.Tracing != nil {
+		ctx = tracing.WithTracing(ctx, input.Tracing)
 	}
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(

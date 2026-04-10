@@ -316,6 +316,7 @@ func performIncrementalCompilation(
 		Writer:             sys.Writer(),
 		CompileTimes:       compileTimes,
 		Testing:            testing,
+		Tracing:            tr,
 	})
 
 	stopTracing(sys, tr)
@@ -358,6 +359,7 @@ func performCompilation(
 		Writer:             sys.Writer(),
 		CompileTimes:       compileTimes,
 		Testing:            testing,
+		Tracing:            tr,
 	})
 
 	stopTracing(sys, tr)
