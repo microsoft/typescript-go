@@ -224,6 +224,8 @@ func (tr *Tracing) writeEventRaw(ph string, cat string, ts float64, name string,
 }
 
 // writeArgsJSON constructs a deterministic JSON object from a map of key-value pairs.
+// String values are properly escaped using json.Marshal to handle backslashes,
+// quotes, control characters, and other special characters safely.
 func writeArgsJSON(args map[string]any) string {
 	if len(args) == 0 {
 		return ""
@@ -242,15 +244,15 @@ func writeArgsJSON(args map[string]any) string {
 			b.WriteString(",")
 		}
 		first = false
-		b.WriteString("\"")
-		b.WriteString(k)
-		b.WriteString("\":")
+		// Use json.Marshal for proper key escaping
+		keyJSON, _ := json.Marshal(k)
+		b.Write(keyJSON)
+		b.WriteString(":")
 		v := args[k]
 		switch val := v.(type) {
 		case string:
-			b.WriteString("\"")
-			b.WriteString(val)
-			b.WriteString("\"")
+			valJSON, _ := json.Marshal(val)
+			b.Write(valJSON)
 		case bool:
 			if val {
 				b.WriteString("true")
@@ -270,7 +272,8 @@ func writeArgsJSON(args map[string]any) string {
 		case ast.Kind:
 			fmt.Fprintf(&b, "%d", int(val))
 		default:
-			fmt.Fprintf(&b, "\"%v\"", val)
+			valJSON, _ := json.Marshal(fmt.Sprintf("%v", val))
+			b.Write(valJSON)
 		}
 	}
 	b.WriteString("}")
