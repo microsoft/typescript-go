@@ -2002,22 +2002,22 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 }
 
 func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.Node) *ast.Node {
-	expression := node.Expression()
-	if expression == nil {
-		return nil
-	}
-	switch ast.GetAssignmentDeclarationKind(expression) {
-	case ast.JSDeclarationKindModuleExports:
-		return tx.transformExportAssignment(node, expression, expression.AsBinaryExpression().Right, true /*isExportEquals*/)
-	case ast.JSDeclarationKindExportsProperty:
-		if ast.IsSourceFile(node.Parent) {
-			return tx.transformCommonJSExport(expression, ast.GetElementOrPropertyAccessName(expression.AsBinaryExpression().Left))
-		}
-	case ast.JSDeclarationKindProperty:
-		return tx.transformExpandoAssignment(expression.AsBinaryExpression())
-	case ast.JSDeclarationKindObjectDefinePropertyExports:
-		if ast.IsSourceFile(node.Parent) {
-			return tx.transformCommonJSExport(expression, expression.Arguments()[1])
+	if expression := node.Expression(); expression != nil {
+		switch ast.GetAssignmentDeclarationKind(expression) {
+		case ast.JSDeclarationKindModuleExports:
+			if ast.IsSourceFile(node.Parent) && node.Parent.AsSourceFile().CommonJSModuleIndicator != nil {
+				return tx.transformExportAssignment(node, expression, expression.AsBinaryExpression().Right, true /*isExportEquals*/)
+			}
+		case ast.JSDeclarationKindExportsProperty:
+			if ast.IsSourceFile(node.Parent) && node.Parent.AsSourceFile().CommonJSModuleIndicator != nil {
+				return tx.transformCommonJSExport(expression, ast.GetElementOrPropertyAccessName(expression.AsBinaryExpression().Left))
+			}
+		case ast.JSDeclarationKindProperty:
+			return tx.transformExpandoAssignment(expression.AsBinaryExpression())
+		case ast.JSDeclarationKindObjectDefinePropertyExports:
+			if ast.IsSourceFile(node.Parent) && node.Parent.AsSourceFile().CommonJSModuleIndicator != nil {
+				return tx.transformCommonJSExport(expression, expression.Arguments()[1])
+			}
 		}
 	}
 	return nil
