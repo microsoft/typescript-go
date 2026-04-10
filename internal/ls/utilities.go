@@ -1013,7 +1013,7 @@ func getTargetLabel(referenceNode *ast.Node, labelName string) *ast.Node {
 }
 
 func skipConstraint(t *checker.Type, typeChecker *checker.Checker) *checker.Type {
-	if t.IsTypeParameterDeclaration() {
+	if t.IsTypeParameter() {
 		c := typeChecker.GetBaseConstraintOfType(t)
 		if c != nil {
 			return c

@@ -688,7 +688,7 @@ func (t *Type) IsClass() bool {
 	return t.objectFlags&ObjectFlagsClass != 0
 }
 
-func (t *Type) IsTypeParameterDeclaration() bool {
+func (t *Type) IsTypeParameter() bool {
 	return t.flags&TypeFlagsTypeParameter != 0
 }
 
