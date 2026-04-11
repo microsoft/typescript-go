@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestGetEditsForFileRename_cssImport5(t *testing.T) {
+func TestGetEditsForFileRename_jsRename(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `

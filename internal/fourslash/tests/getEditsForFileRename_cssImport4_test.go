@@ -25,7 +25,7 @@ export default css;
 // @Filename: /a.ts
 import styles from ".//*rename*/app.css";`
 	capabilities := fourslash.GetDefaultCapabilities()
-	capabilities.Workspace.FileOperations = nil
+	capabilities.Workspace.FileOperations.WillRename = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)
 	defer done()
 	f.VerifyRename(t, "rename", "app2.css", map[string]string{
