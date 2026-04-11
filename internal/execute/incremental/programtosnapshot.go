@@ -211,7 +211,7 @@ func fileAffectsGlobalScope(file *ast.SourceFile) bool {
 		return true
 	}
 
-	if ast.IsExternalOrCommonJSModule(file) || ast.IsJsonSourceFile(file) {
+	if ast.IsExternalModule(file) || ast.IsJsonSourceFile(file) {
 		return false
 	}
 
