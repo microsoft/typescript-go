@@ -2359,21 +2359,19 @@ doThing();
 test("Factory ModifierList auto-conversion", async () => {
     const api = spawnAPI();
     try {
-        
         const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
         const project = snapshot.getProject("/tsconfig.json")!;
         const node = createTypeAliasDeclaration(
             [createToken(SyntaxKind.ExportKeyword)],
-            createIdentifier('Test'),
+            createIdentifier("Test"),
             undefined,
-            createKeywordTypeNode(SyntaxKind.AnyKeyword)
+            createKeywordTypeNode(SyntaxKind.AnyKeyword),
         );
-        
-        assert.equal(await project.emitter.printNode(node), 'export type Test = any;');
-        
+
+        assert.equal(await project.emitter.printNode(node), "export type Test = any;");
+
         const cloned = getSynthesizedDeepClone(node);
-        assert.equal(await project.emitter.printNode(cloned), 'export type Test = any;');
-        
+        assert.equal(await project.emitter.printNode(cloned), "export type Test = any;");
     }
     finally {
         await api.close();
