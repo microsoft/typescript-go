@@ -36,9 +36,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 			continue
 		}
 		for _, tag := range tags.Nodes {
-			if parent.Kind != ast.KindCommonJSExport && parent.Kind != ast.KindJSExportAssignment {
-				p.reparseUnhosted(tag, parent, j)
-			}
+			p.reparseUnhosted(tag, parent, j)
 			if isLast {
 				p.reparseHosted(tag, parent, j)
 			}
@@ -289,9 +287,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					}
 				}
 			}
-		case ast.KindVariableDeclaration,
-			ast.KindCommonJSExport, ast.KindExportAssignment, ast.KindJSExportAssignment,
-			ast.KindPropertyDeclaration, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
+		case ast.KindVariableDeclaration, ast.KindExportAssignment, ast.KindPropertyDeclaration, ast.KindPropertyAssignment,
+			ast.KindShorthandPropertyAssignment:
 			if parent.Type() == nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetType(p.addDeepCloneReparse(tag.TypeExpression().Type()))
 				p.finishMutatedNode(parent)
@@ -344,9 +341,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					}
 				}
 			}
-		case ast.KindVariableDeclaration,
-			ast.KindCommonJSExport,
-			ast.KindPropertyDeclaration, ast.KindPropertyAssignment:
+		case ast.KindVariableDeclaration, ast.KindPropertyDeclaration, ast.KindPropertyAssignment:
 			if parent.Initializer() != nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetInitializer(p.makeNewCast(
 					p.addDeepCloneReparse(tag.TypeExpression().Type()),
@@ -363,8 +358,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					false /*isAssertion*/)
 				p.finishMutatedNode(parent)
 			}
-		case ast.KindReturnStatement, ast.KindParenthesizedExpression,
-			ast.KindExportAssignment, ast.KindJSExportAssignment:
+		case ast.KindReturnStatement, ast.KindParenthesizedExpression, ast.KindExportAssignment:
 			if parent.Expression() != nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetExpression(p.makeNewCast(
 					p.addDeepCloneReparse(tag.TypeExpression().Type()),
@@ -589,8 +583,6 @@ func getFunctionLikeHost(host *ast.Node) *ast.Node {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindExpressionStatement {
 		fun = ast.GetRightMostAssignedExpression(host.Expression())
-	} else if host.Kind == ast.KindCommonJSExport {
-		fun = ast.GetRightMostAssignedExpression(host.Initializer())
 	}
 	if ast.IsFunctionLike(fun) {
 		return fun

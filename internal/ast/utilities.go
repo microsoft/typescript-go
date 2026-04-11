@@ -640,8 +640,6 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindImportEqualsDeclaration,
 		KindExportDeclaration,
 		KindExportAssignment,
-		KindJSExportAssignment,
-		KindCommonJSExport,
 		KindNamespaceExportDeclaration:
 		return true
 	}
@@ -1025,7 +1023,7 @@ func CanHaveSymbol(node *Node) bool {
 		KindConstructSignature, KindElementAccessExpression, KindEnumDeclaration, KindEnumMember, KindExportAssignment,
 		KindExportDeclaration, KindExportSpecifier, KindFunctionDeclaration, KindFunctionExpression, KindFunctionType,
 		KindGetAccessor, KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier, KindIndexSignature,
-		KindInterfaceDeclaration, KindJSExportAssignment, KindJSTypeAliasDeclaration, KindCommonJSExport,
+		KindInterfaceDeclaration, KindJSTypeAliasDeclaration,
 		KindJsxAttribute, KindJsxAttributes, KindJsxSpreadAttribute, KindMappedType, KindMethodDeclaration,
 		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
 		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
@@ -1441,7 +1439,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 			return declaration.Arguments()[1]
 		}
 		return nil
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		expr := declaration.Expression()
 		if IsIdentifier(expr) {
 			return expr
@@ -1474,8 +1472,6 @@ func GetAssignedName(node *Node) *Node {
 					}
 				}
 			}
-		case KindCommonJSExport:
-			return parent.AsCommonJSExport().Name()
 		case KindVariableDeclaration:
 			name := parent.AsVariableDeclaration().Name()
 			if IsIdentifier(name) {
@@ -2211,7 +2207,6 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindImportDeclaration,
 		KindJSImportDeclaration,
 		KindExportAssignment,
-		KindJSExportAssignment,
 		KindExportDeclaration:
 		return SemanticMeaningAll
 
@@ -2600,7 +2595,7 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 		return true
 	case KindImportClause:
 		return node.AsImportClause().Name() != nil
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		return ExpressionIsAlias(node.Expression())
 	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)
@@ -2629,7 +2624,7 @@ func GetNodeAtPosition(file *SourceFile, position int, includeJSDoc bool) *Node 
 		}
 		if child == nil {
 			current.ForEachChild(func(node *Node) bool {
-				if nodeContainsPosition(node, position) && node.Kind != KindJSExportAssignment && node.Kind != KindCommonJSExport {
+				if nodeContainsPosition(node, position) {
 					child = node
 					return true
 				}
@@ -4018,12 +4013,10 @@ func HasInferredType(node *Node) bool {
 		KindCallExpression,
 		KindVariableDeclaration,
 		KindExportAssignment,
-		KindJSExportAssignment,
 		KindPropertyAssignment,
 		KindShorthandPropertyAssignment,
 		KindJSDocParameterTag,
-		KindJSDocPropertyTag,
-		KindCommonJSExport:
+		KindJSDocPropertyTag:
 		return true
 	default:
 		// assertType<never>(node); // !!!

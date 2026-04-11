@@ -201,9 +201,7 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindImportDeclaration,
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
-		ast.KindJSExportAssignment,
-		ast.KindExportAssignment,
-		ast.KindCommonJSExport:
+		ast.KindExportAssignment:
 		return tx.visitDeclarationStatements(node)
 	// statements we elide
 	case ast.KindBreakStatement,
@@ -1018,12 +1016,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			tx.rewriteModuleSpecifier(input, input.ModuleSpecifier()),
 			tx.tryGetResolutionModeOverride(input.AsExportDeclaration().Attributes),
 		)
-	case ast.KindCommonJSExport:
-		if ast.IsSourceFile(input.Parent) {
-			return tx.transformCommonJSExport(input, input.Name())
-		}
-		return nil
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		return tx.transformExportAssignment(input, input, input.Expression(), input.AsExportAssignment().IsExportEquals)
 	default:
 		id := ast.GetNodeId(tx.EmitContext().MostOriginal(input))

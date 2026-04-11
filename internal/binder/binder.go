@@ -379,7 +379,7 @@ func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, descri
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
 	container := b.container
-	isCommonJSExport := ast.IsCommonJSExport(node) || ast.IsCallExpression(node)
+	isCommonJSExport := ast.IsCallExpression(node)
 	if isCommonJSExport {
 		container = b.file.AsNode()
 	}
@@ -660,9 +660,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindBindingElement:
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
-	case ast.KindCommonJSExport:
-		b.trackNestedCJSExport(node)
-		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
@@ -721,7 +718,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindImportClause(node)
 	case ast.KindExportDeclaration:
 		b.bindExportDeclaration(node)
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		b.bindExportAssignment(node)
 	case ast.KindSourceFile:
 		b.bindSourceFileIfExternalModule()
@@ -867,10 +864,6 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 
 func (b *Binder) bindExportAssignment(node *ast.Node) {
 	container := b.container
-	if ast.IsJSExportAssignment(node) {
-		container = b.file.AsNode()
-		b.trackNestedCJSExport(node)
-	}
 	if container.Symbol() == nil && ast.IsExportAssignment(node) {
 		// Incorrect export assignment in some sort of block construct
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsValue, b.getDeclarationName(node))
@@ -881,8 +874,8 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
-		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, core.IfElse(ast.IsJSExportAssignment(node), 0, ast.SymbolFlagsAll))
-		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
+		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsAll)
+		if node.AsExportAssignment().IsExportEquals {
 			// Ensure export assignments have a ValueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
@@ -925,7 +918,7 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 		}
 	}
 	return core.Some(statements, func(s *ast.Node) bool {
-		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s) || ast.IsJSExportAssignment(s)
+		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s)
 	})
 }
 

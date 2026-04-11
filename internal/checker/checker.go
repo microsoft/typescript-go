@@ -5432,7 +5432,7 @@ func (c *Checker) checkExportSpecifier(node *ast.Node) {
 }
 
 func (c *Checker) checkExportAssignment(node *ast.Node) {
-	isExportEquals := ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals
+	isExportEquals := node.AsExportAssignment().IsExportEquals
 	illegalContextMessage := core.IfElse(isExportEquals,
 		diagnostics.An_export_assignment_must_be_at_the_top_level_of_a_file_or_module_declaration,
 		diagnostics.A_default_export_must_be_at_the_top_level_of_a_file_or_module_declaration)
@@ -6793,9 +6793,9 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 		return DeclarationSpacesExportType | DeclarationSpacesExportValue
 	case ast.KindSourceFile:
 		return DeclarationSpacesExportType | DeclarationSpacesExportValue | DeclarationSpacesExportNamespace
-	case ast.KindExportAssignment, ast.KindJSExportAssignment, ast.KindBinaryExpression:
+	case ast.KindExportAssignment, ast.KindBinaryExpression:
 		var expression *ast.Node
-		if ast.IsExportAssignment(node) || ast.IsJSExportAssignment(node) {
+		if ast.IsExportAssignment(node) {
 			expression = node.Expression()
 		} else {
 			expression = node.AsBinaryExpression().Right
@@ -6814,8 +6814,6 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 			result |= c.getDeclarationSpaces(d)
 		}
 		return result
-	case ast.KindCommonJSExport:
-		return DeclarationSpacesExportValue
 	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindFunctionDeclaration, ast.KindImportSpecifier:
 		return DeclarationSpacesExportValue
 	case ast.KindMethodSignature, ast.KindPropertySignature:
@@ -15265,7 +15263,7 @@ func (c *Checker) getTargetOfAliasDeclaration(node *ast.Node) *ast.Symbol {
 		return c.getTargetOfImportSpecifier(node)
 	case ast.KindExportSpecifier:
 		return c.getTargetOfExportSpecifier(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, true /*dontRecursivelyResolve*/)
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		return c.getTargetOfExportAssignment(node)
 	case ast.KindBinaryExpression:
 		return c.getTargetOfBinaryExpression(node)
@@ -15329,9 +15327,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 	}
 	if symbol != nil && symbol != c.unknownSymbol {
 		if !ast.NodeIsSynthesized(name) && ast.IsEntityName(name) &&
-			(symbol.Flags&ast.SymbolFlagsAlias != 0 ||
-				name.Parent != nil && name.Parent.Kind == ast.KindExportAssignment ||
-				name.Parent != nil && name.Parent.Kind == ast.KindJSExportAssignment) {
+			(symbol.Flags&ast.SymbolFlagsAlias != 0 || name.Parent != nil && name.Parent.Kind == ast.KindExportAssignment) {
 			c.markSymbolOfAliasDeclarationIfTypeOnly(getAliasDeclarationFromName(name), nil)
 		}
 		if symbol.Flags&meaning == 0 && !dontResolveAlias && symbol.Flags&ast.SymbolFlagsAlias != 0 {
@@ -16117,7 +16113,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		} else {
 			result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.Expression()), declaration, false /*reportErrors*/)
 		}
-	case ast.KindBinaryExpression, ast.KindCallExpression, ast.KindJSExportAssignment, ast.KindCommonJSExport:
+	case ast.KindBinaryExpression, ast.KindCallExpression:
 		result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 	case ast.KindJsxAttribute:
 		result = c.checkJsxAttribute(declaration, CheckModeNormal)
@@ -17577,7 +17573,7 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 	if t == nil {
 		var types []*Type
 		for i, declaration := range symbol.Declarations {
-			if (ast.IsBinaryExpression(declaration) || ast.IsJSExportAssignment(declaration)) && declaration.Type() != nil {
+			if ast.IsBinaryExpression(declaration) && declaration.Type() != nil {
 				t = c.getTypeFromTypeNode(declaration.Type())
 				break
 			}
@@ -28447,7 +28443,7 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 		return c.getContextualType(parent, contextFlags)
 	case ast.KindSatisfiesExpression:
 		return c.getTypeFromTypeNode(parent.Type())
-	case ast.KindExportAssignment, ast.KindJSExportAssignment, ast.KindCommonJSExport:
+	case ast.KindExportAssignment:
 		return c.tryGetTypeFromTypeNode(parent)
 	case ast.KindJsxExpression:
 		return c.getContextualTypeForJsxExpression(parent, contextFlags)
@@ -30835,7 +30831,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			return symbol
 		}
 	}
-	if (name.Parent.Kind == ast.KindExportAssignment || name.Parent.Kind == ast.KindJSExportAssignment) && ast.IsEntityNameExpression(name) {
+	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
 		success := c.resolveEntityName(
 			name,

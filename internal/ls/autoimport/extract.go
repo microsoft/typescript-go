@@ -416,10 +416,6 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 			)
 		case ast.KindNamespaceExportDeclaration:
 			return ExportSyntaxUMD
-		case ast.KindJSExportAssignment:
-			return ExportSyntaxCommonJSModuleExports
-		case ast.KindCommonJSExport:
-			return ExportSyntaxCommonJSExportsProperty
 		case ast.KindBinaryExpression:
 			switch ast.GetAssignmentDeclarationKind(decl) {
 			case ast.JSDeclarationKindModuleExports:

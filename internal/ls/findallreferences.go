@@ -178,7 +178,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 		return nil
 	}
 
-	if !ast.IsDeclaration(node.Parent) && !ast.IsExportAssignment(node.Parent) && node.Parent.Kind != ast.KindJSExportAssignment {
+	if !ast.IsDeclaration(node.Parent) && !ast.IsExportAssignment(node.Parent) {
 		// Special property assignment in javascript
 		if ast.IsInJSFile(node) {
 			// !!! jsdoc: check if branch still needed
@@ -222,7 +222,6 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 	if node.Parent.Name() == node || // node is name of declaration, use parent
 		node.Parent.Kind == ast.KindConstructor ||
 		node.Parent.Kind == ast.KindExportAssignment ||
-		node.Parent.Kind == ast.KindJSExportAssignment ||
 		// Property name of the import export specifier or binding pattern, use parent
 		((ast.IsImportOrExportSpecifier(node.Parent) || node.Parent.Kind == ast.KindBindingElement) && node.Parent.PropertyName() == node) ||
 		// Is default export

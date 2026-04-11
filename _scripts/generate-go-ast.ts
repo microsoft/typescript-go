@@ -957,7 +957,7 @@ function generateKind(): string {
 
 function writeAndFormat(filePath: string, content: string) {
     fs.writeFileSync(filePath, content);
-    execaSync("dprint", ["fmt", filePath], { stdio: "inherit", cwd: ROOT });
+    // execaSync("dprint", ["fmt", filePath], { stdio: "inherit", cwd: ROOT });
     console.log(`Wrote ${filePath}`);
 }
 
