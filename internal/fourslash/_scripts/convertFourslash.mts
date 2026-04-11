@@ -32,6 +32,7 @@ const IMPORT_UTIL = `. "github.com/microsoft/typescript-go/internal/fourslash/te
 // Tests for code fixes not in this set will be skipped during conversion.
 const allowedCodeFixIds = new Set([
     "fixMissingImport",
+    "fixMissingTypeAnnotationOnExports",
 ]);
 
 // File name prefixes for code fix tests that are allowed even without a fixId.
@@ -42,6 +43,15 @@ const allowedCodeFixDescriptionPrefixes = [
     "Add import from ",
     "Update import from ",
     "Change 'import' to 'import type'",
+    "Add annotation of type",
+    "Add return type",
+    "Add satisfies and an inline type assertion",
+    "Annotate types of properties expando function",
+    "Extract default export to variable",
+    "Extract base class to variable",
+    "Extract binding expressions to variable",
+    "Extract to variable and replace with",
+    "Mark array literal as const",
 ];
 
 function getManualTests(): Set<string> {
