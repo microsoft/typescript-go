@@ -36,7 +36,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		var export *ast.Node
 		switch ast.GetAssignmentDeclarationKind(expr) {
 		case ast.JSDeclarationKindModuleExports:
-			export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+			export = p.factory.NewJSExportAssignment(nil, true, nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
 		case ast.JSDeclarationKindExportsProperty:
 			// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
 			export = p.factory.NewCommonJSExport(
@@ -153,7 +153,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	if tag.Kind != ast.KindJSDocCallbackTag {
 		signature.FunctionLikeData().TypeParameters = p.gatherTypeParameters(jsDoc, tag)
 	}
-	parameters := p.nodeSlicePool.NewSlice(0)
+	parameters := p.nodeSliceArena.NewSlice(0)
 	for _, param := range jsSignature.Parameters() {
 		var parameter *ast.Node
 		if param.Kind == ast.KindJSDocThisTag {
@@ -165,7 +165,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 			if thisTag.TypeExpression != nil {
 				parameter.AsParameterDeclaration().Type = p.addDeepCloneReparse(thisTag.TypeExpression.Type())
 			}
-		} else {
+		} else if param.Kind == ast.KindJSDocParameterTag || param.Kind == ast.KindJSDocPropertyTag {
 			jsparam := param.AsJSDocParameterOrPropertyTag()
 			var dotDotDotToken *ast.Node
 			var paramType *ast.TypeNode
@@ -209,7 +209,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 	if t.Kind == ast.KindJSDocTypeLiteral {
 		jstypeliteral := t.AsJSDocTypeLiteral()
 		isArrayType := jstypeliteral.IsArrayType
-		properties := p.nodeSlicePool.NewSlice(0)
+		properties := p.nodeSliceArena.NewSlice(0)
 		for _, prop := range jstypeliteral.JSDocPropertyTags {
 			jsprop := prop.AsJSDocParameterOrPropertyTag()
 			name := prop.Name()
@@ -284,14 +284,15 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 					p.factory.DeepCloneReparseModifiers(tp.Modifiers()),
 					p.addDeepCloneReparse(tp.Name()),
 					p.addDeepCloneReparse(constraint.Type()),
-					p.addDeepCloneReparse(tp.AsTypeParameter().DefaultType),
+					nil, // expression
+					p.addDeepCloneReparse(tp.AsTypeParameterDeclaration().DefaultType),
 				)
 				p.finishReparsedNode(reparse, tp)
 			} else {
 				reparse = p.addDeepCloneReparse(tp)
 			}
 			if typeParameters == nil {
-				typeParameters = p.nodeSlicePool.NewSlice(0)
+				typeParameters = p.nodeSliceArena.NewSlice(0)
 			}
 			typeParameters = append(typeParameters, reparse)
 			firstTypeParameter = false
@@ -464,7 +465,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 				p.finishReparsedNode(thisParam, tag.TagName())
 
-				newParams := p.nodeSlicePool.NewSlice(len(params) + 1)
+				newParams := p.nodeSliceArena.NewSlice(len(params) + 1)
 				newParams[0] = thisParam
 				for i, param := range params {
 					newParams[i+1] = param
@@ -506,7 +507,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			var nodes []*ast.Node
 			var loc core.TextRange
 			if parent.Modifiers() == nil {
-				nodes = p.nodeSlicePool.NewSlice(1)
+				nodes = p.nodeSliceArena.NewSlice(1)
 				nodes[0] = modifier
 				loc = tag.Loc
 			} else {
@@ -529,13 +530,13 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					return
 				}
 			}
-			typesList := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(p.addDeepCloneReparse(implementsTag.ClassName)))
+			typesList := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSliceArena.NewSlice1(p.addDeepCloneReparse(implementsTag.ClassName)))
 
 			heritageClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, typesList)
 			p.finishReparsedNode(heritageClause, implementsTag.ClassName)
 
 			if class.HeritageClauses == nil {
-				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(heritageClause))
+				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSliceArena.NewSlice1(heritageClause))
 				class.HeritageClauses = heritageClauses
 			} else {
 				class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
@@ -551,7 +552,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				source := tag.ClassName().AsExpressionWithTypeArguments()
 				if ast.HasSamePropertyAccessName(target.Expression, source.Expression) {
 					if target.TypeArguments == nil && source.TypeArguments != nil {
-						newArguments := p.nodeSlicePool.NewSlice(len(source.TypeArguments.Nodes))
+						newArguments := p.nodeSliceArena.NewSlice(len(source.TypeArguments.Nodes))
 						for i, arg := range source.TypeArguments.Nodes {
 							newArguments[i] = p.addDeepCloneReparse(arg)
 						}
@@ -564,7 +565,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 	}
 }
 
-func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.Node {
+func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterOrPropertyTag) *ast.Node {
 	var questionToken *ast.Node
 	if parameter.IsBracketed || parameter.TypeExpression != nil && parameter.TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
 		questionToken = p.factory.NewToken(ast.KindQuestionToken)
@@ -574,7 +575,7 @@ func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.N
 	return questionToken
 }
 
-func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
+func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterOrPropertyTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
 	tagIndex := -1
 	paramCount := -1
 	for _, tag := range jsDoc.AsJSDoc().Tags.Nodes {

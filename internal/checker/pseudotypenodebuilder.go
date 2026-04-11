@@ -562,7 +562,7 @@ func isStructuralPseudoType(t *pseudochecker.PseudoType) bool {
 }
 
 // pseudoReturnTypeMatchesPredicate checks if a pseudo return type (which should be a Direct type
-// wrapping a TypePredicateNode) matches the given type predicate from the checker.
+// wrapping a TypePredicate) matches the given type predicate from the checker.
 func (b *NodeBuilderImpl) pseudoReturnTypeMatchesPredicate(rt *pseudochecker.PseudoType, predicate *TypePredicate) bool {
 	if rt.Kind != pseudochecker.PseudoTypeKindDirect {
 		return false

@@ -56,7 +56,7 @@ type FourslashTest struct {
 
 	stateEnableFormatting   bool
 	reportFormatOnTypeCrash bool
-	userPreferences         *lsutil.UserPreferences
+	userPreferences         lsutil.UserPreferences
 	currentCaretPosition    lsproto.Position
 	lastKnownMarkerName     *string
 	activeFilename          string
@@ -184,7 +184,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		testData:                &testData,
 		stateEnableFormatting:   true,
 		reportFormatOnTypeCrash: true,
-		userPreferences:         lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		userPreferences:         lsutil.NewDefaultUserPreferences(),
 		vfs:                     fs,
 		scriptInfos:             scriptInfos,
 		converters:              converters,
@@ -224,11 +224,27 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 func (f *FourslashTest) handleServerRequest(_ context.Context, req *lsproto.RequestMessage) *lsproto.ResponseMessage {
 	switch req.Method {
 	case lsproto.MethodWorkspaceConfiguration:
-		// Return current user preferences
+		// Return current user preferences for each requested section.
+		// The server requests multiple sections (js/ts, typescript, javascript, editor);
+		// we return user preferences for "js/ts" and nil for others.
+		params, ok := req.Params.(*lsproto.ConfigurationParams)
+		if !ok || params == nil || params.Items == nil {
+			return &lsproto.ResponseMessage{
+				ID:      req.ID,
+				JSONRPC: req.JSONRPC,
+				Result:  []any{f.userPreferences},
+			}
+		}
+		results := make([]any, len(params.Items))
+		for i, item := range params.Items {
+			if item.Section != nil && *item.Section == "js/ts" {
+				results[i] = f.userPreferences
+			}
+		}
 		return &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
-			Result:  []any{f.userPreferences},
+			Result:  results,
 		}
 
 	case lsproto.MethodClientRegisterCapability:
@@ -574,12 +590,11 @@ func (f *FourslashTest) updateState(method lsproto.Method, params any) {
 	}
 }
 
-func (f *FourslashTest) GetOptions() *lsutil.UserPreferences {
+func (f *FourslashTest) GetOptions() lsutil.UserPreferences {
 	return f.userPreferences
 }
 
-func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
-	// !!!
+func (f *FourslashTest) Configure(t *testing.T, config lsutil.UserPreferences) {
 	// We send 'js/ts' by default because that is what we expect the primary config to be in vscode and VS (one
 	// set of preferences for both languages). This should be fine in fourslash since tests that need
 	// multiple options usually send reconfiguration commands for each `verify` anyways
@@ -591,8 +606,8 @@ func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) 
 	})
 }
 
-func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *lsutil.UserPreferences) (reset func()) {
-	originalConfig := f.userPreferences.Copy()
+func (f *FourslashTest) ConfigureWithReset(t *testing.T, config lsutil.UserPreferences) (reset func()) {
+	originalConfig := f.userPreferences
 	f.Configure(t, config)
 	return func() {
 		f.Configure(t, originalConfig)
@@ -926,6 +941,7 @@ type CompletionsExpectedCodeAction struct {
 
 type VerifyCompletionsResult struct {
 	AndApplyCodeAction func(t *testing.T, expectedAction *CompletionsExpectedCodeAction)
+	AndHasNoCodeAction func(t *testing.T, unexpectedAction *CompletionsExpectedCodeAction)
 }
 
 // string | *Marker | []string | []*Marker
@@ -978,6 +994,21 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 			f.applyTextEdits(t, *item.AdditionalTextEdits)
 			assert.Equal(t, f.getScriptInfo(f.activeFilename).content, expectedAction.NewFileContent, fmt.Sprintf("File content after applying code action '%s' did not match expected content.", expectedAction.Name))
 		},
+		AndHasNoCodeAction: func(t *testing.T, unexpectedAction *CompletionsExpectedCodeAction) {
+			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
+				if item.Label != unexpectedAction.Name || item.Data == nil {
+					return false
+				}
+				data := item.Data
+				if data.AutoImport == nil {
+					return false
+				}
+				return data.AutoImport.ModuleSpecifier == unexpectedAction.Source
+			})
+			if item != nil {
+				t.Fatalf("Unexpected code action '%s' from source '%s' found in completions.", unexpectedAction.Name, unexpectedAction.Source)
+			}
+		},
 	}
 }
 
@@ -1008,7 +1039,7 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		Context:  &lsproto.CompletionContext{},
 	}
 	if userPreferences != nil {
-		reset := f.ConfigureWithReset(t, userPreferences)
+		reset := f.ConfigureWithReset(t, *userPreferences)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
@@ -1347,11 +1378,310 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	}
 }
 
+// VerifyCodeFixOptions are the options for VerifyCodeFix.
+type VerifyCodeFixOptions struct {
+	Description    string
+	NewFileContent string
+	Index          int
+	ApplyChanges   bool
+}
+
+// VerifyCodeFixAllOptions are the options for VerifyCodeFixAll.
+type VerifyCodeFixAllOptions struct {
+	FixID          string
+	NewFileContent string
+}
+
+// VerifyCodeFix verifies that applying a code fix produces the expected file content.
+func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if len(actions) == 0 {
+		t.Fatalf("No code fixes returned.")
+	}
+	if options.Index >= len(actions) {
+		t.Fatalf("Code fix index %d out of range (got %d fixes)", options.Index, len(actions))
+	}
+
+	matchingAction := actions[options.Index]
+	if matchingAction.Title != options.Description {
+		found := false
+		for _, action := range actions {
+			if action.Title == options.Description {
+				matchingAction = action
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("No code fix with description %q at index %d found. Available fixes: %v", options.Description, options.Index, titles)
+		}
+	}
+
+	if options.ApplyChanges {
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Code fix returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
+				f.applyTextEdits(t, edits)
+			}
+		}
+		actual := f.getScriptInfo(f.activeFilename).content
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+	} else {
+		actual := f.getScriptInfo(f.activeFilename).content
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Code fix returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
+				actual = f.applyEditsToContent(actual, edits)
+			}
+		}
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+	}
+}
+
+// VerifyCodeFixAvailable verifies that code fixes with the given descriptions are available.
+func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescriptions []string) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if expectedDescriptions == nil {
+		if len(actions) == 0 {
+			t.Fatalf("Expected code fixes to be available, but got none.")
+		}
+		return
+	}
+
+	if len(expectedDescriptions) == 0 {
+		if len(actions) != 0 {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected no code fixes, but got: %v", titles)
+		}
+		return
+	}
+
+	for _, expected := range expectedDescriptions {
+		found := false
+		for _, action := range actions {
+			if action.Title == expected {
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected code fix with description %q not found. Available fixes: %v", expected, titles)
+		}
+	}
+}
+
+// VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
+// It gets all quickfix code actions for the file (which includes per-fixId "Fix all" entries when
+// multiple diagnostics match the same provider), finds the fix-all entry, and applies its edits.
+func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllOptions) {
+	t.Helper()
+
+	actions := f.getAllQuickFixActions(t)
+	if len(actions) == 0 {
+		t.Fatalf("No code fixes available for fixId %q", options.FixID)
+	}
+
+	// Find fix-all actions. The server returns these as quickfix entries with titles like
+	// "Add all missing imports" when multiple diagnostics match the same provider.
+	// We look for actions that are NOT single-diagnostic fixes (i.e., have no Diagnostics attached).
+	var fixAllCandidates []*lsproto.CodeAction
+	for _, action := range actions {
+		if action.Diagnostics == nil || len(*action.Diagnostics) == 0 {
+			fixAllCandidates = append(fixAllCandidates, action)
+		}
+	}
+
+	var fixAllAction *lsproto.CodeAction
+	if len(fixAllCandidates) == 1 {
+		fixAllAction = fixAllCandidates[0]
+	} else {
+		// If there are multiple fix-all candidates, match by FixID in the title.
+		for _, action := range fixAllCandidates {
+			if strings.Contains(strings.ToLower(action.Title), strings.ToLower(options.FixID)) {
+				fixAllAction = action
+				break
+			}
+		}
+	}
+
+	if fixAllAction == nil {
+		var titles []string
+		for _, a := range actions {
+			titles = append(titles, a.Title)
+		}
+		t.Fatalf("No fix-all code action found for fixId %q. Available fixes: %v", options.FixID, titles)
+	}
+
+	if fixAllAction.Edit != nil && fixAllAction.Edit.Changes != nil {
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		for uri, edits := range *fixAllAction.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("Fix-all code action returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actual := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
+}
+
+// VerifySourceFixAll verifies that requesting a source.fixAll code action produces the expected file content.
+// This tests the on-save code path where VS Code requests source.fixAll.
+func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string) {
+	t.Helper()
+
+	only := []lsproto.CodeActionKind{lsproto.CodeActionKindSourceFixAll}
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+			Only:        &only,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	if result.CommandOrCodeActionArray == nil {
+		t.Fatalf("No source.fixAll code actions returned")
+	}
+
+	var selected *lsproto.CodeAction
+	for _, item := range *result.CommandOrCodeActionArray {
+		if item.CodeAction == nil || item.CodeAction.Kind == nil || *item.CodeAction.Kind != lsproto.CodeActionKindSourceFixAll {
+			continue
+		}
+		selected = item.CodeAction
+		break
+	}
+
+	if selected == nil {
+		t.Fatalf("No source.fixAll code action found")
+	}
+	if selected.Edit != nil && selected.Edit.Changes != nil {
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		for uri, edits := range *selected.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("source.fixAll returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actual := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, expectedContent, actual, "File content after source.fixAll did not match expected content.")
+}
+
+// getCodeFixActions gets per-diagnostic quick fix code actions, excluding fix-all entries.
+func (f *FourslashTest) getCodeFixActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+	all := f.getAllQuickFixActions(t)
+	// Filter to only per-diagnostic fixes (those with diagnostics attached)
+	var actions []*lsproto.CodeAction
+	for _, action := range all {
+		if action.Diagnostics != nil && len(*action.Diagnostics) > 0 {
+			actions = append(actions, action)
+		}
+	}
+	return actions
+}
+
+// getAllQuickFixActions gets all quick fix code actions including fix-all entries.
+func (f *FourslashTest) getAllQuickFixActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+
+	diagParams := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+
+	var diagnostics []*lsproto.Diagnostic
+	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+	}
+
+	if len(diagnostics) == 0 {
+		return nil
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: diagnostics[0].Range.Start,
+			End:   diagnostics[0].Range.End,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: diagnostics,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
+// applyEditsToContent applies text edits to a content string without mutating the file.
+func (f *FourslashTest) applyEditsToContent(content string, edits []*lsproto.TextEdit) string {
+	script := f.getScriptInfo(f.activeFilename)
+	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
+		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
+		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
+		return int(aStart) - int(bStart)
+	})
+	for i := len(edits) - 1; i >= 0; i-- {
+		edit := edits[i]
+		start := int(f.converters.LineAndCharacterToPosition(script, edit.Range.Start))
+		end := int(f.converters.LineAndCharacterToPosition(script, edit.Range.End))
+		content = content[:start] + edit.NewText + content[end:]
+	}
+	return content
+}
+
 func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences) {
 	t.Helper()
 
 	if preferences != nil {
-		reset := f.ConfigureWithReset(t, preferences)
+		reset := f.ConfigureWithReset(t, *preferences)
 		defer reset()
 	}
 
@@ -1420,10 +1750,10 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		userPreferences = options.UserPreferences
 	} else {
 		// Default preferences: enables auto-imports
-		userPreferences = lsutil.NewDefaultUserPreferences()
+		userPreferences = new(lsutil.NewDefaultUserPreferences())
 	}
 
-	reset := f.ConfigureWithReset(t, userPreferences)
+	reset := f.ConfigureWithReset(t, *userPreferences)
 	defer reset()
 	completionsList := f.getCompletions(t, nil) // Already configured, so we do not need to pass it in again
 	items := core.Filter(completionsList.Items, func(item *lsproto.CompletionItem) bool {
@@ -1502,7 +1832,7 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	}
 
 	if preferences != nil {
-		reset := f.ConfigureWithReset(t, preferences)
+		reset := f.ConfigureWithReset(t, *preferences)
 		defer reset()
 	}
 
@@ -1535,11 +1865,14 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
 	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
+	// Skip fix-all entries (those without diagnostics attached)
 	var importActions []*lsproto.CodeAction
 	if result.CommandOrCodeActionArray != nil {
 		for _, item := range *result.CommandOrCodeActionArray {
 			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
-				importActions = append(importActions, item.CodeAction)
+				if item.CodeAction.Diagnostics != nil && len(*item.CodeAction.Diagnostics) > 0 {
+					importActions = append(importActions, item.CodeAction)
+				}
 			}
 		}
 	}
@@ -1558,7 +1891,6 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	actualTextArray := make([]string, 0, len(importActions))
 	for _, action := range importActions {
 		// Apply the code action
-		var edits []*lsproto.TextEdit
 		if action.Edit != nil && action.Edit.Changes != nil {
 			if len(*action.Edit.Changes) != 1 {
 				t.Fatalf("Expected exactly 1 change, got %d", len(*action.Edit.Changes))
@@ -1567,7 +1899,6 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 				if uri != lsconv.FileNameToDocumentURI(f.activeFilename) {
 					t.Fatalf("Expected change to file %s, got %s", f.activeFilename, uri)
 				}
-				edits = changeEdits
 				f.applyTextEdits(t, changeEdits)
 			}
 		}
@@ -1581,14 +1912,8 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 		}
 		actualTextArray = append(actualTextArray, text)
 
-		// Undo changes to perform next fix
-		for _, textChange := range edits {
-			start := int(f.converters.LineAndCharacterToPosition(script, textChange.Range.Start))
-			end := int(f.converters.LineAndCharacterToPosition(script, textChange.Range.End))
-			deletedText := originalContent[start:end]
-			insertedText := textChange.NewText
-			f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+len(insertedText), deletedText)
-		}
+		// Restore original content for next fix
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, 0, len(script.content), originalContent)
 		f.currentCaretPosition = currentCaretPosition
 	}
 
@@ -1621,7 +1946,7 @@ func (f *FourslashTest) VerifyImportFixModuleSpecifiers(
 	f.GoToMarker(t, markerName)
 
 	if preferences != nil {
-		reset := f.ConfigureWithReset(t, preferences)
+		reset := f.ConfigureWithReset(t, *preferences)
 		defer reset()
 	}
 
@@ -1750,7 +2075,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 
 func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
-		reset := f.ConfigureWithReset(t, preferences)
+		reset := f.ConfigureWithReset(t, *preferences)
 		defer reset()
 	}
 
@@ -1879,9 +2204,10 @@ func (f *FourslashTest) verifyBaselineDefinitions(
 		}
 
 		f.addResultToBaseline(t, definitionCommand, f.getBaselineForSpansWithFileContents(resultAsSpans, baselineFourslashLocationsOptions{
-			marker:         markerOrRange,
-			markerName:     definitionMarker,
-			additionalSpan: additionalSpan,
+			marker:              markerOrRange,
+			markerName:          definitionMarker,
+			additionalSpan:      additionalSpan,
+			preserveResultOrder: definitionCommand == goToSourceDefinitionCmd,
 		}))
 	}
 }
@@ -1903,6 +2229,33 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 			}
 
 			return sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
+		},
+		false, /*includeOriginalSelectionRange*/
+		markers...,
+	)
+}
+
+func (f *FourslashTest) VerifyBaselineGoToSourceDefinition(
+	t *testing.T,
+	markers ...string,
+) {
+	f.verifyBaselineDefinitions(
+		t,
+		goToSourceDefinitionCmd,
+		"/*GOTO SOURCE DEF*/", /*definitionMarker*/
+		func(t *testing.T, f *FourslashTest, fileName string, position lsproto.Position) lsproto.LocationOrLocationsOrDefinitionLinksOrNull {
+			params := &lsproto.TextDocumentPositionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+			}
+
+			result := sendRequest(t, f, lsproto.CustomTextDocumentSourceDefinitionInfo, params)
+			if result == nil {
+				return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}
+			}
+			return *result
 		},
 		false, /*includeOriginalSelectionRange*/
 		markers...,
@@ -3474,13 +3827,13 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
 	t.Helper()
-	reset := f.ConfigureWithReset(t, &lsutil.UserPreferences{
+	reset := f.ConfigureWithReset(t, lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ImportModuleSpecifierEnding:           f.userPreferences.ImportModuleSpecifierEnding,
 		ImportModuleSpecifierPreference:       f.userPreferences.ImportModuleSpecifierPreference,
-		AutoImportFileExcludePatterns:         f.userPreferences.AutoImportFileExcludePatterns,
+		ImportModuleSpecifierEnding:           f.userPreferences.ImportModuleSpecifierEnding,
 		AutoImportSpecifierExcludeRegexes:     f.userPreferences.AutoImportSpecifierExcludeRegexes,
+		AutoImportFileExcludePatterns:         f.userPreferences.AutoImportFileExcludePatterns,
 		PreferTypeOnlyAutoImports:             f.userPreferences.PreferTypeOnlyAutoImports,
 	})
 	defer reset()
@@ -3600,7 +3953,7 @@ func (f *FourslashTest) verifyBaselineRename(
 	markerOrRanges []MarkerOrRange,
 ) {
 	if preferences != nil {
-		defer f.ConfigureWithReset(t, preferences)()
+		defer f.ConfigureWithReset(t, *preferences)()
 	}
 
 	for _, markerOrRange := range markerOrRanges {
@@ -3678,7 +4031,7 @@ func (f *FourslashTest) verifyBaselineRename(
 
 func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
-		defer f.ConfigureWithReset(t, preferences)()
+		defer f.ConfigureWithReset(t, *preferences)()
 	}
 	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -3708,7 +4061,7 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 
 func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
-		defer f.ConfigureWithReset(t, preferences)()
+		defer f.ConfigureWithReset(t, *preferences)()
 	}
 	params := &lsproto.PrepareRenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -3804,9 +4157,9 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 
 	preferences := testPreferences
 	if preferences == nil {
-		preferences = lsutil.NewDefaultUserPreferences()
+		preferences = new(lsutil.NewDefaultUserPreferences())
 	}
-	reset := f.ConfigureWithReset(t, preferences)
+	reset := f.ConfigureWithReset(t, *preferences)
 	defer reset()
 
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
@@ -4231,13 +4584,13 @@ type VerifyWorkspaceSymbolCase struct {
 
 // `verify.navigateTo` in Strada.
 func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorkspaceSymbolCase) {
-	originalPreferences := f.userPreferences.Copy()
+	originalPreferences := f.userPreferences
 	for _, testCase := range cases {
 		preferences := testCase.Preferences
 		if preferences == nil {
-			preferences = lsutil.NewDefaultUserPreferences()
+			preferences = new(lsutil.NewDefaultUserPreferences())
 		}
-		f.Configure(t, preferences)
+		f.Configure(t, *preferences)
 		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
 		if result.SymbolInformations == nil {
 			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
