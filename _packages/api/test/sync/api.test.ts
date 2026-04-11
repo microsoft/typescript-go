@@ -2376,10 +2376,8 @@ test("Factory ModifierList auto-conversion", () => {
             createKeywordTypeNode(SyntaxKind.AnyKeyword),
         );
 
-        // this fails
         assert.equal(project.emitter.printNode(node), "export type Test = any;");
 
-        // this works
         const cloned = getSynthesizedDeepClone(node);
         assert.equal(project.emitter.printNode(cloned), "export type Test = any;");
     }
