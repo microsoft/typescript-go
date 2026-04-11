@@ -699,6 +699,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindTypeAliasDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
 	case ast.KindJSTypeAliasDeclaration:
+		// Top-level JSTypeAliasDeclaration nodes are processed in bindContainer
 		if !ast.IsSourceFile(b.blockScopeContainer) {
 			b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
 		}
