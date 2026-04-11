@@ -304,7 +304,7 @@ func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) 
 	return l.converters.PositionToLineAndCharacter(file, core.TextPos(position))
 }
 
-func quote(file *ast.SourceFile, preferences *lsutil.UserPreferences, text string) string {
+func quote(file *ast.SourceFile, preferences lsutil.UserPreferences, text string) string {
 	// Editors can pass in undefined or empty string - we want to infer the preference in those cases.
 	quotePreference := lsutil.GetQuotePreference(file, preferences)
 	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
@@ -608,14 +608,14 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	if node.Kind == ast.KindExtendsKeyword {
 		// ... <T /**/extends [|U|]> ...
 		if parent.Kind == ast.KindTypeParameter {
-			if constraint := parent.AsTypeParameter().Constraint; constraint != nil && constraint.Kind == ast.KindTypeReference {
-				return constraint.AsTypeReference().TypeName
+			if constraint := parent.AsTypeParameterDeclaration().Constraint; constraint != nil && constraint.Kind == ast.KindTypeReference {
+				return constraint.AsTypeReferenceNode().TypeName
 			}
 		}
 		// ... T /**/extends [|U|] ? ...
 		if parent.Kind == ast.KindConditionalType {
 			if extendsType := parent.AsConditionalTypeNode().ExtendsType; extendsType != nil && extendsType.Kind == ast.KindTypeReference {
-				return extendsType.AsTypeReference().TypeName
+				return extendsType.AsTypeReferenceNode().TypeName
 			}
 		}
 	}
