@@ -134,7 +134,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 						}
 					}
 					comments := tag.Comments()
-					if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "example" {
+					if tag.Kind == ast.KindJSDocUnknownTag && tag.TagName().Text() == "example" {
 						commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
 						if strings.HasPrefix(commentText, "<caption>") {
 							if captionEnd := strings.Index(commentText, "</caption>"); captionEnd > 0 {
@@ -325,7 +325,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					if decl != nil {
 						decl = ast.GetRootDeclaration(decl)
 						switch {
-						case ast.IsParameter(decl):
+						case ast.IsParameterDeclaration(decl):
 							b.WriteString("(parameter) ")
 						case ast.IsVarLet(decl):
 							b.WriteString("let ")
@@ -538,7 +538,7 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		return jsdoc
 	}
 	switch {
-	case ast.IsParameter(node):
+	case ast.IsParameterDeclaration(node):
 		name := node.Name()
 		if ast.IsBindingPattern(name) {
 			// For binding patterns, match JSDoc @param tags by position rather than by name
@@ -564,14 +564,23 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		}
 		if ast.IsClassOrInterfaceLike(node.Parent) {
 			isStatic := ast.HasStaticModifier(node)
-			for _, baseType := range c.GetBaseTypes(c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())) {
-				t := baseType
-				if isStatic && baseType.Symbol() != nil {
-					t = c.GetTypeOfSymbol(baseType.Symbol())
-				}
-				if prop := c.GetPropertyOfType(t, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+			classType := c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())
+			if isStatic {
+				// For static members, use the checker's base constructor type resolution.
+				// This correctly handles intersection constructor types from mixins
+				// (e.g., typeof MixinClass & T) by preserving the full intersection.
+				staticBaseType := c.GetApparentType(c.GetBaseConstructorTypeOfClass(classType))
+				if prop := c.GetPropertyOfType(staticBaseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
 					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 						return jsDoc
+					}
+				}
+			} else {
+				for _, baseType := range c.GetBaseTypes(classType) {
+					if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+						if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
+							return jsDoc
+						}
 					}
 				}
 			}
