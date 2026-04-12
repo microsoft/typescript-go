@@ -1,0 +1,78 @@
+//// [tests/cases/compiler/inferenceUnionArrayDepth.ts] ////
+
+=== inferenceUnionArrayDepth.ts ===
+// Regression test for https://github.com/microsoft/typescript-go/issues/1789
+// and https://github.com/microsoft/typescript-go/issues/3370
+// Inference should correctly infer T from T[] | T[][] union parameters.
+
+declare function flat<T>(args: T[] | T[][]): T;
+>flat : <T>(args: T[] | T[][]) => T
+>args : T[] | T[][]
+
+// Case 1: Union type (issue #1789)
+type Value = 1 | 2;
+>Value : Value
+
+declare const n: Value[] | Value[][];
+>n : Value[][] | Value[]
+
+const result1: Value = flat(n); // Should infer T = Value, not T = Value[]
+>result1 : Value
+>flat(n) : Value
+>flat : <T>(args: T[] | T[][]) => T
+>n : Value[][] | Value[]
+
+// Case 2: Object type (issue #3370)
+type TG = { a: string };
+>TG : TG
+>a : string
+
+function isNestedArray<T>(arr: T[] | T[][]): arr is T[][] {
+>isNestedArray : <T>(arr: T[] | T[][]) => arr is T[][]
+>arr : T[] | T[][]
+
+    return Array.isArray(arr) && Array.isArray(arr[0]);
+>Array.isArray(arr) && Array.isArray(arr[0]) : boolean
+>Array.isArray(arr) : boolean
+>Array.isArray : (arg: any) => arg is any[]
+>Array : ArrayConstructor
+>isArray : (arg: any) => arg is any[]
+>arr : T[] | T[][]
+>Array.isArray(arr[0]) : boolean
+>Array.isArray : (arg: any) => arg is any[]
+>Array : ArrayConstructor
+>isArray : (arg: any) => arg is any[]
+>arr[0] : T | T[]
+>arr : T[] | T[][]
+>0 : 0
+}
+
+function convert(controls: TG[] | TG[][]): TG[][] {
+>convert : (controls: TG[] | TG[][]) => TG[][]
+>controls : TG[][] | TG[]
+
+    if (isNestedArray(controls)) {
+>isNestedArray(controls) : boolean
+>isNestedArray : <T>(arr: T[] | T[][]) => arr is T[][]
+>controls : TG[][] | TG[]
+
+        return controls;
+>controls : TG[][]
+
+    } else {
+        return [controls];
+>[controls] : TG[][]
+>controls : TG[]
+    }
+}
+
+// Case 3: Primitive type (should already work)
+declare const s: string[] | string[][];
+>s : string[] | string[][]
+
+const result3: string = flat(s);
+>result3 : string
+>flat(s) : string
+>flat : <T>(args: T[] | T[][]) => T
+>s : string[] | string[][]
+
