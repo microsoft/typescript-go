@@ -1642,4 +1642,3 @@ func (c *Checker) mergeInferences(target []*InferenceInfo, source []*InferenceIn
 		}
 	}
 }
-
