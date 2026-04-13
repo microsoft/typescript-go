@@ -558,7 +558,7 @@ var Class_constructor_may_not_be_an_accessor = &Message{code: 1341, category: Ca
 
 var The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_node18_node20_or_nodenext = &Message{code: 1343, category: CategoryError, key: "The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system__1343", text: "The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'."}
 
-var A_label_is_not_allowed_here = &Message{code: 1344, category: CategoryError, key: "A_label_is_not_allowed_here_1344", text: "'A label is not allowed here."}
+var A_label_is_not_allowed_here = &Message{code: 1344, category: CategoryError, key: "A_label_is_not_allowed_here_1344", text: "A label is not allowed here."}
 
 var An_expression_of_type_void_cannot_be_tested_for_truthiness = &Message{code: 1345, category: CategoryError, key: "An_expression_of_type_void_cannot_be_tested_for_truthiness_1345", text: "An expression of type 'void' cannot be tested for truthiness."}
 
@@ -4297,6 +4297,14 @@ var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_10
 var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_types_for_0_100013", text: "Installing types for '{0}'"}
 
 var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
+
+var Fix_All = &Message{code: 100015, category: CategoryMessage, key: "Fix_All_100015", text: "Fix All"}
+
+var Organize_Imports = &Message{code: 100016, category: CategoryMessage, key: "Organize_Imports_100016", text: "Organize Imports"}
+
+var Remove_Unused_Imports = &Message{code: 100017, category: CategoryMessage, key: "Remove_Unused_Imports_100017", text: "Remove Unused Imports"}
+
+var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_Imports_100018", text: "Sort Imports"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8596,6 +8604,14 @@ func keyToMessage(key Key) *Message {
 		return Installing_types_for_0
 	case "Project_0_100014":
 		return Project_0
+	case "Fix_All_100015":
+		return Fix_All
+	case "Organize_Imports_100016":
+		return Organize_Imports
+	case "Remove_Unused_Imports_100017":
+		return Remove_Unused_Imports
+	case "Sort_Imports_100018":
+		return Sort_Imports
 	default:
 		return nil
 	}
