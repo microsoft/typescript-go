@@ -40,7 +40,7 @@ declare var module: any;
 module.exports = minimatch
 >module.exports : Symbol(exports, Decl(minimatch.js, 0, 0))
 >module : Symbol(module, Decl(minimatch.js, 0, 0))
->exports : Symbol(export=, Decl(minimatch.js, 0, 0))
+>exports : Symbol(exports, Decl(minimatch.js, 0, 0))
 >minimatch : Symbol(minimatch, Decl(minimatch.js, 6, 1))
 
 minimatch.M = M

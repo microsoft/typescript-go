@@ -7,11 +7,10 @@
 module.exports = function (p) {
 >module.exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >module : Symbol(module, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
->exports : Symbol(export=, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
+>exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
 
     this.t = 12 + p;
->this : Symbol(module, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
 }
 module.exports.Sub = function() {

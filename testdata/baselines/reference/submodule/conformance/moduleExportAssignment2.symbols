@@ -5,7 +5,7 @@ var npm = module.exports = function (tree) {
 >npm : Symbol(npm, Decl(npm.js, 0, 3))
 >module.exports : Symbol(exports, Decl(npm.js, 0, 0))
 >module : Symbol(module, Decl(npm.js, 0, 0))
->exports : Symbol(npm, Decl(npm.js, 0, 9))
+>exports : Symbol(exports, Decl(npm.js, 0, 0))
 >tree : Symbol(tree, Decl(npm.js, 0, 37))
 }
 module.exports.asReadInstalled = function (tree) {

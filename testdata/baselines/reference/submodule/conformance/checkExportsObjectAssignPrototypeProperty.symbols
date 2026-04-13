@@ -132,6 +132,6 @@ Object.defineProperty(Person.prototype, "setonlyAccessor", {
 module.exports = Person;
 >module.exports : Symbol(exports, Decl(mod1.js, 0, 0))
 >module : Symbol(module, Decl(mod1.js, 0, 0))
->exports : Symbol(export=, Decl(mod1.js, 19, 3))
+>exports : Symbol(exports, Decl(mod1.js, 0, 0))
 >Person : Symbol(Person, Decl(mod1.js, 0, 0))
 

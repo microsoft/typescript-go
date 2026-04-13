@@ -44,6 +44,6 @@ function A() { this.id = 1; }
 module.exports = A;
 >module.exports : Symbol(exports, Decl(other.js, 0, 0))
 >module : Symbol(module, Decl(other.js, 0, 0))
->exports : Symbol(export=, Decl(other.js, 0, 29))
+>exports : Symbol(exports, Decl(other.js, 0, 0))
 >A : Symbol(A, Decl(other.js, 0, 0))
 

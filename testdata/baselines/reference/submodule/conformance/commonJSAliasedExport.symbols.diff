@@ -6,9 +6,10 @@
  module.exports = donkey;
 ->module.exports : Symbol(module.exports, Decl(commonJSAliasedExport.js, 0, 0))
 ->module : Symbol(export=, Decl(commonJSAliasedExport.js, 4, 1))
+->exports : Symbol(export=, Decl(commonJSAliasedExport.js, 4, 1))
 +>module.exports : Symbol(exports, Decl(commonJSAliasedExport.js, 0, 0))
 +>module : Symbol(module, Decl(commonJSAliasedExport.js, 0, 0))
- >exports : Symbol(export=, Decl(commonJSAliasedExport.js, 4, 1))
++>exports : Symbol(exports, Decl(commonJSAliasedExport.js, 0, 0))
  >donkey : Symbol(donkey, Decl(commonJSAliasedExport.js, 0, 5))
 
  module.exports.funky = funky;

@@ -8,4 +8,4 @@
 +>module.exports : Symbol(exports, Decl(enumTagOnExports.js, 0, 0))
  >module : Symbol(module, Decl(enumTagOnExports.js, 0, 0))
 ->exports : Symbol(module.exports, Decl(enumTagOnExports.js, 0, 0))
-+>exports : Symbol(export=, Decl(enumTagOnExports.js, 0, 0))
++>exports : Symbol(exports, Decl(enumTagOnExports.js, 0, 0))

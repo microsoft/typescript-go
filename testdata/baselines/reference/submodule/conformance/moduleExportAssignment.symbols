@@ -27,7 +27,7 @@ var npmlog = module.exports = new EE()
 >npmlog : Symbol(npmlog, Decl(npmlog.js, 4, 3))
 >module.exports : Symbol(exports, Decl(npmlog.js, 0, 0))
 >module : Symbol(module, Decl(npmlog.js, 0, 0))
->exports : Symbol(npmlog, Decl(npmlog.js, 4, 12))
+>exports : Symbol(exports, Decl(npmlog.js, 0, 0))
 >EE : Symbol(EE, Decl(npmlog.js, 0, 0))
 
 npmlog.on('hi') // both references should see EE.on

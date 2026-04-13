@@ -12,7 +12,7 @@ class Abcde {
 module.exports = {
 >module.exports : Symbol(exports, Decl(test.js, 0, 0))
 >module : Symbol(module, Decl(test.js, 0, 0))
->exports : Symbol(export=, Decl(test.js, 3, 1))
+>exports : Symbol(exports, Decl(test.js, 0, 0))
 
   Abcde
 >Abcde : Symbol(Abcde, Decl(test.js, 5, 18))

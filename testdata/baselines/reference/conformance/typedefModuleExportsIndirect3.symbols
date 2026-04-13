@@ -8,7 +8,7 @@ const o = {};
 module.exports = o;
 >module.exports : Symbol(exports, Decl(typedefModuleExportsIndirect3.js, 0, 0))
 >module : Symbol(module, Decl(typedefModuleExportsIndirect3.js, 0, 0))
->exports : Symbol(export=, Decl(typedefModuleExportsIndirect3.js, 1, 13))
+>exports : Symbol(exports, Decl(typedefModuleExportsIndirect3.js, 0, 0))
 >o : Symbol(o, Decl(typedefModuleExportsIndirect3.js, 1, 5))
 
 === use.js ===

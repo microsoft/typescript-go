@@ -32,7 +32,7 @@ class MainThreadTasks {
 module.exports = MainThreadTasks;
 >module.exports : Symbol(exports, Decl(index.js, 0, 0))
 >module : Symbol(module, Decl(index.js, 0, 0))
->exports : Symbol(export=, Decl(index.js, 18, 1))
+>exports : Symbol(exports, Decl(index.js, 0, 0))
 >MainThreadTasks : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
 
 === module.js ===
@@ -80,7 +80,7 @@ const taskNameToGroup = {};
 module.exports = {
 >module.exports : Symbol(exports, Decl(module.js, 0, 0))
 >module : Symbol(module, Decl(module.js, 0, 0))
->exports : Symbol(export=, Decl(module.js, 24, 27))
+>exports : Symbol(exports, Decl(module.js, 0, 0))
 
     taskGroups,
 >taskGroups : Symbol(taskGroups, Decl(module.js, 26, 18))

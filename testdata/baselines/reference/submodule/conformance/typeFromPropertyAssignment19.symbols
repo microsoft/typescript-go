@@ -23,10 +23,10 @@ declare var module: any;
 === semver.js ===
 /// <reference path='./types.d.ts'/>
 exports = module.exports = C
->exports : Symbol("./semver", Decl(semver.js, 0, 0))
+>exports : Symbol(exports, Decl(semver.js, 0, 0))
 >module.exports : Symbol(exports, Decl(semver.js, 0, 0))
 >module : Symbol(module, Decl(semver.js, 0, 0))
->exports : Symbol(export=, Decl(semver.js, 1, 9))
+>exports : Symbol(exports, Decl(semver.js, 0, 0))
 >C : Symbol(C, Decl(semver.js, 2, 16))
 
 C.f = n => n + 1
