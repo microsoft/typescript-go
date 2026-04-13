@@ -401,10 +401,10 @@ func (b *NodeBuilderImpl) serializeNamespaceMember(resolved *ast.Symbol, name st
 		return b.f.NewVariableStatement(
 			nil,
 			b.f.NewVariableDeclarationList(
-				ast.NodeFlagsLet,
 				b.f.NewNodeList([]*ast.Node{
 					b.f.NewVariableDeclaration(b.f.NewIdentifier(name), nil, b.serializeTypeForDeclaration(nil, t, resolved, true), nil),
 				}),
+				ast.NodeFlagsLet,
 			),
 		)
 	}
@@ -460,9 +460,9 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 						localType := b.ch.getWidenedType(b.ch.getTypeOfSymbol(target))
 						b.ctx.approximateLength += len(target.Name) + 5
 						localStmt := b.f.NewVariableStatement(nil,
-							b.f.NewVariableDeclarationList(ast.NodeFlagsLet, b.f.NewNodeList([]*ast.Node{
+							b.f.NewVariableDeclarationList(b.f.NewNodeList([]*ast.Node{
 								b.f.NewVariableDeclaration(b.f.NewIdentifier(target.Name), nil, b.serializeTypeForDeclaration(nil, localType, target, true), nil),
-							})))
+							}), ast.NodeFlagsLet))
 						bodyStmts = append(bodyStmts, hoverStatement{node: localStmt, isLocal: true})
 					}
 				}
