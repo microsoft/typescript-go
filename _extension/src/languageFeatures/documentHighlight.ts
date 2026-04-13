@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
-import { LanguageClient } from "vscode-languageclient/node";
-import type { DocumentHighlight } from "vscode-languageserver-protocol";
+import {
+    DocumentHighlight,
+    LanguageClient,
+} from "vscode-languageclient/node";
 
 const multiDocumentHighlightMethod = "custom/textDocument/multiDocumentHighlight";
 
