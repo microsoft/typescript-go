@@ -197,7 +197,7 @@ func (s *snapshotFSBuilder) FS() vfs.FS {
 func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 	// Synchronize directory structure based on added and deleted files (including overlays)
 	var onDeletedFileOrDirectory func(path tspath.Path)
-	var deleted collections.Set[tspath.Path]
+	var deleted map[tspath.Path]*diskFile
 
 	onAddedFile := func(path tspath.Path, fileName string) {
 		childPath := path
@@ -240,33 +240,39 @@ func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 
 	diskFiles, changed := s.diskFiles.FinalizeWith(dirty.FinalizationHooks[tspath.Path, *diskFile]{
 		OnDelete: func(key tspath.Path, value *diskFile) {
-			deleted.Add(key)
+			if deleted == nil {
+				deleted = make(map[tspath.Path]*diskFile)
+			}
+			deleted[key] = value
 		},
 		OnAdd: func(key tspath.Path, value *diskFile) {
 			onAddedFile(key, value.FileName())
 		},
 	})
 
-	for path := range deleted.Keys() {
+	for path := range deleted {
 		onDeletedFileOrDirectory(path)
 	}
 
-	nodeModulesRealpathAliases, aliasesChanged := s.nodeModulesRealpathAliases.Finalize()
-
-	// Prune aliases whose symlink paths no longer exist in diskFiles.
-	for realpathKey, aliasSet := range nodeModulesRealpathAliases {
-		aliasSet.mu.Lock()
-		for symlinkPath := range aliasSet.paths.Keys() {
-			if _, ok := diskFiles[symlinkPath]; !ok {
-				aliasSet.paths.Delete(symlinkPath)
-			}
+	// Prune deleted symlink paths from realpath alias sets before finalizing,
+	// so that empty sets are dropped during finalization.
+	for deletedPath, deletedFile := range deleted {
+		if deletedFile.realpathPath == "" {
+			continue
 		}
-		empty := aliasSet.paths.Len() == 0
-		aliasSet.mu.Unlock()
-		if empty {
-			delete(nodeModulesRealpathAliases, realpathKey)
+		if entry, ok := s.nodeModulesRealpathAliases.Load(deletedFile.realpathPath); ok {
+			entry.Locked(func(e dirty.Value[*realpathAliasSet]) {
+				e.Change(func(aliasSet *realpathAliasSet) {
+					aliasSet.paths.Delete(deletedPath)
+				})
+				if e.Value().paths.Len() == 0 {
+					e.Delete()
+				}
+			})
 		}
 	}
+
+	nodeModulesRealpathAliases, aliasesChanged := s.nodeModulesRealpathAliases.Finalize()
 
 	return &SnapshotFS{
 		fs:                         s.fs,
@@ -327,7 +333,7 @@ func (s *snapshotFSBuilder) getDiskFile(fileName string, path tspath.Path, force
 	entry, loaded := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
 	if entry != nil {
 		if !loaded && strings.Contains(string(path), "/node_modules/") {
-			s.recordRealpathAlias(fileName, path)
+			s.recordRealpathAlias(entry, fileName, path)
 		}
 		if forceReload {
 			return s.reloadEntry(entry)
@@ -340,10 +346,13 @@ func (s *snapshotFSBuilder) getDiskFile(fileName string, path tspath.Path, force
 // recordRealpathAlias checks if fileName is accessed through a symlink and, if so,
 // records a mapping from the realpath-based key to the symlink-based key.
 // This is only called for files inside node_modules where symlinks are common.
-func (s *snapshotFSBuilder) recordRealpathAlias(fileName string, symlinkPath tspath.Path) {
-	realpath := s.fs.Realpath(fileName)
+func (s *snapshotFSBuilder) recordRealpathAlias(diskFileEntry *dirty.SyncMapEntry[tspath.Path, *diskFile], symlinkFileName string, symlinkPath tspath.Path) {
+	realpath := s.fs.Realpath(symlinkFileName)
 	realpathPath := s.toPath(realpath)
 	if realpathPath != symlinkPath {
+		diskFileEntry.Change(func(file *diskFile) {
+			file.realpathPath = realpathPath
+		})
 		entry, _ := s.nodeModulesRealpathAliases.LoadOrStore(realpathPath, &realpathAliasSet{})
 		entry.Change(func(aliasSet *realpathAliasSet) {
 			aliasSet.Add(symlinkPath)
