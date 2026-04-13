@@ -349,7 +349,8 @@ var (
 		LinkSupport: ptrTrue,
 	}
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
-		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+		ContentFormat:  &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+		VerbosityLevel: ptrTrue,
 	}
 	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
 		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
@@ -1378,6 +1379,305 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	}
 }
 
+// VerifyCodeFixOptions are the options for VerifyCodeFix.
+type VerifyCodeFixOptions struct {
+	Description    string
+	NewFileContent string
+	Index          int
+	ApplyChanges   bool
+}
+
+// VerifyCodeFixAllOptions are the options for VerifyCodeFixAll.
+type VerifyCodeFixAllOptions struct {
+	FixID          string
+	NewFileContent string
+}
+
+// VerifyCodeFix verifies that applying a code fix produces the expected file content.
+func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if len(actions) == 0 {
+		t.Fatalf("No code fixes returned.")
+	}
+	if options.Index >= len(actions) {
+		t.Fatalf("Code fix index %d out of range (got %d fixes)", options.Index, len(actions))
+	}
+
+	matchingAction := actions[options.Index]
+	if matchingAction.Title != options.Description {
+		found := false
+		for _, action := range actions {
+			if action.Title == options.Description {
+				matchingAction = action
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("No code fix with description %q at index %d found. Available fixes: %v", options.Description, options.Index, titles)
+		}
+	}
+
+	if options.ApplyChanges {
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Code fix returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
+				f.applyTextEdits(t, edits)
+			}
+		}
+		actual := f.getScriptInfo(f.activeFilename).content
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+	} else {
+		actual := f.getScriptInfo(f.activeFilename).content
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Code fix returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
+				actual = f.applyEditsToContent(actual, edits)
+			}
+		}
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+	}
+}
+
+// VerifyCodeFixAvailable verifies that code fixes with the given descriptions are available.
+func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescriptions []string) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if expectedDescriptions == nil {
+		if len(actions) == 0 {
+			t.Fatalf("Expected code fixes to be available, but got none.")
+		}
+		return
+	}
+
+	if len(expectedDescriptions) == 0 {
+		if len(actions) != 0 {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected no code fixes, but got: %v", titles)
+		}
+		return
+	}
+
+	for _, expected := range expectedDescriptions {
+		found := false
+		for _, action := range actions {
+			if action.Title == expected {
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected code fix with description %q not found. Available fixes: %v", expected, titles)
+		}
+	}
+}
+
+// VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
+// It gets all quickfix code actions for the file (which includes per-fixId "Fix all" entries when
+// multiple diagnostics match the same provider), finds the fix-all entry, and applies its edits.
+func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllOptions) {
+	t.Helper()
+
+	actions := f.getAllQuickFixActions(t)
+	if len(actions) == 0 {
+		t.Fatalf("No code fixes available for fixId %q", options.FixID)
+	}
+
+	// Find fix-all actions. The server returns these as quickfix entries with titles like
+	// "Add all missing imports" when multiple diagnostics match the same provider.
+	// We look for actions that are NOT single-diagnostic fixes (i.e., have no Diagnostics attached).
+	var fixAllCandidates []*lsproto.CodeAction
+	for _, action := range actions {
+		if action.Diagnostics == nil || len(*action.Diagnostics) == 0 {
+			fixAllCandidates = append(fixAllCandidates, action)
+		}
+	}
+
+	var fixAllAction *lsproto.CodeAction
+	if len(fixAllCandidates) == 1 {
+		fixAllAction = fixAllCandidates[0]
+	} else {
+		// If there are multiple fix-all candidates, match by FixID in the title.
+		for _, action := range fixAllCandidates {
+			if strings.Contains(strings.ToLower(action.Title), strings.ToLower(options.FixID)) {
+				fixAllAction = action
+				break
+			}
+		}
+	}
+
+	if fixAllAction == nil {
+		var titles []string
+		for _, a := range actions {
+			titles = append(titles, a.Title)
+		}
+		t.Fatalf("No fix-all code action found for fixId %q. Available fixes: %v", options.FixID, titles)
+	}
+
+	if fixAllAction.Edit != nil && fixAllAction.Edit.Changes != nil {
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		for uri, edits := range *fixAllAction.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("Fix-all code action returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actual := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, options.NewFileContent, actual, "File content after applying all code fixes did not match expected content.")
+}
+
+// VerifySourceFixAll verifies that requesting a source.fixAll code action produces the expected file content.
+// This tests the on-save code path where VS Code requests source.fixAll.
+func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string) {
+	t.Helper()
+
+	only := []lsproto.CodeActionKind{lsproto.CodeActionKindSourceFixAll}
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+			Only:        &only,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	if result.CommandOrCodeActionArray == nil {
+		t.Fatalf("No source.fixAll code actions returned")
+	}
+
+	var selected *lsproto.CodeAction
+	for _, item := range *result.CommandOrCodeActionArray {
+		if item.CodeAction == nil || item.CodeAction.Kind == nil || *item.CodeAction.Kind != lsproto.CodeActionKindSourceFixAll {
+			continue
+		}
+		selected = item.CodeAction
+		break
+	}
+
+	if selected == nil {
+		t.Fatalf("No source.fixAll code action found")
+	}
+	if selected.Edit != nil && selected.Edit.Changes != nil {
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		for uri, edits := range *selected.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("source.fixAll returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actual := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, expectedContent, actual, "File content after source.fixAll did not match expected content.")
+}
+
+// getCodeFixActions gets per-diagnostic quick fix code actions, excluding fix-all entries.
+func (f *FourslashTest) getCodeFixActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+	all := f.getAllQuickFixActions(t)
+	// Filter to only per-diagnostic fixes (those with diagnostics attached)
+	var actions []*lsproto.CodeAction
+	for _, action := range all {
+		if action.Diagnostics != nil && len(*action.Diagnostics) > 0 {
+			actions = append(actions, action)
+		}
+	}
+	return actions
+}
+
+// getAllQuickFixActions gets all quick fix code actions including fix-all entries.
+func (f *FourslashTest) getAllQuickFixActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+
+	diagParams := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+
+	var diagnostics []*lsproto.Diagnostic
+	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+	}
+
+	if len(diagnostics) == 0 {
+		return nil
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: diagnostics[0].Range.Start,
+			End:   diagnostics[0].Range.End,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: diagnostics,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
+// applyEditsToContent applies text edits to a content string without mutating the file.
+func (f *FourslashTest) applyEditsToContent(content string, edits []*lsproto.TextEdit) string {
+	script := f.getScriptInfo(f.activeFilename)
+	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
+		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
+		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
+		return int(aStart) - int(bStart)
+	})
+	for i := len(edits) - 1; i >= 0; i-- {
+		edit := edits[i]
+		start := int(f.converters.LineAndCharacterToPosition(script, edit.Range.Start))
+		end := int(f.converters.LineAndCharacterToPosition(script, edit.Range.End))
+		content = content[:start] + edit.NewText + content[end:]
+	}
+	return content
+}
+
 func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences) {
 	t.Helper()
 
@@ -1566,11 +1866,14 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
 	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
+	// Skip fix-all entries (those without diagnostics attached)
 	var importActions []*lsproto.CodeAction
 	if result.CommandOrCodeActionArray != nil {
 		for _, item := range *result.CommandOrCodeActionArray {
 			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
-				importActions = append(importActions, item.CodeAction)
+				if item.CodeAction.Diagnostics != nil && len(*item.CodeAction.Diagnostics) > 0 {
+					importActions = append(importActions, item.CodeAction)
+				}
 			}
 		}
 	}
@@ -2129,6 +2432,114 @@ func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedS
 	result = append(result, ms.Value)
 	result = append(result, "```")
 	return result
+}
+
+type hoverWithVerbosity struct {
+	Hover          *lsproto.Hover `json:"hover"`
+	VerbosityLevel int            `json:"verbosityLevel"`
+}
+
+// hoverContentString extracts the text content from a hover response for comparison.
+func hoverContentString(hover *lsproto.Hover) string {
+	if hover == nil {
+		return ""
+	}
+	if hover.Contents.MarkupContent != nil {
+		return hover.Contents.MarkupContent.Value
+	}
+	if hover.Contents.String != nil {
+		return *hover.Contents.String
+	}
+	return ""
+}
+
+func (f *FourslashTest) VerifyBaselineHoverWithVerbosity(t *testing.T, verbosityLevels map[string][]int) {
+	var markersAndItems []markerAndItem[*hoverWithVerbosity]
+	for _, marker := range f.Markers() {
+		if marker.Name == nil {
+			continue
+		}
+		levels, ok := verbosityLevels[*marker.Name]
+		if !ok {
+			levels = []int{0}
+		}
+		for i, level := range levels {
+			var verbLevel *int32
+			if level > 0 {
+				verbLevel = new(int32(level))
+			}
+			params := &lsproto.HoverParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(marker.fileName),
+				},
+				Position:       marker.LSPosition,
+				VerbosityLevel: verbLevel,
+			}
+			result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+			item := &hoverWithVerbosity{
+				Hover:          result.Hover,
+				VerbosityLevel: level,
+			}
+			// If the previous level said it can't expand further, verify the hover
+			// content is identical, meaning the flag was accurate.
+			if i > 0 && level > levels[i-1] {
+				prevItem := markersAndItems[len(markersAndItems)-1].Item
+				if prevItem != nil && prevItem.Hover != nil && !prevItem.Hover.CanIncreaseVerbosity {
+					prevContent := hoverContentString(prevItem.Hover)
+					curContent := hoverContentString(item.Hover)
+					if prevContent != curContent {
+						t.Errorf("At marker %q: verbosity level %d response differs from level %d, but level %d had canIncreaseVerbosity=false.\n  level %d: %s\n  level %d: %s",
+							*marker.Name, level, levels[i-1], levels[i-1], levels[i-1], prevContent, level, curContent)
+					}
+				}
+			}
+			markersAndItems = append(markersAndItems, markerAndItem[*hoverWithVerbosity]{Marker: marker, Item: item})
+		}
+	}
+
+	getRange := func(item *hoverWithVerbosity) *lsproto.Range {
+		if item == nil || item.Hover == nil || item.Hover.Range == nil {
+			return nil
+		}
+		return item.Hover.Range
+	}
+
+	getTooltipLines := func(item, _prev *hoverWithVerbosity) []string {
+		if item == nil || item.Hover == nil {
+			return nil
+		}
+		var result []string
+
+		if item.Hover.Contents.MarkupContent != nil {
+			result = strings.Split(item.Hover.Contents.MarkupContent.Value, "\n")
+		}
+		if item.Hover.Contents.String != nil {
+			result = strings.Split(*item.Hover.Contents.String, "\n")
+		}
+		if item.Hover.Contents.MarkedStringWithLanguage != nil {
+			result = appendLinesForMarkedStringWithLanguage(result, item.Hover.Contents.MarkedStringWithLanguage)
+		}
+		if item.Hover.Contents.MarkedStrings != nil {
+			for _, ms := range *item.Hover.Contents.MarkedStrings {
+				if ms.MarkedStringWithLanguage != nil {
+					result = appendLinesForMarkedStringWithLanguage(result, ms.MarkedStringWithLanguage)
+				} else {
+					result = append(result, *ms.String)
+				}
+			}
+		}
+
+		result = append(result, fmt.Sprintf("(verbosity level: %d)", item.VerbosityLevel))
+
+		return result
+	}
+
+	f.addResultToBaseline(t, quickInfoCmd, annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.writeToBaseline(quickInfoCmd, jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
 }
 
 func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {

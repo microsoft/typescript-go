@@ -17,6 +17,10 @@ import pc from "picocolors";
 import tmp from "tmp";
 import which from "which";
 
+if (process.platform === "win32") {
+    process.chdir(fs.realpathSync.native(process.cwd()));
+}
+
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
@@ -851,6 +855,23 @@ export const checkFormat = task({
     description: "Checks that the repo is formatted.",
     run: async () => {
         await $`dprint check`;
+    },
+});
+
+const scriptTsconfigs = [
+    "./_scripts/tsconfig.json",
+    "./internal/fourslash/_scripts/tsconfig.json",
+    "./internal/lsp/lsproto/_generate/tsconfig.json",
+];
+
+export const checkScripts = task({
+    name: "check:scripts",
+    description: "Type-checks TypeScript scripts.",
+    run: async () => {
+        for (const tsconfig of scriptTsconfigs) {
+            console.log(`Type-checking ${tsconfig}`);
+            await $`tsc -p ${tsconfig}`;
+        }
     },
 });
 
