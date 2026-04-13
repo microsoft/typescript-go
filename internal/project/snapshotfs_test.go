@@ -1045,7 +1045,8 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 		)
 
 		// Simulate deletion of index.d.ts from the disk file cache.
-		if entry, ok := builder2.diskFiles.Load(tspath.Path("/project/node_modules/mylib/index.d.ts")); ok {
+		var entry *dirty.SyncMapEntry[tspath.Path, *diskFile]
+		if entry, ok = builder2.diskFiles.Load(tspath.Path("/project/node_modules/mylib/index.d.ts")); ok {
 			entry.Delete()
 		}
 
