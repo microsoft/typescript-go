@@ -22,8 +22,8 @@ import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
-import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
+import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerSourceDefinitionFeature } from "./languageFeatures/sourceDefinition";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import * as tr from "./telemetryReporting";
