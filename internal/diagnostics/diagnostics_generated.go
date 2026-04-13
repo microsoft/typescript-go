@@ -558,7 +558,7 @@ var Class_constructor_may_not_be_an_accessor = &Message{code: 1341, category: Ca
 
 var The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_node18_node20_or_nodenext = &Message{code: 1343, category: CategoryError, key: "The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system__1343", text: "The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'."}
 
-var A_label_is_not_allowed_here = &Message{code: 1344, category: CategoryError, key: "A_label_is_not_allowed_here_1344", text: "'A label is not allowed here."}
+var A_label_is_not_allowed_here = &Message{code: 1344, category: CategoryError, key: "A_label_is_not_allowed_here_1344", text: "A label is not allowed here."}
 
 var An_expression_of_type_void_cannot_be_tested_for_truthiness = &Message{code: 1345, category: CategoryError, key: "An_expression_of_type_void_cannot_be_tested_for_truthiness_1345", text: "An expression of type 'void' cannot be tested for truthiness."}
 
@@ -4297,6 +4297,14 @@ var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_10
 var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_types_for_0_100013", text: "Installing types for '{0}'"}
 
 var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
+
+var Fix_All = &Message{code: 100015, category: CategoryMessage, key: "Fix_All_100015", text: "Fix All"}
+
+var Organize_Imports = &Message{code: 100016, category: CategoryMessage, key: "Organize_Imports_100016", text: "Organize Imports"}
+
+var Remove_Unused_Imports = &Message{code: 100017, category: CategoryMessage, key: "Remove_Unused_Imports_100017", text: "Remove Unused Imports"}
+
+var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_Imports_100018", text: "Sort Imports"}
 
 var Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2 = &Message{code: 110001, category: CategoryError, key: "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_110001", text: "Your application tried to access '{0}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{0}' isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}"}
 
@@ -8612,6 +8620,14 @@ func keyToMessage(key Key) *Message {
 		return Installing_types_for_0
 	case "Project_0_100014":
 		return Project_0
+	case "Fix_All_100015":
+		return Fix_All
+	case "Organize_Imports_100016":
+		return Organize_Imports
+	case "Remove_Unused_Imports_100017":
+		return Remove_Unused_Imports
+	case "Sort_Imports_100018":
+		return Sort_Imports
 	case "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_110001":
 		return Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2
 	case "_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_run_110002":

@@ -521,6 +521,9 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 		return
 	}
 	for _, childConfig := range children {
+		if childConfig == nil {
+			continue
+		}
 		wg.Queue(func() {
 			if !projectTreeRequest.IsAllProjects() && program.RangeResolvedProjectReferenceInChildConfig(
 				childConfig,
