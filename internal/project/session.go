@@ -69,6 +69,7 @@ type SessionInit struct {
 	Logger        logging.Logger
 	NpmExecutor   ata.NpmExecutor
 	ParseCache    *ParseCache
+	PnpApi *pnp.PnpApi
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -211,6 +212,7 @@ func NewSession(init *SessionInit) *Session {
 				},
 			),
 			toPath,
+			init.PnpApi,
 		),
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
