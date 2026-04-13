@@ -34,11 +34,40 @@ func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	}
 	r := b.reuseNode(node)
 	if r != nil {
+		// After successful reuse during hover, probe the reused AST for expandable
+		// type references so canIncreaseExpansionDepth is set even though
+		// typeToTypeNode (and shouldExpandType) were never called.
+		if b.ctx.maxExpansionDepth >= 0 && !b.ctx.canIncreaseExpansionDepth {
+			b.walkNodeForExpandability(node)
+		}
 		return r
 	}
 	b.ctx.tracker.ReportInferenceFallback(node)
 	t := b.getTypeFromTypeNode(node, false)
 	return b.typeToTypeNode(t)
+}
+
+// walkNodeForExpandability walks a reused AST node tree, calling checkTypeExpandability
+// on each type reference, type predicate, or import type node.
+// Short-circuits once canIncreaseExpansionDepth is set.
+func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
+	if b.ctx.canIncreaseExpansionDepth || node == nil {
+		return
+	}
+	// Check these explicitly so we look into type arguments wehther or not they are in the tree or not.
+	if ast.IsTypeReferenceNode(node) || ast.IsExpressionWithTypeArguments(node) || ast.IsTypePredicateNode(node) || ast.IsImportTypeNode(node) {
+		t := b.getTypeFromTypeNode(node, false)
+		if t != nil {
+			b.checkTypeExpandability(t)
+			if b.ctx.canIncreaseExpansionDepth {
+				return
+			}
+		}
+	}
+	node.ForEachChild(func(child *ast.Node) bool {
+		b.walkNodeForExpandability(child)
+		return b.ctx.canIncreaseExpansionDepth
+	})
 }
 
 type recoveryBoundary struct {
@@ -334,11 +363,12 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		return b.setTextRange(b.f.UpdateIndexedAccessTypeNode(node.AsIndexedAccessTypeNode(), resultObjectType, visitor.VisitNode(node.AsIndexedAccessTypeNode().IndexType)), node)
 	}
 	tryVisitKeyOf := func(node *ast.Node) *ast.Node {
-		t := tryVisitSimpleTypeNode(node.AsTypeOperatorNode().Type)
+		to := node.AsTypeOperatorNode()
+		t := tryVisitSimpleTypeNode(to.Type)
 		if t == nil {
 			return nil
 		}
-		return b.setTextRange(b.f.UpdateTypeOperatorNode(node.AsTypeOperatorNode(), t), node)
+		return b.setTextRange(b.f.UpdateTypeOperatorNode(to, to.Operator, t), node)
 	}
 	tryVisitTypeQuery := func(node *ast.Node) *ast.Node {
 		introducesError, exprName, _ := trackExistingEntityName(node.AsTypeQueryNode().ExprName, nil)
@@ -495,12 +525,12 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if ast.IsTypeParameterDeclaration(node) {
 			_, newName, _ := trackExistingEntityName(node.Name(), nil)
 			return factory.UpdateTypeParameterDeclaration(
-				node.AsTypeParameter(),
+				node.AsTypeParameterDeclaration(),
 				visitor.VisitModifiers(node.Modifiers()),
 				newName,
-				visitor.VisitNode(node.AsTypeParameter().Constraint),
-				visitor.VisitNode(node.AsTypeParameter().Expression),
-				visitor.VisitNode(node.AsTypeParameter().DefaultType),
+				visitor.VisitNode(node.AsTypeParameterDeclaration().Constraint),
+				visitor.VisitNode(node.AsTypeParameterDeclaration().Expression),
+				visitor.VisitNode(node.AsTypeParameterDeclaration().DefaultType),
 			)
 		}
 		if ast.IsIndexedAccessTypeNode(node) {
@@ -592,7 +622,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return nil
 			}
 		}
-		if (ast.IsFunctionLike(node) && node.Type() == nil) || (ast.IsPropertyDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsPropertySignatureDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsParameter(node) && node.Type() == nil && node.Initializer() == nil) {
+		if (ast.IsFunctionLike(node) && node.Type() == nil) || (ast.IsPropertyDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsPropertySignatureDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsParameterDeclaration(node) && node.Type() == nil && node.Initializer() == nil) {
 			visited := visitor.VisitEachChild(node)
 			if visited == node {
 				visited = b.setTextRange(node.Clone(factory), node)

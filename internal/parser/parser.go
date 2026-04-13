@@ -85,8 +85,8 @@ type Parser struct {
 	identifiers                map[string]string
 	identifierCount            int
 	notParenthesizedArrow      collections.Set[int]
-	nodeSlicePool              core.Pool[*ast.Node]
-	stringSlicePool            core.Pool[string]
+	nodeSliceArena             core.Arena[*ast.Node]
+	stringSliceArena           core.Arena[string]
 	jsdocInfos                 []JSDocInfo
 	possibleAwaitSpans         []int
 	jsdocCommentsSpace         []string
@@ -635,7 +635,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	}
 	p.reparseList = outerReparseList
 	p.parsingContexts = saveParsingContexts
-	return p.nodeSlicePool.Clone(list)
+	return p.nodeSliceArena.Clone(list)
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
@@ -699,7 +699,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSliceArena.Clone(list))
 }
 
 // Return a non-nil (but possibly empty) NodeList if parsing was successful, a missing NodeList if the opening
@@ -1534,8 +1534,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	if hasParen {
 		jsdoc &^= jsdocScannerInfoHasJSDoc
 	}
-	jsdocs := p.withJSDoc(result, jsdoc)
-	p.reparseCommonJS(result, jsdocs)
+	p.withJSDoc(result, jsdoc)
 	return result
 }
 
@@ -1588,7 +1587,7 @@ func (p *Parser) parseVariableDeclarationList(inForStatementInitializer bool) *a
 		declarations = p.parseDelimitedList(PCVariableDeclarations, core.IfElse(inForStatementInitializer, (*Parser).parseVariableDeclaration, (*Parser).parseVariableDeclarationAllowExclamation))
 		p.contextFlags = saveContextFlags
 	}
-	result := p.finishNode(p.factory.NewVariableDeclarationList(flags, declarations), pos)
+	result := p.finishNode(p.factory.NewVariableDeclarationList(declarations, flags), pos)
 	return result
 }
 
@@ -2215,7 +2214,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, jsdoc jsdocScannerIn
 		implicitExport := p.factory.NewModifier(ast.KindExportKeyword)
 		implicitExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 		implicitExport.Flags = ast.NodeFlagsReparsed
-		implicitModifiers := p.newModifierList(implicitExport.Loc, p.nodeSlicePool.NewSlice1(implicitExport))
+		implicitModifiers := p.newModifierList(implicitExport.Loc, p.nodeSliceArena.NewSlice1(implicitExport))
 		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), 0 /*jsdoc*/, implicitModifiers, true /*nested*/, keyword)
 	} else {
 		body = p.parseModuleBlock()
@@ -2653,7 +2652,7 @@ func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituen
 		for p.parseOptional(operator) {
 			types = append(types, p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType))
 		}
-		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(types)))
+		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSliceArena.Clone(types)))
 		p.finishNode(typeNode, pos)
 	}
 	return typeNode
@@ -2697,7 +2696,7 @@ func (p *Parser) parseTypeParameterOfInferType() *ast.Node {
 	pos := p.nodePos()
 	name := p.parseIdentifier()
 	constraint := p.tryParseConstraintOfInferType()
-	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, constraint, nil /*defaultType*/), pos)
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, constraint, nil /*expression*/, nil /*defaultType*/), pos)
 }
 
 func (p *Parser) tryParseConstraintOfInferType() *ast.Node {
@@ -3168,7 +3167,7 @@ func (p *Parser) parseMappedTypeParameter() *ast.Node {
 	name := p.parseIdentifierName()
 	p.parseExpected(ast.KindInKeyword)
 	typeNode := p.parseType()
-	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, typeNode, nil /*defaultType*/), pos)
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, typeNode, nil /*expression*/, nil /*defaultType*/), pos)
 }
 
 func (p *Parser) parseTypeMember() *ast.Node {
@@ -3254,8 +3253,7 @@ func (p *Parser) parseTypeParameter() *ast.Node {
 	if p.parseOptional(ast.KindEqualsToken) {
 		defaultType = p.parseType()
 	}
-	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType)
-	result.AsTypeParameter().Expression = expression
+	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, expression, defaultType)
 	return p.finishNode(result, pos)
 }
 
@@ -3370,7 +3368,7 @@ func (p *Parser) parseNameOfParameter(modifiers *ast.ModifierList) *ast.Node {
 		// function foo(static)
 		// isParameter('static') == true, because of isModifier('static')
 		// however 'static' is not a legal identifier in a strict mode.
-		// so result of this function will be ParameterDeclaration (flags = 0, name = missing, type = undefined, initializer = undefined)
+		// so result of this function will be Parameter (flags = 0, name = missing, type = undefined, initializer = undefined)
 		// and current token will not change => parsing of the enclosing parameter list will last till the end of time (or OOM)
 		// to avoid this we'll advance cursor to the next token.
 		p.nextToken()
@@ -3800,7 +3798,7 @@ func (p *Parser) parseModifiersForConstructorType() *ast.ModifierList {
 		modifier := p.factory.NewModifier(p.token)
 		p.nextToken()
 		p.finishNode(modifier, pos)
-		return p.newModifierList(modifier.Loc, p.nodeSlicePool.NewSlice1(modifier))
+		return p.newModifierList(modifier.Loc, p.nodeSliceArena.NewSlice1(modifier))
 	}
 	return nil
 }
@@ -3892,7 +3890,7 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 		}
 	}
 	if len(list) != 0 {
-		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
+		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), p.nodeSliceArena.Clone(list))
 	}
 	return nil
 }
@@ -4442,7 +4440,7 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 		pos := p.nodePos()
 		p.nextToken()
 		modifier := p.finishNode(p.factory.NewModifier(ast.KindAsyncKeyword), pos)
-		return p.newModifierList(modifier.Loc, p.nodeSlicePool.NewSlice1(modifier))
+		return p.newModifierList(modifier.Loc, p.nodeSliceArena.NewSlice1(modifier))
 	}
 	return nil
 }
@@ -4451,7 +4449,7 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	switch node.Kind {
 	case ast.KindTypeReference:
-		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
+		return ast.NodeIsMissing(node.AsTypeReferenceNode().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
 		return isMissingNodeList(node.FunctionLikeData().Parameters) || typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:

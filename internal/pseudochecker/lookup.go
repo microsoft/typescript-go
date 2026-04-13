@@ -45,18 +45,12 @@ func (ch *PseudoChecker) GetTypeOfDeclaration(node *ast.Node) *PseudoType {
 		return ch.typeFromProperty(node)
 	case ast.KindBindingElement:
 		return NewPseudoTypeNoResult(node)
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		return ch.typeFromExpression(node.AsExportAssignment().Expression)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindBinaryExpression:
 		return ch.typeFromExpandoProperty(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
 		return ch.typeFromPropertyAssignment(node)
-	case ast.KindCommonJSExport:
-		t := node.AsCommonJSExport().Type
-		if t != nil {
-			return NewPseudoTypeDirect(t)
-		}
-		return ch.typeFromExpression(node.AsCommonJSExport().Initializer)
 	case ast.KindCallExpression:
 		switch ast.GetAssignmentDeclarationKind(node) {
 		// TODO: How much of the checker's getTypeFromPropertyDescriptor is worth trying to emulate over ASTs?
@@ -196,7 +190,7 @@ func (ch *PseudoChecker) getTypeAnnotationFromAccessor(node *ast.Node) *ast.Node
 		return nil
 	}
 	p := set.Parameters.Nodes[0]
-	if !ast.IsParameter(p) {
+	if !ast.IsParameterDeclaration(p) {
 		return nil
 	}
 	return p.AsParameterDeclaration().Type
@@ -544,7 +538,7 @@ func (ch *PseudoChecker) cloneTypeParameters(nodes *ast.NodeList) []*ast.TypePar
 	}
 	result := make([]*ast.TypeParameterDeclaration, 0, len(nodes.Nodes))
 	for _, e := range nodes.Nodes {
-		result = append(result, e.AsTypeParameter())
+		result = append(result, e.AsTypeParameterDeclaration())
 	}
 	return result
 }

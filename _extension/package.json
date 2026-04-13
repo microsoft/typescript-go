@@ -13,6 +13,7 @@
         "url": "https://github.com/microsoft/typescript-go"
     },
     "enabledApiProposals": [
+        "editorHoverVerbosityLevel",
         "multiDocumentHighlightProvider"
     ],
     "engines": {
