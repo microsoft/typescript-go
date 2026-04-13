@@ -123,7 +123,6 @@ func (h *SessionUtils) FS() vfs.FS {
 // a base URI. On case-insensitive file systems the paths in glob patterns are
 // lowercased, so callers should pass the lowercased path.
 func (h *SessionUtils) WatchesFile(filePath string) bool {
-	fileUri := "file://" + filePath
 	for _, call := range h.client.WatchFilesCalls() {
 		for _, watcher := range call.Watchers {
 			if watcher.GlobPattern.Pattern != nil {
@@ -131,9 +130,17 @@ func (h *SessionUtils) WatchesFile(filePath string) bool {
 					return true
 				}
 			} else if watcher.GlobPattern.RelativePattern != nil {
-				baseUri := string(*watcher.GlobPattern.RelativePattern.BaseUri.URI)
-				if strings.HasPrefix(fileUri, baseUri) {
-					return true
+				rp := watcher.GlobPattern.RelativePattern
+				baseUri := string(*rp.BaseUri.URI)
+				// Convert base URI (e.g. "file:///home/projects") to a directory path
+				// with trailing separator for proper prefix matching on path boundaries.
+				baseDir := lsproto.DocumentUri(baseUri).FileName()
+				baseDir = tspath.EnsureTrailingDirectorySeparator(baseDir)
+				if strings.HasPrefix(filePath, baseDir) {
+					relativePath := filePath[len(baseDir):]
+					if g, err := glob.Parse(rp.Pattern); err == nil && g.Match(relativePath) {
+						return true
+					}
 				}
 			}
 		}

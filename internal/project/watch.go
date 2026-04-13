@@ -188,6 +188,7 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 		hasRelativePatternCapability: w.hasRelativePatternCapability,
 		computeGlobPatterns:          w.computeGlobPatterns,
 		workspaceWatchers:            w.workspaceWatchers,
+		outsideWorkspaceWatchers:     w.outsideWorkspaceWatchers,
 		input:                        input,
 	}
 }

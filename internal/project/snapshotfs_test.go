@@ -1324,4 +1324,61 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 		_, ok = snapshot2.nodeModulesRealpathAliases[tspath.Path("/packages/other/package.json")]
 		assert.Assert(t, ok, "snapshot2 should have other alias")
 	})
+
+	t.Run("adding symlink to inherited realpath key does not mutate previous snapshot", func(t *testing.T) {
+		t.Parallel()
+		testFS := vfstest.FromMap(map[string]any{
+			"/project/node_modules/mylib":  vfstest.Symlink("/packages/mylib"),
+			"/project/node_modules/alias":  vfstest.Symlink("/packages/mylib"),
+			"/packages/mylib/package.json": `{"name": "mylib"}`,
+		}, false)
+
+		// Snapshot 1: read via one symlink only.
+		builder1 := newSnapshotFSBuilder(
+			testFS,
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*diskFile),
+			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
+			nil,
+			lsproto.PositionEncodingKindUTF16,
+			toPath,
+		)
+		builder1.GetFile("/project/node_modules/mylib/package.json")
+		snapshot1, _ := builder1.Finalize()
+
+		// Verify snapshot1 has exactly one alias for the realpath.
+		aliases1, ok := snapshot1.nodeModulesRealpathAliases[tspath.Path("/packages/mylib/package.json")]
+		assert.Assert(t, ok)
+		assert.Equal(t, aliases1.paths.Len(), 1)
+		assert.Assert(t, aliases1.paths.Has(tspath.Path("/project/node_modules/mylib/package.json")))
+
+		// Snapshot 2: read via the SECOND symlink, which maps to the same realpath.
+		// This exercises the case where LoadOrStore finds the key in the base map
+		// and must clone-on-write rather than mutating the shared set.
+		builder2 := newSnapshotFSBuilder(
+			testFS,
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*Overlay),
+			snapshot1.diskFiles,
+			snapshot1.diskDirectories,
+			snapshot1.nodeModulesRealpathAliases,
+			lsproto.PositionEncodingKindUTF16,
+			toPath,
+		)
+		builder2.GetFile("/project/node_modules/alias/package.json")
+		snapshot2, _ := builder2.Finalize()
+
+		// Snapshot 2 should have both symlinks.
+		aliases2, ok := snapshot2.nodeModulesRealpathAliases[tspath.Path("/packages/mylib/package.json")]
+		assert.Assert(t, ok)
+		assert.Equal(t, aliases2.paths.Len(), 2)
+		assert.Assert(t, aliases2.paths.Has(tspath.Path("/project/node_modules/mylib/package.json")))
+		assert.Assert(t, aliases2.paths.Has(tspath.Path("/project/node_modules/alias/package.json")))
+
+		// Snapshot 1 must NOT have been mutated — it should still have only one alias.
+		assert.Equal(t, aliases1.paths.Len(), 1, "snapshot1 alias set must not be mutated by snapshot2")
+		assert.Assert(t, !aliases1.paths.Has(tspath.Path("/project/node_modules/alias/package.json")),
+			"snapshot1 must not contain alias added in snapshot2")
+	})
 }

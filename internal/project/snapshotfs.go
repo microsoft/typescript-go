@@ -345,7 +345,9 @@ func (s *snapshotFSBuilder) recordRealpathAlias(fileName string, symlinkPath tsp
 	realpathPath := s.toPath(realpath)
 	if realpathPath != symlinkPath {
 		entry, _ := s.nodeModulesRealpathAliases.LoadOrStore(realpathPath, &realpathAliasSet{})
-		entry.Value().Add(symlinkPath)
+		entry.Change(func(aliasSet *realpathAliasSet) {
+			aliasSet.Add(symlinkPath)
+		})
 	}
 }
 
