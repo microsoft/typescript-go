@@ -192,7 +192,7 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 		newLine = "\n"
 	}
 	writer := printer.NewTextWriter(newLine, 0)
-	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
+	noTruncation := ((vc == nil || vc.MaxTruncationLength == 0) && c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
