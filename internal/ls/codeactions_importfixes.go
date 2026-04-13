@@ -212,44 +212,7 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 	if view == nil {
 		view = fixContext.LS.getCurrentAutoImportView(fixContext.SourceFile)
 	}
-	info = dedupeExactFixInfos(info)
 	return sortFixInfo(info, fixContext, view), nil
-}
-
-func dedupeExactFixInfos(fixes []*fixInfo) []*fixInfo {
-	if len(fixes) < 2 {
-		return fixes
-	}
-
-	type key struct {
-		symbolName      string
-		fixKind         lsproto.AutoImportFixKind
-		importKind      lsproto.ImportKind
-		addAsTypeOnly   lsproto.AddAsTypeOnly
-		name            string
-		moduleSpecifier string
-		useRequire      bool
-	}
-
-	seen := make(map[key]struct{}, len(fixes))
-	result := make([]*fixInfo, 0, len(fixes))
-	for _, info := range fixes {
-		k := key{
-			symbolName:      info.symbolName,
-			fixKind:         info.fix.Kind,
-			importKind:      info.fix.ImportKind,
-			addAsTypeOnly:   info.fix.AddAsTypeOnly,
-			name:            info.fix.Name,
-			moduleSpecifier: info.fix.ModuleSpecifier,
-			useRequire:      info.fix.UseRequire,
-		}
-		if _, ok := seen[k]; ok {
-			continue
-		}
-		seen[k] = struct{}{}
-		result = append(result, info)
-	}
-	return result
 }
 
 func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, token *ast.Node, view *autoimport.View) []*fixInfo {
