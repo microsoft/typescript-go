@@ -289,6 +289,10 @@ loop:
 			lastSelfReferenceLocation = location
 		}
 		lastLocation = location
+		// !!! In Strada, JSDocTemplateTag/JSDocParameterTag/JSDocReturnTag locations skip to
+		// getEffectiveContainerForJSDocTemplateTag/getHostSignatureFromJSDoc instead of location.parent.
+		// This is a no-op currently because JSDoc nodes have no locals and getEffectiveJSDocHost is not
+		// fully ported for JS assignment patterns.
 		location = location.Parent
 	}
 	// We just climbed up parents looking for the name, meaning that we started in a descendant node of `lastLocation`.
