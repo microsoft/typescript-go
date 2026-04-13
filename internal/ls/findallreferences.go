@@ -348,8 +348,8 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
 	return core.FirstNonNil(symbol.Declarations, func(decl *ast.Node) *ast.Symbol {
 		if decl.Parent == nil {
-			// Ignore UMD module and global merge
-			if symbol.Flags&ast.SymbolFlagsTransient != 0 {
+			// Ignore UMD module and global merge and CJS module end exports symbols
+			if symbol.Flags&(ast.SymbolFlagsTransient|ast.SymbolFlagsModuleExports) != 0 {
 				return nil
 			}
 			// Assertions for GH#21814. We should be handling SourceFile symbols in `getReferencedSymbolsForModule` instead of getting here.

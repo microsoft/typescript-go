@@ -1432,7 +1432,6 @@ func (c *Checker) createNameResolver() *binder.NameResolver {
 		Globals:                          c.globals,
 		ArgumentsSymbol:                  c.argumentsSymbol,
 		RequireSymbol:                    c.requireSymbol,
-		GetModuleSymbol:                  c.getModuleSymbol,
 		Lookup:                           c.getSymbol,
 		SymbolReferenced:                 c.symbolReferenced,
 		SetRequiresScopeChangeCache:      c.setRequiresScopeChangeCache,
@@ -1451,30 +1450,11 @@ func (c *Checker) createNameResolverForSuggestion() *binder.NameResolver {
 		Globals:                     c.globals,
 		ArgumentsSymbol:             c.argumentsSymbol,
 		RequireSymbol:               c.requireSymbol,
-		GetModuleSymbol:             c.getModuleSymbol,
 		Lookup:                      c.getSuggestionForSymbolNameLookup,
 		SymbolReferenced:            c.symbolReferenced,
 		SetRequiresScopeChangeCache: c.setRequiresScopeChangeCache,
 		GetRequiresScopeChangeCache: c.getRequiresScopeChangeCache,
 	}
-}
-
-func (c *Checker) getModuleSymbol(sourceFile *ast.Node) *ast.Symbol {
-	if cached, ok := c.moduleSymbols[sourceFile]; ok {
-		return cached
-	}
-	result := c.newSymbol(ast.SymbolFlagsModuleExports|ast.SymbolFlagsFunctionScopedVariable, "module")
-	result.Declarations = []*ast.Node{sourceFile}
-	result.ValueDeclaration = sourceFile
-	exportsSymbol := c.newSymbol(ast.SymbolFlagsModuleExports|ast.SymbolFlagsProperty, "exports")
-	exportsSymbol.Declarations = result.Declarations
-	exportsSymbol.ValueDeclaration = result.ValueDeclaration
-	exportsSymbol.Parent = result
-	members := make(ast.SymbolTable, 1)
-	members["exports"] = exportsSymbol
-	c.valueSymbolLinks.Get(result).resolvedType = c.newAnonymousType(result, members, nil, nil, nil)
-	c.moduleSymbols[sourceFile] = result
-	return result
 }
 
 func (c *Checker) symbolReferenced(symbol *ast.Symbol, meaning ast.SymbolFlags) {
@@ -6966,7 +6946,8 @@ func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
 	for _, local := range node.Locals() {
 		referenceKinds := c.symbolReferenceLinks.Get(local).referenceKinds
 		if local.Flags&ast.SymbolFlagsTypeParameter != 0 && (local.Flags&ast.SymbolFlagsVariable == 0 || referenceKinds&ast.SymbolFlagsVariable != 0) ||
-			local.Flags&ast.SymbolFlagsTypeParameter == 0 && (referenceKinds != 0 || local.ExportSymbol != nil) {
+			local.Flags&ast.SymbolFlagsTypeParameter == 0 && (referenceKinds != 0 || local.ExportSymbol != nil ||
+				local.Flags&ast.SymbolFlagsModuleExports != 0) {
 			continue
 		}
 		for _, declaration := range local.Declarations {
@@ -11661,7 +11642,7 @@ func (c *Checker) getContextualThisParameterType(fn *ast.Node) *Type {
 				// Don't contextually type `this` as `exports` in `exports.Point = function(x, y) { this.x = x; this.y = y; }`
 				if inJs && ast.IsIdentifier(expression) {
 					sourceFile := ast.GetSourceFileOfNode(parent)
-					if sourceFile.CommonJSModuleIndicator != nil && c.getResolvedSymbol(expression) == sourceFile.Symbol {
+					if sourceFile.CommonJSModuleIndicator != nil && c.getResolvedSymbol(expression).Flags&ast.SymbolFlagsModuleExports != 0 {
 						return nil
 					}
 				}
@@ -16094,7 +16075,10 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		return c.reportCircularityError(symbol)
 	}
 	if symbol.Flags&ast.SymbolFlagsModuleExports != 0 {
-		return c.getTypeOfSymbol(c.resolveExternalModuleSymbol(symbol.ValueDeclaration.Symbol(), false /*dontResolveAlias*/))
+		if symbol.Name == "exports" {
+			return c.getTypeOfSymbol(c.resolveExternalModuleSymbol(symbol.ValueDeclaration.Symbol(), false /*dontResolveAlias*/))
+		}
+		return c.newAnonymousType(symbol, symbol.Members, nil, nil, nil)
 	}
 	var result *Type
 	switch declaration.Kind {
@@ -17605,7 +17589,7 @@ func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type 
 	if ast.IsBinaryExpression(node) {
 		switch ast.GetAssignmentDeclarationKind(node) {
 		case ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty:
-			return c.getRegularTypeOfLiteralType(c.checkExpressionCached(node.AsBinaryExpression().Right))
+			return c.getRegularTypeOfLiteralType(c.checkExpressionCached(ast.GetRightMostAssignedExpression(node)))
 		}
 		return c.checkExpressionForMutableLocation(node.AsBinaryExpression().Right, CheckModeNormal)
 	}
@@ -28860,9 +28844,11 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand
 		// unless it's an assignment declaration.
-		kind := ast.GetAssignmentDeclarationKind(binary.AsNode())
-		if node == binary.Right && !((kind == ast.JSDeclarationKindModuleExports || kind == ast.JSDeclarationKindExportsProperty) && binary.Symbol != nil) {
-			return c.getContextualTypeForAssignmentExpression(binary)
+		if node == binary.Right {
+			target := ast.GetLeftmostExpression(binary.Left, false)
+			if !(ast.IsIdentifier(target) && c.getResolvedSymbol(target).Flags&ast.SymbolFlagsModuleExports != 0) {
+				return c.getContextualTypeForAssignmentExpression(binary)
+			}
 		}
 	case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
 		// When an || expression has a contextual type, the operands are contextually typed by that type, except
@@ -30822,14 +30808,6 @@ func (c *Checker) getIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast.Symbol {
 	if ast.IsDeclarationName(name) {
 		return c.getSymbolOfNode(name.Parent)
-	}
-	if ast.IsInJSFile(name) && ast.IsPropertyAccessExpression(name.Parent) && ast.IsBinaryExpression(name.Parent.Parent) &&
-		name == name.Parent.Name() && name.Parent == name.Parent.Parent.AsBinaryExpression().Left &&
-		ast.GetAssignmentDeclarationKind(name.Parent.Parent) == ast.JSDeclarationKindModuleExports {
-		// For a reference to `exports` in `module.exports = ...` we obtain the `export=` symbol
-		if symbol := c.getSymbolOfNode(name.Parent.Parent); symbol != nil {
-			return symbol
-		}
 	}
 	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression

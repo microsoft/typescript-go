@@ -1614,6 +1614,10 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 				b.bindBlockScopedDeclaration(statement, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
 			}
 		}
+		if b.file.CommonJSModuleIndicator != nil {
+			b.declareCommonJSVariable("module")
+			b.declareCommonJSVariable("exports")
+		}
 	}
 	if ast.IsSourceFile(node) && ast.IsExternalOrCommonJSModule(node.AsSourceFile()) || ast.IsAmbientModule(node) {
 		b.bindCommonJSTypeExports(node.Symbol())
@@ -1621,6 +1625,24 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 	b.container = saveContainer
 	b.thisContainer = saveThisContainer
 	b.blockScopeContainer = savedBlockScopeContainer
+}
+
+func (b *Binder) declareCommonJSVariable(name string) {
+	locals := ast.GetLocals(b.file.AsNode())
+	if locals[name] == nil {
+		symbol := b.newSymbol(ast.SymbolFlagsFunctionScopedVariable|ast.SymbolFlagsModuleExports, name)
+		symbol.Declarations = b.newSingleDeclaration(b.file.AsNode())
+		symbol.ValueDeclaration = symbol.Declarations[0]
+		if name == "module" {
+			exportsProperty := b.newSymbol(ast.SymbolFlagsModuleExports|ast.SymbolFlagsProperty, "exports")
+			exportsProperty.Declarations = symbol.Declarations
+			exportsProperty.ValueDeclaration = symbol.ValueDeclaration
+			exportsProperty.Parent = symbol
+			symbol.Members = make(ast.SymbolTable, 1)
+			symbol.Members["exports"] = exportsProperty
+		}
+		locals[name] = symbol
+	}
 }
 
 func (b *Binder) bindChildren(node *ast.Node) {

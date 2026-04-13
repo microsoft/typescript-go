@@ -1486,7 +1486,7 @@ type JSDeclarationKind int
 
 const (
 	JSDeclarationKindNone JSDeclarationKind = iota
-	// module.exports = expr
+	// module.exports = expr, except for module.exports = exports
 	JSDeclarationKindModuleExports
 	// exports.name = expr
 	// module.exports.name = expr
@@ -1510,7 +1510,7 @@ func GetAssignmentDeclarationKind(node *Node) JSDeclarationKind {
 		bin := node.AsBinaryExpression()
 		if bin.OperatorToken.Kind == KindEqualsToken && IsAccessExpression(bin.Left) {
 			if IsInJSFile(bin.Left) {
-				if IsModuleExportsAccessExpression(bin.Left) {
+				if IsModuleExportsAccessExpression(bin.Left) && !IsExportsIdentifier(bin.Right) {
 					return JSDeclarationKindModuleExports
 				}
 				if (IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
