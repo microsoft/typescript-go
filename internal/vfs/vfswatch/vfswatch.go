@@ -164,14 +164,14 @@ func hashEntries(entries vfs.Entries) uint64 {
 	slices.Sort(files)
 	var h xxh3.Hasher
 	for _, name := range dirs {
-		h.WriteString("d:")
-		h.WriteString(name)
-		h.Write([]byte{0})
+		_, _ = h.WriteString("d:")
+		_, _ = h.WriteString(name)
+		_, _ = h.Write([]byte{0})
 	}
 	for _, name := range files {
-		h.WriteString("f:")
-		h.WriteString(name)
-		h.Write([]byte{0})
+		_, _ = h.WriteString("f:")
+		_, _ = h.WriteString(name)
+		_, _ = h.Write([]byte{0})
 	}
 	return h.Sum64()
 }
