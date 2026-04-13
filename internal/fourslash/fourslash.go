@@ -349,7 +349,8 @@ var (
 		LinkSupport: ptrTrue,
 	}
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
-		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+		ContentFormat:  &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+		VerbosityLevel: ptrTrue,
 	}
 	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
 		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
@@ -2463,13 +2464,16 @@ func (f *FourslashTest) VerifyBaselineHoverWithVerbosity(t *testing.T, verbosity
 			levels = []int{0}
 		}
 		for i, level := range levels {
-			verbLevel := int32(level)
+			var verbLevel *int32
+			if level > 0 {
+				verbLevel = new(int32(level))
+			}
 			params := &lsproto.HoverParams{
 				TextDocument: lsproto.TextDocumentIdentifier{
 					Uri: lsconv.FileNameToDocumentURI(marker.fileName),
 				},
 				Position:       marker.LSPosition,
-				VerbosityLevel: &verbLevel,
+				VerbosityLevel: verbLevel,
 			}
 			result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
 			item := &hoverWithVerbosity{

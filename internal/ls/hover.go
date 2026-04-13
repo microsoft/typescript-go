@@ -76,8 +76,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 		Range: &hoverRange,
 	}
 
-	// Only report canIncreaseVerbosity when the client explicitly requested a verbosity level.
-	if params.VerbosityLevel != nil {
+	if caps.TextDocument.Hover.VerbosityLevel {
 		hover.CanIncreaseVerbosity = vc.CanIncreaseVerbosity && !vc.Truncated
 	}
 

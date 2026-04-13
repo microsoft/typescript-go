@@ -333,7 +333,8 @@
           "line": 4,
           "character": 33
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -387,7 +388,8 @@
           "line": 5,
           "character": 12
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
