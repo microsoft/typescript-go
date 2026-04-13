@@ -62,6 +62,7 @@ type FourslashTest struct {
 	activeFilename          string
 	selectionEnd            *lsproto.Position
 
+	capabilities   *lsproto.ClientCapabilities
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
 }
 
@@ -310,6 +311,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
+	f.capabilities = params.Capabilities
 	resp, _, ok := lsptestutil.SendRequest(t, f.client, lsproto.InitializeInfo, params)
 	if !ok {
 		t.Fatalf("Initialize request failed")
@@ -4156,7 +4158,17 @@ func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.Rena
 				NewUri: string(renameFile.NewUri),
 			})
 		}
-		f.willRenameFilesWorker(t, fileRenames...)
+		if f.capabilities != nil &&
+			f.capabilities.Workspace != nil &&
+			f.capabilities.Workspace.FileOperations != nil &&
+			f.capabilities.Workspace.FileOperations.WillRename != nil &&
+			*f.capabilities.Workspace.FileOperations.WillRename {
+			f.willRenameFilesWorker(t, fileRenames...)
+		} else {
+			for _, renameFile := range renameFiles {
+				f.renameFileOrDirectory(t, renameFile.OldUri.FileName(), renameFile.NewUri.FileName())
+			}
+		}
 	}
 
 	return result
