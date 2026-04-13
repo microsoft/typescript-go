@@ -85,7 +85,8 @@ func (s *StdioServer) Run(ctx context.Context) error {
 	projectSession := project.NewSession(&project.SessionInit{
 		BackgroundCtx: ctx,
 		Logger:        nil, // TODO: Add logging support
-		FS:            fs,
+		FS:                fs,
+		PnpApi:            pnpApi,
 		Options: &project.SessionOptions{
 			CurrentDirectory:   s.options.Cwd,
 			DefaultLibraryPath: s.options.DefaultLibraryPath,

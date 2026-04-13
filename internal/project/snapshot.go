@@ -63,8 +63,8 @@ func NewSnapshot(
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
+	pnpApi *pnp.PnpApi,
 ) *Snapshot {
-	pnpApi := pnp.InitPnpApi(fs.fs, sessionOptions.CurrentDirectory)
 	if pnpApi != nil {
 		fs.fs = pnpvfs.From(fs.fs)
 	}
@@ -464,6 +464,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		autoImports,
 		autoImportsWatch,
 		s.toPath,
+		s.pnpApi,
 	)
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection
