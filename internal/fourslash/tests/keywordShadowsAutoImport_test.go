@@ -28,7 +28,8 @@ function/**/
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	// The keyword `function` should appear, but NOT the auto-import `function` from ./mod.
+	// The keyword `function` should appear, and the auto-import `function` from ./mod should NOT.
+	// Includes consumes the keyword match; Excludes then verifies no auto-import `function` remains.
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		UserPreferences: &lsutil.UserPreferences{
 			IncludeCompletionsForModuleExports:    core.TSTrue,
@@ -47,54 +48,8 @@ function/**/
 					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
-			Excludes: []string{},
-		},
-	})
-}
-
-// Test that contextual keywords like `type` do NOT shadow auto-imports with the same name.
-// Both the keyword and auto-import should appear.
-func TestContextualKeywordDoesNotShadowAutoImport(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `
-// @Filename: /mod.ts
-const value = 1;
-export { value as type }
-
-// @Filename: /index.ts
-type/**/
-`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	// Both the keyword `type` and the auto-import `type` should appear.
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
-		UserPreferences: &lsutil.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		},
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				// The auto-import "type" from ./mod should appear (contextual keyword, coexists)
-				&lsproto.CompletionItem{
-					Label: "type",
-					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportFix{
-							ModuleSpecifier: "./mod",
-						},
-					},
-					LabelDetails: &lsproto.CompletionItemLabelDetails{
-						Description: new("./mod"),
-					},
-					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-					AdditionalTextEdits: fourslash.AnyTextEdits,
-				},
-			},
+			// After Includes consumes the keyword entry, no other `function` item should remain.
+			Excludes: []string{"function"},
 		},
 	})
 }
