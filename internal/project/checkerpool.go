@@ -29,28 +29,29 @@ type CheckerPoolOptions struct {
 	IdleTimeout time.Duration
 }
 
-// checkerPool manages a set of type checkers for a project. It maintains a
-// dedicated diagnostics checker (index 0) that provides consistent walk-order
-// for diagnostic operations, plus a set of ephemeral query checkers (indices 1+)
-// for language-service operations like hover, completions, go-to-definition, etc.
+// checkerPool manages three categories of type checkers for a project:
 //
-// All checkers are created lazily and automatically disposed after an idle
-// timeout. Each pool manages its own cleanup timer, so orphaned pools (from
-// replaced programs) still clean up after themselves. The diagnostics checker
-// is separated from query checkers so that diagnostic walk order is not
-// influenced by other operations, but it is still ephemeral.
-//
-// Concurrency is managed via two buffered channels used as semaphores:
-// diagSem (capacity 1) and querySem (capacity N-1). A goroutine sends
-// a value to claim a slot, and receives to release it.
+//   - Diagnostics (index 0): A single checker for LSP diagnostics, providing
+//     consistent walk order. Idle-cleaned.
+//   - Temporary (indices 1+): Ephemeral query checkers for LSP operations.
+//     Idle-cleaned after a configurable timeout.
+//   - API: A single checker for API operations, providing stable
+//     instance identity for reference equality on type/symbol handles.
+//     Never idle-cleaned.
 type checkerPool struct {
 	opts    CheckerPoolOptions
 	program *compiler.Program
 
 	mu sync.Mutex
 
-	// checkers[0] is the dedicated diagnostics checker.
+	// discarded is set when the pool's program has been replaced. The pool
+	// remains fully functional but stops its idle-cleanup timer so that
+	// query checkers are not disposed until the pool is GC'd.
+	discarded bool
+
+	// checkers[0] is the diagnostics checker.
 	// checkers[1:] are ephemeral query checkers.
+	// All are idle-cleaned.
 	checkers            []*checker.Checker
 	heldBy              []string                // heldBy[i] is the requestID holding checker i, checkerHeldAnonymous, or "" if not held
 	fileAssociations    map[*ast.SourceFile]int // file → query checker index (1+)
@@ -63,11 +64,14 @@ type checkerPool struct {
 	// When it fires, idle checkers are disposed.
 	cleanupTimer *time.Timer
 
-	// diagSem has capacity 1 — the diagnostics checker slot.
-	// querySem has capacity opts.MaxCheckers-1 — one slot per query checker.
-	// Send to acquire a slot, receive to release it.
-	diagSem  chan struct{}
-	querySem chan struct{}
+	// persistentChecker is the API checker. It is never idle-cleaned,
+	// providing stable instance identity for API clients.
+	persistentChecker *checker.Checker
+	persistentHeld    bool
+
+	diagSem       chan struct{}
+	querySem      chan struct{}
+	persistentSem chan struct{}
 
 	log                    func(msg string)
 	globalDiagAccumulated  []*ast.Diagnostic
@@ -97,6 +101,7 @@ func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func
 		lastReleased:           make([]time.Time, opts.MaxCheckers),
 		diagSem:                make(chan struct{}, 1),
 		querySem:               make(chan struct{}, querySlots),
+		persistentSem:          make(chan struct{}, 1),
 		log:                    log,
 		globalDiagCheckerCount: make([]int, opts.MaxCheckers),
 	}
@@ -112,13 +117,17 @@ func holdTag(requestID string) string {
 }
 
 func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	purpose := core.GetCheckerPurpose(ctx)
+	lifetime := core.GetCheckerLifetime(ctx)
 	requestID := core.GetRequestID(ctx)
 
-	if purpose == core.CheckerPurposeDiagnostics {
+	switch lifetime {
+	case core.CheckerLifetimeDiagnostics:
 		return p.getDiagnosticsChecker(ctx, requestID)
+	case core.CheckerLifetimeAPI:
+		return p.getPersistentChecker()
+	default:
+		return p.getQueryChecker(ctx, requestID, file)
 	}
-	return p.getQueryChecker(ctx, requestID, file)
 }
 
 // tryReacquireForRequest checks whether the given request already has an
@@ -291,6 +300,28 @@ func (p *checkerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	panic("checkerpool: no available query slot despite holding semaphore token")
 }
 
+func (p *checkerPool) getPersistentChecker() (*checker.Checker, func()) {
+	p.persistentSem <- struct{}{}
+	p.mu.Lock()
+
+	if p.persistentChecker == nil {
+		p.log("checkerpool: Creating persistent checker")
+		c, _ := checker.NewChecker(p.program)
+		p.persistentChecker = c
+	}
+
+	c := p.persistentChecker
+	p.persistentHeld = true
+	p.mu.Unlock()
+
+	return c, sync.OnceFunc(func() {
+		p.mu.Lock()
+		p.persistentHeld = false
+		p.mu.Unlock()
+		<-p.persistentSem
+	})
+}
+
 func (p *checkerPool) createRelease(requestID string, index int, c *checker.Checker) func() {
 	return sync.OnceFunc(func() {
 		p.mu.Lock()
@@ -301,16 +332,14 @@ func (p *checkerPool) createRelease(requestID string, index int, c *checker.Chec
 			p.disposeCheckerLocked(index, c)
 		} else {
 			p.mergeGlobalDiagnosticsFromCheckerLocked(index, c)
-			if p.opts.IdleTimeout == 0 {
-				// Pool is discarded — dispose immediately instead of caching.
-				p.log(fmt.Sprintf("checkerpool: Pool discarded, disposing checker %d for request %s on release", index, holdTag(requestID)))
-				p.disposeCheckerLocked(index, c)
-			} else {
-				p.heldBy[index] = ""
-				// Track release time and schedule cleanup only for live checkers.
-				p.lastReleased[index] = time.Now()
+			p.heldBy[index] = ""
+			p.lastReleased[index] = time.Now()
+			if !p.discarded {
 				p.scheduleCleanupLocked()
 			}
+			// If discarded, skip scheduling cleanup — checkers stay alive
+			// until the pool is garbage collected so that API clients can
+			// continue resolving type/symbol handles.
 		}
 
 		// Unlock before releasing the semaphore slot. If we received from
@@ -342,9 +371,8 @@ func (p *checkerPool) registerRequestCleanup(ctx context.Context, requestID stri
 
 // scheduleCleanupLocked resets (or starts) the cleanup timer so it fires at
 // the earliest pending checker-expiration deadline among all currently idle,
-// unheld checkers. When the timer fires, it disposes any checkers that have
-// been idle long enough.
-// Must be called with p.mu held.
+// unheld checkers.
+// Must be called with p.mu held. Must NOT be called on discarded pools.
 func (p *checkerPool) scheduleCleanupLocked() {
 	var earliestDeadline time.Time
 	for i := range p.checkers {
@@ -375,14 +403,13 @@ func (p *checkerPool) scheduleCleanupLocked() {
 	}
 }
 
-// cleanupIdleCheckers disposes all checkers (diagnostics and query) that have
-// been idle for longer than the idle timeout. If any checkers are still alive
-// but not yet idle enough, the timer is rescheduled via scheduleCleanupLocked.
+// cleanupIdleCheckers disposes checkers that have been idle for longer than
+// the idle timeout. The API checker is separate and never idle-cleaned.
 func (p *checkerPool) cleanupIdleCheckers() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	now := time.Now()
-	for i := range len(p.checkers) {
+	for i := range p.checkers {
 		c := p.checkers[i]
 		if c == nil || p.heldBy[i] != "" {
 			continue
@@ -456,28 +483,21 @@ func (p *checkerPool) TakeNewGlobalDiagnostics() bool {
 	return changed
 }
 
-// Discard signals that this pool's program has been replaced by a newer
-// version. The pool remains fully functional (old snapshot handlers can
-// still use it) but stops caching idle checkers, disposing them immediately
-// after each use. This prevents checker accumulation during rapid typing,
-// where each keystroke can produce a new program and pool.
+// Discard signals that this pool's program has been replaced. The pool
+// remains functional but stops its idle-cleanup timer so that checkers
+// are not disposed until the pool is GC'd. The API checker is unaffected
+// since it is never idle-cleaned.
 func (p *checkerPool) Discard() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if p.opts.IdleTimeout == 0 {
+	if p.discarded {
 		return // already discarded
 	}
-	p.log("checkerpool: Discarding pool, disposing idle checkers")
-	p.opts.IdleTimeout = 0
+	p.log("checkerpool: Discarding pool, stopping idle cleanup")
+	p.discarded = true
 	if p.cleanupTimer != nil {
 		p.cleanupTimer.Stop()
 		p.cleanupTimer = nil
-	}
-	// Dispose all currently idle checkers.
-	for i, c := range p.checkers {
-		if c != nil && p.heldBy[i] == "" {
-			p.disposeCheckerLocked(i, c)
-		}
 	}
 }
 

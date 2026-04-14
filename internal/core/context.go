@@ -8,7 +8,7 @@ type key int
 
 const (
 	requestIDKey key = iota
-	checkerPurposeKey
+	checkerLifetimeKey
 )
 
 func WithRequestID(ctx context.Context, id string) context.Context {
@@ -22,25 +22,21 @@ func GetRequestID(ctx context.Context) string {
 	return ""
 }
 
-// CheckerPurpose indicates why a checker is being requested.
-type CheckerPurpose int
+type CheckerLifetime int
 
 const (
-	// CheckerPurposeQuery is the default purpose for language service operations
-	// such as hover, completions, go-to-definition, etc.
-	CheckerPurposeQuery CheckerPurpose = iota
-	// CheckerPurposeDiagnostics indicates the checker is being used for diagnostics.
-	// Diagnostic checkers are dedicated to ensure consistent walk order.
-	CheckerPurposeDiagnostics
+	CheckerLifetimeTemporary CheckerLifetime = iota
+	CheckerLifetimeDiagnostics
+	CheckerLifetimeAPI
 )
 
-func WithCheckerPurpose(ctx context.Context, purpose CheckerPurpose) context.Context {
-	return context.WithValue(ctx, checkerPurposeKey, purpose)
+func WithCheckerLifetime(ctx context.Context, lifetime CheckerLifetime) context.Context {
+	return context.WithValue(ctx, checkerLifetimeKey, lifetime)
 }
 
-func GetCheckerPurpose(ctx context.Context) CheckerPurpose {
-	if purpose, ok := ctx.Value(checkerPurposeKey).(CheckerPurpose); ok {
-		return purpose
+func GetCheckerLifetime(ctx context.Context) CheckerLifetime {
+	if lifetime, ok := ctx.Value(checkerLifetimeKey).(CheckerLifetime); ok {
+		return lifetime
 	}
-	return CheckerPurposeQuery
+	return CheckerLifetimeTemporary
 }
