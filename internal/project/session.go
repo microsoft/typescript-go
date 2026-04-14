@@ -706,7 +706,7 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 		compilerOptions["moduleResolution"] = name
 	}
 	if opts.Jsx != core.JsxEmitNone {
-		compilerOptions["jsx"] = fmt.Sprintf("%d", opts.Jsx)
+		compilerOptions["jsx"] = jsxEmitName(opts.Jsx)
 	}
 	if b, err := json.Marshal(compilerOptions); err == nil {
 		props["compilerOptions"] = string(b)
@@ -746,9 +746,8 @@ func boolTelemetry(v bool) string {
 func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetryMeasurements {
 	var stats lsproto.ProjectInfoTelemetryMeasurements
 	for _, sf := range sourceFiles {
-		fileName := sf.FileName()
 		size := float64(sf.End())
-		switch core.GetScriptKindFromFileName(fileName) {
+		switch sf.ScriptKind {
 		case core.ScriptKindJS:
 			stats.JsFileCount++
 			stats.JsFileSize += size
@@ -756,7 +755,7 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 			stats.JsxFileCount++
 			stats.JsxFileSize += size
 		case core.ScriptKindTS:
-			if tspath.IsDeclarationFileName(fileName) {
+			if tspath.IsDeclarationFileName(sf.FileName()) {
 				stats.DtsFileCount++
 				stats.DtsFileSize += size
 			} else {
@@ -785,6 +784,23 @@ func moduleResolutionKindName(kind core.ModuleResolutionKind) string {
 		return "NodeNext"
 	case core.ModuleResolutionKindBundler:
 		return "Bundler"
+	default:
+		return ""
+	}
+}
+
+func jsxEmitName(jsx core.JsxEmit) string {
+	switch jsx {
+	case core.JsxEmitPreserve:
+		return "preserve"
+	case core.JsxEmitReactNative:
+		return "react-native"
+	case core.JsxEmitReact:
+		return "react"
+	case core.JsxEmitReactJSX:
+		return "react-jsx"
+	case core.JsxEmitReactJSXDev:
+		return "react-jsxdev"
 	default:
 		return ""
 	}
