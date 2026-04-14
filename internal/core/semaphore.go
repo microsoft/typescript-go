@@ -27,6 +27,9 @@ type LimitedSemaphore struct {
 }
 
 func NewLimitedSemaphore(maxConcurrency int) *LimitedSemaphore {
+	if maxConcurrency <= 0 {
+		panic("maxConcurrency must be positive")
+	}
 	s := &LimitedSemaphore{
 		ch: make(chan struct{}, maxConcurrency),
 	}
@@ -44,6 +47,6 @@ func (s *LimitedSemaphore) TryAcquire(ctx context.Context) (release func(), acqu
 	case s.ch <- struct{}{}:
 		return s.release, true
 	case <-ctx.Done():
-		return nil, false
+		return func() {}, false
 	}
 }
