@@ -1,6 +1,8 @@
 // pseudochecker is a limited "checker" that returns pseudo-"types" of expressions - mostly those which trivially have type nodes
 package pseudochecker
 
+import "github.com/microsoft/typescript-go/internal/ast"
+
 // TODO: Late binding/symbol merging?
 // In strada, `expressionToTypeNode` used many `resolver` methods whose net effect was just
 // calling `Checker.GetMergedSymbol` on a symbol when dealing with accessors. Right now those
@@ -12,10 +14,15 @@ package pseudochecker
 // extracting the `mergeSymbol` core checker logic into a reusable component.
 
 type PseudoChecker struct {
-	strictNullChecks           bool
-	exactOptionalPropertyTypes bool
+	strictNullChecks                          bool
+	exactOptionalPropertyTypes                bool
+	isDefinitelyReferenceToGlobalSymbolObject func(node *ast.Node) bool
 }
 
-func NewPseudoChecker(strictNullChecks bool, exactOptionalPropertyTypes bool) *PseudoChecker {
-	return &PseudoChecker{strictNullChecks: strictNullChecks, exactOptionalPropertyTypes: exactOptionalPropertyTypes}
+func NewPseudoChecker(strictNullChecks bool, exactOptionalPropertyTypes bool, isDefinitelyReferenceToGlobalSymbolObject func(node *ast.Node) bool) *PseudoChecker {
+	return &PseudoChecker{
+		strictNullChecks:                          strictNullChecks,
+		exactOptionalPropertyTypes:                exactOptionalPropertyTypes,
+		isDefinitelyReferenceToGlobalSymbolObject: isDefinitelyReferenceToGlobalSymbolObject,
+	}
 }

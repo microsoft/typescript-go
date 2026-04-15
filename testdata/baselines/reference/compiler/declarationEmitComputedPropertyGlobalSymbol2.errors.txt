@@ -1,0 +1,15 @@
+declarationEmitComputedPropertyGlobalSymbol2.ts(4,16): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
+
+
+==== declarationEmitComputedPropertyGlobalSymbol2.ts (1 errors) ====
+    export const symbolNamed = {
+        [Symbol.toStringTag]: "demo",
+        [Symbol.iterator]() {
+            return [1, 2, 3][Symbol.iterator]();
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
+!!! related TS9034 declarationEmitComputedPropertyGlobalSymbol2.ts:3:5: Add a return type to the method
+!!! related TS9035 declarationEmitComputedPropertyGlobalSymbol2.ts:4:16: Add satisfies and a type assertion to this expression (satisfies T as T) to make the type explicit.
+        },
+    } as const;
+    

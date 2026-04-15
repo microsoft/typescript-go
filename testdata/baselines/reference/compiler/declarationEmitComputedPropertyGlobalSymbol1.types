@@ -1,0 +1,35 @@
+//// [tests/cases/compiler/declarationEmitComputedPropertyGlobalSymbol1.ts] ////
+
+=== declarationEmitComputedPropertyGlobalSymbol1.ts ===
+export const symbolNamed = {
+>symbolNamed : { readonly [Symbol.toStringTag]: "demo"; readonly [Symbol.iterator]: () => IterableIterator<number>; }
+>{    [Symbol.toStringTag]: "demo",    [Symbol.iterator](): IterableIterator<number> {        return [1, 2, 3][Symbol.iterator]();    },} as const : { readonly [Symbol.toStringTag]: "demo"; readonly [Symbol.iterator]: () => IterableIterator<number>; }
+>{    [Symbol.toStringTag]: "demo",    [Symbol.iterator](): IterableIterator<number> {        return [1, 2, 3][Symbol.iterator]();    },} : { readonly [Symbol.toStringTag]: "demo"; readonly [Symbol.iterator]: () => IterableIterator<number>; }
+
+    [Symbol.toStringTag]: "demo",
+>[Symbol.toStringTag] : "demo"
+>Symbol.toStringTag : unique symbol
+>Symbol : SymbolConstructor
+>toStringTag : unique symbol
+>"demo" : "demo"
+
+    [Symbol.iterator](): IterableIterator<number> {
+>[Symbol.iterator] : () => IterableIterator<number>
+>Symbol.iterator : unique symbol
+>Symbol : SymbolConstructor
+>iterator : unique symbol
+
+        return [1, 2, 3][Symbol.iterator]();
+>[1, 2, 3][Symbol.iterator]() : ArrayIterator<number>
+>[1, 2, 3][Symbol.iterator] : () => ArrayIterator<number>
+>[1, 2, 3] : number[]
+>1 : 1
+>2 : 2
+>3 : 3
+>Symbol.iterator : unique symbol
+>Symbol : SymbolConstructor
+>iterator : unique symbol
+
+    },
+} as const;
+
