@@ -43,9 +43,9 @@ const (
 	FlagsUseTypeOfFunction                   Flags = 1 << 12
 	FlagsOmitParameterModifiers              Flags = 1 << 13
 	FlagsUseAliasDefinedOutsideCurrentScope  Flags = 1 << 14
-	FlagsUseInstantiationExpressions         Flags = 1 << 31
 	FlagsUseSingleQuotesForStringLiteralType Flags = 1 << 28
 	FlagsNoTypeReduction                     Flags = 1 << 29
+	FlagsUseInstantiationExpressions         Flags = 1 << 30
 	FlagsOmitThisParameter                   Flags = 1 << 25
 	FlagsWriteCallStyleSignature             Flags = 1 << 27
 	// Error handling
