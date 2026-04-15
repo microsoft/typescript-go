@@ -350,11 +350,17 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	// otherwise, fallback to actual pseudo/type cross-comparisons
 	switch t.Kind {
 	case pseudochecker.PseudoTypeKindInferred:
-		// PseudoTypeInferred with error nodes is always considered equivalent —
-		// the error nodes identify specific problematic children, and pseudoTypeToNodeWithCheckerFallback
-		// will report errors on them and fall back to the checker's real type.
-		if len(t.AsPseudoTypeInferred().ErrorNodes) > 0 {
-			return true
+		// PseudoTypeInferred with error nodes identifies specific problematic children.
+		// Report fine-grained errors on them, then return false so the parent falls back
+		// to checker-based serialization (avoiding issues like reusing raw JSON string
+		// literal property names from the pseudochecker's AST).
+		if errorNodes := t.AsPseudoTypeInferred().ErrorNodes; len(errorNodes) > 0 {
+			if reportErrors {
+				for _, n := range errorNodes {
+					b.ctx.tracker.ReportInferenceFallback(n)
+				}
+			}
+			return false
 		}
 		if reportErrors {
 			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
@@ -410,8 +416,15 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
 				d := e.AsPseudoPropertyAssignment()
 				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
-					if reportErrors && !isStructuralPseudoType(d.Type) {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+					if reportErrors {
+						if d.Type.Kind == pseudochecker.PseudoTypeKindInferred && len(d.Type.AsPseudoTypeInferred().ErrorNodes) > 0 {
+							// Re-report the fine-grained error nodes; the recursive call used reportErrors=false
+							for _, n := range d.Type.AsPseudoTypeInferred().ErrorNodes {
+								b.ctx.tracker.ReportInferenceFallback(n)
+							}
+						} else if !isStructuralPseudoType(d.Type) {
+							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+						}
 					}
 					return false
 				}

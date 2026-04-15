@@ -2080,6 +2080,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		b.ctx.flags |= nodebuilder.FlagsAllowUniqueESSymbolType
 	}
 	var result *ast.Node
+	var reportedInferenceFallback bool
 	// !!! expandable hover support
 	if tryReuse && b.ctx.enclosingDeclaration != nil && declaration != nil && (ast.IsAccessor(declaration) || (ast.HasInferredType(declaration) && !ast.NodeIsSynthesized(declaration) && (t.ObjectFlags()&ObjectFlagsRequiresWidening) == 0)) {
 		remove := b.addSymbolTypeToContext(symbol, t)
@@ -2089,7 +2090,8 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		} else {
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
-		if b.pseudoTypeEquivalentToType(pt, t, !requiresAddingUndefined && (ast.IsParameterDeclaration(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), !b.ctx.suppressReportInferenceFallback) {
+		reportErrors := !b.ctx.suppressReportInferenceFallback
+		if b.pseudoTypeEquivalentToType(pt, t, !requiresAddingUndefined && (ast.IsParameterDeclaration(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), reportErrors) {
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 			// see: canReuseTypeNodeAnnotation in strada for context
 			ptt := b.pseudoTypeToType(pt)
@@ -2097,16 +2099,31 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 			}
 			result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
-		} else if requiresAddingUndefined {
-			pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
-			if b.pseudoTypeEquivalentToType(pt, t, false, !b.ctx.suppressReportInferenceFallback) {
-				result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
+		} else {
+			// Equivalence failed; if errors from inferred-with-errors pseudo types were
+			// reported, note it so we can suppress nested errors during the fallback
+			// typeToTypeNode serialization (mirroring the suppression that
+			// pseudoTypeToNodeWithCheckerFallback provides).
+			reportedInferenceFallback = reportErrors && pt.Kind == pseudochecker.PseudoTypeKindInferred && len(pt.AsPseudoTypeInferred().ErrorNodes) > 0
+			if requiresAddingUndefined {
+				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
+				if b.pseudoTypeEquivalentToType(pt, t, false, reportErrors) {
+					result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
+					reportedInferenceFallback = false
+				}
 			}
 		}
 		remove()
 	}
 	if result == nil {
-		result = b.typeToTypeNode(t)
+		if reportedInferenceFallback {
+			oldSuppress := b.ctx.suppressReportInferenceFallback
+			b.ctx.suppressReportInferenceFallback = true
+			result = b.typeToTypeNode(t)
+			b.ctx.suppressReportInferenceFallback = oldSuppress
+		} else {
+			result = b.typeToTypeNode(t)
+		}
 	}
 	restoreFlags()
 	if result == nil {
