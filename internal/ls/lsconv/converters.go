@@ -2,6 +2,7 @@ package lsconv
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"slices"
 	"strings"
@@ -221,25 +222,29 @@ type diagnosticOptions struct {
 	reportStyleChecksAsWarnings bool
 	relatedInformation          bool
 	tagValueSet                 []lsproto.DiagnosticTag
+	visualStudio                bool
+}
+
+func clientCapabilitiesToDiagnosticOptions(ctx context.Context) diagnosticOptions {
+	clientCaps := lsproto.GetClientCapabilities(ctx)
+	return diagnosticOptions{
+		relatedInformation: clientCaps.TextDocument.Diagnostic.RelatedInformation,
+		tagValueSet:        clientCaps.TextDocument.Diagnostic.TagSupport.ValueSet,
+		visualStudio:       clientCaps.VSSupportsVisualStudioExtensions,
+	}
 }
 
 // DiagnosticToLSPPull converts a diagnostic for pull diagnostics (textDocument/diagnostic)
 func DiagnosticToLSPPull(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic, reportStyleChecksAsWarnings bool) *lsproto.Diagnostic {
-	clientCaps := lsproto.GetClientCapabilities(ctx).TextDocument.Diagnostic
-	return diagnosticToLSP(ctx, converters, diagnostic, diagnosticOptions{
-		reportStyleChecksAsWarnings: reportStyleChecksAsWarnings, // !!! get through context UserPreferences
-		relatedInformation:          clientCaps.RelatedInformation,
-		tagValueSet:                 clientCaps.TagSupport.ValueSet,
-	})
+	opts := clientCapabilitiesToDiagnosticOptions(ctx)
+	opts.reportStyleChecksAsWarnings = reportStyleChecksAsWarnings
+	return diagnosticToLSP(ctx, converters, diagnostic, opts)
 }
 
 // DiagnosticToLSPPush converts a diagnostic for push diagnostics (textDocument/publishDiagnostics)
 func DiagnosticToLSPPush(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
-	clientCaps := lsproto.GetClientCapabilities(ctx).TextDocument.PublishDiagnostics
-	return diagnosticToLSP(ctx, converters, diagnostic, diagnosticOptions{
-		relatedInformation: clientCaps.RelatedInformation,
-		tagValueSet:        clientCaps.TagSupport.ValueSet,
-	})
+	opts := clientCapabilitiesToDiagnosticOptions(ctx)
+	return diagnosticToLSP(ctx, converters, diagnostic, opts)
 }
 
 // https://github.com/microsoft/vscode/blob/93e08afe0469712706ca4e268f778cfadf1a43ef/extensions/typescript-language-features/src/typeScriptServiceClientHost.ts#L40C7-L40C29
@@ -303,14 +308,25 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 		lspRange = converters.ToLSPRange(diagnostic.File(), diagnostic.Loc())
 	}
 
-	return &lsproto.Diagnostic{
-		Range: lspRange,
-		Code: &lsproto.IntegerOrString{
+	var code *lsproto.IntegerOrString
+	var source *string
+	if opts.visualStudio {
+		code = &lsproto.IntegerOrString{
+			String: new(fmt.Sprintf("TS%d", diagnostic.Code())),
+		}
+	} else {
+		code = &lsproto.IntegerOrString{
 			Integer: new(diagnostic.Code()),
-		},
+		}
+		source = new("ts")
+	}
+
+	return &lsproto.Diagnostic{
+		Range:              lspRange,
+		Code:               code,
 		Severity:           &severity,
 		Message:            messageChainToString(diagnostic, locale),
-		Source:             new("ts"),
+		Source:             source,
 		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
 		Tags:               ptrToSliceIfNonEmpty(tags),
 	}
