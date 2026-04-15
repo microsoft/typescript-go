@@ -290,29 +290,26 @@ func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.Typ
 			}
 		}
 		return b.f.UpdateImportTypeNode(imprt, imprt.IsTypeOf, imprt.Argument, imprt.Attributes, qualifier, ref.TypeArgumentList())
-	} else {
-		// first shift type arguments
-		// !!! In the old emitter, an Identifier could have type arguments for use with quickinfo:
-		// typeArguments := root.TypeArguments
-		// typeName := root.AsTypeReferenceNode().TypeName
-		// if ast.IsIdentifier(typeName) {
-		// 	if typeArguments != getIdentifierTypeArguments(typeName) {
-		// 		typeName = setIdentifierTypeArguments(b.f.cloneNode(typeName), typeArguments)
-		// 	}
-		// } else {
-		// 	if typeArguments != getIdentifierTypeArguments(typeName.Right) {
-		// 		typeName = b.f.UpdateQualifiedName(typeName, typeName.Left, setIdentifierTypeArguments(b.f.cloneNode(typeName.Right), typeArguments))
-		// 	}
-		// }
-		// !!! Without the above, nested type args are silently elided
-		// then move qualifiers
-		ids := getAccessStack(ref)
-		var typeName *ast.Node = root.AsTypeReferenceNode().TypeName
-		for _, id := range ids {
+	} else if ast.IsTypeReferenceNode(root) {
+		typeRef := root.AsTypeReferenceNode()
+		if b.ctx.flags&nodebuilder.FlagsUseInstantiationExpressions != 0 && typeRef.TypeArguments != nil && len(typeRef.TypeArguments.Nodes) != 0 {
+			expr := b.createExpressionWithTypeArguments(b.createAccessExpression(typeRef.TypeName), typeRef.TypeArguments)
+			for _, id := range getAccessStack(ref) {
+				expr = b.f.NewPropertyAccessExpression(expr, nil, id, ast.NodeFlagsNone)
+			}
+			return expr
+		}
+		var typeName *ast.Node = typeRef.TypeName
+		for _, id := range getAccessStack(ref) {
 			typeName = b.f.NewQualifiedName(typeName, id)
 		}
 		return b.f.UpdateTypeReferenceNode(root.AsTypeReferenceNode(), typeName, ref.TypeArgumentList())
 	}
+	expr := b.createAccessExpression(root)
+	for _, id := range getAccessStack(ref) {
+		expr = b.f.NewPropertyAccessExpression(expr, nil, id, ast.NodeFlagsNone)
+	}
+	return expr
 }
 
 func getAccessStack(ref *ast.Node) []*ast.Node {
@@ -742,15 +739,13 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 	if ast.IsIndexedAccessTypeNode(entityName) {
 		return entityName // Indexed accesses can never be `typeof`
 	}
-	if isTypeOf {
-		return b.f.NewTypeQueryNode(entityName, nil)
+	if ast.IsEntityName(entityName) {
+		if isTypeOf {
+			return b.f.NewTypeQueryNode(entityName, nil)
+		}
+		return b.f.NewTypeReferenceNode(entityName, typeArguments)
 	}
-	// !!! TODO: smuggle type arguments out
-	// Move type arguments from last identifier on chain to type reference
-	// const lastId = isIdentifier(entityName) ? entityName : entityName.right;
-	// const lastTypeArgs = getIdentifierTypeArguments(lastId);
-	// setIdentifierTypeArguments(lastId, /*typeArguments*/ undefined);
-	return b.f.NewTypeReferenceNode(entityName, typeArguments)
+	return entityName
 }
 
 func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAccessTypeNode {
@@ -761,7 +756,6 @@ func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAc
 }
 
 func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index int, stopper int, overrideTypeArguments *ast.NodeList) *ast.Node {
-	// !!! TODO: smuggle type arguments out
 	typeParameterNodes := overrideTypeArguments
 	if index != (len(chain) - 1) {
 		typeParameterNodes = b.lookupTypeParameterNodes(chain, index)
@@ -846,18 +840,14 @@ func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 
 	identifier := b.newIdentifier(symbolName, symbol)
 	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
-	// !!! TODO: smuggle type arguments out
-	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
-	// identifier.symbol = symbol;
 
 	if index > stopper {
 		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
-		if !ast.IsEntityName(lhs) {
-			panic("Impossible construct - an export of an indexed access cannot be reachable")
+		if b.ctx.flags&nodebuilder.FlagsUseInstantiationExpressions == 0 || ast.IsEntityName(lhs) && (typeParameterNodes == nil || len(typeParameterNodes.Nodes) == 0) {
+			return b.f.NewQualifiedName(lhs, identifier)
 		}
-		return b.f.NewQualifiedName(lhs, identifier)
+		return b.createExpressionWithTypeArguments(b.f.NewPropertyAccessExpression(b.createAccessExpression(lhs), nil, identifier, ast.NodeFlagsNone), typeParameterNodes)
 	}
-
 	return identifier
 }
 
@@ -3431,4 +3421,22 @@ func (b *NodeBuilderImpl) newIdentifier(text string, symbol *ast.Symbol) *ast.No
 		b.idToSymbol[id] = symbol
 	}
 	return id
+}
+
+func (b *NodeBuilderImpl) createAccessExpression(node *ast.Node) *ast.Expression {
+	switch {
+	case ast.IsQualifiedName(node):
+		return b.f.NewPropertyAccessExpression(b.createAccessExpression(node.AsQualifiedName().Left), nil /*questionDotToken*/, b.f.DeepCloneNode(node.AsQualifiedName().Right), ast.NodeFlagsNone)
+	case ast.IsIdentifier(node), ast.IsPropertyAccessExpression(node), ast.IsExpressionWithTypeArguments(node):
+		return b.f.DeepCloneNode(node)
+	default:
+		panic("unexpected access node kind: " + node.Kind.String())
+	}
+}
+
+func (b *NodeBuilderImpl) createExpressionWithTypeArguments(expr *ast.Expression, typeArguments *ast.NodeList) *ast.Expression {
+	if typeArguments == nil || len(typeArguments.Nodes) == 0 {
+		return expr
+	}
+	return b.f.NewExpressionWithTypeArguments(expr, typeArguments)
 }

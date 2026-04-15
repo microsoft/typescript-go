@@ -43,6 +43,7 @@ const (
 	FlagsUseTypeOfFunction                   Flags = 1 << 12
 	FlagsOmitParameterModifiers              Flags = 1 << 13
 	FlagsUseAliasDefinedOutsideCurrentScope  Flags = 1 << 14
+	FlagsUseInstantiationExpressions         Flags = 1 << 31
 	FlagsUseSingleQuotesForStringLiteralType Flags = 1 << 28
 	FlagsNoTypeReduction                     Flags = 1 << 29
 	FlagsOmitThisParameter                   Flags = 1 << 25
