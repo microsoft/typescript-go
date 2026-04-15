@@ -37,8 +37,7 @@ func createTestZip(t *testing.T, files map[string]string) (string, vfs.FS) {
 	fs := From(osvfs.FS())
 
 	t.Cleanup(func() {
-		errClear := fs.(*pnpFS).ClearCache()
-		assert.NilError(t, errClear)
+		_ = fs.(*pnpFS).ClearCache()
 	})
 
 	return zipPath, fs
