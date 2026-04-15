@@ -180,6 +180,37 @@ func TestShowConfig(t *testing.T) {
 			},
 			commandLineArgs: []string{"-p", "tsconfig.json", "--showConfig"},
 		},
+		{
+			subScenario: "Show TSConfig with transitively implied options",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts": `export const a = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"module": "nodenext"
+					}
+				}`),
+			},
+			commandLineArgs: []string{"-p", "tsconfig.json", "--showConfig"},
+		},
+		{
+			subScenario: "Show TSConfig with exclude and outDir",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts":    `export const a = 1;`,
+				"/home/src/workspaces/project/src/bin/tool.ts": `export const b = 2;`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"outDir": "./build"
+					},
+					"exclude": [
+						"build"
+					]
+				}`),
+			},
+			commandLineArgs: []string{"-p", "tsconfig.json", "--showConfig"},
+		},
 	}
 
 	for _, test := range testCases {

@@ -62,8 +62,12 @@ Output::
         "sourceMap": true,
         "target": "es2017",
         "baseUrl": "./",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "useDefineForClassFields": false
     },
+    "files": [
+        "./src/index.ts"
+    ],
     "include": [
         "./src/**/*"
     ],

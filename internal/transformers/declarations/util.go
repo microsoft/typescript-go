@@ -34,7 +34,7 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsMethodDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsFunctionDeclaration(node) ||
-		ast.IsParameter(node) ||
+		ast.IsParameterDeclaration(node) ||
 		ast.IsTypeParameterDeclaration(node) ||
 		ast.IsExpressionWithTypeArguments(node) ||
 		ast.IsImportEqualsDeclaration(node) ||
@@ -66,7 +66,6 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		ast.KindImportDeclaration,
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
-		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
 		return false
 	case ast.KindClassStaticBlockDeclaration:

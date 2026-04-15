@@ -4,16 +4,16 @@
 module.exports = function () {};
 >module.exports = function () {} : () => void
 >module.exports : () => void
->module : { "export=": () => void; }
+>module : { exports: () => void; }
 >exports : () => void
 >function () {} : () => void
 
 exports.blah = exports.someProp;
 >exports.blah = exports.someProp : any
 >exports.blah : any
->exports : typeof import("./bar")
+>exports : () => void
 >blah : any
 >exports.someProp : any
->exports : typeof import("./bar")
+>exports : () => void
 >someProp : any
 
