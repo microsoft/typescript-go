@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -46,9 +47,10 @@ const fixMissingTypeAnnotationOnExportsFixID = "fixMissingTypeAnnotationOnExport
 
 // IsolatedDeclarationsFixProvider is the CodeFixProvider for isolatedDeclarations-related type annotation fixes.
 var IsolatedDeclarationsFixProvider = &CodeFixProvider{
-	ErrorCodes:     isolatedDeclarationsFixErrorCodes,
-	GetCodeActions: getIsolatedDeclarationsCodeActions,
-	FixIds:         []string{fixMissingTypeAnnotationOnExportsFixID},
+	ErrorCodes:        isolatedDeclarationsFixErrorCodes,
+	GetCodeActions:    getIsolatedDeclarationsCodeActions,
+	FixIds:            []string{fixMissingTypeAnnotationOnExportsFixID},
+	GetAllCodeActions: getAllIsolatedDeclarationsCodeActions,
 }
 
 // canHaveTypeAnnotationKinds are the node kinds that can have type annotations added.
@@ -123,6 +125,45 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	return fixes, nil
 }
 
+func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {
+	ch, done := fixContext.Program.GetTypeCheckerForFile(ctx, fixContext.SourceFile)
+	defer done()
+
+	changeTracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+
+	fixer := &isolatedDeclarationsFixer{
+		sourceFile:    fixContext.SourceFile,
+		program:       fixContext.Program,
+		checker:       ch,
+		changeTracker: changeTracker,
+		fixedNodes:    make(map[*ast.Node]bool),
+		typePrintMode: typePrintModeFull,
+	}
+
+	allDiags := getAllDiagnostics(ctx, fixContext.Program, fixContext.SourceFile)
+	for _, diag := range allDiags {
+		if containsErrorCode(isolatedDeclarationsFixErrorCodes, diag.Code()) {
+			span := core.NewTextRange(diag.Loc().Pos(), diag.Loc().End())
+			fixer.addTypeAnnotation(span)
+		}
+	}
+
+	for _, sym := range fixer.symbolsToImport {
+		fixer.addSymbolToExistingImport(sym)
+	}
+
+	changes := changeTracker.GetChanges()
+	fileChanges := changes[fixContext.SourceFile.FileName()]
+	if len(fileChanges) == 0 {
+		return nil, nil
+	}
+
+	return &CombinedCodeActions{
+		Description: diagnostics.Add_all_missing_type_annotations.Localize(locale.FromContext(ctx)),
+		Changes:     fileChanges,
+	}, nil
+}
+
 func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.Checker, fn func(*isolatedDeclarationsFixer) string) *CodeAction {
 	changeTracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 
@@ -161,7 +202,12 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 		return nil
 	}
 
-	return &CodeAction{Description: description, Changes: fileChanges}
+	return &CodeAction{
+		Description:       description,
+		Changes:           fileChanges,
+		FixID:             fixMissingTypeAnnotationOnExportsFixID,
+		FixAllDescription: diagnostics.Add_all_missing_type_annotations.Localize(locale.FromContext(ctx)),
+	}
 }
 
 // isolatedDeclarationsFixer encapsulates the state for fixing isolated declarations errors.
