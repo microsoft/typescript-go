@@ -38,8 +38,6 @@ f.called = false;
 | `@throws`                  | `/** @throws {E} */`                                                                                                                          | Keep the same                                                                                                                                | TS never had semantics for this                                                       |
 | `@enum`                    | <pre><code>/\** @enum {number} */</code><br/><code>const E = { A: 1, B: 2 }</code></pre>                                                      | <pre><code>/** @typedef {number} E \*/</code><br/><code>/** @type {Record<string, E>} */</code><br/><code>const E = { A: 1, B: 2 }</code></pre> | Closure feature.                                                                      |
 | `@author`                  | `/** @author Finn <finn@treehouse.com> */`                                                                                                    | Keep the same                                                                                                                                | `@treehouse` parses as a new tag in Corsa.                                            |
-| Postfix optional type      | `T?`                                                                                                                                          | `T \| undefined`                                                                                                                             | This was legacy in _Closure_                                                          |
-| Postfix definite type      | `T!`                                                                                                                                          | `T`                                                                                                                                          | This was legacy in _Closure_                                                          |
 | Uppercase synonyms         | `String`, `Void`, `array`                                                                                                                     | `string`, `void`, `Array`                                                                                                                    |                                                                                       |
 | JSDoc index signatures     | `Object.<K,V>`                                                                                                                                | `Record<K, V>`                                                                                                                              |                                                                                       |
 | Identifier-named typedefs  | `/** @typedef {T} */ typeName;`                                                                                                               | `/** @typedef {T} typeName */`                                                                                                               | Closure feature.                                                                      |
@@ -88,10 +86,9 @@ f.called = false;
 
 JSDoc types are parsed in normal type annotation position but show a grammar error. Corsa no longer parses the JSDoc types below, giving a parse error instead of a grammar error.
 
-1. No postfix `T?` and `T!` types. Prefix `?T` and `!T` are still parsed and `!T` continues to have no semantics.
-2. No Closure `function(string,string): void` types.
-3. No JSDoc standalone `?` type.
-4. No JSDoc module namepaths: `module:folder/file.C`
+1. No Closure `function(string,string): void` types.
+2. No JSDoc standalone `?` type.
+3. No JSDoc module namepaths: `module:folder/file.C`
 
 Corsa no longer parses the following JSDoc tags with a specific node type. They now parse as generic JSDocTag nodes.
 
