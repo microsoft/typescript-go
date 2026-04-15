@@ -1894,6 +1894,12 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			continue
 		}
 
+		// Non-contextual keywords (e.g., `function`, `class`, `const`) cannot be used as identifiers,
+		// so auto-imports with these names should not shadow keyword completions.
+		if token := scanner.StringToToken(autoImport.Fix.Name); token != ast.KindUnknown && ast.IsNonContextualKeyword(token) {
+			continue
+		}
+
 		if !autoImport.Export.IsUnresolvedAlias() {
 			if data.isTypeOnlyLocation {
 				if autoImport.Export.Flags&ast.SymbolFlagsType == 0 && autoImport.Export.Flags&ast.SymbolFlagsModule == 0 {
@@ -5042,7 +5048,7 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	position int,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil)
 	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 
