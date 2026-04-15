@@ -87,6 +87,7 @@ type Session struct {
 	logger        logging.Logger
 	npmExecutor   ata.NpmExecutor
 	fs            *overlayFS
+	pnpApi        *pnp.PnpApi
 
 	// parseCache is the ref-counted cache of source files used when
 	// creating programs during snapshot cloning.
@@ -181,6 +182,7 @@ func NewSession(init *SessionInit) *Session {
 		logger:              init.Logger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
+		pnpApi:              init.PnpApi,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
@@ -243,7 +245,7 @@ func (s *Session) GetCurrentDirectory() string {
 
 // PnpApi implements module.ResolutionHost
 func (s *Session) PnpApi() *pnp.PnpApi {
-	return s.snapshot.PnpApi()
+	return s.pnpApi
 }
 
 // Gets copy of current configuration

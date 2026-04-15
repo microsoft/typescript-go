@@ -35,6 +35,7 @@ type ProjectCollectionBuilder struct {
 
 	ctx                                context.Context
 	fs                                 *snapshotFSBuilder
+	pnpApi                             *pnp.PnpApi
 	base                               *ProjectCollection
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	configFileRegistryBuilder          *configFileRegistryBuilder
@@ -56,12 +57,12 @@ func newProjectCollectionBuilder(
 	ctx context.Context,
 	newSnapshotID uint64,
 	fs *snapshotFSBuilder,
+	pnpApi *pnp.PnpApi,
 	oldProjectCollection *ProjectCollection,
 	oldConfigFileRegistry *ConfigFileRegistry,
 	oldAPIOpenedProjects map[tspath.Path]struct{},
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	sessionOptions *SessionOptions,
-	pnpApi *pnp.PnpApi,
 	customConfigFileName string,
 	parseCache *ParseCache,
 	extendedConfigCache *ExtendedConfigCache,
@@ -70,6 +71,7 @@ func newProjectCollectionBuilder(
 	return &ProjectCollectionBuilder{
 		ctx:                                ctx,
 		fs:                                 fs,
+		pnpApi:                             pnpApi,
 		toPath:                             fs.toPath,
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		sessionOptions:                     sessionOptions,
