@@ -225,26 +225,27 @@ type diagnosticOptions struct {
 	visualStudio                bool
 }
 
-func clientCapabilitiesToDiagnosticOptions(ctx context.Context) diagnosticOptions {
-	clientCaps := lsproto.GetClientCapabilities(ctx)
-	return diagnosticOptions{
-		relatedInformation: clientCaps.TextDocument.Diagnostic.RelatedInformation,
-		tagValueSet:        clientCaps.TextDocument.Diagnostic.TagSupport.ValueSet,
-		visualStudio:       clientCaps.VSSupportsVisualStudioExtensions,
-	}
-}
-
 // DiagnosticToLSPPull converts a diagnostic for pull diagnostics (textDocument/diagnostic)
 func DiagnosticToLSPPull(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic, reportStyleChecksAsWarnings bool) *lsproto.Diagnostic {
-	opts := clientCapabilitiesToDiagnosticOptions(ctx)
-	opts.reportStyleChecksAsWarnings = reportStyleChecksAsWarnings
-	return diagnosticToLSP(ctx, converters, diagnostic, opts)
+	clientCaps := lsproto.GetClientCapabilities(ctx)
+	clientDiagnosticCaps := clientCaps.TextDocument.Diagnostic
+	return diagnosticToLSP(ctx, converters, diagnostic, diagnosticOptions{
+		reportStyleChecksAsWarnings: reportStyleChecksAsWarnings, // !!! get through context UserPreferences
+		relatedInformation:          clientDiagnosticCaps.RelatedInformation,
+		tagValueSet:                 clientDiagnosticCaps.TagSupport.ValueSet,
+		visualStudio:                clientCaps.VSSupportsVisualStudioExtensions,
+	})
 }
 
 // DiagnosticToLSPPush converts a diagnostic for push diagnostics (textDocument/publishDiagnostics)
 func DiagnosticToLSPPush(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
-	opts := clientCapabilitiesToDiagnosticOptions(ctx)
-	return diagnosticToLSP(ctx, converters, diagnostic, opts)
+	clientCaps := lsproto.GetClientCapabilities(ctx)
+	clientDiagnosticCaps := clientCaps.TextDocument.PublishDiagnostics
+	return diagnosticToLSP(ctx, converters, diagnostic, diagnosticOptions{
+		relatedInformation: clientDiagnosticCaps.RelatedInformation,
+		tagValueSet:        clientDiagnosticCaps.TagSupport.ValueSet,
+		visualStudio:       clientCaps.VSSupportsVisualStudioExtensions,
+	})
 }
 
 // https://github.com/microsoft/vscode/blob/93e08afe0469712706ca4e268f778cfadf1a43ef/extensions/typescript-language-features/src/typeScriptServiceClientHost.ts#L40C7-L40C29
