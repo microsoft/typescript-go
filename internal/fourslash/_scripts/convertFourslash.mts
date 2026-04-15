@@ -177,7 +177,8 @@ function validateCodeFixCommands(commands: Cmd[]): void {
                 return allowedCodeFixDescriptionPrefixes.some(p => c.description.startsWith(p));
             }
             if (c.kind === "verifyCodeFixAvailable") {
-                return c.descriptions.length > 0 && c.descriptions.every(d => allowedCodeFixDescriptionPrefixes.some(p => d.startsWith(p)));
+                // Empty descriptions means "assert no fixes available", which is always allowed.
+                return c.descriptions.length === 0 || c.descriptions.every(d => allowedCodeFixDescriptionPrefixes.some(p => d.startsWith(p)));
             }
             return true;
         });
@@ -1775,17 +1776,27 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
         throw new Error(`Expected object literal in verify.codeFix, got ${args[0].getText()}`);
     }
 
+    const sourceFile = args[0].getSourceFile();
     let description = "";
     let newFileContent = "";
     let index = 0;
     let applyChanges = false;
 
     for (const prop of obj.properties) {
-        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
-        switch (prop.name.text) {
+        const name = getPropertyName(prop);
+        if (!name) continue;
+        if (ts.isShorthandPropertyAssignment(prop)) {
+            if (name === "description") {
+                const resolved = resolveDescriptionExpression(prop.name, sourceFile);
+                if (resolved) description = resolved;
+            }
+            continue;
+        }
+        if (!ts.isPropertyAssignment(prop)) continue;
+        switch (name) {
             case "description": {
-                const str = getStringLiteralLike(prop.initializer);
-                if (str) description = str.text;
+                const resolved = resolveDescriptionExpression(prop.initializer, sourceFile);
+                if (resolved) description = resolved;
                 break;
             }
             case "newFileContent": {
@@ -1820,15 +1831,22 @@ function parseCodeFixAvailableArgs(args: readonly ts.Expression[]): [VerifyCodeF
     const descriptions: string[] = [];
 
     if (args.length === 1) {
+        const sourceFile = args[0].getSourceFile();
         const arrayArg = getArrayLiteralExpression(args[0]);
         if (arrayArg) {
             for (const elem of arrayArg.elements) {
                 const obj = getObjectLiteralExpression(elem);
                 if (obj) {
                     for (const prop of obj.properties) {
-                        if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name) && prop.name.text === "description") {
-                            const str = getStringLiteralLike(prop.initializer);
-                            if (str) descriptions.push(str.text);
+                        if (getPropertyName(prop) === "description") {
+                            let resolved: string | undefined;
+                            if (ts.isPropertyAssignment(prop)) {
+                                resolved = resolveDescriptionExpression(prop.initializer, sourceFile);
+                            }
+                            else if (ts.isShorthandPropertyAssignment(prop)) {
+                                resolved = resolveDescriptionExpression(prop.name, sourceFile);
+                            }
+                            if (resolved) descriptions.push(resolved);
                         }
                     }
                 }
@@ -4043,6 +4061,78 @@ function getObjectLiteralExpression(node: ts.Node): ts.ObjectLiteralExpression |
 
 function getStringLiteralLike(node: ts.Node): ts.StringLiteralLike | undefined {
     return getNodeOfKind(node, ts.isStringLiteralLike);
+}
+
+// Build a map from diagnostic property names (e.g. "Extract_base_class_to_variable")
+// to their message text, by loading diagnosticMessages.json and applying the same
+// key-generation algorithm used by TypeScript's processDiagnosticMessages script.
+const diagnosticMessagesByPropName: Map<string, string> = (() => {
+    const messagesPath = path.resolve(import.meta.dirname, "../", "../", "../", "_submodules", "TypeScript", "src", "compiler", "diagnosticMessages.json");
+    const raw = JSON.parse(fs.readFileSync(messagesPath, "utf-8"));
+    const map = new Map<string, string>();
+    for (const messageText of Object.keys(raw)) {
+        const propName = messageText.split("").map((ch: string) => {
+            if (ch === "*") return "_Asterisk";
+            if (ch === "/") return "_Slash";
+            if (ch === ":") return "_Colon";
+            return /\w/.test(ch) ? ch : "_";
+        }).join("")
+            .replace(/_+/g, "_")
+            .replace(/^_(\D)/, "$1")
+            .replace(/_$/, "");
+        map.set(propName, messageText);
+    }
+    return map;
+})();
+
+// Resolve a description value from various expression forms:
+// - String literal: "Add return type 'void'"
+// - ts.Diagnostics.X.message property access
+// - Variable identifier referencing a const string in the same file
+function resolveDescriptionExpression(expr: ts.Expression, sourceFile: ts.SourceFile): string | undefined {
+    // String literal
+    const str = getStringLiteralLike(expr);
+    if (str) return str.text;
+
+    // ts.Diagnostics.Foo_bar.message
+    if (ts.isPropertyAccessExpression(expr) && expr.name.text === "message") {
+        const inner = expr.expression;
+        if (
+            ts.isPropertyAccessExpression(inner) && ts.isPropertyAccessExpression(inner.expression)
+            && ts.isIdentifier(inner.expression.name) && inner.expression.name.text === "Diagnostics"
+            && ts.isIdentifier(inner.name)
+        ) {
+            const diagKey = inner.name.text;
+            const message = diagnosticMessagesByPropName.get(diagKey);
+            if (message) return message;
+        }
+    }
+
+    // Variable reference: look for a const string declaration in the same file
+    if (ts.isIdentifier(expr)) {
+        const varName = expr.text;
+        for (const stmt of sourceFile.statements) {
+            if (ts.isVariableStatement(stmt)) {
+                for (const decl of stmt.declarationList.declarations) {
+                    if (ts.isIdentifier(decl.name) && decl.name.text === varName && decl.initializer) {
+                        const initStr = getStringLiteralLike(decl.initializer);
+                        if (initStr) return initStr.text;
+                    }
+                }
+            }
+        }
+    }
+
+    return undefined;
+}
+
+// Get the name of a property in an object literal, whether it's an identifier or string literal.
+function getPropertyName(prop: ts.ObjectLiteralElementLike): string | undefined {
+    if (ts.isPropertyAssignment(prop) || ts.isShorthandPropertyAssignment(prop)) {
+        if (ts.isIdentifier(prop.name)) return prop.name.text;
+        if (ts.isStringLiteral(prop.name)) return prop.name.text;
+    }
+    return undefined;
 }
 
 function getNumericLiteral(node: ts.Node): ts.NumericLiteral | undefined {
