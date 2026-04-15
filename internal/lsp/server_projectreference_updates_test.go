@@ -101,11 +101,29 @@ func TestReferencesAfterAncestorProjectConfigDeletion1(t *testing.T) {
 		}},
 	})
 
-	msg, _, ok = lsptestutil.SendRequest(t, client, lsproto.TextDocumentReferencesInfo, &lsproto.ReferenceParams{
+	msg, resp, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentReferencesInfo, &lsproto.ReferenceParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: mainURI},
 		Position:     lsproto.Position{Line: 1, Character: 3},
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	})
 	assert.Assert(t, ok, "expected response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
+	assert.Assert(t, resp.Locations != nil)
+	assert.Equal(t, len(*resp.Locations), 2)
+	assert.DeepEqual(t, []lsproto.Location{
+		{
+			Uri: mainURI,
+			Range: lsproto.Range{
+				Start: lsproto.Position{Line: 0, Character: 16},
+				End:   lsproto.Position{Line: 0, Character: 26},
+			},
+		},
+		{
+			Uri: mainURI,
+			Range: lsproto.Range{
+				Start: lsproto.Position{Line: 1, Character: 0},
+				End:   lsproto.Position{Line: 1, Character: 10},
+			},
+		},
+	}, *resp.Locations)
 }
