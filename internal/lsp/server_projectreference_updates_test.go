@@ -65,6 +65,8 @@ func initMutableLSPClient(t *testing.T, files map[string]string, prefs *lsutil.U
 }
 
 func TestReferencesAfterAncestorProjectConfigDeletion1(t *testing.T) {
+	t.Parallel()
+
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
 	}
