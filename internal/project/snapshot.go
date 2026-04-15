@@ -144,6 +144,10 @@ func (s *Snapshot) DirectoryExists(path string) bool {
 	return s.fs.fs.DirectoryExists(path)
 }
 
+func (s *Snapshot) FileExists(path string) bool {
+	return s.fs.fs.FileExists(path)
+}
+
 func (s *Snapshot) GetDirectories(path string) []string {
 	return s.fs.fs.GetAccessibleEntries(path).Directories
 }
@@ -278,7 +282,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if change.fileChanges.InvalidateAll {
@@ -297,6 +301,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	} else {
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
+		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
