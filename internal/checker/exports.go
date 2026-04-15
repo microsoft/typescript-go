@@ -266,3 +266,7 @@ func (c *Checker) GetIndexInfosOfType(t *Type) []*IndexInfo {
 func (c *Checker) IsContextSensitive(node *ast.Node) bool {
 	return c.isContextSensitive(node)
 }
+
+func (c *Checker) GetWidenedType(t *Type) *Type {
+	return c.getWidenedType(t)
+}
