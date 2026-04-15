@@ -25,5 +25,5 @@ class Feh {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, nil)
+	f.VerifyCodeFixAvailable(t, []string{})
 }

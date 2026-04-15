@@ -1829,11 +1829,15 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
 
 function parseCodeFixAvailableArgs(args: readonly ts.Expression[]): [VerifyCodeFixAvailableCmd] {
     const descriptions: string[] = [];
+    let expectNone = false;
 
     if (args.length === 1) {
         const sourceFile = args[0].getSourceFile();
         const arrayArg = getArrayLiteralExpression(args[0]);
         if (arrayArg) {
+            if (arrayArg.elements.length === 0) {
+                expectNone = true;
+            }
             for (const elem of arrayArg.elements) {
                 const obj = getObjectLiteralExpression(elem);
                 if (obj) {
@@ -1857,6 +1861,7 @@ function parseCodeFixAvailableArgs(args: readonly ts.Expression[]): [VerifyCodeF
     return [{
         kind: "verifyCodeFixAvailable",
         descriptions,
+        expectNone,
     }];
 }
 
@@ -3538,6 +3543,7 @@ interface VerifyCodeFixCmd {
 interface VerifyCodeFixAvailableCmd {
     kind: "verifyCodeFixAvailable";
     descriptions: string[];
+    expectNone: boolean;
 }
 
 interface VerifyCodeFixAllCmd {
@@ -3961,6 +3967,9 @@ function generateCmd(cmd: Cmd, imports: Set<string>): string {
             }
 })`;
         case "verifyCodeFixAvailable":
+            if (cmd.expectNone) {
+                return `f.VerifyCodeFixAvailable(t, []string{})`;
+            }
             if (cmd.descriptions.length === 0) {
                 return `f.VerifyCodeFixAvailable(t, nil)`;
             }
