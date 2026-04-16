@@ -11,19 +11,25 @@ func TestHoverQualifiedGenericNames(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-function makeBox<T>(x: T) {
-    class Box {
+function f<T>(x: T) {
+    class C {
         value = x
     }
-    return new Box()
+    return new C()
 }
 
-let box/**/ = makeBox("hello")
+class A<T> {
+    foo() {}
+}
+class B extends A<string> {}
+
+let t1/*1*/ = f("hello")
+const t2/*2*/ = new B()
+t2./*3*/foo()
 `
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.GoToMarker(t, "")
-	f.VerifyQuickInfoIs(t, "let box: makeBox<string>.Box", "")
+	f.VerifyBaselineHover(t)
 }

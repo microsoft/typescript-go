@@ -745,6 +745,11 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 		}
 		return b.f.NewTypeReferenceNode(entityName, typeArguments)
 	}
+	if isTypeOf && ast.IsExpressionWithTypeArguments(entityName) {
+		if typeQuery := b.instantiationExpressionToTypeQueryNode(entityName.AsExpressionWithTypeArguments()); typeQuery != nil {
+			return typeQuery
+		}
+	}
 	return entityName
 }
 
@@ -857,7 +862,7 @@ func (b *NodeBuilderImpl) symbolToExpression(symbol *ast.Symbol, mask ast.Symbol
 }
 
 func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, index int) *ast.Expression {
-	// typeParameterNodes := b.lookupTypeParameterNodes(chain, index)
+	typeParameterNodes := b.lookupExpressionChainTypeArgumentNodes(chain, index)
 	symbol := chain[index]
 
 	if index == 0 {
@@ -877,16 +882,13 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 	if index == 0 || canUsePropertyAccess(symbolName) {
 		identifier := b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
-		// !!! TODO: smuggle type arguments out
-		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
-		// identifier.symbol = symbol;
 		b.ctx.approximateLength += 1 + len(symbolName)
 		if index > 0 {
 			result := b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
 			b.e.AddEmitFlags(result, printer.EFNoIndentation)
-			return result
+			return b.createExpressionWithTypeArguments(result, typeParameterNodes)
 		}
-		return identifier
+		return b.createExpressionWithTypeArguments(identifier, typeParameterNodes)
 	}
 
 	if startsWithSquareBracket(symbolName) {
@@ -908,13 +910,9 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		b.ctx.approximateLength += len(symbolName)
 		expression = b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(expression, printer.EFNoAsciiEscaping)
-		// !!! TODO: smuggle type arguments out
-		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
-		// identifier.symbol = symbol;
-		// expression = identifier;
 	}
 	b.ctx.approximateLength += 2 // []
-	return b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone)
+	return b.createExpressionWithTypeArguments(b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone), typeParameterNodes)
 }
 
 func canUsePropertyAccess(name string) bool {
@@ -1059,20 +1057,8 @@ func (b *NodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 	b.ctx.typeParameterSymbolList[symbolId] = struct{}{}
 
 	if b.ctx.flags&nodebuilder.FlagsWriteTypeParametersInQualifiedName != 0 && index < (len(chain)-1) {
-		parentSymbol := symbol
-		nextSymbol := chain[index+1]
-
-		if nextSymbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
-			targetSymbol := parentSymbol
-			if parentSymbol.Flags&ast.SymbolFlagsAlias != 0 {
-				targetSymbol = b.ch.resolveAlias(parentSymbol)
-			}
-			params := b.getTypeParametersOfClassOrInterface(targetSymbol)
-			targetMapper := b.ch.valueSymbolLinks.Get(nextSymbol).mapper
-			if targetMapper != nil {
-				params = core.Map(params, targetMapper.Map)
-			}
-			return b.mapToTypeNodes(params, false /*isBareList*/)
+		if typeArgumentNodes := b.lookupInstantiatedTypeArgumentNodes(chain, index); typeArgumentNodes != nil {
+			return typeArgumentNodes
 		} else {
 			typeParameterNodes := b.typeParametersToTypeParameterDeclarations(symbol)
 			if len(typeParameterNodes) > 0 {
@@ -3439,4 +3425,81 @@ func (b *NodeBuilderImpl) createExpressionWithTypeArguments(expr *ast.Expression
 		return expr
 	}
 	return b.f.NewExpressionWithTypeArguments(expr, typeArguments)
+}
+
+func (b *NodeBuilderImpl) instantiationExpressionToTypeQueryNode(expr *ast.ExpressionWithTypeArguments) *ast.TypeNode {
+	var typeArguments *ast.NodeList
+	if expr.TypeArguments != nil && len(expr.TypeArguments.Nodes) > 0 {
+		typeArguments = expr.TypeArguments
+	}
+
+	var names []*ast.IdentifierNode
+	node := expr.Expression
+
+	for {
+		if ast.IsExpressionWithTypeArguments(node) {
+			exprWithTypeArgs := node.AsExpressionWithTypeArguments()
+			if exprWithTypeArgs.TypeArguments != nil && len(exprWithTypeArgs.TypeArguments.Nodes) > 0 {
+				typeArguments = exprWithTypeArgs.TypeArguments
+			}
+			node = exprWithTypeArgs.Expression
+		} else if ast.IsPropertyAccessExpression(node) && ast.IsIdentifier(node.Name()) {
+			names = append(names, b.f.DeepCloneNode(node.Name()))
+			node = node.Expression()
+		} else if ast.IsIdentifier(node) {
+			entityName := b.f.DeepCloneNode(node)
+			for i := len(names) - 1; i >= 0; i-- {
+				entityName = b.f.NewQualifiedName(entityName, names[i])
+			}
+			return b.f.NewTypeQueryNode(entityName, typeArguments)
+		} else {
+			return nil
+		}
+	}
+}
+
+func (b *NodeBuilderImpl) lookupInstantiatedTypeArgumentNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
+	if b.shouldWriteTypeParametersInQualifiedName(chain, index) {
+		symbol := chain[index]
+		nextSymbol := chain[index+1]
+		if nextSymbol.CheckFlags&ast.CheckFlagsInstantiated == 0 {
+			return nil
+		}
+
+		targetSymbol := symbol
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			targetSymbol = b.ch.resolveAlias(symbol)
+		}
+
+		params := b.getTypeParametersOfClassOrInterface(targetSymbol)
+		targetMapper := b.ch.valueSymbolLinks.Get(nextSymbol).mapper
+		if targetMapper != nil {
+			params = core.Map(params, targetMapper.Map)
+		}
+		return b.mapToTypeNodes(params, false /*isBareList*/)
+	}
+	return nil
+}
+
+func (b *NodeBuilderImpl) lookupExpressionChainTypeArgumentNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
+	if b.shouldWriteTypeParametersInQualifiedName(chain, index) {
+		symbol := chain[index]
+		symbolId := ast.GetSymbolId(symbol)
+		if !b.ctx.hasCreatedTypeParameterSymbolList {
+			b.ctx.hasCreatedTypeParameterSymbolList = true
+			b.ctx.typeParameterSymbolList = make(map[ast.SymbolId]struct{})
+		}
+
+		if _, ok := b.ctx.typeParameterSymbolList[symbolId]; ok {
+			return nil
+		}
+
+		b.ctx.typeParameterSymbolList[symbolId] = struct{}{}
+		return b.lookupInstantiatedTypeArgumentNodes(chain, index)
+	}
+	return nil
+}
+
+func (b *NodeBuilderImpl) shouldWriteTypeParametersInQualifiedName(chain []*ast.Symbol, index int) bool {
+	return b.ctx.flags&nodebuilder.FlagsWriteTypeParametersInQualifiedName != 0 && index < len(chain)-1
 }
