@@ -27,7 +27,7 @@
     "type": "module",
     "preferUnplugged": true,
     "engines": {
-        "node": ">=16.20.0"
+        "node": ">=22.7.0"
     },
     "files": [
         "bin",
