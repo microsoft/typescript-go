@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -136,6 +135,7 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 		program:       fixContext.Program,
 		checker:       ch,
 		changeTracker: changeTracker,
+		locale:        locale.FromContext(ctx),
 		fixedNodes:    make(map[*ast.Node]bool),
 		typePrintMode: typePrintModeFull,
 	}
@@ -177,6 +177,7 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 		checker:       ch,
 		changeTracker: changeTracker,
 		importAdder:   importAdder,
+		locale:        locale.FromContext(ctx),
 		fixedNodes:    make(map[*ast.Node]bool),
 	}
 
@@ -217,6 +218,7 @@ type isolatedDeclarationsFixer struct {
 	checker         *checker.Checker
 	changeTracker   *change.Tracker
 	importAdder     autoimport.ImportAdder
+	locale          locale.Locale
 	fixedNodes      map[*ast.Node]bool
 	typePrintMode   typePrintMode
 	symbolsToImport []*ast.Symbol
@@ -298,7 +300,7 @@ func (f *isolatedDeclarationsFixer) createNamespaceForExpandoProperties(expandoF
 	namespace.Flags = ast.NodeFlagsAmbient | ast.NodeFlagsExportContext | ast.NodeFlagsContextFlags
 
 	f.changeTracker.InsertNodeAfter(f.sourceFile, expandoFunc, namespace)
-	return "Annotate types of properties expando function in a namespace"
+	return diagnostics.Annotate_types_of_properties_expando_function_in_a_namespace.Localize(f.locale)
 }
 
 // needsParenthesizedExpressionForAssertion checks if an expression needs parentheses for an assertion.
@@ -395,7 +397,7 @@ func (f *isolatedDeclarationsFixer) addInlineAssertion(span core.TextRange) stri
 		return ""
 	}
 
-	return fmt.Sprintf("Add satisfies and an inline type assertion with '%s'", typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
+	return diagnostics.Add_satisfies_and_an_inline_type_assertion_with_0.Localize(f.locale, typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
 }
 
 func (f *isolatedDeclarationsFixer) extractAsVariable(span core.TextRange) string {
@@ -416,7 +418,7 @@ func (f *isolatedDeclarationsFixer) extractAsVariable(span core.TextRange) strin
 		constRef := factory.NewTypeReferenceNode(factory.NewIdentifier("const"), nil)
 		cloned := factory.DeepCloneNode(targetNode)
 		f.changeTracker.ReplaceNode(f.sourceFile, targetNode, createAsExpression(factory, cloned, constRef), nil)
-		return "Mark array literal as const"
+		return diagnostics.Mark_array_literal_as_const.Localize(f.locale)
 	}
 
 	parentPropertyAssignment := ast.FindAncestorKind(targetNode, ast.KindPropertyAssignment)
@@ -463,7 +465,7 @@ func (f *isolatedDeclarationsFixer) extractAsVariable(span core.TextRange) strin
 		f.changeTracker.ReplaceNode(f.sourceFile, replacementTarget, asExpr, nil)
 
 		idText := typeToStringForDiag(tempName.AsNode(), f.sourceFile, f.changeTracker)
-		return fmt.Sprintf("Extract to variable and replace with '%s as typeof %s'", idText, idText)
+		return diagnostics.Extract_to_variable_and_replace_with_0_as_typeof_0.Localize(f.locale, idText)
 	}
 
 	return ""
@@ -576,7 +578,7 @@ func (f *isolatedDeclarationsFixer) addTypeToSignatureDeclaration(funcNode *ast.
 		return ""
 	}
 	f.changeTracker.TryInsertTypeAnnotation(f.sourceFile, funcNode, typeNode)
-	return fmt.Sprintf("Add return type '%s'", typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
+	return diagnostics.Add_return_type_0.Localize(f.locale, typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
 }
 
 func (f *isolatedDeclarationsFixer) transformExportAssignment(defaultExport *ast.Node) string {
@@ -605,7 +607,7 @@ func (f *isolatedDeclarationsFixer) transformExportAssignment(defaultExport *ast
 	newExport := factory.UpdateExportAssignment(defaultExport.AsExportAssignment(), defaultExport.Modifiers(), false, nil, defaultIdentifier.AsNode())
 
 	f.changeTracker.ReplaceNodeWithNodes(f.sourceFile, defaultExport, []*ast.Node{varStmt, newExport}, nil)
-	return "Extract default export to variable"
+	return diagnostics.Extract_default_export_to_variable.Localize(f.locale)
 }
 
 func (f *isolatedDeclarationsFixer) transformExtendsClauseWithExpression(classDecl *ast.Node) string {
@@ -654,7 +656,7 @@ func (f *isolatedDeclarationsFixer) transformExtendsClauseWithExpression(classDe
 	// Replace the heritage expression with the base class name
 	f.changeTracker.ReplaceNode(f.sourceFile, heritageExpression, factory.NewExpressionWithTypeArguments(baseClassName.AsNode(), nil), nil)
 
-	return "Extract base class to variable"
+	return diagnostics.Extract_base_class_to_variable.Localize(f.locale)
 }
 
 func (f *isolatedDeclarationsFixer) transformDestructuringPatterns(bindingPattern *ast.Node) string {
@@ -720,7 +722,7 @@ func (f *isolatedDeclarationsFixer) transformDestructuringPatterns(bindingPatter
 	}
 
 	f.changeTracker.ReplaceNodeWithNodes(f.sourceFile, enclosingVarStmt, newNodes, nil)
-	return "Extract binding expressions to variable"
+	return diagnostics.Extract_binding_expressions_to_variable.Localize(f.locale)
 }
 
 func (f *isolatedDeclarationsFixer) extractBindingElements(
@@ -1261,7 +1263,7 @@ func (f *isolatedDeclarationsFixer) addTypeToVariableLike(decl *ast.Node) string
 	} else {
 		f.changeTracker.TryInsertTypeAnnotation(f.sourceFile, decl, typeNode)
 	}
-	return fmt.Sprintf("Add annotation of type '%s'", typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
+	return diagnostics.Add_annotation_of_type_0.Localize(f.locale, typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
 }
 
 // typeToStringForDiag converts a type node to a string for use in diagnostic descriptions.
