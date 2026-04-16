@@ -1,6 +1,11 @@
 --- old.jsDeclarationsDefault(target=es2015).js
 +++ new.jsDeclarationsDefault(target=es2015).js
-@@= skipped -104, +104 lines =@@
+@@= skipped -100, +100 lines =@@
+
+
+ //// [index1.d.ts]
+-declare const _default: 12;
++declare const _default = 12;
  export default _default;
  //// [index2.d.ts]
  export default function foo(): typeof foo;
@@ -24,7 +29,8 @@
 +export default Bar;
  //// [index5.d.ts]
 -type _default = string | number;
- declare const _default: 12;
+-declare const _default: 12;
++declare const _default = 12;
  export default _default;
 +export type default = string | number;
 +/**

@@ -52,7 +52,7 @@ const a = 1;
 console.log(a);
 
 //// [/home/src/workspaces/project/constants.d.ts] *new* 
-declare const _default: 1;
+declare const _default = 1;
 export default _default;
 
 //// [/home/src/workspaces/project/constants.js] *new* 
@@ -65,7 +65,7 @@ export { default as ConstantNumber } from "./constants";
 export { default as ConstantNumber } from "./constants";
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./class1.ts","./constants.ts","./reexport.ts","./types.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"881068d51dfd24d338a5f3706ee1097f-const a: MagicNumber = 1;\nconsole.log(a);","signature":"f59d1a67db5f979e23689dc09b68c628-declare const a = 1;\n","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"c93bc8f54a24dc311538894cf3d7ac17-export default 1;","signature":"f10bb0179505c3428562d842057965c9-declare const _default: 1;\nexport default _default;\n","impliedNodeFormat":1},{"version":"75c0647a66f2f74c4448b4b393e889d1-export { default as ConstantNumber } from \"./constants\"","signature":"3c986fce7f0f21b6b269681962fc7feb-export { default as ConstantNumber } from \"./constants\";\n","impliedNodeFormat":1},{"version":"d84f446b9b1fc3f56545f03793b7992c-type MagicNumber = typeof import('./reexport').ConstantNumber","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[4]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./reexport.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./class1.ts","./constants.ts","./reexport.ts","./types.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"881068d51dfd24d338a5f3706ee1097f-const a: MagicNumber = 1;\nconsole.log(a);","signature":"f59d1a67db5f979e23689dc09b68c628-declare const a = 1;\n","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"c93bc8f54a24dc311538894cf3d7ac17-export default 1;","signature":"2d0006ef6e037f3b7c2ab23503cc8d5c-declare const _default = 1;\nexport default _default;\n","impliedNodeFormat":1},{"version":"75c0647a66f2f74c4448b4b393e889d1-export { default as ConstantNumber } from \"./constants\"","signature":"3c986fce7f0f21b6b269681962fc7feb-export { default as ConstantNumber } from \"./constants\";\n","impliedNodeFormat":1},{"version":"d84f446b9b1fc3f56545f03793b7992c-type MagicNumber = typeof import('./reexport').ConstantNumber","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[4]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./reexport.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -119,11 +119,11 @@ export { default as ConstantNumber } from "./constants";
     {
       "fileName": "./constants.ts",
       "version": "c93bc8f54a24dc311538894cf3d7ac17-export default 1;",
-      "signature": "f10bb0179505c3428562d842057965c9-declare const _default: 1;\nexport default _default;\n",
+      "signature": "2d0006ef6e037f3b7c2ab23503cc8d5c-declare const _default = 1;\nexport default _default;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "c93bc8f54a24dc311538894cf3d7ac17-export default 1;",
-        "signature": "f10bb0179505c3428562d842057965c9-declare const _default: 1;\nexport default _default;\n",
+        "signature": "2d0006ef6e037f3b7c2ab23503cc8d5c-declare const _default = 1;\nexport default _default;\n",
         "impliedNodeFormat": 1
       }
     },
@@ -171,7 +171,7 @@ export { default as ConstantNumber } from "./constants";
     ]
   },
   "latestChangedDtsFile": "./reexport.d.ts",
-  "size": 1838
+  "size": 1839
 }
 
 tsconfig.json::
@@ -206,7 +206,7 @@ Found 1 error in class1.ts[90m:1[0m
 declare const a = 2;
 
 //// [/home/src/workspaces/project/constants.d.ts] *modified* 
-declare const _default: 2;
+declare const _default = 2;
 export default _default;
 
 //// [/home/src/workspaces/project/constants.js] *modified* 
@@ -214,7 +214,7 @@ export default 2;
 
 //// [/home/src/workspaces/project/reexport.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./class1.ts","./constants.ts","./reexport.ts","./types.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"881068d51dfd24d338a5f3706ee1097f-const a: MagicNumber = 1;\nconsole.log(a);","signature":"7a581e19dc1cd6e23aafc45ee6ba2cef-declare const a = 2;\n","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"b8fa0b3912c91197fa3ec685cbc93c70-export default 2;","signature":"96d111d6046d766ad5ed486a2cd2f26b-declare const _default: 2;\nexport default _default;\n","impliedNodeFormat":1},{"version":"75c0647a66f2f74c4448b4b393e889d1-export { default as ConstantNumber } from \"./constants\"","signature":"3c986fce7f0f21b6b269681962fc7feb-export { default as ConstantNumber } from \"./constants\";\n","impliedNodeFormat":1},{"version":"d84f446b9b1fc3f56545f03793b7992c-type MagicNumber = typeof import('./reexport').ConstantNumber","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[4]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"semanticDiagnosticsPerFile":[[2,[{"pos":6,"end":7,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["1","2"]}]]],"latestChangedDtsFile":"./constants.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./class1.ts","./constants.ts","./reexport.ts","./types.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"881068d51dfd24d338a5f3706ee1097f-const a: MagicNumber = 1;\nconsole.log(a);","signature":"7a581e19dc1cd6e23aafc45ee6ba2cef-declare const a = 2;\n","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"b8fa0b3912c91197fa3ec685cbc93c70-export default 2;","signature":"fab8194a8c4d1fb0c7e69bfb95987309-declare const _default = 2;\nexport default _default;\n","impliedNodeFormat":1},{"version":"75c0647a66f2f74c4448b4b393e889d1-export { default as ConstantNumber } from \"./constants\"","signature":"3c986fce7f0f21b6b269681962fc7feb-export { default as ConstantNumber } from \"./constants\";\n","impliedNodeFormat":1},{"version":"d84f446b9b1fc3f56545f03793b7992c-type MagicNumber = typeof import('./reexport').ConstantNumber","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[4]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"semanticDiagnosticsPerFile":[[2,[{"pos":6,"end":7,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["1","2"]}]]],"latestChangedDtsFile":"./constants.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -268,11 +268,11 @@ export default 2;
     {
       "fileName": "./constants.ts",
       "version": "b8fa0b3912c91197fa3ec685cbc93c70-export default 2;",
-      "signature": "96d111d6046d766ad5ed486a2cd2f26b-declare const _default: 2;\nexport default _default;\n",
+      "signature": "fab8194a8c4d1fb0c7e69bfb95987309-declare const _default = 2;\nexport default _default;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "b8fa0b3912c91197fa3ec685cbc93c70-export default 2;",
-        "signature": "96d111d6046d766ad5ed486a2cd2f26b-declare const _default: 2;\nexport default _default;\n",
+        "signature": "fab8194a8c4d1fb0c7e69bfb95987309-declare const _default = 2;\nexport default _default;\n",
         "impliedNodeFormat": 1
       }
     },
@@ -338,7 +338,7 @@ export default 2;
     ]
   ],
   "latestChangedDtsFile": "./constants.d.ts",
-  "size": 1998
+  "size": 1999
 }
 
 tsconfig.json::
