@@ -250,15 +250,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		vc = &checker.VerbosityContext{}
 	}
 	typeToString := func(t *checker.Type, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
-		if vc.Level > 0 {
-			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
-		}
+		flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		return c.TypeToStringEx(t, enclosing, flags, vc)
 	}
 	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
-		if vc.Level > 0 {
-			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
-		}
+		flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		return c.SignatureToStringEx(sig, enclosing, flags, vc)
 	}
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
@@ -311,6 +307,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				if cons != nil {
 					b.WriteString(" extends ")
 					b.WriteString(typeToString(cons, nil, typeFormatFlags))
+				}
+				def := c.GetDefaultFromTypeParameter(tp)
+				if def != nil {
+					b.WriteString(" = ")
+					b.WriteString(typeToString(def, nil, typeFormatFlags))
 				}
 			}
 			b.WriteString(">")
