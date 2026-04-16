@@ -13,7 +13,7 @@
 // === goToDefinition ===
 // === /src/index.ts ===
 // export function a() {}
-// <||>export function [|{ contextId: 0 |}|]b() {}
+// <|export function [|b|]() {}|>
 
 // === /src/user.ts ===
 // import { a, b } from "./indexdef";
