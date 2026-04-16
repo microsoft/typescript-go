@@ -310,21 +310,19 @@ export const generate = task({
 
 /** @type {EnumDef[]} */
 const enumDefs = [
-    // @typescript/api enums
-    { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/api/src/enums" },
-    { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "DiagnosticCategory", goPrefix: "Category", goFile: "internal/diagnostics/diagnostics.go", outDir: "_packages/api/src/enums" },
-    // @typescript/ast enums
-    { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind_generated.go", outDir: "_packages/ast/src/enums" },
-    { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/ast/src/enums" },
-    { name: "OuterExpressionKinds", goPrefix: "OEK", goFile: "internal/ast/utilities.go", outDir: "_packages/ast/src/enums" },
-    { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/ast/src/enums" },
-    { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/ast/src/enums", constEnum: true },
+    { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "DiagnosticCategory", goPrefix: "Category", goFile: "internal/diagnostics/diagnostics.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind_generated.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "OuterExpressionKinds", goPrefix: "OEK", goFile: "internal/ast/utilities.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums", constEnum: true },
 ];
 
 /**
@@ -706,7 +704,7 @@ async function runTestTools() {
 }
 
 async function runTestAPI() {
-    await $`npm run -w @typescript/api test`;
+    await $`npm run -w @typescript/native-preview test`;
 }
 
 export const testTools = task({
@@ -717,23 +715,23 @@ export const testTools = task({
 
 export const buildAPI = task({
     name: "build:api",
-    description: "Builds @typescript/api and @typescript/ast.",
+    description: "Builds @typescript/native-preview JS API.",
     run: async () => {
-        await $`npm run -w @typescript/api build`;
+        await $`npm run -w @typescript/native-preview build`;
     },
 });
 
 export const buildAPITests = task({
     name: "build:api:test",
-    description: "Builds the @typescript/api tests.",
+    description: "Builds the @typescript/native-preview JS API tests.",
     run: async () => {
-        await $`npm run -w @typescript/api build:test`;
+        await $`npm run -w @typescript/native-preview build:test`;
     },
 });
 
 export const testAPI = task({
     name: "test:api",
-    description: "Runs the @typescript/api tests.",
+    description: "Runs the @typescript/native-preview JS API tests.",
     dependencies: [tsgo, buildAPITests],
     run: runTestAPI,
 });
@@ -1500,11 +1498,17 @@ async function runBuildNativePreviewPackages() {
 
     await fs.promises.mkdir(mainPackageDir, { recursive: true });
 
-    await cpWithoutNodeModulesOrTsconfig(inputDir, mainPackageDir);
+    // Copy package contents excluding node_modules and dist (dist is copied separately after build).
+    // The package.json "files" field controls what npm pack actually includes.
+    await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist"));
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
     await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
     // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
+
+    // Build JS API and copy dist into the package.
+    await $`npm run -w @typescript/native-preview build`;
+    await cpRecursive(path.join(inputDir, "dist"), path.join(mainPackageDir, "dist"));
 
     const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
 
@@ -1513,6 +1517,7 @@ async function runBuildNativePreviewPackages() {
             ...inputPackageJson,
             bin: undefined,
             imports: undefined,
+            dependencies: undefined,
             name: npmPackageName,
             os: [nodeOs],
             cpu: [nodeArch],
