@@ -31,5 +31,7 @@ t2./*3*/foo()
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.VerifyBaselineHover(t)
+	f.VerifyQuickInfoAt(t, "1", "let t1: f<string>.C", "")
+	f.VerifyQuickInfoAt(t, "2", "const t2: B", "")
+	f.VerifyQuickInfoAt(t, "3", "(method) A<string>.foo(): void", "")
 }
