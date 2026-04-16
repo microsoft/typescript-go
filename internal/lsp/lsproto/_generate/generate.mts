@@ -56,6 +56,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "userPreferences and/or formatting options if provided at initialization.",
             },
+            {
+                name: "enableTelemetry",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -286,6 +292,105 @@ const customStructures: Structure[] = [
         ],
         documentation: "Result for the custom/projectInfo request.",
     },
+    {
+        name: "PerformanceStatsTelemetryEvent",
+        properties: [
+            {
+                name: "eventName",
+                type: { kind: "stringLiteral", value: "languageServer.performanceStats" },
+                documentation: "The name of the telemetry event.",
+            },
+            {
+                name: "telemetryPurpose",
+                type: { kind: "stringLiteral", value: "usage" },
+                documentation: "Indicates this is a usage telemetry event.",
+            },
+            {
+                name: "measurements",
+                type: { kind: "reference", name: "PerformanceStatsTelemetryMeasurements" },
+                documentation: "Numeric measurements for this telemetry event.",
+            },
+        ],
+        documentation: "A PerformanceStatsTelemetryEvent is sent periodically with performance and resource usage statistics.",
+    },
+    {
+        name: "PerformanceStatsTelemetryMeasurements",
+        properties: [
+            { name: "openFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of files currently open in the editor." },
+            { name: "uptimeSeconds", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Seconds since the session was initialized." },
+            { name: "projectCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of loaded projects." },
+            { name: "configCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of loaded config files." },
+            { name: "cachedDiskFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of files cached from disk." },
+            { name: "memoryUsedBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total memory mapped by the Go runtime in bytes." },
+            { name: "goMemLimit", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "GOMEMLIMIT value in bytes, or 0 if not set." },
+            { name: "goGCPercent", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "GOGC percentage value configured for the GC." },
+            { name: "heapGoalBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Heap size target the GC is working toward in bytes." },
+            { name: "heapLiveBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Bytes of live (reachable) heap objects." },
+            { name: "heapObjectCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of live or unswept objects occupying heap memory." },
+            { name: "heapStackBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Heap memory reserved for goroutine stacks." },
+            { name: "heapReleasedBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Heap memory returned to the OS." },
+            { name: "heapFreeBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Heap memory that is free and eligible to be returned to the OS." },
+            { name: "gcScanHeapBytes", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total scannable heap bytes — how much the GC must traverse." },
+            { name: "goMaxProcs", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "The current GOMAXPROCS value." },
+            { name: "goroutineCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Current number of goroutines." },
+            { name: "gcCyclesTotal", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total completed GC cycles." },
+            { name: "gcCPUSeconds", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Cumulative CPU time spent in GC in seconds." },
+            { name: "userCPUSeconds", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Cumulative CPU time spent in user Go code in seconds." },
+            { name: "systemMemTotal", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total physical memory on the system in bytes." },
+            { name: "systemMemUsed", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Used physical memory on the system in bytes." },
+            { name: "autoImportProjectBucketCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of auto-import project buckets." },
+            { name: "autoImportNodeModulesBucketCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of auto-import node_modules buckets." },
+            { name: "autoImportUniquePackageCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Unique packages across all node_modules buckets." },
+            { name: "autoImportProjectExportCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total indexed exports from project files." },
+            { name: "autoImportNodeModulesExportCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total indexed exports from node_modules." },
+            { name: "autoImportProjectFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total files tracked across project buckets." },
+            { name: "autoImportNodeModulesFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Total files tracked across node_modules buckets." },
+            { name: "autoImportNodeModulesUnfilteredBucketCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true, documentation: "Number of node_modules buckets with no package.json filter." },
+        ],
+        documentation: "Numeric measurements for PerformanceStatsTelemetryEvent.",
+    },
+    {
+        name: "ProjectInfoTelemetryEvent",
+        properties: [
+            {
+                name: "eventName",
+                type: { kind: "stringLiteral", value: "languageServer.projectInfo" },
+                documentation: "The name of the telemetry event.",
+            },
+            {
+                name: "telemetryPurpose",
+                type: { kind: "stringLiteral", value: "usage" },
+                documentation: "Indicates this is a usage telemetry event.",
+            },
+            {
+                name: "properties",
+                type: { kind: "map", key: { kind: "base", name: "string" }, value: { kind: "base", name: "string" } },
+                documentation: "String properties for this telemetry event. Complex values (compilerOptions, fileStats) are JSON-stringified.",
+            },
+            {
+                name: "measurements",
+                type: { kind: "reference", name: "ProjectInfoTelemetryMeasurements" },
+                documentation: "Numeric measurements for this telemetry event.",
+            },
+        ],
+        documentation: "A ProjectInfoTelemetryEvent is sent once per project when it is first loaded.",
+    },
+    {
+        name: "ProjectInfoTelemetryMeasurements",
+        properties: [
+            { name: "jsFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "jsFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "jsxFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "jsxFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "tsFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "tsFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "tsxFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "tsxFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "dtsFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+            { name: "dtsFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
+        ],
+        documentation: "Numeric measurements for ProjectInfoTelemetryEvent.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -408,6 +513,14 @@ const customRequests: Request[] = [
         messageDirection: "clientToServer",
         documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
     },
+    {
+        method: "custom/textDocument/sourceDefinition",
+        typeName: "CustomTextDocumentSourceDefinitionRequest",
+        params: { kind: "reference", name: "TextDocumentPositionParams" },
+        result: { kind: "reference", name: "LocationOrLocationsOrDefinitionLinksOrNull" },
+        messageDirection: "clientToServer",
+        documentation: "Request to get source definitions for a position.",
+    },
 ];
 
 const customTypeAliases: TypeAlias[] = [
@@ -417,6 +530,8 @@ const customTypeAliases: TypeAlias[] = [
             kind: "or",
             items: [
                 { kind: "reference", name: "RequestFailureTelemetryEvent" },
+                { kind: "reference", name: "PerformanceStatsTelemetryEvent" },
+                { kind: "reference", name: "ProjectInfoTelemetryEvent" },
                 { kind: "base", name: "null" },
             ],
         },
@@ -492,6 +607,84 @@ function patchAndPreprocessModel() {
     }
 
     for (const structure of model.structures) {
+        // Patch ServerCapabilities to add custom tsgo capability flags
+        if (structure.name === "ServerCapabilities") {
+            structure.properties.push({
+                name: "customSourceDefinitionProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+            });
+        }
+
+        // Patch HoverParams to add verbosityLevel
+        if (structure.name === "HoverParams") {
+            structure.properties.push({
+                name: "verbosityLevel",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "Controls how many levels of type definitions will be expanded. Default is 0.",
+            });
+        }
+
+        // Patch Hover to add canIncreaseVerbosity
+        if (structure.name === "Hover") {
+            structure.properties.push(
+                {
+                    name: "canIncreaseVerbosity",
+                    type: { kind: "base", name: "boolean" },
+                    omitzeroValue: true,
+                    documentation: "Whether the verbosity level can be increased for this hover.",
+                },
+            );
+        }
+
+        // Patch ClientCapabilities to add VS-specific client capabilities
+        if (structure.name === "ClientCapabilities") {
+            structure.properties.push(
+                {
+                    name: "_vs_supportsVisualStudioExtensions",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports Visual Studio extensions.",
+                },
+                {
+                    name: "_vs_supportedSnippetVersion",
+                    type: { kind: "base", name: "integer" },
+                    optional: true,
+                    documentation: "The snippet version supported by the client.",
+                },
+                {
+                    name: "_vs_supportsNotIncludingTextInTextDocumentDidOpen",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports not including text in textDocument/didOpen notifications.",
+                },
+                {
+                    name: "_vs_supportsIconExtensions",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports icon extensions.",
+                },
+                {
+                    name: "_vs_supportsDiagnosticRequests",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports diagnostic requests.",
+                },
+            );
+        }
+
+        // Patch HoverClientCapabilities to add verbosityLevel support flag
+        if (structure.name === "HoverClientCapabilities") {
+            structure.properties.push({
+                name: "verbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
+            });
+        }
+
         for (const prop of structure.properties) {
             // Replace initializationOptions type with custom InitializationOptions
             if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
@@ -759,6 +952,39 @@ function patchAndPreprocessModel() {
 
 patchAndPreprocessModel();
 
+// Validate that telemetry events in the TelemetryEvent union have properly shaped
+// measurements and properties fields. measurements struct fields must only contain
+// numeric types (decimal/integer/uinteger).
+function validateTelemetryEvents() {
+    const telemetryAlias = customTypeAliases.find(a => a.name === "TelemetryEvent");
+    if (!telemetryAlias || telemetryAlias.type.kind !== "or") return;
+
+    const structureMap = new Map(model.structures.map(s => [s.name, s]));
+
+    for (const item of telemetryAlias.type.items) {
+        if (item.kind !== "reference") continue;
+        const eventStruct = structureMap.get(item.name);
+        if (!eventStruct) continue;
+
+        for (const prop of eventStruct.properties) {
+            if (prop.name === "measurements" && prop.type.kind === "reference") {
+                const measurementsStruct = structureMap.get(prop.type.name);
+                if (!measurementsStruct) continue;
+                for (const mp of measurementsStruct.properties) {
+                    if (mp.type.kind !== "base" || !["decimal", "integer", "uinteger"].includes(mp.type.name)) {
+                        throw new Error(
+                            `Telemetry measurements struct ${prop.type.name}.${mp.name} must be a numeric type ` +
+                                `(decimal/integer/uinteger), got ${mp.type.kind === "base" ? mp.type.name : mp.type.kind}`,
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+validateTelemetryEvents();
+
 interface GoType {
     name: string;
     needsPointer: boolean;
@@ -780,6 +1006,13 @@ const typeInfo: TypeInfo = {
 
 function titleCase(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function goFieldName(prop: Property): string {
+    if (prop.name.startsWith("_vs_")) {
+        return "VS" + titleCase(prop.name.slice(4));
+    }
+    return titleCase(prop.name);
 }
 
 function resolveType(type: Type): GoType {
@@ -1248,6 +1481,40 @@ function goKindCasesForJsonKind(kind: string): string {
 }
 
 /**
+ * Checks if a meta model Type can represent a JSON null value.
+ * Used to determine whether to reject explicit JSON `null` for any field
+ * that can otherwise decode `null` without a type error.
+ */
+function typeCanBeNull(type: Type): boolean {
+    switch (type.kind) {
+        case "base":
+            return type.name === "null";
+        case "reference": {
+            const override = typeAliasOverrides.get(type.name);
+            if (override) {
+                return override.name === "any";
+            }
+            // A bare "any" reference resolves to Go's `any` (interface), which can hold null.
+            if (type.name === "any") {
+                return true;
+            }
+            if (nonResolvedAliases.has(type.name)) {
+                const customAlias = customTypeAliases.find(t => t.name === type.name);
+                if (customAlias) return typeCanBeNull(customAlias.type);
+                return false;
+            }
+            const aliased = typeInfo.typeAliasMap.get(type.name);
+            if (aliased) return typeCanBeNull(aliased);
+            return false;
+        }
+        case "or":
+            return type.items.some(item => typeCanBeNull(item));
+        default:
+            return false;
+    }
+}
+
+/**
  * For a group of union entries that share the same JSON kind (e.g., all objects),
  * find a discriminator field — a JSON property whose string literal type differs
  * across variants — enabling efficient O(1) dispatch instead of try-each.
@@ -1515,14 +1782,14 @@ function generateCode() {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
                     // Use a named type for the resolved version
-                    lines.push(`${indent}${titleCase(prop.name)} Resolved${type.name} \`json:"${prop.name},omitzero"\``);
+                    lines.push(`${indent}${goFieldName(prop)} Resolved${type.name} \`json:"${prop.name},omitzero"\``);
                     continue;
                 }
             }
 
             // For other types (primitives, enums, arrays, etc.), use the type directly (no pointer)
             const goType = type.name;
-            lines.push(`${indent}${titleCase(prop.name)} ${goType} \`json:"${prop.name},omitzero"\``);
+            lines.push(`${indent}${goFieldName(prop)} ${goType} \`json:"${prop.name},omitzero"\``);
         }
 
         return lines;
@@ -1533,15 +1800,14 @@ function generateCode() {
 
         for (const prop of structure.properties) {
             const type = resolveType(prop.type);
-            const fieldName = titleCase(prop.name);
+            const fieldName = goFieldName(prop);
             const accessPath = `${varName}.${fieldName}`;
 
-            // For reference types that are structures, call the resolve function
+            // For reference types that are structures, call the resolve method
             if (prop.type.kind === "reference") {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
-                    // Use lowercase (unexported) function name for helper functions
-                    lines.push(`${indent}${fieldName}: resolve${type.name}(${accessPath}),`);
+                    lines.push(`${indent}${fieldName}: ${accessPath}.resolve(),`);
                     continue;
                 }
             }
@@ -1582,8 +1848,8 @@ function generateCode() {
     function generateResolvedTypeAndHelper(structure: Structure, isMain: boolean = false): string[] {
         const lines: string[] = [];
         const typeName = `Resolved${structure.name}`;
-        // Main function is exported, helpers are unexported
-        const funcName = isMain ? `Resolve${structure.name}` : `resolve${structure.name}`;
+        // Main method is exported (Resolve), helpers are unexported (resolve)
+        const methodName = isMain ? `Resolve` : `resolve`;
 
         // Generate the resolved type with documentation
         if (!isMain) {
@@ -1614,8 +1880,8 @@ function generateCode() {
         lines.push(`}`);
         lines.push(``);
 
-        // Generate the conversion function
-        lines.push(`func ${funcName}(v *${structure.name}) ${typeName} {`);
+        // Generate the conversion method on the pointer receiver
+        lines.push(`func (v *${structure.name}) ${methodName}() ${typeName} {`);
         lines.push(`\tif v == nil {`);
         lines.push(`\t\treturn ${typeName}{}`);
         lines.push(`\t}`);
@@ -1666,7 +1932,7 @@ function generateCode() {
                 const useOmitzero = prop.optional || prop.omitzeroValue;
                 const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
 
-                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
+                writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -1728,24 +1994,33 @@ function generateCode() {
             if (p.omitzeroValue) return false;
             return true;
         }) || [];
-        if (requiredProps.length > 0 && structure.name !== "Registration") {
+        // Check if any fields need null rejection
+        const hasNullRejectableFields = structure.properties?.some(p => {
+            if (p.omitzeroValue) return false;
+            if (typeCanBeNull(p.type)) return false;
+            const resolved = resolveType(p.type);
+            return p.optional || resolved.needsPointer || resolved.name.startsWith("[]") || resolved.name.startsWith("map[");
+        }) || false;
+        if ((requiredProps.length > 0 || hasNullRejectableFields) && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
 
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
-            writeLine(`\tconst (`);
-            for (let i = 0; i < requiredProps.length; i++) {
-                const prop = requiredProps[i];
-                const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
-                writeLine(`\t\tmissing${titleCase(prop.name)}${iotaPrefix}`);
+            if (requiredProps.length > 0) {
+                writeLine(`\tconst (`);
+                for (let i = 0; i < requiredProps.length; i++) {
+                    const prop = requiredProps[i];
+                    const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
+                    writeLine(`\t\tmissing${goFieldName(prop)}${iotaPrefix}`);
+                }
+                writeLine(`\t\t_missingLast`);
+                writeLine(`\t)`);
+                writeLine(`\tmissing := _missingLast - 1`);
+                writeLine("");
             }
-            writeLine(`\t\t_missingLast`);
-            writeLine(`\t)`);
-            writeLine(`\tmissing := _missingLast - 1`);
-            writeLine("");
 
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
-            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t\treturn errNotObject(k)`);
             writeLine(`\t}`);
             writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
             writeLine(`\t\treturn err`);
@@ -1762,9 +2037,18 @@ function generateCode() {
             for (const prop of structure.properties) {
                 writeLine(`\t\tcase \`"${prop.name}"\`:`);
                 if (!prop.optional && !prop.omitzeroValue) {
-                    writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
+                    writeLine(`\t\t\tmissing &^= missing${goFieldName(prop)}`);
                 }
-                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
+                // Reject null for fields whose types cannot represent null but whose Go types
+                // silently accept it (pointers, slices, maps).
+                const resolvedType = resolveType(prop.type);
+                const goTypeAcceptsNull = (prop.optional || resolvedType.needsPointer || resolvedType.name.startsWith("[]") || resolvedType.name.startsWith("map[")) && !prop.omitzeroValue;
+                if (goTypeAcceptsNull && !typeCanBeNull(prop.type)) {
+                    writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
+                    writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
+                    writeLine(`\t\t\t}`);
+                }
+                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${goFieldName(prop)}); err != nil {`);
                 writeLine(`\t\t\t\treturn err`);
                 writeLine(`\t\t\t}`);
             }
@@ -1782,17 +2066,19 @@ function generateCode() {
             writeLine(`\t}`);
             writeLine("");
 
-            writeLine(`\tif missing != 0 {`);
-            writeLine(`\t\tvar missingProps []string`);
-            for (const prop of requiredProps) {
-                writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
-                writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
-                writeLine(`\t\t}`);
+            if (requiredProps.length > 0) {
+                writeLine(`\tif missing != 0 {`);
+                writeLine(`\t\tvar missingProps []string`);
+                for (const prop of requiredProps) {
+                    writeLine(`\t\tif missing&missing${goFieldName(prop)} != 0 {`);
+                    writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
+                    writeLine(`\t\t}`);
+                }
+                writeLine(`\t\treturn errMissing(missingProps)`);
+                writeLine(`\t}`);
+                writeLine("");
             }
-            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
-            writeLine(`\t}`);
 
-            writeLine("");
             writeLine(`\treturn nil`);
             writeLine(`}`);
             writeLine("");
@@ -1872,7 +2158,7 @@ function generateCode() {
             writeLine(`\tmissing := _missingLast - 1`);
             writeLine("");
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
-            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t\treturn errNotObject(k)`);
             writeLine(`\t}`);
             writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
             writeLine(`\t\treturn err`);
@@ -1922,7 +2208,7 @@ function generateCode() {
             writeLine(`\t\tif missing&missingMethod != 0 {`);
             writeLine(`\t\t\tmissingProps = append(missingProps, "method")`);
             writeLine(`\t\t}`);
-            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
+            writeLine(`\t\treturn errMissing(missingProps)`);
             writeLine(`\t}`);
             writeLine("");
             writeLine(`\tif len(rawRegisterOptions) > 0 {`);
@@ -1936,7 +2222,11 @@ function generateCode() {
                 writeLine(`\t\t\t}`);
                 writeLine(`\t\t\ts.RegisterOptions.${reg.fieldName} = &v`);
             }
+            writeLine(`\t\tdefault:`);
+            writeLine(`\t\t\treturn fmt.Errorf("unknown registration method: %s", method)`);
             writeLine(`\t\t}`);
+            writeLine(`\t} else {`);
+            writeLine(`\t\treturn fmt.Errorf("missing registerOptions for method: %s", method)`);
             writeLine(`\t}`);
             writeLine("");
             writeLine(`\treturn nil`);
@@ -2619,7 +2909,7 @@ function generateCode() {
             }
 
             writeLine(`\tdefault:`);
-            writeLine(`\t\treturn fmt.Errorf("invalid ${name}: expected ${[...(unionContainedNull ? ["null"] : []), ...kindMap.keys()].join(", ")}, got %v", dec.PeekKind())`);
+            writeLine(`\t\treturn errInvalidKind("${name}", dec.PeekKind())`);
             writeLine(`\t}`);
         }
         else if (canDispatch) {
@@ -2681,13 +2971,13 @@ function generateCode() {
                         }
                     }
                     if (!exhaustive) {
-                        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+                        writeLine(`\t\treturn errInvalidValue("${name}", data)`);
                     }
                 }
             }
 
             writeLine(`\tdefault:`);
-            writeLine(`\t\treturn fmt.Errorf("invalid ${name}: expected ${[...(unionContainedNull ? ["null"] : []), ...kindMap.keys()].join(", ")}, got %v", dec.PeekKind())`);
+            writeLine(`\t\treturn errInvalidKind("${name}", dec.PeekKind())`);
             writeLine(`\t}`);
         }
         else {
@@ -2732,7 +3022,7 @@ function generateCode() {
         }
         else if (!fallbackExhaustive) {
             // Fallback paths: the final error references `data` which is in scope.
-            writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+            writeLine(`\treturn errInvalidValue("${name}", data)`);
         }
         writeLine(`}`);
         writeLine("");
@@ -2773,7 +3063,7 @@ function generateCode() {
         writeLine(`\t\treturn err`);
         writeLine(`\t}`);
         writeLine(`\tif string(v) != \`${jsonValue}\` {`);
-        writeLine(`\t\treturn fmt.Errorf("expected ${name} value %s, got %s", \`${jsonValue}\`, v)`);
+        writeLine(`\t\treturn errLiteralMismatch("${name}", \`${jsonValue}\`, v)`);
         writeLine(`\t}`);
         writeLine(`\treturn nil`);
         writeLine(`}`);
@@ -2807,7 +3097,7 @@ function generateCode() {
         // Generate the main ResolvedClientCapabilities type and function
         writeLine("// ResolvedClientCapabilities is a version of ClientCapabilities where all nested");
         writeLine("// fields are values (not pointers), making it easier to access deeply nested capabilities.");
-        writeLine("// Use ResolveClientCapabilities to convert from ClientCapabilities.");
+        writeLine("// Use (*ClientCapabilities).Resolve() to convert from ClientCapabilities.");
         if (clientCapsStructure.documentation) {
             writeLine("//");
             const typeDoc = formatDocumentation(clientCapsStructure.documentation);

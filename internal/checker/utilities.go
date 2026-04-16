@@ -183,7 +183,7 @@ func isShorthandAmbientModule(node *ast.Node) bool {
 
 func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 	switch node.Parent.Kind {
-	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment, ast.KindJSExportAssignment,
+	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment,
 		ast.KindImportEqualsDeclaration, ast.KindNamespaceExport:
 		return node.Parent
 	case ast.KindQualifiedName:
@@ -279,10 +279,10 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 
 func (c *Checker) isOptionalParameter(node *ast.Node) bool {
 	// !!! TODO: JSDoc support
-	if ast.IsParameter(node) && node.QuestionToken() != nil {
+	if ast.IsParameterDeclaration(node) && node.QuestionToken() != nil {
 		return true
 	}
-	if !ast.IsParameter(node) {
+	if !ast.IsParameterDeclaration(node) {
 		return false
 	}
 	if node.Initializer() != nil {
@@ -1007,7 +1007,7 @@ func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 	// Return true if symbol is a parameter, a catch clause variable, or a mutable local variable
 	if symbol.ValueDeclaration != nil {
 		declaration := ast.GetRootDeclaration(symbol.ValueDeclaration)
-		return declaration != nil && (ast.IsParameter(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
+		return declaration != nil && (ast.IsParameterDeclaration(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
 	}
 	return false
 }
@@ -1072,7 +1072,7 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 	}
 
 	return node.Parent.Kind == ast.KindImportEqualsDeclaration && node.Parent.AsImportEqualsDeclaration().ModuleReference == node ||
-		(node.Parent.Kind == ast.KindExportAssignment || node.Parent.Kind == ast.KindJSExportAssignment) && node.Parent.Expression() == node
+		node.Parent.Kind == ast.KindExportAssignment && node.Parent.Expression() == node
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
@@ -1166,7 +1166,7 @@ func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
 			return node
 		case ast.KindDecorator:
 			// Decorators are always applied outside of the body of a class or method.
-			if ast.IsParameter(node.Parent) && ast.IsClassElement(node.Parent.Parent) {
+			if ast.IsParameterDeclaration(node.Parent) && ast.IsClassElement(node.Parent.Parent) {
 				// If the decorator's parent is a Parameter, we resolve the this container from
 				// the grandparent class declaration.
 				node = node.Parent.Parent
@@ -1731,4 +1731,82 @@ func (c *Checker) isJSLiteralType(t *Type) bool {
 		return constraint != t && c.isJSLiteralType(constraint)
 	}
 	return false
+}
+
+// DiagnosticDetails holds a resolved diagnostic message and its arguments,
+// used for sharing diagnostic chain computation between the checker and incremental builder.
+type DiagnosticDetails struct {
+	Message *diagnostics.Message
+	Args    []any
+}
+
+// CreateModuleNotFoundChain computes the diagnostic message and arguments for a module-not-found
+// error chain entry. This is shared between the checker (initial diagnostic creation) and the
+// incremental builder (repopulation of cached diagnostics).
+// Mirrors createModuleNotFoundChain in the TypeScript compiler's utilities.ts.
+func CreateModuleNotFoundChain(program Program, file *ast.SourceFile, moduleReference string, mode core.ResolutionMode, packageName string) DiagnosticDetails {
+	resolvedModule := program.GetResolvedModule(file, moduleReference, mode)
+
+	if resolvedModule != nil && resolvedModule.AlternateResult != "" {
+		if strings.Contains(resolvedModule.AlternateResult, "/node_modules/@types/") {
+			packageName = "@types/" + module.MangleScopedPackageName(packageName)
+		}
+		return DiagnosticDetails{
+			Message: diagnostics.There_are_types_at_0_but_this_result_could_not_be_resolved_when_respecting_package_json_exports_The_1_library_may_need_to_update_its_package_json_or_typings,
+			Args:    []any{resolvedModule.AlternateResult, packageName},
+		}
+	}
+
+	packagesMap := program.GetPackagesMap()
+	if _, ok := packagesMap[module.GetTypesPackageName(packageName)]; ok {
+		return DiagnosticDetails{
+			Message: diagnostics.If_the_0_package_actually_exposes_this_module_consider_sending_a_pull_request_to_amend_https_Colon_Slash_Slashgithub_com_SlashDefinitelyTyped_SlashDefinitelyTyped_Slashtree_Slashmaster_Slashtypes_Slash_1,
+			Args:    []any{packageName, module.MangleScopedPackageName(packageName)},
+		}
+	}
+	if packagesMap[packageName] {
+		return DiagnosticDetails{
+			Message: diagnostics.If_the_0_package_actually_exposes_this_module_try_adding_a_new_declaration_d_ts_file_containing_declare_module_1,
+			Args:    []any{packageName, moduleReference},
+		}
+	}
+	return DiagnosticDetails{
+		Message: diagnostics.Try_npm_i_save_dev_types_Slash_1_if_it_exists_or_add_a_new_declaration_d_ts_file_containing_declare_module_0,
+		Args:    []any{moduleReference, module.MangleScopedPackageName(packageName)},
+	}
+}
+
+// CreateModeMismatchDetails computes the diagnostic message and arguments for a mode-mismatch
+// error chain entry. This is shared between the checker (initial diagnostic creation) and the
+// incremental builder (repopulation of cached diagnostics).
+// Mirrors createModeMismatchDetails in the TypeScript compiler's utilities.ts.
+func CreateModeMismatchDetails(program Program, file *ast.SourceFile) DiagnosticDetails {
+	ext := tspath.TryGetExtensionFromPath(file.FileName())
+	targetExt := core.IfElse(ext == tspath.ExtensionTs, tspath.ExtensionMts, core.IfElse(ext == tspath.ExtensionJs, tspath.ExtensionMjs, ""))
+	meta := program.GetSourceFileMetaData(file.Path())
+	packageJsonType := meta.PackageJsonType
+	packageJsonDirectory := meta.PackageJsonDirectory
+
+	if packageJsonDirectory != "" && packageJsonType == "" {
+		if targetExt != "" {
+			return DiagnosticDetails{
+				Message: diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_add_the_field_type_Colon_module_to_1,
+				Args:    []any{targetExt, tspath.CombinePaths(packageJsonDirectory, "package.json")},
+			}
+		}
+		return DiagnosticDetails{
+			Message: diagnostics.To_convert_this_file_to_an_ECMAScript_module_add_the_field_type_Colon_module_to_0,
+			Args:    []any{tspath.CombinePaths(packageJsonDirectory, "package.json")},
+		}
+	}
+	if targetExt != "" {
+		return DiagnosticDetails{
+			Message: diagnostics.To_convert_this_file_to_an_ECMAScript_module_change_its_file_extension_to_0_or_create_a_local_package_json_file_with_type_Colon_module,
+			Args:    []any{targetExt},
+		}
+	}
+	return DiagnosticDetails{
+		Message: diagnostics.To_convert_this_file_to_an_ECMAScript_module_create_a_local_package_json_file_with_type_Colon_module,
+		Args:    nil,
+	}
 }

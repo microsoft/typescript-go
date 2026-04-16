@@ -1,4 +1,7 @@
 UseCaseSensitiveFileNames: true
+//// [/declarationMapsRenameWithProjectReferencesEditEnd.ts] *new* 
+
+
 //// [/myproject/dependency/FnS.ts] *new* 
 export function fn1() { }
 export function fn2() { }
@@ -749,6 +752,14 @@ Config::
     }
   }
 }
+
+//// [/myproject/dependency/FnS.ts] *modified* 
+export function fn1() { }
+export function fn2() { }
+export function fn3() { }
+export function fn4() { }
+export function fn5() { }
+const x = 10;
 
 Projects::
   [/myproject/dependency/tsconfig.json] *modified*

@@ -48,7 +48,7 @@ jobs:
 
   release-build:
     if: ${{ github.repository == 'microsoft/typescript-go' && github.event_name != 'merge_group' }}
-    runs-on: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
+    runs-on: TypeScript-1ES-GitHub-XL-2
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
@@ -97,7 +97,7 @@ jobs:
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
-          - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
+          - os: TypeScript-1ES-GitHub-XL-2
             name: 'race mode'
             race: true
             skip: ${{ github.event_name == 'merge_group' || github.repository != 'microsoft/typescript-go' }}
@@ -191,7 +191,7 @@ jobs:
           npx hereby baseline-accept
           git add testdata/baselines/reference
           git diff --staged --exit-code
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         with:
           name: ${{ matrix.config.os }}-${{ (matrix.config.race && 'race') || 'norace' }}-new-baselines-artifact
@@ -234,8 +234,6 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
       - uses: ./.github/actions/setup-go
-        with:
-          lint-cache: 'true'
 
       # Avoid duplicate PR annotations.
       - if: ${{ ! matrix.config.main }}
@@ -282,8 +280,7 @@ jobs:
 
       - run: npx hereby generate
       - run: npx hereby generate:enums
-      - run: npm run -w @typescript/api generate:sync
-      - run: npm run -w @typescript/ast generate:factory
+      - run: npx hereby generate:ast
 
       - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/fetchModel.mts
       - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/generate.mts
@@ -349,9 +346,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
       - uses: ./.github/actions/setup-go
 
+      - run: npm ci
+
       - run: go -C ./_tools run ./cmd/checkmodpaths $PWD
+
+      - run: npx hereby check:scripts
 
   required:
     runs-on: ubuntu-latest

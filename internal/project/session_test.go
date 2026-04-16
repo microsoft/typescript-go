@@ -10,7 +10,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -625,18 +624,7 @@ func TestSession(t *testing.T) {
 					programBefore := lsBefore.GetProgram()
 					session.WaitForBackgroundTasks()
 
-					var xWatched bool
-				outer:
-					for _, call := range utils.Client().WatchFilesCalls() {
-						for _, watcher := range call.Watchers {
-							// On case-insensitive FS, glob patterns use lowercased paths.
-							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/ts/x.ts") {
-								xWatched = true
-								break outer
-							}
-						}
-					}
-					assert.Check(t, xWatched)
+					assert.Check(t, utils.WatchesFile("/home/projects/ts/x.ts"))
 
 					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`)
 					assert.NilError(t, err)
@@ -1098,6 +1086,80 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(diags), 0)
 		})
 
+		t.Run("symlinked node_modules package.json change invalidates resolution", func(t *testing.T) {
+			t.Parallel()
+			// Set up a project that imports a symlinked node_modules package.
+			// The package resolves via "main" in package.json to dist/index.js.
+			files := map[string]any{
+				"/home/projects/myproject/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true,
+						"module": "nodenext",
+						"moduleResolution": "nodenext"
+					},
+					"files": ["src/index.ts"]
+				}`,
+				"/home/projects/myproject/src/index.ts": `import { foo } from "mylib";`,
+				// The real package lives as a sibling directory
+				"/home/projects/mylib/package.json": `{
+					"name": "mylib",
+					"main": "dist/index.js"
+				}`,
+				"/home/projects/mylib/dist/index.js":   `exports.foo = function() { return 1; };`,
+				"/home/projects/mylib/dist/index.d.ts": `export declare function foo(): number;`,
+				// node_modules/mylib is a symlink to the sibling
+				"/home/projects/myproject/node_modules/mylib": vfstest.Symlink("/home/projects/mylib"),
+			}
+
+			session, utils := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+				CurrentDirectory:   "/home/projects/myproject",
+				DefaultLibraryPath: bundled.LibPath(),
+				TypingsLocation:    projecttestutil.TestTypingsLocation,
+				PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+				WatchEnabled:       true,
+				LoggingEnabled:     true,
+			})
+			session.DidOpenFile(context.Background(), "file:///home/projects/myproject/src/index.ts", 1, files["/home/projects/myproject/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			// Initial state: import resolves successfully via package.json main -> dist/index.d.ts
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/myproject/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			session.WaitForBackgroundTasks()
+			diags := program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/myproject/src/index.ts"))
+			for _, d := range diags {
+				t.Logf("initial diagnostic: %s", d.String())
+			}
+			assert.Equal(t, len(diags), 0, "import should resolve initially")
+
+			// Assert: watched file globs cover the realpath of package.json and dist/index.d.ts.
+			// With a workspace dir set, watchers use RelativePattern with a base URI.
+			assert.Check(t, utils.WatchesFile("/home/projects/mylib/package.json"), "realpath of package.json should be watched")
+			assert.Check(t, utils.WatchesFile("/home/projects/mylib/dist/index.d.ts"), "realpath of dist/index.d.ts should be watched")
+
+			// Edit package.json to remove "main" field
+			err = utils.FS().WriteFile("/home/projects/mylib/package.json", `{
+				"name": "mylib"
+			}`)
+			assert.NilError(t, err)
+
+			// Fire watch event for the realpath of the changed package.json.
+			// A real editor would fire this for the realpath since it watches realpaths.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeChanged,
+					Uri:  "file:///home/projects/mylib/package.json",
+				},
+			})
+
+			// After removing "main" from package.json, the import should no longer resolve.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/myproject/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			diags = program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/myproject/src/index.ts"))
+			assert.Assert(t, len(diags) > 0, "import should fail after removing main from package.json")
+		})
+
 		t.Run("create file in non-existent directory", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
@@ -1197,13 +1259,13 @@ func TestSession(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 
-		session.Configure(lsutil.NewUserConfig(nil))
+		session.Configure(lsutil.NewDefaultUserPreferences())
 		// Change user preferences for code lens and inlay hints.
-		newPrefs := session.Config().TS()
-		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
-		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
+		newPrefs := session.Config()
+		newPrefs.CodeLens.ReferencesCodeLensEnabled = core.TSTrue
+		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = core.TSTrue
 
-		session.Configure(lsutil.NewUserConfig(newPrefs))
+		session.Configure(newPrefs)
 
 		codeLensRefreshCalls := utils.Client().RefreshCodeLensCalls()
 		inlayHintsRefreshCalls := utils.Client().RefreshInlayHintsCalls()
@@ -1223,37 +1285,40 @@ func TestSession(t *testing.T) {
 		assert.NilError(t, err)
 
 		configMap1 := map[string]any{
-			"UseAliasesForRename":       true,
-			"QuotePreference":           "single",
-			"OrganizeImportsIgnoreCase": true,
+			"preferences": map[string]any{
+				"useAliasesForRenames": true,
+				"quoteStyle":           "single",
+			},
+			"unstable": map[string]any{
+				"organizeImportsIgnoreCase": true,
+			},
 		}
-		// set "typescript" options only
-		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"typescript": configMap1}))
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{"js/ts": configMap1}))
 		actualConfig1 := session.Config()
 		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs1.UseAliasesForRename = core.TSTrue
 		expectedPrefs1.QuotePreference = lsutil.QuotePreferenceSingle
 		expectedPrefs1.OrganizeImportsIgnoreCase = core.TSTrue
 
-		// "javascript" options should default to ts
-		assert.DeepEqual(t, *actualConfig1.TS(), *expectedPrefs1)
-		assert.DeepEqual(t, *actualConfig1.JS(), *expectedPrefs1)
+		assert.DeepEqual(t, actualConfig1, expectedPrefs1)
 
 		configMap2 := map[string]any{
-			"UseAliasesForRename":       false,
-			"QuotePreference":           "double",
-			"OrganizeImportsIgnoreCase": false,
+			"preferences": map[string]any{
+				"useAliasesForRenames": false,
+				"quoteStyle":           "double",
+			},
+			"unstable": map[string]any{
+				"organizeImportsIgnoreCase": false,
+			},
 		}
-		// set "javascript" options only
-		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"javascript": configMap2}))
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{"js/ts": configMap2}))
 		actualConfig2 := session.Config()
 		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs2.UseAliasesForRename = core.TSFalse
 		expectedPrefs2.QuotePreference = lsutil.QuotePreferenceDouble
 		expectedPrefs2.OrganizeImportsIgnoreCase = core.TSFalse
-		// "typescript" options should not change
-		assert.DeepEqual(t, *actualConfig2.TS(), *expectedPrefs1)
-		assert.DeepEqual(t, *actualConfig2.JS(), *expectedPrefs2)
+
+		assert.DeepEqual(t, actualConfig2, expectedPrefs2)
 	})
 
 	t.Run("language service for closed files", func(t *testing.T) {

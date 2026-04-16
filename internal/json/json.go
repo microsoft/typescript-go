@@ -70,6 +70,10 @@ func AllowDuplicateNames(allow bool) json.Options {
 	return jsontext.AllowDuplicateNames(allow)
 }
 
+func Deterministic(v bool) json.Options {
+	return json.Deterministic(v)
+}
+
 func WithIndent(indent string) json.Options {
 	return jsontext.WithIndent(indent)
 }
@@ -80,6 +84,7 @@ func NewDecoder(r io.Reader) *jsontext.Decoder {
 
 type (
 	Value           = jsontext.Value
+	Kind            = jsontext.Kind
 	UnmarshalerFrom = json.UnmarshalerFrom
 	MarshalerTo     = json.MarshalerTo
 	Decoder         = jsontext.Decoder
